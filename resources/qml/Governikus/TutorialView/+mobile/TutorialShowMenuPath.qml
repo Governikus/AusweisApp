@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
@@ -11,6 +11,7 @@ Item {
 	id: root
 
 	property alias newSectionImage: newSection.source
+	property double newSectionPointerX: 1
 	property double newSectionPointerY: 0
 	property alias backgroundIcon: icon.source
 
@@ -52,6 +53,7 @@ Item {
 		opacity: 0.3
 		z: 1
 
+		pointerXRatio: root.newSectionPointerX
 		pointerYRatio: root.newSectionPointerY
 	}
 

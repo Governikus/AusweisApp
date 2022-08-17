@@ -43,6 +43,7 @@ class GlobalStatus
 
 			Workflow_AlreadyInProgress_Error,
 			Workflow_Communication_Missing_Redirect_Url,
+			Workflow_InternalError_BeforeTcToken,
 			Workflow_Cancellation_By_User,
 			Workflow_Card_Removed,
 			Workflow_Cannot_Confirm_IdCard_Authenticity,
@@ -53,6 +54,7 @@ class GlobalStatus
 			Workflow_No_Unique_AtCvc,
 			Workflow_No_Unique_DvCvc,
 			Workflow_No_Permission_Error,
+			Workflow_No_Extended_Length_Error,
 			Workflow_Certificate_No_Description,
 			Workflow_Certificate_No_Url_In_Description,
 			Workflow_Certificate_Hash_Error,
@@ -64,6 +66,7 @@ class GlobalStatus
 			Workflow_TrustedChannel_Error_From_Server,
 			Workflow_TrustedChannel_Hash_Not_In_Description,
 			Workflow_TrustedChannel_No_Data_Received,
+			Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length,
 			Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length,
 			Workflow_TrustedChannel_ServiceUnavailable,
 			Workflow_TrustedChannel_TimeOut,
@@ -80,6 +83,10 @@ class GlobalStatus
 			Workflow_Network_Invalid_Scheme,
 			Workflow_Network_Malformed_Redirect_Url,
 			Workflow_Wrong_Parameter_Invocation,
+			Workflow_Smart_eID_Unavailable,
+			Workflow_Smart_eID_Applet_Preparation_Failed,
+			Workflow_Smart_eID_PrePersonalization_Failed,
+			Workflow_Smart_eID_Personalization_Failed,
 
 			Paos_Unexpected_Warning,
 
@@ -108,14 +115,15 @@ class GlobalStatus
 			Card_NewPin_Mismatch,
 			Card_NewPin_Invalid_Length,
 			Card_ValidityVerificationFailed,
+			Card_Smart_Invalid,
 
 			RemoteReader_CloseCode_AbnormalClose,
 
-			RemoteConnector_InvalidRequest,
-			RemoteConnector_NoSupportedApiLevel,
-			RemoteConnector_ConnectionTimeout,
-			RemoteConnector_ConnectionError,
-			RemoteConnector_RemoteHostRefusedConnection
+			IfdConnector_InvalidRequest,
+			IfdConnector_NoSupportedApiLevel,
+			IfdConnector_ConnectionTimeout,
+			IfdConnector_ConnectionError,
+			IfdConnector_RemoteHostRefusedConnection
 		};
 
 		enum class Origin
@@ -126,6 +134,7 @@ class GlobalStatus
 		enum class ExternalInformation
 		{
 			ECARDAPI_ERROR,
+			ECARDAPI_SERVERMESSAGE,
 			LAST_URL,
 			HTTP_STATUS_CODE,
 			REDIRECT_URL,

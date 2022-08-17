@@ -28,7 +28,6 @@ class ProviderConfigurationInfo
 			public:
 				const LanguageString mShortName;
 				const LanguageString mLongName;
-				const LanguageString mShortDescription;
 				const LanguageString mLongDescription;
 				const QString mAddress;
 				const QString mHomepage;
@@ -44,7 +43,6 @@ class ProviderConfigurationInfo
 
 				InternalInfo(const LanguageString& pShortName,
 						const LanguageString& pLongName,
-						const LanguageString& pShortDescription,
 						const LanguageString& pLongDescription,
 						const QString& pAddress,
 						const QString& pHomepage,
@@ -59,7 +57,6 @@ class ProviderConfigurationInfo
 						const QString& pInternalId)
 					: mShortName(pShortName)
 					, mLongName(pLongName)
-					, mShortDescription(pShortDescription)
 					, mLongDescription(pLongDescription)
 					, mAddress(pAddress)
 					, mHomepage(pHomepage)
@@ -80,7 +77,6 @@ class ProviderConfigurationInfo
 				{
 					return mShortName == pOther.mShortName &&
 						   mLongName == pOther.mLongName &&
-						   mShortDescription == pOther.mShortDescription &&
 						   mLongDescription == pOther.mLongDescription &&
 						   mAddress == pOther.mAddress &&
 						   mHomepage == pOther.mHomepage &&
@@ -105,7 +101,6 @@ class ProviderConfigurationInfo
 	public:
 		ProviderConfigurationInfo(const LanguageString& pShortName = QString(),
 				const LanguageString& pLongName = QString(),
-				const LanguageString& pShortDescription = QString(),
 				const LanguageString& pLongDescription = QString(),
 				const QString& pAddress = QString(),
 				const QString& pHomepage = QString(),
@@ -126,7 +121,6 @@ class ProviderConfigurationInfo
 
 		[[nodiscard]] const LanguageString& getShortName() const;
 		[[nodiscard]] const LanguageString& getLongName() const;
-		[[nodiscard]] const LanguageString& getShortDescription() const;
 		[[nodiscard]] const LanguageString& getLongDescription() const;
 		[[nodiscard]] const QString& getAddress() const;
 		[[nodiscard]] QString getAddressDomain() const;

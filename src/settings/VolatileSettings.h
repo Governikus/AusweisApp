@@ -12,11 +12,12 @@
 #include "Env.h"
 
 #include <QObject>
+#include <QReadWriteLock>
 
 #ifndef QT_NO_QDEBUG
-#include <QScopeGuard>
+	#include <QScopeGuard>
 
-#define SDK_MODE(pEnable)\
+	#define SDK_MODE(pEnable)\
 	const auto sdkMode = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();\
 	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(pEnable);\
 	const auto sdkModeGuard = qScopeGuard([sdkMode] {\
@@ -29,9 +30,10 @@ namespace governikus
 {
 
 class VolatileSettings
+	: public QObject
+	, private Env::ThreadSafe
 {
-	Q_GADGET
-
+	Q_OBJECT
 	friend class Env;
 
 	public:
@@ -54,17 +56,17 @@ class VolatileSettings
 		};
 
 	private:
-		static constexpr bool cHandleInterruptDefault = true;
+		static constexpr bool cHandleInterruptDefault = false;
 
+		VolatileSettings();
+		~VolatileSettings() = default;
+
+		mutable QReadWriteLock mLock;
 		bool mUsedAsSdk;
 		bool mDeveloperMode;
 		bool mHandleInterrupt;
 		Messages mMessages;
-
-	protected:
-		VolatileSettings();
-		~VolatileSettings() = default;
-		static VolatileSettings& getInstance();
+		ulong mDelay;
 
 	public:
 		[[nodiscard]] bool isUsedAsSDK() const;
@@ -77,7 +79,13 @@ class VolatileSettings
 		void setHandleInterrupt(bool pScan = cHandleInterruptDefault);
 
 		void setMessages(const Messages& pMessages = Messages());
-		[[nodiscard]] const Messages& getMessages() const;
+		[[nodiscard]] Messages getMessages() const;
+
+		void setDelay(ulong pDelay = 0);
+		[[nodiscard]] ulong getDelay() const;
+
+	Q_SIGNALS:
+		void fireUsedAsSdkChanged();
 };
 
 

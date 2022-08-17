@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Style 1.0
 
@@ -17,6 +17,8 @@ ScrollBar {
 
 	property bool highlighted: false
 	property bool autohide: !Constants.is_desktop
+
+	Accessible.ignored: true
 
 	// Using only ScrollBar.AsNeeded leads to the scrollbar becoming visible when highlighted
 	policy: size < 1.0 ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
@@ -48,7 +50,7 @@ ScrollBar {
 		}
 	}
 
-	onPolicyChanged: if (policy == ScrollBar.AlwaysOn) highlight()
+	onPolicyChanged: if (policy === ScrollBar.AlwaysOn) highlight()
 
 	Timer {
 		id: highlightTimer

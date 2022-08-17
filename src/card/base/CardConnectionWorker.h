@@ -6,17 +6,20 @@
 
 #pragma once
 
-#include "asn1/SecurityInfos.h"
 #include "CardReturnCode.h"
-#include "CommandApdu.h"
-#include "EstablishPaceChannel.h"
 #include "FileRef.h"
-#include "pace/SecureMessaging.h"
 #include "Reader.h"
-#include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/ResponseApdu.h"
+#include "asn1/CVCertificateChain.h"
+#include "asn1/SecurityInfos.h"
+#include "pace/SecureMessaging.h"
+#include "pinpad/EstablishPaceChannel.h"
 
 #include <QByteArray>
+#include <QTimer>
+
 
 namespace governikus
 {
@@ -28,9 +31,9 @@ class CardConnectionWorker
 	: public QObject
 	, public QEnableSharedFromThis<CardConnectionWorker>
 {
-	private:
-		Q_OBJECT
+	Q_OBJECT
 
+	private:
 		/*!
 		 * The connection talks to the Card held by the Reader
 		 */
@@ -41,7 +44,14 @@ class CardConnectionWorker
 		 */
 		QScopedPointer<SecureMessaging> mSecureMessaging;
 
+		QTimer mKeepAliveTimer;
+
 		inline QSharedPointer<const EFCardAccess> getEfCardAccess() const;
+
+		void stopSecureMessaging();
+
+	private Q_SLOTS:
+		void onKeepAliveTimeout();
 
 	protected:
 		/*!
@@ -64,17 +74,9 @@ class CardConnectionWorker
 
 		virtual CardReturnCode updateRetryCounter();
 
-		virtual CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent);
+		virtual CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent, int pLe = CommandApdu::SHORT_MAX_LE);
 
 		virtual ResponseApduResult transmit(const CommandApdu& pCommandApdu);
-
-		/*!
-		 * Performs PACE and establishes a PACE channel.
-		 * If the Reader is a basic reader and the PACE channel is successfully established, the subsequent transmits will be secured using, secure messaging.
-		 * I. e., a secure messaging channel is established.
-		 */
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,
-				const QByteArray& pPasswordValue);
 
 		/*!
 		 * Performs PACE and establishes a PACE channel for later terminal authentication.
@@ -91,21 +93,30 @@ class CardConnectionWorker
 		 */
 		virtual CardReturnCode destroyPaceChannel();
 
+		virtual void setKeepAlive(bool pEnabled);
+
 		/*!
 		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
 		 */
 		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1);
 
-		/*!
-		 * Destroys an established secure messaging channel, if there is one.
-		 */
-		Q_INVOKABLE virtual bool stopSecureMessaging();
-
 		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
+
+		EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat);
+
+		ResponseApduResult getChallenge();
+
+		TerminalAndChipAuthenticationResult performTAandCA(
+			const CVCertificateChain& pTerminalCvcChain,
+			const QByteArray& pAuxiliaryData,
+			const QByteArray& pSignature,
+			const QByteArray& pPin,
+			const QByteArray& pEphemeralPublicKey);
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);
+		void fireSecureMessagingStopped();
 };
 
 } // namespace governikus

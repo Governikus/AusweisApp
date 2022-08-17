@@ -9,8 +9,6 @@
       <key>@BUNDLE_IDENTIFIER@</key>
       <string>@PROVISIONING_PROFILE_SPECIFIER@</string>
     </dict>
-    <key>uploadBitcode</key>
-    <true/>
     <key>uploadSymbols</key>
     <true/>
   </dict>

@@ -14,9 +14,9 @@ class MsgHandler;
 
 class Msg final
 {
-	private:
-		friend class MsgHandler;
+	friend class MsgHandler;
 
+	private:
 		MsgType mType;
 		QByteArray mData;
 

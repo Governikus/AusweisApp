@@ -6,26 +6,18 @@
 
 #pragma once
 
+#include "SecurityProtocol.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/ResponseApdu.h"
 #include "asn1/ASN1TemplateUtil.h"
-#include "CommandApdu.h"
 #include "pace/CipherMac.h"
 #include "pace/SymmetricCipher.h"
-#include "ResponseApdu.h"
 
 #include <QByteArray>
 
 
 namespace governikus
 {
-
-/*!
- * Message part of the Secure Messaging command APDU containing
- * the expected length.
- */
-struct SM_PROTECTED_LE
-	: public ASN1_OCTET_STRING {};
-DECLARE_ASN1_OBJECT(SM_PROTECTED_LE)
-
 
 class SecureMessaging final
 {
@@ -45,7 +37,7 @@ class SecureMessaging final
 		[[nodiscard]] QByteArray createSecuredLe(int pLe) const;
 
 	public:
-		SecureMessaging(const QByteArray& pPaceAlgorithm, const QByteArray& pEncKey, const QByteArray& pMacKey);
+		SecureMessaging(const SecurityProtocol& pSecurityProtocol, const QByteArray& pEncKey, const QByteArray& pMacKey);
 		~SecureMessaging() = default;
 
 		/*!
@@ -55,11 +47,10 @@ class SecureMessaging final
 
 		CommandApdu encrypt(const CommandApdu& pCommandApdu);
 
-		/*!
-		 * \brief Decrypt given ResponseApdu.
-		 *
-		 * \return Decrypted ResponseApdu or an empty ResponseApdu if decryption fails.
-		 */
+		CommandApdu decrypt(const CommandApdu& pEncryptedCommandApdu);
+
+		ResponseApdu encrypt(const ResponseApdu& pResponseApdu);
+
 		ResponseApdu decrypt(const ResponseApdu& pEncryptedResponseApdu);
 };
 

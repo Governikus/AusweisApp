@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -130,7 +130,7 @@ Item {
 						width: logEntryList.width - notificationTime.width - 3 * logEntryList.spacing
 
 						text: model.text
-						textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.normal_inverse
+						textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.normal
 
 					}
 				}

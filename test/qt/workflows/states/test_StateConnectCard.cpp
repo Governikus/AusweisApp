@@ -10,7 +10,7 @@
 #include "ReaderManager.h"
 
 #include "MockCardConnectionWorker.h"
-#include "MockReader.h"
+#include "TestWorkflowContext.h"
 
 #include <QtTest>
 
@@ -41,7 +41,7 @@ class test_StateConnectCard
 		{
 			mReaderInfo = ReaderInfo(QString("test"), ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::EID_CARD));
 
-			mContext.reset(new WorkflowContext());
+			mContext.reset(new TestWorkflowContext());
 			mState.reset(new StateConnectCard(mContext));
 		}
 

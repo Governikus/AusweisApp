@@ -39,8 +39,15 @@
 			<![CDATA[Installed OR (MsiNTProductType = 1)]]>
 		</Condition>
 
-		<Condition Message="!(loc.Windows7SP1Required)">
-			<![CDATA[Installed OR (VersionNT >= 602) OR (VersionNT = 601 AND ServicePackLevel >= 1)]]>
+
+		<Property Id="WIN10FOUND" Secure="yes">
+			<DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
+			<FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.10000.0"/>
+			</DirectorySearch>
+		</Property>
+
+		<Condition Message="!(loc.Windows10Required)">
+			<![CDATA[Installed OR (VersionNT64 >= 1000) OR (VersionNT64 = 603 AND WIN10FOUND)]]>
 		</Condition>
 
 

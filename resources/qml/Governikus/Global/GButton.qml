@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -30,7 +30,7 @@ Button {
 	activeFocusOnTab: enableButton
 	onActiveFocusOnTabChanged: if (!activeFocusOnTab) focus = false
 	Accessible.name: text
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+	Accessible.onPressAction: clicked()
 
 	ToolTip.delay: Constants.toolTipDelay
 	ToolTip.visible: hovered && ToolTip.text !== ""
@@ -87,6 +87,7 @@ Button {
 			FocusFrame {
 				scope: root
 				marginFactor: 0.7
+				isOnLightBackground: false
 			}
 		}
 	}
@@ -110,14 +111,7 @@ Button {
 		z: 2
 		anchors.fill: parent
 
-		onPressed: mouse.accepted = !enableButton
+		onPressed: mouse => { mouse.accepted = !enableButton }
 		cursorShape: enableButton ? root.cursorShape : Qt.ArrowCursor
-	}
-
-	GDropShadow {
-		visible: !Constants.is_desktop && GraphicsInfo.api !== GraphicsInfo.Software
-		anchors.fill: source
-
-		source: root.background
 	}
 }

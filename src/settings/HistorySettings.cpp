@@ -36,11 +36,6 @@ HistorySettings::HistorySettings()
 }
 
 
-HistorySettings::~HistorySettings()
-{
-}
-
-
 void HistorySettings::save()
 {
 	mStore->sync();

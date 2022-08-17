@@ -19,7 +19,7 @@ class test_FileDestination
 	private Q_SLOTS:
 		void getPath()
 		{
-			const auto filename = QStringLiteral("config.json");
+			const auto filename = QStringLiteral("AusweisApp2.rcc");
 			QString path = FileDestination::getPath(filename);
 			QVERIFY(path.endsWith(filename));
 			QVERIFY(QFile::exists(path));

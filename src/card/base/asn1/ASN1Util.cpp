@@ -4,57 +4,17 @@
 
 #include "asn1/ASN1Util.h"
 
-#include "SecureMessagingResponse.h"
+#include "apdu/SecureMessagingResponse.h"
 
-#include <openssl/x509v3.h>
 #include <QDate>
 #include <QLoggingCategory>
 #include <QScopeGuard>
+#include <openssl/asn1.h>
+#include <openssl/x509v3.h>
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
-
-
-ASN1_OBJECT* Asn1ObjectUtil::parseFrom(const QByteArray& pOidAsText)
-{
-	return OBJ_txt2obj(pOidAsText.constData(), 1);
-}
-
-
-QByteArray Asn1ObjectUtil::convertTo(const ASN1_OBJECT* pAsn1Object)
-{
-	if (pAsn1Object == nullptr)
-	{
-		return QByteArray();
-	}
-
-	/*
-	 * According to OpenSSL's documentation on OBJ_nid2obj:
-	 * " A buffer length of 80 should be more than enough to handle any OID encountered in practice."
-	 */
-	char buf[80] = {};
-	if (OBJ_obj2txt(buf, sizeof(buf), pAsn1Object, 1) == sizeof(buf))
-	{
-		qCCritical(card) << "The OID may not fit into the given array, just return an empty string";
-		return QByteArray();
-	}
-	return QByteArray(buf);
-}
-
-
-QByteArray Asn1ObjectUtil::getValue(const ASN1_OBJECT* pAsn1Object)
-{
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	return QByteArray(reinterpret_cast<const char*>(pAsn1Object->data), pAsn1Object->length);
-
-#else
-	const size_t len = OBJ_length(pAsn1Object);
-	const unsigned char* const data = OBJ_get0_data(pAsn1Object);
-	return QByteArray(reinterpret_cast<const char*>(data), static_cast<int>(len));
-
-#endif
-}
 
 
 void Asn1OctetStringUtil::setValue(const QByteArray& pValue, ASN1_OCTET_STRING* pAsn1OctetString)
@@ -81,14 +41,14 @@ void Asn1StringUtil::setValue(const QString& pString, ASN1_STRING* pOut)
 }
 
 
-QString Asn1StringUtil::getValue(ASN1_STRING* pString)
+QString Asn1StringUtil::getValue(const ASN1_STRING* pString)
 {
 	if (pString == nullptr)
 	{
 		return QString();
 	}
 
-	unsigned char* buffer = nullptr;
+	uchar* buffer = nullptr;
 	const int length = ASN1_STRING_to_UTF8(&buffer, pString);
 	const auto guard = qScopeGuard([buffer] {
 			OPENSSL_free(buffer);
@@ -103,14 +63,18 @@ QString Asn1StringUtil::getValue(ASN1_STRING* pString)
 }
 
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 QByteArray Asn1TypeUtil::encode(ASN1_TYPE* pAny)
+#else
+QByteArray Asn1TypeUtil::encode(const ASN1_TYPE* pAny)
+#endif
 {
 	if (pAny == nullptr)
 	{
 		return QByteArray();
 	}
 
-	unsigned char* buffer = nullptr;
+	uchar* buffer = nullptr;
 	const int length = i2d_ASN1_TYPE(pAny, &buffer);
 	const auto guard = qScopeGuard([buffer] {
 			OPENSSL_free(buffer);
@@ -125,13 +89,35 @@ QByteArray Asn1TypeUtil::encode(ASN1_TYPE* pAny)
 }
 
 
-QByteArray Asn1IntegerUtil::getValue(const ASN1_INTEGER* pInteger)
+int Asn1IntegerUtil::getValue(const ASN1_INTEGER* pInteger)
 {
-	if (pInteger == nullptr)
+	if (pInteger)
 	{
+		if (int64_t version = 0;
+				ASN1_INTEGER_get_int64(&version, pInteger))
+		{
+			return static_cast<int>(version);
+		}
+
+		qCCritical(card) << "Conversion error on ASN1_INTEGER";
+	}
+
+	return -1;
+}
+
+
+QByteArray Asn1IntegerUtil::encode(int pValue)
+{
+	QSharedPointer<ASN1_TYPE> type(ASN1_TYPE_new(), [](ASN1_TYPE* pType){ASN1_TYPE_free(pType);});
+	type->type = V_ASN1_INTEGER;
+	type->value.integer = ASN1_INTEGER_new();
+	if (!ASN1_INTEGER_set_int64(type->value.integer, pValue))
+	{
+		qCCritical(card) << "Encoding error on ASN1_INTEGER";
 		return QByteArray();
 	}
-	return QByteArray(reinterpret_cast<const char*>(pInteger->data), pInteger->length);
+
+	return Asn1TypeUtil::encode(type.data()).mid(2);
 }
 
 
@@ -155,7 +141,7 @@ QByteArray Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(QDate pDate)
 }
 
 
-QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(ASN1_OCTET_STRING* pDateBCD)
+QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(const ASN1_OCTET_STRING* pDateBCD)
 {
 	if (pDateBCD == nullptr)
 	{
@@ -177,14 +163,16 @@ QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(ASN1_OCTET_STRING* pDateBCD
 }
 
 
-QByteArray Asn1Util::encode(char pTagByte, const QByteArray& pData)
+QByteArray Asn1Util::encode(int pClass, int pTag, const QByteArray& pData, bool pConstructed)
 {
-	// 1. encode as ASN1_OCTET_STRING using our template utils
-	// (in fact SM_CHECKSUM ::= [8E] IMPLICIT OCTET STRING)
-	auto octetString = newObject<SM_CHECKSUM>();
-	Asn1OctetStringUtil::setValue(pData, octetString.data());
-	auto encodedOctetString = encodeObject(octetString.data());
+	const int constructed = pConstructed ? V_ASN1_CONSTRUCTED : 0;
+	const int size = ASN1_object_size(constructed, pData.length(), pTag);
+	QByteArray result(size, 0);
 
-	// 2. replace the tag byte
-	return encodedOctetString.replace(0, 1, QByteArray(1, pTagByte));
+	auto* p = reinterpret_cast<uchar*>(result.data());
+	ASN1_put_object(&p, constructed, pData.length(), pTag, pClass);
+	Q_ASSERT(reinterpret_cast<uchar*>(result.data()) + result.length() == p + pData.length());
+	memcpy(p, pData.data(), static_cast<size_t>(pData.length()));
+
+	return result;
 }

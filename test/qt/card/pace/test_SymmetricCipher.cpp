@@ -2,14 +2,17 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/KnownOIDs.h"
-#include "pace/KeyDerivationFunction.h"
 #include "pace/SymmetricCipher.h"
 
-#include <openssl/evp.h>
+#include "SecurityProtocol.h"
+#include "pace/KeyDerivationFunction.h"
+
 #include <QtTest>
+#include <openssl/evp.h>
+
 
 using namespace governikus;
+
 
 class test_SymmetricCipher
 	: public QObject
@@ -23,10 +26,10 @@ class test_SymmetricCipher
 	private Q_SLOTS:
 		void unknownAlgorithm()
 		{
-			QByteArray paceAlgo("unknown-algorithm");
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(Oid(QByteArray("unknown-algorithm")));
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QVERIFY(!sc.isInitialized());
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -36,10 +39,10 @@ class test_SymmetricCipher
 
 		void tripleDes()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_3DES_CBC_CBC);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QVERIFY(!sc.isInitialized());
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -49,8 +52,8 @@ class test_SymmetricCipher
 
 		void wrongKeySize()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
-			SymmetricCipher sc(paceAlgo, "dummy");
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			SymmetricCipher sc(securityProtocol, "dummy");
 
 			QVERIFY(!sc.isInitialized());
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
@@ -60,10 +63,10 @@ class test_SymmetricCipher
 
 		void noData()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QVERIFY(sc.encrypt(QByteArray()).isEmpty());
 			QVERIFY(sc.decrypt(QByteArray()).isEmpty());
@@ -72,10 +75,10 @@ class test_SymmetricCipher
 
 		void aes128()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
 			QByteArray decryptedData = sc.decrypt(encryptedData);
@@ -87,10 +90,10 @@ class test_SymmetricCipher
 
 		void aes196()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_192);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
 			QByteArray decryptedData = sc.decrypt(encryptedData);
@@ -102,10 +105,10 @@ class test_SymmetricCipher
 
 		void aes256()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
 			QByteArray decryptedData = sc.decrypt(encryptedData);
@@ -117,10 +120,10 @@ class test_SymmetricCipher
 
 		void multipleuse()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QCOMPARE(sc.decrypt(sc.encrypt(DATA)), DATA);
 			QCOMPARE(sc.decrypt(sc.encrypt(DATA)), DATA);
@@ -132,10 +135,10 @@ class test_SymmetricCipher
 
 		void setIv()
 		{
-			QByteArray paceAlgo = toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256);
-			KeyDerivationFunction kdf(paceAlgo);
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf(securityProtocol);
 			QByteArray key = kdf.pi(PIN);
-			SymmetricCipher sc(paceAlgo, key);
+			SymmetricCipher sc(securityProtocol, key);
 
 			QByteArray encryptedData = sc.encrypt(DATA);
 

@@ -7,8 +7,11 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
+
+
+class test_StateExtractCvcsFromEac1InputType;
 
 
 namespace governikus
@@ -20,9 +23,11 @@ class StateExtractCvcsFromEac1InputType
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateExtractCvcsFromEac1InputType;
 
-	explicit StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

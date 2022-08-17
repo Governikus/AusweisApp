@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "command/CreateCardConnectionCommand.h"
 #include "GenericContextContainer.h"
+#include "command/CreateCardConnectionCommand.h"
 
 class test_StateConnectCard;
 
@@ -21,8 +21,9 @@ class StateConnectCard
 	friend class StateBuilder;
 	friend class ::test_StateConnectCard;
 
-	explicit StateConnectCard(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateConnectCard(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	private Q_SLOTS:
 		void onCardInserted();

@@ -5,11 +5,11 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
-#include "paos/invoke/PaosCreator.h"
+#include "context/AuthContext.h"
 #include "paos/PaosMessage.h"
 #include "paos/PaosType.h"
+#include "paos/invoke/PaosCreator.h"
 
 #include <QSharedPointer>
 #include <QSslPreSharedKeyAuthenticator>
@@ -25,26 +25,30 @@ class StateGenericSendReceive
 	, public GenericContextContainer<AuthContext>
 {
 	Q_OBJECT
+	friend class ::test_StateGenericSendReceive;
 
 	private:
-		friend class ::test_StateGenericSendReceive;
-		const QVector<PaosType> mTypesToReceive;
+		const PaosType mExpectedResponseType;
+		const QVector<PaosType> mOtherResponseTypes;
+		const bool mPersonalization;
 		QSharedPointer<QNetworkReply> mReply;
 
 		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
-		GlobalStatus::Code checkAndSaveCertificate(const QSslCertificate& pCertificate);
+		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
 		void run() override;
 
 	protected:
-		explicit StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, const QVector<PaosType>& pTypesToReceive, bool pConnectOnCardRemoved = true);
-		explicit StateGenericSendReceive(const QSharedPointer<WorkflowContext>& pContext, PaosType pTypesToReceive);
+		explicit StateGenericSendReceive(
+			const QSharedPointer<WorkflowContext>& pContext,
+			PaosType pExpectedResponseType,
+			const QVector<PaosType>& pOtherResponseTypes = {},
+			bool pPersonalization = false);
 
-		virtual QSharedPointer<PaosMessage> getAsMessage() = 0;
 		virtual QSharedPointer<ResponseType> getAsResponse() = 0;
 		virtual QSharedPointer<PaosCreator> getAsCreator() = 0;
-		virtual void emitStateMachineSignal(int result) = 0;
+		virtual void emitStateMachineSignal(PaosType pResponseType);
 
 	private Q_SLOTS:
 		void onReplyFinished();
@@ -60,22 +64,18 @@ class StateSendStartPaos
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendStartPaos(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::INITIALIZE_FRAMEWORK, PaosType::DID_LIST,
-					PaosType::DID_AUTHENTICATE_EAC1, PaosType::STARTPAOS_RESPONSE
-				}, false)
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendStartPaos(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::INITIALIZE_FRAMEWORK,
+					{
+						PaosType::DID_AUTHENTICATE_EAC1,
+						PaosType::STARTPAOS_RESPONSE
+					})
 		{
-			return getContext()->getStartPaos();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
 			return QSharedPointer<ResponseType>();
@@ -88,24 +88,19 @@ class StateSendStartPaos
 		}
 
 
-		void emitStateMachineSignal(int pResult) override
+		void emitStateMachineSignal(PaosType pResponseType) override
 		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedDidList();
-			}
-			else if (pResult == 4)
+			if (pResponseType == PaosType::DID_AUTHENTICATE_EAC1)
 			{
 				Q_EMIT fireReceivedExtractCvcsFromEac1InputType();
 			}
-			else if (pResult == 5)
+			else if (pResponseType == PaosType::STARTPAOS_RESPONSE)
 			{
 				Q_EMIT fireReceivedStartPaosResponse();
 			}
 		}
 
 	Q_SIGNALS:
-		void fireReceivedDidList();
 		void fireReceivedExtractCvcsFromEac1InputType();
 		void fireReceivedStartPaosResponse();
 
@@ -118,21 +113,17 @@ class StateSendInitializeFrameworkResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendInitializeFrameworkResponse(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::DID_LIST, PaosType::DID_AUTHENTICATE_EAC1, PaosType::STARTPAOS_RESPONSE
-				}, false)
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendInitializeFrameworkResponse(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::DID_AUTHENTICATE_EAC1,
+					{
+						PaosType::STARTPAOS_RESPONSE
+					})
 		{
-			return getContext()->getInitializeFrameworkResponse();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
 			return getContext()->getInitializeFrameworkResponse();
@@ -145,73 +136,17 @@ class StateSendInitializeFrameworkResponse
 		}
 
 
-		void emitStateMachineSignal(int pResult) override
+		void emitStateMachineSignal(PaosType pResponseType) override
 		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedExtractCvcsFromEac1InputType();
-			}
-			else if (pResult == 4)
+			if (pResponseType == PaosType::STARTPAOS_RESPONSE)
 			{
 				Q_EMIT fireReceivedStartPaosResponse();
 			}
 		}
 
 	Q_SIGNALS:
-		void fireReceivedExtractCvcsFromEac1InputType();
 		void fireReceivedStartPaosResponse();
 
-
-};
-
-class StateSendDIDListResponse
-	: public StateGenericSendReceive
-{
-	Q_OBJECT
-	friend class StateBuilder;
-
-	explicit StateSendDIDListResponse(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::DID_AUTHENTICATE_EAC1, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
-				}, false)
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
-		{
-			return getContext()->getDidListResponse();
-		}
-
-
-		QSharedPointer<ResponseType> getAsResponse() override
-		{
-			return getContext()->getDidListResponse();
-		}
-
-
-		QSharedPointer<PaosCreator> getAsCreator() override
-		{
-			return getContext()->getDidListResponse();
-		}
-
-
-		void emitStateMachineSignal(int pResult) override
-		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedDisconnect();
-			}
-			else if (pResult == 4)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedDisconnect();
-		void fireReceivedStartPaosResponse();
 
 };
 
@@ -221,21 +156,18 @@ class StateSendDIDAuthenticateResponseEAC1
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendDIDAuthenticateResponseEAC1(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::DID_AUTHENTICATE_EAC2, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
-				})
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendDIDAuthenticateResponseEAC1(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::DID_AUTHENTICATE_EAC2,
+					{
+						PaosType::STARTPAOS_RESPONSE
+					})
 		{
-			return getContext()->getDidAuthenticateResponseEac1();
+			setAbortOnCardRemoved();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
 			return getContext()->getDidAuthenticateResponseEac1();
@@ -247,22 +179,6 @@ class StateSendDIDAuthenticateResponseEAC1
 			return getContext()->getDidAuthenticateResponseEac1();
 		}
 
-
-		void emitStateMachineSignal(int pResult) override
-		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedDisconnect();
-			}
-			else if (pResult == 4)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedDisconnect();
-		void fireReceivedStartPaosResponse();
 
 };
 
@@ -272,21 +188,18 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendDIDAuthenticateResponseEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE, PaosType::STARTPAOS_RESPONSE
-				})
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendDIDAuthenticateResponseEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE,
+					{
+						PaosType::STARTPAOS_RESPONSE
+					})
 		{
-			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
+			setAbortOnCardRemoved();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
 			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
@@ -298,17 +211,6 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 			return getContext()->getDidAuthenticateResponseEacAdditionalInputType();
 		}
 
-
-		void emitStateMachineSignal(int pResult) override
-		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedStartPaosResponse();
 
 };
 
@@ -318,21 +220,18 @@ class StateSendDIDAuthenticateResponseEAC2
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendDIDAuthenticateResponseEAC2(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::TRANSMIT, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
-				})
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendDIDAuthenticateResponseEAC2(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::TRANSMIT,
+					{
+						PaosType::STARTPAOS_RESPONSE
+					})
 		{
-			return getContext()->getDidAuthenticateResponseEac2();
+			setAbortOnCardRemoved();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
 			return getContext()->getDidAuthenticateResponseEac2();
@@ -344,22 +243,6 @@ class StateSendDIDAuthenticateResponseEAC2
 			return getContext()->getDidAuthenticateResponseEac2();
 		}
 
-
-		void emitStateMachineSignal(int pResult) override
-		{
-			if (pResult == 3)
-			{
-				Q_EMIT fireReceivedDisconnect();
-			}
-			else if (pResult == 4)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedDisconnect();
-		void fireReceivedStartPaosResponse();
 
 };
 
@@ -369,87 +252,40 @@ class StateSendTransmitResponse
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateSendTransmitResponse(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, QVector<PaosType>
-				{
-					PaosType::TRANSMIT, PaosType::DISCONNECT, PaosType::STARTPAOS_RESPONSE
-				})
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
+	private:
+		explicit StateSendTransmitResponse(const QSharedPointer<WorkflowContext>& pContext)
+			: StateGenericSendReceive(pContext,
+					PaosType::STARTPAOS_RESPONSE,
+					{
+						PaosType::TRANSMIT
+					})
 		{
-			return getContext()->getTransmitResponses().constLast();
+			setAbortOnCardRemoved();
 		}
 
-
+	protected:
 		QSharedPointer<ResponseType> getAsResponse() override
 		{
-			return getContext()->getTransmitResponses().constLast();
+			return getContext()->getTransmitResponse();
 		}
 
 
 		QSharedPointer<PaosCreator> getAsCreator() override
 		{
-			return getContext()->getTransmitResponses().constLast();
+			return getContext()->getTransmitResponse();
 		}
 
 
-		void emitStateMachineSignal(int pResult) override
+		void emitStateMachineSignal(PaosType pResponseType) override
 		{
-			if (pResult == 3)
+			if (pResponseType == PaosType::TRANSMIT)
 			{
-				Q_EMIT fireReceivedDisconnect();
-			}
-			else if (pResult == 4)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
+				Q_EMIT fireReceivedTransmit();
 			}
 		}
 
 	Q_SIGNALS:
-		void fireReceivedDisconnect();
-		void fireReceivedStartPaosResponse();
-
-
-};
-
-class StateSendDisconnectResponse
-	: public StateGenericSendReceive
-{
-	Q_OBJECT
-	friend class StateBuilder;
-
-	explicit StateSendDisconnectResponse(const QSharedPointer<WorkflowContext>& pContext)
-		: StateGenericSendReceive(pContext, PaosType::STARTPAOS_RESPONSE)
-	{
-	}
-
-	protected:
-		QSharedPointer<PaosMessage> getAsMessage() override
-		{
-			return getContext()->getDisconnectResponse();
-		}
-
-
-		QSharedPointer<ResponseType> getAsResponse() override
-		{
-			return getContext()->getDisconnectResponse();
-		}
-
-
-		QSharedPointer<PaosCreator> getAsCreator() override
-		{
-			return getContext()->getDisconnectResponse();
-		}
-
-
-		void emitStateMachineSignal(int pResult) override
-		{
-			Q_UNUSED(pResult)
-		}
-
+		void fireReceivedTransmit();
 
 };
 

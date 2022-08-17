@@ -6,16 +6,6 @@
 
 using namespace governikus;
 
-UIPlugIn::UIPlugIn()
-{
-}
-
-
-UIPlugIn::~UIPlugIn()
-{
-}
-
-
 void UIPlugIn::onApplicationInitialized()
 {
 }
@@ -33,11 +23,6 @@ void UIPlugIn::onShowUi(UiModule pModule)
 
 
 void UIPlugIn::onHideUi()
-{
-}
-
-
-void UIPlugIn::onShowReaderSettings()
 {
 }
 

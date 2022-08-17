@@ -19,11 +19,6 @@ AbstractSettings::AbstractSettings()
 }
 
 
-AbstractSettings::~AbstractSettings()
-{
-}
-
-
 QSharedPointer<QSettings> AbstractSettings::getStore(const QString& pFilename, QSettings::Format pFormat)
 {
 #ifndef QT_NO_DEBUG

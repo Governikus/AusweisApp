@@ -4,10 +4,11 @@
 
 #include "pace/PaceHandler.h"
 
-#include "asn1/KnownOIDs.h"
+#include "SecurityProtocol.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/CommandData.h"
+#include "apdu/PacePinStatus.h"
 #include "asn1/PaceInfo.h"
-#include "MSEBuilder.h"
-#include "pace/ec/EllipticCurveFactory.h"
 #include "pace/KeyAgreement.h"
 
 #include <QLoggingCategory>
@@ -31,11 +32,11 @@ PaceHandler::PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnec
 }
 
 
-QByteArray PaceHandler::getPaceProtocol() const
+SecurityProtocol PaceHandler::getPaceProtocol() const
 {
 	if (!mPaceInfo)
 	{
-		return QByteArray();
+		return SecurityProtocol(Oid(nullptr));
 	}
 	return mPaceInfo->getProtocol();
 }
@@ -90,7 +91,6 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 	}
 
 	Q_UNREACHABLE();
-	return CardReturnCode::UNDEFINED;
 }
 
 
@@ -130,42 +130,41 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPac
 	}
 
 	const auto protocol = pPaceInfo->getProtocol();
-
-	if ((protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128 ||
-			protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192 ||
-			protocol == KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256)
-			&& pPaceInfo->isStandardizedDomainParameters())
+	if (protocol.getKeyAgreement() == KeyAgreementType::ECDH &&
+			protocol.getMapping() == MappingType::GM &&
+			protocol.getKeySize() >= 16 &&
+			pPaceInfo->isStandardizedDomainParameters())
 	{
 		qCDebug(card) << "Use ECDH with standardized domain parameters:" << pPaceInfo->getProtocol();
 		return true;
 	}
 
-	qCWarning(card) << "Unsupported domain parameters:" << pPaceInfo->getProtocol();
+	qCWarning(card) << "Unsupported domain parameters:" << protocol;
 	return false;
 }
 
 
 CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
-	MSEBuilder mseBuilder(MSEBuilder::P1::PERFORM_SECURITY_OPERATION, MSEBuilder::P2::SET_AT);
-	mseBuilder.setOid(mPaceInfo->getProtocolValueBytes());
-	mseBuilder.setPublicKey(pPasswordId);
-	mseBuilder.setPrivateKey(mPaceInfo->getParameterId());
+	CommandData cmdData;
+	cmdData.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, mPaceInfo->getOid());
+	cmdData.append(CommandData::PUBLIC_KEY_REFERENCE, pPasswordId);
+	cmdData.append(CommandData::PRIVATE_KEY_REFERENCE, mPaceInfo->getParameterId());
 	if (!mChat.isNull())
 	{
-		mseBuilder.setChat(mChat);
+		cmdData.append(mChat);
 	}
+	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::PACE, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
 
-	auto [cardReturnCode, response] = mCardConnectionWorker->transmit(mseBuilder.build());
-	mStatusMseSetAt = response.getBuffer().left(2);
+	const auto& [cardReturnCode, response] = mCardConnectionWorker->transmit(cmdApdu);
+	mStatusMseSetAt = response.getStatusBytes();
 
-	const StatusCode responseReturnCode = response.getReturnCode();
 	if (cardReturnCode != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
-		return responseReturnCode == StatusCode::EMPTY ? CardReturnCode::RETRY_ALLOWED : CardReturnCode::PROTOCOL_ERROR;
+		return response.isEmpty() ? CardReturnCode::RETRY_ALLOWED : CardReturnCode::PROTOCOL_ERROR;
 	}
-	if (responseReturnCode != StatusCode::SUCCESS && responseReturnCode != StatusCode::PIN_RETRY_COUNT_2 && responseReturnCode != StatusCode::PIN_SUSPENDED)
+	if (PacePinStatus::getRetryCounter(response.getStatusCode()) < 1)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
 		return CardReturnCode::PROTOCOL_ERROR;

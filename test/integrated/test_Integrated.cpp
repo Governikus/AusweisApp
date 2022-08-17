@@ -51,9 +51,9 @@ void cb(const char* pMessage)
 }
 
 
-void start_aa2()
+void start_aa2(const char* pParameter)
 {
-	ausweisapp2_init(&cb);
+	ausweisapp2_init(&cb, pParameter);
 
 	std::cout << "Let's wait here..." << std::endl;
 	governikus::ausweisapp2_join_thread_internal();
@@ -69,7 +69,7 @@ int main()
 {
 	governikus::QtHooks::init();
 
-	start_aa2();
+	start_aa2(nullptr);
 
 	const int livingDeadCount = static_cast<int>(governikus::QtHooks::getQObjects().size());
 	if (livingDeadCount > 0)
@@ -87,7 +87,7 @@ int main()
 	if (cExitCode == 0)
 	{
 		cExitCode = -1;
-		start_aa2();
+		start_aa2("--no-loghandler");
 	}
 
 	return cExitCode;

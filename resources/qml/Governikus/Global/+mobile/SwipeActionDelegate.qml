@@ -2,26 +2,37 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 
-Rectangle {
+Item {
 	id: baseItem
 
 	property alias contentItem: content.children
 	property alias pressed: mouseArea.downOnContent
-	property alias actionColor: baseItem.color
+	property alias actionColor: actionBackground.color
 	property alias actionIcon: actionImage.source
 	property alias actionIconTintColor: actionImage.tintColor
 	property string actionAccessibleName
 
-	signal clicked
-	signal actionClicked
+	signal clicked()
+	signal actionClicked()
 
 	height: content.childrenRect.height
 	width: content.childrenRect.width
+
+	Rectangle {
+		id: actionBackground
+
+		anchors {
+			top: parent.top
+			bottom: parent.bottom
+			right: parent.right
+		}
+		width: Math.abs(mouseArea.contentX)
+	}
 
 	TintableIcon {
 		id: actionImage
@@ -84,7 +95,7 @@ Rectangle {
 			onActiveChanged: didDrag = true
 		}
 
-		onPressed: {
+		onPressed: mouse => {
 			startX = mouse.x
 			contentStartX = content.x
 			didDrag = false

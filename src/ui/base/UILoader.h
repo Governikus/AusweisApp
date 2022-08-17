@@ -6,47 +6,68 @@
 
 #pragma once
 
-#include "EnumHelper.h"
 #include "UIPlugIn.h"
 
 #include <QJsonObject>
 #include <QMap>
-#include <QVector>
+#include <QStringList>
+
+class test_UILoader;
 
 namespace governikus
 {
-
-defineEnumType(UIPlugInName, UIPlugInQml, UIPlugInJson, UIPlugInWebSocket, UIPlugInAidl, UIPlugInFunctional)
 
 class UILoader
 	: public QObject
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UILoader;
 
 	private:
-		static QVector<UIPlugInName> cDefault;
-		QMap<UIPlugInName, UIPlugIn*> mLoadedPlugIns;
+		static QStringList cUserRequest;
+		QMap<QString, UIPlugIn*> mLoadedPlugIns;
 
-		static QVector<UIPlugInName> getInitialDefault();
-		static QString getName(UIPlugInName pPlugin);
+		[[nodiscard]] static QStringList getInitialDefault();
+		[[nodiscard]] static QString unify(const QString& pName);
+		[[nodiscard]] static QString getName(const QMetaObject* pMeta);
+		[[nodiscard]] static QString getName(const QJsonObject& pJson);
+		[[nodiscard]] static inline bool isDefault(const QJsonObject& pJson);
+		[[nodiscard]] static QStringList getUserRequestOrDefault();
+		[[nodiscard]] static inline bool isPlugIn(const QJsonObject& pJson);
 
+
+#ifndef QT_NO_DEBUG
+
+	public:
+#endif
 		UILoader();
 		~UILoader() override;
-		[[nodiscard]] inline bool isPlugIn(const QJsonObject& pJson) const;
-		[[nodiscard]] inline bool hasName(const QJsonObject& pJson, const QString& pName) const;
+
+		[[nodiscard]] bool load(const QString& pName);
 
 	public:
 		// do not make this non-static as the CommandLineParser spawns
-		// this object on startup. Since this is a QObject this shoud be avoided.
-		static QStringList getDefault();
-		static void setDefault(const QStringList& pDefault);
+		// this object on startup. Since this is a QObject this should be avoided.
+		[[nodiscard]] static QString getDefault();
+		static void setUserRequest(const QStringList& pRequest);
 
 		[[nodiscard]] bool isLoaded() const;
-		bool load();
-		bool load(UIPlugInName pName);
+		[[nodiscard]] bool load();
 
-		[[nodiscard]] UIPlugIn* getLoaded(UIPlugInName pName) const;
+		template<typename T>
+		[[nodiscard]] std::enable_if_t<std::is_base_of_v<UIPlugIn, T>, bool> load()
+		{
+			return load(getName(&T::staticMetaObject));
+		}
+
+
+		template<typename T>
+		[[nodiscard]] std::enable_if_t<std::is_base_of_v<UIPlugIn, T>, T*> getLoaded() const
+		{
+			return qobject_cast<T*>(mLoadedPlugIns.value(getName(&T::staticMetaObject)));
+		}
+
 
 		Q_INVOKABLE void shutdown();
 

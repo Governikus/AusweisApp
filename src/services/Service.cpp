@@ -9,7 +9,7 @@
 #include "ProviderConfiguration.h"
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-#include "ReaderConfiguration.h"
+	#include "ReaderConfiguration.h"
 #endif
 
 #include "ReleaseInformationConfiguration.h"

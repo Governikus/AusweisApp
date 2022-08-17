@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -29,13 +29,13 @@ SectionPage {
 	property real additionalProviderListTopPadding: 0
 
 	navigationAction: NavigationAction {
-		state: "back"
+		action: category !== "" ? NavigationAction.Action.Back : NavigationAction.Action.None
 		onClicked: {
 			if (category !== "") {
 				ProviderCategoryFilterModel.setCategorySelection("")
-			} else {
-				searchBar.reset()
-				navBar.show(UiModule.DEFAULT)
+			} else if (Qt.platform.os !== "osx") {
+				reset()
+				show(UiModule.DEFAULT)
 			}
 		}
 	}
@@ -46,12 +46,12 @@ SectionPage {
 
 	Connections {
 		target: ProviderCategoryFilterModel
-		onSearchStringChanged: sectionPageFlickable.positionViewAtBeginning()
+		function onSearchStringChanged() { sectionPageFlickable.positionViewAtBeginning() }
 	}
 
 	Connections {
 		target: searchBar
-		onSearchTextChanged: ProviderCategoryFilterModel.searchString = searchBar.searchText
+		function onSearchTextChanged() { ProviderCategoryFilterModel.searchString = searchBar.searchText }
 	}
 
 	onShowCategoriesChanged: {
@@ -93,7 +93,7 @@ SectionPage {
 
 			showSeparator: index < providerList.count - 1  || additionalResultsItemVisible
 
-			onClicked: isProvider ? firePushWithProperties(providerDetailView, {providerModelItem: model}) : ProviderCategoryFilterModel.setCategorySelection(providerCategory)
+			onClicked: isProvider ? push(providerDetailView, {providerModelItem: model}) : ProviderCategoryFilterModel.setCategorySelection(providerCategory)
 		}
 
 		header: headerComponent

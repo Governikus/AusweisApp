@@ -21,11 +21,12 @@ namespace governikus
  */
 class UrlUtil
 {
-	UrlUtil() = delete;
-	~UrlUtil() = delete;
+	private:
+		static inline QString removePrefix(QString pStr);
+		static inline QString getSuffix(ECardApiResult::Minor pMinor);
 
-	static inline QString removePrefix(QString pStr);
-	static inline QString getSuffix(ECardApiResult::Minor pMinor);
+		UrlUtil() = delete;
+		~UrlUtil() = delete;
 
 	public:
 		/*!

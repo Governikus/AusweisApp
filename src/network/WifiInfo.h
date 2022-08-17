@@ -19,9 +19,9 @@ class WifiInfo
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_WifiInfo;
 
 	private:
-		friend class ::test_WifiInfo;
 		bool mWifiEnabled;
 #if defined(Q_OS_ANDROID)
 		int mWifiCheckTimerId;
@@ -30,7 +30,7 @@ class WifiInfo
 		static bool isPrivateIp(const QHostAddress& pAddress);
 		static bool hasPrivateIpAddress();
 
-		bool getCurrentWifiEnabled();
+		[[nodiscard]] bool getCurrentWifiEnabled();
 
 #if defined(Q_OS_ANDROID)
 
@@ -42,7 +42,7 @@ class WifiInfo
 		WifiInfo();
 		~WifiInfo() override = default;
 
-		bool isWifiEnabled();
+		[[nodiscard]] bool isWifiEnabled();
 
 	Q_SIGNALS:
 		void fireWifiEnabledChanged(bool pEnabled);

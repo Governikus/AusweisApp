@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.InformationView 1.0
@@ -26,20 +26,10 @@ SectionPage {
 	readonly property var update: SettingsModel.appUpdateData
 	signal leaveView()
 
-	Accessible.name: qsTr("Application update view")
-	Accessible.description: qsTr("This is the application update panel of the AusweisApp2.")
-
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP
 		text: qsTr("Application update")
 		helpTopic: "applicationUpdate"
-	}
-
-	Keys.onPressed: {
-		if (event.key === Qt.Key_PageDown || event.key === Qt.Key_Down)
-			releaseNotesView.scrollDown()
-		else if (event.key === Qt.Key_PageUp || event.key === Qt.Key_Up)
-			releaseNotesView.scrollUp()
 	}
 
 	ResultView {
@@ -48,7 +38,7 @@ SectionPage {
 		buttonType: NavigationButton.Type.Back
 		resultType: ResultView.Type.IsError
 		text: root.update.missingPlatform
-			  //: LABEL DESKTOP Resulttext if no update information is availalbe for the current platform.
+			  //: LABEL DESKTOP Resulttext if no update information is available for the current platform.
 			  ? qsTr("An update information for your platform is not available.")
 			  //: LABEL DESKTOP Resulttext if the update information are invalid, might be caused by network issues.
 			  : qsTr("The update information could not be retrieved. Please check your network connection.")
@@ -110,11 +100,17 @@ SectionPage {
 				ReleaseNotesView {
 					anchors {
 						fill: parent
+						leftMargin: Constants.pane_padding
 						topMargin: Constants.pane_padding
 						bottomMargin: Constants.pane_padding
 					}
 
-					model: ReleaseInformationModel.updateRelease
+					model: releaseInformationModel.updateRelease
+
+					ReleaseInformationModel {
+						id: releaseInformationModel
+					}
+
 				}
 
 				ScrollGradients {
@@ -153,8 +149,8 @@ SectionPage {
 
 	Connections {
 		target: root.update
-		onFireAppUpdateFailed: warning.exec(pError)
-		onFireAppDownloadFinished: plugin.fireQuitApplicationRequest()
+		function onFireAppUpdateFailed(pError) { warning.exec(pError) }
+		function onFireAppDownloadFinished() { plugin.fireQuitApplicationRequest() }
 	}
 
 	ConfirmationPopup {

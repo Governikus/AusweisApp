@@ -6,14 +6,13 @@
 
 #pragma once
 
-#include "Env.h"
 #include "FormattedTextModel.h"
-#include "GlobalStatus.h"
 #include "ReleaseInformation.h"
 
 #include <QObject>
 #include <QScopedPointer>
 #include <QSharedPointer>
+
 
 class test_ReleaseInformationModel;
 
@@ -24,34 +23,33 @@ class ReleaseInformationModel
 	: public QObject
 {
 	Q_OBJECT
-	friend class Env;
 	friend class ::test_ReleaseInformationModel;
 
-	Q_PROPERTY(QSharedPointer<FormattedTextModel> currentRelease READ getCurrentRelease NOTIFY fireCurrentInformationChanged)
-	Q_PROPERTY(QSharedPointer<FormattedTextModel> updateRelease READ getUpdateRelease NOTIFY fireUpdateInformationChanged)
+	Q_PROPERTY(FormattedTextModel * currentRelease READ getCurrentRelease NOTIFY fireCurrentInformationChanged)
+	Q_PROPERTY(FormattedTextModel * updateRelease READ getUpdateRelease NOTIFY fireUpdateInformationChanged)
 	Q_PROPERTY(bool allowRetry READ allowRetry NOTIFY fireCurrentInformationChanged)
 
 	private:
-		QSharedPointer<FormattedTextModel> mFallbackModel;
-		QSharedPointer<FormattedTextModel> mModelCurrent;
-		QSharedPointer<FormattedTextModel> mModelUpdate;
+		FormattedTextModel* mFallbackModel;
+		FormattedTextModel* mModelCurrent;
+		FormattedTextModel* mModelUpdate;
 
-		ReleaseInformationModel();
-		QSharedPointer<FormattedTextModel> createModel(const ReleaseInformation& pInformation) const;
+		FormattedTextModel* createModel(const ReleaseInformation& pInformation);
 
 	private Q_SLOTS:
 		void onCurrentChanged();
 		void onUpdateChanged();
 
 	public:
+		ReleaseInformationModel();
 		~ReleaseInformationModel() override = default;
-		QSharedPointer<FormattedTextModel> getCurrentRelease() const;
-		QSharedPointer<FormattedTextModel> getUpdateRelease() const;
+		FormattedTextModel* getCurrentRelease() const;
+		FormattedTextModel* getUpdateRelease() const;
 		Q_INVOKABLE void update();
 		bool allowRetry() const;
 
 	public Q_SLOTS:
-		void onTranslationChanged();
+		void onTranslationChanged() const;
 
 	Q_SIGNALS:
 		void fireCurrentInformationChanged();

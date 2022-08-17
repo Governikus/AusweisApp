@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.ProgressView 1.0
 import Governikus.TitleBar 1.0
@@ -15,26 +15,18 @@ SectionPage {
 	id: root
 
 	signal restartCheck()
-
-	//: LABEL ANDROID IOS
-	Accessible.name: qsTr("Check device and ID card")
-	//: LABEL ANDROID IOS
-	Accessible.description: qsTr("This is the device and ID card check of the AusweisApp2.")
+	signal startAuth()
+	signal cancel()
 
 	navigationAction: NavigationAction {
-		state: "cancel"
-		onClicked: {
-			navBar.lockedAndHidden = false
-			firePopAll()
-		}
+		action: NavigationAction.Action.Cancel
+		onClicked: root.cancel()
 	}
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Check device and ID card")
 
 	Component.onCompleted: {
-		navBar.lockedAndHidden = true
-
 		checkIDCardModel.startScan()
 	}
 
@@ -47,7 +39,7 @@ SectionPage {
 	Timer {
 		id: timerHelper
 		interval: 1
-		onTriggered: firePushWithProperties(checkIDCardResultView, { result: checkIDCardModel.result })
+		onTriggered: push(checkIDCardResultView, { result: checkIDCardModel.result })
 	}
 
 	Component {
@@ -55,6 +47,8 @@ SectionPage {
 
 		CheckIDCardResultView {
 			onRestartCheck: root.restartCheck()
+			onStartAuth: root.startAuth()
+			onCancelClicked: root.cancel()
 		}
 	}
 
@@ -69,7 +63,9 @@ SectionPage {
 		visible: checkIDCardModel.result >= CheckIDCardModel.ID_CARD_DETECTED
 		anchors.fill: parent
 
+		//: LABEL ANDROID IOS
 		text: qsTr("Checking ID card")
+		//: LABEL ANDROID IOS
 		subText: qsTr("Please do not move the ID card.")
 	}
 }

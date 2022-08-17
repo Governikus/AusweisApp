@@ -20,8 +20,9 @@ class StateCleanUpReaderManager
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateCleanUpReaderManager(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateCleanUpReaderManager(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

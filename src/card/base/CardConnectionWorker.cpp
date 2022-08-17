@@ -4,28 +4,33 @@
 
 #include "CardConnectionWorker.h"
 
-#include "MSEBuilder.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/FileCommand.h"
 #include "pace/PaceHandler.h"
-#include "ReadBinaryBuilder.h"
-#include "ResetRetryCounterBuilder.h"
-#include "SelectBuilder.h"
 
 #include <QLoggingCategory>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(support)
+
 
 CardConnectionWorker::CardConnectionWorker(Reader* pReader)
 	: QObject()
 	, QEnableSharedFromThis()
 	, mReader(pReader)
 	, mSecureMessaging()
+	, mKeepAliveTimer()
 {
 	connect(mReader.data(), &Reader::fireCardInserted, this, &CardConnectionWorker::fireReaderInfoChanged);
 	connect(mReader.data(), &Reader::fireCardRemoved, this, &CardConnectionWorker::fireReaderInfoChanged);
-	connect(mReader.data(), &Reader::fireCardRetryCounterChanged, this, &CardConnectionWorker::fireReaderInfoChanged);
+	connect(mReader.data(), &Reader::fireCardInfoChanged, this, &CardConnectionWorker::fireReaderInfoChanged);
+
+	mKeepAliveTimer.setInterval(150000);
+	connect(&mKeepAliveTimer, &QTimer::timeout, this, &CardConnectionWorker::onKeepAliveTimeout);
 }
 
 
@@ -34,7 +39,7 @@ CardConnectionWorker::~CardConnectionWorker()
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (card && card->isConnected())
 	{
-		card->disconnect();
+		card->releaseConnection();
 	}
 }
 
@@ -57,29 +62,82 @@ void CardConnectionWorker::setPukInoperative()
 }
 
 
+CardReturnCode CardConnectionWorker::updateRetryCounter()
+{
+	if (!mReader || !mReader->getCard())
+	{
+		return CardReturnCode::CARD_NOT_FOUND;
+	}
+	return mReader->updateRetryCounter(sharedFromThis());
+}
+
+
 QSharedPointer<const EFCardAccess> CardConnectionWorker::getEfCardAccess() const
 {
 	return getReaderInfo().getCardInfo().getEfCardAccess();
 }
 
 
+void CardConnectionWorker::stopSecureMessaging()
+{
+	mSecureMessaging.reset();
+	Q_EMIT fireSecureMessagingStopped();
+}
+
+
+void CardConnectionWorker::onKeepAliveTimeout()
+{
+	if (!mReader || !mReader->getCard())
+	{
+		qCDebug(card) << "Keep alive stopped because of targetLost";
+		mKeepAliveTimer.stop();
+		return;
+	}
+
+	FileCommand command(FileRef::efCardAccess());
+	const auto& result = transmit(command);
+	if (result.mReturnCode == CardReturnCode::OK)
+	{
+		qCDebug(card) << "Keep alive successful";
+		return;
+	}
+
+	qCDebug(card) << "Keep alive failed";
+}
+
+
 ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
+	if (mSecureMessaging && pCommandApdu.isSecureMessaging())
+	{
+		qCDebug(::card) << "The eService has established Secure Messaging. Stopping local Secure Messaging.";
+		stopSecureMessaging();
+	}
+
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
 	{
 		return {CardReturnCode::CARD_NOT_FOUND};
 	}
 
+	CommandApdu commandApdu = pCommandApdu;
 	if (mSecureMessaging)
 	{
-		const CommandApdu securedCommandApdu = mSecureMessaging->encrypt(pCommandApdu);
-		if (securedCommandApdu.getBuffer().isEmpty())
+		commandApdu = mSecureMessaging->encrypt(pCommandApdu);
+		if (commandApdu.isEmpty())
 		{
 			return {CardReturnCode::COMMAND_FAILED};
 		}
+	}
 
-		ResponseApduResult result = card->transmit(securedCommandApdu);
+	ResponseApduResult result = card->transmit(commandApdu);
+	if (result.mResponseApdu.getStatusCode() == StatusCode::WRONG_LENGTH)
+	{
+		return {CardReturnCode::EXTENDED_LENGTH_MISSING};
+	}
+
+	if (mSecureMessaging)
+	{
 		result.mResponseApdu = mSecureMessaging->decrypt(result.mResponseApdu);
 		if (result.mResponseApdu.isEmpty())
 		{
@@ -88,49 +146,74 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 
 			return {CardReturnCode::COMMAND_FAILED};
 		}
-		return result;
 	}
 
-	return card->transmit(pCommandApdu);
+	return result;
 }
 
 
-CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent)
+CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent, int pLe)
 {
 	if (!mReader || !mReader->getCard())
 	{
 		return CardReturnCode::CARD_NOT_FOUND;
 	}
 
-	CommandApdu select = SelectBuilder(pFileRef).build();
-	auto [selectReturnCode, selectRes] = transmit(select);
-	if (selectReturnCode != CardReturnCode::OK || selectRes.getReturnCode() != StatusCode::SUCCESS)
-	{
-		return CardReturnCode::COMMAND_FAILED;
-	}
-
 	while (true)
 	{
-		ReadBinaryBuilder rb(static_cast<uint>(pFileContent.count()), 0xff);
-		auto [returnCode, res] = transmit(rb.build());
+		FileCommand command(pFileRef, pFileContent.count(), pLe);
+		auto [returnCode, res] = transmit(command);
 		if (returnCode != CardReturnCode::OK)
 		{
 			break;
 		}
 
-		pFileContent += res.getData();
-		const StatusCode statusCode = res.getReturnCode();
-		if (statusCode == StatusCode::END_OF_FILE)
+		const auto& responseData = res.getData();
+		pFileContent += responseData;
+		switch (res.getStatusCode())
 		{
-			return CardReturnCode::OK;
-		}
-		if (statusCode != StatusCode::SUCCESS)
-		{
-			break;
+			// Continue, even if the end of the file is probably already reached.
+			// There are at least two cases, where we are not able to find it out:
+			// 1. The buffer of the card is to small to provide the expected length.
+			// 2. The length of the response is less than the expected length
+			//    because the maximum length is reduced by secure messaging.
+			case StatusCode::SUCCESS:
+				if (responseData.isEmpty())
+				{
+					return CardReturnCode::OK;
+				}
+				continue;
+
+			// Will probably never happen, because END_OF_FILE is only
+			// used for a request with Le < CommandApdu::SHORT_MAX_LE.
+			case StatusCode::END_OF_FILE:
+			// We hit the case, that the length of the data is a multiple of
+			// CommandApdu::SHORT_MAX_LE. The status code of the last response
+			// was 0x9000 because the expected bytes could be delivered. So we
+			// are not able to decide, if the end of the file was already reached
+			// and try to read an additional block.
+			// This also happens if a card sends SUCCESS even the whole file was read.
+			case StatusCode::ILLEGAL_OFFSET:
+				return CardReturnCode::OK;
+
+			default:
+				return CardReturnCode::COMMAND_FAILED;
 		}
 	}
 
 	return CardReturnCode::COMMAND_FAILED;
+}
+
+
+void CardConnectionWorker::setKeepAlive(bool pEnabled)
+{
+	if (pEnabled)
+	{
+		mKeepAliveTimer.start();
+		return;
+	}
+
+	mKeepAliveTimer.stop();
 }
 
 
@@ -141,25 +224,6 @@ void CardConnectionWorker::setProgressMessage(const QString& pMessage, int pProg
 	{
 		card->setProgressMessage(pMessage, pProgress);
 	}
-}
-
-
-bool CardConnectionWorker::stopSecureMessaging()
-{
-	if (mSecureMessaging.isNull())
-	{
-		return false;
-	}
-
-	mSecureMessaging.reset();
-	return true;
-}
-
-
-EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
-		const QByteArray& pPasswordValue)
-{
-	return establishPaceChannel(pPasswordId, pPasswordValue, nullptr, nullptr);
 }
 
 
@@ -244,8 +308,9 @@ CardReturnCode CardConnectionWorker::destroyPaceChannel()
 	{
 		qCDebug(::card) << "Destroying PACE channel with invalid command causing 6700 as return code";
 		stopSecureMessaging();
-		MSEBuilder builder(MSEBuilder::P1::ERASE, MSEBuilder::P2::DEFAULT_CHANNEL);
-		return card->transmit(builder.build()).mReturnCode;
+
+		CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::PACE, CommandApdu::AUTHENTICATION_TEMPLATE);
+		return card->transmit(cmdApdu).mReturnCode;
 	}
 	else
 	{
@@ -266,8 +331,8 @@ ResponseApduResult CardConnectionWorker::setEidPin(const QByteArray& pNewPin, qu
 	if (mReader->getReaderInfo().isBasicReader())
 	{
 		Q_ASSERT(!pNewPin.isEmpty());
-		ResetRetryCounterBuilder commandBuilder(pNewPin);
-		result = transmit(commandBuilder.build());
+		const CommandApdu cmdApdu(Ins::RESET_RETRY_COUNTER, CommandApdu::CHANGE, CommandApdu::PIN, pNewPin);
+		result = transmit(cmdApdu);
 	}
 	else
 	{
@@ -275,20 +340,70 @@ ResponseApduResult CardConnectionWorker::setEidPin(const QByteArray& pNewPin, qu
 		result = card->setEidPin(pTimeoutSeconds);
 	}
 
-	if (result.mReturnCode == CardReturnCode::OK && result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	if (result.mReturnCode == CardReturnCode::OK && result.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(::card) << "Modify PIN failed";
-		return {CardReturnCode::COMMAND_FAILED};
 	}
+
 	return result;
 }
 
 
-CardReturnCode CardConnectionWorker::updateRetryCounter()
+EstablishPaceChannelOutput CardConnectionWorker::prepareIdentification(const QByteArray& pChat)
 {
-	if (!mReader || !mReader->getCard())
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
 	{
-		return CardReturnCode::CARD_NOT_FOUND;
+		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
 	}
-	return mReader->updateRetryCounter(sharedFromThis());
+
+	const auto& output = card->prepareIdentification(pChat);
+	qCInfo(support) << "Finished perform user authentication with result" << output.getPaceReturnCode();
+
+	return output;
+}
+
+
+ResponseApduResult CardConnectionWorker::getChallenge()
+{
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
+	{
+		return {CardReturnCode::CARD_NOT_FOUND};
+	}
+
+	ResponseApduResult result = card->getChallenge();
+
+	if (result.mReturnCode != CardReturnCode::OK)
+	{
+		qCWarning(::card) << "Get challenge failed";
+		return {CardReturnCode::COMMAND_FAILED};
+	}
+
+	return result;
+}
+
+
+TerminalAndChipAuthenticationResult CardConnectionWorker::performTAandCA(
+		const CVCertificateChain& pTerminalCvcChain,
+		const QByteArray& pAuxiliaryData,
+		const QByteArray& pSignature,
+		const QByteArray& pPin,
+		const QByteArray& pEphemeralPublicKey)
+{
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (!card)
+	{
+		return {CardReturnCode::CARD_NOT_FOUND};
+	}
+
+	TerminalAndChipAuthenticationResult result = card->performTAandCA(pTerminalCvcChain, pAuxiliaryData, pSignature, pPin, pEphemeralPublicKey);
+
+	if (result.mReturnCode != CardReturnCode::OK)
+	{
+		qCWarning(::card) << "Perform terminal and chip authentication failed";
+		return {CardReturnCode::COMMAND_FAILED};
+	}
+
+	return result;
 }

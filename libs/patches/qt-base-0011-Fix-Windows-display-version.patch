@@ -1,0 +1,55 @@
+From 414732d5c823a5e760cfac85ee6b7097bceaa70b Mon Sep 17 00:00:00 2001
+From: Yuhang Zhao <2546789017@qq.com>
+Date: Fri, 20 May 2022 14:07:54 +0800
+Subject: Fix Windows display version
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The "ReleaseId" key's value stopped updating since
+Windows 10 20H2, so we should query the new "DisplayVersion"
+key when running on Windows 10 20H2 and onwards.
+
+Change-Id: Ifaa8287f9812126bde0390337af0cda23ff8e529
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+---
+ src/corelib/global/qglobal.cpp | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git x/qtbase/src/corelib/global/qglobal.cpp y/qtbase/src/corelib/global/qglobal.cpp
+index 90fbae807e..21386421cb 100644
+--- x/qtbase/src/corelib/global/qglobal.cpp
++++ y/qtbase/src/corelib/global/qglobal.cpp
+@@ -2187,9 +2187,14 @@ static QString readVersionRegistryString(const wchar_t *subKey)
+             .stringValue(subKey);
+ }
+ 
+-static inline QString windows10ReleaseId()
++static inline QString windowsDisplayVersion()
+ {
+-    return readVersionRegistryString(L"ReleaseId");
++    // https://tickets.puppetlabs.com/browse/FACT-3058
++    // The "ReleaseId" key stopped updating since Windows 10 20H2.
++    if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows10_20H2)
++        return readVersionRegistryString(L"DisplayVersion");
++    else
++        return readVersionRegistryString(L"ReleaseId");
+ }
+ 
+ static QString winSp_helper()
+@@ -2911,9 +2916,9 @@ QString QSysInfo::prettyProductName()
+     return result + QLatin1String(" (") + versionString + QLatin1Char(')');
+ #  else
+     // (resembling winver.exe): Windows 10 "Windows 10 Version 1809"
+-    const auto releaseId = windows10ReleaseId();
+-    if (!releaseId.isEmpty())
+-        result += QLatin1String(" Version ") + releaseId;
++    const auto displayVersion = windowsDisplayVersion();
++    if (!displayVersion.isEmpty())
++        result += QLatin1String(" Version ") + displayVersion;
+     return result;
+ #  endif // Windows
+ #elif defined(Q_OS_HAIKU)
+-- 
+2.37.1
+

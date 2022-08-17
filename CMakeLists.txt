@@ -53,10 +53,10 @@ else()
 endif()
 
 if(UNIX AND NOT IOS)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "Required macOS version")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.22.7 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.24.0 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -75,14 +75,17 @@ set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_DIR}")
 option(BUILD_SHARED_LIBS "Enable build of shared libraries")
 option(INTEGRATED_SDK "Build platform specific SDK" OFF)
+option(CONTAINER_SDK "Build container specific SDK" OFF)
+
+if(CONTAINER_SDK)
+	set(INTEGRATED_SDK ON)
+endif()
 
 include(Helper)
 
 if(NOT VENDOR)
-	set(VENDOR_FILE "${PROJECT_SOURCE_DIR}/vendor.txt")
-	if(EXISTS "${VENDOR_FILE}")
-		file(READ "${VENDOR_FILE}" VENDOR)
-		string(STRIP "${VENDOR}" VENDOR)
+	if(EXISTS "${CMAKE_DIR}/Vendor.internal.cmake")
+		include(Vendor.internal)
 	elseif(LINUX OR BSD)
 		set(VENDOR "") # Qt uses Organization for pathes
 	else()
@@ -146,7 +149,6 @@ include(Tools)
 include(DVCS)
 add_subdirectory(docs)
 
-include(DefaultFiles)
 include(Appcast)
 include(Messages)
 if(tools.only)
@@ -154,7 +156,7 @@ if(tools.only)
 	return()
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG" AND NOT CONTAINER_SDK)
 	set(VALGRIND_SUPPRESSIONS "${CMAKE_PREFIX_PATH}/test/valgrind.supp")
 	if(NOT EXISTS "${VALGRIND_SUPPRESSIONS}")
 		set(VALGRIND_SUPPRESSIONS "${CMAKE_SOURCE_DIR}/libs/test/valgrind.supp")
@@ -165,13 +167,15 @@ if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	include(CTest)
 	configure_file("${CMAKE_DIR}/CTestCustom.cmake.in" "${CMAKE_BINARY_DIR}/CTestCustom.cmake" @ONLY)
 
-	set(SONAR_CACHE_DIR ${CMAKE_BINARY_DIR}/../sonar_cache)
+	set(SONAR_CACHE_DIR ${CMAKE_BINARY_DIR}/../cache)
 	if(NOT EXISTS "${SONAR_CACHE_DIR}")
 		set(SONAR_CACHE_DIR ${CMAKE_BINARY_DIR})
 	endif()
 	get_filename_component(SONAR_CACHE_DIR ${SONAR_CACHE_DIR} ABSOLUTE)
 	configure_file("${RESOURCES_DIR}/sonar-project.properties.in" "${CMAKE_BINARY_DIR}/sonar-project.properties" @ONLY)
 endif()
+
+option(USE_SMARTEID "Enable Smart-eID" OFF)
 
 include(Libraries)
 include(CompilerFlags)
@@ -182,7 +186,10 @@ endif()
 
 add_subdirectory(resources)
 add_subdirectory(src)
-add_subdirectory(test)
+
+if(TARGET ${Qt}::Test AND NOT IOS)
+	add_subdirectory(test)
+endif()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 	add_subdirectory(utils)

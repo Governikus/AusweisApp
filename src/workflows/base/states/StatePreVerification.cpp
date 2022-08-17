@@ -4,12 +4,14 @@
 
 #include "StatePreVerification.h"
 
-#include "asn1/SignatureChecker.h"
 #include "AppSettings.h"
 #include "EnumHelper.h"
 #include "SecureStorage.h"
+#include "asn1/SignatureChecker.h"
 
 #include <QVector>
+
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
 
@@ -17,10 +19,10 @@ using namespace governikus;
 
 
 StatePreVerification::StatePreVerification(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
-	, mTrustedCvcas(CVCertificate::fromHex(Env::getSingleton<SecureStorage>()->getCVRootCertificates(true))
-			+ CVCertificate::fromHex(Env::getSingleton<SecureStorage>()->getCVRootCertificates(false)))
+	, mTrustedCvcas(CVCertificate::fromRaw(Env::getSingleton<SecureStorage>()->getCVRootCertificates(true))
+			+ CVCertificate::fromRaw(Env::getSingleton<SecureStorage>()->getCVRootCertificates(false)))
 	, mValidationDateTime(QDateTime::currentDateTime())
 {
 }
@@ -97,11 +99,11 @@ void StatePreVerification::run()
 }
 
 
-bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate> >& pCertificates)
+bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates)
 {
 	qDebug() << "Check certificate chain validity on" << mValidationDateTime.toString(Qt::ISODate);
 
-	QVectorIterator<QSharedPointer<const CVCertificate> > i(pCertificates);
+	QVectorIterator<QSharedPointer<const CVCertificate>> i(pCertificates);
 	i.toBack();
 	while (i.hasPrevious())
 	{
@@ -130,18 +132,14 @@ bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertific
 }
 
 
-void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate> >& pCertificates)
+void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates)
 {
-	const auto& contains = [](const QVector<QSharedPointer<const CVCertificate> >& pStore, const CVCertificate& pCert)
+	const auto& contains = [](const QVector<QSharedPointer<const CVCertificate>>& pStore, const CVCertificate& pCert)
 			{
-				for (const auto& pCertInStore : pStore)
-				{
-					if (*pCertInStore == pCert)
+				return std::any_of(pStore.constBegin(), pStore.constEnd(), [&pCert](const auto& pCertInStore)
 					{
-						return true;
-					}
-				}
-				return false;
+						return *pCertInStore == pCert;
+					});
 			};
 
 	auto& settings = Env::getSingleton<AppSettings>()->getPreVerificationSettings();
@@ -150,7 +148,7 @@ void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer
 		if (certificate->getBody().getCHAT().getAccessRole() == AccessRole::CVCA && !contains(mTrustedCvcas, *certificate))
 		{
 			qInfo() << "Save link certificate" << *certificate;
-			settings.addLinkCertificate(certificate->encode().toHex());
+			settings.addLinkCertificate(certificate->encode());
 		}
 	}
 	settings.save();

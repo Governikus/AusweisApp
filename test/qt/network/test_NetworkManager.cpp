@@ -6,11 +6,13 @@
 
 #include "NetworkManager.h"
 
-#include "context/SelfAuthContext.h"
-#include "controller/SelfAuthController.h"
 #include "Env.h"
 #include "LogHandler.h"
+#include "ReaderManager.h"
+#include "ResourceLoader.h"
 #include "SecureStorage.h"
+#include "context/SelfAuthContext.h"
+#include "controller/SelfAuthController.h"
 
 #include "MockNetworkManager.h"
 #include "MockNetworkReply.h"
@@ -31,7 +33,12 @@ class test_NetworkManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
+			ResourceLoader::getInstance().init();
 			Env::getSingleton<LogHandler>()->init();
+
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->isScanRunning(); // just to wait until initialization finished
 		}
 
 
@@ -41,14 +48,20 @@ class test_NetworkManager
 		}
 
 
+		void cleanupTestCase()
+		{
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
 		void paosRequestAttached()
 		{
 			QNetworkRequest request(QUrl("https://dummy"));
-			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", false, QByteArray(), 1);
+			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", false, QByteArray());
+			reply->abort();
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
-			QCOMPARE(reply->request(), request);
-			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 6);
+			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 5);
 			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1")));
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
@@ -59,10 +72,10 @@ class test_NetworkManager
 		void paosRequestPsk()
 		{
 			QNetworkRequest request(QUrl("https://dummy"));
-			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", true, QByteArray(), 1);
+			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", true, QByteArray());
+			reply->abort();
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
-			QCOMPARE(reply->request(), request);
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
@@ -76,7 +89,7 @@ class test_NetworkManager
 		void serviceUnavailableEnums()
 		{
 			auto reply = QSharedPointer<MockNetworkReply>::create();
-			reply->setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy error msg");
+			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy error msg");
 
 			QCOMPARE(NetworkManager::toNetworkError(reply), NetworkManager::NetworkError::ServiceUnavailable);
 			QCOMPARE(NetworkManager::toTrustedChannelStatus(reply), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}));
@@ -86,7 +99,7 @@ class test_NetworkManager
 
 		void serviceUnavailable_data()
 		{
-			QTest::addColumn<QSharedPointer<GlobalStatus> >("status");
+			QTest::addColumn<QSharedPointer<GlobalStatus>>("status");
 			QTest::addColumn<bool>("param");
 			QTest::addColumn<QString>("msg");
 
@@ -116,16 +129,16 @@ class test_NetworkManager
 		{
 			MockNetworkManager networkManager;
 			Env::set(NetworkManager::staticMetaObject, &networkManager);
-			connect(&networkManager, &MockNetworkManager::fireReply, this, [&] {
+			connect(&networkManager, &MockNetworkManager::fireReply, this, [&networkManager] {
 					networkManager.fireFinished();
 				}, Qt::QueuedConnection);
 
 			auto reply = new MockNetworkReply();
-			reply->setNetworkError(QNetworkReply::ServiceUnavailableError, "dummy");
+			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy");
 			networkManager.setNextReply(reply);
 
 			auto context = QSharedPointer<SelfAuthContext>::create();
-			connect(context.data(), &AuthContext::fireStateChanged, this, [&] {
+			connect(context.data(), &AuthContext::fireStateChanged, this, [&context] {
 					context->setStateApproved();
 				});
 
@@ -136,6 +149,30 @@ class test_NetworkManager
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(context->getStatus(), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, QString()}));
+		}
+
+
+		void closeConnectionsOnShutdown()
+		{
+			MockNetworkManager networkManager;
+			Env::set(NetworkManager::staticMetaObject, &networkManager);
+
+			auto reply1 = networkManager.trackConnection(new MockNetworkReply());
+			QSignalSpy spy1(reply1.data(), &QNetworkReply::finished);
+
+			QCOMPARE(networkManager.getOpenConnectionCount(), 1);
+
+			auto reply2 = networkManager.trackConnection(new MockNetworkReply());
+			QSignalSpy spy2(reply2.data(), &QNetworkReply::finished);
+			QCOMPARE(networkManager.getOpenConnectionCount(), 2);
+
+			static_cast<MockNetworkReply*>(reply1.get())->fireFinished();
+			QTRY_COMPARE(spy1.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(networkManager.getOpenConnectionCount(), 1);
+
+			Q_EMIT networkManager.fireShutdown();
+			QTRY_COMPARE(spy2.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(networkManager.getOpenConnectionCount(), 0);
 		}
 
 

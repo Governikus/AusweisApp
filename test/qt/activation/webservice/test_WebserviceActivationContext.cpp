@@ -6,7 +6,6 @@
 
 #include "WebserviceActivationContext.h"
 
-#include "LogHandler.h"
 #include "MockSocket.h"
 #include "ResourceLoader.h"
 

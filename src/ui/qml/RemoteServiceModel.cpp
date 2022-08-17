@@ -4,15 +4,17 @@
 
 #include "RemoteServiceModel.h"
 
-#include "ApplicationModel.h"
 #include "AppSettings.h"
-#include "EstablishPaceChannel.h"
+#include "ApplicationModel.h"
 #include "NumberModel.h"
-#include "RemoteClientImpl.h"
+#include "RemoteIfdClient.h"
+#include "RemoteIfdServer.h"
 #include "RemoteServiceSettings.h"
+#include "controller/IfdServiceController.h"
+#include "pinpad/EstablishPaceChannel.h"
 
 #ifdef Q_OS_IOS
-#include <QOperatingSystemVersion>
+	#include <QOperatingSystemVersion>
 #endif
 
 using namespace governikus;
@@ -24,18 +26,18 @@ RemoteServiceModel::RemoteServiceModel()
 	, mIsStarting(false)
 	, mCanEnableNfc(false)
 	, mPairingRequested(false)
-	, mRequestTransportPin(false)
 	, mErrorMessage()
 	, mPsk()
 	, mAvailableRemoteDevices(this, false, true)
 	, mKnownDevices(this, true, false)
-	, mCombinedDevices(this, true, true)
 	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
 	, mRememberedServerEntry()
 #ifdef Q_OS_IOS
 	// iOS 14 introduced a local network permission, so we need to handle it.
 	, mRequiresLocalNetworkPermission(QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::IOS, 14))
+	, mWasRunning(false)
+	, mWasPairing(false)
 #else
 	, mRequiresLocalNetworkPermission(false)
 #endif
@@ -47,16 +49,15 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &RemoteServiceModel::onEnvironmentChanged);
 	const auto applicationModel = Env::getSingleton<ApplicationModel>();
 	connect(applicationModel, &ApplicationModel::fireWifiEnabledChanged, this, &RemoteServiceModel::onEnvironmentChanged);
+	connect(applicationModel, &ApplicationModel::fireApplicationStateChanged, this, &RemoteServiceModel::onApplicationStateChanged);
 
-	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
-	connect(remoteClient, &RemoteClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
-	connect(remoteClient, &RemoteClient::fireNewRemoteDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
-	connect(remoteClient, &RemoteClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
-	connect(remoteClient, &RemoteClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
-	connect(remoteClient, &RemoteClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
-
-	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	connect(&settings, &GeneralSettings::fireLanguageChanged, this, &RemoteServiceModel::onEnvironmentChanged);
+	const auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
+	connect(ifdClient, &IfdClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
+	connect(ifdClient, &IfdClient::fireNewDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
+	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
+	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
+	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
+	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -101,6 +102,35 @@ void RemoteServiceModel::onEnvironmentChanged()
 }
 
 
+void RemoteServiceModel::onApplicationStateChanged(bool pIsAppInForeground)
+{
+#if defined(Q_OS_IOS)
+	if (pIsAppInForeground)
+	{
+		setRunning(mWasRunning, mWasPairing);
+
+		mWasRunning = false;
+		mWasPairing = false;
+	}
+	else
+	{
+		mWasRunning = isRunning();
+		mWasPairing = isPairing();
+
+		setRunning(false);
+	}
+#else
+	Q_UNUSED(pIsAppInForeground)
+#endif
+}
+
+
+void RemoteServiceModel::onTranslationChanged()
+{
+	onEnvironmentChanged();
+}
+
+
 bool RemoteServiceModel::isRunning() const
 {
 	return mContext ? mContext->isRunning() : false;
@@ -131,7 +161,9 @@ void RemoteServiceModel::setRunning(bool pState, bool pEnablePairing)
 	else
 	{
 		setStarting(true);
-		Q_EMIT fireStartWorkflow();
+		const auto ifdServer = QSharedPointer<IfdServer>(new RemoteIfdServer());
+		const auto request = WorkflowRequest::createWorkflowRequest<IfdServiceController, IfdServiceContext>(ifdServer);
+		Q_EMIT fireStartWorkflow(request);
 	}
 }
 
@@ -161,35 +193,16 @@ RemoteDeviceModel* RemoteServiceModel::getKnownDevices()
 }
 
 
-RemoteDeviceModel* RemoteServiceModel::getCombinedDevices()
-{
-	return &mCombinedDevices;
-}
-
-
 void RemoteServiceModel::setDetectRemoteDevices(bool pNewStatus)
 {
-	if (pNewStatus == Env::getSingleton<RemoteClient>()->isDetecting())
-	{
-		return;
-	}
-
-	if (pNewStatus)
-	{
-		mAvailableRemoteDevices.onUiShown();
-		mKnownDevices.onUiShown();
-	}
-	else
-	{
-		mAvailableRemoteDevices.onUiHidden();
-		mKnownDevices.onUiHidden();
-	}
+	mAvailableRemoteDevices.setDetectRemoteDevices(pNewStatus);
+	mKnownDevices.setDetectRemoteDevices(pNewStatus);
 }
 
 
 bool RemoteServiceModel::detectRemoteDevices() const
 {
-	return Env::getSingleton<RemoteClient>()->isDetecting();
+	return Env::getSingleton<RemoteIfdClient>()->isDetecting();
 }
 
 
@@ -197,11 +210,11 @@ void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 {
 	if (!pServerPsk.isEmpty() && !mRememberedServerEntry.isNull())
 	{
-		auto* const remoteClient = Env::getSingleton<RemoteClient>();
-		connect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
+		auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
+		connect(ifdClient, &IfdClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 
 		qDebug() << "Starting to pair.";
-		remoteClient->establishConnection(mRememberedServerEntry, pServerPsk);
+		ifdClient->establishConnection(mRememberedServerEntry, pServerPsk);
 	}
 }
 
@@ -213,12 +226,12 @@ bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
 }
 
 
-void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus)
+void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus)
 {
-	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
-	disconnect(remoteClient, &RemoteClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
+	const auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
+	disconnect(ifdClient, &IfdClient::fireEstablishConnectionDone, this, &RemoteServiceModel::onEstablishConnectionDone);
 	qDebug() << "Pairing finished:" << pStatus;
-	const auto deviceName = RemoteServiceSettings::escapeDeviceName(pEntry->getRemoteDeviceDescriptor().getIfdName());
+	const auto deviceName = RemoteServiceSettings::escapeDeviceName(pEntry->getIfdDescriptor().getIfdName());
 	if (pStatus.isError())
 	{
 		Q_EMIT firePairingFailed(deviceName, pStatus.toErrorDescription());
@@ -235,7 +248,7 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 	if (mContext && pConnected)
 	{
 		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const QString peerName = settings.getRemoteInfo(mContext->getRemoteServer()->getCurrentCertificate()).getNameEscaped();
+		const QString peerName = settings.getRemoteInfo(mContext->getIfdServer()->getCurrentCertificate()).getNameEscaped();
 		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
 		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(peerName);
 		Q_EMIT fireConnectionInfoChanged();
@@ -244,34 +257,40 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 }
 
 
-void RemoteServiceModel::onCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection)
+void RemoteServiceModel::onCardConnected(const QSharedPointer<CardConnection>& pConnection)
 {
 	pConnection->setProgressMessage(mConnectionInfo);
 }
 
 
-void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<RemoteServiceContext>& pContext)
+void RemoteServiceModel::onCardDisconnected(const QSharedPointer<CardConnection>& pConnection)
+{
+	pConnection->setProgressMessage(mConnectionInfo);
+}
+
+
+void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext)
 {
 	mContext = pContext;
 	WorkflowModel::resetWorkflowContext(pContext);
 
 	mPsk.clear();
-	onEstablishPaceChannelUpdated();
 
 	if (mContext)
 	{
-		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, [this](){
+		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, [this](){
 				setStarting(false);
 			});
-		connect(mContext.data(), &RemoteServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
-		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, [this](const QByteArray& pPsk){
+		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, [this](const QByteArray& pPsk){
 				mPsk = pPsk;
 			});
-		connect(mContext->getRemoteServer().data(), &RemoteServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
-		connect(mContext->getRemoteServer().data(), &RemoteServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
-		connect(mContext->getRemoteServer().data(), &RemoteServer::firePairingCompleted, this, &RemoteServiceModel::firePairingCompleted);
-		connect(mContext.data(), &RemoteServiceContext::fireCardConnectionEstablished, this, &RemoteServiceModel::onCardConnectionEstablished);
-		connect(mContext.data(), &RemoteServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::onEstablishPaceChannelUpdated);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
+		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::firePairingCompleted);
+		connect(mContext.data(), &IfdServiceContext::fireCardConnected, this, &RemoteServiceModel::onCardConnected);
+		connect(mContext.data(), &IfdServiceContext::fireCardDisconnected, this, &RemoteServiceModel::onCardDisconnected);
+		connect(mContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::fireEstablishPaceChannelUpdated);
 
 		setPairing(mPairingRequested);
 	}
@@ -284,6 +303,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<RemoteSe
 
 	Q_EMIT fireIsRunningChanged();
 	Q_EMIT fireConnectedChanged();
+	Q_EMIT fireEstablishPaceChannelUpdated();
 }
 
 
@@ -291,7 +311,7 @@ void RemoteServiceModel::setPairing(bool pEnabled)
 {
 	if (mContext)
 	{
-		mContext->getRemoteServer()->setPairing(pEnabled);
+		mContext->getIfdServer()->setPairing(pEnabled);
 	}
 }
 
@@ -311,7 +331,7 @@ bool RemoteServiceModel::isConnectedToPairedDevice() const
 {
 	if (mContext)
 	{
-		return mContext->getRemoteServer()->isConnected() && !mContext->getRemoteServer()->isPairingConnection();
+		return mContext->getIfdServer()->isConnected() && !mContext->getIfdServer()->isPairingConnection();
 	}
 
 	return false;
@@ -320,13 +340,7 @@ bool RemoteServiceModel::isConnectedToPairedDevice() const
 
 bool RemoteServiceModel::enableTransportPinLink() const
 {
-	return mContext && mContext->isPinChangeWorkflow() && mContext->getPreferredPinLength() == 0;
-}
-
-
-bool RemoteServiceModel::isRequestTransportPin() const
-{
-	return mRequestTransportPin;
+	return mContext && mContext->allowToChangePinLength();
 }
 
 
@@ -368,37 +382,13 @@ QString RemoteServiceModel::getConnectedServerDeviceNames() const
 
 bool RemoteServiceModel::getRemoteReaderVisible() const
 {
-	return Env::getSingleton<RemoteClient>()->hasAnnouncingRemoteDevices();
+	return Env::getSingleton<RemoteIfdClient>()->hasAnnouncingRemoteDevices();
 }
 
 
 bool RemoteServiceModel::pinPadModeOn() const
 {
 	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
-}
-
-
-QString RemoteServiceModel::getPasswordType() const
-{
-	if (!mContext)
-	{
-		return QString();
-	}
-
-	switch (mContext->getEstablishPaceChannel().getPasswordId())
-	{
-		case PacePasswordId::PACE_CAN:
-			return QStringLiteral("CAN");
-
-		case PacePasswordId::PACE_PIN:
-			return QStringLiteral("PIN");
-
-		case PacePasswordId::PACE_PUK:
-			return QStringLiteral("PUK");
-
-		default:
-			return QString();
-	}
 }
 
 
@@ -434,22 +424,24 @@ void RemoteServiceModel::cancelPasswordRequest()
 {
 	if (mContext)
 	{
-		Q_EMIT mContext->fireCancelPasswordRequest();
+		mContext->cancelPasswordRequest();
 	}
 }
 
 
 void RemoteServiceModel::changePinLength()
 {
-	mRequestTransportPin = !mRequestTransportPin;
-	Q_EMIT fireEstablishPaceChannelUpdated();
+	if (mContext)
+	{
+		mContext->changePinLength();
+	}
 }
 
 
 void RemoteServiceModel::onConnectedDevicesChanged()
 {
-	auto* const remoteClient = Env::getSingleton<RemoteClient>();
-	const auto deviceInfos = remoteClient->getConnectedDeviceInfos();
+	auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
+	const auto deviceInfos = ifdClient->getConnectedDeviceInfos();
 	QStringList deviceNames;
 	for (const auto& info : deviceInfos)
 	{
@@ -457,11 +449,4 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 	}
 	mConnectedServerDeviceNames = deviceNames.join(QLatin1String(", "));
 	Q_EMIT fireConnectedServerDeviceNamesChanged();
-}
-
-
-void RemoteServiceModel::onEstablishPaceChannelUpdated()
-{
-	mRequestTransportPin = (mContext && mContext->isPinChangeWorkflow() && mContext->getPreferredPinLength() == 5);
-	Q_EMIT fireEstablishPaceChannelUpdated();
 }

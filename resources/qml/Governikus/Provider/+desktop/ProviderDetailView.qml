@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,9 +18,6 @@ SectionPage {
 	signal showDetailView(var pModel)
 	property alias historyModelItem: provider.modelItem
 	property alias providerModelItem: provider.modelItem
-
-	Accessible.name: qsTr("Provider detail view")
-	Accessible.description: qsTr("This view shows a detailed description of a provider.")
 
 	titleBarAction: TitleBarAction {
 		text: provider.shortName
@@ -66,12 +63,12 @@ SectionPage {
 				ProviderContactInfo {
 					id: providerContactInfo
 
-					anchors.top: parent.top
-					anchors.left: parent.left
-					anchors.right: parent.right
-					anchors.margins: Constants.pane_spacing
-					anchors.leftMargin: Constants.pane_spacing * 2
-					anchors.rightMargin: Constants.pane_spacing * 2
+					anchors {
+						fill: parent
+						margins: Constants.pane_spacing
+						leftMargin: Constants.pane_spacing * 2
+						rightMargin: Constants.pane_spacing * 2
+					}
 
 					activeFocusOnTab: true
 
@@ -89,7 +86,7 @@ SectionPage {
 			providerIcon: provider.icon
 			address: provider.address
 			shortName: provider.shortName
-			shortDescription: provider.shortDescription
+			longName: provider.longName
 			buttonColor: baseItem.titleBarColor
 		}
 
@@ -133,9 +130,7 @@ SectionPage {
 						textStyle: Style.text.normal
 						textFormat: Text.RichText
 
-						FocusFrame {
-							borderColor: Style.color.focus_indicator
-						}
+						FocusFrame {}
 					}
 				}
 			}
@@ -165,9 +160,5 @@ SectionPage {
 				}
 			}
 		}
-	}
-
-	FocusPoint {
-		color: Style.color.focus_indicator
 	}
 }

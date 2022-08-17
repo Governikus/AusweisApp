@@ -162,29 +162,32 @@ class test_VersionNumber
 		void isDeveloper_data()
 		{
 			QTest::addColumn<bool>("developer");
+			QTest::addColumn<bool>("beta");
 
-			QTest::newRow("") << true;
-			QTest::newRow("1.5.0+16-default-secret") << true;
-			QTest::newRow("1.6.0+1-draft-t34t53+") << true;
-			QTest::newRow("1.5.0") << true;
-			QTest::newRow("1.6.0") << false;
-			QTest::newRow("1.5.0+0") << true;
-			QTest::newRow("1.6.0+0") << true;
-			QTest::newRow("1.6.0+422312-stable-2143eg435") << true;
-			QTest::newRow("1.9.0+422312-stable-2143eg435") << true;
-			QTest::newRow("3.28.1") << false;
-			QTest::newRow("3.28.1+23-default") << true;
-			QTest::newRow("  3.28.1+23-default   ") << true;
-			QTest::newRow("    1.10.0      ") << false;
+			QTest::newRow("") << true << false;
+			QTest::newRow("1.5.0+16-default-secret") << true << true;
+			QTest::newRow("1.6.0+1-draft-t34t53+") << true << false;
+			QTest::newRow("1.5.0") << true << true;
+			QTest::newRow("1.6.0") << false << false;
+			QTest::newRow("1.5.0+0") << true << true;
+			QTest::newRow("1.6.0+0") << true << false;
+			QTest::newRow("1.6.0+422312-stable-2143eg435") << true << false;
+			QTest::newRow("1.9.0+422312-stable-2143eg435") << true << true;
+			QTest::newRow("3.28.1") << false << false;
+			QTest::newRow("3.28.1+23-default") << true << false;
+			QTest::newRow("  3.28.1+23-default   ") << true << false;
+			QTest::newRow("    1.10.0      ") << false << false;
 		}
 
 
 		void isDeveloper()
 		{
 			QFETCH(bool, developer);
+			QFETCH(bool, beta);
 
-			const auto& version = QString::fromLatin1(QTest::currentDataTag());
-			QCOMPARE(VersionNumber(version).isDeveloperVersion(), developer);
+			const auto& version = VersionNumber(QString::fromLatin1(QTest::currentDataTag()));
+			QCOMPARE(version.isDeveloperVersion(), developer);
+			QCOMPARE(version.isBetaVersion(), beta);
 		}
 
 
@@ -192,6 +195,14 @@ class test_VersionNumber
 		{
 			VersionNumber number1("1.6.0+422312-stable-2143eg435");
 			QCOMPARE(number1.getVersionNumber().toString(), QString("1.6.0"));
+		}
+
+
+		void debugStream()
+		{
+			QTest::ignoreMessage(QtDebugMsg, "1.6.0+422312-stable-2143eg435");
+			VersionNumber number1("1.6.0+422312-stable-2143eg435");
+			qDebug() << number1;
 		}
 
 

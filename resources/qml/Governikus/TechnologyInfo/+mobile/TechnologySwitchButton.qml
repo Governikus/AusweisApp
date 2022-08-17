@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -20,18 +19,18 @@ MouseArea {
 
 	Accessible.role: Accessible.Button
 	Accessible.name: text
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+	Accessible.onPressAction: clicked(null)
 
-	Image {
+	TintableIcon {
 		id: img
 
 		anchors.top: parent.top
 		anchors.topMargin: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
 
+		tintEnabled: !parent.enabled || buttonActive
+		desaturate: true
 		sourceSize.height: Style.dimens.icon_size
-		fillMode: Image.PreserveAspectFit
-		smooth: true
 	}
 
 	GText {
@@ -45,18 +44,5 @@ MouseArea {
 		Accessible.ignored: true
 
 		textStyle: (!parent.enabled || buttonActive) ? Style.text.normal_secondary : Style.text.normal_accent
-	}
-
-	Colorize {
-		id: grayLevel
-
-		visible: !parent.enabled || buttonActive
-		anchors.fill: img
-
-		source: img
-		saturation: 0
-		hue: 0
-		lightness: 0.0
-		cached: true
 	}
 }

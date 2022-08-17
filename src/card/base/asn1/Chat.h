@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "AccessRoleAndRight.h"
 #include "ASN1TemplateUtil.h"
+#include "AccessRoleAndRight.h"
+#include "Oid.h"
 
 #include <openssl/asn1t.h>
 
@@ -75,13 +76,8 @@ using CHAT = struct chat_st
 	chat_st& operator=(const chat_st&) = delete;
 	~chat_st();
 
-	void setType(const QByteArray& pOidAsText);
-	[[nodiscard]] QByteArray getType() const;
-
-	void setTemplate(const QByteArray& pValue);
+	[[nodiscard]] Oid getType() const;
 	[[nodiscard]] QByteArray getTemplate() const;
-
-	void setAccessRole(AccessRole pRole);
 	[[nodiscard]] AccessRole getAccessRole() const;
 
 	[[nodiscard]] QSet<AccessRight> getAccessRights() const;

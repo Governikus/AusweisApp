@@ -10,6 +10,7 @@
 #include "SmartCardDefinitions.h"
 
 #include <QString>
+#include <QVariant>
 
 namespace governikus
 {
@@ -17,12 +18,13 @@ class ReaderInfo
 {
 	friend class Reader;
 
-	ReaderManagerPlugInType mPlugInType;
-	QString mName;
-	bool mBasicReader;
-	CardInfo mCardInfo;
-	bool mConnected;
-	int mMaxApduLength;
+	private:
+		ReaderManagerPlugInType mPlugInType;
+		QString mName;
+		bool mBasicReader;
+		CardInfo mCardInfo;
+		int mMaxApduLength;
+		CardType mShelvedCard;
 
 	public:
 		explicit ReaderInfo(const QString& pName = QString(),
@@ -38,7 +40,20 @@ class ReaderInfo
 		}
 
 
-		CardInfo& getCardInfo()
+		[[nodiscard]] bool isValid() const
+		{
+			return mPlugInType != ReaderManagerPlugInType::UNKNOWN;
+		}
+
+
+		void invalidate()
+		{
+			mPlugInType = ReaderManagerPlugInType::UNKNOWN;
+			mCardInfo = CardInfo(CardType::NONE);
+		}
+
+
+		[[nodiscard]] CardInfo& getCardInfo()
 		{
 			return mCardInfo;
 		}
@@ -50,6 +65,12 @@ class ReaderInfo
 		}
 
 
+		[[nodiscard]] CardType getCardType() const
+		{
+			return mCardInfo.getCardType();
+		}
+
+
 		[[nodiscard]] QString getCardTypeString() const
 		{
 			return mCardInfo.getCardTypeString();
@@ -58,19 +79,13 @@ class ReaderInfo
 
 		[[nodiscard]] bool hasCard() const
 		{
-			return mCardInfo.isAvailable();
+			return mCardInfo.getCardType() != CardType::NONE;
 		}
 
 
-		[[nodiscard]] bool hasEidCard() const
+		[[nodiscard]] bool hasEid() const
 		{
-			return mCardInfo.isEid();
-		}
-
-
-		[[nodiscard]] bool hasPassport() const
-		{
-			return mCardInfo.isPassport();
+			return QVector<CardType>({CardType::EID_CARD, CardType::SMART_EID}).contains(mCardInfo.getCardType());
 		}
 
 
@@ -98,6 +113,41 @@ class ReaderInfo
 		}
 
 
+		[[nodiscard]] bool isPhysicalCard() const
+		{
+			const auto& cardType = mCardInfo.getCardType();
+			return cardType == CardType::EID_CARD;
+		}
+
+
+		[[nodiscard]] bool isSoftwareSmartEid() const
+		{
+			return mCardInfo.getMobileEidType() == MobileEidType::HW_KEYSTORE;
+		}
+
+
+		bool wasShelved() const
+		{
+			return mShelvedCard != CardType::NONE;
+		}
+
+
+		void shelveCard()
+		{
+			mShelvedCard = mCardInfo.getCardType();
+			mCardInfo.setCardType(CardType::NONE);
+		}
+
+
+		[[nodiscard]] bool isInsertable() const;
+
+
+		void insertCard()
+		{
+			mCardInfo.setCardType(mShelvedCard);
+		}
+
+
 		void setCardInfo(const CardInfo& pCardInfo)
 		{
 			mCardInfo = pCardInfo;
@@ -122,18 +172,6 @@ class ReaderInfo
 		}
 
 
-		[[nodiscard]] bool isConnected() const
-		{
-			return mConnected;
-		}
-
-
-		void setConnected(bool pConnected)
-		{
-			mConnected = pConnected;
-		}
-
-
 		void setMaxApduLength(int pMaxApduLength)
 		{
 			mMaxApduLength = pMaxApduLength;
@@ -146,9 +184,9 @@ class ReaderInfo
 		}
 
 
-		[[nodiscard]] bool sufficientApduLength() const
+		[[nodiscard]] bool insufficientApduLength() const
 		{
-			return mMaxApduLength == -1 || mMaxApduLength >= 500;
+			return mMaxApduLength >= 0 && mMaxApduLength < 500;
 		}
 
 

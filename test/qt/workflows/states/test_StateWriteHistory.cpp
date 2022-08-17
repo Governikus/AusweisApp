@@ -8,8 +8,9 @@
 
 #include "AppSettings.h"
 #include "Env.h"
-#include "states/StateBuilder.h"
+#include "LanguageLoader.h"
 #include "VolatileSettings.h"
+#include "states/StateBuilder.h"
 
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
@@ -83,9 +84,56 @@ class test_StateWriteHistory
 			QCOMPARE(historyInfo.getSubjectUrl(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectUrl());
 			QCOMPARE(historyInfo.getPurpose(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getPurpose());
 			QVERIFY(historyInfo.getTermOfUsage().contains(mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getTermsOfUsage()));
-			qDebug() << historyInfo.getRequestedData();
+			qDebug() << historyInfo.getTermOfUsage();
+			const auto locale = LanguageLoader::getInstance().getUsedLocale();
+			const auto effectiveDate = locale.toString(QDate(2014, 4, 7), QLocale::ShortFormat);
+			const auto expirationDate = locale.toString(QDate(2014, 7, 6), QLocale::ShortFormat);
+			QVERIFY(historyInfo.getTermOfUsage().endsWith(tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate)));
 			QStringList list = {"DocumentType", "IssuingCountry"};
+			qDebug() << historyInfo.getRequestedData();
 			QCOMPARE(historyInfo.getRequestedData(), list);
+			QCOMPARE(spyContinue.count(), 1);
+		}
+
+
+		void test_SetProgress()
+		{
+			mState->onEntry(nullptr);
+			QCOMPARE(mContext->getProgressValue(), 100);
+			QCOMPARE(mContext->getProgressMessage(), tr("Preparing results"));
+
+			mContext->setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
+			mState->onEntry(nullptr);
+			QCOMPARE(mContext->getProgressValue(), 100);
+			QCOMPARE(mContext->getProgressMessage(), QString());
+		}
+
+
+		void test_RunCertificateValidity()
+		{
+			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"));
+			mState.reset(StateBuilder::createState<StateWriteHistory>(mContext));
+			mState->onEntry(nullptr);
+
+			SDK_MODE(false);
+			auto& historySettings = Env::getSingleton<AppSettings>()->getHistorySettings();
+			QSignalSpy spyContinue(mState.data(), &StateWriteHistory::fireContinue);
+			historySettings.setEnabled(true);
+
+			mContext->setStatus(GlobalStatus::Code::No_Error);
+			mContext->setStateApproved();
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
+			QVERIFY(historySettings.getHistoryInfos().size() > 0);
+			const auto historyInfo = historySettings.getHistoryInfos().at(0);
+			QCOMPARE(historyInfo.getSubjectName(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectName());
+			QCOMPARE(historyInfo.getSubjectUrl(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getSubjectUrl());
+			QCOMPARE(historyInfo.getPurpose(), mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getPurpose());
+			QVERIFY(historyInfo.getTermOfUsage().contains(mState->getContext()->getDidAuthenticateEac1()->getCertificateDescription()->getTermsOfUsage()));
+			qDebug() << historyInfo.getTermOfUsage();
+			const auto locale = LanguageLoader::getInstance().getUsedLocale();
+			const auto effectiveDate = locale.toString(QDate(2020, 5, 21), QLocale::ShortFormat);
+			const auto expirationDate = locale.toString(QDate(2020, 6, 20), QLocale::ShortFormat);
+			QVERIFY(historyInfo.getTermOfUsage().endsWith(tr("Validity:\n%1 - %2").arg(effectiveDate, expirationDate)));
 			QCOMPARE(spyContinue.count(), 1);
 		}
 

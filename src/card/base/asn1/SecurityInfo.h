@@ -7,9 +7,10 @@
 #pragma once
 
 #include "ASN1TemplateUtil.h"
+#include "SecurityProtocol.h"
 
-#include <openssl/asn1.h>
 #include <QSharedPointer>
+#include <openssl/asn1.h>
 
 
 namespace governikus
@@ -47,15 +48,16 @@ class SecurityInfo
 	Q_DISABLE_COPY(SecurityInfo)
 	friend class QSharedPointer<SecurityInfo>;
 
-	const QSharedPointer<const securityinfo_st> mDelegate;
+	private:
+		const QSharedPointer<const securityinfo_st> mDelegate;
 
-	explicit SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
+		explicit SecurityInfo(const QSharedPointer<const securityinfo_st>& pDelegate);
 
-	/*
-	 * Sub classes must override this method to allow the base class to access
-	 * the protocol's ASN1_OBJECT pointer.
-	 */
-	[[nodiscard]] virtual ASN1_OBJECT* getProtocolObjectIdentifier() const;
+		/*
+		 * Sub classes must override this method to allow the base class to access
+		 * the protocol's ASN1_OBJECT pointer.
+		 */
+		[[nodiscard]] virtual ASN1_OBJECT* getProtocolObjectIdentifier() const;
 
 	protected:
 		SecurityInfo();
@@ -71,17 +73,17 @@ class SecurityInfo
 		}
 
 
-		virtual ~SecurityInfo();
+		virtual ~SecurityInfo() = default;
 
 		/**
-		 * Returns the raw bytes of the protocol OID value, i.e. not the tag and not the length structure, but the value bytes.
+		 * Returns the protocol OID.
 		 */
-		[[nodiscard]] QByteArray getProtocolValueBytes() const;
+		[[nodiscard]] Oid getOid() const;
 
 		/**
-		 * Returns the protocol OID in string representation, e.g. 0.4.0.127.0.7.2.2.4.2.2
+		 * Returns the security protocol defined by the OID.
 		 */
-		[[nodiscard]] QByteArray getProtocol() const;
+		[[nodiscard]] SecurityProtocol getProtocol() const;
 };
 
 

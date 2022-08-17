@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "SecurityProtocol.h"
+
 #include <QByteArray>
 #include <QCryptographicHash>
 
@@ -22,10 +24,10 @@ class KeyDerivationFunction final
 	public:
 		/*!
 		 * \brief Creates a new instance with derivation function algorithm determined by parameter.
-		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the key derivation algorithm to use. E.g. a
-		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in SHA256 to be used internally to derive keys.
+		 * \param pSecurityProtocol will determine the key derivation algorithm to use. E.g. a PACE protocol
+		 *        of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in SHA256 to be used internally to derive keys.
 		 */
-		explicit KeyDerivationFunction(const QByteArray& pPaceAlgorithm);
+		explicit KeyDerivationFunction(const SecurityProtocol& pSecurityProtocol);
 		~KeyDerivationFunction() = default;
 
 		/*!
@@ -38,21 +40,21 @@ class KeyDerivationFunction final
 		 * \param pSecret the secret to use.
 		 * \return the encryption key
 		 */
-		QByteArray enc(const QByteArray& pSecret);
+		QByteArray enc(const QByteArray& pSecret, const QByteArray& pNonce = QByteArray()) const;
 
 		/*!
 		 * \brief Derive the MAC key
 		 * \param pSecret the secret to use.
 		 * \return the MAC key
 		 */
-		QByteArray mac(const QByteArray& pSecret);
+		QByteArray mac(const QByteArray& pSecret, const QByteArray& pNonce = QByteArray()) const;
 
 		/*!
 		 * \brief Derive the password key
 		 * \param pSecret the secret to use.
 		 * \return the password key
 		 */
-		QByteArray pi(const QByteArray& pSecret);
+		QByteArray pi(const QByteArray& pSecret) const;
 
 };
 

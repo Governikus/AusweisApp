@@ -7,35 +7,32 @@
 #include "DeviceInfo.h"
 
 #ifdef Q_OS_ANDROID
-#include "VersionNumber.h"
+	#include "VersionNumber.h"
 
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
-#include <QtAndroid>
+	#include <QCryptographicHash>
+	#include <QJniEnvironment>
 #endif
 
-#include <openssl/crypto.h>
 #include <QSysInfo>
+#include <openssl/crypto.h>
 
 using namespace governikus;
 
 #ifdef Q_OS_ANDROID
-namespace
+QJniObject BuildHelper::getPackageInfo(const QString& pPackageName, int pFlags)
 {
-QAndroidJniObject getPackageInfo(const QString& pPackageName, int pFlags = 0)
-{
-	QAndroidJniEnvironment env;
+	QJniEnvironment env;
+	QJniObject result;
 
-	auto context = QtAndroid::androidContext();
-	auto manager = context.callObjectMethod("getPackageManager",
-			"()Landroid/content/pm/PackageManager;");
-
-	if (manager.isValid())
+	if (QJniObject context = QNativeInterface::QAndroidApplication::context(); context.isValid())
 	{
-		const auto& str = QAndroidJniObject::fromString(pPackageName);
-		return manager.callObjectMethod("getPackageInfo",
-				"(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
-				str.object<jstring>(), pFlags);
+		if (auto manager = context.callObjectMethod("getPackageManager", "()Landroid/content/pm/PackageManager;"); manager.isValid())
+		{
+			const auto& str = QJniObject::fromString(pPackageName);
+			result = manager.callObjectMethod("getPackageInfo",
+					"(Ljava/lang/String;I)Landroid/content/pm/PackageInfo;",
+					str.object<jstring>(), pFlags);
+		}
 	}
 
 	if (env->ExceptionCheck())
@@ -44,11 +41,8 @@ QAndroidJniObject getPackageInfo(const QString& pPackageName, int pFlags = 0)
 		env->ExceptionClear();
 	}
 
-	return QAndroidJniObject();
+	return result;
 }
-
-
-} // namespace
 
 
 int BuildHelper::getVersionCode()
@@ -66,7 +60,7 @@ int BuildHelper::getVersionCode()
 
 int BuildHelper::getVersionCode(const QString& pPackageName)
 {
-	const auto info = getPackageInfo(pPackageName);
+	const auto info = BuildHelper::getPackageInfo(pPackageName);
 
 	if (info.isValid())
 	{
@@ -79,11 +73,12 @@ int BuildHelper::getVersionCode(const QString& pPackageName)
 
 QString BuildHelper::getPackageName()
 {
-	auto context = QtAndroid::androidContext();
-	auto name = context.callObjectMethod("getPackageName", "()Ljava/lang/String;");
-	if (name.isValid())
+	if (QJniObject context = QNativeInterface::QAndroidApplication::context(); context.isValid())
 	{
-		return name.toString();
+		if (auto name = context.callObjectMethod("getPackageName", "()Ljava/lang/String;"); name.isValid())
+		{
+			return name.toString();
+		}
 	}
 
 	return QString();
@@ -99,7 +94,7 @@ QByteArrayList BuildHelper::getAppCertificates()
 QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 {
 	const int flags = 0x00000040; // GET_SIGNATURES
-	const auto info = getPackageInfo(pPackageName, flags);
+	const auto info = BuildHelper::getPackageInfo(pPackageName, flags);
 
 	if (!info.isValid())
 	{
@@ -112,7 +107,7 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 		return QByteArrayList();
 	}
 
-	QAndroidJniEnvironment env;
+	QJniEnvironment env;
 	jobjectArray obj = signatures.object<jobjectArray>();
 	const jsize elementCount = env->GetArrayLength(obj);
 	QByteArrayList list;
@@ -120,7 +115,7 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 
 	for (jsize i = 0; i < elementCount; ++i)
 	{
-		QAndroidJniObject elem = env->GetObjectArrayElement(obj, i);
+		QJniObject elem = env->GetObjectArrayElement(obj, i);
 		if (!elem.isValid())
 		{
 			continue;
@@ -135,7 +130,7 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 		jbyteArray data = bytes.object<jbyteArray>();
 		const auto size = env->GetArrayLength(data);
 		jbyte* buffer = env->GetByteArrayElements(data, 0);
-		list << QByteArray(reinterpret_cast<const char* const>(buffer), size).toHex();
+		list << QByteArray(reinterpret_cast<const char* const>(buffer), size);
 	}
 
 	if (env->ExceptionCheck())
@@ -150,14 +145,14 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 
 #endif
 
-QVector<QPair<QLatin1String, QString> > BuildHelper::getInformationHeader()
+QVector<QPair<QLatin1String, QString>> BuildHelper::getInformationHeader()
 {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 	#define OpenSSL_version SSLeay_version
 	#define OPENSSL_VERSION SSLEAY_VERSION
 #endif
 
-	QVector<QPair<QLatin1String, QString> > data;
+	QVector<QPair<QLatin1String, QString>> data;
 	const auto& add = [&data](const char* pKey, const QString& pStr)
 			{
 				data << qMakePair(QLatin1String(pKey), pStr);
@@ -183,6 +178,7 @@ QVector<QPair<QLatin1String, QString> > BuildHelper::getInformationHeader()
 #ifdef Q_OS_ANDROID
 	add(QT_TR_NOOP("Device"), DeviceInfo::getPrettyInfo());
 	add(QT_TR_NOOP("VersionCode"), QString::number(getVersionCode()));
+	add(QT_TR_NOOP("Certificate"), getEnumName(getCertificateType()));
 #else
 	add(QT_TR_NOOP("Device"), DeviceInfo::getName());
 #endif
@@ -191,6 +187,35 @@ QVector<QPair<QLatin1String, QString> > BuildHelper::getInformationHeader()
 	add(QT_TR_NOOP("OpenSSL Version"), QString::fromLatin1(OpenSSL_version(OPENSSL_VERSION)));
 
 	return data;
+}
+
+
+CertificateType BuildHelper::fetchCertificateType()
+{
+#ifdef Q_OS_ANDROID
+	const QByteArrayList certificates = getAppCertificates();
+	for (const auto& cert : certificates)
+	{
+		const auto& hash = QCryptographicHash::hash(cert, QCryptographicHash::Sha256).toHex();
+		if (hash == QByteArrayLiteral("b02ac76b50a497ae810aeac22598187b3d4290277d0851a7fa8e1aea5a979870"))
+		{
+			return CertificateType::PRODUCTION;
+		}
+		else if (hash == QByteArrayLiteral("f96fd6bba899845e06d3e6522f0843217681d473b6b09f1e313dea1a21d6b8e7"))
+		{
+			return CertificateType::DEVELOPER;
+		}
+	}
+#endif
+
+	return CertificateType::UNKNOWN;
+}
+
+
+CertificateType BuildHelper::getCertificateType()
+{
+	static const CertificateType cert = fetchCertificateType();
+	return cert;
 }
 
 
@@ -204,3 +229,6 @@ void BuildHelper::processInformationHeader(const std::function<void(const QStrin
 		pFunc(pTranslate ? tr(key.data()) : QString(key), entry.second);
 	}
 }
+
+
+#include "moc_BuildHelper.cpp"

@@ -19,12 +19,15 @@ class test_KeyPair
 {
 	Q_OBJECT
 
+	private:
+		KeyPair pair1 = KeyPair::generate();
+		KeyPair pair2 = KeyPair::generate();
+
 	private Q_SLOTS:
 		void validKey()
 		{
-			const KeyPair pair = KeyPair::generate();
-			QVERIFY(pair.isValid());
-			const auto& key = pair.getKey();
+			QVERIFY(pair1.isValid());
+			const auto& key = pair1.getKey();
 			QVERIFY(!key.isNull());
 			QCOMPARE(key.length(), 2048);
 			QCOMPARE(key.algorithm(), QSsl::Rsa);
@@ -34,10 +37,8 @@ class test_KeyPair
 
 		void multiKey()
 		{
-			const KeyPair pair1 = KeyPair::generate();
 			QVERIFY(!pair1.getKey().isNull());
 
-			const KeyPair pair2 = KeyPair::generate();
 			QVERIFY(!pair2.getKey().isNull());
 
 			QVERIFY(pair1.getKey() != pair2.getKey());
@@ -46,9 +47,8 @@ class test_KeyPair
 
 		void validCertificate()
 		{
-			const KeyPair pair = KeyPair::generate();
-			QVERIFY(pair.isValid());
-			const auto& cert = pair.getCertificate();
+			QVERIFY(pair1.isValid());
+			const auto& cert = pair1.getCertificate();
 			QVERIFY(!cert.isNull());
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).size(), 1);
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).at(0), QCoreApplication::applicationName());
@@ -78,10 +78,8 @@ class test_KeyPair
 
 		void multiCertificate()
 		{
-			const KeyPair pair1 = KeyPair::generate();
 			QVERIFY(!pair1.getCertificate().isNull());
 
-			const KeyPair pair2 = KeyPair::generate();
 			QVERIFY(!pair2.getCertificate().isNull());
 
 			QVERIFY(pair1.getCertificate() != pair2.getCertificate());

@@ -1,5 +1,4 @@
 import common.Build
-import static common.Constants.strip
 
 def j = new Build
 	(
@@ -13,26 +12,13 @@ j.with
 {
 	steps
 	{
-		shell(strip('''\
-			cd build;
-			cmake ../source
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DCMAKE_CXX_COMPILER=clazy
-			-DCOVERAGE=true
-			-DINTEGRATED_SDK=ON
-			-DSANITIZER=on
-			'''))
+		shell('cd source; cmake --preset ci-integrated')
 
-		shell('''\
-			cd build; make ${MAKE_FLAGS}
-			'''.stripIndent().trim())
+		shell('cmake --build build')
 
-		shell('''\
-			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
-			cd build; ctest --output-on-failure ${MAKE_FLAGS}
-			'''.stripIndent().trim())
+		shell('ctest --test-dir build --output-on-failure')
 
-		shell('cd build; make gcovr')
+		shell('cmake --build build --target gcovr')
 	}
 
 	publishers

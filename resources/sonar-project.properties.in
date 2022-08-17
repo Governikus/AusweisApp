@@ -1,7 +1,7 @@
 sonar.host.url=https://sonar.govkg.de
 
-sonar.projectKey=ausweisapp2:default
-sonar.projectName=AusweisApp2
+sonar.projectKey=ausweisapp2
+sonar.projectName=@PROJECT_NAME@
 sonar.projectVersion=@PROJECT_VERSION@
 
 sonar.projectBaseDir=@PROJECT_SOURCE_DIR@
@@ -14,8 +14,10 @@ sonar.cpp.file.suffixes=.cpp,.h
 sonar.objc.file.suffixes=.m,.mm
 
 sonar.cfamily.threads=4
-sonar.cfamily.cache.enabled=true
-sonar.cfamily.cache.path=@SONAR_CACHE_DIR@
+sonar.cfamily.analysisCache.mode=fs
+sonar.cfamily.analysisCache.path=@SONAR_CACHE_DIR@
+
+sonar.cfamily.reportingCppStandardOverride=c++17
 
 sonar.cfamily.build-wrapper-output=@PROJECT_BINARY_DIR@
 #sonar.cfamily.gcov.reportsPath=@PROJECT_BINARY_DIR@/Testing/CoverageInfo

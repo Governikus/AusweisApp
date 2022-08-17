@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "context/WorkflowContext.h"
+#include "EnumHelper.h"
 #include "Env.h"
+#include "context/WorkflowContext.h"
 
 #include <QObject>
 #include <QSharedPointer>
@@ -16,13 +17,15 @@
 namespace governikus
 {
 
+defineEnumType(PasswordType, TRANSPORT_PIN, PIN, CAN, PUK, NEW_PIN, REMOTE_PIN, SMART_PIN, NEW_SMART_PIN, SMART_BLOCKING_CODE)
+
 class NumberModel
 	: public QObject
 {
 	Q_OBJECT
 	friend class Env;
 
-	Q_PROPERTY(QmlPasswordType passwordType READ getPasswordType NOTIFY firePasswordTypeChanged)
+	Q_PROPERTY(PasswordType passwordType READ getPasswordType NOTIFY firePasswordTypeChanged)
 	Q_PROPERTY(QString can READ getCan WRITE setCan NOTIFY fireCanChanged)
 	Q_PROPERTY(QString pin READ getPin WRITE setPin NOTIFY firePinChanged)
 	Q_PROPERTY(QString newPin READ getNewPin WRITE setNewPin NOTIFY fireNewPinChanged)
@@ -32,11 +35,9 @@ class NumberModel
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool isCanAllowedMode READ isCanAllowedMode NOTIFY fireCanAllowedModeChanged)
-	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireRequestTransportPinChanged)
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
-		bool mRequestNewPin;
 
 		NumberModel();
 		~NumberModel() override = default;
@@ -47,16 +48,9 @@ class NumberModel
 		void onCardConnectionChanged();
 
 	public:
-		enum class QmlPasswordType
-		{
-			PASSWORD_PIN, PASSWORD_CAN, PASSWORD_PUK, PASSWORD_NEW_PIN, PASSWORD_REMOTE_PIN
-		};
-		Q_ENUM(QmlPasswordType)
-
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
-		QmlPasswordType getPasswordType() const;
-		Q_INVOKABLE void requestNewPin();
+		PasswordType getPasswordType() const;
 
 		QString getCan() const;
 		void setCan(const QString& pCan);
@@ -77,8 +71,6 @@ class NumberModel
 		int getRetryCounter() const;
 		bool isCanAllowedMode() const;
 
-		bool isRequestTransportPin() const;
-
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pInfo);
 
@@ -90,7 +82,6 @@ class NumberModel
 		void fireInputErrorChanged();
 		void fireReaderInfoChanged();
 		void fireCanAllowedModeChanged();
-		void fireRequestTransportPinChanged();
 		void firePasswordTypeChanged();
 };
 

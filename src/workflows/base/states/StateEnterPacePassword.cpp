@@ -9,9 +9,10 @@ using namespace governikus;
 
 
 StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setKeepCardConnectionAlive();
 }
 
 
@@ -30,7 +31,17 @@ void StateEnterPacePassword::run()
 
 void StateEnterPacePassword::onEntry(QEvent* pEvent)
 {
-	stopScanIfNecessary();
+	switch (getContext()->getLastPaceResult())
+	{
+		case CardReturnCode::OK:
+		case CardReturnCode::OK_PUK:
+			stopNfcScanIfNecessary();
+			break;
+
+		default:
+			//: INFO IOS The current session was interrupted because of a wrong password.
+			stopNfcScanIfNecessary(tr("Access denied."));
+	}
 
 	AbstractState::onEntry(pEvent);
 }

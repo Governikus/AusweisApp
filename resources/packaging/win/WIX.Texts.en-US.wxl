@@ -3,7 +3,7 @@
 	<String Id="LANG" Overridable="yes">1033</String><!-- see http://wix.tramontana.co.hu/tutorial/user-interface/do-you-speak-english -->
 	<String Id="DowngradeErrorMessage" Overridable="yes">A later version of [ProductName] is already installed. Setup will now exit.</String>
 	<String Id="WindowsServerNotSupported" Overridable="yes">[ProductName] does not support Windows Server.</String>
-	<String Id="Windows7SP1Required" Overridable="yes">[ProductName] requires Windows 7 with SP1 or higher.</String>
+	<String Id="Windows10Required" Overridable="yes">Your operating system does not meet the minimum requirements for AusweisApp2. You need a 64-bit version of Windows 10 or higher.</String>
 	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, the eID-Client of Governikus KG</String>
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installation options</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>

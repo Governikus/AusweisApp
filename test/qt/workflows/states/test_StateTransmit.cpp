@@ -71,8 +71,8 @@ class test_StateTransmit
 				outputApdus.insert(0, output);
 				const QSharedPointer<TransmitResponse> response(new TransmitResponse());
 				response->setOutputApdus(outputApdus);
-				context->addTransmit(transmit);
-				context->addTransmitResponse(response);
+				context->setTransmit(transmit);
+				context->setTransmitResponse(response);
 
 				stateTransmit.run();
 				QCOMPARE(stateTransmit.mConnections.size(), 1);
@@ -86,12 +86,8 @@ class test_StateTransmit
 		void test_OnCardCommandDone()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
-			const QSharedPointer<TransmitResponse> response1(new TransmitResponse());
-			const QSharedPointer<TransmitResponse> response2(new TransmitResponse());
-			const QSharedPointer<TransmitResponse> response3(new TransmitResponse());
-			context->addTransmitResponse(response1);
-			context->addTransmitResponse(response2);
-			context->addTransmitResponse(response3);
+			const QSharedPointer<TransmitResponse> response(new TransmitResponse());
+			context->setTransmitResponse(response);
 			StateTransmit stateTransmit(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			QVector<InputAPDUInfo> vector(5);

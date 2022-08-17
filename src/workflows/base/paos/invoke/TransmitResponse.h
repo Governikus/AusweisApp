@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/ResponseType.h"
 #include "PaosCreator.h"
+#include "paos/ResponseType.h"
 
 namespace governikus
 {
@@ -16,14 +16,14 @@ class TransmitResponse
 	: public PaosCreator
 	, public ResponseType
 {
+	Q_DISABLE_COPY(TransmitResponse)
+
 	private:
 		QByteArrayList mOutputApdus;
 
 		void createTransmitResponse();
 
 		void createBodyElement() override;
-
-		Q_DISABLE_COPY(TransmitResponse)
 
 	public:
 		TransmitResponse();

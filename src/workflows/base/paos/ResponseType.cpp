@@ -14,9 +14,7 @@ ResponseType::ResponseType(PaosType pType)
 }
 
 
-ResponseType::~ResponseType()
-{
-}
+ResponseType::~ResponseType() = default;
 
 
 const ECardApiResult& ResponseType::getResult() const

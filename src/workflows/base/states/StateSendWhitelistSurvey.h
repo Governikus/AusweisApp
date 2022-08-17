@@ -8,10 +8,14 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 #include <QSharedPointer>
+
+
+class test_StateSendWhitelistSurvey;
+
 
 namespace governikus
 {
@@ -21,9 +25,11 @@ class StateSendWhitelistSurvey
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateSendWhitelistSurvey;
 
-	explicit StateSendWhitelistSurvey(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateSendWhitelistSurvey(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

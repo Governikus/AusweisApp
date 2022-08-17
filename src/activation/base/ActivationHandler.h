@@ -9,6 +9,7 @@
 
 #include <QMap>
 #include <QUrl>
+#include <QUrlQuery>
 
 namespace governikus
 {
@@ -53,7 +54,8 @@ class ActivationHandler
 		ActivationHandler() = default;
 		~ActivationHandler() override = default;
 
-		static ActivationRequest getRequest(const QUrl& pUrl);
+		static void handleQueryParams(const QUrlQuery& pUrl);
+		static ActivationRequest getRequest(const QUrlQuery& pUrl);
 
 	public:
 		virtual bool start() = 0;

@@ -144,6 +144,39 @@ class test_ECardApiResult
 		}
 
 
+		void convertToStatusMinorNull_data()
+		{
+			QTest::addColumn<QString>("message");
+			QTest::addColumn<ECardApiResult::Origin>("origin");
+
+			QTest::newRow("No msg - client") << QString() << ECardApiResult::Origin::Client;
+			QTest::newRow("No msg - server") << QString() << ECardApiResult::Origin::Server;
+			QTest::newRow("With msg - client") << QString("Game Over :(") << ECardApiResult::Origin::Client;
+			QTest::newRow("With msg - server") << QString("Game Over :(") << ECardApiResult::Origin::Server;
+		}
+
+
+		void convertToStatusMinorNull()
+		{
+			QFETCH(QString, message);
+			QFETCH(ECardApiResult::Origin, origin);
+
+			const ECardApiResult result1(ECardApiResult::Major::Error, ECardApiResult::Minor::null, message, origin);
+			QVERIFY(result1.toStatus().isError());
+
+			const QString error("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error");
+
+			const ECardApiResult result2(error, QString(), message, origin);
+			QVERIFY(result2.toStatus().isError());
+
+			const ECardApiResult result3(error, "invalid", message, origin);
+			QVERIFY(result3.toStatus().isError());
+
+			const ECardApiResult result4(error, "http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError", message, origin);
+			QVERIFY(result4.toStatus().isError());
+		}
+
+
 		void convertToStatus_data()
 		{
 			QTest::addColumn<ECardApiResult::Minor>("minor");
@@ -199,7 +232,7 @@ class test_ECardApiResult
 			{
 				case ECardApiResult::Minor::AL_No_Permission:
 				case ECardApiResult::Minor::AL_Parameter_Error:
-				case ECardApiResult::Minor::AL_Unkown_API_Function:
+				case ECardApiResult::Minor::AL_Unknown_API_Function:
 				case ECardApiResult::Minor::AL_Not_Initialized:
 				case ECardApiResult::Minor::AL_Warning_Connection_Disconnected:
 				case ECardApiResult::Minor::AL_Session_Terminated_Warning:
@@ -284,7 +317,7 @@ class test_ECardApiResult
 			QTest::newRow("noPermission") << ECardApiResult::Minor::AL_No_Permission << tr("Use of the function by the client application is not permitted.");
 			QTest::newRow("internalError") << ECardApiResult::Minor::AL_Internal_Error << tr("An internal error has occurred during processing.");
 			QTest::newRow("parameterError") << ECardApiResult::Minor::AL_Parameter_Error << tr("There was some problem with a provided or omitted parameter.");
-			QTest::newRow("unknownApiFunction") << ECardApiResult::Minor::AL_Unkown_API_Function << tr("The API function is unknown.");
+			QTest::newRow("unknownApiFunction") << ECardApiResult::Minor::AL_Unknown_API_Function << tr("The API function is unknown.");
 			QTest::newRow("notInitialized") << ECardApiResult::Minor::AL_Not_Initialized << tr("The framework or layer has not been initialized.");
 			QTest::newRow("warningDisconnected") << ECardApiResult::Minor::AL_Warning_Connection_Disconnected << tr("The active session has been terminated.");
 			QTest::newRow("sessionTerminated") << ECardApiResult::Minor::AL_Session_Terminated_Warning << tr("The active session has been terminated.");

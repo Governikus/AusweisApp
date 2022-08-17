@@ -22,7 +22,7 @@ class test_StateExtractCvcsFromEac1InputType
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<const CVCertificate> > mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
+	QVector<QSharedPointer<const CVCertificate>> mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
 	QScopedPointer<StateExtractCvcsFromEac1InputType> mState;
 	QSharedPointer<TestAuthContext> mAuthContext;
 

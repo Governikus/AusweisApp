@@ -6,9 +6,9 @@
 
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 
-#include "asn1/CVCertificate.h"
-#include "EstablishPaceChannelOutput.h"
 #include "TestFileHelper.h"
+#include "asn1/CVCertificate.h"
+#include "pinpad/EstablishPaceChannelOutput.h"
 
 #include <QtTest>
 

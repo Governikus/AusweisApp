@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<full-backup-content>
-    <include domain="file" path="."/>
-</full-backup-content>
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapabilities="false">
+        <include domain="file" path=".config" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path=".config" />
+    </device-transfer>
+</data-extraction-rules>

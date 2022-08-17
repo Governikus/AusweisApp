@@ -6,10 +6,14 @@
 #include "StateDestroyPace.h"
 
 
+Q_DECLARE_LOGGING_CATEGORY(statemachine)
+
+
 using namespace governikus;
 
+
 StateDestroyPace::StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -18,8 +22,13 @@ StateDestroyPace::StateDestroyPace(const QSharedPointer<WorkflowContext>& pConte
 void StateDestroyPace::run()
 {
 	auto cardConnection = getContext()->getCardConnection();
+	if (!cardConnection)
+	{
+		qCDebug(statemachine) << "No card connection available.";
+		Q_EMIT fireAbort();
+		return;
+	}
 
-	Q_ASSERT(cardConnection);
 	mConnections += cardConnection->callDestroyPaceChannelCommand(this, &StateDestroyPace::onDestroyPaceDone);
 }
 

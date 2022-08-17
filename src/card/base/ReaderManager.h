@@ -4,16 +4,18 @@
 
 #pragma once
 
-#include "command/CreateCardConnectionCommand.h"
 #include "Env.h"
 #include "Reader.h"
 #include "ReaderFilter.h"
 #include "ReaderManagerWorker.h"
+#include "command/CreateCardConnectionCommand.h"
+#include "command/ExecuteCommand.h"
 
 #include <QMutex>
 #include <QPointer>
 #include <QThread>
 
+#include <functional>
 
 namespace governikus
 {
@@ -25,6 +27,8 @@ class ReaderManager
 	friend class Env;
 
 	private:
+		static QVector<std::function<void()>> cMainThreadInit;
+
 		mutable QMutex mMutex;
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
@@ -36,6 +40,8 @@ class ReaderManager
 		~ReaderManager() override;
 
 	public:
+		static void addMainThreadInit(const std::function<void()>& pFunc);
+
 		/*!
 		 * Initialize the reader manager service.
 		 * The thread is started and the plug-ins are initialized, too.
@@ -46,6 +52,16 @@ class ReaderManager
 		 * Resets the plugins matching the given type.
 		 */
 		void reset(ReaderManagerPlugInType pType);
+
+		/*!
+		 * Insert a "virtual" card if plugin supports it.
+		 */
+		void insert(const ReaderInfo& pReaderInfo, const QVariant& pData = QVariant());
+
+		/*!
+		 * Shelve all cards that were shelved and inserted before.
+		 */
+		void shelve();
 
 		/*!
 		 * Starts a scan for all device types.
@@ -84,10 +100,80 @@ class ReaderManager
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		void updateReaderInfo(const QString& pReaderName);
 
+		bool isWorkerThread() const
+		{
+			return QThread::currentThread() == &mThread;
+		}
+
+
+		/*!
+		 * Executes a function on ReaderManager-Thread.
+		 * \param pFunc Function that will be executed.
+		 * \param pReceiver The receiver object.
+		 * \param pSlot The slot to receive ExecuteCommand.
+		 */
+		template<typename T>
+		QMetaObject::Connection callExecuteCommand(const std::function<QVariant()>& pFunc, const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pSlot)
+		{
+			const QMutexLocker mutexLocker(&mMutex);
+
+			if (!mThread.isRunning())
+			{
+				qCWarning(card) << "Cannot call ExecuteCommand if ReaderManager-Thread is not active";
+				return QMetaObject::Connection();
+			}
+
+			auto* command = new ExecuteCommand(pFunc);
+			command->moveToThread(&mThread);
+			QMetaObject::Connection connection = connect(command, &ExecuteCommand::fireCommandDone, pReceiver, pSlot, Qt::QueuedConnection);
+			if (connection)
+			{
+				command->run();
+			}
+			else
+			{
+				qCCritical(card) << "Cannot invoke ExecuteCommand command";
+				command->deleteLater();
+			}
+
+			return connection;
+		}
+
+
+#ifndef QT_NO_DEBUG
+
+		/*!
+		 * Executes a blocking function on ReaderManager-Thread.
+		 * \param pFunc Function that will be executed.
+		 */
+		template<typename Func>
+		void callExecute(Func pFunc)
+		{
+			if (!mThread.isRunning())
+			{
+				qCWarning(card) << "Cannot call Execute if ReaderManager-Thread is not active";
+				return;
+			}
+
+			if (isWorkerThread())
+			{
+				pFunc();
+				return;
+			}
+
+			const QMutexLocker mutexLocker(&mMutex);
+
+			QMetaObject::invokeMethod(mWorker.data(), pFunc, Qt::BlockingQueuedConnection);
+		}
+
+
+#endif
+
+
 		/*!
 		 * Executes a command to create a CardConnection for a specified reader.
 		 * \param pReaderName The name of the reader.
-		 * \param pReceiver The receiver object .
+		 * \param pReceiver The receiver object.
 		 * \param pSlot The slot to receive CreateCardConnectionCommand.
 		 */
 		template<typename T>
@@ -119,14 +205,13 @@ class ReaderManager
 		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
 		void fireCardInserted(const ReaderInfo& pInfo);
 		void fireCardRemoved(const ReaderInfo& pInfo);
-		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
-		void fireReaderEvent();
+		void fireCardInfoChanged(const ReaderInfo& pInfo);
 		void fireInitialized();
 
 	private Q_SLOTS:
 		void doUpdateCacheEntry(const ReaderInfo& pInfo);
 		void doRemoveCacheEntry(const ReaderInfo& pInfo);
-		void doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo);
+		void doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo);
 
 	public Q_SLOTS:
 		/*!

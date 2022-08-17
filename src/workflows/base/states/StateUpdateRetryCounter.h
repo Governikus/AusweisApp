@@ -23,8 +23,9 @@ class StateUpdateRetryCounter
 	friend class StateBuilder;
 	friend class ::test_StateUpdateRetryCounter;
 
-	explicit StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	private Q_SLOTS:
 		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);

@@ -1,6 +1,5 @@
 import common.Review
 import common.Build.JobType
-import static common.Constants.strip
 
 def j = new Review
 	(
@@ -27,24 +26,11 @@ j.with
 	{
 		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
-		shell(strip('''\
-			cd build;
-			cmake -Werror=dev ../source
-			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DBUILD_SHARED_LIBS=on
-			'''))
+		shell('cd source; cmake --preset ci-linux')
 
-		shell('''\
-			cd build; make ${MAKE_FLAGS} ALL_Test_configuration
-			'''.stripIndent().trim())
+		shell('cmake --build build --target ALL_Test_configuration')
 
-		shell('''\
-			cd build; ctest --output-on-failure ${MAKE_FLAGS} -R Test_configuration
-			'''.stripIndent().trim())
-
-		shell('''\
-			cd build; ctest --output-on-failure ${MAKE_FLAGS} -L json
-			'''.stripIndent().trim())
+		shell('ctest --test-dir build --output-on-failure -R Test_configuration')
+		shell('ctest --test-dir build --output-on-failure -L json')
 	}
 }

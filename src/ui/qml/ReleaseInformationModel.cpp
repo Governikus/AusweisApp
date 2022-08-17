@@ -4,32 +4,21 @@
 
 #include "ReleaseInformationModel.h"
 
-#include "AppSettings.h"
+#include "Env.h"
 #include "ReleaseInformationConfiguration.h"
 
 #include <QLoggingCategory>
 
+#include <memory>
+
+
 Q_DECLARE_LOGGING_CATEGORY(qml)
+
 
 using namespace governikus;
 
-ReleaseInformationModel::ReleaseInformationModel()
-	: QObject()
-	, mFallbackModel(new FormattedTextModel(QStringList(tr("No release information present, make sure you are connected to the internet."))))
-{
-	const auto& releaseInformationConfig = Env::getSingleton<ReleaseInformationConfiguration>();
-	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireCurrentInformationChanged, this, &ReleaseInformationModel::onCurrentChanged);
-	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireUpdateInformationChanged, this, &ReleaseInformationModel::onUpdateChanged);
 
-	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &ReleaseInformationModel::onTranslationChanged);
-
-	onCurrentChanged();
-	onUpdateChanged();
-}
-
-
-QSharedPointer<FormattedTextModel> ReleaseInformationModel::createModel(const ReleaseInformation& pInformation) const
+FormattedTextModel* ReleaseInformationModel::createModel(const ReleaseInformation& pInformation)
 {
 	QStringList fileList;
 
@@ -49,14 +38,14 @@ QSharedPointer<FormattedTextModel> ReleaseInformationModel::createModel(const Re
 		return mFallbackModel;
 	}
 
-	const QSharedPointer<FormattedTextModel> textModel(new FormattedTextModel());
-	if (!textModel->loadSeveral(fileList))
+	auto textModel = std::make_unique<FormattedTextModel>(this);
+	if (textModel->loadSeveral(fileList))
 	{
-		qCWarning(qml) << "Failed to update text model for version" << pInformation.versionNumber().getVersionNumber();
-		return mFallbackModel;
-
+		return textModel.release();
 	}
-	return textModel;
+
+	qCWarning(qml) << "Failed to update text model for version" << pInformation.versionNumber().getVersionNumber();
+	return mFallbackModel;
 }
 
 
@@ -82,19 +71,28 @@ void ReleaseInformationModel::onUpdateChanged()
 }
 
 
-void ReleaseInformationModel::onTranslationChanged()
+ReleaseInformationModel::ReleaseInformationModel()
+	: QObject()
+	, mFallbackModel(new FormattedTextModel(this, QStringList(tr("No release information present, make sure you are connected to the internet."))))
+	, mModelCurrent(nullptr)
+	, mModelUpdate(nullptr)
 {
-	Env::getSingleton<ReleaseInformationConfiguration>()->reload();
+	const auto& releaseInformationConfig = Env::getSingleton<ReleaseInformationConfiguration>();
+	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireCurrentInformationChanged, this, &ReleaseInformationModel::onCurrentChanged);
+	connect(releaseInformationConfig, &ReleaseInformationConfiguration::fireUpdateInformationChanged, this, &ReleaseInformationModel::onUpdateChanged);
+
+	onCurrentChanged();
+	onUpdateChanged();
 }
 
 
-QSharedPointer<FormattedTextModel> ReleaseInformationModel::getCurrentRelease() const
+FormattedTextModel* ReleaseInformationModel::getCurrentRelease() const
 {
 	return mModelCurrent ? mModelCurrent : mFallbackModel;
 }
 
 
-QSharedPointer<FormattedTextModel> ReleaseInformationModel::getUpdateRelease() const
+FormattedTextModel* ReleaseInformationModel::getUpdateRelease() const
 {
 	return mModelUpdate ? mModelUpdate : mFallbackModel;
 }
@@ -108,6 +106,12 @@ void ReleaseInformationModel::update()
 
 bool ReleaseInformationModel::allowRetry() const
 {
-	Q_ASSERT(!mFallbackModel.isNull());
-	return mModelCurrent.isNull() || mModelCurrent == mFallbackModel;
+	Q_ASSERT(mFallbackModel);
+	return !mModelCurrent || mModelCurrent == mFallbackModel;
+}
+
+
+void ReleaseInformationModel::onTranslationChanged() const
+{
+	Env::getSingleton<ReleaseInformationConfiguration>()->reload();
 }

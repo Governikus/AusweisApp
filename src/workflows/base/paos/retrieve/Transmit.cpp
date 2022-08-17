@@ -14,6 +14,4 @@ Transmit::Transmit()
 }
 
 
-Transmit::~Transmit()
-{
-}
+Transmit::~Transmit() = default;

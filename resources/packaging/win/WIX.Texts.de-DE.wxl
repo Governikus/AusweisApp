@@ -38,12 +38,12 @@
 	<String Id="PackageKeywords" Overridable="yes">Ausweis, Authentisierung</String>
 	<String Id="PackageComments" Overridable="yes">Installationspaket für die AusweisApp2</String>
 	<String Id="ArpComment" Overridable="yes">Offizieller eID-Client des Bundes</String>
-	<String Id="ArpHelp" Overridable="yes">https://www.ausweisapp.bund.de/hilfe-und-support</String>
+	<String Id="ArpHelp" Overridable="yes">https://www.ausweisapp.bund.de/de/aa2/support</String>
 	<String Id="ArpAbout" Overridable="yes">https://www.ausweisapp.bund.de</String>
-	<String Id="ArpUpdate" Overridable="yes">https://www.ausweisapp.bund.de/download</String>
+	<String Id="ArpUpdate" Overridable="yes">https://www.ausweisapp.bund.de/de/aa2/download</String>
 	<String Id="DowngradeErrorMessage" Overridable="yes">Eine aktuellere Version der [ProductName] ist bereits installiert. Die Installation wird nun beendet.</String>
 	<String Id="WindowsServerNotSupported" Overridable="yes">Die [ProductName] unterstützt keine Windows Server.</String>
-	<String Id="Windows7SP1Required" Overridable="yes">[ProductName] unterstützt nur Windows 7 SP1 und höher.</String>
+	<String Id="Windows10Required" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen eine 64-Bit-Version von Windows 10 oder höher.</String>
 	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, der eID-Client der Governikus KG</String>
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installationsoptionen</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>

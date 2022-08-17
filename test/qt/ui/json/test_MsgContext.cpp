@@ -6,12 +6,14 @@
 
 #include "messages/MsgContext.h"
 
-#include "context/AuthContext.h"
-#include "context/WorkflowContext.h"
 #include "InternalActivationContext.h"
+#include "ReaderManager.h"
+#include "context/AuthContext.h"
+#include "messages/MsgHandler.h"
 #include "messages/MsgHandlerEnterPin.h"
 #include "messages/MsgHandlerInsertCard.h"
-#include "ReaderManager.h"
+
+#include "TestWorkflowContext.h"
 
 #include <QtTest>
 
@@ -51,10 +53,10 @@ class test_MsgContext
 		void stateMsg()
 		{
 			MsgDispatcherContext ctx;
-			ctx.setWorkflowContext(QSharedPointer<WorkflowContext>::create());
+			ctx.setWorkflowContext(QSharedPointer<TestWorkflowContext>::create());
 			const MsgContext& readOnly = ctx;
 
-			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INTERNAL_ERROR);
+			QCOMPARE(readOnly.getLastStateMsg(), MsgType::VOID);
 			QVERIFY(!readOnly.getLastStateMsg());
 			ctx.addStateMsg(MsgHandlerInsertCard());
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INSERT_CARD);
@@ -63,7 +65,7 @@ class test_MsgContext
 			QCOMPARE(readOnly.getLastStateMsg(), MsgType::ENTER_PIN);
 			QVERIFY(readOnly.getLastStateMsg());
 			ctx.clear();
-			QCOMPARE(readOnly.getLastStateMsg(), MsgType::INTERNAL_ERROR);
+			QCOMPARE(readOnly.getLastStateMsg(), MsgType::VOID);
 			QVERIFY(!readOnly.getLastStateMsg());
 		}
 
@@ -78,7 +80,7 @@ class test_MsgContext
 			QVERIFY(!ctx.getContext<AuthContext>());
 			QVERIFY(!readOnly.getContext());
 
-			ctx.setWorkflowContext(QSharedPointer<WorkflowContext>(new WorkflowContext()));
+			ctx.setWorkflowContext(QSharedPointer<TestWorkflowContext>::create());
 			QVERIFY(readOnly.isActiveWorkflow());
 			QVERIFY(!readOnly.getContext<AuthContext>());
 			QVERIFY(!ctx.getContext<AuthContext>());

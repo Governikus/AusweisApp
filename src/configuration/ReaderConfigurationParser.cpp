@@ -15,6 +15,11 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+using JsonValueRef = const QJsonValueRef;
+#else
+using JsonValueRef = const QJsonValue&;
+#endif
 
 ReaderConfigurationParser::EntryParser::EntryParser(const QJsonValue& pJsonValue)
 	: mJsonValue(pJsonValue)
@@ -22,9 +27,7 @@ ReaderConfigurationParser::EntryParser::EntryParser(const QJsonValue& pJsonValue
 }
 
 
-ReaderConfigurationParser::EntryParser::~EntryParser()
-{
-}
+ReaderConfigurationParser::EntryParser::~EntryParser() = default;
 
 
 QString ReaderConfigurationParser::EntryParser::getDriverUrl(const QJsonObject& pObject) const
@@ -37,7 +40,7 @@ QString ReaderConfigurationParser::EntryParser::getDriverUrl(const QJsonObject& 
 	}
 
 	const QJsonArray& driversArray = driversValue.toArray();
-	for (const auto& entry : driversArray)
+	for (JsonValueRef entry : driversArray)
 	{
 		const QJsonObject& obj = entry.toObject();
 		if (obj.isEmpty())
@@ -101,7 +104,7 @@ bool ReaderConfigurationParser::EntryParser::matchPlatform(const QJsonArray& pPl
 				return QOperatingSystemVersion(pCurrentVersion.type(), number.majorVersion(), minor, micro);
 			};
 
-	for (const auto& entry : pPlatforms)
+	for (JsonValueRef entry : pPlatforms)
 	{
 		const auto& obj = entry.toObject();
 		if (obj.value(QLatin1String("os")).toString() == currentOS)
@@ -201,7 +204,7 @@ QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArr
 
 	const QJsonArray& devicesArray = devicesValue.toArray();
 	QVector<ReaderConfigurationInfo> infos;
-	for (const auto& entry : devicesArray)
+	for (JsonValueRef entry : devicesArray)
 	{
 		auto info = EntryParser(entry).parse();
 		if (info.isKnownReader())

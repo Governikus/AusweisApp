@@ -129,11 +129,11 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 		return nullptr;
 	}
 
-	QByteArrayList oids;
+	QList<Oid> oids;
 	for (int i = 0; i < sk_AuxDataTemplate_num(auxDate.data()); i++)
 	{
 		const AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(auxDate.data(), i);
-		const auto oid = Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId);
+		const Oid oid(auxDataTemplate->mAuxId);
 		if (oids.contains(oid))
 		{
 			qCCritical(card) << "More than one AuxDataTemplate with OID" << oid;
@@ -142,9 +142,9 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 		oids += oid;
 	}
 
-	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID));
-	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH));
-	oids.removeOne(toByteArray(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY));
+	oids.removeOne(KnownOid::ID_MUNICIPALITY_ID);
+	oids.removeOne(KnownOid::ID_DATE_OF_BIRTH);
+	oids.removeOne(KnownOid::ID_DATE_OF_EXPIRY);
 	if (!oids.isEmpty())
 	{
 		qCCritical(card) << "Unknown AuxDataTemplate with OID" << oids.first();
@@ -164,13 +164,13 @@ QByteArray AuthenticatedAuxiliaryData::encode() const
 
 bool AuthenticatedAuxiliaryData::hasValidityDate() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY) != nullptr;
+	return getAuxDataTemplateFor(KnownOid::ID_DATE_OF_EXPIRY) != nullptr;
 }
 
 
 QDate AuthenticatedAuxiliaryData::getValidityDate() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_EXPIRY))
+	if (auto auxData = getAuxDataTemplateFor(KnownOid::ID_DATE_OF_EXPIRY))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 
@@ -187,13 +187,13 @@ QDate AuthenticatedAuxiliaryData::getValidityDate() const
 
 bool AuthenticatedAuxiliaryData::hasAgeVerificationDate() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH) != nullptr;
+	return getAuxDataTemplateFor(KnownOid::ID_DATE_OF_BIRTH) != nullptr;
 }
 
 
 QDate AuthenticatedAuxiliaryData::getAgeVerificationDate() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_DATE_OF_BIRTH))
+	if (auto auxData = getAuxDataTemplateFor(KnownOid::ID_DATE_OF_BIRTH))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 
@@ -235,13 +235,13 @@ QString AuthenticatedAuxiliaryData::getRequiredAge() const
 
 bool AuthenticatedAuxiliaryData::hasCommunityID() const
 {
-	return getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID) != nullptr;
+	return getAuxDataTemplateFor(KnownOid::ID_MUNICIPALITY_ID) != nullptr;
 }
 
 
 QByteArray AuthenticatedAuxiliaryData::getCommunityID() const
 {
-	if (auto auxData = getAuxDataTemplateFor(KnownOIDs::AuxilaryData::ID_COMMUNITY_ID))
+	if (auto auxData = getAuxDataTemplateFor(KnownOid::ID_MUNICIPALITY_ID))
 	{
 		QByteArray extBytes = Asn1TypeUtil::encode(auxData->mExtInfo);
 		auto communityId = decodeObject<CommunityID>(extBytes);
@@ -254,14 +254,12 @@ QByteArray AuthenticatedAuxiliaryData::getCommunityID() const
 }
 
 
-AuxDataTemplate* AuthenticatedAuxiliaryData::getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const
+AuxDataTemplate* AuthenticatedAuxiliaryData::getAuxDataTemplateFor(const Oid& pOid) const
 {
-	const auto& oid = toByteArray(pData);
-
 	for (int i = 0; i < sk_AuxDataTemplate_num(mData.data()); i++)
 	{
 		AuxDataTemplate* auxDataTemplate = sk_AuxDataTemplate_value(mData.data(), i);
-		if (Asn1ObjectUtil::convertTo(auxDataTemplate->mAuxId) == oid)
+		if (pOid == Oid(auxDataTemplate->mAuxId))
 		{
 			return auxDataTemplate;
 		}

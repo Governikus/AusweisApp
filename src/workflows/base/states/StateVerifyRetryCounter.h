@@ -5,8 +5,11 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
+
+
+class test_StateVerifyRetryCounter;
 
 
 namespace governikus
@@ -18,9 +21,11 @@ class StateVerifyRetryCounter
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateVerifyRetryCounter;
 
-	explicit StateVerifyRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateVerifyRetryCounter(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	Q_SIGNALS:
 		void fireEnterPacePassword();

@@ -7,13 +7,14 @@
 #include "TlsChecker.h"
 
 #include "LogHandler.h"
+#include "ResourceLoader.h"
 #include "SecureStorage.h"
 
 #include "MockNetworkReply.h"
 #include "TestFileHelper.h"
 
-#include <openssl/pem.h>
 #include <QtTest>
+#include <openssl/pem.h>
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
@@ -40,6 +41,7 @@ class test_TlsChecker
 	private Q_SLOTS:
 		void initTestCase()
 		{
+			ResourceLoader::getInstance().init();
 			Env::getSingleton<LogHandler>()->init();
 			certs = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 			QVERIFY(certs.size() > 0);

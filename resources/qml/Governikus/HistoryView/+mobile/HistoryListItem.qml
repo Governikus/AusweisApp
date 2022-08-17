@@ -2,11 +2,12 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Type.HistoryModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 ListItem {
 	property var historyModelItem
@@ -19,7 +20,7 @@ ListItem {
 	//: LABEL ANDROID IOS
 	headerText: (Utils.isToday(dateTime) ? qsTr("today") :
 				 Utils.isYesterday(dateTime) ? qsTr("yesterday") :
-				 Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
+				 Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") :
 				 dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
 				)
 	text: subject

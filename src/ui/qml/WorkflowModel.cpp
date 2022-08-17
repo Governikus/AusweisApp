@@ -5,36 +5,45 @@
 #include "WorkflowModel.h"
 
 #include "AppSettings.h"
-#include "context/AuthContext.h"
+#include "ApplicationModel.h"
 #include "Email.h"
 #include "Env.h"
 #include "FuncUtils.h"
 #include "GeneralSettings.h"
+#include "Initializer.h"
 #include "PinResetInformationModel.h"
 #include "ReaderConfiguration.h"
 #include "ReaderManager.h"
+#include "SmartModel.h"
+#include "context/AuthContext.h"
 
 #include <QDesktopServices>
 
 
 using namespace governikus;
 
+INIT_FUNCTION([] {
+			qRegisterMetaType<QVector<int>>("QVector<ReaderManagerPlugInType>");
+		})
 
 WorkflowModel::WorkflowModel(QObject* pParent)
 	: QObject(pParent)
 	, mContext()
+#if defined(Q_OS_IOS)
+	, mRemoteScanWasRunning(false)
+#endif
 {
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::onReaderManagerSignal);
+	connect(Env::getSingleton<SmartModel>(), &SmartModel::fireSmartStateChanged, this, &WorkflowModel::fireIsSmartCardAllowedChanged);
+
+	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireApplicationStateChanged, this, &WorkflowModel::onApplicationStateChanged);
+
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireDeveloperOptionsChanged, this, &WorkflowModel::fireSupportedPlugInTypesChanged);
 
 	QMetaObject::invokeMethod(this, &WorkflowModel::onReaderManagerSignal, Qt::QueuedConnection);
-}
-
-
-WorkflowModel::~WorkflowModel()
-{
 }
 
 
@@ -46,8 +55,10 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &WorkflowModel::fireCurrentStateChanged);
 		connect(mContext.data(), &WorkflowContext::fireResultChanged, this, &WorkflowModel::fireResultChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &WorkflowModel::fireReaderPlugInTypeChanged);
-		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireIsBasicReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireSelectedReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireIsSmartCardAllowedChanged, this, &WorkflowModel::fireIsSmartCardAllowedChanged);
 		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
+		connect(mContext.data(), &WorkflowContext::fireRemoveCardFeedbackChanged, this, &WorkflowModel::fireRemoveCardFeedbackChanged);
 	}
 
 	/*
@@ -107,6 +118,30 @@ void WorkflowModel::setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInTyp
 }
 
 
+void WorkflowModel::insertCard(ReaderManagerPlugInType pType)
+{
+	auto* const readerManager = Env::getSingleton<ReaderManager>();
+	const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({pType}));
+
+	for (const auto& readerInfo : readerInfos)
+	{
+		readerManager->insert(readerInfo);
+	}
+}
+
+
+void WorkflowModel::insertSmartCard()
+{
+	insertCard(ReaderManagerPlugInType::SMART);
+}
+
+
+void WorkflowModel::insertSimulator()
+{
+	insertCard(ReaderManagerPlugInType::SIMULATOR);
+}
+
+
 void WorkflowModel::continueWorkflow()
 {
 	if (mContext)
@@ -142,6 +177,72 @@ bool WorkflowModel::isBasicReader() const
 	}
 
 	return true;
+}
+
+
+bool WorkflowModel::isRemoteReader() const
+{
+	if (mContext && mContext->getCardConnection())
+	{
+		return mContext->getCardConnection()->getReaderInfo().getPlugInType() == ReaderManagerPlugInType::REMOTE_IFD;
+	}
+
+	return false;
+}
+
+
+bool WorkflowModel::isSmartCardAllowed() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+
+	MobileEidType mobileEidType = Env::getSingleton<SmartModel>()->getMobileEidType();
+	if (mobileEidType == MobileEidType::UNKNOWN)
+	{
+		return false;
+	}
+
+	const auto& acceptedEidTypes = mContext->getAcceptedEidTypes();
+	switch (mobileEidType)
+	{
+		case MobileEidType::SE_CERTIFIED:
+			return acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED);
+
+		case MobileEidType::SE_ENDORSED:
+			return acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED);
+
+		case MobileEidType::HW_KEYSTORE:
+			return acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE);
+
+		case MobileEidType::UNKNOWN:
+			return false;
+	}
+	Q_UNREACHABLE();
+}
+
+
+bool WorkflowModel::isSmartSupported() const
+{
+	return getSupportedReaderPlugInTypes().contains(ReaderManagerPlugInType::SMART);
+}
+
+
+QVector<ReaderManagerPlugInType> WorkflowModel::getSupportedReaderPlugInTypes() const
+{
+	auto supported = Enum<ReaderManagerPlugInType>::getList();
+
+	if (!Env::getSingleton<AppSettings>()->getGeneralSettings().isSimulatorEnabled())
+	{
+		supported.removeOne(ReaderManagerPlugInType::SIMULATOR);
+	}
+
+#if !__has_include("SmartManager.h")
+	supported.removeOne(ReaderManagerPlugInType::SMART);
+#endif
+
+	return supported;
 }
 
 
@@ -208,6 +309,21 @@ bool WorkflowModel::invokeStatusHintAction()
 }
 
 
+bool WorkflowModel::showRemoveCardFeedback() const
+{
+	return mContext && mContext->showRemoveCardFeedback();
+}
+
+
+void WorkflowModel::setRemoveCardFeedback(bool pEnabled)
+{
+	if (mContext)
+	{
+		mContext->setRemoveCardFeedback(pEnabled);
+	}
+}
+
+
 void WorkflowModel::setInitialPluginType()
 {
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
@@ -216,7 +332,7 @@ void WorkflowModel::setInitialPluginType()
 	const QString& lastReaderPluginTypeString = settings.getLastReaderPluginType();
 	const auto& lastReaderPluginType = Enum<ReaderManagerPlugInType>::fromString(lastReaderPluginTypeString, ReaderManagerPlugInType::UNKNOWN);
 
-	if (lastReaderPluginType == ReaderManagerPlugInType::UNKNOWN)
+	if (lastReaderPluginType == ReaderManagerPlugInType::UNKNOWN || !getSupportedReaderPlugInTypes().contains(lastReaderPluginType))
 	{
 		setReaderPlugInType(ReaderManagerPlugInType::NFC);
 		return;
@@ -227,18 +343,8 @@ void WorkflowModel::setInitialPluginType()
 	{
 		return;
 	}
-	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE});
+	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE_IFD, ReaderManagerPlugInType::SIMULATOR});
 #endif
-}
-
-
-bool WorkflowModel::selectedReaderHasCard() const
-{
-	if (mContext && !mContext->getReaderName().isEmpty())
-	{
-		return Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName()).hasCard();
-	}
-	return false;
 }
 
 
@@ -298,14 +404,44 @@ void WorkflowModel::sendResultMail() const
 }
 
 
+void WorkflowModel::onApplicationStateChanged(bool pIsAppInForeground)
+{
+	if (!mContext)
+	{
+		return;
+	}
+
+#if defined(Q_OS_IOS)
+	if (pIsAppInForeground)
+	{
+		if (mRemoteScanWasRunning)
+		{
+			Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::REMOTE_IFD);
+			mRemoteScanWasRunning = false;
+		}
+	}
+	else
+	{
+		mRemoteScanWasRunning = Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::REMOTE_IFD);
+		if (mRemoteScanWasRunning)
+		{
+			Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::REMOTE_IFD);
+		}
+	}
+#else
+	Q_UNUSED(pIsAppInForeground)
+#endif
+}
+
+
 void WorkflowModel::onReaderManagerSignal()
 {
 	QString newReaderImage;
 	const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter::UniqueReaderTypes);
-	const auto& readersWithNPA = filter<ReaderInfo>([](const ReaderInfo& i){return i.hasEidCard();}, readerInfos);
-	if (readersWithNPA.size() == 1)
+	const auto& readersWithEid = filter<ReaderInfo>([](const ReaderInfo& i){return i.hasEid();}, readerInfos);
+	if (readersWithEid.size() == 1)
 	{
-		newReaderImage = readersWithNPA.at(0).getReaderConfigurationInfo().getIconWithNPA()->lookupUrl().toString();
+		newReaderImage = readersWithEid.at(0).getReaderConfigurationInfo().getIconWithNPA()->lookupUrl().toString();
 	}
 	else if (readerInfos.size() == 1)
 	{

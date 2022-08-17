@@ -318,12 +318,12 @@
 			},
 			"address": "https://www.bafoeg-digital.de",
 			"homepage": "https://www.bafoeg-digital.de",
-			"email": "pks@mw.sachsen-anhalt.de",
+			"email": "pks@mwu.sachsen-anhalt.de",
 			"longDescription": {
 				"": "Mit Ihrem Online-Ausweis können Sie auf BAföG Digital Ihren BAföG-Antrag komplett online stellen. Das nachträgliche Ausdrucken des Antrags erübrigt sich. Der Onlinedienst kann von Studierenden, Schülerinnen und Schülern sowie für das Auslands-BAföG genutzt werden.<br/><br/>Notwendige Dokumente können bequem per Upload-Funktion hochgeladen werden. Um Fristen zu wahren, können Sie das auch zu einem späteren Zeitpunkt nachholen. Auf BAföG Digital können Sie zudem jederzeit den Bearbeitungsstatus Ihres Antrags im zuständigen Amt für Ausbildungsförderung einsehen.<br/><br/>Um die komplett digitale Antragstellung nutzen zu können, ist eine elektronische Authentisierung notwendig. Hierzu bietet Ihnen BAföG Digital die Anmeldeoptionen 'Nutzerkonto Bund' oder 'Servicekonto eines Bundeslandes' an. Bei beiden Anmeldeoptionen werden Sie automatisch zu dem entsprechenden Dienst weitergeleitet, über den Sie sich digital mit Ihrem Online-Ausweis ausweisen können. Sobald der Authentisierungsprozess abgeschlossen ist, gelangen Sie zurück zu BAföG Digital.<br/><br/>BAföG Digital ist ein gemeinsames Angebot von Bund und den Ländern. BAföG Digital ist mittlerweile in allen Bundesländern verfügbar."
 			},
 			"phone": "+49 800 2236341",
-			"postalAddress": "Ministerium für Wirtschaft, Wissenschaft und Digitalisierung des Landes Sachsen-Anhalt<br/>Hasselbachstraße 4<br/>439104 Magdeburg",
+			"postalAddress": "Ministerium für Wissenschaft, Energie, Klimaschutz und Umwelt des Landes Sachsen-Anhalt<br/>Leipziger Straße 58<br/>39112 Magdeburg",
 			"icon": "BafoegDigital_icon.svg",
 			"category": "citizen",
 			"subjectUrls": [
@@ -346,7 +346,7 @@
 			"email": "poststelle@zbfs.bayern.de",
 			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://www.buergerserviceportal.de).",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern).",
 			"longName": {
 				"": "Beantragung Schwerbehindertenausweis Bayern"
 			}
@@ -711,14 +711,15 @@
 			"longDescription": {
 				"": "Das BayernPortal ist das zentrale Verwaltungsportal für den Freistaat Bayern und die bayerischen Kommunen.<br/>Es bietet Ihnen eine einheitliche Anlaufstelle sowie einen einheitlichen Zugang zu den staatlichen und kommunalen Verwaltungsdienstleistungen in Bayern. Sie erreichen darüber mehr als 150 Online-Dienstleistungen, mehr als 2.000 Fachdatenbanken, über 2.500 Formulare und Merkblätter sowie mehr als 20.000 Ansprechpartnerinnen und Ansprechpartner bei Behörden.<br/>Über das BayernPortal können Sie sich zudem ein Servicekonto einrichten, das BayernID genannt wird und mit dem Sie die Verwaltungsdienstleistungen aller angeschlossenen Kommunen und des Freistaats Bayern einfach und sicher nutzen können. Die Einrichtung Ihrer BayernID und die Anmeldung an diesem persönlichen Servicekonto können Sie auch mit der Online-Ausweisfunktion vornehmen.<br/>Ihre in Ihrem Servicekonto gespeicherten Daten werden automatisch in Ihre Anträge übernommen. Dadurch sparen Sie Zeit und erleichtern der Behörde die Bearbeitung Ihres Anliegens.<br/>In Verbindung mit dem Bayerischen E-Government Gesetz bietet Ihnen die BayernID die Möglichkeit, die in vielen Fällen erforderliche Schriftform zu ersetzen und damit Ihre Anträge ohne handschriftliche Unterschrift, d. h. vollständig online abzuwickeln. Sie müssen nicht mehr zur Behörde gehen oder Unterlagen per Post senden."
 			},
-			"address": "https://www.buergerserviceportal.de/bayern/classic",
+			"address": "https://www.freistaat.bayern",
 			"homepage": "https://www.freistaat.bayern",
 			"phone": "+49 89 12 22 20",
 			"email": "direkt@bayern.de",
 			"postalAddress": "Postfach 22 00 03<br/>80535 München",
 			"category": "citizen",
 			"subjectUrls": [
-				"https://www.buergerserviceportal.de"
+				"https://www.buergerserviceportal.de",
+				"https://bayernid.freistaat.bayern"
 			],
 			"longName": {
 				"": "Bürgerservice-Portale der bayerischen Kommunen"
@@ -933,6 +934,25 @@
 		},
 		{
 			"shortName": {
+				"": "Landkreis Märkisch-Oderland - iKFZ"
+			},
+			"longName": {
+				"": "Landkreis Märkisch-Oderland - Internetbasierte Fahrzeugzulassung"
+			},
+			"longDescription": {
+				"": "Mit der internetbasierten Fahrzeugzulassung (iKFZ) kann der gesamte Lebenszyklus Ihres Fahrzeuges aus zulassungsrechtlicher Sicht online abgewickelt werden - von der Neuzulassung bis zur Außerbetriebssetzung. Ohne Wartezeiten oder Gang zur Kfz-Zulassungsstelle.<br/><br/>Das Land Brandenburg hat dafür ein zentrales Portal geschaffen. Dort finden Sie alle teilnehmenden Zulassungsbehörden. Außerdem finden Sie dort weiterführende Erklärungen und Videos sowie die Voraussetzungen zur Nutzung des Services."
+			},
+			"homepage": "https://www.maerkisch-oderland.de",
+			"address": "https://ikfz.brandenburg.de/ikfz/de/kfz-zulassungsbehoerden/mol-maerkisch-oderland",
+			"phone": "+49 3346 850 716 1",
+			"email": "strassenverkehrsamt@landkreismol.de",
+			"postalAddress": "Landkreis Märkisch-Oderland<br/>Straßenverkehrsamt<br/>Am Biotop 12<br/>15344 Strausberg",
+			"icon": "KreisMaerkischOderland_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+		},
+		{
+			"shortName": {
 				"": "Landkreis Prignitz - iKFZ"
 			},
 			"longName": {
@@ -1033,7 +1053,7 @@
 			"longDescription": {
 				"": "Für die internetbasierten Kfz-Dienste wird die eID-Funktionalität des neuen Personalausweises benötigt."
 			},
-			"address": "https://formulare-extern.de/metaform/Form-Solutions/sid/assistant/5b83c44dc2dcdb75a7b07fea",
+			"address": "https://i-kfz.krzn.de/static/05554000.html",
 			"homepage": "https://www.kreis-borken.de",
 			"phone": "+49 2861 681 1310",
 			"email": "zulassungsstelle@kreis-borken.de",
@@ -1345,7 +1365,7 @@
 				"": "Wenn Sie Ihre PIN für den Online-Ausweis vergessen haben, Sie Ihren PIN-Brief mit der Transport-PIN nicht mehr haben oder Ihre PIN blockiert ist, können Sie hier einen PIN-Rücksetzbrief bestellen.<br/><br/>Sie erhalten diesen Brief per Post an Ihre deutsche Meldeadresse. Er enthält einen Aktivierungscode und eine neue PIN für Ihren Online-Ausweis, sodass Sie diesen im Anschluss wieder nutzen können."
 			},
 			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
-			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de",
+			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
 			"phone": "+49 180 1 33 33 33",
 			"postalAddress": "Bundesministerium des Innern, für Bau und Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
 			"icon": "bmi_icon.svg",
@@ -1535,7 +1555,7 @@
 			"longDescription": {
 				"": "Die AusweisApp2 verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus GmbH & Co. KG, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp2 angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."
 			},
-			"address": "https://www.ausweisapp.bund.de/download",
+			"address": "https://www.ausweisapp.bund.de/aa2/download",
 			"homepage": "https://www.ausweisapp.bund.de",
 			"phone": "+49 421 204 95 995",
 			"email": "support@ausweisapp.de",
@@ -1588,9 +1608,7 @@
 			"postalAddress": "Landratsamt München<br/>Mariahilfplatz 17<br/>81541 München",
 			"icon": "LandesamtMuenchen_icon.jpg",
 			"category": "citizen",
-			"subjectUrls": [
-				"https://bayernid.freistaat.bayern"
-			],
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern).",
 			"longName": {
 				"": "Landratsamt München"
 			}
@@ -1635,6 +1653,26 @@
 			"icon": "nEHS-Register_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from ELSTER (https://www.elster.de)."
+		},
+		{
+			"shortName": {
+				"": "Region Hannover - Internetbasierte Fahrzeugzulassung"
+			},
+			"longName": {
+				"": "Region Hannover - iKFZ"
+			},
+			"longDescription": {
+				"": "Mithilfe der internetbasierten Fahrzeugzulassung können Sie Ihr Fahrzeug ganz einfach anmelden, Adresse ändern und abmelden.<br/>Nähere Details zum Verfahren entnehmen Sie der Startseite des iKFZ-Portals."
+			},
+			"address": "https://region-hannover.govconnect.de",
+			"homepage": "https://region-hannover.govconnect.de",
+			"phone": "+49 511 616 17444",
+			"email": "TeamKfz@Region-Hannover.de",
+			"postalAddress": "Region Hannover<br/>Fachbereich Öffentliche Sicherheit<br/>Team Kfz-Zulassungsangelegenheiten<br/>Hildesheimer Straße 20<br/>30169 Hannover",
+			"category": "citizen",
+			"image": "RegionHannover_image.jpg",
+			"icon": "RegionHannover_icon.svg",
+			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
 		},
 		{
 			"shortName": {
@@ -1944,6 +1982,28 @@
 			"icon": "Hannover_icon.svg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+		},
+		{
+			"shortName": {
+				"": "Stadt Oberursel - Online Dienste"
+			},
+			"longName": {
+				"": "Stadt Oberursel (Taunus) - Online Dienste"
+			},
+			"longDescription": {
+				"": "Die Stadt Oberursel (Taunus) bietet auf ihrer Homepage Online-Dienste an. Diese werden ständig ergänzt. Die Verwaltungsleistungen können mit und ohne dem Servicekonto Hessen genutzt werden."
+			},
+			"address": "https://www.oberursel.de/online-dienste",
+			"homepage": "https://www.oberursel.de",
+			"phone": "+49 6171 502 0",
+			"email": "info@oberursel.de",
+			"postalAddress": "Stadtverwaltung Oberursel (Taunus)<br/>Rathausplatz 1<br/>61440 Oberursel (Taunus)",
+			"image": "Oberursel_image.jpg",
+			"icon": "Oberursel_icon.png",
+			"category": "citizen",
+			"subjectUrls": [
+				"https://mein-service.hessen.de"
+			]
 		},
 		{
 			"shortName": {

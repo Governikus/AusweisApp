@@ -31,7 +31,7 @@ class FileProvider
 		static FileProvider& getInstance();
 
 	public:
-		const QSharedPointer<UpdatableFile> getFile(const QString& pSection, const QString& pName, const QString& pDefaultPath = QString());
+		QSharedPointer<UpdatableFile> getFile(const QString& pSection, const QString& pName, const QString& pDefaultPath = QString());
 };
 
 } // namespace governikus

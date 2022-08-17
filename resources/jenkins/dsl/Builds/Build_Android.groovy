@@ -1,7 +1,5 @@
 import common.Build
 import common.Constants
-import static common.Constants.strip
-
 
 // ----------------------------------------------------------------- APK
 for(ARCH in Constants.AndroidArchAPK)
@@ -20,31 +18,28 @@ j.with
 {
 	steps
 	{
-		shell(strip("""\
-			cd build;
-			cmake ../source
-			-DCMAKE_BUILD_TYPE=MinSizeRel
-			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
-			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
-			-DAPK_SIGN_KEYSTORE=\${APK_SIGN_KEYSTORE_DEV}
-			-DAPK_SIGN_KEYSTORE_ALIAS=\${APK_SIGN_KEYSTORE_ALIAS_DEV}
-			-DAPK_SIGN_KEYSTORE_PSW=\${APK_SIGN_KEYSTORE_PSW_DEV}
-			"""))
-
-		shell('cd build; make \${MAKE_FLAGS} install')
-		shell('cd build; make apk')
-		shell('cd build; make verify.signature')
-		shell('cd build; make dump.apk')
+		shell("cd source; cmake --preset ci-android-apk -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
+		shell('cmake --build build')
+		shell('cmake --install build')
+		shell('cmake --build build --target apk')
+		shell('cmake --build build --target verify.signature')
+		shell('cmake --build build --target dump.apk')
 	}
 
 	publishers {
-		androidLint('build/dist/build/reports/lint-results.xml')
-		{
-			thresholds(
-				unstableTotal: [all: 0]
-			)
+		recordIssues {
+			tools {
+				androidLintParser {
+					pattern('**/lint-results*.xml')
+				}
+			}
+			qualityGates {
+				qualityGate {
+					threshold(1)
+					type('TOTAL')
+					unstable(false)
+				}
+			}
 		}
 	}
 }
@@ -64,43 +59,34 @@ def j = new Build
 		name: 'Android_AAR',
 		libraries: neededLibraries,
 		label: 'Android',
-		artifacts: 'build/**/dist/**/ausweisapp-*.aar,build/**/dist/**/ausweisapp-*.pom,build/**/dist/**/ausweisapp-*.jar,build/**/debug.symbols/*'
+		artifacts: 'build/dist/**/ausweisapp-*.aar,build/dist/**/ausweisapp-*.pom,build/dist/**/ausweisapp-*.jar,build/**/debug.symbols/*'
 	).generate(this)
-
-
-for(ARCH in Constants.AndroidArchAAR)
-{
 
 j.with
 {
 	steps
 	{
-		shell(strip("""\
-			mkdir -p build/${ARCH};
-			cd build/${ARCH};
-			cmake ../../source
-			-DINTEGRATED_SDK=ON
-			-DCMAKE_BUILD_TYPE=MinSizeRel
-			-DCMAKE_INSTALL_PREFIX=\${WORKSPACE}/build/dist
-			-DCMAKE_PREFIX_PATH="\${WORKSPACE}/libs/${ARCH}/build/dist;\${WORKSPACE}/libs/build/dist"
-			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
-			"""))
-
-		shell("cd build/${ARCH}; make \${MAKE_FLAGS} install")
-		shell("cd build/${ARCH}; make aar")
+		shell('cd source; cmake --preset ci-android-aar')
+		shell('cmake --build build')
+		shell('cmake --install build')
+		shell('cmake --build build --target aar')
 		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
 	}
 
 	publishers {
-		androidLint('build/dist/build/reports/lint-results.xml')
-		{
-			thresholds(
-				unstableTotal: [all: 0]
-			)
+		recordIssues {
+			tools {
+				androidLintParser {
+					pattern('**/lint-results*.xml')
+				}
+			}
+			qualityGates {
+				qualityGate {
+					threshold(1)
+					type('TOTAL')
+					unstable(false)
+				}
+			}
 		}
 	}
-}
-
 }

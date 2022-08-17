@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "context/WorkflowContext.h"
 #include "Env.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "WifiInfo.h"
+#include "context/WorkflowContext.h"
 
 #include <QObject>
 #include <QQmlEngine>
@@ -40,19 +40,17 @@ class ApplicationModel
 	Q_PROPERTY(qreal scaleFactor READ getScaleFactor WRITE setScaleFactor NOTIFY fireScaleFactorChanged)
 	Q_PROPERTY(bool wifiEnabled READ isWifiEnabled NOTIFY fireWifiEnabledChanged)
 
-	Q_PROPERTY(QString currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
+	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
 	Q_PROPERTY(int availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 
-	QSharedPointer<WorkflowContext> mContext;
-
-	ApplicationModel();
-	~ApplicationModel() override = default;
-	void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
-	ReaderManagerPlugInInfo getFirstPlugInInfo(ReaderManagerPlugInType pType) const;
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	Q_PROPERTY(QUrl customConfigPath READ getCustomConfigPath CONSTANT)
+#endif
 
 	private:
+		QSharedPointer<WorkflowContext> mContext;
 		constexpr static qreal DEFAULT_SCALE_FACTOR = 0.6;
 		qreal mScaleFactor;
 		WifiInfo mWifiInfo;
@@ -60,6 +58,7 @@ class ApplicationModel
 		QStringList mFeedback;
 		QTimer mFeedbackTimer;
 		const int mFeedbackDisplayLength;
+		bool mIsAppInForeground;
 #ifdef Q_OS_IOS
 		struct Private
 		{
@@ -70,8 +69,17 @@ class ApplicationModel
 		const QScopedPointer<Private> mPrivate;
 #endif
 
+		ApplicationModel();
+		~ApplicationModel() override = default;
+		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		ReaderManagerPlugInInfo getFirstPlugInInfo(ReaderManagerPlugInType pType) const;
+
 	private Q_SLOTS:
+		void onApplicationStateChanged(Qt::ApplicationState pState);
 		void onWifiEnabledChanged();
+
+	public Q_SLOTS:
+		void onTranslationChanged();
 
 	public:
 		enum class Settings
@@ -82,6 +90,16 @@ class ApplicationModel
 			SETTING_APP
 		};
 		Q_ENUM(Settings)
+
+		enum class Workflow
+		{
+			WORKFLOW_CHANGE_PIN,
+			WORKFLOW_SELF_AUTHENTICATION,
+			WORKFLOW_AUTHENTICATION,
+			WORKFLOW_SMART,
+			WORKFLOW_NONE
+		};
+		Q_ENUM(Workflow)
 
 		enum class QmlNfcState
 		{
@@ -94,6 +112,8 @@ class ApplicationModel
 
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
+		Q_INVOKABLE int randomInt(int pLowerBound, int pUpperBound) const;
+
 		QString getStoreUrl() const;
 		QUrl getReleaseNotesUrl() const;
 
@@ -104,7 +124,7 @@ class ApplicationModel
 		qreal getScaleFactor() const;
 		void setScaleFactor(qreal pScaleFactor);
 
-		QString getCurrentWorkflow() const;
+		Workflow getCurrentWorkflow() const;
 		int getAvailableReader() const;
 
 		QString getFeedback() const;
@@ -115,6 +135,7 @@ class ApplicationModel
 
 		Q_INVOKABLE void enableWifi();
 
+		Q_INVOKABLE void setClipboardText(const QString& pText) const;
 		Q_INVOKABLE void showSettings(const Settings& pAction);
 		Q_INVOKABLE void showFeedback(const QString& pMessage, bool pReplaceExisting = false);
 		Q_INVOKABLE void keepScreenOn(bool pActive);
@@ -122,6 +143,8 @@ class ApplicationModel
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 		Q_INVOKABLE QString onlineHelpUrl(const QString& pHelpSectionName);
 		Q_INVOKABLE void openOnlineHelp(const QString& pHelpSectionName);
+		Q_INVOKABLE QUrl getCustomConfigPath();
+		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename);
 #endif
 		Q_INVOKABLE QString stripHtmlTags(QString pString) const;
 #ifdef Q_OS_IOS
@@ -142,9 +165,10 @@ class ApplicationModel
 
 		void fireScaleFactorChanged();
 		void fireWifiEnabledChanged();
-		void fireCertificateRemoved(const QString& pDeviceName);
 
 		void fireFeedbackChanged();
+
+		void fireApplicationStateChanged(bool pIsAppInForeground);
 };
 
 

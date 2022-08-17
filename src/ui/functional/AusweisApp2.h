@@ -13,7 +13,7 @@ extern "C" {
 
 typedef void (* AusweisApp2Callback)(const char* pMsg);
 
-bool ausweisapp2_init(AusweisApp2Callback pCallback);
+bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* pCmdline);
 void ausweisapp2_shutdown(void);
 bool ausweisapp2_is_running(void);
 void ausweisapp2_send(const char* pCmd);

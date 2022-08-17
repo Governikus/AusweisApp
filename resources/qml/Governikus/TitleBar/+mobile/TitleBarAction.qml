@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,7 +13,7 @@ Item {
 	property alias icon: imageItem.source
 	property alias text: textItem.text
 	readonly property real minimumWidth: d.isEmpty ? 0 : Math.max(implicitHeight, d.textWidth)
-	signal clicked
+	signal clicked()
 
 	height: implicitHeight
 	width: implicitWidth
@@ -24,7 +23,8 @@ Item {
 	Accessible.role: Accessible.Button
 	Accessible.name: text
 	Accessible.ignored: d.isEmpty
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
+	Accessible.focusable: true
+	Accessible.onPressAction: clicked()
 
 	QtObject {
 		id: d

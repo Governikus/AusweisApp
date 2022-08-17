@@ -6,10 +6,11 @@
 
 #include "CardInfo.h"
 
+#include "CardConnectionWorker.h"
+#include "apdu/FileCommand.h"
+#include "asn1/ApplicationTemplates.h"
 #include "asn1/PaceInfo.h"
 #include "asn1/SecurityInfos.h"
-#include "CardConnectionWorker.h"
-#include "SelectBuilder.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -25,13 +26,27 @@ using namespace governikus;
 const int CardInfo::UNDEFINED_RETRY_COUNTER = -1;
 
 
-CardInfo::CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative)
+CardInfo::CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative, bool pPinInitial)
 	: mCardType(pCardType)
 	, mEfCardAccess(pEfCardAccess)
 	, mRetryCounter(pRetryCounter)
 	, mPinDeactivated(pPinDeactivated)
 	, mPukInoperative(pPukInoperative)
+	, mPinInitial(pPinInitial)
+	, mTagType(TagType::UNKNOWN)
 {
+}
+
+
+void CardInfo::setCardType(CardType pCardType)
+{
+	mCardType = pCardType;
+}
+
+
+CardType CardInfo::getCardType() const
+{
+	return mCardType;
 }
 
 
@@ -47,35 +62,16 @@ QString CardInfo::getCardTypeString() const
 			//: ERROR ALL_PLATFORMS An unknown card is present/inserted. The text is only used in DiagnosisView.
 			return tr("unknown type", "Karte");
 
-		case CardType::PASSPORT:
-			//: ERROR ALL_PLATFORMS A passport card is present/inserted. The text is only used in DiagnosisView.
-			return tr("Passport");
-
 		case CardType::EID_CARD:
 			//: ERROR ALL_PLATFORMS An ID card is present/inserted. The text is only used in DiagnosisView.
 			return tr("ID card (PA/eAT/eID)");
+
+		case CardType::SMART_EID:
+			//: ERROR ALL_PLATFORMS A Smart-ID is present/inserted. The text is only used in DiagnosisView.
+			return tr("Smart-eID");
 	}
 
 	Q_UNREACHABLE();
-	return QString();
-}
-
-
-bool CardInfo::isAvailable() const
-{
-	return mCardType != CardType::NONE;
-}
-
-
-bool CardInfo::isEid() const
-{
-	return mCardType == CardType::EID_CARD;
-}
-
-
-bool CardInfo::isPassport() const
-{
-	return mCardType == CardType::PASSPORT;
 }
 
 
@@ -115,52 +111,85 @@ bool CardInfo::isPukInoperative() const
 }
 
 
-bool CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, ReaderInfo& pReaderInfo)
+bool CardInfo::isPinInitial() const
 {
-	pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
+	return mPinInitial;
+}
 
+
+CardInfo::TagType CardInfo::getTagType() const
+{
+	return mTagType;
+}
+
+
+void CardInfo::setTagType(CardInfo::TagType pTagType)
+{
+	mTagType = pTagType;
+}
+
+
+MobileEidType CardInfo::getMobileEidType() const
+{
+	if (!mEfCardAccess || !mEfCardAccess->getMobileEIDTypeInfo())
+	{
+		return MobileEidType::UNKNOWN;
+	}
+
+	const auto oid = mEfCardAccess->getMobileEIDTypeInfo()->getOid();
+	if (oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_CERTIFIED))
+	{
+		return MobileEidType::SE_CERTIFIED;
+	}
+	if (oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_ENDORSED))
+	{
+		return MobileEidType::SE_ENDORSED;
+	}
+	if (oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_HW_KEYSTORE))
+	{
+		return MobileEidType::HW_KEYSTORE;
+	}
+
+	return MobileEidType::UNKNOWN;
+}
+
+
+CardInfo CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+{
 	if (pCardConnectionWorker == nullptr)
 	{
 		qCWarning(card) << "No connection to smart card";
-		return false;
+		return CardInfo(CardType::UNKNOWN);
 	}
 
-	const CardType type = CardInfoFactory::detectCard(pCardConnectionWorker);
-
-	if (type != CardType::EID_CARD)
+	if (!CardInfoFactory::detectCard(pCardConnectionWorker))
 	{
 		qCWarning(card) << "Not a German EID card";
-		return false;
+		return CardInfo(CardType::UNKNOWN);
 	}
 
 	const auto& efCardAccess = readEfCardAccess(pCardConnectionWorker);
 	if (!checkEfCardAccess(efCardAccess))
 	{
 		qCWarning(card) << "EFCardAccess not found or is invalid";
-		return false;
-	}
-	pReaderInfo.setCardInfo(CardInfo(type, efCardAccess));
-
-	if (pCardConnectionWorker->updateRetryCounter() != CardReturnCode::OK)
-	{
-		qCWarning(card) << "Update of the retry counter failed";
-		pReaderInfo.setCardInfo(CardInfo(CardType::UNKNOWN));
-		return false;
+		return CardInfo(CardType::UNKNOWN);
 	}
 
-	return true;
+	const CardInfo cardInfo(efCardAccess->getMobileEIDTypeInfo() ? CardType::SMART_EID : CardType::EID_CARD, efCardAccess);
+	qCDebug(card) << "Card detected:" << cardInfo;
+	return cardInfo;
 }
 
 
 bool CardInfoFactory::selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef)
 {
-	qCDebug(card) << "Try to select application:" << pFileRef.path.toHex();
+	qCDebug(card) << "Try to select application:" << pFileRef;
 
-	CommandApdu command = SelectBuilder(pFileRef).build();
+	FileCommand command(pFileRef);
 	ResponseApduResult select = pCardConnectionWorker->transmit(command);
-	if (select.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	if (select.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "Cannot select application identifier:" << select.mResponseApdu.getReturnCode();
+		qCWarning(card) << "Cannot select application identifier:" << select.mResponseApdu.getStatusCode();
 		return false;
 	}
 
@@ -174,39 +203,32 @@ bool CardInfoFactory::detectEid(const QSharedPointer<CardConnectionWorker>& pCar
 	selectApplication(pCardConnectionWorker, pRef);
 
 	// 2. Select the master file
-	CommandApdu command = SelectBuilder(FileRef::masterFile()).build();
+	FileCommand command(FileRef::masterFile());
 	ResponseApduResult result = pCardConnectionWorker->transmit(command);
-	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	if (result.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
 	{
-		qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getReturnCode();
+		qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getStatusCode();
 		return false;
 	}
 
-	// 3. CL=00, INS=A4=SELECT, P1= 02, P2=0C, Lc=02, Data=2F00 (FI of EF.DIR), Le=absent
-	command = SelectBuilder(FileRef::efDir()).build();
-	result = pCardConnectionWorker->transmit(command);
-	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	// 3. Read EF.DIR
+	QByteArray rawEfDir;
+	if (pCardConnectionWorker->readFile(FileRef::efDir(), rawEfDir) != CardReturnCode::OK)
 	{
-		qCWarning(card) << "Cannot select EF.DIR:" << result.mResponseApdu.getReturnCode();
+		qCWarning(card) << "Cannot read EF.DIR";
 		return false;
 	}
 
-	// 4. CL=00, INS=B0=Read Binary, P1=00, P2=00 (no offset), Lc=00, Le=5A
-	command = CommandApdu(QByteArray::fromHex("00B000005A"));
-	result = pCardConnectionWorker->transmit(command);
-	if (result.mResponseApdu.getReturnCode() != StatusCode::SUCCESS)
+	const auto efDir = ApplicationTemplates::decode(rawEfDir);
+	if (efDir.isNull())
 	{
-		qCWarning(card) << "Cannot read EF.DIR:" << result.mResponseApdu.getReturnCode();
+		qCWarning(card) << "Cannot parse EF.DIR";
 		return false;
 	}
 
-	// matching value from CIF
-	static const QByteArray matchingValue = QByteArray::fromHex("61324F0FE828BD080FA000000167455349474E500F434941207A752044462E655369676E5100730C4F0AA000000167455349474E61094F07A0000002471001610B4F09E80704007F00070302610C4F0AA000000167455349474E");
-	bool efDirMatches = result.mResponseApdu.getData().startsWith(matchingValue);
-	if (!efDirMatches)
+	if (!efDir->contains(FileRef::appEId().getIdentifier()))
 	{
-		qCWarning(card) << "expected EF.DIR(00,5A): " << matchingValue.toHex();
-		qCWarning(card) << "actual   EF.DIR(00,5A): " << result.mResponseApdu.getData().left(90).toHex();
+		qCWarning(card) << "EF.DIR does not match:" << rawEfDir.toHex();
 		return false;
 	}
 
@@ -214,22 +236,23 @@ bool CardInfoFactory::detectEid(const QSharedPointer<CardConnectionWorker>& pCar
 }
 
 
-CardType CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+bool CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
 	for (const auto& appId : {FileRef::appEId(), FileRef::appPersosim()})
 	{
-		if (detectEid(pCardConnectionWorker, appId))
+		const auto eidAvailable = detectEid(pCardConnectionWorker, appId);
+		if (eidAvailable)
 		{
-			return CardType::EID_CARD;
+			return true;
 		}
 	}
 
 	if (selectApplication(pCardConnectionWorker, FileRef::appPassport()))
 	{
-		return CardType::PASSPORT;
+		qCDebug(card) << "Passport found";
 	}
 
-	return CardType::UNKNOWN;
+	return false;
 }
 
 
@@ -289,8 +312,9 @@ QDebug operator<<(QDebug pDbg, const CardInfo& pCardInfo)
 	QDebugStateSaver saver(pDbg);
 	pDbg.nospace() << "{Type: " << pCardInfo.mCardType
 				   << ", Retry counter: " << pCardInfo.mRetryCounter
-				   << ", Pin deactivated: " << pCardInfo.mPinDeactivated << "}";
-	// Skipping mEfCardAccess since there is no pretty formating available.
+				   << ", PIN deactivated: " << pCardInfo.mPinDeactivated
+				   << ", PIN initial: " << pCardInfo.mPinInitial << "}";
+	// Skipping mEfCardAccess since there is no pretty formatting available.
 
 	return pDbg;
 }

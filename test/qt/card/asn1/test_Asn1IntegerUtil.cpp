@@ -12,6 +12,7 @@
 #include <openssl/objects.h>
 #include <openssl/x509v3.h>
 
+
 using namespace governikus;
 
 
@@ -25,21 +26,61 @@ class test_Asn1IntegerUtil
 		{
 			ASN1_INTEGER* asn1Integer = nullptr;
 
-			QCOMPARE(Asn1IntegerUtil::getValue(asn1Integer), QByteArray());
+			QCOMPARE(Asn1IntegerUtil::getValue(asn1Integer), -1);
+		}
+
+
+		void getValue_data()
+		{
+			QTest::addColumn<QByteArray>("data");
+			QTest::addColumn<int>("number");
+
+			QTest::newRow("-1") << QByteArray::fromHex("0201FF") << -1;
+			QTest::newRow("0") << QByteArray::fromHex("020100") << 0;
+			QTest::newRow("1") << QByteArray::fromHex("020101") << 1;
+			QTest::newRow("127") << QByteArray::fromHex("02017F") << 127;
+			QTest::newRow("128") << QByteArray::fromHex("02020080") << 128;
+			QTest::newRow("256") << QByteArray::fromHex("02020100") << 256;
+			QTest::newRow("32767") << QByteArray::fromHex("02027FFF") << 32767;
+			QTest::newRow("32768") << QByteArray::fromHex("0203008000") << 32768;
 		}
 
 
 		void getValue()
 		{
-			ASN1_INTEGER* asn1Integer = ASN1_INTEGER_new();
+			QFETCH(QByteArray, data);
+			QFETCH(int, number);
 
-			QByteArray encoded = QByteArray::fromHex("02080123456789ABCDEF");
-			const unsigned char* encodedPointer = reinterpret_cast<unsigned char*>(encoded.data());
-			d2i_ASN1_INTEGER(&asn1Integer, &encodedPointer, encoded.size());
-
-			QCOMPARE(Asn1IntegerUtil::getValue(asn1Integer).toHex().toUpper(), QByteArray("0123456789ABCDEF"));
-
+			const uchar* dataPointer = reinterpret_cast<uchar*>(data.data());
+			ASN1_INTEGER* asn1Integer = d2i_ASN1_INTEGER(nullptr, &dataPointer, data.length());
+			QCOMPARE(Asn1IntegerUtil::getValue(asn1Integer), number);
 			ASN1_INTEGER_free(asn1Integer);
+		}
+
+
+		void encode_data()
+		{
+			QTest::addColumn<int>("number");
+			QTest::addColumn<QByteArray>("data");
+
+			QTest::newRow("-1") << -1 << QByteArray::fromHex("FF");
+			QTest::newRow("0") << 0 << QByteArray::fromHex("00");
+			QTest::newRow("1") << 1 << QByteArray::fromHex("01");
+			QTest::newRow("127") << 127 << QByteArray::fromHex("7F");
+			QTest::newRow("128") << 128 << QByteArray::fromHex("0080");
+			QTest::newRow("256") << 256 << QByteArray::fromHex("0100");
+			QTest::newRow("32767") << 32767 << QByteArray::fromHex("7FFF");
+			QTest::newRow("32768") << 32768 << QByteArray::fromHex("008000");
+		}
+
+
+		void encode()
+		{
+			QFETCH(int, number);
+			QFETCH(QByteArray, data);
+
+			const auto& rawNumber = Asn1IntegerUtil::encode(number);
+			QCOMPARE(rawNumber, data);
 		}
 
 

@@ -15,16 +15,9 @@ using namespace governikus;
 
 
 StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-}
-
-
-bool StateSelectReader::requiresCard(ReaderManagerPlugInType pPlugInType)
-{
-	return pPlugInType == ReaderManagerPlugInType::PCSC ||
-		   pPlugInType == ReaderManagerPlugInType::REMOTE;
 }
 
 
@@ -35,22 +28,24 @@ void StateSelectReader::run()
 	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateSelectReader::onReaderStatusChanged);
 
 	onReaderInfoChanged();
 
+	const auto& context = getContext();
 	const auto& readerPlugInTypes = Enum<ReaderManagerPlugInType>::getList();
-	const auto& enabledPlugInTypes = getContext()->getReaderPlugInTypes();
+	const auto& enabledPlugInTypes = context->getReaderPlugInTypes();
 	for (const auto t : readerPlugInTypes)
 	{
-		enabledPlugInTypes.contains(t) ? readerManager->startScan(t) : readerManager->stopScan(t);
+		enabledPlugInTypes.contains(t) && !context->skipStartScan() ? readerManager->startScan(t) : readerManager->stopScan(t);
 	}
+	context->setSkipStartScan(false);
 }
 
 
 void StateSelectReader::onReaderInfoChanged()
 {
 	const QSharedPointer<WorkflowContext> context = getContext();
-	Q_ASSERT(context);
 	bool currentReaderHasEidCardButInsufficientApduLength = false;
 
 	const QVector<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
@@ -59,16 +54,15 @@ void StateSelectReader::onReaderInfoChanged()
 
 	for (const auto& info : allReaders)
 	{
-		if (info.isConnected() && (!requiresCard(info.getPlugInType()) || info.hasEidCard()))
+		if (info.hasEid())
 		{
-			if (info.sufficientApduLength())
-			{
-				selectableReaders.append(info);
-			}
-			else
+			if (info.insufficientApduLength())
 			{
 				currentReaderHasEidCardButInsufficientApduLength = true;
+				continue;
 			}
+
+			selectableReaders.append(info);
 		}
 	}
 
@@ -91,10 +85,23 @@ void StateSelectReader::onReaderInfoChanged()
 }
 
 
+void StateSelectReader::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+{
+	const auto& readerPlugInType = pInfo.getPlugInType();
+	const auto& context = getContext();
+
+	const auto& shouldBeRunning = context->getReaderPlugInTypes().contains(readerPlugInType);
+
+	if (Env::getSingleton<ReaderManager>()->isScanRunning(readerPlugInType) != shouldBeRunning)
+	{
+		Q_EMIT fireRetry();
+	}
+}
+
+
 void StateSelectReader::onEntry(QEvent* pEvent)
 {
 	const WorkflowContext* const context = getContext().data();
-	Q_ASSERT(context);
 
 	/*
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.

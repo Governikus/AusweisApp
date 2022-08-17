@@ -2,8 +2,9 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "ASN1TemplateUtil.h"
 #include "SecurityInfos.h"
+
+#include "ASN1TemplateUtil.h"
 
 #include <QLoggingCategory>
 
@@ -47,30 +48,43 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		return QSharedPointer<SecurityInfos>();
 	}
 
-	QVector<QSharedPointer<const SecurityInfo> > securityInfos;
-	QVector<QSharedPointer<const PaceInfo> > paceInfos;
-	QVector<QSharedPointer<const ChipAuthenticationInfo> > chipAuthenticationInfos;
+	QVector<QSharedPointer<const SecurityInfo>> securityInfos;
+	QVector<QSharedPointer<const PaceInfo>> paceInfos;
+	QVector<QSharedPointer<const ChipAuthenticationInfo>> chipAuthenticationInfos;
+	QSharedPointer<const MobileEIDTypeInfo> mobileEIDTypeInfo;
 
 	for (int i = 0; i < sk_securityinfo_st_num(securityInfosStruct.data()); ++i)
 	{
 		securityinfo_st* secInfoStruct = sk_securityinfo_st_value(securityInfosStruct.data(), i);
 		QByteArray bytes = encodeObject(secInfoStruct);
 
-		if (auto pi = PaceInfo::decode(bytes))
+		if (auto meid = MobileEIDTypeInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed PACEInfo";
+			qCDebug(card) << "Parsed SecurityInfo:" << meid;
+
+			if (mobileEIDTypeInfo)
+			{
+				qCCritical(card) << "More than one MobileEIDTypeInfo";
+				return QSharedPointer<SecurityInfos>();
+			}
+			mobileEIDTypeInfo = meid;
+			securityInfos << meid;
+		}
+		else if (auto pi = PaceInfo::decode(bytes))
+		{
+			qCDebug(card) << "Parsed SecurityInfo:" << pi;
 			paceInfos << pi;
 			securityInfos << pi;
 		}
 		else if (auto cai = ChipAuthenticationInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed ChipAuthenticationInfo";
+			qCDebug(card) << "Parsed SecurityInfo:" << cai;
 			chipAuthenticationInfos << cai;
 			securityInfos << cai;
 		}
 		else if (auto secInfo = SecurityInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed SecurityInfo for protocol" << secInfo->getProtocol();
+			qCDebug(card) << "Parsed SecurityInfo:" << secInfo->getOid();
 			securityInfos << secInfo;
 		}
 		else
@@ -80,18 +94,20 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		}
 	}
 
-	return QSharedPointer<SecurityInfos>::create(pBytes, securityInfos, paceInfos, chipAuthenticationInfos);
+	return QSharedPointer<SecurityInfos>::create(pBytes, securityInfos, paceInfos, chipAuthenticationInfos, mobileEIDTypeInfo);
 }
 
 
 SecurityInfos::SecurityInfos(const QByteArray& pBytes,
-		const QVector<QSharedPointer<const SecurityInfo> >& pSecurityInfos,
-		const QVector<QSharedPointer<const PaceInfo> >& pPaceInfos,
-		const QVector<QSharedPointer<const ChipAuthenticationInfo> >& pChipAuthenticationInfos)
+		const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
+		const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
+		const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
+		const QSharedPointer<const MobileEIDTypeInfo>& pMobileEIDTypeInfo)
 	: mContentBytes(pBytes)
 	, mSecurityInfos(pSecurityInfos)
 	, mPaceInfos(pPaceInfos)
 	, mChipAuthenticationInfos(pChipAuthenticationInfos)
+	, mMobileEIDTypeInfo(pMobileEIDTypeInfo)
 {
 }
 
@@ -102,19 +118,25 @@ const QByteArray& SecurityInfos::getContentBytes() const
 }
 
 
-const QVector<QSharedPointer<const SecurityInfo> >& SecurityInfos::getSecurityInfos() const
+const QVector<QSharedPointer<const SecurityInfo>>& SecurityInfos::getSecurityInfos() const
 {
 	return mSecurityInfos;
 }
 
 
-const QVector<QSharedPointer<const PaceInfo> >& SecurityInfos::getPaceInfos() const
+const QVector<QSharedPointer<const PaceInfo>>& SecurityInfos::getPaceInfos() const
 {
 	return mPaceInfos;
 }
 
 
-const QVector<QSharedPointer<const ChipAuthenticationInfo> >& SecurityInfos::getChipAuthenticationInfos() const
+const QVector<QSharedPointer<const ChipAuthenticationInfo>>& SecurityInfos::getChipAuthenticationInfos() const
 {
 	return mChipAuthenticationInfos;
+}
+
+
+const QSharedPointer<const MobileEIDTypeInfo>& SecurityInfos::getMobileEIDTypeInfo() const
+{
+	return mMobileEIDTypeInfo;
 }

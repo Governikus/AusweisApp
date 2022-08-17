@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Style 1.0
 
@@ -10,7 +10,7 @@ GPaneBackground {
 	id: root
 	property alias title: titleText.text
 	property alias contentSpacing: paneContent.spacing
-	default property alias paneChildren: paneContent.children
+	default property alias paneData: paneContent.data
 
 	height: childrenRect.height
 
@@ -29,6 +29,8 @@ GPaneBackground {
 
 		PaneTitle {
 			id: titleText
+
+			width: parent.width
 		}
 
 		Column {

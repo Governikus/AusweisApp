@@ -6,7 +6,7 @@
 
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
-#include "MockReader.h"
+#include "TestWorkflowContext.h"
 
 #include <QtTest>
 
@@ -23,7 +23,7 @@ class test_WorkflowContext
 	private Q_SLOTS:
 		void init()
 		{
-			mContext.reset(new WorkflowContext());
+			mContext.reset(new TestWorkflowContext());
 		}
 
 
@@ -143,7 +143,7 @@ class test_WorkflowContext
 		void test_ReaderPlugInTypes()
 		{
 			QVector<ReaderManagerPlugInType> vector1({ReaderManagerPlugInType::PCSC});
-			QVector<ReaderManagerPlugInType> vector2({ReaderManagerPlugInType::REMOTE});
+			QVector<ReaderManagerPlugInType> vector2({ReaderManagerPlugInType::REMOTE_IFD});
 			QSignalSpy spy(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
 
 			mContext->setReaderPlugInTypes(vector1);
@@ -239,6 +239,21 @@ class test_WorkflowContext
 
 			Q_EMIT mContext->fireCancelWorkflow();
 			QVERIFY(mContext->isWorkflowCancelled());
+		}
+
+
+		void test_alreadyClaimed()
+		{
+			QVERIFY(!mContext->wasClaimed());
+
+			QTest::ignoreMessage(QtDebugMsg, R"(Claim workflow by "test_WorkflowContext")");
+			mContext->claim(this);
+			QVERIFY(mContext->wasClaimed());
+
+			QTest::ignoreMessage(QtDebugMsg, R"(Claim workflow by "test_WorkflowContext")");
+			QTest::ignoreMessage(QtWarningMsg, R"(Workflow already claimed by "test_WorkflowContext")");
+			mContext->claim(this);
+			QVERIFY(mContext->wasClaimed());
 		}
 
 

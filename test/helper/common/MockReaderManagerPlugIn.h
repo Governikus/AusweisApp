@@ -33,8 +33,9 @@ class MockReaderManagerPlugIn
 
 		static MockReaderManagerPlugIn& getInstance();
 
+		void insert(const QString& pReaderName, const QVariant& pData) override;
 		[[nodiscard]] QList<Reader*> getReaders() const override;
-		MockReader* addReader(const QString& pReaderName);
+		MockReader* addReader(const QString& pReaderName = QStringLiteral("MockReader"), ReaderManagerPlugInType pType = MockReader::cMOCKED_READERMANAGER_TYPE);
 		void removeReader(const QString& pReaderName);
 		void removeAllReader();
 };

@@ -4,7 +4,7 @@ metadata:
   name: android
   namespace: ausweisapp
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       workload.user.cattle.io/workloadselector: deployment-ausweisapp-android
@@ -14,6 +14,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: EXECUTOR
+          value: "2"
         - name: APK_SIGN_KEYSTORE
           value: /home/governikus/release.keystore
         - name: APK_SIGN_KEYSTORE_ALIAS
@@ -26,10 +28,10 @@ spec:
           value: android
         - name: CCACHE_DIR
           value: /ccache
-        - name: EXECUTOR
-          value: "2"
-        - name: MAKE_FLAGS
-          value: -j5
+        - name: CMAKE_BUILD_PARALLEL_LEVEL
+          value: 5
+        - name: CTEST_PARALLEL_LEVEL
+          value: 5
         - name: PROCESSOR_COUNT
           value: 5
         - name: APK_SIGN_KEYSTORE_PSW
@@ -78,7 +80,7 @@ spec:
             cpu: "10"
             memory: 8Gi
           requests:
-            cpu: "10"
+            cpu: 500m
             memory: 4Gi
         securityContext:
           allowPrivilegeEscalation: false

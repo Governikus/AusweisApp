@@ -8,6 +8,7 @@
 
 #include "Env.h"
 #include "SelfAuthenticationData.h"
+#include "WorkflowRequest.h"
 
 #include <QAbstractListModel>
 #include <QEvent>
@@ -55,7 +56,7 @@ class SelfAuthModel
 		bool event(QEvent* pEvent) override;
 
 	Q_SIGNALS:
-		void fireStartWorkflow();
+		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 };
 
 

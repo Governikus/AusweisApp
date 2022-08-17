@@ -4,18 +4,18 @@
 
 package com.governikus.ausweisapp2;
 
+import java.util.logging.Level;
+
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.DeadObjectException;
 import android.os.IBinder;
-import android.util.Log;
 
-import org.qtproject.qt5.android.QtNative;
+import org.qtproject.qt.android.QtNative;
 
 class AidlBinder extends IAusweisApp2Sdk.Stub
 {
-	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
 	private IAusweisApp2SdkCallback mCallback;
 	private String mCallbackSessionId;
 
@@ -29,7 +29,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 		IBinder binder = mCallback.asBinder();
 		if (!binder.isBinderAlive() || !binder.pingBinder())
 		{
-			Log.i(LOG_TAG, "Android service: Removing dead callback.");
+			LogHandler.getLogger().info("Android service: Removing dead callback.");
 			mCallback = null;
 		}
 	}
@@ -37,7 +37,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	private void handleClientException(Throwable pException)
 	{
-		Log.w(LOG_TAG, "Android service: Connected client sent an exception. Dropping client.", pException);
+		LogHandler.getLogger().log(Level.WARNING, "Android service: Connected client sent an exception. Dropping client.", pException);
 		mCallback = null;
 	}
 
@@ -46,14 +46,14 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	{
 		if (pCallback == null)
 		{
-			Log.w(LOG_TAG, "Android service: Supplied callback is null.");
+			LogHandler.getLogger().warning("Android service: Supplied callback is null.");
 			return false;
 		}
 
 		cleanUpDeadCallback();
 		if (mCallback != null)
 		{
-			Log.i(LOG_TAG, "Android service: A client is already connected. Dropping previous callback.");
+			LogHandler.getLogger().info("Android service: A client is already connected. Dropping previous callback.");
 			try
 			{
 				mCallbackSessionId = null;
@@ -73,7 +73,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 		mCallback = pCallback;
 		final boolean sessionIdIsSecure = isSecureRandomPsk();
-		Log.i(LOG_TAG, "Android service: Callback connected.");
+		LogHandler.getLogger().info("Android service: Callback connected.");
 
 		try
 		{
@@ -83,7 +83,8 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 		{
 			handleClientException(t);
 		}
-		return sessionIdIsSecure;
+
+		return startReaderManagerScans() && sessionIdIsSecure;
 	}
 
 
@@ -91,7 +92,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 	{
 		if (mCallback == null || pSessionId.compareTo(mCallbackSessionId) != 0)
 		{
-			Log.w(LOG_TAG, "Android service: Invalid sessiond ID!");
+			LogHandler.getLogger().warning("Android service: Invalid sessiond ID!");
 			return false;
 		}
 		return true;
@@ -100,7 +101,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	public synchronized boolean send(String pSessionId, String pMessageFromClient)
 	{
-		Log.d(LOG_TAG, "Android service: Received JSON from client");
+		LogHandler.getLogger().info("Android service: Received JSON from client");
 
 		if (!isValidSessionId(pSessionId))
 		{
@@ -114,7 +115,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	public synchronized boolean updateNfcTag(String pSessionId, Tag pTag)
 	{
-		Log.d(LOG_TAG, "Android service: Received nfc tag from client");
+		LogHandler.getLogger().info("Android service: Received nfc tag from client");
 
 		if (!isValidSessionId(pSessionId))
 		{
@@ -131,11 +132,11 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	public synchronized void aidlReceive(String pMessageToClient)
 	{
-		Log.d(LOG_TAG, "Android service: Passing JSON to client");
+		LogHandler.getLogger().info("Android service: Passing JSON to client");
 
 		if (mCallback == null)
 		{
-			Log.d(LOG_TAG, "Android service: Callback not connected.");
+			LogHandler.getLogger().info("Android service: Callback not connected.");
 			return;
 		}
 
@@ -145,7 +146,7 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 		}
 		catch (DeadObjectException e)
 		{
-			Log.w(LOG_TAG, "Android service: Connected client is already dead.");
+			LogHandler.getLogger().warning("Android service: Connected client is already dead.");
 			mCallback = null;
 		}
 		catch (Throwable t)
@@ -157,5 +158,6 @@ class AidlBinder extends IAusweisApp2Sdk.Stub
 
 	private native String resetValidSessionID();
 	private native boolean isSecureRandomPsk();
+	private native boolean startReaderManagerScans();
 	private native void aidlSend(String pMessageFromClient);
 }

@@ -4,7 +4,6 @@
 
 #include "command/EstablishPaceChannelCommand.h"
 
-#include "LogHandler.h"
 #include "MockCardConnectionWorker.h"
 
 #include <QtCore>
@@ -49,15 +48,19 @@ class test_EstablishPaceChannelCommand
 
 		void test_InternalExecute()
 		{
-			const QByteArray passwort = QByteArrayLiteral("passwort");
-			QByteArray chat("chat");
-			QByteArray description("description");
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			MockReader reader(QStringLiteral("reader"));
+			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, true, true);
+			reader.setInfoCardInfo(info);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 
 			worker->addPaceCode(CardReturnCode::OK);
 			worker->addPaceCode(CardReturnCode::OK);
 			worker->addPaceCode(CardReturnCode::UNKNOWN);
 			worker->addPaceCode(CardReturnCode::PROTOCOL_ERROR);
+
+			const QByteArray passwort = QByteArrayLiteral("passwort");
+			QByteArray chat("chat");
+			QByteArray description("description");
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PIN,
 					passwort, chat, description);
 
@@ -72,6 +75,91 @@ class test_EstablishPaceChannelCommand
 
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+		}
+
+
+		void test_InternalExecuteNoReader()
+		{
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const QByteArray puk("00000000000");
+
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::CARD_NOT_FOUND);
+		}
+
+
+		void test_InternalExecuteNoCard()
+		{
+			MockReader reader(QStringLiteral("reader"));
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			const QByteArray puk("00000000000");
+
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::CARD_NOT_FOUND);
+		}
+
+
+		void test_InternalExecutePinNotBlocked()
+		{
+			MockReader reader(QStringLiteral("reader"));
+			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, true, true);
+			reader.setInfoCardInfo(info);
+
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+			const QByteArray puk("00000000000");
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::PIN_NOT_BLOCKED);
+		}
+
+
+		void test_InternalExecuteProtocolError()
+		{
+			MockReader reader(QStringLiteral("reader"));
+			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
+			reader.setInfoCardInfo(info);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+
+			worker->addPaceCode(CardReturnCode::PROTOCOL_ERROR);
+			const QByteArray puk("12131415");
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+		}
+
+
+		void test_InternalExecuteOK()
+		{
+			MockReader reader(QStringLiteral("reader"));
+			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
+			reader.setInfoCardInfo(info);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addPaceCode(CardReturnCode::OK);
+			const QByteArray puk("00000000000");
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
+		}
+
+
+		void test_InternalExecutePukInoperative()
+		{
+			MockReader reader(QStringLiteral("reader"));
+			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
+			reader.setInfoCardInfo(info);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("6900"));
+			worker->addPaceCode(CardReturnCode::OK);
+			const QByteArray puk("00000000000");
+			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::PUK_INOPERATIVE);
+			QVERIFY(worker->getReaderInfo().getCardInfo().isPukInoperative());
 		}
 
 

@@ -22,8 +22,7 @@ MsgHandlerAccessRights::MsgHandlerAccessRights(const QJsonObject& pObj, MsgConte
 	auto ctx = pContext.getContext<AuthContext>();
 	Q_ASSERT(ctx);
 
-	const auto& jsonRaw = pObj[QLatin1String("chat")];
-	if (jsonRaw.isUndefined())
+	if (const auto& jsonRaw = pObj[QLatin1String("chat")]; jsonRaw.isUndefined())
 	{
 		setError(QLatin1String("'chat' cannot be undefined"));
 	}
@@ -48,29 +47,34 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	if (!pContext->getAccessRightManager()->getOptionalAccessRights().isEmpty())
 	{
-		for (const auto& entry : pChat)
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+		using JsonValueRef = const QJsonValueRef;
+#else
+		using JsonValueRef = const QJsonValue&;
+#endif
+		for (JsonValueRef entry : pChat)
 		{
-			if (entry.isString())
-			{
-				const auto& func = [this, &pContext, &effectiveChat](AccessRight pRight){
-							if (pContext->getAccessRightManager()->getOptionalAccessRights().contains(pRight))
-							{
-								effectiveChat += pRight;
-							}
-							else
-							{
-								setError(QLatin1String("Entry in 'chat' data is not available"));
-							}
-						};
-
-				if (!AccessRoleAndRightsUtil::fromTechnicalName(entry.toString(), func))
-				{
-					setError(QLatin1String("Entry in 'chat' data is invalid"));
-				}
-			}
-			else
+			if (!entry.isString())
 			{
 				setError(QLatin1String("Entry in 'chat' data needs to be string"));
+				break;
+			}
+
+			const auto& func = [this, &pContext, &effectiveChat](AccessRight pRight){
+						if (pContext->getAccessRightManager()->getOptionalAccessRights().contains(pRight))
+						{
+							effectiveChat += pRight;
+						}
+						else
+						{
+							setError(QLatin1String("Entry in 'chat' data is not available"));
+						}
+					};
+
+			if (!AccessRoleAndRightsUtil::fromTechnicalName(entry.toString(), func))
+			{
+				setError(QLatin1String("Entry in 'chat' data is invalid"));
+				break;
 			}
 		}
 	}
@@ -116,14 +120,12 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	chat[QLatin1String("effective")] = getAccessRights(accessRightManager->getEffectiveAccessRights());
 
 	mJsonObject[QLatin1String("chat")] = chat;
-	const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo();
-	if (!transactionInfo.isEmpty())
+	if (const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo(); !transactionInfo.isEmpty())
 	{
 		mJsonObject[QLatin1String("transactionInfo")] = transactionInfo;
 	}
 
-	const QJsonObject& aux = getAuxiliaryData(pContext);
-	if (!aux.isEmpty())
+	if (const QJsonObject& aux = getAuxiliaryData(pContext); !aux.isEmpty())
 	{
 		mJsonObject[QLatin1String("aux")] = aux;
 	}
@@ -134,8 +136,7 @@ QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const 
 {
 	QJsonObject obj;
 
-	const auto& eac1 = pContext->getDidAuthenticateEac1();
-	if (eac1)
+	if (const auto& eac1 = pContext->getDidAuthenticateEac1(); eac1)
 	{
 		const auto& aux = eac1->getAuthenticatedAuxiliaryData();
 		if (aux)

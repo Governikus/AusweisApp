@@ -10,6 +10,8 @@
 
 using namespace governikus;
 
+Q_DECLARE_METATYPE(QtMsgType)
+
 class test_TcToken
 	: public QObject
 {
@@ -214,7 +216,7 @@ class test_TcToken
 		}
 
 
-		void test_IsValid_data()
+		void isValid_data()
 		{
 			QTest::addColumn<QByteArray>("data");
 			QTest::addColumn<bool>("valid");
@@ -312,7 +314,7 @@ class test_TcToken
 		}
 
 
-		void test_IsValid()
+		void isValid()
 		{
 			QFETCH(QByteArray, data);
 			QFETCH(bool, valid);
@@ -322,8 +324,92 @@ class test_TcToken
 		}
 
 
-		void test_ValuesAreSchemaConform()
+		void valuesAreSchemaConform_data()
 		{
+			QTest::addColumn<QString>("binding");
+			QTest::addColumn<QString>("pathProtocol");
+			QTest::addColumn<QByteArray>("psk");
+			QTest::addColumn<QByteArray>("identifier");
+			QTest::addColumn<QString>("serverAdress");
+			QTest::addColumn<QString>("errorAdress");
+			QTest::addColumn<QString>("refreshAdress");
+
+			QTest::addColumn<QtMsgType>("messageType");
+			QTest::addColumn<bool>("valuesAreSchemaConform");
+
+			const QString binding = QStringLiteral("urn:liberty:paos:2006-08");
+			const QString pathProtocol = QStringLiteral("urn:ietf:rfc:4279");
+			const QByteArray psk("4BC1A0B5");
+			const QByteArray identifier("1A2BB129");
+			const QString serverAdress = QStringLiteral("https://eid-server.example.de/entrypoint");
+			const QString errorAdress = QStringLiteral("https://service.example.de/ComError?7eb39f62");
+			const QString refreshAdress = QStringLiteral("https://service.example.de/loggedin?7eb39f62");
+
+			QTest::newRow("Binding is no valid anyUri: \"\"")
+				<< QString() << pathProtocol << psk << identifier
+				<< serverAdress << errorAdress << refreshAdress
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("Binding is no valid anyUri: \"://://\"")
+				<< QString("://://") << pathProtocol << psk << identifier
+				<< serverAdress << errorAdress << refreshAdress
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("PathSecurity-Protocol is no valid URI: \"\"")
+				<< binding << QString("") << psk << identifier
+				<< serverAdress << errorAdress << refreshAdress
+				<< QtCriticalMsg << true;
+
+			QTest::newRow("PSK is null")
+				<< binding << pathProtocol << QByteArray() << identifier
+				<< serverAdress << errorAdress << refreshAdress
+				<< QtWarningMsg << true;
+
+			QTest::newRow("SessionIdentifier is null")
+				<< binding << pathProtocol << psk << QByteArray()
+				<< serverAdress << errorAdress << refreshAdress
+				<< QtWarningMsg << true;
+
+			QTest::newRow("ServerAddress no valid anyUri: \"\"")
+				<< binding << pathProtocol << psk << identifier
+				<< QString() << errorAdress << refreshAdress
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("ServerAddress no valid anyUri: \"://://\"")
+				<< binding << pathProtocol << psk << identifier
+				<< QString("://://") << errorAdress << refreshAdress
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("CommunicationErrorAddress no valid anyUri: \"://://\"")
+				<< binding << pathProtocol << psk << identifier
+				<< serverAdress << QString("://://") << refreshAdress
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("RefreshAddress no valid anyUri: \"\"")
+				<< binding << pathProtocol << psk << identifier
+				<< serverAdress << errorAdress << QString()
+				<< QtCriticalMsg << false;
+
+			QTest::newRow("RefreshAddress no valid anyUri: \"://://\"")
+				<< binding << pathProtocol << psk << identifier
+				<< serverAdress << errorAdress << QString("://://")
+				<< QtCriticalMsg << false;
+		}
+
+
+		void valuesAreSchemaConform()
+		{
+			QFETCH(QString, binding);
+			QFETCH(QString, pathProtocol);
+			QFETCH(QByteArray, psk);
+			QFETCH(QByteArray, identifier);
+			QFETCH(QString, serverAdress);
+			QFETCH(QString, errorAdress);
+			QFETCH(QString, refreshAdress);
+
+			QFETCH(QtMsgType, messageType);
+			QFETCH(bool, valuesAreSchemaConform);
+
 			TcToken token(QByteArray("<?xml version=\"1.0\"?>"
 									 "<TCTokenType>"
 									 "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
@@ -336,50 +422,9 @@ class test_TcToken
 									 "    <PSK> 4BC1A0B5 </PSK>"
 									 "  </PathSecurity-Parameters>"
 									 "</TCTokenType>"));
-			const QString binding = QStringLiteral("urn:liberty:paos:2006-08");
-			const QString pathProtocol = QStringLiteral("urn:ietf:rfc:4279");
-			const QByteArray psk("4BC1A0B5");
-			const QByteArray identifier("1A2BB129");
-			const QString serverAdress = QStringLiteral("https://eid-server.example.de/entrypoint");
-			const QString errorAdress = QStringLiteral("https://service.example.de/ComError?7eb39f62");
-			const QString refreshAdress = QStringLiteral("https://service.example.de/loggedin?7eb39f62");
 
-			QTest::ignoreMessage(QtCriticalMsg, "Binding is no valid anyUri: \"\"");
-			QVERIFY(!token.valuesAreSchemaConform(QString(), pathProtocol, psk,
-					identifier, serverAdress, errorAdress, refreshAdress));
-			QTest::ignoreMessage(QtCriticalMsg, "Binding is no valid anyUri: \"://://\"");
-			QVERIFY(!token.valuesAreSchemaConform(QString("://://"), pathProtocol, psk,
-					identifier, serverAdress, errorAdress, refreshAdress));
-
-			QTest::ignoreMessage(QtCriticalMsg, "PathSecurity-Protocol is no valid URI: \"\"");
-			QVERIFY(token.valuesAreSchemaConform(binding, QString(""), psk,
-					identifier, serverAdress, errorAdress, refreshAdress));
-
-			QTest::ignoreMessage(QtWarningMsg, "PSK is null");
-			QVERIFY(token.valuesAreSchemaConform(binding, pathProtocol, QByteArray(),
-					identifier, serverAdress, errorAdress, refreshAdress));
-
-			QTest::ignoreMessage(QtWarningMsg, "SessionIdentifier is null");
-			QVERIFY(token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					QByteArray(), serverAdress, errorAdress, refreshAdress));
-
-			QTest::ignoreMessage(QtCriticalMsg, "ServerAddress no valid anyUri: \"\"");
-			QVERIFY(!token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					identifier, QString(), errorAdress, refreshAdress));
-			QTest::ignoreMessage(QtCriticalMsg, "ServerAddress no valid anyUri: \"://://\"");
-			QVERIFY(!token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					identifier, QString("://://"), errorAdress, refreshAdress));
-
-			QTest::ignoreMessage(QtCriticalMsg, "RefreshAddress no valid anyUri: \"\"");
-			QVERIFY(!token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					identifier, serverAdress, errorAdress, QString()));
-			QTest::ignoreMessage(QtCriticalMsg, "RefreshAddress no valid anyUri: \"://://\"");
-			QVERIFY(!token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					identifier, serverAdress, errorAdress, QString("://://")));
-
-			QTest::ignoreMessage(QtCriticalMsg, "CommunicationErrorAddress no  valid anyUri: \"://://\"");
-			QVERIFY(!token.valuesAreSchemaConform(binding, pathProtocol, psk,
-					identifier, serverAdress, QString("://://"), refreshAdress));
+			QTest::ignoreMessage(messageType, QTest::currentDataTag());
+			QCOMPARE(token.valuesAreSchemaConform(binding, pathProtocol, psk, identifier, serverAdress, errorAdress, refreshAdress), valuesAreSchemaConform);
 		}
 
 

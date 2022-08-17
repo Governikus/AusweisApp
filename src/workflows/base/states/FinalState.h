@@ -24,13 +24,13 @@ class FinalState
 	protected:
 		void onEntry(QEvent* pEvent) override
 		{
-			AbstractState::onEntry(pEvent);
 			getContext()->setWorkflowFinished(true);
+			AbstractState::onEntry(pEvent);
 		}
 
 	public:
 		explicit FinalState(const QSharedPointer<WorkflowContext>& pContext)
-			: AbstractState(pContext, false)
+			: AbstractState(pContext)
 			, GenericContextContainer(pContext)
 		{
 		}

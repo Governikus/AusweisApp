@@ -2,24 +2,22 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
 import Governikus.Type.UiModule 1.0
+import Governikus.Type.WorkflowModel 1.0
+
 
 SectionPage {
 	id: sectionPage
 
-	Accessible.name: qsTr("Main view")
-	Accessible.description: qsTr("This is the main view of the AusweisApp2.")
-
-	title: qsTr("Start")
+	//: LABEL ANDROID IOS
+	title: qsTr("Start page")
 
 	GridLayout {
 		anchors {
@@ -41,7 +39,7 @@ SectionPage {
 			title: qsTr("Check device and ID card")
 			image: "qrc:///images/mobile/device.svg"
 
-			onClicked: navBar.show(UiModule.CHECK_ID_CARD)
+			onClicked: show(UiModule.CHECK_ID_CARD)
 		}
 
 		Tile {
@@ -53,7 +51,7 @@ SectionPage {
 			title: qsTr("Change my (Transport) PIN")
 			image: "qrc:///images/material_lock.svg"
 
-			onClicked: navBar.show(UiModule.PINMANAGEMENT)
+			onClicked: show(UiModule.PINMANAGEMENT)
 		}
 
 		Tile {
@@ -65,10 +63,24 @@ SectionPage {
 			title: qsTr("See my personal data")
 			image: "qrc:///images/mydata.svg"
 
-			onClicked: navBar.show(UiModule.IDENTIFY)
+			onClicked: show(UiModule.SELF_AUTHENTICATION)
 		}
 
 		Tile {
+			visible: WorkflowModel.isSmartSupported
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+			Layout.alignment: Qt.AlignHCenter
+
+			//: LABEL ANDROID IOS
+			title: qsTr("Smart-eID")
+			image: "qrc:///images/identify.svg"
+
+			onClicked: show(UiModule.SMART)
+		}
+
+		Tile {
+			visible: !WorkflowModel.isSmartSupported
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			Layout.alignment: Qt.AlignHCenter
@@ -77,7 +89,7 @@ SectionPage {
 			title: qsTr("Provider")
 			image: "qrc:///images/provider.svg"
 
-			onClicked: navBar.show(UiModule.PROVIDER)
+			onClicked: show(UiModule.PROVIDER)
 		}
 	}
 }

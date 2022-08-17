@@ -10,11 +10,6 @@
 using namespace governikus;
 
 
-INIT_FUNCTION([] {
-			qRegisterMetaType<CardReturnCode>("CardReturnCode");
-		})
-
-
 GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 {
 	switch (pCode)
@@ -36,6 +31,9 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 
 		case CardReturnCode::PROTOCOL_ERROR:
 			return GlobalStatus::Code::Card_Protocol_Error;
+
+		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+			return GlobalStatus::Code::Workflow_No_Extended_Length_Error;
 
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 			return GlobalStatus::Code::Card_Unexpected_Transmit_Status;
@@ -76,7 +74,6 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 	}
 
 	Q_UNREACHABLE();
-	return GlobalStatus::Code::Unknown_Error;
 }
 
 
@@ -102,6 +99,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::COMMAND_FAILED:
 		case CardReturnCode::PROTOCOL_ERROR:
+		case CardReturnCode::EXTENDED_LENGTH_MISSING:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
@@ -113,5 +111,4 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 	}
 
 	Q_UNREACHABLE();
-	return true;
 }

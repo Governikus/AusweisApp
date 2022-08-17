@@ -1,4 +1,0 @@
-ADD_PLATFORM_LIBRARY(AusweisAppWorkflowsRemoteDevice)
-
-target_link_libraries(AusweisAppWorkflowsRemoteDevice ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppSettings AusweisAppNetwork AusweisAppRemoteDevice)
-target_link_libraries(AusweisAppWorkflowsRemoteDevice AusweisAppWorkflows)

@@ -5,15 +5,13 @@
 #include "Downloader.h"
 
 #include "LogHandler.h"
-#include "SecureStorage.h"
-#include "TlsChecker.h"
 
-#include <http_parser.h>
 #include <QFile>
 #include <QLocale>
 #include <QLoggingCategory>
 #include <QMutableListIterator>
 #include <QScopeGuard>
+#include <http_parser.h>
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 Q_DECLARE_LOGGING_CATEGORY(fileprovider)
@@ -23,9 +21,9 @@ using namespace governikus;
 
 static const char* const cABORTED = "aborted_download";
 
-void Downloader::scheduleDownload(QSharedPointer<QNetworkRequest> request)
+void Downloader::scheduleDownload(QSharedPointer<QNetworkRequest> pDownloadRequest)
 {
-	mPendingRequests.enqueue(request);
+	mPendingRequests.enqueue(pDownloadRequest);
 
 	startDownloadIfPending();
 }
@@ -45,34 +43,11 @@ void Downloader::startDownloadIfPending()
 		return;
 	}
 
-	const auto& caCerts = Env::getSingleton<SecureStorage>()->getUpdateCertificates().toList();
-	mCurrentReply.reset(Env::getSingleton<NetworkManager>()->get(*mPendingRequests.dequeue(), caCerts), &QObject::deleteLater);
+	mCurrentReply = Env::getSingleton<NetworkManager>()->getAsUpdater(*mPendingRequests.dequeue());
 
-	connect(mCurrentReply.data(), &QNetworkReply::sslErrors, this, &Downloader::onSslErrors);
-	connect(mCurrentReply.data(), &QNetworkReply::encrypted, this, &Downloader::onSslHandshakeDone);
 	connect(mCurrentReply.data(), &QNetworkReply::metaDataChanged, this, &Downloader::onMetadataChanged);
 	connect(mCurrentReply.data(), &QNetworkReply::finished, this, &Downloader::onNetworkReplyFinished);
 	connect(mCurrentReply.data(), &QNetworkReply::downloadProgress, this, &Downloader::onNetworkReplyProgress);
-}
-
-
-void Downloader::onSslErrors(const QList<QSslError>& pErrors)
-{
-	TlsChecker::containsFatalError(mCurrentReply, pErrors);
-}
-
-
-void Downloader::onSslHandshakeDone()
-{
-	const auto& cfg = mCurrentReply->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
-
-	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(mCurrentReply))
-	{
-		const QString& textForLog = mCurrentReply->request().url().fileName();
-		qCCritical(fileprovider).nospace() << "Untrusted certificate found [" << textForLog << "]: " << cfg.peerCertificate();
-		mCurrentReply->abort();
-	}
 }
 
 
@@ -80,8 +55,7 @@ void Downloader::onMetadataChanged()
 {
 	const QString& fileName = mCurrentReply->request().url().fileName();
 
-	const auto statusCode = mCurrentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	if (statusCode == HTTP_STATUS_OK)
+	if (mCurrentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == HTTP_STATUS_OK)
 	{
 		qCDebug(fileprovider) << "Continue request for" << fileName;
 		return;
@@ -103,15 +77,6 @@ void Downloader::onNetworkReplyFinished()
 		});
 
 	const QUrl url = mCurrentReply->request().url();
-	const QString& textForLog = url.fileName();
-	if (!Env::getSingleton<NetworkManager>()->checkUpdateServerCertificate(mCurrentReply))
-	{
-		qCCritical(fileprovider).nospace() << "Connection not secure [" << textForLog << "]";
-		Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Network_Ssl_Establishment_Error);
-
-		return;
-	}
-
 	if (mCurrentReply->property(cABORTED).toBool())
 	{
 		qCCritical(fileprovider) << "Download aborted...";
@@ -121,6 +86,7 @@ void Downloader::onNetworkReplyFinished()
 
 	const auto hasError = mCurrentReply->error() != QNetworkReply::NoError;
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mCurrentReply, spawnMessageLogger(network));
+	const QString& textForLog = url.fileName();
 	switch (statusCode)
 	{
 		case HTTP_STATUS_OK:
@@ -132,8 +98,7 @@ void Downloader::onNetworkReplyFinished()
 				lastModified = QDateTime::currentDateTime();
 			}
 
-			const auto readData = mCurrentReply->readAll();
-			if (!hasError && readData.size() > 0)
+			if (const auto& readData = mCurrentReply->readAll(); !hasError && readData.size() > 0)
 			{
 				Q_EMIT fireDownloadSuccess(url, lastModified, readData);
 			}
@@ -204,7 +169,7 @@ bool Downloader::abort(const QUrl& pUpdateUrl)
 		aborted = true;
 	}
 
-	QMutableListIterator<QSharedPointer<QNetworkRequest> > iterator(mPendingRequests);
+	QMutableListIterator<QSharedPointer<QNetworkRequest>> iterator(mPendingRequests);
 	while (iterator.hasNext())
 	{
 		const auto item = iterator.next();

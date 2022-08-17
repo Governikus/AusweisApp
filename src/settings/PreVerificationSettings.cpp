@@ -32,14 +32,9 @@ void PreVerificationSettings::updateLinkCertificates(const QByteArrayList& pLink
 	for (int i = 0; i < pLinkCertificates.size(); ++i)
 	{
 		mStore->setArrayIndex(i);
-		mStore->setValue(SETTINGS_NAME_LINKCERTIFICATE(), pLinkCertificates.at(i));
+		mStore->setValue(SETTINGS_NAME_LINKCERTIFICATE(), pLinkCertificates.at(i).toHex());
 	}
 	mStore->endArray();
-}
-
-
-PreVerificationSettings::~PreVerificationSettings()
-{
 }
 
 
@@ -70,7 +65,7 @@ QByteArrayList PreVerificationSettings::getLinkCertificates() const
 	for (int i = 0; i < itemCount; ++i)
 	{
 		mStore->setArrayIndex(i);
-		linkCertificates += mStore->value(SETTINGS_NAME_LINKCERTIFICATE()).toByteArray();
+		linkCertificates += QByteArray::fromHex(mStore->value(SETTINGS_NAME_LINKCERTIFICATE()).toByteArray());
 	}
 
 	mStore->endArray();

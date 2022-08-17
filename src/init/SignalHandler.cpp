@@ -20,12 +20,18 @@ SignalHandler::SignalHandler()
 }
 
 
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
 SignalHandler::~SignalHandler()
 {
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
 	SetConsoleCtrlHandler(nullptr, false);
-#endif
 }
+
+
+#else
+SignalHandler::~SignalHandler() = default;
+
+
+#endif
 
 
 void SignalHandler::init()
@@ -55,7 +61,9 @@ void SignalHandler::quit()
 
 	if (mAppController)
 	{
-		QMetaObject::invokeMethod(mAppController.data(), qOverload<>(&AppController::doShutdown), Qt::QueuedConnection);
+		QMetaObject::invokeMethod(mAppController.data(), [this]{
+				mAppController->doShutdown();
+			}, Qt::QueuedConnection);
 	}
 	else
 	{

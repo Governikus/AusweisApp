@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQml 2.12
+import QtQml 2.15
 import Governikus.Global 1.0
 
 BrandDimensions {
@@ -24,7 +24,10 @@ BrandDimensions {
 	readonly property int navigation_bar_padding: 5
 	readonly property int navigation_bar_text_padding: 1
 
-	readonly property real max_text_width: 500
+	readonly property int progress_bar_height: 32
+	readonly property int progress_bar_border: 2
+
+	readonly property real max_text_width: 700
 
 	readonly property int small_icon_size: 24
 	readonly property int icon_size: 48

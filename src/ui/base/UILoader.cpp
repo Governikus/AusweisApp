@@ -12,17 +12,8 @@ Q_DECLARE_LOGGING_CATEGORY(gui)
 
 using namespace governikus;
 
-namespace
-{
-QString getPrefixUi()
-{
-	return QStringLiteral("UIPlugIn");
-}
 
-
-} // namespace
-
-QVector<UIPlugInName> governikus::UILoader::cDefault = UILoader::getInitialDefault();
+QStringList governikus::UILoader::cUserRequest;
 
 
 UILoader::UILoader()
@@ -33,16 +24,27 @@ UILoader::UILoader()
 
 UILoader::~UILoader()
 {
+	if (!mLoadedPlugIns.isEmpty())
+	{
+		blockSignals(true);
+		shutdown();
+	}
 }
 
 
-QVector<UIPlugInName> UILoader::getInitialDefault()
+QStringList UILoader::getInitialDefault()
 {
-	QVector<UIPlugInName> list({UIPlugInName::UIPlugInQml});
+	QStringList list;
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	list << UIPlugInName::UIPlugInWebSocket;
-#endif
+	const auto& allPlugins = QPluginLoader::staticPlugins();
+	for (auto& plugin : allPlugins)
+	{
+		const auto& metaData = plugin.metaData();
+		if (isPlugIn(metaData) && isDefault(metaData))
+		{
+			list << getName(metaData);
+		}
+	}
 
 	return list;
 }
@@ -57,7 +59,8 @@ bool UILoader::isLoaded() const
 bool UILoader::load()
 {
 	bool any = false;
-	for (auto entry : qAsConst(cDefault))
+	const auto& list = getUserRequestOrDefault();
+	for (const auto& entry : list)
 	{
 		any = load(entry) || any;
 	}
@@ -65,29 +68,29 @@ bool UILoader::load()
 }
 
 
-bool UILoader::load(UIPlugInName pUi)
+bool UILoader::load(const QString& pUi)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	if (mLoadedPlugIns.contains(pUi))
+	const auto& requestedName = unify(pUi);
+	if (mLoadedPlugIns.contains(requestedName))
 	{
 		return true;
 	}
 
-	const auto& name = getEnumName(pUi);
-	qCDebug(gui) << "Try to load UI plugin:" << name;
+	qCDebug(gui) << "Try to load UI plugin:" << requestedName;
 
 	const auto& allPlugins = QPluginLoader::staticPlugins();
 	for (auto& plugin : allPlugins)
 	{
-		auto metaData = plugin.metaData();
-		if (isPlugIn(metaData) && hasName(metaData, name))
+		const auto& metaData = plugin.metaData();
+		if (isPlugIn(metaData) && getName(metaData) == requestedName)
 		{
 			qCDebug(gui) << "Load plugin:" << metaData;
 			auto instance = qobject_cast<UIPlugIn*>(plugin.instance());
 			if (instance)
 			{
-				mLoadedPlugIns.insert(pUi, instance);
+				mLoadedPlugIns.insert(getName(instance->metaObject()), instance);
 				Q_EMIT fireLoadedPlugin(instance);
 				return true;
 			}
@@ -98,56 +101,50 @@ bool UILoader::load(UIPlugInName pUi)
 		}
 	}
 
-	qCCritical(gui) << "Cannot find UI plugin:" << name;
+	qCCritical(gui) << "Cannot find UI plugin:" << requestedName;
 	return false;
 }
 
 
-QStringList UILoader::getDefault()
+QStringList UILoader::getUserRequestOrDefault()
 {
-	QStringList list;
-	for (auto entry : qAsConst(cDefault))
+	if (!cUserRequest.isEmpty())
 	{
-		list << getName(entry);
+		return cUserRequest;
 	}
-	return list;
+
+	return getInitialDefault();
 }
 
 
-void UILoader::setDefault(const QStringList& pDefault)
+QString UILoader::getDefault()
 {
-	QVector<UIPlugInName> selectedPlugins;
-	const auto& availablePlugins = Enum<UIPlugInName>::getList();
+	const auto& list = getInitialDefault();
 
-	for (const auto& parsedUiOption : pDefault)
-	{
-		for (auto availablePluginEntry : availablePlugins)
-		{
-			if (parsedUiOption.compare(QString(getEnumName(availablePluginEntry)).remove(getPrefixUi()), Qt::CaseInsensitive) == 0)
-			{
-				selectedPlugins << availablePluginEntry;
-			}
-		}
-	}
-
-	if (!selectedPlugins.isEmpty())
-	{
-		cDefault = selectedPlugins;
-	}
+	// Do not return empty QString here. Otherwise QCommandLineParser
+	// won't accept any value for "--ui".
+	return list.isEmpty() ? QStringLiteral(" ") : list.join(QLatin1Char(','));
 }
 
 
-UIPlugIn* UILoader::getLoaded(UIPlugInName pName) const
+void UILoader::setUserRequest(const QStringList& pRequest)
 {
-	return mLoadedPlugIns.value(pName);
+	if (pRequest.isEmpty())
+	{
+		cUserRequest.clear();
+		return;
+	}
+
+	cUserRequest = pRequest;
 }
 
 
 void UILoader::shutdown()
 {
-	qCDebug(gui) << "Shutdown UILoader";
-	const QList<UIPlugInName> keys = mLoadedPlugIns.keys();
-	for (UIPlugInName key : keys)
+	const auto& keys = mLoadedPlugIns.keys();
+	qCDebug(gui) << "Shutdown UILoader:" << keys;
+
+	for (const auto& key : keys)
 	{
 		UIPlugIn* const plugin = mLoadedPlugIns.value(key);
 
@@ -167,19 +164,31 @@ void UILoader::shutdown()
 }
 
 
-bool UILoader::hasName(const QJsonObject& pJson, const QString& pName) const
+bool UILoader::isDefault(const QJsonObject& pJson)
 {
-	return pJson.value(QStringLiteral("className")).toString() == pName;
+	return pJson.value(QLatin1String("MetaData")).toObject().value(QLatin1String("default")).toBool();
 }
 
 
-QString UILoader::getName(UIPlugInName pPlugin)
+QString UILoader::getName(const QJsonObject& pJson)
 {
-	return QString(getEnumName(pPlugin)).remove(getPrefixUi());
+	return unify(pJson.value(QLatin1String("className")).toString());
 }
 
 
-bool UILoader::isPlugIn(const QJsonObject& pJson) const
+QString UILoader::getName(const QMetaObject* pMeta)
 {
-	return pJson.value(QStringLiteral("IID")).toString() == QLatin1String("governikus.UIPlugIn");
+	return unify(QString::fromLatin1(pMeta->className()));
+}
+
+
+QString UILoader::unify(const QString& pName)
+{
+	return pName.toLower().remove(QLatin1String("governikus::")).remove(QLatin1String("uiplugin"));
+}
+
+
+bool UILoader::isPlugIn(const QJsonObject& pJson)
+{
+	return pJson.value(QLatin1String("IID")).toString() == QLatin1String("governikus.UIPlugIn");
 }

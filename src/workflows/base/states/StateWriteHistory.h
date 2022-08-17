@@ -8,8 +8,11 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
+
+
+class test_StateWriteHistory;
 
 
 namespace governikus
@@ -21,9 +24,11 @@ class StateWriteHistory
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateWriteHistory;
 
-	explicit StateWriteHistory(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateWriteHistory(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

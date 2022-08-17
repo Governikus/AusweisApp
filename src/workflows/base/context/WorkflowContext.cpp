@@ -6,19 +6,17 @@
 
 #include "ReaderManager.h"
 
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	#include "VolatileSettings.h"
+#endif
+
 #include <QWeakPointer>
 
 using namespace governikus;
 
-
-void WorkflowContext::onWorkflowCancelled()
-{
-	mWorkflowCancelled = true;
-}
-
-
-WorkflowContext::WorkflowContext()
+WorkflowContext::WorkflowContext(const Action pAction)
 	: QObject()
+	, mAction(pAction)
 	, mStateApproved(false)
 	, mWorkflowKilled(false)
 	, mCurrentState(QStringLiteral("Initial"))
@@ -43,6 +41,11 @@ WorkflowContext::WorkflowContext()
 	, mWorkflowCancelledInState(false)
 	, mNextWorkflowPending(false)
 	, mCurrentReaderHasEidCardButInsufficientApduLength(false)
+	, mSkipStartScan(false)
+	, mProgressValue(0)
+	, mProgressMessage()
+	, mShowRemoveCardFeedback(false)
+	, mClaimedBy()
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -58,6 +61,34 @@ WorkflowContext::~WorkflowContext()
 		Q_ASSERT(getPuk().isEmpty() && "PACE passwords must be cleared as soon as possible.");
 	}
 #endif
+}
+
+
+bool WorkflowContext::wasClaimed() const
+{
+	return !mClaimedBy.isNull();
+}
+
+
+void WorkflowContext::claim(const QObject* pClaimant)
+{
+	const auto& claimant = QString::fromLatin1(pClaimant->metaObject()->className());
+	qDebug() << "Claim workflow by" << claimant;
+
+	if (wasClaimed())
+	{
+		// just a warning... UiAutomatic and UiQml are greedy but it looks ok to see an automated Qml.
+		qWarning() << "Workflow already claimed by" << mClaimedBy;
+		return;
+	}
+
+	mClaimedBy = claimant;
+}
+
+
+void WorkflowContext::onWorkflowCancelled()
+{
+	mWorkflowCancelled = true;
 }
 
 
@@ -95,11 +126,11 @@ void WorkflowContext::setStateApproved(bool pApproved)
 }
 
 
-void WorkflowContext::killWorkflow()
+void WorkflowContext::killWorkflow(GlobalStatus::Code pCode)
 {
 	qWarning() << "Killing the current workflow.";
 	mWorkflowKilled = true;
-	mStatus = GlobalStatus::Code::Workflow_Cancellation_By_User;
+	mStatus = pCode;
 	if (!mStateApproved)
 	{
 		setStateApproved(true);
@@ -149,6 +180,12 @@ void WorkflowContext::setReaderPlugInTypes(const QVector<ReaderManagerPlugInType
 {
 	if (mReaderPlugInTypes != pReaderPlugInTypes)
 	{
+#ifdef Q_OS_IOS
+		const bool usedAsSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+		const bool containsNfc = pReaderPlugInTypes.contains(ReaderManagerPlugInType::NFC);
+		setSkipStartScan(containsNfc && !usedAsSdk);
+#endif
+
 		mReaderPlugInTypes = pReaderPlugInTypes;
 		Q_EMIT fireReaderPlugInTypesChanged();
 	}
@@ -198,6 +235,12 @@ void WorkflowContext::resetCardConnection()
 }
 
 
+bool WorkflowContext::isSmartCardUsed() const
+{
+	return getCardConnection() && getCardConnection()->getReaderInfo().getCardType() == CardType::SMART_EID;
+}
+
+
 bool WorkflowContext::isNpaRepositioningRequired() const
 {
 	if (mCardVanishedDuringPacePinCount >= 10)
@@ -236,6 +279,12 @@ void WorkflowContext::handleWrongNpaPosition()
 bool WorkflowContext::isPinBlocked()
 {
 	return mCardConnection != nullptr && mCardConnection->getReaderInfo().getRetryCounter() == 0;
+}
+
+
+bool WorkflowContext::isRequestTransportPin() const
+{
+	return false;
 }
 
 
@@ -353,6 +402,12 @@ void WorkflowContext::rememberReader()
 }
 
 
+bool WorkflowContext::remembersReader() const
+{
+	return !mExpectedReader.getName().isEmpty();
+}
+
+
 bool WorkflowContext::isExpectedReader() const
 {
 	return mExpectedReader.getName() == mReaderName;
@@ -391,7 +446,7 @@ void WorkflowContext::setStatus(const GlobalStatus& pStatus)
 }
 
 
-const ECardApiResult WorkflowContext::getStartPaosResult() const
+const ECardApiResult& WorkflowContext::getStartPaosResult() const
 {
 	return mStartPaosResult;
 }
@@ -468,4 +523,56 @@ void WorkflowContext::setCurrentReaderHasEidCardButInsufficientApduLength(bool p
 		mCurrentReaderHasEidCardButInsufficientApduLength = pState;
 		Q_EMIT fireReaderInfoChanged();
 	}
+}
+
+
+bool WorkflowContext::skipStartScan() const
+{
+	return mSkipStartScan;
+}
+
+
+void WorkflowContext::setSkipStartScan(bool pState)
+{
+	mSkipStartScan = pState;
+}
+
+
+void WorkflowContext::setProgress(int pValue, const QString& pMessage)
+{
+	if (pValue != mProgressValue || pMessage != mProgressMessage)
+	{
+		mProgressValue = pValue;
+		mProgressMessage = pMessage;
+
+		const auto& connection = getCardConnection();
+		if (connection)
+		{
+			// Card interaction makes up about 80 % of the entire workflow's duration,
+			// "correct" the relative progress value accordingly.
+			connection->setProgressMessage(pMessage, static_cast<int>(1.25 * pValue));
+		}
+
+		Q_EMIT fireProgressChanged();
+	}
+}
+
+
+void WorkflowContext::setRemoveCardFeedback(bool pEnabled)
+{
+	if (pEnabled != mShowRemoveCardFeedback)
+	{
+		mShowRemoveCardFeedback = pEnabled;
+		Q_EMIT fireRemoveCardFeedbackChanged();
+	}
+}
+
+
+bool WorkflowContext::isPhysicalCardRequired() const
+{
+	const auto& acceptedEidTypes = getAcceptedEidTypes();
+	return acceptedEidTypes.contains(AcceptedEidType::CARD_CERTIFIED)
+		   && !(acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED)
+		   || acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED)
+		   || acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE));
 }

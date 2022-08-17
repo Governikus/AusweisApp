@@ -4,7 +4,10 @@
 
 #include "StateStartPaosResponse.h"
 
+#include "SurveyModel.h"
+
 using namespace governikus;
+
 
 StateStartPaosResponse::StateStartPaosResponse(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
@@ -15,10 +18,19 @@ StateStartPaosResponse::StateStartPaosResponse(const QSharedPointer<WorkflowCont
 
 void StateStartPaosResponse::run()
 {
+	Q_ASSERT(getContext()->getPin().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+	Q_ASSERT(getContext()->getCan().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+	Q_ASSERT(getContext()->getPuk().isEmpty() && "PACE passwords must be cleared as soon as possible.");
+
 	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
-	Q_ASSERT(startPaosResponse);
+	if (!startPaosResponse)
+	{
+		Q_EMIT fireAbort();
+		return;
+	}
 
 	const ECardApiResult& result = startPaosResponse->getResult();
+	Env::getSingleton<SurveyModel>()->setAuthWasSuccessful(result.isOk());
 	if (result.isOk())
 	{
 		Q_EMIT fireContinue();

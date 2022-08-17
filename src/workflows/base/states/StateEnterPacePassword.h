@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
 
 class test_StateEnterPacePassword;
 
@@ -21,8 +21,9 @@ class StateEnterPacePassword
 	friend class StateBuilder;
 	friend class ::test_StateEnterPacePassword;
 
-	explicit StateEnterPacePassword(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateEnterPacePassword(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

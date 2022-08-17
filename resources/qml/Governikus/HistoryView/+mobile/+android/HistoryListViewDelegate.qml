@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -38,6 +38,7 @@ HistoryListItem {
 		//: LABEL ANDROID
 		Accessible.name: qsTr("Delete entry")
 		Accessible.role: Accessible.Button
+		Accessible.onPressAction: clicked(null)
 		onClicked: HistoryModel.removeRows(index, 1)
 	}
 }

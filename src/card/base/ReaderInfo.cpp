@@ -7,7 +7,7 @@
 #include "Initializer.h"
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "ReaderDetector.h"
+	#include "ReaderDetector.h"
 #endif
 
 using namespace governikus;
@@ -23,8 +23,8 @@ ReaderInfo::ReaderInfo(const QString& pName,
 	, mName(pName)
 	, mBasicReader(true)
 	, mCardInfo(pCardInfo)
-	, mConnected(false)
 	, mMaxApduLength(500)
+	, mShelvedCard(CardType::NONE)
 {
 #ifdef Q_OS_ANDROID
 	if (pPlugInType == ReaderManagerPlugInType::NFC)
@@ -44,4 +44,21 @@ ReaderConfigurationInfo ReaderInfo::getReaderConfigurationInfo() const
 	return ReaderConfigurationInfo(mName);
 
 #endif
+}
+
+
+[[nodiscard]] bool ReaderInfo::isInsertable() const
+{
+	switch (mShelvedCard)
+	{
+		case CardType::NONE:
+			return false;
+
+		case CardType::SMART_EID:
+			return mCardInfo.getRetryCounter() > 0 && !mCardInfo.isPinInitial();
+
+		default:
+			return true;
+	}
+
 }

@@ -7,26 +7,56 @@
 #pragma once
 
 #include <QByteArray>
+#include <QDebug>
+
 
 namespace governikus
 {
 
-struct FileRef
+class FileRef
 {
-	FileRef(char pType, const QByteArray& pPath);
+	public:
+		enum TYPE : uchar
+		{
+			MASTER_FILE = 0x00,
+			ELEMENTARY_FILE = 0x02,
+			APPLICATION = 0x04,
+			UNKNOWN = 0xFF
+		};
 
-	const char type;
-	const QByteArray path;
+	private:
+		TYPE mType;
+		QByteArray mIdentifier;
+		QByteArray mShortIdentifier;
 
-	static FileRef masterFile();
-	static FileRef efDir();
-	static FileRef efCardAccess();
-	static FileRef efCardSecurity();
-	static FileRef appESign();
-	static FileRef appEId();
-	static FileRef appPassport();
-	static FileRef appPersosim();
+	public:
+		static FileRef masterFile();
+		static FileRef efDir();
+		static FileRef efCardAccess();
+		static FileRef efCardSecurity();
+		static FileRef appCIA();
+		static FileRef appEId();
+		static FileRef appESign();
+		static FileRef appPassport();
+		static FileRef appPersosim();
+
+		FileRef();
+		FileRef(uchar pType, const QByteArray& pIdentifier, const QByteArray& pShortIdentifier = QByteArray());
+		FileRef(TYPE pType, const QByteArray& pIdentifier, const QByteArray& pShortIdentifier = QByteArray());
+
+		[[nodiscard]] TYPE getType() const;
+		[[nodiscard]] const QByteArray& getIdentifier() const;
+		[[nodiscard]] const QByteArray& getShortIdentifier() const;
+		[[nodiscard]] QString getName() const;
 };
+
+
+inline QDebug operator<<(QDebug pDbg, const FileRef& pFileRef)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg.noquote().nospace() << pFileRef.getIdentifier().toHex().toUpper() << " (" << pFileRef.getName() << ")";
+	return pDbg;
+}
 
 
 } // namespace governikus

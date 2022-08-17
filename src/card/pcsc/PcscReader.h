@@ -31,9 +31,10 @@ class PcscReader
 
 		SCARDCONTEXT mContextHandle;
 
+		void fetchGetReaderInfo();
 		PCSC_RETURNCODE readReaderFeatures();
 
-		Reader::CardEvent updateCard() override;
+		void updateCard() override;
 
 	public:
 		explicit PcscReader(const QString& pReaderName);

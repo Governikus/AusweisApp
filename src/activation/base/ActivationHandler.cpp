@@ -5,24 +5,42 @@
 #include "ActivationHandler.h"
 
 #include "ActivationContext.h"
+#include "AppSettings.h"
+#include "Env.h"
 #include "Initializer.h"
-
-#include <QUrlQuery>
-
 
 using namespace governikus;
 
 
 INIT_FUNCTION([] {
-			qRegisterMetaType<UiModule>("UiModule");
-			qRegisterMetaType<QSharedPointer<ActivationContext> >("QSharedPointer<ActivationContext>");
+			qRegisterMetaType<QSharedPointer<ActivationContext>>("QSharedPointer<ActivationContext>");
 		})
 
 
-ActivationHandler::ActivationRequest ActivationHandler::getRequest(const QUrl& pUrl)
+void ActivationHandler::handleQueryParams(const QUrlQuery& pUrl)
 {
-	const auto queryItems = QUrlQuery(pUrl).queryItems();
-	for (auto& item : queryItems)
+	const auto queryUseTestUri = QLatin1String("useTestUri");
+	if (pUrl.hasQueryItem(queryUseTestUri))
+	{
+		const auto value = pUrl.queryItemValue(queryUseTestUri);
+		const bool useTestUri = QVariant(value).toBool();
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setUseSelfauthenticationTestUri(useTestUri);
+	}
+
+	const auto queryEnableSimulator = QLatin1String("enableSimulator");
+	if (pUrl.hasQueryItem(queryEnableSimulator))
+	{
+		const auto value = pUrl.queryItemValue(queryEnableSimulator);
+		const bool enableSimulator = QVariant(value).toBool();
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setSimulatorEnabled(enableSimulator);
+	}
+}
+
+
+ActivationHandler::ActivationRequest ActivationHandler::getRequest(const QUrlQuery& pUrl)
+{
+	const auto queryItems = pUrl.queryItems();
+	for (const auto& item : queryItems)
 	{
 		ActivationType type = Enum<ActivationType>::fromString(item.first.toUpper(), ActivationType::UNKNOWN);
 		if (type != ActivationType::UNKNOWN)

@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include "asn1/Chat.h"
-#include "asn1/CVCertificate.h"
-#include "asn1/CVCertificateChain.h"
-#include "command/BaseCardCommand.h"
 #include "CardConnectionWorker.h"
 #include "InputAPDUInfo.h"
 #include "ReaderInfo.h"
 #include "SmartCardDefinitions.h"
+#include "asn1/CVCertificate.h"
+#include "asn1/CVCertificateChain.h"
+#include "asn1/Chat.h"
+#include "command/BaseCardCommand.h"
 
 #include "command/DestroyPaceChannelCommand.h"
 #include "command/EstablishPaceChannelCommand.h"
@@ -22,7 +22,6 @@
 #include "command/DidAuthenticateEAC1Command.h"
 #include "command/DidAuthenticateEAC2Command.h"
 #include "command/TransmitCommand.h"
-#include "command/UnblockPinCommand.h"
 #include "command/UpdateRetryCounterCommand.h"
 
 #include <QByteArray>
@@ -38,12 +37,11 @@ namespace governikus
 class CardConnection
 	: public QObject
 {
+	Q_OBJECT
+	friend class MockCardConnection;
+	friend class ::test_CardConnection;
+
 	private:
-		friend class MockCardConnection;
-		friend class ::test_CardConnection;
-
-		Q_OBJECT
-
 		/*!
 		 * The connection worker talks to the Card held by the Reader.
 		 */
@@ -55,7 +53,6 @@ class CardConnection
 
 		TransmitCommand* createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle);
 		UpdateRetryCounterCommand* createUpdateRetryCounterCommand();
-		UnblockPinCommand* createUnblockPinCommand(const QByteArray& pPuk);
 
 		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 		SetEidPinCommand* createSetEidPinCommand(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
@@ -65,7 +62,8 @@ class CardConnection
 		DidAuthenticateEAC2Command* createDidAuthenticateEAC2Command(const CVCertificateChain& pCvcChain,
 				const QByteArray& pEphemeralPublicKeyAsHex,
 				const QByteArray& pSignatureAsHex,
-				const QByteArray& pAuthenticatedAuxiliaryDataAsBinary);
+				const QByteArray& pAuthenticatedAuxiliaryDataAsBinary,
+				const QByteArray& pPin);
 
 		template<typename T>
 		QMetaObject::Connection call(BaseCardCommand* pCommand, const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
@@ -112,8 +110,8 @@ class CardConnection
 		[[nodiscard]] bool getPaceCanSuccessful() const;
 		[[nodiscard]] bool getPacePinSuccessful() const;
 
+		void setKeepAlive(bool pEnabled);
 		void setProgressMessage(const QString& pMessage, int pProgress = -1);
-		bool stopSecureMessaging();
 
 		template<typename T>
 		QMetaObject::Connection callDidAuthenticateEAC1Command(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
@@ -128,18 +126,10 @@ class CardConnection
 			const CVCertificateChain& pCvcChain,
 			const QByteArray& pEphemeralPublicKeyAsHex,
 			const QByteArray& pSignatureAsHex,
-			const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
+			const QByteArray& pAuthenticatedAuxiliaryDataAsBinary,
+			const QByteArray& pPin)
 		{
-			auto command = createDidAuthenticateEAC2Command(pCvcChain, pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary);
-			return call(command, pReceiver, pFunc);
-		}
-
-
-		template<typename T>
-		QMetaObject::Connection callUnblockPinCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
-			const QByteArray& pPuk)
-		{
-			auto command = createUnblockPinCommand(pPuk);
+			auto command = createDidAuthenticateEAC2Command(pCvcChain, pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary, pPin);
 			return call(command, pReceiver, pFunc);
 		}
 

@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -42,12 +42,18 @@ Item {
 		displayMarginBeginning: spacing
 		displayMarginEnd: additionalResults.height + spacing
 		highlightFollowsCurrentItem: true
-		highlight: null
 		activeFocusOnTab: true
 		scrollBarTopPadding: spacing / 2
 		scrollBarBottomPadding: spacing / 2
 
 		model: ProviderCategoryFilterModel
+
+		highlight: FocusFrame {
+			scope: gridView
+			framee: gridView.currentItem
+			marginFactor: -0.75
+			radius: Style.dimens.corner_radius
+		}
 
 		delegate: Item {
 			width: gridView.cellWidth
@@ -57,16 +63,15 @@ Item {
 				anchors.fill: parent
 				anchors.margins: Math.floor(gridView.spacing / 2)
 
-				focus: gridView.activeFocus && gridView.currentIndex === index
 				providerModelItem: model
 
-				onShowDetailView: baseItem.showDetails(pModelItem)
+				onShowDetailView: pModelItem => { baseItem.showDetails(pModelItem) }
 			}
 		}
 
 		Connections {
 			target: ProviderCategoryFilterModel
-			onFireCriteriaChanged: {
+			function onFireCriteriaChanged() {
 				gridView.currentIndex = 0
 				gridView.contentY = gridView.originY
 			}

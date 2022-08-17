@@ -7,6 +7,98 @@
   },
   "configurePresets": [
     {
+      "name": "ci",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceParentDir}/../build",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
+        "PACKAGES_DIR": "$env{PACKAGES_DIR}"
+      }
+    },
+    {
+      "name": "ci-msvc-release",
+      "inherits": "ci",
+      "generator": "NMake Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-msvc-debug",
+      "inherits": "ci",
+      "generator": "NMake Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-gnu-release",
+      "inherits": "ci",
+      "generator": "MinGW Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-gnu-debug",
+      "inherits": "ci",
+      "generator": "MinGW Makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-android",
+      "inherits": "ci",
+      "toolchainFile": "${sourceParentDir}/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "ci-ios",
+      "inherits": "ci",
+      "toolchainFile": "${sourceParentDir}/cmake/iOS.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE"
+      }
+    },
+    {
+      "name": "ci-ios-simulator",
+      "inherits": "ci-ios",
+      "cacheVariables": {
+        "CMAKE_OSX_SYSROOT": "iphonesimulator",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
+      "name": "ci-release",
+      "inherits": "ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE"
+      }
+    },
+    {
+      "name": "ci-debug",
+      "inherits": "ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG"
+      }
+    },
+    {
       "name": "base",
       "hidden": true,
       "binaryDir": "${sourceParentDir}/../AusweisApp2-build/libs/${presetName}"
@@ -17,6 +109,18 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "DEBUG"
       }
+    },
+    {
+      "name": "container",
+      "inherits": "default",
+      "cacheVariables": {
+        "CONTAINER_SDK": "ON"
+      }
+    },
+    {
+      "name": "android",
+      "inherits": "default",
+      "toolchainFile": "${sourceParentDir}/cmake/android.toolchain.cmake"
     }
   ],
   "buildPresets": [

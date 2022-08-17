@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQml.Models 2.12
+import QtQuick 2.15
+import QtQml.Models 2.15
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -82,18 +82,18 @@ SectionPage {
 				RemoteReaderView {
 					width: parent.width
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
-					onPairDevice: {
+					onPairDevice: pDeviceId => {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
 							d.view = TabbedReaderView.SubView.ConnectSacView
-							appWindow.menuBar.updateActions()
+							updateTitleBarActions()
 						}
 					}
-					onUnpairDevice: RemoteServiceModel.forgetDevice(pDeviceId)
+					onUnpairDevice: pDeviceId => RemoteServiceModel.forgetDevice(pDeviceId)
 					onMoreInformation: {
 						d.precedingView = d.view
 						d.view = TabbedReaderView.SubView.ConnectSacView
 						connectSacView.showPairingInformation();
-						appWindow.menuBar.updateActions()
+						updateTitleBarActions()
 					}
 				}
 			}
@@ -129,7 +129,7 @@ SectionPage {
 
 		onCloseView: {
 			d.view = d.precedingView
-			appWindow.menuBar.updateActions()
+			updateTitleBarActions()
 		}
 	}
 }

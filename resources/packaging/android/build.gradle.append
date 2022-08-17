@@ -5,13 +5,17 @@ task sourcesJar(type: Jar) {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.appcompat:appcompat:1.4.0"
+    implementation "androidx.core:core:1.4.0"
 }
 
 allprojects {
     repositories {
         maven {
             url "https://maven.google.com"
+        }
+        maven {
+            url "https://repo.govkg.de/repository/maven-3rd-party"
         }
     }
 }
@@ -23,11 +27,27 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/*.version'
+        merges -= ['/META-INF/services/**']
         exclude 'META-INF/proguard/androidx-annotations.pro'
+        exclude 'META-INF/*.version'
+        exclude 'META-INF/*.properties'
+        exclude 'META-INF/*.kotlin_module'
+        exclude 'META-INF/kotlin*'
+        exclude 'META-INF/services/*'
+        exclude 'META-INF/native-image/**'
+        exclude 'META-INF/native/**'
+        exclude 'META-INF/license/**'
+
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     lintOptions {
         lintConfig file('lint.xml')
+    }
+
+    defaultConfig {
+        buildConfigField("String", "ROOT_LOGGER", "\"${project.root_logger}\"")
     }
 }

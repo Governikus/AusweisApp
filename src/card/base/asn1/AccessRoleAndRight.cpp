@@ -318,8 +318,7 @@ bool AccessRoleAndRightsUtil::fromTechnicalName(const char* const pStr, const st
 {
 	const auto undefined = static_cast<AccessRightNames>(UINT_MAX);
 
-	auto entry = Enum<AccessRightNames>::fromString(pStr, undefined);
-	if (entry != undefined)
+	if (const auto& entry = Enum<AccessRightNames>::fromString(pStr, undefined); entry != undefined)
 	{
 		Q_ASSERT(Enum<AccessRight>::isValue(static_cast<int>(entry)));
 		pFunc(static_cast<AccessRight>(entry));

@@ -6,11 +6,12 @@
 
 #pragma once
 
-#include "context/RemoteServiceContext.h"
 #include "Env.h"
 #include "ReaderManager.h"
 #include "RemoteDeviceModel.h"
 #include "WorkflowModel.h"
+#include "WorkflowRequest.h"
+#include "context/IfdServiceContext.h"
 
 #include <QObject>
 #include <QQmlEngine>
@@ -36,44 +37,48 @@ class RemoteServiceModel
 	Q_PROPERTY(QString connectedServerDeviceNames READ getConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
 	Q_PROPERTY(RemoteDeviceModel * availableRemoteDevices READ getAvailableRemoteDevices CONSTANT)
 	Q_PROPERTY(RemoteDeviceModel * knownDevices READ getKnownDevices CONSTANT)
-	Q_PROPERTY(RemoteDeviceModel * combinedDevices READ getCombinedDevices CONSTANT)
 	Q_PROPERTY(bool detectRemoteDevices READ detectRemoteDevices WRITE setDetectRemoteDevices NOTIFY fireDetectionChanged)
 	Q_PROPERTY(bool enableTransportPinLink READ enableTransportPinLink NOTIFY fireEstablishPaceChannelUpdated)
-	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireEstablishPaceChannelUpdated)
 	Q_PROPERTY(bool remoteReaderVisible READ getRemoteReaderVisible NOTIFY fireRemoteReaderVisibleChanged)
 	Q_PROPERTY(bool requiresLocalNetworkPermission MEMBER mRequiresLocalNetworkPermission CONSTANT)
 
 	private:
-		QSharedPointer<RemoteServiceContext> mContext;
+		QSharedPointer<IfdServiceContext> mContext;
 		bool mRunnable;
 		bool mIsStarting;
 		bool mCanEnableNfc;
 		bool mPairingRequested;
-		bool mRequestTransportPin;
 		QString mErrorMessage;
 		QByteArray mPsk;
 		RemoteDeviceModel mAvailableRemoteDevices;
 		RemoteDeviceModel mKnownDevices;
-		RemoteDeviceModel mCombinedDevices;
 		QString mConnectionInfo;
 		QString mConnectedServerDeviceNames;
-		QSharedPointer<RemoteDeviceListEntry> mRememberedServerEntry;
+		QSharedPointer<IfdListEntry> mRememberedServerEntry;
 		const bool mRequiresLocalNetworkPermission;
+#if defined(Q_OS_IOS)
+		bool mWasRunning;
+		bool mWasPairing;
+#endif
 
 		RemoteServiceModel();
 		~RemoteServiceModel() override = default;
 
-		void onEnvironmentChanged();
 		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
 
 		void setStarting(bool pStarting);
 
 	private Q_SLOTS:
-		void onEstablishConnectionDone(const QSharedPointer<RemoteDeviceListEntry>& pEntry, const GlobalStatus& pStatus);
+		void onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus);
 		void onConnectionInfoChanged(bool pConnected);
-		void onCardConnectionEstablished(const QSharedPointer<CardConnection>& pConnection);
+		void onCardConnected(const QSharedPointer<CardConnection>& pConnection);
+		void onCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
 		void onConnectedDevicesChanged();
-		void onEstablishPaceChannelUpdated();
+		void onEnvironmentChanged();
+		void onApplicationStateChanged(const bool pIsAppInForeground);
+
+	public Q_SLOTS:
+		void onTranslationChanged();
 
 	public:
 		bool isRunning() const;
@@ -82,18 +87,16 @@ class RemoteServiceModel
 
 		RemoteDeviceModel* getAvailableRemoteDevices();
 		RemoteDeviceModel* getKnownDevices();
-		RemoteDeviceModel* getCombinedDevices();
 		void setDetectRemoteDevices(bool pNewStatus);
 		bool detectRemoteDevices() const;
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
 		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
 
-		void resetRemoteServiceContext(const QSharedPointer<RemoteServiceContext>& pContext = QSharedPointer<RemoteServiceContext>());
+		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
 		void setPairing(bool pEnabled);
 		bool isPairing();
 		bool isConnectedToPairedDevice() const;
 		bool enableTransportPinLink() const;
-		bool isRequestTransportPin() const;
 		bool isRunnable() const;
 		bool isCanEnableNfc() const;
 		QString getErrorMessage() const;
@@ -103,13 +106,12 @@ class RemoteServiceModel
 		bool getRemoteReaderVisible() const;
 
 		Q_INVOKABLE bool pinPadModeOn() const;
-		Q_INVOKABLE QString getPasswordType() const;
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
 		Q_INVOKABLE void changePinLength();
 
 	Q_SIGNALS:
-		void fireStartWorkflow();
+		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireIsStartingChanged();
 		void fireIsRunningChanged();
 		void fireEnvironmentChanged();
@@ -124,6 +126,7 @@ class RemoteServiceModel
 		void fireConnectedServerDeviceNamesChanged();
 		void fireRemoteReaderVisibleChanged();
 		void fireEstablishPaceChannelUpdated();
+		void fireCertificateRemoved(const QString& pDeviceName);
 };
 
 

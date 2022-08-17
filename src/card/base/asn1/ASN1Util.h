@@ -27,29 +27,15 @@ namespace governikus
 
 class Asn1Util
 {
-	Asn1Util() = delete;
-	~Asn1Util() = delete;
+	private:
+		Asn1Util() = delete;
+		~Asn1Util() = delete;
 
 	public:
 		/*!
 		 * Encodes the data as ASN.1 object with specified tag byte.
 		 */
-		static QByteArray encode(char pTagByte, const QByteArray& pData);
-};
-
-
-/*!
- * Utility for OpenSSL type ASN1_OBJECT, i.e. ASN.1 type OBJECT_IDENTIFIER
- */
-class Asn1ObjectUtil
-{
-	Asn1ObjectUtil() = delete;
-	~Asn1ObjectUtil() = delete;
-
-	public:
-		static ASN1_OBJECT* parseFrom(const QByteArray& pOidAsText);
-		static QByteArray convertTo(const ASN1_OBJECT* pAsn1Object);
-		static QByteArray getValue(const ASN1_OBJECT* pAsn1Object);
+		static QByteArray encode(int pClass, int pTag, const QByteArray& pData, bool pConstructed = false);
 };
 
 
@@ -58,8 +44,9 @@ class Asn1ObjectUtil
  */
 class Asn1OctetStringUtil
 {
-	Asn1OctetStringUtil() = delete;
-	~Asn1OctetStringUtil() = delete;
+	private:
+		Asn1OctetStringUtil() = delete;
+		~Asn1OctetStringUtil() = delete;
 
 	public:
 		static void setValue(const QByteArray& pValue, ASN1_OCTET_STRING* pAsn1OctetString);
@@ -72,12 +59,13 @@ class Asn1OctetStringUtil
  */
 class Asn1StringUtil
 {
-	Asn1StringUtil() = delete;
-	~Asn1StringUtil() = delete;
+	private:
+		Asn1StringUtil() = delete;
+		~Asn1StringUtil() = delete;
 
 	public:
 		static void setValue(const QString& pString, ASN1_STRING* pOut);
-		static QString getValue(ASN1_STRING* pString);
+		static QString getValue(const ASN1_STRING* pString);
 };
 
 
@@ -86,11 +74,16 @@ class Asn1StringUtil
  */
 class Asn1TypeUtil
 {
-	Asn1TypeUtil() = delete;
-	~Asn1TypeUtil() = delete;
+	private:
+		Asn1TypeUtil() = delete;
+		~Asn1TypeUtil() = delete;
 
 	public:
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 		static QByteArray encode(ASN1_TYPE* pAny);
+#else
+		static QByteArray encode(const ASN1_TYPE* pAny);
+#endif
 };
 
 
@@ -99,11 +92,13 @@ class Asn1TypeUtil
  */
 class Asn1IntegerUtil
 {
-	Asn1IntegerUtil() = delete;
-	~Asn1IntegerUtil() = delete;
+	private:
+		Asn1IntegerUtil() = delete;
+		~Asn1IntegerUtil() = delete;
 
 	public:
-		static QByteArray getValue(const ASN1_INTEGER* pInteger);
+		[[nodiscard]] static int getValue(const ASN1_INTEGER* pInteger);
+		[[nodiscard]] static QByteArray encode(int pValue);
 };
 
 
@@ -112,12 +107,13 @@ class Asn1IntegerUtil
  */
 class Asn1BCDDateUtil
 {
-	Asn1BCDDateUtil() = delete;
-	~Asn1BCDDateUtil() = delete;
+	private:
+		Asn1BCDDateUtil() = delete;
+		~Asn1BCDDateUtil() = delete;
 
 	public:
 		static QByteArray convertFromQDateToUnpackedBCD(QDate date);
-		static QDate convertFromUnpackedBCDToQDate(ASN1_OCTET_STRING* pDateBCD);
+		static QDate convertFromUnpackedBCDToQDate(const ASN1_OCTET_STRING* pDateBCD);
 };
 
 

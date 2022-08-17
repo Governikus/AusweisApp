@@ -28,11 +28,11 @@ class NfcCard
 		explicit NfcCard(QNearFieldTarget* pNearFieldTarget);
 
 		[[nodiscard]] bool isValid() const;
-		bool invalidateTarget(QNearFieldTarget* pNearFieldTarget);
+		bool invalidateTarget(const QNearFieldTarget* pNearFieldTarget);
 
-		CardReturnCode connect() override;
-		CardReturnCode disconnect() override;
-		bool isConnected() override;
+		CardReturnCode establishConnection() override;
+		CardReturnCode releaseConnection() override;
+		bool isConnected() const override;
 		void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;

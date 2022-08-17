@@ -4,12 +4,12 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "asn1/SecurityInfo.h"
+
+#include "asn1/Oid.h"
 
 #include <QtCore>
 #include <QtTest>
-
-#include "asn1/KnownOIDs.h"
-#include "asn1/SecurityInfo.h"
 
 
 using namespace governikus;
@@ -55,7 +55,7 @@ class test_SecurityInfo
 			auto securityInfo = SecurityInfo::decode(bytes);
 
 			QVERIFY(securityInfo != nullptr);
-			QCOMPARE(securityInfo->getProtocol(), QByteArray("0.4.0.127.0.7.2.2.4.2.2"));
+			QCOMPARE(securityInfo->getOid(), KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
 		}
 
 
@@ -69,7 +69,7 @@ class test_SecurityInfo
 			auto securityInfo = SecurityInfo::decode(bytes);
 
 			QVERIFY(securityInfo != nullptr);
-			QCOMPARE(securityInfo->getProtocol(), QByteArray("0.4.0.127.0.7.2.2.4.2.2"));
+			QCOMPARE(securityInfo->getOid(), KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
 		}
 
 
@@ -83,8 +83,8 @@ class test_SecurityInfo
 			auto securityInfo = SecurityInfo::decode(bytes);
 
 			QVERIFY(securityInfo != nullptr);
-			QCOMPARE(securityInfo->getProtocol(), QByteArray("0.4.0.127.0.7.2.2.4.2.2"));
-			QCOMPARE(securityInfo->getProtocolValueBytes(), QByteArray::fromHex("04007F00070202040202"));
+			QCOMPARE(securityInfo->getOid(), KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			QCOMPARE(securityInfo->getOid().getData(), QByteArray::fromHex("04007F00070202040202"));
 		}
 
 

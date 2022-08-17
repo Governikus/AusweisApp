@@ -6,29 +6,32 @@
 
 #pragma once
 
-#include <openssl/evp.h>
+#include "SecurityProtocol.h"
+
 #include <QByteArray>
+#include <openssl/evp.h>
 
 namespace governikus
 {
 
 class SymmetricCipher final
 {
+	Q_DISABLE_COPY(SymmetricCipher)
+
 	private:
 		EVP_CIPHER_CTX* mCtx;
 		const EVP_CIPHER* mCipher;
-		QByteArray mIv, mKeyBytes;
-
-		Q_DISABLE_COPY(SymmetricCipher)
+		QByteArray mIv;
+		QByteArray mKeyBytes;
 
 	public:
 		/*!
 		 * \brief Creates a new instance with cipher algorithm determined by parameter and specified cipher key.
-		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the cipher algorithm to use. E.g. a
-		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in AES to be used.
+		 * \param pSecurityProtocol will determine the cipher algorithm to use. E.g. a PACE protocol
+		 *        of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in AES to be used.
 		 * \param pKeyBytes the bytes of the key
 		 */
-		SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes);
+		SymmetricCipher(const SecurityProtocol& pSecurityProtocol, const QByteArray& pKeyBytes);
 		~SymmetricCipher();
 
 		/*!

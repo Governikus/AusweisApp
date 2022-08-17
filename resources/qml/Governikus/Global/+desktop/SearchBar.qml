@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -16,7 +16,7 @@ GTextField {
 
 	function clear() {
 		searchField.text = ""
-		searchField.forceActiveFocus()
+		searchField.forceActiveFocus(Qt.MouseFocusReason)
 	}
 
 	width: 400 * ApplicationModel.scaleFactor
@@ -29,6 +29,7 @@ GTextField {
 	textStyle: Style.text.normal
 	//: LABEL DESKTOP
 	placeholderText: qsTr("Search")
+	isOnLightBackground: false
 
 	TintableIcon {
 		id: glassIcon
@@ -70,7 +71,7 @@ GTextField {
 		}
 
 		FocusFrame {
-			borderColor: Style.color.focus_indicator
+			marginFactor: 0.1
 		}
 	}
 }

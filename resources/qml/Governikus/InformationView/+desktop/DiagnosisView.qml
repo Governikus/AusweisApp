@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.View 1.0
 import Governikus.Global 1.0
@@ -17,14 +17,14 @@ SectionPage {
 
 	anchors.centerIn: parent
 
-	Accessible.name: qsTr("Diagnosis view")
-	Accessible.description: qsTr("This is the diagnosis view of the AusweisApp2.")
-
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP
 		text: qsTr("Diagnosis")
 		helpTopic: "diagnosis"
 	}
+
+	Component.onCompleted: SelfDiagnosisModel.startController()
+	Component.onDestruction: SelfDiagnosisModel.stopController()
 
 	TabbedPane {
 		id: sectionContent
@@ -47,9 +47,7 @@ SectionPage {
 			spacing: Constants.pane_spacing
 
 			Repeater {
-				readonly property string currentSectionName: sectionContent.currentItemModel.display
-
-				model: SelfDiagnosisModel.getSectionContentModel(currentSectionName)
+				model: sectionContent.currentItemModel.content
 				delegate: LabeledText {
 					width: parent.width
 
@@ -96,8 +94,18 @@ SectionPage {
 				//: LABEL DESKTOP
 				enabledTooltipText: SelfDiagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
 				onClicked: {
-					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTimeString())
-					appWindow.openSaveFileDialog(SelfDiagnosisModel.saveToFile, filenameSuggestion, qsTr("Textfiles"), "txt")
+					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTime())
+					fileDialog.selectFile(filenameSuggestion)
+				}
+
+				GFileDialog {
+					id: fileDialog
+
+					defaultSuffix: "txt"
+					//: LABEL DESKTOP
+					nameFilters: qsTr("Textfiles (*.txt)")
+
+					onAccepted: SelfDiagnosisModel.saveToFile(file)
 				}
 			}
 
@@ -108,16 +116,6 @@ SectionPage {
 				running: true
 				repeat: false
 			}
-		}
-	}
-
-	onVisibleChanged: {
-		if (visible) {
-			SelfDiagnosisModel.startController()
-			sectionContent.currentIndex = 0
-		}
-		else {
-			SelfDiagnosisModel.stopController()
 		}
 	}
 }

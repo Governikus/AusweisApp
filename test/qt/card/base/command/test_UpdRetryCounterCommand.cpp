@@ -4,7 +4,6 @@
 
 #include "command/UpdateRetryCounterCommand.h"
 
-#include "LogHandler.h"
 #include "MockCardConnectionWorker.h"
 
 #include <QtCore>
@@ -34,7 +33,7 @@ class test_UpdateRetryCounterCommand
 		{
 			MockReader reader(QStringLiteral("reader"));
 			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 1, true, true);
-			reader.getReaderInfo().setCardInfo(info);
+			reader.setInfoCardInfo(info);
 
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 			UpdateRetryCounterCommand command(worker);

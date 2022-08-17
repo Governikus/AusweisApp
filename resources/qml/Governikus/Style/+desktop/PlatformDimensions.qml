@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQml 2.12
+import QtQml 2.15
 import Governikus.Type.ApplicationModel 1.0
 
 QtObject {
@@ -24,6 +24,9 @@ QtObject {
 	readonly property int high_contrast_item_border: ApplicationModel.scaleFactor * 0
 
 	readonly property int titlebar_padding: ApplicationModel.scaleFactor * 20
+
+	readonly property int progress_bar_height: ApplicationModel.scaleFactor * 48
+	readonly property int progress_bar_border: separator_size_large
 
 	readonly property int scrollbar_padding_vertical: ApplicationModel.scaleFactor * 0
 	readonly property int scrollbar_padding_horizontal: ApplicationModel.scaleFactor * 5

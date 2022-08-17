@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "NetworkManager.h"
+
 #include <QNetworkReply>
 #include <QTimer>
 
@@ -30,7 +32,7 @@ class NetworkReplyTimeout
 		/*!
 		 * Set the timeout in milli-seconds on the specified QNetworkReply.
 		 */
-		static void setTimeout(QNetworkReply* pReply, const int pTimeoutMilliSeconds);
+		static void setTimeout(const NetworkManager* pManager, QNetworkReply* pReply, const int pTimeoutMilliSeconds);
 };
 
 } // namespace governikus

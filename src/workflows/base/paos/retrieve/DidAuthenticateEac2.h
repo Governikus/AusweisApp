@@ -6,9 +6,9 @@
 
 #pragma once
 
+#include "paos/PaosMessage.h"
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/Eac2InputType.h"
-#include "paos/PaosMessage.h"
 
 
 namespace governikus
@@ -38,7 +38,6 @@ class DIDAuthenticateEAC2
 		[[nodiscard]] const QString& getSignature() const;
 		[[nodiscard]] const QString& getEphemeralPublicKey() const;
 		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
-		[[nodiscard]] const QByteArrayList& getCvCertificatesAsBinary() const;
 };
 
 } // namespace governikus

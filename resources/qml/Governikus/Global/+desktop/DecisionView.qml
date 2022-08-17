@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -25,6 +25,7 @@ SectionPage {
 	property alias questionSubText: subTextElement.text
 	property alias mainIconSource: image.source
 	property alias tintEnabled: image.tintEnabled
+	property alias moreInformationVisible: moreInformation.visible
 
 	property int style: DecisionView.ButtonStyle.AgreeButton | DecisionView.ButtonStyle.DisagreeButton
 
@@ -41,8 +42,7 @@ SectionPage {
 	signal disagree()
 	signal neutral()
 
-	signal mainTextLinkActivated()
-	signal subTextLinkActivated()
+	signal moreInformationClicked()
 
 	activeFocusOnTab: false
 
@@ -56,7 +56,7 @@ SectionPage {
 		anchors.verticalCenterOffset: baseItem.height / 4
 
 		source: "qrc:///images/info.svg"
-		tintColor: Style.color.button_text
+		tintColor: Style.color.accent
 	}
 
 	GText {
@@ -72,7 +72,7 @@ SectionPage {
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
 
 		onLinkActivated: baseItem.mainTextLinkActivated()
 
@@ -93,11 +93,21 @@ SectionPage {
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 
-		textStyle: Style.text.header_secondary_inverse
-		linkColor: Style.text.header_inverse.textColor
+		textStyle: Style.text.header_secondary
 		onLinkActivated: baseItem.subTextLinkActivated()
 
 		FocusFrame {}
+	}
+
+	MoreInformationLink {
+		id: moreInformation
+
+		visible: false
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.top: subTextElement.bottom
+		anchors.topMargin: Constants.component_spacing
+
+		onClicked: baseItem.moreInformationClicked()
 	}
 
 	RowLayout {

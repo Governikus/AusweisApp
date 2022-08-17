@@ -21,11 +21,6 @@ AppSettings::AppSettings()
 }
 
 
-AppSettings::~AppSettings()
-{
-}
-
-
 void AppSettings::save()
 {
 	mGeneralSettings.save();

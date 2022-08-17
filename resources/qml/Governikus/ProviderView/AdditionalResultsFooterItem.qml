@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -24,15 +24,6 @@ Item {
 	Accessible.role: Accessible.Button
 	Accessible.name: qsTr("Additional results in other categories: %1. Click here to remove filter.").arg(totalHits)
 
-	Item {
-		id: shadowLayer
-
-		anchors.fill: parent
-
-		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-		layer.effect: GDropShadow { source: background }
-	}
-
 	Rectangle {
 		id: background
 
@@ -45,9 +36,7 @@ Item {
 	RowLayout {
 		id: row
 
-		anchors.top: parent.top
-		anchors.left: parent.left
-		anchors.right: parent.right
+		anchors.fill: parent
 		anchors.margins: Constants.groupbox_spacing
 
 		spacing: Constants.groupbox_spacing
@@ -77,6 +66,7 @@ Item {
 		GText {
 			padding: Constants.text_spacing
 			text: qsTr("Show")
+			textStyle: Style.text.normal_inverse
 		}
 	}
 
@@ -89,7 +79,5 @@ Item {
 		onClicked: baseItem.clicked()
 	}
 
-	FocusFrame {
-		borderColor: Style.color.focus_indicator
-	}
+	FocusFrame {}
 }

@@ -4,16 +4,16 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "SecureStorage.h"
+
+#include "ResourceLoader.h"
+#include "asn1/CVCertificate.h"
+
 #include <QCoreApplication>
 #include <QFile>
 #include <QSslCertificateExtension>
 #include <QSslKey>
 #include <QtTest>
-
-#include "FileDestination.h"
-#include "SecureStorage.h"
-
-#include "asn1/CVCertificate.h"
 
 using namespace governikus;
 
@@ -29,39 +29,29 @@ class test_SecureStorage
 	private:
 		QStringList loadCommentList(const QString& pCommentName)
 		{
-			const QString& path = FileDestination::getPath("config.json");
-			if (!QFile::exists(path))
+			auto* storage = Env::getSingleton<SecureStorage>();
+			const auto& config = storage->loadFile({storage->getEmbeddedConfig()});
+			if (config.isEmpty())
 			{
-				qCritical() << "SecureStorage not found";
 				return QStringList();
 			}
 
-			QFile configFile(path);
-			if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
-			{
-				qCritical() << "Wasn't able to open SecureStorage";
-				return QStringList();
-			}
-
-			QJsonParseError parseError {};
-			QJsonDocument document = QJsonDocument::fromJson(configFile.readAll(), &parseError);
-			configFile.close();
-			if (parseError.error != QJsonParseError::NoError)
-			{
-				qCritical() << "Parse error while reading SecureStorage on position" << parseError.offset << ':' << parseError.errorString();
-				return QStringList();
-			}
-
-			const QJsonValue commentValues = document.object().value(pCommentName);
+			const QJsonValue commentValues = config.value(pCommentName);
 			if (commentValues == QJsonValue::Undefined || !commentValues.isArray())
 			{
 				qCritical() << "Wasn't able to find the array" << pCommentName;
 				return QStringList();
 			}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+			using JsonValueRef = const QJsonValueRef;
+#else
+			using JsonValueRef = const QJsonValue&;
+#endif
+
 			QStringList comments;
 			const auto& commentValueArray = commentValues.toArray();
-			for (const QJsonValue& comment : commentValueArray)
+			for (JsonValueRef comment : commentValueArray)
 			{
 				if (comment.isString())
 				{
@@ -78,13 +68,19 @@ class test_SecureStorage
 		}
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
 		void testGetCVRootCertificatesUnique()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			static const int EXPECTED_CERTIFICATE_COUNT = 15;
+			static const int EXPECTED_CERTIFICATE_COUNT = 16;
 
-			QVector<QSharedPointer<const CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage->getCVRootCertificates(true))
-					+ CVCertificate::fromHex(secureStorage->getCVRootCertificates(false));
+			QVector<QSharedPointer<const CVCertificate>> cvcs = CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true))
+					+ CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false));
 			const auto count = cvcs.count();
 			QCOMPARE(count, EXPECTED_CERTIFICATE_COUNT);
 
@@ -122,7 +118,7 @@ class test_SecureStorage
 			QTest::addColumn<QString>("commentName");
 
 			QTest::newRow("production") << 5 << true << "_comment_2";
-			QTest::newRow("test") << 10 << false << "_comment_4";
+			QTest::newRow("test") << 11 << false << "_comment_4";
 		}
 
 
@@ -134,7 +130,7 @@ class test_SecureStorage
 
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
-			QVector<QSharedPointer<const CVCertificate> > cvcs = CVCertificate::fromHex(secureStorage->getCVRootCertificates(isProductive));
+			QVector<QSharedPointer<const CVCertificate>> cvcs = CVCertificate::fromRaw(secureStorage->getCVRootCertificates(isProductive));
 			QCOMPARE(cvcs.count(), certificateCount);
 
 			const QStringList& comments = loadCommentList(commentName);
@@ -227,7 +223,6 @@ class test_SecureStorage
 			QFETCH(QString, expiryDate);
 			QFETCH(int, length);
 			QFETCH(QSsl::KeyAlgorithm, algorithm);
-			QFETCH(QString, ocsp);
 
 			QVERIFY(certificates.count() - index > 0);
 
@@ -240,6 +235,10 @@ class test_SecureStorage
 			QCOMPARE(cert.publicKey().algorithm(), algorithm);
 			QCOMPARE(cert.publicKey().type(), QSsl::PublicKey);
 
+			// Disable check on older Qt versions, since it leads to a memory leak.
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+			QFETCH(QString, ocsp);
+
 			const auto& ext = cert.extensions();
 
 			const bool foundOcspResponder = std::any_of(ext.cbegin(), ext.cend(), [&ocsp](const auto& entry){
@@ -247,6 +246,7 @@ class test_SecureStorage
 						   entry.value().toMap().value(QStringLiteral("OCSP")).toString() == ocsp;
 				});
 			QCOMPARE(foundOcspResponder, !ocsp.isEmpty());
+#endif
 		}
 
 
@@ -272,6 +272,56 @@ class test_SecureStorage
 		}
 
 
+		void testSmartPersonalizationUrl()
+		{
+			const auto& secureStorage = Env::getSingleton<SecureStorage>();
+
+			if (secureStorage->getVendor().contains(QLatin1String("Governikus")))
+			{
+				QVERIFY(secureStorage->getSmartPersonalizationUrl().contains(QLatin1String("/%1")));
+				QVERIFY(secureStorage->getSmartPersonalizationUrl(true).contains(QLatin1String("/%1")));
+			}
+			else
+			{
+				QVERIFY(secureStorage->getSmartPersonalizationUrl().isEmpty());
+				QVERIFY(secureStorage->getSmartPersonalizationUrl(true).isEmpty());
+			}
+		}
+
+
+		void testSmartService()
+		{
+			const auto& secureStorage = Env::getSingleton<SecureStorage>();
+
+			if (secureStorage->getVendor().contains(QLatin1String("Governikus")))
+			{
+				QVERIFY(!secureStorage->getSmartServiceId().isEmpty());
+				QVERIFY(!secureStorage->getSmartVersionTag().isEmpty());
+				QVERIFY(!secureStorage->getSmartSsdAid().isEmpty());
+			}
+			else
+			{
+				QVERIFY(secureStorage->getSmartServiceId().isEmpty());
+				QVERIFY(secureStorage->getSmartVersionTag().isEmpty());
+				QVERIFY(secureStorage->getSmartSsdAid().isEmpty());
+			}
+		}
+
+
+		void testLocalIfdConfig()
+		{
+			const auto secureStorage = Env::getSingleton<SecureStorage>();
+			QCOMPARE(secureStorage->getLocalIfdPackageName(), "com.governikus.ausweisapp2.dev");
+			QCOMPARE(secureStorage->getLocalIfdMinVersion(), "1.100.0");
+			QCOMPARE(secureStorage->getLocalIfdMinPskSize(), 256);
+
+			const auto& certificateHashes = secureStorage->getLocalIfdAllowedCertificateHashes();
+			QCOMPARE(certificateHashes.size(), 2);
+			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("B02AC76B50A497AE810AEAC22598187B3D4290277D0851A7FA8E1AEA5A979870"))));
+			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("F96FD6BBA899845E06D3E6522F0843217681D473B6B09F1E313DEA1A21D6B8E7"))));
+		}
+
+
 		void testAppcast()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
@@ -285,10 +335,8 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 			QCOMPARE(secureStorage->getMinimumStaticKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
 			QCOMPARE(secureStorage->getMinimumStaticKeySize(QSsl::KeyAlgorithm::Dsa), 2000);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 			QCOMPARE(secureStorage->getMinimumStaticKeySize(QSsl::KeyAlgorithm::Dh), 2000);
-#endif
-			QCOMPARE(secureStorage->getMinimumStaticKeySize(QSsl::KeyAlgorithm::Ec), 224);
+			QCOMPARE(secureStorage->getMinimumStaticKeySize(QSsl::KeyAlgorithm::Ec), 250);
 		}
 
 
@@ -297,10 +345,8 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 			QCOMPARE(secureStorage->getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
 			QCOMPARE(secureStorage->getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Dsa), 2000);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 			QCOMPARE(secureStorage->getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Dh), 2000);
-#endif
-			QCOMPARE(secureStorage->getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Ec), 224);
+			QCOMPARE(secureStorage->getMinimumEphemeralKeySize(QSsl::KeyAlgorithm::Ec), 250);
 		}
 
 
@@ -309,9 +355,9 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
 			const auto& tlsSettings = secureStorage->getTlsConfig();
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 12);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 9);
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ECDSA+SHA224"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("ECDSA+SHA256"));
 		}
 
 
@@ -320,9 +366,9 @@ class test_SecureStorage
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
 			const auto& tlsSettings = secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK);
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 4);
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().size(), 3);
 			QCOMPARE(tlsSettings.getSignatureAlgorithms().constFirst(), QByteArray("RSA+SHA512"));
-			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("RSA+SHA224"));
+			QCOMPARE(tlsSettings.getSignatureAlgorithms().constLast(), QByteArray("RSA+SHA256"));
 		}
 
 
@@ -330,11 +376,14 @@ class test_SecureStorage
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
-			const auto& config = secureStorage->getTlsConfigRemote();
+			const auto& config = secureStorage->getTlsConfigRemoteIfd();
 			QCOMPARE(config.getSignatureAlgorithms().size(), 3);
 
-			const auto& configPairing = secureStorage->getTlsConfigRemote();
+			const auto& configPairing = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK);
 			QCOMPARE(configPairing.getSignatureAlgorithms().size(), 3);
+
+			const auto& configLocalIfd = secureStorage->getTlsConfigLocalIfd();
+			QCOMPARE(configLocalIfd.getSignatureAlgorithms().size(), 3);
 		}
 
 
@@ -351,22 +400,32 @@ class test_SecureStorage
 			QCOMPARE(ciphersPsk.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"));
 
 			const auto& ciphersEc = secureStorage->getTlsConfig().getEllipticCurves();
-			QCOMPARE(ciphersEc.count(), 6);
+			QCOMPARE(ciphersEc.count(), 5);
 			QCOMPARE(ciphersEc.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"));
-			QCOMPARE(ciphersEc.last(), QSslEllipticCurve::fromLongName("secp224r1"));
+			QCOMPARE(ciphersEc.last(), QSslEllipticCurve::fromLongName("prime256v1"));
 
-			const auto& ciphersEcRemoteReader = secureStorage->getTlsConfigRemote().getEllipticCurves();
-			QCOMPARE(ciphersEcRemoteReader.count(), 6);
+			const auto& ciphersEcRemoteReader = secureStorage->getTlsConfigRemoteIfd().getEllipticCurves();
+			QCOMPARE(ciphersEcRemoteReader.count(), 5);
 			QCOMPARE(ciphersEcRemoteReader.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"));
-			QCOMPARE(ciphersEcRemoteReader.last(), QSslEllipticCurve::fromLongName("secp224r1"));
+			QCOMPARE(ciphersEcRemoteReader.last(), QSslEllipticCurve::fromLongName("prime256v1"));
 
-			const auto& ciphersEcRemoteReaderPairing = secureStorage->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getEllipticCurves();
+			const auto& ciphersEcRemoteReaderPairing = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getEllipticCurves();
 			QCOMPARE(ciphersEcRemoteReaderPairing.count(), 0);
 
-			const auto& ciphersRemoteReader = secureStorage->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getCiphers();
+			const auto& ciphersRemoteReader = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
 			QVERIFY(ciphersRemoteReader.count() > 0);
 			QCOMPARE(ciphersRemoteReader.first(), QSslCipher("RSA-PSK-AES256-GCM-SHA384"));
 			QCOMPARE(ciphersRemoteReader.last(), QSslCipher("RSA-PSK-AES256-CBC-SHA"));
+
+			const auto& localIfdConfig = secureStorage->getTlsConfigLocalIfd();
+			const auto& ciphersEcLocalIfd = localIfdConfig.getEllipticCurves();
+			QCOMPARE(ciphersEcLocalIfd.count(), 5);
+			QCOMPARE(ciphersEcLocalIfd.first(), QSslEllipticCurve::fromLongName("brainpoolP512r1"));
+			QCOMPARE(ciphersEcLocalIfd.last(), QSslEllipticCurve::fromLongName("prime256v1"));
+			const auto& ciphersLocalIfd = localIfdConfig.getCiphers();
+			QVERIFY(ciphersLocalIfd.count() == 2);
+			QCOMPARE(ciphersLocalIfd.first(), QSslCipher("ECDHE-PSK-AES128-CBC-SHA256"));
+			QCOMPARE(ciphersLocalIfd.last(), QSslCipher("ECDHE-PSK-AES256-CBC-SHA384"));
 		}
 
 
@@ -400,8 +459,9 @@ class test_SecureStorage
 
 			QTest::newRow("ciphers non PSK") << secureStorage->getTlsConfig().getConfiguration() << 12;
 			QTest::newRow("ciphers for PSK") << secureStorage->getTlsConfig(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
-			QTest::newRow("remote reader") << secureStorage->getTlsConfigRemote().getConfiguration() << 7;
-			QTest::newRow("remote reader pairing") << secureStorage->getTlsConfigRemote(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
+			QTest::newRow("remote ifd") << secureStorage->getTlsConfigRemoteIfd().getConfiguration() << 7;
+			QTest::newRow("remote ifd pairing") << secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration() << 5;
+			QTest::newRow("local ifd") << secureStorage->getTlsConfigLocalIfd().getConfiguration() << 2;
 		}
 
 

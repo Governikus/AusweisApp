@@ -8,7 +8,7 @@
 
 #include "ASN1TemplateUtil.h"
 
-#include "KnownOIDs.h"
+#include "Oid.h"
 
 #include <openssl/asn1t.h>
 
@@ -61,12 +61,13 @@ class AuthenticatedAuxiliaryData
 	friend class ::test_AuxiliaryAuthenticatedData;
 	friend class QSharedPointer<AuthenticatedAuxiliaryData>;
 
-	QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
+	private:
+		QSharedPointer<AuthenticatedAuxiliaryDataInternal> mData;
 
-	explicit AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
-	[[nodiscard]] AuxDataTemplate* getAuxDataTemplateFor(KnownOIDs::AuxilaryData pData) const;
+		explicit AuthenticatedAuxiliaryData(const QSharedPointer<AuthenticatedAuxiliaryDataInternal>& pData);
+		[[nodiscard]] AuxDataTemplate* getAuxDataTemplateFor(const Oid& pOid) const;
 
-	[[nodiscard]] QString getRequiredAge(const QDate& pEffectiveDate) const;
+		[[nodiscard]] QString getRequiredAge(const QDate& pEffectiveDate) const;
 
 	public:
 		static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);

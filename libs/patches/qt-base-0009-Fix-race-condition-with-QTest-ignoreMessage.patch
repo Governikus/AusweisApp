@@ -1,0 +1,80 @@
+From 1de51c3967465d2e9c517acad2b5da17ec4b533b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Fri, 8 Jul 2022 11:35:37 +0200
+Subject: Fix race condition with QTest::ignoreMessage
+
+If another spawned thread will log at the same time
+a crash was possible because IgnoreResultList
+was not thread-safe.
+
+Task-number: QTBUG-104840
+Pick-to: 6.4 6.3 6.2 5.15
+Change-Id: I251c83bb28cb75e55d477706bf2524c061a6eab7
+---
+ src/testlib/qtestlog.cpp | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git x/qtbase/src/testlib/qtestlog.cpp y/qtbase/src/testlib/qtestlog.cpp
+index c90850e786..ef75cf10d2 100644
+--- x/qtbase/src/testlib/qtestlog.cpp
++++ y/qtbase/src/testlib/qtestlog.cpp
+@@ -171,6 +171,7 @@ namespace QTest {
+     };
+ 
+     static IgnoreResultList *ignoreResultList = nullptr;
++    static QBasicMutex mutex;
+ 
+     static std::vector<QVariant> failOnWarningList;
+ 
+@@ -184,6 +185,8 @@ namespace QTest {
+ 
+     static bool handleIgnoredMessage(QtMsgType type, const QString &message)
+     {
++        const QMutexLocker mutexLocker(&QTest::mutex);
++
+         if (!ignoreResultList)
+             return false;
+         IgnoreResultList *last = nullptr;
+@@ -303,6 +306,7 @@ void QTestLog::enterTestData(QTestData *data)
+ 
+ int QTestLog::unhandledIgnoreMessages()
+ {
++    const QMutexLocker mutexLocker(&QTest::mutex);
+     int i = 0;
+     QTest::IgnoreResultList *list = QTest::ignoreResultList;
+     while (list) {
+@@ -323,6 +327,7 @@ void QTestLog::leaveTestFunction()
+ 
+ void QTestLog::printUnhandledIgnoreMessages()
+ {
++    const QMutexLocker mutexLocker(&QTest::mutex);
+     QString message;
+     QTest::IgnoreResultList *list = QTest::ignoreResultList;
+     while (list) {
+@@ -342,6 +347,7 @@ void QTestLog::printUnhandledIgnoreMessages()
+ 
+ void QTestLog::clearIgnoreMessages()
+ {
++    const QMutexLocker mutexLocker(&QTest::mutex);
+     QTest::IgnoreResultList::clearList(QTest::ignoreResultList);
+ }
+ 
+@@ -571,6 +577,7 @@ void QTestLog::ignoreMessage(QtMsgType type, const char *msg)
+ {
+     QTEST_ASSERT(msg);
+ 
++    const QMutexLocker mutexLocker(&QTest::mutex);
+     QTest::IgnoreResultList::append(QTest::ignoreResultList, type, QString::fromUtf8(msg));
+ }
+ 
+@@ -579,6 +586,7 @@ void QTestLog::ignoreMessage(QtMsgType type, const QRegularExpression &expressio
+ {
+     QTEST_ASSERT(expression.isValid());
+ 
++    const QMutexLocker mutexLocker(&QTest::mutex);
+     QTest::IgnoreResultList::append(QTest::ignoreResultList, type, QVariant(expression));
+ }
+ #endif // QT_CONFIG(regularexpression)
+-- 
+2.37.1
+

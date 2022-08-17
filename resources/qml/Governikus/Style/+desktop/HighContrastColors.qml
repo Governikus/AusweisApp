@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 Colors {
 	readonly property var palette: SystemPalette { colorGroup: SystemPalette.Active }
@@ -27,7 +27,6 @@ Colors {
 	readonly property color background_pane_inactive: background
 
 	readonly property color accent: palette.highlight
-	readonly property color accent_disabled: disabledPalette.highlight
 
 	readonly property color button: palette.button
 	readonly property color button_disabled: disabledPalette.button

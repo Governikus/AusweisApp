@@ -27,7 +27,7 @@ QByteArray getOpenSslError();
 template<typename T>
 T* newAsn1Object()
 {
-	static_assert(std::is_void<T>::value, "Implement specialization of newAsn1Object");
+	static_assert(std::is_void_v<T>, "Implement specialization of newAsn1Object");
 	return 0;
 }
 
@@ -50,9 +50,9 @@ QSharedPointer<T> newObject(T* pObject = newAsn1Object<T>())
  * Default template function for encoding an OpenSSL type. This must be specialized for each ASN.1 type.
  */
 template<typename T>
-int encodeAsn1Object(T*, unsigned char**)
+int encodeAsn1Object(T*, uchar**)
 {
-	static_assert(std::is_void<T>::value, "Implement specialization of encodeObject");
+	static_assert(std::is_void_v<T>, "Implement specialization of encodeObject");
 	return 0;
 }
 
@@ -69,7 +69,7 @@ QByteArray encodeObject(T* pObject)
 	}
 
 	ERR_clear_error();
-	unsigned char* encoded = nullptr;
+	uchar* encoded = nullptr;
 	const int length = encodeAsn1Object(pObject, &encoded);
 	const auto guard = qScopeGuard([encoded] {
 			OPENSSL_free(encoded);
@@ -88,9 +88,9 @@ QByteArray encodeObject(T* pObject)
  * Default template function for decoding an OpenSSL type. This must be specialized for each ASN.1 type.
  */
 template<typename T>
-T* decodeAsn1Object(T**, const unsigned char**, long)
+T* decodeAsn1Object(T**, const uchar**, long)
 {
-	static_assert(std::is_void<T>::value, "Implement specialization of decodeObject");
+	static_assert(std::is_void_v<T>, "Implement specialization of decodeObject");
 	return 0;
 }
 
@@ -101,7 +101,7 @@ T* decodeAsn1Object(T**, const unsigned char**, long)
 template<typename T>
 void freeAsn1Object(T*)
 {
-	static_assert(std::is_void<T>::value, "Implement specialization of freeObject");
+	static_assert(std::is_void_v<T>, "Implement specialization of freeObject");
 }
 
 
@@ -149,13 +149,13 @@ static const int CB_ERROR = 0;
 	}\
 \
 	template<>\
-	int encodeAsn1Object<name>(name * pObject, unsigned char** encoded)\
+	int encodeAsn1Object<name>(name * pObject, uchar** encoded)\
 	{\
 		return i2d_##name(pObject, encoded);\
 	}\
 \
 	template<>\
-	name * decodeAsn1Object<name>(name** pObject, const unsigned char** pData, long pDataLen)\
+	name * decodeAsn1Object<name>(name** pObject, const uchar** pData, long pDataLen)\
 	{\
 		return d2i_##name(pObject, pData, pDataLen);\
 	}\
@@ -168,8 +168,8 @@ static const int CB_ERROR = 0;
 
 #define DECLARE_ASN1_OBJECT(name)\
 	template<> name * newAsn1Object<name>();\
-	template<> int encodeAsn1Object<name>(name * pObject, unsigned char** encoded);\
-	template<> name * decodeAsn1Object<name>(name** pObject, const unsigned char** pData, long pDataLen);\
+	template<> int encodeAsn1Object<name>(name * pObject, uchar** encoded);\
+	template<> name * decodeAsn1Object<name>(name** pObject, const uchar** pData, long pDataLen);\
 	template<> void freeAsn1Object<name>(name * pObject);
 
 

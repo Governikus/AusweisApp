@@ -23,7 +23,7 @@ class test_MsgHandlerApiLevel
 			MsgContext context;
 			context.setApiLevel(MsgLevel::v1);
 			MsgHandlerApiLevel msg(qAsConst(context));
-			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1],\"current\":1,\"msg\":\"API_LEVEL\"}"));
+			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1,2],\"current\":1,\"msg\":\"API_LEVEL\"}"));
 		}
 
 
@@ -32,7 +32,7 @@ class test_MsgHandlerApiLevel
 			MsgContext context;
 			context.setApiLevel(MsgHandler::DEFAULT_MSG_LEVEL);
 			MsgHandlerApiLevel msg(qAsConst(context));
-			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1],\"current\":1,\"msg\":\"API_LEVEL\"}"));
+			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1,2],\"current\":2,\"msg\":\"API_LEVEL\"}"));
 		}
 
 
@@ -40,7 +40,7 @@ class test_MsgHandlerApiLevel
 		{
 			MessageDispatcher dispatcher;
 			QByteArray msg = R"({"cmd": "GET_API_LEVEL"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"available\":[1],\"current\":1,\"msg\":\"API_LEVEL\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"available\":[1,2],\"current\":2,\"msg\":\"API_LEVEL\"}"));
 		}
 
 
@@ -48,14 +48,14 @@ class test_MsgHandlerApiLevel
 		{
 			QByteArray msg(R"({"cmd": "SET_API_LEVEL"})");
 			MessageDispatcher dispatcher;
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"current\":1,\"error\":\"Level cannot be undefined\",\"msg\":\"API_LEVEL\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"current\":2,\"error\":\"Level cannot be undefined\",\"msg\":\"API_LEVEL\"}"));
 		}
 
 
 		void setInvalidLevel()
 		{
 			MessageDispatcher dispatcher;
-			QByteArray expected(R"({"current":1,"error":"Invalid level","msg":"API_LEVEL"})");
+			QByteArray expected(R"({"current":2,"error":"Invalid level","msg":"API_LEVEL"})");
 
 			QByteArray msg(R"({"cmd": "SET_API_LEVEL", "level": ""})");
 			QCOMPARE(dispatcher.processCommand(msg), expected);
@@ -77,7 +77,7 @@ class test_MsgHandlerApiLevel
 		void setUnknownLevel()
 		{
 			MessageDispatcher dispatcher;
-			QByteArray expected(R"({"current":1,"error":"Unknown level","msg":"API_LEVEL"})");
+			QByteArray expected(R"({"current":2,"error":"Unknown level","msg":"API_LEVEL"})");
 
 			QByteArray msg(R"({"cmd": "SET_API_LEVEL", "level": -1})");
 			QCOMPARE(dispatcher.processCommand(msg), expected);

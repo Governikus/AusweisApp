@@ -9,7 +9,7 @@
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/PaosParser.h"
 
-#include <QScopedPointer>
+#include <memory>
 
 namespace governikus
 {
@@ -31,9 +31,10 @@ class DidAuthenticateEac1Parser
 		void parseAuthenticatedAuxiliaryData(Eac1InputType& pEac1, QString& pAuthenticatedAuxiliaryData);
 		void parseTransactionInfo(Eac1InputType& pEac1, QString& pTransactionInfo);
 		void parseCertificate(Eac1InputType& pEac1);
+		void parseAcceptedEidType(Eac1InputType& pEac1);
 
 	private:
-		QScopedPointer<DIDAuthenticateEAC1> mDidAuthenticateEac1;
+		std::unique_ptr<DIDAuthenticateEAC1> mDidAuthenticateEac1;
 };
 
 } // namespace governikus

@@ -11,6 +11,10 @@
 #include <QScopeGuard>
 #include <QStringBuilder>
 
+#ifdef Q_OS_ANDROID
+	#include <QJniObject>
+#endif
+
 using namespace governikus;
 
 defineSingleton(LogHandler)
@@ -22,8 +26,8 @@ Q_DECLARE_LOGGING_CATEGORY(configuration)
 #define LOGCAT(name) QString::fromLatin1(name().categoryName())
 
 
-#if !defined(Q_OS_ANDROID) && !defined(QT_USE_JOURNALD)
-#define ENABLE_MESSAGE_PATTERN
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(QT_USE_JOURNALD)
+	#define ENABLE_MESSAGE_PATTERN
 #endif
 
 
@@ -74,18 +78,14 @@ void LogHandler::reset()
 
 void LogHandler::init()
 {
-	const QMutexLocker mutexLocker(&mMutex);
-
-	QStringList rules;
-
-	// Enable this warning again when our minimum Qt version is 5.14
-	rules << QStringLiteral("qt.qml.connections.warning=false");
+#ifndef Q_OS_ANDROID
+	const
+#endif
+	QMutexLocker mutexLocker(&mMutex);
 
 #ifndef QT_NO_DEBUG
-	rules << QStringLiteral("qt.qml.binding.removal.info=true");
+	QLoggingCategory::setFilterRules(QStringLiteral("qt.qml.binding.removal.info=true"));
 #endif
-
-	QLoggingCategory::setFilterRules(rules.join(QLatin1Char('\n')));
 
 	if (mEventHandler.isNull())
 	{
@@ -113,6 +113,11 @@ void LogHandler::init()
 	if (!isInstalled())
 	{
 		mHandler = qInstallMessageHandler(&LogHandler::messageHandler);
+
+#ifdef Q_OS_ANDROID
+		mutexLocker.unlock();
+		QJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/LogHandler", "init");
+#endif
 	}
 }
 
@@ -220,6 +225,11 @@ QDateTime LogHandler::getFileDate(const QFileInfo& pInfo)
 		return dateTime;
 	}
 
+	if (const auto& dateTime = pInfo.lastModified(); dateTime.isValid())
+	{
+		return dateTime;
+	}
+
 	return pInfo.metadataChangeTime();
 }
 
@@ -274,18 +284,11 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 {
 	QByteArray function(pFunction);
 
+	// Remove the parameter list
+	function = function.left(function.indexOf('('));
+
 	// Remove namespace governikus::
 	function.replace(QByteArrayLiteral("governikus::"), "");
-
-	// Remove the parameter list
-	const auto start = function.indexOf('(');
-	const auto end = function.indexOf(')');
-	function = function.left(start) + function.mid(end + 1);
-
-	if (function.endsWith(" const"))
-	{
-		function = function.left(function.size() - 6);
-	}
 
 	// Remove the return type (if any)
 	if (function.indexOf(' ') != -1)
@@ -317,7 +320,6 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 
 QByteArray LogHandler::formatCategory(const QByteArray& pCategory) const
 {
-	const int MAX_CATEGORY_LENGTH = 10;
 	if (pCategory.length() > MAX_CATEGORY_LENGTH)
 	{
 		return pCategory.left(MAX_CATEGORY_LENGTH - 3) + QByteArrayLiteral("...");
@@ -555,5 +557,103 @@ void LogHandler::messageHandler(QtMsgType pType, const QMessageLogContext& pCont
 }
 
 
-static_assert(!std::is_base_of<QObject, LogHandler>::value,
+#ifdef Q_OS_ANDROID
+extern "C"
+{
+
+JNIEXPORT void Java_com_governikus_ausweisapp2_LogHandler_propagate(JNIEnv* pEnv, jobject pObj,
+		int pLevel, jstring pCategory, jstring pFile, jstring pFunction, jstring pMsg)
+{
+	Q_UNUSED(pObj)
+
+	const auto* category = pCategory ? pEnv->GetStringUTFChars(pCategory, 0) : nullptr;
+	const bool useFuncSignature = qstrcmp(category, "bdr") != 0 && qstrcmp(category, "dts") != 0; // no useful information provided
+
+	const auto* file = useFuncSignature && pFile ? pEnv->GetStringUTFChars(pFile, 0) : nullptr;
+	const auto* func = useFuncSignature && pFunction ? pEnv->GetStringUTFChars(pFunction, 0) : nullptr;
+	const auto* msg = pMsg ? pEnv->GetStringUTFChars(pMsg, 0) : nullptr;
+
+	const auto& utf8Msg = QString::fromUtf8(msg);
+	const QLoggingCategory loggingCategory(category);
+	const auto& categoryFunction = [&loggingCategory]() -> const QLoggingCategory& {
+				return loggingCategory;
+			};
+	const MessageLogger logger(file, 0, func, categoryFunction);
+	// https://developer.android.com/reference/java/util/logging/Level
+	switch (pLevel)
+	{
+		// SEVERE
+		case 1000:
+			logger.critical().noquote() << utf8Msg;
+			break;
+
+		// WARNING
+		case 900:
+			logger.warning().noquote() << utf8Msg;
+			break;
+
+		// INFO
+		case 800:
+			logger.info().noquote() << utf8Msg;
+			break;
+
+		default:
+			logger.debug().noquote() << utf8Msg;
+			break;
+	}
+
+	if (category)
+	{
+		pEnv->ReleaseStringUTFChars(pCategory, category);
+	}
+	if (file)
+	{
+		pEnv->ReleaseStringUTFChars(pFile, file);
+	}
+	if (func)
+	{
+		pEnv->ReleaseStringUTFChars(pFunction, func);
+	}
+	if (msg)
+	{
+		pEnv->ReleaseStringUTFChars(pMsg, msg);
+	}
+}
+
+
+}
+#endif
+
+static_assert(!std::is_base_of_v<QObject, LogHandler>,
 		"LogHandler cannot be a QObject because it is a Singleton that should not be destroyed at all!");
+
+
+MessageLogger::MessageLogger(const char* pFile, int pLine, const char* pFunction, const std::function<const QLoggingCategory& ()>& pCategory)
+	: mMessageLogger(pFile, pLine, pFunction, pCategory().categoryName())
+	, mCategory(pCategory)
+{
+}
+
+
+QDebug MessageLogger::critical() const
+{
+	return mMessageLogger.critical(mCategory());
+}
+
+
+QDebug MessageLogger::debug() const
+{
+	return mMessageLogger.debug(mCategory());
+}
+
+
+QDebug MessageLogger::info() const
+{
+	return mMessageLogger.info(mCategory());
+}
+
+
+QDebug MessageLogger::warning() const
+{
+	return mMessageLogger.warning(mCategory());
+}

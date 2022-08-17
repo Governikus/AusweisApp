@@ -277,7 +277,7 @@ TLS termination proxy.
    "eID-SDK",	TCP, 24727,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
    "SaC1",	UDP, 24727,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
    "SaC2",	TCP, ,       "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
-   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as informations on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
+   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as information on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
 
 .. [#TR-03124] See TR-03124 specification from the BSI
 .. [#TR-03112] See TR-03112-6 specifiaction from the BSI

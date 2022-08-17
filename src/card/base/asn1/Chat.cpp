@@ -2,14 +2,18 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "Chat.h"
+
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "Chat.h"
-#include "KnownOIDs.h"
 
 #include <QLoggingCategory>
+#include <openssl/asn1.h>
+#include <openssl/objects.h>
+
 
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 using namespace governikus;
 
@@ -59,7 +63,7 @@ int CHAT::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt
 				*pVal = nullptr;
 				return CB_ERROR;
 			}
-			else if (chat->getType() != KnownOIDs::CHATType::ID_AT)
+			else if (chat->getType() != KnownOid::ID_AT)
 			{
 				// currently we only support Authentication Terminals
 				qCDebug(card) << "CHAT type is unsupported" << chat->getType();
@@ -86,11 +90,9 @@ QSharedPointer<chat_st> CHAT::decode(const QByteArray& pBytes)
 
 
 chat_st::chat_st(const chat_st& pCopy)
-	: mType()
-	, mTemplate(ASN1_OCTET_STRING_new())
+	: mType(OBJ_dup(pCopy.mType))
+	, mTemplate(ASN1_OCTET_STRING_dup(pCopy.mTemplate))
 {
-	mType = Asn1ObjectUtil::parseFrom(Asn1ObjectUtil::convertTo(pCopy.mType));
-	Asn1OctetStringUtil::setValue(Asn1OctetStringUtil::getValue(pCopy.mTemplate), mTemplate);
 }
 
 
@@ -116,44 +118,15 @@ QByteArray CHAT::encode() const
 }
 
 
-void CHAT::setType(const QByteArray& pOidAsText)
+Oid CHAT::getType() const
 {
-	ASN1_OBJECT_free(mType);
-	mType = Asn1ObjectUtil::parseFrom(pOidAsText);
-}
-
-
-QByteArray CHAT::getType() const
-{
-	return Asn1ObjectUtil::convertTo(mType);
-}
-
-
-void CHAT::setTemplate(const QByteArray& pValue)
-{
-	Asn1OctetStringUtil::setValue(pValue, mTemplate);
+	return Oid(mType);
 }
 
 
 QByteArray CHAT::getTemplate() const
 {
 	return Asn1OctetStringUtil::getValue(mTemplate);
-}
-
-
-void CHAT::setAccessRole(AccessRole pRole)
-{
-	if (pRole == AccessRole::UNKNOWN)
-	{
-		qCCritical(card) << "Cannot set" << pRole;
-		return;
-	}
-
-	bool lowerRoleBit = static_cast<int>(pRole) % 2;
-	bool higherRoleBit = static_cast<int>(pRole) >= 2;
-
-	setTemplateBit(38, lowerRoleBit);
-	setTemplateBit(39, higherRoleBit);
 }
 
 
@@ -229,7 +202,7 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 	}
 	if (mTemplate->length == 0)
 	{
-		static const unsigned char nullBytes[5] = {
+		static const uchar nullBytes[5] = {
 			'\0'
 		};
 		ASN1_OCTET_STRING_set(mTemplate, nullBytes, 5);

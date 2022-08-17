@@ -1,0 +1,17 @@
+__GENUS                  : 2
+__CLASS                  : FirewallProduct
+__SUPERCLASS             :
+__DYNASTY                : FirewallProduct
+__RELPATH                : FirewallProduct.instanceGuid="{774D7037-0984-41B0-3A87-5E88E680AD58}"
+__PROPERTY_COUNT         : 6
+__DERIVATION             : {}
+__SERVER                 : DESKTOP-DGTBB4H
+__NAMESPACE              : ROOT\SecurityCenter2
+__PATH                   : \\DESKTOP-DGTBB4H\ROOT\SecurityCenter2:FirewallProduct.instanceGuid="{774D7037-0984-41B0-3A87-5E88E680AD58}"
+displayName              : Kaspersky Internet Security
+instanceGuid             : {774D7037-0984-41B0-3A87-5E88E680AD58}
+pathToSignedProductExe   : C:\Program Files (x86)\Kaspersky Lab\Kaspersky Internet Security 21.2\wmiav.exe
+pathToSignedReportingExe : C:\Program Files (x86)\Kaspersky Lab\Kaspersky Internet Security 21.2\avp.exe
+productState             : 266240
+timestamp                : Fri, 22 Jan 2021 12:00:38 GMT
+PSComputerName           : DESKTOP-DGTBB4H

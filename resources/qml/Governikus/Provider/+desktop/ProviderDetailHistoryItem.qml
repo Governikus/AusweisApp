@@ -2,12 +2,13 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
+import Governikus.Type.SettingsModel 1.0
 
 Item {
 	id: baseItem
@@ -36,7 +37,7 @@ Item {
 			font.capitalization: Font.AllUppercase
 			text: ( Utils.isToday(dateTime) ? qsTr("today") :
 				  Utils.isYesterday(dateTime) ? qsTr("yesterday") :
-				  Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
+				  Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") :
 				  dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))
 				  )
 		}
@@ -83,7 +84,5 @@ Item {
 		}
 	}
 
-	FocusFrame {
-		borderColor: Style.color.focus_indicator
-	}
+	FocusFrame {}
 }

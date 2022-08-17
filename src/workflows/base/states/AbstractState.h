@@ -22,7 +22,8 @@ class AbstractState
 
 	private:
 		const QSharedPointer<WorkflowContext> mContext;
-		const bool mConnectOnCardRemoved;
+		bool mAbortOnCardRemoved;
+		bool mKeepCardConnectionAlive;
 
 		virtual void run() = 0;
 		[[nodiscard]] bool isStartStopEnabled() const;
@@ -30,8 +31,12 @@ class AbstractState
 	protected:
 		QVector<QMetaObject::Connection> mConnections;
 
-		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved = true);
+		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext);
 
+		void setAbortOnCardRemoved();
+		void setKeepCardConnectionAlive();
+
+		void onEntry(QEvent* pEvent) override;
 		void onExit(QEvent* pEvent) override;
 
 		void clearConnections();
@@ -39,23 +44,28 @@ class AbstractState
 		void updateStatus(const GlobalStatus& pStatus);
 		void updateStartPaosResult(const ECardApiResult& pStartPaosResult);
 
-		void startScanIfNecessary();
-		void stopScanIfNecessary(const QString& pError = QString());
+		void startNfcScanIfNecessary();
+		void stopNfcScanIfNecessary(const QString& pError = QString());
 
 	public:
 		static const char* const cFORCE_START_STOP_SCAN;
 		static QString getClassName(const char* const pName);
 
 		template<typename T>
-		static bool isState(const QString& pState)
+		[[nodiscard]] static QString getClassName()
 		{
-			return pState == getClassName(T::staticMetaObject.className());
+			return getClassName(T::staticMetaObject.className());
 		}
 
 
-		~AbstractState() override;
+		template<typename T>
+		static bool isState(const QString& pState)
+		{
+			return pState == getClassName<T>();
+		}
 
-		void onEntry(QEvent* pEvent) override;
+
+		~AbstractState() override = default;
 
 		[[nodiscard]] QString getStateName() const;
 		void setStateName(const QString& pName);

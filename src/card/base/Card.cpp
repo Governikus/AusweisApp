@@ -72,3 +72,38 @@ QString Card::generateProgressMessage(const QString& pMessage, int pProgress)
 
 	return message;
 }
+
+
+EstablishPaceChannelOutput Card::prepareIdentification(const QByteArray& pChat)
+{
+	Q_UNUSED(pChat)
+	qCWarning(card) << "Preparing identification is not supported";
+
+	return EstablishPaceChannelOutput();
+}
+
+
+ResponseApduResult Card::getChallenge()
+{
+	qCWarning(card) << "Getting challenge is not supported";
+
+	return {CardReturnCode::COMMAND_FAILED};
+}
+
+
+TerminalAndChipAuthenticationResult Card::performTAandCA(
+		const CVCertificateChain& pTerminalCvcChain,
+		const QByteArray& pAuxiliaryData,
+		const QByteArray& pSignature,
+		const QByteArray& pPin,
+		const QByteArray& pEphemeralPublicKey)
+{
+	Q_UNUSED(pTerminalCvcChain)
+	Q_UNUSED(pAuxiliaryData)
+	Q_UNUSED(pSignature)
+	Q_UNUSED(pPin)
+	Q_UNUSED(pEphemeralPublicKey)
+	qCWarning(card) << "Performing terminal and card authentication is not supported";
+
+	return {CardReturnCode::COMMAND_FAILED};
+}

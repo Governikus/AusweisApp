@@ -40,7 +40,7 @@ class test_ReleaseInformationConfiguration
 					auto* mock = new MockReleaseInformation(VersionNumber("1.2.3"), false);
 					return mock;
 				}));
-			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([&](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
+			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
 					auto* mock = new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
 					return mock;
 				}));

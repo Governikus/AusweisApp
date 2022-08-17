@@ -35,6 +35,7 @@ class MockCardConnectionWorker
 		void addResponse(CardReturnCode pCode, const QByteArray& pData = QByteArray());
 		void addPaceCode(CardReturnCode pCode);
 
+		CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent, int pLe = CommandApdu::SHORT_MAX_LE) override;
 		ResponseApduResult transmit(const CommandApdu& pCommandApdu) override;
 		CardReturnCode updateRetryCounter() override;
 		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId,

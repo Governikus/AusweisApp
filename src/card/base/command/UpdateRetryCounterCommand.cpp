@@ -15,5 +15,5 @@ UpdateRetryCounterCommand::UpdateRetryCounterCommand(QSharedPointer<CardConnecti
 
 void UpdateRetryCounterCommand::internalExecute()
 {
-	mReturnCode = mCardConnectionWorker->updateRetryCounter();
+	mReturnCode = getCardConnectionWorker()->updateRetryCounter();
 }

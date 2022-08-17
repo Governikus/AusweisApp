@@ -5,7 +5,7 @@ The AusweisApp2 core is encapsulated into an **XCFramework** which needs to
 be linked into your application.
 
 Subsequent sections deal with the SDK interface itself and explain which
-steps are necessary in order to talk to the AusweisApp2 SDK.
+steps are necessary in order to communicate with the AusweisApp2 SDK.
 
 .. important::
    Apple released the necessary NFC API with iOS 13.0!
@@ -47,15 +47,21 @@ in Objective-C classes and call the functions of the ``AusweisApp2.h`` header.
 .. code-block:: c
 
   typedef void (* AusweisApp2Callback)(const char* pMsg);
-  bool ausweisapp2_init(AusweisApp2Callback pCallback);
+  bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* pCmdline);
   void ausweisapp2_shutdown(void);
   bool ausweisapp2_is_running(void);
   void ausweisapp2_send(const char* pCmd);
+
+.. versionchanged:: 1.24.0
+   Added optional parameter ``pCmdline`` to function ``ausweisapp2_init``.
+
 
 First, you need to define a callback function that will be called by the AusweisApp2
 to request or provide additional information. If your application initializes the
 SDK you must pass that callback to ``ausweisapp2_init``. That function will return
 ``false`` if the callback is ``NULL`` or the SDK is already running.
+The Parameter ``pCmdline`` is optional and can be ``NULL``. This allows your application
+to provide additional commandline arguments like ``--no-loghandler``.
 
 After you called that function the AusweisApp2 SDK will start up. If the
 initialization is finished the SDK calls your callback function once with

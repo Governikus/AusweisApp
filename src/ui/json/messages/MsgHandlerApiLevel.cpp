@@ -19,8 +19,7 @@ MsgHandlerApiLevel::MsgHandlerApiLevel(const MsgContext& pContext)
 MsgHandlerApiLevel::MsgHandlerApiLevel(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandler(MsgType::API_LEVEL)
 {
-	const auto& jsonLevel = pObj[QLatin1String("level")];
-	if (jsonLevel.isUndefined())
+	if (const auto& jsonLevel = pObj[QLatin1String("level")]; jsonLevel.isUndefined())
 	{
 		setError(QLatin1String("Level cannot be undefined"));
 	}

@@ -32,12 +32,12 @@ void CheckIDCardModel::onCardInserted(const ReaderInfo& pInfo)
 
 	mReaderWithCard = pInfo.getName();
 
-	if (pInfo.hasEidCard())
+	if (pInfo.hasEid())
 	{
 		mResult = CheckIDCardResult::ID_CARD_DETECTED;
 		Q_EMIT fireResultChanged();
 
-		if (!pInfo.sufficientApduLength())
+		if (pInfo.insufficientApduLength())
 		{
 			stopScanWithResult(CheckIDCardResult::INSUFFICIENT_APDU_LENGTH);
 		}
@@ -98,7 +98,7 @@ void CheckIDCardModel::onReaderRemoved(const ReaderInfo& pInfo)
 
 void CheckIDCardModel::onReaderPropertiesUpdated(const ReaderInfo& pInfo)
 {
-	if (!pInfo.sufficientApduLength())
+	if (pInfo.insufficientApduLength())
 	{
 		stopScanWithResult(CheckIDCardResult::INSUFFICIENT_APDU_LENGTH);
 	}

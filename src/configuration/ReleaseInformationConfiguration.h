@@ -25,14 +25,14 @@ class ReleaseInformationConfiguration
 
 	public:
 		ReleaseInformationConfiguration();
-		~ReleaseInformationConfiguration() = default;
+		~ReleaseInformationConfiguration() override = default;
 
 		void update();
 		void reload();
 		void updateIfNeeded();
 		void setUpdateVersion(const VersionNumber& pVersion);
-		QSharedPointer<const ReleaseInformation> getCurrentInformation() const;
-		QSharedPointer<const ReleaseInformation> getUpdateInformation() const;
+		[[nodiscard]] QSharedPointer<const ReleaseInformation> getCurrentInformation() const;
+		[[nodiscard]] QSharedPointer<const ReleaseInformation> getUpdateInformation() const;
 
 	Q_SIGNALS:
 		void fireCurrentInformationChanged();

@@ -1,10 +1,14 @@
 #####################################################################
-# The module init is responsible to bootstrap the appplication.
+# The module init is responsible to bootstrap the application.
 #####################################################################
 
 ADD_PLATFORM_LIBRARY(AusweisAppInit)
 
 target_link_libraries(AusweisAppInit ${Qt}::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppCore)
+
+if(QT6)
+    target_link_libraries(AusweisAppInit ${Qt}::CorePrivate)
+endif()
 
 if(NOT INTEGRATED_SDK)
 	target_link_libraries(AusweisAppInit ${Qt}::Gui) # QGuiApplication

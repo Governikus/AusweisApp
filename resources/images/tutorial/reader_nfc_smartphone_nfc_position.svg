@@ -3,22 +3,22 @@
   <rect x="175" y="75" width="250" height="250" id="rect4067" style="fill:#f2f2f2" />
   <image x="100" y="50" height="297" width="193"  xlink:href="phone.svg"/>
   <text
-     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4d7aa4;fill-opacity:1;stroke:none;stroke-width:0.75127023"
+     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#164a8c;fill-opacity:1;stroke:none;stroke-width:0.75127023"
      x="130.4081"
      y="117.86777">NFC?</text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4d7aa4;fill-opacity:1;stroke:none;stroke-width:0.75127023"
+     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#164a8c;fill-opacity:1;stroke:none;stroke-width:0.75127023"
      x="194.19092"
      y="170.9494">NFC?</text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4d7aa4;fill-opacity:1;stroke:none;stroke-width:0.75127023"
+     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#164a8c;fill-opacity:1;stroke:none;stroke-width:0.75127023"
      x="124.07948"
      y="226.679">NFC?</text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4d7aa4;fill-opacity:1;stroke:none;stroke-width:0.75127023"
+     style="font-style:normal;font-weight:normal;font-size:30.05080986px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#164a8c;fill-opacity:1;stroke:none;stroke-width:0.75127023"
      x="181.30717"
      y="280.01166">NFC?</text>
 </svg>

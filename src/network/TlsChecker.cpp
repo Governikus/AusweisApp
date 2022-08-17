@@ -9,14 +9,7 @@
 
 #include <QCryptographicHash>
 #include <QLoggingCategory>
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
-	#include <openssl/dh.h>
-	#include <openssl/dsa.h>
-	#include <openssl/ec.h>
-	#include <openssl/evp.h>
-	#include <openssl/rsa.h>
-#endif
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
 Q_DECLARE_LOGGING_CATEGORY(network)
@@ -32,15 +25,11 @@ bool TlsChecker::checkCertificate(const QSslCertificate& pCertificate,
 	QString hash = QString::fromLatin1(pCertificate.digest(pAlgorithm).toHex());
 	qDebug() << "Certificate hash(" << pAlgorithm << ")" << hash;
 	qDebug() << "Accepted certificate hashes" << pAcceptedCertificateHashes;
-	for (const auto& acceptedHash : pAcceptedCertificateHashes)
-	{
-		if (hash.compare(acceptedHash, Qt::CaseInsensitive) == 0)
-		{
-			return true;
-		}
-	}
 
-	return false;
+	return std::any_of(pAcceptedCertificateHashes.constBegin(), pAcceptedCertificateHashes.constEnd(), [&hash](const auto& pAcceptedHash)
+		{
+			return hash.compare(pAcceptedHash, Qt::CaseInsensitive) == 0;
+		});
 }
 
 
@@ -66,32 +55,7 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 
 	if (keyAlgorithm == QSsl::Opaque)
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 		qWarning() << "Qt failed to determine algorithm";
-#else
-		qWarning() << "Qt failed to determine algorithm... fallback to internal handling";
-		// try do determine key algorithm and length
-		if (auto key = static_cast<EVP_PKEY*>(pEphemeralServerKey.handle()))
-		{
-			keyLength = EVP_PKEY_bits(key);
-			switch (EVP_PKEY_base_id(key))
-			{
-				case EVP_PKEY_RSA:
-					keyAlgorithm = QSsl::Rsa;
-					break;
-
-				case EVP_PKEY_DSA:
-				/* fall through */
-				case EVP_PKEY_DH:
-					keyAlgorithm = QSsl::Dsa;
-					break;
-
-				case EVP_PKEY_EC:
-					keyAlgorithm = QSsl::Ec;
-					break;
-			}
-		}
-#endif
 	}
 
 	qDebug() << "Check ephemeral key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
@@ -157,6 +121,9 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 
 #endif
 
+			QT_WARNING_PUSH
+					QT_WARNING_DISABLE_DEPRECATED
+
 		case QSsl::SslProtocol::TlsV1_0:
 			return QStringLiteral("TlsV1_0");
 
@@ -168,18 +135,6 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 
 		case QSsl::SslProtocol::TlsV1_1OrLater:
 			return QStringLiteral("TlsV1_1OrLater");
-
-		case QSsl::SslProtocol::TlsV1_2:
-			return QStringLiteral("TlsV1_2");
-
-		case QSsl::SslProtocol::TlsV1_2OrLater:
-			return QStringLiteral("TlsV1_2OrLater");
-
-		case QSsl::SslProtocol::TlsV1_3:
-			return QStringLiteral("TlsV1_3");
-
-		case QSsl::SslProtocol::TlsV1_3OrLater:
-			return QStringLiteral("TlsV1_3OrLater");
 
 		case QSsl::SslProtocol::DtlsV1_0:
 			return QStringLiteral("DtlsV1_0");
@@ -193,12 +148,25 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::DtlsV1_2OrLater:
 			return QStringLiteral("DtlsV1_2OrLater");
 
+			QT_WARNING_POP
+
+		case QSsl::SslProtocol::TlsV1_2:
+			return QStringLiteral("TlsV1_2");
+
+		case QSsl::SslProtocol::TlsV1_2OrLater:
+			return QStringLiteral("TlsV1_2OrLater");
+
+		case QSsl::SslProtocol::TlsV1_3:
+			return QStringLiteral("TlsV1_3");
+
+		case QSsl::SslProtocol::TlsV1_3OrLater:
+			return QStringLiteral("TlsV1_3OrLater");
+
 		case QSsl::SslProtocol::UnknownProtocol:
 			return QStringLiteral("UnknownProtocol");
 	}
 
 	Q_UNREACHABLE();
-	return QString();
 }
 
 
@@ -218,11 +186,8 @@ QString TlsChecker::toString(QSsl::KeyAlgorithm pKeyAlgorithm)
 		case QSsl::KeyAlgorithm::Ec:
 			return QStringLiteral("Ec");
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 		case QSsl::KeyAlgorithm::Dh:
 			return QStringLiteral("Dh");
-
-#endif
 	}
 
 	return QStringLiteral("Unknown (%1)").arg(pKeyAlgorithm);
@@ -243,31 +208,31 @@ QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 	for (const auto& error : pErrors)
 	{
 		const auto& msg = error.errorString();
-		if (fatalErrors.contains(error.error()))
+		if (!fatalErrors.contains(error.error()))
 		{
-			if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
+			qCDebug(network) << "(ignored)" << msg;
+			continue;
+		}
+
+		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
+		{
+			qCWarning(developermode) << msg;
+			if (!error.certificate().isNull())
 			{
-				qCWarning(developermode) << msg;
-				if (!error.certificate().isNull())
-				{
-					qCWarning(developermode) << error.certificate();
-				}
-			}
-			else
-			{
-				qCWarning(network) << msg;
-				if (!error.certificate().isNull())
-				{
-					qCWarning(network) << error.certificate();
-				}
-				fatalErrorStrings += msg;
+				qCWarning(developermode) << error.certificate();
 			}
 		}
 		else
 		{
-			qCDebug(network) << "(ignored)" << msg;
+			qCWarning(network) << msg;
+			if (!error.certificate().isNull())
+			{
+				qCWarning(network) << error.certificate();
+			}
+			fatalErrorStrings += msg;
 		}
 	}
+
 	return fatalErrorStrings;
 }
 
@@ -284,7 +249,7 @@ bool TlsChecker::containsFatalError(const QSharedPointer<QNetworkReply>& pReply,
 	if (getFatalErrors(pErrors).isEmpty())
 	{
 		qCDebug(network) << "Ignore SSL errors";
-		pReply->ignoreSslErrors();
+		pReply->ignoreSslErrors(pErrors);
 		return false;
 	}
 
@@ -292,7 +257,7 @@ bool TlsChecker::containsFatalError(const QSharedPointer<QNetworkReply>& pReply,
 }
 
 
-void TlsChecker::logSslConfig(const QSslConfiguration& pCfg, const QMessageLogger& pLogger)
+void TlsChecker::logSslConfig(const QSslConfiguration& pCfg, const MessageLogger& pLogger)
 {
 	pLogger.info() << "Used session cipher" << pCfg.sessionCipher();
 	pLogger.info() << "Used session protocol:" << toString(pCfg.sessionProtocol());

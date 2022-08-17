@@ -6,6 +6,8 @@
 
 #include "states/StateGetTcToken.h"
 
+#include "ResourceLoader.h"
+
 #include "MockNetworkReply.h"
 
 #include <QByteArrayList>
@@ -21,6 +23,12 @@ class test_StateGetTcToken
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
 		void test_Run()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));

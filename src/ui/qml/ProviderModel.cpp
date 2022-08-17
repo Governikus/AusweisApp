@@ -75,11 +75,6 @@ ProviderModel::ProviderModel(QObject* pParent)
 }
 
 
-ProviderModel::~ProviderModel()
-{
-}
-
-
 int ProviderModel::rowCount(const QModelIndex&) const
 {
 	return Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos().size() + (mIncludeCategories ? getProviderCategories().size() : 0);
@@ -136,10 +131,6 @@ QVariant ProviderModel::data(const QModelIndex& pIndex, int pRole) const
 	if (pRole == LONGNAME)
 	{
 		return provider.getLongName().toString();
-	}
-	if (pRole == SHORTDESCRIPTION)
-	{
-		return provider.getShortDescription().toString();
 	}
 	if (pRole == LONGDESCRIPTION)
 	{
@@ -202,7 +193,6 @@ QHash<int, QByteArray> ProviderModel::roleNames() const
 	roles.insert(CATEGORY, "providerCategory");
 	roles.insert(SHORTNAME, "providerShortName");
 	roles.insert(LONGNAME, "providerLongName");
-	roles.insert(SHORTDESCRIPTION, "providerShortDescription");
 	roles.insert(LONGDESCRIPTION, "providerLongDescription");
 	roles.insert(ADDRESS, "providerAddress");
 	roles.insert(ADDRESS_DOMAIN, "providerAddressDomain");

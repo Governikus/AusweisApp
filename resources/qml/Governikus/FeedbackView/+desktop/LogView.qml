@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,16 +14,12 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.LogModel 1.0
 
 
-SectionPage
-{
+SectionPage {
 	id: root
 
 	signal keyPressed(int key)
 
-	Accessible.name: qsTr("Log viewer")
-	Accessible.description: qsTr("This is the log viewer of the AusweisApp2.")
-
-	Keys.onPressed: keyPressed(event.key)
+	Keys.onPressed: event => { keyPressed(event.key) }
 
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP
@@ -37,7 +33,7 @@ SectionPage
 		anchors.fill: parent
 		anchors.margins: Constants.pane_padding
 
-		sectionsModel: LogModel.logFiles
+		sectionsModel: LogModel.logFileNames
 		onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
 
 		contentDelegate: logSectionDelegate
@@ -68,7 +64,17 @@ SectionPage
 					tintIcon: true
 					onClicked: {
 						let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogFileDate())
-						appWindow.openSaveFileDialog(LogModel.saveCurrentLogFile, filenameSuggestion, qsTr("Logfiles"), "log")
+						fileDialog.selectFile(filenameSuggestion)
+					}
+
+					GFileDialog {
+						id: fileDialog
+
+						defaultSuffix: "log"
+						//: LABEL DESKTOP
+						nameFilters: qsTr("Logfiles (*.log)")
+
+						onAccepted: LogModel.saveCurrentLogFile(file)
 					}
 				}
 
@@ -115,7 +121,7 @@ SectionPage
 					text: qsTr("Detach log viewer")
 					tintIcon: true
 
-					onClicked: appWindow.showDetachedLogView()
+					onClicked: ApplicationWindow.window.showDetachedLogView()
 				}
 			}
 		}
@@ -149,21 +155,19 @@ SectionPage
 					width: logView.width - 2 * Constants.pane_padding
 				}
 
+				highlight: LogViewHighLight {
+					currentItem: logView.currentItem
+				}
+
 				Connections {
 					target: LogModel
-					onFireNewLogMsg: if (logView.atYEnd) logView.positionViewAtEnd()
+					function onFireNewLogMsg() { if (logView.atYEnd) logView.positionViewAtEnd() }
 				}
 
 				Connections {
 					target: root
-					onKeyPressed: logView.handleKeyPress(key)
+					function onKeyPressed(pKey) { logView.handleKeyPress(pKey) }
 				}
-			}
-
-			FocusFrame {
-				scope: logView
-				framee: logView
-				borderColor: Style.color.focus_indicator
 			}
 		}
 	}

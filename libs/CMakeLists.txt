@@ -8,20 +8,36 @@ if(POLICY CMP0020)
 	cmake_policy(SET CMP0020 NEW)
 endif()
 
+if(POLICY CMP0135)
+	cmake_policy(SET CMP0135 NEW)
+endif()
+
 if(NOT ANDROID AND NOT IOS)
 	set(COMPILER_SEARCH C CXX)
 endif()
 
 project(AusweisApp2_Libs ${COMPILER_SEARCH})
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake")
+option(INTEGRATED_SDK "Build integrated specific SDK" OFF)
+option(CONTAINER_SDK "Build container specific SDK" OFF)
+
+if(CONTAINER_SDK)
+	set(INTEGRATED_SDK ON)
+	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake;${PROJECT_SOURCE_DIR}")
+else()
+	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake")
+endif()
+
 include(ExternalProject)
 include(Helper)
 include(DVCS)
 
 
 if(MSVC)
-	find_program(MAKE nmake CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(MAKE jom CMAKE_FIND_ROOT_PATH_BOTH)
+	if(NOT MAKE)
+		find_program(MAKE nmake CMAKE_FIND_ROOT_PATH_BOTH)
+	endif()
 else()
 	find_program(MAKE make CMAKE_FIND_ROOT_PATH_BOTH)
 endif()
@@ -45,7 +61,7 @@ if(NOT DEFINED PROCESSOR_COUNT)
 	ProcessorCount(PROCESSOR_COUNT)
 endif()
 
-if(NOT PROCESSOR_COUNT EQUAL 0 AND NOT "${MAKE}" MATCHES "nmake")
+if(NOT PROCESSOR_COUNT EQUAL 0 AND NOT MAKE MATCHES "nmake")
 	set(MAKE_JOBS -j${PROCESSOR_COUNT})
 	message(STATUS "PROCESSOR_COUNT: ${PROCESSOR_COUNT}")
 endif()
@@ -93,11 +109,11 @@ if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
 endif()
 
 ################################## Versions
-set(QT 5.15.2)
-set(QT_HASH 3a530d1b243b5dec00bc54937455471aaa3e56849d2593edb8ded07228202240)
+set(QT 6.3.1)
+set(QT_HASH 51114e789485fdb6b35d112dfd7c7abb38326325ac51221b6341564a1c3cc726)
 
-set(OPENSSL 1.1.1o)
-set(OPENSSL_HASH 9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f)
+set(OPENSSL 3.0.5)
+set(OPENSSL_HASH aa7d8d9bef71ad6525c55ba11e5f4397889ce49c2c9349dcea6d3e4f0b024a7a)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -134,10 +150,10 @@ set(ENABLED_TARGETS)
 #########################################################################
 list(APPEND ENABLED_TARGETS openssl)
 
-set(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-hw no-sm2 no-sm3 no-sm4)
+set(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-sm2 no-sm3 no-sm4)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ct no-dgram no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-tls1_3 no-ssl3 no-ssl3-method no-dtls no-dtls1-method no-dtls1_2-method)
-set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated no-engine no-async no-dso no-comp no-ts no-makedepend no-tests shared)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-engine no-async no-dso no-comp no-ts no-makedepend no-tests no-legacy shared)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	set(OPENSSL_CONFIGURE_FLAGS --debug ${OPENSSL_CONFIGURE_FLAGS})
@@ -153,6 +169,10 @@ if(WIN32)
 	ADD_FLAG(-Wl,--dynamicbase NOQUOTES VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
 	ADD_FLAG(-Wl,--nxcompat NOQUOTES VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
 	ADD_FLAG(-Wl,--high-entropy-va NOQUOTES VAR OPENSSL_COMPILER_FLAGS USE_SAME_FOR_LINKER)
+
+	if(MSVC AND MAKE MATCHES "jom")
+		ADD_FLAG(/FS NOQUOTES VAR OPENSSL_COMPILER_FLAGS)
+	endif()
 else()
 	ADD_FLAG(-fstack-protector-strong -fstack-protector NOQUOTES VAR OPENSSL_COMPILER_FLAGS)
 endif()
@@ -164,12 +184,21 @@ if(IOS)
 	else()
 		set(OPENSSL_ARCH ios64-cross)
 		string(REGEX REPLACE "/SDKs/.*" "" CROSS_TOP_DEV_ROOT "${CMAKE_OSX_SYSROOT}")
-		set(OPENSSL_ENV export CROSS_TOP=${CROSS_TOP_DEV_ROOT} && export CROSS_SDK=iPhoneOS.sdk &&)
+		set(OPENSSL_ENV CROSS_TOP=${CROSS_TOP_DEV_ROOT} CROSS_SDK=iPhoneOS.sdk)
 	endif()
 elseif(APPLE)
-	set(OPENSSL_ARCH darwin64-x86_64-cc)
-	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.13)
-elseif(MINGW)
+	if(NOT CMAKE_OSX_ARCHITECTURES AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+		set(CMAKE_OSX_ARCHITECTURES arm64)
+	endif()
+
+	if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+		set(OPENSSL_ARCH darwin64-arm64-cc)
+		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=11.0)
+	else()
+		set(OPENSSL_ARCH darwin64-x86_64-cc)
+		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=10.15)
+	endif()
+elseif(MINGW OR CYGWIN)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(OPENSSL_ARCH mingw64)
 	else()
@@ -202,8 +231,7 @@ elseif(ANDROID)
 	set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-stdio)
 
 	get_filename_component(toolchain_bin "${CMAKE_C_COMPILER}" DIRECTORY)
-	set(OPENSSL_ENV export PATH=${toolchain_bin}/:$ENV{PATH} &&)
-	set(OPENSSL_ENV ${OPENSSL_ENV} export CC=clang && export CXX=clang++ &&)
+	set(OPENSSL_ENV PATH=${toolchain_bin}/:$ENV{PATH} CC=clang CXX=clang++)
 
 	if(ANDROID_NDK_REVISION VERSION_LESS "23")
 		set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -D__ANDROID_API__=${CMAKE_SYSTEM_VERSION})
@@ -220,13 +248,17 @@ else()
 	message(FATAL_ERROR "Unsupported system")
 endif()
 
+if(OPENSSL_ENV)
+	set(OPENSSL_ENV ${CMAKE_COMMAND} -E env ${OPENSSL_ENV})
+endif()
+
 ExternalProject_Add(openssl
 	URL ${OPENSSL_URLS}
 	URL_HASH SHA256=${OPENSSL_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=openssl -P ${PATCH_CMAKE}
-	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} <SOURCE_DIR>/Configure --prefix=${DESTINATION_DIR} ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_ARCH} "${OPENSSL_COMPILER_FLAGS}"
+	CONFIGURE_COMMAND ${OPENSSL_ENV} ${PERL_EXECUTABLE} <SOURCE_DIR>/Configure --prefix=${DESTINATION_DIR} --libdir=lib ${OPENSSL_CONFIGURE_FLAGS} ${OPENSSL_ARCH} "${OPENSSL_COMPILER_FLAGS}"
 	BUILD_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS}
 	INSTALL_COMMAND ${OPENSSL_ENV} ${MAKE} ${MAKE_JOBS} install_sw
 )
@@ -239,7 +271,7 @@ ExternalProject_Add_Step(openssl configdata
 
 
 if(MAC)
-	set(OPENSSL_FILE_VERSION 1.1)
+	set(OPENSSL_FILE_VERSION 3)
 	add_custom_command(TARGET openssl POST_BUILD
 		COMMAND install_name_tool -id libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
 		COMMAND install_name_tool -id libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -272,43 +304,69 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	else()
 		set(QT_CONFIGURE_FLAGS -debug)
 	endif()
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -qml-debug)
+	if(NOT INTEGRATED_SDK)
+		set(QT_CONFIGURE_FLAGS_SHARED -qml-debug)
+	endif()
 else()
-	set(QT_CONFIGURE_FLAGS -release -optimize-size -no-qml-debug)
+	set(QT_CONFIGURE_FLAGS -release)
+	if(NOT WIN32)
+		list(APPEND QT_CONFIGURE_FLAGS -optimize-size)
+	endif()
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-force-debug-info>)
+	if(NOT INTEGRATED_SDK)
+		set(QT_CONFIGURE_FLAGS_SHARED -no-qml-debug)
+	endif()
 endif()
 
-set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR} -opensource -confirm-license -recheck-all)
-set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -nomake examples -nomake tests -no-mtdev -no-dbus -no-harfbuzz -no-compile-examples -no-sql-sqlite)
-set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -qt-zlib -qt-libpng -qt-libjpeg -qt-pcre)
+set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR})
 set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -system-proxies -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
 
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -opensource -confirm-license)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -nomake examples -nomake tests -no-mtdev -no-dbus -no-sql-sqlite)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-zlib -qt-pcre -qt-harfbuzz)
+if(NOT INTEGRATED_SDK)
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-libpng -qt-libjpeg)
+endif()
+
 if(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -ccache)
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -ccache)
 endif()
 
 
-list(APPEND NO_FEATURES dtls winrt_bt ftp lcdnumber mdiarea)
-list(APPEND NO_FEATURES hijricalendar islamiccivilcalendar jalalicalendar)
-list(APPEND NO_FEATURES native-win32-bluetooth testlib_selfcover)
-list(APPEND NO_FEATURES calendarwidget colordialog cups dial fontcombobox fontdialog)
-list(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)
-list(APPEND NO_FEATURES sharedmemory textodfwriter bearermanagement)
-list(APPEND NO_FEATURES undocommand undogroup undostack undoview)
-list(APPEND NO_FEATURES printer printdialog printpreviewdialog printpreviewwidget)
-list(APPEND NO_FEATURES splashscreen syntaxhighlighter dom sql qdoc)
+list(APPEND NO_FEATURES_SHARED hijricalendar islamiccivilcalendar jalalicalendar)
+list(APPEND NO_FEATURES_SHARED designer testlib_selfcover)
+list(APPEND NO_FEATURES_SHARED imageformat_bmp imageformat_ppm imageformat_xbm)
+list(APPEND NO_FEATURES_SHARED sharedmemory textodfwriter)
+list(APPEND NO_FEATURES_SHARED undocommand undogroup undostack)
+list(APPEND NO_FEATURES_SHARED printsupport dtls dom sql xml)
+if(CONTAINER_SDK)
+	list(APPEND NO_FEATURES_SHARED testlib)
+endif()
+foreach(feature ${NO_FEATURES_SHARED})
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-feature-${feature})
+endforeach()
+
+list(APPEND NO_FEATURES calendarwidget colordialog dial fontcombobox fontdialog lcdnumber)
+list(APPEND NO_FEATURES splashscreen syntaxhighlighter undoview)
+if(NOT MAC)
+	list(APPEND NO_FEATURES mdiarea)
+endif()
 foreach(feature ${NO_FEATURES})
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-feature-${feature})
 endforeach()
 
 
-list(APPEND SKIP_MODULES qtwebglplugin qtscxml qtxmlpatterns qtwebchannel)
-list(APPEND SKIP_MODULES qtwebengine qtscript qtactiveqt qtlocation qtserialbus)
-list(APPEND SKIP_MODULES qtserialport qtgamepad qtvirtualkeyboard qtcanvas3d qtcharts)
-list(APPEND SKIP_MODULES qtdatavis3d qt3d qtpurchasing qtwayland qtremoteobjects)
-list(APPEND SKIP_MODULES qtspeech qtwebview multimedia qtquickcontrols qtlottie qtquick3d)
+list(APPEND SKIP_MODULES qtopcua qtwebchannel qtlanguageserver)
+list(APPEND SKIP_MODULES qtwebengine qtactiveqt qtserialbus qt5compat qtsensors)
+list(APPEND SKIP_MODULES qtserialport qtvirtualkeyboard qtcharts)
+list(APPEND SKIP_MODULES qtdatavis3d qt3d qtwayland qtremoteobjects)
+list(APPEND SKIP_MODULES qtwebview qtmultimedia qtlottie qtquick3d)
+list(APPEND SKIP_MODULES qtnetworkauth qtmqtt qtcoap qtquicktimeline qtdoc qtpositioning)
+if(INTEGRATED_SDK)
+	list(APPEND SKIP_MODULES qttranslations qtsensors qtdeclarative qtquickcontrols2 qtgraphicaleffects qtimageformats qttools qtsvg qtconnectivity)
+endif()
 foreach(module ${SKIP_MODULES})
-	set(QT_CONFIGURE_FLAGS_SKIP_MODULES ${QT_CONFIGURE_FLAGS_SKIP_MODULES} -skip ${module})
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -skip ${module})
 endforeach()
 
 
@@ -323,42 +381,24 @@ if(IOS)
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -sdk iphoneos)
 	endif()
 elseif(APPLE)
-	find_program(XCODE_SELECT xcode-select)
-	if(NOT XCODE_SELECT)
-		message(FATAL_ERROR "Cannot find xcode-select")
-	endif()
-
-	execute_process(COMMAND ${XCODE_SELECT} -p OUTPUT_VARIABLE osx_dev_dir OUTPUT_STRIP_TRAILING_WHITESPACE)
-	file(GLOB osx_sdk "${osx_dev_dir}/Platforms/MacOSX.platform/Developer/SDKs/MacOSX1*")
-	get_filename_component(osx_sdk ${osx_sdk} NAME)
-	string(REPLACE ".sdk" "" osx_sdk "${osx_sdk}")
-	string(TOLOWER "${osx_sdk}" osx_sdk)
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework -sdk ${osx_sdk})
-elseif(WIN32)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -framework)
+elseif(WIN32 OR CYGWIN)
 	if(MSVC)
-		if(MSVC_TOOLSET_VERSION STREQUAL "140")
-			set(QT_PLATFORM win32-msvc2015)
-		elseif(MSVC_TOOLSET_VERSION STREQUAL "141")
-			set(QT_PLATFORM win32-msvc2017)
-		elseif(MSVC_TOOLSET_VERSION STREQUAL "142")
-			set(QT_PLATFORM win32-msvc2019)
-		elseif(MSVC_TOOLSET_VERSION STREQUAL "143")
-			set(QT_PLATFORM win32-msvc)
-		else()
-			message(FATAL_ERROR "Version of MSVC not supported: ${MSVC_TOOLSET_VERSION}")
-		endif()
-
-		set(QT_OPENSSL OPENSSL_LIBS=-llibcrypto\ -llibssl)
+		set(QT_PLATFORM win32-msvc)
+		set(QT_ENV OPENSSL_LIBS=-llibcrypto\ -llibssl)
 	else()
 		set(QT_PLATFORM win32-g++)
-		set(QT_OPENSSL OPENSSL_LIBS=-lcrypto\ -lssl)
+		set(QT_ENV OPENSSL_LIBS=-lcrypto\ -lssl)
 	endif()
 
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_OPENSSL} -no-icu -no-sql-odbc)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-icu -no-sql-odbc)
 
-	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+	if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows" OR CYGWIN)
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opengl dynamic -platform ${QT_PLATFORM})
 		set(QT_CONFIGURE ${QT_CONFIGURE}.bat)
+		if(CYGWIN)
+			set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -make-tool ${MAKE})
+		endif()
 	elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -opengl desktop -xplatform ${QT_PLATFORM} -device-option CROSS_COMPILE=${CROSS_PREFIX})
 	else()
@@ -367,8 +407,9 @@ elseif(WIN32)
 elseif(ANDROID)
 	find_package(Java COMPONENTS Development REQUIRED)
 
+	set(QT_ENV OPENSSL_LIBS=-lcrypto_${CMAKE_ANDROID_ARCH_ABI}\ -lssl_${CMAKE_ANDROID_ARCH_ABI})
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
-		-android-sdk ${ANDROID_SDK} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION} -android-ndk-host ${CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG}
+		-android-sdk ${ANDROID_SDK} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION}
 		-android-abis ${CMAKE_ANDROID_ARCH_ABI} -xplatform android-clang)
 
 	if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
@@ -386,16 +427,65 @@ if(IOS OR ANDROID)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-widgets)
 endif()
 
+if(QT_ENV)
+	set(QT_ENV ${CMAKE_COMMAND} -E env ${QT_ENV})
+endif()
+if(CONTAINER_SDK)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-gui -no-accessibility -no-freetype)
+endif()
+
+if(IOS OR ANDROID)
+	option(BUILD_HOST_QT "Build host Qt" ON)
+
+	if(BUILD_HOST_QT AND QT_HOST_PATH)
+		message(FATAL_ERROR "Cannot provide QT_HOST_PATH when building host Qt")
+	elseif(NOT BUILD_HOST_QT AND NOT QT_HOST_PATH)
+		message(FATAL_ERROR "Missing QT_HOST_PATH to provide host tools")
+	endif()
+endif()
+
+# Build minimal qt for host tools until a dedicated target exists, see https://bugreports.qt.io/browse/QTQAINFRA-4203
+if (BUILD_HOST_QT AND (IOS OR ANDROID))
+	list(APPEND ENABLED_TARGETS qt-host)
+	set(QT_HOST_DEPEND qt-host)
+	set(QT_HOST_PATH ${DESTINATION_DIR}/qt-host)
+
+	set(QT_HOST_CONFIGURE_FLAGS -prefix ${QT_HOST_PATH} -release -optimize-size -shared -no-widgets -no-openssl -no-zstd -no-opengl)
+	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED})
+
+	list(APPEND SKIP_HOST_MODULES qtsvg qtimageformats qtconnectivity qttranslations qtwebsockets)
+	foreach(module ${SKIP_HOST_MODULES})
+		set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} -skip ${module})
+	endforeach()
+
+	ExternalProject_Add(qt-host
+		URL ${QT_URLS}
+		URL_HASH SHA256=${QT_HASH}
+		DOWNLOAD_DIR ${PACKAGES_DIR}
+
+		PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=qt -P ${PATCH_CMAKE} &&
+			${CMAKE_COMMAND} -E touch qtbase/.gitignore
+		CONFIGURE_COMMAND <SOURCE_DIR>/${QT_CONFIGURE} ${QT_HOST_CONFIGURE_FLAGS} -- -DCMAKE_PREFIX_PATH=${QT_HOST_PATH}
+		BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
+		INSTALL_COMMAND ${CMAKE_COMMAND} --install .
+	)
+endif()
+
+if(QT_HOST_PATH)
+	set(ADDITIONAL_QT_DEFINES -DQT_HOST_PATH=${QT_HOST_PATH})
+endif()
+
 ExternalProject_Add(qt
-	DEPENDS openssl
+	DEPENDS openssl ${QT_HOST_DEPEND}
 	URL ${QT_URLS}
 	URL_HASH SHA256=${QT_HASH}
 	DOWNLOAD_DIR ${PACKAGES_DIR}
 
 	PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=qt -P ${PATCH_CMAKE} &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
-	CONFIGURE_COMMAND ${QT_ENV} <SOURCE_DIR>/${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SKIP_MODULES}
-	BUILD_COMMAND ${MAKE} ${MAKE_JOBS}
+	CONFIGURE_COMMAND ${QT_ENV} <SOURCE_DIR>/${QT_CONFIGURE} ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED} -- -DOPENSSL_ROOT_DIR=${DESTINATION_DIR} -DCMAKE_PREFIX_PATH=${DESTINATION_DIR} ${ADDITIONAL_QT_DEFINES}
+	BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
+	INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 )
 
 add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E touch ${DESTINATION_DIR}/mkspecs/qt_vendor_governikus)

@@ -7,14 +7,14 @@
 #include "AppSettings.h"
 #include "HistorySettings.h"
 #include "LanguageLoader.h"
-#include "NetworkManager.h"
-#include "PlatformHelper.h"
 #include "Service.h"
 
+#include <QQmlEngine>
 
 #ifdef Q_OS_ANDROID
-#include <QtAndroidExtras/QAndroidJniObject>
+	#include <QJniObject>
 #endif
+
 
 using namespace governikus;
 
@@ -37,7 +37,7 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireProxyChanged, this, &SettingsModel::fireUseCustomProxyChanged);
 
 #ifdef Q_OS_ANDROID
-	mIsStartedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
+	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
 #endif
 }
 
@@ -55,8 +55,14 @@ void SettingsModel::setLanguage(const QString& pLanguage)
 		GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setLanguage(QLocale(pLanguage).language());
 		settings.save();
-		Q_EMIT fireLanguageChanged();
+		// do not emit fireLanguageChanged here! The AppController will emit this!
 	}
+}
+
+
+void SettingsModel::onTranslationChanged()
+{
+	Q_EMIT fireLanguageChanged();
 }
 
 
@@ -286,6 +292,23 @@ void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 }
 
 
+bool SettingsModel::isSimulatorEnabled() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isSimulatorEnabled();
+}
+
+
+void SettingsModel::setSimulatorEnabled(bool pEnabled)
+{
+	if (isSimulatorEnabled() != pEnabled)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setSimulatorEnabled(pEnabled);
+		settings.save();
+	}
+}
+
+
 UiModule SettingsModel::getStartupModule() const
 {
 	if (mIsStartedByAuth)
@@ -349,7 +372,7 @@ void SettingsModel::setAutoStart(bool pEnabled)
 bool SettingsModel::requestStoreFeedback() const
 {
 #ifdef Q_OS_ANDROID
-	const bool startedByAuth = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
+	const bool startedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
 	if (startedByAuth)
 	{
 		return false;
@@ -363,22 +386,6 @@ bool SettingsModel::requestStoreFeedback() const
 void SettingsModel::hideFutureStoreFeedbackDialogs()
 {
 	Env::getSingleton<AppSettings>()->getGeneralSettings().setRequestStoreFeedback(false);
-}
-
-
-bool SettingsModel::askForDeviceSurvey() const
-{
-	if (isPlatform(*this, Platform::IOS))
-	{
-		return false;
-	}
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().askForDeviceSurvey();
-}
-
-
-void SettingsModel::setDeviceSurveyPending(bool pDeviceSurveyPending)
-{
-	Env::getSingleton<AppSettings>()->getGeneralSettings().setDeviceSurveyPending(pDeviceSurveyPending);
 }
 
 
@@ -493,6 +500,7 @@ void SettingsModel::updateAppcast()
 AppUpdateDataModel* SettingsModel::getAppUpdateData() const
 {
 	auto* dataModel = Env::getSingleton<AppUpdateDataModel>();
+	QQmlEngine::setObjectOwnership(dataModel, QQmlEngine::CppOwnership);
 	return dataModel;
 }
 

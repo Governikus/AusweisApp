@@ -11,7 +11,7 @@ using namespace governikus;
 
 
 StatePreparePace::StatePreparePace(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -19,8 +19,9 @@ StatePreparePace::StatePreparePace(const QSharedPointer<WorkflowContext>& pConte
 
 void StatePreparePace::run()
 {
-	getContext()->setEstablishPaceChannelType(PacePasswordId::UNKNOWN);
-	const QSharedPointer<CardConnection>& cardConnection = getContext()->getCardConnection();
+	const auto& context = getContext();
+	context->setEstablishPaceChannelType(PacePasswordId::UNKNOWN);
+	const auto& cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "Card connection lost.";
@@ -28,7 +29,29 @@ void StatePreparePace::run()
 		return;
 	}
 
-	if (getContext()->isCanAllowedMode())
+	const int currentRetryCounter = cardConnection->getReaderInfo().getRetryCounter();
+	if (context->isSmartCardUsed())
+	{
+		if (currentRetryCounter == 0)
+		{
+			qCDebug(statemachine) << "Smart-eID was invalidated during workflow";
+			updateStatus(GlobalStatus::Code::Card_Smart_Invalid);
+			Q_EMIT fireAbort();
+		}
+
+		qCDebug(statemachine) << "Smart-eID PIN required";
+		context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+		if (context->getPin().isEmpty())
+		{
+			Q_EMIT fireEnterPacePassword();
+			return;
+		}
+
+		Q_EMIT fireEstablishPaceChannel();
+		return;
+	}
+
+	if (context->isCanAllowedMode())
 	{
 		qCDebug(statemachine) << "CAN allowed required";
 		if (!requestPaceCanIfStillRequired())
@@ -39,16 +62,15 @@ void StatePreparePace::run()
 		return;
 	}
 
-	const int currentRetryCounter = cardConnection->getReaderInfo().getRetryCounter();
 	Q_ASSERT(currentRetryCounter != -1);
 	switch (currentRetryCounter)
 	{
 		case 0:
 		{
 			qCDebug(statemachine) << "PUK required";
-			getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PUK);
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PUK);
 
-			if (getContext()->getPuk().isEmpty())
+			if (context->getPuk().isEmpty())
 			{
 				Q_EMIT fireEnterPacePassword();
 				return;
@@ -71,13 +93,13 @@ void StatePreparePace::run()
 		default:
 		{
 			qCDebug(statemachine) << "PIN allowed";
-			getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 
 			const bool pacePinDone = cardConnection->getPacePinSuccessful();
 			qCDebug(statemachine) << "PACE_PIN done:" << pacePinDone;
 			if (!pacePinDone)
 			{
-				if (getContext()->getPin().isEmpty())
+				if (context->getPin().isEmpty())
 				{
 					Q_EMIT fireEnterPacePassword();
 					return;
@@ -92,7 +114,6 @@ void StatePreparePace::run()
 	}
 
 	Q_UNREACHABLE();
-	Q_EMIT fireContinue();
 }
 
 

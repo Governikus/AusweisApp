@@ -5,9 +5,9 @@
 #pragma once
 
 #include "AbstractState.h"
+#include "GenericContextContainer.h"
 #include "command/DidAuthenticateEAC1Command.h"
 #include "context/AuthContext.h"
-#include "GenericContextContainer.h"
 
 class test_StateDidAuthenticateEac1;
 
@@ -22,8 +22,9 @@ class StateDidAuthenticateEac1
 	friend class StateBuilder;
 	friend class ::test_StateDidAuthenticateEac1;
 
-	explicit StateDidAuthenticateEac1(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateDidAuthenticateEac1(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	private Q_SLOTS:
 		void onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand);

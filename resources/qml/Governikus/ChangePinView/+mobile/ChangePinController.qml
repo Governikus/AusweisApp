@@ -2,51 +2,45 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
-import Governikus.Type.ApplicationModel 1.0
+import Governikus.View 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
+import Governikus.Type.PasswordType 1.0
 import Governikus.Type.UiModule 1.0
 
 
-Item {
+Controller {
 	enum WorkflowStates {
 			Initial,
 			Reader,
-			Card,
 			Update,
 			Puk,
 			Can,
+			TransportPin,
 			Pin,
 			NewPin,
 			Processing
 	}
 
-	QtObject {
-		id: d
-		readonly property int readerPlugInType: ChangePinModel.readerPlugInType
-	}
-
 	id: controller
 	readonly property string currentState: ChangePinModel.currentState
+	property bool wasNewPin: false
 
-	property bool showRemoveCardFeedback: false
 	property int workflowState: 0
 
 	Connections {
 		target: ChangePinModel
 
-		onFireNewContextSet: {
-			pinProgressView.wasNewPin = false
-			navBar.show(UiModule.PINMANAGEMENT, true)
-			enterPinView.state = "INITIAL"
+		function onFireNewContextSet() {
+			controller.wasNewPin = false
+			show(UiModule.PINMANAGEMENT, true)
 			controller.workflowState = ChangePinController.WorkflowStates.Initial
 			ChangePinModel.setInitialPluginType()
 		}
 
-		onFireCurrentStateChanged: processStateChange()
+		function onFireCurrentStateChanged() { processStateChange() }
 		// This is necessary because onCurrentStateChanged is not
 		// working, when we need to process a state a second time
 	}
@@ -56,51 +50,50 @@ Item {
 			case "Initial":
 				break
 			case "StateSelectReader":
-				fireReplace(pinWorkflow)
+				if (!workflowActive) {
+					replace(pinWorkflow)
+				}
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Reader)
 				break
-			case "StateConnectCard":
-				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Card)
-				break
 			case "StatePreparePace":
-				fireReplace(pinProgressView)
+				replace(pinProgressView)
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Update)
 				break
 			case "StateEnterPacePassword":
-				if (NumberModel.passwordType === NumberModel.PASSWORD_PIN) {
-					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Pin, "PIN")
+				if (NumberModel.passwordType === PasswordType.TRANSPORT_PIN) {
+					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.TransportPin)
 				}
-				else if (NumberModel.passwordType === NumberModel.PASSWORD_CAN) {
-					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Can, "CAN")
+				if (NumberModel.passwordType === PasswordType.PIN) {
+					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Pin)
 				}
-				else if (NumberModel.passwordType === NumberModel.PASSWORD_PUK) {
-					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Puk, "PUK")
+				else if (NumberModel.passwordType === PasswordType.CAN) {
+					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Can)
+				}
+				else if (NumberModel.passwordType === PasswordType.PUK) {
+					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Puk)
+				}
+				else if (NumberModel.passwordType === PasswordType.SMART_PIN) {
+					setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Pin)
 				}
 				break
 			case "StateUnfortunateCardPosition":
-				baseItem.firePush(cardPositionView)
+				push(cardPositionView)
 				break
 			case "StateEnterNewPacePin":
-				setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.NewPin, "PIN_NEW")
+				setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.NewPin)
 				break
 			case "StateCleanUpReaderManager":
-				controller.showRemoveCardFeedback = ChangePinModel.selectedReaderHasCard() && !ChangePinModel.error;
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Processing)
 				break
 			case "FinalState":
-				if (controller.showRemoveCardFeedback) {
-					controller.showRemoveCardFeedback = false
-					//: INFO ANDROID IOS Hint that the ID card may be removed from the card reader since the PIN was changed successfully.
-					ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
-				}
+				showRemoveCardFeedback(ChangePinModel, false)
 				if (ChangePinModel.shouldSkipResultView()) {
 					ChangePinModel.continueWorkflow()
-					firePopAll()
-					navBar.lockedAndHidden = false
+					popAll()
+					setLockedAndHidden(false)
 					break
 				}
-				baseItem.firePush(pinResult)
-				navBar.lockedAndHidden = true
+				push(pinResult)
 				break
 			default:
 				ChangePinModel.continueWorkflow()
@@ -112,11 +105,10 @@ Item {
 		ChangePinModel.continueWorkflow()
 	}
 
-	function setPinWorkflowStateAndRequestInput(pState, pInput) {
+	function setPinWorkflowStateAndRequestInput(pState) {
 		controller.workflowState = pState
 		if (ChangePinModel.isBasicReader) {
-			enterPinView.state = pInput
-			baseItem.firePush(enterPinView)
+			push(enterPinView)
 		} else {
 			ChangePinModel.continueWorkflow()
 		}

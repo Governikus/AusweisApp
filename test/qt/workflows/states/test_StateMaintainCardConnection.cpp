@@ -5,6 +5,7 @@
 #include "states/StateMaintainCardConnection.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestWorkflowContext.h"
 
 #include <QtTest>
 
@@ -22,7 +23,7 @@ class test_StateMaintainCardConnection
 		void init()
 		{
 			workerThread.start();
-			mContext.reset(new WorkflowContext());
+			mContext.reset(new TestWorkflowContext());
 			mState.reset(new StateMaintainCardConnection(mContext));
 		}
 

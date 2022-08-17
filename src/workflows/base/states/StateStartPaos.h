@@ -7,8 +7,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 namespace governikus
 {
@@ -20,8 +20,9 @@ class StateStartPaos
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateStartPaos(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateStartPaos(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

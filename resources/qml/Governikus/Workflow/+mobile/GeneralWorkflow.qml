@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.TechnologyInfo 1.0
@@ -19,13 +19,13 @@ SectionPage {
 	property string workflowTitle
 
 	navigationAction: NavigationAction {
-		state: "cancel"
+		action: NavigationAction.Action.Cancel
 		onClicked: workflowModel.cancelWorkflow()
 	}
 	title: workflowTitle
 
 	NfcWorkflow {
-		visible: workflowModel.readerPlugInType == ReaderPlugIn.NFC
+		visible: workflowModel.readerPlugInType === ReaderPlugIn.NFC
 		anchors {
 			left: parent.left
 			right: parent.right
@@ -35,14 +35,38 @@ SectionPage {
 		onStartScanIfNecessary: workflowModel.startScanIfNecessary()
 	}
 
-	RemoteWorkflow {
-		visible: workflowModel.readerPlugInType == ReaderPlugIn.REMOTE || workflowModel.readerPlugInType == ReaderPlugIn.PCSC
+	SmartWorkflow {
+		visible: workflowModel.readerPlugInType === ReaderPlugIn.SMART
 		anchors {
 			left: parent.left
 			right: parent.right
 			top: parent.top
 			bottom: technologySwitch.top
 		}
+
+		workflowModel: baseItem.workflowModel
+	}
+
+	RemoteWorkflow {
+		visible: workflowModel.readerPlugInType === ReaderPlugIn.REMOTE_IFD || workflowModel.readerPlugInType === ReaderPlugIn.PCSC
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: parent.top
+			bottom: technologySwitch.top
+		}
+	}
+
+	SimulatorWorkflow {
+		visible: workflowModel.readerPlugInType === ReaderPlugIn.SIMULATOR
+		anchors {
+			left: parent.left
+			right: parent.right
+			top: parent.top
+			bottom: technologySwitch.top
+		}
+
+		workflowModel: baseItem.workflowModel
 	}
 
 	TechnologySwitch {
@@ -55,6 +79,7 @@ SectionPage {
 		}
 
 		selectedTechnology: workflowModel.readerPlugInType
-		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType;
+		supportedTechnologies: workflowModel.supportedPlugInTypes
+		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType
 	}
 }

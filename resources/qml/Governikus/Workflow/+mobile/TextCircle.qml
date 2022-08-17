@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -13,13 +13,14 @@ Item {
 	height: 50
 	width: height
 
-	BusyIndicator {
+	GBusyIndicator {
 		id: busy
-		anchors.centerIn: parent
-		height: rec.height * 1.1
+
 		width: height
+		height: rec.height * 1.1
+		anchors.centerIn: parent
+
 		running: false
-		contentItem: NpaBusyIndicatorStyle {}
 	}
 
 	Rectangle {

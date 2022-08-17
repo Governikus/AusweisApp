@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 import QtQuick.Window 2.2
 import Governikus.Global 1.0
 

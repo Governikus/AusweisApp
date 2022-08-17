@@ -113,10 +113,7 @@ def main():
                            b('--force')])
 
     print('Import patch: {}'.format(patch))
-    client.import_([patch],
-                   user='jenkins@review',
-                   date='today',
-                   message='jenkins patch review')
+    client.import_([patch], nocommit=True)
 
     return 0
 

@@ -2,12 +2,13 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Shapes 1.12
+import QtQuick 2.15
+import QtQuick.Shapes 1.15
 
 import Governikus.Global 1.0
 
 Shape {
+	property double pointerXRatio: 1.0
 	property double pointerYRatio: 0.5
 
 	ShapePath {
@@ -16,7 +17,7 @@ Shape {
 		fillColor: Constants.black
 
 		PathLine { x: 0; y: height }
-		PathLine { x: width; y: pointerYRatio * height }
+		PathLine { x: pointerXRatio * width; y: pointerYRatio * height }
 		PathLine { x: 0; y: 0 }
 	}
 }

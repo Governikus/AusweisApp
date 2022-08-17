@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -32,6 +32,9 @@ Item {
 
 	LabeledText {
 		id: providerTitle
+
+		Accessible.ignored: true
+
 		anchors.verticalCenter: image.verticalCenter
 		anchors.left: image.right
 		anchors.leftMargin: Constants.groupbox_spacing

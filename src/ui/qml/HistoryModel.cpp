@@ -6,9 +6,9 @@
 
 #include "HistoryModel.h"
 
-#include "asn1/AccessRoleAndRight.h"
 #include "AppSettings.h"
 #include "Env.h"
+#include "asn1/AccessRoleAndRight.h"
 
 #include "PdfExporter.h"
 #include "ProviderConfiguration.h"
@@ -45,11 +45,6 @@ HistoryModel::HistoryModel(QObject* pParent)
 	QQmlEngine::setObjectOwnership(&mFilterModel, QQmlEngine::CppOwnership);
 	QQmlEngine::setObjectOwnership(&mNameFilterModel, QQmlEngine::CppOwnership);
 	QQmlEngine::setObjectOwnership(&mHistoryModelSearchFilter, QQmlEngine::CppOwnership);
-}
-
-
-HistoryModel::~HistoryModel()
-{
 }
 
 
@@ -92,7 +87,6 @@ void HistoryModel::onProvidersChanged()
 	const static QVector<int> PROVIDER_ROLES({PROVIDER_CATEGORY,
 											  PROVIDER_SHORTNAME,
 											  PROVIDER_LONGNAME,
-											  PROVIDER_SHORTDESCRIPTION,
 											  PROVIDER_LONGDESCRIPTION,
 											  PROVIDER_ADDRESS,
 											  PROVIDER_ADDRESS_DOMAIN,
@@ -153,9 +147,6 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 
 			case PROVIDER_LONGNAME:
 				return provider.getLongName().toString();
-
-			case PROVIDER_SHORTDESCRIPTION:
-				return provider.getShortDescription().toString();
 
 			case PROVIDER_LONGDESCRIPTION:
 				return provider.getLongDescription().toString();
@@ -253,7 +244,6 @@ QHash<int, QByteArray> HistoryModel::roleNames() const
 	roles.insert(PROVIDER_CATEGORY, "providerCategory");
 	roles.insert(PROVIDER_SHORTNAME, "providerShortName");
 	roles.insert(PROVIDER_LONGNAME, "providerLongName");
-	roles.insert(PROVIDER_SHORTDESCRIPTION, "providerShortDescription");
 	roles.insert(PROVIDER_LONGDESCRIPTION, "providerLongDescription");
 	roles.insert(PROVIDER_ADDRESS, "providerAddress");
 	roles.insert(PROVIDER_ADDRESS_DOMAIN, "providerAddressDomain");
@@ -321,10 +311,17 @@ void HistoryModel::exportHistory(const QUrl& pFilename) const
 #ifndef QT_NO_DEBUG
 void HistoryModel::createDummyEntry()
 {
-	getHistorySettings().addHistoryInfo(HistoryInfo(
-			QStringLiteral("Dummy Subject"), QStringLiteral("Dummy Subject URL"), QStringLiteral("Dummy Usage"),
-			QDateTime::currentDateTime(), QStringLiteral("Dummy Term Of Usage"),
-			{QStringLiteral("GivenNames"), QStringLiteral("Address"), QStringLiteral("WriteAddress")}));
+	const auto& now = QDateTime::currentDateTime();
+	const QList<QDateTime> dates = {now.addDays(-7), now.addDays(-2), now.addDays(-1), now};
+
+	for (const auto& date : dates)
+	{
+
+		getHistorySettings().addHistoryInfo(HistoryInfo(
+				QStringLiteral("Dummy Subject"), QStringLiteral("Dummy Subject URL"), QStringLiteral("Dummy Usage"),
+				date, QStringLiteral("Dummy Term Of Usage"),
+				{QStringLiteral("GivenNames"), QStringLiteral("Address"), QStringLiteral("WriteAddress")}));
+	}
 }
 
 

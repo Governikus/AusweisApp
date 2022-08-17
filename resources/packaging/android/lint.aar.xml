@@ -47,8 +47,20 @@
         Unused resources make applications larger and slow down builds.
 
         https://bugreports.qt.io/browse/QTBUG-72976
+
+        Qt includes some resources like strings, which are seen by lint to be unused.
     -->
     <issue id="UnusedResources">
         <ignore path="**/dist/src/android/java/res/layout/splash.xml" />
+        <ignore path="**/backup_rules.xml" />
+        <ignore path="**/libs.xml" />
+        <ignore path="**/strings.xml" />
     </issue>
+
+    <!-- AndroidGradlePluginVersion
+
+        The plugin version is set by Qt itself, so no need to warn us about an outdated version, since this has to be
+        updated in Qt itself.
+    -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>

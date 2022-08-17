@@ -37,7 +37,7 @@ class MockActivationContext
 		bool sendProcessing() override
 		{
 			mSendProcessingCalled = true;
-			mSendError = mErrorMessageOnSend;
+			setSendError(mErrorMessageOnSend);
 			return mProcessingValue;
 		}
 
@@ -45,7 +45,7 @@ class MockActivationContext
 		bool sendOperationAlreadyActive() override
 		{
 			mSendAlreadyActiveCalled = true;
-			mSendError = mErrorMessageOnSend;
+			setSendError(mErrorMessageOnSend);
 			return mAlreadyActiveValue;
 		}
 
@@ -55,7 +55,7 @@ class MockActivationContext
 			Q_UNUSED(pStatusCode)
 			Q_UNUSED(pStatus)
 			mSendErroPageCalled = true;
-			mSendError = mErrorMessageOnSend;
+			setSendError(mErrorMessageOnSend);
 			return mErroPageValue;
 		}
 
@@ -65,7 +65,7 @@ class MockActivationContext
 			Q_UNUSED(pRedirectAddress)
 			Q_UNUSED(pStatus)
 			mSendRedirectCalled = true;
-			mSendError = mErrorMessageOnSend;
+			setSendError(mErrorMessageOnSend);
 			return mRedirectValue;
 		}
 

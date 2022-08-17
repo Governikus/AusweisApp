@@ -36,16 +36,7 @@ void ResourceLoader::init()
 {
 	for (const auto& file : mFilenames)
 	{
-		QString path = FileDestination::getPath(file);
-
-#ifndef QT_NO_DEBUG
-		if (const auto& filePathFromTestDir = QCoreApplication::applicationDirPath() + QStringLiteral("/../../src/") + file;
-				!QFile::exists(path) && QFile::exists(filePathFromTestDir))
-		{
-			path = filePathFromTestDir;
-		}
-#endif
-
+		const QString path = FileDestination::getPath(file);
 		const auto loaded = QResource::registerResource(path);
 		qDebug() << "Register resource:" << path << '|' << loaded;
 		if (loaded)

@@ -22,11 +22,7 @@ NfcCard::NfcCard(QNearFieldTarget* pNearFieldTarget)
 	qCDebug(card_nfc) << "Card created";
 
 	pNearFieldTarget->setParent(nullptr);
-	QObject::connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::fireTargetError);
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	pNearFieldTarget->setKeepConnection(true);
-#endif
+	connect(pNearFieldTarget, &QNearFieldTarget::error, this, &NfcCard::fireTargetError);
 }
 
 
@@ -36,7 +32,7 @@ bool NfcCard::isValid() const
 }
 
 
-bool NfcCard::invalidateTarget(QNearFieldTarget* pNearFieldTarget)
+bool NfcCard::invalidateTarget(const QNearFieldTarget* pNearFieldTarget)
 {
 	if (pNearFieldTarget == mNearFieldTarget.data())
 	{
@@ -48,7 +44,7 @@ bool NfcCard::invalidateTarget(QNearFieldTarget* pNearFieldTarget)
 }
 
 
-CardReturnCode NfcCard::connect()
+CardReturnCode NfcCard::establishConnection()
 {
 	if (isConnected())
 	{
@@ -61,7 +57,7 @@ CardReturnCode NfcCard::connect()
 }
 
 
-CardReturnCode NfcCard::disconnect()
+CardReturnCode NfcCard::releaseConnection()
 {
 	if (!mIsValid || mNearFieldTarget == nullptr)
 	{
@@ -81,7 +77,7 @@ CardReturnCode NfcCard::disconnect()
 }
 
 
-bool NfcCard::isConnected()
+bool NfcCard::isConnected() const
 {
 	return mConnected;
 }
@@ -102,7 +98,7 @@ ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	qCDebug(card_nfc) << "Transmit command APDU:" << pCmd.getBuffer().toHex();
+	qCDebug(card_nfc) << "Transmit command APDU:" << pCmd;
 
 	if (!mNearFieldTarget->accessMethods().testFlag(QNearFieldTarget::AccessMethod::TagTypeSpecificAccess))
 	{
@@ -110,14 +106,19 @@ ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	QNearFieldTarget::RequestId id = mNearFieldTarget->sendCommand(pCmd.getBuffer());
+	QNearFieldTarget::RequestId id = mNearFieldTarget->sendCommand(pCmd);
 	if (!id.isValid())
 	{
 		qCWarning(card_nfc) << "Cannot write messages";
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	if (!mNearFieldTarget->waitForRequestCompleted(id, 1500))
+#if defined(Q_OS_IOS)
+	constexpr int timeoutMsecs = 3000;
+#else
+	constexpr int timeoutMsecs = 1500;
+#endif
+	if (!mNearFieldTarget->waitForRequestCompleted(id, timeoutMsecs))
 	{
 		qCWarning(card_nfc) << "Transmit timeout reached";
 		return {CardReturnCode::COMMAND_FAILED};

@@ -8,9 +8,9 @@
 #include "ReaderManagerPlugIn.h"
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-#include <QMutableListIterator>
+	#include <QMutableListIterator>
 #else
-#include <QMutableVectorIterator>
+	#include <QMutableVectorIterator>
 #endif
 
 using namespace governikus;

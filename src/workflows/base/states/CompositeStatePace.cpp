@@ -53,21 +53,21 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 
 	setInitialState(sMaintainCardConnection);
 
-	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireContinue, sVerifyRetryCounter);
+	sMaintainCardConnection->addTransition(sMaintainCardConnection, &AbstractState::fireContinue, sVerifyRetryCounter);
+	sMaintainCardConnection->addTransition(sMaintainCardConnection, &AbstractState::fireAbort, sClearPacePasswordsOnError);
 	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireNoCardConnection, sSelectReader);
 	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireForceUpdateRetryCounter, sUpdateRetryCounter);
-	sMaintainCardConnection->addTransition(sMaintainCardConnection, &StateMaintainCardConnection::fireAbort, sClearPacePasswordsOnError);
 
 	connect(sClearPacePasswordsOnError, &AbstractState::fireContinue, this, &CompositeStatePace::fireAbort);
 	connect(sClearPacePasswordsOnError, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
 
-	sSelectReader->addTransition(sSelectReader, &StateSelectReader::fireRetry, sSelectReader);
 	sSelectReader->addTransition(sSelectReader, &AbstractState::fireContinue, sConnectCard);
 	sSelectReader->addTransition(sSelectReader, &AbstractState::fireAbort, sMaintainCardConnection);
+	sSelectReader->addTransition(sSelectReader, &StateSelectReader::fireRetry, sSelectReader);
 
-	sConnectCard->addTransition(sConnectCard, &StateConnectCard::fireRetry, sSelectReader);
 	sConnectCard->addTransition(sConnectCard, &AbstractState::fireContinue, sUpdateRetryCounter);
 	sConnectCard->addTransition(sConnectCard, &AbstractState::fireAbort, sMaintainCardConnection);
+	sConnectCard->addTransition(sConnectCard, &StateConnectCard::fireRetry, sSelectReader);
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sVerifyRetryCounter);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sMaintainCardConnection);
@@ -75,19 +75,19 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireContinue, sPreparePace);
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireAbort, sMaintainCardConnection);
 
+	sPreparePace->addTransition(sPreparePace, &AbstractState::fireContinue, sMaintainCardConnection);
+	sPreparePace->addTransition(sPreparePace, &AbstractState::fireAbort, sMaintainCardConnection);
 	sPreparePace->addTransition(sPreparePace, &StatePreparePace::fireEnterPacePassword, sEnterPacePassword);
 	sPreparePace->addTransition(sPreparePace, &StatePreparePace::fireEstablishPaceChannel, sEstablishPaceChannel);
-	sPreparePace->addTransition(sPreparePace, &StatePreparePace::fireContinue, sMaintainCardConnection);
-	sPreparePace->addTransition(sPreparePace, &StatePreparePace::fireAbort, sMaintainCardConnection);
 
 	sEnterPacePassword->addTransition(sEnterPacePassword, &AbstractState::fireContinue, sEstablishPaceChannel);
 	sEnterPacePassword->addTransition(sEnterPacePassword, &AbstractState::fireAbort, sMaintainCardConnection);
 
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireContinue, sMaintainCardConnection);
-	connect(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelEstablished, this, &CompositeStatePace::firePaceChannelEstablished);
+	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireAbort, sMaintainCardConnection);
+	connect(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelEstablished, this, &CompositeStatePace::fireContinue);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelInoperative, sClearPacePasswordsBeforeDestroy);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::fireAbortAndUnfortunateCardPosition, sUnfortunateCardPosition);
-	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireAbort, sMaintainCardConnection);
 
 	sUnfortunateCardPosition->addTransition(sUnfortunateCardPosition, &AbstractState::fireContinue, sMaintainCardConnection);
 	sUnfortunateCardPosition->addTransition(sUnfortunateCardPosition, &AbstractState::fireAbort, sMaintainCardConnection);

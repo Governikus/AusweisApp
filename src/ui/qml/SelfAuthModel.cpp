@@ -4,8 +4,9 @@
 
 #include "SelfAuthModel.h"
 
-#include "context/SelfAuthContext.h"
 #include "PdfExporter.h"
+#include "context/SelfAuthContext.h"
+#include "controller/SelfAuthController.h"
 
 using namespace governikus;
 
@@ -33,7 +34,7 @@ void SelfAuthModel::onSelfAuthenticationDataChanged()
 			{
 				Q_ASSERT(!mSelfData.isEmpty());
 				const auto& previous = mSelfData.takeLast();
-				mSelfData << qMakePair(previous.first, previous.second + QStringLiteral("<br/>") + entry.second);
+				mSelfData << qMakePair(previous.first, previous.second + QLatin1Char('\n') + entry.second);
 			}
 			else
 			{
@@ -59,7 +60,7 @@ void SelfAuthModel::resetContext(const QSharedPointer<SelfAuthContext>& pContext
 
 void SelfAuthModel::startWorkflow()
 {
-	Q_EMIT fireStartWorkflow();
+	Q_EMIT fireStartWorkflow(SelfAuthController::createWorkflowRequest());
 }
 
 

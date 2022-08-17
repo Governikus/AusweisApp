@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtTest 1.12
+import QtQuick 2.15
+import QtTest 1.15
 
 import Governikus.Global 1.0
 
@@ -15,7 +15,7 @@ TestCase {
 	when: windowShown
 
 	function imageFileExists(pImageFilePath) {
-		var image = createTemporaryQmlObject("import QtQuick 2.12; Image {}", testCase)
+		var image = createTemporaryQmlObject("import QtQuick 2.15; Image {}", testCase)
 
 		if (image === null) {
 			return false
@@ -27,8 +27,8 @@ TestCase {
 
 	function test_categories_data() {
 		return [
-			{category: "", color: "#4d7aa4", string: "Provider"},
-			{category: "all", color: "#4d7aa4", string: "All"},
+			{category: "", color: "#164a8c", string: "Provider"},
+			{category: "all", color: "#164a8c", string: "All"},
 			{category: "citizen", color: "#851e6b", string: "Citizen services"},
 			{category: "insurance", color: "#53428c", string: "Insurances"},
 			{category: "finance", color: "#693800", string: "Financials"},

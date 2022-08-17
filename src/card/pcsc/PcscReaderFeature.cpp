@@ -39,10 +39,10 @@ PcscReaderFeature::PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pL
 		++runner;
 
 		PCSC_INT value = 0;
-		value += static_cast<PCSC_INT>(*runner++) << 24 & 0xff000000;
-		value += *runner++ << 16 & 0x00ff0000;
-		value += *runner++ << 8 & 0x0000ff00;
-		value += *runner++ << 0 & 0x000000ff;
+		value += static_cast<PCSC_INT>(*runner++) << 24 & 0xFF000000;
+		value += *runner++ << 16 & 0x00FF0000;
+		value += *runner++ << 8 & 0x0000FF00;
+		value += *runner++ << 0 & 0x000000FF;
 
 		mFeatures.insert(fid, value);
 	}

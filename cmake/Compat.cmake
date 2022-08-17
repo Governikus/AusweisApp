@@ -1,12 +1,10 @@
 if(Qt STREQUAL "Qt5")
 	set(QT5 ON)
 	set(QT_VERSION "${Qt5Core_VERSION}")
-	set(QT_HOST_PREFIX "${_qt5Core_install_prefix}")
 
 elseif(Qt STREQUAL "Qt6")
 	set(QT6 ON)
 	set(QT_VERSION "${Qt6Core_VERSION}")
-	set(QT_HOST_PREFIX "${_qt6Core_install_prefix}")
 
 else()
 	message(FATAL_ERROR "Qt version not supported: ${Qt}")

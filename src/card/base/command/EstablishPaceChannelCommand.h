@@ -18,11 +18,10 @@ class EstablishPaceChannelCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
+	friend class ::test_EstablishPaceChannelCommand;
+	friend class ::MockEstablishPaceChannelCommand;
 
 	private:
-		friend class ::test_EstablishPaceChannelCommand;
-		friend class ::MockEstablishPaceChannelCommand;
-
 		const PacePasswordId mPacePasswordId;
 		const QByteArray mPacePassword;
 		const QByteArray mEffectiveChat;

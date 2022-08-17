@@ -14,9 +14,7 @@ PaosMessage::PaosMessage(PaosType pType)
 }
 
 
-PaosMessage::~PaosMessage()
-{
-}
+PaosMessage::~PaosMessage() = default;
 
 
 bool PaosMessage::handleWSAddressingHeaders(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes&)

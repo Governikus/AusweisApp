@@ -14,7 +14,7 @@ QSharedPointer<QTemporaryFile> MockReleaseInformation::createDummyContent(const 
 	if (tmpFile->open())
 	{
 		QTextStream ts(tmpFile.data());
-		const auto newLine(QChar('\n'));
+		const auto newLine(QLatin1Char('\n'));
 		for (const auto& line : pContent)
 		{
 			ts << line << newLine;

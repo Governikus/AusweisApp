@@ -20,9 +20,7 @@ ElementDetector::ElementDetector(const QByteArray& pXmlData)
 }
 
 
-ElementDetector::~ElementDetector()
-{
-}
+ElementDetector::~ElementDetector() = default;
 
 
 void ElementDetector::detectStartElements(const QStringList& pStartElementNames)

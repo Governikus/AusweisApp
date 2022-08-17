@@ -1,9 +1,5 @@
 if(MAC OR LINUX OR WIN32)
-	if(JENKINS_APPCAST)
-		set(APPCAST_URL ${REMOTE_CONFIG_URL}/build CACHE STRING "Appcast download URL" FORCE)
-	else()
-		set(APPCAST_URL ${REMOTE_CONFIG_URL} CACHE STRING "Appcast download URL" FORCE)
-	endif()
+	set(APPCAST_URL https://updates.autentapp.de)
 
 	macro(ADD_APPCAST_FILE _files _system _min)
 		set(HASHFILE_ENDING "sha256")
@@ -56,7 +52,7 @@ if(MAC OR LINUX OR WIN32)
 		endif()
 
 		if(MSI_FILES)
-			ADD_APPCAST_FILE("${MSI_FILES}" "win" "6.1")
+			ADD_APPCAST_FILE("${MSI_FILES}" "win" "10")
 		endif()
 
 		if(TAR_GZ_FILES)

@@ -5,10 +5,14 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 #include <QSharedPointer>
+
+
+class test_StateInitializeFramework;
+
 
 namespace governikus
 {
@@ -19,9 +23,11 @@ class StateInitializeFramework
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateInitializeFramework;
 
-	explicit StateInitializeFramework(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateInitializeFramework(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

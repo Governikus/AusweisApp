@@ -2,13 +2,12 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "StateConnectCard.h"
+
 #include "CardConnection.h"
 #include "ReaderManager.h"
-#include "StateConnectCard.h"
-#include "VolatileSettings.h"
-#if defined(Q_OS_ANDROID)
 #include "SurveyModel.h"
-#endif
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -17,7 +16,7 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 using namespace governikus;
 
 StateConnectCard::StateConnectCard(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -37,14 +36,10 @@ void StateConnectCard::onCardInserted()
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	ReaderInfo readerInfo = readerManager->getReaderInfo(getContext()->getReaderName());
-	if (readerInfo.hasEidCard())
+	Env::getSingleton<SurveyModel>()->setReaderInfo(readerInfo);
+
+	if (readerInfo.hasEid())
 	{
-#if defined(Q_OS_ANDROID)
-		if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-		{
-			Env::getSingleton<SurveyModel>()->setMaximumNfcPacketLength(readerInfo.getMaxApduLength());
-		}
-#endif
 		qCDebug(statemachine) << "Card has been inserted, trying to connect";
 		mConnections += readerManager->callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);
 	}
@@ -53,37 +48,51 @@ void StateConnectCard::onCardInserted()
 
 void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand)
 {
+	const auto& cardConnection = pCommand->getCardConnection();
+
 	qCDebug(statemachine) << "Card connection command completed";
-	if (pCommand->getCardConnection() == nullptr)
+	if (cardConnection == nullptr)
 	{
 		qCDebug(statemachine) << "Card connection failed";
+		updateStatus(GlobalStatus::Code::Card_Communication_Error);
 		Q_EMIT fireAbort();
 		return;
 	}
 
+	const auto& context = getContext();
 	qCDebug(statemachine) << "Card connection was successful";
-	getContext()->setCardConnection(pCommand->getCardConnection());
+	context->setCardConnection(cardConnection);
 
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	ReaderInfo readerInfo = readerManager->getReaderInfo(getContext()->getReaderName());
-	if (readerInfo.sufficientApduLength() && (!readerInfo.isPinDeactivated() || getContext()->isCanAllowedMode()))
+	const auto& readerInfo = cardConnection->getReaderInfo();
+	if (readerInfo.insufficientApduLength())
 	{
-		Q_EMIT fireContinue();
+		context->getCardConnection()->setProgressMessage(tr("The used card reader does not meet the technical requirements (Extended Length not supported)."));
+		return;
 	}
-	else if (readerInfo.isPinDeactivated() && !getContext()->isCanAllowedMode())
+
+	if (context->isSmartCardUsed() && context->isPhysicalCardRequired())
+	{
+		context->getCardConnection()->setProgressMessage(tr("The provider requires a physical ID card."));
+		return;
+	}
+
+	if (readerInfo.isPinDeactivated() && !context->isCanAllowedMode())
 	{
 		qCDebug(statemachine) << "The online identification function of the ID card is not activated.";
 		const GlobalStatus status = GlobalStatus::Code::Card_Pin_Deactivated;
 		if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 		{
-			getContext()->getCardConnection()->setProgressMessage(status.toErrorDescription());
+			context->getCardConnection()->setProgressMessage(status.toErrorDescription());
 		}
 		else
 		{
 			updateStatus(status);
 			Q_EMIT fireAbort();
 		}
+		return;
 	}
+
+	Q_EMIT fireContinue();
 }
 
 

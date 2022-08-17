@@ -14,6 +14,7 @@ StateProcessCertificatesFromEac2::StateProcessCertificatesFromEac2(const QShared
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setAbortOnCardRemoved();
 }
 
 
@@ -26,7 +27,7 @@ void StateProcessCertificatesFromEac2::run()
 		return;
 	}
 
-	QVector<QSharedPointer<const CVCertificate> > cvcs;
+	QVector<QSharedPointer<const CVCertificate>> cvcs;
 	for (const auto& cvc : getContext()->getDidAuthenticateEac2()->getCvCertificates())
 	{
 		// according to TR-03112-7, paragraph 3.6.4.2, AT certs must be ignored

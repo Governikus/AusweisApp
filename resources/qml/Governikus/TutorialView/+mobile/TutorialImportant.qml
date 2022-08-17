@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,12 +11,12 @@ import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.ChangePinModel 1.0
-import Governikus.Type.UiModule 1.0
 
 TutorialContent {
 	id: baseItem
 
 	signal letsGoClicked()
+	signal showPinManagement()
 
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
@@ -158,10 +158,7 @@ TutorialContent {
 			anchors.margins: Constants.component_spacing
 			//: LABEL ANDROID IOS
 			text: qsTr("Change my (Transport) PIN")
-			onClicked: {
-				SettingsModel.transportPinReminder = false
-				navBar.show(UiModule.PINMANAGEMENT)
-			}
+			onClicked: showPinManagement()
 		}
 	}
 
@@ -190,7 +187,6 @@ TutorialContent {
 		visible: text !== ""
 
 		text: PinResetInformationModel.pinResetActionText
-
 		onClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 	}
 
@@ -216,7 +212,7 @@ TutorialContent {
 				//: LABEL ANDROID IOS
 				Accessible.name: qsTr("Open YouTube video")
 				Accessible.role: Accessible.Button
-				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+				Accessible.onPressAction: clicked(null)
 
 				onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/video-passwords".arg(SettingsModel.language))
 			}
@@ -294,9 +290,10 @@ TutorialContent {
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
 			width: parent.width * 0.9
-			text: "<a href=\"https://%1\">%1</a><br>%2<br><a href=\"https://%3\">%3</a>".arg(
-					  //: LABEL ANDROID IOS
-					  qsTr("www.ausweisapp.bund.de/en")
+			text: "<a href=\"https://%1\">%1/%2</a><br>%3<br><a href=\"https://%4\">%4</a>".arg(
+					  "www.ausweisapp.bund.de"
+				  ).arg(
+					  SettingsModel.language
 				  ).arg(
 					  //: LABEL ANDROID IOS
 					  qsTr("or")

@@ -14,6 +14,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: EXECUTOR
+          value: "3"
         - name: PASSWORD
           valueFrom:
             secretKeyRef:
@@ -25,7 +27,7 @@ spec:
         name: common
         resources:
           limits:
-            cpu: "2"
+            cpu: "3"
             memory: 2Gi
           requests:
             cpu: 500m

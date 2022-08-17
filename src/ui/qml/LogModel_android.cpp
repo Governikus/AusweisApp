@@ -6,10 +6,10 @@
 
 #include "LogHandler.h"
 
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
+#include <QJniEnvironment>
+#include <QJniObject>
 #include <QLoggingCategory>
-#include <QtAndroid>
+#include <QStandardPaths>
 
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
@@ -18,74 +18,43 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 using namespace governikus;
 
 
-/*
- * Calling
- * QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).last()
- * does the same but we don't want to rely on Qt internals, so we do it on our own.
- */
-static QString getPublicLogFileName(QAndroidJniEnvironment& env, const QAndroidJniObject& javaActivity, bool pExternal, const QDateTime& pDateTime = QDateTime::currentDateTime())
+static QString getPublicLogFileName(const QDateTime& pDateTime = QDateTime::currentDateTime())
 {
-	QAndroidJniObject jFile;
-	if (pExternal)
+	const QStringList cachePaths = QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
+	if (cachePaths.isEmpty())
 	{
-		const auto& jEmptyString = QAndroidJniObject::fromString(QString());
-		jFile = javaActivity.callObjectMethod("getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;", jEmptyString.object<jstring>());
-	}
-	else
-	{
-		jFile = javaActivity.callObjectMethod("getCacheDir", "()Ljava/io/File;");
-	}
-
-	if (env->ExceptionCheck())
-	{
-		qCCritical(qml) << "Exception determining publicLogFileDir";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-		return QString();
-	}
-	if (!jFile.isValid())
-	{
-		qCCritical(qml) << "Cannot determine publicLogFileDir";
+		qCCritical(qml) << "No cache paths found!";
 		return QString();
 	}
 
-	const auto& jFilesDirPath = jFile.callObjectMethod("getAbsolutePath", "()Ljava/lang/String;");
-	if (env->ExceptionCheck())
+	const QString cacheBasePath = cachePaths.first();
+	if (cacheBasePath.isEmpty())
 	{
-		qCCritical(qml) << "Exception determining publicLogFileDir absolute path";
-		env->ExceptionDescribe();
-		env->ExceptionClear();
-		return QString();
-	}
-	if (!jFilesDirPath.isValid())
-	{
-		qCCritical(qml) << "Cannot determine publicLogFileDir absolute path";
+		qCCritical(qml) << "Cache base folder is invalid (empty).";
 		return QString();
 	}
 
-	return QStringLiteral("%1/%2").arg(jFilesDirPath.toString(), LogModel::createLogFileName(pDateTime));
+	return QStringLiteral("%1/%2").arg(cacheBasePath, LogModel::createLogFileName(pDateTime));
 }
 
 
 void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg)
 {
-	QAndroidJniEnvironment env;
-	const QAndroidJniObject javaActivity(QtAndroid::androidActivity());
+	QJniEnvironment env;
+	const QJniObject javaActivity(QNativeInterface::QAndroidApplication::context());
 	if (!javaActivity.isValid())
 	{
 		qCCritical(qml) << "Cannot determine android activity";
 		return;
 	}
 
-	const bool external = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/ShareUtil", "isNotAtLeastMarshmallow");
-
-	const auto& jEmail = QAndroidJniObject::fromString(pEmail);
-	const auto& jSubject = QAndroidJniObject::fromString(pSubject);
-	const auto& jMsg = QAndroidJniObject::fromString(pMsg);
+	const auto& jEmail = QJniObject::fromString(pEmail);
+	const auto& jSubject = QJniObject::fromString(pSubject);
+	const auto& jMsg = QJniObject::fromString(pMsg);
 	//: LABEL ANDROID
-	const auto& jChooserTitle = QAndroidJniObject::fromString(tr("Send application log per email..."));
-	const auto& publicLogFile = getPublicLogFileName(env, javaActivity, external);
-	const auto& jPublicLogFile = QAndroidJniObject::fromString(publicLogFile);
+	const auto& jChooserTitle = QJniObject::fromString(tr("Send application log per email..."));
+	const auto& publicLogFile = getPublicLogFileName();
+	const auto& jPublicLogFile = QJniObject::fromString(publicLogFile);
 
 	qCDebug(qml) << "Copy logfile to" << publicLogFile;
 	if (!Env::getSingleton<LogHandler>()->copy(publicLogFile))
@@ -94,7 +63,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 		return;
 	}
 
-	QAndroidJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/ShareUtil",
+	QJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/ShareUtil",
 			"mailLog",
 			"(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
 			javaActivity.object<jobject>(),
@@ -114,8 +83,8 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 
 void LogModel::shareLog(const QPoint /*popupPosition*/)
 {
-	QAndroidJniEnvironment env;
-	const QAndroidJniObject javaActivity(QtAndroid::androidActivity());
+	QJniEnvironment env;
+	const QJniObject javaActivity(QNativeInterface::QAndroidApplication::context());
 	if (!javaActivity.isValid())
 	{
 		qCCritical(qml) << "Cannot determine android activity";
@@ -127,7 +96,7 @@ void LogModel::shareLog(const QPoint /*popupPosition*/)
 	QString publicLogFile;
 	if (mSelectedLogFile == 0)
 	{
-		publicLogFile = getPublicLogFileName(env, javaActivity, false);
+		publicLogFile = getPublicLogFileName();
 		if (!logHandler->copy(publicLogFile))
 		{
 			qCCritical(qml) << "Cannot copy logfile to" << publicLogFile;
@@ -138,7 +107,7 @@ void LogModel::shareLog(const QPoint /*popupPosition*/)
 	{
 		const auto& source = mLogFiles.at(mSelectedLogFile);
 		const auto& dateTime = logHandler->getFileDate(QFileInfo(source));
-		publicLogFile = getPublicLogFileName(env, javaActivity, false, dateTime);
+		publicLogFile = getPublicLogFileName(dateTime);
 		if (QFile::exists(publicLogFile))
 		{
 			QFile::remove(publicLogFile);
@@ -151,10 +120,10 @@ void LogModel::shareLog(const QPoint /*popupPosition*/)
 	}
 
 	//: LABEL ANDROID
-	const auto& jChooserTitle = QAndroidJniObject::fromString(tr("Share application log..."));
-	const auto& jPublicLogFile = QAndroidJniObject::fromString(publicLogFile);
+	const auto& jChooserTitle = QJniObject::fromString(tr("Share application log..."));
+	const auto& jPublicLogFile = QJniObject::fromString(publicLogFile);
 
-	QAndroidJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/ShareUtil",
+	QJniObject::callStaticMethod<void>("com/governikus/ausweisapp2/ShareUtil",
 			"shareLog",
 			"(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;)V",
 			javaActivity.object<jobject>(),

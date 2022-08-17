@@ -6,11 +6,10 @@
 
 #include "pace/ec/EcdhKeyAgreement.h"
 
-#include "asn1/PaceInfo.h"
 #include "MockReader.h"
-#include "pace/ec/EcUtil.h"
-#include "pace/ec/EllipticCurveFactory.h"
 #include "TestFileHelper.h"
+#include "asn1/PaceInfo.h"
+#include "pace/ec/EcUtil.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -42,7 +41,7 @@ class test_EcdhKeyAgreement
 			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6982")));
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccess));
 			QSharedPointer<const PaceInfo> paceInfo = mEfCardAccess->getPaceInfos().at(0);
-			QScopedPointer<KeyAgreement> keyAgreement(new EcdhKeyAgreement(paceInfo, reader->createCardConnectionWorker()));
+			QScopedPointer<KeyAgreement> keyAgreement(new EcdhKeyAgreement(paceInfo, reader->createCardConnectionWorker(), QSharedPointer<EcdhGenericMapping>()));
 
 			KeyAgreementStatus result = keyAgreement->perform("123456");
 
@@ -53,9 +52,9 @@ class test_EcdhKeyAgreement
 		void encodeUncompressedPublicKey()
 		{
 			QByteArray protocolValue = QByteArray::fromHex("04007F00070202040202");
-			QSharedPointer<PaceInfo> paceInfo = PaceInfo::decode(QByteArray::fromHex("300F060A") + protocolValue + QByteArray::fromHex("020102"));
-			QSharedPointer<EC_GROUP> ecGroup = EllipticCurveFactory::create(13);
-			QByteArray ecPointBytes = QByteArray::fromHex("04a9024a1ce8f02db4463cd359be3a6946fa24fdbed7d19b04bea2f0aa2ff63c6d2a05b17a66edbc15875611a209cb87c972a141263bd0843cc64b8b884c52f725");
+			QSharedPointer<const PaceInfo> paceInfo = PaceInfo::decode(QByteArray::fromHex("300F060A") + protocolValue + QByteArray::fromHex("020102"));
+			QSharedPointer<EC_GROUP> ecGroup = EcUtil::create(EC_GROUP_new_by_curve_name(NID_brainpoolP256r1));
+			QByteArray ecPointBytes = QByteArray::fromHex("04A9024A1CE8F02DB4463CD359BE3A6946FA24FDBED7D19B04BEA2F0AA2FF63C6D2A05B17A66EDBC15875611A209CB87C972A141263BD0843CC64B8B884C52F725");
 			QSharedPointer<EC_POINT> ecPoint = EcUtil::oct2point(ecGroup, ecPointBytes);
 
 			const QByteArray& result = EcdhKeyAgreement::encodeUncompressedPublicKey(paceInfo, ecGroup, ecPoint);

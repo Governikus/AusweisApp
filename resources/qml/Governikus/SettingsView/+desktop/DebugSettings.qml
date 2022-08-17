@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick.Layouts 1.12
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0

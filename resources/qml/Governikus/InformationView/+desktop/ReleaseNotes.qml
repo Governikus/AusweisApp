@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -13,25 +13,21 @@ import Governikus.Type.ReleaseInformationModel 1.0
 ColumnLayout {
 	id: root
 
-	height: tabbedPane.availableHeight
-	width: parent.width
+	Component.onCompleted: releaseInformationModel.update()
 
-	// Padding used by the tabbed pane
-	readonly property int contentPadding: 0
-
-	Component.onCompleted: ReleaseInformationModel.update()
+	ReleaseInformationModel {
+		id: releaseInformationModel
+	}
 
 	ReleaseNotesView {
 		Layout.fillHeight: true
 		Layout.fillWidth: true
-		Layout.margins: Constants.pane_padding
-		Layout.rightMargin: 0
 
-		model: ReleaseInformationModel.currentRelease
+		model: releaseInformationModel.currentRelease
 	}
 
 	GButton {
-		visible: ReleaseInformationModel.allowRetry
+		visible: releaseInformationModel.allowRetry
 
 		Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
 		Layout.bottomMargin: Constants.pane_padding
@@ -41,6 +37,6 @@ ColumnLayout {
 		//: LABEL DESKTOP
 		text: qsTr("Retry")
 
-		onClicked: ReleaseInformationModel.update()
+		onClicked: releaseInformationModel.update()
 	}
 }

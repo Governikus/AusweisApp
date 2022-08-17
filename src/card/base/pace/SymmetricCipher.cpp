@@ -4,10 +4,9 @@
 
 #include "pace/SymmetricCipher.h"
 
-#include "asn1/KnownOIDs.h"
-
-#include <openssl/evp.h>
 #include <QLoggingCategory>
+#include <openssl/evp.h>
+
 
 using namespace governikus;
 
@@ -15,38 +14,15 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-SymmetricCipher::SymmetricCipher(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes)
+SymmetricCipher::SymmetricCipher(const SecurityProtocol& pSecurityProtocol, const QByteArray& pKeyBytes)
 	: mCtx(nullptr)
-	, mCipher(nullptr)
+	, mCipher(pSecurityProtocol.getCipher())
 	, mIv()
 	, mKeyBytes(pKeyBytes)
 {
-	using namespace governikus::KnownOIDs;
-
-	if (pPaceAlgorithm == id_PACE::DH::GM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::DH::IM_3DES_CBC_CBC
-			|| pPaceAlgorithm == id_PACE::ECDH::GM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::ECDH::IM_3DES_CBC_CBC)
+	if (!mCipher)
 	{
-		qCCritical(card) << "3DES not supported";
-		return;
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_128
-			|| pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_128)
-	{
-		mCipher = EVP_aes_128_cbc();
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_192 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_192
-			|| pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_192 || pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_192)
-	{
-		mCipher = EVP_aes_192_cbc();
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_256 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_256
-			|| pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_256 || pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_256)
-	{
-		mCipher = EVP_aes_256_cbc();
-	}
-	else
-	{
-		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
+		qCCritical(card) << "Unknown algorithm:" << pSecurityProtocol;
 		return;
 	}
 

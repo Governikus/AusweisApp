@@ -10,6 +10,7 @@ StateEACAdditionalInputType::StateEACAdditionalInputType(const QSharedPointer<Wo
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setAbortOnCardRemoved();
 }
 
 

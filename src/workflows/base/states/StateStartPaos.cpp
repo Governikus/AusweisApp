@@ -2,14 +2,15 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "StateStartPaos.h"
+
 #include "CardConnection.h"
 #include "paos/invoke/StartPaos.h"
-#include "StateStartPaos.h"
 
 using namespace governikus;
 
 StateStartPaos::StateStartPaos(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }

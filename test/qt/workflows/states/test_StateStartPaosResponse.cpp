@@ -2,13 +2,13 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include <QThread>
 #include <QtCore>
 #include <QtTest>
-#include <QThread>
 
+#include "TestFileHelper.h"
 #include "states/StateBuilder.h"
 #include "states/StateStartPaosResponse.h"
-#include "TestFileHelper.h"
 
 using namespace governikus;
 

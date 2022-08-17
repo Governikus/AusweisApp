@@ -17,9 +17,9 @@ class HistoryProxyModel
 	public:
 		Q_INVOKABLE bool removeRows(int pRow, int pCount, const QModelIndex& pParent = QModelIndex()) override;
 
-		HistoryProxyModel();
+		HistoryProxyModel() = default;
 
-		~HistoryProxyModel() override;
+		~HistoryProxyModel() override = default;
 };
 
 

@@ -4,8 +4,10 @@
 
 #include "PaosCreator.h"
 
+#include "Randomizer.h"
+
 #include <QDebug>
-#include <QUuid>
+
 
 using namespace governikus;
 
@@ -42,9 +44,7 @@ PaosCreator::PaosCreator()
 }
 
 
-PaosCreator::~PaosCreator()
-{
-}
+PaosCreator::~PaosCreator() = default;
 
 
 QString PaosCreator::getNamespace(Namespace prefix)
@@ -135,7 +135,7 @@ void PaosCreator::createHeaderElement()
 		mWriter.writeTextElement(getNamespaceType(Namespace::ADDRESSING, QStringLiteral("RelatesTo")), mRelatedMessageId);
 	}
 
-	const auto& id = QStringLiteral("urn:uuid:") + QUuid::createUuid().toString(QUuid::WithoutBraces);
+	const auto& id = QStringLiteral("urn:uuid:") + Randomizer::getInstance().createUuid().toString(QUuid::WithoutBraces);
 	mWriter.writeTextElement(getNamespaceType(Namespace::ADDRESSING, QStringLiteral("MessageID")), id);
 
 	mWriter.writeEndElement(); // Header

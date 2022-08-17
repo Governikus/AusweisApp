@@ -11,9 +11,9 @@
 #pragma once
 
 
+#include <QVector>
 #include <algorithm>
 #include <functional>
-#include <QVector>
 
 
 namespace governikus
@@ -22,10 +22,8 @@ namespace governikus
 template<typename T>
 class ChainBuilder
 {
-	protected:
-		QVector<QVector<T>> mChains;
-
 	private:
+		QVector<QVector<T>> mChains;
 		std::function<bool(const T& pChild, const T& pParent)> mIsChildFunc;
 
 		void buildChain(const QVector<T>& pAllElements, const QVector<T>& pChain)
@@ -72,6 +70,12 @@ class ChainBuilder
 				}
 			}
 			return false;
+		}
+
+	protected:
+		QMutableVectorIterator<QVector<T>> getChainIterator()
+		{
+			return QMutableVectorIterator<QVector<T>>(mChains);
 		}
 
 	public:

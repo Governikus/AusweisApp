@@ -48,9 +48,9 @@ class PcscCard
 		explicit PcscCard(PcscReader* pPcscReader);
 		~PcscCard() override;
 
-		CardReturnCode connect() override;
-		CardReturnCode disconnect() override;
-		bool isConnected() override;
+		CardReturnCode establishConnection() override;
+		CardReturnCode releaseConnection() override;
+		bool isConnected() const override;
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 

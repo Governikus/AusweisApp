@@ -8,15 +8,17 @@
 
 #include "Env.h"
 #include "GlobalStatus.h"
+#include "LogHandler.h"
 
 #include <QAtomicInt>
 #include <QAuthenticator>
 #include <QDebug>
-#include <QMessageLogger>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QSsl>
+
+class test_NetworkManager;
 
 namespace governikus
 {
@@ -26,6 +28,7 @@ class NetworkManager
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_NetworkManager;
 
 	private:
 		static bool mLockProxy;
@@ -33,8 +36,14 @@ class NetworkManager
 		QNetworkAccessManager mNetAccessManager;
 		bool mApplicationExitInProgress;
 		QAtomicInt mOpenConnectionCount;
+		QSet<QByteArray> mUpdaterSessions;
 
-		void trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds);
+		bool prepareConnection(QNetworkRequest& pRequest);
+		[[nodiscard]] QSharedPointer<QNetworkReply> trackConnection(QNetworkReply* pResponse);
+		[[nodiscard]] QSharedPointer<QNetworkReply> processRequest(QNetworkRequest& pRequest,
+				const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke);
+		[[nodiscard]] QSharedPointer<QNetworkReply> processUpdaterRequest(QNetworkRequest& pRequest,
+				const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke);
 
 		[[nodiscard]] QString getUserAgentHeader() const;
 
@@ -44,7 +53,7 @@ class NetworkManager
 
 	protected:
 		NetworkManager();
-		~NetworkManager() override;
+		~NetworkManager() override = default;
 
 	public:
 		enum class NetworkError
@@ -64,33 +73,31 @@ class NetworkManager
 		}
 
 
-		static int getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const QMessageLogger& pLogger);
-		static NetworkError toNetworkError(const QSharedPointer<const QNetworkReply>& pNetworkReply);
-		static GlobalStatus toTrustedChannelStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
-		static GlobalStatus toStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
-		static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
-		static QByteArray getStatusMessage(int pStatus);
+		[[nodiscard]] static bool isLoggingAllowed(const QSharedPointer<const QNetworkReply>& pReply);
+		[[nodiscard]] static int getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const MessageLogger& pLogger);
+		[[nodiscard]] static NetworkError toNetworkError(const QSharedPointer<const QNetworkReply>& pNetworkReply);
+		[[nodiscard]] static GlobalStatus toTrustedChannelStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
+		[[nodiscard]] static GlobalStatus toStatus(const QSharedPointer<const QNetworkReply>& pNetworkReply);
+		[[nodiscard]] static QString getTlsVersionString(QSsl::SslProtocol pProtocol);
+		[[nodiscard]] static QByteArray getStatusMessage(int pStatus);
+		[[nodiscard]] static QString getFormattedStatusMessage(int pStatus);
 
 		virtual void clearConnections();
-		virtual QNetworkReply* paos(QNetworkRequest& pRequest,
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> paos(QNetworkRequest& pRequest,
 				const QByteArray& pNamespace,
 				const QByteArray& pData,
 				bool pUsePsk = true,
-				const QByteArray& pSslSession = QByteArray(),
-				int pTimeoutInMilliSeconds = 30000);
-		virtual QNetworkReply* get(QNetworkRequest& pRequest,
-				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
-				const QByteArray& pSslSession = QByteArray(),
-				int pTimeoutInMilliSeconds = 30000);
+				const QByteArray& pSslSession = QByteArray());
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> get(QNetworkRequest& pRequest);
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> post(QNetworkRequest& pRequest,
+				const QByteArray& pData);
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> deleteResource(QNetworkRequest& pRequest);
 
-		virtual QNetworkReply* post(QNetworkRequest& pRequest,
-				const QByteArray& pData,
-				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
-				int pTimeoutInMilliSeconds = 30000);
+		[[nodiscard]] QSharedPointer<QNetworkReply> getAsUpdater(QNetworkRequest& pRequest);
+		[[nodiscard]] QSharedPointer<QNetworkReply> postAsUpdater(QNetworkRequest& pRequest,
+				const QByteArray& pData);
 
-		virtual bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply);
-
-		int getOpenConnectionCount() const;
+		[[nodiscard]] int getOpenConnectionCount() const;
 
 	Q_SIGNALS:
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);

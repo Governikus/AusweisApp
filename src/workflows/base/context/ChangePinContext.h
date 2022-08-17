@@ -16,9 +16,10 @@ class ChangePinContext
 {
 	Q_OBJECT
 
-	QString mNewPin;
-	QString mSuccessMessage;
-	const bool mRequestTransportPin;
+	private:
+		QString mNewPin;
+		QString mSuccessMessage;
+		const bool mRequestTransportPin;
 
 	public:
 		explicit ChangePinContext(bool pRequestTransportPin = false);
@@ -32,7 +33,9 @@ class ChangePinContext
 		[[nodiscard]] const QString& getSuccessMessage() const;
 		void setSuccessMessage(const QString& pSuccessMessage);
 
-		[[nodiscard]] bool isRequestTransportPin() const;
+		[[nodiscard]] bool isRequestTransportPin() const override;
+
+		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override;
 
 	Q_SIGNALS:
 		void fireNewPinChanged();

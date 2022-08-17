@@ -53,32 +53,34 @@ void ConnectivityManager::updateConnectivity()
 	const auto& allInterfaces = QNetworkInterface::allInterfaces();
 	for (const auto& iface : allInterfaces)
 	{
-		if (iface.flags().testFlag(QNetworkInterface::IsUp)
-				&& iface.flags().testFlag(QNetworkInterface::IsRunning)
-				&& !iface.flags().testFlag(QNetworkInterface::IsLoopBack)
-				&& !iface.addressEntries().isEmpty())
+		if (!iface.flags().testFlag(QNetworkInterface::IsUp)
+				|| !iface.flags().testFlag(QNetworkInterface::IsRunning)
+				|| iface.flags().testFlag(QNetworkInterface::IsLoopBack)
+				|| iface.addressEntries().isEmpty())
 		{
-			bool hasNonLocalAddress = false;
-			const auto& entries = iface.addressEntries();
-			for (const auto& entry : entries)
-			{
-				const QHostAddress& addr = entry.ip();
-				if (addr.protocol() == QAbstractSocket::IPv4Protocol
-						|| !addr.isLinkLocal())
-				{
-					hasNonLocalAddress = true;
-					break;
-				}
-			}
-
-			if (!hasNonLocalAddress)
-			{
-				continue;
-			}
-
-			setActive(true, iface.name());
-			return;
+			continue;
 		}
+
+		bool hasNonLocalAddress = false;
+		const auto& entries = iface.addressEntries();
+		for (const auto& entry : entries)
+		{
+			const QHostAddress& addr = entry.ip();
+			if (addr.protocol() == QAbstractSocket::IPv4Protocol
+					|| !addr.isLinkLocal())
+			{
+				hasNonLocalAddress = true;
+				break;
+			}
+		}
+
+		if (!hasNonLocalAddress)
+		{
+			continue;
+		}
+
+		setActive(true, iface.name());
+		return;
 	}
 	setActive(false);
 }

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "asn1/CVCertificate.h"
-#include "paos/retrieve/DidAuthenticateEac1.h"
+#include "GlobalStatus.h"
+#include "context/AuthContext.h"
 
 #include <QSet>
 #include <QSslCertificate>
@@ -18,14 +18,12 @@
 namespace governikus
 {
 
-/*!
- * \brief Utility class for checking various constraints on certificates
- *
- * \copyright Copyright (c) 2015 Governikus GmbH & Co. KG
- */
 class CertificateChecker
 {
 	Q_GADGET
+
+	private:
+		static bool abortOnError();
 
 	public:
 		enum class CertificateStatus
@@ -36,17 +34,11 @@ class CertificateChecker
 		};
 		Q_ENUM(CertificateStatus)
 
+		static GlobalStatus::Code getGlobalStatus(CertificateStatus pStatus, bool pPaos);
 
-		/*!
-		 * Checks certificate and, if OK, save it using a callback function.
-		 *
-		 * \return Returns a translated error string if an error happened, otherwise QString()
-		 */
 		static CertificateStatus checkAndSaveCertificate(const QSslCertificate& pCertificate,
 				const QUrl& pUrl,
-				const QSharedPointer<DIDAuthenticateEAC1>& pEAC1,
-				const QSharedPointer<const CVCertificate>& pDvCvc,
-				const std::function<void(const QUrl&, const QSslCertificate&)>& pSaveCertificateFunc);
+				const QSharedPointer<AuthContext> pContext);
 };
 
 } // namespace governikus

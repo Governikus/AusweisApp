@@ -23,9 +23,9 @@ class CreateCardConnectionCommand
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_StateConnectCard;
 
 	private:
-		friend class ::test_StateConnectCard;
 		const QString mReaderName;
 		QPointer<ReaderManagerWorker> mReaderManagerWorker;
 		QSharedPointer<CardConnection> mCardConnection;

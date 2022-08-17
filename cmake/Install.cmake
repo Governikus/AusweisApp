@@ -5,10 +5,8 @@
 
 if(MAC)
 	set(DEFAULT_FILE_DESTINATION ${PROJECT_NAME}.app/Contents/Resources)
-	set(TRANSLATION_DESTINATION ${DEFAULT_FILE_DESTINATION}/translations)
 else()
 	set(DEFAULT_FILE_DESTINATION .)
-	set(TRANSLATION_DESTINATION translations)
 endif()
 
 
@@ -47,15 +45,15 @@ set(DEPENDENCY_CHECK "
 
 # qt qml plugins (fixup_bundle needs to know this to fetch their dependencies)
 if((WIN32 OR MAC) AND TARGET ${Qt}::Qml)
-	set(modules QtQuick QtQuick.2 QtQml QtGraphicalEffects Qt)
-	if(WIN32)
-		list(APPEND modules QtWinExtras)
+	set(modules QtQuick QtQml Qt)
+	if (NOT QT6)
+		list(APPEND modules QtQuick.2)
 	endif()
 
 	foreach(entry ${modules})
-		set(_lib_dir ${QT_HOST_PREFIX}/qml/${entry})
+		set(_lib_dir ${QT_INSTALL_ARCHDATA}/qml/${entry})
 		file(GLOB_RECURSE _libs "${_lib_dir}/*.dll" "${_lib_dir}/*.dylib")
-		list(APPEND QML_LIBS ${_libs})
+		list(APPEND LIBS ${_libs})
 		install(DIRECTORY ${_lib_dir} DESTINATION ${DEFAULT_FILE_DESTINATION}/qml COMPONENT Runtime PATTERN "*.dylib" EXCLUDE)
 	endforeach()
 endif()
@@ -71,7 +69,7 @@ if(WIN32)
 	if(TARGET ${Qt}::Qml)
 		FETCH_TARGET_LOCATION(libQuickControls2 "${Qt}::QuickControls2")
 		install(FILES ${libQuickControls2} DESTINATION . COMPONENT Runtime)
-		list(APPEND QML_LIBS ${libQuickControls2})
+		list(APPEND LIBS ${libQuickControls2})
 		if(TARGET ${Qt}::QmlWorkerScript)
 			FETCH_TARGET_LOCATION(libQmlWorkerScript "${Qt}::QmlWorkerScript")
 			install(FILES ${libQmlWorkerScript} DESTINATION . COMPONENT Runtime)
@@ -84,11 +82,24 @@ if(WIN32)
 			install(FILES ${libGLES} DESTINATION . COMPONENT Runtime)
 		endif()
 	endif()
-	FETCH_TARGET_LOCATION(libSvg "${Qt}::Svg")
+
+	if (QT6)
+		# Workaround for QTBUG-94066
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Widgets/Qt6QWindowsVistaStylePluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake")
+		FETCH_TARGET_LOCATION(openSslBackend "${Qt}::QTlsBackendOpenSSLPlugin")
+		install(FILES ${openSslBackend} DESTINATION tls COMPONENT Runtime)
+		list(APPEND LIBS ${openSslBackend})
+	endif()
+
 	FETCH_TARGET_LOCATION(pluginSvg "${Qt}::QSvgPlugin")
 	FETCH_TARGET_LOCATION(pluginGif "${Qt}::QGifPlugin")
 	FETCH_TARGET_LOCATION(pluginJpeg "${Qt}::QJpegPlugin")
-	if(WINDOWS_STORE)
+	if(WINDOWS_STORE AND NOT QT6)
 		FETCH_TARGET_LOCATION(platformWin "${Qt}::QWinRTIntegrationPlugin")
 	else()
 		FETCH_TARGET_LOCATION(platformWin "${Qt}::QWindowsIntegrationPlugin")
@@ -96,19 +107,19 @@ if(WIN32)
 	FETCH_TARGET_LOCATION(styleVista "${Qt}::QWindowsVistaStylePlugin")
 
 	install(TARGETS AusweisApp DESTINATION . COMPONENT Application)
-	install(FILES ${libSvg} DESTINATION . COMPONENT Runtime)
 	install(FILES ${pluginSvg} DESTINATION imageformats COMPONENT Runtime)
 	install(FILES ${pluginGif} DESTINATION imageformats COMPONENT Runtime)
 	install(FILES ${pluginJpeg} DESTINATION imageformats COMPONENT Runtime)
 	install(FILES ${platformWin} DESTINATION platforms COMPONENT Runtime)
 	install(FILES ${styleVista} DESTINATION styles COMPONENT Runtime)
+	list(APPEND LIBS ${pluginSvg} ${pluginGif} ${pluginJpeg} ${platformWin} ${styleVista})
 
 	install(CODE
 		"
 		${DEPENDENCY_CHECK}
 		${SEARCH_ADDITIONAL_DIRS}
 		include(BundleUtilities)
-		FIXUP_BUNDLE(\"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}\" \"${QML_LIBS}\" \"${TOOLCHAIN_BIN_PATH};\${ADDITIONAL_DIRS}\")
+		FIXUP_BUNDLE(\"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}\" \"${LIBS}\" \"${TOOLCHAIN_BIN_PATH};\${ADDITIONAL_DIRS}\")
 		" COMPONENT Runtime)
 
 
@@ -120,15 +131,11 @@ elseif(MAC)
 	set(MACOS_BUNDLE_RESOURCES_DIR ${DEFAULT_FILE_DESTINATION}/../Resources)
 	set(MACOS_BUNDLE_LOGIN_ITEMS_DIR ${DEFAULT_FILE_DESTINATION}/../Library/LoginItems)
 
-	# We need to include the following (i.e. all) image format plug-ins,
-	# since those seem to be loaded upon program start-up. Not including
-	# them would cause the respective add-on from a Qt installation (if
-	# any) to be loaded, which would in turn cause the Qt libraries they
-	# depend on to be loaded as well, thus resulting in two sets of Qt
-	# libraries being loaded (ours from the bundle and the ones from the
-	# installation) and the program misbehaving (crashing).
-	foreach (qtComponent QtCore ${Qt}Gui ${Qt}Network ${Qt}Svg ${Qt}Widgets)
-		foreach(plugin ${${qtComponent}_PLUGINS})
+	install(TARGETS AusweisApp BUNDLE DESTINATION . COMPONENT Application)
+	install(TARGETS AusweisApp2AutostartHelper BUNDLE DESTINATION ${MACOS_BUNDLE_LOGIN_ITEMS_DIR} COMPONENT Application)
+
+	function(install_mac_plugins plugins)
+		foreach(plugin ${plugins})
 			get_target_property(pluginPath ${plugin} LOCATION)
 			get_filename_component(pluginDir ${pluginPath} DIRECTORY)
 			get_filename_component(pluginName ${pluginPath} NAME)
@@ -140,11 +147,41 @@ elseif(MAC)
 
 			install(FILES ${pluginPath} DESTINATION ${MACOS_BUNDLE_PLUGINS_DIR}/${pluginDirName} COMPONENT Runtime)
 		endforeach()
-	endforeach()
+	endfunction(install_mac_plugins)
+
+	# We need to include the following (i.e. all) image format plug-ins,
+	# since those seem to be loaded upon program start-up. Not including
+	# them would cause the respective add-on from a Qt installation (if
+	# any) to be loaded, which would in turn cause the Qt libraries they
+	# depend on to be loaded as well, thus resulting in two sets of Qt
+	# libraries being loaded (ours from the bundle and the ones from the
+	# installation) and the program misbehaving (crashing).
+	if (QT6)
+		# Workaround for QTBUG-94066
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QMacHeifPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QMacJp2PluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets.cmake")
+		include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake")
+
+		set(plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QGifPlugin ${Qt}::QICNSPlugin ${Qt}::QICOPlugin ${Qt}::QJpegPlugin ${Qt}::QMacHeifPlugin ${Qt}::QMacJp2Plugin ${Qt}::QSvgPlugin ${Qt}::QCocoaIntegrationPlugin ${Qt}::QMacStylePlugin ${Qt}::QTlsBackendOpenSSLPlugin)
+		install_mac_plugins("${plugins}")
+	else()
+		foreach (qtComponent QtCore ${Qt}::Gui ${Qt}::Network ${Qt}::Svg ${Qt}::Widgets)
+			install_mac_plugins("${${qtComponent}_PLUGINS}")
+		endforeach()
+	endif()
 
 	if(TARGET ${Qt}::Qml)
-		foreach(entry QtQuick QtQuick.2 QtQml QtGraphicalEffects Qt)
-			set(_dir "${QT_HOST_PREFIX}/qml")
+		foreach(entry QtQuick QtQuick.2 QtQml Qt)
+			set(_dir "${QT_INSTALL_ARCHDATA}/qml")
 			file(GLOB_RECURSE DYLIB "${_dir}/${entry}/*.dylib")
 			foreach(_lib ${DYLIB})
 				file(RELATIVE_PATH _lib_dest "${_dir}" "${_lib}")
@@ -155,14 +192,6 @@ elseif(MAC)
 			endforeach()
 		endforeach()
 	endif()
-
-	install(TARGETS AusweisApp DESTINATION ${MACOS_BUNDLE_MACOS_DIR} COMPONENT Application)
-
-	install(TARGETS AusweisApp2AutostartHelper DESTINATION ${MACOS_BUNDLE_LOGIN_ITEMS_DIR} COMPONENT Application)
-
-	install(FILES ${PACKAGING_DIR}/macos/container-migration.plist DESTINATION ${MACOS_BUNDLE_RESOURCES_DIR} COMPONENT Application)
-	install(FILES ${RESOURCES_DIR}/images/macos/bundle_icons.icns DESTINATION ${MACOS_BUNDLE_RESOURCES_DIR} RENAME ${PROJECT_NAME}.icns COMPONENT Application)
-	install(FILES ${CMAKE_BINARY_DIR}/Info.plist DESTINATION ${DEFAULT_FILE_DESTINATION}/.. COMPONENT Application)
 
 	install(CODE
 		"
@@ -197,7 +226,7 @@ elseif(ANDROID)
 
 	if(INTEGRATED_SDK)
 		set(ANDROID_MANIFEST AndroidManifest.xml.aar.in)
-		foreach(entry network/WifiInfo ui/aidl/AidlBinder android/AusweisApp2Service)
+		foreach(entry network/WifiInfo ui/aidl/AidlBinder android/LogHandler android/AusweisApp2Service android/AusweisApp2LocalIfdServiceConnection)
 			set(_java_file "${SRC_DIR}/${entry}.java")
 			if(NOT EXISTS "${_java_file}")
 				message(FATAL_ERROR "Cannot find file: ${_java_file}")
@@ -208,6 +237,12 @@ elseif(ANDROID)
 		install(FILES ${PACKAGING_DIR}/android/res/values/strings.xml DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/values COMPONENT Runtime)
 	else()
 		set(ANDROID_MANIFEST AndroidManifest.xml.apk.in)
+
+		if(USE_SMARTEID)
+			set(LOCAL_IFD_SERVICE_ENABLED true)
+		else()
+			set(LOCAL_IFD_SERVICE_ENABLED false)
+		endif()
 
 		foreach(entry ldpi mdpi hdpi xhdpi xxhdpi xxxhdpi)
 			install(FILES ${RESOURCES_IMG_ANDROID_DIR}/${entry}/background_npa.png DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/mipmap-${entry} COMPONENT Runtime RENAME npa_background.png)
@@ -231,9 +266,16 @@ elseif(ANDROID)
 		set(ANDROID_VERSION_NAME ${PROJECT_VERSION})
 	endif()
 	configure_file(${PACKAGING_DIR}/android/${ANDROID_MANIFEST} ${ANDROID_PACKAGE_SRC_DIR}/AndroidManifest.xml @ONLY)
-	configure_file(${PACKAGING_DIR}/android/backup_rules.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/backup_rules.xml COPYONLY)
-	if(NOT INTEGRATED_SDK)
+	if(INTEGRATED_SDK)
+		set(QML_ROOT_PATH [])
+		set(ANDROID_ROOT_LOGGER "java")
+	else()
+		set(QML_ROOT_PATH [\"${RESOURCES_DIR}/qml\"])
+		set(ANDROID_ROOT_LOGGER "")
 		configure_file(${PACKAGING_DIR}/android/fileprovider.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/fileprovider.xml COPYONLY)
+
+		configure_file(${PACKAGING_DIR}/android/backup_rules.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/backup_rules.xml COPYONLY)
+		configure_file(${PACKAGING_DIR}/android/backup_rules_legacy.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/backup_rules_legacy.xml COPYONLY)
 	endif()
 
 	set(ANDROID_SO_NAME libAusweisApp2_${CMAKE_ANDROID_ARCH_ABI}.so)
@@ -249,9 +291,8 @@ elseif(ANDROID)
 
 	set(ANDROID_DEPLOYMENT_SETTINGS ${PROJECT_BINARY_DIR}/libAusweisApp2.so-deployment-settings.json CACHE INTERNAL "apk deployment" FORCE)
 	configure_file(${PACKAGING_DIR}/android/libAusweisApp2.so-deployment-settings.json.in ${ANDROID_DEPLOYMENT_SETTINGS} @ONLY)
-	configure_file(${PACKAGING_DIR}/android/gradle.properties ${CMAKE_INSTALL_PREFIX}/gradle.properties COPYONLY)
+	configure_file(${PACKAGING_DIR}/android/gradle.properties.in ${CMAKE_INSTALL_PREFIX}/gradle.properties @ONLY)
 
-	set(TRANSLATION_DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/assets/${TRANSLATION_DESTINATION})
 	set(DEFAULT_FILE_DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/assets)
 
 elseif(UNIX)
@@ -260,15 +301,16 @@ elseif(UNIX)
 	endif()
 
 	set(DEFAULT_FILE_DESTINATION ${CMAKE_INSTALL_DATADIR}/${VENDOR}/AusweisApp2)
-	set(TRANSLATION_DESTINATION ${DEFAULT_FILE_DESTINATION}/${TRANSLATION_DESTINATION})
 	install(TARGETS AusweisApp DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Application)
-	configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.metainfo.xml.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.metainfo.xml @ONLY)
-	configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop @ONLY)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo COMPONENT Application)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT Application)
-	install(FILES ${RESOURCES_DIR}/images/npa.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps COMPONENT Application RENAME AusweisApp2.svg)
-	install(FILES ${RESOURCES_DIR}/images/npa.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/96x96/apps COMPONENT Application RENAME AusweisApp2.png)
-	install(FILES ${DOCS_DIR}/AusweisApp2.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT Application)
+	if(NOT CONTAINER_SDK)
+		configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.metainfo.xml.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.metainfo.xml @ONLY)
+		configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop @ONLY)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo COMPONENT Application)
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications COMPONENT Application)
+		install(FILES ${RESOURCES_DIR}/images/npa.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps COMPONENT Application RENAME AusweisApp2.svg)
+		install(FILES ${RESOURCES_DIR}/images/npa.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/96x96/apps COMPONENT Application RENAME AusweisApp2.png)
+		install(FILES ${DOCS_DIR}/AusweisApp2.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT Application)
+	endif()
 endif()
 
 
@@ -293,19 +335,10 @@ if(LINUX OR WIN32 OR MAC)
 endif()
 
 
-if(LINUX OR BSD)
-	install(FILES ${QM_FILES} DESTINATION ${TRANSLATION_DESTINATION} COMPONENT Translations)
-elseif(NOT INTEGRATED_SDK)
-	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/translations/ DESTINATION ${TRANSLATION_DESTINATION} COMPONENT Translations)
-endif()
-
-if(NOT INTEGRATED_SDK)
+if(NOT INTEGRATED_SDK OR CONTAINER_SDK)
 	# resources file
 	install(FILES ${RCC} DESTINATION ${DEFAULT_FILE_DESTINATION} COMPONENT Runtime)
 endif()
-
-# secure storage file
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.json DESTINATION ${DEFAULT_FILE_DESTINATION} COMPONENT Runtime)
 
 
 if(SIGNTOOL_CMD)

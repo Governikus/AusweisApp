@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -11,9 +11,10 @@ import Governikus.View 1.0
 TextField {
 	id: baseItem
 
-	property var textStyle: Constants.is_desktop ? Style.text.normal_inverse : Style.text.normal
+	property var textStyle: Style.text.normal
 	property int enterKeyType: Qt.EnterKeyDefault
 	property bool valid: true
+	property bool isOnLightBackground: true
 
 	Accessible.role: Accessible.EditableText
 	Accessible.editable: true
@@ -40,5 +41,6 @@ TextField {
 
 	FocusFrame {
 		scope: baseItem
+		isOnLightBackground: baseItem.isOnLightBackground
 	}
 }

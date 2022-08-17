@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -25,9 +25,7 @@ ColumnLayout {
 		text: qsTr("History")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	ToggleableOption {
@@ -58,9 +56,7 @@ ColumnLayout {
 		text: qsTr("Onscreen keypad")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	ToggleableOption {
@@ -103,9 +99,7 @@ ColumnLayout {
 		text: qsTr("Software updates")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	ToggleableOption {
@@ -161,9 +155,7 @@ ColumnLayout {
 			}
 			textStyle: (parent.updateAvailable || !parent.updateValid) ? Style.text.normal_warning : Style.text.normal_accent
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 	}
 

@@ -1,0 +1,44 @@
+From 322996d4aba82ecfd8103ec76177c76f00d66e7e Mon Sep 17 00:00:00 2001
+From: Laszlo Agocs <laszlo.agocs@qt.io>
+Date: Mon, 25 Apr 2022 13:20:05 +0200
+Subject: d3d: Retry with a DXGI_ADAPTER_FLAG_SOFTWARE adapter if failed
+
+To play nice with certain virtual machines, where there is a seemingly
+fine, accelerated adapter which then does not work with shader model 5.
+Or having a pre-2009 GPU which might have similar limitations.
+
+There will almost certainly be a second, software-backed (e.g. WARP)
+adapter. If the first attempt with the proper settings failed, retry
+as if QSG_RHI_PREFER_SOFTWARE_RENDERER was set, thus picking up the
+non-accelerated adapter. This way the out-of-the-box experience when
+running applications in such a less-than-ideal environment becomes
+much better because the user does not need to fiddle with environment
+variables every time when running the Qt app.
+
+Fixes: QTBUG-78648
+Change-Id: I5e38bf7eeddb03eddf5e970dbaf500ccec4d5681
+Reviewed-by: Andy Nichols <andy.nichols@qt.io>
+---
+ src/quick/scenegraph/qsgrhisupport.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git x/qtdeclarative/src/quick/scenegraph/qsgrhisupport.cpp y/qtdeclarative/src/quick/scenegraph/qsgrhisupport.cpp
+index 530ecbb9d7..39ab8961b4 100644
+--- x/qtdeclarative/src/quick/scenegraph/qsgrhisupport.cpp
++++ y/qtdeclarative/src/quick/scenegraph/qsgrhisupport.cpp
+@@ -694,6 +694,12 @@ QSGRhiSupport::RhiCreateResult QSGRhiSupport::createRhi(QQuickWindow *window, QO
+             rhi = QRhi::create(backend, &rhiParams, flags, &importDev);
+         } else {
+             rhi = QRhi::create(backend, &rhiParams, flags);
++            if (!rhi && !flags.testFlag(QRhi::PreferSoftwareRenderer)) {
++                qCDebug(QSG_LOG_INFO, "Failed to create a D3D device with default settings; "
++                                      "attempting to get a software rasterizer backed device instead");
++                flags |= QRhi::PreferSoftwareRenderer;
++                rhi = QRhi::create(backend, &rhiParams, flags);
++            }
+         }
+     }
+ #endif
+-- 
+2.37.1
+

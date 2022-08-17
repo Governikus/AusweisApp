@@ -4,9 +4,9 @@
 
 #include "DidAuthenticateResponseEac1.h"
 
-#include "EstablishPaceChannel.h"
-#include "EstablishPaceChannelOutput.h"
 #include "paos/PaosType.h"
+#include "pinpad/EstablishPaceChannel.h"
+#include "pinpad/EstablishPaceChannelOutput.h"
 
 using namespace governikus;
 
@@ -19,11 +19,6 @@ DIDAuthenticateResponseEAC1::DIDAuthenticateResponseEAC1()
 	, mEfCardAccess()
 	, mIdPICC()
 	, mChallenge()
-{
-}
-
-
-DIDAuthenticateResponseEAC1::~DIDAuthenticateResponseEAC1()
 {
 }
 

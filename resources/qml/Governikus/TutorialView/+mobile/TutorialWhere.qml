@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -85,7 +85,7 @@ TutorialContent {
 		width: parent.width
 
 		newSectionImage: "qrc:///images/tutorial/screenshot_providerlist_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
-		newSectionPointerY: Constants.is_layout_android ? 0.83 : 0.91
+		newSectionPointerY: Constants.is_layout_android ? 0.85 : 0.87
 		backgroundIcon:"qrc:///images/tutorial/background_icon_where.svg"
 	}
 
@@ -114,7 +114,7 @@ TutorialContent {
 		width: parent.width
 
 		newSectionImage: "qrc:///images/tutorial/screenshot_selfauthentication_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
-		newSectionPointerY: Constants.is_layout_android ? 0.66 : 0.7
+		newSectionPointerY: Constants.is_layout_android ? 0.66 : 0.67
 		backgroundIcon: "qrc:///images/tutorial/background_icon_where.svg"
 	}
 

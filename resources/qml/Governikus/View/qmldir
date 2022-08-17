@@ -1,6 +1,6 @@
 module View
 
-internal ContentAreaLoader ContentAreaLoader.qml
+internal BaseController BaseController.qml
 
 ContentArea 1.0 ContentArea.qml
 Controller 1.0 Controller.qml

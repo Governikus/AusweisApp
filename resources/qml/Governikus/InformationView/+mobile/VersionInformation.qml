@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -12,10 +12,10 @@ import Governikus.Type.SettingsModel 1.0
 import Governikus.Type.VersionInformationModel 1.0
 
 
-SectionPage
-{
+SectionPage {
 	id: root
-	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+
+	navigationAction: NavigationAction { action: NavigationAction.Action.Back; onClicked: pop() }
 	//: LABEL ANDROID IOS
 	title: qsTr("Version Information")
 

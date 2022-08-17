@@ -4,14 +4,14 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "asn1/ChipAuthenticationInfo.h"
+
 #include <QtCore>
 #include <QtTest>
 
-#include "asn1/ChipAuthenticationInfo.h"
-#include "asn1/KnownOIDs.h"
-
 
 using namespace governikus;
+
 
 class test_ChipAuthenticationInfo
 	: public QObject
@@ -77,8 +77,8 @@ class test_ChipAuthenticationInfo
 			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
 
 			QVERIFY(chipAuthenticationInfo != nullptr);
-			QVERIFY(!chipAuthenticationInfo->getVersion().isNull());
-			QVERIFY(chipAuthenticationInfo->getKeyId().isNull());
+			QCOMPARE(chipAuthenticationInfo->getVersion(), 2);
+			QCOMPARE(chipAuthenticationInfo->getKeyId(), -1);
 		}
 
 
@@ -92,7 +92,7 @@ class test_ChipAuthenticationInfo
 			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
 
 			QVERIFY(chipAuthenticationInfo != nullptr);
-			QCOMPARE(chipAuthenticationInfo->getKeyId(), QByteArray::fromHex("08"));
+			QCOMPARE(chipAuthenticationInfo->getKeyId(), 8);
 		}
 
 
@@ -106,7 +106,7 @@ class test_ChipAuthenticationInfo
 			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
 
 			QVERIFY(chipAuthenticationInfo != nullptr);
-			QCOMPARE(chipAuthenticationInfo->getVersion(), QByteArray::fromHex("02)"));
+			QCOMPARE(chipAuthenticationInfo->getVersion(), 2);
 		}
 
 

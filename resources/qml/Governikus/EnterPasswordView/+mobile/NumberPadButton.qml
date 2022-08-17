@@ -2,10 +2,9 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,16 +13,15 @@ Button {
 	id: numberPadButton
 
 	property bool visualPrivacy: false
+	property string a11yDisabledText: qsTr("Disabled")
 
 	implicitHeight: 36
 	implicitWidth: 36
 	Layout.fillHeight: true
 	Layout.fillWidth: true
 
-	Accessible.name: numberPadButton.text
-	Accessible.description: numberPadButton.enabled ? "": qsTr("Disabled")
-	Accessible.ignored: Qt.platform.os === "ios" ? false : !numberPadButton.enabled
-	Accessible.onPressAction: if (Qt.platform.os === "ios" && numberPadButton.enabled) clicked(null)
+	Accessible.name: numberPadButton.enabled ? text : a11yDisabledText
+	Accessible.onPressAction: if (numberPadButton.enabled) clicked()
 
 	contentItem: GText {
 		visible: numberPadButton.icon.source == "" && numberPadButton.enabled

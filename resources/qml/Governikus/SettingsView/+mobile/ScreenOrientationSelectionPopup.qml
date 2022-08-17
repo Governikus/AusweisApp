@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Window 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -15,10 +15,10 @@ ConfirmationPopup {
 
 	style: ConfirmationPopup.PopupStyle.OkButton
 	onConfirmed: {
-		if (phone.checked && Screen.primaryOrientation === Qt.LandscapeOrientation) {
+		if (phone.checked && plugin.isTabletLayout) {
 			plugin.applyPlatformStyle("mobile,phone," + Qt.platform.os)
 		}
-		if (tablet.checked && Screen.primaryOrientation !== Qt.LandscapeOrientation) {
+		if (tablet.checked && !plugin.isTabletLayout) {
 			plugin.applyPlatformStyle("mobile,tablet," + Qt.platform.os)
 		}
 	}
@@ -36,7 +36,7 @@ ConfirmationPopup {
 			//: LABEL ANDROID
 			Accessible.description: qsTr("Set screen orientation to portrait")
 
-			checked: Screen.primaryOrientation !== Qt.LandscapeOrientation
+			checked: !plugin.isTabletLayout
 			icon.source: "qrc:///images/android/stay_primary_portrait-24px.svg"
 			//: LABEL ANDROID
 			text: qsTr("Portrait") + (plugin.tablet ? "" : (" (%1)".arg(qsTr("recommended"))))
@@ -51,7 +51,7 @@ ConfirmationPopup {
 			//: LABEL ANDROID
 			Accessible.description: qsTr("Set screen orientation to landscape")
 
-			checked: Screen.primaryOrientation === Qt.LandscapeOrientation
+			checked: plugin.isTabletLayout
 			icon.source: "qrc:///images/android/stay_primary_landscape-24px.svg"
 			//: LABEL ANDROID
 			text: qsTr("Landscape") + (plugin.tablet ? (" (%1)".arg(qsTr("recommended"))) : "")

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtTest 1.12
+import QtQuick 2.15
+import QtTest 1.15
 
 import Governikus.ChangePinView 1.0
 
@@ -16,14 +16,14 @@ TestCase {
 
 	function createTestObject() {
 		return createTemporaryQmlObject("
-			import QtQuick 2.12
-			import Governikus.ChangePinView 1.0;
+			import QtQuick 2.15
+			import QtQuick.Controls 2.15
+			import Governikus.ChangePinView 1.0
 
-			Item {
-				id: appWindow
+			ApplicationWindow {
+				readonly property alias _d: view._d
 
-				property alias _d: view._d
-				property var menuBar: Item {
+				menuBar: Item {
 					function updateActions() {}
 				}
 
@@ -31,17 +31,7 @@ TestCase {
 					id: view
 				}
 			}
-			", testCase);
-	}
-
-	TestCase {
-		when: testCase.completed
-		optional: true
-
-		function benchmark_load() {
-			let testObject = createTestObject()
-			testObject.destroy()
-		}
+		", testCase);
 	}
 
 	function test_load() {

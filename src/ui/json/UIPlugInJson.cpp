@@ -4,10 +4,10 @@
 
 #include "UIPlugInJson.h"
 
+#include "ReaderManager.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "messages/MsgTypes.h"
-#include "ReaderManager.h"
 
 #include <QLoggingCategory>
 #include <QMetaMethod>
@@ -33,17 +33,19 @@ void UIPlugInJson::setEnabled(bool pEnable)
 	{
 		connect(readerManager, &ReaderManager::fireReaderAdded, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
+		connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
-		connect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &UIPlugInJson::onReaderEvent);
+		connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &UIPlugInJson::onCardInfoChanged);
 	}
 	else
 	{
 		disconnect(readerManager, &ReaderManager::fireReaderAdded, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
+		disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
-		disconnect(readerManager, &ReaderManager::fireCardRetryCounterChanged, this, &UIPlugInJson::onReaderEvent);
+		disconnect(readerManager, &ReaderManager::fireCardInfoChanged, this, &UIPlugInJson::onCardInfoChanged);
 	}
 }
 
@@ -77,6 +79,7 @@ void UIPlugInJson::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 	if (pContext.objectCast<AuthContext>() || pContext.objectCast<ChangePinContext>())
 	{
 		connect(pContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInJson::onStateChanged);
+		connect(pContext.data(), &WorkflowContext::fireProgressChanged, this, &UIPlugInJson::onProgressChanged);
 	}
 
 	callFireMessage(mMessageDispatcher.init(pContext));
@@ -95,6 +98,15 @@ void UIPlugInJson::onWorkflowFinished(QSharedPointer<WorkflowContext>)
 }
 
 
+void UIPlugInJson::onCardInfoChanged(const ReaderInfo& pInfo)
+{
+	if (pInfo.hasEid())
+	{
+		onReaderEvent(pInfo);
+	}
+}
+
+
 void UIPlugInJson::onReaderEvent(const ReaderInfo& pInfo)
 {
 	const auto& messages = mMessageDispatcher.processReaderChange(pInfo);
@@ -108,6 +120,12 @@ void UIPlugInJson::onReaderEvent(const ReaderInfo& pInfo)
 void UIPlugInJson::onStateChanged(const QString& pNewState)
 {
 	callFireMessage(mMessageDispatcher.processStateChange(pNewState));
+}
+
+
+void UIPlugInJson::onProgressChanged()
+{
+	callFireMessage(mMessageDispatcher.processProgressChange());
 }
 
 

@@ -1,4 +1,6 @@
 {
-	"name" : "UIPlugInAidl",
-	"dependencies" : ["UIPlugInJson"]
+	"name": "Aidl",
+	"dependencies": [
+		"Json"
+	]
 }

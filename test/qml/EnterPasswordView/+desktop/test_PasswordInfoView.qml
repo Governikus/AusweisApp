@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtTest 1.12
+import QtTest 1.15
 
-import Governikus.Type.NumberModel 1.0
+import Governikus.Type.PasswordType 1.0
 
 TestCase {
 	id: parent
@@ -14,10 +14,10 @@ TestCase {
 
 	function test_load_PasswordInfoView_data() {
 		return [
-			{ "passwordType": NumberModel.PASSWORD_PIN },
-			{ "passwordType": NumberModel.PASSWORD_CAN },
-			{ "passwordType": NumberModel.PASSWORD_PUK },
-			{ "passwordType": NumberModel.PASSWORD_REMOTE_PIN },
+			{ "passwordType": PasswordType.PIN },
+			{ "passwordType": PasswordType.CAN },
+			{ "passwordType": PasswordType.PUK },
+			{ "passwordType": PasswordType.REMOTE_PIN },
 		]
 	}
 

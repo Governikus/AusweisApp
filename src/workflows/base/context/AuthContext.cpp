@@ -4,20 +4,17 @@
 
 #include "AuthContext.h"
 
-#include "asn1/Chat.h"
 #include "AppSettings.h"
-#include "GeneralSettings.h"
-#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "SecureStorage.h"
+#include "asn1/Chat.h"
+#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
-#include <QSignalBlocker>
 
 using namespace governikus;
 
-AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationContext)
-	: WorkflowContext()
-	, mProgressValue(0)
-	, mProgressMessage()
+
+AuthContext::AuthContext(const Action pAction, const QSharedPointer<ActivationContext>& pActivationContext)
+	: WorkflowContext(pAction)
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
 	, mSkipRedirect(false)
@@ -30,17 +27,14 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mStartPaos()
 	, mInitializeFramework()
 	, mInitializeFrameworkResponse()
-	, mDIDList()
-	, mDIDListResponse()
 	, mDIDAuthenticateEAC1()
 	, mDIDAuthenticateResponseEAC1()
 	, mDIDAuthenticateEAC2()
 	, mDIDAuthenticateResponseEACAdditionalInputType()
 	, mDIDAuthenticateEACAdditionalInputType()
 	, mDIDAuthenticateResponseEAC2()
-	, mTransmits()
-	, mTransmitResponses()
-	, mDisconnectResponse()
+	, mTransmit()
+	, mTransmitResponse()
 	, mStartPaosResponse()
 	, mAccessRightManager()
 	, mCertificates()
@@ -49,28 +43,12 @@ AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationCon
 	, mCvcChainBuilderTest()
 	, mSslSession()
 {
-	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	connect(&generalSettings, &GeneralSettings::fireLanguageChanged, this, &AuthContext::fireProgressChanged);
 }
 
 
-void AuthContext::setProgress(int pValue, const QString& pMessage)
+AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationContext)
+	: AuthContext(Action::AUTH, pActivationContext)
 {
-	if (pValue != mProgressValue || pMessage != mProgressMessage)
-	{
-		mProgressValue = pValue;
-		mProgressMessage = pMessage;
-
-		const auto& connection = getCardConnection();
-		if (connection)
-		{
-			// Card interaction makes up about 80 % of the entire workflow's duration,
-			// "correct" the relative progress value accordingly.
-			connection->setProgressMessage(pMessage, static_cast<int>(1.25 * pValue));
-		}
-
-		Q_EMIT fireProgressChanged();
-	}
 }
 
 
@@ -163,16 +141,16 @@ CVCertificateChain AuthContext::getChainForCertificationAuthority(const Establis
 }
 
 
-void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pAdditionalCertificates)
+void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pAdditionalCertificates)
 {
 	Q_ASSERT(mDIDAuthenticateEAC1);
 
-	QVector<QSharedPointer<const CVCertificate> > cvcs;
-	cvcs += CVCertificate::fromHex(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates());
+	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	cvcs += CVCertificate::fromRaw(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates());
 	cvcs += getDidAuthenticateEac1()->getCvCertificates();
 	cvcs += pAdditionalCertificates;
 
 	const auto* secureStorage = Env::getSingleton<SecureStorage>();
-	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage->getCVRootCertificates(true)), true);
-	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromHex(secureStorage->getCVRootCertificates(false)), false);
+	mCvcChainBuilderProd = CVCertificateChainBuilder(cvcs + CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true)), true);
+	mCvcChainBuilderTest = CVCertificateChainBuilder(cvcs + CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false)), false);
 }

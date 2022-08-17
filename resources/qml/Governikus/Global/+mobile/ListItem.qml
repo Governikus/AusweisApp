@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -27,14 +27,15 @@ Rectangle {
 	property bool pressed: mouseArea.pressed
 	property alias mouseAreaEnabled: mouseArea.enabled
 
-	signal clicked
+	signal clicked()
+	signal pressAndHold()
 
 	width: parent ? parent.width : 0
 	height: fixedHeight ? Style.dimens.list_item_height : (content.implicitHeight + Constants.text_spacing)
 
 	Accessible.role: Accessible.ListItem
 	Accessible.name: headerText + ". " + text + ". " + footerText
-	Accessible.onPressAction: if (Qt.platform.os === "ios") mouseArea.clicked(null)
+	Accessible.onPressAction: mouseArea.clicked(null)
 
 	color: pressed ? Style.color.background_pane_active : Style.color.background_pane
 
@@ -127,5 +128,6 @@ Rectangle {
 		anchors.fill: parent
 
 		onClicked: baseItem.clicked()
+		onPressAndHold: baseItem.pressAndHold()
 	}
 }

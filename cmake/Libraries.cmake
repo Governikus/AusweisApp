@@ -5,19 +5,47 @@ if(MINGW AND CMAKE_VERSION VERSION_LESS 3.17.0)
 endif()
 
 if(DESKTOP)
-	set(MIN_QT_VERSION 5.12)
-else()
 	set(MIN_QT_VERSION 5.15)
+else()
+	set(MIN_QT_VERSION 6.2)
+endif()
+
+if(IOS OR ANDROID)
+	if(NOT QT_HOST_PATH)
+		# If no QT_HOST_PATH is set, see if it was build as part of the toolchain
+		foreach(path ${CMAKE_PREFIX_PATH})
+			set(QT_HOST_PATH ${path}/qt-host/)
+			if(EXISTS QT_HOST_PATH)
+				break()
+			endif()
+		endforeach()
+	endif()
+
+	if(NOT EXISTS ${QT_HOST_PATH})
+		message(FATAL_ERROR "QT_HOST_PATH does not exist")
+	endif()
+
+	message(STATUS "Using QT_HOST_PATH: ${QT_HOST_PATH}")
+	set(CMAKE_FIND_ROOT_PATH ${CMAKE_FIND_ROOT_PATH} ${QT_HOST_PATH} )
 endif()
 
 if(NOT DEFINED Qt)
-	set(Qt Qt5)
+	find_package(Qt6 ${MIN_QT_VERSION} COMPONENTS Core CMAKE_FIND_ROOT_PATH_BOTH)
+	if(TARGET Qt6::Core)
+		set(Qt Qt6)
+	else()
+		set(Qt Qt5)
+	endif()
 endif()
-find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS Core Concurrent Network LinguistTools REQUIRED)
+find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS Core Concurrent Network REQUIRED CMAKE_FIND_ROOT_PATH_BOTH)
 include(Compat)
 
 if(QT6)
 	list(APPEND QT_COMPONENTS StateMachine)
+endif()
+
+if(NOT CONTAINER_SDK)
+	list(APPEND QT_COMPONENTS LinguistTools)
 endif()
 
 if(NOT INTEGRATED_SDK)
@@ -25,52 +53,46 @@ if(NOT INTEGRATED_SDK)
 
 	if(QT_VERSION VERSION_GREATER_EQUAL "5.14")
 		list(APPEND QT_COMPONENTS QmlWorkerScript)
-		if(IOS)
-			list(APPEND QT_COMPONENTS QmlImportScanner)
-		endif()
 	endif()
-	if(NOT DESKTOP)
+	if(NOT DESKTOP AND NOT QT6)
 		list(APPEND QT_COMPONENTS QuickShapes)
+	endif()
+	if(QT6)
+		list(APPEND QT_COMPONENTS ShaderTools)
 	endif()
 endif()
 
 if(DESKTOP AND NOT INTEGRATED_SDK)
 	list(APPEND QT_COMPONENTS Widgets)
-
-	if(WIN32)
-		list(APPEND QT_COMPONENTS WinExtras)
-	endif()
 endif()
 
-if(ANDROID OR IOS OR WINDOWS_STORE OR CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+if(ANDROID OR IOS OR WINDOWS_STORE OR (QT6 AND CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
 	list(APPEND QT_COMPONENTS Nfc)
 endif()
 
 if(ANDROID)
-	list(APPEND QT_COMPONENTS AndroidExtras)
-endif()
-
-foreach(dest "" "share/qt" "share/qt5" "share/qt6")
-	if(EXISTS "${QT_HOST_PREFIX}/${dest}/translations")
-		set(QT_TRANSLATIONS_DIR ${QT_HOST_PREFIX}/${dest}/translations)
+	if(INTEGRATED_SDK)
+		list(APPEND QT_COMPONENTS WebSockets)
 	endif()
-endforeach()
-
-if(NOT QT_TRANSLATIONS_DIR)
-	QUERY_QMAKE(QT_TRANSLATIONS_DIR QT_INSTALL_TRANSLATIONS)
+elseif(CONTAINER_SDK)
+	list(APPEND QT_COMPONENTS WebSockets)
 endif()
 
-message(STATUS "QT_HOST_PREFIX: ${QT_HOST_PREFIX}")
-message(STATUS "QT_TRANSLATIONS_DIR: ${QT_TRANSLATIONS_DIR}")
 
-set(QT_VENDOR_FILE "${QT_HOST_PREFIX}/mkspecs/qt_vendor_governikus")
+QUERY_QMAKE(QT_INSTALL_ARCHDATA QT_INSTALL_ARCHDATA)
+QUERY_QMAKE(QT_INSTALL_TRANSLATIONS QT_INSTALL_TRANSLATIONS)
+
+message(STATUS "QT_INSTALL_ARCHDATA: ${QT_INSTALL_ARCHDATA}")
+message(STATUS "QT_INSTALL_TRANSLATIONS: ${QT_INSTALL_TRANSLATIONS}")
+
+set(QT_VENDOR_FILE "${QT_INSTALL_ARCHDATA}/mkspecs/qt_vendor_governikus")
 if(EXISTS "${QT_VENDOR_FILE}")
 	set(QT_VENDOR "Governikus")
 	message(STATUS "QT_VENDOR: ${QT_VENDOR}")
 endif()
 
-if(NOT DEFINED QT_TRANSLATIONS_DIR)
-	message(FATAL_ERROR "Cannot detect QT_TRANSLATIONS_DIR")
+if(NOT DEFINED QT_INSTALL_TRANSLATIONS)
+	message(FATAL_ERROR "Cannot detect QT_INSTALL_TRANSLATIONS")
 endif()
 
 
@@ -88,10 +110,10 @@ endif()
 
 
 if(MINGW)
-	set(PCSC_LIBRARIES -lwinscard)
+	find_package(PCSC REQUIRED)
 	set(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion")
 elseif(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
-	set(PCSC_LIBRARIES winscard.lib)
+	find_package(PCSC REQUIRED)
 	set(WIN_DEFAULT_LIBS setupapi.lib version.lib)
 elseif(ANDROID)
 
@@ -113,8 +135,7 @@ elseif(IOS)
 	find_library(IOS_CORENFC CoreNFC)
 	find_library(IOS_MESSAGEUI MessageUI)
 elseif(MAC)
-	find_path(PCSC_INCLUDE_DIRS WinSCard.h)
-	find_library(PCSC_LIBRARIES NAMES PCSC WinSCard)
+	find_package(PCSC REQUIRED)
 
 	find_library(OSX_USERNOTIFICATIONS UserNotifications)
 	find_library(OSX_APPKIT AppKit)
@@ -123,21 +144,19 @@ elseif(MAC)
 	find_library(OSX_FOUNDATION Foundation)
 	find_library(OSX_SERVICEMANAGEMENT ServiceManagement)
 elseif(UNIX)
-	find_package(PkgConfig REQUIRED)
-
 	if(LINUX)
+		find_package(PkgConfig REQUIRED)
 		pkg_check_modules(UDEV IMPORTED_TARGET libudev)
 		if(NOT TARGET PkgConfig::UDEV)
 			message(STATUS "Hardware detection disabled - Missing libudev")
 		endif()
 	endif()
 
-	pkg_check_modules(PCSC REQUIRED libpcsclite)
-	link_directories("${PCSC_LIBRARY_DIRS}")
+	find_package(PCSC REQUIRED)
 endif()
 
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND NOT CONTAINER_SDK)
 	list(APPEND QT_COMPONENTS Test)
 
 	if(INTEGRATED_SDK)
@@ -151,4 +170,14 @@ endif()
 
 if(QT_COMPONENTS)
 	find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS ${QT_COMPONENTS} REQUIRED)
+endif()
+
+if(LINUX OR BSD)
+	try_run(testResult compileResult "${CMAKE_BINARY_DIR}" "${CMAKE_DIR}/tests/openssl.cpp"
+		CMAKE_FLAGS INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
+		LINK_LIBRARIES ${Qt}::Network OpenSSL::Crypto OpenSSL::SSL
+		OUTPUT_VARIABLE runResult)
+	if(NOT testResult EQUAL 0)
+		message(FATAL_ERROR "Your OpenSSL library looks incompatible: ${testResult}\n${runResult}")
+	endif()
 endif()

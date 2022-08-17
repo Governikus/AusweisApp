@@ -68,6 +68,11 @@ class Build
 		return buildName(prefix, partialLibName, true)
 	}
 
+	boolean cleanUpWs()
+	{
+		return true
+	}
+
 
 
 	Job generate(DslFactory factory)
@@ -102,7 +107,6 @@ class Build
 				env('TEMP', '$WORKSPACE/tmp')
 				env('TMP', '$WORKSPACE/tmp')
 				env('TMPDIR', '$WORKSPACE/tmp')
-				env('QML_DISABLE_DISK_CACHE', '1')
 			}
 
 			wrappers
@@ -110,7 +114,8 @@ class Build
 				preBuildCleanup()
 				{
 					if(!getReleaseJob() && getExcludePattern())
-						excludePattern(getExcludePattern())
+						for(String value in getExcludePattern().split(','))
+							excludePattern(value)
 
 					deleteDirectories(true)
 				}
@@ -156,7 +161,7 @@ class Build
 				String[] requestedLibs = getLibraries()
 				String defaultTargetDestDir = 'libs'
 
-				for(String partLibName : requestedLibs)
+				for(String partLibName in requestedLibs)
 				{
 					String targetDestDir = defaultTargetDestDir
 					if(requestedLibs.length > 1)
@@ -183,7 +188,7 @@ class Build
 				if(getName().contains('_Win'))
 					batchFile('mkdir build & mkdir tmp')
 				else
-					shell('mkdir build; mkdir tmp')
+					shell('mkdir build; mkdir -m 700 tmp')
 			}
 
 			publishers
@@ -229,11 +234,12 @@ class Build
 
 				wsCleanup()
 				{
-					cleanWhenUnstable(false)
-					cleanWhenFailure(false)
-					cleanWhenNotBuilt(false)
-					cleanWhenAborted(false)
-					excludePattern(getExcludePattern())
+					cleanWhenUnstable(cleanUpWs())
+					cleanWhenFailure(cleanUpWs())
+					cleanWhenNotBuilt(cleanUpWs())
+					cleanWhenAborted(cleanUpWs())
+					for(String value in getExcludePattern().split(','))
+						excludePattern(value)
 					deleteDirectories(true)
 				}
 

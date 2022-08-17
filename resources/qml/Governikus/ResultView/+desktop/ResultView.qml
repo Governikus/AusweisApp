@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -27,6 +27,7 @@ SectionPage {
 	property alias text: resultText.text
 	property alias header: resultHeader.text
 	property alias buttonType: button.buttonType
+	property alias buttonText: button.text
 	property alias popupText: detailedResultPopup.text
 	property alias popupTitle: detailedResultPopup.title
 	property alias hintText: hintItem.text
@@ -35,8 +36,6 @@ SectionPage {
 	signal emailButtonPressed()
 	signal hintClicked()
 
-	Accessible.name: qsTr("Result view")
-	Accessible.description: qsTr("This is the result of an authentication.")
 	Keys.onReturnPressed: button.onClicked()
 	Keys.onEnterPressed: button.onClicked()
 	Keys.onEscapePressed: button.onClicked()
@@ -77,7 +76,7 @@ SectionPage {
 
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
-			textStyle: Style.text.header_inverse
+			textStyle: Style.text.header
 
 			FocusFrame {}
 		}
@@ -93,7 +92,7 @@ SectionPage {
 
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
-			textStyle: resultHeader.visible ? Style.text.header_secondary_inverse : Style.text.header_inverse
+			textStyle: resultHeader.visible ? Style.text.header_secondary : Style.text.header
 
 			FocusFrame {}
 		}
@@ -123,7 +122,17 @@ SectionPage {
 				onClicked: {
 					LogModel.setLogFile(0)
 					let filenameSuggestion = LogModel.createLogFileName(LogModel.getCurrentLogFileDate())
-					appWindow.openSaveFileDialog(LogModel.saveCurrentLogFile, filenameSuggestion, qsTr("Logfiles"), "log")
+					fileDialog.selectFile(filenameSuggestion)
+				}
+
+				GFileDialog {
+					id: fileDialog
+
+					defaultSuffix: "log"
+					//: LABEL DESKTOP
+					nameFilters: qsTr("Logfiles (*.log)")
+
+					onAccepted: LogModel.saveCurrentLogFile(file)
 				}
 			}
 

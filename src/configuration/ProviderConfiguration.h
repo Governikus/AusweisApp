@@ -43,7 +43,7 @@ class ProviderConfiguration
 	public:
 		void update();
 		[[nodiscard]] const QVector<ProviderConfigurationInfo>& getProviderConfigurationInfos() const;
-		[[nodiscard]] const CallCost getCallCost(const ProviderConfigurationInfo& pProvider) const;
+		[[nodiscard]] CallCost getCallCost(const ProviderConfigurationInfo& pProvider) const;
 		[[nodiscard]] ProviderConfigurationInfo getProviderInfo(const QString& pInternalId) const;
 
 	Q_SIGNALS:

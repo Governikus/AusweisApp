@@ -2,52 +2,31 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-Item {
-	id: baseItem
 
-	height: tabbedPane.availableHeight
-	width: parent.width
+GListView {
+	id: listView
 
 	readonly property string helpTopic: "helpLicenseinformation"
 
-	// Padding used by the tabbed pane
-	readonly property int contentPadding: 0
+	activeFocusOnTab: true
 
-	GListView {
-		id: listView
+	displayMarginBeginning: Constants.pane_padding
+	displayMarginEnd: Constants.pane_padding
 
-		anchors {
-			fill: parent
-			topMargin: Constants.pane_padding
-			leftMargin: Constants.pane_padding
-			bottomMargin: Constants.pane_padding
-		}
+	model: ApplicationModel.getLicenseText()
+	delegate: GText {
+		width: listView.width - Constants.pane_padding
 
-		activeFocusOnTab: true
+		text: model.modelData
+		textStyle: Style.text.normal
 
-		displayMarginBeginning: Constants.pane_padding
-		displayMarginEnd: Constants.pane_padding
-
-		model: ApplicationModel.getLicenseText()
-
-		delegate: GText {
-			width: listView.width - Constants.pane_padding
-
-			text: model.modelData
-			textStyle: Style.text.normal
-		}
-	}
-
-	FocusFrame {
-		scope: listView
-		framee: listView
-		borderColor: Style.color.focus_indicator
+		FocusFrame {}
 	}
 }

@@ -4,5 +4,5 @@ internal NumberPad NumberPad.qml
 internal NumberPadButton NumberPadButton.qml
 internal PasswordInfoImage PasswordInfoImage.qml
 
-PasswordInfoView 1.0 PasswordInfoView.qml
 EnterPasswordView 1.0 EnterPasswordView.qml
+PasswordInfoView 1.0 PasswordInfoView.qml

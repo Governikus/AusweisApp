@@ -8,8 +8,7 @@
 #include <QNearFieldManager>
 
 #ifdef Q_OS_ANDROID
-#include <QAndroidJniObject>
-#include <QtAndroid>
+	#include <QJniObject>
 #endif
 
 using namespace governikus;
@@ -30,6 +29,15 @@ void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
 	if (pEnabled)
 	{
 		Q_EMIT fireReaderAdded(mNfcReader->getReaderInfo());
+#if defined(Q_OS_ANDROID)
+		if (QNativeInterface::QAndroidApplication::isActivityContext())
+		{
+			if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+			{
+				activity.callMethod<void>("resetNfcReaderMode");
+			}
+		}
+#endif
 	}
 	else
 	{
@@ -46,18 +54,9 @@ void NfcReaderManagerPlugIn::onReaderDisconnected()
 
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC,
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 			QNearFieldManager().isSupported(QNearFieldTarget::TagTypeSpecificAccess)
-#else
-			QNearFieldManager().isSupported()
-#endif
 			)
 	, mNfcReader(nullptr)
-{
-}
-
-
-NfcReaderManagerPlugIn::~NfcReaderManagerPlugIn()
 {
 }
 
@@ -85,13 +84,13 @@ void NfcReaderManagerPlugIn::init()
 	mNfcReader.reset(new NfcReader());
 	connect(mNfcReader.data(), &NfcReader::fireCardInserted, this, &NfcReaderManagerPlugIn::fireCardInserted);
 	connect(mNfcReader.data(), &NfcReader::fireCardRemoved, this, &NfcReaderManagerPlugIn::fireCardRemoved);
-	connect(mNfcReader.data(), &NfcReader::fireCardRetryCounterChanged, this, &NfcReaderManagerPlugIn::fireCardRetryCounterChanged);
+	connect(mNfcReader.data(), &NfcReader::fireCardInfoChanged, this, &NfcReaderManagerPlugIn::fireCardInfoChanged);
 	connect(mNfcReader.data(), &NfcReader::fireReaderPropertiesUpdated, this, &NfcReaderManagerPlugIn::fireReaderPropertiesUpdated);
 	connect(mNfcReader.data(), &NfcReader::fireNfcAdapterStateChanged, this, &NfcReaderManagerPlugIn::onNfcAdapterStateChanged);
 	connect(mNfcReader.data(), &NfcReader::fireReaderDisconnected, this, &NfcReaderManagerPlugIn::onReaderDisconnected);
 	qCDebug(card_nfc) << "Add reader" << mNfcReader->getName();
 
-	onNfcAdapterStateChanged(mNfcReader->isEnabled());
+	onNfcAdapterStateChanged(mNfcReader->isEnabled() && getInfo().isAvailable());
 }
 
 

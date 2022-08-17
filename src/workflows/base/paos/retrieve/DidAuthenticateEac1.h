@@ -7,11 +7,12 @@
 
 #pragma once
 
-#include "asn1/Chat.h"
+#include "SmartCardDefinitions.h"
 #include "asn1/CVCertificate.h"
+#include "asn1/Chat.h"
+#include "paos/PaosMessage.h"
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/Eac1InputType.h"
-#include "paos/PaosMessage.h"
 
 #include <QVector>
 
@@ -50,6 +51,7 @@ class DIDAuthenticateEAC1
 		[[nodiscard]] const QSharedPointer<const CHAT>& getOptionalChat() const;
 		[[nodiscard]] const QSharedPointer<const CHAT>& getRequiredChat() const;
 		[[nodiscard]] const QString& getTransactionInfo() const;
+		[[nodiscard]] const QVector<AcceptedEidType>& getAcceptedEidTypes() const;
 };
 
 } // namespace governikus

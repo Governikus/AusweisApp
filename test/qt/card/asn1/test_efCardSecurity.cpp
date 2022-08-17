@@ -2,13 +2,15 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/EFCardSecurity.h"
 #include "TestFileHelper.h"
+#include "asn1/EFCardSecurity.h"
 
 #include <QSharedPointer>
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 class test_efCardSecurity
 	: public QObject
@@ -132,14 +134,154 @@ class test_efCardSecurity
 		}
 
 
+		void parseEFCardSecurity_data()
+		{
+			QTest::addColumn<QByteArray>("bytes");
+
+			QTest::newRow("file") << QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"));
+
+			QSharedPointer<EVP_PKEY_CTX> keyCtx(EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr), &EVP_PKEY_CTX_free);
+			QVERIFY(keyCtx);
+			QVERIFY(EVP_PKEY_keygen_init(keyCtx.data()) > 0);
+			QVERIFY(EVP_PKEY_CTX_set_rsa_keygen_bits(keyCtx.data(), 512) > 0);
+
+			EVP_PKEY* key = nullptr;
+			QVERIFY(EVP_PKEY_keygen(keyCtx.data(), &key) > 0);
+			const auto keyGuard = qScopeGuard([key] {EVP_PKEY_free(key);});
+
+			QSharedPointer<X509> cert(X509_new(), &X509_free);
+			QVERIFY(cert);
+			ASN1_INTEGER_set(X509_get_serialNumber(cert.data()), 1);
+			X509_gmtime_adj(X509_get_notBefore(cert.data()), 0);
+			X509_gmtime_adj(X509_get_notAfter(cert.data()), 24 * 3600);
+			X509_set_pubkey(cert.data(), key);
+			X509_sign(cert.data(), key, EVP_sha256());
+
+			QByteArray secInfos = QByteArray::fromHex("31820116"
+													  "  300D"
+													  "    060804007F0007020202"
+													  "    020102"
+													  "  300E"
+													  "    060A04007F00070302030201"
+													  "    0500"
+													  "  3012"
+													  "    060A04007F00070202030202"
+													  "    020102"
+													  "    020145"
+													  "  3012"
+													  "    060A04007F00070202040202"
+													  "    020102"
+													  "    02010D"
+													  "  3017"
+													  "    060A04007F00070202050203"
+													  "    3009"
+													  "      020101"
+													  "      020143"
+													  "      0101FF"
+													  "  3017"
+													  "    060A04007F00070202050203"
+													  "    3009"
+													  "      020101"
+													  "      020144"
+													  "      010100"
+													  "  3019"
+													  "    060904007F000702020502"
+													  "    300C"
+													  "      060704007F00070102"
+													  "      02010D"
+													  "  301C"
+													  "    060904007F000702020302"
+													  "    300C"
+													  "      060704007F00070102"
+													  "      02010D"
+													  "    020145"
+													  "  3062"
+													  "    060904007F000702020102"
+													  "    3052"
+													  "      300C"
+													  "        060704007F00070102"
+													  "        02010D"
+													  "      03420004086C9B1F08D2ED1258D5EF006418003333EC5826CF8CBAC231CE3EA162774676136A85CC681B5262180190988E12CFB5B164E37BECB4C493F69CB7BCE5E970F8"
+													  "    020145");
+			QSharedPointer<BIO> bio(BIO_new(BIO_s_mem()), &BIO_free);
+			QVERIFY(bio);
+			QVERIFY(BIO_write(bio.data(), secInfos.data(), secInfos.size()) > 0);
+
+			QSharedPointer<CMS_ContentInfo> cms(CMS_sign(cert.data(), key, nullptr, nullptr, CMS_PARTIAL | CMS_NOSMIMECAP), &CMS_ContentInfo_free);
+			QVERIFY(cms);
+			QVERIFY(CMS_set1_eContentType(cms.data(), OBJ_txt2obj("0.4.0.127.0.7.3.2.1", 1)) > 0);
+			QVERIFY(CMS_final(cms.data(), bio.data(), nullptr, CMS_BINARY) > 0);
+
+			uchar* rawContent = nullptr;
+			const int contentSize = i2d_CMS_ContentInfo(cms.data(), &rawContent);
+			const auto contentGuard = qScopeGuard([rawContent] {OPENSSL_free(rawContent);});
+
+			QTest::newRow("constructed") << QByteArray(reinterpret_cast<char*>(rawContent), contentSize);
+		}
+
+
 		void parseEFCardSecurity()
 		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"));
+			QFETCH(QByteArray, bytes);
 
 			auto efCardSecurity = EFCardSecurity::decode(bytes);
-
-			QVERIFY(efCardSecurity != nullptr);
+			QVERIFY(efCardSecurity);
 			QCOMPARE(efCardSecurity->getSecurityInfos()->getSecurityInfos().size(), 9);
+		}
+
+
+		void logging()
+		{
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.2 (id-TA)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.3.2.3.2.1 (id-mobileEIDType-SECertified)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.3.2.2 (id-CA-ECDH-AES-CBC-CMAC-128), version: 2, keyId: 69");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.4.2.2 (id-PACE-ECDH-GM-AES-CBC-CMAC-128), version: 2, parameterId: 13");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.5.2.3 (id-RI-ECDH-SHA-256)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.5.2.3 (id-RI-ECDH-SHA-256)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.5.2 (id-RI-ECDH)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.3.2 (id-CA-ECDH)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.1.2 (id-PK-ECDH)");
+
+			QVERIFY(EFCardSecurity::fromHex(QByteArray(
+					"3082072f06092a864886f70d010702a08207203082071c020103310f300d060960864801650304020205003082012c06"
+					"0804007f0007030201a082011e0482011a31820116300d060804007f0007020202020102300e060a04007f0007030203"
+					"020105003012060a04007f000702020302020201020201453012060a04007f0007020204020202010202010d3017060a"
+					"04007f0007020205020330090201010201430101ff3017060a04007f0007020205020330090201010201440101003019"
+					"060904007f000702020502300c060704007f0007010202010d301c060904007f000702020302300c060704007f000701"
+					"0202010d0201453062060904007f0007020201023052300c060704007f0007010202010d03420004086c9b1f08d2ed12"
+					"58d5ef006418003333ec5826cf8cbac231ce3ea162774676136a85cc681b5262180190988e12cfb5b164e37becb4c493"
+					"f69cb7bce5e970f8020145a082049830820494308203f8a003020102020204ea300a06082a8648ce3d0403043046310b"
+					"3009060355040613024445310d300b060355040a0c0462756e64310c300a060355040b0c03627369311a301806035504"
+					"030c115445535420637363612d6765726d616e79301e170d3231303531303038333535315a170d333131323130323335"
+					"3935395a3059310b3009060355040613024445310c300a060355040a0c03425349310d300b0603550405130430303031"
+					"312d302b06035504030c245445535420446f63756d656e74205369676e6572204d6f62696c65204964656e7469747930"
+					"8201b53082014d06072a8648ce3d020130820140020101303c06072a8648ce3d01010231008cb91e82a3386d280f5d6f"
+					"7e50e641df152f7109ed5456b412b1da197fb71123acd3a729901d1a71874700133107ec53306404307bc382c63d8c15"
+					"0c3c72080ace05afa0c2bea28e4fb22787139165efba91f90f8aa5814a503ad4eb04a8c7dd22ce2826043004a8c7dd22"
+					"ce28268b39b55416f0447c2fb77de107dcd2a62e880ea53eeb62d57cb4390295dbc9943ab78696fa504c110461041d1c"
+					"64f068cf45ffa2a63a81b7c13f6b8847a3e77ef14fe3db7fcafe0cbd10e8e826e03436d646aaef87b2e247d4af1e8abe"
+					"1d7520f9c2a45cb1eb8e95cfd55262b70b29feec5864e19c054ff99129280e4646217791811142820341263c53150231"
+					"008cb91e82a3386d280f5d6f7e50e641df152f7109ed5456b31f166e6cac0425a7cf3ab6af6b7fc3103b883202e90465"
+					"65020101036200041cdde46681c10996cb44817bc37583426fbeb44df5070c13b2e10d056074faf9a501b628ef18ecb0"
+					"774c6e5d3c913f450167c305aa3eb76e6a1167776d0df43c2bd5724efea7e990fea19839b8dcb9332b37c0a8815f462e"
+					"09f6e250371fd637a38201633082015f301f0603551d23041830168014539db1872aac9193d76392ee80d9e5996cf99b"
+					"3b301d0603551d0e04160414362c0adf7cdb8b22e8de7cea2a494745aa0cadaa300e0603551d0f0101ff040403020780"
+					"302b0603551d1004243022800f32303231303531303038333535315a810f32303231313231303233353935395a301606"
+					"03551d20040f300d300b060904007f00070301010130260603551d11041f301d820b6273692e62756e642e6465a40e30"
+					"0c310a300806035504070c014430510603551d12044a30488118637363612d6765726d616e79406273692e62756e642e"
+					"6465861c68747470733a2f2f7777772e6273692e62756e642e64652f63736361a40e300c310a300806035504070c0144"
+					"3016060767810801010602040b3009020100310413024f4130350603551d1f042e302c302aa028a0268624687474703a"
+					"2f2f7777772e6273692e62756e642e64652f746573745f637363615f63726c300a06082a8648ce3d0403040381890030"
+					"81850241009af70684030b114cd5200d022a52ee2870b038d34df4a2d7d57773c76f99fb260588894ce67ddf73b14595"
+					"0b848cad79e5ffece86233d84f1b1184f53d3236830240031f5b35428ae0d8e081612a37aee86ef66242f02982deddd0"
+					"ce87b7b748b9e57ad7f6e6c2f46578cd90e6566e3766ac5743674361b0be2498b6543add6e0c44318201383082013402"
+					"0101304c3046310b3009060355040613024445310d300b060355040a0c0462756e64310c300a060355040b0c03627369"
+					"311a301806035504030c115445535420637363612d6765726d616e79020204ea300d06096086480165030402020500a0"
+					"5a301706092a864886f70d010903310a060804007f0007030201303f06092a864886f70d01090431320430eeac2bcb96"
+					"97301e917d1b6f7c07983acf58efbaac8c9213cf588ae50137fe33d0efcd894967550f296fc90c254019eb300c06082a"
+					"8648ce3d04030305000466306402305a59398761ae2133d4bd2278a51624309ea3057f1ca0c22a2a2424c42e5be139ad"
+					"aefe2b6a2360a1857db01698608b0f02304d6d9fdfb56bc020d917d948980a4302a1f6f08f1be524446f6eacb5125194"
+					"f201595a2a6bf5222ea7a4e94b2e96db99a100")));
 		}
 
 

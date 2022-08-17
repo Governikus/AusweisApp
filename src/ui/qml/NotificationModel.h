@@ -27,21 +27,21 @@ class NotificationModel
 
 	Q_PROPERTY(QString lastType READ getLastType NOTIFY fireLastTypeChanged)
 
-	enum UserRoles
-	{
-		TYPE = Qt::UserRole + 1,
-		TIME,
-		TEXT
-	};
-
-	struct NotificationEntry
-	{
-		QString mType;
-		QString mTime;
-		QString mText;
-	};
-
 	private:
+		enum UserRoles
+		{
+			TYPE = Qt::UserRole + 1,
+			TIME,
+			TEXT
+		};
+
+		struct NotificationEntry
+		{
+			QString mType;
+			QString mTime;
+			QString mText;
+		};
+
 		QContiguousCache<NotificationEntry> mNotificationEntries;
 
 		NotificationModel();

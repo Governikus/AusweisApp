@@ -5,27 +5,18 @@
 #include "AppController.h"
 
 #include "AppSettings.h"
-#include "context/AuthContext.h"
-#include "context/ChangePinContext.h"
-#include "context/SelfAuthContext.h"
-#include "controller/AuthController.h"
-#include "controller/ChangePinController.h"
-#include "controller/SelfAuthController.h"
-#include "InternalActivationContext.h"
 #include "LanguageLoader.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
+#include "Randomizer.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
 #include "SecureStorage.h"
 #include "UILoader.h"
 #include "UIPlugIn.h"
-
-#if __has_include("RemoteClient.h")
-	#include "context/RemoteServiceContext.h"
-	#include "controller/RemoteServiceController.h"
-	#include "RemoteClient.h"
-#endif
+#include "VolatileSettings.h"
+#include "controller/AuthController.h"
+#include "controller/ChangePinController.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -35,28 +26,13 @@
 #include <QTimer>
 
 #if defined(Q_OS_WIN)
-#include <windows.h>
+	#include <windows.h>
 #endif
 
 
 namespace governikus
 {
 bool AppController::cShowUi = false;
-
-class WorkflowRequest final
-{
-	private:
-		const Action mAction;
-		const QSharedPointer<WorkflowContext> mContext;
-
-	public:
-		WorkflowRequest(Action pAction, const QSharedPointer<WorkflowContext>& pContext);
-		~WorkflowRequest() = default;
-
-		[[nodiscard]] inline Action getAction() const;
-		[[nodiscard]] inline QSharedPointer<WorkflowContext> getContext() const;
-};
-
 } // namespace governikus
 
 
@@ -67,36 +43,9 @@ Q_DECLARE_LOGGING_CATEGORY(support)
 Q_DECLARE_LOGGING_CATEGORY(system)
 
 
-WorkflowRequest::WorkflowRequest(Action pAction,
-		const QSharedPointer<WorkflowContext>& pContext)
-	: mAction(pAction)
-	, mContext(pContext)
-{
-}
-
-
-Action WorkflowRequest::getAction() const
-{
-	return mAction;
-}
-
-
-QSharedPointer<WorkflowContext> WorkflowRequest::getContext() const
-{
-	return mContext;
-}
-
-
-bool AppController::canStartNewAction() const
-{
-	return mCurrentAction == Action::NONE && mActiveController.isNull();
-}
-
-
 AppController::AppController()
-	: mCurrentAction(Action::NONE)
+	: mActiveWorkflow()
 	, mWaitingRequest()
-	, mActiveController()
 	, mActivationController()
 	, mShutdownRunning(false)
 	, mUiDomination(nullptr)
@@ -109,10 +58,12 @@ AppController::AppController()
 	QCoreApplication::instance()->installNativeEventFilter(this);
 #endif
 
-	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireLanguageChanged, this, &AppController::onLanguageChanged, Qt::DirectConnection);
-	onLanguageChanged();
-
+	Randomizer::getInstance(); // just init entropy pool
+	Env::getSingleton<VolatileSettings>(); // just init in MainThread because of QObject
 	ResourceLoader::getInstance().init();
+
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireLanguageChanged, this, &AppController::onLanguageChanged);
+	onLanguageChanged();
 
 	NetworkManager::setApplicationProxyFactory();
 	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireProxyAuthenticationRequired, this, &AppController::fireProxyAuthenticationRequired);
@@ -121,9 +72,9 @@ AppController::AppController()
 }
 
 
-AppController::~AppController()
+bool AppController::canStartNewWorkflow() const
 {
-	LanguageLoader::getInstance().unload();
+	return mActiveWorkflow.isNull();
 }
 
 
@@ -170,11 +121,6 @@ bool AppController::start()
 		// Cache cleanup on android is handled by UpdateReceiver.java
 		clearCacheFolders();
 	}
-#endif
-
-#if __has_include("RemoteClient.h")
-	// Force construction of RemoteClient in the MainThread
-	Env::getSingleton<RemoteClient>();
 #endif
 
 	auto* uiLoader = Env::getSingleton<UILoader>();
@@ -230,64 +176,80 @@ bool AppController::shouldApplicationRestart() const
 
 void AppController::onWorkflowFinished()
 {
-	Q_ASSERT(mActiveController);
+	Q_ASSERT(mActiveWorkflow);
+	Q_ASSERT(mActiveWorkflow->getController());
 
-	qDebug() << mActiveController->metaObject()->className() << "done";
-	disconnect(mActiveController.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished);
+	auto controller = mActiveWorkflow->getController();
 
-	const auto authContext = mActiveController->getContext().objectCast<AuthContext>();
-	if (authContext)
+	qDebug() << controller->metaObject()->className() << "done";
+	disconnect(controller.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished);
+
+	if (mActiveWorkflow->getContext()->getLastPaceResult() == CardReturnCode::NO_ACTIVE_PIN_SET)
 	{
-		if (authContext->getLastPaceResult() == CardReturnCode::NO_ACTIVE_PIN_SET)
+		switch (mActiveWorkflow->getAction())
 		{
-			onChangePinRequested(true);
+			case Action::AUTH:
+			case Action::SELF:
+			case Action::PERSONALIZATION:
+				onWorkflowRequested(ChangePinController::createWorkflowRequest(true));
+				break;
+
+			case Action::PIN:
+			case Action::REMOTE_SERVICE:
+				break;
 		}
 	}
 
-	Q_EMIT fireWorkflowFinished(mActiveController->getContext());
+	Q_EMIT fireWorkflowFinished(mActiveWorkflow->getContext());
 
-	mActiveController.reset();
-	qCInfo(support) << "Finished workflow" << mCurrentAction;
-	mCurrentAction = Action::NONE;
+	qCInfo(support) << "Finish workflow" << mActiveWorkflow->getAction();
+	mActiveWorkflow.reset();
 
 	if (!mWaitingRequest.isNull())
 	{
 		qDebug() << "Running waiting action now.";
-		switch (mWaitingRequest->getAction())
-		{
-			case Action::PIN:
-			{
-				const QSharedPointer<ChangePinContext> context = mWaitingRequest->getContext().objectCast<ChangePinContext>();
-				Q_ASSERT(context);
-				startNewWorkflow<ChangePinController>(Action::PIN, context);
-				break;
-			}
-
-			case Action::AUTH:
-			{
-				const QSharedPointer<AuthContext> context = mWaitingRequest->getContext().objectCast<AuthContext>();
-				Q_ASSERT(context);
-				startNewWorkflow<AuthController>(Action::AUTH, context);
-				break;
-			}
-
-			case Action::READER_SETTINGS:
-			{
-				Q_EMIT fireShowReaderSettings();
-				break;
-			}
-
-			default:
-				qWarning() << "Waiting action is unhandled!";
-				break;
-		}
-
+		startNewWorkflow(mWaitingRequest);
 		mWaitingRequest.reset();
 	}
 
 	if (mShutdownRunning)
 	{
 		completeShutdown();
+	}
+}
+
+
+void AppController::onWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest)
+{
+	Q_ASSERT(pRequest && !pRequest->isInitialized());
+	qDebug() << "New workflow requested:" << pRequest->getAction();
+
+	if (canStartNewWorkflow())
+	{
+		startNewWorkflow(pRequest);
+		return;
+	}
+
+	switch (pRequest->handleBusyWorkflow(mActiveWorkflow, mWaitingRequest))
+	{
+		case WorkflowControl::UNHANDLED:
+			qWarning() << "Cannot start or enqueue workflow:" << pRequest->getAction();
+			break;
+
+		case WorkflowControl::SKIP:
+			qWarning() << "Skip workflow:" << pRequest->getAction() << "| Current workflow:" << mActiveWorkflow->getAction();
+			if (mWaitingRequest)
+			{
+				qDebug() << "Waiting workflow:" << mWaitingRequest->getAction();
+			}
+			break;
+
+		case WorkflowControl::ENQUEUE:
+			Q_ASSERT(mWaitingRequest.isNull());
+			mWaitingRequest = pRequest;
+			qDebug() << "Enqueue workflow:" << mWaitingRequest->getAction();
+			mActiveWorkflow->getContext()->setNextWorkflowPending(true);
+			break;
 	}
 }
 
@@ -302,95 +264,9 @@ void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 }
 
 
-void AppController::onChangePinRequested(bool pRequestTransportPin)
-{
-	if (canStartNewAction())
-	{
-		qDebug() << "PIN change requested";
-		const auto& context = QSharedPointer<ChangePinContext>::create(pRequestTransportPin);
-		startNewWorkflow<ChangePinController>(Action::PIN, context);
-
-		return;
-	}
-
-	if (mWaitingRequest.isNull())
-	{
-		qDebug() << "PIN change enqueued";
-		mActiveController->getContext()->setNextWorkflowPending(true);
-		const auto& context = QSharedPointer<ChangePinContext>::create(pRequestTransportPin);
-		mWaitingRequest.reset(new WorkflowRequest(Action::PIN, context));
-
-		return;
-	}
-
-	qWarning() << "Cannot enqueue action" << Action::PIN << ", queue is already full.";
-}
-
-
-void AppController::onSelfAuthenticationRequested()
-{
-	qDebug() << "Self-authentication requested";
-	if (canStartNewAction())
-	{
-		const auto& context = QSharedPointer<SelfAuthContext>::create();
-		startNewWorkflow<SelfAuthController>(Action::SELF, context);
-	}
-}
-
-
-void AppController::onAuthenticationRequest(const QUrl& pUrl)
-{
-	onAuthenticationContextRequest(QSharedPointer<InternalActivationContext>::create(pUrl));
-}
-
-
 void AppController::onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext)
 {
-	qDebug() << "Authentication requested";
-	const auto& authContext = QSharedPointer<AuthContext>::create(pActivationContext);
-	if (canStartNewAction())
-	{
-		startNewWorkflow<AuthController>(Action::AUTH, authContext);
-		return;
-	}
-
-	if (mCurrentAction == Action::AUTH || mCurrentAction == Action::SELF || mCurrentAction == Action::PIN)
-	{
-		const QSharedPointer<WorkflowContext> activeContext = mActiveController->getContext();
-		Q_ASSERT(!activeContext.isNull());
-		if (activeContext->isWorkflowFinished())
-		{
-			qDebug() << "Auto-approving the current state";
-			if (mWaitingRequest.isNull())
-			{
-				mWaitingRequest.reset(new WorkflowRequest(Action::AUTH, authContext));
-				activeContext->setStateApproved(true);
-
-				return;
-			}
-
-			qWarning() << "Cannot enqueue action" << Action::AUTH << ", queue is already full.";
-		}
-	}
-
-	if (!pActivationContext->sendOperationAlreadyActive())
-	{
-		qCritical() << "Cannot send \"Operation already active\" to caller:" << pActivationContext->getSendError();
-	}
-}
-
-
-void AppController::onRemoteServiceRequested()
-{
-	qDebug() << "remote service requested";
-
-#if __has_include("RemoteClient.h")
-	if (canStartNewAction())
-	{
-		const auto& context = QSharedPointer<RemoteServiceContext>::create();
-		startNewWorkflow<RemoteServiceController>(Action::REMOTE_SERVICE, context);
-	}
-#endif
+	onWorkflowRequested(AuthController::createWorkflowRequest(pActivationContext));
 }
 
 
@@ -423,19 +299,19 @@ void AppController::onLanguageChanged()
 }
 
 
-void AppController::doShutdown()
-{
-	doShutdown(EXIT_SUCCESS);
-}
-
-
 void AppController::doShutdown(int pExitCode)
 {
+	if (mShutdownRunning)
+	{
+		qDebug() << "Application already shutting down";
+		return;
+	}
+
 	mExitCode = pExitCode;
 	mShutdownRunning = true;
 	mActivationController.shutdown();
 
-	if (mActiveController)
+	if (mActiveWorkflow)
 	{
 		// Make sure that any request for a new workflow is removed from the queue.
 		mWaitingRequest.reset();
@@ -445,7 +321,7 @@ void AppController::doShutdown(int pExitCode)
 		Q_EMIT fireHideUi();
 
 		// Make sure the workflow runs to the end without user interaction.
-		const QSharedPointer<WorkflowContext> context = mActiveController->getContext();
+		const QSharedPointer<WorkflowContext> context = mActiveWorkflow->getContext();
 		if (context)
 		{
 			context->killWorkflow();
@@ -508,7 +384,7 @@ void AppController::onUILoaderShutdownComplete()
 void AppController::onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation)
 {
 	bool accepted = false;
-	if (mUiDomination == nullptr && mCurrentAction == Action::NONE)
+	if (mUiDomination == nullptr && canStartNewWorkflow())
 	{
 		mUiDomination = pUi;
 		accepted = true;
@@ -536,7 +412,7 @@ void AppController::onRestartApplicationRequested()
 }
 
 
-void AppController::onUiPlugin(UIPlugIn* pPlugin)
+void AppController::onUiPlugin(const UIPlugIn* pPlugin)
 {
 	qDebug() << "Register UI:" << pPlugin->metaObject()->className();
 	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::QueuedConnection);
@@ -548,47 +424,50 @@ void AppController::onUiPlugin(UIPlugIn* pPlugin)
 	connect(this, &AppController::fireHideUi, pPlugin, &UIPlugIn::onHideUi);
 	connect(this, &AppController::fireTranslationChanged, pPlugin, &UIPlugIn::onTranslationChanged);
 	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::fireShowUserInformation);
-	connect(this, &AppController::fireShowReaderSettings, pPlugin, &UIPlugIn::onShowReaderSettings);
 	connect(this, &AppController::fireApplicationActivated, pPlugin, &UIPlugIn::fireApplicationActivated);
 	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
 
-	connect(pPlugin, &UIPlugIn::fireChangePinRequested, this, &AppController::onChangePinRequested, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireSelfAuthenticationRequested, this, &AppController::onSelfAuthenticationRequested, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireAuthenticationRequest, this, &AppController::onAuthenticationRequest, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireRemoteServiceRequested, this, &AppController::onRemoteServiceRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireWorkflowRequested, this, &AppController::onWorkflowRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
-	connect(pPlugin, qOverload<>(&UIPlugIn::fireQuitApplicationRequest), this, qOverload<>(&AppController::doShutdown));
-	connect(pPlugin, qOverload<int>(&UIPlugIn::fireQuitApplicationRequest), this, qOverload<int>(&AppController::doShutdown));
+	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
 	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
 	connect(pPlugin, &UIPlugIn::fireUiDominationRequest, this, &AppController::onUiDominationRequested);
 	connect(pPlugin, &UIPlugIn::fireUiDominationRelease, this, &AppController::onUiDominationRelease);
 }
 
 
-template<typename Controller, typename Context>
-bool AppController::startNewWorkflow(Action pAction, const QSharedPointer<Context>& pContext)
+bool AppController::startNewWorkflow(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	if (mCurrentAction != Action::NONE || !mActiveController.isNull())
+	Q_ASSERT(pRequest && !pRequest->isInitialized());
+
+	if (!canStartNewWorkflow())
 	{
-		qWarning() << "Cannot start" << Controller::staticMetaObject.className() << "| Current action: " << mCurrentAction;
+		qWarning() << "Cannot start new workflow:" << pRequest->getAction() << "| Current workflow:" << mActiveWorkflow->getAction();
 		return false;
 	}
 
-	qCInfo(support) << "Starting new workflow" << pAction;
-
-	mActiveController.reset(new Controller(pContext));
-	mCurrentAction = pAction;
-	connect(mActiveController.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished, Qt::QueuedConnection);
+	mActiveWorkflow = pRequest;
+	mActiveWorkflow->initialize();
+	qCInfo(support) << "Started new workflow" << mActiveWorkflow->getAction();
+	auto controller = mActiveWorkflow->getController();
+	connect(controller.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished, Qt::QueuedConnection);
 	Env::getSingleton<LogHandler>()->resetBacklog();
-	qDebug() << "Start" << mActiveController->metaObject()->className();
+	qDebug() << "Start" << controller->metaObject()->className();
 
 	//first: run new active controller so that it can be canceled during UI activation if required
-	mActiveController->run();
+	controller->run();
 
 	//second: activate ui
-	Q_EMIT fireWorkflowStarted(pContext);
+	Q_EMIT fireWorkflowStarted(mActiveWorkflow->getContext());
+
+	if (!mActiveWorkflow->getContext()->wasClaimed())
+	{
+		qCritical() << "Workflow was not claimed by any UI... aborting";
+		mActiveWorkflow->getContext()->killWorkflow(GlobalStatus::Code::Workflow_InternalError_BeforeTcToken);
+		return false;
+	}
 
 	return true;
 }

@@ -127,7 +127,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 }
 
 
-bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult)
+bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMessage, EventFilterResultType* pResult)
 {
 	Q_UNUSED(pResult)
 

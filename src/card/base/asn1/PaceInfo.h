@@ -9,25 +9,10 @@
 #include "EnumHelper.h"
 #include "SecurityInfo.h"
 
+class test_PaceInfo;
 
 namespace governikus
 {
-
-/*!
- * Method used for key agreement:
- * * DH, i.e. Diffie-Hellman
- * * ECDH, i.e. elliptic curve Diffie-Hellman
- */
-defineEnumType(KeyAgreementType, DH, ECDH)
-
-
-/*!
- * Method used for mapping:
- * * GM, i.e. generic mapping
- * * IM, i.e. integrated mapping
- */
-defineEnumType(MappingType, GM, IM)
-
 
 /**
  * PACEInfo ::= SEQUENCE {
@@ -52,6 +37,7 @@ struct paceinfo_st
 	ASN1_INTEGER* mParameterId;
 };
 DECLARE_ASN1_FUNCTIONS(paceinfo_st)
+DECLARE_ASN1_OBJECT(paceinfo_st)
 
 
 /*
@@ -60,43 +46,47 @@ DECLARE_ASN1_FUNCTIONS(paceinfo_st)
 class PaceInfo
 	: public SecurityInfo
 {
-	friend class QSharedPointer<PaceInfo>;
+	friend class QSharedPointer<const PaceInfo>;
 
-	const QSharedPointer<const paceinfo_st> mDelegate;
+	friend class ::test_PaceInfo;
 
-	explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
-	[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
-	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
+	private:
+		const QSharedPointer<const paceinfo_st> mDelegate;
+
+		explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
+		[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
+		[[nodiscard]] static int getMappedNid(int pCurveIndex);
+		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
-		static QSharedPointer<PaceInfo> decode(const QByteArray& pBytes)
+		static QSharedPointer<const PaceInfo> decode(const QByteArray& pBytes)
 		{
 			if (const auto& delegate = decodeObject<paceinfo_st>(pBytes, false))
 			{
 				if (PaceInfo::acceptsProtocol(delegate->mProtocol))
 				{
-					return QSharedPointer<PaceInfo>::create(delegate);
+					return QSharedPointer<const PaceInfo>::create(delegate);
 				}
 			}
-			return QSharedPointer<PaceInfo>();
+			return QSharedPointer<const PaceInfo>();
 		}
 
 
-		[[nodiscard]] QByteArray getParameterId() const;
-		[[nodiscard]] int getParameterIdAsInt() const;
 		[[nodiscard]] int getVersion() const;
-		[[nodiscard]] KeyAgreementType getKeyAgreementType() const;
-		[[nodiscard]] MappingType getMappingType() const;
+		[[nodiscard]] int getParameterId() const;
+		[[nodiscard]] int getParameterIdAsNid() const;
 		[[nodiscard]] bool isStandardizedDomainParameters() const;
 };
 
 
-template<>
-paceinfo_st* decodeAsn1Object<paceinfo_st>(paceinfo_st** pObject, const unsigned char** pData, long pDataLen);
-
-
-template<>
-void freeAsn1Object<paceinfo_st>(paceinfo_st* pObject);
+inline QDebug operator<<(QDebug pDbg, const QSharedPointer<const PaceInfo>& pPaceInfo)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg.nospace().noquote() << pPaceInfo->getOid()
+							 << ", version: " << pPaceInfo->getVersion()
+							 << ", parameterId: " << pPaceInfo->getParameterId();
+	return pDbg;
+}
 
 
 }  // namespace governikus

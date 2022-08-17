@@ -22,8 +22,9 @@ class StateDestroyPace
 	friend class StateBuilder;
 	friend class ::test_StateDestroyPace;
 
-	explicit StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateDestroyPace(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	private Q_SLOTS:
 		void onDestroyPaceDone(QSharedPointer<BaseCardCommand> pCommand);

@@ -23,9 +23,7 @@ class AccessRightManager
 	: public QObject
 {
 	Q_OBJECT
-
-	private:
-		friend class ::test_ChatModel;
+	friend class ::test_ChatModel;
 
 	public:
 		explicit AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc);

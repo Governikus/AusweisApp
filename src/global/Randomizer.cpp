@@ -6,9 +6,12 @@
 
 #include "SingletonHelper.h"
 
+#include <QByteArray>
+#include <QRandomGenerator>
+#include <QtEndian>
+
 #include <chrono>
 #include <openssl/rand.h>
-#include <QRandomGenerator>
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -34,12 +37,6 @@ using namespace governikus;
 defineSingleton(Randomizer)
 
 
-template<typename T, typename U = uchar> union UniversalBuffer
-{
-	T number;
-	U data[sizeof(T)] = {};
-};
-
 template<typename T> QList<T> Randomizer::getEntropy()
 {
 	QList<T> entropy;
@@ -50,7 +47,7 @@ template<typename T> QList<T> Randomizer::getEntropy()
 
 	if (UniversalBuffer<T> buffer; RAND_bytes(buffer.data, sizeof(buffer.data)))
 	{
-		entropy += buffer.number;
+		entropy += buffer.get();
 	}
 
 	entropy += getEntropyWin<T>();
@@ -72,7 +69,7 @@ template<typename T> QList<T> Randomizer::getEntropyWin()
 	{
 		if (CryptGenRandom(provider, sizeof(buffer.data), buffer.data))
 		{
-			entropy += buffer.number;
+			entropy += buffer.get();
 		}
 
 		CryptReleaseContext(provider, 0);
@@ -90,7 +87,7 @@ template<typename T> QList<T> Randomizer::getEntropyUnixoid()
 #ifdef SYS_getrandom
 	if (UniversalBuffer<T> buffer; syscall(SYS_getrandom, buffer.data, sizeof(buffer.data), GRND_NONBLOCK))
 	{
-		entropy += buffer.number;
+		entropy += buffer.get();
 	}
 #elif defined(Q_OS_UNIX)
 	// Fallback for unixoid systems without SYS_getrandom (like linux before version 3.17 ).
@@ -113,7 +110,7 @@ template<typename T> QList<T> Randomizer::getEntropyUnixoid()
 		}
 		while (bytesToRead > 0);
 
-		entropy += buffer.number;
+		entropy += buffer.get();
 		file.close();
 	}
 	else
@@ -133,7 +130,7 @@ template<typename T> QList<T> Randomizer::getEntropyApple()
 #if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 	if (UniversalBuffer<T> buffer; SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer.data), buffer.data) == 0)
 	{
-		entropy += buffer.number;
+		entropy += buffer.get();
 	}
 #endif
 
@@ -143,27 +140,22 @@ template<typename T> QList<T> Randomizer::getEntropyApple()
 
 Randomizer::Randomizer()
 {
-	const auto& entropy = getEntropy<std::mt19937::result_type>();
+	const auto& entropy = getEntropy<std::mt19937_64::result_type>();
 	std::seed_seq seed(entropy.cbegin(), entropy.cend());
 	mGenerator.seed(seed);
 
 	// We need to seed pseudo random pool of openssl.
 	// yes, OpenSSL is an entropy source, too. But not the only one!
-	UniversalBuffer<std::mt19937::result_type> buffer;
-	buffer.number = mGenerator();
-	RAND_seed(buffer.data, sizeof(std::mt19937::result_type));
+	UniversalBuffer<std::mt19937_64::result_type> buffer;
+	buffer.set(mGenerator());
+	RAND_seed(buffer.data, sizeof(std::mt19937_64::result_type));
 
 	static const int MINIMUM_ENTROPY_SOURCES = 4;
 	mSecureRandom = seed.size() >= MINIMUM_ENTROPY_SOURCES;
 }
 
 
-Randomizer::~Randomizer()
-{
-}
-
-
-std::mt19937& Randomizer::getGenerator()
+std::mt19937_64& Randomizer::getGenerator()
 {
 	return mGenerator;
 }
@@ -172,4 +164,19 @@ std::mt19937& Randomizer::getGenerator()
 bool Randomizer::isSecureRandom() const
 {
 	return mSecureRandom;
+}
+
+
+QUuid Randomizer::createUuid()
+{
+	std::uniform_int_distribution<quint32> uni;
+
+	QByteArray randomBytes;
+	while (randomBytes.size() < 16)
+	{
+		char number[sizeof(quint32)];
+		qToBigEndian<quint32>(uni(mGenerator), number);
+		randomBytes.append(number, sizeof(quint32));
+	}
+	return QUuid::fromRfc4122(randomBytes);
 }

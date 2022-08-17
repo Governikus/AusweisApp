@@ -19,7 +19,7 @@ void governikus::setValidState(MessageDispatcher& pDispatcher,
 		const QLatin1String& pState,
 		const QSharedPointer<WorkflowContext> pContext)
 {
-	pDispatcher.init(pContext);
+	Q_UNUSED(pDispatcher.init(pContext))
 	pContext->setEstablishPaceChannelType(pPasswordID);
 
 	QByteArray expected;
@@ -62,7 +62,7 @@ void governikus::setValidState(MessageDispatcher& pDispatcher,
 QByteArray governikus::addReaderData(const char* pData, bool pKeyPad)
 {
 	const QByteArray data(pData);
-	const QByteArray part1(R"(,"reader":{"attached":true,"card":{"deactivated":false,"inoperative":false,"retryCounter":-1},"keypad":)");
+	const QByteArray part1(R"(,"reader":{"attached":true,"card":{"deactivated":false,"inoperative":false,"retryCounter":-1},"insertable":false,"keypad":)");
 	const QByteArray keypad = pKeyPad ? QByteArrayLiteral("true") : QByteArrayLiteral("false");
 	const QByteArray part2(R"(,"name":"MockReader CARD"})");
 	return data.mid(0, data.size() - 1) + part1 + keypad + part2 + QByteArrayLiteral("}");

@@ -4,9 +4,9 @@
 
 #include "StateCertificateDescriptionCheck.h"
 
-#include "asn1/KnownOIDs.h"
 #include "AppSettings.h"
 #include "UrlUtil.h"
+#include "asn1/Oid.h"
 
 
 using namespace governikus;
@@ -15,7 +15,7 @@ Q_DECLARE_LOGGING_CATEGORY(developermode)
 
 
 StateCertificateDescriptionCheck::StateCertificateDescriptionCheck(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -46,8 +46,7 @@ void StateCertificateDescriptionCheck::run()
 	QCryptographicHash hashCalculator(terminalCertificate->getBody().getHashAlgorithm());
 	hashCalculator.addData(getContext()->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary());
 
-	const auto& idDescOid = toByteArray(KnownOIDs::CertificateExtensions::ID_DESCRIPTION);
-	const QByteArray& hashOfDescription = terminalCertificate->getBody().getExtensions().value(idDescOid);
+	const QByteArray& hashOfDescription = terminalCertificate->getBody().getExtensions().value(KnownOid::ID_DESCRIPTION);
 	if (hashCalculator.result() != hashOfDescription)
 	{
 		auto certificateHashError = QStringLiteral("The certificate description does not match the certificate.");

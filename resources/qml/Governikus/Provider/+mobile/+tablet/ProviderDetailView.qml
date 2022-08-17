@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,13 +13,13 @@ import Governikus.View 1.0
 SectionPage {
 	id: baseItem
 	navigationAction: NavigationAction {
-		state: "back"
+		action: NavigationAction.Action.Back
 		onClicked: {
 			if (providerDetailsHistoryInfo.visible) {
 				providerDetailsHistoryInfo.visible = false
 			}
 			else {
-				firePop()
+				pop()
 			}
 		}
 	}
@@ -60,20 +59,16 @@ SectionPage {
 					anchors.verticalCenter: parent.verticalCenter
 				}
 
-				Item {
+				Rectangle {
 					height: parent.height
 					width: image.width / 4
 					anchors.right: image.right
 					anchors.top: parent.top
 
-					LinearGradient {
-						anchors.fill: parent
-						start: Qt.point(0, 0)
-						end: Qt.point(parent.width, 0)
-						gradient: Gradient {
-							GradientStop { position: 0.0; color: Style.color.transparent }
-							GradientStop { position: 0.95; color: Category.displayColor(provider.category) }
-						}
+					gradient: Gradient {
+						orientation: Gradient.Horizontal
+						GradientStop { position: 0.0; color: Style.color.transparent }
+						GradientStop { position: 0.95; color: Category.displayColor(provider.category) }
 					}
 				}
 
@@ -92,9 +87,8 @@ SectionPage {
 				color: baseItem.titleBarColor
 
 				ProviderContactInfo {
-					color: baseItem.titleBarColor
-					height: parent.height
-					width: baseItem.width / 3 - Constants.component_spacing
+					anchors.fill: parent
+					anchors.margins: Constants.groupbox_spacing
 
 					contactModel: provider.contactModel
 				}

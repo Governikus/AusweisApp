@@ -15,9 +15,13 @@ namespace governikus
 class MsgHandlerInsertCard
 	: public MsgHandler
 {
+	private:
+		void setError(const QString& pError);
+
 	public:
 		MsgHandlerInsertCard();
 		explicit MsgHandlerInsertCard(MsgContext& pContext);
+		explicit MsgHandlerInsertCard(const QJsonObject& pObj, MsgContext& pContext);
 };
 
 

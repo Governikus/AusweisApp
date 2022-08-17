@@ -16,8 +16,10 @@ namespace governikus
 
 class TcToken
 {
+	Q_DISABLE_COPY(TcToken)
+	friend class ::test_TcToken;
+
 	private:
-		friend class ::test_TcToken;
 		bool mSchemaConform;
 		QString mBinding;
 		QString mPathSecurityProtocol;
@@ -27,7 +29,6 @@ class TcToken
 		QUrl mCommunicationErrorAddress;
 		QUrl mRefreshAddress;
 
-		Q_DISABLE_COPY(TcToken)
 		void parse(const QByteArray& pData);
 		[[nodiscard]] bool valuesAreSchemaConform(const QString& pBinding,
 				const QString& pPathSecurityProtocol,

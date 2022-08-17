@@ -2,15 +2,15 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.EnterPasswordView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.NumberModel  1.0
+import Governikus.Type.PasswordType 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.View 1.0
 
@@ -48,7 +48,7 @@ SectionPage {
 			d.view = ConnectSacView.SubView.None
 			d.externalMoreInformation = false
 		}
-		appWindow.menuBar.updateActions()
+		updateTitleBarActions()
 	}
 
 	titleBarAction: TitleBarAction {
@@ -75,20 +75,20 @@ SectionPage {
 		visible: d.view === ConnectSacView.SubView.EnterPassword
 
 		statusIcon: "qrc:///images/phone_to_pc.svg"
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
+		passwordType: PasswordType.REMOTE_PIN
 
 		onPasswordEntered: d.view = ConnectSacView.SubView.WaitForPairing
 
 		onRequestPasswordInfo: {
 			d.view = ConnectSacView.SubView.PairingInfo
-			appWindow.menuBar.updateActions()
+			updateTitleBarActions()
 		}
 	}
 
 	PasswordInfoView {
 		visible: d.view === ConnectSacView.SubView.PairingInfo
 
-		passwordType: NumberModel.PASSWORD_REMOTE_PIN
+		passwordType: PasswordType.REMOTE_PIN
 		rootEnabled: mainTitleBarAction.rootEnabled
 
 		onClose: {
@@ -98,7 +98,7 @@ SectionPage {
 			} else {
 				d.view = ConnectSacView.SubView.EnterPassword
 			}
-			appWindow.menuBar.updateActions()
+			updateTitleBarActions()
 		}
 	}
 
@@ -112,13 +112,13 @@ SectionPage {
 			enabled: visible
 			target: RemoteServiceModel
 
-			onFirePairingFailed: {
+			function onFirePairingFailed(pDeviceName, pErrorMessage) {
 				pairingFailedView.deviceName = pDeviceName
 				pairingFailedView.errorMessage = pErrorMessage
 				d.view = ConnectSacView.SubView.PairingFailed
 			}
 
-			onFirePairingSuccess: {
+			function onFirePairingSuccess (pDeviceName) {
 				ApplicationModel.showFeedback(qsTr("The device \"%1\" has been paired.").arg(pDeviceName))
 				root.closeView()
 			}

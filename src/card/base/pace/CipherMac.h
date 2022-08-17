@@ -6,27 +6,35 @@
 
 #pragma once
 
-#include <openssl/evp.h>
+#include "SecurityProtocol.h"
+
 #include <QByteArray>
+#include <openssl/evp.h>
 
 namespace governikus
 {
 
 class CipherMac final
 {
-	private:
-		EVP_PKEY* mKey;
+	Q_DISABLE_COPY(CipherMac)
 
-		Q_DISABLE_COPY(CipherMac)
+	private:
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+		EVP_PKEY * mKey;
+
+#else
+		EVP_MAC* mMac;
+		EVP_MAC_CTX* mCtx;
+#endif
 
 	public:
 		/*!
 		 * \brief Creates a new instance with cipher algorithm determined by parameter and specified MAC key.
-		 * \param pPaceAlgorithm algorithm of PACE protocol. This will determine the cipher algorithm to use. E.g. a
-		 *        PACE protocol of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in AES to be used for CMAC.
+		 * \param pSecurityProtocol will determine the cipher algorithm to use. E.g. a PACE protocol
+		 *        of id_PACE::DH::GM_AES_CBC_CMAC_128 will result in AES to be used for CMAC.
 		 * \param pKeyBytes the bytes of the key
 		 */
-		CipherMac(const QByteArray& pPaceAlgorithm, const QByteArray& pKeyBytes);
+		CipherMac(const SecurityProtocol& pSecurityProtocol, const QByteArray& pKeyBytes);
 		~CipherMac();
 
 		/*!

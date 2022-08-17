@@ -4,10 +4,9 @@
 
 #include "pace/KeyDerivationFunction.h"
 
-#include "asn1/KnownOIDs.h"
-
 #include <QLoggingCategory>
 #include <QtEndian>
+
 
 using namespace governikus;
 
@@ -15,38 +14,13 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-KeyDerivationFunction::KeyDerivationFunction(const QByteArray& pPaceAlgorithm)
-	: mHashAlgorithm()
-	, mKeySize(0)
+KeyDerivationFunction::KeyDerivationFunction(const SecurityProtocol& pSecurityProtocol)
+	: mHashAlgorithm(pSecurityProtocol.getHashAlgorithm())
+	, mKeySize(pSecurityProtocol.getKeySize())
 {
-	using namespace KnownOIDs;
-
-	if (pPaceAlgorithm == id_PACE::DH::GM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::DH::IM_3DES_CBC_CBC || pPaceAlgorithm == id_PACE::ECDH::GM_3DES_CBC_CBC
-			|| pPaceAlgorithm == id_PACE::ECDH::IM_3DES_CBC_CBC)
+	if (!isInitialized())
 	{
-		qCCritical(card) << "3DES not supported";
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_128 || pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_128
-			|| pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_128)
-	{
-		mHashAlgorithm = QCryptographicHash::Sha1;
-		mKeySize = 16;
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_192 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_192 || pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_192
-			|| pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_192)
-	{
-		mHashAlgorithm = QCryptographicHash::Sha256;
-		mKeySize = 24;
-	}
-	else if (pPaceAlgorithm == id_PACE::DH::GM_AES_CBC_CMAC_256 || pPaceAlgorithm == id_PACE::DH::IM_AES_CBC_CMAC_256 || pPaceAlgorithm == id_PACE::ECDH::GM_AES_CBC_CMAC_256
-			|| pPaceAlgorithm == id_PACE::ECDH::IM_AES_CBC_CMAC_256)
-	{
-		mHashAlgorithm = QCryptographicHash::Sha256;
-		mKeySize = 32;
-	}
-	else
-	{
-		qCCritical(card) << "Unknown algorithm:" << pPaceAlgorithm;
+		qCCritical(card) << "Unknown algorithm:" << pSecurityProtocol;
 	}
 }
 
@@ -57,19 +31,19 @@ bool KeyDerivationFunction::isInitialized() const
 }
 
 
-QByteArray KeyDerivationFunction::enc(const QByteArray& pSecret)
+QByteArray KeyDerivationFunction::enc(const QByteArray& pSecret, const QByteArray& pNonce) const
 {
-	return deriveKey(pSecret, QByteArray(), 1);
+	return deriveKey(pSecret, pNonce, 1);
 }
 
 
-QByteArray KeyDerivationFunction::mac(const QByteArray& pSecret)
+QByteArray KeyDerivationFunction::mac(const QByteArray& pSecret, const QByteArray& pNonce) const
 {
-	return deriveKey(pSecret, QByteArray(), 2);
+	return deriveKey(pSecret, pNonce, 2);
 }
 
 
-QByteArray KeyDerivationFunction::pi(const QByteArray& pSecret)
+QByteArray KeyDerivationFunction::pi(const QByteArray& pSecret) const
 {
 	return deriveKey(pSecret, QByteArray(), 3);
 }

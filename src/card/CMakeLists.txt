@@ -20,6 +20,8 @@ if(TARGET ${Qt}::Nfc)
 	add_subdirectory(nfc)
 endif()
 
-if(IOS)
-	add_subdirectory(ios)
+if(USE_SMARTEID)
+	add_subdirectory(smart)
 endif()
+
+add_subdirectory(simulator)

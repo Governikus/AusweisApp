@@ -4,7 +4,6 @@
 
 #include "CommandLineParser.h"
 
-#include "controller/AppController.h"
 #include "DatagramHandlerImpl.h"
 #include "Env.h"
 #include "LogHandler.h"
@@ -12,9 +11,10 @@
 #include "PortFile.h"
 #include "SingletonHelper.h"
 #include "UILoader.h"
+#include "controller/AppController.h"
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "HttpServer.h"
+	#include "HttpServer.h"
 #endif
 
 #include <QCoreApplication>
@@ -33,8 +33,9 @@ CommandLineParser::CommandLineParser()
 	, mOptionNoLogHandler(QStringLiteral("no-loghandler"), QStringLiteral("Disable default log handler."))
 	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
 	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Ignore proxy settings."))
-	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getDefault().join(QLatin1Char(',')))
+	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getDefault())
 	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QString::number(PortFile::cDefaultPort))
+	, mOptionAddresses(QStringLiteral("address"), QStringLiteral("Use address binding."), QStringLiteral("127.0.0.1"))
 {
 	addOptions();
 }
@@ -56,10 +57,11 @@ void CommandLineParser::addOptions()
 	mParser.addOption(mOptionProxy);
 	mParser.addOption(mOptionUi);
 	mParser.addOption(mOptionPort);
+	mParser.addOption(mOptionAddresses);
 }
 
 
-void CommandLineParser::parse(QCoreApplication* pApp)
+void CommandLineParser::parse(const QCoreApplication* pApp)
 {
 	if (pApp == nullptr)
 	{
@@ -94,6 +96,23 @@ void CommandLineParser::parse(QCoreApplication* pApp)
 #endif
 		}
 	}
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (mParser.isSet(mOptionAddresses))
+	{
+		HttpServer::cAddresses.clear();
+
+		const auto& addresses = mParser.values(mOptionAddresses);
+		for (const auto& ip : addresses)
+		{
+			const QHostAddress entry(ip);
+			if (!entry.isNull())
+			{
+				HttpServer::cAddresses << entry;
+			}
+		}
+	}
+#endif
 }
 
 
@@ -101,6 +120,6 @@ void CommandLineParser::parseUiPlugin()
 {
 	if (mParser.isSet(mOptionUi))
 	{
-		UILoader::setDefault(mParser.values(mOptionUi));
+		UILoader::setUserRequest(mParser.values(mOptionUi));
 	}
 }

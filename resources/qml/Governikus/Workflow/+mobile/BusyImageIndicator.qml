@@ -2,22 +2,24 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-import Governikus.Style 1.0
+import Governikus.Global 1.0
 
 Item {
 	property string image
 	property alias running: busyIndicator.running
 
-	BusyIndicator {
+	GBusyIndicator {
 		id: busyIndicator
-		anchors.centerIn: parent
-		height: img.height
+
 		width: height
+		height: img.height
+		anchors.centerIn: parent
+
 		running: false
-		contentItem: NpaBusyIndicatorStyle {factor: 1.2}
+		factor: 1.2
 	}
 
 	Image {

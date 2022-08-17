@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 
@@ -13,23 +12,17 @@ Item {
 	property alias imageIconSource: busyIcon.image
 	property alias imagePhoneSource: phone.source
 
-	Image {
+	TintableIcon {
 		id: phone
+
+		visible: baseItem.state === "off"
+
 		height: parent.height * 0.5
 		width: height
 		anchors.centerIn: parent
-		fillMode: Image.PreserveAspectFit
-		visible: baseItem.state === "off"
-	}
-	Colorize {
-		id: grayLevel
-		source: phone
-		anchors.fill: phone
-		saturation: 0
-		hue: 0
-		lightness: 0.3
-		cached: true
-		visible: baseItem.state === "off"
+
+		desaturate: true
+		opacity: tintEnabled ? 0.7 : 1.0
 	}
 
 	Item {

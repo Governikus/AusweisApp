@@ -6,7 +6,7 @@
 
 #include "UILoader.h"
 #include "UIPlugInJson.h"
-#include "VolatileSettings.h"
+#include "controller/AuthController.h"
 
 #include <QSharedPointer>
 #include <QUrlQuery>
@@ -15,12 +15,12 @@ using namespace governikus;
 
 
 MsgHandlerAuth::MsgHandlerAuth()
-	: MsgHandler(MsgType::AUTH)
+	: MsgHandlerWorkflows(MsgType::AUTH)
 {
 }
 
 
-MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
+MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj, MsgContext& pContext)
 	: MsgHandlerAuth()
 {
 	const auto& jsonTcTokenUrl = pObj[QLatin1String("tcTokenURL")];
@@ -34,12 +34,9 @@ MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj)
 	}
 	else
 	{
-		const auto& url = createUrl(jsonTcTokenUrl.toString());
-		if (url.isValid())
+		if (const auto& url = createUrl(jsonTcTokenUrl.toString()); url.isValid())
 		{
-			initMessages(pObj[QLatin1String("messages")].toObject());
-			initDeveloperMode(pObj[QLatin1String("developerMode")]);
-			initHandleInterrupt(pObj[QLatin1String("handleInterrupt")]);
+			handleWorkflowProperties(pObj, pContext);
 			initAuth(url);
 			setVoid();
 			return;
@@ -76,8 +73,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 
 QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 {
-	const QUrl parsedUrl(pUrl);
-	if (parsedUrl.isValid() && !parsedUrl.host().isEmpty())
+	if (const QUrl parsedUrl(pUrl); parsedUrl.isValid() && !parsedUrl.host().isEmpty())
 	{
 		QUrlQuery query;
 		query.addQueryItem(QStringLiteral("tcTokenURL"), QString::fromLatin1(QUrl::toPercentEncoding(pUrl)));
@@ -93,47 +89,9 @@ QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 }
 
 
-void MsgHandlerAuth::initMessages(const QJsonObject& pUi)
-{
-	if (!pUi.isEmpty())
-	{
-		const VolatileSettings::Messages messages(pUi[QLatin1String("sessionStarted")].toString(),
-				pUi[QLatin1String("sessionFailed")].toString(),
-				pUi[QLatin1String("sessionSucceeded")].toString(),
-				pUi[QLatin1String("sessionInProgress")].toString());
-
-		Env::getSingleton<VolatileSettings>()->setMessages(messages);
-	}
-}
-
-
-void MsgHandlerAuth::initHandleInterrupt(const QJsonValue& pValue)
-{
-	if (pValue.isBool())
-	{
-		Env::getSingleton<VolatileSettings>()->setHandleInterrupt(pValue.toBool());
-	}
-}
-
-
-void MsgHandlerAuth::initDeveloperMode(const QJsonValue& pValue)
-{
-	if (pValue.isBool())
-	{
-		Env::getSingleton<VolatileSettings>()->setDeveloperMode(pValue.toBool());
-		qDebug() << "Using Developer Mode on SDK:" << Env::getSingleton<VolatileSettings>()->isDeveloperMode();
-	}
-}
-
-
 void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl)
 {
-	auto mJson = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson);
-	Q_EMIT mJson->fireAuthenticationRequest(pTcTokenUrl);
-}
-
-
-void MsgHandlerAuth::setError(const QLatin1String pError)
-{
-	setValue("error", pError);
+	auto* ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+	Q_ASSERT(ui);
+	Q_EMIT ui->fireWorkflowRequested(AuthController::createWorkflowRequest(pTcTokenUrl));
 }

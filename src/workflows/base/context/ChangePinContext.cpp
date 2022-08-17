@@ -8,7 +8,7 @@ using namespace governikus;
 
 
 ChangePinContext::ChangePinContext(bool pRequestTransportPin)
-	: WorkflowContext()
+	: WorkflowContext(Action::PIN)
 	, mNewPin()
 	, mSuccessMessage()
 	, mRequestTransportPin(pRequestTransportPin)
@@ -69,4 +69,15 @@ void ChangePinContext::setSuccessMessage(const QString& pSuccessMessage)
 bool ChangePinContext::isRequestTransportPin() const
 {
 	return mRequestTransportPin;
+}
+
+
+QVector<AcceptedEidType> ChangePinContext::getAcceptedEidTypes() const
+{
+	if (mRequestTransportPin)
+	{
+		return {AcceptedEidType::CARD_CERTIFIED};
+	}
+
+	return {AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED, AcceptedEidType::HW_KEYSTORE};
 }

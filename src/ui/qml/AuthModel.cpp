@@ -4,8 +4,6 @@
 
 #include "AuthModel.h"
 
-#include "ReaderManagerPlugInInfo.h"
-
 using namespace governikus;
 
 AuthModel::AuthModel()

@@ -7,11 +7,13 @@
 #include <QFile>
 #include <QtTest>
 
+#include <algorithm>
+
 using namespace governikus;
 
 static const uchar qm_magic[16] = {
-	0x3c, 0xb8, 0x64, 0x18, 0xca, 0xef, 0x9c, 0x95,
-	0xcd, 0x21, 0x1c, 0xbf, 0x60, 0xa1, 0xbd, 0xdd
+	0x3C, 0xB8, 0x64, 0x18, 0xCA, 0xEF, 0x9C, 0x95,
+	0xCD, 0x21, 0x1C, 0xBF, 0x60, 0xA1, 0xBD, 0xDD
 };
 
 static const uchar qm_content[48] = {
@@ -24,14 +26,14 @@ static const uchar qm_content[48] = {
 };
 
 
-QByteArray TestFileHelper::readFile(const QString& pFileName)
+QByteArray TestFileHelper::readFile(const QString& pFileName, bool pFromHex)
 {
 	QFile file(pFileName);
 	Q_ASSERT(file.exists());
 	Q_ASSERT(file.open(QIODevice::ReadOnly | QIODevice::Unbuffered));
 	QByteArray content = file.readAll();
 	file.close();
-	return content;
+	return pFromHex ? QByteArray::fromHex(content) : content;
 }
 
 
@@ -65,14 +67,10 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 
 bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String pStr)
 {
-	for (const auto& entry : pSpy)
-	{
-		if (entry.at(0).toString().contains(pStr))
+	return std::any_of(pSpy.constBegin(), pSpy.constEnd(), [pStr](const auto& pEntry)
 		{
-			return true;
-		}
-	}
-	return false;
+			return pEntry.at(0).toString().contains(pStr);
+		});
 }
 
 

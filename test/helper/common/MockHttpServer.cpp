@@ -6,6 +6,7 @@
 
 #include "Env.h"
 
+#include <QTest>
 #include <http_parser.h>
 
 using namespace governikus;
@@ -28,9 +29,10 @@ void MockHttpServer::reset()
 }
 
 
-void MockHttpServer::addMock(const QByteArray& pUrl, const HttpResponse& pResponse)
+void MockHttpServer::addMock(const QByteArray& pUrl, const HttpResponse& pResponse, const http_method& pHttpMethod)
 {
-	mMock.insert(pUrl, pResponse);
+	const MockKey mockUrl = {pHttpMethod, pUrl};
+	mMock.insert(mockUrl, pResponse);
 }
 
 
@@ -44,6 +46,11 @@ QUrl MockHttpServer::getAddress(const QString& pPath) const
 void MockHttpServer::onNewHttpRequest(const QSharedPointer<HttpRequest>& pRequest)
 {
 	QVERIFY(pRequest);
-	const auto& response = mMock.value(pRequest->getUrl().toEncoded());
+
+	const auto& url = pRequest->getUrl().toEncoded();
+	const MockKey mockUrl = {pRequest->getHttpMethod(), url};
+	QVERIFY2(mMock.contains(mockUrl), qPrintable(QStringLiteral("No mock entry for \"%1\"").arg(mockUrl)));
+
+	const auto& response = mMock.value(mockUrl);
 	pRequest->send(response);
 }

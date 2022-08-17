@@ -6,8 +6,8 @@ import static common.Constants.createReviewMessage
 
 def getJobs()
 {
-	def list = ['Linux', 'MacOS', 'Win32_GNU', 'Win32_MSVC', 'iOS', 'iOS_Simulator', 'FreeBSD']
-	for(ARCH in Constants.AndroidArch)
+	def list = ['Linux', 'MacOS', 'Win64_GNU', 'Win64_MSVC', 'Win64_MSVC_dev', 'iOS', 'iOS_Simulator', 'FreeBSD']
+	for(ARCH in Constants.AndroidArchAPKReview)
 	{
 		list << 'Android_' + ARCH
 	}
@@ -62,7 +62,7 @@ j.with
 				killPhaseCondition('NEVER')
 			}
 
-			for(ARCH in Constants.AndroidArch)
+			for(ARCH in Constants.AndroidArchAPKReview)
 			{
 				phaseJob(getName('Android_' + ARCH))
 				{
@@ -71,18 +71,23 @@ j.with
 				}
 			}
 
-			phaseJob(getName('Win32_GNU'))
+			phaseJob(getName('Win64_GNU'))
 			{
 				abortAllJobs(false)
 				killPhaseCondition('NEVER')
 			}
 
-			phaseJob(getName('Win32_MSVC'))
+			phaseJob(getName('Win64_MSVC'))
 			{
 				abortAllJobs(false)
 				killPhaseCondition('NEVER')
 			}
 
+			phaseJob(getName('Win64_MSVC_dev'))
+			{
+				abortAllJobs(false)
+				killPhaseCondition('NEVER')
+			}
 			phaseJob(getName('MacOS'))
 			{
 				abortAllJobs(false)

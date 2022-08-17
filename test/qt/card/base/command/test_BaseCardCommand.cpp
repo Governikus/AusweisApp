@@ -63,7 +63,7 @@ class test_BaseCardCommand
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spy.takeFirst();
-			QSharedPointer<BaseCardCommand> sharedCommand = param.at(0).value<QSharedPointer<BaseCardCommand> >();
+			QSharedPointer<BaseCardCommand> sharedCommand = param.at(0).value<QSharedPointer<BaseCardCommand>>();
 			QCOMPARE(sharedCommand.data(), &command);
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
 		}

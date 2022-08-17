@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -16,9 +16,6 @@ import Governikus.Type.UiModule 1.0
 
 SectionPage {
 	id: sectionPage
-
-	Accessible.name: qsTr("Main view")
-	Accessible.description: qsTr("This is the main view of the AusweisApp2.")
 
 	GridLayout {
 		anchors.fill: parent

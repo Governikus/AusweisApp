@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -19,7 +19,6 @@ SectionPage {
 
 	onReset: {
 		ProviderCategoryFilterModel.setCategorySelection("")
-		if (subTitleBarAction) subTitleBarAction.reset()
 		if (rightTitleBarAction) rightTitleBarAction.reset()
 	}
 
@@ -28,10 +27,10 @@ SectionPage {
 
 	titleBarColor: Style.color.accent
 	navigationAction: NavigationAction {
-		state: "back"
+		action: NavigationAction.Action.Back
 		onClicked: {
 			baseItem.reset()
-			navBar.show(UiModule.DEFAULT)
+			show(UiModule.DEFAULT)
 		}
 	}
 
@@ -45,7 +44,7 @@ SectionPage {
 
 	function pushProviderDetails(pModel) {
 		HistoryModel.nameFilter.setProviderAddress(pModel.providerAddress)
-		firePushWithProperties(providerDetailView, {providerModelItem: pModel})
+		push(providerDetailView, {providerModelItem: pModel})
 	}
 
 	Component {
@@ -131,7 +130,7 @@ SectionPage {
 			width: parent.width
 			anchors.horizontalCenter: parent.horizontalCenter
 
-			onShowDetails: baseItem.pushProviderDetails(pModelItem)
+			onShowDetails: pModelItem => { baseItem.pushProviderDetails(pModelItem) }
 			onShowAdditionalResults: ProviderCategoryFilterModel.addAdditionalResultCategories()
 		}
 	}

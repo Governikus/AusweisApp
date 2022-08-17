@@ -17,7 +17,7 @@
 #include <QVector>
 
 class test_RemoteServiceSettings;
-class test_RemoteConnector;
+class test_IfdConnector;
 class test_RemoteTlsServer;
 class test_RemoteWebSocketServer;
 
@@ -28,10 +28,9 @@ class RemoteServiceSettings
 	: public AbstractSettings
 {
 	Q_OBJECT
-
 	friend class AppSettings;
 	friend class ::test_RemoteServiceSettings;
-	friend class ::test_RemoteConnector;
+	friend class ::test_IfdConnector;
 	friend class ::test_RemoteTlsServer;
 	friend class ::test_RemoteWebSocketServer;
 
@@ -80,7 +79,7 @@ class RemoteServiceSettings
 
 	public:
 		static QString generateFingerprint(const QSslCertificate& pCert);
-		~RemoteServiceSettings() override;
+		~RemoteServiceSettings() override = default;
 		void save() override;
 
 		[[nodiscard]] QString getServerName() const;

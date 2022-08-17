@@ -16,15 +16,12 @@ StateDidAuthenticateEac1::StateDidAuthenticateEac1(const QSharedPointer<Workflow
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setAbortOnCardRemoved();
 }
 
 
 void StateDidAuthenticateEac1::run()
 {
-	Q_ASSERT(getContext()->getPin().isEmpty() && "PACE passwords must be cleared as soon as possible.");
-	Q_ASSERT(getContext()->getCan().isEmpty() && "PACE passwords must be cleared as soon as possible.");
-	Q_ASSERT(getContext()->getPuk().isEmpty() && "PACE passwords must be cleared as soon as possible.");
-
 	Q_ASSERT(!getContext()->getDidAuthenticateEac1().isNull());
 	Q_ASSERT(getContext()->getPaceOutputData() != nullptr);
 	Q_ASSERT(getContext()->getCardConnection());

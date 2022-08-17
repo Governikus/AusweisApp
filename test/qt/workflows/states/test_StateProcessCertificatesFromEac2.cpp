@@ -6,6 +6,7 @@
 
 #include "states/StateProcessCertificatesFromEac2.h"
 
+#include "ResourceLoader.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
@@ -32,6 +33,12 @@ class test_StateProcessCertificatesFromEac2
 		void fireStateStart(QEvent* pEvent);
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
 		void init()
 		{
 			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));

@@ -4,15 +4,15 @@
 
 #include "StateActivateStoreFeedbackDialog.h"
 
-#include "asn1/AccessRoleAndRight.h"
 #include "AppSettings.h"
 #include "VolatileSettings.h"
+#include "asn1/AccessRoleAndRight.h"
 
 using namespace governikus;
 
 
 StateActivateStoreFeedbackDialog::StateActivateStoreFeedbackDialog(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }

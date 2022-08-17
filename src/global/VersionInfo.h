@@ -16,9 +16,10 @@ namespace governikus
 
 class VersionInfo
 {
-	QMap<QString, QString> mInfo;
+	private:
+		QMap<QString, QString> mInfo;
 
-	explicit VersionInfo(const QMap<QString, QString>& pInfo);
+		explicit VersionInfo(const QMap<QString, QString>& pInfo);
 
 	public:
 		VersionInfo();

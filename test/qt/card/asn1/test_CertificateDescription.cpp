@@ -107,7 +107,7 @@ class test_CertificateDescription
 			auto certDescr = CertificateDescription::fromHex(hexString);
 
 			QVERIFY(certDescr != nullptr);
-			QCOMPARE(certDescr->getDescriptionType(), QByteArray("0.4.0.127.0.7.3.1.3.1.3"));
+			QCOMPARE(QByteArray(certDescr->getDescriptionType()), QByteArray("0.4.0.127.0.7.3.1.3.1.3 (id-pdfFormat)"));
 			QCOMPARE(certDescr->getIssuerName(), QString("D-Trust GmbH"));
 			QCOMPARE(certDescr->getIssuerUrl(), QString());
 			QCOMPARE(certDescr->getSubjectName(), QString("Gesamtverband der deutschen Versicherungswirtschaft e.V."));
@@ -141,7 +141,7 @@ class test_CertificateDescription
 			auto certDescr = CertificateDescription::fromHex(hexString);
 
 			QVERIFY(certDescr != nullptr);
-			QCOMPARE(certDescr->getDescriptionType(), QByteArray("0.4.0.127.0.7.3.1.3.1.3"));
+			QCOMPARE(QByteArray(certDescr->getDescriptionType()), QByteArray("0.4.0.127.0.7.3.1.3.1.3 (id-pdfFormat)"));
 			QCOMPARE(certDescr->getIssuerName(), QString("D-Trust GmbH"));
 			QCOMPARE(certDescr->getIssuerUrl(), QString("http://www.d-trust.net"));
 			QCOMPARE(certDescr->getSubjectName(), QString("Gesamtverband der deutschen Versicherungswirtschaft e.V."));
@@ -299,17 +299,26 @@ class test_CertificateDescription
 		{
 			CertificateDescription* certDescr = CertificateDescription_new();
 
-			certDescr->setDescriptionType("0.4.0.127.0.7.3.1.3.1.3");
-			certDescr->setIssuerName("D-Trust GmbH");
-			certDescr->setIssuerUrl("http://www.d-trust.net");
-			certDescr->setSubjectName("Gesamtverband der deutschen Versicherungswirtschaft e.V.");
-			certDescr->setSubjectUrl("https://www.gdv-testportal.de");
-			certDescr->setRedirectUrl("https://www.redirect-test.de");
+			ASN1_OBJECT_free(certDescr->mDescriptionType);
+			certDescr->mDescriptionType = OBJ_txt2obj("0.4.0.127.0.7.3.1.3.1.3", 1);
 
-			QByteArray termsOfUsageBytes = QByteArray::fromHex("4e616d652c20416e7363687269667420756e6420452d4d61696c2d4164726573736520646573204469656e737465616e626965746572733a0d0a476573616d7476657262616e64206465722064657574736368656e20566572736963686572756e67737769727473636861667420652e562e0d0a57696c68656c6d73747261c39f652034332f3433670d0a3130313137204265726c696e0d0a6265726c696e406764762e64650d0a0d0a4765736368c3a46674737a7765636b3a0d0a2d52656769737472696572756e6720756e64204c6f67696e20616d204744562d4d616b6c6572706f7274616c2d0d0a0d0a48696e7765697320617566206469652066c3bc722064656e204469656e737465616e626965746572207a757374c3a46e646967656e205374656c6c656e2c20646965206469652045696e68616c74756e672064657220566f7273636872696674656e207a756d20446174656e73636875747a206b6f6e74726f6c6c696572656e3a0d0a4265726c696e6572204265617566747261677465722066c3bc7220446174656e73636875747a20756e6420496e666f726d6174696f6e7366726569686569740d0a416e20646572205572616e696120342d31300d0a3130373837204265726c696e0d0a3033302f3133382038392d300d0a6d61696c626f7840646174656e73636875747a2d6265726c696e2e64650d0a687474703a2f2f7777772e646174656e73636875747a2d6265726c696e2e64650d0a416e737072656368706172746e65723a2044722e20416c6578616e64657220446978");
-			ASN1_TYPE_set_octetstring(certDescr->mTermsOfUsage, reinterpret_cast<unsigned char*>(termsOfUsageBytes.data()), termsOfUsageBytes.length());
+			Asn1StringUtil::setValue("D-Trust GmbH", certDescr->mIssuerName);
+
+			certDescr->mIssuerURL = ASN1_PRINTABLESTRING_new();
+			Asn1StringUtil::setValue("http://www.d-trust.net", certDescr->mIssuerURL);
+
+			Asn1StringUtil::setValue("Gesamtverband der deutschen Versicherungswirtschaft e.V.", certDescr->mSubjectName);
+
+			certDescr->mSubjectURL = ASN1_PRINTABLESTRING_new();
+			Asn1StringUtil::setValue("https://www.gdv-testportal.de", certDescr->mSubjectURL);
+
+			certDescr->mRedirectURL = ASN1_PRINTABLESTRING_new();
+			Asn1StringUtil::setValue("https://www.redirect-test.de", certDescr->mRedirectURL);
+
+			QByteArray termsOfUsageBytes = QByteArray::fromHex("4E616D652C20416E7363687269667420756E6420452D4D61696C2D4164726573736520646573204469656E737465616E626965746572733A0D0A476573616D7476657262616E64206465722064657574736368656E20566572736963686572756E67737769727473636861667420652E562E0D0A57696C68656C6D73747261C39F652034332F3433670D0A3130313137204265726C696E0D0A6265726C696E406764762E64650D0A0D0A4765736368C3A46674737A7765636B3A0D0A2D52656769737472696572756E6720756E64204C6F67696E20616D204744562D4D616B6C6572706F7274616C2D0D0A0D0A48696E7765697320617566206469652066C3BC722064656E204469656E737465616E626965746572207A757374C3A46E646967656E205374656C6C656E2C20646965206469652045696E68616C74756E672064657220566F7273636872696674656E207A756D20446174656E73636875747A206B6F6E74726F6C6C696572656E3A0D0A4265726C696E6572204265617566747261677465722066C3BC7220446174656E73636875747A20756E6420496E666F726D6174696F6E7366726569686569740D0A416E20646572205572616E696120342D31300D0A3130373837204265726C696E0D0A3033302F3133382038392D300D0A6D61696C626F7840646174656E73636875747A2D6265726C696E2E64650D0A687474703A2F2F7777772E646174656E73636875747A2D6265726C696E2E64650D0A416E737072656368706172746E65723A2044722E20416C6578616E64657220446978");
+			ASN1_TYPE_set_octetstring(certDescr->mTermsOfUsage, reinterpret_cast<uchar*>(termsOfUsageBytes.data()), termsOfUsageBytes.length());
 			{
-				unsigned char buf[1024];
+				uchar buf[1024];
 				int buf_len = ASN1_TYPE_get_octetstring(certDescr->mTermsOfUsage, buf, 1024);
 				if (buf_len == 1024)
 				{
@@ -332,7 +341,7 @@ class test_CertificateDescription
 			for (const auto& commCertByte : qAsConst(commCertBytes))
 			{
 				ASN1_OCTET_STRING* octetString = ASN1_OCTET_STRING_new();
-				ASN1_OCTET_STRING_set(octetString, reinterpret_cast<const unsigned char*>(commCertByte.constData()), commCertByte.length());
+				ASN1_OCTET_STRING_set(octetString, reinterpret_cast<const uchar*>(commCertByte.constData()), commCertByte.length());
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 				SKM_sk_push(ASN1_OCTET_STRING, certDescr->mCommCertificates, octetString);
 #else

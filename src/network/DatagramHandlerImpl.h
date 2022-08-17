@@ -22,11 +22,10 @@ class DatagramHandlerImpl
 	: public DatagramHandler
 {
 	Q_OBJECT
+	friend class ::test_DatagramHandlerImpl;
+	friend struct QtSharedPointer::CustomDeleter<DatagramHandlerImpl, QtSharedPointer::NormalDeleter>;
 
 	private:
-		friend class ::test_DatagramHandlerImpl;
-		friend struct QtSharedPointer::CustomDeleter<DatagramHandlerImpl, QtSharedPointer::NormalDeleter>;
-
 		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
 		QScopedPointer<MulticastLock> mMulticastLock;
 		quint16 mUsedPort;
@@ -34,6 +33,8 @@ class DatagramHandlerImpl
 		bool mEnableListening;
 
 		void resetSocket();
+		bool isValidBroadcastInterface(const QNetworkInterface& pInterface) const;
+		QVector<QHostAddress> getAllBroadcastAddresses(const QNetworkInterface& pInterface) const;
 		bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0);
 		bool sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
 

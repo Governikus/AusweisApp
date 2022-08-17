@@ -1,0 +1,80 @@
+From b380035b22bd53808ad04485cdceecae5c1cdee0 Mon Sep 17 00:00:00 2001
+From: Mike Achtelik <mike.achtelik@gmail.com>
+Date: Fri, 24 Jun 2022 16:15:26 +0200
+Subject: Android A11Y: Add content change type to content change event
+
+This fixes a problem where the accessibility tree is not correctly
+updated, when using e.g. a StackView. The problem was, that sometimes
+when pushing items of the previous view where still selectable via
+TalkBack. When popping this sometimes lead to some views not being
+selectable because the subtree wasn't updated. To solve this, lets tell
+android directly that the subtree changed when invalidating a view.
+
+Fixes: QTBUG-102825
+Pick-to: 6.4 6.3 6.2 5.15
+Change-Id: Ifbf8da1b95f02935b9bcffabfe821547b1128103
+---
+ .../QtAccessibilityDelegate.java              | 28 ++++++++++++++-----
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
+index c8503b42da..5ce8c144d7 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
+@@ -263,10 +263,15 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
+
+     public boolean sendEventForVirtualViewId(int virtualViewId, int eventType)
+     {
+-        if ((virtualViewId == INVALID_ID) || !m_manager.isEnabled()) {
+-            Log.w(TAG, "sendEventForVirtualViewId for invalid view");
++        final AccessibilityEvent event;
++        event = getEventForVirtualViewId(virtualViewId, eventType);
++        return sendAccessibilityEvent(event);
++    }
++
++    public boolean sendAccessibilityEvent(AccessibilityEvent event)
++    {
++        if (event == null)
+             return false;
+-        }
+
+         final ViewGroup group = (ViewGroup) m_view.getParent();
+         if (group == null) {
+@@ -274,15 +279,19 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
+             return false;
+         }
+
+-        final AccessibilityEvent event;
+-        event = getEventForVirtualViewId(virtualViewId, eventType);
+         return group.requestSendAccessibilityEvent(m_view, event);
+     }
+
+     public void invalidateVirtualViewId(int virtualViewId)
+     {
+-        if (virtualViewId != INVALID_ID)
+-            sendEventForVirtualViewId(virtualViewId, AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED);
++        final AccessibilityEvent event;
++        event = getEventForVirtualViewId(virtualViewId, AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED);
++
++        if (event == null)
++            return;
++
++        event.setContentChangeTypes(AccessibilityEvent.CONTENT_CHANGE_TYPE_SUBTREE);
++        sendAccessibilityEvent(event);
+     }
+
+     private void setHoveredVirtualViewId(int virtualViewId)
+@@ -299,6 +308,11 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
+
+     private AccessibilityEvent getEventForVirtualViewId(int virtualViewId, int eventType)
+     {
++        if ((virtualViewId == INVALID_ID) || !m_manager.isEnabled()) {
++            Log.w(TAG, "getEventForVirtualViewId for invalid view");
++            return null;
++        }
++
+         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+
+         event.setEnabled(true);
+--
+2.32.1 (Apple Git-133)

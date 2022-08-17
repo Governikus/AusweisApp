@@ -5,11 +5,11 @@
 #include "states/StateCheckRefreshAddress.h"
 
 #include "AppSettings.h"
-#include "context/AuthContext.h"
 #include "Env.h"
+#include "VolatileSettings.h"
+#include "context/AuthContext.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 #include "states/StateBuilder.h"
-#include "VolatileSettings.h"
 
 #include "MockNetworkManager.h"
 #include "TestFileHelper.h"

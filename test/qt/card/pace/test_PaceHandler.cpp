@@ -9,11 +9,14 @@
 #include "MockCardConnectionWorker.h"
 #include "MockReader.h"
 #include "TestFileHelper.h"
+#include "asn1/Oid.h"
 
 #include <QtCore>
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 class test_PaceHandler
 	: public QObject
@@ -31,7 +34,7 @@ class test_PaceHandler
 		void getPaceProtocol_uninitiaized()
 		{
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(QSharedPointer<CardConnectionWorker>()));
-			QCOMPARE(paceHandler->getPaceProtocol(), QByteArray(""));
+			QVERIFY(paceHandler->getPaceProtocol().getOid().isUndefined());
 		}
 
 
@@ -42,7 +45,7 @@ class test_PaceHandler
 
 			paceHandler->initialize(reader->getReaderInfo().getCardInfo().getEfCardAccess());
 
-			QCOMPARE(paceHandler->getPaceProtocol(), QByteArray("0.4.0.127.0.7.2.2.4.2.2"));
+			QCOMPARE(paceHandler->getPaceProtocol(), SecurityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128));
 		}
 
 
@@ -266,11 +269,12 @@ class test_PaceHandler
 			QVERIFY(paceHandler->mPaceInfo != nullptr);
 
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("009000"));
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("009000"));
-			CardReturnCode status = paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN);
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::OK);
+			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("9000"));
 
-			QCOMPARE(status, CardReturnCode::OK);
-			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("0090"));
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::OK);
+			QCOMPARE(paceHandler->getStatusMseSetAt(), QByteArray::fromHex("9000"));
 		}
 
 

@@ -1,4 +1,5 @@
 {
-	"name" : "UIPlugInQml",
-	"dependencies" : []
+	"name": "Qml",
+	"dependencies": [],
+	"default": true
 }

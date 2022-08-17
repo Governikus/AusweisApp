@@ -7,7 +7,6 @@
 #pragma once
 
 #include <QLocale>
-#include <QPointer>
 #include <QSharedPointer>
 #include <QTranslator>
 #include <QVector>
@@ -21,9 +20,11 @@ namespace governikus
 
 class LanguageLoader
 {
+	Q_DISABLE_COPY(LanguageLoader)
+	friend class ::test_LanguageLoader;
+	friend class ::test_ProviderConfigurationParser;
+
 	private:
-		friend class ::test_LanguageLoader;
-		friend class ::test_ProviderConfigurationParser;
 		static const QLocale::Language mFallbackLanguage;
 		static QLocale mDefaultLanguage;
 
@@ -32,17 +33,15 @@ class LanguageLoader
 		const QStringList mComponentList;
 		QLocale mUsedLocale;
 
-		Q_DISABLE_COPY(LanguageLoader)
-
 		bool loadTranslationFiles(const QLocale& pLocale);
 		QSharedPointer<QTranslator> createTranslator(const QLocale& pLocale, const QString& pComponent);
 
 	protected:
 		LanguageLoader();
-		~LanguageLoader();
+		~LanguageLoader() = default;
 
 	public:
-		static const QLocale& getDefaultLanguage();
+		[[nodiscard]] static const QLocale& getDefaultLanguage();
 		static void setDefaultLanguage(const QLocale& pLocale);
 		static LanguageLoader& getInstance();
 		static QString getLocaleCode(const QLocale& pLocale = getInstance().getUsedLocale());

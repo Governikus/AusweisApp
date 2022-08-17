@@ -1,25 +1,25 @@
 module TutorialView
 
-internal TutorialHeader TutorialHeader.qml
+internal TransportPinAssistantView TransportPinAssistantView.qml
+internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
 internal TutorialContent TutorialContent.qml
-internal TutorialWhat TutorialWhat.qml
-internal TutorialWhere TutorialWhere.qml
-internal TutorialHow TutorialHow.qml
-internal TutorialImportant TutorialImportant.qml
-internal TutorialImage TutorialImage.qml
+internal TutorialExpandAnimation TutorialExpandAnimation.qml
 internal TutorialFooter TutorialFooter.qml
+internal TutorialHeader TutorialHeader.qml
+internal TutorialHow TutorialHow.qml
+internal TutorialImage TutorialImage.qml
+internal TutorialImportant TutorialImportant.qml
+internal TutorialReaderMethodFooter TutorialReaderMethodFooter.qml
+internal TutorialReaderMethodNfc TutorialReaderMethodNfc.qml
+internal TutorialReaderMethodSacDesktop TutorialReaderMethodSacDesktop.qml
+internal TutorialReaderMethodSacMobile TutorialReaderMethodSacMobile.qml
 internal TutorialSeperator TutorialSeperator.qml
+internal TutorialShowMenuPath TutorialShowMenuPath.qml
 internal TutorialSpacer TutorialSpacer.qml
 internal TutorialStatusBar TutorialStatusBar.qml
-internal TutorialReaderMethodNfc TutorialReaderMethodNfc.qml
-internal TutorialReaderMethodSacMobile TutorialReaderMethodSacMobile.qml
-internal TutorialReaderMethodSacDesktop TutorialReaderMethodSacDesktop.qml
-internal TutorialReaderMethodFooter TutorialReaderMethodFooter.qml
-internal TutorialExpandAnimation TutorialExpandAnimation.qml
-internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
-internal TutorialShowMenuPath TutorialShowMenuPath.qml
+internal TutorialWhat TutorialWhat.qml
+internal TutorialWhere TutorialWhere.qml
 internal TutorialZoomTriangle TutorialZoomTriangle.qml
-internal TransportPinAssistantView TransportPinAssistantView.qml
 
 SetupAssistantView 1.0 SetupAssistantView.qml
 TutorialView 1.0 TutorialView.qml

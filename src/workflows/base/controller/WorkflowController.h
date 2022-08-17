@@ -26,9 +26,14 @@ class WorkflowController
 
 	public:
 		explicit WorkflowController(const QSharedPointer<WorkflowContext>& pContext);
-		~WorkflowController() override;
 
 		void run();
+
+		[[nodiscard]] Action getAction() const
+		{
+			return mContext->getAction();
+		}
+
 
 		[[nodiscard]] QSharedPointer<WorkflowContext> getContext() const
 		{

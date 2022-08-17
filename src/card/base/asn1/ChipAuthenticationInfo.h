@@ -31,6 +31,7 @@ struct chipauthenticationinfo_st
 	ASN1_INTEGER* mKeyId;
 };
 DECLARE_ASN1_FUNCTIONS(chipauthenticationinfo_st)
+DECLARE_ASN1_OBJECT(chipauthenticationinfo_st)
 
 
 /*
@@ -39,39 +40,48 @@ DECLARE_ASN1_FUNCTIONS(chipauthenticationinfo_st)
 class ChipAuthenticationInfo
 	: public SecurityInfo
 {
-	friend class QSharedPointer<ChipAuthenticationInfo>;
+	friend class QSharedPointer<const ChipAuthenticationInfo>;
 
-	const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
+	private:
+		const QSharedPointer<const chipauthenticationinfo_st> mDelegate;
 
-	explicit ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
-	[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
-	static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
+		explicit ChipAuthenticationInfo(const QSharedPointer<const chipauthenticationinfo_st>& pDelegate);
+		[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
+		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
-		static QSharedPointer<ChipAuthenticationInfo> decode(const QByteArray& pBytes)
+		static QSharedPointer<const ChipAuthenticationInfo> decode(const QByteArray& pBytes)
 		{
 			if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes, false))
 			{
 				if (ChipAuthenticationInfo::acceptsProtocol(delegate->mProtocol))
 				{
-					return QSharedPointer<ChipAuthenticationInfo>::create(delegate);
+					return QSharedPointer<const ChipAuthenticationInfo>::create(delegate);
 				}
 			}
-			return QSharedPointer<ChipAuthenticationInfo>();
+			return QSharedPointer<const ChipAuthenticationInfo>();
 		}
 
 
-		[[nodiscard]] QByteArray getVersion() const;
-		[[nodiscard]] QByteArray getKeyId() const;
+		[[nodiscard]] QByteArray encode() const
+		{
+			return encodeObject(const_cast<chipauthenticationinfo_st*>(mDelegate.data()));
+		}
+
+
+		[[nodiscard]] int getVersion() const;
+		[[nodiscard]] int getKeyId() const;
 };
 
 
-template<>
-chipauthenticationinfo_st* decodeAsn1Object<chipauthenticationinfo_st>(chipauthenticationinfo_st** pObject, const unsigned char** pData, long pDataLen);
-
-
-template<>
-void freeAsn1Object<chipauthenticationinfo_st>(chipauthenticationinfo_st* pObject);
+inline QDebug operator<<(QDebug pDbg, const QSharedPointer<const ChipAuthenticationInfo>& pChipAuthenticationInfo)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg.nospace().noquote() << pChipAuthenticationInfo->getOid()
+							 << ", version: " << pChipAuthenticationInfo->getVersion()
+							 << ", keyId: " << pChipAuthenticationInfo->getKeyId();
+	return pDbg;
+}
 
 
 }  // namespace governikus

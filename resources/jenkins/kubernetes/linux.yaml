@@ -4,7 +4,7 @@ metadata:
   name: linux
   namespace: ausweisapp
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       workload.user.cattle.io/workloadselector: deployment-ausweisapp-linux
@@ -14,12 +14,16 @@ spec:
     spec:
       containers:
       - env:
+        - name: EXECUTOR
+          value: "2"
         - name: CCACHE_DIR
           value: /ccache
         - name: CCACHE_MAXSIZE
           value: 10G
-        - name: MAKE_FLAGS
-          value: -j5
+        - name: CMAKE_BUILD_PARALLEL_LEVEL
+          value: 5
+        - name: CTEST_PARALLEL_LEVEL
+          value: 5
         - name: PROCESSOR_COUNT
           value: 5
         - name: PASSWORD
@@ -33,7 +37,7 @@ spec:
         name: linux
         resources:
           limits:
-            cpu: "5"
+            cpu: "10"
             memory: 8Gi
           requests:
             cpu: 500m

@@ -20,11 +20,12 @@ class CompositeStateProcessCvcsAndSetRights
 {
 	Q_OBJECT
 
-	const QSharedPointer<WorkflowContext> mContext;
+	private:
+		const QSharedPointer<WorkflowContext> mContext;
 
 	public:
 		explicit CompositeStateProcessCvcsAndSetRights(const QSharedPointer<WorkflowContext>& pContext);
-		~CompositeStateProcessCvcsAndSetRights() override;
+		~CompositeStateProcessCvcsAndSetRights() override = default;
 
 	Q_SIGNALS:
 		void fireContinue();

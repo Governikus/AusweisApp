@@ -13,6 +13,8 @@
 #include <QPair>
 #include <QString>
 
+#include "ReaderInfo.h"
+
 class test_SurveyModel;
 
 namespace governikus
@@ -27,13 +29,16 @@ class SurveyModel
 
 	private:
 		const QString mBuildNumber;
-		const QString mAndroidVersion;
+		const QString mOsVersion;
 		const QString mKernelVersion;
 		int mMaximumNfcPacketLength;
 		const QString mVendor;
 		const QString mModelNumber;
 		const QString mModelName;
 		const QString mAusweisAppVersionNumber;
+		QString mNfcTagType;
+		bool mNfcDataAvailable;
+		bool mAuthWasSuccessful;
 
 		QVector<QPair<QString, QString>> mData;
 		QSharedPointer<QNetworkReply> mReply;
@@ -49,10 +54,9 @@ class SurveyModel
 
 		void buildDataObject();
 		[[nodiscard]] QByteArray toJsonByteArray() const;
+		void resetNfcData();
 
 	private Q_SLOTS:
-		void onSslErrors(const QList<QSslError>& pErrors);
-		void onSslHandshakeDone();
 		void onNetworkReplyFinished();
 
 	public:
@@ -60,7 +64,13 @@ class SurveyModel
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		void setMaximumNfcPacketLength(int pMaximumNfcPacketLength);
+		void setReaderInfo(const ReaderInfo& pReaderInfo);
+		void setAuthWasSuccessful(bool pSuccess);
+
+		Q_INVOKABLE [[nodiscard]] bool askForDeviceSurvey();
+		[[nodiscard]] bool isDeviceSurveyPending();
+		Q_INVOKABLE void setDeviceSurveyPending(bool pValue);
+
 
 		void transmitSurvey();
 };

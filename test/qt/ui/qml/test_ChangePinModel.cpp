@@ -56,6 +56,23 @@ class test_ChangePinModel
 		}
 
 
+		void test_supportedPlugInTypes()
+		{
+			const auto& model = Env::getSingleton<ChangePinModel>();
+			QSharedPointer<ChangePinContext> context(new ChangePinContext());
+			model->resetChangePinContext(context);
+#if __has_include("context/PersonalizationContext.h")
+			QVERIFY(model->getSupportedReaderPlugInTypes().contains(ReaderManagerPlugInType::SMART));
+#else
+			QVERIFY(!model->getSupportedReaderPlugInTypes().contains(ReaderManagerPlugInType::SMART));
+#endif
+
+			QSharedPointer<ChangePinContext> contextTransportPin(new ChangePinContext(true));
+			model->resetChangePinContext(contextTransportPin);
+			QVERIFY(!model->getSupportedReaderPlugInTypes().contains(ReaderManagerPlugInType::SMART));
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_ChangePinModel)

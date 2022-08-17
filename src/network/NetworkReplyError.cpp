@@ -17,11 +17,7 @@ qint64 NetworkReplyError::readData(char* data, qint64 maxlen)
 
 void NetworkReplyError::onErrorSignals()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 	Q_EMIT errorOccurred(NetworkError::OperationCanceledError);
-#else
-	Q_EMIT error(NetworkError::OperationCanceledError);
-#endif
 	Q_EMIT finished();
 }
 

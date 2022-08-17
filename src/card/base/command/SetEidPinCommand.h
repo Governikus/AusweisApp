@@ -18,11 +18,10 @@ class SetEidPinCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
+	friend class ::test_SetEidPinCommand;
+	friend class ::MockSetEidPinCommand;
 
 	private:
-		friend class ::test_SetEidPinCommand;
-		friend class ::MockSetEidPinCommand;
-
 		QByteArray mNewPin;
 		quint8 mTimeoutSeconds;
 		ResponseApdu mResponseApdu;

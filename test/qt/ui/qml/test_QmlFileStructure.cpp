@@ -52,7 +52,7 @@ class test_QmlFileStructure
 			QFETCH(QFileInfo, qmlFile);
 
 			QDir dir = qmlFile.dir();
-			while (dir.dirName().startsWith(QChar('+')))
+			while (dir.dirName().startsWith(QLatin1Char('+')))
 			{
 				dir.cdUp();
 				const QString fileInParentFolder = dir.path() + QDir::separator() + qmlFile.fileName();

@@ -33,13 +33,13 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 	, mUiDomination(false)
 	, mUiDominationPrevUsedAsSDK(false)
 {
-	if (!Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson))
+	if (!Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
 		qCWarning(websocket) << "Cannot start WebSocket because JSON-API is missing";
 		return;
 	}
 
-	mJson = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+	mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 	Q_ASSERT(mJson);
 
 	mHttpServer = Env::getShared<HttpServer>();
@@ -52,16 +52,12 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 }
 
 
-UIPlugInWebSocket::~UIPlugInWebSocket()
-{
-}
-
-
 void UIPlugInWebSocket::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 	if (mUiDomination)
 	{
-		pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE});
+		pContext->claim(this);
+		pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE_IFD, ReaderManagerPlugInType::SIMULATOR});
 		mContext = pContext;
 	}
 }

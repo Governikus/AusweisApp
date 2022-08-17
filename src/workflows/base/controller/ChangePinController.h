@@ -7,6 +7,7 @@
 #pragma once
 
 #include "WorkflowController.h"
+#include "WorkflowRequest.h"
 
 
 namespace governikus
@@ -20,8 +21,10 @@ class ChangePinController
 	Q_OBJECT
 
 	public:
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pRequestTransportPin = false);
+
 		explicit ChangePinController(QSharedPointer<ChangePinContext> pContext);
-		~ChangePinController() override;
+		~ChangePinController() override = default;
 };
 
 } // namespace governikus

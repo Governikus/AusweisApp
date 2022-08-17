@@ -1,21 +1,14 @@
 ADD_PLATFORM_LIBRARY(AusweisAppTestHelperCommon)
 
-if(DESKTOP)
-	target_include_directories(AusweisAppTestHelperCommon SYSTEM PUBLIC ${PCSC_INCLUDE_DIRS})
-endif()
+target_link_libraries(AusweisAppTestHelperCommon ${Qt}::Network ${Qt}::Test AusweisAppExternal::HttpParser)
+target_link_libraries(AusweisAppTestHelperCommon AusweisAppActivation AusweisAppCard AusweisAppNetwork AusweisAppCore)
+target_link_libraries(AusweisAppTestHelperCommon AusweisAppWorkflowsSelfAuth)
 
-target_link_libraries(AusweisAppTestHelperCommon ${Qt}::Network ${Qt}::Test AusweisAppExternal::HttpParser AusweisAppActivation AusweisAppCard AusweisAppNetwork AusweisAppCore)
 target_compile_definitions(AusweisAppTestHelperCommon PRIVATE QT_STATICPLUGIN)
 
 if(DESKTOP)
 	target_link_libraries(AusweisAppTestHelperCommon AusweisAppCardDrivers)
 endif()
-
-if(TARGET ${Qt}::Gui)
-	target_link_libraries(AusweisAppTestHelperCommon AusweisAppUiCommon)
-endif()
-
-
 
 # Enable QtHooks
 if(QT5)

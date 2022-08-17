@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -19,26 +19,17 @@ GPane {
 
 	signal clicked()
 
+	title: qsTr("Hint")
+
 	ColumnLayout {
 		width: parent.width
 
 		spacing: 0
 
 		GText {
-			Layout.fillWidth: true
-
-			activeFocusOnTab: true
-			textStyle: Style.text.normal
-			text: qsTr("Hint")
-			font.bold: true
-
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
-		}
-
-		GText {
 			id: hintText
+
+			visible: text !== ""
 
 			Layout.fillWidth: true
 			Layout.topMargin: Constants.text_spacing
@@ -46,9 +37,7 @@ GPane {
 			activeFocusOnTab: true
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GButton {

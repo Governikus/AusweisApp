@@ -9,7 +9,7 @@
 #include "UsbId.h"
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-#include <QObject>
+	#include <QObject>
 
 namespace governikus
 {
@@ -20,7 +20,7 @@ class ReaderDetector
 };
 } // namespace governikus
 #else
-#include "ReaderDetector.h"
+	#include "ReaderDetector.h"
 #endif
 
 namespace governikus

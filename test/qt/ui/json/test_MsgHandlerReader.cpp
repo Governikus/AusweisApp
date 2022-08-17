@@ -49,7 +49,7 @@ class test_MsgHandlerReader
 			QCOMPARE(noReader.toJson(), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader\"}"));
 
 			MsgHandlerReader reader(info);
-			QCOMPARE(reader.toJson(), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(reader.toJson(), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
 
@@ -73,7 +73,7 @@ class test_MsgHandlerReader
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader 081\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
 			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 0815");
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
@@ -88,7 +88,7 @@ class test_MsgHandlerReader
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
 
@@ -115,19 +115,19 @@ class test_MsgHandlerReader
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "ReaderMock"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMock\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMock\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "ReaderMockXYZ"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMockXYZ\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMockXYZ\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "SpecialMock"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "SpecialMockWithGermanCard"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
 		}
 
 

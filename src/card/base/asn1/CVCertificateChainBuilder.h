@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "ChainBuilder.h"
 #include "CVCertificate.h"
 #include "CVCertificateChain.h"
-#include "EstablishPaceChannelOutput.h"
+#include "ChainBuilder.h"
+#include "pinpad/EstablishPaceChannelOutput.h"
 
 
 namespace governikus

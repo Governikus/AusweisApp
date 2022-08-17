@@ -7,10 +7,11 @@
 #pragma once
 
 #include "CardReturnCode.h"
-#include "CommandApdu.h"
-#include "EstablishPaceChannelOutput.h"
-#include "ResponseApdu.h"
 #include "SmartCardDefinitions.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/ResponseApdu.h"
+#include "asn1/CVCertificateChain.h"
+#include "pinpad/EstablishPaceChannelOutput.h"
 
 #include <QObject>
 #include <QPointer>
@@ -18,6 +19,26 @@
 
 namespace governikus
 {
+
+struct TerminalAndChipAuthenticationResult
+{
+	CardReturnCode mReturnCode = CardReturnCode::UNDEFINED;
+	QByteArray mEfCardSecurity = QByteArray();
+	QByteArray mAuthenticationToken = QByteArray();
+	QByteArray mNonce = QByteArray();
+};
+
+#ifndef QT_NO_DEBUG
+inline bool operator ==(const TerminalAndChipAuthenticationResult& pLeft, const TerminalAndChipAuthenticationResult& pRight)
+{
+	return pLeft.mReturnCode == pRight.mReturnCode
+		   && pLeft.mEfCardSecurity == pRight.mEfCardSecurity
+		   && pLeft.mAuthenticationToken == pRight.mAuthenticationToken
+		   && pLeft.mNonce == pRight.mNonce;
+}
+
+
+#endif
 
 class Card
 	: public QObject
@@ -31,17 +52,17 @@ class Card
 		/*!
 		 * Establish a connection to the smart card
 		 */
-		virtual CardReturnCode connect() = 0;
+		virtual CardReturnCode establishConnection() = 0;
 
 		/*!
 		 * Destroys the previously established connection to the smart card
 		 */
-		virtual CardReturnCode disconnect() = 0;
+		virtual CardReturnCode releaseConnection() = 0;
 
 		/*!
 		 * Is the smart card connected, i.e. has a connection successfully been established?
 		 */
-		virtual bool isConnected() = 0;
+		virtual bool isConnected() const = 0;
 
 		/*!
 		 * Sets the current workflow progress message. This is necessary for platforms like iOS,
@@ -75,6 +96,17 @@ class Card
 		 * Combines the message and progressvalue depending on the environment.
 		 */
 		static QString generateProgressMessage(const QString& pMessage, int pProgress = -1);
+
+		virtual EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat);
+
+		virtual ResponseApduResult getChallenge();
+
+		virtual TerminalAndChipAuthenticationResult performTAandCA(
+			const CVCertificateChain& pTerminalCvcChain,
+			const QByteArray& pAuxiliaryData,
+			const QByteArray& pSignature,
+			const QByteArray& pPin,
+			const QByteArray& pEphemeralPublicKey);
 };
 
 } // namespace governikus

@@ -9,6 +9,8 @@
 using namespace governikus;
 
 
+ReaderManagerPlugInType MockReader::cMOCKED_READERMANAGER_TYPE = ReaderManagerPlugInType::MOCK;
+
 MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QByteArray& pEfCardAccess)
 {
 	if (pEfCardAccess.isNull())
@@ -25,19 +27,17 @@ MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmi
 MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess)
 {
 	MockCardConfig cardConfig(pTransmitConfig);
-	QScopedPointer<MockReader> reader(new MockReader());
+	MockReader* reader = new MockReader();
 	reader->setCard(cardConfig, pEfCardAccess);
-	return reader.take();
+	return reader;
 }
 
 
-MockReader::MockReader(const QString& pReaderName)
-	: Reader(ReaderManagerPlugInType::UNKNOWN, pReaderName)
+MockReader::MockReader(const QString& pReaderName, ReaderManagerPlugInType pType)
+	: Reader(pType, pReaderName)
 	, mCard(nullptr)
-	, mEvent(CardEvent::NONE)
 {
-	mReaderInfo.setConnected(true);
-	mReaderInfo.setBasicReader(true);
+	setInfoBasicReader(true);
 }
 
 
@@ -53,29 +53,29 @@ void MockReader::removeCard()
 
 	QMetaObject::invokeMethod(this, [this] {
 			mCard.reset(nullptr);
-			mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-			Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
+			removeCardInfo();
+			Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
 		}, type);
 	QCoreApplication::processEvents();
 }
 
 
-MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QByteArray& pEfCardAccess)
+MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QByteArray& pEfCardAccess, CardType pType)
 {
-	setCard(pCardConfig, EFCardAccess::decode(pEfCardAccess));
+	setCard(pCardConfig, EFCardAccess::decode(pEfCardAccess), pType);
 	return mCard.data();
 }
 
 
-MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess)
+MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess, CardType pType)
 {
 	// some unit tests uses MockReader without ReaderManager. So avoid a deadlock here.
 	Qt::ConnectionType type = QThread::currentThread() == QObject::thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection;
 
-	QMetaObject::invokeMethod(this, [this, pCardConfig, pEfCardAccess] {
+	QMetaObject::invokeMethod(this, [this, pCardConfig, pEfCardAccess, pType] {
 			mCard.reset(new MockCard(pCardConfig));
-			mReaderInfo.setCardInfo(CardInfo(CardType::EID_CARD, pEfCardAccess));
-			Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
+			setInfoCardInfo(CardInfo(pType, pEfCardAccess));
+			Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
 		}, type);
 
 	QCoreApplication::processEvents();
@@ -90,7 +90,19 @@ void MockReader::setReaderInfo(const ReaderInfo& pReaderInfo)
 
 	QMetaObject::invokeMethod(this, [this, pReaderInfo] {
 			mReaderInfo = pReaderInfo;
-			Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
+			Q_EMIT fireReaderPropertiesUpdated(pReaderInfo);
 		}, type);
 	QCoreApplication::processEvents();
+}
+
+
+void MockReader::setInfoBasicReader(bool pBasicReader)
+{
+	Reader::setInfoBasicReader(pBasicReader);
+}
+
+
+void MockReader::setInfoCardInfo(const CardInfo& pCardInfo)
+{
+	Reader::setInfoCardInfo(pCardInfo);
 }

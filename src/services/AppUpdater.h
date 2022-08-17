@@ -19,11 +19,10 @@ class AppUpdater
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
+	friend class ::test_AppUpdatr;
 
 	private:
-		friend class Env;
-		friend class ::test_AppUpdatr;
-
 		bool mForceUpdate;
 		QUrl mAppUpdateJsonUrl;
 		AppUpdateData mAppUpdateData;
@@ -50,6 +49,11 @@ class AppUpdater
 		[[nodiscard]] QString getDownloadPath() const;
 		void setDownloadPath(const QString& pPath);
 #endif
+
+		void handleVersionInfoDownloadFinished(const QByteArray& pData);
+		void handleReleaseNotesDownloadFinished(const QByteArray& pData);
+		void handleChecksumDownloadFinished(const QUrl& pUpdateUrl, const QByteArray& pData);
+		void handleAppDownloadFinished(const QByteArray& pData);
 
 	private Q_SLOTS:
 		void onDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);

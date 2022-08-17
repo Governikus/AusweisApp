@@ -4,7 +4,7 @@ if(COVERAGE)
 	if(GCOVR_BIN)
 		set(GCOVR_FILE "${PROJECT_BINARY_DIR}/gcovr.xml")
 		set(GCOVR_SONAR_FILE "${PROJECT_BINARY_DIR}/gcovr_sonarqube.xml")
-		set(GCOVR_OPTIONS --exclude="utils" --exclude="src/external" --exclude="test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
+		set(GCOVR_OPTIONS --gcov-ignore-parse-errors --exclude="${PROJECT_SOURCE_DIR}/utils" --exclude="${PROJECT_SOURCE_DIR}/src/external" --exclude="${PROJECT_SOURCE_DIR}/test" -r ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
 		add_custom_command(OUTPUT ${GCOVR_FILE} COMMAND ${GCOVR_BIN} -x -o ${GCOVR_FILE} ${GCOVR_OPTIONS})
 		add_custom_command(OUTPUT ${GCOVR_SONAR_FILE} COMMAND ${GCOVR_BIN} --sonarqube ${GCOVR_SONAR_FILE} ${GCOVR_OPTIONS})
@@ -329,6 +329,11 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} img_Simulator.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator.png
 		COMMAND ${INKSCAPE} img_Simulator_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/reader/src)
+
+	add_custom_target(tutorialimages
+		COMMAND ${INKSCAPE} phone_screen_de.svg -w 585 -h 622 -y 0 -o ${RESOURCES_DIR}/images/tutorial/phone_screen_de.png
+		COMMAND ${INKSCAPE} phone_screen_en.svg -w 585 -h 622 -y 0 -o ${RESOURCES_DIR}/images/tutorial/phone_screen_en.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images/tutorial/src)
 endif()
 
 find_program(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
@@ -502,6 +507,11 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} img_Simulator.png -- img_Simulator.png
 		COMMAND ${PNGQUANT_CMD} img_Simulator_mit_ausweis.png -- img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/updatable-files/reader)
+
+	add_custom_target(pngquant.tutorialimages
+		COMMAND ${PNGQUANT_CMD} phone_screen_de.png -- phone_screen_de.png
+		COMMAND ${PNGQUANT_CMD} phone_screen_en.png -- phone_screen_en.png
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images/tutorial)
 endif()
 
 find_program(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)
@@ -515,7 +525,6 @@ if(INKSCAPE AND APPLE AND NOT IOS)
 	find_program(ICONUTIL iconutil)
 	if(ICONUTIL)
 		set(BUNDLE_ICON_SET_DIR ${CMAKE_CURRENT_BINARY_DIR}/bundle_icons.iconset)
-
 		add_custom_target(npaicons.mac
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${BUNDLE_ICON_SET_DIR}
 			COMMAND ${INKSCAPE} appIcon.svg -w 16 -h 16 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_16x16.png
@@ -528,7 +537,23 @@ if(INKSCAPE AND APPLE AND NOT IOS)
 			COMMAND ${INKSCAPE} appIcon.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_256x256@2x.png
 			COMMAND ${INKSCAPE} appIcon.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512.png
 			COMMAND ${INKSCAPE} appIcon.svg -w 1024 -h 1024 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512@2x.png
-			COMMAND ${ICONUTIL} -c icns --output bundle_icons.icns ${BUNDLE_ICON_SET_DIR}
+			COMMAND ${ICONUTIL} -c icns --output AusweisApp2.icns ${BUNDLE_ICON_SET_DIR}
+			COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUNDLE_ICON_SET_DIR}
+			WORKING_DIRECTORY ${RESOURCES_DIR}/images/macos)
+
+		add_custom_target(npaicons.mac.beta
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${BUNDLE_ICON_SET_DIR}
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 16 -h 16 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_16x16.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 32 -h 32 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_16x16@2x.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 32 -h 32 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_32x32.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 64 -h 64 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_32x32@2x.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 128 -h 128 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_128x128.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 256 -h 256 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_128x128@2x.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 256 -h 256 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_256x256.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_256x256@2x.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512.png
+			COMMAND ${INKSCAPE} appIconBeta.svg -w 1024 -h 1024 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512@2x.png
+			COMMAND ${ICONUTIL} -c icns --output beta/AusweisApp2.icns ${BUNDLE_ICON_SET_DIR}
 			COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUNDLE_ICON_SET_DIR}
 			WORKING_DIRECTORY ${RESOURCES_DIR}/images/macos)
 	endif()

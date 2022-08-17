@@ -90,7 +90,7 @@ const QVector<ProviderConfigurationInfo>& ProviderConfiguration::getProviderConf
 }
 
 
-const CallCost ProviderConfiguration::getCallCost(const ProviderConfigurationInfo& pProvider) const
+CallCost ProviderConfiguration::getCallCost(const ProviderConfigurationInfo& pProvider) const
 {
 	QString standardisedPhoneNumber = pProvider.getPhone();
 	standardisedPhoneNumber = standardisedPhoneNumber.remove(QStringLiteral("+49"));

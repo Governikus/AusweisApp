@@ -7,6 +7,7 @@ package com.governikus.ausweisapp2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -15,23 +16,14 @@ import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.core.content.FileProvider;
 
 
 public final class ShareUtil
 {
-	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
-
 	private ShareUtil()
 	{
-	}
-
-
-	public static boolean isNotAtLeastMarshmallow()
-	{
-		return android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M;
 	}
 
 
@@ -39,19 +31,6 @@ public final class ShareUtil
 	{
 		try
 		{
-			if (isNotAtLeastMarshmallow())
-			{
-				Intent shareData = new Intent(Intent.ACTION_SENDTO);
-				shareData.setData(Uri.parse("mailto:"));
-				shareData.putExtra(Intent.EXTRA_EMAIL, new String[] {email});
-				shareData.putExtra(Intent.EXTRA_SUBJECT, subject);
-				shareData.putExtra(Intent.EXTRA_TEXT, msg);
-				shareData.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(logFilePath)));
-				activity.startActivity(Intent.createChooser(shareData, chooserTitle));
-
-				return;
-			}
-
 			Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
 			emailIntent.setData(Uri.parse("mailto:"));
 
@@ -80,7 +59,7 @@ public final class ShareUtil
 		}
 		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "Error sharing logfile", e);
+			LogHandler.getLogger().log(Level.SEVERE, "Error sharing logfile", e);
 		}
 	}
 
@@ -97,7 +76,7 @@ public final class ShareUtil
 		}
 		catch (Exception e)
 		{
-			Log.e(LOG_TAG, "Error sharing logfile", e);
+			LogHandler.getLogger().log(Level.SEVERE, "Error sharing logfile", e);
 		}
 	}
 

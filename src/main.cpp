@@ -8,16 +8,23 @@
 
 #include <QtPlugin>
 
+
+Q_IMPORT_PLUGIN(SimulatorReaderManagerPlugIn)
+
 #if !defined(Q_OS_WINRT) && !defined(INTEGRATED_SDK)
-Q_IMPORT_PLUGIN(RemoteReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(RemoteIfdReaderManagerPlugIn)
 #endif
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 Q_IMPORT_PLUGIN(PcscReaderManagerPlugIn)
 
-#ifndef INTEGRATED_SDK
+	#if !defined(INTEGRATED_SDK) || defined(CONTAINER_SDK)
 Q_IMPORT_PLUGIN(WebserviceActivationHandler)
-#endif
+	#endif
+
+	#if defined(USE_SMARTEID) && (defined(CONTAINER_SDK) || !defined(QT_NO_DEBUG))
+Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
+	#endif
 
 #endif
 
@@ -25,22 +32,34 @@ Q_IMPORT_PLUGIN(WebserviceActivationHandler)
 #if defined(Q_OS_ANDROID)
 Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
 
-#ifndef INTEGRATED_SDK
-Q_IMPORT_PLUGIN(IntentActivationHandler)
-#endif
+	#ifndef INTEGRATED_SDK
+Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
+Q_IMPORT_PLUGIN(UIPlugInLocalIfd)
+
+		#ifdef USE_SMARTEID
+Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
+		#endif
+
+	#else
+Q_IMPORT_PLUGIN(LocalIfdReaderManagerPlugIn)
+	#endif
 
 #endif
 
 
 #if defined(Q_OS_IOS)
-Q_IMPORT_PLUGIN(IosReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
 
-#ifndef INTEGRATED_SDK
+	#ifndef INTEGRATED_SDK
 Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
+
+		#ifdef USE_SMARTEID
+Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
+		#endif
 
 Q_IMPORT_PLUGIN(QJpegPlugin)
 Q_IMPORT_PLUGIN(QSvgPlugin)
-#endif
+	#endif
 
 #endif
 
@@ -53,11 +72,12 @@ Q_IMPORT_PLUGIN(UIPlugInAidl)
 Q_IMPORT_PLUGIN(UIPlugInQml)
 #endif
 
-#if defined(INTEGRATED_SDK) && !defined(Q_OS_ANDROID)
+#if defined(INTEGRATED_SDK) && !defined(Q_OS_ANDROID) && !defined(CONTAINER_SDK)
 Q_IMPORT_PLUGIN(UIPlugInFunctional)
 #endif
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(INTEGRATED_SDK)
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && (!defined(INTEGRATED_SDK) || defined(CONTAINER_SDK))
+Q_IMPORT_PLUGIN(UIPlugInAutomatic)
 Q_IMPORT_PLUGIN(UIPlugInWebSocket)
 #endif
 

@@ -9,13 +9,13 @@ using namespace governikus;
 
 
 CVCertificateChain::CVCertificateChain(bool pProductive)
-	: CVCertificateChain(QVector<QSharedPointer<const CVCertificate> >(), pProductive)
+	: CVCertificateChain(QVector<QSharedPointer<const CVCertificate>>(), pProductive)
 {
 }
 
 
-CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<const CVCertificate> >& pCvcs, bool pProductive)
-	: QVector<QSharedPointer<const CVCertificate> >(pCvcs)
+CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive)
+	: QVector<QSharedPointer<const CVCertificate>>(pCvcs)
 	, mProductive(pProductive)
 {
 	if (!isValid())

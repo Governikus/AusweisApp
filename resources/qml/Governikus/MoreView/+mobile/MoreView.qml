@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -43,15 +43,15 @@ SectionPage {
 			title: qsTr("Tutorial")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to know how to use %1?").arg(Qt.application.name)
-			onClicked: firePush(tutorialView)
+			onClicked: push(tutorialView)
 
 			Component {
 				id: tutorialView
 
 				TutorialView {
 					onLeave: {
-						firePop()
-						navBar.show(UiModule.HELP)
+						pop()
+						show(UiModule.HELP)
 					}
 				}
 			}
@@ -131,7 +131,7 @@ SectionPage {
 			title: qsTr("Logs")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to view the logs of %1?").arg(Qt.application.name)
-			onClicked: firePush(logPage)
+			onClicked: push(logPage)
 
 			Component {
 				id: logPage
@@ -161,7 +161,7 @@ SectionPage {
 			title: qsTr("Version information")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to see detailed information about %1?").arg(Qt.application.name)
-			onClicked: firePush(versionInformation)
+			onClicked: push(versionInformation)
 
 			Component {
 				id: versionInformation
@@ -175,7 +175,7 @@ SectionPage {
 			title: qsTr("Software license")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to read the software licenses?")
-			onClicked: firePush(licenseInformation)
+			onClicked: push(licenseInformation)
 
 			Component {
 				id: licenseInformation
@@ -189,7 +189,7 @@ SectionPage {
 			title: qsTr("Release notes")
 			//: LABEL ANDROID IOS
 			description: qsTr("Do you want to view the release notes of %1?").arg(Qt.application.name)
-			onClicked: firePush(releaseNotes)
+			onClicked: push(releaseNotes)
 
 			Component {
 				id: releaseNotes

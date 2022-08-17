@@ -6,24 +6,25 @@
 
 #pragma once
 
+#include "Initializer.h"
+
 #include <QDebug>
 #include <QMetaEnum>
 #include <type_traits>
 
-
 namespace governikus
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define defineQHash(enumName)\
+	#define defineQHash(enumName)\
 	inline size_t qHash(enumName pKey, size_t pSeed)\
 	{\
-		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
+		return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
 	}
 #else
-#define defineQHash(enumName)\
+	#define defineQHash(enumName)\
 	inline uint qHash(enumName pKey, uint pSeed)\
 	{\
-		return ::qHash(static_cast<std::underlying_type<enumName>::type>(pKey), pSeed);\
+		return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
 	}
 #endif
 
@@ -50,11 +51,11 @@ namespace governikus
 		return Enum<enumName>::getName(pType) + pStr;\
 	}\
 \
-	inline bool operator==(std::underlying_type<enumName>::type pType, enumName pName)\
+	inline bool operator==(std::underlying_type_t<enumName> pType, enumName pName)\
 	{\
-		return static_cast<std::underlying_type<enumName>::type>(pName) == pType;\
+		return static_cast<std::underlying_type_t<enumName>>(pName) == pType;\
 	}\
-	inline bool operator!=(std::underlying_type<enumName>::type pType, enumName pName)\
+	inline bool operator!=(std::underlying_type_t<enumName> pType, enumName pName)\
 	{\
 		return !(pType == pName);\
 	}\
@@ -65,9 +66,11 @@ namespace governikus
 	class Enum##enumName\
 	{\
 		Q_GADGET\
+\
+		Q_DISABLE_COPY(Enum##enumName)\
+\
 		private:\
 			Enum##enumName();\
-			Q_DISABLE_COPY(Enum##enumName)\
 \
 		public:\
 			enum class enumName : enumType\
@@ -79,6 +82,13 @@ namespace governikus
 	};\
 \
 	using enumName = Enum##enumName::enumName;\
+	namespace governikusEnum##enumName\
+	{\
+	INIT_FUNCTION([]\
+		{\
+			qRegisterMetaType<enumType>(#enumName);\
+		})\
+	}\
 \
 	defineEnumOperators(enumName)
 
@@ -88,28 +98,30 @@ namespace governikus
 
 template<typename EnumTypeT> class Enum
 {
-	using EnumBaseTypeT = typename std::underlying_type<EnumTypeT>::type;
+	using EnumBaseTypeT = std::underlying_type_t<EnumTypeT>;
+
+	Q_DISABLE_COPY(Enum)
 
 	private:
 		Enum() = delete;
-		Q_DISABLE_COPY(Enum)
+		~Enum() = delete;
 
 	public:
-		static inline QMetaEnum getQtEnumMetaEnum()
+		[[nodiscard]] static inline QMetaEnum getQtEnumMetaEnum()
 		{
 			return QMetaEnum::fromType<EnumTypeT>();
 		}
 
 
-		static QLatin1String getName()
+		[[nodiscard]] static QLatin1String getName()
 		{
 			return QLatin1String(getQtEnumMetaEnum().name());
 		}
 
 
-		static QLatin1String getName(EnumTypeT pType)
+		[[nodiscard]] static QLatin1String getName(EnumTypeT pType)
 		{
-			const int value = static_cast<int>(pType);
+			const auto value = static_cast<int>(pType);
 			const char* const name = getQtEnumMetaEnum().valueToKey(value);
 			if (Q_UNLIKELY(name == nullptr))
 			{
@@ -121,13 +133,13 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		static int getCount()
+		[[nodiscard]] static int getCount()
 		{
 			return getQtEnumMetaEnum().keyCount();
 		}
 
 
-		static QVector<EnumTypeT> getList()
+		[[nodiscard]] static QVector<EnumTypeT> getList()
 		{
 			QVector<EnumTypeT> list;
 
@@ -142,7 +154,7 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		static EnumTypeT fromString(const char* const pValue, EnumTypeT pDefault)
+		[[nodiscard]] static EnumTypeT fromString(const char* const pValue, EnumTypeT pDefault)
 		{
 			bool ok = false;
 			int key = getQtEnumMetaEnum().keyToValue(pValue, &ok);
@@ -154,31 +166,25 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		static EnumTypeT fromString(const QString& pValue, EnumTypeT pDefaultType)
+		[[nodiscard]] static EnumTypeT fromString(const QString& pValue, EnumTypeT pDefaultType)
 		{
 			return fromString(pValue.toUtf8().constData(), pDefaultType);
 		}
 
 
-		static bool isValue(int pValue)
+		[[nodiscard]] static bool isValue(int pValue)
 		{
 			return getQtEnumMetaEnum().valueToKey(pValue) != nullptr;
 		}
 
 
-		static bool isValue(uchar pValue)
+		[[nodiscard]] static bool isValue(ushort pValue)
 		{
 			return isValue(static_cast<int>(pValue));
 		}
 
 
-		static bool isValue(char pValue)
-		{
-			return isValue(static_cast<uchar>(pValue));
-		}
-
-
-		static EnumBaseTypeT getValue(EnumTypeT pType)
+		[[nodiscard]] static EnumBaseTypeT getValue(EnumTypeT pType)
 		{
 			return static_cast<EnumBaseTypeT>(pType);
 		}

@@ -2,17 +2,16 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-SectionPage
-{
+SectionPage {
 	id: baseItem
 
 	property alias text: text.text
@@ -22,9 +21,6 @@ SectionPage
 	property int progressValue
 	property alias progressBarVisible: progressBar.visible
 
-	Accessible.name: qsTr("Progress view")
-	Accessible.description: qsTr("This is the progress view of the AusweisApp2.")
-
 	StatusIcon {
 		id: circle
 
@@ -33,6 +29,7 @@ SectionPage
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: baseItem.height / 4
 
+		borderEnabled: false
 		busy: true
 		source: "qrc:///images/sandglass.svg"
 	}
@@ -49,7 +46,7 @@ SectionPage
 		Accessible.name: text.text
 
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
 
 		FocusFrame {}
 	}
@@ -67,7 +64,7 @@ SectionPage
 		Accessible.name: subText.text
 
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header_secondary_inverse
+		textStyle: Style.text.header_secondary
 
 		FocusFrame {}
 	}
@@ -75,7 +72,7 @@ SectionPage
 	GText {
 		id: progressText
 
-		visible: progressText.text !== ""
+		visible: progressBar.visible
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 		anchors.bottom: progressBar.top
 		anchors.bottomMargin: Constants.component_spacing
@@ -93,7 +90,6 @@ SectionPage
 		id: progressBar
 
 		visible: false
-		height: ApplicationModel.scaleFactor * 40
 		anchors {
 			bottom: parent.bottom
 			left: parent.left

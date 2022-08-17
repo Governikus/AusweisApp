@@ -7,8 +7,8 @@
 #include "LogHandler.h"
 #include "NetworkManager.h"
 
-#include <http_parser.h>
 #include <QLoggingCategory>
+#include <http_parser.h>
 
 using namespace governikus;
 
@@ -26,18 +26,13 @@ HttpServerStatusParser::HttpServerStatusParser(quint16 pPort, const QHostAddress
 }
 
 
-HttpServerStatusParser::~HttpServerStatusParser()
-{
-}
-
-
 bool HttpServerStatusParser::request()
 {
 	// if we were called multiple time we need to clear() here
 	mVersionInfo = VersionInfo();
 	mServerHeader.clear();
 
-	const auto reply = mRequestor.request(mUrl);
+	const auto reply = mRequestor.getRequest(mUrl);
 	if (!reply.isNull())
 	{
 		return parseReply(reply);
@@ -80,6 +75,6 @@ bool HttpServerStatusParser::parseReply(const QSharedPointer<QNetworkReply>& pRe
 		return !mVersionInfo.isNull();
 	}
 
-	qCDebug(network) << "Cannot get status information! Got bad http status code.";
+	qCDebug(network) << "Cannot get status information! Got bad http status code:" << pReply->error();
 	return false;
 }

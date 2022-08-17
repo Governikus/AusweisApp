@@ -1,76 +1,48 @@
 <?xml version="1.0"?>
-<manifest package="@BUNDLE_IDENTIFIER@"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="@BUNDLE_IDENTIFIER@"
+    android:installLocation="auto">
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.NFC"/>
+    <uses-permission android:name="android.permission.NFC" />
 
-    <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
-         Remove the comment if you do not require these default features. -->
-    <!-- %%INSERT_FEATURES -->
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
 
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
-
-    <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
 
     <queries>
         <package android:name="com.governikus.ausweisapp2" />
+        <package android:name="com.governikus.ausweisapp2.dev" />
     </queries>
 
     <application
-        android:extractNativeLibs="true"
-        tools:targetApi="23">
-
-        <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
+        android:extractNativeLibs="true">
 
         <service
-            android:process=":ausweisapp2_service"
-            android:label="@string/app_name"
-            android:enabled="true"
             android:name="com.governikus.ausweisapp2.AusweisApp2Service"
+            android:enabled="true"
             android:exported="false"
-            >
-            <!--<service android:process=":qt" android:enabled="true" android:name="org.qtproject.qt5.android.bindings.QtService">-->
-            <!-- android:process=":qt" is needed to force the service to run on a separate process than the Activity -->
+            android:label="@string/app_name"
+            android:process=":ausweisapp2_service">
 
-            <!-- Application arguments -->
-            <meta-data android:name="android.app.arguments" android:value="--ui aidl"/>
-            <!-- Application arguments -->
-
-            <!-- If you are using the same application (.so file) for activity and also for service, then you
-                 need to use *android.app.arguments* to pass some arguments to your service in order to know which
-                 one is which
-             -->
-
-            <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
-            <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
-            <meta-data android:name="android.app.repository" android:value="default"/>
-            <meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>
-            <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
-            <!-- Deploy Qt libs as part of package -->
-            <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <!-- Run with local libs -->
-            <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
-            <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
-            <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
-            <!--  Messages maps -->
-            <meta-data android:value="@string/ministro_not_found_msg" android:name="android.app.ministro_not_found_msg"/>
-            <meta-data android:value="@string/ministro_needed_msg" android:name="android.app.ministro_needed_msg"/>
-            <meta-data android:value="@string/fatal_error_msg" android:name="android.app.fatal_error_msg"/>
-            <meta-data android:value="@string/unsupported_android_version" android:name="android.app.unsupported_android_version"/>
-            <!--  Messages maps -->
-
-
-            <!-- Background running -->
-            <meta-data android:name="android.app.background_running" android:value="true"/>
-            <!-- Background running -->
-
+            <meta-data
+                android:name="android.app.arguments"
+                android:value="--ui aidl" />
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="-- %%INSERT_APP_LIB_NAME%% --" />
+            <meta-data
+                android:name="android.app.background_running"
+                android:value="true" />
 
             <intent-filter>
                 <action android:name="com.governikus.ausweisapp2.START_SERVICE" />

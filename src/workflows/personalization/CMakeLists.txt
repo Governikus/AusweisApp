@@ -1,0 +1,3 @@
+ADD_PLATFORM_LIBRARY(AusweisAppWorkflowsPersonalization)
+
+target_link_libraries(AusweisAppWorkflowsPersonalization AusweisAppWorkflows AusweisAppCardSmart)

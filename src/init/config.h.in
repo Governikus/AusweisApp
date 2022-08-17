@@ -1,6 +1,8 @@
 /* DO NOT TOUCH THIS MANUALLY */
 
 #cmakedefine INTEGRATED_SDK
+#cmakedefine CONTAINER_SDK
+#cmakedefine USE_SMARTEID
 
 #define PRODUCT "@PRODUCT@"
 #define VENDOR "@VENDOR@"
@@ -14,8 +16,8 @@
 #define VERSION_TWEAK @PROJECT_VERSION_TWEAK@
 
 #ifndef RC_INVOKED
-#if defined(__BASE_FILE__) && __has_include(<string_view>)
-#include <string_view>
+	#if defined(__BASE_FILE__) && __has_include(<string_view>)
+		#include <string_view>
 
 constexpr bool isPathSeparator(char pChar)
 {
@@ -44,7 +46,7 @@ constexpr std::string_view currentFile()
 
 
 static_assert(currentFile() == "Bootstrap.cpp" || currentFile() == "main.cpp", "config.h include is allowed in Bootstrap.cpp and main.cpp only!");
-#endif
+	#endif
 #endif // RC_INVOKED
 
 

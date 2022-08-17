@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtTest 1.12
+import QtTest 1.15
 
 TestCase {
 	name: "ModuleImportTest"

@@ -6,18 +6,14 @@ running in the background without a user interface. This service is interfaced
 via an Android specific interprocess communication (IPC) mechanism. The basics
 of this mechanism - the **Android Interface Definition Language** (AIDL) -
 are introduced in the following section. Subsequent sections deal with the
-SDK interface itself and explain which steps are necessary in order to talk
-to the AusweisApp2 SDK.
+SDK interface itself and explain which steps are necessary in order to
+communicate with the AusweisApp2 SDK.
 
-The AusweisApp2 is available as an integrated and as an external variant.
-The integrated version is provided as an AAR package that can automatically
-be fetched by Android's default build system **gradle**. The external variant
-is available as an APK in Google's PlayStore. It is required that the user
-has manually installed the AusweisApp2 like any other app to connect to the
-external variant.
+The AusweisApp2 is available as an AAR package that can automatically
+be fetched by Android's default build system **gradle**.
 
 .. important::
-   The integrated variant is available in maven central for free.
+   The AAR package is available in maven central for free.
    If you need enterprise support feel free to contact us.
 
 .. important::
@@ -31,9 +27,9 @@ external variant.
 
 
 
-Integrated
-----------
-The integrated SDK is distributed as an AAR package that contains
+SDK
+---
+The AusweisApp2 SDK is distributed as an AAR package that contains
 native **arm64-v8a** libraries only.
 The AAR package is available in the default repository of Android.
 The following listing shows the required **mavenCentral** in **build.gradle**.
@@ -47,7 +43,7 @@ The following listing shows the required **mavenCentral** in **build.gradle**.
   }
 
 
-The integrated AusweisApp2 will be fetched automatically as a dependency by
+The AusweisApp2 SDK will be fetched automatically as a dependency by
 your **app/build.gradle** file.
 It is recommended to always use the latest version (|version|) of AusweisApp2.
 
@@ -75,7 +71,7 @@ It is recommended to always use the latest version (|version|) of AusweisApp2.
 App Bundle
 ^^^^^^^^^^
 
-The integrated AusweisApp2 uses native libraries which need to be extracted when
+The AusweisApp2 SDK uses native libraries which need to be extracted when
 used in an App Bundle, otherwise the SDK will not work correctly.
 
 Add the following statement to your app's build.gradle file:
@@ -88,7 +84,7 @@ Add the following statement to your app's build.gradle file:
 Logging
 ^^^^^^^
 
-The AusweisApp2 uses default logging of Android and has its own log file.
+The AusweisApp2 SDK uses default logging of Android and has its own log file.
 It is **recommended** to collect that log file if an error occurs in
 your application to receive better support.
 
@@ -111,7 +107,7 @@ The AusweisApp2 deletes any log files that are older than 14 days.
 
 Initialization of the Android Application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The integrated SDK creates a fork of the Android "main" Application if started.
+The AusweisApp2 SDK creates a fork of the Android "main" Application if started.
 Due to this, the Application is instantiated a second time. Thus, it must
 ensure that any initialization (e.g. Firebase connections) is only carried out
 once. To do so the following snippet may prove useful:
@@ -153,127 +149,6 @@ once. To do so the following snippet may prove useful:
   }
 
 
-External
---------
-The APK is available in Google's PlayStore and needs to be installed by
-the user. The external SDK is distributed as 32-bit and 64-bit.
-
-.. important::
-   Please note that the external SDK will no longer be available with AusweisApp2 1.24.0.
-   Only the integrated SDK will still be available.
-
-
-Security
-^^^^^^^^
-The following listing provides information about the solution to provide a
-secure connection to AusweisApp2.
-
-  - Data between two apps connected via AIDL as a bound service cannot be
-    grabbed by an attacker. Android will send the data to the corresponding
-    app directly. There is no broadcast like an implicit intent.
-
-  - An attacker cannot bind to an already bound service as AusweisApp2 will
-    accept only one connection at the same time.
-
-  - An attacker cannot resume a connection after the previous app disconnects
-    because AusweisApp2 will reset the internal state if an app connects
-    with another session ID.
-
-  - An attacker cannot grab the session ID of the previous app because
-    AusweisApp2 uses multiple sources of secure random number generator.
-
-  - An attacker cannot fake AusweisApp2 for other apps because the connection
-    via AIDL is bound with package name "com.governikus.ausweisapp2". Google
-    ensures that there is no other app in Google Play Store with that package
-    name. Also the client app can check the fingerprint of signature certificate
-    used for that package name.
-
-
-
-Verify the authenticity of AusweisApp2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The following section deals with the cryptographic verification of the SDK's
-authenticity. This step is necessary to ensure that the SDK has not been
-modified in a malicious way.
-
-
-Fingerprint
-"""""""""""
-In order to verify that the AusweisApp2 SDK is authentic and has not been
-modified in a malicious way, it is required to verify its authenticity
-before establishing a connection with it.
-Each Android application is signed by a distribution certificate which
-ensures its authenticity. During the installation of an application
-Android verifies that it has been correctly signed with the supplied
-distribution certificate.
-So everything the client has to do in order to verify the authenticity
-is to verify that the correct certificate has been used. The **SHA256**
-fingerprint of the authentic SDK certificate is the following:
-
-.. code-block:: text
-
-  B0 2A C7 6B 50 A4 97 AE 81 0A EA C2 25 98 18 7B 3D 42 90 27 7D 08 51 A7 FA 8E 1A EA 5A 97 98 70
-
-
-
-Example
-"""""""
-The following example code demonstrates how the certificate
-hash value of a signed application on Android can be verified.
-
-.. code-block:: java
-
-  import android.content.pm.PackageInfo;
-  import android.content.pm.PackageManager;
-  import android.content.pm.Signature;
-
-  public class AusweisApp2Validator
-  {
-    private static final String PACKAGE = "com.governikus.ausweisapp2";
-    private static final String FINGERPRINT = "..."; // see above
-
-    public boolean isValid()
-    {
-      final PackageManager m = getPackageManager();
-      PackageInfo info;
-      try {
-        info = m.getPackageInfo(PACKAGE, PackageManager.GET_SIGNATURES);
-      } catch (PackageManager.NameNotFoundException e) {
-        return false;
-      }
-
-      // What the API names signatures are actually the signing certificates.
-      Signature certificates[] =  info.signatures;
-      String computed = computeHashHexString("SHA256", certificates[0]);
-
-      return FINGERPRINT.equalsIgnoreCase(computed);
-    }
-  }
-
-
-
-Visibility in AndroidManifest.xml
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The client application needs to set the queries element as shown in the
-listing below in order to access the AusweisApp2 since Android 11.
-
-.. code-block:: xml
-
-  <queries>
-    <package android:name="com.governikus.ausweisapp2" />
-  </queries>
-
-
-.. seealso::
-
-  https://developer.android.com/guide/topics/manifest/queries-element
-
-.. note::
-  The integrated variant already provides an **AndroidManifest.xml** with
-  prepared queries.
-
-
-
 .. _android_import_aidl:
 
 Import the AIDL files
@@ -293,24 +168,14 @@ client to establish a session with the SDK,
 to send JSON commands to the SDK and to pass discovered NFC tags to the SDK.
 
 The second AIDL interface is given to the SDK by the client application. It
-enables the client to receive the intial session parameters as well as
+enables the client to receive the initial session parameters as well as
 JSON messages from the SDK. Furthermore it has a function which is called
 when an existing connection with the SDK is dropped by the SDK. Both interfaces
 are listed below and you need to import them into your build environment.
 
-.. important::
-  It is required that you place the AIDL files under subdirectory
-  "aidl/com.governikus.ausweisapp2". Also the interface methods
-  names must be exactly the same.
-
 .. seealso::
 
   https://developer.android.com/guide/components/aidl.html
-
-.. note::
-  If you implement the integrated variant beside the external variant you do
-  **not** need to manually add AIDL files as the AAR package already provides
-  those interfaces.
 
 
 Interface
@@ -351,10 +216,7 @@ Callback
 
 Background service
 ------------------
-The integrated and external variants use the same method to establish
-a connection to the AusweisApp2 SDK. The AusweisApp2 SDK is a background
-service in the external AusweisApp2 or an embedded background service
-in your own application.
+The AusweisApp2 SDK is an embedded background service in your own application.
 
 
 .. _android_binding_service:
@@ -372,8 +234,8 @@ This binding fulfils two purposes:
 
 
 Due to the nature of an Android service, there can be only one instance of
-the SDK running. If multiple clients bind to the service, they are interacting
-with the same instance of the service.
+the SDK running. If multiple clients in your application bind to the service,
+they are interacting with the same instance of the service.
 The service is terminated once all previously bound clients are unbound.
 
 To differentiate between different connected clients, virtual sessions are used
@@ -424,9 +286,8 @@ created above. This API call either starts up the SDK if it is the
 first client, or connects to the running SDK instance if there is already
 another client bound.
 
-If you use the external variant of AusweisApp2 you need to pass the package
-name of Governikus. Otherwise you need to pass your own package name
-as the integrated variant is a background service of your application.
+You need to pass your own package name as the AusweisApp2 SDK is a background
+service of your application.
 
 
 .. code-block:: java
@@ -437,12 +298,7 @@ as the integrated variant is a background service of your application.
 
   // [...]
 
-  String pkg = "com.governikus.ausweisapp2";
-
-  boolean useIntegrated = true; // use external or integrated
-  if (useIntegrated)
-    pkg = getApplicationContext().getPackageName();
-
+  String pkg = getApplicationContext().getPackageName();
   String name = "com.governikus.ausweisapp2.START_SERVICE";
   Intent serviceIntent = new Intent(name);
   serviceIntent.setPackage(pkg);
@@ -453,41 +309,6 @@ as the integrated variant is a background service of your application.
   https://developer.android.com/guide/components/bound-services.html
 
   https://developer.android.com/reference/android/app/Activity.html
-
-
-
-Redirect to Play Store
-""""""""""""""""""""""
-It is necessary that AusweisApp2 is installed in order to use the external SDK.
-It is recommended to check and display a message in case the user needs
-to install AusweisApp2 first. Also, the user should be redirected to
-the Play Store entry to find the app.
-
-
-.. code-block:: java
-
-  import android.content.ActivityNotFoundException;
-  import android.content.pm.ResolveInfo;
-  import android.net.Uri;
-  import java.util.List;
-
-  PackageManager m = getPackageManager();
-  List<ResolveInfo> list = m.queryIntentServices(serviceIntent, PackageManager.MATCH_ALL);
-
-  if (list == null || list.isEmpty())
-  {
-    final String name = "com.governikus.ausweisapp2";
-    try {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + name)));
-    } catch (ActivityNotFoundException e) {
-      // Use the browser if Play Store is not installed, too!
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + name)));
-    }
-  }
-
-.. note::
-  This is not necessary if you use the integrated variant.
-
 
 
 .. _android_init_aidl:
@@ -719,26 +540,6 @@ Furthermore, this interface design enables the client application to do
 **foreground dispatching** of NFC tags. If the active application registers itself for
 foreground dispatching, it receives discovered NFC tags directly without
 Android displaying an App Chooser.
-
-
-Permissions in AndroidManifest.xml
-""""""""""""""""""""""""""""""""""
-The client applications needs to register the NFC permission as shown in the
-listing below in order to access the NFC reader hardware.
-
-.. code-block:: xml
-
-  <uses-permission android:name="android.permission.NFC"/>
-
-
-.. seealso::
-
-  https://developer.android.com/guide/topics/security/permissions.html
-
-.. note::
-  The integrated variant already provides an **AndroidManifest.xml** with
-  prepared permissions.
-
 
 
 Intent-Filter in AndroidManifest.xml

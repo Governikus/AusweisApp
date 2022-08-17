@@ -13,7 +13,7 @@ using namespace governikus;
 MockReaderManagerPlugIn* MockReaderManagerPlugIn::mInstance = nullptr;
 
 MockReaderManagerPlugIn::MockReaderManagerPlugIn()
-	: ReaderManagerPlugIn(ReaderManagerPlugInType::UNKNOWN, true)
+	: ReaderManagerPlugIn(MockReader::cMOCKED_READERMANAGER_TYPE, true)
 	, mReaders()
 {
 	mInstance = this;
@@ -32,8 +32,6 @@ MockReaderManagerPlugIn& MockReaderManagerPlugIn::getInstance()
 
 QList<Reader*> MockReaderManagerPlugIn::getReaders() const
 {
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
 	QList<Reader*> readers;
 	readers.reserve(mReaders.size());
 	for (MockReader* reader : mReaders)
@@ -44,17 +42,17 @@ QList<Reader*> MockReaderManagerPlugIn::getReaders() const
 }
 
 
-MockReader* MockReaderManagerPlugIn::addReader(const QString& pReaderName)
+MockReader* MockReaderManagerPlugIn::addReader(const QString& pReaderName, ReaderManagerPlugInType pType)
 {
 	MockReader* mockReader = nullptr;
 
-	QMetaObject::invokeMethod(this, [this, pReaderName] {
-			auto* reader = new MockReader(pReaderName);
+	QMetaObject::invokeMethod(this, [this, pReaderName, pType] {
+			auto* reader = new MockReader(pReaderName, pType);
 			reader->setParent(this);
 
 			connect(reader, &Reader::fireCardInserted, this, &ReaderManagerPlugIn::fireCardInserted);
 			connect(reader, &Reader::fireCardRemoved, this, &ReaderManagerPlugIn::fireCardRemoved);
-			connect(reader, &Reader::fireCardRetryCounterChanged, this, &ReaderManagerPlugIn::fireCardRetryCounterChanged);
+			connect(reader, &Reader::fireCardInfoChanged, this, &ReaderManagerPlugIn::fireCardInfoChanged);
 			connect(reader, &Reader::fireReaderPropertiesUpdated, this, &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
 
 			mReaders.insert(pReaderName, reader);
@@ -94,4 +92,16 @@ void MockReaderManagerPlugIn::removeAllReader()
 		removeReader(reader->getName());
 	}
 	QCoreApplication::processEvents();
+}
+
+
+void MockReaderManagerPlugIn::insert(const QString& pReaderName, const QVariant& pData)
+{
+	for (MockReader* reader : qAsConst(mReaders))
+	{
+		if (reader->getName() == pReaderName)
+		{
+			reader->insertCard(pData);
+		}
+	}
 }

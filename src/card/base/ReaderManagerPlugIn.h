@@ -8,6 +8,7 @@
 #pragma once
 
 #include "GlobalStatus.h"
+#include "Reader.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 
@@ -17,15 +18,14 @@
 namespace governikus
 {
 
-class Reader;
-
 class ReaderManagerPlugIn
 	: public QObject
 {
 	Q_OBJECT
-	ReaderManagerPlugInInfo mInfo;
+	friend class MockReaderManagerPlugIn;
 
 	private:
+		ReaderManagerPlugInInfo mInfo;
 		bool mScanRunning;
 
 	protected:
@@ -42,6 +42,7 @@ class ReaderManagerPlugIn
 		void setPlugInAvailable(bool pAvailable)
 		{
 			mInfo.setAvailable(pAvailable);
+			Q_EMIT fireStatusChanged(mInfo);
 		}
 
 
@@ -89,6 +90,16 @@ class ReaderManagerPlugIn
 		}
 
 
+		virtual void insert(const QString& pReaderName, const QVariant& pData)
+		{
+			Q_UNUSED(pReaderName)
+			Q_UNUSED(pData)
+		}
+
+
+		void shelve();
+
+
 		virtual void startScan(bool pAutoConnect);
 		virtual void stopScan(const QString& pError = QString());
 
@@ -98,7 +109,7 @@ class ReaderManagerPlugIn
 		void fireReaderRemoved(const ReaderInfo& pInfo);
 		void fireCardInserted(const ReaderInfo& pInfo);
 		void fireCardRemoved(const ReaderInfo& pInfo);
-		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
+		void fireCardInfoChanged(const ReaderInfo& pInfo);
 		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
 };
 

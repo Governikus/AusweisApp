@@ -2,11 +2,11 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import Governikus.Type.Random 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 Item {
 	property bool pinFieldAnimation: true
@@ -27,7 +27,7 @@ Item {
 			onTimer.triggeredOnStart = false
 			if (pinFieldAnimation)
 			{
-				onTimer.index = Random.randomInt(0, 8)
+				onTimer.index = ApplicationModel.randomInt(0, 8)
 				repeater.itemAt(onTimer.index).state = "on"
 			}
 

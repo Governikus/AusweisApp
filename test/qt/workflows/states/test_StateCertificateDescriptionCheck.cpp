@@ -12,9 +12,9 @@
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
+#include <QThread>
 #include <QtCore>
 #include <QtTest>
-#include <QThread>
 
 using namespace governikus;
 
@@ -62,7 +62,8 @@ class test_StateCertificateDescriptionCheck
 		void noSubjectUrl()
 		{
 			const auto& desc = qSharedPointerConstCast<CertificateDescription>(mAuthContext->getDidAuthenticateEac1()->getCertificateDescription());
-			desc->setSubjectUrl(QString());
+
+			Asn1StringUtil::setValue(QString(), desc->mSubjectURL);
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 

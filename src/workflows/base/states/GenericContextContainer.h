@@ -1,6 +1,6 @@
 /*!
  * \brief Template base class for all steps taken by the state machine.
- *        It is parameterized over the model type and contains a getter for the model.
+ *        It is parameterized over the context type and contains a getter for the context.
  *        We cannot parameterize the super class AbstractState because Qt does not
  *        support template classes.
  *
@@ -29,9 +29,7 @@ class GenericContextContainer
 		}
 
 
-		virtual ~GenericContextContainer() = default;
-
-		virtual QSharedPointer<ContextClass> getContext()
+		[[nodiscard]] QSharedPointer<ContextClass> getContext() const
 		{
 			return mTypedContext;
 		}

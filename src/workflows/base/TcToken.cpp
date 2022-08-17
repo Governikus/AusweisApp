@@ -30,9 +30,7 @@ TcToken::TcToken(const QByteArray& pData)
 }
 
 
-TcToken::~TcToken()
-{
-}
+TcToken::~TcToken() = default;
 
 
 void TcToken::parse(const QByteArray& pData)
@@ -40,8 +38,13 @@ void TcToken::parse(const QByteArray& pData)
 	qDebug().noquote() << "Parsing TcToken:\n" << pData;
 	QXmlStreamReader reader(pData);
 
-	QString binding, pathSecurityProtocol, serverAddress, refreshAddress, communicationErrorAddress;
-	QByteArray psk, sessionIdentifier;
+	QString binding;
+	QString pathSecurityProtocol;
+	QString serverAddress;
+	QString refreshAddress;
+	QString communicationErrorAddress;
+	QByteArray psk;
+	QByteArray sessionIdentifier;
 
 	for (reader.readNext(); !reader.isEndDocument() && !reader.hasError(); reader.readNext())
 	{
@@ -153,7 +156,7 @@ bool TcToken::valuesAreSchemaConform(const QString& pBinding,
 
 	if (!isAnyUri(pCommunicationErrorAddress))
 	{
-		qCritical() << "CommunicationErrorAddress no  valid anyUri:" << pCommunicationErrorAddress;
+		qCritical() << "CommunicationErrorAddress no valid anyUri:" << pCommunicationErrorAddress;
 		return false;
 	}
 

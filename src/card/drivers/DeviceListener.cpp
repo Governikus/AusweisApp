@@ -5,7 +5,7 @@
 #include "DeviceListener.h"
 
 #if __has_include(<libudev.h>)
-#include <libudev.h>
+	#include <libudev.h>
 #endif
 
 #include <QByteArray>
@@ -30,7 +30,7 @@ void DeviceListener::run()
 		// slept; most other implementations do not do this.  (POSIX.1 permits
 		// either behavior.)
 		struct timeval timeout;
-#ifndef QT_NO_DEBUG
+	#ifndef QT_NO_DEBUG
 		if (QCoreApplication::applicationName().startsWith(QLatin1String("Test")))
 		{
 			timeout = {
@@ -39,7 +39,7 @@ void DeviceListener::run()
 			};
 		}
 		else
-#endif
+	#endif
 		{
 			timeout = {
 				1, /*long tv_sec*/

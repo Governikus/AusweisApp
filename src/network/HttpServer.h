@@ -10,9 +10,9 @@
 #include "PortFile.h"
 
 #include <QMetaMethod>
-#include <QScopedPointer>
 #include <QSharedPointer>
 #include <QTcpServer>
+#include <QVector>
 
 namespace governikus
 {
@@ -23,17 +23,20 @@ class HttpServer
 	Q_OBJECT
 
 	private:
-		QScopedPointer<QTcpServer, QScopedPointerDeleteLater> mServer;
+		QVector<QSharedPointer<QTcpServer>> mServer;
 		PortFile mPortFile;
 
 		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
 
 	public:
 		static quint16 cPort;
+		static QVector<QHostAddress> cAddresses;
 
-		explicit HttpServer(quint16 pPort = HttpServer::cPort);
+		explicit HttpServer(quint16 pPort = HttpServer::cPort,
+				const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);
 		~HttpServer() override;
 
+		[[nodiscard]] int boundAddresses() const;
 		[[nodiscard]] bool isListening() const;
 		[[nodiscard]] quint16 getServerPort() const;
 

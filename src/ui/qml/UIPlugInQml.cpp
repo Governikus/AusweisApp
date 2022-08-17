@@ -4,12 +4,9 @@
 
 #include "UIPlugInQml.h"
 
-#include "ApplicationModel.h"
 #include "AppSettings.h"
+#include "ApplicationModel.h"
 #include "AuthModel.h"
-#include "context/AuthContext.h"
-#include "context/ChangePinContext.h"
-#include "context/SelfAuthContext.h"
 #include "CardPosition.h"
 #include "CardPositionModel.h"
 #include "CertificateDescriptionModel.h"
@@ -21,26 +18,40 @@
 #include "FileDestination.h"
 #include "FormattedTextModel.h"
 #include "Initializer.h"
+#include "LogFilterModel.h"
 #include "LogHandler.h"
 #include "LogModel.h"
 #include "NotificationModel.h"
+#include "NumberModel.h"
+#include "PersonalizationModel.h"
 #include "PinResetInformationModel.h"
 #include "PlatformTools.h"
 #include "ProviderCategoryFilterModel.h"
-#include "Random.h"
 #include "ReaderScanEnabler.h"
 #include "ReleaseInformationModel.h"
 #include "RemoteServiceModel.h"
 #include "SelfAuthModel.h"
-#include "SelfDiagnosisModel.h"
 #include "Service.h"
+#include "SmartModel.h"
 #include "SurveyModel.h"
+#include "UILoader.h"
 #include "VersionInformationModel.h"
 #include "VersionNumber.h"
 #include "VolatileSettings.h"
+#include "context/AuthContext.h"
+#include "context/ChangePinContext.h"
+#include "context/SelfAuthContext.h"
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	#include "SelfDiagnosisModel.h"
+#endif
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-#include "ReaderDriverModel.h"
+	#include "ReaderModel.h"
+#endif
+
+#if __has_include("context/PersonalizationContext.h")
+	#include "context/PersonalizationContext.h"
 #endif
 
 #if defined(Q_OS_ANDROID)
@@ -48,14 +59,13 @@
 	#include "UILoader.h"
 
 	#include <QFont>
-	#include <QtAndroidExtras/QAndroidJniEnvironment>
-	#include <QtAndroidExtras/QtAndroid>
+	#include <QJniEnvironment>
 #endif
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include <QAbstractButton>
-#include <QMessageBox>
-#include <QStyle>
+	#include <QAbstractButton>
+	#include <QMessageBox>
+	#include <QStyle>
 #endif
 
 #include <QDir>
@@ -68,6 +78,7 @@
 #include <QOpenGLContext>
 #include <QOperatingSystemVersion>
 #include <QQmlContext>
+#include <QQuickStyle>
 #include <QScreen>
 #include <QtPlugin>
 #include <QtQml>
@@ -80,34 +91,41 @@ using namespace governikus;
 
 
 INIT_FUNCTION([] {
-			qRegisterMetaType<QList<QQmlError> >("QList<QQmlError>");
+			qRegisterMetaType<QList<QQmlError>>("QList<QQmlError>");
 		})
 
-
-template<typename T>
-QObject* provideQmlType(QQmlEngine* pEngine, QJSEngine* pScriptEngine)
+namespace
 {
-	Q_UNUSED(pEngine)
-	Q_UNUSED(pScriptEngine)
-
+template<typename T>
+[[nodiscard]] QObject* provideQmlType(const QQmlEngine*, const QJSEngine*)
+{
 	return new T();
 }
 
 
 template<typename T>
-static QObject* provideSingletonQmlType(QQmlEngine* pEngine, QJSEngine* pScriptEngine)
+[[nodiscard]] QObject* provideSingletonQmlType(const QQmlEngine*, const QJSEngine*)
 {
-	Q_UNUSED(pEngine)
-	Q_UNUSED(pScriptEngine)
-
 	const auto model = Env::getSingleton<T>();
 	QQmlEngine::setObjectOwnership(model, QQmlEngine::CppOwnership);
+
+	const auto& metaObject = model->metaObject();
+	const auto& onTranslationChangedSlot = metaObject->method(metaObject->indexOfSlot("onTranslationChanged()"));
+	if (onTranslationChangedSlot.isValid())
+	{
+		const auto& qmlPlugin = Env::getSingleton<UILoader>()->getLoaded<UIPlugInQml>();
+		if (qmlPlugin)
+		{
+			QObject::connect(qmlPlugin, QMetaMethod::fromSignal(&UIPlugInQml::fireTranslationChanged), model, onTranslationChangedSlot);
+		}
+	}
+
 	return model;
 }
 
 
 template<typename T>
-static void registerQmlSingletonType(QObject* (*pTypeProvider)(QQmlEngine*, QJSEngine*))
+void registerQmlSingletonType(const std::function<QObject* (const QQmlEngine*, const QJSEngine*)>& pTypeProvider)
 {
 	QByteArray qmlName(T::staticMetaObject.className());
 	qmlName.replace(QByteArrayLiteral("governikus::"), QByteArray());
@@ -119,7 +137,7 @@ static void registerQmlSingletonType(QObject* (*pTypeProvider)(QQmlEngine*, QJSE
 
 
 template<typename T>
-static void registerQmlType()
+void registerQmlType()
 {
 	QByteArray qmlName(T::staticMetaObject.className());
 	qmlName.replace(QByteArrayLiteral("governikus::"), QByteArray());
@@ -129,6 +147,8 @@ static void registerQmlType()
 	qmlRegisterType<T>(url.constData(), 1, 0, qmlName.constData());
 }
 
+
+} // namespace
 
 UIPlugInQml::UIPlugInQml()
 	: UIPlugIn()
@@ -141,6 +161,7 @@ UIPlugInQml::UIPlugInQml()
 #if defined(Q_OS_MACOS)
 	, mMenuBar()
 #endif
+	, mShowFocusIndicator(false)
 {
 	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
@@ -178,39 +199,51 @@ UIPlugInQml::UIPlugInQml()
 	QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
 #endif
 
+#ifndef Q_OS_ANDROID
 	QGuiApplication::setWindowIcon(mTrayIcon.getIcon());
+#endif
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UIPlugInQml::show);
-	connect(&mTrayIcon, &TrayIcon::fireQuit, this, qOverload<>(&UIPlugInQml::fireQuitApplicationRequest));
+	connect(&mTrayIcon, &TrayIcon::fireQuit, this, [this] {
+			Q_EMIT fireQuitApplicationRequest();
+		});
 
 	connect(this, &UIPlugIn::fireShowUserInformation, this, &UIPlugInQml::onShowUserInformation);
-	connect(qGuiApp, &QGuiApplication::paletteChanged, this, &UIPlugInQml::onWindowPaletteChanged);
+	qApp->installEventFilter(this);
 }
 
 
 void UIPlugInQml::registerQmlTypes()
 {
-	qmlRegisterUncreatableType<EnumUiModule>("Governikus.Type.UiModule", 1, 0, "UiModule", QStringLiteral("Not creatable as it is an enum type"));
-	qmlRegisterUncreatableType<GlobalStatus>("Governikus.Type.GlobalStatus", 1, 0, "GlobalStatus", QStringLiteral("Not creatable as it is an enum type"));
-	qmlRegisterUncreatableType<EnumReaderManagerPlugInType>("Governikus.Type.ReaderPlugIn", 1, 0, "ReaderPlugIn", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(EnumUiModule::staticMetaObject, "Governikus.Type.UiModule", 1, 0, "UiModule", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(GlobalStatus::staticMetaObject, "Governikus.Type.GlobalStatus", 1, 0, "GlobalStatus", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(EnumReaderManagerPlugInType::staticMetaObject, "Governikus.Type.ReaderPlugIn", 1, 0, "ReaderPlugIn", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(EnumPasswordType::staticMetaObject, "Governikus.Type.PasswordType", 1, 0, "PasswordType", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(FormattedTextModel::staticMetaObject, "Governikus.Type.FormattedTextModel", 1, 0, "LineType", QStringLiteral("Not creatable as it is an enum type"));
 
 	registerQmlType<ReaderScanEnabler>();
 	registerQmlType<CardPosition>();
 	registerQmlType<CardPositionModel>();
 	registerQmlType<CheckIDCardModel>();
-	registerQmlType<FormattedTextModel>();
+	registerQmlType<ReleaseInformationModel>();
+	registerQmlType<LogFilterModel>();
 
 	registerQmlSingletonType<ProviderCategoryFilterModel>(&provideQmlType<ProviderCategoryFilterModel>);
 	registerQmlSingletonType<HistoryModel>(&provideQmlType<HistoryModel>);
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-	registerQmlSingletonType<ReaderDriverModel>(&provideQmlType<ReaderDriverModel>);
+	registerQmlSingletonType<ReaderModel>(&provideQmlType<ReaderModel>);
+#endif
+
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	registerQmlSingletonType<SelfDiagnosisModel>(&provideSingletonQmlType<SelfDiagnosisModel>);
 #endif
 
 	registerQmlSingletonType<ApplicationModel>(&provideSingletonQmlType<ApplicationModel>);
 	registerQmlSingletonType<SettingsModel>(&provideSingletonQmlType<SettingsModel>);
+	registerQmlSingletonType<WorkflowModel>(&provideSingletonQmlType<WorkflowModel>);
 	registerQmlSingletonType<AuthModel>(&provideSingletonQmlType<AuthModel>);
 	registerQmlSingletonType<SelfAuthModel>(&provideSingletonQmlType<SelfAuthModel>);
-	registerQmlSingletonType<SelfDiagnosisModel>(&provideSingletonQmlType<SelfDiagnosisModel>);
+	registerQmlSingletonType<PersonalizationModel>(&provideSingletonQmlType<PersonalizationModel>);
 	registerQmlSingletonType<ChangePinModel>(&provideSingletonQmlType<ChangePinModel>);
 	registerQmlSingletonType<NumberModel>(&provideSingletonQmlType<NumberModel>);
 	registerQmlSingletonType<RemoteServiceModel>(&provideSingletonQmlType<RemoteServiceModel>);
@@ -218,12 +251,11 @@ void UIPlugInQml::registerQmlTypes()
 	registerQmlSingletonType<NotificationModel>(&provideSingletonQmlType<NotificationModel>);
 	registerQmlSingletonType<SurveyModel>(&provideSingletonQmlType<SurveyModel>);
 	registerQmlSingletonType<Service>(&provideSingletonQmlType<Service>);
-	registerQmlSingletonType<Random>(&provideSingletonQmlType<Random>);
 	registerQmlSingletonType<CertificateDescriptionModel>(&provideSingletonQmlType<CertificateDescriptionModel>);
 	registerQmlSingletonType<ChatModel>(&provideSingletonQmlType<ChatModel>);
 	registerQmlSingletonType<VersionInformationModel>(&provideSingletonQmlType<VersionInformationModel>);
 	registerQmlSingletonType<ConnectivityManager>(&provideSingletonQmlType<ConnectivityManager>);
-	registerQmlSingletonType<ReleaseInformationModel>(&provideSingletonQmlType<ReleaseInformationModel>);
+	registerQmlSingletonType<SmartModel>(&provideSingletonQmlType<SmartModel>);
 	registerQmlSingletonType<PinResetInformationModel>(&provideSingletonQmlType<PinResetInformationModel>);
 }
 
@@ -237,8 +269,12 @@ void UIPlugInQml::init()
 	const auto orientation = isTabletLayout()
 		? "SCREEN_ORIENTATION_SENSOR_LANDSCAPE"
 		: "SCREEN_ORIENTATION_PORTRAIT";
-	QtAndroid::androidActivity().callMethod<void>("setRequestedOrientation", "(I)V", QAndroidJniObject::getStaticField<jint>("android/content/pm/ActivityInfo", orientation));
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	context.callMethod<void>("setRequestedOrientation", "(I)V", QJniObject::getStaticField<jint>("android/content/pm/ActivityInfo", orientation));
 #endif
+
+	// https://bugreports.qt.io/browse/QTBUG-98098
+	QQuickStyle::setStyle(QStringLiteral("Basic"));
 
 	mEngine.reset(new QQmlApplicationEngine());
 
@@ -246,7 +282,11 @@ void UIPlugInQml::init()
 	connect(mEngine.data(), &QQmlApplicationEngine::objectCreated, this, &UIPlugInQml::onQmlObjectCreated, Qt::QueuedConnection);
 
 	mEngine->rootContext()->setContextProperty(QStringLiteral("plugin"), this);
-	QQmlFileSelector::get(mEngine.data())->setExtraSelectors(mExplicitPlatformStyle.split(QLatin1Char(',')));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	mEngine->setExtraFileSelectors(mExplicitPlatformStyle.split(QLatin1Char(',')));
+#else
+	(new QQmlFileSelector(mEngine.data()))->setExtraSelectors(mExplicitPlatformStyle.split(QLatin1Char(',')));
+#endif
 
 	UIPlugInQml::registerQmlTypes();
 
@@ -259,20 +299,13 @@ void UIPlugInQml::init()
 	QQuickWindow* rootWindow = getRootWindow();
 	if (rootWindow != nullptr)
 	{
-#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(5, 14, 1)
-		// we need to call create() explicitly because Windows needs a handle to fire WM_ENDSESSION!
-		// Since we start as a systemtray only we don't have a correct handle until we call show()
-		rootWindow->create();
-#endif
 		connect(rootWindow, &QQuickWindow::sceneGraphInitialized, this, &UIPlugInQml::fireSafeAreaMarginsChanged);
+		connect(rootWindow->screen(), &QScreen::orientationChanged, this, &UIPlugInQml::fireSafeAreaMarginsChanged);
 		connect(rootWindow, &QQuickWindow::sceneGraphError, this, &UIPlugInQml::onSceneGraphError);
 		qCDebug(qml) << "Using renderer interface:" << rootWindow->rendererInterface()->graphicsApi();
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-		const auto& newSize = getInitialWindowSize();
-		const auto screenGeometry = rootWindow->screen()->availableGeometry();
-		const auto newWindowGeometry = QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, newSize, screenGeometry);
-		rootWindow->setGeometry(newWindowGeometry);
+		rootWindow->resize(getInitialWindowSize());
 #endif
 	}
 
@@ -288,17 +321,23 @@ void UIPlugInQml::hideFromTaskbar()
 
 QString UIPlugInQml::getPlatformSelectors() const
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+	QString qtVersion = QStringLiteral("qt5,");
+#else
+	QString qtVersion = QStringLiteral("qt6,");
+#endif
+
 #ifndef QT_NO_DEBUG
 	const char* const overrideSelector = "OVERRIDE_PLATFORM_SELECTOR";
 	if (!qEnvironmentVariableIsEmpty(overrideSelector))
 	{
-		const auto& platform = QString::fromLocal8Bit(qgetenv(overrideSelector));
+		const auto& platform = qEnvironmentVariable(overrideSelector);
 		qCDebug(qml) << "Override platform selector:" << platform;
 		if (platform.startsWith(QLatin1Char('+')) || platform.contains(QLatin1String(",+")))
 		{
 			Q_ASSERT(false && "Please supply selectors without a '+'.");
 		}
-		return platform;
+		return qtVersion + platform;
 	}
 #endif
 
@@ -309,14 +348,14 @@ QString UIPlugInQml::getPlatformSelectors() const
 #else
 	const QString platform = QStringLiteral("desktop,");
 	const QString tablet;
-#if defined(Q_OS_WIN)
+	#if defined(Q_OS_WIN)
 	const QString brand = QStringLiteral("win");
-#else
+	#else
 	const QString brand = QStringLiteral("nowin");
-#endif
+	#endif
 #endif
 
-	return platform + tablet + brand;
+	return qtVersion + platform + tablet + brand;
 }
 
 
@@ -327,15 +366,29 @@ void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 		return;
 	}
 
+	pContext->claim(this);
 	Env::getSingleton<ApplicationModel>()->keepScreenOn(true);
 	Env::getSingleton<ApplicationModel>()->resetContext(pContext);
 	Env::getSingleton<NumberModel>()->resetContext(pContext);
+	Env::getSingleton<VolatileSettings>()->setDelay(1000);
 
 	if (auto changePinContext = pContext.objectCast<ChangePinContext>())
 	{
 		onShowUi(UiModule::PINMANAGEMENT);
 		Env::getSingleton<ChangePinModel>()->resetChangePinContext(changePinContext);
 	}
+
+#if __has_include("context/PersonalizationContext.h")
+	if (auto smartContext = pContext.objectCast<PersonalizationContext>())
+	{
+		onShowUi(UiModule::SMART);
+		Env::getSingleton<ConnectivityManager>()->startWatching();
+		Env::getSingleton<PersonalizationModel>()->resetPersonalizationContext(smartContext);
+		Env::getSingleton<CertificateDescriptionModel>()->resetContext(smartContext);
+		Env::getSingleton<ChatModel>()->resetContext(smartContext);
+	}
+	else
+#endif
 
 	if (auto authContext = pContext.objectCast<AuthContext>())
 	{
@@ -352,7 +405,7 @@ void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 		Env::getSingleton<SelfAuthModel>()->resetContext(authContext);
 	}
 
-	if (auto remoteServiceContext = pContext.objectCast<RemoteServiceContext>())
+	if (auto remoteServiceContext = pContext.objectCast<IfdServiceContext>())
 	{
 		Env::getSingleton<RemoteServiceModel>()->resetRemoteServiceContext(remoteServiceContext);
 	}
@@ -364,6 +417,7 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 	Env::getSingleton<ApplicationModel>()->keepScreenOn(false);
 	Env::getSingleton<ApplicationModel>()->resetContext();
 	Env::getSingleton<NumberModel>()->resetContext();
+	Env::getSingleton<VolatileSettings>()->setDelay();
 
 	if (pContext.objectCast<ChangePinContext>())
 	{
@@ -382,7 +436,14 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		// Only hide the UI if we don't need to show the update information view. This behaviour ensures that
 		// the user is (aggressively) notified about a pending update if the AA2 is only shown for authentication
 		// workflows and never manually brought to foreground in between.
-		if (!pContext.objectCast<SelfAuthContext>() && !pContext->hasNextWorkflowPending() && generalSettings.isAutoCloseWindowAfterAuthentication() && !showUpdateInformationIfPending() && !context->showChangePinView())
+		if (!pContext.objectCast<SelfAuthContext>()
+#if __has_include("context/PersonalizationContext.h")
+				&& !pContext.objectCast<PersonalizationContext>()
+#endif
+				&& !pContext->hasNextWorkflowPending()
+				&& generalSettings.isAutoCloseWindowAfterAuthentication()
+				&& !showUpdateInformationIfPending()
+				&& !context->showChangePinView())
 		{
 			onHideUi();
 		}
@@ -393,18 +454,28 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 		Env::getSingleton<SelfAuthModel>()->resetContext();
 	}
 
-	if (pContext.objectCast<RemoteServiceContext>())
+	if (pContext.objectCast<IfdServiceContext>())
 	{
 		Env::getSingleton<RemoteServiceModel>()->resetRemoteServiceContext();
 	}
+
+#if __has_include("context/PersonalizationContext.h")
+	if (pContext.objectCast<PersonalizationContext>())
+	{
+		Env::getSingleton<PersonalizationModel>()->resetPersonalizationContext();
+	}
+#endif
+
+	Env::getSingleton<SmartModel>()->workflowFinished(pContext);
 }
 
 
 void UIPlugInQml::onApplicationInitialized()
 {
-	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UIPlugIn::fireChangePinRequested);
-	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UIPlugIn::fireSelfAuthenticationRequested);
-	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UIPlugIn::fireRemoteServiceRequested);
+	connect(Env::getSingleton<ChangePinModel>(), &ChangePinModel::fireStartWorkflow, this, &UIPlugIn::fireWorkflowRequested);
+	connect(Env::getSingleton<SelfAuthModel>(), &SelfAuthModel::fireStartWorkflow, this, &UIPlugIn::fireWorkflowRequested);
+	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UIPlugIn::fireWorkflowRequested);
+	connect(Env::getSingleton<PersonalizationModel>(), &PersonalizationModel::fireStartWorkflow, this, &UIPlugIn::fireWorkflowRequested);
 	connect(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireRawLog, this, &UIPlugInQml::onRawLog, Qt::QueuedConnection);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireAutoStartChanged, this, &UIPlugInQml::onAutoStartChanged);
 
@@ -419,15 +490,16 @@ void UIPlugInQml::onApplicationInitialized()
 void UIPlugInQml::onApplicationStarted()
 {
 	mTrayIcon.create();
+	connect(this, &UIPlugInQml::fireTranslationChanged, &mTrayIcon, &TrayIcon::onTranslationChanged);
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	const bool showSetupAssistant = Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL) == UiModule::TUTORIAL;
 	const bool developerMode = generalSettings.isDeveloperMode();
 	bool missingTrayIcon = !QSystemTrayIcon::isSystemTrayAvailable();
-#ifdef Q_OS_MACOS
+	#ifdef Q_OS_MACOS
 	missingTrayIcon |= !Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStart();
-#endif
+	#endif
 	if (missingTrayIcon || showSetupAssistant || developerMode)
 #endif
 	{
@@ -435,7 +507,7 @@ void UIPlugInQml::onApplicationStarted()
 	}
 
 #if defined(Q_OS_ANDROID)
-	QtAndroid::hideSplashScreen(250);
+	QNativeInterface::QAndroidApplication::hideSplashScreen(250);
 #endif
 }
 
@@ -570,12 +642,42 @@ bool UIPlugInQml::showUpdateInformationIfPending()
 }
 
 
+bool UIPlugInQml::eventFilter(QObject* pObj, QEvent* pEvent)
+{
+	if (pEvent->type() == QEvent::ApplicationPaletteChange)
+	{
+		onWindowPaletteChanged();
+		return true;
+	}
+
+	if (pEvent->type() == QEvent::Quit)
+	{
+		Q_EMIT fireQuitApplicationRequest();
+		return true;
+	}
+
+	if (pEvent->type() == QEvent::FocusIn)
+	{
+		const auto focusEvent = static_cast<QFocusEvent*>(pEvent);
+		const auto focusReason = focusEvent->reason();
+
+		mShowFocusIndicator = focusReason == Qt::TabFocusReason ||
+				focusReason == Qt::BacktabFocusReason ||
+				focusReason == Qt::OtherFocusReason;
+		Q_EMIT fireShowFocusIndicator();
+	}
+
+	return QObject::eventFilter(pObj, pEvent);
+}
+
+
 void UIPlugInQml::onTranslationChanged()
 {
 	if (mEngine)
 	{
 		mEngine->retranslate();
 	}
+	Q_EMIT fireTranslationChanged();
 }
 
 
@@ -617,14 +719,15 @@ bool UIPlugInQml::isHidden() const
 #ifndef Q_OS_IOS
 bool UIPlugInQml::isTablet() const
 {
-#ifdef Q_OS_ANDROID
-	const jboolean result = QtAndroid::androidActivity().callMethod<jboolean>("isTablet", "()Z");
+	#ifdef Q_OS_ANDROID
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	const jboolean result = context.callMethod<jboolean>("isTablet", "()Z");
 	return result != JNI_FALSE;
 
-#else
+	#else
 	return false;
 
-#endif
+	#endif
 }
 
 
@@ -646,7 +749,7 @@ void UIPlugInQml::onQmlWarnings(const QList<QQmlError>& pWarnings)
 #endif
 
 #ifndef QT_NO_DEBUG
-	for (auto warning : pWarnings)
+	for (const auto& warning : pWarnings)
 	{
 		Env::getSingleton<ApplicationModel>()->showFeedback(QStringLiteral("Got QML warning: %1").arg(warning.toString()), false);
 	}
@@ -748,21 +851,23 @@ QVariantMap UIPlugInQml::getSafeAreaMargins() const
 {
 	QVariantMap marginMap;
 
-#ifdef Q_OS_ANDROID
-
-	auto screen = QGuiApplication::primaryScreen();
-	auto windowInsets = QtAndroid::androidActivity().callObjectMethod("getWindowInsets", "()Landroid/view/ViewGroup$MarginLayoutParams;");
-
-	marginMap[QStringLiteral("top")] = windowInsets.getField<jint>("topMargin") / screen->devicePixelRatio();
-	marginMap[QStringLiteral("left")] = windowInsets.getField<jint>("leftMargin") / screen->devicePixelRatio();
-	marginMap[QStringLiteral("right")] = windowInsets.getField<jint>("rightMargin") / screen->devicePixelRatio();
-	marginMap[QStringLiteral("bottom")] = windowInsets.getField<jint>("bottomMargin") / screen->devicePixelRatio();
-#else
 	marginMap[QStringLiteral("top")] = 0;
 	marginMap[QStringLiteral("right")] = 0;
 	marginMap[QStringLiteral("bottom")] = 0;
 	marginMap[QStringLiteral("left")] = 0;
-#endif
+
+	#ifdef Q_OS_ANDROID
+	if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+	{
+		auto screen = QGuiApplication::primaryScreen();
+		auto windowInsets = activity.callObjectMethod("getWindowInsets", "()Landroid/view/ViewGroup$MarginLayoutParams;");
+
+		marginMap[QStringLiteral("top")] = windowInsets.getField<jint>("topMargin") / screen->devicePixelRatio();
+		marginMap[QStringLiteral("left")] = windowInsets.getField<jint>("leftMargin") / screen->devicePixelRatio();
+		marginMap[QStringLiteral("right")] = windowInsets.getField<jint>("rightMargin") / screen->devicePixelRatio();
+		marginMap[QStringLiteral("bottom")] = windowInsets.getField<jint>("bottomMargin") / screen->devicePixelRatio();
+	}
+	#endif
 
 	return marginMap;
 }
@@ -780,11 +885,10 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAr
 	Q_UNUSED(pObj)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			UIPlugIn* uiPlugIn = Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInQml);
+			UIPlugInQml* const uiPlugIn = Env::getSingleton<UILoader>()->getLoaded<UIPlugInQml>();
 			if (uiPlugIn)
 			{
-				UIPlugInQml* uiPlugInQml = qobject_cast<UIPlugInQml*>(uiPlugIn);
-				Q_EMIT uiPlugInQml->fireSafeAreaMarginsChanged();
+				Q_EMIT uiPlugIn->fireSafeAreaMarginsChanged();
 			}
 		}, Qt::QueuedConnection);
 }
@@ -797,15 +901,15 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAr
 #ifndef Q_OS_MACOS
 bool UIPlugInQml::isHighContrastEnabled() const
 {
-#ifdef Q_OS_WIN
+	#ifdef Q_OS_WIN
 	HIGHCONTRAST hc;
 	hc.cbSize = sizeof(hc);
 	return SystemParametersInfo(SPI_GETHIGHCONTRAST, sizeof(hc), &hc, FALSE) && (hc.dwFlags & HCF_HIGHCONTRASTON);
 
-#else
+	#else
 	return false;
 
-#endif
+	#endif
 }
 
 
@@ -834,6 +938,12 @@ QSize UIPlugInQml::getInitialWindowSize() const
 }
 
 
+bool UIPlugInQml::getShowFocusIndicator() const
+{
+	return mShowFocusIndicator;
+}
+
+
 void UIPlugInQml::onWindowPaletteChanged()
 {
 	const bool highContrast = isHighContrastEnabled();
@@ -855,9 +965,15 @@ void UIPlugInQml::onAutoStartChanged()
 
 void UIPlugInQml::applyPlatformStyle(const QString& pPlatformStyle)
 {
-	if (mExplicitPlatformStyle != pPlatformStyle)
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+	QString platformStyle = QStringLiteral("qt5,%1").arg(pPlatformStyle);
+#else
+	QString platformStyle = QStringLiteral("qt6,%1").arg(pPlatformStyle);
+#endif
+
+	if (mExplicitPlatformStyle != platformStyle)
 	{
-		mExplicitPlatformStyle = pPlatformStyle;
+		mExplicitPlatformStyle = platformStyle;
 		Env::getSingleton<AppSettings>()->getGeneralSettings().setScreenOrientation(pPlatformStyle.indexOf(QLatin1String("tablet")) == -1 ? QStringLiteral("portrait") : QStringLiteral("landscape"));
 		doRefresh();
 	}

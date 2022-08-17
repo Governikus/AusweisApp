@@ -9,10 +9,10 @@
 #include "NetworkManager.h"
 #include "TlsChecker.h"
 
-#include <http_parser.h>
 #include <QDebug>
 #include <QNetworkRequest>
 #include <QSslKey>
+#include <http_parser.h>
 
 
 using namespace governikus;
@@ -22,7 +22,7 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateGetTcToken::StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 	, mReply()
 {
@@ -33,12 +33,14 @@ void StateGetTcToken::run()
 {
 	auto url = getContext()->getTcTokenUrl();
 	qDebug() << "Got TC Token URL:" << url;
+	getContext()->setProgress(0, tr("Fetch TCToken"));
 
 	if (!isValidRedirectUrl(url))
 	{
 		Q_EMIT fireAbort();
 		return;
 	}
+
 	// At this time we start the first network communication in a
 	// workflow. Therefore it is necessary to clear all connections
 	// to force new connections with the expected security settings.
@@ -57,8 +59,6 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 	}
 	else if (pUrl.scheme() != QLatin1String("https"))
 	{
-		// according to TR-03124-1 in case of a non-HTTPS URL a createTrustedChannelEstablishmentError error must be sent
-		// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
 		const auto httpsError1 = QStringLiteral("Error while connecting to the provider. A secure connection could not be established.");
 		const auto httpsError2 = QStringLiteral("  The used URL is not of type HTTPS: %1").arg(pUrl.toString());
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
@@ -70,6 +70,8 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 		{
 			qCritical() << httpsError1;
 			qCritical() << httpsError2;
+			// according to TR-03124-1 in case of a non-HTTPS URL a createTrustedChannelEstablishmentError error must be sent
+			// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
 			getContext()->setTcTokenNotFound(false);
 			const GlobalStatus::ExternalInfoMap& infoMap {
 				{GlobalStatus::ExternalInformation::LAST_URL, pUrl.toString()},
@@ -86,7 +88,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 void StateGetTcToken::sendRequest(const QUrl& pUrl)
 {
 	QNetworkRequest request(pUrl);
-	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetTcToken::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetTcToken::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGetTcToken::onNetworkReply);
@@ -95,18 +97,21 @@ void StateGetTcToken::sendRequest(const QUrl& pUrl)
 
 void StateGetTcToken::onSslErrors(const QList<QSslError>& pErrors)
 {
-	TlsChecker::containsFatalError(mReply, pErrors);
+	if (TlsChecker::containsFatalError(mReply, pErrors))
+	{
+		mReply->abort();
+	}
 }
 
 
 void StateGetTcToken::onExit(QEvent* pEvent)
 {
-	AbstractState::onExit(pEvent);
-
 	if (!mReply.isNull())
 	{
 		mReply.reset();
 	}
+
+	AbstractState::onExit(pEvent);
 }
 
 

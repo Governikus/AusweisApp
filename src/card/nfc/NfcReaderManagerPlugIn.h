@@ -31,7 +31,7 @@ class NfcReaderManagerPlugIn
 
 	public:
 		NfcReaderManagerPlugIn();
-		~NfcReaderManagerPlugIn() override;
+		~NfcReaderManagerPlugIn() override = default;
 
 		[[nodiscard]] QList<Reader*> getReaders() const override;
 

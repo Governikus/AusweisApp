@@ -11,7 +11,7 @@
 
 using namespace governikus;
 
-MsgHandlerReaderList::MsgHandlerReaderList()
+MsgHandlerReaderList::MsgHandlerReaderList(const MsgContext& pContext)
 	: MsgHandler(MsgType::READER_LIST)
 {
 	QJsonArray reader;
@@ -20,5 +20,7 @@ MsgHandlerReaderList::MsgHandlerReaderList()
 	{
 		reader += MsgHandlerReader::createReaderInfo(info);
 	}
-	mJsonObject[QLatin1String("reader")] = reader;
+
+	const QLatin1String parameterName = pContext.getApiLevel() >= MsgLevel::v2 ? QLatin1String("readers") : QLatin1String("reader");
+	mJsonObject[parameterName] = reader;
 }

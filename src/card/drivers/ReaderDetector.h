@@ -12,15 +12,20 @@
 #include "UsbId.h"
 
 #ifdef Q_OS_LINUX
-#include "DeviceListener.h"
+	#include "DeviceListener.h"
 #endif
 
 #ifdef Q_OS_MACOS
-#include <IOKit/IOKitLib.h>
+	#include <IOKit/IOKitLib.h>
 #endif
 
 #ifdef Q_OS_WIN
-#include <QAbstractNativeEventFilter>
+	#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+using EventFilterResultType = long;
+	#else
+using EventFilterResultType = qintptr;
+	#endif
+	#include <QAbstractNativeEventFilter>
 #endif
 
 #include <QSharedPointer>
@@ -31,23 +36,23 @@ namespace governikus
 
 class ReaderDetector
 	: public QObject
-	#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 	, QAbstractNativeEventFilter
-	#endif
+#endif
 {
 	Q_OBJECT
 	friend class Env;
 
 	private:
-	#ifdef Q_OS_MACOS
+#ifdef Q_OS_MACOS
 		io_iterator_t mIteratorPublish;
 
 		io_iterator_t mIteratorTerminated;
-	#endif
+#endif
 
-	#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 		DeviceListener* mDeviceListener;
-	#endif
+#endif
 
 		bool initNativeEvents();
 		bool terminateNativeEvents();
@@ -59,9 +64,9 @@ class ReaderDetector
 	public:
 		[[nodiscard]] virtual QVector<UsbId> attachedDevIds() const;
 
-	#ifdef Q_OS_WIN
-		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
-	#endif
+#ifdef Q_OS_WIN
+		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, EventFilterResultType* pResult) override;
+#endif
 
 		/*!
 		 * \brief getAttachedDevices produce a list of supported devices that are

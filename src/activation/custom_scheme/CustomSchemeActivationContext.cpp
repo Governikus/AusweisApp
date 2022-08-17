@@ -10,8 +10,7 @@
 #include <QUrlQuery>
 
 #ifdef Q_OS_ANDROID
-	#include <QtAndroidExtras/QAndroidJniObject>
-	#include <QtAndroidExtras/QtAndroid>
+	#include <QJniObject>
 #endif
 
 
@@ -41,7 +40,8 @@ CustomSchemeActivationContext::~CustomSchemeActivationContext()
 		qDebug() << "Perform redirect to URL" << mRedirectAddress;
 
 #ifdef Q_OS_ANDROID
-		if (QtAndroid::androidActivity().callMethod<jboolean>("openUrl", "(Ljava/lang/String;Ljava/lang/String;)Z", QAndroidJniObject::fromString(mRedirectAddress.url()).object<jstring>(), QAndroidJniObject::fromString(mReferrer).object<jstring>()))
+		QJniObject context = QNativeInterface::QAndroidApplication::context();
+		if (context.callMethod<jboolean>("openUrl", "(Ljava/lang/String;Ljava/lang/String;)Z", QJniObject::fromString(mRedirectAddress.url()).object<jstring>(), QJniObject::fromString(mReferrer).object<jstring>()))
 		{
 			return;
 		}

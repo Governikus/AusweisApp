@@ -4,15 +4,17 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/CVCertificate.h"
 #include "asn1/EcdsaPublicKey.h"
 
-#include <QtCore>
-#include <QtTest>
+#include "asn1/CVCertificate.h"
+#include "asn1/Oid.h"
 
+#include <QtTest>
 #include <openssl/bn.h>
+#include <openssl/evp.h>
 #include <openssl/objects.h>
 #include <openssl/x509v3.h>
+
 
 using namespace governikus;
 
@@ -34,6 +36,44 @@ class test_EcdsaPublicKey
 		QVector<uchar> buf(BN_num_bytes(pBigNum));
 		BN_bn2bin(pBigNum, buf.data());
 		return QByteArray(reinterpret_cast<const char*>(buf.data()), buf.size());
+	}
+
+
+	QByteArray fetchEcParams(const QSharedPointer<EVP_PKEY>& pKey, BIGNUM** pA, BIGNUM** pB, BIGNUM** pP, BIGNUM** pCofactor, BIGNUM** pOrder)
+	{
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		EVP_PKEY_get_bn_param(pKey.data(), "a", pA);
+		EVP_PKEY_get_bn_param(pKey.data(), "b", pB);
+		EVP_PKEY_get_bn_param(pKey.data(), "p", pP);
+		EVP_PKEY_get_bn_param(pKey.data(), "cofactor", pCofactor);
+		EVP_PKEY_get_bn_param(pKey.data(), "order", pOrder);
+
+		QByteArray generator(1024, 0);
+		size_t usedSize = 0;
+		EVP_PKEY_get_octet_string_param(pKey.data(), "generator", reinterpret_cast<uchar*>(generator.data()), static_cast<size_t>(generator.size()), &usedSize);
+		generator.resize(static_cast<int>(usedSize));
+		return generator;
+
+#else
+		const EC_GROUP* ecGroup = EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(pKey.data()));
+		EC_GROUP_get_cofactor(ecGroup, *pCofactor, nullptr);
+		EC_GROUP_get_order(ecGroup, *pOrder, nullptr);
+
+	#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
+		EC_GROUP_get_curve_GFp(ecGroup, *pP, *pA, *pB, nullptr);
+	#else
+		EC_GROUP_get_curve(ecGroup, *pP, *pA, *pB, nullptr);
+	#endif
+
+		const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
+		auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
+
+		Q_ASSERT(bufLen <= INT_MAX);
+		QVector<char> buf(static_cast<int>(bufLen));
+		EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<uchar*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
+		return QByteArray(buf.data(), buf.size());
+
+#endif
 	}
 
 	private Q_SLOTS:
@@ -80,9 +120,10 @@ class test_EcdsaPublicKey
 			auto ecdsaPublicKey = EcdsaPublicKey::fromHex(hexString);
 
 			QVERIFY(ecdsaPublicKey != nullptr);
-			QVERIFY(ecdsaPublicKey->getEcKey() == nullptr);
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOidValueBytes().toHex().toUpper(), QByteArray("04007F00070202020203"));
+			QVERIFY(!ecdsaPublicKey->isComplete());
+			QVERIFY(ecdsaPublicKey->createKey().isNull());
+			QCOMPARE(ecdsaPublicKey->getSecurityProtocol(), SecurityProtocol(KnownOid::ID_TA_ECDSA_SHA_256));
+			QCOMPARE(ecdsaPublicKey->getOid(), Oid(KnownOid::ID_TA_ECDSA_SHA_256));
 			QCOMPARE(ecdsaPublicKey->getUncompressedPublicPoint().toHex().toUpper(), QByteArray("0426DB60E123E6B0D740E544213CD35CAB4D59D692A02A6FD97E06FE52FA32AFF05B1748141260AA618A05671E8C70C1957B2E96794EA08DEEB47834A074CF6912"));
 		}
 
@@ -193,45 +234,31 @@ class test_EcdsaPublicKey
 			auto ecdsaPublicKey = EcdsaPublicKey::fromHex(hexString);
 
 			QVERIFY(ecdsaPublicKey != nullptr);
-			QVERIFY(ecdsaPublicKey->getEcKey() != nullptr);
+			QVERIFY(ecdsaPublicKey->isComplete());
+			const auto& key = ecdsaPublicKey->createKey();
+			QVERIFY(!key.isNull());
 
-			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
-
-			#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
-			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
-			#else
-			EC_GROUP_get_curve(ecGroup, p, a, b, nullptr);
-			#endif
+			const auto guard = qScopeGuard([a, b, p, cofactor, order] {
+					BN_clear_free(a);
+					BN_clear_free(b);
+					BN_clear_free(p);
+					BN_clear_free(cofactor);
+					BN_clear_free(order);
+				});
+			const auto generator = fetchEcParams(key, &a, &b, &p, &cofactor, &order);
 
 			QCOMPARE(convert(p).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E5377"));
-			BN_clear_free(p);
-
 			QCOMPARE(convert(a).toHex().toUpper(), QByteArray("7D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D9"));
-			BN_clear_free(a);
-
 			QCOMPARE(convert(b).toHex().toUpper(), QByteArray("26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6"));
-			BN_clear_free(b);
 
-			EC_GROUP_get_cofactor(ecGroup, cofactor, nullptr);
 			const auto parsedCofactor = convert(cofactor).toHex().toUpper();
 			QVERIFY(parsedCofactor == QByteArray("") || parsedCofactor == QByteArray("01")); // https://github.com/openssl/openssl/commit/a6186f39802f94937a46f7a41ef0c86b6334b592
-			BN_clear_free(cofactor);
 
-			EC_GROUP_get_order(ecGroup, order, nullptr);
 			QCOMPARE(convert(order).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7"));
-			BN_clear_free(order);
-
-			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
-			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
-
-			Q_ASSERT(bufLen <= INT_MAX);
-			QVector<char> buf(static_cast<int>(bufLen));
-			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
-			QCOMPARE(QByteArray(buf.data(), buf.size()).toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
-
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOidValueBytes().toHex().toUpper(), QByteArray("04007F00070202020203"));
+			QCOMPARE(generator.toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
+			QCOMPARE(ecdsaPublicKey->getSecurityProtocol(), SecurityProtocol(KnownOid::ID_TA_ECDSA_SHA_256));
+			QCOMPARE(ecdsaPublicKey->getOid(), Oid(KnownOid::ID_TA_ECDSA_SHA_256));
 			QCOMPARE(ecdsaPublicKey->getUncompressedPublicPoint().toHex().toUpper(), QByteArray("043347ECF96FFB4BD9B8554EFBCCFC7D0B242F1071E29B4C9C622C79E339D840AF67BEB9B912692265D9C16C62573F4579FFD4DE2DE92BAB409DD5C5D48244A9F7"));
 		}
 
@@ -251,44 +278,28 @@ class test_EcdsaPublicKey
 			auto ecdsaPublicKey = EcdsaPublicKey::fromHex(hexString);
 
 			QVERIFY(ecdsaPublicKey != nullptr);
-			QVERIFY(ecdsaPublicKey->getEcKey() != nullptr);
+			QVERIFY(ecdsaPublicKey->isComplete());
+			const auto& key = ecdsaPublicKey->createKey();
+			QVERIFY(!key.isNull());
 
-			const EC_GROUP* ecGroup = EC_KEY_get0_group(ecdsaPublicKey->getEcKey());
 			BIGNUM* a = BN_new(), * b = BN_new(), * p = BN_new(), * cofactor = BN_new(), * order = BN_new();
-
-			#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
-			EC_GROUP_get_curve_GFp(ecGroup, p, a, b, nullptr);
-			#else
-			EC_GROUP_get_curve(ecGroup, p, a, b, nullptr);
-			#endif
+			const auto guard = qScopeGuard([a, b, p, cofactor, order] {
+					BN_clear_free(a);
+					BN_clear_free(b);
+					BN_clear_free(p);
+					BN_clear_free(cofactor);
+					BN_clear_free(order);
+				});
+			const auto generator = fetchEcParams(key, &a, &b, &p, &cofactor, &order);
 
 			QCOMPARE(convert(p).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E5377"));
-			BN_clear_free(p);
-
 			QCOMPARE(convert(a).toHex().toUpper(), QByteArray("7D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D9"));
-			BN_clear_free(a);
-
 			QCOMPARE(convert(b).toHex().toUpper(), QByteArray("26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6"));
-			BN_clear_free(b);
-
-			EC_GROUP_get_cofactor(ecGroup, cofactor, nullptr);
 			QCOMPARE(convert(cofactor).toHex().toUpper(), QByteArray("01"));
-			BN_clear_free(cofactor);
-
-			EC_GROUP_get_order(ecGroup, order, nullptr);
 			QCOMPARE(convert(order).toHex().toUpper(), QByteArray("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7"));
-			BN_clear_free(order);
-
-			const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
-			auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
-			Q_ASSERT(bufLen <= INT_MAX);
-
-			QVector<char> buf(static_cast<int>(bufLen));
-			EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<unsigned char*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
-			QCOMPARE(QByteArray(buf.data(), buf.size()).toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
-
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOid(), QByteArray("0.4.0.127.0.7.2.2.2.2.3"));
-			QCOMPARE(ecdsaPublicKey->getPublicKeyOidValueBytes().toHex().toUpper(), QByteArray("04007F00070202020203"));
+			QCOMPARE(generator.toHex().toUpper(), QByteArray("048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F046997"));
+			QCOMPARE(ecdsaPublicKey->getSecurityProtocol(), SecurityProtocol(KnownOid::ID_TA_ECDSA_SHA_256));
+			QCOMPARE(ecdsaPublicKey->getOid(), Oid(KnownOid::ID_TA_ECDSA_SHA_256));
 			QCOMPARE(ecdsaPublicKey->getUncompressedPublicPoint().toHex().toUpper(), QByteArray("043347ECF96FFB4BD9B8554EFBCCFC7D0B242F1071E29B4C9C622C79E339D840AF67BEB9B912692265D9C16C62573F4579FFD4DE2DE92BAB409DD5C5D48244A9F7"));
 		}
 

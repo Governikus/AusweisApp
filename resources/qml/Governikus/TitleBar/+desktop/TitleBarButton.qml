@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -67,14 +67,16 @@ Button {
 		}
 	}
 
-	FocusFrame {}
+	FocusFrame {
+		isOnLightBackground: false
+	}
 
 	MouseArea {
 		id: mouseArea
 
 		anchors.fill: parent
 		cursorShape: Qt.PointingHandCursor
-		onPressed: mouse.accepted = false
+		onPressed: mouse => { mouse.accepted = false }
 		hoverEnabled: true
 	}
 

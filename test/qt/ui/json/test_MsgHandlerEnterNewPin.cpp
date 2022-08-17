@@ -8,9 +8,13 @@
 
 #include "MsgHandlerEnterPassword.h"
 
-#include "context/ChangePinContext.h"
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
+#include "context/ChangePinContext.h"
+
+#if __has_include("context/PersonalizationContext.h")
+	#include "context/PersonalizationContext.h"
+#endif
 
 #include "MockReaderManagerPlugIn.h"
 
@@ -20,6 +24,8 @@
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
 using namespace governikus;
+
+Q_DECLARE_METATYPE(QSharedPointer<WorkflowContext>)
 
 
 class test_MsgHandlerEnterNewPin
@@ -31,10 +37,10 @@ class test_MsgHandlerEnterNewPin
 			bool pSelectReader = true,
 			bool pBasicReader = true,
 			const PacePasswordId pPasswordID = PacePasswordId::PACE_PIN,
-			const QLatin1String& pState = QLatin1String("StateEnterNewPacePin"))
+			const QLatin1String& pState = QLatin1String("StateEnterNewPacePin"),
+			const QSharedPointer<WorkflowContext> pContext = QSharedPointer<ChangePinContext>::create())
 	{
-		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID, pState,
-				QSharedPointer<ChangePinContext>::create());
+		setValidState(pDispatcher, pSelectReader, pBasicReader, pPasswordID, pState, pContext);
 	}
 
 	private Q_SLOTS:
@@ -127,10 +133,24 @@ class test_MsgHandlerEnterNewPin
 		}
 
 
+		void noDirectResponseIfPinLooksValid_data()
+		{
+			QTest::addColumn<QSharedPointer<WorkflowContext>>("ctx");
+
+			QTest::newRow("ChangePinContext") << QSharedPointer<ChangePinContext>::create().objectCast<WorkflowContext>();
+
+#if __has_include("context/PersonalizationContext.h")
+			QTest::newRow("PersonalizationContext") << QSharedPointer<PersonalizationContext>::create(QString("dummy")).objectCast<WorkflowContext>();
+#endif
+		}
+
+
 		void noDirectResponseIfPinLooksValid()
 		{
+			QFETCH(QSharedPointer<WorkflowContext>, ctx);
+
 			MessageDispatcher dispatcher;
-			setValidPinState(dispatcher);
+			setValidPinState(dispatcher, true, true, PacePasswordId::PACE_PIN, QLatin1String("StateEnterNewPacePin"), ctx);
 
 			const QByteArray msg(R"({"cmd": "SET_NEW_PIN", "value": "123456"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray());

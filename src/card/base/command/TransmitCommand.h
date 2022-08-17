@@ -19,16 +19,14 @@ class TransmitCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
+	friend class ::test_TransmitCommand;
+	friend class ::test_CardConnection;
 
 	private:
-		friend class ::test_TransmitCommand;
-		friend class ::test_CardConnection;
-
 		const QVector<InputAPDUInfo> mInputApduInfos;
 		const QString mSlotHandle;
 		QByteArrayList mOutputApduAsHex;
-
-		static bool isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse);
+		bool mSecureMessagingStopped;
 
 	protected:
 		void internalExecute() override;
@@ -39,15 +37,23 @@ class TransmitCommand
 				const QVector<InputAPDUInfo>& pInputApduInfos,
 				const QString& pSlotHandle);
 
-		const QByteArrayList& getOutputApduAsHex() const
+		static bool isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse);
+
+		[[nodiscard]] const QByteArrayList& getOutputApduAsHex() const
 		{
 			return mOutputApduAsHex;
 		}
 
 
-		const QString& getSlotHandle() const
+		[[nodiscard]] const QString& getSlotHandle() const
 		{
 			return mSlotHandle;
+		}
+
+
+		[[nodiscard]] bool getSecureMessagingStopped() const
+		{
+			return mSecureMessagingStopped;
 		}
 
 

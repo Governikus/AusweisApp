@@ -38,14 +38,12 @@ class FormattedTextModel
 			LineTypeRole
 		};
 
-		explicit FormattedTextModel(QObject* pParent = nullptr);
-		explicit FormattedTextModel(const QStringList& pLines);
+		explicit FormattedTextModel(QObject* pParent, const QStringList& pLines = QStringList());
 
 		int rowCount(const QModelIndex& pIndex = QModelIndex()) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		QHash<int, QByteArray> roleNames() const override;
 
-		Q_INVOKABLE bool load(const QString& pFilepath);
 		Q_INVOKABLE bool loadSeveral(const QStringList& pFilepaths);
 
 #if defined(QT_NO_DEBUG)

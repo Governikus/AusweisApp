@@ -8,6 +8,8 @@
 
 #include "MessageDispatcher.h"
 
+#include "TestWorkflowContext.h"
+
 #include <QByteArray>
 #include <QSharedPointer>
 #include <QString>
@@ -20,7 +22,7 @@ void setValidState(MessageDispatcher& pDispatcher,
 		bool pBasicReader,
 		const PacePasswordId pPasswordID,
 		const QLatin1String& pState = QLatin1String("StateEnterPacePassword"),
-		const QSharedPointer<WorkflowContext> pContext = QSharedPointer<WorkflowContext>::create());
+		const QSharedPointer<WorkflowContext> pContext = QSharedPointer<TestWorkflowContext>::create());
 
 QByteArray addReaderData(const char* pData, bool pKeyPad = false);
 

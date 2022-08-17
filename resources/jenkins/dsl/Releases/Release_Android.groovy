@@ -29,22 +29,17 @@ j.with
 		buildDescription('', 'ANDROID_VERSION_CODE: ${ANDROID_VERSION_CODE}<br>BUILD_PREVIEW: ${BUILD_PREVIEW}')
 
 		shell(strip("""\
-			cd build; cmake ../source
-			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
-			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake
-			-DCMAKE_BUILD_TYPE=MinSizeRel
+			cd source; cmake --preset ci-android-apk-release
 			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
-			-DAPK_SIGN_KEYSTORE=\${APK_SIGN_KEYSTORE}
-			-DAPK_SIGN_KEYSTORE_ALIAS=\${APK_SIGN_KEYSTORE_ALIAS}
-			-DAPK_SIGN_KEYSTORE_PSW=\${APK_SIGN_KEYSTORE_PSW}
 			-DANDROID_VERSION_CODE=\${ANDROID_VERSION_CODE}
 			-DBUILD_PREVIEW=\${BUILD_PREVIEW}
 			"""))
 
-		shell('cd build; make \${MAKE_FLAGS} install')
-		shell('cd build; make apk')
-		shell('cd build; make verify.signature')
-		shell('cd build; make dump.apk')
+		shell('cmake --build build')
+		shell('cmake --install build')
+		shell('cmake --build build --target apk')
+		shell('cmake --build build --target verify.signature')
+		shell('cmake --build build --target dump.apk')
 	}
 }
 
@@ -76,33 +71,15 @@ j.with
 	steps
 	{
 		buildDescription('', 'BUILD_PREVIEW: ${BUILD_PREVIEW}')
-	}
-}
 
-for(ARCH in Constants.AndroidArchAAR)
-{
-
-j.with
-{
-	steps
-	{
 		shell(strip("""\
-			mkdir -p build/${ARCH};
-			cd build/${ARCH};
-			cmake ../../source
-			-DINTEGRATED_SDK=ON
-			-DCMAKE_INSTALL_PREFIX=\${WORKSPACE}/build/dist
-			-DCMAKE_PREFIX_PATH="\${WORKSPACE}/libs/${ARCH}/build/dist;\${WORKSPACE}/libs/build/dist"
-			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/android.toolchain.cmake
-			-DCMAKE_BUILD_TYPE=MinSizeRel
-			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
+			cd source; cmake --preset ci-android-aar
 			-DBUILD_PREVIEW=\${BUILD_PREVIEW}
 			"""))
 
-		shell("cd build/${ARCH}; make \${MAKE_FLAGS} install")
-		shell("cd build/${ARCH}; make aar")
+		shell('cmake --build build')
+		shell('cmake --install build')
+		shell('cmake --build build --target aar')
 		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
 	}
-}
-
 }

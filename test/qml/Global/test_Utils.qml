@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtTest 1.12
+import QtTest 1.15
 
 import Governikus.Global 1.0
 
@@ -65,15 +65,15 @@ TestCase {
 
 		compare(shuffledNumbers.count, numbers.count)
 
-		let isSameOrder = numbers.toString() == shuffledNumbers.toString()
+		let isSameOrder = numbers.toString() === shuffledNumbers.toString()
 		compare(isSameOrder, false, "Shuffled arrays have same order")
 	}
 
 	function test_helpTopicOf() {
 		let defaultHelpTopic = "defaultHelp"
 
-		let componentWithoutHelp = createTemporaryQmlObject("import QtQuick 2.12; Item {}", testCase)
-		let componentWithHelp = createTemporaryQmlObject("import QtQuick 2.12; Item {property string helpTopic: \"dummyHelp\";}", testCase)
+		let componentWithoutHelp = createTemporaryQmlObject("import QtQuick 2.15; Item {}", testCase)
+		let componentWithHelp = createTemporaryQmlObject("import QtQuick 2.15; Item {property string helpTopic: \"dummyHelp\";}", testCase)
 
 		compare(Utils.helpTopicOf(null, defaultHelpTopic), defaultHelpTopic, "Get default help topic if component is null")
 		compare(Utils.helpTopicOf(componentWithoutHelp, defaultHelpTopic), defaultHelpTopic, "Get default help topic if component got no helpTopic")

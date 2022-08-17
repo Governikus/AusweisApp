@@ -13,8 +13,8 @@ j.with
 	{
 		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
-		shell("cd build; cmake ../source/libs -DCMAKE_BUILD_TYPE=debug -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DPACKAGES_DIR=\${PACKAGES_DIR}")
+		shell('cd source/libs; cmake --preset ci-debug')
 
-		shell('cd build; make compress')
+		shell('cmake --build build --target compress')
 	}
 }

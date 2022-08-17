@@ -6,9 +6,9 @@
 
 #include "ChatModel.h"
 
+#include "AppSettings.h"
 #include "asn1/AccessRoleAndRight.h"
 #include "asn1/CVCertificate.h"
-#include "AppSettings.h"
 #include "context/SelfAuthContext.h"
 
 using namespace governikus;

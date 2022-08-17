@@ -46,10 +46,10 @@ class MockCard
 		MockCard(const MockCardConfig& pCardConfig);
 		~MockCard() override;
 
-		CardReturnCode connect() override;
-		CardReturnCode disconnect() override;
+		CardReturnCode establishConnection() override;
+		CardReturnCode releaseConnection() override;
 
-		bool isConnected() override
+		bool isConnected() const override
 		{
 			return mConnected;
 		}

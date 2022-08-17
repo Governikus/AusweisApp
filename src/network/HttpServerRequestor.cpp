@@ -3,7 +3,6 @@
  */
 
 #include "HttpServerRequestor.h"
-#include "NetworkManager.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
@@ -15,18 +14,29 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
-HttpServerRequestor::HttpServerRequestor()
+HttpServerRequestor::HttpServerRequestor(bool pCustomNetworkManager)
 	: QObject()
+	, mNetworkManager(getNetworkManager(pCustomNetworkManager))
 	, mEventLoop()
 	, mTimer()
 {
+	Q_ASSERT(mNetworkManager && mNetworkManager->thread() == thread());
 	connect(&mTimer, &QTimer::timeout, &mEventLoop, &QEventLoop::quit);
 	mTimer.setSingleShot(true);
 }
 
 
-HttpServerRequestor::~HttpServerRequestor()
+QPointer<NetworkManager> HttpServerRequestor::getNetworkManager(bool pCustomNetworkManager)
 {
+	if (pCustomNetworkManager)
+	{
+		auto* manager = new ServerRequestorManager();
+		connect(this, &QObject::destroyed, manager, &NetworkManager::onShutdown, Qt::QueuedConnection);
+		connect(this, &QObject::destroyed, manager, &QObject::deleteLater, Qt::QueuedConnection);
+		return manager;
+	}
+
+	return Env::getSingleton<NetworkManager>();
 }
 
 
@@ -42,30 +52,61 @@ QUrl HttpServerRequestor::createUrl(const QString& pQuery, quint16 pPort, const 
 }
 
 
-QSharedPointer<QNetworkReply> HttpServerRequestor::request(const QUrl& pUrl, int pTimeOut)
+QSharedPointer<QNetworkReply> HttpServerRequestor::getRequest(const QUrl& pUrl, int pTimeOut)
 {
+	QNetworkRequest request(pUrl);
+	qCDebug(network) << "Request URL (GET):" << pUrl;
+	auto reply = mNetworkManager ? mNetworkManager->get(request) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
+QSharedPointer<QNetworkReply> HttpServerRequestor::postRequest(const QUrl& pUrl, const QByteArray& pData, const QString& pContentType, int pTimeOut)
+{
+	QNetworkRequest request(pUrl);
+	request.setHeader(QNetworkRequest::ContentTypeHeader, pContentType);
+	qCDebug(network) << "Request URL (POST):" << pUrl;
+	auto reply = mNetworkManager ? mNetworkManager->post(request, pData) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
+QSharedPointer<QNetworkReply> HttpServerRequestor::deleteRequest(const QUrl& pUrl, int pTimeOut)
+{
+	QNetworkRequest request(pUrl);
+	qCDebug(network) << "Request URL (DELETE):" << pUrl;
+	auto reply = mNetworkManager ? mNetworkManager->deleteResource(request) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
+QSharedPointer<QNetworkReply> HttpServerRequestor::waitForReply(QSharedPointer<QNetworkReply> pReply, int pTimeOut)
+{
+	if (!pReply)
+	{
+		return nullptr;
+	}
+
 	if (mEventLoop.isRunning())
 	{
 		qCWarning(network) << "Requestor already active...";
 		return nullptr;
 	}
 
-	qCDebug(network) << "Request URL:" << pUrl;
-
-	QNetworkRequest getRequest(pUrl);
 	mTimer.start(pTimeOut);
-	auto* reply = Env::getSingleton<NetworkManager>()->get(getRequest);
-	const auto connection = connect(reply, &QNetworkReply::finished, this, &HttpServerRequestor::finished);
+	const auto connection = connect(pReply.data(), &QNetworkReply::finished, this, &HttpServerRequestor::finished);
 	mEventLoop.exec();
 
-	if (reply->isFinished())
+	if (pReply->isFinished())
 	{
-		return QSharedPointer<QNetworkReply>(reply, &QObject::deleteLater);
+		return pReply;
 	}
 
+	qCWarning(network) << "Request timed out.";
+
 	disconnect(connection);
-	reply->abort();
-	reply->deleteLater();
+	pReply->abort();
+	pReply->deleteLater();
 	return nullptr;
 }
 

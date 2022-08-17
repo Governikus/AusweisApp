@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -16,8 +16,11 @@ Item {
 
 	signal accepted()
 
+	//: LABEL DESKTOP Screenreader text for the password field
+	readonly property string passwordState: qsTr("You entered %1 of %2 digits.").arg(number.length).arg(passwordLength)
+	readonly property var text: if (Qt.platform.os === "windows") passwordState
 	readonly property bool validInput: echoField.acceptableInput && confirmedInput
-	readonly property bool confirmedInput: inputConfirmation.length != number.length || inputConfirmation === number
+	readonly property bool confirmedInput: inputConfirmation.length !== number.length || inputConfirmation === number
 	readonly property real eyeWidth: eye.width + eye.Layout.leftMargin + eye.Layout.rightMargin
 	property alias number: echoField.text
 	property alias passwordLength: echoField.maximumLength
@@ -36,9 +39,8 @@ Item {
 					  ? qsTr("The password is visible.")
 					  //: LABEL DESKTOP Screenreader text for the password field
 					  : qsTr("The password is hidden.")
-					  //: LABEL DESKTOP Screenreader text for the password field
-					  ) + " " + qsTr("You entered %1 of %2 digits.").arg(number.length).arg(passwordLength)
-	Keys.onPressed: event.accepted = root.handleKeyEvent(event.key, event.modifiers)
+					  ) + (text === undefined ? " " + passwordState : "")
+	Keys.onPressed: event => { event.accepted = root.handleKeyEvent(event.key, event.modifiers) }
 
 	function handleKeyEvent(eventKey, eventModifiers = Qt.NoModifier) {
 		if (eventKey >= Qt.Key_0 && eventKey <= Qt.Key_9) {
@@ -62,7 +64,7 @@ Item {
 
 		// Otherwise focus is lost if last clicked button gets invisible
 		// like 'C' in NumberPad.
-		root.forceActiveFocus()
+		if (visible) root.forceActiveFocus()
 		return true
 	}
 
@@ -81,8 +83,8 @@ Item {
 		visible: false
 
 		maximumLength: 6
-		validator: RegExpValidator {
-			regExp: new RegExp("[0-9]{" + echoField.maximumLength + "}")
+		validator: RegExpValidatorCompat {
+			expression: new RegExp("[0-9]{" + echoField.maximumLength + "}")
 		}
 	}
 
@@ -98,7 +100,7 @@ Item {
 			onPressAndHold: root.handleKeyEvent(Qt.Key_Paste)
 			onClicked: {
 				root.forceActiveFocus()
-				if (mouse.button == Qt.RightButton || mouse.button == Qt.MiddleButton) {
+				if (mouse.button === Qt.RightButton || mouse.button === Qt.MiddleButton) {
 					echoField.paste()
 				}
 			}
@@ -127,7 +129,7 @@ Item {
 				verticalAlignment: Text.AlignTop
 				horizontalAlignment: Text.AlignHCenter
 				text: eye.activated ? root.number.substr(index, 1) : ""
-				color: Constants.is_desktop ? Style.color.primary_text_inverse : Style.color.primary_text
+				color: Style.color.primary_text
 				font: fontMetrics.font
 
 				Rectangle {
@@ -165,7 +167,7 @@ Item {
 			Layout.preferredWidth: implicitWidth + (Constants.is_desktop ? 0 : Constants.text_spacing)
 			Layout.leftMargin: Constants.text_spacing
 
-			Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+			Accessible.onPressAction: clicked()
 
 			text: (activated
 				  //: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
@@ -176,7 +178,7 @@ Item {
 
 			contentItem: Item {}
 			background: TintableIcon {
-				tintColor: Constants.is_desktop ? Style.color.secondary_text_inverse : Style.color.secondary_text
+				tintColor: Style.color.secondary_text
 				source: eye.activated ? "qrc:///images/material_visibility.svg" : "qrc:///images/material_visibility_off.svg"
 				sourceSize.height: Constants.is_desktop ? Style.dimens.large_icon_size : Style.dimens.small_icon_size
 				fillMode: Image.Pad

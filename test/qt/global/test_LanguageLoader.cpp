@@ -6,7 +6,6 @@
 
 #include "LanguageLoader.h"
 
-#include "LogHandler.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
@@ -23,7 +22,6 @@ class test_LanguageLoader
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			TestFileHelper::createTranslations(mTranslationDir.path());
 			LanguageLoader::getInstance().setPath(mTranslationDir.path());
 		}
@@ -35,7 +33,6 @@ class test_LanguageLoader
 			{
 				LanguageLoader::getInstance().unload();
 			}
-			Env::getSingleton<LogHandler>()->resetBacklog();
 		}
 
 
@@ -49,26 +46,25 @@ class test_LanguageLoader
 
 		void loadTwice()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(German, Latin, Germany)");
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 			LanguageLoader::getInstance().load(QLocale::German);
 			QVERIFY(LanguageLoader::getInstance().isLoaded());
 
+			QTest::ignoreMessage(QtWarningMsg, "Loader is already in use. You need to unload before you load again...");
 			LanguageLoader::getInstance().load(QLocale::German);
-			QVERIFY(logSpy.count() > 0);
-			auto param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Loader is already in use. You need to unload before you load again..."));
 		}
 
 
 		void load()
 		{
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(French, Latin, France)");
 			QLocale locale = QLocale::French;
 			LanguageLoader::getInstance().load(locale);
 			QVERIFY(LanguageLoader::getInstance().isLoaded());
 			QVERIFY(!LanguageLoader::getInstance().mTranslatorList.isEmpty());
 
+			QTest::ignoreMessage(QtWarningMsg, "Loader is already in use. You need to unload before you load again...");
 			LanguageLoader::getInstance().load(QLocale::German);
 			QVERIFY(LanguageLoader::getInstance().isLoaded());
 
@@ -80,12 +76,15 @@ class test_LanguageLoader
 		{
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 
+			QTest::ignoreMessage(QtWarningMsg, "Cannot unload translation because it is nothing loaded");
 			LanguageLoader::getInstance().unload();
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 
+			QTest::ignoreMessage(QtWarningMsg, "Cannot unload translation because it is nothing loaded");
 			LanguageLoader::getInstance().unload();
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 
+			QTest::ignoreMessage(QtWarningMsg, "Cannot unload translation because it is nothing loaded");
 			LanguageLoader::getInstance().unload();
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 
@@ -105,8 +104,20 @@ class test_LanguageLoader
 		}
 
 
+		void localeC()
+		{
+			QTest::ignoreMessage(QtDebugMsg, R"(Using fallback language: "English")");
+
+			LanguageLoader::getInstance().load(QLocale::C);
+			QCOMPARE(LanguageLoader::getInstance().getUsedLocale(), LanguageLoader::getInstance().getFallbackLanguage());
+
+			QVERIFY(LanguageLoader::getInstance().mTranslatorList.isEmpty());
+		}
+
+
 		void usedLocale()
 		{
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(German, Latin, Germany)");
 			QLocale locale = QLocale::German;
 			LanguageLoader::getInstance().load(locale);
 			QCOMPARE(LanguageLoader::getInstance().getUsedLocale(), locale);
@@ -117,6 +128,15 @@ class test_LanguageLoader
 
 		void unknownLocale()
 		{
+			QTest::ignoreMessage(QtDebugMsg, R"(UI language: "chr")");
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(Cherokee, Cherokee, United States)");
+
+			QTest::ignoreMessage(QtDebugMsg, R"(UI language: "chr-US")");
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(Cherokee, Cherokee, United States)");
+
+			QTest::ignoreMessage(QtDebugMsg, R"(UI language: "chr-Cher-US")");
+			QTest::ignoreMessage(QtDebugMsg, "Try to load translation: QLocale(Cherokee, Cherokee, United States)");
+
 			LanguageLoader::getInstance().load(QLocale::Cherokee);
 			QVERIFY(!LanguageLoader::getInstance().isLoaded());
 
@@ -132,12 +152,8 @@ class test_LanguageLoader
 			QLocale::Language lang = LanguageLoader::getInstance().getFallbackLanguage();
 			QCOMPARE(lang, QLocale::English);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-
+			QTest::ignoreMessage(QtDebugMsg, R"(Using fallback language: "English")");
 			LanguageLoader::getInstance().load(QLocale::English);
-			QVERIFY(logSpy.count() > 0);
-			auto param = logSpy.takeAt(2);
-			QVERIFY(param.at(0).toString().contains("Using fallback language: "));
 		}
 
 

@@ -17,5 +17,5 @@ for image in images:
     proc_args = ["docker", "build", "-t", "alpine:%s" % (image), image]
     subprocess.run(proc_args).check_returncode()
     proc_args = ["docker", "tag", "alpine:%s" % (image),
-                 "dev-docker.governikus.de/ausweisapp2/alpine:%s" % image]
+                 "dev-docker.govkg.de/ausweisapp2/alpine:%s" % image]
     subprocess.run(proc_args).check_returncode()

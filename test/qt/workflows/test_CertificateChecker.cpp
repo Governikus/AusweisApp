@@ -6,8 +6,9 @@
 
 #include "CertificateChecker.h"
 
-#include "context/AuthContext.h"
+#include "ResourceLoader.h"
 #include "SecureStorage.h"
+#include "context/AuthContext.h"
 
 #include "MockActivationContext.h"
 
@@ -25,6 +26,7 @@ class test_CertificateChecker
 	private Q_SLOTS:
 		void initTestCase()
 		{
+			ResourceLoader::getInstance().init();
 			certs = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
 			QVERIFY(certs.size() > 0);
 		}
@@ -32,16 +34,11 @@ class test_CertificateChecker
 
 		void validUpdateCert()
 		{
-			const QSharedPointer<AuthContext> model(new AuthContext(QSharedPointer<MockActivationContext>::create()));
-			std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [&model]
-					(const QUrl& pUrl, const QSslCertificate& pCert)
-					{
-						model->addCertificateData(pUrl, pCert);
-					};
+			const QSharedPointer<AuthContext> context(new AuthContext(QSharedPointer<MockActivationContext>::create()));
 
-			QCOMPARE(model->getCertificateList().size(), 0);
-			QCOMPARE(CertificateChecker::checkAndSaveCertificate(certs.at(0), QUrl("dummy"), model->getDidAuthenticateEac1(), model->getDvCvc(), saveCertificateFunc), CertificateChecker::CertificateStatus::Good);
-			QCOMPARE(model->getCertificateList().size(), 1);
+			QCOMPARE(context->getCertificateList().size(), 0);
+			QCOMPARE(CertificateChecker::checkAndSaveCertificate(certs.at(0), QUrl("dummy"), context), CertificateChecker::CertificateStatus::Good);
+			QCOMPARE(context->getCertificateList().size(), 1);
 		}
 
 

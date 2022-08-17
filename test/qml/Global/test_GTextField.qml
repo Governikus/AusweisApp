@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtTest 1.12
+import QtQuick 2.15
+import QtTest 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -17,16 +17,6 @@ TestCase {
 
 	function createTestObject() {
 		return createTemporaryQmlObject("import Governikus.Global 1.0; GTextField {}", testCase)
-	}
-
-	TestCase {
-		when: testCase.completed
-		optional: true
-
-		function benchmark_load() {
-			let testObject = createTestObject()
-			testObject.destroy()
-		}
 	}
 
 	function test_load() {
@@ -73,7 +63,7 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject()
 
-		compare(testObject.textStyle, Constants.is_desktop ? Style.text.normal_inverse : Style.text.normal, "Initial textStyle: normal")
+		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal")
 
 		testObject.textStyle = Style.text.hint_warning
 		compare(testObject.textStyle, Style.text.hint_warning, "textStyle: hint_warning")

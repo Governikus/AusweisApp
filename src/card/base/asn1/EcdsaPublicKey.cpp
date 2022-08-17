@@ -2,14 +2,20 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "EcdsaPublicKey.h"
+
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "EcdsaPublicKey.h"
 #include "pace/ec/EcUtil.h"
 
-#include <openssl/evp.h>
 #include <QLoggingCategory>
-#include <QScopeGuard>
+
+#include <functional>
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	#include <openssl/param_build.h>
+#endif
+
 
 using namespace governikus;
 
@@ -30,10 +36,8 @@ int EcdsaPublicKey::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1
 		{
 			// According to TR-03110-3, chapter D.3.3:
 			// CONDITIONAL domain parameters MUST be either all present, except the cofactor, or all absent
-			if ((ecdsaPublicKey->mPrimeModulus && ecdsaPublicKey->mFirstCoefficient && ecdsaPublicKey->mSecondCoefficient && ecdsaPublicKey->mBasePoint && ecdsaPublicKey->mOrderOfTheBasePoint)
-					|| (!ecdsaPublicKey->mPrimeModulus && !ecdsaPublicKey->mFirstCoefficient && !ecdsaPublicKey->mSecondCoefficient && !ecdsaPublicKey->mBasePoint && !ecdsaPublicKey->mOrderOfTheBasePoint))
+			if (isAllValid(ecdsaPublicKey) || isAllInvalid(ecdsaPublicKey))
 			{
-				ecdsaPublicKey->initEcKey();
 				return CB_SUCCESS;
 			}
 			else
@@ -43,13 +47,6 @@ int EcdsaPublicKey::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1
 				*pVal = nullptr;
 				return CB_ERROR;
 			}
-		}
-	}
-	else if (pOperation == ASN1_OP_FREE_POST)
-	{
-		if (auto ecdsaPublicKey = reinterpret_cast<EcdsaPublicKey*>(*pVal))
-		{
-			EC_KEY_free(ecdsaPublicKey->mEcKey);
 		}
 	}
 
@@ -85,6 +82,24 @@ IMPLEMENT_ASN1_OBJECT(EcdsaPublicKey)
 }  // namespace governikus
 
 
+bool EcdsaPublicKey::isAllValid(const ecdsapublickey_st* pKey)
+{
+	return pKey->mPrimeModulus && pKey->mFirstCoefficient && pKey->mSecondCoefficient && pKey->mBasePoint && pKey->mOrderOfTheBasePoint;
+}
+
+
+bool EcdsaPublicKey::isAllInvalid(const ecdsapublickey_st* pKey)
+{
+	return !pKey->mPrimeModulus && !pKey->mFirstCoefficient && !pKey->mSecondCoefficient && !pKey->mBasePoint && !pKey->mOrderOfTheBasePoint;
+}
+
+
+bool EcdsaPublicKey::isComplete() const
+{
+	return isAllValid(this);
+}
+
+
 QSharedPointer<EcdsaPublicKey> EcdsaPublicKey::fromHex(const QByteArray& pHexValue)
 {
 	return decode(QByteArray::fromHex(pHexValue));
@@ -103,15 +118,15 @@ QByteArray EcdsaPublicKey::encode()
 }
 
 
-QByteArray EcdsaPublicKey::getPublicKeyOid() const
+SecurityProtocol EcdsaPublicKey::getSecurityProtocol() const
 {
-	return Asn1ObjectUtil::convertTo(mObjectIdentifier);
+	return SecurityProtocol(Oid(mObjectIdentifier));
 }
 
 
-QByteArray EcdsaPublicKey::getPublicKeyOidValueBytes() const
+Oid EcdsaPublicKey::getOid() const
 {
-	return Asn1ObjectUtil::getValue(mObjectIdentifier);
+	return Oid(mObjectIdentifier);
 }
 
 
@@ -121,101 +136,178 @@ QByteArray EcdsaPublicKey::getUncompressedPublicPoint() const
 }
 
 
-const EC_KEY* EcdsaPublicKey::getEcKey() const
+[[nodiscard]] EcdsaPublicKey::CurveData EcdsaPublicKey::createCurveData() const
 {
-	return mEcKey;
+	CurveData result;
+
+	result.p = EcUtil::create(BN_new());
+	if (!BN_bin2bn(mPrimeModulus->data, mPrimeModulus->length, result.p.data()))
+	{
+		qCCritical(card) << "Cannot convert prime modulus";
+		return {};
+	}
+
+	result.a = EcUtil::create(BN_new());
+	if (!BN_bin2bn(mFirstCoefficient->data, mFirstCoefficient->length, result.a.data()))
+	{
+		qCCritical(card) << "Cannot convert first coefficient";
+		return {};
+	}
+
+	result.b = EcUtil::create(BN_new());
+	if (!BN_bin2bn(mSecondCoefficient->data, mSecondCoefficient->length, result.b.data()))
+	{
+		qCCritical(card) << "Cannot convert second coefficient";
+		return {};
+	}
+
+	result.order = EcUtil::create(BN_new());
+	if (!BN_bin2bn(mOrderOfTheBasePoint->data, mOrderOfTheBasePoint->length, result.order.data()))
+	{
+		qCCritical(card) << "Cannot convert order of the generator";
+		return {};
+	}
+
+	if (mCofactor)
+	{
+		result.cofactor = EcUtil::create(BN_new());
+		if (!BN_bin2bn(mCofactor->data, mCofactor->length, result.cofactor.data()))
+		{
+			qCCritical(card) << "Cannot convert cofactor";
+			return {};
+		}
+	}
+
+	return result;
 }
 
 
-void EcdsaPublicKey::initEcKey()
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+QSharedPointer<EC_GROUP> EcdsaPublicKey::createGroup(const CurveData& pData) const
 {
-	if (mPrimeModulus == nullptr)
-	{
-		return;
-	}
-
-	QSharedPointer<BIGNUM> p = EcUtil::create(BN_new());
-	if (!BN_bin2bn(mPrimeModulus->data, mPrimeModulus->length, p.data()))
-	{
-		qCCritical(card) << "Cannot convert prime modulus";
-		return;
-	}
-
-	QSharedPointer<BIGNUM> a = EcUtil::create(BN_new());
-	if (!BN_bin2bn(mFirstCoefficient->data, mFirstCoefficient->length, a.data()))
-	{
-		qCCritical(card) << "Cannot convert first coefficient";
-		return;
-	}
-
-	QSharedPointer<BIGNUM> b = EcUtil::create(BN_new());
-	if (!BN_bin2bn(mSecondCoefficient->data, mSecondCoefficient->length, b.data()))
-	{
-		qCCritical(card) << "Cannot convert second coefficient";
-		return;
-	}
-
-	QSharedPointer<EC_GROUP> group = EcUtil::create(EC_GROUP_new_curve_GFp(p.data(), a.data(), b.data(), nullptr));
+	QSharedPointer<EC_GROUP> group = EcUtil::create(EC_GROUP_new_curve_GFp(pData.p.data(), pData.a.data(), pData.b.data(), nullptr));
 	if (!group)
 	{
 		qCCritical(card) << "Cannot create group";
-		return;
+		return nullptr;
 	}
 
 	QSharedPointer<EC_POINT> generator = EcUtil::create(EC_POINT_new(group.data()));
 	if (!EC_POINT_oct2point(group.data(), generator.data(), mBasePoint->data, static_cast<size_t>(mBasePoint->length), nullptr))
 	{
 		qCCritical(card) << "Cannot convert generator";
-		return;
+		return nullptr;
 	}
 
-	QSharedPointer<BIGNUM> order = EcUtil::create(BN_new());
-	if (!BN_bin2bn(mOrderOfTheBasePoint->data, mOrderOfTheBasePoint->length, order.data()))
-	{
-		qCCritical(card) << "Cannot convert order of the generator";
-		return;
-	}
-
-	QSharedPointer<BIGNUM> cofactor;
-	if (mCofactor)
-	{
-		cofactor = EcUtil::create(BN_new());
-		if (!BN_bin2bn(mCofactor->data, mCofactor->length, cofactor.data()))
-		{
-			qCCritical(card) << "Cannot convert cofactor";
-			return;
-		}
-	}
-
-	if (!EC_GROUP_set_generator(group.data(), generator.data(), order.data(), cofactor.data()))
+	if (!EC_GROUP_set_generator(group.data(), generator.data(), pData.order.data(), pData.cofactor.data()))
 	{
 		qCCritical(card) << "Cannot set generator";
-		return;
+		return nullptr;
 	}
 
-	EC_KEY* ecKey = EC_KEY_new();
-	auto guard = qScopeGuard([ecKey] {
-			EC_KEY_free(ecKey);
-		});
+	return group;
+}
 
-	if (!EC_KEY_set_group(ecKey, group.data()))
+
+#endif
+
+QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const QByteArray& pPublicPoint) const
+{
+	return createKey(reinterpret_cast<const uchar*>(pPublicPoint.constData()), pPublicPoint.size());
+}
+
+
+#ifndef QT_NO_DEBUG
+QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey() const
+{
+	return createKey(reinterpret_cast<const uchar*>(mPublicPoint->data), mPublicPoint->length);
+}
+
+
+#endif
+
+QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const uchar* pPublicPoint, int pPublicPointLength) const
+{
+	if (!isComplete())
+	{
+		return nullptr;
+	}
+
+	const auto& curveData = createCurveData();
+	if (!curveData.isValid())
+	{
+		return nullptr;
+	}
+
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+	const auto& group = createGroup(curveData);
+	if (group.isNull())
+	{
+		return nullptr;
+	}
+
+	QSharedPointer<EC_KEY> ecKey = EcUtil::create(EC_KEY_new());
+	if (!EC_KEY_set_group(ecKey.data(), group.data()))
 	{
 		qCCritical(card) << "Cannot set group";
-		return;
+		return nullptr;
 	}
 
 	QSharedPointer<EC_POINT> publicPoint = EcUtil::create(EC_POINT_new(group.data()));
-	if (!EC_POINT_oct2point(group.data(), publicPoint.data(), mPublicPoint->data, static_cast<size_t>(mPublicPoint->length), nullptr))
+	if (!EC_POINT_oct2point(group.data(), publicPoint.data(), pPublicPoint, static_cast<size_t>(pPublicPointLength), nullptr))
 	{
 		qCCritical(card) << "Cannot convert public point";
-		return;
-	}
-	if (!EC_KEY_set_public_key(ecKey, publicPoint.data()))
-	{
-		qCCritical(card) << "Cannot set public key";
-		return;
+		return nullptr;
 	}
 
-	guard.dismiss();
-	mEcKey = ecKey;
+	if (!EC_KEY_set_public_key(ecKey.data(), publicPoint.data()))
+	{
+		qCCritical(card) << "Cannot set public key";
+		return nullptr;
+	}
+
+	const QSharedPointer<EVP_PKEY> key = EcUtil::create(EVP_PKEY_new());
+	if (!EVP_PKEY_set1_EC_KEY(key.data(), ecKey.data()))
+	{
+		qCCritical(card) << "Cannot set key";
+		return nullptr;
+	}
+
+	return key;
+
+#else
+	const auto& params = EcUtil::create([&curveData, pPublicPoint, pPublicPointLength, this](OSSL_PARAM_BLD* pBuilder){
+			return OSSL_PARAM_BLD_push_BN(pBuilder, "p", curveData.p.data())
+				   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", curveData.a.data())
+				   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", curveData.b.data())
+				   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", curveData.order.data())
+				   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", curveData.cofactor.data())
+				   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "pub", pPublicPoint, static_cast<size_t>(pPublicPointLength))
+				   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", mBasePoint->data, static_cast<size_t>(mBasePoint->length))
+				   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
+		});
+
+	if (params == nullptr)
+	{
+		qCCritical(card) << "Cannot set parameter";
+		return nullptr;
+	}
+
+	auto ctx = EcUtil::create(EVP_PKEY_CTX_new_from_name(nullptr, "EC", nullptr));
+	if (!EVP_PKEY_fromdata_init(ctx.data()))
+	{
+		qCCritical(card) << "Cannot init pkey";
+		return nullptr;
+	}
+
+	EVP_PKEY* key = nullptr;
+	if (!EVP_PKEY_fromdata(ctx.data(), &key, EVP_PKEY_PUBLIC_KEY, params.data()))
+	{
+		qCCritical(card) << "Cannot fetch data for pkey";
+		return nullptr;
+	}
+
+	return EcUtil::create(key);
+
+#endif
 }

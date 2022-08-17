@@ -6,7 +6,9 @@
 
 #pragma once
 
+#include "ActivationContext.h"
 #include "WorkflowController.h"
+#include "WorkflowRequest.h"
 
 namespace governikus
 {
@@ -19,6 +21,9 @@ class AuthController
 	Q_OBJECT
 
 	public:
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(const QSharedPointer<ActivationContext>& pActivationContext);
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(const QUrl& pUrl);
+
 		explicit AuthController(QSharedPointer<AuthContext> pContext);
 		~AuthController() override = default;
 };

@@ -663,7 +663,7 @@ class test_Env
 					};
 
 			TestMockedInstance mock;
-			QVector<QFuture<void> > threads;
+			QVector<QFuture<void>> threads;
 
 			for (int i = 0; i < 100; ++i)
 			{
@@ -688,7 +688,7 @@ class test_Env
 
 		void threadSafeDeadlockDuringCreate_data()
 		{
-			QTest::addColumn<std::function<TestEmptyTmp()> >("creator");
+			QTest::addColumn<std::function<TestEmptyTmp()>>("creator");
 
 			QTest::newRow("with mock") << std::function<TestEmptyTmp()>([](){
 					return TestEmptyTmp();

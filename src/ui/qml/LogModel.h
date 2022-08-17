@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QObject>
 #include <QPoint>
+#include <QSet>
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
@@ -27,18 +28,15 @@ class LogModel
 	friend class Env;
 	friend class ::test_LogModel;
 
-	enum LogModelRoles
-	{
-		OriginRole = Qt::UserRole + 1,
-		MessageRole
-	};
-
-	Q_PROPERTY(QStringList logFiles READ getLogFiles NOTIFY fireLogFilesChanged)
+	Q_PROPERTY(QStringList logFileNames READ getLogFileNames NOTIFY fireLogFileNamesChanged)
 
 	private:
 		QStringList mLogFiles;
 		int mSelectedLogFile;
 		QStringList mLogEntries;
+
+		QSet<QString> mLevels;
+		QSet<QString> mCategories;
 
 		LogModel();
 		~LogModel() override = default;
@@ -50,15 +48,28 @@ class LogModel
 	private Q_SLOTS:
 		void onNewLogMsg(const QString& pMsg);
 
+	public Q_SLOTS:
+		void onTranslationChanged();
+
 	public:
-		QStringList getLogFiles() const;
+		enum LogModelRoles
+		{
+			OriginRole = Qt::UserRole + 1,
+			LevelRole,
+			CategoryRole,
+			MessageRole
+		};
+
+		QStringList getLogFileNames() const;
+		const QSet<QString>& getLevels() const;
+		const QSet<QString>& getCategories() const;
 		Q_INVOKABLE QDateTime getCurrentLogFileDate() const;
 		Q_INVOKABLE void removeOtherLogFiles();
 		Q_INVOKABLE void removeCurrentLogFile();
 		Q_INVOKABLE void setLogFile(int pIndex);
 		Q_INVOKABLE void saveCurrentLogFile(const QUrl& pFilename) const;
 #ifndef QT_NO_DEBUG
-		Q_INVOKABLE void saveDummyLogFile() const;
+		Q_INVOKABLE void saveDummyLogFile(const QDateTime& pTimeStamp = QDateTime());
 #endif
 
 		Q_INVOKABLE void mailLog(const QString& pEmail = tr("support@ausweisapp.de"),
@@ -74,7 +85,9 @@ class LogModel
 		Q_INVOKABLE static QString createLogFileName(const QDateTime& pDateTime = QDateTime::currentDateTime());
 
 	Q_SIGNALS:
-		void fireLogFilesChanged();
+		void fireLogFileNamesChanged();
+		void fireLevelsChanged();
+		void fireCategoriesChanged();
 		void fireNewLogMsg();
 };
 

@@ -19,6 +19,11 @@ class test_RemoteServiceSettings
 {
 	Q_OBJECT
 
+	private:
+		KeyPair pair1 = KeyPair::generate();
+		KeyPair pair2 = KeyPair::generate();
+		KeyPair pair3 = KeyPair::generate();
+
 	private Q_SLOTS:
 		void init()
 		{
@@ -75,10 +80,6 @@ class test_RemoteServiceSettings
 
 		void testDuplicatedTrustedCertificates()
 		{
-			const KeyPair pair1 = KeyPair::generate();
-			const KeyPair pair2 = KeyPair::generate();
-			const KeyPair pair3 = KeyPair::generate();
-
 			RemoteServiceSettings settings;
 			QVERIFY(settings.getTrustedCertificates().isEmpty());
 
@@ -109,8 +110,6 @@ class test_RemoteServiceSettings
 
 		void testTrustedCertificates()
 		{
-			const KeyPair pair1 = KeyPair::generate();
-
 			RemoteServiceSettings settings;
 			QVERIFY(settings.getTrustedCertificates().isEmpty());
 			QList<QSslCertificate> certs;
@@ -128,7 +127,6 @@ class test_RemoteServiceSettings
 			certs.pop_front();
 			QCOMPARE(storedCerts.size(), 2);
 
-			const KeyPair pair2 = KeyPair::generate();
 			QVERIFY(!storedCerts.contains(pair2.getCertificate()));
 			settings.addTrustedCertificate(pair2.getCertificate());
 			storedCerts = settings.getTrustedCertificates();
@@ -150,8 +148,6 @@ class test_RemoteServiceSettings
 			RemoteServiceSettings settings;
 			QVERIFY(settings.getTrustedCertificates().isEmpty());
 
-			const KeyPair pair1 = KeyPair::generate();
-			const KeyPair pair2 = KeyPair::generate();
 			settings.addTrustedCertificate(pair1.getCertificate());
 			settings.addTrustedCertificate(pair2.getCertificate());
 			QCOMPARE(settings.getTrustedCertificates().size(), 2);
@@ -193,9 +189,8 @@ class test_RemoteServiceSettings
 			settings.save();
 			QCOMPARE(settings.getKey(), QSslKey());
 
-			const KeyPair pair = KeyPair::generate();
-			settings.setKey(pair.getKey());
-			QCOMPARE(settings.getKey(), pair.getKey());
+			settings.setKey(pair1.getKey());
+			QCOMPARE(settings.getKey(), pair1.getKey());
 			QVERIFY(!settings.getKey().isNull());
 			settings.save();
 		}
@@ -208,9 +203,8 @@ class test_RemoteServiceSettings
 			settings.save();
 			QCOMPARE(settings.getCertificate(), QSslCertificate());
 
-			const KeyPair pair = KeyPair::generate();
-			settings.setCertificate(pair.getCertificate());
-			QCOMPARE(settings.getCertificate(), pair.getCertificate());
+			settings.setCertificate(pair1.getCertificate());
+			QCOMPARE(settings.getCertificate(), pair1.getCertificate());
 			QVERIFY(!settings.getCertificate().isNull());
 			settings.save();
 		}
@@ -257,8 +251,8 @@ class test_RemoteServiceSettings
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getRemoteInfos().size(), 0);
 
-			auto a = KeyPair::generate().getCertificate();
-			auto b = KeyPair::generate().getCertificate();
+			auto a = pair1.getCertificate();
+			auto b = pair2.getCertificate();
 
 			settings.addTrustedCertificate(a);
 			settings.addTrustedCertificate(b);
@@ -271,7 +265,7 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().at(0).getNameEscaped(), QString("dummy"));
 			QCOMPARE(settings.getRemoteInfos().size(), 2);
 
-			auto c = KeyPair::generate().getCertificate();
+			auto c = pair3.getCertificate();
 			auto cInfo = settings.getRemoteInfo(c);
 			QCOMPARE(cInfo.getFingerprint(), QString());
 			QCOMPARE(settings.getRemoteInfos().size(), 2);
@@ -295,7 +289,7 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().size(), 0);
 			QVERIFY(!settings.updateRemoteInfo(RemoteServiceSettings::RemoteInfo()));
 
-			auto a = KeyPair::generate().getCertificate();
+			auto a = pair1.getCertificate();
 			settings.addTrustedCertificate(a);
 
 			auto aInfo = settings.getRemoteInfo(a);
@@ -310,7 +304,7 @@ class test_RemoteServiceSettings
 		void testGenerateFingerprint()
 		{
 			QCOMPARE(RemoteServiceSettings::generateFingerprint(QSslCertificate()), QLatin1String());
-			auto cert = KeyPair::generate().getCertificate();
+			auto cert = pair1.getCertificate();
 			QVERIFY(!cert.isNull());
 			const auto& fingerprint = QString::fromLatin1(cert.digest(QCryptographicHash::Sha256).toHex());
 			QVERIFY(!fingerprint.isEmpty());

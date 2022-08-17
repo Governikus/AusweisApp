@@ -3,11 +3,11 @@ add_library(AusweisAppTestHelper INTERFACE)
 add_subdirectory(common)
 target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperCommon)
 
-if(TARGET AusweisAppRemoteDevice)
-	add_subdirectory(remote_device)
+if(TARGET AusweisAppIfd)
+	add_subdirectory(ifd)
 
 	# TestModule detection misses indirect dependency currently
-	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperRemoteDevice)
+	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperIfd)
 endif()
 
 add_subdirectory(ui)

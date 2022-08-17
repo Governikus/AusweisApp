@@ -12,12 +12,12 @@
 #include "TlsChecker.h"
 #include "UrlUtil.h"
 
-#include <http_parser.h>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QSslCipher>
 #include <QSslKey>
 #include <QSslSocket>
+#include <http_parser.h>
 
 
 using namespace governikus;
@@ -27,7 +27,7 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 StateCheckRefreshAddress::StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 	, mReply()
 	, mUrl()
@@ -161,7 +161,7 @@ void StateCheckRefreshAddress::sendGetRequest()
 {
 	qDebug() << "Send GET request to URL:" << mUrl.toString();
 	QNetworkRequest request(mUrl);
-	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDone);
 	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateCheckRefreshAddress::onNetworkReply);
@@ -202,38 +202,25 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 	const QSharedPointer<AuthContext>& context = getContext();
 	Q_ASSERT(!context.isNull());
 
-	std::function<void(const QUrl&, const QSslCertificate&)> saveCertificateFunc = [this, context]
-			(const QUrl& pUrl, const QSslCertificate& pCertificate)
-			{
-				mVerifiedRefreshUrlHosts += pUrl;
-				context->addCertificateData(pUrl, pCertificate);
-			};
-
-	const GlobalStatus::ExternalInfoMap infoMap {
-		{GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate())},
+	GlobalStatus::ExternalInfoMap infoMap {
 		{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
 	};
-	switch (CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context->getDidAuthenticateEac1(), context->getDvCvc(), saveCertificateFunc))
-	{
-		case CertificateChecker::CertificateStatus::Good:
-			break;
-
-		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Certificate_Unsupported_Algorithm_Or_Length, infoMap});
-			return false;
-
-		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description, infoMap});
-			return false;
-	}
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-				});
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
 		return false;
 	}
 
+	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context);
+	if (statusCode != CertificateChecker::CertificateStatus::Good)
+	{
+		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
+		reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap});
+		return false;
+	}
+
+	mVerifiedRefreshUrlHosts << mUrl;
 	return true;
 }
 
@@ -243,7 +230,6 @@ void StateCheckRefreshAddress::onNetworkReply()
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 	if (mReply->error() != QNetworkReply::NoError)
 	{
-		qCritical() << "An error occured:" << mReply->errorString();
 		switch (NetworkManager::toNetworkError(mReply))
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
@@ -316,7 +302,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 		else
 		{
 			qCritical() << httpsError;
-			const QMap<GlobalStatus::ExternalInformation, QString> infoMap {
+			const GlobalStatus::ExternalInfoMap infoMap {
 				{GlobalStatus::ExternalInformation::URL_SCHEME, redirectUrl.scheme()},
 				{GlobalStatus::ExternalInformation::LAST_URL, redirectUrl.toString()}
 			};
@@ -371,15 +357,11 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	//
 	// "...This means that you are only guaranteed to receive this signal for the first connection to a site in the lifespan of the QNetworkAccessManager."
 	Env::getSingleton<NetworkManager>()->clearConnections();
-	mReply.reset(Env::getSingleton<NetworkManager>()->get(request), &QObject::deleteLater);
+	mReply = Env::getSingleton<NetworkManager>()->get(request);
 
 	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 	mConnections += connect(mReply.data(), &QNetworkReply::errorOccurred, this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
-#else
-	mConnections += connect(mReply.data(), QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
-#endif
 }
 
 
@@ -416,7 +398,7 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 	{
 		return;
 	}
-	qCritical() << "An error occured fetching the server certificate:" << mReply->errorString();
+	qCritical() << "An error occurred fetching the server certificate:" << mReply->errorString();
 	reportCommunicationError({GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 			});
 }
@@ -432,10 +414,10 @@ void StateCheckRefreshAddress::onEntry(QEvent* pEvent)
 
 void StateCheckRefreshAddress::onExit(QEvent* pEvent)
 {
-	AbstractState::onExit(pEvent);
-
 	if (mReply)
 	{
 		mReply.reset();
 	}
+
+	AbstractState::onExit(pEvent);
 }

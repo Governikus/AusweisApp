@@ -6,9 +6,9 @@
 
 #include "asn1/ASN1Util.h"
 
+#include <QtTest>
 #include <openssl/objects.h>
 #include <openssl/x509v3.h>
-#include <QtTest>
 
 using namespace governikus;
 

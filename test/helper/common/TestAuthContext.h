@@ -18,6 +18,11 @@ class TestAuthContext
 {
 	Q_OBJECT
 
+	private:
+		QVector<AcceptedEidType> mAcceptedEidTypes;
+
+		const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1) const;
+
 	public:
 		explicit TestAuthContext(const QSharedPointer<ActivationContext>& pActivationContext, const QString& pFileName = QString());
 		~TestAuthContext() override;
@@ -27,6 +32,8 @@ class TestAuthContext
 		void addCvCertificate(const QSharedPointer<const CVCertificate>& pCvCertificate);
 		void clearCvCertificates();
 		void removeCvCertAt(int pPosition);
+		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+		void setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes);
 };
 
 } // namespace governikus

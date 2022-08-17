@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -69,6 +69,8 @@ Item {
 			//: INFO DESKTOP No authentication history, placeholder text.
 			text: qsTr("Currently there are no history entries.")
 			textStyle: Style.text.normal
+
+			FocusFrame {}
 		}
 	}
 }

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -22,6 +22,9 @@ Rectangle {
 
 	GText {
 		id: number
+
+		Accessible.ignored: true
+
 		anchors.centerIn: parent
 		font.bold: true
 		textStyle: parent.enabled ? Style.text.header_inverse : Style.text.header_accent

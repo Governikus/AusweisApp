@@ -20,7 +20,7 @@ const QMap<ECardApiResult::Major, QString> ECardApiResult::cMajorResults = {
 	{ECardApiResult::Major::Error, QLatin1String(RESULTMAJOR) + QLatin1String("#error")}
 };
 
-// See TR-03112, section 4.2 for details about the codes
+// See TR-03112-1 Section 4.2 Codes for errors and warnings
 //      AL -> Applicaction Layer
 //      DP -> Dispatcher
 //      IFDL -> Interface Device Layer
@@ -32,7 +32,7 @@ const QMap<ECardApiResult::Minor, QString> ECardApiResult::cMinorResults = {
 	{ECardApiResult::Minor::AL_No_Permission, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#noPermission")},
 	{ECardApiResult::Minor::AL_Internal_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#internalError")},
 	{ECardApiResult::Minor::AL_Parameter_Error, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#parameterError")},
-	{ECardApiResult::Minor::AL_Unkown_API_Function, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#unknownAPIFunction")},
+	{ECardApiResult::Minor::AL_Unknown_API_Function, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#unknownAPIFunction")},
 	{ECardApiResult::Minor::AL_Not_Initialized, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#notInitialized")},
 	{ECardApiResult::Minor::AL_Warning_Connection_Disconnected, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#warningConnectionDisconnected")},
 	{ECardApiResult::Minor::AL_Session_Terminated_Warning, QLatin1String(RESULTMINOR) + QLatin1String("/al/common#SessionTerminatedWarning")},
@@ -119,6 +119,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_TimeOut, Minor::DP_Trusted_Channel_Establishment_Failed);
@@ -128,10 +129,13 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User, Minor::SAL_Cancellation_by_User);
+	addConversionElement(GlobalStatus::Code::Workflow_InternalError_BeforeTcToken, Minor::SAL_Cancellation_by_User);
 	addConversionElement(GlobalStatus::Code::Workflow_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
 	addConversionElement(GlobalStatus::Code::Card_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
 
 	addConversionElement(GlobalStatus::Code::Workflow_No_Permission_Error, Minor::AL_No_Permission);
+	addConversionElement(GlobalStatus::Code::Card_Pin_Deactivated, Minor::AL_No_Permission);
+	addConversionElement(GlobalStatus::Code::Card_Puk_Blocked, Minor::AL_No_Permission);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Communication_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url, Minor::AL_Communication_Error);
@@ -156,18 +160,22 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Invalid_Pin, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Card_Invalid_Can, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Card_Invalid_Puk, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Card_Puk_Blocked, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Unavailable, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed, Minor::AL_Unknown_Error);
 
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Invalid_Length, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_AlreadyInProgress_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_No_Extended_Length_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Communication_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Input_TimeOut, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Card_Pin_Deactivated, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Not_Blocked, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Mismatch, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_ValidityVerificationFailed, Minor::SAL_MEAC_DocumentValidityVerificationFailed);
+	addConversionElement(GlobalStatus::Code::Card_Smart_Invalid, Minor::AL_Unknown_Error);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
@@ -175,7 +183,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Card_Protocol_Error, Minor::AL_Internal_Error);
 
-	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Unkown_API_Function);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Unknown_API_Function);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Not_Initialized);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Warning_Connection_Disconnected);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Session_Terminated_Warning);
@@ -202,11 +210,11 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, Minor::SAL_Invalid_Key);
 
 	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_InvalidRequest, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionTimeout, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_ConnectionError, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::RemoteConnector_RemoteHostRefusedConnection, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::IfdConnector_InvalidRequest, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::IfdConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::IfdConnector_ConnectionTimeout, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::IfdConnector_ConnectionError, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_File_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_Cannot_Save_File, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_Data_Corrupted, Minor::AL_Unknown_Error);
@@ -232,11 +240,16 @@ void ECardApiResult::addConversionElement(const GlobalStatus::Code pCode, const 
 
 GlobalStatus::Code ECardApiResult::toStatus(const Minor pMinor)
 {
+	if (pMinor == Minor::null)
+	{
+		return GlobalStatus::Code::Paos_Error_AL_Unknown_Error;
+	}
+
 	initConversionMaps();
 
 	if (!cConversionMap2.contains(pMinor))
 	{
-		qCritical() << "Critical conversion missmatch for" << pMinor;
+		qCritical() << "Critical conversion mismatch for" << pMinor;
 		Q_ASSERT(false);
 		return GlobalStatus::Code::Unknown_Error;
 	}
@@ -251,7 +264,7 @@ ECardApiResult::Minor ECardApiResult::fromStatus(const GlobalStatus::Code pCode)
 
 	if (!cConversionMap1.contains(pCode))
 	{
-		qCritical() << "Critical conversion missmatch for" << pCode;
+		qCritical() << "Critical conversion mismatch for" << pCode;
 		Q_ASSERT(false);
 		return Minor::AL_Unknown_Error;
 	}
@@ -359,7 +372,7 @@ QString ECardApiResult::getMessage(Minor pMinor)
 			//: LABEL ALL_PLATFORMS
 			return tr("There was some problem with a provided or omitted parameter.");
 
-		case Minor::AL_Unkown_API_Function:
+		case Minor::AL_Unknown_API_Function:
 			//: LABEL ALL_PLATFORMS
 			return tr("The API function is unknown.");
 
@@ -456,10 +469,15 @@ QString ECardApiResult::getMessage(Minor pMinor)
 			//: LABEL ALL_PLATFORMS
 			return tr("The ID card is invalid or disabled.");
 
+		case Minor::IFDL_UnknownSlot:
+		case Minor::IFDL_InvalidSlotHandle:
+		case Minor::IFDL_CancellationByUser:
+		case Minor::IFDL_IFD_SharingViolation:
 		case Minor::null:
-		default:
 			return QString();
 	}
+
+	Q_UNREACHABLE();
 }
 
 
@@ -585,19 +603,27 @@ bool ECardApiResult::isOriginServer() const
 
 GlobalStatus ECardApiResult::toStatus() const
 {
-	QString message = getMessage();
+	GlobalStatus::ExternalInfoMap infoMap;
+	const auto& message = getMessage();
 	if (message.isEmpty() || isOriginServer())
 	{
-		// if the message is not set, we clearly use the result minor
-		// if the server sent the message, it can be in any language, so we take the result minor
-		message = ECardApiResult::getMessage(getMinor());
+		// We want to map the server error to our own error message which will use the correct UI language
+		infoMap.insert(GlobalStatus::ExternalInformation::ECARDAPI_ERROR, getMessage(getMinor()));
+
+		if (message != infoMap.value(GlobalStatus::ExternalInformation::ECARDAPI_ERROR))
+		{
+			infoMap.insert(GlobalStatus::ExternalInformation::ECARDAPI_SERVERMESSAGE, message);
+		}
+	}
+	else
+	{
+		infoMap.insert(GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message);
 	}
 
 	switch (getMajor())
 	{
 		case Major::Unknown:
-			return {GlobalStatus::Code::Unknown_Error, {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}
-			};
+			return {GlobalStatus::Code::Unknown_Error, infoMap};
 
 		case Major::Ok:
 			if (isOk())
@@ -607,11 +633,10 @@ GlobalStatus ECardApiResult::toStatus() const
 			Q_FALLTHROUGH();
 
 		case Major::Error:
-			return {toStatus(getMinor()), {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}, toStatus(d->mOrigin)};
+			return {toStatus(getMinor()), infoMap, toStatus(d->mOrigin)};
 
 		case Major::Warning:
-			return {GlobalStatus::Code::Paos_Unexpected_Warning, {GlobalStatus::ExternalInformation::ECARDAPI_ERROR, message}
-			};
+			return {GlobalStatus::Code::Paos_Unexpected_Warning, infoMap};
 	}
 
 	Q_UNREACHABLE();

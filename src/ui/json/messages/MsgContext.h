@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "context/WorkflowContext.h"
 #include "Msg.h"
 #include "MsgTypes.h"
+#include "context/WorkflowContext.h"
 
 namespace governikus
 {
@@ -17,10 +17,16 @@ class MsgContext
 {
 	Q_DISABLE_COPY(MsgContext)
 
-	protected:
+	private:
 		MsgLevel mApiLevel;
 		QVector<Msg> mStateMessages;
+		bool mProgressStatus;
 		QSharedPointer<WorkflowContext> mContext;
+
+	protected:
+		void addStateMsg(const Msg& pMsg);
+		void clear();
+		void setWorkflowContext(const QSharedPointer<WorkflowContext>& pContext);
 
 	public:
 		MsgContext();
@@ -30,12 +36,15 @@ class MsgContext
 
 		[[nodiscard]] Msg getLastStateMsg() const;
 
+		[[nodiscard]] bool provideProgressStatus() const;
+		void setProgressStatus(bool pStatus);
+
 		[[nodiscard]] bool isActiveWorkflow() const;
 
 		template<typename T = WorkflowContext>
 		QSharedPointer<const T> getContext() const
 		{
-			static_assert(std::is_base_of<WorkflowContext, T>::value, "T must derive WorkflowContext");
+			static_assert(std::is_base_of_v<WorkflowContext, T>, "T must derive WorkflowContext");
 
 			if (mContext)
 			{
@@ -49,7 +58,7 @@ class MsgContext
 		template<typename T = WorkflowContext>
 		QSharedPointer<T> getContext()
 		{
-			static_assert(std::is_base_of<WorkflowContext, T>::value, "T must derive WorkflowContext");
+			static_assert(std::is_base_of_v<WorkflowContext, T>, "T must derive WorkflowContext");
 
 			if (mContext)
 			{
@@ -66,9 +75,9 @@ class MsgDispatcherContext
 	: public MsgContext
 {
 	public:
-		void clear();
-		void addStateMsg(const Msg& pMsg);
-		void setWorkflowContext(const QSharedPointer<WorkflowContext>& pContext);
+		using MsgContext::addStateMsg;
+		using MsgContext::clear;
+		using MsgContext::setWorkflowContext;
 };
 
 } // namespace governikus

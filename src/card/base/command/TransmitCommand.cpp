@@ -11,6 +11,8 @@
 
 #include <QLoggingCategory>
 
+#include <algorithm>
+
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 using namespace governikus;
@@ -23,27 +25,29 @@ TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConne
 	, mInputApduInfos(pInputApduInfos)
 	, mSlotHandle(pSlotHandle)
 	, mOutputApduAsHex()
+	, mSecureMessagingStopped(false)
 {
+	connect(pCardConnectionWorker.data(), &CardConnectionWorker::fireSecureMessagingStopped, this, [this](){
+			mSecureMessagingStopped = true;
+		});
 }
 
 
 bool TransmitCommand::isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse)
 {
-	if (pInputApduInfo.getAcceptableStatusCodes().isEmpty())
+	const auto& acceptableStatusCodes = pInputApduInfo.getAcceptableStatusCodes();
+
+	if (acceptableStatusCodes.isEmpty())
 	{
 		return true;
 	}
 
-	for (const QByteArray& acceptableStatusCodeAsHex : pInputApduInfo.getAcceptableStatusCodes())
-	{
-		// according to TR-03112-6 chapter 3.2.5
-		if (pResponse.getReturnCodeAsHex().startsWith(acceptableStatusCodeAsHex))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	const auto& responseBytes = pResponse.getStatusBytes().toHex();
+	return std::any_of(acceptableStatusCodes.constBegin(), acceptableStatusCodes.constEnd(),
+			[&responseBytes](const auto& pCode)
+			{
+				return responseBytes.startsWith(pCode); // according to TR-03112-6 chapter 3.2.5
+			});
 }
 
 
@@ -54,7 +58,7 @@ void TransmitCommand::internalExecute()
 
 	for (const auto& inputApduInfo : mInputApduInfos)
 	{
-		auto [returnCode, response] = mCardConnectionWorker->transmit(inputApduInfo.getInputApdu());
+		auto [returnCode, response] = getCardConnectionWorker()->transmit(inputApduInfo.getInputApdu());
 		mReturnCode = returnCode;
 		if (mReturnCode != CardReturnCode::OK)
 		{
@@ -63,7 +67,14 @@ void TransmitCommand::internalExecute()
 			return;
 		}
 
-		mOutputApduAsHex += response.getBuffer().toHex();
+		if (response.isEmpty())
+		{
+			qCWarning(card) << "Transmit unsuccessful. Received empty response.";
+			mReturnCode = CardReturnCode::COMMAND_FAILED;
+			return;
+		}
+
+		mOutputApduAsHex += QByteArray(response).toHex();
 		if (isAcceptable(inputApduInfo, response))
 		{
 			continue;

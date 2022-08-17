@@ -15,7 +15,16 @@
 namespace governikus
 {
 
-defineEnumType(ReaderManagerPlugInType, UNKNOWN, PCSC, NFC, REMOTE)
+defineEnumType(ReaderManagerPlugInType
+		, UNKNOWN
+		, MOCK
+		, PCSC
+		, NFC
+		, REMOTE_IFD
+		, LOCAL_IFD
+		, SMART
+		, SIMULATOR
+		)
 
 
 class ReaderManagerPlugInInfo
@@ -23,7 +32,7 @@ class ReaderManagerPlugInInfo
 	public:
 		enum class Key
 		{
-			PCSC_LITE_VERSION,
+			PCSC_LITE_VERSION, LOCAL_IFD_STATE
 		};
 
 	public:

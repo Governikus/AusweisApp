@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -12,13 +11,15 @@ Item {
 	property alias source: tabImage.source
 	property alias text: tabText.text
 	property var selected: false
-	signal clicked
+	signal clicked()
 
-	Accessible.role: Accessible.PageTab
+	readonly property color itemColor: selected ? Style.text.hint_accent.textColor : Style.text.hint_secondary.textColor
+
+	Accessible.role: Accessible.Button
 	Accessible.name: text
 	Accessible.onPressAction: clicked()
 
-	Image {
+	TintableIcon {
 		id: tabImage
 
 		anchors {
@@ -29,8 +30,8 @@ Item {
 			bottomMargin: Style.dimens.navigation_bar_text_padding
 		}
 
-		sourceSize.height: height
-		fillMode: Image.PreserveAspectFit
+		sourceSize.height: Style.dimens.navigation_bar_height
+		tintColor: parent.itemColor
 	}
 
 	GText {
@@ -46,15 +47,11 @@ Item {
 		horizontalAlignment: Text.AlignHCenter
 		elide: Text.ElideRight
 		textStyle: Style.text.navigation
+		color: parent.itemColor
 	}
 
 	MouseArea {
 		anchors.fill: parent
 		onClicked: parent.clicked()
-	}
-
-	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-	layer.effect: ColorOverlay {
-		color: selected ? Style.text.hint_accent.textColor : Style.text.hint_secondary.textColor
 	}
 }

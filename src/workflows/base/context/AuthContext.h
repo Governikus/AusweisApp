@@ -6,29 +6,25 @@
 
 #pragma once
 
+#include "ActivationContext.h"
+#include "NetworkManager.h"
+#include "TcToken.h"
+#include "UrlUtil.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
-#include "ActivationContext.h"
 #include "context/AccessRightManager.h"
 #include "context/WorkflowContext.h"
-#include "NetworkManager.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 #include "paos/invoke/DidAuthenticateResponseEac2.h"
-#include "paos/invoke/DidListResponse.h"
-#include "paos/invoke/DisconnectResponse.h"
 #include "paos/invoke/InitializeFrameworkResponse.h"
 #include "paos/invoke/StartPaos.h"
 #include "paos/invoke/TransmitResponse.h"
 #include "paos/retrieve/DidAuthenticateEac1.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
-#include "paos/retrieve/DidList.h"
-#include "paos/retrieve/Disconnect.h"
 #include "paos/retrieve/InitializeFramework.h"
 #include "paos/retrieve/StartPaosResponse.h"
 #include "paos/retrieve/Transmit.h"
-#include "TcToken.h"
-#include "UrlUtil.h"
 
 #include <QDebug>
 #include <QPointer>
@@ -48,16 +44,13 @@ class AuthContext
 	: public WorkflowContext
 {
 	Q_OBJECT
+	friend class ::test_StateRedirectBrowser;
+	friend class ::test_StatePreVerification;
+	friend class ::test_StateProcessCertificatesFromEac2;
+	friend class ::test_StateCertificateDescriptionCheck;
+	friend class TestAuthContext;
 
 	private:
-		friend class ::test_StateRedirectBrowser;
-		friend class ::test_StatePreVerification;
-		friend class ::test_StateProcessCertificatesFromEac2;
-		friend class ::test_StateCertificateDescriptionCheck;
-		friend class TestAuthContext;
-
-		int mProgressValue;
-		QString mProgressMessage;
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
 		bool mSkipRedirect;
@@ -71,30 +64,29 @@ class AuthContext
 		QSharedPointer<StartPaos> mStartPaos;
 		QSharedPointer<InitializeFramework> mInitializeFramework;
 		QSharedPointer<InitializeFrameworkResponse> mInitializeFrameworkResponse;
-		QSharedPointer<DIDList> mDIDList;
-		QSharedPointer<DIDListResponse> mDIDListResponse;
 		QSharedPointer<DIDAuthenticateEAC1> mDIDAuthenticateEAC1;
 		QSharedPointer<DIDAuthenticateResponseEAC1> mDIDAuthenticateResponseEAC1;
 		QSharedPointer<DIDAuthenticateEAC2> mDIDAuthenticateEAC2;
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEACAdditionalInputType;
 		QSharedPointer<DIDAuthenticateEACAdditional> mDIDAuthenticateEACAdditionalInputType;
 		QSharedPointer<DIDAuthenticateResponseEAC2> mDIDAuthenticateResponseEAC2;
-		QVector<QSharedPointer<Transmit>> mTransmits;
-		QVector<QSharedPointer<TransmitResponse>> mTransmitResponses;
-		QSharedPointer<Disconnect> mDisconnect;
-		QSharedPointer<DisconnectResponse> mDisconnectResponse;
+		QSharedPointer<Transmit> mTransmit;
+		QSharedPointer<TransmitResponse> mTransmitResponse;
 		QSharedPointer<StartPaosResponse> mStartPaosResponse;
 		QSharedPointer<AccessRightManager> mAccessRightManager;
 		QMultiMap<QUrl, QSslCertificate> mCertificates;
 		QSharedPointer<const CVCertificate> mDvCvc;
-		CVCertificateChainBuilder mCvcChainBuilderProd, mCvcChainBuilderTest;
+		CVCertificateChainBuilder mCvcChainBuilderProd;
+		CVCertificateChainBuilder mCvcChainBuilderTest;
 		QByteArray mSslSession;
 
 	Q_SIGNALS:
-		void fireProgressChanged();
 		void fireShowChangePinViewChanged();
 		void fireDidAuthenticateEac1Changed();
 		void fireAccessRightManagerCreated(QSharedPointer<AccessRightManager> pAccessRightManager);
+
+	protected:
+		explicit AuthContext(const Action pAction, const QSharedPointer<ActivationContext>& pActivationContext);
 
 	public:
 		explicit AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
@@ -109,21 +101,6 @@ class AuthContext
 		{
 			mErrorReportedToServer = pErrorReportedToServer;
 		}
-
-
-		[[nodiscard]] int getProgressValue() const
-		{
-			return mProgressValue;
-		}
-
-
-		[[nodiscard]] const QString getProgressMessage() const
-		{
-			return mProgressMessage;
-		}
-
-
-		void setProgress(int pValue, const QString& pMessage);
 
 
 		[[nodiscard]] bool showChangePinView() const
@@ -147,6 +124,18 @@ class AuthContext
 		}
 
 
+		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override
+		{
+
+			if (isCanAllowedMode() || !mDIDAuthenticateEAC1)
+			{
+				return {AcceptedEidType::CARD_CERTIFIED};
+			}
+
+			return mDIDAuthenticateEAC1->getAcceptedEidTypes();
+		}
+
+
 		[[nodiscard]] bool isSkipRedirect() const
 		{
 			return mSkipRedirect;
@@ -162,12 +151,6 @@ class AuthContext
 		[[nodiscard]] QList<QSslCertificate> getCertificateList() const
 		{
 			return mCertificates.values();
-		}
-
-
-		[[nodiscard]] bool containsCertificateFor(const QUrl& pUrl) const
-		{
-			return mCertificates.contains(UrlUtil::getUrlOrigin(pUrl));
 		}
 
 
@@ -243,6 +226,7 @@ class AuthContext
 		{
 			mDIDAuthenticateEAC1 = pDIDAuthenticateEAC1;
 			Q_EMIT fireDidAuthenticateEac1Changed();
+			Q_EMIT fireIsSmartCardAllowedChanged();
 		}
 
 
@@ -306,30 +290,6 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] const QSharedPointer<DIDList>& getDidList() const
-		{
-			return mDIDList;
-		}
-
-
-		void setDidList(const QSharedPointer<DIDList>& pDidList)
-		{
-			mDIDList = pDidList;
-		}
-
-
-		const QSharedPointer<DIDListResponse>& getDidListResponse()
-		{
-			return mDIDListResponse;
-		}
-
-
-		void setDidListResponse(const QSharedPointer<DIDListResponse>& pDidListResponse)
-		{
-			mDIDListResponse = pDidListResponse;
-		}
-
-
 		[[nodiscard]] const QSharedPointer<InitializeFramework>& getInitializeFramework() const
 		{
 			return mInitializeFramework;
@@ -354,30 +314,6 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] const QSharedPointer<Disconnect>& getDisconnect() const
-		{
-			return mDisconnect;
-		}
-
-
-		void setDisconnect(const QSharedPointer<Disconnect>& pDisconnect)
-		{
-			mDisconnect = pDisconnect;
-		}
-
-
-		const QSharedPointer<DisconnectResponse>& getDisconnectResponse()
-		{
-			return mDisconnectResponse;
-		}
-
-
-		void setDisconnectResponse(const QSharedPointer<DisconnectResponse>& pDisconnectResponse)
-		{
-			mDisconnectResponse = pDisconnectResponse;
-		}
-
-
 		[[nodiscard]] const QSharedPointer<StartPaosResponse>& getStartPaosResponse() const
 		{
 			return mStartPaosResponse;
@@ -390,29 +326,29 @@ class AuthContext
 		}
 
 
-		const QVector<QSharedPointer<TransmitResponse>>& getTransmitResponses()
+		[[nodiscard]] const QSharedPointer<TransmitResponse>& getTransmitResponse()
 		{
-			return mTransmitResponses;
+			return mTransmitResponse;
 		}
 
 
-		void addTransmitResponse(const QSharedPointer<TransmitResponse>& pTransmitResponse)
+		void setTransmitResponse(const QSharedPointer<TransmitResponse>& pTransmitResponse)
 		{
 			Q_ASSERT(!pTransmitResponse.isNull());
-			mTransmitResponses += pTransmitResponse;
+			mTransmitResponse = pTransmitResponse;
 		}
 
 
-		const QVector<QSharedPointer<Transmit>>& getTransmits()
+		[[nodiscard]] const QSharedPointer<Transmit>& getTransmit()
 		{
-			return mTransmits;
+			return mTransmit;
 		}
 
 
-		void addTransmit(const QSharedPointer<Transmit>& pTransmit)
+		void setTransmit(const QSharedPointer<Transmit>& pTransmit)
 		{
 			Q_ASSERT(!pTransmit.isNull());
-			mTransmits += pTransmit;
+			mTransmit = pTransmit;
 		}
 
 
@@ -422,7 +358,7 @@ class AuthContext
 		}
 
 
-		QByteArray encodeEffectiveChat();
+		[[nodiscard]] QByteArray encodeEffectiveChat();
 
 
 		[[nodiscard]] const QSharedPointer<StartPaos>& getStartPaos() const

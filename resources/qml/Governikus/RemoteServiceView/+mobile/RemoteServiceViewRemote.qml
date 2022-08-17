@@ -2,20 +2,27 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.PasswordType 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 
 
 Item {
 	id: baseItem
 	height: mainColumn.height
+
+	QtObject {
+		id: d
+
+		property bool oldLockedAndHiddenStatus
+	}
 
 	Column {
 		id: mainColumn
@@ -130,20 +137,10 @@ Item {
 				onClicked: ApplicationModel.enableWifi()
 			}
 
-			GText {
+			LocalNetworkInfo {
 				visible: RemoteServiceModel.requiresLocalNetworkPermission && !RemoteServiceModel.remoteReaderVisible
 				width: parent.width
 				topPadding: Constants.component_spacing
-
-				text: "%1<br><a href=\"#\"><center>%2</center></a>"
-					//: INFO IOS Let user know to check the application settings for local network permission
-					.arg(qsTr("To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed for %1.").arg(Qt.application.name))
-					//: INFO IOS Link to application settings
-					.arg(qsTr("Go to application settings"))
-				textStyle: Style.text.normal_secondary
-				textFormat: Text.RichText
-
-				onLinkActivated: ApplicationModel.showSettings(ApplicationModel.SETTING_APP)
 			}
 
 			ListView {
@@ -182,18 +179,27 @@ Item {
 		title: qsTr("Pairing mode")
 		//: INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smartphone.
 		text: qsTr("Start the pairing mode on your smartphone if you haven't done it already.")
-		onConfirmed: firePush(enterPinView)
+		onConfirmed: {
+			d.oldLockedAndHiddenStatus = getLockedAndHidden()
+			setLockedAndHidden()
+			push(enterPinView)
+		}
 	}
 
 	Component {
 		id: enterPinView
 
 		EnterPasswordView {
-			state: "REMOTE_PIN"
-			navigationAction: NavigationAction { state: "cancel"; onClicked: { firePop() } }
+			function close() {
+				setLockedAndHidden(d.oldLockedAndHiddenStatus)
+				pop()
+			}
+
+			passwordType: PasswordType.REMOTE_PIN
+			navigationAction: NavigationAction { action: NavigationAction.Action.Cancel; onClicked: close() }
 			//: LABEL ANDROID IOS
 			title: qsTr("Pairing code")
-			onPasswordEntered: firePop()
+			onPasswordEntered: close()
 		}
 	}
 }

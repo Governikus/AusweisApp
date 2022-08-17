@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.TechnologyInfo 1.0
@@ -21,6 +21,8 @@ Item {
 
 	NfcProgressIndicator {
 		id: progressIndicator
+
+		Accessible.ignored: true
 
 		anchors.top: parent.top
 		anchors.left: parent.left
@@ -42,13 +44,18 @@ Item {
 			rightMargin: Constants.component_spacing
 		}
 
-		enableButtonVisible: nfcState === ApplicationModel.NFC_DISABLED || nfcState === ApplicationModel.NFC_INACTIVE
-		enableButtonText: (nfcState === ApplicationModel.NFC_DISABLED ?
-						   //: LABEL ANDROID IOS
-						   qsTr("Go to NFC settings") :
-						   //: LABEL ANDROID IOS
-						   qsTr("Start NFC scan")
-						  )
+		enableButtonText: {
+			switch (nfcState) {
+				case ApplicationModel.NFC_DISABLED:
+					//: INFO ANDROID IOS
+					return qsTr("Go to NFC settings")
+				case ApplicationModel.NFC_INACTIVE:
+					//: LABEL ANDROID IOS
+					return qsTr("Start NFC scan")
+				default:
+					return ""
+			}
+		}
 		onEnableClicked: nfcState === ApplicationModel.NFC_DISABLED ? ApplicationModel.showSettings(ApplicationModel.SETTING_NFC) : startScanIfNecessary()
 		enableText: {
 			switch (nfcState) {
@@ -71,16 +78,39 @@ Item {
 					return ""
 			}
 		}
-		titleText: qsTr("Establish connection")
 
-		subTitleText: (!visible ? "" :
-					  //: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
-					  ApplicationModel.extendedLengthApdusUnsupported ? qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.") :
-					  Constants.is_layout_ios ?
-					  //: INFO IOS The ID card may be inserted, the authentication process may be started.
-					  qsTr("Please place your ID card on the top of the device's back side.") :
-					  //: INFO ANDROID The ID card may be inserted, the authentication process may be started.
-					  qsTr("Please place your ID card on the device, the exact position is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.")
-					  )
+		titleText: {
+			switch (nfcState) {
+				case ApplicationModel.NFC_UNAVAILABLE:
+					//: INFO ANDROID IOS
+					return qsTr("NFC is not available")
+				case ApplicationModel.NFC_DISABLED:
+					//: INFO ANDROID IOS
+					return qsTr("NFC is disabled")
+				case ApplicationModel.NFC_INACTIVE:
+					//: INFO ANDROID IOS
+					return qsTr("Start scan")
+				default:
+					//: INFO ANDROID IOS
+					return qsTr("Establish connection")
+			}
+		}
+
+		subTitleText: {
+			if (nfcState !== ApplicationModel.NFC_READY) {
+				return ""
+			}
+
+			if (ApplicationModel.extendedLengthApdusUnsupported) {
+				//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
+				return qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.")
+			} else if (Constants.is_layout_ios) {
+				//: INFO IOS The ID card may be inserted, the authentication process may be started.
+				return qsTr("Please place your ID card on the top of the device's back side.")
+			} else {
+				//: INFO ANDROID The ID card may be inserted, the authentication process may be started.
+				return qsTr("Please place your ID card on the device, the exact position is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.")
+			}
+		}
 	}
 }

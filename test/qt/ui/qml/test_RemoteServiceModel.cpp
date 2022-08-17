@@ -6,8 +6,8 @@
 
 #include "RemoteServiceModel.h"
 
-#include "context/RemoteServiceContext.h"
-#include "MockRemoteServer.h"
+#include "MockIfdServer.h"
+#include "context/IfdServiceContext.h"
 
 #include <QDebug>
 #include <QtTest>
@@ -24,7 +24,7 @@ class test_RemoteServiceModel
 
 	private:
 		RemoteServiceModel* mModel = nullptr;
-		QSharedPointer<RemoteServiceContext> mContext;
+		QSharedPointer<IfdServiceContext> mContext;
 
 		static EstablishPaceChannel createDataToParse(const PacePasswordId& pinId)
 		{
@@ -42,16 +42,13 @@ class test_RemoteServiceModel
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			Env::setCreator<RemoteServer*>(std::function<RemoteServer* ()>([&] {
-					return new MockRemoteServer();
-				}));
 			mModel = Env::getSingleton<RemoteServiceModel>();
 		}
 
 
 		void init()
 		{
-			mContext.reset(new RemoteServiceContext());
+			mContext.reset(new IfdServiceContext(QSharedPointer<IfdServer>(new MockIfdServer())));
 		}
 
 
@@ -81,7 +78,7 @@ class test_RemoteServiceModel
 
 		void test_CancelPasswordRequest()
 		{
-			QSignalSpy spy(mContext.data(), &RemoteServiceContext::fireCancelPasswordRequest);
+			QSignalSpy spy(mContext.data(), &IfdServiceContext::fireCancelPasswordRequest);
 
 			mModel->cancelPasswordRequest();
 			QCOMPARE(spy.count(), 0);
@@ -95,7 +92,7 @@ class test_RemoteServiceModel
 		void test_Running()
 		{
 			QSignalSpy spyStartWorkflow(mModel, &RemoteServiceModel::fireStartWorkflow);
-			QSignalSpy spyCancelWorkflow(mContext.data(), &RemoteServiceContext::fireCancelWorkflow);
+			QSignalSpy spyCancelWorkflow(mContext.data(), &IfdServiceContext::fireCancelWorkflow);
 			QSignalSpy spyIsRunningChanged(mModel, &RemoteServiceModel::fireIsRunningChanged);
 
 			QVERIFY(!mModel->isRunning());
@@ -104,13 +101,13 @@ class test_RemoteServiceModel
 			QCOMPARE(spyIsRunningChanged.count(), 1);
 			QVERIFY(!mModel->isRunning());
 
-			mContext->getRemoteServer()->start(QString());
+			mContext->getIfdServer()->start(QString());
 			QVERIFY(mModel->isRunning());
 			mModel->setRunning(false);
 			QCOMPARE(spyIsRunningChanged.count(), 2);
 			QCOMPARE(spyCancelWorkflow.count(), 1);
 
-			mContext->getRemoteServer()->stop();
+			mContext->getIfdServer()->stop();
 			mModel->setRunning(true);
 			QCOMPARE(spyIsRunningChanged.count(), 3);
 			QCOMPARE(spyStartWorkflow.count(), 1);
@@ -132,10 +129,10 @@ class test_RemoteServiceModel
 			Q_EMIT mContext->fireStateChanged(QString());
 			QCOMPARE(spyIsRunningChanged.count(), 1);
 
-			Q_EMIT mContext->getRemoteServer()->firePskChanged(QByteArray());
+			Q_EMIT mContext->getIfdServer()->firePskChanged(QByteArray());
 			QCOMPARE(spyPskChanged.count(), 1);
 
-			Q_EMIT mContext->getRemoteServer()->fireConnectedChanged(true);
+			Q_EMIT mContext->getIfdServer()->fireConnectedChanged(true);
 			QCOMPARE(spyConnectedChanged.count(), 2);
 			QCOMPARE(spyConnectedClientDeviceNameChanged.count(), 1);
 		}
@@ -144,7 +141,7 @@ class test_RemoteServiceModel
 		void test_SetPairing()
 		{
 			mModel->resetRemoteServiceContext(mContext);
-			const QSharedPointer<MockRemoteServer> server = qSharedPointerCast<MockRemoteServer>(mContext->getRemoteServer());
+			const QSharedPointer<MockIfdServer> server = qSharedPointerCast<MockIfdServer>(mContext->getIfdServer());
 
 			mModel->setPairing(true);
 			QVERIFY(server->getPairing());
@@ -154,102 +151,60 @@ class test_RemoteServiceModel
 		}
 
 
-		void test_GetPasswordTypeContextIsNull()
-		{
-			QCOMPARE(mModel->getPasswordType(), QString());
-		}
-
-
-		void test_GetPassword_data()
-		{
-			QTest::addColumn<PacePasswordId>("password");
-			QTest::addColumn<QString>("output");
-
-			QTest::newRow("pin") << PacePasswordId::PACE_PIN << QString("PIN");
-			QTest::newRow("can") << PacePasswordId::PACE_CAN << QString("CAN");
-			QTest::newRow("puk") << PacePasswordId::PACE_PUK << QString("PUK");
-			QTest::newRow("unknown") << PacePasswordId::UNKNOWN << QString();
-		}
-
-
-		void test_GetPassword()
-		{
-			QFETCH(PacePasswordId, password);
-			QFETCH(QString, output);
-
-			EstablishPaceChannel establishPaceChannel(password);
-			QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(QStringLiteral("SlotHandle"), establishPaceChannel, 6));
-			mContext->setEstablishPaceChannel(message);
-			mModel->resetRemoteServiceContext(mContext);
-			QCOMPARE(mModel->getPasswordType(), output);
-		}
-
-
-		void test_TransportPinLink_data()
+		void test_EnableTransportPinLink_data()
 		{
 			QTest::addColumn<EstablishPaceChannel>("inputData");
 			QTest::addColumn<int>("pinLength");
 			QTest::addColumn<bool>("enableTransportPinLink");
-			QTest::addColumn<bool>("requestTransportPin");
 
-			QTest::newRow("default - 0") << EstablishPaceChannel() << 0 << false << false;
-			QTest::newRow("default - 5") << EstablishPaceChannel() << 5 << false << false;
-			QTest::newRow("default - 6") << EstablishPaceChannel() << 6 << false << false;
+			QTest::newRow("default - 0") << EstablishPaceChannel() << 0 << false;
+			QTest::newRow("default - 5") << EstablishPaceChannel() << 5 << false;
+			QTest::newRow("default - 6") << EstablishPaceChannel() << 6 << false;
 
-			QTest::newRow("pin - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 0 << true << false;
-			QTest::newRow("pin - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 5 << false << true;
-			QTest::newRow("pin - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 6 << false << false;
+			QTest::newRow("pin - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 0 << true;
+			QTest::newRow("pin - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 5 << false;
+			QTest::newRow("pin - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 6 << false;
 
-			QTest::newRow("can - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 0 << false << false;
-			QTest::newRow("can - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 5 << false << false;
-			QTest::newRow("can - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 6 << false << false;
+			QTest::newRow("can - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 0 << false;
+			QTest::newRow("can - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 5 << false;
+			QTest::newRow("can - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 6 << false;
 
-			QTest::newRow("puk - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 0 << false << false;
-			QTest::newRow("puk - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 5 << false << false;
-			QTest::newRow("puk - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 6 << false << false;
+			QTest::newRow("puk - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 0 << false;
+			QTest::newRow("puk - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 5 << false;
+			QTest::newRow("puk - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 6 << false;
 
-			QTest::newRow("unknown - no cert - 0") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 0 << false << false;
-			QTest::newRow("unknown - no cert - 5") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 5 << false << false;
-			QTest::newRow("unknown - no cert - 6") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 6 << false << false;
+			QTest::newRow("unknown - no cert - 0") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 0 << false;
+			QTest::newRow("unknown - no cert - 5") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 5 << false;
+			QTest::newRow("unknown - no cert - 6") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 6 << false;
 
-			QTest::newRow("pin - cert - 0") << createDataToParse(PacePasswordId::PACE_PIN) << 0 << false << false;
-			QTest::newRow("pin - cert - 5") << createDataToParse(PacePasswordId::PACE_PIN) << 5 << false << false;
-			QTest::newRow("pin - cert - 6") << createDataToParse(PacePasswordId::PACE_PIN) << 6 << false << false;
+			QTest::newRow("pin - cert - 0") << createDataToParse(PacePasswordId::PACE_PIN) << 0 << true;
+			QTest::newRow("pin - cert - 5") << createDataToParse(PacePasswordId::PACE_PIN) << 5 << true;
+			QTest::newRow("pin - cert - 6") << createDataToParse(PacePasswordId::PACE_PIN) << 6 << true;
 
-			QTest::newRow("can - cert - 0") << createDataToParse(PacePasswordId::PACE_CAN) << 0 << false << false;
-			QTest::newRow("can - cert - 5") << createDataToParse(PacePasswordId::PACE_CAN) << 5 << false << false;
-			QTest::newRow("can - cert - 6") << createDataToParse(PacePasswordId::PACE_CAN) << 6 << false << false;
+			QTest::newRow("can - cert - 0") << createDataToParse(PacePasswordId::PACE_CAN) << 0 << false;
+			QTest::newRow("can - cert - 5") << createDataToParse(PacePasswordId::PACE_CAN) << 5 << false;
+			QTest::newRow("can - cert - 6") << createDataToParse(PacePasswordId::PACE_CAN) << 6 << false;
 
-			QTest::newRow("puk - cert - 0") << createDataToParse(PacePasswordId::PACE_PUK) << 0 << false << false;
-			QTest::newRow("puk - cert - 5") << createDataToParse(PacePasswordId::PACE_PUK) << 5 << false << false;
-			QTest::newRow("puk - cert - 6") << createDataToParse(PacePasswordId::PACE_PUK) << 6 << false << false;
+			QTest::newRow("puk - cert - 0") << createDataToParse(PacePasswordId::PACE_PUK) << 0 << false;
+			QTest::newRow("puk - cert - 5") << createDataToParse(PacePasswordId::PACE_PUK) << 5 << false;
+			QTest::newRow("puk - cert - 6") << createDataToParse(PacePasswordId::PACE_PUK) << 6 << false;
 
-			QTest::newRow("unknown - cert - 0") << createDataToParse(PacePasswordId::UNKNOWN) << 0 << false << false;
-			QTest::newRow("unknown - cert - 5") << createDataToParse(PacePasswordId::UNKNOWN) << 5 << false << false;
-			QTest::newRow("unknown - cert - 6") << createDataToParse(PacePasswordId::UNKNOWN) << 6 << false << false;
+			QTest::newRow("unknown - cert - 0") << createDataToParse(PacePasswordId::UNKNOWN) << 0 << false;
+			QTest::newRow("unknown - cert - 5") << createDataToParse(PacePasswordId::UNKNOWN) << 5 << false;
+			QTest::newRow("unknown - cert - 6") << createDataToParse(PacePasswordId::UNKNOWN) << 6 << false;
 		}
 
 
-		void test_TransportPinLink()
+		void test_EnableTransportPinLink()
 		{
 			QFETCH(EstablishPaceChannel, inputData);
 			QFETCH(int, pinLength);
 			QFETCH(bool, enableTransportPinLink);
-			QFETCH(bool, requestTransportPin);
 
 			mModel->resetRemoteServiceContext(mContext);
-
 			QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(QString(), inputData, pinLength));
 			mContext->setEstablishPaceChannel(message);
-
 			QCOMPARE(mModel->enableTransportPinLink(), enableTransportPinLink);
-			QCOMPARE(mModel->isRequestTransportPin(), requestTransportPin);
-
-			mModel->changePinLength();
-			QCOMPARE(mModel->isRequestTransportPin(), !requestTransportPin);
-
-			mModel->changePinLength();
-			QCOMPARE(mModel->isRequestTransportPin(), requestTransportPin);
 		}
 
 

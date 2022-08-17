@@ -20,7 +20,7 @@ class DatagramHandler
 
 	public:
 		explicit DatagramHandler(bool pEnableListening = true);
-		~DatagramHandler() override;
+		~DatagramHandler() override = default;
 		[[nodiscard]] virtual bool isBound() const = 0;
 		virtual bool send(const QByteArray& pData) = 0;
 

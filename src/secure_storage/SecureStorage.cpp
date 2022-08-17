@@ -5,6 +5,7 @@
 
 #include "SecureStorage.h"
 
+#include "BuildHelper.h"
 #include "FileDestination.h"
 #include "SingletonHelper.h"
 
@@ -30,6 +31,8 @@ namespace
 		return QLatin1String(_key);\
 	}
 
+CONFIG_NAME(CONFIGURATION_VENDOR, "vendor")
+
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE, "cvRootCertificates")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE_TEST, "cvRootCertificatesTest")
 
@@ -37,8 +40,9 @@ CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATE_CERTIFICATES, "updateCertificates")
 
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_SETTINGS, "tlsSettings")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_PSK, "tlsSettingsPsk")
-CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_READER, "tlsSettingsRemoteReader")
-CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_READER_PAIRING, "tlsSettingsRemoteReaderPairing")
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD, "tlsSettingsRemoteIfd")
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD_PAIRING, "tlsSettingsRemoteIfdPairing")
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_LOCAL_IFD, "tlsSettingsLocalIfd")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_STATIC_KEY_SIZES, "minStaticKeySizes")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES, "minEphemeralKeySizes")
 
@@ -55,6 +59,20 @@ CONFIG_NAME(CONFIGURATION_NAME_WHITELIST_SERVER_BASE_URL, "baseUrl")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_UPDATES, "updates")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_UPDATE_URL, "release")
 CONFIG_NAME(CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL, "beta")
+
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_SMART, "smart")
+CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_URL, "personalizationUrl")
+CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL, "personalizationTestUrl")
+CONFIG_NAME(CONFIGURATION_NAME_SMART_SERVICEID, "serviceId")
+CONFIG_NAME(CONFIGURATION_NAME_SMART_VERSIONTAG, "versionTag")
+CONFIG_NAME(CONFIGURATION_NAME_SMART_SSDAID, "ssdAid")
+
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_LOCAL_IFD, "localIfd")
+CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_PACKAGE_NAME, "packageName")
+CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_MIN_VERSION, "minVersion")
+CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_ALLOWED_CERTIFICATE_HASHES, "allowedCertificateHashes")
+CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_MIN_PSK_SIZE, "minPskSize")
+
 } // namespace
 
 defineSingleton(SecureStorage)
@@ -71,10 +89,20 @@ SecureStorage::SecureStorage()
 	, mWhitelistServerBaseUrl()
 	, mAppcastUpdateUrl()
 	, mAppcastBetaUpdateUrl()
+	, mSmartPersonalizationUrl()
+	, mSmartPersonalizationTestUrl()
+	, mSmartServiceId()
+	, mSmartVersionTag()
+	, mSmartSsdAid()
+	, mLocalIfdPackageName()
+	, mLocalIfdMinVersion()
+	, mLocalIfAllowedCertificateHashes()
+	, mLocalIfdMinPskSize()
 	, mTlsConfig()
 	, mTlsConfigPsk()
-	, mTlsConfigRemote()
-	, mTlsConfigRemotePsk()
+	, mTlsConfigRemoteIfd()
+	, mTlsConfigRemoteIfdPairing()
+	, mTlsConfigLocalIfd()
 	, mMinStaticKeySizes()
 	, mMinEphemeralKeySizes()
 {
@@ -88,10 +116,38 @@ bool SecureStorage::isLoaded() const
 }
 
 
+QString SecureStorage::getDeveloperConfig() const
+{
+	if (BuildHelper::getCertificateType() == CertificateType::DEVELOPER)
+	{
+		return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QStringLiteral("/config.json");
+	}
+
+	return QString();
+}
+
+
+QString SecureStorage::getCustomConfig() const
+{
+	return FileDestination::getPath(QStringLiteral("config.json"));
+}
+
+
+QString SecureStorage::getEmbeddedConfig() const
+{
+	return QStringLiteral(":/config.json");
+}
+
+
 QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
 {
 	for (const auto& path : pFiles)
 	{
+		if (path.isNull())
+		{
+			continue;
+		}
+
 		qCDebug(securestorage) << "Load SecureStorage:" << path;
 
 		QFile configFile(path);
@@ -124,12 +180,15 @@ QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
 
 void SecureStorage::load()
 {
-	const QStringList files({FileDestination::getPath(QStringLiteral("config.json")), QStringLiteral(":/config.json")});
+	const QStringList files({getDeveloperConfig(), getCustomConfig(), getEmbeddedConfig()});
 	const auto& config = loadFile(files);
 	if (config.isEmpty())
 	{
 		return;
 	}
+
+	mVendor = config.value(CONFIGURATION_VENDOR()).toString();
+	qCInfo(securestorage) << "Vendor" << mVendor;
 
 	mCvcas.clear();
 	mCvcas = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE());
@@ -142,7 +201,7 @@ void SecureStorage::load()
 	mUpdateCertificates.clear();
 	for (int i = 0; i < certificates.size(); ++i)
 	{
-		QSslCertificate certificate(QByteArray::fromHex(certificates[i]), QSsl::Der);
+		QSslCertificate certificate(certificates[i], QSsl::Der);
 		if (certificate.isNull())
 		{
 			qCCritical(securestorage) << "Failed to read update certificate[" << i << "] from SecureStorage";
@@ -163,15 +222,20 @@ void SecureStorage::load()
 		mTlsConfigPsk.load(tlsPskValue.toObject());
 	}
 
-	QJsonValue tlsRemoteReaderValue = config.value(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_READER());
+	QJsonValue tlsRemoteReaderValue = config.value(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD());
 	if (tlsRemoteReaderValue.isObject())
 	{
-		mTlsConfigRemote.load(tlsRemoteReaderValue.toObject());
+		mTlsConfigRemoteIfd.load(tlsRemoteReaderValue.toObject());
 	}
-	QJsonValue tlsRemoteReaderPairingValue = config.value(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_READER_PAIRING());
+	QJsonValue tlsRemoteReaderPairingValue = config.value(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD_PAIRING());
 	if (tlsRemoteReaderPairingValue.isObject())
 	{
-		mTlsConfigRemotePsk.load(tlsRemoteReaderPairingValue.toObject());
+		mTlsConfigRemoteIfdPairing.load(tlsRemoteReaderPairingValue.toObject());
+	}
+	QJsonValue tlsLocalIfd = config.value(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_LOCAL_IFD());
+	if (tlsLocalIfd.isObject())
+	{
+		mTlsConfigLocalIfd.load(tlsLocalIfd.toObject());
 	}
 
 	mMinStaticKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_STATIC_KEY_SIZES());
@@ -185,6 +249,22 @@ void SecureStorage::load()
 
 	mAppcastUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_UPDATE_URL());
 	mAppcastBetaUpdateUrl = readGroup(config, CONFIGURATION_GROUP_NAME_UPDATES(), CONFIGURATION_NAME_APPCAST_BETA_UPDATE_URL());
+
+	mSmartPersonalizationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_URL());
+	mSmartPersonalizationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL());
+	mSmartServiceId = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SERVICEID());
+	mSmartVersionTag = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_VERSIONTAG());
+	mSmartSsdAid = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SSDAID());
+
+	QJsonValue localIfdValue = config.value(CONFIGURATION_GROUP_NAME_LOCAL_IFD());
+	if (localIfdValue.isObject())
+	{
+		mLocalIfdPackageName = readGroup(config, CONFIGURATION_GROUP_NAME_LOCAL_IFD(), CONFIGURATION_NAME_LOCAL_IFD_PACKAGE_NAME());
+		mLocalIfdMinVersion = readGroup(config, CONFIGURATION_GROUP_NAME_LOCAL_IFD(), CONFIGURATION_NAME_LOCAL_IFD_MIN_VERSION());
+		QJsonObject localIfdValueObject = localIfdValue.toObject();
+		mLocalIfAllowedCertificateHashes = readByteArrayList(localIfdValueObject, CONFIGURATION_NAME_LOCAL_IFD_ALLOWED_CERTIFICATE_HASHES());
+		mLocalIfdMinPskSize = localIfdValueObject.value(CONFIGURATION_NAME_LOCAL_IFD_MIN_PSK_SIZE()).toInt();
+	}
 
 	mLoaded = true;
 	qCInfo(securestorage) << "SecureStorage successfully loaded";
@@ -226,6 +306,12 @@ QByteArray SecureStorage::loadTestCvc(const QString& pPath) const
 		return QByteArray();
 	}
 	return cvcFile.readAll();
+}
+
+
+[[nodiscard]] const QString& SecureStorage::getVendor() const
+{
+	return mVendor;
 }
 
 
@@ -271,15 +357,69 @@ const QUrl& SecureStorage::getAppcastBetaUpdateUrl() const
 }
 
 
+const QString& SecureStorage::getSmartPersonalizationUrl(bool pTest) const
+{
+	return pTest ? mSmartPersonalizationTestUrl : mSmartPersonalizationUrl;
+}
+
+
+const QString& SecureStorage::getSmartServiceId() const
+{
+	return mSmartServiceId;
+}
+
+
+const QString& SecureStorage::getSmartVersionTag() const
+{
+	return mSmartVersionTag;
+}
+
+
+const QString& SecureStorage::getSmartSsdAid() const
+{
+	return mSmartSsdAid;
+}
+
+
 const TlsConfiguration& SecureStorage::getTlsConfig(TlsSuite pTlsSuite) const
 {
 	return pTlsSuite == TlsSuite::PSK ? mTlsConfigPsk : mTlsConfig;
 }
 
 
-const TlsConfiguration& SecureStorage::getTlsConfigRemote(TlsSuite pTlsSuite) const
+const TlsConfiguration& SecureStorage::getTlsConfigRemoteIfd(TlsSuite pTlsSuite) const
 {
-	return pTlsSuite == TlsSuite::PSK ? mTlsConfigRemotePsk : mTlsConfigRemote;
+	return pTlsSuite == TlsSuite::PSK ? mTlsConfigRemoteIfdPairing : mTlsConfigRemoteIfd;
+}
+
+
+const TlsConfiguration& SecureStorage::getTlsConfigLocalIfd() const
+{
+	return mTlsConfigLocalIfd;
+}
+
+
+const QString& SecureStorage::getLocalIfdPackageName() const
+{
+	return mLocalIfdPackageName;
+}
+
+
+const QString& SecureStorage::getLocalIfdMinVersion() const
+{
+	return mLocalIfdMinVersion;
+}
+
+
+const QByteArrayList& SecureStorage::getLocalIfdAllowedCertificateHashes() const
+{
+	return mLocalIfAllowedCertificateHashes;
+}
+
+
+int SecureStorage::getLocalIfdMinPskSize() const
+{
+	return mLocalIfdMinPskSize;
 }
 
 
@@ -354,12 +494,10 @@ QMap<QSsl::KeyAlgorithm, int> SecureStorage::readKeySizes(const QJsonObject& pCo
 			{
 				keySizes.insert(QSsl::KeyAlgorithm::Dsa, value);
 			}
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 			else if (key == QLatin1String("Dh"))
 			{
 				keySizes.insert(QSsl::KeyAlgorithm::Dh, value);
 			}
-#endif
 			else if (key == QLatin1String("Ec"))
 			{
 				keySizes.insert(QSsl::KeyAlgorithm::Ec, value);
@@ -381,13 +519,13 @@ QByteArrayList SecureStorage::readByteArrayList(const QJsonObject& pConfig, cons
 
 	for (int i = 0; i < jsonArray.size(); ++i)
 	{
-		QJsonValue certificate = jsonArray[i];
-		if (!certificate.isString())
+		QJsonValue entry = jsonArray[i];
+		if (!entry.isString())
 		{
 			qCCritical(securestorage) << "Expected hexstring in array[" << i << "] " << pName << " in SecureStorage";
 			continue;
 		}
-		byteArrayList += certificate.toString().toLatin1();
+		byteArrayList << QByteArray::fromHex(entry.toString().toLatin1());
 	}
 
 	return byteArrayList;

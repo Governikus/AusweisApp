@@ -20,19 +20,24 @@ class BaseCardCommand
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_CardConnection;
 
 	private:
-		friend class ::test_CardConnection;
 		Q_INVOKABLE void execute();
+		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 
 	protected:
-		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		CardReturnCode mReturnCode;
-
 		explicit BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
+		[[nodiscard]] QSharedPointer<CardConnectionWorker> getCardConnectionWorker()
+		{
+			return mCardConnectionWorker;
+		}
+
+
 		virtual void internalExecute() = 0;
-		~BaseCardCommand() override;
+		~BaseCardCommand() override = default;
 
 	public:
 		void run();

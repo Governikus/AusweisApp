@@ -2,11 +2,12 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 
@@ -24,7 +25,7 @@ Button {
 
 	contentItem: GText {
 		text: control.text
-		textStyle: Style.text.header
+		textStyle: Style.text.header_inverse
 		horizontalAlignment: Text.AlignHCenter
 		verticalAlignment: Text.AlignVCenter
 		font.pixelSize: fontScale * ApplicationModel.scaleFactor * 50
@@ -37,7 +38,7 @@ Button {
 		border.color: Style.text.header.textColor
 		border.width: !visualPrivacy && control.focus ? Math.max(1, ApplicationModel.scaleFactor * 2) : 0
 		radius: control.height / 2
-		color: Style.color.background_pane
+		color: Style.color.accent
 		visible: control.enabled
 
 		Rectangle {
@@ -65,4 +66,6 @@ Button {
 			}
 		}
 	}
+
+	FocusFrame {}
 }

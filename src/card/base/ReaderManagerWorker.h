@@ -23,8 +23,9 @@ class ReaderManagerWorker
 	private:
 		QVector<ReaderManagerPlugIn*> mPlugIns;
 
+		void callOnPlugIn(ReaderManagerPlugInType pType, const std::function<void(ReaderManagerPlugIn* pPlugIn)>& pFunc, const char* pLog);
 		void registerPlugIns();
-		[[nodiscard]] bool isPlugIn(const QJsonObject& pJson) const;
+		[[nodiscard]] static bool isPlugIn(const QJsonObject& pJson);
 		void registerPlugIn(ReaderManagerPlugIn* pPlugIn);
 		[[nodiscard]] Reader* getReader(const QString& pReaderName) const;
 
@@ -35,6 +36,8 @@ class ReaderManagerWorker
 		Q_INVOKABLE void shutdown();
 
 		Q_INVOKABLE void reset(ReaderManagerPlugInType pType);
+		Q_INVOKABLE void insert(const ReaderInfo& pReaderInfo, const QVariant& pData);
+		Q_INVOKABLE void shelve();
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
 		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType, const QString& pError);
 		Q_INVOKABLE [[nodiscard]] bool isScanRunning() const;
@@ -53,9 +56,12 @@ class ReaderManagerWorker
 		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
 		void fireCardInserted(const ReaderInfo& pInfo);
 		void fireCardRemoved(const ReaderInfo& pInfo);
-		void fireCardRetryCounterChanged(const ReaderInfo& pInfo);
+		void fireCardInfoChanged(const ReaderInfo& pInfo);
 		void fireCardConnectionWorkerCreated(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 		void fireInitialized();
+
+	private Q_SLOTS:
+		void onReaderRemoved(ReaderInfo pInfo);
 
 	public Q_SLOTS:
 		void onThreadStarted();

@@ -9,9 +9,33 @@ using namespace governikus;
 StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
 	: ResponseType(PaosType::STARTPAOS_RESPONSE)
 	, ElementDetector(pXmlData)
+	, mResultMajor()
+	, mResultMinor()
+	, mResultMessage()
+	, mRemainingDays(-1)
+	, mRemainingAttempts(-1)
+	, mBlockingCode()
 {
 	parse();
 	setResult(ECardApiResult(mResultMajor, mResultMinor, mResultMessage, ECardApiResult::Origin::Server));
+}
+
+
+int StartPaosResponse::getRemainingDays() const
+{
+	return mRemainingDays;
+}
+
+
+int StartPaosResponse::getRemainingAttempts() const
+{
+	return mRemainingAttempts;
+}
+
+
+const QString& StartPaosResponse::getBlockingCode() const
+{
+	return mBlockingCode;
 }
 
 
@@ -22,7 +46,10 @@ void StartPaosResponse::parse()
 				QStringLiteral("MessageID"),
 				QStringLiteral("ResultMajor"),
 				QStringLiteral("ResultMinor"),
-				QStringLiteral("ResultMessage")
+				QStringLiteral("ResultMessage"),
+				QStringLiteral("remainingDays"),
+				QStringLiteral("remainingAttempts"),
+				QStringLiteral("blockingCode")
 			});
 
 	detectStartElements(expectedElements);
@@ -47,5 +74,26 @@ bool StartPaosResponse::handleFoundElement(const QString& pElementName, const QS
 	{
 		mResultMessage = pValue;
 	}
+	else if (pElementName == QLatin1String("remainingDays"))
+	{
+		mRemainingDays = valuetoInt(pValue);
+	}
+	else if (pElementName == QLatin1String("remainingAttempts"))
+	{
+		mRemainingAttempts = valuetoInt(pValue);
+	}
+	else if (pElementName == QLatin1String("blockingCode"))
+	{
+		mBlockingCode = pValue;
+	}
+
 	return true;
+}
+
+
+int StartPaosResponse::valuetoInt(const QString& pValue) const
+{
+	bool succeed = false;
+	const int value = pValue.toInt(&succeed);
+	return succeed ? value : -1;
 }
