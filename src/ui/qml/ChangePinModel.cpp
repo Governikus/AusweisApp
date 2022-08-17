@@ -5,6 +5,7 @@
 #include "ChangePinModel.h"
 
 #include "ReaderManager.h"
+#include "controller/ChangePinController.h"
 
 using namespace governikus;
 
@@ -20,13 +21,15 @@ void ChangePinModel::resetChangePinContext(const QSharedPointer<ChangePinContext
 		connect(mContext.data(), &ChangePinContext::firePaceResultUpdated, this, &ChangePinModel::onPaceResultUpdated);
 
 		Q_EMIT fireNewContextSet();
+		Q_EMIT fireSupportedPlugInTypesChanged();
+		Q_EMIT fireIsSmartCardAllowedChanged();
 	}
 }
 
 
 void ChangePinModel::startWorkflow(bool pRequestTransportPin)
 {
-	Q_EMIT fireStartWorkflow(pRequestTransportPin);
+	Q_EMIT fireStartWorkflow(ChangePinController::createWorkflowRequest(pRequestTransportPin));
 }
 
 
@@ -38,6 +41,17 @@ QString ChangePinModel::getResultString() const
 	}
 
 	return isError() ? WorkflowModel::getResultString() : mContext->getSuccessMessage();
+}
+
+
+QVector<ReaderManagerPlugInType> ChangePinModel::getSupportedReaderPlugInTypes() const
+{
+	auto plugins = WorkflowModel::getSupportedReaderPlugInTypes();
+	if (mContext && mContext->isRequestTransportPin())
+	{
+		plugins.removeOne(ReaderManagerPlugInType::SMART);
+	}
+	return plugins;
 }
 
 

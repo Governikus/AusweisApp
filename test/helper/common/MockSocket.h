@@ -9,7 +9,6 @@
 #include <QByteArray>
 #include <QTcpSocket>
 
-class test_WebserviceActivationContext;
 
 namespace governikus
 {
@@ -18,7 +17,6 @@ class MockSocket
 	: public QTcpSocket
 {
 	Q_OBJECT
-	friend class ::test_WebserviceActivationContext;
 
 	public:
 		QByteArray mReadBuffer;
@@ -33,6 +31,12 @@ class MockSocket
 
 		MockSocket();
 		~MockSocket() override;
+
+		void setSocketState(QAbstractSocket::SocketState pState)
+		{
+			QTcpSocket::setSocketState(pState);
+		}
+
 
 		[[nodiscard]] qint64 bytesAvailable() const override;
 		qint64 readData(char* pDestination, qint64 pMaxSize) override;

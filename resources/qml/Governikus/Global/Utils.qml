@@ -4,9 +4,9 @@
 
 pragma Singleton
 
-import QtQuick 2.12
+import QtQuick 2.15
 
-import Governikus.Type.Random 1.0
+import Governikus.Type.ApplicationModel 1.0
 
 QtObject {
 
@@ -69,7 +69,7 @@ QtObject {
 
 	function shuffle(pArray) {
 		for (let i = pArray.length - 1; i > 0; i--) {
-			let j = Random.randomInt(0, i);
+			let j = ApplicationModel.randomInt(0, i);
 			let x = pArray[i];
 			pArray[i] = pArray[j];
 			pArray[j] = x;

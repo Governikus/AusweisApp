@@ -7,10 +7,10 @@
 #include "ASN1TemplateUtil.h"
 #include "pace/ec/EcUtil.h"
 
+#include <QLoggingCategory>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#include <QLoggingCategory>
 
 using namespace governikus;
 
@@ -18,7 +18,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-SignatureChecker::SignatureChecker(const QVector<QSharedPointer<const CVCertificate> >& pCertificateChain)
+SignatureChecker::SignatureChecker(const QVector<QSharedPointer<const CVCertificate>>& pCertificateChain)
 	: mCertificateChain(pCertificateChain)
 {
 }
@@ -33,8 +33,8 @@ bool SignatureChecker::check() const
 	}
 
 	auto signingCert = mCertificateChain.at(0);
-	const EC_KEY* key = signingCert->getBody().getPublicKey().getEcKey();
-	if (!key)
+	const EcdsaPublicKey* parentKey = &signingCert->getBody().getPublicKey();
+	if (!parentKey->isComplete())
 	{
 		qCCritical(card) << "No elliptic curve parameters";
 		return false;
@@ -42,15 +42,15 @@ bool SignatureChecker::check() const
 
 	for (const auto& cert : mCertificateChain)
 	{
-		if (!checkSignature(cert, signingCert, key))
+		if (!checkSignature(cert, signingCert, parentKey))
 		{
 			qCCritical(card) << "Certificate verification failed:" << cert->getBody().getCertificateHolderReference();
 			return false;
 		}
 
-		if (cert->getBody().getPublicKey().getEcKey())
+		if (const auto& certKey = cert->getBody().getPublicKey(); certKey.isComplete())
 		{
-			key = cert->getBody().getPublicKey().getEcKey();
+			parentKey = &certKey;
 		}
 		signingCert = cert;
 	}
@@ -59,43 +59,19 @@ bool SignatureChecker::check() const
 }
 
 
-bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EC_KEY* pKey) const
+bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>& pCert, const QSharedPointer<const CVCertificate>& pSigningCert, const EcdsaPublicKey* pKey) const
 {
 	ERR_clear_error();
 
-	// We duplicate the key because we modify it by setting the public point.
-	const QSharedPointer<EC_KEY> signingKey = EcUtil::create(EC_KEY_dup(pKey));
-
-	const QByteArray uncompPublicPoint = pSigningCert->getBody().getPublicKey().getUncompressedPublicPoint();
-	const auto* const uncompPublicPointData = reinterpret_cast<const unsigned char*>(uncompPublicPoint.constData());
-	const auto uncompPublicPointLen = static_cast<size_t>(uncompPublicPoint.size());
-
-	EC_POINT* publicPoint = EC_POINT_new(EC_KEY_get0_group(signingKey.data()));
-	const auto guard = qScopeGuard([publicPoint] {
-			EC_POINT_free(publicPoint);
-		});
-
-	const EC_GROUP* ecGroup = EC_KEY_get0_group(signingKey.data());
-	if (!EC_POINT_oct2point(ecGroup, publicPoint, uncompPublicPointData, uncompPublicPointLen, nullptr))
+	// Some keys are "incomplete": So we need to use the parameters of the parent key and current public point.
+	const QSharedPointer<EVP_PKEY> signingKey = pKey->createKey(pSigningCert->getBody().getPublicKey().getUncompressedPublicPoint());
+	if (signingKey.isNull())
 	{
-		qCCritical(card) << "Cannot decode uncompressed public point";
+		qCCritical(card) << "Cannot fetch signing key";
 		return false;
 	}
 
-	if (!EC_KEY_set_public_key(signingKey.data(), publicPoint))
-	{
-		qCCritical(card) << "Cannot set public point";
-		return false;
-	}
-
-	const QSharedPointer<EVP_PKEY> evpPkey = EcUtil::create(EVP_PKEY_new());
-	if (!EVP_PKEY_set1_EC_KEY(evpPkey.data(), signingKey.data()))
-	{
-		qCCritical(card) << "Cannot set key";
-		return false;
-	}
-
-	const QSharedPointer<EVP_PKEY_CTX> ctx = EcUtil::create(EVP_PKEY_CTX_new(evpPkey.data(), nullptr));
+	const QSharedPointer<EVP_PKEY_CTX> ctx = EcUtil::create(EVP_PKEY_CTX_new(signingKey.data(), nullptr));
 	if (!EVP_PKEY_verify_init(ctx.data()))
 	{
 		qCCritical(card) << "Cannot init verify ctx";
@@ -112,7 +88,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 
 	if (result == -1)
 	{
-		qCCritical(card) << "Signature verification failed, an error occured:" << getOpenSslError();
+		qCCritical(card) << "Signature verification failed, an error occurred:" << getOpenSslError();
 	}
 
 	return result == 1;

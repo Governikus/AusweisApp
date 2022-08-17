@@ -47,7 +47,8 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 
 	struct udev* udev;
 	struct udev_enumerate* enumerate;
-	struct udev_list_entry* devices, * dev_list_entry;
+	struct udev_list_entry* devices;
+	struct udev_list_entry* dev_list_entry;
 
 	/* Create the udev object */
 	udev = udev_new();

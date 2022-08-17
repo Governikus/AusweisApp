@@ -19,8 +19,9 @@ namespace governikus
 {
 class ProviderConfigurationParser
 {
+	friend class ::test_ProviderConfigurationParser;
+
 	private:
-		friend class ::test_ProviderConfigurationParser;
 		static QVector<ProviderConfigurationInfo> parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS);
 
 		ProviderConfigurationParser() = delete;

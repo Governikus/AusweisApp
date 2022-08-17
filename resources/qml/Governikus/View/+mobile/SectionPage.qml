@@ -2,39 +2,18 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.Type.ApplicationModel 1.0
 
-Item {
-	signal reset
+Controller {
+	id: root
 
-	function firePush(pSectionPage) {
-		StackView.view.push(pSectionPage)
-	}
-
-	function firePushWithProperties(pSectionPage, pProperties) {
-		StackView.view.push(pSectionPage, pProperties)
-	}
-
-	function fireReplace(pSectionPage) {
-		if (StackView.view.depth <= 1) {
-			StackView.view.push(pSectionPage)
-			return
-		}
-		StackView.view.replace(pSectionPage)
-	}
-
-	function firePop() {
-		StackView.view.pop()
-	}
-
-	function firePopAll() {
-		StackView.view.pop(null)
-	}
+	signal reset()
 
 	function scrollPageDown() {
 		sectionPageFlickable.scrollPageDown()
@@ -49,7 +28,9 @@ Item {
 	}
 
 	function activated() {
-		forceActiveFocus()
+		if (ApplicationModel.isScreenReaderRunning()) {
+			updateFocus()
+		}
 		highlightScrollbar()
 	}
 
@@ -58,7 +39,6 @@ Item {
 	property var navigationAction: null
 	property string title: ""
 	property var rightTitleBarAction: null
-	property var subTitleBarAction: null
 
 	property bool titleBarVisible: true
 	property color titleBarColor: Style.color.accent
@@ -70,11 +50,9 @@ Item {
 
 	// When enabled the section page will automatically add a safeAreaMargin to the bottom of the page
 	property bool automaticSafeAreaMarginHandling: true
+	property bool hiddenNavbarPadding: false
 
 	property alias content: flickableContent.data
-
-	Accessible.onScrollDownAction: flickable.scrollPageDown()
-	Accessible.onScrollUpAction: flickable.scrollPageUp()
 
 	GFlickable {
 		id: flickable

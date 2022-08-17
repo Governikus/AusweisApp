@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,11 +18,9 @@ Item {
 	activeFocusOnTab: true
 
 	Accessible.role: Accessible.Button
-	Accessible.name: readerName + ". " + readerStatus
+	Accessible.name: readerName + ". " + readerHTMLDescription
 
-	FocusFrame {
-		borderColor: Style.color.focus_indicator
-	}
+	FocusFrame {}
 
 	RowLayout {
 		id: rowLayout
@@ -103,20 +101,7 @@ Item {
 			}
 
 			GText {
-				id: textStatus
-
-				visible: readerSupported
-
-				Layout.fillWidth: true
-
-				textStyle: Style.text.normal
-				text: readerStatus
-			}
-
-			GText {
 				id: textDescription
-
-				visible: !(readerInstalled && readerSupported)
 
 				Layout.fillWidth: true
 
@@ -126,9 +111,7 @@ Item {
 				textStyle: Style.text.normal
 				text: readerHTMLDescription
 
-				FocusFrame {
-					borderColor: Style.color.focus_indicator
-				}
+				FocusFrame {}
 			}
 		}
 

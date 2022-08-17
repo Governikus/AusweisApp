@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -22,26 +23,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
-import android.view.accessibility.AccessibilityManager;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 
-import org.qtproject.qt5.android.bindings.QtActivity;
-import org.qtproject.qt5.android.QtNative;
+import org.qtproject.qt.android.QtActivityDelegate;
+import org.qtproject.qt.android.QtNative;
+import org.qtproject.qt.android.bindings.QtActivity;
 
 import androidx.core.view.ViewCompat;
 
 
 public class MainActivity extends QtActivity
 {
-	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
-
 	private static Intent cIntent;
-	private static Uri cReferrer;
-	private static boolean cStartedByAuth;
 
 	private final MarginLayoutParams windowInsets = new MarginLayoutParams(0, 0);
 
@@ -59,6 +56,7 @@ public class MainActivity extends QtActivity
 		private final String[][] mTechLists;
 		private final PendingIntent mPendingIntent;
 
+		@SuppressLint("UnspecifiedImmutableFlag")
 		NfcForegroundDispatcher()
 		{
 			mFilters = new IntentFilter[] {
@@ -69,7 +67,15 @@ public class MainActivity extends QtActivity
 					IsoDep.class.getName()
 				}
 			};
-			mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), 0);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+			{
+				mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), PendingIntent.FLAG_MUTABLE);
+			}
+			else
+			{
+				mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), 0);
+			}
 		}
 
 
@@ -122,6 +128,12 @@ public class MainActivity extends QtActivity
 		}
 
 
+		boolean isEnabled()
+		{
+			return mEnabled;
+		}
+
+
 		void enable()
 		{
 			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
@@ -163,35 +175,14 @@ public class MainActivity extends QtActivity
 
 
 	// required by IntentActivationHandler -> MainActivityAccessor
-	public static String fetchStoredIntent()
-	{
-		if (cIntent == null)
-		{
-			Log.e(LOG_TAG, "No stored intent available, returning null");
-			return null;
-		}
-
-		String url = cIntent.getDataString();
-		cIntent = null;
-		return url;
-	}
-
-
-	// required by IntentActivationHandler -> MainActivityAccessor
 	public static String fetchStoredReferrer()
 	{
-		if (cReferrer == null)
+		if (cIntent == null || cIntent.getExtras() == null)
 		{
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22, Android 5.1
-			{
-				Log.e(LOG_TAG, "No stored referrer available, returning null");
-			}
-			return null;
+			return "";
 		}
 
-		String ref = cReferrer.toString();
-		cReferrer = null;
-		return ref;
+		return cIntent.getExtras().getString(EXTRA_SOURCE_INFO);
 	}
 
 
@@ -206,7 +197,13 @@ public class MainActivity extends QtActivity
 
 	public static boolean isStartedByAuth()
 	{
-		return cStartedByAuth;
+		if (cIntent == null || cIntent.getData() == null)
+		{
+			return false;
+		}
+
+		return cIntent.getAction().equals(Intent.ACTION_VIEW)
+			   && cIntent.getData().getQuery().toLowerCase(Locale.GERMAN).contains("tctokenurl");
 	}
 
 
@@ -215,7 +212,7 @@ public class MainActivity extends QtActivity
 	{
 		setTheme(R.style.AppTheme);
 
-		Log.d(LOG_TAG, "onCreate: " + getIntent());
+		LogHandler.getLogger().info("onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
 
 		onNewIntent(getIntent());
@@ -223,19 +220,9 @@ public class MainActivity extends QtActivity
 		mNfcForegroundDispatcher = new NfcForegroundDispatcher();
 		mNfcReaderMode = new NfcReaderMode();
 
-		// Set statusBar/navigationBar color and handle systemWindowInsets
+		// Handle systemWindowInsets
 		Window window = getWindow();
 		View rootView = window.getDecorView().findViewById(android.R.id.content);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
-		{
-			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-			window.setNavigationBarColor(Color.TRANSPARENT);
-		}
-		else
-		{
-			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-		}
-		window.setStatusBarColor(Color.TRANSPARENT);
 		ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) ->
 				{
 					windowInsets.topMargin = insets.getSystemWindowInsetTop();
@@ -247,31 +234,31 @@ public class MainActivity extends QtActivity
 
 					return insets;
 				});
+
+		// Set Qt flags first so we can overwrite with our own values.
+		setSystemUiVisibility(QtActivityDelegate.SYSTEM_UI_VISIBILITY_TRANSLUCENT);
+		window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+		// Make statusbar and navigation bar transparent
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
+		{
+			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+			window.setNavigationBarColor(Color.TRANSPARENT);
+		}
+		else
+		{
+			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+		}
+		window.setStatusBarColor(Color.TRANSPARENT);
 	}
 
 
 	@Override
 	protected void onNewIntent(Intent newIntent)
 	{
-		Log.d(LOG_TAG, "onNewIntent: " + newIntent);
-		super.onNewIntent(newIntent);
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) // API 22, Android 5.1
-		{
-			cReferrer = getReferrer();
-		}
-
 		cIntent = newIntent;
-		Uri data = cIntent.getData();
-		if (data == null)
-		{
-			cStartedByAuth = false;
-		}
-		else
-		{
-			cStartedByAuth = cIntent.getAction().equals(Intent.ACTION_VIEW)
-					&& data.getQuery().toLowerCase(Locale.GERMAN).contains("tctokenurl");
-		}
+		LogHandler.getLogger().info("onNewIntent: " + newIntent);
+		super.onNewIntent(newIntent);
 	}
 
 
@@ -302,7 +289,7 @@ public class MainActivity extends QtActivity
 	@Override
 	protected void onDestroy()
 	{
-		Log.d(LOG_TAG, "onDestroy");
+		LogHandler.getLogger().info("onDestroy");
 		super.onDestroy();
 	}
 
@@ -326,9 +313,20 @@ public class MainActivity extends QtActivity
 	}
 
 
+	// used by NfcReaderManagerPlugIn
+	public void resetNfcReaderMode()
+	{
+		if (mIsResumed && mNfcReaderMode.isEnabled())
+		{
+			mNfcReaderMode.disable();
+			mNfcReaderMode.enable();
+		}
+	}
+
+
 	public void keepScreenOn(boolean pActivate)
 	{
-		Log.d(LOG_TAG, "Keep screen on: " + pActivate);
+		LogHandler.getLogger().info("Keep screen on: " + pActivate);
 		if (pActivate)
 		{
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -365,19 +363,18 @@ public class MainActivity extends QtActivity
 
 	public boolean openUrl(String pUrl, String pReferrer)
 	{
-		String packageName = pReferrer == null ? null : pReferrer.replace("android-app://", "");
 		Intent intent = new Intent(Intent.ACTION_VIEW)
 				.setData(Uri.parse(pUrl))
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-				.setPackage(packageName);
+				.setPackage(pReferrer);
 		try
 		{
 			startActivity(intent);
-			Log.d(LOG_TAG, "Started Intent in browser with id " + packageName);
+			LogHandler.getLogger().info("Started Intent in browser with id " + pReferrer);
 		}
 		catch (ActivityNotFoundException e)
 		{
-			Log.e(LOG_TAG, "Couldn't open URL in browser with id " + packageName);
+			LogHandler.getLogger().warning("Couldn't open URL in browser with id " + pReferrer);
 			return false;
 		}
 		return true;

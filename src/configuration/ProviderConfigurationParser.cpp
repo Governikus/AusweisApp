@@ -10,12 +10,18 @@
 #include <QJsonObject>
 #include <QLoggingCategory>
 
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(update)
 
 
 using namespace governikus;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+using JsonValueRef = const QJsonValueRef;
+#else
+using JsonValueRef = const QJsonValue&;
+#endif
 
 QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS)
 {
@@ -35,7 +41,7 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 	const QJsonArray& array = doc[QLatin1String("provider")].toArray();
 	QVector<ProviderConfigurationInfo> providers;
 	providers.reserve(array.size());
-	for (const auto& entry : array)
+	for (JsonValueRef entry : array)
 	{
 		const QJsonObject prov = entry.toObject();
 
@@ -44,19 +50,16 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 			continue;
 		}
 
-		const QString postalAddressCamel = prov[QLatin1String("postalAddress")].toString();
-		const QString postalAddressLower = prov[QLatin1String("postaladdress")].toString();
 		providers << ProviderConfigurationInfo(
 				LanguageString(prov[QLatin1String("shortName")]),
 				LanguageString(prov[QLatin1String("longName")]),
-				LanguageString(prov[QLatin1String("shortDescription")]),
 				LanguageString(prov[QLatin1String("longDescription")]),
 				prov[QLatin1String("address")].toString(),
 				prov[QLatin1String("homepage")].toString(),
 				prov[QLatin1String("category")].toString(),
 				prov[QLatin1String("phone")].toString(),
 				prov[QLatin1String("email")].toString(),
-				postalAddressCamel.isEmpty() ? postalAddressLower : postalAddressCamel, // Accept old format
+				prov[QLatin1String("postalAddress")].toString(),
 				prov[QLatin1String("icon")].toString(),
 				prov[QLatin1String("image")].toString(),
 				prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
@@ -81,11 +84,11 @@ QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteA
 
 	QMap<QString, CallCost> callCosts;
 	const auto& callCostArray = doc[QLatin1String("callcosts")].toArray();
-	for (const auto& callCostElem : callCostArray)
+	for (JsonValueRef callCostElem : callCostArray)
 	{
 		const auto cost = CallCost(callCostElem);
 		const auto& prefixArray = callCostElem.toObject()[QLatin1String("prefixes")].toArray();
-		for (const auto& prefixElem : prefixArray)
+		for (JsonValueRef prefixElem : prefixArray)
 		{
 			const auto& prefix = prefixElem.toString();
 			callCosts.insert(prefix, cost);

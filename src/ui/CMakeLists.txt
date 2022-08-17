@@ -8,17 +8,15 @@ add_subdirectory(base)
 
 add_subdirectory(json)
 add_subdirectory(aidl)
+add_subdirectory(automatic)
 
 if(TARGET ${Qt}::WebSockets)
 	add_subdirectory(websocket)
+	add_subdirectory(local_ifd)
 endif()
 
 if(NOT ANDROID AND INTEGRATED_SDK)
 	add_subdirectory(functional)
-endif()
-
-if(TARGET ${Qt}::Gui)
-	add_subdirectory(common)
 endif()
 
 if(TARGET ${Qt}::Qml)

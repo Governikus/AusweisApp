@@ -34,7 +34,7 @@ class test_PdfExporter
 		{
 			QTest::addColumn<int>("min");
 			QTest::addColumn<int>("max");
-			QTest::addColumn<QVector<HistoryInfo> >("infos");
+			QTest::addColumn<QVector<HistoryInfo>>("infos");
 
 			QVector<HistoryInfo> entries;
 
@@ -73,9 +73,9 @@ class test_PdfExporter
 		{
 			QTest::addColumn<int>("min");
 			QTest::addColumn<int>("max");
-			QTest::addColumn<QVector<Pair> >("data");
+			QTest::addColumn<QVector<Pair>>("data");
 
-			QVector<QPair<QString, QString> > data;
+			QVector<QPair<QString, QString>> data;
 
 			QTest::newRow("empty") << 10000 << 100000 << data;
 

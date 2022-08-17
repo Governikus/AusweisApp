@@ -19,7 +19,6 @@ namespace governikus
 class ProviderModel
 	: public QAbstractListModel
 {
-
 	Q_OBJECT
 
 	static QString createCostString(double pCostsPerMinute, double pCostsPerCall);
@@ -40,7 +39,6 @@ class ProviderModel
 			CATEGORY = Qt::UserRole + 1,
 			SHORTNAME,
 			LONGNAME,
-			SHORTDESCRIPTION,
 			LONGDESCRIPTION,
 			ADDRESS,
 			ADDRESS_DOMAIN,
@@ -57,7 +55,7 @@ class ProviderModel
 		};
 
 		explicit ProviderModel(QObject* pParent = nullptr);
-		~ProviderModel() override;
+		~ProviderModel() override = default;
 
 		int rowCount(const QModelIndex&) const override;
 		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

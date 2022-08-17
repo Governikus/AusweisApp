@@ -33,18 +33,47 @@ class test_Randomizer
 
 		void defaultSeedNotUsed()
 		{
+			std::mt19937 unseeded;
+			std::mt19937_64 unseeded64;
+
 			auto& randomizer = Randomizer::getInstance();
-			const QSet<unsigned long> defaultSeedValues = {
-				3499211612, 581869302, 3890346734, 3586334585, 545404204
-			};
 
-			QSet<unsigned long> randomValues;
-			for (int i = 0; i < defaultSeedValues.size(); ++i)
+			for (int i = 0; i < 10; ++i)
 			{
-				randomValues += randomizer.getGenerator()();
+				const auto fromRandomizer = randomizer.getGenerator()();
+				QVERIFY(fromRandomizer != unseeded());
+				QVERIFY(fromRandomizer != unseeded64());
 			}
+		}
 
-			QVERIFY(randomValues != defaultSeedValues);
+
+		void createUuid()
+		{
+			auto& randomizer = Randomizer::getInstance();
+
+			const auto& uuid1 = randomizer.createUuid();
+			QVERIFY(!uuid1.isNull());
+
+			const auto& uuid2 = randomizer.createUuid();
+			QVERIFY(!uuid2.isNull());
+
+			QVERIFY(uuid1 != uuid2);
+		}
+
+
+		void universalBuffer()
+		{
+			Randomizer::UniversalBuffer buffer;
+			QCOMPARE(buffer.get(), 0);
+
+			buffer.set(666);
+			QCOMPARE(buffer.get(), 666);
+
+			memcpy(buffer.data, "1234567", sizeof(buffer.data));
+			QCOMPARE(buffer.get(), 15540725856023089);
+
+			buffer.set(13847469359445559);
+			QCOMPARE(QLatin1String(reinterpret_cast<char*>(buffer.data)), QLatin1String("7654321"));
 		}
 
 

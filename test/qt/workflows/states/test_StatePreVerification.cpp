@@ -7,13 +7,14 @@
 #include "states/StatePreVerification.h"
 
 #include "AppSettings.h"
+#include "ResourceLoader.h"
 
 #include "TestAuthContext.h"
 
-#include <openssl/bn.h>
-#include <openssl/ecdsa.h>
 #include <QtCore>
 #include <QtTest>
+#include <openssl/bn.h>
+#include <openssl/ecdsa.h>
 
 
 using namespace governikus;
@@ -30,6 +31,12 @@ class test_StatePreVerification
 		void fireStateStart(QEvent* pEvent);
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
@@ -96,7 +103,7 @@ class test_StatePreVerification
 
 		void testCvcaNotTrusted()
 		{
-			const_cast<QVector<QSharedPointer<const CVCertificate> >*>(&mState->mTrustedCvcas)->clear();
+			const_cast<QVector<QSharedPointer<const CVCertificate>>*>(&mState->mTrustedCvcas)->clear();
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			mAuthContext->setStateApproved();
@@ -148,9 +155,9 @@ class test_StatePreVerification
 
 		void testSaveLinkCertificates()
 		{
-			const auto& remove = [](QVector<QSharedPointer<const CVCertificate> >& pVector, const QSharedPointer<const CVCertificate>& pCert)
+			const auto& remove = [](QVector<QSharedPointer<const CVCertificate>>& pVector, const QSharedPointer<const CVCertificate>& pCert)
 					{
-						QMutableVectorIterator<QSharedPointer<const CVCertificate> > iter(pVector);
+						QMutableVectorIterator<QSharedPointer<const CVCertificate>> iter(pVector);
 						while (iter.hasNext())
 						{
 							iter.next();
@@ -169,10 +176,10 @@ class test_StatePreVerification
 			}
 			settings.save();
 
-			const int expectedCvcaSize = 15;
+			const int expectedCvcaSize = 16;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
-			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate> >&>(mState->mTrustedCvcas);
+			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate>>&>(mState->mTrustedCvcas);
 
 			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(3));
 			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(2));

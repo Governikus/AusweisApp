@@ -28,4 +28,4 @@
 		return *Instance;\
 	}\
 \
-	static_assert(!std::is_base_of<QObject, className>::value, "QObject cannot be Q_GLOBAL_STATIC");
+	static_assert(!std::is_base_of_v<QObject, className>, "QObject cannot be Q_GLOBAL_STATIC");

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "MsgContext.h"
 #include "MsgHandler.h"
 
 namespace governikus
@@ -15,7 +16,7 @@ class MsgHandlerReaderList
 	: public MsgHandler
 {
 	public:
-		MsgHandlerReaderList();
+		explicit MsgHandlerReaderList(const MsgContext& pContext);
 };
 
 

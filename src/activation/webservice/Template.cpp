@@ -52,7 +52,7 @@ Template::Template(const QString& pTemplate)
 }
 
 
-const QSet<QString> Template::getContextKeys() const
+const QSet<QString>& Template::getContextKeys() const
 {
 	return mKeys;
 }

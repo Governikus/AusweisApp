@@ -15,8 +15,7 @@ namespace governikus
 
 class ElementDetector
 {
-	private:
-		Q_DISABLE_COPY(ElementDetector)
+	Q_DISABLE_COPY(ElementDetector)
 
 	protected:
 		QXmlStreamReader mReader;

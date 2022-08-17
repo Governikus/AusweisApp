@@ -18,15 +18,30 @@
 #include <QPointer>
 #include <QStringList>
 #include <QTemporaryFile>
+#include <functional>
 
 #define spawnMessageLogger(category)\
-	QMessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category().categoryName())
+	MessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category)
 
 class test_LogHandler;
 class test_LogModel;
 
 namespace governikus
 {
+
+class MessageLogger
+{
+	private:
+		QMessageLogger mMessageLogger;
+		std::function<const QLoggingCategory& ()> mCategory;
+
+	public:
+		MessageLogger(const char* pFile, int pLine, const char* pFunction, const std::function<const QLoggingCategory& ()>& pCategory);
+		QDebug critical() const;
+		QDebug debug() const;
+		QDebug info() const;
+		QDebug warning() const;
+};
 
 class LogEventHandler
 	: public QObject
@@ -55,14 +70,15 @@ class LogHandler
 	friend class Env;
 	friend class ::test_LogHandler;
 	friend class ::test_LogModel;
-
-	struct LogWindowEntry
-	{
-		qint64 mPosition;
-		qint64 mLength;
-	};
+	friend QDebug operator<<(QDebug, const LogHandler&);
 
 	private:
+		struct LogWindowEntry
+		{
+			qint64 mPosition;
+			qint64 mLength;
+		};
+
 		static QString getLogFileTemplate();
 
 		QPointer<LogEventHandler> mEventHandler;
@@ -72,7 +88,8 @@ class LogHandler
 		bool mCriticalLog;
 		QContiguousCache<LogWindowEntry> mCriticalLogWindow;
 		QStringList mCriticalLogIgnore;
-		const QString mMessagePattern, mDefaultMessagePattern;
+		const QString mMessagePattern;
+		const QString mDefaultMessagePattern;
 		QPointer<QTemporaryFile> mLogFile;
 		QtMessageHandler mHandler;
 		bool mUseHandler;
@@ -87,9 +104,9 @@ class LogHandler
 				const QByteArray& pFunction = QByteArray(),
 				const QByteArray& pCategory = QByteArray()) const;
 		inline void logToFile(const QString& pOutput);
-		inline QByteArray formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const;
-		inline QByteArray formatFilename(const char* const pFilename) const;
-		[[nodiscard]] inline QByteArray formatCategory(const QByteArray& pCategory) const;
+		[[nodiscard]] QByteArray formatFunction(const char* const pFunction, const QByteArray& pFilename, int pLine) const;
+		[[nodiscard]] QByteArray formatFilename(const char* const pFilename) const;
+		[[nodiscard]] QByteArray formatCategory(const QByteArray& pCategory) const;
 
 		[[nodiscard]] QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
@@ -99,7 +116,6 @@ class LogHandler
 		void setLogFileInternal(bool pEnable);
 
 		static void messageHandler(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
-		friend QDebug operator<<(QDebug, const LogHandler&);
 
 	protected:
 		LogHandler();
@@ -114,6 +130,8 @@ class LogHandler
 		[[nodiscard]] bool isInstalled() const;
 
 	public:
+		static constexpr int MAX_CATEGORY_LENGTH = 13;
+
 		void init();
 		[[nodiscard]] const LogEventHandler* getEventHandler() const;
 

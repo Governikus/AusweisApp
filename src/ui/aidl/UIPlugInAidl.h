@@ -32,7 +32,7 @@ class UIPlugInAidl
 
 	public:
 		UIPlugInAidl();
-		~UIPlugInAidl() override;
+		~UIPlugInAidl() override = default;
 
 		static UIPlugInAidl* getInstance(bool pBlock = true);
 		[[nodiscard]] bool isSuccessfullInitialized() const;
@@ -41,6 +41,7 @@ class UIPlugInAidl
 
 	public Q_SLOTS:
 		void reset();
+		void startReaderManagerScans() const;
 
 	private Q_SLOTS:
 		void doShutdown() override;

@@ -89,11 +89,7 @@ class test_ChatModel
 			QVERIFY(mModel->mAllRights.isEmpty());
 			QVERIFY(mModel->mOptionalRights.isEmpty());
 			QVERIFY(mModel->mSelectedRights.isEmpty());
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 			auto uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
-#else
-			auto uniqueRights = mModel->mAllRights.toSet();
-#endif
 			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			accessRightManager->mRequiredAccessRights += AccessRight::READ_DG01;
@@ -105,11 +101,7 @@ class test_ChatModel
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG01));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mOptionalRights.isEmpty());
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
-#else
-			uniqueRights = mModel->mAllRights.toSet();
-#endif
 			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 
 			accessRightManager->mOptionalAccessRights += AccessRight::READ_DG10;
@@ -124,11 +116,7 @@ class test_ChatModel
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG04));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG10));
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG17));
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 			uniqueRights = QSet<AccessRight>(mModel->mAllRights.constBegin(), mModel->mAllRights.constEnd());
-#else
-			uniqueRights = mModel->mAllRights.toSet();
-#endif
 			QCOMPARE(mModel->mSelectedRights, uniqueRights);
 		}
 
@@ -196,7 +184,7 @@ class test_ChatModel
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG16));
 			QCOMPARE(spy.count(), 1);
 			auto arguments = spy.takeFirst();
-			auto role = arguments.at(2).value<QVector<int> >();
+			auto role = arguments.at(2).value<QVector<int>>();
 			QCOMPARE(arguments.at(0), index);
 			QCOMPARE(arguments.at(1), index);
 			QCOMPARE(role.at(0), ChatModel::ChatRoles::SELECTED_ROLE);

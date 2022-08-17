@@ -7,7 +7,7 @@
 using namespace governikus;
 
 StateCheckError::StateCheckError(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }

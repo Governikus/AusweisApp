@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -34,9 +34,7 @@ ColumnLayout {
 			text: qsTr("New version:")
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -46,9 +44,7 @@ ColumnLayout {
 
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -58,9 +54,7 @@ ColumnLayout {
 			text: qsTr("Release date:")
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -69,9 +63,7 @@ ColumnLayout {
 			text: releaseDate.toLocaleDateString(Qt.locale(SettingsModel.language))
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -81,9 +73,7 @@ ColumnLayout {
 			text: qsTr("Download size:")
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -92,9 +82,7 @@ ColumnLayout {
 			text: "%1 MiB".arg((downloadSize / 1024576).toLocaleString(Qt.locale(SettingsModel.language), "f", 1))
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -106,9 +94,7 @@ ColumnLayout {
 			text: qsTr("Download link:")
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -119,9 +105,7 @@ ColumnLayout {
 			text: "<a href=\"%1\">%1</a>".arg(downloadUrl)
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -133,9 +117,7 @@ ColumnLayout {
 			text: qsTr("Checksum link:")
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GText {
@@ -146,9 +128,7 @@ ColumnLayout {
 			text: "<a href=\"%1\">%1</a>".arg(checksumUrl)
 			textStyle: Style.text.normal
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 	}
 }

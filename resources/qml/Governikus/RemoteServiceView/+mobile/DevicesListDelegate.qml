@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -21,7 +21,7 @@ MouseArea {
 	Accessible.role: Accessible.ListItem
 	Accessible.name: qsTr("Device %1").arg(title)
 	Accessible.description: description
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+	Accessible.onPressAction: clicked(null)
 
 	RowLayout {
 		id: content

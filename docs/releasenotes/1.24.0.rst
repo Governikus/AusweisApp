@@ -1,0 +1,52 @@
+AusweisApp2 1.24.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 17. August 2022
+
+
+Anwender
+""""""""
+- Technische Überarbeitung der Funktion "Smartphone als
+  Kartenleser". Die Verwendung einer AusweisApp2 älter
+  als 1.22.1 ist damit in Kombination mit der 1.24.0
+  nicht mehr möglich.
+
+- Diverse Optimierungen im Bereich der Barrierefreiheit.
+
+- Unterstützung von "nur IPv6"-Heimnetzwerken.
+
+- Die AusweisApp2 wird nun als 64-bit unter Windows bereitgestellt.
+
+- Offizielle Unterstützung von Windows 11.
+
+- Unterstützung von Windows 7 und Windows 8.1 wurde eingestellt.
+
+- Unterstützung von macOS 10.13 und 10.14 wurde eingestellt.
+
+- Unterstützung von Android 5 und 6 und wurde eingestellt.
+
+
+Entwickler
+""""""""""
+- Es wurde ein integrierter Kartensimulator für Tests
+  hinzugefügt.
+
+- Ein automatischer Modus zur Authentisierung für Tests
+  ist nun möglich.
+
+- Die AusweisApp2 gibt es nun auch als Container-SDK
+  bzw. als Docker-Image. Dies kann mittels WebSocket
+  oder der neuen automatischen Authentisierung gesteuert
+  werden.
+
+- Im iOS SDK können nun commandline-Parameter übergeben werden.
+
+- Unterstützung von SHA224 und SECP224 wurde eingestellt.
+
+- Das teil-integrierte SDK unter Android wurde eingestellt.
+
+- Das SDK verwendet nun den API-Level v2.
+
+- Aktualisierung von OpenSSL auf die Version 3.0.5.
+
+- Aktualisierung von Qt auf die Version 6.3.1.

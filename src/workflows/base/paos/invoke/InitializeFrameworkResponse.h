@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "paos/element/SupportedApi.h"
-#include "paos/ResponseType.h"
 #include "PaosCreator.h"
+#include "paos/ResponseType.h"
+#include "paos/element/SupportedApi.h"
 
 namespace governikus
 {
@@ -17,6 +17,8 @@ class InitializeFrameworkResponse
 	: public PaosCreator
 	, public ResponseType
 {
+	Q_DISABLE_COPY(InitializeFrameworkResponse)
+
 	private:
 		SupportedAPI mSupportedAPI;
 
@@ -24,8 +26,6 @@ class InitializeFrameworkResponse
 		void createInitializeFrameworkResponse();
 
 		void createBodyElement() override;
-
-		Q_DISABLE_COPY(InitializeFrameworkResponse)
 
 	public:
 		InitializeFrameworkResponse();

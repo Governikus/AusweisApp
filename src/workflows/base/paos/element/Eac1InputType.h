@@ -6,10 +6,11 @@
 
 #pragma once
 
+#include "SmartCardDefinitions.h"
 #include "asn1/AuthenticatedAuxiliaryData.h"
+#include "asn1/CVCertificate.h"
 #include "asn1/CertificateDescription.h"
 #include "asn1/Chat.h"
-#include "asn1/CVCertificate.h"
 
 #include <QByteArray>
 #include <QSharedPointer>
@@ -30,10 +31,12 @@ class Eac1InputType
 		QVector<QSharedPointer<const CVCertificate>> mCvCertificates;
 		QByteArray mCertificateDescriptionAsBinary;
 		QSharedPointer<const CertificateDescription> mCertificateDescription;
-		QSharedPointer<const CHAT> mRequiredChat, mOptionalChat;
+		QSharedPointer<const CHAT> mRequiredChat;
+		QSharedPointer<const CHAT> mOptionalChat;
 		QByteArray mAuthenticatedAuxiliaryDataAsBinary;
 		QSharedPointer<const AuthenticatedAuxiliaryData> mAuthenticatedAuxiliaryData;
 		QString mTransactionInfo;
+		QVector<AcceptedEidType> mAcceptedEidTypes;
 
 		void setAuthenticatedAuxiliaryData(const QSharedPointer<const AuthenticatedAuxiliaryData>& pAuthenticatedAuxiliaryData)
 		{
@@ -82,9 +85,15 @@ class Eac1InputType
 			mTransactionInfo = pTransactionInfo;
 		}
 
+
+		void appendAcceptedEidType(AcceptedEidType pAcceptedEidType)
+		{
+			mAcceptedEidTypes += pAcceptedEidType;
+		}
+
 	public:
 		Eac1InputType();
-		~Eac1InputType();
+		~Eac1InputType() = default;
 
 		[[nodiscard]] const QSharedPointer<const AuthenticatedAuxiliaryData>& getAuthenticatedAuxiliaryData() const
 		{
@@ -131,6 +140,12 @@ class Eac1InputType
 		[[nodiscard]] const QString& getTransactionInfo() const
 		{
 			return mTransactionInfo;
+		}
+
+
+		[[nodiscard]] const QVector<AcceptedEidType>& getAcceptedEidTypes() const
+		{
+			return mAcceptedEidTypes;
 		}
 
 

@@ -19,32 +19,23 @@ class MockNetworkManager
 
 	private:
 		QString mFilename;
-		MockNetworkReply* mNextReply;
-		MockNetworkReply* mLastReply;
+		QSharedPointer<MockNetworkReply> mNextReply;
+		QSharedPointer<MockNetworkReply> mLastReply;
 		QNetworkRequest mLastRequest;
 		QByteArray mLastData;
 
-		MockNetworkReply* getReply(const QNetworkRequest& pRequest);
+		[[nodiscard]] QSharedPointer<MockNetworkReply> getReply(const QNetworkRequest& pRequest);
 
 	public:
 		MockNetworkManager();
 		~MockNetworkManager() override;
-		QNetworkReply* paos(QNetworkRequest& pRequest,
+		[[nodiscard]] QSharedPointer<QNetworkReply> paos(QNetworkRequest& pRequest,
 				const QByteArray& pNamespace,
 				const QByteArray& pData,
 				bool pUsePsk = true,
-				const QByteArray& pSslSession = QByteArray(),
-				int pTimeoutInMilliSeconds = 30000) override;
-		QNetworkReply* get(QNetworkRequest& pRequest,
-				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
-				const QByteArray& pSslSession = QByteArray(),
-				int pTimeoutInMilliSeconds = 30000) override;
-		QNetworkReply* post(QNetworkRequest& pRequest,
-				const QByteArray& pData,
-				const QList<QSslCertificate>& pCaCerts = QList<QSslCertificate>(),
-				int pTimeoutInMilliSeconds = 30000) override;
-
-		bool checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply) override;
+				const QByteArray& pSslSession = QByteArray()) override;
+		[[nodiscard]] QSharedPointer<QNetworkReply> get(QNetworkRequest& pRequest) override;
+		[[nodiscard]] QSharedPointer<QNetworkReply> post(QNetworkRequest& pRequest, const QByteArray& pData) override;
 
 		void setFilename(const QString& pFilename)
 		{
@@ -54,7 +45,7 @@ class MockNetworkManager
 
 		void setNextReply(MockNetworkReply* pNextReply)
 		{
-			mNextReply = pNextReply;
+			mNextReply = QSharedPointer<MockNetworkReply>(pNextReply, &QObject::deleteLater);
 		}
 
 

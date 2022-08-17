@@ -35,11 +35,11 @@ class test_HelpAction
 
 	QString toWebUrl(const QString& pLang = QStringLiteral("en"))
 	{
-		#ifdef Q_OS_MACOS
+#ifdef Q_OS_MACOS
 		const QString sys = "macOS";
-		#else
+#else
 		const QString sys = "Windows";
-		#endif
+#endif
 
 		return QStringLiteral("https://www.ausweisapp.bund.de/ausweisapp2/help/1.16/%1/%2/index.html").arg(pLang, sys);
 	}

@@ -46,7 +46,7 @@ class test_UIPlugInJson
 			const QByteArray msg(R"({"cmd": "GET_LOG"})");
 			QByteArray result;
 			UIPlugInJson api;
-			connect(&api, &UIPlugInJson::fireMessage, this, [&](const QByteArray& pMsg){result = pMsg;});
+			connect(&api, &UIPlugInJson::fireMessage, this, [&result](const QByteArray& pMsg){result = pMsg;});
 			api.setEnabled();
 
 			api.doMessageProcessing(msg);

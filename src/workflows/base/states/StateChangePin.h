@@ -7,8 +7,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/ChangePinContext.h"
 #include "GenericContextContainer.h"
+#include "context/ChangePinContext.h"
 
 class test_StateChangePin;
 
@@ -23,14 +23,15 @@ class StateChangePin
 	friend class StateBuilder;
 	friend class ::test_StateChangePin;
 
-	explicit StateChangePin(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateChangePin(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	private Q_SLOTS:
 		void onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand);
 
 	Q_SIGNALS:
-		void fireInvalidPin();
+		void fireRetry();
 };
 
 } // namespace governikus

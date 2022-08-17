@@ -1,0 +1,5 @@
+ADD_PLATFORM_LIBRARY(AusweisAppUiLocalIfd)
+
+target_link_libraries(AusweisAppUiLocalIfd ${Qt}::Core AusweisAppUi)
+target_link_libraries(AusweisAppUiLocalIfd AusweisAppWorkflowsIfd AusweisAppIfdRemote AusweisAppIfdLocal)
+target_compile_definitions(AusweisAppUiLocalIfd PRIVATE QT_STATICPLUGIN)

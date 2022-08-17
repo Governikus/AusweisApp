@@ -19,7 +19,7 @@ class test_UpdatableFile
 
 	private:
 		const QString mSection;
-		const QChar mSep;
+		const QLatin1Char mSep;
 
 		void verifySectionCacheFolder(UpdatableFile& pUpdatableFile)
 		{
@@ -75,7 +75,7 @@ class test_UpdatableFile
 			QCOMPARE(updatableFile.cacheTimestamp(), timestamp);
 
 			QStringList paths;
-			QVERIFY(updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
+			QVERIFY(updatableFile.forEachLookupPath([&paths](const QString& pPath) -> bool {
 					paths += pPath;
 					return true;
 				}));
@@ -110,7 +110,7 @@ class test_UpdatableFile
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache);
 
 			QStringList paths;
-			QVERIFY(!updatableFile.forEachLookupPath([&](const QString& pPath) -> bool {
+			QVERIFY(!updatableFile.forEachLookupPath([&paths](const QString& pPath) -> bool {
 					paths += pPath;
 					return false;
 				}));

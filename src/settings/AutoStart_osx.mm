@@ -20,7 +20,12 @@ static NSString* autostartBundleIdentifier = @"com.governikus.AusweisApp2.Autost
 
 bool AutoStart::enabled()
 {
+	QT_WARNING_PUSH
+	QT_WARNING_DISABLE_DEPRECATED
+	// Allow warning for SMCopyAllJobDictionaries, Apple will provide an alternative, until then we are stuck with this deprecated method
 	auto jobDictionaries = static_cast<NSArray*>(SMCopyAllJobDictionaries(kSMDomainUserLaunchd));
+	QT_WARNING_POP
+
 	if (jobDictionaries == nullptr)
 	{
 		qCCritical(settings) << "Getting autostart entries failed";

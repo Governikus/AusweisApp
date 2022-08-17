@@ -6,6 +6,7 @@
 
 #include "ReleaseInformationModel.h"
 
+#include "Env.h"
 #include "MockReleaseInformation.h"
 #include "ReleaseInformationConfiguration.h"
 
@@ -30,7 +31,7 @@ class test_ReleaseInformationModel
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* ()>([] {
 					return new MockReleaseInformation(VersionNumber("1.2.3"), false);
 				}));
-			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([&](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
+			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
 					return new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
 				}));
 		}

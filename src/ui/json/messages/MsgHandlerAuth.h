@@ -6,27 +6,23 @@
 
 #pragma once
 
-#include "MsgHandler.h"
-
+#include "MsgHandlerWorkflows.h"
 #include "context/AuthContext.h"
+#include "messages/MsgContext.h"
 
 namespace governikus
 {
 
 class MsgHandlerAuth
-	: public MsgHandler
+	: public MsgHandlerWorkflows
 {
 	private:
 		QUrl createUrl(const QString& pUrl);
 		void initAuth(const QUrl& pTcTokenUrl);
-		void initMessages(const QJsonObject& pUi);
-		void initDeveloperMode(const QJsonValue& pValue);
-		void initHandleInterrupt(const QJsonValue& pValue);
-		void setError(const QLatin1String pError);
 
 	public:
 		MsgHandlerAuth();
-		explicit MsgHandlerAuth(const QJsonObject& pObj);
+		explicit MsgHandlerAuth(const QJsonObject& pObj, MsgContext& pContext);
 		explicit MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext);
 };
 

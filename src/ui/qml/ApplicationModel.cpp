@@ -7,30 +7,36 @@
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthContext.h"
-#include "ProviderConfiguration.h"
 
-#include "AppSettings.h"
 #include "BuildHelper.h"
 #include "Env.h"
 #include "HelpAction.h"
 #include "LanguageLoader.h"
+#include "ProviderConfiguration.h"
+#include "Randomizer.h"
+#include "ReaderFilter.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
-#include "RemoteClient.h"
 #include "SecureStorage.h"
 #include "VersionNumber.h"
 
 #if !defined(Q_OS_WINRT) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include "PdfExporter.h"
+	#include "PdfExporter.h"
 #endif
 
+#if __has_include("context/PersonalizationContext.h")
+	#include "context/PersonalizationContext.h"
+#endif
+
+#include <QClipboard>
 #include <QFile>
+#include <QFileInfo>
+#include <QGuiApplication>
 #include <QRegularExpression>
 
 #ifdef Q_OS_ANDROID
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
-#include <QtAndroid>
+	#include <QJniEnvironment>
+	#include <QJniObject>
 #endif
 
 
@@ -56,13 +62,11 @@ ApplicationModel::ApplicationModel()
 	, mFeedback()
 	, mFeedbackTimer()
 	, mFeedbackDisplayLength(3500)
+	, mIsAppInForeground(true)
 #ifdef Q_OS_IOS
 	, mPrivate(new Private())
 #endif
 {
-	const auto generalSettings = &Env::getSingleton<AppSettings>()->getGeneralSettings();
-	connect(generalSettings, &GeneralSettings::fireLanguageChanged, this, &ApplicationModel::fireStoreUrlChanged);
-
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
@@ -72,11 +76,11 @@ ApplicationModel::ApplicationModel()
 
 	onWifiEnabledChanged();
 
-	const auto* const remoteClient = Env::getSingleton<RemoteClient>();
-	connect(remoteClient, &RemoteClient::fireCertificateRemoved, this, &ApplicationModel::fireCertificateRemoved);
-
 	mFeedbackTimer.setSingleShot(true);
 	connect(&mFeedbackTimer, &QTimer::timeout, this, &ApplicationModel::onShowNextFeedback, Qt::QueuedConnection);
+
+	onApplicationStateChanged(qGuiApp->applicationState());
+	connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, &ApplicationModel::onApplicationStateChanged);
 }
 
 
@@ -95,6 +99,13 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 		connect(mContext.data(), &WorkflowContext::fireReaderInfoChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	}
 	Q_EMIT fireCurrentWorkflowChanged();
+}
+
+
+int ApplicationModel::randomInt(int pLowerBound, int pUpperBound) const
+{
+	std::uniform_int_distribution<int> distribution(pLowerBound, pUpperBound);
+	return distribution(Randomizer::getInstance().getGenerator());
 }
 
 
@@ -122,7 +133,7 @@ QString ApplicationModel::getStoreUrl() const
 QUrl ApplicationModel::getReleaseNotesUrl() const
 {
 	const auto storage = Env::getSingleton<SecureStorage>();
-	const auto& url = VersionNumber::getApplicationVersion().isDeveloperVersion() ? storage->getAppcastBetaUpdateUrl() : storage->getAppcastUpdateUrl();
+	const auto& url = VersionNumber::getApplicationVersion().isBetaVersion() ? storage->getAppcastBetaUpdateUrl() : storage->getAppcastUpdateUrl();
 	return url.adjusted(QUrl::RemoveFilename).toString() + QStringLiteral("ReleaseNotes.html");
 }
 
@@ -172,7 +183,6 @@ ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
 
 bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 {
-
 	if (mContext)
 	{
 		if (mContext->currentReaderHasEidCardButInsufficientApduLength())
@@ -182,7 +192,7 @@ bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 		if (!mContext->getReaderName().isEmpty())
 		{
 			ReaderInfo readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName());
-			return !readerInfo.sufficientApduLength();
+			return readerInfo.insufficientApduLength();
 		}
 	}
 	return false;
@@ -213,21 +223,27 @@ void ApplicationModel::setScaleFactor(qreal pScaleFactor)
 }
 
 
-QString ApplicationModel::getCurrentWorkflow() const
+ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 {
 	if (mContext.objectCast<ChangePinContext>())
 	{
-		return QStringLiteral("changepin");
+		return Workflow::WORKFLOW_CHANGE_PIN;
 	}
 	if (mContext.objectCast<SelfAuthContext>())
 	{
-		return QStringLiteral("selfauthentication");
+		return Workflow::WORKFLOW_SELF_AUTHENTICATION;
 	}
 	if (mContext.objectCast<AuthContext>())
 	{
-		return QStringLiteral("authentication");
+		return Workflow::WORKFLOW_AUTHENTICATION;
 	}
-	return QString();
+#if __has_include("context/PersonalizationContext.h")
+	if (mContext.objectCast<PersonalizationContext>())
+	{
+		return Workflow::WORKFLOW_SMART;
+	}
+#endif
+	return Workflow::WORKFLOW_NONE;
 }
 
 
@@ -261,15 +277,16 @@ bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType
 #ifndef Q_OS_IOS
 bool ApplicationModel::isScreenReaderRunning() const
 {
-#ifdef Q_OS_ANDROID
-	const jboolean result = QtAndroid::androidActivity().callMethod<jboolean>("isScreenReaderRunning", "()Z");
+	#ifdef Q_OS_ANDROID
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	const jboolean result = context.callMethod<jboolean>("isScreenReaderRunning", "()Z");
 	return result != JNI_FALSE;
 
-#else
+	#else
 	qCWarning(qml) << "NOT IMPLEMENTED";
 	return false;
 
-#endif
+	#endif
 }
 
 
@@ -293,6 +310,12 @@ void ApplicationModel::onShowNextFeedback()
 }
 
 
+void ApplicationModel::setClipboardText(const QString& pText) const
+{
+	QGuiApplication::clipboard()->setText(pText);
+}
+
+
 void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisting)
 {
 	qCInfo(feedback).noquote() << pMessage;
@@ -301,15 +324,16 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 	Q_UNUSED(pReplaceExisting)
 	// Wait for toast activation synchronously so that the app can not be deactivated
 	// in the meantime and all used Java objects are still alive when accessed.
-	QtAndroid::runOnAndroidThreadSync([pMessage](){
-			QAndroidJniEnvironment env;
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage](){
+			QJniEnvironment env;
 
-			const QAndroidJniObject& jMessage = QAndroidJniObject::fromString(pMessage);
-			const QAndroidJniObject& toast = QAndroidJniObject::callStaticObjectMethod(
+			QJniObject context = QNativeInterface::QAndroidApplication::context();
+			const QJniObject& jMessage = QJniObject::fromString(pMessage);
+			const QJniObject& toast = QJniObject::callStaticObjectMethod(
 					"android/widget/Toast",
 					"makeText",
 					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
-					QtAndroid::androidActivity().object(),
+					context.object(),
 					jMessage.object(),
 					jint(1));
 			toast.callMethod<void>("show");
@@ -323,7 +347,7 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 				// since it is used to display information to the user as required by the TR.
 				Q_ASSERT(false);
 			}
-		});
+		}).waitForFinished();
 #else
 	if (pReplaceExisting)
 	{
@@ -348,10 +372,11 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 #ifndef Q_OS_IOS
 void ApplicationModel::keepScreenOn(bool pActive)
 {
-#if defined(Q_OS_ANDROID)
-	QtAndroid::runOnAndroidThread([pActive](){
-			QtAndroid::androidActivity().callMethod<void>("keepScreenOn", "(Z)V", pActive);
-			QAndroidJniEnvironment env;
+	#if defined(Q_OS_ANDROID)
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pActive](){
+			QJniObject context = QNativeInterface::QAndroidApplication::context();
+			context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
+			QJniEnvironment env;
 			if (env->ExceptionCheck())
 			{
 				qCCritical(qml) << "Exception calling java native function.";
@@ -360,9 +385,9 @@ void ApplicationModel::keepScreenOn(bool pActive)
 			}
 		});
 
-#else
+	#else
 	qCWarning(qml) << "NOT IMPLEMENTED:" << pActive;
-#endif
+	#endif
 }
 
 
@@ -407,13 +432,55 @@ void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
 }
 
 
+QUrl ApplicationModel::getCustomConfigPath()
+{
+	QFileInfo info(Env::getSingleton<SecureStorage>()->getCustomConfig());
+	QUrl url(info.absolutePath());
+	url.setScheme(QStringLiteral("file"));
+	return url;
+}
+
+
+void ApplicationModel::saveEmbeddedConfig(const QUrl& pFilename)
+{
+	bool success = true;
+	if (QFile::exists(pFilename.toLocalFile()))
+	{
+		success = QFile::remove(pFilename.toLocalFile());
+	}
+	if (success)
+	{
+		success = QFile::copy(Env::getSingleton<SecureStorage>()->getEmbeddedConfig(), pFilename.toLocalFile());
+	}
+	Env::getSingleton<ApplicationModel>()->showFeedback((success ? tr("Successfully saved config to \"%1\"") : tr("Error while saving config to \"%1\"")).arg(pFilename.toLocalFile()));
+}
+
+
 #endif
+
+void ApplicationModel::onApplicationStateChanged(Qt::ApplicationState pState)
+{
+	const bool isAppInForeground = pState == Qt::ApplicationActive || pState == Qt::ApplicationInactive;
+	if (isAppInForeground == mIsAppInForeground)
+	{
+		return;
+	}
+
+	mIsAppInForeground = isAppInForeground;
+	Q_EMIT fireApplicationStateChanged(isAppInForeground);
+}
 
 
 void ApplicationModel::onWifiEnabledChanged()
 {
 	mWifiEnabled = mWifiInfo.isWifiEnabled();
 	Q_EMIT fireWifiEnabledChanged();
+}
+
+
+void ApplicationModel::onTranslationChanged()
+{
+	Q_EMIT fireStoreUrlChanged();
 }
 
 
@@ -427,5 +494,6 @@ void ApplicationModel::enableWifi()
 
 QString ApplicationModel::stripHtmlTags(QString pString) const
 {
+	pString.replace(QRegularExpression(QStringLiteral("(<br>)+")), QStringLiteral(" "));
 	return pString.remove(QRegularExpression(QStringLiteral("<[^>]*>")));
 }

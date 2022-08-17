@@ -14,7 +14,7 @@ using namespace governikus;
 
 
 StateUpdateRetryCounter::StateUpdateRetryCounter(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -50,7 +50,7 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 #ifndef QT_NO_DEBUG
 	if (getContext()->getCardConnection()->getReaderInfo().getRetryCounter() == -1)
 	{
-		qCWarning(statemachine) << "Retry counter should be intialized if command has succeeded.";
+		qCWarning(statemachine) << "Retry counter should be initialized if command has succeeded.";
 	}
 #endif
 

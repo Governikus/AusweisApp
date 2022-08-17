@@ -15,6 +15,8 @@ namespace governikus
 
 class PaosCreator
 {
+	Q_DISABLE_COPY(PaosCreator)
+
 	public:
 		enum class Namespace
 		{
@@ -24,8 +26,6 @@ class PaosCreator
 	private:
 		static const QMap<Namespace, QString> mNamespacePrefix;
 		static const QMap<Namespace, QString> mNamespace;
-
-		Q_DISABLE_COPY(PaosCreator)
 
 		QByteArray mContent;
 		QString mRelatedMessageId;
@@ -46,7 +46,7 @@ class PaosCreator
 
 	public:
 		/**
-		 * \brief Creates an XML structure of underyling information.
+		 * \brief Creates an XML structure of underlying information.
 		 * Be aware that this method will create the structure only once. If you change something
 		 * and call marshall() again it won't use the new information.
 		 * \return Complete XML structure

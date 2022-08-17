@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -61,10 +61,14 @@ Row {
 		source: searchField.visible ? "qrc:///images/material_close.svg" : "qrc:///images/material_search.svg"
 
 		Accessible.role: Accessible.Button
-		//: LABEL ANDROID
-		Accessible.name: qsTr("Search")
+		Accessible.name: searchField.visible
+			//: LABEL ANDROID
+			? qsTr("Abort search")
+			//: LABEL ANDROID
+			: qsTr("Search")
 		//: LABEL ANDROID
 		Accessible.description: qsTr("Search provider list")
+		Accessible.onPressAction: button.clicked(null)
 
 		MouseArea {
 			id: button

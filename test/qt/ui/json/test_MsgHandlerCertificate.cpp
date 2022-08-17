@@ -8,6 +8,7 @@
 
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
+#include "states/StateEditAccessRights.h"
 
 #include "TestAuthContext.h"
 #include <QtTest>
@@ -36,7 +37,7 @@ class test_MsgHandlerCertificate
 			QByteArray msg = QByteArray(R"({"cmd": "GET_CERTIFICATE"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"GET_CERTIFICATE\",\"msg\":\"BAD_STATE\"}"));
 
-			dispatcher.init(getContext());
+			QCOMPARE(dispatcher.init(getContext()), MsgType::AUTH);
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"GET_CERTIFICATE\",\"msg\":\"BAD_STATE\"}"));
 		}
 
@@ -46,9 +47,9 @@ class test_MsgHandlerCertificate
 			auto context = getContext();
 
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 			QByteArray msg = R"({"cmd": "GET_CERTIFICATE"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"description\":{\"issuerName\":\"Governikus Test DVCA\",\"issuerUrl\":\"http://www.governikus.de\",\"purpose\":\"\",\"subjectName\":\"Governikus GmbH & Co. KG\",\"subjectUrl\":\"https://test.governikus-eid.de\",\"termsOfUsage\":\"Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\\r\\nGovernikus GmbH & Co. KG\\r\\nHochschulring 4\\r\\n28359 Bremen\\r\\nE-Mail: kontakt@governikus.de\\t\"},\"msg\":\"CERTIFICATE\",\"validity\":{\"effectiveDate\":\"2020-05-21\",\"expirationDate\":\"2020-06-20\"}}"));
 		}

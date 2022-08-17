@@ -40,7 +40,7 @@ QSharedPointer<UpdatableFile> ReleaseInformation::getFile(const QString& pFile)
 }
 
 
-QVector<QSharedPointer<UpdatableFile> > ReleaseInformation::getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion)
+QVector<QSharedPointer<UpdatableFile>> ReleaseInformation::getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion)
 {
 	const auto versionNumber = pVersion.getVersionNumber();
 
@@ -49,7 +49,7 @@ QVector<QSharedPointer<UpdatableFile> > ReleaseInformation::getReleaseNotes(cons
 		return {getFile(QStringLiteral("%1.txt").arg(versionNumber.toString()))};
 	}
 
-	QVector<QSharedPointer<UpdatableFile> > releaseNotes;
+	QVector<QSharedPointer<UpdatableFile>> releaseNotes;
 
 	for (int i = versionNumber.microVersion(); i >= 0; --i)
 	{

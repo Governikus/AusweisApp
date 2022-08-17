@@ -7,6 +7,7 @@
 #pragma once
 
 #include "ChipAuthenticationInfo.h"
+#include "MobileEIDTypeInfo.h"
 #include "PaceInfo.h"
 #include "SecurityInfo.h"
 
@@ -32,15 +33,18 @@ class SecurityInfos
 	Q_DISABLE_COPY(SecurityInfos)
 	friend class QSharedPointer<SecurityInfos>;
 
-	const QByteArray mContentBytes;
-	const QVector<QSharedPointer<const SecurityInfo>> mSecurityInfos;
-	const QVector<QSharedPointer<const PaceInfo>> mPaceInfos;
-	const QVector<QSharedPointer<const ChipAuthenticationInfo>> mChipAuthenticationInfos;
+	private:
+		const QByteArray mContentBytes;
+		const QVector<QSharedPointer<const SecurityInfo>> mSecurityInfos;
+		const QVector<QSharedPointer<const PaceInfo>> mPaceInfos;
+		const QVector<QSharedPointer<const ChipAuthenticationInfo>> mChipAuthenticationInfos;
+		const QSharedPointer<const MobileEIDTypeInfo> mMobileEIDTypeInfo;
 
-	SecurityInfos(const QByteArray& pBytes,
-			const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
-			const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
-			const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos);
+		SecurityInfos(const QByteArray& pBytes,
+				const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
+				const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
+				const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
+				const QSharedPointer<const MobileEIDTypeInfo>& pMobileEIDTypeInfo);
 
 	public:
 		static QSharedPointer<SecurityInfos> fromHex(const QByteArray& pHexString);
@@ -50,6 +54,7 @@ class SecurityInfos
 		[[nodiscard]] const QVector<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
 		[[nodiscard]] const QVector<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
 		[[nodiscard]] const QVector<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
+		[[nodiscard]] const QSharedPointer<const MobileEIDTypeInfo>& getMobileEIDTypeInfo() const;
 };
 
 

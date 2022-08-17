@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="500" viewBox="0 0 320 500">
+  <defs>
+    <g id="symbol">
+      <!-- <text x="47" y="117" style="font-weight: bold; font-size: 100px; font-family: sans-serif; fill: #ffffff;">S</text> -->
+      <path d="M 107.7,66.3
+               C 107.6,51.2 97.5,42.9 79.1,42.9
+               c -17.5,0 -27.6,8.2 -27.6,22.4 0,11.3 5.7,16.8 20.5,19.6
+               l 10.2,2
+               c 10,1.9 13.7,4.7 13.7,10.6 0,6.1 -5.6,9.8 -14.7,9.8
+               C 71,107.3 65.3,103 64.8,95.2 H 50.2
+               c 0.9,15.6 11.6,24.1 30.2,24.1 18.8,0 29.9,-8.7 29.9,-23.6 0,-11.5 -5.8,-17.5 -19.3,-20.1
+               L 79.6,73.4
+               C 68.9,71.3 65.8,69.2 65.8,63.9
+               c 0,-5.5 4.8,-9 12.6,-9 9.5,0 14.8,4 15.3,11.4 z" fill="#ffffff" />
+      </g>
+  </defs>
+  <rect x="0" y="0" width="320" height="500" rx="20" ry="20" fill="#444445" />
+  <circle cx="160" cy="220" r="80" fill="#164a8c" />
+  <path d="m40 40 h240 v360 h-240 v-360 m40,180 a80,80,0 0 0 160,0 a80,80,0 0 0 -160,0 Z" fill="#eef5fb" />
+  <use xlink:href="#symbol" x="80" y="140" />
+</svg>

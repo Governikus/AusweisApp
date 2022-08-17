@@ -1,0 +1,85 @@
+From 0c5c8b67b7b479121b5c3a814e76d316726e4295 Mon Sep 17 00:00:00 2001
+From: Mike Achtelik <mike.achtelik@gmail.com>
+Date: Thu, 5 May 2022 16:32:12 +0200
+Subject: QtNfc: Fix iOS session invalidation/restart
+
+Fix a problem where the user is able to get into a state, where iOS NFC
+implementation deadlocks itself, so the whole app has to be restarted
+to get it working again.
+
+Basically, if we (or the user) abort a scan sessionStoppedByApplication
+will be set, preventing a new scan until the session is invalidated by
+the system and sessionStoppedByApplication is cleared. The problem is
+that sometimes the invalidation by the system takes some time, especially
+if the sessions is transmitting and waiting for a timeout. In that case,
+the user is able to quickly start a new scan, which will of course wait
+for the flag to be cleared. However, if that scan is immediately stopped
+again self.session will be set to nil. This then becomes a problem, when
+the original session finally invalidates and we now think it's an
+unexpected session and return. This means self.sessionStoppedByApplication
+will never be cleared, preventing any start of the scan.
+
+To fix this we should always wait for the system to invalidate the
+session and not just clear it ourselves. Similarly, if we already have
+a session don't just to restartPolling, since it has no effect on
+an invalidated session, so invalidate it to make sure and wait for
+it to clear and start a new one.
+
+Pick-to: 6.4 6.3 6.2
+Change-Id: I341a114d6ba5c761aa3c61df66b1a17636ec3946
+Reviewed-by: Juha Vuolle <juha.vuolle@insta.fi>
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+(cherry picked from commit a113cea72806e3b1302d36532df3a8a58c6640fe)
+---
+ src/nfc/ios/qiostagreaderdelegate.mm | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git x/qtconnectivity/src/nfc/ios/qiostagreaderdelegate.mm y/qtconnectivity/src/nfc/ios/qiostagreaderdelegate.mm
+index 03a2554c..3540aa0a 100644
+--- x/qtconnectivity/src/nfc/ios/qiostagreaderdelegate.mm
++++ y/qtconnectivity/src/nfc/ios/qiostagreaderdelegate.mm
+@@ -63,13 +63,13 @@ QT_USE_NAMESPACE
+ 
+ - (void)startSession
+ {
+-    if (self.sessionStoppedByApplication) {
+-        Q_EMIT self.listener->didInvalidateWithError(true);
+-        return;
++    if (self.session && !self.sessionStoppedByApplication) {
++        [self.session invalidateSession];
++        self.sessionStoppedByApplication = true;
+     }
+ 
+-    if (self.session) {
+-        [self.session restartPolling];
++    if (self.sessionStoppedByApplication) {
++        Q_EMIT self.listener->didInvalidateWithError(true);
+         return;
+     }
+ 
+@@ -85,16 +85,12 @@ QT_USE_NAMESPACE
+ 
+ - (void)stopSession:(QString)message
+ {
+-    if (self.session) {
+-        if (self.session.ready) {
+-            if (message.isNull())
+-                [self.session invalidateSession];
+-            else
+-               [self.session invalidateSessionWithErrorMessage:message.toNSString()];
+-           self.sessionStoppedByApplication = true;
+-        } else {
+-            self.session = nil;
+-        }
++    if (self.session && !self.sessionStoppedByApplication) {
++        if (message.isNull())
++            [self.session invalidateSession];
++        else
++            [self.session invalidateSessionWithErrorMessage:message.toNSString()];
++        self.sessionStoppedByApplication = true;
+     }
+ }
+ 
+-- 
+2.36.1
+

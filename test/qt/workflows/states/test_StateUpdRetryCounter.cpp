@@ -8,6 +8,7 @@
 
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
+#include "TestWorkflowContext.h"
 
 #include <QtTest>
 
@@ -33,7 +34,7 @@ class MockCardCommand
 
 		void internalExecute() override
 		{
-			mReturnCode = mCardConnectionWorker->updateRetryCounter();
+			mReturnCode = getCardConnectionWorker()->updateRetryCounter();
 		}
 
 
@@ -48,7 +49,7 @@ class test_StateUpdateRetryCounter
 	private Q_SLOTS:
 		void test_RunWithoutCardConnection()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			StateUpdateRetryCounter counter(context);
 			QSignalSpy spyContinue(&counter, &StateUpdateRetryCounter::fireContinue);
 			QSignalSpy spyAbort(&counter, &StateUpdateRetryCounter::fireAbort);
@@ -62,7 +63,7 @@ class test_StateUpdateRetryCounter
 
 		void test_OnUpdateRetryCounterDone()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			StateUpdateRetryCounter counter(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));

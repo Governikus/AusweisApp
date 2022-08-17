@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <http_parser.h>
 #include <QByteArray>
 #include <QMap>
+#include <http_parser.h>
 
 namespace governikus
 {

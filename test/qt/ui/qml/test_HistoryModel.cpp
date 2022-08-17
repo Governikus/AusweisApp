@@ -33,7 +33,6 @@ class test_HistoryModel
 		return ProviderConfigurationInfo(
 				/* short name  */ QStringLiteral("Provider 1"),
 				/* long name  */ QStringLiteral("Provider 1 - long name"),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -159,7 +158,6 @@ class test_HistoryModel
 			QTest::newRow("providerCategory") << HistoryModel::HistoryRoles::PROVIDER_CATEGORY << "CategoryA";
 			QTest::newRow("providerShortname") << HistoryModel::HistoryRoles::PROVIDER_SHORTNAME << "Provider 1";
 			QTest::newRow("providerLongname") << HistoryModel::HistoryRoles::PROVIDER_LONGNAME << "Provider 1 - long name";
-			QTest::newRow("providerShortdescription") << HistoryModel::HistoryRoles::PROVIDER_SHORTDESCRIPTION << "Provider description short";
 			QTest::newRow("providerLongdescription") << HistoryModel::HistoryRoles::PROVIDER_LONGDESCRIPTION << "Provider description long";
 			QTest::newRow("providerAddress") << HistoryModel::HistoryRoles::PROVIDER_ADDRESS << "https://www.homepage.com/";
 			QTest::newRow("providerAddressDomain") << HistoryModel::HistoryRoles::PROVIDER_ADDRESS_DOMAIN << "www.homepage.com";

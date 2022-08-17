@@ -16,7 +16,7 @@ using namespace governikus;
 
 
 INIT_FUNCTION([] {
-			qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand> >("QSharedPointer<CreateCardConnectionCommand>");
+			qRegisterMetaType<QSharedPointer<CreateCardConnectionCommand>>("QSharedPointer<CreateCardConnectionCommand>");
 		})
 
 

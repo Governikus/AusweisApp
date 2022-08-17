@@ -2,16 +2,16 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "EFCardSecurity.h"
+
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "EFCardSecurity.h"
-#include "KnownOIDs.h"
+#include "Oid.h"
 
 #include <QLoggingCategory>
 
 
 using namespace governikus;
-using namespace governikus::KnownOIDs;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
@@ -19,18 +19,8 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 #ifndef OPENSSL_NO_CMS
 namespace governikus
 {
-template<>
-CMS_ContentInfo* decodeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo** pObject, const unsigned char** pData, long pDataLen)
-{
-	return d2i_CMS_ContentInfo(pObject, pData, pDataLen);
-}
 
-
-template<>
-void freeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo* pObject)
-{
-	CMS_ContentInfo_free(pObject);
-}
+IMPLEMENT_ASN1_OBJECT(CMS_ContentInfo)
 
 
 } // namespace governikus
@@ -47,7 +37,7 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::fromHex(const QByteArray& pHexStr
 QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 {
 #ifdef OPENSSL_NO_CMS
-#error Cryptographic Message Syntax (CMS) is required. Do you use LibreSSL?
+	#error Cryptographic Message Syntax (CMS) is required. Do you use LibreSSL?
 	Q_UNUSED(pBytes)
 	return QSharedPointer<EFCardSecurity>();
 
@@ -59,15 +49,13 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 		return QSharedPointer<EFCardSecurity>();
 	}
 
-	const auto type = Asn1ObjectUtil::convertTo(CMS_get0_type(contentInfo.data()));
-	if (type != KnownOIDs::Base::SIGNED_DATA)
+	if (const Oid type(CMS_get0_type(contentInfo.data())); type != KnownOid::ID_SIGNED_DATA)
 	{
 		qCCritical(card) << "Got unexpected ContentInfo type" << type;
 		return QSharedPointer<EFCardSecurity>();
 	}
 
-	const auto eContentType = Asn1ObjectUtil::convertTo(CMS_get0_eContentType(contentInfo.data()));
-	if (eContentType != KnownOIDs::Base::ID_SECURITY_OBJECT)
+	if (const Oid eContentType(CMS_get0_eContentType(contentInfo.data())); eContentType != KnownOid::ID_SECURITY_OBJECT)
 	{
 		qCCritical(card) << "Got unexpected eContentType" << eContentType;
 		return QSharedPointer<EFCardSecurity>();

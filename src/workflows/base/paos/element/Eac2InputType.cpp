@@ -6,14 +6,7 @@
 
 using namespace governikus;
 
-Eac2InputType::Eac2InputType()
-{
-}
-
-
-Eac2InputType::~Eac2InputType()
-{
-}
+Eac2InputType::~Eac2InputType() = default;
 
 
 const QString& Eac2InputType::getSignature() const
@@ -22,15 +15,9 @@ const QString& Eac2InputType::getSignature() const
 }
 
 
-const QVector<QSharedPointer<const CVCertificate> >& Eac2InputType::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate>>& Eac2InputType::getCvCertificates() const
 {
 	return mCvCertificates;
-}
-
-
-const QByteArrayList& Eac2InputType::getCvCertificatesAsBinary() const
-{
-	return mCvCertificatesAsBinary;
 }
 
 
@@ -55,10 +42,4 @@ void Eac2InputType::setSignature(const QString& pSignature)
 void Eac2InputType::appendCvcert(const QSharedPointer<const CVCertificate>& pCert)
 {
 	mCvCertificates += pCert;
-}
-
-
-void Eac2InputType::appendCvcertAsBinary(const QByteArray& pCvcertAsBinary)
-{
-	mCvCertificatesAsBinary += pCvcertAsBinary;
 }

@@ -4,14 +4,13 @@
 
 #pragma once
 
-#include "asn1/SecurityInfo.h"
 #include "CardConnectionWorker.h"
-#include "pace/DomainParameterMapping.h"
+#include "asn1/SecurityInfo.h"
 #include "pace/KeyAgreement.h"
+#include "pace/ec/EcdhGenericMapping.h"
 
-#include <openssl/ec.h>
-#include <QPair>
 #include <QSharedPointer>
+#include <openssl/ec.h>
 
 class test_EcdhKeyAgreement;
 
@@ -21,32 +20,30 @@ namespace governikus
 class EcdhKeyAgreement
 	: public KeyAgreement
 {
-	private:
-		friend class ::test_EcdhKeyAgreement;
+	friend class ::test_EcdhKeyAgreement;
 
-		QSharedPointer<DomainParameterMapping<EC_GROUP>> mMapping;
-		QSharedPointer<EC_GROUP> mEphemeralCurve;
+	private:
+		QSharedPointer<EcdhGenericMapping> mMapping;
 		QSharedPointer<EC_POINT> mTerminalPublicKey;
 		QSharedPointer<const EC_POINT> mCardPublicKey;
 
-		QPair<CardReturnCode, QSharedPointer<EC_GROUP>> determineEphemeralDomainParameters(const QByteArray& pNonce);
-		QPair<CardReturnCode, QSharedPointer<EC_POINT>> performKeyExchange(const QSharedPointer<const EC_GROUP>& pCurve);
+		CardReturnCode determineEphemeralDomainParameters(const QByteArray& pNonce);
+		CardResult performKeyExchange();
 
 		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
-		static QByteArray encodeCompressedPublicKey(const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
 
 		KeyAgreement::CardResult determineSharedSecret(const QByteArray& pNonce) override;
 		QByteArray getUncompressedTerminalPublicKey() override;
 		QByteArray getUncompressedCardPublicKey() override;
 		QByteArray getCompressedCardPublicKey() override;
 
-		EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		explicit EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo,
+				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker,
+				const QSharedPointer<EcdhGenericMapping>& pMapping);
 
 	public:
 		static QSharedPointer<EcdhKeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
-
-		~EcdhKeyAgreement() override = default;
 };
 
 } // namespace governikus

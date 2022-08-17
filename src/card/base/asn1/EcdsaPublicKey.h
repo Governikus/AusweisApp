@@ -5,12 +5,17 @@
 #pragma once
 
 #include "ASN1TemplateUtil.h"
+#include "SecurityProtocol.h"
 
 #include <QByteArray>
 #include <QSharedPointer>
 
 #include <openssl/asn1t.h>
-#include <openssl/ec.h>
+#include <openssl/evp.h>
+
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+	#include <openssl/ec.h>
+#endif
 
 
 namespace governikus
@@ -46,23 +51,63 @@ using EcdsaPublicKey = struct ecdsapublickey_st
 	ASN1_OCTET_STRING* mOrderOfTheBasePoint;
 	ASN1_OCTET_STRING* mPublicPoint;
 	ASN1_OCTET_STRING* mCofactor;
-	EC_KEY* mEcKey;
 
 	static QSharedPointer<ecdsapublickey_st> fromHex(const QByteArray& pHexValue);
 	static QSharedPointer<ecdsapublickey_st> decode(const QByteArray& pBytes);
 	QByteArray encode();
 
-	[[nodiscard]] QByteArray getPublicKeyOid() const;
+	[[nodiscard]] bool isComplete() const;
+	[[nodiscard]] SecurityProtocol getSecurityProtocol() const;
 
 	/**
 	 * Returns the raw bytes of the OID value, i.e. not the tag and not the length structure, but the value bytes.
 	 */
-	[[nodiscard]] QByteArray getPublicKeyOidValueBytes() const;
+	[[nodiscard]] Oid getOid() const;
 	[[nodiscard]] QByteArray getUncompressedPublicPoint() const;
-	[[nodiscard]] const EC_KEY* getEcKey() const;
+
+	/**
+	 * Create signing key using the given public point and the current curve parameters.
+	 *
+	 * \param pPublicPoint Another public key
+	 * \returns A new EVP_PKEY with given public key.
+	 */
+	[[nodiscard]] QSharedPointer<EVP_PKEY> createKey(const QByteArray& pPublicPoint) const;
+
+#ifndef QT_NO_DEBUG
+
+	/**
+	 * Create signing key using current public point and the current curve parameters.
+	 *
+	 * \returns A new EVP_PKEY with current public key.
+	 */
+	[[nodiscard]] QSharedPointer<EVP_PKEY> createKey() const;
+#endif
 
 	private:
-		void initEcKey();
+		struct CurveData
+		{
+			QSharedPointer<BIGNUM> p;
+			QSharedPointer<BIGNUM> a;
+			QSharedPointer<BIGNUM> b;
+			QSharedPointer<BIGNUM> order;
+			QSharedPointer<BIGNUM> cofactor;
+
+			[[nodiscard]] bool isValid() const
+			{
+				return !p.isNull() && !a.isNull() && !b.isNull() && !order.isNull();
+			}
+
+
+		};
+
+		[[nodiscard]] static bool isAllValid(const ecdsapublickey_st* pKey);
+		[[nodiscard]] static bool isAllInvalid(const ecdsapublickey_st* pKey);
+
+		[[nodiscard]] CurveData createCurveData() const;
+		[[nodiscard]] QSharedPointer<EVP_PKEY> createKey(const uchar* pPublicPoint, int pPublicPointLength) const;
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+		[[nodiscard]] QSharedPointer<EC_GROUP> createGroup(const CurveData& pData) const;
+#endif
 
 	public:
 		static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);

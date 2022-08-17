@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -42,7 +42,7 @@ Item {
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
 
-		color: Qt.lighter(Style.color.background, 1.15)
+		color: Qt.darker(Style.color.background, 1.05)
 		border.width: Math.max(1, ApplicationModel.scaleFactor * 3)
 		border.color: Style.color.accent
 
@@ -71,7 +71,7 @@ Item {
 				id: deleteButton
 
 				text: "C"
-				color: "yellow"
+				color: Constants.red
 				fontScale: 0.75
 				onClicked: baseItem.deletePressed()
 				enabled: baseItem.deleteEnabled
@@ -89,7 +89,7 @@ Item {
 				id: submitButton
 
 				text: "OK"
-				color: "lime"
+				color: Constants.green
 				fontScale: 0.75
 				onClicked: baseItem.submitPressed()
 				enabled: baseItem.submitEnabled

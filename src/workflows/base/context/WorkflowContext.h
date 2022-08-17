@@ -18,6 +18,12 @@
 
 namespace governikus
 {
+defineEnumType(Action,
+		AUTH,
+		SELF,
+		PIN,
+		PERSONALIZATION,
+		REMOTE_SERVICE)
 
 class WorkflowContext
 	: public QObject
@@ -25,6 +31,7 @@ class WorkflowContext
 	Q_OBJECT
 
 	private:
+		const Action mAction;
 		bool mStateApproved;
 		bool mWorkflowKilled;
 		QString mCurrentState;
@@ -49,6 +56,11 @@ class WorkflowContext
 		bool mWorkflowCancelledInState;
 		bool mNextWorkflowPending;
 		bool mCurrentReaderHasEidCardButInsufficientApduLength;
+		bool mSkipStartScan;
+		int mProgressValue;
+		QString mProgressMessage;
+		bool mShowRemoveCardFeedback;
+		QString mClaimedBy;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -60,6 +72,7 @@ class WorkflowContext
 		void fireReaderInfoChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
+		void fireIsSmartCardAllowedChanged();
 		void fireCanChanged();
 		void firePinChanged();
 		void firePukChanged();
@@ -67,14 +80,25 @@ class WorkflowContext
 		void fireResultChanged();
 		void fireCanAllowedModeChanged();
 		void firePasswordTypeChanged();
+		void fireProgressChanged();
+		void fireRemoveCardFeedbackChanged();
 
 		void fireCancelWorkflow();
 
 		void fireNextWorkflowPending();
 
 	public:
-		WorkflowContext();
+		explicit WorkflowContext(const Action mAction);
 		~WorkflowContext() override;
+
+		[[nodiscard]] Action getAction() const
+		{
+			return mAction;
+		}
+
+
+		[[nodiscard]] bool wasClaimed() const;
+		void claim(const QObject* pClaimant);
 
 		[[nodiscard]] bool isErrorReportedToUser() const;
 		void setErrorReportedToUser(bool pErrorReportedToUser = true);
@@ -85,11 +109,13 @@ class WorkflowContext
 		void setStateApproved(bool pApproved = true);
 		[[nodiscard]] bool isStateApproved() const;
 
-		void killWorkflow();
+		void killWorkflow(GlobalStatus::Code pCode = GlobalStatus::Code::Workflow_Cancellation_By_User);
 		[[nodiscard]] bool isWorkflowKilled() const;
 
 		[[nodiscard]] const QString& getCurrentState() const;
 		void setCurrentState(const QString& pNewState);
+
+		[[nodiscard]] bool isSmartCardUsed() const;
 
 		[[nodiscard]] const QVector<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
 		void setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes);
@@ -104,6 +130,8 @@ class WorkflowContext
 		[[nodiscard]] bool isNpaRepositioningRequired() const;
 		void setNpaPositionVerified();
 		void handleWrongNpaPosition();
+
+		[[nodiscard]] virtual bool isRequestTransportPin() const;
 
 		[[nodiscard]] const QString& getPuk() const;
 		void setPuk(const QString& pPuk);
@@ -128,6 +156,7 @@ class WorkflowContext
 		void resetLastPaceResult();
 
 		void rememberReader();
+		[[nodiscard]] bool remembersReader() const;
 		[[nodiscard]] bool isExpectedReader() const;
 		[[nodiscard]] const ReaderInfo& getExpectedReader() const;
 
@@ -137,7 +166,7 @@ class WorkflowContext
 		[[nodiscard]] const GlobalStatus& getStatus() const;
 		void setStatus(const GlobalStatus& pResult);
 
-		[[nodiscard]] const ECardApiResult getStartPaosResult() const;
+		[[nodiscard]] const ECardApiResult& getStartPaosResult() const;
 		void setStartPaosResult(const ECardApiResult& pStartPaosResult);
 
 		[[nodiscard]] bool isWorkflowFinished() const;
@@ -154,6 +183,35 @@ class WorkflowContext
 
 		[[nodiscard]] bool currentReaderHasEidCardButInsufficientApduLength() const;
 		void setCurrentReaderHasEidCardButInsufficientApduLength(bool pState);
+
+		[[nodiscard]] bool skipStartScan() const;
+		void setSkipStartScan(bool pState);
+
+		[[nodiscard]] int getProgressValue() const
+		{
+			return mProgressValue;
+		}
+
+
+		[[nodiscard]] const QString& getProgressMessage() const
+		{
+			return mProgressMessage;
+		}
+
+
+		void setProgress(int pValue, const QString& pMessage);
+
+		[[nodiscard]] bool showRemoveCardFeedback() const
+		{
+			return mShowRemoveCardFeedback;
+		}
+
+
+		void setRemoveCardFeedback(bool pEnabled);
+
+		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const = 0;
+
+		bool isPhysicalCardRequired() const;
 };
 
 } // namespace governikus

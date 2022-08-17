@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -33,8 +33,8 @@ Popup {
 	property int style: ConfirmationPopup.PopupStyle.OkButton | ConfirmationPopup.PopupStyle.CancelButton
 	property var horizontalTextAlignment: Text.AlignLeft
 
-	signal confirmed
-	signal cancelled
+	signal confirmed()
+	signal cancelled()
 
 	function accept(){
 		root.confirmed()
@@ -66,12 +66,6 @@ Popup {
 		radius: Style.dimens.corner_radius_popup
 		border.color: Style.color.border
 		border.width: Style.dimens.popup_border
-
-		FocusPoint {
-			anchors.margins: 4 * ApplicationModel.scaleFactor
-
-			scope: contentItem
-		}
 	}
 
 	Item {
@@ -80,10 +74,6 @@ Popup {
 		implicitWidth: root.availableWidth
 		implicitHeight: contentLayout.height
 
-		focus: true
-		activeFocusOnTab: true
-		Accessible.role: Accessible.Grouping
-		Accessible.name: qsTr("Dialog")
 		Keys.onEnterPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
 		Keys.onReturnPressed: if (style & ConfirmationPopup.PopupStyle.OkButton) root.accept()
 
@@ -100,6 +90,7 @@ Popup {
 				Layout.leftMargin: Constants.pane_padding
 
 				activeFocusOnTab: true
+				focus: true
 
 				text: root.title
 				textStyle: root.headerTextStyle

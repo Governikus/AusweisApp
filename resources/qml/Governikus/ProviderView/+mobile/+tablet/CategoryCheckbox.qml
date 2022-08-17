@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -25,7 +25,7 @@ Item {
 	Accessible.name: text
 	Accessible.checkable: true
 	Accessible.checked: checkBox.checked
-	Accessible.onPressAction: if (Qt.platform.os === "ios") mouseArea.clicked(null)
+	Accessible.onPressAction: mouseArea.clicked(null)
 
 	Row {
 		id: mainContent

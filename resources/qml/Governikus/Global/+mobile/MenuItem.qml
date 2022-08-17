@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -28,9 +28,8 @@ Rectangle {
 	color: mouseArea.pressed ? Style.color.background_item_pressed : Style.color.transparent
 
 	Accessible.role: Accessible.Button
-	Accessible.name: title
-	Accessible.description: description
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
+	Accessible.name: title + ". " + description
+	Accessible.onPressAction: clicked()
 
 	Item {
 		id: textContainer

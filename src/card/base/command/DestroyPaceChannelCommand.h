@@ -17,9 +17,7 @@ class DestroyPaceChannelCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
-
-	private:
-		friend class ::test_DestroyPaceChannelCommand;
+	friend class ::test_DestroyPaceChannelCommand;
 
 	protected:
 		void internalExecute() override;

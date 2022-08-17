@@ -47,9 +47,13 @@
         Unused resources make applications larger and slow down builds.
 
         https://bugreports.qt.io/browse/QTBUG-72976
+
+        Qt includes some resources like strings, which are seen by lint to be unused.
     -->
     <issue id="UnusedResources">
         <ignore path="**/dist/src/android/java/res/layout/splash.xml" />
+        <ignore path="**/libs.xml" />
+        <ignore path="**/strings.xml" />
     </issue>
 
     <!-- Unused Exported service does not require permission.
@@ -64,6 +68,54 @@
          service without additional barriers.
     -->
     <issue id="ExportedService">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+
+    <!-- Activity is set to be non resizeable
+
+        The `<activity>` element should be allowed to be resized to allow users to take advantage of the multi-window
+        environments available on larger screen Android devices. To fix the issue, consider declaring the corresponding
+        activity element with `resizableActivity="true"` attribute.
+
+        We can ignore it as the AusweisApp2 still doesn't properly support multi-window environments.
+    -->
+    <issue id="NonResizeableActivity">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+
+    <!-- Missing registered class
+
+        If a class is referenced in the manifest or in a layout file, it must also exist in the project (or in one of
+        the libraries included by the project. This check helps uncover typos in registration names, or attempts to
+        rename or move classes without updating the XML references properly.
+
+        Somehow android lint isn't able to find the classes like the MainActivity, when checking the app.
+        We can just ignore it for now, as it will be pretty obvious, if the MainActivity is missing and nothing is shown.
+    -->
+    <issue id="MissingClass">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+
+    <!-- AndroidGradlePluginVersion
+
+        The plugin version is set by Qt itself, so no need to warn us about an outdated version, since this has to be
+        updated in Qt itself.
+    -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+
+    <!-- PrivateApi
+
+        Qt is using some private API, which we can't change, so ignore it.
+    -->
+    <issue id="PrivateApi">
+        <ignore path="**/QtActivityLoader.java" />
+    </issue>
+
+    <!-- Unused attribute
+
+        We are setting some flags that are only available in later api version, which get flagged by lint as unused.
+    -->
+    <issue id="UnusedAttribute">
         <ignore path="AndroidManifest.xml" />
     </issue>
 </lint>

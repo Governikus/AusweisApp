@@ -110,7 +110,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return QString();
 
 		case Code::No_Error:
-			//: ERROR ALL_PLATFORMS No actual error occured, required to provide a message for status code No_Error.
+			//: ERROR ALL_PLATFORMS No actual error occurred, required to provide a message for status code No_Error.
 			return tr("No error occurred.");
 
 		case Code::Unknown_Error:
@@ -157,6 +157,10 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the ID card declined the certificates.
 			return tr("Authentication failed.");
 
+		case Code::Workflow_No_Extended_Length_Error:
+			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2 was not able to send the certificates to the card because the card reader does not support extended length.
+			return tr("Your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.").arg(QCoreApplication::applicationName());
+
 		case Code::Workflow_Certificate_No_Description:
 			//: ERROR_MASKED ALL_PLATFORMS
 			return tr("No certificate description available.");
@@ -196,6 +200,22 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS A server has responded with an HTTP error code 503.
 			return tr("The service is temporarily not available. Please try again later.");
 
+		case Code::Workflow_Smart_eID_Unavailable:
+			//: ERROR ALL_PLATFORMS The device does not support the Smart-eID functionality
+			return tr("The device does not support Smart-eID.");
+
+		case Code::Workflow_Smart_eID_Applet_Preparation_Failed:
+			//: ERROR ANDROID The preparation of the Smart-eID Applet failed
+			return tr("The preparation of the Smart-eID Applet failed.");
+
+		case Code::Workflow_Smart_eID_PrePersonalization_Failed:
+			//: ERROR ALL_PLATFORMS Initialization of Personalization failed
+			return tr("Initialization of Personalization of Smart-eID failed.");
+
+		case Code::Workflow_Smart_eID_Personalization_Failed:
+			//: ERROR ALL_PLATFORMS Personalization of Smart-eID failed
+			return tr("Personalization of Smart-eID failed.");
+
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
 			//: ERROR_MASKED ALL_PLATFORMS The TCP connection to the server timed out.
@@ -232,6 +252,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS The result of the self authentication could not be retrieved from the eService.
 			return tr("The server provided no or incomplete information. Your personal data could not be read out.");
 
+		case Code::Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length:
 		case Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length:
 			//: ERROR_MASKED ALL_PLATFORMS
 			return tr("Error while connecting to the provider. The TLS connection uses an unsupported key algorithm or length.");
@@ -260,6 +281,10 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_Cancellation_By_User:
 			//: ERROR ALL_PLATFORMS The user cancelled the authentication in the UI.
 			return tr("The process has been cancelled.");
+
+		case Code::Workflow_InternalError_BeforeTcToken:
+			//: ERROR ALL_PLATFORMS An internal error occurred before fetching TcToken.
+			return tr("The process has been aborted because of an internal error.");
 
 		case Code::Card_Cancellation_By_User:
 			//: ERROR ALL_PLATFORMS The user cancelled the authentication on his card reader.
@@ -311,7 +336,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("The given PUK is not correct.");
 
 		case Code::Card_Pin_Blocked:
-			//: ERROR ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attemps.
+			//: ERROR ALL_PLATFORMS The ID card refused the PIN since the PIN feature is blocked after too many wrong attempts.
 			return tr("The PIN was blocked after too many unsuccessful attempts.");
 
 		case Code::Card_Pin_Not_Blocked:
@@ -334,27 +359,31 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS The validity verification of the card failed.
 			return tr("The validity verification of the card failed.");
 
+		case Code::Card_Smart_Invalid:
+			//: ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.
+			return tr("The Smart-eID is invalid. This might have been caused by entering the wrong Smart-eID PIN three times.");
+
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.
 			return tr("The smartphone as card reader (SaC) connection was aborted.");
 
-		case Code::RemoteConnector_InvalidRequest:
+		case Code::IfdConnector_InvalidRequest:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (missing device ID).
 			return tr("Smartphone as card reader (SaC) connection request was invalid.");
 
-		case Code::RemoteConnector_NoSupportedApiLevel:
+		case Code::IfdConnector_NoSupportedApiLevel:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).
 			return tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
 
-		case Code::RemoteConnector_ConnectionTimeout:
+		case Code::IfdConnector_ConnectionTimeout:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.
 			return tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 
-		case Code::RemoteConnector_ConnectionError:
+		case Code::IfdConnector_ConnectionError:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)
 			return tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 
-		case Code::RemoteConnector_RemoteHostRefusedConnection:
+		case Code::IfdConnector_RemoteHostRefusedConnection:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was rejected by the device.
 			return tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
 
@@ -384,7 +413,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 	}
 
 	Q_UNREACHABLE();
-	return QString();
 }
 
 

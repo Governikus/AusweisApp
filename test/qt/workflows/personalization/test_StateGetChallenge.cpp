@@ -1,0 +1,137 @@
+/*!
+ * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
+ */
+
+#include "states/StateGetChallenge.h"
+
+#include "LogHandler.h"
+#include "ResourceLoader.h"
+#include "context/PersonalizationContext.h"
+
+#include "MockNetworkReply.h"
+#include "TestFileHelper.h"
+
+#include <QtTest>
+
+
+Q_DECLARE_LOGGING_CATEGORY(network)
+
+
+using namespace governikus;
+
+
+class test_StateGetChallenge
+	: public QObject
+{
+	Q_OBJECT
+	QSharedPointer<StateGetChallenge> mState;
+	QSharedPointer<PersonalizationContext> mContext;
+
+	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
+		void init()
+		{
+			Env::getSingleton<LogHandler>()->init();
+			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/v1/%1")));
+			mState.reset(new StateGetChallenge(mContext));
+			QVERIFY(mContext->getChallenge().isEmpty());
+		}
+
+
+		void cleanup()
+		{
+			mState.clear();
+			mContext.clear();
+		}
+
+
+		void test_CheckRequestUrl()
+		{
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+
+			const auto& url = mState->getRequestUrl().toString();
+			QCOMPARE(url, QString("https://dummy/v1/challenge"));
+		}
+
+
+		void test_CheckPayload()
+		{
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+
+			const auto& payload = mState->getPayload();
+			QJsonParseError jsonError {};
+			const auto& json = QJsonDocument::fromJson(payload, &jsonError);
+			QCOMPARE(jsonError.error, QJsonParseError::NoError);
+
+			const auto obj = json.object();
+			QCOMPARE(obj.size(), 2);
+			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), QString("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+			QCOMPARE(obj.value(QLatin1String("osType")).toString(), QString("Unknown"));
+		}
+
+
+		void test_OnNetworkReplyNoValidData()
+		{
+			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
+
+			mState->onNetworkReply();
+			const QString logMsg(logSpy.takeLast().at(0).toString());
+			QVERIFY(logMsg.contains("No valid challenge to prepare personalization"));
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QVERIFY(mContext->getChallenge().isEmpty());
+		}
+
+
+		void test_OnNetworkReplyValidData()
+		{
+			const QByteArray data(R"({
+				"challenge": "Q2hhbGxlbmdl"
+			})");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+			QSignalSpy spyContinue(mState.data(), &StateGetChallenge::fireContinue);
+
+			mState->onNetworkReply();
+			QCOMPARE(spyContinue.count(), 1);
+			QCOMPARE(mContext->getChallenge(), QString("Q2hhbGxlbmdl"));
+		}
+
+
+		void test_OnNetworkReplyWrongHttpStatus()
+		{
+			auto reply = new MockNetworkReply();
+			mState->mReply.reset(reply, &QObject::deleteLater);
+			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
+
+			mState->onNetworkReply();
+			const QString logMsg(logSpy.takeLast().at(0).toString());
+			QVERIFY(logMsg.contains("Network request failed"));
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QVERIFY(mContext->getChallenge().isEmpty());
+		}
+
+
+		void test_SetProgress()
+		{
+			mState->setProgress();
+			QCOMPARE(mContext->getProgressValue(), 10);
+			QCOMPARE(mContext->getProgressMessage(), tr("Getting challenge from server"));
+		}
+
+
+};
+
+QTEST_GUILESS_MAIN(test_StateGetChallenge)
+#include "test_StateGetChallenge.moc"

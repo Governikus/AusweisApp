@@ -52,7 +52,7 @@ class test_DidAuthenticateEac1
 			QCOMPARE(eac1->getAuthenticatedAuxiliaryDataAsBinary(), QByteArray::fromHex("67447315060904007F000703010401530831393932313230367315060904007F000703010402530832303133313230367314060904007F000703010403530702760400110000"));
 			QCOMPARE(eac1->getAuthenticatedAuxiliaryData()->getAgeVerificationDate(), QDate(1992, 12, 6));
 			QCOMPARE(eac1->getCvCertificates().size(), 6);
-			QCOMPARE(eac1->getCertificateDescriptionAsBinary(), QByteArray::fromHex("3082013b060a04007f00070301030101a1160c14476f7665726e696b757320546573742044564341a21a1318687474703a2f2f7777772e676f7665726e696b75732e6465a31a0c18476f7665726e696b757320476d6248202620436f2e204b47a420131e68747470733a2f2f746573742e676f7665726e696b75732d6569642e6465a581940c81914e616d652c20416e7363687269667420756e6420452d4d61696c2d4164726573736520646573204469656e737465616e626965746572733a0d0a476f7665726e696b757320476d6248202620436f2e204b470d0a486f6368736368756c72696e6720340d0a3238333539204272656d656e0d0a452d4d61696c3a206b6f6e74616b7440676f7665726e696b75732e646509a72431220420ccb65ac1d48e9cd43876ca82cfe83c43d711294d4a40f68811acb715aaa6c8ab"));
+			QCOMPARE(eac1->getCertificateDescriptionAsBinary(), QByteArray::fromHex("3082013B060A04007F00070301030101A1160C14476F7665726E696B757320546573742044564341A21A1318687474703A2F2F7777772E676F7665726E696B75732E6465A31A0C18476F7665726E696B757320476D6248202620436F2E204B47A420131E68747470733A2F2F746573742E676F7665726E696B75732D6569642E6465A581940C81914E616D652C20416E7363687269667420756E6420452D4D61696C2D4164726573736520646573204469656E737465616E626965746572733A0D0A476F7665726E696B757320476D6248202620436F2E204B470D0A486F6368736368756C72696E6720340D0A3238333539204272656D656E0D0A452D4D61696C3A206B6F6E74616B7440676F7665726E696B75732E646509A72431220420CCB65AC1D48E9CD43876CA82CFE83C43D711294D4A40F68811ACB715AAA6C8AB"));
 			QCOMPARE(eac1->getCertificateDescription()->getIssuerName(), QStringLiteral("Governikus Test DVCA"));
 			QVERIFY(eac1->getOptionalChat());
 			QVERIFY(eac1->getRequiredChat());
@@ -112,6 +112,57 @@ class test_DidAuthenticateEac1
 
 			const QByteArray duplicateUniqueElement = "Duplicate unique element: \"" + tag + "\"";
 			QVERIFY(Env::getSingleton<LogHandler>()->getBacklog().contains(duplicateUniqueElement));
+		}
+
+
+		void acceptedEidType_data()
+		{
+			QTest::addColumn<QByteArray>("replaceContent");
+			QTest::addColumn<bool>("parsingSuccessful");
+			QTest::addColumn<QList<AcceptedEidType>>("acceptedEidTypes");
+
+			QTest::newRow("AcceptedEidType - Empty 1") << QByteArray() << true << QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED});
+			QTest::newRow("AcceptedEidType - Empty 2") << QByteArray("<AcceptedEIDType></AcceptedEIDType>") << false << QList<AcceptedEidType>({});
+			QTest::newRow("AcceptedEidType - CardCertified") << QByteArray("<AcceptedEIDType>CardCertified</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED});
+			QTest::newRow("AcceptedEidType - SECertified") << QByteArray("<AcceptedEIDType>SECertified</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::SE_CERTIFIED});
+			QTest::newRow("AcceptedEidType - SEEndorsed") << QByteArray("<AcceptedEIDType>SEEndorsed</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::SE_ENDORSED});
+			QTest::newRow("AcceptedEidType - HWKeyStore") << QByteArray("<AcceptedEIDType>HWKeyStore</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::HW_KEYSTORE});
+			QTest::newRow("AcceptedEidType - CardCertified, SECertified") << QByteArray("<AcceptedEIDType>CardCertified</AcceptedEIDType><AcceptedEIDType>SECertified</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED});
+			QTest::newRow("AcceptedEidType - CardCertified, SECertified, SEEndorsed") << QByteArray("<AcceptedEIDType>CardCertified</AcceptedEIDType><AcceptedEIDType>SECertified</AcceptedEIDType><AcceptedEIDType>SEEndorsed</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED});
+			QTest::newRow("AcceptedEidType - CardCertified, SECertified, SEEndorsed, HWKeyStore") << QByteArray("<AcceptedEIDType>CardCertified</AcceptedEIDType><AcceptedEIDType>SECertified</AcceptedEIDType><AcceptedEIDType>SEEndorsed</AcceptedEIDType><AcceptedEIDType>HWKeyStore</AcceptedEIDType>") << true << QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED, AcceptedEidType::HW_KEYSTORE});
+			QTest::newRow("AcceptedEidType - Invalid 1") << QByteArray("<AcceptedEIDType>NotCertified</AcceptedEIDType>") << false << QList<AcceptedEidType>({});
+			QTest::newRow("AcceptedEidType - Invalid 2") << QByteArray("<AcceptedEIDType>HelloWorld!") << false << QList<AcceptedEidType>({});
+		}
+
+
+		void acceptedEidType()
+		{
+			QFETCH(QByteArray, replaceContent);
+			QFETCH(bool, parsingSuccessful);
+			QFETCH(QList<AcceptedEidType>, acceptedEidTypes);
+
+			QByteArray content = TestFileHelper::readFile(QString(":/paos/DIDAuthenticateEAC1_template.xml"));
+			content = content.replace(QByteArray("<!-- PLACEHOLDER -->"), replaceContent);
+
+			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			if (parsingSuccessful)
+			{
+				QVERIFY(!eac1.isNull());
+				QCOMPARE(eac1->getAcceptedEidTypes().size(), acceptedEidTypes.size());
+				if (acceptedEidTypes.isEmpty())
+				{
+					QVERIFY(eac1->getAcceptedEidTypes().isEmpty());
+				}
+				for (const auto& accepted : acceptedEidTypes)
+				{
+					QVERIFY(eac1->getAcceptedEidTypes().contains(accepted));
+				}
+
+			}
+			else
+			{
+				QVERIFY(eac1.isNull());
+			}
 		}
 
 

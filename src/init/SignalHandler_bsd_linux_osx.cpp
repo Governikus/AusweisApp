@@ -54,8 +54,8 @@ void SignalHandler::onSignalSocketActivated()
 	mSignalSocketNotifier->setEnabled(false);
 
 	int signal = -1;
-	const auto bytes = ::read(cSignalSocketPair[1], &signal, sizeof(signal));
-	if (bytes == 0 || signal == -1)
+	if (const auto bytes = ::read(cSignalSocketPair[1], &signal, sizeof(signal));
+			bytes == 0 || signal == -1)
 	{
 		qCWarning(system) << "Cannot read signal:" << signal << "| bytes:" << bytes;
 		return;

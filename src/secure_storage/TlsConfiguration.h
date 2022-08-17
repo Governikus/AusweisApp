@@ -51,7 +51,7 @@ class TlsConfiguration final
 		QSslConfiguration mConfiguration;
 
 		TlsConfiguration();
-		~TlsConfiguration();
+		~TlsConfiguration() = default;
 
 		[[nodiscard]] QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
 		[[nodiscard]] QSsl::SslProtocol readSslProtocol(const QJsonObject& pConfig, const QLatin1String pName) const;

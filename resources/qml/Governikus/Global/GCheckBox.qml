@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -16,16 +16,21 @@ CheckBox {
 	property alias textStyle: description.textStyle
 	property alias maximumLineCount: description.maximumLineCount
 
+	Accessible.onPressAction: {
+		toggle()
+		toggled()
+	}
+
 	padding: 0
 
 	indicator: Rectangle {
 		implicitHeight: ApplicationModel.scaleFactor * 33
 		implicitWidth: implicitHeight
 
-		color: control.checked ? (enabled ? Style.color.button : Style.color.button_disabled) : Style.color.transparent
+		color: enabled ? (control.checked ? Style.color.button : Style.color.transparent) : Style.color.button_disabled
 		radius: Math.max(ApplicationModel.scaleFactor * 4, 1)
 		border.width: Math.max(ApplicationModel.scaleFactor * 4, 1)
-		border.color: enabled ? Style.color.accent : Style.color.accent_disabled
+		border.color: enabled ? Style.color.accent : Style.color.button_disabled
 
 		TintableIcon {
 			visible: control.checked
@@ -42,9 +47,10 @@ CheckBox {
 	contentItem: GText {
 		id: description
 
-		leftPadding: control.indicator.width + control.spacing
-
 		activeFocusOnTab: false
+		Accessible.ignored: true
+
+		leftPadding: control.indicator.width + control.spacing
 
 		text: control.text
 		textStyle: Style.text.normal

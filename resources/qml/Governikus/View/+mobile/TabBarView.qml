@@ -2,78 +2,75 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
-import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
 
-Item {
-	id: baseItem
+StackView {
+	id: root
 
-	property Component sourceComponent
-	readonly property var currentSectionPage: stack.currentItem
-
-	property alias stackView: stack
-
-	StackView {
-		id: stack
-
-		anchors.fill: parent
-
-		initialItem: baseItem.sourceComponent
+	function doActivate() {
+		if (visible && currentItem && typeof currentItem.activated === "function") {
+			currentItem.activated()
+		}
 	}
 
-	MouseArea {
-		id: iosBackGestureMouseArea
+	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning()
 
-		readonly property real minSwipeDistance: parent.width * 0.2
-		readonly property real minVelocity: 10
-		readonly property real touchStartAreaWidth: 10
-		property real startPosX: 0.0
-		property real previousPosX: 0.0
-		property real velocity: 0.0
+	onVisibleChanged: doActivate()
+	onCurrentItemChanged: doActivate()
 
-		anchors.fill: parent
+	Component {
+		id: enterAnimation
 
-		enabled: Constants.is_layout_ios
-		preventStealing: true
+		Transition {
+			readonly property bool reversed: false
 
-		onPressed: {
-			if (mouse.x < touchStartAreaWidth && currentSectionPage.navigationAction.state === "back") {
-				mouse.accepted = true
-				startPosX = mouse.x
-				previousPosX = startPosX
-				velocity = 0.0
-			} else {
-				mouse.accepted = false
+			enabled: animationEnabled
+
+			ParallelAnimation {
+				NumberAnimation {
+					property: "opacity"
+					from: 0
+					to: 1
+					duration: Constants.animation_duration
+					easing.type: Easing.InQuint
+				}
+				NumberAnimation {
+					property: "x"
+					from: (root.mirrored ? -0.3 : 0.3) * root.width * (reversed ? 1 : -1)
+					to: 0
+					duration: Constants.animation_duration * 2
+					easing.type: Easing.OutCubic
+				}
 			}
 		}
+    }
 
-		onPositionChanged: {
-			let currentVelocity = mouse.x - previousPosX
-			velocity = (velocity + currentVelocity) / 2.0
-			previousPosX = mouse.x
-		}
+	Component {
+		id: exitAnimation
 
-		onReleased: {
-			let swipeDistance = mouse.x - startPosX
-			if (swipeDistance > minSwipeDistance && velocity > minVelocity) {
-				currentSectionPage.navigationAction.clicked()
+		Transition {
+			enabled: animationEnabled
+
+			NumberAnimation {
+				property: "opacity"
+				from: 1
+				to: 0
+				duration: Constants.animation_duration
+				easing.type: Easing.OutQuint
 			}
 		}
-	}
+    }
 
-	onVisibleChanged: {
-		if (currentSectionPage) {
-			currentSectionPage.activated()
-		}
-	}
+    popEnter: enterAnimation.createObject(root)
+    popExit: exitAnimation.createObject(root)
 
-	onCurrentSectionPageChanged: {
-		if (currentSectionPage) {
-			currentSectionPage.activated()
-		}
-	}
+    pushEnter: enterAnimation.createObject(root, {reversed: true})
+    pushExit: exitAnimation.createObject(root)
+
+    replaceEnter: enterAnimation.createObject(root, {reversed: true})
+    replaceExit: exitAnimation.createObject(root)
 }

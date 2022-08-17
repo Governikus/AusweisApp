@@ -33,12 +33,12 @@ class test_Asn1OctetStringUtil
 
 		void getValue()
 		{
-			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
+			QByteArray bytes = QByteArray::fromHex("0102030405060708090A0B0C0D0E0F");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([asn1OctetString] {
 					ASN1_STRING_free(asn1OctetString);
 				});
-			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<unsigned char*>(bytes.data()), bytes.length());
+			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<uchar*>(bytes.data()), bytes.length());
 
 			QCOMPARE(Asn1OctetStringUtil::getValue(asn1OctetString), bytes);
 		}
@@ -46,7 +46,7 @@ class test_Asn1OctetStringUtil
 
 		void setValue()
 		{
-			QByteArray bytes = QByteArray::fromHex("0102030405060708090a0b0c0d0e0f");
+			QByteArray bytes = QByteArray::fromHex("0102030405060708090A0B0C0D0E0F");
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
 			const auto guard = qScopeGuard([asn1OctetString] {
 					ASN1_STRING_free(asn1OctetString);
@@ -56,7 +56,7 @@ class test_Asn1OctetStringUtil
 			QCOMPARE(asn1OctetString->length, 15);
 			for (int i = 0; i < 15; i++)
 			{
-				QCOMPARE(asn1OctetString->data[i], uchar(i + 1));
+				QCOMPARE(asn1OctetString->data[i], static_cast<uchar>(i + 1));
 			}
 		}
 

@@ -9,13 +9,9 @@ import java.io.File;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class UpdateReceiver extends BroadcastReceiver
 {
-	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
-
-
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
@@ -24,7 +20,7 @@ public class UpdateReceiver extends BroadcastReceiver
 			return;
 		}
 
-		Log.d(LOG_TAG, "New app version received. Clear app cache.");
+		LogHandler.getLogger().info("New app version received. Clear app cache.");
 
 		try
 		{
@@ -33,7 +29,7 @@ public class UpdateReceiver extends BroadcastReceiver
 		}
 		catch (Exception e)
 		{
-			Log.e(LOG_TAG, e.toString());
+			LogHandler.getLogger().severe(e.toString());
 		}
 	}
 
@@ -56,7 +52,7 @@ public class UpdateReceiver extends BroadcastReceiver
 			{
 				if (!deleteDir(child))
 				{
-					Log.d(LOG_TAG, "Failed to delete " + child);
+					LogHandler.getLogger().info("Failed to delete " + child);
 					return false;
 				}
 			}

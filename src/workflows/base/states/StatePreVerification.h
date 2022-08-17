@@ -7,8 +7,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 #include <QDateTime>
 
@@ -24,14 +24,15 @@ class StatePreVerification
 	friend class StateBuilder;
 	friend class ::test_StatePreVerification;
 
-	const QVector<QSharedPointer<const CVCertificate>> mTrustedCvcas;
-	const QDateTime mValidationDateTime;
+	private:
+		const QVector<QSharedPointer<const CVCertificate>> mTrustedCvcas;
+		const QDateTime mValidationDateTime;
 
-	explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+		explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
-	bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
-	void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
+		bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
+		void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
 };
 
 } // namespace governikus

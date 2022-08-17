@@ -87,11 +87,11 @@ class test_Reader
 			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
-			QSignalSpy spy(mReader.data(), &Reader::fireCardRetryCounterChanged);
+			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
-			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false");
-			QTest::ignoreMessage(QtDebugMsg, "fireCardRetryCounterChanged");
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
+			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
 			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
 			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
 			QVERIFY(!mReader->getReaderInfo().isPinDeactivated());
@@ -99,28 +99,78 @@ class test_Reader
 		}
 
 
-		void test_Update()
+		void test_UpdateRetryCounter_InitialPinChanged()
 		{
-			CardInfo cInfo(CardType::UNKNOWN, QSharedPointer<const EFCardAccess>(), 3, false, false);
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			auto efCardAccess = EFCardAccess::decode(bytes);
+			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, true, false);
 			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
+			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("63D3"));
+			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
 
-			QSignalSpy spyCardInserted(mReader.data(), &Reader::fireCardInserted);
-			QSignalSpy spyCardRemoved(mReader.data(), &Reader::fireCardRemoved);
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 3 , PIN deactivated: false , PIN initial:  true ");
+			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
+			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
+			QVERIFY(mReader->getReaderInfo().getCardInfo().isPinInitial());
+			QCOMPARE(spy.count(), 1);
+		}
 
-			mReader->update();
-			QCOMPARE(spyCardInserted.count(), 0);
-			QCOMPARE(spyCardRemoved.count(), 0);
 
-			mReader->setCardEvent(Reader::CardEvent::CARD_INSERTED);
-			QTest::ignoreMessage(QtInfoMsg, "Card inserted: {Type: UNKNOWN, Retry counter: 3, Pin deactivated: false}");
-			mReader->update();
-			QCOMPARE(spyCardInserted.count(), 1);
+		void test_shelve_insert_data()
+		{
+			QTest::addColumn<CardType>("type");
+			QTest::addColumn<int>("retryCounter");
+			QTest::addColumn<int>("propertiesCount");
+			QTest::addColumn<int>("infoCount");
+			QTest::addColumn<bool>("insertable");
 
-			mReader->setCardEvent(Reader::CardEvent::CARD_REMOVED);
-			QTest::ignoreMessage(QtInfoMsg, "Card removed");
-			mReader->update();
-			QCOMPARE(spyCardRemoved.count(), 1);
+			QTest::newRow("NONE") << CardType::NONE << -1 << 0 << 0 << false;
+			QTest::newRow("EID_CARD") << CardType::EID_CARD << 3 << 1 << 0 << true;
+			QTest::newRow("SMART_EID_RC3") << CardType::SMART_EID << 3 << 1 << 0 << true;
+			QTest::newRow("SMART_EID_RC0") << CardType::SMART_EID << 0 << 0 << 1 << false;
+		}
+
+
+		void test_shelve_insert()
+		{
+			QFETCH(CardType, type);
+			QFETCH(int, retryCounter);
+			QFETCH(int, propertiesCount);
+			QFETCH(int, infoCount);
+			QFETCH(bool, insertable);
+
+			QSignalSpy removed(mReader.data(), &Reader::fireCardRemoved);
+			QSignalSpy properties(mReader.data(), &Reader::fireReaderPropertiesUpdated);
+			QSignalSpy info(mReader.data(), &Reader::fireCardInfoChanged);
+
+			QVERIFY(!mReader->getReaderInfo().isInsertable());
+			mReader->setInfoCardInfo(CardInfo(type, nullptr, retryCounter));
+
+			mReader->shelveCard();
+			QCOMPARE(removed.count(), 0);
+			QCOMPARE(properties.count(), propertiesCount);
+			QCOMPARE(info.count(), infoCount);
+			QCOMPARE(mReader->getReaderInfo().isInsertable(), insertable);
+
+			if (insertable)
+			{
+				QSignalSpy inserted(mReader.data(), &Reader::fireCardInserted);
+
+				mReader->insertCard();
+				QCOMPARE(inserted.count(), 1);
+				QCOMPARE(removed.count(), 0);
+				QCOMPARE(properties.count(), propertiesCount);
+				QCOMPARE(info.count(), infoCount);
+				QVERIFY(mReader->getReaderInfo().isInsertable());
+
+				mReader->shelveCard();
+				QCOMPARE(inserted.count(), 1);
+				QCOMPARE(removed.count(), 1);
+				QCOMPARE(properties.count(), propertiesCount);
+				QCOMPARE(info.count(), infoCount);
+				QVERIFY(mReader->getReaderInfo().isInsertable());
+			}
 		}
 
 

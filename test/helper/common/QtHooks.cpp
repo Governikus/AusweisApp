@@ -5,7 +5,7 @@
 #include "QtHooks.h"
 
 #if __has_include(<private/qhooks_p.h>)
-#include <private/qhooks_p.h>
+	#include <private/qhooks_p.h>
 #endif
 
 #include <QCoreApplication>

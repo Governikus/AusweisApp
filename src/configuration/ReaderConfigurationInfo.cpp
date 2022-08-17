@@ -29,9 +29,7 @@ ReaderConfigurationInfo::ReaderConfigurationInfo(uint pVendorId, uint pProductId
 }
 
 
-ReaderConfigurationInfo::~ReaderConfigurationInfo()
-{
-}
+ReaderConfigurationInfo::~ReaderConfigurationInfo() = default;
 
 
 bool ReaderConfigurationInfo::operator ==(const ReaderConfigurationInfo& pOther) const

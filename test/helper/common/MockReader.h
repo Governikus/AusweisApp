@@ -7,9 +7,9 @@
 #pragma once
 
 
-#include "asn1/SecurityInfos.h"
 #include "MockCard.h"
 #include "Reader.h"
+#include "asn1/SecurityInfos.h"
 
 
 namespace governikus
@@ -21,13 +21,14 @@ class MockReader
 	Q_OBJECT
 
 	QScopedPointer<MockCard> mCard;
-	CardEvent mEvent;
 
 	public:
+		static ReaderManagerPlugInType cMOCKED_READERMANAGER_TYPE;
+
 		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig = QVector<TransmitConfig>(), const QByteArray& pEfCardAccess = QByteArray());
 		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess);
 
-		MockReader(const QString& pReaderName = QStringLiteral("MockReader"));
+		MockReader(const QString& pReaderName = QStringLiteral("MockReader"), ReaderManagerPlugInType pType = cMOCKED_READERMANAGER_TYPE);
 		~MockReader() override;
 
 
@@ -39,28 +40,12 @@ class MockReader
 
 		void removeCard();
 
-		MockCard* setCard(const MockCardConfig& pCardConfig, const QByteArray& pEfCardAccess);
-		MockCard* setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess = QSharedPointer<EFCardAccess>());
-
-		ReaderInfo& getReaderInfo()
-		{
-			return mReaderInfo;
-		}
-
+		MockCard* setCard(const MockCardConfig& pCardConfig, const QByteArray& pEfCardAccess, CardType pType = CardType::EID_CARD);
+		MockCard* setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess = QSharedPointer<EFCardAccess>(), CardType pType = CardType::EID_CARD);
 
 		void setReaderInfo(const ReaderInfo& pReaderInfo);
-		void setCardEvent(const CardEvent pEvent)
-		{
-			mEvent = pEvent;
-		}
-
-	private:
-		Reader::CardEvent updateCard() override
-		{
-			return mEvent;
-		}
-
-
+		void setInfoBasicReader(bool pBasicReader);
+		void setInfoCardInfo(const CardInfo& pCardInfo);
 };
 
 } // namespace governikus

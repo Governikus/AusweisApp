@@ -15,7 +15,7 @@ using namespace governikus;
 
 
 StateRedirectBrowser::StateRedirectBrowser(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -32,7 +32,11 @@ void StateRedirectBrowser::run()
 	}
 	else
 #endif
-	if (getContext()->isTcTokenNotFound())
+	if (getContext()->getStatus() == GlobalStatus::Code::Workflow_InternalError_BeforeTcToken)
+	{
+		sendErrorPage(HTTP_STATUS_INTERNAL_SERVER_ERROR);
+	}
+	else if (getContext()->isTcTokenNotFound())
 	{
 		sendErrorPage(HTTP_STATUS_NOT_FOUND);
 	}

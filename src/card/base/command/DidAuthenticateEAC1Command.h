@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "asn1/Chat.h"
 #include "BaseCardCommand.h"
+#include "asn1/Chat.h"
 
 class test_DidAuthenticateEAC1Command;
 class test_StateDidAuthenticateEac1;
@@ -19,10 +19,10 @@ class DidAuthenticateEAC1Command
 	: public BaseCardCommand
 {
 	Q_OBJECT
+	friend class ::test_DidAuthenticateEAC1Command;
+	friend class ::test_StateDidAuthenticateEac1;
 
 	private:
-		friend class ::test_DidAuthenticateEAC1Command;
-		friend class ::test_StateDidAuthenticateEac1;
 		QByteArray mChallenge;
 
 	protected:

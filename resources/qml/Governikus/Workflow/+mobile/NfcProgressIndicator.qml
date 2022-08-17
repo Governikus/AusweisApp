@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -21,7 +20,7 @@ Item {
 	Connections {
 		target: cardPositionModel
 
-		onFireCardPositionChanged: {
+		function onFireCardPositionChanged() {
 			cardPosition = cardPositionModel.getCardPosition()
 			animation.restart()
 		}
@@ -42,14 +41,14 @@ Item {
 	states: [
 		State {
 			name: "off"
-			PropertyChanges { target: grayLevel; visible: true }
+			PropertyChanges { target: phone; tintEnabled: true }
 			PropertyChanges { target: card; opacity: 0; restoreEntryValues: false }
 			PropertyChanges { target: modelActivationTimer; running: false }
 			PropertyChanges { target: cardPositionModel; running: false; restoreEntryValues: false }
 		},
 		State {
 			name: "on"
-			PropertyChanges { target: grayLevel; visible: false }
+			PropertyChanges { target: phone; tintEnabled: false }
 			PropertyChanges { target: modelActivationTimer; running: true }
 		}
 	]
@@ -134,7 +133,7 @@ Item {
 	Image {
 		id: card
 
-		visible: !grayLevel.visible
+		visible: !phone.tintEnabled
 		anchors.centerIn: phone
 		sourceSize.height: phone.height * 0.5
 		transformOrigin: Item.Center
@@ -142,9 +141,10 @@ Item {
 		opacity: 0
 		source: "qrc:///images/ausweis.svg"
 		fillMode: Image.PreserveAspectFit
+		asynchronous: true
 	}
 
-	Image {
+	TintableIcon {
 		id: phone
 
 		z: 0
@@ -153,10 +153,11 @@ Item {
 
 		clip: true
 		source: "qrc:///images/mobile/phone_nfc.svg"
-		fillMode: Image.PreserveAspectFit
+		desaturate: true
+		opacity: tintEnabled ? 0.7 : 1.0
 
 		Image {
-			visible: !grayLevel.visible
+			visible: !phone.tintEnabled
 			x: card.x - phone.x
 			y: card.y - phone.y
 			z: 1
@@ -167,19 +168,7 @@ Item {
 			rotation: card.rotation
 			source: "qrc:///images/ausweis_outline.svg"
 			fillMode: Image.PreserveAspectFit
+			asynchronous: true
 		}
-	}
-
-	Colorize {
-		id: grayLevel
-
-		z: 0
-		anchors.fill: phone
-
-		source: phone
-		saturation: 0
-		hue: 0
-		lightness: 0.3
-		cached: true
 	}
 }

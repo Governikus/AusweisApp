@@ -51,7 +51,7 @@ class UIPlugInWebSocket
 
 	public:
 		UIPlugInWebSocket();
-		~UIPlugInWebSocket() override;
+		~UIPlugInWebSocket() override = default;
 };
 
 } // namespace governikus

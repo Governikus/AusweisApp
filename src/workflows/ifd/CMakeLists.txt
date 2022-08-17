@@ -1,0 +1,4 @@
+ADD_PLATFORM_LIBRARY(AusweisAppWorkflowsIfd)
+
+target_link_libraries(AusweisAppWorkflowsIfd ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppSettings AusweisAppNetwork AusweisAppIfd)
+target_link_libraries(AusweisAppWorkflowsIfd AusweisAppWorkflows)

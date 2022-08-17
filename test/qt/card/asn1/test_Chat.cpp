@@ -4,16 +4,16 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/ASN1Util.h"
-#include "asn1/KnownOIDs.h"
-
 #include "asn1/Chat.h"
+
+#include "asn1/ASN1Util.h"
 
 #include <QtCore>
 #include <QtTest>
 
 
 using namespace governikus;
+
 
 class test_CHAT
 	: public QObject
@@ -32,17 +32,20 @@ class test_CHAT
 			auto chat = newObject<CHAT>();
 			QCOMPARE(chat->getAccessRole(), AccessRole::UNKNOWN);
 			QCOMPARE(chat->getAccessRights().size(), 0);
-			QCOMPARE(chat->getType(), QByteArray());
-			QCOMPARE(chat->getTemplate(), QByteArray());
+			QCOMPARE(QByteArray(chat->getType()), QByteArray());
+			QVERIFY(chat->getType().isUndefined());
+			QVERIFY(chat->getTemplate().isNull());
 		}
 
 
-		void setAccessRolegetAccessRole()
+		void getAccessRole()
 		{
 			auto chat = newObject<CHAT>();
-			chat->setType("0.4.0.127.0.1.2.3.4.5");
 
-			chat->setAccessRole(AccessRole::CVCA);
+			ASN1_OBJECT_free(chat->mType);
+			chat->mType = OBJ_txt2obj("0.4.0.127.0.1.2.3.4.5", 1);
+
+			Asn1OctetStringUtil::setValue(QByteArray::fromHex("C000000000"), chat->mTemplate);
 
 			QCOMPARE(chat->getAccessRole(), AccessRole::CVCA);
 			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("5305C000000000")));
@@ -52,8 +55,11 @@ class test_CHAT
 		void setAccessRights()
 		{
 			auto chat = newObject<CHAT>();
-			chat->setAccessRole(AccessRole::AT);
-			chat->setType("0.4.0.127.0.1.2.3.4.5");
+
+			ASN1_OBJECT_free(chat->mType);
+			chat->mType = OBJ_txt2obj("0.4.0.127.0.1.2.3.4.5", 1);
+
+			Asn1OctetStringUtil::setValue(QByteArray::fromHex("0000000000"), chat->mTemplate);
 
 			QSet<AccessRight> rights;
 			rights += AccessRight::PRIVILEGED_TERMINAL;
@@ -184,7 +190,7 @@ class test_CHAT
 			auto chat = CHAT::fromHex(hexEncodedChat);
 
 			QVERIFY(chat != nullptr);
-			QCOMPARE(chat->getType(), QByteArray("0.4.0.127.0.7.3.1.2.2"));
+			QCOMPARE(QByteArray(chat->getType()), QByteArray("0.4.0.127.0.7.3.1.2.2 (id-AT)"));
 			QCOMPARE(chat->getTemplate().toHex().toUpper(), QByteArray("FC0F13FFFF"));
 			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("FC0F13FFFF")));
 		}

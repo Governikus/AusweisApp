@@ -6,7 +6,7 @@
 
 #include "BaseCardCommand.h"
 #include "CardConnection.h"
-#include "GetChallengeBuilder.h"
+#include "apdu/CommandApdu.h"
 
 #include <QLoggingCategory>
 
@@ -26,17 +26,29 @@ DidAuthenticateEAC1Command::DidAuthenticateEAC1Command(QSharedPointer<CardConnec
 
 void DidAuthenticateEAC1Command::internalExecute()
 {
-	auto [returnCode, response] = mCardConnectionWorker->transmit(GetChallengeBuilder().build());
+	auto [returnCode, response] = [this]() -> ResponseApduResult {
+				if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())
+				{
+					return getCardConnectionWorker()->getChallenge();
+				}
+				else
+				{
+					CommandApdu cmdApdu(Ins::GET_CHALLENGE, CommandApdu::IMPLICIT, CommandApdu::IMPLICIT, QByteArray(), 8);
+					return getCardConnectionWorker()->transmit(cmdApdu);
+				}
+			}
+				();
 	mReturnCode = returnCode;
-	if (mReturnCode != CardReturnCode::OK || response.getReturnCode() != StatusCode::SUCCESS)
+
+	if (response.getStatusCode() != StatusCode::SUCCESS)
 	{
 		qCWarning(card) << "GetChallenge failed";
 		return;
 	}
 
-	if (response.getDataLength() != 8)
+	if (response.getData().size() != 8)
 	{
-		qCCritical(card) << "Challenge has wrong size. Expect 8 bytes, got" << response.getDataLength();
+		qCCritical(card) << "Challenge has wrong size. Expect 8 bytes, got" << response.getData().size();
 	}
 
 	mChallenge = response.getData();

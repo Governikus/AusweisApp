@@ -6,22 +6,22 @@
 
 #include <QFile>
 #include <QLoggingCategory>
+#include <QQmlEngine>
 #include <QRegularExpression>
 #include <QTextStream>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
 
-FormattedTextModel::FormattedTextModel(QObject* pParent)
+FormattedTextModel::FormattedTextModel(QObject* pParent, const QStringList& pLines)
 	: QAbstractListModel(pParent)
 {
-}
+	QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 
-
-FormattedTextModel::FormattedTextModel(const QStringList& pLines)
-{
 	processLines(pLines);
 }
 
@@ -62,16 +62,6 @@ QHash<int, QByteArray> FormattedTextModel::roleNames() const
 	roles.insert(ContentRole, QByteArrayLiteral("content"));
 	roles.insert(LineTypeRole, QByteArrayLiteral("lineType"));
 	return roles;
-}
-
-
-bool FormattedTextModel::load(const QString& pFilepath)
-{
-	const auto [success, lines] = readLines(pFilepath);
-
-	processLines(lines);
-
-	return success;
 }
 
 

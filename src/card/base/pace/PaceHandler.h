@@ -6,8 +6,9 @@
 
 #pragma once
 
-#include "asn1/SecurityInfos.h"
 #include "CardConnectionWorker.h"
+#include "SecurityProtocol.h"
+#include "asn1/SecurityInfos.h"
 #include "pace/KeyAgreement.h"
 
 #include <QByteArray>
@@ -19,6 +20,7 @@ namespace governikus
 {
 class PaceHandler final
 {
+	Q_DISABLE_COPY(PaceHandler)
 	friend class ::test_PaceHandler;
 
 	private:
@@ -30,7 +32,8 @@ class PaceHandler final
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
 		QByteArray mChat;
-		QByteArray mCarCurr, mCarPrev;
+		QByteArray mCarCurr;
+		QByteArray mCarPrev;
 
 		/*!
 		 * \brief checks for implementation support
@@ -50,8 +53,6 @@ class PaceHandler final
 		 * \return false on any card errors
 		 */
 		CardReturnCode transmitMSESetAT(PacePasswordId pPasswordId);
-
-		Q_DISABLE_COPY(PaceHandler)
 
 	public:
 		explicit PaceHandler(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
@@ -107,9 +108,9 @@ class PaceHandler final
 
 		/*!
 		 * The used PACE protocol.
-		 * \return the PACE protocol OID as string.
+		 * \return the PACE specific security protocol.
 		 */
-		[[nodiscard]] QByteArray getPaceProtocol() const;
+		[[nodiscard]] SecurityProtocol getPaceProtocol() const;
 };
 
 } // namespace governikus

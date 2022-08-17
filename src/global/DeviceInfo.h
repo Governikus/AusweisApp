@@ -14,25 +14,30 @@ namespace governikus
 
 class DeviceInfo
 {
-	private:
-		DeviceInfo();
-		~DeviceInfo();
-		Q_DISABLE_COPY(DeviceInfo)
+	Q_DISABLE_COPY(DeviceInfo)
 
-#ifdef Q_OS_ANDROID
+	private:
+		DeviceInfo() = default;
+		~DeviceInfo() = default;
+
+#if defined(Q_OS_ANDROID)
 		static QString getField(const char* const pField);
 #endif
 
+#if defined(Q_OS_IOS)
+		static QString getMachineId();
+#endif
+
 	public:
-		static QString getPrettyInfo();
-		static QString getName();
-		static QString getFingerprint();
-		static QString getOSBuildNumber();
-		static QString getOSVersion();
-		static QString getKernelVersion();
-		static QString getVendor();
-		static QString getModelNumber();
-		static QString getModelName();
+		[[nodiscard]] static QString getPrettyInfo();
+		[[nodiscard]] static QString getName();
+		[[nodiscard]] static QString getFingerprint();
+		[[nodiscard]] static QString getOSBuildNumber();
+		[[nodiscard]] static QString getOSVersion();
+		[[nodiscard]] static QString getKernelVersion();
+		[[nodiscard]] static QString getVendor();
+		[[nodiscard]] static QString getModelNumber();
+		[[nodiscard]] static QString getModelName();
 };
 
 } // namespace governikus

@@ -2,7 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
@@ -14,6 +15,8 @@ BaseProviderView {
 
 	Rectangle {
 		id: searchBarHeader
+
+		readonly property var menuBar: ApplicationWindow.menuBar
 
 		width: baseItem.width
 		height: providerSearchBar.height

@@ -11,7 +11,8 @@ Q_LOGGING_CATEGORY(card, "card")
 Q_LOGGING_CATEGORY(card_pcsc, "card_pcsc")
 Q_LOGGING_CATEGORY(card_nfc, "card_nfc")
 Q_LOGGING_CATEGORY(card_remote, "card_remote")
-Q_LOGGING_CATEGORY(remote_device, "remote_device")
+Q_LOGGING_CATEGORY(card_smart, "card_smart")
+Q_LOGGING_CATEGORY(ifd, "ifd")
 Q_LOGGING_CATEGORY(card_drivers, "card_drivers")
 Q_LOGGING_CATEGORY(statemachine, "statemachine")
 Q_LOGGING_CATEGORY(paos, "paos")
@@ -21,6 +22,7 @@ Q_LOGGING_CATEGORY(qml, "qml")
 Q_LOGGING_CATEGORY(json, "json")
 Q_LOGGING_CATEGORY(aidl, "aidl")
 Q_LOGGING_CATEGORY(websocket, "websocket")
+Q_LOGGING_CATEGORY(automatic, "automatic")
 Q_LOGGING_CATEGORY(cli, "cli")
 Q_LOGGING_CATEGORY(stdinput, "stdinput")
 Q_LOGGING_CATEGORY(activation, "activation")
@@ -65,7 +67,7 @@ Q_LOGGING_CATEGORY(init, "init")
 Q_LOGGING_CATEGORY(update, "update")
 
 /*!
- * Logging category for app update informations
+ * Logging category for app update information
  */
 Q_LOGGING_CATEGORY(appupdate, "appupdate")
 

@@ -11,9 +11,9 @@
 #include <QtTest>
 
 #ifndef Q_OS_WIN
-#include <sys/time.h>
-#include <sys/types.h>
-#include <utime.h>
+	#include <sys/time.h>
+	#include <sys/types.h>
+	#include <utime.h>
 #endif
 
 Q_DECLARE_LOGGING_CATEGORY(fileprovider)
@@ -29,9 +29,9 @@ class test_LogHandler
 
 	void fakeLastModifiedAndLastAccessTime(const QString& pPath)
 	{
-	#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 		Q_UNUSED(pPath)
-	#else
+#else
 		struct timeval tv[2];
 
 		struct timeval& accessTime = tv[0];
@@ -43,7 +43,7 @@ class test_LogHandler
 		time_t fiveteenDays = 60 * 60 * 24 * 15;
 		modifyTime.tv_sec -= fiveteenDays;
 		utimes(pPath.toLatin1().constData(), tv);
-	#endif
+#endif
 	}
 
 
@@ -264,11 +264,11 @@ class test_LogHandler
 		}
 
 
-		void removeUpOldLogfiles()
+		void removeUpOldLogFiles()
 		{
-			#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 			QSKIP("File time stamp mocking unimplemented on windows");
-			#endif
+#endif
 
 			const auto& logger = Env::getSingleton<LogHandler>();
 
@@ -307,11 +307,11 @@ class test_LogHandler
 		}
 
 
-		void removeUpMultipleOldLogfilesWithInit()
+		void removeUpMultipleOldLogFilesWithInit()
 		{
-			#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 			QSKIP("File time stamp mocking unimplemented on windows");
-			#endif
+#endif
 
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->reset();
@@ -405,7 +405,7 @@ class test_LogHandler
 		}
 
 
-		void getCriticalLogWindowWithoutLogfile()
+		void getCriticalLogWindowWithoutLogFile()
 		{
 			const auto& logger = Env::getSingleton<LogHandler>();
 			logger->setCriticalLogCapacity(10);
@@ -428,6 +428,54 @@ class test_LogHandler
 			logger->setLogFile(true);
 			QCOMPARE(logger->getCriticalLogWindow(), QByteArray());
 			QVERIFY(!logger->hasCriticalLog());
+		}
+
+
+		void formatFunction_data()
+		{
+			QTest::addColumn<QByteArray>("function");
+			QTest::addColumn<QByteArray>("result");
+
+			QTest::newRow("LanguageLoader::createTranslator") << QByteArray("QSharedPointer<QTranslator> governikus::LanguageLoader::createTranslator(const QLocale&, const QString&)")
+															  << QByteArray("LanguageLoader::createTranslator");
+
+			QTest::newRow("LanguageLoader::load") << QByteArray("void governikus::LanguageLoader::load(const QLocale&)")
+												  << QByteArray("LanguageLoader::load");
+
+			QTest::newRow("createSingleton") << QByteArray("T* governikus::Env::createSingleton() [with T = governikus::AppUpdater]")
+											 << QByteArray("Env::createSingleton");
+
+			QTest::newRow("printInfo") << QByteArray("void printInfo()")
+									   << QByteArray("printInfo");
+
+			QTest::newRow("FileDestination::getPath") << QByteArray("static QString governikus::FileDestination::getPath(const QString&, QStandardPaths::LocateOption, QStandardPaths::StandardLocation)")
+													  << QByteArray("FileDestination::getPath");
+
+			QTest::newRow("Env::setCreator") << QByteArray("static void governikus::Env::setCreator(std::function<_Res(_ArgTypes ...)>) [with Q = {anonymous}::TestEmptyTmp; Args = {}]")
+											 << QByteArray("Env::setCreator");
+
+			QTest::newRow("lambdaParam") << QByteArray("void lambdaParam(std::function<bool()>)")
+										 << QByteArray("lambdaParam");
+
+			QTest::newRow("lambda") << QByteArray("governikus::initApp(int&, char**)::<lambda()>")
+									<< QByteArray("initApp");
+
+			// the const is fake for better unit testing
+			QTest::newRow("UILoader::load") << QByteArray("std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> governikus::UILoader::load() const [with T = governikus::UIPlugInJson; std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> = bool]")
+											<< QByteArray("UILoader::load");
+
+		}
+
+
+		void formatFunction()
+		{
+			QFETCH(QByteArray, function);
+			QFETCH(QByteArray, result);
+
+			const auto* handler = Env::getSingleton<LogHandler>();
+			const auto& formattedFunction = handler->formatFunction(function.constData(), QByteArray(), 194);
+
+			QCOMPARE(formattedFunction, result);
 		}
 
 

@@ -4,10 +4,10 @@
 
 #include "ApplicationModel.h"
 
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
+#include <QJniEnvironment>
+#include <QJniObject>
 #include <QOperatingSystemVersion>
-#include <QtAndroid>
+#include <QtCore/private/qandroidextras_p.h>
 
 using namespace governikus;
 
@@ -15,17 +15,17 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 
 static void showSystemSettings(const QString& pAction)
 {
-	QAndroidJniEnvironment env;
+	QJniEnvironment env;
 
-	const QAndroidJniObject& jAction = QAndroidJniObject::fromString(pAction);
-	QAndroidJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", jAction.object<jstring>());
-	const jint flag = QAndroidJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK");
+	const QJniObject& jAction = QJniObject::fromString(pAction);
+	QJniObject intent("android/content/Intent", "(Ljava/lang/String;)V", jAction.object<jstring>());
+	const jint flag = QJniObject::getStaticField<jint>("android/content/Intent", "FLAG_ACTIVITY_NEW_TASK");
 	intent.callObjectMethod("setFlags", "(I)V", flag);
 
 	if (intent.isValid())
 	{
 		qCCritical(qml) << "Call action:" << pAction;
-		QtAndroid::startActivity(intent, 0);
+		QtAndroidPrivate::startActivity(intent, 0);
 	}
 
 	if (env->ExceptionCheck())

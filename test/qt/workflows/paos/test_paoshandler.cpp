@@ -7,8 +7,8 @@
 #include <QtCore>
 #include <QtTest>
 
-#include "paos/PaosHandler.h"
 #include "TestFileHelper.h"
+#include "paos/PaosHandler.h"
 
 
 using namespace governikus;
@@ -50,22 +50,6 @@ class test_paoshandler
 			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEACAdditionalInput.xml");
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE);
-		}
-
-
-		void parseDIDList()
-		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDList.xml");
-			PaosHandler handler(initFW);
-			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_LIST);
-		}
-
-
-		void parseDisconnect()
-		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/Disconnect.xml");
-			PaosHandler handler(initFW);
-			QVERIFY(handler.getDetectedPaosType() == PaosType::DISCONNECT);
 		}
 
 

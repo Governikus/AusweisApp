@@ -4,8 +4,8 @@
 
 #include "states/StateDestroyPace.h"
 
-#include "context/ChangePinContext.h"
 #include "MockCardConnectionWorker.h"
+#include "context/ChangePinContext.h"
 
 #include <QtTest>
 

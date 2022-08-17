@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -13,7 +13,7 @@ import Governikus.Type.ApplicationModel 1.0
 GButton {
 	readonly property color pressColor: Qt.darker(textStyle.textColor, Constants.highlightDarkerFactor)
 
-	visible: ApplicationModel.currentWorkflow !== ""
+	visible: ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE
 	height: if (parent) parent.height
 
 	text: qsTr("Cancel")

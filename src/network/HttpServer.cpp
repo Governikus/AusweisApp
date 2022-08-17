@@ -13,23 +13,41 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 quint16 HttpServer::cPort = PortFile::cDefaultPort;
+QVector<QHostAddress> HttpServer::cAddresses = {QHostAddress::LocalHost, QHostAddress::LocalHostIPv6};
 
 
-HttpServer::HttpServer(quint16 pPort)
+HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 	: QObject()
-	, mServer(new QTcpServer())
+	, mServer()
 	, mPortFile()
 {
-	connect(mServer.data(), &QTcpServer::newConnection, this, &HttpServer::onNewConnection);
+	auto port = pPort;
 
-	if (mServer->listen(QHostAddress::LocalHost, pPort))
+	if (pAddresses.isEmpty())
 	{
-		mPortFile.handlePort(mServer->serverPort());
-		qCDebug(network) << "Listening on port:" << mServer->serverPort();
+		qCCritical(network) << "Cannot start server without addresses";
+		return;
 	}
-	else
+
+	for (const auto& address : pAddresses)
 	{
-		qCDebug(network) << "Cannot start server:" << mServer->errorString();
+		const QSharedPointer<QTcpServer> server(new QTcpServer(), &QObject::deleteLater);
+		connect(server.data(), &QTcpServer::newConnection, this, &HttpServer::onNewConnection);
+
+		if (!server->listen(address, port))
+		{
+			qCDebug(network) << "Cannot start server:" << server->errorString() << '|' << address << '|' << port;
+			continue;
+		}
+
+		qCDebug(network) << "Listening on port:" << server->serverPort() << '|' << server->serverAddress();
+		mServer += server;
+
+		if (mServer.size() == 1)
+		{
+			port = mServer.constFirst()->serverPort();
+			mPortFile.handlePort(port);
+		}
 	}
 }
 
@@ -39,31 +57,50 @@ HttpServer::~HttpServer()
 	if (isListening())
 	{
 		qCDebug(network) << "Shutdown server";
-		mServer->close();
+		for (const auto& server : qAsConst(mServer))
+		{
+			server->close();
+		}
 	}
+}
+
+
+int HttpServer::boundAddresses() const
+{
+	return mServer.size();
 }
 
 
 bool HttpServer::isListening() const
 {
-	return mServer->isListening();
+	return std::any_of(mServer.begin(), mServer.end(), [](const auto& server){
+			return server->isListening();
+		});
 }
 
 
 quint16 HttpServer::getServerPort() const
 {
-	return mServer->serverPort();
+	if (mServer.isEmpty())
+	{
+		return 0;
+	}
+
+	return mServer.constFirst()->serverPort();
 }
 
 
 void HttpServer::onNewConnection()
 {
-	while (mServer->hasPendingConnections())
+	for (const auto& server : qAsConst(mServer))
 	{
-		auto socket = mServer->nextPendingConnection();
-		socket->startTransaction();
-		auto request = new HttpRequest(socket, this);
-		connect(request, &HttpRequest::fireMessageComplete, this, &HttpServer::onMessageComplete);
+		while (server->hasPendingConnections())
+		{
+			auto socket = server->nextPendingConnection();
+			socket->startTransaction();
+			auto request = new HttpRequest(socket, this);
+			connect(request, &HttpRequest::fireMessageComplete, this, &HttpServer::onMessageComplete);
+		}
 	}
 }
 

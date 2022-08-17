@@ -13,7 +13,7 @@
 
 using namespace governikus;
 
-const MsgLevel MsgHandler::DEFAULT_MSG_LEVEL = MsgLevel::v1;
+const MsgLevel MsgHandler::DEFAULT_MSG_LEVEL = MsgLevel::v2;
 
 const MsgHandler MsgHandler::Void = MsgHandler();
 
@@ -48,13 +48,12 @@ MsgType MsgHandler::getStateMsgType(const QString& pState, PacePasswordId pPassw
 		return MsgType::INSERT_CARD;
 	}
 
-	// indicates "do not use this" otherwise it is an internal error!
-	return MsgType::INTERNAL_ERROR;
+	return MsgType::VOID;
 }
 
 
 MsgHandler::MsgHandler()
-	: MsgHandler(MsgType::INTERNAL_ERROR)
+	: MsgHandler(MsgType::VOID)
 {
 	setVoid();
 }
@@ -103,7 +102,7 @@ QByteArray MsgHandler::getOutput() const
 
 bool MsgHandler::isVoid() const
 {
-	return mVoid;
+	return mType == MsgType::VOID || mVoid;
 }
 
 

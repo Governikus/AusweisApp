@@ -10,19 +10,13 @@
 #include <QLoggingCategory>
 
 #if defined(Q_OS_ANDROID)
-#include <QtAndroid>
+	#include <QJniObject>
 #endif
 
 using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
-
-
-Reader::CardEvent NfcReader::updateCard()
-{
-	return CardEvent::NONE;
-}
 
 
 void NfcReader::adapterStateChanged(QNearFieldManager::AdapterState pState)
@@ -46,33 +40,46 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	}
 
 	int length = pTarget->maxCommandLength();
-	mReaderInfo.setMaxApduLength(length);
-	if (!mReaderInfo.sufficientApduLength())
+	setInfoMaxApduLength(length);
+	if (getReaderInfo().insufficientApduLength())
 	{
-		Q_EMIT fireReaderPropertiesUpdated(mReaderInfo);
+		Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
 		qCDebug(card_nfc) << "ExtendedLengthApduSupport missing. MaxTransceiveLength:" << length;
 	}
 
 	mCard.reset(new NfcCard(pTarget));
 	connect(mCard.data(), &NfcCard::fireSetProgressMessage, this, &NfcReader::setProgressMessage);
 	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-	CardInfoFactory::create(cardConnection, mReaderInfo);
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	fetchCardInfo(cardConnection);
+
+	if (!getCard())
+	{
+		removeCardInfo();
+		return;
+	}
+
+	switch (pTarget->type())
+	{
+		case QNearFieldTarget::Type::NfcTagType4A:
+			setCardInfoTagType(CardInfo::TagType::NFC_4A);
+			break;
+
+		case QNearFieldTarget::Type::NfcTagType4B:
+			setCardInfoTagType(CardInfo::TagType::NFC_4B);
+			break;
+
+		default:
+			setCardInfoTagType(CardInfo::TagType::UNKNOWN);
+	}
+
 	//: INFO IOS Feedback when a new ID card has been detected
 	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
 			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
 			 : tr("ID card detected. Please do not move the device!");
 
 	mNfManager.setUserInformation(info);
-#endif
-	if (getCard())
-	{
-		Q_EMIT fireCardInserted(mReaderInfo);
-	}
-	else
-	{
-		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-	}
+
+	Q_EMIT fireCardInserted(getReaderInfo());
 }
 
 
@@ -82,79 +89,71 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 	if (pTarget != nullptr && mCard && mCard->invalidateTarget(pTarget))
 	{
 		mCard.reset();
-		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-		Q_EMIT fireCardRemoved(mReaderInfo);
+		removeCardInfo();
+		Q_EMIT fireCardRemoved(getReaderInfo());
 	}
 }
 
 
 void NfcReader::setProgressMessage(const QString& pMessage)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
 			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
 			 : pMessage;
 
 	mNfManager.setUserInformation(info);
-#else
-	Q_UNUSED(pMessage)
-#endif
 }
 
 
 NfcReader::NfcReader()
 	: ConnectableReader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
 	, mNfManager()
+	, mCard()
 {
-	mReaderInfo.setBasicReader(true);
-	mReaderInfo.setConnected(true);
+	setInfoBasicReader(true);
 
 	connect(&mNfManager, &QNearFieldManager::adapterStateChanged, this, &NfcReader::adapterStateChanged);
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	connect(&mNfManager, &QNearFieldManager::targetDetectionStopped, this, &NfcReader::fireReaderDisconnected);
-#endif
 	connect(&mNfManager, &QNearFieldManager::targetDetected, this, &NfcReader::targetDetected);
 	connect(&mNfManager, &QNearFieldManager::targetLost, this, &NfcReader::targetLost);
 
 #if defined(Q_OS_ANDROID)
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	mNfManager.startTargetDetection();
-#else
 	mNfManager.startTargetDetection(QNearFieldTarget::TagTypeSpecificAccess);
-#endif
-	auto activity = QtAndroid::androidActivity();
-	// Check if not used as SDK
-	if (activity.isValid())
+
+	if (QNativeInterface::QAndroidApplication::isActivityContext())
 	{
-		activity.callMethod<void>("enableNfcReaderMode");
+		if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+		{
+			activity.callMethod<void>("enableNfcReaderMode");
+		}
 	}
 #endif
 }
 
 
+#if defined(Q_OS_ANDROID)
 NfcReader::~NfcReader()
 {
-#if defined(Q_OS_ANDROID)
-	auto activity = QtAndroid::androidActivity();
-	// Check if not used as SDK
-	if (activity.isValid())
+	if (QNativeInterface::QAndroidApplication::isActivityContext())
 	{
-		activity.callMethod<void>("disableNfcReaderMode");
+		if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+		{
+			activity.callMethod<void>("disableNfcReaderMode");
+		}
 	}
 	mNfManager.stopTargetDetection();
-#endif
 }
 
+
+#else
+NfcReader::~NfcReader() = default;
+
+
+#endif
 
 bool NfcReader::isEnabled() const
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	return mNfManager.isAvailable();
-
-#else
 	return mNfManager.isEnabled();
-
-#endif
 }
 
 
@@ -171,7 +170,7 @@ Card* NfcReader::getCard() const
 
 void NfcReader::connectReader()
 {
-#if defined(Q_OS_IOS) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if defined(Q_OS_IOS)
 	//: INFO IOS The ID card may be inserted, the authentication process may be started.
 	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
 			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionStarted()
@@ -184,7 +183,7 @@ void NfcReader::connectReader()
 
 void NfcReader::disconnectReader(const QString& pError)
 {
-#if defined(Q_OS_IOS) && QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if defined(Q_OS_IOS)
 	if (pError.isNull())
 	{
 		//: INFO IOS The current session was stopped without errors.

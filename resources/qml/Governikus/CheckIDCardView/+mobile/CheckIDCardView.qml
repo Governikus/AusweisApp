@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -17,59 +17,84 @@ import Governikus.Type.UiModule 1.0
 SectionPage {
 	id: root
 
-	signal restartCheck()
+	signal startAuth()
 
-	//: LABEL ANDROID IOS
-	Accessible.name: qsTr("Check device and ID card")
-	//: LABEL ANDROID IOS
-	Accessible.description: qsTr("This is the device and ID card check of the AusweisApp2.")
-
-	navigationAction: NavigationAction { state: "back"; onClicked: navBar.show(UiModule.DEFAULT) }
+	navigationAction: NavigationAction { action: NavigationAction.Action.Back; onClicked: show(UiModule.DEFAULT) }
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Check device and ID card")
 
-	function startCheck() {
-		firePush(checkIDCardWorkflow)
+	onStartAuth: {
+		popAll()
+		show(UiModule.SELF_AUTHENTICATION)
 	}
 
-	onRestartCheck: {
-		firePopAll()
-		startCheck()
+	QtObject {
+		id: d
+
+		function restartCheck() {
+			popAll()
+			startCheck()
+		}
+
+		function startCheck() {
+			setLockedAndHidden()
+			push(checkIDCardWorkflow)
+		}
+
+		function cancel() {
+			setLockedAndHidden(false)
+			popAll()
+		}
 	}
 
 	Component {
 		id: checkIDCardResultView
 
-		CheckIDCardResultView {}
+		CheckIDCardResultView {
+			onRestartCheck: d.restartCheck()
+			onStartAuth: root.startAuth()
+			onCancelClicked: d.cancel()
+		}
 	}
 
 	Component {
 		id: checkIDCardWorkflow
 
 		CheckIDCardWorkflow {
-			onRestartCheck: root.restartCheck()
+			onRestartCheck: d.restartCheck()
+			onStartAuth: root.startAuth()
+			onCancel: d.cancel()
 		}
 	}
 
-	ColumnLayout {
-		anchors.fill: parent
-		anchors.margins: Constants.component_spacing
+	sectionPageFlickable: contentItem
+	GFlickableColumnLayout {
+		id: contentItem
 
+		readonly property var minIconHeight: Style.dimens.medium_icon_size
+		readonly property var maxIconHeight: Style.dimens.header_icon_size
+
+		anchors.fill: parent
+
+		minimumContentHeight: implicitContentHeight - (maxIconHeight - minIconHeight)
+		maximumContentWidth: Style.dimens.max_text_width
 		spacing: Constants.component_spacing
 
 		TintableIcon {
 			Layout.fillHeight: true
-			Layout.maximumHeight: Style.dimens.header_icon_size
 			Layout.alignment: Qt.AlignHCenter
+			Layout.minimumHeight: contentItem.minIconHeight
+			Layout.maximumHeight: contentItem.maxIconHeight
+			Layout.preferredHeight: contentItem.maxIconHeight
 
 			source: "qrc:///images/mobile/device.svg"
+			sourceSize.height: contentItem.maxIconHeight
 			tintColor: Style.color.accent
 		}
 
 		GPane {
 			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
 			Layout.alignment: Qt.AlignHCenter
 
 			GText {
@@ -98,9 +123,10 @@ SectionPage {
 
 			onClicked: {
 				if (ApplicationModel.nfcState === ApplicationModel.NFC_UNAVAILABLE) {
-					firePushWithProperties(checkIDCardResultView, { result: CheckIDCardModel.NO_NFC })
+					setLockedAndHidden()
+					push(checkIDCardResultView, { result: CheckIDCardModel.NO_NFC })
 				} else {
-					startCheck()
+					d.startCheck()
 				}
 			}
 		}

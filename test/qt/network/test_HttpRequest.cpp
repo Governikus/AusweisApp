@@ -29,6 +29,7 @@ class test_HttpRequest
 			HttpRequest request(socket);
 			QVERIFY(!request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
+			QCOMPARE(request.getHttpMethod(), HTTP_GET);
 			QCOMPARE(request.getHeader().size(), 1);
 			QCOMPARE(request.getHeader("host"), QByteArray("Dummy.de"));
 			QCOMPARE(request.getUrl(), QUrl("/favicon.ico"));
@@ -52,6 +53,7 @@ class test_HttpRequest
 			HttpRequest request(socket);
 			QVERIFY(request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
+			QCOMPARE(request.getHttpMethod(), HTTP_GET);
 			QCOMPARE(request.getHeader().size(), 7);
 			QCOMPARE(request.getHeader("host"), QByteArray("server.example.com"));
 			QCOMPARE(request.getHeader("upgrade"), QByteArray("websocket"));
@@ -79,6 +81,7 @@ class test_HttpRequest
 			HttpRequest request(socket);
 			QVERIFY(!request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
+			QCOMPARE(request.getHttpMethod(), HTTP_GET);
 			QCOMPARE(request.getHeader().size(), 9);
 			QCOMPARE(request.getHeader("host"), QByteArray("127.0.0.1:24727"));
 			QCOMPARE(request.getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue"));

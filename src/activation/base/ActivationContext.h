@@ -6,10 +6,10 @@
 
 #include "GlobalStatus.h"
 
-#include <http_parser.h>
 #include <QObject>
 #include <QString>
 #include <QUrl>
+#include <http_parser.h>
 
 namespace governikus
 {
@@ -19,8 +19,11 @@ class ActivationContext
 {
 	Q_OBJECT
 
-	protected:
+	private:
 		QString mSendError;
+
+	protected:
+		void setSendError(const QString& pError);
 
 	public:
 		ActivationContext();

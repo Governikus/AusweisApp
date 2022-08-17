@@ -13,9 +13,6 @@
 #include <QFile>
 #include <QLoggingCategory>
 
-#include <optional>
-
-
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
 
@@ -40,18 +37,18 @@ using namespace governikus;
 @end
 
 
-static std::optional<QString> getTemporaryLogFile(std::optional<QString> pSourceFile = std::nullopt)
+static QString getTemporaryLogFile(const QString& pSourceFile = QString())
 {
 	LogHandler* logHandler = Env::getSingleton<LogHandler>();
 
 	QString destinationFileName;
-	if (pSourceFile)
+	if (pSourceFile.isEmpty())
 	{
-		destinationFileName = LogModel::createLogFileName(logHandler->getFileDate(QFileInfo(pSourceFile.value())));
+		destinationFileName = LogModel::createLogFileName();
 	}
 	else
 	{
-		destinationFileName = LogModel::createLogFileName();
+		destinationFileName = LogModel::createLogFileName(logHandler->getFileDate(QFileInfo(pSourceFile)));
 	}
 
 	QString destinationFilePath = QString::fromNSString([NSTemporaryDirectory() stringByAppendingPathComponent: destinationFileName.toNSString()]);
@@ -61,17 +58,17 @@ static std::optional<QString> getTemporaryLogFile(std::optional<QString> pSource
 		QFile::remove(destinationFilePath);
 	}
 
-	if (pSourceFile)
+	if (pSourceFile.isEmpty())
 	{
-		if (!QFile::copy(pSourceFile.value(), destinationFilePath))
-		{
-			qCCritical(qml) << "Cannot copy logfile to" << destinationFilePath;
-			return std::nullopt;
-		}
+		logHandler->copy(destinationFilePath);
 	}
 	else
 	{
-		logHandler->copy(destinationFilePath);
+		if (!QFile::copy(pSourceFile, destinationFilePath))
+		{
+			qCCritical(qml) << "Cannot copy logfile to" << destinationFilePath;
+			return QString();
+		}
 	}
 
 	return destinationFilePath;
@@ -88,13 +85,13 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 	}
 
 	QString fileName = LogModel::createLogFileName();
-	std::optional<QString> logFile = getTemporaryLogFile();
-	if (!logFile)
+	const auto& logFile = getTemporaryLogFile();
+	if (logFile.isEmpty())
 	{
 		return;
 	}
 
-	NSData* fileContent = [NSData dataWithContentsOfFile: logFile.value().toNSString()];
+	NSData* fileContent = [NSData dataWithContentsOfFile: logFile.toNSString()];
 
 	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
 
@@ -112,21 +109,13 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 
 void LogModel::shareLog(const QPoint popupPosition)
 {
-	std::optional<QString> logFile;
-	if (mSelectedLogFile == 0)
-	{
-		logFile = getTemporaryLogFile();
-	}
-	else
-	{
-		logFile = getTemporaryLogFile(mLogFiles.at(mSelectedLogFile));
-	}
-	if (!logFile)
+	const QString& logFile = mSelectedLogFile == 0 ? getTemporaryLogFile() : getTemporaryLogFile(mLogFiles.at(mSelectedLogFile));
+	if (logFile.isEmpty())
 	{
 		return;
 	}
 
-	NSURL* logFileURL = [NSURL fileURLWithPath: logFile.value().toNSString()];
+	NSURL* logFileURL = [NSURL fileURLWithPath: logFile.toNSString()];
 
 	NSArray* shareItems = @[logFileURL];
 

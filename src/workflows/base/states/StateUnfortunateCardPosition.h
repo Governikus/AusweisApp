@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
 
 namespace governikus
 {
@@ -18,8 +18,9 @@ class StateUnfortunateCardPosition
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateUnfortunateCardPosition(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateUnfortunateCardPosition(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

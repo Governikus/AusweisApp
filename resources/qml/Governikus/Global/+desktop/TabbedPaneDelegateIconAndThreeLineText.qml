@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -40,7 +40,7 @@ RowLayout {
 			width: parent.width
 
 			text: headerText
-			textStyle: Style.text.normal
+			textStyle: isCurrentItem ? Style.text.normal : Style.text.normal_inverse
 			maximumLineCount: 1
 		}
 
@@ -48,7 +48,7 @@ RowLayout {
 			width: parent.width
 
 			text: sectionName
-			textStyle: Style.text.header
+			textStyle: isCurrentItem ? Style.text.header : Style.text.header_inverse
 			maximumLineCount: 1
 			elide: Text.ElideRight
 		}
@@ -57,7 +57,7 @@ RowLayout {
 			width: parent.width
 
 			text: footerText
-			textStyle: Style.text.normal
+			textStyle: isCurrentItem ? Style.text.normal : Style.text.normal_inverse
 			maximumLineCount: 1
 			elide: Text.ElideRight
 		}

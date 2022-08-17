@@ -2,15 +2,21 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.UiModule 1.0
+import Governikus.Type.WorkflowModel 1.0
+
 
 Item {
 	id: content
+
+	Component.onCompleted: if (!WorkflowModel.isSmartSupported) {
+		navModel.set(1, {image: "qrc:///images/material_history.svg", desc: QT_TR_NOOP("History"), module: UiModule.HISTORY})
+	}
 
 	ListModel {
 		id: navModel
@@ -22,9 +28,9 @@ Item {
 		}
 
 		ListElement {
-			image: "qrc:///images/material_history.svg"
-			desc: QT_TR_NOOP("History")
-			module: UiModule.HISTORY
+			image: "qrc:///images/provider.svg"
+			desc: QT_TR_NOOP("Provider")
+			module: UiModule.PROVIDER
 		}
 
 		ListElement {
@@ -69,6 +75,12 @@ Item {
 			model: navModel
 
 			delegate: NavigationItem {
+				readonly property var mainViewSubViews: {
+					let subViews = [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD]
+					subViews.push(WorkflowModel.isSmartSupported ? UiModule.SMART : UiModule.PROVIDER)
+					return subViews
+				}
+
 				Layout.fillWidth: true
 				Layout.fillHeight: true
 
@@ -76,13 +88,7 @@ Item {
 
 				source: image
 				text: qsTr(desc)
-				selected: baseItem.activeModule === module ||
-							module === UiModule.DEFAULT && (
-								baseItem.activeModule === UiModule.IDENTIFY ||
-								baseItem.activeModule === UiModule.PINMANAGEMENT ||
-								baseItem.activeModule === UiModule.PROVIDER ||
-								baseItem.activeModule === UiModule.CHECK_ID_CARD
-							)
+				selected: baseItem.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(baseItem.activeModule))
 				onClicked: {
 					baseItem.resetContentArea()
 					baseItem.show(module)

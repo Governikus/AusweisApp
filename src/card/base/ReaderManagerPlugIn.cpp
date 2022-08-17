@@ -4,6 +4,7 @@
 
 #include "ReaderManagerPlugIn.h"
 
+
 using namespace governikus;
 
 
@@ -13,6 +14,19 @@ ReaderManagerPlugIn::ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
 	: mInfo(pPlugInType, pPlugInEnabled, pAvailable)
 	, mScanRunning(false)
 {
+}
+
+
+void ReaderManagerPlugIn::shelve()
+{
+	const auto& readers = getReaders();
+	for (const auto& reader : readers)
+	{
+		if (reader->getReaderInfo().wasShelved())
+		{
+			reader->shelveCard();
+		}
+	}
 }
 
 

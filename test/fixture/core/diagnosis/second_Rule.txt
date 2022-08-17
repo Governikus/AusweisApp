@@ -1,0 +1,19 @@
+Name                  : {BC8716ED-A024-4BD0-8519-517CF47E618C}
+DisplayName           : AusweisApp2-SaC
+Description           : Allow inbound udp connections for Smartphone as card reader.
+DisplayGroup          :
+Group                 :
+Enabled               : True
+Profile               : Any
+Platform              : {}
+Direction             : Inbound
+Action                : Allow
+EdgeTraversalPolicy   : Allow
+LooseSourceMapping    : False
+LocalOnlyMapping      : False
+Owner                 :
+PrimaryStatus         : OK
+Status                : Die Regel wurde erfolgreich vom Speicher aus analysiert. (65536)
+EnforcementStatus     : NotApplicable
+PolicyStoreSource     : PersistentStore
+PolicyStoreSourceType : Local

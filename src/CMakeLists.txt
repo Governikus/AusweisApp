@@ -19,46 +19,14 @@ add_subdirectory(export)
 add_subdirectory(card)
 add_subdirectory(services)
 
-add_subdirectory(ui)
+add_subdirectory(diagnosis)
 add_subdirectory(activation)
-add_subdirectory(remote_device)
+add_subdirectory(ifd)
 add_subdirectory(workflows)
+add_subdirectory(ui)
 add_subdirectory(core)
 add_subdirectory(init)
-
 add_subdirectory(whitelist_client)
-
-file(GLOB TRANSLATION_FILES ${RESOURCES_DIR}/translations/*.ts)
-
-foreach(filepath ${TRANSLATION_FILES})
-	get_filename_component(filename "${filepath}" NAME)
-	string(REGEX MATCH "_(.*)\.ts$" _unused "${filename}")
-	list(APPEND USED_TRANSLATIONS ${CMAKE_MATCH_1})
-endforeach()
-
-set_property(SOURCE ${TRANSLATION_FILES} PROPERTY OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translations)
-foreach(locale ${USED_TRANSLATIONS})
-	file(COPY ${QT_TRANSLATIONS_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR} FILES_MATCHING REGEX "qtbase_${locale}")
-endforeach()
-
-option(UPDATE_TRANSLATIONS "Update translations/*.ts files (WARNING: make clean will delete the *.ts files!)")
-if(UPDATE_TRANSLATIONS)
-	option(UPDATE_TRANSLATIONS_NO_OBSOLETE "Remove obsolete translations from translations/*.ts files )")
-
-	set(LUPDATE_OPTIONS -extensions c,cpp,h,ui,m,mm,qml,js -no-ui-lines -locations none)
-	if(UPDATE_TRANSLATIONS_NO_OBSOLETE)
-		qt_create_translation(QM_FILES ${SRC_DIR} ${RESOURCES_DIR} ${TRANSLATION_FILES} OPTIONS ${LUPDATE_OPTIONS} -no-obsolete)
-	else()
-		qt_create_translation(QM_FILES ${SRC_DIR} ${RESOURCES_DIR} ${TRANSLATION_FILES} OPTIONS ${LUPDATE_OPTIONS})
-	endif()
-
-	add_custom_target(update.translations DEPENDS ${QM_FILES})
-	message(WARNING "'make clean' will delete *.ts files!")
-else()
-	qt_add_translation(QM_FILES ${TRANSLATION_FILES})
-endif()
-
-CONFIGURE_DEFAULT_FILES(${CMAKE_CURRENT_BINARY_DIR})
 
 
 if(IOS)
@@ -66,8 +34,6 @@ if(IOS)
 		list(APPEND IOS_RESOURCES ${RESOURCES_DIR}/qml)
 		list(APPEND IOS_RESOURCES ${RESOURCES_DIR}/packaging/ios/de.lproj)
 		list(APPEND IOS_RESOURCES ${RESOURCES_DIR}/packaging/ios/launchscreen.storyboard)
-		list(APPEND IOS_RESOURCES ${CMAKE_CURRENT_BINARY_DIR}/translations)
-		list(APPEND IOS_RESOURCES ${CMAKE_CURRENT_BINARY_DIR}/config.json)
 
 		# Attention: the file names correspond to values in the Info.plist
 		if(BUILD_PREVIEW)
@@ -83,23 +49,46 @@ if(IOS)
 		list(APPEND IOS_RESOURCES ${RCC})
 		set_source_files_properties(${RCC} PROPERTIES GENERATED TRUE)
 	endif()
+elseif(MAC)
+	if(IS_DEVELOPER_VERSION)
+		set(MACOS_APPICON_PATH "beta/")
+	else()
+		set(MACOS_APPICON_PATH "")
+	endif()
+
+	list(APPEND MAC_RESOURCES ${RESOURCES_DIR}/images/macos/${MACOS_APPICON_PATH}AusweisApp2.icns)
+	list(APPEND MAC_RESOURCES ${PACKAGING_DIR}/macos/container-migration.plist)
+	list(APPEND MAC_RESOURCES ${RCC})
+	set_source_files_properties(${RCC} PROPERTIES GENERATED TRUE)
 endif()
 
+if(APPLE)
+	set(CMAKE_XCODE_GENERATE_SCHEME ON)
+	set(CMAKE_XCODE_SCHEME_DISABLE_MAIN_THREAD_CHECKER ON)
+
+	if(MAC AND DEFINED CMAKE_PREFIX_PATH)
+		set(CMAKE_XCODE_SCHEME_ENVIRONMENT "DYLD_LIBRARY_PATH=${CMAKE_PREFIX_PATH}/lib;DYLD_FRAMEWORK_PATH=${CMAKE_PREFIX_PATH}/lib")
+	endif()
+endif()
 
 set(MAIN_FILE main.cpp)
 if(IOS)
 	if(INTEGRATED_SDK)
-		add_library(AusweisApp SHARED ${MAIN_FILE} ${IOS_RESOURCES} ${QM_FILES})
+		add_library(AusweisApp SHARED ${MAIN_FILE} ${IOS_RESOURCES})
 	else()
-		add_executable(AusweisApp MACOSX_BUNDLE ${MAIN_FILE} ${IOS_RESOURCES} ${QM_FILES})
+		add_executable(AusweisApp MACOSX_BUNDLE ${MAIN_FILE} ${IOS_RESOURCES})
 	endif()
-elseif(ANDROID OR INTEGRATED_SDK)
-	add_library(AusweisApp SHARED ${MAIN_FILE} ${QM_FILES})
+elseif(ANDROID OR (INTEGRATED_SDK AND NOT CONTAINER_SDK))
+	add_library(AusweisApp SHARED ${MAIN_FILE})
+elseif(MAC)
+	add_executable(AusweisApp MACOSX_BUNDLE ${MAIN_FILE} ${MAC_RESOURCES})
 else()
-	add_executable(AusweisApp WIN32 ${MAIN_FILE} windows.rc ${QM_FILES})
+	add_executable(AusweisApp WIN32 ${MAIN_FILE} windows.rc)
 endif()
 
-add_dependencies(AusweisApp AusweisAppRcc)
+if(TARGET AusweisAppRcc)
+	add_dependencies(AusweisApp AusweisAppRcc)
+endif()
 
 target_link_libraries(AusweisApp PRIVATE AusweisAppInit)
 if(ANDROID)
@@ -108,18 +97,16 @@ else()
 	set_target_properties(AusweisApp PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
 endif()
 
-if(INTEGRATED_SDK AND NOT ANDROID)
-	ADD_CONFIG_JSON_RESOURCE(CONFIG_JSON_SOURCE)
-	ADD_OBJECT_LIBRARY(AusweisAppConfig ${CONFIG_JSON_SOURCE})
+if(TARGET AusweisAppConfig)
 	target_link_libraries(AusweisApp PRIVATE AusweisAppConfig)
 endif()
 
+ADD_SHADERS_TO_TARGET(AusweisApp)
 
 if(APPLE)
 	set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
 	set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
 	set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
-	set(MACOSX_BUNDLE_ICON_FILE "${PROJECT_NAME}.icns")
 	set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER "${BUNDLE_IDENTIFIER}")
 	set(MACOSX_BUNDLE_COPYRIGHT "${COPYRIGHT_TEXT}")
@@ -132,8 +119,11 @@ if(APPLE)
 		set_target_properties(AusweisApp PROPERTIES MACOSX_FRAMEWORK_INFO_PLIST "${PACKAGING_DIR}/ios/Info.framework.plist.in")
 	elseif(IOS)
 		set_target_properties(AusweisApp PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PACKAGING_DIR}/ios/Info.plist.in")
-	else()
-		configure_file(${PACKAGING_DIR}/macos/Info.plist.in ${CMAKE_BINARY_DIR}/Info.plist @ONLY)
+	elseif(MAC AND NOT INTEGRATED_SDK)
+		set_target_properties(AusweisApp PROPERTIES RESOURCE "${MAC_RESOURCES}")
+		set_target_properties(AusweisApp PROPERTIES MACOSX_BUNDLE_ICON_FILE "${PROJECT_NAME}.icns")
+		set_target_properties(AusweisApp PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${PACKAGING_DIR}/macos/Info.plist.in")
+		set_target_properties(AusweisApp PROPERTIES XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
 	endif()
 endif()
 
@@ -145,22 +135,20 @@ if(IOS)
 	endif()
 
 	target_link_libraries(AusweisApp PRIVATE OpenSSL::Crypto OpenSSL::SSL) # remove this if iOS uses shared libraries
-	target_link_libraries(AusweisApp PRIVATE -L${QT_HOST_PREFIX}/plugins/platforms)
-	target_link_libraries(AusweisApp PRIVATE -L${QT_HOST_PREFIX}/plugins/imageformats)
-	target_link_libraries(AusweisApp PRIVATE -L${QT_HOST_PREFIX}/lib)
+	target_link_libraries(AusweisApp PRIVATE -L${QT_INSTALL_ARCHDATA}/plugins/platforms)
+	target_link_libraries(AusweisApp PRIVATE -L${QT_INSTALL_ARCHDATA}/plugins/imageformats)
+	target_link_libraries(AusweisApp PRIVATE -L${QT_INSTALL_ARCHDATA}/lib)
 	target_link_libraries(AusweisApp PRIVATE ${Qt}::Core ${Qt}::Network)
-	target_link_libraries(AusweisApp PRIVATE -lqtpcre2${qt_suffix} -lqios${qt_suffix})
-	target_link_libraries(AusweisApp PRIVATE -l${Qt}ClipboardSupport${qt_suffix})
+	target_link_libraries(AusweisApp PRIVATE -lqios${qt_suffix})
 
 	target_link_libraries(AusweisApp PRIVATE "-lc++ -lz -lm")
 	target_link_libraries(AusweisApp PRIVATE ${IOS_ASSETSLIBRARY} ${IOS_UIKIT} ${IOS_COREFOUNDATION} ${IOS_OPENGLES} ${IOS_FOUNDATION} ${IOS_QUARTZCORE} ${IOS_CORETEXT} ${IOS_COREGRAPHICS} ${IOS_SECURITY} ${IOS_NETWORK} ${IOS_MOBILECORESERVICES} ${IOS_AUDIOTOOLBOX} ${IOS_IMAGEIO} ${IOS_CORENFC} ${IOS_MESSAGEUI} ${IOS_STOREKIT})
 	target_link_libraries(AusweisApp PRIVATE -Wl,-e,_qt_main_wrapper)
 
 	if(TARGET ${Qt}::Qml)
-		target_link_libraries(AusweisApp PRIVATE ${Qt}::Gui ${Qt}::Svg ${Qt}::Qml ${Qt}::Quick ${Qt}::QuickControls2 ${Qt}::QuickTemplates2 ${Qt}::QuickShapes)
-		target_link_libraries(AusweisApp PRIVATE -lqtlibpng${qt_suffix} -lqsvg${qt_suffix} -lqjpeg${qt_suffix} -lqtfreetype${qt_suffix})
-		target_link_libraries(AusweisApp PRIVATE -l${Qt}GraphicsSupport${qt_suffix} -l${Qt}FontDatabaseSupport${qt_suffix})
-		qt_import_qml_plugins(AusweisApp PATH_TO_SCAN "${RESOURCES_DIR}/qml")
+		target_link_libraries(AusweisApp PRIVATE ${Qt}::Gui ${Qt}::Svg ${Qt}::Qml ${Qt}::Quick ${Qt}::QuickControls2 ${Qt}::QuickTemplates2)
+		target_link_libraries(AusweisApp PRIVATE -lqsvg${qt_suffix} -lqjpeg${qt_suffix})
+		target_link_libraries(AusweisApp PRIVATE AusweisAppQmlPlugins)
 	endif()
 
 	set_target_properties(AusweisApp PROPERTIES RESOURCE "${IOS_RESOURCES}")
@@ -199,60 +187,90 @@ endif()
 if(MAC)
 	target_link_libraries(AusweisApp PRIVATE ${OSX_APPKIT})
 
-	set_target_properties(AusweisApp PROPERTIES XCODE_ATTRIBUTE_DEBUG_INFORMATION_FORMAT "dwarf-with-dsym")
-
 	set(AUTOSTART_HELPER_NAME AutostartHelper)
 	set(AUTOSTART_HELPER_FULL_NAME ${PROJECT_NAME}${AUTOSTART_HELPER_NAME})
 	set(AUTOSTART_HELPER_SOURCES autostart_helper/main.mm)
 	set(AUTOSTART_HELPER_BUNDLE_ID "com.governikus.AusweisApp2.${AUTOSTART_HELPER_NAME}")
 	add_executable(${AUTOSTART_HELPER_FULL_NAME} MACOSX_BUNDLE ${AUTOSTART_HELPER_SOURCES})
 	target_link_libraries(${AUTOSTART_HELPER_FULL_NAME} ${OSX_APPKIT})
-	configure_file(${PACKAGING_DIR}/macos/autostart_helper/Info.plist.in ${CMAKE_CURRENT_BINARY_DIR}/AutostartHelperInfo.plist @ONLY)
-	set_target_properties(${AUTOSTART_HELPER_FULL_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/AutostartHelperInfo.plist)
-
-endif()
-
-if(ANDROID)
-	target_link_libraries(AusweisApp PRIVATE ${Qt}::AndroidExtras)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppCardNfc)
-	if(NOT INTEGRATED_SDK)
-		target_link_libraries(AusweisApp PRIVATE AusweisAppActivationIntent)
-	endif()
-endif()
-
-if(IOS)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppCardIos)
-	if(NOT INTEGRATED_SDK)
-		target_link_libraries(AusweisApp PRIVATE AusweisAppActivationCustomScheme)
-	endif()
+	set_target_properties(${AUTOSTART_HELPER_FULL_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${PACKAGING_DIR}/macos/autostart_helper/Info.plist.in)
 endif()
 
 if(WIN32)
 	target_link_libraries(AusweisApp PRIVATE ${WIN_DEFAULT_LIBS})
 endif()
 
-if(TARGET ${Qt}::Qml)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppUiQml)
-endif()
+#####################################################################
+# ui
+#####################################################################
 
 if(ANDROID)
 	target_link_libraries(AusweisApp PRIVATE AusweisAppUiAidl)
+	if(NOT INTEGRATED_SDK)
+		target_link_libraries(AusweisApp PRIVATE AusweisAppUiLocalIfd)
+	endif()
 else()
 	target_link_libraries(AusweisApp PRIVATE debug AusweisAppUiAidl)
 endif()
 
-if(DESKTOP)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppCardPcsc AusweisAppCardDrivers AusweisAppActivationWebservice)
+if(TARGET ${Qt}::Qml)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppUiQml)
 endif()
 
-if(INTEGRATED_SDK AND NOT ANDROID)
+if(INTEGRATED_SDK AND NOT ANDROID AND NOT CONTAINER_SDK)
 	target_link_libraries(AusweisApp PRIVATE AusweisAppUiFunctional)
 endif()
 
-if(NOT ANDROID AND NOT IOS AND NOT INTEGRATED_SDK)
+if((NOT ANDROID AND NOT IOS AND NOT INTEGRATED_SDK) OR CONTAINER_SDK)
 	target_link_libraries(AusweisApp PRIVATE AusweisAppUiWebsocket)
 endif()
 
+if(CONTAINER_SDK OR DESKTOP)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppUiAutomatic)
+endif()
+
+#####################################################################
+# activation
+#####################################################################
+
+if((ANDROID OR IOS) AND NOT INTEGRATED_SDK)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppActivationCustomScheme)
+endif()
+
+if(DESKTOP)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppActivationWebservice)
+endif()
+
+#####################################################################
+# card
+#####################################################################
+
+if(ANDROID)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppCardNfc)
+	if(INTEGRATED_SDK)
+		target_link_libraries(AusweisApp PRIVATE AusweisAppIfdLocal)
+	endif()
+endif()
+
+if(IOS)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppCardNfc)
+endif()
+
+if(TARGET AusweisAppCardSmart)
+	if(((ANDROID OR IOS) AND NOT INTEGRATED_SDK) OR CONTAINER_SDK)
+		target_link_libraries(AusweisApp PRIVATE AusweisAppCardSmart)
+	else()
+		target_link_libraries(AusweisApp PRIVATE debug AusweisAppCardSmart)
+	endif()
+endif()
+
+if(DESKTOP)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppCardPcsc AusweisAppCardDrivers)
+endif()
+
+target_link_libraries(AusweisApp PRIVATE AusweisAppCardSimulator)
+
+#####################################################################
 
 include(Install)
 include(FeatureSummary)

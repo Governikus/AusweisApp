@@ -2,8 +2,9 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/ASN1Util.h"
 #include "DidAuthenticateEac1.h"
+
+#include "asn1/ASN1Util.h"
 
 using namespace governikus;
 
@@ -13,9 +14,7 @@ DIDAuthenticateEAC1::DIDAuthenticateEAC1()
 }
 
 
-DIDAuthenticateEAC1::~DIDAuthenticateEAC1()
-{
-}
+DIDAuthenticateEAC1::~DIDAuthenticateEAC1() = default;
 
 
 void DIDAuthenticateEAC1::setConnectionHandle(const ConnectionHandle& connectionHandle)
@@ -66,7 +65,7 @@ const ConnectionHandle& DIDAuthenticateEAC1::getConnectionHandle() const
 }
 
 
-const QVector<QSharedPointer<const CVCertificate> >& DIDAuthenticateEAC1::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC1::getCvCertificates() const
 {
 	return mEac1InputType.getCvCertificates();
 }
@@ -93,4 +92,10 @@ const QSharedPointer<const CHAT>& DIDAuthenticateEAC1::getRequiredChat() const
 const QString& DIDAuthenticateEAC1::getTransactionInfo() const
 {
 	return mEac1InputType.getTransactionInfo();
+}
+
+
+const QVector<AcceptedEidType>& DIDAuthenticateEAC1::getAcceptedEidTypes() const
+{
+	return mEac1InputType.getAcceptedEidTypes();
 }

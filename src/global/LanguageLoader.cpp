@@ -4,12 +4,12 @@
 
 #include "LanguageLoader.h"
 
-#include "FileDestination.h"
 #include "SingletonHelper.h"
 
 #include <QCoreApplication>
 #include <QDir>
 #include <QLoggingCategory>
+#include <QObject>
 #include <QRegularExpression>
 
 Q_DECLARE_LOGGING_CATEGORY(language)
@@ -23,7 +23,7 @@ const QLocale::Language LanguageLoader::mFallbackLanguage = QLocale::Language::E
 QLocale LanguageLoader::mDefaultLanguage = QLocale::system();
 
 LanguageLoader::LanguageLoader()
-	: mPath(FileDestination::getPath(QStringLiteral("translations"), QStandardPaths::LocateDirectory))
+	: mPath(QStringLiteral(":/translations"))
 	, mTranslatorList()
 	, mComponentList(
 		{
@@ -31,11 +31,13 @@ LanguageLoader::LanguageLoader()
 		})
 	, mUsedLocale(mFallbackLanguage)
 {
-}
-
-
-LanguageLoader::~LanguageLoader()
-{
+	QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, [] {
+			// Avoid "this" as lambda capture to get more pointer safety.
+			if (LanguageLoader::getInstance().isLoaded())
+			{
+				LanguageLoader::getInstance().unload();
+			}
+		});
 }
 
 
@@ -187,7 +189,7 @@ QLocale::Language LanguageLoader::getFallbackLanguage() const
 
 bool LanguageLoader::loadTranslationFiles(const QLocale& pLocale)
 {
-	if (pLocale.language() == mFallbackLanguage)
+	if (pLocale.language() == mFallbackLanguage || pLocale == QLocale::C)
 	{
 		qCDebug(language) << "Using fallback language:" << QLocale::languageToString(mFallbackLanguage);
 		return true;

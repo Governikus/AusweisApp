@@ -10,7 +10,6 @@ using namespace governikus;
 
 INIT_FUNCTION([] {
 			qRegisterMetaType<ReaderManagerPlugInInfo>("ReaderManagerPlugInInfo");
-			qRegisterMetaType<ReaderManagerPlugInType>("ReaderManagerPlugInType");
 		})
 
 

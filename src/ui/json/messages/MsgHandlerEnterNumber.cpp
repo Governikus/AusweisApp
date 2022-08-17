@@ -28,7 +28,7 @@ void MsgHandlerEnterNumber::setError(const QString& pError)
 void MsgHandlerEnterNumber::setReader(const QSharedPointer<const WorkflowContext>& pContext)
 {
 	const auto& info = pContext->getExpectedReader();
-	if (!info.getName().isEmpty() && info.isConnected())
+	if (!info.getName().isEmpty())
 	{
 		mJsonObject[QLatin1String("reader")] = MsgHandlerReader::createReaderInfo(info);
 	}

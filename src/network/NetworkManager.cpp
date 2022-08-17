@@ -6,15 +6,19 @@
 
 #include "AppSettings.h"
 #include "NetworkReplyError.h"
-#include "NetworkReplyTimeout.h"
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+	#include "NetworkReplyTimeout.h"
+#endif
+#include "LogHandler.h"
 #include "SecureStorage.h"
+#include "TlsChecker.h"
 #include "VersionInfo.h"
 
-#include <http_parser.h>
 #include <QCoreApplication>
 #include <QLoggingCategory>
 #include <QNetworkProxyFactory>
 #include <QStringBuilder>
+#include <http_parser.h>
 
 
 using namespace governikus;
@@ -28,15 +32,12 @@ NetworkManager::NetworkManager()
 	, mNetAccessManager()
 	, mApplicationExitInProgress(false)
 	, mOpenConnectionCount(0)
+	, mUpdaterSessions()
 {
+	mNetAccessManager.setRedirectPolicy(QNetworkRequest::ManualRedirectPolicy);
 	connect(&mNetAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &NetworkManager::fireProxyAuthenticationRequired);
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireProxyChanged, this, &NetworkManager::onProxyChanged);
-}
-
-
-NetworkManager::~NetworkManager()
-{
 }
 
 
@@ -49,90 +50,146 @@ int NetworkManager::getOpenConnectionCount() const
 void NetworkManager::clearConnections()
 {
 	mNetAccessManager.clearConnectionCache();
+	mUpdaterSessions.clear();
 }
 
 
-QNetworkReply* NetworkManager::paos(QNetworkRequest& pRequest,
+QSharedPointer<QNetworkReply> NetworkManager::paos(QNetworkRequest& pRequest,
 		const QByteArray& pNamespace,
 		const QByteArray& pData,
 		bool pUsePsk,
-		const QByteArray& pSslSession,
-		int pTimeoutInMilliSeconds)
+		const QByteArray& pSslSession)
 {
-	if (mApplicationExitInProgress)
-	{
-		return new NetworkReplyError(pRequest);
-	}
+	return processRequest(pRequest, [pData, pNamespace, pUsePsk, pSslSession, this] (QNetworkRequest& request){
+			request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/vnd.paos+xml; charset=UTF-8"));
+			request.setRawHeader("Connection", "keep-alive");
+			request.setRawHeader("Accept", "text/html; application/vnd.paos+xml");
+			request.setRawHeader("PAOS", QByteArray("ver=\"%1\"").replace(QByteArray("%1"), pNamespace));
 
-	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	pRequest.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/vnd.paos+xml; charset=UTF-8"));
-	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
-	pRequest.setRawHeader("Connection", "keep-alive");
-	pRequest.setRawHeader("Accept", "text/html; application/vnd.paos+xml");
-	pRequest.setRawHeader("PAOS", QByteArray("ver=\"%1\"").replace(QByteArray("%1"), pNamespace));
-
-	SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
-	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(tlsSuite).getConfiguration();
-	cfg.setSessionTicket(pSslSession);
-	pRequest.setSslConfiguration(cfg);
-
-	QNetworkReply* response = mNetAccessManager.post(pRequest, pData);
-	trackConnection(response, pTimeoutInMilliSeconds);
-	return response;
+			SecureStorage::TlsSuite tlsSuite = pUsePsk ? SecureStorage::TlsSuite::PSK : SecureStorage::TlsSuite::DEFAULT;
+			auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(tlsSuite).getConfiguration();
+			cfg.setSessionTicket(pSslSession);
+			request.setSslConfiguration(cfg);
+			return post(request, pData);
+		});
 }
 
 
-QNetworkReply* NetworkManager::get(QNetworkRequest& pRequest,
-		const QList<QSslCertificate>& pCaCerts,
-		const QByteArray& pSslSession,
-		int pTimeoutInMilliSeconds)
+QSharedPointer<QNetworkReply> NetworkManager::get(QNetworkRequest& pRequest)
 {
-	if (mApplicationExitInProgress)
-	{
-		return new NetworkReplyError(pRequest);
-	}
-
-	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
-	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
-	cfg.setSessionTicket(pSslSession);
-	cfg.setCaCertificates(pCaCerts);
-	pRequest.setSslConfiguration(cfg);
-
-	QNetworkReply* response = mNetAccessManager.get(pRequest);
-	trackConnection(response, pTimeoutInMilliSeconds);
-	return response;
+	return processRequest(pRequest, [this] (const QNetworkRequest& request){
+			return trackConnection(mNetAccessManager.get(request));
+		});
 }
 
 
-QNetworkReply* NetworkManager::post(QNetworkRequest& pRequest,
-		const QByteArray& pData,
-		const QList<QSslCertificate>& pCaCerts,
-		int pTimeoutInMilliSeconds)
+QSharedPointer<QNetworkReply> NetworkManager::post(QNetworkRequest& pRequest,
+		const QByteArray& pData)
 {
-	if (mApplicationExitInProgress)
-	{
-		return new NetworkReplyError(pRequest);
-	}
-
-	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
 	pRequest.setHeader(QNetworkRequest::ContentLengthHeader, QString::number(pData.size()));
 
-	auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::DEFAULT).getConfiguration();
-	cfg.setCaCertificates(pCaCerts);
-	pRequest.setSslConfiguration(cfg);
-
-	QNetworkReply* response = mNetAccessManager.post(pRequest, pData);
-	trackConnection(response, pTimeoutInMilliSeconds);
-	return response;
+	return processRequest(pRequest, [pData, this] (const QNetworkRequest& request){
+			return trackConnection(mNetAccessManager.post(request, pData));
+		});
 }
 
 
-bool NetworkManager::checkUpdateServerCertificate(const QSharedPointer<const QNetworkReply>& pReply)
+QSharedPointer<QNetworkReply> NetworkManager::deleteResource(QNetworkRequest& pRequest)
 {
-	const QVector<QSslCertificate>& trustedCertificates = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
+	return processRequest(pRequest, [this] (const QNetworkRequest& request){
+			return trackConnection(mNetAccessManager.deleteResource(request));
+		});
+}
 
-	const auto& cert = pReply->sslConfiguration().peerCertificate();
-	return !cert.isNull() && trustedCertificates.contains(cert);
+
+QSharedPointer<QNetworkReply> NetworkManager::getAsUpdater(QNetworkRequest& pRequest)
+{
+	return processUpdaterRequest(pRequest, [this] (QNetworkRequest& request){
+			return get(request);
+		});
+}
+
+
+QSharedPointer<QNetworkReply> NetworkManager::postAsUpdater(QNetworkRequest& pRequest, const QByteArray& pData)
+{
+	return processUpdaterRequest(pRequest, [pData, this] (QNetworkRequest& request){
+			return post(request, pData);
+		});
+}
+
+
+QSharedPointer<QNetworkReply> NetworkManager::processRequest(QNetworkRequest& pRequest,
+		const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke)
+{
+	if (!prepareConnection(pRequest))
+	{
+		return QSharedPointer<QNetworkReply>(new NetworkReplyError(pRequest), &QObject::deleteLater);
+	}
+
+	return pInvoke(pRequest);
+}
+
+
+QSharedPointer<QNetworkReply> NetworkManager::processUpdaterRequest(QNetworkRequest& pRequest,
+		const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke)
+{
+	QSharedPointer<QNetworkReply> response = processRequest(pRequest, [pInvoke] (QNetworkRequest& request){
+			auto cfg = request.sslConfiguration();
+			cfg.setCaCertificates(Env::getSingleton<SecureStorage>()->getUpdateCertificates().toList());
+			request.setSslConfiguration(cfg);
+			return pInvoke(request);
+		});
+
+	connect(response.data(), &QNetworkReply::sslErrors, this, [response, this](const QList<QSslError>& pErrors){
+			QList<QSslError> ignoredErrors;
+
+			for (const auto& error : pErrors)
+			{
+				if (error.error() == QSslError::OcspNoResponseFound && mUpdaterSessions.contains(response->sslConfiguration().sessionTicket()))
+				{
+					ignoredErrors << error; // QTBUG-99241
+					continue;
+				}
+
+				qCCritical(network) << "Fatal SSL error:" << error;
+				if (!error.certificate().isNull())
+				{
+					qCCritical(network) << error.certificate();
+				}
+			}
+
+			if (ignoredErrors.isEmpty())
+			{
+				response->abort();
+			}
+			else
+			{
+				response->ignoreSslErrors(ignoredErrors);
+			}
+		});
+
+	connect(response.data(), &QNetworkReply::encrypted, this, [response, this]{
+			const auto& cfg = response->sslConfiguration();
+			TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
+
+			const auto& trustedCertificates = Env::getSingleton<SecureStorage>()->getUpdateCertificates();
+			const auto& cert = cfg.peerCertificate();
+			if (cert.isNull() || !trustedCertificates.contains(cert))
+			{
+				const QString& textForLog = response->request().url().fileName();
+				qCCritical(network).nospace() << "Untrusted certificate found [" << textForLog << "]: " << cert;
+				response->abort();
+				return;
+			}
+
+			const auto& ticket = cfg.sessionTicket();
+			if (!ticket.isEmpty())
+			{
+				mUpdaterSessions << ticket;
+			}
+		});
+
+	return response;
 }
 
 
@@ -148,7 +205,7 @@ void NetworkManager::onShutdown()
 {
 	mApplicationExitInProgress = true;
 	mNetAccessManager.clearAccessCache();
-	mNetAccessManager.clearConnectionCache();
+	clearConnections();
 	Q_EMIT fireShutdown();
 }
 
@@ -243,20 +300,45 @@ GlobalStatus NetworkManager::toStatus(const QSharedPointer<const QNetworkReply>&
 }
 
 
-void NetworkManager::trackConnection(QNetworkReply* pResponse, const int pTimeoutInMilliSeconds)
+bool NetworkManager::prepareConnection(QNetworkRequest& pRequest)
+{
+	if (mApplicationExitInProgress)
+	{
+		return false;
+	}
+
+	pRequest.setTransferTimeout();
+	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
+
+	if (pRequest.sslConfiguration() == QSslConfiguration::defaultConfiguration())
+	{
+		auto cfg = Env::getSingleton<SecureStorage>()->getTlsConfig().getConfiguration();
+		pRequest.setSslConfiguration(cfg);
+	}
+
+	return true;
+}
+
+
+QSharedPointer<QNetworkReply> NetworkManager::trackConnection(QNetworkReply* pResponse)
 {
 	Q_ASSERT(pResponse);
 
-	if (pResponse)
+	if (pResponse && !pResponse->isFinished())
 	{
 		++mOpenConnectionCount;
 
-		connect(pResponse, &QObject::destroyed, this, [this] {
+		connect(pResponse, &QNetworkReply::finished, this, [this] {
 				--mOpenConnectionCount;
 			});
+		connect(this, &NetworkManager::fireShutdown, pResponse, &QNetworkReply::abort, Qt::QueuedConnection);
 
-		NetworkReplyTimeout::setTimeout(pResponse, pTimeoutInMilliSeconds);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+		NetworkReplyTimeout::setTimeout(this, pResponse, 30000);
+#endif
 	}
+
+	return QSharedPointer<QNetworkReply>(pResponse, &QObject::deleteLater);
 }
 
 
@@ -264,19 +346,43 @@ QByteArray NetworkManager::getStatusMessage(int pStatus)
 {
 	switch (pStatus)
 	{
-	#define XX(num, name, string) case num:\
+#define XX(num, name, string) case num:\
 			return QByteArrayLiteral(#string);
 
 	HTTP_STATUS_MAP(XX)
-	#undef XX
+#undef XX
 	}
 
 	return QByteArray();
 }
 
 
-int NetworkManager::getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const QMessageLogger& pLogger)
+QString NetworkManager::getFormattedStatusMessage(int pStatus)
 {
+	return QStringLiteral("%1 %2").arg(QString::number(pStatus), QString::fromLatin1(NetworkManager::getStatusMessage(pStatus)));
+}
+
+
+bool NetworkManager::isLoggingAllowed(const QSharedPointer<const QNetworkReply>& pReply)
+{
+	const auto attribute = QByteArrayLiteral("Pragma");
+	if (pReply->hasRawHeader(attribute))
+	{
+		const auto& pragma = pReply->rawHeader(attribute);
+		return !pragma.contains(QByteArrayLiteral("no-log"));
+	}
+
+	return true;
+}
+
+
+int NetworkManager::getLoggedStatusCode(const QSharedPointer<const QNetworkReply>& pReply, const MessageLogger& pLogger)
+{
+	if (pReply->error() != QNetworkReply::NoError)
+	{
+		pLogger.critical() << "An error occurred:" << pReply->error() << pReply->errorString();
+	}
+
 	const int statusCode = pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	pLogger.debug() << "Status Code:" << statusCode << getStatusMessage(statusCode);
 	for (const auto& header : pReply->rawHeaderPairs())

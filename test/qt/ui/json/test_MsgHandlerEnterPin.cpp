@@ -8,9 +8,9 @@
 
 #include "MsgHandlerEnterPassword.h"
 
-#include "context/ChangePinContext.h"
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
+#include "context/ChangePinContext.h"
 
 #include "MockReaderManagerPlugIn.h"
 

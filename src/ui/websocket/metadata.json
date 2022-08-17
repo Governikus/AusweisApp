@@ -1,4 +1,7 @@
 {
-	"name" : "UIPlugInWebSocket",
-	"dependencies" : ["UIPlugInJsonApi"]
+	"name": "WebSocket",
+	"dependencies": [
+		"Json"
+	],
+	"default": true
 }

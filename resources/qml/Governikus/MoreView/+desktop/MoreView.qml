@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQml.Models 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQml.Models 2.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -24,10 +24,6 @@ SectionPage {
 
 	property int activeSubView
 
-	//: LABEL DESKTOP
-	Accessible.name: qsTr("Help section")
-	//: LABEL DESKTOP
-	Accessible.description: qsTr("This is the help section of the AusweisApp2.")
 	Keys.onEscapePressed: {
 		if (activeSubView === MoreView.SubViews.None) {
 			event.accepted = false
@@ -72,8 +68,22 @@ SectionPage {
 			Component { MoreViewGeneral {} }
 			Component { MoreViewDiagnosis {} }
 			Component { VersionInformation {} }
-			Component { LicenseInformation {} }
-			Component { ReleaseNotes {} }
+			Component { LicenseInformation {
+				height: tabbedPane.availableHeight
+				anchors {
+					left: parent.left
+					right: parent.right
+					rightMargin: -Constants.pane_padding
+				}
+			} }
+			Component { ReleaseNotes {
+				height: tabbedPane.availableHeight
+				anchors {
+					left: parent.left
+					right: parent.right
+					rightMargin: -Constants.pane_padding
+				}
+			} }
 		}
 	}
 
@@ -81,12 +91,6 @@ SectionPage {
 		id: diagnosisView
 
 		DiagnosisView {}
-	}
-
-	Component {
-		id: versionInformation
-
-		VersionInformation {}
 	}
 
 	Component {

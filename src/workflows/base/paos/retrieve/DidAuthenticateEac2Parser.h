@@ -6,12 +6,12 @@
 
 #pragma once
 
-#include "paos/element/Eac2InputType.h"
 #include "paos/PaosMessage.h"
+#include "paos/element/Eac2InputType.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 #include "paos/retrieve/PaosParser.h"
 
-#include <QScopedPointer>
+#include <memory>
 
 
 namespace governikus
@@ -22,7 +22,7 @@ class DidAuthenticateEac2Parser
 {
 	public:
 		DidAuthenticateEac2Parser();
-		~DidAuthenticateEac2Parser() override;
+		~DidAuthenticateEac2Parser() override = default;
 
 	protected:
 		PaosMessage* parseMessage() override;
@@ -34,7 +34,7 @@ class DidAuthenticateEac2Parser
 		void parseSignature(Eac2InputType& pEac2, QString& pSignature);
 
 	private:
-		QScopedPointer<DIDAuthenticateEAC2> mDidAuthenticateEac2;
+		std::unique_ptr<DIDAuthenticateEAC2> mDidAuthenticateEac2;
 };
 
 } // namespace governikus

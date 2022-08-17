@@ -6,9 +6,9 @@
 
 #include "controller/ChangePinController.h"
 
-#include "context/ChangePinContext.h"
 #include "PersoSimController.h"
 #include "ReaderManager.h"
+#include "context/ChangePinContext.h"
 #include "states/AbstractState.h"
 #include "states/StateUpdateRetryCounter.h"
 
@@ -38,7 +38,7 @@ class test_ChangePinController
 
 		void onCardInserted(const ReaderInfo& pInfo)
 		{
-			if (pInfo.hasEidCard())
+			if (pInfo.hasEid())
 			{
 				Q_EMIT fireEidCardInserted();
 			}

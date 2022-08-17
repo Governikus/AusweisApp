@@ -13,10 +13,10 @@
 
 #include "EnumHelper.h"
 
-#include <functional>
 #include <QCoreApplication>
 #include <QList>
 #include <QString>
+#include <functional>
 
 
 namespace governikus
@@ -66,8 +66,8 @@ defineTypedEnumType(AccessRight, uint,
 
 // do NOT change any key/value as this is used as an unique identifier!
 // if you add entries you need to modify the SDK documentation.
-#define TYPE(x) static_cast<std::underlying_type<AccessRight>::type>(x)
-defineTypedEnumType(AccessRightNames, std::underlying_type<AccessRight>::type,
+#define TYPE(x) static_cast<std::underlying_type_t<AccessRight>>(x)
+defineTypedEnumType(AccessRightNames, std::underlying_type_t<AccessRight>,
 		ResidencePermitII = TYPE(AccessRight::READ_DG20),
 		ResidencePermitI = TYPE(AccessRight::READ_DG19),
 		CommunityID = TYPE(AccessRight::READ_DG18),
@@ -95,7 +95,7 @@ defineTypedEnumType(AccessRightNames, std::underlying_type<AccessRight>::type,
 		)
 #undef TYPE
 
-inline uint qHash(governikus::AccessRight pAccessRight)
+[[nodiscard]] inline uint qHash(governikus::AccessRight pAccessRight)
 {
 	return static_cast<uint>(pAccessRight);
 }
@@ -122,14 +122,17 @@ class AccessRoleAndRightsUtil
 	private:
 		static QList<AccessRight> mAllRights;
 		static QList<AccessRight> mAllDisplayedOrderedRights;
-		AccessRoleAndRightsUtil() = delete;
+
 		static bool fromTechnicalName(const char* const pStr, const std::function<void(AccessRight)>& pFunc);
 		static QStringList fromTechnicalName(const QStringList& pStr, JoinRights pJoinRight);
+
+		AccessRoleAndRightsUtil() = delete;
+		~AccessRoleAndRightsUtil() = delete;
 
 	public:
 		static const QList<AccessRight>& allDisplayedOrderedRights();
 		static const QList<AccessRight>& allRights();
-		static bool isWriteAccessRight(AccessRight pRight);
+		[[nodiscard]] static bool isWriteAccessRight(AccessRight pRight);
 		static QString toDisplayText(AccessRight pRight);
 		static QLatin1String toTechnicalName(AccessRight pRight);
 		static bool fromTechnicalName(const QString& pStr, const std::function<void(AccessRight)>& pFunc);

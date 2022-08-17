@@ -4,10 +4,10 @@
 
 #include "WifiInfo.h"
 
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
+#include <QCoreApplication>
+#include <QJniEnvironment>
+#include <QJniObject>
 #include <QLoggingCategory>
-#include <QtAndroid>
 #include <QTimerEvent>
 
 Q_DECLARE_LOGGING_CATEGORY(network)
@@ -27,15 +27,15 @@ WifiInfo::WifiInfo()
 
 bool WifiInfo::getCurrentWifiEnabled()
 {
-	QAndroidJniEnvironment env;
-	const QAndroidJniObject context(QtAndroid::androidContext());
+	QJniEnvironment env;
+	const QJniObject context(QNativeInterface::QAndroidApplication::context());
 	if (!context.isValid())
 	{
 		qCCritical(network) << "Cannot determine android context.";
 		return false;
 	}
 
-	const jboolean jEnabled = QAndroidJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/WifiInfo",
+	const jboolean jEnabled = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/WifiInfo",
 			"wifiEnabled",
 			"(Landroid/content/Context;)Z",
 			context.object<jobject>());

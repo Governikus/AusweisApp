@@ -9,7 +9,6 @@
 #include <QAbstractTextDocumentLayout>
 #include <QDebug>
 #include <QPagedPaintDevice>
-#include <QPainter>
 #include <QSvgRenderer>
 
 using namespace governikus;
@@ -86,7 +85,7 @@ void PdfCreator::createFooter()
 
 
 // inspired by void QTextDocument::drawContents(QPainter *p, const QRectF &rect)
-void drawContents(QTextDocument& pTextDocument, QPainter& pPainter, const QRectF& pClipRect = QRectF())
+void PdfCreator::drawContents(const QTextDocument& pTextDocument, QPainter& pPainter, const QRectF& pClipRect)
 {
 	QAbstractTextDocumentLayout::PaintContext paintContext;
 	paintContext.palette.setColor(QPalette::Text, Qt::black);
@@ -124,8 +123,8 @@ bool PdfCreator::save()
 	const QSizeF contentMaxPageSize(pageArea.width(), pageArea.height() - headerHeight - mFooter.size().height());
 	mContent.setPageSize(contentMaxPageSize);
 
-	const QRect contentRect = QRect(QPoint(0, 0), mContent.size().toSize());
-	QRect currentRect = QRect(QPoint(0, 0), contentMaxPageSize.toSize());
+	const QRect contentRect(QPoint(0, 0), mContent.size().toSize());
+	QRect currentRect(QPoint(0, 0), contentMaxPageSize.toSize());
 	while (currentRect.intersects(contentRect))
 	{
 		painter.resetTransform();

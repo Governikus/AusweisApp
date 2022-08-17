@@ -15,7 +15,7 @@
 #include <QSharedPointer>
 #include <QtTest>
 #ifdef Q_OS_MACOS
-#include <QOperatingSystemVersion>
+	#include <QOperatingSystemVersion>
 #endif
 
 using namespace governikus;
@@ -66,23 +66,23 @@ class test_DatagramHandlerImpl
 		{
 			DatagramHandlerImpl::cPort = 80;
 
-			#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
-			#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX)
 			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
 			QVERIFY(portStart != -1);
 			if (portStart <= DatagramHandlerImpl::cPort)
 			{
 				QSKIP("Cannot check privileged port");
 			}
-			#endif
+#endif
 
-			#ifdef Q_OS_MACOS
+#ifdef Q_OS_MACOS
 			if (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 10, 14))
 			{
 				QSKIP("macOS >= 10.14 does not block privileged ports - https://news.ycombinator.com/item?id=18302380");
 			}
-			#endif
+#endif
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
@@ -126,12 +126,12 @@ class test_DatagramHandlerImpl
 		{
 			QFETCH(bool, broadcast);
 
-			#ifdef Q_OS_FREEBSD
+#ifdef Q_OS_FREEBSD
 			if (broadcast)
 			{
 				QSKIP("FreeBSD does not like that");
 			}
-			#endif
+#endif
 
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 			QVERIFY(socket->isBound());
@@ -178,9 +178,9 @@ class test_DatagramHandlerImpl
 			doc.setObject(obj);
 			if (broadcast)
 			{
-				#ifdef Q_OS_FREEBSD
+#ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
-				#endif
+#endif
 				QVERIFY(datagramHandlerImpl->sendToAllAddressEntries(doc.toJson(QJsonDocument::Compact), receiver.localPort()));
 			}
 			else

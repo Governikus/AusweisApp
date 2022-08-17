@@ -10,7 +10,7 @@
 
 #include <QLocale>
 #include <QNetworkProxy>
-#include <QUuid>
+
 
 class test_GeneralSettings;
 
@@ -31,17 +31,15 @@ class GeneralSettings
 	Q_OBJECT
 
 	friend class AppSettings;
-	friend bool operator==(const GeneralSettings& pLeft, const GeneralSettings& pRight);
 	friend class ::test_GeneralSettings;
 
 	private:
 		bool mAutoStart;
 		QSharedPointer<QSettings> mStoreGeneral;
-		QSharedPointer<QSettings> mStoreCommon;
 		bool mIsNewAppVersion;
 
 		GeneralSettings();
-		GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QSharedPointer<QSettings> pStoreCommon);
+		explicit GeneralSettings(QSharedPointer<QSettings> pStoreGeneral);
 		[[nodiscard]] bool isShowNotificationsOsDefault() const;
 		void setAutoStartInternal(bool pAutoStart);
 		[[nodiscard]] QString getPersistentSettingsVersion() const;
@@ -79,6 +77,9 @@ class GeneralSettings
 
 		[[nodiscard]] bool useSelfAuthTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse);
+
+		[[nodiscard]] bool isSimulatorEnabled() const;
+		void setSimulatorEnabled(bool pEnabled);
 
 		[[nodiscard]] QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
@@ -132,6 +133,8 @@ class GeneralSettings
 		[[nodiscard]] bool customProxyAttributesPresent() const;
 		[[nodiscard]] bool useCustomProxy() const;
 		void setUseCustomProxy(bool pUseCustomProxy);
+
+		[[nodiscard]] QString getIfdServiceToken();
 
 	Q_SIGNALS:
 		void fireLanguageChanged();

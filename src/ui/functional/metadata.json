@@ -1,4 +1,6 @@
 {
-	"name" : "UIPlugInFunctional",
-	"dependencies" : ["UIPlugInJsonApi"]
+	"name": "Functional",
+	"dependencies": [
+		"Json"
+	]
 }

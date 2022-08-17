@@ -1,5 +1,4 @@
 import common.Release
-import static common.Constants.strip
 
 def j = new Release
 	(
@@ -23,15 +22,7 @@ j.with
 
 		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
-		shell(strip('''\
-			cd build;
-			cmake ../source
-			-DCMAKE_BUILD_TYPE=MinSizeRel
-			-DCMAKE_PREFIX_PATH=\${WORKSPACE}/libs/build/dist
-			-DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake
-			-DUSE_DISTRIBUTION_PROFILE=\${USE_DISTRIBUTION_PROFILE}
-			-GXcode
-			'''))
+		shell('cd source; cmake --preset ci-ios -DUSE_DISTRIBUTION_PROFILE=${USE_DISTRIBUTION_PROFILE}')
 
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive')
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')

@@ -2,12 +2,13 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Window 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import Governikus.Global 1.0
+import Governikus.HistoryView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
@@ -17,11 +18,16 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.Type.HistoryModel 1.0
 import Governikus.Type.LogModel 1.0
+import Governikus.Type.WorkflowModel 1.0
+
 
 SectionPage {
 	id: baseItem
 
-	navigationAction: NavigationAction { state: topLevelPage ? "" : "back"; onClicked: firePop() }
+	navigationAction: NavigationAction {
+		action: topLevelPage ? NavigationAction.Action.None : NavigationAction.Action.Back
+		onClicked: pop()
+	}
 	//: LABEL ANDROID IOS
 	title: qsTr("Settings")
 
@@ -69,13 +75,13 @@ SectionPage {
 			width: parent.width
 			//: LABEL ANDROID
 			title: qsTr("Screen orientation")
-			description: (Screen.primaryOrientation === Qt.LandscapeOrientation
+			description: (plugin.isTabletLayout
 				//: LABEL ANDROID
 				? qsTr("Landscape")
 				//: LABEL ANDROID
 				: qsTr("Portrait")
 			)
-			icon: Screen.primaryOrientation === Qt.LandscapeOrientation ? "qrc:///images/android/stay_primary_landscape-24px.svg" : "qrc:///images/android/stay_primary_portrait-24px.svg"
+			icon: plugin.isTabletLayout ? "qrc:///images/android/stay_primary_landscape-24px.svg" : "qrc:///images/android/stay_primary_portrait-24px.svg"
 			tintIcon: true
 
 			onClicked: orientationPopup.open()
@@ -96,8 +102,9 @@ SectionPage {
 
 			width: parent.width
 
-			Accessible.role: Accessible.Grouping
 			Accessible.name: serverNameText.text
+			Accessible.role: Accessible.Grouping
+			Accessible.focusable: true
 
 			GText {
 				id: serverNameText
@@ -131,7 +138,6 @@ SectionPage {
 				maximumLength: Constants.maximumDeviceNameLength
 				onAccepted: saveInput()
 				onFocusChanged: if (!focus) saveInput()
-				onVisibleChanged: if (!visible) saveInput()
 			}
 		}
 
@@ -153,7 +159,7 @@ SectionPage {
 			title: qsTr("Remote card reader")
 			//: LABEL ANDROID IOS
 			description: qsTr("Configure remote service for another device")
-			onClicked: baseItem.firePush(remoteServiceSettings)
+			onClicked: push(remoteServiceSettings)
 
 			Component {
 				id: remoteServiceSettings
@@ -175,11 +181,28 @@ SectionPage {
 			width: parent.width
 
 			//: LABEL ANDROID IOS
-			title: qsTr("History")
+			title: qsTr("Save history")
 			//: LABEL ANDROID IOS
 			description: qsTr("Save authentication history")
 			checked: SettingsModel.historyEnabled
 			onCheckedChanged: SettingsModel.historyEnabled = checked
+		}
+
+		MenuItem {
+			visible: WorkflowModel.isSmartSupported
+			width: parent.width
+
+			//: LABEL ANDROID IOS
+			title: qsTr("History")
+			//: LABEL ANDROID IOS
+			description: qsTr("View authentication history")
+			onClicked: push(historyView)
+
+			Component {
+				id: historyView
+
+				HistoryView {}
+			}
 		}
 
 		LabeledSwitch {
@@ -240,19 +263,12 @@ SectionPage {
 				checked: SettingsModel.skipRightsOnCanAllowed
 				onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
 			}
-		}
-
-		Column {
-			visible: plugin.debugBuild
-			width: parent.width
-
-			spacing: parent.spacing
 
 			TitledSeparator {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Developer Options")
+				title: qsTr("Developer options")
 			}
 
 			LabeledSwitch {
@@ -273,7 +289,32 @@ SectionPage {
 				width: parent.width
 
 				//: LABEL ANDROID IOS
-				title: qsTr("Developer Mode")
+				title: qsTr("Internal card simulator")
+				//: LABEL ANDROID IOS
+				description: qsTr("Enable internal card simulator")
+				checked: SettingsModel.enableSimulator
+				onCheckedChanged: SettingsModel.enableSimulator = checked
+			}
+		}
+
+		Column {
+			visible: plugin.debugBuild
+			width: parent.width
+
+			spacing: parent.spacing
+
+			TitledSeparator {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Debug options")
+			}
+
+			LabeledSwitch {
+				width: parent.width
+
+				//: LABEL ANDROID IOS
+				title: qsTr("Developer mode")
 				//: LABEL ANDROID IOS
 				description: qsTr("Use a more tolerant mode")
 				checked: SettingsModel.developerMode
@@ -337,10 +378,25 @@ SectionPage {
 					Layout.topMargin: Constants.component_spacing / 2
 
 					//: LABEL ALL_PLATFORMS
-					text: qsTr("Logfile")
+					text: qsTr("New Logfile")
 					onClicked: {
 						LogModel.saveDummyLogFile()
 						ApplicationModel.showFeedback("Created new logfile.")
+					}
+				}
+
+				GButton {
+					Layout.fillWidth: true
+					Layout.margins: Constants.component_spacing
+					Layout.topMargin: 0
+
+					//: LABEL ALL_PLATFORMS
+					text: qsTr("15 days old Logfile")
+					onClicked: {
+						let date = new Date()
+						date.setDate(new Date().getDate() - 15)
+						LogModel.saveDummyLogFile(date)
+						ApplicationModel.showFeedback("Created old logfile.")
 					}
 				}
 

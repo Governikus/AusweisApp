@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -18,9 +18,6 @@ SectionPage {
 	id: baseItem
 
 	signal showDetailView(var pModelItem)
-
-	Accessible.name: qsTr("Provider view")
-	Accessible.description: qsTr("This is the provider view of the AusweisApp2.")
 
 	Component.onCompleted: {
 		ProviderCategoryFilterModel.setCategorySelection("all")
@@ -64,7 +61,7 @@ SectionPage {
 
 		sectionDelegate: TabbedPaneDelegateIconAndText {
 			sectionName: model.modelData.categoryName
-			iconPath: Category.imageSource(model.modelData.category)
+			iconPath: Category.buttonImageSource(model.modelData.category)
 		}
 		contentDelegate: content
 		contentPadding: 0
@@ -83,7 +80,7 @@ SectionPage {
 				height: tabbedPane.availableHeight
 				width: parent.width
 
-				onShowDetails: baseItem.showDetailView(pModelItem)
+				onShowDetails: pModelItem => { baseItem.showDetailView(pModelItem) }
 				onShowAdditionalResults: {
 					ProviderCategoryFilterModel.setCategorySelection("all")
 					tabbedPane.currentIndex = 0
@@ -91,6 +88,4 @@ SectionPage {
 			}
 		}
 	}
-
-	FocusPoint {}
 }

@@ -1,6 +1,6 @@
 Nutzungsbedingungen
 
-Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/datenschutz/ abrufbar.
+Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/aa2/privacy abrufbar.
 
 
 ÜBERSICHT
@@ -10,7 +10,6 @@ Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die
       Anlage: Kompatible Lizenzen
  B. Zusatzvereinbarungen zur AusweisApp2
  C. Anhang Lizenztexte verwendeter OpenSource Bibliotheken
-      OpenSSL license & SSLeay license
       LGPL v3
       MIT License
       Apache License v2
@@ -19,8 +18,7 @@ Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die
 
 A. LIZENZBEDINGUNGEN
 
-Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt, mit Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License lizensiert ist.
-
+Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt.
 
 
 
@@ -326,15 +324,15 @@ B. ZUSATZVEREINBARUNGEN
 (3) Die AusweisApp2 wird von der Governikus GmbH & Co. KG (Governikus) als Erfüllungsgehilfe des Bundes überlassen.
 
 § 3 Verwendungszweck
-Die AusweisApp2 und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises, des elektronischen Aufenthaltstitels, der eID-Karte für Bürgerinnen und Bürger der EU und des EWR und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden.
+Die AusweisApp2 und alle ihre Bestandteile dienen ausschließlich dazu, im Zusammenhang mit der Nutzung der Online-Ausweisfunktion des Personalausweises, des elektronischen Aufenthaltstitels, der eID-Karte für Bürgerinnen und Bürger der EU und des EWR und der Übermittlung der damit verbundenen Daten gemäß den gesetzlichen Vorgaben verwendet zu werden. Ebenso dient die AusweisApp2 zur Einrichtung und Nutzung der Online-Ausweisfunktion mit einem mobilen Endgerät (Smart-eID) auf Basis eines der vorgenannten Dokumente.
 
 § 4 Empfehlungen zum Einsatz
 (1) Es liegt im Interesse des Nutzers, dass in Verbindung mit der AusweisApp2 genutzte Hard- und Software immer auf dem neuesten Stand der Sicherheitstechnik (System- und Firmware Update, Virenscanner,  Firewall usw.) sind.
 (2) Es liegt im Interesse des Nutzers aber auch des Bundes, dass stets nur die neueste Version der AusweisApp2 (siehe § 5) verwendet wird.
 
 § 5 Pflege und Support
-(1) Der Bund bietet nach eigenem Ermessen und ohne hierzu verpflichtet zu sein für Teile der AusweisApp2 zusätzliche kostenfreie Supportleistungen in Form von Dokumentationen und online Hilfen auf dem AusweisApp2-Portal im Internet unter der Adresse www.ausweisapp.bund.de an, sowie über die Hotline des Herstellers Governikus unter der E-Mail-Adresse: support@ausweisapp.de und der Tel.-Nr.: +49 421 204 95-995. Auch stellt er verfügbare neue Versionen der AusweisApp2 zur Verfügung. Hieraus erwächst jedoch kein Anspruch auf Mängelbeseitigung, auf Zertifizierung, auf Beibehaltung der Supportleistungen oder der Hotline und auf Überlassung neuer Versionen.
-(2) Verfügbare neue Versionen der AusweisApp2 können im Internet kostenfrei auf dem AusweisApp2-Portal unter der Adresse www.ausweisapp.bund.de sowie über allgemein zugängliche AppStore heruntergeladen werden.
+(1) Der Bund bietet nach eigenem Ermessen und ohne hierzu verpflichtet zu sein für Teile der AusweisApp2 zusätzliche kostenfreie Supportleistungen in Form von Dokumentationen und online Hilfen auf dem AusweisApp2-Portal im Internet unter der Adresse https://www.ausweisapp.bund.de an, sowie über die Hotline des Herstellers Governikus unter der E-Mail-Adresse: support@ausweisapp.de und der Tel.-Nr.: +49 421 204 95-995. Auch stellt er verfügbare neue Versionen der AusweisApp2 zur Verfügung. Hieraus erwächst jedoch kein Anspruch auf Mängelbeseitigung, auf Zertifizierung, auf Beibehaltung der Supportleistungen oder der Hotline und auf Überlassung neuer Versionen.
+(2) Verfügbare neue Versionen der AusweisApp2 können im Internet kostenfrei auf dem AusweisApp2-Portal unter der Adresse https://www.ausweisapp.bund.de sowie über allgemein zugängliche AppStore heruntergeladen werden.
 (3) Eventuelle Mängel der AusweisApp2 werden grundsätzlich dadurch behoben, dass der Bund jeweils eine neue Version der AusweisApp2 zum Herunterladen zur Verfügung stellt (siehe § 5 Absatz 1). Eine Pflicht zur Bereitstellung von neuen Versionen ergibt sich daraus nicht.
 
 § 6 Hinweis auf gewerbliche und urheberrechtliche Schutzrechte
@@ -351,13 +349,13 @@ Ergänzende Lizenzhinweise
 Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedingungen:
 
 OpenSSL
-  Lizenz: OpenSSL license & SSLeay license
-  Version: 1.1.1o
+  Lizenz: Apache 2.0
+  Version: 3.0.5
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 5.15.2
+  Version: 6.3.1
   Adresse: https://www.qt.io/
 
 http_parser
@@ -373,122 +371,6 @@ AndroidX Support Library
 
 
 Die oben genannten Lizenztexte lauten in ihrer originalen Fassung wie folgt:
-
-
-
-OpenSSL license & SSLeay license
-
-Copyright (c) 1998-2017 The OpenSSL Project.  All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the
-   distribution.
-
-3. All advertising materials mentioning features or use of this
-   software must display the following acknowledgment:
-   "This product includes software developed by the OpenSSL Project
-   for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
-
-4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
-   endorse or promote products derived from this software without
-   prior written permission. For written permission, please contact
-   openssl-core@openssl.org.
-
-5. Products derived from this software may not be called "OpenSSL"
-   nor may "OpenSSL" appear in their names without prior written
-   permission of the OpenSSL Project.
-
-6. Redistributions of any form whatsoever must retain the following
-   acknowledgment:
-   "This product includes software developed by the OpenSSL Project
-   for use in the OpenSSL Toolkit (http://www.openssl.org/)"
-
-THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
-EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-OF THE POSSIBILITY OF SUCH DAMAGE.
-
-This product includes cryptographic software written by Eric Young
-(eay@cryptsoft.com).  This product includes software written by Tim
-Hudson (tjh@cryptsoft.com).
-
-
-Original SSLeay License
-
-Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
-All rights reserved.
-
-This package is an SSL implementation written
-by Eric Young (eay@cryptsoft.com).
-The implementation was written so as to conform with Netscapes SSL.
-
-This library is free for commercial and non-commercial use as long as
-the following conditions are aheared to.  The following conditions
-apply to all code found in this distribution, be it the RC4, RSA,
-lhash, DES, etc., code; not just the SSL code.  The SSL documentation
-included with this distribution is covered by the same copyright terms
-except that the holder is Tim Hudson (tjh@cryptsoft.com).
-
-Copyright remains Eric Young's, and as such any Copyright notices in
-the code are not to be removed.
-If this package is used in a product, Eric Young should be given attribution
-as the author of the parts of the library used.
-This can be in the form of a textual message at program startup or
-in documentation (online or textual) provided with the package.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-1. Redistributions of source code must retain the copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. All advertising materials mentioning features or use of this software
-   must display the following acknowledgement:
-   "This product includes cryptographic software written by
-   Eric Young (eay@cryptsoft.com)"
-   The word 'cryptographic' can be left out if the rouines from the library
-   being used are not cryptographic related :-).
-4. If you include any Windows specific code (or a derivative thereof) from
-   the apps directory (application code) you must include an acknowledgement:
-   "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
-
-THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGE.
-
-The licence and distribution terms for any publically available version or
-derivative of this code cannot be changed.  i.e. this code cannot simply be
-copied and put under another distribution licence
-[including the GNU Public Licence.]
-
-
 
 
 

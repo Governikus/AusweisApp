@@ -12,29 +12,31 @@ StateDidAuthenticateEac2::StateDidAuthenticateEac2(const QSharedPointer<Workflow
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setAbortOnCardRemoved();
 }
 
 
 void StateDidAuthenticateEac2::run()
 {
-	Q_ASSERT(!getContext()->getDidAuthenticateEac2().isNull());
-	Q_ASSERT(!getContext()->getCardConnection().isNull());
-	Q_ASSERT(getContext()->getPaceOutputData() != nullptr);
-	auto cardConnection = getContext()->getCardConnection();
-	const auto ephemeralPublicKeyAsHex = getContext()->getDidAuthenticateEac2()->getEphemeralPublicKey().toLatin1();
-	QByteArray authenticatedAuxiliaryDataAsBinary = getContext()->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryDataAsBinary();
+	const auto& context = getContext();
+	Q_ASSERT(!context->getDidAuthenticateEac2().isNull());
+	Q_ASSERT(!context->getCardConnection().isNull());
+	Q_ASSERT(context->getPaceOutputData() != nullptr);
+	auto cardConnection = context->getCardConnection();
+	const auto ephemeralPublicKeyAsHex = context->getDidAuthenticateEac2()->getEphemeralPublicKey().toLatin1();
+	QByteArray authenticatedAuxiliaryDataAsBinary = context->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryDataAsBinary();
 
 	QByteArray signatureAsHex;
-	if (!getContext()->getDidAuthenticateEac2()->getSignature().isEmpty())
+	if (!context->getDidAuthenticateEac2()->getSignature().isEmpty())
 	{
-		signatureAsHex = getContext()->getDidAuthenticateEac2()->getSignature().toLatin1();
+		signatureAsHex = context->getDidAuthenticateEac2()->getSignature().toLatin1();
 	}
-	else if (getContext()->getDidAuthenticateEacAdditional())
+	else if (context->getDidAuthenticateEacAdditional())
 	{
-		signatureAsHex = getContext()->getDidAuthenticateEacAdditional()->getSignature().toLatin1();
+		signatureAsHex = context->getDidAuthenticateEacAdditional()->getSignature().toLatin1();
 	}
 
-	auto cvcChain = getContext()->getChainForCertificationAuthority(*getContext()->getPaceOutputData());
+	auto cvcChain = context->getChainForCertificationAuthority(*context->getPaceOutputData());
 	if (!cvcChain.isValid())
 	{
 		updateStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
@@ -42,8 +44,9 @@ void StateDidAuthenticateEac2::run()
 		return;
 	}
 
-	mConnections += cardConnection->callDidAuthenticateEAC2Command(this, &StateDidAuthenticateEac2::onCardCommandDone, cvcChain, ephemeralPublicKeyAsHex, signatureAsHex,
-			authenticatedAuxiliaryDataAsBinary);
+	mConnections += cardConnection->callDidAuthenticateEAC2Command(this,
+			&StateDidAuthenticateEac2::onCardCommandDone, cvcChain, ephemeralPublicKeyAsHex,
+			signatureAsHex, authenticatedAuxiliaryDataAsBinary, context->getPin().toLatin1());
 }
 
 
@@ -52,7 +55,21 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	const CardReturnCode returnCode = pCommand->getReturnCode();
 	if (returnCode != CardReturnCode::OK)
 	{
-		updateStatus(returnCode == CardReturnCode::COMMAND_FAILED ? GlobalStatus::Code::Workflow_Card_Removed : GlobalStatus::Code::Workflow_No_Permission_Error);
+		GlobalStatus::Code newStatus;
+		switch (returnCode)
+		{
+			case CardReturnCode::COMMAND_FAILED:
+				newStatus = GlobalStatus::Code::Workflow_Card_Removed;
+				break;
+
+			case CardReturnCode::EXTENDED_LENGTH_MISSING:
+				newStatus = GlobalStatus::Code::Workflow_No_Extended_Length_Error;
+				break;
+
+			default:
+				newStatus = GlobalStatus::Code::Workflow_No_Permission_Error;
+		}
+		updateStatus(newStatus);
 		Q_EMIT fireAbort();
 		return;
 	}
@@ -70,6 +87,6 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 void StateDidAuthenticateEac2::onEntry(QEvent* pEvent)
 {
 	//: INFO ALL_PLATFORMS Status message after the PIN was entered, Card Authentication.
-	getContext()->setProgress(40, tr("Card is being verified"));
+	getContext()->setProgress(40, tr("eID is being verified"));
 	AbstractState::onEntry(pEvent);
 }

@@ -1,14 +1,14 @@
 module SettingsView
 
 internal CardReaderDelegate CardReaderDelegate.qml
-internal RemoteReaderDelegate RemoteReaderDelegate.qml
-internal GeneralSettings GeneralSettings.qml
-internal DeveloperSettings DeveloperSettings.qml
-internal DebugSettings DebugSettings.qml
-internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
-internal LanguageSelectionPopup LanguageSelectionPopup.qml
-internal ScreenOrientationSelectionPopup ScreenOrientationSelectionPopup.qml
 internal ConnectSacView ConnectSacView.qml
+internal DebugSettings DebugSettings.qml
+internal DeveloperSettings DeveloperSettings.qml
+internal GeneralSettings GeneralSettings.qml
+internal LanguageSelectionPopup LanguageSelectionPopup.qml
+internal RemoteReaderDelegate RemoteReaderDelegate.qml
+internal ScreenOrientationSelectionPopup ScreenOrientationSelectionPopup.qml
+internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
 
 CardReaderView 1.0 CardReaderView.qml
 RemoteReaderView 1.0 RemoteReaderView.qml

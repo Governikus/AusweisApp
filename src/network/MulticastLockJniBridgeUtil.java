@@ -6,13 +6,9 @@ package com.governikus.ausweisapp2;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
-import android.util.Log;
-
 
 public final class MulticastLockJniBridgeUtil
 {
-	private static final String LOG_TAG = AusweisApp2Service.LOG_TAG;
-
 	private static WifiManager.MulticastLock cLock;
 
 
@@ -31,14 +27,14 @@ public final class MulticastLockJniBridgeUtil
 		}
 
 		cLock.acquire();
-		Log.d(LOG_TAG, "Multicast lock: " + cLock.toString());
+		LogHandler.getLogger().info("Multicast lock: " + cLock.toString());
 	}
 
 
 	public static synchronized void release(Context pContext)
 	{
 		cLock.release();
-		Log.d(LOG_TAG, "Multicast lock released.");
+		LogHandler.getLogger().info("Multicast lock released.");
 	}
 
 

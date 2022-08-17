@@ -20,14 +20,25 @@ class StartPaosResponse
 	, private ElementDetector
 {
 	private:
-		QString mResultMajor, mResultMinor, mResultMessage;
+		QString mResultMajor;
+		QString mResultMinor;
+		QString mResultMessage;
+		int mRemainingDays;
+		int mRemainingAttempts;
+		QString mBlockingCode;
 
 	public:
 		explicit StartPaosResponse(const QByteArray& pXmlData);
 
+		[[nodiscard]] int getRemainingDays() const;
+		[[nodiscard]] int getRemainingAttempts() const;
+		[[nodiscard]] const QString& getBlockingCode() const;
+
 	private:
 		void parse();
 		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+
+		int valuetoInt(const QString& pValue) const;
 };
 
 } // namespace governikus

@@ -1,0 +1,37 @@
+From c69b7d2e46da7d7b3252697f1fc938343c74c10a Mon Sep 17 00:00:00 2001
+From: Joerg Bornemann <joerg.bornemann@qt.io>
+Date: Thu, 27 Jan 2022 13:59:12 +0100
+Subject: Remove QDom from bootstrap lib
+
+It's not used by any bootstrapped tool.
+
+Change-Id: Id6751e80bb34642aeaea1c2bb4f24b480280623d
+Reviewed-by: Alexey Edelev <alexey.edelev@qt.io>
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+---
+ src/tools/bootstrap/CMakeLists.txt | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git x/qtbase/src/tools/bootstrap/CMakeLists.txt y/qtbase/src/tools/bootstrap/CMakeLists.txt
+index fb39c115ed..16d30f024e 100644
+--- x/qtbase/src/tools/bootstrap/CMakeLists.txt
++++ y/qtbase/src/tools/bootstrap/CMakeLists.txt
+@@ -95,7 +95,6 @@ qt_internal_extend_target(Bootstrap
+         ../../corelib/tools/qringbuffer.cpp
+         ../../corelib/tools/qsize.cpp
+         ../../corelib/tools/qversionnumber.cpp
+-        ../../xml/dom/qdom.cpp
+     DEFINES
+         HAVE_CONFIG_H
+         QT_TYPESAFE_FLAGS
+@@ -114,7 +113,6 @@ qt_internal_extend_target(Bootstrap
+         ../../3rdparty/tinycbor/src
+     PUBLIC_INCLUDE_DIRECTORIES  # special case
+         $<TARGET_PROPERTY:Core,INCLUDE_DIRECTORIES> # special case
+-        $<TARGET_PROPERTY:Xml,INCLUDE_DIRECTORIES> # special case
+     PUBLIC_LIBRARIES  # special case
+         Qt::Platform # special case
+ )
+-- 
+2.36.0
+

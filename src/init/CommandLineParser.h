@@ -14,6 +14,8 @@ namespace governikus
 
 class CommandLineParser
 {
+	Q_DISABLE_COPY(CommandLineParser)
+
 	private:
 		QCommandLineParser mParser;
 		const QCommandLineOption mOptionKeepLog;
@@ -23,8 +25,7 @@ class CommandLineParser
 		const QCommandLineOption mOptionProxy;
 		const QCommandLineOption mOptionUi;
 		const QCommandLineOption mOptionPort;
-
-		Q_DISABLE_COPY(CommandLineParser)
+		const QCommandLineOption mOptionAddresses;
 
 		void addOptions();
 		void parseUiPlugin();
@@ -36,7 +37,7 @@ class CommandLineParser
 	public:
 		static CommandLineParser& getInstance();
 
-		void parse(QCoreApplication* pApp = QCoreApplication::instance());
+		void parse(const QCoreApplication* pApp = QCoreApplication::instance());
 
 };
 

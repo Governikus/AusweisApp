@@ -21,12 +21,12 @@ defineEnumType(FeatureID,
 		MODIFY_PIN_DIRECT = 0x7,
 		MCT_READERDIRECT = 0x8,
 		MCT_UNIVERSAL = 0x9,
-		IFD_PIN_PROP = 0xa,
-		ABORT = 0xb,
-		SET_SPE_MESSAGE = 0x0c,
-		VERIFY_PIN_DIRECT_APP_ID = 0x0d,
-		MODIFY_PIN_DIRECT_APP_ID = 0x0e,
-		WRITE_DISPLAY = 0x0f,
+		IFD_PIN_PROP = 0xA,
+		ABORT = 0xB,
+		SET_SPE_MESSAGE = 0x0C,
+		VERIFY_PIN_DIRECT_APP_ID = 0x0D,
+		MODIFY_PIN_DIRECT_APP_ID = 0x0E,
+		WRITE_DISPLAY = 0x0F,
 		GET_KEY = 0x10,
 		IFD_DISPLAY_PROPERTIES = 0x11,
 		TLV_PROPERTIES = 0x12,
@@ -35,10 +35,10 @@ defineEnumType(FeatureID,
 
 class PcscReaderFeature
 {
+	friend QDebug operator<<(QDebug, const PcscReaderFeature&);
+
 	private:
 		QMap<FeatureID, PCSC_INT> mFeatures;
-
-		friend QDebug operator<<(QDebug, const PcscReaderFeature&);
 
 	public:
 		PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength = 0);

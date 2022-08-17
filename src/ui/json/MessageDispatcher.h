@@ -25,9 +25,9 @@ namespace governikus
 
 class MessageDispatcher
 {
-	private:
-		friend class ::test_Message;
+	friend class ::test_Message;
 
+	private:
 		MsgDispatcherContext mContext;
 
 		Msg createForStateChange(MsgType pStateType);
@@ -42,13 +42,14 @@ class MessageDispatcher
 	public:
 		MessageDispatcher();
 
-		QByteArray init(const QSharedPointer<WorkflowContext>& pWorkflowContext);
-		QByteArray finish();
+		[[nodiscard]] Msg init(const QSharedPointer<WorkflowContext>& pWorkflowContext);
+		[[nodiscard]] Msg finish();
 		void reset();
-		Msg processCommand(const QByteArray& pMsg);
-		QByteArray processStateChange(const QString& pState);
-
-		[[nodiscard]] QByteArrayList processReaderChange(const ReaderInfo& pInfo);
+		[[nodiscard]] Msg processCommand(const QByteArray& pMsg);
+		[[nodiscard]] Msg processStateChange(const QString& pState);
+		[[nodiscard]] Msg processProgressChange() const;
+		[[nodiscard]] QVector<Msg> processReaderChange(const ReaderInfo& pInfo);
 };
+
 
 } // namespace governikus

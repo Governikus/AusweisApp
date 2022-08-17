@@ -2,10 +2,10 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
 */
 
-import QtQml 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQml 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -17,9 +17,6 @@ import Governikus.View 1.0
 
 SectionPage {
 	id: root
-
-	Accessible.name: qsTr("History view")
-	Accessible.description: qsTr("This is the history view of the AusweisApp2.")
 
 	ConfirmationPopup {
 		id: deleteHistoryConfirmationPopup
@@ -78,7 +75,7 @@ SectionPage {
 		sectionDelegate: TabbedPaneDelegateIconAndThreeLineText {
 			headerText: (model ? ( Utils.isToday(model.dateTime) ? qsTr("today") :
 				Utils.isYesterday(model.dateTime) ? qsTr("yesterday") :
-					Utils.isThisWeek(model.dateTime) ? model.dateTime.toLocaleString(Qt.locale(), qsTr("dddd")) :
+					Utils.isThisWeek(model.dateTime) ? model.dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") :
 						model.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")) ) : "")
 			sectionName: model ? model.subject : ""
 			footerText: model ? model.purpose : ""
@@ -125,7 +122,17 @@ SectionPage {
 					onClicked: {
 						let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd")
 						let filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("History")).arg(now)
-						appWindow.openSaveFileDialog(HistoryModel.exportHistory, filenameSuggestion, qsTr("Portable Document Format"), "pdf")
+						fileDialog.selectFile(filenameSuggestion)
+					}
+
+					GFileDialog {
+						id: fileDialog
+
+						defaultSuffix: "pdf"
+						//: LABEL DESKTOP
+						nameFilters: qsTr("Portable Document Format (*.pdf)")
+
+						onAccepted: HistoryModel.exportHistory(file)
 					}
 				}
 			}
@@ -143,6 +150,8 @@ SectionPage {
 			   ? qsTr("Currently there are no history entries.")
 			   //: INFO DESKTOP No authentication history entries match the search, placeholder text.
 			   : qsTr("No history entries match your search term.")
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
+
+		FocusFrame {}
 	}
 }

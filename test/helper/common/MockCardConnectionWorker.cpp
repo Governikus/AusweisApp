@@ -50,6 +50,19 @@ ResponseApduResult MockCardConnectionWorker::getMockedResponse()
 }
 
 
+CardReturnCode MockCardConnectionWorker::readFile(const FileRef& pFileRef, QByteArray& pFileContent, int pLe)
+{
+	Q_UNUSED(pFileRef)
+	Q_UNUSED(pLe)
+
+	const auto& [returnCode, result] = getMockedResponse();
+	pFileContent += result.getData();
+
+	return returnCode;
+
+}
+
+
 ResponseApduResult MockCardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
 	Q_UNUSED(pCommandApdu)

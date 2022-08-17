@@ -17,20 +17,20 @@ j.with
 
 	steps
 	{
-		shell('cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true -DENABLE_DVCS=\${ENABLE_DVCS}')
+		shell('cd source; cmake --preset ci-tools -DENABLE_DVCS=\${ENABLE_DVCS}')
 
-		shell('cd build; make notes')
-		shell('cd build; make notes.latex.pdf')
+		shell('cmake --build build --target notes')
+		shell('cmake --build build --target notes.latex.pdf')
 		shell('cd build/docs/notes; cmake -E tar cfJ ../AusweisApp2_ReleaseNotes.tar.xz .')
 
-		shell('cd build; make sdk')
-		shell('cd build; make sdk.latex.pdf')
+		shell('cmake --build build --target sdk')
+		shell('cmake --build build --target sdk.latex.pdf')
 		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../../AusweisApp2_SDK.tar.xz .')
 
-		shell('cd build; make inst.latex.pdf')
+		shell('cmake --build build --target inst.latex.pdf')
 
-		shell('cd build; make inte.latex.pdf')
+		shell('cmake --build build --target inte.latex.pdf')
 
-		shell('cd build; make license')
+		shell('cmake --build build --target license')
 	}
 }

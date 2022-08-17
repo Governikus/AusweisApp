@@ -8,8 +8,8 @@
 
 
 #include <QElapsedTimer>
-#include <QtTest>
 #include <QTimer>
+#include <QtTest>
 
 
 using namespace governikus;

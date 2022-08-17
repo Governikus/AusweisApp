@@ -90,7 +90,7 @@ static bool getUintValueFromDeviceRegistryEntry(io_object_t pDevice, CFStringRef
 	static const CFTypeID NUMBER_TYPE_ID = CFNumberGetTypeID();
 
 	CFTypeRef property = IORegistryEntryCreateCFProperty(pDevice, pKey, kCFAllocatorDefault, /* options */ 0);
-	if (property == NULL)
+	if (property == nullptr)
 	{
 		qCWarning(card_drivers) << "property" << pKey << "not found in registry entry";
 

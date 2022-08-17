@@ -15,7 +15,7 @@ using namespace governikus;
 
 
 StateSendWhitelistSurvey::StateSendWhitelistSurvey(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -23,7 +23,7 @@ StateSendWhitelistSurvey::StateSendWhitelistSurvey(const QSharedPointer<Workflow
 
 void StateSendWhitelistSurvey::run()
 {
-#if !defined(QT_NO_DEBUG) || defined(Q_OS_ANDROID)
+#if !defined(QT_NO_DEBUG) || defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
 		qCDebug(statemachine) << "Running as SDK. Ignoring whitelist survey.";
@@ -31,26 +31,16 @@ void StateSendWhitelistSurvey::run()
 		return;
 	}
 
-	if (!Env::getSingleton<AppSettings>()->getGeneralSettings().isDeviceSurveyPending())
+	const auto& surveyModel = Env::getSingleton<SurveyModel>();
+	if (!surveyModel->isDeviceSurveyPending())
 	{
 		qCDebug(statemachine) << "No survey pending.";
 		Q_EMIT fireContinue();
 		return;
 	}
 
-	Env::getSingleton<AppSettings>()->getGeneralSettings().setDeviceSurveyPending(false);
-
-	const auto authContext = getContext();
-	if (authContext->getDidAuthenticateEac1() == nullptr || authContext->getAccessRightManager()->getEffectiveAccessRights().isEmpty() ||
-			authContext->getStatus().isError())
-	{
-		qWarning() << "Authentication was not completed successfully, cannot send survey to whitelist server.";
-		Q_ASSERT(false);
-		Q_EMIT fireAbort();
-		return;
-	}
-
-	Env::getSingleton<SurveyModel>()->transmitSurvey();
+	surveyModel->setDeviceSurveyPending(false);
+	surveyModel->transmitSurvey();
 #endif
 
 	Q_EMIT fireContinue();

@@ -2,10 +2,11 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
+import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
 
@@ -28,9 +29,10 @@ RowLayout {
 		visible: downloadInProgress
 
 		Layout.fillWidth: true
-		Layout.preferredHeight: ApplicationModel.scaleFactor * 40
 
 		activeFocusOnTab: true
+
+		backgroundColor: Style.color.background_pane_inactive
 	}
 
 	GButton {

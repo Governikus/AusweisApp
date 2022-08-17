@@ -26,7 +26,6 @@ QString ProviderConfigurationInfo::getDefaultFile(const QString& pSuffix) const
 
 ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShortName,
 		const LanguageString& pLongName,
-		const LanguageString& pShortDescription,
 		const LanguageString& pLongDescription,
 		const QString& pAddress,
 		const QString& pHomepage,
@@ -39,15 +38,13 @@ ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShor
 		const QStringList& pSubjectUrls,
 		const QString& pSubjectUrlInfo,
 		const QString& pInternalId)
-	: d(new InternalInfo(pShortName, pLongName, pShortDescription, pLongDescription, pAddress, pHomepage,
+	: d(new InternalInfo(pShortName, pLongName, pLongDescription, pAddress, pHomepage,
 			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pSubjectUrls, pSubjectUrlInfo, pInternalId))
 {
 }
 
 
-ProviderConfigurationInfo::~ProviderConfigurationInfo()
-{
-}
+ProviderConfigurationInfo::~ProviderConfigurationInfo() = default;
 
 
 bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOther) const
@@ -91,19 +88,13 @@ bool ProviderConfigurationInfo::matchWithSubjectUrl(const QString& pSubjectUrl) 
 
 const LanguageString& ProviderConfigurationInfo::getShortName() const
 {
-	return d->mShortName;
+	return !d->mShortName.toString().isNull() ? d->mShortName : getLongName();
 }
 
 
 const LanguageString& ProviderConfigurationInfo::getLongName() const
 {
-	return !d->mLongName.toString().isNull() ? d->mLongName : getShortName();
-}
-
-
-const LanguageString& ProviderConfigurationInfo::getShortDescription() const
-{
-	return d->mShortDescription;
+	return d->mLongName;
 }
 
 

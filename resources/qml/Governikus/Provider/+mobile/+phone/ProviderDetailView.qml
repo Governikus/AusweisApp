@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -17,7 +17,7 @@ SectionPage {
 	readonly property real tabBarSpacing: Constants.is_layout_ios ? Constants.component_spacing : 0
 	property alias providerModelItem: provider.modelItem
 
-	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+	navigationAction: NavigationAction { action: NavigationAction.Action.Back; onClicked: pop() }
 	title: provider.shortName
 	titleBarColor: Category.displayColor(provider.category)
 	titleBarOpacity: header.titleBarOpacity
@@ -28,6 +28,9 @@ SectionPage {
 	}
 
 	content: Column {
+		spacing: Constants.pane_padding
+		bottomPadding: Constants.pane_padding
+
 		ProviderHeader {
 			id: header
 
@@ -36,76 +39,46 @@ SectionPage {
 			selectedProvider: provider
 		}
 
-		Item {
-			height: swipeBar.height + swipeViewBackground.height + 2 * Constants.component_spacing + tabBarSpacing
-			width: baseItem.width
-
-			TabBar {
-				id: swipeBar
-				spacing: 0
-				width: Constants.is_layout_android ? parent.width : parent.width * 0.666 // Each tab of the 2 tabs gets 1/3 of the parent width, the rest ist padding
-				height: descriptionButton.implicitHeight
-				anchors.top: parent.top
-				anchors.topMargin: Constants.component_spacing
-				anchors.horizontalCenter: parent.horizontalCenter
-
-				currentIndex: swipeView.currentIndex
-
-				ProviderDetailTab {
-					id: descriptionButton
-					//: LABEL ANDROID_PHONE IOS_PHONE
-					text: qsTr("DESCRIPTION")
-				}
-
-				ProviderDetailTab {
-					id: contactButton
-					//: LABEL ANDROID_PHONE IOS_PHONE
-					text: qsTr("CONTACT")
-				}
+		GPaneBackground {
+			anchors {
+				left: parent.left
+				right: parent.right
+				margins: Constants.pane_padding
 			}
 
-			Rectangle {
-				id: swipeViewBackground
+			implicitHeight: description.implicitHeight + 2 * Constants.pane_padding
 
-				height: swipeView.height
-				width: parent.width
-				anchors.top: swipeBar.bottom
-				anchors.topMargin: tabBarSpacing
-				anchors.horizontalCenter: swipeBar.horizontalCenter
+			ProviderDetailDescription {
+				id: description
 
-				color: Style.color.background_pane
+				anchors.fill: parent
+				anchors.margins: Constants.pane_padding
 
-				SwipeView {
-					id: swipeView
-
-					height: Math.max(providerText.implicitHeight, providerInfo.implicitHeight)
-					anchors.left: parent.left
-					anchors.top: parent.top
-					anchors.right: parent.right
-
-					currentIndex: swipeBar.currentIndex
-					clip: true
-
-					GText {
-						id: providerText
-
-						Accessible.onScrollDownAction: baseItem.scrollPageDown()
-						Accessible.onScrollUpAction: baseItem.scrollPageUp()
-
-						padding: Constants.component_spacing
-						//: LABEL ANDROID_PHONE IOS_PHONE
-						text: (!!provider.longDescription ? provider.longDescription : qsTr("The provider did not provide a description."))
-						textFormat: Text.RichText
-						horizontalAlignment: Text.AlignLeft
-					}
-
-					ProviderContactTab {
-						id: providerInfo
-
-						contactModel: provider.contactModel
-					}
-				}
+				description: provider.longDescription
 			}
 		}
+
+		GPaneBackground {
+			anchors {
+				left: parent.left
+				right: parent.right
+				margins: Constants.pane_padding
+			}
+
+			implicitHeight: contactInfo.implicitHeight + 2 * Constants.pane_padding
+
+			ProviderContactInfo {
+				id: contactInfo
+
+				anchors.fill: parent
+				anchors.margins: Constants.pane_padding
+
+				titleTextStyle: Style.text.header_accent
+				textStyle: Style.text.normal_accent
+
+				contactModel: provider.contactModel
+			}
+		}
+
 	}
 }

@@ -2,15 +2,17 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "asn1/KnownOIDs.h"
 #include "pace/KeyDerivationFunction.h"
 
 #include "LogHandler.h"
+#include "SecurityProtocol.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 /**
  * Test data generated with ocard_client
@@ -35,7 +37,8 @@ class test_KeyDerivationFunction
 
 		void unknownAlgorithm()
 		{
-			KeyDerivationFunction kdf("unknown-algorithm");
+			SecurityProtocol securityProtocol(Oid(QByteArray("unknown-algorithm")));
+			KeyDerivationFunction kdf(securityProtocol);
 
 			QByteArray key = kdf.pi("123456");
 
@@ -48,9 +51,10 @@ class test_KeyDerivationFunction
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_3DES_CBC_CBC));
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_3DES_CBC_CBC);
+			KeyDerivationFunction kdf(securityProtocol);
 
-			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.count() > 0);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("3DES not supported")));
 			QVERIFY(!kdf.isInitialized());
 		}
@@ -58,7 +62,8 @@ class test_KeyDerivationFunction
 
 		void aes128Key()
 		{
-			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_128));
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			KeyDerivationFunction kdf(securityProtocol);
 
 			QByteArray key = kdf.pi("123456");
 
@@ -69,7 +74,8 @@ class test_KeyDerivationFunction
 
 		void aes196Key()
 		{
-			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_192));
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_192);
+			KeyDerivationFunction kdf(securityProtocol);
 
 			QByteArray key = kdf.pi("123456");
 
@@ -80,7 +86,8 @@ class test_KeyDerivationFunction
 
 		void aes256Key()
 		{
-			KeyDerivationFunction kdf(toByteArray(KnownOIDs::id_PACE::ECDH::GM_AES_CBC_CMAC_256));
+			SecurityProtocol securityProtocol(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256);
+			KeyDerivationFunction kdf(securityProtocol);
 
 			QByteArray key = kdf.pi("123456");
 

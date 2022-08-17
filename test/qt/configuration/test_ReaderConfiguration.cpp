@@ -21,6 +21,12 @@ using namespace governikus;
 
 Q_DECLARE_METATYPE(UsbId)
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+using JsonValueRef = const QJsonValueRef;
+#else
+using JsonValueRef = const QJsonValue&;
+#endif
+
 
 class test_ReaderConfiguration
 	: public QObject
@@ -44,14 +50,14 @@ class test_ReaderConfiguration
 		void checkPlatformsMinMax(const QJsonObject& pObject, const QLatin1String& pValue)
 		{
 			const QJsonArray& array = pObject[pValue].toArray();
-			for (const auto& entry : array)
+			for (JsonValueRef entry : array)
 			{
 				QVERIFY(entry.isObject());
 				auto object = entry.toObject();
 				QVERIFY(object.contains(QLatin1String("Platforms")));
 
 				const QJsonArray& platforms = object[QLatin1String("Platforms")].toArray();
-				for (const auto& platform : platforms)
+				for (JsonValueRef platform : platforms)
 				{
 					QVERIFY(platform.isObject());
 					auto platformObject = platform.toObject();
@@ -113,7 +119,7 @@ class test_ReaderConfiguration
 			QTest::newRow("REINER SCT cyberJack RFID basis") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis" << "img_Reiner_SCT_cyberjack_RFID_basis" << "REINER SCT cyberJack RFID basis";
 			QTest::newRow("REINER SCT cyberJack wave") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave" << "img_cyberjack_wave" << "REINER SCT cyberJack wave( USB 1)?$";
 
-			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken( 0)?$";
+			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken( \\d{1,1})?$";
 
 			QTest::newRow("Identiv SDI011") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
 			QTest::newRow("Identiv SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
@@ -142,6 +148,7 @@ class test_ReaderConfiguration
 			QTest::newRow("Cherry-TC-1200-data") << UsbId(0x046A, 0x0091) << "Cherry TC 1200" << "Cherry TC-1200" << "img_Cherry_TC_1200" << "(Cherry TC 1200($|[^-])|TC 12xx-CL 0|Cherry SC Reader \\(046A:0091\\))";
 			QTest::newRow("Cherry-TC-1300-data") << UsbId(0x046A, 0x0092) << "Cherry TC 1300" << "Cherry TC-1300" << "img_Cherry_TC_1300" << "(Cherry TC 1300|Cherry Smartcard Terminal TC 13xx-CL 0|Cherry SC Reader \\(046A:0092\\))";
 			QTest::newRow("Cherry-ST-1275-data") << UsbId(0x046A, 0x0072) << "Cherry SmartTerminal XX7X-RF 0" << "Cherry ST-1275" << "img_Cherry_ST_1275" << "(Cherry ST-1275|Cherry SmartTerminal XX7X-RF 0)";
+			QTest::newRow("Cherry-sercure Board") << UsbId(0x046A, 0x01A2) << "Cherry GmbH CHERRY SECURE BOARD 1.0" << "Cherry Secure Board 1.0" << "img_Cherry_secure_board" << "Cherry GmbH CHERRY SECURE BOARD 1.0( 0)?$";
 
 			QTest::newRow("Signotec Omega Pad") << UsbId(0x2133, 0x010B) << "NXP PR533" << "Signotec Omega Pad" << "img_Signotec_Omega_Pad" << "NXP PR533( 0)?";
 		}
@@ -201,8 +208,13 @@ class test_ReaderConfiguration
 			QTest::newRow("REINER SCT cyberJack wave-windows-7-10-2") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave USB 1" << "REINER SCT cyberJack wave";
 			QTest::newRow("REINER SCT cyberJack wave-macosx-10.13-11.0") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave";
 
-			QTest::newRow("KOBIL IDToken-windows-7-10") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 0" << "KOBIL IDToken";
-			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-windows-7-10-1") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 0" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-windows-7-10-2") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 1" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-windows-7-10-3") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 2" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-windows-7-10-4") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-1") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-2") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken 0" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-3") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken 1" << "KOBIL IDToken";
 
 			QTest::newRow("Identiv SDI011-windows-7-10-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
 			QTest::newRow("Identiv SDI011-windows-7-10-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
@@ -336,6 +348,9 @@ class test_ReaderConfiguration
 			QTest::newRow("Cherry-ST-1275-windows-7-10-1") << UsbId(0x046A, 0x0072) << "Cherry SmartTerminal XX7X 0" << "Cherry SmartTerminal XX7X 0";
 			QTest::newRow("Cherry-ST-1275-windows-7-10-2") << UsbId(0x046A, 0x0072) << "Cherry SmartTerminal XX7X-RF 0" << "Cherry ST-1275";
 
+			QTest::newRow("Cherry-sercure Board-windows-7-10-1") << UsbId(0x046A, 0x01A2) << "Cherry GmbH CHERRY SECURE BOARD 1.0 0" << "Cherry Secure Board 1.0";
+			QTest::newRow("Cherry-sercure Board-macosx-10.13-11.0-1") << UsbId(0x046A, 0x01A2) << "Cherry GmbH CHERRY SECURE BOARD 1.0" << "Cherry Secure Board 1.0";
+
 			QTest::newRow("Signotec Omega Pad-windows-7-10") << UsbId(0x2133, 0x010B) << "NXP PR533 0" << "Signotec Omega Pad";
 			QTest::newRow("Signotec Omega Pad-macosx-10.13-11.0") << UsbId(0x2133, 0x010B) << "NXP PR533" << "Signotec Omega Pad";
 		}
@@ -390,7 +405,7 @@ class test_ReaderConfiguration
 			QVERIFY(jsonError.error == QJsonParseError::NoError);
 			QJsonObject doc = json.object();
 			const QJsonArray& array = doc[QLatin1String("SupportedDevices")].toArray();
-			for (const auto& entry : array)
+			for (JsonValueRef entry : array)
 			{
 				QVERIFY(entry.isObject());
 				auto object = entry.toObject();
@@ -404,7 +419,7 @@ class test_ReaderConfiguration
 };
 
 
-const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 31;
+const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 32;
 
 QTEST_GUILESS_MAIN(test_ReaderConfiguration)
 #include "test_ReaderConfiguration.moc"

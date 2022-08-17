@@ -1,0 +1,5 @@
+if(TARGET ${Qt}::WebSockets)
+	add_subdirectory(base)
+	add_subdirectory(remote)
+	add_subdirectory(local)
+endif()

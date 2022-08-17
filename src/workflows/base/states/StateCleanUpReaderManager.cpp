@@ -13,7 +13,7 @@
 using namespace governikus;
 
 StateCleanUpReaderManager::StateCleanUpReaderManager(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -23,25 +23,39 @@ void StateCleanUpReaderManager::run()
 {
 	const QSharedPointer<WorkflowContext> context = getContext();
 
-	// Stop scanning is required to kill all connections to force deleting all pace passwords on a remote comfort reader
-	const auto& status = context->getStatus();
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	readerManager->stopScanAll(status.isError() ? status.toErrorDescription(true) : QString());
-
-#ifdef Q_OS_IOS
-	readerManager->reset(ReaderManagerPlugInType::NFC);
-#else
-	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	const auto& reader = context->getReaderName();
+	if (!reader.isEmpty() && !context->getStatus().isError())
 	{
-		readerManager->startScanAll();
+		const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(reader);
+		if (readerInfo.hasCard() && readerInfo.getCardInfo().getCardType() != CardType::SMART_EID)
+		{
+			context->setRemoveCardFeedback(true);
+		}
 	}
-#endif
 
 	if (context->getCardConnection())
 	{
 		qDebug() << "Going to disconnect card connection";
 		context->resetCardConnection();
 	}
+	context->rememberReader();
+
+	const auto& status = context->getStatus();
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+#ifdef Q_OS_IOS
+		readerManager->stopScan(ReaderManagerPlugInType::NFC, status.isError() ? status.toErrorDescription(true) : QString());
+#endif
+		readerManager->shelve();
+	}
+	else
+	{
+		readerManager->stopScanAll(status.isError() ? status.toErrorDescription(true) : QString());
+	}
+#ifdef Q_OS_IOS
+	readerManager->reset(ReaderManagerPlugInType::NFC);
+#endif
 
 	Q_EMIT fireContinue();
 }

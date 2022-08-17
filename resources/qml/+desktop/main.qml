@@ -8,7 +8,7 @@ import Governikus.FeedbackView 1.0
 import Governikus.MainView 1.0
 import Governikus.HistoryView 1.0
 import Governikus.SelfAuthenticationView 1.0
-import Governikus.IdentifyView 1.0
+import Governikus.AuthView 1.0
 import Governikus.ChangePinView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ProviderView 1.0
@@ -25,45 +25,33 @@ import Governikus.Type.SelfAuthModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Style 1.0
 
-import QtQml 2.12
-import QtQml.Models 2.12
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.12
-import Qt.labs.platform 1.0 as Labs
-
+import QtQml 2.15
+import QtQml.Models 2.15
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 ApplicationWindow {
 	id: appWindow
-
-	function openSaveFileDialog(pOnAcceptedCallback, pDefaultFilename, pFileType, pSuffix) {
-		saveFileDialog.nameFilters = "%1 (*.%2)".arg(pFileType).arg(pSuffix)
-		saveFileDialog.defaultSuffix = pSuffix
-		saveFileDialog.currentFile = saveFileDialog.folder + "/" + pDefaultFilename
-		saveFileDialog.acceptedCallback = pOnAcceptedCallback
-		saveFileDialog.open()
-	}
 
 	visible: false
 
 	minimumWidth: 480
 	minimumHeight: 360
 
-	title: Qt.application.name + (plugin.developerVersion ? " - Beta - " + Qt.application.version : "")
+	title: menuBar.rightMostAction.text
 	color: Style.color.background
 	menuBar: TitleBar {
-		id: titleBar
 		contentRoot: contentLoader
 		onRootClicked: d.activeView = UiModule.DEFAULT
 	}
 
-	Component.onCompleted: menuBar.forceActiveFocus()
+	Component.onCompleted: menuBar.forceActiveFocus(Qt.MouseFocusReason)
 
 	onWidthChanged: d.setScaleFactor()
 	onHeightChanged: d.setScaleFactor()
 
-	onClosing: {
-		if (ApplicationModel.currentWorkflow !== "") {
+	onClosing: close => {
+		if (ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE) {
 			abortWorkflowWarning.open()
 			close.accepted = false
 			return
@@ -81,7 +69,7 @@ ApplicationWindow {
 			d.hideUiAndTaskbarEntry()
 		}
 	}
-	onVisibilityChanged: if (visibility !== ApplicationWindow.Minimized) d.lastVisibility = visibility
+	onVisibilityChanged: visibility => { if (visibility !== ApplicationWindow.Minimized) d.lastVisibility = visibility }
 
 	function showDetachedLogView() {
 		if (d.detachedLogView === null) {
@@ -100,13 +88,13 @@ ApplicationWindow {
 		property ApplicationWindow detachedLogView: null
 
 		function abortCurrentWorkflow() {
-			if (ApplicationModel.currentWorkflow === "authentication") {
+			if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_AUTHENTICATION) {
 				AuthModel.cancelWorkflow()
 			}
-			else if (ApplicationModel.currentWorkflow === "selfauthentication") {
+			else if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_SELF_AUTHENTICATION) {
 				SelfAuthModel.cancelWorkflow()
 			}
-			else if (ApplicationModel.currentWorkflow === "changepin") {
+			else if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN) {
 				ChangePinModel.cancelWorkflow()
 			}
 		}
@@ -117,7 +105,6 @@ ApplicationWindow {
 		}
 
 		function closeOpenDialogs() {
-			saveFileDialog.reject()
 			closeWarning.close()
 			abortWorkflowWarning.close()
 		}
@@ -151,18 +138,6 @@ ApplicationWindow {
 
 	}
 
-	TaskbarProgress {}
-
-	Labs.FileDialog {
-		id: saveFileDialog
-
-		property var acceptedCallback
-
-		fileMode: Labs.FileDialog.SaveFile
-		folder: Labs.StandardPaths.writableLocation(Labs.StandardPaths.DocumentsLocation)
-		onAccepted: acceptedCallback(file)
-	}
-
 	ConfirmationPopup {
 		id: domination
 
@@ -189,7 +164,7 @@ ApplicationWindow {
 		ToggleableOption {
 			//: LABEL DESKTOP
 			text: qsTr("Do not show this dialog again.")
-			textStyle: Style.text.normal_inverse
+			textStyle: Style.text.normal
 
 			checked: !SettingsModel.remindUserToClose
 
@@ -219,43 +194,43 @@ ApplicationWindow {
 
 	Connections {
 		target: plugin
-		onFireShowRequest: {
+		function onFireShowRequest(pModule) {
 			d.showMainWindow()
 			d.closeOpenDialogs()
 			switch (pModule) {
 				case UiModule.CURRENT:
 					break
 				case UiModule.IDENTIFY:
-					if (ApplicationModel.currentWorkflow === "") {
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE) {
 						d.activeView = UiModule.SELF_AUTHENTICATION
 					}
-					if (ApplicationModel.currentWorkflow === "authentication" || ApplicationModel.currentWorkflow === "selfauthentication") {
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_AUTHENTICATION || ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_SELF_AUTHENTICATION) {
 						d.activeView = UiModule.IDENTIFY
 					}
 					break
 				case UiModule.PINMANAGEMENT:
-					if (ApplicationModel.currentWorkflow === "" || ApplicationModel.currentWorkflow === "changepin") {
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE || ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN) {
 						d.activeView = UiModule.PINMANAGEMENT
 					}
 					break
 				case UiModule.UPDATEINFORMATION:
-					if (ApplicationModel.currentWorkflow === "" && d.activeView === UiModule.DEFAULT) {
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE && d.activeView === UiModule.DEFAULT) {
 						d.activeView = UiModule.UPDATEINFORMATION
 					}
 					break
 				default:
-					if (ApplicationModel.currentWorkflow === "") {
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE) {
 						d.activeView = pModule
 					}
 					break
 			}
 		}
-		onFireHideRequest: hide()
+		function onFireHideRequest() { hide() }
 	}
 
 	Connections {
 		target: SettingsModel
-		onFireAppUpdateDataChanged: {
+		function onFireAppUpdateDataChanged() {
 			if (!SettingsModel.appUpdateData.valid) {
 				//: INFO DESKTOP Message that the update data is invalid and can't be used.
 				ApplicationModel.showFeedback(qsTr("Failed to retrieve update information."))
@@ -269,7 +244,7 @@ ApplicationWindow {
 
 	Shortcut {
 		sequence: StandardKey.HelpContents
-		onActivated: ApplicationModel.openOnlineHelp(titleBar.rightMostAction.helpTopic)
+		onActivated: ApplicationModel.openOnlineHelp(menuBar.rightMostAction.helpTopic)
 	}
 
 	Image {
@@ -288,7 +263,7 @@ ApplicationWindow {
 
 		Component {id: main; MainView {}}
 		Component {id: selfauthentication; SelfAuthenticationView {}}
-		Component {id: identify; IdentifyView {}}
+		Component {id: auth; AuthView {}}
 		Component {id: pinmanagement; ChangePinView {}}
 		Component {id: provider; ProviderView {}}
 		Component {id: help; MoreView {}}
@@ -305,19 +280,19 @@ ApplicationWindow {
 
 		Connections {
 			target: contentLoader.item
-			onNextView: d.activeView = pName
-			onVisibleChildrenChanged: titleBar.updateActions()
+			function onNextView(pName) { d.activeView = pName }
+			function onVisibleChildrenChanged() { menuBar.updateActions() }
 		}
 
 		anchors.fill: parent
 
 		onItemChanged: {
-			titleBar.updateActions()
+			menuBar.updateActions()
 			item.setActive()
 		}
 		sourceComponent: switch(d.activeView) {
 			case UiModule.SELF_AUTHENTICATION: return selfauthentication
-			case UiModule.IDENTIFY: return identify
+			case UiModule.IDENTIFY: return auth
 			case UiModule.PINMANAGEMENT: return pinmanagement
 			case UiModule.PROVIDER: return provider
 			case UiModule.HELP: return help
@@ -379,7 +354,7 @@ ApplicationWindow {
 
 	Connections {
 		target: plugin
-		onFireProxyAuthenticationRequired: {
+		function onFireProxyAuthenticationRequired(pProxyCredentials) {
 			proxyCredentials.credentials = pProxyCredentials
 			proxyCredentials.open()
 		}
@@ -399,7 +374,7 @@ ApplicationWindow {
 			minimumHeight: appWindow.minimumHeight
 			minimumWidth: appWindow.minimumWidth
 
-			title: qsTr("%1 - Detached log viewer").arg(appWindow.title)
+			title: qsTr("Detached log viewer")
 
 			DetachedLogView {
 				anchors.fill: parent

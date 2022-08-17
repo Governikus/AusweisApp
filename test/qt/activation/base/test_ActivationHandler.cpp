@@ -6,7 +6,7 @@
 
 #include "ActivationHandler.h"
 
-#include "LogHandler.h"
+#include "AppSettings.h"
 #include "MockSocket.h"
 #include "ResourceLoader.h"
 
@@ -25,9 +25,16 @@ class TestActivationHandler
 	public:
 		static void checkUrl(const QUrl& pUrl, ActivationType pType, const QString& pValue)
 		{
-			const auto [type, value] = getRequest(pUrl);
+			const auto queryUrl = QUrlQuery(pUrl);
+			const auto [type, value] = getRequest(queryUrl);
 			QCOMPARE(type, pType);
 			QCOMPARE(value, pValue);
+		}
+
+
+		static void checkQueryParams(const QUrl& pUrl)
+		{
+			handleQueryParams(QUrlQuery(pUrl));
 		}
 
 
@@ -72,6 +79,43 @@ class test_ActivationHandler
 			QFETCH(QString, value);
 
 			TestActivationHandler::checkUrl(url, type, value);
+		}
+
+
+		void handleQueryParams_data()
+		{
+			QTest::addColumn<QUrl>("url");
+			QTest::addColumn<bool>("useTestUri");
+			QTest::addColumn<bool>("enableSimulator");
+
+			QTest::newRow("empty") << QUrl("") << false << false;
+			QTest::newRow("useTestUri") << QUrl("?useTestUri=true") << true << false;
+			QTest::newRow("!useTestUri") << QUrl("?useTestUri=false") << false << false;
+			QTest::newRow("enableSimulator") << QUrl("?enableSimulator=true") << false << true;
+			QTest::newRow("!enableSimulator") << QUrl("?enableSimulator=false") << false << false;
+			QTest::newRow("multi 1") << QUrl("?useTestUri=true&enableSimulator=true") << true << true;
+			QTest::newRow("multi 2") << QUrl("?useTestUri=true&enableSimulator=false") << true << false;
+		}
+
+
+		void handleQueryParams()
+		{
+			auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			generalSettings.setDeveloperOptions(true);
+			generalSettings.setUseSelfauthenticationTestUri(false);
+			generalSettings.setSimulatorEnabled(false);
+
+			QCOMPARE(generalSettings.useSelfAuthTestUri(), false);
+			QCOMPARE(generalSettings.isSimulatorEnabled(), false);
+
+			QFETCH(QUrl, url);
+			QFETCH(bool, useTestUri);
+			QFETCH(bool, enableSimulator);
+
+			TestActivationHandler::checkQueryParams(url);
+
+			QCOMPARE(generalSettings.useSelfAuthTestUri(), useTestUri);
+			QCOMPARE(generalSettings.isSimulatorEnabled(), enableSimulator);
 		}
 
 

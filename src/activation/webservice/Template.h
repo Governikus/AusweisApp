@@ -18,9 +18,10 @@ namespace governikus
 
 class Template
 {
-	QString mTemplate;
-	QSet<QString> mKeys;
-	QMap<QString, QString> mContext;
+	private:
+		QString mTemplate;
+		QSet<QString> mKeys;
+		QMap<QString, QString> mContext;
 
 	public:
 		/*!
@@ -37,7 +38,7 @@ class Template
 		 * \brief Get template context keys, i.e. the possible keys
 		 * to add as context parameter.
 		 */
-		[[nodiscard]] const QSet<QString> getContextKeys() const;
+		[[nodiscard]] const QSet<QString>& getContextKeys() const;
 
 		/*!
 		 * \brief Set known context key as parameter. Unknown context

@@ -13,11 +13,11 @@ namespace governikus
 
 class ResourceLoader
 {
+	Q_DISABLE_COPY(ResourceLoader)
+
 	private:
 		const QStringList mFilenames;
 		QStringList mLoadedResources;
-
-		Q_DISABLE_COPY(ResourceLoader)
 
 	protected:
 		ResourceLoader();

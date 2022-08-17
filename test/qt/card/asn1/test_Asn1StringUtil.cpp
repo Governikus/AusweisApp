@@ -27,9 +27,9 @@ class test_Asn1StringUtil
 
 			Asn1StringUtil::setValue(QString("abc"), asn1String);
 			QCOMPARE(asn1String->length, 3);
-			QCOMPARE(asn1String->data[0], uchar('a'));
-			QCOMPARE(asn1String->data[1], uchar('b'));
-			QCOMPARE(asn1String->data[2], uchar('c'));
+			QCOMPARE(asn1String->data[0], static_cast<uchar>('a'));
+			QCOMPARE(asn1String->data[1], static_cast<uchar>('b'));
+			QCOMPARE(asn1String->data[2], static_cast<uchar>('c'));
 
 			ASN1_STRING_free(asn1String);
 		}

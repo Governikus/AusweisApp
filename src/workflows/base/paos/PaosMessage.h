@@ -20,7 +20,8 @@ class PaosMessage
 	friend class ::test_PaosMessage;
 
 	private:
-		QString mMessageID, mRelatesTo;
+		QString mMessageID;
+		QString mRelatesTo;
 
 	protected:
 		bool handleWSAddressingHeaders(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes);

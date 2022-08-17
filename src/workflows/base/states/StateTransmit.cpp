@@ -11,19 +11,20 @@ StateTransmit::StateTransmit(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setAbortOnCardRemoved();
 }
 
 
 void StateTransmit::run()
 {
-	const auto& transmits = getContext()->getTransmits();
+	const auto& transmit = getContext()->getTransmit();
 
-	Q_ASSERT(!transmits.isEmpty());
-	Q_ASSERT(transmits.size() == getContext()->getTransmitResponses().size());
+	Q_ASSERT(transmit);
+	Q_ASSERT(getContext()->getTransmitResponse());
 
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection != nullptr);
-	mConnections += cardConnection->callTransmitCommand(this, &StateTransmit::onCardCommandDone, transmits.last()->getInputApduInfos());
+	mConnections += cardConnection->callTransmitCommand(this, &StateTransmit::onCardCommandDone, transmit->getInputApduInfos());
 }
 
 
@@ -33,14 +34,12 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 	auto returnCode = transmitCommand->getReturnCode();
 	if (returnCode == CardReturnCode::OK)
 	{
-		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
-		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
+		getContext()->getTransmitResponse()->setOutputApdus(transmitCommand->getOutputApduAsHex());
 		Q_EMIT fireContinue();
 	}
 	else if (returnCode == CardReturnCode::UNEXPECTED_TRANSMIT_STATUS)
 	{
-		QSharedPointer<TransmitResponse> response(getContext()->getTransmitResponses().last());
-		response->setOutputApdus(transmitCommand->getOutputApduAsHex());
+		getContext()->getTransmitResponse()->setOutputApdus(transmitCommand->getOutputApduAsHex());
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode)); // set the result to the model so it is written to the PAOS response
 		Q_EMIT fireContinue();
 	}

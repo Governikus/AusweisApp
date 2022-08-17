@@ -181,8 +181,6 @@ class test_Downloader
 			QTest::ignoreMessage(QtDebugMsg, "Operation aborted"); // from MockNetworkReply
 			QTest::ignoreMessage(QtDebugMsg, "Current download aborted");
 			QVERIFY(downloader->abort(urlCurrent));
-			QCOMPARE(spy.count(), 0);
-			mMockNetworkManager.fireFinished();
 			verifyFailedReply(spy, urlCurrent, GlobalStatus::Code::Downloader_Aborted);
 		}
 
@@ -191,7 +189,7 @@ class test_Downloader
 		{
 			const QByteArray fileContent("Some icon data");
 			auto* const reply = new MockNetworkReply(fileContent, HTTP_STATUS_OK);
-			const QDateTime timestampOnServer(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
+			const QDateTime timestampOnServer(QDate(2017, 7, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			reply->setFileModificationTimestamp(timestampOnServer);
 			mMockNetworkManager.setNextReply(reply);
 
@@ -199,7 +197,7 @@ class test_Downloader
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
 
 			const QUrl url("http://server/reader/icons/icon.png");
-			const QDateTime timestampInCache(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
+			const QDateTime timestampInCache(QDate(2017, 6, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			downloader->download(url, timestampInCache);
 
 			mMockNetworkManager.fireFinished();
@@ -216,7 +214,7 @@ class test_Downloader
 		void conditionalDownloadOfOlderFile()
 		{
 			MockNetworkReply* const reply = new MockNetworkReply(QByteArray(), HTTP_STATUS_NOT_MODIFIED);
-			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0));
+			const QDateTime timestampOnServer(QDate(2017, 6, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			reply->setFileModificationTimestamp(timestampOnServer);
 			mMockNetworkManager.setNextReply(reply);
 
@@ -224,7 +222,7 @@ class test_Downloader
 			QSignalSpy spy(downloader, &Downloader::fireDownloadUnnecessary);
 
 			const QUrl url("http://server/reader/icons/icon.png");
-			const QDateTime timestampInCache(QDate(2017, 7, 1), QTime(12, 00, 0, 0));
+			const QDateTime timestampInCache(QDate(2017, 7, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			downloader->download(url, timestampInCache);
 
 			mMockNetworkManager.fireFinished();

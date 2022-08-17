@@ -127,7 +127,6 @@ bool ProviderCategoryFilterModel::rowMatchesFilter(int pSourceRow, const QModelI
 	const QString longname = model->data(idx, ProviderModel::LONGNAME).toString();
 	const QString address = model->data(idx, ProviderModel::ADDRESS).toString();
 	const QString homepage = model->data(idx, ProviderModel::HOMEPAGE).toString();
-	const QString shortdescription = model->data(idx, ProviderModel::SHORTDESCRIPTION).toString();
 	const QString longdescription = model->data(idx, ProviderModel::LONGDESCRIPTION).toString();
 
 	return display.contains(pSearchString, Qt::CaseInsensitive) ||
@@ -135,7 +134,6 @@ bool ProviderCategoryFilterModel::rowMatchesFilter(int pSourceRow, const QModelI
 		   longname.contains(pSearchString, Qt::CaseInsensitive) ||
 		   address.contains(pSearchString, Qt::CaseInsensitive) ||
 		   homepage.contains(pSearchString, Qt::CaseInsensitive) ||
-		   shortdescription.contains(pSearchString, Qt::CaseInsensitive) ||
 		   longdescription.contains(pSearchString, Qt::CaseInsensitive);
 }
 
@@ -148,11 +146,6 @@ ProviderCategoryFilterModel::ProviderCategoryFilterModel() :
 	QSortFilterProxyModel::sort(0);
 	sortByCategoryFirst(false);
 	setSortCaseSensitivity(Qt::CaseInsensitive);
-}
-
-
-ProviderCategoryFilterModel::~ProviderCategoryFilterModel()
-{
 }
 
 

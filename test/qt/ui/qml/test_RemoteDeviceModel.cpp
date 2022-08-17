@@ -74,8 +74,8 @@ class test_RemoteDeviceModel
 			const QString id = QStringLiteral("id");
 			const QDateTime time(QDateTime::currentDateTime());
 			RemoteDeviceModelEntry entry1(name);
-			const RemoteDeviceDescriptor descriptor = RemoteDeviceDescriptor();
-			QSharedPointer<RemoteDeviceListEntry> pointer(new RemoteDeviceListEntry(descriptor));
+			const IfdDescriptor descriptor = IfdDescriptor();
+			QSharedPointer<IfdListEntry> pointer(new IfdListEntry(descriptor));
 			RemoteDeviceModelEntry entry2(name, id, true, true, true, time, pointer);
 
 			QVERIFY(!entry1.isSupported());
@@ -90,8 +90,8 @@ class test_RemoteDeviceModel
 			RemoteDeviceModelEntry entry1(name);
 			QCOMPARE(entry1.getRemoteDeviceListEntry(), nullptr);
 
-			const RemoteDeviceDescriptor descriptor = RemoteDeviceDescriptor();
-			QSharedPointer<RemoteDeviceListEntry> pointer(new RemoteDeviceListEntry(descriptor));
+			const IfdDescriptor descriptor = IfdDescriptor();
+			QSharedPointer<IfdListEntry> pointer(new IfdListEntry(descriptor));
 			const QString id = QStringLiteral("id");
 			RemoteDeviceModelEntry entry2(name, id, pointer);
 			QCOMPARE(entry2.getRemoteDeviceListEntry(), pointer);
@@ -149,28 +149,13 @@ class test_RemoteDeviceModel
 		}
 
 
-		void test_HeaderData()
-		{
-			QCOMPARE(mModel->headerData(3, Qt::Vertical, 3), QVariant());
-			QCOMPARE(mModel->headerData(0, Qt::Horizontal, 3), QVariant());
-			QCOMPARE(mModel->headerData(0, Qt::Horizontal, 0), QVariant("Device"));
-			QCOMPARE(mModel->headerData(1, Qt::Horizontal, 0), QVariant("Status"));
-		}
-
-
-		void test_ColumnCount()
-		{
-			QCOMPARE(mModel->columnCount(), 2);
-		}
-
-
 		void test_GetRemoteDeviceListEntryId()
 		{
 			RemoteDeviceModelEntry entry1;
 			RemoteDeviceModelEntry entry2;
 			entry1.setId(QString("id"));
 
-			QCOMPARE(mModel->getRemoteDeviceListEntry(QString("id")), QSharedPointer<RemoteDeviceListEntry>());
+			QCOMPARE(mModel->getRemoteDeviceListEntry(QString("id")), QSharedPointer<IfdListEntry>());
 
 			mModel->mAllRemoteReaders.insert(0, entry1);
 			mModel->mAllRemoteReaders.insert(1, entry2);
@@ -181,7 +166,7 @@ class test_RemoteDeviceModel
 
 		void test_GetRemoteDeviceListEntryModelIndex()
 		{
-			QSharedPointer<RemoteDeviceListEntry> listEntry(new RemoteDeviceListEntry(RemoteDeviceDescriptor()));
+			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(IfdDescriptor()));
 			RemoteDeviceModelEntry entry1(QString("entry 1"), QStringLiteral("01"), listEntry);
 			RemoteDeviceModelEntry entry2(QString("entry 2"));
 			mModel->mAllRemoteReaders << entry1 << entry2;
@@ -220,7 +205,7 @@ class test_RemoteDeviceModel
 			QFETCH(QVariant, output);
 
 			QVector<RemoteDeviceModelEntry> readers;
-			QSharedPointer<RemoteDeviceListEntry> listEntry(new RemoteDeviceListEntry(RemoteDeviceDescriptor()));
+			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(IfdDescriptor()));
 			const RemoteDeviceModelEntry entry1(QString("reader 1"), QString("test id"), true, false, true, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
 			const RemoteDeviceModelEntry entry2(QString("reader 2"));
 			readers << entry1 << entry2;

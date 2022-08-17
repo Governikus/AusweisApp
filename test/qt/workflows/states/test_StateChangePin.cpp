@@ -6,6 +6,7 @@
 
 #include "states/StateChangePin.h"
 
+#include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
 
 #include <QtTest>
@@ -34,6 +35,40 @@ class MockEstablishPaceChannelCommand
 		void setReturnCode(CardReturnCode pCode)
 		{
 			mReturnCode = pCode;
+		}
+
+
+};
+
+
+class MockSetEidPinCommand
+	: public SetEidPinCommand
+{
+	Q_OBJECT
+
+	public:
+		explicit MockSetEidPinCommand(const QSharedPointer<MockCardConnectionWorker>& pWorker)
+			: SetEidPinCommand(pWorker, QByteArray("123456"), 1)
+		{
+		}
+
+
+		~MockSetEidPinCommand() override = default;
+
+		void internalExecute() override
+		{
+		}
+
+
+		void setReturnCode(CardReturnCode pCode)
+		{
+			mReturnCode = pCode;
+		}
+
+
+		void setData(const QByteArray& pData)
+		{
+			mResponseApdu = ResponseApdu(pData);
 		}
 
 
@@ -68,40 +103,99 @@ class test_StateChangePin
 		}
 
 
+		void test_OnSetEidPinDone_data()
+		{
+			QTest::addColumn<CardReturnCode>("returnCode");
+			QTest::addColumn<QByteArray>("response");
+			QTest::addColumn<GlobalStatus::Code>("globalStatus");
+			QTest::addColumn<int>("fireContinue");
+			QTest::addColumn<int>("fireAbort");
+			QTest::addColumn<int>("fireRetry");
+
+			QTest::newRow("1") << CardReturnCode::OK << QByteArray() << GlobalStatus::Code::Card_Unexpected_Transmit_Status << 0 << 1 << 0;
+			QTest::newRow("2") << CardReturnCode::OK << QByteArray("9000") << GlobalStatus::Code::No_Error << 1 << 0 << 0;
+			QTest::newRow("3") << CardReturnCode::OK << QByteArray("6400") << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0;
+			QTest::newRow("4") << CardReturnCode::OK << QByteArray("6401") << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0;
+			QTest::newRow("5") << CardReturnCode::OK << QByteArray("6402") << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0;
+			QTest::newRow("6") << CardReturnCode::OK << QByteArray("6403") << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0;
+			QTest::newRow("7") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("8") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0;
+			QTest::newRow("9") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0;
+			QTest::newRow("10") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("11") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("12") << CardReturnCode::CARD_NOT_FOUND << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("13") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("14") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+		}
+
+
 		void test_OnSetEidPinDone()
 		{
+			QFETCH(CardReturnCode, returnCode);
+			QFETCH(QByteArray, response);
+			QFETCH(GlobalStatus::Code, globalStatus);
+			QFETCH(int, fireContinue);
+			QFETCH(int, fireAbort);
+			QFETCH(int, fireRetry);
+
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateChangePin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker));
+			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
+			const ReaderInfo readerInfo("NFC", ReaderManagerPlugInType::NFC);
+			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
+			context->setCardConnection(connection);
 
 			QSignalSpy spyContinue(&state, &StateChangePin::fireContinue);
 			QSignalSpy spyAbort(&state, &StateChangePin::fireAbort);
-			QSignalSpy spyInvalidPin(&state, &StateChangePin::fireInvalidPin);
+			QSignalSpy spyRetry(&state, &StateChangePin::fireRetry);
+
+			command->setReturnCode(returnCode);
+			command->setData(QByteArray::fromHex(response));
+			state.onSetEidPinDone(command);
+			QCOMPARE(context->getStatus().getStatusCode(), globalStatus);
+
+			if (fireContinue > 0)
+			{
+				QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your ID card PIN."));
+			}
+			QCOMPARE(spyContinue.count(), fireContinue);
+			QCOMPARE(spyAbort.count(), fireAbort);
+			QCOMPARE(spyRetry.count(), fireRetry);
+		}
+
+
+		void test_OnSetSmartEidPinDone_data()
+		{
+			QTest::addColumn<ReaderManagerPlugInType>("type");
+
+			const auto& readerTypes = Enum<ReaderManagerPlugInType>::getList();
+			for (const auto& type : readerTypes)
+			{
+				QTest::newRow(getEnumName(type).data()) << type;
+			}
+		}
+
+
+		void test_OnSetSmartEidPinDone()
+		{
+			QFETCH(ReaderManagerPlugInType, type);
+
+			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
+			StateChangePin state(context);
+			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
+			const ReaderInfo readerInfo("SMART", type, CardInfo(CardType::SMART_EID));
+			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
+			context->setCardConnection(connection);
+
+			QSignalSpy spyContinue(&state, &StateChangePin::fireContinue);
 
 			command->setReturnCode(CardReturnCode::OK);
+			command->setData(QByteArray::fromHex("9000"));
 			state.onSetEidPinDone(command);
-			QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your PIN."));
+			QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your Smart-eID PIN."));
 			QCOMPARE(spyContinue.count(), 1);
-
-			command->setReturnCode(CardReturnCode::CANCELLATION_BY_USER);
-			state.onSetEidPinDone(command);
-			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Card_Cancellation_By_User);
-			QCOMPARE(spyAbort.count(), 1);
-
-			context->setStatus(GlobalStatus::Code::No_Error);
-
-			command->setReturnCode(CardReturnCode::NEW_PIN_MISMATCH);
-			state.onSetEidPinDone(command);
-			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Card_NewPin_Mismatch);
-			QCOMPARE(spyInvalidPin.count(), 1);
-
-			context->setStatus(GlobalStatus::Code::No_Error);
-
-			command->setReturnCode(CardReturnCode::PIN_BLOCKED);
-			state.onSetEidPinDone(command);
-			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::No_Error);
-			QCOMPARE(spyAbort.count(), 2);
 		}
 
 

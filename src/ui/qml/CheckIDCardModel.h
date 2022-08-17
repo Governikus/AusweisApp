@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "command/CreateCardConnectionCommand.h"
+#include "ReaderInfo.h"
 
 #include <QObject>
 

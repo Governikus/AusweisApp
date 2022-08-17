@@ -48,7 +48,7 @@ class test_MsgHandlerInternalError
 		void msgVoid()
 		{
 			MsgHandler msg = MsgHandler::Void;
-			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"INTERNAL_ERROR\"}"));
+			QCOMPARE(msg.toJson(), QByteArray(R"({"msg":"VOID"})"));
 			QCOMPARE(msg.getOutput(), QByteArray());
 			QVERIFY(msg.isVoid());
 		}

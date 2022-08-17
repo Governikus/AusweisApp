@@ -4,6 +4,9 @@
 
 #include "MsgHandlerInfo.h"
 
+#include "Env.h"
+#include "ReaderManager.h"
+#include "ReaderManagerPlugInInfo.h"
 #include "VersionInfo.h"
 
 using namespace governikus;

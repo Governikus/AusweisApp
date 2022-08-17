@@ -24,13 +24,13 @@ class Appcast extends Build
 			{
 				triggers
 				{
-					upstream(getSourceJobName('Win32_GNU_MSI') + ',' + getSourceJobName('MacOS_DMG_PKG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
+					upstream(getSourceJobName('Win64_GNU_MSI') + ',' + getSourceJobName('MacOS_DMG_PKG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
 				}
 			}
 
 			steps
 			{
-				copyArtifacts(getSourceJobName('Win32_GNU_MSI'))
+				copyArtifacts(getSourceJobName('Win64_GNU_MSI'))
 				{
 					buildSelector
 					{
@@ -63,8 +63,7 @@ class Appcast extends Build
 					}
 				}
 
-				def appCastJob = getReleaseJob() ? '' : '-DJENKINS_APPCAST=\${JOB_NAME}'
-				shell("cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true ${appCastJob}")
+				shell("cd source; cmake --preset ci-tools")
 				shell('cd build; cmake -E copy docs/notes/singlehtml/de/appcast.html ReleaseNotes.html')
 			}
 		}

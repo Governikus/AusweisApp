@@ -61,7 +61,7 @@ const QVector<ActivationHandler*>& ActivationController::getHandler() const
 }
 
 
-bool ActivationController::isPlugIn(const QJsonObject& pJson) const
+bool ActivationController::isPlugIn(const QJsonObject& pJson)
 {
-	return pJson.value(QStringLiteral("IID")).toString() == QLatin1String("governikus.ActivationHandler");
+	return pJson.value(QLatin1String("IID")).toString() == QLatin1String("governikus.ActivationHandler");
 }

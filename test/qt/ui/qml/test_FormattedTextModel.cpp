@@ -10,7 +10,7 @@
 
 using namespace governikus;
 
-using PairList = QList<QPair<QString, FormattedTextModel::LineType> >;
+using PairList = QList<QPair<QString, FormattedTextModel::LineType>>;
 
 class test_FormattedTextModel
 	: public QObject
@@ -124,27 +124,29 @@ class test_FormattedTextModel
 			QTest::addColumn<int>("rowCount");
 			QTest::addColumn<PairList>("modelContent");
 
-			PairList modelContent;
+			PairList fileContent;
+			fileContent << qMakePair(QStringLiteral("This is a header"), FormattedTextModel::HEADER);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("First section"), FormattedTextModel::SECTION);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("Subsection one"), FormattedTextModel::SUBSECTION);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("This multiline text will be concatenated to one text."), FormattedTextModel::REGULARTEXT);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("Subsection <b>two</b>"), FormattedTextModel::SUBSECTION);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("Some list items:"), FormattedTextModel::REGULARTEXT);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("First"), FormattedTextModel::LISTITEM);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("Second"), FormattedTextModel::LISTITEM);
+			fileContent << qMakePair(QString(), FormattedTextModel::EMPTY);
+			fileContent << qMakePair(QStringLiteral("Third"), FormattedTextModel::LISTITEM);
 
-			modelContent << qMakePair(QStringLiteral("This is a header"), FormattedTextModel::HEADER);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("First section"), FormattedTextModel::SECTION);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("Subsection one"), FormattedTextModel::SUBSECTION);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("This multiline text will be concatenated to one text."), FormattedTextModel::REGULARTEXT);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("Subsection <b>two</b>"), FormattedTextModel::SUBSECTION);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("Some list items:"), FormattedTextModel::REGULARTEXT);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("First"), FormattedTextModel::LISTITEM);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("Second"), FormattedTextModel::LISTITEM);
-			modelContent << qMakePair(QString(), FormattedTextModel::EMPTY);
-			modelContent << qMakePair(QStringLiteral("Third"), FormattedTextModel::LISTITEM);
+			PairList fileSeparator;
+			fileSeparator << qMakePair(QString(), FormattedTextModel::EMPTY);
 
-			QTest::addRow("formattedText.txt") << ":/qml/formattedText.txt" << 17 << modelContent;
+			QTest::addRow("formattedText.txt") << ":/qml/formattedText.txt" << 35 << fileContent + fileSeparator + fileContent;
 		}
 
 
@@ -154,8 +156,8 @@ class test_FormattedTextModel
 			QFETCH(int, rowCount);
 			QFETCH(PairList, modelContent);
 
-			FormattedTextModel textModel;
-			QCOMPARE(textModel.load(textFile), true);
+			FormattedTextModel textModel(nullptr);
+			QCOMPARE(textModel.loadSeveral({textFile, textFile}), true);
 			QCOMPARE(textModel.rowCount(), rowCount);
 
 			for (int i = 0; i < textModel.rowCount(); ++i)

@@ -1,5 +1,4 @@
 import common.Review
-import static common.Constants.strip
 
 def j = new Review
 	(
@@ -21,12 +20,11 @@ j.with
 			hg --config extensions.hgext.strip= strip -r 'secret() or draft()' --no-backup --force 2>/dev/null || echo "No changeset stripped"
 			'''.stripIndent().trim())
 
-		shell('cd build; cmake -Werror=dev ../source -Dtools.only=true')
+		shell('cd source; cmake --preset ci-tools')
 
 		shell('''\
-			cd build
-			make format
-			cd ../source
+			cd source
+			cmake --build ../build --target format
 
 			STATUS=$(hg status | wc -c)
 			if [ "$STATUS" != "0" ]; then
@@ -42,10 +40,8 @@ j.with
 			  exit 0
 			fi
 
-			cd ../build
-			make rebuild_cache
-			make format
-			cd ../source
+			cmake --build ../build --target rebuild_cache
+			cmake --build ../build --target format
 
 			STATUS=$(hg status | wc -c)
 			if [ "$STATUS" != "0" ]; then

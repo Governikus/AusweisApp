@@ -7,8 +7,8 @@
 #include <QtCore>
 #include <QtTest>
 
-#include "asn1/CVCertificateChainBuilder.h"
 #include "TestFileHelper.h"
+#include "asn1/CVCertificateChainBuilder.h"
 
 
 using namespace governikus;
@@ -107,7 +107,7 @@ class test_CVCertificateChainBuilder
 
 		void noDV_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -127,7 +127,7 @@ class test_CVCertificateChainBuilder
 
 		void noDV_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -147,7 +147,7 @@ class test_CVCertificateChainBuilder
 
 		void noAT_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -167,7 +167,7 @@ class test_CVCertificateChainBuilder
 
 		void noAT_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -187,7 +187,7 @@ class test_CVCertificateChainBuilder
 
 		void onlyATandDV_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			// list.append(mCvca_DETESTeID00005);
 			// list.append(mCvca_DETESTeID00005_DETESTeID00004); do not include any CVCA certificates
 			// list.append(mCvca_DETESTeID00004);
@@ -207,7 +207,7 @@ class test_CVCertificateChainBuilder
 
 		void onlyATandDV_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			// list.append(mCvca_DETESTeID00005);
 			// list.append(mCvca_DETESTeID00005_DETESTeID00004); do not include any CVCA certificates
 			// list.append(mCvca_DETESTeID00004);
@@ -227,7 +227,7 @@ class test_CVCertificateChainBuilder
 
 		void missingLinkCert_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -252,7 +252,7 @@ class test_CVCertificateChainBuilder
 
 		void missingLinkCert_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -290,7 +290,7 @@ class test_CVCertificateChainBuilder
 		 */
 		void match_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -315,7 +315,7 @@ class test_CVCertificateChainBuilder
 
 		void match_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -340,7 +340,7 @@ class test_CVCertificateChainBuilder
 
 		void noMatch_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -360,7 +360,7 @@ class test_CVCertificateChainBuilder
 
 		void noMatch_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -380,7 +380,7 @@ class test_CVCertificateChainBuilder
 
 		void getChainForCertificationAuthority_forCarCurr()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -403,7 +403,7 @@ class test_CVCertificateChainBuilder
 
 		void getChainForCertificationAuthority_forCarPrev()
 		{
-			QVector<QSharedPointer<const CVCertificate> > list;
+			QVector<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);

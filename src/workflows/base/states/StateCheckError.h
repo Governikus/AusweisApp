@@ -8,8 +8,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 namespace governikus
 {
@@ -21,8 +21,9 @@ class StateCheckError
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

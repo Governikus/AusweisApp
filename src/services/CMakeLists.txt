@@ -1,6 +1,6 @@
 #####################################################################
 # The module services is responsible to trigger periodic background
-# services like checkes for appplication updates or updates for
+# services like checks for application updates or updates for
 # configuration files.
 #####################################################################
 

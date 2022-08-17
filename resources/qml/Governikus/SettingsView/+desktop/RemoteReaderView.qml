@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -27,7 +27,7 @@ Item {
 	implicitHeight: column.implicitHeight
 
 	ReaderScanEnabler {
-		plugInType: ReaderPlugIn.REMOTE
+		plugInType: ReaderPlugIn.REMOTE_IFD
 	}
 
 	Column {
@@ -47,9 +47,7 @@ Item {
 			textStyle: Style.text.header_accent
 			text: qsTr("Paired remote devices")
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		Column {
@@ -62,7 +60,7 @@ Item {
 				delegate: RemoteReaderDelegate {
 					width: parent.width
 					height: implicitHeight + Constants.pane_padding
-					onUnpairDevice: root.unpairDevice(pDeviceId)
+					onUnpairDevice: pDeviceId => root.unpairDevice(pDeviceId)
 				}
 			}
 		}
@@ -81,9 +79,7 @@ Item {
 			textStyle: Style.text.header_accent
 			text: qsTr("Available remote devices")
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GListView {
@@ -96,7 +92,7 @@ Item {
 			delegate: RemoteReaderDelegate {
 				width: availableDevices.width
 				height: implicitHeight + Constants.pane_padding
-				onPairDevice: root.pairDevice(pDeviceId)
+				onPairDevice: pDeviceId => root.pairDevice(pDeviceId)
 			}
 		}
 
@@ -110,9 +106,7 @@ Item {
 			textStyle: Style.text.normal
 			text: RemoteServiceModel.availableRemoteDevices.emptyListDescriptionString
 
-			FocusFrame {
-				borderColor: Style.color.focus_indicator
-			}
+			FocusFrame {}
 		}
 
 		GSeparator {
@@ -145,9 +139,7 @@ Item {
 				textStyle: Style.text.hint
 				text: qsTr("Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.")
 
-				FocusFrame {
-					borderColor: Style.color.focus_indicator
-				}
+				FocusFrame {}
 			}
 		}
 

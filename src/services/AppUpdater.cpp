@@ -29,7 +29,7 @@ AppUpdater::AppUpdater()
 {
 	const auto* secureStorage = Env::getSingleton<SecureStorage>();
 
-	mAppUpdateJsonUrl = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage->getAppcastBetaUpdateUrl() : secureStorage->getAppcastUpdateUrl();
+	mAppUpdateJsonUrl = VersionNumber::getApplicationVersion().isBetaVersion() ? secureStorage->getAppcastBetaUpdateUrl() : secureStorage->getAppcastUpdateUrl();
 }
 
 
@@ -164,102 +164,124 @@ void AppUpdater::onDownloadFinished(const QUrl& pUpdateUrl, const QDateTime& pNe
 
 	if (pUpdateUrl == mAppUpdateJsonUrl)
 	{
-		AppUpdateData newData(pData);
-		if (newData.isValid())
-		{
-			mAppUpdateData = newData;
-			const auto& version = mAppUpdateData.getVersion();
-
-			if (VersionNumber(version) > VersionNumber::getApplicationVersion())
-			{
-				if (!mForceUpdate && version == Env::getSingleton<AppSettings>()->getGeneralSettings().getSkipVersion())
-				{
-					qCInfo(appupdate) << "Version will be skipped:" << version;
-					Q_EMIT fireAppcastCheckFinished(false, GlobalStatus::Code::No_Error);
-				}
-				else
-				{
-					mForceUpdate = false;
-					qCInfo(appupdate) << "Found new version:" << version << ", greater than old version" << QCoreApplication::applicationVersion();
-					Env::getSingleton<Downloader>()->download(mAppUpdateData.getNotesUrl());
-					return;
-				}
-			}
-			else
-			{
-				qCDebug(appupdate) << "No new version:" << version;
-				Q_EMIT fireAppcastCheckFinished(false, GlobalStatus::Code::No_Error);
-			}
-		}
-		else
-		{
-			Q_EMIT fireAppcastCheckFinished(false, newData.getParsingResult().getStatusCode());
-		}
-		clearDownloaderConnection();
+		handleVersionInfoDownloadFinished(pData);
 	}
 	else if (pUpdateUrl == mAppUpdateData.getNotesUrl())
 	{
-		qCDebug(appupdate) << "Release notes downloaded successfully";
-		mAppUpdateData.setNotes(QString::fromUtf8(pData));
-		Q_EMIT fireAppcastCheckFinished(true, GlobalStatus::Code::No_Error);
-		clearDownloaderConnection();
+		handleReleaseNotesDownloadFinished(pData);
 	}
 	else if (pUpdateUrl == mAppUpdateData.getChecksumUrl())
 	{
-		qCDebug(appupdate) << "Checksum file downloaded successfully:" << pUpdateUrl.fileName();
-		save(pData, pUpdateUrl.fileName());
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-		const auto split = Qt::SkipEmptyParts;
-#else
-		const auto split = QString::SkipEmptyParts;
-#endif
-
-		const auto extensionSplit = pUpdateUrl.fileName().split(QLatin1Char('.'), split);
-		const auto extension = extensionSplit.isEmpty() ? QByteArray() : extensionSplit.last().toLatin1();
-		mAppUpdateData.setChecksum(pData, getHashAlgo(extension));
-
-		const auto package = mDownloadPath + mAppUpdateData.getUrl().fileName();
-		if (QFile::exists(package))
-		{
-			qCDebug(appupdate) << "Package already exists:" << package;
-			mAppUpdateData.setUpdatePackagePath(package);
-			if (mAppUpdateData.isChecksumValid())
-			{
-				clearDownloaderConnection();
-				qCDebug(appupdate) << "Re-use valid package...";
-				Q_EMIT fireAppDownloadFinished(GlobalStatus::Code::No_Error);
-				return;
-			}
-			qCDebug(appupdate) << "Checksum of package invalid...";
-		}
-
-		qCDebug(appupdate) << "Download package...";
-		Env::getSingleton<Downloader>()->download(mAppUpdateData.getUrl());
+		handleChecksumDownloadFinished(pUpdateUrl, pData);
 	}
 	else if (pUpdateUrl == mAppUpdateData.getUrl())
 	{
-		clearDownloaderConnection();
-		const auto filename = mAppUpdateData.getUrl().fileName();
-		qCDebug(appupdate) << "Package downloaded successfully:" << filename;
-		const auto file = save(pData, filename);
+		handleAppDownloadFinished(pData);
+	}
+	else
+	{
+		qCWarning(appupdate) << "Unhandled download result from" << pUpdateUrl;
+	}
+}
 
-		auto status = GlobalStatus::Code::No_Error;
-		if (file.isNull())
+
+void AppUpdater::handleVersionInfoDownloadFinished(const QByteArray& pData)
+{
+	AppUpdateData newData(pData);
+	if (newData.isValid())
+	{
+		mAppUpdateData = newData;
+		const auto& version = mAppUpdateData.getVersion();
+
+		if (VersionNumber(version) > VersionNumber::getApplicationVersion())
 		{
-			status = GlobalStatus::Code::Downloader_Cannot_Save_File;
+			if (!mForceUpdate && version == Env::getSingleton<AppSettings>()->getGeneralSettings().getSkipVersion())
+			{
+				qCInfo(appupdate) << "Version will be skipped:" << version;
+				Q_EMIT fireAppcastCheckFinished(false, GlobalStatus::Code::No_Error);
+			}
+			else
+			{
+				mForceUpdate = false;
+				qCInfo(appupdate) << "Found new version:" << version << ", greater than old version" << QCoreApplication::applicationVersion();
+				Env::getSingleton<Downloader>()->download(mAppUpdateData.getNotesUrl());
+				return;
+			}
 		}
 		else
 		{
-			mAppUpdateData.setUpdatePackagePath(file);
-			if (!mAppUpdateData.isChecksumValid())
-			{
-				status = GlobalStatus::Code::Downloader_Data_Corrupted;
-			}
+			qCDebug(appupdate) << "No new version:" << version;
+			Q_EMIT fireAppcastCheckFinished(false, GlobalStatus::Code::No_Error);
 		}
-
-		Q_EMIT fireAppDownloadFinished(status);
 	}
+	else
+	{
+		Q_EMIT fireAppcastCheckFinished(false, newData.getParsingResult().getStatusCode());
+	}
+	clearDownloaderConnection();
+}
+
+
+void AppUpdater::handleReleaseNotesDownloadFinished(const QByteArray& pData)
+{
+	qCDebug(appupdate) << "Release notes downloaded successfully";
+	mAppUpdateData.setNotes(QString::fromUtf8(pData));
+	Q_EMIT fireAppcastCheckFinished(true, GlobalStatus::Code::No_Error);
+	clearDownloaderConnection();
+}
+
+
+void AppUpdater::handleChecksumDownloadFinished(const QUrl& pUpdateUrl, const QByteArray& pData)
+{
+	qCDebug(appupdate) << "Checksum file downloaded successfully:" << pUpdateUrl.fileName();
+	save(pData, pUpdateUrl.fileName());
+
+	const auto extensionSplit = pUpdateUrl.fileName().split(QLatin1Char('.'), Qt::SkipEmptyParts);
+	const auto extension = extensionSplit.isEmpty() ? QByteArray() : extensionSplit.last().toLatin1();
+	mAppUpdateData.setChecksum(pData, getHashAlgo(extension));
+
+	const auto package = mDownloadPath + mAppUpdateData.getUrl().fileName();
+	if (QFile::exists(package))
+	{
+		qCDebug(appupdate) << "Package already exists:" << package;
+		mAppUpdateData.setUpdatePackagePath(package);
+		if (mAppUpdateData.isChecksumValid())
+		{
+			clearDownloaderConnection();
+			qCDebug(appupdate) << "Re-use valid package...";
+			Q_EMIT fireAppDownloadFinished(GlobalStatus::Code::No_Error);
+			return;
+		}
+		qCDebug(appupdate) << "Checksum of package invalid...";
+	}
+
+	qCDebug(appupdate) << "Download package...";
+	Env::getSingleton<Downloader>()->download(mAppUpdateData.getUrl());
+}
+
+
+void AppUpdater::handleAppDownloadFinished(const QByteArray& pData)
+{
+	clearDownloaderConnection();
+	const auto filename = mAppUpdateData.getUrl().fileName();
+	qCDebug(appupdate) << "Package downloaded successfully:" << filename;
+	const auto file = save(pData, filename);
+
+	auto status = GlobalStatus::Code::No_Error;
+	if (file.isNull())
+	{
+		status = GlobalStatus::Code::Downloader_Cannot_Save_File;
+	}
+	else
+	{
+		mAppUpdateData.setUpdatePackagePath(file);
+		if (!mAppUpdateData.isChecksumValid())
+		{
+			status = GlobalStatus::Code::Downloader_Data_Corrupted;
+		}
+	}
+
+	Q_EMIT fireAppDownloadFinished(status);
 }
 
 

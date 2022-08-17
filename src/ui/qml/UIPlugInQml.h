@@ -18,7 +18,7 @@
 #include <QQuickWindow>
 #include <QScopedPointer>
 #if defined (Q_OS_MACOS)
-#include <QMenuBar>
+	#include <QMenuBar>
 #endif
 
 namespace governikus
@@ -39,7 +39,9 @@ class UIPlugInQml
 	Q_PROPERTY(bool highContrastEnabled READ isHighContrastEnabled NOTIFY fireHighContrastEnabledChanged)
 	Q_PROPERTY(QString fixedFontFamily READ getFixedFontFamily CONSTANT)
 	Q_PROPERTY(bool tablet READ isTablet CONSTANT)
+	Q_PROPERTY(bool isTabletLayout READ isTabletLayout CONSTANT)
 	Q_PROPERTY(QSize initialWindowSize READ getInitialWindowSize CONSTANT)
+	Q_PROPERTY(bool showFocusIndicator READ getShowFocusIndicator NOTIFY fireShowFocusIndicator)
 
 	private:
 		QScopedPointer<QQmlApplicationEngine> mEngine;
@@ -52,6 +54,7 @@ class UIPlugInQml
 #if defined(Q_OS_MACOS)
 		QMenuBar mMenuBar;
 #endif
+		bool mShowFocusIndicator;
 
 		QString getPlatformSelectors() const;
 		static QUrl getPath(const QString& pRelativePath, bool pQrc = true);
@@ -60,6 +63,9 @@ class UIPlugInQml
 		bool isTablet() const;
 		bool isTabletLayout() const;
 		bool showUpdateInformationIfPending();
+
+	protected:
+		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
 
 	public:
 		UIPlugInQml();
@@ -76,6 +82,7 @@ class UIPlugInQml
 		bool isHighContrastEnabled() const;
 		QString getFixedFontFamily() const;
 		QSize getInitialWindowSize() const;
+		bool getShowFocusIndicator() const;
 
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE void init();
@@ -88,6 +95,8 @@ class UIPlugInQml
 		void fireSafeAreaMarginsChanged();
 		void fireHighContrastEnabledChanged();
 		void fireProxyAuthenticationRequired(ProxyCredentials* pProxyCredentials);
+		void fireTranslationChanged();
+		void fireShowFocusIndicator();
 
 	private Q_SLOTS:
 		void show();

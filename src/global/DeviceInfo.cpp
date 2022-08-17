@@ -4,30 +4,20 @@
 
 #include "DeviceInfo.h"
 
-#ifdef Q_OS_ANDROID
-#include <QtAndroidExtras/QAndroidJniObject>
+#if defined(Q_OS_ANDROID)
+	#include <QJniObject>
 #elif defined(Q_OS_IOS)
-#include <sys/utsname.h>
+	#include <sys/utsname.h>
 #endif
 
 #include <QDebug>
 
 using namespace governikus;
 
-DeviceInfo::DeviceInfo()
-{
-}
-
-
-DeviceInfo::~DeviceInfo()
-{
-}
-
-
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 QString DeviceInfo::getField(const char* const pField)
 {
-	QAndroidJniObject field = QAndroidJniObject::getStaticObjectField("android/os/Build", pField, "Ljava/lang/String;");
+	QJniObject field = QJniObject::getStaticObjectField("android/os/Build", pField, "Ljava/lang/String;");
 	if (field == nullptr || !field.isValid())
 	{
 		qCritical() << "Cannot get field:" << pField;
@@ -35,6 +25,19 @@ QString DeviceInfo::getField(const char* const pField)
 	}
 
 	return field.toString();
+}
+
+
+#endif
+
+
+#if defined(Q_OS_IOS)
+QString DeviceInfo::getMachineId()
+{
+	struct utsname systemInfo;
+	uname(&systemInfo);
+
+	return QString::fromUtf8(systemInfo.machine);
 }
 
 
@@ -48,13 +51,11 @@ QString DeviceInfo::getPrettyInfo()
 
 QString DeviceInfo::getName()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("MODEL");
 
 #elif defined(Q_OS_IOS)
-	struct utsname systemInfo;
-	uname(&systemInfo);
-	return QString::fromUtf8(systemInfo.machine);
+	return getMachineId();
 
 #else
 	return QSysInfo::machineHostName();
@@ -65,7 +66,7 @@ QString DeviceInfo::getName()
 
 QString DeviceInfo::getFingerprint()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("FINGERPRINT");
 
 #else
@@ -77,7 +78,7 @@ QString DeviceInfo::getFingerprint()
 
 QString DeviceInfo::getOSBuildNumber()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("DISPLAY");
 
 #else
@@ -101,8 +102,11 @@ QString DeviceInfo::getKernelVersion()
 
 QString DeviceInfo::getVendor()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("MANUFACTURER");
+
+#elif defined(Q_OS_IOS)
+	return QStringLiteral("Apple");
 
 #else
 	return QString();
@@ -113,7 +117,7 @@ QString DeviceInfo::getVendor()
 
 QString DeviceInfo::getModelNumber()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("MODEL");
 
 #else
@@ -125,8 +129,11 @@ QString DeviceInfo::getModelNumber()
 
 QString DeviceInfo::getModelName()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID)
 	return getField("PRODUCT");
+
+#elif defined(Q_OS_IOS)
+	return getMachineId();
 
 #else
 	return QString();

@@ -6,24 +6,30 @@ include(CheckCXXCompilerFlag)
 #   NOQUOTES:            Do not add quotes to the variable (not used if it is a TARGET).
 #   USE_SAME_FOR_LINKER: Use flag value for linker, too.
 #   USE_LINKER_ONLY:     Use flag for linker only. Only recognized for USE_SAME_FOR_LINKER.
+#   LINK_GLOBAL:         Add flags specified by LINK to global linker options.
 #
 # Parameter
-#   NAME: Add a human readable name. This is for configure output only to
-#         group multiple flags or to indicate the usage.
-#   LINK: Use these linker flags to try the compiler flag. The linker
-#         flags won't be added. They are for testing only.
-#   VAR:  Checked compiler flags will be added to these variables. (default: CMAKE_CXX_FLAGS)
-#         It is possible to add multiple VAR parameter.
-#         If VAR parameter is a cmake TARGET the compiler flag will be added
-#         to the COMPILE_FLAGS property of this TARGET only.
+#   NAME:     Add a human readable name. This is for configure output only to
+#             group multiple flags or to indicate the usage.
+#   LINK:     Use these linker flags to try the compiler flag. The linker
+#             flags won't be added unless LINK_GLOBAL is enabled. Otherwise they are for testing only.
+#   LINK_VAR: Checked link flags will be added to these variables. (default: CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS)
+#   VAR:      Checked compiler flags will be added to these variables. (default: CMAKE_CXX_FLAGS)
+#             It is possible to add multiple VAR parameter.
+#             If VAR parameter is a cmake TARGET the compiler flag will be added
+#             to the COMPILE_FLAGS property of this TARGET only.
 function(ADD_FLAG)
-	set(options NOQUOTES USE_SAME_FOR_LINKER USE_LINKER_ONLY)
+	set(options NOQUOTES USE_SAME_FOR_LINKER USE_LINKER_ONLY LINK_GLOBAL)
 	set(oneValueArgs NAME)
-	set(multiValueArgs LINK VAR)
+	set(multiValueArgs LINK LINK_VAR VAR)
 	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	if(NOT _PARAM_VAR)
 		set(_PARAM_VAR CMAKE_CXX_FLAGS)
+	endif()
+
+	if(NOT _PARAM_LINK_VAR)
+		set(_PARAM_LINK_VAR CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS)
 	endif()
 
 	if(_PARAM_LINK)
@@ -79,6 +85,11 @@ function(ADD_FLAG)
 				endif()
 			endforeach()
 
+			if (_PARAM_LINK_GLOBAL)
+				foreach(var ${_PARAM_LINK_VAR})
+					set(${var} "${${var}} ${_PARAM_LINK}" PARENT_SCOPE)
+				endforeach()
+			endif()
 			return()
 		endif()
 	endforeach()
@@ -105,10 +116,19 @@ function(QUERY_QMAKE _out _var)
 	endif()
 
 	get_target_property(qmake_bin ${Qt}::qmake LOCATION)
-	execute_process(COMMAND "${qmake_bin}" -query ${_var}
+
+	if (IOS OR ANDROID)
+		find_file(TARGET_QT_CONF target_qt.conf PATH_SUFFIXES /bin CMAKE_FIND_ROOT_PATH_BOTH)
+		if(NOT TARGET_QT_CONF)
+			message(FATAL_ERROR "Could not find target_qt.conf")
+		endif()
+
+		set(QT_CONFIG -qtconf ${TARGET_QT_CONF})
+	endif()
+
+execute_process(COMMAND "${qmake_bin}" ${QT_CONFIG} -query ${_var}
 		RESULT_VARIABLE _result
 		OUTPUT_VARIABLE _output
-		ERROR_QUIET
 		OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 	if(_result EQUAL 0)
@@ -246,7 +266,7 @@ function(ADD_PLATFORM_LIBRARY _name)
 		if(CMAKE_VERSION VERSION_LESS "3.14")
 			message(WARNING "Compiler flags for mocs with 3.13.x and earlier leads to linker errors")
 		endif()
-		set_source_files_properties("${_name}_autogen/mocs_compilation.cpp" PROPERTIES COMPILE_OPTIONS ${INCOMPATIBLE_QT_COMPILER_FLAGS})
+		set_source_files_properties("${_name}_autogen/mocs_compilation.cpp" PROPERTIES COMPILE_OPTIONS "${INCOMPATIBLE_QT_COMPILER_FLAGS}")
 	endif()
 endfunction()
 

@@ -12,6 +12,4 @@ RequestType::RequestType(PaosType pType)
 }
 
 
-RequestType::~RequestType()
-{
-}
+RequestType::~RequestType() = default;

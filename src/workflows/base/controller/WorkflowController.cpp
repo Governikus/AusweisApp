@@ -4,6 +4,10 @@
 
 #include "controller/WorkflowController.h"
 
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	#include "ReaderManager.h"
+#endif
+
 #include <QDebug>
 
 using namespace governikus;
@@ -13,11 +17,6 @@ WorkflowController::WorkflowController(const QSharedPointer<WorkflowContext>& pC
 	, mContext(pContext)
 {
 	connect(&mStateMachine, &QStateMachine::finished, this, &WorkflowController::fireComplete, Qt::QueuedConnection);
-}
-
-
-WorkflowController::~WorkflowController()
-{
 }
 
 

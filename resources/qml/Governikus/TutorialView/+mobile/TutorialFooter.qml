@@ -2,19 +2,13 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
-import QtGraphicalEffects 1.12
 
-Item {
+Rectangle {
 	id: baseItem
-
-	property alias color: colorOverlay.color
-	property alias shaderSource: effectSource.sourceItem
-
-	height: plugin.safeAreaMargins.bottom + Math.max(backToMenu.height, quitTutorial.height)
 
 	property alias backRotation: leftArrow.rotation
 	property alias backText: menuText.text
@@ -22,6 +16,11 @@ Item {
 
 	signal menuClicked()
 	signal quitTutorialClicked()
+
+	height: plugin.safeAreaMargins.bottom + Math.max(backToMenu.height, quitTutorial.height)
+
+	color: footer.color
+	Behavior on color { ColorAnimation { duration: Constants.animation_duration } }
 
 	state: "showOnlyQuit"
 	states: [
@@ -52,26 +51,6 @@ Item {
 		}
 	}
 
-	ShaderEffectSource {
-		id: effectSource
-
-		anchors.fill: parent
-		sourceRect: Qt.rect(baseItem.x, baseItem.y, baseItem.width, baseItem.height)
-	}
-	FastBlur {
-		anchors.fill: effectSource
-		source: effectSource
-		radius: 32
-	}
-	ColorOverlay {
-		id: colorOverlay
-
-		anchors.fill: parent
-		color: footer.color
-		Behavior on color { ColorAnimation { duration: Constants.animation_duration } }
-		opacity: 0.7
-	}
-
 	Item {
 		id: backToMenu
 		anchors.left: parent.left
@@ -80,7 +59,7 @@ Item {
 		width: menuRow.width
 
 		Accessible.name: menuText.text
-		Accessible.onPressAction: if (Qt.platform.os === "ios") baseItem.menuClicked()
+		Accessible.onPressAction: baseItem.menuClicked()
 
 		MouseArea {
 			anchors.fill: parent
@@ -128,7 +107,7 @@ Item {
 		anchors.top: parent.top
 
 		Accessible.name: quitText.text
-		Accessible.onPressAction: if (Qt.platform.os === "ios") baseItem.quitTutorialClicked()
+		Accessible.onPressAction: baseItem.quitTutorialClicked()
 
 		MouseArea {
 			anchors.fill: parent
@@ -169,4 +148,3 @@ Item {
 		}
 	}
 }
-

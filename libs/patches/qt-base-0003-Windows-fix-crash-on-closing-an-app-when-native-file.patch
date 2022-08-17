@@ -1,0 +1,138 @@
+From 2b466e173496433def07f2266e5afe3d4736a810 Mon Sep 17 00:00:00 2001
+From: Vladimir Belyavsky <belyavskyv@gmail.com>
+Date: Sat, 14 May 2022 17:23:17 +0300
+Subject: Windows: fix crash on closing an app when native file dialog is
+ opened
+
+The crash was provoked by QThread::terminate() called
+for QWindowsDialogThread from QWindowsDialogHelperBase destructor.
+It's still not clear why terminating the thread here causes a crash,
+but normally we should avoid terminating a thread anyway.
+
+Current changes make several improvements to avoid terminating the
+thread. The main problem was that QWindowsDialogThread::run() was never
+returned. That's because QWindowsNativeFileDialogBase::close() was not
+called on QWindowsDialogHelperBase destruction. The second problem
+was that QWindowsNativeFileDialogBase::close() may still not close
+native file dialog because it was not able to find HWND for IFileDialog
+instance in some circumstances, so make this by more robust way.
+
+Fixes: QTBUG-93298
+Change-Id: I55c8cf664ae2cf7c41c8cce43a6bb88a2680bf14
+Reviewed-by: Friedemann Kleint <Friedemann.Kleint@qt.io>
+Reviewed-by: Oliver Wolff <oliver.wolff@qt.io>
+(cherry picked from commit 66bcb66a51b523fdb6dabefa6366abed17f3b06f)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+---
+ .../windows/qwindowsdialoghelpers.cpp         | 60 ++++++++-----------
+ .../platforms/windows/qwindowsdialoghelpers.h |  2 +-
+ 2 files changed, 25 insertions(+), 37 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
+index 89d55e9b48..44e3164aaa 100644
+--- x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
++++ y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
+@@ -140,6 +140,22 @@ void eatMouseMove()
+     qCDebug(lcQpaDialogs) << __FUNCTION__ << "triggered=" << (msg.message == WM_MOUSEMOVE);
+ }
+ 
++HWND getHWND(IFileDialog *fileDialog)
++{
++    IOleWindow *oleWindow = nullptr;
++    if (FAILED(fileDialog->QueryInterface(IID_IOleWindow, reinterpret_cast<void **>(&oleWindow)))) {
++        qCWarning(lcQpaDialogs, "Native file dialog: unable to query IID_IOleWindow interface.");
++        return HWND(0);
++    }
++
++    HWND result(0);
++    if (FAILED(oleWindow->GetWindow(&result)))
++        qCWarning(lcQpaDialogs, "Native file dialog: unable to get dialog's window.");
++
++    oleWindow->Release();
++    return result;
++}
++
+ } // namespace QWindowsDialogs
+ 
+ /*!
+@@ -211,6 +227,13 @@ private:
+     \internal
+ */
+ 
++template <class BaseClass>
++QWindowsDialogHelperBase<BaseClass>::~QWindowsDialogHelperBase()
++{
++    hide();
++    cleanupThread();
++}
++
+ template <class BaseClass>
+ void QWindowsDialogHelperBase<BaseClass>::cleanupThread()
+ {
+@@ -337,41 +360,6 @@ void QWindowsDialogHelperBase<BaseClass>::stopTimer()
+     }
+ }
+ 
+-// Find a file dialog window created by IFileDialog by process id, window
+-// title and class, which starts with a hash '#'.
+-
+-struct FindDialogContext
+-{
+-    explicit FindDialogContext(const QString &titleIn)
+-        : title(qStringToWCharArray(titleIn)), processId(GetCurrentProcessId()), hwnd(nullptr) {}
+-
+-    const QScopedArrayPointer<wchar_t> title;
+-    const DWORD processId;
+-    HWND hwnd; // contains the HWND of the window found.
+-};
+-
+-static BOOL QT_WIN_CALLBACK findDialogEnumWindowsProc(HWND hwnd, LPARAM lParam)
+-{
+-    auto *context = reinterpret_cast<FindDialogContext *>(lParam);
+-    DWORD winPid = 0;
+-    GetWindowThreadProcessId(hwnd, &winPid);
+-    if (winPid != context->processId)
+-        return TRUE;
+-    wchar_t buf[256];
+-    if (!RealGetWindowClass(hwnd, buf, sizeof(buf)/sizeof(wchar_t)) || buf[0] != L'#')
+-        return TRUE;
+-    if (!GetWindowTextW(hwnd, buf, sizeof(buf)/sizeof(wchar_t)) || wcscmp(buf, context->title.data()) != 0)
+-        return TRUE;
+-    context->hwnd = hwnd;
+-    return FALSE;
+-}
+-
+-static inline HWND findDialogWindow(const QString &title)
+-{
+-    FindDialogContext context(title);
+-    EnumWindows(findDialogEnumWindowsProc, reinterpret_cast<LPARAM>(&context));
+-    return context.hwnd;
+-}
+ 
+ template <class BaseClass>
+ void QWindowsDialogHelperBase<BaseClass>::hide()
+@@ -1267,7 +1255,7 @@ void QWindowsNativeFileDialogBase::close()
+     m_fileDialog->Close(S_OK);
+     // IFileDialog::Close() does not work unless invoked from a callback.
+     // Try to find the window and send it a WM_CLOSE in addition.
+-    const HWND hwnd = findDialogWindow(m_title);
++    const HWND hwnd = QWindowsDialogs::getHWND(m_fileDialog);
+     qCDebug(lcQpaDialogs) << __FUNCTION__ << "closing" << hwnd;
+     if (hwnd && IsWindowVisible(hwnd))
+         PostMessageW(hwnd, WM_CLOSE, 0, 0);
+diff --git x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
+index 55167ad36d..bbf4bd544d 100644
+--- x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
++++ y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
+@@ -67,7 +67,7 @@ class QWindowsDialogHelperBase : public BaseClass
+     Q_DISABLE_COPY_MOVE(QWindowsDialogHelperBase)
+ public:
+     using QWindowsNativeDialogBasePtr = QSharedPointer<QWindowsNativeDialogBase>;
+-    ~QWindowsDialogHelperBase() { cleanupThread(); }
++    ~QWindowsDialogHelperBase();
+ 
+     void exec() override;
+     bool show(Qt::WindowFlags windowFlags,
+-- 
+2.36.1
+

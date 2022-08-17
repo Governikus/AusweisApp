@@ -87,6 +87,7 @@ class test_Template
 		void renderErrorPage()
 		{
 			QString title("test titel");
+			QString application_link("application_link");
 			QString msg_header("nachrichten header");
 			QString msg_header_expl("nachricht");
 			QString error_msg("fehler");
@@ -98,6 +99,7 @@ class test_Template
 			Template tplt = Template::fromFile(QStringLiteral(":/html_templates/error.html"));
 
 			tplt.setContextParameter(QStringLiteral("TITLE"), title);
+			tplt.setContextParameter(QStringLiteral("APPLICATION_LINK"), application_link);
 			tplt.setContextParameter(QStringLiteral("MESSAGE_HEADER"), msg_header);
 			tplt.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), msg_header_expl);
 			tplt.setContextParameter(QStringLiteral("ERROR_MESSAGE_LABEL"), error_msg_label);
@@ -107,9 +109,10 @@ class test_Template
 			tplt.setContextParameter(QStringLiteral("REPORT_BUTTON"), report_button);
 
 			const auto& errorPage = tplt.render();
-			QCOMPARE(tplt.getContextKeys().size(), 8);
+			QCOMPARE(tplt.getContextKeys().size(), 9);
 			QVERIFY(!errorPage.contains(QLatin1Char('$')));
 			QVERIFY(errorPage.contains(title));
+			QVERIFY(errorPage.contains(application_link));
 			QVERIFY(errorPage.contains(msg_header));
 			QVERIFY(errorPage.contains(msg_header_expl));
 			QVERIFY(errorPage.contains(error_msg));
@@ -123,6 +126,7 @@ class test_Template
 		void renderAlreadyActivePage()
 		{
 			QString title("test titel");
+			QString application_link("application_link");
 			QString msg_header("nachrichten header");
 			QString msg_header_expl("nachricht");
 			QString content_header("inhalt header");
@@ -132,6 +136,7 @@ class test_Template
 			Template tplt = Template::fromFile(QStringLiteral(":/html_templates/alreadyactive.html"));
 
 			tplt.setContextParameter(QStringLiteral("TITLE"), title);
+			tplt.setContextParameter(QStringLiteral("APPLICATION_LINK"), application_link);
 			tplt.setContextParameter(QStringLiteral("MESSAGE_HEADER"), msg_header);
 			tplt.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), msg_header_expl);
 			tplt.setContextParameter(QStringLiteral("CONTENT_HEADER"), content_header);
@@ -139,9 +144,10 @@ class test_Template
 			tplt.setContextParameter(QStringLiteral("CONTENT_BUTTON"), content_button);
 
 			const auto& errorPage = tplt.render();
-			QCOMPARE(tplt.getContextKeys().size(), 6);
+			QCOMPARE(tplt.getContextKeys().size(), 7);
 			QVERIFY(!errorPage.contains(QLatin1Char('$')));
 			QVERIFY(errorPage.contains(title));
+			QVERIFY(errorPage.contains(application_link));
 			QVERIFY(errorPage.contains(msg_header));
 			QVERIFY(errorPage.contains(msg_header_expl));
 			QVERIFY(errorPage.contains(content_header));

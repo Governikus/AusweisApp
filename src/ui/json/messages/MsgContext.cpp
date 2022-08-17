@@ -14,6 +14,7 @@ using namespace governikus;
 MsgContext::MsgContext()
 	: mApiLevel(MsgHandler::DEFAULT_MSG_LEVEL)
 	, mStateMessages()
+	, mProgressStatus(true)
 	, mContext()
 {
 }
@@ -48,19 +49,31 @@ Msg MsgContext::getLastStateMsg() const
 }
 
 
-void MsgDispatcherContext::setWorkflowContext(const QSharedPointer<WorkflowContext>& pContext)
+bool MsgContext::provideProgressStatus() const
+{
+	return mProgressStatus;
+}
+
+
+void MsgContext::setProgressStatus(bool pStatus)
+{
+	mProgressStatus = pStatus;
+}
+
+
+void MsgContext::setWorkflowContext(const QSharedPointer<WorkflowContext>& pContext)
 {
 	mContext = pContext;
 }
 
 
-void MsgDispatcherContext::addStateMsg(const Msg& pMsg)
+void MsgContext::addStateMsg(const Msg& pMsg)
 {
 	mStateMessages += pMsg;
 }
 
 
-void MsgDispatcherContext::clear()
+void MsgContext::clear()
 {
 	mStateMessages.clear();
 	mContext.clear();

@@ -18,11 +18,12 @@ namespace governikus
 class PaosHandler
 	: private ElementDetector
 {
+	Q_DISABLE_COPY(PaosHandler)
+
 	private:
 		PaosType mDetectedType;
 		QSharedPointer<PaosMessage> mParsedObject;
 
-		Q_DISABLE_COPY(PaosHandler)
 		void detect();
 		void parse();
 		void setParsedObject(PaosMessage* pParsedObject);

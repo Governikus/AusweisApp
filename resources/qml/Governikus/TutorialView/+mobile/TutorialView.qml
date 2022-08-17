@@ -2,17 +2,18 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQml.Models 2.12
-import QtQml 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtQml 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Type.UiModule 1.0
 
 
 SectionPage {
@@ -37,7 +38,7 @@ SectionPage {
 	onVisibleChanged: {
 		if (visible) {
 			flickable.contentY = lastYPosition
-			navBar.lockedAndHidden = true
+			setLockedAndHidden()
 		} else {
 			lastYPosition = flickable.contentY
 		}
@@ -45,7 +46,7 @@ SectionPage {
 
 	Component.onCompleted: {
 		if (visible) {
-			navBar.lockedAndHidden = true
+			setLockedAndHidden()
 		}
 	}
 
@@ -321,9 +322,7 @@ SectionPage {
 					Accessible.onScrollDownAction: flickable.scrollPageDown()
 					Accessible.onScrollUpAction: flickable.scrollPageUp()
 
-					onFirePush: {
-						root.firePush(pSectionPage)
-					}
+					onFirePush: push(pSectionPage)
 					onQuitTutorialClicked: leaveView()
 				}
 
@@ -372,6 +371,10 @@ SectionPage {
 					Accessible.onScrollUpAction: flickable.scrollPageUp()
 
 					onLetsGoClicked: leaveView()
+					onShowPinManagement: {
+						SettingsModel.transportPinReminder = false
+						root.show(UiModule.PINMANAGEMENT)
+					}
 				}
 
 				// We could use a bottom margin instead of this rectangle, but that would result in the content suddenly
@@ -388,8 +391,6 @@ SectionPage {
 
 	TutorialStatusBar {
 		id: statusBar
-
-		shaderSource: flickable
 	}
 
 	TutorialFooter {
@@ -400,7 +401,6 @@ SectionPage {
 			 : howContent.visible && flickable.contentY > howHeader.y - 1 ? Style.color.tutorial_how
 			 : whereContent.visible && flickable.contentY > whereHeader.y - 1 ? Style.color.tutorial_where
 			 : Style.color.tutorial_what
-		shaderSource: flickable
 		anchors.bottom: parent.bottom
 		backToMenuActive: root.state !== ""
 

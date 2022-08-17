@@ -69,7 +69,7 @@ QVariant CardPositionModel::getCardPosition() const
 {
 	Q_ASSERT(mCurrentIndex >= 0 && mCurrentIndex < mCardPositions.size());
 
-	CardPosition* cardPosition = new CardPosition(mCardPositions[mCurrentIndex]);
+	auto* cardPosition = new CardPosition(mCardPositions[mCurrentIndex]);
 	QQmlEngine::setObjectOwnership(cardPosition, QQmlEngine::JavaScriptOwnership);
 	return QVariant::fromValue<QObject*>(cardPosition);
 }

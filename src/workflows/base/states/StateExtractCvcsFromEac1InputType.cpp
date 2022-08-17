@@ -9,7 +9,7 @@
 using namespace governikus;
 
 StateExtractCvcsFromEac1InputType::StateExtractCvcsFromEac1InputType(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
 }
@@ -19,7 +19,8 @@ void StateExtractCvcsFromEac1InputType::run()
 {
 	Q_ASSERT(getContext()->getDidAuthenticateEac1());
 
-	bool foundTerminalCvc = false, foundDvCvc = false;
+	bool foundTerminalCvc = false;
+	bool foundDvCvc = false;
 	for (const auto& cvc : getContext()->getDidAuthenticateEac1()->getCvCertificates())
 	{
 		const auto& cvcAccessRole = cvc->getBody().getCHAT().getAccessRole();

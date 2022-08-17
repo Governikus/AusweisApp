@@ -13,9 +13,7 @@ DIDAuthenticateEAC2::DIDAuthenticateEAC2()
 }
 
 
-DIDAuthenticateEAC2::~DIDAuthenticateEAC2()
-{
-}
+DIDAuthenticateEAC2::~DIDAuthenticateEAC2() = default;
 
 
 const ConnectionHandle& DIDAuthenticateEAC2::getConnectionHandle() const
@@ -36,15 +34,9 @@ const QString& DIDAuthenticateEAC2::getSignature() const
 }
 
 
-const QVector<QSharedPointer<const CVCertificate> >& DIDAuthenticateEAC2::getCvCertificates() const
+const QVector<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC2::getCvCertificates() const
 {
 	return mEac2.getCvCertificates();
-}
-
-
-const QByteArrayList& DIDAuthenticateEAC2::getCvCertificatesAsBinary() const
-{
-	return mEac2.getCvCertificatesAsBinary();
 }
 
 

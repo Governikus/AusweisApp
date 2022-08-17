@@ -4,9 +4,9 @@
 
 #include "PcscCard.h"
 
-#include "DestroyPaceChannel.h"
-#include "EstablishPaceChannel.h"
-#include "PinModify.h"
+#include "pinpad/DestroyPaceChannelBuilder.h"
+#include "pinpad/EstablishPaceChannel.h"
+#include "pinpad/PinModify.h"
 
 #include <QLatin1String>
 #include <QLoggingCategory>
@@ -62,7 +62,7 @@ PcscCard::PcscCard(PcscReader* pPcscReader)
 	qCDebug(card_pcsc) << "SCardEstablishContext for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
 	mTimer.setInterval(4000);
-	QObject::connect(&mTimer, &QTimer::timeout, this, &PcscCard::sendSCardStatus);
+	connect(&mTimer, &QTimer::timeout, this, &PcscCard::sendSCardStatus);
 }
 
 
@@ -71,7 +71,7 @@ PcscCard::~PcscCard()
 	qCDebug(card_pcsc) << mReader->getName();
 	if (PcscCard::isConnected())
 	{
-		PcscCard::disconnect();
+		PcscCard::releaseConnection();
 	}
 
 	PCSC_RETURNCODE returnCode = SCardReleaseContext(mContextHandle);
@@ -99,7 +99,7 @@ void PcscCard::sendSCardStatus()
 }
 
 
-CardReturnCode PcscCard::connect()
+CardReturnCode PcscCard::establishConnection()
 {
 	if (PcscCard::isConnected())
 	{
@@ -133,7 +133,7 @@ CardReturnCode PcscCard::connect()
 }
 
 
-CardReturnCode PcscCard::disconnect()
+CardReturnCode PcscCard::releaseConnection()
 {
 	if (!PcscCard::isConnected())
 	{
@@ -154,7 +154,7 @@ CardReturnCode PcscCard::disconnect()
 }
 
 
-bool PcscCard::isConnected()
+bool PcscCard::isConnected() const
 {
 	return mCardHandle != 0;
 }
@@ -168,7 +168,7 @@ ResponseApduResult PcscCard::transmit(const CommandApdu& pCmd)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	CardResult data = transmit(pCmd.getBuffer());
+	CardResult data = transmit(QByteArray(pCmd));
 	if (data.mReturnCode != PcscUtils::Scard_S_Success)
 	{
 		return {CardReturnCode::COMMAND_FAILED};
@@ -178,9 +178,9 @@ ResponseApduResult PcscCard::transmit(const CommandApdu& pCmd)
 
 	if (tempResponse.getSW1() == SW1::WRONG_LE_FIELD)
 	{
-		qCDebug(card_pcsc) << "got SW1 == 0x6c, retransmitting with new Le:" << tempResponse.getSW2();
-		CommandApdu retransmitCommand(pCmd.getCLA(), pCmd.getINS(), pCmd.getP1(), pCmd.getP2(), pCmd.getData(), tempResponse.getSW2());
-		data = transmit(retransmitCommand.getBuffer());
+		qCDebug(card_pcsc) << "got SW1 == 0x6C, retransmitting with new Le:" << tempResponse.getSW2();
+		CommandApdu retransmitCommand(pCmd.getHeaderBytes(), pCmd.getData(), tempResponse.getSW2());
+		data = transmit(QByteArray(retransmitCommand));
 		if (data.mReturnCode != PcscUtils::Scard_S_Success)
 		{
 			return {CardReturnCode::COMMAND_FAILED};
@@ -190,8 +190,8 @@ ResponseApduResult PcscCard::transmit(const CommandApdu& pCmd)
 	while (tempResponse.getSW1() == SW1::MORE_DATA_AVAILABLE)
 	{
 		qCDebug(card_pcsc) << "got SW1 == 0x61, getting response with Le:" << tempResponse.getSW2();
-		CommandApdu getResponseCommand(0, char(0xC0), 0, 0, QByteArray(), tempResponse.getSW2());
-		CardResult tmpData = transmit(getResponseCommand.getBuffer());
+		CommandApdu getResponseCommand(Ins::GET_RESPONSE, 0, 0, QByteArray(), tempResponse.getSW2());
+		CardResult tmpData = transmit(QByteArray(getResponseCommand));
 		if (data.mReturnCode != PcscUtils::Scard_S_Success)
 		{
 			return {CardReturnCode::COMMAND_FAILED};
@@ -235,7 +235,7 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer)
 	 * Reconnecting makes only sense, when no secure messaging channel is active.
 	 * Otherwise the secure messaging channel is destroyed and the transmit will fail anyway.
 	 */
-	if (returnCode == PcscUtils::Scard_W_Reset_Card && !CommandApdu::isSecureMessaging(pSendBuffer))
+	if (returnCode == PcscUtils::Scard_W_Reset_Card && !CommandApdu(pSendBuffer).isSecureMessaging())
 	{
 		returnCode = SCardReconnect(mCardHandle, SCARD_SHARE_SHARED, mProtocol, SCARD_RESET_CARD, nullptr);
 		qCDebug(card_pcsc) << "Reconnect to Card";
@@ -275,23 +275,44 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 
 	qCDebug(card_pcsc) << "SCardTransmit for" << mReader->getName() << ':' << PcscUtils::toString(returnCode);
 
-	if (dataReceived > INT_MAX)
+	switch (returnCode)
 	{
-		qCCritical(card_pcsc) << "Max allowed receive buffer size exceeded";
-		Q_ASSERT(dataReceived <= INT_MAX);
-		return {PcscUtils::Scard_F_Unknown_Error};
+		case PcscUtils::Scard_S_Success:
+			data.resize(static_cast<int>(dataReceived));
+			qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << data.toHex();
+
+			if (data.size() < 2)
+			{
+				qCCritical(card_pcsc) << "Response buffer smaller than 2";
+				return {PcscUtils::Scard_F_Unknown_Error};
+			}
+
+			return {returnCode, data};
+
+		case PcscUtils::Scard_E_Insufficient_Buffer:
+			qCCritical(card_pcsc) << "Max allowed receive buffer size of" << data.size() << "exceeded. Expected size is" << dataReceived;
+			Q_ASSERT(false);
+			return {returnCode};
+
+		case PcscUtils::Scard_E_Invalid_Handle:
+		case PcscUtils::Scard_E_Invalid_Parameter:
+		case PcscUtils::Scard_E_Invalid_Value:
+		case PcscUtils::Scard_E_No_Service:
+		case PcscUtils::Scard_E_Not_Transacted:
+		case PcscUtils::Scard_E_Proto_Mismatch:
+		case PcscUtils::Scard_E_Reader_Unavailable:
+		case PcscUtils::Scard_F_Comm_Error:
+		case PcscUtils::Scard_W_Reset_Card:
+		case PcscUtils::Scard_W_Removed_Card:
+			return {returnCode};
+
+		default:
+			qCCritical(card_pcsc) << "Unexpected returnCode:" << PcscUtils::toString(returnCode);
+			Q_ASSERT(false);
+			return {returnCode};
 	}
 
-	data.resize(static_cast<int>(dataReceived));
-	qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << data.toHex();
-
-	if (data.size() < 2)
-	{
-		qCCritical(card_pcsc) << "Response buffer smaller than 2";
-		return {PcscUtils::Scard_F_Unknown_Error};
-	}
-
-	return {returnCode, data};
+	Q_UNREACHABLE();
 }
 
 
@@ -393,5 +414,5 @@ ResponseApduResult PcscCard::setEidPin(quint8 pTimeoutSeconds)
 	}
 
 	const ResponseApdu response(controlRes);
-	return {response.getCardReturnCode(), response};
+	return {CardReturnCode::OK, response};
 }

@@ -15,6 +15,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 #include <QtTest>
 
 using namespace governikus;
@@ -53,12 +55,49 @@ class test_HttpServer
 			auto server = Env::getShared<HttpServer>();
 
 			QVERIFY(server->isListening());
-			QCOMPARE(logSpy.count(), 2);
+			QCOMPARE(logSpy.count(), 3);
+			QVERIFY(server->boundAddresses() > 0);
+			QVERIFY(server->boundAddresses() < 3);
 
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"));
+
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Listening on port:"));
+			const auto listenPort = param.at(0).toString();
+			const auto listeningLogPattern = QStringLiteral("Listening on port: ");
+
+			// IPv4 and IPv6 are available on test system
+			if (server->boundAddresses() == 2)
+			{
+				QVERIFY(listenPort.contains(listeningLogPattern));
+
+				// Check that next listening port will be the same
+				const auto matcher = QRegularExpression(listeningLogPattern + QStringLiteral("(\\d+) .*")).match(listenPort);
+				QVERIFY(matcher.hasMatch());
+
+				param = logSpy.takeFirst();
+				QVERIFY(param.at(0).toString().contains(listeningLogPattern + matcher.captured(1)));
+			}
+			else if (server->boundAddresses() == 1)
+			{
+				// Only IPv4 OR IPv6 is available... let 's just that at least one was successful.
+				const auto notAvailableLogPattern = QStringLiteral("The address is not available");
+				if (listenPort.contains(listeningLogPattern))
+				{
+					param = logSpy.takeFirst();
+					QVERIFY(param.at(0).toString().contains(notAvailableLogPattern));
+				}
+				else
+				{
+					QVERIFY(listenPort.contains(notAvailableLogPattern));
+					param = logSpy.takeFirst();
+					QVERIFY(param.at(0).toString().contains(listeningLogPattern));
+				}
+			}
+			else
+			{
+				QFAIL("This boundAddress case should fail earlier");
+			}
 
 			server.reset();
 			QCOMPARE(logSpy.count(), 1);
@@ -71,22 +110,22 @@ class test_HttpServer
 		{
 			HttpServer::cPort = 80;
 
-			#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
-			#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX)
 			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
 			QVERIFY(portStart != -1);
 			if (portStart <= HttpServer::cPort)
 			{
 				QSKIP("Cannot check privileged port");
 			}
-			#endif
+#endif
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			HttpServer server;
 
 			QVERIFY(!server.isListening());
-			QCOMPARE(logSpy.count(), 1);
+			QCOMPARE(logSpy.count(), 2);
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Cannot start server: \"The address is protected\""));
 		}
@@ -104,7 +143,7 @@ class test_HttpServer
 
 			QTRY_COMPARE(spyServer.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spyServer.takeFirst();
-			auto httpRequest = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0));
+			auto httpRequest = qvariant_cast<QSharedPointer<HttpRequest>>(param.at(0));
 			QCOMPARE(httpRequest->getMethod(), QByteArray("GET"));
 			QCOMPARE(httpRequest->getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de"));
 
@@ -130,7 +169,7 @@ class test_HttpServer
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QTRY_COMPARE(spyServer.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spyServer.takeFirst();
-			auto socket = qvariant_cast<QSharedPointer<HttpRequest> >(param.at(0))->take();
+			auto socket = qvariant_cast<QSharedPointer<HttpRequest>>(param.at(0))->take();
 			QVERIFY(socket->bytesAvailable() > 0); // check rollbackTransaction
 			const auto& requestData = socket->readAll();
 			QVERIFY(requestData.contains("GET / HTTP/1.1"));

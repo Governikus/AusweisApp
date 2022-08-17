@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.View 1.0
 import Governikus.Style 1.0
@@ -13,7 +13,10 @@ Item {
 	id: root
 
 	Accessible.role: Accessible.Grouping
-	Accessible.name: titleText.text
+	Accessible.name: title
+	Accessible.focusable: title !== ""
+
+	activeFocusOnTab: title !== ""
 
 	property alias title: titleText.text
 	property alias titleTextStyle: titleText.textStyle
@@ -29,7 +32,7 @@ Item {
 	}
 
 	property alias content: paneContent
-	default property alias children: paneContent.children
+	default property alias data: paneContent.data
 
 	implicitHeight: containerCol.implicitHeight
 	implicitWidth: containerCol.implicitWidth
@@ -60,7 +63,6 @@ Item {
 
 			FocusFrame {
 				scope: root
-				borderColor: Style.color.focus_indicator
 			}
 		}
 

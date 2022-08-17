@@ -9,38 +9,15 @@ Alle Plattformen
 - Eine vollständige Barrierearmut ist zum aktuellen Zeitpunkt nicht
   gegeben. Wir arbeiten kontinuierlich an einer Verbesserung.
 
-- Bei der Nutzung eines Smartphones als Kartenleser mit aktiviertem
-  Tastaturmodus kann bei einer Authentisierung nicht in die PIN-Änderung
-  gewechselt werden, wenn nur eine fünfstellige PIN vorhanden ist.
-
 
 Windows / macOS
 """""""""""""""
 
-.. important::
-    Auf Windows wird beim Update einer Version der AusweisApp2 älter
-    als Version 1.16.0 auf eine aktuelle Version der AusweisApp2 die
-    ältere Version nicht erkannt und auch nicht entfernt. Bitte gehen
-    Sie in die Systemsteuerung Ihres Endgeräts und deinstallieren Sie
-    die ältere Version manuell. Danach kann die bereits installierte,
-    aktuelle Version aufgerufen werden.
-
-- Auf Windows 10 Plattformen mit aktivierter Benutzerkontensteuerung kann
-  es bei Benutzern mit eingeschränkten Berechtigungen zu Problemen mit der
-  Online-Ausweisfunktion kommen.
-
-- Derzeit kommt es noch zu leichten Schwierigkeiten bei der Bedienbarkeit
-  mit der Tastatur.
-
-- Bei Verwendung des Screenreaders JAWS unter Windows, kann es zu
-  leichten Irritationen bei der angegebenen Bedienung kommen.
-
 - Wenn die AusweisApp2 heruntergefahren wird, während eine Authentisierung
-  oder eine PIN-Änderung mit Komfort-Kartenleser durchgeführt wird, kann es
-  unter Windows und macOS zu einem Absturz kommen.
-
-- Unter Windows wird der "Datei speichern unter"-Dialog nicht automatisch
-  bei Beginn einer Authentisierung geschlossen.
+  oder eine PIN-Änderung mit einem Komfort-Kartenleser durchgeführt wird, kann
+  dieser Vorgang erst abgeschlossen werden, wenn der Prozess auch auf dem
+  Kartenleser beendet wird, oder dieser den Prozess selbstständig wegen einer
+  Zeitüberschreitung abbricht.
 
 - Unter macOS können per Tastatur mit den Standardsystemeinstellungen nur
   Textfelder angesprungen werden. Mit Änderung der Tastaturnavigationsoption
@@ -48,14 +25,8 @@ Windows / macOS
   das Verhalten von macOS geändert werden, sodass auch alle anderen
   Komponenten in der App fokussiert werden können.
 
-- Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
-  die Kommandozeilenparameter DESKTOPSHORTCUT und SYSTEMSETTINGS ignoriert.
-  Dies kann durch eine Deinstallation und eine erneute Installation umgangen
-  werden.
-
-- Unter Windows wird ein benutzerdefinierter Installationspfad bei einem Update
-  einer Version der AusweisApp2 älter als Version 1.22.0 auf eine aktuelle
-  Version nicht automatisch übernommen.
+- Der "Datei speichern unter"-Dialog wird nicht in allen Fällen automatisch
+  bei Beginn einer Authentisierung geschlossen.
 
 - Vereinzelt kann es bei Problemen mit dem Grafikkartentreiber, insbesondere
   bei der Verwendung einer virtuellen Maschine, zu Darstellungsfehlern in
@@ -64,13 +35,36 @@ Windows / macOS
   Hierfür muss QT_QUICK_BACKEND=software gesetzt und die AusweisApp2
   neugestartet werden.
 
+- Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
+  die Kommandozeilenparameter DESKTOPSHORTCUT und SYSTEMSETTINGS ignoriert.
+  Dies kann durch eine Deinstallation und eine erneute Installation umgangen
+  werden.
+
+- Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
+  Kommandozeilenparameter, die nicht schon bei der installierten Version der
+  AusweisApp2 genutzt wurden, ignoriert. Dies kann durch eine Deinstallation
+  und eine erneute Installation umgangen werden.
+
+- Das Beenden der AusweisApp2 über das Kontextmenü in der Menüleiste unter
+  macOS funktioniert nur, wenn das Kontextmenü mit der linken Maustaste
+  geöffnet wird. Alternativ kann das Tastaturkürzel CMD + Q zum beenden der
+  AusweisApp2 verwendet werden.
+
 Android / iOS
 """""""""""""
 
-- Zu Nutzungseinschränkungen einzelner Geräte beachten Sie bitte unsere Homepage
-  https://www.ausweisapp.bund.de/mobile-geraete/
+- Zu Nutzungseinschränkungen einzelner Geräte beachten Sie bitte unsere
+  Homepage https://www.ausweisapp.bund.de/aa2/mobile-devices
 
-- Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle
-  auf Android und iOS.
+- Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
 
 - Unter iOS kann derzeit das Hoch- bzw. Querformat nicht geändert werden.
+
+- Die Systemtastatur wird nach der Eingabe von Daten unter iOS nicht
+  automatisch geschlossen. Das Schließen muss manuell über die entsprechenden
+  Buttons "Fertig" bzw. "Suchen" erfolgen.
+
+- Bei der Nutzung von TalkBack unter Android ist es nicht möglich, eine
+  Authentisierung zu starten, wenn die AusweisApp2 bereits geöffnet ist.
+  Um das Problem zu vermeiden, muss die AusweisApp2 zunächst aus der Liste
+  der zuletzt verwendeten Apps entfernt werden.

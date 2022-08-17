@@ -14,6 +14,7 @@ namespace governikus
 
 class ActivationController
 {
+	Q_DISABLE_COPY_MOVE(ActivationController)
 	friend class AppController;
 
 	private:
@@ -21,12 +22,8 @@ class ActivationController
 
 		ActivationController();
 		~ActivationController();
-		ActivationController(const ActivationController&) = delete;
-		ActivationController& operator=(const ActivationController&) = delete;
-		ActivationController(ActivationController&&) = delete;
-		ActivationController& operator=(ActivationController&&) = delete;
 
-		[[nodiscard]] bool isPlugIn(const QJsonObject& pJson) const;
+		[[nodiscard]] static bool isPlugIn(const QJsonObject& pJson);
 
 	public:
 		[[nodiscard]] const QVector<ActivationHandler*>& getHandler() const;

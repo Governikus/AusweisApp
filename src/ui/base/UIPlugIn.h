@@ -14,6 +14,7 @@
 namespace governikus
 {
 
+class WorkflowRequest;
 class WorkflowContext;
 
 /*!
@@ -36,7 +37,8 @@ defineEnumType(UiModule,
 
 		// Mobile only
 		REMOTE_SERVICE,
-		CHECK_ID_CARD
+		CHECK_ID_CARD,
+		SMART
 		)
 
 class UIPlugIn
@@ -45,8 +47,8 @@ class UIPlugIn
 	Q_OBJECT
 
 	public:
-		UIPlugIn();
-		~UIPlugIn() override;
+		UIPlugIn() = default;
+		~UIPlugIn() override = default;
 
 	public Q_SLOTS:
 		virtual void doShutdown() = 0;
@@ -56,19 +58,14 @@ class UIPlugIn
 		virtual void onApplicationStarted();
 		virtual void onShowUi(UiModule pModule);
 		virtual void onHideUi();
-		virtual void onShowReaderSettings();
 		virtual void onTranslationChanged();
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		virtual void onUiDominationReleased();
 
 	Q_SIGNALS:
-		void fireChangePinRequested(bool pRequestTransportPin);
-		void fireAuthenticationRequest(const QUrl& pUrl);
-		void fireSelfAuthenticationRequested();
-		void fireRemoteServiceRequested();
-		void fireQuitApplicationRequest();
-		void fireQuitApplicationRequest(int pExitCode);
+		void fireWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
+		void fireQuitApplicationRequest(int pExitCode = EXIT_SUCCESS);
 		void fireCloseReminderFinished(bool pDontRemindAgain);
 		void fireApplicationActivated();
 

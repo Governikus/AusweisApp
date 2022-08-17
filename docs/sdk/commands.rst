@@ -24,6 +24,25 @@ The AusweisApp2 will send an :ref:`info` message as an answer.
 
 
 
+.. _get_status:
+
+GET_STATUS
+^^^^^^^^^^
+Returns information about the current workflow and state of AusweisApp2.
+
+The AusweisApp2 will send a :ref:`status` message as an answer.
+
+.. versionadded:: 1.24.0
+   Support of GET_STATUS command in :ref:`api_level` **2**.
+
+
+.. code-block:: json
+
+  {"cmd": "GET_STATUS"}
+
+
+
+
 .. _get_api_level:
 
 GET_API_LEVEL
@@ -118,12 +137,17 @@ Starts an authentication.
 
 The AusweisApp2 will send an :ref:`auth` message when the authentication is started.
 
-The system dialog on iOS can be customized by **handleInterrupt** and **messages**.
-This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`enter_can`
-and :ref:`enter_puk`. You can disable that behavior with
-**handleInterrupt**. Command :ref:`interrupt` allows to stop the dialog manually,
-if needed.
+The system dialog on iOS can be customized by **messages**.
+This dialog won't be stopped by default after an :ref:`enter_pin`, :ref:`enter_can`
+and :ref:`enter_puk`.
+Command :ref:`interrupt` allows to stop the dialog manually, if needed.
 
+
+.. versionchanged:: 1.24.0
+   Parameter **handleInterrupt** removed with :ref:`api_level` v2 and defaults to ``false``.
+
+.. versionadded:: 1.24.0
+   Parameter **status** added.
 
 .. versionadded:: 1.22.3
    Parameter **developerMode** added.
@@ -132,7 +156,7 @@ if needed.
    Parameter **handleInterrupt** and **messages** added.
 
 .. deprecated:: 1.22.1
-   Parameter **handleInterrupt** will be removed with :ref:`api_level` v2
+   Parameter **handleInterrupt** has been removed with :ref:`api_level` v2
    and defaults to ``false``.
 
 
@@ -141,11 +165,15 @@ if needed.
     *(http://127.0.0.1:24727/eID-Client?tcTokenURL=)*
 
   - **developerMode**: True to enable "Developer Mode" for test cards according to BSI TR-03124-1,
-    otherwise false.
+    otherwise false. (optional, default: false)
 
   - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
+    :ref:`api_level` v1 only. (optional, default: false)
 
-  - **messages**: Optional messages for the system dialog on iOS.
+  - **status**: True to enable automatic :ref:`status` messages, otherwise false.
+    :ref:`api_level` v2 only. (optional, default: true)
+
+  - **messages**: Messages for the system dialog on iOS. (optional, default: empty)
 
     - **sessionStarted**: Shown if scanning is started.
 
@@ -162,7 +190,8 @@ if needed.
     "cmd": "RUN_AUTH",
     "tcTokenURL": "https://test.governikus-eid.de/Autent-DemoApplication/RequestServlet?provider=demo_epa_20&redirect=true",
     "developerMode": false,
-    "handleInterrupt": true,
+    "handleInterrupt": false,
+    "status": true,
     "messages":
         {
          "sessionStarted": "Please place your ID card on the top of the device's back side.",
@@ -188,26 +217,36 @@ Starts a change PIN workflow.
 
 The AusweisApp2 will send a :ref:`change_pin` message when the workflow is started.
 
-The system dialog on iOS can be customized by **handleInterrupt** and **messages**.
-This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`enter_can`,
-:ref:`enter_new_pin` and :ref:`enter_puk`. You can disable that behavior with parameter
-**handleInterrupt**. Command :ref:`interrupt` allows to stop the dialog manually, if needed.
+The system dialog on iOS can be customized by **messages**.
+This dialog won't be stopped by default after an :ref:`enter_pin`, :ref:`enter_can`,
+:ref:`enter_new_pin` and :ref:`enter_puk`.
+Command :ref:`interrupt` allows to stop the dialog manually, if needed.
 
 
-.. versionadded:: 1.22.0
-   Support of RUN_CHANGE_PIN command.
+.. versionchanged:: 1.24.0
+   Parameter **handleInterrupt** removed with :ref:`api_level` v2 and defaults to ``false``.
+
+.. versionadded:: 1.24.0
+   Parameter **status** added.
 
 .. versionadded:: 1.22.1
    Parameter **handleInterrupt** and **messages** added.
 
 .. deprecated:: 1.22.1
-   Parameter **handleInterrupt** will be removed with :ref:`api_level` v2
+   Parameter **handleInterrupt** has been removed with :ref:`api_level` v2
    and defaults to ``false``.
+
+.. versionadded:: 1.22.0
+   Support of RUN_CHANGE_PIN command.
 
 
   - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
+    :ref:`api_level` v1 only. (optional, default: false)
 
-  - **messages**: Optional messages for the system dialog on iOS.
+  - **status**: True to enable automatic :ref:`status` messages, otherwise false.
+    :ref:`api_level` v2 only. (optional, default: true)
+
+  - **messages**: Messages for the system dialog on iOS. (optional, default: empty)
 
     - **sessionStarted**: Shown if scanning is started.
 
@@ -222,7 +261,8 @@ This dialog will be stopped by default (true) after an :ref:`enter_pin`, :ref:`e
 
   {
     "cmd": "RUN_CHANGE_PIN",
-    "handleInterrupt": true,
+    "handleInterrupt": false,
+    "status": true,
     "messages":
         {
          "sessionStarted": "Please place your ID card on the top of the device's back side.",
@@ -299,6 +339,47 @@ The AusweisApp2 will send an :ref:`access_rights` message as an answer.
 
 .. seealso::
   List of possible access rights are listed in :ref:`access_rights`.
+
+
+
+
+.. _set_card:
+
+SET_CARD
+^^^^^^^^
+Insert "virtual" card.
+
+Since :ref:`api_level` **2** it is possible to provide a "virtual"
+card. The information whether this is possible will be indicated
+in a :ref:`reader` message.
+
+
+.. versionadded:: 1.24.0
+   This command was introduced in :ref:`api_level` **2**.
+
+
+- **name**: Name of the :ref:`reader`.
+
+- **simulator**: Specific data for :doc:`simulator`. (optional)
+
+  - **files**: Content of card :ref:`filesystem`.
+
+.. code-block:: json
+
+  {
+    "cmd": "SET_CARD",
+    "name": "reader name",
+    "simulator":
+    {
+       "files": []
+    }
+  }
+
+.. note::
+  This command is allowed only if the AusweisApp2 sends an initial
+  :ref:`insert_card` message. Otherwise you will get a :ref:`bad_state`
+  message as an answer.
+
 
 
 

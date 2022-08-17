@@ -16,7 +16,7 @@ namespace governikus
 class TestFileHelper
 {
 	public:
-		static QByteArray readFile(const QString& pFileName);
+		static QByteArray readFile(const QString& pFileName, bool pFromHex = false);
 		static void createTranslations(const QString& pTranslationDir);
 		static bool containsLog(const QSignalSpy& pSpy, const QLatin1String pStr);
 		static int getUnprivilegedPortStart();

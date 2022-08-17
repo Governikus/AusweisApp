@@ -18,10 +18,11 @@ Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::PCSC, true)
 	, mContextHandle(0)
-	, mTimerId(0)
+	, mTimer()
 	, mReaders()
 {
 	setObjectName(QStringLiteral("PcscReaderManager"));
+	connect(&mTimer, &QTimer::timeout, this, &PcscReaderManagerPlugIn::updateReaders);
 
 #ifdef PCSCLITE_VERSION_NUMBER
 	setPlugInValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION, QStringLiteral(PCSCLITE_VERSION_NUMBER));
@@ -31,7 +32,7 @@ PcscReaderManagerPlugIn::PcscReaderManagerPlugIn()
 
 PcscReaderManagerPlugIn::~PcscReaderManagerPlugIn()
 {
-	Q_ASSERT(mTimerId == 0);
+	Q_ASSERT(!mTimer.isActive());
 	Q_ASSERT(mContextHandle == 0);
 
 	while (!mReaders.isEmpty())
@@ -49,31 +50,24 @@ QList<Reader*> PcscReaderManagerPlugIn::getReaders() const
 
 void PcscReaderManagerPlugIn::startScan(bool pAutoConnect)
 {
-	Q_UNUSED(pAutoConnect)
-
 	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
 	setPlugInEnabled(returnCode == PcscUtils::Scard_S_Success);
 	qCDebug(card_pcsc) << "SCardEstablishContext:" << PcscUtils::toString(returnCode);
-	if (returnCode != PcscUtils::Scard_S_Success)
+	if (!getInfo().isEnabled())
 	{
 		qCWarning(card_pcsc) << "Not started: Cannot establish context";
+		return;
 	}
 
-	if (mTimerId == 0)
-	{
-		mTimerId = startTimer(500);
-	}
+	mTimer.start(500);
 	ReaderManagerPlugIn::startScan(pAutoConnect);
 }
 
 
 void PcscReaderManagerPlugIn::stopScan(const QString& pError)
 {
-	if (mTimerId)
-	{
-		killTimer(mTimerId);
-		mTimerId = 0;
-	}
+	mTimer.stop();
+
 	if (mContextHandle)
 	{
 		PCSC_RETURNCODE returnCode = SCardReleaseContext(mContextHandle);
@@ -89,15 +83,6 @@ void PcscReaderManagerPlugIn::stopScan(const QString& pError)
 }
 
 
-void PcscReaderManagerPlugIn::timerEvent(QTimerEvent* pEvent)
-{
-	if (pEvent->timerId() == mTimerId)
-	{
-		updateReaders();
-	}
-}
-
-
 void PcscReaderManagerPlugIn::updateReaders()
 {
 	QStringList readersToAdd;
@@ -106,7 +91,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 	{
 		qCWarning(card_pcsc) << "Cannot update readers, returnCode:" << returnCode;
 
-		if (returnCode == PcscUtils::Scard_E_No_Service && mTimerId != 0)
+		if (returnCode == PcscUtils::Scard_E_No_Service && mTimer.isActive())
 		{
 			// Work around for an issue on Linux: Sometimes when unplugging a reader
 			// the library seems to get confused and any further calls with existing
@@ -116,7 +101,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 			stopScan();
 			startScan(true);
 		}
-		else if (returnCode == PcscUtils::Scard_E_Service_Stopped && mTimerId != 0)
+		else if (returnCode == PcscUtils::Scard_E_Service_Stopped && mTimer.isActive())
 		{
 			// Work around for an issue on Windows 8.1: Sometimes when unplugging a reader
 			// the library seems to get confused and any further calls with existing
@@ -126,7 +111,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 			stopScan();
 			startScan(true);
 		}
-		else if (returnCode == PcscUtils::Scard_E_Invalid_Handle && mTimerId != 0)
+		else if (returnCode == PcscUtils::Scard_E_Invalid_Handle && mTimer.isActive())
 		{
 			// If the pc/sc daemon terminates on Linux, the handle is invalidated. We try
 			// to restart the manager in this case.
@@ -157,7 +142,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 
 		connect(reader, &Reader::fireCardInserted, this, &PcscReaderManagerPlugIn::fireCardInserted);
 		connect(reader, &Reader::fireCardRemoved, this, &PcscReaderManagerPlugIn::fireCardRemoved);
-		connect(reader, &Reader::fireCardRetryCounterChanged, this, &PcscReaderManagerPlugIn::fireCardRetryCounterChanged);
+		connect(reader, &Reader::fireCardInfoChanged, this, &PcscReaderManagerPlugIn::fireCardInfoChanged);
 
 		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName << "(" << mReaders.size() << "reader in total )";
 		Q_EMIT fireReaderAdded(reader->getReaderInfo());
@@ -165,7 +150,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 }
 
 
-QString PcscReaderManagerPlugIn::extractReaderName(PCSC_CHAR_PTR pReaderPointer) const
+QString PcscReaderManagerPlugIn::extractReaderName(const PCSC_CHAR_PTR pReaderPointer) const
 {
 #if defined(Q_OS_WIN) && defined(UNICODE)
 	return QString::fromWCharArray(pReaderPointer);
@@ -188,9 +173,7 @@ void PcscReaderManagerPlugIn::removeReader(const QString& pReaderName)
 	auto* reader = mReaders.take(pReaderName);
 	auto info = reader->getReaderInfo();
 	delete reader;
-	info.setCardInfo(CardInfo(CardType::NONE));
 
-	qCDebug(card_pcsc) << "fireReaderRemoved:" << pReaderName;
 	Q_EMIT fireReaderRemoved(info);
 }
 

@@ -5,6 +5,8 @@
 #include "StartPaos.h"
 
 #include "paos/PaosType.h"
+#include "paos/element/SupportedApi.h"
+#include "paos/element/UserAgent.h"
 
 using namespace governikus;
 
@@ -12,8 +14,6 @@ StartPaos::StartPaos(const QByteArray& pSessionId)
 	: PaosCreator()
 	, PaosMessage(PaosType::STARTPAOS)
 	, mSessionId(pSessionId)
-	, mUserAgent()
-	, mSupportedAPI()
 {
 	Q_ASSERT(!mSessionId.isEmpty());
 }
@@ -36,10 +36,11 @@ void StartPaos::createUserAgentElement()
 {
 	mWriter.writeStartElement(QStringLiteral("UserAgent"));
 
-	mWriter.writeTextElement(QStringLiteral("Name"), mUserAgent.getName());
-	mWriter.writeTextElement(QStringLiteral("VersionMajor"), mUserAgent.getVersionMajor());
-	mWriter.writeTextElement(QStringLiteral("VersionMinor"), mUserAgent.getVersionMinor());
-	mWriter.writeTextElement(QStringLiteral("VersionSubminor"), mUserAgent.getVersionSubminor());
+	const UserAgent userAgent;
+	mWriter.writeTextElement(QStringLiteral("Name"), userAgent.getName());
+	mWriter.writeTextElement(QStringLiteral("VersionMajor"), userAgent.getVersionMajor());
+	mWriter.writeTextElement(QStringLiteral("VersionMinor"), userAgent.getVersionMinor());
+	mWriter.writeTextElement(QStringLiteral("VersionSubminor"), userAgent.getVersionSubminor());
 
 	mWriter.writeEndElement(); // UserAgent
 }
@@ -49,9 +50,10 @@ void StartPaos::createSupportedAPIVersionsElement()
 {
 	mWriter.writeStartElement(QStringLiteral("SupportedAPIVersions"));
 
-	mWriter.writeTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor());
-	mWriter.writeTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor());
-	mWriter.writeTextElement(QStringLiteral("Subminor"), mSupportedAPI.getSubminor());
+	const SupportedAPI supportedAPI;
+	mWriter.writeTextElement(QStringLiteral("Major"), supportedAPI.getMajor());
+	mWriter.writeTextElement(QStringLiteral("Minor"), supportedAPI.getMinor());
+	mWriter.writeTextElement(QStringLiteral("Subminor"), supportedAPI.getSubminor());
 
 	mWriter.writeEndElement(); // SupportedAPIVersions
 }

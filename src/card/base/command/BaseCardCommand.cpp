@@ -4,9 +4,9 @@
 
 #include "BaseCardCommand.h"
 
-#include "asn1/SecurityInfos.h"
 #include "CardConnection.h"
 #include "Initializer.h"
+#include "asn1/SecurityInfos.h"
 
 #include <QLoggingCategory>
 #include <QSharedPointer>
@@ -17,7 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 using namespace governikus;
 
 INIT_FUNCTION([] {
-			qRegisterMetaType<QSharedPointer<BaseCardCommand> >("QSharedPointer<BaseCardCommand>");
+			qRegisterMetaType<QSharedPointer<BaseCardCommand>>("QSharedPointer<BaseCardCommand>");
 		})
 
 
@@ -26,11 +26,6 @@ BaseCardCommand::BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConne
 	, mReturnCode(CardReturnCode::UNKNOWN)
 {
 	Q_ASSERT(mCardConnectionWorker);
-}
-
-
-BaseCardCommand::~BaseCardCommand()
-{
 }
 
 

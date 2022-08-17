@@ -71,13 +71,44 @@ class test_StatePreparePace
 		}
 
 
-		void test_Run_RetryCounter0()
+		void test_Run_RetryCounter0_Smart()
 		{
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const CardInfo cardInfo(CardType::SMART_EID, QSharedPointer<const EFCardAccess>(), 0);
+			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::REMOTE_IFD, cardInfo);
+			mContext->setCardConnection(connection);
+			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
+			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
+
+			mContext->setStateApproved();
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Smart_Invalid);
+		}
+
+
+		void test_Run_RetryCounter0_data()
+		{
+			QTest::addColumn<ReaderManagerPlugInType>("type");
+
+			const auto& readerTypes = Enum<ReaderManagerPlugInType>::getList();
+			for (const auto& type : readerTypes)
+			{
+				QTest::newRow(getEnumName(type).data()) << type;
+			}
+		}
+
+
+		void test_Run_RetryCounter0()
+		{
+			QFETCH(ReaderManagerPlugInType, type);
+
+			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			worker->moveToThread(&workerThread);
+			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const ReaderInfo readerInfo(QString(), type, cardInfo);
 			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);

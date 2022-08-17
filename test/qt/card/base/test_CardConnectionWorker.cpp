@@ -6,13 +6,13 @@
 
 #include "CardConnectionWorker.h"
 
-#include "asn1/KnownOIDs.h"
-
 #include "MockReader.h"
 
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 class test_CardConnectionWorker
 	: public QObject
@@ -82,7 +82,7 @@ class test_CardConnectionWorker
 			QCOMPARE(mWorker->establishPaceChannel(PacePasswordId::PACE_CAN, password, chat, certDescription).getPaceReturnCode(), CardReturnCode::PROTOCOL_ERROR);
 
 			//comfort reader
-			mReader->getReaderInfo().setBasicReader(false);
+			mReader->setInfoBasicReader(false);
 			QTest::ignoreMessage(QtInfoMsg, "Starting PACE for PACE_PIN");
 			QTest::ignoreMessage(QtInfoMsg, "Finished PACE for PACE_PIN with result COMMAND_FAILED");
 			QTest::ignoreMessage(QtWarningMsg, "Establishment of PACE channel not supported");
@@ -103,7 +103,7 @@ class test_CardConnectionWorker
 			QCOMPARE(mWorker->destroyPaceChannel(), CardReturnCode::OK);
 
 			//comfort reader
-			mReader->getReaderInfo().setBasicReader(false);
+			mReader->setInfoBasicReader(false);
 			QTest::ignoreMessage(QtInfoMsg, "Destroying PACE channel");
 			QTest::ignoreMessage(QtWarningMsg, "Destruction of PACE channel not supported");
 			QCOMPARE(mWorker->destroyPaceChannel(), CardReturnCode::COMMAND_FAILED);
@@ -121,10 +121,10 @@ class test_CardConnectionWorker
 
 			//basic reader
 			QTest::ignoreMessage(QtWarningMsg, "Modify PIN failed");
-			QCOMPARE(mWorker->setEidPin(newPin, 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
+			QCOMPARE(mWorker->setEidPin(newPin, 5), ResponseApduResult({CardReturnCode::OK, ResponseApdu(QByteArray::fromHex("6982"))}));
 
 			//comfort reader
-			mReader->getReaderInfo().setBasicReader(false);
+			mReader->setInfoBasicReader(false);
 			QTest::ignoreMessage(QtWarningMsg, "Setting eID PIN is not supported");
 			QCOMPARE(mWorker->setEidPin(QByteArray(), 5), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
 		}
@@ -134,6 +134,94 @@ class test_CardConnectionWorker
 		{
 			//no card
 			QCOMPARE(mWorker->updateRetryCounter(), CardReturnCode::CARD_NOT_FOUND);
+		}
+
+
+		void test_readFile_data()
+		{
+			QTest::addColumn<QVector<TransmitConfig>>("responses");
+			QTest::addColumn<QByteArray>("expectedFileContent");
+
+			QTest::newRow("short file - success") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(8, 0);
+
+			QTest::newRow("short file - end of file") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("6282")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(8, 0);
+
+			QTest::newRow("short file - illegal offset") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6B00")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(256, 0);
+
+			QTest::newRow("long file - success") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(264, 0);
+
+			QTest::newRow("long file - end of file") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("6282")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(264, 0);
+
+			QTest::newRow("long file - illegal offset") << QVector<TransmitConfig>({
+						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
+						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6B00")),
+						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
+					}) << QByteArray(512, 0);
+		}
+
+
+		void test_readFile()
+		{
+			QFETCH(QVector<TransmitConfig>, responses);
+			QFETCH(QByteArray, expectedFileContent);
+
+			MockCardConfig cardConfig(responses);
+			mReader->setCard(cardConfig);
+
+			QByteArray fileContent;
+			mWorker->readFile(FileRef::efCardSecurity(), fileContent);
+			QCOMPARE(fileContent, expectedFileContent);
+
+			QCOMPARE(mWorker->transmit(CommandApdu()), ResponseApduResult({CardReturnCode::COMMAND_FAILED}));
+		}
+
+
+		void test_getChallenge()
+		{
+			QCOMPARE(mWorker->getChallenge(), ResponseApduResult{CardReturnCode::CARD_NOT_FOUND});
+
+			mReader->setCard(MockCardConfig());
+			QCOMPARE(mWorker->getChallenge(), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
+		}
+
+
+		void test_prepareIdentification()
+		{
+			QCOMPARE(mWorker->prepareIdentification(QByteArray()), EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND));
+
+			mReader->setCard(MockCardConfig());
+			QCOMPARE(mWorker->prepareIdentification(QByteArray()), EstablishPaceChannelOutput{CardReturnCode::COMMAND_FAILED});
+		}
+
+
+		void test_performTAandCA()
+		{
+			const QByteArray empty;
+			QCOMPARE(mWorker->performTAandCA(CVCertificateChain(), empty, empty, empty, empty), TerminalAndChipAuthenticationResult{CardReturnCode::CARD_NOT_FOUND});
+
+			mReader->setCard(MockCardConfig());
+			QCOMPARE(mWorker->performTAandCA(CVCertificateChain(), empty, empty, empty, empty), TerminalAndChipAuthenticationResult{CardReturnCode::COMMAND_FAILED});
 		}
 
 

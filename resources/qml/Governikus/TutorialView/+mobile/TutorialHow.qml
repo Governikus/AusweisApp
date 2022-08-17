@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -559,7 +559,7 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 			//: LABEL ANDROID IOS
-			text: qsTr("For lenghty forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...")
+			text: qsTr("For lengthy forms, e.g. a BAf\u00F6G application, we recommend you to use the AusweisApp2 on a computer...")
 			textStyle: Style.text.tutorial_header_secondary
 			horizontalAlignment: Text.AlignHCenter
 		}

@@ -1,5 +1,4 @@
 import common.Build
-import static common.Constants.strip
 
 def j = new Build
 	(
@@ -22,33 +21,24 @@ j.with
 
 	steps
 	{
-		shell(strip('''\
-			cd build;
-			cmake ../source
-			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DCOVERAGE=true
-			-DBUILD_SHARED_LIBS=on
-			-DSANITIZER=on
-			'''))
+		shell('cd source; cmake --preset ci-linux')
 
 		shell('''\
-			cd build; make ${MAKE_FLAGS}
+			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
 			export QML2_IMPORT_PATH=$WORKSPACE/libs/build/dist/qml
-			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
-			cd build; ctest --output-on-failure ${MAKE_FLAGS}
+			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 
 		shell('''\
-			cd build; DESTDIR=$WORKSPACE/install make ${MAKE_FLAGS} install
+			DESTDIR=$WORKSPACE/install cmake --install build
 			'''.stripIndent().trim())
 
-		shell('cd build; make gcovr')
+		shell('cmake --build build --target gcovr')
 
-		shell('cd build; make cloc.report')
+		shell('cmake --build build --target cloc.report')
 	}
 
 	publishers

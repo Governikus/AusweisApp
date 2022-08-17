@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -23,6 +23,7 @@ FocusScope {
 	property Item customSubAction: Item { visible: false }
 
 	property bool rootEnabled: true
+	property bool active: true
 
 	property bool showSettings: false
 	property var customSettingsHandler
@@ -31,11 +32,30 @@ FocusScope {
 	property bool showHelp: true
 	property string helpTopic: "applicationPage"
 
+	property int list_index: 1
+	property int list_length: 1
+
+	readonly property bool isLastElement: list_index === list_length
+	readonly property bool isClickable: active && !isLastElement
+
 	Accessible.role: Accessible.Button
-	Accessible.name: text.text
+	Accessible.name: !scope.active
+				//: LABEL DESKTOP
+				? qsTr("Navigating to %1 in current context disabled").arg(text.text) + ", "
+					//: LABEL DESKTOP
+					+ qsTr("element %1 of %2").arg(list_index).arg(list_length)
+				: isLastElement
+					//: LABEL DESKTOP
+					? qsTr("Current context: %1").arg(text.text) + ", "
+						//: LABEL DESKTOP
+						+ qsTr("element %1 of %2").arg(list_index).arg(list_length)
+					//: LABEL DESKTOP
+					: qsTr("Navigate to %1").arg(text.text) + ", "
+						//: LABEL DESKTOP
+						+ qsTr("element %1 of %2").arg(list_index).arg(list_length)
 	activeFocusOnTab: true
 
-	Keys.onSpacePressed: scope.clicked()
+	Keys.onSpacePressed: if (isClickable) scope.clicked()
 
 	Row {
 		id: row
@@ -57,25 +77,28 @@ FocusScope {
 		TitleBarText {
 			id: text
 
-			readonly property color textColor: scope.enabled ? Style.text.header_inverse.textColor : Style.text.header_secondary_inverse.textColor
+			readonly property color textColor: scope.active ? Style.text.header_inverse.textColor : Style.text.header_secondary_inverse.textColor
 			readonly property color pressColor: Qt.darker(textColor,  Constants.highlightDarkerFactor)
 
 			Accessible.role: Accessible.Button
 			Accessible.name: text.text
 
 			color: mouseArea.containsPress ? pressColor : textColor
+			font.bold: isLastElement
 
 			FocusFrame {
 				scope: scope
+				isOnLightBackground: false
 			}
 
 			MouseArea {
 				id: mouseArea
 
 				anchors.fill: parent
-				cursorShape: Qt.PointingHandCursor
+				cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
 				onPressed: scope.focus = true
 				onClicked: scope.clicked()
+				enabled: scope.isClickable
 			}
 		}
 	}

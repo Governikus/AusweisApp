@@ -27,10 +27,17 @@ static std::mutex cMutex;
 
 namespace governikus
 {
-Q_DECL_EXPORT void ausweisapp2_init_internal()
+Q_DECL_EXPORT void ausweisapp2_init_internal(const QByteArray& pCmdline)
 {
-	static const std::vector<const char*> args = {"SDK", "--ui", "functional"};
-	static int length = static_cast<int>(args.size());
+	QByteArrayList userParameter = pCmdline.split(' ');
+
+	std::vector<const char*> args({"SDK", "--ui", "functional"});
+	for (QByteArray& entry : userParameter)
+	{
+		args.push_back(entry.data());
+	}
+
+	int length = static_cast<int>(args.size());
 	initApp(length, const_cast<char**>(args.data()));
 }
 
@@ -81,7 +88,7 @@ Q_DECL_EXPORT void ausweisapp2_join_thread_internal()
 using namespace governikus;
 
 
-Q_DECL_EXPORT bool ausweisapp2_init(AusweisApp2Callback pCallback)
+Q_DECL_EXPORT bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* pCmdline)
 {
 	if (pCallback == nullptr)
 	{
@@ -98,7 +105,7 @@ Q_DECL_EXPORT bool ausweisapp2_init(AusweisApp2Callback pCallback)
 
 	cCallback = pCallback;
 	cShutdownCalled = false;
-	cThread = std::thread(&ausweisapp2_init_internal);
+	cThread = std::thread(&ausweisapp2_init_internal, QByteArray(pCmdline));
 
 	return true;
 }
@@ -115,7 +122,7 @@ Q_DECL_EXPORT void ausweisapp2_shutdown(void)
 			std::cout << "Send shutdown request" << std::endl;
 
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-					auto* j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
+					auto* j = Env::getSingleton<UILoader>()->getLoaded<UIPlugInFunctional>();
 					if (j)
 					{
 						j->doQuitApplicationRequest();
@@ -147,7 +154,7 @@ Q_DECL_EXPORT void ausweisapp2_send(const char* pCmd)
 
 	const auto cmd = QByteArray(pCmd);
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [cmd] {
-			const auto j = qobject_cast<UIPlugInFunctional*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInFunctional));
+			auto* j = Env::getSingleton<UILoader>()->getLoaded<UIPlugInFunctional>();
 			if (j)
 			{
 				j->doMessageProcessing(cmd);

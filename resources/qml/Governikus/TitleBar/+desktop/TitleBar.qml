@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -14,21 +13,29 @@ import Governikus.Type.SettingsModel 1.0
 
 Item {
 	id: titleBar
+
+	function setActiveFocus() {
+		forceActiveFocus(Qt.MouseFocusReason)
+	}
+
 	height: actionRow.height + 2 * Style.dimens.titlebar_padding
 
 	Accessible.role: Accessible.Grouping
-	Accessible.name: qsTr("Titlebar")
-	Accessible.description: qsTr("This bar represents the navigation tree of the AusweisApp2.")
+
 	activeFocusOnTab: true
 
 	property var contentRoot
-	signal rootClicked();
+	signal rootClicked()
 
 	property var rightMostAction: actionRow.lastAction
 
 	function updateActions() {
 		actionRow.children = [rootAction]
 		addRecursive(contentRoot)
+
+		let visibleActionsCount = getVisibleTitleBarActionCount()
+		Accessible.name = buildAccessibleName(visibleActionsCount)
+		updateListIndexAndLength(visibleActionsCount)
 	}
 
 	function addRecursive(root) {
@@ -41,6 +48,42 @@ Item {
 				addRecursive(child)
 			}
 		}
+	}
+
+	function buildAccessibleName(visibleActionsCount) {
+		//: LABEL DESKTOP
+		var accessible_name = qsTr("Navigation bar") + ", "
+		//: LABEL DESKTOP
+		accessible_name += qsTr("List") + ", "
+		if (actionRow.children.length > 1) {
+			//: LABEL DESKTOP
+			accessible_name += qsTr("%1 elements").arg(visibleActionsCount)
+		} else {
+			//: LABEL DESKTOP
+			accessible_name += qsTr("1 element")
+		}
+		return accessible_name
+	}
+
+	function updateListIndexAndLength(visibleActionsCount) {
+		var idx = 1
+		for (var i = 0; i < actionRow.children.length; i++) {
+			if (actionRow.children[i].visible) {
+				actionRow.children[i].list_index = idx;
+				actionRow.children[i].list_length = visibleActionsCount;
+				idx += 1
+			}
+		}
+	}
+
+	function getVisibleTitleBarActionCount() {
+		var count = 0
+		for (var i = 0; i < actionRow.children.length; i++) {
+			if (actionRow.children[i].visible) {
+				count += 1
+			}
+		}
+		return count
 	}
 
 	Rectangle
@@ -61,6 +104,7 @@ Item {
 
 		FocusPoint {
 			scope: titleBar
+			isOnLightBackground: false
 		}
 
 		Item {
@@ -92,8 +136,8 @@ Item {
 
 					showArrow: false
 					//: LABEL DESKTOP
-					text: qsTr("Start")
-					enabled: rightMostAction.rootEnabled
+					text: qsTr("Start page")
+					active: rightMostAction.rootEnabled
 					helpTopic: "applicationOverview"
 
 					onClicked: titleBar.rootClicked()
@@ -101,18 +145,17 @@ Item {
 			}
 		}
 
-		LinearGradient {
+		Rectangle {
 			visible: !actionRow.childrenFitSpace
 			height: parent.height
 			width: Constants.pane_padding
 			anchors.right: rightTitleBarActions.left
 			anchors.rightMargin: Style.dimens.titlebar_padding
 
-			start: Qt.point(0, 0)
-			end: Qt.point(Constants.pane_padding, 0)
 			gradient: Gradient {
+				orientation: Gradient.Horizontal
 				GradientStop { position: 0.0; color: Style.color.transparent }
-				GradientStop { position: 1.0; color: Constants.blue }
+				GradientStop { position: 1.0; color: Style.color.navigation }
 			}
 		}
 

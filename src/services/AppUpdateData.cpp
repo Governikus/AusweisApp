@@ -112,9 +112,16 @@ const GlobalStatus& AppUpdateData::getParsingResult() const
 bool AppUpdateData::isCompatible() const
 {
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+
+	#if (QT_VERSION < QT_VERSION_CHECK(6, 1, 0))
 	const auto osv = QOperatingSystemVersion::current();
 	const auto currentVersion = QVersionNumber(osv.majorVersion(), osv.minorVersion(), osv.microVersion());
 	return currentVersion >= mMinOsVersion;
+
+	#else
+	return QOperatingSystemVersion::current().version() >= mMinOsVersion;
+
+	#endif
 
 #else
 	return true;

@@ -19,9 +19,9 @@ class ProviderNameFilterModel
 	: public QSortFilterProxyModel
 {
 	Q_OBJECT
+	friend class ::test_ProviderNameFilterModel;
 
 	private:
-		friend class ::test_ProviderNameFilterModel;
 		ProviderConfigurationInfo mProvider;
 
 	protected:

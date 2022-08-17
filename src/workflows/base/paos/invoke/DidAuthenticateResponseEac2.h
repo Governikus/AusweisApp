@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/ResponseType.h"
 #include "PaosCreator.h"
+#include "paos/ResponseType.h"
 
 #include <QString>
 
@@ -18,6 +18,8 @@ class DIDAuthenticateResponseEAC2
 	: public PaosCreator
 	, public ResponseType
 {
+	Q_DISABLE_COPY(DIDAuthenticateResponseEAC2)
+
 	private:
 		QByteArray mEfCardSecurity;
 		QByteArray mAuthenticationToken;
@@ -28,8 +30,6 @@ class DIDAuthenticateResponseEAC2
 		void createAuthenticationProtocolDataElement();
 
 		void createBodyElement() override;
-
-		Q_DISABLE_COPY(DIDAuthenticateResponseEAC2)
 
 	public:
 		DIDAuthenticateResponseEAC2();

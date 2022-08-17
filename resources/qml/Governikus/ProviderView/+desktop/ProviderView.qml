@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Provider 1.0
@@ -62,9 +62,7 @@ SectionPage {
 
 		visible: d.activeView === ProviderView.SubViews.Detail
 
-		activeFocusOnTab: true
-
-		onNextView: {
+		onNextView: pName => {
 			d.activeView = ProviderView.SubViews.None
 			baseItem.nextView(pName)
 		}
@@ -77,10 +75,8 @@ SectionPage {
 
 		Component.onCompleted: setActive()
 
-		activeFocusOnTab: true
-
-		onNextView: baseItem.nextView(pName)
-		onShowDetailView: {
+		onNextView: pName => { baseItem.nextView(pName) }
+		onShowDetailView: pModelItem => {
 			HistoryModel.nameFilter.setProviderAddress(pModelItem.providerAddress)
 			detailView.providerModelItem = pModelItem
 			d.activeView = ProviderView.SubViews.Detail

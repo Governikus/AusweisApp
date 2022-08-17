@@ -4,14 +4,15 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include <QtCore>
-#include <QtTest>
+#include "asn1/CVCertificateBody.h"
 
 #include "asn1/ASN1Util.h"
 #include "asn1/CVCertificate.h"
-#include "asn1/KnownOIDs.h"
+#include "asn1/Oid.h"
+
 #include "TestFileHelper.h"
 
+#include <QtTest>
 
 using namespace governikus;
 
@@ -48,28 +49,30 @@ class test_CVCertificateBody
 
 			QByteArray expectedDescription = QByteArray::fromHex("12CA9D0A51DF9297EABA7EBE9AB49DF2F4CF83E0DBB02772EFAD89C8AD75FCCD");
 			QByteArray expectedSector = QByteArray::fromHex("CB1E1940159F11DC96845B87C23B86F9BAA755A789A914BBD5B8FA9784019D1C");
-			const auto idDesc = KnownOIDs::CertificateExtensions::ID_DESCRIPTION;
-			QCOMPARE(cvc->getBody().getExtensions().value(toByteArray(idDesc)), expectedDescription);
-			const auto idSector = KnownOIDs::CertificateExtensions::ID_SECTOR;
-			QCOMPARE(cvc->getBody().getExtensions().value(toByteArray(idSector)), expectedSector);
+			QCOMPARE(cvc->getBody().getExtensions().value(KnownOid::ID_DESCRIPTION), expectedDescription);
+			QCOMPARE(cvc->getBody().getExtensions().value(KnownOid::ID_SECTOR), expectedSector);
 		}
 
 
 		void getPublicKey_noCompletePublicKey()
 		{
 			auto cvc = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00035.hex"));
+			const auto& key = cvc->getBody().getPublicKey();
 
-			QVERIFY(!cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull());
-			QVERIFY(!cvc->getBody().getPublicKey().getEcKey());
+			QVERIFY(!key.getUncompressedPublicPoint().isNull());
+			QVERIFY(!key.isComplete());
+			QVERIFY(key.createKey(key.getUncompressedPublicPoint()).isNull());
 		}
 
 
 		void getPublicKey_completePublicKey()
 		{
 			auto cvc = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00002_DETESTeID00001.hex"));
+			const auto& key = cvc->getBody().getPublicKey();
 
-			QVERIFY(!cvc->getBody().getPublicKey().getUncompressedPublicPoint().isNull());
-			QVERIFY(cvc->getBody().getPublicKey().getEcKey());
+			QVERIFY(!key.getUncompressedPublicPoint().isNull());
+			QVERIFY(key.isComplete());
+			QVERIFY(!key.createKey(key.getUncompressedPublicPoint()).isNull());
 		}
 
 

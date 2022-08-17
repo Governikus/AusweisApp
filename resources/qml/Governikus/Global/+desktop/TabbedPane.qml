@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -28,9 +28,8 @@ Item {
 	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
 	readonly property var currentContentItem: contentLoader.item
 	readonly property real relativeListViewWidth: 0.3
-	readonly property int availableHeight: height - 2 * contentItemPadding - 2 * Style.dimens.high_contrast_item_border
+	readonly property int availableHeight: height - 2 * contentPadding - 2 * Style.dimens.high_contrast_item_border
 	property int contentPadding: Constants.pane_padding
-	readonly property int contentItemPadding: currentContentItem && currentContentItem.contentPadding !== undefined ? currentContentItem.contentPadding : contentPadding
 
 	function scrollYPositionIntoView(pYposition) {
 		var dy = pYposition - flickable.contentY - flickable.height
@@ -115,8 +114,8 @@ Item {
 
 					anchors {
 						fill: parent
-						bottomMargin: contentItemPadding
-						topMargin: contentItemPadding
+						bottomMargin: contentPadding
+						topMargin: contentPadding
 					}
 
 					contentHeight: contentLoader.height
@@ -128,8 +127,8 @@ Item {
 							top: parent.top
 							left: parent.left
 							right: parent.right
-							leftMargin: contentItemPadding
-							rightMargin: contentItemPadding
+							leftMargin: contentPadding
+							rightMargin: contentPadding
 						}
 
 						sourceComponent: {
@@ -161,7 +160,7 @@ Item {
 	Component {
 		id: sectionNameDelegate
 
-		Control {
+		Item {
 			id: delegateItem
 
 			readonly property bool isFirstItem: index === 0
@@ -171,8 +170,9 @@ Item {
 			readonly property var itemModel: model
 
 			activeFocusOnTab: false
-			Accessible.role: Accessible.PageTab
+			Accessible.role: Accessible.Button
 			Accessible.name: delegateLoader.item ? delegateLoader.item.sectionName : ""
+			Accessible.focusable: true
 
 			width: sectionNameList.width
 			height: delegateLoader.height + 2 * Constants.pane_padding
@@ -226,16 +226,14 @@ Item {
 			}
 
 			FocusFrame {
-				visible: delegateItem.focusReason !== Qt.MouseFocusReason
-
 				framee: delegateLoader
-				borderColor: Style.color.focus_indicator
 			}
 
 			Loader {
 				id: delegateLoader
 
 				property var model: itemModel
+				property bool isCurrentItem: parent.isCurrentItem
 
 				anchors {
 					verticalCenter: parent.verticalCenter

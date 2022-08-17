@@ -20,17 +20,25 @@ using namespace governikus;
 const char* const AbstractState::cFORCE_START_STOP_SCAN = "FORCE_START_STOP_SCAN";
 
 
-AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext, bool pConnectOnCardRemoved)
+AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 	: mContext(pContext)
-	, mConnectOnCardRemoved(pConnectOnCardRemoved)
+	, mAbortOnCardRemoved(false)
+	, mKeepCardConnectionAlive(false)
 	, mConnections()
 {
 	Q_ASSERT(mContext);
 }
 
 
-AbstractState::~AbstractState()
+void AbstractState::setAbortOnCardRemoved()
 {
+	mAbortOnCardRemoved = true;
+}
+
+
+void AbstractState::setKeepCardConnectionAlive()
+{
+	mKeepCardConnectionAlive = true;
 }
 
 
@@ -70,8 +78,7 @@ void AbstractState::onStateApprovedChanged(bool pApproved)
 
 void AbstractState::onEntry(QEvent* pEvent)
 {
-	Q_UNUSED(pEvent)
-	if (mConnectOnCardRemoved)
+	if (mAbortOnCardRemoved)
 	{
 		const auto readerManager = Env::getSingleton<ReaderManager>();
 		mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &AbstractState::onCardRemoved);
@@ -80,6 +87,11 @@ void AbstractState::onEntry(QEvent* pEvent)
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
 	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged, Qt::QueuedConnection);
 
+	if (const auto& connection = mContext->getCardConnection(); connection && mKeepCardConnectionAlive)
+	{
+		connection->setKeepAlive(true);
+	}
+
 	qCDebug(statemachine) << "Next state is" << getStateName();
 	mContext->setCurrentState(getStateName());
 
@@ -87,16 +99,23 @@ void AbstractState::onEntry(QEvent* pEvent)
 	{
 		onUserCancelled();
 	}
+
+	QState::onEntry(pEvent);
 }
 
 
 void AbstractState::onExit(QEvent* pEvent)
 {
-	QState::onExit(pEvent);
+	if (const auto& connection = mContext->getCardConnection(); connection && mKeepCardConnectionAlive)
+	{
+		connection->setKeepAlive(false);
+	}
 	clearConnections();
 	mContext->setStateApproved(false);
 	qCDebug(statemachine) << "Leaving state" << getStateName()
 						  << "with status: [" << mContext->getLastPaceResult() << "+" << mContext->getStatus() << "]";
+
+	QState::onExit(pEvent);
 }
 
 
@@ -161,7 +180,7 @@ bool AbstractState::isStartStopEnabled() const
 }
 
 
-void AbstractState::startScanIfNecessary()
+void AbstractState::startNfcScanIfNecessary()
 {
 #if defined(Q_OS_IOS)
 	if (isStartStopEnabled())
@@ -172,10 +191,15 @@ void AbstractState::startScanIfNecessary()
 }
 
 
-void AbstractState::stopScanIfNecessary(const QString& pError)
+void AbstractState::stopNfcScanIfNecessary(const QString& pError)
 {
 #if defined(Q_OS_IOS)
-	if (isStartStopEnabled() && Env::getSingleton<VolatileSettings>()->handleInterrupt())
+	const auto& volatileSettings = Env::getSingleton<VolatileSettings>();
+	if (volatileSettings->isUsedAsSDK() && !volatileSettings->handleInterrupt())
+	{
+		return;
+	}
+	if (isStartStopEnabled())
 	{
 		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC, pError);
 	}

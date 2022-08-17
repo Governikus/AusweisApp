@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/ChangePinContext.h"
 #include "GenericContextContainer.h"
+#include "context/ChangePinContext.h"
 
 namespace governikus
 {
@@ -18,8 +18,9 @@ class StatePrepareChangePin
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StatePrepareChangePin(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StatePrepareChangePin(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
 	Q_SIGNALS:
 		void fireEnterNewPacePin();

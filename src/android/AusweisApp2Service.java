@@ -6,14 +6,12 @@ package com.governikus.ausweisapp2;
 
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
-import org.qtproject.qt5.android.bindings.QtService;
+import org.qtproject.qt.android.bindings.QtService;
 
 public class AusweisApp2Service
 	extends QtService
 {
-	public static final String LOG_TAG = "AusweisApp2";
 	private final AidlBinder mBinder = new AidlBinder();
 
 	public AidlBinder getAidlBinder()
@@ -25,7 +23,7 @@ public class AusweisApp2Service
 	@Override
 	public IBinder onBind(Intent intent)
 	{
-		Log.d(LOG_TAG, "Android service bound.");
+		LogHandler.getLogger().info("Android service bound.");
 		return mBinder;
 	}
 
@@ -33,7 +31,7 @@ public class AusweisApp2Service
 	@Override
 	public boolean onUnbind(Intent intent)
 	{
-		Log.d(LOG_TAG, "Android service unbound.");
+		LogHandler.getLogger().info("Android service unbound.");
 		return super.onUnbind(intent);
 	}
 
@@ -41,7 +39,7 @@ public class AusweisApp2Service
 	@Override
 	public void onCreate()
 	{
-		Log.d(LOG_TAG, "Android service created.");
+		LogHandler.getLogger().info("Android service created.");
 		super.onCreate();
 	}
 
@@ -49,7 +47,7 @@ public class AusweisApp2Service
 	@Override
 	public void onDestroy()
 	{
-		Log.d(LOG_TAG, "Android service destroyed.");
+		LogHandler.getLogger().info("Android service destroyed.");
 
 		super.onDestroy();
 

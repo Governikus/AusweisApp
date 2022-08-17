@@ -17,9 +17,7 @@ PaosParser::PaosParser(const QString& pMessageName)
 }
 
 
-PaosParser::~PaosParser()
-{
-}
+PaosParser::~PaosParser() = default;
 
 
 PaosMessage* PaosParser::parse(const QByteArray& pXmlData)

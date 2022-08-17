@@ -11,11 +11,11 @@
       <image xlink:href="nfc.svg" height="100" width="100" y="67" x="138" />
     </g>
     <g id="wifi">
-      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#4d7aa4" stroke-width="3" />
+      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#164a8c" stroke-width="3" />
       <image xlink:href="wifi.svg" height="70" width="70" x="5" y="5"  />
     </g>
     <g id="usb">
-      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#4d7aa4" stroke-width="3" />
+      <circle cx="40" cy="40" r="40" fill="#fff" stroke="#164a8c" stroke-width="3" />
       <image xlink:href="usb.svg" height="70" width="70" x="5" y="5"  />
     </g>
   </defs>

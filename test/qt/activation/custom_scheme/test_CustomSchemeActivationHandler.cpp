@@ -64,7 +64,7 @@ class test_CustomSchemeActivationHandler
 			QDesktopServices::openUrl(url);
 			QCOMPARE(spy.count(), 1);
 
-			const auto context = spy.at(0).at(0).value<QSharedPointer<ActivationContext> >();
+			const auto context = spy.at(0).at(0).value<QSharedPointer<ActivationContext>>();
 			QCOMPARE(context->getActivationURL(), url);
 		}
 

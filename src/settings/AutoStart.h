@@ -7,8 +7,8 @@
 #include <QString>
 
 #ifdef Q_OS_WIN
-#include <QSettings>
-#include <QSharedPointer>
+	#include <QSettings>
+	#include <QSharedPointer>
 #endif
 
 class test_GeneralSettings;
@@ -22,15 +22,15 @@ class AutoStart
 
 	private:
 #ifdef Q_OS_WIN
-		static QString appPath();
-		static QSharedPointer<QSettings> getRegistryStore();
+		[[nodiscard]] static QString appPath();
+		[[nodiscard]] static QSharedPointer<QSettings> getRegistryStore();
 #endif
-		static bool setInternal(bool pEnabled);
+		[[nodiscard]] static bool setInternal(bool pEnabled);
 
 	public:
-		static bool enabled();
-		static bool isSetByAdmin();
-		static bool set(bool pEnabled);
+		[[nodiscard]] static bool enabled();
+		[[nodiscard]] static bool isSetByAdmin();
+		[[nodiscard]] static bool set(bool pEnabled);
 };
 
 

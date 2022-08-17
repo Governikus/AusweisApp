@@ -21,9 +21,9 @@ class WebserviceActivationHandler
 	Q_OBJECT
 	Q_PLUGIN_METADATA(IID "governikus.ActivationHandler" FILE "metadata.json")
 	Q_INTERFACES(governikus::ActivationHandler)
+	friend class ::test_WebserviceActivationHandler;
 
 	private:
-		friend class ::test_WebserviceActivationHandler;
 		QSharedPointer<HttpServer> mServer;
 
 		void handleImageRequest(const QSharedPointer<HttpRequest>& pRequest, const QString& pImagePath) const;
@@ -36,7 +36,7 @@ class WebserviceActivationHandler
 
 	public:
 		WebserviceActivationHandler();
-		~WebserviceActivationHandler() override;
+		~WebserviceActivationHandler() override = default;
 
 		bool start() override;
 		void stop() override;

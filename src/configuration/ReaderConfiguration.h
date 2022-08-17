@@ -27,10 +27,9 @@ class ReaderConfiguration
 {
 	Q_OBJECT
 	friend class Env;
+	friend class MockReaderConfiguration;
 
 	private:
-		friend class MockReaderConfiguration;
-
 		const QSharedPointer<UpdatableFile> mUpdatableFile;
 		QVector<ReaderConfigurationInfo> mReaderConfigurationInfos;
 

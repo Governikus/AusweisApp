@@ -2,8 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -23,7 +22,7 @@ Item {
 	signal clicked()
 
 	Accessible.name: title.text
-	Accessible.onPressAction: if (Qt.platform.os === "ios") clicked()
+	Accessible.onPressAction: clicked()
 
 	Image{
 		id: headerImage
@@ -57,14 +56,8 @@ Item {
 
 			font.bold: true
 			textStyle: Style.text.tutorial_title
-			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-			layer.effect: DropShadow {
-				verticalOffset: 3
-				horizontalOffset: 3
-				color: Constants.white
-				radius: 1
-				samples: 3
-			}
+			style: Text.Outline
+			styleColor: Constants.white
 		}
 	}
 }

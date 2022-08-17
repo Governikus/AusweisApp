@@ -10,6 +10,7 @@
 #include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
 #include "VolatileSettings.h"
+#include "states/StateEditAccessRights.h"
 
 #include "TestAuthContext.h"
 #include <QtTest>
@@ -69,9 +70,9 @@ class test_MsgHandlerAccessRights
 			QSharedPointer<ActivationContext> activationContext(new InternalActivationContext(QUrl("http://dummy")));
 			QSharedPointer<TestAuthContext> context(new TestAuthContext(activationContext, ":/paos/DIDAuthenticateEAC1_2.xml"));
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
-			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"),
+			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>()),
 					QByteArray(R"({"chat":{"effective":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitII","ResidencePermitI","CommunityID","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","PinManagement","CanAllowed","Pseudonym"],"optional":["WriteAddress","WriteCommunityID","WriteResidencePermitI","WriteResidencePermitII","ResidencePermitII","ResidencePermitI","CommunityID","Address","BirthName","Nationality","PlaceOfBirth","DateOfBirth","DoctoralDegree","ArtisticName","FamilyName","GivenNames","ValidUntil","IssuingCountry","DocumentType","PinManagement","CanAllowed","Pseudonym"],"required":[]},"msg":"ACCESS_RIGHTS"})"));
 		}
 
@@ -79,9 +80,9 @@ class test_MsgHandlerAccessRights
 		void state()
 		{
 			MessageDispatcher dispatcher;
-			dispatcher.init(getContextWithChat());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
 
-			QCOMPARE(dispatcher.processStateChange("StateEditAccessRights"),
+			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>()),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
@@ -93,7 +94,7 @@ class test_MsgHandlerAccessRights
 			const auto& msg = QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"GET_ACCESS_RIGHTS","msg":"BAD_STATE"})"));
 
-			dispatcher.init(getContextWithChat());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"GET_ACCESS_RIGHTS","msg":"BAD_STATE"})"));
 		}
 
@@ -102,10 +103,10 @@ class test_MsgHandlerAccessRights
 		{
 			const auto& context = getContextWithChat();
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
 			QVERIFY(!context->isStateApproved());
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 
 			QVERIFY(!context->isStateApproved());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
@@ -119,9 +120,9 @@ class test_MsgHandlerAccessRights
 		void getAccessRights()
 		{
 			MessageDispatcher dispatcher;
-			dispatcher.init(getContextWithChat());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
 
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
@@ -131,9 +132,9 @@ class test_MsgHandlerAccessRights
 		{
 			MessageDispatcher dispatcher;
 			auto context = getContextWithChat(true);
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","CanAllowed","AgeVerification"],"optional":["FamilyName","CanAllowed","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 
@@ -151,13 +152,16 @@ class test_MsgHandlerAccessRights
 			QTest::addColumn<QByteArray>("msg");
 
 			QTest::newRow("chat_invalid") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["8",11]}   )")
-										  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data needs to be string","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+										  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_needs_be_string") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": [8,"11"]}   )")
-												  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+												  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data needs to be string","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_unknown_id") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["y", "123"]}   )")
 											 << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
+
+			QTest::newRow("chat_invalid_and_needs_be_string") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["y", 123]}   )")
+															  << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"error":"Entry in 'chat' data is invalid","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
 
 			QTest::newRow("chat_set_optional") << QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["FamilyName"]}   )")
 											   << getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})");
@@ -182,8 +186,8 @@ class test_MsgHandlerAccessRights
 			QFETCH(QByteArray, msg);
 
 			MessageDispatcher dispatcher;
-			dispatcher.init(getContextWithChat());
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 
 			// check original state
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
@@ -197,8 +201,8 @@ class test_MsgHandlerAccessRights
 		void setAccessRightsWithMultipleCmds()
 		{
 			MessageDispatcher dispatcher;
-			dispatcher.init(getContextWithChat());
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 
 			// check original state
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
@@ -220,8 +224,8 @@ class test_MsgHandlerAccessRights
 			context->setOptionalAccessRights({});
 
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","GivenNames","DocumentType"],"optional":[],"required":["Address","GivenNames","DocumentType"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
@@ -234,6 +238,22 @@ class test_MsgHandlerAccessRights
 			context->setOptionalAccessRights({});
 			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "SET_ACCESS_RIGHTS", "chat": ["AgeVerification"]}   )")),
 					getAux() + QByteArray(R"("chat":{"effective":["Address","AgeVerification"],"optional":[],"required":["Address","AgeVerification"]},"error":"No optional access rights available","msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+		}
+
+
+		void smartCardAllowed()
+		{
+			const auto& context = getContextWithChat();
+			MessageDispatcher dispatcher;
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
+
+			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
+
+			context->setAcceptedEidTypes({AcceptedEidType::CARD_CERTIFIED});
+			QCOMPARE(dispatcher.processCommand(QByteArray(R"(   {"cmd": "GET_ACCESS_RIGHTS"}   )")),
+					getAux() + QByteArray(R"("chat":{"effective":["Address","FamilyName","GivenNames","DocumentType","AgeVerification"],"optional":["FamilyName","AgeVerification"],"required":["Address","GivenNames","DocumentType"]},"msg":"ACCESS_RIGHTS","transactionInfo":"this is a test for TransactionInfo"})"));
 		}
 
 
@@ -256,8 +276,8 @@ class test_MsgHandlerAccessRights
 			QFETCH(QByteArray, msg);
 
 			MessageDispatcher dispatcher;
-			dispatcher.init(getContextWithChat());
-			QVERIFY(!dispatcher.processStateChange("StateEditAccessRights").isEmpty());
+			QCOMPARE(dispatcher.init(getContextWithChat()), MsgType::AUTH);
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).isEmpty());
 
 			QCOMPARE(dispatcher.processCommand(cmd), msg);
 		}

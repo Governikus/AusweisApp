@@ -2,18 +2,16 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "ASN1TemplateUtil.h"
+#include "SecurityInfo.h"
+
 #include "ASN1Util.h"
 #include "ChipAuthenticationInfo.h"
-#include "KnownOIDs.h"
 #include "PaceInfo.h"
-#include "SecurityInfo.h"
 
 #include <QLoggingCategory>
 
 
 using namespace governikus;
-using namespace KnownOIDs;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
@@ -57,18 +55,13 @@ ASN1_OBJECT* SecurityInfo::getProtocolObjectIdentifier() const
 }
 
 
-QByteArray SecurityInfo::getProtocolValueBytes() const
+Oid SecurityInfo::getOid() const
 {
-	return Asn1ObjectUtil::getValue(getProtocolObjectIdentifier());
+	return Oid(getProtocolObjectIdentifier());
 }
 
 
-QByteArray SecurityInfo::getProtocol() const
+SecurityProtocol SecurityInfo::getProtocol() const
 {
-	return Asn1ObjectUtil::convertTo(getProtocolObjectIdentifier());
-}
-
-
-SecurityInfo::~SecurityInfo()
-{
+	return SecurityProtocol(getOid());
 }

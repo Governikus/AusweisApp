@@ -7,10 +7,14 @@
 using namespace governikus;
 
 Eac1InputType::Eac1InputType()
-{
-}
-
-
-Eac1InputType::~Eac1InputType()
+	: mCvCertificates(),
+	mCertificateDescriptionAsBinary(),
+	mCertificateDescription(),
+	mRequiredChat(),
+	mOptionalChat(),
+	mAuthenticatedAuxiliaryDataAsBinary(),
+	mAuthenticatedAuxiliaryData(),
+	mTransactionInfo(),
+	mAcceptedEidTypes()
 {
 }

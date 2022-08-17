@@ -10,9 +10,9 @@
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
 #include "paos/retrieve/PaosParser.h"
 
-#include <QScopedPointer>
 #include <QString>
 
+#include <memory>
 
 namespace governikus
 {
@@ -22,7 +22,7 @@ class DidAuthenticateEacAdditionalParser
 {
 	public:
 		DidAuthenticateEacAdditionalParser();
-		~DidAuthenticateEacAdditionalParser() override;
+		~DidAuthenticateEacAdditionalParser() override = default;
 
 	protected:
 		PaosMessage* parseMessage() override;
@@ -31,7 +31,7 @@ class DidAuthenticateEacAdditionalParser
 		QString parseEacAdditionalInputType();
 
 	private:
-		QScopedPointer<DIDAuthenticateEACAdditional> mDidAuthenticateEacAdditional;
+		std::unique_ptr<DIDAuthenticateEACAdditional> mDidAuthenticateEacAdditional;
 };
 
 } // namespace governikus

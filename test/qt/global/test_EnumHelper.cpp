@@ -25,7 +25,9 @@ namespace governikus
 {
 defineEnumType(TestEnum1, FIRST, SECOND, THIRD)
 
-defineEnumType(TestEnum2, FIRST = 0xff, SECOND = 0x01, THIRD = 0xaa)
+defineEnumType(TestEnum2, FIRST = 0xFF, SECOND = 0x01, THIRD = 0xAA)
+
+defineTypedEnumType(TestEnum3, char, FIRST = static_cast<char>(0xFF), SECOND = static_cast<char>(0x01), THIRD = static_cast<char>(0xAA))
 } // namespace governikus
 
 class test_EnumHelper
@@ -61,11 +63,11 @@ class test_EnumHelper
 
 		void operatorEquals()
 		{
-			QVERIFY(0xff == TestEnum2::FIRST);
-			QVERIFY(0xff != TestEnum2::SECOND);
+			QVERIFY(0xFF == TestEnum2::FIRST);
+			QVERIFY(0xFF != TestEnum2::SECOND);
 
-			QVERIFY(!(0xff != TestEnum2::FIRST));
-			QVERIFY(!(0xff == TestEnum2::SECOND));
+			QVERIFY(!(0xFF != TestEnum2::FIRST));
+			QVERIFY(!(0xFF == TestEnum2::SECOND));
 		}
 
 
@@ -128,19 +130,31 @@ class test_EnumHelper
 
 		void isValue()
 		{
-			QVERIFY(!Enum<TestEnum1>::isValue(static_cast<int>(999)));
-			QVERIFY(Enum<TestEnum1>::isValue(static_cast<int>(0)));
-
-			QVERIFY(!Enum<TestEnum2>::isValue(static_cast<int>(0xbb)));
-			QVERIFY(Enum<TestEnum2>::isValue(static_cast<int>(0xFF)));
-			QVERIFY(Enum<TestEnum2>::isValue(static_cast<int>(0xaa)));
-
-			QVERIFY(!Enum<TestEnum1>::isValue(char(999)));
+			QVERIFY(!Enum<TestEnum1>::isValue(999));
+			QVERIFY(!Enum<TestEnum1>::isValue(static_cast<char>(999)));
+			QVERIFY(Enum<TestEnum1>::isValue(0));
 			QVERIFY(Enum<TestEnum1>::isValue('\0'));
 
-			QVERIFY(!Enum<TestEnum2>::isValue(char(0xbb)));
-			QVERIFY(Enum<TestEnum2>::isValue(char(0xff)));
-			QVERIFY(Enum<TestEnum2>::isValue(char(0xaa)));
+			QVERIFY(!Enum<TestEnum2>::isValue(-69));
+			QVERIFY(!Enum<TestEnum2>::isValue(0xBB));
+			QVERIFY(!Enum<TestEnum2>::isValue(static_cast<char>(0xBB)));
+			QVERIFY(!Enum<TestEnum2>::isValue(-1));
+			QVERIFY(Enum<TestEnum2>::isValue(0xFF));
+			QVERIFY(!Enum<TestEnum2>::isValue(static_cast<char>(0xFF)));
+			QVERIFY(Enum<TestEnum2>::isValue(1));
+			QVERIFY(Enum<TestEnum2>::isValue(static_cast<char>(0x01)));
+			QVERIFY(!Enum<TestEnum2>::isValue(-86));
+			QVERIFY(Enum<TestEnum2>::isValue(0xAA));
+			QVERIFY(!Enum<TestEnum2>::isValue(static_cast<char>(0xAA)));
+
+			QVERIFY(!Enum<TestEnum3>::isValue(-69));
+			QVERIFY(!Enum<TestEnum3>::isValue(static_cast<char>(0xBB)));
+			QVERIFY(Enum<TestEnum3>::isValue(-1));
+			QVERIFY(Enum<TestEnum3>::isValue(static_cast<char>(0xFF)));
+			QVERIFY(Enum<TestEnum3>::isValue(1));
+			QVERIFY(Enum<TestEnum3>::isValue(static_cast<char>(0x01)));
+			QVERIFY(Enum<TestEnum3>::isValue(-86));
+			QVERIFY(Enum<TestEnum3>::isValue(static_cast<char>(0xAA)));
 		}
 
 

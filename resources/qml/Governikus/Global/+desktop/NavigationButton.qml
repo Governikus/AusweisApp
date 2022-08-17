@@ -2,9 +2,9 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -53,9 +53,7 @@ Button {
 			Layout.alignment: Qt.AlignHCenter
 
 			radius: height / 2
-			border.width: height / 40;
-			border.color: enabled ? Style.color.primary_text_inverse : Constants.red
-			color: Style.color.button
+			color: enabled ? Style.color.button : Style.color.button_disabled
 
 			TintableIcon {
 				anchors.centerIn: parent
@@ -96,7 +94,7 @@ Button {
 			Layout.fillWidth: true
 
 			text: control.subText
-			textStyle: Style.text.header_inverse
+			textStyle: Style.text.header
 			horizontalAlignment: Text.AlignHCenter
 		}
 	}
@@ -106,7 +104,7 @@ Button {
 	MouseArea {
 		anchors.fill: parent
 
-		onPressed: mouse.accepted = false
+		onPressed: mouse => { mouse.accepted = false }
 		cursorShape: Qt.PointingHandCursor
 	}
 }

@@ -18,14 +18,15 @@ class CompositeStatePace
 {
 	Q_OBJECT
 
-	const QSharedPointer<WorkflowContext> mContext;
+	private:
+		const QSharedPointer<WorkflowContext> mContext;
 
 	public:
 		explicit CompositeStatePace(const QSharedPointer<WorkflowContext>& pContext);
 		~CompositeStatePace() override = default;
 
 	Q_SIGNALS:
-		void firePaceChannelEstablished();
+		void fireContinue();
 		void fireAbort();
 };
 

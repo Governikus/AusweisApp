@@ -7,6 +7,5 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppCardPcsc)
 
-target_include_directories(AusweisAppCardPcsc SYSTEM PUBLIC ${PCSC_INCLUDE_DIRS})
-target_link_libraries(AusweisAppCardPcsc ${Qt}::Core AusweisAppGlobal AusweisAppCard ${PCSC_LIBRARIES})
+target_link_libraries(AusweisAppCardPcsc PkgConfig::PCSC ${Qt}::Core AusweisAppGlobal AusweisAppCard)
 target_compile_definitions(AusweisAppCardPcsc PRIVATE QT_STATICPLUGIN)

@@ -61,6 +61,10 @@ function(ADD_TEST_EXECUTABLE testname)
 		add_executable(${testname} ${ARGN})
 	endif()
 
+	if(TARGET AusweisAppConfig)
+		target_link_libraries(${testname} AusweisAppConfig)
+	endif()
+
 	GET_MODULE(TESTMODULE "AusweisAppTestHelper" "${ARGN}")
 	GET_MODULE(MODULE "AusweisApp" "${ARGN}")
 	if(NOT MODULE)
@@ -70,7 +74,11 @@ function(ADD_TEST_EXECUTABLE testname)
 	target_link_libraries(${testname} ${Qt}::Test AusweisAppTestHelper QRC_FIXTURE_OBJ ${MODULE} ${TESTMODULE})
 
 	if(INCOMPATIBLE_QT_COMPILER_FLAGS)
-		set_source_files_properties(${ARGN} PROPERTIES COMPILE_OPTIONS ${INCOMPATIBLE_QT_COMPILER_FLAGS})
+		set_source_files_properties(${ARGN} PROPERTIES COMPILE_OPTIONS "${INCOMPATIBLE_QT_COMPILER_FLAGS}")
+	endif()
+
+	if(CMAKE_GENERATOR MATCHES "Xcode")
+		set_target_properties(${testname} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} "${CMAKE_CURRENT_BINARY_DIR}")
 	endif()
 endfunction()
 
@@ -79,19 +87,26 @@ function(SHOULD_SKIP_TEST _out filename)
 	set(${_out} FALSE PARENT_SCOPE)
 	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" test "${sourcefile}")
 
+	if(NOT USE_SMARTEID AND (test MATCHES "card/smart"
+			OR test MATCHES "ui/qml/smart"
+			OR test MATCHES "workflows/personalization"))
+		set(${_out} TRUE PARENT_SCOPE)
+		return()
+	endif()
+
 	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
-		OR test MATCHES "ui/websocket"
-		OR test MATCHES "activation/custom_scheme"
-		OR test MATCHES "init/"
-		OR test MATCHES "remote_device"
-		OR test MATCHES "export"))
+			OR test MATCHES "activation/custom_scheme"
+			OR test MATCHES "ifd"
+			OR test MATCHES "export"
+			OR test MATCHES "diagnosis"))
 		set(${_out} TRUE PARENT_SCOPE)
 		return()
 	endif()
 
 	if(IOS OR ANDROID)
 		if(test MATCHES "card/pcsc"
-			OR test MATCHES "card/drivers")
+				OR test MATCHES "card/drivers"
+				OR test MATCHES "diagnosis")
 			set(${_out} TRUE PARENT_SCOPE)
 			return()
 		endif()
@@ -100,6 +115,11 @@ endfunction()
 
 
 function(ADD_TEST_EXECUTABLE_SUBDIR)
+	if(TARGET AusweisAppRcc)
+		add_custom_target(AusweisAppTestRcc DEPENDS AusweisAppRcc)
+		add_custom_command(TARGET AusweisAppTestRcc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RCC}" "${CMAKE_CURRENT_BINARY_DIR}")
+	endif()
+
 	file(GLOB_RECURSE TEST_FILES "*.cpp")
 
 	foreach(sourcefile ${TEST_FILES})
@@ -112,15 +132,15 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 		ADD_TEST_EXECUTABLE(${TESTNAME} ${sourcefile})
 		GET_TEST_CMDLINE(TEST_CMDLINE ${TESTNAME})
 		add_test(${TESTNAME} ${TESTNAME} ${TEST_CMDLINE})
-		add_dependencies(${TESTNAME} AusweisAppRcc)
-		set_tests_properties(${TESTNAME} PROPERTIES FAIL_REGULAR_EXPRESSION "nullptr parameter")
-		set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "QT_ENABLE_REGEXP_JIT=0")
-
-		if(TESTNAME MATCHES "UIPlugIn")
-			set_tests_properties(${TESTNAME} PROPERTIES LABELS "ausweisapp" TIMEOUT 300)
-		else()
-			set_tests_properties(${TESTNAME} PROPERTIES LABELS "ausweisapp" TIMEOUT 120)
+		if(TARGET AusweisAppTestRcc)
+			add_dependencies(${TESTNAME} AusweisAppTestRcc)
 		endif()
+
+		GET_TEST_ENV(TESTENV ${TESTNAME})
+
+		set_tests_properties(${TESTNAME} PROPERTIES FAIL_REGULAR_EXPRESSION "nullptr parameter")
+		set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "${TESTENV}")
+		set_tests_properties(${TESTNAME} PROPERTIES LABELS "qt" TIMEOUT 120)
 
 		# Create a target for each folder and add each test as a dependency
 		get_filename_component(TEST_FOLDER_TARGET ${sourcefile} DIRECTORY)
@@ -134,8 +154,6 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 endfunction()
 
 
-
-CONFIGURE_DEFAULT_FILES(${CMAKE_CURRENT_BINARY_DIR})
 
 # Build single test binaries for each cpp file
 ADD_TEST_EXECUTABLE_SUBDIR()

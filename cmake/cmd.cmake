@@ -4,6 +4,13 @@ cmake_minimum_required(VERSION 3.1.0)
 #### Usage: cmake -DCMD= -P cmake/cmd.cmake
 ###########################################
 
+function(EXECUTE)
+	execute_process(COMMAND ${ARGV} RESULT_VARIABLE _result)
+	if(NOT ${_result} EQUAL 0)
+		message(FATAL_ERROR "Process failed: ${_result}")
+	endif()
+endfunction(EXECUTE)
+
 function(MESSAGE type)
 	if(ARGV0 STREQUAL "STDOUT")
 		execute_process(COMMAND ${CMAKE_COMMAND} -E echo "${ARGN}")
@@ -51,17 +58,8 @@ endfunction()
 
 function(IMPORT_PATCH)
 	message(STATUS "Import patch...")
-	if(CMAKE_VERSION VERSION_LESS "3.12")
-		find_package(PythonInterp REQUIRED)
-		set(Python_EXECUTABLE ${PYTHON_EXECUTABLE})
-	else()
-		find_package(Python REQUIRED)
-	endif()
-
-	execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_BINARY_DIR}/resources/jenkins/import.py" RESULT_VARIABLE _result)
-	if(NOT ${_result} EQUAL 0)
-		message(FATAL_ERROR "Cannot apply patch")
-	endif()
+	find_package(Python REQUIRED)
+	EXECUTE(${Python_EXECUTABLE} "${CMAKE_BINARY_DIR}/resources/jenkins/import.py")
 endfunction()
 
 
@@ -115,7 +113,7 @@ function(DEPLOY_NEXUS)
 		endif()
 	endif()
 
-	execute_process(COMMAND ${MVN_BIN} deploy:deploy-file -Dfile=${FILE_AAR} -DpomFile=${FILE_POM} -Dsources=${FILE_JAR} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
+	EXECUTE(${MVN_BIN} deploy:deploy-file -Dfile=${FILE_AAR} -DpomFile=${FILE_POM} -Dsources=${FILE_JAR} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
 
 	if(PUBLIC)
 		get_file("*.aar.asc" FILE_AAR_ASC)
@@ -123,7 +121,7 @@ function(DEPLOY_NEXUS)
 		get_file("*-sources.jar.asc" FILE_SOURCES_ASC)
 
 		function(mvn_upload _file _packaging _classifier)
-			execute_process(COMMAND ${MVN_BIN} deploy:deploy-file -Dfile=${_file} -Dpackaging=${_packaging} -Dclassifier=${_classifier} -DpomFile=${FILE_POM} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
+			EXECUTE(${MVN_BIN} deploy:deploy-file -Dfile=${_file} -Dpackaging=${_packaging} -Dclassifier=${_classifier} -DpomFile=${FILE_POM} -DrepositoryId=nexus -Durl=${NEXUS_URL} --settings settings.xml)
 		endfunction()
 
 		mvn_upload("${FILE_AAR_ASC}" "aar.asc" "")

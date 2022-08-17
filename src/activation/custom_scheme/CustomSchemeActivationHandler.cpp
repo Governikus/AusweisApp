@@ -10,7 +10,7 @@
 #include <QLoggingCategory>
 
 #ifdef Q_OS_ANDROID
-#include <QtAndroidExtras/QAndroidJniObject>
+	#include <QJniObject>
 #endif
 
 using namespace governikus;
@@ -40,7 +40,7 @@ void CustomSchemeActivationHandler::onCustomUrl(const QUrl& pUrl)
 {
 	QString referrer;
 #ifdef Q_OS_ANDROID
-	referrer = QAndroidJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "fetchStoredReferrer").toString();
+	referrer = QJniObject::callStaticObjectMethod<jstring>("com/governikus/ausweisapp2/MainActivity", "fetchStoredReferrer").toString();
 	qCDebug(activation) << "Got new request by:" << referrer;
 #else
 	qCDebug(activation) << "Got new request";
@@ -63,14 +63,16 @@ void CustomSchemeActivationHandler::onCustomUrl(const QUrl& pUrl)
 		return;
 	}
 
-	const auto& [type, value] = getRequest(pUrl);
+	const auto queryUrl = QUrlQuery(pUrl);
+	handleQueryParams(queryUrl);
+	const auto& [type, value] = getRequest(queryUrl);
 	switch (type)
 	{
 		case ActivationType::SHOWUI:
 		{
 			qCDebug(activation) << "Request type: showui";
-			const UiModule module = Enum<UiModule>::fromString(value.toUpper(), UiModule::DEFAULT);
-			Q_EMIT fireShowUiRequest(module);
+			const UiModule showModule = Enum<UiModule>::fromString(value.toUpper(), UiModule::DEFAULT);
+			Q_EMIT fireShowUiRequest(showModule);
 			return;
 		}
 

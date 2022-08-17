@@ -3,7 +3,6 @@
  */
 
 #include "CertificateDescription.h"
-#include "KnownOIDs.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -109,22 +108,9 @@ QByteArray CertificateDescription::encode()
 }
 
 
-void CertificateDescription::setDescriptionType(const QByteArray& pOidAsText)
+Oid CertificateDescription::getDescriptionType() const
 {
-	ASN1_OBJECT_free(mDescriptionType);
-	mDescriptionType = Asn1ObjectUtil::parseFrom(pOidAsText);
-}
-
-
-QByteArray CertificateDescription::getDescriptionType() const
-{
-	return Asn1ObjectUtil::convertTo(mDescriptionType);
-}
-
-
-void CertificateDescription::setIssuerName(const QString& pIssuerName)
-{
-	Asn1StringUtil::setValue(pIssuerName, mIssuerName);
+	return Oid(mDescriptionType);
 }
 
 
@@ -134,41 +120,15 @@ QString CertificateDescription::getIssuerName() const
 }
 
 
-void CertificateDescription::setIssuerUrl(const QString& pIssuerUrl)
-{
-	if (mIssuerURL == nullptr)
-	{
-		mIssuerURL = ASN1_PRINTABLESTRING_new();
-	}
-	Asn1StringUtil::setValue(pIssuerUrl, mIssuerURL);
-}
-
-
 QString CertificateDescription::getIssuerUrl() const
 {
 	return Asn1StringUtil::getValue(mIssuerURL);
 }
 
 
-void CertificateDescription::setSubjectName(const QString& pSubjectName)
-{
-	Asn1StringUtil::setValue(pSubjectName, mSubjectName);
-}
-
-
 QString CertificateDescription::getSubjectName() const
 {
 	return Asn1StringUtil::getValue(mSubjectName);
-}
-
-
-void CertificateDescription::setSubjectUrl(const QString& pSubjectUrl)
-{
-	if (mSubjectURL == nullptr)
-	{
-		mSubjectURL = ASN1_PRINTABLESTRING_new();
-	}
-	Asn1StringUtil::setValue(pSubjectUrl, mSubjectURL);
 }
 
 
@@ -180,11 +140,11 @@ QString CertificateDescription::getSubjectUrl() const
 
 CertificateDescription::TermsOfUsageType CertificateDescription::getTermsOfUsageType() const
 {
-	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::ID_PLAIN_FORMAT)
+	if (getDescriptionType() == KnownOid::ID_PLAIN_FORMAT)
 	{
 		return TermsOfUsageType::PLAIN_TEXT;
 	}
-	if (getDescriptionType() == KnownOIDs::TermsOfUsageType::ID_HTML_FORMAT)
+	if (getDescriptionType() == KnownOid::ID_HTML_FORMAT)
 	{
 		return TermsOfUsageType::HTML;
 	}
@@ -209,16 +169,6 @@ QString CertificateDescription::getTermsOfUsage() const
 	}
 
 	return string;
-}
-
-
-void CertificateDescription::setRedirectUrl(const QString& pRedirectUrl)
-{
-	if (mRedirectURL == nullptr)
-	{
-		mRedirectURL = ASN1_PRINTABLESTRING_new();
-	}
-	Asn1StringUtil::setValue(pRedirectUrl, mRedirectURL);
 }
 
 

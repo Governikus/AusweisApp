@@ -126,77 +126,27 @@ class test_AuthContext
 		}
 
 
-		void test_DidList()
-		{
-			AuthContext context(nullptr);
-			const QByteArray data("data");
-			const QSharedPointer<DIDList> list(new DIDList(data));
-
-			QCOMPARE(context.getDidList(), nullptr);
-
-			context.setDidList(list);
-			QCOMPARE(context.getDidList(), list);
-		}
-
-
-		void test_DidListResponse()
-		{
-			AuthContext context(nullptr);
-			const QSharedPointer<DIDListResponse> response(new DIDListResponse());
-
-			QCOMPARE(context.getDidListResponse(), nullptr);
-
-			context.setDidListResponse(response);
-			QCOMPARE(context.getDidListResponse(), response);
-		}
-
-
-		void test_Disconnect()
-		{
-			AuthContext context(nullptr);
-			const QByteArray data("disconnect");
-			const QSharedPointer<Disconnect> discnnct(new Disconnect(data));
-
-			QCOMPARE(context.getDisconnect(), nullptr);
-
-			context.setDisconnect(discnnct);
-			QCOMPARE(context.getDisconnect(), discnnct);
-		}
-
-
-		void test_DisconnectResponse()
-		{
-			AuthContext context(nullptr);
-			const QSharedPointer<DisconnectResponse> response(new DisconnectResponse());
-
-			QCOMPARE(context.getDisconnectResponse(), nullptr);
-
-			context.setDisconnectResponse(response);
-			QCOMPARE(context.getDisconnectResponse(), response);
-		}
-
-
-		void test_TransmitResponses()
+		void test_TransmitResponse()
 		{
 			AuthContext context(nullptr);
 			QSharedPointer<TransmitResponse> response(new TransmitResponse());
 
-			QVERIFY(context.getTransmitResponses().isEmpty());
+			QCOMPARE(context.getTransmitResponse(), nullptr);
 
-			context.addTransmitResponse(response);
-			QVERIFY(context.getTransmitResponses().contains(response));
+			context.setTransmitResponse(response);
+			QCOMPARE(context.getTransmitResponse(), response);
 		}
 
 
-		void test_Transmits()
+		void test_Transmit()
 		{
 			AuthContext context(nullptr);
 			const QSharedPointer<Transmit> transmit(new Transmit());
 
-			QVERIFY(context.getTransmits().isEmpty());
+			QCOMPARE(context.getTransmit(), nullptr);
 
-			context.addTransmit(transmit);
-			QVERIFY(context.getTransmits().contains(transmit));
+			context.setTransmit(transmit);
+			QCOMPARE(context.getTransmit(), transmit);
 		}
 
 

@@ -36,6 +36,7 @@ class SettingsModel
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool enableCanAllowed READ isEnableCanAllowed WRITE setEnableCanAllowed NOTIFY fireCanAllowedChanged)
 	Q_PROPERTY(bool skipRightsOnCanAllowed READ isSkipRightsOnCanAllowed WRITE setSkipRightsOnCanAllowed NOTIFY fireCanAllowedChanged)
+	Q_PROPERTY(bool enableSimulator READ isSimulatorEnabled WRITE setSimulatorEnabled NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
@@ -104,6 +105,9 @@ class SettingsModel
 		bool isSkipRightsOnCanAllowed() const;
 		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
 
+		bool isSimulatorEnabled() const;
+		void setSimulatorEnabled(bool pEnabled);
+
 		UiModule getStartupModule() const;
 		void setStartupModule(UiModule pModule);
 
@@ -137,12 +141,12 @@ class SettingsModel
 		Q_INVOKABLE bool requestStoreFeedback() const;
 		Q_INVOKABLE void hideFutureStoreFeedbackDialogs();
 
-		Q_INVOKABLE bool askForDeviceSurvey() const;
-		Q_INVOKABLE void setDeviceSurveyPending(bool pDeviceSurveyPending);
-
 		Q_INVOKABLE void updateAppcast();
 
 		AppUpdateDataModel* getAppUpdateData() const;
+
+	public Q_SLOTS:
+		void onTranslationChanged();
 
 	Q_SIGNALS:
 		void fireLanguageChanged();

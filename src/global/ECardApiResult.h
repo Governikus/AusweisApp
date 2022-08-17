@@ -26,7 +26,7 @@ class ECardApiResult
 	Q_GADGET
 	Q_DECLARE_TR_FUNCTIONS(governikus::ECardApiResult)
 
-	friend class RemoteMessageResponse;
+	friend class IfdMessageResponse;
 	friend class StartPaosResponse;
 	friend class ::test_ECardApiResult;
 	friend class ::test_UrlUtil;
@@ -47,7 +47,7 @@ class ECardApiResult
 			AL_No_Permission,
 			AL_Internal_Error,
 			AL_Parameter_Error,
-			AL_Unkown_API_Function,
+			AL_Unknown_API_Function,
 			AL_Not_Initialized,
 			AL_Warning_Connection_Disconnected,
 			AL_Session_Terminated_Warning,
@@ -141,7 +141,7 @@ class ECardApiResult
 
 		bool operator ==(const ECardApiResult& pResult) const;
 
-		static ECardApiResult createOk();
+		[[nodiscard]] static ECardApiResult createOk();
 
 		static bool isMajor(const QString& pMajor);
 		static bool isMinor(const QString& pMinor);

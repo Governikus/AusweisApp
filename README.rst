@@ -11,9 +11,8 @@ Kontakt
 
 Lizenz
 ------
-Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt, mit
-Ausnahme der Bibliothek OpenSSL, die unter der OpenSSL License / SSLeay License
-lizensiert ist. Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
+Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt.
+Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
 die offizielle Version der AusweisApp2, welche von der Governikus GmbH & Co. KG
 im Auftrag des Bundes unter https://www.ausweisapp.bund.de bereitgestellt wird.
 
@@ -23,7 +22,7 @@ Toolchain / Bibliotheken
 Die Einrichtung der Toolchain wird im Unterordner ``./libs``
 bzw. in der darin enthaltenen README erläutert.
 
-Die separate README und das Skript unter "libs" dienen dem Aufzusetzen
+Die separate README und das Skript unter "libs" dienen dem Aufsetzen
 der notwendigen Build-Umgebung und dem automatisierten Bauen der
 notwendigen Bibliotheken mit den entsprechenden Patches.
 
@@ -31,21 +30,21 @@ notwendigen Bibliotheken mit den entsprechenden Patches.
 
 Build
 -----
-Um die AusweisApp2 zu bauen ist es notwendig ein Makefile mittels CMake zu
+Um die AusweisApp2 zu bauen, ist es notwendig, ein Makefile mittels CMake zu
 generieren. Dazu kann CMake auf der Kommandozeile oder mit der von CMake
 mitgelieferten CMake-GUI ausgeführt werden.
 
 CMake erkennt während der Konfigurationszeit automatisch die Abhängigkeiten.
-Dazu kann die Variable *CMAKE_PREFIX_PATH* verwendet werden um die Toolchain CMake
-bekannt zu machen. Alternativ zu %PATH% bzw. $PATH können alle Ordner, die dort
+Dazu kann die Variable *CMAKE_PREFIX_PATH* verwendet werden, um die Toolchain CMake
+bekannt zu machen. Alternativ zu `%PATH%` bzw. `$PATH` können alle Ordner, die dort
 für den Build eingetragen wurden, über diesen Mechanismus an CMake übergeben werden.
 
-Als Generator für Makefiles sollte unter Windows eine Variante von "MinGW Makefiles"
-gewählt werden.
+Als Generator für Makefiles sollte unter Windows für MinGW "MinGW Makefiles" und
+für MSVC "NMake Makefiles" oder "Ninja" gewählt werden.
 
 Beim Generieren des Makefiles ist zu beachten, dass die AusweisApp2 nur sogenannte
 "out of source tree"-Builds erlaubt. Daher ist die empfohlene Variante von CMake
-zwingend einzuhalten und der Build-Ordner darf sich nicht im Source-Ordner
+zwingend einzuhalten, und der Build-Ordner darf sich nicht im Source-Ordner
 befinden.
 
 Beispiel über die CLI:
@@ -53,35 +52,45 @@ Beispiel über die CLI:
 ::
 
    C:/AusweisApp2/
-   C:/Toolchain/
+   C:/qt/
    C:/build/
 
 ::
 
-   $ cd C:/build
-   $ cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:/Toolchain ../AusweisApp2 -DCMAKE_BUILD_TYPE=release
-   -- The CXX compiler identification is GNU 4.9.1
-   -- Check for working CXX compiler: C:/mingw32/bin/g++.exe
-   -- Check for working CXX compiler: C:/mingw32/bin/g++.exe -- works
+   C:>cd C:/build
+   C:\build>cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:/qt/dist C:/AusweisApp2 -DCMAKE_BUILD_TYPE=release
+   -- The CXX compiler identification is GNU 11.2.0
    -- Detecting CXX compiler ABI info
    -- Detecting CXX compiler ABI info - done
-   -- VERSION: 1.0.0
-   -- CMAKE_INSTALL_PREFIX: C:/build/dist
+   -- Check for working CXX compiler: C:/mingw64/bin/g++.exe - skipped
+   -- Detecting CXX compile features
+   -- Detecting CXX compile features - done
+   -- VENDOR: Governikus GmbH & Co. KG
+   -- VERSION: 1.24.0
+   -- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE)
+   -- Found Java: C:/Program Files/Java/jre1.8.0_241/bin/java.exe (found version "1.8.0.241") found components: Runtime
+   -- Found Hg: C:/Program Files/TortoiseHg/hg.exe (found version "5.6.1")
+   -- DVCS tag: tip
+   -- DVCS distance: 23
+   -- DVCS branch: default
+   -- DVCS phase: public
+   -- DVCS revision: 283adbf18b4e+
+   -- No documentation will be generated
+   -- CMAKE_INSTALL_PREFIX: C:/Program Files (x86)/AusweisApp2
    -- CMAKE_BUILD_TYPE: RELEASE
-   -- CMAKE_PREFIX_PATH: C:/Toolchain
+   -- CMAKE_PREFIX_PATH: C:/qt/dist
    -- CMAKE_INCLUDE_PATH:
    -- CMAKE_LIBRARY_PATH:
-   -- CMAKE_SYSTEM_PREFIX_PATH: C:\Program Files;C:\Program Files (x86);C:/Program Files (x86)/CMake;C:/Program Files (x86)/AusweisApp2
+   -- CMAKE_SYSTEM_PREFIX_PATH: C:/Program Files;C:/Program Files (x86);C:/Program Files/CMake;C:/Program Files (x86)/AusweisApp2
    -- CMAKE_SYSTEM_INCLUDE_PATH:
+   -- CMAKE_VERSION: 3.23.2
+   -- CMAKE_SYSTEM_PROCESSOR: AMD64
+   -- CMAKE_CXX_SIMULATE_ID:
    -- BUILD_SHARED_LIBS: OFF
-   -- Found OpenSSL: C:/Toolchain/lib/libssl.dll.a;C:/Toolchain/lib/libcrypto.dll.a (found suitable version "1.0.1i", minimum required is "1.0.1")
-   -- Found Hg: C:/Program Files/TortoiseHg/hg.exe (found version "3.1.1")
-   -- Configuring done
-   -- Generating done
-   -- Build files have been written to: C:/build
+   [...]
 
 
-Um die mobile Variante der AusweisApp2 zu bauen benötigt man je nach Plattform zusätzliche
+Um die mobile Variante der AusweisApp2 zu bauen, benötigt man je nach Plattform zusätzliche
 externe Komponenten, die in der README in ``./libs`` im Abschnitt Android / iOS beschrieben
 sind.
 
@@ -122,8 +131,8 @@ eingebettet werden kann. Zu beachten ist vor allem, dass in der Umgebungsvariabl
 *PROVISIONING_PROFILE* das jeweilige Profil verwendet wird, welches unter XCode
 eingerichtet ist. Im Ordner "~/Library/MobileDevice/Provisioning Profiles"
 sind diese ebenfalls einsehbar.
-Unter Umständen kann es zu Berechtigungsproblemen mit XCode und den Zugriff auf
-die Keys kommen. Dabei ist es oft hilfreich die Keys im macOS-Schlüsselbund
+Unter Umständen kann es zu Berechtigungsproblemen mit XCode und dem Zugriff auf
+die Keys kommen. Dabei ist es oft hilfreich, die Keys im macOS-Schlüsselbund
 freizuschalten bzw. den Schlüsselbund freizugeben.
 
 security unlock-keychain -pPASSWORD ${HOME}/Library/Keychains/login.keychain
@@ -154,7 +163,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 - Unter macOS wird mittels "make package" die AusweisApp2 gebaut und ein DMG bereitgestellt.
 
 - Um ein APK für Android zu bauen, sind zwei Schritte notwendig, da CMake das Format bisher
-  nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig
+  nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig,
   um ein endgültiges APK zu erhalten:
 
   ::
@@ -166,7 +175,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
 Reproduzierbarer Build
 ----------------------
-Wir sind stets bemüht den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
+Wir sind stets bemüht, den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
 Daher haben wir unter anderem eine README in dem Unterordner ``./libs`` hinterlegt, die den Aufbau
 der Buildumgebung und den Build der externen Bibliotheken beschreibt.
 Anhand dieser Anleitung können Sie nachvollziehen, wie unser internes Buildsystem aufgebaut ist und

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "CommandApdu.h"
+#include "apdu/CommandApdu.h"
 
 #include <QByteArrayList>
 
@@ -25,7 +25,7 @@ class InputAPDUInfo
 		}
 
 
-		[[nodiscard]] const CommandApdu getInputApdu() const
+		[[nodiscard]] CommandApdu getInputApdu() const
 		{
 			return CommandApdu(mInputApdu);
 		}

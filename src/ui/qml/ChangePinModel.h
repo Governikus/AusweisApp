@@ -6,9 +6,10 @@
 
 #pragma once
 
-#include "context/ChangePinContext.h"
 #include "Env.h"
 #include "WorkflowModel.h"
+#include "WorkflowRequest.h"
+#include "context/ChangePinContext.h"
 
 #include <QObject>
 #include <QQmlEngine>
@@ -34,12 +35,13 @@ class ChangePinModel
 
 		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin);
 		QString getResultString() const override;
+		QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 	private Q_SLOTS:
 		void onPaceResultUpdated();
 
 	Q_SIGNALS:
-		void fireStartWorkflow(bool pRequestTransportPin);
+		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireNewContextSet();
 		void fireOnPinUnlocked();
 };

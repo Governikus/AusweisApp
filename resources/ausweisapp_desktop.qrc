@@ -1,12 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>html_templates/alreadyactive.html</file>
-        <file>html_templates/error.html</file>
-        <file alias="images/html_templates/Logo_AusweisApp2.png">../docs/sdk/Logo_AusweisApp2.png</file>
-        <file>images/html_templates/icon_attention.svg</file>
-        <file>images/html_templates/html_message_section.jpg</file>
         <file>images/macos/appIcon.svg</file>
-        <file>images/desktop/npa.ico</file>
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/material_assistant.svg</file>
         <file>images/desktop/material_bug_report.svg</file>
@@ -87,5 +81,7 @@
         <file>updatable-files/reader/img_Cherry_ST_1275_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Signotec_Omega_Pad.png</file>
         <file>updatable-files/reader/img_Signotec_Omega_Pad_mit_ausweis.png</file>
+        <file>updatable-files/reader/img_Cherry_secure_board.png</file>
+        <file>updatable-files/reader/img_Cherry_secure_board_mit_ausweis.png</file>
     </qresource>
 </RCC>

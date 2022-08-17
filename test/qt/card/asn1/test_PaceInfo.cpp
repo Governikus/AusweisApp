@@ -4,14 +4,16 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "asn1/PaceInfo.h"
+
+#include "SecurityProtocol.h"
+
 #include <QtCore>
 #include <QtTest>
 
-#include "asn1/KnownOIDs.h"
-#include "asn1/PaceInfo.h"
-
 
 using namespace governikus;
+
 
 class test_PaceInfo
 	: public QObject
@@ -77,7 +79,7 @@ class test_PaceInfo
 			auto paceInfo = PaceInfo::decode(bytes);
 
 			QVERIFY(paceInfo != nullptr);
-			QCOMPARE(paceInfo->getParameterIdAsInt(), -1);
+			QCOMPARE(paceInfo->getParameterId(), -1);
 		}
 
 
@@ -91,15 +93,14 @@ class test_PaceInfo
 			auto paceInfo = PaceInfo::decode(bytes);
 
 			QVERIFY(paceInfo != nullptr);
-			QCOMPARE(paceInfo->getParameterId(), QByteArray::fromHex("08"));
-			QCOMPARE(paceInfo->getParameterIdAsInt(), 8);
+			QCOMPARE(paceInfo->getParameterId(), 8);
 		}
 
 
 		void getVersion()
 		{
 			QByteArray bytes;
-			QSharedPointer<PaceInfo> paceInfo;
+			QSharedPointer<const PaceInfo> paceInfo;
 
 			bytes = QByteArray::fromHex("30 12"
 										"            06 0A 04007F00070202040202"
@@ -132,49 +133,49 @@ class test_PaceInfo
 
 		void getKeyAgreementType()
 		{
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040101 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040102 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040103 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040104 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040101 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040102 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040103 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040104 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040201 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040202 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040203 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040204 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040201 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040202 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040203 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040204 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040301 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040302 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040303 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040304 020102"))->getKeyAgreementType(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040301 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040302 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040303 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040304 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::DH);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040401 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040402 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040403 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040404 020102"))->getKeyAgreementType(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040401 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040402 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040403 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040404 020102"))->getProtocol().getKeyAgreement(), KeyAgreementType::ECDH);
 		}
 
 
 		void getMappingType()
 		{
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040101 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040102 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040103 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040104 020102"))->getMappingType(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040101 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040102 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040103 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040104 020102"))->getProtocol().getMapping(), MappingType::GM);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040201 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040202 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040203 020102"))->getMappingType(), MappingType::GM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040204 020102"))->getMappingType(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040201 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040202 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040203 020102"))->getProtocol().getMapping(), MappingType::GM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040204 020102"))->getProtocol().getMapping(), MappingType::GM);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040301 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040302 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040303 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040304 020102"))->getMappingType(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040301 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040302 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040303 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040304 020102"))->getProtocol().getMapping(), MappingType::IM);
 
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040401 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040402 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040403 020102"))->getMappingType(), MappingType::IM);
-			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040404 020102"))->getMappingType(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040401 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040402 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040403 020102"))->getProtocol().getMapping(), MappingType::IM);
+			QCOMPARE(PaceInfo::decode(QByteArray::fromHex("300F 060A04007F00070202040404 020102"))->getProtocol().getMapping(), MappingType::IM);
 		}
 
 
@@ -295,6 +296,37 @@ class test_PaceInfo
 
 			QVERIFY(paceInfo != nullptr);
 			QVERIFY(!paceInfo->isStandardizedDomainParameters());
+		}
+
+
+		void paramterId_data()
+		{
+			QTest::addColumn<int>("parameterId");
+			QTest::addColumn<int>("curveNid");
+
+			QTest::newRow("prime192") << 8 << NID_X9_62_prime192v1;
+			QTest::newRow("brainpool192") << 9 << NID_brainpoolP192r1;
+			QTest::newRow("secp224") << 10 << NID_secp224r1;
+			QTest::newRow("brainpool224") << 11 << NID_brainpoolP224r1;
+			QTest::newRow("prime256") << 12 << NID_X9_62_prime256v1;
+			QTest::newRow("brainpool256") << 13 << NID_brainpoolP256r1;
+			QTest::newRow("brainpool320") << 14 << NID_brainpoolP320r1;
+			QTest::newRow("secp384") << 15 << NID_secp384r1;
+			QTest::newRow("brainpool384") << 16 << NID_brainpoolP384r1;
+			QTest::newRow("brainpool512") << 17 << NID_brainpoolP512r1;
+			QTest::newRow("secp521") << 18 << NID_secp521r1;
+
+			QTest::newRow("NID_undef 7") << 7 << NID_undef;
+			QTest::newRow("NID_undef 19") << 19 << NID_undef;
+		}
+
+
+		void paramterId()
+		{
+			QFETCH(int, parameterId);
+			QFETCH(int, curveNid);
+
+			QCOMPARE(PaceInfo::getMappedNid(parameterId), curveNid);
 		}
 
 

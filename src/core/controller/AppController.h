@@ -8,6 +8,7 @@
 
 #include "ActivationController.h"
 #include "EnumHelper.h"
+#include "WorkflowRequest.h"
 
 #include <QAbstractNativeEventFilter>
 #include <QSharedPointer>
@@ -16,18 +17,7 @@ class test_AppController;
 
 namespace governikus
 {
-
-defineEnumType(Action,
-		NONE,
-		AUTH,
-		SELF,
-		PIN,
-		READER_SETTINGS,
-		REMOTE_SERVICE)
-
-
 class WorkflowController;
-class WorkflowRequest;
 class CommandLineParser;
 
 class AppController final
@@ -35,30 +25,26 @@ class AppController final
 	, public QAbstractNativeEventFilter
 {
 	Q_OBJECT
+	Q_DISABLE_COPY(AppController)
+	friend class ::test_AppController;
+	friend class SignalHandler;
+	friend class CommandLineParser;
 
 	private:
-		friend class ::test_AppController;
-		Q_DISABLE_COPY(AppController)
-
-		friend class SignalHandler;
-		friend class CommandLineParser;
-
 		static bool cShowUi;
-		Action mCurrentAction;
-		QScopedPointer<WorkflowRequest> mWaitingRequest;
-		QScopedPointer<WorkflowController> mActiveController;
+		QSharedPointer<WorkflowRequest> mActiveWorkflow;
+		QSharedPointer<WorkflowRequest> mWaitingRequest;
 		ActivationController mActivationController;
 		bool mShutdownRunning;
 		const UIPlugIn* mUiDomination;
 		bool mRestartApplication;
 		int mExitCode;
 
-		[[nodiscard]] bool canStartNewAction() const;
+		[[nodiscard]] bool canStartNewWorkflow() const;
 		void completeShutdown();
 
 	public:
 		AppController();
-		~AppController() override;
 
 		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
 
@@ -81,7 +67,6 @@ class AppController final
 		void fireShowUi(UiModule pModule);
 		void fireHideUi();
 		void fireShowUserInformation(const QString& pInformationMessage);
-		void fireShowReaderSettings();
 		void fireTranslationChanged();
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		void fireApplicationActivated();
@@ -89,16 +74,12 @@ class AppController final
 		void fireUiDominationReleased();
 
 	private Q_SLOTS:
-		void doShutdown();
-		void doShutdown(int pExitCode);
-		void onUiPlugin(UIPlugIn* pPlugin);
+		void doShutdown(int pExitCode = EXIT_SUCCESS);
+		void onUiPlugin(const UIPlugIn* pPlugin);
 		void onWorkflowFinished();
+		void onWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
 		void onCloseReminderFinished(bool pDontRemindAgain);
-		void onChangePinRequested(bool pRequestTransportPin);
-		void onSelfAuthenticationRequested();
-		void onAuthenticationRequest(const QUrl& pUrl);
 		void onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext);
-		void onRemoteServiceRequested();
 		void onLanguageChanged();
 		void onUILoaderShutdownComplete();
 		void onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation);
@@ -106,7 +87,7 @@ class AppController final
 		void onRestartApplicationRequested();
 
 	private:
-		template<typename Controller, typename Context> bool startNewWorkflow(Action pAction, const QSharedPointer<Context>& pContext);
+		bool startNewWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		static void clearCacheFolders();
 
 };

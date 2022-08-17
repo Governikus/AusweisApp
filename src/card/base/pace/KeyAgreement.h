@@ -7,7 +7,7 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "GeneralAuthenticateResponse.h"
+#include "apdu/GeneralAuthenticateResponse.h"
 #include "pace/KeyDerivationFunction.h"
 
 #include <QSharedPointer>
@@ -37,11 +37,14 @@ class KeyAgreement
 		const QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
 		QByteArray mEncryptionKey;
 		QByteArray mMacKey;
-		QByteArray mCarCurr, mCarPrev;
+		QByteArray mCarCurr;
+		QByteArray mCarPrev;
+		const QSharedPointer<const PaceInfo> mPaceInfo;
+		KeyDerivationFunction mKeyDerivationFunction;
 
 
 		CardResult createTransmitResult(CardReturnCode pReturnCode,
-				StatusCode pResponseReturnCode,
+				const ResponseApdu& pResponseApdu,
 				const QByteArray& pResultData,
 				const char* pLogMessage) const;
 
@@ -82,9 +85,6 @@ class KeyAgreement
 		KeyAgreementStatus performMutualAuthenticate();
 
 	protected:
-		const QSharedPointer<const PaceInfo> mPaceInfo;
-		KeyDerivationFunction mKeyDerivationFunction;
-
 		KeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 		/*!
@@ -108,7 +108,20 @@ class KeyAgreement
 		 */
 		GAMutualAuthenticationResponse transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData);
 
+		[[nodiscard]] const QSharedPointer<const PaceInfo>& getPaceInfo() const;
+
 	public:
+		/*!
+		 * \brief Factory method to create an instance of KeyAgreement.
+		 * \param pPaceInfo the PACEInfo containing the protocol parameters
+		 * \param pCardConnectionWorker the reader connection to transmit card commands
+		 * \return new instance
+		 */
+		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
+				QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+
+		virtual ~KeyAgreement();
+
 		/*!
 		 * \brief Returns the uncompressed card's ephemeral public key calculated during key agreement.
 		 * This public key is needed for mutual authentication.
@@ -122,16 +135,6 @@ class KeyAgreement
 		 * \return the compressed card's ephemeral public key
 		 */
 		virtual QByteArray getCompressedCardPublicKey() = 0;
-
-		/*!
-		 * \brief Factory method to create an instance of KeyAgreement.
-		 * \param pPaceInfo the PACEInfo containing the protocol parameters
-		 * \param pCardConnectionWorker the reader connection to transmit card commands
-		 * \return new instance
-		 */
-		static QSharedPointer<KeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
-				QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
-		virtual ~KeyAgreement();
 
 		/*!
 		 * \brief Perform the key agreement.

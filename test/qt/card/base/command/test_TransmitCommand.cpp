@@ -42,7 +42,7 @@ class test_TransmitCommand
 			QTest::newRow("all-code-only") << QByteArrayList({""}) << QByteArray("9000") << true;
 			QTest::newRow("all-data+code") << QByteArrayList({""}) << QByteArray("abcd9000") << true;
 			QTest::newRow("starting-with-90-empty") << QByteArrayList({"90"}) << QByteArray("") << false;
-			QTest::newRow("starting-with-90-incomplete") << QByteArrayList({"90"}) << QByteArray("90") << true;
+			QTest::newRow("starting-with-90-incomplete") << QByteArrayList({"90"}) << QByteArray("90") << false;
 			QTest::newRow("starting-with-90-code-only") << QByteArrayList({"90"}) << QByteArray("9000") << true;
 			QTest::newRow("starting-with-90-data+code") << QByteArrayList({"90"}) << QByteArray("abcd9000") << true;
 			QTest::newRow("equal-to-9000-empty") << QByteArrayList({"9000"}) << QByteArray("") << false;
@@ -118,7 +118,7 @@ class test_TransmitCommand
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Transmit unsuccessful. Return code:"));
 
-			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63c0"));
+			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63C0"));
 			TransmitCommand command2(worker, inputApduInfos, QStringLiteral("slotname"));
 			command2.internalExecute();
 			QVERIFY(command2.getOutputApduAsHex().isEmpty());
@@ -226,6 +226,21 @@ class test_TransmitCommand
 			const QString name = QStringLiteral("slotname");
 			TransmitCommand command(worker, inputApduInfos, name);
 			QCOMPARE(command.getSlotHandle(), name);
+		}
+
+
+		void test_EmptyResponse()
+		{
+			QVector<InputAPDUInfo> inputApduInfos(2);
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+
+			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			worker->addResponse(CardReturnCode::OK, QByteArray());
+			TransmitCommand command(worker, inputApduInfos, QStringLiteral("slotname"));
+			command.internalExecute();
+			QCOMPARE(command.getOutputApduAsHex().size(), 1);
+			QCOMPARE(command.getOutputApduAsHex()[0], QByteArray("9000"));
+			QCOMPARE(command.getReturnCode(), CardReturnCode::COMMAND_FAILED);
 		}
 
 

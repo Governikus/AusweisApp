@@ -1,0 +1,17 @@
+__GENUS                  : 2
+__CLASS                  : FirewallProduct
+__SUPERCLASS             :
+__DYNASTY                : FirewallProduct
+__RELPATH                : FirewallProduct.instanceGuid="{2BD24B80-3C45-7816-06F6-8D68A8F1E67E}"
+__PROPERTY_COUNT         : 6
+__DERIVATION             : {}
+__SERVER                 : DESKTOP-DGTBB4H
+__NAMESPACE              : ROOT\SecurityCenter2
+__PATH                   : \\DESKTOP-DGTBB4H\ROOT\SecurityCenter2:FirewallProduct.instanceGuid="{2BD24B80-3C45-7816-06F6-8D68A8F1E67E}"
+displayName              : BullGuard Firewall
+instanceGuid             : {2BD24B80-3C45-7816-06F6-8D68A8F1E67E}
+pathToSignedProductExe   : C:\Program Files\BullGuard Ltd\BullGuard\BullGuard.exe
+pathToSignedReportingExe : C:\Program Files\BullGuard Ltd\BullGuard\BgWsc.exe
+productState             : 266240
+timestamp                : Tue, 11 Jun 2019 08:01:19 GMT
+PSComputerName           : DESKTOP-DGTBB4H

@@ -32,8 +32,8 @@ class HttpServerStatusParser
 		bool parseReply(const QSharedPointer<QNetworkReply>& pReply);
 
 	public:
-		HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost);
-		~HttpServerStatusParser() override;
+		HttpServerStatusParser(quint16 pPort, const QHostAddress& pHost);
+		~HttpServerStatusParser() override = default;
 
 		bool request();
 		[[nodiscard]] const QString& getServerHeader() const;

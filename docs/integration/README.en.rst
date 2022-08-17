@@ -31,7 +31,7 @@ Developer options allow to adjust two different settings:
 Test mode for self-authentication (Test-PKI)
 ''''''''''''''''''''''''''''''''''''''''''''
 
-In general, the self-authentication is a build-in service of AusweisApp2 and
+In general, the self-authentication is a built-in service of AusweisApp2 and
 can only be used with genuine ID cards. However, when in test mode, AusweisApp2
 uses a test service allowing for self-authentication with a test ID card.
 
@@ -47,6 +47,6 @@ safety breach will be highlighted as an internal notification in AusweisApp2
 or the operating system respectively.
 
 
-**Plese note:**
+**Please note:**
 Developer mode can only be used for test services, usage with genuine provider
 certificates is not possible.

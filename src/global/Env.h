@@ -25,11 +25,11 @@
 #include <QWriteLocker>
 
 #ifndef QT_NO_DEBUG
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-#include <QMutableVectorIterator>
-#endif
+	#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+		#include <QMutableVectorIterator>
+	#endif
 
-#include <QVector>
+	#include <QVector>
 #endif
 
 class test_Env;
@@ -42,19 +42,19 @@ template<typename T, typename ... Args> T createNewObject(Args && ... pArgs);
 
 class Env
 {
+	Q_DISABLE_COPY(Env)
+	friend class ::test_Env;
+
 	public:
 		struct ThreadSafe {};
 
 	private:
-		friend class ::test_Env;
-		Q_DISABLE_COPY(Env)
 		using Identifier = const char*;
 
 #ifndef QT_NO_DEBUG
 		class FuncWrapperBase
 		{
-			protected:
-				int mCounter = 0;
+			int mCounter = 0;
 
 			public:
 				[[nodiscard]] inline int getCounter() const
@@ -66,6 +66,12 @@ class Env
 				inline void reset()
 				{
 					mCounter = 0;
+				}
+
+
+				inline void increaseCounter()
+				{
+					++mCounter;
 				}
 
 
@@ -88,7 +94,7 @@ class Env
 
 				T operator()(Args&& ... pArgs)
 				{
-					++mCounter;
+					increaseCounter();
 					return mFunc(pArgs ...);
 				}
 
@@ -123,7 +129,7 @@ class Env
 			qDebug() << "Create singleton:" << T::staticMetaObject.className();
 
 			T* ptr = nullptr;
-			if constexpr (std::is_abstract<T>::value && std::is_destructible<T>::value)
+			if constexpr (std::is_abstract_v<T> && std::is_destructible_v<T>)
 			{
 				ptr = createNewObject<T*>();
 			}
@@ -167,9 +173,9 @@ class Env
 			}
 			else
 			{
-				if constexpr (std::is_abstract<T>::value && std::is_destructible<T>::value)
+				if constexpr (std::is_abstract_v<T> && std::is_destructible_v<T>)
 				{
-					static_assert(std::has_virtual_destructor<T>::value, "Destructor must be virtual");
+					static_assert(std::has_virtual_destructor_v<T>, "Destructor must be virtual");
 					return singleton<T>();
 				}
 				else
@@ -181,7 +187,7 @@ class Env
 
 
 		template<typename T>
-		inline typename std::enable_if<QtPrivate::IsGadgetHelper<T>::IsRealGadget, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
+		inline std::enable_if_t<QtPrivate::IsGadgetHelper<T>::IsRealGadget, T*> checkObjectInfo(Identifier pId, T* pObject) const
 		{
 			Q_UNUSED(pId)
 			return pObject;
@@ -189,7 +195,7 @@ class Env
 
 
 		template<typename T>
-		inline typename std::enable_if<QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, T*>::type checkObjectInfo(Identifier pId, T* pObject) const
+		inline std::enable_if_t<QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, T*> checkObjectInfo(Identifier pId, T* pObject) const
 		{
 			if (!std::is_base_of<ThreadSafe, T>() && pObject->thread() != QThread::currentThread())
 			{
@@ -225,11 +231,11 @@ class Env
 		template<typename T, typename ... Args>
 		inline T newObject(Args&& ... pArgs) const
 		{
-			if constexpr (std::is_constructible<typename std::remove_pointer<T>::type, Args ...>::value)
+			if constexpr (std::is_constructible_v<std::remove_pointer_t<T>, Args ...>)
 			{
-				if constexpr (std::is_pointer<T>::value)
+				if constexpr (std::is_pointer_v<T>)
 				{
-					using t = typename std::remove_pointer<T>::type;
+					using t = std::remove_pointer_t<T>;
 					return new t(std::forward<Args>(pArgs) ...);
 				}
 				else
@@ -239,7 +245,7 @@ class Env
 			}
 			else
 			{
-				static_assert(std::is_pointer<T>::value, "It is impossible to return implementation of interface by value. Use pointer or add constructor!");
+				static_assert(std::is_pointer_v<T>, "It is impossible to return implementation of interface by value. Use pointer or add constructor!");
 				auto obj = createNewObject<T>(std::forward<Args>(pArgs) ...);
 				Q_ASSERT(obj);
 				return obj;
@@ -256,7 +262,7 @@ class Env
 
 				// copy QSharedPointer "mock" to increase ref-counter. Otherwise
 				// unlock would allow to delete the wrapper.
-				for (auto mock : qAsConst(mInstancesCreator)) // clazy:exclude=range-loop
+				for (auto mock : qAsConst(mInstancesCreator)) // clazy:exclude=range-loop,range-loop-reference
 				{
 					auto creator = mock.dynamicCast<FuncWrapper<T, Args ...>>();
 					if (creator)
@@ -314,8 +320,7 @@ class Env
 		template<typename T>
 		static QSharedPointer<T> getShared()
 		{
-			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
-					"Shared class needs to be a Q_GADGET or an QObject/Q_OBJECT");
+			static_assert(QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, "Shared class needs to be an QObject/Q_OBJECT");
 
 			const Identifier className = T::staticMetaObject.className();
 

@@ -17,9 +17,12 @@ class CallCost
 {
 	friend bool operator==(const CallCost& pLeft, const CallCost& pRight);
 
-	int mFreeSeconds;
-	double mLandlineCentsPerMinute, mLandlineCentsPerCall;
-	double mMobileCentsPerMinute, mMobileCentsPerCall;
+	private:
+		int mFreeSeconds;
+		double mLandlineCentsPerMinute;
+		double mLandlineCentsPerCall;
+		double mMobileCentsPerMinute;
+		double mMobileCentsPerCall;
 
 	public:
 		explicit CallCost(int pFreeSeconds = 0, double pLandlineCentsPerMinute = 0.0, double pLandlineCentsPerCall = 0.0, double pMobileCentsPerMinute = 0.0, double pMobileCentsPerCall = 0.0);

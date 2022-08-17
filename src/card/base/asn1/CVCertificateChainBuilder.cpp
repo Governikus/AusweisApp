@@ -20,12 +20,12 @@ bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate
 
 
 CVCertificateChainBuilder::CVCertificateChainBuilder(bool pProductive)
-	: CVCertificateChainBuilder(QVector<QSharedPointer<const CVCertificate> >(), pProductive)
+	: CVCertificateChainBuilder(QVector<QSharedPointer<const CVCertificate>>(), pProductive)
 {
 }
 
 
-CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate> >& pCvcPool, bool pProductive)
+CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive)
 	: ChainBuilder(pCvcPool, &CVCertificateChainBuilder::isChild)
 	, mProductive(pProductive)
 {
@@ -52,7 +52,7 @@ CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointe
 
 void CVCertificateChainBuilder::removeInvalidChains()
 {
-	QMutableVectorIterator<QVector<QSharedPointer<const CVCertificate> > > chainIter(mChains);
+	auto chainIter = getChainIterator();
 	while (chainIter.hasNext())
 	{
 		if (!CVCertificateChain(chainIter.next(), mProductive).isValid())
@@ -87,14 +87,16 @@ CVCertificateChain CVCertificateChainBuilder::getChainForCertificationAuthority(
 		for (int i = 0; i < chain.length(); ++i)
 		{
 			auto cert = chain.at(i);
-			if (cert->getBody().getCertificationAuthorityReference() == pCar && !cert->isIssuedBy(*cert))
+			if (cert->getBody().getCertificationAuthorityReference() != pCar || cert->isIssuedBy(*cert))
 			{
-				CVCertificateChain subChain(chain.mid(i), mProductive);
-				if (subChain.isValid())
-				{
-					qCDebug(card) << "Found valid chain" << subChain;
-					return subChain;
-				}
+				continue;
+			}
+
+			CVCertificateChain subChain(chain.mid(i), mProductive);
+			if (subChain.isValid())
+			{
+				qCDebug(card) << "Found valid chain" << subChain;
+				return subChain;
 			}
 		}
 	}
@@ -110,14 +112,16 @@ CVCertificateChain CVCertificateChainBuilder::getChainStartingWith(const QShared
 	{
 		for (int i = 0; i < chain.length(); ++i)
 		{
-			if (*chain.at(i) == *pChainRoot)
+			if (*chain.at(i) != *pChainRoot)
 			{
-				CVCertificateChain subChain(chain.mid(i), mProductive);
-				if (subChain.isValid())
-				{
-					qCDebug(card) << "Found valid chain" << subChain;
-					return subChain;
-				}
+				continue;
+			}
+
+			CVCertificateChain subChain(chain.mid(i), mProductive);
+			if (subChain.isValid())
+			{
+				qCDebug(card) << "Found valid chain" << subChain;
+				return subChain;
 			}
 		}
 	}

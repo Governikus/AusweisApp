@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -22,9 +22,7 @@ ColumnLayout {
 		text: qsTr("Language selection")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	RowLayout {
@@ -61,9 +59,7 @@ ColumnLayout {
 		text: qsTr("Behavior")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	ToggleableOption {
@@ -111,9 +107,7 @@ ColumnLayout {
 		text: qsTr("Using the developer mode forces the notifications to be enabled.")
 		textStyle: Style.text.hint_warning
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	GSeparator {
@@ -131,9 +125,7 @@ ColumnLayout {
 		text: qsTr("Network")
 		textStyle: Style.text.header_accent
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	ToggleableOption {

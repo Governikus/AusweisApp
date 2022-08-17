@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "context/WorkflowContext.h"
 #include "MessageDispatcher.h"
 #include "UIPlugIn.h"
+#include "context/WorkflowContext.h"
 
 namespace governikus
 {
@@ -37,8 +37,10 @@ class UIPlugInJson
 		void doShutdown() override;
 		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
 		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onCardInfoChanged(const ReaderInfo& pInfo);
 		void onReaderEvent(const ReaderInfo& pInfo);
 		void onStateChanged(const QString& pNewState);
+		void onProgressChanged();
 
 	public Q_SLOTS:
 		void doMessageProcessing(const QByteArray& pMsg);

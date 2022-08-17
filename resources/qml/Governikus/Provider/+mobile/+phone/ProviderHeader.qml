@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -33,7 +33,7 @@ Rectangle {
 
 	readonly property real headerOffsetY: sectionPageFlickable.contentY - sectionPageFlickable.originY
 
-	property int maxContentY: if (withButtons && parent != null) {
+	property int maxContentY: if (withButtons && parent !== null) {
 		return parent.height * (iconHeightRatio + iconVerticalMarginRatio)
 	} else {
 		return height / 2
@@ -154,8 +154,8 @@ Rectangle {
 			GText {
 				id: providerText
 				width: parent.width
-				text: selectedProvider ? selectedProvider.shortDescription : ""
-				visible: text.length > 0
+				text: selectedProvider ? selectedProvider.longName : ""
+				visible: text.length > 0 && selectedProvider.longName !== selectedProvider.shortName
 			}
 
 			GButton {

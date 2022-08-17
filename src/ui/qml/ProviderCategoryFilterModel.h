@@ -26,9 +26,9 @@ class ProviderCategoryFilterModel
 	Q_PROPERTY(QStringList categories READ getSelectedCategories NOTIFY fireCriteriaChanged)
 	Q_PROPERTY(int rowCount READ rowCount NOTIFY fireCriteriaChanged)
 	Q_PROPERTY(int additionalResultCount READ getAdditionalResultCount NOTIFY fireCriteriaChanged)
+	friend class ::test_ProviderCategoryFilterModel;
 
 	private:
-		friend class ::test_ProviderCategoryFilterModel;
 		QString mSearchString;
 		QStringList mSelectedCategories;
 
@@ -47,7 +47,7 @@ class ProviderCategoryFilterModel
 
 	public:
 		ProviderCategoryFilterModel();
-		~ProviderCategoryFilterModel() override;
+		~ProviderCategoryFilterModel() override = default;
 
 		Q_INVOKABLE void setIncludeCategoriesInModel(bool pIncludeCategories);
 		Q_INVOKABLE void sortByCategoryFirst(bool pEnabled);

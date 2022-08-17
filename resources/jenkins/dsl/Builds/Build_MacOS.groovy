@@ -1,5 +1,4 @@
 import common.Build
-import static common.Constants.strip
 
 def j = new Build
 	(
@@ -16,19 +15,12 @@ j.with
 	{
 		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
-		shell(strip('''\
-			cd build;
-			cmake ../source
-			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DBUILD_SHARED_LIBS=on
-			-DSANITIZER=on
-			'''))
+		shell('cd source; cmake --preset ci-macos')
 
 		shell('''\
 			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
 			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
-			cd build; make ${MAKE_FLAGS}
+			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
@@ -36,7 +28,7 @@ j.with
 			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			export QT_PLUGIN_PATH=${WORKSPACE}/libs/build/dist/plugins
 			export QML2_IMPORT_PATH=${WORKSPACE}/libs/build/dist/qml
-			cd build; ctest --output-on-failure ${MAKE_FLAGS}
+			ctest -C Debug --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 	}
 }

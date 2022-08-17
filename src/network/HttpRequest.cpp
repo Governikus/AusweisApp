@@ -38,19 +38,26 @@ HttpRequest::HttpRequest(QTcpSocket* pSocket, QObject* pParent)
 	mParserSettings.on_body = &HttpRequest::onBody;
 	mParserSettings.on_url = &HttpRequest::onUrl;
 
-	connect(mSocket.data(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
-	connect(mSocket.data(), &QAbstractSocket::disconnected, this, &HttpRequest::onSocketDisconnected, Qt::QueuedConnection);
-	connect(mSocket.data(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater, Qt::QueuedConnection);
+	connect(mSocket.get(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
+	connect(mSocket.get(), &QAbstractSocket::disconnected, this, &HttpRequest::onSocketDisconnected, Qt::QueuedConnection);
+	connect(mSocket.get(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater, Qt::QueuedConnection);
 	onReadyRead();
 }
 
 
 QTcpSocket* HttpRequest::take()
 {
-	disconnect(mSocket.data(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
-	disconnect(mSocket.data(), &QAbstractSocket::disconnected, this, &HttpRequest::onSocketDisconnected);
-	disconnect(mSocket.data(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater);
+	disconnect(mSocket.get(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
+	disconnect(mSocket.get(), &QAbstractSocket::disconnected, this, &HttpRequest::onSocketDisconnected);
+	disconnect(mSocket.get(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater);
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 1, 0))
 	return mSocket.take();
+
+#else
+	return mSocket.release();
+
+#endif
 }
 
 
@@ -77,7 +84,13 @@ bool HttpRequest::isConnected() const
 
 QByteArray HttpRequest::getMethod() const
 {
-	return QByteArray(http_method_str(static_cast<http_method>(mParser.method)));
+	return QByteArray(http_method_str(getHttpMethod()));
+}
+
+
+http_method HttpRequest::getHttpMethod() const
+{
+	return static_cast<http_method>(mParser.method);
 }
 
 
@@ -118,8 +131,7 @@ bool HttpRequest::send(const HttpResponse& pResponse)
 		return false;
 	}
 
-	const auto& msg = pResponse.getMessage();
-	if (mSocket->write(msg) != msg.size())
+	if (const auto& msg = pResponse.getMessage(); mSocket->write(msg) != msg.size())
 	{
 		qCCritical(network) << "Cannot write response:" << mSocket->error() << '|' << mSocket->errorString();
 		return false;
@@ -151,8 +163,8 @@ void HttpRequest::onReadyRead()
 
 	if (mFinished)
 	{
-		disconnect(mSocket.data(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
-		disconnect(mSocket.data(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater);
+		disconnect(mSocket.get(), &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
+		disconnect(mSocket.get(), &QAbstractSocket::disconnected, this, &HttpRequest::deleteLater);
 		Q_EMIT fireMessageComplete(this);
 	}
 }

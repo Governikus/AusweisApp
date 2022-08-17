@@ -36,6 +36,7 @@ Table of contents
    android
    ios
    desktop
+   container
 
 
 .. raw:: latex
@@ -54,3 +55,19 @@ Table of contents
    commands
    messages
    workflow
+
+
+.. raw:: latex
+
+    \clearpage
+
+
+
+
+.. _tools:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tools
+
+   simulator

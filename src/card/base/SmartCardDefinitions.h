@@ -11,8 +11,8 @@ namespace governikus
 defineEnumType(CardType,
 		NONE,
 		UNKNOWN,
-		PASSPORT,
-		EID_CARD)
+		EID_CARD,
+		SMART_EID)
 
 defineTypedEnumType(PacePasswordId, char,
 		UNKNOWN = 0x00,
@@ -21,6 +21,18 @@ defineTypedEnumType(PacePasswordId, char,
 		PACE_PIN = 0x03,
 		PACE_PUK = 0x04)
 
-} // namespace governikus
+// TR03159-4
+defineEnumType(AcceptedEidType,
+		CARD_CERTIFIED,
+		SE_CERTIFIED,
+		SE_ENDORSED,
+		HW_KEYSTORE)
 
-Q_DECLARE_METATYPE(governikus::PacePasswordId)
+// TR 03110 Smart-eID Amendment
+defineEnumType(MobileEidType,
+		UNKNOWN,
+		SE_CERTIFIED,
+		SE_ENDORSED,
+		HW_KEYSTORE)
+
+} // namespace governikus

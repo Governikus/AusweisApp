@@ -4,11 +4,11 @@
 
 #include "CVCertificateBody.h"
 
-#include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "KnownOIDs.h"
+#include "SecurityProtocol.h"
 
 #include <QLoggingCategory>
+
 
 using namespace governikus;
 
@@ -176,43 +176,20 @@ QByteArray CVCertificateBody::getCertificateHolderReference() const
 
 QCryptographicHash::Algorithm CVCertificateBody::getHashAlgorithm() const
 {
-	const auto oid = getPublicKey().getPublicKeyOid();
-	if (oid == KnownOIDs::id_ta::ECDSA_SHA_1)
-	{
-		return QCryptographicHash::Sha1;
-	}
-	if (oid == KnownOIDs::id_ta::ECDSA_SHA_224)
-	{
-		return QCryptographicHash::Sha224;
-	}
-	if (oid == KnownOIDs::id_ta::ECDSA_SHA_256)
-	{
-		return QCryptographicHash::Sha256;
-	}
-	if (oid == KnownOIDs::id_ta::ECDSA_SHA_384)
-	{
-		return QCryptographicHash::Sha384;
-	}
-	if (oid == KnownOIDs::id_ta::ECDSA_SHA_512)
-	{
-		return QCryptographicHash::Sha512;
-	}
-
-	qCCritical(card) << "unknown OID" << oid;
-	return QCryptographicHash::Sha256;
+	return getPublicKey().getSecurityProtocol().getHashAlgorithm();
 }
 
 
-QMap<QByteArray, QByteArray> CVCertificateBody::getExtensions() const
+QHash<Oid, QByteArray> CVCertificateBody::getExtensions() const
 {
-	QMap<QByteArray, QByteArray> ext;
+	QHash<Oid, QByteArray> ext;
 
 	if (mExtensions != nullptr)
 	{
 		for (int i = 0; i < sk_CERTIFICATEEXTENSION_num(mExtensions); i++)
 		{
 			const CERTIFICATEEXTENSION* extension = sk_CERTIFICATEEXTENSION_value(mExtensions, i);
-			ext.insert(Asn1ObjectUtil::convertTo(extension->mOid), Asn1OctetStringUtil::getValue(extension->mObject1));
+			ext.insert(Oid(extension->mOid), Asn1OctetStringUtil::getValue(extension->mObject1));
 		}
 	}
 

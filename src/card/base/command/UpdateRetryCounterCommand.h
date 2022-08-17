@@ -17,9 +17,7 @@ class UpdateRetryCounterCommand
 	: public BaseCardCommand
 {
 	Q_OBJECT
-
-	private:
-		friend class ::test_UpdateRetryCounterCommand;
+	friend class ::test_UpdateRetryCounterCommand;
 
 	protected:
 		void internalExecute() override;

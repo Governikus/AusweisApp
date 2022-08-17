@@ -73,7 +73,7 @@ class test_AccessRoleAndRight
 			QFETCH(AccessRight, value);
 			const auto undefined = static_cast<AccessRight>(UINT_MAX);
 			AccessRight right = undefined;
-			const auto& func = [&](AccessRight pRight){
+			const auto& func = [&right](AccessRight pRight){
 						right = pRight;
 					};
 
@@ -93,7 +93,7 @@ class test_AccessRoleAndRight
 		{
 			const auto undefined = static_cast<AccessRight>(UINT_MAX);
 			AccessRight right = undefined;
-			const auto& func = [&](AccessRight pRight){
+			const auto& func = [&right](AccessRight pRight){
 						right = pRight;
 					};
 

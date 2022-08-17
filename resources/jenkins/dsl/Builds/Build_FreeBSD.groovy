@@ -1,5 +1,4 @@
 import common.Build
-import static common.Constants.strip
 
 def j = new Build
 	(
@@ -22,24 +21,17 @@ j.with
 
 	steps
 	{
-		shell(strip('''\
-			cd build;
-			cmake ../source
-			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-			-DBUILD_SHARED_LIBS=on
-			'''))
+		shell('cd source; cmake -Werror=dev --preset ci-bsd')
 
 		shell('''\
 			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
-			cd build; make ${MAKE_FLAGS}
+			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
 			export QML2_IMPORT_PATH=$WORKSPACE/libs/build/dist/qml
 			export LD_LIBRARY_PATH=$WORKSPACE/libs/build/dist/lib:$LD_LIBRARY_PATH
-			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
-			cd build; ctest --output-on-failure ${MAKE_FLAGS}
+			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 	}
 }

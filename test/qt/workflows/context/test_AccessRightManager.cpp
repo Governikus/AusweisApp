@@ -64,12 +64,7 @@ class test_AccessRightManager
 		{
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
-			// Creates a context with 16 access rights in cvc
-			// Because required and optional are empty, all 16 rights are optional by default
-			mTestAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
-			mTestAuthContext->setRequiredAccessRights({});
-			mTestAuthContext->setOptionalAccessRights({});
-
+			mTestAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_accessRightsEmpty.xml"));
 			mEac1Changed.reset(new QSignalSpy(mTestAuthContext.data(), &AuthContext::fireDidAuthenticateEac1Changed));
 			mARMCreated.reset(new QSignalSpy(mTestAuthContext.data(), &AuthContext::fireAccessRightManagerCreated));
 		}
@@ -82,10 +77,19 @@ class test_AccessRightManager
 		}
 
 
+		void test_AuthContext_00()
+		{
+			TestAuthContext context(nullptr, ":/paos/DIDAuthenticateEAC1_accessRightsMissing.xml");
+			QCOMPARE(context.getAccessRightManager()->getRequiredAccessRights().size(), 0);
+			QCOMPARE(context.getAccessRightManager()->getOptionalAccessRights().size(), 16);
+			QCOMPARE(context.getAccessRightManager()->getEffectiveAccessRights().size(), 16);
+		}
+
+
 		void test_AuthContext_01()
 		{
-			// Exists after creation - All cvc rights are optional and selected
-			checkChatSizes("01-01", 0, 16, 16);
+			// Empty after creation
+			checkChatSizes("01-01", 0, 0, 0);
 		}
 
 
@@ -93,12 +97,12 @@ class test_AccessRightManager
 		{
 			// Try to set required right that is not in cvc
 			mTestAuthContext->setRequiredAccessRights({AccessRight::READ_DG21});
-			checkChatSizes("02-01", 0, 16, 16);
+			checkChatSizes("02-01", 0, 0, 0);
 			checkAndClearSignals("02-02", 1);
 
 			// Try to set optional right that is not in cvc
 			mTestAuthContext->setOptionalAccessRights({AccessRight::READ_DG21});
-			checkChatSizes("02-03", 0, 16, 16);
+			checkChatSizes("02-03", 0, 0, 0);
 			checkAndClearSignals("02-04", 1);
 
 			// Try to set a right in required and optional
@@ -113,10 +117,15 @@ class test_AccessRightManager
 
 		void test_AuthContext_03()
 		{
+			mTestAuthContext->setOptionalAccessRights({AccessRight::READ_DG05});
+			mTestAuthContext->setRequiredAccessRights({AccessRight::READ_DG06});
+			checkChatSizes("03-01", 1, 1, 2);
+			checkAndClearSignals("03-02", 2);
+
 			// Clear effective access rights
 			*mTestAuthContext->getAccessRightManager() = {};
-			checkChatSizes("03-01", 0, 16, 0);
-			checkAndClearSignals("03-02", 0);
+			checkChatSizes("03-03", 1, 1, 1);
+			checkAndClearSignals("03-04", 0);
 		}
 
 

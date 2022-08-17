@@ -1,15 +1,15 @@
 module ProviderView
 
-internal AdditionalResultsItem AdditionalResultsItem.qml
 internal AdditionalResultsFooterItem AdditionalResultsFooterItem.qml
+internal AdditionalResultsItem AdditionalResultsItem.qml
+internal BaseProviderView BaseProviderView.qml
 internal CategoryCheckbox CategoryCheckbox.qml
-internal ProviderCardNameRow ProviderCardNameRow.qml
 internal ProviderCard ProviderCard.qml
+internal ProviderCardNameRow ProviderCardNameRow.qml
 internal ProviderContactInfoItem ProviderContactInfoItem.qml
-internal ProviderSectionDelegate ProviderSectionDelegate.qml
+internal ProviderGridView ProviderGridView.qml
 internal ProviderListItemDelegate ProviderListItemDelegate.qml
 internal ProviderOverview ProviderOverview.qml
-internal ProviderGridView ProviderGridView.qml
-internal BaseProviderView BaseProviderView.qml
+internal ProviderSectionDelegate ProviderSectionDelegate.qml
 
 ProviderView 1.0 ProviderView.qml

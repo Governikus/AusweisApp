@@ -10,7 +10,7 @@
 #include <QVariant>
 
 #ifndef QT_NO_DEBUG
-#include <QTemporaryDir>
+	#include <QTemporaryDir>
 #endif
 
 #define SETTINGS_NAME(_name, _key)\
@@ -28,7 +28,7 @@ class AbstractSettings
 
 	protected:
 		AbstractSettings();
-		~AbstractSettings() override;
+		~AbstractSettings() override = default;
 
 	public:
 #ifndef QT_NO_DEBUG

@@ -7,7 +7,11 @@
 #include "AppSettings.h"
 #include "VolatileSettings.h"
 
+#include <QSignalBlocker>
+
+
 using namespace governikus;
+
 
 AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc)
 	: QObject()
@@ -22,14 +26,18 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 		return;
 	}
 
+	bool accessRightPresent = false;
+
 	if (const auto& requiredChat = mDIDAuthenticateEAC1->getRequiredChat())
 	{
+		accessRightPresent = true;
 		mRequiredAccessRights = requiredChat.data()->getAccessRights();
 		removeForbiddenAccessRights(mRequiredAccessRights);
 	}
 
 	if (const auto& optionalChat = mDIDAuthenticateEAC1->getOptionalChat())
 	{
+		accessRightPresent = true;
 		mOptionalAccessRights = optionalChat.data()->getAccessRights();
 		removeForbiddenAccessRights(mOptionalAccessRights);
 
@@ -39,7 +47,7 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 		}
 	}
 
-	if (mOptionalAccessRights.isEmpty() && mRequiredAccessRights.isEmpty())
+	if (!accessRightPresent)
 	{
 		mOptionalAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
 		removeForbiddenAccessRights(mOptionalAccessRights);
@@ -72,12 +80,7 @@ void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessR
 	const auto& allowedCvcAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
 
 	const auto rights = AccessRoleAndRightsUtil::allDisplayedOrderedRights();
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 	const auto& allDisplayedOrderedRights = QSet<AccessRight>(rights.constBegin(), rights.constEnd());
-#else
-	const auto& allDisplayedOrderedRights = rights.toSet();
-#endif
-
 	const auto& allowedAccessRights = allowedCvcAccessRights & allDisplayedOrderedRights;
 
 	const auto rightsToCheck = pAccessRights;

@@ -6,14 +6,4 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppCore)
 
-target_link_libraries(AusweisAppCore ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppUi AusweisAppActivation AusweisAppSettings AusweisAppNetwork AusweisAppWorkflows AusweisAppServices)
-
-if(TARGET ${Qt}::WebSockets)
-	target_link_libraries(AusweisAppCore AusweisAppWorkflowsRemoteDevice AusweisAppRemoteDevice)
-endif()
-
-if(NOT INTEGRATED_SDK)
-	if(DESKTOP)
-		target_link_libraries(AusweisAppCore AusweisAppCardDrivers)
-	endif()
-endif()
+target_link_libraries(AusweisAppCore AusweisAppActivation AusweisAppCard AusweisAppGlobal AusweisAppNetwork AusweisAppServices AusweisAppSettings AusweisAppUi AusweisAppWorkflows)

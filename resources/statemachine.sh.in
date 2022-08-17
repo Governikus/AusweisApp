@@ -23,6 +23,7 @@ createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStatePace.cp
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateProcessCvcsAndSetRights
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateTrustedChannel.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateTrustedChannel
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
-createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/selfauth/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController
-createImage @PROJECT_SOURCE_DIR@/src/workflows/remote_device/controller/RemoteServiceController.cpp @PROJECT_BINARY_DIR@/uml_RemoteServiceController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/ifd/controller/IfdServiceController.cpp @PROJECT_BINARY_DIR@/uml_IfdServiceController
+createImage @PROJECT_SOURCE_DIR@/src/workflows/personalization/controller/PersonalizationController.cpp @PROJECT_BINARY_DIR@/uml_PersonalizationController

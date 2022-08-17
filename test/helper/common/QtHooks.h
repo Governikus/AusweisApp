@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <list>
 #include <QObject>
+#include <list>
 
 namespace governikus
 {

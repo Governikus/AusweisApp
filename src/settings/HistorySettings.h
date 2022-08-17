@@ -43,7 +43,7 @@ class HistorySettings
 		[[nodiscard]] QVector<HistoryInfo> getHistoryInfosFromStore() const;
 
 	public:
-		~HistorySettings() override;
+		~HistorySettings() override = default;
 		void save() override;
 
 		[[nodiscard]] bool isEnabled() const;

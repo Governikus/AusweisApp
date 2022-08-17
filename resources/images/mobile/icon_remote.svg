@@ -6,6 +6,6 @@
       <path d="M -24 -30 a 38 38 0 0 1 48 0 M -37 -47 a 58 58 0 0 1 74 0 M -50 -64 a 78 78 0 0 1 100 0" stroke="#ffffff" stroke-width="18" fill="none"/>
     </g>
   </defs>
-  <circle cx="80" cy="80" r="80" fill="#4d7aa4"/>
+  <circle cx="80" cy="80" r="80" fill="#164a8c"/>
   <use x="80" y="130" xlink:href="#air" />
 </svg>

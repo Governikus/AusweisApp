@@ -1,0 +1,61 @@
+From 43f460c8a5f5992b65729a240f2f5db2ce9230e6 Mon Sep 17 00:00:00 2001
+From: Yuhang Zhao <2546789017@qq.com>
+Date: Tue, 24 May 2022 14:05:10 +0800
+Subject: QSysInfo::prettyProductName(): add missing macOS product names
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Pick-to: 6.2 6.3 6.4 5.15
+Change-Id: I9163917187b7a4cbf48e443303313b25473b229f
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+---
+ src/corelib/global/qglobal.cpp | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/corelib/global/qglobal.cpp y/qtbase/src/corelib/global/qglobal.cpp
+index 21386421cb..ae7efe5454 100644
+--- x/qtbase/src/corelib/global/qglobal.cpp
++++ y/qtbase/src/corelib/global/qglobal.cpp
+@@ -2121,6 +2121,11 @@ QT_END_INCLUDE_NAMESPACE
+ static const char *osVer_helper(QOperatingSystemVersion version = QOperatingSystemVersion::current())
+ {
+ #ifdef Q_OS_MACOS
++    if (version.majorVersion() == 12)
++        return "Monterey";
++    // Compare against predefined constant to handle 10.16/11.0
++    if (QOperatingSystemVersion::MacOSBigSur.version().isPrefixOf(version.version()))
++        return "Big Sur";
+     if (version.majorVersion() == 10) {
+         switch (version.minorVersion()) {
+         case 9:
+@@ -2135,13 +2140,15 @@ static const char *osVer_helper(QOperatingSystemVersion version = QOperatingSyst
+             return "High Sierra";
+         case 14:
+             return "Mojave";
++        case 15:
++            return "Catalina";
+         }
+     }
+     // unknown, future version
+ #else
+     Q_UNUSED(version);
+ #endif
+-    return 0;
++    return nullptr;
+ }
+ #endif
+ 
+@@ -2235,7 +2242,7 @@ static const char *osVer_helper(QOperatingSystemVersion version = QOperatingSyst
+     }
+ #undef Q_WINVER
+     // unknown, future version
+-    return 0;
++    return nullptr;
+ }
+ 
+ #endif
+-- 
+2.37.1
+

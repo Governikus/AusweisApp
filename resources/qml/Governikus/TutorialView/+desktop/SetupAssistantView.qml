@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -60,9 +60,6 @@ SectionPage {
 
 		Component.onCompleted: setActive()
 
-		Accessible.name: qsTr("Setup assistant view")
-		Accessible.description: qsTr("This is the setup assistant view which will guide you through the basic setup of %1").arg(Qt.application.name)
-
 		mainIconSource: "qrc:///images/status_info.svg"
 		//: INFO DESKTOP Welcome message when starting the setup assistant.
 		questionText: qsTr("Welcome to the AusweisApp2. Please take a few moments to set up the environment to your needs. Every decision you make can later be changed in the settings menu.")
@@ -75,8 +72,6 @@ SectionPage {
 
 	DecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.AutoStartSetting
-
-		Accessible.name: qsTr("Auto-start setup step")
 
 		mainIconSource: "qrc:///images/status_info.svg"
 		//: INFO DESKTOP Question if the App shall be started automatically after boot
@@ -113,8 +108,6 @@ SectionPage {
 	DecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.HistorySetting
 
-		Accessible.name: qsTr("History setup step")
-
 		mainIconSource: "qrc:///images/material_history.svg"
 		//: INFO DESKTOP Question if the authentication history shall be stored.
 		questionText: qsTr("Do you want to save a history of performed authentications on your device?")
@@ -143,8 +136,6 @@ SectionPage {
 	DecisionView {
 		visible: d.activeView === SetupAssistantView.SubViews.CardReaderInfo
 
-		Accessible.name: qsTr("Card reader setup information step")
-
 		tintEnabled: false
 		mainIconSource: "qrc:///images/reader/default_reader.png"
 		//: INFO DESKTOP Question if the the user wants to setup any card readers now.
@@ -169,8 +160,6 @@ SectionPage {
 		id: readerView
 
 		visible: d.activeView === SetupAssistantView.SubViews.CardReader
-
-		Accessible.name: qsTr("Card reader setup step")
 
 		rootEnabled: d.allowNavigation
 
@@ -200,7 +189,7 @@ SectionPage {
 		rootEnabled: d.allowNavigation
 
 		onAgree: {
-			SettingsModel.startupModule = UiModule.DEFAULT // We don't wan't to show the setup assistant again, as the only subview left is "Setup assistant done"
+			SettingsModel.startupModule = UiModule.DEFAULT // We don't want to show the setup assistant again, as the only subview left is "Setup assistant done"
 			SettingsModel.transportPinReminder = false
 			baseItem.nextView(UiModule.PINMANAGEMENT)
 		}
@@ -213,12 +202,12 @@ SectionPage {
 	ResultView {
 		visible: d.activeView === SetupAssistantView.SubViews.Finished
 
-		Accessible.name: qsTr("Setup assistant done")
-
 		resultType: ResultView.Type.IsSuccess
 		//: INFO DESKTOP Success message after completing the setup assistant.
 		text: qsTr("You have completed the setup of the AusweisApp2 successfully.")
-		onNextView: baseItem.nextView(pName)
+		//: INFO DESKTOP A11y button text to exit the setup assistant.
+		buttonText: qsTr("Proceed to start page")
+		onNextView: pName => { baseItem.nextView(pName) }
 	}
 
 }

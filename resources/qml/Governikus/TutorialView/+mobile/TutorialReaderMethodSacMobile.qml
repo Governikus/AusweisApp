@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -16,7 +16,7 @@ SectionPage {
 
 	titleBarVisible: false
 	automaticSafeAreaMarginHandling: false
-	navigationAction: NavigationAction { state: "back"; onClicked: firePop() }
+	navigationAction: NavigationAction { action: NavigationAction.Action.Back; onClicked: pop() }
 	//: LABEL ANDROID IOS
 	title: qsTr("Tutorial: Smartphone as card reader")
 
@@ -608,11 +608,11 @@ SectionPage {
 
 				Row {
 					anchors.horizontalCenter: parent.horizontalCenter
-					height: identifyArrow.height
+					height: authArrow.height
 					spacing: Constants.component_spacing
 
 					Image {
-						id: identifyArrow
+						id: authArrow
 						source: "qrc:///images/tutorial/arrow_blue.svg"
 						width: parent.width * 0.2
 						height: width * (sourceSize.height / sourceSize.width)
@@ -620,8 +620,6 @@ SectionPage {
 					}
 
 					GButton {
-						id: identifyButton
-
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
@@ -644,10 +642,10 @@ SectionPage {
 
 				Item {
 					width: parent.width
-					height: screenshotIdentify.height
+					height: screenshotAuth.height
 
 					TutorialImage {
-						id: screenshotIdentify
+						id: screenshotAuth
 
 						source: "qrc:///images/tutorial/screenshot_choose_reader_%1_%2.png".arg(Constants.layout).arg(SettingsModel.language)
 						width: parent.width * 0.5
@@ -938,7 +936,7 @@ SectionPage {
 					fillMode: Image.PreserveAspectFit
 				}
 
-				onClicked: firePop()
+				onClicked: pop()
 			}
 
 			GSpacer {
@@ -950,18 +948,15 @@ SectionPage {
 
 	TutorialStatusBar {
 		id: statusBar
-
-		shaderSource: sectionPageFlickable
 	}
 
 	TutorialReaderMethodFooter {
 		id: footer
 		width: baseItem.width
 
-		shaderSource: sectionPageFlickable
-		onMenuClicked: firePop()
+		onMenuClicked: pop()
 		onQuitTutorialClicked: {
-			firePop()
+			pop()
 			baseItem.quitTutorialClicked()
 		}
 	}

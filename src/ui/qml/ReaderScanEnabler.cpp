@@ -4,6 +4,7 @@
 
 #include "ReaderScanEnabler.h"
 
+#include "ApplicationModel.h"
 #include "Env.h"
 #include "ReaderManager.h"
 
@@ -20,6 +21,7 @@ ReaderScanEnabler::ReaderScanEnabler(QQuickItem* pParent)
 	, mPlugInType(ReaderManagerPlugInType::UNKNOWN)
 	, mObligedToStopScan(false)
 {
+	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireStatusChanged, this, &ReaderScanEnabler::onStatusChanged);
 }
 
 
@@ -31,18 +33,22 @@ ReaderScanEnabler::~ReaderScanEnabler()
 
 void ReaderScanEnabler::enableScan(const bool pEnable)
 {
-	const auto manager = Env::getSingleton<ReaderManager>();
-	if (pEnable && !manager->isScanRunning())
+	if (pEnable)
 	{
-		qCDebug(qml) << "Starting scan on" << mPlugInType;
-		mObligedToStopScan = true;
-		manager->startScan(mPlugInType, false);
+		if (!isScanRunning())
+		{
+			qCDebug(qml) << "Starting scan on" << mPlugInType;
+			mObligedToStopScan = Env::getSingleton<ApplicationModel>()->getCurrentWorkflow() == ApplicationModel::Workflow::WORKFLOW_NONE;
+			Env::getSingleton<ReaderManager>()->startScan(mPlugInType, false);
+		}
+		return;
 	}
-	else if (mObligedToStopScan)
+
+	if (mObligedToStopScan)
 	{
 		qCDebug(qml) << "Stopping scan on" << mPlugInType;
 		mObligedToStopScan = false;
-		manager->stopScan(mPlugInType);
+		Env::getSingleton<ReaderManager>()->stopScan(mPlugInType);
 	}
 }
 
@@ -50,6 +56,21 @@ void ReaderScanEnabler::enableScan(const bool pEnable)
 void ReaderScanEnabler::enableScanIfVisible()
 {
 	enableScan(isVisible());
+}
+
+
+bool ReaderScanEnabler::isScanRunning() const
+{
+	return Env::getSingleton<ReaderManager>()->isScanRunning(mPlugInType);
+}
+
+
+void ReaderScanEnabler::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+{
+	if (pInfo.getPlugInType() == mPlugInType)
+	{
+		Q_EMIT fireScanRunningChanged();
+	}
 }
 
 
@@ -71,6 +92,7 @@ void ReaderScanEnabler::setPlugInType(ReaderManagerPlugInType pPlugInType)
 	QMetaObject::invokeMethod(this, &ReaderScanEnabler::enableScanIfVisible, Qt::QueuedConnection);
 
 	Q_EMIT firePlugInTypeChanged();
+	Q_EMIT fireScanRunningChanged();
 }
 
 
@@ -82,4 +104,11 @@ void ReaderScanEnabler::itemChange(QQuickItem::ItemChange pChange, const QQuickI
 	}
 
 	QQuickItem::itemChange(pChange, pValue);
+}
+
+
+void ReaderScanEnabler::restartScan()
+{
+	enableScan(false);
+	enableScan(true);
 }

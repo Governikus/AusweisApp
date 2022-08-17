@@ -5,8 +5,11 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
+
+
+class test_StatePreparePace;
 
 
 namespace governikus
@@ -18,11 +21,13 @@ class StatePreparePace
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StatePreparePace;
 
-	explicit StatePreparePace(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StatePreparePace(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 
-	bool requestPaceCanIfStillRequired();
+		bool requestPaceCanIfStillRequired();
 
 	Q_SIGNALS:
 		void fireEnterPacePassword();

@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,21 +11,22 @@ import Governikus.Style 1.0
 Item {
 	id: titleBar
 
+	function setActiveFocus() {
+		titleText.forceActiveFocus(Qt.MouseFocusReason)
+	}
+
 	property alias contentHeight: contentLayout.height
 	property alias titleBarOpacity: background.opacity
 
 	property alias title: titleText.text
 	property NavigationAction navigationAction
 	property var rightAction
-	property var subTitleBarAction
 
 	property var color
 	property bool enableTitleMoveAnimation: Constants.is_layout_ios
 	property var topSafeAreaMargin: plugin.safeAreaMargins.top
 
 	height: contentLayout.height + topSafeAreaMargin
-
-	Accessible.role: Accessible.TitleBar
 
 	Rectangle {
 		id: safeAreaBackground
@@ -37,8 +38,7 @@ Item {
 			right: parent.right
 		}
 
-		property color baseColor: titleBar.color ? titleBar.color : Style.color.accent
-		color: Constants.is_layout_android ? Qt.darker(baseColor, 1.2) : baseColor
+		color: titleBar.color ? titleBar.color : Style.color.accent
 
 		Behavior on color { ColorAnimation { duration: Constants.animation_duration } }
 	}
@@ -85,7 +85,7 @@ Item {
 				}
 				width: titleText.moreSpacePreferred ? minimumWidth : implicitWidth
 
-				state: titleBar.navigationAction ? titleBar.navigationAction.state : ""
+				action: titleBar.navigationAction ? titleBar.navigationAction.action : NavigationAction.Action.None
 				enabled: titleBar.navigationAction ? titleBar.navigationAction.enabled : false
 
 				onClicked: titleBar.navigationAction.clicked()
@@ -100,6 +100,9 @@ Item {
 				readonly property int implicitAvailableWidth: parent.width - leftAction.implicitWidth - rightActionStack.implicitWidth
 				readonly property int availableWidth: parent.width - leftAction.width - rightActionStack.width
 				readonly property bool moreSpacePreferred: implicitWidth > implicitAvailableWidth
+
+				Accessible.role: Accessible.Heading
+				Accessible.focusable: true
 
 				height: Style.dimens.titlebar_height
 				width: Math.min(implicitWidth, availableWidth)
@@ -119,8 +122,6 @@ Item {
 				textStyle: Style.text.header_inverse
 
 				Behavior on text {
-					enabled: appWindow.ready
-
 					SequentialAnimation {
 						PropertyAnimation {
 							target: titleText
@@ -144,7 +145,7 @@ Item {
 				}
 
 				Behavior on x {
-					enabled: enableTitleMoveAnimation && appWindow.ready
+					enabled: enableTitleMoveAnimation
 					NumberAnimation {
 						from: parent.width * 0.75
 						duration: Constants.animation_duration
@@ -191,15 +192,6 @@ Item {
 					easing.type: Easing.OutCubic
 				}
 			}
-		}
-
-		Item {
-			id: secondLine
-
-			width: parent.width
-			height: subTitleBarAction ? subTitleBarAction.height : 0
-
-			data: subTitleBarAction ? subTitleBarAction : []
 		}
 	}
 }

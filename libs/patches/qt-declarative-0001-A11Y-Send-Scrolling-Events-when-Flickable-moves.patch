@@ -1,0 +1,45 @@
+From 80ac871bf5c97995950201b469889639ea18779f Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Mon, 27 Jun 2022 16:29:09 +0200
+Subject: A11Y: Send Scrolling Events when Flickable moves
+
+Task-number: QTBUG-103513
+Pick-to: 6.4 6.3 6.2 5.15
+Change-Id: I6b67ff2611f37a6519420d875e7d9a70d0eb210a
+---
+ src/quick/items/qquickflickable.cpp | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git x/qtdeclarative/src/quick/items/qquickflickable.cpp y/qtdeclarative/src/quick/items/qquickflickable.cpp
+index 8dc9a9afe6..a0bf18c4c3 100644
+--- x/qtdeclarative/src/quick/items/qquickflickable.cpp
++++ y/qtdeclarative/src/quick/items/qquickflickable.cpp
+@@ -2898,6 +2898,12 @@ void QQuickFlickable::movementStarting()
+     if (!wasMoving && (d->hData.moving || d->vData.moving)) {
+         emit movingChanged();
+         emit movementStarted();
++#if QT_CONFIG(accessibility)
++        if (QAccessible::isActive()) {
++            QAccessibleEvent ev(this, QAccessible::ScrollingStart);
++            QAccessible::updateAccessibility(&ev);
++        }
++#endif
+     }
+ }
+ 
+@@ -2942,6 +2948,12 @@ void QQuickFlickable::movementEnding(bool hMovementEnding, bool vMovementEnding)
+     if (wasMoving && !isMoving()) {
+         emit movingChanged();
+         emit movementEnded();
++#if QT_CONFIG(accessibility)
++        if (QAccessible::isActive()) {
++            QAccessibleEvent ev(this, QAccessible::ScrollingEnd);
++            QAccessible::updateAccessibility(&ev);
++        }
++#endif
+     }
+ 
+     if (hMovementEnding) {
+-- 
+2.28.0
+

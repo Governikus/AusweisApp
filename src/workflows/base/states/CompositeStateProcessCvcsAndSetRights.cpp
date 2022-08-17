@@ -49,8 +49,3 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 	connect(sEditAccessRights, &AbstractState::fireContinue, this, &CompositeStateProcessCvcsAndSetRights::fireContinue);
 	connect(sEditAccessRights, &AbstractState::fireAbort, this, &CompositeStateProcessCvcsAndSetRights::fireAbort);
 }
-
-
-CompositeStateProcessCvcsAndSetRights::~CompositeStateProcessCvcsAndSetRights()
-{
-}

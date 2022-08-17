@@ -8,8 +8,8 @@
 
 #include "Env.h"
 #include "LogHandler.h"
-#include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
 #include "TestFileHelper.h"
+#include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
 
 #include <QtCore>
 #include <QtTest>

@@ -7,14 +7,15 @@
 #include "ApplicationModel.h"
 #include "LanguageLoader.h"
 #include "LogHandler.h"
-#include "PlatformHelper.h"
 #include "Randomizer.h"
-#include "SettingsModel.h"
 
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
+#include <QSignalBlocker>
 #include <QtMath>
+
 
 using namespace governikus;
 
@@ -24,9 +25,10 @@ LogModel::LogModel()
 	, mLogFiles()
 	, mSelectedLogFile(-1)
 	, mLogEntries()
+	, mLevels()
+	, mCategories()
 {
 	reset();
-	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireLanguageChanged, this, &LogModel::fireLogFilesChanged); // needed to translate the "Current log" entry on language change
 }
 
 
@@ -46,7 +48,30 @@ void LogModel::reset()
 
 void LogModel::addLogEntry(const QString& pEntry)
 {
+	const QString re = QStringLiteral(R"(^[a-z\._ ]{%1} \d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \d{3,} )").arg(LogHandler::MAX_CATEGORY_LENGTH);
+	if (!QRegularExpression(re).match(pEntry).hasMatch() && !mLogEntries.isEmpty())
+	{
+		mLogEntries.last().append(QLatin1String("\n")).append(pEntry);
+		return;
+	}
+
 	mLogEntries.append(pEntry);
+
+	QModelIndex idx = index(mLogEntries.size() - 1, 0);
+
+	const auto& level = data(idx, LogModel::LogModelRoles::LevelRole).toString();
+	if (!mLevels.contains(level))
+	{
+		mLevels.insert(level);
+		Q_EMIT fireLevelsChanged();
+	}
+
+	const auto& category = data(idx, LogModel::LogModelRoles::CategoryRole).toString();
+	if (!mCategories.contains(category))
+	{
+		mCategories.insert(category);
+		Q_EMIT fireCategoriesChanged();
+	}
 }
 
 
@@ -54,13 +79,22 @@ void LogModel::setLogEntries(QTextStream& pTextStream)
 {
 	beginResetModel();
 
+	mLevels.clear();
+	mCategories.clear();
 	mLogEntries.clear();
-	while (!pTextStream.atEnd())
+
 	{
-		addLogEntry(pTextStream.readLine());
+		const QSignalBlocker blocker(this);
+		while (!pTextStream.atEnd())
+		{
+			addLogEntry(pTextStream.readLine());
+		}
 	}
 
 	endResetModel();
+
+	Q_EMIT fireLevelsChanged();
+	Q_EMIT fireCategoriesChanged();
 }
 
 
@@ -68,16 +102,21 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 {
 	if (mSelectedLogFile == 0)
 	{
-		const int oldSize = mLogEntries.size();
+		beginInsertRows(QModelIndex(), mLogEntries.size(), mLogEntries.size());
 		addLogEntry(pMsg);
-		beginInsertRows(QModelIndex(), oldSize, mLogEntries.size() - 1);
 		endInsertRows();
 		Q_EMIT fireNewLogMsg();
 	}
 }
 
 
-QStringList LogModel::getLogFiles() const
+void LogModel::onTranslationChanged()
+{
+	Q_EMIT fireLogFileNamesChanged();
+}
+
+
+QStringList LogModel::getLogFileNames() const
 {
 	QStringList logFileNames;
 	//: LABEL ALL_PLATFORMS
@@ -91,6 +130,18 @@ QStringList LogModel::getLogFiles() const
 	}
 
 	return logFileNames;
+}
+
+
+const QSet<QString>& LogModel::getLevels() const
+{
+	return mLevels;
+}
+
+
+const QSet<QString>& LogModel::getCategories() const
+{
+	return mCategories;
 }
 
 
@@ -110,7 +161,7 @@ void LogModel::removeOtherLogFiles()
 	if (Env::getSingleton<LogHandler>()->removeOtherLogFiles())
 	{
 		reset();
-		Q_EMIT fireLogFilesChanged();
+		Q_EMIT fireLogFileNamesChanged();
 	}
 }
 
@@ -129,7 +180,7 @@ void LogModel::removeCurrentLogFile()
 	}
 
 	mLogFiles.removeAt(mSelectedLogFile);
-	Q_EMIT fireLogFilesChanged();
+	Q_EMIT fireLogFileNamesChanged();
 }
 
 
@@ -179,16 +230,13 @@ void LogModel::setLogFile(int pIndex)
 void LogModel::saveCurrentLogFile(const QUrl& pFilename) const
 {
 	bool success = false;
-	const auto logHandler = Env::getSingleton<LogHandler>();
-	const QString logfilePath = mLogFiles.at(mSelectedLogFile);
-
-	if (logfilePath.isEmpty())
+	if (const auto& logfilePath = mLogFiles.at(mSelectedLogFile); logfilePath.isEmpty())
 	{
-		success = logHandler->copy(pFilename.toLocalFile());
+		success = Env::getSingleton<LogHandler>()->copy(pFilename.toLocalFile());
 	}
 	else
 	{
-		success = logHandler->copyOther(logfilePath, pFilename.toLocalFile());
+		success = Env::getSingleton<LogHandler>()->copyOther(logfilePath, pFilename.toLocalFile());
 	}
 
 	const auto applicationModel = Env::getSingleton<ApplicationModel>();
@@ -197,12 +245,21 @@ void LogModel::saveCurrentLogFile(const QUrl& pFilename) const
 
 
 #ifndef QT_NO_DEBUG
-void LogModel::saveDummyLogFile() const
+void LogModel::saveDummyLogFile(const QDateTime& pTimestamp)
 {
 	auto& generator = Randomizer::getInstance().getGenerator();
 	std::uniform_int_distribution<uint32_t> dist;
 	const auto logHandler = Env::getSingleton<LogHandler>();
-	logHandler->copy(QDir::temp().filePath(QStringLiteral("%1.%2.log").arg(QCoreApplication::applicationName()).arg(dist(generator))));
+	const auto& copyFilename = QDir::temp().filePath(QStringLiteral("%1.%2.log").arg(QCoreApplication::applicationName()).arg(dist(generator)));
+	if (logHandler->copy(copyFilename) && pTimestamp.isValid())
+	{
+		if (QFile file(copyFilename); file.open(QFile::Append))
+		{
+			file.setFileTime(pTimestamp, QFile::FileModificationTime);
+		}
+	}
+	reset();
+	Q_EMIT fireLogFileNamesChanged();
 }
 
 
@@ -221,6 +278,8 @@ QHash<int, QByteArray> LogModel::roleNames() const
 	QHash<int, QByteArray> roles;
 	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
 	roles.insert(OriginRole, QByteArrayLiteral("origin"));
+	roles.insert(LevelRole, QByteArrayLiteral("level"));
+	roles.insert(CategoryRole, QByteArrayLiteral("category"));
 	roles.insert(MessageRole, QByteArrayLiteral("message"));
 	return roles;
 }
@@ -244,6 +303,23 @@ QVariant LogModel::data(const QModelIndex& pIndex, int pRole) const
 
 		case OriginRole:
 			return logMessage.section(splitToken, 0, 0).trimmed();
+
+		case LevelRole:
+		{
+			const QRegularExpression re(QStringLiteral("[0-9]{3,} ([A-Z]) "));
+			const auto& match = re.match(logMessage);
+			if (match.hasMatch())
+			{
+				return match.captured(1);
+			}
+
+			return QStringLiteral("D");
+		}
+
+		case CategoryRole:
+		{
+			return logMessage.left(logMessage.indexOf(QLatin1Char(' ')));
+		}
 
 		case MessageRole:
 			return logMessage.section(splitToken, 1, -1).trimmed();

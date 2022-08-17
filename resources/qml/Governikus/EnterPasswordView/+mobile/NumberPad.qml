@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
@@ -13,6 +13,11 @@ GridLayout {
 
 	property bool deleteEnabled: true
 	property bool submitEnabled: true
+
+	Accessible.role: Accessible.Grouping
+	//: LABEL ANDROID IOS
+	Accessible.description: qsTr("Number pad")
+	Accessible.focusable: true
 
 	signal digitPressed(string digit)
 	signal deletePressed()
@@ -55,6 +60,7 @@ GridLayout {
 		enabled: baseItem.deleteEnabled
 
 		text: qsTr("Delete last digit")
+		a11yDisabledText: qsTr("Delete last digit, disabled until input is present.")
 		icon.source: "qrc:///images/mobile/material_backspace.svg"
 
 		onClicked: baseItem.deletePressed()
@@ -74,6 +80,7 @@ GridLayout {
 		enabled: baseItem.submitEnabled
 
 		text: qsTr("Submit")
+		a11yDisabledText: qsTr("Submit, disabled until input is complete.")
 		icon.source: "qrc:///images/material_check.svg"
 
 		onClicked: baseItem.submitPressed()

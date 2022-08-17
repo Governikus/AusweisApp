@@ -3,7 +3,7 @@
  */
 
 #include "Env.h"
-#include "LogHandler.h"
+#include "MockNetworkManager.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
 #include "UIPlugInQml.h"
@@ -13,6 +13,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlFileSelector>
+#include <QQuickStyle>
 #include <QStandardPaths>
 #include <QtQuickTest>
 
@@ -33,6 +34,7 @@ class QmlTestRunner
 	Q_PROPERTY(QVariantMap safeAreaMargins MEMBER mSafeAreaMargins CONSTANT)
 	Q_PROPERTY(bool highContrastEnabled MEMBER mFalse CONSTANT)
 	Q_PROPERTY(QString platformStyle MEMBER mPlatformStyle CONSTANT)
+	Q_PROPERTY(bool isTabletLayout MEMBER isTabletLayout CONSTANT)
 	Q_PROPERTY(QString fixedFontFamily MEMBER mFixedFontFamily CONSTANT)
 
 	private:
@@ -42,15 +44,11 @@ class QmlTestRunner
 		};
 		QString mPlatformStyle;
 		QString mFixedFontFamily;
+		bool isTabletLayout;
+
+		QSharedPointer<MockNetworkManager> mMockNetworkManager;
 
 	public:
-		QmlTestRunner()
-		{
-			// Enable this warning again when our minimum Qt version is 5.14
-			QLoggingCategory::setFilterRules(QStringLiteral("qt.qml.connections.warning=false"));
-		}
-
-
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle)
 		{
 			Q_UNUSED(pPlatformStyle)
@@ -61,9 +59,12 @@ class QmlTestRunner
 		{
 			QStandardPaths::setTestModeEnabled(true);
 			QCoreApplication::setApplicationName("TestQmlRunner");
+			QQuickStyle::setStyle(QStringLiteral("Basic"));
 			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 			ResourceLoader::getInstance().init();
 			Env::getSingleton<ReaderManager>()->init();
+			mMockNetworkManager.reset(new MockNetworkManager());
+			Env::set(NetworkManager::staticMetaObject, mMockNetworkManager.get());
 			UIPlugInQml::registerQmlTypes();
 		}
 
@@ -72,6 +73,8 @@ class QmlTestRunner
 		{
 			ResourceLoader::getInstance().shutdown();
 			Env::getSingleton<ReaderManager>()->shutdown();
+			Env::set(NetworkManager::staticMetaObject, nullptr);
+			mMockNetworkManager.reset();
 		}
 
 
@@ -83,7 +86,7 @@ class QmlTestRunner
 					bool fail = false;
 					for (auto& warning : pWarnings)
 					{
-						QWARN(warning.toString().toLatin1().constData());
+						qCritical() << warning;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 1))
 						fail |= !warning.description().contains("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead:");
 #else
@@ -98,8 +101,9 @@ class QmlTestRunner
 					}
 				});
 
-			const QStringList selectors = QQmlFileSelector::get(pEngine)->selector()->extraSelectors();
+			const QStringList selectors = QQmlFileSelector(pEngine).selector()->extraSelectors();
 			mPlatformStyle = selectors.join(QLatin1String(","));
+			isTabletLayout = mPlatformStyle.contains("tablet");
 
 			mFixedFontFamily = QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
 		}

@@ -17,8 +17,9 @@ AusweisApp2
 [--no-loghandler]
 [--show]
 [--no-proxy]
-[--ui { Qml|WebSocket }]
+[--ui { qml|websocket }]
 [--port \fI\,PORT\/\fR]
+[--address \fI\,ADDRESS\/\fR]
 
 .SH DESCRIPTION
 AusweisApp2 allows you to authenticate yourself against websites via your German
@@ -81,10 +82,10 @@ Show window on startup.
 Disable system proxy.
 
 .TP
-.B --ui { Qml|WebSocket }
-Use given UI plugin. "Qml" will start the program with a visible UI, "WebSocket"
+.B --ui { qml|websocket }
+Use given UI plugin. "qml" will start the program with a visible UI, "websocket"
 will let it start in the background as an SDK. This is only useful when integrating
-AusweisApp2 into other programs. Default is "Qml,Websocket".
+AusweisApp2 into other programs. Default is "qml,websocket".
 This option allows multiple values.
 
 .TP
@@ -93,8 +94,14 @@ Change the listening port for the WebSocket. Default is 24727. Selecting "0" is
 a special case. AusweisApp2 will then select a random port and write the port
 number to a file in ${TMP}/AusweisApp2.<PID>.port.
 
+.TP
+.B --address \fI\,ADDRESS\/\fR
+Use given addresses for interface binding. Normally AusweisApp2 is bound to
+localhost only as it is a security requirement. Useful for testing only.
+This option allows multiple values.
+
 .SH "RETURN VALUE"
-AusweisApp2 will return 0 when sucessfully terminated.
+AusweisApp2 will return 0 when successfully terminated.
 .SH ENVIRONMENT
 .TP
 .B QT_QPA_PLATFORM={ wayland|X11 }
@@ -115,6 +122,6 @@ This man page was written by Lee Garrett (debian@rocketjump.eu) for Debian (but
 may be used by others).
 
 .SH "SEE ALSO"
-https://www.ausweisapp.bund.de/
+https://www.ausweisapp.bund.de/en
 .br
-https://www.ausweisapp.bund.de/sdk/
+https://www.ausweisapp.bund.de/sdk

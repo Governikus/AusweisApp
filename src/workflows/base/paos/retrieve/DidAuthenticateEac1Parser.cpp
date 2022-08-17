@@ -10,6 +10,7 @@
 #include "paos/element/ConnectionHandleParser.h"
 #include "paos/invoke/PaosCreator.h"
 
+#include <QRegularExpression>
 #include <QXmlStreamReader>
 
 using namespace governikus;
@@ -64,7 +65,7 @@ PaosMessage* DidAuthenticateEac1Parser::parseMessage()
 		}
 	}
 
-	return mParseError ? nullptr : mDidAuthenticateEac1.take();
+	return mParseError ? nullptr : mDidAuthenticateEac1.release();
 }
 
 
@@ -72,7 +73,11 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 {
 	Eac1InputType eac1;
 
-	QString certificateDescription, requiredCHAT, optionalCHAT, authenticatedAuxiliaryData, transactionInfo;
+	QString certificateDescription;
+	QString requiredCHAT;
+	QString optionalCHAT;
+	QString authenticatedAuxiliaryData;
+	QString transactionInfo;
 	while (readNextStartElement())
 	{
 		qCDebug(paos) << mXmlReader->name();
@@ -100,13 +105,23 @@ Eac1InputType DidAuthenticateEac1Parser::parseEac1InputType()
 		{
 			parseCertificate(eac1);
 		}
+		else if (mXmlReader->name() == QLatin1String("AcceptedEIDType"))
+		{
+			parseAcceptedEidType(eac1);
+		}
 		else
 		{
 			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
 			mXmlReader->skipCurrentElement();
 		}
 	}
-	assertMandatoryList<QSharedPointer<const CVCertificate> >(eac1.getCvCertificates(), "Certificate");
+	assertMandatoryList<QSharedPointer<const CVCertificate>>(eac1.getCvCertificates(), "Certificate");
+	if (eac1.getAcceptedEidTypes().isEmpty()) // For legacy eID-Server without explicit Smart-eID information
+	{
+		eac1.appendAcceptedEidType(AcceptedEidType::CARD_CERTIFIED);
+		eac1.appendAcceptedEidType(AcceptedEidType::SE_CERTIFIED);
+		eac1.appendAcceptedEidType(AcceptedEidType::SE_ENDORSED);
+	}
 
 	return eac1;
 }
@@ -191,7 +206,7 @@ void DidAuthenticateEac1Parser::parseTransactionInfo(Eac1InputType& pEac1, QStri
 
 void DidAuthenticateEac1Parser::parseCertificate(Eac1InputType& pEac1)
 {
-	if (auto cvc = CVCertificate::fromHex(readElementText().toLatin1()))
+	if (auto cvc = CVCertificate::fromRaw(QByteArray::fromHex(readElementText().toLatin1())))
 	{
 		qCDebug(paos) << "Linked Certificate (Authority):" << cvc->getBody().getCertificationAuthorityReference();
 		qCDebug(paos) << "Certificate Name (Holder):" << cvc->getBody().getCertificateHolderReference();
@@ -200,6 +215,35 @@ void DidAuthenticateEac1Parser::parseCertificate(Eac1InputType& pEac1)
 	else
 	{
 		qCCritical(paos) << "Cannot parse Certificate";
+		mParseError = true;
+	}
+}
+
+
+void DidAuthenticateEac1Parser::parseAcceptedEidType(Eac1InputType& pEac1)
+{
+	const auto& acceptedEidType = readElementText();
+	qCDebug(paos) << "AcceptedEIDType:" << acceptedEidType;
+
+	if (acceptedEidType == QLatin1String("CardCertified"))
+	{
+		pEac1.appendAcceptedEidType(AcceptedEidType::CARD_CERTIFIED);
+	}
+	else if (acceptedEidType == QLatin1String("SECertified"))
+	{
+		pEac1.appendAcceptedEidType(AcceptedEidType::SE_CERTIFIED);
+	}
+	else if (acceptedEidType == QLatin1String("SEEndorsed"))
+	{
+		pEac1.appendAcceptedEidType(AcceptedEidType::SE_ENDORSED);
+	}
+	else if (acceptedEidType == QLatin1String("HWKeyStore"))
+	{
+		pEac1.appendAcceptedEidType(AcceptedEidType::HW_KEYSTORE);
+	}
+	else
+	{
+		qCCritical(paos) << "Cannot parse AcceptedEidType";
 		mParseError = true;
 	}
 }

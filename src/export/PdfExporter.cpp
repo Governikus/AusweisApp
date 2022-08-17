@@ -4,10 +4,10 @@
 
 #include "PdfExporter.h"
 
-#include "asn1/AccessRoleAndRight.h"
 #include "AppSettings.h"
 #include "LanguageLoader.h"
 #include "PdfCreator.h"
+#include "asn1/AccessRoleAndRight.h"
 
 #include <QDesktopServices>
 
@@ -157,7 +157,7 @@ bool PdfExporter::exportHistory()
 }
 
 
-bool PdfExporter::exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QString, QString> >& pInfoData)
+bool PdfExporter::exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QString, QString>>& pInfoData)
 {
 	if (mFilename.isEmpty())
 	{

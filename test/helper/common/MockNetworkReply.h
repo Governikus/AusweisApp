@@ -8,11 +8,9 @@
 
 #include "MockSocket.h"
 
-#include <http_parser.h>
 #include <QNetworkReply>
+#include <http_parser.h>
 
-class test_StateCheckRefreshAddress;
-class test_StateGetSelfAuthenticationData;
 
 namespace governikus
 {
@@ -23,16 +21,35 @@ class MockNetworkReply
 	Q_OBJECT
 
 	private:
-		friend class ::test_StateCheckRefreshAddress;
-		friend class ::test_StateGetSelfAuthenticationData;
 		MockSocket mSocket;
+		bool mFinished;
 
 	public:
 		MockNetworkReply(const QByteArray& pData = QByteArray(), http_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);
 		~MockNetworkReply() override;
+
 		void abort() override
 		{
 			qDebug() << "Operation aborted";
+			fireFinished();
+		}
+
+
+		void setAttribute(QNetworkRequest::Attribute pCode, const QVariant& pValue)
+		{
+			QNetworkReply::setAttribute(pCode, pValue);
+		}
+
+
+		void setError(QNetworkReply::NetworkError pErrorCode, const QString& pErrorString)
+		{
+			QNetworkReply::setError(pErrorCode, pErrorString);
+		}
+
+
+		void setRawHeader(const QByteArray& pHeaderName, const QByteArray& pValue)
+		{
+			QNetworkReply::setRawHeader(pHeaderName, pValue);
 		}
 
 
@@ -44,16 +61,7 @@ class MockNetworkReply
 
 		qint64 readData(char* pDst, qint64 pMaxSize) override;
 
-		void fireFinished()
-		{
-			Q_EMIT finished();
-		}
-
-
-		void setNetworkError(NetworkError pErrorCode, const QString& pErrorString)
-		{
-			setError(pErrorCode, pErrorString);
-		}
+		void fireFinished();
 
 
 		void setFileModificationTimestamp(const QVariant& pTimestamp)

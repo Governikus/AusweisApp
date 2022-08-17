@@ -1,7 +1,7 @@
 Abkündigungen
 =============
 
-Mit der Version 1.24.0 der AusweisApp2 wird die Unterstützung
+Mit der Version 1.24.0 der AusweisApp2 wurde die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 
 - Windows 7
@@ -13,8 +13,8 @@ folgender Systeme und Funktionen eingestellt.
   Smartphone als Kartenleser. Die Verwendung einer AusweisApp2
   älter als 1.22.1 ist damit in Kombination mit der 1.24.0
   nicht mehr möglich.
-- Externes Android SDK. Unterstützt wird dann nur
-  noch das als AAR verfügbare integrierte Android SDK.
+- Externes Android SDK. Unterstützt wird nur noch
+  das als AAR verfügbare integrierte Android SDK.
 - Unterstützung von SHA224 bei TLS.
 
 

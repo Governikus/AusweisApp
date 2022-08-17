@@ -58,13 +58,15 @@ QJsonObject MsgHandlerReader::createReaderInfo(const ReaderInfo& pInfo)
 
 void MsgHandlerReader::setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo)
 {
+	const bool known = pInfo.isValid();
 	pObj[QLatin1String("name")] = pInfo.getName();
-	pObj[QLatin1String("attached")] = pInfo.isConnected();
-	if (pInfo.isConnected())
+	pObj[QLatin1String("attached")] = known;
+	if (known)
 	{
+		pObj[QLatin1String("insertable")] = pInfo.isInsertable();
 		pObj[QLatin1String("keypad")] = !pInfo.isBasicReader();
 
-		if (pInfo.hasEidCard())
+		if (pInfo.hasEid())
 		{
 			QJsonObject card;
 			card[QLatin1String("deactivated")] = pInfo.isPinDeactivated();

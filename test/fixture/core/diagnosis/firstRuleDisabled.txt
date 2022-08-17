@@ -1,0 +1,19 @@
+Name                  : AusweisApp2-Firewall-Rule
+DisplayName           : AusweisApp2
+Description           : AusweisApp2 firewall rule
+DisplayGroup          :
+Group                 :
+Enabled               : False
+Profile               : Any
+Platform              : {}
+Direction             : Outbound
+Action                : Allow
+EdgeTraversalPolicy   : Block
+LooseSourceMapping    : False
+LocalOnlyMapping      : False
+Owner                 :
+PrimaryStatus         : OK
+Status                : Die Regel wurde erfolgreich vom Speicher aus analysiert. (65536)
+EnforcementStatus     : NotApplicable
+PolicyStoreSource     : PersistentStore
+PolicyStoreSourceType : Local

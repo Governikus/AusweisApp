@@ -6,11 +6,12 @@
 
 #pragma once
 
-#include <QScopedPointer>
-#include <QXmlStreamReader>
-
 #include "paos/retrieve/PaosParser.h"
 #include "paos/retrieve/Transmit.h"
+
+#include <QXmlStreamReader>
+
+#include <memory>
 
 namespace governikus
 {
@@ -20,7 +21,7 @@ class TransmitParser
 {
 	public:
 		TransmitParser();
-		~TransmitParser() override;
+		~TransmitParser() override = default;
 
 	protected:
 		PaosMessage* parseMessage() override;
@@ -30,7 +31,7 @@ class TransmitParser
 		void parseInputApduInfo();
 
 	private:
-		QScopedPointer<Transmit> mTransmit;
+		std::unique_ptr<Transmit> mTransmit;
 };
 
 } // namespace governikus

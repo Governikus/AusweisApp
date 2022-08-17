@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "asn1/SecurityInfos.h"
 #include "FileRef.h"
 #include "SmartCardDefinitions.h"
+#include "asn1/SecurityInfos.h"
 
 #include <QCoreApplication>
 #include <QSharedPointer>
 
+class test_CardInfo;
 
 namespace governikus
 {
@@ -22,12 +23,22 @@ class Reader;
 class ReaderInfo;
 
 /*!
- * Holds smart card informations.
+ * Holds smart card information.
  * An instance of CardInfo is created using the CardInfoFactory.
  */
 class CardInfo
 {
 	Q_DECLARE_TR_FUNCTIONS(governikus::CardInfo)
+	friend class Reader;
+	friend QDebug operator<<(QDebug, const CardInfo&);
+
+	public:
+		enum class TagType
+		{
+			UNKNOWN,
+			NFC_4A,
+			NFC_4B
+		};
 
 	private:
 		CardType mCardType;
@@ -35,23 +46,26 @@ class CardInfo
 		int mRetryCounter;
 		bool mPinDeactivated;
 		bool mPukInoperative;
+		bool mPinInitial;
+		TagType mTagType;
 		static const int UNDEFINED_RETRY_COUNTER;
-
-		friend QDebug operator<<(QDebug, const CardInfo&);
 
 	public:
 		CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
-				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false);
+				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false, bool pPinInitial = false);
 
+		void setCardType(CardType pCardType);
+		[[nodiscard]] CardType getCardType() const;
 		[[nodiscard]] QString getCardTypeString() const;
-		[[nodiscard]] bool isAvailable() const;
-		[[nodiscard]] bool isEid() const;
-		[[nodiscard]] bool isPassport() const;
 
 		[[nodiscard]] QSharedPointer<const EFCardAccess> getEfCardAccess() const;
+		[[nodiscard]] MobileEidType getMobileEidType() const;
 
 		[[nodiscard]] int getRetryCounter() const;
 		void setRetryCounter(int pRetryCounter);
+
+		[[nodiscard]] TagType getTagType() const;
+		void setTagType(TagType pTagType);
 
 		[[nodiscard]] bool isRetryCounterDetermined() const;
 
@@ -65,7 +79,7 @@ class CardInfo
 		 */
 		[[nodiscard]] bool isPukInoperative() const;
 
-		friend class Reader;
+		[[nodiscard]] bool isPinInitial() const;
 };
 
 
@@ -74,12 +88,14 @@ class CardInfo
  */
 class CardInfoFactory
 {
+	friend class ::test_CardInfo;
+
 	public:
 		/*!
 		 * In order to create a CardInfo instance a connection is established to the smart card
 		 * and  data is read.
 		 */
-		static bool create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, ReaderInfo& pReaderInfo);
+		static CardInfo create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 	private:
 		static bool selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef);
@@ -87,7 +103,7 @@ class CardInfoFactory
 		/*!
 		 * Checks, if the smart card is a german eID card (i.e. a NPA or an EAT) or a passport.
 		 */
-		static CardType detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		static bool detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 		static bool detectEid(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pRef);
 
 		/*!

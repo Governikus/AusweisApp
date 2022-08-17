@@ -15,8 +15,8 @@ j.with
 
 		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain-db')
 
-		shell("cd build; cmake ../source/libs -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../source/cmake/iOS.toolchain.cmake -DCMAKE_OSX_SYSROOT=iphonesimulator -DCMAKE_OSX_ARCHITECTURES=x86_64 -DPACKAGES_DIR=\${PACKAGES_DIR}")
+		shell('cd source/libs; cmake --preset ci-ios-simulator')
 
-		shell('cd build; make compress')
+		shell('cmake --build build --target compress')
 	}
 }

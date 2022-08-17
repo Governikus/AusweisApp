@@ -31,7 +31,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider1(
 				/* short name  */ QString(),
 				/* long name  */ QString(),
-				/* short description */ QString(),
 				/* long description */ QString(),
 				/* address */ QStringLiteral("ftp://homepage.com/form"),
 				/* homepage */ QStringLiteral("ftp://www.homepage.de/bla/bla1")
@@ -42,7 +41,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider2(
 				/* short name  */ QString(),
 				/* long name  */ QString(),
-				/* short description */ QString(),
 				/* long description */ QString(),
 				/* address */ QStringLiteral("https://homepage.com/form"),
 				/* homepage */ QStringLiteral("https://www.homepage.de/bla/bla1")
@@ -53,7 +51,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider3(
 				/* short name  */ QString(),
 				/* long name  */ QString(),
-				/* short description */ QString(),
 				/* long description */ QString(),
 				/* address */ QStringLiteral("homepage.com/form"),
 				/* homepage */ QStringLiteral("www.homepage.de/bla/bla1")
@@ -73,7 +70,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider(
 				/* short name  */ QStringLiteral("Provider 1"),
 				/* long name  */ QStringLiteral("Provider 1 - long name"),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -88,7 +84,6 @@ class test_ProviderConfiguration
 
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Provider 1"));
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Provider 1 - long name"));
-			QCOMPARE(provider.getShortDescription().toString(), QStringLiteral("Provider description short"));
 			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Provider description long"));
 			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.homepage.com/form/"));
 			QCOMPARE(provider.getHomepage(), QStringLiteral("https://www.homepage.com/"));
@@ -107,7 +102,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo providerEmptyLongname(
 				/* short name  */ QStringLiteral("Provider 1"),
 				/* long name  */ QString(QLatin1String("")),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -121,10 +115,9 @@ class test_ProviderConfiguration
 
 			QCOMPARE(providerEmptyLongname.getLongName().toString(), QString());
 
-			const ProviderConfigurationInfo providerWithoutLongname(
-				/* short name  */ QStringLiteral("Provider 1"),
-				/* long name  */ QString(),
-				/* short description */ QStringLiteral("Provider description short"),
+			const ProviderConfigurationInfo providerWithoutShortname(
+				/* short name  */ QString(),
+				/* long name  */ QStringLiteral("Provider 1"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -136,7 +129,7 @@ class test_ProviderConfiguration
 				/* image */ QString(),
 				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
 
-			QCOMPARE(providerWithoutLongname.getLongName().toString(), QStringLiteral("Provider 1"));
+			QCOMPARE(providerWithoutShortname.getShortName().toString(), QStringLiteral("Provider 1"));
 		}
 
 
@@ -160,7 +153,7 @@ class test_ProviderConfiguration
 			QTest::addColumn<double>("mobileCentsPerMinute");
 			QTest::addColumn<double>("mobileCentsPerCall");
 
-			QTest::newRow("delimeter") << "+49  1-8/05-123456789" << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("delimiter") << "+49  1-8/05-123456789" << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
 			QTest::newRow("notExisting") << "+49 123456" << false << 0 << 0.0 << 0.0 << 0.0 << 0.0;
 			QTest::newRow("01") << "+49 1371" << true << 0 << 0.0 << 14.0 << 0.0 << 0.0;
 			QTest::newRow("02") << "+49 1372" << true << 0 << 14.0 << 0.0 << 0.0 << 0.0;
@@ -186,7 +179,7 @@ class test_ProviderConfiguration
 			QFETCH(double, landlineCentsPerCall);
 			QFETCH(double, mobileCentsPerMinute);
 			QFETCH(double, mobileCentsPerCall);
-			const ProviderConfigurationInfo provider(QString(), QString(), QString(), QString(), QString(), QString(), QString(""), phone);
+			const ProviderConfigurationInfo provider(QString(), QString(), QString(), QString(), QString(), QString(""), phone);
 			const CallCost& callCost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
 
 			QVERIFY(notNull || callCost.isNull());
@@ -241,7 +234,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider1(
 				/* short name  */ QStringLiteral("Provider"),
 				/* long name  */ QStringLiteral("Provider - long name"),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -257,7 +249,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider2(
 				/* short name  */ QStringLiteral("Provider"),
 				/* long name  */ QStringLiteral("Provider - long name"),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -273,7 +264,6 @@ class test_ProviderConfiguration
 			const ProviderConfigurationInfo provider3(
 				/* short name  */ QStringLiteral("Provider"),
 				/* long name  */ QStringLiteral("Provider - long name"),
-				/* short description */ QStringLiteral("Provider description short"),
 				/* long description */ QStringLiteral("Provider description long"),
 				/* address */ QStringLiteral("https://www.homepage.com/form/"),
 				/* homepage */ QStringLiteral("https://www.homepage.com/"),
@@ -310,7 +300,7 @@ class test_ProviderConfiguration
 				}
 			}
 
-			QCOMPARE(attachedEidCounter, 20);
+			QCOMPARE(attachedEidCounter, 19);
 		}
 
 

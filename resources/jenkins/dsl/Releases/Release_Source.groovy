@@ -12,7 +12,7 @@ j.with
 {
 	steps
 	{
-		shell('cd build; cmake ../source -DCMAKE_BUILD_TYPE=release -Dtools.only=true')
-		shell('cd build; make package_source')
+		shell('cd source; cmake --preset ci-tools')
+		shell('cmake --build build --target package_source')
 	}
 }

@@ -74,13 +74,15 @@ class test_CardConnection
 			const QByteArray publicKey("0000");
 			const QByteArray signature("0000");
 			const QByteArray authenticatedAuxiliaryData("0000");
-			DidAuthenticateEAC2Command* command = connection.createDidAuthenticateEAC2Command(chain, publicKey, signature, authenticatedAuxiliaryData);
+			const QByteArray pin("123456");
+			DidAuthenticateEAC2Command* command = connection.createDidAuthenticateEAC2Command(chain, publicKey, signature, authenticatedAuxiliaryData, pin);
 			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 			QCOMPARE(command->mCvcChain, chain);
 			QCOMPARE(command->mEphemeralPublicKeyAsHex, publicKey);
 			QCOMPARE(command->mSignatureAsHex, signature);
 			QCOMPARE(command->mAuthenticatedAuxiliaryDataAsBinary, authenticatedAuxiliaryData);
+			QCOMPARE(command->mPin, pin);
 		}
 
 

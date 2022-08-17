@@ -2,7 +2,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="90px" height="90px" viewBox="0 0 1700 1700">
   <defs>
     <path id="form" d="M723 1450 c-179 -90 -345 -407 -402 -770 -14 -82 -14 -221 -1 -254 12 -32 97 -89 175 -117 78 -28 215 -30 298 -6 52 16 62 16 110 3 127 -36 248 -26 358 29 112 57 129 82 129 192 0 235 -116 594 -253 779 -85 116 -165 165 -277 172 -68 3 -80 1 -137 -28z" />
-    <radialGradient id="verlauf">
+    <radialGradient id="verlauf"  r="0.5">
       <stop offset="0%" stop-color="#cdcde5" />
       <stop offset="100%" stop-color="#5455a0" />
     </radialGradient>

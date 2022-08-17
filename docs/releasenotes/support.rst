@@ -8,23 +8,17 @@ der AusweisApp2 unterstützt.
 
 Betriebssysteme
 """""""""""""""
-- macOS 10.13
-
-- macOS 10.14
-
 - macOS 10.15
 
 - macOS 11.0
 
 - macOS 12.0
 
-- Windows 7 SP1 (32bit / 64bit)
+- Windows 10
 
-- Windows 8.1 (64bit)
+- Windows 11
 
-- Windows 10 (64bit)
-
-- Android 5.0 und höher (armeabi-v7a, arm64-v8a)
+- Android 7.0 und höher (armeabi-v7a, arm64-v8a)
 
 - iOS 13 und höher
 
@@ -52,15 +46,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 101
+- Chrome 104
 
-- Firefox 100
+- Firefox 103
 
-- Internet Explorer 11
+- Safari 15.6
 
-- Safari 15.4
-
-- Edge 98
+- Edge 104
 
 
 
@@ -94,7 +86,7 @@ Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
 
 
 Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
-https://www.ausweisapp.bund.de/de/aa2/cardreader
+https://www.ausweisapp.bund.de/aa2/cardreader
 
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen, können als Kartenleser verwendet werden.
@@ -102,7 +94,7 @@ Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
 zu installieren und zu starten.
 
 Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/de/aa2/mobile-devices
+https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 
 Android / iOS
@@ -118,18 +110,20 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 101 (iOS/Android)
+- Chrome 104 (iOS/Android)
 
-- Firefox 100 (iOS/Android)
+- Firefox 103 (iOS/Android)
 
-- Safari 15.3 (iOS)
+- Samsung Internet 18 (Android)
+
+- Safari 15.6 (iOS)
 
 
 Kartenleser
 ~~~~~~~~~~~
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
 unterstützen. Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/de/aa2/mobile-devices
+https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 Ebenfalls ist es möglich ein weiteres Smartphone als Kartenleser zu verwenden.
 Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone zu

@@ -13,9 +13,7 @@ ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader)
 }
 
 
-ElementParser::~ElementParser()
-{
-}
+ElementParser::~ElementParser() = default;
 
 
 bool ElementParser::parserFailed() const

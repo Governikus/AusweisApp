@@ -5,13 +5,14 @@
 #pragma once
 
 #include "ASN1TemplateUtil.h"
-#include "ASN1Util.h"
 #include "Chat.h"
 #include "EcdsaPublicKey.h"
+#include "Oid.h"
 
+#include <QByteArray>
 #include <QCryptographicHash>
 #include <QDate>
-#include <QMap>
+#include <QHash>
 #include <QSharedPointer>
 
 #include <openssl/ec.h>
@@ -69,7 +70,7 @@ using CVCertificateBody = struct certificateprofilebody_st
 	[[nodiscard]] QDate getCertificateEffectiveDate() const;
 
 	[[nodiscard]] QCryptographicHash::Algorithm getHashAlgorithm() const;
-	[[nodiscard]] QMap<QByteArray, QByteArray> getExtensions() const;
+	[[nodiscard]] QHash<Oid, QByteArray> getExtensions() const;
 };
 
 DECLARE_ASN1_FUNCTIONS(CVCertificateBody)

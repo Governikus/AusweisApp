@@ -38,8 +38,6 @@ class Downloader
 		~Downloader() override;
 
 	private Q_SLOTS:
-		void onSslErrors(const QList<QSslError>& pErrors);
-		void onSslHandshakeDone();
 		void onMetadataChanged();
 		void onNetworkReplyFinished();
 		void onNetworkReplyProgress(qint64 pBytesReceived, qint64 pBytesTotal);

@@ -14,7 +14,7 @@ Msg::Msg(const MsgType& pType, const QByteArray& pData)
 
 
 Msg::Msg()
-	: Msg(MsgType::INTERNAL_ERROR, QByteArray())
+	: Msg(MsgType::VOID, QByteArray())
 {
 }
 
@@ -38,7 +38,7 @@ Msg::operator bool() const
 
 
 #if !defined(QT_NO_DEBUG) && __has_include(<QTest>)
-#include <QTest>
+	#include <QTest>
 char* governikus::toString(const Msg& pMsg)
 {
 	return QTest::toString(QByteArray(pMsg));

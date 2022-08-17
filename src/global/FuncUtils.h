@@ -22,7 +22,7 @@ namespace governikus
  * where readers has type QVector<Reader>
  */
 template<typename S, typename T>
-typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type map(const std::function<T(const S&)>& pFunc, const QVector<S>& pItems)
+std::enable_if_t<!std::is_void_v<T>, QVector<T>> map(const std::function<T(const S&)>& pFunc, const QVector<S>& pItems)
 {
 	const auto sz = pItems.size();
 	QVector<T> result(sz);
@@ -44,7 +44,7 @@ typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type map(const std
  * where readers has type QList<Reader>
  */
 template<typename S, typename T>
-typename std::enable_if<!std::is_void<T>::value, QList<T>>::type map(const std::function<T(const S&)>& pFunc, const QList<S>& pItems)
+std::enable_if_t<!std::is_void_v<T>, QList<T>> map(const std::function<T(const S&)>& pFunc, const QList<S>& pItems)
 {
 	const auto sz = pItems.size();
 	QList<T> result;
@@ -63,7 +63,7 @@ typename std::enable_if<!std::is_void<T>::value, QList<T>>::type map(const std::
  * where readers has type QVector<Reader>
  */
 template<typename T>
-typename std::enable_if<!std::is_void<T>::value, QVector<T>>::type filter(const std::function<bool(const T&)>& pFunc, const QVector<T>& pItems)
+std::enable_if_t<!std::is_void_v<T>, QVector<T>> filter(const std::function<bool(const T&)>& pFunc, const QVector<T>& pItems)
 {
 	QVector<T> result;
 	for (const T& item : pItems)

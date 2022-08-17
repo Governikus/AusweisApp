@@ -1,0 +1,21 @@
+From 448802ddcd08e66ad6cf449af2f62208c4ba6235 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Tue, 12 Apr 2022 10:21:19 +0200
+Subject: Make qtdeclarative optional for CONTAINER_SDK
+
+---
+ dependencies.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtscxml/dependencies.yaml y/qtscxml/dependencies.yaml
+index ed080e3..61116e7 100644
+--- x/qtscxml/dependencies.yaml
++++ y/qtscxml/dependencies.yaml
+@@ -4,4 +4,4 @@ dependencies:
+     required: true
+   ../qtdeclarative:
+     ref: 47ef121e1a436fd46129cdaa1a4398c82045eb97
+-    required: true
++    required: false
+-- 
+2.35.1

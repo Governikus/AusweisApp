@@ -7,8 +7,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 #include <QNetworkReply>
 #include <QSharedPointer>
@@ -26,14 +26,15 @@ class StateGetTcToken
 	friend class StateBuilder;
 	friend class ::test_StateGetTcToken;
 
-	QSharedPointer<QNetworkReply> mReply;
+	private:
+		QSharedPointer<QNetworkReply> mReply;
 
-	void parseTcToken();
-	void sendRequest(const QUrl& pUrl);
-	bool isValidRedirectUrl(const QUrl& pUrl);
-	void run() override;
+		void parseTcToken();
+		void sendRequest(const QUrl& pUrl);
+		bool isValidRedirectUrl(const QUrl& pUrl);
+		void run() override;
 
-	explicit StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
+		explicit StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext);
 
 	private Q_SLOTS:
 		void onNetworkReply();

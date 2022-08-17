@@ -4,8 +4,6 @@
 
 #include "NetworkReplyTimeout.h"
 
-#include "NetworkManager.h"
-
 #include <QCoreApplication>
 
 using namespace governikus;
@@ -43,9 +41,9 @@ void NetworkReplyTimeout::onShutdown()
 }
 
 
-void NetworkReplyTimeout::setTimeout(QNetworkReply* pReply, const int pTimeout)
+void NetworkReplyTimeout::setTimeout(const NetworkManager* pManager, QNetworkReply* pReply, const int pTimeout)
 {
 	// since the QNetworkReply is set as parent, we don't need to care about destruction
 	const auto* timeout = new NetworkReplyTimeout(pReply, pTimeout);
-	connect(Env::getSingleton<NetworkManager>(), &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
+	connect(pManager, &NetworkManager::fireShutdown, timeout, &NetworkReplyTimeout::onShutdown);
 }

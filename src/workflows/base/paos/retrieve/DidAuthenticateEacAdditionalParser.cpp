@@ -19,11 +19,6 @@ DidAuthenticateEacAdditionalParser::DidAuthenticateEacAdditionalParser()
 }
 
 
-DidAuthenticateEacAdditionalParser::~DidAuthenticateEacAdditionalParser()
-{
-}
-
-
 PaosMessage* DidAuthenticateEacAdditionalParser::parseMessage()
 {
 	mDidAuthenticateEacAdditional.reset(new DIDAuthenticateEACAdditional());
@@ -67,7 +62,7 @@ PaosMessage* DidAuthenticateEacAdditionalParser::parseMessage()
 		}
 	}
 
-	return mParseError ? nullptr : mDidAuthenticateEacAdditional.take();
+	return mParseError ? nullptr : mDidAuthenticateEacAdditional.release();
 }
 
 

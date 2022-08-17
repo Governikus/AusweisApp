@@ -100,7 +100,7 @@ class test_GeneralSettings
 			SDK_MODE(useSdkMode);
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-			#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 			QCOMPARE(settings.isAutoStartAvailable(), !useSdkMode);
 
 			bool initial = settings.isAutoStart();
@@ -129,10 +129,10 @@ class test_GeneralSettings
 			QCOMPARE(settings.isAutoStart(), initial);
 			settings.save();
 
-			#else
+#else
 			Q_UNUSED(useSdkMode)
 			QCOMPARE(settings.isAutoStartAvailable(), false);
-			#endif
+#endif
 		}
 
 
@@ -161,7 +161,7 @@ class test_GeneralSettings
 			QVERIFY(!AutoStart::enabled());
 			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), QString("dummy"));
 
-			AutoStart::set(true);
+			QCOMPARE(AutoStart::set(true), !useSdkMode);
 			QCOMPARE(AutoStart::enabled(), !useSdkMode);
 			const auto& expectedPath = useSdkMode ? QString("dummy") : AutoStart::appPath();
 			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), expectedPath);
@@ -444,7 +444,7 @@ class test_GeneralSettings
 
 			QCoreApplication::setApplicationVersion(QStringLiteral("Z.Y.X"));
 
-			GeneralSettings generalSettings(settings.mStoreGeneral, settings.mStoreCommon);
+			GeneralSettings generalSettings(settings.mStoreGeneral);
 
 			QCOMPARE(generalSettings.isNewAppVersion(), true);
 		}

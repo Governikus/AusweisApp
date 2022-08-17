@@ -33,9 +33,11 @@ class SecureStorage
 
 	friend class Env;
 	friend class ::MockSecureStorage;
+	friend class ::test_SecureStorage;
 
 	private:
 		bool mLoaded;
+		QString mVendor;
 		QByteArrayList mCvcas;
 		QByteArrayList mCvcasTest;
 		QVector<QSslCertificate> mUpdateCertificates;
@@ -45,8 +47,21 @@ class SecureStorage
 		QUrl mWhitelistServerBaseUrl;
 		QUrl mAppcastUpdateUrl;
 		QUrl mAppcastBetaUpdateUrl;
+		QString mSmartPersonalizationUrl;
+		QString mSmartPersonalizationTestUrl;
+		QString mSmartServiceId;
+		QString mSmartVersionTag;
+		QString mSmartSsdAid;
+		QString mLocalIfdPackageName;
+		QString mLocalIfdMinVersion;
+		QByteArrayList mLocalIfAllowedCertificateHashes;
+		int mLocalIfdMinPskSize;
 
-		TlsConfiguration mTlsConfig, mTlsConfigPsk, mTlsConfigRemote, mTlsConfigRemotePsk;
+		TlsConfiguration mTlsConfig;
+		TlsConfiguration mTlsConfigPsk;
+		TlsConfiguration mTlsConfigRemoteIfd;
+		TlsConfiguration mTlsConfigRemoteIfdPairing;
+		TlsConfiguration mTlsConfigLocalIfd;
 		QMap<QSsl::KeyAlgorithm, int> mMinStaticKeySizes;
 		QMap<QSsl::KeyAlgorithm, int> mMinEphemeralKeySizes;
 
@@ -72,6 +87,7 @@ class SecureStorage
 			DEFAULT, PSK,
 		};
 
+		[[nodiscard]] const QString& getVendor() const;
 		[[nodiscard]] const QByteArrayList& getCVRootCertificates(bool pProductive) const;
 		[[nodiscard]] const QVector<QSslCertificate>& getUpdateCertificates() const;
 		[[nodiscard]] const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
@@ -79,11 +95,24 @@ class SecureStorage
 		[[nodiscard]] const QUrl& getWhitelistServerBaseUrl() const;
 		[[nodiscard]] const QUrl& getAppcastUpdateUrl() const;
 		[[nodiscard]] const QUrl& getAppcastBetaUpdateUrl() const;
+		[[nodiscard]] const QString& getSmartPersonalizationUrl(bool pTest = false) const;
+		[[nodiscard]] const QString& getSmartServiceId() const;
+		[[nodiscard]] const QString& getSmartVersionTag() const;
+		[[nodiscard]] const QString& getSmartSsdAid() const;
+		[[nodiscard]] const QString& getLocalIfdPackageName() const;
+		[[nodiscard]] const QString& getLocalIfdMinVersion() const;
+		[[nodiscard]] const QByteArrayList& getLocalIfdAllowedCertificateHashes() const;
+		[[nodiscard]] int getLocalIfdMinPskSize() const;
 		[[nodiscard]] const TlsConfiguration& getTlsConfig(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
-		[[nodiscard]] const TlsConfiguration& getTlsConfigRemote(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
+		[[nodiscard]] const TlsConfiguration& getTlsConfigRemoteIfd(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
+		[[nodiscard]] const TlsConfiguration& getTlsConfigLocalIfd() const;
 		[[nodiscard]] int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
 		[[nodiscard]] int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
 		[[nodiscard]] bool isLoaded() const;
+
+		[[nodiscard]] QString getDeveloperConfig() const;
+		[[nodiscard]] QString getCustomConfig() const;
+		[[nodiscard]] QString getEmbeddedConfig() const;
 };
 
 

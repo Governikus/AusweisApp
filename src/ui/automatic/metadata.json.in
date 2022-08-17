@@ -1,0 +1,5 @@
+{
+	"name" : "Automatic",
+	"dependencies" : [],
+	"default": @CONTAINER_SDK_DEFAULT@
+}

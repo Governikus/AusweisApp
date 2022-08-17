@@ -1,0 +1,161 @@
+From 6952f491586c98e6953cb3bef849b2d39fd67ad3 Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Tue, 28 Jun 2022 14:10:30 +0200
+Subject: Android A11Y: Notify android about scroll events
+
+QtQuick Flickable has an issue that after a scroll the previously
+hidden items are not added to the A11Y hierarchy. That happens because
+Android has no ways to detect that something has changed.
+
+This patch uses the ScrollingEnd event to notify Android A11Y backend
+that the Flickable was scrolled, so that it could update the A11Y
+hierarchy and add the previously hidden nodes.
+
+The ScrollingEnd event generation is added to QQuickFlickable in a
+separate commit.
+
+Task-number: QTBUG-103513
+Pick-to: 6.4 6.3 6.2 5.15
+Change-Id: Ie6cd688d56343bcfe7ce9580c0b9244dd6d6c068
+---
+ .../org/qtproject/qt/android/QtActivityDelegate.java |  8 ++++++++
+ .../jar/src/org/qtproject/qt/android/QtNative.java   | 12 ++++++++++++
+ .../accessibility/QtAccessibilityDelegate.java       |  5 +++++
+ .../platforms/android/androidjniaccessibility.cpp    |  5 +++++
+ .../platforms/android/androidjniaccessibility.h      |  1 +
+ src/plugins/platforms/android/androidjnimain.cpp     |  6 ++++++
+ src/plugins/platforms/android/androidjnimain.h       |  1 +
+ .../android/qandroidplatformaccessibility.cpp        |  2 ++
+ 8 files changed, 40 insertions(+)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+index bf9a7d5961..b81b20b19a 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+@@ -977,6 +977,14 @@ public class QtActivityDelegate
+         m_accessibilityDelegate.notifyValueChanged(viewId, value);
+     }
+ 
++    public void notifyScrolledEvent(int viewId)
++    {
++        if (m_accessibilityDelegate == null)
++            return;
++        m_accessibilityDelegate.notifyScrolledEvent(viewId);
++    }
++
++
+     public void notifyQtAndroidPluginRunning(boolean running)
+     {
+         m_isPluginRunning = running;
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
+index bc090db25d..e73fe9e733 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
+@@ -1021,6 +1021,18 @@ public class QtNative
+         });
+     }
+ 
++    private static void notifyScrolledEvent(final int viewId)
++    {
++        runAction(new Runnable() {
++            @Override
++            public void run() {
++                if (m_activityDelegate != null) {
++                    m_activityDelegate.notifyScrolledEvent(viewId);
++                }
++            }
++        });
++    }
++
+     public static void notifyQtAndroidPluginRunning(final boolean running)
+     {
+         m_activityDelegate.notifyQtAndroidPluginRunning(running);
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
+index dffa3b1fb8..b32cdd81c7 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
+@@ -193,6 +193,11 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
+         return true;
+     }
+ 
++    public void notifyScrolledEvent(int viewId)
++    {
++        sendEventForVirtualViewId(viewId, AccessibilityEvent.TYPE_VIEW_SCROLLED);
++    }
++
+     public void notifyLocationChange(int viewId)
+     {
+         if (m_focusedVirtualViewId == viewId)
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index 3f156cdb7b..75f1dc9c0a 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -164,6 +164,11 @@ namespace QtAndroidAccessibility
+         QtAndroid::notifyValueChanged(accessibilityObjectId, value);
+     }
+ 
++    void notifyScrolledEvent(uint accessiblityObjectId)
++    {
++        QtAndroid::notifyScrolledEvent(accessiblityObjectId);
++    }
++
+     static QVarLengthArray<int, 8> childIdListForAccessibleObject_helper(int objectId)
+     {
+         QAccessibleInterface *iface = interfaceFromId(objectId);
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.h y/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
+index 99d151bc3f..212131ff62 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
+@@ -55,6 +55,7 @@ namespace QtAndroidAccessibility
+     void notifyObjectHide(uint accessibilityObjectId);
+     void notifyObjectFocus(uint accessibilityObjectId);
+     void notifyValueChanged(uint accessibilityObjectId);
++    void notifyScrolledEvent(uint accessibilityObjectId);
+     void createAccessibilityContextObject(QObject *parent);
+ }
+ 
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.cpp y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+index 5af7318955..e8e875ba50 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
+@@ -233,6 +233,12 @@ namespace QtAndroid
+                                            "(ILjava/lang/String;)V", accessibilityObjectId, value);
+     }
+ 
++    void notifyScrolledEvent(uint accessibilityObjectId)
++    {
++        QJniObject::callStaticMethod<void>(m_applicationClass, "notifyScrolledEvent", "(I)V",
++                                           accessibilityObjectId);
++    }
++
+     void notifyQtAndroidPluginRunning(bool running)
+     {
+         QJniObject::callStaticMethod<void>(m_applicationClass, "notifyQtAndroidPluginRunning","(Z)V", running);
+diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.h y/qtbase/src/plugins/platforms/android/androidjnimain.h
+index 288d2b95b2..fea0a80cb3 100644
+--- x/qtbase/src/plugins/platforms/android/androidjnimain.h
++++ y/qtbase/src/plugins/platforms/android/androidjnimain.h
+@@ -104,6 +104,7 @@ namespace QtAndroid
+     void notifyObjectHide(uint accessibilityObjectId, uint parentObjectId);
+     void notifyObjectFocus(uint accessibilityObjectId);
+     void notifyValueChanged(uint accessibilityObjectId, jstring value);
++    void notifyScrolledEvent(uint accessibilityObjectId);
+     void notifyQtAndroidPluginRunning(bool running);
+ 
+     const char *classErrorMsgFmt();
+diff --git x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+index bdbf709b3d..b29190d3e9 100644
+--- x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
+@@ -68,6 +68,8 @@ void QAndroidPlatformAccessibility::notifyAccessibilityUpdate(QAccessibleEvent *
+         QtAndroidAccessibility::notifyObjectFocus(event->uniqueId());
+     } else if (event->type() == QAccessible::ValueChanged) {
+         QtAndroidAccessibility::notifyValueChanged(event->uniqueId());
++    } else if (event->type() == QAccessible::ScrollingEnd) {
++        QtAndroidAccessibility::notifyScrolledEvent(event->uniqueId());
+     }
+ }
+ 
+-- 
+2.28.0
+

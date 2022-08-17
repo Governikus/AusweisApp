@@ -11,10 +11,10 @@
 #include <QPointer>
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-#include <csignal>
-#include <QSocketNotifier>
+	#include <QSocketNotifier>
+	#include <csignal>
 #elif defined(Q_OS_WIN)
-#include <windows.h>
+	#include <windows.h>
 #endif
 
 namespace governikus
@@ -24,11 +24,11 @@ class SignalHandler
 	: public QObject
 {
 	Q_OBJECT
+
+	Q_DISABLE_COPY(SignalHandler)
 	friend class Env;
 
 	private:
-		Q_DISABLE_COPY(SignalHandler)
-
 		bool mInit;
 		QPointer<AppController> mAppController;
 		bool mQuit;

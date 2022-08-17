@@ -10,13 +10,12 @@
 #include "Env.h"
 #include "GlobalStatus.h"
 #include "MockDownloader.h"
-#include "SecureStorage.h"
 #include "VersionNumber.h"
 
 #include <QDir>
 #include <QRegularExpression>
-#include <QtTest>
 #include <QTemporaryDir>
+#include <QtTest>
 
 namespace
 {
@@ -125,17 +124,17 @@ class test_AppUpdatr
 
 		QJsonValue getJsonItemField(QJsonDocument& pDocument, const QString& pField)
 		{
-			#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 			QString platform = "win";
-			#endif
+#endif
 
-			#ifdef Q_OS_MACOS
+#ifdef Q_OS_MACOS
 			QString platform = "mac";
-			#endif
+#endif
 
-			#if !defined(Q_OS_MACOS) && !defined(Q_OS_WIN)
+#if !defined(Q_OS_MACOS) && !defined(Q_OS_WIN)
 			QString platform = "src";
-			#endif
+#endif
 
 			auto itemArray = pDocument.object()["items"].toArray();
 			for (auto item : itemArray)
@@ -154,9 +153,7 @@ class test_AppUpdatr
 		{
 			Env::set(Downloader::staticMetaObject, &mDownloader);
 
-			const auto* secureStorage = Env::getSingleton<SecureStorage>();
-			mAppCastLocation = VersionNumber::getApplicationVersion().isDeveloperVersion() ? secureStorage->getAppcastBetaUpdateUrl() : secureStorage->getAppcastUpdateUrl();
-
+			mAppCastLocation = mAppUpdater.mAppUpdateJsonUrl;
 			mJsonDocument = QJsonDocument::fromJson(test_jsonData);
 			mReleaseNoteLocation = getJsonItemField(mJsonDocument, "notes").toString();
 		}

@@ -2,17 +2,19 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.CheckIDCardView 1.0
 import Governikus.ChangePinView 1.0
+import Governikus.HistoryView 1.0
 import Governikus.MainView 1.0
 import Governikus.MoreView 1.0
-import Governikus.IdentifyView 1.0
+import Governikus.AuthView 1.0
 import Governikus.ProviderView 1.0
-import Governikus.HistoryView 1.0
 import Governikus.SettingsView 1.0
+import Governikus.SelfAuthenticationView 1.0
+import Governikus.SmartView 1.0
 import Governikus.TutorialView 1.0
 import Governikus.RemoteServiceView 1.0
 import Governikus.View 1.0
@@ -23,141 +25,106 @@ Item {
 	id: baseItem
 
 	property int activeModule
-	readonly property var visibleLoader: visibleChildren[0]
-	readonly property var visibleItem: if (visibleLoader) visibleLoader.item
-	readonly property var currentSectionPage: if (visibleItem) visibleItem.currentSectionPage
-	readonly property int startupModule: SettingsModel.startupModule
-	readonly property bool initialViewsReady: identifyView.isLoaded && initialView.isLoaded
-	readonly property bool ready: initialViewsReady && checkIDCardView.isLoaded && providerView.isLoaded && changePinView.isLoaded &&
-								  historyView.isLoaded && settingsView.isLoaded && helpView.isLoaded && remoteView.isLoaded
-	readonly property var initialView:
-		startupModule === UiModule.CHECK_ID_CARD ? checkIDCardView :
-		startupModule === UiModule.IDENTIFY ? identifyView :
-		startupModule === UiModule.PROVIDER ? providerView :
-		startupModule === UiModule.PINMANAGEMENT ? changePinView :
-		startupModule === UiModule.HISTORY ? historyView :
-		startupModule === UiModule.REMOTE_SERVICE ? remoteView :
-		startupModule === UiModule.SETTINGS ? settingsView :
-		startupModule === UiModule.HELP ? helpView :
-		mainView
+	readonly property var visibleItem: visibleChildren[0]
+	readonly property var currentSectionPage: if (visibleItem) visibleItem.currentItem
 
-	ContentAreaLoader {
-		id: identifyView
+	TabBarView {
+		id: authView
 
-		contentArea: baseItem
-		module: UiModule.IDENTIFY
+		visible: baseItem.activeModule === UiModule.IDENTIFY
+		anchors.fill: parent
 
-		active: true
-		asynchronous: false
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: IdentifyView {}
-			}
-		}
+		initialItem: AuthView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
 		id: mainView
 
-		contentArea: baseItem
-		module: UiModule.DEFAULT
+		visible: baseItem.activeModule === UiModule.DEFAULT
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: MainView {}
-			}
-		}
+		initialItem: MainView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
+		id: selfAuthenticationView
+
+		visible: baseItem.activeModule === UiModule.SELF_AUTHENTICATION
+		anchors.fill: parent
+
+		initialItem: SelfAuthenticationView {}
+	}
+
+	TabBarView {
 		id: checkIDCardView
 
-		contentArea: baseItem
-		module: UiModule.CHECK_ID_CARD
+		visible: baseItem.activeModule === UiModule.CHECK_ID_CARD
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: CheckIDCardView {}
-			}
-		}
+		initialItem: CheckIDCardView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
+		id: smartView
+
+		visible: baseItem.activeModule === UiModule.SMART
+		anchors.fill: parent
+
+		initialItem: SmartView {}
+	}
+
+	TabBarView {
 		id: providerView
 
-		contentArea: baseItem
-		module: UiModule.PROVIDER
+		visible: baseItem.activeModule === UiModule.PROVIDER
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: ProviderView {}
-			}
-		}
+		initialItem: ProviderView {}
 	}
 
-	ContentAreaLoader {
-		id: changePinView
-
-		contentArea: baseItem
-		module: UiModule.PINMANAGEMENT
-
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: ChangePinView {}
-			}
-		}
-	}
-
-	ContentAreaLoader {
+	TabBarView {
 		id: historyView
 
-		contentArea: baseItem
-		module: UiModule.HISTORY
+		visible: baseItem.activeModule === UiModule.HISTORY
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: HistoryView {}
-			}
-		}
+		initialItem: HistoryView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
+		id: changePinView
+
+		visible: baseItem.activeModule === UiModule.PINMANAGEMENT
+		anchors.fill: parent
+
+		initialItem: ChangePinView {}
+	}
+
+	TabBarView {
 		id: remoteView
 
-		contentArea: baseItem
-		module: UiModule.REMOTE_SERVICE
+		visible: baseItem.activeModule === UiModule.REMOTE_SERVICE
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: RemoteServiceView {}
-			}
-		}
+		initialItem: RemoteServiceView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
 		id: settingsView
 
-		contentArea: baseItem
-		module: UiModule.SETTINGS
+		visible: baseItem.activeModule === UiModule.SETTINGS
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: SettingsView {}
-			}
-		}
+		initialItem: SettingsView {}
 	}
 
-	ContentAreaLoader {
+	TabBarView {
 		id: helpView
 
-		contentArea: baseItem
-		module: UiModule.HELP
+		visible: baseItem.activeModule === UiModule.HELP
+		anchors.fill: parent
 
-		sourceComponent: Component {
-			TabBarView {
-				sourceComponent: MoreView {}
-			}
-		}
+		initialItem: MoreView {}
 	}
 
 }

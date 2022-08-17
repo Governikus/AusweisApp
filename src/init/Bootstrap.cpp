@@ -5,11 +5,11 @@
 #include "Bootstrap.h"
 
 #include "BuildHelper.h"
-#include "controller/AppController.h"
 #include "CommandLineParser.h"
 #include "Env.h"
 #include "LogHandler.h"
 #include "SignalHandler.h"
+#include "controller/AppController.h"
 
 #include <openssl/crypto.h>
 
@@ -28,7 +28,7 @@ Q_DECLARE_LOGGING_CATEGORY(init)
 
 #if defined(INTEGRATED_SDK)
 	#ifdef Q_OS_ANDROID
-		#include <QAndroidService>
+		#include <QtCore/private/qandroidextras_p.h>
 using QAPP = QAndroidService;
 
 	#else
@@ -38,8 +38,7 @@ using QAPP = QCoreApplication;
 
 #elif defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || defined(Q_OS_WINRT)
 	#ifdef Q_OS_ANDROID
-		#include <QAndroidService>
-		#include <QtAndroid>
+		#include <QtCore/private/qandroidextras_p.h>
 	#endif
 
 	#include <QGuiApplication>
@@ -62,10 +61,10 @@ static inline void printInfo()
 	}
 	qCInfo(init) << "##################################################";
 
-	#if OPENSSL_VERSION_NUMBER < 0x10100000L
-		#define OpenSSL_version SSLeay_version
-		#define OPENSSL_VERSION SSLEAY_VERSION
-	#endif
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define OpenSSL_version SSLeay_version
+	#define OPENSSL_VERSION SSLEAY_VERSION
+#endif
 
 	if (QSslSocket::sslLibraryVersionString() != QLatin1String(OpenSSL_version(OPENSSL_VERSION)))
 	{
@@ -101,7 +100,9 @@ static inline QCoreApplication* initQt(int& argc, char** argv)
 #endif
 
 #if defined(Q_OS_ANDROID) && !defined(INTEGRATED_SDK)
-	if (QtAndroid::androidService().isValid())
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	bool isServiceContext = !QNativeInterface::QAndroidApplication::isActivityContext();
+	if (context.isValid() && isServiceContext)
 	{
 		return new QAndroidService(argc, argv);
 	}

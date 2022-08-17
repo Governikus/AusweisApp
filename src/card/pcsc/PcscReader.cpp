@@ -48,17 +48,16 @@ PcscReader::PcscReader(const QString& pReaderName)
 		return;
 	}
 
-	mReaderInfo.setBasicReader(!hasFeature(FeatureID::EXECUTE_PACE));
-	mReaderInfo.setConnected(true);
+	setInfoBasicReader(!hasFeature(FeatureID::EXECUTE_PACE));
 
-	update();
-	mTimerId = startTimer(500);
+	PcscReader::updateCard();
+	setTimerId(startTimer(500));
 }
 
 
 PcscReader::~PcscReader()
 {
-	qCDebug(card_pcsc) << mReaderInfo.getName();
+	qCDebug(card_pcsc) << getReaderInfo().getName();
 	qCDebug(card_pcsc) << "SCardCancel:        " << PcscUtils::toString(SCardCancel(mContextHandle));
 	qCDebug(card_pcsc) << "SCardReleaseContext:" << PcscUtils::toString(SCardReleaseContext(mContextHandle));
 	mContextHandle = 0;
@@ -145,37 +144,37 @@ static QString SCARD_STATE_toString(DWORD i)
 }
 
 
-Reader::CardEvent PcscReader::updateCard()
+void PcscReader::updateCard()
 {
 	PCSC_RETURNCODE returnCode = SCardGetStatusChange(mContextHandle, 0, &mReaderState, 1);
 	if (returnCode == PcscUtils::Scard_E_Timeout)
 	{
-		return Reader::CardEvent::NONE;
+		return;
 	}
 	else if (returnCode == PcscUtils::Scard_E_Unknown_Reader)
 	{
 		qCWarning(card_pcsc) << "SCardGetStatusChange:" << PcscUtils::toString(returnCode);
 		qCWarning(card_pcsc) << "Reader unknown, stop updating reader information";
-		if (mTimerId != 0)
+		if (getTimerId() != 0)
 		{
-			killTimer(mTimerId);
-			mTimerId = 0;
+			killTimer(getTimerId());
+			setTimerId(0);
 		}
-		return Reader::CardEvent::NONE;
+		return;
 	}
 	else if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "SCardGetStatusChange:" << PcscUtils::toString(returnCode);
 		qCWarning(card_pcsc) << "Cannot update reader";
-		return Reader::CardEvent::NONE;
+		return;
 	}
 	else if ((mReaderState.dwEventState & SCARD_STATE_CHANGED) == 0)
 	{
-		return Reader::CardEvent::NONE;
+		return;
 	}
 	else if ((mReaderState.dwEventState & (SCARD_STATE_UNKNOWN | SCARD_STATE_UNAVAILABLE)) != 0)
 	{
-		return Reader::CardEvent::NONE;
+		return;
 	}
 
 	qCDebug(card_pcsc) << "old state:" << SCARD_STATE_toString(mReaderState.dwCurrentState)
@@ -186,39 +185,76 @@ Reader::CardEvent PcscReader::updateCard()
 
 	mReaderState.dwCurrentState = mReaderState.dwEventState;
 
-	if (newPresent)
+	if (!newPresent)
 	{
-		if (!mPcscCard && !newExclusive)
+		if (!mPcscCard.isNull())
 		{
-			qCDebug(card_pcsc) << "ATR:" << QByteArray(reinterpret_cast<char*>(mReaderState.rgbAtr), static_cast<int>(mReaderState.cbAtr)).toHex(' ');
+			mPcscCard.reset();
+			removeCardInfo();
 
-			static const int MAX_TRY_COUNT = 5;
-			for (int tryCount = 0; tryCount < MAX_TRY_COUNT; ++tryCount)
-			{
-				mPcscCard.reset(new PcscCard(this));
-				QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-				CardInfoFactory::create(cardConnection, mReaderInfo);
-				qCDebug(card_pcsc) << "Card detected:" << mReaderInfo.getCardInfo();
+			qCInfo(card_pcsc) << "Card removed";
+			Q_EMIT fireCardRemoved(getReaderInfo());
+		}
+		return;
+	}
 
-				if (mReaderInfo.hasEidCard() || mReaderInfo.hasPassport())
-				{
-					break;
-				}
+	if (mPcscCard || newExclusive)
+	{
+		return;
+	}
 
-				qCDebug(card_pcsc) << "Unknown card detected, retrying";
-			}
+	qCDebug(card_pcsc) << "ATR:" << QByteArray(reinterpret_cast<char*>(mReaderState.rgbAtr), static_cast<int>(mReaderState.cbAtr)).toHex(' ');
 
-			return CardEvent::CARD_INSERTED;
+	static const int MAX_TRY_COUNT = 5;
+	for (int tryCount = 0; tryCount < MAX_TRY_COUNT; ++tryCount)
+	{
+		mPcscCard.reset(new PcscCard(this));
+		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
+		fetchCardInfo(cardConnection);
+
+		if (getReaderInfo().hasEid())
+		{
+			break;
+		}
+
+		qCDebug(card_pcsc) << "Unknown card detected, retrying";
+	}
+
+	qCInfo(card_pcsc) << "Card inserted:" << getReaderInfo().getCardInfo();
+	fetchGetReaderInfo();
+	Q_EMIT fireCardInserted(getReaderInfo());
+}
+
+
+void PcscReader::fetchGetReaderInfo()
+{
+	if (mPcscCard.isNull())
+	{
+		return;
+	}
+
+	// see TR-03119 chapter A 1.3
+	// These commands have to be implemented for all interfaces.
+	// However, they only have to be provided when a smart card is available at the respective interface.
+	// The implementation of this functionality without a card being available is optional.
+
+	const QByteArrayList apdus({"FF9A010100", "FF9A010300", "FF9A010600", "FF9A010700"});
+
+	QByteArrayList result;
+	for (const auto& apdu : apdus)
+	{
+		const CommandApdu cmd(QByteArray::fromHex(apdu));
+		const auto& responseResult = mPcscCard->transmit(cmd);
+		if (responseResult.mReturnCode == CardReturnCode::OK)
+		{
+			result += responseResult.mResponseApdu.getData();
 		}
 	}
-	else if (!mPcscCard.isNull())
-	{
-		mPcscCard.reset();
-		mReaderInfo.setCardInfo(CardInfo(CardType::NONE));
-		return CardEvent::CARD_REMOVED;
-	}
 
-	return CardEvent::NONE;
+	if (!result.isEmpty())
+	{
+		qCDebug(card_pcsc) << "GetReaderInfo:" << result.join(QByteArrayLiteral(", "));
+	}
 }
 
 
@@ -232,7 +268,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 
 	SCARDHANDLE cardHandle = 0;
 	PCSC_INT protocol = 0;
-	const auto& readerName = mReaderInfo.getName();
+	const auto& readerName = getReaderInfo().getName();
 	QString str =
 			QStringLiteral("SCardConnect(%1, %2, %3, %4, %5, %6)").arg(mContextHandle, 0, 16).arg(readerName).arg(SCARD_SHARE_DIRECT)
 			.arg(PROTOCOL).arg(cardHandle, 0, 16).arg(protocol);
@@ -252,7 +288,7 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 
 	// control (get features)
 #if defined(PCSCLITE_VERSION_NUMBER)
-	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x42000d48;
+	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x42000D48;
 #else
 	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x00313520;
 #endif

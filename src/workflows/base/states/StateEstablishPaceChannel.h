@@ -8,8 +8,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
 
 class test_StateEstablishPaceChannel;
 

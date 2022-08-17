@@ -96,9 +96,7 @@ void Env::setShared(const QMetaObject& pMetaObject, const QSharedPointer<QObject
 }
 
 
-Env::FuncWrapperBase::~FuncWrapperBase()
-{
-}
+Env::FuncWrapperBase::~FuncWrapperBase() = default;
 
 
 #endif

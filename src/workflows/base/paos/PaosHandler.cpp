@@ -2,11 +2,10 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "paos/retrieve/DidList.h"
-#include "paos/retrieve/Disconnect.h"
+#include "PaosHandler.h"
+
 #include "paos/retrieve/InitializeFramework.h"
 #include "paos/retrieve/StartPaosResponse.h"
-#include "PaosHandler.h"
 #include "retrieve/DidAuthenticateEac1Parser.h"
 #include "retrieve/DidAuthenticateEac2Parser.h"
 #include "retrieve/DidAuthenticateEacAdditionalParser.h"
@@ -31,10 +30,6 @@ void PaosHandler::parse()
 	{
 		setParsedObject(new InitializeFramework(mXmlData));
 	}
-	else if (mDetectedType == PaosType::DID_LIST)
-	{
-		setParsedObject(new DIDList(mXmlData));
-	}
 	else if (mDetectedType == PaosType::DID_AUTHENTICATE_EAC1)
 	{
 		setParsedObject(DidAuthenticateEac1Parser().parse(mXmlData));
@@ -50,10 +45,6 @@ void PaosHandler::parse()
 	else if (mDetectedType == PaosType::TRANSMIT)
 	{
 		setParsedObject(TransmitParser().parse(mXmlData));
-	}
-	else if (mDetectedType == PaosType::DISCONNECT)
-	{
-		setParsedObject(new Disconnect(mXmlData));
 	}
 	else if (mDetectedType == PaosType::STARTPAOS_RESPONSE)
 	{
@@ -82,10 +73,6 @@ bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&
 	{
 		mDetectedType = PaosType::INITIALIZE_FRAMEWORK;
 	}
-	else if (pElementName == QLatin1String("DIDList"))
-	{
-		mDetectedType = PaosType::DID_LIST;
-	}
 	else if (pElementName == QLatin1String("DIDAuthenticate"))
 	{
 		detectStartElements({QStringLiteral("AuthenticationProtocolData")});
@@ -111,10 +98,6 @@ bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&
 	else if (pElementName == QLatin1String("Transmit"))
 	{
 		mDetectedType = PaosType::TRANSMIT;
-	}
-	else if (pElementName == QLatin1String("Disconnect"))
-	{
-		mDetectedType = PaosType::DISCONNECT;
 	}
 	else if (pElementName == QLatin1String("StartPAOSResponse"))
 	{

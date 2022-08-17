@@ -37,12 +37,12 @@ class test_TlsConfiguration
 		void testLoadprotocolVersion()
 		{
 			QByteArray config("{"
-							  "  \"protocolVersion\": \"TlsV1_0OrLater\""
+							  "  \"protocolVersion\": \"TlsV1_2OrLater\""
 							  "}");
 
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
 
-			QCOMPARE(mTlsConfiguration.getProtocolVersion(), QSsl::TlsV1_0OrLater);
+			QCOMPARE(mTlsConfiguration.getProtocolVersion(), QSsl::TlsV1_2OrLater);
 		}
 
 
@@ -53,11 +53,7 @@ class test_TlsConfiguration
 							  "}");
 
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
 			QCOMPARE(mTlsConfiguration.getOcspStapling(), true);
-#else
-			QCOMPARE(mTlsConfiguration.getOcspStapling(), false);
-#endif
 		}
 
 
@@ -112,19 +108,19 @@ class test_TlsConfiguration
 
 			QByteArrayList configs({"",
 									"{"
-									"  \"protocolVersion\": \"TlsV1_0OrLater\""
+									"  \"protocolVersion\": \"TlsV1_2OrLater\""
 									"}",
 									"{"
-									"  \"protocolVersion\": \"TlsV1_0OrLater\","
+									"  \"protocolVersion\": \"TlsV1_2OrLater\","
 									"  \"ciphers\": [\"ECDHE-ECDSA-AES256-GCM-SHA384\",\"DHE-RSA-AES256-SHA256\"]"
 									"}",
 									"{"
-									"  \"protocolVersion\": \"TlsV1_0OrLater\","
+									"  \"protocolVersion\": \"TlsV1_2OrLater\","
 									"  \"ciphers\": [\"ECDHE-ECDSA-AES256-GCM-SHA384\",\"DHE-RSA-AES256-SHA256\"],"
 									"  \"ellipticCurves\":  [\"brainpoolP512r1\", \"brainpoolP384r1\"]"
 									"}",
 									"{"
-									"  \"protocolVersion\": \"TlsV1_0OrLater\","
+									"  \"protocolVersion\": \"TlsV1_2OrLater\","
 									"  \"ciphers\": [\"ECDHE-ECDSA-AES256-GCM-SHA384\",\"DHE-RSA-AES256-SHA256\"],"
 									"  \"ellipticCurves\":  [\"brainpoolP512r1\", \"brainpoolP384r1\"],"
 									"  \"signatureAlgorithms\":  [\"Rsa+Sha512\", \"Dsa+Sha384\", \"Ec+Sha256\"]"

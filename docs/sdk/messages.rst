@@ -154,6 +154,10 @@ This message will be sent if :ref:`get_api_level` or :ref:`set_api_level` is cal
 It lists all **available** API levels that can be used and set by :ref:`set_api_level`.
 Also it indicates the **current** selected API level.
 
+.. versionadded:: 1.24.0
+   Level **2** added.
+
+
   - **error**: Optional error message if :ref:`SET_API_LEVEL` failed.
 
   - **available**: List of supported API level by this version.
@@ -418,6 +422,7 @@ again but without an error parameter.
     "reader":
              {
               "name": "NFC",
+              "insertable": false,
               "attached": true,
               "keypad": false,
               "card":
@@ -479,6 +484,7 @@ AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **3**.
     "reader":
              {
               "name": "NFC",
+              "insertable": false,
               "attached": true,
               "keypad": false,
               "card":
@@ -522,6 +528,7 @@ provide the new PIN of the inserted card with :ref:`set_new_pin`.
     "reader":
              {
               "name": "NFC",
+              "insertable": false,
               "attached": true,
               "keypad": false,
               "card":
@@ -582,6 +589,7 @@ Please see the note for more information.
     "reader":
              {
               "name": "NFC",
+              "insertable": false,
               "attached": true,
               "keypad": false,
               "card":
@@ -668,8 +676,12 @@ this message will be sent as a notification.
 If your application receives this message it should
 show a hint to the user.
 
-After the user inserted a card, the workflow will continue automatically,
-unless both the eID functionality and CAN allowed mode are disabled.
+The user must provide a physical card or your application needs to
+to provide a "virtual" card by calling :ref:`set_card`.
+
+After the user or your application inserted a card, the workflow will
+continue automatically, unless both the eID functionality and
+CAN allowed mode are disabled.
 CAN allowed mode is enabled if the AusweisApp2 is used as SDK and the
 certificate contains the CAN allowed right.
 In this case, the workflow will be paused until another card is inserted.
@@ -678,9 +690,14 @@ If the user already inserted a card this message will not be sent at all.
 This message will also be sent if there is no connected card reader.
 
 
+  - **error**: Optional detailed error message.
+
 .. code-block:: json
 
-  {"msg": "INSERT_CARD"}
+  {
+    "msg": "INSERT_CARD",
+    "error": "Name cannot be undefined"
+  }
 
 
 
@@ -746,11 +763,16 @@ If a workflow is in progress and a card with disabled eID functionality was
 inserted, this message will still be sent, but the workflow will be paused
 until a card with enabled eID functionality is inserted.
 
+.. versionadded:: 1.24.0
+   Parameter **insertable** added.
+
 .. versionadded:: 1.16.0
    Parameter **keypad** added.
 
 
   - **name**: Identifier of card reader.
+
+  - **insertable**: Indicates whether a card can be inserted via :ref:`set_card`.
 
   - **attached**: Indicates whether a card reader is connected or disconnected.
 
@@ -774,6 +796,7 @@ until a card with enabled eID functionality is inserted.
   {
     "msg": "READER",
     "name": "NFC",
+    "insertable": false,
     "attached": true,
     "keypad": false,
     "card":
@@ -793,18 +816,22 @@ READER_LIST
 ^^^^^^^^^^^
 Provides information about all connected card readers.
 
+.. versionchanged:: 1.24.0
+   Parameter **reader** was renamed to **readers** with :ref:`api_level` **2**.
 
-  - **reader**: A list of all connected card readers. Please
+
+  - **readers**: A list of all connected card readers. Please
     see message :ref:`reader` for details.
 
 .. code-block:: json
 
   {
     "msg": "READER_LIST",
-    "reader":
+    "readers":
              [
                {
                 "name": "Example reader 1 [SmartCard] (1234567) 01 00",
+                "insertable": false,
                 "attached": true,
                 "keypad": true,
                 "card": null
@@ -812,6 +839,7 @@ Provides information about all connected card readers.
 
                {
                 "name": "NFC",
+                "insertable": false,
                 "attached": true,
                 "keypad": false,
                 "card":
@@ -822,6 +850,44 @@ Provides information about all connected card readers.
                        }
                }
              ]
+  }
+
+
+
+
+.. _status:
+
+STATUS
+^^^^^^
+Provides information about the current workflow and state.
+This message indicates if a workflow is in progress or the
+workflow is paused. This can occur if the AusweisApp2 needs
+additional data like :ref:`access_rights` or :ref:`insert_card`.
+
+The messages will be sent by default if not disabled in :ref:`run_auth`
+or :ref:`run_change_pin`.
+
+.. versionadded:: 1.24.0
+   Support of STATUS message in :ref:`api_level` **2**.
+
+
+  - **workflow**: Name of the current workflow.
+    If there is no workflow in progress this will be null.
+
+  - **progress**: Percentage of workflow progress.
+    If there is no workflow in progress this will be null.
+
+  - **state**: Name of the current state if paused.
+    If there is no workflow in progress or the workflow is not paused
+    this will be null.
+
+.. code-block:: json
+
+  {
+    "msg": "STATUS",
+    "workflow": "AUTH",
+    "progress": 25,
+    "state": "ACCESS_RIGHTS"
   }
 
 

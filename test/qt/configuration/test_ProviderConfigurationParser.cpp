@@ -44,7 +44,7 @@ class test_ProviderConfigurationParser
 			QByteArray data = QByteArray("{"
 										 "   \"provider\": ["
 										 "      {"
-										 "         \"shortName\": {\"\" : \":::(bit)kasten\", \"de\" : \":::(bit)-de-kasten\", \"fr_FR\" : \":::(bit)-fr-kasten\"},"
+										 "         \"longName\": {\"\" : \":::(bit)kasten\", \"de\" : \":::(bit)-de-kasten\", \"fr_FR\" : \":::(bit)-fr-kasten\"},"
 										 "         \"address\": \"https://www.bitkasten.de/\","
 										 "         \"phone\": \"\","
 										 "         \"email\": \"\","
@@ -52,8 +52,8 @@ class test_ProviderConfigurationParser
 										 "         \"category\": \"other\""
 										 "      },"
 										 "      {"
-										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
 										 "         \"longName\": {\"\" : \"Selbstauskunft - \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
 										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
 										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
 										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
@@ -64,8 +64,8 @@ class test_ProviderConfigurationParser
 										 "         \"category\": \"citizen\""
 										 "      },"
 										 "		{"
-										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
-										 "         \"longName\": {\"\" : \"\"},"
+										 "         \"longName\": {\"\" : \"Selbstauskunft\"},"
+										 "         \"shortName\": {\"\" : \"\"},"
 										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
 										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
 										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
@@ -84,22 +84,21 @@ class test_ProviderConfigurationParser
 			QCOMPARE(providers.size(), 3);
 
 			auto provider = providers[0];
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)kasten"));
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)kasten"));
 
 			LanguageLoader::getInstance().mUsedLocale = QLocale("om");
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)kasten"));
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)kasten"));
 
 			LanguageLoader::getInstance().mUsedLocale = QLocale("de");
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-de-kasten"));
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-de-kasten"));
 
 			LanguageLoader::getInstance().mUsedLocale = QLocale("fr");
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 
 			LanguageLoader::getInstance().mUsedLocale = QLocale("fr_FR");
-			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
-
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
-			QCOMPARE(provider.getShortDescription().toString(), QString());
+
+			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 			QCOMPARE(provider.getLongDescription().toString(), QString());
 			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.bitkasten.de/"));
 			QCOMPARE(provider.getHomepage(), QString());
@@ -113,7 +112,6 @@ class test_ProviderConfigurationParser
 			provider = providers[1];
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Selbstauskunft"));
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Selbstauskunft - \"Meine Daten einsehen\""));
-			QCOMPARE(provider.getShortDescription().toString(), QStringLiteral("Funktion der AusweisApp2"));
 			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Die AusweisApp2 verfuegt ueber die Funktion \"Meine Daten einsehen\""));
 			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/"));
 			QCOMPARE(provider.getHomepage(), QStringLiteral("https://www.ausweisapp.bund.de/"));
@@ -126,7 +124,8 @@ class test_ProviderConfigurationParser
 			QVERIFY(provider.getInternalId().isEmpty());
 
 			provider = providers[2];
-			QCOMPARE(provider.getLongName().toString(), QString());
+			QCOMPARE(provider.getShortName().toString(), QString());
+			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Selbstauskunft"));
 			QCOMPARE(provider.getInternalId(), QStringLiteral("myId"));
 		}
 
@@ -136,7 +135,7 @@ class test_ProviderConfigurationParser
 			QByteArray data = QByteArray("{"
 										 "   \"provider\": ["
 										 "      {"
-										 "         \"shortName\": {\"\" : \":::(bit)kasten\"},"
+										 "         \"longName\": {\"\" : \":::(bit)kasten\"},"
 										 "         \"address\": \"https://www.bitkasten.de/\","
 										 "         \"phone\": \"\","
 										 "         \"email\": \"\","
@@ -152,6 +151,7 @@ class test_ProviderConfigurationParser
 			QCOMPARE(providers.size(), 1);
 			auto provider = providers[0];
 			QCOMPARE(provider.getShortName().toString(), QString(":::(bit)kasten"));
+			QCOMPARE(provider.getLongName().toString(), QString(":::(bit)kasten"));
 			QCOMPARE(provider.getAddress(), QString("https://www.bitkasten.de/"));
 			QCOMPARE(provider.getPhone(), QString(""));
 			QCOMPARE(provider.getEMail(), QString(""));
@@ -222,8 +222,8 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int all = 95;
-			const int withEidSupport = 72;
+			const int all = 98;
+			const int withEidSupport = 75;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;

@@ -9,7 +9,7 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.SelfAuthModel 1.0
 import Governikus.View 1.0
-import QtQuick 2.12
+import QtQuick 2.15
 
 SectionPage {
 
@@ -19,9 +19,6 @@ SectionPage {
 		helpTopic: "selfauthentication"
 	}
 
-	//: LABEL DESKTOP
-	Accessible.name: qsTr("Self-authentication.")
-	Accessible.description: qsTr("This is the self-authentication view of the AusweisApp2.")
 	Keys.onReturnPressed: startWorkflowButton.onClicked()
 	Keys.onEnterPressed: startWorkflowButton.onClicked()
 
@@ -38,6 +35,7 @@ SectionPage {
 				id: useNpa
 
 				width: ApplicationModel.scaleFactor * 400
+				height: width
 				anchors.left: parent.left
 
 				fillMode: Image.PreserveAspectFit
@@ -53,8 +51,10 @@ SectionPage {
 				anchors.right: parent.right
 
 				activeFocusOnTab: true
+				//: LABEL DESKTOP A11y description of eID logo displayed next to the logo itself
+				Accessible.name: qsTr("You can use your ID card anywhere you find the logo of the electronic identification function.")
 
-				textStyle: Style.text.header_inverse
+				textStyle: Style.text.header
 
 				//: LABEL DESKTOP
 				text: qsTr("You can use your ID card anywhere you see this logo.")
@@ -80,30 +80,16 @@ SectionPage {
 				text: qsTr("Use the button \"See my personal data\" to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.")
 					.arg(Qt.application.name)
 
-				FocusFrame {
-					borderColor: Style.color.focus_indicator
-				}
+				FocusFrame {}
 			}
 
-			GText {
-				readonly property string privacyStatementUrl: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
-				//: LABEL DESKTOP Text of the html link inside of a sentence
-				readonly property string privacyStatementDescription: qsTr("data privacy statement")
-				readonly property string privacyStatementLink: "<a href=\"%1\">%2</a>".arg(privacyStatementUrl).arg(privacyStatementDescription)
-
+			PrivacyStatement {
 				width: parent.width
 
 				activeFocusOnTab: true
-
 				textStyle: Style.text.normal
-				font.bold: true
-				//: LABEL DESKTOP
-				text: qsTr("Your personal data is neither saved nor processed in any way. Please see our %1 for details on how your personal data is processed.")
-						.arg(privacyStatementLink)
 
-				FocusFrame {
-					borderColor: Style.color.focus_indicator
-				}
+				FocusFrame {}
 			}
 
 			GButton {

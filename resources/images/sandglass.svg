@@ -2,12 +2,12 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="156px" height="248px" viewBox="0 0 156 248">
   <defs>
     <g id="shape">
-      <path stroke="#4d7aa4" stroke-width="8" fill="none" d="M 25 14 c 0 0 -30 40 35 95 c 0 0 18 15 0 30 c 0 0 -60 40 -35 95" />
-      <path fill="#4d7aa4" d="M 78 63 c 0 0 -20 -1 -45 4 c 0 0 8 16 36 42 c 0 0 5 6 5 12 l -1 39 c 0 0 0 6 -5 9 l -39 21 c 0 0 -6 15 -1 31 h 50 z" />
+      <path stroke="#164a8c" stroke-width="8" fill="none" d="M 25 14 c 0 0 -30 40 35 95 c 0 0 18 15 0 30 c 0 0 -60 40 -35 95" />
+      <path fill="#164a8c" d="M 78 63 c 0 0 -20 -1 -45 4 c 0 0 8 16 36 42 c 0 0 5 6 5 12 l -1 39 c 0 0 0 6 -5 9 l -39 21 c 0 0 -6 15 -1 31 h 50 z" />
     </g>
   </defs>
 
-  <g stroke="#4d7aa4" stroke-width="20" stroke-linecap="round">
+  <g stroke="#164a8c" stroke-width="20" stroke-linecap="round">
     <line x1="16" y1="14" x2="140" y2="14" />
     <line x1="16" y1="234" x2="140" y2="234" />
   </g>

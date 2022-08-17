@@ -11,7 +11,7 @@
 #include "SecurityInfos.h"
 
 #ifndef OPENSSL_NO_CMS
-#include <openssl/cms.h>
+	#include <openssl/cms.h>
 #endif
 
 #include <QByteArray>
@@ -21,10 +21,11 @@ namespace governikus
 {
 
 /*!
- * EF.CardSecurity is defined in TR-03110-3 as ContentInfo with contentType id-signedData,
- * where the SignedData has eContentType id-SecurityObject.
+ * EF.CardSecurity is defined in TR-03110-3 as ContentInfo with contentType id-signedData, known
+ * as pkcs7-signedData in OpenSSL, where the SignedData has eContentType id-SecurityObject.
  *
  *
+ * RFC 5652 - 5.1. SignedData Type
  * id-signedData OBJECT IDENTIFIER ::= { iso(1) member-body(2)
  *      us(840) rsadsi(113549) pkcs(1) pkcs7(7) 2 }
  *
@@ -86,12 +87,13 @@ namespace governikus
  */
 class EFCardSecurity
 {
+	Q_DISABLE_COPY(EFCardSecurity)
 	friend class QSharedPointer<EFCardSecurity>;
 
-	const QSharedPointer<const SecurityInfos> mSecurityInfos;
+	private:
+		const QSharedPointer<const SecurityInfos> mSecurityInfos;
 
-	explicit EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
-	Q_DISABLE_COPY(EFCardSecurity)
+		explicit EFCardSecurity(const QSharedPointer<const SecurityInfos>& pSecurityInfos);
 
 	public:
 		static QSharedPointer<EFCardSecurity> fromHex(const QByteArray& pHexString);
@@ -101,11 +103,7 @@ class EFCardSecurity
 };
 
 #ifndef OPENSSL_NO_CMS
-template<>
-CMS_ContentInfo* decodeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo** pObject, const unsigned char** pData, long pDataLen);
-
-template<>
-void freeAsn1Object<CMS_ContentInfo>(CMS_ContentInfo* pObject);
+DECLARE_ASN1_OBJECT(CMS_ContentInfo)
 #endif
 
 } // namespace governikus

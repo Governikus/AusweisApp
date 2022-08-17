@@ -13,7 +13,7 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 using namespace governikus;
 
 StateEstablishPaceChannel::StateEstablishPaceChannel(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 	, mPasswordId(PacePasswordId::UNKNOWN)
 {
@@ -37,14 +37,13 @@ void StateEstablishPaceChannel::run()
 	if (mPasswordId == PacePasswordId::PACE_PIN ||
 			(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
 	{
-		if (authContext)
+		if (authContext && authContext->getDidAuthenticateEac1())
 		{
 			// if PACE is performed for authentication purposes,
 			// the chat and certificate description need to be sent
 			//
 			// in other scenarios, e.g. for changing the PIN, the data
 			// is not needed
-			Q_ASSERT(authContext->getDidAuthenticateEac1());
 			certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
 			effectiveChat = authContext->encodeEffectiveChat();
 			Q_ASSERT(!effectiveChat.isEmpty());
@@ -100,28 +99,21 @@ void StateEstablishPaceChannel::run()
 	qDebug() << "Establish connection using" << mPasswordId;
 	Q_ASSERT(!password.isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
 
-	if (mPasswordId == PacePasswordId::PACE_PUK)
+	if (mPasswordId == PacePasswordId::PACE_PIN && !cardConnection->getReaderInfo().isBasicReader())
 	{
-		mConnections += cardConnection->callUnblockPinCommand(this, &StateEstablishPaceChannel::onEstablishConnectionDone, password);
-	}
-	else
-	{
-		if (mPasswordId == PacePasswordId::PACE_PIN && !cardConnection->getReaderInfo().isBasicReader())
+		const auto pinContext = getContext().objectCast<ChangePinContext>();
+		if (pinContext && pinContext->isRequestTransportPin())
 		{
-			const auto pinContext = getContext().objectCast<ChangePinContext>();
-			if (pinContext && pinContext->isRequestTransportPin())
-			{
-				password = QByteArray(5, 0);
-			}
+			password = QByteArray(5, 0);
 		}
-
-		mConnections += cardConnection->callEstablishPaceChannelCommand(this,
-				&StateEstablishPaceChannel::onEstablishConnectionDone,
-				mPasswordId,
-				password,
-				effectiveChat,
-				certificateDescription);
 	}
+
+	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
+			&StateEstablishPaceChannel::onEstablishConnectionDone,
+			mPasswordId,
+			password,
+			effectiveChat,
+			certificateDescription);
 }
 
 

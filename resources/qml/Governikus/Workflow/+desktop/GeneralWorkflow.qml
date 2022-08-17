@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -11,12 +11,12 @@ import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.PasswordType  1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 
 
-SectionPage
-{
+SectionPage {
 	id: root
 
 	property int waitingFor: 0
@@ -24,22 +24,21 @@ SectionPage
 	signal settingsRequested()
 	signal requestPasswordInfo()
 
-	Accessible.name: qsTr("General workflow view")
-	Accessible.description: qsTr("This is the general workflow view of the AusweisApp2.")
+	onWaitingForChanged: if (visible) progressCircle.forceActiveFocus(Qt.MouseFocusReason)
 
 	QtObject {
 		id: d
 
 		readonly property bool foundSelectedReader: ApplicationModel.availableReader > 0
 		readonly property bool foundPCSCReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.PCSC)
-		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.REMOTE)
+		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderPlugIn.REMOTE_IFD)
 	}
 
 
 
 	Connections {
-		target: ApplicationModel
-		onFireCertificateRemoved: {
+		target: RemoteServiceModel
+		function onFireCertificateRemoved(pDeviceName) {
 			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
 			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName))
 		}
@@ -51,6 +50,8 @@ SectionPage
 		anchors.bottom: retryCounter.top
 		anchors.bottomMargin: Constants.component_spacing
 
+		Accessible.ignored: true
+
 		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
@@ -59,16 +60,18 @@ SectionPage
 	StatusIcon {
 		id: retryCounter
 
-		visible: NumberModel.retryCounter >= 0  && NumberModel.passwordType === NumberModel.PASSWORD_PIN
+		visible: NumberModel.retryCounter >= 0  && NumberModel.passwordType === PasswordType.PIN
 		height: Style.dimens.status_icon_small
 		anchors.left: parent.left
 		anchors.top: parent.top
 		anchors.margins: height
 
 		activeFocusOnTab: true
-		Accessible.name: qsTr("Remaining attempts:") + " " + NumberModel.retryCounter
+		Accessible.name: qsTr("Remaining ID card PIN attempts: %1").arg(NumberModel.retryCounter)
 
 		text: NumberModel.retryCounter
+		textStyle: Style.text.title_inverse
+		contentBackgroundColor: Style.color.accent
 
 		FocusFrame {}
 	}
@@ -79,6 +82,7 @@ SectionPage
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: parent.height / 4
 
+		borderEnabled: false
 		busy: true
 		source: AuthModel.readerImage
 	}
@@ -93,12 +97,11 @@ SectionPage
 		activeFocusOnTab: true
 		Accessible.role: Accessible.ProgressBar
 		Accessible.name: qsTr("Step %1 of 3").arg(state)
+		Accessible.focusable: true
 
 		state: switch (waitingFor) {
 					case Workflow.WaitingFor.Reader:
 						return d.foundSelectedReader ? "2" : "1"
-					case Workflow.WaitingFor.Card:
-						return "2"
 					case Workflow.WaitingFor.Password:
 						return "3"
 					default:
@@ -132,9 +135,6 @@ SectionPage
 						   ? qsTr("Place ID card")
 						   //: LABEL DESKTOP
 						   : qsTr("Connect USB card reader or smartphone")
-				case Workflow.WaitingFor.Card:
-					//: LABEL DESKTOP
-					return qsTr("Place ID card")
 				case Workflow.WaitingFor.Password:
 					//: LABEL DESKTOP
 					return qsTr("Information")
@@ -142,7 +142,7 @@ SectionPage
 					return ""
 			}
 		}
-		textStyle: Style.text.header_inverse
+		textStyle: Style.text.header
 
 		horizontalAlignment: Text.AlignHCenter
 		FocusFrame {}
@@ -173,31 +173,39 @@ SectionPage
 		activeFocusOnTab: true
 
 		textFormat: Text.StyledText
-		linkColor: Style.text.header_inverse.textColor
+		linkColor: Style.text.header.textColor
 		text: {
 			switch (waitingFor) {
 				case Workflow.WaitingFor.Reader:
 					//: INFO DESKTOP AA2 is waiting for the card reader or the ID card.
-					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the %1reader settings%2 to configure readers and get more information about supported readers.").arg("<a href=\"#\">").arg("</a>")
-				case Workflow.WaitingFor.Card:
-					return requestCardText
+					return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the reader settings to configure readers and get more information about supported readers.")
 				case Workflow.WaitingFor.Password:
-					return ("%1<br><br><a href=\"#\">%2</a>").arg(
-							   //: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
-							   qsTr("Please observe the display of your card reader.")
-						   ).arg(
-							   //: INFO DESKTOP Link text
-							   qsTr("More information")
-						   )
+					//: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
+					return qsTr("Please observe the display of your card reader.")
 				default:
 					return ""
 			}
 		}
-		textStyle: Style.text.header_secondary_inverse
+		textStyle: Style.text.header_secondary
 		horizontalAlignment: Text.AlignHCenter
 
-		onLinkActivated: waitingFor === Workflow.WaitingFor.Reader ? root.settingsRequested() : root.requestPasswordInfo()
 
 		FocusFrame {}
+	}
+
+	MoreInformationLink {
+		visible: (waitingFor === Workflow.WaitingFor.Reader && ! d.foundSelectedReader) || waitingFor === Workflow.WaitingFor.Password
+
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.top: subText.bottom
+		anchors.topMargin: Constants.component_spacing
+
+		text: waitingFor === Workflow.WaitingFor.Reader ?
+			//: INFO DESKTOP
+			qsTr("Go to reader settings") :
+			//: INFO DESKTOP Link text
+			qsTr("More information")
+
+		onClicked: waitingFor === Workflow.WaitingFor.Reader ? root.settingsRequested() : root.requestPasswordInfo()
 	}
 }

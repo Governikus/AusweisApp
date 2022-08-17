@@ -2,9 +2,8 @@
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -15,6 +14,11 @@ Flickable {
 	property bool scrollBarEnabled: true
 	property real scrollBarTopPadding: 0
 	property real scrollBarBottomPadding: 0
+
+	Accessible.role: Accessible.ScrollBar
+	Accessible.focusable: false
+	Accessible.onIncreaseAction: scrollPageDown()
+	Accessible.onDecreaseAction: scrollPageUp()
 
 	function scrollPageDown() {
 		Utils.scrollPageDown(baseItem)
@@ -45,7 +49,7 @@ Flickable {
 			baseItem.contentY = baseItem.originY
 	}
 
-	Keys.onPressed: handleKeyPress(event.key)
+	Keys.onPressed: event => { handleKeyPress(event.key) }
 
 	maximumFlickVelocity: Constants.scrolling_speed
 	flickDeceleration: Constants.flickDeceleration

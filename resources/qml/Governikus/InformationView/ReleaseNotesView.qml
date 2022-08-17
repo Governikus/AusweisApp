@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.View 1.0
@@ -15,16 +15,21 @@ GListView {
 	id: root
 
 	activeFocusOnTab: true
+
 	displayMarginBeginning: Constants.pane_padding
 	displayMarginEnd: Constants.pane_padding
+
 	delegate: RowLayout {
+		id: row
+
 		width: root.width - Constants.pane_padding
 
-		GText {
-			visible: lineType === FormattedTextModel.LISTITEM
-			Layout.fillHeight: true
+		Accessible.role: Accessible.StaticText
+		Accessible.name: contentText.text
 
-			Accessible.ignored: true
+		GText {
+			visible: lineType === LineType.LISTITEM
+			Layout.fillHeight: true
 
 			verticalAlignment: Text.AlignTop
 			fontSizeMode: Text.Fit
@@ -36,24 +41,25 @@ GListView {
 			id: contentText
 
 			Layout.fillWidth: true
+
 			text: content
 			textStyle: {
 				switch (lineType) {
-				case FormattedTextModel.HEADER:
+				case LineType.HEADER:
 					return Style.text.title
-				case FormattedTextModel.SECTION:
+				case LineType.SECTION:
 					return Style.text.header
-				case FormattedTextModel.SUBSECTION:
+				case LineType.SUBSECTION:
 					return Style.text.header_accent
 				default:
 					return Style.text.normal
 				}
 			}
-			font.underline: lineType === FormattedTextModel.SECTION
-		}
-	}
+			font.underline: lineType === LineType.SECTION
 
-	FocusFrame {
-		borderColor: Style.color.focus_indicator
+			FocusFrame {
+				scope: row
+			}
+		}
 	}
 }

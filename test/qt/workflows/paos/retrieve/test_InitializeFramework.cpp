@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "paos/retrieve/InitializeFramework.h"
 #include "TestFileHelper.h"
+#include "paos/retrieve/InitializeFramework.h"
 
 #include <QtCore>
 #include <QtTest>

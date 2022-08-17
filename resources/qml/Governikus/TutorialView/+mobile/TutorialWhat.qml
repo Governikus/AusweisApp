@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -476,7 +476,7 @@ TutorialContent {
 
 			anchors.horizontalCenter: parent.horizontalCenter
 			//: LABEL ANDROID IOS
-			text: qsTr("Everytime both participants authenticate each other...")
+			text: qsTr("Every time both participants authenticate each other...")
 			textStyle: Style.text.tutorial_header
 			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
@@ -491,7 +491,7 @@ TutorialContent {
 		Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
 		//: LABEL ANDROID IOS
-		text: qsTr("... and therefore your data is protected and securely transfered.")
+		text: qsTr("... and therefore your data is protected and securely transferred.")
 		color: Style.color.tutorial_what
 	}
 
@@ -526,7 +526,7 @@ TutorialContent {
 				//: LABEL ANDROID IOS
 				Accessible.name: qsTr("Open YouTube video")
 				Accessible.role: Accessible.Button
-				Accessible.onPressAction: if (Qt.platform.os === "ios") clicked(null)
+				Accessible.onPressAction: clicked(null)
 
 				onClicked: Qt.openUrlExternally("https://www.ausweisapp.bund.de/%1/aa2/video-authentication-example".arg(SettingsModel.language))
 			}

@@ -34,27 +34,22 @@ j.with
 		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 
 		shell(strip('''\
-			cd build;
-			cmake -Werror=dev ../source
-			-DCMAKE_PREFIX_PATH=${WORKSPACE}/libs/build/dist
-			-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+			cd source;
+			cmake -Werror=dev --preset ci-linux
 			-DCMAKE_CXX_COMPILER=${Compiler}
-			-DBUILD_SHARED_LIBS=on
-			-DSANITIZER=on
 			'''))
 
 		shell('''\
-			cd build; make ${MAKE_FLAGS}
+			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
 			export QML2_IMPORT_PATH=${WORKSPACE}/libs/build/dist/qml
-			export ASAN_OPTIONS=detect_leaks=0,new_delete_type_mismatch=0
-			cd build; ctest --output-on-failure ${MAKE_FLAGS}
+			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 
 		shell('''\
-			cd build; DESTDIR=$WORKSPACE/install make ${MAKE_FLAGS} install
+			DESTDIR=$WORKSPACE/install cmake --install build
 			'''.stripIndent().trim())
 	}
 }

@@ -13,9 +13,7 @@ DIDAuthenticateEACAdditional::DIDAuthenticateEACAdditional()
 }
 
 
-DIDAuthenticateEACAdditional::~DIDAuthenticateEACAdditional()
-{
-}
+DIDAuthenticateEACAdditional::~DIDAuthenticateEACAdditional() = default;
 
 
 void DIDAuthenticateEACAdditional::setConnectionHandle(const ConnectionHandle& pConnectionHandle)

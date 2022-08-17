@@ -2,7 +2,7 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -35,7 +35,6 @@ Item {
 
 	FocusFrame {
 		id: focusFrame
-		borderColor: Style.color.focus_indicator
 	}
 
 	Column {

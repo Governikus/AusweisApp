@@ -9,8 +9,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 namespace governikus
 {
@@ -22,8 +22,9 @@ class StateCheckCertificates
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateCheckCertificates(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

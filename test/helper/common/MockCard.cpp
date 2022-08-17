@@ -18,14 +18,14 @@ MockCard::~MockCard()
 }
 
 
-CardReturnCode MockCard::connect()
+CardReturnCode MockCard::establishConnection()
 {
 	mConnected = mCardConfig.mConnect == CardReturnCode::OK;
 	return mCardConfig.mConnect;
 }
 
 
-CardReturnCode MockCard::disconnect()
+CardReturnCode MockCard::releaseConnection()
 {
 	mConnected = mCardConfig.mDisconnect == CardReturnCode::OK;
 	return mCardConfig.mDisconnect;

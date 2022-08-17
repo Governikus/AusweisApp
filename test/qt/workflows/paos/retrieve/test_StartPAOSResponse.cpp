@@ -4,8 +4,8 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "paos/retrieve/StartPaosResponse.h"
 #include "TestFileHelper.h"
+#include "paos/retrieve/StartPaosResponse.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -19,44 +19,41 @@ class test_StartPAOSResponse
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void initTestCase()
+		void parsing_data()
 		{
+			QTest::addColumn<QString>("filename");
+			QTest::addColumn<ECardApiResult::Major>("major");
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+			QTest::addColumn<QString>("message");
+			QTest::addColumn<int>("mRemainingDays");
+			QTest::addColumn<int>("mRemainingAttempts");
+			QTest::addColumn<QString>("mBlockingCode");
+
+			QTest::newRow("Major") << ":paos/StartPAOSResponse1.xml" << ECardApiResult::Major::Ok << ECardApiResult::Minor::null << QString() << -1 << -1 << QString();
+			QTest::newRow("MajorMinor") << ":paos/StartPAOSResponse2.xml" << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << QString() << -1 << -1 << QString();
+			QTest::newRow("MajorMinorMessage") << ":paos/StartPAOSResponse3.xml" << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << QString("Detail message") << -1 << -1 << QString();
+			QTest::newRow("AdditionalInformation") << ":paos/StartPAOSResponse4.xml" << ECardApiResult::Major::Ok << ECardApiResult::Minor::null << QString() << 30 << 9 << QString("LASTWAGEN");
 		}
 
 
-		void parse_ResultMajor()
+		void parsing()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/StartPAOSResponse1.xml");
+			QFETCH(QString, filename);
+			QFETCH(ECardApiResult::Major, major);
+			QFETCH(ECardApiResult::Minor, minor);
+			QFETCH(QString, message);
+			QFETCH(int, mRemainingDays);
+			QFETCH(int, mRemainingAttempts);
+			QFETCH(QString, mBlockingCode);
 
-			StartPaosResponse message(content);
-
-			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Ok);
-			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::null);
-			QVERIFY(message.getResult().getMessage().isNull());
-		}
-
-
-		void parse_ResultMajorResultMinor()
-		{
-			QByteArray content = TestFileHelper::readFile(":paos/StartPAOSResponse2.xml");
-
-			StartPaosResponse message(content);
-
-			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
-			QVERIFY(message.getResult().getMessage().isNull());
-		}
-
-
-		void parse_ResultMajorResultMinorResultMessage()
-		{
-			QByteArray content = TestFileHelper::readFile(":paos/StartPAOSResponse3.xml");
-
-			StartPaosResponse message(content);
-
-			QCOMPARE(message.getResult().getMajor(), ECardApiResult::Major::Error);
-			QCOMPARE(message.getResult().getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
-			QCOMPARE(message.getResult().getMessage(), QString("Detail message"));
+			QByteArray content = TestFileHelper::readFile(filename);
+			StartPaosResponse startPaosResponse(content);
+			QCOMPARE(startPaosResponse.getResult().getMajor(), major);
+			QCOMPARE(startPaosResponse.getResult().getMinor(), minor);
+			QCOMPARE(startPaosResponse.getResult().getMessage(), message);
+			QCOMPARE(startPaosResponse.getRemainingDays(), mRemainingDays);
+			QCOMPARE(startPaosResponse.getRemainingAttempts(), mRemainingAttempts);
+			QCOMPARE(startPaosResponse.getBlockingCode(), mBlockingCode);
 		}
 
 

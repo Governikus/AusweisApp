@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -21,7 +21,7 @@ Rectangle {
 	property string providerIcon: ""
 	property string address: ""
 	property string shortName: ""
-	property string shortDescription: ""
+	property string longName: ""
 	property alias buttonColor: button.buttonColor
 
 	function clickButton() {
@@ -95,13 +95,11 @@ Rectangle {
 		activeFocusOnTab: true
 
 		textStyle: Style.text.header
-		text: shortDescription !== "" ? shortDescription : shortName
+		text: longName
 		elide: Text.ElideRight
 		maximumLineCount: 2
 
-		FocusFrame {
-			borderColor: Style.color.focus_indicator
-		}
+		FocusFrame {}
 	}
 
 	GButton {

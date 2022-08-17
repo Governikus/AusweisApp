@@ -5,10 +5,10 @@
 #include "states/StateEstablishPaceChannel.h"
 
 #include "AppSettings.h"
-#include "context/ChangePinContext.h"
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
+#include "context/ChangePinContext.h"
 
 #include <QtTest>
 
@@ -22,26 +22,6 @@ class MockEstablishPaceChannelCommand
 	public:
 		explicit MockEstablishPaceChannelCommand(const QSharedPointer<MockCardConnectionWorker>& pCardConnectionWorker, PacePasswordId pPacePasswordId)
 			: EstablishPaceChannelCommand(pCardConnectionWorker, pPacePasswordId, QByteArray(), QByteArray(), QByteArray())
-		{
-		}
-
-
-		void setReturnCode(CardReturnCode pCode)
-		{
-			mReturnCode = pCode;
-		}
-
-
-};
-
-class MockUnblockPinCommand
-	: public UnblockPinCommand
-{
-	Q_OBJECT
-
-	public:
-		explicit MockUnblockPinCommand(const QSharedPointer<MockCardConnectionWorker>& pCardConnectionWorker)
-			: UnblockPinCommand(pCardConnectionWorker, QByteArray())
 		{
 		}
 

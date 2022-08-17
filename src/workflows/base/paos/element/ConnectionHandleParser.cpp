@@ -14,16 +14,18 @@ ConnectionHandleParser::ConnectionHandleParser(QSharedPointer<QXmlStreamReader> 
 }
 
 
-ConnectionHandleParser::~ConnectionHandleParser()
-{
-}
+ConnectionHandleParser::~ConnectionHandleParser() = default;
 
 
 ConnectionHandle ConnectionHandleParser::parse()
 {
 	ConnectionHandle connectionHandle;
 
-	QString contexthandle, ifdName, slotIndex, cardApplication, slotHandle;
+	QString contexthandle;
+	QString ifdName;
+	QString slotIndex;
+	QString cardApplication;
+	QString slotHandle;
 	while (readNextStartElement())
 	{
 		qCDebug(paos) << mXmlReader->name();

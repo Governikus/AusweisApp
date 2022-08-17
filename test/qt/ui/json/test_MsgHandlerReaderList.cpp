@@ -4,10 +4,10 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include "messages/MsgHandlerReader.h"
 #include "MessageDispatcher.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
+#include "messages/MsgHandlerReader.h"
 
 #include <QtTest>
 
@@ -35,11 +35,23 @@ class test_MsgHandlerReaderList
 		}
 
 
+		void apiLevel1Reader()
+		{
+			MessageDispatcher dispatcher;
+			const QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"msg":"READER_LIST","readers":[]})"));
+
+			const QByteArray msgLevel = (R"({"cmd": "SET_API_LEVEL", "level": 1})");
+			QCOMPARE(dispatcher.processCommand(msgLevel), QByteArray(R"({"current":1,"msg":"API_LEVEL"})"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"msg":"READER_LIST","reader":[]})"));
+		}
+
+
 		void noReader()
 		{
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"reader\":[]}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"readers\":[]}"));
 		}
 
 
@@ -49,7 +61,7 @@ class test_MsgHandlerReaderList
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"reader\":[{\"attached\":true,\"card\":null,\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"readers\":[{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
 		}
 
 
@@ -60,7 +72,7 @@ class test_MsgHandlerReaderList
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"reader\":[{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"readers\":[{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
 		}
 
 
@@ -88,12 +100,12 @@ class test_MsgHandlerReaderList
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
 
-			QByteArray expected("{\"msg\":\"READER_LIST\",\"reader\":["
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"name\":\"MockReader 0815\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"keypad\":false,\"name\":\"ReaderMock\"},"
-								"{\"attached\":true,\"card\":null,\"keypad\":false,\"name\":\"ReaderMockXYZ\"},"
-								"{\"attached\":true,\"card\":null,\"keypad\":false,\"name\":\"SpecialMock\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"keypad\":false,\"name\":\"SpecialMockWithGermanCard\"}"
+			QByteArray expected("{\"msg\":\"READER_LIST\",\"readers\":["
+								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"ReaderMock\"},"
+								"{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"name\":\"ReaderMockXYZ\"},"
+								"{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"name\":\"SpecialMock\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"name\":\"SpecialMockWithGermanCard\"}"
 								"]}");
 
 			QCOMPARE(dispatcher.processCommand(msg), expected);

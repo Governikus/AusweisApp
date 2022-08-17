@@ -16,7 +16,7 @@ namespace governikus
 {
 
 /*!
- * \brief Represents a history entry, i.e. information of a successfull authentication
+ * \brief Represents a history entry, i.e. information of a successful authentication
  */
 class HistoryInfo
 {
@@ -54,10 +54,7 @@ class HistoryInfo
 		QStringList mRequestedData;
 
 	public:
-		HistoryInfo()
-		{
-		}
-
+		HistoryInfo() = default;
 
 		HistoryInfo(const QString& pSubjectName, const QString& pSubjectUrl, const QString& pUsage, const QDateTime& pDateTime, const QString& pTermOfUsage, const QStringList& pRequestedData);
 

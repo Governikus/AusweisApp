@@ -12,6 +12,7 @@
 
 #include <QMap>
 #include <QStringList>
+#include <QTimer>
 
 
 namespace governikus
@@ -26,18 +27,15 @@ class PcscReaderManagerPlugIn
 
 	private:
 		SCARDCONTEXT mContextHandle;
-		int mTimerId;
+		QTimer mTimer;
 		QMap<QString, Reader*> mReaders;
 
 	private:
 		PCSC_RETURNCODE readReaderNames(QStringList& pReaderNames);
 		void updateReaders();
-		inline QString extractReaderName(PCSC_CHAR_PTR pReaderPointer) const;
+		inline QString extractReaderName(const PCSC_CHAR_PTR pReaderPointer) const;
 		void removeReader(const QString& pReaderName);
 		void removeReaders(const QStringList& pReaderNames);
-
-	protected:
-		void timerEvent(QTimerEvent* pEvent) override;
 
 	public:
 		PcscReaderManagerPlugIn();

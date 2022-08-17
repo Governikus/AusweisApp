@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "NetworkManager.h"
+
 #include <QEventLoop>
 #include <QHostAddress>
 #include <QNetworkReply>
@@ -15,21 +17,36 @@
 namespace governikus
 {
 
+class ServerRequestorManager
+	: public NetworkManager
+{
+	Q_OBJECT
+
+	using NetworkManager::NetworkManager;
+};
+
 class HttpServerRequestor
 	: public QObject
 {
 	Q_OBJECT
 
 	private:
+		QPointer<NetworkManager> mNetworkManager;
 		QEventLoop mEventLoop;
 		QTimer mTimer;
 
-	public:
-		HttpServerRequestor();
-		~HttpServerRequestor() override;
+		[[nodiscard]] QPointer<NetworkManager> getNetworkManager(bool pCustomNetworkManager);
+		[[nodiscard]] QSharedPointer<QNetworkReply> waitForReply(QSharedPointer<QNetworkReply> pReply, int pTimeOut);
 
-		QSharedPointer<QNetworkReply> request(const QUrl& pUrl, int pTimeOut = 2000);
-		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost = QHostAddress::LocalHost, const QString& pPath = QStringLiteral("/eID-Client"));
+	public:
+		explicit HttpServerRequestor(bool pCustomNetworkManager = false);
+		~HttpServerRequestor() override = default;
+
+		[[nodiscard]] QSharedPointer<QNetworkReply> getRequest(const QUrl& pUrl, int pTimeOut = 2000);
+		[[nodiscard]] QSharedPointer<QNetworkReply> postRequest(const QUrl& pUrl, const QByteArray& pData, const QString& pContentType, int pTimeOut = 2000);
+		[[nodiscard]] QSharedPointer<QNetworkReply> deleteRequest(const QUrl& pUrl, int pTimeOut = 2000);
+
+		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost, const QString& pPath = QStringLiteral("/eID-Client"));
 
 	private Q_SLOTS:
 		void finished();

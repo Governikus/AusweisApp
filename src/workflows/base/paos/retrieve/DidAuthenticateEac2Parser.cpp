@@ -20,11 +20,6 @@ DidAuthenticateEac2Parser::DidAuthenticateEac2Parser()
 }
 
 
-DidAuthenticateEac2Parser::~DidAuthenticateEac2Parser()
-{
-}
-
-
 PaosMessage* DidAuthenticateEac2Parser::parseMessage()
 {
 	mDidAuthenticateEac2.reset(new DIDAuthenticateEAC2());
@@ -68,7 +63,7 @@ PaosMessage* DidAuthenticateEac2Parser::parseMessage()
 		}
 	}
 
-	return mParseError ? nullptr : mDidAuthenticateEac2.take();
+	return mParseError ? nullptr : mDidAuthenticateEac2.release();
 }
 
 
@@ -76,7 +71,8 @@ Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 {
 	Eac2InputType eac2;
 
-	QString ephemeralPublicKey, signature;
+	QString ephemeralPublicKey;
+	QString signature;
 	while (readNextStartElement())
 	{
 		qCDebug(paos) << mXmlReader->name();
@@ -108,10 +104,9 @@ Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 void DidAuthenticateEac2Parser::parseCertificate(Eac2InputType& pEac2)
 {
 	const QByteArray hexCvc = readElementText().toLatin1();
-	if (auto cvc = CVCertificate::fromHex(hexCvc))
+	if (auto cvc = CVCertificate::fromRaw(QByteArray::fromHex(hexCvc)))
 	{
 		pEac2.appendCvcert(cvc);
-		pEac2.appendCvcertAsBinary(QByteArray::fromHex(hexCvc));
 	}
 	else
 	{

@@ -5,13 +5,14 @@
 
 #include "KeyAgreement.h"
 
-#include "asn1/PaceInfo.h"
-#include "GABuilder.h"
 #include "GlobalStatus.h"
+#include "apdu/CommandApdu.h"
+#include "apdu/CommandData.h"
+#include "asn1/PaceInfo.h"
 #include "pace/CipherMac.h"
-#include "pace/ec/EcdhKeyAgreement.h"
 #include "pace/KeyDerivationFunction.h"
 #include "pace/SymmetricCipher.h"
+#include "pace/ec/EcdhKeyAgreement.h"
 
 #include <QLoggingCategory>
 
@@ -29,17 +30,17 @@ static QString getResponseErrorString(CardReturnCode pReturnCode, StatusCode pRe
 
 
 KeyAgreement::CardResult KeyAgreement::createTransmitResult(CardReturnCode pReturnCode,
-		StatusCode pResponseReturnCode,
+		const ResponseApdu& pResponseApdu,
 		const QByteArray& pResultData,
 		const char* pLogMessage) const
 {
-	if (pReturnCode == CardReturnCode::OK && pResponseReturnCode == StatusCode::SUCCESS)
+	if (pReturnCode == CardReturnCode::OK && pResponseApdu.getStatusCode() == StatusCode::SUCCESS)
 	{
 		return {pReturnCode, pResultData};
 	}
 
 	CardReturnCode newReturnCode = CardReturnCode::COMMAND_FAILED;
-	if (pResponseReturnCode == StatusCode::EMPTY)
+	if (pResponseApdu.isEmpty())
 	{
 		newReturnCode = CardReturnCode::RETRY_ALLOWED;
 	}
@@ -48,7 +49,7 @@ KeyAgreement::CardResult KeyAgreement::createTransmitResult(CardReturnCode pRetu
 		newReturnCode = CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	qCCritical(card).noquote() << pLogMessage << getResponseErrorString(newReturnCode, pResponseReturnCode);
+	qCCritical(card).noquote() << pLogMessage << getResponseErrorString(newReturnCode, pResponseApdu.getStatusCode());
 	return {newReturnCode};
 }
 
@@ -56,7 +57,7 @@ KeyAgreement::CardResult KeyAgreement::createTransmitResult(CardReturnCode pRetu
 QSharedPointer<KeyAgreement> KeyAgreement::create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 		QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
 {
-	if (pPaceInfo->getKeyAgreementType() == KeyAgreementType::ECDH)
+	if (pPaceInfo->getProtocol().getKeyAgreement() == KeyAgreementType::ECDH)
 	{
 		return EcdhKeyAgreement::create(pPaceInfo, pCardConnectionWorker);
 	}
@@ -80,9 +81,7 @@ KeyAgreement::KeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo, cons
 }
 
 
-KeyAgreement::~KeyAgreement()
-{
-}
+KeyAgreement::~KeyAgreement() = default;
 
 
 KeyAgreementStatus KeyAgreement::perform(const QByteArray& pPin)
@@ -149,21 +148,18 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 	QByteArray mutualAuthenticationCardData = cmac.generate(uncompressedCardPublicKey);
 
 	const GAMutualAuthenticationResponse response = transmitGAMutualAuthentication(mutualAuthenticationCardData);
-	if (response.getReturnCode() == StatusCode::EMPTY)
+	if (response.isEmpty())
 	{
 		return KeyAgreementStatus::RETRY_ALLOWED;
 	}
 
-	if (response.getReturnCode() == StatusCode::VERIFICATION_FAILED ||
-			response.getReturnCode() == StatusCode::PIN_BLOCKED ||
-			response.getReturnCode() == StatusCode::PIN_SUSPENDED ||
-			response.getReturnCode() == StatusCode::PIN_RETRY_COUNT_2)
+	if (response.getRetryCounter() < 3)
 	{
-		return KeyAgreementStatus::FAILED;
-	}
+		if (response.getSW1() == SW1::NONVOLATILE_MEMORY_CHANGED_1)
+		{
+			return KeyAgreementStatus::FAILED;
+		}
 
-	if (response.getReturnCode() != StatusCode::SUCCESS)
-	{
 		return KeyAgreementStatus::PROTOCOL_ERROR;
 	}
 
@@ -185,48 +181,61 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 {
-	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
+	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
+	cmdApdu.enableCommandChaining();
 
-	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
+	const auto& [returnCode, responseApdu] = mCardConnectionWorker->transmit(cmdApdu);
 	const GAEncryptedNonceResponse response(responseApdu);
-	return createTransmitResult(returnCode, response.getReturnCode(), response.getEncryptedNonce(), "Error on GA (Encrypted Nonce):");
+	return createTransmitResult(returnCode, responseApdu, response.getEncryptedNonce(), "Error on GA (Encrypted Nonce):");
 }
 
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey)
 {
-	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
-	commandBuilder.setPaceEphemeralPublicKey(pEphemeralPublicKey);
+	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(CommandData::PACE_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
+	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
+	cmdApdu.enableCommandChaining();
 
-	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
+	const auto& [returnCode, responseApdu] = mCardConnectionWorker->transmit(cmdApdu);
 	const GAPerformKeyAgreementResponse response(responseApdu);
-	return createTransmitResult(returnCode, response.getReturnCode(), response.getEphemeralPublicKey(), "Error on GA(Perform Key Agreement):");
+	return createTransmitResult(returnCode, responseApdu, response.getEphemeralPublicKey(), "Error on GA(Perform Key Agreement):");
 }
 
 
 KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData) const
 {
 	// sende den PublicKey (D.3.4.)
-	GABuilder commandBuilder(CommandApdu::CLA_COMMAND_CHAINING);
-	commandBuilder.setPaceMappingData(pMappingData);
+	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(CommandData::MAPPING_DATA, pMappingData);
+	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
+	cmdApdu.enableCommandChaining();
 
-	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(cmdApdu);
 	const GAMapNonceResponse response(responseApdu);
-	return createTransmitResult(returnCode, response.getReturnCode(), response.getMappingData(), "Error on GA(Mapping Data):");
+	return createTransmitResult(returnCode, responseApdu, response.getMappingData(), "Error on GA(Mapping Data):");
 }
 
 
 GAMutualAuthenticationResponse KeyAgreement::transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData)
 {
-	GABuilder commandBuilder(CommandApdu::CLA);
-	commandBuilder.setPaceAuthenticationToken(pMutualAuthenticationData);
+	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(CommandData::AUTHENTICATION_TOKEN, pMutualAuthenticationData);
+	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 
-	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(commandBuilder.build());
-	if (returnCode != CardReturnCode::OK || responseApdu.getReturnCode() != StatusCode::SUCCESS)
+	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(cmdApdu);
+	if (returnCode != CardReturnCode::OK || responseApdu.getStatusCode() != StatusCode::SUCCESS)
 	{
-		qCCritical(card) << "Error on GA(Mutual Authentication):" << getResponseErrorString(returnCode, responseApdu.getReturnCode());
+		qCCritical(card) << "Error on GA(Mutual Authentication):" << getResponseErrorString(returnCode, responseApdu.getStatusCode());
 	}
 	return GAMutualAuthenticationResponse(responseApdu);
+}
+
+
+const QSharedPointer<const PaceInfo>& KeyAgreement::getPaceInfo() const
+{
+	return mPaceInfo;
 }
 
 

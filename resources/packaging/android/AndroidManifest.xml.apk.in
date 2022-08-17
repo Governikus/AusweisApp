@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
-<manifest package="@BUNDLE_IDENTIFIER@"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionName="@ANDROID_VERSION_NAME@"
+    package="@BUNDLE_IDENTIFIER@"
+    android:installLocation="auto"
     android:versionCode="@ANDROID_VERSION_CODE@"
-    android:installLocation="auto">
+    android:versionName="@ANDROID_VERSION_NAME@">
+
+    <uses-sdk tools:overrideLibrary="de.bdr.eid_applet_service_lib, com.tsystems.optimos.tsms.tsm_api_sdk" />
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,8 +14,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.NFC"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <queries>
         <intent>
@@ -22,157 +24,115 @@
         </intent>
     </queries>
 
-    <!-- The following comment will be replaced upon deployment with default features based on the dependencies of the application.
-         Remove the comment if you do not require these default features. -->
-    <!-- %%INSERT_FEATURES -->
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
 
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true" />
 
-    <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
+    <application
+        android:name="org.qtproject.qt.android.bindings.QtApplication"
+        android:allowBackup="true"
+        android:allowNativeHeapPointerTagging="false"
+        android:dataExtractionRules="@xml/backup_rules"
+        android:extractNativeLibs="true"
+        android:fullBackupContent="@xml/backup_rules_legacy"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/npa"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme.Launcher"
+        tools:targetApi="31">
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.4" />
 
-    <application android:hardwareAccelerated="true"
-                android:name="org.qtproject.qt5.android.bindings.QtApplication"
-                android:label="@string/app_name"
-                android:icon="@mipmap/npa"
-                android:theme="@style/AppTheme.Launcher"
-                android:allowBackup="true"
-                android:fullBackupContent="@xml/backup_rules"
-                android:extractNativeLibs="true"
-                android:allowNativeHeapPointerTagging="false"
-                tools:targetApi="30">
-        <meta-data android:name="android.max_aspect" android:value="2.4" />
-
-        <receiver android:name="com.governikus.ausweisapp2.UpdateReceiver" >
+        <receiver
+            android:name="com.governikus.ausweisapp2.UpdateReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 
-        <provider android:name="androidx.core.content.FileProvider"
-                  android:authorities="${applicationId}"
-                  android:exported="false"
-                  android:grantUriPermissions="true">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
-                       android:resource="@xml/fileprovider"/>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider" />
         </provider>
 
-        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
-                  android:name="com.governikus.ausweisapp2.MainActivity"
-                  android:label="@string/app_name"
-                  android:launchMode="singleTask"
-                  android:resizeableActivity="false"
-                  tools:targetApi="24">
+        <activity
+            android:name="com.governikus.ausweisapp2.MainActivity"
+            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:resizeableActivity="false">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="eid" android:host="127.0.0.1" android:port="24727" android:path="/eID-Client"/>
-                <data android:scheme="http" android:host="localhost" android:port="24727" android:path="/eID-Client" />
+
+                <data
+                    android:host="127.0.0.1"
+                    android:path="/eID-Client"
+                    android:port="24727"
+                    android:scheme="eid" />
+                <data
+                    android:host="localhost"
+                    android:path="/eID-Client"
+                    android:port="24727"
+                    android:scheme="http" />
             </intent-filter>
 
-            <!-- Application arguments -->
-            <!-- meta-data android:name="android.app.arguments" android:value="arg1 arg2 arg3"/ -->
-            <!-- Application arguments -->
-
-            <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
-            <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
-            <meta-data android:name="android.app.repository" android:value="default"/>
-            <meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>
-            <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
-            <!-- Deploy Qt libs as part of package -->
-            <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <!-- Run with local libs -->
-            <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
-            <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
-            <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
-            <!--  Messages maps -->
-            <meta-data android:value="@string/ministro_not_found_msg" android:name="android.app.ministro_not_found_msg"/>
-            <meta-data android:value="@string/ministro_needed_msg" android:name="android.app.ministro_needed_msg"/>
-            <meta-data android:value="@string/fatal_error_msg" android:name="android.app.fatal_error_msg"/>
-            <meta-data android:value="@string/unsupported_android_version" android:name="android.app.unsupported_android_version"/>
-            <!--  Messages maps -->
-
             <!-- Splash screen -->
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/bg_splash_screen"/>
-            <meta-data android:name="android.app.splash_screen_sticky" android:value="true"/>
+            <meta-data
+                android:name="android.app.splash_screen_drawable"
+                android:resource="@drawable/bg_splash_screen" />
+            <meta-data
+                android:name="android.app.splash_screen_sticky"
+                android:value="true" />
             <!-- Splash screen -->
 
-            <!-- Background running -->
-            <!-- Warning: changing this value to true may cause unexpected crashes if the
-                          application still try to draw after
-                          "applicationStateChanged(Qt::ApplicationSuspended)"
-                          signal is sent! -->
-            <meta-data android:name="android.app.background_running" android:value="false"/>
-            <!-- Background running -->
-
-            <!-- auto screen scale factor -->
-            <meta-data android:name="android.app.auto_screen_scale_factor" android:value="false"/>
-            <!-- auto screen scale factor -->
-
-            <!-- extract android style -->
-            <!-- available android:values :
-                * full - useful QWidget & Quick Controls 1 apps
-                * minimal - useful for Quick Controls 2 apps, it is much faster than "full"
-                * none - useful for apps that don't use any of the above Qt modules
-                -->
-            <meta-data android:name="android.app.extract_android_style" android:value="minimal"/>
-            <!-- extract android style -->
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="-- %%INSERT_APP_LIB_NAME%% --" />
+            <meta-data
+                android:name="android.app.background_running"
+                android:value="false" />
+            <meta-data
+                android:name="android.app.extract_android_style"
+                android:value="minimal" />
         </activity>
 
-        <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-
         <service
-            android:process=":ausweisapp2_service"
+            android:name="com.governikus.ausweisapp2.AusweisApp2LocalIfdService"
+            android:enabled="@LOCAL_IFD_SERVICE_ENABLED@"
+            android:exported="@LOCAL_IFD_SERVICE_ENABLED@"
             android:label="@string/app_name"
-            android:enabled="true"
-            android:name="com.governikus.ausweisapp2.AusweisApp2Service"
-            android:exported="true"
-            >
-            <!--<service android:process=":qt" android:enabled="true" android:name="org.qtproject.qt5.android.bindings.QtService">-->
-            <!-- android:process=":qt" is needed to force the service to run on a separate process than the Activity -->
+            android:process=":ausweisapp2_local_ifd_service">
 
-            <!-- Application arguments -->
-            <meta-data android:name="android.app.arguments" android:value="--ui aidl"/>
-            <!-- Application arguments -->
-
-            <!-- If you are using the same application (.so file) for activity and also for service, then you
-                 need to use *android.app.arguments* to pass some arguments to your service in order to know which
-                 one is which
-             -->
-
-            <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
-            <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
-            <meta-data android:name="android.app.repository" android:value="default"/>
-            <meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>
-            <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
-            <!-- Deploy Qt libs as part of package -->
-            <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
-            <!-- Run with local libs -->
-            <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
-            <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
-            <meta-data android:name="android.app.load_local_libs_resource_id" android:resource="@array/load_local_libs"/>
-            <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
-            <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
-            <!--  Messages maps -->
-            <meta-data android:value="@string/ministro_not_found_msg" android:name="android.app.ministro_not_found_msg"/>
-            <meta-data android:value="@string/ministro_needed_msg" android:name="android.app.ministro_needed_msg"/>
-            <meta-data android:value="@string/fatal_error_msg" android:name="android.app.fatal_error_msg"/>
-            <!--  Messages maps -->
-
-
-            <!-- Background running -->
-            <meta-data android:name="android.app.background_running" android:value="true"/>
-            <!-- Background running -->
-
+            <meta-data
+                android:name="android.app.arguments"
+                android:value="--ui localifd" />
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="-- %%INSERT_APP_LIB_NAME%% --" />
 
             <intent-filter>
-                <action android:name="com.governikus.ausweisapp2.START_SERVICE" />
+                <action android:name="com.governikus.ausweisapp2.START_LOCAL_IFD_SERVICE" />
             </intent-filter>
         </service>
 

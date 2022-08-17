@@ -15,14 +15,19 @@ class TestWorkflowContext
 	Q_OBJECT
 
 	public:
-		TestWorkflowContext(bool pCanAllowed = false);
+		TestWorkflowContext(bool pCanAllowed = false, Action pAction = Action::AUTH);
 		~TestWorkflowContext() override = default;
 
 		[[nodiscard]] bool isCanAllowedMode() const override;
 		void setCanAllowedMode(bool pCanAllowed);
 
+
+		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+		void setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes);
+
 	private:
 		bool mCanAllowed;
+		QVector<AcceptedEidType> mAcceptedEidTypes;
 };
 
 } // namespace governikus

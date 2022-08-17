@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "paos/ResponseType.h"
 #include "PaosCreator.h"
+#include "paos/ResponseType.h"
 
 #include <QByteArrayList>
 #include <QString>
@@ -22,6 +22,8 @@ class DIDAuthenticateResponseEAC1
 	: public PaosCreator
 	, public ResponseType
 {
+	Q_DISABLE_COPY(DIDAuthenticateResponseEAC1)
+
 	private:
 		QByteArray mCertificateHolderAuthorizationTemplate;
 		QByteArrayList mCertificationAuthorityReferences;
@@ -35,11 +37,9 @@ class DIDAuthenticateResponseEAC1
 		void createBodyElement() override;
 		[[nodiscard]] virtual ECardApiResult getResult() const;
 
-		Q_DISABLE_COPY(DIDAuthenticateResponseEAC1)
-
 	public:
 		DIDAuthenticateResponseEAC1();
-		~DIDAuthenticateResponseEAC1() override;
+		~DIDAuthenticateResponseEAC1() override = default;
 
 
 		[[nodiscard]] const QByteArray& getCertificateHolderAuthorizationTemplate() const;

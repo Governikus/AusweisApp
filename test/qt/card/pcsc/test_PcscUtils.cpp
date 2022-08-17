@@ -50,7 +50,7 @@ class test_PcscUtils
 
 		void checkLength()
 		{
-			using uPCSC_RETURNCODE = std::make_unsigned<PCSC_RETURNCODE>::type;
+			using uPCSC_RETURNCODE = std::make_unsigned_t<PCSC_RETURNCODE>;
 
 			const auto& getString = [](PcscUtils::PcscReturnCode pCode){
 						return QByteArray::fromStdString(std::to_string(static_cast<uPCSC_RETURNCODE>(pCode)));

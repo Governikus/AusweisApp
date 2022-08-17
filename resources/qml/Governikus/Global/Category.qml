@@ -4,14 +4,12 @@
 
 pragma Singleton
 
-import QtQuick 2.12
-
-import Governikus.Type.Random 1.0
+import QtQuick 2.15
 
 QtObject {
 
-	readonly property color categoryColorNone: "#4d7aa4"
-	readonly property color categoryColorAll: "#4d7aa4"
+	readonly property color categoryColorNone: "#164a8c"
+	readonly property color categoryColorAll: "#164a8c"
 	readonly property color categoryColorCitizen: "#851e6b"
 	readonly property color categoryColorInsurance: "#53428c"
 	readonly property color categoryColorFinance: "#693800"

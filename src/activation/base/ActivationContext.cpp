@@ -11,3 +11,9 @@ ActivationContext::ActivationContext()
 	: mSendError()
 {
 }
+
+
+void ActivationContext::setSendError(const QString& pError)
+{
+	mSendError = pError;
+}

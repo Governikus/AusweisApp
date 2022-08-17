@@ -15,8 +15,3 @@ INIT_FUNCTION([] {
 DatagramHandler::DatagramHandler(bool)
 {
 }
-
-
-DatagramHandler::~DatagramHandler()
-{
-}

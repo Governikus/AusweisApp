@@ -2,21 +2,24 @@
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.PasswordType 1.0
 
 Item {
 	id: root
 
-	property int passwordType: NumberModel.PASSWORD_PIN
+	property int passwordType: PasswordType.PIN
 	property real scaleFactorGeneral: 1
 	property real scaleFactorCan: 1
 	property alias textStyle: imageDescriptionText.textStyle
 
-	implicitHeight: infoImage.implicitHeight + Constants.component_spacing + imageDescriptionText.implicitHeight
+	visible: infoImage.source.toString() !== ""
+
+	implicitHeight: infoImage.implicitHeight + (imageDescriptionText.visible ? (Constants.component_spacing + imageDescriptionText.implicitHeight) : 0)
 	implicitWidth: Math.max(infoImageContainer.width, imageDescriptionText.implicitWidth)
 	height: root.implicitHeight
 	width: root.implicitWidth
@@ -27,7 +30,7 @@ Item {
 		property bool alternativeLetter: true
 
 		interval: 6000
-		running: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
+		running: passwordType === PasswordType.PIN || passwordType === PasswordType.PUK
 		repeat: true
 		onTriggered: alternativeLetter = !alternativeLetter
 	}
@@ -44,19 +47,20 @@ Item {
 			id: infoImage
 
 			width: parent.width
-			sourceSize.width: passwordType === NumberModel.PASSWORD_CAN ? 400 * scaleFactorCan : 200 * scaleFactorGeneral
+			sourceSize.width: passwordType === PasswordType.CAN ? 400 * scaleFactorCan : 200 * scaleFactorGeneral
 			anchors.fill: parent
 
 			fillMode: Image.PreserveAspectFit
-			source: passwordType === NumberModel.PASSWORD_CAN ? "qrc:///images/id_card.png"
-					: passwordType === NumberModel.PASSWORD_REMOTE_PIN ? "qrc:///images/phone_to_pc.svg"
+			source: passwordType === PasswordType.CAN ? "qrc:///images/id_card.png"
+					: passwordType === PasswordType.REMOTE_PIN ? "qrc:///images/phone_to_pc.svg"
+					: passwordType === PasswordType.SMART_PIN || passwordType === PasswordType.NEW_SMART_PIN || passwordType === PasswordType.SMART_BLOCKING_CODE ? ""
 					: "qrc:///images/pin_letter_pinpuk_same_page.svg"
 
 			Rectangle {
 				readonly property real leftEdge: (parent.width - parent.paintedWidth) / 2.0
 				readonly property real topEdge: (parent.height - parent.paintedHeight) / 2.0
 
-				visible: passwordType === NumberModel.PASSWORD_CAN
+				visible: passwordType === PasswordType.CAN
 				height: parent.paintedWidth * 0.0625
 				width: parent.paintedWidth * 0.2
 				anchors.top: parent.top
@@ -91,7 +95,7 @@ Item {
 		Image {
 			id: pinPukVariantB
 
-			visible: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
+			visible: passwordType === PasswordType.PIN || passwordType === PasswordType.PUK
 
 			opacity: 0.0
 			width: parent.width
@@ -107,7 +111,7 @@ Item {
 	GText {
 		id: imageDescriptionText
 
-		visible: passwordType === NumberModel.PASSWORD_PIN || passwordType === NumberModel.PASSWORD_PUK
+		visible: passwordType === PasswordType.PIN || passwordType === PasswordType.PUK
 
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
@@ -115,9 +119,9 @@ Item {
 		textStyle: Style.text.normal
 		text: (imageChangeTimer.alternativeLetter ?
 			//: LABEL
-			qsTr("PIN/PUK on different pages") :
+			qsTr("ID card PIN/PUK on different pages") :
 			//: LABEL
-			qsTr("PIN/PUK on the same page")
+			qsTr("ID card PIN/PUK on the same page")
 			)
 	}
 }

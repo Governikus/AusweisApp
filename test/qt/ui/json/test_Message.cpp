@@ -8,7 +8,9 @@
 
 #include "InternalActivationContext.h"
 #include "ReaderManager.h"
-#include "VersionInfo.h"
+#include "states/StateEnterPacePassword.h"
+
+#include "TestWorkflowContext.h"
 
 #include <QSignalSpy>
 #include <QtTest>
@@ -89,21 +91,6 @@ class test_Message
 		}
 
 
-		void info()
-		{
-			QByteArray msg(R"({"cmd": "GET_INFO"})");
-			MessageDispatcher dispatcher;
-			auto versionInfo = VersionInfo::getInstance().toJson(QJsonDocument::Compact);
-
-			const auto& result = dispatcher.processCommand(msg);
-			QCOMPARE(result, MsgType::INFO);
-			const QByteArray data = result;
-			QVERIFY(data.contains(versionInfo));
-			QVERIFY(data.contains("\"VersionInfo\":{"));
-			QVERIFY(data.contains("\"msg\":\"INFO\""));
-		}
-
-
 		void createMsgHandlerReader()
 		{
 			MessageDispatcher dispatcher;
@@ -115,20 +102,21 @@ class test_Message
 
 		void processStateEnterPacePassword()
 		{
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(QSharedPointer<WorkflowContext>(new WorkflowContext()));
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-			const auto& msg = dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword"));
+			const auto& msg = dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>());
 			QCOMPARE(msg, QByteArray("{\"msg\":\"ENTER_PIN\"}"));
 		}
 
 
 		void processStateApprovedOfUnhandledState()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			QVERIFY(!context->isStateApproved());
 			QCOMPARE(dispatcher.processStateChange(QStringLiteral("SomeUnknownState")), QByteArray());
@@ -138,9 +126,9 @@ class test_Message
 
 		void processUnhandledStateAndHandledCmd()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			context->setReaderName("dummy");
 			QVERIFY(!context->isStateApproved());
@@ -153,7 +141,7 @@ class test_Message
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
 			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
-			QVERIFY(!dispatcher.processStateChange(QStringLiteral("StateEnterPacePassword")).isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>())).isEmpty());
 			QVERIFY(!context->isStateApproved());
 
 			auto expectedEnterCan = QByteArray(R"({"error":"You must provide 6 digits","msg":"ENTER_CAN"})");
@@ -178,8 +166,9 @@ class test_Message
 
 		void processEmptyState()
 		{
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(QSharedPointer<WorkflowContext>(new WorkflowContext()));
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			const auto& msg = dispatcher.processStateChange(QString());
 			QCOMPARE(msg, QByteArray("{\"error\":\"Unexpected condition\",\"msg\":\"INTERNAL_ERROR\"}"));
@@ -188,9 +177,9 @@ class test_Message
 
 		void acceptResultsInBadState()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			QVERIFY(!context->isStateApproved());
 			QByteArray msg = R"({"cmd": "ACCEPT"})";
@@ -209,11 +198,11 @@ class test_Message
 
 		void cancel()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			QSignalSpy spy(context.data(), &WorkflowContext::fireCancelWorkflow);
 
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			QVERIFY(!context->isStateApproved());
 			QVERIFY(!context->isWorkflowCancelled());
@@ -235,7 +224,7 @@ class test_Message
 			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setRefreshUrl(QUrl("http://dummy"));
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
 			QCOMPARE(dispatcher.finish(), QByteArray("{\"msg\":\"AUTH\",\"result\":{\"major\":\"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\"},\"url\":\"http://dummy\"}"));
 		}
@@ -243,9 +232,9 @@ class test_Message
 
 		void finishWorkflowContext()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			QCOMPARE(dispatcher.finish(), QByteArray());
 		}

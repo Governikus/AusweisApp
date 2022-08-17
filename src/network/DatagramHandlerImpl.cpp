@@ -114,13 +114,105 @@ bool DatagramHandlerImpl::isBound() const
 
 bool DatagramHandlerImpl::send(const QByteArray& pData)
 {
-	if (!sendToAllAddressEntries(pData, 0))
+	return sendToAllAddressEntries(pData, 0);
+}
+
+
+bool DatagramHandlerImpl::isValidBroadcastInterface(const QNetworkInterface& pInterface) const
+{
+	if (!pInterface.isValid())
 	{
-		qCDebug(network) << "Socket error, resetting broadcasting socket.";
-		resetSocket();
 		return false;
 	}
+
+	const auto& flags = pInterface.flags();
+
+	if (flags.testFlag(QNetworkInterface::IsLoopBack) || flags.testFlag(QNetworkInterface::IsPointToPoint))
+	{
+		return false;
+	}
+
+	if (!flags.testFlag(QNetworkInterface::CanBroadcast) && !flags.testFlag(QNetworkInterface::CanMulticast))
+	{
+		return false;
+	}
+
+	if (!flags.testFlag(QNetworkInterface::IsUp) || !flags.testFlag(QNetworkInterface::IsRunning))
+	{
+		return false;
+	}
+
+#ifdef Q_OS_MACOS
+	// Excluding not documented interface of the T2 Coprocessor on macOS,  which does not accept broadcasts.
+	// https://duo.com/labs/research/apple-t2-xpc
+	if (pInterface.hardwareAddress().toLower() == QLatin1String("ac:de:48:00:11:22"))
+	{
+		return false;
+	}
+#endif
+
 	return true;
+}
+
+
+QVector<QHostAddress> DatagramHandlerImpl::getAllBroadcastAddresses(const QNetworkInterface& pInterface) const
+{
+	QVector<QHostAddress> broadcastAddresses;
+
+	if (!isValidBroadcastInterface(pInterface))
+	{
+		return broadcastAddresses;
+	}
+
+	bool skipFurtherIPv6AddressesOnThisInterface = false;
+
+	const auto& entries = pInterface.addressEntries();
+	for (const QNetworkAddressEntry& addressEntry : entries)
+	{
+		const auto ipAddr = addressEntry.ip();
+		switch (ipAddr.protocol())
+		{
+			case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
+			{
+				const QHostAddress& broadcastAddr = addressEntry.broadcast();
+				if (broadcastAddr.isNull() || !ipAddr.isGlobal())
+				{
+					continue;
+				}
+
+				broadcastAddresses += broadcastAddr;
+				break;
+			}
+
+			case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
+			{
+				if (skipFurtherIPv6AddressesOnThisInterface)
+				{
+					continue;
+				}
+
+				const QString& scopeId = ipAddr.scopeId();
+				if (scopeId.isEmpty() || !(ipAddr.isLinkLocal() || ipAddr.isUniqueLocalUnicast()))
+				{
+					continue;
+				}
+
+				QHostAddress scopedMulticastAddress(QStringLiteral("ff02::1"));
+				scopedMulticastAddress.setScopeId(scopeId);
+				broadcastAddresses += scopedMulticastAddress;
+
+				skipFurtherIPv6AddressesOnThisInterface = true;
+				break;
+			}
+
+			default:
+			{
+				qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
+			}
+		}
+	}
+
+	return broadcastAddresses;
 }
 
 
@@ -131,67 +223,7 @@ bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 	const auto& interfaces = QNetworkInterface::allInterfaces();
 	for (const QNetworkInterface& interface : interfaces)
 	{
-		bool skipFurtherIPv6AddressesOnThisInterface = false;
-
-#ifdef Q_OS_MACOS
-		// Excluding not documented interface of the T2 Coprocessor on macOS,  which does not accept broadcasts.
-		// https://duo.com/labs/research/apple-t2-xpc
-		if (interface.hardwareAddress().toLower() == QLatin1String("ac:de:48:00:11:22"))
-		{
-			continue;
-		}
-#endif
-
-		const auto& entries = interface.addressEntries();
-		for (const QNetworkAddressEntry& addressEntry : entries)
-		{
-			const auto ipAddr = addressEntry.ip();
-			if (ipAddr.isLoopback())
-			{
-				continue;
-			}
-
-			switch (ipAddr.protocol())
-			{
-				case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
-				{
-					const QHostAddress& broadcastAddr = addressEntry.broadcast();
-					if (broadcastAddr.isNull() || !ipAddr.isGlobal())
-					{
-						continue;
-					}
-
-					broadcastAddresses += broadcastAddr;
-					break;
-				}
-
-				case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
-				{
-					if (skipFurtherIPv6AddressesOnThisInterface)
-					{
-						continue;
-					}
-
-					const QString& scopeId = ipAddr.scopeId();
-					if (scopeId.isEmpty() || !(ipAddr.isLinkLocal() || ipAddr.isUniqueLocalUnicast()))
-					{
-						continue;
-					}
-
-					QHostAddress scopedMulticastAddress = QHostAddress(QStringLiteral("ff02::1"));
-					scopedMulticastAddress.setScopeId(scopeId);
-					broadcastAddresses += scopedMulticastAddress;
-
-					skipFurtherIPv6AddressesOnThisInterface = true;
-					break;
-				}
-
-				default:
-				{
-					qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
-				}
-			}
-		}
+		broadcastAddresses << getAllBroadcastAddresses(interface);
 	}
 
 	if (broadcastAddresses.isEmpty())

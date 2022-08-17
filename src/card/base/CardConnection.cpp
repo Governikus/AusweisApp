@@ -48,6 +48,14 @@ bool CardConnection::getPacePinSuccessful() const
 }
 
 
+void CardConnection::setKeepAlive(bool pEnabled)
+{
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pEnabled] {
+			mCardConnectionWorker->setKeepAlive(pEnabled);
+		});
+}
+
+
 void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage, pProgress] {
@@ -56,23 +64,9 @@ void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
-bool CardConnection::stopSecureMessaging()
-{
-	bool result;
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), &CardConnectionWorker::stopSecureMessaging, Qt::BlockingQueuedConnection, &result);
-	return result;
-}
-
-
 UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
 {
 	return new UpdateRetryCounterCommand(mCardConnectionWorker);
-}
-
-
-UnblockPinCommand* CardConnection::createUnblockPinCommand(const QByteArray& pPuk)
-{
-	return new UnblockPinCommand(mCardConnectionWorker, pPuk);
 }
 
 
@@ -102,10 +96,11 @@ DidAuthenticateEAC1Command* CardConnection::createDidAuthenticateEAC1Command()
 
 DidAuthenticateEAC2Command* CardConnection::createDidAuthenticateEAC2Command(
 		const CVCertificateChain& pCvcChain, const QByteArray& pEphemeralPublicKeyAsHex,
-		const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
+		const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary,
+		const QByteArray& pPin)
 {
 	return new DidAuthenticateEAC2Command(mCardConnectionWorker, pCvcChain,
-			pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary);
+			pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary, pPin);
 }
 
 

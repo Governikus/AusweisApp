@@ -8,6 +8,8 @@
 
 using namespace governikus;
 
+QVector<std::function<void()>> ReaderManager::cMainThreadInit;
+
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
@@ -36,6 +38,12 @@ ReaderManager::~ReaderManager()
 }
 
 
+void ReaderManager::addMainThreadInit(const std::function<void()>& pFunc)
+{
+	cMainThreadInit << pFunc;
+}
+
+
 void ReaderManager::init()
 {
 	const QMutexLocker mutexLocker(&mMutex);
@@ -48,6 +56,12 @@ void ReaderManager::init()
 
 	if (mWorker.isNull())
 	{
+		for (const auto& func : qAsConst(cMainThreadInit))
+		{
+			func();
+		}
+		cMainThreadInit.clear();
+
 		mWorker = new ReaderManagerWorker();
 		mWorker->moveToThread(&mThread);
 
@@ -55,29 +69,29 @@ void ReaderManager::init()
 		connect(&mThread, &QThread::finished, mWorker.data(), &QObject::deleteLater);
 		connect(mWorker.data(), &ReaderManagerWorker::fireInitialized, this, &ReaderManager::fireInitialized);
 
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderAdded, this, &ReaderManager::doUpdateCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderRemoved, this, &ReaderManager::doRemoveCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderPropertiesUpdated, this, &ReaderManager::doUpdateCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardInserted, this, &ReaderManager::doUpdateCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardRemoved, this, &ReaderManager::doUpdateCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardRetryCounterChanged, this, &ReaderManager::doUpdateCacheEntry);
-		connect(mWorker.data(), &ReaderManagerWorker::firePluginAdded, this, &ReaderManager::doFullUpdateCache);
-		connect(mWorker.data(), &ReaderManagerWorker::fireStatusChanged, this, &ReaderManager::doFullUpdateCache);
-
+		connect(mWorker.data(), &ReaderManagerWorker::firePluginAdded, this, &ReaderManager::doUpdatePluginCache);
 		connect(mWorker.data(), &ReaderManagerWorker::firePluginAdded, this, &ReaderManager::firePluginAdded);
-		connect(mWorker.data(), &ReaderManagerWorker::fireStatusChanged, this, &ReaderManager::fireStatusChanged);
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderAdded, this, &ReaderManager::fireReaderAdded);
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderRemoved, this, &ReaderManager::fireReaderRemoved);
-		connect(mWorker.data(), &ReaderManagerWorker::fireReaderPropertiesUpdated, this, &ReaderManager::fireReaderPropertiesUpdated);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardInserted, this, &ReaderManager::fireCardInserted);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardRemoved, this, &ReaderManager::fireCardRemoved);
-		connect(mWorker.data(), &ReaderManagerWorker::fireCardRetryCounterChanged, this, &ReaderManager::fireCardRetryCounterChanged);
 
-		connect(this, &ReaderManager::fireReaderAdded, this, &ReaderManager::fireReaderEvent);
-		connect(this, &ReaderManager::fireReaderRemoved, this, &ReaderManager::fireReaderEvent);
-		connect(this, &ReaderManager::fireCardInserted, this, &ReaderManager::fireReaderEvent);
-		connect(this, &ReaderManager::fireCardRemoved, this, &ReaderManager::fireReaderEvent);
-		connect(this, &ReaderManager::fireReaderPropertiesUpdated, this, &ReaderManager::fireReaderEvent);
+		connect(mWorker.data(), &ReaderManagerWorker::fireStatusChanged, this, &ReaderManager::doUpdatePluginCache);
+		connect(mWorker.data(), &ReaderManagerWorker::fireStatusChanged, this, &ReaderManager::fireStatusChanged);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderAdded, this, &ReaderManager::doUpdateCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderAdded, this, &ReaderManager::fireReaderAdded);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderRemoved, this, &ReaderManager::doRemoveCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderRemoved, this, &ReaderManager::fireReaderRemoved);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderPropertiesUpdated, this, &ReaderManager::doUpdateCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireReaderPropertiesUpdated, this, &ReaderManager::fireReaderPropertiesUpdated);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardInserted, this, &ReaderManager::doUpdateCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardInserted, this, &ReaderManager::fireCardInserted);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardRemoved, this, &ReaderManager::doUpdateCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardRemoved, this, &ReaderManager::fireCardRemoved);
+
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardInfoChanged, this, &ReaderManager::doUpdateCacheEntry);
+		connect(mWorker.data(), &ReaderManagerWorker::fireCardInfoChanged, this, &ReaderManager::fireCardInfoChanged);
 	}
 
 	mThread.start();
@@ -97,6 +111,40 @@ void ReaderManager::reset(ReaderManagerPlugInType pType)
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
 			mWorker->reset(pType);
+		}, Qt::QueuedConnection);
+}
+
+
+void ReaderManager::insert(const ReaderInfo& pReaderInfo, const QVariant& pData)
+{
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (!mThread.isRunning())
+	{
+		qCWarning(card) << "Cannot insert a card if ReaderManager-Thread is not active";
+		return;
+	}
+
+	Q_ASSERT(mWorker);
+	QMetaObject::invokeMethod(mWorker.data(), [this, pReaderInfo, pData] {
+			mWorker->insert(pReaderInfo, pData);
+		}, Qt::QueuedConnection);
+}
+
+
+void ReaderManager::shelve()
+{
+	const QMutexLocker mutexLocker(&mMutex);
+
+	if (!mThread.isRunning())
+	{
+		qCWarning(card) << "Cannot shelve cards if ReaderManager-Thread is not active";
+		return;
+	}
+
+	Q_ASSERT(mWorker);
+	QMetaObject::invokeMethod(mWorker.data(), [this] {
+			mWorker->shelve();
 		}, Qt::QueuedConnection);
 }
 
@@ -219,6 +267,8 @@ QVector<ReaderManagerPlugInInfo> ReaderManager::getPlugInInfos() const
 
 void ReaderManager::doUpdateCacheEntry(const ReaderInfo& pInfo)
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	qCDebug(card) << "Update cache entry:" << pInfo.getName();
 	mReaderInfoCache.insert(pInfo.getName(), pInfo);
 }
@@ -226,39 +276,19 @@ void ReaderManager::doUpdateCacheEntry(const ReaderInfo& pInfo)
 
 void ReaderManager::doRemoveCacheEntry(const ReaderInfo& pInfo)
 {
+	const QMutexLocker mutexLocker(&mMutex);
+
 	qCDebug(card) << "Remove cache entry:" << pInfo.getName();
 	mReaderInfoCache.remove(pInfo.getName());
 }
 
 
-void ReaderManager::doFullUpdateCache(const ReaderManagerPlugInInfo& pInfo)
+void ReaderManager::doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo)
 {
-	Q_UNUSED(pInfo)
 	const QMutexLocker mutexLocker(&mMutex);
 
-	qCDebug(card) << "Start full update of cache...";
-
-	mReaderInfoCache.clear();
-
-	if (mWorker)
-	{
-		mPlugInInfoCache.insert(pInfo.getPlugInType(), pInfo);
-
-		QVector<ReaderInfo> list;
-		QMetaObject::invokeMethod(mWorker.data(), [this] {
-				return mWorker->getReaderInfos();
-			}, Qt::BlockingQueuedConnection, &list);
-
-		for (const auto& info : qAsConst(list))
-		{
-			qCDebug(card) << "Update cache entry:" << info.getName();
-			mReaderInfoCache.insert(info.getName(), info);
-		}
-	}
-	else
-	{
-		mPlugInInfoCache.clear();
-	}
+	qCDebug(card) << "Update cache entry:" << pInfo.getPlugInType();
+	mPlugInInfoCache.insert(pInfo.getPlugInType(), pInfo);
 }
 
 

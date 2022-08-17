@@ -16,8 +16,11 @@ namespace governikus
 
 class StateBuilder
 {
-	StateBuilder() = delete;
 	Q_DISABLE_COPY(StateBuilder)
+
+	private:
+		StateBuilder() = delete;
+		~StateBuilder() = delete;
 
 	public:
 		template<typename T, typename C>

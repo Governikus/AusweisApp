@@ -24,8 +24,6 @@ class NfcReader
 		QNearFieldManager mNfManager;
 		QScopedPointer<NfcCard, QScopedPointerDeleteLater> mCard;
 
-		CardEvent updateCard() override;
-
 	Q_SIGNALS:
 		void fireNfcAdapterStateChanged(bool pEnabled);
 

@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "context/AuthContext.h"
 #include "Env.h"
 #include "WorkflowModel.h"
+#include "context/AuthContext.h"
 
 #include <QObject>
 #include <QQmlEngine>
@@ -36,6 +36,7 @@ class AuthModel
 		QSharedPointer<AuthContext> mContext;
 		QString mTransactionInfo;
 
+	protected:
 		AuthModel();
 		~AuthModel() override = default;
 

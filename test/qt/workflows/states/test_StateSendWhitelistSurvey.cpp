@@ -7,9 +7,10 @@
 #include "AppSettings.h"
 #include "HttpServer.h"
 #include "LogHandler.h"
-#include "states/StateBuilder.h"
 #include "SecureStorage.h"
+#include "SurveyModel.h"
 #include "VolatileSettings.h"
+#include "states/StateBuilder.h"
 
 #include "MockCardConnectionWorker.h"
 #include "TestAuthContext.h"
@@ -126,6 +127,13 @@ class test_StateSendWhitelistSurvey
 
 			Env::getSingleton<LogHandler>()->init();
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeviceSurveyPending(true);
+
+			const auto& surveyModel = Env::getSingleton<SurveyModel>();
+			ReaderInfo readerInfo("reader", ReaderManagerPlugInType::NFC, CardInfo(CardType::EID_CARD));
+			readerInfo.setMaxApduLength(0);
+			surveyModel->setReaderInfo(readerInfo);
+			surveyModel->setAuthWasSuccessful(true);
+
 			QSignalSpy spyContinue(mState.data(), &StateSendWhitelistSurvey::fireContinue);
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
@@ -159,15 +167,16 @@ class test_StateSendWhitelistSurvey
 			QVERIFY(message.contains("ModelName"));
 			QVERIFY(message.contains("ModelNumber"));
 			QVERIFY(message.contains("Rom"));
-			QVERIFY(message.contains("AndroidVersion"));
+			QVERIFY(message.contains("OsVersion"));
 			QVERIFY(message.contains("BuildNumber"));
 			QVERIFY(message.contains("KernelVersion"));
 			QVERIFY(message.contains("\"MaximumNfcPacketLength\": 0"));
 			QVERIFY(message.contains("Vendor"));
+			QVERIFY(message.contains("NfcTagType"));
 
 			if (spyCounter != 0)
 			{
-				const QSharedPointer<HttpRequest> request = spy.at(0).at(0).value<QSharedPointer<HttpRequest> >();
+				const QSharedPointer<HttpRequest> request = spy.at(0).at(0).value<QSharedPointer<HttpRequest>>();
 				QCOMPARE(request->getUrl(), QUrl("/new"));
 				QCOMPARE(request->getHeader(QByteArray("host")), QByteArray("localhost:25000"));
 				QCOMPARE(request->getHeader(QByteArray("content-type")), QByteArray("application/json; charset=UTF-8"));
@@ -178,6 +187,7 @@ class test_StateSendWhitelistSurvey
 				QVERIFY(jsonObject.contains("ModelNumber"));
 				QVERIFY(jsonObject.contains("Rom"));
 				QVERIFY(jsonObject.contains("Vendor"));
+				QVERIFY(jsonObject.contains("NfcTagType"));
 			}
 		}
 

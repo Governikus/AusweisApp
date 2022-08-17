@@ -9,9 +9,10 @@ using namespace governikus;
 
 
 StateEnterNewPacePin::StateEnterNewPacePin(const QSharedPointer<WorkflowContext>& pContext)
-	: AbstractState(pContext, false)
+	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setKeepCardConnectionAlive();
 }
 
 
@@ -23,7 +24,7 @@ void StateEnterNewPacePin::run()
 
 void StateEnterNewPacePin::onEntry(QEvent* pEvent)
 {
-	stopScanIfNecessary();
+	stopNfcScanIfNecessary();
 
 	AbstractState::onEntry(pEvent);
 }

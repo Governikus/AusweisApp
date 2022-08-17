@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <functional>
 #include <QEventLoop>
 #include <QStringList>
 #include <QWebSocket>
+#include <functional>
 
 namespace governikus
 {

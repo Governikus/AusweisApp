@@ -2,10 +2,9 @@
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 import QtQuick.Window 2.10
-import QtQuick.Layouts 1.12
-import QtGraphicalEffects 1.12
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -24,7 +23,7 @@ Item {
 
 	Keys.onSpacePressed: mouseArea.clicked(undefined)
 	Accessible.role: Accessible.Button
-	Accessible.name: !!providerModelItem ? provider.shortName : qsTr("Unknown error")
+	Accessible.name: nameText.text
 
 	ProviderModelItem {
 		id: provider
@@ -46,22 +45,26 @@ Item {
 			sourceSize.width: Screen.devicePixelRatio * 512
 			mipmap: true
 			asynchronous: true
-			fillMode: Image.PreserveAspectCrop
+			fillMode: Image.PreserveAspectFit
+
 
 			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-			layer.effect: OpacityMask {
-				maskSource: Item {
-					width: image.width
-					height: image.height
-					RoundedRectangle {
-						anchors.centerIn: parent
-						width: image.width
-						height: image.height
-						radius: Style.dimens.corner_radius
-						bottomLeftCorner: false
-						bottomRightCorner: false
-					}
+			layer.effect: ShaderEffect {
+				property var maskSource: ShaderEffectSource {
+					 width: image.width
+					 height: image.height
+
+					 sourceItem: RoundedRectangle {
+							width: image.width
+							height: image.height
+
+							radius: Style.dimens.corner_radius
+							bottomLeftCorner: false
+							bottomRightCorner: false
+						}
 				}
+
+				fragmentShader: "qrc:/shader/OpacityMaskShader.frag"
 			}
 		}
 
@@ -126,11 +129,5 @@ Item {
 
 		onClicked: baseItem.showDetailView(providerModelItem)
 		cursorShape: Qt.PointingHandCursor
-	}
-
-	FocusFrame {
-		marginFactor: 2
-		radius: Style.dimens.corner_radius
-		borderColor: Style.color.focus_indicator
 	}
 }

@@ -18,7 +18,8 @@ class CompositeStateTrustedChannel
 {
 	Q_OBJECT
 
-	const QSharedPointer<WorkflowContext> mContext;
+	private:
+		const QSharedPointer<WorkflowContext> mContext;
 
 	public:
 		explicit CompositeStateTrustedChannel(const QSharedPointer<WorkflowContext>& pContext);

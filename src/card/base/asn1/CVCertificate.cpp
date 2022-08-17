@@ -59,7 +59,7 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 			cvc->mEcdsaSignature = ECDSA_SIG_new();
 			QByteArray sigValue = Asn1OctetStringUtil::getValue(cvc->mSignature);
 
-			const auto* const sig = reinterpret_cast<const unsigned char*>(sigValue.data());
+			const auto* const sig = reinterpret_cast<const uchar*>(sigValue.data());
 			int siglen = sigValue.size();
 
 			BIGNUM* r = BN_bin2bn(sig, siglen / 2, nullptr);
@@ -85,12 +85,12 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 }
 
 
-QVector<QSharedPointer<const CVCertificate> > CVCertificate::fromHex(const QByteArrayList& pHexByteList)
+QVector<QSharedPointer<const CVCertificate>> CVCertificate::fromRaw(const QByteArrayList& pByteList)
 {
-	QVector<QSharedPointer<const CVCertificate> > cvcs;
-	for (const QByteArray& hexBytes : pHexByteList)
+	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	for (const auto& data : pByteList)
 	{
-		if (auto cvc = CVCertificate::fromHex(hexBytes))
+		if (const auto& cvc = CVCertificate::fromRaw(data))
 		{
 			cvcs += cvc;
 		}
@@ -99,10 +99,20 @@ QVector<QSharedPointer<const CVCertificate> > CVCertificate::fromHex(const QByte
 }
 
 
-QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pHexBytes)
+QSharedPointer<const CVCertificate> CVCertificate::fromRaw(const QByteArray& pBytes)
 {
-	return decodeObject<CVCertificate>(QByteArray::fromHex(pHexBytes));
+	return decodeObject<CVCertificate>(pBytes);
 }
+
+
+#ifndef QT_NO_DEBUG
+QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pBytes)
+{
+	return fromRaw(QByteArray::fromHex(pBytes));
+}
+
+
+#endif
 
 
 QByteArray CVCertificate::encode() const
@@ -133,7 +143,7 @@ const ECDSA_SIG* CVCertificate::getEcdsaSignature() const
 
 QByteArray CVCertificate::getRawSignature() const
 {
-	return encodeObject(const_cast<SIGNATURE*>(mSignature));
+	return encodeObject(mSignature);
 }
 
 
@@ -188,20 +198,18 @@ QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertific
 }
 
 
-QDebug operator<<(QDebug pDbg, QSharedPointer<governikus::CVCertificate>& pCvc)
+QDebug operator<<(QDebug pDbg, const QSharedPointer<governikus::CVCertificate>& pCvc)
 {
-	const QSharedPointer<const governikus::CVCertificate> constPtr(pCvc);
-	pDbg << constPtr;
-
+	pDbg << QSharedPointer<const governikus::CVCertificate>(pCvc);
 	return pDbg;
 }
 
 
-QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate> >& pCvcs)
+QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate>>& pCvcs)
 {
 	QDebugStateSaver saver(pDbg);
 	pDbg.nospace() << "QVector(";
-	for (auto cvc : pCvcs)
+	for (const auto& cvc : pCvcs)
 	{
 		pDbg.nospace() << cvc << ",";
 	}

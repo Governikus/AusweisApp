@@ -3,11 +3,11 @@
   <defs>
     <radialGradient id="verlauf" cy="0.82" r="0.71" gradientTransform="scale(1 1.86)">
       <stop offset="0%" stop-color="#c5d9ec" />
-      <stop offset="100%" stop-color="#4d7aa4" />
+      <stop offset="100%" stop-color="#164a8c" />
     </radialGradient>
   </defs>
   <rect width="14400" height="6000" fill="url(#verlauf)" />
-  <path d="M 0 4300 C 0 4300 7200 6800 14400 4300 V 7920 H 0 Z" fill="#4d7aa4"/>
+  <path d="M 0 4300 C 0 4300 7200 6800 14400 4300 V 7920 H 0 Z" fill="#164a8c"/>
   <g transform="translate(2850,0) scale(8.0,8.0)" fill="#ffffff">
     <path d="M 210 432 c0 -11 8 -26 18 -34 22 -18 293 -128 317 -128 24 0 295 110 318 128 9 8 17 23 17 34 0 17 -16 18 -335 18 -319 0 -335 -1 -335 -18 Z
            M 320 445 H 770 V 840 a 50 50 0 0 1 -50 50 L 370 890 a 50 50 0 0 1 -50 -50 Z

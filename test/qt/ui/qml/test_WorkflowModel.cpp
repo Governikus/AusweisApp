@@ -7,6 +7,7 @@
 #include "WorkflowModel.h"
 
 #include "MockCardConnectionWorker.h"
+#include "TestWorkflowContext.h"
 
 #include <QDebug>
 #include <QtTest>
@@ -24,12 +25,12 @@ class test_WorkflowModel
 		void test_ResetContext()
 		{
 			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QSignalSpy spyCurrentStateChanged(&model, &WorkflowModel::fireCurrentStateChanged);
 			QSignalSpy spyResultChanged(&model, &WorkflowModel::fireResultChanged);
 			QSignalSpy spyReaderPlugInTypeChanged(&model, &WorkflowModel::fireReaderPlugInTypeChanged);
-			QSignalSpy spyIsBasicReaderChanged(&model, &WorkflowModel::fireIsBasicReaderChanged);
+			QSignalSpy spySelectedReaderChanged(&model, &WorkflowModel::fireSelectedReaderChanged);
 
 			model.resetWorkflowContext();
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
@@ -49,7 +50,7 @@ class test_WorkflowModel
 			QCOMPARE(spyReaderPlugInTypeChanged.count(), 1);
 
 			Q_EMIT context->fireCardConnectionChanged();
-			QCOMPARE(spyIsBasicReaderChanged.count(), 1);
+			QCOMPARE(spySelectedReaderChanged.count(), 1);
 		}
 
 
@@ -59,7 +60,7 @@ class test_WorkflowModel
 			connectionThread.start();
 
 			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QVERIFY(model.isBasicReader());
 
@@ -67,7 +68,7 @@ class test_WorkflowModel
 			QVERIFY(model.isBasicReader());
 
 			MockReader reader;
-			reader.getReaderInfo().setBasicReader(false);
+			reader.setInfoBasicReader(false);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 			worker->moveToThread(&connectionThread);
 			QSharedPointer<CardConnection> connection(new CardConnection(worker));
@@ -83,7 +84,7 @@ class test_WorkflowModel
 		void test_ReaderPlugInType()
 		{
 			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QCOMPARE(model.getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
 
@@ -100,15 +101,9 @@ class test_WorkflowModel
 		}
 
 
-		void test_SelectedReaderHasCardNoConnection()
+		void test_isSmartCardAllowed()
 		{
-			WorkflowModel model;
-			QSharedPointer<WorkflowContext> context(new WorkflowContext());
-
-			QVERIFY(!model.selectedReaderHasCard());
-
-			model.mContext = context;
-			QVERIFY(!model.selectedReaderHasCard());
+			QVERIFY(true);
 		}
 
 

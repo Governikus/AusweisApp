@@ -66,8 +66,7 @@ KeyPair KeyPair::generate()
 		return KeyPair();
 	}
 
-	auto pkey = createKey();
-	if (pkey)
+	if (auto* pkey = createKey(); pkey)
 	{
 		auto cert = createCertificate(pkey);
 		if (cert)
@@ -142,10 +141,10 @@ QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
 	std::uniform_int_distribution<long> uni_long(1);
 	std::uniform_int_distribution<qulonglong> uni_qulonglong(1);
 
-	#if OPENSSL_VERSION_NUMBER < 0x10100000L
-		#define X509_getm_notBefore X509_get_notBefore
-		#define X509_getm_notAfter X509_get_notAfter
-	#endif
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	#define X509_getm_notBefore X509_get_notBefore
+	#define X509_getm_notAfter X509_get_notAfter
+#endif
 
 	ASN1_INTEGER_set(X509_get_serialNumber(x509.data()), uni_long(randomizer));
 	// see: https://tools.ietf.org/html/rfc5280#section-4.1.2.5

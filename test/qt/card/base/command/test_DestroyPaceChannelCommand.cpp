@@ -4,7 +4,6 @@
 
 #include "command/DestroyPaceChannelCommand.h"
 
-#include "LogHandler.h"
 #include "MockCardConnectionWorker.h"
 
 #include <QtCore>

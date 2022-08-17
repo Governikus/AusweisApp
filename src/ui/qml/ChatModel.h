@@ -12,8 +12,8 @@
 #include <QSharedPointer>
 #include <QSortFilterProxyModel>
 
-#include "context/AuthContext.h"
 #include "Env.h"
+#include "context/AuthContext.h"
 
 class test_ChatModel;
 
@@ -33,23 +33,24 @@ class ChatModel
 	Q_PROPERTY(QSortFilterProxyModel * required READ getFilterRequiredModel CONSTANT)
 	Q_PROPERTY(QSortFilterProxyModel * write READ getFilterWriteModel CONSTANT)
 
-	QSharedPointer<AuthContext> mAuthContext;
-	QList<AccessRight> mAllRights;
-	QSet<AccessRight> mOptionalRights, mSelectedRights;
-	QSortFilterProxyModel mFilterOptionalModel;
-	QSortFilterProxyModel mFilterRequiredModel;
-	QSortFilterProxyModel mFilterReadModel;
-	QSortFilterProxyModel mFilterWriteModel;
-
-	enum ChatRoles
-	{
-		NAME_ROLE = Qt::UserRole + 1,
-		OPTIONAL_ROLE,
-		SELECTED_ROLE,
-		WRITE_RIGHT,
-	};
-
 	private:
+		QSharedPointer<AuthContext> mAuthContext;
+		QList<AccessRight> mAllRights;
+		QSet<AccessRight> mOptionalRights;
+		QSet<AccessRight> mSelectedRights;
+		QSortFilterProxyModel mFilterOptionalModel;
+		QSortFilterProxyModel mFilterRequiredModel;
+		QSortFilterProxyModel mFilterReadModel;
+		QSortFilterProxyModel mFilterWriteModel;
+
+		enum ChatRoles
+		{
+			NAME_ROLE = Qt::UserRole + 1,
+			OPTIONAL_ROLE,
+			SELECTED_ROLE,
+			WRITE_RIGHT,
+		};
+
 		ChatModel();
 		~ChatModel() override = default;
 

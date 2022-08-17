@@ -13,7 +13,3 @@ target_link_libraries(AusweisAppSettings ${Qt}::Core ${Qt}::Network ${Qt}::Concu
 if(MAC)
 	target_link_libraries(AusweisAppSettings ${OSX_APPKIT} ${OSX_SERVICEMANAGEMENT})
 endif()
-
-if(ANDROID)
-	target_link_libraries(AusweisAppSettings ${Qt}::AndroidExtras)
-endif()

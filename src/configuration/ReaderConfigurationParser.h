@@ -17,16 +17,17 @@ namespace governikus
 {
 class ReaderConfigurationParser
 {
-	private:
-		friend class ::test_ReaderConfigurationEntryParser;
+	friend class ::test_ReaderConfigurationEntryParser;
 
+	private:
 		/**
 		 * Parse a single entry of a reader configuration info list.
 		 */
 		class EntryParser
 		{
+			friend class ::test_ReaderConfigurationEntryParser;
+
 			private:
-				friend class ::test_ReaderConfigurationEntryParser;
 				const QJsonValue mJsonValue;
 
 				[[nodiscard]] QString getDriverUrl(const QJsonObject& pObject) const;

@@ -13,6 +13,7 @@ class Seeder
 		dslFactory.freeStyleJob('Seeder_' + branch)
 		{
 			label('Seeder')
+			logRotator(14, -1)
 
 			scm
 			{

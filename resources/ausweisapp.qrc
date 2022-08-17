@@ -7,6 +7,8 @@
         <file>images/material_help.svg</file>
         <file>images/material_lock.svg</file>
         <file>images/material_delete.svg</file>
+        <file>images/material_filter.svg</file>
+        <file>images/material_filter_off.svg</file>
         <file>images/material_open_in_new.svg</file>
         <file>images/material_search.svg</file>
         <file>images/material_location.svg</file>
@@ -21,6 +23,7 @@
         <file>images/checkbox_indicator.svg</file>
         <file>images/npa.svg</file>
         <file>images/id_card.png</file>
+        <file>images/signature.jp2</file>
         <file>images/pin_letter_pinpuk_different_page.svg</file>
         <file>images/pin_letter_pinpuk_same_page.svg</file>
         <file>images/logo_beta_background.svg</file>
@@ -65,5 +68,9 @@
         <file>images/sandglass.svg</file>
         <file>images/trash_icon_all.svg</file>
         <file>images/triangle.svg</file>
+        <file>shader/ConicalGradientShader.frag</file>
+        <file>shader/ColorOverlayShader.frag</file>
+        <file>shader/DesaturateShader.frag</file>
+        <file>shader/OpacityMaskShader.frag</file>
     </qresource>
 </RCC>

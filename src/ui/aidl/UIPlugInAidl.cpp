@@ -5,10 +5,11 @@
 #include "UIPlugInAidl.h"
 
 #include "Env.h"
+#include "ReaderManager.h"
 #include "UILoader.h"
 #ifdef Q_OS_ANDROID
-#include "PskManager.h"
-#include <QMetaObject>
+	#include "Randomizer.h"
+	#include <QMetaObject>
 #endif
 
 #include <QCoreApplication>
@@ -17,9 +18,9 @@
 #include <QThread>
 
 #ifdef Q_OS_ANDROID
-#include <jni.h>
-#include <QtAndroidExtras/QAndroidJniEnvironment>
-#include <QtAndroidExtras/QtAndroid>
+	#include <QJniEnvironment>
+	#include <QJniObject>
+	#include <jni.h>
 #endif
 
 
@@ -37,9 +38,9 @@ UIPlugInAidl::UIPlugInAidl()
 	, mWorkflowIsActive()
 	, mInitializationSuccessfull(false)
 {
-	if (Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson))
+	if (Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
-		mJson = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+		mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 		Q_ASSERT(mJson);
 		connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
 
@@ -55,34 +56,19 @@ UIPlugInAidl::UIPlugInAidl()
 }
 
 
-UIPlugInAidl::~UIPlugInAidl()
-{
-}
-
-
 UIPlugInAidl* UIPlugInAidl::getInstance(bool pBlock)
 {
 	// The Java interface thread is ready before our core has booted.
 	// Hence we delay access to the UIPlugInAidl.
 	if (pBlock)
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 		while (instance.loadRelaxed() == nullptr)
-#else
-		while (instance.load() == nullptr)
-#endif
 		{
 			QThread::msleep(100);
 		}
 	}
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
 	return instance.loadRelaxed();
-
-#else
-	return instance.load();
-
-#endif
 }
 
 
@@ -95,8 +81,9 @@ bool UIPlugInAidl::isSuccessfullInitialized() const
 void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 	mWorkflowIsActive.lock();
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC});
+	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::LOCAL_IFD});
 	mContext = pContext;
+	mContext->claim(this);
 }
 
 
@@ -138,13 +125,23 @@ void UIPlugInAidl::reset()
 }
 
 
+void UIPlugInAidl::startReaderManagerScans() const
+{
+	const auto readerManager = Env::getSingleton<ReaderManager>();
+	readerManager->startScan(ReaderManagerPlugInType::NFC);
+	readerManager->startScan(ReaderManagerPlugInType::SMART);
+	readerManager->startScan(ReaderManagerPlugInType::LOCAL_IFD);
+}
+
+
 void UIPlugInAidl::onToSend(const QByteArray& pMessage)
 {
 #ifdef Q_OS_ANDROID
 	const QString json = QString::fromUtf8(pMessage);
-	QAndroidJniObject jsonAndroidString = QAndroidJniObject::fromString(json);
+	QJniObject jsonAndroidString = QJniObject::fromString(json);
 
-	QAndroidJniObject aidlBinder = QtAndroid::androidService().callObjectMethod("getAidlBinder", "()Lcom/governikus/ausweisapp2/AidlBinder;");
+	QJniObject service = QNativeInterface::QAndroidApplication::context();
+	QJniObject aidlBinder = service.callObjectMethod("getAidlBinder", "()Lcom/governikus/ausweisapp2/AidlBinder;");
 	aidlBinder.callMethod<void>("aidlReceive", "(Ljava/lang/String;)V", jsonAndroidString.object<jstring>());
 #else
 	Q_UNUSED(pMessage)
@@ -181,8 +178,8 @@ JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidS
 		return pEnv->NewStringUTF("");
 	}
 
-	const auto& finalPsk = PskManager::getInstance().generatePsk();
-	return pEnv->NewStringUTF(finalPsk.constData());
+	const auto& finalPsk = Randomizer::getInstance().createUuid();
+	return pEnv->NewStringUTF(finalPsk.toByteArray().constData());
 }
 
 
@@ -191,14 +188,26 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AidlBinder_isSecureRa
 	Q_UNUSED(pEnv)
 	Q_UNUSED(pObj)
 
-	return PskManager::getInstance().isSecureRandomPsk();
+	return Randomizer::getInstance().isSecureRandom();
 }
 
 
-}
-
-extern "C"
+JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AidlBinder_startReaderManagerScans(JNIEnv* pEnv, jobject pObj)
 {
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
+
+	UIPlugInAidl* plugin = UIPlugInAidl::getInstance();
+	if (!plugin->isSuccessfullInitialized())
+	{
+		qCCritical(aidl) << "Cannot call AIDL plugin";
+		return false;
+	}
+
+	QMetaObject::invokeMethod(plugin, &UIPlugInAidl::startReaderManagerScans, Qt::QueuedConnection);
+	return true;
+}
+
 
 JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEnv* pEnv, jobject pObj, jstring pJson)
 {

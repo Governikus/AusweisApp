@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.RemoteServiceView 1.0
@@ -22,8 +22,8 @@ Item {
 	property bool foundSelectedReader: ApplicationModel.availableReader > 0
 
 	Connections {
-		target: ApplicationModel
-		onFireCertificateRemoved: {
+		target: RemoteServiceModel
+		function onFireCertificateRemoved() {
 			//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
 			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName))
 		}
@@ -31,12 +31,15 @@ Item {
 
 	onFoundSelectedReaderChanged: {
 		if (baseItem.settingsPushed && foundSelectedReader) {
-			remoteServiceSettings.firePop()
+			remoteServiceSettings.pop()
 		}
 	}
 
 	ProgressIndicator {
 		id: progressIndicator
+
+		Accessible.ignored: true
+
 		anchors.left: parent.left
 		anchors.top: parent.top
 		anchors.right: parent.right
@@ -58,9 +61,6 @@ Item {
 			rightMargin: Constants.component_spacing
 		}
 
-		onEnableLinkActivated: ApplicationModel.showSettings(ApplicationModel.SETTING_APP)
-
-		enableButtonVisible: !wifiEnabled || !foundSelectedReader
 		enableButtonText: {
 			if (!wifiEnabled) {
 				//: LABEL ANDROID IOS
@@ -69,8 +69,7 @@ Item {
 				//: LABEL ANDROID IOS
 				return qsTr("Pair device");
 			} else {
-				//: LABEL ANDROID IOS
-				return qsTr("Continue")
+				return ""
 			}
 		}
 
@@ -78,7 +77,7 @@ Item {
 			if (!wifiEnabled) {
 				ApplicationModel.enableWifi()
 			} else if (!baseItem.settingsPushed) {
-				firePush(remoteServiceSettings)
+				push(remoteServiceSettings)
 			}
 		}
 		enableText: {
@@ -87,33 +86,36 @@ Item {
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				var text = qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.")
-
-				if (RemoteServiceModel.requiresLocalNetworkPermission) {
-					text += "<br><br>%1<br><br><a href=\"#\">%2</a><br>"
-						//: INFO IOS Let user know to check the application settings for local network permission
-						.arg(qsTr("To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed for %1.").arg(Qt.application.name))
-						//: INFO IOS Link to application settings
-						.arg(qsTr("Go to application settings"))
-				}
-
-				return text;
+				return qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.")
 			} else {
 				return "";
 			}
 		}
 
-		titleText: (foundSelectedReader ?
-			//: LABEL ANDROID IOS
-			qsTr("Determine card") :
-			//: LABEL ANDROID IOS
-			qsTr("Establish connection")
-		)
+		additionalContent: LocalNetworkInfo {
+			visible: RemoteServiceModel.requiresLocalNetworkPermission && baseItem.wifiEnabled && !baseItem.foundSelectedReader
+			width: parent.width
+		}
+
+		titleText: {
+			if (!wifiEnabled) {
+				//: LABEL ANDROID IOS
+				return qsTr("Wifi disabled")
+			} else if (!foundSelectedReader) {
+				//: LABEL ANDROID IOS
+				return qsTr("Waiting for connection")
+			} else {
+				//: LABEL ANDROID IOS
+				return qsTr("Determine card")
+			}
+		}
 
 		subTitleText: {
-			if (!visible) {
-				return "";
-			} else if (!!NumberModel.inputError) {
+			if (!wifiEnabled || !foundSelectedReader) {
+				return ""
+			}
+
+			if (!!NumberModel.inputError) {
 				return NumberModel.inputError;
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.

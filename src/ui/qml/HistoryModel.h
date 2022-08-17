@@ -24,18 +24,18 @@ class HistoryModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	friend class ::test_HistoryModel;
+
 	Q_PROPERTY(HistoryProxyModel * filter READ getFilterModel CONSTANT)
 	Q_PROPERTY(ProviderNameFilterModel * nameFilter READ getNameFilterModel CONSTANT)
 	Q_PROPERTY(HistoryModelSearchFilter * searchFilter READ getHistoryModelSearchFilter CONSTANT)
 	Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY fireEnabledChanged)
 	Q_PROPERTY(bool empty READ isEmpty NOTIFY fireEmptyChanged)
 
-	HistoryProxyModel mFilterModel;
-	ProviderNameFilterModel mNameFilterModel;
-	HistoryModelSearchFilter mHistoryModelSearchFilter;
-
 	private:
-		friend class ::test_HistoryModel;
+		HistoryProxyModel mFilterModel;
+		ProviderNameFilterModel mNameFilterModel;
+		HistoryModelSearchFilter mHistoryModelSearchFilter;
 		QVector<QMetaObject::Connection> mConnections;
 
 		ProviderConfigurationInfo determineProviderFor(const HistoryInfo& pHistoryInfo) const;
@@ -56,7 +56,7 @@ class HistoryModel
 
 	public:
 		explicit HistoryModel(QObject* pParent = nullptr);
-		~HistoryModel() override;
+		~HistoryModel() override = default;
 
 		enum HistoryRoles
 		{
@@ -69,7 +69,6 @@ class HistoryModel
 			PROVIDER_CATEGORY,
 			PROVIDER_SHORTNAME,
 			PROVIDER_LONGNAME,
-			PROVIDER_SHORTDESCRIPTION,
 			PROVIDER_LONGDESCRIPTION,
 			PROVIDER_ADDRESS,
 			PROVIDER_ADDRESS_DOMAIN,

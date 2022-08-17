@@ -38,11 +38,11 @@ class test_DidAuthenticateEAC1Command
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 
 			ResponseApdu response(QByteArray::fromHex("9000"));
-			worker->addResponse(CardReturnCode::OK, response.getBuffer());
+			worker->addResponse(CardReturnCode::OK, response);
 			DidAuthenticateEAC1Command command(worker);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
-			QCOMPARE(response.getReturnCode(), StatusCode::SUCCESS);
+			QCOMPARE(response.getStatusCode(), StatusCode::SUCCESS);
 			QCOMPARE(command.getChallenge(), QByteArray());
 			QCOMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"));
@@ -54,11 +54,11 @@ class test_DidAuthenticateEAC1Command
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 
 			ResponseApdu response(QByteArray::fromHex("00000000000000009000"));
-			worker->addResponse(CardReturnCode::OK, response.getBuffer());
+			worker->addResponse(CardReturnCode::OK, response);
 			DidAuthenticateEAC1Command command(worker);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
-			QCOMPARE(response.getReturnCode(), StatusCode::SUCCESS);
+			QCOMPARE(response.getStatusCode(), StatusCode::SUCCESS);
 			QCOMPARE(command.getChallenge(), QByteArray::fromHex("0000000000000000"));
 		}
 
@@ -68,25 +68,25 @@ class test_DidAuthenticateEAC1Command
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 
-			ResponseApdu response1(QByteArray::fromHex("63c0"));
-			worker->addResponse(CardReturnCode::PIN_BLOCKED, response1.getBuffer());
+			ResponseApdu response1(QByteArray::fromHex("63C0"));
+			worker->addResponse(CardReturnCode::PIN_BLOCKED, response1);
 			DidAuthenticateEAC1Command command1(worker);
 			command1.internalExecute();
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::PIN_BLOCKED);
-			QCOMPARE(response1.getReturnCode(), StatusCode::PIN_BLOCKED);
+			QCOMPARE(response1.getStatusCode(), StatusCode::PIN_BLOCKED);
 			QCOMPARE(command1.getChallenge(), QByteArray());
 			QCOMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"));
 
 			ResponseApdu response2(QByteArray::fromHex("19191919191919"));
-			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response2.getBuffer());
+			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response2);
 			DidAuthenticateEAC1Command command2(worker);
 			command2.internalExecute();
 			QCOMPARE(command2.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
-			QCOMPARE(response2.getReturnCode(), StatusCode::INVALID);
+			QCOMPARE(response2.getStatusCode(), StatusCode::UNKNOWN);
 			QCOMPARE(command2.getChallenge(), QByteArray());
-			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"));
+			QCOMPARE(logSpy.count(), 3);
+			QVERIFY(logSpy.at(1).at(0).toString().contains("GetChallenge failed"));
 		}
 
 

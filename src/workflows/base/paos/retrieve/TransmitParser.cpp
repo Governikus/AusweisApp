@@ -14,11 +14,6 @@ TransmitParser::TransmitParser()
 }
 
 
-TransmitParser::~TransmitParser()
-{
-}
-
-
 PaosMessage* TransmitParser::parseMessage()
 {
 	mTransmit.reset(new Transmit());
@@ -46,7 +41,7 @@ PaosMessage* TransmitParser::parseMessage()
 		}
 	}
 
-	return mParseError ? nullptr : mTransmit.take();
+	return mParseError ? nullptr : mTransmit.release();
 }
 
 
@@ -73,7 +68,7 @@ void TransmitParser::parseInputApduInfo()
 		}
 		else if (mXmlReader->name() == QLatin1String("AcceptableStatusCode"))
 		{
-			inputApduInfo.addAcceptableStatusCode(readElementText().toUtf8());
+			inputApduInfo.addAcceptableStatusCode(readElementText().toLatin1());
 		}
 		else
 		{

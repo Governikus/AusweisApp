@@ -2,8 +2,8 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -19,44 +19,42 @@ import Governikus.Style 1.0
 ApplicationWindow {
 	id: appWindow
 
-	readonly property alias ready: contentArea.ready
-
 	visible: true
 
 	// Workaround for qt 5.12 not calculating the highdpi scaling factor correctly. On some devices (like the pixel 3)
 	// this leads to a small light stripe above the dark statusbar. By setting the background to black and filling the
 	// rest of the window with the background color, it's still there but not noticeable.
 	color: "#000000"
-	Rectangle { anchors.fill: parent; color: Style.color.background }
-
-	Component.onCompleted: {
-		flags |= Qt.MaximizeUsingFullscreenGeometryHint
-	}
+	background: Rectangle { color: Style.color.background }
+	flags: Qt.Window | Qt.MaximizeUsingFullscreenGeometryHint
 
 	menuBar: TitleBar {
-		id: titleBar
-
-		property var currentSectionPage: if (contentArea) contentArea.currentSectionPage
+		readonly property var currentSectionPage: contentArea.currentSectionPage
+		readonly property bool isBackAction: navigationAction &&
+			navigationAction.action === NavigationAction.Action.Back
 
 		visible: !currentSectionPage || currentSectionPage.titleBarVisible
 
 		navigationAction: currentSectionPage ? currentSectionPage.navigationAction : null
 		title: currentSectionPage ? currentSectionPage.title : ""
-		rightAction: currentSectionPage ?  currentSectionPage.rightTitleBarAction : null
-		subTitleBarAction: currentSectionPage ?  currentSectionPage.subTitleBarAction : null
+		rightAction: currentSectionPage ? currentSectionPage.rightTitleBarAction : null
 		color: currentSectionPage ? currentSectionPage.titleBarColor : null
 		titleBarOpacity: currentSectionPage ? currentSectionPage.titleBarOpacity : 1
 	}
 
-	onClosing: { // back button pressed
-		close.accepted = false
+	Component.onCompleted: {
+		feedback.showIfNecessary()
+	}
+
+	onClosing: pClose => { // back button pressed
+		pClose.accepted = false
 
 		if (contentArea.visibleItem) {
 			if (contentArea.activeModule === UiModule.DEFAULT) {
 				var currentTime = new Date().getTime();
 				if (currentTime - d.lastCloseInvocation < 1000) {
 					plugin.fireQuitApplicationRequest()
-					close.accepted = true
+					pClose.accepted = true
 					return
 				}
 
@@ -66,13 +64,13 @@ ApplicationWindow {
 				return;
 			}
 
-			var activeStackView = contentArea.visibleItem.stackView
+			var activeStackView = contentArea.visibleItem
 			var navigationAction = contentArea.currentSectionPage.navigationAction
 
 			if (activeStackView.depth <= 1
-					&& (!navigationAction || navigationAction.state !== "cancel")
+					&& (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel)
 					&& contentArea.activeModule !== UiModule.PROVIDER) {
-				navBar.show(UiModule.DEFAULT)
+				navigation.show(UiModule.DEFAULT)
 			} else if (navigationAction) {
 				navigationAction.clicked(undefined)
 			}
@@ -97,27 +95,32 @@ ApplicationWindow {
 
 	Connections {
 		target: plugin
-		enabled: contentArea.ready
-		onFireApplicationActivated: feedback.showIfNecessary()
+		function onFireApplicationActivated() { feedback.showIfNecessary() }
 	}
 
 	Connections {
 		target: plugin
-		onFireShowRequest: {
+		function onFireShowRequest(pModule) {
 			switch (pModule) {
 				case UiModule.CURRENT:
 					break
 
 				case UiModule.UPDATEINFORMATION:
-					navBar.show(UiModule.DEFAULT)
+					navigation.show(UiModule.DEFAULT)
 					break
 
-				case UiModule.SELF_AUTHENTICATION:
-					navBar.show(UiModule.IDENTIFY)
+				case UiModule.TUTORIAL:
+					navigation.show(UiModule.HELP)
 					break
+
+				case UiModule.IDENTIFY:
+					if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE) {
+						navigation.show(UiModule.SELF_AUTHENTICATION)
+						break
+					}
 
 				default:
-					navBar.show(pModule)
+					navigation.show(pModule)
 					break;
 			}
 		}
@@ -127,39 +130,48 @@ ApplicationWindow {
 		id: contentArea
 
 		function reset() {
-			visibleItem.currentSectionPage.firePopAll()
-			visibleItem.currentSectionPage.reset()
+			currentSectionPage.popAll()
+			currentSectionPage.reset()
 		}
 
 		anchors {
 			left: parent.left
 			top: parent.top
 			right: parent.right
-			bottom: navBar.top
+			bottom: navigation.top
 			leftMargin: plugin.safeAreaMargins.left
 			rightMargin: plugin.safeAreaMargins.right
-			bottomMargin: (
-				currentSectionPage && currentSectionPage.automaticSafeAreaMarginHandling && navBar.lockedAndHidden
-			) ? plugin.safeAreaMargins.bottom : 0
+			bottomMargin: !navigation.lockedAndHidden || !currentSectionPage ? 0 :
+				(currentSectionPage.automaticSafeAreaMarginHandling ? plugin.safeAreaMargins.bottom : 0) +
+				(currentSectionPage.hiddenNavbarPadding ? Style.dimens.navigation_bar_height : 0)
 
 			Behavior on bottomMargin {
-				enabled: appWindow.ready
+				enabled: !ApplicationModel.isScreenReaderRunning()
+
 				NumberAnimation {duration: Constants.animation_duration}
 			}
 		}
 
-		activeModule: navBar.activeModule
-		onReadyChanged: feedback.showIfNecessary()
+		activeModule: navigation.activeModule
 	}
 
 	Navigation {
-		id: navBar
+		id: navigation
 
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
+			right: parent.right
+		}
 
 		onResetContentArea: contentArea.reset()
+	}
+
+	IosBackGestureMouseArea {
+		visible: Constants.is_layout_ios && menuBar.isBackAction
+		anchors.fill: contentArea
+
+		onBackGestureTriggered: menuBar.navigationAction.clicked()
 	}
 
 	ConfirmationPopup {
@@ -181,7 +193,7 @@ ApplicationWindow {
 		id: feedback
 
 		function showIfNecessary() {
-			if (!ApplicationModel.currentWorkflow && !RemoteServiceModel.running && SettingsModel.requestStoreFeedback()) {
+			if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE && !RemoteServiceModel.running && SettingsModel.requestStoreFeedback()) {
 				SettingsModel.hideFutureStoreFeedbackDialogs()
 				feedback.open()
 			}

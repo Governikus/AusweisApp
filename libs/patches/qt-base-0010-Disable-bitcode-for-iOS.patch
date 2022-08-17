@@ -1,0 +1,49 @@
+From 674bf8d670109406af4d213eb0b2525896896056 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Tue, 5 Jul 2022 16:06:22 +0200
+Subject: Disable bitcode for iOS
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+It's deprecated as of Xcode 14, and generates a warning message if a
+project explicitly enables bitcode. The App Store no longer accepts
+bitcode submissions from Xcode 14.
+
+Change-Id: Ib1f9d5114ca4d8b1845ecc7a9de0473ee015db33
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+(cherry picked from commit e27a0d5a0f8818653ff125409db8187454409749)
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+---
+ cmake/QtInternalTargets.cmake | 1 -
+ mkspecs/common/uikit.conf     | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git x/qtbase/cmake/QtInternalTargets.cmake y/qtbase/cmake/QtInternalTargets.cmake
+index 298f7d023d..72861994f8 100644
+--- x/qtbase/cmake/QtInternalTargets.cmake
++++ y/qtbase/cmake/QtInternalTargets.cmake
+@@ -218,7 +218,6 @@ if(UIKIT)
+         # TODO: Figure out if this ok or not (sounds ok to me).
+         target_compile_definitions(PlatformCommonInternal INTERFACE QT_COMPILER_SUPPORTS_SSE2)
+     endif()
+-    qt_internal_apply_bitcode_flags(PlatformCommonInternal)
+ endif()
+ 
+ if(WASM AND QT_FEATURE_sse2)
+diff --git x/qtbase/mkspecs/common/uikit.conf y/qtbase/mkspecs/common/uikit.conf
+index 0388b8e616..8419506f09 100644
+--- x/qtbase/mkspecs/common/uikit.conf
++++ y/qtbase/mkspecs/common/uikit.conf
+@@ -3,7 +3,7 @@
+ #
+ 
+ QMAKE_PLATFORM         += uikit
+-CONFIG                 += bitcode reduce_exports shallow_bundle no_qt_rpath
++CONFIG                 += reduce_exports shallow_bundle no_qt_rpath
+ 
+ INCLUDEPATH            += $$PWD/uikit
+ 
+-- 
+2.32.1 (Apple Git-133)
+

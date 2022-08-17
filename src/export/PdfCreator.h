@@ -7,6 +7,7 @@
 #pragma once
 
 #include <QCoreApplication>
+#include <QPainter>
 #include <QPdfWriter>
 #include <QString>
 #include <QTextDocument>
@@ -24,6 +25,7 @@ class PdfCreator
 		QTextDocument mContent;
 		QTextDocument mFooter;
 
+		void drawContents(const QTextDocument& pTextDocument, QPainter& pPainter, const QRectF& pClipRect = QRectF());
 		void createHeader(const QString& pTitle, const QString& pHeadline);
 		void createContent(const QString& pContent);
 		void createFooter();

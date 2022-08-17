@@ -31,7 +31,7 @@ class PreVerificationSettings
 		void updateLinkCertificates(const QByteArrayList& pLinkCertificates);
 
 	public:
-		~PreVerificationSettings() override;
+		~PreVerificationSettings() override = default;
 		void save() override;
 
 		[[nodiscard]] bool isEnabled() const;

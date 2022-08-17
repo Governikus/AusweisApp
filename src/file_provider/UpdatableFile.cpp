@@ -13,7 +13,7 @@
 #include <QStandardPaths>
 
 #ifndef QT_NO_DEBUG
-#include <QTemporaryDir>
+	#include <QTemporaryDir>
 #endif
 
 using namespace governikus;
@@ -67,8 +67,8 @@ QString UpdatableFile::qrcPath() const
 QString UpdatableFile::cachePath() const
 {
 	QDir folder(mSectionCachePath);
-	const QStringList nameFilter = QStringList({mName + QStringLiteral("_*")});
-	const QStringList matchingFiles = folder.entryList(nameFilter, QDir::Files, QDir::Name | QDir::Reversed);
+	const QStringList nameFilter({mName + QStringLiteral("_*")});
+	const auto matchingFiles = folder.entryList(nameFilter, QDir::Files, QDir::Name | QDir::Reversed);
 
 	// Files are saved in the cache with the suffix _<timestamp>, where
 	// the timestamp has the format "yyyyMMddhhmmss".
@@ -319,14 +319,10 @@ bool UpdatableFile::forEachLookupPath(const std::function<bool(const QString&)>&
 		}
 	}
 
-	for (const QString& path : qAsConst(paths))
-	{
-		if (pValidate(path))
+	return std::any_of(paths.constBegin(), paths.constEnd(), [&pValidate](const QString& pPath)
 		{
-			return true;
-		}
-	}
-	return false;
+			return pValidate(pPath);
+		});
 }
 
 

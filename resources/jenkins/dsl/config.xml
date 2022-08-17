@@ -15,13 +15,19 @@
   <assignedNode>Seeder</assignedNode>
   <canRoam>false</canRoam>
   <builders>
-	<javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.36">
+	<javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.77">
 	  <targets>resources/jenkins/dsl/*.groovy
 	  resources/jenkins/dsl/Releases/*.groovy</targets>
 	  <usingScriptText>false</usingScriptText>
+	  <sandbox>false</sandbox>
 	  <ignoreExisting>false</ignoreExisting>
+	  <ignoreMissingFiles>false</ignoreMissingFiles>
+	  <failOnMissingPlugin>true</failOnMissingPlugin>
+	  <failOnSeedCollision>true</failOnSeedCollision>
+	  <unstableOnDeprecation>false</unstableOnDeprecation>
 	  <removedJobAction>DISABLE</removedJobAction>
 	  <removedViewAction>DELETE</removedViewAction>
+	  <removedConfigFilesAction>IGNORE</removedConfigFilesAction>
 	  <lookupStrategy>JENKINS_ROOT</lookupStrategy>
 	  <additionalClasspath>resources/jenkins/dsl</additionalClasspath>
 	</javaposse.jobdsl.plugin.ExecuteDslScripts>

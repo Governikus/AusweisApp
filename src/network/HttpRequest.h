@@ -8,13 +8,16 @@
 
 #include "HttpResponse.h"
 
-#include <http_parser.h>
 #include <QByteArray>
 #include <QMap>
 #include <QObject>
 #include <QScopedPointer>
 #include <QTcpSocket>
 #include <QUrl>
+
+#include <http_parser.h>
+
+#include <memory>
 
 class test_WebserviceActivationHandler;
 class test_WebserviceActivationContext;
@@ -26,19 +29,18 @@ class HttpRequest
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_WebserviceActivationHandler;
+	friend class ::test_WebserviceActivationContext;
+	friend class HttpServer;
 
 	private:
-		friend class ::test_WebserviceActivationHandler;
-		friend class ::test_WebserviceActivationContext;
-		friend class HttpServer;
-
-		static int onMessageBegin(http_parser* pParser);
-		static int onMessageComplete(http_parser* pParser);
-		static int onHeadersComplete(http_parser* pParser);
-		static int onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength);
-		static int onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength);
-		static int onBody(http_parser* pParser, const char* const pPos, size_t pLength);
-		static int onUrl(http_parser* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onMessageBegin(http_parser* pParser);
+		[[nodiscard]] static int onMessageComplete(http_parser* pParser);
+		[[nodiscard]] static int onHeadersComplete(http_parser* pParser);
+		[[nodiscard]] static int onHeaderField(http_parser* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onHeaderValue(http_parser* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onBody(http_parser* pParser, const char* const pPos, size_t pLength);
+		[[nodiscard]] static int onUrl(http_parser* pParser, const char* const pPos, size_t pLength);
 
 		static inline void add(QByteArray& pDest, const char* const pPos, size_t pLength)
 		{
@@ -49,7 +51,11 @@ class HttpRequest
 		QByteArray mUrl;
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 1, 0))
 		QScopedPointer<QTcpSocket, QScopedPointerDeleteLater> mSocket;
+#else
+		std::unique_ptr<QTcpSocket, QScopedPointerDeleteLater> mSocket;
+#endif
 		http_parser mParser;
 		http_parser_settings mParserSettings;
 
@@ -67,6 +73,7 @@ class HttpRequest
 		[[nodiscard]] bool isConnected() const;
 
 		[[nodiscard]] QByteArray getMethod() const;
+		[[nodiscard]] http_method getHttpMethod() const;
 		[[nodiscard]] bool isUpgrade() const;
 		[[nodiscard]] QByteArray getHeader(const QByteArray& pKey) const;
 		[[nodiscard]] const QMap<QByteArray, QByteArray>& getHeader() const;

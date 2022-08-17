@@ -79,6 +79,23 @@ class test_ChangePinContext
 		}
 
 
+		void test_isPhysicalCardRequired()
+		{
+			{
+				ChangePinContext context;
+				QVERIFY(!context.isPhysicalCardRequired());
+			}
+			{
+				ChangePinContext context(false);
+				QVERIFY(!context.isPhysicalCardRequired());
+			}
+			{
+				ChangePinContext context(true);
+				QVERIFY(context.isPhysicalCardRequired());
+			}
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_ChangePinContext)

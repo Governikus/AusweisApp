@@ -35,15 +35,14 @@ defineEnumType(CardReturnCode,
 		PUK_INOPERATIVE,
 		NO_ACTIVE_PIN_SET,
 		PROTOCOL_ERROR,
+		EXTENDED_LENGTH_MISSING,
 		UNEXPECTED_TRANSMIT_STATUS)
 
 
 class CardReturnCodeUtil
 {
 	private:
-		CardReturnCodeUtil()
-		{
-		}
+		CardReturnCodeUtil() = default;
 
 	public:
 		static GlobalStatus toGlobalStatus(CardReturnCode pCode);

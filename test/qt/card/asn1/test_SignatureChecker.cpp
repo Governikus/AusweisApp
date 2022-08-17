@@ -4,7 +4,13 @@
  * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
  */
 
-#include <QtCore>
+#include "asn1/SignatureChecker.h"
+
+#include "asn1/ASN1TemplateUtil.h"
+#include "asn1/CVCertificate.h"
+
+#include "TestFileHelper.h"
+
 #include <QtTest>
 
 #include <openssl/bn.h>
@@ -12,13 +18,6 @@
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
-
-#include "asn1/CVCertificate.h"
-#include "asn1/SignatureChecker.h"
-#include "TestFileHelper.h"
-#include <QDebug>
-
-#include "pace/ec/EcUtil.h"
 
 
 using namespace governikus;
@@ -29,7 +28,7 @@ class test_SignatureChecker
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<const CVCertificate> > cvcs;
+	QVector<QSharedPointer<const CVCertificate>> cvcs;
 
 	static QSharedPointer<const CVCertificate> load(const QString& pName)
 	{
@@ -52,13 +51,13 @@ class test_SignatureChecker
 
 		void cleanup()
 		{
-			QCOMPARE(ERR_get_error(), 0);
+			QCOMPARE(getOpenSslError(), QByteArray());
 		}
 
 
 		void verifyEmptyList()
 		{
-			QVector<QSharedPointer<const CVCertificate> > certs;
+			QVector<QSharedPointer<const CVCertificate>> certs;
 			SignatureChecker checker(certs);
 
 			QVERIFY(!checker.check());
@@ -67,7 +66,7 @@ class test_SignatureChecker
 
 		void verifyNotSelfSigned()
 		{
-			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(0);
 			SignatureChecker checker(certs);
 
@@ -77,7 +76,7 @@ class test_SignatureChecker
 
 		void verifyNoCertificateWithCurveParameters()
 		{
-			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(2);
 			certs.removeAt(1);
 			certs.removeAt(0);
@@ -89,7 +88,7 @@ class test_SignatureChecker
 
 		void verifyNoValidChain()
 		{
-			QVector<QSharedPointer<const CVCertificate> > certs(cvcs);
+			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(2);
 			SignatureChecker checker(certs);
 

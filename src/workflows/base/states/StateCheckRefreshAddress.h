@@ -8,8 +8,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/AuthContext.h"
 #include "GenericContextContainer.h"
+#include "context/AuthContext.h"
 
 #include <QNetworkReply>
 #include <QSharedPointer>

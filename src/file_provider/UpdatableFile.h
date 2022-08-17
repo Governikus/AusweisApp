@@ -26,11 +26,10 @@ class UpdatableFile
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_UpdatableFile;
+	friend class ::test_ReaderConfiguration;
 
 	private:
-		friend class ::test_UpdatableFile;
-		friend class ::test_ReaderConfiguration;
-
 		const QString mSection;
 		const QString mName;
 		QString mDefaultPath;

@@ -2,11 +2,13 @@
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.TitleBar 1.0
+
 
 Row {
 	id: logControls
@@ -22,55 +24,28 @@ Row {
 	spacing: 18
 	anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-	ShareButton {
+	TitleBarButton {
 		Accessible.name: qsTr("Share log")
 
+		source: "qrc:///images/mobile/platform_specific_share.svg"
 		onClicked: logControls.share(mapToGlobal(width / 2, height))
 	}
 
-	TintableIcon {
+	TitleBarButton {
 		id: removeButton
 
-		height: Style.dimens.small_icon_size
-
-		Accessible.role: Accessible.Button
 		Accessible.name: qsTr("Delete log")
-		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaRemove.clicked(null)
 
-		tintColor: Style.color.button_text
-		sourceSize.height: height
 		source: "qrc:///images/material_delete.svg"
-
-		MouseArea {
-			id: mouseAreaRemove
-
-			anchors.fill: parent
-			anchors.margins: -8
-
-			onClicked: logControls.remove()
-		}
+		onClicked: logControls.remove()
 	}
 
-	Image {
+	TitleBarButton {
 		id: removeAllButton
 
-		height: Style.dimens.small_icon_size
-		width: height
-
-		Accessible.role: Accessible.Button
 		Accessible.name: qsTr("Delete all logs")
-		Accessible.onPressAction: if (Qt.platform.os === "ios") mouseAreaRemove.clicked(null)
 
-		fillMode: Image.PreserveAspectFit
 		source: "qrc:///images/trash_icon_all.svg"
-
-		MouseArea {
-			id: mouseAreaRemoveAll
-
-			anchors.fill: parent
-			anchors.margins: -8
-
-			onClicked: logControls.removeAll()
-		}
+		onClicked: logControls.removeAll()
 	}
  }

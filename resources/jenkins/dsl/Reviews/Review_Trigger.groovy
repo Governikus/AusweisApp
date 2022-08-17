@@ -9,7 +9,7 @@ def getJobs()
 {
 	def list = ['Formatting', 'Source', 'Docs']
 
-	def packages = ['MacOS_DMG_PKG', 'Win32_GNU_MSI', 'Win32_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'Android_AAR']
+	def packages = ['Container', 'MacOS_DMG_PKG', 'Win64_GNU_MSI', 'Win64_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'Android_AAR']
 	for(ARCH in Constants.AndroidArchAPKReview)
 	{
 		packages << 'Android_APK_' + ARCH
@@ -19,7 +19,7 @@ def getJobs()
 	def subPackages = ['iOS_SwiftPackage']
 	list += subPackages
 
-	def unitTests = ['Linux', 'Linux_Integrated', 'MacOS', 'MacOS_Integrated', 'Win32_GNU', 'FreeBSD']
+	def unitTests = ['Linux', 'Linux_Integrated', 'MacOS', 'MacOS_Integrated', 'Win64_GNU', 'Win64_MSVC', 'FreeBSD', 'SonarQube']
 	list += unitTests
 
 	return list
@@ -31,7 +31,8 @@ String getName(String name)
 }
 
 def envMap = createEnvMap(getJobs(), this.&getName)
-def reviewMessage = createReviewMessage(getJobs(), this.&getName) + ' | Libraries: ${Libraries}'
+
+def reviewMessage = createReviewMessage(getJobs(), this.&getName) + ' | Libraries: ${Libraries}' + ' | SonarQube Analysis: ${SONARQUBE_ANALYSIS_MESSAGE}'
 
 
 
@@ -51,6 +52,7 @@ j.with
 		environmentVariables
 		{
 			envs(envMap)
+			env('SONARQUBE_ANALYSIS_MESSAGE', '')
 		}
 	}
 
@@ -76,9 +78,9 @@ j.with
 				phaseJob(getName('Android_APK_' + ARCH))
 			}
 
-			phaseJob(getName('Win32_GNU_MSI'))
+			phaseJob(getName('Win64_GNU_MSI'))
 
-			phaseJob(getName('Win32_MSVC_MSI'))
+			phaseJob(getName('Win64_MSVC_MSI'))
 
 			phaseJob(getName('MacOS_DMG_PKG'))
 
@@ -87,6 +89,8 @@ j.with
 			phaseJob(getName('iOS_Framework'))
 
 			phaseJob(getName('iOS_Simulator_Framework'))
+
+			phaseJob(getName('Container'))
 		}
 
 		phase('Sub-Packages', 'UNSTABLE')
@@ -107,13 +111,44 @@ j.with
 
 			phaseJob(getName('Linux_Integrated'))
 
-			phaseJob(getName('Win32_GNU'))
+			phaseJob(getName('Win64_GNU'))
+
+			phaseJob(getName('Win64_MSVC'))
 
 			phaseJob(getName('MacOS'))
 
 			phaseJob(getName('MacOS_Integrated'))
 
 			phaseJob(getName('FreeBSD'))
+
+			phaseJob(getName('SonarQube'))
+		}
+
+		copyArtifacts(getName('SonarQube'))
+		{
+			includePatterns('*/sonar-metadata.txt')
+			flatten()
+			buildSelector
+			{
+				multiJobBuild()
+			}
+		}
+
+		shell('''\
+		if [ -f sonar-metadata.txt ]; then
+			echo "sonar-metadata.txt exists";
+			URL=$(grep dashboardUrl sonar-metadata.txt | cut -d"=" -f 2-);
+			echo -n "SONARQUBE_ANALYSIS_MESSAGE=" > sonar_analysis_message.env;
+			echo -n "[Result](" >> sonar_analysis_message.env;
+			echo -n $URL >> sonar_analysis_message.env; echo -n ")" >> sonar_analysis_message.env;
+		else echo "sonar-metadata.txt does not exist";
+			echo -n "SONARQUBE_ANALYSIS_MESSAGE=No sonar analysis available" > sonar_analysis_message.env;
+		fi
+		''')
+
+		environmentVariables
+		{
+			propertiesFile('sonar_analysis_message.env')
 		}
 	}
 

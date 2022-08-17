@@ -2,17 +2,16 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
+#include "PaceInfo.h"
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "KnownOIDs.h"
-#include "PaceInfo.h"
+#include "SecurityProtocol.h"
 
 #include <QLoggingCategory>
 
 
 using namespace governikus;
-using namespace governikus::KnownOIDs;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
@@ -31,19 +30,7 @@ ASN1_SEQUENCE(paceinfo_st) = {
 ASN1_SEQUENCE_END(paceinfo_st)
 
 IMPLEMENT_ASN1_FUNCTIONS(paceinfo_st)
-
-template<>
-paceinfo_st* decodeAsn1Object<paceinfo_st>(paceinfo_st** pObject, const unsigned char** pData, long pDataLen)
-{
-	return d2i_paceinfo_st(pObject, pData, pDataLen);
-}
-
-
-template<>
-void freeAsn1Object<paceinfo_st>(paceinfo_st* pObject)
-{
-	paceinfo_st_free(pObject);
-}
+IMPLEMENT_ASN1_OBJECT(paceinfo_st)
 
 
 }  // namespace governikus
@@ -51,23 +38,7 @@ void freeAsn1Object<paceinfo_st>(paceinfo_st* pObject)
 
 bool PaceInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier)
 {
-	const auto protocol = Asn1ObjectUtil::convertTo(pObjectIdentifier);
-	return protocol == id_PACE::DH::GM_3DES_CBC_CBC
-		   || protocol == id_PACE::DH::GM_AES_CBC_CMAC_128
-		   || protocol == id_PACE::DH::GM_AES_CBC_CMAC_192
-		   || protocol == id_PACE::DH::GM_AES_CBC_CMAC_256
-		   || protocol == id_PACE::ECDH::GM_3DES_CBC_CBC
-		   || protocol == id_PACE::ECDH::GM_AES_CBC_CMAC_128
-		   || protocol == id_PACE::ECDH::GM_AES_CBC_CMAC_192
-		   || protocol == id_PACE::ECDH::GM_AES_CBC_CMAC_256
-		   || protocol == id_PACE::DH::IM_3DES_CBC_CBC
-		   || protocol == id_PACE::DH::IM_AES_CBC_CMAC_128
-		   || protocol == id_PACE::DH::IM_AES_CBC_CMAC_192
-		   || protocol == id_PACE::DH::IM_AES_CBC_CMAC_256
-		   || protocol == id_PACE::ECDH::IM_3DES_CBC_CBC
-		   || protocol == id_PACE::ECDH::IM_AES_CBC_CMAC_128
-		   || protocol == id_PACE::ECDH::IM_AES_CBC_CMAC_192
-		   || protocol == id_PACE::ECDH::IM_AES_CBC_CMAC_256;
+	return SecurityProtocol(Oid(pObjectIdentifier)).getProtocol() == ProtocolType::PACE;
 }
 
 
@@ -88,69 +59,21 @@ ASN1_OBJECT* PaceInfo::getProtocolObjectIdentifier() const
 }
 
 
-QByteArray PaceInfo::getParameterId() const
-{
-	if (mDelegate->mParameterId)
-	{
-		return Asn1IntegerUtil::getValue(mDelegate->mParameterId);
-	}
-	return QByteArray();
-}
-
-
 int PaceInfo::getVersion() const
 {
-	const auto& version = Asn1IntegerUtil::getValue(mDelegate->mVersion);
-	return version.isEmpty() || version.size() > 1 ? -1 : version[0];
+	return Asn1IntegerUtil::getValue(mDelegate->mVersion);
 }
 
 
-KeyAgreementType PaceInfo::getKeyAgreementType() const
+int PaceInfo::getParameterId() const
 {
-	const auto& protocol = getProtocol();
-	if (protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::GM))
-			|| protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::IM)))
-	{
-		return KeyAgreementType::DH;
-	}
-	else
-	{
-		return KeyAgreementType::ECDH;
-	}
+	return Asn1IntegerUtil::getValue(mDelegate->mParameterId);
 }
 
 
-MappingType PaceInfo::getMappingType() const
+int PaceInfo::getParameterIdAsNid() const
 {
-	const auto& protocol = getProtocol();
-	if (protocol.startsWith(toByteArray(KnownOIDs::id_PACE::DH::GM))
-			|| protocol.startsWith(toByteArray(KnownOIDs::id_PACE::ECDH::GM)))
-	{
-		return MappingType::GM;
-	}
-	else
-	{
-		return MappingType::IM;
-	}
-}
-
-
-int PaceInfo::getParameterIdAsInt() const
-{
-	bool conversionOkay = false;
-
-	/*
-	 * According to the Qt documentation of QByteArray:
-	 * "base must be between 2 and 36, or 0."
-	 * So we convert first to hex and parse  it then with base 16
-	 */
-	int parameterIdAsInt = getParameterId().toHex().toInt(&conversionOkay, 16);
-	if (!conversionOkay)
-	{
-		qCCritical(card) << "Conversion error on parameterId";
-		return -1;
-	}
-	return parameterIdAsInt;
+	return getMappedNid(getParameterId());
 }
 
 
@@ -176,16 +99,20 @@ bool PaceInfo::isStandardizedDomainParameters() const
 	 * 18 NIST P-521 (secp521r1) 521 ECP
 	 * 19-31 RFU
 	 */
-	int paramId = getParameterIdAsInt();
-	if (getKeyAgreementType() == KeyAgreementType::DH)
+	const auto protocol = getProtocol();
+	const auto keyAgreement = protocol.getKeyAgreement();
+	const auto mapping = protocol.getMapping();
+	const auto paramId = getParameterId();
+
+	if (keyAgreement == KeyAgreementType::DH)
 	{
 		return 0 <= paramId && paramId <= 3;
 	}
-	if (getKeyAgreementType() == KeyAgreementType::ECDH && getMappingType() == MappingType::GM)
+	if (keyAgreement == KeyAgreementType::ECDH && mapping == MappingType::GM)
 	{
 		return 8 <= paramId && paramId <= 18;
 	}
-	if (getKeyAgreementType() == KeyAgreementType::ECDH && getMappingType() == MappingType::IM)
+	if (keyAgreement == KeyAgreementType::ECDH && mapping == MappingType::IM)
 	{
 		return 8 <= paramId && paramId <= 18 && paramId != 10;
 	}
@@ -194,4 +121,48 @@ bool PaceInfo::isStandardizedDomainParameters() const
 }
 
 
-#include "moc_PaceInfo.cpp"
+int PaceInfo::getMappedNid(int pCurveIndex)
+{
+	switch (pCurveIndex)
+	{
+		case 8:
+			// According to RFC 5480 2.1.1.1 secp192r1 equals NID_X9_62_prime192v1
+			return NID_X9_62_prime192v1;
+
+		case 9:
+			return NID_brainpoolP192r1;
+
+		case 10:
+			// cannot be used with IM
+			return NID_secp224r1;
+
+		case 11:
+			return NID_brainpoolP224r1;
+
+		case 12:
+			// According to RFC 5480 2.1.1.1 secp256r1 equals NID_X9_62_prime256v1
+			return NID_X9_62_prime256v1;
+
+		case 13:
+			return NID_brainpoolP256r1;
+
+		case 14:
+			return NID_brainpoolP320r1;
+
+		case 15:
+			return NID_secp384r1;
+
+		case 16:
+			return NID_brainpoolP384r1;
+
+		case 17:
+			return NID_brainpoolP512r1;
+
+		case 18:
+			return NID_secp521r1;
+
+		default:
+			qCWarning(card) << "Standardized elliptic curve" << pCurveIndex << "not supported";
+			return NID_undef;
+	}
+}

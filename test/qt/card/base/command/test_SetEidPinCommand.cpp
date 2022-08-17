@@ -37,25 +37,25 @@ class test_SetEidPinCommand
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex(("9000")));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
-			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63c0"));
+			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63C0"));
 			const QByteArray pin = QByteArrayLiteral("111111");
 			SetEidPinCommand command(worker, pin, 8);
 
 			ResponseApdu apdu1(QByteArray("apdu"));
 			command.mResponseApdu = apdu1;
-			QCOMPARE(command.getResponseApdu().getBuffer(), QByteArray("apdu"));
+			QCOMPARE(command.getResponseApdu(), QByteArray("apdu"));
 
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
-			QCOMPARE(command.getResponseApdu().getBuffer(), QByteArray::fromHex("9000"));
+			QCOMPARE(command.getResponseApdu(), QByteArray::fromHex("9000"));
 
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PROTOCOL_ERROR);
-			QCOMPARE(command.getResponseApdu().getBuffer(), QByteArray::fromHex("1919"));
+			QCOMPARE(command.getResponseApdu(), QByteArray::fromHex("1919"));
 
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PIN_BLOCKED);
-			QCOMPARE(command.getResponseApdu().getBuffer(), QByteArray::fromHex("63c0"));
+			QCOMPARE(command.getResponseApdu(), QByteArray::fromHex("63C0"));
 		}
 
 

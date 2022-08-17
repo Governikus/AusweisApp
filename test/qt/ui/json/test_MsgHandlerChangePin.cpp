@@ -6,12 +6,14 @@
 
 #include "messages/MsgHandlerChangePin.h"
 
-#include "controller/AppController.h"
 #include "Env.h"
 #include "MessageDispatcher.h"
 #include "UILoader.h"
 #include "UIPlugInJson.h"
 #include "VolatileSettings.h"
+#include "controller/AppController.h"
+
+#include "TestWorkflowContext.h"
 
 #include <QSignalSpy>
 #include <QtTest>
@@ -28,7 +30,7 @@ class test_MsgHandlerChangePin
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			qRegisterMetaType<QSharedPointer<WorkflowContext> >("QSharedPointer<WorkflowContext>");
+			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 		}
 
 
@@ -46,10 +48,10 @@ class test_MsgHandlerChangePin
 
 		void runChangePinCmd()
 		{
-			Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson);
-			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			QVERIFY(Env::getSingleton<UILoader>()->load<UIPlugInJson>());
+			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
-			QSignalSpy spy(ui, &UIPlugIn::fireChangePinRequested);
+			QSignalSpy spy(ui, &UIPlugIn::fireWorkflowRequested);
 
 			MessageDispatcher dispatcher;
 			const QByteArray msg = R"({"cmd": "RUN_CHANGE_PIN"})";
@@ -61,7 +63,7 @@ class test_MsgHandlerChangePin
 
 		void initChangePin()
 		{
-			const auto context = QSharedPointer<WorkflowContext>::create();
+			const auto context = QSharedPointer<TestWorkflowContext>::create();
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), QByteArray());
 			QCOMPARE(dispatcher.finish(), QByteArray());
@@ -90,9 +92,9 @@ class test_MsgHandlerChangePin
 
 		void badState()
 		{
-			const QSharedPointer<WorkflowContext> context(new WorkflowContext());
+			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			MessageDispatcher dispatcher;
-			dispatcher.init(context);
+			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 			const QByteArray expected(R"({"error":"RUN_CHANGE_PIN","msg":"BAD_STATE"})");
 
 			const QByteArray msg(R"({"cmd": "RUN_CHANGE_PIN"})");
@@ -102,11 +104,11 @@ class test_MsgHandlerChangePin
 
 		void cancelChangePin()
 		{
-			UILoader::setDefault({QStringLiteral("json")});
+			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			QVERIFY(controller.start());
 
-			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
@@ -126,7 +128,7 @@ class test_MsgHandlerChangePin
 
 		void iosScanDialogMessages()
 		{
-			UILoader::setDefault({QStringLiteral("json")});
+			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			QVERIFY(controller.start());
 
@@ -137,12 +139,15 @@ class test_MsgHandlerChangePin
 			QVERIFY(initialMessages.getSessionFailed().isEmpty());
 			QVERIFY(!initialMessages.getSessionFailed().isNull());
 
-			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
-			QSignalSpy spyUi(ui, &UIPlugIn::fireChangePinRequested);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
+					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+				});
 
 			const QByteArray msg("{"
 								 "\"cmd\": \"RUN_CHANGE_PIN\","
@@ -158,7 +163,6 @@ class test_MsgHandlerChangePin
 			QCOMPARE(spyUi.count(), 1);
 			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
 
-			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
 			auto messages = Env::getSingleton<VolatileSettings>()->getMessages();
 			QCOMPARE(messages.getSessionStarted(), QLatin1String("start"));
 			QCOMPARE(messages.getSessionInProgress(), QLatin1String("progress"));
@@ -181,28 +185,44 @@ class test_MsgHandlerChangePin
 		void handleInterrupt_data()
 		{
 			QTest::addColumn<QVariant>("handleInterrupt");
+			QTest::addColumn<bool>("handleInterruptExpected");
+			QTest::addColumn<char>("apiLevel");
 
-			QTest::newRow("shouldStop") << QVariant(true);
-			QTest::newRow("shouldNotStop") << QVariant(false);
+			QTest::newRow("shouldStop_v1") << QVariant(true) << true << '1';
+			QTest::newRow("shouldNotStop_v1") << QVariant(false) << false << '1';
+			QTest::newRow("shouldNotStop_v2 requested") << QVariant(true) << false << '2';
+			QTest::newRow("shouldNotStop_v2 not requested") << QVariant(false) << false << '2';
 		}
 
 
 		void handleInterrupt()
 		{
 			QFETCH(QVariant, handleInterrupt);
+			QFETCH(bool, handleInterruptExpected);
+			QFETCH(char, apiLevel);
 
-			UILoader::setDefault({QStringLiteral("json")});
+			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			QVERIFY(controller.start());
 
-			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 
-			auto ui = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
-			QSignalSpy spyUi(ui, &UIPlugIn::fireChangePinRequested);
+			QSignalSpy spyMessage(ui, &UIPlugInJson::fireMessage);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
+					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+				});
+
+			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
+			ui->doMessageProcessing(msgApiLevel.replace('*', apiLevel));
+			QTRY_COMPARE(spyMessage.count(), 1); // clazy:exclude=qstring-allocations
+			QByteArray msgApiLevelResponse = R"({"current":*,"msg":"API_LEVEL"})";
+			QCOMPARE(spyMessage.takeFirst().at(0).toByteArray(), msgApiLevelResponse.replace('*', apiLevel));
 
 			QByteArray msg("{"
 						   "\"cmd\": \"RUN_CHANGE_PIN\","
@@ -214,13 +234,66 @@ class test_MsgHandlerChangePin
 			QCOMPARE(spyUi.count(), 1);
 			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
 
-			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), handleInterrupt.toBool());
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), handleInterruptExpected);
 
 			const QByteArray msgCancel(R"({"cmd": "CANCEL"})");
 			ui->doMessageProcessing(msgCancel);
 			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
 
-			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), true); // default
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
+		}
+
+
+		void handleInterruptDefault_data()
+		{
+			QTest::addColumn<bool>("handleInterruptExpected");
+			QTest::addColumn<char>("apiLevel");
+
+			QTest::newRow("v1") << true << '1';
+			QTest::newRow("v2") << false << '2';
+		}
+
+
+		void handleInterruptDefault()
+		{
+			QFETCH(bool, handleInterruptExpected);
+			QFETCH(char, apiLevel);
+
+			UILoader::setUserRequest({QStringLiteral("json")});
+			AppController controller;
+			QVERIFY(controller.start());
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
+
+			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			QVERIFY(ui);
+			ui->setEnabled(true);
+			QSignalSpy spyMessage(ui, &UIPlugInJson::fireMessage);
+			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
+			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
+			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
+					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+				});
+
+			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
+			ui->doMessageProcessing(msgApiLevel.replace('*', apiLevel));
+			QTRY_COMPARE(spyMessage.count(), 1); // clazy:exclude=qstring-allocations
+			QByteArray msgApiLevelResponse = R"({"current":*,"msg":"API_LEVEL"})";
+			QCOMPARE(spyMessage.takeFirst().at(0).toByteArray(), msgApiLevelResponse.replace('*', apiLevel));
+
+			const QByteArray msg(R"({"cmd": "RUN_CHANGE_PIN"})");
+			ui->doMessageProcessing(msg);
+			QCOMPARE(spyUi.count(), 1);
+			QTRY_COMPARE(spyStarted.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), handleInterruptExpected);
+
+			const QByteArray msgCancel(R"({"cmd": "CANCEL"})");
+			ui->doMessageProcessing(msgCancel);
+			QTRY_COMPARE(spyFinished.count(), 1); // clazy:exclude=qstring-allocations
+
+			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 		}
 
 

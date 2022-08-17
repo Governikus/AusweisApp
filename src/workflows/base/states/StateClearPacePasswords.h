@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AbstractState.h"
-#include "context/WorkflowContext.h"
 #include "GenericContextContainer.h"
+#include "context/WorkflowContext.h"
 
 
 namespace governikus
@@ -19,8 +19,9 @@ class StateClearPacePasswords
 	Q_OBJECT
 	friend class StateBuilder;
 
-	explicit StateClearPacePasswords(const QSharedPointer<WorkflowContext>& pContext);
-	void run() override;
+	private:
+		explicit StateClearPacePasswords(const QSharedPointer<WorkflowContext>& pContext);
+		void run() override;
 };
 
 } // namespace governikus

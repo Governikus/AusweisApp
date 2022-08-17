@@ -40,7 +40,13 @@ const QVersionNumber& VersionNumber::getVersionNumber() const
 
 bool VersionNumber::isDeveloperVersion() const
 {
-	return mVersionNumber.isNull() || (mVersionNumber.minorVersion() & 1) || !mSuffix.isEmpty();
+	return mVersionNumber.isNull() || isBetaVersion() || !mSuffix.isEmpty();
+}
+
+
+bool VersionNumber::isBetaVersion() const
+{
+	return mVersionNumber.minorVersion() & 1;
 }
 
 
@@ -113,4 +119,10 @@ QString VersionNumber::getRevision() const
 bool VersionNumber::isDraft() const
 {
 	return mSuffix.contains(QStringLiteral("-draft")) || mSuffix.contains(QStringLiteral("-secret"));
+}
+
+
+QString VersionNumber::getSuffix() const
+{
+	return mSuffix;
 }

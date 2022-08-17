@@ -8,6 +8,7 @@
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
+#include "Oid.h"
 
 #include <openssl/asn1t.h>
 #include <openssl/err.h>
@@ -15,7 +16,6 @@
 #include <QSet>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 
 namespace governikus
@@ -57,27 +57,14 @@ struct CertificateDescription
 	static QSharedPointer<const CertificateDescription> decode(const QByteArray& pBytes);
 	QByteArray encode();
 
-	void setDescriptionType(const QByteArray& pOidAsText);
-	[[nodiscard]] QByteArray getDescriptionType() const;
-
-	void setIssuerName(const QString& pIssuerName);
+	[[nodiscard]] Oid getDescriptionType() const;
 	[[nodiscard]] QString getIssuerName() const;
-
-	void setIssuerUrl(const QString& pIssuerUrl);
 	[[nodiscard]] QString getIssuerUrl() const;
-
-	void setSubjectName(const QString& pSubjectName);
 	[[nodiscard]] QString getSubjectName() const;
-
-	void setSubjectUrl(const QString& pSubjectUrl);
 	[[nodiscard]] QString getSubjectUrl() const;
-
 	[[nodiscard]] TermsOfUsageType getTermsOfUsageType() const;
 	[[nodiscard]] QString getTermsOfUsage() const;
-
-	void setRedirectUrl(const QString& pRedirectUrl);
 	[[nodiscard]] QString getRedirectUrl() const;
-
 	[[nodiscard]] QSet<QString> getCommCertificates() const;
 
 	/*!

@@ -38,25 +38,25 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	auto sFinal = addState<FinalState>();
 	mStateMachine.setInitialState(sStatePace);
 
-	sStatePace->addTransition(sStatePace, &CompositeStatePace::firePaceChannelEstablished, sPrepareChangePin);
+	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireContinue, sPrepareChangePin);
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sClearPacePasswords);
 
-	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireContinue, sChangePin);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &AbstractState::fireContinue, sChangePin);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &AbstractState::fireAbort, sDestroyPace);
 	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireEnterNewPacePin, sEnterNewPacePin);
-	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireAbort, sStatePace);
 
 	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireContinue, sChangePin);
-	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireAbort, sStatePace);
+	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireAbort, sDestroyPace);
 
 	sChangePin->addTransition(sChangePin, &AbstractState::fireContinue, sDestroyPace);
-	sChangePin->addTransition(sChangePin, &StateChangePin::fireInvalidPin, sClearPacePasswords);
-	sChangePin->addTransition(sChangePin, &AbstractState::fireAbort, sStatePace);
+	sChangePin->addTransition(sChangePin, &AbstractState::fireAbort, sDestroyPace);
+	sChangePin->addTransition(sChangePin, &StateChangePin::fireRetry, sStatePace);
 
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sClearPacePasswords);
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireAbort, sClearPacePasswords);
 
-	sClearPacePasswords->addTransition(sClearPacePasswords, &StateClearPacePasswords::fireContinue, sUpdateRetryCounterFinal);
-	sClearPacePasswords->addTransition(sClearPacePasswords, &StateClearPacePasswords::fireAbort, sUpdateRetryCounterFinal);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireContinue, sUpdateRetryCounterFinal);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireAbort, sUpdateRetryCounterFinal);
 
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireContinue, sCleanUpReaderManager);
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireAbort, sCleanUpReaderManager);
@@ -66,6 +66,19 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 }
 
 
-ChangePinController::~ChangePinController()
+QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool pRequestTransportPin)
 {
+	const auto& handler = [](const WorkflowRequest& pRequest, const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
+				Q_UNUSED(pRequest)
+				Q_UNUSED(pActiveWorkflow)
+
+				if (pWaitingWorkflow.isNull())
+				{
+					return WorkflowControl::ENQUEUE;
+				}
+
+				return WorkflowControl::SKIP;
+			};
+
+	return WorkflowRequest::createWorkflowRequestHandler<ChangePinController, ChangePinContext>(handler, pRequestTransportPin);
 }

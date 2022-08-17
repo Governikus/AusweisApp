@@ -14,9 +14,9 @@
 #include <QLoggingCategory>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-#include <QMutableListIterator>
+	#include <QMutableListIterator>
 #else
-#include <QMutableVectorIterator>
+	#include <QMutableVectorIterator>
 #endif
 
 using namespace governikus;
@@ -52,11 +52,6 @@ RemoteServiceSettings::RemoteServiceSettings()
 	{
 		setServerName(QString());
 	}
-}
-
-
-RemoteServiceSettings::~RemoteServiceSettings()
-{
 }
 
 
@@ -152,13 +147,7 @@ void RemoteServiceSettings::setUniqueTrustedCertificates(const QSet<QSslCertific
 void RemoteServiceSettings::setTrustedCertificates(const QList<QSslCertificate>& pCertificates)
 {
 	// remove duplicates
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-	const auto set = QSet<QSslCertificate>(pCertificates.constBegin(), pCertificates.constEnd());
-#else
-	const auto set = pCertificates.toSet();
-#endif
-
-	setUniqueTrustedCertificates(set);
+	setUniqueTrustedCertificates(QSet<QSslCertificate>(pCertificates.constBegin(), pCertificates.constEnd()));
 }
 
 
@@ -268,11 +257,17 @@ RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QSt
 
 QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos() const
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+	using JsonValueRef = const QJsonValueRef;
+#else
+	using JsonValueRef = const QJsonValue&;
+#endif
+
 	QVector<RemoteInfo> infos;
 
 	const auto& data = mStore->value(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QByteArray()).toByteArray();
 	const auto& array = QJsonDocument::fromJson(data).array();
-	for (const auto& item : array)
+	for (JsonValueRef item : array)
 	{
 		infos << RemoteInfo::fromJson(item.toObject());
 	}

@@ -7,8 +7,10 @@
 #include "GeneralSettings.h"
 
 #include "AutoStart.h"
+#include "BuildHelper.h"
 #include "Env.h"
 #include "LanguageLoader.h"
+#include "Randomizer.h"
 #include "VolatileSettings.h"
 
 #include <QCoreApplication>
@@ -33,6 +35,7 @@ SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
+SETTINGS_NAME(SETTINGS_NAME_SIMULATOR, "simulator")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_NAME_SCREEN_ORIENTATION, "screenOrientation")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
@@ -49,19 +52,19 @@ SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_TYPE, "customProxyType")
 SETTINGS_NAME(SETTINGS_NAME_USE_CUSTOM_PROXY, "useCustomProxy")
 SETTINGS_NAME(SETTINGS_NAME_ENABLE_CAN_ALLOWED, "enableCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed")
+SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
 } // namespace
 
 GeneralSettings::GeneralSettings()
-	: GeneralSettings(getStore(), getStore())
+	: GeneralSettings(getStore())
 {
 }
 
 
-GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QSharedPointer<QSettings> pStoreCommon)
+GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral)
 	: AbstractSettings()
 	, mAutoStart(false)
 	, mStoreGeneral(std::move(pStoreGeneral))
-	, mStoreCommon(std::move(pStoreCommon))
 	, mIsNewAppVersion(false)
 {
 	{
@@ -78,24 +81,6 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QShare
 		// With 1.22.0 the old widgets was removed, no need for UI selector
 		mStoreGeneral->remove(QStringLiteral("selectedUi"));
 		mStoreGeneral->remove(QStringLiteral("showNewUiHint"));
-
-		// With 1.20.1 the common values are moved to the general values
-
-		mStoreCommon->beginGroup(QStringLiteral("common"));
-		if (!autoUpdateCheckIsSetByAdmin() && mStoreCommon->contains(SETTINGS_NAME_AUTO()))
-		{
-			mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), mStoreCommon->value(SETTINGS_NAME_AUTO()).toBool());
-		}
-		if (mStoreCommon->contains(SETTINGS_NAME_KEYLESS_PASSWORD()))
-		{
-			mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), mStoreCommon->value(SETTINGS_NAME_KEYLESS_PASSWORD()).toBool());
-		}
-		if (mStoreCommon->contains(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD()))
-		{
-			mStoreGeneral->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), mStoreCommon->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD()).toBool());
-		}
-		mStoreCommon->remove(QString()); // remove the whole group
-		mStoreCommon->endGroup();
 	}
 
 	// Check if the key "autoCloseWindow" (introduced in changeset 199210b0b20c)
@@ -112,10 +97,6 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral, QShare
 		mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 		mStoreGeneral->sync();
 	}
-
-#if defined(QT_NO_DEBUG) && (defined(Q_OS_ANDROID) || defined(Q_OS_IOS))
-	setUseSelfauthenticationTestUri(false);
-#endif
 
 #ifdef QT_NO_DEBUG
 	mAutoStart = AutoStart::enabled();
@@ -145,7 +126,6 @@ void GeneralSettings::save()
 	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 
 	mStoreGeneral->sync();
-	mStoreCommon->sync();
 }
 
 
@@ -357,6 +337,29 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 }
 
 
+bool GeneralSettings::isSimulatorEnabled() const
+{
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+	if (!isDeveloperOptions())
+	{
+		return false;
+	}
+#endif
+
+	return mStoreGeneral->value(SETTINGS_NAME_SIMULATOR(), false).toBool();
+}
+
+
+void GeneralSettings::setSimulatorEnabled(bool pEnabled)
+{
+	if (pEnabled != isSimulatorEnabled())
+	{
+		mStoreGeneral->setValue(SETTINGS_NAME_SIMULATOR(), pEnabled);
+		Q_EMIT fireDeveloperOptionsChanged();
+	}
+}
+
+
 QLocale::Language GeneralSettings::getLanguage() const
 {
 	const QString loadedLanguage = mStoreGeneral->value(SETTINGS_NAME_LANGUAGE(), QString()).toString();
@@ -487,17 +490,7 @@ bool GeneralSettings::isAutoUpdateCheck() const
 
 bool GeneralSettings::autoUpdateCheckIsSetByAdmin() const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
-	QSettings settings(QSettings::Scope::SystemScope);
-#else
-#ifdef Q_OS_MACOS
-	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationDomain(), QCoreApplication::applicationName());
-#else
-	QSettings settings(QSettings::Scope::SystemScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
-#endif
-#endif
-
-	return settings.contains(SETTINGS_NAME_AUTO());
+	return QSettings(QSettings::Scope::SystemScope).contains(SETTINGS_NAME_AUTO());
 }
 
 
@@ -686,4 +679,18 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 		mStoreGeneral->setValue(SETTINGS_NAME_USE_CUSTOM_PROXY(), pUseCustomProxy);
 		Q_EMIT fireProxyChanged();
 	}
+}
+
+
+QString GeneralSettings::getIfdServiceToken()
+{
+	mStoreGeneral->sync();
+	if (!mStoreGeneral->contains(SETTINGS_NAME_IFD_SERVICE_TOKEN()))
+	{
+		auto serviceToken = Randomizer::getInstance().createUuid().toString();
+		mStoreGeneral->setValue(SETTINGS_NAME_IFD_SERVICE_TOKEN(), serviceToken);
+		save();
+	}
+
+	return mStoreGeneral->value(SETTINGS_NAME_IFD_SERVICE_TOKEN(), QString()).toString();
 }

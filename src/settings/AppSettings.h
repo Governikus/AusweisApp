@@ -30,7 +30,7 @@ class AppSettings
 
 	private:
 		AppSettings();
-		~AppSettings() override;
+		~AppSettings() override = default;
 
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;

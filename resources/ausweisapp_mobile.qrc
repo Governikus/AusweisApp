@@ -3,15 +3,22 @@
         <file>qtquickcontrols2.conf</file>
         <file>images/mobile/device.svg</file>
         <file>images/mobile/icon_nfc.svg</file>
+        <file>images/mobile/icon_smart.svg</file>
         <file>images/mobile/icon_remote.svg</file>
+        <file>images/mobile/icon_simulator.svg</file>
         <file>images/mobile/material_arrow_right.svg</file>
         <file>images/mobile/material_arrow_back.svg</file>
         <file>images/mobile/material_backspace.svg</file>
         <file>images/mobile/material_view_headline.svg</file>
         <file>images/mobile/material_home.svg</file>
+        <file>images/mobile/material_five.svg</file>
+        <file>images/mobile/material_six.svg</file>
+        <file>images/mobile/phone_smart.svg</file>
         <file>images/mobile/phone_nfc.svg</file>
         <file>images/mobile/phone_nfc_with_card.svg</file>
         <file>images/mobile/phone_remote.svg</file>
+        <file>images/mobile/phone_simulator.svg</file>
+        <file>images/mobile/generic_id_card.svg</file>
         <file>images/android/stay_primary_landscape-24px.svg</file>
         <file>images/android/stay_primary_portrait-24px.svg</file>
         <file>images/ios/material_arrow_left.svg</file>
@@ -67,8 +74,9 @@
         <file>images/tutorial/reader.svg</file>
         <file>images/tutorial/desktop.svg</file>
         <file>images/tutorial/phone.svg</file>
+        <file>images/tutorial/phone_border.svg</file>
         <file>images/tutorial/phone_list.svg</file>
-        <file>images/tutorial/phone-screen.svg</file>
+        <file>images/tutorial/phone_screen.svg</file>
         <file>images/tutorial/nfc.svg</file>
         <file>images/tutorial/no-nfc.svg</file>
         <file>images/tutorial/wifi.svg</file>
@@ -81,8 +89,8 @@
         <file>images/tutorial/circle-lock.svg</file>
         <file>images/tutorial/circle-lock-2.svg</file>
         <file>images/tutorial/up_icon.svg</file>
-        <file>images/tutorial/phone_screen_de.jpg</file>
-        <file>images/tutorial/phone_screen_en.jpg</file>
+        <file>images/tutorial/phone_screen_de.png</file>
+        <file>images/tutorial/phone_screen_en.png</file>
         <file>images/tutorial/pin-5@2x.png</file>
         <file>images/tutorial/pin-6@2x.png</file>
         <file>images/tutorial/user-tine@3x.png</file>

@@ -8,6 +8,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFile>
 #include <QStandardPaths>
 #include <QStringBuilder>
 
@@ -16,23 +17,33 @@ namespace governikus
 
 class FileDestination
 {
+	Q_DISABLE_COPY(FileDestination)
+
 	private:
 		FileDestination() = delete;
 		~FileDestination() = delete;
-		Q_DISABLE_COPY(FileDestination)
 
 		static QString getPath()
 		{
-			#if defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
 			return QStringLiteral("assets:");
 
-			#elif defined(Q_OS_MACOS) && defined(QT_NO_DEBUG)
-			return QCoreApplication::applicationDirPath() + QStringLiteral("/../Resources");
+#elif defined(Q_OS_MACOS)
+			const auto& path = QCoreApplication::applicationDirPath() + QStringLiteral("/../Resources");
 
-			#else
+	#if !defined(QT_NO_DEBUG)
+			if (!QFile::exists(path))
+			{
+				return QCoreApplication::applicationDirPath();
+			}
+	#endif
+
+			return path;
+
+#else
 			return QCoreApplication::applicationDirPath();
 
-			#endif
+#endif
 		}
 
 	public:
@@ -40,9 +51,8 @@ class FileDestination
 			QStandardPaths::LocateOption pOption = QStandardPaths::LocateFile,
 			QStandardPaths::StandardLocation pStandard = QStandardPaths::AppDataLocation)
 		{
-			#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || (defined(Q_OS_BSD4) && !defined(Q_OS_MACOS) && !defined(Q_OS_IOS))
-			const auto match = QStandardPaths::locate(pStandard, pFilename, pOption);
-			if (!match.isNull())
+#if (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || (defined(Q_OS_BSD4) && !defined(Q_OS_MACOS) && !defined(Q_OS_IOS))
+			if (const auto& match = QStandardPaths::locate(pStandard, pFilename, pOption); !match.isNull())
 			{
 				return match;
 			}
@@ -53,10 +63,10 @@ class FileDestination
 			{
 				qDebug() << location;
 			}
-			#else
+#else
 			Q_UNUSED(pOption)
 			Q_UNUSED(pStandard)
-			#endif
+#endif
 
 			return getPath() % QLatin1Char('/') % pFilename;
 		}

@@ -21,13 +21,13 @@ UIPlugInFunctional::UIPlugInFunctional()
 	, mJson(nullptr)
 	, mContext()
 {
-	if (!Env::getSingleton<UILoader>()->load(UIPlugInName::UIPlugInJson))
+	if (!Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
 		qWarning() << "Cannot start functional because JSON-API is missing";
 		return;
 	}
 
-	mJson = qobject_cast<UIPlugInJson*>(Env::getSingleton<UILoader>()->getLoaded(UIPlugInName::UIPlugInJson));
+	mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 	Q_ASSERT(mJson);
 	connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInFunctional::onJsonMessage);
 }
@@ -56,6 +56,7 @@ void UIPlugInFunctional::onWorkflowStarted(QSharedPointer<WorkflowContext> pCont
 	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC});
 #endif
 
+	pContext->claim(this);
 	mContext = pContext;
 
 #if !defined(Q_OS_IOS)

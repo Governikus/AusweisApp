@@ -2,10 +2,9 @@
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick 2.12
+import QtQuick 2.15
 
 import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
 
@@ -16,7 +15,6 @@ Controller {
 	enum WorkflowStates {
 			Initial,
 			Reader,
-			Card,
 			Update,
 			Password,
 			Processing
@@ -25,16 +23,10 @@ Controller {
 
 	property int workflowState: ChangePinController.WorkflowStates.Initial
 
-	QtObject {
-		id: d
-
-		property bool showRemoveCardFeedback: false
-	}
-
 	Connections {
 		target: ChangePinModel
 
-		onFireCurrentStateChanged: processStateChange()
+		function onFireCurrentStateChanged() { processStateChange() }
 		// This is necessary because onCurrentStateChanged is not
 		// working, when we need to process a state a second time.
 	}
@@ -48,9 +40,6 @@ Controller {
 				controller.nextView(ChangePinView.SubViews.Workflow)
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Reader)
 				break
-			case "StateConnectCard":
-				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Card)
-				break
 			case "StateEnterPacePassword":
 				setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Password)
 				break
@@ -58,19 +47,13 @@ Controller {
 				controller.nextView(ChangePinView.SubViews.CardPosition)
 				break
 			case "StateEnterNewPacePin":
-				NumberModel.requestNewPin()
 				setPinWorkflowStateAndRequestInput(ChangePinController.WorkflowStates.Password)
 				break
 			case "StateCleanUpReaderManager":
-				d.showRemoveCardFeedback = ChangePinModel.selectedReaderHasCard() && !ChangePinModel.error;
 				setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Processing)
 				break
 			case "FinalState":
-				if (d.showRemoveCardFeedback) {
-					d.showRemoveCardFeedback = false
-					//: INFO DESKTOP Changing the PIN was successful; hint that the ID card may now be removed from the card reader.
-					ApplicationModel.showFeedback(qsTr("You may now remove your ID card from the device."))
-				}
+				showRemoveCardFeedback(ChangePinModel, false)
 				if (ChangePinModel.shouldSkipResultView()) {
 					controller.nextView(ChangePinView.SubViews.ReturnToMain)
 					ChangePinModel.continueWorkflow()
