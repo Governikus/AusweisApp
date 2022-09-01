@@ -1,0 +1,15 @@
+AusweisApp2 1.24.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 31. August 2022
+
+
+Anwender
+""""""""
+- Die ukrainische und russische Sprache wurde eingeführt.
+
+
+Entwickler
+""""""""""
+
+- Fehlerkorrekturen bei der Verwendung von PersoSim.

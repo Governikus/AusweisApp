@@ -70,6 +70,8 @@ SectionPage {
 					GFileDialog {
 						id: fileDialog
 
+						//: LABEL DESKTOP
+						title: qsTr("Save log")
 						defaultSuffix: "log"
 						//: LABEL DESKTOP
 						nameFilters: qsTr("Logfiles (*.log)")

@@ -3,9 +3,13 @@
  */
 
 import QtQml 2.15
+
 import Governikus.Global 1.0
+import Governikus.Type.SettingsModel 1.0
 
 BrandDimensions {
+	readonly property bool isLongLanguage: SettingsModel.language === "uk" || SettingsModel.language === "ru"
+
 	readonly property int button_radius: 6
 	readonly property int corner_radius: 10
 	readonly property int popup_border: 0
@@ -27,7 +31,7 @@ BrandDimensions {
 	readonly property int progress_bar_height: 32
 	readonly property int progress_bar_border: 2
 
-	readonly property real max_text_width: 700
+	readonly property real max_text_width: isLongLanguage ? 800 : 700
 
 	readonly property int small_icon_size: 24
 	readonly property int icon_size: 48

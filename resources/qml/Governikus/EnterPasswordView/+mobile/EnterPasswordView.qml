@@ -180,10 +180,10 @@ SectionPage {
 			text: {
 				if (!pinField.confirmedInput) {
 					return passwordType === PasswordType.NEW_SMART_PIN
-					//: INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.
-					? qsTr("The new Smart-eID PIN and the confirmation do not match. Please correct your input.")
-					//: INFO ANDROID IOS The changed ID card PIN was entered wrongfully during confirmation.
-					: qsTr("The new ID card PIN and the confirmation do not match. Please correct your input.")
+						//: INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.
+						? qsTr("The new Smart-eID PIN and the confirmation do not match. Please correct your input.")
+						//: INFO ANDROID IOS The changed ID card PIN was entered wrongfully during confirmation.
+						: qsTr("The new ID card PIN and the confirmation do not match. Please correct your input.")
 				}
 				if (!!NumberModel.inputError) {
 					return NumberModel.inputError
@@ -229,10 +229,10 @@ SectionPage {
 
 				if (passwordType === PasswordType.SMART_PIN) {
 					return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN
-					//: INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
-					? qsTr("Please enter your current six-digit Smart-eID PIN.")
-					//: INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.
-					: qsTr("Please enter your six-digit Smart-eID PIN.")
+						//: INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
+						? qsTr("Please enter your current six-digit Smart-eID PIN.")
+						//: INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.
+						: qsTr("Please enter your six-digit Smart-eID PIN.")
 				}
 
 				return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN

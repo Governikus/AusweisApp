@@ -20,7 +20,7 @@ namespace governikus
 
 defineEnumType(ProtocolType, UNDEFINED, TA, CA, PACE, RI)
 defineEnumType(KeyAgreementType, UNDEFINED, DH, ECDH)
-defineEnumType(MappingType, UNDEFINED, GM, IM)
+defineEnumType(MappingType, UNDEFINED, GM, IM, CAM)
 defineEnumType(CipherType, UNDEFINED, DES3_CBC, AES_128_CBC, AES_192_CBC, AES_256_CBC)
 defineEnumType(SignatureType, UNDEFINED, RSA, ECDSA)
 

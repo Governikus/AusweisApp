@@ -2,6 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="de">
 <context>
+    <name>DvcsAttributes</name>
+    <message>
+        <source>revision</source>
+        <translation>116337b35ec0</translation>
+    </message>
+</context>
+<context>
     <name>AbortedProgressView</name>
     <message>
         <source>Aborting process and informing the service provider</source>
@@ -1208,6 +1215,11 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Textdateien (*.txt)</translation>
     </message>
+    <message>
+        <source>Save diagnosis</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Diagnose speichern</translation>
+    </message>
 </context>
 <context>
     <name>EditRights</name>
@@ -1487,37 +1499,51 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>Enter Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID-PIN eingeben</translation>
     </message>
     <message>
         <source>Enter new Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Neue Smart-eID-PIN eingeben</translation>
     </message>
     <message>
         <source>Confirm new Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Neue Smart-eID-PIN bestätigen</translation>
     </message>
     <message>
         <source>The new Smart-eID PIN and the confirmation do not match. Please correct your input.</source>
-        <extracomment>INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.</extracomment>
+        <extracomment>INFO DESKTOP The changed Smart-eID PIN was entered wrongfully during the confirmation process.
+----------
+INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.</extracomment>
         <translation>Die neue Smart-eID-PIN und ihre Wiederholung stimmen nicht überein. Bitte korrigieren Sie Ihre Eingabe.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
+        <extracomment>INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID
+----------
+INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
         <translation>Sie haben zweimal eine falsche, sechsstellige Smart-eID-PIN eingegeben. Ein dritter Fehlversuch wird Ihre Smart-eID ungültig machen und Sie müssen sie neu einrichten.</translation>
     </message>
     <message>
         <source>Please confirm your new six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.</extracomment>
+        <extracomment>INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
+----------
+INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.</extracomment>
         <translation>Bitte bestätigen Sie Ihre neue sechsstellige Smart-eID-PIN.</translation>
     </message>
     <message>
         <source>Please enter a new six-digit Smart-eID PIN now.</source>
-        <extracomment>INFO ANDROID IOS A new six-digit Smart-eID PIN needs to be supplied.</extracomment>
+        <extracomment>INFO DESKTOP A new six-digit Smart-eID PIN needs to be supplied.
+----------
+INFO ANDROID IOS A new six-digit Smart-eID PIN needs to be supplied.</extracomment>
         <translation>Bitte vergeben Sie eine neue sechsstellige Smart-eID-PIN.</translation>
     </message>
     <message>
@@ -1527,12 +1553,16 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>Please enter your current six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.</extracomment>
+        <extracomment>INFO DESKTOP The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
+----------
+INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.</extracomment>
         <translation>Bitte geben Sie Ihre aktuelle sechsstellige Smart-eID-PIN ein.</translation>
     </message>
     <message>
         <source>Please enter your six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.</extracomment>
+        <extracomment>INFO DESKTOP The AA2 expects a Smart-eID PIN with six digits in an authentication.
+----------
+INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.</extracomment>
         <translation>Bitte geben Sie Ihre sechsstellige Smart-eID-PIN ein.</translation>
     </message>
     <message>
@@ -1569,22 +1599,6 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <source>Language selection</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Sprachauswahl</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>Deutsch</translation>
-    </message>
-    <message>
-        <source>Set language to german</source>
-        <translation>Verwende deutsche Sprache</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>Englisch</translation>
-    </message>
-    <message>
-        <source>Set language to english</source>
-        <translation>Verwende englische Sprache</translation>
     </message>
     <message>
         <source>Behavior</source>
@@ -1850,6 +1864,11 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <extracomment>LABEL IOS</extracomment>
         <translation>Alle Einträge löschen</translation>
     </message>
+    <message>
+        <source>Save history</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Verlauf speichern</translation>
+    </message>
 </context>
 <context>
     <name>HistoryViewConfirmationPopup</name>
@@ -1936,27 +1955,54 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>LanguageButtons</name>
+    <message>
+        <source>German</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Deutsch</translation>
+    </message>
+    <message>
+        <source>Set language to german</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verwende deutsche Sprache</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Englisch</translation>
+    </message>
+    <message>
+        <source>Set language to english</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verwende englische Sprache</translation>
+    </message>
+    <message>
+        <source>Ukrainian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Ukrainisch</translation>
+    </message>
+    <message>
+        <source>Set language to ukrainian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verwende ukrainische Sprache</translation>
+    </message>
+    <message>
+        <source>Russian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Russisch</translation>
+    </message>
+    <message>
+        <source>Set language to russian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verwende russische Sprache</translation>
+    </message>
+</context>
+<context>
     <name>LanguageSelectionPopup</name>
     <message>
         <source>Select language</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Sprache auswählen</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>Deutsch</translation>
-    </message>
-    <message>
-        <source>Set language to german</source>
-        <translation>Verwende deutsche Sprache</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>Englisch</translation>
-    </message>
-    <message>
-        <source>Set language to english</source>
-        <translation>Verwende englische Sprache</translation>
     </message>
 </context>
 <context>
@@ -3907,6 +3953,11 @@ LABEL ANDROID</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ausweisen</translation>
     </message>
+    <message>
+        <source>Save read self-authentication data</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Ausgelesene Daten der Selbstauskunft speichern</translation>
+    </message>
 </context>
 <context>
     <name>SelfAuthenticationView</name>
@@ -5040,12 +5091,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingeben</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
@@ -5055,12 +5101,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>jetzt!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -5213,8 +5254,8 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingeben</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation>Jetzt</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5223,12 +5264,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>jetzt!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -5386,8 +5422,8 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingeben</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation>Jetzt</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5396,12 +5432,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>jetzt!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -5585,12 +5616,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingeben</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
@@ -5600,12 +5626,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>jetzt!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
 </context>

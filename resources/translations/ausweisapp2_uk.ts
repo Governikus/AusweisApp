@@ -2,6 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="uk">
 <context>
+    <name>DvcsAttributes</name>
+    <message>
+        <source>revision</source>
+        <translation>116337b35ec0</translation>
+    </message>
+</context>
+<context>
     <name>AbortedProgressView</name>
     <message>
         <source>Aborting process and informing the service provider</source>
@@ -1084,32 +1091,32 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>Filter</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр</translation>
     </message>
     <message>
         <source>Select level:</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати рівень:</translation>
     </message>
     <message>
         <source>Select category:</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати категорію:</translation>
     </message>
     <message>
         <source>Currently there are no log entries matching your filter.</source>
         <extracomment>INFO DESKTOP No log entries, placeholder text.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Наразі немає жодних записів журналу, що відповідають цьому фільтру.</translation>
     </message>
     <message>
         <source>Filter. Activated.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр. Активовано.</translation>
     </message>
     <message>
         <source>Filter. Deactivated.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр. Деактивовано.</translation>
     </message>
 </context>
 <context>
@@ -1207,6 +1214,11 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Textfiles (*.txt)</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Текстові файли (*.txt)</translation>
+    </message>
+    <message>
+        <source>Save diagnosis</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished">Зберегти діагностику</translation>
     </message>
 </context>
 <context>
@@ -1487,37 +1499,51 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>Enter Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Уведіть PIN-код Smart-eID</translation>
     </message>
     <message>
         <source>Enter new Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Уведіть новий PIN-код Smart-eID</translation>
     </message>
     <message>
         <source>Confirm new Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Підтвердьте новий PIN-код Smart-eID</translation>
     </message>
     <message>
         <source>The new Smart-eID PIN and the confirmation do not match. Please correct your input.</source>
-        <extracomment>INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.</extracomment>
+        <extracomment>INFO DESKTOP The changed Smart-eID PIN was entered wrongfully during the confirmation process.
+----------
+INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.</extracomment>
         <translation>Новий PIN-код Smart-eID та його підтвердження не збігаються. Виправте введені дані.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
+        <extracomment>INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID
+----------
+INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
         <translation>Ви двічі ввели неправильний шестизначний PIN-код Smart-eID. Якщо його втретє буде введено неправильно, ваш Smart-eID стане недійсним і вам доведеться знову його налаштувати.</translation>
     </message>
     <message>
         <source>Please confirm your new six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.</extracomment>
+        <extracomment>INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
+----------
+INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.</extracomment>
         <translation>Підтвердьте новий шестизначний PIN-код Smart-eID.</translation>
     </message>
     <message>
         <source>Please enter a new six-digit Smart-eID PIN now.</source>
-        <extracomment>INFO ANDROID IOS A new six-digit Smart-eID PIN needs to be supplied.</extracomment>
+        <extracomment>INFO DESKTOP A new six-digit Smart-eID PIN needs to be supplied.
+----------
+INFO ANDROID IOS A new six-digit Smart-eID PIN needs to be supplied.</extracomment>
         <translation>Уведіть новий шестизначний PIN-код Smart-eID.</translation>
     </message>
     <message>
@@ -1527,12 +1553,16 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>Please enter your current six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.</extracomment>
+        <extracomment>INFO DESKTOP The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
+----------
+INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.</extracomment>
         <translation>Уведіть поточний шестизначний PIN-код Smart-eID.</translation>
     </message>
     <message>
         <source>Please enter your six-digit Smart-eID PIN.</source>
-        <extracomment>INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.</extracomment>
+        <extracomment>INFO DESKTOP The AA2 expects a Smart-eID PIN with six digits in an authentication.
+----------
+INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.</extracomment>
         <translation>Уведіть шестизначний PIN-код Smart-eID.</translation>
     </message>
     <message>
@@ -1569,22 +1599,6 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <source>Language selection</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Вибір мови</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>Німецька</translation>
-    </message>
-    <message>
-        <source>Set language to german</source>
-        <translation>Вибрати німецьку мову</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>Англійська</translation>
-    </message>
-    <message>
-        <source>Set language to english</source>
-        <translation>Вибрати англійську мову</translation>
     </message>
     <message>
         <source>Behavior</source>
@@ -1727,7 +1741,7 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Tap for more details</source>
@@ -1818,7 +1832,7 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -1849,6 +1863,11 @@ LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <source>Delete all entries</source>
         <extracomment>LABEL IOS</extracomment>
         <translation>Видалити всі записи</translation>
+    </message>
+    <message>
+        <source>Save history</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Зберегти історію</translation>
     </message>
 </context>
 <context>
@@ -1903,7 +1922,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Write access (update)</source>
@@ -1936,27 +1955,54 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>LanguageButtons</name>
+    <message>
+        <source>German</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Німецька</translation>
+    </message>
+    <message>
+        <source>Set language to german</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Вибрати німецьку мову</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Англійська</translation>
+    </message>
+    <message>
+        <source>Set language to english</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Вибрати англійську мову</translation>
+    </message>
+    <message>
+        <source>Ukrainian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Українська</translation>
+    </message>
+    <message>
+        <source>Set language to ukrainian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Вибрати українську мову</translation>
+    </message>
+    <message>
+        <source>Russian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Російська</translation>
+    </message>
+    <message>
+        <source>Set language to russian</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Использовать русский язык</translation>
+    </message>
+</context>
+<context>
     <name>LanguageSelectionPopup</name>
     <message>
         <source>Select language</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Вибрати мову</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation>Німецька</translation>
-    </message>
-    <message>
-        <source>Set language to german</source>
-        <translation>Вибрати німецьку мову</translation>
-    </message>
-    <message>
-        <source>English</source>
-        <translation>Англійська</translation>
-    </message>
-    <message>
-        <source>Set language to english</source>
-        <translation>Вибрати англійську мову</translation>
     </message>
 </context>
 <context>
@@ -2073,27 +2119,27 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
     <message>
         <source>The log entry was copied to the clipboard.</source>
         <extracomment>INFO ANDROID IOS Toast message used to confirm the copy of a log entry.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Запис журналу скопійовано до буфера обміну.</translation>
     </message>
     <message>
         <source>Filter</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Фільтр</translation>
     </message>
     <message>
         <source>Select level:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати рівень:</translation>
     </message>
     <message>
         <source>Select category:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати категорію:</translation>
     </message>
     <message>
         <source>Currently there are no log entries matching your filter.</source>
         <extracomment>INFO ANDROID IOS No log entries, placeholder text.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Наразі немає жодних записів журналу, що відповідають цьому фільтру.</translation>
     </message>
 </context>
 <context>
@@ -3109,7 +3155,7 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Service:</source>
@@ -3906,6 +3952,11 @@ LABEL ANDROID</extracomment>
         <source>Identify</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ідентифікувати</translation>
+    </message>
+    <message>
+        <source>Save read self-authentication data</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished">Зберегти читати дані самоавтентифікації</translation>
     </message>
 </context>
 <context>
@@ -5040,13 +5091,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Уведіть</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Зараз</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5055,13 +5101,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>зараз!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>уведіть!</translation>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <translation type="unfinished">зараз!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
@@ -5213,8 +5254,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Уведіть</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5223,13 +5264,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>зараз!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>уведіть!</translation>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <translation type="unfinished">зараз!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
@@ -5386,8 +5422,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Уведіть</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5396,13 +5432,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>зараз!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>уведіть!</translation>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <translation type="unfinished">зараз!</translation>
     </message>
     <message>
         <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
@@ -5508,7 +5539,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>... and therefore your data is protected and securely transferred.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>… і тому ваші дані захищені та передаються безпечним чином.</translation>
+        <translation>…і тому ваші дані захищені та передаються безпечним чином.</translation>
     </message>
     <message>
         <source>You can also watch a video on YouTube on this topic</source>
@@ -5585,13 +5616,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Уведіть</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Зараз</translation>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
         <source>six-digit PIN</source>
@@ -5600,13 +5626,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>зараз!</translation>
-    </message>
-    <message>
-        <source>enter!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>уведіть!</translation>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <translation type="unfinished">зараз!</translation>
     </message>
 </context>
 <context>
@@ -6118,7 +6139,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>d. MMMM yyyy, hh:mm:ss AP</source>
         <extracomment>LABEL DESKTOP Timestamp, formatted according to the selected language</extracomment>
-        <translation>д. ММММ рррр, гг:хх:сс AP</translation>
+        <translation>d MMMM yyyy р., hh:mm:ss</translation>
     </message>
     <message>
         <source>&lt;Not set&gt;</source>
@@ -6328,7 +6349,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>dd.MM.yyyy, hh:mm:ss</source>
         <extracomment>LABEL DESKTOP Timestamp</extracomment>
-        <translation>дд.ММ.рррр, гг:хх:сс</translation>
+        <translation>dd.MM.yyyy, hh:mm:ss</translation>
     </message>
     <message>
         <source>Last connection: %1</source>
@@ -6871,7 +6892,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <name>governikus::HistoryModelSearchFilter</name>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
 </context>
 <context>
@@ -6890,7 +6911,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm:ss</source>
-        <translation>дд.ММ.рррр гг:хх:сс</translation>
+        <translation>dd.MM.yyyy hh:mm:ss</translation>
     </message>
     <message>
         <source>The logfile is disabled.</source>
@@ -6953,7 +6974,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <name>governikus::NotificationModel</name>
     <message>
         <source>hh:mm:ss</source>
-        <translation>гг:хх:сс</translation>
+        <translation>hh:mm:ss</translation>
     </message>
 </context>
 <context>
@@ -7047,7 +7068,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>дд.ММ.рррр, гг:хх AP</translation>
+        <translation>dd.MM.yyyy hh:mm</translation>
     </message>
     <message>
         <source>Provider:</source>
@@ -7072,12 +7093,12 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>dd.MM.yyyy</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>hh:mm AP</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>гг:хх AP</translation>
+        <translation>hh:mm</translation>
     </message>
     <message>
         <source>At %1 %2 the following data were saved:</source>
@@ -7282,7 +7303,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>hh:mm:ss AP</source>
-        <translation>гг:хх:сс AP</translation>
+        <translation>hh:mm:ss</translation>
     </message>
     <message>
         <source>The list of card readers was last updated at %1.</source>
@@ -7331,7 +7352,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
-        <translation>дд.ММ.рррр, гг:хх AP</translation>
+        <translation>dd.MM.yyyy hh:mm</translation>
     </message>
     <message>
         <source>online help</source>
@@ -7397,7 +7418,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.рррр</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>xx.MM.yyyy</source>

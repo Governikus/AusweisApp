@@ -146,7 +146,7 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			const QByteArray msg("{"
@@ -215,7 +215,7 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
@@ -273,7 +273,7 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and do not claim by itself
+					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";

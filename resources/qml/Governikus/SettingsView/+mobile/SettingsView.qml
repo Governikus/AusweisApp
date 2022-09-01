@@ -58,6 +58,10 @@ SectionPage {
 				switch(SettingsModel.language) {
 					case "de":
 						return "Deutsch"
+					case "ru":
+						return "Русский"
+					case "uk":
+						return "Українська"
 					default:
 						return "English"
 				}

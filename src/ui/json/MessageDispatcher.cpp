@@ -26,7 +26,9 @@
 #include "messages/MsgHandlerStatus.h"
 #include "messages/MsgHandlerUnknownCommand.h"
 
-#include "ReaderManager.h"
+#ifdef Q_OS_IOS
+	#include "ReaderManager.h"
+#endif
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 
@@ -39,15 +41,22 @@
 
 #include <algorithm>
 
+
 Q_DECLARE_LOGGING_CATEGORY(json)
+
 
 #define HANDLE_CURRENT_STATE(msgType, msgHandler) handleCurrentState(requestType, msgType, [&] {return msgHandler;})
 #define HANDLE_INTERNAL_ONLY(msgHandler) handleInternalOnly(requestType, [&] {return msgHandler;})
 
+
 using namespace governikus;
+
 
 MessageDispatcher::MessageDispatcher()
 	: mContext()
+#ifndef QT_NO_DEBUG
+	, mSkipStateApprovedHook()
+#endif
 {
 }
 
@@ -125,6 +134,13 @@ Msg MessageDispatcher::processStateChange(const QString& pState)
 		qCCritical(json) << "Unexpected condition:" << mContext.getContext() << '|' << pState;
 		return MsgHandlerInternalError(QLatin1String("Unexpected condition"));
 	}
+
+#ifndef QT_NO_DEBUG
+	if (mSkipStateApprovedHook && mSkipStateApprovedHook(pState))
+	{
+		return MsgHandler::Void;
+	}
+#endif
 
 	const Msg& msg = createForStateChange(MsgHandler::getStateMsgType(pState, mContext.getContext()->getEstablishPaceChannelType()));
 	mContext.addStateMsg(msg);
@@ -381,3 +397,13 @@ MsgHandler MessageDispatcher::interrupt()
 
 #endif
 }
+
+
+#ifndef QT_NO_DEBUG
+void MessageDispatcher::setSkipStateApprovedHook(const SkipStateApprovedHook& pHook)
+{
+	mSkipStateApprovedHook = pHook;
+}
+
+
+#endif

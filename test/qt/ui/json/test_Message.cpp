@@ -8,6 +8,7 @@
 
 #include "InternalActivationContext.h"
 #include "ReaderManager.h"
+#include "context/AuthContext.h"
 #include "states/StateEnterPacePassword.h"
 
 #include "TestWorkflowContext.h"
@@ -15,7 +16,9 @@
 #include <QSignalSpy>
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 class test_Message
 	: public QObject

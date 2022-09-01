@@ -6,6 +6,7 @@ folgender Systeme und Funktionen eingestellt.
 
 - Windows 7
 - Windows 8.1
+- Windows 10 32-Bit-Version
 - Android 5.x und 6
 - macOS High Sierra 10.13
 - macOS Mojave 10.14

@@ -6,11 +6,13 @@
 
 #pragma once
 
+#include "Env.h"
 #include "UIPlugIn.h"
 
 #include <QJsonObject>
 #include <QMap>
 #include <QStringList>
+
 
 class test_UILoader;
 

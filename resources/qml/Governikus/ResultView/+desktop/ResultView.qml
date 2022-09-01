@@ -40,7 +40,7 @@ SectionPage {
 	Keys.onEnterPressed: button.onClicked()
 	Keys.onEscapePressed: button.onClicked()
 
-	ColumnLayout {
+	GFlickableColumnLayout {
 		anchors.fill: parent
 		anchors.margins: Constants.pane_padding
 
@@ -128,6 +128,8 @@ SectionPage {
 				GFileDialog {
 					id: fileDialog
 
+					//: LABEL DESKTOP
+					title: qsTr("Save log")
 					defaultSuffix: "log"
 					//: LABEL DESKTOP
 					nameFilters: qsTr("Logfiles (*.log)")

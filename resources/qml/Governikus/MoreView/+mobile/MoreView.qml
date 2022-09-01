@@ -51,6 +51,8 @@ SectionPage {
 				TutorialView {
 					onLeave: {
 						pop()
+					}
+					Component.onDestruction: {
 						show(UiModule.HELP)
 					}
 				}

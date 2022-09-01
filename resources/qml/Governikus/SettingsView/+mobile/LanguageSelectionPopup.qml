@@ -6,6 +6,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
+import Governikus.SettingsView 1.0
 import Governikus.Style 1.0
 
 ConfirmationPopup {
@@ -16,29 +17,8 @@ ConfirmationPopup {
 
 	style: ConfirmationPopup.PopupStyle.CancelButton
 
-	ColumnLayout {
-		spacing: Constants.component_spacing
-
-		LocationButton {
-			Accessible.name: qsTr("German")
-			Accessible.description: qsTr("Set language to german")
-
-			language: "de"
-			text: "Deutsch"
-			image: "qrc:///images/location_flag_de.svg"
-
-			onClicked: close()
-		}
-
-		LocationButton {
-			Accessible.name: qsTr("English")
-			Accessible.description: qsTr("Set language to english")
-
-			language: "en"
-			text: "English"
-			image: "qrc:///images/location_flag_en.svg"
-
-			onClicked: close()
-		}
+	LanguageButtons {
+		columns: 1
+		onButtonClicked: baseItem.close()
 	}
 }

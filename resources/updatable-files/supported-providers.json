@@ -358,8 +358,8 @@
 			"longDescription": {
 				"": "Als erstes Bundesland bietet Ihnen das Saarland mit Schweb.NET Online die Möglichkeit, Ihren Erst- und Verschlimmerungsantrag auf Feststellung einer Behinderung nach dem Schwerbehindertenrecht online beim Landesamt für Soziales zu stellen.<br/>Weite Wege werden dadurch vermieden. Bearbeitungszeiten und Arbeitsabläufe werden verkürzt.<br/>Der Antrag ist selbsterklärend und nutzerfreundlich. "
 			},
-			"address": "https://gatewaylas.saarland.de/FV/Onlineantrag",
-			"homepage": "https://www.saarland.de/index.htm",
+			"address": "https://gatewaylas.saarland.de",
+			"homepage": "https://www.saarland.de",
 			"phone": "+49 681 9978 2181",
 			"postalAddress": "Ministerium für Soziales, Gesundheit, Frauen und Familie<br/>Franz-Josef-Röder-Straße 23<br/>66119 Saarbrücken",
 			"category": "citizen",
@@ -1278,7 +1278,7 @@
 				"": "Mit den Online-Services können Sie die Leistungen der Verwaltung zeit- und ortsunabhängig nutzen, z. B. ganz bequem von zu Haus aus. Probieren Sie es einfach mal aus!"
 			},
 			"address": "https://mv.buergerserviceportal.de/mecklenburgvorpommern/lkrrostock/bsp_ikfz_antragstellung",
-			"homepage": "https://www.landkreis-rostock.de/landkreis/online-dienste2.html",
+			"homepage": "https://www.landkreis-rostock.de",
 			"phone": "+49 3843 755 0",
 			"email": "info@lkros.de",
 			"postalAddress": "Landkreis Rostock<br/>Der Landrat<br/>Am Wall 3-5<br/>18273 Güstrow",
@@ -1624,7 +1624,7 @@
 				"": "Wer sich mit einem Lehrgang oder an einer Fachschule auf eine anspruchsvolle berufliche Fortbildungsprüfung in Voll- oder Teilzeit vorbereitet, kann eine finanzielle Förderung nach dem Aufstiegsfortbildungsförderungsgesetz (AFBG) beantragen.<br/><br/>Bürgerinnen und Bürger mit ständigem Wohnsitz in Mecklenburg-Vorpommern können den Antrag für ihr Aufstiegs-BAföG digital stellen.<br/><br/>Während und nach Eingabe Ihrer Antragsdaten erfolgt eine Plausibilisierungsprüfung des Antrags. Im Anschluss daran reichen Sie Ihren Antrag online ein. Dafür weisen Sie sich mit Ihrem Online-Ausweis aus - das Ausdrucken, Unterschreiben und postalische Versenden des Antrags entfallen damit.<br/><br/>Das Datum der erfolgreichen Übertragung an die zuständige Behörde gilt als Antragsdatum.<br/><br/>Notwendige Nachweise oder weitere Dokumente können Sie nach dem Absenden der ausgefüllten Formulare als Anlagen hochladen."
 			},
 			"address": "https://fms.mv-regierung.de/lip3_2/action/invoke.do?id=afbg",
-			"homepage": "https://www.regierung-mv.de/Landesregierung/bm/Wissenschaft/Studium/Studienfinanzierung%20%28BafoeG%29",
+			"homepage": "https://www.regierung-mv.de/Landesregierung/bm/F%C3%B6rderungen/BAf%C3%B6G",
 			"phone": "+49 385 588 0",
 			"email": "poststelle@bm.mv-regierung.de",
 			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Werderstraße 124<br/>19055 Schwerin",

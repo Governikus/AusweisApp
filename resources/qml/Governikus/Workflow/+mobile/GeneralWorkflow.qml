@@ -80,6 +80,6 @@ SectionPage {
 
 		selectedTechnology: workflowModel.readerPlugInType
 		supportedTechnologies: workflowModel.supportedPlugInTypes
-		onRequestPluginType: workflowModel.readerPlugInType = pReaderPlugInType
+		onRequestPluginType: pReaderPlugInType => workflowModel.readerPlugInType = pReaderPlugInType
 	}
 }

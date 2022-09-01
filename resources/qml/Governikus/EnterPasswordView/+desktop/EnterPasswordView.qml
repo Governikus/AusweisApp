@@ -40,7 +40,7 @@ SectionPage {
 			}
 
 			let wasNewPin = false;
-			if (passwordType === PasswordType.PIN) {
+			if (passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN) {
 				NumberModel.pin = numberField.number
 			}
 			else if (passwordType === PasswordType.CAN) {
@@ -49,7 +49,7 @@ SectionPage {
 			else if (passwordType === PasswordType.PUK) {
 				NumberModel.puk = numberField.number
 			}
-			else if (passwordType === PasswordType.NEW_PIN) {
+			else if (passwordType === PasswordType.NEW_PIN || passwordType === PasswordType.NEW_SMART_PIN) {
 				if (numberField.inputConfirmation === "") {
 					numberField.inputConfirmation = numberField.number
 				} else {
@@ -85,7 +85,7 @@ SectionPage {
 	StatusIcon {
 		id: retryCounter
 
-		visible: NumberModel.retryCounter >= 0 && passwordType === PasswordType.PIN
+		visible: NumberModel.retryCounter >= 0 && (passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN)
 		height: Style.dimens.status_icon_small
 		anchors.left: parent.left
 		anchors.top: parent.top
@@ -140,6 +140,12 @@ SectionPage {
 			 //: LABEL DESKTOP
 			 : passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Enter Transport PIN")
 			 //: LABEL DESKTOP
+			 : passwordType === PasswordType.SMART_PIN ? qsTr("Enter Smart-eID PIN")
+			 //: LABEL DESKTOP
+			 : (passwordType === PasswordType.NEW_SMART_PIN && numberField.inputConfirmation === "")? qsTr("Enter new Smart-eID PIN")
+			 //: LABEL DESKTOP
+			 : (passwordType === PasswordType.NEW_SMART_PIN) ? qsTr("Confirm new Smart-eID PIN")
+			 //: LABEL DESKTOP
 			 : qsTr("Enter ID card PIN")
 		textStyle: Style.text.header
 		horizontalAlignment: Text.AlignHCenter
@@ -161,8 +167,11 @@ SectionPage {
 		textFormat: Text.StyledText
 		text: {
 			if (!numberField.confirmedInput) {
-				//: INFO DESKTOP The changed ID card PIN was entered wrongfully during the confirmation process.
-				return qsTr("The new ID card PIN and the confirmation do not match. Please correct your input.")
+				return passwordType === PasswordType.NEW_SMART_PIN
+					//: INFO DESKTOP The changed Smart-eID PIN was entered wrongfully during the confirmation process.
+					? qsTr("The new Smart-eID PIN and the confirmation do not match. Please correct your input.")
+					//: INFO DESKTOP The changed ID card PIN was entered wrongfully during the confirmation process.
+					: qsTr("The new ID card PIN and the confirmation do not match. Please correct your input.")
 			}
 			if (passwordType === PasswordType.TRANSPORT_PIN) {
 				//: INFO DESKTOP The AA2 expects the Transport PIN with five digits.
@@ -176,6 +185,18 @@ SectionPage {
 					//: INFO DESKTOP The AA2 expects a ID card PIN with six digits in an authentication.
 					: qsTr("Please enter your six-digit ID card PIN.")
 			}
+			if (passwordType === PasswordType.SMART_PIN) {
+				if (NumberModel.retryCounter === 1) {
+					//: INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID
+					return qsTr("You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.")
+				}
+
+				return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN
+					//: INFO DESKTOP The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
+					? qsTr("Please enter your current six-digit Smart-eID PIN.")
+					//: INFO DESKTOP The AA2 expects a Smart-eID PIN with six digits in an authentication.
+					: qsTr("Please enter your six-digit Smart-eID PIN.")
+			}
 			if (passwordType === PasswordType.CAN) {
 				return NumberModel.isCanAllowedMode
 					//: INFO DESKTOP The user is required to enter the six-digit CAN in CAN-allowed authentication.
@@ -188,13 +209,18 @@ SectionPage {
 				return qsTr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.")
 			}
 			if (passwordType === PasswordType.NEW_PIN) {
-				if (numberField.inputConfirmation === "") {
+				return numberField.inputConfirmation === ""
 					//: INFO DESKTOP A new six-digit ID card PIN needs to be supplied.
-					return qsTr("Please enter a new six-digit ID card PIN now.")
-				} else {
+					? qsTr("Please enter a new six-digit ID card PIN now.")
 					//: INFO DESKTOP The new ID card PIN needs to be entered again for verification.
-					return qsTr("Please confirm your new six-digit ID card PIN.")
-				}
+					: qsTr("Please confirm your new six-digit ID card PIN.")
+			}
+			if (passwordType === PasswordType.NEW_SMART_PIN) {
+				return numberField.inputConfirmation === ""
+					//: INFO DESKTOP A new six-digit Smart-eID PIN needs to be supplied.
+					? qsTr("Please enter a new six-digit Smart-eID PIN now.")
+					//: INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
+					:  qsTr("Please confirm your new six-digit Smart-eID PIN.")
 			}
 			if (passwordType === PasswordType.REMOTE_PIN) {
 				//: INFO DESKTOP The pairing code needs to be supplied.

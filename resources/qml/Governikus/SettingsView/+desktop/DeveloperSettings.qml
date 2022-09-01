@@ -119,6 +119,8 @@ ColumnLayout {
 		GFileDialog {
 			id: fileDialog
 
+			//: LABEL DESKTOP
+			title: qsTr("Save config.json")
 			folder: ApplicationModel.customConfigPath
 			defaultSuffix: "json"
 			//: LABEL DESKTOP

@@ -169,4 +169,58 @@
         <file>images/tutorial/reader_sac_no_nfc_devices.svg</file>
         <file>images/tutorial/reader_sac_no_nfc_provider.svg</file>
     </qresource>
+    <qresource prefix="/">
+        <file alias="images/tutorial/button_ru.png">images/tutorial/button_en.png</file>
+        <file alias="images/tutorial/phone_screen_ru.png">images/tutorial/phone_screen_en.png</file>
+        <file alias="images/tutorial/screenshot_cert_android_ru.png">images/tutorial/screenshot_cert_android_en.png</file>
+        <file alias="images/tutorial/screenshot_cert_ios_ru.png">images/tutorial/screenshot_cert_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_check_id_card_android_ru.png">images/tutorial/screenshot_check_id_card_android_en.png</file>
+        <file alias="images/tutorial/screenshot_check_id_card_ios_ru.png">images/tutorial/screenshot_check_id_card_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_choose_reader_android_ru.png">images/tutorial/screenshot_choose_reader_android_en.png</file>
+        <file alias="images/tutorial/screenshot_choose_reader_ios_ru.png">images/tutorial/screenshot_choose_reader_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_pairing_ru.png">images/tutorial/screenshot_pairing_en.png</file>
+        <file alias="images/tutorial/screenshot_pin_management_menu_android_ru.png">images/tutorial/screenshot_pin_management_menu_android_en.png</file>
+        <file alias="images/tutorial/screenshot_pin_management_menu_ios_ru.png">images/tutorial/screenshot_pin_management_menu_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_providerlist_android_ru.png">images/tutorial/screenshot_providerlist_android_en.png</file>
+        <file alias="images/tutorial/screenshot_providerlist_ios_ru.png">images/tutorial/screenshot_providerlist_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_remoteservice_android_ru.png">images/tutorial/screenshot_remoteservice_android_en.png</file>
+        <file alias="images/tutorial/screenshot_remoteservice_ios_ru.png">images/tutorial/screenshot_remoteservice_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_selfauthentication_android_ru.png">images/tutorial/screenshot_selfauthentication_android_en.png</file>
+        <file alias="images/tutorial/screenshot_selfauthentication_ios_ru.png">images/tutorial/screenshot_selfauthentication_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_start_android_ru.png">images/tutorial/screenshot_start_android_en.png</file>
+        <file alias="images/tutorial/screenshot_start_ios_ru.png">images/tutorial/screenshot_start_ios_en.png</file>
+        <file alias="images/tutorial/reader_nfc_userdata_example_ru.svg">images/tutorial/reader_nfc_userdata_example_en.svg</file>
+        <file alias="images/tutorial/reader_sac_menu_android_ru.svg">images/tutorial/reader_sac_menu_android_en.svg</file>
+        <file alias="images/tutorial/reader_sac_menu_ios_ru.svg">images/tutorial/reader_sac_menu_ios_en.svg</file>
+        <file alias="images/tutorial/src/phone_screen_ru.svg">images/tutorial/src/phone_screen_en.svg</file>
+        <file alias="images/tutorial/where_identify_now_ru.svg">images/tutorial/where_identify_now_en.svg</file>
+        <file alias="images/tutorial/where_userdata_example_ru.svg">images/tutorial/where_userdata_example_en.svg</file>
+    </qresource>
+    <qresource prefix="/">
+        <file alias="images/tutorial/button_uk.png">images/tutorial/button_en.png</file>
+        <file alias="images/tutorial/phone_screen_uk.png">images/tutorial/phone_screen_en.png</file>
+        <file alias="images/tutorial/screenshot_cert_android_uk.png">images/tutorial/screenshot_cert_android_en.png</file>
+        <file alias="images/tutorial/screenshot_cert_ios_uk.png">images/tutorial/screenshot_cert_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_check_id_card_android_uk.png">images/tutorial/screenshot_check_id_card_android_en.png</file>
+        <file alias="images/tutorial/screenshot_check_id_card_ios_uk.png">images/tutorial/screenshot_check_id_card_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_choose_reader_android_uk.png">images/tutorial/screenshot_choose_reader_android_en.png</file>
+        <file alias="images/tutorial/screenshot_choose_reader_ios_uk.png">images/tutorial/screenshot_choose_reader_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_pairing_uk.png">images/tutorial/screenshot_pairing_en.png</file>
+        <file alias="images/tutorial/screenshot_pin_management_menu_android_uk.png">images/tutorial/screenshot_pin_management_menu_android_en.png</file>
+        <file alias="images/tutorial/screenshot_pin_management_menu_ios_uk.png">images/tutorial/screenshot_pin_management_menu_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_providerlist_android_uk.png">images/tutorial/screenshot_providerlist_android_en.png</file>
+        <file alias="images/tutorial/screenshot_providerlist_ios_uk.png">images/tutorial/screenshot_providerlist_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_remoteservice_android_uk.png">images/tutorial/screenshot_remoteservice_android_en.png</file>
+        <file alias="images/tutorial/screenshot_remoteservice_ios_uk.png">images/tutorial/screenshot_remoteservice_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_selfauthentication_android_uk.png">images/tutorial/screenshot_selfauthentication_android_en.png</file>
+        <file alias="images/tutorial/screenshot_selfauthentication_ios_uk.png">images/tutorial/screenshot_selfauthentication_ios_en.png</file>
+        <file alias="images/tutorial/screenshot_start_android_uk.png">images/tutorial/screenshot_start_android_en.png</file>
+        <file alias="images/tutorial/screenshot_start_ios_uk.png">images/tutorial/screenshot_start_ios_en.png</file>
+        <file alias="images/tutorial/reader_nfc_userdata_example_uk.svg">images/tutorial/reader_nfc_userdata_example_en.svg</file>
+        <file alias="images/tutorial/reader_sac_menu_android_uk.svg">images/tutorial/reader_sac_menu_android_en.svg</file>
+        <file alias="images/tutorial/reader_sac_menu_ios_uk.svg">images/tutorial/reader_sac_menu_ios_en.svg</file>
+        <file alias="images/tutorial/src/phone_screen_uk.svg">images/tutorial/src/phone_screen_en.svg</file>
+        <file alias="images/tutorial/where_identify_now_uk.svg">images/tutorial/where_identify_now_en.svg</file>
+        <file alias="images/tutorial/where_userdata_example_uk.svg">images/tutorial/where_userdata_example_en.svg</file>
+    </qresource>
 </RCC>

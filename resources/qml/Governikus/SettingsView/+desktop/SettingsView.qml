@@ -99,7 +99,7 @@ SectionPage {
 			return model
 		}
 
-		sectionDelegate: TabbedPaneDelegateOneLineText {
+		sectionDelegate: TabbedPaneDelegateText {
 			sectionName: model ? model.modelData : ""
 		}
 

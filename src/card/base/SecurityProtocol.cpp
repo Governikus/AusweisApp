@@ -26,7 +26,8 @@ const QMap<char, KeyAgreementType> SecurityProtocol::cKeyAgreement = {
 	{1, KeyAgreementType::DH},
 	{2, KeyAgreementType::ECDH},
 	{3, KeyAgreementType::DH},
-	{4, KeyAgreementType::ECDH}
+	{4, KeyAgreementType::ECDH},
+	{6, KeyAgreementType::ECDH}
 };
 
 
@@ -34,7 +35,8 @@ const QMap<char, MappingType> SecurityProtocol::cMapping = {
 	{1, MappingType::GM},
 	{2, MappingType::GM},
 	{3, MappingType::IM},
-	{4, MappingType::IM}
+	{4, MappingType::IM},
+	{6, MappingType::CAM}
 };
 
 

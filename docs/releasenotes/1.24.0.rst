@@ -21,6 +21,8 @@ Anwender
 
 - Unterstützung von Windows 7 und Windows 8.1 wurde eingestellt.
 
+- Unterstützung von Windows 10 32-Bit-Version wurde eingestellt.
+
 - Unterstützung von macOS 10.13 und 10.14 wurde eingestellt.
 
 - Unterstützung von Android 5 und 6 und wurde eingestellt.

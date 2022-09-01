@@ -25,27 +25,8 @@ ColumnLayout {
 		FocusFrame {}
 	}
 
-	RowLayout {
-		spacing: Constants.component_spacing
-
-		LocationButton {
-			Accessible.name: qsTr("German")
-			Accessible.description: qsTr("Set language to german")
-
-			language: "de"
-			text: "Deutsch"
-			image: "qrc:///images/location_flag_de.svg"
-		}
-
-		LocationButton {
-			Accessible.name: qsTr("English")
-			Accessible.description: qsTr("Set language to english")
-
-			language: "en"
-			text: "English"
-			image: "qrc:///images/location_flag_en.svg"
-		}
-
+	LanguageButtons {
+		columns: 2
 	}
 
 	GSeparator {
