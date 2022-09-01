@@ -15,6 +15,6 @@ GText {
 
 	textStyle: isCurrentItem ? Style.text.header : Style.text.header_inverse
 	text: sectionName
-	maximumLineCount: 1
+	maximumLineCount: 2
 	elide: Text.ElideRight
 }

@@ -184,6 +184,7 @@ TutorialContent {
 			//: LABEL ANDROID IOS
 			Accessible.name: qsTr("Direct connection via NFC chip tutorial")
 			Accessible.role: Accessible.Button
+			Accessible.onPressAction: firePush(readerMethodNfc)
 		}
 
 		Column {
@@ -279,6 +280,7 @@ TutorialContent {
 			//: LABEL ANDROID IOS
 			Accessible.name: qsTr("Smartphone as card reader tutorial")
 			Accessible.role: Accessible.Button
+			Accessible.onPressAction: firePush(readerMethodSacDesktop)
 		}
 
 		Column {
@@ -416,6 +418,7 @@ TutorialContent {
 			//: LABEL ANDROID IOS
 			Accessible.name: qsTr("Smartphone as card reader mobile tutorial")
 			Accessible.role: Accessible.Button
+			Accessible.onPressAction: firePush(readerMethodSacMobile)
 		}
 
 		Column {

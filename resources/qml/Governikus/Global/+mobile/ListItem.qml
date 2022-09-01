@@ -96,7 +96,7 @@ Rectangle {
 				Accessible.ignored: true
 
 				elide: Text.ElideRight
-				maximumLineCount: fixedHeight ? 2 : 64
+				maximumLineCount: fixedHeight ? (headerText === "" ? 2 : 1) : 64
 			}
 
 			GText {

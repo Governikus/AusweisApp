@@ -60,7 +60,7 @@ SectionPage {
 			qsTr("Release notes")
 		]
 
-		sectionDelegate: TabbedPaneDelegateOneLineText {
+		sectionDelegate: TabbedPaneDelegateText {
 			sectionName: model ? model.modelData : ""
 		}
 

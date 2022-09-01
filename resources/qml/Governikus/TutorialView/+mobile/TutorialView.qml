@@ -322,7 +322,7 @@ SectionPage {
 					Accessible.onScrollDownAction: flickable.scrollPageDown()
 					Accessible.onScrollUpAction: flickable.scrollPageUp()
 
-					onFirePush: push(pSectionPage)
+					onFirePush: pSectionPage => push(pSectionPage)
 					onQuitTutorialClicked: leaveView()
 				}
 

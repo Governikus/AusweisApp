@@ -56,12 +56,16 @@ GPaneBackground {
 			id: text
 
 			Layout.fillWidth: true
+			Layout.fillHeight: true
+			Layout.minimumHeight: lineHeight
 
 			Accessible.ignored: true
 
+			elide: Text.ElideRight
 			textStyle: Style.text.title_inverse
 			color: Qt.darker(textStyle.textColor, mouseArea.pressed ? Constants.highlightDarkerFactor : 1)
 			horizontalAlignment: Text.AlignHCenter
+			verticalAlignment: Text.AlignVCenter
 			font.bold: true
 		}
 

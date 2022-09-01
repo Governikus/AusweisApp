@@ -101,6 +101,8 @@ SectionPage {
 				GFileDialog {
 					id: fileDialog
 
+					//: LABEL DESKTOP
+					title: qsTr("Save diagnosis")
 					defaultSuffix: "txt"
 					//: LABEL DESKTOP
 					nameFilters: qsTr("Textfiles (*.txt)")

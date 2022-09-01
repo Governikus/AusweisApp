@@ -89,7 +89,8 @@ function(SHOULD_SKIP_TEST _out filename)
 
 	if(NOT USE_SMARTEID AND (test MATCHES "card/smart"
 			OR test MATCHES "ui/qml/smart"
-			OR test MATCHES "workflows/personalization"))
+			OR test MATCHES "workflows/personalization"
+			OR test MATCHES "ui/json/test_MsgHandlerPersonalization"))
 		set(${_out} TRUE PARENT_SCOPE)
 		return()
 	endif()

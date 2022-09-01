@@ -11,6 +11,7 @@ internal ScreenOrientationSelectionPopup ScreenOrientationSelectionPopup.qml
 internal SecurityAndPrivacySettings SecurityAndPrivacySettings.qml
 
 CardReaderView 1.0 CardReaderView.qml
+LanguageButtons 1.0 LanguageButtons.qml
 RemoteReaderView 1.0 RemoteReaderView.qml
 SettingsView 1.0 SettingsView.qml
 TabbedReaderView 1.0 TabbedReaderView.qml

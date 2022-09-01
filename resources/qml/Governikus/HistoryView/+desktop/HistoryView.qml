@@ -128,6 +128,8 @@ SectionPage {
 					GFileDialog {
 						id: fileDialog
 
+						//: LABEL DESKTOP
+						title: qsTr("Save history")
 						defaultSuffix: "pdf"
 						//: LABEL DESKTOP
 						nameFilters: qsTr("Portable Document Format (*.pdf)")

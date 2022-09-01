@@ -4,12 +4,14 @@
 
 #include "StateSelectReader.h"
 
-#include "FuncUtils.h"
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
+
 
 using namespace governikus;
 
@@ -63,6 +65,13 @@ void StateSelectReader::onReaderInfoChanged()
 			}
 
 			selectableReaders.append(info);
+		}
+		else if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
+				&& info.getPlugInType() == ReaderManagerPlugInType::REMOTE_IFD
+				&& info.isInsertable())
+		{
+			Env::getSingleton<ReaderManager>()->insert(info);
+			continue;
 		}
 	}
 

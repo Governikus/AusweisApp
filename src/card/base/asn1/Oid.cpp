@@ -34,9 +34,11 @@ void Oid::createKnownOids()
 
 	cKnownOids[KnownOid::BSI_DE_PROTOCOLS_SMARTCARD] = OBJ_create("0.4.0.127.0.7.2.2", "bsi-de-protocols-smartcard", "BSI TR-03110 Part 3 Version 2.21 Supported Protocols A.1.1");
 
-	cKnownOids[KnownOid::ID_PK] = OBJ_create("0.4.0.127.0.7.2.2.1", "id-PK", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication Key A.1.1.2");
-	cKnownOids[KnownOid::ID_PK_DH] = OBJ_create("0.4.0.127.0.7.2.2.1.1", "id-PK-DH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication Key A.1.1.2 - 1");
-	cKnownOids[KnownOid::ID_PK_ECDH] = OBJ_create("0.4.0.127.0.7.2.2.1.2", "id-PK-ECDH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication Key A.1.1.2 - 2");
+	cKnownOids[KnownOid::ID_PK] = OBJ_create("0.4.0.127.0.7.2.2.1", "id-PK", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1");
+	cKnownOids[KnownOid::ID_PK_DH] = OBJ_create("0.4.0.127.0.7.2.2.1.1", "id-PK-DH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.1");
+	cKnownOids[KnownOid::ID_PK_ECDH] = OBJ_create("0.4.0.127.0.7.2.2.1.2", "id-PK-ECDH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.2");
+	cKnownOids[KnownOid::ID_PS_PK] = OBJ_create("0.4.0.127.0.7.2.2.1.3", "id-PS-PK", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.3");
+	cKnownOids[KnownOid::ID_PS_PK_ECDH_ESCHNORR] = OBJ_create("0.4.0.127.0.7.2.2.1.3.2", "id-PS-PK-ECDH-ECSchnorr", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.3.2");
 
 	cKnownOids[KnownOid::ID_TA] = OBJ_create("0.4.0.127.0.7.2.2.2", "id-TA", "BSI TR-03110 Part 3 Version 2.21 Terminal Authentication A.1.1.3");
 	cKnownOids[KnownOid::ID_TA_RSA] = OBJ_create("0.4.0.127.0.7.2.2.2.1", "id-TA-RSA", "BSI TR-03110 Part 3 Version 2.21 Terminal Authentication A.1.1.3 - 1");
@@ -53,39 +55,43 @@ void Oid::createKnownOids()
 	cKnownOids[KnownOid::ID_TA_ECDSA_SHA_384] = OBJ_create("0.4.0.127.0.7.2.2.2.2.4", "id-TA-ECDSA-SHA-384", "BSI TR-03110 Part 3 Version 2.21 Terminal Authentication A.1.1.3 - 2.4");
 	cKnownOids[KnownOid::ID_TA_ECDSA_SHA_512] = OBJ_create("0.4.0.127.0.7.2.2.2.2.5", "id-TA-ECDSA-SHA-512", "BSI TR-03110 Part 3 Version 2.21 Terminal Authentication A.1.1.3 - 2.5");
 
-	cKnownOids[KnownOid::ID_CA] = OBJ_create("0.4.0.127.0.7.2.2.3", "id-CA", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2");
-	cKnownOids[KnownOid::ID_CA_DH] = OBJ_create("0.4.0.127.0.7.2.2.3.1", "id-CA-DH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1");
-	cKnownOids[KnownOid::ID_CA_DH_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.3.1.1", "id-CA-DH-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.1");
-	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.3.1.2", "id-CA-DH-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.2");
-	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.3.1.3", "id-CA-DH-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.3");
-	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.3.1.4", "id-CA-DH-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 1.4");
-	cKnownOids[KnownOid::ID_CA_ECDH] = OBJ_create("0.4.0.127.0.7.2.2.3.2", "id-CA-ECDH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 2");
-	cKnownOids[KnownOid::ID_CA_ECDH_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.3.2.1", "id-CA-ECDH-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 2.1");
-	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.3.2.2", "id-CA-ECDH-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 2.2");
-	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.3.2.3", "id-CA-ECDH-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 2.3");
-	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.3.2.4", "id-CA-ECDH-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 2.4");
+	cKnownOids[KnownOid::ID_CA] = OBJ_create("0.4.0.127.0.7.2.2.3", "id-CA", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3");
+	cKnownOids[KnownOid::ID_CA_DH] = OBJ_create("0.4.0.127.0.7.2.2.3.1", "id-CA-DH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.1");
+	cKnownOids[KnownOid::ID_CA_DH_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.3.1.1", "id-CA-DH-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.1.1");
+	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.3.1.2", "id-CA-DH-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.1.2");
+	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.3.1.3", "id-CA-DH-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.1.3");
+	cKnownOids[KnownOid::ID_CA_DH_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.3.1.4", "id-CA-DH-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.1.4");
+	cKnownOids[KnownOid::ID_CA_ECDH] = OBJ_create("0.4.0.127.0.7.2.2.3.2", "id-CA-ECDH", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.2");
+	cKnownOids[KnownOid::ID_CA_ECDH_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.3.2.1", "id-CA-ECDH-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.2.1");
+	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.3.2.2", "id-CA-ECDH-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.2.2");
+	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.3.2.3", "id-CA-ECDH-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.2.3");
+	cKnownOids[KnownOid::ID_CA_ECDH_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.3.2.4", "id-CA-ECDH-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 3.2.4");
 
-	cKnownOids[KnownOid::ID_PACE] = OBJ_create("0.4.0.127.0.7.2.2.4", "id-PACE", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1");
-	cKnownOids[KnownOid::ID_PACE_DH_GM] = OBJ_create("0.4.0.127.0.7.2.2.4.1", "id-PACE-DH-GM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 1");
-	cKnownOids[KnownOid::ID_PACE_DH_GM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.1.1", "id-PACE-DH-GM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 1.1");
-	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.1.2", "id-PACE-DH-GM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 1.2");
-	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.1.3", "id-PACE-DH-GM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 1.3");
-	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.1.4", "id-PACE-DH-GM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 1.4");
-	cKnownOids[KnownOid::ID_PACE_ECDH_GM] = OBJ_create("0.4.0.127.0.7.2.2.4.2", "id-PACE-ECDH-GM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 2");
-	cKnownOids[KnownOid::ID_PACE_ECDH_GM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.2.1", "id-PACE-ECDH-GM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 2.1");
-	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.2.2", "id-PACE-ECDH-GM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 2.2");
-	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.2.3", "id-PACE-ECDH-GM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 2.3");
-	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.2.4", "id-PACE-ECDH-GM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 2.4");
-	cKnownOids[KnownOid::ID_PACE_DH_IM] = OBJ_create("0.4.0.127.0.7.2.2.4.3", "id-PACE-DH-IM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 3");
-	cKnownOids[KnownOid::ID_PACE_DH_IM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.3.1", "id-PACE-DH-IM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 3.1");
-	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.3.2", "id-PACE-DH-IM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 3.2");
-	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.3.3", "id-PACE-DH-IM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 3.3");
-	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.3.4", "id-PACE-DH-IM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 3.4");
-	cKnownOids[KnownOid::ID_PACE_ECDH_IM] = OBJ_create("0.4.0.127.0.7.2.2.4.4", "id-PACE-ECDH-IM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4");
-	cKnownOids[KnownOid::ID_PACE_ECDH_IM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.4.1", "id-PACE-ECDH-IM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1");
-	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.4.2", "id-PACE-ECDH-IM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2");
-	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.4.3", "id-PACE-ECDH-IM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3");
-	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.4.4", "id-PACE-ECDH-IM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4");
+	cKnownOids[KnownOid::ID_PACE] = OBJ_create("0.4.0.127.0.7.2.2.4", "id-PACE", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4");
+	cKnownOids[KnownOid::ID_PACE_DH_GM] = OBJ_create("0.4.0.127.0.7.2.2.4.1", "id-PACE-DH-GM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1");
+	cKnownOids[KnownOid::ID_PACE_DH_GM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.1.1", "id-PACE-DH-GM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1.1");
+	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.1.2", "id-PACE-DH-GM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1.2");
+	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.1.3", "id-PACE-DH-GM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1.3");
+	cKnownOids[KnownOid::ID_PACE_DH_GM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.1.4", "id-PACE-DH-GM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.1.4");
+	cKnownOids[KnownOid::ID_PACE_ECDH_GM] = OBJ_create("0.4.0.127.0.7.2.2.4.2", "id-PACE-ECDH-GM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2");
+	cKnownOids[KnownOid::ID_PACE_ECDH_GM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.2.1", "id-PACE-ECDH-GM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2.1");
+	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.2.2", "id-PACE-ECDH-GM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2.2");
+	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.2.3", "id-PACE-ECDH-GM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2.3");
+	cKnownOids[KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.2.4", "id-PACE-ECDH-GM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.2.4");
+	cKnownOids[KnownOid::ID_PACE_DH_IM] = OBJ_create("0.4.0.127.0.7.2.2.4.3", "id-PACE-DH-IM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3");
+	cKnownOids[KnownOid::ID_PACE_DH_IM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.3.1", "id-PACE-DH-IM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3.1");
+	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.3.2", "id-PACE-DH-IM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3.2");
+	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.3.3", "id-PACE-DH-IM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3.3");
+	cKnownOids[KnownOid::ID_PACE_DH_IM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.3.4", "id-PACE-DH-IM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.3.4");
+	cKnownOids[KnownOid::ID_PACE_ECDH_IM] = OBJ_create("0.4.0.127.0.7.2.2.4.4", "id-PACE-ECDH-IM", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4");
+	cKnownOids[KnownOid::ID_PACE_ECDH_IM_3DES_CBC_CBC] = OBJ_create("0.4.0.127.0.7.2.2.4.4.1", "id-PACE-ECDH-IM-3DES-CBC-CBC", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4.1");
+	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.4.2", "id-PACE-ECDH-IM-AES-CBC-CMAC-128", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4.2");
+	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.4.3", "id-PACE-ECDH-IM-AES-CBC-CMAC-192", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4.3");
+	cKnownOids[KnownOid::ID_PACE_ECDH_IM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.4.4", "id-PACE-ECDH-IM-AES-CBC-CMAC-256", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 4.4.4");
+	cKnownOids[KnownOid::ID_PACE_ECDH_CAM] = OBJ_create("0.4.0.127.0.7.2.2.4.6", "id-PACE-ECDH-CAM", "BSI TR-03105 Part 5.1 Version 1.5 PACE 7.4 - 6");
+	cKnownOids[KnownOid::ID_PACE_ECDH_CAM_AES_CBC_CMAC_128] = OBJ_create("0.4.0.127.0.7.2.2.4.6.2", "id-PACE-ECDH-CAM-AES-CBC-CMAC-128", "BSI TR-03105 Part 5.1 Version 1.5 PACE 7.4 - 6.2");
+	cKnownOids[KnownOid::ID_PACE_ECDH_CAM_AES_CBC_CMAC_192] = OBJ_create("0.4.0.127.0.7.2.2.4.6.3", "id-PACE-ECDH-CAM-AES-CBC-CMAC-192", "BSI TR-03105 Part 5.1 Version 1.5 PACE 7.4 - 6.3");
+	cKnownOids[KnownOid::ID_PACE_ECDH_CAM_AES_CBC_CMAC_256] = OBJ_create("0.4.0.127.0.7.2.2.4.6.4", "id-PACE-ECDH-CAM-AES-CBC-CMAC-256", "BSI TR-03105 Part 5.1 Version 1.5 PACE 7.4 - 6.4");
 
 	cKnownOids[KnownOid::ID_RI] = OBJ_create("0.4.0.127.0.7.2.2.5", "id-RI", "BSI TR-03110 Part 3 Version 2.21 Restricted Identification A.1.1.4");
 	cKnownOids[KnownOid::ID_RI_DH] = OBJ_create("0.4.0.127.0.7.2.2.5.1", "id-RI-DH", "BSI TR-03110 Part 3 Version 2.21 Restricted Identification A.1.1.4 - 1");
@@ -106,6 +112,19 @@ void Oid::createKnownOids()
 	cKnownOids[KnownOid::ID_EID_SECURITY] = OBJ_create("0.4.0.127.0.7.2.2.7", "id-eIDSecurity", "BSI TR-03110 Part 3 Version 2.21 EIDSecurityInfo (eIDAS token only) A.1.1.8");
 
 	cKnownOids[KnownOid::ID_PT] = OBJ_create("0.4.0.127.0.7.2.2.8", "id-PT", "BSI TR-03110 Part 3 Version 2.21 PrivilegedTerminalInfo (eIDAS token only) A.1.1.9");
+
+	cKnownOids[KnownOid::ID_PS] = OBJ_create("0.4.0.127.0.7.2.2.11", "id-PS", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11");
+	cKnownOids[KnownOid::ID_PSA] = OBJ_create("0.4.0.127.0.7.2.2.11.1", "id-PSA", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11.1");
+	cKnownOids[KnownOid::ID_PSA_ECDH_ECSCHNORR] = OBJ_create("0.4.0.127.0.7.2.2.11.1.2", "id-PSA-ECDH-ECSchnorr", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11.1.2");
+	cKnownOids[KnownOid::ID_PSA_ECDH_ECSCHNORR_SHA_256] = OBJ_create("0.4.0.127.0.7.2.2.11.1.2.3", "id-PSA-ECDH-ECSchnorr-SHA-256", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11.1.2.3");
+	cKnownOids[KnownOid::ID_PSA_ECDH_ECSCHNORR_SHA_384] = OBJ_create("0.4.0.127.0.7.2.2.11.1.2.4", "id-PSA-ECDH-ECSchnorr-SHA-384", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11.1.2.4");
+	cKnownOids[KnownOid::ID_PSA_ECDH_ECSCHNORR_SHA_512] = OBJ_create("0.4.0.127.0.7.2.2.11.1.2.5", "id-PSA-ECDH-ECSchnorr-SHA-512", "BSI TR-03110 Part 3 Version 2.21 Chip Authentication A.1.1.2 - 11.1.2.5");
+
+	cKnownOids[KnownOid::ID_PASSWORDTYPE] = OBJ_create("0.4.0.127.0.7.2.2.12", "id-PasswordType", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 12");
+	cKnownOids[KnownOid::ID_PASSWORDTYPE_MRZ] = OBJ_create("0.4.0.127.0.7.2.2.12.1", "id-PasswordType-MRZ", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 12.1");
+	cKnownOids[KnownOid::ID_PASSWORDTYPE_CAN] = OBJ_create("0.4.0.127.0.7.2.2.12.2", "id-PasswordType-CAN", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 12.2");
+	cKnownOids[KnownOid::ID_PASSWORDTYPE_PIN] = OBJ_create("0.4.0.127.0.7.2.2.12.3", "id-PasswordType-PIN", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 12.3");
+	cKnownOids[KnownOid::ID_PASSWORDTYPE_PUK] = OBJ_create("0.4.0.127.0.7.2.2.12.4", "id-PasswordType-PUK", "BSI TR-03110 Part 3 Version 2.21 PACE A.1.1.1 - 12.4");
 
 	cKnownOids[KnownOid::ID_AUXILIARY_DATA] = OBJ_create("0.4.0.127.0.7.3.1.4", "id-AuxiliaryData", "BSI TR-03110 Part 3 Version 2.21 Object Identifier A.7.5.1");
 	cKnownOids[KnownOid::ID_DATE_OF_BIRTH] = OBJ_create("0.4.0.127.0.7.3.1.4.1", "id-DateOfBirth", "BSI TR-03110 Part 3 Version 2.21 Age Verification A.7.5.2");

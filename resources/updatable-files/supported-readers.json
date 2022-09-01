@@ -363,7 +363,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://security.kobil.de/idtoken/"
+					"URL": "https://www.kobil.de"
 				}
 			],
 			"Information": [
@@ -373,8 +373,8 @@
 							"os": "win"
 						}
 					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader operates with the driver automatically installed by the system."
 				},
 				{
 					"Platforms": [
@@ -390,7 +390,8 @@
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader is compatible with the installed system driver."
 				}
-			]
+			],
+			"Internal information": "Der Hersteller stellt keinen Treiber mehr zur Verfügung."
 		},
 		{
 			"VendorId": "0x04E6",

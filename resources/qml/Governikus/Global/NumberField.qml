@@ -98,7 +98,7 @@ Item {
 			acceptedButtons: Qt.AllButtons
 
 			onPressAndHold: root.handleKeyEvent(Qt.Key_Paste)
-			onClicked: {
+			onClicked: mouse => {
 				root.forceActiveFocus()
 				if (mouse.button === Qt.RightButton || mouse.button === Qt.MiddleButton) {
 					echoField.paste()

@@ -5,6 +5,7 @@ internal TutorialCollapseAnimation TutorialCollapseAnimation.qml
 internal TutorialContent TutorialContent.qml
 internal TutorialExpandAnimation TutorialExpandAnimation.qml
 internal TutorialFooter TutorialFooter.qml
+internal TutorialFooterButton TutorialFooterButton.qml
 internal TutorialHeader TutorialHeader.qml
 internal TutorialHow TutorialHow.qml
 internal TutorialImage TutorialImage.qml

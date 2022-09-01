@@ -14,7 +14,7 @@ BaseConfirmationPopup {
 
 	headerTextStyle: Style.text.header
 
-	buttons: Row {
+	buttons: Flow {
 		width: parent.width
 
 		layoutDirection: Qt.RightToLeft

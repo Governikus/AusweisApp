@@ -10,6 +10,9 @@
 #include "UIPlugIn.h"
 #include "context/WorkflowContext.h"
 
+class test_MsgHandlerAuth;
+class test_MsgHandlerPersonalization;
+
 namespace governikus
 {
 
@@ -19,6 +22,8 @@ class UIPlugInJson
 	Q_OBJECT
 	Q_PLUGIN_METADATA(IID "governikus.UIPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::UIPlugIn)
+	friend class ::test_MsgHandlerAuth;
+	friend class ::test_MsgHandlerPersonalization;
 
 	private:
 		MessageDispatcher mMessageDispatcher;

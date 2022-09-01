@@ -19,7 +19,7 @@ Item {
 	property var contentObjectModel: undefined
 	property Component contentDelegate: null
 	property Component footerItem: null
-	property Component sectionDelegate: TabbedPaneDelegateOneLineText {
+	property Component sectionDelegate: TabbedPaneDelegateText {
 		sectionName: model ? (model.display ? model.display : model.modelData) : ""
 	}
 	property alias currentIndex: sectionNameList.currentIndex

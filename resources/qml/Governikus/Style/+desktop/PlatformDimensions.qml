@@ -3,9 +3,13 @@
  */
 
 import QtQml 2.15
+
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 QtObject {
+	readonly property bool isLongLanguage: SettingsModel.language === "uk" || SettingsModel.language === "ru"
+
 	readonly property int title_font_size: ApplicationModel.scaleFactor * 42
 	readonly property int header_font_size: ApplicationModel.scaleFactor * 32
 	readonly property int normal_font_size: ApplicationModel.scaleFactor * 26
@@ -19,7 +23,7 @@ QtObject {
 	readonly property int separator_size: Math.max(ApplicationModel.scaleFactor * 2, 1)
 	readonly property int separator_size_large: Math.max(ApplicationModel.scaleFactor * 4, 1)
 	readonly property int tabbed_pane_separator_size: separator_size_large
-	readonly property real max_text_width: ApplicationModel.scaleFactor * 1000
+	readonly property real max_text_width: ApplicationModel.scaleFactor * (isLongLanguage ? 1250 : 1000)
 	readonly property int list_item_height: ApplicationModel.scaleFactor * 64
 	readonly property int high_contrast_item_border: ApplicationModel.scaleFactor * 0
 

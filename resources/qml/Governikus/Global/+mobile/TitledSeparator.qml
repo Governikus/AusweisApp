@@ -16,6 +16,7 @@ RowLayout {
 	property real contentMarginBottom: Constants.component_spacing / 2
 	property real contentMarginLeft: Constants.component_spacing
 	property real contentMarginRight: Constants.component_spacing
+	property real minimumSeperatorWidth: Constants.component_spacing
 
 	Accessible.role: Accessible.Heading
 	Accessible.name: title
@@ -29,7 +30,8 @@ RowLayout {
 		Layout.topMargin: baseItem.contentMarginTop
 		Layout.bottomMargin: baseItem.contentMarginBottom
 		Layout.leftMargin: baseItem.contentMarginLeft
-		Layout.preferredWidth: titleText.implicitWidth
+		Layout.fillWidth: true
+		Layout.maximumWidth: Math.ceil(titleText.implicitWidth)
 
 		Accessible.ignored: true
 
@@ -38,6 +40,7 @@ RowLayout {
 
 	GSeparator {
 		Layout.fillWidth: true
+		Layout.minimumWidth: baseItem.minimumSeperatorWidth
 		Layout.topMargin: baseItem.contentMarginTop
 		Layout.bottomMargin: baseItem.contentMarginBottom
 		Layout.rightMargin: baseItem.contentMarginRight

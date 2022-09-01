@@ -20,7 +20,7 @@ Item {
 	visible: infoImage.source.toString() !== ""
 
 	implicitHeight: infoImage.implicitHeight + (imageDescriptionText.visible ? (Constants.component_spacing + imageDescriptionText.implicitHeight) : 0)
-	implicitWidth: Math.max(infoImageContainer.width, imageDescriptionText.implicitWidth)
+	implicitWidth: infoImageContainer.width
 	height: root.implicitHeight
 	width: root.implicitWidth
 
@@ -112,10 +112,12 @@ Item {
 		id: imageDescriptionText
 
 		visible: passwordType === PasswordType.PIN || passwordType === PasswordType.PUK
+		width: root.width
 
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.bottom: parent.bottom
 
+		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.normal
 		text: (imageChangeTimer.alternativeLetter ?
 			//: LABEL
@@ -123,5 +125,6 @@ Item {
 			//: LABEL
 			qsTr("ID card PIN/PUK on the same page")
 			)
+		wrapMode: Text.Wrap
 	}
 }

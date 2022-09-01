@@ -298,6 +298,7 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 		case PcscUtils::Scard_E_Invalid_Parameter:
 		case PcscUtils::Scard_E_Invalid_Value:
 		case PcscUtils::Scard_E_No_Service:
+		case PcscUtils::Scard_E_No_Smartcard:
 		case PcscUtils::Scard_E_Not_Transacted:
 		case PcscUtils::Scard_E_Proto_Mismatch:
 		case PcscUtils::Scard_E_Reader_Unavailable:

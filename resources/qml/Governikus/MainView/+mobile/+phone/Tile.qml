@@ -52,16 +52,19 @@ GPaneBackground {
 		anchors {
 			right: root.right
 			left: image.right
-			verticalCenter: root.verticalCenter
+			top: root.top
+			bottom: root.bottom
 			leftMargin: Constants.text_spacing
 			rightMargin: Constants.text_spacing
 		}
 
 		Accessible.ignored: true
 
+		elide: Text.ElideRight
 		textStyle: Style.text.title_inverse
 		color: Qt.darker(textStyle.textColor, mouseArea.pressed ? Constants.highlightDarkerFactor : 1)
 		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignVCenter
 		font.bold: true
 	}
 }

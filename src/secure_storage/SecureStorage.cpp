@@ -129,7 +129,13 @@ QString SecureStorage::getDeveloperConfig() const
 
 QString SecureStorage::getCustomConfig() const
 {
-	return FileDestination::getPath(QStringLiteral("config.json"));
+	const auto& path = FileDestination::getPath(QStringLiteral("config.json"));
+	if (QFile(path).exists())
+	{
+		return path;
+	}
+
+	return QString();
 }
 
 
@@ -181,6 +187,7 @@ QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
 void SecureStorage::load()
 {
 	const QStringList files({getDeveloperConfig(), getCustomConfig(), getEmbeddedConfig()});
+	qDebug() << files;
 	const auto& config = loadFile(files);
 	if (config.isEmpty())
 	{
@@ -188,7 +195,6 @@ void SecureStorage::load()
 	}
 
 	mVendor = config.value(CONFIGURATION_VENDOR()).toString();
-	qCInfo(securestorage) << "Vendor" << mVendor;
 
 	mCvcas.clear();
 	mCvcas = readByteArrayList(config, CONFIGURATION_GROUP_NAME_CV_ROOT_CERTIFICATE());
@@ -267,7 +273,8 @@ void SecureStorage::load()
 	}
 
 	mLoaded = true;
-	qCInfo(securestorage) << "SecureStorage successfully loaded";
+	qCDebug(securestorage) << "SecureStorage successfully loaded";
+	qCInfo(securestorage) << "Vendor" << mVendor;
 }
 
 

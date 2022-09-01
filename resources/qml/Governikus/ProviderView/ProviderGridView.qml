@@ -48,11 +48,12 @@ Item {
 
 		model: ProviderCategoryFilterModel
 
-		highlight: FocusFrame {
-			scope: gridView
-			framee: gridView.currentItem
-			marginFactor: -0.75
-			radius: Style.dimens.corner_radius
+		highlight: Item {
+			FocusFrame {
+				scope: gridView
+				marginFactor: -0.75
+				radius: Style.dimens.corner_radius
+			}
 		}
 
 		delegate: Item {

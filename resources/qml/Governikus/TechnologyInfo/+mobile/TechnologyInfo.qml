@@ -22,7 +22,9 @@ Item {
 
 	signal enableClicked()
 
-	ColumnLayout {
+	clip: true
+
+	GFlickableColumnLayout {
 		anchors.fill: parent
 
 		spacing: 0

@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.1.0)
+
+foreach(file @TRANSLATION_FILES@)
+	message(STATUS "Adding DvcsAttributes to ${file}")
+	file(READ ${file} TR_FILE)
+	string(REPLACE "\">\n<context>" "\
+\">\n\
+<context>\n\
+    <name>DvcsAttributes</name>\n\
+    <message>\n\
+        <source>revision</source>\n\
+        <translation>@dvcs_revision@</translation>\n\
+    </message>\n\
+</context>\n\
+<context>" TR_FILE "${TR_FILE}")
+	file(WRITE ${file} "${TR_FILE}")
+endforeach()

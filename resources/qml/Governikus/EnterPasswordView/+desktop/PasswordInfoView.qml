@@ -38,8 +38,7 @@ SectionPage {
 		showHelp: false
 	}
 
-	ColumnLayout {
-
+	GFlickableColumnLayout {
 		anchors.fill: parent
 		anchors.margins: Constants.pane_padding
 

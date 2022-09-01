@@ -109,7 +109,7 @@ function(ADD_QML_TEST_FILES)
 	endforeach()
 endfunction()
 
-qt_add_resources(QRC_FIXTURE "fixture/fixture.qrc")
+qt_add_resources(QRC_FIXTURE "fixture/fixture.qrc" OPTIONS -compress-algo zlib)
 ADD_OBJECT_LIBRARY(QRC_FIXTURE_OBJ ${QRC_FIXTURE} ${Qt}::Core)
 
 add_subdirectory(helper)

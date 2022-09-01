@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "context/AuthContext.h"
 #include "context/WorkflowContext.h"
 #include "messages/Msg.h"
 #include "messages/MsgContext.h"
@@ -17,6 +16,7 @@
 
 #include <functional>
 #include <initializer_list>
+
 
 class test_Message;
 
@@ -29,6 +29,10 @@ class MessageDispatcher
 
 	private:
 		MsgDispatcherContext mContext;
+#ifndef QT_NO_DEBUG
+		using SkipStateApprovedHook = std::function<bool (const QString& pState)>;
+		SkipStateApprovedHook mSkipStateApprovedHook;
+#endif
 
 		Msg createForStateChange(MsgType pStateType);
 		MsgHandler createForCommand(const QJsonObject& pObj);
@@ -49,6 +53,10 @@ class MessageDispatcher
 		[[nodiscard]] Msg processStateChange(const QString& pState);
 		[[nodiscard]] Msg processProgressChange() const;
 		[[nodiscard]] QVector<Msg> processReaderChange(const ReaderInfo& pInfo);
+
+#ifndef QT_NO_DEBUG
+		void setSkipStateApprovedHook(const SkipStateApprovedHook& pHook);
+#endif
 };
 
 

@@ -15,7 +15,7 @@ j.with
 	{
 		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
-		shell('cd source; cmake --preset ci-ios-framework')
+		shell('cd source; cmake --preset ci-ios-framework-simulator')
 
 		shell('cd build; xcodebuild -configuration MinSizeRel')
 		shell('cmake -E tar cf AusweisApp2_BuildDir.tar.zstd --zstd build')

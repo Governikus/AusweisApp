@@ -47,7 +47,7 @@ SectionPage {
 		fillHeight: false
 
 		PasswordInfoImage {
-			Layout.alignment: Qt.AlignHCenter
+			Layout.fillWidth: true
 			Layout.topMargin: Constants.pane_padding
 
 			passwordType: root.passwordType

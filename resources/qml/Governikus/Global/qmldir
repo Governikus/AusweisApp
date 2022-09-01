@@ -54,7 +54,7 @@ SwipeActionDelegate 1.0 SwipeActionDelegate.qml
 TabbedPane 1.0 TabbedPane.qml
 TabbedPaneDelegateIconAndText 1.0 TabbedPaneDelegateIconAndText.qml
 TabbedPaneDelegateIconAndThreeLineText 1.0 TabbedPaneDelegateIconAndThreeLineText.qml
-TabbedPaneDelegateOneLineText 1.0 TabbedPaneDelegateOneLineText.qml
+TabbedPaneDelegateText 1.0 TabbedPaneDelegateText.qml
 PkiSwitch 1.0 PkiSwitch.qml
 TintableIcon 1.0 TintableIcon.qml
 TitledSeparator 1.0 TitledSeparator.qml
