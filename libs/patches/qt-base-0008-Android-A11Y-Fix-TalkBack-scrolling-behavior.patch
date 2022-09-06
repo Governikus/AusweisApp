@@ -1,4 +1,4 @@
-From 9c43a66f982b1630b32011024018547b9413a1bf Mon Sep 17 00:00:00 2001
+From 7163363866d36b6ba8452d78cf26014e4c007f96 Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Tue, 24 May 2022 08:57:45 +0200
 Subject: Android A11Y: Fix TalkBack scrolling behavior
@@ -26,7 +26,7 @@ Change-Id: Ie2c51d0b77fb5030973a0f93c42e0db3082be45e
  2 files changed, 27 insertions(+), 4 deletions(-)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
-index bd8909b45e..ad62cce74d 100644
+index bd8909b45e0..ad62cce74d6 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 @@ -51,6 +51,7 @@ import android.view.ViewParent;
@@ -47,7 +47,7 @@ index bd8909b45e..ad62cce74d 100644
          return node;
      }
 diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
-index 75f1dc9c0a..1d47d015d9 100644
+index 75f1dc9c0ab..1d47d015d9f 100644
 --- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 +++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 @@ -226,7 +226,7 @@ namespace QtAndroidAccessibility
@@ -115,5 +115,5 @@ index 75f1dc9c0a..1d47d015d9 100644
  
  
 -- 
-2.28.0
+2.37.3
 

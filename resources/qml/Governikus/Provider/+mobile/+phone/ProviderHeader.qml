@@ -43,7 +43,7 @@ Rectangle {
 
 	height: backgroundImage.height + providerInfo.height - titleBarTopBounce
 
-	color: providerInfo.color // Some provider images have transparent backgrounds, so we need to fill the background
+	color: providerInfo.color
 
 	Image {
 		id: backgroundImage

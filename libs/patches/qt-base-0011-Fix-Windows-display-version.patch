@@ -1,4 +1,4 @@
-From 414732d5c823a5e760cfac85ee6b7097bceaa70b Mon Sep 17 00:00:00 2001
+From 9270e1c7a784ad229fc4c46cc5b938736cedf667 Mon Sep 17 00:00:00 2001
 From: Yuhang Zhao <2546789017@qq.com>
 Date: Fri, 20 May 2022 14:07:54 +0800
 Subject: Fix Windows display version
@@ -17,7 +17,7 @@ Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
  1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qglobal.cpp y/qtbase/src/corelib/global/qglobal.cpp
-index 90fbae807e..21386421cb 100644
+index 90fbae807e5..21386421cbc 100644
 --- x/qtbase/src/corelib/global/qglobal.cpp
 +++ y/qtbase/src/corelib/global/qglobal.cpp
 @@ -2187,9 +2187,14 @@ static QString readVersionRegistryString(const wchar_t *subKey)
@@ -51,5 +51,5 @@ index 90fbae807e..21386421cb 100644
  #  endif // Windows
  #elif defined(Q_OS_HAIKU)
 -- 
-2.37.1
+2.37.3
 

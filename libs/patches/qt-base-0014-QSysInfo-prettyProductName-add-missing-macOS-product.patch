@@ -1,4 +1,4 @@
-From 43f460c8a5f5992b65729a240f2f5db2ce9230e6 Mon Sep 17 00:00:00 2001
+From 8f2b78091c4d0f081646f43bf0dbf27056855b4d Mon Sep 17 00:00:00 2001
 From: Yuhang Zhao <2546789017@qq.com>
 Date: Tue, 24 May 2022 14:05:10 +0800
 Subject: QSysInfo::prettyProductName(): add missing macOS product names
@@ -15,7 +15,7 @@ Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
  1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qglobal.cpp y/qtbase/src/corelib/global/qglobal.cpp
-index 21386421cb..ae7efe5454 100644
+index 21386421cbc..ae7efe54541 100644
 --- x/qtbase/src/corelib/global/qglobal.cpp
 +++ y/qtbase/src/corelib/global/qglobal.cpp
 @@ -2121,6 +2121,11 @@ QT_END_INCLUDE_NAMESPACE
@@ -57,5 +57,5 @@ index 21386421cb..ae7efe5454 100644
  
  #endif
 -- 
-2.37.1
+2.37.3
 

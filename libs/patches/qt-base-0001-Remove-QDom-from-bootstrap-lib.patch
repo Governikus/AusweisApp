@@ -1,4 +1,4 @@
-From c69b7d2e46da7d7b3252697f1fc938343c74c10a Mon Sep 17 00:00:00 2001
+From 6dbc82a42d1bf1bfbe31b5e5b1afc4466e9f5959 Mon Sep 17 00:00:00 2001
 From: Joerg Bornemann <joerg.bornemann@qt.io>
 Date: Thu, 27 Jan 2022 13:59:12 +0100
 Subject: Remove QDom from bootstrap lib
@@ -13,7 +13,7 @@ Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
  1 file changed, 2 deletions(-)
 
 diff --git x/qtbase/src/tools/bootstrap/CMakeLists.txt y/qtbase/src/tools/bootstrap/CMakeLists.txt
-index fb39c115ed..16d30f024e 100644
+index fb39c115eda..16d30f024e5 100644
 --- x/qtbase/src/tools/bootstrap/CMakeLists.txt
 +++ y/qtbase/src/tools/bootstrap/CMakeLists.txt
 @@ -95,7 +95,6 @@ qt_internal_extend_target(Bootstrap
@@ -33,5 +33,5 @@ index fb39c115ed..16d30f024e 100644
          Qt::Platform # special case
  )
 -- 
-2.36.0
+2.37.3
 

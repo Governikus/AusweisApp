@@ -63,8 +63,3 @@ Android / iOS
 - Die Systemtastatur wird nach der Eingabe von Daten unter iOS nicht
   automatisch geschlossen. Das Schließen muss manuell über die entsprechenden
   Buttons "Fertig" bzw. "Suchen" erfolgen.
-
-- Bei der Nutzung von TalkBack unter Android ist es nicht möglich, eine
-  Authentisierung zu starten, wenn die AusweisApp2 bereits geöffnet ist.
-  Um das Problem zu vermeiden, muss die AusweisApp2 zunächst aus der Liste
-  der zuletzt verwendeten Apps entfernt werden.

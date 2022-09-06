@@ -1,4 +1,4 @@
-From 002ee6d33eecbfbc6116e777466ff2eddaef20ef Mon Sep 17 00:00:00 2001
+From 7784e1f1c25e93ef8c52eb1934ee7e0060c43487 Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Fri, 10 Jun 2022 16:31:21 +0200
 Subject: Revert "Add more verification when parsing http headers and add
@@ -11,7 +11,7 @@ This reverts commit 18aff2b424577b4560b32698038e9bcf68a54b88.
  2 files changed, 23 insertions(+), 135 deletions(-)
 
 diff --git x/qtbase/src/network/access/qhttpheaderparser.cpp y/qtbase/src/network/access/qhttpheaderparser.cpp
-index 5caa541cb2..4a6bbd49a7 100644
+index 5caa541cb2e..4a6bbd49a7e 100644
 --- x/qtbase/src/network/access/qhttpheaderparser.cpp
 +++ y/qtbase/src/network/access/qhttpheaderparser.cpp
 @@ -39,16 +39,8 @@
@@ -122,7 +122,7 @@ index 5caa541cb2..4a6bbd49a7 100644
  }
  
 diff --git x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
-index eca81ba4ea..50132dde35 100644
+index eca81ba4eac..50132dde35d 100644
 --- x/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
 +++ y/qtbase/tests/auto/network/access/qhttpnetworkreply/tst_qhttpnetworkreply.cpp
 @@ -40,9 +40,6 @@ private Q_SLOTS:
@@ -228,5 +228,5 @@ index eca81ba4ea..50132dde35 100644
  {
  public:
 -- 
-2.36.1
+2.37.3
 

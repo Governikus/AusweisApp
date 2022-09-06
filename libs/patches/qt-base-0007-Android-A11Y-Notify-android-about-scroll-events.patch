@@ -1,4 +1,4 @@
-From 6952f491586c98e6953cb3bef849b2d39fd67ad3 Mon Sep 17 00:00:00 2001
+From 434717645e45ce16f4baaf81bd2dc916bc4452ce Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Tue, 28 Jun 2022 14:10:30 +0200
 Subject: Android A11Y: Notify android about scroll events
@@ -29,7 +29,7 @@ Change-Id: Ie6cd688d56343bcfe7ce9580c0b9244dd6d6c068
  8 files changed, 40 insertions(+)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
-index bf9a7d5961..b81b20b19a 100644
+index bf9a7d59610..b81b20b19ac 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
 @@ -977,6 +977,14 @@ public class QtActivityDelegate
@@ -48,7 +48,7 @@ index bf9a7d5961..b81b20b19a 100644
      {
          m_isPluginRunning = running;
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
-index bc090db25d..e73fe9e733 100644
+index bc090db25d3..e73fe9e7339 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtNative.java
 @@ -1021,6 +1021,18 @@ public class QtNative
@@ -71,7 +71,7 @@ index bc090db25d..e73fe9e733 100644
      {
          m_activityDelegate.notifyQtAndroidPluginRunning(running);
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
-index dffa3b1fb8..b32cdd81c7 100644
+index 5ce8c144d79..bd8909b45e0 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 @@ -193,6 +193,11 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
@@ -87,7 +87,7 @@ index dffa3b1fb8..b32cdd81c7 100644
      {
          if (m_focusedVirtualViewId == viewId)
 diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
-index 3f156cdb7b..75f1dc9c0a 100644
+index 3f156cdb7bc..75f1dc9c0ab 100644
 --- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 +++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
 @@ -164,6 +164,11 @@ namespace QtAndroidAccessibility
@@ -103,7 +103,7 @@ index 3f156cdb7b..75f1dc9c0a 100644
      {
          QAccessibleInterface *iface = interfaceFromId(objectId);
 diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.h y/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
-index 99d151bc3f..212131ff62 100644
+index 99d151bc3f5..212131ff62c 100644
 --- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
 +++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.h
 @@ -55,6 +55,7 @@ namespace QtAndroidAccessibility
@@ -115,7 +115,7 @@ index 99d151bc3f..212131ff62 100644
  }
  
 diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.cpp y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
-index 5af7318955..e8e875ba50 100644
+index 5af7318955c..e8e875ba505 100644
 --- x/qtbase/src/plugins/platforms/android/androidjnimain.cpp
 +++ y/qtbase/src/plugins/platforms/android/androidjnimain.cpp
 @@ -233,6 +233,12 @@ namespace QtAndroid
@@ -132,7 +132,7 @@ index 5af7318955..e8e875ba50 100644
      {
          QJniObject::callStaticMethod<void>(m_applicationClass, "notifyQtAndroidPluginRunning","(Z)V", running);
 diff --git x/qtbase/src/plugins/platforms/android/androidjnimain.h y/qtbase/src/plugins/platforms/android/androidjnimain.h
-index 288d2b95b2..fea0a80cb3 100644
+index 288d2b95b2c..fea0a80cb32 100644
 --- x/qtbase/src/plugins/platforms/android/androidjnimain.h
 +++ y/qtbase/src/plugins/platforms/android/androidjnimain.h
 @@ -104,6 +104,7 @@ namespace QtAndroid
@@ -144,7 +144,7 @@ index 288d2b95b2..fea0a80cb3 100644
  
      const char *classErrorMsgFmt();
 diff --git x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
-index bdbf709b3d..b29190d3e9 100644
+index bdbf709b3d4..b29190d3e92 100644
 --- x/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
 +++ y/qtbase/src/plugins/platforms/android/qandroidplatformaccessibility.cpp
 @@ -68,6 +68,8 @@ void QAndroidPlatformAccessibility::notifyAccessibilityUpdate(QAccessibleEvent *
@@ -157,5 +157,5 @@ index bdbf709b3d..b29190d3e9 100644
  }
  
 -- 
-2.28.0
+2.37.3
 
