@@ -1,4 +1,4 @@
-From 2b466e173496433def07f2266e5afe3d4736a810 Mon Sep 17 00:00:00 2001
+From 3a382772036f3143cdd7f2934b30553328ccacdb Mon Sep 17 00:00:00 2001
 From: Vladimir Belyavsky <belyavskyv@gmail.com>
 Date: Sat, 14 May 2022 17:23:17 +0300
 Subject: Windows: fix crash on closing an app when native file dialog is
@@ -29,7 +29,7 @@ Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
  2 files changed, 25 insertions(+), 37 deletions(-)
 
 diff --git x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
-index 89d55e9b48..44e3164aaa 100644
+index 89d55e9b482..44e3164aaa6 100644
 --- x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
 +++ y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
 @@ -140,6 +140,22 @@ void eatMouseMove()
@@ -121,7 +121,7 @@ index 89d55e9b48..44e3164aaa 100644
      if (hwnd && IsWindowVisible(hwnd))
          PostMessageW(hwnd, WM_CLOSE, 0, 0);
 diff --git x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
-index 55167ad36d..bbf4bd544d 100644
+index 55167ad36d1..bbf4bd544db 100644
 --- x/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
 +++ y/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.h
 @@ -67,7 +67,7 @@ class QWindowsDialogHelperBase : public BaseClass
@@ -134,5 +134,5 @@ index 55167ad36d..bbf4bd544d 100644
      void exec() override;
      bool show(Qt::WindowFlags windowFlags,
 -- 
-2.36.1
+2.37.3
 

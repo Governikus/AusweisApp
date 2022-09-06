@@ -40,7 +40,7 @@ SectionPage {
 			}
 
 			let wasNewPin = false;
-			if (passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN) {
+			if (passwordType === PasswordType.PIN || passwordType === PasswordType.TRANSPORT_PIN || passwordType === PasswordType.SMART_PIN) {
 				NumberModel.pin = numberField.number
 			}
 			else if (passwordType === PasswordType.CAN) {

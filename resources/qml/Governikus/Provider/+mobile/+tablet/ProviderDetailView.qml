@@ -3,6 +3,7 @@
  */
 
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -36,59 +37,53 @@ SectionPage {
 
 
 	content: Column {
-		id: mainContent
 		height: childrenRect.height + Constants.component_spacing
 		width: baseItem.width
 
-		Row {
+		Rectangle {
 			height: baseItem.height / 2
 			width: parent.width
 
-			Item {
-				height: parent.height
-				width: baseItem.width * 2 / 3
-				anchors.top: parent.top
+			color: baseItem.titleBarColor
 
-				Image {
-					id: image
-					source: provider.image
-					asynchronous: true
-					height: parent.height
-					fillMode: Image.PreserveAspectFit
-					anchors.left: parent.left
-					anchors.verticalCenter: parent.verticalCenter
-				}
+			RowLayout {
+				anchors.fill: parent
 
-				Rectangle {
-					height: parent.height
-					width: image.width / 4
-					anchors.right: image.right
-					anchors.top: parent.top
+				spacing: 0
 
-					gradient: Gradient {
-						orientation: Gradient.Horizontal
-						GradientStop { position: 0.0; color: Style.color.transparent }
-						GradientStop { position: 0.95; color: Category.displayColor(provider.category) }
+				Item {
+					Layout.fillHeight: true
+					Layout.preferredWidth: baseItem.width * 2 / 3
+
+					Image {
+						source: provider.image
+						asynchronous: true
+						height: parent.height
+						fillMode: Image.PreserveAspectFit
+						anchors.left: parent.left
+						anchors.verticalCenter: parent.verticalCenter
+
+						Rectangle {
+							width: parent.width / 4
+							anchors {
+								right: parent.right
+								top: parent.top
+								bottom: parent.bottom
+							}
+
+							gradient: Gradient {
+								orientation: Gradient.Horizontal
+								GradientStop { position: 0.0; color: Style.color.transparent }
+								GradientStop { position: 0.95; color: Category.displayColor(provider.category) }
+							}
+						}
 					}
 				}
 
-				Rectangle {
-					anchors.left: image.right
-					anchors.right: parent.right
-					anchors.top: parent.top
-					height: parent.height
-					color: baseItem.titleBarColor
-				}
-			}
-
-			Rectangle {
-				height: parent.height
-				width: baseItem.width / 3
-				color: baseItem.titleBarColor
-
 				ProviderContactInfo {
-					anchors.fill: parent
-					anchors.margins: Constants.groupbox_spacing
+					Layout.fillWidth: true
+					Layout.fillHeight: true
+					Layout.margins: Constants.groupbox_spacing
 
 					contactModel: provider.contactModel
 				}

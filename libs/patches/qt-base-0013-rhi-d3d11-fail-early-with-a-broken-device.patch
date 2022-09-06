@@ -1,4 +1,4 @@
-From f71d0c0c546c6af05ded236341b4e45790c09260 Mon Sep 17 00:00:00 2001
+From 1f7c7e1b443f7932fd4b51c6bd72e1550ffac030 Mon Sep 17 00:00:00 2001
 From: Laszlo Agocs <laszlo.agocs@qt.io>
 Date: Mon, 25 Apr 2022 10:41:21 +0200
 Subject: rhi: d3d11: fail early with a broken device
@@ -32,7 +32,7 @@ Reviewed-by: Andy Nichols <andy.nichols@qt.io>
  create mode 100644 src/gui/rhi/vs_test_p.h
 
 diff --git x/qtbase/src/gui/rhi/qrhid3d11.cpp y/qtbase/src/gui/rhi/qrhid3d11.cpp
-index 765a911ed6..19d2b848a2 100644
+index 765a911ed67..19d2b848a24 100644
 --- x/qtbase/src/gui/rhi/qrhid3d11.cpp
 +++ y/qtbase/src/gui/rhi/qrhid3d11.cpp
 @@ -39,6 +39,7 @@
@@ -69,7 +69,7 @@ index 765a911ed6..19d2b848a2 100644
          }
 diff --git x/qtbase/src/gui/rhi/test.hlsl y/qtbase/src/gui/rhi/test.hlsl
 new file mode 100644
-index 0000000000..2417762f83
+index 00000000000..2417762f839
 --- /dev/null
 +++ y/qtbase/src/gui/rhi/test.hlsl
 @@ -0,0 +1,24 @@
@@ -99,7 +99,7 @@ index 0000000000..2417762f83
 +}
 diff --git x/qtbase/src/gui/rhi/vs_test_p.h y/qtbase/src/gui/rhi/vs_test_p.h
 new file mode 100644
-index 0000000000..314c0112e8
+index 00000000000..314c0112e8c
 --- /dev/null
 +++ y/qtbase/src/gui/rhi/vs_test_p.h
 @@ -0,0 +1,273 @@
@@ -377,5 +377,5 @@ index 0000000000..314c0112e8
 +
 +#endif // VS_TEST_P_H
 -- 
-2.37.1
+2.37.3
 

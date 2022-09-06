@@ -24,13 +24,13 @@ class Appcast extends Build
 			{
 				triggers
 				{
-					upstream(getSourceJobName('Win64_GNU_MSI') + ',' + getSourceJobName('MacOS_DMG_PKG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
+					upstream(getSourceJobName('Win64_MSVC_MSI') + ',' + getSourceJobName('MacOS_DMG_PKG') + ',' + getSourceJobName('Source') + ',' + getSourceJobName('Docs'))
 				}
 			}
 
 			steps
 			{
-				copyArtifacts(getSourceJobName('Win64_GNU_MSI'))
+				copyArtifacts(getSourceJobName('Win64_MSVC_MSI'))
 				{
 					buildSelector
 					{

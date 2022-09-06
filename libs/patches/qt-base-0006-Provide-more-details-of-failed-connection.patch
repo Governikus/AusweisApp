@@ -1,4 +1,4 @@
-From 28c85250bacd2f256730ba914dbb1375bc0785bf Mon Sep 17 00:00:00 2001
+From 9647cf502a31639a15d32b334a66a8b82a4d1c40 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Wed, 29 Jun 2022 09:59:08 +0200
 Subject: Provide more details of failed connection
@@ -15,7 +15,7 @@ Change-Id: Iab74b73488219686e5926308db02bc4063818c9f
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/access/qhttpnetworkconnection.cpp y/qtbase/src/network/access/qhttpnetworkconnection.cpp
-index f8ef05a561..1c4e35f741 100644
+index f8ef05a561a..1c4e35f7413 100644
 --- x/qtbase/src/network/access/qhttpnetworkconnection.cpp
 +++ y/qtbase/src/network/access/qhttpnetworkconnection.cpp
 @@ -925,7 +925,10 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
@@ -31,5 +31,5 @@ index f8ef05a561..1c4e35f741 100644
      case QNetworkReply::TooManyRedirectsError:
          errorString = QCoreApplication::translate("QHttp", "Too many redirects");
 -- 
-2.37.0
+2.37.3
 

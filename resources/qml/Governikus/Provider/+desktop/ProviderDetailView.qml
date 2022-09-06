@@ -33,42 +33,36 @@ SectionPage {
 
 		anchors.fill: parent
 
-		Row {
+		Rectangle {
 			id: imageHeader
 
 			height: Math.floor(baseItem.height * 0.5)
 			width: parent.width
-
 			anchors.top: parent.top
 
-			Image {
-				id: image
+			color: baseItem.titleBarColor
 
-				height: parent.height
-				width: Math.floor(baseItem.width * 0.6)
-				anchors.top: parent.top
+			RowLayout {
+				anchors.fill: parent
 
-				source: provider.image
-				sourceSize.height: height
-				asynchronous: true
-				fillMode: Image.PreserveAspectCrop
-			}
+				spacing: 0
 
-			Rectangle {
-				height: parent.height
-				width: Math.ceil(baseItem.width * 0.4)
+				Image {
+					Layout.fillHeight: true
+					Layout.preferredWidth: Math.floor(parent.width * 0.6)
 
-				color: baseItem.titleBarColor
+					source: provider.image
+					sourceSize.height: height
+					asynchronous: true
+					fillMode: Image.PreserveAspectCrop
+				}
 
 				ProviderContactInfo {
-					id: providerContactInfo
-
-					anchors {
-						fill: parent
-						margins: Constants.pane_spacing
-						leftMargin: Constants.pane_spacing * 2
-						rightMargin: Constants.pane_spacing * 2
-					}
+					Layout.fillWidth: true
+					Layout.fillHeight: true
+					Layout.margins: Constants.pane_spacing
+					Layout.leftMargin: Constants.pane_spacing * 2
+					Layout.rightMargin: Constants.pane_spacing * 2
 
 					activeFocusOnTab: true
 

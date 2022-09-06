@@ -1,4 +1,4 @@
-From b380035b22bd53808ad04485cdceecae5c1cdee0 Mon Sep 17 00:00:00 2001
+From 1fdff88ca1390cf33d6c63740725851b33ab4a0c Mon Sep 17 00:00:00 2001
 From: Mike Achtelik <mike.achtelik@gmail.com>
 Date: Fri, 24 Jun 2022 16:15:26 +0200
 Subject: Android A11Y: Add content change type to content change event
@@ -18,11 +18,11 @@ Change-Id: Ifbf8da1b95f02935b9bcffabfe821547b1128103
  1 file changed, 21 insertions(+), 7 deletions(-)
 
 diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
-index c8503b42da..5ce8c144d7 100644
+index c8503b42dad..5ce8c144d79 100644
 --- x/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 +++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/accessibility/QtAccessibilityDelegate.java
 @@ -263,10 +263,15 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
-
+ 
      public boolean sendEventForVirtualViewId(int virtualViewId, int eventType)
      {
 -        if ((virtualViewId == INVALID_ID) || !m_manager.isEnabled()) {
@@ -37,18 +37,18 @@ index c8503b42da..5ce8c144d7 100644
 +        if (event == null)
              return false;
 -        }
-
+ 
          final ViewGroup group = (ViewGroup) m_view.getParent();
          if (group == null) {
 @@ -274,15 +279,19 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
              return false;
          }
-
+ 
 -        final AccessibilityEvent event;
 -        event = getEventForVirtualViewId(virtualViewId, eventType);
          return group.requestSendAccessibilityEvent(m_view, event);
      }
-
+ 
      public void invalidateVirtualViewId(int virtualViewId)
      {
 -        if (virtualViewId != INVALID_ID)
@@ -62,10 +62,10 @@ index c8503b42da..5ce8c144d7 100644
 +        event.setContentChangeTypes(AccessibilityEvent.CONTENT_CHANGE_TYPE_SUBTREE);
 +        sendAccessibilityEvent(event);
      }
-
+ 
      private void setHoveredVirtualViewId(int virtualViewId)
 @@ -299,6 +308,11 @@ public class QtAccessibilityDelegate extends View.AccessibilityDelegate
-
+ 
      private AccessibilityEvent getEventForVirtualViewId(int virtualViewId, int eventType)
      {
 +        if ((virtualViewId == INVALID_ID) || !m_manager.isEnabled()) {
@@ -74,7 +74,8 @@ index c8503b42da..5ce8c144d7 100644
 +        }
 +
          final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
-
+ 
          event.setEnabled(true);
---
-2.32.1 (Apple Git-133)
+-- 
+2.37.3
+

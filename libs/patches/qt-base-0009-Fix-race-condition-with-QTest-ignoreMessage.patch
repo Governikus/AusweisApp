@@ -1,4 +1,4 @@
-From 1de51c3967465d2e9c517acad2b5da17ec4b533b Mon Sep 17 00:00:00 2001
+From 64aeaba694abb2c2f2787f0e3e5e2f8cd3224be7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Fri, 8 Jul 2022 11:35:37 +0200
 Subject: Fix race condition with QTest::ignoreMessage
@@ -15,7 +15,7 @@ Change-Id: I251c83bb28cb75e55d477706bf2524c061a6eab7
  1 file changed, 8 insertions(+)
 
 diff --git x/qtbase/src/testlib/qtestlog.cpp y/qtbase/src/testlib/qtestlog.cpp
-index c90850e786..ef75cf10d2 100644
+index c90850e7863..1498028e6a3 100644
 --- x/qtbase/src/testlib/qtestlog.cpp
 +++ y/qtbase/src/testlib/qtestlog.cpp
 @@ -171,6 +171,7 @@ namespace QTest {
@@ -76,5 +76,5 @@ index c90850e786..ef75cf10d2 100644
  }
  #endif // QT_CONFIG(regularexpression)
 -- 
-2.37.1
+2.37.3
 

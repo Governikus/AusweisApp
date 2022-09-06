@@ -1147,6 +1147,28 @@
 		},
 		{
 			"shortName": {
+				"": "Serviceportal - Landkreis Hameln-Pyrmont"
+			},
+			"longName": {
+				"": "Serviceportal - Landkreis Hameln-Pyrmont"
+			},
+			"longDescription": {
+				"": "Gemeinschaftsserviceportal der Gemeinden des Landkreises Hameln-Pyrmont.<br/><br/>Die Städte- und Gemeinden des Landkreises Hameln-Pyrmont haben sich zusammengeschlossen und bieten, gemeinsam mit der Kreisverwaltung, auf Ihrem Serviceportal eine Reihe von Online-Diensten an."
+			},
+			"address": "https://service.einfach-digital-leben.de",
+			"homepage": "https://service.einfach-digital-leben.de",
+			"phone": "+49 5151 903 0",
+			"email": "digitalisierung@hameln-pyrmont.de",
+			"postalAddress": "Landkreis Hameln-Pyrmont<br/>Süntelstraße 9<br/>31785 Hameln",
+			"category": "citizen",
+			"image": "Hameln-Pyrmont_image.png",
+			"icon": "Hameln-Pyrmont_icon.png",
+			"subjectUrls": [
+				"https://idp.servicekonto.niedersachsen.de"
+			]
+		},
+		{
+			"shortName": {
 				"": "Land Berlin - iKFZ"
 			},
 			"longName": {

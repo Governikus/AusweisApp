@@ -1,4 +1,4 @@
-From 9cd0da1bc7b87e9e0cbeb8f907a20634b8531210 Mon Sep 17 00:00:00 2001
+From 78bb96041fdb6f0cfc9104dd4270bf7aeb689b7b Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Mon, 25 Jul 2022 17:08:54 +0200
 Subject: Revert "Fix usage of logging category on Android"
@@ -9,7 +9,7 @@ This reverts commit 87d8ee755bfdef8e72a122789c2e3ed382881a12.
  1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qlogging.cpp y/qtbase/src/corelib/global/qlogging.cpp
-index ece8216ed6..329c76c5ac 100644
+index 0c1a03e6818..329c76c5acf 100644
 --- x/qtbase/src/corelib/global/qlogging.cpp
 +++ y/qtbase/src/corelib/global/qlogging.cpp
 @@ -1413,10 +1413,7 @@ QString qFormatLogMessage(QtMsgType type, const QMessageLogContext &context, con
@@ -37,5 +37,5 @@ index ece8216ed6..329c76c5ac 100644
      return true; // Prevent further output to stderr
  }
 -- 
-2.37.1
+2.37.3
 

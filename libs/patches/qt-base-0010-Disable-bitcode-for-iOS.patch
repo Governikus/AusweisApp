@@ -1,4 +1,4 @@
-From 674bf8d670109406af4d213eb0b2525896896056 Mon Sep 17 00:00:00 2001
+From 8f8ed40cd46a2f7c8702b7fae581af81f6cd188f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
 Date: Tue, 5 Jul 2022 16:06:22 +0200
 Subject: Disable bitcode for iOS
@@ -20,7 +20,7 @@ Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
  2 files changed, 1 insertion(+), 2 deletions(-)
 
 diff --git x/qtbase/cmake/QtInternalTargets.cmake y/qtbase/cmake/QtInternalTargets.cmake
-index 298f7d023d..72861994f8 100644
+index 298f7d023de..72861994f83 100644
 --- x/qtbase/cmake/QtInternalTargets.cmake
 +++ y/qtbase/cmake/QtInternalTargets.cmake
 @@ -218,7 +218,6 @@ if(UIKIT)
@@ -32,7 +32,7 @@ index 298f7d023d..72861994f8 100644
  
  if(WASM AND QT_FEATURE_sse2)
 diff --git x/qtbase/mkspecs/common/uikit.conf y/qtbase/mkspecs/common/uikit.conf
-index 0388b8e616..8419506f09 100644
+index 0388b8e6167..8419506f09c 100644
 --- x/qtbase/mkspecs/common/uikit.conf
 +++ y/qtbase/mkspecs/common/uikit.conf
 @@ -3,7 +3,7 @@
@@ -45,5 +45,5 @@ index 0388b8e616..8419506f09 100644
  INCLUDEPATH            += $$PWD/uikit
  
 -- 
-2.32.1 (Apple Git-133)
+2.37.3
 
