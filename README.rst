@@ -98,7 +98,7 @@ sind.
 
 Android
 ^^^^^^^
-Bei Android ist zu beachten, dass ein CMAKE_TOOLCHAIN_FILE angegeben werden muss.
+Bei Android ist zu beachten, dass eine CMAKE_TOOLCHAIN_FILE angegeben werden muss.
 
 ::
 
