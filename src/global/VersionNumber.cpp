@@ -17,7 +17,11 @@ VersionNumber::VersionNumber(const QString& pVersion)
 	: mVersionNumber()
 	, mSuffix()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 4, 0))
+	qsizetype idx = 0;
+#else
 	int idx = 0;
+#endif
 	mVersionNumber = QVersionNumber::fromString(pVersion, &idx);
 #ifdef Q_CC_GNU
 	__sync_synchronize(); // QTBUG-62185
