@@ -17,7 +17,9 @@ const QLatin1String SETTINGS_GROUP_NAME_CIPHERS("ciphers");
 const QLatin1String SETTINGS_GROUP_NAME_ELLIPTIC_CURVES("ellipticCurves");
 const QLatin1String SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS("signatureAlgorithms");
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 4, 0))
+using JsonValueRef = const QJsonValueConstRef;
+#elif (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 using JsonValueRef = const QJsonValueRef;
 #else
 using JsonValueRef = const QJsonValue&;

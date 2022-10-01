@@ -47,7 +47,9 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	if (!pContext->getAccessRightManager()->getOptionalAccessRights().isEmpty())
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 4, 0))
+		using JsonValueRef = const QJsonValueConstRef;
+#elif (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 		using JsonValueRef = const QJsonValueRef;
 #else
 		using JsonValueRef = const QJsonValue&;

@@ -17,7 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(update)
 
 using namespace governikus;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 4, 0))
+using JsonValueRef = const QJsonValueConstRef;
+#elif (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 using JsonValueRef = const QJsonValueRef;
 #else
 using JsonValueRef = const QJsonValue&;
