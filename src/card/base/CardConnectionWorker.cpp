@@ -161,7 +161,7 @@ CardReturnCode CardConnectionWorker::readFile(const FileRef& pFileRef, QByteArra
 
 	while (true)
 	{
-		FileCommand command(pFileRef, pFileContent.count(), pLe);
+		FileCommand command(pFileRef, pFileContent.size(), pLe);
 		auto [returnCode, res] = transmit(command);
 		if (returnCode != CardReturnCode::OK)
 		{
