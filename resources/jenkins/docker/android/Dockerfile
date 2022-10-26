@@ -22,7 +22,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE
 
 RUN mkdir -p /tmp/dl && cd /tmp/dl && wget -O sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip && \
     unzip sdk.zip && \
-    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;6.0" "build-tools;30.0.3" "platforms;android-30" "platforms;android-31" "ndk;${ANDROID_NDK_VERSION}" && \
+    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;6.0" "build-tools;30.0.3" "platforms;android-31" "platforms;android-33" "ndk;${ANDROID_NDK_VERSION}" && \
     rm -rf /tmp/dl
 
 USER governikus

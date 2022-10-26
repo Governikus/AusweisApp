@@ -65,6 +65,12 @@ int PaceInfo::getVersion() const
 }
 
 
+bool PaceInfo::hasParameterId() const
+{
+	return mDelegate->mParameterId;
+}
+
+
 int PaceInfo::getParameterId() const
 {
 	return Asn1IntegerUtil::getValue(mDelegate->mParameterId);

@@ -4,9 +4,8 @@
 
 #include "CertificateDescriptionModel.h"
 
-#include "AppSettings.h"
 #include "LanguageLoader.h"
-#include "SecureStorage.h"
+
 
 using namespace governikus;
 
@@ -17,13 +16,6 @@ CertificateDescriptionModel::CertificateDescriptionModel()
 	, mContext()
 {
 	resetContext();
-	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
-	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-		{
-			beginResetModel();
-			onDidAuthenticateEac1Changed();
-			endResetModel();
-		});
 }
 
 
@@ -49,6 +41,12 @@ void CertificateDescriptionModel::onDidAuthenticateEac1Changed()
 	endResetModel();
 
 	Q_EMIT fireChanged();
+}
+
+
+void CertificateDescriptionModel::onTranslationChanged()
+{
+	onDidAuthenticateEac1Changed();
 }
 
 

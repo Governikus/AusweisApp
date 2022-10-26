@@ -826,7 +826,7 @@ SectionPage {
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
-						//: LABEL ANDROID IOS This is the first of three lines "Enter" "six-digit PIN" "now!" and should be translated accoording to the third line.
+						//: LABEL ANDROID IOS This is the first of three lines "Enter" "six-digit PIN" "now!" and should be translated according to the third line.
 						text: qsTr("Enter")
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter
@@ -869,7 +869,7 @@ SectionPage {
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 
-						//: LABEL ANDROID IOS This is the third of three lines "Enter" "six-digit PIN" "now!" and should be translated accoording to the first line.
+						//: LABEL ANDROID IOS This is the third of three lines "Enter" "six-digit PIN" "now!" and should be translated according to the first line.
 						text: qsTr("now!")
 						textStyle: Style.text.tutorial_header
 						horizontalAlignment: Text.AlignHCenter

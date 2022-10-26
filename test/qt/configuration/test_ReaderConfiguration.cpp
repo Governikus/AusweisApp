@@ -7,6 +7,7 @@
 #include "ReaderConfiguration.h"
 
 #include "Env.h"
+#include "JsonValueRef.h"
 #include "MockReaderDetector.h"
 #include "ResourceLoader.h"
 #include "TestFileHelper.h"
@@ -20,13 +21,6 @@ using namespace governikus;
 
 
 Q_DECLARE_METATYPE(UsbId)
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-using JsonValueRef = const QJsonValueRef;
-#else
-using JsonValueRef = const QJsonValue&;
-#endif
-
 
 class test_ReaderConfiguration
 	: public QObject

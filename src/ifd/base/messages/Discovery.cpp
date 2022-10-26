@@ -6,6 +6,7 @@
 #include "Discovery.h"
 
 #include "Initializer.h"
+#include "JsonValueRef.h"
 #include "RemoteServiceSettings.h"
 
 #include <QJsonArray>
@@ -49,12 +50,6 @@ void Discovery::parseSupportedApi(const QJsonObject& pMessageObject)
 		invalidType(SUPPORTED_API(), QLatin1String("array"));
 		return;
 	}
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	using JsonValueRef = const QJsonValueRef;
-#else
-	using JsonValueRef = const QJsonValue&;
-#endif
 
 	const auto& array = value.toArray();
 	for (JsonValueRef entry : array)

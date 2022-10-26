@@ -220,7 +220,6 @@ void HistoryModel::setEnabled(bool pEnabled)
 	{
 		auto& historySettings = getHistorySettings();
 		historySettings.setEnabled(pEnabled);
-		historySettings.save();
 	}
 }
 
@@ -275,8 +274,6 @@ bool HistoryModel::removeRows(int pRow, int pCount, const QModelIndex& pParent)
 	disconnect(&historySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
 	historySettings.setHistoryInfos(entries);
 	connect(&historySettings, &HistorySettings::fireHistoryInfosChanged, this, &HistoryModel::onHistoryEntriesChanged);
-
-	historySettings.save();
 
 	endRemoveRows();
 	return true;

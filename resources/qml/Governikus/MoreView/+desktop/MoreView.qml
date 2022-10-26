@@ -24,7 +24,7 @@ SectionPage {
 
 	property int activeSubView
 
-	Keys.onEscapePressed: {
+	Keys.onEscapePressed: event => {
 		if (activeSubView === MoreView.SubViews.None) {
 			event.accepted = false
 			return

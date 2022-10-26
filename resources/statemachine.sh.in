@@ -15,7 +15,7 @@ function createImage {
 	sed -E -n -e "$RULE" < $1 >> $2.uml
 	echo "@enduml" >> $2.uml
 	cat $2.uml
-	@JAVA_EXECUTABLE@ -DPLANTUML_LIMIT_SIZE=8192 -jar @PLANTUML@ $2.uml
+	PLANTUML_LIMIT_SIZE=8192 @PLANTUML@ $2.uml
 	rm $2.uml
 }
 

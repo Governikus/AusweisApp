@@ -24,7 +24,7 @@ SectionPage {
 		AppUpdateView
 	}
 
-	Keys.onEscapePressed: {
+	Keys.onEscapePressed: event => {
 		if (d.view === SettingsView.SubView.None) {
 			event.accepted = false
 			return

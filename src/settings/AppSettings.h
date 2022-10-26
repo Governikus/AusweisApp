@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "AbstractSettings.h"
 #include "Env.h"
 #include "GeneralSettings.h"
 #include "HistorySettings.h"
@@ -15,6 +14,7 @@
 
 #include <QObject>
 
+
 namespace governikus
 {
 
@@ -22,7 +22,7 @@ namespace governikus
  * \brief Represents application settings.
  */
 class AppSettings
-	: public AbstractSettings
+	: public QObject
 	, private Env::ThreadSafe
 {
 	Q_OBJECT
@@ -38,8 +38,6 @@ class AppSettings
 		RemoteServiceSettings mRemoteReaderSettings;
 
 	public:
-		void save() override;
-
 		virtual GeneralSettings& getGeneralSettings();
 		virtual PreVerificationSettings& getPreVerificationSettings();
 		virtual HistorySettings& getHistorySettings();

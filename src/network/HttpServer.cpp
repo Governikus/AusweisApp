@@ -37,6 +37,14 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 		if (!server->listen(address, port))
 		{
 			qCDebug(network) << "Cannot start server:" << server->errorString() << '|' << address << '|' << port;
+
+			if (server->serverError() == QAbstractSocket::AddressInUseError)
+			{
+				qCDebug(network) << "Abort init of http server because of fatal error...";
+				shutdown();
+				break;
+			}
+
 			continue;
 		}
 
@@ -54,6 +62,12 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 
 HttpServer::~HttpServer()
 {
+	shutdown();
+}
+
+
+void HttpServer::shutdown()
+{
 	if (isListening())
 	{
 		qCDebug(network) << "Shutdown server";
@@ -61,6 +75,7 @@ HttpServer::~HttpServer()
 		{
 			server->close();
 		}
+		mServer.clear();
 	}
 }
 

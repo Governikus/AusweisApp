@@ -7,6 +7,7 @@
 #if defined(Q_OS_ANDROID)
 	#include <QJniObject>
 #elif defined(Q_OS_IOS)
+	#include <sys/sysctl.h>
 	#include <sys/utsname.h>
 #endif
 
@@ -38,6 +39,25 @@ QString DeviceInfo::getMachineId()
 	uname(&systemInfo);
 
 	return QString::fromUtf8(systemInfo.machine);
+}
+
+
+QString DeviceInfo::getBuildNumber()
+{
+	int mib[] = {CTL_KERN, KERN_OSVERSION};
+	u_int namelen = sizeof(mib) / sizeof(mib[0]);
+
+	size_t bufferSize = 0;
+	sysctl(mib, namelen, nullptr, &bufferSize, nullptr, 0);
+
+	QByteArray buffer(bufferSize, '\0');
+	if (int error = sysctl(mib, namelen, buffer.data(), &bufferSize, nullptr, 0); error)
+	{
+		qDebug() << "Error trying to retrieve iOS build number:" << strerror(errno);
+		return QString();
+	}
+
+	return QString::fromLatin1(buffer.data(), buffer.size() - 1);
 }
 
 
@@ -81,6 +101,9 @@ QString DeviceInfo::getOSBuildNumber()
 #if defined(Q_OS_ANDROID)
 	return getField("DISPLAY");
 
+#elif defined(Q_OS_IOS)
+	return getBuildNumber();
+
 #else
 	return QString();
 
@@ -119,6 +142,9 @@ QString DeviceInfo::getModelNumber()
 {
 #if defined(Q_OS_ANDROID)
 	return getField("MODEL");
+
+#elif defined(Q_OS_IOS)
+	return getMachineId();
 
 #else
 	return QString();

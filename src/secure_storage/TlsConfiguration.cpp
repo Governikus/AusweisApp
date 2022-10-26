@@ -4,6 +4,8 @@
 
 #include "TlsConfiguration.h"
 
+#include "JsonValueRef.h"
+
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonValue>
@@ -16,13 +18,6 @@ const QLatin1String SETTINGS_NAME_SSL_OCSP_STAPLING("ocspStapling");
 const QLatin1String SETTINGS_GROUP_NAME_CIPHERS("ciphers");
 const QLatin1String SETTINGS_GROUP_NAME_ELLIPTIC_CURVES("ellipticCurves");
 const QLatin1String SETTINGS_GROUP_NAME_SIGNATURE_ALGORITHMS("signatureAlgorithms");
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-using JsonValueRef = const QJsonValueRef;
-#else
-using JsonValueRef = const QJsonValue&;
-#endif
-
 
 SslCipherList& SslCipherList::operator +=(const QString& pCipherName)
 {
@@ -68,15 +63,15 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	const auto ocspStapling = readOcspStapling(pConfig, SETTINGS_NAME_SSL_OCSP_STAPLING);
 
 	SslCipherList ciphers;
-	QJsonArray pskCiphers = readJsonArray(pConfig, SETTINGS_GROUP_NAME_CIPHERS);
-	for (JsonValueRef line : qAsConst(pskCiphers))
+	const QJsonArray& pskCiphers = readJsonArray(pConfig, SETTINGS_GROUP_NAME_CIPHERS);
+	for (JsonValueRef line : pskCiphers)
 	{
 		ciphers += line.toString();
 	}
 
 	SslEllipticCurveVector ellipticCurves;
-	QJsonArray allowedEcs = readJsonArray(pConfig, SETTINGS_GROUP_NAME_ELLIPTIC_CURVES);
-	for (JsonValueRef line : qAsConst(allowedEcs))
+	const QJsonArray& allowedEcs = readJsonArray(pConfig, SETTINGS_GROUP_NAME_ELLIPTIC_CURVES);
+	for (JsonValueRef line : allowedEcs)
 	{
 		ellipticCurves += line.toString();
 	}

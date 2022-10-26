@@ -80,7 +80,6 @@ class RemoteServiceSettings
 	public:
 		static QString generateFingerprint(const QSslCertificate& pCert);
 		~RemoteServiceSettings() override = default;
-		void save() override;
 
 		[[nodiscard]] QString getServerName() const;
 		void setServerName(const QString& pName);

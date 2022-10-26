@@ -72,7 +72,7 @@ class LogModel
 		Q_INVOKABLE void saveDummyLogFile(const QDateTime& pTimeStamp = QDateTime());
 #endif
 
-		Q_INVOKABLE void mailLog(const QString& pEmail = tr("support@ausweisapp.de"),
+		Q_INVOKABLE void mailLog(const QString& pEmail = QStringLiteral("support@ausweisapp.de"),
 				const QString& pSubject = tr("Mobile logfile"),
 				const QString& pMsg = tr("<Please describe the error>"));
 

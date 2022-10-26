@@ -16,7 +16,9 @@ namespace governikus
 {
 defineTypedEnumType(Ins, uchar,
 		UNKNOWN = 0x00,
+		DEACTIVATE = 0x04,
 		MSE_SET = 0x22,
+		ACTIVATE = 0x44,
 		EXTERNAL_AUTHENTICATE = 0x82,
 		GET_CHALLENGE = 0x84,
 		GENERAL_AUTHENTICATE = 0x86,

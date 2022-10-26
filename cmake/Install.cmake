@@ -273,9 +273,6 @@ elseif(ANDROID)
 		set(QML_ROOT_PATH [\"${RESOURCES_DIR}/qml\"])
 		set(ANDROID_ROOT_LOGGER "")
 		configure_file(${PACKAGING_DIR}/android/fileprovider.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/fileprovider.xml COPYONLY)
-
-		configure_file(${PACKAGING_DIR}/android/backup_rules.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/backup_rules.xml COPYONLY)
-		configure_file(${PACKAGING_DIR}/android/backup_rules_legacy.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/backup_rules_legacy.xml COPYONLY)
 	endif()
 
 	set(ANDROID_SO_NAME libAusweisApp2_${CMAKE_ANDROID_ARCH_ABI}.so)

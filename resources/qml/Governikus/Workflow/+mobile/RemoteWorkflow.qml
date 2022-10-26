@@ -23,7 +23,7 @@ Item {
 
 	Connections {
 		target: RemoteServiceModel
-		function onFireCertificateRemoved() {
+		function onFireCertificateRemoved(pDeviceName) {
 			//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
 			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName))
 		}

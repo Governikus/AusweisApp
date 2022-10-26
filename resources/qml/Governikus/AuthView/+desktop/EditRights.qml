@@ -29,9 +29,9 @@ SectionPage {
 		updateTitleBarActions()
 	}
 
-	Keys.onReturnPressed: d.onKeyboardConfirmPressed(event)
-	Keys.onEnterPressed: d.onKeyboardConfirmPressed(event)
-	Keys.onEscapePressed: {
+	Keys.onReturnPressed: event => d.onKeyboardConfirmPressed(event)
+	Keys.onEnterPressed: event => d.onKeyboardConfirmPressed(event)
+	Keys.onEscapePressed: event => {
 		if (!detailView) {
 			event.accepted = false
 			return

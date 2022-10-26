@@ -25,7 +25,7 @@ SettingsModel::SettingsModel()
 	, mIsStartedByAuth(false)
 	, mShowBetaTesting(true)
 {
-	const HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	const auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 	connect(&settings, &HistorySettings::fireEnabledChanged, this, &SettingsModel::fireHistoryEnabledChanged);
 
 	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
@@ -52,9 +52,8 @@ void SettingsModel::setLanguage(const QString& pLanguage)
 {
 	if (getLanguage() != pLanguage)
 	{
-		GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setLanguage(QLocale(pLanguage).language());
-		settings.save();
 		// do not emit fireLanguageChanged here! The AppController will emit this!
 	}
 }
@@ -94,7 +93,6 @@ void SettingsModel::setDeveloperOptions(bool pEnable)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setDeveloperOptions(pEnable);
-		settings.save();
 	}
 }
 
@@ -111,7 +109,6 @@ void SettingsModel::setDeveloperMode(bool pEnable)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setDeveloperMode(pEnable);
-		settings.save();
 	}
 }
 
@@ -128,7 +125,6 @@ void SettingsModel::setUseSelfauthenticationTestUri(bool pUse)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setUseSelfauthenticationTestUri(pUse);
-		settings.save();
 	}
 }
 
@@ -141,9 +137,8 @@ QString SettingsModel::getServerName() const
 
 void SettingsModel::setServerName(const QString& name)
 {
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.setServerName(name);
-	settings.save();
 	Q_EMIT fireDeviceNameChanged();
 }
 
@@ -156,9 +151,8 @@ void SettingsModel::removeTrustedCertificate(const QString& pFingerprint)
 
 int SettingsModel::removeHistory(const QString& pPeriodToRemove)
 {
-	HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 	int removedItemCount = settings.deleteSettings(Enum<TimePeriod>::fromString(pPeriodToRemove, TimePeriod::UNKNOWN));
-	settings.save();
 	return removedItemCount;
 }
 
@@ -171,15 +165,14 @@ bool SettingsModel::getPinPadMode() const
 
 void SettingsModel::setPinPadMode(bool pPinPadMode)
 {
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.setPinPadMode(pPinPadMode);
-	settings.save();
 }
 
 
 bool SettingsModel::isHistoryEnabled() const
 {
-	const HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	const auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 	return settings.isEnabled();
 }
 
@@ -188,16 +181,15 @@ void SettingsModel::setHistoryEnabled(bool pEnabled)
 {
 	if (isHistoryEnabled() != pEnabled)
 	{
-		HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+		auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 		settings.setEnabled(pEnabled);
-		settings.save();
 	}
 }
 
 
 int SettingsModel::removeEntireHistory()
 {
-	HistorySettings& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
+	auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
 	return settings.deleteSettings(TimePeriod::ALL_HISTORY);
 }
 
@@ -214,7 +206,6 @@ void SettingsModel::setUseScreenKeyboard(bool pUseScreenKeyboard)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setUseScreenKeyboard(pUseScreenKeyboard);
-		settings.save();
 		Q_EMIT fireScreenKeyboardChanged();
 	}
 }
@@ -232,7 +223,6 @@ void SettingsModel::setVisualPrivacy(bool pVisualPrivacy)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setVisualPrivacy(pVisualPrivacy);
-		settings.save();
 		Q_EMIT fireScreenKeyboardChanged();
 	}
 }
@@ -250,7 +240,6 @@ void SettingsModel::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setShuffleScreenKeyboard(pShuffleScreenKeyboard);
-		settings.save();
 		Q_EMIT fireScreenKeyboardChanged();
 	}
 }
@@ -268,7 +257,6 @@ void SettingsModel::setEnableCanAllowed(bool pEnableCanAllowed)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setEnableCanAllowed(pEnableCanAllowed);
-		settings.save();
 		Q_EMIT fireCanAllowedChanged();
 	}
 }
@@ -286,7 +274,6 @@ void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setSkipRightsOnCanAllowed(pSkipRightsOnCanAllowed);
-		settings.save();
 		Q_EMIT fireCanAllowedChanged();
 	}
 }
@@ -304,7 +291,6 @@ void SettingsModel::setSimulatorEnabled(bool pEnabled)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setSimulatorEnabled(pEnabled);
-		settings.save();
 	}
 }
 
@@ -333,7 +319,6 @@ void SettingsModel::setStartupModule(UiModule pModule)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setStartupModule(Enum<UiModule>::getName(pModule));
-		settings.save();
 		Q_EMIT fireStartupModuleChanged();
 	}
 }
@@ -363,7 +348,6 @@ void SettingsModel::setAutoStart(bool pEnabled)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setAutoStart(pEnabled);
-		settings.save();
 		Q_EMIT fireAutoStartChanged();
 	}
 }
@@ -401,7 +385,6 @@ void SettingsModel::setAutoCloseWindowAfterAuthentication(bool pEnabled)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setAutoCloseWindowAfterAuthentication(pEnabled);
-		settings.save();
 		Q_EMIT fireAutoCloseWindowAfterAuthenticationChanged();
 	}
 }
@@ -431,7 +414,6 @@ void SettingsModel::setAutoUpdateCheck(bool pAutoUpdateCheck)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setAutoUpdateCheck(pAutoUpdateCheck);
-		settings.save();
 		Q_EMIT fireAutoUpdateCheckChanged();
 	}
 }
@@ -449,7 +431,6 @@ void SettingsModel::setRemindUserToClose(bool pRemindUser)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setRemindUserToClose(pRemindUser);
-		settings.save();
 		Q_EMIT fireRemindUserToCloseChanged();
 	}
 }
@@ -467,7 +448,6 @@ void SettingsModel::setTransportPinReminder(bool pTransportPinReminder)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setTransportPinReminder(pTransportPinReminder);
-		settings.save();
 		Q_EMIT fireTransportPinReminderChanged();
 	}
 }
@@ -486,7 +466,6 @@ void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setShowInAppNotifications(pShowInAppNotifications);
-		settings.save();
 	}
 }
 

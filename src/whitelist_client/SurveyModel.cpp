@@ -102,10 +102,8 @@ void SurveyModel::buildDataObject()
 	mData.clear();
 	mData += qMakePair(tr("Vendor"), mVendor);
 	mData += qMakePair(tr("Model Name"), mModelName);
-#if defined(Q_OS_ANDROID)
 	mData += qMakePair(tr("Model Number"), mModelNumber);
 	mData += qMakePair(tr("Build Number"), mBuildNumber);
-#endif
 	mData += qMakePair(tr("OS version"), mOsVersion);
 	mData += qMakePair(tr("Kernel version"), mKernelVersion);
 	mData += qMakePair(tr("Max. NFC Packet Length"), QString::number(mMaximumNfcPacketLength));

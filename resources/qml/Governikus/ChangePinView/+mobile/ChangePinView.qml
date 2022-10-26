@@ -199,7 +199,7 @@ SectionPage {
 				}
 
 				if (changePinController.workflowState === ChangePinController.WorkflowStates.Can) {
-					//: INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verifcation via CAN.
+					//: INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verification via CAN.
 					return qsTr("A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.")
 				}
 

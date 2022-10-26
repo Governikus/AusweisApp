@@ -45,15 +45,17 @@ void UIPlugInFunctional::onApplicationStarted()
 
 	mJson->setEnabled();
 	callback(nullptr);
+
+	Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::SIMULATOR);
 }
 
 
 void UIPlugInFunctional::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC});
+	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SIMULATOR});
 #else
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC});
+	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::SIMULATOR});
 #endif
 
 	pContext->claim(this);

@@ -55,7 +55,6 @@ class test_PdfExporter
 			QFETCH(QVector<HistoryInfo>, infos);
 
 			Env::getSingleton<AppSettings>()->getHistorySettings().setHistoryInfos(infos);
-			Env::getSingleton<AppSettings>()->getHistorySettings().save();
 
 			QTemporaryFile file;
 			QVERIFY(file.open());

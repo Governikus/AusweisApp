@@ -8,25 +8,12 @@
 using namespace governikus;
 
 AppSettings::AppSettings()
-	: AbstractSettings()
+	: QObject()
 	, mGeneralSettings()
 	, mPreVerificationSettings()
 	, mHistorySettings()
 	, mRemoteReaderSettings()
 {
-	connect(&mGeneralSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
-	connect(&mPreVerificationSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
-	connect(&mHistorySettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
-	connect(&mRemoteReaderSettings, &AbstractSettings::fireSettingsChanged, this, &AbstractSettings::fireSettingsChanged);
-}
-
-
-void AppSettings::save()
-{
-	mGeneralSettings.save();
-	mPreVerificationSettings.save();
-	mHistorySettings.save();
-	mRemoteReaderSettings.save();
 }
 
 

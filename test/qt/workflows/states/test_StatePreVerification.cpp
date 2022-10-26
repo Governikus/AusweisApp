@@ -174,7 +174,6 @@ class test_StatePreVerification
 			{
 				settings.removeLinkCertificate(cvc);
 			}
-			settings.save();
 
 			const int expectedCvcaSize = 16;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);

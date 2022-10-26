@@ -44,7 +44,6 @@ class HistorySettings
 
 	public:
 		~HistorySettings() override = default;
-		void save() override;
 
 		[[nodiscard]] bool isEnabled() const;
 		void setEnabled(bool pEnabled);

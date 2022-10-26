@@ -83,26 +83,21 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral)
 		mStoreGeneral->remove(QStringLiteral("showNewUiHint"));
 	}
 
-	// Check if the key "autoCloseWindow" (introduced in changeset 199210b0b20c)
-	// does not yet exist to detect a new installation. This key was the first one
-	// in the settings general group.
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
 	{
 		setAutoStartInternal(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
 	}
 	mIsNewAppVersion = !isNewInstallation && getPersistentSettingsVersion() != QCoreApplication::applicationVersion();
-	if (isNewInstallation || mIsNewAppVersion)
-	{
-		mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
-		mStoreGeneral->sync();
-	}
 
 #ifdef QT_NO_DEBUG
 	mAutoStart = AutoStart::enabled();
 #else
 	mAutoStart = GENERAL_SETTINGS_DEFAULT_AUTOSTART;
 #endif
+
+	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
+	save(mStoreGeneral);
 }
 
 
@@ -118,14 +113,6 @@ bool GeneralSettings::isShowNotificationsOsDefault() const
 	return true;
 
 #endif
-}
-
-
-void GeneralSettings::save()
-{
-	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
-
-	mStoreGeneral->sync();
 }
 
 
@@ -196,6 +183,7 @@ QString GeneralSettings::getSkipVersion() const
 void GeneralSettings::skipVersion(const QString& pVersion)
 {
 	mStoreGeneral->setValue(SETTINGS_NAME_SKIP_VERSION(), pVersion);
+	save(mStoreGeneral);
 }
 
 
@@ -216,6 +204,7 @@ void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
 	if (pAutoClose != isAutoCloseWindowAfterAuthentication())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), pAutoClose);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -232,6 +221,7 @@ void GeneralSettings::setStartupModule(const QString& pModule)
 	if (getStartupModule() != pModule)
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_UI_STARTUP_MODULE(), pModule);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -248,6 +238,7 @@ void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 	if (pRemindUser != isRemindUserToClose())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), pRemindUser);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -264,6 +255,7 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 	if (pTransportPinReminder != isTransportPinReminder())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), pTransportPinReminder);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -280,6 +272,7 @@ void GeneralSettings::setDeveloperOptions(bool pEnabled)
 	if (pEnabled != isDeveloperOptions())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_OPTIONS(), pEnabled);
+		save(mStoreGeneral);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -308,6 +301,7 @@ void GeneralSettings::setDeveloperMode(bool pEnabled)
 	if (pEnabled != isDeveloperMode())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_MODE(), pEnabled);
+		save(mStoreGeneral);
 		Q_EMIT fireDeveloperOptionsChanged();
 		Q_EMIT fireShowInAppNotificationsChanged();
 	}
@@ -332,6 +326,7 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 	if (pUse != useSelfAuthTestUri())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), pUse);
+		save(mStoreGeneral);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -355,6 +350,7 @@ void GeneralSettings::setSimulatorEnabled(bool pEnabled)
 	if (pEnabled != isSimulatorEnabled())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_SIMULATOR(), pEnabled);
+		save(mStoreGeneral);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -377,6 +373,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 	if (pLanguage != getLanguage())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : LanguageLoader::getLocaleCode(QLocale(pLanguage)));
+		save(mStoreGeneral);
 		Q_EMIT fireLanguageChanged();
 		Q_EMIT fireSettingsChanged();
 	}
@@ -394,6 +391,7 @@ void GeneralSettings::setScreenOrientation(const QString& pScreenOrientation)
 	if (pScreenOrientation != getScreenOrientation())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_SCREEN_ORIENTATION(), pScreenOrientation);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -416,6 +414,7 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 	if (askForDeviceSurvey() || pDeviceSurveyPending != isDeviceSurveyPending())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), pDeviceSurveyPending);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -438,6 +437,7 @@ void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 	if (askForStoreFeedback() || pRequest != isRequestStoreFeedback())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -454,6 +454,7 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 	if (pLastReaderPluginType != getLastReaderPluginType())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -476,6 +477,7 @@ bool GeneralSettings::isAutoUpdateCheck() const
 	if (autoUpdateCheckIsSetByAdmin())
 	{
 		mStoreGeneral->remove(SETTINGS_NAME_AUTO());
+		save(mStoreGeneral);
 	}
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
@@ -499,6 +501,7 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -515,6 +518,7 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 	if (pUseScreenKeyboard != isUseScreenKeyboard())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -531,6 +535,7 @@ void GeneralSettings::setVisualPrivacy(bool pVisualPrivacy)
 	if (pVisualPrivacy != isVisualPrivacy())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_VISUAL_PRIVACY(), pVisualPrivacy);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -547,6 +552,7 @@ void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 	if (pShuffleScreenKeyboard != isShuffleScreenKeyboard())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -563,6 +569,7 @@ void GeneralSettings::setEnableCanAllowed(bool pEnableCanAllowed)
 	if (pEnableCanAllowed != isEnableCanAllowed())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), pEnableCanAllowed);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -583,6 +590,7 @@ void GeneralSettings::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 	if (pSkipRightsOnCanAllowed != isSkipRightsOnCanAllowed())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), pSkipRightsOnCanAllowed);
+		save(mStoreGeneral);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -604,6 +612,7 @@ void GeneralSettings::setShowInAppNotifications(bool pShowInAppNotifications)
 	if (pShowInAppNotifications != isShowInAppNotifications())
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
+		save(mStoreGeneral);
 		Q_EMIT fireShowInAppNotificationsChanged();
 	}
 }
@@ -677,6 +686,7 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 	if (useCustomProxy() != pUseCustomProxy)
 	{
 		mStoreGeneral->setValue(SETTINGS_NAME_USE_CUSTOM_PROXY(), pUseCustomProxy);
+		save(mStoreGeneral);
 		Q_EMIT fireProxyChanged();
 	}
 }
@@ -684,12 +694,11 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 
 QString GeneralSettings::getIfdServiceToken()
 {
-	mStoreGeneral->sync();
 	if (!mStoreGeneral->contains(SETTINGS_NAME_IFD_SERVICE_TOKEN()))
 	{
 		auto serviceToken = Randomizer::getInstance().createUuid().toString();
 		mStoreGeneral->setValue(SETTINGS_NAME_IFD_SERVICE_TOKEN(), serviceToken);
-		save();
+		save(mStoreGeneral);
 	}
 
 	return mStoreGeneral->value(SETTINGS_NAME_IFD_SERVICE_TOKEN(), QString()).toString();

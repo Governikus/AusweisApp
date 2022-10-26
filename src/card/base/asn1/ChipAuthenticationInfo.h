@@ -70,6 +70,7 @@ class ChipAuthenticationInfo
 
 
 		[[nodiscard]] int getVersion() const;
+		[[nodiscard]] bool hasKeyId() const;
 		[[nodiscard]] int getKeyId() const;
 };
 
@@ -77,9 +78,17 @@ class ChipAuthenticationInfo
 inline QDebug operator<<(QDebug pDbg, const QSharedPointer<const ChipAuthenticationInfo>& pChipAuthenticationInfo)
 {
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace().noquote() << pChipAuthenticationInfo->getOid()
-							 << ", version: " << pChipAuthenticationInfo->getVersion()
-							 << ", keyId: " << pChipAuthenticationInfo->getKeyId();
+	if (pChipAuthenticationInfo->hasKeyId())
+	{
+		pDbg.nospace().noquote() << pChipAuthenticationInfo->getOid()
+								 << ", version: " << pChipAuthenticationInfo->getVersion()
+								 << ", keyId: " << pChipAuthenticationInfo->getKeyId();
+	}
+	else
+	{
+		pDbg.nospace().noquote() << pChipAuthenticationInfo->getOid()
+								 << ", version: " << pChipAuthenticationInfo->getVersion();
+	}
 	return pDbg;
 }
 

@@ -5,6 +5,7 @@
 #include "RemoteServiceSettings.h"
 
 #include "DeviceInfo.h"
+#include "JsonValueRef.h"
 #include "KeyPair.h"
 
 #include <QCryptographicHash>
@@ -47,17 +48,10 @@ RemoteServiceSettings::RemoteServiceSettings()
 	, mStore(getStore())
 {
 	mStore->beginGroup(SETTINGS_GROUP_NAME_REMOTEREADER());
-
 	if (!mStore->contains(SETTINGS_NAME_DEVICE_NAME()))
 	{
 		setServerName(QString());
 	}
-}
-
-
-void RemoteServiceSettings::save()
-{
-	mStore->sync();
 }
 
 
@@ -83,13 +77,8 @@ QString RemoteServiceSettings::getServerName() const
 void RemoteServiceSettings::setServerName(const QString& pName)
 {
 	const QString serverName = pName.trimmed();
-	if (serverName.isEmpty())
-	{
-		mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), getDefaultServerName());
-		return;
-	}
-
-	mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName);
+	mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName.isEmpty() ? getDefaultServerName() : serverName);
+	save(mStore);
 }
 
 
@@ -102,6 +91,7 @@ bool RemoteServiceSettings::getPinPadMode() const
 void RemoteServiceSettings::setPinPadMode(bool pPinPadMode)
 {
 	mStore->setValue(SETTINGS_NAME_PIN_PAD_MODE(), pPinPadMode);
+	save(mStore);
 }
 
 
@@ -138,6 +128,7 @@ void RemoteServiceSettings::setUniqueTrustedCertificates(const QSet<QSslCertific
 		mStore->setValue(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM(), cert.toPem());
 	}
 	mStore->endArray();
+	save(mStore);
 
 	syncRemoteInfos(pCertificates);
 	Q_EMIT fireTrustedCertificatesChanged();
@@ -213,6 +204,7 @@ QSslCertificate RemoteServiceSettings::getCertificate() const
 void RemoteServiceSettings::setCertificate(const QSslCertificate& pCert) const
 {
 	mStore->setValue(SETTINGS_NAME_CERTIFICATE(), pCert.toPem());
+	save(mStore);
 }
 
 
@@ -231,6 +223,7 @@ QSslKey RemoteServiceSettings::getKey() const
 void RemoteServiceSettings::setKey(const QSslKey& pKey) const
 {
 	mStore->setValue(SETTINGS_NAME_KEY(), pKey.toPem());
+	save(mStore);
 }
 
 
@@ -257,12 +250,6 @@ RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QSt
 
 QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos() const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	using JsonValueRef = const QJsonValueRef;
-#else
-	using JsonValueRef = const QJsonValue&;
-#endif
-
 	QVector<RemoteInfo> infos;
 
 	const auto& data = mStore->value(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QByteArray()).toByteArray();
@@ -285,6 +272,7 @@ void RemoteServiceSettings::setRemoteInfos(const QVector<RemoteInfo>& pInfos)
 	}
 
 	mStore->setValue(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QJsonDocument(array).toJson(QJsonDocument::Compact));
+	save(mStore);
 	Q_EMIT fireTrustedRemoteInfosChanged();
 }
 

@@ -36,12 +36,6 @@ HistorySettings::HistorySettings()
 }
 
 
-void HistorySettings::save()
-{
-	mStore->sync();
-}
-
-
 bool HistorySettings::isEnabled() const
 {
 	return mStore->value(SETTINGS_NAME_HISTORY_ENABLED(), true).toBool();
@@ -53,6 +47,7 @@ void HistorySettings::setEnabled(bool pEnabled)
 	if (isEnabled() != pEnabled)
 	{
 		mStore->setValue(SETTINGS_NAME_HISTORY_ENABLED(), pEnabled);
+		save(mStore);
 		Q_EMIT fireEnabledChanged(pEnabled);
 	}
 }
@@ -107,6 +102,7 @@ void HistorySettings::setHistoryInfos(const QVector<HistoryInfo>& pHistoryInfos)
 		mStore->setValue(SETTINGS_NAME_CHRONIC_REQUESTED_DATA(), item.getRequestedData());
 	}
 	mStore->endArray();
+	save(mStore);
 
 	mHistoryInfos = pHistoryInfos;
 

@@ -30,14 +30,14 @@ class AbstractSettings
 		AbstractSettings();
 		~AbstractSettings() override = default;
 
+		static void save(const QSharedPointer<QSettings>& pSettings);
+
 	public:
 #ifndef QT_NO_DEBUG
 		static QSharedPointer<QTemporaryDir> mTestDir;
 #endif
 
 		static QSharedPointer<QSettings> getStore(const QString& pFilename = QString(), QSettings::Format pFormat = QSettings::InvalidFormat);
-
-		virtual void save() = 0;
 
 	Q_SIGNALS:
 		void fireSettingsChanged();

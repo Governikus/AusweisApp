@@ -81,7 +81,7 @@ bool UIPlugInAidl::isSuccessfullInitialized() const
 void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 {
 	mWorkflowIsActive.lock();
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::LOCAL_IFD});
+	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::LOCAL_IFD, ReaderManagerPlugInType::SIMULATOR});
 	mContext = pContext;
 	mContext->claim(this);
 }
@@ -129,8 +129,8 @@ void UIPlugInAidl::startReaderManagerScans() const
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	readerManager->startScan(ReaderManagerPlugInType::NFC);
-	readerManager->startScan(ReaderManagerPlugInType::SMART);
 	readerManager->startScan(ReaderManagerPlugInType::LOCAL_IFD);
+	readerManager->startScan(ReaderManagerPlugInType::SIMULATOR);
 }
 
 

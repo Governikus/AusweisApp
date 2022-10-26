@@ -259,7 +259,6 @@ void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 	if (pDontRemindAgain)
 	{
 		Env::getSingleton<AppSettings>()->getGeneralSettings().setRemindUserToClose(false);
-		Env::getSingleton<AppSettings>()->getGeneralSettings().save();
 	}
 }
 

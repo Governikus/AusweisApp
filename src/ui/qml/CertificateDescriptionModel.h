@@ -42,6 +42,9 @@ class CertificateDescriptionModel
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();
 
+	public Q_SLOTS:
+		void onTranslationChanged();
+
 	public:
 		enum UserRoles
 		{

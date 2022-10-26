@@ -15,6 +15,17 @@ GListView {
 
 	readonly property string helpTopic: "helpLicenseinformation"
 
+	Keys.onDownPressed: {
+		do {
+			listView.incrementCurrentIndex()
+		} while (currentItem.text === "")
+	}
+	Keys.onUpPressed: {
+		do {
+			listView.decrementCurrentIndex()
+		} while (currentItem.text === "")
+	}
+
 	activeFocusOnTab: true
 
 	displayMarginBeginning: Constants.pane_padding
@@ -22,6 +33,8 @@ GListView {
 
 	model: ApplicationModel.getLicenseText()
 	delegate: GText {
+		Accessible.ignored: text === ""
+
 		width: listView.width - Constants.pane_padding
 
 		text: model.modelData

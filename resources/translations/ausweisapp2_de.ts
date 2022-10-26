@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>116337b35ec0</translation>
+        <translation>a129b249277f</translation>
     </message>
 </context>
 <context>
@@ -170,10 +170,6 @@ INFO ANDROID IOS Second line text if a basic card reader is used and background 
         <source>Send log</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Protokoll senden</translation>
-    </message>
-    <message>
-        <source>support@ausweisapp.de</source>
-        <translation>support@ausweisapp.de</translation>
     </message>
 </context>
 <context>
@@ -510,7 +506,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     </message>
     <message>
         <source>A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verifcation via CAN.</extracomment>
+        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verification via CAN.</extracomment>
         <translation>Die Karten-PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
@@ -1180,8 +1176,8 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
 <context>
     <name>DevicesListDelegate</name>
     <message>
-        <source>Device %1</source>
-        <translation>Gerät %1</translation>
+        <source>Device %1. %2.</source>
+        <translation>Gerät %1. %2.</translation>
     </message>
 </context>
 <context>
@@ -3499,11 +3495,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Fernzugriff startbereit</translation>
     </message>
     <message>
-        <source>Enter this code in the %1 on your other device to use your smartphone as a card reader (SaC).</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Geben Sie diesen Code in der %1 auf Ihrem anderen Gerät ein, um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
-    </message>
-    <message>
         <source>Waiting for connection from a paired device...</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Warte auf eine Verbindung eines gekoppelten Gerätes...</translation>
@@ -3516,11 +3507,6 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Starten Sie den Fernzugriff, um dieses Smartphone sichtbar und damit als Kartenleser (SaK) nutzbar zu machen.
 
 Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um dieses Smartphone als Kartenleser einzurichten.</translation>
-    </message>
-    <message>
-        <source>Pairing code: %1</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplungscode: %1</translation>
     </message>
     <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -3561,6 +3547,11 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <source>Start pairing</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplung starten</translation>
+    </message>
+    <message>
+        <source>Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Geben Sie den Code %1 in der %2 auf Ihrem anderen Gerät ein, um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
     </message>
 </context>
 <context>
@@ -5254,7 +5245,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
@@ -5264,7 +5255,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -5422,7 +5413,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
@@ -5432,7 +5423,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
     <message>
@@ -5616,7 +5607,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation>Jetzt</translation>
     </message>
     <message>
@@ -5626,7 +5617,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation>eingeben!</translation>
     </message>
 </context>
@@ -6924,10 +6915,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <message>
         <source>Error while saving logfile to &quot;%1&quot;</source>
         <translation>Fehler beim Speichern der Protokolldatei unter &quot;%1&quot;</translation>
-    </message>
-    <message>
-        <source>support@ausweisapp.de</source>
-        <translation>support@ausweisapp.de</translation>
     </message>
     <message>
         <source>Mobile logfile</source>

@@ -121,7 +121,11 @@ function(ADD_TEST_EXECUTABLE_SUBDIR)
 		add_custom_command(TARGET AusweisAppTestRcc POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${RCC}" "${CMAKE_CURRENT_BINARY_DIR}")
 	endif()
 
-	file(GLOB_RECURSE TEST_FILES "*.cpp")
+	if(APPLE)
+		file(GLOB_RECURSE TEST_FILES "*.cpp" "*.mm")
+	else()
+		file(GLOB_RECURSE TEST_FILES "*.cpp")
+	endif()
 
 	foreach(sourcefile ${TEST_FILES})
 		SHOULD_SKIP_TEST(SKIP "${sourcefile}")

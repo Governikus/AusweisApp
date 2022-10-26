@@ -14,7 +14,7 @@ Betriebssysteme
 
 - macOS 12.0
 
-- Windows 10
+- Windows 10 (64 Bit) ab Version 1809
 
 - Windows 11
 
@@ -46,13 +46,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 104
+- Chrome 107
 
-- Firefox 103
+- Firefox 106
 
 - Safari 15.6
 
-- Edge 104
+- Edge 105
 
 
 
@@ -110,9 +110,9 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 104 (iOS/Android)
+- Chrome 107 (iOS/Android)
 
-- Firefox 103 (iOS/Android)
+- Firefox 106 (iOS/Android)
 
 - Samsung Internet 18 (Android)
 

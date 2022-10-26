@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>116337b35ec0</translation>
+        <translation>a129b249277f</translation>
     </message>
 </context>
 <context>
@@ -170,10 +170,6 @@ INFO ANDROID IOS Second line text if a basic card reader is used and background 
         <source>Send log</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Надіслати журнал</translation>
-    </message>
-    <message>
-        <source>support@ausweisapp.de</source>
-        <translation>support@ausweisapp.de</translation>
     </message>
 </context>
 <context>
@@ -510,7 +506,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     </message>
     <message>
         <source>A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verifcation via CAN.</extracomment>
+        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verification via CAN.</extracomment>
         <translation>На вашій ID-картці було двічі введено неправильний PIN-код. Для третьої спроби спочатку введіть шестизначний номер доступу до картки (CAN). Ви можете знайти номер CAN у нижньому правому куті на лицьовому боці своєї ID-картки.</translation>
     </message>
     <message>
@@ -1180,8 +1176,8 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
 <context>
     <name>DevicesListDelegate</name>
     <message>
-        <source>Device %1</source>
-        <translation>Пристрій %1</translation>
+        <source>Device %1. %2.</source>
+        <translation>Пристрій %1. %2.</translation>
     </message>
 </context>
 <context>
@@ -3499,11 +3495,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Віддалена служба готова</translation>
     </message>
     <message>
-        <source>Enter this code in the %1 on your other device to use your smartphone as a card reader (SaC).</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Введіть цей код у %1 своєму іншому пристрої, щоб використовувати свій смартфон як пристрій читання карток (SaC).</translation>
-    </message>
-    <message>
         <source>Waiting for connection from a paired device...</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Очікування підключення від пристрою, з яким створено пару…</translation>
@@ -3516,11 +3507,6 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Запустіть віддалений доступ, щоб зробити цей смартфон видимим і використовувати його як пристрій читання карток (SaC).
 
 Якщо ви ще не створили пару для пристрою, почніть створення пари зараз, щоб налаштувати цей смартфон як пристрій читання карток.</translation>
-    </message>
-    <message>
-        <source>Pairing code: %1</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Код створення пари: %1</translation>
     </message>
     <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -3561,6 +3547,11 @@ If you have not already paired a device, start the pairing now to set up this sm
         <source>Start pairing</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Почати створення пари</translation>
+    </message>
+    <message>
+        <source>Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation type="unfinished">Введіть код %1 у %2 на іншому пристрої, щоб використовувати свій смартфон як пристрій читання карток (SaC).</translation>
     </message>
 </context>
 <context>
@@ -5254,7 +5245,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
@@ -5264,7 +5255,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation type="unfinished">зараз!</translation>
     </message>
     <message>
@@ -5422,7 +5413,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
@@ -5432,7 +5423,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation type="unfinished">зараз!</translation>
     </message>
     <message>
@@ -5616,7 +5607,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
         <translation type="unfinished">Уведіть</translation>
     </message>
     <message>
@@ -5626,7 +5617,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
+        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
         <translation type="unfinished">зараз!</translation>
     </message>
 </context>
@@ -6924,10 +6915,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>Error while saving logfile to &quot;%1&quot;</source>
         <translation>Помилка під час збереження файлу журналу до «%1»</translation>
-    </message>
-    <message>
-        <source>support@ausweisapp.de</source>
-        <translation>support@ausweisapp.de</translation>
     </message>
     <message>
         <source>Mobile logfile</source>

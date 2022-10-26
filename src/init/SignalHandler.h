@@ -6,9 +6,8 @@
 
 #pragma once
 
-#include "controller/AppController.h"
-
-#include <QPointer>
+#include <QObject>
+#include <functional>
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	#include <QSocketNotifier>
@@ -30,7 +29,7 @@ class SignalHandler
 
 	private:
 		bool mInit;
-		QPointer<AppController> mAppController;
+		std::function<void()> mController;
 		bool mQuit;
 
 		SignalHandler();
@@ -56,7 +55,7 @@ class SignalHandler
 
 	public:
 		void init();
-		void setController(AppController& pAppController);
+		void setController(const std::function<void()>& pController);
 		[[nodiscard]] bool shouldQuit() const;
 };
 

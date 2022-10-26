@@ -78,25 +78,12 @@ class test_ChipAuthenticationInfo
 
 			QVERIFY(chipAuthenticationInfo != nullptr);
 			QCOMPARE(chipAuthenticationInfo->getVersion(), 2);
+			QVERIFY(!chipAuthenticationInfo->hasKeyId());
 			QCOMPARE(chipAuthenticationInfo->getKeyId(), -1);
 		}
 
 
-		void getKeyId()
-		{
-			QByteArray bytes = QByteArray::fromHex("30 12"
-												   "            06 0A 04007F00070202030202"
-												   "            02 01 02"
-												   "            02 01 08");
-
-			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
-
-			QVERIFY(chipAuthenticationInfo != nullptr);
-			QCOMPARE(chipAuthenticationInfo->getKeyId(), 8);
-		}
-
-
-		void getVersion()
+		void getKeyParameter()
 		{
 			QByteArray bytes = QByteArray::fromHex("30 12"
 												   "            06 0A 04007F00070202030202"
@@ -107,6 +94,8 @@ class test_ChipAuthenticationInfo
 
 			QVERIFY(chipAuthenticationInfo != nullptr);
 			QCOMPARE(chipAuthenticationInfo->getVersion(), 2);
+			QVERIFY(chipAuthenticationInfo->hasKeyId());
+			QCOMPARE(chipAuthenticationInfo->getKeyId(), 8);
 		}
 
 

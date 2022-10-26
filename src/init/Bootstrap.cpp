@@ -167,7 +167,12 @@ int governikus::initApp(int& argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	Env::getSingleton<SignalHandler>()->setController(controller);
+	Env::getSingleton<SignalHandler>()->setController([&controller]{
+			QMetaObject::invokeMethod(&controller, [&controller]{
+				controller.doShutdown();
+			}, Qt::QueuedConnection);
+		});
+
 	if (Env::getSingleton<SignalHandler>()->shouldQuit())
 	{
 		return EXIT_SUCCESS;

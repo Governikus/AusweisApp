@@ -96,6 +96,37 @@ class test_Reader
 			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
 			QVERIFY(!mReader->getReaderInfo().isPinDeactivated());
 			QCOMPARE(spy.count(), 1);
+
+			const auto& commands = mWorker->getCommands();
+			QCOMPARE(commands.size(), 1);
+			QCOMPARE(commands.at(0), QByteArray::fromHex("0022C1A412800A04007F0007020204020283010384010D"));
+		}
+
+
+		void test_UpdateRetryCounter_WithoutParameterId()
+		{
+			QByteArray hexString("31 11"
+								 "        30 0F"
+								 "            06 0A 04007F00070202040202"
+								 "            02 01 02");
+			auto efCardAccess = EFCardAccess::fromHex(hexString);
+			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 2, true, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			mReader->setReaderInfo(rInfo);
+			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
+
+			QTest::ignoreMessage(QtDebugMsg, "StatusCode: SUCCESS");
+			QTest::ignoreMessage(QtInfoMsg, "retrieved retry counter: 3 , was: 2 , PIN deactivated: false , PIN initial:  false ");
+			QTest::ignoreMessage(QtDebugMsg, "fireCardInfoChanged");
+			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::OK);
+			QCOMPARE(mReader->getReaderInfo().getRetryCounter(), 3);
+			QVERIFY(!mReader->getReaderInfo().isPinDeactivated());
+			QCOMPARE(spy.count(), 1);
+
+			const auto& commands = mWorker->getCommands();
+			QCOMPARE(commands.size(), 1);
+			QCOMPARE(commands.at(0), QByteArray::fromHex("0022C1A40F800A04007F00070202040202830103"));
 		}
 
 

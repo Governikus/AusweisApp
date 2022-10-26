@@ -4,6 +4,8 @@
 
 #include "MsgHandlerAccessRights.h"
 
+#include "JsonValueRef.h"
+
 #include <QJsonArray>
 
 using namespace governikus;
@@ -47,11 +49,6 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	if (!pContext->getAccessRightManager()->getOptionalAccessRights().isEmpty())
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-		using JsonValueRef = const QJsonValueRef;
-#else
-		using JsonValueRef = const QJsonValue&;
-#endif
 		for (JsonValueRef entry : pChat)
 		{
 			if (!entry.isString())

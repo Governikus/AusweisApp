@@ -1,0 +1,22 @@
+AusweisApp2 1.24.3
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 26. Oktober 2022
+
+
+Anwender
+""""""""
+- Behebung von Abstürzen unter Android.
+
+- Deaktivierung des (Cloud) Backups unter Android und iOS.
+
+- Korrektur der A11y-Darstellung des SaK-Kopplungscodes auf Android und iOS.
+
+- Verhinderung der Installation auf nicht mehr unterstützten Versionen von Windows 10.
+
+
+Entwickler
+""""""""""
+- Kompatibilität zu Qt 6.4 korrigiert.
+
+- Aktivierung des Simulators im Android- und iOS-SDK.
