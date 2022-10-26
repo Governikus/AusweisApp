@@ -26,6 +26,7 @@ class DeviceInfo
 
 #if defined(Q_OS_IOS)
 		static QString getMachineId();
+		static QString getBuildNumber();
 #endif
 
 	public:

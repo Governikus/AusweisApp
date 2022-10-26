@@ -4,6 +4,7 @@
 
 #include "ProviderConfigurationParser.h"
 
+#include "JsonValueRef.h"
 #include "LanguageString.h"
 
 #include <QJsonDocument>
@@ -16,12 +17,6 @@ Q_DECLARE_LOGGING_CATEGORY(update)
 
 
 using namespace governikus;
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-using JsonValueRef = const QJsonValueRef;
-#else
-using JsonValueRef = const QJsonValue&;
-#endif
 
 QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS)
 {

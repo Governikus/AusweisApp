@@ -112,9 +112,8 @@ void WorkflowModel::setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInTyp
 	}
 	mContext->setReaderPlugInTypes({pReaderPlugInType});
 
-	GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	settings.setLastReaderPluginType(getEnumName(pReaderPlugInType));
-	settings.save();
 }
 
 

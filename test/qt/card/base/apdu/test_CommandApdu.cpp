@@ -109,7 +109,7 @@ class test_CommandApdu
 			QTest::addColumn<QString>("logMsg");
 
 			QTest::newRow("00") << QByteArray("00000000") << QString("Unknown INS value, returning UNKNOWN, value: 0x0");
-			QTest::newRow("44") << QByteArray("00440000") << QString("Unknown INS value, returning UNKNOWN, value: 0x44");
+			QTest::newRow("42") << QByteArray("00420000") << QString("Unknown INS value, returning UNKNOWN, value: 0x42");
 			QTest::newRow("AA") << QByteArray("00AA0000") << QString("Unknown INS value, returning UNKNOWN, value: 0xaa");
 			QTest::newRow("FF") << QByteArray("00FF0000") << QString("Unknown INS value, returning UNKNOWN, value: 0xff");
 		}

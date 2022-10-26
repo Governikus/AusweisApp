@@ -85,15 +85,29 @@ class test_PaceInfo
 
 		void getParameterId()
 		{
-			QByteArray bytes = QByteArray::fromHex("30 12"
-												   "            06 0A 04007F00070202040202"
-												   "            02 01 02"
-												   "            02 01 08");
+			QByteArray bytes;
+			QSharedPointer<const PaceInfo> paceInfo;
 
-			auto paceInfo = PaceInfo::decode(bytes);
+			bytes = QByteArray::fromHex("30 12"
+										"            06 0A 04007F00070202040202"
+										"            02 01 02"
+										"            02 01 08");
+
+			paceInfo = PaceInfo::decode(bytes);
 
 			QVERIFY(paceInfo != nullptr);
+			QVERIFY(paceInfo->hasParameterId());
 			QCOMPARE(paceInfo->getParameterId(), 8);
+
+			bytes = QByteArray::fromHex("30 0F"
+										"            06 0A 04007F00070202040202"
+										"            02 01 02");
+
+			paceInfo = PaceInfo::decode(bytes);
+
+			QVERIFY(paceInfo != nullptr);
+			QVERIFY(!paceInfo->hasParameterId());
+			QCOMPARE(paceInfo->getParameterId(), -1);
 		}
 
 

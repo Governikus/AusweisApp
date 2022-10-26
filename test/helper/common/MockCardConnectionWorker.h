@@ -22,6 +22,7 @@ class MockCardConnectionWorker
 
 	private:
 		QPointer<Reader> mReader;
+		QList<CommandApdu> mCommands;
 		QList<CardReturnCode> mResponseCodes;
 		QByteArrayList mResponseData;
 		QList<CardReturnCode> mPaceCodes;
@@ -32,6 +33,7 @@ class MockCardConnectionWorker
 		explicit MockCardConnectionWorker(Reader* pReader = new MockReader());
 		~MockCardConnectionWorker() override;
 
+		const QList<CommandApdu>& getCommands() const;
 		void addResponse(CardReturnCode pCode, const QByteArray& pData = QByteArray());
 		void addPaceCode(CardReturnCode pCode);
 

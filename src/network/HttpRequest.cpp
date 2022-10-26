@@ -136,6 +136,7 @@ bool HttpRequest::send(const HttpResponse& pResponse)
 		qCCritical(network) << "Cannot write response:" << mSocket->error() << '|' << mSocket->errorString();
 		return false;
 	}
+	mSocket->flush();
 	return true;
 }
 

@@ -27,7 +27,7 @@ class AppController final
 	Q_OBJECT
 	Q_DISABLE_COPY(AppController)
 	friend class ::test_AppController;
-	friend class SignalHandler;
+	friend int initApp(int&, char**);
 	friend class CommandLineParser;
 
 	private:

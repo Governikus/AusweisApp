@@ -15,7 +15,7 @@ add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_CAST_FROM_ASCII>)
 
 if(QT_VENDOR STREQUAL "Governikus")
 	add_definitions(-DGOVERNIKUS_QT)
-	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x051500)
+	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060301)
 endif()
 
 

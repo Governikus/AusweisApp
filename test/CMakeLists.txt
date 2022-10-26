@@ -1,5 +1,6 @@
 function(EXTRACT_TESTNAME result filepath)
 	string(REPLACE ".cpp" "" testname ${filepath})
+	string(REPLACE ".mm" "" testname ${testname})
 	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" testname ${testname})
 	string(REPLACE "/" "_" testname ${testname})
 	string(REPLACE "+" "" testname ${testname})

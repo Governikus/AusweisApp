@@ -45,8 +45,6 @@ class GeneralSettings
 		[[nodiscard]] QString getPersistentSettingsVersion() const;
 
 	public:
-		void save() override;
-
 		[[nodiscard]] bool isAutoStartAvailable() const;
 		[[nodiscard]] bool isAutoStart() const;
 		[[nodiscard]] bool autoStartIsSetByAdmin() const;

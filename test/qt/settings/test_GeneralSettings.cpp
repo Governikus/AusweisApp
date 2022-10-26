@@ -62,11 +62,9 @@ class test_GeneralSettings
 
 			settings.setAutoCloseWindowAfterAuthentication(newValue);
 			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), newValue);
-			settings.save();
 
 			settings.setAutoCloseWindowAfterAuthentication(initial);
 			QCOMPARE(settings.isAutoCloseWindowAfterAuthentication(), initial);
-			settings.save();
 		}
 
 
@@ -77,11 +75,9 @@ class test_GeneralSettings
 
 			settings.setAutoUpdateCheck(!initial);
 			QCOMPARE(settings.isAutoUpdateCheck(), !initial);
-			settings.save();
 
 			settings.setAutoUpdateCheck(initial);
 			QCOMPARE(settings.isAutoUpdateCheck(), initial);
-			settings.save();
 		}
 
 
@@ -119,16 +115,12 @@ class test_GeneralSettings
 				QCOMPARE(settings.isAutoStart(), !initial);
 			}
 
-			settings.save();
-
 			if (useSdkMode)
 			{
 				QTest::ignoreMessage(QtDebugMsg, "AutoStart is not available");
 			}
 			settings.setAutoStart(initial);
 			QCOMPARE(settings.isAutoStart(), initial);
-			settings.save();
-
 #else
 			Q_UNUSED(useSdkMode)
 			QCOMPARE(settings.isAutoStartAvailable(), false);
@@ -177,11 +169,9 @@ class test_GeneralSettings
 
 			settings.setUseScreenKeyboard(!initial);
 			QCOMPARE(settings.isUseScreenKeyboard(), !initial);
-			settings.save();
 
 			settings.setUseScreenKeyboard(initial);
 			QCOMPARE(settings.isUseScreenKeyboard(), initial);
-			settings.save();
 		}
 
 
@@ -192,11 +182,9 @@ class test_GeneralSettings
 
 			settings.setVisualPrivacy(!initial);
 			QCOMPARE(settings.isVisualPrivacy(), !initial);
-			settings.save();
 
 			settings.setVisualPrivacy(initial);
 			QCOMPARE(settings.isVisualPrivacy(), initial);
-			settings.save();
 		}
 
 
@@ -207,11 +195,9 @@ class test_GeneralSettings
 
 			settings.setShuffleScreenKeyboard(!initial);
 			QCOMPARE(settings.isShuffleScreenKeyboard(), !initial);
-			settings.save();
 
 			settings.setShuffleScreenKeyboard(initial);
 			QCOMPARE(settings.isShuffleScreenKeyboard(), initial);
-			settings.save();
 		}
 
 
@@ -238,7 +224,6 @@ class test_GeneralSettings
 			settings.setSkipRightsOnCanAllowed(false);
 			QVERIFY(!settings.isEnableCanAllowed());
 			QVERIFY(!settings.isSkipRightsOnCanAllowed());
-			settings.save();
 		}
 
 
@@ -288,11 +273,9 @@ class test_GeneralSettings
 
 			settings.setStartupModule(newValue);
 			QCOMPARE(settings.getStartupModule(), newValue);
-			settings.save();
 
 			settings.setStartupModule(initial);
 			QCOMPARE(settings.getStartupModule(), initial);
-			settings.save();
 		}
 
 
@@ -305,11 +288,9 @@ class test_GeneralSettings
 
 			settings.setDeveloperOptions(newValue);
 			QCOMPARE(settings.isDeveloperOptions(), newValue);
-			settings.save();
 
 			settings.setDeveloperOptions(initial);
 			QCOMPARE(settings.isDeveloperOptions(), initial);
-			settings.save();
 		}
 
 
@@ -323,24 +304,19 @@ class test_GeneralSettings
 
 			settings.setDeveloperMode(newValue);
 			QCOMPARE(settings.isDeveloperMode(), initial);
-			settings.save();
 
 			settings.setDeveloperMode(initial);
 			QCOMPARE(settings.isDeveloperMode(), initial);
-			settings.save();
 
 			settings.setDeveloperOptions(true);
 
 			settings.setDeveloperMode(newValue);
 			QCOMPARE(settings.isDeveloperMode(), newValue);
-			settings.save();
 
 			settings.setDeveloperMode(initial);
 			QCOMPARE(settings.isDeveloperMode(), initial);
-			settings.save();
 
 			settings.setDeveloperOptions(false);
-			settings.save();
 		}
 
 
@@ -353,24 +329,19 @@ class test_GeneralSettings
 
 			settings.setUseSelfauthenticationTestUri(newValue);
 			QCOMPARE(settings.useSelfAuthTestUri(), initial);
-			settings.save();
 
 			settings.setUseSelfauthenticationTestUri(initial);
 			QCOMPARE(settings.useSelfAuthTestUri(), initial);
-			settings.save();
 
 			settings.setDeveloperOptions(true);
 
 			settings.setUseSelfauthenticationTestUri(newValue);
 			QCOMPARE(settings.useSelfAuthTestUri(), newValue);
-			settings.save();
 
 			settings.setUseSelfauthenticationTestUri(initial);
 			QCOMPARE(settings.useSelfAuthTestUri(), initial);
-			settings.save();
 
 			settings.setDeveloperOptions(false);
-			settings.save();
 		}
 
 
@@ -391,13 +362,11 @@ class test_GeneralSettings
 			QCOMPARE(settings.isDeveloperMode(), true);
 			QCOMPARE(settings.isShowInAppNotifications(), true);
 			QCOMPARE(spyShowInAppNotifications.count(), 1);
-			settings.save();
 
 			settings.setDeveloperMode(false);
 			QCOMPARE(settings.isDeveloperMode(), false);
 			QCOMPARE(settings.isShowInAppNotifications(), osDefaultNotifications);
 			QCOMPARE(spyShowInAppNotifications.count(), 2);
-			settings.save();
 		}
 
 
@@ -410,43 +379,35 @@ class test_GeneralSettings
 
 			settings.setRemindUserToClose(newValue);
 			QCOMPARE(settings.isRemindUserToClose(), newValue);
-			settings.save();
 
 			settings.setRemindUserToClose(initial);
 			QCOMPARE(settings.isRemindUserToClose(), initial);
-			settings.save();
 		}
 
 
 		void testPersistentSettingsVersion()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-
-			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
-			// the persistent settings version contains the application version number
-			// last saving the settings --> in this test the settings have
-			// never been saved, so the empty string is expected
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
 
-			settings.save();
-			QCOMPARE(settings.getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
+			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
+			GeneralSettings generalSettings(settings.mStoreGeneral);
+			QCOMPARE(generalSettings.getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
 		}
 
 
 		void testIsNewAppVersion()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-
-			QCOMPARE(settings.isNewAppVersion(), false);
-
 			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
-			settings.save();
+			GeneralSettings generalSettings1(settings.mStoreGeneral);
+
+			GeneralSettings generalSettings2(settings.mStoreGeneral);
+			QCOMPARE(generalSettings2.isNewAppVersion(), false);
 
 			QCoreApplication::setApplicationVersion(QStringLiteral("Z.Y.X"));
-
-			GeneralSettings generalSettings(settings.mStoreGeneral);
-
-			QCOMPARE(generalSettings.isNewAppVersion(), true);
+			GeneralSettings generalSettings3(settings.mStoreGeneral);
+			QCOMPARE(generalSettings3.isNewAppVersion(), true);
 		}
 
 
@@ -457,14 +418,11 @@ class test_GeneralSettings
 			bool initialValue = settings.isTransportPinReminder();
 			bool newValue = !initialValue;
 
-			settings.save();
 			settings.setTransportPinReminder(newValue);
 			QCOMPARE(settings.isTransportPinReminder(), newValue);
-			settings.save();
 
 			settings.setTransportPinReminder(initialValue);
 			QCOMPARE(settings.isTransportPinReminder(), initialValue);
-			settings.save();
 		}
 
 
@@ -475,10 +433,8 @@ class test_GeneralSettings
 			const QLocale::Language initialValue = settings.getLanguage();
 			const QLocale::Language newValue = QLocale::English;
 
-			settings.save();
 			settings.setLanguage(newValue);
 			QCOMPARE(settings.getLanguage(), newValue);
-			settings.save();
 
 			settings.setLanguage(initialValue);
 			QCOMPARE(settings.getLanguage(), initialValue);
@@ -497,13 +453,11 @@ class test_GeneralSettings
 			settings.setLastReaderPluginType(newValue);
 
 			QCOMPARE(settings.getLastReaderPluginType(), newValue);
-			settings.save();
 			QCOMPARE(spy.count(), 0);
 			newValue = QStringLiteral("REMOTE");
 			settings.setLastReaderPluginType(newValue);
 			QCOMPARE(settings.getLastReaderPluginType(), newValue);
 			QCOMPARE(spy.count(), 1);
-			settings.save();
 		}
 
 
@@ -512,10 +466,8 @@ class test_GeneralSettings
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 			QCOMPARE(settings.isRequestStoreFeedback(), false);
 			settings.setRequestStoreFeedback(true);
-			settings.save();
 			QCOMPARE(settings.isRequestStoreFeedback(), true);
 			settings.setRequestStoreFeedback(false);
-			settings.save();
 			QCOMPARE(settings.isRequestStoreFeedback(), false);
 		}
 

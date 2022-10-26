@@ -177,6 +177,15 @@ class test_ReaderModel
 		}
 
 
+		void test_07_translation()
+		{
+			ReaderModel readerModel;
+			QSignalSpy spy(&readerModel, &ReaderModel::fireModelChanged);
+			readerModel.onTranslationChanged();
+			QCOMPARE(spy.count(), 1);
+		}
+
+
 };
 
 

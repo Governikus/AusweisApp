@@ -214,7 +214,10 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 	CommandData cmdData;
 	cmdData.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, paceInfo->getOid());
 	cmdData.append(CommandData::PUBLIC_KEY_REFERENCE, PacePasswordId::PACE_PIN);
-	cmdData.append(CommandData::PRIVATE_KEY_REFERENCE, paceInfo->getParameterId());
+	if (paceInfo->hasParameterId())
+	{
+		cmdData.append(CommandData::PRIVATE_KEY_REFERENCE, paceInfo->getParameterId());
+	}
 	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::PACE, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
 
 	const auto& [returnCode, mseSetAtResponse] = pCardConnectionWorker->transmit(cmdApdu);

@@ -14,7 +14,7 @@ Q_DECLARE_LOGGING_CATEGORY(system)
 
 SignalHandler::SignalHandler()
 	: mInit(false)
-	, mAppController()
+	, mController()
 	, mQuit(false)
 {
 }
@@ -49,9 +49,9 @@ void SignalHandler::init()
 }
 
 
-void SignalHandler::setController(AppController& pAppController)
+void SignalHandler::setController(const std::function<void()>& pController)
 {
-	mAppController = &pAppController;
+	mController = pController;
 }
 
 
@@ -59,11 +59,9 @@ void SignalHandler::quit()
 {
 	mQuit = true;
 
-	if (mAppController)
+	if (mController)
 	{
-		QMetaObject::invokeMethod(mAppController.data(), [this]{
-				mAppController->doShutdown();
-			}, Qt::QueuedConnection);
+		mController();
 	}
 	else
 	{

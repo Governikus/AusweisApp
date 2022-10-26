@@ -156,6 +156,35 @@ class test_DidAuthenticateEAC2Command
 			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::OK);
 			QCOMPARE(command.getNonceAsHex(), QByteArray("5b5b32c5b15d012c"));
 			QCOMPARE(command.getAuthTokenAsHex(), QByteArray("aaa14cfba15994d3"));
+
+			const auto& commands = mWorker->getCommands();
+			QCOMPARE(commands.size(), 10);
+			QCOMPARE(commands.at(8), QByteArray::fromHex("002241a40f800a04007f00070202030202840108"));
+			QCOMPARE(commands.at(9), QByteArray::fromHex("00860000087c0680043030303000"));
+		}
+
+
+		void test_PerformChipAuthenticationWithoutKeyId()
+		{
+			QByteArray input("0000");
+			DidAuthenticateEAC2Command command(mWorker, CVCertificateChain(false), QByteArray(), QByteArray(), input, QByteArray());
+			QByteArray bytes = QByteArray::fromHex("30 0F"
+												   "            06 0A 04007F00070202030202"
+												   "            02 01 02");
+			auto chipAuthenticationInfo = ChipAuthenticationInfo::decode(bytes);
+
+			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
+			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("7C1481085B5B32C5B15D012C8208AAA14CFBA15994D39000"));
+			QTest::ignoreMessage(QtDebugMsg, "Performing CA MSE:Set AT");
+			QTest::ignoreMessage(QtDebugMsg, "Performing CA General Authenticate");
+			QCOMPARE(command.performChipAuthentication(chipAuthenticationInfo, input), CardReturnCode::OK);
+			QCOMPARE(command.getNonceAsHex(), QByteArray("5b5b32c5b15d012c"));
+			QCOMPARE(command.getAuthTokenAsHex(), QByteArray("aaa14cfba15994d3"));
+
+			const auto& commands = mWorker->getCommands();
+			QCOMPARE(commands.size(), 2);
+			QCOMPARE(commands.at(0), QByteArray::fromHex("002241a40c800a04007f00070202030202"));
+			QCOMPARE(commands.at(1), QByteArray::fromHex("00860000087c0680043030303000"));
 		}
 
 
@@ -227,7 +256,7 @@ class test_DidAuthenticateEAC2Command
 			}
 			else if (error == 2)
 			{
-				QTest::ignoreMessage(QtWarningMsg, "Cannot decode ASN.1 object: \"error:0680009B:asn1 encoding routines::too long | error:06800066:asn1 encoding routines::bad object header | error:0688010A:asn1 encoding routines::nested asn1 error\"");
+				QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Cannot decode ASN.1 object: .*"));
 				QTest::ignoreMessage(QtCriticalMsg, "No contentInfo");
 				QTest::ignoreMessage(QtCriticalMsg, "Cannot parse EF.CardSecurity");
 			}

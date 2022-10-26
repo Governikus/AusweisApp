@@ -1,0 +1,2 @@
+[codespell]
+skip = ./docs/releasenotes/*,*.pdf,*.ts,*.wxl,*.svg,./src/external/*,.git,.hg,LICENSE*,CMakeLists.txt.user,patch.py,README.rst,README.de.rst,supported-readers.json,supported-providers.json,./test/fixture/logfiles/*

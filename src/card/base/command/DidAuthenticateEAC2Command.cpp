@@ -253,7 +253,10 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 {
 	CommandData cmdDataSet;
 	cmdDataSet.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, pChipAuthInfo->getOid());
-	cmdDataSet.append(CommandData::PRIVATE_KEY_REFERENCE, pChipAuthInfo->getKeyId());
+	if (pChipAuthInfo->hasKeyId())
+	{
+		cmdDataSet.append(CommandData::PRIVATE_KEY_REFERENCE, pChipAuthInfo->getKeyId());
+	}
 	CommandApdu cmdApduSet(Ins::MSE_SET, CommandApdu::CHIP_AUTHENTICATION, CommandApdu::AUTHENTICATION_TEMPLATE, cmdDataSet);
 
 	qCDebug(card) << "Performing CA MSE:Set AT";

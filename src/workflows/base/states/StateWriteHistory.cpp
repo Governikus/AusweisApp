@@ -72,7 +72,6 @@ void StateWriteHistory::run()
 			termsOfUsage = termsOfUsage.isEmpty() ? validity : termsOfUsage + QStringLiteral("\n\n") + validity;
 			HistoryInfo info(subjectName, subjectUrl, certDesc->getPurpose(), QDateTime::currentDateTime(), termsOfUsage, requestedData);
 			Env::getSingleton<AppSettings>()->getHistorySettings().addHistoryInfo(info);
-			Env::getSingleton<AppSettings>()->getHistorySettings().save();
 		}
 	}
 

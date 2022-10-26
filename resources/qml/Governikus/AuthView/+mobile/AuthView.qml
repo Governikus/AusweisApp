@@ -204,6 +204,8 @@ ProgressView {
 		id: authResult
 
 		ResultErrorView {
+			property bool skipShowAfterContinue: true
+
 			title: root.title
 			resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 			header: AuthModel.errorHeader
@@ -216,13 +218,16 @@ ProgressView {
 			mailButtonText: AuthModel.errorIsMasked ? qsTr("Send log") : ""
 			titleBarColor: root.titleBarColor
 
-			onMailClicked: LogModel.mailLog(qsTr("support@ausweisapp.de"), AuthModel.getEmailHeader(), AuthModel.getEmailBody())
+			onMailClicked: LogModel.mailLog("support@ausweisapp.de", AuthModel.getEmailHeader(), AuthModel.getEmailBody())
 			onHintClicked: AuthModel.invokeStatusHintAction()
 			onContinueClicked: {
 				AuthModel.continueWorkflow()
 				popAll()
+				skipShowAfterContinue = false
 			}
 			Component.onDestruction: {
+				if (skipShowAfterContinue) return
+
 				if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_AUTHENTICATION) {
 					show(UiModule.DEFAULT)
 				} else {

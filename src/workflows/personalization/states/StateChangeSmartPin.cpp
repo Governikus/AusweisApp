@@ -52,7 +52,6 @@ void StateChangeSmartPin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pComma
 
 			GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 			settings.setLastReaderPluginType(getEnumName(ReaderManagerPlugInType::SMART));
-			settings.save();
 
 			Q_EMIT fireContinue();
 			break;

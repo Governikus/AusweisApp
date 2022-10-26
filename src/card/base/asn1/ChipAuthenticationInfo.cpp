@@ -56,6 +56,12 @@ int ChipAuthenticationInfo::getVersion() const
 }
 
 
+bool ChipAuthenticationInfo::hasKeyId() const
+{
+	return mDelegate->mKeyId;
+}
+
+
 int ChipAuthenticationInfo::getKeyId() const
 {
 	return Asn1IntegerUtil::getValue(mDelegate->mKeyId);

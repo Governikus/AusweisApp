@@ -43,7 +43,7 @@
 	<String Id="ArpUpdate" Overridable="yes">https://www.ausweisapp.bund.de/de/aa2/download</String>
 	<String Id="DowngradeErrorMessage" Overridable="yes">Eine aktuellere Version der [ProductName] ist bereits installiert. Die Installation wird nun beendet.</String>
 	<String Id="WindowsServerNotSupported" Overridable="yes">Die [ProductName] unterstützt keine Windows Server.</String>
-	<String Id="Windows10Required" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen eine 64-Bit-Version von Windows 10 oder höher.</String>
+	<String Id="Windows10Required" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen eine 64-Bit-Version von Windows 10 Version 1809 oder neuer.</String>
 	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, der eID-Client der Governikus KG</String>
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installationsoptionen</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>

@@ -26,6 +26,7 @@ class HttpServer
 		QVector<QSharedPointer<QTcpServer>> mServer;
 		PortFile mPortFile;
 
+		void shutdown();
 		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
 
 	public:

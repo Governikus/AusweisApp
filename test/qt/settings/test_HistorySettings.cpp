@@ -40,7 +40,6 @@ class test_HistorySettings
 
 			settings.setEnabled(!initial);
 			QCOMPARE(settings.isEnabled(), !initial);
-			settings.save();
 
 			settings.setEnabled(initial);
 			QCOMPARE(settings.isEnabled(), initial);
@@ -86,7 +85,6 @@ class test_HistorySettings
 			settings.addHistoryInfo(info);
 			settings.addHistoryInfo(info);
 			settings.addHistoryInfo(info);
-			settings.save();
 			QVERIFY(QFile::exists(file));
 
 			auto content = TestFileHelper::readFile(file);
@@ -97,7 +95,6 @@ class test_HistorySettings
 			QVERIFY(content.contains("pRequestedDataXYZ"));
 
 			settings.deleteSettings();
-			settings.save();
 
 			content = TestFileHelper::readFile(file);
 			QVERIFY(!content.contains("pSubjectXYZ"));

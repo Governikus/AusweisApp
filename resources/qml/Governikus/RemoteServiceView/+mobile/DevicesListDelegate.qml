@@ -19,8 +19,7 @@ MouseArea {
 	width: content.implicitWidth
 
 	Accessible.role: Accessible.ListItem
-	Accessible.name: qsTr("Device %1").arg(title)
-	Accessible.description: description
+	Accessible.name: qsTr("Device %1. %2.").arg(title).arg(description)
 	Accessible.onPressAction: clicked(null)
 
 	RowLayout {
@@ -38,6 +37,8 @@ MouseArea {
 
 				Layout.fillWidth: true
 
+				Accessible.ignored: true
+
 				elide: Text.ElideRight
 				maximumLineCount: 1
 				textStyle: Style.text.normal_accent
@@ -47,6 +48,8 @@ MouseArea {
 				id: descriptionText
 
 				Layout.fillWidth: true
+
+				Accessible.ignored: true
 
 				elide: Text.ElideRight
 				maximumLineCount: 1

@@ -6,6 +6,7 @@
 
 #include "SecureStorage.h"
 
+#include "JsonValueRef.h"
 #include "ResourceLoader.h"
 #include "asn1/CVCertificate.h"
 
@@ -42,12 +43,6 @@ class test_SecureStorage
 				qCritical() << "Wasn't able to find the array" << pCommentName;
 				return QStringList();
 			}
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-			using JsonValueRef = const QJsonValueRef;
-#else
-			using JsonValueRef = const QJsonValue&;
-#endif
 
 			QStringList comments;
 			const auto& commentValueArray = commentValues.toArray();

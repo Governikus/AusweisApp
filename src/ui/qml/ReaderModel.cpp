@@ -4,7 +4,6 @@
 
 #include "ReaderModel.h"
 
-#include "AppSettings.h"
 #include "Env.h"
 #include "HelpAction.h"
 #include "LanguageLoader.h"
@@ -16,6 +15,7 @@
 #endif
 
 #include <QQmlEngine>
+
 
 using namespace governikus;
 
@@ -32,9 +32,6 @@ ReaderModel::ReaderModel(QObject* pParent)
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ReaderModel::onUpdateContent);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ReaderModel::onUpdateContent);
 	connect(Env::getSingleton<ReaderConfiguration>(), &ReaderConfiguration::fireUpdated, this, &ReaderModel::onUpdateContent);
-	connect(Env::getSingleton<AppSettings>(), &AppSettings::fireSettingsChanged, this, &ReaderModel::onUpdateContent);
-
-
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	connect(Env::getSingleton<ReaderDetector>(), &ReaderDetector::fireReaderChangeDetected, this, &ReaderModel::onUpdateContent);
 #endif

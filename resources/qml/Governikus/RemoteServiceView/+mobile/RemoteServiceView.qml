@@ -83,13 +83,18 @@ SectionPage {
 		}
 
 		GText {
+			//: INFO ANDROID IOS
+			readonly property string enterCodeString: qsTr("Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).")
+			readonly property string currentPin: RemoteServiceModel.psk
+
 			Layout.fillWidth: true
 			Layout.topMargin: Constants.text_spacing
 
+			Accessible.name: RemoteServiceModel.isPairing ? enterCodeString.arg(currentPin.split("").join(" ")).arg(Qt.application.name) : text
+
 			text: !RemoteServiceModel.runnable ? RemoteServiceModel.errorMessage
 				: RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice ? RemoteServiceModel.connectionInfo
-				//: INFO ANDROID IOS
-				: RemoteServiceModel.isPairing ? qsTr("Enter this code in the %1 on your other device to use your smartphone as a card reader (SaC).").arg(Qt.application.name)
+				: RemoteServiceModel.isPairing ? enterCodeString.arg(currentPin).arg(Qt.application.name)
 				 //: INFO ANDROID IOS
 				: RemoteServiceModel.running ? qsTr("Waiting for connection from a paired device...")
 				 //: INFO ANDROID IOS
@@ -107,8 +112,7 @@ SectionPage {
 			Layout.fillWidth: true
 			Layout.topMargin: Constants.component_spacing
 
-			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("Pairing code: %1").arg(currentPin.split("").join(" "));
+			Accessible.ignored: true
 
 			//: LABEL ANDROID IOS
 			text: qsTr("Pairing code: <b>%1</b>").arg(RemoteServiceModel.isPairing ? currentPin : "0000")

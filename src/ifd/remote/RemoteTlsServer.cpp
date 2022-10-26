@@ -112,7 +112,6 @@ void RemoteTlsServer::onEncrypted()
 	{
 		qCDebug(ifd) << "Pairing completed | Add certificate:" << cfg.peerCertificate();
 		settings.addTrustedCertificate(cfg.peerCertificate());
-		settings.save();
 		setPairing(false);
 		Q_EMIT firePairingCompleted();
 	}

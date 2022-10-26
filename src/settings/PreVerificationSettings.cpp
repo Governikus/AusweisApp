@@ -35,12 +35,7 @@ void PreVerificationSettings::updateLinkCertificates(const QByteArrayList& pLink
 		mStore->setValue(SETTINGS_NAME_LINKCERTIFICATE(), pLinkCertificates.at(i).toHex());
 	}
 	mStore->endArray();
-}
-
-
-void PreVerificationSettings::save()
-{
-	mStore->sync();
+	save(mStore);
 }
 
 
@@ -53,6 +48,7 @@ bool PreVerificationSettings::isEnabled() const
 void PreVerificationSettings::setEnabled(bool pEnabled)
 {
 	mStore->setValue(SETTINGS_NAME_ENABLED(), pEnabled);
+	save(mStore);
 }
 
 

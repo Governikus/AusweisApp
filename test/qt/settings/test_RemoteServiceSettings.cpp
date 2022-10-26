@@ -44,7 +44,6 @@ class test_RemoteServiceSettings
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
 
-			settings.save();
 			QCOMPARE(settings.getServerName(), DeviceInfo::getName());
 
 			settings.setServerName(QStringLiteral("   "));
@@ -71,7 +70,6 @@ class test_RemoteServiceSettings
 		{
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getPinPadMode(), false);
-			settings.save();
 			QCOMPARE(settings.getPinPadMode(), false);
 			settings.setPinPadMode(true);
 			QCOMPARE(settings.getPinPadMode(), true);
@@ -186,13 +184,11 @@ class test_RemoteServiceSettings
 		{
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getKey(), QSslKey());
-			settings.save();
 			QCOMPARE(settings.getKey(), QSslKey());
 
 			settings.setKey(pair1.getKey());
 			QCOMPARE(settings.getKey(), pair1.getKey());
 			QVERIFY(!settings.getKey().isNull());
-			settings.save();
 		}
 
 
@@ -200,13 +196,11 @@ class test_RemoteServiceSettings
 		{
 			RemoteServiceSettings settings;
 			QCOMPARE(settings.getCertificate(), QSslCertificate());
-			settings.save();
 			QCOMPARE(settings.getCertificate(), QSslCertificate());
 
 			settings.setCertificate(pair1.getCertificate());
 			QCOMPARE(settings.getCertificate(), pair1.getCertificate());
 			QVERIFY(!settings.getCertificate().isNull());
-			settings.save();
 		}
 
 

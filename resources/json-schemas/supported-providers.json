@@ -82,9 +82,6 @@
 						"description": "Complete name of the provider",
 						"$ref": "#/definitions/languageString"
 					},
-					"shortDescription": {
-						"$ref": "#/definitions/languageString"
-					},
 					"longDescription": {
 						"$ref": "#/definitions/languageString"
 					},

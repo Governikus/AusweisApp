@@ -88,6 +88,14 @@ class test_CertificateDescriptionModel
 		}
 
 
+		void test_Translation()
+		{
+			QSignalSpy spy(mModel, &CertificateDescriptionModel::fireChanged);
+			mModel->onTranslationChanged();
+			QCOMPARE(spy.count(), 1);
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_CertificateDescriptionModel)

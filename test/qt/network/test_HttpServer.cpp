@@ -240,6 +240,24 @@ class test_HttpServer
 		}
 
 
+		void addressInUseError()
+		{
+			QTcpServer existingServer;
+			existingServer.listen(QHostAddress::LocalHost, 0);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			HttpServer server(existingServer.serverPort());
+			QVERIFY(!server.isListening());
+			QCOMPARE(server.boundAddresses(), 0);
+
+			auto param = logSpy.takeFirst();
+			QVERIFY(param.at(0).toString().contains(QLatin1String("Cannot start server: \"The bound address is already in use")));
+
+			param = logSpy.takeLast();
+			QVERIFY(param.at(0).toString().contains(QLatin1String("Abort init of http server because of fatal error...")));
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_HttpServer)

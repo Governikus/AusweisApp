@@ -59,9 +59,11 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>eID</string>
+				<string>eid</string>
 			</array>
 			<key>CFBundleURLName</key>
 			<string>com.governikus.url-scheme.eid</string>

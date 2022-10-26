@@ -5,6 +5,7 @@
 #include "SimulatorFileSystem.h"
 
 #include "FileRef.h"
+#include "JsonValueRef.h"
 #include "apdu/CommandApdu.h"
 #include "apdu/ResponseApdu.h"
 #include "asn1/ASN1TemplateUtil.h"
@@ -135,12 +136,6 @@ SimulatorFileSystem::SimulatorFileSystem()
 
 SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	using JsonValueRef = const QJsonValueRef;
-#else
-	using JsonValueRef = const QJsonValue&;
-#endif
-
 	const auto& files = pData[QLatin1String("files")].toArray();
 	for (JsonValueRef value : files)
 	{

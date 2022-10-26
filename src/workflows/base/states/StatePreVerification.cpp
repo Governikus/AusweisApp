@@ -142,14 +142,13 @@ void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer
 					});
 			};
 
-	auto& settings = Env::getSingleton<AppSettings>()->getPreVerificationSettings();
 	for (const auto& certificate : pCertificates)
 	{
 		if (certificate->getBody().getCHAT().getAccessRole() == AccessRole::CVCA && !contains(mTrustedCvcas, *certificate))
 		{
 			qInfo() << "Save link certificate" << *certificate;
+			auto& settings = Env::getSingleton<AppSettings>()->getPreVerificationSettings();
 			settings.addLinkCertificate(certificate->encode());
 		}
 	}
-	settings.save();
 }

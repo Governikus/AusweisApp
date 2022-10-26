@@ -73,6 +73,7 @@ class PaceInfo
 
 
 		[[nodiscard]] int getVersion() const;
+		[[nodiscard]] bool hasParameterId() const;
 		[[nodiscard]] int getParameterId() const;
 		[[nodiscard]] int getParameterIdAsNid() const;
 		[[nodiscard]] bool isStandardizedDomainParameters() const;
@@ -82,9 +83,17 @@ class PaceInfo
 inline QDebug operator<<(QDebug pDbg, const QSharedPointer<const PaceInfo>& pPaceInfo)
 {
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace().noquote() << pPaceInfo->getOid()
-							 << ", version: " << pPaceInfo->getVersion()
-							 << ", parameterId: " << pPaceInfo->getParameterId();
+	if (pPaceInfo->hasParameterId())
+	{
+		pDbg.nospace().noquote() << pPaceInfo->getOid()
+								 << ", version: " << pPaceInfo->getVersion()
+								 << ", parameterId: " << pPaceInfo->getParameterId();
+	}
+	else
+	{
+		pDbg.nospace().noquote() << pPaceInfo->getOid()
+								 << ", version: " << pPaceInfo->getVersion();
+	}
 	return pDbg;
 }
 

@@ -56,7 +56,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.24.2 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.24.3 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -87,7 +87,7 @@ if(NOT VENDOR)
 	if(EXISTS "${CMAKE_DIR}/Vendor.internal.cmake")
 		include(Vendor.internal)
 	elseif(LINUX OR BSD)
-		set(VENDOR "") # Qt uses Organization for pathes
+		set(VENDOR "") # Qt uses Organization for paths
 	else()
 		set(VENDOR AusweisApp2_CE) # CommunityEdition
 	endif()

@@ -5,6 +5,8 @@
 
 #include "AbstractSettings.h"
 
+#include "Backup.h"
+
 #include <QCoreApplication>
 
 using namespace governikus;
@@ -16,6 +18,13 @@ QSharedPointer<QTemporaryDir> AbstractSettings::mTestDir;
 AbstractSettings::AbstractSettings()
 	: QObject()
 {
+}
+
+
+void AbstractSettings::save(const QSharedPointer<QSettings>& pSettings)
+{
+	pSettings->sync();
+	Backup::disable(pSettings);
 }
 
 

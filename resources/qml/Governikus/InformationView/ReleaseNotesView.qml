@@ -8,6 +8,7 @@ import QtQuick.Layouts 1.15
 import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.Style 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.FormattedTextModel 1.0
 
 
@@ -19,17 +20,39 @@ GListView {
 	displayMarginBeginning: Constants.pane_padding
 	displayMarginEnd: Constants.pane_padding
 
+	Keys.onDownPressed: {
+		do {
+			root.incrementCurrentIndex()
+		} while (currentItem.text === "")
+	}
+	Keys.onUpPressed: {
+		do {
+			root.decrementCurrentIndex()
+		} while (currentItem.text === "")
+	}
+
+	highlight: Item {
+		FocusFrame {
+			scope: root
+		}
+	}
+
 	delegate: RowLayout {
 		id: row
+
+		readonly property alias text: contentText.text
 
 		width: root.width - Constants.pane_padding
 
 		Accessible.role: Accessible.StaticText
-		Accessible.name: contentText.text
+		Accessible.name: ApplicationModel.stripHtmlTags(contentText.text)
+		Accessible.ignored: contentText.text === ""
 
 		GText {
 			visible: lineType === LineType.LISTITEM
 			Layout.fillHeight: true
+
+			Accessible.ignored: true
 
 			verticalAlignment: Text.AlignTop
 			fontSizeMode: Text.Fit
@@ -41,6 +64,8 @@ GListView {
 			id: contentText
 
 			Layout.fillWidth: true
+
+			Accessible.ignored: true
 
 			text: content
 			textStyle: {
@@ -56,10 +81,6 @@ GListView {
 				}
 			}
 			font.underline: lineType === LineType.SECTION
-
-			FocusFrame {
-				scope: row
-			}
 		}
 	}
 }

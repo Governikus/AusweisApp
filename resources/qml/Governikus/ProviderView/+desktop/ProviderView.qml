@@ -21,7 +21,7 @@ SectionPage {
 		Detail
 	}
 
-	Keys.onEscapePressed: {
+	Keys.onEscapePressed: event => {
 		if (d.activeView === ProviderView.SubViews.None) {
 			event.accepted = false
 			return

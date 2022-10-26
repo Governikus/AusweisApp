@@ -60,6 +60,8 @@ Item {
 			width: gridView.cellWidth
 			height: gridView.cellHeight
 
+			Keys.forwardTo: children
+
 			ProviderCard {
 				anchors.fill: parent
 				anchors.margins: Math.floor(gridView.spacing / 2)

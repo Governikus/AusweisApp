@@ -1,0 +1,39 @@
+From 4554f8d7761e79700c3d07c6ac81fb80d3881a88 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Tue, 5 Jul 2022 15:59:05 +0200
+Subject: iOS: Explicitly link to IOKit
+
+We use it to implement QSysInfo::machineUniqueId()
+
+Pick-to: 6.2 6.3 6.4
+Change-Id: I9303001cbc3e5e6716ee57ce9ae785dba08ba88f
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+(cherry picked from commit b692d7b268948d9af0a9c0e9e188074e2347eecb)
+---
+ src/corelib/CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git x/qtbase/src/corelib/CMakeLists.txt y/qtbase/src/corelib/CMakeLists.txt
+index 403654d0fc..4296500ac5 100644
+--- x/qtbase/src/corelib/CMakeLists.txt
++++ y/qtbase/src/corelib/CMakeLists.txt
+@@ -530,6 +530,8 @@ qt_internal_extend_target(Core CONDITION APPLE
+     LIBRARIES
+         ${FWCoreFoundation}
+         ${FWFoundation}
++    PUBLIC_LIBRARIES
++        ${FWIOKit}
+ )
+ 
+ qt_internal_extend_target(Core CONDITION MACOS
+@@ -540,7 +542,6 @@ qt_internal_extend_target(Core CONDITION MACOS
+         ${FWSecurity}
+     PUBLIC_LIBRARIES
+         ${FWDiskArbitration}
+-        ${FWIOKit}
+ )
+ 
+ qt_internal_extend_target(Core CONDITION INTEGRITY
+-- 
+2.38.0
+

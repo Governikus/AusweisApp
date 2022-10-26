@@ -133,9 +133,6 @@
 			"longName": {
 				"": "bitkasten - Ihr digitaler Briefkasten"
 			},
-			"shortDescription": {
-				"": "Empfangen Sie Ihre Briefpost von unterschiedlichen Unternehmen orts- und zeitunabhängig in einem digitalen Briefkasten."
-			},
 			"longDescription": {
 				"": "Der bitkasten ist ein digitaler Briefkasten für die Briefkommunikation als Alternative zur klassischen Post. Sie empfangen Ihre Post elektronisch von unterschiedlichen Unternehmen und Behörden zum Beispiel Rechnungen, Vertragsunterlagen, Gehaltsabrechnungen oder Bescheide sicher und rechtsverbindlich. Damit ist der bitkasten mit dem Briefkasten an der Hauswand zu vergleichen - nur digital. Sie müssen keine weiteren persönlichen Daten an Dritte herausgeben, Ihre Postadresse reicht für den DSGVO-konformen Versand an den bitkasten aus.<br/>Die Anmeldung kann ganz einfach über den elektronischen Personalausweis erfolgen. Im Anschluss können Sie Ihre Post digital abrufen, im Langzeitarchiv speichern oder herunterladen. Die Briefkommunikation wird damit zukünftig grün, persönlich und smart."
 			},
@@ -158,14 +155,11 @@
 			"longName": {
 				"": "Akteneinsicht in Stasi-Unterlagen"
 			},
-			"shortDescription": {
-				"": "Antragstellung auf Einsicht in Stasi-Unterlagen für Privatpersonen."
-			},
 			"longDescription": {
 				"": "Privatpersonen können online mittels neuem Personalausweis ohne weitere Wege die Einsichtnahme in die von der Stasi angelegten Akten zur eigenen Person oder zu verstorbenen/vermissten nahen Angehörigen beantragen."
 			},
-			"address": "https://www.bstu.bund.de/DE/Akteneinsicht/Privatpersonen/Online-Antrag/online-antrag_node.html",
-			"homepage": "https://www.bstu.bund.de",
+			"address": "https://www.stasi-unterlagen-archiv.de/akteneinsicht/privatpersonen",
+			"homepage": "https://www.stasi-unterlagen-archiv.de",
 			"phone": "+49 30 23 24 7000",
 			"email": "post@bstu.bund.de",
 			"postalAddress": "Der Bundesbeauftragte für die Unterlagen des Staatssicherheitsdienstes der ehemaligen Deutschen Demokratischen Republik (BStU)<br/>Karl-Liebknecht-Straße 31/33<br/>10178 Berlin",
@@ -182,9 +176,6 @@
 			},
 			"longName": {
 				"": "Antragstellung an die Kreisverwaltung im Hochsauerlandkreis"
-			},
-			"shortDescription": {
-				"": "Übersicht über die verschiedenen Online-Anträge"
 			},
 			"longDescription": {
 				"": "Stellen Sie hier Ihre Anträge an die Kreisverwaltung. Das Angebot wird laufend erweitert."
@@ -205,9 +196,6 @@
 			},
 			"longName": {
 				"": "Anträge im Mahnverfahren"
-			},
-			"shortDescription": {
-				"": "Antragstellung im Mahnverfahren nach der ZPO"
 			},
 			"longDescription": {
 				"": "Dienst zur Stellung von Anträgen und Abgabe von Erklärungen im Mahnverfahren nach der Zivilprozessordnung vor den bundesdeutschen Mahngerichten."
@@ -230,9 +218,6 @@
 			"longName": {
 				"": "Auskunft aus den Zentralen Registern des Kraftfahrt-Bundesamtes"
 			},
-			"shortDescription": {
-				"": "Auskunft aus den Zentralen Registern des Kraftfahrt-Bundesamtes"
-			},
 			"longDescription": {
 				"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister (Punkteauskunft), dem Zentralen Fahrzeugregister (Fahrzeugzulassungen), dem Zentralen Fahrerlaubnisregister (Führerschein) sowie dem Berufskraftfahrerqualifikationsregister des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind.<br/><ul><li>Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der letzten Haupt- bzw. Sicherheitsüberprüfung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ereignissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.</li><li>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und Löschungsdatum.</li><li>Die Online-Auskunft aus dem Zentralen Fahrerlaubnisregister umfasst Informationen zu Fahrerlaubnissen, die seit dem 01.01.1999 erteilt, erweitert oder umgeschrieben wurden. Über die anderen vor dem 01.01.1999 ausgestellten Führerscheine führt nur die jeweils ausstellende Fahrerlaubnisbehörde eine Kartei/Datei.</li><li>Die Online-Auskunft aus dem Berufskraftfahrerqualifikationsregister umfasst Informationen zu Fahrerqualifizierungsnachweisen sowie Teilnahmebescheinigungen zu Grundqualifikationen, Weiterbildungen und anderen abgeschlossenen Maßnahmen von Berufskraftfahrerinnen und -fahrern.</li></ul>"
 			},
@@ -253,9 +238,6 @@
 			},
 			"longName": {
 				"": "AusweisIDent Identifizierungsdienst"
-			},
-			"shortDescription": {
-				"": "AusweisIDent ist eine neue Lösung für Unternehmen zur schnellen und günstigen Online-Identifikation neuer Kunden mit der Online-Ausweisfunktion des Personalausweises oder des elektronischen Aufenthaltstitels."
 			},
 			"longDescription": {
 				"": "AusweisIDent ergänzt am Markt etablierte Verfahren um die medienbruchfreie und sichere Online-Identifizierung. Nutzer weisen sich mit der Applikation und der Online-Ausweisfunktion des Personalausweises oder des elektronischen Aufenthaltstitels online aus. Das Identifizierungsverfahren wurde von der Bundesdruckerei gemeinsam mit Governikus entwickelt. AusweisIDent eignet sich für die Identifizierung von Personen für eine Web-Anwendung. Über eine Zwei-Faktor-Authentisierung durch den Kunden werden höchste Sicherheitsanforderungen bei der Kundenregistrierung erfüllt. Die Identitätsprüfungen erfolgen gesetzeskonform nach demGesetz zur Förderung der elektronischen Verwaltung (eGovG), dem Gesetz über das Aufspüren von Gewinnen aus schweren Straftaten (GWG), dem Telekommunikationsgesetz (TKG) sowie nach Bundesdatenschutzgesetz (BDSG) und der EUDatenschutzgrundverordnung (EU-DSGVO)."
@@ -297,6 +279,9 @@
 			"shortName": {
 				"": "BAföG Online - Rückzahlung"
 			},
+			"longName": {
+				"": "BAföG Online - Rückzahlung"
+			},
 			"address": "https://www.bafoegonline.bva.bund.de",
 			"homepage": "https://www.bafoegonline.bva.bund.de",
 			"longDescription": {
@@ -307,13 +292,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://e-id.bva.bund.de"
-			],
-			"longName": {
-				"": "BAföG Online - Rückzahlung"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "BAföG Digital - Antragstellung"
+			},
+			"longName": {
 				"": "BAföG Digital - Antragstellung"
 			},
 			"address": "https://www.bafoeg-digital.de",
@@ -328,13 +313,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://id.bund.de"
-			],
-			"longName": {
-				"": "BAföG Digital - Antragstellung"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Beantragung Schwerbehindertenausweis Bayern"
+			},
+			"longName": {
 				"": "Beantragung Schwerbehindertenausweis Bayern"
 			},
 			"longDescription": {
@@ -346,13 +331,13 @@
 			"email": "poststelle@zbfs.bayern.de",
 			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern).",
-			"longName": {
-				"": "Beantragung Schwerbehindertenausweis Bayern"
-			}
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
 		},
 		{
 			"shortName": {
+				"": "Beantragung Schwerbehindertenausweis Saarland"
+			},
+			"longName": {
 				"": "Beantragung Schwerbehindertenausweis Saarland"
 			},
 			"longDescription": {
@@ -365,10 +350,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://tbklas.saarland.de"
-			],
-			"longName": {
-				"": "Beantragung Schwerbehindertenausweis Saarland"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -389,6 +371,9 @@
 			"shortName": {
 				"": "Bundesagentur für Arbeit"
 			},
+			"longName": {
+				"": "Bundesagentur für Arbeit"
+			},
 			"longDescription": {
 				"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich bei der Bundesagentur für Arbeit einfach und zuverlässig anmelden oder registrieren. So nutzen Sie bequem viele eServices rund um die Themen Geldleistungen der Bundesagentur für Arbeit und der Familienkasse, Jobsuche sowie Berufs- und Studienwahl. Sie haben u.a. die Möglichkeit:<br/><ul><li>Arbeitslosengeld zu beantragen</li><li>sich arbeitssuchend zu melden</li><li>einen Ausbildungs- und Studienwahltest durchzuführen.</li></ul><br/>Die Bundesagentur für Arbeit arbeitet stetig an der Ausweitung des Onlineangebots. Zukünftig können mit der Online-Ausweisfunktion auch weitere Dienste komplett digital in Anspruch genommen werden."
 			},
@@ -400,10 +385,7 @@
 			"category": "other",
 			"subjectUrls": [
 				"https://formular.arbeitsagentur.de"
-			],
-			"longName": {
-				"": "Bundesagentur für Arbeit"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -411,6 +393,9 @@
 			],
 			"eidSupport": false,
 			"shortName": {
+				"": "Bundestag ePetition"
+			},
+			"longName": {
 				"": "Bundestag ePetition"
 			},
 			"longDescription": {
@@ -424,13 +409,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://epetitionen.bundestag.de"
-			],
-			"longName": {
-				"": "Bundestag ePetition"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Bürgerantrag Bremen"
+			},
+			"longName": {
 				"": "Bürgerantrag Bremen"
 			},
 			"longDescription": {
@@ -442,13 +427,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://servicekonto.bremen.de"
-			],
-			"longName": {
-				"": "Bürgerantrag Bremen"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Bürgerdienste der Stadt Münster"
+			},
+			"longName": {
 				"": "Bürgerdienste der Stadt Münster"
 			},
 			"longDescription": {
@@ -460,13 +445,13 @@
 			"email": "stadtverwaltung@stadt-muenster.de",
 			"postalAddress": "Stadt Münster<br/>48127 Münster",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Bürgerdienste der Stadt Münster"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
+				"": "Bürgerportal Baden-Württemberg"
+			},
+			"longName": {
 				"": "Bürgerportal Baden-Württemberg"
 			},
 			"longDescription": {
@@ -479,13 +464,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://eid.service-bw.de"
-			],
-			"longName": {
-				"": "Bürgerportal Baden-Württemberg"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Bürgerportal der Stadt Düren"
+			},
+			"longName": {
 				"": "Bürgerportal der Stadt Düren"
 			},
 			"longDescription": {
@@ -499,10 +484,7 @@
 			"image": "StadtDueren_image.jpg",
 			"icon": "StadtDueren_icon.jpg",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Bürgerportal der Stadt Düren"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
@@ -526,6 +508,9 @@
 			"shortName": {
 				"": "Stadt Netphen"
 			},
+			"longName": {
+				"": "Stadt Netphen"
+			},
 			"longDescription": {
 				"": "Auf ihrem Serviceportal bietet die Stadt Netphen ihren Bürgerinnen und Bürgern sowie Unternehmen digitale Verwaltungsleistungen an.<br/><br/>Um die Verwaltungsleistungen komplett online zu erledigen, benötigen Sie das Servicekonto NRW. Dieses können Sie mit Ihrem Online-Ausweis schnell und einfach anlegen.<br/><br/>Mit dem Servicekonto NRW und Ihrem Online-Ausweis haben Sie Zugang zu immer mehr digitalen Verwaltungsleistungen, wie zum Beispiel der Anmeldung eines Hundes zur Hundesteuer sowie vielen weiteren Online-Diensten rund um Ausweise, Bauen, Bildung, Familie, Gesundheit und Umwelt."
 			},
@@ -536,10 +521,7 @@
 			"postalAddress": "Stadt Netphen<br/>Amtsstraße 2 & 6<br/>57250 Netphen",
 			"icon": "StadtNetphen_icon.png",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Stadt Netphen"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
@@ -548,8 +530,9 @@
 			"longName": {
 				"": "Bürgerservice-Portal Kommunales Rechenzentrum Minden-Ravensberg/Lippe"
 			},
-			"address": "https://www.buergerserviceportal.nrw/krz/classic",
-			"homepage": "https://www.buergerserviceportal.nrw/krz",
+			"address": "https://www.buergerserviceportal.nrw/krz",
+			"homepage": "https://www.buergerserviceportal.nrw",
+			"email": "bsp@support.krz.de",
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.buergerserviceportal.nrw"
@@ -565,9 +548,6 @@
 			},
 			"longName": {
 				"": "Bürgerservice-Portal Kreis Herford"
-			},
-			"shortDescription": {
-				"": "Anträge an die Kreisverwaltung Herford online erfassen."
 			},
 			"longDescription": {
 				"": "In unserem Bürgerservice-Portal können Sie Anträge an die Kreisverwaltung Herford online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."
@@ -593,9 +573,6 @@
 			"longName": {
 				"": "Bürgerservice-Portal Kreis Minden-Lübbecke"
 			},
-			"shortDescription": {
-				"": "Anträge an den Kreis Minden-Lübbecke online erfassen."
-			},
 			"longDescription": {
 				"": "In unserem Portal können Sie Ihren Antrag an den Kreis Minden-Lübbecke direkt online erfassen und elektronisch übermitteln."
 			},
@@ -613,6 +590,9 @@
 			"shortName": {
 				"": "Bürgerservice-Portal Saarbrücken"
 			},
+			"longName": {
+				"": "Bürgerservice-Portal Saarbrücken"
+			},
 			"longDescription": {
 				"": "Im Rahmen des Bürgerservice-Portals haben Sie die Möglichkeit, Anträge zu erfassen und diese direkt an die Landeshauptstadt Saarbrücken zur weiteren Bearbeitung weiterzuleiten."
 			},
@@ -624,10 +604,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://sl.buergerserviceportal.de"
-			],
-			"longName": {
-				"": "Bürgerservice-Portal Saarbrücken"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -639,9 +616,6 @@
 			},
 			"longName": {
 				"": "Bürgerservice-Portal Stadt Lage"
-			},
-			"shortDescription": {
-				"": "Anträge online erfassen und an die Verwaltung weiterleiten."
 			},
 			"longDescription": {
 				"": "Das Bürgerservice-Portal bietet die Möglichkeit, Anträge an die Verwaltung der Stadt Lage online zu erfassen und elektronisch zur weiteren Bearbeitung weiterzuleiten."
@@ -664,6 +638,9 @@
 			"shortName": {
 				"": "Bürgerservice-Portal Stadt Norderstedt"
 			},
+			"longName": {
+				"": "Bürgerservice-Portal Stadt Norderstedt"
+			},
 			"longDescription": {
 				"": "In Norderstedt können Sie mit der Online-Ausweisfunktion über das Bürgerservice-Portal folgende Bürgerdienste nutzen:<br/><ul><li>Meldebestätigung</li><li>Aufenthaltsbescheinigung</li><li>Übermittlungssperren</li><li>Umzug innerhalb der Stadt</li><li>Voranzeige einer Anmeldung</li><li>Briefwahlunterlagen</li><li>Führungszeugnis</li></ul><br/>Darüber hinaus können Sie Ihr persönliches Bürgerkonto einrichten. Nach Einrichtung des Bürgerkontos werden die bei einer Nutzung des Bürgerservice-Portals notwendigen persönlichen Daten komfortabel aus Ihrem Bürgerkonto übernommen. Damit sparen Sie Zeit und erleichtern den Behörden die Bearbeitung Ihres Antrags."
 			},
@@ -675,13 +652,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://sh.buergerserviceportal.de"
-			],
-			"longName": {
-				"": "Bürgerservice-Portal Stadt Norderstedt"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Bürgerservice-Portal Wiesbaden"
+			},
+			"longName": {
 				"": "Bürgerservice-Portal Wiesbaden"
 			},
 			"longDescription": {
@@ -695,10 +672,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://he.buergerserviceportal.de"
-			],
-			"longName": {
-				"": "Bürgerservice-Portal Wiesbaden"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -706,6 +680,9 @@
 			],
 			"eidSupport": false,
 			"shortName": {
+				"": "Bürgerservice-Portale der bayerischen Kommunen"
+			},
+			"longName": {
 				"": "Bürgerservice-Portale der bayerischen Kommunen"
 			},
 			"longDescription": {
@@ -720,10 +697,7 @@
 			"subjectUrls": [
 				"https://www.buergerserviceportal.de",
 				"https://bayernid.freistaat.bayern"
-			],
-			"longName": {
-				"": "Bürgerservice-Portale der bayerischen Kommunen"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -747,6 +721,28 @@
 		},
 		{
 			"shortName": {
+				"": "Stadt Fürth"
+			},
+			"longName": {
+				"": "Stadt Fürth"
+			},
+			"longDescription": {
+				"": "Digitale Dienstleistungen der Stadt Fürth."
+			},
+			"address": "https://www.fuerth.de/Home/edienste/online-anwendungen.aspx",
+			"homepage": "https://www.fuerth.de",
+			"phone": "+49 911 974 0",
+			"email": "poststelle@fuerth.de",
+			"postalAddress": "Stadt Fürth<br/>Königstraße 88<br/>90762 Fürth",
+			"image": "StadtFuerth_image.jpg",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+		},
+		{
+			"shortName": {
+				"": "Deutsche Rentenversicherung"
+			},
+			"longName": {
 				"": "Deutsche Rentenversicherung"
 			},
 			"longDescription": {
@@ -760,10 +756,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.eservice-drv.de"
-			],
-			"longName": {
-				"": "Deutsche Rentenversicherung"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -771,6 +764,9 @@
 			],
 			"eidSupport": false,
 			"shortName": {
+				"": "eAntrag der Investitionsbank Berlin (IBB)"
+			},
+			"longName": {
 				"": "eAntrag der Investitionsbank Berlin (IBB)"
 			},
 			"longDescription": {
@@ -784,10 +780,7 @@
 			"category": "finance",
 			"subjectUrls": [
 				"https://registrierung-eantrag.ibb.de"
-			],
-			"longName": {
-				"": "eAntrag der Investitionsbank Berlin (IBB)"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -818,9 +811,6 @@
 			},
 			"longName": {
 				"": "ELSTER - Die elektronische Steuererklärung"
-			},
-			"shortDescription": {
-				"": "Abwicklung der Steuererklärungen und -anmeldungen über das Internet."
 			},
 			"longDescription": {
 				"": "ELSTER bietet im Rahmen der Registrierung, welche Voraussetzung für die Abwicklung der Steuererklärungen und Steueranmeldungen über das Internet ist, die Möglichkeit der Nutzung der Online-Ausweisfunktion."
@@ -860,6 +850,9 @@
 			"shortName": {
 				"": "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"
 			},
+			"longName": {
+				"": "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"
+			},
 			"longDescription": {
 				"": "Sie benötigen ein Führungszeugnis oder eine Auskunft aus dem Gewerbezentralregister? Mit dem Personalausweis im Scheckkartenformat können Sie einen Behördengang sparen. Weitere Voraussetzungen sind die freigeschaltete Online-Ausweisfunktion und ein passender Kartenleser für Ihren Computer. Auf diese Weise kann eindeutig identifiziert werden, wer den Antrag stellt. Ausländische Mitbürger, die keinen deutschen Personalausweis besitzen, können in gleicher Weise die entsprechende Funktion ihres elektronischen Aufenthaltstitels nutzen.<br/>Neben Führungszeugnissen können auch Auskünfte aus dem Gewerbezentralregister über das neue Online-Portal des BfJ beantragt werden. Solche Auskünfte benötigen Unternehmen, die sich in Ausschreibungsverfahren um öffentliche Aufträge bewerben, recht häufig. Auch hier kann das Online-Verfahren den Aufwand erheblich senken."
 			},
@@ -871,13 +864,13 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.fuehrungszeugnis.bund.de"
-			],
-			"longName": {
-				"": "Führungszeugnis und Auskunft aus dem Gewerbezentralregister"
-			}
+			]
 		},
 		{
 			"shortName": {
+				"": "Hamburg Service - Serviceportal"
+			},
+			"longName": {
 				"": "Hamburg Service - Serviceportal"
 			},
 			"longDescription": {
@@ -892,13 +885,13 @@
 			"subjectUrls": [
 				"https://idp.servicekonto.serviceportal.hamburg.de"
 			],
-			"icon": "hamburg_serviceportal_icon.png",
-			"longName": {
-				"": "Hamburg Service - Serviceportal"
-			}
+			"icon": "hamburg_serviceportal_icon.png"
 		},
 		{
 			"shortName": {
+				"": "Landesportal Brandenburg"
+			},
+			"longName": {
 				"": "Landesportal Brandenburg"
 			},
 			"homepage": "https://www.brandenburg.de",
@@ -909,10 +902,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://e-ident.brandenburg.de"
-			],
-			"longName": {
-				"": "Landesportal Brandenburg"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -972,13 +962,13 @@
 		},
 		{
 			"shortName": {
-				"": "i-Kfz Nordsachsen"
+				"": "Landkreis Nordsachsen - iKFZ"
 			},
-			"shortDescription": {
-				"": "Mit i-Kfz können Sie Ihr Auto per Internet von zu Hause aus zulassen."
+			"longName": {
+				"": "Landkreis Nordsachsen - Internetbasierte Fahrzeugzulassung"
 			},
 			"longDescription": {
-				"": "Mit i-Kfz sind online derzeit folgende Dienstleistungen möglich:<br/><ul><li>Neuzulassung</li><li>Umschreibung</li><li>Wiederzulassung</li><li>Adressänderung</li><li>Außerbetriebsetzung</li></ul>"
+				"": "Mit i-Kfz können Sie Ihr Auto per Internet von zu Hause aus zulassen. Derzeit sind online folgende Dienstleistungen möglich:<br/><ul><li>Neuzulassung</li><li>Umschreibung</li><li>Wiederzulassung</li><li>Adressänderung</li><li>Außerbetriebsetzung</li></ul>"
 			},
 			"address": "https://ikfz.ikfz-sachsen.de/ikfz3/?LICENSEIDENTIFIER=nordsachsen_kreis",
 			"homepage": "https://www.landkreis-nordsachsen.de",
@@ -987,10 +977,7 @@
 			"postalAddress": "Landratsamt Nordsachsen<br/>Schloßstraße 27<br/>04860 Torgau",
 			"icon": "Nordsachsen_icon.png",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Sachsen (https://eidconnect.egov.sachsen.de).",
-			"longName": {
-				"": "i-Kfz Nordsachsen"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Sachsen (https://eidconnect.egov.sachsen.de)."
 		},
 		{
 			"shortName": {
@@ -1022,11 +1009,8 @@
 			"longName": {
 				"": "invenio - Rechercheanwendung für Archivgut des Bundesarchivs"
 			},
-			"shortDescription": {
-				"": "invenio ermöglicht die Recherche in den Beständen des Bundesarchivs. Über invenio können Sie außerdem digitalisierte Unterlagen ansehen und Archivgut zur Einsicht in den Lesesaal bestellen. Die eID-Funktion Ihres Personalausweises dient Ihrer eindeutigen Identifizierung außerhalb des Lesesaals, sodass Ihnen zusätzlich zu den frei verfügbaren Informationen zugangsbeschränkte Erschließungsinformationen über das Internet zur Verfügung gestellt werden können."
-			},
 			"longDescription": {
-				"": "Ein Großteil der Erschließungsinformationen und Digitalisate in der Rechercheanwendung invenio ist frei im Internet zugänglich und unterliegt keinen Schutzfristen oder sonstigen Benutzungsbeschränkungen. Archivalien und deren Erschließungsinformationen, auf denen noch Benutzungsbeschränkungen liegen, können im Einzelfall auf Antrag zugänglich gemacht werden und im Lesesaal eingesehen werden. Wenn Sie nicht selbst vor Ort im Lesesaal recherchieren können, bietet Ihnen das Bundesarchiv mit der eID-Funktion die Möglichkeit, sich über das Internet auszuweisen und so Zugriff auf grundsätzlich noch unter Schutzfristen und anderen Benutzungsbeschränkungen liegenden Informationen zu erhalten. Nach der Verbindung Ihres Benutzerkontos mit der eID werden Ihnen vom Bundesarchiv die für Ihr Benutzungsthema erforderlichen Rechte auf Antrag freigeschaltet. Sofern Sie die entsprechenden Anträge bereits zu einem früheren Zeitpunkt gestellt haben, müssen Sie diese nicht erneut stellen. Sie können dann die Recherche in den benutzungsbeschränkten Beständen durchführen, die Ihnen bisher nur an den PCs im Benutzersaal des Bundesarchivs möglich war. Die Entscheidung über Schutzfristverkürzungen und das Freischalten von Rechten für invenio liegt bei den archivischen Fachreferaten des Bundesarchivs."
+				"": "invenio ermöglicht die Recherche in den Beständen des Bundesarchivs. Über invenio können Sie außerdem digitalisierte Unterlagen ansehen und Archivgut zur Einsicht in den Lesesaal bestellen. Die eID-Funktion Ihres Personalausweises dient Ihrer eindeutigen Identifizierung außerhalb des Lesesaals, sodass Ihnen zusätzlich zu den frei verfügbaren Informationen zugangsbeschränkte Erschließungsinformationen über das Internet zur Verfügung gestellt werden können.<br/><br/>Ein Großteil der Erschließungsinformationen und Digitalisate in der Rechercheanwendung invenio ist frei im Internet zugänglich und unterliegt keinen Schutzfristen oder sonstigen Benutzungsbeschränkungen. Archivalien und deren Erschließungsinformationen, auf denen noch Benutzungsbeschränkungen liegen, können im Einzelfall auf Antrag zugänglich gemacht werden und im Lesesaal eingesehen werden. Wenn Sie nicht selbst vor Ort im Lesesaal recherchieren können, bietet Ihnen das Bundesarchiv mit der eID-Funktion die Möglichkeit, sich über das Internet auszuweisen und so Zugriff auf grundsätzlich noch unter Schutzfristen und anderen Benutzungsbeschränkungen liegenden Informationen zu erhalten. Nach der Verbindung Ihres Benutzerkontos mit der eID werden Ihnen vom Bundesarchiv die für Ihr Benutzungsthema erforderlichen Rechte auf Antrag freigeschaltet. Sofern Sie die entsprechenden Anträge bereits zu einem früheren Zeitpunkt gestellt haben, müssen Sie diese nicht erneut stellen. Sie können dann die Recherche in den benutzungsbeschränkten Beständen durchführen, die Ihnen bisher nur an den PCs im Benutzersaal des Bundesarchivs möglich war. Die Entscheidung über Schutzfristverkürzungen und das Freischalten von Rechten für invenio liegt bei den archivischen Fachreferaten des Bundesarchivs."
 			},
 			"image": "invenio_image.png",
 			"icon": "invenio_icon.png",
@@ -1046,9 +1030,6 @@
 			},
 			"longName": {
 				"": "Kreis Borken - Internetbasierte Fahrzeugzulassung"
-			},
-			"shortDescription": {
-				"": "Authentisierung für internetbasierte Kfz-Dienste."
 			},
 			"longDescription": {
 				"": "Für die internetbasierten Kfz-Dienste wird die eID-Funktionalität des neuen Personalausweises benötigt."
@@ -1105,6 +1086,25 @@
 		},
 		{
 			"shortName": {
+				"": "Serviceportal Solingen"
+			},
+			"longName": {
+				"": "Serviceportal Klingenstadt Solingen"
+			},
+			"longDescription": {
+				"": "Das Serviceportal der Klingenstadt Solingen ermöglicht die Abwicklung von digitalen Dienstleistungen."
+			},
+			"address": "https://service.solingen.de",
+			"homepage": "https://www.solingen.de",
+			"phone": "+49 212 2900",
+			"email": "solingen.digital@solingen.de",
+			"postalAddress": "Klingenstadt Solingen<br/>Walter-Scheel-Platz 1<br/>42651 Solingen",
+			"icon": "KlingenstadtSolingen_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
 				"": "Online-Portal Kreis Lippe"
 			},
 			"longName": {
@@ -1129,9 +1129,6 @@
 			"longName": {
 				"": "Serviceportal Kreis Paderborn"
 			},
-			"shortDescription": {
-				"": "Online-Dienstleistungen des Kreises Paderborn"
-			},
 			"longDescription": {
 				"": "Service rund um die Uhr und von jedem Ort der Welt, einfach und unkompliziert - das bieten wir Ihnen mit unserem Serviceportal. Hier können Sie Termine vereinbaren, Anträge stellen und erhalten Ihren Bescheid."
 			},
@@ -1153,7 +1150,7 @@
 				"": "Serviceportal - Landkreis Hameln-Pyrmont"
 			},
 			"longDescription": {
-				"": "Gemeinschaftsserviceportal der Gemeinden des Landkreises Hameln-Pyrmont.<br/><br/>Die Städte- und Gemeinden des Landkreises Hameln-Pyrmont haben sich zusammengeschlossen und bieten, gemeinsam mit der Kreisverwaltung, auf Ihrem Serviceportal eine Reihe von Online-Diensten an."
+				"": "Gemeinschaftsserviceportal der Gemeinden des Landkreises Hameln-Pyrmont.<br/><br/>Die Städte- und Gemeinden des Landkreises Hameln-Pyrmont haben sich zusammengeschlossen und bieten, gemeinsam mit der Kreisverwaltung, auf Ihrem Serviceportal eine Reihe von Online-Diensten an. Städte- und Gemeinden des Landkreises Hameln-Pyrmont:<br/><ul><li>Aerzen</li><li>Bad Münder</li><li>Emmerthal</li><li>Coppenbrügge</li><li>Hameln</li><li>Bad Pyrmont</li><li>Hessisch Oldendorf</li><li>Salzhemmendorf</li></ul>"
 			},
 			"address": "https://service.einfach-digital-leben.de",
 			"homepage": "https://service.einfach-digital-leben.de",
@@ -1174,7 +1171,7 @@
 			"longName": {
 				"": "Land Berlin - Internetbasierte Fahrzeugzulassung"
 			},
-			"shortDescription": {
+			"longDescription": {
 				"": "Das Portal 'Kfz-Online Berlin' bündelt alle Vorgänge rund um Kfz, die sich im Land Berlin online erledigen lassen."
 			},
 			"address": "https://kfz-portal.berlin.de",
@@ -1316,9 +1313,6 @@
 			"longName": {
 				"": "DATEV - Arbeitnehmer online"
 			},
-			"shortDescription": {
-				"": "Arbeitnehmer online ist ein Angebot Ihres Arbeitgebers, um mit Ihnen digital zusammenzuarbeiten. Im Portal stellt er Ihnen persönliche Daten bereit, wie zum Beispiel Ihre Lohn- und Gehaltsdokumente."
-			},
 			"longDescription": {
 				"": "Arbeitnehmer online ist ein Angebot Ihres Arbeitgebers, um mit Ihnen digital zusammenzuarbeiten. Im Portal stellt er Ihnen persönliche Daten bereit, wie zum Beispiel Ihre Lohn- und Gehaltsdokumente. <br/> Ihr Arbeitgeber schaltet Sie für die Nutzung von Arbeitnehmer online frei. Daraufhin erhalten Sie persönliche Briefe, mit denen Sie sich registrieren können. Im Anschluss können Sie jederzeit Ihre Brutto/Netto-Abrechnungen, Sozialversicherungsnachweise und Lohnsteuerbescheinigungen online abrufen. Sie haben dadurch jederzeit und überall einen schnellen Überblick über Ihre gesamten Lohn- und Gehaltsdokumente."
 			},
@@ -1359,6 +1353,9 @@
 			"shortName": {
 				"": "Niedersächsisches Ministerium für Inneres und Sport"
 			},
+			"longName": {
+				"": "Niedersächsisches Ministerium für Inneres und Sport"
+			},
 			"longDescription": {
 				"": "Das Niedersächsische Ministerium für Inneres und Sport stellt u.a. Software für die Nutzung digitaler Bürgerdienste bereit. Diese wird z.B. von niedersächsischen Kommunen für deren digitales Angebot genutzt."
 			},
@@ -1370,10 +1367,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://e-id.niedersachsen.de"
-			],
-			"longName": {
-				"": "Niedersächsisches Ministerium für Inneres und Sport"
-			}
+			]
 		},
 		{
 			"internalId": "pinResetService",
@@ -1421,9 +1415,6 @@
 			"longName": {
 				"": "Online-Bürgerdienste der Kreisstadt Siegburg"
 			},
-			"shortDescription": {
-				"": "Alle Online-Services der Kreisstadt Siegburg"
-			},
 			"longDescription": {
 				"": "Die Kreisstadt Siegburg bietet auf ihrer Homepage viele Online-Services an, die Sie mit der Online-Ausweisfunktion nutzen können. Hierzu zählen unter anderem:<br/><ul><li>An-, Um- und Abmeldung des Wohnsitzes</li><li>Urkundenservice des Standesamts</li><li>Hundeservice (Online An- & Abmeldung, Hundemarke etc.)</li><li>Bewohnerparkausweis beantragen & verlängern</li><li>Meldebescheinigung & Melderegisterauskunft</li><li>Übermittlungssperre</li><li>Statusabfrage Personalausweis /Reisepass</li><li>Beantragung Siegburg Pass & Siegburg Gutschein</li></ul>"
 			},
@@ -1461,8 +1452,8 @@
 			"shortName": {
 				"": "Online-Service der Stadt Bonn"
 			},
-			"shortDescription": {
-				"": "Hier finden Sie unsere Online-Services."
+			"longName": {
+				"": "Online-Service der Stadt Bonn"
 			},
 			"longDescription": {
 				"": "Bitte beachten Sie, dass noch nicht alle Online-Dienste mit der neuen eID-Funktion zur Verfügung stehen. Wählen Sie die mit 'nPA' ausgewiesenen Online-Services, um die eID-Funktion nutzen zu können.<br/>Die Stadt Bonn arbeitet zurzeit verstärkt an dem Ausbau der Online-Services mit eID-Funktion."
@@ -1475,10 +1466,7 @@
 			"image": "StadtBonn_image.jpg",
 			"icon": "StadtBonn_icon.png",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Online-Service der Stadt Bonn"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
@@ -1486,9 +1474,6 @@
 			},
 			"longName": {
 				"": "Onlinedienste der Kreisverwaltung Soest"
-			},
-			"shortDescription": {
-				"": "Anträge an die Kreisverwaltung Soest online erfassen."
 			},
 			"longDescription": {
 				"": "In unserem Service-Portal können Sie Anträge an die Kreisverwaltung Soest online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."
@@ -1546,11 +1531,8 @@
 			"longName": {
 				"": "Schlüsselbeglaubigung"
 			},
-			"shortDescription": {
-				"": "OpenPGP-Schlüssel mit dem Online-Ausweis beglaubigen"
-			},
 			"longDescription": {
-				"": "Die Beglaubigung Ihres PGP-Schlüssels stellt gegenüber dem Empfänger sicher, dass Sie und kein Dritter der Absender einer Nachricht sind. Ein Dienst i.A. des Bundesamtes für Sicherheit in der Informationstechnik (BSI)."
+				"": "OpenPGP-Schlüssel mit dem Online-Ausweis beglaubigen.<br/>Die Beglaubigung Ihres PGP-Schlüssels stellt gegenüber dem Empfänger sicher, dass Sie und kein Dritter der Absender einer Nachricht sind. Ein Dienst i.A. des Bundesamtes für Sicherheit in der Informationstechnik (BSI)."
 			},
 			"address": "https://pgp.governikus.de",
 			"homepage": "https://www.governikus.de",
@@ -1569,9 +1551,6 @@
 				"": "Selbstauskunft"
 			},
 			"longName": {
-				"": "Selbstauskunft/ 'Meine Daten einsehen'"
-			},
-			"shortDescription": {
 				"": "Selbstauskunft/ 'Meine Daten einsehen'"
 			},
 			"longDescription": {
@@ -1600,11 +1579,8 @@
 			"longName": {
 				"": "Kreis Lippe - Internetbasierte Fahrzeugzulassung"
 			},
-			"shortDescription": {
-				"": "Das Service-Portal bietet Online-Dienste rund um die KFZ-Zulassung."
-			},
 			"longDescription": {
-				"": "Im Service-Portal 'Auto' können Sie Ihr Auto online abmelden. Weitere Angebote wie die komplette online KFZ-Wiederzulassung und -Zulassung sind im Aufbau."
+				"": "Das Service-Portal bietet Online-Dienste rund um die KFZ-Zulassung. Sie können Ihr Auto z.B. online abmelden. Weitere Angebote wie die komplette online KFZ-Wiederzulassung und -Zulassung sind im Aufbau."
 			},
 			"address": "https://www.buergerserviceportal.nrw/krz/lkrlippe",
 			"homepage": "https://www.kreis-lippe.de",
@@ -1620,6 +1596,9 @@
 			"shortName": {
 				"": "Landratsamt München"
 			},
+			"longName": {
+				"": "Landratsamt München"
+			},
 			"longDescription": {
 				"": "Bürgerinnen und Bürger im Landkreis München können viele Behördengänge digital erledigen.<br/><br/>Zahlreiche Online-Dienstleistungen des Landratsamtes München sind über das BayernPortal verfügbar, von A wie Abfallerzeugernummer beantragen bis Z wie Zulassung von Kraftfahrzeugen.<br/><br/>Je nach Anforderung der jeweiligen Verwaltungsleistung benötigen Sie ein kostenloses Bürgerkonto, eine BayernID. Mit Ihrer BayernID können Sie alle Verwaltungsleistungen in Anspruch nehmen.<br/><br/>Einige Verwaltungsleistungen erfordern einen elektronischen Identitätsnachweis. Sie weisen sich also online gegenüber diesen Leistungen aus. Dazu melden Sie sich einfach mit Ihrem Online-Ausweis an Ihrem BayernID-Konto an."
 			},
@@ -1630,10 +1609,7 @@
 			"postalAddress": "Landratsamt München<br/>Mariahilfplatz 17<br/>81541 München",
 			"icon": "LandesamtMuenchen_icon.jpg",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern).",
-			"longName": {
-				"": "Landratsamt München"
-			}
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
 		},
 		{
 			"shortName": {
@@ -1645,8 +1621,8 @@
 			"longDescription": {
 				"": "Wer sich mit einem Lehrgang oder an einer Fachschule auf eine anspruchsvolle berufliche Fortbildungsprüfung in Voll- oder Teilzeit vorbereitet, kann eine finanzielle Förderung nach dem Aufstiegsfortbildungsförderungsgesetz (AFBG) beantragen.<br/><br/>Bürgerinnen und Bürger mit ständigem Wohnsitz in Mecklenburg-Vorpommern können den Antrag für ihr Aufstiegs-BAföG digital stellen.<br/><br/>Während und nach Eingabe Ihrer Antragsdaten erfolgt eine Plausibilisierungsprüfung des Antrags. Im Anschluss daran reichen Sie Ihren Antrag online ein. Dafür weisen Sie sich mit Ihrem Online-Ausweis aus - das Ausdrucken, Unterschreiben und postalische Versenden des Antrags entfallen damit.<br/><br/>Das Datum der erfolgreichen Übertragung an die zuständige Behörde gilt als Antragsdatum.<br/><br/>Notwendige Nachweise oder weitere Dokumente können Sie nach dem Absenden der ausgefüllten Formulare als Anlagen hochladen."
 			},
-			"address": "https://fms.mv-regierung.de/lip3_2/action/invoke.do?id=afbg",
-			"homepage": "https://www.regierung-mv.de/Landesregierung/bm/F%C3%B6rderungen/BAf%C3%B6G",
+			"address": "https://fms.mv-regierung.de/formulare/action/invoke.do?id=afbg",
+			"homepage": "https://www.mv-serviceportal.de/leistung/?leistungId=9575472",
 			"phone": "+49 385 588 0",
 			"email": "poststelle@bm.mv-regierung.de",
 			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Werderstraße 124<br/>19055 Schwerin",
@@ -1657,6 +1633,11 @@
 			]
 		},
 		{
+			"exclude": [
+				"ios",
+				"android"
+			],
+			"eidSupport": false,
 			"shortName": {
 				"": "nEHS-Register"
 			},
@@ -1678,10 +1659,10 @@
 		},
 		{
 			"shortName": {
-				"": "Region Hannover - Internetbasierte Fahrzeugzulassung"
+				"": "Region Hannover - iKFZ"
 			},
 			"longName": {
-				"": "Region Hannover - iKFZ"
+				"": "Region Hannover - Internetbasierte Fahrzeugzulassung"
 			},
 			"longDescription": {
 				"": "Mithilfe der internetbasierten Fahrzeugzulassung können Sie Ihr Fahrzeug ganz einfach anmelden, Adresse ändern und abmelden.<br/>Nähere Details zum Verfahren entnehmen Sie der Startseite des iKFZ-Portals."
@@ -1700,6 +1681,9 @@
 			"shortName": {
 				"": "Service-Portal Berlin"
 			},
+			"longName": {
+				"": "Service-Portal Berlin"
+			},
 			"address": "https://service.berlin.de/onlineverfahren-onlinedienstleistungen",
 			"homepage": "https://service.berlin.de",
 			"phone": "+49 30 90269 0",
@@ -1708,17 +1692,14 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://eid-prod.connect.verwalt-berlin.de"
-			],
-			"longName": {
-				"": "Service-Portal Berlin"
-			}
+			]
 		},
 		{
 			"shortName": {
 				"": "Serviceportal Duisburg"
 			},
-			"shortDescription": {
-				"": "Bereitstellung von online Services für die Stadt Duisburg."
+			"longName": {
+				"": "Serviceportal Duisburg"
 			},
 			"longDescription": {
 				"": "Die Stadt Duisburg bietet auf ihrer Webseite eine Reihe von Online-Diensten an.<br/>Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/><ul><li>eine Personenstandsurkunde bestellen,</li><li>Ihr Wunschkennzeichen beantragen.</li></ul>"
@@ -1729,17 +1710,14 @@
 			"email": "serviceportal@stadt-duisburg.de",
 			"postalAddress": "Stadt Duisburg<br/>Burgplatz 19<br/>47051 Duisburg",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Serviceportal Duisburg"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
 				"": "Serviceportal Düsseldorf"
 			},
-			"shortDescription": {
-				"": "Bereitstellung von Online-Services für die Stadt Düsseldorf."
+			"longName": {
+				"": "Serviceportal Düsseldorf"
 			},
 			"longDescription": {
 				"": "Die Stadt Düsseldorf bietet auf ihrer Webseite eine Reihe von Online-Diensten an.<br/>Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/><ul><li>eine Personenstandurkunde bestellen,</li><li>Ihr Wunschkennzeichen beantragen.</li></ul>"
@@ -1752,17 +1730,17 @@
 			"image": "Duesseldorf_image.jpg",
 			"icon": "Duesseldorf_icon.png",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Serviceportal Düsseldorf"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"shortName": {
 				"": "Servicekonto Sachsen"
 			},
-			"shortDescription": {
-				"": "Servicekonto Sachsen - Hilfe in allen Lebenslagen - Von A wie Adoption über U wie Unternehmen gründen bis Z wie Zuwanderung."
+			"longName": {
+				"": "Servicekonto Sachsen"
+			},
+			"longDescription": {
+				"": "Das Servicekonto Sachsen bietet Hilfe in allen Lebenslagen - von A wie Adoption, über U wie Unternehmen gründen, bis Z wie Zuwanderung."
 			},
 			"address": "https://amt24.sachsen.de",
 			"homepage": "https://amt24.sachsen.de",
@@ -1772,10 +1750,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://eidconnect.egov.sachsen.de"
-			],
-			"longName": {
-				"": "Servicekonto Sachsen"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -1819,6 +1794,9 @@
 			"shortName": {
 				"": "Serviceportal Kreis Gütersloh"
 			},
+			"longName": {
+				"": "Serviceportal Kreis Gütersloh"
+			},
 			"longDescription": {
 				"": "Bei der Kreisverwaltung Gütersloh können Sie viele Dienste mit Hilfe des Servicekonto NRW online erledigen. Einmal angemeldet, ist es Ihr Schlüssel zu unseren Online-Dienstleistungen. Erledigen Sie Ihre Verwaltungsangelegenheiten ganz bequem von Zuhause aus."
 			},
@@ -1828,10 +1806,7 @@
 			"email": "kreisverwaltung@kreis-guetersloh.de",
 			"postalAddress": "Kreisverwaltung Gütersloh<br/>Herzebrocker Str. 140<br/>33334 Gütersloh",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Serviceportal Kreis Gütersloh"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"exclude": [
@@ -1841,22 +1816,25 @@
 			"shortName": {
 				"": "Serviceportal Sachsen-Anhalt"
 			},
+			"longName": {
+				"": "Serviceportal Sachsen-Anhalt"
+			},
 			"address": "https://serviceportal.sachsen-anhalt.de",
 			"homepage": "https://serviceportal.sachsen-anhalt.de",
 			"category": "citizen",
 			"subjectUrls": [
 				"https://st.buergerserviceportal.de",
 				"https://bk.sachsen-anhalt-connect.de"
-			],
-			"longName": {
-				"": "Serviceportal Sachsen-Anhalt"
-			}
+			]
 		},
 		{
 			"shortName": {
 				"": "Serviceportal Schleswig-Holstein"
 			},
-			"shortDescription": {
+			"longName": {
+				"": "Serviceportal Schleswig-Holstein"
+			},
+			"longDescription": {
 				"": "Digitale Verwaltungsleistungen von Land und Kommunen in Schleswig-Holstein"
 			},
 			"address": "https://serviceportal.schleswig-holstein.de/Verwaltungsportal",
@@ -1869,10 +1847,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://idp.serviceportal.schleswig-holstein.de"
-			],
-			"longName": {
-				"": "Serviceportal Schleswig-Holstein"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -1881,11 +1856,8 @@
 			"longName": {
 				"": "Serviceportal der Stadt Wuppertal"
 			},
-			"shortDescription": {
-				"": "Das Serviceportal der Stadt Wuppertal bietet zahlreiche Online-Dienstleistungen an."
-			},
 			"longDescription": {
-				"": "Mit der eID können Sie sich u. a. bei den folgenden Dienstleistungen authentifizieren:<br/><ul><li>KFZ-Zulassung</li><li>Meldebescheinigung</li><li>Zweitwohnungssteuer</li><li>Internationaler Führerschein</li><li>Kurzzeitkennzeichen</li></ul>"
+				"": "Das Serviceportal der Stadt Wuppertal bietet zahlreiche Online-Dienstleistungen an. Mit der eID können Sie sich u. a. bei den folgenden Dienstleistungen authentifizieren:<br/><ul><li>KFZ-Zulassung</li><li>Meldebescheinigung</li><li>Zweitwohnungssteuer</li><li>Internationaler Führerschein</li><li>Kurzzeitkennzeichen</li></ul>"
 			},
 			"address": "https://serviceportal.wuppertal.de",
 			"homepage": "https://serviceportal.wuppertal.de",
@@ -1903,9 +1875,6 @@
 			},
 			"longName": {
 				"": "sign-me - Dokumente online unterschreiben"
-			},
-			"shortDescription": {
-				"": "sign-me ermöglicht die Nutzung aller Signaturniveaus der eIDAS-Verordnung - von der einfachen über die fortgeschrittene bis hin zur qualifizierten Online-Unterschrift. Letztere erfüllt das Schriftformerfordernis und ist in der Rechtswirkung der handschriftlichen Unterschrift gleichgestellt."
 			},
 			"longDescription": {
 				"": "Mit sign-me, dem digitalen Service für Ihre sichere Online-Unterschrift, wickeln Sie Ihre papierbasierten Unterschriftsprozesse durchgängig elektronisch ab. Ob Sie europaweit Dokumente austauschen, Transaktionen absichern oder Verträge unterschreiben wollen - mit dem digitalen Signaturservice ist dies möglich: online, komfortabel und rechtsverbindlich. Mit sign-me senken Sie Kosten, optimieren Workflows, verringern Abbruchraten bei Vertragsabschlüssen und verbessern die Kundenzufriedenheit. sign-me ermöglicht die Nutzung aller Signaturniveaus der eIDAS-Verordnung - von der einfachen über die fortgeschrittene bis hin zur qualifizierten Online-Unterschrift. Letztere erfüllt das Schriftformerfordernis und ist in der Rechtswirkung der handschriftlichen Unterschrift gleichgestellt."
@@ -1989,11 +1958,8 @@
 			"longName": {
 				"": "Stadt Hannover - Internetbasierte Fahrzeugzulassung"
 			},
-			"shortDescription": {
-				"": "Neuzulassung, Wiederzulassung, Anmeldung und Abmeldung von Kfz."
-			},
 			"longDescription": {
-				"": "Beim Halterwechsel können Sie übrigens sofort nach der Ummeldung losfahren, wenn Sie das alte Kennzeichen übernehmen. Abmeldung online nur bei Kfz, die nach dem 01.01.2015 zugelassen wurden."
+				"": "Neuzulassung, Wiederzulassung, Anmeldung und Abmeldung von Kfz.<br/>Beim Halterwechsel können Sie übrigens sofort nach der Ummeldung losfahren, wenn Sie das alte Kennzeichen übernehmen. Abmeldung online nur bei Kfz, die nach dem 01.01.2015 zugelassen wurden."
 			},
 			"address": "https://landeshauptstadt-hannover.govconnect.de",
 			"homepage": "https://landeshauptstadt-hannover.govconnect.de",
@@ -2048,6 +2014,46 @@
 			]
 		},
 		{
+			"shortName": {
+				"": "meine pronovabkk - Deine Online-Geschäftsstelle"
+			},
+			"longName": {
+				"": "Online Service der pronova BKK"
+			},
+			"longDescription": {
+				"": "Mit der Online-Geschäftsstelle 'meine pronova BKK' stehen dir kostenlos und bequem viele Services zur Verfügung. So kannst du dir zum Beispiel selbst einen Auslandskrankenschein ausdrucken,  Anträge einreichen oder dein Bonus digital sammeln und auszahlen lassen. Registriere dich noch heute mit der Online-Ausweisfunktion für den Online Service 'meine pronova BKK'."
+			},
+			"address": "https://www.pronovabkk.de/service/online-services/meine-pronova-bkk.html",
+			"homepage": "https://www.pronovabkk.de",
+			"phone": "+49 621 53391 1000",
+			"email": "service@pronovabkk.de",
+			"postalAddress": "pronova BKK<br/>Rheinallee 13<br/>67061 Ludwigshafen",
+			"icon": "pronova_icon.png",
+			"category": "insurance",
+			"subjectUrls": [
+				"https://apptransfer.pronovabkk.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Stadt Remscheid"
+			},
+			"longName": {
+				"": "Stadt Remscheid"
+			},
+			"longDescription": {
+				"": "Die Stadt Remscheid bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://serviceportal.remscheid.de",
+			"homepage": "https://www.remscheid.de",
+			"phone": "+49 2191 16 00",
+			"email": "Serviceportal@remscheid.de",
+			"postalAddress": "Stadt Remscheid<br/>Theodor-Heuss-Platz 1<br/>42853 Remscheid",
+			"icon": "Remscheid_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
 			"exclude": [
 				"ios"
 			],
@@ -2077,6 +2083,9 @@
 			"shortName": {
 				"": "T-Systems DeMail für Großkunden"
 			},
+			"longName": {
+				"": "T-Systems DeMail für Großkunden"
+			},
 			"address": "https://www.t-systems.de/de-mail",
 			"homepage": "https://www.t-systems.de",
 			"phone": "+49 69 20060 0",
@@ -2085,10 +2094,7 @@
 			"category": "other",
 			"subjectUrls": [
 				"https://www.de-mail.t-systems.de"
-			],
-			"longName": {
-				"": "T-Systems DeMail für Großkunden"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -2118,6 +2124,9 @@
 			"shortName": {
 				"": "Urkundenservice Köln"
 			},
+			"longName": {
+				"": "Urkundenservice Köln"
+			},
 			"longDescription": {
 				"": "Bei der Stadt Köln können Sie mit der Online-Ausweisfunktion folgende Urkunden beantragen:<br/><ul><li>Geburtsurkunden</li><li>Eheurkunden</li><li>Lebenspartnerschaftsurkunden</li><li>Sterbeurkunden</li></ul><br/>Dabei werden die Adressatenangaben in den Online-Formularen automatisch befüllt."
 			},
@@ -2129,10 +2138,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://ea.stadt-koeln.de"
-			],
-			"longName": {
-				"": "Urkundenservice Köln"
-			}
+			]
 		},
 		{
 			"exclude": [
@@ -2140,6 +2146,9 @@
 			],
 			"eidSupport": false,
 			"shortName": {
+				"": "Virtuelles Rathaus Stadt Dortmund"
+			},
+						"longName": {
 				"": "Virtuelles Rathaus Stadt Dortmund"
 			},
 			"longDescription": {
@@ -2151,10 +2160,7 @@
 			"email": "domap-feedback@stadtdo.de",
 			"postalAddress": "Stadt Dortmund<br/>Dortmunder Systemhaus<br/>Deggingstraße 42<br/>44122 Dortmund",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw).",
-			"longName": {
-				"": "Virtuelles Rathaus Stadt Dortmund"
-			}
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
 			"exclude": [
@@ -2162,6 +2168,9 @@
 			],
 			"eidSupport": false,
 			"shortName": {
+				"": "Vollstreckungsportal"
+			},
+			"longName": {
 				"": "Vollstreckungsportal"
 			},
 			"longDescription": {
@@ -2174,10 +2183,7 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.vollstreckungsportal.de"
-			],
-			"longName": {
-				"": "Vollstreckungsportal"
-			}
+			]
 		},
 		{
 			"shortName": {
@@ -2209,9 +2215,6 @@
 			},
 			"longName": {
 				"": "Förderportal des Europäischen Sozialfonds"
-			},
-			"shortDescription": {
-				"": "Projektanträge stellen, Bescheide abrufen, Belege hochladen"
 			},
 			"longDescription": {
 				"": "Projektträger können schriftformerforderliche Anträge stellen, Bescheide der Behörde abrufen oder Belege hochladen. Behörden können Bescheiddokumente (z.B. Zuwendungsbescheid) versenden."

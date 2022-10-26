@@ -322,8 +322,6 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 
 #if defined(Q_OS_ANDROID)
 	Q_UNUSED(pReplaceExisting)
-	// Wait for toast activation synchronously so that the app can not be deactivated
-	// in the meantime and all used Java objects are still alive when accessed.
 	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage](){
 			QJniEnvironment env;
 
@@ -347,7 +345,7 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 				// since it is used to display information to the user as required by the TR.
 				Q_ASSERT(false);
 			}
-		}).waitForFinished();
+		});
 #else
 	if (pReplaceExisting)
 	{

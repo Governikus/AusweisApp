@@ -155,7 +155,7 @@ Rectangle {
 				id: providerText
 				width: parent.width
 				text: selectedProvider ? selectedProvider.longName : ""
-				visible: text.length > 0 && selectedProvider.longName !== selectedProvider.shortName
+				visible: text.length > 0
 			}
 
 			GButton {

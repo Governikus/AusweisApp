@@ -4,6 +4,8 @@
 
 #include "ReaderConfigurationParser.h"
 
+#include "JsonValueRef.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -14,12 +16,6 @@
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card_drivers)
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-using JsonValueRef = const QJsonValueRef;
-#else
-using JsonValueRef = const QJsonValue&;
-#endif
 
 ReaderConfigurationParser::EntryParser::EntryParser(const QJsonValue& pJsonValue)
 	: mJsonValue(pJsonValue)

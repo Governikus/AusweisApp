@@ -26,6 +26,12 @@ MockCardConnectionWorker::~MockCardConnectionWorker()
 }
 
 
+const QList<CommandApdu>& MockCardConnectionWorker::getCommands() const
+{
+	return mCommands;
+}
+
+
 void MockCardConnectionWorker::addResponse(CardReturnCode pCode, const QByteArray& pData)
 {
 	mResponseCodes += pCode;
@@ -65,7 +71,8 @@ CardReturnCode MockCardConnectionWorker::readFile(const FileRef& pFileRef, QByte
 
 ResponseApduResult MockCardConnectionWorker::transmit(const CommandApdu& pCommandApdu)
 {
-	Q_UNUSED(pCommandApdu)
+	mCommands += pCommandApdu;
+
 	return getMockedResponse();
 }
 

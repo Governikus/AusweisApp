@@ -139,7 +139,6 @@ void ConnectRequest::onConnected()
 	{
 		qCDebug(ifd) << "Pairing completed | Add certificate:" << cfg.peerCertificate();
 		settings.addTrustedCertificate(cfg.peerCertificate());
-		settings.save();
 	}
 	else
 	{
