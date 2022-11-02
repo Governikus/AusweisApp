@@ -1,0 +1,14 @@
+AusweisApp2 1.24.4
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 2. November 2022
+
+
+Anwender
+""""""""
+- Mögliche Abstürze durch OpenSSL (denial of service) behoben.
+
+
+Entwickler
+""""""""""
+- Aktualisierung von OpenSSL auf die Version 3.0.7.

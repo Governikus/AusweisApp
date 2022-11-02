@@ -39,7 +39,7 @@ function(SELF_GENERATED)
 			execute_process(COMMAND install_name_tool -id @rpath/${filename_stripped} ${f})
 		endforeach()
 
-		execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/SignFiles.cmake WORKING_DIRECTORY ${BundleDir} RESULT_VARIABLE _result)
+		execute_process(COMMAND ${CMAKE_COMMAND} -DIOS=${IOS} -P ${CMAKE_BINARY_DIR}/SignFiles.cmake WORKING_DIRECTORY ${BundleDir} RESULT_VARIABLE _result)
 		if(NOT ${_result} EQUAL 0)
 			message(FATAL_ERROR "Signing failed")
 		endif()

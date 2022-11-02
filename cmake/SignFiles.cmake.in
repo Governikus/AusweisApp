@@ -77,9 +77,9 @@ else()
 endif()
 
 message(STATUS "Sign in directory: ${CMAKE_BINARY_DIR}")
-message(STATUS "Sign extensions: ${FILE_EXTENSIONS}")
 file(GLOB_RECURSE FILES RELATIVE "${CMAKE_BINARY_DIR}" ${FILE_EXTENSIONS})
 if(APPLE)
+	list(APPEND FILE_EXTENSIONS *.framework)
 	file(GLOB_RECURSE DIRECTORIES LIST_DIRECTORIES true RELATIVE "${CMAKE_BINARY_DIR}" *)
 	foreach(entry ${DIRECTORIES})
 		if(${entry} MATCHES ".framework$")
@@ -87,7 +87,7 @@ if(APPLE)
 		endif()
 	endforeach()
 endif()
-
+message(STATUS "Sign extensions: ${FILE_EXTENSIONS}")
 message(STATUS "Sign: ${FILES}")
 
 
