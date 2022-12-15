@@ -14,6 +14,8 @@
 #include <QSharedPointer>
 #include <QTimer>
 
+class test_UIPlugInWebService;
+
 namespace governikus
 {
 
@@ -29,12 +31,14 @@ class HttpServerRequestor
 	: public QObject
 {
 	Q_OBJECT
+	friend class ::test_UIPlugInWebService;
 
 	private:
 		QPointer<NetworkManager> mNetworkManager;
 		QEventLoop mEventLoop;
 		QTimer mTimer;
 
+		[[nodiscard]] QSharedPointer<QNetworkReply> getRequest(QNetworkRequest pRequest, int pTimeOut = 2000);
 		[[nodiscard]] QPointer<NetworkManager> getNetworkManager(bool pCustomNetworkManager);
 		[[nodiscard]] QSharedPointer<QNetworkReply> waitForReply(QSharedPointer<QNetworkReply> pReply, int pTimeOut);
 

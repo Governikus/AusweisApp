@@ -208,7 +208,6 @@ UIPlugInQml::UIPlugInQml()
 			Q_EMIT fireQuitApplicationRequest();
 		});
 
-	connect(this, &UIPlugIn::fireShowUserInformation, this, &UIPlugInQml::onShowUserInformation);
 	qApp->installEventFilter(this);
 }
 

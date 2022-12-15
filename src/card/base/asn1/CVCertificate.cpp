@@ -117,7 +117,7 @@ QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pBy
 
 QByteArray CVCertificate::encode() const
 {
-	return encodeObject(const_cast<CVCertificate*>(this));
+	return encodeObject(this);
 }
 
 

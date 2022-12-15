@@ -16,6 +16,10 @@
 #include <QSysInfo>
 #include <openssl/crypto.h>
 
+#ifdef Q_OS_WIN
+	#include <windows.h>
+#endif
+
 using namespace governikus;
 
 #ifdef Q_OS_ANDROID
@@ -216,6 +220,34 @@ CertificateType BuildHelper::getCertificateType()
 {
 	static const CertificateType cert = fetchCertificateType();
 	return cert;
+}
+
+
+bool BuildHelper::fetchUserInteractive()
+{
+	bool isInteractive = true;
+
+#ifdef Q_OS_WIN
+	HWINSTA station = GetProcessWindowStation();
+	if (station != nullptr)
+	{
+		USEROBJECTFLAGS flags;
+		if (GetUserObjectInformation(station, UOI_FLAGS, &flags, sizeof(USEROBJECTFLAGS), nullptr)
+				&& ((flags.dwFlags & WSF_VISIBLE) == 0))
+		{
+			isInteractive = false;
+		}
+	}
+#endif
+
+	return isInteractive;
+}
+
+
+bool BuildHelper::isUserInteractive()
+{
+	static const bool isInteractive = fetchUserInteractive();
+	return isInteractive;
 }
 
 

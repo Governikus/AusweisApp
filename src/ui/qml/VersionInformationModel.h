@@ -34,9 +34,9 @@ class VersionInformationModel
 		void init();
 
 	public:
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 };
 
 } // namespace governikus

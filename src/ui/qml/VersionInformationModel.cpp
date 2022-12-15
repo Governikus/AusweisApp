@@ -55,7 +55,7 @@ QVariant VersionInformationModel::data(const QModelIndex& pIndex, int pRole) con
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		const auto& entry = qAsConst(mData).at(pIndex.row());
+		const auto& entry = std::as_const(mData).at(pIndex.row());
 		if (pRole == LABEL)
 		{
 			return entry.first;

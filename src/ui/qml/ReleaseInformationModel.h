@@ -43,10 +43,10 @@ class ReleaseInformationModel
 	public:
 		ReleaseInformationModel();
 		~ReleaseInformationModel() override = default;
-		FormattedTextModel* getCurrentRelease() const;
-		FormattedTextModel* getUpdateRelease() const;
+		[[nodiscard]] FormattedTextModel* getCurrentRelease() const;
+		[[nodiscard]] FormattedTextModel* getUpdateRelease() const;
 		Q_INVOKABLE void update();
-		bool allowRetry() const;
+		[[nodiscard]] bool allowRetry() const;
 
 	public Q_SLOTS:
 		void onTranslationChanged() const;

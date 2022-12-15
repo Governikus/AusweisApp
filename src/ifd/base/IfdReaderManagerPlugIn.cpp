@@ -27,9 +27,8 @@ void IfdReaderManagerPlugIn::removeDispatcher(const QString& pId)
 			continue;
 		}
 
-		auto* reader = mReaderList.take(readerName);
+		QScopedPointer reader(mReaderList.take(readerName));
 		Q_EMIT fireReaderRemoved(reader->getReaderInfo());
-		delete reader;
 		mReadersForDispatcher.remove(pId, readerName);
 	}
 
@@ -44,7 +43,7 @@ void IfdReaderManagerPlugIn::removeDispatcher(const QString& pId)
 
 void IfdReaderManagerPlugIn::removeAllDispatchers()
 {
-	for (const auto& dispatcher : qAsConst(mDispatcherList))
+	for (const auto& dispatcher : std::as_const(mDispatcherList))
 	{
 		QMetaObject::invokeMethod(dispatcher.data(), &IfdDispatcher::close, Qt::QueuedConnection);
 	}
@@ -77,10 +76,9 @@ void IfdReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, con
 		{
 			qCDebug(card_remote) << "Removed reader" << readerName;
 
-			if (auto* reader = mReaderList.take(readerName); reader)
+			if (QScopedPointer reader(mReaderList.take(readerName)); reader)
 			{
 				Q_EMIT fireReaderRemoved(reader->getReaderInfo());
-				delete reader;
 				mReadersForDispatcher.remove(pId, readerName);
 			}
 		}

@@ -207,7 +207,7 @@ QByteArray Discovery::toByteArray(IfdVersion::Version pIfdVersion, const QString
 	result[PORT()] = mPort;
 
 	QJsonArray levels;
-	for (const auto& level : qAsConst(mSupportedApis))
+	for (const auto& level : std::as_const(mSupportedApis))
 	{
 		levels += IfdVersion(level).toString();
 	}

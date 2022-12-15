@@ -32,17 +32,17 @@ class PinResetInformationModel
 	public:
 		PinResetInformationModel();
 
-		QUrl getPinResetUrl() const;
-		QString getPinUnknownText() const;
-		QString getPinUnknownHint() const;
-		QString getNoPinAndNoPukHint() const;
-		QString getNoPinAndNoTransportPinHint() const;
-		QString getPinForgottenHint() const;
-		QString getPinForgottenTutorialHint() const;
-		QString getRequestNewPinHint() const;
-		QString getActivateOnlineFunctionHint() const;
-		QString getActivateOnlineFunctionDescription() const;
-		QString getPinResetActionText() const;
+		[[nodiscard]] QUrl getPinResetUrl() const;
+		[[nodiscard]] QString getPinUnknownText() const;
+		[[nodiscard]] QString getPinUnknownHint() const;
+		[[nodiscard]] QString getNoPinAndNoPukHint() const;
+		[[nodiscard]] QString getNoPinAndNoTransportPinHint() const;
+		[[nodiscard]] QString getPinForgottenHint() const;
+		[[nodiscard]] QString getPinForgottenTutorialHint() const;
+		[[nodiscard]] QString getRequestNewPinHint() const;
+		[[nodiscard]] QString getActivateOnlineFunctionHint() const;
+		[[nodiscard]] QString getActivateOnlineFunctionDescription() const;
+		[[nodiscard]] QString getPinResetActionText() const;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

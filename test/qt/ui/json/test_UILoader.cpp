@@ -33,6 +33,14 @@ class test_UILoader
 			QVERIFY(loader.load<UIPlugInJson>()); // already loaded
 			QVERIFY(loader.getLoaded<UIPlugInJson>());
 			QCOMPARE(spyLoaded.count(), 1);
+			QVERIFY(loader.initialize());
+			QVERIFY(loader.requiresReaderManager());
+
+			const auto* ui = loader.getLoaded<UIPlugInJson>();
+			QCOMPARE(ui->property("default"), QVariant());
+			QCOMPARE(ui->property("passive"), QVariant(true));
+			QCOMPARE(ui->property("userInteractive"), QVariant());
+			QCOMPARE(ui->property("readerManager"), QVariant());
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("json"))");
@@ -92,6 +100,7 @@ class test_UILoader
 			QSignalSpy spyLoaded(&loader, &UILoader::fireLoadedPlugin);
 			QVERIFY(!loader.load());
 			QVERIFY(!loader.isLoaded());
+			QVERIFY(loader.initialize()); // empty list is ok
 			QCOMPARE(spyLoaded.count(), 0);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
@@ -126,7 +135,7 @@ class test_UILoader
 		void fireShutdownNoUi() // no ui loaded
 		{
 			auto loader = QSharedPointer<UILoader>::create();
-			QSignalSpy spyShutdown(loader.get(), &UILoader::fireShutdownComplete);
+			QSignalSpy spyShutdown(loader.get(), &UILoader::fireRemovedAllPlugins);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
@@ -142,7 +151,7 @@ class test_UILoader
 		void fireShutdownBeforeDtor() // ui loaded, shutdown before dtor
 		{
 			auto loader = QSharedPointer<UILoader>::create();
-			QSignalSpy spyShutdown(loader.data(), &UILoader::fireShutdownComplete);
+			QSignalSpy spyShutdown(loader.data(), &UILoader::fireRemovedAllPlugins);
 
 			QTest::ignoreMessage(QtDebugMsg, R"(Try to load UI plugin: "json")");
 			QVERIFY(loader->load<UIPlugInJson>());
@@ -164,7 +173,7 @@ class test_UILoader
 		void noFireShutdownDtor() // ui loaded, but dtor won't fire
 		{
 			auto loader = QSharedPointer<UILoader>::create();
-			QSignalSpy spyShutdown(loader.data(), &UILoader::fireShutdownComplete);
+			QSignalSpy spyShutdown(loader.data(), &UILoader::fireRemovedAllPlugins);
 
 			QTest::ignoreMessage(QtDebugMsg, R"(Try to load UI plugin: "json")");
 			QVERIFY(loader->load<UIPlugInJson>());
@@ -176,7 +185,7 @@ class test_UILoader
 
 			// We call deleteLater and add a lambda with QueuedConnection.
 			// So the lambda will be disconnected if loader is destroyed abd
-			// we never get a fireShutdownComplete here. Even we don't have
+			// we never get a fireRemovedAllPlugins here. Even we don't have
 			// blockSignals in dtor.
 			QCOMPARE(spyShutdown.count(), 0);
 		}

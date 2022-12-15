@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "WifiInfo.h"
 #include "context/WorkflowContext.h"
@@ -72,7 +71,6 @@ class ApplicationModel
 		ApplicationModel();
 		~ApplicationModel() override = default;
 		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
-		ReaderManagerPlugInInfo getFirstPlugInInfo(ReaderManagerPlugInType pType) const;
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(Qt::ApplicationState pState);
@@ -112,26 +110,26 @@ class ApplicationModel
 
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
-		Q_INVOKABLE int randomInt(int pLowerBound, int pUpperBound) const;
+		[[nodiscard]] Q_INVOKABLE int randomInt(int pLowerBound, int pUpperBound) const;
 
-		QString getStoreUrl() const;
-		QUrl getReleaseNotesUrl() const;
+		[[nodiscard]] QString getStoreUrl() const;
+		[[nodiscard]] QUrl getReleaseNotesUrl() const;
 
-		QmlNfcState getNfcState() const;
-		bool isExtendedLengthApdusUnsupported() const;
+		[[nodiscard]] QmlNfcState getNfcState() const;
+		[[nodiscard]] bool isExtendedLengthApdusUnsupported() const;
 
-		bool isWifiEnabled() const;
-		qreal getScaleFactor() const;
+		[[nodiscard]] bool isWifiEnabled() const;
+		[[nodiscard]] qreal getScaleFactor() const;
 		void setScaleFactor(qreal pScaleFactor);
 
-		Workflow getCurrentWorkflow() const;
-		int getAvailableReader() const;
+		[[nodiscard]] Workflow getCurrentWorkflow() const;
+		[[nodiscard]] int getAvailableReader() const;
 
-		QString getFeedback() const;
+		[[nodiscard]] QString getFeedback() const;
 
-		Q_INVOKABLE bool isScreenReaderRunning() const;
+		[[nodiscard]] Q_INVOKABLE bool isScreenReaderRunning() const;
 
-		Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const;
+		[[nodiscard]] Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const;
 
 		Q_INVOKABLE void enableWifi();
 
@@ -139,14 +137,14 @@ class ApplicationModel
 		Q_INVOKABLE void showSettings(const Settings& pAction);
 		Q_INVOKABLE void showFeedback(const QString& pMessage, bool pReplaceExisting = false);
 		Q_INVOKABLE void keepScreenOn(bool pActive);
-		Q_INVOKABLE QStringList getLicenseText() const;
+		[[nodiscard]] Q_INVOKABLE QStringList getLicenseText() const;
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-		Q_INVOKABLE QString onlineHelpUrl(const QString& pHelpSectionName);
+		[[nodiscard]] Q_INVOKABLE QString onlineHelpUrl(const QString& pHelpSectionName);
 		Q_INVOKABLE void openOnlineHelp(const QString& pHelpSectionName);
-		Q_INVOKABLE QUrl getCustomConfigPath();
+		[[nodiscard]] Q_INVOKABLE QUrl getCustomConfigPath();
 		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename);
 #endif
-		Q_INVOKABLE QString stripHtmlTags(QString pString) const;
+		[[nodiscard]] Q_INVOKABLE QString stripHtmlTags(QString pString) const;
 #ifdef Q_OS_IOS
 		Q_INVOKABLE void showAppStoreRatingDialog();
 #endif

@@ -248,7 +248,7 @@
 			"phone": "+49 30 25 98 0",
 			"postalAddress": "D-Trust GmbH<br/>Kommandantenstraße 15<br/>10969 Berlin",
 			"image": "ausweisident_image.jpg",
-			"icon": "ausweisident_icon.png",
+			"icon": "ausweisident_icon.svg",
 			"category": "other",
 			"subjectUrls": [
 				"https://ausweisident.eid-service.de"
@@ -287,7 +287,7 @@
 			"longDescription": {
 				"": "Mit Ihrer Online-Ausweisfunktion können Sie sich beim Bundesverwaltungsamt für das BAföG-Rückzahlungsverfahren anmelden und sowohl Ihre persönlichen Daten als auch die erforderlichen Nachweise sicher und schnell elektronisch übermitteln. Sie müssen die Nachweise nicht mehr per Post senden.<br/>Die Online-Ausweisfunktion vereinfacht und beschleunigt das BAföG-Rückzahlungsverfahren."
 			},
-			"phone": "+49 22899358 4500",
+			"phone": "+49 22899358 45454",
 			"postalAddress": "Bundesverwaltungsamt<br/>BT-BAföG<br/>50728 Köln",
 			"category": "citizen",
 			"subjectUrls": [
@@ -375,14 +375,14 @@
 				"": "Bundesagentur für Arbeit"
 			},
 			"longDescription": {
-				"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich bei der Bundesagentur für Arbeit einfach und zuverlässig anmelden oder registrieren. So nutzen Sie bequem viele eServices rund um die Themen Geldleistungen der Bundesagentur für Arbeit und der Familienkasse, Jobsuche sowie Berufs- und Studienwahl. Sie haben u.a. die Möglichkeit:<br/><ul><li>Arbeitslosengeld zu beantragen</li><li>sich arbeitssuchend zu melden</li><li>einen Ausbildungs- und Studienwahltest durchzuführen.</li></ul><br/>Die Bundesagentur für Arbeit arbeitet stetig an der Ausweitung des Onlineangebots. Zukünftig können mit der Online-Ausweisfunktion auch weitere Dienste komplett digital in Anspruch genommen werden."
+				"": "Das Online-Portal der Bundesagentur für Arbeit bietet viele eServices rund um die Themen Geldleistungen, Jobsuche sowie Berufs- und Studienwahl.<br/><br/>Mit der Online-Ausweisfunktion können Sie viele der angebotenen eServices durchgängig und ohne Unterbrechung nutzen.<br/><br/>Sie können u.a.<br/><ul><li>im Online-Portal der Bundesagentur für Arbeit erweiterte Funktionen nutzen, die eine höhere Sicherheit erfordern</li><li>sich im Online-Prozess ausweisen (z. B. bei der Online-Arbeitslosmeldung)</li><li>eine notwendige Unterschrift digital ersetzen (z. B. bei einem Widerspruch)</li></ul><br/>Die Bundesagentur für Arbeit arbeiten stetig an der Ausweitung ihres Onlineangebots, sodass immer mehr Dienste digital in Anspruch genommen werden können."
 			},
 			"address": "https://www.arbeitsagentur.de/npa",
 			"homepage": "https://www.arbeitsagentur.de",
 			"phone": "+49 911 179 0",
 			"email": "Zentrale@arbeitsagentur.de",
 			"postalAddress": "Bundesagentur für Arbeit<br/>Regensburger Straße 104<br/>90478 Nürnberg",
-			"category": "other",
+			"category": "citizen",
 			"subjectUrls": [
 				"https://formular.arbeitsagentur.de"
 			]
@@ -457,7 +457,7 @@
 			"longDescription": {
 				"": "Das Bürgerportal ,mein service-bw' bietet Bürgerinnen und Bürgern mit dem Personalausweis praktische Anwendungen für die Online-Ausweisfunktion. Das Portal bietet seinen Nutzern unter anderem:<br/><ul><li>sicheres Registrieren und Anmelden, um Behördengänge im Internet zu erledigen</li><li>verschlüsselte Ablage persönlicher Daten und Dateien in einem Datenspeicher im Internet, dem sogenannten Dokumentensafe</li><li>orts- und zeitunabhängiger Zugang zu den Daten im Dokumentensafe sowie die Möglichkeit, diese elektronisch an Behörden weiterzuleiten (z. B. für eine Gewerbeanmeldung).</li></ul>"
 			},
-			"address": "https://service-bw.de/zfinder-bw-web/welcome.do?showMsbwDetails=1",
+			"address": "https://www.service-bw.de",
 			"homepage": "https://www.service-bw.de",
 			"email": "service-bw@im.bwl.de",
 			"postalAddress": "Ministerium für Inneres, Digitalisierung und Migration Baden-Württemberg<br/>Willy-Brandt-Straße 41<br/>70173 Stuttgart",
@@ -1490,6 +1490,25 @@
 		},
 		{
 			"shortName": {
+				"": "Onlinedienste der Kreisverwaltung Coesfeld"
+			},
+			"longName": {
+				"": "Onlinedienste der Kreisverwaltung Coesfeld"
+			},
+			"longDescription": {
+				"": "In unserem Serviceportal können Sie bereits viele Anträge an die Kreisverwaltung Coesfeld direkt online stellen und zur Bearbeitung an die zuständigen Stellen einreichen."
+			},
+			"address": "https://www.kreis-coesfeld.de",
+			"homepage": "https://serviceportal.kreis-coesfeld.de",
+			"phone": "+49 2541 18 0",
+			"email": "info@kreis-coesfeld.de",
+			"postalAddress": "Kreis Coesfeld<br/>Friedrich-Ebert-Straße 7<br/>48653 Coesfeld",
+			"icon": "Coesfeld_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
 				"": "Rhein-Neckar-Kreis - iKFZ"
 			},
 			"longName": {
@@ -2015,20 +2034,20 @@
 		},
 		{
 			"shortName": {
-				"": "meine pronovabkk - Deine Online-Geschäftsstelle"
+				"": "Pronova BKK - Online-Service-Center"
 			},
 			"longName": {
-				"": "Online Service der pronova BKK"
+				"": "Online-Service der Pronova BKK"
 			},
 			"longDescription": {
-				"": "Mit der Online-Geschäftsstelle 'meine pronova BKK' stehen dir kostenlos und bequem viele Services zur Verfügung. So kannst du dir zum Beispiel selbst einen Auslandskrankenschein ausdrucken,  Anträge einreichen oder dein Bonus digital sammeln und auszahlen lassen. Registriere dich noch heute mit der Online-Ausweisfunktion für den Online Service 'meine pronova BKK'."
+				"": "Mit dem Online-Service-Center 'Pronova BKK' stehen dir kostenlos und bequem viele Services zur Verfügung. So kannst du dir zum Beispiel selbst einen Auslandskrankenschein ausdrucken, Anträge einreichen oder dein Bonus digital sammeln und auszahlen lassen. Registriere dich noch heute mit der Online-Ausweisfunktion für den Online-Service 'Pronova BKK'."
 			},
 			"address": "https://www.pronovabkk.de/service/online-services/meine-pronova-bkk.html",
 			"homepage": "https://www.pronovabkk.de",
 			"phone": "+49 621 53391 1000",
 			"email": "service@pronovabkk.de",
 			"postalAddress": "pronova BKK<br/>Rheinallee 13<br/>67061 Ludwigshafen",
-			"icon": "pronova_icon.png",
+			"icon": "Pronova_icon.svg",
 			"category": "insurance",
 			"subjectUrls": [
 				"https://apptransfer.pronovabkk.de"
@@ -2148,7 +2167,7 @@
 			"shortName": {
 				"": "Virtuelles Rathaus Stadt Dortmund"
 			},
-						"longName": {
+			"longName": {
 				"": "Virtuelles Rathaus Stadt Dortmund"
 			},
 			"longDescription": {

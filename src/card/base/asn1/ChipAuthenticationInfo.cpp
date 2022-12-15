@@ -50,6 +50,27 @@ ASN1_OBJECT* ChipAuthenticationInfo::getProtocolObjectIdentifier() const
 }
 
 
+QSharedPointer<const ChipAuthenticationInfo> ChipAuthenticationInfo::decode(const QByteArray& pBytes)
+{
+	if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes, false))
+	{
+		if (ChipAuthenticationInfo::acceptsProtocol(delegate->mProtocol))
+		{
+			const auto& si = QSharedPointer<const ChipAuthenticationInfo>::create(delegate);
+			qCDebug(card) << "Parsed SecurityInfo:" << si;
+			return si;
+		}
+	}
+	return QSharedPointer<const ChipAuthenticationInfo>();
+}
+
+
+QByteArray ChipAuthenticationInfo::encode() const
+{
+	return encodeObject(mDelegate.data());
+}
+
+
 int ChipAuthenticationInfo::getVersion() const
 {
 	return Asn1IntegerUtil::getValue(mDelegate->mVersion);

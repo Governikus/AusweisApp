@@ -4,6 +4,8 @@
 
 #include "PaosParser.h"
 
+#include "paos/invoke/PaosCreator.h"
+
 #include <QDebug>
 
 using namespace governikus;
@@ -24,11 +26,11 @@ PaosMessage* PaosParser::parse(const QByteArray& pXmlData)
 {
 	PaosMessage* message = nullptr;
 
-	mXmlReader->addData(pXmlData);
+	initData(pXmlData);
 
 	while (readNextStartElement())
 	{
-		if (mXmlReader->name() == QLatin1String("Envelope"))
+		if (getElementName() == QLatin1String("Envelope"))
 		{
 			if (!assertNoDuplicateElement(message == nullptr))
 			{
@@ -46,11 +48,11 @@ PaosMessage* PaosParser::parse(const QByteArray& pXmlData)
 		}
 		else
 		{
-			mXmlReader->skipCurrentElement();
+			skipCurrentElement();
 		}
 	}
 
-	if (mParseError)
+	if (parserFailed())
 	{
 		delete message;
 		message = nullptr;
@@ -66,30 +68,38 @@ PaosMessage* PaosParser::parse(const QByteArray& pXmlData)
 }
 
 
+QStringView PaosParser::getElementType() const
+{
+	QString ns = PaosCreator::getNamespace(PaosCreator::Namespace::XSI);
+	return getElementTypeByNamespace(ns);
+}
+
+
 PaosMessage* PaosParser::parseEnvelope()
 {
 	PaosMessage* message = nullptr;
 
 	while (readNextStartElement())
 	{
-		if (mXmlReader->name() == QLatin1String("Body"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("Body"))
 		{
 			if (assertNoDuplicateElement(message == nullptr))
 			{
 				message = parseBody();
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("Header"))
+		else if (name == QLatin1String("Header"))
 		{
 			parseHeader();
 		}
 		else
 		{
-			mXmlReader->skipCurrentElement();
+			skipCurrentElement();
 		}
 	}
 
-	if (!mParseError && message == nullptr)
+	if (!parserFailed() && message == nullptr)
 	{
 		qCWarning(paos) << "Element Body not found";
 	}
@@ -102,17 +112,18 @@ void PaosParser::parseHeader()
 {
 	while (readNextStartElement())
 	{
-		if (mXmlReader->name() == QLatin1String("MessageID"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("MessageID"))
 		{
 			mMessageID = readElementText();
 		}
-		else if (mXmlReader->name() == QLatin1String("RelatesTo"))
+		else if (name == QLatin1String("RelatesTo"))
 		{
 			mRelatesTo = readElementText();
 		}
 		else
 		{
-			mXmlReader->skipCurrentElement();
+			skipCurrentElement();
 		}
 	}
 }
@@ -124,7 +135,7 @@ PaosMessage* PaosParser::parseBody()
 
 	while (readNextStartElement())
 	{
-		if (mXmlReader->name() == mMessageName)
+		if (getElementName() == mMessageName)
 		{
 			if (assertNoDuplicateElement(message == nullptr))
 			{
@@ -133,11 +144,11 @@ PaosMessage* PaosParser::parseBody()
 		}
 		else
 		{
-			mXmlReader->skipCurrentElement();
+			skipCurrentElement();
 		}
 	}
 
-	if (!mParseError && message == nullptr)
+	if (!parserFailed() && message == nullptr)
 	{
 		qCWarning(paos) << "Element" << mMessageName << "not found";
 	}

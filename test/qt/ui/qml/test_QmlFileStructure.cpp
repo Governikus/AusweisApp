@@ -39,7 +39,7 @@ class test_QmlFileStructure
 		{
 			QTest::addColumn<QFileInfo>("qmlFile");
 
-			for (const QString& file : qAsConst(mQmlFiles))
+			for (const QString& file : std::as_const(mQmlFiles))
 			{
 				const QFileInfo info(file);
 				QTest::newRow(info.fileName().toLatin1().data()) << info;
@@ -65,7 +65,7 @@ class test_QmlFileStructure
 		{
 			QTest::addColumn<QFileInfo>("qmlFile");
 
-			for (const QString& file : qAsConst(mQmlFiles))
+			for (const QString& file : std::as_const(mQmlFiles))
 			{
 				if (file.contains(QLatin1String("+phone")) || file.contains(QLatin1String("+tablet")))
 				{

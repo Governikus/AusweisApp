@@ -1,9 +1,7 @@
 /*
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -12,21 +10,19 @@ import Governikus.Provider 1.0
 
 BaseProviderView {
 	id: baseItem
-
-	titleBarOpacity: headerItem.titleBarOpacity
 	contentBehindTitlebar: true
 	rightTitleBarAction: searchBar
-	searchBar: SearchBar {
-		availableWidth: baseItem.width - Style.dimens.menubar_width
-	}
+	titleBarOpacity: headerItem.titleBarOpacity
 
 	headerComponent: Component {
 		ProviderHeader {
-			width: baseItem.width
-
 			selectedCategory: baseItem.category
+			width: baseItem.width
 
 			onCategorySelected: ProviderCategoryFilterModel.setCategorySelection(category)
 		}
+	}
+	searchBar: SearchBar {
+		availableWidth: baseItem.width - Style.dimens.menubar_width
 	}
 }

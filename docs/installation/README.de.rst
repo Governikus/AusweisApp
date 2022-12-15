@@ -13,7 +13,7 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
 INSTALLDIR
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
@@ -28,6 +28,16 @@ DESKTOPSHORTCUT
   Durch Angabe von DESKTOPSHORTCUT=false kann die Erstellung einer
   Desktop-Verknüpfung vermieden werden. Ohne Angabe des Parameters wird eine
   Desktop-Verknüpfung für alle Benutzer erstellt (true).
+
+PROXYSERVICE
+  Um den parallelen Betrieb mehrer Instanzen der AusweisApp2 zu ermöglichen, ist
+  der Proxy-Dienst notwendig. Der Proxy-Dienst übernimmt die Überwachung von Port
+  24727 (definiert in BSI TR-03124-1) und leitet Anfragen an die lokalen Instanzen
+  der AusweisApp2 weiter. Eine Weiterleitung der Discovery-Nachrichten (Ergänzung
+  zu BSI TR-03112-6 - IFD Service - Kapitel 3) erfolgt nicht, so dass SaK-Geräte
+  in diesem Betriebsmodus nicht erkannt bzw. genutzt werden können. Ohne Angabe des
+  Parameters wird der Proxy-Dienst automatisch eingerichtet, wenn Terminaldienste
+  installiert sind und das System im Anwendungsservermodus ausgeführt wird.
 
 AUTOSTART
   Durch Angabe von AUTOSTART=true wird ein Autostart-Eintrag für alle Benutzer
@@ -249,6 +259,11 @@ Anwendungen über eine Websocket-Schnittstelle angeboten (SDK-Funktion, eID-SDK)
 Daher müssen eingehende lokale Netzwerkverbindungen auf dem TCP Port 24727
 ermöglicht werden.
 
+Bei aktiviertem Proxy-Dienst übernimmt der AusweisApp2-Proxy die Serverfunktionen
+der AusweisApp2 auf Port 24727. Die Instanzen der AusweisApp2 erkennen den Proxy
+und benutzen in diesem Fall einen zufälligen freien Port auf den der Proxy die
+Anfragen weiterleitet.
+
 Für die Verwendung von der "Smartphone als Kartenleser"-Funktion über WLAN
 müssen außerdem Broadcasts auf UDP Port 24727 im lokalen Subnetz empfangen
 werden können.
@@ -293,14 +308,15 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    :header: "Referenz", "Protokoll", "Port", "Richtung", "Optional", "Zweck", "Anmerkungen"
    :widths: 8, 8, 8, 8, 8, 35, 25
 
-   "eID1",	TCP, 24727,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",										    "Nur erreichbar von localhost [#TR-03124]_"
-   "eID2",	TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Anbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
-   "eID3",      TCP, 443,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",								    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
-   "eID-SDK",	TCP, 24727,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
-   "SaK1",	UDP, 24727,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
-   "SaK2",	TCP, ,       "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
-   "Update",	TCP, 443,    "ausgehend", "Ja",   "Updates [#govurl]_ zu Anbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
+   "eID1",	TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",										    "Nur erreichbar von localhost [#TR-03124]_"
+   "eID2",	TCP, 443,                 "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Anbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID3",      TCP, 443,                 "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",								    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID-SDK",	TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
+   "SaK1",	UDP, 24727 [#aa2proxy]_,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
+   "SaK2",	TCP, ,                    "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
+   "Update",	TCP, 443,                 "ausgehend", "Ja",   "Updates [#govurl]_ zu Anbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
 
+.. [#aa2proxy] Oder ein zufälliger Port bei Verwendung des AusweisApp2-Proxys.
 .. [#TR-03124] Siehe TR-03124 des BSI
 .. [#TR-03112] Siehe TR-03112-6 des BSI
 .. [#govurl] Erreichbar unter dem URL https://appl.governikus-asp.de/ausweisapp2/

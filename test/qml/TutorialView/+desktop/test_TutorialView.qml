@@ -1,16 +1,10 @@
 /*
  * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtTest 1.15
 
 TestCase {
 	id: testCase
-
-	name: "test_TutorialView"
-	visible: true
-	when: windowShown
-
 	function createTestObject() {
 		return createTemporaryQmlObject("
 			import QtQuick 2.15
@@ -24,12 +18,14 @@ TestCase {
 
 				SetupAssistantView {}
 			}
-		", testCase)
+		", testCase);
 	}
-
 	function test_load() {
-		let testObject = createTestObject()
-		verify(testObject, "Object loaded")
+		let testObject = createTestObject();
+		verify(testObject, "Object loaded");
 	}
 
+	name: "test_TutorialView"
+	visible: true
+	when: windowShown
 }

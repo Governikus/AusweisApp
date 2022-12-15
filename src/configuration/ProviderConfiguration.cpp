@@ -56,7 +56,7 @@ void ProviderConfiguration::onFileUpdated()
 {
 	if (mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseProviderConfiguration(pPath);}))
 	{
-		for (const ProviderConfigurationInfo& info : qAsConst(mProviderConfigurationInfos))
+		for (const ProviderConfigurationInfo& info : std::as_const(mProviderConfigurationInfos))
 		{
 			info.getIcon()->markDirty();
 			info.getImage()->markDirty();
@@ -113,7 +113,7 @@ CallCost ProviderConfiguration::getCallCost(const ProviderConfigurationInfo& pPr
 
 ProviderConfigurationInfo ProviderConfiguration::getProviderInfo(const QString& pInternalId) const
 {
-	for (const auto& info : qAsConst(mProviderConfigurationInfos))
+	for (const auto& info : std::as_const(mProviderConfigurationInfos))
 	{
 		if (info.getInternalId() == pInternalId)
 		{

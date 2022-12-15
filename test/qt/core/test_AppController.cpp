@@ -154,7 +154,7 @@ class test_AppController
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Auto-approving the current state");
 			QTest::ignoreMessage(QtDebugMsg, "Enqueue workflow: AUTH");
-			mController->onAuthenticationContextRequest(context);
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
 			QVERIFY(mController->mActiveWorkflow->getController()->getContext()->isStateApproved());
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
@@ -164,7 +164,7 @@ class test_AppController
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
 			QTest::ignoreMessage(QtWarningMsg, "Skip workflow: AUTH | Current workflow: SELF");
 			QTest::ignoreMessage(QtDebugMsg, "Waiting workflow: AUTH");
-			mController->onAuthenticationContextRequest(context);
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
 		}
 
 
@@ -175,7 +175,7 @@ class test_AppController
 			mController->onWorkflowRequested(ChangePinController::createWorkflowRequest());
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
 			QTest::ignoreMessage(QtCriticalMsg, R"(Cannot send "Operation already active" to caller: "send error")");
-			mController->onAuthenticationContextRequest(context);
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
 		}
 
 

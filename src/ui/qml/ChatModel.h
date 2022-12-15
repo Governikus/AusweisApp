@@ -63,15 +63,15 @@ class ChatModel
 	public:
 		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		bool setData(const QModelIndex& pIndex, const QVariant& pValue, int pRole) override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] bool setData(const QModelIndex& pIndex, const QVariant& pValue, int pRole) override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 		Q_INVOKABLE void transferAccessRights();
-		Q_INVOKABLE QSortFilterProxyModel* getFilterOptionalModel();
-		Q_INVOKABLE QSortFilterProxyModel* getFilterRequiredModel();
-		Q_INVOKABLE QSortFilterProxyModel* getFilterWriteModel();
+		[[nodiscard]] Q_INVOKABLE QSortFilterProxyModel* getFilterOptionalModel();
+		[[nodiscard]] Q_INVOKABLE QSortFilterProxyModel* getFilterRequiredModel();
+		[[nodiscard]] Q_INVOKABLE QSortFilterProxyModel* getFilterWriteModel();
 };
 
 

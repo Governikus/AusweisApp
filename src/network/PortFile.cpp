@@ -27,6 +27,12 @@ PortFile::PortFile(const QString& pUsage, quint16 pDefaultPort)
 }
 
 
+PortFile::~PortFile()
+{
+	remove();
+}
+
+
 void PortFile::handlePort(quint16 pCurrentPort)
 {
 	if (pCurrentPort != mDefaultPort && mPortFile.open(QIODevice::WriteOnly) && mPortFile.isWritable())
@@ -37,10 +43,20 @@ void PortFile::handlePort(quint16 pCurrentPort)
 }
 
 
-PortFile::~PortFile()
+void PortFile::remove()
 {
 	if (mPortFile.exists())
 	{
 		mPortFile.remove();
 	}
+}
+
+
+QFileInfoList PortFile::getAllPortFiles()
+{
+	QDir tmpPath = QDir::temp();
+	tmpPath.setSorting(QDir::Time);
+	tmpPath.setFilter(QDir::Files);
+	tmpPath.setNameFilters(QStringList({QCoreApplication::applicationName() + QStringLiteral(".*.port")}));
+	return tmpPath.entryInfoList();
 }

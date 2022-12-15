@@ -49,25 +49,8 @@ class MobileEIDTypeInfo
 		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
-		static QSharedPointer<const MobileEIDTypeInfo> decode(const QByteArray& pBytes)
-		{
-			if (const auto& delegate = decodeObject<mobileeidtypeinfo_st>(pBytes, false))
-			{
-				if (MobileEIDTypeInfo::acceptsProtocol(delegate->mProtocol))
-				{
-					return QSharedPointer<const MobileEIDTypeInfo>::create(delegate);
-				}
-			}
-			return QSharedPointer<const MobileEIDTypeInfo>();
-		}
-
-
-		[[nodiscard]] QByteArray encode() const
-		{
-			return encodeObject(const_cast<mobileeidtypeinfo_st*>(mDelegate.data()));
-		}
-
-
+		static QSharedPointer<const MobileEIDTypeInfo> decode(const QByteArray& pBytes);
+		[[nodiscard]] QByteArray encode() const;
 };
 
 

@@ -33,22 +33,42 @@ UIPlugInWebSocket::UIPlugInWebSocket()
 	, mUiDomination(false)
 	, mUiDominationPrevUsedAsSDK(false)
 {
+}
+
+
+bool UIPlugInWebSocket::initialize()
+{
+	if (mHttpServer)
+	{
+		return true;
+	}
+
 	if (!Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
 		qCWarning(websocket) << "Cannot start WebSocket because JSON-API is missing";
-		return;
+		return false;
 	}
 
 	mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
-	Q_ASSERT(mJson);
-
 	mHttpServer = Env::getShared<HttpServer>();
-	if (mHttpServer->isListening())
+	if (!mHttpServer->isListening())
 	{
-		qCDebug(websocket) << "Enable WebSocket...";
-		connect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UIPlugInWebSocket::onNewWebSocketRequest);
-		connect(&mServer, &QWebSocketServer::newConnection, this, &UIPlugInWebSocket::onNewConnection);
+		mHttpServer.clear();
+		return false;
 	}
+
+	qCDebug(websocket) << "Enable WebSocket...";
+	connect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UIPlugInWebSocket::onNewWebSocketRequest);
+	connect(mHttpServer.data(), &HttpServer::fireRebound, this, [this]{
+			if (!mHttpServer->isListening())
+			{
+				qCDebug(websocket) << "Disable WebSocket...";
+				disconnect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UIPlugInWebSocket::onNewWebSocketRequest);
+				mHttpServer.clear();
+			}
+		});
+	connect(&mServer, &QWebSocketServer::newConnection, this, &UIPlugInWebSocket::onNewConnection);
+	return true;
 }
 
 

@@ -16,6 +16,7 @@ j.with
 	{
 		stringParam('iOS_Framework_Build', '', 'Build of iOS Framework')
 		stringParam('iOS_Simulator_Framework_Build', '', 'Build of iOS Simulator-Framework')
+		stringParam('iOS_Simulator_arm64_Framework_Build', '', 'Build of iOS Simulator-arm64-Framework')
 	}
 
 	steps
@@ -37,6 +38,15 @@ j.with
 			buildSelector
 			{
 				buildNumber('${iOS_Simulator_Framework_Build}')
+			}
+		}
+
+		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
+		{
+			targetDirectory('build/arm64-simulator')
+			buildSelector
+			{
+				buildNumber('${iOS_Simulator_arm64_Framework_Build}')
 			}
 		}
 

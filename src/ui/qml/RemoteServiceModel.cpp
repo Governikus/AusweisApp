@@ -6,18 +6,18 @@
 
 #include "AppSettings.h"
 #include "ApplicationModel.h"
-#include "NumberModel.h"
 #include "RemoteIfdClient.h"
 #include "RemoteIfdServer.h"
 #include "RemoteServiceSettings.h"
 #include "controller/IfdServiceController.h"
-#include "pinpad/EstablishPaceChannel.h"
 
 #ifdef Q_OS_IOS
 	#include <QOperatingSystemVersion>
 #endif
 
+
 using namespace governikus;
+
 
 RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
@@ -65,20 +65,9 @@ RemoteServiceModel::RemoteServiceModel()
 
 void RemoteServiceModel::onEnvironmentChanged()
 {
-	bool nfcPluginAvailable = false;
-	bool nfcPluginEnabled = false;
-	const auto& allPlugins = Env::getSingleton<ReaderManager>()->getPlugInInfos();
-	for (const auto& pluginInfo : allPlugins)
-	{
-		if (pluginInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
-		{
-			// At this time no basic reader available so we can skip
-			continue;
-		}
-
-		nfcPluginAvailable |= pluginInfo.isAvailable();
-		nfcPluginEnabled |= pluginInfo.isEnabled();
-	}
+	const auto& nfcInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::NFC);
+	const bool nfcPluginAvailable = nfcInfo.isAvailable();
+	const bool nfcPluginEnabled = nfcInfo.isEnabled();
 
 	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::NFC})).isEmpty());
 	const bool wifiEnabled = Env::getSingleton<ApplicationModel>()->isWifiEnabled();

@@ -39,7 +39,7 @@ ReaderManagerWorker::~ReaderManagerWorker()
 void ReaderManagerWorker::shutdown()
 {
 	qCDebug(card) << "Shutdown ReaderManagerWorker";
-	for (auto& plugin : qAsConst(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugIns))
 	{
 		plugin->stopScan();
 
@@ -124,7 +124,7 @@ void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
 
 void ReaderManagerWorker::callOnPlugIn(ReaderManagerPlugInType pType, const std::function<void(ReaderManagerPlugIn*)>& pFunc, const char* pLog)
 {
-	for (auto& plugin : qAsConst(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugIns))
 	{
 		if (plugin->getInfo().getPlugInType() == pType)
 		{
@@ -159,7 +159,7 @@ void ReaderManagerWorker::shelve()
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	for (const auto& plugIn : qAsConst(mPlugIns))
+	for (const auto& plugIn : std::as_const(mPlugIns))
 	{
 		callOnPlugIn(plugIn->getInfo().getPlugInType(), [](ReaderManagerPlugIn* pPlugIn){
 				pPlugIn->shelve();
@@ -221,7 +221,7 @@ QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QVector<ReaderInfo> list;
-	for (const auto& plugIn : qAsConst(mPlugIns))
+	for (const auto& plugIn : std::as_const(mPlugIns))
 	{
 		const auto& readerList = plugIn->getReaders();
 		for (const Reader* const reader : readerList)
@@ -251,7 +251,7 @@ Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	for (auto& plugin : qAsConst(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugIns))
 	{
 		const auto& readerList = plugin->getReaders();
 		for (Reader* reader : readerList)

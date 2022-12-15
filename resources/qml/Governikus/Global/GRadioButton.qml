@@ -1,11 +1,9 @@
 /*
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -19,62 +17,52 @@ RadioButton {
 	property bool tintIcon: false
 
 	Accessible.name: text
-
 	spacing: Constants.groupbox_spacing
-	indicator: Item {}
+
 	contentItem: RowLayout {
 		spacing: root.spacing
 
 		Rectangle {
 			Layout.preferredHeight: root.indicatorHeight
 			Layout.preferredWidth: root.indicatorHeight
-
-			radius: height / 2
 			border.color: Style.color.accent
 			border.width: Math.max(ApplicationModel.scaleFactor * 3, 1)
+			radius: height / 2
 
 			Rectangle {
-				visible: root.checked
-				anchors.centerIn: parent
 				anchors.alignWhenCentered: false
-				height: parent.height / 2
-				width: height
-
-				radius: height / 2
+				anchors.centerIn: parent
 				color: Style.color.accent
+				height: parent.height / 2
+				radius: height / 2
+				visible: root.checked
+				width: height
 			}
 		}
-
 		TintableIcon {
-			visible: source != ""
 			Layout.preferredHeight: sourceSize.height
-
 			source: root.icon.source
 			sourceSize.height: root.indicatorHeight
-
-			tintEnabled: tintIcon
 			tintColor: root.textStyle.textColor
+			tintEnabled: tintIcon
+			visible: source != ""
 		}
-
 		GText {
-			Layout.fillWidth: true
-
 			Accessible.ignored: true
-
+			Layout.fillWidth: true
 			text: root.text
 			textStyle: root.textStyle
-
 		}
+	}
+	indicator: Item {
 	}
 
 	FocusFrame {
 		scope: root
 	}
-
 	MouseArea {
-		anchors.fill: parent
-
-		cursorShape: root.checked ? Qt.ArrowCursor : Qt.PointingHandCursor
 		acceptedButtons: Qt.NoButton
+		anchors.fill: parent
+		cursorShape: root.checked ? Qt.ArrowCursor : Qt.PointingHandCursor
 	}
 }

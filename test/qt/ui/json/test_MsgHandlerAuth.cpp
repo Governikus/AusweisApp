@@ -7,13 +7,13 @@
 #include "messages/MsgHandlerAuth.h"
 
 #include "AppSettings.h"
-#include "InternalActivationContext.h"
 #include "LanguageLoader.h"
 #include "MessageDispatcher.h"
 #include "UILoader.h"
 #include "UIPlugInJson.h"
 #include "VolatileSettings.h"
 #include "WorkflowRequest.h"
+#include "context/InternalActivationContext.h"
 #include "controller/AppController.h"
 #include "states/StateGetTcToken.h"
 
@@ -45,6 +45,10 @@ class test_MsgHandlerAuth
 		{
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 			LanguageLoader::getInstance().setPath(mTranslationDir.path()); // avoid loaded translations
+
+			connect(Env::getSingleton<UILoader>(), &UILoader::fireLoadedPlugin, this, [](UIPlugIn* pUi){
+					pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
+				});
 		}
 
 
@@ -53,7 +57,7 @@ class test_MsgHandlerAuth
 			auto* uiLoader = Env::getSingleton<UILoader>();
 			if (uiLoader->isLoaded())
 			{
-				QSignalSpy spyUi(uiLoader, &UILoader::fireShutdownComplete);
+				QSignalSpy spyUi(uiLoader, &UILoader::fireRemovedAllPlugins);
 				uiLoader->shutdown();
 				QTRY_COMPARE(spyUi.count(), 1); // clazy:exclude=qstring-allocations
 			}
@@ -151,12 +155,14 @@ class test_MsgHandlerAuth
 
 		void handleStatus()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, handleStatus);
 			QFETCH(int, statusMessages);
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 
 			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
@@ -287,11 +293,13 @@ class test_MsgHandlerAuth
 
 		void iosScanDialogMessages()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			bool reachedStateGetTcToken = false;
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -378,6 +386,8 @@ class test_MsgHandlerAuth
 
 		void handleInterrupt()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, handleInterrupt);
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
@@ -386,7 +396,7 @@ class test_MsgHandlerAuth
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -456,6 +466,8 @@ class test_MsgHandlerAuth
 
 		void handleInterruptDefault()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
@@ -463,7 +475,7 @@ class test_MsgHandlerAuth
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -523,13 +535,15 @@ class test_MsgHandlerAuth
 
 		void handleDeveloperMode()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, developerMode);
 
 			bool reachedStateGetTcToken = false;
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});

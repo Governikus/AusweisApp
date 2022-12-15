@@ -36,12 +36,13 @@ template<> DatagramHandler* createNewObject<DatagramHandler*, bool>(bool&& pEnab
 
 } // namespace governikus
 
-quint16 DatagramHandlerImpl::cPort = PortFile::cDefaultPort;
 
 DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
-	: DatagramHandler()
+	: DatagramHandler(pEnableListening)
 	, mSocket()
 	, mMulticastLock()
+	, mAllAddresses()
+	, mFailedAddresses()
 	, mUsedPort(pPort)
 	, mPortFile(QStringLiteral("udp"))
 	, mEnableListening(pEnableListening)
@@ -60,7 +61,7 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
 
 void DatagramHandlerImpl::resetSocket()
 {
-	if (isBound())
+	if (DatagramHandlerImpl::isBound())
 	{
 		mSocket->close();
 	}
@@ -112,9 +113,9 @@ bool DatagramHandlerImpl::isBound() const
 }
 
 
-bool DatagramHandlerImpl::send(const QByteArray& pData)
+void DatagramHandlerImpl::send(const QByteArray& pData)
 {
-	return sendToAllAddressEntries(pData, 0);
+	sendToAllAddressEntries(pData, 0);
 }
 
 
@@ -126,17 +127,6 @@ bool DatagramHandlerImpl::isValidBroadcastInterface(const QNetworkInterface& pIn
 	}
 
 	const auto& flags = pInterface.flags();
-
-	if (flags.testFlag(QNetworkInterface::IsLoopBack) || flags.testFlag(QNetworkInterface::IsPointToPoint))
-	{
-		return false;
-	}
-
-	if (!flags.testFlag(QNetworkInterface::CanBroadcast) && !flags.testFlag(QNetworkInterface::CanMulticast))
-	{
-		return false;
-	}
-
 	if (!flags.testFlag(QNetworkInterface::IsUp) || !flags.testFlag(QNetworkInterface::IsRunning))
 	{
 		return false;
@@ -216,36 +206,55 @@ QVector<QHostAddress> DatagramHandlerImpl::getAllBroadcastAddresses(const QNetwo
 }
 
 
-bool DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint16 pPort)
+void DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint16 pPort)
 {
-	QVector<QHostAddress> broadcastAddresses;
+	const auto& allInterfaces = QNetworkInterface::allInterfaces();
 
-	const auto& interfaces = QNetworkInterface::allInterfaces();
-	for (const QNetworkInterface& interface : interfaces)
+	// QNetworkInterface has no operator== so we use allAddresses()
+	// to check if something changed. We don't want to log
+	// all interfaces for any broadcast here.
+	const auto& addresses = QNetworkInterface::allAddresses();
+	if (mAllAddresses != addresses)
+	{
+		mAllAddresses = addresses;
+		mFailedAddresses.clear();
+		qCDebug(network) << "Network interfaces changed...";
+		for (const auto& interface : allInterfaces)
+		{
+			qCDebug(network) << interface;
+		}
+	}
+
+	QVector<QHostAddress> broadcastAddresses;
+	for (const QNetworkInterface& interface : allInterfaces)
 	{
 		broadcastAddresses << getAllBroadcastAddresses(interface);
 	}
 
 	if (broadcastAddresses.isEmpty())
 	{
-		return false;
+		return;
 	}
 
-	bool broadcastedSuccessfully = true;
-	for (const QHostAddress& broadcastAddr : qAsConst(broadcastAddresses))
+	for (const QHostAddress& broadcastAddr : std::as_const(broadcastAddresses))
 	{
-		if (!sendToAddress(pData, broadcastAddr, pPort))
+		const auto alreadyFailed = mFailedAddresses.contains(broadcastAddr);
+		const auto sendSuccess = sendToAddress(pData, broadcastAddr, pPort, !alreadyFailed);
+
+		if (sendSuccess && alreadyFailed)
+		{
+			mFailedAddresses.removeAll(broadcastAddr);
+		}
+		else if (!sendSuccess && !alreadyFailed)
 		{
 			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
-			broadcastedSuccessfully = false;
+			mFailedAddresses << broadcastAddr;
 		}
 	}
-
-	return broadcastedSuccessfully;
 }
 
 
-bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort)
+bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort, bool pLogError)
 {
 	// If port is 0 we should take our own listening port as destination as other instances
 	// should use the same port to receive broadcasts.
@@ -254,7 +263,10 @@ bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddr
 
 	if (mSocket->writeDatagram(pData.constData(), pAddress, port) != pData.size())
 	{
-		qCCritical(network) << "Cannot write datagram to address" << pAddress << ':' << mSocket->error() << '|' << mSocket->errorString();
+		if (pLogError)
+		{
+			qCCritical(network) << "Cannot write datagram to address" << pAddress << ':' << mSocket->error() << '|' << mSocket->errorString();
+		}
 		return false;
 	}
 
@@ -276,7 +288,8 @@ void DatagramHandlerImpl::checkNetworkPermission()
 	// Use port 9 as all traffic send to it is discarded (RFC863).
 
 	quint16 discardServicePort = 9;
-	if (!sendToAllAddressEntries(QByteArrayLiteral("!"), discardServicePort))
+	if (!sendToAddress(QByteArrayLiteral("!"), QHostAddress::LocalHost, discardServicePort)
+			|| !sendToAddress(QByteArrayLiteral("!"), QHostAddress::LocalHostIPv6, discardServicePort))
 	{
 		qCDebug(network) << "Probably no permission to access the local network, resetting broadcasting socket.";
 		resetSocket();

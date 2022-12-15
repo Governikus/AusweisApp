@@ -4,6 +4,7 @@
 
 #include "IfdCard.h"
 
+#include "VolatileSettings.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnectResponse.h"
 #include "messages/IfdDisconnect.h"
@@ -209,6 +210,11 @@ ResponseApduResult IfdCard::transmit(const CommandApdu& pCommand)
 EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
 {
 	EstablishPaceChannel establishPaceChannel(pPasswordId, pChat, pCertificateDescription);
+
+	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		pPreferredPinLength = 0;
+	}
 
 	const QSharedPointer<const IfdEstablishPaceChannel>& message = QSharedPointer<IfdEstablishPaceChannel>::create(mSlotHandle, establishPaceChannel, pPreferredPinLength);
 	if (sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))

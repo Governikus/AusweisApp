@@ -26,9 +26,9 @@ class MockEstablishPaceChannelCommand
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = pCode;
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -198,7 +198,7 @@ class test_StateEstablishPaceChannel
 			{
 				*mAuthContext->getAccessRightManager() -= AccessRight::CAN_ALLOWED;
 			}
-			command->setReturnCode(code);
+			command->setMockReturnCode(code);
 
 			if (code == CardReturnCode::OK && password == PacePasswordId::PACE_PIN)
 			{

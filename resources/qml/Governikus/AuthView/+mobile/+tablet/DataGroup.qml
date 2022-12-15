@@ -1,50 +1,46 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 
 Item {
 	id: root
 
-	signal scrollPageUp()
-	signal scrollPageDown()
-
+	property var chat
+	property int columns: 1
 	readonly property alias count: repeater.count
 	property alias title: dataTitle.text
 	property alias titleStyle: dataTitle.textStyle
-	property int columns: 1
-	property var chat
 
-	width: parent.width
+	signal scrollPageDown
+	signal scrollPageUp
+
 	height: column.height
 	visible: repeater.count > 0
+	width: parent.width
 
 	Column {
 		id: column
-		anchors.top: parent.top
 		anchors.left: parent.left
 		anchors.right: parent.right
+		anchors.top: parent.top
 
 		PaneTitle {
 			id: dataTitle
-
-			width: parent.width
 			height: implicitHeight * 1.5
 			verticalAlignment: Text.AlignTop
+			width: parent.width
 		}
-
 		Grid {
 			id: grid
-			columns: root.columns
 			columnSpacing: Constants.pane_spacing
-			width: parent.width
-			verticalItemAlignment: Grid.AlignBottom
+			columns: root.columns
 			flow: Grid.TopToBottom
+			verticalItemAlignment: Grid.AlignBottom
+			width: parent.width
 
 			Repeater {
 				id: repeater
@@ -52,60 +48,59 @@ Item {
 				visible: repeater.count > 0
 
 				Item {
-					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
-					height: 40
-
-					Accessible.role: Accessible.ListItem
-					Accessible.name: name
 					Accessible.checkable: optional
 					Accessible.checked: checkBox.checked
-					Accessible.onPressAction: if (optional) selected = !selected
+					Accessible.name: name
+					Accessible.role: Accessible.ListItem
+					height: 40
+					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
+
+					Accessible.onPressAction: if (optional)
+						selected = !selected
 					Accessible.onScrollDownAction: baseItem.scrollPageDown()
 					Accessible.onScrollUpAction: baseItem.scrollPageUp()
 
 					GText {
 						id: text
-
-						anchors.verticalCenter: parent.verticalCenter
+						Accessible.ignored: true
 						anchors.left: parent.left
 						anchors.right: checkBox.left
-
-						Accessible.ignored: true
-
+						anchors.verticalCenter: parent.verticalCenter
 						text: name
 						textStyle: writeRight ? Style.text.normal_warning : Style.text.normal_secondary
 					}
-
 					GSeparator {
 						anchors.top: parent.bottom
 						anchors.topMargin: -height
-						width: parent.width
 						visible: !(index === repeater.count - 1 || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
+						width: parent.width
 					}
-
 					GCheckBox {
 						id: checkBox
-
-						visible: optional
+						Accessible.ignored: true
 						anchors.right: parent.right
 						anchors.verticalCenter: parent.verticalCenter
-
-						Accessible.ignored: true
-
 						checked: selected
+						visible: optional
 					}
-
 					MouseArea {
 						anchors.fill: parent
 						enabled: optional
+
 						onClicked: selected = !selected
+
 						Rectangle {
 							anchors.centerIn: parent
-							width: root.width
-							height: parent.height
 							color: Style.color.accent
+							height: parent.height
 							opacity: parent.pressed ? 0.5 : 0
-							Behavior on opacity { NumberAnimation { duration: 100 } }
+							width: root.width
+
+							Behavior on opacity  {
+								NumberAnimation {
+									duration: 100
+								}
+							}
 						}
 					}
 				}

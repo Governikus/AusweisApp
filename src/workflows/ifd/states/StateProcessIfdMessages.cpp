@@ -81,7 +81,7 @@ void StateProcessIfdMessages::onClosed()
 {
 	qCDebug(statemachine) << "ServerMessageHandler closed";
 
-	for (const auto& connection : qAsConst(mMessageConnections))
+	for (const auto& connection : std::as_const(mMessageConnections))
 	{
 		disconnect(connection);
 	}
@@ -174,7 +174,7 @@ void StateProcessIfdMessages::onEntry(QEvent* pEvent)
 
 void StateProcessIfdMessages::onExit(QEvent* pEvent)
 {
-	for (const auto& connection : qAsConst(mMessageConnections))
+	for (const auto& connection : std::as_const(mMessageConnections))
 	{
 		disconnect(connection);
 	}

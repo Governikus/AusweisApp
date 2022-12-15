@@ -49,7 +49,7 @@ void ResourceLoader::init()
 
 void ResourceLoader::shutdown()
 {
-	for (const auto& path : qAsConst(mLoadedResources))
+	for (const auto& path : std::as_const(mLoadedResources))
 	{
 		const auto result = QResource::unregisterResource(path);
 		qDebug() << "Unregister resource:" << path << '|' << result;

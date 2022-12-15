@@ -254,7 +254,7 @@ void RemoteDeviceModel::updatePairedReaders()
 	const auto& availableReaders = presentReaders();
 	const auto& connectedDeviceIDs = Env::getSingleton<RemoteIfdClient>()->getConnectedDeviceIDs();
 
-	for (const auto& pairedReader : qAsConst(mPairedReaders))
+	for (const auto& pairedReader : std::as_const(mPairedReaders))
 	{
 		bool visible = false;
 		bool connected = false;

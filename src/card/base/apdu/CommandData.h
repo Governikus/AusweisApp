@@ -9,6 +9,7 @@
 
 #include <QByteArray>
 #include <QVector>
+#include <openssl/asn1.h>
 
 
 namespace governikus
@@ -24,10 +25,12 @@ class CommandData
 			CRYPTOGRAPHIC_MECHANISM_REFERENCE = 0,
 			CA_EPHEMERAL_PUBLIC_KEY = 0,
 			MAPPING_DATA = 1,
+			INTEGER = 2,
 			PACE_EPHEMERAL_PUBLIC_KEY = 3,
 			PUBLIC_KEY_REFERENCE = 3,
 			PRIVATE_KEY_REFERENCE = 4,
 			AUTHENTICATION_TOKEN = 5,
+			RI_EPHEMERAL_PUBLIC_KEY = 6,
 			AUXILIARY_AUTHENTICATED_DATA = 7,
 			TA_EPHEMERAL_PUBLIC_KEY = 17,
 			DYNAMIC_AUTHENTICATION_DATA = 28,
@@ -37,23 +40,17 @@ class CommandData
 		};
 
 	private:
-		struct DataEntry
-		{
-			int mClass;
-			int mTag;
-			bool mConstructed;
-			QByteArray mData;
-
-			operator QByteArray() const;
-		};
-
-		QVector<DataEntry> mData;
+		int mClass;
 		int mTag;
+		QByteArray mSimpleData;
+		QVector<CommandData> mComplexData;
 
 	public:
-		explicit CommandData(DATA_TAG pTag = NONE);
+		explicit CommandData(int pClass = V_ASN1_UNIVERSAL, DATA_TAG pTag = NONE, const QByteArray& pData = QByteArray());
+		explicit CommandData(const QByteArray& pData);
 
-		[[nodiscard]] QByteArray get(DATA_TAG pTag) const;
+		[[nodiscard]] QByteArray getData(int pClass, DATA_TAG pTag) const;
+		[[nodiscard]] QByteArray getObject(int pClass, DATA_TAG pTag) const;
 
 		void append(const QByteArray& pData);
 		void append(DATA_TAG pTag, int pValue);
@@ -62,6 +59,10 @@ class CommandData
 		void append(DATA_TAG pTag, const QByteArray& pData);
 
 		operator QByteArray() const;
+
+#ifndef QT_NO_DEBUG
+		int getObjectCount() const;
+#endif
 };
 
 } // namespace governikus

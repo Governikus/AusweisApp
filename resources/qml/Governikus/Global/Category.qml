@@ -1,20 +1,16 @@
 /*
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
-
 pragma Singleton
-
 import QtQuick 2.15
 
 QtObject {
-
-	readonly property color categoryColorNone: "#164a8c"
 	readonly property color categoryColorAll: "#164a8c"
 	readonly property color categoryColorCitizen: "#851e6b"
-	readonly property color categoryColorInsurance: "#53428c"
 	readonly property color categoryColorFinance: "#693800"
+	readonly property color categoryColorInsurance: "#53428c"
+	readonly property color categoryColorNone: "#164a8c"
 	readonly property color categoryColorOther: "#00828a"
-
 	readonly property var categoryToColor: {
 		"": categoryColorAll,
 		"all": categoryColorAll,
@@ -23,7 +19,6 @@ QtObject {
 		"finance": categoryColorFinance,
 		"other": categoryColorOther
 	}
-
 	readonly property var categoryToImageName: {
 		"citizen": "citizen",
 		"insurance": "insurance",
@@ -33,10 +28,15 @@ QtObject {
 		"": "default"
 	}
 
-	function getTableValue(table, key, defaultValue) {
-		return key in table ? table[key] : defaultValue
+	function backgroundImageSource(cat) {
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_bg.svg";
 	}
-
+	function buttonImageSource(cat) {
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_button.svg";
+	}
+	function displayColor(cat) {
+		return getTableValue(categoryToColor, cat, categoryColorNone);
+	}
 	function displayString(cat) {
 		let categoryToDisplayString = {
 			"": qsTr("Provider"),
@@ -45,35 +45,19 @@ QtObject {
 			"insurance": qsTr("Insurances"),
 			"finance": qsTr("Financials"),
 			"other": qsTr("Other services")
-		}
-		return getTableValue(categoryToDisplayString, cat, "")
+		};
+		return getTableValue(categoryToDisplayString, cat, "");
 	}
-
-	function displayColor(cat) {
-		return getTableValue(categoryToColor, cat, categoryColorNone)
-	}
-
-	function imageName(cat) {
-		return getTableValue(categoryToImageName, cat, "default")
-	}
-
-
 	function getPlatform() {
-		return plugin.platformStyle.indexOf("ios") !== -1 ? "ios/" : ""
+		return plugin.platformStyle.indexOf("ios") !== -1 ? "ios/" : "";
 	}
-
-
-	function backgroundImageSource(cat) {
-		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_bg.svg"
+	function getTableValue(table, key, defaultValue) {
+		return key in table ? table[key] : defaultValue;
 	}
-
-
-	function buttonImageSource(cat) {
-		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + "_button.svg"
+	function imageName(cat) {
+		return getTableValue(categoryToImageName, cat, "default");
 	}
-
-
 	function imageSource(cat) {
-		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + ".svg"
+		return "qrc:///images/provider/" + getPlatform() + imageName(cat) + ".svg";
 	}
 }

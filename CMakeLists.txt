@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.13.0)
+if(WIN32)
+	cmake_minimum_required(VERSION 3.19.0)
+else()
+	cmake_minimum_required(VERSION 3.13.0)
+endif()
 
 if(POLICY CMP0020)
 	cmake_policy(SET CMP0020 NEW)
@@ -56,7 +60,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.24.4 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.26.0 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it

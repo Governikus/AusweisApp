@@ -15,7 +15,7 @@ class SortedReaderModel
 	Q_OBJECT
 
 	protected:
-		bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
+		[[nodiscard]] bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
 	public Q_SLOTS:
 		void onDataChanged();

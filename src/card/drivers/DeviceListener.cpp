@@ -80,7 +80,7 @@ DeviceListener::DeviceListener()
 	udev_monitor_filter_add_match_subsystem_devtype(mDeviceMonitor, "usb", nullptr);
 	udev_monitor_enable_receiving(mDeviceMonitor);
 
-	/// Get the file descriptor (fd) for the monitor
+	// Get the file descriptor (fd) for the monitor
 	mFileDescriptor = udev_monitor_get_fd(mDeviceMonitor);
 #endif
 }

@@ -6,4 +6,4 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppCore)
 
-target_link_libraries(AusweisAppCore AusweisAppActivation AusweisAppCard AusweisAppGlobal AusweisAppNetwork AusweisAppServices AusweisAppSettings AusweisAppUi AusweisAppWorkflows)
+target_link_libraries(AusweisAppCore AusweisAppCard AusweisAppGlobal AusweisAppNetwork AusweisAppServices AusweisAppSettings AusweisAppUi AusweisAppWorkflows)

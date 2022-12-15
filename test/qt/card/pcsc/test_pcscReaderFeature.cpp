@@ -63,8 +63,8 @@ class test_pcscReaderFeature
 
 		void featuresCyberjackBasis()
 		{
-			QByteArray featuresTLV = QByteArray::fromHex("120442330012");
-			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
+			const auto featuresTLV = QByteArray::fromHex("120442330012");
+			PcscReaderFeature readerFeature(featuresTLV);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;
@@ -78,8 +78,8 @@ class test_pcscReaderFeature
 
 		void featuresCyberjackStandard()
 		{
-			QByteArray featuresTLV = QByteArray::fromHex("060442000DB2070442000DB3080442000DB4090442000DB5200442000DCC");
-			PcscReaderFeature readerFeature(featuresTLV.constData(), static_cast<PCSC_INT>(featuresTLV.length()));
+			const auto featuresTLV = QByteArray::fromHex("060442000DB2070442000DB3080442000DB4090442000DB5200442000DCC");
+			PcscReaderFeature readerFeature(featuresTLV);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			qDebug() << readerFeature;

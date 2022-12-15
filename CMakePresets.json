@@ -112,9 +112,17 @@
     {
       "name": "ci-ios-framework-simulator",
       "inherits": "ci-ios-framework",
+      "generator": "Xcode",
       "cacheVariables": {
         "CMAKE_OSX_SYSROOT": "iphonesimulator",
         "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
+      "name": "ci-ios-framework-simulator-arm64",
+      "inherits": "ci-ios-framework-simulator",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
       }
     },
     {
@@ -181,6 +189,13 @@
         "CMAKE_BUILD_TYPE": "RELEASE",
         "tools.only": "ON",
         "CMAKE_CXX_COMPILER_LAUNCHER": null
+      }
+    },
+    {
+      "name": "ci-tools-with-libs",
+      "inherits": "ci-tools",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "${sourceParentDir}/libs/build/dist"
       }
     },
     {

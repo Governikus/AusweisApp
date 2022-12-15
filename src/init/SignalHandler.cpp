@@ -4,6 +4,10 @@
 
 #include "SignalHandler.h"
 
+#ifdef Q_OS_WIN
+	#include "BuildHelper.h"
+#endif
+
 #include <QCoreApplication>
 #include <QLoggingCategory>
 
@@ -13,9 +17,13 @@ Q_DECLARE_LOGGING_CATEGORY(system)
 
 
 SignalHandler::SignalHandler()
-	: mInit(false)
+	: QObject()
+	, mInit(false)
 	, mController()
-	, mQuit(false)
+#ifdef Q_OS_WIN
+	, mServiceStatusHandle(nullptr)
+	, mLock()
+#endif
 {
 }
 
@@ -24,6 +32,7 @@ SignalHandler::SignalHandler()
 SignalHandler::~SignalHandler()
 {
 	SetConsoleCtrlHandler(nullptr, false);
+	setServiceStatus(SERVICE_STOPPED);
 }
 
 
@@ -42,6 +51,11 @@ void SignalHandler::init()
 		initUnix();
 #elif defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
 		SetConsoleCtrlHandler(PHANDLER_ROUTINE(ctrlHandler), true);
+		if (!BuildHelper::isUserInteractive())
+		{
+			registerService();
+		}
+
 #endif
 
 		mInit = true;
@@ -57,7 +71,9 @@ void SignalHandler::setController(const std::function<void()>& pController)
 
 void SignalHandler::quit()
 {
-	mQuit = true;
+#ifdef Q_OS_WIN
+	setServiceStatus(SERVICE_STOP_PENDING);
+#endif
 
 	if (mController)
 	{
@@ -67,12 +83,6 @@ void SignalHandler::quit()
 	{
 		QCoreApplication::exit();
 	}
-}
-
-
-bool SignalHandler::shouldQuit() const
-{
-	return mQuit;
 }
 
 

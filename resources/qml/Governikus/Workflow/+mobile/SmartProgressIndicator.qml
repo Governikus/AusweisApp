@@ -1,9 +1,7 @@
 /*
  * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 
 Item {
@@ -13,12 +11,10 @@ Item {
 
 	TintableIcon {
 		id: icon
-
 		anchors.centerIn: parent
-		height: Math.ceil(parent.height * 0.25) * 2
-
-		source: "qrc:///images/mobile/phone_smart.svg"
 		desaturate: true
+		height: Math.ceil(parent.height * 0.25) * 2
 		opacity: tintEnabled ? 0.7 : 1.0
+		source: "qrc:///images/mobile/phone_smart.svg"
 	}
 }

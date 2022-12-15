@@ -4,6 +4,8 @@
 
 #include "UILoader.h"
 
+#include "BuildHelper.h"
+
 #include <QLoggingCategory>
 #include <QPluginLoader>
 #include <QThread>
@@ -46,7 +48,33 @@ QStringList UILoader::getInitialDefault()
 		}
 	}
 
+	list.sort();
 	return list;
+}
+
+
+bool UILoader::initialize() const
+{
+	return std::all_of(mLoadedPlugIns.begin(), mLoadedPlugIns.end(), [](UIPlugIn* pUi){
+			return pUi->initialize();
+		});
+}
+
+
+bool UILoader::hasActiveUI() const
+{
+	return std::any_of(mLoadedPlugIns.begin(), mLoadedPlugIns.end(), [](const UIPlugIn* pUi){
+			return !pUi->property("passive").toBool();
+		});
+}
+
+
+bool UILoader::requiresReaderManager() const
+{
+	return std::any_of(mLoadedPlugIns.begin(), mLoadedPlugIns.end(), [](const UIPlugIn* pUi){
+			const auto& property = pUi->property("readerManager");
+			return property.isNull() || property.toBool();
+		});
 }
 
 
@@ -86,12 +114,17 @@ bool UILoader::load(const QString& pUi)
 		const auto& metaData = plugin.metaData();
 		if (isPlugIn(metaData) && getName(metaData) == requestedName)
 		{
+			if (!BuildHelper::isUserInteractive() && isUserInteractive(metaData))
+			{
+				qCDebug(gui) << "Cannot load plugin in non-interactive mode:" << metaData;
+				continue;
+			}
+
 			qCDebug(gui) << "Load plugin:" << metaData;
 			auto instance = qobject_cast<UIPlugIn*>(plugin.instance());
 			if (instance)
 			{
-				mLoadedPlugIns.insert(getName(instance->metaObject()), instance);
-				Q_EMIT fireLoadedPlugin(instance);
+				preparePlugIn(instance, metaData);
 				return true;
 			}
 			else
@@ -103,6 +136,26 @@ bool UILoader::load(const QString& pUi)
 
 	qCCritical(gui) << "Cannot find UI plugin:" << requestedName;
 	return false;
+}
+
+
+void UILoader::preparePlugIn(UIPlugIn* pUi, const QJsonObject& pMetaData)
+{
+	setMetaDataProperties(pUi, pMetaData);
+	const auto& key = getName(pUi->metaObject());
+
+	mLoadedPlugIns.insert(key, pUi);
+	connect(pUi, &QObject::destroyed, this, [this, key] {
+			qCDebug(gui) << "Shutdown UI:" << key;
+			mLoadedPlugIns.remove(key);
+
+			if (mLoadedPlugIns.isEmpty())
+			{
+				Q_EMIT fireRemovedAllPlugins();
+			}
+		});
+
+	Q_EMIT fireLoadedPlugin(pUi);
 }
 
 
@@ -141,22 +194,10 @@ void UILoader::setUserRequest(const QStringList& pRequest)
 
 void UILoader::shutdown()
 {
-	const auto& keys = mLoadedPlugIns.keys();
-	qCDebug(gui) << "Shutdown UILoader:" << keys;
+	qCDebug(gui) << "Shutdown UILoader:" << mLoadedPlugIns.keys();
 
-	for (const auto& key : keys)
+	for (const auto& plugin : std::as_const(mLoadedPlugIns))
 	{
-		UIPlugIn* const plugin = mLoadedPlugIns.value(key);
-
-		connect(plugin, &QObject::destroyed, this, [this, key] {
-				qCDebug(gui) << "Shutdown UI:" << key;
-				mLoadedPlugIns.remove(key);
-				if (mLoadedPlugIns.isEmpty())
-				{
-					Q_EMIT fireShutdownComplete();
-				}
-			}, Qt::QueuedConnection);
-
 		// Plugins and therefore their members are not auto destructed due to a bug in Qt.
 		// https://bugreports.qt.io/browse/QTBUG-17458
 		plugin->deleteLater();
@@ -164,9 +205,33 @@ void UILoader::shutdown()
 }
 
 
+void UILoader::setMetaDataProperties(UIPlugIn* pUi, const QJsonObject& pJson)
+{
+	const auto& fileContent = getMetaDataFileContent(pJson);
+	const auto& iterEnd = fileContent.constEnd();
+	for (auto iter = fileContent.constBegin(); iter != iterEnd; ++iter)
+	{
+		const bool qProperty = pUi->setProperty(qPrintable(iter.key()), iter.value().toVariant());
+		Q_ASSERT(!qProperty);
+	}
+}
+
+
+QJsonObject UILoader::getMetaDataFileContent(const QJsonObject& pJson)
+{
+	return pJson.value(QLatin1String("MetaData")).toObject();
+}
+
+
 bool UILoader::isDefault(const QJsonObject& pJson)
 {
-	return pJson.value(QLatin1String("MetaData")).toObject().value(QLatin1String("default")).toBool();
+	return getMetaDataFileContent(pJson).value(QLatin1String("default")).toBool();
+}
+
+
+bool UILoader::isUserInteractive(const QJsonObject& pJson)
+{
+	return getMetaDataFileContent(pJson).value(QLatin1String("userInteractive")).toBool();
 }
 
 

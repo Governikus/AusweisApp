@@ -262,7 +262,7 @@ class Env
 
 				// copy QSharedPointer "mock" to increase ref-counter. Otherwise
 				// unlock would allow to delete the wrapper.
-				for (auto mock : qAsConst(mInstancesCreator)) // clazy:exclude=range-loop,range-loop-reference
+				for (auto mock : std::as_const(mInstancesCreator)) // clazy:exclude=range-loop,range-loop-reference
 				{
 					auto creator = mock.dynamicCast<FuncWrapper<T, Args ...>>();
 					if (creator)
@@ -356,7 +356,7 @@ class Env
 			auto& holder = getInstance();
 			const QReadLocker locker(&holder.mLock);
 
-			for (const auto& mock : qAsConst(holder.mInstancesCreator))
+			for (const auto& mock : std::as_const(holder.mInstancesCreator))
 			{
 				if (mock.dynamicCast<FuncWrapper<T, Args ...>>())
 				{

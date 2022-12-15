@@ -2,12 +2,14 @@
 <WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="LANG" Overridable="yes">1033</String><!-- see http://wix.tramontana.co.hu/tutorial/user-interface/do-you-speak-english -->
 	<String Id="DowngradeErrorMessage" Overridable="yes">A later version of [ProductName] is already installed. Setup will now exit.</String>
-	<String Id="WindowsServerNotSupported" Overridable="yes">[ProductName] does not support Windows Server.</String>
-	<String Id="Windows10Required" Overridable="yes">Your operating system does not meet the minimum requirements for AusweisApp2. You need a 64-bit version of Windows 10 version 1809 or newer.</String>
+	<String Id="WindowsRequired" Overridable="yes">Your operating system does not meet the minimum requirements for AusweisApp2. You need at least a 64-bit version of Windows 10 or Windows Server 2016.</String>
+	<String Id="WindowsClient" Overridable="yes">Your operating system does not meet the minimum requirements for AusweisApp2. You need at least a 64-bit version of Windows 10 version 1809.</String>
+	<String Id="WindowsServer" Overridable="yes">Your operating system does not meet the minimum requirements for AusweisApp2. You need at least a 64-bit version of Windows Server 2016 version 1607.</String>
 	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, the eID-Client of Governikus KG</String>
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installation options</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
 	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Create link on desktop</String>
+	<String Id="CustomInstallDirDlg_MultiUserInfo" Overridable="yes">The installation takes place on a Windows Terminal Server. Please take note of the information in the documentation on installations in company networks.</String>
 	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Add required rules to Windows Firewall</String>
 	<String Id="CustomInstallDirDlg_SystemSettingsTooltip" Overridable="yes">Firewall rules are required, among others, by the function smartphone as card reader.</String>
 	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Start AusweisApp2</String>

@@ -57,16 +57,16 @@ class ProviderModel
 		explicit ProviderModel(QObject* pParent = nullptr);
 		~ProviderModel() override = default;
 
-		int rowCount(const QModelIndex&) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex&) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 		void setIncludeCategories(bool pIncludeCategories);
-		bool getIncludeCategories() const;
+		[[nodiscard]] bool getIncludeCategories() const;
 
-		static const QStringList& getProviderCategories();
+		[[nodiscard]] static const QStringList& getProviderCategories();
 
-		static QString createCostString(const CallCost& pCosts);
+		[[nodiscard]] static QString createCostString(const CallCost& pCosts);
 };
 
 

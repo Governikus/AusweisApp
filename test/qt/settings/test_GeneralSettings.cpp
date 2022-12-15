@@ -391,7 +391,7 @@ class test_GeneralSettings
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
 
 			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
-			GeneralSettings generalSettings(settings.mStoreGeneral);
+			GeneralSettings generalSettings(settings.mStore);
 			QCOMPARE(generalSettings.getPersistentSettingsVersion(), QCoreApplication::applicationVersion());
 		}
 
@@ -400,13 +400,13 @@ class test_GeneralSettings
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 			QCoreApplication::setApplicationVersion(QStringLiteral("X.Y.Z"));
-			GeneralSettings generalSettings1(settings.mStoreGeneral);
+			GeneralSettings generalSettings1(settings.mStore);
 
-			GeneralSettings generalSettings2(settings.mStoreGeneral);
+			GeneralSettings generalSettings2(settings.mStore);
 			QCOMPARE(generalSettings2.isNewAppVersion(), false);
 
 			QCoreApplication::setApplicationVersion(QStringLiteral("Z.Y.X"));
-			GeneralSettings generalSettings3(settings.mStoreGeneral);
+			GeneralSettings generalSettings3(settings.mStore);
 			QCOMPARE(generalSettings3.isNewAppVersion(), true);
 		}
 

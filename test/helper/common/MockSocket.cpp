@@ -26,7 +26,7 @@ MockSocket::~MockSocket()
 
 qint64 MockSocket::bytesAvailable() const
 {
-	return mReadBuffer.size() - mReaderBufferPosition;
+	return mReadBuffer.size() - mReaderBufferPosition + QTcpSocket::bytesAvailable();
 }
 
 

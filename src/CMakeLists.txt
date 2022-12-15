@@ -20,7 +20,6 @@ add_subdirectory(card)
 add_subdirectory(services)
 
 add_subdirectory(diagnosis)
-add_subdirectory(activation)
 add_subdirectory(ifd)
 add_subdirectory(workflows)
 add_subdirectory(ui)
@@ -229,16 +228,13 @@ if(CONTAINER_SDK OR DESKTOP)
 	target_link_libraries(AusweisApp PRIVATE AusweisAppUiAutomatic)
 endif()
 
-#####################################################################
-# activation
-#####################################################################
-
-if((ANDROID OR IOS) AND NOT INTEGRATED_SDK)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppActivationCustomScheme)
+if(DESKTOP)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppUiWebservice)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppUiProxy)
 endif()
 
-if(DESKTOP)
-	target_link_libraries(AusweisApp PRIVATE AusweisAppActivationWebservice)
+if((ANDROID OR IOS) AND NOT INTEGRATED_SDK)
+	target_link_libraries(AusweisApp PRIVATE AusweisAppUiScheme)
 endif()
 
 #####################################################################

@@ -227,7 +227,7 @@ QString DiagnosisModel::getAsPlaintext() const
 #endif
 
 	QStringList modelPlaintext;
-	for (const auto& sectionPair : qAsConst(mSections))
+	for (const auto& sectionPair : std::as_const(mSections))
 	{
 		modelPlaintext << sectionPair.first;
 		modelPlaintext << sectionPair.second->getAsPlaintext();

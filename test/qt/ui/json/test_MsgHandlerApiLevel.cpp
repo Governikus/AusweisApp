@@ -22,7 +22,7 @@ class test_MsgHandlerApiLevel
 		{
 			MsgContext context;
 			context.setApiLevel(MsgLevel::v1);
-			MsgHandlerApiLevel msg(qAsConst(context));
+			MsgHandlerApiLevel msg(std::as_const(context));
 			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1,2],\"current\":1,\"msg\":\"API_LEVEL\"}"));
 		}
 
@@ -31,7 +31,7 @@ class test_MsgHandlerApiLevel
 		{
 			MsgContext context;
 			context.setApiLevel(MsgHandler::DEFAULT_MSG_LEVEL);
-			MsgHandlerApiLevel msg(qAsConst(context));
+			MsgHandlerApiLevel msg(std::as_const(context));
 			QCOMPARE(msg.toJson(), QByteArray("{\"available\":[1,2],\"current\":2,\"msg\":\"API_LEVEL\"}"));
 		}
 

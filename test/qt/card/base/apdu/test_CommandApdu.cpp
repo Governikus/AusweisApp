@@ -129,6 +129,28 @@ class test_CommandApdu
 		}
 
 
+		void test_Proprietary_data()
+		{
+			QTest::addColumn<char>("cla");
+			QTest::addColumn<bool>("enabled");
+
+			for (int i = -128; i < 128; ++i)
+			{
+				QTest::newRow(QByteArray(1, static_cast<char>(i)).toHex().data()) << static_cast<char>(i) << ((i & 0x80) == 0x80);
+			}
+		}
+
+
+		void test_Proprietary()
+		{
+			QFETCH(char, cla);
+			QFETCH(bool, enabled);
+
+			CommandApdu apdu(QByteArray(4, cla));
+			QCOMPARE(apdu.isProprietary(), enabled);
+		}
+
+
 		void test_CommandChaining_data()
 		{
 			QTest::addColumn<char>("cla");

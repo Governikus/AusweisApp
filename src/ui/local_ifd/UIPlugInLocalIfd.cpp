@@ -17,7 +17,7 @@
 	#include <jni.h>
 #endif
 
-Q_DECLARE_LOGGING_CATEGORY(activation)
+Q_DECLARE_LOGGING_CATEGORY(ifd)
 
 using namespace governikus;
 
@@ -67,7 +67,7 @@ bool UIPlugInLocalIfd::onStartWorkflowRequested(const QString& pPsk)
 	if (const auto minPskSize = Env::getSingleton<SecureStorage>()->getLocalIfdMinPskSize();
 			(pPsk.toUtf8().size() * CHAR_BIT) < minPskSize)
 	{
-		qCCritical(activation) << "PSK must be at least" << minPskSize << "bit";
+		qCCritical(ifd) << "PSK must be at least" << minPskSize << "bit";
 		return false;
 	}
 

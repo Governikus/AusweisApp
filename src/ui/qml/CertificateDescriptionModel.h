@@ -54,13 +54,13 @@ class CertificateDescriptionModel
 
 		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
-		QString getSubjectName() const;
-		QString getSubjectUrl() const;
-		QString getPurpose() const;
+		[[nodiscard]] QString getSubjectName() const;
+		[[nodiscard]] QString getSubjectUrl() const;
+		[[nodiscard]] QString getPurpose() const;
 
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 	Q_SIGNALS:
 		void fireChanged();

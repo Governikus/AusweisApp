@@ -8,6 +8,8 @@
 #include <QScopeGuard>
 #include <QStringList>
 
+#include <array>
+
 using namespace governikus;
 
 
@@ -293,13 +295,16 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x00313520;
 #endif
 
-	char buffer[1024];
-	const uchar inBuffer1[2] = {
-		0, 0
-	};
+	QByteArray buffer(1024, '\0');
+	const std::array<uchar, 2> inBuffer({0, 0});
 
 	PCSC_INT clen = 0;
-	returnCode = SCardControl(cardHandle, CM_IOCTL_GET_FEATURE_REQUEST, inBuffer1, 2, buffer, sizeof(buffer), &clen);
+	returnCode = SCardControl(cardHandle, CM_IOCTL_GET_FEATURE_REQUEST,
+			inBuffer.data(), static_cast<int>(inBuffer.size()),
+			buffer.data(), static_cast<DWORD>(buffer.size()),
+			&clen);
+	buffer.resize(static_cast<int>(clen));
+
 	qCDebug(card_pcsc) << "SCardControl for" << readerName << ':' << PcscUtils::toString(returnCode);
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
@@ -307,21 +312,8 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 		return PcscUtils::Scard_S_Success;
 	}
 
-	if (sizeof(buffer) < clen)
-	{
-		qCCritical(card_pcsc) << "Buffer size smaller than read length";
-		Q_ASSERT(sizeof(buffer) >= clen);
-		return PcscUtils::Scard_F_Unknown_Error;
-	}
-	if (clen > INT_MAX)
-	{
-		qCCritical(card_pcsc) << "Read length > INT_MAX not supported";
-		Q_ASSERT(clen <= INT_MAX);
-		return PcscUtils::Scard_F_Unknown_Error;
-	}
-
-	qCDebug(card_pcsc) << "FEATURES:" << QByteArray(buffer, static_cast<int>(clen)).toHex();
-	mReaderFeatures = PcscReaderFeature(buffer, clen);
+	qCDebug(card_pcsc) << "FEATURES:" << buffer.toHex();
+	mReaderFeatures = PcscReaderFeature(buffer);
 	qCDebug(card_pcsc) << "FEATURES:" << mReaderFeatures;
 
 	return PcscUtils::Scard_S_Success;

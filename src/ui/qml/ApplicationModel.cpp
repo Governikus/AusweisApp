@@ -12,17 +12,12 @@
 #include "Env.h"
 #include "HelpAction.h"
 #include "LanguageLoader.h"
-#include "ProviderConfiguration.h"
 #include "Randomizer.h"
 #include "ReaderFilter.h"
 #include "ReaderInfo.h"
 #include "ReaderManager.h"
 #include "SecureStorage.h"
 #include "VersionNumber.h"
-
-#if !defined(Q_OS_WINRT) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	#include "PdfExporter.h"
-#endif
 
 #if __has_include("context/PersonalizationContext.h")
 	#include "context/PersonalizationContext.h"
@@ -42,8 +37,10 @@
 
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(qml)
 Q_DECLARE_LOGGING_CATEGORY(feedback)
+
 
 void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 {
@@ -138,20 +135,6 @@ QUrl ApplicationModel::getReleaseNotesUrl() const
 }
 
 
-ReaderManagerPlugInInfo ApplicationModel::getFirstPlugInInfo(ReaderManagerPlugInType pType) const
-{
-	const auto pluginInfos = Env::getSingleton<ReaderManager>()->getPlugInInfos();
-	for (const auto& info : pluginInfos)
-	{
-		if (info.getPlugInType() == pType)
-		{
-			return info;
-		}
-	}
-	return ReaderManagerPlugInInfo();
-}
-
-
 ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
 {
 #if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
@@ -160,7 +143,7 @@ ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
 	const ReaderManagerPlugInType type = ReaderManagerPlugInType::NFC;
 #endif
 
-	const auto& pluginInfo = getFirstPlugInInfo(type);
+	const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(type);
 
 	if (!pluginInfo.isAvailable())
 	{

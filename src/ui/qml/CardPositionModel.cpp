@@ -19,8 +19,7 @@ CardPositionModel::CardPositionModel()
 				CardPosition(0.5, 0.5, -1, 90),
 				CardPosition(0.5, 0.5, -1),
 				CardPosition(0.5, 0.25, -1),
-				CardPosition(0.5, 0.75, -1),
-				CardPosition(0.5, 0.0, 1)
+				CardPosition(0.5, 0.75, -1)
 			})
 #endif
 {

@@ -1,10 +1,8 @@
 /*
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-
 import Governikus.Global 1.0
 import Governikus.Provider 1.0
 import Governikus.TitleBar 1.0
@@ -15,40 +13,38 @@ import Governikus.Type.HistoryModel 1.0
 
 SectionPage {
 	id: baseItem
-
 	enum SubViews {
-		None = 0,
+		None,
 		Detail
-	}
-
-	Keys.onEscapePressed: event => {
-		if (d.activeView === ProviderView.SubViews.None) {
-			event.accepted = false
-			return
-		}
-
-		d.activeView = ProviderView.SubViews.None
 	}
 
 	isAbstract: true
 
 	titleBarAction: TitleBarAction {
+		helpTopic: "provider"
 		//: LABEL DESKTOP
 		text: qsTr("Provider")
-		helpTopic: "provider"
-
-		onClicked: {
-			d.activeView = ProviderView.SubViews.None
-		}
 
 		customSubAction: SearchBar {
 			anchors.verticalCenter: parent ? parent.verticalCenter : undefined
 
-			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
-
 			//: LABEL DESKTOP
 			placeholderText: qsTr("Search providers")
+
+			onDisplayTextChanged: ProviderCategoryFilterModel.searchString = displayText
 		}
+
+		onClicked: {
+			d.activeView = ProviderView.SubViews.None;
+		}
+	}
+
+	Keys.onEscapePressed: event => {
+		if (d.activeView === ProviderView.SubViews.None) {
+			event.accepted = false;
+			return;
+		}
+		d.activeView = ProviderView.SubViews.None;
 	}
 
 	QtObject {
@@ -56,30 +52,27 @@ SectionPage {
 
 		property int activeView: ProviderView.SubViews.None
 	}
-
 	ProviderDetailView {
 		id: detailView
-
 		visible: d.activeView === ProviderView.SubViews.Detail
 
 		onNextView: pName => {
-			d.activeView = ProviderView.SubViews.None
-			baseItem.nextView(pName)
+			d.activeView = ProviderView.SubViews.None;
+			baseItem.nextView(pName);
 		}
 	}
-
 	ProviderOverview {
 		id: overviewView
-
 		visible: d.activeView === ProviderView.SubViews.None
 
 		Component.onCompleted: setActive()
-
-		onNextView: pName => { baseItem.nextView(pName) }
+		onNextView: pName => {
+			baseItem.nextView(pName);
+		}
 		onShowDetailView: pModelItem => {
-			HistoryModel.nameFilter.setProviderAddress(pModelItem.providerAddress)
-			detailView.providerModelItem = pModelItem
-			d.activeView = ProviderView.SubViews.Detail
+			HistoryModel.nameFilter.setProviderAddress(pModelItem.providerAddress);
+			detailView.providerModelItem = pModelItem;
+			d.activeView = ProviderView.SubViews.Detail;
 		}
 	}
 }

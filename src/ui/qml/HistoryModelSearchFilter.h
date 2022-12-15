@@ -22,7 +22,7 @@ class HistoryModelSearchFilter
 		QString mFilterString;
 
 	protected:
-		bool filterAcceptsRow(int pSourceRow, const QModelIndex&) const override;
+		[[nodiscard]] bool filterAcceptsRow(int pSourceRow, const QModelIndex&) const override;
 
 	public:
 		Q_INVOKABLE void setFilterString(const QString& pFilterString);

@@ -24,15 +24,17 @@ class PaosParser
 	protected:
 		virtual PaosMessage* parseMessage() = 0;
 
+		[[nodiscard]] QStringView getElementType() const;
+
 	private:
+		QString mMessageName;
+		QString mMessageID;
+		QString mRelatesTo;
+
 		PaosMessage* parseEnvelope();
 		void parseHeader();
 		PaosMessage* parseBody();
 
-	protected:
-		QString mMessageName;
-		QString mMessageID;
-		QString mRelatesTo;
 };
 
 } // namespace governikus

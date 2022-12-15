@@ -34,9 +34,8 @@ class DatagramHandlerMock
 		}
 
 
-		bool send(const QByteArray&) override
+		void send(const QByteArray&) override
 		{
-			return true;
 		}
 
 

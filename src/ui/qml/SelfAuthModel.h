@@ -46,14 +46,14 @@ class SelfAuthModel
 
 		Q_INVOKABLE void startWorkflow();
 		Q_INVOKABLE void cancelWorkflow();
-		Q_INVOKABLE bool isBasicReader() const;
+		[[nodiscard]] Q_INVOKABLE bool isBasicReader() const;
 		Q_INVOKABLE void exportData(const QUrl& pFilename) const;
 
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		bool event(QEvent* pEvent) override;
+		[[nodiscard]] bool event(QEvent* pEvent) override;
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);

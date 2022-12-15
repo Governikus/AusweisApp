@@ -169,7 +169,7 @@ class test_HttpServer
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QTRY_COMPARE(spyServer.count(), 1); // clazy:exclude=qstring-allocations
 			auto param = spyServer.takeFirst();
-			auto socket = qvariant_cast<QSharedPointer<HttpRequest>>(param.at(0))->take();
+			QScopedPointer<QTcpSocket> socket(qvariant_cast<QSharedPointer<HttpRequest>>(param.at(0))->take());
 			QVERIFY(socket->bytesAvailable() > 0); // check rollbackTransaction
 			const auto& requestData = socket->readAll();
 			QVERIFY(requestData.contains("GET / HTTP/1.1"));

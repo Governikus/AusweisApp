@@ -42,5 +42,5 @@ class test_ApplicationModel
 
 };
 
-QTEST_GUILESS_MAIN(test_ApplicationModel)
+QTEST_MAIN(test_ApplicationModel)
 #include "test_ApplicationModel.moc"

@@ -56,16 +56,16 @@ class UIPlugInQml
 #endif
 		bool mShowFocusIndicator;
 
-		QString getPlatformSelectors() const;
-		static QUrl getPath(const QString& pRelativePath, bool pQrc = true);
-		QQuickWindow* getRootWindow() const;
-		bool isHidden() const;
-		bool isTablet() const;
-		bool isTabletLayout() const;
-		bool showUpdateInformationIfPending();
+		[[nodiscard]] QString getPlatformSelectors() const;
+		[[nodiscard]] static QUrl getPath(const QString& pRelativePath, bool pQrc = true);
+		[[nodiscard]] QQuickWindow* getRootWindow() const;
+		[[nodiscard]] bool isHidden() const;
+		[[nodiscard]] bool isTablet() const;
+		[[nodiscard]] bool isTabletLayout() const;
+		[[nodiscard]] bool showUpdateInformationIfPending();
 
 	protected:
-		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
+		[[nodiscard]] bool eventFilter(QObject* pObj, QEvent* pEvent) override;
 
 	public:
 		UIPlugInQml();
@@ -73,16 +73,16 @@ class UIPlugInQml
 
 		static void registerQmlTypes();
 
-		QString getPlatformStyle() const;
-		bool isDebugBuild() const;
-		bool isDeveloperVersion() const;
-		QString getDominator() const;
-		bool isDominated() const;
-		QVariantMap getSafeAreaMargins() const;
-		bool isHighContrastEnabled() const;
-		QString getFixedFontFamily() const;
-		QSize getInitialWindowSize() const;
-		bool getShowFocusIndicator() const;
+		[[nodiscard]] QString getPlatformStyle() const;
+		[[nodiscard]] bool isDebugBuild() const;
+		[[nodiscard]] bool isDeveloperVersion() const;
+		[[nodiscard]] QString getDominator() const;
+		[[nodiscard]] bool isDominated() const;
+		[[nodiscard]] QVariantMap getSafeAreaMargins() const;
+		[[nodiscard]] bool isHighContrastEnabled() const;
+		[[nodiscard]] QString getFixedFontFamily() const;
+		[[nodiscard]] QSize getInitialWindowSize() const;
+		[[nodiscard]] bool getShowFocusIndicator() const;
 
 		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle);
 		Q_INVOKABLE void init();
@@ -111,7 +111,7 @@ class UIPlugInQml
 		void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator) override;
 		void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
 		void onUiDominationReleased() override;
-		void onShowUserInformation(const QString& pMessage);
+		void onShowUserInformation(const QString& pMessage) override;
 		void onUpdateScheduled();
 		void onUpdateAvailable(bool pUpdateAvailable, const GlobalStatus& pStatus);
 

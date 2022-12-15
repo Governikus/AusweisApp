@@ -16,26 +16,97 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-CommandData::DataEntry::operator QByteArray() const
-{
-	return Asn1Util::encode(mClass, mTag, mData, mConstructed);
-}
-
-
-CommandData::CommandData(DATA_TAG pTag)
-	: mData()
+CommandData::CommandData(int pClass, DATA_TAG pTag, const QByteArray& pData)
+	: mClass(pClass)
 	, mTag(pTag)
+	, mSimpleData(pData)
+	, mComplexData()
 {
 }
 
 
-QByteArray CommandData::get(DATA_TAG pTag) const
+CommandData::CommandData(const QByteArray& pData)
+	: mClass(V_ASN1_UNIVERSAL)
+	, mTag(NONE)
+	, mSimpleData()
+	, mComplexData()
 {
-	for (const auto& data : qAsConst(mData))
+	QByteArray data(pData);
+	while (!data.isEmpty())
 	{
-		if (data.mTag == pTag)
+		const unsigned char* p = reinterpret_cast<unsigned char*>(data.data());
+		long size = -1;
+		int tagNumber = -1;
+		int tagClass = -1;
+		const auto result = ASN1_get_object(&p, &size, &tagNumber, &tagClass, data.length());
+		if (result & 0x80)
 		{
-			return data.mData;
+			qCritical() << "Could not parse CommandData:" << getOpenSslError();
+			return;
+		}
+
+		const auto dataSize = static_cast<int>(size);
+		const auto objectSize = ASN1_object_size(false, dataSize, tagNumber);
+		if (data.size() < objectSize)
+		{
+			qCritical() << "Unexpected end of CommandData";
+			return;
+		}
+
+		if (mTag != NONE || data.size() > objectSize || !mComplexData.isEmpty())
+		{
+			mComplexData += CommandData(data.mid(0, objectSize));
+			data.remove(0, objectSize);
+			continue;
+		}
+
+		mClass = tagClass;
+		mTag = tagNumber;
+		if (result & V_ASN1_CONSTRUCTED)
+		{
+			data.remove(0, objectSize - dataSize);
+			continue;
+		}
+
+		mSimpleData.append(reinterpret_cast<const char*>(p), dataSize);
+		return;
+	}
+}
+
+
+QByteArray CommandData::getData(int pClass, DATA_TAG pTag) const
+{
+	if (mClass == pClass && mTag == pTag && !mSimpleData.isNull())
+	{
+		return mSimpleData;
+	}
+
+	for (const auto& data : std::as_const(mComplexData))
+	{
+		const auto& result = data.getData(pClass, pTag);
+		if (!result.isNull())
+		{
+			return result;
+		}
+	}
+
+	return QByteArray();
+}
+
+
+QByteArray CommandData::getObject(int pClass, DATA_TAG pTag) const
+{
+	if (mClass == pClass && mTag == pTag)
+	{
+		return QByteArray(*this);
+	}
+
+	for (const auto& data : std::as_const(mComplexData))
+	{
+		const auto& result = data.getObject(pClass, pTag);
+		if (!result.isNull())
+		{
+			return result;
 		}
 	}
 
@@ -45,27 +116,21 @@ QByteArray CommandData::get(DATA_TAG pTag) const
 
 void CommandData::append(const QByteArray& pData)
 {
-	const auto* p = reinterpret_cast<const unsigned char*>(pData.data());
-
-	long objectLength = -1;
-	int tagNumber = -1;
-	int tagClass = -1;
-
-	const int result = ASN1_get_object(&p, &objectLength, &tagNumber, &tagClass, pData.length());
-	if (result & 0x80)
-	{
-		qCDebug(card) << "Parsing failed, an error occurred:" << getOpenSslError();
-		return;
-	}
-
-	const bool constructed = result & V_ASN1_CONSTRUCTED;
-	mData += {tagClass, tagNumber, constructed, QByteArray(reinterpret_cast<const char*>(p), static_cast<int>(objectLength))};
+	mComplexData += CommandData(pData);
 }
 
 
 void CommandData::append(DATA_TAG pTag, int pValue)
 {
-	append(pTag, Asn1IntegerUtil::encode(pValue));
+	QSharedPointer<ASN1_TYPE> type(ASN1_TYPE_new(), [](ASN1_TYPE* pType){ASN1_TYPE_free(pType);});
+	type->type = V_ASN1_INTEGER;
+	type->value.integer = ASN1_INTEGER_new();
+	if (!ASN1_INTEGER_set_int64(type->value.integer, pValue))
+	{
+		qCCritical(card) << "Encoding error on ASN1_INTEGER";
+	}
+	CommandData integer(Asn1TypeUtil::encode(type.data()));
+	append(pTag, integer.getData(V_ASN1_UNIVERSAL, INTEGER));
 }
 
 
@@ -83,22 +148,42 @@ void CommandData::append(DATA_TAG pTag, PacePasswordId pPassword)
 
 void CommandData::append(DATA_TAG pTag, const QByteArray& pData)
 {
-	mData += {V_ASN1_CONTEXT_SPECIFIC, pTag, false, pData};
+	mComplexData += CommandData(V_ASN1_CONTEXT_SPECIFIC, pTag, pData);
 }
 
 
 CommandData::operator QByteArray() const
 {
-	QByteArray data;
-	for (const auto& entry : qAsConst(mData))
+	if (mSimpleData.isNull())
 	{
-		data += entry;
+		QByteArray data;
+		for (const auto& entry : std::as_const(mComplexData))
+		{
+			data += entry;
+		}
+
+		if (mTag == NONE)
+		{
+			return data;
+		}
+
+		return Asn1Util::encode(mClass, mTag, data, true);
 	}
 
-	if (mTag == NONE)
-	{
-		return data;
-	}
-
-	return Asn1Util::encode(V_ASN1_APPLICATION, mTag, data, true);
+	return Asn1Util::encode(mClass, mTag, mSimpleData);
 }
+
+
+#ifndef QT_NO_DEBUG
+int CommandData::getObjectCount() const
+{
+	int counter = 1;
+	for (const auto& entry : std::as_const(mComplexData))
+	{
+		counter += entry.getObjectCount();
+	}
+	return counter;
+}
+
+
+#endif

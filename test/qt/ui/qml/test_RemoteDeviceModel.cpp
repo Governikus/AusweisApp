@@ -217,5 +217,5 @@ class test_RemoteDeviceModel
 
 };
 
-QTEST_GUILESS_MAIN(test_RemoteDeviceModel)
+QTEST_MAIN(test_RemoteDeviceModel)
 #include "test_RemoteDeviceModel.moc"

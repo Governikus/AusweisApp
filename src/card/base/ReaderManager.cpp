@@ -6,9 +6,12 @@
 
 #include <QLoggingCategory>
 
+
 using namespace governikus;
 
+
 QVector<std::function<void()>> ReaderManager::cMainThreadInit;
+
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
@@ -56,7 +59,7 @@ void ReaderManager::init()
 
 	if (mWorker.isNull())
 	{
-		for (const auto& func : qAsConst(cMainThreadInit))
+		for (const auto& func : std::as_const(cMainThreadInit))
 		{
 			func();
 		}
@@ -189,7 +192,7 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 
 void ReaderManager::startScanAll(bool pAutoConnect)
 {
-	for (const auto& entry : qAsConst(mPlugInInfoCache))
+	for (const auto& entry : std::as_const(mPlugInInfoCache))
 	{
 		startScan(entry.getPlugInType(), pAutoConnect);
 	}
@@ -215,7 +218,7 @@ void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pErro
 
 void ReaderManager::stopScanAll(const QString& pError)
 {
-	for (const auto& entry : qAsConst(mPlugInInfoCache))
+	for (const auto& entry : std::as_const(mPlugInInfoCache))
 	{
 		stopScan(entry.getPlugInType(), pError);
 	}
@@ -250,18 +253,11 @@ bool ReaderManager::isScanRunning(ReaderManagerPlugInType pType) const
 }
 
 
-QVector<ReaderManagerPlugInInfo> ReaderManager::getPlugInInfos() const
+ReaderManagerPlugInInfo ReaderManager::getPlugInInfo(ReaderManagerPlugInType pType) const
 {
-	Q_ASSERT(mThread.isRunning() || mThread.isFinished());
 	const QMutexLocker mutexLocker(&mMutex);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	const auto& list = mPlugInInfoCache.values();
-#else
-	const auto& list = mPlugInInfoCache.values().toVector(); // clazy:exclude=container-anti-pattern
-#endif
-
-	return list;
+	return mPlugInInfoCache.value(pType, ReaderManagerPlugInInfo(pType));
 }
 
 

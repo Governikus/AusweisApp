@@ -121,7 +121,7 @@ void AbstractState::onExit(QEvent* pEvent)
 
 void AbstractState::clearConnections()
 {
-	for (const auto& connection : qAsConst(mConnections))
+	for (const auto& connection : std::as_const(mConnections))
 	{
 		QObject::disconnect(connection);
 	}

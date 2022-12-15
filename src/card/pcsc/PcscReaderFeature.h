@@ -41,7 +41,7 @@ class PcscReaderFeature
 		QMap<FeatureID, PCSC_INT> mFeatures;
 
 	public:
-		PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength = 0);
+		explicit PcscReaderFeature(const QByteArray& pFeaturesTLV);
 
 		[[nodiscard]] bool contains(FeatureID pFeatureID) const;
 

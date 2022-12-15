@@ -26,7 +26,7 @@ class UIPlugInAutomatic
 		QString mDominator;
 		bool mPrevUsedAsSDK;
 
-		bool isDominated() const;
+		[[nodiscard]] bool isDominated() const;
 		void handleInsertCard();
 		void handlePassword();
 

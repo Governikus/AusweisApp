@@ -9,7 +9,7 @@ def getJobs()
 {
 	def list = ['Formatting', 'Source', 'Docs']
 
-	def packages = ['Container', 'MacOS_DMG_PKG', 'Win64_GNU_MSI', 'Win64_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'Android_AAR']
+	def packages = ['Container', 'MacOS_DMG_PKG', 'Win64_GNU_MSI', 'Win64_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'iOS_Simulator_arm64_Framework', 'Android_AAR']
 	for(ARCH in Constants.AndroidArchAPKReview)
 	{
 		packages << 'Android_APK_' + ARCH
@@ -90,6 +90,8 @@ j.with
 
 			phaseJob(getName('iOS_Simulator_Framework'))
 
+			phaseJob(getName('iOS_Simulator_arm64_Framework'))
+
 			phaseJob(getName('Container'))
 		}
 
@@ -101,6 +103,7 @@ j.with
 				{
 					predefinedProp('iOS_Framework_Build', getEnvNumber(getName('iOS_Framework')))
 					predefinedProp('iOS_Simulator_Framework_Build', getEnvNumber(getName('iOS_Simulator_Framework')))
+					predefinedProp('iOS_Simulator_arm64_Framework_Build', getEnvNumber(getName('iOS_Simulator_arm64_Framework')))
 				}
 			}
 		}

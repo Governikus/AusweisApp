@@ -50,24 +50,8 @@ class ChipAuthenticationInfo
 		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
-		static QSharedPointer<const ChipAuthenticationInfo> decode(const QByteArray& pBytes)
-		{
-			if (const auto& delegate = decodeObject<chipauthenticationinfo_st>(pBytes, false))
-			{
-				if (ChipAuthenticationInfo::acceptsProtocol(delegate->mProtocol))
-				{
-					return QSharedPointer<const ChipAuthenticationInfo>::create(delegate);
-				}
-			}
-			return QSharedPointer<const ChipAuthenticationInfo>();
-		}
-
-
-		[[nodiscard]] QByteArray encode() const
-		{
-			return encodeObject(const_cast<chipauthenticationinfo_st*>(mDelegate.data()));
-		}
-
+		static QSharedPointer<const ChipAuthenticationInfo> decode(const QByteArray& pBytes);
+		[[nodiscard]] QByteArray encode() const;
 
 		[[nodiscard]] int getVersion() const;
 		[[nodiscard]] bool hasKeyId() const;

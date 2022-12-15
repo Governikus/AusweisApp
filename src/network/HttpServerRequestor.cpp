@@ -52,12 +52,17 @@ QUrl HttpServerRequestor::createUrl(const QString& pQuery, quint16 pPort, const 
 }
 
 
+QSharedPointer<QNetworkReply> HttpServerRequestor::getRequest(QNetworkRequest pRequest, int pTimeOut)
+{
+	qCDebug(network) << "Request URL (GET):" << pRequest.url();
+	auto reply = mNetworkManager ? mNetworkManager->get(pRequest) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
 QSharedPointer<QNetworkReply> HttpServerRequestor::getRequest(const QUrl& pUrl, int pTimeOut)
 {
-	QNetworkRequest request(pUrl);
-	qCDebug(network) << "Request URL (GET):" << pUrl;
-	auto reply = mNetworkManager ? mNetworkManager->get(request) : nullptr;
-	return waitForReply(reply, pTimeOut);
+	return getRequest(QNetworkRequest(pUrl), pTimeOut);
 }
 
 

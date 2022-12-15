@@ -117,7 +117,7 @@ class test_RemoteServiceSettings
 			settings.setTrustedCertificates(certs);
 			auto storedCerts = settings.getTrustedCertificates();
 			QCOMPARE(settings.getTrustedCertificates().size(), 2);
-			for (const auto& entry : qAsConst(certs))
+			for (const auto& entry : std::as_const(certs))
 			{
 				QVERIFY(storedCerts.contains(entry));
 			}
@@ -131,7 +131,7 @@ class test_RemoteServiceSettings
 			QCOMPARE(storedCerts.size(), 3);
 
 			certs << pair2.getCertificate();
-			for (const auto& entry : qAsConst(certs))
+			for (const auto& entry : std::as_const(certs))
 			{
 				QVERIFY(storedCerts.contains(entry));
 			}

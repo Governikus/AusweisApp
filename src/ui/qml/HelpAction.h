@@ -35,7 +35,7 @@ class HelpAction
 		~HelpAction() = default;
 
 	public:
-		static QString getOnlineUrl(const QString& pObjectName = QString());
+		[[nodiscard]] static QString getOnlineUrl(const QString& pObjectName = QString());
 		static void openContextHelp(const QString& pObjectName = QStringLiteral("applicationPage"));
 };
 

@@ -52,9 +52,9 @@ class NotificationModel
 		void onNewLogMsg(const QString& pMsg, const QString& pCategoryName);
 
 	public:
-		int rowCount(const QModelIndex& pIndex) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& pIndex) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 	Q_SIGNALS:
 		void fireLastTypeChanged();

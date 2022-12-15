@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include "ActivationContext.h"
 #include "NetworkManager.h"
 #include "TcToken.h"
 #include "UrlUtil.h"
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "context/AccessRightManager.h"
+#include "context/ActivationContext.h"
 #include "context/WorkflowContext.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 #include "paos/invoke/DidAuthenticateResponseEac2.h"

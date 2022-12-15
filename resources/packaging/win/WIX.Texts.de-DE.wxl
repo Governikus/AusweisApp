@@ -42,12 +42,15 @@
 	<String Id="ArpAbout" Overridable="yes">https://www.ausweisapp.bund.de</String>
 	<String Id="ArpUpdate" Overridable="yes">https://www.ausweisapp.bund.de/de/aa2/download</String>
 	<String Id="DowngradeErrorMessage" Overridable="yes">Eine aktuellere Version der [ProductName] ist bereits installiert. Die Installation wird nun beendet.</String>
-	<String Id="WindowsServerNotSupported" Overridable="yes">Die [ProductName] unterstützt keine Windows Server.</String>
-	<String Id="Windows10Required" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen eine 64-Bit-Version von Windows 10 Version 1809 oder neuer.</String>
+	<String Id="WindowsRequired" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen mindestens eine 64-Bit-Version von Windows 10 oder Windows Server 2016.</String>
+	<String Id="WindowsClient" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen mindestens eine 64-Bit-Version von Windows 10 Version 1809.</String>
+	<String Id="WindowsServer" Overridable="yes">Ihr Betriebssystem erfüllt leider nicht die Mindestvoraussetzungen für die AusweisApp2. Sie benötigen mindestens eine 64-Bit-Version von Windows Server 2016 Version 1607.</String>
 	<String Id="ProgramDescription" Overridable="yes">AusweisApp2, der eID-Client der Governikus KG</String>
+	<String Id="ServiceDescription" Overridable="yes">Ermöglicht den parallelen Betrieb mehrere Instanzen der AusweisApp2 auf einem System im Anwendungsservermodus.</String>
 	<String Id="CustomInstallDirDlg_Title" Overridable="yes">Installationsoptionen</String>
 	<String Id="CustomInstallDirDlg_Description" Overridable="yes"></String>
 	<String Id="CustomInstallDirDlg_DesktopShortcutCheckBox" Overridable="yes">Verknüpfung auf dem Desktop anlegen</String>
+	<String Id="CustomInstallDirDlg_ProxyServiceCheckBox" Overridable="yes">Proxy-Dienst installieren</String>
 	<String Id="CustomInstallDirDlg_SystemSettingsCheckBox" Overridable="yes">Notwendige Regeln zur Windows-Firewall hinzufügen</String>
 	<String Id="CustomInstallDirDlg_SystemSettingsTooltip" Overridable="yes">Firewallregeln sind u.A. für die Funktion Smartphone als Kartenleser notwendig.</String>
 	<String Id="CustomExitDialog_LaunchCheckBox" Overridable="yes">Starten der AusweisApp2</String>

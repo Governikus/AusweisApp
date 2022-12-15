@@ -93,7 +93,7 @@ QJsonArray MsgHandlerAccessRights::getAccessRights(const QSet<AccessRight>& pRig
 
 	QList<AccessRight> accessRights = pRights.values();
 	std::sort(accessRights.rbegin(), accessRights.rend());
-	for (auto entry : qAsConst(accessRights))
+	for (auto entry : std::as_const(accessRights))
 	{
 		const QLatin1String name = AccessRoleAndRightsUtil::toTechnicalName(entry);
 		if (name.size())

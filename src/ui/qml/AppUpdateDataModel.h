@@ -50,23 +50,23 @@ class AppUpdateDataModel
 		void onAppDownloadFinished(const GlobalStatus& pError);
 
 	public:
-		bool isUpdateAvailable() const;
-		bool isMissingPlatform() const;
-		bool isValid() const;
-		bool isCompatible() const;
-		int getDownloadProgress() const;
-		int getDownloadTotal() const;
-		QString getDownloadFolder() const;
-		const QDateTime& getDate() const;
-		const QString& getVersion() const;
-		const QUrl& getUrl() const;
-		int getSize() const;
-		const QUrl& getChecksumUrl() const;
-		const QUrl& getNotesUrl() const;
-		const QString& getNotes() const;
+		[[nodiscard]] bool isUpdateAvailable() const;
+		[[nodiscard]] bool isMissingPlatform() const;
+		[[nodiscard]] bool isValid() const;
+		[[nodiscard]] bool isCompatible() const;
+		[[nodiscard]] int getDownloadProgress() const;
+		[[nodiscard]] int getDownloadTotal() const;
+		[[nodiscard]] QString getDownloadFolder() const;
+		[[nodiscard]] const QDateTime& getDate() const;
+		[[nodiscard]] const QString& getVersion() const;
+		[[nodiscard]] const QUrl& getUrl() const;
+		[[nodiscard]] int getSize() const;
+		[[nodiscard]] const QUrl& getChecksumUrl() const;
+		[[nodiscard]] const QUrl& getNotesUrl() const;
+		[[nodiscard]] const QString& getNotes() const;
 		Q_INVOKABLE void skipUpdate() const;
-		Q_INVOKABLE bool download();
-		Q_INVOKABLE bool abortDownload();
+		[[nodiscard]] Q_INVOKABLE bool download();
+		[[nodiscard]] Q_INVOKABLE bool abortDownload();
 
 	Q_SIGNALS:
 		void fireAppUpdateDataChanged();

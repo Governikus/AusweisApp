@@ -40,17 +40,17 @@ class test_CommandLineParser
 			out << QStringLiteral("Usage: %1 [options]").arg(app);
 			out << QString();
 			out << QStringLiteral("Options:");
-			out << QStringLiteral("  -h, --help             Displays help on commandline options.");
-			out << QStringLiteral("  --help-all             Displays help including Qt specific options.");
-			out << QStringLiteral("  -v, --version          Displays version information.");
-			out << QStringLiteral("  --keep                 Keep logfile.");
-			out << QStringLiteral("  --no-logfile           Disable logfile.");
-			out << QStringLiteral("  --no-loghandler        Disable default log handler.");
-			out << QStringLiteral("  --show                 Show window on startup.");
-			out << QStringLiteral("  --no-proxy             Ignore proxy settings.");
-			out << QStringLiteral("  --ui <qml,websocket>   Use given UI plugin.");
-			out << QStringLiteral("  --port <24727>         Use listening port.");
-			out << QStringLiteral("  --address <127.0.0.1>  Use address binding.");
+			out << QStringLiteral("  -h, --help                       Displays help on commandline options.");
+			out << QStringLiteral("  --help-all                       Displays help including Qt specific options.");
+			out << QStringLiteral("  -v, --version                    Displays version information.");
+			out << QStringLiteral("  --keep                           Keep logfile.");
+			out << QStringLiteral("  --no-logfile                     Disable logfile.");
+			out << QStringLiteral("  --no-loghandler                  Disable default log handler.");
+			out << QStringLiteral("  --show                           Show window on startup.");
+			out << QStringLiteral("  --no-proxy                       Ignore proxy settings.");
+			out << QStringLiteral("  --ui <qml,webservice,websocket>  Use given UI plugin.");
+			out << QStringLiteral("  --port <24727>                   Use listening port.");
+			out << QStringLiteral("  --address <127.0.0.1>            Use address binding.");
 			out << QString();
 
 			const auto& standardOut = process.readAllStandardOutput();

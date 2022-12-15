@@ -538,5 +538,5 @@ class test_NumberModel
 
 };
 
-QTEST_GUILESS_MAIN(test_NumberModel)
+QTEST_MAIN(test_NumberModel)
 #include "test_NumberModel.moc"

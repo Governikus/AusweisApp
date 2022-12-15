@@ -105,7 +105,7 @@ void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
 	{
 		writeTextElement(QStringLiteral("CertificateHolderAuthorizationTemplate"), mCertificateHolderAuthorizationTemplate);
 	}
-	for (const auto& reference : qAsConst(mCertificationAuthorityReferences))
+	for (const auto& reference : std::as_const(mCertificationAuthorityReferences))
 	{
 		writeTextElement(QStringLiteral("CertificationAuthorityReference"), reference);
 	}

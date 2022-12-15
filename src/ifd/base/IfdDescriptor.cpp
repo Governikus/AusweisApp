@@ -67,26 +67,19 @@ bool IfdDescriptor::IfdDescriptorData::isSameIfd(const IfdDescriptorData& pOther
 }
 
 
-IfdDescriptor::IfdDescriptorData* IfdDescriptor::createRemoteDeviceDescriptorData(const Discovery& pDiscovery,
-		const QHostAddress& pHostAddress, bool pLocalIfd)
+IfdDescriptor::IfdDescriptor(const Discovery& pDiscovery, const QHostAddress& pHostAddress, bool pLocalIfd)
+	: d()
 {
 	const QUrl url = urlFromMsgAndHost(pDiscovery, pHostAddress);
 	if (url.isEmpty() || url.host().isEmpty())
 	{
-		return nullptr;
+		return;
 	}
 
 	const QString& ifdName = pDiscovery.getIfdName();
 	const QString& ifdId = pDiscovery.getIfdId();
 	const QVector<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
-
-	return new IfdDescriptorData(ifdName, ifdId, supportedApis, url, pLocalIfd);
-}
-
-
-IfdDescriptor::IfdDescriptor(const Discovery& pDiscovery, const QHostAddress& pHostAddress, bool pLocalIfd)
-	: d(createRemoteDeviceDescriptorData(pDiscovery, pHostAddress, pLocalIfd))
-{
+	d = new IfdDescriptorData(ifdName, ifdId, supportedApis, url, pLocalIfd);
 }
 
 

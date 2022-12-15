@@ -22,6 +22,12 @@ void UIPlugIn::onShowUi(UiModule pModule)
 }
 
 
+bool UIPlugIn::initialize()
+{
+	return true;
+}
+
+
 void UIPlugIn::onHideUi()
 {
 }
@@ -49,4 +55,10 @@ void UIPlugIn::onUiDomination(const UIPlugIn* pUi, const QString& pInformation, 
 
 void UIPlugIn::onUiDominationReleased()
 {
+}
+
+
+void UIPlugIn::onShowUserInformation(const QString& pInformationMessage)
+{
+	Q_UNUSED(pInformationMessage)
 }

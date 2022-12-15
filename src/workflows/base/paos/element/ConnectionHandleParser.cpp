@@ -28,53 +28,53 @@ ConnectionHandle ConnectionHandleParser::parse()
 	QString slotHandle;
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("ContextHandle"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("ContextHandle"))
 		{
 			if (readUniqueElementText(contexthandle))
 			{
 				connectionHandle.setContextHandle(contexthandle);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("IFDName"))
+		else if (name == QLatin1String("IFDName"))
 		{
 			if (readUniqueElementText(ifdName))
 			{
 				connectionHandle.setIfdName(ifdName);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("SlotIndex"))
+		else if (name == QLatin1String("SlotIndex"))
 		{
 			if (readUniqueElementText(slotIndex))
 			{
 				connectionHandle.setSlotIndex(slotIndex);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("CardApplication"))
+		else if (name == QLatin1String("CardApplication"))
 		{
 			if (readUniqueElementText(cardApplication))
 			{
 				connectionHandle.setCardApplication(cardApplication);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("SlotHandle"))
+		else if (name == QLatin1String("SlotHandle"))
 		{
 			if (readUniqueElementText(slotHandle))
 			{
 				connectionHandle.setSlotHandle(slotHandle);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("RecognitionInfo"))
+		else if (name == QLatin1String("RecognitionInfo"))
 		{
-			qCWarning(paos) << "Unsupported element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unsupported element:" << name;
+			skipCurrentElement();
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
-	return mParseError ? ConnectionHandle() : connectionHandle;
+	return parserFailed() ? ConnectionHandle() : connectionHandle;
 }

@@ -58,32 +58,6 @@ class test_Asn1IntegerUtil
 		}
 
 
-		void encode_data()
-		{
-			QTest::addColumn<int>("number");
-			QTest::addColumn<QByteArray>("data");
-
-			QTest::newRow("-1") << -1 << QByteArray::fromHex("FF");
-			QTest::newRow("0") << 0 << QByteArray::fromHex("00");
-			QTest::newRow("1") << 1 << QByteArray::fromHex("01");
-			QTest::newRow("127") << 127 << QByteArray::fromHex("7F");
-			QTest::newRow("128") << 128 << QByteArray::fromHex("0080");
-			QTest::newRow("256") << 256 << QByteArray::fromHex("0100");
-			QTest::newRow("32767") << 32767 << QByteArray::fromHex("7FFF");
-			QTest::newRow("32768") << 32768 << QByteArray::fromHex("008000");
-		}
-
-
-		void encode()
-		{
-			QFETCH(int, number);
-			QFETCH(QByteArray, data);
-
-			const auto& rawNumber = Asn1IntegerUtil::encode(number);
-			QCOMPARE(rawNumber, data);
-		}
-
-
 };
 
 QTEST_GUILESS_MAIN(test_Asn1IntegerUtil)

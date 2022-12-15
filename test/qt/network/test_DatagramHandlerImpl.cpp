@@ -7,10 +7,12 @@
 #include "DatagramHandlerImpl.h"
 
 #include "Env.h"
+#include "HttpServer.h"
 #include "LogHandler.h"
 
 #include "TestFileHelper.h"
 
+#include <QNetworkInterface>
 #include <QNetworkProxy>
 #include <QSharedPointer>
 #include <QtTest>
@@ -35,7 +37,7 @@ class test_DatagramHandlerImpl
 
 		void init()
 		{
-			DatagramHandlerImpl::cPort = 0;
+			HttpServer::cPort = 0;
 		}
 
 
@@ -64,14 +66,14 @@ class test_DatagramHandlerImpl
 
 		void cannotStart()
 		{
-			DatagramHandlerImpl::cPort = 80;
+			HttpServer::cPort = 80;
 
 #ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
 #elif defined(Q_OS_LINUX)
 			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
 			QVERIFY(portStart != -1);
-			if (portStart <= DatagramHandlerImpl::cPort)
+			if (portStart <= HttpServer::cPort)
 			{
 				QSKIP("Cannot check privileged port");
 			}
@@ -181,7 +183,7 @@ class test_DatagramHandlerImpl
 #ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
 #endif
-				QVERIFY(datagramHandlerImpl->sendToAllAddressEntries(doc.toJson(QJsonDocument::Compact), receiver.localPort()));
+				datagramHandlerImpl->sendToAllAddressEntries(doc.toJson(QJsonDocument::Compact), receiver.localPort());
 			}
 			else
 			{
@@ -189,7 +191,7 @@ class test_DatagramHandlerImpl
 			}
 
 			QTRY_COMPARE(spyReceiver.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(logSpy.count(), 0);
+			QCOMPARE(logSpy.count(), broadcast ? QNetworkInterface::allInterfaces().size() + 1 : 0);
 
 			QVERIFY(receiver.hasPendingDatagrams());
 			QByteArray msg;

@@ -14,9 +14,17 @@ Betriebssysteme
 
 - macOS 12.0
 
+- macOS 13.0
+
 - Windows 10 (64 Bit) ab Version 1809
 
 - Windows 11
+
+- Windows Server 2016 (Version 1607)
+
+- Windows Server 2019
+
+- Windows Server 2022
 
 - Android 7.0 und höher (armeabi-v7a, arm64-v8a)
 
@@ -46,13 +54,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 107
+- Chrome 108
 
-- Firefox 106
+- Firefox 107
 
-- Safari 15.6
+- Safari 16.1 (macOS)
 
-- Edge 105
+- Edge 108
 
 
 
@@ -110,13 +118,13 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 107 (iOS/Android)
+- Chrome 108 (iOS/Android)
 
-- Firefox 106 (iOS/Android)
+- Firefox 107 (iOS/Android)
 
-- Samsung Internet 18 (Android)
+- Samsung Internet 19 (Android)
 
-- Safari 15.6 (iOS)
+- Safari 16.1 (iOS)
 
 
 Kartenleser

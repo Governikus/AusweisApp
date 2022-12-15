@@ -45,7 +45,7 @@ class CheckIDCardModel
 		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void stopScan();
 
-		CheckIDCardResult getResult() const;
+		[[nodiscard]] CheckIDCardResult getResult() const;
 
 	private:
 		bool mIsRunning;

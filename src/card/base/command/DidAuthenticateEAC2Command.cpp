@@ -46,10 +46,10 @@ void DidAuthenticateEAC2Command::internalExecuteSoftwareSmartCard()
 			mPin,
 			QByteArray::fromHex(mEphemeralPublicKeyAsHex));
 
-	mReturnCode = returnCode;
-	if (mReturnCode != CardReturnCode::OK)
+	setReturnCode(returnCode);
+	if (returnCode != CardReturnCode::OK)
 	{
-		qCWarning(card) << "Perform terminal and chip authentication failed:" << CardReturnCodeUtil::toGlobalStatus(mReturnCode);
+		qCWarning(card) << "Perform terminal and chip authentication failed:" << CardReturnCodeUtil::toGlobalStatus(getReturnCode());
 		return;
 	}
 
@@ -57,7 +57,7 @@ void DidAuthenticateEAC2Command::internalExecuteSoftwareSmartCard()
 	if (EFCardSecurity::decode(efCardSecurity) == nullptr)
 	{
 		qCCritical(card) << "Cannot parse EF.CardSecurity";
-		mReturnCode = CardReturnCode::PROTOCOL_ERROR;
+		setReturnCode(CardReturnCode::PROTOCOL_ERROR);
 		return;
 	}
 
@@ -74,8 +74,8 @@ void DidAuthenticateEAC2Command::internalExecute()
 		return;
 	}
 
-	mReturnCode = putCertificateChain(mCvcChain);
-	if (mReturnCode != CardReturnCode::OK)
+	setReturnCode(putCertificateChain(mCvcChain));
+	if (getReturnCode() != CardReturnCode::OK)
 	{
 		return;
 	}
@@ -98,21 +98,21 @@ void DidAuthenticateEAC2Command::internalExecute()
 	QByteArray compressedEphemeralPublicKey = ephemeralPublicKey.mid(1, (ephemeralPublicKey.size() - 1) / 2);
 
 	QByteArray signature = QByteArray::fromHex(mSignatureAsHex);
-	mReturnCode = performTerminalAuthentication(taProtocol,
+	setReturnCode(performTerminalAuthentication(taProtocol,
 			chr,
 			mAuthenticatedAuxiliaryDataAsBinary,
 			compressedEphemeralPublicKey,
-			signature);
+			signature));
 
-	if (mReturnCode != CardReturnCode::OK)
+	if (getReturnCode() != CardReturnCode::OK)
 	{
 		return;
 	}
 
 	QByteArray efCardSecurityBytes;
 	qCDebug(card) << "Performing Read EF.CardSecurity";
-	mReturnCode = getCardConnectionWorker()->readFile(FileRef::efCardSecurity(), efCardSecurityBytes, CommandApdu::EXTENDED_MAX_LE);
-	if (mReturnCode != CardReturnCode::OK)
+	setReturnCode(getCardConnectionWorker()->readFile(FileRef::efCardSecurity(), efCardSecurityBytes, CommandApdu::EXTENDED_MAX_LE));
+	if (getReturnCode() != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Cannot read EF.CardSecurity";
 		return;
@@ -122,7 +122,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 	if (efCardSecurity == nullptr)
 	{
 		qCCritical(card) << "Cannot parse EF.CardSecurity";
-		mReturnCode = CardReturnCode::PROTOCOL_ERROR;
+		setReturnCode(CardReturnCode::PROTOCOL_ERROR);
 		return;
 	}
 
@@ -130,7 +130,7 @@ void DidAuthenticateEAC2Command::internalExecute()
 	if (chipAuthenticationInfoList.isEmpty())
 	{
 		qCCritical(card) << "No ChipAuthenticationInfo found in EF.CardSecurity";
-		mReturnCode = CardReturnCode::PROTOCOL_ERROR;
+		setReturnCode(CardReturnCode::PROTOCOL_ERROR);
 		return;
 	}
 
@@ -139,13 +139,13 @@ void DidAuthenticateEAC2Command::internalExecute()
 		if (info->getVersion() == 2)
 		{
 			qCDebug(card) << "Choose ChipAuthenticationInfo:" << info;
-			mReturnCode = performChipAuthentication(info, ephemeralPublicKey);
+			setReturnCode(performChipAuthentication(info, ephemeralPublicKey));
 			return;
 		}
 	}
 
 	qCCritical(card) << "No ChipAuthenticationInfo with version 2 found in EF.CardSecurity";
-	mReturnCode = CardReturnCode::PROTOCOL_ERROR;
+	setReturnCode(CardReturnCode::PROTOCOL_ERROR);
 }
 
 
@@ -272,7 +272,7 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	CommandData cmdDataCa(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandData cmdDataCa(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
 	cmdDataCa.append(CommandData::CA_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
 	CommandApdu cmdApduCa(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdDataCa, CommandApdu::SHORT_MAX_LE);
 	qCDebug(card) << "Performing CA General Authenticate";

@@ -133,5 +133,5 @@ class test_ReaderScanEnabler
 };
 
 
-QTEST_GUILESS_MAIN(test_ReaderScanEnabler)
+QTEST_MAIN(test_ReaderScanEnabler)
 #include "test_ReaderScanEnabler.moc"

@@ -15,13 +15,85 @@ class test_CommandData
 	Q_OBJECT
 
 	private Q_SLOTS:
-		void setAuxiliaryData()
+		void encodeDecode_data()
 		{
-			CommandData data;
-			QByteArray auxData = QByteArray::fromHex("670F0102030405060708090A0B0C0D0E0F");
-			data.append(auxData);
-			QCOMPARE(data, auxData);
-			QCOMPARE(data.get(CommandData::AUXILIARY_AUTHENTICATED_DATA), auxData.mid(2));
+			QTest::addColumn<int>("objectCount");
+			QTest::addColumn<QByteArray>("data");
+
+			// S = Simple, C = Complex
+			QTest::newRow("Empty") << 1 << QByteArray();
+			QTest::newRow("S") << 1 << QByteArray::fromHex("81 01 FF");
+			QTest::newRow("S,S") << 3 << QByteArray::fromHex("82 01 FF"
+															 "83 01 FE");
+			QTest::newRow("C(S)") << 2 << QByteArray::fromHex("A1 03"
+															  "   82 01 FF");
+			QTest::newRow("S,C(S)") << 4 << QByteArray::fromHex("82 01 FF"
+																"A3 03"
+																"   84 01 FE");
+			QTest::newRow("C(S),S") << 4 << QByteArray::fromHex("A2 03"
+																"   83 01 FF"
+																"84 01 FE");
+			QTest::newRow("C(S),C(S)") << 5 << QByteArray::fromHex("A2 03"
+																   "   83 01 FF"
+																   "A4 03"
+																   "   85 01 FE");
+			QTest::newRow("C(S,S)") << 3 << QByteArray::fromHex("A1 06"
+																"   82 01 FF"
+																"   83 01 FE");
+			QTest::newRow("C(C(S))") << 3 << QByteArray::fromHex("A1 05"
+																 "   A2 03"
+																 "      83 01 FF");
+			QTest::newRow("C(S,C(S))") << 4 << QByteArray::fromHex("A1 08"
+																   "   82 01 FF"
+																   "   A3 03"
+																   "      84 01 FE");
+			QTest::newRow("C(C(S),S)") << 4 << QByteArray::fromHex("A1 08"
+																   "   A2 03"
+																   "      83 01 FF"
+																   "   84 01 FE");
+			QTest::newRow("C(C(S),C(S))") << 5 << QByteArray::fromHex("A1 0A"
+																	  "   A2 03"
+																	  "      83 01 FF"
+																	  "   A4 03"
+																	  "      85 01 FE");
+		}
+
+
+		void encodeDecode()
+		{
+			QFETCH(int, objectCount);
+			QFETCH(QByteArray, data);
+
+			const CommandData cmd(data);
+			QCOMPARE(cmd.getObjectCount(), objectCount);
+			QCOMPARE(QByteArray(cmd), data);
+		}
+
+
+		void encodeInteger_data()
+		{
+			QTest::addColumn<int>("number");
+			QTest::addColumn<QByteArray>("data");
+
+			QTest::newRow("-1") << -1 << QByteArray::fromHex("8401FF");
+			QTest::newRow("0") << 0 << QByteArray::fromHex("840100");
+			QTest::newRow("1") << 1 << QByteArray::fromHex("840101");
+			QTest::newRow("127") << 127 << QByteArray::fromHex("84017F");
+			QTest::newRow("128") << 128 << QByteArray::fromHex("84020080");
+			QTest::newRow("256") << 256 << QByteArray::fromHex("84020100");
+			QTest::newRow("32767") << 32767 << QByteArray::fromHex("84027FFF");
+			QTest::newRow("32768") << 32768 << QByteArray::fromHex("8403008000");
+		}
+
+
+		void encodeInteger()
+		{
+			QFETCH(int, number);
+			QFETCH(QByteArray, data);
+
+			CommandData cmd;
+			cmd.append(CommandData::PRIVATE_KEY_REFERENCE, number);
+			QCOMPARE(cmd, data);
 		}
 
 
@@ -49,14 +121,6 @@ class test_CommandData
 			PacePasswordId pinId = PacePasswordId::PACE_PIN;
 			data.append(CommandData::PUBLIC_KEY_REFERENCE, pinId);
 			QCOMPARE(data, QByteArray::fromHex("8301").append(static_cast<char>(pinId)));
-		}
-
-
-		void setPrivateKey()
-		{
-			CommandData data;
-			data.append(CommandData::PRIVATE_KEY_REFERENCE, 2);
-			QCOMPARE(data, QByteArray::fromHex("840102"));
 		}
 
 
@@ -105,13 +169,64 @@ class test_CommandData
 		}
 
 
-		void setChat()
+		void getDataObject_data()
 		{
-			CommandData data;
-			QByteArray chat = QByteArray::fromHex("7f4C05A9D9E9F949");
-			data.append(chat);
-			QCOMPARE(data, chat);
-			QCOMPARE(data.get(CommandData::CERTIFICATE_HOLDER_AUTHORIZATION_TEMPLATE), chat.mid(3));
+			QTest::addColumn<QByteArray>("asn1");
+			QTest::addColumn<QByteArray>("data");
+			QTest::addColumn<QByteArray>("object");
+
+			// S = Simple, C = Complex
+			QTest::newRow("Empty") << QByteArray() << QByteArray() << QByteArray();
+			QTest::newRow("S MISS") << QByteArray::fromHex("82 01 FF")
+									<< QByteArray()
+									<< QByteArray();
+			QTest::newRow("S HIT") << QByteArray::fromHex("81 01 FF")
+								   << QByteArray::fromHex("FF")
+								   << QByteArray::fromHex("81 01 FF");
+			QTest::newRow("S,S MISS") << QByteArray::fromHex("82 01 FF"
+															 "83 01 FE")
+									  << QByteArray()
+									  << QByteArray();
+			QTest::newRow("S,S HIT 1") << QByteArray::fromHex("81 01 FF"
+															  "82 01 FE")
+									   << QByteArray::fromHex("FF")
+									   << QByteArray::fromHex("81 01 FF");
+			QTest::newRow("S,S HIT 2") << QByteArray::fromHex("82 01 FE"
+															  "81 01 FF")
+									   << QByteArray::fromHex("FF")
+									   << QByteArray::fromHex("81 01 FF");
+			QTest::newRow("S,S HIT 3") << QByteArray::fromHex("81 01 FF"
+															  "81 01 FE")
+									   << QByteArray::fromHex("FF")
+									   << QByteArray::fromHex("81 01 FF");
+			QTest::newRow("C(S) MISS") << QByteArray::fromHex("A2 03"
+															  "   82 01 FF")
+									   << QByteArray()
+									   << QByteArray();
+			QTest::newRow("C(S) HIT 1") << QByteArray::fromHex("A1 03"
+															   "   81 01 FF")
+										<< QByteArray::fromHex("FF")
+										<< QByteArray::fromHex("A1 03 81 01 FF");
+			QTest::newRow("C(S) HIT 2") << QByteArray::fromHex("A2 03"
+															   "   81 01 FF")
+										<< QByteArray::fromHex("FF")
+										<< QByteArray::fromHex("81 01 FF");
+			QTest::newRow("C(S) MISS/HIT") << QByteArray::fromHex("A1 03"
+																  "   82 01 FF")
+										   << QByteArray()
+										   << QByteArray::fromHex("A1 03 82 01 FF");
+		}
+
+
+		void getDataObject()
+		{
+			QFETCH(QByteArray, asn1);
+			QFETCH(QByteArray, data);
+			QFETCH(QByteArray, object);
+
+			const CommandData cmd(asn1);
+			QCOMPARE(cmd.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::MAPPING_DATA), data);
+			QCOMPARE(cmd.getObject(V_ASN1_CONTEXT_SPECIFIC, CommandData::MAPPING_DATA), object);
 		}
 
 
@@ -121,17 +236,41 @@ class test_CommandData
 			QByteArray signature = QByteArray::fromHex("5f37050102030405");
 			data.append(signature);
 			QCOMPARE(data, signature);
-			QCOMPARE(data.get(CommandData::CERTIFICATE_SIGNATURE), signature.mid(3));
+			QCOMPARE(data.getData(V_ASN1_APPLICATION, CommandData::CERTIFICATE_SIGNATURE), signature.mid(3));
+			QCOMPARE(data.getObject(V_ASN1_APPLICATION, CommandData::CERTIFICATE_SIGNATURE), signature);
+		}
+
+
+		void setAuxiliaryData()
+		{
+			CommandData data;
+			QByteArray auxData = QByteArray::fromHex("6703800101");
+			data.append(auxData);
+			QCOMPARE(data, auxData);
+			QCOMPARE(data.getData(V_ASN1_APPLICATION, CommandData::AUXILIARY_AUTHENTICATED_DATA), QByteArray());
+			QCOMPARE(data.getObject(V_ASN1_APPLICATION, CommandData::AUXILIARY_AUTHENTICATED_DATA), auxData);
+		}
+
+
+		void setChat()
+		{
+			CommandData data;
+			QByteArray chat = QByteArray::fromHex("7f4C03800101");
+			data.append(chat);
+			QCOMPARE(data, chat);
+			QCOMPARE(data.getData(V_ASN1_APPLICATION, CommandData::CERTIFICATE_HOLDER_AUTHORIZATION_TEMPLATE), QByteArray());
+			QCOMPARE(data.getObject(V_ASN1_APPLICATION, CommandData::CERTIFICATE_HOLDER_AUTHORIZATION_TEMPLATE), chat);
 		}
 
 
 		void setCertificateBody()
 		{
 			CommandData data;
-			QByteArray body = QByteArray::fromHex("7f4e050102030405");
+			QByteArray body = QByteArray::fromHex("7f4e03800101");
 			data.append(body);
 			QCOMPARE(data, body);
-			QCOMPARE(data.get(CommandData::CERTIFICATE_BODY), body.mid(3));
+			QCOMPARE(data.getData(V_ASN1_APPLICATION, CommandData::CERTIFICATE_BODY), QByteArray());
+			QCOMPARE(data.getObject(V_ASN1_APPLICATION, CommandData::CERTIFICATE_BODY), body);
 		}
 
 

@@ -218,10 +218,9 @@ int SecureMessaging::createNewLe(const QByteArray& pSecuredData, int pOldLe) con
 
 QByteArray SecureMessaging::getSendSequenceCounter() const
 {
-	static const int COUNTER_SIZE = sizeof(mSendSequenceCounter);
-	char converted[COUNTER_SIZE];
-	qToBigEndian(mSendSequenceCounter, converted);
-	return QByteArray(mCipher.getBlockSize() - COUNTER_SIZE, 0x00) + QByteArray(converted, COUNTER_SIZE);
+	QByteArray converted(sizeof(mSendSequenceCounter), '\0');
+	qToBigEndian(mSendSequenceCounter, converted.data());
+	return QByteArray(mCipher.getBlockSize() - converted.size(), 0x00) + converted;
 }
 
 

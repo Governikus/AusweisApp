@@ -6,8 +6,8 @@
 
 #include "messages/MsgHandlerCertificate.h"
 
-#include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
+#include "context/InternalActivationContext.h"
 #include "states/StateEditAccessRights.h"
 
 #include "TestAuthContext.h"

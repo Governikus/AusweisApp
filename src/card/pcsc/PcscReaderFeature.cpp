@@ -14,17 +14,17 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 
-PcscReaderFeature::PcscReaderFeature(const char* const pFeaturesTLV, PCSC_INT pLength)
+PcscReaderFeature::PcscReaderFeature(const QByteArray& pFeaturesTLV)
 	: mFeatures()
 {
-	if (pFeaturesTLV == nullptr)
+	if (pFeaturesTLV.isEmpty())
 	{
 		qCDebug(card_pcsc) << "features: null";
 		return;
 	}
 
-	const auto* const end = reinterpret_cast<const uchar*>(pFeaturesTLV + pLength);
-	for (const auto* runner = reinterpret_cast<const uchar*>(pFeaturesTLV); runner + 6 <= end;)
+	const auto* const end = reinterpret_cast<const uchar*>(pFeaturesTLV.constData() + pFeaturesTLV.size());
+	for (const auto* runner = reinterpret_cast<const uchar*>(pFeaturesTLV.constData()); runner + 6 <= end;)
 	{
 		if (!Enum<FeatureID>::isValue(*runner))
 		{

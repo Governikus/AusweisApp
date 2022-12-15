@@ -30,16 +30,16 @@ class LogFilterModel
 		void onCategoriesChanged();
 
 	protected:
-		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
+		[[nodiscard]] bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
 
 	public:
 		LogFilterModel();
 		~LogFilterModel() override = default;
 
-		const QSet<QString>& getLevels() const;
-		const QSet<QString>& getSelectedLevels() const;
-		const QSet<QString>& getCategories() const;
-		const QSet<QString>& getSelectedCategories() const;
+		[[nodiscard]] const QSet<QString>& getLevels() const;
+		[[nodiscard]] const QSet<QString>& getSelectedLevels() const;
+		[[nodiscard]] const QSet<QString>& getCategories() const;
+		[[nodiscard]] const QSet<QString>& getSelectedCategories() const;
 
 		Q_INVOKABLE void configureLevel(const QString& pLevel, bool pEnabled);
 		Q_INVOKABLE void configureCategory(const QString& pCategory, bool pEnabled);

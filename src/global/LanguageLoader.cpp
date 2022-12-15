@@ -164,7 +164,7 @@ void LanguageLoader::unload()
 	else
 	{
 		qCDebug(language) << "Unload translations";
-		for (const auto& translator : qAsConst(mTranslatorList))
+		for (const auto& translator : std::as_const(mTranslatorList))
 		{
 			QCoreApplication::removeTranslator(translator.data());
 		}

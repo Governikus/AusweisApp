@@ -26,9 +26,9 @@ class MockEstablishPaceChannelCommand
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = pCode;
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -88,13 +88,13 @@ class test_StateDidAuthenticateEac1
 			QSignalSpy spyContinue(&state, &StateDidAuthenticateEac1::fireContinue);
 			QSignalSpy spyAbort(&state, &StateDidAuthenticateEac1::fireAbort);
 
-			command->setReturnCode(CardReturnCode::UNKNOWN);
+			command->setMockReturnCode(CardReturnCode::UNKNOWN);
 			mAuthContext->setStatus(GlobalStatus::Code::No_Error);
 			state.onCardCommandDone(command);
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Unknown_Error);
 			QCOMPARE(spyAbort.count(), 1);
 
-			command->setReturnCode(CardReturnCode::OK);
+			command->setMockReturnCode(CardReturnCode::OK);
 			const QByteArray array(QByteArray::fromHex("9000"));
 			command->mChallenge = array;
 			QSharedPointer<DIDAuthenticateResponseEAC1> response(new DIDAuthenticateResponseEAC1());

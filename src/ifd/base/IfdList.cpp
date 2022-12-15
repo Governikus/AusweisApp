@@ -145,7 +145,7 @@ IfdListImpl::~IfdListImpl()
 
 void IfdListImpl::update(const IfdDescriptor& pDescriptor)
 {
-	for (const QSharedPointer<IfdListEntry>& entry : qAsConst(mResponsiveList))
+	for (const QSharedPointer<IfdListEntry>& entry : std::as_const(mResponsiveList))
 	{
 		if (entry->containsEquivalent(pDescriptor))
 		{
@@ -173,7 +173,7 @@ void IfdListImpl::clear()
 {
 	decltype(mResponsiveList) removedDevices;
 	mResponsiveList.swap(removedDevices);
-	for (const auto& entry : qAsConst(removedDevices))
+	for (const auto& entry : std::as_const(removedDevices))
 	{
 		Q_EMIT fireDeviceVanished(entry);
 	}

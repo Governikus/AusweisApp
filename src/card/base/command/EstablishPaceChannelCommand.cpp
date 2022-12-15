@@ -34,7 +34,7 @@ void EstablishPaceChannelCommand::internalExecute()
 	if (!getCardConnectionWorker()->getReaderInfo().hasEid())
 	{
 		mPaceOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
-		mReturnCode = CardReturnCode::CARD_NOT_FOUND;
+		setReturnCode(CardReturnCode::CARD_NOT_FOUND);
 		return;
 	}
 
@@ -43,7 +43,7 @@ void EstablishPaceChannelCommand::internalExecute()
 		if (getCardConnectionWorker()->getReaderInfo().getRetryCounter() > 0 || getCardConnectionWorker()->getReaderInfo().isPinDeactivated())
 		{
 			mPaceOutput.setPaceReturnCode(CardReturnCode::PIN_NOT_BLOCKED);
-			mReturnCode = mPaceOutput.getPaceReturnCode();
+			setReturnCode(mPaceOutput.getPaceReturnCode());
 			return;
 		}
 	}
@@ -57,18 +57,18 @@ void EstablishPaceChannelCommand::internalExecute()
 	{
 		mPaceOutput = getCardConnectionWorker()->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
 	}
-	mReturnCode = mPaceOutput.getPaceReturnCode();
+	setReturnCode(mPaceOutput.getPaceReturnCode());
 
-	if (mPacePasswordId == PacePasswordId::PACE_PUK && mReturnCode == CardReturnCode::OK)
+	if (mPacePasswordId == PacePasswordId::PACE_PUK && getReturnCode() == CardReturnCode::OK)
 	{
 		const CommandApdu cmdApdu(Ins::RESET_RETRY_COUNTER, CommandApdu::UNBLOCK, CommandApdu::PIN);
 		auto [returnCode, response] = getCardConnectionWorker()->transmit(cmdApdu);
-		mReturnCode = returnCode;
-		if (mReturnCode == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
+		setReturnCode(returnCode);
+		if (getReturnCode() == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
 		{
 			getCardConnectionWorker()->setPukInoperative();
 			mPaceOutput.setPaceReturnCode(CardReturnCode::PUK_INOPERATIVE);
-			mReturnCode = mPaceOutput.getPaceReturnCode();
+			setReturnCode(mPaceOutput.getPaceReturnCode());
 		}
 	}
 }

@@ -82,26 +82,22 @@ void DiagnosisController::collectInterfaceInformation()
 DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 {
 	PcscInfo result;
-
-	bool hasPcsc = false;
-	const auto infos = Env::getSingleton<ReaderManager>()->getPlugInInfos();
-	for (const auto& info : infos)
+	const auto& pcscInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC);
+	if (pcscInfo.isAvailable())
 	{
-		if (info.getPlugInType() == ReaderManagerPlugInType::PCSC)
+		const QVariant version = pcscInfo.getValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION);
+		if (version.isValid())
 		{
-			hasPcsc = true;
-
-			QVariant version = info.getValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION);
-			if (version.isValid())
-			{
-				result.mPcscVersion = tr("pcsclite %1").arg(version.toString());
-			}
+			result.mPcscVersion = tr("pcsclite %1").arg(version.toString());
+		}
+		else
+		{
+			tr("unknown");
 		}
 	}
-
-	if (result.mPcscVersion.isEmpty())
+	else
 	{
-		result.mPcscVersion = hasPcsc ? tr("unknown") : tr("not available");
+		result.mPcscVersion = tr("not available");
 	}
 
 	getPcscInfo(result.mPcscComponents, result.mPcscDrivers);

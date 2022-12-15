@@ -38,11 +38,11 @@ class SelfDiagnosisModel
 		bool isRunning() const;
 
 	public:
-		QAbstractListModel* getSectionsModel();
+		[[nodiscard]] QAbstractListModel* getSectionsModel();
 		Q_INVOKABLE void startController();
 		Q_INVOKABLE void stopController();
 		Q_INVOKABLE void saveToFile(const QUrl& pFilename) const;
-		Q_INVOKABLE QString getCreationTime() const;
+		[[nodiscard]] Q_INVOKABLE QString getCreationTime() const;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

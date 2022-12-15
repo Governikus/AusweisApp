@@ -61,8 +61,8 @@ class LogModel
 		};
 
 		QStringList getLogFileNames() const;
-		const QSet<QString>& getLevels() const;
-		const QSet<QString>& getCategories() const;
+		[[nodiscard]] const QSet<QString>& getLevels() const;
+		[[nodiscard]] const QSet<QString>& getCategories() const;
 		Q_INVOKABLE QDateTime getCurrentLogFileDate() const;
 		Q_INVOKABLE void removeOtherLogFiles();
 		Q_INVOKABLE void removeCurrentLogFile();
@@ -76,7 +76,7 @@ class LogModel
 				const QString& pSubject = tr("Mobile logfile"),
 				const QString& pMsg = tr("<Please describe the error>"));
 
-		/// \a popupPosition will be used on an iPad as the origin of the share bubble
+		// \a popupPosition will be used on an iPad as the origin of the share bubble
 		Q_INVOKABLE void shareLog(QPoint popupPosition);
 
 		int rowCount(const QModelIndex& pIndex = QModelIndex()) const override;

@@ -103,16 +103,16 @@ class CardConnectionWorker
 
 		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
 
-		EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat);
+		EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat) const;
 
-		ResponseApduResult getChallenge();
+		ResponseApduResult getChallenge() const;
 
 		TerminalAndChipAuthenticationResult performTAandCA(
 			const CVCertificateChain& pTerminalCvcChain,
 			const QByteArray& pAuxiliaryData,
 			const QByteArray& pSignature,
 			const QByteArray& pPin,
-			const QByteArray& pEphemeralPublicKey);
+			const QByteArray& pEphemeralPublicKey) const;
 
 	Q_SIGNALS:
 		void fireReaderInfoChanged(const ReaderInfo& pReaderInfo);

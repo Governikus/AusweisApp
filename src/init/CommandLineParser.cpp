@@ -4,18 +4,14 @@
 
 #include "CommandLineParser.h"
 
-#include "DatagramHandlerImpl.h"
 #include "Env.h"
+#include "HttpServer.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
 #include "PortFile.h"
 #include "SingletonHelper.h"
 #include "UILoader.h"
 #include "controller/AppController.h"
-
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	#include "HttpServer.h"
-#endif
 
 #include <QCoreApplication>
 
@@ -89,11 +85,7 @@ void CommandLineParser::parse(const QCoreApplication* pApp)
 		const uint port = mParser.value(mOptionPort).toUInt(&converted);
 		if (converted && port <= std::numeric_limits<quint16>::max())
 		{
-			DatagramHandlerImpl::cPort = static_cast<quint16>(port);
-
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-			HttpServer::cPort = DatagramHandlerImpl::cPort;
-#endif
+			HttpServer::cPort = static_cast<quint16>(port);
 		}
 	}
 

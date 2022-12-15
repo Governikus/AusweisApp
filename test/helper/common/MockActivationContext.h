@@ -7,8 +7,7 @@
 #pragma once
 
 
-#include "ActivationContext.h"
-#include "ActivationHandler.h"
+#include "context/ActivationContext.h"
 
 
 namespace governikus

@@ -6,9 +6,8 @@
 
 #include "FileRef.h"
 #include "VolatileSettings.h"
-#include "apdu/FileCommand.h"
+#include "apdu/CommandData.h"
 #include "apdu/GeneralAuthenticateResponse.h"
-#include "apdu/SecureMessagingResponse.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
 #include "pace/CipherMac.h"
@@ -73,7 +72,6 @@ bool SimulatorCard::isConnected() const
 ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 {
 	CommandApdu commandApdu = pCmd;
-	QByteArray commandBytes = pCmd;
 	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 
 	qCDebug(card) << "Transmit command APDU:" << commandApdu;
@@ -83,7 +81,6 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 		if (commandApdu.isSecureMessaging())
 		{
 			commandApdu = mSecureMessaging->decrypt(commandApdu);
-			commandBytes = commandApdu;
 			qCDebug(secure) << "Unencrypted transmit command APDU:" << commandApdu;
 		}
 		else
@@ -96,126 +93,35 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 	switch (commandApdu.getINS())
 	{
 		case Ins::SELECT:
-		{
-			const auto fileRef = FileCommand(commandApdu).getFileRef();
-			if (fileRef.getType() == FileRef::ELEMENTARY_FILE)
-			{
-				const auto& fileId = fileRef.getIdentifier();
-				result = {CardReturnCode::OK, ResponseApdu(mFileSystem.select(fileId))};
-			}
-
-			break;
-		}
-
 		case Ins::READ_BINARY:
-		{
-			const FileCommand fileCommand(commandApdu);
-			const int offset = fileCommand.getOffset();
-			const auto fileRef = fileCommand.getFileRef();
-
-			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
-			{
-				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
-				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
-			}
-
-			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
-			{
-				const auto& file = mFileSystem.read(offset, fileCommand.getLe(), commandApdu.isExtendedLength());
-				result = {CardReturnCode::OK, ResponseApdu(file)};
-			}
-
-			break;
-		}
-
 		case Ins::UPDATE_BINARY:
-		{
-			const FileCommand fileCommand(commandApdu);
-			const int offset = fileCommand.getOffset();
-			const auto fileRef = fileCommand.getFileRef();
-
-			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
-			{
-				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
-				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
-			}
-
-			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
-			{
-				const auto& statusCode = mFileSystem.write(offset, commandApdu.getData());
-				result = {CardReturnCode::OK, ResponseApdu(statusCode)};
-			}
-
+			result = executeFileCommand(commandApdu);
 			break;
-		}
+
+		case Ins::GET_CHALLENGE:
+			result = {CardReturnCode::OK, ResponseApdu(QByteArray::fromHex("01020304050607089000"))};
+			break;
+
+		case Ins::MSE_SET:
+			result = executeMseSetAt(commandApdu);
+			break;
+
+		case Ins::GENERAL_AUTHENTICATE:
+			result = executeGeneralAuthenticate(commandApdu);
+			break;
+
+		case Ins::VERIFY:
+			if (commandApdu.isProprietary())
+			{
+				result = {CardReturnCode::OK, ResponseApdu(verifyAuxiliaryData(commandApdu.getData()))};
+				break;
+			}
+
+			result = {CardReturnCode::OK, ResponseApdu(StatusCode::UNSUPPORTED_CLA)};
+			break;
 
 		default:
 			break;
-	}
-
-	// Challenge
-	if (commandBytes.startsWith(QByteArray::fromHex("00840000")))
-	{
-		result = {CardReturnCode::OK, ResponseApdu(QByteArray::fromHex("01020304050607089000"))};
-	}
-
-	// MSE:Set AT for Restricted Identification
-	if (commandBytes.startsWith(QByteArray::fromHex("002241A4 0F 800A 04007F00070202050203 8401")))
-	{
-		mRiKeyId = commandBytes.right(1).back();
-	}
-
-	// CA General Authenticate - Chip Authentication
-	// RE General Authenticate - Restricted Identification
-	if (commandBytes.startsWith(QByteArray::fromHex("00860000")))
-	{
-		const QByteArray& asn1Data = commandApdu.getData();
-
-		auto index = asn1Data.indexOf(QByteArray::fromHex("8041"));
-		if (index >= 0)
-		{
-			const QByteArray ephemeralPublicKey = asn1Data.mid(index + 2, 65);
-			const QByteArray nonce = QByteArray::fromHex("0001020304050607");
-			const QByteArray& authenticationToken = generateAuthenticationToken(ephemeralPublicKey, nonce);
-
-			auto ga = newObject<GA_CHIPAUTHENTICATIONDATA>();
-			Asn1OctetStringUtil::setValue(nonce, ga->mNonce);
-			Asn1OctetStringUtil::setValue(authenticationToken, ga->mAuthenticationToken);
-			result = {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
-		}
-		else
-		{
-			index = asn1Data.indexOf(QByteArray::fromHex("8641"));
-			if (index >= 0)
-			{
-				const QByteArray ephemeralPublicKey = asn1Data.mid(index + 2, 65);
-				const QByteArray& restrictedId = generateRestrictedId(ephemeralPublicKey);
-
-				const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 1, restrictedId);
-				const auto response = Asn1Util::encode(V_ASN1_APPLICATION, 28, responseData, true);
-
-				result = {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
-			}
-		}
-
-	}
-
-	// auxiliaryData (TA) for verification
-	if (commandBytes.startsWith(QByteArray::fromHex("002281A4")))
-	{
-		const auto commandData = commandApdu.getData();
-		int index = 0;
-		while (index < commandData.size() && commandData.at(index) != 0x67)
-		{
-			index += commandData.at(index + 1) + 2;
-		}
-		mAuxiliaryData = AuthenticatedAuxiliaryData::decode(commandData.mid(index, commandData.at(index + 1) + 2));
-	}
-
-	// Verify
-	if (commandBytes.startsWith(QByteArray::fromHex("80208000")))
-	{
-		result = {CardReturnCode::OK, ResponseApdu(verifyAuxiliaryData(commandApdu.getData()))};
 	}
 
 	if (mSecureMessaging)
@@ -270,7 +176,122 @@ ResponseApduResult SimulatorCard::setEidPin(quint8 pTimeoutSeconds)
 }
 
 
-QByteArray SimulatorCard::brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar)
+ResponseApduResult SimulatorCard::executeFileCommand(const CommandApdu& pCmd)
+{
+	const FileCommand fileCommand(pCmd);
+	const int offset = fileCommand.getOffset();
+	const auto fileRef = fileCommand.getFileRef();
+	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
+
+	switch (pCmd.getINS())
+	{
+		case Ins::SELECT:
+			if (fileRef.getType() == FileRef::ELEMENTARY_FILE)
+			{
+				const auto& fileId = fileRef.getIdentifier();
+				result = {CardReturnCode::OK, ResponseApdu(mFileSystem.select(fileId))};
+			}
+			break;
+
+		case Ins::READ_BINARY:
+			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
+			{
+				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
+				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
+			}
+
+			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
+			{
+				const auto& file = mFileSystem.read(offset, fileCommand.getLe(), pCmd.isExtendedLength());
+				result = {CardReturnCode::OK, ResponseApdu(file)};
+			}
+			break;
+
+		case Ins::UPDATE_BINARY:
+			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
+			{
+				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
+				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
+			}
+
+			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
+			{
+				const auto& statusCode = mFileSystem.write(offset, pCmd.getData());
+				result = {CardReturnCode::OK, ResponseApdu(statusCode)};
+			}
+			break;
+
+		default:
+			result = {CardReturnCode::COMMAND_FAILED};
+	}
+
+	return result;
+}
+
+
+ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
+{
+	if (pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
+	{
+		const CommandData cmdData(pCmd.getData());
+
+		if (pCmd.getP1() == CommandApdu::CHIP_AUTHENTICATION && pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
+		{
+			const auto& cmr = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE);
+			if (cmr == Oid(KnownOid::ID_RI_ECDH_SHA_256).getData())
+			{
+				mRiKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::PRIVATE_KEY_REFERENCE).back();
+			}
+		}
+
+		if (pCmd.getP1() == CommandApdu::VERIFICATION)
+		{
+			const auto& aad = cmdData.getObject(V_ASN1_APPLICATION, CommandData::AUXILIARY_AUTHENTICATED_DATA);
+			mAuxiliaryData = AuthenticatedAuxiliaryData::decode(aad);
+		}
+	}
+
+	return {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
+}
+
+
+ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
+{
+	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
+
+	const CommandData cmdData(pCmd.getData());
+	const auto& caKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CA_EPHEMERAL_PUBLIC_KEY);
+	if (!caKey.isEmpty())
+	{
+		// CA General Authenticate - Chip Authentication
+		const QByteArray nonce = QByteArray::fromHex("0001020304050607");
+		const QByteArray& authenticationToken = generateAuthenticationToken(caKey, nonce);
+
+		auto ga = newObject<GA_CHIPAUTHENTICATIONDATA>();
+		Asn1OctetStringUtil::setValue(nonce, ga->mNonce);
+		Asn1OctetStringUtil::setValue(authenticationToken, ga->mAuthenticationToken);
+		result = {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
+	}
+	else
+	{
+		const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
+		if (!riKey.isEmpty())
+		{
+			// RE General Authenticate - Restricted Identification
+			const QByteArray& restrictedId = generateRestrictedId(riKey);
+
+			const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 1, restrictedId);
+			const auto response = Asn1Util::encode(V_ASN1_APPLICATION, 28, responseData, true);
+
+			result = {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
+		}
+	}
+
+	return result;
+}
+
+
+QByteArray SimulatorCard::brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar) const
 {
 	auto curve = EcUtil::createCurve(NID_brainpoolP256r1);
 

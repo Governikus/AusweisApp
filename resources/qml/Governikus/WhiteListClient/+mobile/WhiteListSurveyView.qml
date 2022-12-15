@@ -1,10 +1,8 @@
 /*
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
@@ -13,202 +11,171 @@ import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
 import Governikus.Type.SurveyModel 1.0
 
-
 SectionPage {
 	id: root
-
 	signal done(bool pUserAccepted)
 
-	navigationAction: NavigationAction { action: NavigationAction.Action.Cancel; onClicked: root.done(false) }
 	//: LABEL ANDROID IOS
 	title: qsTr("Feedback")
 
-	QtObject {
-		id: d
-
-		property bool dataHidden: true
-	}
-
 	content: Column {
-		width: root.width
-
 		padding: Constants.pane_padding
 		spacing: Constants.pane_spacing
+		width: root.width
 
 		GPane {
 			id: whitePane
 
-			anchors {
-				left: parent.left
-				right: parent.right
-				margins: Constants.pane_padding
-			}
-
 			//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Header
 			title: qsTr("Send device data?")
 
+			anchors {
+				left: parent.left
+				margins: Constants.pane_padding
+				right: parent.right
+			}
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("Would you like to help us to improve the AusweisApp2?")
 			}
-
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.")
 			}
-
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
 				//: INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text
 				text: qsTr("The transmission is anonymous. No personal data is collected or transmitted!")
 			}
-
 			Column {
 				anchors.left: parent.left
 				anchors.right: parent.right
-
 				spacing: 2
 
 				GSeparator {
 					anchors.left: parent.left
 					anchors.right: parent.right
 				}
-
 				Button {
 					id: collapsableCollectedData
-
-					height: showDataButton.height + Constants.pane_spacing
 					anchors.left: parent.left
 					anchors.right: parent.right
+					height: showDataButton.height + Constants.pane_spacing
 
+					background: Rectangle {
+						color: collapsableCollectedData.down ? Style.color.tutorial_box_background : Style.color.background_pane
+					}
+					contentItem: Item {
+						Item {
+							id: showDataButton
+							anchors.left: parent.left
+							anchors.right: parent.right
+							anchors.top: parent.top
+							height: showDataText.height
+
+							GText {
+								id: showDataTriangle
+								anchors.right: parent.right
+								anchors.top: parent.top
+								horizontalAlignment: Text.AlignRight
+								rightPadding: Constants.groupbox_spacing
+								text: d.dataHidden ? "\u25BC" : "\u25B2"
+							}
+							GText {
+								id: showDataText
+								anchors.bottom: showDataTriangle.bottom
+								anchors.bottomMargin: showDataText.height / 8
+								anchors.right: showDataTriangle.left
+								rightPadding: Constants.groupbox_spacing
+								text: qsTr("Collected data")
+							}
+						}
+						Item {
+							id: collectedData
+
+							property real openHeight: dataColumn.implicitHeight
+
+							anchors.top: showDataButton.bottom
+							clip: true
+							height: openHeight
+							opacity: 0
+							width: parent.width
+
+							Column {
+								id: dataColumn
+								anchors.left: parent.left
+								topPadding: Constants.groupbox_spacing
+								width: parent.width
+
+								Repeater {
+									id: repeater
+									model: SurveyModel
+
+									delegate: LabeledText {
+										label: title
+										text: value
+										width: dataColumn.width
+									}
+								}
+							}
+						}
+					}
 					states: [
 						State {
-							name: "open";
+							name: "open"
 							when: !d.dataHidden
 
 							PropertyChanges {
-								target: collapsableCollectedData;
 								height: collectedData.openHeight + showDataButton.height + Constants.pane_spacing
+								target: collapsableCollectedData
 							}
 							PropertyChanges {
-								target: collectedData;
 								height: collectedData.openHeight
+								target: collectedData
 							}
 							PropertyChanges {
-								target: collectedData;
 								opacity: 1.0
+								target: collectedData
 							}
 						}
 					]
 					transitions: [
 						Transition {
 							PropertyAnimation {
-								target: collectedData
-								property: "height"
-								easing.type: Easing.InOutQuad
 								duration: 500
+								easing.type: Easing.InOutQuad
+								property: "height"
+								target: collectedData
 							}
 							PropertyAnimation {
-								target: collectedData
+								duration: 500
+								easing.type: Easing.InOutQuad
 								property: "opacity"
-								easing.type: Easing.InOutQuad
-								duration: 500
+								target: collectedData
 							}
 							PropertyAnimation {
-								target: collapsableCollectedData
-								property: "height"
-								easing.type: Easing.InOutQuad
 								duration: 500
+								easing.type: Easing.InOutQuad
+								property: "height"
+								target: collapsableCollectedData
 							}
 						}
 					]
 
-					background: Rectangle {
-						color: collapsableCollectedData.down ? Style.color.tutorial_box_background : Style.color.background_pane
-					}
-
 					onClicked: {
-						d.dataHidden = !d.dataHidden
-					}
-
-					contentItem: Item {
-						Item {
-							id: showDataButton
-
-							height: showDataText.height
-							anchors.left: parent.left
-							anchors.right: parent.right
-							anchors.top: parent.top
-
-							GText {
-								id: showDataTriangle
-
-								anchors.top: parent.top
-								anchors.right: parent.right
-
-								rightPadding: Constants.groupbox_spacing
-								text: d.dataHidden ? "\u25BC" : "\u25B2"
-								horizontalAlignment: Text.AlignRight
-							}
-
-							GText {
-								id: showDataText
-
-								anchors.right: showDataTriangle.left
-								anchors.bottom: showDataTriangle.bottom
-								anchors.bottomMargin: showDataText.height / 8
-
-								rightPadding: Constants.groupbox_spacing
-								text: qsTr("Collected data")
-							}
-						}
-
-						Item {
-							id: collectedData
-
-							property real openHeight: dataColumn.implicitHeight
-
-							height: openHeight
-							width: parent.width
-							anchors.top: showDataButton.bottom
-
-							opacity: 0
-							clip: true
-
-							Column {
-								id: dataColumn
-
-								width: parent.width
-								anchors.left: parent.left
-
-								topPadding: Constants.groupbox_spacing
-
-								Repeater {
-									id: repeater
-
-									model: SurveyModel
-									delegate: LabeledText {
-										width: dataColumn.width
-										label: title
-										text: value
-									}
-								}
-							}
-						}
+						d.dataHidden = !d.dataHidden;
 					}
 				}
-
 				GSeparator {
 					anchors.left: parent.left
 					anchors.right: parent.right
 				}
 			}
-
 			GText {
 				anchors.left: parent.left
 				anchors.right: parent.right
@@ -216,25 +183,34 @@ SectionPage {
 				text: qsTr("Thank you for your assistance!")
 			}
 		}
-
-
 		Row {
-			height: childrenRect.height
 			anchors.horizontalCenter: parent.horizontalCenter
-
+			height: childrenRect.height
 			spacing: Constants.component_spacing
 
 			GButton {
 				//: LABEL ANDROID IOS
 				text: qsTr("Do not send")
+
 				onClicked: root.done(false)
 			}
-
 			GButton {
 				//: LABEL ANDROID IOS
 				text: qsTr("Send")
+
 				onClicked: root.done(true)
 			}
 		}
+	}
+	navigationAction: NavigationAction {
+		action: NavigationAction.Action.Cancel
+
+		onClicked: root.done(false)
+	}
+
+	QtObject {
+		id: d
+
+		property bool dataHidden: true
 	}
 }

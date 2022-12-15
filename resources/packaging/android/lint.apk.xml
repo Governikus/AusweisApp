@@ -96,6 +96,35 @@
         <ignore path="AndroidManifest.xml" />
     </issue>
 
+    <!-- Missing data extraction rules
+
+        The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in
+        future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml`
+        resource which configures cloud backups and device transfers on Android 12 and higher.
+        Before Android 12, the attributes `android:allowBackup` and `android:fullBackupContent` were used
+        to configure all orms of backup, including cloud backups, device-to-device transfers and adb backup.
+
+        In Android 12 and higher, these attributes have been deprecated and will only apply to cloud backups.
+        You should instead use the attribute `android:dataExtractionRules`, specifying an `@xml` resource that
+        configures which files to back up, for cloud backups and for device-to-device transfers, separately.
+        If your `minSdkVersion` supports older versions, you'll still want to specify an
+        `android:fullBackupContent` resource if the default behavior is not right for your app.
+    -->
+    <issue id="DataExtractionRules">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+
+    <!-- Data tags should only declare unique attributes
+
+        Consider splitting data tag into multiple tags with individual attributes to avoid confusion `data`
+        tags should only declare a single unique attribute (i.e. scheme OR host, but not both). This better
+        matches the runtime behavior of intent filters, as they combine all of the declared data attributes
+        into a single matcher which is allowed to handle any combination across attribute types.
+    -->
+    <issue id="	IntentFilterUniqueDataAttributes">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
+
     <!-- AndroidGradlePluginVersion
 
         The plugin version is set by Qt itself, so no need to warn us about an outdated version, since this has to be
@@ -109,6 +138,15 @@
     -->
     <issue id="PrivateApi">
         <ignore path="**/QtActivityLoader.java" />
+    </issue>
+
+    <!-- DiscouragedApi
+
+        Qt is using some discouraged API. They are allowed and are not deprecated, but they may be unfit
+        for common use (e.g. due to slow performance or subtle behavior). which we can't change, so ignore it.
+    -->
+    <issue id="DiscouragedApi">
+        <ignore path="**/QtLoader.java" />
     </issue>
 
     <!-- Unused attribute

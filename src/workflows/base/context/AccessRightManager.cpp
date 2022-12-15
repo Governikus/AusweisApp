@@ -6,6 +6,7 @@
 
 #include "AppSettings.h"
 #include "VolatileSettings.h"
+#include "asn1/ASN1TemplateUtil.h"
 
 #include <QSignalBlocker>
 
@@ -167,7 +168,7 @@ AccessRightManager::operator QByteArray() const
 	effectiveChat.removeAllAccessRights();
 	effectiveChat.setAccessRights(mEffectiveAccessRights);
 
-	qDebug() << "Using effective CHAT:" << effectiveChat.encode().toHex() << "with access rights:" << effectiveChat.getAccessRights();
-
-	return effectiveChat.encode();
+	const auto& encodedChat = encodeObject(&effectiveChat);
+	qDebug() << "Using effective CHAT:" << encodedChat.toHex() << "with access rights:" << effectiveChat.getAccessRights();
+	return encodedChat;
 }

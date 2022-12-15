@@ -21,7 +21,7 @@ void TransmitResponse::createBodyElement()
 
 	createResultElement(*this);
 
-	for (const auto& apdu : qAsConst(mOutputApdus))
+	for (const auto& apdu : std::as_const(mOutputApdus))
 	{
 		writeTextElement(QStringLiteral("OutputAPDU"), apdu);
 	}

@@ -59,6 +59,21 @@ ASN1_OBJECT* PaceInfo::getProtocolObjectIdentifier() const
 }
 
 
+QSharedPointer<const PaceInfo> PaceInfo::decode(const QByteArray& pBytes)
+{
+	if (const auto& delegate = decodeObject<paceinfo_st>(pBytes, false))
+	{
+		if (PaceInfo::acceptsProtocol(delegate->mProtocol))
+		{
+			const auto& si = QSharedPointer<const PaceInfo>::create(delegate);
+			qCDebug(card) << "Parsed SecurityInfo:" << si;
+			return si;
+		}
+	}
+	return QSharedPointer<const PaceInfo>();
+}
+
+
 int PaceInfo::getVersion() const
 {
 	return Asn1IntegerUtil::getValue(mDelegate->mVersion);

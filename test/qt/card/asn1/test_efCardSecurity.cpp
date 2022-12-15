@@ -7,6 +7,8 @@
 
 #include <QSharedPointer>
 #include <QtTest>
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
 
 
 using namespace governikus;
@@ -152,8 +154,8 @@ class test_efCardSecurity
 			QSharedPointer<X509> cert(X509_new(), &X509_free);
 			QVERIFY(cert);
 			ASN1_INTEGER_set(X509_get_serialNumber(cert.data()), 1);
-			X509_gmtime_adj(X509_get_notBefore(cert.data()), 0);
-			X509_gmtime_adj(X509_get_notAfter(cert.data()), 24 * 3600);
+			X509_gmtime_adj(X509_getm_notBefore(cert.data()), 0);
+			X509_gmtime_adj(X509_getm_notAfter(cert.data()), 24 * 3600);
 			X509_set_pubkey(cert.data(), key);
 			X509_sign(cert.data(), key, EVP_sha256());
 

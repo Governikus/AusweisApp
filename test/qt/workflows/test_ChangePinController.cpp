@@ -6,7 +6,6 @@
 
 #include "controller/ChangePinController.h"
 
-#include "PersoSimController.h"
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
 #include "states/AbstractState.h"
@@ -16,9 +15,7 @@
 #include <QtTest>
 
 
-#ifdef PERSOSIM_TESTS_ENABLED
-Q_IMPORT_PLUGIN(PcscReaderManagerPlugIn)
-#endif
+Q_IMPORT_PLUGIN(SimulatorReaderManagerPlugIn)
 
 
 using namespace governikus;
@@ -30,10 +27,18 @@ class test_ChangePinController
 	Q_OBJECT
 
 	private:
-		QScopedPointer<PersoSimController> mPersoSim;
 		QSharedPointer<ChangePinContext> mChangePinContext;
 		QScopedPointer<WorkflowController> mChangePinController;
 		bool mRetryCounterUpdated = false;
+
+
+		void onCardInfoChanged(const ReaderInfo& pInfo)
+		{
+			if (pInfo.isInsertable())
+			{
+				Env::getSingleton<ReaderManager>()->insert(pInfo);
+			}
+		}
 
 
 		void onCardInserted(const ReaderInfo& pInfo)
@@ -69,21 +74,12 @@ class test_ChangePinController
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mPersoSim.reset(new PersoSimController());
-			if (!mPersoSim->isEnabled())
-			{
-				QSKIP("PersoSim tests not enabled");
-			}
-
-			QVERIFY(mPersoSim->init());
-
 			QSignalSpy eidCardDetected(this, &test_ChangePinController::fireEidCardInserted);
 
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &test_ChangePinController::onCardInfoChanged);
 			connect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
 			readerManager->init();
-
-			QVERIFY(eidCardDetected.wait(20000));
 		}
 
 
@@ -92,16 +88,14 @@ class test_ChangePinController
 			const auto readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->shutdown();
 			disconnect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
-
-			QVERIFY(mPersoSim->shutdown());
-			mPersoSim.reset();
+			disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &test_ChangePinController::onCardInfoChanged);
 		}
 
 
 		void init()
 		{
 			mChangePinContext.reset(new ChangePinContext());
-			mChangePinContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC});
+			mChangePinContext->setReaderPlugInTypes({ReaderManagerPlugInType::SIMULATOR});
 			connect(mChangePinContext.data(), &WorkflowContext::fireStateChanged, this, &test_ChangePinController::onStateChanged);
 
 			mChangePinController.reset(new ChangePinController(mChangePinContext));
@@ -123,9 +117,6 @@ class test_ChangePinController
 		{
 			qDebug() << "START: testSuccess";
 
-			mChangePinContext->setPin("123456");
-			mChangePinContext->setNewPin("123456");
-
 			QSignalSpy controllerFinishedSpy(mChangePinController.data(), &ChangePinController::fireComplete);
 
 			mChangePinController->run();
@@ -133,21 +124,6 @@ class test_ChangePinController
 			QVERIFY(controllerFinishedSpy.wait());
 
 			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::No_Error);
-		}
-
-
-		void testWrongPin()
-		{
-			mChangePinContext->setPin("111111");
-			mChangePinContext->setNewPin("111111");
-
-			QSignalSpy controllerFinishedSpy(mChangePinController.data(), &ChangePinController::fireComplete);
-
-			mChangePinController->run();
-
-			QVERIFY(controllerFinishedSpy.wait());
-
-			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_Cancellation_By_User);
 		}
 
 	Q_SIGNALS:

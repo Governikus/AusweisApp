@@ -36,23 +36,28 @@ UIPlugInAidl::UIPlugInAidl()
 	, mJson(nullptr)
 	, mContext()
 	, mWorkflowIsActive()
-	, mInitializationSuccessfull(false)
 {
-	if (Env::getSingleton<UILoader>()->load<UIPlugInJson>())
-	{
-		mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
-		Q_ASSERT(mJson);
-		connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
+	instance = this;
+}
 
-		mJson->setEnabled();
-		mInitializationSuccessfull = true;
+
+bool UIPlugInAidl::initialize()
+{
+	if (mJson)
+	{
+		return true;
 	}
-	else
+
+	if (!Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
 		qCWarning(aidl) << "Cannot start AIDL because JSON-API is missing";
+		return false;
 	}
 
-	instance = this;
+	mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+	connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInAidl::onToSend, Qt::QueuedConnection);
+	mJson->setEnabled();
+	return true;
 }
 
 
@@ -74,7 +79,7 @@ UIPlugInAidl* UIPlugInAidl::getInstance(bool pBlock)
 
 bool UIPlugInAidl::isSuccessfullInitialized() const
 {
-	return mInitializationSuccessfull;
+	return mJson;
 }
 
 

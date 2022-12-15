@@ -17,5 +17,5 @@ DestroyPaceChannelCommand::DestroyPaceChannelCommand(QSharedPointer<CardConnecti
 
 void DestroyPaceChannelCommand::internalExecute()
 {
-	mReturnCode = getCardConnectionWorker()->destroyPaceChannel();
+	setReturnCode(getCardConnectionWorker()->destroyPaceChannel());
 }

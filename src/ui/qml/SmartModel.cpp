@@ -50,13 +50,8 @@ void SmartModel::updateStatus()
 void SmartModel::updatePinStatus()
 {
 	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	const auto& infos = readerManager->getPlugInInfos();
-	const bool smartAvailable = std::any_of(infos.constBegin(), infos.constEnd(), [](const auto& pInfo)
-		{
-			return pInfo.getPlugInType() == ReaderManagerPlugInType::SMART && pInfo.isAvailable();
-		});
-
-	if (smartAvailable)
+	const auto& smartInfo = readerManager->getPlugInInfo(ReaderManagerPlugInType::SMART);
+	if (smartInfo.isAvailable())
 	{
 		setStatus(QmlSmartState::SMART_UPDATING_STATUS);
 		connect(readerManager, &ReaderManager::fireStatusChanged, this, &SmartModel::onUpdatePinStatusDone);

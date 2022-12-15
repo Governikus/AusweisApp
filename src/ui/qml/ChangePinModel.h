@@ -34,8 +34,8 @@ class ChangePinModel
 		void resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
 		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin);
-		QString getResultString() const override;
-		QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QString getResultString() const override;
+		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 	private Q_SLOTS:
 		void onPaceResultUpdated();

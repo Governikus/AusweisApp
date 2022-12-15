@@ -188,7 +188,7 @@ Command :ref:`interrupt` allows to stop the dialog manually, if needed.
 
   {
     "cmd": "RUN_AUTH",
-    "tcTokenURL": "https://test.governikus-eid.de/Autent-DemoApplication/RequestServlet?provider=demo_epa_20&redirect=true",
+    "tcTokenURL": "https://test.governikus-eid.de/AusweisAuskunft/WebServiceRequesterServlet",
     "developerMode": false,
     "handleInterrupt": false,
     "status": true,

@@ -42,6 +42,49 @@
 			</Component>
 		</DirectoryRef>
 
+		<!-- ##################### -->
+		<!-- Install proxy service -->
+		<!-- ##################### -->
+		<Property Id="PROXYSERVICE" Secure="yes"/>
+		<Property Id="PROXYSERVICE_FEATURE" Value="false"/>
+		<Property Id="PROXYSERVICE_REGISTRY" Secure="yes">
+			<RegistrySearch Id="ProxyServiceRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisApp2Proxy" Name="ImagePath" Type="raw"/>
+		</Property>
+		<SetProperty Before="CostFinalize" Id="PROXYSERVICE_FEATURE" Value="true" Sequence="first">
+			(PROXYSERVICE AND (PROXYSERVICE = "true"))
+			OR ((NOT PROXYSERVICE) AND WIX_UPGRADE_DETECTED AND PROXYSERVICE_REGISTRY)
+			OR ((NOT PROXYSERVICE) AND (WIX_SUITE_TERMINAL="1") AND NOT (WIX_SUITE_SINGLEUSERTS))
+		</SetProperty>
+		<SetProperty After="SetPROXYSERVICE_FEATURE" Id="PROXYSERVICE_GUI" Value="true" Sequence="ui">
+			PROXYSERVICE_FEATURE = "true"
+		</SetProperty>
+		<Feature Id="ProxyService" Level="1">
+			<Condition Level="2">NOT (PROXYSERVICE_FEATURE = "true") AND NOT REMOVE</Condition>
+			<ComponentRef Id="ProxyService"/>
+		</Feature>
+		<DirectoryRef Id="INSTALL_ROOT">
+			<Component Id="ProxyService" Guid="{391CF345-5AA2-45CD-D003-C24861C9AB8D}">
+				<File Source="ProxyAusweisApp2.exe" Hidden="yes" />
+				<ServiceInstall Id="AusweisApp2Proxy"
+								Name="AusweisApp2Proxy"
+								DisplayName="AusweisApp2-Proxy"
+								Description="!(loc.ServiceDescription)"
+								Start="auto"
+								Type="ownProcess"
+								ErrorControl="normal"
+								Account="LocalSystem"
+								Arguments="--ui proxy"
+								Vital="yes"
+								Interactive="no" />
+				<ServiceControl Id="AusweisApp2Proxy"
+								Name="AusweisApp2Proxy"
+								Start="install"
+								Stop="uninstall"
+								Remove="uninstall"
+								Wait="yes" />
+			</Component>
+		</DirectoryRef>
+
 		<!-- ####################### -->
 		<!-- Create desktop shortcut -->
 		<!-- ####################### -->

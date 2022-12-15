@@ -43,13 +43,13 @@ class AuthModel
 	public:
 		void resetAuthContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
 
-		const QString& getTransactionInfo() const;
-		int getProgressValue() const;
-		QString getProgressMessage() const;
-		bool getShowChangePinView() const;
-		QString getErrorHeader() const;
-		QString getErrorText() const;
-		QString getStatusCodeString() const;
+		[[nodiscard]] const QString& getTransactionInfo() const;
+		[[nodiscard]] int getProgressValue() const;
+		[[nodiscard]] QString getProgressMessage() const;
+		[[nodiscard]] bool getShowChangePinView() const;
+		[[nodiscard]] QString getErrorHeader() const;
+		[[nodiscard]] QString getErrorText() const;
+		[[nodiscard]] QString getStatusCodeString() const;
 
 		Q_INVOKABLE void cancelWorkflowToChangePin();
 		Q_INVOKABLE void requestTransportPinChange();

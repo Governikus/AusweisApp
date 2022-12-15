@@ -35,10 +35,6 @@
 			AllowSameVersionUpgrades="yes"
 			DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"/>
 
-		<Condition Message="!(loc.WindowsServerNotSupported)">
-			<![CDATA[Installed OR (MsiNTProductType = 1)]]>
-		</Condition>
-
 
 		<Property Id="WIN10FOUND" Secure="yes">
 			<DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
@@ -46,7 +42,7 @@
 			</DirectorySearch>
 		</Property>
 
-		<Condition Message="!(loc.Windows10Required)">
+		<Condition Message="!(loc.WindowsRequired)">
 			<![CDATA[Installed OR (VersionNT64 >= 1000) OR (VersionNT64 = 603 AND WIN10FOUND)]]>
 		</Condition>
 
@@ -55,8 +51,12 @@
 			<RegistrySearch Id="searchId" Root="HKLM" Key="Software\Microsoft\Windows NT\CurrentVersion" Name="ReleaseId" Type="raw" />
 		</Property>
 
-		<Condition Message="!(loc.Windows10Required)">
-			<![CDATA[Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809)]]>
+		<Condition Message="!(loc.WindowsClient)">
+			<![CDATA[(MsiNTProductType > 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809)]]>
+		</Condition>
+
+		<Condition Message="!(loc.WindowsServer)">
+			<![CDATA[(MsiNTProductType = 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809) OR (WIN10RELEASEID = 1607)]]>
 		</Condition>
 
 
@@ -83,6 +83,7 @@
 		<FeatureRef Id="ProductFeature">
 			<!-- Installation settings -->
 			<FeatureRef Id="WindowsFirewallRule" />
+			<FeatureRef Id="ProxyService" />
 			<FeatureRef Id="DesktopShortcut" />
 			<ComponentRef Id="StartmenuShortcut"/>
 

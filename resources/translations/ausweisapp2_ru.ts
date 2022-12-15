@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>a129b249277f</translation>
+        <translation>7488db7b6a84</translation>
     </message>
 </context>
 <context>
@@ -2621,9 +2621,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Расположите идентификационную карту сверху на обратной стороне устройства.</translation>
     </message>
     <message>
-        <source>Please place your ID card on the device, the exact position is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
+        <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
-        <translation>Расположите идентификационную карту на устройстве (точное положение зависит от устройства). Возможное положение показано в анимации. Удерживайте идентификационную карту в одном положении несколько секунд, прежде чем поменять положение, и не смещайте ее после установки соединения.</translation>
+        <translation type="unfinished">Расположите идентификационную карту на устройстве (точное положение зависит от устройства). Возможное положение показано в анимации. Удерживайте идентификационную карту в одном положении несколько секунд, прежде чем поменять положение, и не смещайте ее после установки соединения.</translation>
     </message>
 </context>
 <context>
@@ -2800,6 +2800,13 @@ INFO ANDROID IOS Description text of PIN</extracomment>
         <source>Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device.&lt;br&gt;&lt;br&gt;To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.</source>
         <extracomment>INFO ANDROID IOS Description text of Transport PIN</extracomment>
         <translation>Сохраненную на смартфоне электронную идентификационную карту Smart-eID можно заблокировать, как и физическую идентификационную карту. Это может потребоваться при потере устройства.&lt;br&gt;&lt;br&gt;Для блокировки активной электронной идентификационной карты Smart-eID требуется код блокировки. Код блокировки отображается на дисплее после успешного создания электронной идентификационной карты Smart-eID. Кроме того, он указан в письме, которое вы получите после создания.</translation>
+    </message>
+    <message>
+        <source>Select &lt;b&gt;&quot;Six-digit PIN&quot;&lt;/b&gt; to change the self-chosen PIN of your ID card.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;Five-digit Transport PIN&quot;&lt;/b&gt; if your PIN letter is at hand (see figure) and you have not yet chosen a six-digit ID card PIN.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;PIN unknown&quot;&lt;/b&gt; if your PIN letter is not at hand or you cannot recall your PIN.</source>
+        <extracomment>INFO DESKTOP Description text of change PIN selection options
+----------
+INFO ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3274,27 +3281,22 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <name>ProviderOverview</name>
     <message>
         <source>All provider</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Все провайдеры</translation>
     </message>
     <message>
         <source>Citizen services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Услуги для граждан</translation>
     </message>
     <message>
         <source>Financials</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Финансы</translation>
     </message>
     <message>
         <source>Insurances</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Страхование</translation>
     </message>
     <message>
         <source>Other services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Другие услуги</translation>
     </message>
 </context>
@@ -3315,9 +3317,9 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <name>ProxyCredentialsPopup</name>
     <message>
         <source>Sign in</source>
-        <extracomment>LABEL DESKTOP Title of the proxy credentials popup.
+        <extracomment>LABEL DESKTOP Text of the button in the proxy credentials popup.
 ----------
-LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
+LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <translation>Войти в систему</translation>
     </message>
     <message>
@@ -4510,7 +4512,6 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
     <message>
         <source>Resetting Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Сброс Smart-eID</translation>
     </message>
 </context>
@@ -6887,6 +6888,39 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
 </context>
 <context>
+    <name>governikus::HttpHandler</name>
+    <message>
+        <source>Invalid request (%1)</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Недействительный запрос (%1)</translation>
+    </message>
+    <message>
+        <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Браузер отправил запрос, который не удалось интерпретировать.</translation>
+    </message>
+    <message>
+        <source>Error message:</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Сообщение об ошибке:</translation>
+    </message>
+    <message>
+        <source>Unknown request: %1</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Неизвестный запрос: %1</translation>
+    </message>
+    <message>
+        <source>Would you like to report this error?</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Сообщить об этой ошибке?</translation>
+    </message>
+    <message>
+        <source>Report now</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Сообщить сейчас</translation>
+    </message>
+</context>
+<context>
     <name>governikus::LocalIfdReaderManagerPlugIn</name>
     <message>
         <source>Connection closed by remote with status: %1.</source>
@@ -7296,6 +7330,29 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>The list of card readers was last updated at %1.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Список устройств чтения карт последний раз обновлялся %1.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::RedirectRequest</name>
+    <message>
+        <source>Cannot reach local AusweisApp2</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your local AusweisApp2 is not running. Please start your local AusweisApp2 and try again.</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Would you like to try again?</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation type="unfinished">Повторить попытку?</translation>
+    </message>
+    <message>
+        <source>Try again</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation type="unfinished">Повторить попытку</translation>
     </message>
 </context>
 <context>
@@ -7715,10 +7772,44 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
 </context>
 <context>
+    <name>governikus::UIPlugInProxy</name>
+    <message>
+        <source>Reverse proxy plugin is enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>governikus::UIPlugInQml</name>
     <message>
         <source>Information</source>
         <translation>Информация</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::UIPlugInWebService</name>
+    <message>
+        <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
+        <extracomment>ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.</extracomment>
+        <translation>Неизвестная программа использует требуемый порт (%1). Завершите работу другой программы и повторите попытку!</translation>
+    </message>
+    <message>
+        <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
+        <extracomment>ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.</extracomment>
+        <translation>Программа (%1) использует требуемый порт (%2). Закройте %1 и повторите попытку!</translation>
+    </message>
+    <message>
+        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
+        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
+        <translation>Вы попытались запустить более новую версию (%1) уже запущенного приложения AusweisApp2. Остановите текущую версию (%2) и повторите попытку!</translation>
+    </message>
+    <message>
+        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
+        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
+        <translation>Вы попытались запустить более старую версию (%1) уже запущенного приложения AusweisApp2. Откройте текущую запущенную версию (%2)!</translation>
+    </message>
+    <message>
+        <source>Reverse-Proxy of AusweisApp2 is started and this instance cannot rebind port. Please ask your administrator!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7759,9 +7850,9 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <translation>Браузер отправил запрос, который не удалось интерпретировать.</translation>
     </message>
     <message>
-        <source>Error message</source>
+        <source>Error message:</source>
         <extracomment>ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page</extracomment>
-        <translation>Сообщение об ошибке</translation>
+        <translation>Сообщение об ошибке:</translation>
     </message>
     <message>
         <source>Would you like to report this error?</source>
@@ -7777,59 +7868,6 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..</extracomment>
         <translation>Прервано соединение с браузером. Не удалось выполнить переадресацию. Повторите попытку вызвать URL вручную: %1</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::WebserviceActivationHandler</name>
-    <message>
-        <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
-        <extracomment>ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.</extracomment>
-        <translation>Неизвестная программа использует требуемый порт (%1). Завершите работу другой программы и повторите попытку!</translation>
-    </message>
-    <message>
-        <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
-        <extracomment>ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.</extracomment>
-        <translation>Программа (%1) использует требуемый порт (%2). Закройте %1 и повторите попытку!</translation>
-    </message>
-    <message>
-        <source>Invalid request (%1)</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Недействительный запрос (%1)</translation>
-    </message>
-    <message>
-        <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Браузер отправил запрос, который не удалось интерпретировать.</translation>
-    </message>
-    <message>
-        <source>Error message</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Сообщение об ошибке</translation>
-    </message>
-    <message>
-        <source>Unknown request: %1</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Неизвестный запрос: %1</translation>
-    </message>
-    <message>
-        <source>Would you like to report this error?</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Сообщить об этой ошибке?</translation>
-    </message>
-    <message>
-        <source>Report now</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Сообщить сейчас</translation>
-    </message>
-    <message>
-        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
-        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
-        <translation>Вы попытались запустить более новую версию (%1) уже запущенного приложения AusweisApp2. Остановите текущую версию (%2) и повторите попытку!</translation>
-    </message>
-    <message>
-        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
-        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
-        <translation>Вы попытались запустить более старую версию (%1) уже запущенного приложения AusweisApp2. Откройте текущую запущенную версию (%2)!</translation>
     </message>
 </context>
 <context>

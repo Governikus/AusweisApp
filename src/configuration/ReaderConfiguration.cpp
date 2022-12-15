@@ -46,7 +46,7 @@ void ReaderConfiguration::onFileUpdated()
 {
 	if (mUpdatableFile->forEachLookupPath([this](const QString& pPath){return parseReaderConfiguration(pPath);}))
 	{
-		for (const ReaderConfigurationInfo& info : qAsConst(mReaderConfigurationInfos))
+		for (const ReaderConfigurationInfo& info : std::as_const(mReaderConfigurationInfos))
 		{
 			info.getIcon()->markDirty();
 			info.getIconWithNPA()->markDirty();
@@ -95,7 +95,7 @@ QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigur
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
 			return !i.getUrl().isEmpty();
-		}, qAsConst(mReaderConfigurationInfos));
+		}, std::as_const(mReaderConfigurationInfos));
 }
 
 
@@ -103,13 +103,13 @@ QVector<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurat
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
 			return i.getVendorId() == 0x0;
-		}, qAsConst(mReaderConfigurationInfos));
+		}, std::as_const(mReaderConfigurationInfos));
 }
 
 
 ReaderConfigurationInfo ReaderConfiguration::getReaderConfigurationInfoById(const UsbId& pId) const
 {
-	for (const auto& info : qAsConst(mReaderConfigurationInfos))
+	for (const auto& info : std::as_const(mReaderConfigurationInfos))
 	{
 		if (pId.getVendorId() == info.getVendorId() && pId.getProductId() == info.getProductId())
 		{

@@ -28,7 +28,6 @@ namespace
 SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVersion")
 SETTINGS_NAME(SETTINGS_NAME_SKIP_VERSION, "skipVersion")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
-SETTINGS_NAME(SETTINGS_NAME_SHOW_SETUP_ASSISTANT, "showSetupAssistant")
 SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
@@ -61,28 +60,12 @@ GeneralSettings::GeneralSettings()
 }
 
 
-GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral)
+GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 	: AbstractSettings()
 	, mAutoStart(false)
-	, mStoreGeneral(std::move(pStoreGeneral))
+	, mStore(std::move(pStore))
 	, mIsNewAppVersion(false)
 {
-	{
-		// With 1.22.1 the showSetupAssistant was replaced with a general startupModule, so migrate the settings.
-		if (!mStoreGeneral->contains(SETTINGS_NAME_UI_STARTUP_MODULE()))
-		{
-			if (!mStoreGeneral->value(SETTINGS_NAME_SHOW_SETUP_ASSISTANT(), true).toBool())
-			{
-				setStartupModule(QStringLiteral("DEFAULT"));
-			}
-			mStoreGeneral->remove(SETTINGS_NAME_SHOW_SETUP_ASSISTANT());
-		}
-
-		// With 1.22.0 the old widgets was removed, no need for UI selector
-		mStoreGeneral->remove(QStringLiteral("selectedUi"));
-		mStoreGeneral->remove(QStringLiteral("showNewUiHint"));
-	}
-
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
 	{
@@ -96,8 +79,8 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStoreGeneral)
 	mAutoStart = GENERAL_SETTINGS_DEFAULT_AUTOSTART;
 #endif
 
-	mStoreGeneral->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
-	save(mStoreGeneral);
+	mStore->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
+	save(mStore);
 }
 
 
@@ -170,20 +153,20 @@ void GeneralSettings::setAutoStart(bool pAutoStart)
 
 QString GeneralSettings::getPersistentSettingsVersion() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QString()).toString();
 }
 
 
 QString GeneralSettings::getSkipVersion() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SKIP_VERSION(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_SKIP_VERSION(), QString()).toString();
 }
 
 
 void GeneralSettings::skipVersion(const QString& pVersion)
 {
-	mStoreGeneral->setValue(SETTINGS_NAME_SKIP_VERSION(), pVersion);
-	save(mStoreGeneral);
+	mStore->setValue(SETTINGS_NAME_SKIP_VERSION(), pVersion);
+	save(mStore);
 }
 
 
@@ -195,7 +178,7 @@ bool GeneralSettings::isNewAppVersion() const
 
 bool GeneralSettings::isAutoCloseWindowAfterAuthentication() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), true).toBool();
+	return mStore->value(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), true).toBool();
 }
 
 
@@ -203,8 +186,8 @@ void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
 {
 	if (pAutoClose != isAutoCloseWindowAfterAuthentication())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), pAutoClose);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), pAutoClose);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -212,7 +195,7 @@ void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
 
 QString GeneralSettings::getStartupModule() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_UI_STARTUP_MODULE(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_UI_STARTUP_MODULE(), QString()).toString();
 }
 
 
@@ -220,8 +203,8 @@ void GeneralSettings::setStartupModule(const QString& pModule)
 {
 	if (getStartupModule() != pModule)
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_UI_STARTUP_MODULE(), pModule);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_UI_STARTUP_MODULE(), pModule);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -229,7 +212,7 @@ void GeneralSettings::setStartupModule(const QString& pModule)
 
 bool GeneralSettings::isRemindUserToClose() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), true).toBool();
+	return mStore->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), true).toBool();
 }
 
 
@@ -237,8 +220,8 @@ void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 {
 	if (pRemindUser != isRemindUserToClose())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), pRemindUser);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), pRemindUser);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -246,7 +229,7 @@ void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 
 bool GeneralSettings::isTransportPinReminder() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), true).toBool();
+	return mStore->value(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), true).toBool();
 }
 
 
@@ -254,8 +237,8 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 {
 	if (pTransportPinReminder != isTransportPinReminder())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), pTransportPinReminder);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_TRANSPORT_PIN_REMINDER(), pTransportPinReminder);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -263,7 +246,7 @@ void GeneralSettings::setTransportPinReminder(bool pTransportPinReminder)
 
 bool GeneralSettings::isDeveloperOptions() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_OPTIONS(), false).toBool();
+	return mStore->value(SETTINGS_NAME_DEVELOPER_OPTIONS(), false).toBool();
 }
 
 
@@ -271,8 +254,8 @@ void GeneralSettings::setDeveloperOptions(bool pEnabled)
 {
 	if (pEnabled != isDeveloperOptions())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_OPTIONS(), pEnabled);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_DEVELOPER_OPTIONS(), pEnabled);
+		save(mStore);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -292,7 +275,7 @@ bool GeneralSettings::isDeveloperMode() const
 	}
 #endif
 
-	return mStoreGeneral->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
+	return mStore->value(SETTINGS_NAME_DEVELOPER_MODE(), false).toBool();
 }
 
 
@@ -300,8 +283,8 @@ void GeneralSettings::setDeveloperMode(bool pEnabled)
 {
 	if (pEnabled != isDeveloperMode())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_DEVELOPER_MODE(), pEnabled);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_DEVELOPER_MODE(), pEnabled);
+		save(mStore);
 		Q_EMIT fireDeveloperOptionsChanged();
 		Q_EMIT fireShowInAppNotificationsChanged();
 	}
@@ -317,7 +300,7 @@ bool GeneralSettings::useSelfAuthTestUri() const
 	}
 #endif
 
-	return mStoreGeneral->value(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), false).toBool();
+	return mStore->value(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), false).toBool();
 }
 
 
@@ -325,8 +308,8 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 {
 	if (pUse != useSelfAuthTestUri())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), pUse);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), pUse);
+		save(mStore);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -341,7 +324,7 @@ bool GeneralSettings::isSimulatorEnabled() const
 	}
 #endif
 
-	return mStoreGeneral->value(SETTINGS_NAME_SIMULATOR(), false).toBool();
+	return mStore->value(SETTINGS_NAME_SIMULATOR(), false).toBool();
 }
 
 
@@ -349,8 +332,8 @@ void GeneralSettings::setSimulatorEnabled(bool pEnabled)
 {
 	if (pEnabled != isSimulatorEnabled())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_SIMULATOR(), pEnabled);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_SIMULATOR(), pEnabled);
+		save(mStore);
 		Q_EMIT fireDeveloperOptionsChanged();
 	}
 }
@@ -358,7 +341,7 @@ void GeneralSettings::setSimulatorEnabled(bool pEnabled)
 
 QLocale::Language GeneralSettings::getLanguage() const
 {
-	const QString loadedLanguage = mStoreGeneral->value(SETTINGS_NAME_LANGUAGE(), QString()).toString();
+	const QString loadedLanguage = mStore->value(SETTINGS_NAME_LANGUAGE(), QString()).toString();
 	if (loadedLanguage.isEmpty())
 	{
 		return QLocale::C;
@@ -372,8 +355,8 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 {
 	if (pLanguage != getLanguage())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : LanguageLoader::getLocaleCode(QLocale(pLanguage)));
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_LANGUAGE(), pLanguage == QLocale::C ? QString() : LanguageLoader::getLocaleCode(QLocale(pLanguage)));
+		save(mStore);
 		Q_EMIT fireLanguageChanged();
 		Q_EMIT fireSettingsChanged();
 	}
@@ -382,7 +365,7 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 
 QString GeneralSettings::getScreenOrientation() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SCREEN_ORIENTATION(), QStringLiteral("auto")).toString();
+	return mStore->value(SETTINGS_NAME_SCREEN_ORIENTATION(), QStringLiteral("auto")).toString();
 }
 
 
@@ -390,8 +373,8 @@ void GeneralSettings::setScreenOrientation(const QString& pScreenOrientation)
 {
 	if (pScreenOrientation != getScreenOrientation())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_SCREEN_ORIENTATION(), pScreenOrientation);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_SCREEN_ORIENTATION(), pScreenOrientation);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -399,13 +382,13 @@ void GeneralSettings::setScreenOrientation(const QString& pScreenOrientation)
 
 bool GeneralSettings::askForDeviceSurvey() const
 {
-	return !mStoreGeneral->contains(SETTINGS_NAME_DEVICE_SURVEY_PENDING());
+	return !mStore->contains(SETTINGS_NAME_DEVICE_SURVEY_PENDING());
 }
 
 
 bool GeneralSettings::isDeviceSurveyPending() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), false).toBool();
+	return mStore->value(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), false).toBool();
 }
 
 
@@ -413,8 +396,8 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 {
 	if (askForDeviceSurvey() || pDeviceSurveyPending != isDeviceSurveyPending())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), pDeviceSurveyPending);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_DEVICE_SURVEY_PENDING(), pDeviceSurveyPending);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -422,13 +405,13 @@ void GeneralSettings::setDeviceSurveyPending(bool pDeviceSurveyPending)
 
 bool GeneralSettings::askForStoreFeedback() const
 {
-	return !mStoreGeneral->contains(SETTINGS_NAME_REQUEST_STORE_FEEDBACK());
+	return !mStore->contains(SETTINGS_NAME_REQUEST_STORE_FEEDBACK());
 }
 
 
 bool GeneralSettings::isRequestStoreFeedback() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), false).toBool();
+	return mStore->value(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), false).toBool();
 }
 
 
@@ -436,8 +419,8 @@ void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 {
 	if (askForStoreFeedback() || pRequest != isRequestStoreFeedback())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_REQUEST_STORE_FEEDBACK(), pRequest);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -445,7 +428,7 @@ void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 
 QString GeneralSettings::getLastReaderPluginType() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), QString()).toString();
 }
 
 
@@ -453,8 +436,8 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 {
 	if (pLastReaderPluginType != getLastReaderPluginType())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -476,15 +459,15 @@ bool GeneralSettings::isAutoUpdateCheck() const
 {
 	if (autoUpdateCheckIsSetByAdmin())
 	{
-		mStoreGeneral->remove(SETTINGS_NAME_AUTO());
-		save(mStoreGeneral);
+		mStore->remove(SETTINGS_NAME_AUTO());
+		save(mStore);
 	}
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-	return mStoreGeneral->value(SETTINGS_NAME_AUTO(), true).toBool();
+	return mStore->value(SETTINGS_NAME_AUTO(), true).toBool();
 
 #else
-	return mStoreGeneral->value(SETTINGS_NAME_AUTO(), false).toBool();
+	return mStore->value(SETTINGS_NAME_AUTO(), false).toBool();
 
 #endif
 }
@@ -500,8 +483,8 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 {
 	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -509,7 +492,7 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 
 bool GeneralSettings::isUseScreenKeyboard() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
+	return mStore->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
 }
 
 
@@ -517,8 +500,8 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 {
 	if (pUseScreenKeyboard != isUseScreenKeyboard())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -526,7 +509,7 @@ void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
 
 bool GeneralSettings::isVisualPrivacy() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_VISUAL_PRIVACY(), false).toBool();
+	return mStore->value(SETTINGS_NAME_VISUAL_PRIVACY(), false).toBool();
 }
 
 
@@ -534,8 +517,8 @@ void GeneralSettings::setVisualPrivacy(bool pVisualPrivacy)
 {
 	if (pVisualPrivacy != isVisualPrivacy())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_VISUAL_PRIVACY(), pVisualPrivacy);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_VISUAL_PRIVACY(), pVisualPrivacy);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -543,7 +526,7 @@ void GeneralSettings::setVisualPrivacy(bool pVisualPrivacy)
 
 bool GeneralSettings::isShuffleScreenKeyboard() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
+	return mStore->value(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), false).toBool();
 }
 
 
@@ -551,8 +534,8 @@ void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 {
 	if (pShuffleScreenKeyboard != isShuffleScreenKeyboard())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD(), pShuffleScreenKeyboard);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -560,7 +543,7 @@ void GeneralSettings::setShuffleScreenKeyboard(bool pShuffleScreenKeyboard)
 
 bool GeneralSettings::isEnableCanAllowed() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), false).toBool();
+	return mStore->value(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), false).toBool();
 }
 
 
@@ -568,8 +551,8 @@ void GeneralSettings::setEnableCanAllowed(bool pEnableCanAllowed)
 {
 	if (pEnableCanAllowed != isEnableCanAllowed())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), pEnableCanAllowed);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_ENABLE_CAN_ALLOWED(), pEnableCanAllowed);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -581,7 +564,7 @@ bool GeneralSettings::isSkipRightsOnCanAllowed() const
 	{
 		return false;
 	}
-	return mStoreGeneral->value(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), false).toBool();
+	return mStore->value(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), false).toBool();
 }
 
 
@@ -589,8 +572,8 @@ void GeneralSettings::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 {
 	if (pSkipRightsOnCanAllowed != isSkipRightsOnCanAllowed())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), pSkipRightsOnCanAllowed);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED(), pSkipRightsOnCanAllowed);
+		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}
 }
@@ -603,7 +586,7 @@ bool GeneralSettings::isShowInAppNotifications() const
 		return true;
 	}
 
-	return mStoreGeneral->value(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), isShowNotificationsOsDefault()).toBool();
+	return mStore->value(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), isShowNotificationsOsDefault()).toBool();
 }
 
 
@@ -611,8 +594,8 @@ void GeneralSettings::setShowInAppNotifications(bool pShowInAppNotifications)
 {
 	if (pShowInAppNotifications != isShowInAppNotifications())
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_IN_APP_NOTIFICATIONS(), pShowInAppNotifications);
+		save(mStore);
 		Q_EMIT fireShowInAppNotificationsChanged();
 	}
 }
@@ -626,7 +609,7 @@ bool GeneralSettings::isCustomProxyHost() const
 
 QString GeneralSettings::getCustomProxyHost() const
 {
-	return mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_HOST(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_CUSTOM_PROXY_HOST(), QString()).toString();
 }
 
 
@@ -639,7 +622,7 @@ bool GeneralSettings::isCustomProxyType() const
 QNetworkProxy::ProxyType GeneralSettings::getCustomProxyType() const
 {
 	QNetworkProxy::ProxyType result;
-	auto value = mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_TYPE(), QString()).toString().toLower();
+	auto value = mStore->value(SETTINGS_NAME_CUSTOM_PROXY_TYPE(), QString()).toString().toLower();
 	if (value == QLatin1String("socks5"))
 	{
 		result = QNetworkProxy::ProxyType::Socks5Proxy;
@@ -664,7 +647,7 @@ bool GeneralSettings::isCustomProxyPort() const
 
 quint16 GeneralSettings::getCustomProxyPort() const
 {
-	return static_cast<quint16>(mStoreGeneral->value(SETTINGS_NAME_CUSTOM_PROXY_PORT(), 0).toInt());
+	return static_cast<quint16>(mStore->value(SETTINGS_NAME_CUSTOM_PROXY_PORT(), 0).toInt());
 }
 
 
@@ -676,7 +659,7 @@ bool GeneralSettings::customProxyAttributesPresent() const
 
 bool GeneralSettings::useCustomProxy() const
 {
-	bool useCustomProxy = mStoreGeneral->value(SETTINGS_NAME_USE_CUSTOM_PROXY(), true).toBool();
+	bool useCustomProxy = mStore->value(SETTINGS_NAME_USE_CUSTOM_PROXY(), true).toBool();
 	return useCustomProxy && customProxyAttributesPresent();
 }
 
@@ -685,8 +668,8 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 {
 	if (useCustomProxy() != pUseCustomProxy)
 	{
-		mStoreGeneral->setValue(SETTINGS_NAME_USE_CUSTOM_PROXY(), pUseCustomProxy);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_USE_CUSTOM_PROXY(), pUseCustomProxy);
+		save(mStore);
 		Q_EMIT fireProxyChanged();
 	}
 }
@@ -694,12 +677,12 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 
 QString GeneralSettings::getIfdServiceToken()
 {
-	if (!mStoreGeneral->contains(SETTINGS_NAME_IFD_SERVICE_TOKEN()))
+	if (!mStore->contains(SETTINGS_NAME_IFD_SERVICE_TOKEN()))
 	{
 		auto serviceToken = Randomizer::getInstance().createUuid().toString();
-		mStoreGeneral->setValue(SETTINGS_NAME_IFD_SERVICE_TOKEN(), serviceToken);
-		save(mStoreGeneral);
+		mStore->setValue(SETTINGS_NAME_IFD_SERVICE_TOKEN(), serviceToken);
+		save(mStore);
 	}
 
-	return mStoreGeneral->value(SETTINGS_NAME_IFD_SERVICE_TOKEN(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_IFD_SERVICE_TOKEN(), QString()).toString();
 }

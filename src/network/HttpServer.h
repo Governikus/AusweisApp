@@ -10,7 +10,6 @@
 #include "PortFile.h"
 
 #include <QMetaMethod>
-#include <QSharedPointer>
 #include <QTcpServer>
 #include <QVector>
 
@@ -23,10 +22,11 @@ class HttpServer
 	Q_OBJECT
 
 	private:
-		QVector<QSharedPointer<QTcpServer>> mServer;
+		QVector<QTcpServer*> mServer;
 		PortFile mPortFile;
 
 		void shutdown();
+		void bindAddresses(quint16 pPort, const QVector<QHostAddress>& pAddresses);
 		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
 
 	public:
@@ -40,6 +40,7 @@ class HttpServer
 		[[nodiscard]] int boundAddresses() const;
 		[[nodiscard]] bool isListening() const;
 		[[nodiscard]] quint16 getServerPort() const;
+		void rebind(quint16 pPort = 0, const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);
 
 	private Q_SLOTS:
 		void onNewConnection();
@@ -48,6 +49,7 @@ class HttpServer
 	Q_SIGNALS:
 		void fireNewHttpRequest(const QSharedPointer<HttpRequest>& pRequest);
 		void fireNewWebSocketRequest(const QSharedPointer<HttpRequest>& pRequest);
+		void fireRebound();
 };
 
 } // namespace governikus

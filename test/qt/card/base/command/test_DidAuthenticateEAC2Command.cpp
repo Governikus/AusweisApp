@@ -12,6 +12,8 @@
 #include <QByteArrayList>
 #include <QtTest>
 #include <openssl/cms.h>
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
 
 
 using namespace governikus;
@@ -81,8 +83,8 @@ class test_DidAuthenticateEAC2Command
 			mCert = QSharedPointer<X509>(X509_new(), &X509_free);
 			QVERIFY(mCert);
 			ASN1_INTEGER_set(X509_get_serialNumber(mCert.data()), 1);
-			X509_gmtime_adj(X509_get_notBefore(mCert.data()), 0);
-			X509_gmtime_adj(X509_get_notAfter(mCert.data()), 24 * 3600);
+			X509_gmtime_adj(X509_getm_notBefore(mCert.data()), 0);
+			X509_gmtime_adj(X509_getm_notAfter(mCert.data()), 24 * 3600);
 			X509_set_pubkey(mCert.data(), key);
 			X509_sign(mCert.data(), key, EVP_sha256());
 		}

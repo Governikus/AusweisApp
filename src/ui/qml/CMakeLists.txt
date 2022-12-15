@@ -8,7 +8,7 @@ target_link_libraries(AusweisAppUiQml ${Qt}::Core ${Qt}::Svg ${Qt}::Qml ${Qt}::Q
 target_link_libraries(AusweisAppUiQml AusweisAppGlobal AusweisAppUi AusweisAppIfdRemote AusweisAppExport AusweisAppServices AusweisAppWorkflowsSelfAuth)
 
 if(QT6)
-    target_link_libraries(AusweisAppUiQml ${Qt}::CorePrivate)
+	target_link_libraries(AusweisAppUiQml ${Qt}::CorePrivate)
 endif()
 
 if(TARGET ${Qt}::Widgets)

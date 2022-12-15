@@ -1,68 +1,63 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 
 ListView {
 	id: baseItem
 
+	property bool scrollBarAutohide: !Constants.is_desktop
+	property real scrollBarBottomPadding: 0
 	property bool scrollBarEnabled: true
 	property real scrollBarTopPadding: 0
-	property real scrollBarBottomPadding: 0
-	property bool scrollBarAutohide: !Constants.is_desktop
-
-	Accessible.role: Accessible.ScrollBar
-	Accessible.focusable: false
-	Accessible.onIncreaseAction: scrollPageDown()
-	Accessible.onDecreaseAction: scrollPageUp()
-
-	function scrollPageDown() {
-		Utils.scrollPageDown(baseItem)
-	}
-
-	function scrollPageUp() {
-		Utils.scrollPageUp(baseItem)
-	}
-
-	function highlightScrollbar() {
-		if (ScrollBar.vertical) ScrollBar.vertical.highlight()
-	}
-
-	ScrollBar.vertical: scrollBarEnabled ? scrollBar.createObject() : null
 
 	function handleKeyPress(key) {
 		if (key === Qt.Key_PageDown)
-			baseItem.scrollPageDown()
+			baseItem.scrollPageDown();
 		else if (key === Qt.Key_PageUp)
-			baseItem.scrollPageUp()
+			baseItem.scrollPageUp();
 		else if (key === Qt.Key_End)
-			baseItem.positionViewAtEnd()
+			baseItem.positionViewAtEnd();
 		else if (key === Qt.Key_Home)
-			baseItem.positionViewAtBeginning()
+			baseItem.positionViewAtBeginning();
+	}
+	function highlightScrollbar() {
+		if (ScrollBar.vertical)
+			ScrollBar.vertical.highlight();
+	}
+	function scrollPageDown() {
+		Utils.scrollPageDown(baseItem);
+	}
+	function scrollPageUp() {
+		Utils.scrollPageUp(baseItem);
 	}
 
-	Keys.onPressed: event => { handleKeyPress(event.key) }
-
-	maximumFlickVelocity: Constants.scrolling_speed
+	Accessible.focusable: false
+	Accessible.role: Accessible.ScrollBar
+	ScrollBar.vertical: scrollBarEnabled ? scrollBar.createObject() : null
+	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
+	boundsMovement: Flickable.FollowBoundsBehavior
 	flickDeceleration: Constants.flickDeceleration
 	flickableDirection: Flickable.VerticalFlick
+	maximumFlickVelocity: Constants.scrolling_speed
 
-	boundsMovement: Flickable.FollowBoundsBehavior
-	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
-
-	onVisibleChanged: if (visible) highlightScrollbar()
+	Accessible.onDecreaseAction: scrollPageUp()
+	Accessible.onIncreaseAction: scrollPageDown()
+	Keys.onPressed: event => {
+		handleKeyPress(event.key);
+	}
+	onVisibleChanged: if (visible)
+		highlightScrollbar()
 
 	Component {
 		id: scrollBar
 		GScrollBar {
-			topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
-			bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
 			autohide: scrollBarAutohide
+			bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
+			topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
 		}
 	}
 }

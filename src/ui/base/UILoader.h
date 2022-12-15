@@ -34,10 +34,12 @@ class UILoader
 		[[nodiscard]] static QString unify(const QString& pName);
 		[[nodiscard]] static QString getName(const QMetaObject* pMeta);
 		[[nodiscard]] static QString getName(const QJsonObject& pJson);
+		[[nodiscard]] static QJsonObject getMetaDataFileContent(const QJsonObject& pJson);
 		[[nodiscard]] static inline bool isDefault(const QJsonObject& pJson);
+		[[nodiscard]] static inline bool isUserInteractive(const QJsonObject& pJson);
 		[[nodiscard]] static QStringList getUserRequestOrDefault();
 		[[nodiscard]] static inline bool isPlugIn(const QJsonObject& pJson);
-
+		static inline void setMetaDataProperties(UIPlugIn* pUi, const QJsonObject& pJson);
 
 #ifndef QT_NO_DEBUG
 
@@ -47,6 +49,7 @@ class UILoader
 		~UILoader() override;
 
 		[[nodiscard]] bool load(const QString& pName);
+		void preparePlugIn(UIPlugIn* pUi, const QJsonObject& pMetaData);
 
 	public:
 		// do not make this non-static as the CommandLineParser spawns
@@ -54,6 +57,9 @@ class UILoader
 		[[nodiscard]] static QString getDefault();
 		static void setUserRequest(const QStringList& pRequest);
 
+		[[nodiscard]] bool initialize() const;
+		[[nodiscard]] bool hasActiveUI() const;
+		[[nodiscard]] bool requiresReaderManager() const;
 		[[nodiscard]] bool isLoaded() const;
 		[[nodiscard]] bool load();
 
@@ -75,7 +81,7 @@ class UILoader
 
 	Q_SIGNALS:
 		void fireLoadedPlugin(UIPlugIn* pPlugin);
-		void fireShutdownComplete();
+		void fireRemovedAllPlugins();
 };
 
 } // namespace governikus

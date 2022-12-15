@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>a129b249277f</translation>
+        <translation>7488db7b6a84</translation>
     </message>
 </context>
 <context>
@@ -1135,7 +1135,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Der interne Kartensimulator ermöglicht die Durchführung einer Authentisierung in der Test-PKI ohne Ausweis oder Kartenleser. Beachten Sie, dass kein anderer Kartenleser verwendet werden kann, während der Simulator aktiviert ist. </translation>
+        <translation>Der interne Kartensimulator ermöglicht die Durchführung einer Authentisierung in der Test-PKI ohne Ausweis oder Kartenleser. Beachten Sie, dass kein anderer Kartenleser verwendet werden kann, während der Simulator aktiviert ist.</translation>
     </message>
     <message>
         <source>Developer mode</source>
@@ -2621,9 +2621,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Bitte platzieren Sie Ihren Ausweis oben an der Geräterückseite.</translation>
     </message>
     <message>
-        <source>Please place your ID card on the device, the exact position is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
+        <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
-        <translation>Bitte platzieren Sie Ihren Ausweis am Gerät, die genaue Position ist modellabhängig. Die Animationen zeigen Ihnen mögliche Positionen. Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
+        <translation>Bitte platzieren Sie Ihren Ausweis direkt an der Geräterückseite.&lt;br/&gt;&lt;br/&gt;Die genaue Position des Ausweises ist modellabhängig. Die Animationen zeigen Ihnen mögliche Positionen. Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
     </message>
 </context>
 <context>
@@ -2800,6 +2800,13 @@ INFO ANDROID IOS Description text of PIN</extracomment>
         <source>Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device.&lt;br&gt;&lt;br&gt;To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.</source>
         <extracomment>INFO ANDROID IOS Description text of Transport PIN</extracomment>
         <translation>Genau wie der physische Ausweis kann auch die auf Ihrem Smartphone gespeicherte Smart-eID gesperrt werden. Dies kann erforderlich sein, wenn Sie Ihr Gerät einmal verlieren.&lt;br&gt;&lt;br&gt;Um eine aktive Smart-eID zu sperren, ist ein Sperrkennwort erforderlich. Das Sperrkennwort wird nach erfolgreicher Erstellung der Smart-eID angezeigt. Darüber hinaus ist es in dem Schreiben enthalten, das Sie nach der Erstellung erhalten.</translation>
+    </message>
+    <message>
+        <source>Select &lt;b&gt;&quot;Six-digit PIN&quot;&lt;/b&gt; to change the self-chosen PIN of your ID card.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;Five-digit Transport PIN&quot;&lt;/b&gt; if your PIN letter is at hand (see figure) and you have not yet chosen a six-digit ID card PIN.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;PIN unknown&quot;&lt;/b&gt; if your PIN letter is not at hand or you cannot recall your PIN.</source>
+        <extracomment>INFO DESKTOP Description text of change PIN selection options
+----------
+INFO ANDROID IOS</extracomment>
+        <translation>Wählen Sie &lt;b&gt;&quot;Sechsstellige PIN&quot;&lt;/b&gt;, um die selbstvergebene PIN Ihres Ausweises zu ändern.&lt;br&gt;&lt;br&gt;Wählen Sie &lt;b&gt;&quot;Fünfstellige Transport-PIN&quot;&lt;/b&gt;, wenn Ihnen Ihr PIN-Brief vorliegt (siehe Grafik) und Sie noch keine sechsstellige Karten-PIN gesetzt haben.&lt;br&gt;&lt;br&gt;Wählen Sie &lt;b&gt;&quot;PIN unbekannt&quot;&lt;/b&gt;, wenn Sie keinen PIN-Brief vorliegen haben oder Ihre PIN vergessen haben.</translation>
     </message>
 </context>
 <context>
@@ -3274,27 +3281,22 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <name>ProviderOverview</name>
     <message>
         <source>All provider</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Alle Anbieter</translation>
     </message>
     <message>
         <source>Citizen services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Bürgerdienste</translation>
     </message>
     <message>
         <source>Financials</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Finanzen</translation>
     </message>
     <message>
         <source>Insurances</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Versicherungen</translation>
     </message>
     <message>
         <source>Other services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Weitere Dienste</translation>
     </message>
 </context>
@@ -3315,9 +3317,9 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <name>ProxyCredentialsPopup</name>
     <message>
         <source>Sign in</source>
-        <extracomment>LABEL DESKTOP Title of the proxy credentials popup.
+        <extracomment>LABEL DESKTOP Text of the button in the proxy credentials popup.
 ----------
-LABEL DESKTOP Text of the button in the proxy credentials popup.</extracomment>
+LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <translation>Anmelden</translation>
     </message>
     <message>
@@ -4510,7 +4512,6 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
     <message>
         <source>Resetting Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Setze Smart-eID zurück</translation>
     </message>
 </context>
@@ -6887,6 +6888,39 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
+    <name>governikus::HttpHandler</name>
+    <message>
+        <source>Invalid request (%1)</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Ungültige Anfrage (%1)</translation>
+    </message>
+    <message>
+        <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Ihr Browser hat eine Anfrage gesendet, die nicht interpretiert werden konnte.</translation>
+    </message>
+    <message>
+        <source>Error message:</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Fehlermeldung:</translation>
+    </message>
+    <message>
+        <source>Unknown request: %1</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Unbekannte Anfrage: %1</translation>
+    </message>
+    <message>
+        <source>Would you like to report this error?</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Möchten Sie diesen Fehler melden?</translation>
+    </message>
+    <message>
+        <source>Report now</source>
+        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
+        <translation>Jetzt melden</translation>
+    </message>
+</context>
+<context>
     <name>governikus::LocalIfdReaderManagerPlugIn</name>
     <message>
         <source>Connection closed by remote with status: %1.</source>
@@ -7296,6 +7330,29 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>The list of card readers was last updated at %1.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Die Liste der Kartenleser wurde zuletzt um %1 aktualisiert.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::RedirectRequest</name>
+    <message>
+        <source>Cannot reach local AusweisApp2</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation>Die lokale AusweisApp2 ist nicht erreichbar</translation>
+    </message>
+    <message>
+        <source>Your local AusweisApp2 is not running. Please start your local AusweisApp2 and try again.</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation>Ihre lokale AusweisApp2 läuft nicht. Bitte starten Sie Ihre lokale AusweisApp2 und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>Would you like to try again?</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation>Möchten Sie es erneut versuchen?</translation>
+    </message>
+    <message>
+        <source>Try again</source>
+        <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
+        <translation>Erneut versuchen</translation>
     </message>
 </context>
 <context>
@@ -7715,10 +7772,44 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     </message>
 </context>
 <context>
+    <name>governikus::UIPlugInProxy</name>
+    <message>
+        <source>Reverse proxy plugin is enabled</source>
+        <translation>Reverse-Proxy-Plugin ist aktiviert</translation>
+    </message>
+</context>
+<context>
     <name>governikus::UIPlugInQml</name>
     <message>
         <source>Information</source>
         <translation>Information</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::UIPlugInWebService</name>
+    <message>
+        <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
+        <extracomment>ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.</extracomment>
+        <translation>Eine unbekannte Anwendung verwendet den benötigten Port (%1) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
+    </message>
+    <message>
+        <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
+        <extracomment>ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.</extracomment>
+        <translation>Die Anwendung &quot;%1&quot; verwendet den benötigten Port (%2) bereits. Bitte beenden Sie &quot;%1&quot; und versuchen Sie es anschließend erneut!</translation>
+    </message>
+    <message>
+        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
+        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
+        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
+    </message>
+    <message>
+        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
+        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
+        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
+    </message>
+    <message>
+        <source>Reverse-Proxy of AusweisApp2 is started and this instance cannot rebind port. Please ask your administrator!</source>
+        <translation>Der Reverse-Proxy der AusweisApp2 ist gestartet und diese Instanz konnte nicht auf einen anderen Port wechseln. Bitte wenden Sie sich an Ihren Administrator!</translation>
     </message>
 </context>
 <context>
@@ -7759,9 +7850,9 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <translation>Ihr Browser hat eine Anfrage gesendet, die nicht interpretiert werden konnte.</translation>
     </message>
     <message>
-        <source>Error message</source>
+        <source>Error message:</source>
         <extracomment>ERROR ALL_PLATFORMS Invalid request by the browser, part of an HTML error page</extracomment>
-        <translation>Fehlermeldung</translation>
+        <translation>Fehlermeldung:</translation>
     </message>
     <message>
         <source>Would you like to report this error?</source>
@@ -7777,59 +7868,6 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..</extracomment>
         <translation>Die Verbindung zum Browser ging verloren. Es konnte keine Weiterleitung durchgeführt werden. Bitte versuchen Sie, die URL manuell aufzurufen: %1</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::WebserviceActivationHandler</name>
-    <message>
-        <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
-        <extracomment>ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.</extracomment>
-        <translation>Eine unbekannte Anwendung verwendet den benötigten Port (%1) bereits. Bitte beenden Sie zuerst die andere Anwendung und versuchen Sie es anschließend erneut!</translation>
-    </message>
-    <message>
-        <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
-        <extracomment>ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.</extracomment>
-        <translation>Die Anwendung &quot;%1&quot; verwendet den benötigten Port (%2) bereits. Bitte beenden Sie &quot;%1&quot; und versuchen Sie es anschließend erneut!</translation>
-    </message>
-    <message>
-        <source>Invalid request (%1)</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Ungültige Anfrage (%1)</translation>
-    </message>
-    <message>
-        <source>Your browser sent a request that couldn&apos;t be interpreted.</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Ihr Browser hat eine Anfrage gesendet, die nicht interpretiert werden konnte.</translation>
-    </message>
-    <message>
-        <source>Error message</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Fehlermeldung</translation>
-    </message>
-    <message>
-        <source>Unknown request: %1</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Unbekannte Anfrage: %1</translation>
-    </message>
-    <message>
-        <source>Would you like to report this error?</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Möchten Sie diesen Fehler melden?</translation>
-    </message>
-    <message>
-        <source>Report now</source>
-        <extracomment>ERROR ALL_PLATFORMS The browser sent an unknown or faulty request, part of an HTML error page.</extracomment>
-        <translation>Jetzt melden</translation>
-    </message>
-    <message>
-        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
-        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
-    </message>
-    <message>
-        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
-        <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
     </message>
 </context>
 <context>

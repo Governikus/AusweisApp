@@ -6,11 +6,13 @@
 
 #pragma once
 
-#include "ActivationController.h"
 #include "EnumHelper.h"
+#include "UIPlugIn.h"
 #include "WorkflowRequest.h"
 
 #include <QAbstractNativeEventFilter>
+#include <QAuthenticator>
+#include <QNetworkProxy>
 #include <QSharedPointer>
 
 class test_AppController;
@@ -34,7 +36,6 @@ class AppController final
 		static bool cShowUi;
 		QSharedPointer<WorkflowRequest> mActiveWorkflow;
 		QSharedPointer<WorkflowRequest> mWaitingRequest;
-		ActivationController mActivationController;
 		bool mShutdownRunning;
 		const UIPlugIn* mUiDomination;
 		bool mRestartApplication;
@@ -42,6 +43,7 @@ class AppController final
 
 		[[nodiscard]] bool canStartNewWorkflow() const;
 		void completeShutdown();
+		void waitForNetworkConnections(const std::function<void()>& pExitFunc);
 
 	public:
 		AppController();
@@ -54,7 +56,7 @@ class AppController final
 		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
 #endif
 
-		bool start();
+		void start();
 
 		[[nodiscard]] bool shouldApplicationRestart() const;
 
@@ -79,9 +81,7 @@ class AppController final
 		void onWorkflowFinished();
 		void onWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
 		void onCloseReminderFinished(bool pDontRemindAgain);
-		void onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext);
 		void onLanguageChanged();
-		void onUILoaderShutdownComplete();
 		void onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation);
 		void onUiDominationRelease();
 		void onRestartApplicationRequested();

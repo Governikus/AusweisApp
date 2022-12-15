@@ -6,6 +6,7 @@
 
 #include "asn1/Chat.h"
 
+#include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
 
 #include <QtCore>
@@ -23,7 +24,7 @@ class test_CHAT
 	QByteArray decode_encode(const QByteArray& pHexEncodedChat)
 	{
 		QSharedPointer<CHAT> chat = CHAT::fromHex(pHexEncodedChat);
-		return chat->encode().toHex().toUpper();
+		return encodeObject(chat.data()).toHex().toUpper();
 	}
 
 	private Q_SLOTS:
@@ -48,7 +49,7 @@ class test_CHAT
 			Asn1OctetStringUtil::setValue(QByteArray::fromHex("C000000000"), chat->mTemplate);
 
 			QCOMPARE(chat->getAccessRole(), AccessRole::CVCA);
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("5305C000000000")));
+			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("5305C000000000")));
 		}
 
 
@@ -73,7 +74,7 @@ class test_CHAT
 			chat->setAccessRights(rights);
 
 			QCOMPARE(chat->getTemplate().toHex().toUpper(), QByteArray("0000000F0F"));
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("0000000F0F")));
+			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("0000000F0F")));
 		}
 
 
@@ -111,7 +112,7 @@ class test_CHAT
 			chat->removeAllAccessRights();
 
 			QVERIFY(chat->getAccessRights().isEmpty());
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("0000000000")));
+			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("0000000000")));
 		}
 
 
@@ -122,7 +123,7 @@ class test_CHAT
 			chat->removeAccessRight(AccessRight::AGE_VERIFICATION);
 
 			QVERIFY(!chat->hasAccessRight(AccessRight::AGE_VERIFICATION));
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("0000000000")));
+			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("0000000000")));
 		}
 
 
@@ -192,7 +193,7 @@ class test_CHAT
 			QVERIFY(chat != nullptr);
 			QCOMPARE(QByteArray(chat->getType()), QByteArray("0.4.0.127.0.7.3.1.2.2 (id-AT)"));
 			QCOMPARE(chat->getTemplate().toHex().toUpper(), QByteArray("FC0F13FFFF"));
-			QVERIFY(chat->encode().toHex().toUpper().endsWith(QByteArray("FC0F13FFFF")));
+			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("FC0F13FFFF")));
 		}
 
 
@@ -204,7 +205,7 @@ class test_CHAT
 			QSharedPointer<CHAT> copiedChat(new CHAT(*chat.data()));
 			copiedChat->removeAllAccessRights();
 
-			QCOMPARE(chat->encode().toHex().toUpper(), hexEncodedChat);
+			QCOMPARE(encodeObject(chat.data()).toHex().toUpper(), hexEncodedChat);
 		}
 
 

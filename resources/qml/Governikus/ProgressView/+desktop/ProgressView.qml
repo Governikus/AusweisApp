@@ -1,11 +1,9 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -14,91 +12,77 @@ import Governikus.Type.ApplicationModel 1.0
 SectionPage {
 	id: baseItem
 
-	property alias text: text.text
-	property alias subText: subText.text
-	property alias subTextColor: subText.color
+	property alias progressBarVisible: progressBar.visible
 	property alias progressText: progressText.text
 	property int progressValue
-	property alias progressBarVisible: progressBar.visible
+	property alias subText: subText.text
+	property alias subTextColor: subText.color
+	property alias text: text.text
 
 	StatusIcon {
 		id: circle
-
-		height: Style.dimens.status_icon_large
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: baseItem.height / 4
-
 		borderEnabled: false
 		busy: true
+		height: Style.dimens.status_icon_large
 		source: "qrc:///images/sandglass.svg"
 	}
-
 	GText {
 		id: text
-
-		visible: text.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		Accessible.name: text.text
+		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: parent.verticalCenter
-
-		activeFocusOnTab: true
-		Accessible.name: text.text
-
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.header
+		visible: text.text !== ""
+		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
-		FocusFrame {}
+		FocusFrame {
+		}
 	}
-
 	GText {
 		id: subText
-
-		visible: subText.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		Accessible.name: subText.text
+		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: text.bottom
 		anchors.topMargin: Constants.text_spacing
-
-		activeFocusOnTab: true
-		Accessible.name: subText.text
-
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.header_secondary
+		visible: subText.text !== ""
+		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
-		FocusFrame {}
+		FocusFrame {
+		}
 	}
-
 	GText {
 		id: progressText
-
-		visible: progressBar.visible
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		Accessible.name: progressText.text
+		activeFocusOnTab: true
 		anchors.bottom: progressBar.top
 		anchors.bottomMargin: Constants.component_spacing
 		anchors.horizontalCenter: parent.horizontalCenter
-
-		activeFocusOnTab: true
-		Accessible.name: progressText.text
-
 		horizontalAlignment: Text.AlignHCenter
+		visible: progressBar.visible
+		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
-		FocusFrame {}
+		FocusFrame {
+		}
 	}
-
 	GProgressBar {
 		id: progressBar
-
+		activeFocusOnTab: true
+		value: progressValue
 		visible: false
+
 		anchors {
 			bottom: parent.bottom
 			left: parent.left
-			right: parent.right
 			margins: ApplicationModel.scaleFactor * 80
+			right: parent.right
 		}
-
-		activeFocusOnTab: true
-
-		value: progressValue
 	}
 }

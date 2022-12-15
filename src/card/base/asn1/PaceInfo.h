@@ -59,18 +59,7 @@ class PaceInfo
 		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
-		static QSharedPointer<const PaceInfo> decode(const QByteArray& pBytes)
-		{
-			if (const auto& delegate = decodeObject<paceinfo_st>(pBytes, false))
-			{
-				if (PaceInfo::acceptsProtocol(delegate->mProtocol))
-				{
-					return QSharedPointer<const PaceInfo>::create(delegate);
-				}
-			}
-			return QSharedPointer<const PaceInfo>();
-		}
-
+		static QSharedPointer<const PaceInfo> decode(const QByteArray& pBytes);
 
 		[[nodiscard]] int getVersion() const;
 		[[nodiscard]] bool hasParameterId() const;

@@ -50,7 +50,7 @@ QSharedPointer<T> newObject(T* pObject = newAsn1Object<T>())
  * Default template function for encoding an OpenSSL type. This must be specialized for each ASN.1 type.
  */
 template<typename T>
-int encodeAsn1Object(T*, uchar**)
+int encodeAsn1Object(const T*, uchar**)
 {
 	static_assert(std::is_void_v<T>, "Implement specialization of encodeObject");
 	return 0;
@@ -141,6 +141,13 @@ static const int CB_SUCCESS = 1;
 static const int CB_ERROR = 0;
 
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+	#define i2d_const_cast(name, object) const_cast<name*>(object)
+#else
+	#define i2d_const_cast(name, object) object
+#endif
+
+
 #define IMPLEMENT_ASN1_OBJECT(name)\
 	template<>\
 	name * newAsn1Object<name>()\
@@ -149,9 +156,9 @@ static const int CB_ERROR = 0;
 	}\
 \
 	template<>\
-	int encodeAsn1Object<name>(name * pObject, uchar** encoded)\
+	int encodeAsn1Object<name>(const name * pObject, uchar** encoded)\
 	{\
-		return i2d_##name(pObject, encoded);\
+		return i2d_##name(i2d_const_cast(name, pObject), encoded);\
 	}\
 \
 	template<>\
@@ -168,7 +175,7 @@ static const int CB_ERROR = 0;
 
 #define DECLARE_ASN1_OBJECT(name)\
 	template<> name * newAsn1Object<name>();\
-	template<> int encodeAsn1Object<name>(name * pObject, uchar** encoded);\
+	template<> int encodeAsn1Object<name>(const name * pObject, uchar** encoded);\
 	template<> name * decodeAsn1Object<name>(name** pObject, const uchar** pData, long pDataLen);\
 	template<> void freeAsn1Object<name>(name * pObject);
 
