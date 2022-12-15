@@ -1,37 +1,35 @@
 /*
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 
 SequentialAnimation {
 	id: expandAnimation
+
 	property real duration: 500
 	property var targetContent
 	property var targetHeader
 
 	PropertyAction {
-		target: expandAnimation.targetContent
 		property: "visible"
+		target: expandAnimation.targetContent
 		value: true
 	}
-
 	ParallelAnimation {
 		NumberAnimation {
-			target: flickable
-			property: "contentY"
-			easing.type: Easing.InOutQuad
-			to: expandAnimation.targetHeader.initY
 			duration: expandAnimation.duration
+			easing.type: Easing.InOutQuad
+			property: "contentY"
+			target: flickable
+			to: expandAnimation.targetHeader.initY
 		}
-
 		NumberAnimation {
-			target: expandAnimation.targetContent
-			property: "height"
+			duration: expandAnimation.duration
 			easing.type: Easing.InOutQuad
 			from: 0
+			property: "height"
+			target: expandAnimation.targetContent
 			to: expandAnimation.targetContent.contentHeight
-			duration: expandAnimation.duration
 		}
 	}
 }

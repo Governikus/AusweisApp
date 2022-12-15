@@ -121,7 +121,7 @@ QStringList LogModel::getLogFileNames() const
 	QStringList logFileNames;
 	//: LABEL ALL_PLATFORMS
 	logFileNames += tr("Current log");
-	for (const auto& entry : qAsConst(mLogFiles))
+	for (const auto& entry : std::as_const(mLogFiles))
 	{
 		if (!entry.isEmpty())
 		{

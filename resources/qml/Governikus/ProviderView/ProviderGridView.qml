@@ -1,11 +1,9 @@
 /*
  * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
@@ -16,9 +14,8 @@ import Governikus.Type.ApplicationModel 1.0
 
 Item {
 	id: baseItem
-
+	signal showAdditionalResults
 	signal showDetails(var pModelItem)
-	signal showAdditionalResults()
 
 	GGridView {
 		id: gridView
@@ -27,87 +24,81 @@ Item {
 		property bool hasResults: gridView.count > 0 || ProviderCategoryFilterModel.additionalResultCount > 0
 		property real spacing: Constants.component_spacing
 
-		anchors {
-			top: parent.top
-			left: parent.left
-			right: parent.right
-			bottom: additionalResults.top
-			topMargin: Math.floor(spacing / 2)
-			leftMargin: Math.floor(spacing / 2)
-			bottomMargin: Math.floor(spacing / 2)
-		}
-
-		cellWidth: Math.floor((width - spacing / 2) / columns)
+		activeFocusOnTab: true
 		cellHeight: Math.floor(cellWidth * 0.84) // Set aspect ratio from ProviderCard
+		cellWidth: Math.floor((width - spacing / 2) / columns)
 		displayMarginBeginning: spacing
 		displayMarginEnd: additionalResults.height + spacing
 		highlightFollowsCurrentItem: true
-		activeFocusOnTab: true
-		scrollBarTopPadding: spacing / 2
-		scrollBarBottomPadding: spacing / 2
-
 		model: ProviderCategoryFilterModel
-
-		highlight: Item {
-			FocusFrame {
-				scope: gridView
-				marginFactor: -0.75
-				radius: Style.dimens.corner_radius
-			}
-		}
+		scrollBarBottomPadding: spacing / 2
+		scrollBarTopPadding: spacing / 2
 
 		delegate: Item {
-			width: gridView.cellWidth
-			height: gridView.cellHeight
-
 			Keys.forwardTo: children
+			height: gridView.cellHeight
+			width: gridView.cellWidth
 
 			ProviderCard {
 				anchors.fill: parent
 				anchors.margins: Math.floor(gridView.spacing / 2)
-
 				providerModelItem: model
 
-				onShowDetailView: pModelItem => { baseItem.showDetails(pModelItem) }
+				onShowDetailView: pModelItem => {
+					baseItem.showDetails(pModelItem);
+				}
+			}
+		}
+		highlight: Item {
+			FocusFrame {
+				marginFactor: -0.75
+				radius: Style.dimens.corner_radius
+				scope: gridView
 			}
 		}
 
+		anchors {
+			bottom: additionalResults.top
+			bottomMargin: Math.floor(spacing / 2)
+			left: parent.left
+			leftMargin: Math.floor(spacing / 2)
+			right: parent.right
+			top: parent.top
+			topMargin: Math.floor(spacing / 2)
+		}
 		Connections {
-			target: ProviderCategoryFilterModel
 			function onFireCriteriaChanged() {
-				gridView.currentIndex = 0
-				gridView.contentY = gridView.originY
+				gridView.currentIndex = 0;
+				gridView.contentY = gridView.originY;
 			}
+
+			target: ProviderCategoryFilterModel
 		}
 	}
-
 	AdditionalResultsFooterItem {
 		id: additionalResults
-
-		visible: ProviderCategoryFilterModel.additionalResultCount > 0 && ProviderCategoryFilterModel.categories.length > 0 && ProviderCategoryFilterModel.categories.indexOf("all") === -1
-		height: visible ? implicitHeight : 0
-		width: gridView.columns * gridView.cellWidth
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			right: parent.right
-			leftMargin: Math.floor(gridView.spacing * 2)
-			rightMargin: Math.floor(gridView.spacing * 2)
-			topMargin: visible ? gridView.spacing : 0
-			bottomMargin: visible ? gridView.spacing : 0
-		}
-
 		activeFocusOnTab: true
+		height: visible ? implicitHeight : 0
+		visible: ProviderCategoryFilterModel.additionalResultCount > 0 && ProviderCategoryFilterModel.categories.length > 0 && ProviderCategoryFilterModel.categories.indexOf("all") === -1
+		width: gridView.columns * gridView.cellWidth
 
 		onClicked: baseItem.showAdditionalResults()
+
+		anchors {
+			bottom: parent.bottom
+			bottomMargin: visible ? gridView.spacing : 0
+			left: parent.left
+			leftMargin: Math.floor(gridView.spacing * 2)
+			right: parent.right
+			rightMargin: Math.floor(gridView.spacing * 2)
+			topMargin: visible ? gridView.spacing : 0
+		}
 	}
-
 	GText {
-		visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
-
 		anchors.centerIn: parent
 		//: LABEL DESKTOP IOS_TABLET ANDROID_TABLET The text entered into the provider search field results in no matches
 		text: qsTr("No results matching your search query found")
 		textStyle: Style.text.normal
+		visible: ProviderCategoryFilterModel.rowCount === 0 && !additionalResults.visible
 	}
 }

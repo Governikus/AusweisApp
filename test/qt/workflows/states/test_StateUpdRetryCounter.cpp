@@ -26,15 +26,15 @@ class MockCardCommand
 		}
 
 
-		void setCode(CardReturnCode pCode)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = pCode;
+			setReturnCode(pReturnCode);
 		}
 
 
 		void internalExecute() override
 		{
-			mReturnCode = getCardConnectionWorker()->updateRetryCounter();
+			setReturnCode(getCardConnectionWorker()->updateRetryCounter());
 		}
 
 
@@ -75,7 +75,7 @@ class test_StateUpdateRetryCounter
 			counter.onUpdateRetryCounterDone(command);
 			QCOMPARE(spyAbort.count(), 1);
 
-			command->setCode(CardReturnCode::OK);
+			command->setMockReturnCode(CardReturnCode::OK);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create());
 			QTest::ignoreMessage(QtDebugMsg, "StateUpdateRetryCounter::onUpdateRetryCounterDone()");
 			counter.onUpdateRetryCounterDone(command);

@@ -23,18 +23,18 @@ class UIPlugInAidl
 	Q_INTERFACES(governikus::UIPlugIn)
 
 	private:
-		UIPlugInJson* mJson;
+		QPointer<UIPlugInJson> mJson;
 		QSharedPointer<WorkflowContext> mContext;
 		QMutex mWorkflowIsActive;
 
 		static QAtomicPointer<UIPlugInAidl> instance;
-		bool mInitializationSuccessfull;
 
 	public:
 		UIPlugInAidl();
 		~UIPlugInAidl() override = default;
 
 		static UIPlugInAidl* getInstance(bool pBlock = true);
+		[[nodiscard]] bool initialize() override;
 		[[nodiscard]] bool isSuccessfullInitialized() const;
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
 		bool waitForWorkflowToFinish();

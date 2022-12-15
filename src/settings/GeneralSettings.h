@@ -35,11 +35,11 @@ class GeneralSettings
 
 	private:
 		bool mAutoStart;
-		QSharedPointer<QSettings> mStoreGeneral;
+		QSharedPointer<QSettings> mStore;
 		bool mIsNewAppVersion;
 
 		GeneralSettings();
-		explicit GeneralSettings(QSharedPointer<QSettings> pStoreGeneral);
+		explicit GeneralSettings(QSharedPointer<QSettings> pStore);
 		[[nodiscard]] bool isShowNotificationsOsDefault() const;
 		void setAutoStartInternal(bool pAutoStart);
 		[[nodiscard]] QString getPersistentSettingsVersion() const;

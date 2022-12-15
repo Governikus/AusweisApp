@@ -52,7 +52,7 @@ QStringList ProviderCategoryFilterModel::getFilteredProviderCategories() const
 {
 	auto filteredCats = ProviderModel::getProviderCategories();
 	filteredCats.removeOne(QStringLiteral("all"));
-	for (const auto& cat : qAsConst(mSelectedCategories))
+	for (const auto& cat : std::as_const(mSelectedCategories))
 	{
 		filteredCats.removeOne(cat);
 	}

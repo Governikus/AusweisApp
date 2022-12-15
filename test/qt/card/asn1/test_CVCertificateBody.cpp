@@ -97,7 +97,7 @@ class test_CVCertificateBody
 			auto cvc = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMODEV00038.hex"));
 
 			auto chat = const_cast<CHAT&>(cvc->getBody().getCHAT());
-			QCOMPARE(chat.encode().toHex().toUpper(), QByteArray("7F4C12060904007F0007030102025305000513FF87"));
+			QCOMPARE(encodeObject(&chat).toHex().toUpper(), QByteArray("7F4C12060904007F0007030102025305000513FF87"));
 		}
 
 

@@ -82,11 +82,14 @@ Show window on startup.
 Disable system proxy.
 
 .TP
-.B --ui { qml|websocket }
-Use given UI plugin. "qml" will start the program with a visible UI, "websocket"
-will let it start in the background as an SDK. This is only useful when integrating
-AusweisApp2 into other programs. Default is "qml,websocket".
+.B --ui { qml|webservice|websocket }
 This option allows multiple values.
+- "qml" will start the program with a visible UI.
+- "websocket" will let it start in the background as an SDK. This is only useful when integrating
+AusweisApp2 into other programs.
+- "webservice" starts listening on given port/address.
+
+Default is "qml,webservice,websocket".
 
 .TP
 .B --port \fI\,PORT\/\fR

@@ -1,5 +1,4 @@
 {
-	"name": "Qml",
-	"dependencies": [],
-	"default": true
+	"default": true,
+	"userInteractive": true
 }

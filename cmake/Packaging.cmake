@@ -1,5 +1,5 @@
 # CPack
-# http://www.cmake.org/Wiki/CMake:CPackConfiguration
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/Configuration
 
 set(PACKAGE_VERSION ${PROJECT_VERSION})
 
@@ -113,6 +113,9 @@ if(WIN32)
 	# suppress warning LGHT1076/ICE61 caused by AllowSameVersionUpgrades
 	set(CPACK_WIX_LIGHT_EXTRA_FLAGS -sw1076 ${CPACK_WIX_LIGHT_EXTRA_FLAGS})
 
+	configure_file(${CMAKE_DIR}/PrepareProxy.cmake.in ${CMAKE_BINARY_DIR}/PrepareProxy.cmake @ONLY)
+	set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_BINARY_DIR}/PrepareProxy.cmake")
+
 	if(SIGNTOOL_CMD)
 		message(STATUS "MSI can be signed with 'make package.sign'")
 		set(MSI ${PROJECT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.msi)
@@ -168,7 +171,7 @@ elseif(ANDROID)
 	file(READ "${BUILD_GRADLE_APPEND}" BUILD_GRADLE)
 	file(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")
 
-	if(USE_SMARTEID)
+	if(USE_SMARTEID AND NOT INTEGRATED_SDK)
 		set(BUILD_GRADLE_APPEND "${PACKAGING_DIR}/android/build.gradle.append.smarteid")
 		file(READ "${BUILD_GRADLE_APPEND}" BUILD_GRADLE)
 		file(APPEND "${CMAKE_INSTALL_PREFIX}/build.gradle" "${BUILD_GRADLE}")

@@ -1,57 +1,56 @@
 /*
  * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 
 Item {
 	id: root
 
-	property int verticalOffset: 0
-	property int horizontalOffset: 0
 	property real angle: 0
-
-	property var source: Rectangle {
-		width: root.width
-		height: root.height
-	}
-
 	property Gradient gradient: Gradient {
-		GradientStop { position: 0.0; color: "white" }
-		GradientStop { position: 1.0; color: "black" }
+		GradientStop {
+			color: "white"
+			position: 0.0
+		}
+		GradientStop {
+			color: "black"
+			position: 1.0
+		}
 	}
+	property int horizontalOffset: 0
+	property var source: Rectangle {
+		height: root.height
+		width: root.width
+	}
+	property int verticalOffset: 0
 
 	ShaderEffectSource {
 		id: baseSource
-
 		anchors.fill: parent
-
-		sourceItem: root.source
 		smooth: true
+		sourceItem: root.source
 		visible: false
 	}
-
 	ShaderEffect {
 		id: colorEffect
 
-		property var source: baseSource
-		property real startAngle: (root.angle - 90) * Math.PI/180
 		property var center: Qt.point(0.5 + root.horizontalOffset / width, 0.5 + root.verticalOffset / height)
 		property var gradientSource: ShaderEffectSource {
-			sourceItem: Rectangle {
-				width: 16
-				height: 256
-				gradient: root.gradient
-				smooth: true
-			}
-
-			smooth: true
 			hideSource: true
+			smooth: true
+
+			sourceItem: Rectangle {
+				gradient: root.gradient
+				height: 256
+				smooth: true
+				width: 16
+			}
 		}
+		property var source: baseSource
+		property real startAngle: (root.angle - 90) * Math.PI / 180
 
 		anchors.fill: baseSource
-
-		smooth: true
 		fragmentShader: "qrc:/shader/ConicalGradientShader.frag"
+		smooth: true
 	}
 }

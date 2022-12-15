@@ -1,123 +1,134 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.View 1.0
 
-
 Item {
 	property int iconHeight: ApplicationModel.scaleFactor * 175
 
-	implicitHeight: rowLayout.implicitHeight
-	activeFocusOnTab: true
-
-	Accessible.role: Accessible.Button
 	Accessible.name: readerName + ". " + readerHTMLDescription
+	Accessible.role: Accessible.Button
+	activeFocusOnTab: true
+	implicitHeight: rowLayout.implicitHeight
 
-	FocusFrame {}
-
+	FocusFrame {
+	}
 	RowLayout {
 		id: rowLayout
-
-		width: parent.width
-
 		spacing: 0
+		state: {
+			if (readerInstalled) {
+				if (readerSupported) {
+					return "OK";
+				}
+				return "WARNING";
+			}
+			return "ERROR";
+		}
+		width: parent.width
 
 		states: [
 			State {
 				name: "OK"
-				PropertyChanges {target: statusIcon; source: "qrc:///images/status_ok.svg"}
-				PropertyChanges {target: statusIcon; tintColor: Style.color.success}
-				PropertyChanges {target: textDescription; font.bold: false}
+
+				PropertyChanges {
+					source: "qrc:///images/status_ok.svg"
+					target: statusIcon
+				}
+				PropertyChanges {
+					target: statusIcon
+					tintColor: Style.color.success
+				}
+				PropertyChanges {
+					font.bold: false
+					target: textDescription
+				}
 			},
 			State {
 				name: "WARNING"
-				PropertyChanges {target: statusIcon; source: "qrc:///images/material_alert.svg"}
-				PropertyChanges {target: statusIcon; tintColor: "#e68a00"}
-				PropertyChanges {target: textDescription; font.bold: true}
+
+				PropertyChanges {
+					source: "qrc:///images/material_alert.svg"
+					target: statusIcon
+				}
+				PropertyChanges {
+					target: statusIcon
+					tintColor: "#e68a00"
+				}
+				PropertyChanges {
+					font.bold: true
+					target: textDescription
+				}
 			},
 			State {
 				name: "ERROR"
-				PropertyChanges {target: statusIcon; source: "qrc:///images/status_error.svg"}
-				PropertyChanges {target: statusIcon; tintColor: Style.color.warning_text}
-				PropertyChanges {target: textDescription; font.bold: false}
+
+				PropertyChanges {
+					source: "qrc:///images/status_error.svg"
+					target: statusIcon
+				}
+				PropertyChanges {
+					target: statusIcon
+					tintColor: Style.color.warning_text
+				}
+				PropertyChanges {
+					font.bold: false
+					target: textDescription
+				}
 			}
 		]
 
-		state: {
-			if (readerInstalled) {
-				if (readerSupported) {
-					return "OK"
-				}
-				return "WARNING"
-			}
-			return "ERROR"
-		}
-
 		Rectangle {
-			Layout.preferredWidth: iconHeight
 			Layout.preferredHeight: iconHeight
+			Layout.preferredWidth: iconHeight
 
 			border {
 				color: Style.color.border
 				width: Style.dimens.separator_size
 			}
-
 			Image {
 				id: readerIcon
-
 				anchors.fill: parent
 				anchors.margins: iconHeight * 0.05
-
 				asynchronous: true
-				source: readerImagePath
 				fillMode: Image.PreserveAspectFit
+				source: readerImagePath
 			}
 		}
-
 		GSpacer {
-			width: Constants.component_spacing
 			height: Constants.component_spacing
+			width: Constants.component_spacing
 		}
-
 		ColumnLayout {
 			id: textColumn
-
-			Layout.fillHeight: true
 			Layout.alignment: Qt.AlignLeft
+			Layout.fillHeight: true
 			spacing: Constants.text_spacing
 
 			GText {
 				Layout.fillWidth: true
-
-				textStyle: Style.text.header
 				text: readerName
+				textStyle: Style.text.header
 			}
-
 			GText {
 				id: textDescription
-
-				Layout.fillWidth: true
-
-				activeFocusOnTab: true
 				Accessible.description: qsTr("Press space to open the link in your browser")
-
-				textStyle: Style.text.normal
+				Layout.fillWidth: true
+				activeFocusOnTab: true
 				text: readerHTMLDescription
+				textStyle: Style.text.normal
 
-				FocusFrame {}
+				FocusFrame {
+				}
 			}
 		}
-
 		TintableIcon {
 			id: statusIcon
-
 			sourceSize.height: iconHeight * 0.33
 		}
 	}

@@ -215,7 +215,7 @@ public class MainActivity extends QtActivity
 		LogHandler.getLogger().info("onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
 
-		onNewIntent(getIntent());
+		cIntent = getIntent();
 
 		mNfcForegroundDispatcher = new NfcForegroundDispatcher();
 		mNfcReaderMode = new NfcReaderMode();
@@ -257,6 +257,7 @@ public class MainActivity extends QtActivity
 	protected void onNewIntent(Intent newIntent)
 	{
 		cIntent = newIntent;
+		setIntent(newIntent);
 		LogHandler.getLogger().info("onNewIntent: " + newIntent);
 		super.onNewIntent(newIntent);
 	}

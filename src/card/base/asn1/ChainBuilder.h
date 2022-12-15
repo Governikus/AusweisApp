@@ -62,14 +62,10 @@ class ChainBuilder
 
 		bool isSubChain(const QVector<T>& pSubChain)
 		{
-			for (const auto& chain : qAsConst(mChains))
-			{
-				if (std::search(chain.begin(), chain.end(), pSubChain.begin(), pSubChain.end()) != chain.end())
-				{
-					return true;
-				}
-			}
-			return false;
+			return std::any_of(mChains.constBegin(), mChains.constEnd(), [&pSubChain] (const QVector<T>& pChain) {
+					return std::search(pChain.constBegin(), pChain.constEnd(), pSubChain.constBegin(), pSubChain.constEnd())
+						   != pChain.constEnd();
+				});
 		}
 
 	protected:

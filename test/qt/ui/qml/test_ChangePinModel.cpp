@@ -75,5 +75,5 @@ class test_ChangePinModel
 
 };
 
-QTEST_GUILESS_MAIN(test_ChangePinModel)
+QTEST_MAIN(test_ChangePinModel)
 #include "test_ChangePinModel.moc"

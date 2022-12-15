@@ -21,6 +21,32 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 	, mServer()
 	, mPortFile()
 {
+	bindAddresses(pPort, pAddresses);
+}
+
+
+HttpServer::~HttpServer()
+{
+	shutdown();
+}
+
+
+void HttpServer::shutdown()
+{
+	if (isListening())
+	{
+		qCDebug(network) << "Shutdown server";
+		for (const auto& server : std::as_const(mServer))
+		{
+			server->close();
+		}
+		mServer.clear();
+	}
+}
+
+
+void HttpServer::bindAddresses(quint16 pPort, const QVector<QHostAddress>& pAddresses)
+{
 	auto port = pPort;
 
 	if (pAddresses.isEmpty())
@@ -31,8 +57,8 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 
 	for (const auto& address : pAddresses)
 	{
-		const QSharedPointer<QTcpServer> server(new QTcpServer(), &QObject::deleteLater);
-		connect(server.data(), &QTcpServer::newConnection, this, &HttpServer::onNewConnection);
+		auto server = std::make_unique<QTcpServer>(this);
+		connect(server.get(), &QTcpServer::newConnection, this, &HttpServer::onNewConnection);
 
 		if (!server->listen(address, port))
 		{
@@ -49,7 +75,7 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 		}
 
 		qCDebug(network) << "Listening on port:" << server->serverPort() << '|' << server->serverAddress();
-		mServer += server;
+		mServer += server.release();
 
 		if (mServer.size() == 1)
 		{
@@ -57,25 +83,10 @@ HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
 			mPortFile.handlePort(port);
 		}
 	}
-}
 
-
-HttpServer::~HttpServer()
-{
-	shutdown();
-}
-
-
-void HttpServer::shutdown()
-{
 	if (isListening())
 	{
-		qCDebug(network) << "Shutdown server";
-		for (const auto& server : qAsConst(mServer))
-		{
-			server->close();
-		}
-		mServer.clear();
+		HttpServer::cPort = getServerPort();
 	}
 }
 
@@ -105,16 +116,25 @@ quint16 HttpServer::getServerPort() const
 }
 
 
+void HttpServer::rebind(quint16 pPort, const QVector<QHostAddress>& pAddresses)
+{
+	qCDebug(network) << "Rebind HttpServer:" << pPort << '|' << pAddresses;
+	mPortFile.remove();
+	mServer.clear();
+	bindAddresses(pPort, pAddresses);
+	Q_EMIT fireRebound();
+}
+
+
 void HttpServer::onNewConnection()
 {
-	for (const auto& server : qAsConst(mServer))
+	for (const auto& server : std::as_const(mServer))
 	{
 		while (server->hasPendingConnections())
 		{
-			auto socket = server->nextPendingConnection();
-			socket->startTransaction();
-			auto request = new HttpRequest(socket, this);
+			auto* request = new HttpRequest(server->nextPendingConnection(), this);
 			connect(request, &HttpRequest::fireMessageComplete, this, &HttpServer::onMessageComplete);
+			request->triggerSocketBuffer();
 		}
 	}
 }
@@ -150,7 +170,6 @@ void HttpServer::onMessageComplete(HttpRequest* pRequest)
 				return;
 			}
 
-			pRequest->mSocket->rollbackTransaction();
 			Q_EMIT fireNewWebSocketRequest(QSharedPointer<HttpRequest>(pRequest, &QObject::deleteLater));
 		}
 		else
@@ -168,7 +187,6 @@ void HttpServer::onMessageComplete(HttpRequest* pRequest)
 			return;
 		}
 
-		pRequest->mSocket->commitTransaction();
 		Q_EMIT fireNewHttpRequest(QSharedPointer<HttpRequest>(pRequest, &QObject::deleteLater));
 	}
 }

@@ -369,7 +369,7 @@ class test_ReaderConfiguration
 		void uniqueNames()
 		{
 			QSet<QString> readerNames;
-			for (const auto& readerSettingsInfo : qAsConst(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
+			for (const auto& readerSettingsInfo : std::as_const(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
 			{
 				readerNames += readerSettingsInfo.getName();
 			}
@@ -379,7 +379,7 @@ class test_ReaderConfiguration
 
 		void checkIconNames()
 		{
-			for (const auto& readerSettingsInfo : qAsConst(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
+			for (const auto& readerSettingsInfo : std::as_const(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
 			{
 				const auto& iconName = readerSettingsInfo.getIcon()->getName();
 				const auto& iconNameWithNPA = readerSettingsInfo.getIconWithNPA()->getName();

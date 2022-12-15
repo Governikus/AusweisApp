@@ -67,7 +67,7 @@ class SmartModel
 
 	public:
 		QmlSmartState getSmartState() const;
-		int getProgress() const;
+		[[nodiscard]] int getProgress() const;
 
 		void workflowFinished(QSharedPointer<WorkflowContext> pContext);
 

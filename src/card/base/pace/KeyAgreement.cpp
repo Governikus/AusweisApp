@@ -181,7 +181,7 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 {
-	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
 
@@ -193,7 +193,7 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey)
 {
-	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
 	cmdData.append(CommandData::PACE_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
@@ -207,7 +207,7 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteA
 KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData) const
 {
 	// sende den PublicKey (D.3.4.)
-	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
 	cmdData.append(CommandData::MAPPING_DATA, pMappingData);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
@@ -220,7 +220,7 @@ KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& p
 
 GAMutualAuthenticationResponse KeyAgreement::transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData)
 {
-	CommandData cmdData(CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
 	cmdData.append(CommandData::AUTHENTICATION_TOKEN, pMutualAuthenticationData);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 

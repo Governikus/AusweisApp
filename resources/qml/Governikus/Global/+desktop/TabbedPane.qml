@@ -1,46 +1,40 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.View 1.0
 
-
 Item {
 	id: root
 
-	property var sectionsModel: undefined
-	property var contentObjectModel: undefined
+	readonly property int availableHeight: height - 2 * contentPadding - 2 * Style.dimens.high_contrast_item_border
 	property Component contentDelegate: null
+	property var contentObjectModel: undefined
+	property int contentPadding: Constants.pane_padding
+	readonly property var currentContentItem: contentLoader.item
+	property alias currentIndex: sectionNameList.currentIndex
+	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
 	property Component footerItem: null
+	readonly property real relativeListViewWidth: 0.3
+	property alias sectionCount: sectionNameList.count
 	property Component sectionDelegate: TabbedPaneDelegateText {
 		sectionName: model ? (model.display ? model.display : model.modelData) : ""
 	}
-	property alias currentIndex: sectionNameList.currentIndex
-	property alias sectionCount: sectionNameList.count
-
-	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
-	readonly property var currentContentItem: contentLoader.item
-	readonly property real relativeListViewWidth: 0.3
-	readonly property int availableHeight: height - 2 * contentPadding - 2 * Style.dimens.high_contrast_item_border
-	property int contentPadding: Constants.pane_padding
+	property var sectionsModel: undefined
 
 	function scrollYPositionIntoView(pYposition) {
-		var dy = pYposition - flickable.contentY - flickable.height
-
+		var dy = pYposition - flickable.contentY - flickable.height;
 		if (dy > 0 || flickable.contentY > 0) {
-			flickable.contentY += dy
-
+			flickable.contentY += dy;
 			if (flickable.contentY < 0)
-				flickable.contentY = 0
+				flickable.contentY = 0;
 			else if (flickable.contentY + flickable.height > flickable.contentHeight)
-				flickable.contentY = flickable.contentHeight - flickable.height
+				flickable.contentY = flickable.contentHeight - flickable.height;
 		}
 	}
 
@@ -49,105 +43,88 @@ Item {
 
 		ColumnLayout {
 			height: parent.height
-			width: parent.width * relativeListViewWidth + 2 * Style.dimens.high_contrast_item_border
-
-			anchors {
-				left: parent.left
-				top: parent.top
-				bottom: parent.bottom
-			}
-
 			spacing: Constants.component_spacing
+			width: parent.width * relativeListViewWidth + 2 * Style.dimens.high_contrast_item_border
 			z: 1
 
+			anchors {
+				bottom: parent.bottom
+				left: parent.left
+				top: parent.top
+			}
 			GListView {
 				id: sectionNameList
-
-				Layout.fillWidth: true
 				Layout.fillHeight: true
-
+				Layout.fillWidth: true
 				activeFocusOnTab: true
-
-				clip: true
 				boundsBehavior: Flickable.StopAtBounds
-				model: sectionsModel
-				highlightFollowsCurrentItem: true
-				highlight: null
+				clip: true
 				delegate: sectionNameDelegate
-				scrollBarTopPadding: Constants.text_spacing
-				scrollBarBottomPadding: Constants.text_spacing
+				highlight: null
+				highlightFollowsCurrentItem: true
+				model: sectionsModel
 				scrollBarAutohide: true
+				scrollBarBottomPadding: Constants.text_spacing
+				scrollBarTopPadding: Constants.text_spacing
+
 				onCurrentIndexChanged: flickable.positionViewAtBeginning()
 			}
-
 			Loader {
-				Layout.preferredHeight: status === Loader.Ready ? item.height : 0
-				Layout.fillWidth: true
 				Layout.alignment: Qt.AlignLeft
-
+				Layout.fillWidth: true
+				Layout.preferredHeight: status === Loader.Ready ? item.height : 0
 				sourceComponent: footerItem
 			}
 		}
-
 		RoundedRectangle {
-			height: parent.height
-			width: parent.width * (1.0 - relativeListViewWidth)
-
 			anchors.right: parent.right
-
-			radius: Style.dimens.corner_radius
-			color: Style.color.background_pane
-			topLeftCorner: false
-			bottomLeftCorner: sectionNameList.contentHeight < height
-
-			borderWidth: Style.dimens.high_contrast_item_border
 			borderColor: Style.color.high_contrast_item_border
+			borderWidth: Style.dimens.high_contrast_item_border
+			bottomLeftCorner: sectionNameList.contentHeight < height
+			color: Style.color.background_pane
+			height: parent.height
+			radius: Style.dimens.corner_radius
+			topLeftCorner: false
+			width: parent.width * (1.0 - relativeListViewWidth)
 
 			Item {
 				anchors.fill: parent
 				anchors.margins: Style.dimens.high_contrast_item_border
-
 				clip: true
 
 				GFlickable {
 					id: flickable
-
-					anchors {
-						fill: parent
-						bottomMargin: contentPadding
-						topMargin: contentPadding
-					}
-
 					contentHeight: contentLoader.height
 
+					anchors {
+						bottomMargin: contentPadding
+						fill: parent
+						topMargin: contentPadding
+					}
 					Loader {
 						id: contentLoader
-
-						anchors {
-							top: parent.top
-							left: parent.left
-							right: parent.right
-							leftMargin: contentPadding
-							rightMargin: contentPadding
-						}
-
 						sourceComponent: {
 							if (contentDelegate !== null) {
-								return contentDelegate
+								return contentDelegate;
 							}
-
 							if (contentObjectModel === undefined) {
-								return null
+								return null;
 							}
+							if (sectionNameList.currentIndex < contentObjectModel.count) {
+								return contentObjectModel.get(sectionNameList.currentIndex);
+							}
+						}
 
-							if (sectionNameList.currentIndex < contentObjectModel.count){
-								return contentObjectModel.get(sectionNameList.currentIndex)
-							}
+						anchors {
+							left: parent.left
+							leftMargin: contentPadding
+							right: parent.right
+							rightMargin: contentPadding
+							top: parent.top
 						}
 					}
 				}
 			}
-
 			ScrollGradients {
 				anchors.fill: parent
 				anchors.margins: Style.dimens.high_contrast_item_border
@@ -155,103 +132,91 @@ Item {
 			}
 		}
 	}
-
-
 	Component {
 		id: sectionNameDelegate
-
 		Item {
 			id: delegateItem
 
+			readonly property bool isCurrentItem: ListView.isCurrentItem
 			readonly property bool isFirstItem: index === 0
 			readonly property bool isLastItem: index === ListView.view.count - 1
-			readonly property bool isCurrentItem: ListView.isCurrentItem
 			readonly property bool isPreviousToCurrentItem: index === ListView.view.currentIndex - 1
 			readonly property var itemModel: model
 
-			activeFocusOnTab: false
-			Accessible.role: Accessible.Button
-			Accessible.name: delegateLoader.item ? delegateLoader.item.sectionName : ""
 			Accessible.focusable: true
-
-			width: sectionNameList.width
+			Accessible.name: delegateLoader.item ? delegateLoader.item.sectionName : ""
+			Accessible.role: Accessible.Button
+			activeFocusOnTab: false
 			height: delegateLoader.height + 2 * Constants.pane_padding
+			width: sectionNameList.width
 
 			RoundedRectangle {
 				id: background
-
-				anchors {
-					fill: parent
-					topMargin: isCurrentItem && !isFirstItem ? Style.dimens.tabbed_pane_separator_size : 0
-					bottomMargin: isCurrentItem && !isLastItem ? Style.dimens.tabbed_pane_separator_size : 0
-					rightMargin: !isCurrentItem ? (Style.dimens.tabbed_pane_separator_size + 2 * Style.dimens.high_contrast_item_border) : 0
-				}
-
-				radius: Style.dimens.corner_radius
+				borderColor: Style.color.high_contrast_item_border
+				borderWidth: Style.dimens.high_contrast_item_border
+				bottomLeftCorner: isLastItem
+				bottomRightCorner: false
 				color: isCurrentItem ? Style.color.background_pane : Style.color.background_pane_inactive
-
+				radius: Style.dimens.corner_radius
 				topLeftCorner: isFirstItem
 				topRightCorner: false
-				bottomRightCorner: false
-				bottomLeftCorner: isLastItem
-				borderWidth: Style.dimens.high_contrast_item_border
-				borderColor: Style.color.high_contrast_item_border
 
+				anchors {
+					bottomMargin: isCurrentItem && !isLastItem ? Style.dimens.tabbed_pane_separator_size : 0
+					fill: parent
+					rightMargin: !isCurrentItem ? (Style.dimens.tabbed_pane_separator_size + 2 * Style.dimens.high_contrast_item_border) : 0
+					topMargin: isCurrentItem && !isFirstItem ? Style.dimens.tabbed_pane_separator_size : 0
+				}
 				Rectangle {
+					color: background.color
 					width: isCurrentItem ? Style.dimens.high_contrast_item_border : 0
+
 					anchors {
+						bottom: parent.bottom
+						bottomMargin: isLastItem ? Style.dimens.high_contrast_item_border : 0
 						right: parent.right
 						top: parent.top
-						bottom: parent.bottom
 						topMargin: isFirstItem ? Style.dimens.high_contrast_item_border : 0
-						bottomMargin: isLastItem ? Style.dimens.high_contrast_item_border : 0
 					}
-
-					color: background.color
 				}
 			}
-
 			GSeparator {
 				id: horizontalSeparator
-
 				visible: !isLastItem && !isCurrentItem && !isPreviousToCurrentItem
 
 				anchors {
-					left: parent.left
-					right: parent.right
 					bottom: parent.bottom
-					rightMargin: (!isCurrentItem ? Style.dimens.tabbed_pane_separator_size : 0) + 2 * Style.dimens.high_contrast_item_border
+					left: parent.left
 					leftMargin: Style.dimens.high_contrast_item_border
+					right: parent.right
+					rightMargin: (!isCurrentItem ? Style.dimens.tabbed_pane_separator_size : 0) + 2 * Style.dimens.high_contrast_item_border
 				}
 			}
-
 			FocusFrame {
 				framee: delegateLoader
 			}
-
 			Loader {
 				id: delegateLoader
 
-				property var model: itemModel
 				property bool isCurrentItem: parent.isCurrentItem
-
-				anchors {
-					verticalCenter: parent.verticalCenter
-					left: parent.left
-					right: parent.right
-					leftMargin: Constants.pane_padding
-					rightMargin: Constants.pane_padding + 2 * Style.dimens.high_contrast_item_border
-				}
+				property var model: itemModel
 
 				sourceComponent: sectionDelegate
-			}
 
+				anchors {
+					left: parent.left
+					leftMargin: Constants.pane_padding
+					right: parent.right
+					rightMargin: Constants.pane_padding + 2 * Style.dimens.high_contrast_item_border
+					verticalCenter: parent.verticalCenter
+				}
+			}
 			MouseArea {
 				anchors.fill: parent
-
 				cursorShape: index === currentIndex ? Qt.ArrowCursor : Qt.PointingHandCursor
+
 				onClicked: {
-					delegateItem.ListView.view.currentIndex = index
+					delegateItem.ListView.view.currentIndex = index;
 				}
 			}
 		}

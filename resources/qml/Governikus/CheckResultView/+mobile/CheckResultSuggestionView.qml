@@ -1,38 +1,35 @@
 /*
  * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.ResultView 1.0
 
 ResultView {
 	id: root
 
-	property var suggestionData: SuggestionData {}
+	property var suggestionData: SuggestionData {
+	}
 
-	resultType: ResultView.Type.IsInfo
-	header: suggestionData.header
-	title: suggestionData.title
-	text: suggestionData.text
-	buttonText: suggestionData.continueButtonText
 	buttonIcon: suggestionData.continueButtonIcon
-	hintText: suggestionData.hintText
+	buttonText: suggestionData.continueButtonText
+	header: suggestionData.header
 	hintButtonText: suggestionData.hintButtonText
+	hintText: suggestionData.hintText
+	resultType: ResultView.Type.IsInfo
+	text: suggestionData.text
 	textFormat: suggestionData.textFormat
+	title: suggestionData.title
 
 	onContinueClicked: suggestionData.continueClicked()
 	onHintClicked: suggestionData.hintClicked()
 
 	GButton {
-		visible: text !== ""
-
 		anchors.horizontalCenter: parent.horizontalCenter
-
-		text: suggestionData.actionButtonText
 		icon.source: suggestionData.actionButtonIcon
+		text: suggestionData.actionButtonText
 		tintIcon: true
+		visible: text !== ""
 
 		onClicked: suggestionData.actionClicked()
 	}

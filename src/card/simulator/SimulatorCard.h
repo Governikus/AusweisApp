@@ -8,6 +8,7 @@
 
 #include "Card.h"
 #include "SimulatorFileSystem.h"
+#include "apdu/FileCommand.h"
 #include "asn1/AuthenticatedAuxiliaryData.h"
 #include "pace/SecureMessaging.h"
 
@@ -46,7 +47,10 @@ class SimulatorCard
 		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 
 	private:
-		QByteArray brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar);
+		ResponseApduResult executeFileCommand(const CommandApdu& pCmd);
+		ResponseApduResult executeMseSetAt(const CommandApdu& pCmd);
+		ResponseApduResult executeGeneralAuthenticate(const CommandApdu& pCmd);
+		QByteArray brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar) const;
 		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce);
 		QByteArray generateRestrictedId(const QByteArray& pPublicKey);
 		StatusCode verifyAuxiliaryData(const QByteArray& pCommandData);

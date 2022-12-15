@@ -55,6 +55,18 @@ ASN1_OBJECT* SecurityInfo::getProtocolObjectIdentifier() const
 }
 
 
+QSharedPointer<const SecurityInfo> SecurityInfo::decode(const QByteArray& pBytes)
+{
+	if (const auto& delegate = decodeObject<securityinfo_st>(pBytes))
+	{
+		const auto& si = QSharedPointer<const SecurityInfo>::create(delegate);
+		qCDebug(card) << "Parsed SecurityInfo:" << si;
+		return si;
+	}
+	return QSharedPointer<SecurityInfo>();
+}
+
+
 Oid SecurityInfo::getOid() const
 {
 	return Oid(getProtocolObjectIdentifier());

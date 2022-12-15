@@ -33,7 +33,7 @@ class MockEstablishPaceChannelCommand
 		void setPaceReturnCode(CardReturnCode pCode)
 		{
 			mPaceOutput = EstablishPaceChannelOutput(pCode);
-			mReturnCode = mPaceOutput.getPaceReturnCode();
+			setReturnCode(mPaceOutput.getPaceReturnCode());
 		}
 
 

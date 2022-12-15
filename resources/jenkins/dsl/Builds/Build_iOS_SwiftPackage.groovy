@@ -32,6 +32,15 @@ j.with
 			}
 		}
 
+		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
+		{
+			targetDirectory('build/arm64-simulator')
+			buildSelector
+			{
+				latestSuccessful(true)
+			}
+		}
+
 		shell('cd build; cmake -P ../source/cmake/SwiftPackage.cmake')
 	}
 }

@@ -38,12 +38,15 @@ class BuildHelper
 		~BuildHelper() = delete;
 
 		[[nodiscard]] static CertificateType fetchCertificateType();
+		[[nodiscard]] static bool fetchUserInteractive();
 
 	public:
 		static QVector<QPair<QLatin1String, QString>> getInformationHeader();
 		static void processInformationHeader(const std::function<void(const QString&, const QString&)>& pFunc, bool pTranslate = true);
 
 		[[nodiscard]] static CertificateType getCertificateType();
+		[[nodiscard]] static bool isUserInteractive();
+
 
 #ifdef Q_OS_ANDROID
 		static QJniObject getPackageInfo(const QString& pPackageName, int pFlags = 0);

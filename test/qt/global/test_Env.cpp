@@ -679,7 +679,7 @@ class test_Env
 					});
 			}
 
-			for (auto future : qAsConst(threads))
+			for (auto future : std::as_const(threads))
 			{
 				future.waitForFinished();
 			}

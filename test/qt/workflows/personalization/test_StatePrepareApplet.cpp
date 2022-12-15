@@ -133,7 +133,7 @@ class test_StatePrepareApplet
 			QSignalSpy spyAbort(&state, &StatePrepareApplet::fireAbort);
 			QSignalSpy spyContinue(&state, &StatePrepareApplet::fireContinue);
 
-			for (const auto& log : qAsConst(logEntries))
+			for (const auto& log : std::as_const(logEntries))
 			{
 				QTest::ignoreMessage(QtDebugMsg, log.toUtf8().data());
 			}

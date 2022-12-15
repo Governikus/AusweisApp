@@ -19,7 +19,8 @@ Q_IMPORT_PLUGIN(RemoteIfdReaderManagerPlugIn)
 Q_IMPORT_PLUGIN(PcscReaderManagerPlugIn)
 
 	#if !defined(INTEGRATED_SDK) || defined(CONTAINER_SDK)
-Q_IMPORT_PLUGIN(WebserviceActivationHandler)
+Q_IMPORT_PLUGIN(UIPlugInWebService)
+Q_IMPORT_PLUGIN(UIPlugInProxy)
 	#endif
 
 	#if defined(USE_SMARTEID) && (defined(CONTAINER_SDK) || !defined(QT_NO_DEBUG))
@@ -33,7 +34,7 @@ Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
 Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
 
 	#ifndef INTEGRATED_SDK
-Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
+Q_IMPORT_PLUGIN(UIPlugInScheme)
 Q_IMPORT_PLUGIN(UIPlugInLocalIfd)
 
 		#ifdef USE_SMARTEID
@@ -51,7 +52,7 @@ Q_IMPORT_PLUGIN(LocalIfdReaderManagerPlugIn)
 Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
 
 	#ifndef INTEGRATED_SDK
-Q_IMPORT_PLUGIN(CustomSchemeActivationHandler)
+Q_IMPORT_PLUGIN(UIPlugInScheme)
 
 		#ifdef USE_SMARTEID
 Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)

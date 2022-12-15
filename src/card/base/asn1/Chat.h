@@ -70,7 +70,6 @@ using CHAT = struct chat_st
 
 	static QSharedPointer<chat_st> fromHex(const QByteArray& pHexValue);
 	static QSharedPointer<chat_st> decode(const QByteArray& pBytes);
-	[[nodiscard]] QByteArray encode() const;
 
 	chat_st(const chat_st& pCopy);
 	chat_st& operator=(const chat_st&) = delete;

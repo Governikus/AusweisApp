@@ -1,9 +1,7 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -13,12 +11,11 @@ Item {
 	id: baseItem
 
 	property alias image: icon.source
-	property alias title: text.label
 	property string name: ""
+	property alias title: text.label
 
-	Accessible.role: Accessible.StaticText
 	Accessible.name: text.Accessible.name
-
+	Accessible.role: Accessible.StaticText
 	height: contentRow.height
 	width: contentRow.width
 
@@ -29,22 +26,20 @@ Item {
 
 		Image {
 			id: icon
-			sourceSize.height: Style.dimens.icon_size
 			anchors.verticalCenter: text.verticalCenter
+			sourceSize.height: Style.dimens.icon_size
 		}
-
 		LabeledText {
 			id: text
-
-			width: baseItem.width - icon.width - Constants.groupbox_spacing
+			activeFocusOnTab: false
+			bodyElide: Text.ElideRight
+			maximumBodyLineCount: 1
 
 			//: LABEL DESKTOP
 			text: name.length > 0 ? name : qsTr("See details under \"more...\"")
-			maximumBodyLineCount: 1
-			bodyElide: Text.ElideRight
-			activeFocusOnTab: false
+			width: baseItem.width - icon.width - Constants.groupbox_spacing
 		}
 	}
-
-	FocusFrame {}
+	FocusFrame {
+	}
 }

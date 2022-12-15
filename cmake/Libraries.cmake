@@ -111,10 +111,10 @@ endif()
 
 if(MINGW)
 	find_package(PCSC REQUIRED)
-	set(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion")
+	set(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion" "-liphlpapi")
 elseif(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
 	find_package(PCSC REQUIRED)
-	set(WIN_DEFAULT_LIBS setupapi.lib version.lib)
+	set(WIN_DEFAULT_LIBS setupapi.lib version.lib iphlpapi.lib)
 elseif(ANDROID)
 
 elseif(IOS)

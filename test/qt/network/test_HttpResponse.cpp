@@ -39,8 +39,7 @@ class test_HttpResponse
 
 		void body()
 		{
-			HttpResponse response;
-			response.setStatus(HTTP_STATUS_OK);
+			HttpResponse response(HTTP_STATUS_OK);
 			response.setBody(QByteArray("this is dummy content"), QByteArray("text/plain"));
 			const auto& msg = response.getMessage();
 

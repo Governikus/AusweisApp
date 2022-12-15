@@ -1,30 +1,24 @@
 /*
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.View 1.0
 import Governikus.Type.CertificateDescriptionModel 1.0
 
-
 SectionPage {
 	id: root
 
-	navigationAction: NavigationAction { action: NavigationAction.Action.Back; onClicked: pop() }
-	title: name
-
 	property string name
 
-	content: Item
-	{
+	title: name
+
+	content: Item {
 		height: pane.height + 2 * Constants.component_spacing
 		width: root.width
 
-		Column
-		{
+		Column {
 			anchors.fill: parent
 			anchors.margins: Constants.component_spacing
 
@@ -37,7 +31,6 @@ SectionPage {
 					left: parent.left
 					right: parent.right
 				}
-
 				Repeater {
 					id: listView
 					model: CertificateDescriptionModel
@@ -52,5 +45,10 @@ SectionPage {
 				}
 			}
 		}
+	}
+	navigationAction: NavigationAction {
+		action: NavigationAction.Action.Back
+
+		onClicked: pop()
 	}
 }

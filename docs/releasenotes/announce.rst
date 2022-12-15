@@ -1,6 +1,12 @@
 Abkündigungen
 =============
 
+Mit der Version 1.28.0 der AusweisApp2 wird die Unterstützung
+folgender Systeme und Funktionen eingestellt.
+
+- macOS Catalina 10.15
+
+
 Mit der Version 1.24.0 der AusweisApp2 wurde die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 

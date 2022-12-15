@@ -36,7 +36,7 @@ Env::Env()
 
 void Env::resetCounter()
 {
-	for (auto& mock : qAsConst(getInstance().mInstancesCreator))
+	for (auto& mock : std::as_const(getInstance().mInstancesCreator))
 	{
 		mock->reset();
 	}

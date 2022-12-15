@@ -126,7 +126,7 @@ class ReaderInfo
 		}
 
 
-		bool wasShelved() const
+		[[nodiscard]] bool wasShelved() const
 		{
 			return mShelvedCard != CardType::NONE;
 		}

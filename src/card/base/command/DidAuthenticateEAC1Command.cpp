@@ -26,7 +26,7 @@ DidAuthenticateEAC1Command::DidAuthenticateEAC1Command(QSharedPointer<CardConnec
 
 void DidAuthenticateEAC1Command::internalExecute()
 {
-	auto [returnCode, response] = [this]() -> ResponseApduResult {
+	auto [returnCode, response] = [this] {
 				if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())
 				{
 					return getCardConnectionWorker()->getChallenge();
@@ -38,7 +38,7 @@ void DidAuthenticateEAC1Command::internalExecute()
 				}
 			}
 				();
-	mReturnCode = returnCode;
+	setReturnCode(returnCode);
 
 	if (response.getStatusCode() != StatusCode::SUCCESS)
 	{

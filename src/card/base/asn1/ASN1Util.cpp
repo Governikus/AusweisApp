@@ -106,21 +106,6 @@ int Asn1IntegerUtil::getValue(const ASN1_INTEGER* pInteger)
 }
 
 
-QByteArray Asn1IntegerUtil::encode(int pValue)
-{
-	QSharedPointer<ASN1_TYPE> type(ASN1_TYPE_new(), [](ASN1_TYPE* pType){ASN1_TYPE_free(pType);});
-	type->type = V_ASN1_INTEGER;
-	type->value.integer = ASN1_INTEGER_new();
-	if (!ASN1_INTEGER_set_int64(type->value.integer, pValue))
-	{
-		qCCritical(card) << "Encoding error on ASN1_INTEGER";
-		return QByteArray();
-	}
-
-	return Asn1TypeUtil::encode(type.data()).mid(2);
-}
-
-
 QByteArray Asn1BCDDateUtil::convertFromQDateToUnpackedBCD(QDate pDate)
 {
 	QByteArray aBCD = pDate.toString(QStringLiteral("yyMMdd")).toLocal8Bit();

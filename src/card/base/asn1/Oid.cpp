@@ -265,18 +265,16 @@ Oid::operator QByteArray() const
 		return QByteArray();
 	}
 
-	/*
-	 * According to OpenSSL's documentation on OBJ_nid2obj:
-	 * " A buffer length of 80 should be more than enough to handle any OID encountered in practice."
-	 */
-	char buf[80] = {};
-	if (OBJ_obj2txt(buf, sizeof(buf), mObject, 1) == sizeof(buf))
+	const int oidSize = OBJ_obj2txt(nullptr, 0, mObject, 1);
+	if (oidSize < 1)
 	{
-		qCritical() << "The OID may not fit into the given array, just return an empty string";
 		return QByteArray();
 	}
 
-	QByteArray description(buf);
+	QByteArray description(oidSize + 1, '\0'); // +1 = null termination
+	OBJ_obj2txt(description.data(), description.size(), mObject, 1);
+	description.resize(oidSize); // remove null termination
+
 	if (const int nid = OBJ_obj2nid(mObject); nid != NID_undef)
 	{
 		description += QByteArray(" (");

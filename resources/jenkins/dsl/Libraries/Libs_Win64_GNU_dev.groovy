@@ -10,6 +10,8 @@ def j = new Library
 
 j.with
 {
+	customWorkspace('workspace/' + MERCURIAL_REVISION_BRANCH + '_LW64GD')
+
 	wrappers
 	{
 		environmentVariables
@@ -25,7 +27,7 @@ j.with
 
 		shell('''\
 			#!c:\\msys64\\usr\\bin\\bash --login
-			cd /jenkins/$JOB_NAME/
+			cd /jenkins/${MERCURIAL_REVISION_BRANCH}_LW64GD/
 			cmake --build build --target openssl
 			'''.stripIndent().trim())
 

@@ -96,7 +96,7 @@ function(SHOULD_SKIP_TEST _out filename)
 	endif()
 
 	if(INTEGRATED_SDK AND (test MATCHES "ui/qml"
-			OR test MATCHES "activation/custom_scheme"
+			OR test MATCHES "ui/scheme"
 			OR test MATCHES "ifd"
 			OR test MATCHES "export"
 			OR test MATCHES "diagnosis"))

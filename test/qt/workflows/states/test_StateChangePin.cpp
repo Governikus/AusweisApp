@@ -32,9 +32,9 @@ class MockEstablishPaceChannelCommand
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = pCode;
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -60,15 +60,15 @@ class MockSetEidPinCommand
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
-		{
-			mReturnCode = pCode;
-		}
-
-
 		void setData(const QByteArray& pData)
 		{
 			mResponseApdu = ResponseApdu(pData);
+		}
+
+
+		void setMockReturnCode(CardReturnCode pReturnCode)
+		{
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -150,7 +150,7 @@ class test_StateChangePin
 			QSignalSpy spyAbort(&state, &StateChangePin::fireAbort);
 			QSignalSpy spyRetry(&state, &StateChangePin::fireRetry);
 
-			command->setReturnCode(returnCode);
+			command->setMockReturnCode(returnCode);
 			command->setData(QByteArray::fromHex(response));
 			state.onSetEidPinDone(command);
 			QCOMPARE(context->getStatus().getStatusCode(), globalStatus);
@@ -191,7 +191,7 @@ class test_StateChangePin
 
 			QSignalSpy spyContinue(&state, &StateChangePin::fireContinue);
 
-			command->setReturnCode(CardReturnCode::OK);
+			command->setMockReturnCode(CardReturnCode::OK);
 			command->setData(QByteArray::fromHex("9000"));
 			state.onSetEidPinDone(command);
 			QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your Smart-eID PIN."));

@@ -21,6 +21,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 constexpr std::byte CLA {0x00};
+constexpr std::byte CLA_PROPRIETARY {0x80};
 constexpr std::byte CLA_COMMAND_CHAINING {0x10};
 constexpr std::byte CLA_SECURE_MESSAGING {0x0C};
 
@@ -158,6 +159,12 @@ CommandApdu::CommandApdu(Ins pIns, uchar pP1, uchar pP2, const QByteArray& pData
 
 
 CommandApdu::~CommandApdu() = default;
+
+
+bool CommandApdu::isProprietary() const
+{
+	return (mCla & CLA_PROPRIETARY) == CLA_PROPRIETARY;
+}
 
 
 void CommandApdu::enableCommandChaining()

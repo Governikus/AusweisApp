@@ -18,14 +18,11 @@ StateCheckStatus::StateCheckStatus(const QSharedPointer<WorkflowContext>& pConte
 
 void StateCheckStatus::run()
 {
-	const auto pluginInfos = Env::getSingleton<ReaderManager>()->getPlugInInfos();
-	for (const auto& info : pluginInfos)
+	const auto smartInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::SMART);
+	if (smartInfo.isAvailable())
 	{
-		if (info.getPlugInType() == ReaderManagerPlugInType::SMART && info.isAvailable())
-		{
-			Q_EMIT fireContinue();
-			return;
-		}
+		Q_EMIT fireContinue();
+		return;
 	}
 
 	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Unavailable);

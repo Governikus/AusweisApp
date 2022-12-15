@@ -11,6 +11,7 @@
 #include <openssl/asn1.h>
 #include <openssl/objects.h>
 
+#include <array>
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
@@ -112,12 +113,6 @@ chat_st::~chat_st()
 }
 
 
-QByteArray CHAT::encode() const
-{
-	return encodeObject(const_cast<CHAT*>(this));
-}
-
-
 Oid CHAT::getType() const
 {
 	return Oid(mType);
@@ -202,10 +197,8 @@ void chat_st::setTemplateBit(uint pBitIndex, bool pOn)
 	}
 	if (mTemplate->length == 0)
 	{
-		static const uchar nullBytes[5] = {
-			'\0'
-		};
-		ASN1_OCTET_STRING_set(mTemplate, nullBytes, 5);
+		const std::array<uchar, 5> nullBytes {0, 0, 0, 0, 0};
+		ASN1_OCTET_STRING_set(mTemplate, nullBytes.data(), static_cast<int>(nullBytes.size()));
 	}
 
 	// because pBitIndex < 40, it follows that pBitIndex / 8 <= 4, so byteNumber has no underflow

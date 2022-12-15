@@ -21,15 +21,25 @@ UIPlugInFunctional::UIPlugInFunctional()
 	, mJson(nullptr)
 	, mContext()
 {
+}
+
+
+bool UIPlugInFunctional::initialize()
+{
+	if (mJson)
+	{
+		return true;
+	}
+
 	if (!Env::getSingleton<UILoader>()->load<UIPlugInJson>())
 	{
 		qWarning() << "Cannot start functional because JSON-API is missing";
-		return;
+		return false;
 	}
 
 	mJson = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
-	Q_ASSERT(mJson);
 	connect(mJson, &UIPlugInJson::fireMessage, this, &UIPlugInFunctional::onJsonMessage);
+	return true;
 }
 
 

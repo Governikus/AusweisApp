@@ -22,12 +22,14 @@ Q_LOGGING_CATEGORY(qml, "qml")
 Q_LOGGING_CATEGORY(json, "json")
 Q_LOGGING_CATEGORY(aidl, "aidl")
 Q_LOGGING_CATEGORY(websocket, "websocket")
+Q_LOGGING_CATEGORY(webservice, "webservice")
+Q_LOGGING_CATEGORY(scheme, "scheme")
 Q_LOGGING_CATEGORY(automatic, "automatic")
 Q_LOGGING_CATEGORY(cli, "cli")
 Q_LOGGING_CATEGORY(stdinput, "stdinput")
-Q_LOGGING_CATEGORY(activation, "activation")
 Q_LOGGING_CATEGORY(fileprovider, "fileprovider")
 Q_LOGGING_CATEGORY(diagnosis, "diagnosis")
+Q_LOGGING_CATEGORY(rproxy, "rproxy")
 
 /*!
  * Logging category for all security relevant messages,

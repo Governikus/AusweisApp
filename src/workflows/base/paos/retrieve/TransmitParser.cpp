@@ -22,26 +22,26 @@ PaosMessage* TransmitParser::parseMessage()
 
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("SlotHandle"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("SlotHandle"))
 		{
 			if (readUniqueElementText(slotHandle))
 			{
 				mTransmit->setSlotHandle(slotHandle);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("InputAPDUInfo"))
+		else if (name == QLatin1String("InputAPDUInfo"))
 		{
 			parseInputApduInfo();
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
-	return mParseError ? nullptr : mTransmit.release();
+	return parserFailed() ? nullptr : mTransmit.release();
 }
 
 
@@ -58,29 +58,29 @@ void TransmitParser::parseInputApduInfo()
 
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("InputAPDU"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("InputAPDU"))
 		{
 			if (!readUniqueElementText(inputApdu))
 			{
 				return;
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("AcceptableStatusCode"))
+		else if (name == QLatin1String("AcceptableStatusCode"))
 		{
 			inputApduInfo.addAcceptableStatusCode(readElementText().toLatin1());
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
 	if (inputApdu.isNull())
 	{
 		qCWarning(paos) << "InputAPDU element missing";
-		mParseError = true;
+		setParserFailed();
 		return;
 	}
 

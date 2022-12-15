@@ -1,4 +1,4 @@
-From 8b704ee2a89f6905257feea2cbbfc5148626df0a Mon Sep 17 00:00:00 2001
+From ee68d7d67358f92c87720c2f740322fb03ad8299 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Tue, 12 Apr 2022 11:39:12 +0200
 Subject: Disable qtscxml library
@@ -34,5 +34,5 @@ index 9726a78..956f904 100644
 +    #add_subdirectory(qscxmlc)
  endif()
 -- 
-2.35.1
+2.38.1
 

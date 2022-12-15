@@ -37,7 +37,7 @@ class ReaderScanEnabler
 		explicit ReaderScanEnabler(QQuickItem* pParent = nullptr);
 		~ReaderScanEnabler() override;
 
-		ReaderManagerPlugInType getPlugInType() const;
+		[[nodiscard]] ReaderManagerPlugInType getPlugInType() const;
 		void setPlugInType(ReaderManagerPlugInType pPlugInType);
 		void itemChange(QQuickItem::ItemChange pChange, const QQuickItem::ItemChangeData& pValue) override;
 		Q_INVOKABLE void restartScan();

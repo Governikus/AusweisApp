@@ -10,6 +10,7 @@
 #include <QRandomGenerator>
 #include <QtEndian>
 
+#include <array>
 #include <chrono>
 #include <openssl/rand.h>
 
@@ -174,9 +175,9 @@ QUuid Randomizer::createUuid()
 	QByteArray randomBytes;
 	while (randomBytes.size() < 16)
 	{
-		char number[sizeof(quint32)];
-		qToBigEndian<quint32>(uni(mGenerator), number);
-		randomBytes.append(number, sizeof(quint32));
+		std::array<char, sizeof(quint32)> number;
+		qToBigEndian<quint32>(uni(mGenerator), number.data());
+		randomBytes.append(number.data(), number.size());
 	}
 	return QUuid::fromRfc4122(randomBytes);
 }

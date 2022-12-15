@@ -192,9 +192,6 @@ else()
 endif()
 
 
-include(CompilerFlagsPersoSim)
-
-
 # http://gcc.gnu.org/onlinedocs/gcc/Gcov.html
 # http://llvm.org/docs/CommandGuide/llvm-cov.html
 option(COVERAGE "Enable code coverage")

@@ -28,18 +28,18 @@ class ProxyCredentials
 		const QString mProposedUser;
 		const QString mUrl;
 
-		QString createUrl(const QNetworkProxy& pProxy) const;
+		[[nodiscard]] QString createUrl(const QNetworkProxy& pProxy) const;
 
 	public:
 		ProxyCredentials(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 
-		QString getProposedUser() const;
-		QString getUrl() const;
+		[[nodiscard]] QString getProposedUser() const;
+		[[nodiscard]] QString getUrl() const;
 
-		QString getUser() const;
+		[[nodiscard]] QString getUser() const;
 		void setUser(const QString& pUser);
 
-		QString getPassword() const;
+		[[nodiscard]] QString getPassword() const;
 		void setPassword(const QString& pPassword);
 
 		Q_INVOKABLE void confirmInput();

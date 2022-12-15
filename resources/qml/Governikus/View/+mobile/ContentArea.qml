@@ -1,9 +1,7 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.CheckIDCardView 1.0
 import Governikus.ChangePinView 1.0
@@ -25,106 +23,96 @@ Item {
 	id: baseItem
 
 	property int activeModule
+	readonly property var currentSectionPage: if (visibleItem)
+		visibleItem.currentItem
 	readonly property var visibleItem: visibleChildren[0]
-	readonly property var currentSectionPage: if (visibleItem) visibleItem.currentItem
 
 	TabBarView {
 		id: authView
-
-		visible: baseItem.activeModule === UiModule.IDENTIFY
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.IDENTIFY
 
-		initialItem: AuthView {}
+		initialItem: AuthView {
+		}
 	}
-
 	TabBarView {
 		id: mainView
-
-		visible: baseItem.activeModule === UiModule.DEFAULT
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.DEFAULT
 
-		initialItem: MainView {}
+		initialItem: MainView {
+		}
 	}
-
 	TabBarView {
 		id: selfAuthenticationView
-
-		visible: baseItem.activeModule === UiModule.SELF_AUTHENTICATION
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.SELF_AUTHENTICATION
 
-		initialItem: SelfAuthenticationView {}
+		initialItem: SelfAuthenticationView {
+		}
 	}
-
 	TabBarView {
 		id: checkIDCardView
-
-		visible: baseItem.activeModule === UiModule.CHECK_ID_CARD
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.CHECK_ID_CARD
 
-		initialItem: CheckIDCardView {}
+		initialItem: CheckIDCardView {
+		}
 	}
-
 	TabBarView {
 		id: smartView
-
-		visible: baseItem.activeModule === UiModule.SMART
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.SMART
 
-		initialItem: SmartView {}
+		initialItem: SmartView {
+		}
 	}
-
 	TabBarView {
 		id: providerView
-
-		visible: baseItem.activeModule === UiModule.PROVIDER
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.PROVIDER
 
-		initialItem: ProviderView {}
+		initialItem: ProviderView {
+		}
 	}
-
 	TabBarView {
 		id: historyView
-
-		visible: baseItem.activeModule === UiModule.HISTORY
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.HISTORY
 
-		initialItem: HistoryView {}
+		initialItem: HistoryView {
+		}
 	}
-
 	TabBarView {
 		id: changePinView
-
-		visible: baseItem.activeModule === UiModule.PINMANAGEMENT
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.PINMANAGEMENT
 
-		initialItem: ChangePinView {}
+		initialItem: ChangePinView {
+		}
 	}
-
 	TabBarView {
 		id: remoteView
-
-		visible: baseItem.activeModule === UiModule.REMOTE_SERVICE
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.REMOTE_SERVICE
 
-		initialItem: RemoteServiceView {}
+		initialItem: RemoteServiceView {
+		}
 	}
-
 	TabBarView {
 		id: settingsView
-
-		visible: baseItem.activeModule === UiModule.SETTINGS
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.SETTINGS
 
-		initialItem: SettingsView {}
+		initialItem: SettingsView {
+		}
 	}
-
 	TabBarView {
 		id: helpView
-
-		visible: baseItem.activeModule === UiModule.HELP
 		anchors.fill: parent
+		visible: baseItem.activeModule === UiModule.HELP
 
-		initialItem: MoreView {}
+		initialItem: MoreView {
+		}
 	}
-
 }

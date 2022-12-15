@@ -20,7 +20,7 @@ class UIPlugInFunctional
 	Q_INTERFACES(governikus::UIPlugIn)
 
 	private:
-		UIPlugInJson* mJson;
+		QPointer<UIPlugInJson> mJson;
 		QSharedPointer<WorkflowContext> mContext;
 
 	private Q_SLOTS:
@@ -37,6 +37,8 @@ class UIPlugInFunctional
 	public:
 		UIPlugInFunctional();
 		~UIPlugInFunctional() override = default;
+
+		[[nodiscard]] bool initialize() override;
 };
 
 } // namespace governikus

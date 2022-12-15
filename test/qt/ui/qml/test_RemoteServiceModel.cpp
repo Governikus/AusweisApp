@@ -210,5 +210,5 @@ class test_RemoteServiceModel
 
 };
 
-QTEST_GUILESS_MAIN(test_RemoteServiceModel)
+QTEST_MAIN(test_RemoteServiceModel)
 #include "test_RemoteServiceModel.moc"

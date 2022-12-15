@@ -67,7 +67,7 @@ class test_CardPositionModel
 #if defined(Q_OS_IOS)
 			QCOMPARE(mModel->getCardPositionCount(), 1);
 #else
-			QCOMPARE(mModel->getCardPositionCount(), 5);
+			QCOMPARE(mModel->getCardPositionCount(), 4);
 #endif
 		}
 
@@ -114,21 +114,16 @@ class test_CardPositionModel
 			mModel->onTimerTimeout();
 			QCOMPARE(spyCardPositionChanged.count(), 5);
 			cardPosition.reset(qvariant_cast<CardPosition*>(mModel->getCardPosition()));
-			QVERIFY(CardPosition(0.5, 0.0, 1) == *cardPosition);
-
-			mModel->onTimerTimeout();
-			QCOMPARE(spyCardPositionChanged.count(), 6);
-			cardPosition.reset(qvariant_cast<CardPosition*>(mModel->getCardPosition()));
 			QVERIFY(CardPosition(0.5, 0.5, -1, 90) == *cardPosition);
 
 			mModel->onTimerTimeout();
-			QCOMPARE(spyCardPositionChanged.count(), 7);
+			QCOMPARE(spyCardPositionChanged.count(), 6);
 			cardPosition.reset(qvariant_cast<CardPosition*>(mModel->getCardPosition()));
 			QVERIFY(CardPosition(0.5, 0.5, -1) == *cardPosition);
 
 			mModel->setIsRunning(false);
 			mModel->setIsRunning(true);
-			QCOMPARE(spyCardPositionChanged.count(), 8);
+			QCOMPARE(spyCardPositionChanged.count(), 7);
 			cardPosition.reset(qvariant_cast<CardPosition*>(mModel->getCardPosition()));
 			QVERIFY(CardPosition(0.5, 0.5, -1, 90) == *cardPosition);
 		}
@@ -136,5 +131,5 @@ class test_CardPositionModel
 
 };
 
-QTEST_GUILESS_MAIN(test_CardPositionModel)
+QTEST_MAIN(test_CardPositionModel)
 #include "test_CardPositionModel.moc"

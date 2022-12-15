@@ -1,49 +1,54 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-
 Button {
 	id: root
 
-	property TextStyle textStyle: enabled && enableButton ? Style.text.button : Style.text.button_disabled
+	property bool animationsDisabled: false
 	property color buttonColor: Style.color.button
 	property int cursorShape: Qt.PointingHandCursor
-	property bool animationsDisabled: false
-	property color textHighlightColor: textStyle.textColor
-
-	/// Similar to "enabled", but tooltips will continue to work
-	property bool enableButton: true
-
-	property string enabledTooltipText
 	property string disabledTooltipText
+
+	// Similar to "enabled", but tooltips will continue to work
+	property bool enableButton: true
+	property string enabledTooltipText
+	property color textHighlightColor: textStyle.textColor
+	property TextStyle textStyle: enabled && enableButton ? Style.text.button : Style.text.button_disabled
 	property bool tintIcon: false
 
-	activeFocusOnTab: enableButton
-	onActiveFocusOnTabChanged: if (!activeFocusOnTab) focus = false
 	Accessible.name: text
-	Accessible.onPressAction: clicked()
-
 	ToolTip.delay: Constants.toolTipDelay
-	ToolTip.visible: hovered && ToolTip.text !== ""
 	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
-
+	ToolTip.visible: hovered && ToolTip.text !== ""
+	activeFocusOnTab: enableButton
 	font.pixelSize: textStyle.textSize
 
+	background: Rectangle {
+		readonly property color pressColor: Qt.darker(buttonColor, Constants.highlightDarkerFactor)
+
+		border.color: Style.color.high_contrast_item_border
+		border.width: Style.dimens.high_contrast_item_border
+		color: {
+			if (!enabled || !enableButton) {
+				return Style.color.button_disabled;
+			}
+			return !animationsDisabled && pressed ? pressColor : buttonColor;
+		}
+		radius: Style.dimens.button_radius
+	}
 	contentItem: Item {
-		z: 1
+		implicitHeight: root.textStyle.textSize + 2 * verticalPadding
 
 		// The icon's width is already included in the text's margins
 		implicitWidth: buttonText.visible ? Math.max(buttonText.effectiveWidth, Style.dimens.large_icon_size) : buttonIcon.width
-		implicitHeight: root.textStyle.textSize + 2 * verticalPadding
+		z: 1
 
 		TintableIcon {
 			id: buttonIcon
@@ -51,67 +56,53 @@ Button {
 			readonly property color iconColor: root.textStyle.textColor
 			readonly property color pressColor: Qt.darker(iconColor, Constants.highlightDarkerFactor)
 
-			visible: source != ""
 			anchors.left: parent.left
 			anchors.verticalCenter: parent.verticalCenter
-
 			source: root.icon.source
 			sourceSize.height: parent.height
-
-			tintEnabled: tintIcon
 			tintColor: !animationsDisabled && root.pressed ? pressColor : iconColor
+			tintEnabled: tintIcon
+			visible: source != ""
 		}
-
 		GText {
 			id: buttonText
 
 			readonly property real effectiveWidth: implicitWidth + anchors.leftMargin + anchors.rightMargin
 
-			visible: text !== ""
+			Accessible.ignored: true
 			anchors.left: parent.left
 			anchors.leftMargin: buttonIcon.visible ? buttonIcon.width + Constants.text_spacing : 0
 			anchors.right: parent.right
 			anchors.verticalCenter: parent.verticalCenter
-
-			Accessible.ignored: true
-
-			font: root.font
-			textStyle: root.textStyle
 			color: !animationsDisabled && root.pressed ? root.textHighlightColor : root.textStyle.textColor
-			text: root.text
-			horizontalAlignment: buttonIcon.visible ? Text.AlignLeft : Text.AlignHCenter
-			verticalAlignment: Text.AlignVCenter
-			maximumLineCount: 1
 			elide: Text.ElideRight
+			font: root.font
+			horizontalAlignment: buttonIcon.visible ? Text.AlignLeft : Text.AlignHCenter
+			maximumLineCount: 1
+			text: root.text
+			textStyle: root.textStyle
+			verticalAlignment: Text.AlignVCenter
+			visible: text !== ""
 
 			FocusFrame {
-				scope: root
-				marginFactor: 0.7
 				isOnLightBackground: false
+				marginFactor: 0.7
+				scope: root
 			}
 		}
 	}
 
-	background: Rectangle {
-		readonly property color pressColor: Qt.darker(buttonColor, Constants.highlightDarkerFactor)
-
-		radius: Style.dimens.button_radius
-		color: {
-			if (!enabled || !enableButton) {
-				return Style.color.button_disabled
-			}
-
-			return !animationsDisabled && pressed ? pressColor : buttonColor
-		}
-		border.width: Style.dimens.high_contrast_item_border
-		border.color: Style.color.high_contrast_item_border
-	}
+	Accessible.onPressAction: clicked()
+	onActiveFocusOnTabChanged: if (!activeFocusOnTab)
+		focus = false
 
 	MouseArea {
-		z: 2
 		anchors.fill: parent
-
-		onPressed: mouse => { mouse.accepted = !enableButton }
 		cursorShape: enableButton ? root.cursorShape : Qt.ArrowCursor
+		z: 2
+
+		onPressed: mouse => {
+			mouse.accepted = !enableButton;
+		}
 	}
 }

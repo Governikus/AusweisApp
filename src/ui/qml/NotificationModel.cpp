@@ -25,7 +25,7 @@ QString NotificationModel::getLastType() const
 		return QString();
 	}
 
-	return qAsConst(mNotificationEntries).last().mType;
+	return std::as_const(mNotificationEntries).last().mType;
 }
 
 
@@ -63,7 +63,7 @@ QVariant NotificationModel::data(const QModelIndex& pIndex, int pRole) const
 	{
 		return QVariant();
 	}
-	const auto& notification = qAsConst(mNotificationEntries).at(mNotificationEntries.firstIndex() + pIndex.row());
+	const auto& notification = std::as_const(mNotificationEntries).at(mNotificationEntries.firstIndex() + pIndex.row());
 	switch (pRole)
 	{
 		case TYPE:

@@ -6,10 +6,10 @@
 
 #include "messages/MsgHandlerStatus.h"
 
-#include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
+#include "context/InternalActivationContext.h"
 #include "context/SelfAuthContext.h"
 #include "states/StateConnectCard.h"
 #include "states/StateEditAccessRights.h"

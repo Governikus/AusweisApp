@@ -214,7 +214,7 @@ class test_DiagnosisModel
 			mModel->onNetworkInfoChanged();
 
 			QCOMPARE(mModel->mNetworkInterfaceSection->mContentItems.size(), 3);
-			for (const auto& item : qAsConst(mModel->mNetworkInterfaceSection->mContentItems))
+			for (const auto& item : std::as_const(mModel->mNetworkInterfaceSection->mContentItems))
 			{
 				QCOMPARE(item->mTitle, QString(""));
 				QCOMPARE(item->mContent, QString("Hardware address: <Not set>\nNo IP addresses assigned"));

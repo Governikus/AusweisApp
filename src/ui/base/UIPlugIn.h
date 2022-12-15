@@ -50,6 +50,8 @@ class UIPlugIn
 		UIPlugIn() = default;
 		~UIPlugIn() override = default;
 
+		[[nodiscard]] virtual bool initialize();
+
 	public Q_SLOTS:
 		virtual void doShutdown() = 0;
 		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) = 0;
@@ -62,14 +64,16 @@ class UIPlugIn
 		virtual void onProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		virtual void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
 		virtual void onUiDominationReleased();
+		virtual void onShowUserInformation(const QString& pInformationMessage);
 
 	Q_SIGNALS:
 		void fireWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
+		void fireShowUiRequested(UiModule pModule);
+		void fireShowUserInformationRequested(const QString& pMsg);
 		void fireQuitApplicationRequest(int pExitCode = EXIT_SUCCESS);
 		void fireCloseReminderFinished(bool pDontRemindAgain);
 		void fireApplicationActivated();
 
-		void fireShowUserInformation(const QString& pInformationMessage);
 		void fireUiDominationRequest(const UIPlugIn* pUi, const QString& pInformation);
 		void fireUiDominationRelease();
 		void fireRestartApplicationRequested();

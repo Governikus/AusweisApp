@@ -31,6 +31,14 @@ j.with
 			}
 			description('Build to get iOS Simulator Framework artifacts from')
 		}
+		buildSelectorParam('iOS_Simulator_arm64_Framework_Build')
+		{
+			defaultBuildSelector
+			{
+				latestSuccessful(true)
+			}
+			description('Build to get iOS Simulator arm64 Framework artifacts from')
+		}
 	}
 
 	steps
@@ -50,6 +58,15 @@ j.with
 			buildSelector
 			{
 				buildParameter('iOS_Simulator_Framework_Build')
+			}
+		}
+
+		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
+		{
+			targetDirectory('build/arm64-simulator')
+			buildSelector
+			{
+				buildParameter('iOS_Simulator_arm64_Framework_Build')
 			}
 		}
 

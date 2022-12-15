@@ -74,7 +74,7 @@ VersionInfo VersionInfo::fromText(const QString& pText)
 	for (const auto& line : header)
 	{
 		const auto pair = line.split(QLatin1Char(':'));
-		if (pair.size() != 2 || pair[0].trimmed().isEmpty() || pair[1].trimmed().isEmpty())
+		if (pair.size() != 2 || pair[0].trimmed().isEmpty())
 		{
 			qWarning() << "Cannot parse line:" << line;
 			continue;

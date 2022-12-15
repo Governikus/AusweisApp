@@ -7,9 +7,9 @@
 #include "messages/MsgHandlerAccessRights.h"
 
 #include "AppSettings.h"
-#include "InternalActivationContext.h"
 #include "MessageDispatcher.h"
 #include "VolatileSettings.h"
+#include "context/InternalActivationContext.h"
 #include "states/StateEditAccessRights.h"
 
 #include "TestAuthContext.h"

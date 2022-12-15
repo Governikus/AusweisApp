@@ -87,7 +87,7 @@ void MockReaderManagerPlugIn::removeAllReader()
 			return getReaders();
 		}, Qt::BlockingQueuedConnection, &readerList);
 
-	for (auto reader : qAsConst(readerList))
+	for (auto reader : std::as_const(readerList))
 	{
 		removeReader(reader->getName());
 	}
@@ -97,7 +97,7 @@ void MockReaderManagerPlugIn::removeAllReader()
 
 void MockReaderManagerPlugIn::insert(const QString& pReaderName, const QVariant& pData)
 {
-	for (MockReader* reader : qAsConst(mReaders))
+	for (MockReader* reader : std::as_const(mReaders))
 	{
 		if (reader->getName() == pReaderName)
 		{

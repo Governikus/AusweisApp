@@ -31,6 +31,10 @@ class test_MsgHandlerChangePin
 		void initTestCase()
 		{
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
+
+			connect(Env::getSingleton<UILoader>(), &UILoader::fireLoadedPlugin, this, [](UIPlugIn* pUi){
+					pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
+				});
 		}
 
 
@@ -39,7 +43,7 @@ class test_MsgHandlerChangePin
 			auto* uiLoader = Env::getSingleton<UILoader>();
 			if (uiLoader->isLoaded())
 			{
-				QSignalSpy spyUi(uiLoader, &UILoader::fireShutdownComplete);
+				QSignalSpy spyUi(uiLoader, &UILoader::fireRemovedAllPlugins);
 				uiLoader->shutdown();
 				QTRY_COMPARE(spyUi.count(), 1); // clazy:exclude=qstring-allocations
 			}
@@ -104,9 +108,11 @@ class test_MsgHandlerChangePin
 
 		void cancelChangePin()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 
 			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 			QVERIFY(ui);
@@ -128,9 +134,11 @@ class test_MsgHandlerChangePin
 
 		void iosScanDialogMessages()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 
 			const auto& initialMessages = Env::getSingleton<VolatileSettings>()->getMessages();
 			QVERIFY(initialMessages.getSessionStarted().isNull());
@@ -197,13 +205,15 @@ class test_MsgHandlerChangePin
 
 		void handleInterrupt()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, handleInterrupt);
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 
@@ -256,12 +266,14 @@ class test_MsgHandlerChangePin
 
 		void handleInterruptDefault()
 		{
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 

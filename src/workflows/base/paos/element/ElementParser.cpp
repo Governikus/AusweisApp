@@ -4,6 +4,8 @@
 
 #include "ElementParser.h"
 
+#include "paos/element/ConnectionHandleParser.h"
+
 using namespace governikus;
 
 ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader)
@@ -81,4 +83,47 @@ bool ElementParser::readUniqueElementText(QString& pText)
 
 	pText = readElementText();
 	return !pText.isNull();
+}
+
+
+void ElementParser::skipCurrentElement() const
+{
+	mXmlReader->skipCurrentElement();
+}
+
+
+QStringView ElementParser::getElementName() const
+{
+	const auto& name = mXmlReader->name();
+	qCDebug(paos) << name;
+	return name;
+}
+
+
+QStringView ElementParser::getElementTypeByNamespace(const QString& pNamespace) const
+{
+	return mXmlReader->attributes().value(pNamespace, QStringLiteral("type"));
+}
+
+
+void ElementParser::initData(const QByteArray& pXmlData)
+{
+	mParseError = false;
+	mXmlReader->clear();
+	mXmlReader->addData(pXmlData);
+}
+
+
+void ElementParser::setParserFailed()
+{
+	mParseError = true;
+}
+
+
+ConnectionHandle ElementParser::parseConnectionHandle()
+{
+	ConnectionHandleParser parser(mXmlReader);
+	const auto& handle = parser.parse();
+	mParseError |= parser.parserFailed();
+	return handle;
 }

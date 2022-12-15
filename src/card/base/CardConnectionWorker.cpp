@@ -349,7 +349,7 @@ ResponseApduResult CardConnectionWorker::setEidPin(const QByteArray& pNewPin, qu
 }
 
 
-EstablishPaceChannelOutput CardConnectionWorker::prepareIdentification(const QByteArray& pChat)
+EstablishPaceChannelOutput CardConnectionWorker::prepareIdentification(const QByteArray& pChat) const
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
@@ -364,7 +364,7 @@ EstablishPaceChannelOutput CardConnectionWorker::prepareIdentification(const QBy
 }
 
 
-ResponseApduResult CardConnectionWorker::getChallenge()
+ResponseApduResult CardConnectionWorker::getChallenge() const
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)
@@ -389,7 +389,7 @@ TerminalAndChipAuthenticationResult CardConnectionWorker::performTAandCA(
 		const QByteArray& pAuxiliaryData,
 		const QByteArray& pSignature,
 		const QByteArray& pPin,
-		const QByteArray& pEphemeralPublicKey)
+		const QByteArray& pEphemeralPublicKey) const
 {
 	const auto card = mReader ? mReader->getCard() : nullptr;
 	if (!card)

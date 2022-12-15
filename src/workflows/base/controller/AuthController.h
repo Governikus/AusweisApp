@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "ActivationContext.h"
 #include "WorkflowController.h"
 #include "WorkflowRequest.h"
+#include "context/ActivationContext.h"
 
 namespace governikus
 {

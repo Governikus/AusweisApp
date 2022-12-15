@@ -54,7 +54,7 @@ ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString
 	QVector<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
 	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getVirtualReaderConfigurationInfos();
 
-	for (const auto& info : qAsConst(attachedSupportedDevices))
+	for (const auto& info : std::as_const(attachedSupportedDevices))
 	{
 		const QString& pattern = info.getPattern();
 		const QRegularExpression expression(pattern.isEmpty() ? info.getName() : pattern);

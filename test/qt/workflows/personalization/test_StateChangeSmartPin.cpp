@@ -32,12 +32,7 @@ class MockEstablishPaceChannelCommand
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
-		{
-			mReturnCode = pCode;
-		}
-
-
+		using BaseCardCommand::setReturnCode;
 };
 
 class test_StateChangeSmartPin

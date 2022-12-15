@@ -161,23 +161,14 @@ int governikus::initApp(int& argc, char** argv)
 	printInfo();
 
 	AppController controller;
-	if (!controller.start())
-	{
-		qCCritical(init) << "Cannot start application controller, exit application";
-		return EXIT_FAILURE;
-	}
-
 	Env::getSingleton<SignalHandler>()->setController([&controller]{
 			QMetaObject::invokeMethod(&controller, [&controller]{
 				controller.doShutdown();
 			}, Qt::QueuedConnection);
 		});
+	controller.start();
 
-	if (Env::getSingleton<SignalHandler>()->shouldQuit())
-	{
-		return EXIT_SUCCESS;
-	}
-
+	qCDebug(init) << "Enter main event loop...";
 	const int returnCode = exec(app);
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))

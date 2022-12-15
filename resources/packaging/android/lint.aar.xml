@@ -62,4 +62,13 @@
         updated in Qt itself.
     -->
     <issue id="AndroidGradlePluginVersion" severity="ignore" />
+
+    <!-- DiscouragedApi
+
+        Qt is using some discouraged API. They are allowed and are not deprecated, but they may be unfit
+        for common use (e.g. due to slow performance or subtle behavior). which we can't change, so ignore it.
+    -->
+    <issue id="DiscouragedApi">
+        <ignore path="**/QtLoader.java" />
+    </issue>
 </lint>

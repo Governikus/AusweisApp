@@ -41,9 +41,9 @@ class HistoryModel
 		ProviderConfigurationInfo determineProviderFor(const HistoryInfo& pHistoryInfo) const;
 		static auto& getHistorySettings();
 
-		bool isEnabled() const;
+		[[nodiscard]] bool isEnabled() const;
 		void setEnabled(bool pEnabled);
-		bool isEmpty() const;
+		[[nodiscard]] bool isEmpty() const;
 		void updateConnections();
 
 	private Q_SLOTS:
@@ -82,14 +82,14 @@ class HistoryModel
 			PROVIDER_IMAGE
 		};
 
-		int rowCount(const QModelIndex& = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
-		Q_INVOKABLE bool removeRows(int pRow, int pCount, const QModelIndex& pParent = QModelIndex()) override;
+		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] Q_INVOKABLE bool removeRows(int pRow, int pCount, const QModelIndex& pParent = QModelIndex()) override;
 
-		Q_INVOKABLE HistoryProxyModel* getFilterModel();
-		Q_INVOKABLE ProviderNameFilterModel* getNameFilterModel();
-		HistoryModelSearchFilter* getHistoryModelSearchFilter();
+		[[nodiscard]] Q_INVOKABLE HistoryProxyModel* getFilterModel();
+		[[nodiscard]] Q_INVOKABLE ProviderNameFilterModel* getNameFilterModel();
+		[[nodiscard]] HistoryModelSearchFilter* getHistoryModelSearchFilter();
 
 		Q_INVOKABLE void exportHistory(const QUrl& pFilename) const;
 

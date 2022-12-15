@@ -40,11 +40,11 @@ class FormattedTextModel
 
 		explicit FormattedTextModel(QObject* pParent, const QStringList& pLines = QStringList());
 
-		int rowCount(const QModelIndex& pIndex = QModelIndex()) const override;
-		QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
-		QHash<int, QByteArray> roleNames() const override;
+		[[nodiscard]] int rowCount(const QModelIndex& pIndex = QModelIndex()) const override;
+		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
+		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		Q_INVOKABLE bool loadSeveral(const QStringList& pFilepaths);
+		[[nodiscard]] Q_INVOKABLE bool loadSeveral(const QStringList& pFilepaths);
 
 #if defined(QT_NO_DEBUG)
 
@@ -67,7 +67,7 @@ class FormattedTextModel
 
 		void processLines(const QStringList& pLines);
 		void processLine(const QString& pLine);
-		bool lastLineIsEmpty() const;
+		[[nodiscard]] bool lastLineIsEmpty() const;
 };
 
 } // namespace governikus

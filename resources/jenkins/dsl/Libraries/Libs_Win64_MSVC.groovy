@@ -9,6 +9,8 @@ def j = new Library
 
 j.with
 {
+	customWorkspace('workspace/' + MERCURIAL_REVISION_BRANCH + '_LW64M')
+
 	steps
 	{
 		batchFile('''\

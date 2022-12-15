@@ -81,31 +81,31 @@ class RemoteServiceModel
 		void onTranslationChanged();
 
 	public:
-		bool isRunning() const;
+		[[nodiscard]] bool isRunning() const;
 		Q_INVOKABLE void setRunning(bool pState, bool pEnablePairing = false);
-		bool isStarting() const;
+		[[nodiscard]] bool isStarting() const;
 
-		RemoteDeviceModel* getAvailableRemoteDevices();
-		RemoteDeviceModel* getKnownDevices();
+		[[nodiscard]] RemoteDeviceModel* getAvailableRemoteDevices();
+		[[nodiscard]] RemoteDeviceModel* getKnownDevices();
 		void setDetectRemoteDevices(bool pNewStatus);
-		bool detectRemoteDevices() const;
+		[[nodiscard]] bool detectRemoteDevices() const;
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
 		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
 
 		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
 		void setPairing(bool pEnabled);
-		bool isPairing();
-		bool isConnectedToPairedDevice() const;
-		bool enableTransportPinLink() const;
-		bool isRunnable() const;
-		bool isCanEnableNfc() const;
-		QString getErrorMessage() const;
-		QByteArray getPsk() const;
-		QString getConnectionInfo() const;
-		QString getConnectedServerDeviceNames() const;
-		bool getRemoteReaderVisible() const;
+		[[nodiscard]] bool isPairing();
+		[[nodiscard]] bool isConnectedToPairedDevice() const;
+		[[nodiscard]] bool enableTransportPinLink() const;
+		[[nodiscard]] bool isRunnable() const;
+		[[nodiscard]] bool isCanEnableNfc() const;
+		[[nodiscard]] QString getErrorMessage() const;
+		[[nodiscard]] QByteArray getPsk() const;
+		[[nodiscard]] QString getConnectionInfo() const;
+		[[nodiscard]] QString getConnectedServerDeviceNames() const;
+		[[nodiscard]] bool getRemoteReaderVisible() const;
 
-		Q_INVOKABLE bool pinPadModeOn() const;
+		[[nodiscard]] Q_INVOKABLE bool pinPadModeOn() const;
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
 		Q_INVOKABLE void changePinLength();

@@ -27,6 +27,8 @@ class test_HttpRequest
 											 "\r\n\r\n");
 
 			HttpRequest request(socket);
+			request.triggerSocketBuffer();
+			QVERIFY(request.mFinished);
 			QVERIFY(!request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
 			QCOMPARE(request.getHttpMethod(), HTTP_GET);
@@ -51,6 +53,8 @@ class test_HttpRequest
 											 "\r\n\r\n");
 
 			HttpRequest request(socket);
+			request.triggerSocketBuffer();
+			QVERIFY(request.mFinished);
 			QVERIFY(request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
 			QCOMPARE(request.getHttpMethod(), HTTP_GET);
@@ -65,20 +69,30 @@ class test_HttpRequest
 
 		void tcTokenURL()
 		{
+			const QByteArray data("GET /eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue HTTP/1.1\r\n"
+								  "Host: 127.0.0.1:24727\r\n"
+								  "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0\r\n"
+								  "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+								  "Accept-Language: de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3\r\n"
+								  "Accept-Encoding: gzip, deflate\r\n"
+								  "Cookie: csrftoken=4LcbL9banTtJjpsDRc9du7M4u1rPJZhY; rbsessionid=nevw98w871u0p5ed8cvwfk5yyqh19dh6\r\n"
+								  "DNT: 1\r\n"
+								  "Connection: keep-alive\r\n"
+								  "Upgrade-Insecure-Requests: 1\r\n"
+								  "\r\n\r\n");
 			auto* socket = new MockSocket();
-			socket->mReadBuffer = QByteArray("GET /eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue HTTP/1.1\r\n"
-											 "Host: 127.0.0.1:24727\r\n"
-											 "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0\r\n"
-											 "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
-											 "Accept-Language: de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3\r\n"
-											 "Accept-Encoding: gzip, deflate\r\n"
-											 "Cookie: csrftoken=4LcbL9banTtJjpsDRc9du7M4u1rPJZhY; rbsessionid=nevw98w871u0p5ed8cvwfk5yyqh19dh6\r\n"
-											 "DNT: 1\r\n"
-											 "Connection: keep-alive\r\n"
-											 "Upgrade-Insecure-Requests: 1\r\n"
-											 "\r\n\r\n");
+			socket->mReadBuffer = data;
 
 			HttpRequest request(socket);
+
+			QByteArray receivedData;
+			connect(&request, &HttpRequest::fireSocketBuffer, this, [&receivedData] (const QByteArray& pBuffer){
+					receivedData = pBuffer;
+				});
+
+			request.triggerSocketBuffer();
+			QVERIFY(request.mFinished);
+			QCOMPARE(receivedData, QByteArray()); // initial parsing does not fill this!
 			QVERIFY(!request.isUpgrade());
 			QCOMPARE(request.getMethod(), QByteArray("GET"));
 			QCOMPARE(request.getHttpMethod(), HTTP_GET);
@@ -86,6 +100,9 @@ class test_HttpRequest
 			QCOMPARE(request.getHeader("host"), QByteArray("127.0.0.1:24727"));
 			QCOMPARE(request.getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue"));
 			QCOMPARE(request.getBody().size(), 0);
+
+			request.triggerSocketBuffer();
+			QCOMPARE(receivedData, data);
 		}
 
 

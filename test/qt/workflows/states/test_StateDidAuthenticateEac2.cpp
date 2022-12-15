@@ -27,9 +27,9 @@ class MockDidAuthenticateEAC2Command
 		}
 
 
-		void setReturnCode(CardReturnCode pCode)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = pCode;
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -109,7 +109,7 @@ class test_StateDidAuthenticateEac2
 			const QSharedPointer<DIDAuthenticateResponseEAC2> response(new DIDAuthenticateResponseEAC2());
 			const QSharedPointer<MockDidAuthenticateEAC2Command> command(new MockDidAuthenticateEAC2Command(worker, certificate, key, signature, auxiliaryData));
 
-			command->setReturnCode(code);
+			command->setMockReturnCode(code);
 			mAuthContext->setDidAuthenticateResponseEac2(response);
 
 			mState->onCardCommandDone(command);

@@ -1,11 +1,9 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ProviderCategoryFilterModel 1.0
@@ -17,52 +15,44 @@ Item {
 	property alias imageSource: icon.source
 	property alias text: label.text
 
-	height: parent.height
-	width: mainContent.width
-	anchors.verticalCenter: parent.verticalCenter
-
-	Accessible.role: Accessible.CheckBox
-	Accessible.name: text
 	Accessible.checkable: true
 	Accessible.checked: checkBox.checked
+	Accessible.name: text
+	Accessible.role: Accessible.CheckBox
+	anchors.verticalCenter: parent.verticalCenter
+	height: parent.height
+	width: mainContent.width
+
 	Accessible.onPressAction: mouseArea.clicked(null)
 
 	Row {
 		id: mainContent
+		anchors.verticalCenter: parent.verticalCenter
 		height: parent.height
 		spacing: 5
-		anchors.verticalCenter: parent.verticalCenter
 
 		Image {
 			id: icon
+			anchors.verticalCenter: parent.verticalCenter
+			fillMode: Image.PreserveAspectFit
 			height: baseItem.height * 0.7
 			width: height
-			fillMode: Image.PreserveAspectFit
-			anchors.verticalCenter: parent.verticalCenter
 		}
-
 		GText {
 			id: label
-			anchors.verticalCenter: parent.verticalCenter
-
 			Accessible.ignored: true
+			anchors.verticalCenter: parent.verticalCenter
 		}
-
 		GCheckBox {
 			id: checkBox
-
-			visible: true
-			anchors.verticalCenter: parent.verticalCenter
-
 			Accessible.ignored: true
-
+			anchors.verticalCenter: parent.verticalCenter
 			checked: ProviderCategoryFilterModel.categories.indexOf(baseItem.category) !== -1
+			visible: true
 		}
 	}
-
 	MouseArea {
 		id: mouseArea
-
 		anchors.fill: parent
 
 		onClicked: ProviderCategoryFilterModel.updateCategorySelection(category, !checkBox.checked)

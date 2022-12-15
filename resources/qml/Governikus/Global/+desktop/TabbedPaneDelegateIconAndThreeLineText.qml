@@ -1,65 +1,53 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 RowLayout {
 	id: root
 
-	property string sectionName
-	property string headerText
 	property string footerText
+	property string headerText
 	property string iconPath
-
-	width: parent.width
+	property string sectionName
 
 	spacing: Constants.groupbox_spacing
+	width: parent.width
 
 	Image {
 		id: sectionIcon
-
-		visible: source !== ""
+		fillMode: Image.PreserveAspectFit
+		source: iconPath
 		sourceSize.height: Style.dimens.medium_icon_size
 		sourceSize.width: Style.dimens.medium_icon_size
-
-		source: iconPath
-		fillMode: Image.PreserveAspectFit
+		visible: source !== ""
 	}
-
 	Column {
 		Layout.fillWidth: true
-
 		spacing: Constants.text_spacing
 
 		GText {
-			width: parent.width
-
+			maximumLineCount: 1
 			text: headerText
 			textStyle: isCurrentItem ? Style.text.normal : Style.text.normal_inverse
-			maximumLineCount: 1
-		}
-
-		GText {
 			width: parent.width
-
+		}
+		GText {
+			elide: Text.ElideRight
+			maximumLineCount: 1
 			text: sectionName
 			textStyle: isCurrentItem ? Style.text.header : Style.text.header_inverse
-			maximumLineCount: 1
-			elide: Text.ElideRight
-		}
-
-		GText {
 			width: parent.width
-
+		}
+		GText {
+			elide: Text.ElideRight
+			maximumLineCount: 1
 			text: footerText
 			textStyle: isCurrentItem ? Style.text.normal : Style.text.normal_inverse
-			maximumLineCount: 1
-			elide: Text.ElideRight
+			width: parent.width
 		}
 	}
 }

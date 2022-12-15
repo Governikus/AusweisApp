@@ -122,7 +122,7 @@ void SectionModel::replaceWithSections(QVector<QSharedPointer<SectionModel>> pSe
 	beginResetModel();
 	removeAllItems();
 
-	for (const auto& section : qAsConst(pSections))
+	for (const auto& section : std::as_const(pSections))
 	{
 		const auto& sectionItems = section->mContentItems;
 		for (const auto& item : sectionItems)
@@ -138,7 +138,7 @@ void SectionModel::replaceWithSections(QVector<QSharedPointer<SectionModel>> pSe
 QStringList SectionModel::getAsPlaintext(const QString& pPrependString) const
 {
 	QStringList sectionPlaintext;
-	for (const auto& item : qAsConst(mContentItems))
+	for (const auto& item : std::as_const(mContentItems))
 	{
 		if (!item->mTitle.isEmpty())
 		{

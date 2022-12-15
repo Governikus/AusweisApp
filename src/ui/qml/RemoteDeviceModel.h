@@ -60,7 +60,7 @@ class RemoteDeviceModelEntry
 		void setNetworkVisible(bool pNetworkVisible);
 		[[nodiscard]] const QDateTime& getLastConnected() const;
 		void setLastConnected(const QDateTime& pLastConnected);
-		bool operator==(const RemoteDeviceModelEntry& pOther) const;
+		[[nodiscard]] bool operator==(const RemoteDeviceModelEntry& pOther) const;
 
 		[[nodiscard]] const QSharedPointer<IfdListEntry>& getRemoteDeviceListEntry() const;
 		[[nodiscard]] QString getDeviceNameEscaped() const;

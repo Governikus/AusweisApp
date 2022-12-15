@@ -28,7 +28,7 @@ class BaseCardCommandDummy
 
 		void internalExecute() override
 		{
-			mReturnCode = CardReturnCode::OK;
+			setReturnCode(CardReturnCode::OK);
 		}
 
 

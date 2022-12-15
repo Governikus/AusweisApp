@@ -38,6 +38,7 @@ DECLARE_STACK_OF(securityinfo_st)
 #else
 DEFINE_STACK_OF(securityinfo_st)
 #endif
+DECLARE_ASN1_OBJECT(securityinfo_st)
 
 /*
  * Because OpenSSL's template macro system does not support inheritance,
@@ -46,7 +47,7 @@ DEFINE_STACK_OF(securityinfo_st)
 class SecurityInfo
 {
 	Q_DISABLE_COPY(SecurityInfo)
-	friend class QSharedPointer<SecurityInfo>;
+	friend class QSharedPointer<const SecurityInfo>;
 
 	private:
 		const QSharedPointer<const securityinfo_st> mDelegate;
@@ -63,15 +64,7 @@ class SecurityInfo
 		SecurityInfo();
 
 	public:
-		static QSharedPointer<SecurityInfo> decode(const QByteArray& pBytes)
-		{
-			if (const auto& delegate = decodeObject<securityinfo_st>(pBytes))
-			{
-				return QSharedPointer<SecurityInfo>::create(delegate);
-			}
-			return QSharedPointer<SecurityInfo>();
-		}
-
+		static QSharedPointer<const SecurityInfo> decode(const QByteArray& pBytes);
 
 		virtual ~SecurityInfo() = default;
 
@@ -87,6 +80,12 @@ class SecurityInfo
 };
 
 
-DECLARE_ASN1_OBJECT(securityinfo_st)
+inline QDebug operator<<(QDebug pDbg, const QSharedPointer<const SecurityInfo>& pSecurityInfo)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg.nospace().noquote() << pSecurityInfo->getOid();
+	return pDbg;
+}
+
 
 } // namespace governikus

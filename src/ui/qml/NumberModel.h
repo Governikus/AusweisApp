@@ -50,26 +50,26 @@ class NumberModel
 	public:
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
-		PasswordType getPasswordType() const;
+		[[nodiscard]] PasswordType getPasswordType() const;
 
-		QString getCan() const;
+		[[nodiscard]] QString getCan() const;
 		void setCan(const QString& pCan);
 
-		QString getPin() const;
+		[[nodiscard]] QString getPin() const;
 		void setPin(const QString& pPin);
 
-		QString getNewPin() const;
+		[[nodiscard]] QString getNewPin() const;
 		void setNewPin(const QString& pNewPin);
 
-		QString getPuk() const;
+		[[nodiscard]] QString getPuk() const;
 		void setPuk(const QString& pPuk);
 
-		bool hasError() const;
-		bool hasPasswordError() const;
-		QString getInputError() const;
+		[[nodiscard]] bool hasError() const;
+		[[nodiscard]] bool hasPasswordError() const;
+		[[nodiscard]] QString getInputError() const;
 
-		int getRetryCounter() const;
-		bool isCanAllowedMode() const;
+		[[nodiscard]] int getRetryCounter() const;
+		[[nodiscard]] bool isCanAllowedMode() const;
 
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pInfo);

@@ -1,38 +1,32 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 Row {
 	id: root
 
-	property string sectionName
 	property string iconPath
+	property string sectionName
 
 	spacing: Constants.groupbox_spacing
 
 	Image {
 		id: sectionIcon
-
-		visible: source !== ""
+		fillMode: Image.PreserveAspectFit
+		source: iconPath
 		sourceSize.height: Style.dimens.medium_icon_size
 		sourceSize.width: Style.dimens.medium_icon_size
-
-		source: iconPath
-		fillMode: Image.PreserveAspectFit
+		visible: source !== ""
 	}
-
 	GText {
-		width: parent.width - sectionIcon.width
 		anchors.verticalCenter: parent.verticalCenter
-
+		elide: Text.ElideRight
+		maximumLineCount: 1
 		text: sectionName
 		textStyle: isCurrentItem ? Style.text.header : Style.text.header_inverse
-		maximumLineCount: 1
-		elide: Text.ElideRight
+		width: parent.width - sectionIcon.width
 	}
 }

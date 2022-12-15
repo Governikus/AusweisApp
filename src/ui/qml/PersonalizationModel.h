@@ -41,10 +41,10 @@ class PersonalizationModel
 
 	public:
 		Q_INVOKABLE void startWorkflow();
-		QString getBlockingCode() const;
-		int getRemainingAttempts() const;
-		QString getRestrictionDate() const;
-		QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QString getBlockingCode() const;
+		[[nodiscard]] int getRemainingAttempts() const;
+		[[nodiscard]] QString getRestrictionDate() const;
+		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

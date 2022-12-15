@@ -29,9 +29,9 @@ class MockTransmitCommand
 		void internalExecute() override;
 		~MockTransmitCommand() override = default;
 
-		void setReturnCode(CardReturnCode code)
+		void setMockReturnCode(CardReturnCode pReturnCode)
 		{
-			mReturnCode = code;
+			setReturnCode(pReturnCode);
 		}
 
 
@@ -97,16 +97,16 @@ class test_StateTransmit
 			QSignalSpy spyContinue(&stateTransmit, &StateTransmit::fireContinue);
 			QSignalSpy spyAbort(&stateTransmit, &StateTransmit::fireAbort);
 
-			command->setReturnCode(CardReturnCode::OK);
+			command->setMockReturnCode(CardReturnCode::OK);
 			stateTransmit.onCardCommandDone(command);
 			QCOMPARE(spyContinue.count(), 1);
 
-			command->setReturnCode(CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
+			command->setMockReturnCode(CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
 			stateTransmit.onCardCommandDone(command);
 			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Card_Unexpected_Transmit_Status);
 			QCOMPARE(spyContinue.count(), 2);
 
-			command->setReturnCode(CardReturnCode::UNKNOWN);
+			command->setMockReturnCode(CardReturnCode::UNKNOWN);
 			stateTransmit.onCardCommandDone(command);
 			QCOMPARE(spyAbort.count(), 1);
 		}

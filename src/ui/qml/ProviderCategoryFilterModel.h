@@ -34,16 +34,16 @@ class ProviderCategoryFilterModel
 
 		ProviderModel mProviderModel;
 
-		QString getSearchString() const;
+		[[nodiscard]] QString getSearchString() const;
 		void updateSearchString(const QString& pSearchString);
-		QStringList getSelectedCategories() const;
-		int getAdditionalResultCount() const;
-		QStringList getFilteredProviderCategories() const;
-		int resultCountForFilter(const QStringList& pCategories, const QString& pSearchString) const;
-		bool rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QStringList& pSelectedCategories, const QString& pSearchString, bool pMatchCategoryType) const;
+		[[nodiscard]] QStringList getSelectedCategories() const;
+		[[nodiscard]] int getAdditionalResultCount() const;
+		[[nodiscard]] QStringList getFilteredProviderCategories() const;
+		[[nodiscard]] int resultCountForFilter(const QStringList& pCategories, const QString& pSearchString) const;
+		[[nodiscard]] bool rowMatchesFilter(int pSourceRow, const QModelIndex& pSourceParent, const QStringList& pSelectedCategories, const QString& pSearchString, bool pMatchCategoryType) const;
 
 	protected:
-		bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
+		[[nodiscard]] bool filterAcceptsRow(int pSourceRow, const QModelIndex& pSourceParent) const override;
 
 	public:
 		ProviderCategoryFilterModel();

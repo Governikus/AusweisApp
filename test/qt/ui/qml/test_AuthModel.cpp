@@ -52,5 +52,5 @@ class test_AuthModel
 
 };
 
-QTEST_GUILESS_MAIN(test_AuthModel)
+QTEST_MAIN(test_AuthModel)
 #include "test_AuthModel.moc"

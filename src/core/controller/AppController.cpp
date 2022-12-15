@@ -39,6 +39,7 @@ bool AppController::cShowUi = false;
 using namespace governikus;
 
 
+Q_DECLARE_LOGGING_CATEGORY(init)
 Q_DECLARE_LOGGING_CATEGORY(support)
 Q_DECLARE_LOGGING_CATEGORY(system)
 
@@ -46,7 +47,6 @@ Q_DECLARE_LOGGING_CATEGORY(system)
 AppController::AppController()
 	: mActiveWorkflow()
 	, mWaitingRequest()
-	, mActivationController()
 	, mShutdownRunning(false)
 	, mUiDomination(nullptr)
 	, mRestartApplication(false)
@@ -107,12 +107,22 @@ bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 }
 
 
-bool AppController::start()
+void AppController::start()
 {
+	auto shutdownGuard = qScopeGuard([this] {
+			qCCritical(init) << "Cannot start application controller, exit application";
+
+			// Let's enter event loop before we shutdown.
+			// Otherwise we call QCoreApplication::exit before ::exec and get stuck.
+			QMetaObject::invokeMethod(this, [this]{
+				doShutdown(EXIT_FAILURE);
+			}, Qt::QueuedConnection);
+		});
+
 	if (!Env::getSingleton<SecureStorage>()->isLoaded())
 	{
-		qCritical() << "SecureStorage not loaded";
-		return false;
+		qCCritical(init) << "SecureStorage not loaded";
+		return;
 	}
 
 #if !defined(Q_OS_ANDROID)
@@ -125,33 +135,28 @@ bool AppController::start()
 
 	auto* uiLoader = Env::getSingleton<UILoader>();
 	connect(uiLoader, &UILoader::fireLoadedPlugin, this, &AppController::onUiPlugin);
-	if (!uiLoader->load())
+	if (!uiLoader->load() || !uiLoader->hasActiveUI())
 	{
-		qCritical() << "Cannot start without UI";
-		return false;
+		qCCritical(init) << "Cannot start without active UI";
+		return;
 	}
 
-	for (const auto& handler : mActivationController.getHandler())
+	if (!uiLoader->initialize())
 	{
-		connect(this, &AppController::fireApplicationActivated, handler, &ActivationHandler::onApplicationActivated);
-		connect(handler, &ActivationHandler::fireShowUserInformation, this, &AppController::fireShowUserInformation);
-		connect(handler, &ActivationHandler::fireShowUiRequest, this, &AppController::fireShowUi);
-		connect(handler, &ActivationHandler::fireAuthenticationRequest, this, &AppController::onAuthenticationContextRequest, Qt::QueuedConnection);
-
-		if (!handler->start())
-		{
-			qCritical() << "Cannot start activation handler:" << handler->metaObject()->className();
-			doShutdown();
-			return false;
-		}
-		qDebug() << "Successfully started activation handler:" << handler->metaObject()->className();
+		qCCritical(init) << "Cannot initialize UI";
+		return;
 	}
 
-	// Start the ReaderManager *after* initializing the ActivationHandlers. Otherwise the TrayIcon
-	// will be created even when we're just showing an error message and shutdown after that.
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
-	connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
+	if (uiLoader->requiresReaderManager())
+	{
+		// Start the ReaderManager *after* initializing the UIs. Otherwise the TrayIcon
+		// will be created even when we're just showing an error message and shutdown after that.
+		const auto readerManager = Env::getSingleton<ReaderManager>();
+		connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
+		connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
+		readerManager->init();
+	}
+
 	connect(this, &AppController::fireStarted, this, [this] {
 			if (cShowUi)
 			{
@@ -159,12 +164,10 @@ bool AppController::start()
 			}
 		}, Qt::QueuedConnection);
 
-	readerManager->init();
 	QCoreApplication::instance()->installEventFilter(this);
 
 	Q_EMIT fireInitialized();
-
-	return true;
+	shutdownGuard.dismiss();
 }
 
 
@@ -263,12 +266,6 @@ void AppController::onCloseReminderFinished(bool pDontRemindAgain)
 }
 
 
-void AppController::onAuthenticationContextRequest(const QSharedPointer<ActivationContext>& pActivationContext)
-{
-	onWorkflowRequested(AuthController::createWorkflowRequest(pActivationContext));
-}
-
-
 void AppController::onLanguageChanged()
 {
 	LanguageLoader& languageLoader = LanguageLoader::getInstance();
@@ -302,13 +299,12 @@ void AppController::doShutdown(int pExitCode)
 {
 	if (mShutdownRunning)
 	{
-		qDebug() << "Application already shutting down";
+		qCDebug(init) << "Application already shutting down";
 		return;
 	}
 
 	mExitCode = pExitCode;
 	mShutdownRunning = true;
-	mActivationController.shutdown();
 
 	if (mActiveWorkflow)
 	{
@@ -339,15 +335,46 @@ void AppController::doShutdown(int pExitCode)
 
 void AppController::completeShutdown()
 {
-	qDebug() << "Emit fire shutdown";
+	qCDebug(init) << "Emit fire shutdown";
 	Q_EMIT fireShutdown();
 
 	ResourceLoader::getInstance().shutdown();
 
+	const auto& uiShutdown = [this] {
+				const auto& exitApp = [this] {
+							qCDebug(init) << "Quit event loop of QCoreApplication";
+							QCoreApplication::exit(mExitCode);
+						};
+
+				auto* uiLoader = Env::getSingleton<UILoader>();
+				if (uiLoader->isLoaded())
+				{
+					connect(uiLoader, &UILoader::fireRemovedAllPlugins, this, exitApp, Qt::QueuedConnection);
+					uiLoader->shutdown();
+				}
+				else
+				{
+					exitApp();
+				}
+			};
+
+	if (Env::getSingleton<NetworkManager>()->getOpenConnectionCount() > 0)
+	{
+		waitForNetworkConnections(uiShutdown);
+	}
+	else
+	{
+		uiShutdown();
+	}
+}
+
+
+void AppController::waitForNetworkConnections(const std::function<void()>& pExitFunc)
+{
 	auto* timer = new QTimer(this);
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
-	connect(timer, &QTimer::timeout, this, [this, timer](){
+	connect(timer, &QTimer::timeout, this, [timer, pExitFunc](){
 			const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
 			if (openConnectionCount > 0)
 			{
@@ -358,25 +385,15 @@ void AppController::completeShutdown()
 					return;
 				}
 
-				qWarning() << "Closing with" << openConnectionCount << "pending network connections.";
+				qCWarning(init) << "Closing with" << openConnectionCount << "pending network connections.";
 				Q_ASSERT(false);
 			}
 
 			timer->deleteLater();
-
-			auto* uiLoader = Env::getSingleton<UILoader>();
-			connect(uiLoader, &UILoader::fireShutdownComplete, this, &AppController::onUILoaderShutdownComplete, Qt::QueuedConnection);
-			QMetaObject::invokeMethod(uiLoader, &UILoader::shutdown, Qt::QueuedConnection);
+			pExitFunc();
 		});
 
 	timer->start();
-}
-
-
-void AppController::onUILoaderShutdownComplete()
-{
-	qDebug() << "Quit event loop of QCoreApplication";
-	QCoreApplication::exit(mExitCode);
 }
 
 
@@ -413,7 +430,7 @@ void AppController::onRestartApplicationRequested()
 
 void AppController::onUiPlugin(const UIPlugIn* pPlugin)
 {
-	qDebug() << "Register UI:" << pPlugin->metaObject()->className();
+	qCDebug(init) << "Register UI:" << pPlugin->metaObject()->className();
 	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::QueuedConnection);
 	connect(this, &AppController::fireWorkflowStarted, pPlugin, &UIPlugIn::onWorkflowStarted);
 	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UIPlugIn::onWorkflowFinished);
@@ -422,13 +439,15 @@ void AppController::onUiPlugin(const UIPlugIn* pPlugin)
 	connect(this, &AppController::fireShowUi, pPlugin, &UIPlugIn::onShowUi);
 	connect(this, &AppController::fireHideUi, pPlugin, &UIPlugIn::onHideUi);
 	connect(this, &AppController::fireTranslationChanged, pPlugin, &UIPlugIn::onTranslationChanged);
-	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::fireShowUserInformation);
+	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::onShowUserInformation);
 	connect(this, &AppController::fireApplicationActivated, pPlugin, &UIPlugIn::fireApplicationActivated);
 	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
 
 	connect(pPlugin, &UIPlugIn::fireWorkflowRequested, this, &AppController::onWorkflowRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireShowUiRequested, this, &AppController::fireShowUi, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireShowUserInformationRequested, this, &AppController::fireShowUserInformation, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
 	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
@@ -488,7 +507,7 @@ bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessa
 		MSG* msg = reinterpret_cast<MSG*>(pMessage);
 		if (msg->message == WM_QUERYENDSESSION)
 		{
-			qDebug() << "WM_QUERYENDSESSION received";
+			qCDebug(system) << "WM_QUERYENDSESSION received";
 			Q_EMIT fireHideUi();
 		}
 	}
@@ -514,14 +533,14 @@ void AppController::clearCacheFolders()
 
 		cacheDir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 		auto entries = cacheDir.entryList();
-		for (const QString& filePath : qAsConst(entries))
+		for (const QString& filePath : std::as_const(entries))
 		{
 			cacheDir.remove(filePath);
 		}
 
 		cacheDir.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
 		entries = cacheDir.entryList();
-		for (const QString& subDirPath : qAsConst(entries))
+		for (const QString& subDirPath : std::as_const(entries))
 		{
 			QDir subDir(cacheDir.absoluteFilePath(subDirPath));
 			subDir.removeRecursively();

@@ -6,9 +6,9 @@
 
 #include "MessageDispatcher.h"
 
-#include "InternalActivationContext.h"
 #include "ReaderManager.h"
 #include "context/AuthContext.h"
+#include "context/InternalActivationContext.h"
 #include "states/StateEnterPacePassword.h"
 
 #include "TestWorkflowContext.h"

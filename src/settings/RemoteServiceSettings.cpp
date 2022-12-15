@@ -299,7 +299,7 @@ void RemoteServiceSettings::syncRemoteInfos(const QSet<QSslCertificate>& pCertif
 	}
 
 	// add new entries
-	for (const auto& fingerprint : qAsConst(trustedFingerprints))
+	for (const auto& fingerprint : std::as_const(trustedFingerprints))
 	{
 		syncedInfo << RemoteInfo(fingerprint, QDateTime::currentDateTime());
 	}

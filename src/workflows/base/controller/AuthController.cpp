@@ -4,8 +4,8 @@
 
 #include "controller/AuthController.h"
 
-#include "InternalActivationContext.h"
 #include "context/AuthContext.h"
+#include "context/InternalActivationContext.h"
 #include "states/CompositeStateTrustedChannel.h"
 #include "states/FinalState.h"
 #include "states/StateActivateStoreFeedbackDialog.h"

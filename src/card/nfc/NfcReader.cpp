@@ -72,10 +72,10 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 			setCardInfoTagType(CardInfo::TagType::UNKNOWN);
 	}
 
-	//: INFO IOS Feedback when a new ID card has been detected
 	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
-			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
-			 : tr("ID card detected. Please do not move the device!");
+			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+	        //: INFO IOS Feedback when a new ID card has been detected
+			: tr("ID card detected. Please do not move the device!");
 
 	mNfManager.setUserInformation(info);
 

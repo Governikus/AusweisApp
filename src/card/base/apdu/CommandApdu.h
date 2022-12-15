@@ -17,6 +17,7 @@ namespace governikus
 defineTypedEnumType(Ins, uchar,
 		UNKNOWN = 0x00,
 		DEACTIVATE = 0x04,
+		VERIFY = 0x20,
 		MSE_SET = 0x22,
 		ACTIVATE = 0x44,
 		EXTERNAL_AUTHENTICATE = 0x82,
@@ -68,6 +69,8 @@ class CommandApdu
 		explicit CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int pLe = NO_LE);
 		explicit CommandApdu(Ins pIns, uchar pP1, uchar pP2, const QByteArray& pData = QByteArray(), int pLe = NO_LE);
 		virtual ~CommandApdu();
+
+		[[nodiscard]] bool isProprietary() const;
 
 		void enableCommandChaining();
 		[[nodiscard]] bool isCommandChaining() const;

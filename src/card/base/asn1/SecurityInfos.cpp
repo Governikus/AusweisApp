@@ -60,11 +60,9 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 
 		if (auto meid = MobileEIDTypeInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed SecurityInfo:" << meid;
-
 			if (mobileEIDTypeInfo)
 			{
-				qCCritical(card) << "More than one MobileEIDTypeInfo";
+				qCCritical(card) << "More than one MobileEIDTypeInfo found:" << meid;
 				return QSharedPointer<SecurityInfos>();
 			}
 			mobileEIDTypeInfo = meid;
@@ -72,22 +70,20 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		}
 		else if (auto pi = PaceInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed SecurityInfo:" << pi;
 			paceInfos << pi;
 			securityInfos << pi;
 		}
 		else if (auto cai = ChipAuthenticationInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed SecurityInfo:" << cai;
 			chipAuthenticationInfos << cai;
 			securityInfos << cai;
 		}
 		else if (auto secInfo = SecurityInfo::decode(bytes))
 		{
-			qCDebug(card) << "Parsed SecurityInfo:" << secInfo->getOid();
 			securityInfos << secInfo;
 		}
-		else
+
+		if (securityInfos.size() == i)
 		{
 			qCCritical(card) << "Cannot parse as SecurityInfo" << pBytes.toHex();
 			return QSharedPointer<SecurityInfos>();

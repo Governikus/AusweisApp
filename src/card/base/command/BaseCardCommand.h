@@ -25,14 +25,20 @@ class BaseCardCommand
 	private:
 		Q_INVOKABLE void execute();
 		QSharedPointer<CardConnectionWorker> mCardConnectionWorker;
+		CardReturnCode mReturnCode;
 
 	protected:
-		CardReturnCode mReturnCode;
 		explicit BaseCardCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 		[[nodiscard]] QSharedPointer<CardConnectionWorker> getCardConnectionWorker()
 		{
 			return mCardConnectionWorker;
+		}
+
+
+		void setReturnCode(CardReturnCode pReturnCode)
+		{
+			mReturnCode = pReturnCode;
 		}
 
 

@@ -1,97 +1,145 @@
 /*
  * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
-
 Item {
-	QtObject {
-		id: d
-		readonly property int stepWidth: ApplicationModel.scaleFactor * 250
-	}
-
 	height: selector.height
+	state: "1"
 	width: d.stepWidth * 4 + height
 
-	state: "1"
 	states: [
 		State {
 			name: "1"
-			PropertyChanges { target: circle1; enabled: true }
-			PropertyChanges { target: circle2; enabled: false }
-			PropertyChanges { target: circle3; enabled: false }
-			PropertyChanges { target: line; anchors.leftMargin: 0 }
+
+			PropertyChanges {
+				enabled: true
+				target: circle1
+			}
+			PropertyChanges {
+				enabled: false
+				target: circle2
+			}
+			PropertyChanges {
+				enabled: false
+				target: circle3
+			}
+			PropertyChanges {
+				anchors.leftMargin: 0
+				target: line
+			}
 		},
 		State {
 			name: "2"
-			PropertyChanges { target: circle1; enabled: false }
-			PropertyChanges { target: circle2; enabled: true }
-			PropertyChanges { target: circle3; enabled: false }
-			PropertyChanges { target: line; anchors.leftMargin: -d.stepWidth }
+
+			PropertyChanges {
+				enabled: false
+				target: circle1
+			}
+			PropertyChanges {
+				enabled: true
+				target: circle2
+			}
+			PropertyChanges {
+				enabled: false
+				target: circle3
+			}
+			PropertyChanges {
+				anchors.leftMargin: -d.stepWidth
+				target: line
+			}
 		},
 		State {
 			name: "3"
-			PropertyChanges { target: circle1; enabled: false }
-			PropertyChanges { target: circle2; enabled: false }
-			PropertyChanges { target: circle3; enabled: true }
-			PropertyChanges { target: line; anchors.leftMargin: 2 * -d.stepWidth }
+
+			PropertyChanges {
+				enabled: false
+				target: circle1
+			}
+			PropertyChanges {
+				enabled: false
+				target: circle2
+			}
+			PropertyChanges {
+				enabled: true
+				target: circle3
+			}
+			PropertyChanges {
+				anchors.leftMargin: 2 * -d.stepWidth
+				target: line
+			}
 		}
 	]
 	transitions: [
 		Transition {
-			PropertyAnimation { target: line; property: "anchors.leftMargin"; duration: 500; easing.type: Easing.InOutCubic }
+			PropertyAnimation {
+				duration: 500
+				easing.type: Easing.InOutCubic
+				property: "anchors.leftMargin"
+				target: line
+			}
 			SequentialAnimation {
-				PauseAnimation { duration: 200 }
-				PropertyAction { target: circle1; property: "enabled" }
-				PropertyAction { target: circle2; property: "enabled" }
-				PropertyAction { target: circle3; property: "enabled" }
+				PauseAnimation {
+					duration: 200
+				}
+				PropertyAction {
+					property: "enabled"
+					target: circle1
+				}
+				PropertyAction {
+					property: "enabled"
+					target: circle2
+				}
+				PropertyAction {
+					property: "enabled"
+					target: circle3
+				}
 			}
 		}
 	]
 
+	QtObject {
+		id: d
+
+		readonly property int stepWidth: ApplicationModel.scaleFactor * 250
+	}
 	Rectangle {
 		id: line
 		anchors.left: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
-		width: d.stepWidth * 2
-		height: ApplicationModel.scaleFactor * 8
 		color: Style.color.border
+		height: ApplicationModel.scaleFactor * 8
+		width: d.stepWidth * 2
 	}
-
 	TextCircle {
 		id: circle1
-		anchors.verticalCenter: line.verticalCenter
 		anchors.horizontalCenter: line.left
+		anchors.verticalCenter: line.verticalCenter
 		text: "1"
 	}
-
 	TextCircle {
 		id: circle2
-		anchors.verticalCenter: line.verticalCenter
 		anchors.horizontalCenter: line.horizontalCenter
+		anchors.verticalCenter: line.verticalCenter
 		text: "2"
 	}
-
 	TextCircle {
 		id: circle3
-		anchors.verticalCenter: line.verticalCenter
 		anchors.horizontalCenter: line.right
+		anchors.verticalCenter: line.verticalCenter
 		text: "3"
 	}
-
 	Rectangle {
 		id: selector
-		height: circle1.height + ApplicationModel.scaleFactor * 40
-		width: height
 		anchors.centerIn: parent
-		color: Style.color.transparent
-		radius: height / 2
 		border.color: Style.color.accent
 		border.width: ApplicationModel.scaleFactor * 6
+		color: Style.color.transparent
+		height: circle1.height + ApplicationModel.scaleFactor * 40
+		radius: height / 2
+		width: height
 	}
 }

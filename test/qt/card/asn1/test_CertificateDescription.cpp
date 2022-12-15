@@ -338,7 +338,7 @@ class test_CertificateDescription
 			commCertBytes.append(QByteArray::fromHex("E85E1E8A78864E9246C86CF1C2A3810603EEEE75746C70CD51ACB86B5E2655D8"));
 			commCertBytes.append(QByteArray::fromHex("0617A64C37179860FEA3044A14052505FB4F8EF4D61F047B6A30130CD06718E6"));
 			commCertBytes.append(QByteArray::fromHex("718FA21C2DF3A81BEF1B7A53360481C78C017F1EC7170266C2C4E9BB654B0E3B"));
-			for (const auto& commCertByte : qAsConst(commCertBytes))
+			for (const auto& commCertByte : std::as_const(commCertBytes))
 			{
 				ASN1_OCTET_STRING* octetString = ASN1_OCTET_STRING_new();
 				ASN1_OCTET_STRING_set(octetString, reinterpret_cast<const uchar*>(commCertByte.constData()), commCertByte.length());

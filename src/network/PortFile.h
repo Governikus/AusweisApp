@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QFile>
+#include <QFileInfoList>
 #include <QString>
 
 namespace governikus
@@ -20,7 +21,8 @@ class PortFile
 	public:
 		static const quint16 cDefaultPort;
 
-		static QString getPortFilename(const QString& pUsage = QString(),
+		[[nodiscard]] static QFileInfoList getAllPortFiles();
+		[[nodiscard]] static QString getPortFilename(const QString& pUsage = QString(),
 				qint64 pPid = QCoreApplication::applicationPid(),
 				const QString& pApp = QCoreApplication::applicationName());
 
@@ -28,6 +30,7 @@ class PortFile
 		~PortFile();
 
 		void handlePort(quint16 pCurrentPort);
+		void remove();
 };
 
 } // namespace governikus

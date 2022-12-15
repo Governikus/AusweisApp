@@ -43,9 +43,6 @@ class IfdDescriptor
 				bool isSameIfd(const IfdDescriptorData& pOther) const;
 		};
 
-		static IfdDescriptorData* createRemoteDeviceDescriptorData(const Discovery& pDiscovery,
-				const QHostAddress& pHostAddress, bool pLocalIfd);
-
 		QSharedDataPointer<IfdDescriptorData> d;
 
 	public:

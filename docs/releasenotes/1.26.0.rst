@@ -1,0 +1,30 @@
+AusweisApp2 1.26.0
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 14. Dezember 2022
+
+
+Anwender
+""""""""
+- Unterstützung von macOS 13.
+
+- Unterstützung von Windows Server 2016 (Version 1607).
+
+- Unterstützung von Windows Server 2019.
+
+- Unterstützung von Windows Server 2022.
+
+- Für den Mehrbenutzerbetrieb in Terminalserver-Umgebungen ist nun ein
+  Proxy-Dienst verfügbar. Details finden sich im Dokument "Anleitung
+  zur Installation in Firmennetzwerken".
+
+- Behebung von Abstürzen unter Android.
+
+
+Entwickler
+""""""""""
+- Das iOS SDK unterstützt jetzt arm64-simulator.
+
+- Aktualisierung von OpenSSL auf die Version 3.0.7.
+
+- Aktualisierung von Qt auf die Version 6.4.1.

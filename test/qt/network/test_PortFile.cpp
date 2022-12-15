@@ -43,8 +43,10 @@ class test_PortFile
 
 			{
 				PortFile portFile(usage);
+				QCOMPARE(PortFile::getAllPortFiles().size(), 0);
 				QVERIFY(!QFile::exists(filename));
 				portFile.handlePort(port);
+				QCOMPARE(PortFile::getAllPortFiles().size(), fileCreated ? 1 : 0);
 				QCOMPARE(QFile::exists(filename), fileCreated);
 
 				if (!usage.isEmpty())

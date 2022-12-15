@@ -244,7 +244,7 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 
 	// Response data according to PC/SC Part 10 amendment 1.1
 	mStatusMseSetAt = pOutput.mid(0, 2);
-	qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(qAsConst(mStatusMseSetAt).data()));
+	qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(std::as_const(mStatusMseSetAt).data()));
 
 	int it = 2;
 	const auto& efCardAccess = LengthValue::readByteArray<quint16>(pOutput, it);
@@ -343,7 +343,7 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 	if (channelOutput->mStatusMSESetAt)
 	{
 		mStatusMseSetAt = Asn1OctetStringUtil::getValue(channelOutput->mStatusMSESetAt);
-		qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(qAsConst(mStatusMseSetAt).data()));
+		qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(std::as_const(mStatusMseSetAt).data()));
 	}
 
 	if (channelOutput->mEfCardAccess)

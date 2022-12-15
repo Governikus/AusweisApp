@@ -109,7 +109,7 @@ QVector<RemoteServiceSettings::RemoteInfo> RemoteIfdClient::getConnectedDeviceIn
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto remoteInfos = settings.getRemoteInfos();
 	QVector<RemoteServiceSettings::RemoteInfo> result;
-	for (const auto& info : qAsConst(remoteInfos))
+	for (const auto& info : std::as_const(remoteInfos))
 	{
 		const auto& deviceIDs = getConnectedDeviceIDs();
 		for (const auto& id : deviceIDs)

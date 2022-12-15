@@ -308,7 +308,10 @@ bool NetworkManager::prepareConnection(QNetworkRequest& pRequest)
 	}
 
 	pRequest.setTransferTimeout();
-	pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
+	if (pRequest.header(QNetworkRequest::UserAgentHeader).isNull())
+	{
+		pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
+	}
 
 	if (pRequest.sslConfiguration() == QSslConfiguration::defaultConfiguration())
 	{

@@ -62,88 +62,88 @@ class SettingsModel
 		~SettingsModel() override = default;
 
 	public:
-		QString getLanguage() const;
+		[[nodiscard]] QString getLanguage() const;
 		void setLanguage(const QString& pLanguage);
 
-		bool isAdvancedSettings() const;
+		[[nodiscard]] bool isAdvancedSettings() const;
 		void setAdvancedSettings(bool pEnabled);
 
-		bool isDeveloperOptions() const;
+		[[nodiscard]] bool isDeveloperOptions() const;
 		void setDeveloperOptions(bool pEnabled);
 
-		bool isDeveloperMode() const;
+		[[nodiscard]] bool isDeveloperMode() const;
 		void setDeveloperMode(bool pEnabled);
 
-		bool useSelfauthenticationTestUri() const;
+		[[nodiscard]] bool useSelfauthenticationTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse);
 
-		QString getServerName() const;
+		[[nodiscard]] QString getServerName() const;
 		void setServerName(const QString& name);
 
 		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint);
-		Q_INVOKABLE int removeHistory(const QString& pPeriodToRemove);
-		Q_INVOKABLE int removeEntireHistory();
+		[[nodiscard]] Q_INVOKABLE int removeHistory(const QString& pPeriodToRemove);
+		[[nodiscard]] Q_INVOKABLE int removeEntireHistory();
 
-		bool getPinPadMode() const;
+		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
 
-		bool isHistoryEnabled() const;
+		[[nodiscard]] bool isHistoryEnabled() const;
 		void setHistoryEnabled(bool pEnabled);
 
-		bool isUseScreenKeyboard() const;
+		[[nodiscard]] bool isUseScreenKeyboard() const;
 		void setUseScreenKeyboard(bool pUseScreenKeyboard);
 
-		bool isVisualPrivacy() const;
+		[[nodiscard]] bool isVisualPrivacy() const;
 		void setVisualPrivacy(bool pVisualPrivacy);
 
-		bool isShuffleScreenKeyboard() const;
+		[[nodiscard]] bool isShuffleScreenKeyboard() const;
 		void setShuffleScreenKeyboard(bool pShuffleScreenKeyboard);
 
-		bool isEnableCanAllowed() const;
+		[[nodiscard]] bool isEnableCanAllowed() const;
 		void setEnableCanAllowed(bool pEnableCanAllowed);
 
-		bool isSkipRightsOnCanAllowed() const;
+		[[nodiscard]] bool isSkipRightsOnCanAllowed() const;
 		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
 
-		bool isSimulatorEnabled() const;
+		[[nodiscard]] bool isSimulatorEnabled() const;
 		void setSimulatorEnabled(bool pEnabled);
 
-		UiModule getStartupModule() const;
+		[[nodiscard]] UiModule getStartupModule() const;
 		void setStartupModule(UiModule pModule);
 
-		bool isAutoStartAvailable() const;
-		bool isAutoStart() const;
-		bool autoStartIsSetByAdmin() const;
+		[[nodiscard]] bool isAutoStartAvailable() const;
+		[[nodiscard]] bool isAutoStart() const;
+		[[nodiscard]] bool autoStartIsSetByAdmin() const;
 		void setAutoStart(bool pEnabled);
 
-		bool isAutoCloseWindowAfterAuthentication() const;
+		[[nodiscard]] bool isAutoCloseWindowAfterAuthentication() const;
 		void setAutoCloseWindowAfterAuthentication(bool pEnabled);
 
-		bool isAutoUpdateAvailable() const;
-		bool isAutoUpdateCheck() const;
-		bool autoUpdateCheckIsSetByAdmin() const;
+		[[nodiscard]] bool isAutoUpdateAvailable() const;
+		[[nodiscard]] bool isAutoUpdateCheck() const;
+		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
 
-		bool isRemindUserToClose() const;
+		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
 
-		bool isTransportPinReminder() const;
+		[[nodiscard]] bool isTransportPinReminder() const;
 		void setTransportPinReminder(bool pTransportPinReminder);
 
-		bool isShowInAppNotifications() const;
+		[[nodiscard]] bool isShowInAppNotifications() const;
 		void setShowInAppNotifications(bool pShowInAppNotifications);
 
-		QUrl getCustomProxyUrl() const;
-		bool isCustomProxyAttributesPresent() const;
-		bool isUseCustomProxy() const;
+		[[nodiscard]] QUrl getCustomProxyUrl() const;
+		[[nodiscard]] bool isCustomProxyAttributesPresent() const;
+		[[nodiscard]] bool isUseCustomProxy() const;
 		void setUseCustomProxy(bool pUseCustomProxy);
 
-		Q_INVOKABLE bool requestStoreFeedback() const;
+		[[nodiscard]] Q_INVOKABLE bool requestStoreFeedback() const;
 		Q_INVOKABLE void hideFutureStoreFeedbackDialogs();
 
 		Q_INVOKABLE void updateAppcast();
 
-		AppUpdateDataModel* getAppUpdateData() const;
+		[[nodiscard]] AppUpdateDataModel* getAppUpdateData() const;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

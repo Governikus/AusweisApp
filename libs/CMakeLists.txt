@@ -109,8 +109,8 @@ if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
 endif()
 
 ################################## Versions
-set(QT 6.3.1)
-set(QT_HASH 51114e789485fdb6b35d112dfd7c7abb38326325ac51221b6341564a1c3cc726)
+set(QT 6.4.1)
+set(QT_HASH e20b850b6134098a7f2e7701cfddfb213c6cf394b9e848e6fbc5b0e89dcfcc09)
 
 set(OPENSSL 3.0.7)
 set(OPENSSL_HASH 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e)
@@ -178,9 +178,12 @@ else()
 endif()
 
 if(IOS)
-	if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
 		set(OPENSSL_ARCH iossimulator-xcrun)
 		set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-asm)
+		if (CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+			set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} "-arch arm64")
+		endif()
 	else()
 		set(OPENSSL_ARCH ios64-cross)
 		string(REGEX REPLACE "/SDKs/.*" "" CROSS_TOP_DEV_ROOT "${CMAKE_OSX_SYSROOT}")
@@ -356,11 +359,11 @@ foreach(feature ${NO_FEATURES})
 endforeach()
 
 
-list(APPEND SKIP_MODULES qtopcua qtwebchannel qtlanguageserver)
+list(APPEND SKIP_MODULES qtopcua qtwebchannel qtlanguageserver qtspeech)
 list(APPEND SKIP_MODULES qtwebengine qtactiveqt qtserialbus qt5compat qtsensors)
 list(APPEND SKIP_MODULES qtserialport qtvirtualkeyboard qtcharts)
 list(APPEND SKIP_MODULES qtdatavis3d qt3d qtwayland qtremoteobjects)
-list(APPEND SKIP_MODULES qtwebview qtmultimedia qtlottie qtquick3d)
+list(APPEND SKIP_MODULES qtwebview qtmultimedia qtlottie qtquick3d qtquick3dphysics)
 list(APPEND SKIP_MODULES qtnetworkauth qtmqtt qtcoap qtquicktimeline qtdoc qtpositioning)
 if(INTEGRATED_SDK)
 	list(APPEND SKIP_MODULES qttranslations qtsensors qtdeclarative qtquickcontrols2 qtgraphicaleffects qtimageformats qttools qtsvg qtconnectivity)
@@ -375,7 +378,11 @@ set(QT_CONFIGURE configure)
 if(IOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -xplatform macx-ios-clang)
 
-	if(CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
+		set(QT_HOST_CMAKE_FLAGS ${QT_HOST_CMAKE_FLAGS} -DCMAKE_OSX_SYSROOT=macosx)
+		if (CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+			set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})
+		endif()
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -sdk iphonesimulator)
 	else()
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -sdk iphoneos)
@@ -453,6 +460,8 @@ if (BUILD_HOST_QT AND (IOS OR ANDROID))
 	set(QT_HOST_CONFIGURE_FLAGS -prefix ${QT_HOST_PATH} -release -optimize-size -shared -no-widgets -no-openssl -no-zstd -no-opengl)
 	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED})
 
+	set(QT_HOST_CMAKE_FLAGS	${QT_HOST_CMAKE_FLAGS} -DCMAKE_PREFIX_PATH=${QT_HOST_PATH})
+
 	list(APPEND SKIP_HOST_MODULES qtsvg qtimageformats qtconnectivity qttranslations qtwebsockets)
 	foreach(module ${SKIP_HOST_MODULES})
 		set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} -skip ${module})
@@ -465,14 +474,14 @@ if (BUILD_HOST_QT AND (IOS OR ANDROID))
 
 		PATCH_COMMAND ${CMAKE_COMMAND} -DCOMPONENT=qt -P ${PATCH_CMAKE} &&
 			${CMAKE_COMMAND} -E touch qtbase/.gitignore
-		CONFIGURE_COMMAND <SOURCE_DIR>/${QT_CONFIGURE} ${QT_HOST_CONFIGURE_FLAGS} -- -DCMAKE_PREFIX_PATH=${QT_HOST_PATH}
+		CONFIGURE_COMMAND <SOURCE_DIR>/${QT_CONFIGURE} ${QT_HOST_CONFIGURE_FLAGS} -- ${QT_HOST_CMAKE_FLAGS}
 		BUILD_COMMAND ${CMAKE_COMMAND} --build . ${MAKE_JOBS}
 		INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 	)
 endif()
 
 if(QT_HOST_PATH)
-	set(ADDITIONAL_QT_DEFINES -DQT_HOST_PATH=${QT_HOST_PATH})
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DQT_HOST_PATH=${QT_HOST_PATH})
 endif()
 
 ExternalProject_Add(qt

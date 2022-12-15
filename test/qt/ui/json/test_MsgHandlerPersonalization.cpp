@@ -55,6 +55,10 @@ class test_MsgHandlerPersonalization
 						mSmartAvailable = true;
 					}
 				});
+
+			connect(Env::getSingleton<UILoader>(), &UILoader::fireLoadedPlugin, this, [](UIPlugIn* pUi){
+					pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
+				});
 		}
 
 
@@ -63,7 +67,7 @@ class test_MsgHandlerPersonalization
 			auto* uiLoader = Env::getSingleton<UILoader>();
 			if (uiLoader->isLoaded())
 			{
-				QSignalSpy spyUi(uiLoader, &UILoader::fireShutdownComplete);
+				QSignalSpy spyUi(uiLoader, &UILoader::fireRemovedAllPlugins);
 				uiLoader->shutdown();
 				QTRY_COMPARE(spyUi.count(), 1); // clazy:exclude=qstring-allocations
 			}
@@ -225,9 +229,11 @@ class test_MsgHandlerPersonalization
 			bool reachedStateGetTcToken = false;
 
 #if __has_include("context/PersonalizationContext.h")
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -318,6 +324,8 @@ class test_MsgHandlerPersonalization
 		void handleInterrupt()
 		{
 #if __has_include("context/PersonalizationContext.h")
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, handleInterrupt);
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
@@ -326,7 +334,7 @@ class test_MsgHandlerPersonalization
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -400,6 +408,8 @@ class test_MsgHandlerPersonalization
 		void handleInterruptDefault()
 		{
 #if __has_include("context/PersonalizationContext.h")
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
@@ -407,7 +417,7 @@ class test_MsgHandlerPersonalization
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
@@ -473,13 +483,15 @@ class test_MsgHandlerPersonalization
 		void handleDeveloperMode()
 		{
 #if __has_include("context/PersonalizationContext.h")
+			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+
 			QFETCH(QVariant, developerMode);
 
 			bool reachedStateGetTcToken = false;
 
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
-			QVERIFY(controller.start());
+			controller.start();
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
 					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});

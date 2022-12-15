@@ -190,8 +190,8 @@ QByteArray LogHandler::getCriticalLogWindow()
 
 	if (mCriticalLog)
 	{
-		const auto first = qAsConst(mCriticalLogWindow).first();
-		const auto last = qAsConst(mCriticalLogWindow).last();
+		const auto first = std::as_const(mCriticalLogWindow).first();
+		const auto last = std::as_const(mCriticalLogWindow).last();
 		return readLogFile(first.mPosition, last.mPosition - first.mPosition + last.mLength);
 	}
 

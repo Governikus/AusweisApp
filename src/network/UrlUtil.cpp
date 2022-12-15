@@ -5,6 +5,10 @@
 
 #include "UrlUtil.h"
 
+#include "AppSettings.h"
+#include "Env.h"
+#include "Initializer.h"
+
 #include <QHostAddress>
 #include <QLoggingCategory>
 #include <QRegularExpression>
@@ -106,3 +110,42 @@ QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
 	adaptedUrl.setQuery(q);
 	return adaptedUrl;
 }
+
+
+void UrlUtil::setHiddenSettings(const QUrlQuery& pUrl)
+{
+	const auto queryUseTestUri = QLatin1String("useTestUri");
+	if (pUrl.hasQueryItem(queryUseTestUri))
+	{
+		const auto value = pUrl.queryItemValue(queryUseTestUri);
+		const bool useTestUri = QVariant(value).toBool();
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setUseSelfauthenticationTestUri(useTestUri);
+	}
+
+	const auto queryEnableSimulator = QLatin1String("enableSimulator");
+	if (pUrl.hasQueryItem(queryEnableSimulator))
+	{
+		const auto value = pUrl.queryItemValue(queryEnableSimulator);
+		const bool enableSimulator = QVariant(value).toBool();
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setSimulatorEnabled(enableSimulator);
+	}
+}
+
+
+QPair<UrlQueryRequest, QString> UrlUtil::getRequest(const QUrlQuery& pUrl)
+{
+	const auto queryItems = pUrl.queryItems();
+	for (const auto& item : queryItems)
+	{
+		const auto type = Enum<UrlQueryRequest>::fromString(item.first.toUpper(), UrlQueryRequest::UNKNOWN);
+		if (type != UrlQueryRequest::UNKNOWN)
+		{
+			return {type, item.second};
+		}
+	}
+
+	return {UrlQueryRequest::UNKNOWN, QString()};
+}
+
+
+#include "moc_UrlUtil.cpp"

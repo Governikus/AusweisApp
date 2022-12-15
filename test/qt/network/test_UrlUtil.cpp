@@ -5,7 +5,10 @@
  */
 
 #include "UrlUtil.h"
-#include <QSslCertificate>
+
+#include "AppSettings.h"
+#include "Env.h"
+
 #include <QtTest>
 
 using namespace governikus;
@@ -78,6 +81,81 @@ class test_UrlUtil
 			// General client error
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Not_Initialized))).toString(),
 					URL_PREFIX + "?ResultMajor=error&ResultMinor=clientError");
+		}
+
+
+		void getRequest_data()
+		{
+			QTest::addColumn<QUrl>("url");
+			QTest::addColumn<UrlQueryRequest>("type");
+			QTest::addColumn<QString>("value");
+
+			QTest::newRow("empty") << QUrl("") << UrlQueryRequest::UNKNOWN << QString();
+			QTest::newRow("no query") << QUrl("example.com") << UrlQueryRequest::UNKNOWN << QString();
+			QTest::newRow("empty value") << QUrl("?showui=") << UrlQueryRequest::SHOWUI << QString();
+			QTest::newRow("showui - l") << QUrl("?showui=test") << UrlQueryRequest::SHOWUI << QString("test");
+			QTest::newRow("showui - h") << QUrl("?SHOWUI=test") << UrlQueryRequest::SHOWUI << QString("test");
+			QTest::newRow("status - l") << QUrl("?status=test") << UrlQueryRequest::STATUS << QString("test");
+			QTest::newRow("status - h") << QUrl("?STATUS=test") << UrlQueryRequest::STATUS << QString("test");
+			QTest::newRow("tctokenurl - l") << QUrl("?tctokenurl=test") << UrlQueryRequest::TCTOKENURL << QString("test");
+			QTest::newRow("tctokenurl - h") << QUrl("?TCTOKENURL=test") << UrlQueryRequest::TCTOKENURL << QString("test");
+			QTest::newRow("multi 1") << QUrl("?showui=test1&status=test2") << UrlQueryRequest::SHOWUI << QString("test1");
+			QTest::newRow("multi 2") << QUrl("?status=test1&showui=test2") << UrlQueryRequest::STATUS << QString("test1");
+			QTest::newRow("multi 3") << QUrl("?foo=test1&showui=test2") << UrlQueryRequest::SHOWUI << QString("test2");
+			QTest::newRow("multi 4") << QUrl("?foo=&showui=test2") << UrlQueryRequest::SHOWUI << QString("test2");
+			QTest::newRow("multi 5") << QUrl("?foo=test1&showui=") << UrlQueryRequest::SHOWUI << QString();
+			QTest::newRow("multi 6") << QUrl("?showui=&showui=test1") << UrlQueryRequest::SHOWUI << QString();
+			QTest::newRow("multi 7") << QUrl("?foo=test1&bar=test2") << UrlQueryRequest::UNKNOWN << QString();
+		}
+
+
+		void getRequest()
+		{
+			QFETCH(QUrl, url);
+			QFETCH(UrlQueryRequest, type);
+			QFETCH(QString, value);
+
+			const auto queryUrl = QUrlQuery(url);
+			const auto [parsedType, parsedValue] = UrlUtil::getRequest(queryUrl);
+			QCOMPARE(type, parsedType);
+			QCOMPARE(value, parsedValue);
+		}
+
+
+		void setHiddenSettings_data()
+		{
+			QTest::addColumn<QUrl>("url");
+			QTest::addColumn<bool>("useTestUri");
+			QTest::addColumn<bool>("enableSimulator");
+
+			QTest::newRow("empty") << QUrl("") << false << false;
+			QTest::newRow("useTestUri") << QUrl("?useTestUri=true") << true << false;
+			QTest::newRow("!useTestUri") << QUrl("?useTestUri=false") << false << false;
+			QTest::newRow("enableSimulator") << QUrl("?enableSimulator=true") << false << true;
+			QTest::newRow("!enableSimulator") << QUrl("?enableSimulator=false") << false << false;
+			QTest::newRow("multi 1") << QUrl("?useTestUri=true&enableSimulator=true") << true << true;
+			QTest::newRow("multi 2") << QUrl("?useTestUri=true&enableSimulator=false") << true << false;
+		}
+
+
+		void setHiddenSettings()
+		{
+			auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			generalSettings.setDeveloperOptions(true);
+			generalSettings.setUseSelfauthenticationTestUri(false);
+			generalSettings.setSimulatorEnabled(false);
+
+			QCOMPARE(generalSettings.useSelfAuthTestUri(), false);
+			QCOMPARE(generalSettings.isSimulatorEnabled(), false);
+
+			QFETCH(QUrl, url);
+			QFETCH(bool, useTestUri);
+			QFETCH(bool, enableSimulator);
+
+			UrlUtil::setHiddenSettings(QUrlQuery(url));
+
+			QCOMPARE(generalSettings.useSelfAuthTestUri(), useTestUri);
+			QCOMPARE(generalSettings.isSimulatorEnabled(), enableSimulator);
 		}
 
 

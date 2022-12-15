@@ -1,21 +1,18 @@
 /*
  * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
-
 import Governikus.Global 1.0
 
 Column {
-	width: parent.width
-
 	property alias source: image.source
+
+	width: parent.width
 
 	TutorialImage {
 		id: image
-		width: parent.width * 0.03
-
 		centerX: 0.5
 		centerY: 0.5
+		width: parent.width * 0.03
 	}
 }

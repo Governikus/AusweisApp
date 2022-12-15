@@ -12,7 +12,7 @@ contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
 INSTALLDIR
   States the installation directory. If not specified, the folder
@@ -26,6 +26,16 @@ SYSTEMSETTINGS
 DESKTOPSHORTCUT
   By specifying DESKTOPSHORTCUT=false, no desktop shortcut is created. Without
   specifying the argument, the desktop shortcut is created for all users (true).
+
+PROXYSERVICE
+  The proxy service is required to enable the parallel operation of several
+  entities of AusweisApp2. The proxy service monitors port 24727 (defined in
+  BSI TR-03124-1) and forwards requests to the local AusweisApp2 instances.
+  The Discovery messages (amendment to BSI TR-03112-6 - IFD Service - Chapter
+  3) are not forwarded, so that SaC devices cannot be recognized or used in
+  this operating mode. Not specified, the proxy service will be installed
+  automatically if Terminal Services is installed and the system is running
+  in application server mode.
 
 AUTOSTART
   Setting AUTOSTART=true creates autostart entry for all users. Users are unable
@@ -231,6 +241,11 @@ AusweisApp2 via a websocket interface (SDK function, eID-SDK).
 Therefore local incoming network connections to TCP Port 24727 must be
 permitted.
 
+If the proxy service is activated, the AusweisApp2 proxy takes over the server
+functions of AusweisApp2 on port 24727. The entities of AusweisApp2 recognize
+the proxy and use a free random port in this case to which the proxy forwards
+the requests.
+
 Broadcast on UDP port 24727 in the local subnet have to be receivable by the
 AusweisApp2 to use the "Smartphone as Card Reader" functionality.
 It may be necessary to deactive AP isolation on your router.
@@ -271,14 +286,15 @@ TLS termination proxy.
    :header: "Reference", "Protocol", "Port", "Direction", "Optional", "Purpose", "Note"
    :widths: 8, 8, 8, 8, 8, 35, 25
 
-   "eID1",	TCP, 24727,  "incoming", "no",	"Online eID function, eID activation [#TR-03124]_",											    "Only accessible from localhost [#TR-03124]_"
-   "eID2",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to the provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
-   "eID3",	TCP, 443,    "outgoing", "no",	"Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",								    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
-   "eID-SDK",	TCP, 24727,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
-   "SaC1",	UDP, 24727,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
-   "SaC2",	TCP, ,       "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
-   "Update",	TCP, 443,    "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as information on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
+   "eID1",	TCP, 24727 [#aa2proxy]_,  "incoming", "no",	"Online eID function, eID activation [#TR-03124]_",											    "Only accessible from localhost [#TR-03124]_"
+   "eID2",	TCP, 443,                 "outgoing", "no",	"Online eID function, connection to the provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID3",	TCP, 443,                 "outgoing", "no",	"Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",								    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID-SDK",	TCP, 24727 [#aa2proxy]_,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
+   "SaC1",	UDP, 24727 [#aa2proxy]_,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
+   "SaC2",	TCP, ,                    "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
+   "Update",	TCP, 443,                 "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as information on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
 
+.. [#aa2proxy] Or a random port when using AusweisApp2 proxy.
 .. [#TR-03124] See TR-03124 specification from the BSI
 .. [#TR-03112] See TR-03112-6 specifiaction from the BSI
 .. [#govurl] All updates are based on the URL https://appl.governikus-asp.de/ausweisapp2/

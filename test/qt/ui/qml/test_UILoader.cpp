@@ -27,6 +27,7 @@ class test_UILoader
 			UILoader loader;
 			QSignalSpy spyLoaded(&loader, &UILoader::fireLoadedPlugin);
 
+			QVERIFY(loader.initialize());
 			QVERIFY(!loader.isLoaded());
 			QTest::ignoreMessage(QtDebugMsg, R"(Try to load UI plugin: "json")");
 			QTest::ignoreMessage(QtCriticalMsg, R"(Cannot find UI plugin: "json")");
@@ -58,8 +59,15 @@ class test_UILoader
 			QSignalSpy spyLoaded(&loader, &UILoader::fireLoadedPlugin);
 			QVERIFY(loader.load());
 			QVERIFY(loader.isLoaded());
+			QVERIFY(!loader.initialize());
 			QVERIFY(loader.getLoaded<UIPlugInWebSocket>());
 			QCOMPARE(spyLoaded.count(), 1);
+			QVERIFY(loader.requiresReaderManager());
+
+			const auto* ui = loader.getLoaded<UIPlugInWebSocket>();
+			QCOMPARE(ui->property("default"), QVariant(true));
+			QCOMPARE(ui->property("passive"), QVariant());
+			QCOMPARE(ui->property("readerManager"), QVariant());
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("websocket"))");
@@ -77,6 +85,7 @@ class test_UILoader
 			QSignalSpy spyLoaded(&loader, &UILoader::fireLoadedPlugin);
 			QVERIFY(loader.load());
 			QVERIFY(loader.isLoaded());
+			QVERIFY(!loader.initialize());
 			QVERIFY(loader.getLoaded<UIPlugInWebSocket>());
 			QCOMPARE(spyLoaded.count(), 1);
 

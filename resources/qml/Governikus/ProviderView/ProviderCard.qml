@@ -1,11 +1,9 @@
 /*
  * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQuick.Window 2.10
 import QtQuick.Layouts 1.15
-
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Provider 1.0
@@ -17,117 +15,100 @@ Item {
 	id: baseItem
 
 	property alias providerModelItem: provider.modelItem
+
 	signal showDetailView(var pModelItem)
 
+	Accessible.name: nameText.text
+	Accessible.role: Accessible.Button
 	height: Math.floor(width * 0.84) // Set a fixed aspect ratio which best fits the view
 
 	Keys.onSpacePressed: mouseArea.clicked(undefined)
-	Accessible.role: Accessible.Button
-	Accessible.name: nameText.text
 
 	ProviderModelItem {
 		id: provider
 	}
-
 	Column {
 		id: column
-
 		width: baseItem.width
 
 		Image {
 			id: image
-
+			asynchronous: true
+			fillMode: Image.PreserveAspectFit
 			height: Math.floor(baseItem.width * 0.56) // Image aspect ratio 16:9
-			width: baseItem.width
-
+			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+			mipmap: true
 			source: provider.image
 			// Set a fixed size for width and height, so it doesn't have to resize the source when the window size changes -> way faster
 			sourceSize.width: Screen.devicePixelRatio * 512
-			mipmap: true
-			asynchronous: true
-			fillMode: Image.PreserveAspectFit
+			width: baseItem.width
 
-
-			layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 			layer.effect: ShaderEffect {
 				property var maskSource: ShaderEffectSource {
-					 width: image.width
-					 height: image.height
+					height: image.height
+					width: image.width
 
-					 sourceItem: RoundedRectangle {
-							width: image.width
-							height: image.height
-
-							radius: Style.dimens.corner_radius
-							bottomLeftCorner: false
-							bottomRightCorner: false
-						}
+					sourceItem: RoundedRectangle {
+						bottomLeftCorner: false
+						bottomRightCorner: false
+						height: image.height
+						radius: Style.dimens.corner_radius
+						width: image.width
+					}
 				}
 
 				fragmentShader: "qrc:/shader/OpacityMaskShader.frag"
 			}
 		}
-
 		Rectangle {
-			width: baseItem.width
-			height: Math.floor(baseItem.width * 0.2)
-
 			color: Style.color.background_pane
+			height: Math.floor(baseItem.width * 0.2)
+			width: baseItem.width
 
 			GText {
 				id: nameText
-
 				anchors.fill: parent
 				anchors.leftMargin: Constants.text_spacing
 				anchors.rightMargin: Constants.text_spacing
-
-				horizontalAlignment: Text.AlignHCenter
-				verticalAlignment: Text.AlignVCenter
-
-				text: provider.longName
-
 				elide: Text.ElideRight
+				horizontalAlignment: Text.AlignHCenter
 				maximumLineCount: 2
+				text: provider.longName
 				textStyle: Style.text.normal
+				verticalAlignment: Text.AlignVCenter
 			}
 		}
-
 		RoundedRectangle {
-			width: baseItem.width
-			height: Math.floor(baseItem.width * 0.08)
-
-			radius: Style.dimens.corner_radius
 			color: Style.currentTheme.highContrast ? Style.color.background_pane : Category.displayColor(provider.category)
+			height: Math.floor(baseItem.width * 0.08)
+			radius: Style.dimens.corner_radius
 			topLeftCorner: false
 			topRightCorner: false
+			width: baseItem.width
 
 			GSeparator {
+				color: Style.color.high_contrast_item_border
+				height: Style.dimens.high_contrast_item_border
+
 				anchors {
-					top: parent.top
 					left: parent.left
 					right: parent.right
+					top: parent.top
 				}
-
-				height: Style.dimens.high_contrast_item_border
-				color: Style.color.high_contrast_item_border
 			}
 		}
 	}
-
 	RoundedRectangle {
 		anchors.fill: column
-
-		color: Style.color.transparent
 		borderColor: Style.color.border
 		borderWidth: ApplicationModel.scaleFactor * 1
+		color: Style.color.transparent
 	}
-
 	MouseArea {
 		id: mouseArea
-
 		anchors.fill: parent
+		cursorShape: Qt.PointingHandCursor
 
 		onClicked: baseItem.showDetailView(providerModelItem)
-		cursorShape: Qt.PointingHandCursor
 	}
 }

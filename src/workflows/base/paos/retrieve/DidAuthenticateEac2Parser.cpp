@@ -4,7 +4,6 @@
 
 #include "paos/retrieve/DidAuthenticateEac2Parser.h"
 
-#include "paos/element/ConnectionHandleParser.h"
 #include "paos/invoke/PaosCreator.h"
 #include "paos/retrieve/DidAuthenticateEac2.h"
 
@@ -29,28 +28,25 @@ PaosMessage* DidAuthenticateEac2Parser::parseMessage()
 
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("ConnectionHandle"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("ConnectionHandle"))
 		{
 			if (assertNoDuplicateElement(isConnectionHandleNotSet))
 			{
 				isConnectionHandleNotSet = false;
-				ConnectionHandleParser parser(mXmlReader);
-				mDidAuthenticateEac2->setConnectionHandle(parser.parse());
-				mParseError |= parser.parserFailed();
+				mDidAuthenticateEac2->setConnectionHandle(parseConnectionHandle());
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("DIDName"))
+		else if (name == QLatin1String("DIDName"))
 		{
 			if (readUniqueElementText(didName))
 			{
 				mDidAuthenticateEac2->setDidName(didName);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("AuthenticationProtocolData"))
+		else if (name == QLatin1String("AuthenticationProtocolData"))
 		{
-			QString ns = PaosCreator::getNamespace(PaosCreator::Namespace::XSI);
-			const auto value = mXmlReader->attributes().value(ns, QStringLiteral("type"));
+			const auto value = getElementType();
 			if (value.endsWith(QLatin1String("EAC2InputType")))
 			{
 				mDidAuthenticateEac2->setEac2InputType(parseEac2InputType());
@@ -58,12 +54,12 @@ PaosMessage* DidAuthenticateEac2Parser::parseMessage()
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
-	return mParseError ? nullptr : mDidAuthenticateEac2.release();
+	return parserFailed() ? nullptr : mDidAuthenticateEac2.release();
 }
 
 
@@ -75,23 +71,23 @@ Eac2InputType DidAuthenticateEac2Parser::parseEac2InputType()
 	QString signature;
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("Certificate"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("Certificate"))
 		{
 			parseCertificate(eac2);
 		}
-		else if (mXmlReader->name() == QLatin1String("EphemeralPublicKey"))
+		else if (name == QLatin1String("EphemeralPublicKey"))
 		{
 			parseEphemeralPublicKey(eac2, ephemeralPublicKey);
 		}
-		else if (mXmlReader->name() == QLatin1String("Signature"))
+		else if (name == QLatin1String("Signature"))
 		{
 			parseSignature(eac2, signature);
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
@@ -111,7 +107,7 @@ void DidAuthenticateEac2Parser::parseCertificate(Eac2InputType& pEac2)
 	else
 	{
 		qCCritical(paos) << "Cannot parse Certificate";
-		mParseError = true;
+		setParserFailed();
 	}
 }
 

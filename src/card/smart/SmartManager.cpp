@@ -216,7 +216,7 @@ QByteArrayList SmartManager::performPersonalization(const QVector<InputAPDUInfo>
 
 	QByteArrayList outputApduAsHex;
 
-	for (const auto& inputApduInfo : qAsConst(pInputApdus))
+	for (const auto& inputApduInfo : std::as_const(pInputApdus))
 	{
 		const auto& cmdPersonalization = QByteArray(inputApduInfo.getInputApdu()).toHex().toStdString();
 		const auto& [result, response] = ::performPersonalization(cmdPersonalization);

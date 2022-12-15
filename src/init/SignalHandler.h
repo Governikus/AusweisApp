@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "Env.h"
+
 #include <QObject>
 #include <functional>
 
@@ -13,6 +15,7 @@
 	#include <QSocketNotifier>
 	#include <csignal>
 #elif defined(Q_OS_WIN)
+	#include <QReadWriteLock>
 	#include <windows.h>
 #endif
 
@@ -21,6 +24,7 @@ namespace governikus
 
 class SignalHandler
 	: public QObject
+	, private Env::ThreadSafe
 {
 	Q_OBJECT
 
@@ -30,11 +34,14 @@ class SignalHandler
 	private:
 		bool mInit;
 		std::function<void()> mController;
-		bool mQuit;
+
+#ifdef Q_OS_WIN
+		SERVICE_STATUS_HANDLE mServiceStatusHandle;
+		QReadWriteLock mLock;
+#endif
 
 		SignalHandler();
 		~SignalHandler() override;
-		void quit();
 
 #if defined(Q_OS_UNIX) && !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 
@@ -48,15 +55,19 @@ class SignalHandler
 
 	private:
 		static BOOL WINAPI ctrlHandler(DWORD pCtrlType);
+		static VOID WINAPI serviceMain(DWORD pArgc, LPTSTR* pArgv);
+		static VOID WINAPI serviceCtrlHandler(DWORD pCtrlCode);
+		static void registerService();
+		void setServiceStatus(DWORD pCurrentState);
 #endif
 
 	private Q_SLOTS:
 		void onSignalSocketActivated();
+		void quit();
 
 	public:
 		void init();
 		void setController(const std::function<void()>& pController);
-		[[nodiscard]] bool shouldQuit() const;
 };
 
 } // namespace governikus

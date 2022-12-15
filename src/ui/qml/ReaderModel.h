@@ -64,7 +64,7 @@ class ReaderModel
 		[[nodiscard]] bool isInstalledReader(const QModelIndex& pIndex) const;
 		[[nodiscard]] QString getLastUpdatedInformation() const;
 
-		SortedReaderModel* getSortedModel();
+		[[nodiscard]] SortedReaderModel* getSortedModel();
 
 	private Q_SLOTS:
 		void onUpdateContent();

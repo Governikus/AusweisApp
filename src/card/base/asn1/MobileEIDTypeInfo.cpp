@@ -30,15 +30,6 @@ IMPLEMENT_ASN1_OBJECT(mobileeidtypeinfo_st)
 }  // namespace governikus
 
 
-bool MobileEIDTypeInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier)
-{
-	auto oid = Oid(pObjectIdentifier);
-	return oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_CERTIFIED)
-		   || oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_ENDORSED)
-		   || oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_HW_KEYSTORE);
-}
-
-
 MobileEIDTypeInfo::MobileEIDTypeInfo(const QSharedPointer<const mobileeidtypeinfo_st>& pDelegate)
 	: SecurityInfo()
 	, mDelegate(pDelegate)
@@ -49,4 +40,34 @@ MobileEIDTypeInfo::MobileEIDTypeInfo(const QSharedPointer<const mobileeidtypeinf
 ASN1_OBJECT* MobileEIDTypeInfo::getProtocolObjectIdentifier() const
 {
 	return mDelegate->mProtocol;
+}
+
+
+bool MobileEIDTypeInfo::acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier)
+{
+	auto oid = Oid(pObjectIdentifier);
+	return oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_CERTIFIED)
+		   || oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_SE_ENDORSED)
+		   || oid == Oid(KnownOid::ID_MOBILE_EID_TYPE_HW_KEYSTORE);
+}
+
+
+QSharedPointer<const MobileEIDTypeInfo> MobileEIDTypeInfo::decode(const QByteArray& pBytes)
+{
+	if (const auto& delegate = decodeObject<mobileeidtypeinfo_st>(pBytes, false))
+	{
+		if (MobileEIDTypeInfo::acceptsProtocol(delegate->mProtocol))
+		{
+			const auto& si = QSharedPointer<const MobileEIDTypeInfo>::create(delegate);
+			qCDebug(card) << "Parsed SecurityInfo:" << si;
+			return si;
+		}
+	}
+	return QSharedPointer<const MobileEIDTypeInfo>();
+}
+
+
+[[nodiscard]] QByteArray MobileEIDTypeInfo::encode() const
+{
+	return encodeObject(mDelegate.data());
 }

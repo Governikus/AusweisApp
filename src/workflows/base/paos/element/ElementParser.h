@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "paos/element/ConnectionHandle.h"
+
 #include <QLoggingCategory>
 #include <QSharedPointer>
 #include <QVector>
@@ -14,12 +16,15 @@
 
 Q_DECLARE_LOGGING_CATEGORY(paos)
 
+class test_ElementParser;
 
 namespace governikus
 {
 
 class ElementParser
 {
+	friend class ::test_ElementParser;
+
 	public:
 		explicit ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader);
 		virtual ~ElementParser();
@@ -28,6 +33,7 @@ class ElementParser
 
 	protected:
 		// helper methods
+		[[nodiscard]] ConnectionHandle parseConnectionHandle();
 
 		/*!
 		 * \brief Like QXmlStreamReader::readNextStartElement(), but also checks mParseError.
@@ -75,6 +81,25 @@ class ElementParser
 		 */
 		bool readUniqueElementText(QString& pText);
 
+		/*!
+		 * \brief Skips parsing of the current element
+		 * Used to ignore unknown or unrecognized elements while parsing.
+		 */
+		void skipCurrentElement() const;
+
+		/*!
+		 * \brief Returns the name of the current element and issues a log message with it
+		 * \return the name of the currently parsed element, e.g. "data" in "<data>...</data>"
+		 */
+		[[nodiscard]] QStringView getElementName() const;
+
+		void setParserFailed();
+
+		void initData(const QByteArray& pXmlData);
+
+		[[nodiscard]] QStringView getElementTypeByNamespace(const QString& pNamespace) const;
+
+	private:
 		QSharedPointer<QXmlStreamReader> mXmlReader;
 		bool mParseError;
 };

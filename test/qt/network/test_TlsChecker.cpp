@@ -56,7 +56,7 @@ class test_TlsChecker
 
 		void hasUpdateCertificateKeyLength()
 		{
-			for (const auto& cert : qAsConst(certs))
+			for (const auto& cert : std::as_const(certs))
 			{
 				QVERIFY(TlsChecker::hasValidCertificateKeyLength(cert));
 			}

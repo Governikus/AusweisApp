@@ -109,5 +109,5 @@ class test_WorkflowModel
 
 };
 
-QTEST_GUILESS_MAIN(test_WorkflowModel)
+QTEST_MAIN(test_WorkflowModel)
 #include "test_WorkflowModel.moc"

@@ -39,12 +39,12 @@ class CardPositionModel
 	public:
 		CardPositionModel();
 
-		int getCyclingClock() const;
+		[[nodiscard]] int getCyclingClock() const;
 		void setCyclingClock(int pCyclingClock);
-		Q_INVOKABLE QVariant getCardPosition() const;
-		bool getIsRunning() const;
+		[[nodiscard]] Q_INVOKABLE QVariant getCardPosition() const;
+		[[nodiscard]] bool getIsRunning() const;
 		void setIsRunning(bool pRunning);
-		int getCardPositionCount() const;
+		[[nodiscard]] int getCardPositionCount() const;
 
 	Q_SIGNALS:
 		void fireCyclingClockChanged();

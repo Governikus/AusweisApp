@@ -4,7 +4,6 @@
 
 #include "paos/retrieve/DidAuthenticateEacAdditionalParser.h"
 
-#include "paos/element/ConnectionHandleParser.h"
 #include "paos/invoke/PaosCreator.h"
 #include "paos/retrieve/DidAuthenticateEacAdditional.h"
 
@@ -28,28 +27,25 @@ PaosMessage* DidAuthenticateEacAdditionalParser::parseMessage()
 
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("ConnectionHandle"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("ConnectionHandle"))
 		{
 			if (assertNoDuplicateElement(isConnectionHandleNotSet))
 			{
 				isConnectionHandleNotSet = false;
-				ConnectionHandleParser parser(mXmlReader);
-				mDidAuthenticateEacAdditional->setConnectionHandle(parser.parse());
-				mParseError |= parser.parserFailed();
+				mDidAuthenticateEacAdditional->setConnectionHandle(parseConnectionHandle());
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("DIDName"))
+		else if (name == QLatin1String("DIDName"))
 		{
 			if (readUniqueElementText(didName))
 			{
 				mDidAuthenticateEacAdditional->setDidName(didName);
 			}
 		}
-		else if (mXmlReader->name() == QLatin1String("AuthenticationProtocolData"))
+		else if (name == QLatin1String("AuthenticationProtocolData"))
 		{
-			QString ns = PaosCreator::getNamespace(PaosCreator::Namespace::XSI);
-			const auto value = mXmlReader->attributes().value(ns, QStringLiteral("type"));
+			const auto value = getElementType();
 			if (value.endsWith(QLatin1String("EACAdditionalInputType")))
 			{
 				mDidAuthenticateEacAdditional->setSignature(parseEacAdditionalInputType());
@@ -57,12 +53,12 @@ PaosMessage* DidAuthenticateEacAdditionalParser::parseMessage()
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 
-	return mParseError ? nullptr : mDidAuthenticateEacAdditional.release();
+	return parserFailed() ? nullptr : mDidAuthenticateEacAdditional.release();
 }
 
 
@@ -71,19 +67,19 @@ QString DidAuthenticateEacAdditionalParser::parseEacAdditionalInputType()
 	QString signature;
 	while (readNextStartElement())
 	{
-		qCDebug(paos) << mXmlReader->name();
-		if (mXmlReader->name() == QLatin1String("Signature"))
+		const auto& name = getElementName();
+		if (name == QLatin1String("Signature"))
 		{
 			if (!readUniqueElementText(signature))
 			{
 				qCWarning(paos) << "Abort parsing of Signature";
-				mParseError = true;
+				setParserFailed();
 			}
 		}
 		else
 		{
-			qCWarning(paos) << "Unknown element:" << mXmlReader->name();
-			mXmlReader->skipCurrentElement();
+			qCWarning(paos) << "Unknown element:" << name;
+			skipCurrentElement();
 		}
 	}
 

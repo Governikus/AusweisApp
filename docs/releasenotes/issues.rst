@@ -36,9 +36,9 @@ Windows / macOS
   neugestartet werden.
 
 - Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
-  die Kommandozeilenparameter DESKTOPSHORTCUT und SYSTEMSETTINGS ignoriert.
-  Dies kann durch eine Deinstallation und eine erneute Installation umgangen
-  werden.
+  die Kommandozeilenparameter DESKTOPSHORTCUT, SYSTEMSETTINGS und PROXYSERVICE
+  ignoriert. Dies kann durch eine Deinstallation und eine erneute Installation
+  umgangen werden.
 
 - Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
   Kommandozeilenparameter, die nicht schon bei der installierten Version der
@@ -49,6 +49,9 @@ Windows / macOS
   macOS funktioniert nur, wenn das Kontextmenü mit der linken Maustaste
   geöffnet wird. Alternativ kann das Tastaturkürzel CMD + Q zum beenden der
   AusweisApp2 verwendet werden.
+
+- Die visuelle Hervorhebung des aktiven Elements wird an einigen Stellen
+  fälschlicherwiese auch aktiviert, wenn die Maus benutzt wurde.
 
 Android / iOS
 """""""""""""

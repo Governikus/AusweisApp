@@ -6,9 +6,9 @@
 
 #include "messages/MsgContext.h"
 
-#include "InternalActivationContext.h"
 #include "ReaderManager.h"
 #include "context/AuthContext.h"
+#include "context/InternalActivationContext.h"
 #include "messages/MsgHandler.h"
 #include "messages/MsgHandlerEnterPin.h"
 #include "messages/MsgHandlerInsertCard.h"

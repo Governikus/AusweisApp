@@ -3,6 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'Formatting',
+		libraries: ['Linux'],
 		label: 'Common'
 	).generate(this)
 
@@ -20,7 +21,7 @@ j.with
 			hg --config extensions.hgext.strip= strip -r 'secret() or draft()' --no-backup --force 2>/dev/null || echo "No changeset stripped"
 			'''.stripIndent().trim())
 
-		shell('cd source; cmake --preset ci-tools')
+		shell('cd source; cmake --preset ci-tools-with-libs')
 
 		shell('''\
 			cd source

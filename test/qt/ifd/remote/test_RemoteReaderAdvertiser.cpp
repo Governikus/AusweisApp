@@ -24,10 +24,9 @@ class DatagramHandlerMock
 	public:
 		[[nodiscard]] bool isBound() const override;
 
-		bool send(const QByteArray& pData) override
+		void send(const QByteArray& pData) override
 		{
 			Q_EMIT fireSend(pData);
-			return true;
 		}
 
 	Q_SIGNALS:

@@ -79,9 +79,17 @@
     {
       "name": "ci-ios-simulator",
       "inherits": "ci-ios",
+      "generator": "Xcode",
       "cacheVariables": {
         "CMAKE_OSX_SYSROOT": "iphonesimulator",
         "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
+      "name": "ci-ios-simulator-arm64",
+      "inherits": "ci-ios-simulator",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
       }
     },
     {

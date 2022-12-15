@@ -1,56 +1,38 @@
 /*
  * \copyright Copyright (c) 2019-2022 Governikus GmbH & Co. KG, Germany
  */
-
 import QtQuick 2.15
 import QtQml.Models 2.15
-
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.NumberModel  1.0
+import Governikus.Type.NumberModel 1.0
 import Governikus.Type.RemoteServiceModel 1.0
 import Governikus.View 1.0
 
 SectionPage {
 	id: root
-
-	signal closeView()
-
-	property alias rootEnabled: titleBarAction.rootEnabled
-	property alias paneAnchors: tabbedPane.anchors
-	property int lastReaderCount: 0
-	readonly property int currentView: d.view
-	readonly property int availableReader: ApplicationModel.availableReader
-
 	enum SubView {
 		None,
 		ConnectSacView
 	}
 
-	QtObject {
-		id: d
+	readonly property int availableReader: ApplicationModel.availableReader
+	readonly property int currentView: d.view
+	property int lastReaderCount: 0
+	property alias paneAnchors: tabbedPane.anchors
+	property alias rootEnabled: titleBarAction.rootEnabled
 
-		property int view
-		property int precedingView
-	}
-
-	onVisibleChanged: d.view = TabbedReaderView.SubView.None
-
-	onAvailableReaderChanged: {
-		if (visible && availableReader > lastReaderCount) {
-			root.closeView();
-		}
-		lastReaderCount = availableReader;
-	}
+	signal closeView
 
 	titleBarAction: TitleBarAction {
 		id: titleBarAction
+		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
+		rootEnabled: false
 
 		//: LABEL DESKTOP
 		text: qsTr("Card Readers")
-		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
-		rootEnabled: false
+
 		customSubAction: CancelAction {
 			onClicked: closeView()
 		}
@@ -59,77 +41,82 @@ SectionPage {
 	}
 
 	Component.onCompleted: lastReaderCount = availableReader
+	onAvailableReaderChanged: {
+		if (visible && availableReader > lastReaderCount) {
+			root.closeView();
+		}
+		lastReaderCount = availableReader;
+	}
+	onVisibleChanged: d.view = TabbedReaderView.SubView.None
 
+	QtObject {
+		id: d
+
+		property int precedingView
+		property int view
+	}
 	TabbedPane {
 		id: tabbedPane
-
+		sectionsModel: [qsTr("Smartphone as card reader"), qsTr("USB card reader")]
 		visible: d.view === TabbedReaderView.SubView.None
 
-		anchors {
-			top: parent.top
-			left: parent.left
-			right: parent.right
-			bottom: parent.bottom
-			margins: Constants.pane_padding
-		}
-
-		sectionsModel: [
-			qsTr("Smartphone as card reader"),
-			qsTr("USB card reader")
-		]
 		contentObjectModel: ObjectModel {
 			Component {
 				RemoteReaderView {
-					width: parent.width
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
+					width: parent.width
+
+					onMoreInformation: {
+						d.precedingView = d.view;
+						d.view = TabbedReaderView.SubView.ConnectSacView;
+						connectSacView.showPairingInformation();
+						updateTitleBarActions();
+					}
 					onPairDevice: pDeviceId => {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
-							d.view = TabbedReaderView.SubView.ConnectSacView
-							updateTitleBarActions()
+							d.view = TabbedReaderView.SubView.ConnectSacView;
+							updateTitleBarActions();
 						}
 					}
 					onUnpairDevice: pDeviceId => RemoteServiceModel.forgetDevice(pDeviceId)
-					onMoreInformation: {
-						d.precedingView = d.view
-						d.view = TabbedReaderView.SubView.ConnectSacView
-						connectSacView.showPairingInformation();
-						updateTitleBarActions()
-					}
 				}
 			}
-
 			Component {
 				CardReaderView {
-					width: parent.width
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
+					width: parent.width
 				}
 			}
 		}
-	}
-
-	NavigationButton {
-		visible: tabbedPane.visible
 
 		anchors {
-			left: parent.left
 			bottom: parent.bottom
+			left: parent.left
+			margins: Constants.pane_padding
+			right: parent.right
+			top: parent.top
+		}
+	}
+	NavigationButton {
+		buttonType: NavigationButton.Type.Back
+		visible: tabbedPane.visible
+
+		onClicked: root.closeView()
+
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
 			margins: Constants.pane_padding
 		}
-
-		buttonType: NavigationButton.Type.Back
-		onClicked: root.closeView()
 	}
-
 	ConnectSacView {
 		id: connectSacView
-
+		rootEnabled: root.rootEnabled
 		visible: d.view === TabbedReaderView.SubView.ConnectSacView
 
-		rootEnabled: root.rootEnabled
-
 		onCloseView: {
-			d.view = d.precedingView
-			updateTitleBarActions()
+			d.view = d.precedingView;
+			updateTitleBarActions();
 		}
 	}
 }

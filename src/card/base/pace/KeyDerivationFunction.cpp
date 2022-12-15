@@ -57,8 +57,8 @@ QByteArray KeyDerivationFunction::deriveKey(const QByteArray& pK, const QByteArr
 		return QByteArray();
 	}
 
-	char counterBigEndian[4];
-	qToBigEndian(pC, counterBigEndian);
+	QByteArray counterBigEndian(4, '\0');
+	qToBigEndian(pC, counterBigEndian.data());
 
-	return QCryptographicHash::hash(pK + pNonce + QByteArray(counterBigEndian, 4), mHashAlgorithm).left(mKeySize);
+	return QCryptographicHash::hash(pK + pNonce + counterBigEndian, mHashAlgorithm).left(mKeySize);
 }

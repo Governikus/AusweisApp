@@ -59,10 +59,10 @@ void TransmitCommand::internalExecute()
 	for (const auto& inputApduInfo : mInputApduInfos)
 	{
 		auto [returnCode, response] = getCardConnectionWorker()->transmit(inputApduInfo.getInputApdu());
-		mReturnCode = returnCode;
-		if (mReturnCode != CardReturnCode::OK)
+		setReturnCode(returnCode);
+		if (getReturnCode() != CardReturnCode::OK)
 		{
-			qCWarning(card) << "Transmit unsuccessful. Return code:" << CardReturnCodeUtil::toGlobalStatus(mReturnCode);
+			qCWarning(card) << "Transmit unsuccessful. Return code:" << CardReturnCodeUtil::toGlobalStatus(getReturnCode());
 
 			return;
 		}
@@ -70,7 +70,7 @@ void TransmitCommand::internalExecute()
 		if (response.isEmpty())
 		{
 			qCWarning(card) << "Transmit unsuccessful. Received empty response.";
-			mReturnCode = CardReturnCode::COMMAND_FAILED;
+			setReturnCode(CardReturnCode::COMMAND_FAILED);
 			return;
 		}
 
@@ -81,9 +81,9 @@ void TransmitCommand::internalExecute()
 		}
 
 		qCWarning(card) << "Transmit unsuccessful. StatusCode does not start with acceptable status code" << inputApduInfo.getAcceptableStatusCodes();
-		mReturnCode = CardReturnCode::UNEXPECTED_TRANSMIT_STATUS;
+		setReturnCode(CardReturnCode::UNEXPECTED_TRANSMIT_STATUS);
 		return;
 	}
 	qCDebug(card) << "transmit end";
-	mReturnCode = CardReturnCode::OK;
+	setReturnCode(CardReturnCode::OK);
 }

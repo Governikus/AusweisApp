@@ -58,7 +58,7 @@ void StateWriteHistory::run()
 		QStringList requestedData;
 		QList<AccessRight> rights = context->getAccessRightManager()->getEffectiveAccessRights().values();
 		std::sort(rights.begin(), rights.end());
-		for (const auto& entry : qAsConst(rights))
+		for (const auto& entry : std::as_const(rights))
 		{
 			const auto data = AccessRoleAndRightsUtil::toTechnicalName(entry);
 			if (!data.isEmpty())

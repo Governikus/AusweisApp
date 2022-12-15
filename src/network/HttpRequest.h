@@ -11,7 +11,7 @@
 #include <QByteArray>
 #include <QMap>
 #include <QObject>
-#include <QScopedPointer>
+#include <QPointer>
 #include <QTcpSocket>
 #include <QUrl>
 
@@ -19,8 +19,9 @@
 
 #include <memory>
 
-class test_WebserviceActivationHandler;
-class test_WebserviceActivationContext;
+
+class test_HttpRequest;
+
 
 namespace governikus
 {
@@ -29,9 +30,8 @@ class HttpRequest
 	: public QObject
 {
 	Q_OBJECT
-	friend class ::test_WebserviceActivationHandler;
-	friend class ::test_WebserviceActivationContext;
 	friend class HttpServer;
+	friend class ::test_HttpRequest;
 
 	private:
 		[[nodiscard]] static int onMessageBegin(http_parser* pParser);
@@ -51,15 +51,10 @@ class HttpRequest
 		QByteArray mUrl;
 		QMap<QByteArray, QByteArray> mHeader;
 		QByteArray mBody;
-#if (QT_VERSION < QT_VERSION_CHECK(6, 1, 0))
-		QScopedPointer<QTcpSocket, QScopedPointerDeleteLater> mSocket;
-#else
-		std::unique_ptr<QTcpSocket, QScopedPointerDeleteLater> mSocket;
-#endif
+		QPointer<QTcpSocket> mSocket;
 		http_parser mParser;
 		http_parser_settings mParserSettings;
 
-		bool mSocketDisconnected;
 		bool mFinished;
 		QByteArray mCurrentHeaderField;
 		QByteArray mCurrentHeaderValue;
@@ -79,17 +74,22 @@ class HttpRequest
 		[[nodiscard]] const QMap<QByteArray, QByteArray>& getHeader() const;
 		[[nodiscard]] QUrl getUrl() const;
 		[[nodiscard]] const QByteArray& getBody() const;
+		[[nodiscard]] quint16 getPeerPort() const;
+		[[nodiscard]] quint16 getLocalPort() const;
+		void triggerSocketBuffer();
 
 		bool send(const HttpResponse& pResponse);
+		bool send(const QByteArray& pResponse);
 
 		QTcpSocket* take();
 
 	private Q_SLOTS:
 		void onReadyRead();
-		void onSocketDisconnected();
 
 	Q_SIGNALS:
 		void fireMessageComplete(HttpRequest* pSelf);
+		void fireSocketStateChanged(QAbstractSocket::SocketState pSocketState);
+		void fireSocketBuffer(const QByteArray& pBuffer);
 };
 
 } // namespace governikus

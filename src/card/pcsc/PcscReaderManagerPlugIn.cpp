@@ -37,7 +37,7 @@ PcscReaderManagerPlugIn::~PcscReaderManagerPlugIn()
 
 	while (!mReaders.isEmpty())
 	{
-		removeReader(qAsConst(mReaders).first()->getName());
+		removeReader(std::as_const(mReaders).first()->getName());
 	}
 }
 

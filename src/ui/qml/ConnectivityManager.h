@@ -37,7 +37,7 @@ class ConnectivityManager
 		void timerEvent(QTimerEvent* pEvent) override;
 
 	public:
-		bool isNetworkInterfaceActive() const;
+		[[nodiscard]] bool isNetworkInterfaceActive() const;
 		void startWatching();
 		void stopWatching();
 

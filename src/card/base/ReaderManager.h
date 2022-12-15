@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Env.h"
-#include "Reader.h"
 #include "ReaderFilter.h"
 #include "ReaderManagerWorker.h"
 #include "command/CreateCardConnectionCommand.h"
@@ -17,8 +16,10 @@
 
 #include <functional>
 
+
 namespace governikus
 {
+
 class ReaderManager
 	: public QObject
 	, private Env::ThreadSafe
@@ -95,7 +96,7 @@ class ReaderManager
 		 */
 		void stopScan(ReaderManagerPlugInType pType, const QString& pError = QString());
 
-		QVector<ReaderManagerPlugInInfo> getPlugInInfos() const;
+		ReaderManagerPlugInInfo getPlugInInfo(ReaderManagerPlugInType pType) const;
 		virtual QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		void updateReaderInfo(const QString& pReaderName);

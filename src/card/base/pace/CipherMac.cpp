@@ -8,8 +8,6 @@
 
 #include <QLoggingCategory>
 #include <QScopeGuard>
-#include <QVarLengthArray>
-
 
 using namespace governikus;
 

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "DatagramHandler.h"
+#include "HttpServer.h"
 #include "MulticastLock.h"
 #include "PortFile.h"
 
@@ -28,15 +29,17 @@ class DatagramHandlerImpl
 	private:
 		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
 		QScopedPointer<MulticastLock> mMulticastLock;
+		QList<QHostAddress> mAllAddresses;
+		QVector<QHostAddress> mFailedAddresses;
 		quint16 mUsedPort;
 		PortFile mPortFile;
 		bool mEnableListening;
 
 		void resetSocket();
-		bool isValidBroadcastInterface(const QNetworkInterface& pInterface) const;
-		QVector<QHostAddress> getAllBroadcastAddresses(const QNetworkInterface& pInterface) const;
-		bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0);
-		bool sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
+		[[nodiscard]] bool isValidBroadcastInterface(const QNetworkInterface& pInterface) const;
+		[[nodiscard]] QVector<QHostAddress> getAllBroadcastAddresses(const QNetworkInterface& pInterface) const;
+		[[nodiscard]] bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0, bool pLogError = true);
+		void sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
 
 #if defined(Q_OS_IOS)
 
@@ -44,13 +47,11 @@ class DatagramHandlerImpl
 #endif
 
 	public:
-		static quint16 cPort;
-
-		DatagramHandlerImpl(bool pEnableListening = true, quint16 pPort = DatagramHandlerImpl::cPort);
+		DatagramHandlerImpl(bool pEnableListening = true, quint16 pPort = HttpServer::cPort);
 		~DatagramHandlerImpl() override;
 
 		[[nodiscard]] bool isBound() const override;
-		bool send(const QByteArray& pData) override;
+		void send(const QByteArray& pData) override;
 
 	private Q_SLOTS:
 		void onReadyRead();

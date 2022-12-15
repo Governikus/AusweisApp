@@ -53,30 +53,30 @@ class WorkflowModel
 
 		void resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
-		QString getCurrentState() const;
-		virtual QString getResultString() const;
-		bool isError() const;
-		bool isMaskedError() const;
+		[[nodiscard]] QString getCurrentState() const;
+		[[nodiscard]] virtual QString getResultString() const;
+		[[nodiscard]] bool isError() const;
+		[[nodiscard]] bool isMaskedError() const;
 
-		ReaderManagerPlugInType getReaderPlugInType() const;
+		[[nodiscard]] ReaderManagerPlugInType getReaderPlugInType() const;
 		void setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInType);
 
-		bool isBasicReader() const;
-		bool isRemoteReader() const;
+		[[nodiscard]] bool isBasicReader() const;
+		[[nodiscard]] bool isRemoteReader() const;
 
-		bool isSmartCardAllowed() const;
+		[[nodiscard]] bool isSmartCardAllowed() const;
 
-		bool isSmartSupported() const;
-		virtual QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
+		[[nodiscard]] bool isSmartSupported() const;
+		[[nodiscard]] virtual QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
 
-		bool getNextWorkflowPending() const;
+		[[nodiscard]] bool getNextWorkflowPending() const;
 
-		GlobalStatus::Code getStatusCode() const;
-		QString getReaderImage() const;
+		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
+		[[nodiscard]] QString getReaderImage() const;
 
-		QString getStatusHintText() const;
-		QString getStatusHintActionText() const;
-		Q_INVOKABLE bool invokeStatusHintAction();
+		[[nodiscard]] QString getStatusHintText() const;
+		[[nodiscard]] QString getStatusHintActionText() const;
+		[[nodiscard]] Q_INVOKABLE bool invokeStatusHintAction();
 
 		[[nodiscard]] bool showRemoveCardFeedback() const;
 		void setRemoveCardFeedback(bool pEnabled);
@@ -87,10 +87,10 @@ class WorkflowModel
 		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
-		Q_INVOKABLE bool shouldSkipResultView() const;
-		Q_INVOKABLE bool isCancellationByUser() const;
-		Q_INVOKABLE QString getEmailHeader() const;
-		Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
+		[[nodiscard]] Q_INVOKABLE bool shouldSkipResultView() const;
+		[[nodiscard]] Q_INVOKABLE bool isCancellationByUser() const;
+		[[nodiscard]] Q_INVOKABLE QString getEmailHeader() const;
+		[[nodiscard]] Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
 		Q_INVOKABLE void sendResultMail() const;
 
 	private Q_SLOTS:

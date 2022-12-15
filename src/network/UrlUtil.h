@@ -7,12 +7,20 @@
 
 #include "ECardApiResult.h"
 
-#include <QSslCertificate>
 #include <QString>
 #include <QUrl>
+#include <QUrlQuery>
 
 namespace governikus
 {
+
+defineEnumType(UrlQueryRequest,
+		UNKNOWN,
+		SHOWUI,
+		STATUS,
+		TCTOKENURL
+		)
+
 
 /*!
  * \brief Utility class for checking various constraints on URLs.
@@ -44,6 +52,8 @@ class UrlUtil
 		 */
 		static QUrl addMajorMinor(const QUrl& pUrl, const GlobalStatus& pStatus);
 
+		static void setHiddenSettings(const QUrlQuery& pUrl);
+		static QPair<UrlQueryRequest, QString> getRequest(const QUrlQuery& pUrl);
 };
 
 } // namespace governikus

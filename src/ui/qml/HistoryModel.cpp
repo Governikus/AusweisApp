@@ -50,7 +50,7 @@ HistoryModel::HistoryModel(QObject* pParent)
 
 void HistoryModel::updateConnections()
 {
-	for (const auto& connection : qAsConst(mConnections))
+	for (const auto& connection : std::as_const(mConnections))
 	{
 		disconnect(connection);
 	}

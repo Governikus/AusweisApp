@@ -32,7 +32,7 @@ class UIPlugInWebSocket
 		QWebSocketServer mServer;
 		QScopedPointer<QWebSocket, QScopedPointerDeleteLater> mConnection;
 		QSharedPointer<HttpRequest> mRequest;
-		UIPlugInJson* mJson;
+		QPointer<UIPlugInJson> mJson;
 		QSharedPointer<WorkflowContext> mContext;
 		bool mUiDomination;
 		bool mUiDominationPrevUsedAsSDK;
@@ -52,6 +52,8 @@ class UIPlugInWebSocket
 	public:
 		UIPlugInWebSocket();
 		~UIPlugInWebSocket() override = default;
+
+		[[nodiscard]] bool initialize() override;
 };
 
 } // namespace governikus
