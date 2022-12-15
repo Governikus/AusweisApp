@@ -1,0 +1,16 @@
+AusweisApp2 1.26.1
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 15. Dezember 2022
+
+
+Anwender
+""""""""
+- Vermeidung des Verlusts der Einstellungen auf Android.
+
+
+Entwickler
+""""""""""
+- Vermeidung der Verwendung von nicht öffentlichen oder
+  veralteten APIs auf macOS zur Einhaltung der App Store
+  Guidelines.

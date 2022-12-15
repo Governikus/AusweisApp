@@ -375,6 +375,10 @@ endforeach()
 
 set(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-directfb -no-linuxfb)
 set(QT_CONFIGURE configure)
+
+if(APPLE)
+	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -appstore-compliant)
+endif()
 if(IOS)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -xplatform macx-ios-clang)
 
