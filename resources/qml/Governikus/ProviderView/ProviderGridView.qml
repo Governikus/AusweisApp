@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -35,11 +35,14 @@ Item {
 		scrollBarTopPadding: spacing / 2
 
 		delegate: Item {
+			Accessible.name: card.Accessible.name
+			Accessible.role: card.Accessible.role
 			Keys.forwardTo: children
 			height: gridView.cellHeight
 			width: gridView.cellWidth
 
 			ProviderCard {
+				id: card
 				anchors.fill: parent
 				anchors.margins: Math.floor(gridView.spacing / 2)
 				providerModelItem: model

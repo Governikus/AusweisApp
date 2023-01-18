@@ -16,7 +16,7 @@ contains all supported arguments, which are explained below.
 
 INSTALLDIR
   States the installation directory. If not specified, the folder
-  "C:\\Program Files (x86)\\AusweisApp2" is used.
+  "C:\\Program Files\\AusweisApp2" is used.
 
 SYSTEMSETTINGS
   Concerns the settings of firewall rules of the Windows Firewall. When not
@@ -134,11 +134,6 @@ In order to optimize the start of the AusweisApp2 on systems with no graphics
 acceleration, the system variable "QT_QUICK_BACKEND" can be set to the value
 "software". In this case, the AusweisApp2 does not attempt to use graphics
 acceleration and starts directly with the alternative software renderer.
-
-When installing an AusweisApp2 update new commandline parameters cannot be added
-to the system-wide default settings. If new commandline parameters are needed
-the AusweisApp2 has to be deinstalled and then reinstalled with the new
-parameters.
 
 macOS
 -----
@@ -286,16 +281,19 @@ TLS termination proxy.
    :header: "Reference", "Protocol", "Port", "Direction", "Optional", "Purpose", "Note"
    :widths: 8, 8, 8, 8, 8, 35, 25
 
-   "eID1",	TCP, 24727 [#aa2proxy]_,  "incoming", "no",	"Online eID function, eID activation [#TR-03124]_",											    "Only accessible from localhost [#TR-03124]_"
-   "eID2",	TCP, 443,                 "outgoing", "no",	"Online eID function, connection to the provider, TLS-1-2 channel [#TR-03124]_",						    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
-   "eID3",	TCP, 443,                 "outgoing", "no",	"Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",								    "TLS certificates interlaced with authorization certificate [#TR-03124]_"
-   "eID-SDK",	TCP, 24727 [#aa2proxy]_,  "incoming", "no",	"Usage of the SDK functionality",													    "Only accessible from localhost [#TR-03124]_"
-   "SaC1",	UDP, 24727 [#aa2proxy]_,  "incoming", "yes",	"Smartphone as Card Reader, detection [#TR-03112]_",											    "Broadcasts"
-   "SaC2",	TCP, ,                    "outgoing", "yes",	"Smartphone as Card Reader, usage [#TR-03112]_",											    "Connection in local subnet"
-   "Update",	TCP, 443,                 "outgoing", "yes",	"Updates [#govurl]_ of provider and card reader information as well as information on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
+   "eID1",    TCP, 24727 [#aa2proxy]_,  "incoming", "no",  "Online eID function, eID activation [#TR-03124]_",                                                                                "Only accessible from localhost [#TR-03124]_"
+   "eID2",    TCP, 443 [#eidports]_,    "outgoing", "no",  "Online eID function, connection to the provider, TLS-1-2 channel [#TR-03124]_",                                                   "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID3",    TCP, 443 [#eidports]_,    "outgoing", "no",  "Online eID function, connection to eID-Server, TLS-2 channel [#TR-03124]_",                                                       "TLS certificates interlaced with authorization certificate [#TR-03124]_"
+   "eID-SDK", TCP, 24727 [#aa2proxy]_,  "incoming", "no",  "Usage of the SDK functionality",                                                                                                  "Only accessible from localhost [#TR-03124]_"
+   "SaC1",    UDP, 24727 [#aa2proxy]_,  "incoming", "yes", "Smartphone as Card Reader, detection [#TR-03112]_",                                                                               "Broadcasts"
+   "SaC2",    TCP, ,                    "outgoing", "yes", "Smartphone as Card Reader, usage [#TR-03112]_",                                                                                   "Connection in local subnet"
+   "Update",  TCP, 443,                 "outgoing", "yes", "Updates [#govurl]_ of provider and card reader information as well as information on new AusweisApp2 versions [#updatecheck]_ .", "TLS certificates will be validated against CA certificates included in the AusweisApp2. CA certificates provided by the OS are ignored."
 
 .. [#aa2proxy] Or a random port when using AusweisApp2 proxy.
 .. [#TR-03124] See TR-03124 specification from the BSI
+.. [#eidports] Port 443 is used for the initial contact with the provider or
+   eID server. Due to configuration of the service on the service provider's
+   behalf, any other port might be used by forwarding.
 .. [#TR-03112] See TR-03112-6 specifiaction from the BSI
 .. [#govurl] All updates are based on the URL https://appl.governikus-asp.de/ausweisapp2/
 .. [#updatecheck] Automatic checks for new AusweisApp2 versions can be deactivated, see commandline parameter

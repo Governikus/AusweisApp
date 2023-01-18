@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Asn1StringUtil
  *
- * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"

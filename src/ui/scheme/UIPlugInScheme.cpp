@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInScheme.h"
@@ -53,7 +53,7 @@ void UIPlugInScheme::onCustomUrl(const QUrl& pUrl)
 	const bool isUniversal = pUrl.host() == QLatin1String("www.ausweisapp.bund.de");
 	if (pUrl.path() != QLatin1String("/eID-Client") || !(isLocalhost || isUniversal))
 	{
-		if (pUrl.scheme() == QLatin1String("https"))
+		if (pUrl.scheme().startsWith(QLatin1String("http")))
 		{
 			qCDebug(scheme) << "Not our business. Using the appropriate mechanism for the user's desktop environment.";
 			QDesktopServices::openUrl(pUrl);

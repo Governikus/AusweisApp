@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref CommandLineParser
  *
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QProcess>
@@ -50,7 +50,7 @@ class test_CommandLineParser
 			out << QStringLiteral("  --no-proxy                       Ignore proxy settings.");
 			out << QStringLiteral("  --ui <qml,webservice,websocket>  Use given UI plugin.");
 			out << QStringLiteral("  --port <24727>                   Use listening port.");
-			out << QStringLiteral("  --address <127.0.0.1>            Use address binding.");
+			out << QStringLiteral("  --address <127.0.0.1,::1>        Use address binding.");
 			out << QString();
 
 			const auto& standardOut = process.readAllStandardOutput();

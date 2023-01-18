@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -151,6 +151,17 @@ bool HttpServer::checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest
 	pRequest->send(HTTP_STATUS_SERVICE_UNAVAILABLE);
 	pRequest->deleteLater();
 	return false;
+}
+
+
+QString HttpServer::getDefault()
+{
+	QStringList list;
+	for (const auto& entry : std::as_const(HttpServer::cAddresses))
+	{
+		list << entry.toString();
+	}
+	return list.join(QLatin1Char(','));
 }
 
 

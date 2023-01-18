@@ -385,6 +385,51 @@ function(FETCH_TARGET_LOCATION _destination _target)
 	set(${_destination} ${tmp} PARENT_SCOPE)
 endfunction()
 
+function(list_add_if_not_present list elem)
+	list(FIND "${list}" "${elem}" exists)
+	if(exists EQUAL -1)
+		list(APPEND "${list}" "${elem}")
+		set("${list}" "${${list}}" PARENT_SCOPE)
+	endif()
+endfunction()
+
+macro(target_get_linked_libraries_internal _target _outlist)
+	list_add_if_not_present("${_outlist}" "${_target}")
+
+	get_target_property(target_type "${_target}" TYPE)
+	if(${target_type} STREQUAL "INTERFACE_LIBRARY")
+		get_target_property(libs "${_target}" INTERFACE_LINK_LIBRARIES)
+	else()
+		get_target_property(libs "${_target}" LINK_LIBRARIES)
+	endif()
+
+	foreach(lib IN LISTS libs)
+		# Required for libs linked as "debug" like "$<$<CONFIG:DEBUG>:$<TARGET_NAME:AusweisAppUiAidl>>"
+		string(REGEX REPLACE ".*(AusweisApp[a-zA-Z:]+).*" "\\1" lib "${lib}")
+		string(REPLACE "::" "" lib "${lib}")
+
+		if(NOT TARGET "${lib}")
+			continue()
+		endif()
+
+		if(NOT "${lib}" MATCHES "AusweisApp")
+			continue()
+		endif()
+
+		list(FIND "${_outlist}" "${lib}" exists)
+		if(NOT exists EQUAL -1)
+			continue()
+		endif()
+
+		target_get_linked_libraries_internal("${lib}" "${_outlist}")
+	endforeach()
+endmacro()
+
+function(target_get_linked_libraries _target _outlist)
+	set(${_outlist} "${_target}")
+	target_get_linked_libraries_internal(${_target} ${_outlist})
+	set(${_outlist} ${${_outlist}} PARENT_SCOPE)
+endfunction()
 
 function(map_set_value _map _key _value)
 	set(${_map}_${_key} "${_value}" PARENT_SCOPE)

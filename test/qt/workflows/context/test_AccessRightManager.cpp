@@ -1,7 +1,7 @@
 /*!
  * \brief Test for the chat administration in authentication context.
  *
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VolatileSettings.h"

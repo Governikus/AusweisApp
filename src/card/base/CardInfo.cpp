@@ -1,7 +1,7 @@
 /*!
  * \brief CardInfo holds smart card information, such as the type and some contained data structure (currently only the EF.CardAccess).
  *
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"

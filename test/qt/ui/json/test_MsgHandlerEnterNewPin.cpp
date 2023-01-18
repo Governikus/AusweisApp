@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref MsgHandlerEnterNewPin
  *
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerEnterNewPin.h"

@@ -1,14 +1,14 @@
-ARG ALPINE_VERSION=3.16
+ARG ALPINE_VERSION=3.17
 
 FROM alpine:$ALPINE_VERSION as builder
 # Install development stuff
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs perl python3 linux-headers
 
-# Use optional secondary ccache
+# Use optional remote ccache
 # redis://YOUR_SERVER:6379|share-hits=false
-ARG CCACHE_SECONDARY_STORAGE=""
-ENV CCACHE_SECONDARY_STORAGE=$CCACHE_SECONDARY_STORAGE CCACHE_RESHARE=true CCACHE_DIR=/build/ccache
+ARG CCACHE_REMOTE_STORAGE=""
+ENV CCACHE_REMOTE_STORAGE=$CCACHE_REMOTE_STORAGE CCACHE_REMOTE_ONLY=true CCACHE_RESHARE=true CCACHE_DIR=/build/ccache
 
 # Build Libraries
 COPY cmake/Helper.cmake cmake/DVCS.cmake cmake/Messages.cmake libs /src/libs/
@@ -59,4 +59,5 @@ RUN apk --no-cache upgrade -a && \
 USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]
 ENTRYPOINT ["/sbin/tini", "--"]
+EXPOSE 24727
 CMD ["AusweisApp2", "--address", "0.0.0.0"]

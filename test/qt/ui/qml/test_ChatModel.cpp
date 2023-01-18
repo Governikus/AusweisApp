@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ChatModel
  *
- * \copyright Copyright (c) 2018-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChatModel.h"

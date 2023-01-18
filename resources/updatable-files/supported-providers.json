@@ -234,28 +234,6 @@
 		},
 		{
 			"shortName": {
-				"": "AusweisIDent"
-			},
-			"longName": {
-				"": "AusweisIDent Identifizierungsdienst"
-			},
-			"longDescription": {
-				"": "AusweisIDent ergänzt am Markt etablierte Verfahren um die medienbruchfreie und sichere Online-Identifizierung. Nutzer weisen sich mit der Applikation und der Online-Ausweisfunktion des Personalausweises oder des elektronischen Aufenthaltstitels online aus. Das Identifizierungsverfahren wurde von der Bundesdruckerei gemeinsam mit Governikus entwickelt. AusweisIDent eignet sich für die Identifizierung von Personen für eine Web-Anwendung. Über eine Zwei-Faktor-Authentisierung durch den Kunden werden höchste Sicherheitsanforderungen bei der Kundenregistrierung erfüllt. Die Identitätsprüfungen erfolgen gesetzeskonform nach demGesetz zur Förderung der elektronischen Verwaltung (eGovG), dem Gesetz über das Aufspüren von Gewinnen aus schweren Straftaten (GWG), dem Telekommunikationsgesetz (TKG) sowie nach Bundesdatenschutzgesetz (BDSG) und der EUDatenschutzgrundverordnung (EU-DSGVO)."
-			},
-			"address": "https://www.ausweisident.de",
-			"homepage": "https://www.ausweisident.de",
-			"email": "vertrieb@d-trust.net",
-			"phone": "+49 30 25 98 0",
-			"postalAddress": "D-Trust GmbH<br/>Kommandantenstraße 15<br/>10969 Berlin",
-			"image": "ausweisident_image.jpg",
-			"icon": "ausweisident_icon.svg",
-			"category": "other",
-			"subjectUrls": [
-				"https://ausweisident.eid-service.de"
-			]
-		},
-		{
-			"shortName": {
 				"": "AFBG Brandenburg"
 			},
 			"longName": {
@@ -1307,28 +1285,6 @@
 			]
 		},
 		{
-			"shortName": {
-				"": "DATEV"
-			},
-			"longName": {
-				"": "DATEV - Arbeitnehmer online"
-			},
-			"longDescription": {
-				"": "Arbeitnehmer online ist ein Angebot Ihres Arbeitgebers, um mit Ihnen digital zusammenzuarbeiten. Im Portal stellt er Ihnen persönliche Daten bereit, wie zum Beispiel Ihre Lohn- und Gehaltsdokumente. <br/> Ihr Arbeitgeber schaltet Sie für die Nutzung von Arbeitnehmer online frei. Daraufhin erhalten Sie persönliche Briefe, mit denen Sie sich registrieren können. Im Anschluss können Sie jederzeit Ihre Brutto/Netto-Abrechnungen, Sozialversicherungsnachweise und Lohnsteuerbescheinigungen online abrufen. Sie haben dadurch jederzeit und überall einen schnellen Überblick über Ihre gesamten Lohn- und Gehaltsdokumente."
-			},
-			"address": "https://www.datev.de/ano",
-			"homepage": "https://www.datev.de",
-			"phone": "+49 800 6648383",
-			"email": "info@datev.de",
-			"postalAddress": "Datev eG <br/>Paumgartnerstr. 6 - 14 <br/>90429 Nürnberg",
-			"image": "datev_image.jpg",
-			"icon": "datev_icon.png",
-			"category": "other",
-			"subjectUrls": [
-				"https://secure6.datev.de"
-			]
-		},
-		{
 			"exclude": [
 				"ios"
 			],
@@ -1972,21 +1928,21 @@
 		},
 		{
 			"shortName": {
-				"": "Stadt Hannover - iKFZ"
+				"": "Service-Portal Stadt Hannover"
 			},
 			"longName": {
-				"": "Stadt Hannover - Internetbasierte Fahrzeugzulassung"
+				"": "Service-Portal der Landeshauptstadt Hannover"
 			},
 			"longDescription": {
-				"": "Neuzulassung, Wiederzulassung, Anmeldung und Abmeldung von Kfz.<br/>Beim Halterwechsel können Sie übrigens sofort nach der Ummeldung losfahren, wenn Sie das alte Kennzeichen übernehmen. Abmeldung online nur bei Kfz, die nach dem 01.01.2015 zugelassen wurden."
+				"": "Im Service-Portal der Landeshauptstadt Hannover finden Sie alle öffentlichen Dienstleistungen der Verwaltung für Bürgerinnen, Bürger und Unternehmen.  Immer mehr Dienstleistungen können über das Portal direkt online erledigt werden. Daneben bietet die Stadt Hannover weitere Services wie Online-Terminreservierung und Online-Sprechstunden an."
 			},
-			"address": "https://landeshauptstadt-hannover.govconnect.de",
-			"homepage": "https://landeshauptstadt-hannover.govconnect.de",
-			"phone": "+49 511 168 44539",
-			"email": "Kfz-Zulassungsbehoerde@Hannover-Stadt.de",
-			"postalAddress": "Landeshauptstadt Hannover<br/>Fachbereich Öffentliche Ordnung<br/>Am Schützenplatz 1<br/>30169 Hannover",
-			"image": "Hannover_image.jpg",
-			"icon": "Hannover_icon.svg",
+			"address": "https://serviceportal.hannover-stadt.de",
+			"homepage": "https://serviceportal.hannover-stadt.de",
+			"phone": "+49 511 168 43039",
+			"email": "serviceportal@hannover-stadt.de",
+			"postalAddress": "Landeshauptstadt Hannover<br/>Trammplatz 2<br/>30159 Hannover",
+			"image": "StadtHannover_image.jpg",
+			"icon": "StadtHannover_icon.svg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
 		},
@@ -2093,47 +2049,6 @@
 			"postalAddress": "Landkreis Saalekreis<br/>Domplatz 9<br/>06217 Merseburg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
-		},
-		{
-			"exclude": [
-				"ios"
-			],
-			"eidSupport": false,
-			"shortName": {
-				"": "T-Systems DeMail für Großkunden"
-			},
-			"longName": {
-				"": "T-Systems DeMail für Großkunden"
-			},
-			"address": "https://www.t-systems.de/de-mail",
-			"homepage": "https://www.t-systems.de",
-			"phone": "+49 69 20060 0",
-			"email": "de-mail@t-systems.com",
-			"postalAddress": "T-Systems International GmbH<br/>Hahnstraße 43d<br/>60528 Frankfurt am Main",
-			"category": "other",
-			"subjectUrls": [
-				"https://www.de-mail.t-systems.de"
-			]
-		},
-		{
-			"exclude": [
-				"ios"
-			],
-			"eidSupport": false,
-			"shortName": {
-				"": "Telekom DeMail"
-			},
-			"longName": {
-				"": "Telekom DeMail für Privat- und Geschäftskunden"
-			},
-			"address": "https://www.telekom.de/de-mail",
-			"homepage": "https://www.telekom.de",
-			"phone": "+49 800 33 01000",
-			"postalAddress": "Telekom Deutschland GmbH<br/>Landgrabenweg 151<br/>53227 Bonn",
-			"category": "other",
-			"subjectUrls": [
-				"https://www.de-mail.t-online.de"
-			]
 		},
 		{
 			"exclude": [

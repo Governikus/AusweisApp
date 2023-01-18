@@ -308,6 +308,14 @@ elseif(UNIX)
 		install(FILES ${RESOURCES_DIR}/images/npa.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/96x96/apps COMPONENT Application RENAME AusweisApp2.png)
 		install(FILES ${DOCS_DIR}/AusweisApp2.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT Application)
 	endif()
+
+	# This is for internal use only! It is not recommended to split the AusweisApp2 into multiple libs!
+	if(BUILD_SHARED_LIBS)
+		target_get_linked_libraries(AusweisApp libraries)
+		foreach(libTarget ${libraries})
+			install(TARGETS ${libTarget} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Application)
+		endforeach()
+	endif()
 endif()
 
 

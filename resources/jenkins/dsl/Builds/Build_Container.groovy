@@ -22,9 +22,9 @@ j.with
 	steps
 	{
 		shell(strip('''\
-			docker build
+			docker build --pull
 			-t dev-docker.govkg.de/ausweisapp2/sdk:${TAG//-default/""}
-			--build-arg CCACHE_SECONDARY_STORAGE="redis://${CCACHE_SECONDARY_STORAGE_HOST}|share-hits=false"
+			--build-arg CCACHE_REMOTE_STORAGE="redis://${CCACHE_REMOTE_STORAGE_HOST}|share-hits=false"
 			source
 			'''))
 

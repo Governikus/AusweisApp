@@ -1,7 +1,7 @@
 /*!
  * \brief Provide a HTTP server.
  *
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,6 +32,7 @@ class HttpServer
 	public:
 		static quint16 cPort;
 		static QVector<QHostAddress> cAddresses;
+		static QString getDefault();
 
 		explicit HttpServer(quint16 pPort = HttpServer::cPort,
 				const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);

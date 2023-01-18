@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -63,7 +63,7 @@ Item {
 			Layout.bottomMargin: Constants.component_spacing
 			Layout.fillWidth: true
 			Layout.maximumWidth: Style.dimens.max_text_width
-			height: childrenRect.height
+			implicitHeight: childrenRect.height
 			visible: children.length !== 0
 		}
 		GSpacer {

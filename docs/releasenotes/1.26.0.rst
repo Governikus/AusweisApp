@@ -25,6 +25,4 @@ Entwickler
 """"""""""
 - Das iOS SDK unterstützt jetzt arm64-simulator.
 
-- Aktualisierung von OpenSSL auf die Version 3.0.7.
-
 - Aktualisierung von Qt auf die Version 6.4.1.

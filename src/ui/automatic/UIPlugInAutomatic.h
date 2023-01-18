@@ -1,7 +1,7 @@
 /*!
  * \brief UIPlugIn implementation of full automatic authentication.
  *
- * \copyright Copyright (c) 2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

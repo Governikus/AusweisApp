@@ -1,7 +1,7 @@
 /*!
  * \brief Represents a PAOS response type according to ISOCommon.xsd
  *
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 

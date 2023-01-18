@@ -1,0 +1,23 @@
+AusweisApp2 1.26.2
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 17. Januar 2023
+
+
+Anwender
+""""""""
+- Die Anzeige, dass eine andere Anwendung auf dem verwendeten
+  Port läuft, wurde korrigiert.
+
+- Behebung von Abstürzen unter Android.
+
+
+Entwickler
+""""""""""
+- Optimierung der Weiterleitung an "CommunicationErrorAddress" unter iOS.
+
+- Die Installation des Proxy-Dienstes für Terminalserver-Umgebungen
+  wurde verbessert.
+
+- Die Einstellung zum Einrichtungsassistenten über die Installation
+  in Firmennetzwerken wurde korrigiert.

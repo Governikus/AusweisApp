@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref UIPlugInScheme
  *
- * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInScheme.h"
@@ -136,11 +136,6 @@ class test_UIPlugInScheme
 			QTest::newRow(" 3") << QUrl("eid://localhost:24727/eID?tctokenURL=bla");
 			QTest::newRow(" 4") << QUrl("eid://www.ausweisapp.bund.de/de/aa2/a11y");
 			QTest::newRow(" 5") << QUrl("eid://www.ausweisapp.bund.de/en/aa2/a11y");
-			QTest::newRow(" 6") << QUrl("http://127.0.0.1/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 7") << QUrl("http://localhost/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 8") << QUrl("http://localhost:24727/eID?tctokenURL=bla");
-			QTest::newRow(" 9") << QUrl("http://www.ausweisapp.bund.de/de/aa2/a11y");
-			QTest::newRow("10") << QUrl("http://www.ausweisapp.bund.de/en/aa2/a11y");
 		}
 
 

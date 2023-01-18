@@ -3,8 +3,8 @@ MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Docs LABELS=Docs
 
-RUN apk --no-cache add py3-setuptools icu poppler zziplib enscript ghostscript texlive-full && \
-    pip3 install doc8 cloud_sptheme sphinx sphinx_rtd_theme
+RUN apk --no-cache add py3-setuptools icu poppler zziplib enscript ghostscript texlive-full py3-sphinx py3-sphinx_rtd_theme && \
+    pip3 install doc8
 
 USER governikus
 

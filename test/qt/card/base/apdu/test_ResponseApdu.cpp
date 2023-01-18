@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref Apdu
  *
- * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/ResponseApdu.h"
