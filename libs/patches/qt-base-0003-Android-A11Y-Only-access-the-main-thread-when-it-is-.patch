@@ -1,0 +1,66 @@
+From 97d4394f85f120724a9cbe518ba2233b87e48c68 Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Wed, 4 Jan 2023 16:32:28 +0100
+Subject: Android A11Y: Only access the main thread when it is not blocked
+
+When the qtMainLoopThread calls QSGThreadedRenderLoop::polishAndSync(),
+it waits for the QSGRenderThread.
+
+In the QSGRenderThread, QAndroidPlatformOpenGLWindow::eglSurface()
+calls QtAndroid::createSurface() and waits for the "android main
+thread" to return a valid surface.
+When the "android main thread" now calls "runInObjectContext" (e.g. by
+calling QtAndroidAccessibility::childIdListForAccessibleObject()) it
+waits for the qtMainLoopThread and the program is stuck in a deadlock.
+
+To prevent this, we protect all BlockedQueuedConnection from the
+"android main thread" to the qtMainLoopThread by acquiring the
+AndroidDeadlockProtector.
+When QAndroidPlatformOpenGLWindow::eglSurface() already acquired the
+AndroidDeadlockProtector we abort the current A11y call with an emtpy
+or default value.
+
+Note: b8a95275440b8a143ee648466fd8b5401ee1e839 already tried to fix
+this by checking "getSurfaceCount() != 0", but there are situations,
+where a new surface is being created while an old surface is still
+present.
+
+Task-number: QTBUG-105958
+Pick-to: 6.5 6.4 6.3 6.2 5.15
+Change-Id: Ie40e8654c99aace9e69b0b8412952fa22c89f071
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit b832a5ac72c6015b6509d60b75b2ce5d5e570800)
+---
+ .../platforms/android/androidjniaccessibility.cpp        | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+index 3067cb178a..8990289dc4 100644
+--- x/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
++++ y/qtbase/src/plugins/platforms/android/androidjniaccessibility.cpp
+@@ -1,6 +1,7 @@
+ // Copyright (C) 2021 The Qt Company Ltd.
+ // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ 
++#include "androiddeadlockprotector.h"
+ #include "androidjniaccessibility.h"
+ #include "androidjnimain.h"
+ #include "qandroidplatformintegration.h"
+@@ -61,6 +62,14 @@ namespace QtAndroidAccessibility
+     template <typename Func, typename Ret>
+     void runInObjectContext(QObject *context, Func &&func, Ret *retVal)
+     {
++        AndroidDeadlockProtector protector;
++        if (!protector.acquire()) {
++            __android_log_print(ANDROID_LOG_WARN, m_qtTag,
++                                "Could not run accessibility call in object context, accessing "
++                                "main thread could lead to deadlock");
++            return;
++        }
++
+         if (!QtAndroid::blockEventLoopsWhenSuspended()
+             || QGuiApplication::applicationState() != Qt::ApplicationSuspended) {
+             QMetaObject::invokeMethod(context, func, Qt::BlockingQueuedConnection, retVal);
+-- 
+2.39.0
+

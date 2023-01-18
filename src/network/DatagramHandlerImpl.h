@@ -1,7 +1,7 @@
 /*!
  * \brief Provides an UDP socket to send and receive datagrams.
  *
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

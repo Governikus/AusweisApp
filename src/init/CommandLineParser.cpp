@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
@@ -31,7 +31,7 @@ CommandLineParser::CommandLineParser()
 	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Ignore proxy settings."))
 	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getDefault())
 	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QString::number(PortFile::cDefaultPort))
-	, mOptionAddresses(QStringLiteral("address"), QStringLiteral("Use address binding."), QStringLiteral("127.0.0.1"))
+	, mOptionAddresses(QStringLiteral("address"), QStringLiteral("Use address binding."), HttpServer::getDefault())
 {
 	addOptions();
 }

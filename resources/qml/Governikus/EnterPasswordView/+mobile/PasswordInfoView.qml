@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -24,7 +24,7 @@ SectionPage {
 	//: LABEL ANDROID IOS
 	title: changePinInfo ? qsTr("Change PIN information") :
 	//: LABEL ANDROID IOS
-	passwordType === PasswordType.PASSWORD_CAN ? qsTr("CAN information") :
+	passwordType === PasswordType.CAN ? qsTr("CAN information") :
 	//: LABEL ANDROID IOS
 	passwordType === PasswordType.PUK ? qsTr("PUK information") :
 	//: LABEL ANDROID IOS

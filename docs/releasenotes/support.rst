@@ -54,13 +54,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 108
+- Chrome 109
 
-- Firefox 107
+- Firefox 108
 
 - Safari 16.1 (macOS)
 
-- Edge 108
+- Edge 109
 
 
 
@@ -118,9 +118,9 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 108 (iOS/Android)
+- Chrome 109 (iOS/Android)
 
-- Firefox 107 (iOS/Android)
+- Firefox 108 (iOS/Android)
 
 - Samsung Internet 19 (Android)
 

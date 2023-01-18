@@ -2,7 +2,7 @@
  * \brief Information needed to display a remote device in the GUI and to open
  * a websocket connection to it.
  *
- * \copyright Copyright (c) 2017-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

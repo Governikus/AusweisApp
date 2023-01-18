@@ -19,7 +19,7 @@ def getJobs()
 	def subPackages = ['iOS_SwiftPackage']
 	list += subPackages
 
-	def unitTests = ['Linux', 'Linux_Integrated', 'MacOS', 'MacOS_Integrated', 'Win64_GNU', 'Win64_MSVC', 'FreeBSD', 'SonarQube']
+	def unitTests = ['Linux', 'Linux_Integrated', 'MacOS', 'MacOS_Integrated', 'Win64_GNU', 'Win64_MSVC', 'FreeBSD', 'SonarQube', 'Docker_VNC']
 	list += unitTests
 
 	return list
@@ -125,6 +125,8 @@ j.with
 			phaseJob(getName('FreeBSD'))
 
 			phaseJob(getName('SonarQube'))
+
+			phaseJob(getName('Docker_VNC'))
 		}
 
 		copyArtifacts(getName('SonarQube'))

@@ -1,10 +1,9 @@
 /*!
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCleanUpReaderManager.h"
 
-#include "AppSettings.h"
 #include "ReaderManager.h"
 #include "VolatileSettings.h"
 
@@ -42,10 +41,11 @@ void StateCleanUpReaderManager::run()
 
 	const auto& status = context->getStatus();
 	const auto readerManager = Env::getSingleton<ReaderManager>();
-	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	const auto volatileSettings = Env::getSingleton<VolatileSettings>();
+	if (volatileSettings->isUsedAsSDK())
 	{
 #ifdef Q_OS_IOS
-		readerManager->stopScan(ReaderManagerPlugInType::NFC, status.isError() ? status.toErrorDescription(true) : QString());
+		readerManager->stopScan(ReaderManagerPlugInType::NFC, status.isError() ? volatileSettings->getMessages().getSessionFailed() : QString());
 #endif
 		readerManager->shelve();
 	}

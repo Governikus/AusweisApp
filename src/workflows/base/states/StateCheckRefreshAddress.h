@@ -2,7 +2,7 @@
  * \brief Calls the RefreshAddress of TcToken and checks the certificates.
  * After that it will set RedirectAddress in WorkflowContext.
  *
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

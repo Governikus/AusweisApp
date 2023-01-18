@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"

@@ -4,7 +4,7 @@
  * This is not integrated into AppSettings to avoid
  * circular dependency because settings can use this, too.
  *
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

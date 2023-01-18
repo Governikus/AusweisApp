@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref VolatileSettings
  *
- * \copyright Copyright (c) 2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VolatileSettings.h"

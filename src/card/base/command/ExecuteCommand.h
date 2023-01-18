@@ -1,7 +1,7 @@
 /*!
  * \brief Execute function on ReaderManager-Thread
  *
- * \copyright Copyright (c) 2021-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

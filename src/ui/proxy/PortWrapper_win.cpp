@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PortWrapper.h"
@@ -167,7 +167,8 @@ quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>
 			continue;
 		}
 
-		if (!QCoreApplication::applicationFilePath().endsWith(getExecutableOfProcessID(connection.dwOwningPid)))
+		const auto& executable = getExecutableOfProcessID(connection.dwOwningPid);
+		if (executable.isEmpty() || !QCoreApplication::applicationFilePath().endsWith(executable))
 		{
 			continue;
 		}

@@ -81,28 +81,9 @@
 		<!-- ProductFeature components -->
 		<!-- ######################### -->
 		<FeatureRef Id="ProductFeature">
-			<!-- Installation settings -->
-			<FeatureRef Id="WindowsFirewallRule" />
-			<FeatureRef Id="ProxyService" />
-			<FeatureRef Id="DesktopShortcut" />
-			<ComponentRef Id="StartmenuShortcut"/>
-
-			<!-- Runtime settings -->
-			<FeatureRef Id="AutoStart"/>
-			<FeatureRef Id="AutoHide"/>
-			<FeatureRef Id="RemindToClose"/>
-			<FeatureRef Id="Assistant"/>
-			<FeatureRef Id="TransportPinReminder"/>
-			<FeatureRef Id="CustomProxyType"/>
-			<FeatureRef Id="CustomProxyHost"/>
-			<FeatureRef Id="CustomProxyPort"/>
-			<FeatureRef Id="UpdateCheck"/>
-			<FeatureRef Id="OnScreenKeyboard"/>
-			<FeatureRef Id="ShuffleScreenKeyboard"/>
-			<FeatureRef Id="EnableCanAllowed"/>
-			<FeatureRef Id="SkipRightsOnCanAllowed"/>
-			<FeatureRef Id="History"/>
-
+			<FeatureRef Id="Executable" />
+			<FeatureRef Id="InstallSettings" />
+			<FeatureRef Id="RuntimeSettings" />
 			<ComponentRef Id="RememberInstallRoot"/>
 		</FeatureRef>
 

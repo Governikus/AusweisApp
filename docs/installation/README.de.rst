@@ -17,7 +17,7 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 INSTALLDIR
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
-  "C:\\Programme (x86)\\AusweisApp2" genutzt.
+  "C:\\Programme\\AusweisApp2" genutzt.
 
 SYSTEMSETTINGS
   Betrifft die Erstellung von Firewall-Regeln der Windows Firewall. Ohne Angabe
@@ -145,11 +145,6 @@ zu optimieren, kann die Systemvariable "QT_QUICK_BACKEND" auf den Wert
 "software" gesetzt werden. In diesem Fall verzichtet die AusweisApp2 auf den
 Versuch die Grafikbeschleunigung zu nutzen und startet direkt mit dem
 alternativen Softwarerenderer.
-
-Bei Durchführung eines Updates der AusweisApp2 können keine systemweiten
-Standardeinstellungen durch neue Kommandozeilenparameter ergänzt werden.
-Werden neue Parameter benötigt, so muss die AusweisApp2 deinstalliert und mit
-den neuen Kommandozeilenparametern neuinstalliert werden.
 
 macOS
 -----
@@ -308,16 +303,20 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    :header: "Referenz", "Protokoll", "Port", "Richtung", "Optional", "Zweck", "Anmerkungen"
    :widths: 8, 8, 8, 8, 8, 35, 25
 
-   "eID1",	TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",										    "Nur erreichbar von localhost [#TR-03124]_"
-   "eID2",	TCP, 443,                 "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Anbieter, TLS-1-2-Kanal [#TR-03124]_",							    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
-   "eID3",      TCP, 443,                 "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",								    "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
-   "eID-SDK",	TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",													    "Nur erreichbar von localhost [#TR-03124]_"
-   "SaK1",	UDP, 24727 [#aa2proxy]_,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",											    "Broadcasts"
-   "SaK2",	TCP, ,                    "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",										    "Verbindung im lokalen Subnetz"
-   "Update",	TCP, 443,                 "ausgehend", "Ja",   "Updates [#govurl]_ zu Anbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .",	    "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
+   "eID1",    TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Online-Ausweisvorgang, eID-Aktivierung [#TR-03124]_",                                                                   "Nur erreichbar von localhost [#TR-03124]_"
+   "eID2",    TCP, 443 [#eidports]_,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum Anbieter, TLS-1-2-Kanal [#TR-03124]_",                                            "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID3",    TCP, 443 [#eidports]_,    "ausgehend", "Nein", "Online-Ausweisvorgang, Verbindung zum eID-Server, TLS-2-Kanal [#TR-03124]_",                                            "TLS-Zertifikate verschränkt mit Berechtigungs-Zertifikat [#TR-03124]_"
+   "eID-SDK", TCP, 24727 [#aa2proxy]_,  "eingehend", "Nein", "Verwendung der SDK-Schnittstelle",                                                                                      "Nur erreichbar von localhost [#TR-03124]_"
+   "SaK1",    UDP, 24727 [#aa2proxy]_,  "eingehend", "Ja",   "Smartphone als Kartenleser, Erkennung [#TR-03112]_",                                                                    "Broadcasts"
+   "SaK2",    TCP, ,                    "ausgehend", "Ja",   "Smartphone als Kartenleser, Verwendung [#TR-03112]_",                                                                   "Verbindung im lokalen Subnetz"
+   "Update",  TCP, 443,                 "ausgehend", "Ja",   "Updates [#govurl]_ zu Anbietern und Kartenlesern sowie Informationen zu neuen AusweisApp2-Versionen [#updatecheck]_ .", "Die Zertifikate der TLS-Verbindung werden mit in der AusweisApp2 mitgelieferten CA-Zertifikaten validiert. Im Betriebssystem hinterlegte CA-Zertifikate werden ignoriert."
 
 .. [#aa2proxy] Oder ein zufälliger Port bei Verwendung des AusweisApp2-Proxys.
 .. [#TR-03124] Siehe TR-03124 des BSI
+.. [#eidports] Port 443 wird für die initiale Kontaktaufnahme zum Anbieter bzw.
+   eID-Server verwendet. Durch die Konfiguration des Dienstes durch den
+   Diensteanbieter können durch Weiterleitungen beliebige andere Ports zum
+   Einsatz kommen.
 .. [#TR-03112] Siehe TR-03112-6 des BSI
 .. [#govurl] Erreichbar unter dem URL https://appl.governikus-asp.de/ausweisapp2/
 .. [#updatecheck] Die Überprüfung auf neue AusweisApp2-Versionen kann deaktiviert werden, siehe

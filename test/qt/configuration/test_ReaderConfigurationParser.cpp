@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ReaderDetector
  *
- * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationParser.h"

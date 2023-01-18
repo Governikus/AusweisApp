@@ -1,5 +1,5 @@
 /*!
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -447,7 +447,7 @@ void AppController::onUiPlugin(const UIPlugIn* pPlugin)
 
 	connect(pPlugin, &UIPlugIn::fireWorkflowRequested, this, &AppController::onWorkflowRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireShowUiRequested, this, &AppController::fireShowUi, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireShowUserInformationRequested, this, &AppController::fireShowUserInformation, Qt::QueuedConnection);
+	connect(pPlugin, &UIPlugIn::fireShowUserInformationRequested, this, &AppController::fireShowUserInformation);
 	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
 	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
 	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
@@ -508,7 +508,8 @@ bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessa
 		if (msg->message == WM_QUERYENDSESSION)
 		{
 			qCDebug(system) << "WM_QUERYENDSESSION received";
-			Q_EMIT fireHideUi();
+			doShutdown();
+			return true;
 		}
 	}
 #endif

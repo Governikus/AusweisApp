@@ -105,13 +105,13 @@ if(WIN32)
 	# disable above line, enable beneath line to build MSI for english
 	# set(CPACK_WIX_CULTURES en-US)
 	set(CPACK_WIX_TEMPLATE ${PACKAGING_DIR}/win/WIX.template.in)
-	set(CPACK_WIX_EXTRA_SOURCES ${PACKAGING_DIR}/win/install_settings.wxs ${PACKAGING_DIR}/win/runtime_settings.wxs ${PACKAGING_DIR}/win/gui.wxs)
+	set(CPACK_WIX_EXTRA_SOURCES ${PACKAGING_DIR}/win/executable.wxs ${PACKAGING_DIR}/win/install_settings.wxs ${PACKAGING_DIR}/win/runtime_settings.wxs ${PACKAGING_DIR}/win/gui.wxs)
 	set(CPACK_WIX_UI_BANNER ${RESOURCES_DIR}/images/wix_banner.jpg)
 	set(CPACK_WIX_UI_DIALOG ${RESOURCES_DIR}/images/wix_dialog.jpg)
 	set(CPACK_WIX_EXTENSIONS WixUtilExtension WixFirewallExtension)
 	set(CPACK_WIX_LIGHT_EXTRA_FLAGS -loc ${PACKAGING_DIR}/win/WIX.Texts.de-DE.wxl -loc ${PACKAGING_DIR}/win/WIX.Texts.en-US.wxl)
-	# suppress warning LGHT1076/ICE61 caused by AllowSameVersionUpgrades
-	set(CPACK_WIX_LIGHT_EXTRA_FLAGS -sw1076 ${CPACK_WIX_LIGHT_EXTRA_FLAGS})
+	# suppress errors related to the shortcuts (HKCU/HKLM)
+	set(CPACK_WIX_LIGHT_EXTRA_FLAGS -sice:ICE38 -sice:ICE43 -sice:ICE57 ${CPACK_WIX_LIGHT_EXTRA_FLAGS})
 
 	configure_file(${CMAKE_DIR}/PrepareProxy.cmake.in ${CMAKE_BINARY_DIR}/PrepareProxy.cmake @ONLY)
 	set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_BINARY_DIR}/PrepareProxy.cmake")

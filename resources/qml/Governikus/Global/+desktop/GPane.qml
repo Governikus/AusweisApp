@@ -1,5 +1,5 @@
 /*
- * \copyright Copyright (c) 2016-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.View 1.0

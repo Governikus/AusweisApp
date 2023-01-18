@@ -1,7 +1,7 @@
 /*!
  * \brief Unit tests for \ref ProxyCredentials
  *
- * \copyright Copyright (c) 2020-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProxyCredentials.h"

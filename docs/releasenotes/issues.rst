@@ -35,16 +35,6 @@ Windows / macOS
   Hierfür muss QT_QUICK_BACKEND=software gesetzt und die AusweisApp2
   neugestartet werden.
 
-- Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
-  die Kommandozeilenparameter DESKTOPSHORTCUT, SYSTEMSETTINGS und PROXYSERVICE
-  ignoriert. Dies kann durch eine Deinstallation und eine erneute Installation
-  umgangen werden.
-
-- Unter Windows werden bei einem Update der AusweisApp2 über die Kommandozeile
-  Kommandozeilenparameter, die nicht schon bei der installierten Version der
-  AusweisApp2 genutzt wurden, ignoriert. Dies kann durch eine Deinstallation
-  und eine erneute Installation umgangen werden.
-
 - Das Beenden der AusweisApp2 über das Kontextmenü in der Menüleiste unter
   macOS funktioniert nur, wenn das Kontextmenü mit der linken Maustaste
   geöffnet wird. Alternativ kann das Tastaturkürzel CMD + Q zum beenden der

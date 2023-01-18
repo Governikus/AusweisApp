@@ -5,7 +5,7 @@
  *
  * All found chains are returned by the function /ref ChainBuilder::getChains().
  *
- * \copyright Copyright (c) 2015-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

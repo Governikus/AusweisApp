@@ -1,7 +1,7 @@
 /*!
  * \brief Handler for the PACE protocol. See TR-03110.
  *
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

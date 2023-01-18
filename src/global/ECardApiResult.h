@@ -1,7 +1,7 @@
 /*!
  * \brief Status representation according to TR-03112-6 "eCard-API-Framework"
  *
- * \copyright Copyright (c) 2014-2022 Governikus GmbH & Co. KG, Germany
+ * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
