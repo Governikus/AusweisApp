@@ -146,6 +146,7 @@ void HttpHandler::handleStatusRequest(StatusFormat pStatusFormat, const QSharedP
 
 	HttpResponse response(HTTP_STATUS_OK);
 	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
+	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Private-Network"), QByteArrayLiteral("true"));
 	switch (pStatusFormat)
 	{
 		case StatusFormat::PLAIN:
