@@ -1,0 +1,11 @@
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp	2023-02-22 22:01:06.387856631 +0100
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp	2023-02-23 07:42:58.722535032 +0100
+@@ -143,7 +143,7 @@
+ {
+     QJniObject tagTech;
+     if (techList.contains(ISODEPTECHNOLOGY))
++        return 500; // kleinerm changed to 500, was: tagTech = getTagTechnology(ISODEPTECHNOLOGY);
+-        tagTech = getTagTechnology(ISODEPTECHNOLOGY);
+     else if (techList.contains(NFCATECHNOLOGY))
+         tagTech = getTagTechnology(NFCATECHNOLOGY);
+     else if (techList.contains(NFCBTECHNOLOGY))

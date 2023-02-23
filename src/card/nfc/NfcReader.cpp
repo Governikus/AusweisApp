@@ -40,6 +40,14 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	}
 
 	int length = pTarget->maxCommandLength();
+
+	if (length < 500)
+	{
+		qCDebug(card_nfc) << "ExtendedLengthApduSupport missing. MaxTransceiveLength:" << length;
+		length = 500;
+		qCDebug(card_nfc) << "kleinerm hack. Overriding MaxTransceiveLength to:" << length;
+	}
+
 	setInfoMaxApduLength(length);
 	if (getReaderInfo().insufficientApduLength())
 	{
