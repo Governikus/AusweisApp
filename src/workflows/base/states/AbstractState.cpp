@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AbstractState.h"
@@ -27,6 +27,7 @@ AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 	, mConnections()
 {
 	Q_ASSERT(mContext);
+	connect(this, &AbstractState::fireAbort, this, &AbstractState::onAbort);
 }
 
 
@@ -52,6 +53,16 @@ QString AbstractState::getStateName() const
 void AbstractState::setStateName(const QString& pName)
 {
 	setObjectName(pName);
+}
+
+
+void AbstractState::onAbort(const FailureCode& pFailure) const
+{
+	if (mContext)
+	{
+		qCDebug(statemachine) << "Abort with FailureCode" << pFailure;
+		mContext->setFailureCode(pFailure);
+	}
 }
 
 
@@ -140,7 +151,9 @@ void AbstractState::onUserCancelled()
 	qCInfo(support) << "Cancellation by user";
 	mContext->setWorkflowCancelledInState();
 	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort({FailureCode::Reason::User_Cancelled,
+					  {FailureCode::Info::State_Name, getStateName()}
+			});
 }
 
 
@@ -149,7 +162,9 @@ void AbstractState::onCardRemoved(const ReaderInfo& pInfo)
 	if (pInfo.getName() == mContext->getReaderName())
 	{
 		updateStatus(GlobalStatus::Code::Workflow_Card_Removed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Card_Removed,
+						  {FailureCode::Info::State_Name, getStateName()}
+				});
 	}
 }
 

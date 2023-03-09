@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Provides information about the App release to QML
- *
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Provide a HTTP server.
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -10,6 +12,7 @@
 #include "PortFile.h"
 
 #include <QMetaMethod>
+#include <QStringList>
 #include <QTcpServer>
 #include <QVector>
 
@@ -38,7 +41,7 @@ class HttpServer
 				const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);
 		~HttpServer() override;
 
-		[[nodiscard]] int boundAddresses() const;
+		[[nodiscard]] QStringList boundAddresses() const;
 		[[nodiscard]] bool isListening() const;
 		[[nodiscard]] quint16 getServerPort() const;
 		void rebind(quint16 pPort = 0, const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);

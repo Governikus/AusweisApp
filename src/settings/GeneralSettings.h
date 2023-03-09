@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Contains the definition of the GeneralSettings class.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

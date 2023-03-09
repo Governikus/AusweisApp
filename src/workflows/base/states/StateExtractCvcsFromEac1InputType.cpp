@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateExtractCvcsFromEac1InputType.h"
@@ -31,7 +31,7 @@ void StateExtractCvcsFromEac1InputType::run()
 			{
 				qCritical() << "More than one terminal certificate found in EAC1InputType";
 				updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
-				Q_EMIT fireAbort();
+				Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_At);
 				return;
 			}
 			foundTerminalCvc = true;
@@ -43,7 +43,7 @@ void StateExtractCvcsFromEac1InputType::run()
 			{
 				qCritical() << "More than one DV certificate found in EAC1InputType";
 				updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
-				Q_EMIT fireAbort();
+				Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_Dv);
 				return;
 			}
 			foundDvCvc = true;
@@ -55,14 +55,14 @@ void StateExtractCvcsFromEac1InputType::run()
 	{
 		qCritical() << "No terminal certificate found in EAC1InputType";
 		updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_At_Missing);
 		return;
 	}
 	if (!foundDvCvc)
 	{
 		qCritical() << "No DV certificate found in EAC1InputType";
 		updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_Dv_Missing);
 		return;
 	}
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -36,7 +36,11 @@ StateGenericSendReceive::StateGenericSendReceive(
 void StateGenericSendReceive::emitStateMachineSignal(PaosType pResponseType)
 {
 	Q_UNUSED(pResponseType)
-	Q_EMIT fireAbort();
+	const FailureCode::FailureInfoMap infoMap {
+		{FailureCode::Info::State_Name, getStateName()},
+		{FailureCode::Info::Paos_Type, Enum<PaosType>::getName(pResponseType)}
+	};
+	Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Paos_Unhandled, infoMap});
 }
 
 
@@ -94,7 +98,11 @@ void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 
 		clearConnections();
 		mReply->abort();
-		Q_EMIT fireAbort();
+		const FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::State_Name, getStateName()},
+			{FailureCode::Info::Ssl_Errors, TlsChecker::sslErrorsToString(pErrors)}
+		};
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Ssl_Error, infoMap});
 	}
 }
 
@@ -104,10 +112,10 @@ void StateGenericSendReceive::onSslHandshakeDone()
 	const auto& cfg = mReply->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
-	bool abort = !checkSslConnectionAndSaveCertificate(cfg);
+	auto failure = checkSslConnectionAndSaveCertificate(cfg);
 
 	auto context = getContext();
-	if (!abort && !context->getTcToken()->usePsk())
+	if (!failure.has_value() && !context->getTcToken()->usePsk())
 	{
 		const auto& session = context->getSslSession();
 		if (session.isEmpty() || session != cfg.sessionTicket())
@@ -123,16 +131,18 @@ void StateGenericSendReceive::onSslHandshakeDone()
 				qCCritical(network) << sessionFailedError;
 				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 						});
-				abort = true;
+				failure = {FailureCode::Reason::Generic_Send_Receive_Session_Resumption_Failed,
+						   {FailureCode::Info::State_Name, getStateName()}
+				};
 			}
 		}
 	}
 
-	if (abort)
+	if (failure.has_value())
 	{
 		clearConnections();
 		mReply->abort();
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(failure.value());
 	}
 }
 
@@ -162,7 +172,7 @@ void StateGenericSendReceive::onExit(QEvent* pEvent)
 }
 
 
-bool StateGenericSendReceive::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
+std::optional<FailureCode> StateGenericSendReceive::checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration)
 {
 	const QSharedPointer<AuthContext> context = getContext();
 	Q_ASSERT(!context.isNull());
@@ -177,7 +187,8 @@ bool StateGenericSendReceive::checkSslConnectionAndSaveCertificate(const QSslCon
 			!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
-		return false;
+		return FailureCode(FailureCode::Reason::Generic_Send_Receive_Invalid_Ephemeral_Key_Length,
+				{FailureCode::Info::State_Name, getStateName()});
 	}
 
 	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), context->getTcToken()->getServerAddress(), context);
@@ -185,10 +196,14 @@ bool StateGenericSendReceive::checkSslConnectionAndSaveCertificate(const QSslCon
 	{
 		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
 		updateStatus({CertificateChecker::getGlobalStatus(statusCode, true), infoMap});
-		return false;
+		const FailureCode::FailureInfoMap failureInfoMap {
+			{FailureCode::Info::State_Name, getStateName()},
+			{FailureCode::Info::Certificate_Status, Enum<CertificateChecker::CertificateStatus>::getName(statusCode)}
+		};
+		return FailureCode(FailureCode::Reason::Generic_Send_Receive_Certificate_Error, failureInfoMap);
 	}
 
-	return true;
+	return {};
 }
 
 
@@ -254,7 +269,11 @@ void StateGenericSendReceive::onReplyFinished()
 		const auto& channelStatus = NetworkManager::toTrustedChannelStatus(mReply);
 		qCCritical(network) << GlobalStatus(channelStatus);
 		updateStatus(channelStatus);
-		Q_EMIT fireAbort();
+		const FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::Network_Error, mReply->errorString()},
+			{FailureCode::Info::State_Name, getStateName()}
+		};
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Network_Error, infoMap});
 		return;
 	}
 
@@ -263,7 +282,11 @@ void StateGenericSendReceive::onReplyFinished()
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
-		Q_EMIT fireAbort();
+		const FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::State_Name, getStateName()},
+			{FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+		};
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Server_Error, infoMap});
 		return;
 	}
 
@@ -272,7 +295,11 @@ void StateGenericSendReceive::onReplyFinished()
 		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
 		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
-		Q_EMIT fireAbort();
+		const FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::State_Name, getStateName()},
+			{FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+		};
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Client_Error, infoMap});
 		return;
 	}
 
@@ -317,12 +344,18 @@ void StateGenericSendReceive::onReplyFinished()
 		qCCritical(network) << "The program received an unknown message from the server.";
 		updateStatus({GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
-	}
-	else
-	{
-		qCCritical(network) << "The program received an unexpected message from the server.";
-		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Paos_Unknown,
+						  {FailureCode::Info::State_Name, getStateName()}
 				});
+		return;
 	}
-	Q_EMIT fireAbort();
+
+	qCCritical(network) << "The program received an unexpected message from the server.";
+	updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+			});
+	const FailureCode::FailureInfoMap infoMap {
+		{FailureCode::Info::State_Name, getStateName()},
+		{FailureCode::Info::Paos_Type, Enum<PaosType>::getName(receivedType)}
+	};
+	Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Paos_Unexpected, infoMap});
 }

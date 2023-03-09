@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick.Layouts 1.15
 import Governikus.Global 1.0
@@ -38,21 +38,21 @@ ColumnLayout {
 			}
 		}
 	}
-	ToggleableOption {
+	GCheckBox {
 		checked: SettingsModel.showBetaTesting
 		//: LABEL DESKTOP
 		text: qsTr("Show beta testing image")
 
 		onCheckedChanged: SettingsModel.showBetaTesting = checked
 	}
-	ToggleableOption {
+	GCheckBox {
 		checked: SettingsModel.enableCanAllowed
 		//: LABEL DESKTOP
 		text: qsTr("Support CAN allowed mode")
 
 		onCheckedChanged: SettingsModel.enableCanAllowed = checked
 	}
-	ToggleableOption {
+	GCheckBox {
 		checked: SettingsModel.skipRightsOnCanAllowed
 		enabled: SettingsModel.enableCanAllowed
 		//: LABEL DESKTOP

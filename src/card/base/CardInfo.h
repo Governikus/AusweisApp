@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Contains the CardInfo and the CardInfoFactory
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -70,7 +72,7 @@ class CardInfo
 		[[nodiscard]] bool isRetryCounterDetermined() const;
 
 		/*!
-		 * The online identification function has not been activated by the competent authority.
+		 * The eID function has not been activated by the competent authority.
 		 */
 		[[nodiscard]] bool isPinDeactivated() const;
 

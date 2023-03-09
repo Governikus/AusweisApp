@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief A final state which blocks the state machine before termination.
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

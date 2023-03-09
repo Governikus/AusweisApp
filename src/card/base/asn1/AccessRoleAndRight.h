@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Defines the AccessRight and AccessRole enum.
  *
@@ -5,8 +9,6 @@
  * this header must be included before <QHash> (also indirectly via <QSet> or <QList>),
  * or otherwise they complain about the qHash() function for AccessRight not being
  * found.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

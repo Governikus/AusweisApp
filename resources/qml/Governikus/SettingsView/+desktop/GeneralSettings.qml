@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -39,9 +39,8 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
+	GCheckBox {
 		Layout.fillWidth: true
-		activeFocusOnTab: true
 		checked: SettingsModel.autoStartApp
 		enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
 		maximumLineCount: 2
@@ -53,8 +52,7 @@ ColumnLayout {
 
 		onCheckedChanged: SettingsModel.autoStartApp = checked
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.autoCloseWindowAfterAuthentication
 
 		//: LABEL DESKTOP
@@ -62,8 +60,7 @@ ColumnLayout {
 
 		onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.showInAppNotifications
 		enabled: !SettingsModel.developerMode
 
@@ -99,9 +96,8 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
+	GCheckBox {
 		id: customProxySetting
-		activeFocusOnTab: true
 		checked: SettingsModel.useCustomProxy
 
 		//: LABEL DESKTOP

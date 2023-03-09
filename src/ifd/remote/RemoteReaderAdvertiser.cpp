@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -24,12 +24,6 @@ template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, cons
 }
 
 
-template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, int&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, int& pTimerInterval)
-{
-	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pTimerInterval);
-}
-
-
 } // namespace governikus
 
 
@@ -40,8 +34,14 @@ void RemoteReaderAdvertiserImpl::timerEvent(QTimerEvent* pEvent)
 {
 	if (pEvent->timerId() == mTimerId)
 	{
-		mHandler->send(mDiscovery.toByteArray(IfdVersion::Version::latest));
+		sendDiscovery();
 	}
+}
+
+
+void RemoteReaderAdvertiserImpl::sendDiscovery()
+{
+	mHandler->send(mDiscovery.toByteArray(IfdVersion::Version::latest));
 }
 
 
@@ -51,13 +51,14 @@ RemoteReaderAdvertiserImpl::~RemoteReaderAdvertiserImpl()
 }
 
 
-RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, int pTimerInterval)
+RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, int pTimerInterval, bool pPairing)
 	: RemoteReaderAdvertiser()
 	, mHandler(Env::create<DatagramHandler*>(false))
 	, mTimerId(startTimer(pTimerInterval))
-	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}))
+	, mDiscovery(Discovery(pIfdName, pIfdId, pPort, {IfdVersion::supported()}, pPairing))
 {
 	qCDebug(ifd) << "Start advertising every" << pTimerInterval << "msecs";
+	sendDiscovery();
 }
 
 

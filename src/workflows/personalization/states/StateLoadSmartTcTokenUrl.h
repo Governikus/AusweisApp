@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief State that retrieves the Smart-eID TcTokenURL from the Secure Storage
- *
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

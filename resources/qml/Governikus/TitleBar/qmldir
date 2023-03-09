@@ -2,7 +2,6 @@ module TitleBar
 
 internal BackCloseAction BackCloseAction.qml
 internal TitleBarNavigation TitleBarNavigation.qml
-internal TitleBarText TitleBarText.qml
 
 CancelAction 1.0 CancelAction.qml
 NavigationAction 1.0 NavigationAction.qml

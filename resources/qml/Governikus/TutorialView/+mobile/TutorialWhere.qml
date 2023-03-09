@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -10,12 +10,11 @@ TutorialContent {
 	id: baseItem
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
-		font.italic: true
 		horizontalAlignment: Text.AlignHCenter
 
 		//: LABEL ANDROID IOS
 		text: qsTr("Where can I use the online ID function?")
-		textStyle: Style.text.tutorial_header
+		textStyle: Style.text.tutorial_header_accent
 		width: parent.width * 0.9
 
 		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -232,12 +231,11 @@ TutorialContent {
 			z: 1
 		}
 		GText {
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 
 			//: LABEL ANDROID IOS
 			text: qsTr("six-digit PIN")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_highlight
 			width: parent.width
 			x: (parent.width * 0.5) - (width / 2)
 			y: (parent.height * 0.2) - (height / 2)

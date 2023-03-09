@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -43,11 +43,10 @@ TutorialContent {
 		}
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("Transport PIN")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_highlight
 			width: parent.width * 0.9
 		}
 		TutorialImage {
@@ -72,11 +71,10 @@ TutorialContent {
 		}
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("six-digit PIN")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_highlight
 			width: parent.width * 0.9
 		}
 		TutorialImage {
@@ -153,7 +151,8 @@ TutorialContent {
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
 		horizontalAlignment: Text.AlignHCenter
-		text: PinResetInformationModel.pinForgottenTutorialHint
+		//: LABEL ANDROID IOS
+		text: qsTr("If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.")
 		textStyle: Style.text.tutorial_header_secondary
 		width: parent.width * 0.9
 	}

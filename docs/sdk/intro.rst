@@ -49,13 +49,3 @@ show a possible communication.
      `TR-03124`_, part 1: Specifications
 
    .. _TR-03124: https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Publikationen/TechnischeRichtlinien/TR03124/TR-03124-1.pdf
-
-
-Recommended
------------
-The SDK uses JSON as the communication protocol.
-It is recommended to use an existing library for this.
-
-  - **Java**: `Google GSON <https://github.com/google/gson>`_
-
-  - **C++**: `JsonCPP <https://github.com/open-source-parsers/jsoncpp>`_

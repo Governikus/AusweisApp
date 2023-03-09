@@ -1,7 +1,6 @@
 import common.Trigger
 import common.Constants
 import common.Build.JobType
-import static common.Constants.createEnvMap
 import static common.Constants.createReviewMessage
 
 def getJobs()
@@ -27,7 +26,6 @@ String getName(String name)
 	return "${MERCURIAL_REVISION_BRANCH}_Review_Libs_" + name
 }
 
-def envMap = createEnvMap(getJobs(), this.&getName)
 def reviewMessage = createReviewMessage(getJobs(), this.&getName)
 
 
@@ -42,16 +40,10 @@ def j = new Trigger
 
 j.with
 {
-	wrappers
-	{
-		environmentVariables
-		{
-			envs(envMap)
-		}
-	}
-
 	steps
 	{
+		shell('cd source; resources/jenkins/notify_rb.sh')
+
 		shell('cd source; hg import --no-commit ../patch.diff')
 
 		phase('Libraries')
@@ -131,12 +123,31 @@ j.with
 		}
 	}
 
-	configure
-	{
-		project -> project / 'publishers' << 'org.jenkinsci.plugins.jenkinsreviewbot.ReviewboardNotifier' {
-			shipItOnSuccess 'false'
-			useMarkdown 'true'
-			customMessage "${reviewMessage}"
+	publishers {
+		postBuildScript
+		{
+			markBuildUnstable(true)
+			buildSteps
+			{
+				postBuildStep
+				{
+					stopOnFailure(false)
+					results(['SUCCESS', 'FAILURE', 'UNSTABLE', 'ABORTED', 'NOT_BUILT'])
+					buildSteps
+					{
+						envInjectBuilder
+						{
+							propertiesFilePath('')
+							propertiesContent("REVIEWBOARD_MSG=" + reviewMessage)
+						}
+
+						shell
+						{
+							command('cd source; resources/jenkins/notify_rb.sh')
+						}
+					}
+				}
+			}
 		}
 	}
 }

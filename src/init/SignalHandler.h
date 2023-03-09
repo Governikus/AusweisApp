@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*
  * \brief Implements signal handler for unix and windows.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -63,7 +65,11 @@ class SignalHandler
 
 	private Q_SLOTS:
 		void onSignalSocketActivated();
+#if defined(Q_OS_WIN)
 		void quit();
+#else
+		void quit() const;
+#endif
 
 	public:
 		void init();

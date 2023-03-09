@@ -1,13 +1,13 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
+import Governikus.PasswordInfoView 1.0
+import Governikus.ResultView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
-import Governikus.ResultView 1.0
 import Governikus.Type.PasswordType 1.0
 import Governikus.Type.PersonalizationModel 1.0
 
@@ -41,10 +41,9 @@ ResultErrorView {
 		}
 		GText {
 			Layout.fillWidth: true
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 			text: PersonalizationModel.blockingCode
-			textStyle: Style.text.header
+			textStyle: Style.text.header_highlight
 			visible: text !== ""
 		}
 		GText {
@@ -56,14 +55,14 @@ ResultErrorView {
 		}
 		GText {
 			Layout.fillWidth: true
-			font.bold: true
 			//: INFO ANDROID IOS Placeholder (error) text if the Smart-eID setup finished successfully but for some reason no blocking code was retrieved
 			text: qsTr("The Smart-eID setup finished successfully but no blocking code was retrieved. For security reasons, you should delete your Smart-eID and restart the setup.")
-			textStyle: Style.text.normal_warning
+			textStyle: Style.text.normal_warning_highlight
 			visible: PersonalizationModel.blockingCode === ""
 		}
 		MoreInformationLink {
 			Layout.alignment: Qt.AlignHCenter
+			text: infoData.linkText
 
 			onClicked: push(passwordInfoView)
 		}
@@ -85,10 +84,14 @@ ResultErrorView {
 			visible: text !== ""
 		}
 	}
+	PasswordInfoData {
+		id: infoData
+		contentType: PasswordInfoContent.Type.SMART_BLOCKING_CODE
+	}
 	Component {
 		id: passwordInfoView
 		PasswordInfoView {
-			passwordType: PasswordType.SMART_BLOCKING_CODE
+			infoContent: infoData
 			titleBarColor: root.titleBarColor
 
 			navigationAction: NavigationAction {

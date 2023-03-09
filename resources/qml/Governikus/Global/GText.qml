@@ -1,11 +1,15 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
+import QtQuick.Controls 2.15
+import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
 
 Text {
+	id: baseItem
+
 	property TextStyle textStyle: Style.text.normal
 
 	Accessible.ignored: text === ""
@@ -13,7 +17,10 @@ Text {
 	Accessible.name: ApplicationModel.stripHtmlTags(text) + (Constants.is_desktop && d.hasLink ? " " + qsTr("Press space to open link: %1").arg(d.link) : "")
 	Accessible.role: Accessible.StaticText
 	color: textStyle.textColor
+	font.bold: textStyle.bold
+	font.italic: textStyle.italic
 	font.pixelSize: textStyle.textSize
+	font.underline: textStyle.underline
 	linkColor: textStyle.linkColor
 	wrapMode: d.nonMultilineElided ? Text.NoWrap : Text.Wrap
 
@@ -56,8 +63,22 @@ Text {
 		}
 	}
 	MouseArea {
+		id: mouseArea
 		acceptedButtons: Qt.NoButton
 		anchors.fill: parent
-		cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
+		cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : undefined
+		hoverEnabled: true
+	}
+	Item {
+		ToolTip {
+			delay: Constants.toolTipDelay
+			text: baseItem.hoveredLink
+			visible: Constants.is_desktop && baseItem.hoveredLink !== ""
+
+			onAboutToShow: {
+				parent.x = mouseArea.mouseX;
+				parent.y = mouseArea.mouseY;
+			}
+		}
 	}
 }

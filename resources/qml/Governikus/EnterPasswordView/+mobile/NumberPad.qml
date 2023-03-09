@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -10,6 +10,7 @@ GridLayout {
 	id: baseItem
 
 	property bool deleteEnabled: true
+	property string submitAccessibleText
 	property bool submitEnabled: true
 
 	signal deletePressed
@@ -67,7 +68,9 @@ GridLayout {
 		onClicked: baseItem.digitPressed(text)
 	}
 	NumberPadButton {
-		a11yDisabledText: qsTr("Submit, disabled until input is complete.")
+		//: LABEL ANDROID IOS A11y text, appended onto the "submit" button text when the button is disabled.
+		a11yDisabledText: a11yText + qsTr(", disabled until input is complete.")
+		a11yText: submitAccessibleText !== "" ? submitAccessibleText : text
 		enabled: baseItem.submitEnabled
 		icon.source: "qrc:///images/material_check.svg"
 		text: qsTr("Submit")

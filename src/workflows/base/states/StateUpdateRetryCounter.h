@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Controller for the step that updates the retry
  *        counter of a card.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

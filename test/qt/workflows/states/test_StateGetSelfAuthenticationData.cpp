@@ -1,10 +1,9 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSelfAuthenticationData.h"
 
-#include "LogHandler.h"
 #include "context/SelfAuthContext.h"
 
 #include "MockNetworkReply.h"
@@ -29,9 +28,9 @@ class test_StateGetSelfAuthenticationData
 	private Q_SLOTS:
 		void init()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new SelfAuthContext());
 			mState.reset(new StateGetSelfAuthenticationData(mContext));
+			mState->setStateName("StateGetSelfAuthenticationData");
 		}
 
 
@@ -46,14 +45,13 @@ class test_StateGetSelfAuthenticationData
 		{
 			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "No valid data of self-authentication.");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("No valid data of self-authentication."));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Get_SelfAuthData_Invalid_Or_Empty);
 		}
 
 
@@ -74,14 +72,20 @@ class test_StateGetSelfAuthenticationData
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "Network request failed");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			const FailureCode::FailureInfoMap infoMap {
+				{FailureCode::Info::State_Name, "StateGetSelfAuthenticationData"},
+				{FailureCode::Info::Http_Status_Code, QString::number(500)},
+				{FailureCode::Info::Network_Error, "Unknown error"}
+			};
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);
+			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
 		}
 
 

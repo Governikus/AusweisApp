@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Performs clean up of the ReaderManager,
  * e.g. disconnects all readers, clears the card connection, ...
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

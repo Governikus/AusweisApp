@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateUpdateRetryCounter
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateUpdateRetryCounter.h"
@@ -58,6 +60,7 @@ class test_StateUpdateRetryCounter
 			counter.run();
 			QCOMPARE(spyContinue.count(), 0);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Update_Retry_Counter_No_Card_Connection);
 		}
 
 
@@ -74,6 +77,7 @@ class test_StateUpdateRetryCounter
 			QTest::ignoreMessage(QtCriticalMsg, "An error occurred while communicating with the card reader, cannot determine retry counter, abort state");
 			counter.onUpdateRetryCounterDone(command);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Update_Retry_Counter_Communication_Error);
 
 			command->setMockReturnCode(CardReturnCode::OK);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create());

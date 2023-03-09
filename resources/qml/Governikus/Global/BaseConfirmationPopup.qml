@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -21,7 +21,6 @@ Popup {
 	//: LABEL ALL_PLATFORMS
 	property string cancelButtonText: qsTr("Cancel")
 	default property alias children: customContent.children
-	property TextStyle headerTextStyle
 	property var horizontalTextAlignment: Text.AlignLeft
 	//: LABEL ALL_PLATFORMS
 	property string okButtonText: qsTr("OK")
@@ -84,11 +83,10 @@ Popup {
 				activeFocusOnTab: true
 				elide: Text.ElideRight
 				focus: true
-				font.bold: true
 				horizontalAlignment: root.horizontalTextAlignment
 				maximumLineCount: 5
 				text: root.title
-				textStyle: root.headerTextStyle
+				textStyle: Style.text.header_highlight
 				visible: text !== ""
 
 				FocusFrame {

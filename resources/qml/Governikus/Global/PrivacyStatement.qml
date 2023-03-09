@@ -1,10 +1,11 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SettingsModel 1.0
+import Governikus.Style 1.0
 
 GText {
 	readonly property string privacyStatementDescription: smart ?
@@ -21,7 +22,7 @@ GText {
 	readonly property string privacyStatementUrl: smart ? "https://www.ausweisapp.bund.de/%1/aa2/bmi/privacy".arg(SettingsModel.language) : "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
 	property bool smart: false
 
-	font.bold: true
 	text: privacyStatementText.arg(privacyStatementLink)
+	textStyle: Style.text.normal_highlight
 	wrapMode: Text.WordWrap
 }

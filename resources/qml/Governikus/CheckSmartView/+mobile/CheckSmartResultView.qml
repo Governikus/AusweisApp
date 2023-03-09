@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQml.Models 2.15
@@ -59,8 +59,8 @@ CheckResultView {
 	}
 
 	GText {
-		font.bold: true
 		text: result === SmartModel.SMART_READY ? qsTr("You may now try the function: \"See my personal data\". Press the Continue button to do so now.") : ""
+		textStyle: Style.text.normal_highlight
 		visible: text !== ""
 		width: parent.width
 	}

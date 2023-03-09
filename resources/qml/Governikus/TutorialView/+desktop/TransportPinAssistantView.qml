@@ -1,11 +1,11 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
-import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.View 1.0
 import Governikus.TitleBar 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.Type.PasswordType 1.0
 
 SectionPage {
@@ -35,6 +35,7 @@ SectionPage {
 
 	DecisionView {
 		mainIconSource: "qrc:///images/material_lock.svg"
+		moreInformationText: infoData.linkText
 		moreInformationVisible: true
 		//: INFO DESKTOP Hint that a six-digit PIN is required to use the online identification feature of the ID card.
 		questionSubText: qsTr("If you have not already done so you have to change your five-digit Transport PIN to a six-digit PIN before you can use the online-ID function.")
@@ -49,9 +50,13 @@ SectionPage {
 			updateTitleBarActions();
 		}
 	}
+	PasswordInfoData {
+		id: infoData
+		contentType: PasswordInfoContent.Type.TRANSPORT_PIN
+	}
 	PasswordInfoView {
 		id: passwordInfoView
-		passwordType: PasswordType.TRANSPORT_PIN
+		infoContent: infoData
 		rootEnabled: root.rootEnabled
 		visible: showPasswordInfo
 

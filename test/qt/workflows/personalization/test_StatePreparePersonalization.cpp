@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePersonalization.h"
@@ -40,6 +40,7 @@ class test_StatePreparePersonalization
 			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/%1")));
 			mState.reset(new StatePreparePersonalization(mContext));
+			mState->setStateName("StatePreparePersonalization");
 
 			mNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
@@ -103,6 +104,14 @@ class test_StatePreparePersonalization
 			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			const FailureCode::FailureInfoMap infoMap {
+				{FailureCode::Info::State_Name, "StatePreparePersonalization"},
+				{FailureCode::Info::Http_Status_Code, QString::number(500)},
+				{FailureCode::Info::Network_Error, "Unknown error"}
+			};
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode() == failureCode, true);
+			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
 		}
 
 

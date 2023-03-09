@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -173,19 +173,19 @@ void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
 		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-				});
+				}, {FailureCode::Reason::Check_Refresh_Address_Fatal_Ssl_Error_Before_Reply});
 	}
 }
 
 
-void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus)
+void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure)
 {
 	qCritical() << pStatus;
 	updateStatus(pStatus);
 
 	clearConnections();
 	mReply->abort();
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(pFailure);
 }
 
 
@@ -208,7 +208,8 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap},
+				{FailureCode::Reason::Check_Refresh_Address_Invalid_Ephemeral_Key_Length});
 		return false;
 	}
 
@@ -216,7 +217,22 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 	if (statusCode != CertificateChecker::CertificateStatus::Good)
 	{
 		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
-		reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap});
+		switch (statusCode)
+		{
+			case CertificateChecker::CertificateStatus::Good:
+				break;
+
+			case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
+				reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
+						{FailureCode::Reason::Check_Refresh_Address_Unsupported_Certificate});
+				break;
+
+			case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
+				reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
+						{FailureCode::Reason::Check_Refresh_Address_Hash_Missing_In_Certificate});
+
+		}
+
 		return false;
 	}
 
@@ -234,27 +250,27 @@ void StateCheckRefreshAddress::onNetworkReply()
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
 				reportCommunicationError({GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						});
+						}, {FailureCode::Reason::Check_Refresh_Address_Service_Unavailable});
 				break;
 
 			case NetworkManager::NetworkError::TimeOut:
 				reportCommunicationError({GlobalStatus::Code::Network_TimeOut, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						});
+						}, {FailureCode::Reason::Check_Refresh_Address_Service_Timeout});
 				break;
 
 			case NetworkManager::NetworkError::ProxyError:
 				reportCommunicationError({GlobalStatus::Code::Network_Proxy_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						});
+						}, {FailureCode::Reason::Check_Refresh_Address_Proxy_Error});
 				break;
 
 			case NetworkManager::NetworkError::SecurityError:
 				reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						});
+						}, {FailureCode::Reason::Check_Refresh_Address_Fatal_Ssl_Error_After_Reply});
 				break;
 
 			case NetworkManager::NetworkError::OtherError:
 				reportCommunicationError({GlobalStatus::Code::Network_Other_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						});
+						}, {FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error});
 				break;
 		}
 		return;
@@ -267,7 +283,8 @@ void StateCheckRefreshAddress::onNetworkReply()
 			{GlobalStatus::ExternalInformation::HTTP_STATUS_CODE, QString::number(statusCode)},
 			{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
 		};
-		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Expected_Redirect, infoMap});
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Expected_Redirect, infoMap},
+				{FailureCode::Reason::Check_Refresh_Address_Invalid_Http_Response});
 		return;
 	}
 
@@ -276,7 +293,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 	{
 		qCritical() << "Got empty redirect URL";
 		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-				});
+				}, {FailureCode::Reason::Check_Refresh_Address_Empty});
 		return;
 	}
 
@@ -287,7 +304,8 @@ void StateCheckRefreshAddress::onNetworkReply()
 			{GlobalStatus::ExternalInformation::REDIRECT_URL, redirectUrl.toString()},
 			{GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
 		};
-		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, infoMap});
+		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, infoMap},
+				{FailureCode::Reason::Check_Refresh_Address_Invalid_Url});
 		return;
 	}
 
@@ -306,7 +324,8 @@ void StateCheckRefreshAddress::onNetworkReply()
 				{GlobalStatus::ExternalInformation::URL_SCHEME, redirectUrl.scheme()},
 				{GlobalStatus::ExternalInformation::LAST_URL, redirectUrl.toString()}
 			};
-			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Invalid_Scheme, infoMap});
+			reportCommunicationError({GlobalStatus::Code::Workflow_Network_Invalid_Scheme, infoMap},
+					{FailureCode::Reason::Check_Refresh_Address_No_Https_Scheme});
 			return;
 		}
 	}
@@ -400,7 +419,7 @@ void StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate(QNetworkR
 	}
 	qCritical() << "An error occurred fetching the server certificate:" << mReply->errorString();
 	reportCommunicationError({GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-			});
+			}, {FailureCode::Reason::Check_Refresh_Address_Fetch_Certificate_Error});
 }
 
 

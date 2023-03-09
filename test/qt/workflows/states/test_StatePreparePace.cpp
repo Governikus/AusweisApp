@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StatePreparePace
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePace.h"
@@ -52,6 +54,7 @@ class test_StatePreparePace
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::UNKNOWN);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Prepace_Pace_No_Card_Connection);
 		}
 
 
@@ -85,6 +88,7 @@ class test_StatePreparePace
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Smart_Invalid);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Prepace_Pace_Smart_Eid_Invalidated);
 		}
 
 

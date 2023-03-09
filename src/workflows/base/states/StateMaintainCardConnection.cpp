@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateMaintainCardConnection.h"
@@ -24,7 +24,8 @@ void StateMaintainCardConnection::run()
 	auto context = getContext();
 	if (context->getStatus().isError())
 	{
-		Q_EMIT fireAbort();
+		Q_ASSERT(context->getFailureCode().has_value());
+		Q_EMIT firePropagateAbort();
 		return;
 	}
 
@@ -48,7 +49,9 @@ void StateMaintainCardConnection::run()
 
 			qCDebug(statemachine) << "Last PACE result is unrecoverable. Aborting.";
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(lastPaceResult));
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort({FailureCode::Reason::Maintain_Card_Connection_Pace_Unrecoverable,
+							  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(lastPaceResult)}
+					});
 			return;
 		}
 

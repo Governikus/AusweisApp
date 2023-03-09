@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAutomatic.h"
@@ -21,6 +21,7 @@ UIPlugInAutomatic::UIPlugInAutomatic()
 	: UIPlugIn()
 	, mContext()
 	, mPrevUsedAsSDK()
+	, mPrevUsedDeveloperMode()
 {
 }
 
@@ -51,8 +52,15 @@ void UIPlugInAutomatic::onWorkflowStarted(QSharedPointer<WorkflowContext> pConte
 		mContext->setReaderPlugInTypes({ReaderManagerPlugInType::SIMULATOR, ReaderManagerPlugInType::PCSC});
 		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInAutomatic::onStateChanged);
 		mPrevUsedAsSDK = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
+		mPrevUsedDeveloperMode = Env::getSingleton<VolatileSettings>()->isDeveloperMode();
 		Env::getSingleton<VolatileSettings>()->setUsedAsSDK(true);
 		Env::getSingleton<ReaderManager>()->startScanAll();
+
+		const auto& developerMode = qEnvironmentVariable("AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE").toLower();
+		if (developerMode == QLatin1String("true") || developerMode == QLatin1String("on") || developerMode == QLatin1String("1"))
+		{
+			Env::getSingleton<VolatileSettings>()->setDeveloperMode(true);
+		}
 	}
 	else
 	{
@@ -73,6 +81,7 @@ void UIPlugInAutomatic::onWorkflowFinished(QSharedPointer<WorkflowContext> pCont
 
 	Env::getSingleton<ReaderManager>()->stopScanAll();
 	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(mPrevUsedAsSDK);
+	Env::getSingleton<VolatileSettings>()->setDeveloperMode(mPrevUsedDeveloperMode);
 	mContext.clear();
 }
 

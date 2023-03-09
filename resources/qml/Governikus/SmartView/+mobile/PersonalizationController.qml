@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.AuthView 1.0
@@ -7,6 +7,7 @@ import Governikus.EnterPasswordView 1.0
 import Governikus.ResultView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.View 1.0
 import Governikus.WhiteListClient 1.0
 import Governikus.Workflow 1.0
@@ -193,6 +194,7 @@ Controller {
 	Component {
 		id: transportPinReminder
 		TransportPinReminderView {
+			moreInformationText: transportPinReminderInfoData.linkText
 			title: smartEidTitle
 			titleBarColor: Style.color.accent
 
@@ -205,6 +207,21 @@ Controller {
 				pop();
 				PersonalizationModel.cancelWorkflowToChangePin();
 			}
+			onShowInfoView: {
+				push(transportPinReminderInfoDataView);
+			}
+		}
+	}
+	PasswordInfoData {
+		id: transportPinReminderInfoData
+		contentType: PasswordInfoContent.Type.CHANGE_PIN
+	}
+	Component {
+		id: transportPinReminderInfoView
+		PasswordInfoView {
+			infoContent: transportPinReminderInfoData
+
+			onClose: pop()
 		}
 	}
 	Component {
@@ -265,7 +282,6 @@ Controller {
 	Component {
 		id: enterPinView
 		EnterPasswordView {
-			enableTransportPinLink: NumberModel.passwordType === PasswordType.PIN
 			//: LABEL ANDROID IOS
 			title: qsTr("Set up Smart-eID")
 			titleBarColor: workflowState === PersonalizationController.WorkflowStates.Pin ? Style.color.accent : Style.color.accent_smart
@@ -278,10 +294,6 @@ Controller {
 				}
 			}
 
-			onChangePinLength: {
-				replace(smartProgress);
-				PersonalizationModel.requestTransportPinChange();
-			}
 			onPasswordEntered: {
 				replace(smartProgress);
 				PersonalizationModel.continueWorkflow();

@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref DatagramHandlerImpl
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -71,11 +73,9 @@ class test_DatagramHandlerImpl
 #ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
 #elif defined(Q_OS_LINUX)
-			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
-			QVERIFY(portStart != -1);
-			if (portStart <= HttpServer::cPort)
+			if (TestFileHelper::systemAllowsPort(HttpServer::cPort))
 			{
-				QSKIP("Cannot check privileged port");
+				QSKIP("Cannot check, privileged port allowed.");
 			}
 #endif
 

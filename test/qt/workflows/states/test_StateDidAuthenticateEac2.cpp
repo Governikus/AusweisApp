@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit test for \ref StateDidAuthenticateEac2
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac2.h"
@@ -35,6 +37,7 @@ class MockDidAuthenticateEAC2Command
 
 };
 
+Q_DECLARE_METATYPE(std::optional<FailureCode>)
 
 class test_StateDidAuthenticateEac2
 	: public QObject
@@ -76,6 +79,7 @@ class test_StateDidAuthenticateEac2
 			mState->run();
 			QCOMPARE(mState->mConnections.size(), 0);
 			QCOMPARE(mAuthContext->getStatus(), GlobalStatus::Code::Workflow_No_Permission_Error);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Did_Authenticate_Eac2_Invalid_Cvc_Chain);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -85,10 +89,11 @@ class test_StateDidAuthenticateEac2
 			QTest::addColumn<CardReturnCode>("code");
 			QTest::addColumn<GlobalStatus::Code>("status");
 			QTest::addColumn<int>("abort");
+			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
-			QTest::newRow("ok") << CardReturnCode::OK << GlobalStatus::Code::No_Error << 0;
-			QTest::newRow("command_failed") << CardReturnCode::COMMAND_FAILED << GlobalStatus::Code::Workflow_Card_Removed << 1;
-			QTest::newRow("undefined") << CardReturnCode::UNDEFINED << GlobalStatus::Code::Workflow_No_Permission_Error << 1;
+			QTest::newRow("ok") << CardReturnCode::OK << GlobalStatus::Code::No_Error << 0 << std::optional<FailureCode>();
+			QTest::newRow("command_failed") << CardReturnCode::COMMAND_FAILED << GlobalStatus::Code::Workflow_Card_Removed << 1 << std::optional<FailureCode>(FailureCode::Reason::Did_Authenticate_Eac2_Card_Command_Failed);
+			QTest::newRow("undefined") << CardReturnCode::UNDEFINED << GlobalStatus::Code::Workflow_No_Permission_Error << 1 << std::optional<FailureCode>(FailureCode::Reason::Did_Authenticate_Eac2_Card_Command_Failed);
 		}
 
 
@@ -97,6 +102,7 @@ class test_StateDidAuthenticateEac2
 			QFETCH(CardReturnCode, code);
 			QFETCH(GlobalStatus::Code, status);
 			QFETCH(int, abort);
+			QFETCH(std::optional<FailureCode>, failureCode);
 
 			QSignalSpy spyAbort(mState.data(), &StateDidAuthenticateEac2::fireAbort);
 			QSignalSpy spyContinue(mState.data(), &StateDidAuthenticateEac2::fireContinue);
@@ -116,6 +122,13 @@ class test_StateDidAuthenticateEac2
 			QCOMPARE(mAuthContext->getStatus(), status);
 			QCOMPARE(spyAbort.count(), abort);
 			QCOMPARE(spyContinue.count(), 1 - abort);
+
+			const auto& actualFailureCode = mAuthContext->getFailureCode();
+			QCOMPARE(actualFailureCode, failureCode);
+			if (actualFailureCode.has_value())
+			{
+				QVERIFY(actualFailureCode->getFailureInfoMap().contains(FailureCode::Info::Card_Return_Code));
+			}
 		}
 
 

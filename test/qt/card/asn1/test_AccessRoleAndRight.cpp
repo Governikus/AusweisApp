@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref AccessRoleAndRight
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/AccessRoleAndRight.h"

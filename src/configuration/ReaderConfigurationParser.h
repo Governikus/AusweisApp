@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Parser for reader configuration files
- *
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

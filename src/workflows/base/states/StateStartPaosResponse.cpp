@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateStartPaosResponse.h"
@@ -25,7 +25,7 @@ void StateStartPaosResponse::run()
 	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
 	if (!startPaosResponse)
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Start_Paos_Response_Missing);
 		return;
 	}
 
@@ -39,5 +39,5 @@ void StateStartPaosResponse::run()
 
 	qDebug() << "Processing server result:" << result.getMajorString() << result.getMinorString() << result.getMessage();
 	updateStartPaosResult(result);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Start_Paos_Response_Error);
 }

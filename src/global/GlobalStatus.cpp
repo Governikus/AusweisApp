@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -201,7 +201,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("The service is temporarily not available. Please try again later.");
 
 		case Code::Workflow_Smart_eID_Unavailable:
-			//: ERROR ALL_PLATFORMS The device does not support the Smart-eID functionality
+			//: ERROR ALL_PLATFORMS The device does not support the Smart-eID function
 			return tr("The device does not support Smart-eID.");
 
 		case Code::Workflow_Smart_eID_Applet_Preparation_Failed:
@@ -309,8 +309,8 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("Card does not exist");
 
 		case Code::Card_Pin_Deactivated:
-			//: ERROR ALL_PLATFORMS The eID functionality of the ID card is not active.
-			return tr("The online identification function of your ID card is not yet activated.");
+			//: ERROR ALL_PLATFORMS The eID function of the ID card is not active.
+			return tr("The eID function of your ID card is not yet activated.");
 
 		case Code::Card_Communication_Error:
 			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie),

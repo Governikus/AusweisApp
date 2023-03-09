@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Parse tcTokenURL from GET query.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateParseTcTokenUrl.h"
@@ -31,13 +33,14 @@ void StateParseTcTokenUrl::run()
 		if (query.hasQueryItem(QStringLiteral("tcTokenURL")))
 		{
 			qCritical() << "TcTokenUrl is not valid:" << tcTokenURL.toString();
+			updateStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
+			Q_EMIT fireAbort(FailureCode::Reason::Parse_TcToken_Invalid_Url);
 		}
 		else
 		{
 			qCritical() << "No parameter tcTokenURL";
+			updateStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
+			Q_EMIT fireAbort(FailureCode::Reason::Parse_TcToken_Missing_Url);
 		}
-
-		updateStatus(GlobalStatus::Code::Workflow_Wrong_Parameter_Invocation);
-		Q_EMIT fireAbort();
 	}
 }

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -127,7 +127,7 @@ Item {
 			Repeater {
 				model: filterModel.levels
 
-				delegate: ToggleableOption {
+				delegate: GCheckBox {
 					Layout.fillWidth: true
 					checked: filterModel.selectedLevels.indexOf(text) !== -1
 					text: modelData
@@ -169,7 +169,7 @@ Item {
 					id: repeater
 					model: filterModel.categories
 
-					delegate: ToggleableOption {
+					delegate: GCheckBox {
 						Layout.fillWidth: true
 						checked: filterModel.selectedCategories.indexOf(text) !== -1
 						text: modelData

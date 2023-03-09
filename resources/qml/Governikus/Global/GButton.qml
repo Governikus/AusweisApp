@@ -1,8 +1,9 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.View 1.0
@@ -19,6 +20,7 @@ Button {
 	// Similar to "enabled", but tooltips will continue to work
 	property bool enableButton: true
 	property string enabledTooltipText
+	property alias maximumLineCount: buttonText.maximumLineCount
 	property color textHighlightColor: textStyle.textColor
 	property TextStyle textStyle: enabled && enableButton ? Style.text.button : Style.text.button_disabled
 	property bool tintIcon: false
@@ -28,7 +30,6 @@ Button {
 	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
 	ToolTip.visible: hovered && ToolTip.text !== ""
 	activeFocusOnTab: enableButton
-	font.pixelSize: textStyle.textSize
 
 	background: Rectangle {
 		readonly property color pressColor: Qt.darker(buttonColor, Constants.highlightDarkerFactor)
@@ -43,11 +44,8 @@ Button {
 		}
 		radius: Style.dimens.button_radius
 	}
-	contentItem: Item {
-		implicitHeight: root.textStyle.textSize + 2 * verticalPadding
-
-		// The icon's width is already included in the text's margins
-		implicitWidth: buttonText.visible ? Math.max(buttonText.effectiveWidth, Style.dimens.large_icon_size) : buttonIcon.width
+	contentItem: RowLayout {
+		spacing: Constants.text_spacing
 		z: 1
 
 		TintableIcon {
@@ -56,27 +54,21 @@ Button {
 			readonly property color iconColor: root.textStyle.textColor
 			readonly property color pressColor: Qt.darker(iconColor, Constants.highlightDarkerFactor)
 
-			anchors.left: parent.left
-			anchors.verticalCenter: parent.verticalCenter
 			source: root.icon.source
-			sourceSize.height: parent.height
+			sourceSize.height: root.textStyle.textSize + 2 * verticalPadding
 			tintColor: !animationsDisabled && root.pressed ? pressColor : iconColor
 			tintEnabled: tintIcon
 			visible: source != ""
+			width: height
 		}
 		GText {
 			id: buttonText
-
-			readonly property real effectiveWidth: implicitWidth + anchors.leftMargin + anchors.rightMargin
-
 			Accessible.ignored: true
-			anchors.left: parent.left
-			anchors.leftMargin: buttonIcon.visible ? buttonIcon.width + Constants.text_spacing : 0
-			anchors.right: parent.right
-			anchors.verticalCenter: parent.verticalCenter
+			Layout.fillWidth: true
+			Layout.minimumHeight: root.textStyle.textSize + 2 * verticalPadding
+			Layout.minimumWidth: Style.dimens.large_icon_size - x
 			color: !animationsDisabled && root.pressed ? root.textHighlightColor : root.textStyle.textColor
 			elide: Text.ElideRight
-			font: root.font
 			horizontalAlignment: buttonIcon.visible ? Text.AlignLeft : Text.AlignHCenter
 			maximumLineCount: 1
 			text: root.text
@@ -85,7 +77,7 @@ Button {
 			visible: text !== ""
 
 			FocusFrame {
-				isOnLightBackground: false
+				isOnLightBackground: !root.background
 				marginFactor: 0.7
 				scope: root
 			}

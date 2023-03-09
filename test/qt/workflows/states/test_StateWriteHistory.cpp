@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateWriteHistory
- *
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateWriteHistory.h"
@@ -61,9 +63,10 @@ class test_StateWriteHistory
 			Env::getSingleton<AppSettings>()->getHistorySettings().setEnabled(true);
 			*mContext->getAccessRightManager() = {};
 
-			QTest::ignoreMessage(QtWarningMsg, "No EAC1 structure or effective CHAT in model.");
+			QTest::ignoreMessage(QtWarningMsg, "No effective CHAT in context.");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(*mContext->getFailureCode(), FailureCode::Reason::Write_History_No_Chat);
 		}
 
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateRedirectBrowser.h"
@@ -76,7 +76,7 @@ void StateRedirectBrowser::sendErrorPage(http_status pStatus)
 		qCritical() << "Cannot send error page to caller:" << activationContext->getSendError();
 		updateStatus({GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
 				});
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
 	}
 }
 
@@ -106,7 +106,7 @@ bool StateRedirectBrowser::sendRedirect(const QUrl& pRedirectAddress, const ECar
 		qCritical() << "Cannot send redirect to caller:" << activationContext->getSendError();
 		updateStatus({GlobalStatus::Code::Workflow_Redirect_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
 				});
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
 		return false;
 	}
 

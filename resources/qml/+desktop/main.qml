@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
@@ -142,7 +142,7 @@ ApplicationWindow {
 
 		onConfirmed: d.hideUiAndTaskbarEntry()
 
-		ToggleableOption {
+		GCheckBox {
 			checked: !SettingsModel.remindUserToClose
 			//: LABEL DESKTOP
 			text: qsTr("Do not show this dialog again.")

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -26,8 +26,7 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.historyEnabled
 
 		//: LABEL DESKTOP
@@ -56,8 +55,7 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.useScreenKeyboard
 
 		//: LABEL DESKTOP
@@ -65,8 +63,7 @@ ColumnLayout {
 
 		onCheckedChanged: SettingsModel.useScreenKeyboard = checked
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.shuffleScreenKeyboard
 		enabled: SettingsModel.useScreenKeyboard
 
@@ -75,8 +72,7 @@ ColumnLayout {
 
 		onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: !SettingsModel.visualPrivacy
 		enabled: SettingsModel.useScreenKeyboard
 
@@ -98,8 +94,7 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.autoUpdateCheck
 		enabled: !SettingsModel.autoUpdateCheckSetByAdmin && SettingsModel.autoUpdateAvailable
 

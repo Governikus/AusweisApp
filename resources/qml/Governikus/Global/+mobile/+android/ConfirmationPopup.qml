@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -8,8 +8,6 @@ import Governikus.Style 1.0
 
 BaseConfirmationPopup {
 	id: root
-	headerTextStyle: Style.text.header
-
 	buttons: Flow {
 		bottomPadding: Constants.groupbox_spacing / 2
 		layoutDirection: Qt.RightToLeft

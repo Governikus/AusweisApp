@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckStatus.h"
@@ -27,5 +27,5 @@ void StateCheckStatus::run()
 
 	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Unavailable);
 	qDebug() << "Smart-eID not available";
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Check_Status_Unavailable);
 }

@@ -1,9 +1,10 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Governikus.EnterPasswordView 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.TitleBar 1.0
@@ -80,9 +81,12 @@ SectionPage {
 		}
 	}
 	PasswordInfoView {
-		passwordType: PasswordType.REMOTE_PIN
 		rootEnabled: mainTitleBarAction.rootEnabled
 		visible: d.view === ConnectSacView.SubView.PairingInfo
+
+		infoContent: PasswordInfoData {
+			contentType: PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER
+		}
 
 		onClose: {
 			if (d.externalMoreInformation) {

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateWriteHistory.h"
@@ -35,10 +35,17 @@ void StateWriteHistory::run()
 		return;
 	}
 
-	if (context->getDidAuthenticateEac1() == nullptr || context->getAccessRightManager()->getEffectiveAccessRights().isEmpty())
+	if (context->getDidAuthenticateEac1() == nullptr)
 	{
-		qWarning() << "No EAC1 structure or effective CHAT in model.";
-		Q_EMIT fireAbort();
+		qWarning() << "No EAC1 structure in context.";
+		Q_EMIT fireAbort(FailureCode::Reason::Write_History_No_Eac1);
+		return;
+	}
+
+	if (context->getAccessRightManager()->getEffectiveAccessRights().isEmpty())
+	{
+		qWarning() << "No effective CHAT in context.";
+		Q_EMIT fireAbort(FailureCode::Reason::Write_History_No_Chat);
 		return;
 	}
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -97,14 +97,22 @@ QString AuthModel::getErrorText() const
 	}
 
 	const auto& status = mContext->getStatus();
-	const auto& externalInfo = status.getExternalInfo();
-	const auto& errorDescription = status.toErrorDescription(false);
-	if (externalInfo.isEmpty() || errorDescription == externalInfo)
+	auto errorDescription = status.toErrorDescription(false);
+
+	if (const auto& externalInfo = status.getExternalInfo();
+			!externalInfo.isEmpty() && errorDescription != externalInfo)
 	{
-		return errorDescription;
+		errorDescription += QStringLiteral("<br/>(%1)").arg(externalInfo);
 	}
 
-	return errorDescription + QStringLiteral("\n(%1)").arg(externalInfo);
+	if (const auto& failureCode = mContext->getFailureCode();
+			failureCode.has_value())
+	{
+		//: INFO ALL_PLATFORMS Failure code (string) of current workflow error.
+		errorDescription += QStringLiteral("<br/><br/>%1<br/>%2").arg(tr("Reason:"), failureCode.value().toString());
+	}
+
+	return errorDescription;
 }
 
 
@@ -121,16 +129,6 @@ void AuthModel::cancelWorkflowToChangePin()
 		mContext->requestChangePinView();
 		mContext->setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
 		Q_EMIT mContext->fireCancelWorkflow();
-	}
-}
-
-
-void AuthModel::requestTransportPinChange()
-{
-	if (mContext)
-	{
-		mContext->setPin(QString(5, QLatin1Char(0)));
-		continueWorkflow();
 	}
 }
 

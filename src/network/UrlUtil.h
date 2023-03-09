@@ -1,6 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Helper to convert \ref Result to Redirect-Result-String and some other URL stuff.
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,8 +27,6 @@ defineEnumType(UrlQueryRequest,
 
 /*!
  * \brief Utility class for checking various constraints on URLs.
- *
- * \copyright Copyright (c) 2014 Governikus GmbH & Co. KG
  */
 class UrlUtil
 {

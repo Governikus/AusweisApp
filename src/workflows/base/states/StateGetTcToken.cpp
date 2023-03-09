@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetTcToken.h"
@@ -37,7 +37,7 @@ void StateGetTcToken::run()
 
 	if (!isValidRedirectUrl(url))
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Url);
 		return;
 	}
 
@@ -129,7 +129,7 @@ void StateGetTcToken::onSslHandshakeDone()
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
 		updateStatus(status);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Certificate_Key_Length);
 		return;
 	}
 
@@ -139,7 +139,7 @@ void StateGetTcToken::onSslHandshakeDone()
 		mReply->abort();
 		qCritical() << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
 		updateStatus(status);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Ephemeral_Key_Length);
 		return;
 	}
 
@@ -158,7 +158,9 @@ void StateGetTcToken::onNetworkReply()
 	{
 		qCritical() << NetworkManager::toStatus(mReply);
 		updateStatus(NetworkManager::toTrustedChannelStatus(mReply));
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Network_Error,
+						  {FailureCode::Info::Network_Error, mReply->errorString()}
+				});
 		return;
 	}
 
@@ -171,7 +173,7 @@ void StateGetTcToken::onNetworkReply()
 	const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
 	if (!isValidRedirectUrl(redirectUrl))
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
 		return;
 	}
 
@@ -183,7 +185,9 @@ void StateGetTcToken::onNetworkReply()
 			{GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 		};
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, infoMap});
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Invalid_Server_Reply,
+						  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+				});
 		return;
 	}
 
@@ -201,7 +205,7 @@ void StateGetTcToken::parseTcToken()
 		qDebug() << "Received no data.";
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Empty_Data);
 		return;
 	}
 	const QSharedPointer<const TcToken>& tcToken = QSharedPointer<TcToken>::create(data);
@@ -223,5 +227,5 @@ void StateGetTcToken::parseTcToken()
 	qCritical() << "TCToken invalid";
 	updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 			});
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Data);
 }

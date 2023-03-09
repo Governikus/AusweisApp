@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>7488db7b6a84</translation>
+        <translation>52a5aa47f692</translation>
     </message>
 </context>
 <context>
@@ -65,14 +65,6 @@
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Ідентифікувати</translation>
-    </message>
-    <message>
-        <source>Do you know your six-digit PIN?</source>
-        <translation>Ви знаєте свій шестизначний PIN-код?</translation>
-    </message>
-    <message>
-        <source>The personal, six-digit PIN is mandatory to use the online identification function.</source>
-        <translation>Особистий шестизначний PIN-код є обов’язковим для використання функції онлайн-ідентифікації.</translation>
     </message>
     <message>
         <source>No network connectivity</source>
@@ -170,6 +162,21 @@ INFO ANDROID IOS Second line text if a basic card reader is used and background 
         <source>Send log</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Надіслати журнал</translation>
+    </message>
+    <message>
+        <source>Authenticate with provider</source>
+        <extracomment>LABEL DESKTOP A11y button to confirm the PIN and start the provider authentication
+----------
+LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you know your six-digit ID card PIN?</source>
+        <translation>Ви знаєте шестизначний PIN-код своєї ID-картки?</translation>
     </message>
 </context>
 <context>
@@ -401,31 +408,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Змінити PIN-код</translation>
     </message>
     <message>
-        <source>What kind of PIN do you have?</source>
-        <extracomment>LABEL DESKTOP Title of PIN change start page. User is asked which type of PIN they have.</extracomment>
-        <translation>Якого типу ваш PIN-код?</translation>
-    </message>
-    <message>
-        <source>Please make a choice to set or change your PIN.</source>
-        <extracomment>LABEL DESKTOP Description of PIN change start page. User has a choice of which PIN to set.</extracomment>
-        <translation>Зробіть вибір, щоб установити або змінити свій PIN-код.</translation>
-    </message>
-    <message>
-        <source>PIN unknown</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>PIN-код невідомий</translation>
-    </message>
-    <message>
-        <source>Five-digit Transport PIN</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>П’ятизначний транспортний PIN-код</translation>
-    </message>
-    <message>
-        <source>Six-digit PIN</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Шестизначний PIN-код</translation>
-    </message>
-    <message>
         <source>Setting new PIN</source>
         <extracomment>LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.</extracomment>
         <translation>Установлення нового PIN-коду</translation>
@@ -519,28 +501,38 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <name>ChangePinViewContent</name>
     <message>
         <source>What kind of PIN do you have?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Якого типу ваш PIN-код?</translation>
     </message>
     <message>
-        <source>Please make a choice to set or change your PIN.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Зробіть вибір, щоб установити або змінити свій PIN-код.</translation>
+        <source>6-digit PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Six-digit PIN</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Шестизначний PIN-код</translation>
+        <source>Set by yourself</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Five-digit Transport PIN</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>П’ятизначний транспортний PIN-код</translation>
+        <source>5-digit Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PIN unknown</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>PIN-код невідомий</translation>
+        <source>Received by mail in PIN letter</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lost, forgotten, or never received it</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -671,7 +663,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Немає NFC</translation>
     </message>
     <message>
-        <source>Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the online identification function.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
+        <source>Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the eID function.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ваш мобільний пристрій не має інтерфейсу NFC. Він потрібен для читання ID-картки. Однак ви можете використовувати окремий смартфон як пристрій читання карток, щоб застосовувати функцію онлайн-ідентифікації.&lt;br&gt;&lt;br&gt;Ви можете знайти смартфони, сумісні з %1, на нашому сайті.</translation>
     </message>
@@ -759,7 +751,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Перевірити пристрій та ID-картку</translation>
     </message>
     <message>
-        <source>To use the online identification function, your device must meet certain technical requirements. Furthermore, the online identification function must be activated.</source>
+        <source>To use the eID function, your device must meet certain technical requirements. Furthermore, the eID function must be activated.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Для використання функції онлайн-ідентифікації ваш пристрій має відповідати певним технічним вимогам. Крім того, має бути активовано функцію онлайн-ідентифікації.</translation>
     </message>
@@ -882,7 +874,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Smart-eID не підтримується</translation>
     </message>
     <message>
-        <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID functionality.</source>
+        <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID function.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ваш мобільний пристрій не відповідає технічним вимогам щодо Smart-eID.&lt;br&gt;&lt;br&gt;Ви можете перевірити, чи підходять ваш пристрій та ID-картка для використання функції eID.</translation>
     </message>
@@ -965,7 +957,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Перевірте Smart-eID</translation>
     </message>
     <message>
-        <source>Your device needs to meet the technical requirements to use the Smart-eID functionality.</source>
+        <source>Your device needs to meet the technical requirements to use the Smart-eID function.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Для використання функції Smart-eID ваш пристрій має відповідати технічним вимогам.</translation>
     </message>
@@ -1488,9 +1480,7 @@ INFO ANDROID IOS The new ID card PIN needs to be confirmed.</extracomment>
     </message>
     <message>
         <source>Do you have a five-digit Transport PIN?</source>
-        <extracomment>LABEL DESKTOP Button to switch to start a change of the Transport PIN.
-----------
-LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
+        <extracomment>LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
         <translation>Чи є у вас п’ятизначний транспортний PIN-код?</translation>
     </message>
     <message>
@@ -1565,6 +1555,62 @@ INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentic
         <source>Do you have a six-digit ID card PIN?</source>
         <extracomment>LABEL ANDROID IOS Button to switch to a six-digit ID card PIN.</extracomment>
         <translation>У вас є шестизначний PIN-код ID-картки?</translation>
+    </message>
+    <message>
+        <source>Send CAN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send PUK</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send pairing code</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send new ID card PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Transport PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Smart-eID PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send new Smart-eID PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send ID card PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1709,7 +1755,7 @@ INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentic
     </message>
     <message>
         <source>More information</source>
-        <extracomment>INFO DESKTOP Link text</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Додаткова інформація</translation>
     </message>
 </context>
@@ -2566,7 +2612,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>На жаль, ця функція недоступна на вашому пристрої.</translation>
     </message>
     <message>
-        <source>However, you can use a separate smartphone as card reader to utilize the online identification function.</source>
+        <source>However, you can use a separate smartphone as card reader to utilize the eID function.</source>
         <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
         <translation>Однак ви можете використовувати окремий смартфон як пристрій читання карток, щоб застосовувати функцію онлайн-ідентифікації.</translation>
     </message>
@@ -2611,7 +2657,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Установити з’єднання</translation>
     </message>
     <message>
-        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.</source>
+        <source>Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the eID function.</source>
         <extracomment>INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.</extracomment>
         <translation>Ваш пристрій не відповідає технічним вимогам (Extended Length не підтримується). Однак ви можете використовувати окремий смартфон як пристрій читання карток, щоб застосовувати функцію онлайн-ідентифікації.</translation>
     </message>
@@ -2628,11 +2674,6 @@ LABEL ANDROID IOS</extracomment>
 </context>
 <context>
     <name>NumberField</name>
-    <message>
-        <source>The password is visible.</source>
-        <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
-        <translation>Пароль показано.</translation>
-    </message>
     <message>
         <source>The password is hidden.</source>
         <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
@@ -2652,6 +2693,11 @@ LABEL ANDROID IOS</extracomment>
         <source>Press to show the password</source>
         <extracomment>LABEL DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
         <translation>Натисніть, щоб показати пароль</translation>
+    </message>
+    <message>
+        <source>The password is visible. Digits entered so far: %1</source>
+        <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2674,7 +2720,8 @@ LABEL ANDROID IOS</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Submit, disabled until input is complete.</source>
+        <source>, disabled until input is complete.</source>
+        <extracomment>LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2686,126 +2733,280 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
-    <name>PasswordInfoImage</name>
+    <name>PasswordInfoContent</name>
     <message>
-        <source>ID card PIN/PUK on different pages</source>
-        <extracomment>LABEL</extracomment>
-        <translation>PIN-код/PUK-код ID-картки на різних сторінках</translation>
-    </message>
-    <message>
-        <source>ID card PIN/PUK on the same page</source>
-        <extracomment>LABEL</extracomment>
-        <translation>PIN-код/PUK-код ID-картки на одній сторінці</translation>
+        <source>More information</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Додаткова інформація</translation>
     </message>
 </context>
 <context>
-    <name>PasswordInfoView</name>
+    <name>PasswordInfoData</name>
     <message>
-        <source>Change PIN information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Змінити інформацію про PIN-код</translation>
-    </message>
-    <message>
-        <source>CAN information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Інформація про CAN-код</translation>
-    </message>
-    <message>
-        <source>PUK information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Інформація про PUK-код</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Інформація про смартфон як пристрій читання карток</translation>
-    </message>
-    <message>
-        <source>Transport PIN information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Інформація про транспортний PIN-код</translation>
+        <source>What is the card PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>PIN information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Інформація про PIN-код</translation>
     </message>
     <message>
-        <source>Select &lt;b&gt;&quot;Six-digit PIN&quot;&lt;/b&gt; to change the self-chosen PIN of your ID card or the Smart-eID.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;Five-digit Transport PIN&quot;&lt;/b&gt; if your PIN letter is at hand (see figure) and you have not yet chosen a six-digit ID card PIN.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;PIN unknown&quot;&lt;/b&gt; if your PIN letter is not at hand or you cannot recall your PIN.</source>
-        <extracomment>INFO DESKTOP Description text of change PIN selection options
-----------
-INFO ANDROID IOS</extracomment>
-        <translation>Виберіть &lt;b&gt;«Шестизначний PIN-код»&lt;/b&gt;, щоб змінити самостійно вибраний PIN-код своєї ID-картки або Smart-eID.&lt;br&gt;&lt;br&gt;Виберіть &lt;b&gt;«П’ятизначний транспортний PIN-код»&lt;/b&gt;, якщо лист із PIN-кодом є під рукою (див. рисунок), і якщо ви ще не вибрали шестизначний PIN-код ID-картки.&lt;br&gt;&lt;br&gt;Виберіть &lt;b&gt;«PIN невідомий»&lt;/b&gt;, якщо листа з PIN-кодом немає під рукою або ви не пам’ятаєте свій PIN-код.</translation>
+        <source>The card PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where can I find the card PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How do I choose a secure PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For your 6-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 1/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can change your 6-digit PIN at any time and an unlimited number of times as long as you know your valid PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 2/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep your PIN secret and change it if another person becomes aware of it.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 3/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>What is the Transport PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transport PIN information</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Інформація про транспортний PIN-код</translation>
+    </message>
+    <message>
+        <source>The 5-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 1/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you did not set a self-selected 6-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 2/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Once you have set a card PIN, the Transport PIN loses its validity.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 3/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smartphone as card reader information</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Інформація про смартфон як пристрій читання карток</translation>
+    </message>
+    <message>
+        <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text of SaC pairing</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use your smartphone as a card reader you&apos;ll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you&apos;ll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text of SaC pairing</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where do I find the PUK?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PUK information</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Інформація про PUK-код</translation>
+    </message>
+    <message>
+        <source>The PUK is a 10-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Why is the PUK required?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The PUK is required if the card PIN has been entered incorrectly three times in a row. As a result, the card PIN is blocked.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why is the PUK required?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>What is the PUK&apos;s purpose?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By entering the PUK, you unblock the card PIN and have another three chances to enter the correct PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the PUK&apos;s purpose?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Why is the CAN required?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAN information</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Інформація про CAN-код</translation>
+    </message>
+    <message>
+        <source>When is the card access number (CAN) required?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The card access number (CAN) is required when the card PIN has been entered incorrectly twice.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;When is the card access number (CAN) required?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Why do I have to enter the CAN before a third attempt?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A third incorrect entry blocks your PIN and you can no longer use the eID function until it is unblocked. Requesting the CAN ensures that a third incorrect entry can only be made with direct access to your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why do I have to enter the CAN before a third attempt?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where can I find the CAN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The CAN is a 6-digit number that can be found on the bottom right of the front of the ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the CAN?&apos;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
-        <extracomment>INFO DESKTOP Description text of CAN-allowed authentication
-----------
-INFO ANDROID IOS Description text of CAN-allowed authentication</extracomment>
+        <extracomment>INFO ALL_PLATFORMS Description text of CAN-allowed authentication</extracomment>
         <translation>Номер доступу до картки (CAN) дає змогу отримати доступ до вихідних даних ID-картки. CAN – це шестизначний номер, який можна знайти на лицьовій стороні ID-картки. Він розташований унизу праворуч від терміну дії (позначено червоним).</translation>
     </message>
     <message>
-        <source>The Card Access Number (CAN) is required if the ID card PIN has already been entered incorrectly twice. In order to prevent a third incorrect entry and thus the blocking of the PIN without your consent, the CAN is also requested at this point. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
-        <extracomment>INFO DESKTOP Description text of CAN if required for third ID card PIN attempt
-----------
-INFO ANDROID IOS Description text of CAN if required for third ID card PIN attempt</extracomment>
-        <translation>Номер доступу до картки (CAN) потрібен, якщо PIN-код ID-картки вже двічі введено неправильно. Щоб запобігти третьому неправильному введенню і, таким чином, блокуванню PIN-коду без вашої згоди, на цьому етапі також запитується CAN. CAN – це шестизначний номер, який можна знайти на лицьовій стороні ID-картки. Він розташований унизу праворуч від терміну дії (позначено червоним).</translation>
-    </message>
-    <message>
-        <source>The PUK is required if the ID card PIN has been entered incorrectly three times. At this point the ID card PIN is blocked. The PUK (marked in red) is a ten-digit number you received with the letter sent to you by your competent authority. Please note that you can only use the PUK to unblock the PIN entry.</source>
-        <extracomment>INFO DESKTOP Description text of PUK
-----------
-INFO ANDROID IOS Description text of PUK</extracomment>
-        <translation>PUK-код потрібен, якщо PIN-код ID-картки було тричі введено неправильно. На цьому етапі PIN-код ID-картки блокується. PUK-код (позначено червоним) – це десятизначний номер, який ви отримали разом із листом від компетентного органа. Зверніть увагу, що ви можете використовувати PUK-код лише для розблокування введення PIN-коду.</translation>
-    </message>
-    <message>
-        <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.&lt;br&gt;&lt;br&gt;To use your smartphone as a card reader you&apos;ll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you&apos;ll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.</source>
-        <extracomment>INFO DESKTOP Description text of SaC pairing
-----------
-INFO ANDROID IOS Description text of SaC pairing</extracomment>
-        <translation>Ви можете використовувати свій смартфон як пристрій читання карток у програмі AusweisApp2. Смартфон повинен мати підтримуваний набір мікросхем NFC, й обидва пристрої (ваш смартфон і цей апарат) мають бути підключені до однієї мережі Wi-Fi.&lt;br&gt;&lt;br&gt;Щоб використовувати свій смартфон як пристрій читання карток, вам завжди буде потрібно активувати віддалену службу в програмі AusweisApp2 на смартфоні. Уперше вам також потрібно буде запустити режим створення пари на своєму смартфоні, вибрати пристрій зі списку доступних пристроїв на цьому апараті, а потім ввести код створення пари, показаний на телефоні.</translation>
-    </message>
-    <message>
-        <source>In order to use the online identification function you need an ID card PIN. It has six digits and is chosen by you.&lt;br&gt;&lt;br&gt;If you have not yet set a six-digit ID card PIN, e.g. when picking up your ID card, use the five-digit Transport PIN for initially setting the ID card PIN. The Transport PIN is contained in the PIN letter (see figure) you received after applying for your ID card. Note that the Transport PIN is void after setting a six-digit ID card PIN.&lt;br&gt;&lt;br&gt;If you already have a six-digit PIN only that is valid. This is also the case if you reinstalled the %1, the ID card PIN is stored on your ID card.</source>
-        <extracomment>INFO DESKTOP Description text of Transport PIN
-----------
-INFO ANDROID IOS Description text of Transport PIN</extracomment>
-        <translation>Для використання функції онлайн-ідентифікації вам потрібен PIN-код ID-картки. Він містить шість цифр і вибирається вами.&lt;br&gt;&lt;br&gt;Якщо ви ще не встановили шестизначний PIN-код ID-картки, наприклад під час її отримання, скористайтеся п’ятизначним транспортним PIN-код для початкового встановлення PIN-коду ID-картки. Транспортний PIN-код наведено в листі з PIN-кодом (див. рисунок), який ви отримали після подання заяви на отримання ID-картки. Зверніть увагу, що після встановлення шестизначного PIN-коду ID-картки транспортний PIN-код стає недійсним.&lt;br&gt;&lt;br&gt;Якщо у вас уже є шестизначний PIN-код, лише він є дійсним. Це також вірно, якщо ви перевстановили %1; PIN-код ID-картки зберігається на вашій ID-картці.</translation>
-    </message>
-    <message>
-        <source>The PIN is a six-digit number you set yourself and is required for every use of the online identification function. You can change it anytime and indefinitely if you know your valid PIN. For your six-digit PIN choose a combination of numbers, that is not easy to guess, neither &quot;123456&quot; nor your birth date, or any other numbers printed on the ID card.</source>
-        <extracomment>INFO DESKTOP Description text of PIN
-----------
-INFO ANDROID IOS Description text of PIN</extracomment>
-        <translation>PIN-код – шестизначний номер, який ви встановлюєте самостійно і який потрібен для кожного використання функції онлайн-ідентифікації. Ви можете змінити його в будь-який час і на невизначений термін, якщо знаєте свій дійсний PIN-код. Для свого шестизначного PIN-коду виберіть комбінацію цифр, яку важко вгадати; не використовуйте ні набір цифр «123456», ні дату народження, ні жодні інші числа, надруковані на ID-картці.</translation>
-    </message>
-    <message>
         <source>Smart-eID blocking code</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS
+----------
+LABEL ALL_PLATFORMS</extracomment>
         <translation>Код блокування Smart-eID</translation>
     </message>
     <message>
-        <source>Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device.&lt;br&gt;&lt;br&gt;To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.</source>
-        <extracomment>INFO ANDROID IOS Description text of Transport PIN</extracomment>
-        <translation>Так само як і фізичну ID-картку, Smart-eID, збережений на вашому смартфоні, можна заблокувати. Це може знадобитися, якщо ви коли-небудь втратите свій пристрій.&lt;br&gt;&lt;br&gt;Щоб анулювати активний Smart-eID, потрібен код блокування. Код блокування відобразиться після успішного створення Smart-eID. Крім того, він міститься в листі, який ви отримаєте після створення.</translation>
+        <source>Just like the physical ID card, the Smart-eID stored on your Smartphone can be blocked. This might be required if you ever lose your device.</source>
+        <extracomment>INFO ANDROID IOS Description text of Smart-eID PIN</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select &lt;b&gt;&quot;Six-digit PIN&quot;&lt;/b&gt; to change the self-chosen PIN of your ID card.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;Five-digit Transport PIN&quot;&lt;/b&gt; if your PIN letter is at hand (see figure) and you have not yet chosen a six-digit ID card PIN.&lt;br&gt;&lt;br&gt;Select &lt;b&gt;&quot;PIN unknown&quot;&lt;/b&gt; if your PIN letter is not at hand or you cannot recall your PIN.</source>
-        <extracomment>INFO DESKTOP Description text of change PIN selection options
-----------
-INFO ANDROID IOS</extracomment>
+        <source>To revoke an active Smart-eID, a blocking code is required. The blocking code will be displayed after successfully creating the Smart-eID. Furthermore, it is contained in the letter you will receive after creation.</source>
+        <extracomment>INFO ANDROID IOS Description text of Smart-eID PIN</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No PIN known</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>PIN-код невідомий</translation>
+    </message>
+    <message>
+        <source>You do not know your PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have not yet set a 6-digit card PIN and cannot find the PIN letter with the Transport PIN?</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You set a card PIN when picking up your ID card or later by yourself, but you can no longer remember it?</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Learn more about the two types of PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Types of PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your ID card comes with a 5-digit &apos;Transport PIN&apos; which you need to replace with a 6-digit PIN that you choose yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>5-digit Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The 5-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The PIN can only be used once. When you set up the eID function, you will replace this 5-digit PIN with a 6-digit PIN that you choose yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>6-digit PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your 5-digit Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This PIN allows you to prove online that the ID card belongs to you. No one can use your ID card online without this PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can change your 6-digit PIN at any time in AusweisApp2.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/6</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2979,34 +3180,6 @@ INFO ANDROID IOS</extracomment>
         <source>Attention: you may only set up &lt;b&gt;&lt;u&gt;one&lt;/u&gt;&lt;/b&gt; more Smart-eID with your ID card. Further setups may be carried out on %1.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Увага: ви можете налаштувати лише &lt;b&gt;&lt;u&gt;один&lt;/u&gt;&lt;/b&gt; Smart-eID для своєї ID-картки. Подальші налаштування можна виконати %1.</translation>
-    </message>
-</context>
-<context>
-    <name>PinUnknownView</name>
-    <message>
-        <source>No PIN known</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>PIN-код невідомий</translation>
-    </message>
-    <message>
-        <source>ID card</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>ID-картка</translation>
-    </message>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your Smart-eID PIN, you can easily set up Smart-eID again. This requires knowledge of your ID card PIN.</source>
-        <extracomment>LABEL ANDROID IOS A user wants to change but does not know their Smart-eID PIN.</extracomment>
-        <translation>Якщо ви забули свій PIN-код Smart-eID, ви можете легко знову налаштувати Smart-eID. Для цього потрібно знати PIN-код вашої ID-картки.</translation>
-    </message>
-    <message>
-        <source>Setup Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Налаштування Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3281,22 +3454,27 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <name>ProviderOverview</name>
     <message>
         <source>All provider</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Усі постачальники</translation>
     </message>
     <message>
         <source>Citizen services</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Послуги для громадян</translation>
     </message>
     <message>
         <source>Financials</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Фінанси</translation>
     </message>
     <message>
         <source>Insurances</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Страхування</translation>
     </message>
     <message>
         <source>Other services</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Інші послуги</translation>
     </message>
 </context>
@@ -3693,8 +3871,9 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Відомості</translation>
     </message>
     <message>
-        <source>Error code: %1</source>
-        <translation>Код помилки: %1</translation>
+        <source>Error code:</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Код помилки:</translation>
     </message>
 </context>
 <context>
@@ -4220,7 +4399,7 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Автоматично запускати %1 після завантаження?</translation>
     </message>
     <message>
-        <source>In order to successfully use the online identification function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.</source>
+        <source>In order to successfully use the eID function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.</source>
         <extracomment>INFO DESKTOP Information text why autostart of the App is advisable</extracomment>
         <translation>Для успішного використання функції онлайн-ідентифікації має бути запущено %1. Тому рекомендовано активувати автозапуск після запуску системи.</translation>
     </message>
@@ -4512,6 +4691,7 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
     <message>
         <source>Resetting Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Скидання Smart-eID</translation>
     </message>
 </context>
@@ -4760,11 +4940,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Ви знаєте шестизначний PIN-код своєї ID-картки?</translation>
     </message>
     <message>
-        <source>Online identification with Transport PIN is not possible. The personal, six-digit ID card PIN is mandatory to use the online identification function.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Онлайн-ідентифікація за допомогою транспортного PIN-коду неможлива. Особистий шестизначний PIN-код ID-картки є обов’язковим для використання функції онлайн-ідентифікації.</translation>
-    </message>
-    <message>
         <source>No</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ні</translation>
@@ -4773,6 +4948,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Yes</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Так</translation>
+    </message>
+    <message>
+        <source>Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4994,6 +5174,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>You can always access this tutorial again from the &quot;Help&quot; section in the menu bar.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ви завжди можете знову отримати доступ до цього посібника з розділу «Довідка» на панелі меню.</translation>
+    </message>
+    <message>
+        <source>If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished">Якщо ви не можете згадати свій шестизначний PIN-код або не можете знайти свій лист із PIN-кодом, ви можете надіслати запит на новий PIN-код за допомогою служби скидання PIN-коду.</translation>
     </message>
 </context>
 <context>
@@ -5984,6 +6169,14 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
 </context>
 <context>
+    <name>governikus::AuthModel</name>
+    <message>
+        <source>Reason:</source>
+        <extracomment>INFO ALL_PLATFORMS Failure code (string) of current workflow error.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>governikus::CardInfo</name>
     <message>
         <source>not inserted</source>
@@ -6385,7 +6578,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>No driver installed</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Драйвер не встановлено</translation>
     </message>
     <message>
@@ -6397,6 +6590,16 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Antivirus and firewall</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Антивірусна програма і брандмауер</translation>
+    </message>
+    <message>
+        <source>Service addresses</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not bound</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6502,7 +6705,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Не вдалося перевірити один або кілька сертифікатів. Операцію буде перервано з міркувань безпеки.</translation>
     </message>
     <message>
-        <source>This action cannot be performed. The online identification function of your ID card is not activated.</source>
+        <source>This action cannot be performed. The eID function of your ID card is not activated.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Цю дію виконати неможливо. Функцію онлайн-ідентифікації вашої ID-картки не активовано.</translation>
     </message>
@@ -6641,7 +6844,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>The device does not support Smart-eID.</source>
-        <extracomment>ERROR ALL_PLATFORMS The device does not support the Smart-eID functionality</extracomment>
+        <extracomment>ERROR ALL_PLATFORMS The device does not support the Smart-eID function</extracomment>
         <translation>Пристрій не підтримує Smart-eID.</translation>
     </message>
     <message>
@@ -6755,8 +6958,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Картка не існує</translation>
     </message>
     <message>
-        <source>The online identification function of your ID card is not yet activated.</source>
-        <extracomment>ERROR ALL_PLATFORMS The eID functionality of the ID card is not active.</extracomment>
+        <source>The eID function of your ID card is not yet activated.</source>
+        <extracomment>ERROR ALL_PLATFORMS The eID function of the ID card is not active.</extracomment>
         <translation>Функцію онлайн-ідентифікації вашої ID-картки ще не активовано.</translation>
     </message>
     <message>
@@ -7159,89 +7362,29 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>https://www.personalausweisportal.de/EN</translation>
     </message>
     <message>
-        <source>You cannot find your PIN letter? You have set a ID card PIN when picking up the ID card or later that you cannot recall now?</source>
-        <extracomment>LABEL ALL_PLATFORMS Explanation if the (Transport) PIN is unknown to the user on the Change PIN startpage.</extracomment>
-        <translation>Не можете знайти свій PIN-код? Не можете згадати PIN-код, який отримали під час отримання ID-картки або пізніше?</translation>
-    </message>
-    <message>
-        <source>By using the PIN Reset Service you may request a new ID card PIN.</source>
-        <extracomment>LABEL ALL_PLATFORMS Text in Hint to PRS if the (Transport) PIN is unknown to the user on the Change PIN startpage</extracomment>
-        <translation>За допомогою служби скидання PIN-коду ви можете надіслати запит на новий PIN-код ID-картки.</translation>
-    </message>
-    <message>
-        <source>If this is the case please turn to the competent authority and set a new ID card PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Text in Hint when PRS is not available and the (Transport) PIN is unknown to the user on the Change PIN startpage</extracomment>
-        <translation>У такому разі зверніться до компетентного органа й установіть там новий PIN-код ID-картки.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your ID card PIN or do not have access to the PUK, you may request a new PIN here.</source>
+        <source>You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
-        <translation>Якщо ви забули PIN-код своєї ID-картки або не маєте доступу до PUK-коду, ви можете надіслати запит на новий PIN-код тут.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If you have forgotten your ID card PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
-        <translation>Якщо ви забули PIN-код своєї ID-картки або не маєте доступу до PUK-коду, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>If you know neither your Transport PIN nor your ID card PIN, you may request a new PIN here.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
-        <translation>Якщо ви не знаєте ні транспортного PIN-коду, ні PIN-коду своєї ID-картки, ви можете надіслати запит на новий PIN-код тут.</translation>
-    </message>
-    <message>
-        <source>If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
-        <translation>Якщо ви не знаєте ні транспортного PIN-коду, ні PIN-коду своєї ID-картки, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>If you cannot recall your ID card PIN, you may request a new PIN here.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Якщо ви не можете згадати PIN-код своєї ID-картки, ви можете надіслати запит на новий PIN-код тут.</translation>
-    </message>
-    <message>
-        <source>If you cannot recall your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Якщо ви не можете згадати PIN-код своєї ID-картки, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Якщо ви не можете згадати свій шестизначний PIN-код або не можете знайти свій лист із PIN-кодом, ви можете надіслати запит на новий PIN-код за допомогою служби скидання PIN-коду.</translation>
-    </message>
-    <message>
-        <source>You can always set a new ID card PIN at the competent authority if the (Transport) PIN is not known.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ви завжди можете встановити новий PIN-код ID-картки в компетентному органі, якщо (транспортний) PIN-код невідомий.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>You may request a new ID card PIN here.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
-        <translation>Ви можете надіслати запит на новий PIN-код ID-картки тут.</translation>
-    </message>
-    <message>
-        <source>You may turn to the competent authority and set a new ID card PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
-        <translation>Ви можете звернутися до компетентного органа й установити там новий PIN-код ID-картки.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>You can request activation of the online identification function here.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the online identification function was not activated</extracomment>
-        <translation>Замовити активацію функції онлайн-ідентифікації можна тут.</translation>
-    </message>
-    <message>
-        <source>Please contact the competent authority to activate the online identification function.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the online identification function was not activated</extracomment>
-        <translation>Зверніться до компетентного органа, щоб активувати функцію онлайн-ідентифікації.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
-    </message>
-    <message>
-        <source>To provider</source>
+        <source>Go to PIN Reset Service</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>До постачальника</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open website</source>
+        <source>You can request activation of the eID function without charge.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go to Activation Service</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Відкрити сайт</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request a new card PIN free of charge to be able to use the eID function again.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7875,6 +8018,10 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>AusweisApp2 error report - %1</source>
         <translation>Звіт про помилку програми AusweisApp2 – %1</translation>
+    </message>
+    <message>
+        <source>Contact your local citizens&apos; office (Bürgeramt) to apply for a new ID card or to unblock the ID card.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

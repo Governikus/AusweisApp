@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import Governikus.Global 1.0
 import Governikus.Style 1.0
@@ -74,7 +74,6 @@ SectionPage {
 			}
 			PrivacyStatement {
 				activeFocusOnTab: true
-				textStyle: Style.text.normal
 				width: parent.width
 
 				FocusFrame {

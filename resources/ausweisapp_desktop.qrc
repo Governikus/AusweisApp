@@ -4,7 +4,6 @@
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/material_assistant.svg</file>
         <file>images/desktop/material_bug_report.svg</file>
-        <file>images/desktop/material_live_help.svg</file>
         <file>images/desktop/material_new_releases.svg</file>
         <file>images/desktop/material_rate_review.svg</file>
         <file>images/desktop/material_save.svg</file>
@@ -23,10 +22,6 @@
         <file>images/reader/default_reader.png</file>
         <file>images/reader/default_reader_mit_ausweis.png</file>
         <file>updatable-files/supported-readers.json</file>
-        <file>updatable-files/reader/img_ACS_ACR122U.png</file>
-        <file>updatable-files/reader/img_ACS_ACR122U_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_ACS_ACR1252U.png</file>
-        <file>updatable-files/reader/img_ACS_ACR1252U_mit_ausweis.png</file>
         <file>updatable-files/reader/img_ACS_ACR1281U.png</file>
         <file>updatable-files/reader/img_ACS_ACR1281U_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Cherry_TC_1200.png</file>
@@ -47,8 +42,6 @@
         <file>updatable-files/reader/img_HID_Omnikey_542x_mit_ausweis.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_4121_CL.png</file>
-        <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_4121_CL_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_XXXX_F.png</file>
         <file>updatable-files/reader/img_Identive_XXXX_F_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_Cloud_4700_F.png</file>
@@ -59,8 +52,6 @@
         <file>updatable-files/reader/img_Identive_SCL011_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_SCL3711.png</file>
         <file>updatable-files/reader/img_Identive_SCL3711_mit_ausweis.png</file>
-        <file>updatable-files/reader/img_Identive_SDI010.png</file>
-        <file>updatable-files/reader/img_Identive_SDI010_mit_ausweis.png</file>
         <file>updatable-files/reader/img_Identive_SDI011.png</file>
         <file>updatable-files/reader/img_Identive_SDI011_mit_ausweis.png</file>
         <file>updatable-files/reader/img_KOBIL_ID_Token.png</file>

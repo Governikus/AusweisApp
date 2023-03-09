@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelIfd.h"
@@ -53,7 +53,7 @@ void StateEstablishPaceChannelIfd::run()
 			break;
 
 		default:
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Ifd_Unknown);
 			return;
 	}
 

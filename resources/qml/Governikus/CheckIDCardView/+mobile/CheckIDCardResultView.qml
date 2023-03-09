@@ -1,11 +1,12 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQml.Models 2.15
 import Governikus.CheckResultView 1.0
 import Governikus.Global 1.0
 import Governikus.ResultView 1.0
+import Governikus.Style 1.0
 import Governikus.Type.CheckIDCardModel 1.0
 
 CheckResultView {
@@ -48,8 +49,8 @@ CheckResultView {
 	}
 
 	GText {
-		font.bold: true
 		text: result === CheckIDCardModel.SUCCESS ? qsTr("You may now try the function: \"See my personal data\". Press the Continue button to do so now.") : ""
+		textStyle: Style.text.normal_highlight
 		visible: text !== ""
 		width: parent.width
 	}

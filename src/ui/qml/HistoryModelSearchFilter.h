@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief A filter to search the history model
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

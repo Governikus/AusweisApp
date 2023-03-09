@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckCertificates.h"
@@ -41,7 +41,7 @@ void StateCheckCertificates::run()
 				const auto& issuerName = TlsChecker::getCertificateIssuerName(certificate);
 				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, {GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, issuerName}
 						});
-				Q_EMIT fireAbort();
+				Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_Hash_Missing_In_Description);
 				return;
 			}
 		}

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckApplet.h"
@@ -32,12 +32,12 @@ void StateCheckApplet::onCommandDone(const QVariant& pResult)
 	{
 		case EidStatus::INTERNAL_ERROR:
 			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Check_Applet_Error);
 			return;
 
 		case EidStatus::UNAVAILABLE:
 			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Unavailable);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Check_Applet_Unavailable);
 			return;
 
 		case EidStatus::NO_PERSONALIZATION:

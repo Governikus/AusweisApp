@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateTransmitPersonalization.h"
@@ -69,6 +69,7 @@ class test_StateTransmitPersonalization
 			QTRY_COMPARE(spyAbort.size(), 1);  // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Transmit_Personalization_Size_Mismatch);
 		}
 
 
@@ -86,6 +87,7 @@ class test_StateTransmitPersonalization
 			QTRY_COMPARE(spyAbort.size(), 1);  // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Transmit_Personalization_Size_Mismatch);
 		}
 
 
@@ -109,6 +111,7 @@ class test_StateTransmitPersonalization
 			QTRY_COMPARE(spyAbort.size(), 1);  // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Transmit_Personalization_Size_Mismatch);
 		}
 
 

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -17,11 +17,13 @@ Button {
 		Cancel
 	}
 
+	property string accessibleText
 	property int buttonType: NavigationButton.Type.Forward
 	property string iconSource
 	property string iconText
 	property string subText
 
+	Accessible.name: accessibleText !== "" ? accessibleText : text
 	Accessible.role: Accessible.Button
 	implicitHeight: column.implicitHeight
 	implicitWidth: column.implicitWidth

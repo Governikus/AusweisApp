@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/WorkflowContext.h"
@@ -254,6 +254,22 @@ class test_WorkflowContext
 			QTest::ignoreMessage(QtWarningMsg, R"(Workflow already claimed by "test_WorkflowContext")");
 			mContext->claim(this);
 			QVERIFY(mContext->wasClaimed());
+		}
+
+
+		void test_setFailureCode()
+		{
+			QVERIFY(!mContext->getFailureCode().has_value());
+
+			mContext->setFailureCode(FailureCode::Reason::Card_Removed);
+
+			const auto& firstFailureCode = mContext->getFailureCode();
+			QVERIFY(firstFailureCode.has_value());
+			QCOMPARE(firstFailureCode->getReason(), FailureCode::Reason::Card_Removed);
+
+			QTest::ignoreMessage(QtWarningMsg, "FailureCode already set to Card_Removed - ignoring User_Cancelled");
+			mContext->setFailureCode(FailureCode::Reason::User_Cancelled);
+			QCOMPARE(firstFailureCode->getReason(), FailureCode::Reason::Card_Removed);
 		}
 
 

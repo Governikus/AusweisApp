@@ -1,10 +1,12 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Class that provides access to a file identified by a section and a name.
  * The file is looked up in the local cache or in the application's resource bundle.
  * This class also handles the synchronization of the local cache with the content
  * provided by a server.
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

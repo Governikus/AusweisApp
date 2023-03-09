@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetChallenge.h"
@@ -101,5 +101,5 @@ void StateGetChallenge::handleNetworkReply(const QByteArray& pContent)
 
 	qDebug() << "No valid challenge to prepare personalization";
 	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Get_Challenge_Invalid);
 }

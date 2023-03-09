@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref ProviderConfiguration
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -300,7 +302,7 @@ class test_ProviderConfiguration
 				}
 			}
 
-			QCOMPARE(attachedEidCounter, 19);
+			QCOMPARE(attachedEidCounter, 20);
 		}
 
 

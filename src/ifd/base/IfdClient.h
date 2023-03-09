@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief An interface for IfdClients, meant to omit the
  * dependency between card_base and ifd.
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

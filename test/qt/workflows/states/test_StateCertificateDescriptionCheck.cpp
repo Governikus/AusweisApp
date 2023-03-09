@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
@@ -56,6 +56,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Certificate_Check_Failed_No_Description);
 		}
 
 
@@ -71,6 +72,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Certificate_Check_Failed_No_SubjectUrl_In_Description);
 		}
 
 
@@ -86,6 +88,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Certificate_Check_Failed_Hash_Mismatch);
 		}
 
 
@@ -110,6 +113,7 @@ class test_StateCertificateDescriptionCheck
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Certificate_Check_Failed_Same_Origin_Policy_Violation);
 		}
 
 

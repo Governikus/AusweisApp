@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Implementation of the ISO 7816 EF.DIR data structure (set of
  *        application template)
- *
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

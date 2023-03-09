@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*
  * \brief Initializer to register a lambda that will be executed if QCoreApplication is ready.
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

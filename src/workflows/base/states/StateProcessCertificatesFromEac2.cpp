@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessCertificatesFromEac2.h"
@@ -44,7 +44,7 @@ void StateProcessCertificatesFromEac2::run()
 	{
 		qCritical() << "No cvc chain determined, abort authentication";
 		updateStatus(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Process_Certificates_From_Eac2_Cvc_Chain_Missing);
 	}
 	else
 	{

@@ -1,9 +1,11 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Checks whether the hashes of the certificates encountered so far
  * (i.e. those stored in the AuthContext) are in the CertificateDescription
  * extension of the eService certificate.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

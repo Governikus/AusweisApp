@@ -19,7 +19,6 @@ j.with
 		environmentVariables
 		{
 			env("XDG_RUNTIME_DIR", '$WORKSPACE/tmp')
-			env("REVIEW_URL", '${review.url}')
 			env("SONAR_USER_HOME", '$WORKSPACE/cache/sonar')
 		}
 	}
@@ -42,18 +41,16 @@ j.with
 
 		shell('$WORKSPACE/sonarqubetools/sonar-build-wrapper/build-wrapper-linux-x86-64 --out-dir build cmake --build build')
 
-		shell('ctest -E qml_ --test-dir build --output-on-failure')
+		shell('ctest -LE qml -E Test_ui_qml_UIPlugInQml --test-dir build --output-on-failure')
 
 		shell('cmake --build build --target gcovr.sonar')
 
 		shell(strip('''\
-			REVIEW_ID=${REVIEW_URL%/};
-			REVIEW_ID=${REVIEW_ID##*/};
 			cd build;
 			$WORKSPACE/sonarqubetools/sonar-scanner/bin/sonar-scanner
 			-Dsonar.scanner.metadataFilePath=${WORKSPACE}/tmp/sonar-metadata.txt
-			-Dsonar.pullrequest.key=${REVIEW_ID}
-			-Dsonar.pullrequest.branch=${REVIEW_URL}
+			-Dsonar.pullrequest.key=${REVIEWBOARD_REVIEW_ID}
+			-Dsonar.pullrequest.branch=${REVIEWBOARD_REVIEW_ID}
 			-Dsonar.pullrequest.base=${MERCURIAL_REVISION_BRANCH}
 			-Dsonar.login=${SONARQUBE_TOKEN}
 			-Dsonar.qualitygate.wait=true

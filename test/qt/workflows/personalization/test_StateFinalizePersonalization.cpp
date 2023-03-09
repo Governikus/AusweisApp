@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateFinalizePersonalization.h"
@@ -57,14 +57,16 @@ class test_StateFinalizePersonalization
 		}
 
 
-		void fail()
+		void previousFail()
 		{
 			StateFinalizePersonalization state(mContext);
-			QSignalSpy spy(&state, &StateFinalizePersonalization::fireAbort);
+			QSignalSpy spy(&state, &StateFinalizePersonalization::firePropagateAbort);
 
 			mContext->setStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			mContext->setFailureCode(FailureCode::Reason::Start_Paos_Response_Personalization_Invalid);
 			state.run();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Start_Paos_Response_Personalization_Invalid);
 		}
 
 

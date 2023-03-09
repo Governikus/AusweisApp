@@ -1,10 +1,8 @@
-/*!
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfDiagnosisModel.h"
-
-#include "GeneralSettings.h"
 
 #include <QFile>
 #include <QQmlEngine>
@@ -19,6 +17,8 @@ SelfDiagnosisModel::SelfDiagnosisModel()
 	, mDiagnosisContext(new DiagnosisContext())
 	, mDiagnosisModel(mDiagnosisContext)
 {
+	QQmlEngine::setObjectOwnership(&mDiagnosisModel, QQmlEngine::CppOwnership);
+
 	connect(&mDiagnosisModel, &DiagnosisModel::fireRunningChanged, this, &SelfDiagnosisModel::fireRunningChanged);
 }
 

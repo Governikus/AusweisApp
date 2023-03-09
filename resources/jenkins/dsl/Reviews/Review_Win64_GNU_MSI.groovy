@@ -12,14 +12,6 @@ def j = new Review
 
 j.with
 {
-	wrappers
-	{
-		environmentVariables
-		{
-			env('PATH', '${COMPILER_${MERCURIAL_REVISION_BRANCH}};$PATH')
-		}
-	}
-
 	steps
 	{
 		batchFile('cd source & cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')

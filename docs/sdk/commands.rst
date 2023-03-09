@@ -112,6 +112,8 @@ The AusweisApp2 will send a :ref:`reader` message as an answer.
 
 
 
+.. _get_reader_list:
+
 GET_READER_LIST
 ^^^^^^^^^^^^^^^
 Returns information about all connected readers.
@@ -164,8 +166,8 @@ Command :ref:`interrupt` allows to stop the dialog manually, if needed.
     URL to the TcToken. This is equal to the desktop style activation URL.
     *(http://127.0.0.1:24727/eID-Client?tcTokenURL=)*
 
-  - **developerMode**: True to enable "Developer Mode" for test cards according to BSI TR-03124-1,
-    otherwise false. (optional, default: false)
+  - **developerMode**: True to enable "Developer Mode" for test cards and disable some security
+    checks according to BSI TR-03124-1, otherwise false. (optional, default: false)
 
   - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
     :ref:`api_level` v1 only. (optional, default: false)
@@ -434,7 +436,7 @@ ACCEPT
 Accept the current state.
 
 If the AusweisApp2 will send the message :ref:`access_rights` the user
-needs to **accept** or **deny**. So the workflow is paused until
+needs to **accept** or **cancel**. So the workflow is paused until
 your application sends this command to accept the requested information.
 
 If the user does not accept the requested information your application

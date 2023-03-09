@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateUpdateRetryCounter.h"
@@ -26,7 +26,7 @@ void StateUpdateRetryCounter::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Update_Retry_Counter_No_Card_Connection);
 		return;
 	}
 
@@ -39,11 +39,14 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 {
 	qCDebug(statemachine) << "StateUpdateRetryCounter::onUpdateRetryCounterDone()";
 
-	if (pCommand->getReturnCode() != CardReturnCode::OK)
+	const auto& returnCode = pCommand->getReturnCode();
+	if (returnCode != CardReturnCode::OK)
 	{
 		qCCritical(statemachine) << "An error occurred while communicating with the card reader, cannot determine retry counter, abort state";
 		getContext()->resetCardConnection();
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Update_Retry_Counter_Communication_Error,
+						  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
+				});
 		return;
 	}
 

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 pragma Singleton
 import QtQuick 2.15
@@ -53,7 +53,7 @@ QtObject {
 		pFlickable.contentY = Math.max(pFlickable.contentY - pFlickable.height, pFlickable.originY);
 	}
 	function shuffle(pArray) {
-		for (var i = pArray.length - 1; i > 0; i--) {
+		for (let i = pArray.length - 1; i > 0; i--) {
 			let j = ApplicationModel.randomInt(0, i);
 			let x = pArray[i];
 			pArray[i] = pArray[j];

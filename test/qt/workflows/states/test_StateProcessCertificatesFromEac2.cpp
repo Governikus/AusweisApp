@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StatePreVerification
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessCertificatesFromEac2.h"
@@ -93,6 +95,7 @@ class test_StateProcessCertificatesFromEac2
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(!mState->getContext()->hasChainForCertificationAuthority(*mState->getContext()->getPaceOutputData()));
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Process_Certificates_From_Eac2_Cvc_Chain_Missing);
 		}
 
 

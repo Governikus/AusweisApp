@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreparePace.h"
@@ -25,7 +25,7 @@ void StatePreparePace::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "Card connection lost.";
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Prepace_Pace_No_Card_Connection);
 		return;
 	}
 
@@ -36,7 +36,7 @@ void StatePreparePace::run()
 		{
 			qCDebug(statemachine) << "Smart-eID was invalidated during workflow";
 			updateStatus(GlobalStatus::Code::Card_Smart_Invalid);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Prepace_Pace_Smart_Eid_Invalidated);
 		}
 
 		qCDebug(statemachine) << "Smart-eID PIN required";

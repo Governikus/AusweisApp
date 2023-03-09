@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisFirewallDetection.h"
@@ -157,7 +157,7 @@ void DiagnosisFirewallDetection::parseFirewallProfileInfos(const QString& pFirew
 	bool enabled = false;
 
 	const auto& lines = pFirewallProfileInfos.split(QLatin1Char('\n'));
-	for (auto line : lines)
+	for (const auto& line : lines)
 	{
 		const QString& trimmedLine = line.trimmed();
 		if (trimmedLine.isEmpty() && !name.isEmpty())
@@ -308,6 +308,9 @@ DiagnosisFirewallDetection::DiagnosisFirewallDetection()
 void DiagnosisFirewallDetection::startDetection()
 {
 #if defined(Q_OS_WIN)
+	mDetectedFirewalls.clear();
+	mFirewallProfiles.clear();
+
 	QString powershellCommand = QStandardPaths::findExecutable(QStringLiteral("powershell.exe"));
 	if (powershellCommand.isEmpty())
 	{

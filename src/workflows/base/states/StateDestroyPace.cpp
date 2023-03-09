@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -25,7 +25,7 @@ void StateDestroyPace::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Destroy_Pace_No_Connection_To_Destroy);
 		return;
 	}
 

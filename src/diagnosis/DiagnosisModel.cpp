@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -7,24 +7,49 @@
 #include "AppSettings.h"
 #include "BuildHelper.h"
 #include "Env.h"
+#include "HttpServer.h"
 #include "LanguageLoader.h"
 #include "RemoteServiceSettings.h"
 
 #include <QOperatingSystemVersion>
+#include <QQmlEngine>
 
 
 using namespace governikus;
 
 
 DiagnosisModel::DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext)
-	: mContext(pContext)
-	, mAntivirusSectionRunning(false)
-	, mFirewallSectionRunning(false)
-	, mCardReaderSectionRunning(false)
-	, mPcscSectionRunning(false)
+	: mSections()
+	, mContext(pContext)
+	, mAusweisApp2Section()
+	, mTimestampSection()
 	, mRemoteDeviceSectionRunning(false)
+	, mRemoteDeviceSection()
+	, mCardReaderSectionRunning(false)
+	, mCardReaderSection()
+	, mPcscSectionRunning(false)
+	, mPcscSection()
+	, mConnectionTest()
+	, mNetworkConnectionSection()
+	, mNetworkInterfaceSection()
+	, mAntivirusSectionRunning(false)
+	, mAntivirusDetection()
+	, mAntivirusSection()
+	, mFirewallSectionRunning(false)
+	, mFirewallDetection()
+	, mFirewallSection()
 {
-	reloadContent();
+	mSections[Section::GENERAL].reset(new SectionModel());
+	QQmlEngine::setObjectOwnership(mSections[Section::GENERAL].data(), QQmlEngine::CppOwnership);
+
+	mSections[Section::READER].reset(new SectionModel());
+	QQmlEngine::setObjectOwnership(mSections[Section::READER].data(), QQmlEngine::CppOwnership);
+
+	mSections[Section::NETWORK].reset(new SectionModel());
+	QQmlEngine::setObjectOwnership(mSections[Section::NETWORK].data(), QQmlEngine::CppOwnership);
+
+	mSections[Section::SECURITY].reset(new SectionModel());
+	QQmlEngine::setObjectOwnership(mSections[Section::SECURITY].data(), QQmlEngine::CppOwnership);
 }
 
 
@@ -34,89 +59,151 @@ DiagnosisModel::~DiagnosisModel()
 }
 
 
-QSharedPointer<SectionModel> DiagnosisModel::createAusweisApp2Section()
+QString DiagnosisModel::getSectionName(Section pSection) const
 {
-	QSharedPointer<SectionModel> aa2Section(new SectionModel());
+	switch (pSection)
+	{
+		case Section::GENERAL:
+			return QCoreApplication::applicationName();
 
-	BuildHelper::processInformationHeader([aa2Section](const QString& pKey, const QString& pValue){
-			aa2Section->addItem(pKey, pValue);
+		case Section::READER:
+			//: LABEL DESKTOP
+			return tr("Card reader");
+
+		case Section::NETWORK:
+			//: LABEL DESKTOP
+			return tr("Network");
+
+		case Section::SECURITY:
+			//: LABEL DESKTOP
+			return tr("Antivirus and firewall");
+	}
+
+	Q_UNREACHABLE();
+}
+
+
+void DiagnosisModel::initGeneralSections()
+{
+	mAusweisApp2Section.clear();
+	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
+			mAusweisApp2Section << ContentItem(pKey, pValue);
 		});
 
 	//: LABEL DESKTOP
 	const auto& title = tr("Time of diagnosis");
 	//: LABEL DESKTOP
 	const auto& content = tr("Initial diagnosis running, please wait.");
-
-	mTimestampItem = QSharedPointer<ContentItem>::create(title, content);
-	aa2Section->addItem(mTimestampItem);
-
-	return aa2Section;
+	mTimestampSection << ContentItem(title, content);
 }
 
 
-void DiagnosisModel::createNetworkSection()
+void DiagnosisModel::updateGeneralSection()
 {
-	mNetworkInterfaceSection = QSharedPointer<SectionModel>::create();
-	mNetworkConnectionSection = QSharedPointer<SectionModel>::create();
-	mCombinedNetworkSection = QSharedPointer<SectionModel>::create();
+	mSections[Section::GENERAL]->removeAllItems();
+	mSections[Section::GENERAL]->addContent(mAusweisApp2Section);
+	mSections[Section::GENERAL]->addContent(mTimestampSection);
 }
 
 
-void DiagnosisModel::createCardReaderSection()
+void DiagnosisModel::initNetworkSections()
 {
-	mCombinedReaderSection = QSharedPointer<SectionModel>::create();
-	mPcscSection = QSharedPointer<SectionModel>::create();
+	mSections[Section::NETWORK]->removeAllItems();
+	mNetworkInterfaceSection.clear();
+	mNetworkConnectionSection.clear();
+}
+
+
+void DiagnosisModel::updateNetworkSection(bool pUpdateTimestamp)
+{
+	mSections[Section::NETWORK]->removeAllItems();
+	mSections[Section::NETWORK]->addContent(mNetworkConnectionSection);
+	mSections[Section::NETWORK]->addContent(mNetworkInterfaceSection);
+	if (pUpdateTimestamp)
+	{
+		mContext->setTimestamp(QDateTime::currentDateTime());
+	}
+}
+
+
+void DiagnosisModel::initCardReaderSections()
+{
+	mPcscSection.clear();
 	//: LABEL DESKTOP
-	mPcscSection->addTitleWithoutContent(tr("PC/SC driver information"));
+	mPcscSection << ContentItem(tr("PC/SC driver information"));
 	//: LABEL DESKTOP
-	mPcscSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mPcscSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mPcscSectionRunning = true;
-	mCardReaderSection = QSharedPointer<SectionModel>::create();
+	mCardReaderSection.clear();
 	//: LABEL DESKTOP
-	mCardReaderSection->addTitleWithoutContent(tr("Card reader"));
+	mCardReaderSection << ContentItem(tr("Card reader"));
 	//: LABEL DESKTOP
-	mCardReaderSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mCardReaderSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mCardReaderSectionRunning = true;
-	mRemoteDeviceSection = QSharedPointer<SectionModel>::create();
+	mRemoteDeviceSection.clear();
 	//: LABEL DESKTOP
-	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired smartphones"));
+	mRemoteDeviceSection << ContentItem(tr("Paired smartphones"));
 	//: LABEL DESKTOP
-	mRemoteDeviceSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mRemoteDeviceSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mRemoteDeviceSectionRunning = true;
 	Q_EMIT fireRunningChanged();
 }
 
 
-void DiagnosisModel::createAntiVirusAndFirewallSection()
+void DiagnosisModel::updateCardReaderSection(bool pUpdateTimestamp)
 {
-	mAntivirusSection = QSharedPointer<SectionModel>::create();
-	mFirewallSection = QSharedPointer<SectionModel>::create();
-	mCombinedAntivirusFirewallSection = QSharedPointer<SectionModel>::create();
+	mSections[Section::READER]->removeAllItems();
+	mSections[Section::READER]->addContent(mRemoteDeviceSection);
+	mSections[Section::READER]->addContent(mCardReaderSection);
+	mSections[Section::READER]->addContent(mPcscSection);
+	if (pUpdateTimestamp)
+	{
+		mContext->setTimestamp(QDateTime::currentDateTime());
+	}
+}
+
+
+void DiagnosisModel::initAntiVirusAndFirewallSection()
+{
+	mSections[Section::SECURITY]->removeAllItems();
+	mAntivirusSection.clear();
+	mFirewallSection.clear();
 
 	//: LABEL DESKTOP
-	mAntivirusSection->addTitleWithoutContent(tr("Antivirus information"));
+	mAntivirusSection << ContentItem(tr("Antivirus information"));
 #ifdef Q_OS_WIN
-	//: LABEL DESKTOP
-	mAntivirusSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mAntivirusSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mAntivirusSectionRunning = true;
 #else
 	//: LABEL DESKTOP
-	mAntivirusSection->addItemWithoutTitle(tr("No Antivirus information available on this platform."));
+	mAntivirusSection << ContentItem(QString(), tr("No Antivirus information available on this platform."));
 #endif
 	//: LABEL DESKTOP
-	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
+	mFirewallSection << ContentItem(tr("Firewall information"));
 #ifdef Q_OS_WIN
 	//: LABEL DESKTOP
-	mFirewallSection->addItemWithoutTitle(tr("Diagnosis is running..."));
+	mFirewallSection << ContentItem(QString(), tr("Diagnosis is running..."));
 	mFirewallSectionRunning = true;
 #else
 	//: LABEL DESKTOP
-	mFirewallSection->addItemWithoutTitle(tr("No Firewall information available on this platform."));
+	mFirewallSection << ContentItem(QString(), tr("No Firewall information available on this platform."));
 #endif
 
 #ifdef Q_OS_WIN
 	Q_EMIT fireRunningChanged();
 #endif
+}
+
+
+void DiagnosisModel::updateAntiVirusAndFirewallSection(bool pUpdateTimestamp)
+{
+	mSections[Section::SECURITY]->removeAllItems();
+	mSections[Section::SECURITY]->addContent(mAntivirusSection);
+	mSections[Section::SECURITY]->addContent(mFirewallSection);
+	if (pUpdateTimestamp)
+	{
+		mContext->setTimestamp(QDateTime::currentDateTime());
+	}
 }
 
 
@@ -141,7 +228,6 @@ void DiagnosisModel::connectSignals()
 
 void DiagnosisModel::disconnectSignals()
 {
-
 	disconnect(mContext.data(), &DiagnosisContext::timestampChanged, this, &DiagnosisModel::onTimestampChanged);
 	disconnect(mContext.data(), &DiagnosisContext::fireNetworkInfoChanged, this, &DiagnosisModel::onNetworkInfoChanged);
 	disconnect(&mConnectionTest, &DiagnosisConnectionTest::fireConnectionTestDone, this, &DiagnosisModel::onConnectionTestDone);
@@ -174,8 +260,8 @@ QString DiagnosisModel::boolToString(bool pBoolean) const
 
 QVariant DiagnosisModel::data(const QModelIndex& pIndex, int pRole) const
 {
-	const int row = pIndex.row();
-	if (!pIndex.isValid() || row >= mSections.size())
+	const auto section = static_cast<Section>(pIndex.row());
+	if (!pIndex.isValid() || !mSections.contains(section))
 	{
 		return QVariant();
 	}
@@ -183,10 +269,10 @@ QVariant DiagnosisModel::data(const QModelIndex& pIndex, int pRole) const
 	switch (pRole)
 	{
 		case Qt::DisplayRole:
-			return mSections.at(row).first;
+			return getSectionName(section);
 
 		case ContentRole:
-			return QVariant::fromValue(mSections.at(row).second);
+			return QVariant::fromValue(mSections[section]);
 
 		default:
 			return QVariant();
@@ -227,10 +313,12 @@ QString DiagnosisModel::getAsPlaintext() const
 #endif
 
 	QStringList modelPlaintext;
-	for (const auto& sectionPair : std::as_const(mSections))
+
+	const auto& sections = mSections.keys();
+	for (const auto& section : sections)
 	{
-		modelPlaintext << sectionPair.first;
-		modelPlaintext << sectionPair.second->getAsPlaintext();
+		modelPlaintext << getSectionName(section);
+		modelPlaintext << mSections[section]->getAsPlaintext();
 		modelPlaintext << endl;
 	}
 
@@ -246,26 +334,32 @@ bool DiagnosisModel::isRunning() const
 
 void DiagnosisModel::onTimestampChanged()
 {
+	mTimestampSection.clear();
+
 	QDateTime timestampValue = mContext->getTimestamp();
-	if (!timestampValue.isValid())
-	{
-		//: LABEL DESKTOP
-		mTimestampItem->mContent = tr("Failed to retrieve date & time");
-	}
-	else
+	if (timestampValue.isValid())
 	{
 		//: LABEL DESKTOP Timestamp, formatted according to the selected language
 		QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(timestampValue, tr("d. MMMM yyyy, hh:mm:ss AP"));
-		mTimestampItem->mContent = timestamp;
+		//: LABEL DESKTOP
+		mTimestampSection << ContentItem(tr("Time of diagnosis"), timestamp);
+	}
+	else
+	{
+		//: LABEL DESKTOP
+		const auto& title = tr("Time of diagnosis");
+		//: LABEL DESKTOP
+		const auto& content = tr("Failed to retrieve date & time");
+		mTimestampSection << ContentItem(title, content);
 	}
 
-	mSections.at(0).second->emitDataChangedForItem(mTimestampItem);
+	updateGeneralSection();
 }
 
 
 void DiagnosisModel::onNetworkInfoChanged()
 {
-	mNetworkInterfaceSection->removeAllItems();
+	mNetworkInterfaceSection.clear();
 
 	const auto& networkInterfaces = mContext->getNetworkInterfaces();
 	for (const auto& iface : networkInterfaces)
@@ -281,7 +375,7 @@ void DiagnosisModel::onNetworkInfoChanged()
 		{
 			//: LABEL DESKTOP Interface has no IP addresses assigned
 			interfaceInfos << tr("No IP addresses assigned");
-			mNetworkInterfaceSection->addItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
+			mNetworkInterfaceSection << ContentItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
 			continue;
 		}
 
@@ -304,18 +398,25 @@ void DiagnosisModel::onNetworkInfoChanged()
 				interfaceInfos << tr("Unknown address: %1").arg(ip.toString());
 			}
 		}
-
-		mNetworkInterfaceSection->addItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
+		mNetworkInterfaceSection << ContentItem(iface.humanReadableName(), interfaceInfos.join(QLatin1Char('\n')));
 	}
 
-	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateNetworkSection();
 }
 
 
 void DiagnosisModel::onConnectionTestDone()
 {
-	mNetworkConnectionSection->removeAllItems();
+	mNetworkConnectionSection.clear();
+
+	const auto& server = Env::getShared<HttpServer>(false);
+
+	mNetworkConnectionSection << ContentItem(
+			//: LABEL DESKTOP
+			tr("Service addresses"),
+			//: LABEL DESKTOP
+			server ? server->boundAddresses().join(QLatin1Char('\n')) : tr("Not bound"));
+
 	QStringList proxyInfo;
 
 	if (mConnectionTest.getIsProxySet())
@@ -369,15 +470,15 @@ void DiagnosisModel::onConnectionTestDone()
 	}
 
 	//: LABEL DESKTOP
-	mNetworkConnectionSection->addItem(tr("Proxy information"), proxyInfo.join(QLatin1Char('\n')));
-	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	mNetworkConnectionSection << ContentItem(tr("Proxy information"), proxyInfo.join(QLatin1Char('\n')));
+
+	updateNetworkSection();
 }
 
 
 void DiagnosisModel::onAntivirusInformationChanged()
 {
-	mAntivirusSection->removeAllItems();
+	mAntivirusSection.clear();
 	mAntivirusSectionRunning = false;
 
 	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformations();
@@ -387,12 +488,12 @@ void DiagnosisModel::onAntivirusInformationChanged()
 		const auto& title = tr("Antivirus information");
 		//: LABEL DESKTOP
 		const auto& content = tr("No Antivirus software detected.");
-		mAntivirusSection->addItem(title, content);
+		mAntivirusSection << ContentItem(title, content);
 	}
 	else
 	{
 		//: LABEL DESKTOP
-		mAntivirusSection->addTitleWithoutContent(tr("Antivirus information"));
+		mAntivirusSection << ContentItem(tr("Antivirus information"));
 
 		for (const auto& info : antivirusInfos)
 		{
@@ -405,37 +506,36 @@ void DiagnosisModel::onAntivirusInformationChanged()
 			//: LABEL DESKTOP
 			avInfo << tr("Executable path: %1").arg(info->getExePath());
 			auto antivirusName = info->getDisplayName();
-			mAntivirusSection->addItem(antivirusName, avInfo.join(QLatin1Char('\n')));
+			mAntivirusSection << ContentItem(antivirusName, avInfo.join(QLatin1Char('\n')));
 		}
 	}
 
-	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateAntiVirusAndFirewallSection();
 	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onAntivirusDetectionFailed()
 {
-	mAntivirusSection->removeAllItems();
+	mAntivirusSection.clear();
 
 	//: LABEL DESKTOP
 	const auto& title = tr("Antivirus information");
 	//: LABEL DESKTOP
 	const auto& content = tr("Antivirus detection failed.");
-	mAntivirusSection->addItem(title, content);
-	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	mAntivirusSection << ContentItem(title, content);
+
+	updateAntiVirusAndFirewallSection();
 }
 
 
 void DiagnosisModel::onFirewallInformationReady()
 {
-	mFirewallSection->removeAllItems();
+	mFirewallSection.clear();
 	mFirewallSectionRunning = false;
 
 	//: LABEL DESKTOP
-	mFirewallSection->addTitleWithoutContent(tr("Firewall information"));
+	mFirewallSection << ContentItem(tr("Firewall information"));
 	auto installedFirewalls = mFirewallDetection.getDetectedFirewalls();
 	if (installedFirewalls.isEmpty())
 	{
@@ -443,7 +543,7 @@ void DiagnosisModel::onFirewallInformationReady()
 		if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
 		{
 			//: LABEL DESKTOP
-			mFirewallSection->addItemWithoutTitle(tr("Third party firewalls cannot be detected on Windows 7."));
+			mFirewallSection << ContentItem(QString(), tr("Third party firewalls cannot be detected on Windows 7."));
 		}
 		else
 		{
@@ -451,7 +551,7 @@ void DiagnosisModel::onFirewallInformationReady()
 		{
 #endif
 			//: LABEL DESKTOP
-			mFirewallSection->addItemWithoutTitle(tr("No third party firewalls detected"));
+			mFirewallSection << ContentItem(QString(), tr("No third party firewalls detected"));
 		}
 	}
 	else
@@ -469,7 +569,7 @@ void DiagnosisModel::onFirewallInformationReady()
 			firewallInfos << tr("Up to date: %1").arg(uptodate);
 		}
 		//: LABEL DESKTOP
-		mFirewallSection->addItem(tr("Firewalls from third party vendors"), firewallInfos.join(QLatin1Char('\n')));
+		mFirewallSection << ContentItem(tr("Firewalls from third party vendors"), firewallInfos.join(QLatin1Char('\n')));
 	}
 
 	QStringList windowsFirewallSettings;
@@ -492,7 +592,7 @@ void DiagnosisModel::onFirewallInformationReady()
 	windowsFirewallSettings << tr("Enabled: %1").arg(secondRuleEnabled);
 
 	//: LABEL DESKTOP
-	mFirewallSection->addItem(tr("Windows firewall rules"), windowsFirewallSettings.join(QLatin1Char('\n')));
+	mFirewallSection << ContentItem(tr("Windows firewall rules"), windowsFirewallSettings.join(QLatin1Char('\n')));
 
 	QStringList windowsFirewallProfiles;
 	auto firewallProfiles = mFirewallDetection.getFirewallProfiles();
@@ -500,41 +600,49 @@ void DiagnosisModel::onFirewallInformationReady()
 	{
 		windowsFirewallProfiles << profile->getName();
 		QString enabled = boolToString(profile->getEnabled());
-		//: LABEL DESKTOP
 		windowsFirewallProfiles << tr("Enabled: %1").arg(enabled);
+		//: LABEL DESKTOP
 	}
 
-	//: LABEL DESKTOP
-	mFirewallSection->addItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QLatin1Char('\n')));
+	if (windowsFirewallProfiles.isEmpty())
+	{
+		//: LABEL DESKTOP
+		mFirewallSection << ContentItem(tr("Windows firewall profiles"), tr("Diagnosis is running..."));
+	}
+	else
+	{
+		//: LABEL DESKTOP
+		mFirewallSection << ContentItem(tr("Windows firewall profiles"), windowsFirewallProfiles.join(QLatin1Char('\n')));
+	}
 
-	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateAntiVirusAndFirewallSection();
 	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onFirewallInformationFailed()
 {
-	mFirewallSection->removeAllItems();
+	mFirewallSection.clear();
+
 	//: LABEL DESKTOP
 	const auto& title = tr("Firewall information");
 	//: LABEL DESKTOP
 	const auto& content = tr("An error occurred while trying to gather firewall information. Please check the log for more information.");
-	mFirewallSection->addItem(title, content);
-	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	mFirewallSection << ContentItem(title, content);
+
+	updateAntiVirusAndFirewallSection();
 }
 
 
 void DiagnosisModel::onPcscInfoChanged()
 {
-	mPcscSection->removeAllItems();
+	mPcscSection.clear();
 	mPcscSectionRunning = false;
 
 	//: LABEL DESKTOP
-	mPcscSection->addTitleWithoutContent(tr("PC/SC information"));
+	mPcscSection << ContentItem(tr("PC/SC information"));
 	//: LABEL DESKTOP
-	mPcscSection->addItem(tr("Version"), mContext->getPcscVersion());
+	mPcscSection << ContentItem(tr("Version"), mContext->getPcscVersion());
 
 	QStringList pcscInfo;
 	for (const auto& info : mContext->getPcscComponents())
@@ -550,7 +658,7 @@ void DiagnosisModel::onPcscInfoChanged()
 	if (!pcscInfo.empty())
 	{
 		//: LABEL DESKTOP
-		mPcscSection->addItem(tr("Components"), pcscInfo.join(QLatin1Char('\n')));
+		mPcscSection << ContentItem(tr("Components"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
 	pcscInfo.clear();
@@ -567,35 +675,33 @@ void DiagnosisModel::onPcscInfoChanged()
 	if (!pcscInfo.empty())
 	{
 		//: LABEL DESKTOP
-		mPcscSection->addItem(tr("Driver"), pcscInfo.join(QLatin1Char('\n')));
+		mPcscSection << ContentItem(tr("Driver"), pcscInfo.join(QLatin1Char('\n')));
 	}
 
-	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateCardReaderSection();
 	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onRemoteInfosChanged()
 {
-	mRemoteDeviceSection->removeAllItems();
+	mRemoteDeviceSection.clear();
 	mRemoteDeviceSectionRunning = false;
 
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& trustedCertificates = settings.getTrustedCertificates();
 
 	//: LABEL DESKTOP
-	mRemoteDeviceSection->addTitleWithoutContent(tr("Paired smartphones"));
+	mRemoteDeviceSection << ContentItem(tr("Paired smartphones"));
 
 	if (trustedCertificates.isEmpty())
 	{
 		//: LABEL DESKTOP
-		mRemoteDeviceSection->addItemWithoutTitle(tr("No devices paired."));
+		mRemoteDeviceSection << ContentItem(QString(), tr("No devices paired."));
 	}
 
 	for (const auto& cert : trustedCertificates)
 	{
-		QStringList certInfo;
 		const auto& info = settings.getRemoteInfo(cert);
 
 		if (!info.getFingerprint().isEmpty())
@@ -603,35 +709,34 @@ void DiagnosisModel::onRemoteInfosChanged()
 			//: LABEL DESKTOP Timestamp
 			const QString& timestamp = LanguageLoader::getInstance().getUsedLocale().toString(info.getLastConnected(), tr("dd.MM.yyyy, hh:mm:ss"));
 			//: LABEL DESKTOP
-			mRemoteDeviceSection->addItem(info.getNameEscaped(), tr("Last connection: %1").arg(timestamp));
+			mRemoteDeviceSection << ContentItem(info.getNameEscaped(), tr("Last connection: %1").arg(timestamp));
 		}
 		else
 		{
 			//: LABEL DESKTOP
-			mRemoteDeviceSection->addItem(RemoteServiceSettings::generateFingerprint(cert), tr("No information found for this certificate."));
+			mRemoteDeviceSection << ContentItem(RemoteServiceSettings::generateFingerprint(cert), tr("No information found for this certificate."));
 		}
 	}
 
-	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateCardReaderSection();
 	Q_EMIT fireRunningChanged();
 }
 
 
 void DiagnosisModel::onReaderInfosChanged()
 {
-	mCardReaderSection->removeAllItems();
+	mCardReaderSection.clear();
 	mCardReaderSectionRunning = false;
 
 	//: LABEL DESKTOP
-	mCardReaderSection->addTitleWithoutContent(tr("Connected Card readers"));
+	mCardReaderSection << ContentItem(tr("Connected Card readers"));
 
 	const auto& readerInfos = mContext->getReaderInfos();
 	const auto& readerInfoNoDriver = mContext->getReaderInfosNoDriver();
 	if (readerInfos.isEmpty() && readerInfoNoDriver.isEmpty())
 	{
 		//: LABEL DESKTOP
-		mCardReaderSection->addItemWithoutTitle(tr("No supported reader found."));
+		mCardReaderSection << ContentItem(QString(), tr("No supported reader found."));
 	}
 
 	for (const auto& info : readerInfos)
@@ -654,17 +759,16 @@ void DiagnosisModel::onReaderInfosChanged()
 			infoList << tr("Retry counter: %1").arg(info.getRetryCounter());
 		}
 
-		mCardReaderSection->addItem(info.getName(), infoList.join(QLatin1Char('\n')));
+		mCardReaderSection << ContentItem(info.getName(), infoList.join(QLatin1Char('\n')));
 	}
 
 	for (const auto& info : readerInfoNoDriver)
 	{
-		//: LABEL ALL_PLATFORMS
-		mCardReaderSection->addItem(info.getName(), tr("No driver installed"));
+		//: LABEL DESKTOP
+		mCardReaderSection << ContentItem(info.getName(), tr("No driver installed"));
 	}
 
-	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
-	mContext->setTimestamp(QDateTime::currentDateTime());
+	updateCardReaderSection();
 	Q_EMIT fireRunningChanged();
 }
 
@@ -674,24 +778,18 @@ void DiagnosisModel::reloadContent()
 	disconnectSignals();
 
 	beginResetModel();
-	mSections.clear();
 
-	mSections.append(qMakePair(QCoreApplication::applicationName(), createAusweisApp2Section()));
+	initGeneralSections();
+	updateGeneralSection();
 
-	createCardReaderSection();
-	mCombinedReaderSection->replaceWithSections({mRemoteDeviceSection, mCardReaderSection, mPcscSection});
-	//: LABEL DESKTOP
-	mSections.append(qMakePair(tr("Card reader"), mCombinedReaderSection));
+	initCardReaderSections();
+	updateCardReaderSection(false);
 
-	createNetworkSection();
-	mCombinedNetworkSection->replaceWithSections({mNetworkConnectionSection, mNetworkInterfaceSection});
-	//: LABEL DESKTOP
-	mSections.append(qMakePair(tr("Network"), mCombinedNetworkSection));
+	initNetworkSections();
+	updateNetworkSection(false);
 
-	createAntiVirusAndFirewallSection();
-	mCombinedAntivirusFirewallSection->replaceWithSections({mAntivirusSection, mFirewallSection});
-	//: LABEL DESKTOP
-	mSections.append(qMakePair(tr("Antivirus and firewall"), mCombinedAntivirusFirewallSection));
+	initAntiVirusAndFirewallSection();
+	updateAntiVirusAndFirewallSection(false);
 
 	onRemoteInfosChanged();
 	mConnectionTest.startConnectionTest();

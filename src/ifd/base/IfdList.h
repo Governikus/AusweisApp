@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Interface for IfdList
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

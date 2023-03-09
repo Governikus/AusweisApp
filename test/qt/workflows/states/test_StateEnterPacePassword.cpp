@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEnterPacePassword.h"
@@ -46,11 +46,12 @@ class test_StateEnterPacePassword
 		void test_RunContextError()
 		{
 			mAuthContext->setStatus(GlobalStatus::Code::Card_Cancellation_By_User);
-			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
+			mAuthContext->setFailureCode(FailureCode::Reason::User_Cancelled);
+			QSignalSpy spyPropagateAbort(mState.data(), &StateEnterPacePassword::firePropagateAbort);
 
 			mState->run();
 
-			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(spyPropagateAbort.count(), 1);
 		}
 
 

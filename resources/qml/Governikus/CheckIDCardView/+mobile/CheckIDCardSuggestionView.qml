@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.CheckResultView 1.0
@@ -49,7 +49,7 @@ CheckResultSuggestionView {
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Open website")
 		//: LABEL ANDROID IOS
-		text: qsTr("Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the online identification function.<br><br>You can find smartphones compatible with the %1 on our website.").arg(Qt.application.name)
+		text: qsTr("Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the eID function.<br><br>You can find smartphones compatible with the %1 on our website.").arg(Qt.application.name)
 
 		//: LABEL ANDROID IOS
 		title: qsTr("No NFC")

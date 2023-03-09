@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.EnterPasswordView 1.0
@@ -7,6 +7,7 @@ import Governikus.Global 1.0
 import Governikus.AuthView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.View 1.0
@@ -53,11 +54,49 @@ SectionPage {
 	ChangePinViewContent {
 		id: changePinViewContent
 		anchors.fill: parent
+		moreInformationText: changePinInfo.linkText
 
 		onMoreInformationRequested: push(passwordInfoView)
 		onNoPinAvailable: {
 			setLockedAndHidden();
 			push(pinUnknownView);
+		}
+
+		PasswordInfoData {
+			id: changePinInfo
+			contentType: PasswordInfoContent.Type.CHANGE_PIN
+		}
+		PasswordInfoData {
+			id: infoData
+			contentType: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(NumberModel.passwordType)
+		}
+	}
+	Component {
+		id: passwordInfoView
+		PasswordInfoView {
+			infoContent: infoData
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: pop()
+			}
+		}
+	}
+	Component {
+		id: pinUnknownView
+		PasswordInfoView {
+			infoContent: PasswordInfoData {
+				contentType: PasswordInfoContent.Type.NO_PIN
+			}
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: {
+					pop();
+					setLockedAndHidden(false);
+				}
+			}
 		}
 	}
 	Component {
@@ -66,27 +105,6 @@ SectionPage {
 			titleBarColor: baseItem.titleBarColor
 			workflowModel: ChangePinModel
 			workflowTitle: baseItem.title
-		}
-	}
-	Component {
-		id: pinUnknownView
-		PinUnknownView {
-			onClose: {
-				pop();
-				setLockedAndHidden(false);
-			}
-		}
-	}
-	Component {
-		id: passwordInfoView
-		PasswordInfoView {
-			changePinInfo: true
-
-			navigationAction: NavigationAction {
-				action: NavigationAction.Action.Back
-
-				onClicked: pop()
-			}
 		}
 	}
 	Component {
@@ -123,6 +141,7 @@ SectionPage {
 	Component {
 		id: enterPinView
 		EnterPasswordView {
+			moreInformationText: infoData.linkText
 			title: baseItem.title
 			titleBarColor: baseItem.titleBarColor
 
@@ -137,6 +156,7 @@ SectionPage {
 				pop();
 				ChangePinModel.continueWorkflow();
 			}
+			onRequestPasswordInfo: push(passwordInfoView)
 		}
 	}
 	Component {

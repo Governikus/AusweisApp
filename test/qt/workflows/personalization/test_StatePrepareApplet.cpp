@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePrepareApplet.h"
@@ -49,67 +49,67 @@ class test_StatePrepareApplet
 			QTest::addColumn<EidUpdateInfo>("updateInfo");
 			QTest::addColumn<EidServiceResult>("result");
 			QTest::addColumn<QStringList>("logEntries");
-			QTest::addColumn<bool>("stateSucceed");
+			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
 			QTest::newRow("unavailable")
 				<< EidStatus::UNAVAILABLE << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList("Smart-eID is not available on this device") << false;
+				<< QStringList("Smart-eID is not available on this device") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Unavailable);
 
 			QTest::newRow("no_provisioning - success")
 				<< EidStatus::NO_PROVISIONING << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList("Successfully installed Smart-eID") << true;
+				<< QStringList("Successfully installed Smart-eID") << std::optional<FailureCode>();
 			QTest::newRow("no_provisioning - fail")
 				<< EidStatus::NO_PROVISIONING << EidUpdateInfo::UP_TO_DATE << EidServiceResult::ERROR
-				<< QStringList("Installation of Smart-eID failed") << false;
+				<< QStringList("Installation of Smart-eID failed") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Installation_Failed);
 
 			QTest::newRow("no_personalization - internal_error")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::INTERNAL_ERROR << EidServiceResult::SUCCESS
-				<< QStringList("updateInfo() failed") << false;
+				<< QStringList("updateInfo() failed") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_UpdateInfo_Call_Failed);
 			QTest::newRow("no_personalization - up_to_data")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList("No update available") << true;
+				<< QStringList("No update available") << std::optional<FailureCode>();
 			QTest::newRow("no_personalization - unavailable")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::UNAVAILABLE << EidServiceResult::SUCCESS
-				<< QStringList("No update available") << true;
+				<< QStringList("No update available") << std::optional<FailureCode>();
 			QTest::newRow("no_personalization - no_provisioning")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::NO_PROVISIONING << EidServiceResult::SUCCESS
-				<< QStringList("No update available") << true;
+				<< QStringList("No update available") << std::optional<FailureCode>();
 			QTest::newRow("no_personalization - update_available - success")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::UPDATE_AVAILABLE << EidServiceResult::SUCCESS
-				<< QStringList({"Update available, delete the Smart-eID first", "Successfully deleted Smart-eID"}) << true;
+				<< QStringList({"Update available, delete the Smart-eID first", "Successfully deleted Smart-eID"}) << std::optional<FailureCode>();
 			QTest::newRow("no_personalization - update_available - fail")
 				<< EidStatus::NO_PERSONALIZATION << EidUpdateInfo::UPDATE_AVAILABLE << EidServiceResult::ERROR
-				<< QStringList({"Update available, delete the Smart-eID first", "Deletion of Smart-eID failed"}) << false;
+				<< QStringList({"Update available, delete the Smart-eID first", "Deletion of Smart-eID failed"}) << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Delete_Smart_Failed);
 
 			QTest::newRow("applet_unusable - success")
 				<< EidStatus::APPLET_UNUSABLE << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList("Successfully deleted Smart-eID") << true;
+				<< QStringList("Successfully deleted Smart-eID") << std::optional<FailureCode>();
 			QTest::newRow("applet_unusable - fail")
 				<< EidStatus::APPLET_UNUSABLE << EidUpdateInfo::UP_TO_DATE << EidServiceResult::ERROR
-				<< QStringList("Deletion of Smart-eID failed") << false;
+				<< QStringList("Deletion of Smart-eID failed") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Delete_Smart_Failed);
 
 			QTest::newRow("personalized - fail")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::UP_TO_DATE << EidServiceResult::ERROR
-				<< QStringList("Deletion of Smart-eID personalization failed") << false;
+				<< QStringList("Deletion of Smart-eID personalization failed") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Delete_Personalization_Failed);
 			QTest::newRow("personalized - internal_error")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::INTERNAL_ERROR << EidServiceResult::SUCCESS
-				<< QStringList({"Successfully deleted the Smart-eID personalization", "updateInfo() failed"}) << false;
+				<< QStringList({"Successfully deleted the Smart-eID personalization", "updateInfo() failed"}) << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_UpdateInfo_Call_Failed);
 			QTest::newRow("personalized - up_to_data")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << true;
+				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << std::optional<FailureCode>();
 			QTest::newRow("personalized - unavailable")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::UNAVAILABLE << EidServiceResult::SUCCESS
-				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << true;
+				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << std::optional<FailureCode>();
 			QTest::newRow("personalized - no_provisioning")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::NO_PROVISIONING << EidServiceResult::SUCCESS
-				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << true;
+				<< QStringList({"Successfully deleted the Smart-eID personalization", "No update available"}) << std::optional<FailureCode>();
 			QTest::newRow("personalized - update_available")
 				<< EidStatus::PERSONALIZED << EidUpdateInfo::UPDATE_AVAILABLE << EidServiceResult::SUCCESS
-				<< QStringList({"Successfully deleted the Smart-eID personalization", "Update available, delete the Smart-eID first", "Successfully deleted Smart-eID"}) << true;
+				<< QStringList({"Successfully deleted the Smart-eID personalization", "Update available, delete the Smart-eID first", "Successfully deleted Smart-eID"}) << std::optional<FailureCode>();
 
 			QTest::newRow("internal_error")
 				<< EidStatus::INTERNAL_ERROR << EidUpdateInfo::UP_TO_DATE << EidServiceResult::SUCCESS
-				<< QStringList("getSmartEidStatus() failed") << false;
+				<< QStringList("getSmartEidStatus() failed") << std::optional<FailureCode>(FailureCode::Reason::Prepare_Applet_Status_Call_Failed);
 		}
 
 
@@ -119,7 +119,7 @@ class test_StatePrepareApplet
 			QFETCH(EidUpdateInfo, updateInfo);
 			QFETCH(EidServiceResult, result);
 			QFETCH(QStringList, logEntries);
-			QFETCH(bool, stateSucceed);
+			QFETCH(std::optional<FailureCode>, failureCode);
 
 			setSmartEidStatus(status);
 			setUpdateInfo(updateInfo);
@@ -139,17 +139,18 @@ class test_StatePrepareApplet
 			}
 			state.run();
 
-			if (stateSucceed)
-			{
-				QTRY_COMPARE(spyContinue.size(), 1); // clazy:exclude=qstring-allocations
-				QCOMPARE(spyAbort.size(), 0);
-				QCOMPARE(context->getStatus(), GlobalStatus::Code::No_Error);
-			}
-			else
+			if (failureCode.has_value())
 			{
 				QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(spyContinue.size(), 0);
 				QCOMPARE(context->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed);
+				QCOMPARE(context->getFailureCode(), failureCode);
+			}
+			else
+			{
+				QTRY_COMPARE(spyContinue.size(), 1); // clazy:exclude=qstring-allocations
+				QCOMPARE(spyAbort.size(), 0);
+				QCOMPARE(context->getStatus(), GlobalStatus::Code::No_Error);
 			}
 		}
 

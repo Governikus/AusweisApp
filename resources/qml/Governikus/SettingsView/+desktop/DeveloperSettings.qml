@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick.Layouts 1.15
 import Governikus.Global 1.0
@@ -25,8 +25,7 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.useSelfauthenticationTestUri
 
 		//: LABEL DESKTOP
@@ -34,7 +33,7 @@ ColumnLayout {
 
 		onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
 	}
-	ToggleableOption {
+	GCheckBox {
 		checked: SettingsModel.enableSimulator
 		//: LABEL DESKTOP
 		text: qsTr("Enable internal card simulator")
@@ -51,8 +50,7 @@ ColumnLayout {
 		FocusFrame {
 		}
 	}
-	ToggleableOption {
-		activeFocusOnTab: true
+	GCheckBox {
 		checked: SettingsModel.developerMode
 
 		//: LABEL DESKTOP

@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateChangePin
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateChangeSmartPin.h"
@@ -117,6 +119,11 @@ class test_StateChangeSmartPin
 			command->setReturnCode(CardReturnCode::CANCELLATION_BY_USER);
 			state.onSetEidPinDone(command);
 			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Card_Cancellation_By_User);
+			const FailureCode failureCode({FailureCode::Reason::Change_Smart_Pin_Failed,
+										   {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(CardReturnCode::CANCELLATION_BY_USER)}
+					});
+			QCOMPARE(context->getFailureCode().value(), failureCode);
+			QVERIFY(context->getFailureCode()->getFailureInfoMap() == failureCode.getFailureInfoMap());
 			QCOMPARE(spyAbort.count(), 1);
 		}
 

@@ -4,6 +4,7 @@ import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.DslFactory
 
 import common.Build
+import common.Constants
 
 class Trigger extends Build
 {
@@ -23,13 +24,16 @@ class Trigger extends Build
 			parameters
 			{
 				fileParam('patch.diff', 'Patch file that will be applied and tested')
+				stringParam('REVIEWBOARD_SERVER', Constants.ReviewBoardServer, 'Server')
+				stringParam('REVIEWBOARD_REVIEW_ID', '', 'ReviewID')
+				stringParam('REVIEWBOARD_DIFF_REVISION', '', 'ReviewDiffRev')
+				stringParam('REVIEWBOARD_STATUS_UPDATE_ID', '', 'StatusUpdateID')
 				stringParam('Libraries', dslFactory.MERCURIAL_REVISION_BRANCH, 'Copy library artifacts from this job (prefix)')
-				stringParam('review.url', '', 'Review URL that will be used for description (optional)')
 			}
 
 			steps
 			{
-				buildDescription('', '${review.url}')
+				buildDescription('', '${REVIEWBOARD_REVIEW_ID} / ${REVIEWBOARD_DIFF_REVISION}')
 			}
 		}
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateDidAuthenticateEac2.h"
@@ -40,7 +40,7 @@ void StateDidAuthenticateEac2::run()
 	if (!cvcChain.isValid())
 	{
 		updateStatus(GlobalStatus::Code::Workflow_No_Permission_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Did_Authenticate_Eac2_Invalid_Cvc_Chain);
 		return;
 	}
 
@@ -70,7 +70,9 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 				newStatus = GlobalStatus::Code::Workflow_No_Permission_Error;
 		}
 		updateStatus(newStatus);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Did_Authenticate_Eac2_Card_Command_Failed,
+						  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
+				});
 		return;
 	}
 

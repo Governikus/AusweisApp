@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateInitializePersonalization.h"
@@ -63,6 +63,7 @@ class test_StateInitializePersonalization
 			QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Initialize_Personalization_Failed);
 		}
 
 

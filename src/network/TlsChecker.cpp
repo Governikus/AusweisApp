@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -254,6 +254,17 @@ bool TlsChecker::containsFatalError(const QSharedPointer<QNetworkReply>& pReply,
 	}
 
 	return true;
+}
+
+
+QString TlsChecker::sslErrorsToString(const QList<QSslError>& pErrors)
+{
+	QStringList errorString;
+	for (const auto& error : pErrors)
+	{
+		errorString += error.errorString();
+	}
+	return errorString.join(QLatin1Char(','));
 }
 
 

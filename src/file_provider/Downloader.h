@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Generic class that allows to download files from a server to the
  *        local application cache.
- *
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

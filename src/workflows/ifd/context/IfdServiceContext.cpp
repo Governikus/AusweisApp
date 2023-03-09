@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdServiceContext.h"
@@ -104,7 +104,7 @@ bool IfdServiceContext::isCanAllowedMode() const
 
 void IfdServiceContext::cancelPasswordRequest()
 {
-	Q_EMIT fireCancelPasswordRequest(false);
+	Q_EMIT fireCancelPasswordRequest();
 }
 
 
@@ -115,7 +115,7 @@ void IfdServiceContext::setEstablishPaceChannel(const QSharedPointer<const IfdEs
 		mSlotHandle = pMessage->getSlotHandle();
 		mEstablishPaceChannel = pMessage->getInputData();
 		mRequestTransportPin = pMessage->getExpectedPinLength() == 5;
-		mAllowToChangePinLength = isPinAuthentication() || (isPinChangeWorkflow() && pMessage->getExpectedPinLength() == 0);
+		mAllowToChangePinLength = isPinChangeWorkflow() && pMessage->getExpectedPinLength() == 0;
 	}
 	else
 	{
@@ -153,8 +153,6 @@ void IfdServiceContext::changePinLength()
 		Q_EMIT firePasswordTypeChanged();
 		return;
 	}
-
-	Q_EMIT fireCancelPasswordRequest(true);
 }
 
 

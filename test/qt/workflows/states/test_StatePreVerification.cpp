@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StatePreVerification
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreVerification.h"
@@ -87,6 +89,10 @@ class test_StatePreVerification
 
 			QTRY_COMPARE(spyContinue.count(), isValid ? 1 : 0); // clazy:exclude=qstring-allocations
 			QTRY_COMPARE(spyAbort.count(), isValid ? 0 : 1); // clazy:exclude=qstring-allocations
+			if (!isValid)
+			{
+				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+			}
 		}
 
 
@@ -98,6 +104,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
 		}
 
 
@@ -109,6 +116,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Chain);
 		}
 
 
@@ -128,6 +136,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Signature);
 		}
 
 
@@ -139,6 +148,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
 		}
 
 

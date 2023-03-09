@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -10,9 +10,13 @@ import Governikus.View 1.0
 
 SectionPage {
 	id: root
+
+	property alias moreInformationText: moreInformationLink.text
+
 	signal cancel
 	signal pinKnown
 	signal pinUnknown
+	signal showInfoView
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
@@ -41,9 +45,16 @@ SectionPage {
 			GText {
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Online identification with Transport PIN is not possible. The personal, six-digit ID card PIN is mandatory to use the online identification function.")
+				text: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
 				width: parent.width
 			}
+		}
+		MoreInformationLink {
+			id: moreInformationLink
+			Layout.alignment: Qt.AlignCenter
+			Layout.topMargin: Constants.component_spacing
+
+			onClicked: root.showInfoView()
 		}
 		GSpacer {
 			Layout.fillHeight: true

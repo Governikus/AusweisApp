@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateInsertCard.h"
@@ -29,14 +29,14 @@ void StateInsertCard::run()
 	{
 		qCWarning(statemachine) << "No Smart reader present";
 		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_No_SmartReader);
 		return;
 	}
 	if (readerInfos.size() > 1)
 	{
 		qCWarning(statemachine) << "Multiple Smart readers present";
 		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Multiple_SmartReader);
 		return;
 	}
 
@@ -63,12 +63,12 @@ void StateInsertCard::onCardInfoChanged(const ReaderInfo& pInfo)
 		case MobileEidType::UNKNOWN:
 			qCWarning(statemachine) << "Smart card has an unexpected eID-Type:" << type;
 			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Unknown_Eid_Type);
 			return;
 
 		case MobileEidType::HW_KEYSTORE:
 			qCDebug(statemachine) << "Skipping PIN change because of eID-Type:" << type;
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_HW_Keystore);
 			return;
 	}
 
@@ -76,7 +76,7 @@ void StateInsertCard::onCardInfoChanged(const ReaderInfo& pInfo)
 	{
 		qCWarning(statemachine) << "Smart reader is present but not insertable";
 		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Invalid_SmartReader);
 		return;
 	}
 
@@ -94,5 +94,5 @@ void StateInsertCard::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 
 	qCWarning(statemachine) << "Scan was started but no smart card was found";
 	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Missing_Card);
 }

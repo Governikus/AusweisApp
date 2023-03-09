@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -45,8 +45,8 @@ Item {
 					tintColor: Style.color.success
 				}
 				PropertyChanges {
-					font.bold: false
 					target: textDescription
+					textStyle: Style.text.normal
 				}
 			},
 			State {
@@ -61,8 +61,8 @@ Item {
 					tintColor: "#e68a00"
 				}
 				PropertyChanges {
-					font.bold: true
 					target: textDescription
+					textStyle: Style.text.normal_highlight
 				}
 			},
 			State {
@@ -77,8 +77,8 @@ Item {
 					tintColor: Style.color.warning_text
 				}
 				PropertyChanges {
-					font.bold: false
 					target: textDescription
+					textStyle: Style.text.normal
 				}
 			}
 		]
@@ -121,7 +121,6 @@ Item {
 				Layout.fillWidth: true
 				activeFocusOnTab: true
 				text: readerHTMLDescription
-				textStyle: Style.text.normal
 
 				FocusFrame {
 				}

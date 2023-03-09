@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckApplet.h"
@@ -75,10 +75,17 @@ class test_StateCheckApplet
 			switch (code)
 			{
 				case GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed:
+					QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
+					QCOMPARE(spyContinue.size(), 0);
+					QCOMPARE(spyFurtherStepRequired.size(), 0);
+					QCOMPARE(context->getFailureCode(), FailureCode::Reason::Check_Applet_Error);
+					break;
+
 				case GlobalStatus::Code::Workflow_Smart_eID_Unavailable:
 					QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
 					QCOMPARE(spyContinue.size(), 0);
 					QCOMPARE(spyFurtherStepRequired.size(), 0);
+					QCOMPARE(context->getFailureCode(), FailureCode::Reason::Check_Applet_Unavailable);
 					break;
 
 				default:

@@ -118,6 +118,16 @@
 			)
 		</SetProperty>
 
+		<Property Id="SECURESCREENKEYBOARD" Secure="yes"/>
+		<Property Id="SECURESCREENKEYBOARD_FOUND" Secure="yes">
+			<RegistrySearch Id="SecureScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="visualPrivacy" Type="raw"/>
+		</Property>
+		<SetProperty Before="CostFinalize" Id="SECURESCREENKEYBOARD" Value="[SECURESCREENKEYBOARD_FOUND]">
+			(NOT SECURESCREENKEYBOARD) AND (
+				(WIX_UPGRADE_DETECTED OR REINSTALL) AND SECURESCREENKEYBOARD_FOUND
+			)
+		</SetProperty>
+
 		<Property Id="ENABLECANALLOWED" Secure="yes"/>
 		<Property Id="ENABLECANALLOWED_FOUND" Secure="yes">
 			<RegistrySearch Id="EnableCanAllowedRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableCanAllowed" Type="raw"/>
@@ -162,6 +172,7 @@
 			<ComponentRef Id="UpdateCheck"/>
 			<ComponentRef Id="OnScreenKeyboard"/>
 			<ComponentRef Id="ShuffleScreenKeyboard"/>
+			<ComponentRef Id="SecureScreenKeyboard"/>
 			<ComponentRef Id="EnableCanAllowed"/>
 			<ComponentRef Id="SkipRightsOnCanAllowed"/>
 			<ComponentRef Id="History"/>
@@ -244,6 +255,13 @@
 				<Condition>SHUFFLESCREENKEYBOARD</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="shuffleScreenKeyboard" Type="string" Value="[SHUFFLESCREENKEYBOARD]" />
+				</RegistryKey>
+			</Component>
+
+			<Component Id="SecureScreenKeyboard" Guid="{391CF345-5AA2-45CD-C015-C24861C9AB8D}">
+				<Condition>SECURESCREENKEYBOARD</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="visualPrivacy" Type="string" Value="[SECURESCREENKEYBOARD]" />
 				</RegistryKey>
 			</Component>
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetSelfAuthenticationData.h"
@@ -56,5 +56,5 @@ void StateGetSelfAuthenticationData::handleNetworkReply(const QByteArray& pConte
 
 	qDebug() << "No valid data of self-authentication.";
 	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Get_SelfAuthData_Invalid_Or_Empty);
 }

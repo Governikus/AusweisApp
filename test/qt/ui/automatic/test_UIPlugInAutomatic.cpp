@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref UIPlugInAutomatic
- *
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInAutomatic.h"

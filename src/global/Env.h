@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*
  * \brief Runtime environment to create (mockable) objects.
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -318,7 +320,7 @@ class Env
 
 
 		template<typename T>
-		static QSharedPointer<T> getShared()
+		static QSharedPointer<T> getShared(bool pSpawn = true)
 		{
 			static_assert(QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, "Shared class needs to be an QObject/Q_OBJECT");
 
@@ -329,7 +331,7 @@ class Env
 			QSharedPointer<T> shared = qSharedPointerCast<T>(holder.mSharedInstances.value(className));
 			holder.mSharedInstancesLock.unlock();
 
-			if (!shared)
+			if (!shared && pSpawn)
 			{
 				const QWriteLocker locker(&holder.mSharedInstancesLock);
 				shared = qSharedPointerCast<T>(holder.mSharedInstances.value(className));

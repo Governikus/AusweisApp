@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateChangePin
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateChangePin.h"
@@ -74,6 +76,8 @@ class MockSetEidPinCommand
 
 };
 
+Q_DECLARE_METATYPE(std::optional<FailureCode>)
+
 class test_StateChangePin
 	: public QObject
 {
@@ -111,21 +115,22 @@ class test_StateChangePin
 			QTest::addColumn<int>("fireContinue");
 			QTest::addColumn<int>("fireAbort");
 			QTest::addColumn<int>("fireRetry");
+			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
-			QTest::newRow("1") << CardReturnCode::OK << QByteArray() << GlobalStatus::Code::Card_Unexpected_Transmit_Status << 0 << 1 << 0;
-			QTest::newRow("2") << CardReturnCode::OK << QByteArray("9000") << GlobalStatus::Code::No_Error << 1 << 0 << 0;
-			QTest::newRow("3") << CardReturnCode::OK << QByteArray("6400") << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0;
-			QTest::newRow("4") << CardReturnCode::OK << QByteArray("6401") << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0;
-			QTest::newRow("5") << CardReturnCode::OK << QByteArray("6402") << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0;
-			QTest::newRow("6") << CardReturnCode::OK << QByteArray("6403") << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0;
-			QTest::newRow("7") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
-			QTest::newRow("8") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0;
-			QTest::newRow("9") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0;
-			QTest::newRow("10") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
-			QTest::newRow("11") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
-			QTest::newRow("12") << CardReturnCode::CARD_NOT_FOUND << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
-			QTest::newRow("13") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
-			QTest::newRow("14") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1;
+			QTest::newRow("1") << CardReturnCode::OK << QByteArray() << GlobalStatus::Code::Card_Unexpected_Transmit_Status << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unexpected_Transmit_Status);
+			QTest::newRow("2") << CardReturnCode::OK << QByteArray("9000") << GlobalStatus::Code::No_Error << 1 << 0 << 0 << std::optional<FailureCode>();
+			QTest::newRow("3") << CardReturnCode::OK << QByteArray("6400") << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Input_Timeout);
+			QTest::newRow("4") << CardReturnCode::OK << QByteArray("6401") << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_User_Cancelled);
+			QTest::newRow("5") << CardReturnCode::OK << QByteArray("6402") << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Mismatch);
+			QTest::newRow("6") << CardReturnCode::OK << QByteArray("6403") << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Invalid_Length);
+			QTest::newRow("7") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("8") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
+			QTest::newRow("9") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
+			QTest::newRow("10") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("11") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("12") << CardReturnCode::CARD_NOT_FOUND << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("13") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("14") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
 		}
 
 
@@ -137,6 +142,7 @@ class test_StateChangePin
 			QFETCH(int, fireContinue);
 			QFETCH(int, fireAbort);
 			QFETCH(int, fireRetry);
+			QFETCH(std::optional<FailureCode>, failureCode);
 
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateChangePin state(context);
@@ -162,6 +168,7 @@ class test_StateChangePin
 			QCOMPARE(spyContinue.count(), fireContinue);
 			QCOMPARE(spyAbort.count(), fireAbort);
 			QCOMPARE(spyRetry.count(), fireRetry);
+			QCOMPARE(context->getFailureCode(), failureCode);
 		}
 
 

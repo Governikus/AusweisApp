@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Remote service context.
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -46,7 +48,7 @@ class IfdServiceContext
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);
 		void fireCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
-		void fireCancelPasswordRequest(bool pRequestPinChange);
+		void fireCancelPasswordRequest();
 		void fireEstablishPaceChannelUpdated();
 		void fireIsRunningChanged();
 

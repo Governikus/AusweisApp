@@ -1,0 +1,32 @@
+AusweisApp2 1.26.3
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 9. März 2023
+
+
+Anwender
+""""""""
+- Erweiterung der Hilfs- und Erklärungstexte.
+
+- Verbesserungen in der Diagnose.
+
+- Korrektur eines Fehlers beim NFC-Dialog von iOS.
+
+- Verbesserung der Barrierefreiheit bei der Eingabe von
+  PIN, CAN und PUK.
+
+
+Entwickler
+""""""""""
+- Einführung von eindeutigen FailureCodes im SDK.
+
+- Ergänzung der Umgebungsvariable AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE
+  im vollautomatischen SDK.
+
+- Korrektur einer falschen Anzeige des Fortschritts im SDK für iOS.
+
+- Ergänzung von SECURESCREENKEYBOARD bei der Firmeninstallation.
+
+- Anhebung des TargetSDKs auf 33 im SDK für Android.
+
+- Aktualisierung von OpenSSL auf die Version 3.0.8.

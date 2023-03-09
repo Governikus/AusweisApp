@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -11,6 +11,7 @@ Item {
 	id: baseItem
 
 	property alias deleteEnabled: deleteButton.enabled
+	property string submitAccessibleText
 	property alias submitEnabled: submitButton.enabled
 
 	signal deletePressed
@@ -74,6 +75,7 @@ Item {
 			}
 			NumberPadButton {
 				id: submitButton
+				Accessible.name: submitAccessibleText !== "" ? submitAccessibleText : text
 				color: Constants.green
 				enabled: baseItem.submitEnabled
 				fontScale: 0.75

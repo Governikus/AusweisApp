@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="128" viewBox="0 0 600 128">
+  <defs>
+    <g id="star">
+      <!-- <text style="font-size:310px; font-family:sans-serif;" x="-9" y="231">*</text> -->
+      <path d="M 40.6,5.01 42.15,39.73 9.29,27.95 3.4,46.24 36.88,55.54 15.49,83.13 30.99,94.29 50.52,65.46 69.74,94.29 85.55,83.13 63.85,55.54 97.33,46.24 91.44,27.95 58.58,39.73 60.13,5.01 Z"/>
+    </g>
+  </defs>
+  <rect x="0" y="0" width="600" height="128" rx="30" ry="30" fill="#9D0100"/>
+  <g fill="#ffffff" transform="translate(0 39) scale(0.5)">
+    <use xlink:href="#star" x="60" />
+    <use xlink:href="#star" x="160" />
+    <use xlink:href="#star" x="260" />
+    <use xlink:href="#star" x="360" />
+    <use xlink:href="#star" x="460" />
+    <use xlink:href="#star" x="640" />
+    <use xlink:href="#star" x="740" />
+    <use xlink:href="#star" x="840" />
+    <use xlink:href="#star" x="940" />
+    <use xlink:href="#star" x="1040" />
+  </g>
+</svg>

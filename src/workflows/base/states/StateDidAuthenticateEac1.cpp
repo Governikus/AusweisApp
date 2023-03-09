@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateDidAuthenticateEac1.h"
@@ -57,7 +57,9 @@ void StateDidAuthenticateEac1::onCardCommandDone(QSharedPointer<BaseCardCommand>
 	else
 	{
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(result));
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Did_Authenticate_Eac1_Card_Command_Failed,
+						  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(result)}
+				});
 	}
 }
 

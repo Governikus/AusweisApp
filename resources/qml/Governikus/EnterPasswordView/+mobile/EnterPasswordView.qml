@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -15,12 +15,15 @@ import Governikus.Type.PasswordType 1.0
 SectionPage {
 	id: baseItem
 
+	property string accessibleContinueText
 	property alias enableTransportPinLink: transportPinLink.visible
 	property bool isConfirmation: false
+	property alias moreInformationText: moreInformation.text
 	property int passwordType: NumberModel.passwordType
 
 	signal changePinLength
 	signal passwordEntered(bool pWasNewPin)
+	signal requestPasswordInfo
 
 	Keys.onPressed: event => {
 		event.accepted = pinField.handleKeyEvent(event.key, event.modifiers);
@@ -246,9 +249,8 @@ SectionPage {
 		}
 		MoreInformationLink {
 			id: transportPinLink
-			Layout.fillWidth: true
+			Layout.alignment: Qt.AlignHCenter
 			Layout.topMargin: Constants.text_spacing
-			horizontalAlignment: Text.AlignHCenter
 			text: (passwordType === PasswordType.TRANSPORT_PIN ?
 				//: LABEL ANDROID IOS Button to switch to a six-digit ID card PIN.
 				qsTr("Do you have a six-digit ID card PIN?") :
@@ -257,6 +259,13 @@ SectionPage {
 			visible: false
 
 			onClicked: baseItem.changePinLength()
+		}
+		MoreInformationLink {
+			id: moreInformation
+			Layout.alignment: Qt.AlignHCenter
+			Layout.topMargin: Constants.text_spacing
+
+			onClicked: baseItem.requestPasswordInfo()
 		}
 		Rectangle {
 			Layout.alignment: Qt.AlignHCenter
@@ -282,11 +291,33 @@ SectionPage {
 			}
 		}
 		NumberPad {
+			id: numberPad
 			Layout.alignment: Qt.AlignHCenter
 			Layout.preferredHeight: height
 			Layout.preferredWidth: width
 			Layout.topMargin: Constants.component_spacing
 			deleteEnabled: pinField.number.length > 0
+			submitAccessibleText: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
+			//: LABEL ANDROID IOS
+			passwordType === PasswordType.CAN ? qsTr("Send CAN") :
+			//: LABEL ANDROID IOS
+			passwordType === PasswordType.PUK ? qsTr("Send PUK") :
+			//: LABEL ANDROID IOS
+			passwordType === PasswordType.REMOTE_PIN ? qsTr("Send pairing code") :
+			//: LABEL ANDROID IOS
+			(passwordType === PasswordType.NEW_PIN && !isConfirmation) ? qsTr("Send new ID card PIN") :
+			//: LABEL ANDROID IOS
+			(passwordType === PasswordType.NEW_PIN && isConfirmation) ? qsTr("Confirm new ID card PIN") :
+			//: LABEL ANDROID IOS
+			passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Send Transport PIN") :
+			//: LABEL ANDROID IOS
+			passwordType === PasswordType.SMART_PIN ? qsTr("Send Smart-eID PIN") :
+			//: LABEL ANDROID IOS
+			(passwordType === PasswordType.NEW_SMART_PIN && !isConfirmation) ? qsTr("Send new Smart-eID PIN") :
+			//: LABEL ANDROID IOS
+			(passwordType === PasswordType.NEW_SMART_PIN && isConfirmation) ? qsTr("Confirm new Smart-eID PIN") :
+			//: LABEL ANDROID IOS
+			qsTr("Send ID card PIN")
 			submitEnabled: pinField.validInput
 
 			onDeletePressed: {

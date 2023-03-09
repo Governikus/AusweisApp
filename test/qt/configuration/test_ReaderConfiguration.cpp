@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref ReaderConfiguration
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -119,7 +121,6 @@ class test_ReaderConfiguration
 			QTest::newRow("Identiv SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
 
 			QTest::newRow("ACS-ACR1281U") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U" << "img_ACS_ACR1281U" << "ACS ACR1281 PICC Reader( 0)?";
-			QTest::newRow("ACS-ACR1252U") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader PICC 0" << "ACS ACR1252U" << "img_ACS_ACR1252U" << "^ACS ACR1252 (1S CL|Dual)? Reader(( PICC 0)|\\(1\\))?$";
 
 			QTest::newRow("HID OMNIKEY 5021") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL";
 			QTest::newRow("HID OMNIKEY 5022") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "HID OMNIKEY 5022-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$";
@@ -229,16 +230,6 @@ class test_ReaderConfiguration
 
 			QTest::newRow("ACS-ACR1281U-windows-7-10") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader 0" << "ACS ACR1281U";
 			QTest::newRow("ACS-ACR1281U-macosx-10.13-11.0") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U";
-
-			QTest::newRow("ACS-ACR1252U-windows-7-10-1") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader PICC 0" << "ACS ACR1252U";
-			QTest::newRow("ACS-ACR1252U-windows-7-10-2") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader SAM 0" << "ACS ACR1252 1S CL Reader SAM 0";
-			QTest::newRow("ACS-ACR1252U-windows-7-10-3") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader PICC 0" << "ACS ACR1252U";
-			QTest::newRow("ACS-ACR1252U-windows-7-10-4") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader SAM 0" << "ACS ACR1252 Dual Reader SAM 0";
-			QTest::newRow("ACS-ACR1252U-macosx-10.13-10.15-1") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader(1)" << "ACS ACR1252U";
-			QTest::newRow("ACS-ACR1252U-macosx-10.13-10.15-2") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader(2)" << "ACS ACR1252 Dual Reader(2)";
-			QTest::newRow("ACS-ACR1252U-macosx-10.13-11.0-3") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader(1)" << "ACS ACR1252U";
-			QTest::newRow("ACS-ACR1252U-macosx-10.13-11.0-4") << UsbId(0x072F, 0x223B) << "ACS ACR1252 1S CL Reader(2)" << "ACS ACR1252 1S CL Reader(2)";
-			QTest::newRow("ACS-ACR1252U-macosx-10.13-11.0-5") << UsbId(0x072F, 0x223B) << "ACS ACR1252 Dual Reader" << "ACS ACR1252U";
 
 			QTest::newRow("HID OMNIKEY 5021-windows-7-10") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL";
 			QTest::newRow("HID OMNIKEY 5021-macosx-10.13-11.0") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan (076B:5340) 5021 CL" << "HID OMNIKEY 5021-CL";
@@ -413,7 +404,7 @@ class test_ReaderConfiguration
 };
 
 
-const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 32;
+const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 31;
 
 QTEST_GUILESS_MAIN(test_ReaderConfiguration)
 #include "test_ReaderConfiguration.moc"

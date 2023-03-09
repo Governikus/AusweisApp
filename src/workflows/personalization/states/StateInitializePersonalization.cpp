@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateInitializePersonalization.h"
@@ -61,5 +61,5 @@ void StateInitializePersonalization::onCommandDone(const QVariant& pResult)
 
 	qCWarning(card_smart) << "Initialization of personalization failed";
 	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Initialize_Personalization_Failed);
 }

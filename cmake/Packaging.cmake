@@ -222,7 +222,7 @@ elseif(ANDROID)
 		endif()
 	endif()
 
-	set(DEPLOY_CMD ${androiddeployqt} --verbose --gradle --input ${ANDROID_DEPLOYMENT_SETTINGS} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
+	set(DEPLOY_CMD ${androiddeployqt} --verbose --gradle --input ${ANDROID_DEPLOYMENT_SETTINGS} --android-platform ${ANDROID_TARGET_SDK_VERSION} --output ${CMAKE_INSTALL_PREFIX} ${DEPLOY_CMD_SIGN})
 	set(SOURCE_ANDROID_FILE ${CMAKE_INSTALL_PREFIX}/build/outputs/${ANDROID_FILE_EXT})
 
 	if(NOT INTEGRATED_SDK)

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -21,7 +21,6 @@ Rectangle {
 		id: number
 		Accessible.ignored: true
 		anchors.centerIn: parent
-		font.bold: true
-		textStyle: parent.enabled ? Style.text.header_inverse : Style.text.header_accent
+		textStyle: parent.enabled ? Style.text.header_inverse_highlight : Style.text.header_accent_highlight
 	}
 }

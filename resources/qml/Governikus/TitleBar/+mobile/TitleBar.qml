@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -98,12 +98,11 @@ Item {
 				Accessible.focusable: true
 				Accessible.role: Accessible.Heading
 				elide: Text.ElideRight
-				font.bold: true
 				height: Style.dimens.titlebar_height
 				leftPadding: Style.dimens.titlebar_padding
 				maximumLineCount: 1
 				rightPadding: Style.dimens.titlebar_padding
-				textStyle: Style.text.header_inverse
+				textStyle: Style.text.header_inverse_highlight
 				verticalAlignment: Text.AlignVCenter
 				width: Math.min(implicitWidth, availableWidth)
 				wrapMode: Text.NoWrap

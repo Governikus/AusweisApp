@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Tests for SecureMessagingResponse
- *
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/SecureMessagingResponse.h"

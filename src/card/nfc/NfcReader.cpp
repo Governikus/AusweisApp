@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcReader.h"
@@ -97,11 +97,7 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 
 void NfcReader::setProgressMessage(const QString& pMessage)
 {
-	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
-			 ? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
-			 : pMessage;
-
-	mNfManager.setUserInformation(info);
+	mNfManager.setUserInformation(pMessage);
 }
 
 

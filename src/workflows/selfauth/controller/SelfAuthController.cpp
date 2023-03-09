@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/SelfAuthController.h"
@@ -46,7 +46,7 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	sTrustedChannel->addTransition(sTrustedChannel, &CompositeStateTrustedChannel::fireAbort, sCheckError);
 
 	sCheckError->addTransition(sCheckError, &AbstractState::fireContinue, sCheckRefreshAddress);
-	sCheckError->addTransition(sCheckError, &AbstractState::fireAbort, sFinal);
+	sCheckError->addTransition(sCheckError, &StateCheckError::firePropagateAbort, sFinal);
 
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sActivateStoreFeedbackDialog);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sFinal);

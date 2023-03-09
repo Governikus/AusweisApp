@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UILoader.h"
@@ -122,15 +122,14 @@ bool UILoader::load(const QString& pUi)
 
 			qCDebug(gui) << "Load plugin:" << metaData;
 			auto instance = qobject_cast<UIPlugIn*>(plugin.instance());
-			if (instance)
-			{
-				preparePlugIn(instance, metaData);
-				return true;
-			}
-			else
+			if (!instance)
 			{
 				qCWarning(gui) << "Cannot cast to plugin instance:" << plugin.instance();
+				continue;
 			}
+
+			preparePlugIn(instance, metaData);
+			return true;
 		}
 	}
 

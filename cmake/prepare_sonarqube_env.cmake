@@ -13,20 +13,20 @@ message(STATUS "Use PACKAGES_DIR: ${PACKAGES_DIR}")
 set(BUILDWRAPPER_ZIP_NAME build-wrapper-linux-x86.zip)
 set(BUILDWRAPPER_URL https://sonar.govkg.de/static/cpp/${BUILDWRAPPER_ZIP_NAME})
 
-set(SONARSCANNERCLI_VERSION 4.7.0.2747-linux) # https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/
+set(SONARSCANNERCLI_VERSION 4.8.0.2856-linux) # https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/
 set(SONARSCANNERCLI_ZIP_NAME sonar-scanner-cli-${SONARSCANNERCLI_VERSION}.zip)
 set(SONARSCANNERCLI_URL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/${SONARSCANNERCLI_ZIP_NAME})
-set(SONARSCANNERCLI_HASH 3e121d85a4adb1f30b917d5f3eb897966b59e02c3d6d313a78dcd964193dc963)
+set(SONARSCANNERCLI_HASH 45a9a54dfe5f58b554e9b40ad3becbf9871a4eddb1c2892b67cf191cdd891754)
 
-set(DEPENDENCYCHECK_VERSION 7.1.1) # https://github.com/jeremylong/DependencyCheck/releases
+set(DEPENDENCYCHECK_VERSION 8.1.0) # https://github.com/jeremylong/DependencyCheck/releases
 set(DEPENDENCYCHECK_ZIP_NAME dependency-check-${DEPENDENCYCHECK_VERSION}-release.zip)
 set(DEPENDENCYCHECK_URL https://github.com/jeremylong/DependencyCheck/releases/download/v${DEPENDENCYCHECK_VERSION}/${DEPENDENCYCHECK_ZIP_NAME})
-set(DEPENDENCYCHECK_HASH 1070591e7ae2b9ed60384f58db489405c68856f544b8d27456eb3b153478ec8f)
+set(DEPENDENCYCHECK_HASH a87231139f7a3de8e9fec2fa4353a9b21bd0397a4540fa24e91a8716e9e6e74e)
 
-set(MARIADB_CONNECTOR_VERSION 3.0.4)
+set(MARIADB_CONNECTOR_VERSION 3.1.2)
 set(MARIADB_CONNECTOR_ZIP_NAME mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar)
 set(MARIADB_CONNECTOR_URL https://downloads.mariadb.com/Connectors/java/connector-java-${MARIADB_CONNECTOR_VERSION}/${MARIADB_CONNECTOR_ZIP_NAME})
-set(MARIADB_CONNECTOR_HASH c8c9eba4f5368e3fdb321e17353446cbf8d36c822ec604841308b1bef950a529)
+set(MARIADB_CONNECTOR_HASH aaec1ad348d030a65b25c93c65cdaf472bf8b4b6b314b965e5ba13aec81bc622)
 
 set(SONARQUBETOOLS_DIR ${CMAKE_BINARY_DIR}/sonarqubetools)
 

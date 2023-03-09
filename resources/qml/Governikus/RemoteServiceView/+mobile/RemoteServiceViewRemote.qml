@@ -1,10 +1,11 @@
-/*
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
 import Governikus.Type.ApplicationModel 1.0
@@ -169,6 +170,18 @@ Item {
 			push(enterPinView);
 		}
 	}
+	PasswordInfoData {
+		id: infoData
+		contentType: PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER
+	}
+	Component {
+		id: passwordInfoView
+		PasswordInfoView {
+			infoContent: infoData
+
+			onClose: pop()
+		}
+	}
 	Component {
 		id: enterPinView
 		EnterPasswordView {
@@ -177,6 +190,7 @@ Item {
 				pop();
 			}
 
+			moreInformationText: infoData.linkText
 			passwordType: PasswordType.REMOTE_PIN
 			//: LABEL ANDROID IOS
 			title: qsTr("Pairing code")
@@ -188,6 +202,7 @@ Item {
 			}
 
 			onPasswordEntered: close()
+			onRequestPasswordInfo: push(passwordInfoView)
 		}
 	}
 }

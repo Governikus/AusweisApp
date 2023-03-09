@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -64,13 +64,13 @@ SectionPage {
 		visible: d.activeView === SetupAssistantView.SubViews.Welcome
 
 		Component.onCompleted: setActive()
-		onAgree: d.activeView = SettingsModel.autoStartAvailable ? SetupAssistantView.SubViews.AutoStartSetting : SetupAssistantView.SubViews.HistorySetting
+		onAgree: d.activeView = (SettingsModel.autoStartAvailable && !SettingsModel.autoStartSetByAdmin) ? SetupAssistantView.SubViews.AutoStartSetting : SetupAssistantView.SubViews.HistorySetting
 	}
 	DecisionView {
 		mainIconSource: "qrc:///images/status_info.svg"
 		//: INFO DESKTOP Information text why autostart of the App is advisable
 		questionSubText: {
-			let subText = qsTr("In order to successfully use the online identification function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.").arg(Qt.application.name);
+			let subText = qsTr("In order to successfully use the eID function, %1 has to be running. It is therefore advisable to activate the auto-start after system startup.").arg(Qt.application.name);
 			if (Qt.platform.os === "osx") {
 				//: INFO MACOS Additional information that macOS auto-start add a symbol to the menu bar
 				subText += " " + qsTr("The launch will add an icon to the menu bar.");

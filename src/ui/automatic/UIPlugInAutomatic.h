@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief UIPlugIn implementation of full automatic authentication.
- *
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,6 +27,7 @@ class UIPlugInAutomatic
 		QSharedPointer<WorkflowContext> mContext;
 		QString mDominator;
 		bool mPrevUsedAsSDK;
+		bool mPrevUsedDeveloperMode;
 
 		[[nodiscard]] bool isDominated() const;
 		void handleInsertCard();

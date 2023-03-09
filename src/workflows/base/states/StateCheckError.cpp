@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckError.h"
@@ -21,5 +21,6 @@ void StateCheckError::run()
 		return;
 	}
 
-	Q_EMIT fireAbort();
+	Q_ASSERT(getContext()->getFailureCode().has_value());
+	Q_EMIT firePropagateAbort();
 }

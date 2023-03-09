@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief State that finalizes the personalization of the Smart-eID applet
- *
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,6 +33,9 @@ class StateFinalizePersonalization
 
 	private Q_SLOTS:
 		void onCommandDone(const QVariant& pResult);
+
+	Q_SIGNALS:
+		void firePropagateAbort();
 };
 
 } // namespace governikus

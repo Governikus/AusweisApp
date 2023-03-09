@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessing.h"
@@ -25,6 +25,6 @@ void StateProcessing::run()
 		qCritical() << "Cannot send \"Processing\" to caller:" << activationContext->getSendError();
 		updateStatus({GlobalStatus::Code::Workflow_Processing_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
 				});
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Processing_Send_Status_Failed);
 	}
 }

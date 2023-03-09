@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -49,10 +49,9 @@ Item {
 			id: title
 			Accessible.ignored: true
 			anchors.horizontalCenter: parent.horizontalCenter
-			font.bold: true
 			style: Text.Outline
 			styleColor: Constants.white
-			textStyle: Style.text.tutorial_title
+			textStyle: Style.text.tutorial_title_highlight
 			y: ((categoryAbove ? 0.575 : 0.5) * parent.height) - (0.5 * height)
 		}
 	}

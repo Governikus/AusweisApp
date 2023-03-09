@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateStartPaosResponsePersonalization.h"
@@ -23,7 +23,7 @@ void StateStartPaosResponsePersonalization::run()
 	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
 	if (!startPaosResponse)
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Start_Paos_Response_Personalization_Empty);
 		return;
 	}
 
@@ -47,5 +47,5 @@ void StateStartPaosResponsePersonalization::run()
 
 	qDebug() << "Processing server result:" << result.getMajorString() << result.getMinorString() << result.getMessage();
 	updateStartPaosResult(result);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Start_Paos_Response_Personalization_Invalid);
 }

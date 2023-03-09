@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref NumberModel
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -243,16 +245,13 @@ class test_NumberModel
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
 			QCOMPARE(mModel->getInputError(), QString());
-			QVERIFY(!mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::OK);
 			mModel->resetContext(context);
 			QCOMPARE(mModel->getInputError(), QString());
-			QVERIFY(!mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
 			QCOMPARE(mModel->getInputError(), QString());
-			QVERIFY(!mModel->hasError());
 
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&connectionThread);
@@ -261,25 +260,21 @@ class test_NumberModel
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN. You have two further attempts to enter the correct ID card PIN."));
-			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN twice. "
 												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
 												 "You can find your CAN in the bottom right on the front of your ID card."));
-			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. "
 												 "To remove the block, the ten-digit PUK must be entered first."));
-			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit Card Access Number (CAN). Please try again."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, ten-digit PUK. Please try again."));
-			QVERIFY(mModel->hasError());
 
 			context->setLastPaceResult(CardReturnCode::UNKNOWN);
 			QCOMPARE(mModel->getInputError(), tr("An unexpected error has occurred during processing."));
@@ -289,7 +284,6 @@ class test_NumberModel
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
 					LanguageLoader::getLocaleCode(),
 					tr("AusweisApp2 Support")));
-			QVERIFY(mModel->hasError());
 
 			context.reset(new ChangePinContext(true));
 			mModel->resetContext(context);
@@ -514,24 +508,6 @@ class test_NumberModel
 			QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(QString(), inputData, pinLength));
 			context->setEstablishPaceChannel(message);
 
-			QCOMPARE(mModel->getPasswordType(), passwordType);
-
-			context->changePinLength();
-			PasswordType otherType = passwordType;
-			if (context->isPinChangeWorkflow())
-			{
-				if (passwordType == PasswordType::PIN)
-				{
-					otherType = PasswordType::TRANSPORT_PIN;
-				}
-				else if (passwordType == PasswordType::TRANSPORT_PIN)
-				{
-					otherType = PasswordType::PIN;
-				}
-			}
-			QCOMPARE(mModel->getPasswordType(), otherType);
-
-			context->changePinLength();
 			QCOMPARE(mModel->getPasswordType(), passwordType);
 		}
 

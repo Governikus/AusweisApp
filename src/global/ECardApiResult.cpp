@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ECardApiResult.h"
@@ -67,7 +67,7 @@ QMap<GlobalStatus::Code, ECardApiResult::Minor> ECardApiResult::cConversionMap1 
 QMap<ECardApiResult::Minor, GlobalStatus::Code> ECardApiResult::cConversionMap2 = {};
 
 
-ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus)
+ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus, const std::optional<FailureCode>& pFailureCode)
 {
 	if (pStatus.getStatusCode() == GlobalStatus::Code::No_Error)
 	{
@@ -78,7 +78,7 @@ ECardApiResult ECardApiResult::fromStatus(const GlobalStatus& pStatus)
 	const Minor minor = fromStatus(pStatus.getStatusCode());
 	const Origin status = fromStatus(pStatus.getOrigin());
 
-	return ECardApiResult(Major::Error, minor, message, status);
+	return ECardApiResult(Major::Error, minor, message, status, pFailureCode);
 }
 
 
@@ -451,7 +451,7 @@ QString ECardApiResult::getMessage(Minor pMinor)
 
 		case Minor::SAL_Invalid_Key:
 			//: LABEL ALL_PLATFORMS
-			return tr("This action cannot be performed. The online identification function of your ID card is not activated.");
+			return tr("This action cannot be performed. The eID function of your ID card is not activated.");
 
 		case Minor::SAL_SecurityConditionNotSatisfied:
 			//: LABEL ALL_PLATFORMS
@@ -481,19 +481,20 @@ QString ECardApiResult::getMessage(Minor pMinor)
 }
 
 
-ECardApiResult::ResultData::ResultData(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin)
+ECardApiResult::ResultData::ResultData(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin, const std::optional<FailureCode>& pFailureCode)
 	: QSharedData()
 	, mMajor(pMajor)
 	, mMinor(pMinor)
 	, mMessage(pMessage)
 	, mMessageLang(LanguageLoader::getLocaleCode())
 	, mOrigin(pOrigin)
+	, mFailureCode(pFailureCode)
 {
 }
 
 
-ECardApiResult::ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin)
-	: d(new ResultData(pMajor, pMinor, pMessage, pOrigin))
+ECardApiResult::ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin, const std::optional<FailureCode>& pFailureCode)
+	: d(new ResultData(pMajor, pMinor, pMessage, pOrigin, pFailureCode))
 {
 	const bool nullWithoutOk = pMajor != Major::Ok && pMinor == Minor::null;
 	const bool okWithoutNull = pMajor == Major::Ok && pMinor != Minor::null;
@@ -513,8 +514,8 @@ ECardApiResult::ECardApiResult(const QString& pMajor, const QString& pMinor, con
 }
 
 
-ECardApiResult::ECardApiResult(const GlobalStatus& pStatus)
-	: ECardApiResult(fromStatus(pStatus))
+ECardApiResult::ECardApiResult(const GlobalStatus& pStatus, const std::optional<FailureCode>& pFailureCode)
+	: ECardApiResult(fromStatus(pStatus, pFailureCode))
 {
 }
 
@@ -546,6 +547,12 @@ QString ECardApiResult::getMessage() const
 const QString& ECardApiResult::getMessageLang() const
 {
 	return d->mMessageLang;
+}
+
+
+const std::optional<FailureCode>& ECardApiResult::getFailureCode() const
+{
+	return d->mFailureCode;
 }
 
 
@@ -677,13 +684,25 @@ QJsonObject ECardApiResult::toJson() const
 		obj[QLatin1String("language")] = lang;
 	}
 
+	const auto& failureCode = getFailureCode();
+	if (failureCode.has_value())
+	{
+		obj[QLatin1String("reason")] = Enum<FailureCode::Reason>::getName(failureCode.value().getReason());
+	}
+
 	return obj;
 }
 
 
 QDebug operator <<(QDebug pDbg, const governikus::ECardApiResult& pResult)
 {
-	const QString string = pResult.getMajorString() % QLatin1String(" | ") % pResult.getMinorString() % QLatin1String(" | ") % pResult.getMessage();
+	QString string = pResult.getMajorString() % QLatin1String(" | ") % pResult.getMinorString() % QLatin1String(" | ") % pResult.getMessage();
+	const auto& failureCode = pResult.getFailureCode();
+	if (failureCode.has_value())
+	{
+		string += QLatin1String(" | ");
+		string += Enum<FailureCode::Reason>::getName(failureCode.value().getReason());
+	}
 	QDebugStateSaver saver(pDbg);
 	pDbg.space() << "Result:";
 	pDbg.quote() << string;

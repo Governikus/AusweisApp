@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref FormattedTextModel
- *
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FormattedTextModel.h"

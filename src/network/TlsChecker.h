@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Helper to check certificates and other security stuff of TLS/SSL.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,6 +36,7 @@ class TlsChecker
 
 		[[nodiscard]] static QStringList getFatalErrors(const QList<QSslError>& pErrors);
 		[[nodiscard]] static bool containsFatalError(const QSharedPointer<QNetworkReply>& pReply, const QList<QSslError>& pErrors);
+		[[nodiscard]] static QString sslErrorsToString(const QList<QSslError>& pErrors);
 
 		/*!
 		 * Checks, whether the certificate's hash is contained in a set of accepted certificate hashes.

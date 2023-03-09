@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
@@ -230,22 +230,29 @@ class test_StateCheckRefreshAddress
 		}
 
 
-		void reportCommunicationError()
+		void reportCommunicationError_CardCommunicationError()
 		{
 			mState->mReply = QSharedPointer<MockNetworkReply>::create();
 			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Card_Communication_Error | \"An error occurred while communicating with the ID card. Please make sure that your ID card is placed correctly on the card reader and try again.\"");
-			mState->reportCommunicationError(GlobalStatus::Code::Card_Communication_Error);
+			mState->reportCommunicationError(GlobalStatus::Code::Card_Communication_Error, FailureCode::Reason::Check_Refresh_Address_Empty);
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Communication_Error);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Check_Refresh_Address_Empty);
 			QCOMPARE(spy.count(), 1);
+		}
 
-			mAuthContext->setStatus(GlobalStatus::Code::No_Error);
+
+		void reportCommunicationError_NetworkError()
+		{
+			mState->mReply = QSharedPointer<MockNetworkReply>::create();
+			QSignalSpy spy(mState.data(), &StateCheckRefreshAddress::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Network_Other_Error | \"An unknown network error occurred. Check your network connection and try to restart the app.\"");
-			mState->reportCommunicationError(GlobalStatus::Code::Network_Other_Error);
+			mState->reportCommunicationError(GlobalStatus::Code::Network_Other_Error, FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error);
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Network_Other_Error);
-			QCOMPARE(spy.count(), 2);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error);
+			QCOMPARE(spy.count(), 1);
 		}
 
 

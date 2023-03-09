@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -74,7 +74,7 @@ SectionPage {
 			GText {
 
 				//: LABEL ANDROID IOS
-				text: qsTr("Your device needs to meet the technical requirements to use the Smart-eID functionality.")
+				text: qsTr("Your device needs to meet the technical requirements to use the Smart-eID function.")
 				width: parent.width
 			}
 			GText {

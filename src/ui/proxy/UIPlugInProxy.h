@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief UIPlugIn implementation of the UIPlugInProxy.
- *
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

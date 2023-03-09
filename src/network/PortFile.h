@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -31,6 +31,7 @@ class PortFile
 
 		void handlePort(quint16 pCurrentPort);
 		void remove();
+		[[nodiscard]] const QFile& getFile() const;
 };
 
 } // namespace governikus

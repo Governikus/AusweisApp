@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateVerifyRetryCounter
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateVerifyRetryCounter.h"
@@ -69,6 +71,7 @@ class test_StateVerifyRetryCounter
 			QTest::ignoreMessage(QtDebugMsg, "Card connection lost.");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Verify_Retry_Counter_No_Card_Connection);
 		}
 
 

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -44,9 +44,8 @@ GPaneBackground {
 		Accessible.ignored: true
 		color: Qt.darker(textStyle.textColor, mouseArea.pressed ? Constants.highlightDarkerFactor : 1)
 		elide: Text.ElideRight
-		font.bold: true
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.title_inverse
+		textStyle: Style.text.title_inverse_highlight
 		verticalAlignment: Text.AlignVCenter
 
 		anchors {

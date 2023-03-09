@@ -1,6 +1,7 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
+import QtQml 2.15
 import QtQuick 2.15
 import QtTest 1.15
 import Governikus.Global 1.0
@@ -28,6 +29,57 @@ TestCase {
 	function test_load() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
+	}
+	function test_size(data) {
+		let button = createTemporaryQmlObject("import Governikus.Global 1.0; GButton {icon.source: \"" + data.icon + "\"; text: \"" + data.text + "\"}", testCase);
+		waitForRendering(button);
+		compare(button.height, data.height);
+		compare(button.width, data.width);
+	}
+	function test_size_data() {
+		if (Qt.platform.os !== "osx") {
+			skip();
+		}
+		let text = createTemporaryQmlObject("import Governikus.Global 1.0; import Governikus.Style 1.0; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
+		waitForRendering(text);
+		let longTextWidth = Math.round(text.width + 0.1);
+		return [{
+				"tag": "noIconNoText",
+				"icon": "",
+				"text": "",
+				"height": 12,
+				"width": 16
+			}, {
+				"tag": "noIconSmallText",
+				"icon": "",
+				"text": "t",
+				"height": Constants.is_desktop ? 39 : 40,
+				"width": Constants.is_desktop ? 59 : 112
+			}, {
+				"tag": "noIconLongText",
+				"icon": "",
+				"text": "test test test test test test",
+				"height": Constants.is_desktop ? 39 : 40,
+				"width": 16 + longTextWidth
+			}, {
+				"tag": "withIconNoText",
+				"icon": "qrc:///images/identify.svg",
+				"text": "",
+				"height": Constants.is_desktop ? 39 : 40,
+				"width": Constants.is_desktop ? 43 : 44
+			}, {
+				"tag": "withIconSmallText",
+				"icon": "qrc:///images/identify.svg",
+				"text": "t",
+				"height": Constants.is_desktop ? 39 : 40,
+				"width": Constants.is_desktop ? 59 : 112
+			}, {
+				"tag": "withIconLongText",
+				"icon": "qrc:///images/identify.svg",
+				"text": "test test test test test test",
+				"height": Constants.is_desktop ? 39 : 40,
+				"width": (Constants.is_desktop ? 49 : 54) + longTextWidth
+			}];
 	}
 	function test_text() {
 		let testObject = createTestObject();

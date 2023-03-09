@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
@@ -54,6 +54,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 
 	sCheckError->addTransition(sCheckError, &AbstractState::fireContinue, sActivateStoreFeedbackDialog);
 	sCheckError->addTransition(sCheckError, &AbstractState::fireAbort, sRedirectBrowser);
+	sCheckError->addTransition(sCheckError, &StateCheckError::firePropagateAbort, sRedirectBrowser);
 
 	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sWriteHistory);
 	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sWriteHistory);

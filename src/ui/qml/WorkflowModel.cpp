@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -273,6 +273,9 @@ QString WorkflowModel::getStatusHintText() const
 		case GlobalStatus::Code::Card_Pin_Deactivated:
 			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionHint();
 
+		case GlobalStatus::Code::Card_ValidityVerificationFailed:
+			return tr("Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card.");
+
 		default:
 			return QString();
 	}
@@ -284,8 +287,10 @@ QString WorkflowModel::getStatusHintActionText() const
 	switch (getStatusCode())
 	{
 		case GlobalStatus::Code::Card_Puk_Blocked:
-		case GlobalStatus::Code::Card_Pin_Deactivated:
 			return Env::getSingleton<PinResetInformationModel>()->getPinResetActionText();
+
+		case GlobalStatus::Code::Card_Pin_Deactivated:
+			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionActionText();
 
 		default:
 			return QString();

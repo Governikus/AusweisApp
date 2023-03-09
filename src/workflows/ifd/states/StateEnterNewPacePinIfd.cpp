@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterNewPacePinIfd.h"
@@ -28,7 +28,7 @@ void StateEnterNewPacePinIfd::onCancelChangePin()
 	{
 		getContext()->setModifyPinMessageResponseApdu(ResponseApdu(StatusCode::INPUT_CANCELLED));
 	}
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(FailureCode::Reason::Enter_New_Pace_Pin_Ifd_User_Cancelled);
 }
 
 

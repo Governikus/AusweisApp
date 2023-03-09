@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessIfdMessages.h"
@@ -105,7 +105,7 @@ void StateProcessIfdMessages::onReaderStatusChanged(const ReaderManagerPlugInInf
 	const auto& context = getContext();
 	if (context->getIfdServer()->isConnected())
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Process_Ifd_Messages_No_Server_Connection);
 	}
 }
 

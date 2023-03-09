@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -47,10 +47,9 @@ SectionPage {
 					GText {
 						id: numberThree
 						anchors.centerIn: parent
-						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
 						text: "3"
-						textStyle: Style.text.tutorial_header_secondary
+						textStyle: Style.text.tutorial_header_secondary_highlight
 
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 						Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
@@ -160,12 +159,11 @@ SectionPage {
 				}
 				GText {
 					anchors.horizontalCenter: parent.horizontalCenter
-					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 
 					//: LABEL ANDROID IOS
 					text: qsTr("Both devices have to be connected to the same WiFi network")
-					textStyle: Style.text.tutorial_header
+					textStyle: Style.text.tutorial_header_highlight
 					width: parent.width * 0.9
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -264,12 +262,11 @@ SectionPage {
 						id: pairingCodeText
 						anchors.horizontalCenter: parent.horizontalCenter
 						anchors.top: greyBackgroundRect.top
-						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
 
 						//: LABEL ANDROID IOS
 						text: qsTr("Pairing code")
-						textStyle: Style.text.tutorial_header
+						textStyle: Style.text.tutorial_header_highlight
 						topPadding: 30
 
 						Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -309,12 +306,11 @@ SectionPage {
 				}
 				GText {
 					id: noticeText5
-					font.bold: true
 					horizontalAlignment: Text.AlignLeft
 
 					//: LABEL IOS
 					text: qsTr("On the first use of the Smartphone as card reader (SaC), iOS will asks for your permission to access the local network. This permission is required in order find and connect to your SaC. After the first request you can always access the permission in the iOS settings for this app.")
-					textStyle: Style.text.tutorial_content
+					textStyle: Style.text.tutorial_content_highlight
 					width: parent.width * 0.6
 					x: (parent.width * 0.65) - (width / 2)
 					y: (parent.height * 0.5) - (height / 2)
@@ -407,12 +403,11 @@ SectionPage {
 						width: parent.width * 0.2
 					}
 					GText {
-						font.bold: true
 						horizontalAlignment: Text.AlignLeft
 
 						//: LABEL ANDROID IOS
 						text: qsTr("Enter pairing code next.")
-						textStyle: Style.text.tutorial_content
+						textStyle: Style.text.tutorial_content_highlight
 						width: parent.width * 0.6
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)
@@ -634,12 +629,11 @@ SectionPage {
 						width: parent.width * 0.2
 					}
 					GText {
-						font.bold: true
 						horizontalAlignment: Text.AlignLeft
 
 						//: LABEL ANDROID IOS
 						text: qsTr("Do not move device or ID card!")
-						textStyle: Style.text.tutorial_content
+						textStyle: Style.text.tutorial_content_highlight
 						width: parent.width * 0.6
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)
@@ -668,12 +662,11 @@ SectionPage {
 				}
 				GText {
 					id: nfcText
-					font.bold: true
 					horizontalAlignment: Text.AlignLeft
 
 					//: LABEL ANDROID IOS
 					text: qsTr("The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions.")
-					textStyle: Style.text.tutorial_content
+					textStyle: Style.text.tutorial_content_highlight
 					width: parent.width * 0.55
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -687,12 +680,11 @@ SectionPage {
 			}
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
-				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
 				text: qsTr("If your device is unable to detect your ID card try to check the device capabilities by clicking on \"Check device and ID card\" on the start page.")
-				textStyle: Style.text.tutorial_content
+				textStyle: Style.text.tutorial_content_highlight
 				width: parent.width * 0.9
 
 				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -744,12 +736,11 @@ SectionPage {
 						z: 1
 					}
 					GText {
-						font.bold: true
 						horizontalAlignment: Text.AlignHCenter
 
 						//: LABEL ANDROID IOS
 						text: qsTr("six-digit PIN")
-						textStyle: Style.text.tutorial_header
+						textStyle: Style.text.tutorial_header_highlight
 						width: parent.width
 						x: (parent.width * 0.5) - (width / 2)
 						y: (parent.height * 0.2) - (height / 2)
@@ -786,12 +777,11 @@ SectionPage {
 					}
 					GText {
 						id: noticeText2
-						font.bold: true
 						horizontalAlignment: Text.AlignLeft
 
 						//: LABEL ANDROID IOS
 						text: qsTr("This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.")
-						textStyle: Style.text.tutorial_content
+						textStyle: Style.text.tutorial_content_highlight
 						width: parent.width * 0.6
 						x: (parent.width * 0.65) - (width / 2)
 						y: (parent.height * 0.5) - (height / 2)

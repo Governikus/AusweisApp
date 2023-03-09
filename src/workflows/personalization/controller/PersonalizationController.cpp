@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/PersonalizationController.h"
@@ -96,6 +96,7 @@ PersonalizationController::PersonalizationController(QSharedPointer<Personalizat
 
 	sCheckError->addTransition(sCheckError, &AbstractState::fireContinue, sCheckRefreshAddress);
 	sCheckError->addTransition(sCheckError, &AbstractState::fireAbort, sFinal);
+	sCheckError->addTransition(sCheckError, &StateCheckError::firePropagateAbort, sFinal);
 
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sWriteHistory);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sFinal);
@@ -137,6 +138,7 @@ PersonalizationController::PersonalizationController(QSharedPointer<Personalizat
 
 	sFinalizePersonalization->addTransition(sFinalizePersonalization, &AbstractState::fireContinue, sInsertCard);
 	sFinalizePersonalization->addTransition(sFinalizePersonalization, &AbstractState::fireAbort, sClearPacePasswordsNewPin);
+	sFinalizePersonalization->addTransition(sFinalizePersonalization, &StateFinalizePersonalization::firePropagateAbort, sClearPacePasswordsNewPin);
 
 	sClearPacePasswordsNewPin->addTransition(sClearPacePasswordsNewPin, &AbstractState::fireContinue, sFinal);
 	sClearPacePasswordsNewPin->addTransition(sClearPacePasswordsNewPin, &AbstractState::fireAbort, sFinal);
@@ -146,6 +148,7 @@ PersonalizationController::PersonalizationController(QSharedPointer<Personalizat
 
 	sPace->addTransition(sPace, &CompositeStatePace::fireContinue, sChangeSmartPin);
 	sPace->addTransition(sPace, &CompositeStatePace::fireAbort, sClearPacePasswordsAll);
+	sPace->addTransition(sPace, &CompositeStatePace::firePropagateAbort, sClearPacePasswordsAll);
 
 	sChangeSmartPin->addTransition(sChangeSmartPin, &AbstractState::fireContinue, sDestroyPace);
 	sChangeSmartPin->addTransition(sChangeSmartPin, &AbstractState::fireAbort, sDestroyPace);
