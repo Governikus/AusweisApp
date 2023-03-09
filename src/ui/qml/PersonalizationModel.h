@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Model implementation for Smart-eID workflow.
- *
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

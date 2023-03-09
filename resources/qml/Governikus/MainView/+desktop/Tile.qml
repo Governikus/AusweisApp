@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -45,9 +45,8 @@ FocusScope {
 	}
 	GText {
 		id: text
-		font.bold: true
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.title_accent
+		textStyle: Style.text.title_accent_highlight
 
 		anchors {
 			left: parent.left

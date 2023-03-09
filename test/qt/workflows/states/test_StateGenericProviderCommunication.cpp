@@ -1,10 +1,10 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSelfAuthenticationData.h"
 
-#include "LogHandler.h"
+#include "TlsChecker.h"
 
 #include "MockNetworkManager.h"
 
@@ -63,7 +63,6 @@ class test_StateGenericProviderCommunication
 	private Q_SLOTS:
 		void init()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new AuthContext(QSharedPointer<ActivationContext>()));
 			mState.reset(new StateGenericProviderCommunicationImpl(mContext));
 			mState->setStateName("StateGenericProviderCommunicationImpl");
@@ -86,20 +85,22 @@ class test_StateGenericProviderCommunication
 			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
 			QSignalSpy spy(mState.data(), &StateGetSelfAuthenticationData::fireAbort);
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			mState->reportCommunicationError(GlobalStatus::Code::Unknown_Error);
-			QVERIFY(logSpy.takeLast().at(0).toString().contains("Operation aborted"));
-			QVERIFY(logSpy.takeLast().at(0).toString().contains("Unknown_Error | \"An unexpected error has occurred during processing.\""));
+			QTest::ignoreMessage(QtCriticalMsg, "Unknown_Error | \"An unexpected error has occurred during processing.\"");
+			QTest::ignoreMessage(QtDebugMsg, "Operation aborted");
+			mState->reportCommunicationError(GlobalStatus::Code::Unknown_Error, FailureCode::Reason::Generic_Provider_Communication_Network_Error);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Unknown_Error);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Generic_Provider_Communication_Network_Error);
 			QCOMPARE(spy.count(), 1);
 
 			mContext->setStatus(GlobalStatus::Code::No_Error);
 
-			mState->reportCommunicationError(GlobalStatus::Code::Card_Not_Found);
-			QVERIFY(logSpy.takeLast().at(0).toString().contains("Operation aborted"));
-			QVERIFY(logSpy.takeLast().at(0).toString().contains("Card_Not_Found | \"Card does not exist\""));
+			QTest::ignoreMessage(QtCriticalMsg, "Card_Not_Found | \"Card does not exist\"");
+			QTest::ignoreMessage(QtDebugMsg, "Operation aborted");
+			QTest::ignoreMessage(QtWarningMsg, "FailureCode already set to Generic_Provider_Communication_Network_Error - ignoring Generic_Provider_Communication_Certificate_Error");
+			mState->reportCommunicationError(GlobalStatus::Code::Card_Not_Found, FailureCode::Reason::Generic_Provider_Communication_Certificate_Error);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Card_Not_Found);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Generic_Provider_Communication_Network_Error);
 			QCOMPARE(spy.count(), 2);
 		}
 
@@ -108,15 +109,12 @@ class test_StateGenericProviderCommunication
 		{
 			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-
+			QTest::ignoreMessage(QtDebugMsg, "Operation aborted");
 			mState->onSslHandshakeDone();
-			QVERIFY(logSpy.takeLast().at(0).toString().contains("Operation aborted"));
 
+			QTest::ignoreMessage(QtInfoMsg, QRegularExpression("^Used session cipher"));
 			mState->mReply->setSslConfiguration(QSslConfiguration());
 			mState->onSslHandshakeDone();
-			const QString logMsg(logSpy.at(0).at(0).toString());
-			QVERIFY(logMsg.contains("Used session cipher"));
 		}
 
 
@@ -131,6 +129,11 @@ class test_StateGenericProviderCommunication
 			const QList<QSslError> errorList({QSslError(QSslError::CertificateNotYetValid), QSslError(QSslError::CertificateUntrusted)});
 			mState->onSslErrors(errorList);
 			QCOMPARE(spy.count(), 1);
+
+			const auto& failureCode = mState->getContext()->getFailureCode();
+			QCOMPARE(failureCode, FailureCode::Reason::Generic_Provider_Communication_Ssl_Error);
+			QCOMPARE(failureCode->getFailureInfoMap()[FailureCode::Info::Network_Error], mState->mReply->errorString());
+			QCOMPARE(failureCode->getFailureInfoMap()[FailureCode::Info::Ssl_Errors], TlsChecker::sslErrorsToString(errorList));
 		}
 
 

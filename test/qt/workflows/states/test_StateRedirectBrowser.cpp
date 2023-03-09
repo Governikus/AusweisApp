@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateRedirectBrowser.h"
@@ -63,6 +63,7 @@ class test_StateRedirectBrowser
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
 		}
 
 
@@ -89,6 +90,7 @@ class test_StateRedirectBrowser
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
 		}
 
 
@@ -117,6 +119,7 @@ class test_StateRedirectBrowser
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
 		}
 
 
@@ -145,6 +148,7 @@ class test_StateRedirectBrowser
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
 		}
 
 
@@ -175,6 +179,7 @@ class test_StateRedirectBrowser
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
 		}
 
 

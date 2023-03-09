@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PortFile.h"
@@ -49,6 +49,12 @@ void PortFile::remove()
 	{
 		mPortFile.remove();
 	}
+}
+
+
+const QFile& PortFile::getFile() const
+{
+	return mPortFile;
 }
 
 

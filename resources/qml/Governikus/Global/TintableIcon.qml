@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Style 1.0
@@ -9,6 +9,8 @@ Item {
 
 	property bool desaturate: false
 	property alias fillMode: image.fillMode
+	property alias paintedHeight: image.paintedHeight
+	property alias paintedWidth: image.paintedWidth
 	property alias playAnimation: animation.enabled
 	property alias source: image.source
 	property alias sourceSize: image.sourceSize

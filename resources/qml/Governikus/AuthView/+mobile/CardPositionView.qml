@@ -1,9 +1,8 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.ResultView 1.0
-import Governikus.Type.ConnectivityManager 1.0
 
 ResultView {
 	id: root

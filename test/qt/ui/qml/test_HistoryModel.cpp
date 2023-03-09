@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref HistoryModel
- *
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HistoryModel.h"

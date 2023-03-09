@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -69,10 +69,13 @@ void SignalHandler::setController(const std::function<void()>& pController)
 }
 
 
+#ifdef Q_OS_WIN
 void SignalHandler::quit()
 {
-#ifdef Q_OS_WIN
 	setServiceStatus(SERVICE_STOP_PENDING);
+#else
+void SignalHandler::quit() const
+{
 #endif
 
 	if (mController)

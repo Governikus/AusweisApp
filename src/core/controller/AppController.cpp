@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -155,6 +155,10 @@ void AppController::start()
 		connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
 		connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 		readerManager->init();
+	}
+	else
+	{
+		connect(this, &AppController::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 	}
 
 	connect(this, &AppController::fireStarted, this, [this] {

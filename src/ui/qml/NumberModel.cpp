@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -198,12 +198,6 @@ void NumberModel::setPuk(const QString& pPuk)
 	{
 		mContext->setPuk(pPuk);
 	}
-}
-
-
-bool NumberModel::hasError() const
-{
-	return getInputErrorCode() != CardReturnCode::OK || Env::getSingleton<ApplicationModel>()->isExtendedLengthApdusUnsupported();
 }
 
 

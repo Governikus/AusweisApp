@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class Discovery
 		void parsePairing(const QJsonObject& pMessageObject);
 
 	public:
-		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis);
+		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis, bool pPairing = false);
 		explicit Discovery(const QJsonObject& pMessageObject);
 		~Discovery() override = default;
 

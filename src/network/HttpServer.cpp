@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -91,9 +91,14 @@ void HttpServer::bindAddresses(quint16 pPort, const QVector<QHostAddress>& pAddr
 }
 
 
-int HttpServer::boundAddresses() const
+QStringList HttpServer::boundAddresses() const
 {
-	return mServer.size();
+	QStringList serverList;
+	for (const auto& server : std::as_const(mServer))
+	{
+		serverList << server->serverAddress().toString() + QLatin1Char(':') + QString::number(server->serverPort());
+	}
+	return serverList;
 }
 
 

@@ -20,12 +20,17 @@
         <file>images/material_refresh.svg</file>
         <file>images/material_history.svg</file>
         <file>images/material_alert.svg</file>
+        <file>images/material_block.svg</file>
+        <file>images/material_live_help.svg</file>
+        <file>images/material_person.svg</file>
         <file>images/checkbox_indicator.svg</file>
         <file>images/npa.svg</file>
         <file>images/id_card.png</file>
         <file>images/signature.jp2</file>
-        <file>images/pin_letter_pinpuk_different_page.svg</file>
-        <file>images/pin_letter_pinpuk_same_page.svg</file>
+        <file>images/pin_letter_pinpuk.svg</file>
+        <file>images/pin_letter_pinpuk_red_bar.svg</file>
+        <file>images/pin_letter_pinpuk_red_bar_puk.svg</file>
+        <file>images/pin_person.svg</file>
         <file>images/logo_beta_background.svg</file>
         <file>images/logo_beta_testing.svg</file>
         <file>images/status_error.svg</file>
@@ -55,6 +60,10 @@
         <file>images/provider/other_bg.svg</file>
         <file>images/provider/other_button.svg</file>
         <file>updatable-files/supported-providers.json</file>
+        <file>images/icon_five_digit_pin.svg</file>
+        <file>images/icon_six_digit_pin_white.svg</file>
+        <file>images/icon_six_digit_pin_blue.svg</file>
+        <file>images/icon_ten_digit_puk.svg</file>
         <file>images/icon_remote_inactive.svg</file>
         <file>images/icon_remote_0.svg</file>
         <file>images/icon_remote_25.svg</file>

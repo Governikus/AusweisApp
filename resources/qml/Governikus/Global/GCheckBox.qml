@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.15
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.View 1.0
 
 CheckBox {
 	id: control
@@ -14,17 +15,17 @@ CheckBox {
 	property alias maximumLineCount: description.maximumLineCount
 	property alias textStyle: description.textStyle
 
+	activeFocusOnTab: true
 	padding: 0
 
 	contentItem: GText {
 		id: description
 		Accessible.ignored: true
-		activeFocusOnTab: false
 		elide: Text.ElideRight
 		leftPadding: control.indicator.width + control.spacing
 		maximumLineCount: 1
 		text: control.text
-		textStyle: Style.text.normal
+		textStyle: enabled ? Style.text.normal : Style.text.normal_secondary
 		verticalAlignment: Text.AlignVCenter
 	}
 	indicator: Rectangle {
@@ -48,5 +49,14 @@ CheckBox {
 	Accessible.onPressAction: {
 		toggle();
 		toggled();
+	}
+
+	MouseArea {
+		anchors.fill: parent
+		cursorShape: Qt.PointingHandCursor
+
+		onClicked: control.toggle()
+	}
+	FocusFrame {
 	}
 }

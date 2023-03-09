@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Tests the StateSelectReader
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateSelectReader.h"
@@ -64,22 +66,6 @@ class test_StateSelectReader
 			QTest::ignoreMessage(QtDebugMsg, "No selectable reader detected");
 			Q_EMIT readerManager->fireReaderAdded(ReaderInfo());
 			QCoreApplication::processEvents();
-		}
-
-
-		void test_OnReaderStatusChanged()
-		{
-			const auto pType = ReaderManagerPlugInType::PCSC;
-			mContext->setReaderPlugInTypes({pType});
-			mContext->setStateApproved();
-
-			QVERIFY(!Env::getSingleton<ReaderManager>()->isScanRunning(pType));
-
-			QSignalSpy spyRetry(mState.data(), &StateSelectReader::fireRetry);
-
-			mState->onReaderStatusChanged(ReaderManagerPlugInInfo(pType));
-
-			QTRY_COMPARE(spyRetry.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

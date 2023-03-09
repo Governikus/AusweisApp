@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*
  * \brief Allows the user to send a survey after a successful authentication
  * on Android.
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

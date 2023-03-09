@@ -811,42 +811,6 @@
 			]
 		},
 		{
-			"VendorId": "0x072F",
-			"ProductId": "0x223B",
-			"Name": "ACS ACR1252U",
-			"Pattern": "^ACS ACR1252 (1S CL|Dual)? Reader(( PICC 0)|\\(1\\))?$",
-			"Icon": "img_ACS_ACR1252U.png",
-			"IconWithNPA": "img_ACS_ACR1252U_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
-						}
-					],
-					"URL": "https://www.acs.com.hk/en/products/342/acr1252u-usb-nfc-reader-iii-nfc-forum-certified-reader/#tab_downloads"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
-				}
-			],
-			"Internal information": "Unter macOS funktioniert nur NFC A. Reader wird als unterstützt markiert, da zertifiziert."
-		},
-		{
 			"VendorId": "0x076B",
 			"ProductId": "0x5340",
 			"Name": "HID OMNIKEY 5021-CL",

@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Tests the StateExtractCvcsFromEac1InputType
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateExtractCvcsFromEac1InputType.h"
@@ -69,6 +71,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Extract_Cvcs_From_Eac1_Dv_Missing);
 		}
 
 
@@ -82,6 +85,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_Dv);
 		}
 
 
@@ -93,6 +97,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Extract_Cvcs_From_Eac1_At_Missing);
 		}
 
 
@@ -106,6 +111,7 @@ class test_StateExtractCvcsFromEac1InputType
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_At);
 		}
 
 

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -46,7 +46,9 @@ void StateTransmit::onCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 	else
 	{
 		updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort({FailureCode::Reason::Transmit_Card_Command_Failed,
+						  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
+				});
 	}
 }
 

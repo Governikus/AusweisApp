@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -29,18 +29,23 @@ SectionPage {
 		contentDelegate: content
 		contentPadding: 0
 		sectionsModel: [{
+				//: LABEL DESKTOP
 				"categoryName": qsTr("All provider"),
 				"category": "all"
 			}, {
+				//: LABEL DESKTOP
 				"categoryName": qsTr("Citizen services"),
 				"category": "citizen"
 			}, {
+				//: LABEL DESKTOP
 				"categoryName": qsTr("Financials"),
 				"category": "finance"
 			}, {
+				//: LABEL DESKTOP
 				"categoryName": qsTr("Insurances"),
 				"category": "insurance"
 			}, {
+				//: LABEL DESKTOP
 				"categoryName": qsTr("Other services"),
 				"category": "other"
 			}]

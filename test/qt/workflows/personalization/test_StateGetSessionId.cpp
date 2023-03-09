@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSessionId.h"
@@ -32,6 +32,7 @@ class test_StateGetSessionId
 			Env::getSingleton<LogHandler>()->init();
 			mContext = QSharedPointer<PersonalizationContext>::create(QString());
 			mState.reset(new StateGetSessionId(mContext));
+			mState->setStateName("StateGetSessionId");
 			QVERIFY(mContext->getSessionIdentifier().isNull());
 		}
 
@@ -82,6 +83,7 @@ class test_StateGetSessionId
 			QVERIFY(logMsg.contains("No valid sessionID to prepare personalization"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Get_Session_Id_Invalid);
 			QVERIFY(mContext->getSessionIdentifier().isNull());
 		}
 
@@ -126,6 +128,14 @@ class test_StateGetSessionId
 			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			const FailureCode::FailureInfoMap infoMap {
+				{FailureCode::Info::State_Name, "StateGetSessionId"},
+				{FailureCode::Info::Http_Status_Code, QString::number(500)},
+				{FailureCode::Info::Network_Error, "Unknown error"}
+			};
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode() == failureCode, true);
+			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
 			QVERIFY(mContext->getSessionIdentifier().isNull());
 		}
 

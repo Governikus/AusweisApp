@@ -3,6 +3,8 @@ package common
 import javaposse.jobdsl.dsl.Job
 import javaposse.jobdsl.dsl.DslFactory
 
+import common.Constants
+
 class RootTrigger
 {
 	String jobName
@@ -17,18 +19,20 @@ class RootTrigger
 			logRotator(14, -1)
 			label('Trigger')
 
-			configure
+			parameters
 			{
-				project -> project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions' << 'org.jenkinsci.plugins.jenkinsreviewbot.ReviewboardParameterDefinition' {
-					name('review.url')
-					defaultValue('')
-					description('ID of review request')
-				}
+				stringParam('REVIEWBOARD_SERVER', Constants.ReviewBoardServer, 'Server')
+				stringParam('REVIEWBOARD_REVIEW_ID', '', 'ReviewID')
+				stringParam('REVIEWBOARD_DIFF_REVISION', '', 'ReviewDiffRev')
+				stringParam('REVIEWBOARD_REVIEW_BRANCH', '', 'ReviewBranch')
+				stringParam('REVIEWBOARD_STATUS_UPDATE_ID', '', 'StatusUpdateID')
 			}
 
 			steps
 			{
-				buildDescription('', '${REVIEW_URL}')
+				buildDescription('', '${REVIEWBOARD_REVIEW_ID} / ${REVIEWBOARD_DIFF_REVISION}')
+
+				shell('rbt patch --write patch.diff --server ${REVIEWBOARD_SERVER} --diff-revision ${REVIEWBOARD_DIFF_REVISION} ${REVIEWBOARD_REVIEW_ID}')
 
 				downstreamParameterized
 				{
@@ -36,7 +40,10 @@ class RootTrigger
 					{
 						parameters
 						{
-							predefinedProp('review.url', '${REVIEW_URL}')
+							predefinedProp('REVIEWBOARD_SERVER', '${REVIEWBOARD_SERVER}')
+							predefinedProp('REVIEWBOARD_REVIEW_ID', '${REVIEWBOARD_REVIEW_ID}')
+							predefinedProp('REVIEWBOARD_DIFF_REVISION', '${REVIEWBOARD_DIFF_REVISION}')
+							predefinedProp('REVIEWBOARD_STATUS_UPDATE_ID', '${REVIEWBOARD_STATUS_UPDATE_ID}')
 						}
 
 						parameterFactories

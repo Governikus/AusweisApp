@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -38,7 +38,9 @@ ResultView {
 		}
 	}
 	GText {
-		text: qsTr("Error code: %1").arg(errorCode)
+		//: LABEL ANDROID IOS
+		text: "%1 %2".arg(qsTr("Error code:")).arg(errorCode)
+		textStyle: Style.text.normal_highlight
 		visible: baseItem.errorDetailsShown
 
 		anchors {

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateSelectReader.h"
@@ -30,7 +30,6 @@ void StateSelectReader::run()
 	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateSelectReader::onReaderStatusChanged);
 
 	onReaderInfoChanged();
 
@@ -48,6 +47,7 @@ void StateSelectReader::run()
 void StateSelectReader::onReaderInfoChanged()
 {
 	const QSharedPointer<WorkflowContext> context = getContext();
+	Q_ASSERT(context);
 	bool currentReaderHasEidCardButInsufficientApduLength = false;
 
 	const QVector<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
@@ -94,23 +94,10 @@ void StateSelectReader::onReaderInfoChanged()
 }
 
 
-void StateSelectReader::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
-{
-	const auto& readerPlugInType = pInfo.getPlugInType();
-	const auto& context = getContext();
-
-	const auto& shouldBeRunning = context->getReaderPlugInTypes().contains(readerPlugInType);
-
-	if (Env::getSingleton<ReaderManager>()->isScanRunning(readerPlugInType) != shouldBeRunning)
-	{
-		Q_EMIT fireRetry();
-	}
-}
-
-
 void StateSelectReader::onEntry(QEvent* pEvent)
 {
 	const WorkflowContext* const context = getContext().data();
+	Q_ASSERT(context);
 
 	/*
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.

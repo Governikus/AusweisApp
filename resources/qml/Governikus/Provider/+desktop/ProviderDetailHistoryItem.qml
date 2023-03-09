@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -37,11 +37,10 @@ Item {
 			columns: 2
 
 			GText {
-				font.weight: Font.Bold
 				maximumLineCount: 1
 				//: LABEL DESKTOP
 				text: qsTr("Service:")
-				textStyle: Style.text.normal
+				textStyle: Style.text.normal_highlight
 			}
 			GText {
 				Layout.fillWidth: true
@@ -51,11 +50,10 @@ Item {
 				textStyle: Style.text.normal
 			}
 			GText {
-				font.weight: Font.Bold
 				maximumLineCount: 1
 				//: LABEL DESKTOP
 				text: qsTr("Provider:")
-				textStyle: Style.text.normal
+				textStyle: Style.text.normal_highlight
 			}
 			GText {
 				Layout.fillWidth: true

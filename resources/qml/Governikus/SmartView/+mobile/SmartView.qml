@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -89,8 +89,10 @@ SectionPage {
 			onDeleteConfirmed: {
 				setLockedAndHidden();
 				push(deleteProgressView, {
+						//: LABEL ANDROID IOS
 						"text": qsTr("Resetting Smart-eID"),
 						"progressBarVisible": true,
+						//: LABEL ANDROID IOS
 						"progressText": qsTr("Resetting Smart-eID")
 					});
 				SmartModel.deleteSmart();

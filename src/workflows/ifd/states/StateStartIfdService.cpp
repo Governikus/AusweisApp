@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateStartIfdService.h"
@@ -29,7 +29,7 @@ void StateStartIfdService::run()
 	if (!server->isRunning() && !server->start(serverName))
 	{
 		qCCritical(statemachine) << "Cannot start IfdServer.";
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Start_Ifd_Service_Failed);
 		return;
 	}
 

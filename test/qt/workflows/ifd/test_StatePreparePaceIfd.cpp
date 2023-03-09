@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePaceIfd.h"
@@ -102,11 +102,12 @@ class test_StatePreparePaceIfd
 		{
 			const auto& message = createMessage(PacePasswordId::UNKNOWN);
 			mContext->setEstablishPaceChannel(message);
-			QSignalSpy spyContinue(mState.data(), &StatePreparePaceIfd::fireAbort);
+			QSignalSpy spyAbort(mState.data(), &StatePreparePaceIfd::fireAbort);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot handle unknown PacePasswordId");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Prepare_Pace_Ifd_Unknown);
 		}
 
 

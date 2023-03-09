@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -15,11 +15,11 @@ import Governikus.Type.RemoteServiceModel 1.0
 SectionPage {
 	id: baseItem
 
-	property alias enableTransportPinLink: transportPinLink.visible
+	property string accessibleContinueText
+	property alias moreInformationText: moreInformation.text
 	property int passwordType: NumberModel.passwordType
 	property alias statusIcon: statusIcon.source
 
-	signal changePinLength
 	signal passwordEntered(bool pWasNewPin)
 	signal requestPasswordInfo
 
@@ -46,7 +46,7 @@ SectionPage {
 			} else if (passwordType === PasswordType.NEW_PIN || passwordType === PasswordType.NEW_SMART_PIN) {
 				if (numberField.inputConfirmation === "") {
 					numberField.inputConfirmation = numberField.number;
-					numberField.forceActiveFocus(Qt.MouseFocusReason);
+					mainText.forceActiveFocus(Qt.MouseFocusReason);
 				} else {
 					NumberModel.newPin = numberField.number;
 					numberField.inputConfirmation = "";
@@ -239,27 +239,12 @@ SectionPage {
 				horizontalCenterOffset: eyeWidth / 2
 			}
 		}
-		MoreInformationLink {
-			id: transportPinLink
-
-			//: LABEL DESKTOP Button to switch to start a change of the Transport PIN.
-			text: qsTr("Do you have a five-digit Transport PIN?")
-			textStyle: Style.text.hint
-			visible: false
-
-			onClicked: baseItem.changePinLength()
-
-			anchors {
-				horizontalCenter: parent.horizontalCenter
-				top: numberField.bottom
-				topMargin: Constants.component_spacing
-			}
-		}
 	}
 	NumberPad {
 		anchors.bottom: parent.bottom
 		anchors.right: parent.right
 		deleteEnabled: numberField.number.length > 0
+		submitAccessibleText: button.accessibleText
 		submitEnabled: numberField.validInput
 
 		onDeletePressed: {
@@ -272,6 +257,27 @@ SectionPage {
 	}
 	NavigationButton {
 		id: button
+		accessibleText: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.CAN ? qsTr("Send CAN") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.PUK ? qsTr("Send PUK") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.REMOTE_PIN ? qsTr("Send pairing code") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.NEW_PIN && numberField.inputConfirmation === "" ? qsTr("Send new ID card PIN") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.NEW_PIN ? qsTr("Confirm new ID card PIN") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Send Transport PIN") :
+		//: LABEL DESKTOP
+		passwordType === PasswordType.SMART_PIN ? qsTr("Send Smart-eID PIN") :
+		//: LABEL DESKTOP
+		(passwordType === PasswordType.NEW_SMART_PIN && numberField.inputConfirmation === "") ? qsTr("Send new Smart-eID PIN") :
+		//: LABEL DESKTOP
+		(passwordType === PasswordType.NEW_SMART_PIN) ? qsTr("Confirm new Smart-eID PIN") :
+		//: LABEL DESKTOP
+		qsTr("Send ID card PIN")
 		activeFocusOnTab: true
 		buttonType: NavigationButton.Type.Forward
 		enabled: numberField.validInput

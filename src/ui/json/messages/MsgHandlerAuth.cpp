@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerAuth.h"
@@ -51,7 +51,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
 
-	mJsonObject[QLatin1String("result")] = ECardApiResult(pContext->getStatus()).toJson();
+	mJsonObject[QLatin1String("result")] = ECardApiResult(pContext->getStatus(), pContext->getFailureCode()).toJson();
 
 	QString url;
 	if (pContext->getRefreshUrl().isEmpty())

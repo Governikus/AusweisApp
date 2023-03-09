@@ -1307,6 +1307,26 @@
 		},
 		{
 			"shortName": {
+				"": "Stadt Niederkassel - Online-Services"
+			},
+			"longName": {
+				"": "Stadt Niederkassel - Online-Services"
+			},
+			"longDescription": {
+				"": "Im Online-Services-Portal der Stadt Niederkassel finden Sie diverse Dienstleistungen wie z. B. Bauanträge, Hundeangelegenheiten, Meldebescheinigung oder den Urkundenservice."
+			},
+			"address": "https://www.niederkassel.de/eServices",
+			"homepage": "https://www.niederkassel.de",
+			"phone": "+49 2208 9466 0",
+			"email": "digitalisierung@niederkassel.de",
+			"postalAddress": "Stadt Niederkassel<br/>Rathausstraße 19<br/>53859 Niederkassel",
+			"image": "StadtNiederkassel_image.jpg",
+			"icon": "StadtNiederkassel_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
 				"": "Niedersächsisches Ministerium für Inneres und Sport"
 			},
 			"longName": {
@@ -1338,9 +1358,9 @@
 			},
 			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
 			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
-			"phone": "+49 180 1 33 33 33",
-			"postalAddress": "Bundesministerium des Innern, für Bau und Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
-			"icon": "bmi_icon.svg",
+			"phone": "+49 30 18 681 23333",
+			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
+			"icon": "BMI_PIN_Reset_icon.svg",
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.pin-ruecksetzbrief-bestellen.de"
@@ -1358,9 +1378,9 @@
 			},
 			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
 			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
-			"phone": "+49 180 1 33 33 33",
-			"postalAddress": "Bundesministerium des Innern, für Bau und Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
-			"icon": "bmi_icon.svg",
+			"phone": "+49 30 18 681 23333",
+			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
+			"icon": "BMI_Aktivierung_icon.svg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Neue PIN für den Online-Ausweis bestellen (https://www.pin-ruecksetzbrief-bestellen.de)."
 		},
@@ -1671,6 +1691,25 @@
 		},
 		{
 			"shortName": {
+				"": "Serviceportal der Stadt Boizenburg/Elbe"
+			},
+			"longName": {
+				"": "Serviceportal der Stadt Boizenburg/Elbe"
+			},
+			"longDescription": {
+				"": "Die Stadt Boizenburg/Elbe bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.boizenburg.de",
+			"homepage": "https://www.boizenburg.de",
+			"phone": "+49 38847 626 0",
+			"email": "stadt@boizenburg.de",
+			"postalAddress": "Stadt Boizenburg/Elbe<br/>Kirchplatz 1<br/>19258 Boizenburg/Elbe",
+			"category": "citizen",
+			"icon": "Boizenburg_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
 				"": "Serviceportal Duisburg"
 			},
 			"longName": {
@@ -1709,6 +1748,44 @@
 		},
 		{
 			"shortName": {
+				"": "Serviceportal der Hansestadt Stralsund"
+			},
+			"longName": {
+				"": "Serviceportal der Hansestadt Stralsund"
+			},
+			"longDescription": {
+				"": "Die Hansestadt Stralsund bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.stralsund.de",
+			"homepage": "https://www.stralsund.de",
+			"phone": "+49 3831 252 110",
+			"email": "info@stralsund.de",
+			"postalAddress": "Hansestadt Stralsund<br/>Postfach 2145<br/>18408 Stralsund",
+			"category": "citizen",
+			"icon": "Stralsund_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
+				"": "Serviceportal der Stadt Grabow"
+			},
+			"longName": {
+				"": "Serviceportal der Stadt Grabow"
+			},
+			"longDescription": {
+				"": "Die Stadt Grabow bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.grabow.de",
+			"homepage": "https://www.grabow.de",
+			"phone": "+49 38756 503 0",
+			"email": "info@grabow.de",
+			"postalAddress": "Stadt Grabow<br/>Am Markt 1<br/>19300 Grabow",
+			"category": "citizen",
+			"icon": "Grabow_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
 				"": "Servicekonto Sachsen"
 			},
 			"longName": {
@@ -1726,6 +1803,25 @@
 			"subjectUrls": [
 				"https://eidconnect.egov.sachsen.de"
 			]
+		},
+		{
+			"shortName": {
+				"": "Serviceportal der Stadt Ludwigslust"
+			},
+			"longName": {
+				"": "Serviceportal der Stadt Ludwigslust"
+			},
+			"longDescription": {
+				"": "Die Stadt Ludwigslust bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.ludwigslust.de",
+			"homepage": "https://ludwigslust.de",
+			"phone": "+49 3874 526 0",
+			"email": "stadt@ludwigslust.de",
+			"postalAddress": "Stadt Ludwigslust<br/>Schloßstraße 38<br/>19288 Ludwigslust",
+			"category": "citizen",
+			"icon": "Ludwigslust_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
 		},
 		{
 			"shortName": {
@@ -1784,6 +1880,101 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
+			"shortName": {
+				"": "MV-Serviceportal"
+			},
+			"longName": {
+				"": "Serviceportal Mecklenburg-Vorpommern"
+			},
+			"longDescription": {
+				"": "Das MV-Serviceportal ist die zentrale Informationsplattform der öffentlichen Verwaltung von Mecklenburg-Vorpommern für Bürgerinnen und Bürger, Unternehmen und Verwaltungen."
+			},
+			"address": "https://login.mv-serviceportal.de",
+			"homepage": "https://login.mv-serviceportal.de",
+			"email": "support@ego-mv.de",
+			"postalAddress": "Ministerium für Inneres, Bau und Digitalisierung Mecklenburg-Vorpommern<br/>Arsenal am Pfaffenteich<br/>Alexandrinenstraße 1<br/>19053 Schwerin",
+			"category": "citizen",
+			"subjectUrls": [
+				"https://login.mv-serviceportal.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Serviceportal des Amtes Neustadt-Glewe"
+			},
+			"longName": {
+				"": "Serviceportal des Amtes Neustadt-Glewe"
+			},
+			"longDescription": {
+				"": "Das Amt Neustadt-Glewe bietet auf seinem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.neustadt-glewe.de",
+			"homepage": "https://www.neustadt-glewe.de",
+			"phone": "+49 38757 500 0",
+			"email": "info@neustadt-glewe.de",
+			"postalAddress": "Stadt Neustadt-Glewe<br/>Markt 1<br/>19306 Neustadt-Glewe",
+			"category": "citizen",
+			"icon": "Neustadt-Glewe_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
+				"": "Serviceportal der Landeshauptstadt Schwerin"
+			},
+			"longName": {
+				"": "Serviceportal der Landeshauptstadt Schwerin"
+			},
+			"longDescription": {
+				"": "Die Landeshauptstadt Schwerin bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://serviceportal.schwerin.de",
+			"homepage": "https://serviceportal.schwerin.de",
+			"phone": "+49 385 545 0",
+			"email": "info@schwerin.de",
+			"postalAddress": "Landeshauptstadt Schwerin<br/>Am Packhof 2-6<br/>19053 Schwerin",
+			"category": "citizen",
+			"icon": "Schwerin_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
+				"": "Serviceportal des Landkreises Ludwigslust-Parchim"
+			},
+			"longName": {
+				"": "Serviceportal des Landkreises Ludwigslust-Parchim"
+			},
+			"longDescription": {
+				"": "Der Landkreis Ludwigslust-Parchim bietet auf seinem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.kreis-lup.de",
+			"homepage": "https://www.kreis-lup.de",
+			"phone": "+49 3871 722 0",
+			"email": "info@kreis-lup.de",
+			"postalAddress": "Landkreis Ludwigslust-Parchim<br/>Postfach 16 02 20<br/>19092 Schwerin",
+			"category": "citizen",
+			"icon": "Ludwigslust-Parchim_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
+			"shortName": {
+				"": "Serviceportal des Amtes Stralendorf"
+			},
+			"longName": {
+				"": "Serviceportal des Amtes Stralendorf"
+			},
+			"longDescription": {
+				"": "Das Amtes Stralendorf bietet auf seinem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
+			},
+			"address": "https://service.amt-stralendorf.de",
+			"homepage": "https://www.amt-stralendorf.de",
+			"phone": "+49 3869 7600 0",
+			"email": "amt@amt-stralendorf.de",
+			"postalAddress": "Amt Stralendorf<br/>Dorfstraße 30<br/>19073 Stralendorf",
+			"category": "citizen",
+			"icon": "Stralendorf_icon.png",
+			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+		},
+		{
 			"exclude": [
 				"ios"
 			],
@@ -1816,7 +2007,7 @@
 			"homepage": "https://serviceportal.schleswig-holstein.de",
 			"phone": "+49 431 988 0",
 			"email": "dataportdigitaleplattformens-hsupport@dataport.de",
-			"postalAddress": "Ministerium für Energiewende, Landwirtschaft, Umwelt, Natur und Digitalisierung des Landes Schleswig-Holstein<br/>Digitalisierung und Zentrales IT-Management der Landesregierung<br/>Niemannsweg 220<br/>24106 Kiel",
+			"postalAddress": "Der Ministerpräsident - Staatskanzlei des Landes Schleswig-Holstein<br/>Digitalisierung und Zentrales IT-Management der Landesregierung<br/>Düsternbrooker Weg 104<br/>24105 Kiel",
 			"image": "ServiceportalSchleswigHolstein_image.jpg",
 			"icon": "ServiceportalSchleswigHolstein_icon.png",
 			"category": "citizen",
@@ -2049,6 +2240,44 @@
 			"postalAddress": "Landkreis Saalekreis<br/>Domplatz 9<br/>06217 Merseburg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
+		},
+		{
+			"shortName": {
+				"": "UVO"
+			},
+			"longName": {
+				"": "Unterhaltsvorschuss Online"
+			},
+			"longDescription": {
+				"": "Der Unterhaltsvorschuss ist eine staatliche Leistung für Kinder von Alleinerziehenden. Er hilft, die finanzielle Lebensgrundlage Ihres Kindes zu sichern, wenn der andere Elternteil nicht oder nur teilweise oder nicht regelmäßig Unterhalt in Höhe des Unterhaltsvorschusses zahlt. Sie können Unterhaltsvorschuss mit diesem Online-Dienst oder mit dem Papierantrag in Ihrer zuständigen Unterhaltsvorschuss-Stelle beantragen. Bitte beachten Sie, dass der Onlineantrag Unterhaltsvorschuss Online noch nicht in allen deutschen UV-Stellen verfügbar ist."
+			},
+			"address": "https://serviceportal.gemeinsamonline.de/Onlinedienste/Service/Entry/UVORSCHUSS",
+			"homepage": "https://www.finanzen.bremen.de/digitalisierung/nachnutzbare-ozg-services/uvo-108593",
+			"email": "betrieb-onlinedienste@finanzen.bremen.de",
+			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
+			"category": "citizen",
+			"icon": "UVO_icon.svg",
+			"subjectUrls": [
+				"https://idp.serviceportal.gemeinsamonline.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "UVOJahr"
+			},
+			"longName": {
+				"": "Unterhaltsvorschuss - Jährliche Überprüfung"
+			},
+			"longDescription": {
+				"": "Viele Kinder Alleinerziehender erhalten Unterhaltsvorschuss. Die Unterhaltsvorschuss-Stelle muss jährlich prüfen, ob dem Kind der Unterhaltsvorschuss noch zusteht. Hier können Bürgerinnen und Bürger die notwendigen Angaben machen. Bitte beachten Sie, dass der Onlineantrag Unterhaltsvorschuss Online noch nicht in allen deutschen UV-Stellen verfügbar ist."
+			},
+			"address": "https://serviceportal.gemeinsamonline.de/Onlinedienste/Service/Entry/UVOJAHR",
+			"homepage": "https://www.finanzen.bremen.de/digitalisierung/nachnutzbare-ozg-services/uvo-108593",
+			"email": "betrieb-onlinedienste@finanzen.bremen.de",
+			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
+			"category": "citizen",
+			"icon": "UVOJahr_icon.svg",
+			"subjectUrlInfo": "Using service from Unterhaltsvorschuss Online (https://idp.serviceportal.gemeinsamonline.de)."
 		},
 		{
 			"exclude": [

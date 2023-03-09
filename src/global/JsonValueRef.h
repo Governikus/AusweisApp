@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Compatibility helper for Qt5/Qt6 JSON stuff.
- *
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

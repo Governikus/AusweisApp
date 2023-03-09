@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class StateEnterPacePasswordIfd
 		void run() override;
 
 	private Q_SLOTS:
-		void onCancelEstablishPaceChannel(bool pRequestPinChange);
+		void onCancelEstablishPaceChannel();
 
 	public:
 		void onEntry(QEvent* pEvent) override;

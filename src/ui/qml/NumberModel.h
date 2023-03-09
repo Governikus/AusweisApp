@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Model for accessing PIN, CAN, PUK, according to the
  * currently active workflow.
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +32,6 @@ class NumberModel
 	Q_PROPERTY(QString pin READ getPin WRITE setPin NOTIFY firePinChanged)
 	Q_PROPERTY(QString newPin READ getNewPin WRITE setNewPin NOTIFY fireNewPinChanged)
 	Q_PROPERTY(QString puk READ getPuk WRITE setPuk NOTIFY firePukChanged)
-	Q_PROPERTY(bool hasError READ hasError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(bool hasPasswordError READ hasPasswordError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
@@ -64,7 +65,6 @@ class NumberModel
 		[[nodiscard]] QString getPuk() const;
 		void setPuk(const QString& pPuk);
 
-		[[nodiscard]] bool hasError() const;
 		[[nodiscard]] bool hasPasswordError() const;
 		[[nodiscard]] QString getInputError() const;
 

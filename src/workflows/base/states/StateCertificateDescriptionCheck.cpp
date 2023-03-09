@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCertificateDescriptionCheck.h"
@@ -31,7 +31,7 @@ void StateCertificateDescriptionCheck::run()
 	{
 		qCritical() << "No certificate description available";
 		updateStatus(GlobalStatus::Code::Workflow_Certificate_No_Description);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_No_Description);
 		return;
 	}
 
@@ -39,7 +39,7 @@ void StateCertificateDescriptionCheck::run()
 	{
 		qCritical() << "No subject url available in certificate description";
 		updateStatus(GlobalStatus::Code::Workflow_Certificate_No_Url_In_Description);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_No_SubjectUrl_In_Description);
 		return;
 	}
 
@@ -58,7 +58,7 @@ void StateCertificateDescriptionCheck::run()
 		{
 			qCritical() << certificateHashError;
 			updateStatus(GlobalStatus::Code::Workflow_Certificate_Hash_Error);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_Hash_Mismatch);
 			return;
 		}
 	}
@@ -87,7 +87,7 @@ void StateCertificateDescriptionCheck::run()
 		{
 			qCritical() << sameOriginPolicyError;
 			updateStatus(GlobalStatus::Code::Workflow_Certificate_Sop_Error);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_Same_Origin_Policy_Violation);
 			return;
 		}
 	}

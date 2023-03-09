@@ -1,7 +1,6 @@
 import common.Trigger
 import common.Constants
 import common.Build.JobType
-import static common.Constants.createEnvMap
 import static common.Constants.createReviewMessage
 import static common.Constants.getEnvNumber
 
@@ -30,8 +29,6 @@ String getName(String name)
 	return "${MERCURIAL_REVISION_BRANCH}_Review_" + name
 }
 
-def envMap = createEnvMap(getJobs(), this.&getName)
-
 def reviewMessage = createReviewMessage(getJobs(), this.&getName) + ' | Libraries: ${Libraries}' + ' | SonarQube Analysis: ${SONARQUBE_ANALYSIS_MESSAGE}'
 
 
@@ -51,13 +48,14 @@ j.with
 	{
 		environmentVariables
 		{
-			envs(envMap)
 			env('SONARQUBE_ANALYSIS_MESSAGE', '')
 		}
 	}
 
 	steps
 	{
+		shell('cd source; resources/jenkins/notify_rb.sh')
+
 		shell('cd source; hg import --no-commit ../patch.diff')
 
 		phase('General', 'UNSTABLE')
@@ -157,12 +155,31 @@ j.with
 		}
 	}
 
-	configure
-	{
-		project -> project / 'publishers' << 'org.jenkinsci.plugins.jenkinsreviewbot.ReviewboardNotifier' {
-			shipItOnSuccess 'false'
-			useMarkdown 'true'
-			customMessage "${reviewMessage}"
+	publishers {
+		postBuildScript
+		{
+			markBuildUnstable(true)
+			buildSteps
+			{
+				postBuildStep
+				{
+					stopOnFailure(false)
+					results(['SUCCESS', 'FAILURE', 'UNSTABLE', 'ABORTED', 'NOT_BUILT'])
+					buildSteps
+					{
+						envInjectBuilder
+						{
+							propertiesFilePath('')
+							propertiesContent("REVIEWBOARD_MSG=" + reviewMessage)
+						}
+
+						shell
+						{
+							command('cd source; resources/jenkins/notify_rb.sh')
+						}
+					}
+				}
+			}
 		}
 	}
 }

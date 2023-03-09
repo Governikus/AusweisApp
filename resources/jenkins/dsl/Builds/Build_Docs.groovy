@@ -4,7 +4,7 @@ def j = new Build
 	(
 		name: 'Docs',
 		label: 'Docs',
-		artifacts: 'build/*.pdf,build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html'
+		artifacts: 'build/*.pdf,build/docs/**/*.pdf,build/docs/**/*.tar.xz,build/docs/notes/singlehtml/**/appcast.html,build/docs/**/*.inv'
 	).generate(this)
 
 

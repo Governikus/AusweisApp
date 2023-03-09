@@ -112,8 +112,8 @@ endif()
 set(QT 6.4.1)
 set(QT_HASH e20b850b6134098a7f2e7701cfddfb213c6cf394b9e848e6fbc5b0e89dcfcc09)
 
-set(OPENSSL 3.0.7)
-set(OPENSSL_HASH 83049d042a260e696f62406ac5c08bf706fd84383f945cf21bd61e9ed95c396e)
+set(OPENSSL 3.0.8)
+set(OPENSSL_HASH 6c13d2bf38fdf31eac3ce2a347073673f5d63263398f1f69d0df4a41253e4b3e)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)
@@ -422,6 +422,9 @@ elseif(ANDROID)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
 		-android-sdk ${ANDROID_SDK} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION}
 		-android-abis ${CMAKE_ANDROID_ARCH_ABI} -xplatform android-clang)
+
+	# ANDROID_TARGET_SDK_VERSION cannot be passed here as Qt has it's own variable and uses the latest in "${ANDROID_SDK_ROOT}/platforms".
+	# https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPlatformAndroid.cmake?h=6.4#n36
 
 	if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-use-gold-linker)

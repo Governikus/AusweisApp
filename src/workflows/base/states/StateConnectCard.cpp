@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateConnectCard.h"
@@ -55,7 +55,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	{
 		qCDebug(statemachine) << "Card connection failed";
 		updateStatus(GlobalStatus::Code::Card_Communication_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Connect_Card_Connection_Failed);
 		return;
 	}
 
@@ -78,7 +78,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 
 	if (readerInfo.isPinDeactivated() && !context->isCanAllowedMode())
 	{
-		qCDebug(statemachine) << "The online identification function of the ID card is not activated.";
+		qCDebug(statemachine) << "The eID function of the ID card is not activated.";
 		const GlobalStatus status = GlobalStatus::Code::Card_Pin_Deactivated;
 		if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 		{
@@ -87,7 +87,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 		else
 		{
 			updateStatus(status);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Connect_Card_Eid_Inactive);
 		}
 		return;
 	}

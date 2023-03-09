@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Controller for the step that tries to establish a PACE
  *        connection using the card's Pin.
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,8 +34,8 @@ class StateEstablishPaceChannel
 		void run() override;
 		void onUserCancelled() override;
 
-		void abort();
-		void abortToChangePin();
+		void abort(FailureCode::Reason pReason);
+		void abortToChangePin(FailureCode::Reason pReason);
 		void handleNpaPosition(CardReturnCode pReturnCode);
 
 	private Q_SLOTS:
@@ -43,6 +45,7 @@ class StateEstablishPaceChannel
 		void firePaceChannelEstablished();
 		void firePaceChannelInoperative();
 		void fireAbortAndUnfortunateCardPosition();
+		void firePropagateAbort();
 };
 
 } // namespace governikus

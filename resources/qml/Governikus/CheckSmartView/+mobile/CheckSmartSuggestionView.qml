@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.CheckResultView 1.0
@@ -53,7 +53,7 @@ CheckResultSuggestionView {
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Check device and ID card")
 		//: LABEL ANDROID IOS
-		text: qsTr("Your mobile device does not meet the technical requirements for Smart-eID.<br><br>You may check if your device and ID card are suitable to use the eID functionality.")
+		text: qsTr("Your mobile device does not meet the technical requirements for Smart-eID.<br><br>You may check if your device and ID card are suitable to use the eID function.")
 
 		//: LABEL ANDROID IOS
 		title: qsTr("Smart-eID not supported")

@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref RemoteReaderAdvertiserImpl
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -13,6 +15,19 @@
 #include <QNetworkProxy>
 #include <QtTest>
 
+namespace governikus
+{
+
+
+template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, int&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, int& pTimerInterval, bool& pPairing)
+{
+	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pTimerInterval, pPairing);
+}
+
+
+} // namespace governikus
+
+
 using namespace governikus;
 
 
@@ -22,15 +37,16 @@ class DatagramHandlerMock
 	Q_OBJECT
 
 	public:
+		QByteArrayList mList;
+
 		[[nodiscard]] bool isBound() const override;
 
 		void send(const QByteArray& pData) override
 		{
-			Q_EMIT fireSend(pData);
+			mList << pData;
 		}
 
-	Q_SIGNALS:
-		void fireSend(const QByteArray& pData);
+
 };
 
 
@@ -64,19 +80,6 @@ class test_RemoteReaderAdvertiser
 		}
 
 
-		void advertisePeriodically()
-		{
-			const QString ifdName("ServerName");
-			const QString ifdId("0123456789ABCDEF");
-			quint16 port = 12345;
-			int pTimerInterval = 100;
-
-			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
-			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			QTRY_COMPARE(spy.count(), 5); // clazy:exclude=qstring-allocations
-		}
-
-
 		void checkBroadcast_data()
 		{
 			QTest::addColumn<bool>("pairing");
@@ -92,16 +95,14 @@ class test_RemoteReaderAdvertiser
 			const QString ifdName("ServerName");
 			const QString ifdId("0123456789ABCDEF");
 			quint16 port = 12345;
-			int pTimerInterval = 100;
+			int pTimerInterval = 99999;
 
-			QSignalSpy spy(mMock.data(), &DatagramHandlerMock::fireSend);
-			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval));
-			advertiser->setPairing(pairing);
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QScopedPointer<RemoteReaderAdvertiser> advertiser(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, pTimerInterval, pairing));
+			QTRY_COMPARE(mMock->mList.size(), 1); // clazy:exclude=qstring-allocations
+
+			const auto data = mMock->mList.at(0);
 			advertiser.reset();
-
-			const auto& byteArray = spy.at(0).at(0).toByteArray();
-			const auto& offerMsg = Discovery(QJsonDocument::fromJson(byteArray).object());
+			const auto& offerMsg = Discovery(QJsonDocument::fromJson(data).object());
 
 			QCOMPARE(offerMsg.getIfdName(), ifdName);
 			QCOMPARE(offerMsg.getIfdId(), ifdId);

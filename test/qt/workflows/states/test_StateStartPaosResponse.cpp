@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QThread>
@@ -56,6 +56,8 @@ class test_StateStartPaosResponse
 			const ECardApiResult& result = mState->getContext()->getStartPaosResult();
 			QCOMPARE(result.getMajor(), ECardApiResult::Major::Error);
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::DP_Timeout_Error);
+
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Start_Paos_Response_Error);
 		}
 
 
@@ -69,6 +71,7 @@ class test_StateStartPaosResponse
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Start_Paos_Response_Error);
 		}
 
 

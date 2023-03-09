@@ -11,10 +11,10 @@ singleton Utils 1.0 Utils.qml
 
 ConfirmationPopup 1.0 ConfirmationPopup.qml
 DecisionView 1.0 DecisionView.qml
-DynamicLayout 1.0 DynamicLayout.qml
 
 GBusyIndicator 1.0 GBusyIndicator.qml
 GButton 1.0 GButton.qml
+GInformativeButton 1.0 GInformativeButton.qml
 GCheckBox 1.0 GCheckBox.qml
 GComboBox 1.0 GComboBox.qml
 GConicalGradient 1.0 GConicalGradient.qml
@@ -58,7 +58,6 @@ TabbedPaneDelegateText 1.0 TabbedPaneDelegateText.qml
 PkiSwitch 1.0 PkiSwitch.qml
 TintableIcon 1.0 TintableIcon.qml
 TitledSeparator 1.0 TitledSeparator.qml
-ToggleableOption 1.0 ToggleableOption.qml
 PrivacyStatement 1.0 PrivacyStatement.qml
 Hint 1.0 Hint.qml
 MoreInformationLink 1.0 MoreInformationLink.qml

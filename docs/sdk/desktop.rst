@@ -74,6 +74,9 @@ Automatic
 .. versionadded:: 1.24.0
    Mode "automatic" added.
 
+.. versionadded:: 1.26.3
+   Variable "AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE" added.
+
 You can enable an automatic authentication with the automatic plugin by providing the
 commandline parameter ``--ui automatic``.
 
@@ -90,6 +93,10 @@ The default value for the PIN is **123456**. If a value is not defined or the ca
 refuses a PIN, CAN or PUK the AusweisApp2 will cancel the whole workflow.
 Also the workflow will be canceled if the card reader is not a basic reader as it
 is not possible to automatically enter the values.
+
+The **developerMode** (like in :ref:`run_auth`) can be enabled with the environment
+variable ``AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE``.
+This will be evaluated if the automatic plugin takes control over the workflow.
 
 
 .. note::

@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
@@ -33,6 +33,7 @@ WorkflowContext::WorkflowContext(const Action pAction)
 	, mExpectedReader()
 	, mLastPaceResult(CardReturnCode::OK)
 	, mStatus(GlobalStatus::Code::No_Error)
+	, mFailureCode()
 	, mStartPaosResult(ECardApiResult::createOk())
 	, mErrorReportedToUser(true)
 	, mPaceResultReportedToUser(false)
@@ -442,6 +443,25 @@ void WorkflowContext::setStatus(const GlobalStatus& pStatus)
 {
 	mStatus = pStatus;
 	mErrorReportedToUser = false;
+	Q_EMIT fireResultChanged();
+}
+
+
+std::optional<FailureCode> WorkflowContext::getFailureCode() const
+{
+	return mFailureCode;
+}
+
+
+void WorkflowContext::setFailureCode(const FailureCode& pFailure)
+{
+	if (mFailureCode.has_value())
+	{
+		qWarning() << "FailureCode already set to" << mFailureCode.value() << "- ignoring" << pFailure;
+		return;
+	}
+
+	mFailureCode = pFailure;
 	Q_EMIT fireResultChanged();
 }
 

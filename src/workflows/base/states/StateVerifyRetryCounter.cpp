@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateVerifyRetryCounter.h"
@@ -24,7 +24,7 @@ void StateVerifyRetryCounter::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "Card connection lost.";
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Verify_Retry_Counter_No_Card_Connection);
 		return;
 	}
 

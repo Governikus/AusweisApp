@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangePin.h"
@@ -40,7 +40,7 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 		Q_ASSERT(false);
 		qCDebug(statemachine) << "Expected a SetEidPinCommand as response!";
 		updateStatus(GlobalStatus::Code::Card_Protocol_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_No_SetEidPinCommand_Response);
 		return;
 	}
 
@@ -68,31 +68,39 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 
 				case StatusCode::INPUT_TIMEOUT:
 					updateStatus(GlobalStatus::Code::Card_Input_TimeOut);
+					Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Input_Timeout);
 					break;
 
 				case StatusCode::INPUT_CANCELLED:
 					updateStatus(GlobalStatus::Code::Card_Cancellation_By_User);
+					Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_User_Cancelled);
 					break;
 
 				case StatusCode::PASSWORDS_DIFFER:
 					updateStatus(GlobalStatus::Code::Card_NewPin_Mismatch);
+					Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_New_Pin_Mismatch);
 					break;
 
 				case StatusCode::PASSWORD_OUTOF_RANGE:
 					updateStatus(GlobalStatus::Code::Card_NewPin_Invalid_Length);
+					Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_New_Pin_Invalid_Length);
 					break;
 
 				default:
 					updateStatus(GlobalStatus::Code::Card_Unexpected_Transmit_Status);
+					Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Unexpected_Transmit_Status);
 			}
 
-			Q_EMIT fireAbort();
 			return;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
+			break;
+
 		case CardReturnCode::NEW_PIN_MISMATCH:
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
 			break;
 
 		default:

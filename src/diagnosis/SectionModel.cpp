@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SectionModel.h"
@@ -25,24 +25,24 @@ QVariant SectionModel::data(const QModelIndex& pIndex, int pRole) const
 
 	static const QLatin1Char endl('\n');
 
-	QSharedPointer<ContentItem> item = mContentItems.at(row);
+	const ContentItem& item = mContentItems.at(row);
 	switch (pRole)
 	{
 		case Qt::DisplayRole:
-			if (item->mTitle.isEmpty())
+			if (item.mTitle.isEmpty())
 			{
-				return item->mContent;
+				return item.mContent;
 			}
 			else
 			{
-				return item->mTitle + endl + item->mContent;
+				return item.mTitle + endl + item.mContent;
 			}
 
 		case TitleRole:
-			return item->mTitle;
+			return item.mTitle;
 
 		case ContentRole:
-			return item->mContent;
+			return item.mContent;
 
 		default:
 			return QVariant();
@@ -67,71 +67,29 @@ QHash<int, QByteArray> SectionModel::roleNames() const
 }
 
 
-void SectionModel::addItem(const QString& pTitle, const QString& pContent)
-{
-	addItem(QSharedPointer<ContentItem>::create(pTitle, pContent));
-}
-
-
-void SectionModel::addItem(const QSharedPointer<ContentItem>& pContentItem)
-{
-	beginInsertRows(index(0), mContentItems.size(), mContentItems.size());
-	mContentItems.append(pContentItem);
-	endInsertRows();
-}
-
-
-void SectionModel::addItemWithoutTitle(const QString& pContent)
-{
-	addItem(QString(), pContent);
-}
-
-
-void SectionModel::addTitleWithoutContent(const QString& pTitle)
-{
-	addItem(pTitle, QString());
-}
-
-
-bool SectionModel::contains(const QSharedPointer<ContentItem>& pContentItem) const
-{
-	return mContentItems.contains(pContentItem);
-}
-
-
 void SectionModel::removeAllItems()
 {
-	if (!mContentItems.empty())
+	if (mContentItems.empty())
 	{
-		beginRemoveRows(index(0), 0, mContentItems.size() - 1);
-		mContentItems.clear();
-		endRemoveRows();
+		return;
 	}
-}
 
-
-void SectionModel::emitDataChangedForItem(const QSharedPointer<ContentItem>& pItem)
-{
-	QModelIndex itemIndex = index(mContentItems.indexOf(pItem));
-	Q_EMIT dataChanged(itemIndex, itemIndex);
-}
-
-
-void SectionModel::replaceWithSections(QVector<QSharedPointer<SectionModel>> pSections)
-{
 	beginResetModel();
-	removeAllItems();
+	mContentItems.clear();
+	endResetModel();
+}
 
-	for (const auto& section : std::as_const(pSections))
+
+void SectionModel::addContent(const QVector<ContentItem>& pContent)
+{
+	if (pContent.empty())
 	{
-		const auto& sectionItems = section->mContentItems;
-		for (const auto& item : sectionItems)
-		{
-			addItem(item);
-		}
+		return;
 	}
 
-	endResetModel();
+	beginInsertRows(index(mContentItems.size()), mContentItems.size(), mContentItems.size() + pContent.size() - 1);
+	mContentItems << pContent;
+	endInsertRows();
 }
 
 
@@ -140,14 +98,14 @@ QStringList SectionModel::getAsPlaintext(const QString& pPrependString) const
 	QStringList sectionPlaintext;
 	for (const auto& item : std::as_const(mContentItems))
 	{
-		if (!item->mTitle.isEmpty())
+		if (!item.mTitle.isEmpty())
 		{
-			sectionPlaintext << pPrependString + item->mTitle;
+			sectionPlaintext << pPrependString + item.mTitle;
 		}
 
-		if (!item->mContent.isEmpty())
+		if (!item.mContent.isEmpty())
 		{
-			sectionPlaintext << pPrependString + item->mContent;
+			sectionPlaintext << pPrependString + item.mContent;
 		}
 	}
 

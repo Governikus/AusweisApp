@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -8,6 +8,10 @@
 #include <QtTest>
 
 #include <algorithm>
+
+#if __has_include(<unistd.h>)
+	#include <unistd.h>
+#endif
 
 using namespace governikus;
 
@@ -86,7 +90,21 @@ int TestFileHelper::getUnprivilegedPortStart()
 	{
 		result = converted;
 	}
+	else
+	{
+		qCritical() << "Cannot convert port data";
+	}
 #endif
 
 	return result;
+}
+
+
+bool TestFileHelper::systemAllowsPort(int pPort)
+{
+	return TestFileHelper::getUnprivilegedPortStart() <= pPort
+#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS) || defined(Q_OS_BSD4)
+		   || getuid() == 0
+#endif
+	;
 }

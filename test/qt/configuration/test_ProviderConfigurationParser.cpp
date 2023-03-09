@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref ProviderConfigurationParser
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -222,8 +224,8 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int all = 100;
-			const int withEidSupport = 78;
+			const int all = 112;
+			const int withEidSupport = 90;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;

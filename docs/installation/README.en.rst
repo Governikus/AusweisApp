@@ -12,7 +12,7 @@ contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
+  msiexec /i AusweisApp2-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp2" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true SECURESCREENKEYBOARD=true HISTORY=false ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
 INSTALLDIR
   States the installation directory. If not specified, the folder
@@ -105,6 +105,11 @@ SHUFFLESCREENKEYBOARD
   By setting SHUFFLESCREENKEYBOARD to false or true, the random arrangement can be
   deactivated or activated. Users are able to adjust the setting.
 
+SECURESCREENKEYBOARD
+  If the on-screen keyboard is activated, the animation of the number keys can be
+  disabled. By setting SECURESCREENKEYBOARD to false or true, the animation can be
+  activated or deactivated. Users are able to adjust the setting.
+
 HISTORY
   Each authentication is saved in the history. No personal data is saved, only the
   time of authentication, the provider and the selected fields (without
@@ -171,6 +176,8 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
     <true/>
     <key>shuffleScreenKeyboard</key>
     <true/>
+    <key>visualPrivacy</key>
+    <true/>
     <key>history.enable</key>
     <false/>
     <key>enableCanAllowed</key>
@@ -196,6 +203,7 @@ customProxyHost         CUSTOMPROXYHOST
 autoUpdateCheck         UPDATECHECK
 keylessPassword         ONSCREENKEYBOARD
 shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
+visualPrivacy           SECURESCREENKEYBOARD
 history.enable          HISTORY
 enableCanAllowed        ENABLECANALLOWED
 skipRightsOnCanAllowed  SKIPRIGHTSONCANALLOWED

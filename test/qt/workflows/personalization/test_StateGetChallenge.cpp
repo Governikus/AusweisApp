@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetChallenge.h"
@@ -39,6 +39,7 @@ class test_StateGetChallenge
 			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/v1/%1")));
 			mState.reset(new StateGetChallenge(mContext));
+			mState->setStateName("StateGetChallenge");
 			QVERIFY(mContext->getChallenge().isEmpty());
 		}
 
@@ -87,6 +88,7 @@ class test_StateGetChallenge
 			QVERIFY(logMsg.contains("No valid challenge to prepare personalization"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getFailureCode() == FailureCode::Reason::Get_Challenge_Invalid, true);
 			QVERIFY(mContext->getChallenge().isEmpty());
 		}
 
@@ -119,6 +121,16 @@ class test_StateGetChallenge
 			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+
+			const FailureCode::FailureInfoMap infoMap {
+				{FailureCode::Info::State_Name, "StateGetChallenge"},
+				{FailureCode::Info::Http_Status_Code, QString::number(500)},
+				{FailureCode::Info::Network_Error, "Unknown error"}
+			};
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode() == failureCode, true);
+			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
+
 			QVERIFY(mContext->getChallenge().isEmpty());
 		}
 

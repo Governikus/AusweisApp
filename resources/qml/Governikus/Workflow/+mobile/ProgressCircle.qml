@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -136,12 +136,13 @@ Item {
 			height: width
 			radius: width / 2
 
-			Text {
+			GText {
+				Accessible.ignored: true
 				anchors.centerIn: parent
 				color: tCircle1.state === "active" ? Constants.white : Style.color.accent
-				font.bold: true
 				font.pixelSize: parent.height / 3
 				text: "1"
+				textStyle: Style.text.normal_highlight
 			}
 		}
 	}

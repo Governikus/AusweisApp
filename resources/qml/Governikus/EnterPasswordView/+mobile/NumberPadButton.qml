@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -11,9 +11,10 @@ Button {
 	id: numberPadButton
 
 	property string a11yDisabledText: qsTr("Disabled")
+	property string a11yText
 	property bool visualPrivacy: false
 
-	Accessible.name: numberPadButton.enabled ? text : a11yDisabledText
+	Accessible.name: numberPadButton.enabled ? a11yText !== "" ? a11yText : text : a11yDisabledText
 	Layout.fillHeight: true
 	Layout.fillWidth: true
 	implicitHeight: 36

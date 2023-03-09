@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,15 +11,23 @@ namespace governikus
 
 struct ContentItem
 {
-	ContentItem(const QString& pTitle, const QString& pContent)
+	QString mTitle;
+	QString mContent;
+
+
+	explicit ContentItem(const QString& pTitle = QString(), const QString& pContent = QString())
 		: mTitle(pTitle)
 		, mContent(pContent)
 	{
 	}
 
 
-	QString mTitle;
-	QString mContent;
+	bool operator==(const ContentItem& pOther) const
+	{
+		return mTitle == pOther.mTitle && mContent == pOther.mContent;
+	}
+
+
 };
 
 } // namespace governikus

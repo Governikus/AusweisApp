@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit test for \ref StateDidAuthenticateEac1
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDidAuthenticateEac1.h"
@@ -93,6 +95,7 @@ class test_StateDidAuthenticateEac1
 			state.onCardCommandDone(command);
 			QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Unknown_Error);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Did_Authenticate_Eac1_Card_Command_Failed);
 
 			command->setMockReturnCode(CardReturnCode::OK);
 			const QByteArray array(QByteArray::fromHex("9000"));

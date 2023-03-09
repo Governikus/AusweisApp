@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -129,13 +129,13 @@ void Discovery::parsePairing(const QJsonObject& pMessageObject)
 }
 
 
-Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis)
+Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis, bool pPairing)
 	: IfdMessage(IfdMessageType::UNDEFINED)
 	, mIfdName(pIfdName)
 	, mIfdId(pIfdId)
 	, mPort(pPort)
 	, mSupportedApis(pSupportedApis)
-	, mPairing(false)
+	, mPairing(pPairing)
 {
 }
 

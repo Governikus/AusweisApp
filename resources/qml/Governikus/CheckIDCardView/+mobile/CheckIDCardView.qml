@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -91,7 +91,7 @@ SectionPage {
 			GText {
 
 				//: LABEL ANDROID IOS
-				text: qsTr("To use the online identification function, your device must meet certain technical requirements. Furthermore, the online identification function must be activated.")
+				text: qsTr("To use the eID function, your device must meet certain technical requirements. Furthermore, the eID function must be activated.")
 				width: parent.width
 			}
 			GText {

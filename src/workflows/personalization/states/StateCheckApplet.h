@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Helper state that installs the Smart-eID applet
- *
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Status representation according to TR-03112-6 "eCard-API-Framework"
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "FailureCode.h"
 #include "GlobalStatus.h"
 
 #include <QCoreApplication>
@@ -14,9 +17,12 @@
 #include <QPair>
 #include <QSharedData>
 #include <QString>
+#include <optional>
+
 
 class test_ECardApiResult;
 class test_UrlUtil;
+
 
 namespace governikus
 {
@@ -97,8 +103,9 @@ class ECardApiResult
 				const QString mMessage;
 				const QString mMessageLang;
 				const Origin mOrigin;
+				const std::optional<FailureCode> mFailureCode;
 
-				ResultData(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin);
+				ResultData(Major pMajor, Minor pMinor, const QString& pMessage, Origin pOrigin, const std::optional<FailureCode>& pFailureCode = {});
 
 				bool operator ==(const ResultData& pOther) const
 				{
@@ -106,7 +113,8 @@ class ECardApiResult
 						   mMinor == pOther.mMinor &&
 						   mMessage == pOther.mMessage &&
 						   mMessageLang == pOther.mMessageLang &&
-						   mOrigin == pOther.mOrigin;
+						   mOrigin == pOther.mOrigin &&
+						   mFailureCode == pOther.mFailureCode;
 				}
 
 
@@ -126,18 +134,18 @@ class ECardApiResult
 		static GlobalStatus::Origin toStatus(governikus::ECardApiResult::Origin pSelf);
 		static ECardApiResult::Origin fromStatus(GlobalStatus::Origin pSelf);
 
-		static ECardApiResult fromStatus(const GlobalStatus& pStatus);
+		static ECardApiResult fromStatus(const GlobalStatus& pStatus, const std::optional<FailureCode>& pFailureCode);
 
 		static Major parseMajor(const QString& pMajor);
 		static Minor parseMinor(const QString& pMinor);
 
 		QSharedDataPointer<ResultData> d;
 
-		ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage = QString(), Origin pOrigin = Origin::Client);
+		ECardApiResult(Major pMajor, Minor pMinor, const QString& pMessage = QString(), Origin pOrigin = Origin::Client, const std::optional<FailureCode>& pFailureCode = {});
 		explicit ECardApiResult(const QString& pMajor, const QString& pMinor = QString(), const QString& pMessage = QString(), Origin pOrigin = Origin::Client);
 
 	public:
-		explicit ECardApiResult(const GlobalStatus& pStatus);
+		explicit ECardApiResult(const GlobalStatus& pStatus, const std::optional<FailureCode>& pFailureCode = {});
 
 		bool operator ==(const ECardApiResult& pResult) const;
 
@@ -151,6 +159,7 @@ class ECardApiResult
 		[[nodiscard]] Minor getMinor() const;
 		[[nodiscard]] QString getMessage() const;
 		[[nodiscard]] const QString& getMessageLang() const;
+		[[nodiscard]] const std::optional<FailureCode>& getFailureCode() const;
 
 		static QString getMajorString(Major pMajor);
 		static QString getMinorString(Minor pMinor);

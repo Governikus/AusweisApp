@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref AppUpdateData
- *
- * \copyright Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateData.h"

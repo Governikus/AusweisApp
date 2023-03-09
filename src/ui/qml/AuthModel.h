@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Model implementation for the authentication action.
- *
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -52,7 +54,6 @@ class AuthModel
 		[[nodiscard]] QString getStatusCodeString() const;
 
 		Q_INVOKABLE void cancelWorkflowToChangePin();
-		Q_INVOKABLE void requestTransportPinChange();
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();

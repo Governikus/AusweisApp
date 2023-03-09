@@ -52,6 +52,8 @@ j.with
 			  exit 0
 			fi
 			'''.stripIndent().trim())
+
+		shell('cd source; cmake -DCMD=CHECK_FAILURE_CODES -P cmake/cmd.cmake')
 	}
 
 	publishers

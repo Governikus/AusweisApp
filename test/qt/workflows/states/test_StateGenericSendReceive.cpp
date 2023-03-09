@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -210,6 +210,7 @@ class test_StateGenericSendReceive
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Generic_Send_Receive_Network_Error);
 		}
 
 
@@ -244,6 +245,7 @@ class test_StateGenericSendReceive
 			mNetworkManager->fireFinished();
 
 			QCOMPARE(spy.count(), 1);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Generic_Send_Receive_Paos_Unexpected);
 		}
 
 

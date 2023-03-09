@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -56,7 +56,7 @@ class StateGenericProviderCommunication
 
 
 		void run() override;
-		void reportCommunicationError(const GlobalStatus& pStatus);
+		void reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure);
 		void checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 
 	private Q_SLOTS:

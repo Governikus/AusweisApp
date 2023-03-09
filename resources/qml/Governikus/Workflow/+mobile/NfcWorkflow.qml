@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -45,7 +45,7 @@ Item {
 				//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use SaK instead.
 				return qsTr("Unfortunately, this functionality is not available on your device.") + "<br/>" +
 				//: INFO ANDROID IOS AA2 can't use NFC on this device, suggest to use SaK instead.
-				qsTr("However, you can use a separate smartphone as card reader to utilize the online identification function.");
+				qsTr("However, you can use a separate smartphone as card reader to utilize the eID function.");
 			case ApplicationModel.NFC_DISABLED:
 				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
 				return qsTr("NFC is switched off.") + "<br/>" +
@@ -66,7 +66,7 @@ Item {
 			}
 			if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
-				return qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the online identification function.");
+				return qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the eID function.");
 			} else if (Constants.is_layout_ios) {
 				//: INFO IOS The ID card may be inserted, the authentication process may be started.
 				return qsTr("Please place your ID card on the top of the device's back side.");

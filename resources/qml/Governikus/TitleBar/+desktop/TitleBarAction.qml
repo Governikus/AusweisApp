@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -63,7 +63,7 @@ FocusScope {
 			sourceSize.width: Style.dimens.icon_size
 			tintColor: Style.text.header_inverse.textColor
 		}
-		TitleBarText {
+		GText {
 			id: text
 
 			readonly property color pressColor: Qt.darker(textColor, Constants.highlightDarkerFactor)
@@ -72,7 +72,7 @@ FocusScope {
 			Accessible.name: text.text
 			Accessible.role: Accessible.Button
 			color: mouseArea.containsPress ? pressColor : textColor
-			font.bold: isLastElement
+			textStyle: isLastElement ? Style.text.navigation_highlight : Style.text.navigation
 
 			FocusFrame {
 				isOnLightBackground: false

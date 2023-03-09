@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref HttpResponse
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -56,8 +58,8 @@ class test_HttpServer
 
 			QVERIFY(server->isListening());
 			QCOMPARE(logSpy.count(), 3);
-			QVERIFY(server->boundAddresses() > 0);
-			QVERIFY(server->boundAddresses() < 3);
+			QVERIFY(server->boundAddresses().size() > 0);
+			QVERIFY(server->boundAddresses().size() < 3);
 
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"));
@@ -67,7 +69,7 @@ class test_HttpServer
 			const auto listeningLogPattern = QStringLiteral("Listening on port: ");
 
 			// IPv4 and IPv6 are available on test system
-			if (server->boundAddresses() == 2)
+			if (server->boundAddresses().size() == 2)
 			{
 				QVERIFY(listenPort.contains(listeningLogPattern));
 
@@ -78,7 +80,7 @@ class test_HttpServer
 				param = logSpy.takeFirst();
 				QVERIFY(param.at(0).toString().contains(listeningLogPattern + matcher.captured(1)));
 			}
-			else if (server->boundAddresses() == 1)
+			else if (server->boundAddresses().size() == 1)
 			{
 				// Only IPv4 OR IPv6 is available... let 's just that at least one was successful.
 				const auto notAvailableLogPattern = QStringLiteral("The address is not available");
@@ -113,11 +115,9 @@ class test_HttpServer
 #ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
 #elif defined(Q_OS_LINUX)
-			const auto portStart = TestFileHelper::getUnprivilegedPortStart();
-			QVERIFY(portStart != -1);
-			if (portStart <= HttpServer::cPort)
+			if (TestFileHelper::systemAllowsPort(HttpServer::cPort))
 			{
-				QSKIP("Cannot check privileged port");
+				QSKIP("Cannot check, privileged port allowed.");
 			}
 #endif
 
@@ -248,7 +248,7 @@ class test_HttpServer
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			HttpServer server(existingServer.serverPort());
 			QVERIFY(!server.isListening());
-			QCOMPARE(server.boundAddresses(), 0);
+			QCOMPARE(server.boundAddresses().size(), 0);
 
 			auto param = logSpy.takeFirst();
 			QVERIFY(param.at(0).toString().contains(QLatin1String("Cannot start server: \"The bound address is already in use")));

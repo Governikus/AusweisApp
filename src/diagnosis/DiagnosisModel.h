@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +12,7 @@
 #include "context/DiagnosisContext.h"
 
 #include <QAbstractListModel>
+#include <QMap>
 #include <QPair>
 #include <QSharedPointer>
 #include <QVector>
@@ -25,6 +26,7 @@ class DiagnosisModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+
 	friend class ::test_DiagnosisModel;
 
 	private:
@@ -33,32 +35,47 @@ class DiagnosisModel
 			ContentRole = Qt::UserRole + 1
 		};
 
-		QVector<QPair<QString, QSharedPointer<SectionModel>>> mSections;
-		QSharedPointer<DiagnosisContext> mContext;
-		DiagnosisAntivirusDetection mAntivirusDetection;
-		DiagnosisFirewallDetection mFirewallDetection;
-		DiagnosisConnectionTest mConnectionTest;
-		QSharedPointer<ContentItem> mTimestampItem;
-		QSharedPointer<SectionModel> mNetworkInterfaceSection;
-		QSharedPointer<SectionModel> mNetworkConnectionSection;
-		QSharedPointer<SectionModel> mCombinedNetworkSection;
-		QSharedPointer<SectionModel> mCombinedAntivirusFirewallSection;
-		QSharedPointer<SectionModel> mAntivirusSection;
-		bool mAntivirusSectionRunning;
-		QSharedPointer<SectionModel> mFirewallSection;
-		bool mFirewallSectionRunning;
-		QSharedPointer<SectionModel> mCombinedReaderSection;
-		QSharedPointer<SectionModel> mCardReaderSection;
-		bool mCardReaderSectionRunning;
-		QSharedPointer<SectionModel> mPcscSection;
-		bool mPcscSectionRunning;
-		QSharedPointer<SectionModel> mRemoteDeviceSection;
-		bool mRemoteDeviceSectionRunning;
+		enum class Section : int
+		{
+			GENERAL,
+			READER,
+			NETWORK,
+			SECURITY
+		};
 
-		QSharedPointer<SectionModel> createAusweisApp2Section();
-		void createNetworkSection();
-		void createCardReaderSection();
-		void createAntiVirusAndFirewallSection();
+		QMap<Section, QSharedPointer<SectionModel>> mSections;
+		QSharedPointer<DiagnosisContext> mContext;
+
+		QVector<ContentItem> mAusweisApp2Section;
+		QVector<ContentItem> mTimestampSection;
+
+		bool mRemoteDeviceSectionRunning;
+		QVector<ContentItem> mRemoteDeviceSection;
+		bool mCardReaderSectionRunning;
+		QVector<ContentItem> mCardReaderSection;
+		bool mPcscSectionRunning;
+		QVector<ContentItem> mPcscSection;
+
+		DiagnosisConnectionTest mConnectionTest;
+		QVector<ContentItem> mNetworkConnectionSection;
+		QVector<ContentItem> mNetworkInterfaceSection;
+
+		bool mAntivirusSectionRunning;
+		DiagnosisAntivirusDetection mAntivirusDetection;
+		QVector<ContentItem> mAntivirusSection;
+		bool mFirewallSectionRunning;
+		DiagnosisFirewallDetection mFirewallDetection;
+		QVector<ContentItem> mFirewallSection;
+
+		[[nodiscard]] QString getSectionName(Section pSection) const;
+		void initGeneralSections();
+		void updateGeneralSection();
+		void initNetworkSections();
+		void updateNetworkSection(bool pUpdateTimestamp = true);
+		void initCardReaderSections();
+		void updateCardReaderSection(bool pUpdateTimestamp = true);
+		void initAntiVirusAndFirewallSection();
+		void updateAntiVirusAndFirewallSection(bool pUpdateTimestamp = true);
 		void connectSignals();
 		void disconnectSignals();
 

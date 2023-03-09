@@ -1,8 +1,10 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
+
+#include "FailureCode.h"
 
 #include <QSharedPointer>
 #include <QState>
@@ -27,7 +29,8 @@ class CompositeStatePace
 
 	Q_SIGNALS:
 		void fireContinue();
-		void fireAbort();
+		void fireAbort(const FailureCode& pFailure);
+		void firePropagateAbort();
 };
 
 } // namespace governikus

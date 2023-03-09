@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -56,7 +56,7 @@ ColumnLayout {
 		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
 		//: LABEL DESKTOP
 		description: qsTr("Do you have further questions about %1?").arg(Qt.application.name)
-		iconSource: "qrc:/images/desktop/material_live_help.svg"
+		iconSource: "qrc:/images/material_live_help.svg"
 
 		//: LABEL DESKTOP
 		title: qsTr("FAQ")

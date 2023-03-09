@@ -1,8 +1,10 @@
-/*!
- * \copyright Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
+
+#include "FailureCode.h"
 
 #include <QSharedPointer>
 #include <QState>
@@ -27,7 +29,7 @@ class CompositeStateTrustedChannel
 
 	Q_SIGNALS:
 		void fireContinue();
-		void fireAbort();
+		void fireAbort(const FailureCode& pFailure);
 };
 
 } // namespace governikus

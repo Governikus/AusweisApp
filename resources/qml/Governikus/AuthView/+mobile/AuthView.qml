@@ -1,11 +1,12 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.Style 1.0
 import Governikus.TitleBar 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.WhiteListClient 1.0
@@ -13,7 +14,6 @@ import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
-import Governikus.Type.ConnectivityManager 1.0
 import Governikus.Type.LogModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.PasswordType 1.0
@@ -117,6 +117,7 @@ ProgressView {
 	Component {
 		id: transportPinReminder
 		TransportPinReminderView {
+			moreInformationText: transportPinReminderInfoData.linkText
 			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
@@ -128,12 +129,41 @@ ProgressView {
 				pop();
 				AuthModel.cancelWorkflowToChangePin();
 			}
+			onShowInfoView: {
+				push(transportPinReminderInfoView);
+			}
+		}
+	}
+	PasswordInfoData {
+		id: transportPinReminderInfoData
+		contentType: PasswordInfoContent.Type.CHANGE_PIN
+	}
+	Component {
+		id: transportPinReminderInfoView
+		PasswordInfoView {
+			infoContent: transportPinReminderInfoData
+
+			onClose: pop()
+		}
+	}
+	PasswordInfoData {
+		id: infoData
+		contentType: fromPasswordType(NumberModel.passwordType, NumberModel.isCanAllowedMode)
+	}
+	Component {
+		id: passwordInfoView
+		PasswordInfoView {
+			infoContent: infoData
+
+			onClose: pop()
 		}
 	}
 	Component {
 		id: enterPinView
 		EnterPasswordView {
-			enableTransportPinLink: NumberModel.passwordType === PasswordType.PIN
+			//: LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication
+			accessibleContinueText: passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN || (passwordType === PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			moreInformationText: infoData.linkText
 			title: root.title
 			titleBarColor: root.titleBarColor
 
@@ -146,14 +176,11 @@ ProgressView {
 				}
 			}
 
-			onChangePinLength: {
-				pop();
-				AuthModel.requestTransportPinChange();
-			}
 			onPasswordEntered: {
 				pop();
 				AuthModel.continueWorkflow();
 			}
+			onRequestPasswordInfo: push(passwordInfoView)
 		}
 	}
 	Component {

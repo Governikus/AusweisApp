@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -9,6 +9,7 @@ GFlickable {
 	id: root
 
 	default property alias children: contentLayout.children
+	readonly property real effectiveContentWidth: maximumContentWidth > 0 ? Math.min(contentWidth, maximumContentWidth) : contentWidth
 	property bool fillHeight: true
 	readonly property real implicitContentHeight: contentLayout.implicitHeight
 	property real maximumContentWidth: -1
@@ -31,7 +32,7 @@ GFlickable {
 	ColumnLayout {
 		id: contentLayout
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: maximumContentWidth > 0 ? Math.min(root.contentWidth, maximumContentWidth) : root.contentWidth
+		width: effectiveContentWidth
 
 		Binding on height  {
 			delayed: fillHeight

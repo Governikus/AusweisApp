@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateGetTcToken
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetTcToken.h"
@@ -46,6 +48,7 @@ class test_StateGetTcToken
 			QTest::ignoreMessage(QtDebugMsg, "Got TC Token URL: QUrl(\"test\")");
 			state.run();
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Invalid_Url);
 		}
 
 
@@ -77,6 +80,7 @@ class test_StateGetTcToken
 			QCOMPARE(state.mConnections.size(), 3);
 
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Network_Error);
 		}
 
 
@@ -91,6 +95,7 @@ class test_StateGetTcToken
 			state.parseTcToken();
 			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Empty_Data);
 		}
 
 
@@ -133,6 +138,7 @@ class test_StateGetTcToken
 			state.parseTcToken();
 			QCOMPARE(context->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Invalid_Data);
 		}
 
 

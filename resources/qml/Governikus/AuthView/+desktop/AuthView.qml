@@ -1,11 +1,12 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.Style 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.SettingsView 1.0
@@ -25,6 +26,7 @@ SectionPage {
 	enum SubViews {
 		Undefined,
 		TransportPinReminder,
+		TransportPinReminderInfo,
 		Connectivity,
 		Progress,
 		AccessRights,
@@ -75,10 +77,7 @@ SectionPage {
 
 		onClicked: {
 			editRights.showProviderInformation(false);
-			if (d.activeView === AuthView.SubViews.PasswordInfo) {
-				d.view = SettingsModel.transportPinReminder ? AuthView.SubViews.TransportPinReminder : AuthView.SubViews.Password;
-				updateTitleBarActions();
-			} else if (d.activeView === AuthView.SubViews.ReaderSettings) {
+			if (d.activeView === AuthView.SubViews.TransportPinReminderInfo || d.activeView === AuthView.SubViews.PasswordInfo || d.activeView === AuthView.SubViews.ReaderSettings) {
 				d.view = d.precedingView;
 				updateTitleBarActions();
 			}
@@ -93,6 +92,7 @@ SectionPage {
 
 		readonly property int activeView: inputError.visible ? AuthView.SubViews.InputError : view
 		readonly property bool cancelAllowed: AuthModel.isBasicReader || generalWorkflow.waitingFor !== Workflow.WaitingFor.Password
+		readonly property int passwordType: NumberModel.passwordType
 		property int precedingView: AuthView.SubViews.Undefined
 		property int view: AuthView.SubViews.Undefined
 	}
@@ -119,9 +119,10 @@ SectionPage {
 		}
 	}
 	DecisionView {
+		moreInformationText: infoData.linkText
 		moreInformationVisible: true
-		questionSubText: qsTr("The personal, six-digit PIN is mandatory to use the online identification function.")
-		questionText: qsTr("Do you know your six-digit PIN?")
+		questionSubText: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
+		questionText: qsTr("Do you know your six-digit ID card PIN?")
 		visible: d.activeView === AuthView.SubViews.TransportPinReminder
 
 		onAgree: {
@@ -129,7 +130,7 @@ SectionPage {
 			AuthModel.continueWorkflow();
 		}
 		onDisagree: AuthModel.cancelWorkflowToChangePin()
-		onMoreInformationClicked: showPasswordInfo()
+		onMoreInformationClicked: showWithPrecedingView(AuthView.SubViews.TransportPinReminderInfo)
 	}
 	ProgressView {
 		id: checkConnectivityView
@@ -148,6 +149,7 @@ SectionPage {
 	GeneralWorkflow {
 		id: generalWorkflow
 		isPinChange: false
+		passwordInfoLinkText: infoData.linkText
 		visible: d.activeView === AuthView.SubViews.Workflow
 		waitingFor: switch (authController.workflowState) {
 		case AuthController.WorkflowStates.Reader:
@@ -163,19 +165,29 @@ SectionPage {
 	}
 	EnterPasswordView {
 		id: enterPasswordView
-		enableTransportPinLink: passwordType === PasswordType.PIN
+		//: LABEL DESKTOP A11y button to confirm the PIN and start the provider authentication
+		accessibleContinueText: passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN || (passwordType === PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+		moreInformationText: infoData.linkText
 		visible: d.activeView === AuthView.SubViews.Password
 
-		onChangePinLength: AuthModel.requestTransportPinChange()
 		onPasswordEntered: {
 			d.view = AuthView.SubViews.Progress;
 			AuthModel.continueWorkflow();
 		}
 		onRequestPasswordInfo: authView.showPasswordInfo()
 	}
+	PasswordInfoData {
+		id: infoData
+		contentType: d.activeView === AuthView.SubViews.TransportPinReminder || d.activeView === AuthView.SubViews.TransportPinReminderInfo ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType, NumberModel.isCanAllowedMode)
+	}
 	PasswordInfoView {
 		id: passwordInfoView
-		visible: d.activeView === AuthView.SubViews.PasswordInfo
+		infoContent: infoData
+		visible: d.activeView === AuthView.SubViews.PasswordInfo || d.activeView === AuthView.SubViews.TransportPinReminderInfo
+
+		titleBarAction.customSubAction: CancelAction {
+			onClicked: passwordInfoView.close()
+		}
 
 		onClose: {
 			d.view = d.precedingView;

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -33,12 +33,11 @@ TutorialContent {
 	}
 	GText {
 		anchors.horizontalCenter: parent.horizontalCenter
-		font.italic: true
 		horizontalAlignment: Text.AlignHCenter
 
 		//: INFO ANDROID IOS
 		text: (Constants.is_layout_ios ? qsTr("How can I use the AusweisApp2 on my iPhone?") : qsTr("How can I use the AusweisApp2 on my smartphone?"))
-		textStyle: Style.text.tutorial_header
+		textStyle: Style.text.tutorial_header_accent
 		width: parent.width * 0.9
 
 		Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -74,12 +73,11 @@ TutorialContent {
 			}
 			GText {
 				id: noticeText
-				font.bold: true
 				horizontalAlignment: Text.AlignLeft
 
 				//: INFO ANDROID IOS
 				text: (Constants.is_layout_ios ? qsTr("Many iPhones (iPhone 7 and newer) can access the ID card via the built-in NFC interface.") : qsTr("Many Android devices can access the ID card via the built-in NFC interface."))
-				textStyle: Style.text.tutorial_content
+				textStyle: Style.text.tutorial_content_highlight
 				width: parent.width * 0.6
 				x: (parent.width * 0.65) - (width / 2)
 				y: (parent.height * 0.5) - (height / 2)
@@ -126,12 +124,11 @@ TutorialContent {
 		}
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
-			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
 
 			//: LABEL ANDROID IOS
 			text: qsTr("The AusweisApp2 offers the following options to access your ID card:")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_accent
 			width: parent.width * 0.9
 
 			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -167,12 +164,11 @@ TutorialContent {
 
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
-				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Direct connection via NFC chip")
-				textStyle: Style.text.tutorial_header_secondary
+				textStyle: Style.text.tutorial_header_secondary_highlight
 				width: parent.width * 0.9
 
 				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -189,10 +185,9 @@ TutorialContent {
 				GText {
 					id: numberOne
 					anchors.centerIn: parent
-					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 					text: "1"
-					textStyle: Style.text.tutorial_header_secondary
+					textStyle: Style.text.tutorial_header_secondary_highlight
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
@@ -255,12 +250,11 @@ TutorialContent {
 
 			GText {
 				anchors.horizontalCenter: parent.horizontalCenter
-				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Smartphone as card reader")
-				textStyle: Style.text.tutorial_header_secondary
+				textStyle: Style.text.tutorial_header_secondary_highlight
 				width: parent.width * 0.9
 
 				Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -277,10 +271,9 @@ TutorialContent {
 				GText {
 					id: numberTwo
 					anchors.centerIn: parent
-					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 					text: "2"
-					textStyle: Style.text.tutorial_header_secondary
+					textStyle: Style.text.tutorial_header_secondary_highlight
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
@@ -388,10 +381,9 @@ TutorialContent {
 				GText {
 					id: numberThree
 					anchors.centerIn: parent
-					font.bold: true
 					horizontalAlignment: Text.AlignHCenter
 					text: "3"
-					textStyle: Style.text.tutorial_header_secondary
+					textStyle: Style.text.tutorial_header_secondary_highlight
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()

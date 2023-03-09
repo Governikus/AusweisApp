@@ -1,19 +1,20 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Governikus.EnterPasswordView 1.0
 import Governikus.Global 1.0
 import Governikus.TitleBar 1.0
+import Governikus.PasswordInfoView 1.0
 import Governikus.ProgressView 1.0
 import Governikus.ResultView 1.0
 import Governikus.SettingsView 1.0
 import Governikus.View 1.0
 import Governikus.Workflow 1.0
-import Governikus.Type.PinResetInformationModel 1.0
 import Governikus.Type.ChangePinModel 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.PasswordType 1.0
 import Governikus.Type.UiModule 1.0
 
 SectionPage {
@@ -87,6 +88,7 @@ SectionPage {
 
 		readonly property int activeView: inputError.visible ? ChangePinView.SubViews.InputError : pinUnlocked.visible ? ChangePinView.SubViews.PinUnlocked : view
 		readonly property bool cancelAllowed: view !== ChangePinView.SubViews.NoPassword && view !== ChangePinView.SubViews.Start && (ChangePinModel.isBasicReader || generalWorkflow.waitingFor !== Workflow.WaitingFor.Password)
+		readonly property int passwordType: NumberModel.passwordType
 		property int precedingView: ChangePinView.SubViews.Start
 		property var view: ChangePinView.SubViews.Start
 	}
@@ -108,45 +110,31 @@ SectionPage {
 			d.view = pName;
 		}
 	}
-	DecisionView {
-		agreeButton.iconText: "?"
-		//: LABEL DESKTOP
-		agreeText: qsTr("PIN unknown")
-		disagreeButton.iconText: "6"
-		//: LABEL DESKTOP
-		disagreeText: qsTr("Six-digit PIN")
-		mainIconSource: "qrc:/images/material_lock.svg"
-		moreInformationVisible: true
-		neutralButton.iconText: "5"
-		//: LABEL DESKTOP
-		neutralText: qsTr("Five-digit Transport PIN")
-		//: LABEL DESKTOP Description of PIN change start page. User has a choice of which PIN to set.
-		questionSubText: qsTr("Please make a choice to set or change your PIN.")
-		//: LABEL DESKTOP Title of PIN change start page. User is asked which type of PIN they have.
-		questionText: qsTr("What kind of PIN do you have?")
-		style: DecisionView.ButtonStyle.AllButtons
+	SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.Start
 
-		onAgree: d.view = ChangePinView.SubViews.NoPassword
-		onDisagree: ChangePinModel.startWorkflow(false)
-		onMoreInformationClicked: baseItem.showPasswordInfo()
-		onNeutral: ChangePinModel.startWorkflow(true)
+		ChangePinViewContent {
+			anchors.fill: parent
+			moreInformationText: infoData.linkText
+
+			onMoreInformationRequested: baseItem.showPasswordInfo()
+			onNoPinAvailable: d.view = ChangePinView.SubViews.NoPassword
+		}
 	}
-	ResultView {
+	PasswordInfoView {
 		id: noPasswordView
-		buttonType: NavigationButton.Type.Check
-		hintButtonText: PinResetInformationModel.pinResetActionText
-		hintText: PinResetInformationModel.pinUnknownHint
-		resultType: ResultView.Type.IsInfo
-		text: PinResetInformationModel.pinUnknownText
 		visible: d.activeView === ChangePinView.SubViews.NoPassword
 
-		onHintClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
-		onNextView: baseItem.nextView(UiModule.DEFAULT)
+		infoContent: PasswordInfoData {
+			contentType: PasswordInfoContent.Type.NO_PIN
+		}
+
+		onClose: d.view = ChangePinView.SubViews.Start
 	}
 	GeneralWorkflow {
 		id: generalWorkflow
 		isPinChange: true
+		passwordInfoLinkText: infoData.linkText
 		visible: d.activeView === ChangePinView.SubViews.Workflow
 		waitingFor: switch (changePinController.workflowState) {
 		case ChangePinController.WorkflowStates.Reader:
@@ -162,6 +150,7 @@ SectionPage {
 	}
 	EnterPasswordView {
 		id: enterPasswordView
+		moreInformationText: infoData.linkText
 		visible: d.activeView === ChangePinView.SubViews.Password
 
 		onPasswordEntered: pWasNewPin => {
@@ -170,9 +159,13 @@ SectionPage {
 		}
 		onRequestPasswordInfo: baseItem.showPasswordInfo()
 	}
+	PasswordInfoData {
+		id: infoData
+		contentType: changePinController.workflowState === ChangePinController.WorkflowStates.Initial ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType)
+	}
 	PasswordInfoView {
 		id: passwordInfoView
-		changePinInfo: changePinController.workflowState === ChangePinController.WorkflowStates.Initial
+		infoContent: infoData
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
 		onClose: {

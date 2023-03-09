@@ -1,6 +1,8 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
- *
  * Known OIDs according to TR-03110-3 A.1.1
  */
 

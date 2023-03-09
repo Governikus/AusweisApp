@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreVerification.h"
@@ -53,7 +53,7 @@ void StatePreVerification::run()
 	{
 		qCritical() << "Using the developer mode is only allowed in a test environment";
 		updateStatus(GlobalStatus::Code::Workflow_Preverification_Developermode_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Pre_Verfication_No_Test_Environment);
 		return;
 	}
 
@@ -68,14 +68,14 @@ void StatePreVerification::run()
 	{
 		qCritical() << "Pre-verification failed: cannot build certificate chain";
 		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Chain);
 		return;
 	}
 	else if (!SignatureChecker(certificateChain).check())
 	{
 		qCritical() << "Pre-verification failed: signature check failed";
 		updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Signature);
 		return;
 	}
 	else if (!isValid(certificateChain))
@@ -88,7 +88,7 @@ void StatePreVerification::run()
 		{
 			qCritical() << "Pre-verification failed: certificate not valid";
 			updateStatus(GlobalStatus::Code::Workflow_Preverification_Error);
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort(FailureCode::Reason::Pre_Verfication_Certificate_Expired);
 			return;
 		}
 	}

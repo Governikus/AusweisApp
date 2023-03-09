@@ -226,6 +226,9 @@ started at all.
 If the workflow is finished the AusweisApp2 will send a message with
 a result and an url parameter to indicate the end of an authentication.
 
+.. versionadded:: 1.26.3
+   Parameter **reason** added.
+
 
   - **result**: The final result of authentication.
 
@@ -239,6 +242,8 @@ a result and an url parameter to indicate the end of an authentication.
     - **description**: Description of the error message.
 
     - **message**: The error message.
+
+    - **reason**: Unique error code.
 
   - **url**: Refresh url or communication error address.
 
@@ -680,7 +685,7 @@ The user must provide a physical card or your application needs to
 to provide a "virtual" card by calling :ref:`set_card`.
 
 After the user or your application inserted a card, the workflow will
-continue automatically, unless both the eID functionality and
+continue automatically, unless both the eID function and
 CAN allowed mode are disabled.
 CAN allowed mode is enabled if the AusweisApp2 is used as SDK and the
 certificate contains the CAN allowed right.
@@ -702,6 +707,7 @@ This message will also be sent if there is no connected card reader.
 
 
 
+.. _internal_error:
 
 INTERNAL_ERROR
 ^^^^^^^^^^^^^^
@@ -723,6 +729,7 @@ a bug. Please report this issue to our support!
 
 
 
+.. _invalid:
 
 INVALID
 ^^^^^^^
@@ -759,9 +766,9 @@ card reader or removed from a card reader.
 
 Your application can explicitly check for card reader with :ref:`get_reader`.
 
-If a workflow is in progress and a card with disabled eID functionality was
+If a workflow is in progress and a card with disabled eID function was
 inserted, this message will still be sent, but the workflow will be paused
-until a card with enabled eID functionality is inserted.
+until a card with enabled eID function is inserted.
 
 .. versionadded:: 1.24.0
    Parameter **insertable** added.
@@ -786,7 +793,7 @@ until a card with enabled eID functionality is inserted.
       PUK only. It is not possbible to read this data before a user tries
       to unblock the PIN.
 
-    - **deactivated**: True if eID functionality is deactivated, otherwise false.
+    - **deactivated**: True if eID function is deactivated, otherwise false.
 
     - **retryCounter**: Count of possible retries for the PIN. If you enter a PIN
       with command :ref:`set_pin` it will be decreased if PIN was incorrect.
@@ -892,6 +899,8 @@ or :ref:`run_change_pin`.
 
 
 
+
+.. _unknown_command:
 
 UNKNOWN_COMMAND
 ^^^^^^^^^^^^^^^

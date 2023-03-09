@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateMaintainCardConnection.h"
@@ -39,9 +39,10 @@ class test_StateMaintainCardConnection
 
 		void test_Run_Error()
 		{
-			QSignalSpy spy(mState.data(), &StateMaintainCardConnection::fireAbort);
+			QSignalSpy spy(mState.data(), &StateMaintainCardConnection::firePropagateAbort);
 
 			mContext->setStatus(GlobalStatus::Code::Unknown_Error);
+			mContext->setFailureCode(FailureCode::Reason::User_Cancelled);
 			mState->run();
 			QCOMPARE(spy.count(), 1);
 		}
@@ -69,6 +70,7 @@ class test_StateMaintainCardConnection
 			mState->run();
 			QCOMPARE(mContext->getStatus(), status);
 			QCOMPARE(spy.count(), 1);
+			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Maintain_Card_Connection_Pace_Unrecoverable);
 		}
 
 
@@ -164,6 +166,10 @@ class test_StateMaintainCardConnection
 			QCOMPARE(mContext->getLastPaceResult(), doReset ? CardReturnCode::OK : code);
 			QCOMPARE(spyNoCard.count(), doReset ? 1 : 0);
 			QCOMPARE(spyAbort.count(), doReset ? 0 : 1);
+			if (!doReset)
+			{
+				QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Maintain_Card_Connection_Pace_Unrecoverable);
+			}
 		}
 
 

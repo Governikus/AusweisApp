@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreparePaceIfd.h"
@@ -56,7 +56,7 @@ void StatePreparePaceIfd::run()
 			case PacePasswordId::PACE_MRZ:
 			case PacePasswordId::UNKNOWN:
 				qCritical() << "Cannot handle unknown PacePasswordId";
-				Q_EMIT fireAbort();
+				Q_EMIT fireAbort(FailureCode::Reason::Prepare_Pace_Ifd_Unknown);
 				return;
 		}
 	}

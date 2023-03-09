@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
@@ -60,10 +60,10 @@ SectionPage {
 				width: parent.width
 			}
 			GText {
-				font.bold: true
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Please note that your current Smart-eID is invalidated during the process and will not be usable until the update process is completed.")
+				textStyle: Style.text.normal_highlight
 				width: parent.width
 			}
 			PrivacyStatement {

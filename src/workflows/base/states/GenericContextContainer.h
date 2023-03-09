@@ -1,10 +1,12 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Template base class for all steps taken by the state machine.
  *        It is parameterized over the context type and contains a getter for the context.
  *        We cannot parameterize the super class AbstractState because Qt does not
  *        support template classes.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

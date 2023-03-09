@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -17,6 +17,8 @@ SectionPage {
 	id: root
 
 	property bool isPinChange: false
+	//: LABEL DESKTOP
+	property string passwordInfoLinkText: qsTr("More information")
 	property int waitingFor: 0
 
 	signal requestPasswordInfo
@@ -45,9 +47,9 @@ SectionPage {
 		anchors.bottom: retryCounter.top
 		anchors.bottomMargin: Constants.component_spacing
 		anchors.horizontalCenter: retryCounter.horizontalCenter
-		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
+		textStyle: Style.text.normal_highlight
 		visible: retryCounter.visible
 	}
 	StatusIcon {
@@ -173,16 +175,40 @@ SectionPage {
 		}
 	}
 	MoreInformationLink {
+		id: moreInfo
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: subText.bottom
 		anchors.topMargin: Constants.component_spacing
-		text: waitingFor === Workflow.WaitingFor.Reader ?
-		//: INFO DESKTOP
-		qsTr("Go to reader settings") :
-		//: INFO DESKTOP Link text
-		qsTr("More information")
-		visible: (waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader) || waitingFor === Workflow.WaitingFor.Password
+		visible: false
 
-		onClicked: waitingFor === Workflow.WaitingFor.Reader ? root.settingsRequested() : root.requestPasswordInfo()
+		states: [
+			State {
+				name: "readerSettings"
+				when: waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
+
+				PropertyChanges {
+					iconVisible: false
+					target: moreInfo
+					//: INFO DESKTOP
+					text: qsTr("Go to reader settings")
+					visible: true
+
+					onClicked: root.settingsRequested()
+				}
+			},
+			State {
+				name: "moreInformation"
+				when: waitingFor === Workflow.WaitingFor.Password
+
+				PropertyChanges {
+					iconVisible: true
+					target: moreInfo
+					text: root.passwordInfoLinkText
+					visible: true
+
+					onClicked: root.requestPasswordInfo()
+				}
+			}
+		]
 	}
 }

@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import QtQuick.Controls 2.15
@@ -40,6 +40,7 @@ Item {
 			echoField.paste();
 		} else if (eventKey === Qt.Key_Enter || eventKey === Qt.Key_Return) {
 			root.accepted();
+			return true;
 		} else {
 			return false;
 		}
@@ -56,7 +57,7 @@ Item {
 
 	Accessible.name: (eye.activated ?
 		//: LABEL DESKTOP Screenreader text for the password field
-		qsTr("The password is visible.") :
+		qsTr("The password is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
 		//: LABEL DESKTOP Screenreader text for the password field
 		qsTr("The password is hidden.")) + (text === undefined ? " " + passwordState : "")
 	Accessible.role: Accessible.EditableText
@@ -123,8 +124,10 @@ Item {
 				verticalAlignment: Text.AlignTop
 
 				Rectangle {
+					readonly property int normalHeight: Constants.is_desktop ? Math.max(ApplicationModel.scaleFactor * 4, 1) : 1
+
 					color: parent.color
-					height: Constants.is_desktop ? Math.max(ApplicationModel.scaleFactor * 4, 1) : 1
+					height: index === root.number.length ? normalHeight * 3 : normalHeight
 					width: parent.markerWidth
 
 					anchors {

@@ -1,10 +1,14 @@
+/**
+ * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Composite state for selecting a card.
- *
- * \copyright Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
+
+#include "FailureCode.h"
 
 #include <QSharedPointer>
 #include <QState>
@@ -29,7 +33,7 @@ class CompositeStateProcessCvcsAndSetRights
 
 	Q_SIGNALS:
 		void fireContinue();
-		void fireAbort();
+		void fireAbort(const FailureCode& pFailure);
 };
 
 } // namespace governikus

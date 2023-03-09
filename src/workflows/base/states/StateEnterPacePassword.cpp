@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePassword.h"
@@ -20,7 +20,8 @@ void StateEnterPacePassword::run()
 {
 	if (getContext()->getStatus().isError())
 	{
-		Q_EMIT fireAbort();
+		Q_ASSERT(getContext()->getFailureCode().has_value());
+		Q_EMIT firePropagateAbort();
 	}
 	else
 	{

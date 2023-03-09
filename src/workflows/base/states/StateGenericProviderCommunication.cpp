@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericProviderCommunication.h"
@@ -59,14 +59,14 @@ void StateGenericProviderCommunication::run()
 }
 
 
-void StateGenericProviderCommunication::reportCommunicationError(const GlobalStatus& pStatus)
+void StateGenericProviderCommunication::reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure)
 {
 	qCritical() << pStatus;
 	updateStatus(pStatus);
 
 	clearConnections();
 	mReply->abort();
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(pFailure);
 }
 
 
@@ -83,7 +83,11 @@ void StateGenericProviderCommunication::checkSslConnectionAndSaveCertificate(con
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
-		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
+		const GlobalStatus& status {GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap};
+		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Invalid_Ephemeral_Key_Length,
+									{FailureCode::Info::State_Name, getStateName()}
+		};
+		reportCommunicationError(status, failure);
 		return;
 	}
 
@@ -91,7 +95,14 @@ void StateGenericProviderCommunication::checkSslConnectionAndSaveCertificate(con
 	if (statusCode != CertificateChecker::CertificateStatus::Good)
 	{
 		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
-		reportCommunicationError(GlobalStatus(CertificateChecker::getGlobalStatus(statusCode, false), infoMap));
+		const auto& status = GlobalStatus(CertificateChecker::getGlobalStatus(statusCode, false), infoMap);
+		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Certificate_Error,
+									{
+										{FailureCode::Info::Certificate_Status, Enum<CertificateChecker::CertificateStatus>::getName(statusCode)},
+										{FailureCode::Info::State_Name, getStateName()}
+									}
+		};
+		reportCommunicationError(status, failure);
 	}
 }
 
@@ -112,7 +123,15 @@ void StateGenericProviderCommunication::onSslErrors(const QList<QSslError>& pErr
 			infoMap.insert(GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString());
 		}
 
-		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap});
+		const GlobalStatus& status = {GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap};
+		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Ssl_Error,
+									{
+										{FailureCode::Info::Network_Error, mReply->errorString()},
+										{FailureCode::Info::Ssl_Errors, TlsChecker::sslErrorsToString(pErrors)},
+										{FailureCode::Info::State_Name, getStateName()}
+									}
+		};
+		reportCommunicationError(status, failure);
 	}
 }
 
@@ -152,7 +171,12 @@ void StateGenericProviderCommunication::onNetworkReply()
 
 	qDebug() << "Network request failed";
 	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-	Q_EMIT fireAbort();
+	const FailureCode::FailureInfoMap infoMap {
+		{FailureCode::Info::Network_Error, mReply->errorString()},
+		{FailureCode::Info::Http_Status_Code, QString::number(statusCode)},
+		{FailureCode::Info::State_Name, getStateName()}
+	};
+	Q_EMIT fireAbort({FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap});
 }
 
 

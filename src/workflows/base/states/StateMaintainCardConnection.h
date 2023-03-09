@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,6 +25,7 @@ class StateMaintainCardConnection
 	Q_SIGNALS:
 		void fireNoCardConnection();
 		void fireForceUpdateRetryCounter();
+		void firePropagateAbort();
 };
 
 } // namespace governikus

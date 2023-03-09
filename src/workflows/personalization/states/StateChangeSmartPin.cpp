@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangeSmartPin.h"
@@ -59,6 +59,8 @@ void StateChangeSmartPin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pComma
 
 		default:
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireAbort();
+			Q_EMIT fireAbort({FailureCode::Reason::Change_Smart_Pin_Failed,
+							  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
+					});
 	}
 }

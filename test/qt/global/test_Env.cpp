@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref Env
- *
- * \copyright Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -420,6 +422,20 @@ class test_Env
 			auto orig3 = Env::getShared<TestSharedInstance>();
 			QVERIFY(orig != orig3);
 			QCOMPARE(orig3->something(), QLatin1String("orig"));
+		}
+
+
+		void sharedNoSpawn()
+		{
+			{
+				auto orig = Env::getShared<TestSharedInstance>();
+				QVERIFY(orig);
+
+				auto orig2 = Env::getShared<TestSharedInstance>(true);
+				QVERIFY(orig == orig2);
+			}
+
+			QVERIFY(!Env::getShared<TestSharedInstance>(false));
 		}
 
 

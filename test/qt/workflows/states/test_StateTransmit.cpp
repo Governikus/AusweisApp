@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Unit tests for \ref StateTransmit
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateTransmit.h"
@@ -109,6 +111,7 @@ class test_StateTransmit
 			command->setMockReturnCode(CardReturnCode::UNKNOWN);
 			stateTransmit.onCardCommandDone(command);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Transmit_Card_Command_Failed);
 		}
 
 

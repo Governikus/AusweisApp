@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RedirectRequest.h"
@@ -45,12 +45,12 @@ class test_RedirectRequest
 
 			PortFile portFile;
 			portFile.handlePort(123);
+			QVERIFY(portFile.getFile().exists());
 
 			const auto httpRequest = QSharedPointer<HttpRequest>::create(new MockSocket());
 
 			QTest::ignoreMessage(QtDebugMsg, "Redirect to port: 123");
 			RedirectRequest request(httpRequest);
-			QCOMPARE(request.mPortWrapper.fetchPort(), 123);
 		}
 
 

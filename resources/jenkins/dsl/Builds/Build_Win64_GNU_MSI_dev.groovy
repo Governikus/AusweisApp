@@ -12,14 +12,6 @@ def j = new Build
 
 j.with
 {
-	wrappers
-	{
-		environmentVariables
-		{
-			env('PATH', '${COMPILER_${MERCURIAL_REVISION_BRANCH}};$PATH')
-		}
-	}
-
 	steps
 	{
 		batchFile('cd source & cmake --preset ci-win-debug')

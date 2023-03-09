@@ -1,7 +1,9 @@
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief unit tests for \ref StateConnectCard
- *
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateConnectCard.h"
@@ -68,6 +70,7 @@ class test_StateConnectCard
 			QTest::ignoreMessage(QtDebugMsg, "Card connection failed");
 			mState->onCommandDone(command);
 			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Connect_Card_Connection_Failed);
 
 			QSharedPointer<MockCardConnectionWorker> connectionWorker(new MockCardConnectionWorker());
 			connectionWorker->moveToThread(&workerThread);

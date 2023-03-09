@@ -54,19 +54,19 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 109
+- Chrome 110
 
-- Firefox 108
+- Firefox 110
 
-- Safari 16.1 (macOS)
+- Safari 16.3 (macOS)
 
-- Edge 109
+- Edge 110
 
 
 
 Kartenleser
 ~~~~~~~~~~~
-Alle Kartenleser, die die Onlineausweisfunktionalität unterstützen und nach
+Alle Kartenleser, die die Online-Ausweisfunktion unterstützen und nach
 BSI TR-03119 zertifiziert sind. Details hierzu befinden sich auf der Homepage
 des BSI unter "Nach Technischen Richtlinien zertifizierte Produkte".
 
@@ -96,7 +96,7 @@ Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
 Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
 https://www.ausweisapp.bund.de/aa2/cardreader
 
-Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
+Alle NFC-fähigen Smartphones bzw. Tablets, die die Online-Ausweisfunktion
 unterstützen, können als Kartenleser verwendet werden.
 Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
 zu installieren und zu starten.
@@ -118,18 +118,18 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 109 (iOS/Android)
+- Chrome 110 (iOS/Android)
 
-- Firefox 108 (iOS/Android)
+- Firefox 110 (iOS/Android)
 
-- Samsung Internet 19 (Android)
+- Samsung Internet 20 (Android)
 
-- Safari 16.1 (iOS)
+- Safari 16.3 (iOS)
 
 
 Kartenleser
 ~~~~~~~~~~~
-Alle NFC-fähigen Smartphones bzw. Tablets, die die Onlineausweisfunktionalität
+Alle NFC-fähigen Smartphones bzw. Tablets, die die Online-Ausweisfunktion
 unterstützen. Details hierzu befinden sich auf der Homepage:
 https://www.ausweisapp.bund.de/aa2/mobile-devices
 

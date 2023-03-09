@@ -1,11 +1,14 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Base class for all states taken by the state machine.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include "FailureCode.h"
 #include "context/WorkflowContext.h"
 
 #include <QSharedPointer>
@@ -72,7 +75,10 @@ class AbstractState
 
 	Q_SIGNALS:
 		void fireContinue();
-		void fireAbort();
+		void fireAbort(const FailureCode& pFailure);
+
+	private Q_SLOTS:
+		void onAbort(const FailureCode& pFailure) const;
 
 	public Q_SLOTS:
 		void onStateApprovedChanged(bool pApproved);

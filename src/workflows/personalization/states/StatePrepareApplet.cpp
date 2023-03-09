@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePrepareApplet.h"
@@ -36,14 +36,14 @@ void StatePrepareApplet::run()
 				{
 					case EidStatus::INTERNAL_ERROR:
 						qCDebug(card_smart) << "getSmartEidStatus() failed";
-						return false;
+						return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Status_Call_Failed);
 
 					case EidStatus::NO_PROVISIONING:
 					{
 						if (!context->allowSmartEidInstallation())
 						{
 							qCDebug(card_smart) << "Loop detected: A previous Smart-eID installation seems to be broken.";
-							return false;
+							return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Installation_Loop);
 						}
 
 						const int initialProgress = context->getProgressValue();
@@ -59,22 +59,22 @@ void StatePrepareApplet::run()
 						{
 							context->smartEidInstallationSuccessfull();
 							qCDebug(card_smart) << "Successfully installed Smart-eID";
-							return true;
+							return QVariant();
 						}
 
 						qCDebug(card_smart) << "Installation of Smart-eID failed";
-						return false;
+						return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Installation_Failed);
 					}
 
 					case EidStatus::UNAVAILABLE:
 						qCDebug(card_smart) << "Smart-eID is not available on this device";
-						return false;
+						return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Unavailable);
 
 					case EidStatus::PERSONALIZED:
 						if (!smartManager->deletePersonalization())
 						{
 							qCDebug(card_smart) << "Deletion of Smart-eID personalization failed";
-							return false;
+							return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Delete_Personalization_Failed);
 						}
 
 						qCDebug(card_smart) << "Successfully deleted the Smart-eID personalization";
@@ -85,7 +85,7 @@ void StatePrepareApplet::run()
 						{
 							case EidUpdateInfo::INTERNAL_ERROR:
 								qCDebug(card_smart) << "updateInfo() failed";
-								return false;
+								return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_UpdateInfo_Call_Failed);
 
 							case EidUpdateInfo::UPDATE_AVAILABLE:
 								qCDebug(card_smart) << "Update available, delete the Smart-eID first";
@@ -93,7 +93,7 @@ void StatePrepareApplet::run()
 
 							default:
 								qCDebug(card_smart) << "No update available";
-								return true;
+								return QVariant();
 						}
 
 						Q_FALLTHROUGH();
@@ -112,11 +112,11 @@ void StatePrepareApplet::run()
 						if (!smartManager->deleteSmart(progressHandler))
 						{
 							qCDebug(card_smart) << "Deletion of Smart-eID failed";
-							return false;
+							return QVariant::fromValue(FailureCode::Reason::Prepare_Applet_Delete_Smart_Failed);
 						}
 
 						qCDebug(card_smart) << "Successfully deleted Smart-eID";
-						return true;
+						return QVariant();
 					}
 				}
 
@@ -142,22 +142,22 @@ void StatePrepareApplet::setProgress(int pProgress, const QString& pMessage, int
 }
 
 
-void StatePrepareApplet::onCommandDone(const QVariant& pResult)
+void StatePrepareApplet::onCommandDone(const QVariant& pFailure)
 {
 	if (getContext()->isWorkflowCancelledInState())
 	{
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Prepare_Applet_User_Cancelled);
 		return;
 	}
 
-	if (pResult.toBool())
+	if (pFailure.isNull())
 	{
 		Q_EMIT fireContinue();
 		return;
 	}
 
 	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed);
-	Q_EMIT fireAbort();
+	Q_EMIT fireAbort(pFailure.value<FailureCode::Reason>());
 }
 
 

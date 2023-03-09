@@ -1,8 +1,10 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Helper state to decide whether an error has been occurred that should
  * be reported to the user.
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,6 +26,9 @@ class StateCheckError
 	private:
 		explicit StateCheckError(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
+
+	Q_SIGNALS:
+		void firePropagateAbort();
 };
 
 } // namespace governikus

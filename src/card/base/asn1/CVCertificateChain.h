@@ -1,11 +1,13 @@
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief A CV certificate chain is an ordered list, where the
  * CV certificates are ordered by the holder to authority reference
  * relation
  * (The holder is equivalent to the Subject-DN, the authority reference
  * is equivalent to the Issuer-DN.)
- *
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

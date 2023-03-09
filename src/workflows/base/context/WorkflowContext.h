@@ -1,13 +1,16 @@
+/**
+ * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ */
+
 /*!
  * \brief Workflow context.
- *
- * \copyright Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "CardConnection.h"
 #include "ECardApiResult.h"
+#include "FailureCode.h"
 #include "GlobalStatus.h"
 #include "ReaderInfo.h"
 #include "SmartCardDefinitions.h"
@@ -15,6 +18,7 @@
 #include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QString>
+#include <optional>
 
 namespace governikus
 {
@@ -48,6 +52,7 @@ class WorkflowContext
 		ReaderInfo mExpectedReader;
 		CardReturnCode mLastPaceResult;
 		GlobalStatus mStatus;
+		std::optional<FailureCode> mFailureCode;
 		ECardApiResult mStartPaosResult;
 		bool mErrorReportedToUser;
 		bool mPaceResultReportedToUser;
@@ -165,6 +170,9 @@ class WorkflowContext
 
 		[[nodiscard]] const GlobalStatus& getStatus() const;
 		void setStatus(const GlobalStatus& pResult);
+
+		[[nodiscard]] std::optional<FailureCode> getFailureCode() const;
+		void setFailureCode(const FailureCode& pFailure);
 
 		[[nodiscard]] const ECardApiResult& getStartPaosResult() const;
 		void setStartPaosResult(const ECardApiResult& pStartPaosResult);

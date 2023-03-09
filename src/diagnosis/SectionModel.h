@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,6 +22,7 @@ class SectionModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+
 	friend class ::test_DiagnosisModel;
 
 	private:
@@ -31,7 +32,7 @@ class SectionModel
 			ContentRole
 		};
 
-		QVector<QSharedPointer<ContentItem>> mContentItems;
+		QVector<ContentItem> mContentItems;
 
 	public:
 		explicit SectionModel(QObject* pParent = nullptr);
@@ -40,14 +41,8 @@ class SectionModel
 		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		void addItem(const QString& pTitle, const QString& pContent);
-		void addItem(const QSharedPointer<ContentItem>& pContentItem);
-		void addItemWithoutTitle(const QString& pContent);
-		void addTitleWithoutContent(const QString& pTitle);
-		[[nodiscard]] bool contains(const QSharedPointer<ContentItem>& pContentItem) const;
 		void removeAllItems();
-		void emitDataChangedForItem(const QSharedPointer<ContentItem>& pItem);
-		void replaceWithSections(QVector<QSharedPointer<SectionModel>> pSections);
+		void addContent(const QVector<ContentItem>& pContent);
 		[[nodiscard]] QStringList getAsPlaintext(const QString& pPrependString = QString()) const;
 };
 

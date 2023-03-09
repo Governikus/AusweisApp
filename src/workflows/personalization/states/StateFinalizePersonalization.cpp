@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateFinalizePersonalization.h"
@@ -48,7 +48,8 @@ void StateFinalizePersonalization::onCommandDone(const QVariant& pResult)
 
 	if (context->getStatus().isError())
 	{
-		Q_EMIT fireAbort();
+		Q_ASSERT(context->getFailureCode().has_value());
+		Q_EMIT firePropagateAbort();
 		return;
 	}
 
@@ -57,7 +58,7 @@ void StateFinalizePersonalization::onCommandDone(const QVariant& pResult)
 	{
 		qCWarning(card_smart) << "Finalization of personalization failed";
 		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Finalize_Personalization_Failed);
 		return;
 	}
 

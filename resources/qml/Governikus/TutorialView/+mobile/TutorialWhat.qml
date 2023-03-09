@@ -1,5 +1,5 @@
-/*
- * \copyright Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick 2.15
 import Governikus.Global 1.0
@@ -13,12 +13,11 @@ TutorialContent {
 		width: parent.width * 0.9
 
 		GText {
-			font.italic: true
 			horizontalAlignment: Text.AlignHCenter
 
 			//: LABEL ANDROID IOS
 			text: qsTr("What is the online ID function?")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_accent
 			width: parent.width
 
 			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -120,12 +119,11 @@ TutorialContent {
 			Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()
 		}
 		GText {
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 
 			//: LABEL ANDROID IOS
 			text: qsTr("Mutual authentication")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_highlight
 			width: parent.width
 
 			Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
@@ -298,12 +296,11 @@ TutorialContent {
 				z: 1
 			}
 			GText {
-				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
 				text: qsTr("... is the provider authorized for this?")
-				textStyle: Style.text.tutorial_header
+				textStyle: Style.text.tutorial_header_highlight
 				width: parent.width - 2 * Constants.component_spacing
 				x: (parent.width * 0.5) - (width / 2)
 				y: (parent.height * 0.3) - (height / 2)
@@ -332,12 +329,11 @@ TutorialContent {
 			width: parent.width
 
 			GText {
-				font.bold: true
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Certificate")
-				textStyle: Style.text.tutorial_header
+				textStyle: Style.text.tutorial_header_highlight
 				width: parent.width
 				x: (parent.width * 0.2) - (width / 2)
 				y: (parent.height * 0.5) - (height / 2)
@@ -404,11 +400,10 @@ TutorialContent {
 		}
 		GText {
 			anchors.horizontalCenter: parent.horizontalCenter
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("Every time both participants authenticate each other...")
-			textStyle: Style.text.tutorial_header
+			textStyle: Style.text.tutorial_header_highlight
 			width: parent.width * 0.9
 			z: 1
 

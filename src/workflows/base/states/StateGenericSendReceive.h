@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,6 +14,7 @@
 #include <QSharedPointer>
 #include <QSslPreSharedKeyAuthenticator>
 #include <QVector>
+#include <optional>
 
 class test_StateGenericSendReceive;
 
@@ -34,7 +35,7 @@ class StateGenericSendReceive
 		QSharedPointer<QNetworkReply> mReply;
 
 		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
-		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
+		std::optional<FailureCode> checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
 		void run() override;

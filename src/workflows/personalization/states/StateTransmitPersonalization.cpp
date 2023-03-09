@@ -1,5 +1,5 @@
-/*!
- * \copyright Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+/**
+ * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateTransmitPersonalization.h"
@@ -44,7 +44,7 @@ void StateTransmitPersonalization::onCommandDone(const QVariant& pResult)
 	if (outputApduAsHex.size() != transmit->getInputApduInfos().size())
 	{
 		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort();
+		Q_EMIT fireAbort(FailureCode::Reason::Transmit_Personalization_Size_Mismatch);
 		return;
 	}
 
