@@ -76,8 +76,7 @@ notwendig.)
 macOS
 ^^^^^
 Unter MacOS ist die Einrichtung relativ einfach und bedarf nur der oben genannten Voreinstellungen.
-Es wird der von Apple ausgelieferte clang compiler verwendet. Wenn man die Kompilierung des Quellcodes beschleunigen möchte, kann man den Parameter `-j <THREADS>` nutzen.
-
+Es wird der von Apple ausgelieferte clang compiler verwendet. 
 Beispiel: Innerhalb von macOS /Users/governikus/AusweisApp2 befindet sich der Quellcode.
 ::
 
@@ -90,7 +89,7 @@ Beispiel: Innerhalb von macOS /Users/governikus/AusweisApp2 befindet sich der Qu
 
 Linux / Unix
 ^^^^^
-Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannten Einstellungen. Die meisten Distributionen haben den clang Compiler bereits vorinstalliert, aber er kann auch nachträglich installiert werden. Wenn man die Kompilierung des Quellcodes beschleunigen möchte, kann man den Parameter `-j <THREADS>` nutzen.
+Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannten Einstellungen. Die meisten Distributionen haben den clang Compiler bereits vorinstalliert, aber er kann auch nachträglich installiert werden.
 Beispiel: Innerhalb von Linux/Unix /home/governikus/AusweisApp2. befindet sich der Quellcode
 ::
 
