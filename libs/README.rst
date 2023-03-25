@@ -88,7 +88,7 @@ Es wird der von Apple ausgelieferte clang compiler verwendet.
 
 
 Linux / Unix
-^^^^^
+^^^^^^^^^^^^
 Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannten Einstellungen. Die meisten Distributionen haben den C Compiler bereits vorinstalliert, aber er kann auch nachträglich installiert werden.
  Beispiel: Innerhalb von Linux/Unix /home/governikus/AusweisApp2 befindet sich der Quellcode
 ::
