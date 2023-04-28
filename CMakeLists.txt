@@ -60,7 +60,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.26.3 LANGUAGES ${LANGUAGES})
+project(AusweisApp2 VERSION 1.26.4 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -182,6 +182,7 @@ endif()
 option(USE_SMARTEID "Enable Smart-eID" OFF)
 
 include(Libraries)
+include(Tools.Libraries)
 include(CompilerFlags)
 
 if(LINUX OR BSD)
@@ -200,3 +201,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 endif()
 
 include(Packaging)
+
+include(FeatureSummary)
+FEATURE_SUMMARY(WHAT ALL)

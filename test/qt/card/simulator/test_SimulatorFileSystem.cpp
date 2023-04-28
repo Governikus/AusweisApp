@@ -9,6 +9,7 @@
 #include "ResourceLoader.h"
 #include "TestFileHelper.h"
 
+#include <QJsonDocument>
 #include <QScopedPointer>
 #include <QtTest>
 
@@ -40,24 +41,36 @@ class test_SimulatorFileSystem
 
 		void initTestCase()
 		{
-			QJsonObject file;
-			file.insert("fileId", QJsonValue("0101"));
-			file.insert("shortFileId", QJsonValue("01"));
-			QJsonValue value(file);
-
-			QJsonArray innerArray;
-			innerArray.append(value);
-
-			QJsonArray array;
-			array.append(QJsonValue(innerArray));
-			array.append(QJsonValue(value));
-
-			QJsonObject object;
-			object[QLatin1String("files")] = array;
+			QJsonDocument doc = QJsonDocument::fromJson(QByteArray(R"({
+	"files": [
+		[
+			{
+				"fileId": "0101",
+				"shortFileId": "01"
+			}
+		],
+		{
+			"fileId": "0101",
+			"shortFileId": "01"
+		}
+	],
+	"keys": [
+		[
+			{
+				"id": 1
+			}
+		],
+		{
+			"id": 1
+		}
+	]
+})"));
 
 			QTest::ignoreMessage(QtWarningMsg, R"(Skipping file entry. Expected JSON object, got QJsonValue(array, QJsonArray([{"fileId":"0101","shortFileId":"01"}])))");
 			QTest::ignoreMessage(QtWarningMsg, R"(Skipping file entry. Expected JSON object with 'fileId', 'shortFileId' and 'content', got QJsonObject({"fileId":"0101","shortFileId":"01"}))");
-			SimulatorFileSystem fs(object);
+			QTest::ignoreMessage(QtWarningMsg, R"(Skipping key entry. Expected JSON object, got QJsonValue(array, QJsonArray([{"id":1}])))");
+			QTest::ignoreMessage(QtWarningMsg, R"(Skipping key entry. Expected JSON object with 'id' and 'private', got QJsonObject({"id":1}))");
+			SimulatorFileSystem fs(doc.object());
 		}
 
 

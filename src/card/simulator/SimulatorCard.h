@@ -31,6 +31,7 @@ class SimulatorCard
 		QSharedPointer<AuthenticatedAuxiliaryData> mAuxiliaryData;
 		std::unique_ptr<SecureMessaging> mSecureMessaging;
 		std::unique_ptr<SecureMessaging> mNewSecureMessaging;
+		int mCaKeyId;
 		int mRiKeyId;
 
 	public:

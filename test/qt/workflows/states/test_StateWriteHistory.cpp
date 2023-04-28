@@ -57,19 +57,6 @@ class test_StateWriteHistory
 		}
 
 
-		void test_RunNoEffectiveAccessRights()
-		{
-			QSignalSpy spyAbort(mState.data(), &StateWriteHistory::fireAbort);
-			Env::getSingleton<AppSettings>()->getHistorySettings().setEnabled(true);
-			*mContext->getAccessRightManager() = {};
-
-			QTest::ignoreMessage(QtWarningMsg, "No effective CHAT in context.");
-			mContext->setStateApproved();
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(*mContext->getFailureCode(), FailureCode::Reason::Write_History_No_Chat);
-		}
-
-
 		void test_RunNoError()
 		{
 			SDK_MODE(false);

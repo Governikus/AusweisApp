@@ -45,7 +45,7 @@ SectionPage {
 	}
 	ColumnLayout {
 		anchors.fill: parent
-		spacing: filterButton.filter ? Constants.text_spacing : 0
+		spacing: 0
 
 		Rectangle {
 			id: logSelector
@@ -87,70 +87,72 @@ SectionPage {
 				}
 			}
 		}
-		TitledSeparator {
-			Layout.preferredWidth: parent.width
-			contentMarginTop: 0
-
-			//: LABEL ANDROID IOS
-			title: qsTr("Filter")
-			visible: filterButton.filter
-		}
-		GText {
-			Layout.leftMargin: Constants.component_spacing
-
-			//: LABEL ANDROID IOS
-			text: qsTr("Select level:")
-			textStyle: Style.text.normal_accent
-			visible: filterButton.filter
-		}
-		GridLayout {
+		GFlickableColumnLayout {
+			Layout.fillHeight: true
 			Layout.fillWidth: true
-			Layout.leftMargin: Constants.component_spacing
-			columnSpacing: Constants.groupbox_spacing
-			columns: (width + columnSpacing) / (levelRepeater.maxItemWidth + columnSpacing)
-			rowSpacing: Constants.groupbox_spacing
+			clip: true
+			spacing: Constants.text_spacing
 			visible: filterButton.filter
 
-			GRepeater {
-				id: levelRepeater
-				model: filterModel.levels
+			TitledSeparator {
+				Layout.fillWidth: true
+				contentMarginLeft: 0
+				contentMarginRight: 0
+				contentMarginTop: 0
 
-				delegate: GCheckBox {
-					Layout.fillWidth: true
-					checked: filterModel.selectedLevels.indexOf(text) !== -1
-					text: modelData
+				//: LABEL ANDROID IOS
+				title: qsTr("Filter")
+			}
+			GText {
+				//: LABEL ANDROID IOS
+				text: qsTr("Level")
+				textStyle: Style.text.normal_accent
+			}
+			GridLayout {
+				Layout.fillWidth: true
+				columnSpacing: Constants.groupbox_spacing
+				columns: (width + columnSpacing) / (levelRepeater.maxItemWidth + columnSpacing)
+				rowSpacing: Constants.groupbox_spacing
 
-					onToggled: filterModel.configureLevel(text, checked)
+				GRepeater {
+					id: levelRepeater
+					model: filterModel.levels
+
+					delegate: GCheckBox {
+						Layout.fillWidth: true
+						checked: filterModel.selectedLevels.indexOf(text) !== -1
+						text: modelData
+
+						onCheckedChanged: filterModel.configureLevel(text, checked)
+					}
 				}
 			}
-		}
-		GText {
-			Layout.leftMargin: Constants.component_spacing
+			GText {
+				//: LABEL ANDROID IOS
+				text: qsTr("Category")
+				textStyle: Style.text.normal_accent
+			}
+			GridLayout {
+				Layout.fillWidth: true
+				columnSpacing: Constants.groupbox_spacing
+				columns: (width + columnSpacing) / (categoryRepeater.maxItemWidth + columnSpacing)
+				rowSpacing: Constants.groupbox_spacing
 
-			//: LABEL ANDROID IOS
-			text: qsTr("Select category:")
-			textStyle: Style.text.normal_accent
-			visible: filterButton.filter
-		}
-		GridLayout {
-			Layout.fillWidth: true
-			Layout.leftMargin: Constants.component_spacing
-			columnSpacing: Constants.groupbox_spacing
-			columns: (width + columnSpacing) / (categoryRepeater.maxItemWidth + columnSpacing)
-			rowSpacing: Constants.groupbox_spacing
-			visible: filterButton.filter
+				GRepeater {
+					id: categoryRepeater
+					model: filterModel.categories
 
-			GRepeater {
-				id: categoryRepeater
-				model: filterModel.categories
+					delegate: GCheckBox {
+						Layout.fillWidth: true
+						checked: filterModel.selectedCategories.indexOf(text) !== -1
+						text: modelData
 
-				delegate: GCheckBox {
-					Layout.fillWidth: true
-					checked: filterModel.selectedCategories.indexOf(text) !== -1
-					text: modelData
-
-					onToggled: filterModel.configureCategory(text, checked)
+						onCheckedChanged: filterModel.configureCategory(text, checked)
+					}
 				}
+			}
+			GSpacer {
+				Layout.fillHeight: true
 			}
 		}
 		GListView {
@@ -159,6 +161,7 @@ SectionPage {
 			Layout.fillWidth: true
 			clip: true
 			model: filterModel
+			visible: !filterButton.filter
 
 			delegate: ListItem {
 				readonly property bool isLastItem: index === ListView.view.count - 1

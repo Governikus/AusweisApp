@@ -149,7 +149,6 @@ SectionPage {
 	GeneralWorkflow {
 		id: generalWorkflow
 		isPinChange: false
-		passwordInfoLinkText: infoData.linkText
 		visible: d.activeView === AuthView.SubViews.Workflow
 		waitingFor: switch (authController.workflowState) {
 		case AuthController.WorkflowStates.Reader:
@@ -160,7 +159,6 @@ SectionPage {
 			return Workflow.WaitingFor.None;
 		}
 
-		onRequestPasswordInfo: authView.showPasswordInfo()
 		onSettingsRequested: authView.showSettings()
 	}
 	EnterPasswordView {
@@ -189,6 +187,7 @@ SectionPage {
 			onClicked: passwordInfoView.close()
 		}
 
+		onAbortCurrentWorkflow: AuthModel.cancelWorkflow()
 		onClose: {
 			d.view = d.precedingView;
 			updateTitleBarActions();

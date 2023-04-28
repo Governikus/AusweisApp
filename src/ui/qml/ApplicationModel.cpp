@@ -76,7 +76,7 @@ ApplicationModel::ApplicationModel()
 	mFeedbackTimer.setSingleShot(true);
 	connect(&mFeedbackTimer, &QTimer::timeout, this, &ApplicationModel::onShowNextFeedback, Qt::QueuedConnection);
 
-	onApplicationStateChanged(qGuiApp->applicationState());
+	onApplicationStateChanged(QGuiApplication::applicationState());
 	connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, &ApplicationModel::onApplicationStateChanged);
 }
 
@@ -216,16 +216,16 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 	{
 		return Workflow::WORKFLOW_SELF_AUTHENTICATION;
 	}
-	if (mContext.objectCast<AuthContext>())
-	{
-		return Workflow::WORKFLOW_AUTHENTICATION;
-	}
 #if __has_include("context/PersonalizationContext.h")
 	if (mContext.objectCast<PersonalizationContext>())
 	{
 		return Workflow::WORKFLOW_SMART;
 	}
 #endif
+	if (mContext.objectCast<AuthContext>())
+	{
+		return Workflow::WORKFLOW_AUTHENTICATION;
+	}
 	return Workflow::WORKFLOW_NONE;
 }
 

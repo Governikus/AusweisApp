@@ -24,6 +24,7 @@ SectionPage {
 	property alias rootEnabled: titleBarAction.rootEnabled
 	readonly property string title: infoContent.title
 
+	signal abortCurrentWorkflow
 	signal close
 
 	titleBarAction: TitleBarAction {
@@ -140,7 +141,10 @@ SectionPage {
 				text: root.hint
 				visible: text !== ""
 
-				onClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
+				onClicked: {
+					abortCurrentWorkflow();
+					Qt.openUrlExternally(PinResetInformationModel.pinResetUrl);
+				}
 			}
 		}
 		NavigationButton {

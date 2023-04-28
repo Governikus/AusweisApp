@@ -60,7 +60,7 @@ GFlickableColumnLayout {
 			icon.source: "qrc:///images/icon_six_digit_pin_white.svg"
 
 			//: LABEL ALL_PLATFORMS
-			text: qsTr("6-digit PIN")
+			text: qsTr("Six-digit PIN")
 
 			onClicked: ChangePinModel.startWorkflow(false)
 		}
@@ -73,7 +73,7 @@ GFlickableColumnLayout {
 			icon.source: "qrc:///images/icon_five_digit_pin.svg"
 
 			//: LABEL ALL_PLATFORMS
-			text: qsTr("5-digit Transport PIN")
+			text: qsTr("Five-digit Transport PIN")
 
 			onClicked: ChangePinModel.startWorkflow(true)
 		}

@@ -28,8 +28,7 @@ class StateVerifyRetryCounter
 		void run() override;
 
 	Q_SIGNALS:
-		void fireEnterPacePassword();
-		void fireEstablishPaceChannel();
+		void fireNoCardConnection();
 };
 
 } // namespace governikus

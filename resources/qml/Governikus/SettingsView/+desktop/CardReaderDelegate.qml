@@ -112,6 +112,7 @@ Item {
 
 			GText {
 				Layout.fillWidth: true
+				clip: true
 				text: readerName
 				textStyle: Style.text.header
 			}

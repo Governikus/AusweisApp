@@ -28,6 +28,7 @@ bool GlobalStatus::isMessageMasked() const
 	switch (d->mStatusCode)
 	{
 		case Code::Workflow_Unknown_Paos_From_EidServer:
+		case Code::Workflow_Start_Paos_Response_Missing:
 		case Code::Workflow_Unexpected_Message_From_EidServer:
 		case Code::Workflow_Preverification_Error:
 		case Code::Workflow_No_Unique_AtCvc:
@@ -130,8 +131,12 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("The authenticity of your ID card could not be confirmed.");
 
 		case Code::Workflow_Unknown_Paos_From_EidServer:
-			//: ERROR_MASKED ALL_PLATFORMS The type of a POAS message could not be determined.
+			//: ERROR_MASKED ALL_PLATFORMS The type of a PAOS message could not be determined.
 			return tr("The program received an unknown message from the server.");
+
+		case Code::Workflow_Start_Paos_Response_Missing:
+			//: ERROR_MASKED ALL_PLATFORMS The PAOS message StartPaosResponse was not received.
+			return tr("The program did not receive a StartPaosResponse message from the server.");
 
 		case Code::Workflow_Unexpected_Message_From_EidServer:
 			//: ERROR_MASKED ALL_PLATFORMS The server sent a valid PAOS message but its type was unexpected.

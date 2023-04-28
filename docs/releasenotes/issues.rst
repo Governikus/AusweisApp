@@ -35,11 +35,6 @@ Windows / macOS
   Hierfür muss QT_QUICK_BACKEND=software gesetzt und die AusweisApp2
   neugestartet werden.
 
-- Das Beenden der AusweisApp2 über das Kontextmenü in der Menüleiste unter
-  macOS funktioniert nur, wenn das Kontextmenü mit der linken Maustaste
-  geöffnet wird. Alternativ kann das Tastaturkürzel CMD + Q zum beenden der
-  AusweisApp2 verwendet werden.
-
 - Die visuelle Hervorhebung des aktiven Elements wird an einigen Stellen
   fälschlicherwiese auch aktiviert, wenn die Maus benutzt wurde.
 
@@ -57,7 +52,3 @@ Android / iOS
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
 
 - Unter iOS kann derzeit das Hoch- bzw. Querformat nicht geändert werden.
-
-- Die Systemtastatur wird nach der Eingabe von Daten unter iOS nicht
-  automatisch geschlossen. Das Schließen muss manuell über die entsprechenden
-  Buttons "Fertig" bzw. "Suchen" erfolgen.

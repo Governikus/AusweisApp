@@ -21,6 +21,8 @@ j.with
 
 	steps
 	{
+		shell('docker container prune -f')
+
 		shell(strip('''\
 			docker build --pull
 			-t dev-docker.govkg.de/ausweisapp2/sdk:${TAG//-default/""}

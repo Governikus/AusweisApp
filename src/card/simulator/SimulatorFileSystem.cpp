@@ -24,11 +24,12 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-SimulatorFileSystem::SimulatorFileSystem()
-	: mSelectedFile()
-	, mFiles()
-	, mFileIds()
+void SimulatorFileSystem::initMandatoryData()
 {
+	mKeys.insert(1, QByteArray::fromHex("0353859C2EC67780BA39015DE8C682AF2326D43DE9CE1E07737087BD1E17CB22"));
+	mKeys.insert(2, QByteArray::fromHex("9AD0AD7F4DFAAA06988339FC31D3A111F4C7964AC7F377373A2454327C43E2FF"));
+	mKeys.insert(41, QByteArray::fromHex("A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C987A610"));
+
 	createFile(FileRef::efDir().getIdentifier(), FileRef::efDir().getShortIdentifier(), QByteArray::fromHex(
 			"61324F0FE828BD080FA000000167455349474E500F434941207A752044462E655369676E5100730C4F0AA00000016745"
 			"5349474E61094F07A0000002471001610B4F09E80704007F00070302610C4F0AA000000167455349474E"));
@@ -93,6 +94,16 @@ SimulatorFileSystem::SimulatorFileSystem()
 			"0304046630640230582364C74D9C694D3C8F99ACBF82A7A847141248B015AED8BEE3C395E82788426F032978D196303A"
 			"6B81D9FA8B8DBC8E02305BF169DE97B344A4B03E862C48A76226F044C6DA1EA78E380C2C6479B79526415735345764D7"
 			"B6E738EE83931AABE840"));
+}
+
+
+SimulatorFileSystem::SimulatorFileSystem()
+	: mSelectedFile()
+	, mKeys()
+	, mFiles()
+	, mFileIds()
+{
+	initMandatoryData();
 
 	// Default profile 01        : 01 - 0A, 0D, 11 - 12
 	// Additional data fields    : 0B - 0C, 0E - 0F, 13 - 16
@@ -135,7 +146,13 @@ SimulatorFileSystem::SimulatorFileSystem()
 
 
 SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
+	: mSelectedFile()
+	, mKeys()
+	, mFiles()
+	, mFileIds()
 {
+	initMandatoryData();
+
 	const auto& files = pData[QLatin1String("files")].toArray();
 	for (JsonValueRef value : files)
 	{
@@ -158,6 +175,27 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 		createFile(QByteArray::fromHex(fileId.toUtf8()),
 				QByteArray::fromHex(shortFileId.toUtf8()),
 				QByteArray::fromHex(content.toUtf8()));
+	}
+
+	const auto& keys = pData[QLatin1String("keys")].toArray();
+	for (JsonValueRef value : keys)
+	{
+		if (!value.isObject())
+		{
+			qCWarning(card) << "Skipping key entry. Expected JSON object, got" << value;
+			continue;
+		}
+
+		const auto& key = value.toObject();
+		const auto& keyId = key[QLatin1String("id")].toInt(0);
+		const auto& privateKey = key[QLatin1String("private")].toString();
+		if (keyId == 0 || privateKey.isNull())
+		{
+			qCWarning(card) << "Skipping key entry. Expected JSON object with 'id' and 'private', got" << key;
+			continue;
+		}
+
+		mKeys.insert(keyId, QByteArray::fromHex(privateKey.toUtf8()));
 	}
 }
 
@@ -241,25 +279,9 @@ QByteArray SimulatorFileSystem::getEfCardAccess() const
 }
 
 
-QByteArray SimulatorFileSystem::getCardAuthenticationKey() const
+QByteArray SimulatorFileSystem::getPrivateKey(int pKeyId) const
 {
-	return QByteArray::fromHex("A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C987A610");
-}
-
-
-QByteArray SimulatorFileSystem::getRestrictedIdentificationKey(int pKeyId) const
-{
-	switch (pKeyId)
-	{
-		case 1:
-			return QByteArray::fromHex("0353859C2EC67780BA39015DE8C682AF2326D43DE9CE1E07737087BD1E17CB22");
-
-		case 2:
-			return QByteArray::fromHex("9AD0AD7F4DFAAA06988339FC31D3A111F4C7964AC7F377373A2454327C43E2FF");
-
-		default:
-			return QByteArray();
-	}
+	return mKeys[pKeyId];
 }
 
 

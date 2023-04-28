@@ -57,6 +57,10 @@ Controller {
 		PasswordInfoView {
 			infoContent: infoData
 
+			onAbortCurrentWorkflow: {
+				popAll();
+				RemoteServiceModel.cancelPasswordRequest();
+			}
 			onClose: pop()
 		}
 	}

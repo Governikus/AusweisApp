@@ -1,4 +1,4 @@
-FROM ubuntu:swarm
+FROM dev-docker.governikus.de/ausweisapp2/ubuntu:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Vanilla LABELS="Vanilla" PACKAGES_DIR=/home/governikus/packages

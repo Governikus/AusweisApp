@@ -23,6 +23,7 @@ void StateStartPaosResponsePersonalization::run()
 	const QSharedPointer<StartPaosResponse>& startPaosResponse = getContext()->getStartPaosResponse();
 	if (!startPaosResponse)
 	{
+		updateStatus(GlobalStatus::Code::Workflow_Start_Paos_Response_Missing);
 		Q_EMIT fireAbort(FailureCode::Reason::Start_Paos_Response_Personalization_Empty);
 		return;
 	}

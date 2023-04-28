@@ -50,6 +50,7 @@ class GlobalStatus
 			Workflow_Card_Removed,
 			Workflow_Cannot_Confirm_IdCard_Authenticity,
 			Workflow_Unknown_Paos_From_EidServer,
+			Workflow_Start_Paos_Response_Missing,
 			Workflow_Unexpected_Message_From_EidServer,
 			Workflow_Preverification_Developermode_Error,
 			Workflow_Preverification_Error,

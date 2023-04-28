@@ -76,6 +76,10 @@ static inline void printInfo()
 	{
 		qCDebug(init) << "Library path:" << path;
 	}
+
+#if (QT_VERSION > QT_VERSION_CHECK(6, 0, 0))
+	qCDebug(init) << "TLS backends:" << QSslSocket::availableBackends() << "| using:" << QSslSocket::activeBackend();
+#endif
 }
 
 

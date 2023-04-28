@@ -106,6 +106,7 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 
 	sSendDidAuthenticateResponseEac1->addTransition(sSendDidAuthenticateResponseEac1, &AbstractState::fireContinue, sEacAdditionalInputType);
 	sSendDidAuthenticateResponseEac1->addTransition(sSendDidAuthenticateResponseEac1, &AbstractState::fireAbort, sDestroyPace);
+	sSendDidAuthenticateResponseEac1->addTransition(sSendDidAuthenticateResponseEac1, &StateSendDIDAuthenticateResponseEAC1::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &AbstractState::fireContinue, sProcessCertificatesFromEac2);
 	sEacAdditionalInputType->addTransition(sEacAdditionalInputType, &AbstractState::fireAbort, sSendDidAuthenticatResponseEacAdditionalInput);
@@ -113,6 +114,7 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 
 	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &AbstractState::fireContinue, sProcessCertificatesFromEac2);
 	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &AbstractState::fireAbort, sDestroyPace);
+	sSendDidAuthenticatResponseEacAdditionalInput->addTransition(sSendDidAuthenticatResponseEacAdditionalInput, &StateSendDIDAuthenticateResponseEACAdditionalInputType::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sProcessCertificatesFromEac2->addTransition(sProcessCertificatesFromEac2, &AbstractState::fireContinue, sDidAuthenticateEac2);
 	sProcessCertificatesFromEac2->addTransition(sProcessCertificatesFromEac2, &AbstractState::fireAbort, sSendDidAuthenticateResponseEac2);
@@ -122,13 +124,14 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 
 	sSendDidAuthenticateResponseEac2->addTransition(sSendDidAuthenticateResponseEac2, &AbstractState::fireContinue, sTransmit);
 	sSendDidAuthenticateResponseEac2->addTransition(sSendDidAuthenticateResponseEac2, &AbstractState::fireAbort, sDestroyPace);
+	sSendDidAuthenticateResponseEac2->addTransition(sSendDidAuthenticateResponseEac2, &StateSendDIDAuthenticateResponseEAC2::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sTransmit->addTransition(sTransmit, &AbstractState::fireContinue, sSendTransmitResponse);
 	sTransmit->addTransition(sTransmit, &AbstractState::fireAbort, sSendTransmitResponse);
 
-	sSendTransmitResponse->addTransition(sSendTransmitResponse, &AbstractState::fireContinue, sDestroyPace);
+	sSendTransmitResponse->addTransition(sSendTransmitResponse, &AbstractState::fireContinue, sTransmit);
 	sSendTransmitResponse->addTransition(sSendTransmitResponse, &AbstractState::fireAbort, sDestroyPace);
-	sSendTransmitResponse->addTransition(sSendTransmitResponse, &StateSendTransmitResponse::fireReceivedTransmit, sTransmit);
+	sSendTransmitResponse->addTransition(sSendTransmitResponse, &StateSendTransmitResponse::fireReceivedStartPaosResponse, sDestroyPace);
 
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sClearPacePasswords);
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireAbort, sClearPacePasswords);
@@ -138,6 +141,7 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireContinue, sCleanUpReaderManager);
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireAbort, sCleanUpReaderManager);
+	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &StateUpdateRetryCounter::fireNoCardConnection, sCleanUpReaderManager);
 
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireContinue, sStartPaosResponse);
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireAbort, sStartPaosResponse);

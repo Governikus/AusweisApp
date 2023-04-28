@@ -7,10 +7,11 @@ labels=${LABELS:-undefined}
 mode=${MODE:-exclusive}
 master=${MASTER:-https://ausweisapp-ci.govkg.de/}
 user=${USER:-jenkins-swarm}
-fingerprints=${FINGERPRINTS:-40:DD:0E:F9:8D:A1:DA:39:D4:B9:B6:31:C3:F8:E5:8B:45:76:C5:BB:68:61:4A:F3:DD:14:16:85:D9:03:C2:02}
+fingerprints=${FINGERPRINTS:-FA:B8:35:6B:4F:1F:AF:68:9F:CC:B9:63:71:BC:1F:DA:6E:DB:61:F6:C7:E4:64:F6:41:8F:51:09:4C:A9:A0:A9}
 
 /usr/bin/java                                          \
     -jar /swarm-client.jar                             \
+    -webSocket                                         \
     -name $name-$HOSTNAME                              \
     -mode $mode                                        \
     -executors $executor                               \

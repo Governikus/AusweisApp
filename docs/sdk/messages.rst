@@ -243,9 +243,9 @@ a result and an url parameter to indicate the end of an authentication.
 
     - **message**: The error message.
 
-    - **reason**: Unique error code.
+    - **reason**: Unique :doc:`failurecodes`.
 
-  - **url**: Refresh url or communication error address.
+  - **url**: Refresh url or an optional communication error address.
 
 .. code-block:: json
 
@@ -269,7 +269,8 @@ a result and an url parameter to indicate the end of an authentication.
               "minor": "http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError",
               "language": "en",
               "description": "An internal error has occurred during processing.",
-              "message": "The connection to the ID card has been lost. The process was aborted."
+              "message": "The connection to the ID card has been lost. The process was aborted.",
+              "reason": "Card_Removed"
              },
     "url": "https://test.governikus-eid.de/gov_autent/async?refID=_abcdefgh"
   }
@@ -370,14 +371,29 @@ command if the connection to the card failed. Also the parameter
    Support of CHANGE_PIN message.
 
 
+.. versionadded:: 1.26.4
+   Parameter **reason** added.
+
+
   - **success**: Indicates with true that the PIN was successfully
     changed, otherwise false.
+
+  - **reason**: Unique :doc:`failurecodes`.
 
 .. code-block:: json
 
   {
     "msg": "CHANGE_PIN",
     "success": true
+  }
+
+
+.. code-block:: json
+
+  {
+    "msg": "CHANGE_PIN",
+    "success": false,
+    "reason": "Card_Removed"
   }
 
 

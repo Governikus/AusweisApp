@@ -110,7 +110,7 @@ Item {
 	TabBarView {
 		id: helpView
 		anchors.fill: parent
-		visible: baseItem.activeModule === UiModule.HELP
+		visible: baseItem.activeModule === UiModule.HELP || baseItem.activeModule === UiModule.TUTORIAL
 
 		initialItem: MoreView {
 		}

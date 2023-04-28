@@ -58,9 +58,13 @@ QTcpSocket* HttpRequest::take()
 
 HttpRequest::~HttpRequest()
 {
-	if (mSocket && mSocket->state() == QAbstractSocket::ConnectedState)
+	if (mSocket && mSocket->bytesToWrite() && mSocket->state() == QAbstractSocket::ConnectedState && !mSocket->flush())
 	{
-		mSocket->flush();
+		qCDebug(network) << "Flush socket failed. Waiting for bytes:" << mSocket->bytesToWrite();
+		if (!mSocket->waitForBytesWritten())
+		{
+			qCWarning(network) << "Cannot wait for socket anymore... abort!";
+		}
 	}
 }
 

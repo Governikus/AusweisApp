@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.13.0)
+cmake_policy(SET CMP0057 NEW)
 
 ###########################################
 #### Usage: cmake -DCMD= -P cmake/cmd.cmake
@@ -184,8 +185,29 @@ function(CHECK_FAILURE_CODES)
 	string(REGEX REPLACE "/\\*[^(\\*/)]*\\*/" "" SINGLE_LINE ${SINGLE_LINE})
 	string(REGEX MATCHALL "([a-zA-Z0-9_]+)" FAILURE_CODES ${SINGLE_LINE})
 
+	file(STRINGS "docs/failurecodes/failurecodes.rst" LINES_RST)
+	foreach(line_rst ${LINES_RST})
+		#match this pattern: "  - | **Card_Removed**" with spaces or tabs as whitespaces.
+		string(REGEX MATCH "[ \\t]+-[ \\t]+\\|[ \\t]+\\*\\*([A-Za-z0-9_]+)\\*\\*" MATCH ${line_rst})
+		if(MATCH)
+			list(APPEND FAILURE_CODES_RST ${CMAKE_MATCH_1})
+		endif()
+	endforeach()
+
+	list(LENGTH FAILURE_CODES ENUM_CODE_COUNT)
+	list(LENGTH FAILURE_CODES_RST RST_CODE_COUNT)
+	if(NOT ENUM_CODE_COUNT EQUAL RST_CODE_COUNT)
+		message(FATAL_ERROR
+			"The failure code count in FailureCode.h (${ENUM_CODE_COUNT}) does not match the count in failurecodes.rst (${RST_CODE_COUNT})!")
+	endif()
+
 	file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 	foreach(code ${FAILURE_CODES})
+		if(NOT code IN_LIST FAILURE_CODES_RST)
+			message(FATAL_ERROR
+				"The failure code [${code}] is not part of failurecodes.rst. This hints a missing, duplicated or incorrectly spelled code in failurecodes.rst.")
+		endif()
+
 		set(COUNTER 0)
 		foreach(file ${SOURCE_FILES})
 			file(READ ${file} CONTENT)
@@ -194,7 +216,7 @@ function(CHECK_FAILURE_CODES)
 			math(EXPR COUNTER ${COUNTER}+${OCCURRENCES})
 		endforeach()
 		if(NOT COUNTER EQUAL 1)
-			message(FATAL_ERROR "${code} is not used excatly one time. Found ${COUNTER}")
+			message(FATAL_ERROR "${code} is not used exactly one time. Found ${COUNTER}")
 		endif()
 	endforeach()
 endfunction()

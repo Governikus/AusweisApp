@@ -110,7 +110,6 @@ void HttpHandler::handleImageRequest(const QSharedPointer<HttpRequest>& pRequest
 	{
 		qCCritical(network) << "Unknown image file requested" << pImagePath;
 		response.setStatus(HTTP_STATUS_NOT_FOUND);
-		response.setBody(QByteArrayLiteral("Not found"), QByteArrayLiteral("text/plain; charset=utf-8"));
 	}
 
 	pRequest->send(response);

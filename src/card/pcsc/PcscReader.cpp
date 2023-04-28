@@ -25,16 +25,7 @@ PcscReader::PcscReader(const QString& pReaderName)
 	qCDebug(card_pcsc) << pReaderName;
 	setObjectName(pReaderName);
 
-	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
-	qCDebug(card_pcsc) << "SCardEstablishContext:" << PcscUtils::toString(returnCode);
-	if (returnCode != PcscUtils::Scard_S_Success)
-	{
-		qCWarning(card_pcsc) << "Cannot establish context";
-		return;
-	}
-
 	memset(&mReaderState, 0, sizeof(SCARD_READERSTATE));
-
 #if defined(Q_OS_WIN) && defined(UNICODE)
 	wchar_t* name = new wchar_t[static_cast<size_t>(pReaderName.size()) + 1]();
 	pReaderName.toWCharArray(name);
@@ -42,27 +33,44 @@ PcscReader::PcscReader(const QString& pReaderName)
 #else
 	mReaderState.szReader = qstrdup(pReaderName.toUtf8().data());
 #endif
+}
+
+
+PCSC_RETURNCODE PcscReader::init()
+{
+	PCSC_RETURNCODE returnCode = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &mContextHandle);
+	qCDebug(card_pcsc) << "SCardEstablishContext:" << PcscUtils::toString(returnCode);
+	if (returnCode != PcscUtils::Scard_S_Success)
+	{
+		qCWarning(card_pcsc) << "Cannot establish context";
+		return returnCode;
+	}
 
 	returnCode = readReaderFeatures();
 	if (returnCode != PcscUtils::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Features / Capabilities not successful:" << returnCode;
-		return;
+		return returnCode;
 	}
 
 	setInfoBasicReader(!hasFeature(FeatureID::EXECUTE_PACE));
 
 	PcscReader::updateCard();
 	setTimerId(startTimer(500));
+	return PcscUtils::Scard_S_Success;
 }
 
 
 PcscReader::~PcscReader()
 {
 	qCDebug(card_pcsc) << getReaderInfo().getName();
-	qCDebug(card_pcsc) << "SCardCancel:        " << PcscUtils::toString(SCardCancel(mContextHandle));
-	qCDebug(card_pcsc) << "SCardReleaseContext:" << PcscUtils::toString(SCardReleaseContext(mContextHandle));
-	mContextHandle = 0;
+
+	if (mContextHandle != 0)
+	{
+		qCDebug(card_pcsc) << "SCardCancel:        " << PcscUtils::toString(SCardCancel(mContextHandle));
+		qCDebug(card_pcsc) << "SCardReleaseContext:" << PcscUtils::toString(SCardReleaseContext(mContextHandle));
+		mContextHandle = 0;
+	}
 
 	delete[] mReaderState.szReader;
 }

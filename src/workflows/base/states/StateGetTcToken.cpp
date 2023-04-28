@@ -9,7 +9,7 @@
 #include "NetworkManager.h"
 #include "TlsChecker.h"
 
-#include <QDebug>
+#include <QLoggingCategory>
 #include <QNetworkRequest>
 #include <QSslKey>
 #include <http_parser.h>
@@ -31,12 +31,12 @@ StateGetTcToken::StateGetTcToken(const QSharedPointer<WorkflowContext>& pContext
 
 void StateGetTcToken::run()
 {
-	auto url = getContext()->getTcTokenUrl();
-	qDebug() << "Got TC Token URL:" << url;
+	const auto& url = getContext()->getTcTokenUrl();
 	getContext()->setProgress(0, tr("Fetch TCToken"));
 
 	if (!isValidRedirectUrl(url))
 	{
+		qCCritical(network) << "TCToken URL is invalid:" << url;
 		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Url);
 		return;
 	}
@@ -53,7 +53,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 {
 	if (pUrl.isEmpty())
 	{
-		qCritical() << "Error while connecting to the provider. The server returns an invalid or empty redirect URL.";
+		qCCritical(network) << "Error while connecting to the provider. The server returns an invalid or empty redirect URL.";
 		updateStatus(GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error);
 		return false;
 	}
@@ -68,8 +68,8 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 		}
 		else
 		{
-			qCritical() << httpsError1;
-			qCritical() << httpsError2;
+			qCCritical(network) << httpsError1;
+			qCCritical(network) << httpsError2;
 			// according to TR-03124-1 in case of a non-HTTPS URL a createTrustedChannelEstablishmentError error must be sent
 			// in contrast a HTTP error 404 must be sent, if the TCToken could not be determined
 			getContext()->setTcTokenNotFound(false);
@@ -87,6 +87,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 
 void StateGetTcToken::sendRequest(const QUrl& pUrl)
 {
+	qCDebug(network) << "Fetch TCToken URL:" << pUrl;
 	QNetworkRequest request(pUrl);
 	mReply = Env::getSingleton<NetworkManager>()->get(request);
 	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetTcToken::onSslErrors);
@@ -127,7 +128,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		clearConnections();
 		mReply->abort();
-		qCritical() << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
+		qCCritical(network) << "Error while connecting to the provider. The server's SSL certificate uses an unsupported key algorithm or length.";
 		updateStatus(status);
 		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Certificate_Key_Length);
 		return;
@@ -137,7 +138,7 @@ void StateGetTcToken::onSslHandshakeDone()
 	{
 		clearConnections();
 		mReply->abort();
-		qCritical() << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
+		qCCritical(network) << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
 		updateStatus(status);
 		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Ephemeral_Key_Length);
 		return;
@@ -151,12 +152,12 @@ void StateGetTcToken::onSslHandshakeDone()
 
 void StateGetTcToken::onNetworkReply()
 {
-	qCDebug(network) << "Received TCToken from eID-Service";
+	qCDebug(network) << "TCToken request finished";
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 
 	if (mReply->error() != QNetworkReply::NoError)
 	{
-		qCritical() << NetworkManager::toStatus(mReply);
+		qCCritical(network) << NetworkManager::toStatus(mReply);
 		updateStatus(NetworkManager::toTrustedChannelStatus(mReply));
 		Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Network_Error,
 						  {FailureCode::Info::Network_Error, mReply->errorString()}
@@ -166,6 +167,7 @@ void StateGetTcToken::onNetworkReply()
 
 	if (statusCode == HTTP_STATUS_OK)
 	{
+		qCDebug(network) << "Received TCToken from eID-Service";
 		parseTcToken();
 		return;
 	}
@@ -202,7 +204,7 @@ void StateGetTcToken::parseTcToken()
 	QByteArray data = mReply->readAll();
 	if (data.isEmpty())
 	{
-		qDebug() << "Received no data.";
+		qCDebug(network) << "Received no data.";
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 				});
 		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Empty_Data);
@@ -224,7 +226,7 @@ void StateGetTcToken::parseTcToken()
 		return;
 	}
 
-	qCritical() << "TCToken invalid";
+	qCCritical(network) << "TCToken invalid";
 	updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
 			});
 	Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Data);

@@ -29,7 +29,6 @@ class StateConnectCard
 		void onCardInserted();
 		void onCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
 		void onReaderRemoved(const ReaderInfo& pInfo);
-		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 
 	public:
 		void onEntry(QEvent* pEvent) override;

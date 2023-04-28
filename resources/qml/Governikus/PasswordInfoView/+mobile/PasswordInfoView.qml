@@ -21,6 +21,7 @@ SectionPage {
 	}
 	readonly property string infoContentTitle: infoContent.title
 
+	signal abortCurrentWorkflow
 	signal close
 
 	sectionPageFlickable: contentItem
@@ -112,7 +113,10 @@ SectionPage {
 			text: root.hint
 			visible: text !== ""
 
-			onClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
+			onClicked: {
+				abortCurrentWorkflow();
+				Qt.openUrlExternally(PinResetInformationModel.pinResetUrl);
+			}
 		}
 	}
 }

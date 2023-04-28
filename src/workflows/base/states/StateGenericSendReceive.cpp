@@ -331,6 +331,13 @@ void StateGenericSendReceive::onReplyFinished()
 		return;
 	}
 
+	if (receivedType == PaosType::STARTPAOS_RESPONSE)
+	{
+		setReceivedMessage(paosHandler.getPaosMessage());
+		Q_EMIT fireReceivedStartPaosResponse();
+		return;
+	}
+
 	if (mOtherResponseTypes.contains(receivedType))
 	{
 		setReceivedMessage(paosHandler.getPaosMessage());

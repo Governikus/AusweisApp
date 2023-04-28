@@ -22,6 +22,9 @@ j.with
 		shell('cmake --build build --target sdk.latex.pdf')
 		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../../AusweisApp2_SDK.tar.xz .')
 
+		shell('cmake --build build --target failurecodes')
+		shell('cmake --build build --target failurecodes.latex.pdf')
+
 		shell('cmake --build build --target inst.latex.pdf')
 
 		shell('cmake --build build --target inte.latex.pdf')

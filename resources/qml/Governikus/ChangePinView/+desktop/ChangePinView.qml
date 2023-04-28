@@ -134,7 +134,6 @@ SectionPage {
 	GeneralWorkflow {
 		id: generalWorkflow
 		isPinChange: true
-		passwordInfoLinkText: infoData.linkText
 		visible: d.activeView === ChangePinView.SubViews.Workflow
 		waitingFor: switch (changePinController.workflowState) {
 		case ChangePinController.WorkflowStates.Reader:
@@ -145,7 +144,6 @@ SectionPage {
 			return Workflow.WaitingFor.None;
 		}
 
-		onRequestPasswordInfo: baseItem.showPasswordInfo()
 		onSettingsRequested: baseItem.showSettings()
 	}
 	EnterPasswordView {
@@ -168,6 +166,7 @@ SectionPage {
 		infoContent: infoData
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
+		onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
 		onClose: {
 			d.view = d.precedingView;
 			updateTitleBarActions();

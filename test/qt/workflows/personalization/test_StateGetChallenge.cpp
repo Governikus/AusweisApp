@@ -4,12 +4,10 @@
 
 #include "states/StateGetChallenge.h"
 
-#include "LogHandler.h"
 #include "ResourceLoader.h"
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkReply.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -36,7 +34,6 @@ class test_StateGetChallenge
 
 		void init()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/v1/%1")));
 			mState.reset(new StateGetChallenge(mContext));
 			mState->setStateName("StateGetChallenge");
@@ -80,12 +77,10 @@ class test_StateGetChallenge
 		{
 			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "No valid challenge to prepare personalization");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("No valid challenge to prepare personalization"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			QCOMPARE(mState->getContext()->getFailureCode() == FailureCode::Reason::Get_Challenge_Invalid, true);
@@ -113,12 +108,10 @@ class test_StateGetChallenge
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "Network request failed");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 

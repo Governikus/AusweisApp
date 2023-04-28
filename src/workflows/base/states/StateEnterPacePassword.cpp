@@ -4,6 +4,8 @@
 
 #include "StateEnterPacePassword.h"
 
+#include "VolatileSettings.h"
+
 
 using namespace governikus;
 
@@ -40,8 +42,9 @@ void StateEnterPacePassword::onEntry(QEvent* pEvent)
 			break;
 
 		default:
+			const auto* volatileSettings = Env::getSingleton<VolatileSettings>();
 			//: INFO IOS The current session was interrupted because of a wrong password.
-			stopNfcScanIfNecessary(tr("Access denied."));
+			stopNfcScanIfNecessary(volatileSettings->isUsedAsSDK() ? volatileSettings->getMessages().getSessionFailed() : tr("Access denied."));
 	}
 
 	AbstractState::onEntry(pEvent);

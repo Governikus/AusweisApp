@@ -17,6 +17,9 @@
 #include <QTimer>
 
 
+class test_PcscReaderManagerPlugIn;
+
+
 namespace governikus
 {
 
@@ -26,6 +29,7 @@ class PcscReaderManagerPlugIn
 	Q_OBJECT
 	Q_PLUGIN_METADATA(IID "governikus.ReaderManagerPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
+	friend class ::test_PcscReaderManagerPlugIn;
 
 	private:
 		SCARDCONTEXT mContextHandle;
@@ -36,6 +40,7 @@ class PcscReaderManagerPlugIn
 		PCSC_RETURNCODE readReaderNames(QStringList& pReaderNames);
 		void updateReaders();
 		inline QString extractReaderName(const PCSC_CHAR_PTR pReaderPointer) const;
+		void addReaders(const QStringList& pReaderNames);
 		void removeReader(const QString& pReaderName);
 		void removeReaders(const QStringList& pReaderNames);
 

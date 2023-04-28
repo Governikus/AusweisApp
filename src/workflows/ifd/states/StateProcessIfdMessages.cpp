@@ -105,7 +105,8 @@ void StateProcessIfdMessages::onReaderStatusChanged(const ReaderManagerPlugInInf
 	const auto& context = getContext();
 	if (context->getIfdServer()->isConnected())
 	{
-		Q_EMIT fireAbort(FailureCode::Reason::Process_Ifd_Messages_No_Server_Connection);
+		qCDebug(statemachine) << "Stopping IfdService because NFC was disabled.";
+		Q_EMIT fireContinue();
 	}
 }
 

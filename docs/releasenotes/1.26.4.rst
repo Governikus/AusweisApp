@@ -1,0 +1,31 @@
+AusweisApp2 1.26.4
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 28. April 2023
+
+
+Anwender
+""""""""
+- Unter macOS wurde das Fensterverhalten korrigiert.
+
+- Kleinere Fehlerbehebungen und Optimierungen.
+
+
+Entwickler
+""""""""""
+- INTERRUPT zeigt nun nicht immer ein Fehlersymbol an.
+
+- Der Header "Access-Control-Allow-Private-Network" ist
+  nun beim Status-Request gesetzt.
+
+- CHANGE_PIN liefert nun auch einen FailureCode.
+
+- Ein Absturz bei AirPlay im iOS-SDK wurde behoben.
+
+- Private Symbole im iOS-SDK wurden korrigiert.
+
+- Der Simulator unterstützt nun auch explizite
+  private Schlüssel als Parameter.
+
+- Der Abbruch-Button im iOS-Scan-Dialog des SDK bricht
+  nun wieder den Workflow ab.

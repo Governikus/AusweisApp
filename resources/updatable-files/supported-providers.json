@@ -366,9 +366,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bundestag ePetition"
@@ -517,9 +514,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portal Kreis Herford"
@@ -541,9 +535,6 @@
 			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portal Kreis Minden-Lübbecke"
@@ -585,9 +576,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portal Stadt Lage"
@@ -609,9 +597,6 @@
 			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portal Stadt Norderstedt"
@@ -653,9 +638,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Bürgerservice-Portale der bayerischen Kommunen"
@@ -737,9 +719,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "eAntrag der Investitionsbank Berlin (IBB)"
@@ -761,9 +740,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "ekom21 (KGRZ Hessen)"
@@ -806,9 +782,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Stadt Frankfurt am Main - iKFZ"
@@ -977,9 +950,6 @@
 			}
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "invenio"
@@ -1181,9 +1151,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Landkreis Hildburghausen - iKFZ"
@@ -1261,9 +1228,6 @@
 			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Landkreis Rostock - iKFZ"
@@ -1285,9 +1249,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "De-Mail Registrierung"
@@ -1406,6 +1367,26 @@
 		},
 		{
 			"shortName": {
+				"": "Serviceportal der Stadtverwaltung Siegen"
+			},
+			"longName": {
+				"": "Serviceportal der Stadtverwaltung Siegen"
+			},
+			"longDescription": {
+				"": "Im Serviceportal der Stadtverwaltung Siegen finden Sie Informationen zu zahlreichen Dienstleistungen, von denen Sie viele bequem von zu Hause aus beantragen, bezahlen und erledigen können. Das Angebot wird ständig erweitert und verbessert.<br/><br/>Für einige Online-Services ist eine einmalige Registrierung über das Servicekonto.NRW (Konto für alle Online-Anwendungen des Landes und der Kommunen in Nordrhein-Westfalen) erforderlich."
+			},
+			"address": "https://serviceportal.siegen.de",
+			"homepage": "https://www.siegen.de",
+			"phone": "+49 271 404 0",
+			"email": "serviceportal@siegen.de",
+			"postalAddress": "Stadt Siegen<br/>Rathaus/Markt 2<br/>57072 Siegen",
+			"image": "Siegen_image.jpg",
+			"icon": "Siegen_icon.jpg",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
 				"": "Online Services der Stadt Bad Oeynhausen"
 			},
 			"longName": {
@@ -1502,9 +1483,6 @@
 			"subjectUrlInfo": "Using service from Bürgerportal Baden-Württemberg (https://eid.service-bw.de)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Rheingau-Taunus-Kreis - iKFZ"
@@ -1564,9 +1542,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Kreis Lippe - iKFZ"
@@ -1628,10 +1603,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios",
-				"android"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "nEHS-Register"
@@ -1975,9 +1946,6 @@
 			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Serviceportal Sachsen-Anhalt"
@@ -2220,9 +2188,6 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Saalekreis - iKFZ"
@@ -2280,9 +2245,6 @@
 			"subjectUrlInfo": "Using service from Unterhaltsvorschuss Online (https://idp.serviceportal.gemeinsamonline.de)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Urkundenservice Köln"
@@ -2304,9 +2266,6 @@
 			]
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Virtuelles Rathaus Stadt Dortmund"
@@ -2326,9 +2285,6 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
-			"exclude": [
-				"ios"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Vollstreckungsportal"
@@ -2368,10 +2324,6 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
-			"exclude": [
-				"ios",
-				"android"
-			],
 			"eidSupport": false,
 			"shortName": {
 				"": "Z-EU-S"

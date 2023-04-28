@@ -269,5 +269,3 @@ target_link_libraries(AusweisApp PRIVATE AusweisAppCardSimulator)
 #####################################################################
 
 include(Install)
-include(FeatureSummary)
-FEATURE_SUMMARY(WHAT ALL)

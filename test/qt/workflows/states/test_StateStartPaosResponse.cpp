@@ -39,6 +39,24 @@ class test_StateStartPaosResponse
 		}
 
 
+		void missingStartPAOSResponse()
+		{
+			QSignalSpy spyAbort(mState.data(), &StateStartPaosResponse::fireAbort);
+
+			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+
+			const GlobalStatus& status = mState->getContext()->getStatus();
+			QCOMPARE(status.getStatusCode(), GlobalStatus::Code::Workflow_Start_Paos_Response_Missing);
+
+			const ECardApiResult& result = mState->getContext()->getStartPaosResult();
+			QCOMPARE(result.getMajor(), ECardApiResult::Major::Ok);
+			QCOMPARE(result.getMinor(), ECardApiResult::Minor::null);
+
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Start_Paos_Response_Missing);
+		}
+
+
 		void takeResultFromStartPAOSResponse()
 		{
 			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));

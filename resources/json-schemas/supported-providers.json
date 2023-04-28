@@ -118,7 +118,7 @@
 					},
 					"postalAddress": {
 						"type": "string",
-						"pattern": "^([\\w\\. \\(\\)äöüÄÖÜß\\-\\/,:&–]|(<br\\/>))+$"
+						"pattern": "^([\\w\\. \\(\\)äöüÄÖÜß\\-\\/,:&]|(<br\\/>))+$"
 					},
 					"category": {
 						"type": "string",
@@ -140,20 +140,6 @@
 					"subjectUrlInfo": {
 						"type": "string",
 						"minLength": 1
-					},
-					"exclude": {
-						"type": "array",
-						"items": {
-							"type": "string",
-							"enum": [
-								"android",
-								"bsd",
-								"ios",
-								"linux",
-								"mac",
-								"win"
-							]
-						}
 					},
 					"eidSupport": {
 						"type": "boolean"

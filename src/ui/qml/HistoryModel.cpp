@@ -136,7 +136,13 @@ QVariant HistoryModel::data(const QModelIndex& pIndex, int pRole) const
 			}
 
 			case REQUESTEDDATA:
-				return AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::READ);
+				if (const auto& data = entry.getRequestedData(); !data.isEmpty())
+				{
+					return AccessRoleAndRightsUtil::joinFromTechnicalName(data, AccessRoleAndRightsUtil::READ);
+				}
+
+				//: LABEL ALL_PLATFORMS
+				return tr("No data stored on your ID card was read, only confirmed whether you are in possession of a valid ID card.");
 
 			case WRITTENDATA:
 				return AccessRoleAndRightsUtil::joinFromTechnicalName(entry.getRequestedData(), AccessRoleAndRightsUtil::WRITE);
