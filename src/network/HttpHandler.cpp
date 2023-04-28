@@ -110,7 +110,6 @@ void HttpHandler::handleImageRequest(const QSharedPointer<HttpRequest>& pRequest
 	{
 		qCCritical(network) << "Unknown image file requested" << pImagePath;
 		response.setStatus(HTTP_STATUS_NOT_FOUND);
-		response.setBody(QByteArrayLiteral("Not found"), QByteArrayLiteral("text/plain; charset=utf-8"));
 	}
 
 	pRequest->send(response);
@@ -146,6 +145,7 @@ void HttpHandler::handleStatusRequest(StatusFormat pStatusFormat, const QSharedP
 
 	HttpResponse response(HTTP_STATUS_OK);
 	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
+	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Private-Network"), QByteArrayLiteral("true"));
 	switch (pStatusFormat)
 	{
 		case StatusFormat::PLAIN:

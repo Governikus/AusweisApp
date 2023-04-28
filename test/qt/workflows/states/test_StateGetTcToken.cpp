@@ -40,12 +40,12 @@ class test_StateGetTcToken
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
 			context->setTcTokenUrl(validUrl);
-			QTest::ignoreMessage(QtDebugMsg, "Got TC Token URL: QUrl(\"https://a.not.existing.valid.test.url.com\")");
+			QTest::ignoreMessage(QtDebugMsg, "Fetch TCToken URL: QUrl(\"https://a.not.existing.valid.test.url.com\")");
 			state.run();
 			QCOMPARE(spyAbort.count(), 0);
 
 			context->setTcTokenUrl(invalidUrl);
-			QTest::ignoreMessage(QtDebugMsg, "Got TC Token URL: QUrl(\"test\")");
+			QTest::ignoreMessage(QtCriticalMsg, "TCToken URL is invalid: QUrl(\"test\")");
 			state.run();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Invalid_Url);

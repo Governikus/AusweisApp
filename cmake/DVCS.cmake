@@ -45,8 +45,6 @@ endfunction()
 
 
 macro(CHECK_DVCS)
-	set(VERSION_DVCS ${PROJECT_VERSION})
-
 	if(HG_FOUND)
 		DVCS_CALL("tag" "" id -t)
 	elseif(GIT_FOUND)
@@ -96,7 +94,7 @@ macro(GET_DVCS_INFO)
 	endif()
 endmacro()
 
-
+set(VERSION_DVCS ${PROJECT_VERSION})
 FIND_DVCS(${PROJECT_SOURCE_DIR})
 if(DVCS_FOUND)
 	option(ENABLE_DVCS "Check consistency of version/tag and get additional revision data" true)

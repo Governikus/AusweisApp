@@ -105,6 +105,7 @@ SectionPage {
 
 		Image {
 			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: contentItem.effectiveContentWidth
 			Layout.preferredHeight: Style.dimens.medium_icon_size
 			fillMode: Image.PreserveAspectFit
 			source: "qrc:///images/phone_to_pc.svg"

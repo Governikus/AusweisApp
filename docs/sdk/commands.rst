@@ -359,12 +359,17 @@ in a :ref:`reader` message.
 .. versionadded:: 1.24.0
    This command was introduced in :ref:`api_level` **2**.
 
+.. versionadded:: 1.26.4
+   Parameter **keys** added.
+
 
 - **name**: Name of the :ref:`reader`.
 
 - **simulator**: Specific data for :doc:`simulator`. (optional)
 
   - **files**: Content of card :ref:`filesystem`.
+
+  - **keys**: Keys of card :ref:`filesystem`.
 
 .. code-block:: json
 
@@ -373,7 +378,8 @@ in a :ref:`reader` message.
     "name": "reader name",
     "simulator":
     {
-       "files": []
+       "files": [],
+       "keys": []
     }
   }
 

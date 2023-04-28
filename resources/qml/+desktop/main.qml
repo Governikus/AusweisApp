@@ -52,16 +52,16 @@ ApplicationWindow {
 
 	Component.onCompleted: menuBar.forceActiveFocus(Qt.MouseFocusReason)
 	onClosing: close => {
-		if (ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE) {
+		if (ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE && !d.suppressAbortWarning) {
 			abortWorkflowWarning.open();
 			close.accepted = false;
 			return;
 		}
-		if (Qt.platform.os === "osx" && !SettingsModel.autoStartApp) {
+		if (d.isMacOsAndAutoStartDisabled) {
 			close.accepted = true;
 			return;
 		}
-		if (SettingsModel.remindUserToClose) {
+		if (SettingsModel.remindUserToClose && !d.suppressAbortWarning) {
 			closeWarning.open();
 			close.accepted = false;
 		} else {
@@ -80,7 +80,18 @@ ApplicationWindow {
 
 		property int activeView: UiModule.DEFAULT
 		property ApplicationWindow detachedLogView: null
+		readonly property string hideToTrayText: {
+			if (Qt.platform.os === "osx") {
+				//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.
+				return qsTr("The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
+			}
+
+			//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled.
+			return qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
+		}
+		readonly property bool isMacOsAndAutoStartDisabled: Qt.platform.os === "osx" && !SettingsModel.autoStartApp
 		property int lastVisibility: ApplicationWindow.Windowed
+		property bool suppressAbortWarning: false
 
 		function abortCurrentWorkflow() {
 			if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_AUTHENTICATION) {
@@ -104,6 +115,7 @@ ApplicationWindow {
 			ApplicationModel.scaleFactor = Math.min(width / initialSize.width, height / initialSize.height);
 		}
 		function showMainWindow() {
+			d.suppressAbortWarning = false;
 			if (active) {
 				return;
 			}
@@ -135,8 +147,7 @@ ApplicationWindow {
 		id: closeWarning
 		closePolicy: Popup.NoAutoClose
 		style: ConfirmationPopup.PopupStyle.OkButton
-		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed for the first time.
-		text: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
+		text: d.hideToTrayText
 		//: INFO DESKTOP Header of the popup that is shown when the AA2 is closed for the first time.
 		title: qsTr("The user interface of the %1 is closed.").arg(Qt.application.name)
 
@@ -156,18 +167,17 @@ ApplicationWindow {
 
 		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active.
 		readonly property string abortText: qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name)
-		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.
-		readonly property string hideToTrayText: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
 
 		closePolicy: Popup.NoAutoClose
-		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose ? "<br/><br/>%1".arg(hideToTrayText) : "")
+		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose && !d.isMacOsAndAutoStartDisabled ? "<br/><br/>%1".arg(d.hideToTrayText) : "")
 		//: INFO DESKTOP Header of the popup that is shown when the AA2 is closed and a workflow is still active
 		title: qsTr("Abort operation")
 
 		onCancelled: close()
 		onConfirmed: {
 			d.abortCurrentWorkflow();
-			d.hideUiAndTaskbarEntry();
+			d.suppressAbortWarning = true;
+			appWindow.close();
 		}
 	}
 	Connections {

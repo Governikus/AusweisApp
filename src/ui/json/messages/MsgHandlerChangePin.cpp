@@ -36,4 +36,10 @@ MsgHandlerChangePin::MsgHandlerChangePin(const QSharedPointer<const ChangePinCon
 	Q_ASSERT(pContext);
 
 	mJsonObject[QLatin1String("success")] = pContext->getLastPaceResult() == CardReturnCode::OK && !pContext->isWorkflowCancelled();
+
+	const auto& failureCode = pContext->getFailureCode();
+	if (failureCode.has_value())
+	{
+		mJsonObject[QLatin1String("reason")] = Enum<FailureCode::Reason>::getName(failureCode.value().getReason());
+	}
 }

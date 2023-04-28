@@ -32,7 +32,7 @@ class DatagramHandlerImpl
 		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
 		QScopedPointer<MulticastLock> mMulticastLock;
 		QList<QHostAddress> mAllAddresses;
-		QVector<QHostAddress> mFailedAddresses;
+		QStringList mFailedAddresses;
 		quint16 mUsedPort;
 		PortFile mPortFile;
 		bool mEnableListening;

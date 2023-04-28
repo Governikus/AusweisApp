@@ -24,8 +24,8 @@ void StateDestroyPace::run()
 	auto cardConnection = getContext()->getCardConnection();
 	if (!cardConnection)
 	{
-		qCDebug(statemachine) << "No card connection available.";
-		Q_EMIT fireAbort(FailureCode::Reason::Destroy_Pace_No_Connection_To_Destroy);
+		qCDebug(statemachine) << "Nothing to do. No card connection available.";
+		Q_EMIT fireContinue();
 		return;
 	}
 

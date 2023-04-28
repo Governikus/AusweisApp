@@ -27,7 +27,6 @@ void StateConnectCard::run()
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
 	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onReaderRemoved);
-	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateConnectCard::onReaderStatusChanged);
 	onCardInserted();
 }
 
@@ -93,30 +92,6 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	}
 
 	Q_EMIT fireContinue();
-}
-
-
-void StateConnectCard::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
-{
-	Q_UNUSED(pInfo)
-
-#if defined(Q_OS_IOS)
-	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-	{
-		return;
-	}
-
-	const auto activePlugins = getContext()->getReaderPlugInTypes();
-	if (activePlugins.size() > 1 || !activePlugins.contains(ReaderManagerPlugInType::NFC))
-	{
-		return;
-	}
-
-	if (!Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
-	{
-		Q_EMIT getContext()->fireCancelWorkflow();
-	}
-#endif
 }
 
 

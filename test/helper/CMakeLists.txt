@@ -11,6 +11,7 @@ if(TARGET AusweisAppIfd)
 endif()
 
 add_subdirectory(ui)
+add_subdirectory(pcsc)
 
 # TestModule detection misses indirect dependency currently
 if(TARGET AusweisAppTestHelperUiWebsocket)

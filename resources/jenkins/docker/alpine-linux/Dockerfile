@@ -1,4 +1,4 @@
-FROM alpine:swarm
+FROM dev-docker.governikus.de/ausweisapp2/alpine:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Linux LABELS="Linux g++ clang++" PACKAGES_DIR=/home/governikus/packages

@@ -61,6 +61,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireContinue, sCleanUpReaderManager);
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireAbort, sCleanUpReaderManager);
+	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &StateUpdateRetryCounter::fireNoCardConnection, sCleanUpReaderManager);
 
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireContinue, sFinal);
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireAbort, sFinal);

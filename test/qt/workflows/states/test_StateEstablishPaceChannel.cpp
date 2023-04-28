@@ -78,12 +78,12 @@ class test_StateEstablishPaceChannel
 		void test_Run_NoConnection()
 		{
 			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-			QSignalSpy spyAbort(mState.data(), &StateEstablishPaceChannel::fireAbort);
+			QSignalSpy spyNoCardConnection(mState.data(), &StateEstablishPaceChannel::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
-			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Establish_Pace_Channel_No_Card_Connection);
+			QCOMPARE(spyNoCardConnection.count(), 1);
+			QVERIFY(!mAuthContext->getFailureCode().has_value());
 		}
 
 
@@ -108,27 +108,27 @@ class test_StateEstablishPaceChannel
 		{
 			mAuthContext->setStatus(GlobalStatus::Code::Card_Cancellation_By_User);
 			mAuthContext->setFailureCode(FailureCode::Reason::User_Cancelled);
-			QSignalSpy spyPropagateAbort(mState.data(), &StateEstablishPaceChannel::firePropagateAbort);
+			QSignalSpy spyPaceChannelFailed(mState.data(), &StateEstablishPaceChannel::firePaceChannelFailed);
 
 			mState->run();
 
-			QCOMPARE(spyPropagateAbort.count(), 1);
+			QCOMPARE(spyPaceChannelFailed.count(), 1);
 		}
 
 
 		void test_OnKillWorkflow()
 		{
 			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
-			QSignalSpy spyPropagateAbort(mState.data(), &StateEstablishPaceChannel::firePropagateAbort);
+			QSignalSpy spyPaceChannelFailed(mState.data(), &StateEstablishPaceChannel::firePaceChannelFailed);
 			mState->setStateName("StateEstablishPaceChannel");
 			mState->onEntry(nullptr);
 			QCOMPARE(spyAbort.count(), 0);
-			QCOMPARE(spyPropagateAbort.count(), 0);
+			QCOMPARE(spyPaceChannelFailed.count(), 0);
 
 			mAuthContext->killWorkflow();
 
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
-			QTRY_COMPARE(spyPropagateAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyPaceChannelFailed.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

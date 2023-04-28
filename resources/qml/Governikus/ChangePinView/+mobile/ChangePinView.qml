@@ -81,6 +81,8 @@ SectionPage {
 
 				onClicked: pop()
 			}
+
+			onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
 		}
 	}
 	Component {

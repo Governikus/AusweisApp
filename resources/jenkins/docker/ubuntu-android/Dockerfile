@@ -1,4 +1,4 @@
-FROM ubuntu:swarm
+FROM dev-docker.governikus.de/ausweisapp2/ubuntu:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ARG ANDROID_CMDLINE_TOOLS=8092744

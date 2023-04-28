@@ -25,7 +25,7 @@ void StatePreparePace::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "Card connection lost.";
-		Q_EMIT fireAbort(FailureCode::Reason::Prepace_Pace_No_Card_Connection);
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 

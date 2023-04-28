@@ -24,6 +24,7 @@ class StateSelectReader
 
 	private Q_SLOTS:
 		void onReaderInfoChanged();
+		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

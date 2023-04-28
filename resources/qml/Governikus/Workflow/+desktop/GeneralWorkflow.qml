@@ -17,11 +17,8 @@ SectionPage {
 	id: root
 
 	property bool isPinChange: false
-	//: LABEL DESKTOP
-	property string passwordInfoLinkText: qsTr("More information")
 	property int waitingFor: 0
 
-	signal requestPasswordInfo
 	signal settingsRequested
 
 	onWaitingForChanged: if (visible)
@@ -175,7 +172,7 @@ SectionPage {
 		}
 	}
 	MoreInformationLink {
-		id: moreInfo
+		id: readerSettingsLink
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: subText.bottom
 		anchors.topMargin: Constants.component_spacing
@@ -188,25 +185,12 @@ SectionPage {
 
 				PropertyChanges {
 					iconVisible: false
-					target: moreInfo
+					target: readerSettingsLink
 					//: INFO DESKTOP
 					text: qsTr("Go to reader settings")
 					visible: true
 
 					onClicked: root.settingsRequested()
-				}
-			},
-			State {
-				name: "moreInformation"
-				when: waitingFor === Workflow.WaitingFor.Password
-
-				PropertyChanges {
-					iconVisible: true
-					target: moreInfo
-					text: root.passwordInfoLinkText
-					visible: true
-
-					onClicked: root.requestPasswordInfo()
 				}
 			}
 		]

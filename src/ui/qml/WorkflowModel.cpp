@@ -274,7 +274,7 @@ QString WorkflowModel::getStatusHintText() const
 			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionHint();
 
 		case GlobalStatus::Code::Card_ValidityVerificationFailed:
-			return tr("Contact your local citizens' office (Bürgeramt) to apply for a new ID card or to unblock the ID card.");
+			return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
 
 		default:
 			return QString();

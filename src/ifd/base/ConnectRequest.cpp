@@ -53,7 +53,11 @@ ConnectRequest::ConnectRequest(const IfdDescriptor& pIfdDescriptor,
 
 	mSocket->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
 	connect(mSocket.data(), &QWebSocket::connected, this, &ConnectRequest::onConnected);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+	connect(mSocket.data(), &QWebSocket::errorOccurred, this, &ConnectRequest::onError);
+#else
 	connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &ConnectRequest::onError);
+#endif
 
 	mTimer.setSingleShot(true);
 	mTimer.setInterval(pTimeoutMs);

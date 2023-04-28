@@ -4,11 +4,9 @@
 
 #include "states/StateGetSessionId.h"
 
-#include "LogHandler.h"
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkReply.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -29,7 +27,6 @@ class test_StateGetSessionId
 	private Q_SLOTS:
 		void init()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			mContext = QSharedPointer<PersonalizationContext>::create(QString());
 			mState.reset(new StateGetSessionId(mContext));
 			mState->setStateName("StateGetSessionId");
@@ -75,12 +72,10 @@ class test_StateGetSessionId
 
 			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSessionId::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "No valid sessionID to prepare personalization");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("No valid sessionID to prepare personalization"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Get_Session_Id_Invalid);
@@ -120,12 +115,10 @@ class test_StateGetSessionId
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetSessionId::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "Network request failed");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			const FailureCode::FailureInfoMap infoMap {

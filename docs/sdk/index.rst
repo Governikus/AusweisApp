@@ -55,6 +55,7 @@ Table of contents
    commands
    messages
    workflow
+   failurecodes
 
 
 .. raw:: latex

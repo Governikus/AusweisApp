@@ -250,6 +250,7 @@ SectionPage {
 		MoreInformationLink {
 			id: transportPinLink
 			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: numberPadLayout.width
 			Layout.topMargin: Constants.text_spacing
 			text: (passwordType === PasswordType.TRANSPORT_PIN ?
 				//: LABEL ANDROID IOS Button to switch to a six-digit ID card PIN.
@@ -263,6 +264,7 @@ SectionPage {
 		MoreInformationLink {
 			id: moreInformation
 			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: numberPadLayout.width
 			Layout.topMargin: Constants.text_spacing
 
 			onClicked: baseItem.requestPasswordInfo()

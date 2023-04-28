@@ -150,7 +150,6 @@ else()
 		endif()
 	endif()
 
-
 	if(CMAKE_COMPILE_WARNING_AS_ERROR AND CMAKE_VERSION VERSION_LESS "3.24")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 	endif()

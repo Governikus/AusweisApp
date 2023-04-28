@@ -9,7 +9,6 @@
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkManager.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -96,12 +95,10 @@ class test_StatePreparePersonalization
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Network request failed"));
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			const FailureCode::FailureInfoMap infoMap {

@@ -57,13 +57,12 @@ Item {
 			verticalAlignment: Text.AlignBottom
 			visible: text !== ""
 		}
-		Item {
+		Column {
 			id: additionalContentItem
 			Layout.alignment: Qt.AlignHCenter
 			Layout.bottomMargin: Constants.component_spacing
 			Layout.fillWidth: true
 			Layout.maximumWidth: Style.dimens.max_text_width
-			implicitHeight: childrenRect.height
 			visible: children.length !== 0
 		}
 		GSpacer {

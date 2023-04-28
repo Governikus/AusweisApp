@@ -78,14 +78,14 @@ Item {
 				blockTitle: qsTr("What is the card PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'what is the card pin?'
-					qsTr("The card PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.")]
+					qsTr("The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.")]
 			},
 			PasswordInfoContentBlock {
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("Where can I find the card PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?'
-					qsTr("You set the card PIN either directly when you picked up your ID card at the citizens' office (Bürgeramt) or later in AusweisApp2 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function.")]
+					qsTr("You set the card PIN either directly when you picked up your ID card at the citizens' office (Bürgeramt) or later in AusweisApp2 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function.")]
 			}
 		]
 	}
@@ -104,9 +104,9 @@ Item {
 				blockTitle: qsTr("How do I choose a secure PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 1/3
-					qsTr("For your 6-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
+					qsTr("For your six-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 2/3
-					qsTr("You can change your 6-digit PIN at any time and an unlimited number of times as long as you know your valid PIN."),
+					qsTr("You can change your six-digit PIN at any time and an unlimited number of times as long as you know your valid PIN."),
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 3/3
 					qsTr("Keep your PIN secret and change it if another person becomes aware of it.")]
 			}
@@ -129,9 +129,9 @@ Item {
 				blockTitle: qsTr("What is the Transport PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 1/3
-					qsTr("The 5-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card."),
+					qsTr("The five-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card."),
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 2/3
-					qsTr("If you did not set a self-selected 6-digit card PIN when you picked up your ID card, you can do so using the Transport PIN."),
+					qsTr("If you did not set a self-selected six-digit card PIN when you picked up your ID card, you can do so using the Transport PIN."),
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 3/3
 					qsTr("Once you have set a card PIN, the Transport PIN loses its validity.")]
 			}
@@ -172,7 +172,7 @@ Item {
 				blockTitle: qsTr("Where do I find the PUK?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'Where do I find the PUK?'
-					qsTr("The PUK is a 10-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.")]
+					qsTr("The PUK is a ten-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.")]
 			},
 			PasswordInfoContentBlock {
 				//: LABEL ALL_PLATFORMS
@@ -219,7 +219,7 @@ Item {
 				blockTitle: qsTr("Where can I find the CAN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the CAN?'
-					qsTr("The CAN is a 6-digit number that can be found on the bottom right of the front of the ID card.")]
+					qsTr("The CAN is a six-digit number that can be found on the bottom right of the front of the ID card.")]
 			}
 		]
 	}
@@ -227,6 +227,8 @@ Item {
 		id: canAllowedInfo
 		imageType: PasswordInfoImage.CAN
 
+		//: LABEL ALL_PLATFORMS
+		linkText: qsTr("Why is the CAN required?")
 		//: LABEL ALL_PLATFORMS
 		title: qsTr("CAN information")
 
@@ -254,29 +256,29 @@ Item {
 				blockTitle: qsTr("Learn more about the two types of PIN")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 1/6
-					qsTr("Your ID card comes with a 5-digit 'Transport PIN' which you need to replace with a 6-digit PIN that you choose yourself.")]
+					qsTr("Your ID card comes with a five-digit 'Transport PIN' which you need to replace with a six-digit PIN that you choose yourself.")]
 			},
 			PasswordInfoContentBlock {
 				blockHeaderImageType: PasswordInfoImage.Type.LETTER
 				//: LABEL ALL_PLATFORMS
-				blockTitle: qsTr("5-digit Transport PIN")
+				blockTitle: qsTr("Five-digit Transport PIN")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 2/6
-					qsTr("The 5-digit Transport PIN was sent to you by post after you applied for your ID card."),
+					qsTr("The five-digit Transport PIN was sent to you by post after you applied for your ID card."),
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 3/6
-					qsTr("The PIN can only be used once. When you set up the eID function, you will replace this 5-digit PIN with a 6-digit PIN that you choose yourself.")]
+					qsTr("The PIN can only be used once. When you set up the eID function, you will replace this five-digit PIN with a six-digit PIN that you choose yourself.")]
 			},
 			PasswordInfoContentBlock {
 				blockHeaderImageType: PasswordInfoImage.Type.PIN
 				//: LABEL ALL_PLATFORMS
-				blockTitle: qsTr("6-digit PIN")
+				blockTitle: qsTr("Six-digit PIN")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 4/6
-					qsTr("This is a number that you choose yourself when you set up the eID function for the first time. It replaces your 5-digit Transport PIN."),
+					qsTr("This is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN."),
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 5/6
 					qsTr("This PIN allows you to prove online that the ID card belongs to you. No one can use your ID card online without this PIN."),
 					//: INFO ALL_PLATFORMS Description text explaining the PINs 6/6
-					qsTr("You can change your 6-digit PIN at any time in AusweisApp2.")]
+					qsTr("You can change your six-digit PIN at any time in AusweisApp2.")]
 			}
 		]
 	}
@@ -313,7 +315,7 @@ Item {
 				blockTitle: qsTr("You do not know your PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS
-					qsTr("You have not yet set a 6-digit card PIN and cannot find the PIN letter with the Transport PIN?"),
+					qsTr("You have not yet set a six-digit card PIN and cannot find the PIN letter with the Transport PIN?"),
 					//: INFO ALL_PLATFORMS
 					qsTr("You set a card PIN when picking up your ID card or later by yourself, but you can no longer remember it?")]
 			}

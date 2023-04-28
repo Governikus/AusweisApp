@@ -34,7 +34,6 @@ class StateEstablishPaceChannel
 		void run() override;
 		void onUserCancelled() override;
 
-		void abort(FailureCode::Reason pReason);
 		void abortToChangePin(FailureCode::Reason pReason);
 		void handleNpaPosition(CardReturnCode pReturnCode);
 
@@ -42,10 +41,11 @@ class StateEstablishPaceChannel
 		void onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand);
 
 	Q_SIGNALS:
+		void fireNoCardConnection();
 		void firePaceChannelEstablished();
 		void firePaceChannelInoperative();
 		void fireAbortAndUnfortunateCardPosition();
-		void firePropagateAbort();
+		void firePaceChannelFailed();
 };
 
 } // namespace governikus

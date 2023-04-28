@@ -25,8 +25,11 @@ class SimulatorFileSystem
 {
 	private:
 		QByteArray mSelectedFile;
+		QMap<int, QByteArray> mKeys;
 		QMap<QByteArray, QByteArray> mFiles;
 		QMap<QByteArray, QByteArray> mFileIds;
+
+		void initMandatoryData();
 
 	public:
 		SimulatorFileSystem();
@@ -37,8 +40,7 @@ class SimulatorFileSystem
 		[[nodiscard]] StatusCode write(int pOffset, const QByteArray& pData);
 
 		[[nodiscard]] QByteArray getEfCardAccess() const;
-		[[nodiscard]] QByteArray getCardAuthenticationKey() const;
-		[[nodiscard]] QByteArray getRestrictedIdentificationKey(int pKeyId) const;
+		[[nodiscard]] QByteArray getPrivateKey(int pKeyId) const;
 
 		[[nodiscard]] StatusCode verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData);
 

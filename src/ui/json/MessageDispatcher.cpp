@@ -387,8 +387,19 @@ MsgHandler MessageDispatcher::interrupt()
 #ifdef Q_OS_IOS
 	{
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
-		return handleCurrentState(cmdType, allowedStates, [] {
-				Env::getSingleton<ReaderManager>()->stopScanAll(QLatin1String("")); // Null string is interpreted as 'success'
+		const auto lastPaceResult = mContext.getContext()->getLastPaceResult();
+		return handleCurrentState(cmdType, allowedStates, [lastPaceResult] {
+				switch (lastPaceResult)
+				{
+						case CardReturnCode::OK:
+						case CardReturnCode::OK_PUK:
+							Env::getSingleton<ReaderManager>()->stopScanAll(); // Null string is interpreted as 'success'
+							break;
+
+						default:
+							Env::getSingleton<ReaderManager>()->stopScanAll(Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
+				}
+
 				return MsgHandler::Void;
 			});
 	}

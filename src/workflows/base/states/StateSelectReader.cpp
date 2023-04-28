@@ -30,6 +30,7 @@ void StateSelectReader::run()
 	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
 	mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateSelectReader::onReaderStatusChanged);
 
 	onReaderInfoChanged();
 
@@ -91,6 +92,24 @@ void StateSelectReader::onReaderInfoChanged()
 	qCDebug(statemachine) << "Type:" << readerInfo.getPlugInType() << "BasicReader:" << readerInfo.isBasicReader();
 
 	Q_EMIT fireContinue();
+}
+
+
+void StateSelectReader::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const
+{
+#if defined(Q_OS_IOS)
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
+	{
+		return;
+	}
+
+	if (!Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
+	{
+		Q_EMIT getContext()->fireCancelWorkflow();
+	}
+#else
+	Q_UNUSED(pInfo)
+#endif
 }
 
 

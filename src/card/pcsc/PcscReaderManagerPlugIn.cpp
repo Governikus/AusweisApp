@@ -133,20 +133,7 @@ void PcscReaderManagerPlugIn::updateReaders()
 	}
 
 	removeReaders(readersToRemove);
-
-	for (QMutableListIterator<QString> iterator(readersToAdd); iterator.hasNext();)
-	{
-		QString readerName = iterator.next();
-		Reader* reader = new PcscReader(readerName);
-		mReaders.insert(readerName, reader);
-
-		connect(reader, &Reader::fireCardInserted, this, &PcscReaderManagerPlugIn::fireCardInserted);
-		connect(reader, &Reader::fireCardRemoved, this, &PcscReaderManagerPlugIn::fireCardRemoved);
-		connect(reader, &Reader::fireCardInfoChanged, this, &PcscReaderManagerPlugIn::fireCardInfoChanged);
-
-		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName << "(" << mReaders.size() << "reader in total )";
-		Q_EMIT fireReaderAdded(reader->getReaderInfo());
-	}
+	addReaders(readersToAdd);
 }
 
 
@@ -159,6 +146,30 @@ QString PcscReaderManagerPlugIn::extractReaderName(const PCSC_CHAR_PTR pReaderPo
 	return QString::fromUtf8(pReaderPointer);
 
 #endif
+}
+
+
+void PcscReaderManagerPlugIn::addReaders(const QStringList& pReaderNames)
+{
+	for (const auto& readerName : pReaderNames)
+	{
+		auto pcscReader = std::make_unique<PcscReader>(readerName);
+		if (pcscReader->init() != PcscUtils::Scard_S_Success)
+		{
+			qCDebug(card_pcsc) << "Initialization of" << readerName << "failed";
+			continue;
+		}
+
+		Reader* reader = pcscReader.release();
+		mReaders.insert(readerName, reader);
+
+		connect(reader, &Reader::fireCardInserted, this, &PcscReaderManagerPlugIn::fireCardInserted);
+		connect(reader, &Reader::fireCardRemoved, this, &PcscReaderManagerPlugIn::fireCardRemoved);
+		connect(reader, &Reader::fireCardInfoChanged, this, &PcscReaderManagerPlugIn::fireCardInfoChanged);
+
+		qCDebug(card_pcsc) << "fireReaderAdded:" << readerName << "(" << mReaders.size() << "reader in total )";
+		Q_EMIT fireReaderAdded(reader->getReaderInfo());
+	}
 }
 
 

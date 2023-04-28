@@ -142,11 +142,12 @@ class test_UIPlugInWebService
 		{
 			QTest::addColumn<QString>("url");
 			QTest::addColumn<QString>("header");
+			QTest::addColumn<int>("size");
 			QTest::addColumn<QNetworkReply::NetworkError>("error");
 
-			QTest::newRow("favicon") << QString("/favicon.ico") << QString("image/x-icon") << QNetworkReply::NoError;
-			QTest::newRow("logo") << QString("/images/html_templates/Logo_AusweisApp2.png") << QString("image/png") << QNetworkReply::NoError;
-			QTest::newRow("nothing") << QString("/images/html_templates/nothing.gif") << QString("text/plain; charset=utf-8") << QNetworkReply::ContentNotFoundError;
+			QTest::newRow("favicon") << QString("/favicon.ico") << QString("image/x-icon") << 94921 << QNetworkReply::NoError;
+			QTest::newRow("logo") << QString("/images/html_templates/Logo_AusweisApp2.png") << QString("image/png") << 3291 << QNetworkReply::NoError;
+			QTest::newRow("nothing") << QString("/images/html_templates/nothing.gif") << QString() << 0 << QNetworkReply::ContentNotFoundError;
 		}
 
 
@@ -154,11 +155,13 @@ class test_UIPlugInWebService
 		{
 			QFETCH(QString, url);
 			QFETCH(QString, header);
+			QFETCH(int, size);
 			QFETCH(QNetworkReply::NetworkError, error);
 
 			HttpServerRequestor requestor;
 			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl(url));
 			QVERIFY(reply);
+			QCOMPARE(reply->readAll().size(), size);
 			QCOMPARE(reply->error(), error);
 
 			const auto& contentType = reply->header(QNetworkRequest::ContentTypeHeader);

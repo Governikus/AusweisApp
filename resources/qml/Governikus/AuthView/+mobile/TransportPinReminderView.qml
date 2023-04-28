@@ -25,6 +25,7 @@ SectionPage {
 	}
 
 	GFlickableColumnLayout {
+		id: layout
 		anchors.fill: parent
 		spacing: Constants.component_spacing
 
@@ -52,6 +53,7 @@ SectionPage {
 		MoreInformationLink {
 			id: moreInformationLink
 			Layout.alignment: Qt.AlignCenter
+			Layout.maximumWidth: layout.effectiveContentWidth
 			Layout.topMargin: Constants.component_spacing
 
 			onClicked: root.showInfoView()
@@ -65,10 +67,9 @@ SectionPage {
 			spacing: Constants.component_spacing
 
 			GButton {
-				Layout.alignment: Qt.AlignCenter
+				Layout.alignment: Qt.AlignVCenter
 				Layout.fillWidth: true
 				Layout.maximumWidth: Style.dimens.max_text_width / 2
-				Layout.preferredWidth: parent.width / 2
 
 				//: LABEL ANDROID IOS
 				text: qsTr("No")
@@ -76,10 +77,9 @@ SectionPage {
 				onClicked: pinUnknown()
 			}
 			GButton {
-				Layout.alignment: Qt.AlignCenter
+				Layout.alignment: Qt.AlignVCenter
 				Layout.fillWidth: true
 				Layout.maximumWidth: Style.dimens.max_text_width / 2
-				Layout.preferredWidth: parent.width / 2
 
 				//: LABEL ANDROID IOS
 				text: qsTr("Yes")

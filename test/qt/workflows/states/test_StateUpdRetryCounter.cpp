@@ -55,12 +55,14 @@ class test_StateUpdateRetryCounter
 			StateUpdateRetryCounter counter(context);
 			QSignalSpy spyContinue(&counter, &StateUpdateRetryCounter::fireContinue);
 			QSignalSpy spyAbort(&counter, &StateUpdateRetryCounter::fireAbort);
+			QSignalSpy spyNoCardConnection(&counter, &StateUpdateRetryCounter::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			counter.run();
 			QCOMPARE(spyContinue.count(), 0);
-			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Update_Retry_Counter_No_Card_Connection);
+			QCOMPARE(spyAbort.count(), 0);
+			QCOMPARE(spyNoCardConnection.count(), 1);
+			QVERIFY(!context->getFailureCode().has_value());
 		}
 
 
@@ -72,13 +74,14 @@ class test_StateUpdateRetryCounter
 			const QSharedPointer<MockCardCommand> command(new MockCardCommand(worker));
 			QSignalSpy spyContinue(&counter, &StateUpdateRetryCounter::fireContinue);
 			QSignalSpy spyAbort(&counter, &StateUpdateRetryCounter::fireAbort);
+			QSignalSpy spyNoCardConnection(&counter, &StateUpdateRetryCounter::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "StateUpdateRetryCounter::onUpdateRetryCounterDone()");
-			QTest::ignoreMessage(QtCriticalMsg, "An error occurred while communicating with the card reader, cannot determine retry counter, abort state");
+			QTest::ignoreMessage(QtCriticalMsg, "An error ( UNKNOWN ) occurred while communicating with the card reader, cannot determine retry counter, abort state");
 			counter.onUpdateRetryCounterDone(command);
-			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Update_Retry_Counter_Communication_Error);
-
+			QCOMPARE(spyAbort.count(), 0);
+			QCOMPARE(spyNoCardConnection.count(), 1);
+			QVERIFY(!context->getFailureCode().has_value());
 			command->setMockReturnCode(CardReturnCode::OK);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create());
 			QTest::ignoreMessage(QtDebugMsg, "StateUpdateRetryCounter::onUpdateRetryCounterDone()");

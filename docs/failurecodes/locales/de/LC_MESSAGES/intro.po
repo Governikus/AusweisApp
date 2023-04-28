@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2023, Governikus GmbH & Co. KG
+# This file is distributed under the same license as the AusweisApp2 Failure
+# Codes package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: AusweisApp2 Failure Codes 1.26.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-27 13:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+msgid "Introduction"
+msgstr "Einführung"
+
+msgid ""
+"This documentation will list all failure codes that may occur while using"
+" the AusweisApp2 or the AusweisApp2 SDK. In addition to detailed "
+"information on where and why an error occurred, possible solutions are "
+"provided as well. Furthermore there will be first guidance to prevent "
+"many of the causes that will be mentioned."
+msgstr ""
+"Diese Dokumentation listet alle Fehlercodes auf, die beim Verwenden der "
+"AusweisApp2 oder des AusweisApp2-SDK auftreten können. Neben "
+"detaillierten Informationen über das \"Wo\" und \"Warum\" bietet sie auch"
+" mögliche Lösungen an. Darüber hinaus gibt es vorab Hilfestellung zur "
+"Verhinderung einer Vielzahl der hier beschriebenen Ursachen."
+

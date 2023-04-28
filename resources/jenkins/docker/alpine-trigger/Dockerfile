@@ -1,4 +1,4 @@
-FROM alpine:swarm
+FROM dev-docker.governikus.de/ausweisapp2/alpine:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Trigger LABELS="Trigger Seeder"

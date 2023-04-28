@@ -35,6 +35,7 @@ SimulatorCard::SimulatorCard(const SimulatorFileSystem& pFileSystem)
 	, mAuxiliaryData()
 	, mSecureMessaging()
 	, mNewSecureMessaging()
+	, mCaKeyId(0)
 	, mRiKeyId(0)
 {
 }
@@ -238,6 +239,10 @@ ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 		if (pCmd.getP1() == CommandApdu::CHIP_AUTHENTICATION && pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
 		{
 			const auto& cmr = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE);
+			if (cmr == Oid(KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128).getData())
+			{
+				mCaKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::PRIVATE_KEY_REFERENCE).back();
+			}
 			if (cmr == Oid(KnownOid::ID_RI_ECDH_SHA_256).getData())
 			{
 				mRiKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::PRIVATE_KEY_REFERENCE).back();
@@ -257,37 +262,36 @@ ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 
 ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 {
-	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
-
 	const CommandData cmdData(pCmd.getData());
 	const auto& caKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CA_EPHEMERAL_PUBLIC_KEY);
 	if (!caKey.isEmpty())
 	{
-		// CA General Authenticate - Chip Authentication
 		const QByteArray nonce = QByteArray::fromHex("0001020304050607");
 		const QByteArray& authenticationToken = generateAuthenticationToken(caKey, nonce);
 
 		auto ga = newObject<GA_CHIPAUTHENTICATIONDATA>();
 		Asn1OctetStringUtil::setValue(nonce, ga->mNonce);
 		Asn1OctetStringUtil::setValue(authenticationToken, ga->mAuthenticationToken);
-		result = {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
+		return {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
 	}
-	else
+
+	const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
+	if (!riKey.isEmpty())
 	{
-		const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
-		if (!riKey.isEmpty())
+		const auto& oid = cmdData.getData(V_ASN1_UNIVERSAL, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
+		if (oid != Oid(KnownOid::ID_RI_ECDH_SHA_256).getData())
 		{
-			// RE General Authenticate - Restricted Identification
-			const QByteArray& restrictedId = generateRestrictedId(riKey);
-
-			const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 1, restrictedId);
-			const auto response = Asn1Util::encode(V_ASN1_APPLICATION, 28, responseData, true);
-
-			result = {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
+			return {CardReturnCode::OK, ResponseApdu(StatusCode::NO_BINARY_FILE)};
 		}
+
+		const QByteArray& restrictedId = generateRestrictedId(riKey);
+
+		const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 1, restrictedId);
+		const auto response = Asn1Util::encode(V_ASN1_APPLICATION, 28, responseData, true);
+		return {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
 	}
 
-	return result;
+	return {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 }
 
 
@@ -321,7 +325,7 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 {
 	const Oid oid(KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128);
 
-	QByteArray sharedSecret = brainpoolP256r1Multiplication(pPublicKey, mFileSystem.getCardAuthenticationKey());
+	QByteArray sharedSecret = brainpoolP256r1Multiplication(pPublicKey, mFileSystem.getPrivateKey(mCaKeyId));
 
 	const auto protocol = SecurityProtocol(oid);
 	KeyDerivationFunction kdf(protocol);
@@ -346,7 +350,7 @@ QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey)
 {
 	// const Oid oid(KnownOid::ID_RI_ECDH_SHA_256);
 
-	QByteArray sharedSecret = brainpoolP256r1Multiplication(pPublicKey, mFileSystem.getRestrictedIdentificationKey(mRiKeyId));
+	QByteArray sharedSecret = brainpoolP256r1Multiplication(pPublicKey, mFileSystem.getPrivateKey(mRiKeyId));
 
 	return QCryptographicHash::hash(sharedSecret, QCryptographicHash::Sha256);
 }

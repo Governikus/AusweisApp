@@ -30,6 +30,7 @@ class StatePreparePace
 		bool requestPaceCanIfStillRequired();
 
 	Q_SIGNALS:
+		void fireNoCardConnection();
 		void fireEnterPacePassword();
 		void fireEstablishPaceChannel();
 };

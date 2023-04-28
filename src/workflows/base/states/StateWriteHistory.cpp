@@ -35,22 +35,10 @@ void StateWriteHistory::run()
 		return;
 	}
 
-	if (context->getDidAuthenticateEac1() == nullptr)
+	Q_ASSERT(context->getDidAuthenticateEac1());
+	if (const auto& eac1 = context->getDidAuthenticateEac1(); eac1&& eac1->getCertificateDescription())
 	{
-		qWarning() << "No EAC1 structure in context.";
-		Q_EMIT fireAbort(FailureCode::Reason::Write_History_No_Eac1);
-		return;
-	}
-
-	if (context->getAccessRightManager()->getEffectiveAccessRights().isEmpty())
-	{
-		qWarning() << "No effective CHAT in context.";
-		Q_EMIT fireAbort(FailureCode::Reason::Write_History_No_Chat);
-		return;
-	}
-
-	if (auto certDesc = context->getDidAuthenticateEac1()->getCertificateDescription())
-	{
+		auto certDesc = eac1->getCertificateDescription();
 		auto subjectName = certDesc->getSubjectName();
 		auto termsOfUsage = certDesc->getTermsOfUsage();
 		auto subjectUrl = certDesc->getSubjectUrl();

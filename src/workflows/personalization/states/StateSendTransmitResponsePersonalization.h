@@ -22,12 +22,6 @@ class StateSendTransmitResponsePersonalization
 	protected:
 		QSharedPointer<ResponseType> getAsResponse() override;
 		QSharedPointer<PaosCreator> getAsCreator() override;
-		void emitStateMachineSignal(PaosType pResponseType) override;
-
-	Q_SIGNALS:
-		void fireReceivedStartPaosResponse();
-
-
 };
 
 } // namespace governikus

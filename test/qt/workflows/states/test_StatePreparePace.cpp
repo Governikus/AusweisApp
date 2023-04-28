@@ -48,13 +48,13 @@ class test_StatePreparePace
 
 		void test_Run_NoCardConnection()
 		{
-			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
+			QSignalSpy spyNoCardConnection(mState.data(), &StatePreparePace::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection lost.");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyNoCardConnection.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::UNKNOWN);
-			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Prepace_Pace_No_Card_Connection);
+			QVERIFY(!mContext->getFailureCode().has_value());
 		}
 
 

@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>52a5aa47f692</translation>
+        <translation>efee4b38a0c7</translation>
     </message>
 </context>
 <context>
@@ -505,7 +505,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Was für eine PIN haben Sie?</translation>
     </message>
     <message>
-        <source>6-digit PIN</source>
+        <source>Six-digit PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Sechsstellige PIN</translation>
     </message>
@@ -515,7 +515,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Von Ihnen selbst gesetzt</translation>
     </message>
     <message>
-        <source>5-digit Transport PIN</source>
+        <source>Five-digit Transport PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Fünfstellige Transport-PIN</translation>
     </message>
@@ -1753,11 +1753,6 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>INFO DESKTOP</extracomment>
         <translation>Zu den Einstellungen</translation>
     </message>
-    <message>
-        <source>More information</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Mehr Informationen</translation>
-    </message>
 </context>
 <context>
     <name>Hint</name>
@@ -2169,14 +2164,14 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Filter</translation>
     </message>
     <message>
-        <source>Select level:</source>
+        <source>Level</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Level auswählen:</translation>
+        <translation>Level</translation>
     </message>
     <message>
-        <source>Select category:</source>
+        <source>Category</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kategorie auswählen:</translation>
+        <translation>Kategorie</translation>
     </message>
     <message>
         <source>Currently there are no log entries matching your filter.</source>
@@ -2753,7 +2748,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>PIN-Information</translation>
     </message>
     <message>
-        <source>The card PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
+        <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
         <translation>Die Karten-PIN ist eine sechsstellige PIN, die Sie selbst gesetzt haben. Diese PIN brauchen Sie immer, wenn Sie die Online-Ausweisfunktion nutzen möchten.</translation>
     </message>
@@ -2763,7 +2758,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wo finde ich die Karten-PIN?</translation>
     </message>
     <message>
-        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function.</source>
+        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos;</extracomment>
         <translation>Sie haben die Karten-PIN entweder direkt bei der Abholung des Ausweises im Bürgeramt oder später in der AusweisApp2 mithilfe der fünfstelligen Transport-PIN gesetzt. Erst wenn Sie eine selbstgewählte, sechsstellige PIN gesetzt haben, können Sie die Online-Ausweisfunktion nutzen.</translation>
     </message>
@@ -2773,12 +2768,12 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wie wähle ich eine sichere PIN?</translation>
     </message>
     <message>
-        <source>For your 6-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
+        <source>For your six-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 1/3</extracomment>
-        <translation>Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht zu erraten ist – also weder „123456“, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.</translation>
+        <translation>Wählen Sie für Ihre sechsstellige PIN eine Zahlenkombination, die nicht zu erraten ist - also weder „123456“, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.</translation>
     </message>
     <message>
-        <source>You can change your 6-digit PIN at any time and an unlimited number of times as long as you know your valid PIN.</source>
+        <source>You can change your six-digit PIN at any time and an unlimited number of times as long as you know your valid PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 2/3</extracomment>
         <translation>Sie können Ihre sechsstellige PIN jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige PIN bekannt ist.</translation>
     </message>
@@ -2798,12 +2793,12 @@ LABEL ANDROID IOS</extracomment>
         <translation>Transport-PIN-Information</translation>
     </message>
     <message>
-        <source>The 5-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
+        <source>The five-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 1/3</extracomment>
         <translation>Die fünfstellige Transport-PIN wurde Ihnen im PIN-Brief per Post zugesandt, nachdem Sie Ihren Ausweis beantragt haben.</translation>
     </message>
     <message>
-        <source>If you did not set a self-selected 6-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
+        <source>If you did not set a self-selected six-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 2/3</extracomment>
         <translation>Falls Sie nicht direkt bei der Abholung Ihres Ausweises eine selbstgewählte, sechsstellige Karten-PIN gesetzt haben, können Sie dies mithilfe der Transport-PIN tun.</translation>
     </message>
@@ -2838,7 +2833,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>PUK-Information</translation>
     </message>
     <message>
-        <source>The PUK is a 10-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
+        <source>The PUK is a ten-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
         <translation>Die PUK ist eine zehnstellige Zahl, die Sie in dem PIN-Brief finden, der Ihnen nach Beantragung Ihres Ausweises per Post zugeschickt wurde.</translation>
     </message>
@@ -2898,7 +2893,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Wo finde ich die CAN?</translation>
     </message>
     <message>
-        <source>The CAN is a 6-digit number that can be found on the bottom right of the front of the ID card.</source>
+        <source>The CAN is a six-digit number that can be found on the bottom right of the front of the ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the CAN?&apos;</extracomment>
         <translation>Die CAN ist eine sechsstellige Zahl, die unten rechts auf der Vorderseite des Ausweises zu finden ist.</translation>
     </message>
@@ -2935,7 +2930,7 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Sie kennen Ihre PIN nicht?</translation>
     </message>
     <message>
-        <source>You have not yet set a 6-digit card PIN and cannot find the PIN letter with the Transport PIN?</source>
+        <source>You have not yet set a six-digit card PIN and cannot find the PIN letter with the Transport PIN?</source>
         <extracomment>INFO ALL_PLATFORMS</extracomment>
         <translation>Sie haben noch keine sechsstellige PIN gesetzt und können den Brief mit der Transport-PIN nicht finden?</translation>
     </message>
@@ -2955,32 +2950,32 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>PIN-Arten</translation>
     </message>
     <message>
-        <source>Your ID card comes with a 5-digit &apos;Transport PIN&apos; which you need to replace with a 6-digit PIN that you choose yourself.</source>
+        <source>Your ID card comes with a five-digit &apos;Transport PIN&apos; which you need to replace with a six-digit PIN that you choose yourself.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/6</extracomment>
         <translation>Ihr Ausweis wurde bei Erstellung mit einer fünfstelligen „Transport-PIN“ versehen, die Sie durch eine sechsstellige, selbstgewählte PIN ersetzen müssen.</translation>
     </message>
     <message>
-        <source>5-digit Transport PIN</source>
+        <source>Five-digit Transport PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Fünfstellige Transport-PIN</translation>
     </message>
     <message>
-        <source>The 5-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
+        <source>The five-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/6</extracomment>
         <translation>Die fünfstellige Transport-PIN wurde Ihnen per Post zugesandt, nachdem Sie Ihren Ausweis beantragt haben.</translation>
     </message>
     <message>
-        <source>The PIN can only be used once. When you set up the eID function, you will replace this 5-digit PIN with a 6-digit PIN that you choose yourself.</source>
+        <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit PIN with a six-digit PIN that you choose yourself.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/6</extracomment>
         <translation>Diese PIN kann nur einmal verwendet werden. Wenn Sie Ihren Online-Ausweis einrichten, ersetzen Sie diese fünfstellige Transport-PIN durch eine sechsstellige, selbstgewählte PIN.</translation>
     </message>
     <message>
-        <source>6-digit PIN</source>
+        <source>Six-digit PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Sechsstellige PIN</translation>
     </message>
     <message>
-        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your 5-digit Transport PIN.</source>
+        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/6</extracomment>
         <translation>Die sechsstellige PIN ist eine Zahlenkombination, die Sie selbst wählen, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie ersetzt Ihre fünfstellige Transport-PIN.</translation>
     </message>
@@ -2990,7 +2985,7 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Mit der sechsstelligen, selbstgewählten PIN weisen Sie online nach, dass der Ausweis Ihnen gehört. Keiner kann Ihren Ausweis online benutzen ohne diese PIN.</translation>
     </message>
     <message>
-        <source>You can change your 6-digit PIN at any time in AusweisApp2.</source>
+        <source>You can change your six-digit PIN at any time in AusweisApp2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/6</extracomment>
         <translation>Sie können Ihre PIN jederzeit in der AusweisApp2 ändern.</translation>
     </message>
@@ -6764,7 +6759,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>The program received an unknown message from the server.</source>
-        <extracomment>ERROR_MASKED ALL_PLATFORMS The type of a POAS message could not be determined.</extracomment>
+        <extracomment>ERROR_MASKED ALL_PLATFORMS The type of a PAOS message could not be determined.</extracomment>
         <translation>Die Anwendung hat eine unbekannte Nachricht vom Server erhalten.</translation>
     </message>
     <message>
@@ -7081,6 +7076,19 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>A new process to start the update could not be launched.</source>
         <extracomment>ERROR ALL_PLATFORMS Starting the update failed.</extracomment>
         <translation>Ein neuer Prozess zur Durchführung der Aktualisierung konnte nicht gestartet werden.</translation>
+    </message>
+    <message>
+        <source>The program did not receive a StartPaosResponse message from the server.</source>
+        <extracomment>ERROR_MASKED ALL_PLATFORMS The PAOS message StartPaosResponse was not received.</extracomment>
+        <translation>Die Anwendung hat keine StartPaosResponse Nachricht vom Server erhalten.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::HistoryModel</name>
+    <message>
+        <source>No data stored on your ID card was read, only confirmed whether you are in possession of a valid ID card.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Es wurden keine Daten von Ihrem Ausweis ausgelesen, sondern lediglich sichergestellt, dass Sie im Besitz eines gültigen Ausweises sind.</translation>
     </message>
 </context>
 <context>
@@ -8038,9 +8046,7 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     </message>
     <message>
         <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed for the first time.
-----------
-INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.</extracomment>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled.</extracomment>
         <translation>Das Programm steht weiterhin im Infobereich zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
     </message>
     <message>
@@ -8086,6 +8092,11 @@ INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a wor
         <source>To close the app, quickly press the back button twice.</source>
         <extracomment>INFO ANDROID IOS Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
         <translation>Um die Anwendung zu schließen, drücken Sie zweimal schnell die Zurück-Taste.</translation>
+    </message>
+    <message>
+        <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.</extracomment>
+        <translation>Das Programm steht weiterhin in der Menüleiste zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
     </message>
 </context>
 </TS>

@@ -31,6 +31,9 @@ class StateUpdateRetryCounter
 
 	private Q_SLOTS:
 		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);
+
+	Q_SIGNALS:
+		void fireNoCardConnection();
 };
 
 } // namespace governikus

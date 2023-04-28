@@ -6,6 +6,7 @@ folgender Systeme und Funktionen eingestellt.
 
 - macOS Catalina 10.15
 - Online-Hilfe
+- PDF-Export-Funktion der Selbstauskunft
 
 
 Mit der Version 1.24.0 der AusweisApp2 wurde die Unterstützung

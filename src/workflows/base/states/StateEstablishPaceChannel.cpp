@@ -25,7 +25,7 @@ void StateEstablishPaceChannel::run()
 	if (getContext()->getStatus().isError())
 	{
 		Q_ASSERT(getContext()->getFailureCode().has_value());
-		Q_EMIT firePropagateAbort();
+		Q_EMIT firePaceChannelFailed();
 		return;
 	}
 
@@ -60,11 +60,6 @@ void StateEstablishPaceChannel::run()
 
 		case PacePasswordId::PACE_PIN:
 			password = getContext()->getPin().toLatin1();
-			if (authContext && password.size() == 5)
-			{
-				abortToChangePin(FailureCode::Reason::Establish_Pace_Channel_Transport_Pin);
-				return;
-			}
 			break;
 
 		case PacePasswordId::PACE_PUK:
@@ -81,7 +76,8 @@ void StateEstablishPaceChannel::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		abort(FailureCode::Reason::Establish_Pace_Channel_No_Card_Connection);
+		getContext()->setLastPaceResult(CardReturnCode::CARD_NOT_FOUND);
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 
@@ -90,10 +86,8 @@ void StateEstablishPaceChannel::run()
 		qCCritical(statemachine) << "We hit an invalid state! PACE password is empty for basic reader.";
 		Q_ASSERT(false);
 
-		qCDebug(statemachine) << "Resetting all PACE passwords.";
-		getContext()->resetPacePasswords();
-
-		abort(FailureCode::Reason::Establish_Pace_Channel_Basic_Reader_No_Pin);
+		updateStatus(GlobalStatus::Code::Card_Invalid_Pin);
+		Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Basic_Reader_No_Pin);
 		return;
 	}
 
@@ -122,13 +116,6 @@ void StateEstablishPaceChannel::onUserCancelled()
 {
 	getContext()->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
 	AbstractState::onUserCancelled();
-}
-
-
-void StateEstablishPaceChannel::abort(FailureCode::Reason pReason)
-{
-	getContext()->resetLastPaceResult();
-	Q_EMIT fireAbort(pReason);
 }
 
 
@@ -248,9 +235,7 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 				return;
 			}
 
-			Q_EMIT fireAbort({FailureCode::Reason::Establish_Pace_Channel_Invalid_Card_Return_Code,
-							  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
-					});
+			Q_EMIT firePaceChannelFailed();
 			return;
 	}
 

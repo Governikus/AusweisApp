@@ -155,6 +155,7 @@ ProgressView {
 		PasswordInfoView {
 			infoContent: infoData
 
+			onAbortCurrentWorkflow: AuthModel.cancelWorkflow()
 			onClose: pop()
 		}
 	}
