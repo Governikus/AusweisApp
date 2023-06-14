@@ -15,6 +15,7 @@ Checks: '
        ,-readability-convert-member-functions-to-static,
        ,-readability-redundant-member-init,
        ,-readability-implicit-bool-cast,
+       ,-llvmlibc-*,
 '
 
 WarningsAsErrors: ''
