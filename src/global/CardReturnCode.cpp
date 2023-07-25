@@ -32,8 +32,8 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::PROTOCOL_ERROR:
 			return GlobalStatus::Code::Card_Protocol_Error;
 
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
-			return GlobalStatus::Code::Workflow_No_Extended_Length_Error;
+		case CardReturnCode::WRONG_LENGTH:
+			return GlobalStatus::Code::Workflow_Wrong_Length_Error;
 
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 			return GlobalStatus::Code::Card_Unexpected_Transmit_Status;
@@ -99,7 +99,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::COMMAND_FAILED:
 		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+		case CardReturnCode::WRONG_LENGTH:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:

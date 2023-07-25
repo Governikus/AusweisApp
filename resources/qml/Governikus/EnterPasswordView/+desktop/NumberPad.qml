@@ -63,6 +63,7 @@ Item {
 				enabled: baseItem.deleteEnabled
 				fontScale: 0.75
 				text: "C"
+				visualPrivacy: SettingsModel.visualPrivacy
 
 				onClicked: baseItem.deletePressed()
 			}
@@ -80,6 +81,7 @@ Item {
 				enabled: baseItem.submitEnabled
 				fontScale: 0.75
 				text: "OK"
+				visualPrivacy: SettingsModel.visualPrivacy
 
 				onClicked: baseItem.submitPressed()
 			}

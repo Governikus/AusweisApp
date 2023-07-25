@@ -22,11 +22,12 @@ class RemoteWebSocketServer
 		~RemoteWebSocketServer() override;
 
 		[[nodiscard]] virtual bool isPairingConnection() const = 0;
+		[[nodiscard]] virtual bool isPairingAnnounced() const = 0;
 		virtual void setPairing(bool pEnable = true) = 0;
 		[[nodiscard]] virtual QSslCertificate getCurrentCertificate() const = 0;
 
 	Q_SIGNALS:
-		void firePairingCompleted();
+		void firePairingCompleted(const QSslCertificate& pCertificate);
 
 };
 

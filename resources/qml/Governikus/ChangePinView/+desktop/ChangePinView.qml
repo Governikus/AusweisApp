@@ -22,6 +22,7 @@ SectionPage {
 	enum SubViews {
 		Start,
 		Workflow,
+		WorkflowError,
 		Password,
 		NoPassword,
 		PasswordInfo,
@@ -144,7 +145,23 @@ SectionPage {
 			return Workflow.WaitingFor.None;
 		}
 
+		onDeviceUnpaired: function (pDeviceName) {
+			deviceUnpairedView.deviceName = pDeviceName;
+			showWithPrecedingView(ChangePinView.SubViews.WorkflowError);
+		}
 		onSettingsRequested: baseItem.showSettings()
+	}
+	ResultView {
+		id: deviceUnpairedView
+
+		property string deviceName
+
+		resultType: ResultView.Type.IsError
+		//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
+		text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
+		visible: d.activeView === ChangePinView.SubViews.WorkflowError
+
+		onNextView: d.view = ChangePinView.SubViews.Workflow
 	}
 	EnterPasswordView {
 		id: enterPasswordView
@@ -238,8 +255,8 @@ SectionPage {
 		id: pinResult
 		hintButtonText: ChangePinModel.statusHintActionText
 		hintText: ChangePinModel.statusHintText
+		mailButtonVisible: ChangePinModel.errorIsMasked
 		resultType: ChangePinModel.error ? ResultView.Type.IsError : ResultView.Type.IsSuccess
-		supportButtonsVisible: ChangePinModel.errorIsMasked
 		text: ChangePinModel.resultString
 		visible: d.activeView === ChangePinView.SubViews.Result
 

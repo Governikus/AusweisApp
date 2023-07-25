@@ -91,7 +91,7 @@ class test_StatePreVerification
 			QTRY_COMPARE(spyAbort.count(), isValid ? 0 : 1); // clazy:exclude=qstring-allocations
 			if (!isValid)
 			{
-				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 			}
 		}
 
@@ -104,7 +104,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 		}
 
 
@@ -116,7 +116,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Chain);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Invalid_Certificate_Chain);
 		}
 
 
@@ -136,7 +136,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Signature);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Invalid_Certificate_Signature);
 		}
 
 
@@ -148,7 +148,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 		}
 
 

@@ -115,7 +115,7 @@ EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(Car
 		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+		case CardReturnCode::WRONG_LENGTH:
 			return EstablishPaceChannelErrorCode::UnexpectedDataInInput;
 
 		case CardReturnCode::INVALID_CAN:

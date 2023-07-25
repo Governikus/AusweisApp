@@ -56,6 +56,7 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 		connect(mContext.data(), &WorkflowContext::fireResultChanged, this, &WorkflowModel::fireResultChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &WorkflowModel::fireReaderPlugInTypeChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireSelectedReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireHasCardChanged);
 		connect(mContext.data(), &WorkflowContext::fireIsSmartCardAllowedChanged, this, &WorkflowModel::fireIsSmartCardAllowedChanged);
 		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
 		connect(mContext.data(), &WorkflowContext::fireRemoveCardFeedbackChanged, this, &WorkflowModel::fireRemoveCardFeedbackChanged);
@@ -159,11 +160,11 @@ void WorkflowModel::cancelWorkflow()
 }
 
 
-void WorkflowModel::startScanIfNecessary()
+void WorkflowModel::startScanExplicitly()
 {
 	if (mContext)
 	{
-		Q_EMIT mContext->fireReaderPlugInTypesChanged();
+		Q_EMIT mContext->fireReaderPlugInTypesChanged(true);
 	}
 }
 
@@ -187,6 +188,19 @@ bool WorkflowModel::isRemoteReader() const
 	}
 
 	return false;
+}
+
+
+bool WorkflowModel::hasCard() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+
+	const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({getReaderPlugInType()}));
+	const auto& readersWithEid = filter<ReaderInfo>([](const ReaderInfo& i){return i.hasEid();}, readerInfos);
+	return !readersWithEid.isEmpty();
 }
 
 
@@ -465,4 +479,6 @@ void WorkflowModel::onReaderManagerSignal()
 		mReaderImage = newReaderImage;
 		Q_EMIT fireReaderImageChanged();
 	}
+
+	Q_EMIT fireHasCardChanged();
 }

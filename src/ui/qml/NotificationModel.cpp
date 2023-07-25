@@ -41,6 +41,7 @@ void NotificationModel::onNewLogMsg(const QString& pMsg, const QString& pCategor
 		}
 
 		beginInsertRows(QModelIndex(), mNotificationEntries.size(), mNotificationEntries.size());
+		//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 		const auto& time = QTime::currentTime().toString(tr("hh:mm:ss"));
 		mNotificationEntries.append({pCategoryName, time, pMsg});
 		endInsertRows();

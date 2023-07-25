@@ -339,7 +339,7 @@ void DiagnosisModel::onTimestampChanged()
 	QDateTime timestampValue = mContext->getTimestamp();
 	if (timestampValue.isValid())
 	{
-		//: LABEL DESKTOP Timestamp, formatted according to the selected language
+		//: LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 		QString timestamp = LanguageLoader::getInstance().getUsedLocale().toString(timestampValue, tr("d. MMMM yyyy, hh:mm:ss AP"));
 		//: LABEL DESKTOP
 		mTimestampSection << ContentItem(tr("Time of diagnosis"), timestamp);
@@ -706,7 +706,7 @@ void DiagnosisModel::onRemoteInfosChanged()
 
 		if (!info.getFingerprint().isEmpty())
 		{
-			//: LABEL DESKTOP Timestamp
+			//: LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 			const QString& timestamp = LanguageLoader::getInstance().getUsedLocale().toString(info.getLastConnected(), tr("dd.MM.yyyy, hh:mm:ss"));
 			//: LABEL DESKTOP
 			mRemoteDeviceSection << ContentItem(info.getNameEscaped(), tr("Last connection: %1").arg(timestamp));

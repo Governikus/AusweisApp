@@ -395,13 +395,6 @@ void SmartManager::abortSDKWorkflow() const
 }
 
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-	#define HEX hex
-#else
-	#define HEX Qt::hex
-#endif
-
-
 QDebug operator<<(QDebug pDbg, const EidStatus& pStatus)
 {
 	const auto& toString = [](const EidStatus& status){
@@ -430,7 +423,7 @@ QDebug operator<<(QDebug pDbg, const EidStatus& pStatus)
 			};
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pStatus) << " 0x" << HEX << static_cast<int>(pStatus);
+	pDbg.nospace() << toString(pStatus) << " 0x" << Qt::hex << static_cast<int>(pStatus);
 	return pDbg;
 }
 
@@ -460,7 +453,7 @@ QDebug operator<<(QDebug pDbg, const EidUpdateInfo& pInfo)
 			};
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pInfo) << " 0x" << HEX << static_cast<int>(pInfo);
+	pDbg.nospace() << toString(pInfo) << " 0x" << Qt::hex << static_cast<int>(pInfo);
 	return pDbg;
 }
 
@@ -493,6 +486,6 @@ QDebug operator<<(QDebug pDbg, const EidServiceResult& pResult)
 			};
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pResult) << " 0x" << HEX << static_cast<int>(pResult);
+	pDbg.nospace() << toString(pResult) << " 0x" << Qt::hex << static_cast<int>(pResult);
 	return pDbg;
 }

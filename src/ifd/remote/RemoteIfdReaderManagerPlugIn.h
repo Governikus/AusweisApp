@@ -40,7 +40,6 @@ class RemoteIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		bool isInitialPairing(const QString& pIfdName, const QString& pId) override;
 		IfdClient* getIfdClient() override;
 
 };

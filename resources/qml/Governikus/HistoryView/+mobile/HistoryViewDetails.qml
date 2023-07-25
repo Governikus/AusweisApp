@@ -62,6 +62,7 @@ SectionPage {
 						if (!historyModelItem) {
 							return "";
 						}
+						//: LABEL ANDROID IOS Date format according to https://doc.qt.io/qt/qdate.html#toString
 						return historyModelItem.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"));
 					}
 					width: parent.width

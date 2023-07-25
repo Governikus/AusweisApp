@@ -4,6 +4,7 @@
 import QtQuick 2.15
 import Governikus.Global 1.0
 import Governikus.TechnologyInfo 1.0
+import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.SmartModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.PersonalizationModel 1.0
@@ -12,6 +13,7 @@ Item {
 	id: baseItem
 
 	readonly property bool canUseSmart: smartState === SmartModel.SMART_READY && isSmartCardAllowed && SmartModel.isScanRunning
+	readonly property bool isRemoteWorkflow: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_REMOTE_SERVICE
 	readonly property bool isSmartCardAllowed: workflowModel.isSmartCardAllowed
 	readonly property int smartState: SmartModel.smartState
 	property var workflowModel
@@ -20,7 +22,6 @@ Item {
 		id: progressIndicator
 		Accessible.ignored: true
 		disabled: !canUseSmart
-		height: parent.height / 2
 
 		anchors {
 			left: parent.left
@@ -55,6 +56,10 @@ Item {
 				}
 				return "";
 			default:
+				if (isRemoteWorkflow) {
+					//: LABEL ANDROID IOS
+					return qsTr("You have not yet set up a Smart-eID or it is no longer usable.\n\nTo proceed use your ID card by selecting the NFC interface. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.");
+				}
 				//: LABEL ANDROID IOS
 				return qsTr("You have not yet set up a Smart-eID or it is no longer usable.\n\nTo proceed use your ID card by selecting the NFC interface or choose \"WiFi\" to connect with another device as cardreader. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.");
 			}

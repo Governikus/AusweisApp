@@ -190,7 +190,7 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 				break;
 
 			case StatusCode::WRONG_LENGTH:
-				return CardReturnCode::EXTENDED_LENGTH_MISSING;
+				return CardReturnCode::WRONG_LENGTH;
 
 			default:
 				qCWarning(card) << "TA PSO:Verify Certificate failed:" << psoResult.getStatusCode();

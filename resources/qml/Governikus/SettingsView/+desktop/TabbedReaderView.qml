@@ -66,12 +66,6 @@ SectionPage {
 					height: Math.max(implicitHeight, tabbedPane.availableHeight)
 					width: parent.width
 
-					onMoreInformation: {
-						d.precedingView = d.view;
-						d.view = TabbedReaderView.SubView.ConnectSacView;
-						connectSacView.showPairingInformation();
-						updateTitleBarActions();
-					}
 					onPairDevice: pDeviceId => {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
 							d.view = TabbedReaderView.SubView.ConnectSacView;

@@ -4,10 +4,11 @@
 pragma Singleton
 import QtQuick 2.15
 import Governikus.Type.ApplicationModel 1.0
+import Governikus.Type.SettingsModel 1.0
 
 QtObject {
-	function escapeHtml(str) {
-		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	function escapeHtml(pStr) {
+		return String(pStr).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
 	function helpTopicOf(pComponent, pDefaultHelpTopic) {
 		if (pComponent && typeof (pComponent.helpTopic) !== "undefined") {
@@ -16,23 +17,33 @@ QtObject {
 			return pDefaultHelpTopic;
 		}
 	}
-	function isSameDate(one, another) {
-		return one.getFullYear() === another.getFullYear() && one.getMonth() === another.getMonth() && one.getDate() === another.getDate();
+	function historyDateString(pDate) {
+		//: LABEL ALL_PLATFORMS
+		return (isToday(pDate) ? qsTr("today") :
+			//: LABEL ALL_PLATFORMS
+			isYesterday(pDate) ? qsTr("yesterday") :
+			// dddd is without translation because we want the long day name with every language
+			isThisWeek(pDate) ? pDate.toLocaleString(Qt.locale(SettingsModel.language), "dddd") :
+			//: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
+			pDate.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")));
 	}
-	function isThisWeek(date) {
+	function isSameDate(pOne, pAnother) {
+		return pOne.getFullYear() === pAnother.getFullYear() && pOne.getMonth() === pAnother.getMonth() && pOne.getDate() === pAnother.getDate();
+	}
+	function isThisWeek(pDate) {
 		var monday = new Date;
 		monday.setDate(monday.getDate() - monday.getDay());
-		date.setDate(date.getDate() - date.getDay());
-		return isSameDate(monday, date);
+		pDate.setDate(pDate.getDate() - pDate.getDay());
+		return isSameDate(monday, pDate);
 	}
-	function isToday(date) {
+	function isToday(pDate) {
 		var today = new Date;
-		return isSameDate(today, date);
+		return isSameDate(today, pDate);
 	}
-	function isYesterday(date) {
+	function isYesterday(pDate) {
 		var yesterday = new Date;
 		yesterday.setDate(yesterday.getDate() - 1);
-		return isSameDate(yesterday, date);
+		return isSameDate(yesterday, pDate);
 	}
 	function scrollPageDown(pFlickable) {
 		if (pFlickable.height >= pFlickable.contentHeight) {

@@ -18,9 +18,9 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 namespace governikus
 {
 
-template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort)
+template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, bool&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, bool& pIsPairing)
 {
-	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort);
+	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pIsPairing);
 }
 
 
@@ -51,7 +51,7 @@ RemoteReaderAdvertiserImpl::~RemoteReaderAdvertiserImpl()
 }
 
 
-RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, int pTimerInterval, bool pPairing)
+RemoteReaderAdvertiserImpl::RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, bool pPairing, int pTimerInterval)
 	: RemoteReaderAdvertiser()
 	, mHandler(Env::create<DatagramHandler*>(false))
 	, mTimerId(startTimer(pTimerInterval))

@@ -28,7 +28,7 @@ Item {
 		GText {
 			id: date
 			font.capitalization: Font.AllUppercase
-			text: (Utils.isToday(dateTime) ? qsTr("today") : Utils.isYesterday(dateTime) ? qsTr("yesterday") : Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") : dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")))
+			text: Utils.historyDateString(dateTime)
 			textStyle: Style.text.normal
 		}
 		GridLayout {

@@ -97,14 +97,6 @@ void LocalIfdReaderManagerPlugIn::onLocalIfdConnectionClosed(GlobalStatus::Code 
 }
 
 
-bool LocalIfdReaderManagerPlugIn::isInitialPairing(const QString& pIfdName, const QString& pId)
-{
-	Q_UNUSED(pIfdName)
-	Q_UNUSED(pId)
-	return false;
-}
-
-
 bool LocalIfdReaderManagerPlugIn::isAusweisApp2Installed()
 {
 	if (mServiceConnected)

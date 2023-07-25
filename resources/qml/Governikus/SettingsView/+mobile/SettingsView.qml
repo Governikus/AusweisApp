@@ -136,12 +136,24 @@ SectionPage {
 
 			onCheckedChanged: SettingsModel.pinPadMode = checked
 		}
-		MenuItem {
+		LabeledSwitch {
+			checked: SettingsModel.showAccessRights
 			//: LABEL ANDROID IOS
-			description: qsTr("Configure remote service for another device")
+			description: qsTr("Show requested rights on this device as well")
+			enabled: SettingsModel.pinPadMode
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Remote card reader")
+			title: qsTr("Show access rights")
+			width: parent.width
+
+			onCheckedChanged: SettingsModel.showAccessRights = checked
+		}
+		MenuItem {
+			//: LABEL ANDROID IOS
+			description: qsTr("Manage paired devices and add new devices")
+
+			//: LABEL ANDROID IOS
+			title: qsTr("Manage pairings")
 			width: parent.width
 
 			onClicked: push(remoteServiceSettings)
@@ -395,10 +407,5 @@ SectionPage {
 				}
 			}
 		}
-	}
-	navigationAction: NavigationAction {
-		action: topLevelPage ? NavigationAction.Action.None : NavigationAction.Action.Back
-
-		onClicked: pop()
 	}
 }

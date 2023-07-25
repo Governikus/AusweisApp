@@ -1,8 +1,11 @@
 module RemoteServiceView
 
 internal DevicesListDelegate DevicesListDelegate.qml
+internal PairingCodeInfoView PairingCodeInfoView.qml
+internal PairingProcessInfo PairingProcessInfo.qml
 internal RemoteServiceController RemoteServiceController.qml
 internal RemoteServiceViewRemote RemoteServiceViewRemote.qml
+internal RemoteServiceWifiInfo RemoteServiceWifiInfo.qml
 
 LinkQuality 1.0 LinkQuality.qml
 LocalNetworkInfo 1.0 LocalNetworkInfo.qml

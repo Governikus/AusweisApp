@@ -71,8 +71,16 @@ class test_RemoteServiceSettings
 		void testPinPadMode()
 		{
 			RemoteServiceSettings settings;
+			QCOMPARE(settings.getPinPadMode(), true);
+			settings.setPinPadMode(false);
 			QCOMPARE(settings.getPinPadMode(), false);
-			QCOMPARE(settings.getPinPadMode(), false);
+		}
+
+
+		void testShowAccessRights()
+		{
+			RemoteServiceSettings settings;
+			QCOMPARE(settings.getShowAccessRights(), false);
 			settings.setPinPadMode(true);
 			QCOMPARE(settings.getPinPadMode(), true);
 		}

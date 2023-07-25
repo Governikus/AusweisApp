@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>efee4b38a0c7</translation>
+        <translation>b9ade3b30f3d</translation>
     </message>
 </context>
 <context>
@@ -177,6 +177,11 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
     <message>
         <source>Do you know your six-digit ID card PIN?</source>
         <translation>Вы знаете 6-значный PIN-код идентификационной карты?</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
+        <translation>Сопряжение устройства «%1» не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
     </message>
 </context>
 <context>
@@ -496,6 +501,11 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <extracomment>INFO ANDROID IOS The ID card PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.</extracomment>
         <translation>Вы трижды ввели неправильный 6-значный PIN-код идентификационной карты, PIN-код идентификационной карты заблокирован. Для разблокировки введите 10-значный PUK-код.</translation>
     </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
+        <translation>Сопряжение устройства «%1» не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
+    </message>
 </context>
 <context>
     <name>ChangePinViewContent</name>
@@ -505,9 +515,19 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Какой у вас PIN-код?</translation>
     </message>
     <message>
+        <source>Six-digit PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>6-значный PIN-код</translation>
+    </message>
+    <message>
         <source>Set by yourself</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Создается пользователем самостоятельно</translation>
+    </message>
+    <message>
+        <source>Five-digit Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>5-значный временный PIN-код</translation>
     </message>
     <message>
         <source>Received by mail in PIN letter</source>
@@ -523,16 +543,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Lost, forgotten, or never received it</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Утерян, забыт или не получен вовсе</translation>
-    </message>
-    <message>
-        <source>Six-digit PIN</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">6-значный PIN-код</translation>
-    </message>
-    <message>
-        <source>Five-digit Transport PIN</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">5-значный временный PIN-код</translation>
     </message>
 </context>
 <context>
@@ -665,7 +675,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the eID function.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>В вашем мобильном устройстве нет интерфейса NFC. Он требуется для считывания идентификационной карты. Вы также можете использовать другой смартфон в качестве устройства чтения карт для онлайн-идентификации.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
+        <translation>В вашем мобильном устройстве нет интерфейса NFC. Он требуется для считывания идентификационной карты. Вы можете воспользоваться функцией eID на другом смартфоне, используемом в качестве устройства чтения карт.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
     </message>
     <message>
         <source>Open website</source>
@@ -695,7 +705,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>The NFC interface of your mobile device does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Интерфейс NFC вашего мобильного устройства не поддерживает связь по протоколу с расширенной длиной и не может использоваться для считывания идентификационной карты. %1 не имеет какого-либо влияния на это ограничение.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
+        <translation>Интерфейс NFC вашего мобильного устройства не поддерживает связь по протоколу с расширенной длиной и не может использоваться для считывания идентификационной карты. К сожалению, %1 не влияет на это ограничение.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
     </message>
     <message>
         <source>ID card access failed</source>
@@ -725,7 +735,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>The ID card PIN has been entered incorrectly twice in a row. This is why you must first enter the six-digit Card Access Number (CAN) for the next identification process. You can find it at the bottom right of the front of your ID card.&lt;br&gt;&lt;br&gt;You may now try the function: &quot;See my personal data&quot;. There you can also use the CAN to unblock the ID card PIN.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>PIN-код идентификационной карты введен неправильно два раза подряд. Поэтому перед следующей попыткой идентификации необходимо ввести 6-значный код доступа (CAN). Он расположен внизу справа на передней стороне идентификационной карты.&lt;br&gt;&lt;br&gt;Теперь проверьте работу функции. «Просмотреть персональные данные». Вы также можете использовать код CAN для разблокировки PIN-кода идентификационной карты.</translation>
+        <translation>PIN-код идентификационной карты введен неправильно два раза подряд. Поэтому перед следующей попыткой идентификации необходимо ввести 6-значный код доступа (CAN). Он указан внизу справа на передней стороне вашей идентификационной карты.&lt;br&gt;&lt;br&gt;Проверьте функцию: «Просмотреть персональные данные». Вы также можете использовать код CAN для разблокировки PIN-кода идентификационной карты.</translation>
     </message>
     <message>
         <source>Continue</source>
@@ -740,7 +750,7 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
     <message>
         <source>The ID card PIN has been entered incorrectly thrice. Therefore, you must first enter the ten-digit PUK during the next authentication process. You can find it in the PIN letter you received after applying for your ID card.&lt;br&gt;&lt;br&gt;You may now try the function: &quot;See my personal data&quot;. Have your PUK ready to unlock the ID card PIN.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>PIN-код идентификационной карты введен неправильно трижды. Поэтому при следующем процессе аутентификации сначала необходимо ввести 10-значный PUK-код. Он указан в письме с PIN-кодом, которое вы получили после заказа идентификационной карты.&lt;br&gt;&lt;br&gt;Теперь проверьте работу функции. «Просмотреть персональные данные». Подготовьте PUK-код для разблокировки PIN-кода идентификационной карты.</translation>
+        <translation>PIN-код идентификационной карты введен неправильно трижды. Поэтому при следующем процессе аутентификации сначала необходимо ввести 10-значный PUK-код. Он указан в письме с PIN-кодом, которое вы получили после заказа идентификационной карты.&lt;br&gt;&lt;br&gt;Проверьте функцию: «Просмотреть персональные данные». Подготовьте PUK-код для разблокировки PIN-кода идентификационной карты.</translation>
     </message>
 </context>
 <context>
@@ -983,10 +993,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Pairing the device ...</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Сопряжение устройства…</translation>
-    </message>
-    <message>
-        <source>The device &quot;%1&quot; has been paired.</source>
-        <translation>Устройство «%1» сопряжено.</translation>
     </message>
     <message>
         <source>Pairing to &quot;%1&quot; failed:</source>
@@ -1469,11 +1475,6 @@ INFO ANDROID IOS The new ID card PIN needs to be confirmed.</extracomment>
         <translation>Подтвердите новый 6-значный PIN-код идентификационной карты.</translation>
     </message>
     <message>
-        <source>Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).</source>
-        <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
-        <translation>Запустите сопряжение на смартфоне и введите указанный в смартфоне код сопряжения для использования смартфона в качестве устройства чтения карт (SaC).</translation>
-    </message>
-    <message>
         <source>Unknown password type:</source>
         <extracomment>INFO DESKTOP Error message during PIN/CAN/PUK input procedure, the requested password type is unknown; internal error.</extracomment>
         <translation>Неизвестный тип пароля:</translation>
@@ -1612,6 +1613,11 @@ LABEL ANDROID IOS</extracomment>
 LABEL ANDROID IOS</extracomment>
         <translation>Отправить PIN-код идентификационной карты</translation>
     </message>
+    <message>
+        <source>Enter the pairing code shown on your smartphone.</source>
+        <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
+        <translation>Введите указанный в смартфоне код сопряжения.</translation>
+    </message>
 </context>
 <context>
     <name>GProgressBar</name>
@@ -1686,11 +1692,6 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>GeneralWorkflow</name>
     <message>
-        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
-        <translation>Сопряжение устройства %1 не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
-    </message>
-    <message>
         <source>Attempts</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Попытки</translation>
@@ -1753,6 +1754,11 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>INFO DESKTOP</extracomment>
         <translation>Перейти к настройкам устройства чтения карт</translation>
     </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
+        <translation>Сопряжение устройства «%1» не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
+    </message>
 </context>
 <context>
     <name>Hint</name>
@@ -1765,20 +1771,8 @@ LABEL ANDROID IOS</extracomment>
     <name>HistoryListItem</name>
     <message>
         <source>Click to view details of history entry.</source>
-        <translation>Щелкните, чтобы просмотреть подробную информацию о записи журнала.</translation>
-    </message>
-    <message>
-        <source>today</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>сегодня</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>вчера</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
+        <translation>Щелкните, чтобы просмотреть подробную информацию о записи журнала.</translation>
     </message>
     <message>
         <source>Tap for more details</source>
@@ -1858,18 +1852,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Search in history</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Поиск в журнале</translation>
-    </message>
-    <message>
-        <source>today</source>
-        <translation>сегодня</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>вчера</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -1959,7 +1941,10 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
+        <extracomment>LABEL DESKTOP Date format according to https://doc.qt.io/qt/qdate.html#toString
+----------
+LABEL ANDROID IOS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Write access (update)</source>
@@ -2053,14 +2038,14 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>LocalNetworkInfo</name>
     <message>
-        <source>To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed.</source>
-        <extracomment>INFO IOS Let user know to check the application settings for local network permission</extracomment>
-        <translation>Чтобы использовать смартфон в качестве устройства чтения карт (SaC), убедитесь в наличии доступа к локальной сети.</translation>
-    </message>
-    <message>
         <source>Go to application settings</source>
         <extracomment>INFO IOS Link to application settings</extracomment>
         <translation>Перейти к настройкам приложения</translation>
+    </message>
+    <message>
+        <source>Ensure that access to the local network is allowed in your settings.</source>
+        <extracomment>INFO IOS Let user know to check the application settings for local network permission</extracomment>
+        <translation>Убедитесь в наличии доступа к локальной сети.</translation>
     </message>
 </context>
 <context>
@@ -2164,19 +2149,19 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Фильтр</translation>
     </message>
     <message>
-        <source>Currently there are no log entries matching your filter.</source>
-        <extracomment>INFO ANDROID IOS No log entries, placeholder text.</extracomment>
-        <translation>В настоящее время отсутствуют записи журнала, соответствующие вашему фильтру.</translation>
-    </message>
-    <message>
         <source>Level</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Уровень</translation>
+        <translation>Уровень</translation>
     </message>
     <message>
         <source>Category</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Категория</translation>
+        <translation>Категория</translation>
+    </message>
+    <message>
+        <source>Currently there are no log entries matching your filter.</source>
+        <extracomment>INFO ANDROID IOS No log entries, placeholder text.</extracomment>
+        <translation>В настоящее время отсутствуют записи журнала, соответствующие вашему фильтру.</translation>
     </message>
 </context>
 <context>
@@ -2577,16 +2562,16 @@ LABEL ANDROID IOS</extracomment>
         <translation>Провайдер</translation>
     </message>
     <message>
-        <source>Remote</source>
-        <translation>Удаленный доступ</translation>
-    </message>
-    <message>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
         <source>Help</source>
         <translation>Справка</translation>
+    </message>
+    <message>
+        <source>Card reader</source>
+        <translation>Устройство чтения карт</translation>
     </message>
 </context>
 <context>
@@ -2623,12 +2608,12 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>NFC scan is not running.</source>
-        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>NFC-сканирование не выполняется.</translation>
     </message>
     <message>
         <source>Please start the NFC scan.</source>
-        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>Запустите NFC-сканирование.</translation>
     </message>
     <message>
@@ -2665,6 +2650,11 @@ LABEL ANDROID IOS</extracomment>
         <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
         <translation>Расположите идентификационную карту непосредственно на задней стороне устройства.&lt;br/&gt;&lt;br/&gt;Точное положение идентификационной карты зависит от устройства. Возможное положение показано в анимации. Удерживайте идентификационную карту в одном положении несколько секунд, прежде чем поменять положение, и не смещайте ее после установки соединения.</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; wants to use this smartphone as card reader and connect to your id card.</source>
+        <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
+        <translation>Устройство «%1» планирует использовать данный смартфон в качестве устройства чтения карт и установить соединение с вашей идентификационной картой.</translation>
     </message>
 </context>
 <context>
@@ -2728,6 +2718,52 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>PairingCodeInfoView</name>
+    <message>
+        <source>Pairing Information</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Информация о сопряжении</translation>
+    </message>
+    <message>
+        <source>Open %1 on your %2other device%3.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 3</extracomment>
+        <translation>Откройте %1 в другом %2вашем устройстве%3.</translation>
+    </message>
+    <message>
+        <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 3. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>В данном устройстве перейдите в меню %1Настройки%2, а затем %1Смартфон в качестве устройства чтения карт%2 и в соответствующее меню %1Управлять сопряжениями%2.</translation>
+    </message>
+    <message>
+        <source>Choose this smartphone in the list to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 3</extracomment>
+        <translation>Чтобы выполнить сопряжение, выберите данный смартфон в списке.</translation>
+    </message>
+</context>
+<context>
+    <name>PairingProcessInfo</name>
+    <message>
+        <source>Open %1 on your smartphone as card reader.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Откройте %1 в вашем смартфоне в качестве устройства чтения карт.</translation>
+    </message>
+    <message>
+        <source>On that device choose %1Card reader%2 and then %1Pair device%2 resp. %1Pair new device%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>В данном устройстве выберите %1Устройство чтения карт%2, а затем %1Выполнить сопряжение устройства%2 и соответствующее меню %1Выполнить сопряжение нового устройства%2.</translation>
+    </message>
+    <message>
+        <source>Choose the smartphone in the list shown here to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 4</extracomment>
+        <translation>Чтобы выполнить сопряжение, выберите смартфон в приведенном списке.</translation>
+    </message>
+    <message>
+        <source>Ensure that the %1 on your Smartphone as card reader has at least version %2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Убедитесь, что программа %1, установленная на смартфоне в качестве устройства чтения карт, имеет версию не ниже %2.</translation>
+    </message>
+</context>
+<context>
     <name>PasswordInfoContent</name>
     <message>
         <source>More information</source>
@@ -2748,14 +2784,34 @@ LABEL ANDROID IOS</extracomment>
         <translation>Информация о PIN-коде</translation>
     </message>
     <message>
+        <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
+        <translation>PIN-код карты — это 6-значный PIN-код, который пользователь создает самостоятельно. Этот PIN-код необходим, если планируется использовать функцию eID.</translation>
+    </message>
+    <message>
         <source>Where can I find the card PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Где найти PIN-код карты?</translation>
     </message>
     <message>
+        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos;</extracomment>
+        <translation>Вы устанавливаете PIN-код карты либо непосредственно при получении идентификационной карты в ведомстве по делам граждан (Bürgeramt), либо позже в AusweisApp2, используя для этого 5-значный временный PIN-код. Только установив 6-значный PIN-код по своему выбору, вы можете использовать функцию eID.</translation>
+    </message>
+    <message>
         <source>How do I choose a secure PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Как выбрать безопасный PIN-код?</translation>
+    </message>
+    <message>
+        <source>For your six-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 1/3</extracomment>
+        <translation>Не выбирайте для 6-значного PIN-кода комбинации, которые легко отгадать (например, «123456», дату своего рождения или любые другие цифры с идентификационной карты).</translation>
+    </message>
+    <message>
+        <source>You can change your six-digit PIN at any time and an unlimited number of times as long as you know your valid PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 2/3</extracomment>
+        <translation>Изменить 6-значный PIN-код можно в любое время и неограниченное количество раз, если вы знаете свой действительный PIN-код.</translation>
     </message>
     <message>
         <source>Keep your PIN secret and change it if another person becomes aware of it.</source>
@@ -2771,6 +2827,16 @@ LABEL ANDROID IOS</extracomment>
         <source>Transport PIN information</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Информация о временном PIN-коде</translation>
+    </message>
+    <message>
+        <source>The five-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 1/3</extracomment>
+        <translation>5-значный временный PIN-код был отправлен вам в письме с PIN-кодом по почте после того, как вы заказали идентификационную карту.</translation>
+    </message>
+    <message>
+        <source>If you did not set a self-selected six-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 2/3</extracomment>
+        <translation>Если при получении идентификационной карты вы не установили 6-значный PIN-код карты, это можно сделать с помощью временного PIN-кода.</translation>
     </message>
     <message>
         <source>Once you have set a card PIN, the Transport PIN loses its validity.</source>
@@ -2801,6 +2867,11 @@ LABEL ANDROID IOS</extracomment>
         <source>PUK information</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Информация о PUK-коде</translation>
+    </message>
+    <message>
+        <source>The PUK is a ten-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
+        <translation>PUK-код — это 10-значный номер, который можно найти в письме с PIN-кодом, отправленном вам по почте после того, как вы заказали идентификационную карту.</translation>
     </message>
     <message>
         <source>Why is the PUK required?</source>
@@ -2858,6 +2929,11 @@ LABEL ANDROID IOS</extracomment>
         <translation>Где найти CAN-код?</translation>
     </message>
     <message>
+        <source>The CAN is a six-digit number that can be found on the bottom right of the front of the ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the CAN?&apos;</extracomment>
+        <translation>CAN-код — это 6-значный номер, указанный в нижнем правом углу на передней стороне идентификационной карты.</translation>
+    </message>
+    <message>
         <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a six-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
         <extracomment>INFO ALL_PLATFORMS Description text of CAN-allowed authentication</extracomment>
         <translation>Код доступа (CAN) предоставляет доступ к сохраненным на идентификационной карте данным. CAN — это 6-значный номер, указанный на идентификационной карте спереди. Он расположен внизу справа рядом со сроком действия (выделен красным цветом).</translation>
@@ -2890,6 +2966,11 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Знаете ли вы свой PIN-код?</translation>
     </message>
     <message>
+        <source>You have not yet set a six-digit card PIN and cannot find the PIN letter with the Transport PIN?</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Вы еще не установили 6-значный PIN-код карты и не можете найти письмо с PIN-кодом, где указан временный PIN-код?</translation>
+    </message>
+    <message>
         <source>You set a card PIN when picking up your ID card or later by yourself, but you can no longer remember it?</source>
         <extracomment>INFO ALL_PLATFORMS</extracomment>
         <translation>Вы установили PIN-код карты при получении идентификационной карты или позже самостоятельно, но не можете его вспомнить?</translation>
@@ -2905,9 +2986,44 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Типы PIN-кодов</translation>
     </message>
     <message>
+        <source>Your ID card comes with a five-digit &apos;Transport PIN&apos; which you need to replace with a six-digit PIN that you choose yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/6</extracomment>
+        <translation>К вашей идентификационной карте прилагается 5-значный временный PIN-код, который необходимо заменить на 6-значным PIN-кодом (его вы выберете сами).</translation>
+    </message>
+    <message>
+        <source>Five-digit Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>5-значный временный PIN-код</translation>
+    </message>
+    <message>
+        <source>The five-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/6</extracomment>
+        <translation>5-значный временный PIN-код был отправлен вам по почте после того, как вы заказали идентификационную карту.</translation>
+    </message>
+    <message>
+        <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit PIN with a six-digit PIN that you choose yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/6</extracomment>
+        <translation>Этот PIN-код можно использовать только один раз. Настроив функцию eID, вы замените этот 5-значный PIN-код 6-значным PIN-кодом, который выберете сами.</translation>
+    </message>
+    <message>
+        <source>Six-digit PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>6-значный PIN-код</translation>
+    </message>
+    <message>
+        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/6</extracomment>
+        <translation>Это номер, который вы выбираете сами при настройке функции eID в первый раз. Он заменяет 5-значный временный PIN-код.</translation>
+    </message>
+    <message>
         <source>This PIN allows you to prove online that the ID card belongs to you. No one can use your ID card online without this PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/6</extracomment>
         <translation>Этот PIN-код позволяет в режиме онлайн подтвердить то, что идентификационная карта принадлежит именно вам. Никто не сможет использовать вашу идентификационную карту в режиме онлайн без этого PIN-кода.</translation>
+    </message>
+    <message>
+        <source>You can change your six-digit PIN at any time in AusweisApp2.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/6</extracomment>
+        <translation>Вы можете изменить свой 6-значный PIN-код в любое время в AusweisApp2.</translation>
     </message>
     <message>
         <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
@@ -2923,86 +3039,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
         <translation>Если вы забыли PIN-код карты, вы можете бесплатно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
-    </message>
-    <message>
-        <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
-        <translation type="unfinished">PIN-код карты — это 6-значный PIN-код, который пользователь создает самостоятельно. Этот PIN-код необходим, если планируется использовать функцию eID.</translation>
-    </message>
-    <message>
-        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos;</extracomment>
-        <translation type="unfinished">Вы устанавливаете PIN-код карты либо непосредственно при получении идентификационной карты в ведомстве по делам граждан (Bürgeramt), либо позже в AusweisApp2, используя для этого 5-значный временный PIN-код. Только установив 6-значный PIN-код по своему выбору, вы можете использовать функцию eID.</translation>
-    </message>
-    <message>
-        <source>For your six-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 1/3</extracomment>
-        <translation type="unfinished">Не выбирайте для 6-значного PIN-кода комбинации, которые легко отгадать (например, 123456, дату своего рождения или любые другие цифры с идентификационной карты).</translation>
-    </message>
-    <message>
-        <source>You can change your six-digit PIN at any time and an unlimited number of times as long as you know your valid PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 2/3</extracomment>
-        <translation type="unfinished">Изменить 6-значный PIN-код можно в любое время и неограниченное количество раз, если вы знаете свой действительный PIN-код.</translation>
-    </message>
-    <message>
-        <source>The five-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 1/3</extracomment>
-        <translation type="unfinished">5-значный временный PIN-код был отправлен вам в письме с PIN-кодом по почте после того, как вы заказали идентификационную карту.</translation>
-    </message>
-    <message>
-        <source>If you did not set a self-selected six-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 2/3</extracomment>
-        <translation type="unfinished">Если при получении идентификационной карты вы не установили 6-значный PIN-код карты, это можно сделать с помощью временного PIN-кода.</translation>
-    </message>
-    <message>
-        <source>The PUK is a ten-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
-        <translation type="unfinished">PUK-код — это 10-значный номер, который можно найти в письме с PIN-кодом, отправленном вам по почте после того, как вы заказали идентификационную карту.</translation>
-    </message>
-    <message>
-        <source>The CAN is a six-digit number that can be found on the bottom right of the front of the ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the CAN?&apos;</extracomment>
-	<translation type="unfinished">CAN-код — это 6-значный номер, указанный в нижнем правом углу на передней стороне идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>Your ID card comes with a five-digit &apos;Transport PIN&apos; which you need to replace with a six-digit PIN that you choose yourself.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/6</extracomment>
-        <translation type="unfinished">К вашей идентификационной карте прилагается 5-значный временный PIN-код, который необходимо заменить 6-значным PIN-кодом (его вы выберете сами).</translation>
-    </message>
-    <message>
-        <source>Five-digit Transport PIN</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-	<translation type="unfinished">5-значный временный PIN-код</translation>
-    </message>
-    <message>
-        <source>The five-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/6</extracomment>
-        <translation type="unfinished">5-значный временный PIN-код был отправлен вам по почте после того, как вы заказали идентификационную карту.</translation>
-    </message>
-    <message>
-        <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit PIN with a six-digit PIN that you choose yourself.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/6</extracomment>
-        <translation type="unfinished">Этот PIN-код можно использовать только один раз. Настроив функцию eID, вы замените этот 5-значный PIN-код 6-значным PIN-кодом, который выберете сами.</translation>
-    </message>
-    <message>
-        <source>Six-digit PIN</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">6-значный PIN-код</translation>
-    </message>
-    <message>
-        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/6</extracomment>
-        <translation type="unfinished">Это номер, который вы выбираете сами при настройке функции eID в первый раз. Он заменяет 5-значный временный PIN-код.</translation>
-    </message>
-    <message>
-        <source>You can change your six-digit PIN at any time in AusweisApp2.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/6</extracomment>
-        <translation type="unfinished">Вы можете изменить свой 6-значный PIN-код в любое время в AusweisApp2.</translation>
-    </message>
-    <message>
-        <source>You have not yet set a six-digit card PIN and cannot find the PIN letter with the Transport PIN?</source>
-        <extracomment>INFO ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">Вы еще не установили 6-значный PIN-код карты и не можете найти письмо с PIN-кодом, где указан временный PIN-код?</translation>
     </message>
 </context>
 <context>
@@ -3316,19 +3352,6 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
 <context>
     <name>ProviderDetailHistoryItem</name>
     <message>
-        <source>today</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>сегодня</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>вчера</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
-    </message>
-    <message>
         <source>Service:</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Служба:</translation>
@@ -3387,7 +3410,7 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
     <message>
         <source>See details under &quot;more...&quot;</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Подробнее см. в пункте «Дополнительные сведения»</translation>
+        <translation>Подробнее см. в пункте «Дополнительные сведения».</translation>
     </message>
 </context>
 <context>
@@ -3591,10 +3614,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Нажмите пробел для сопряжения смартфона «%1».</translation>
     </message>
     <message>
-        <source>Click to pair</source>
-        <translation>Нажмите для сопряжения</translation>
-    </message>
-    <message>
         <source>Remove remote device</source>
         <translation>Удалить дистанционное устройство</translation>
     </message>
@@ -3602,38 +3621,70 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteReaderView</name>
     <message>
-        <source>Paired remote devices</source>
-        <translation>Сопряженные дистанционные устройства</translation>
+        <source>Paired devices</source>
+        <translation>Сопряженные устройства</translation>
     </message>
     <message>
-        <source>Available remote devices</source>
-        <translation>Доступные дистанционные устройства</translation>
+        <source>Add pairing</source>
+        <translation>Добавить сопряжение</translation>
     </message>
     <message>
-        <source>Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.</source>
-        <translation>Здесь отображаются только уже сопряженные или подключенные к той же сети Wi-Fi устройства с активированной удаленной службой.</translation>
+        <source>Open the %1 on your Smartphone as card reader.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Откройте %1 в вашем смартфоне в качестве устройства чтения карт.</translation>
     </message>
     <message>
-        <source>More information</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Дополнительные сведения</translation>
+        <source>Both devices have to be connected to the same WiFi.</source>
+        <translation>Оба устройства должны быть подключены к одной сети Wi-Fi.</translation>
+    </message>
+    <message>
+        <source>On that device go to %1Card reader%2 and then %1Pair device%2 rsp. %1Pair new device%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4. %1 and %2 are surrounding tags for bold font</extracomment>
+        <translation>В данном устройстве перейдите в меню %1Устройство чтения карт%2, а затем %1Выполнить сопряжение устройства%2 и в соответствующее меню %1Выполнить сопряжение нового устройства%2.</translation>
+    </message>
+    <message>
+        <source>Choose the device in the list to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 4</extracomment>
+        <translation>Чтобы выполнить сопряжение, выберите устройство в списке.</translation>
+    </message>
+    <message>
+        <source>Last connected</source>
+        <translation>Последние подключенные</translation>
+    </message>
+    <message>
+        <source>Ensure that the %1 on your Smartphone as card reader has at least version %2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Убедитесь, что программа %1, установленная на смартфоне в качестве устройства чтения карт, имеет версию не ниже %2.</translation>
     </message>
 </context>
 <context>
-    <name>RemoteServiceSettings</name>
+    <name>RemoteServiceController</name>
     <message>
-        <source>Configure remote service</source>
+        <source>You are about to identify yourself towards the following provider using the device &quot;%1&quot;:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Сконфигурировать удаленную службу</translation>
+        <translation>Вы собираетесь пройти самоидентификацию для следующего провайдера, используя устройство «%1»:</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceView</name>
+    <message>
+        <source>Card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Устройство чтения карт</translation>
+    </message>
     <message>
         <source>Remote service</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Удаленная служба</translation>
     </message>
+</context>
+<context>
+    <name>RemoteServiceSettings</name>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Управление сопряжениями</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteServiceView</name>
     <message>
         <source>Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code.</source>
         <extracomment>ERROR ANDROID IOS An error occurred while pairing the device.</extracomment>
@@ -3665,33 +3716,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ожидание соединения</translation>
     </message>
     <message>
-        <source>Remote service ready</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Удаленная служба готова к работе</translation>
-    </message>
-    <message>
         <source>Waiting for connection from a paired device...</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Ожидание соединения сопряженного устройства…</translation>
     </message>
     <message>
-        <source>Start the remote access in order to make this smartphone visible and use it as a card reader (SaC).
-
-If you have not already paired a device, start the pairing now to set up this smartphone as a card reader.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Запустите удаленный доступ, чтобы смартфон стал видимым и его можно было использовать как устройство чтения карт (SaC).
-
-Если сопряженных устройств еще нет, запустите сопряжение, чтобы настроить смартфон как устройство чтения карт.</translation>
-    </message>
-    <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Код сопряжения: &lt;b&gt;%1&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Both of your devices have to be connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
-        <translation>Оба устройства должны быть подключены к одной сети Wi-Fi.</translation>
     </message>
     <message>
         <source>Enable WiFi</source>
@@ -3704,48 +3736,77 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Активировать NFC</translation>
     </message>
     <message>
-        <source>Stop remote service</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Остановить удаленную службу</translation>
+        <translation>Выполнить сопряжение устройства</translation>
     </message>
     <message>
-        <source>Start remote service</source>
+        <source>Allow connection</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Запустить удаленную службу</translation>
+        <translation>Разрешить подключение</translation>
     </message>
     <message>
-        <source>Stop pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Остановить сопряжение</translation>
-    </message>
-    <message>
-        <source>Start pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Запустить сопряжение</translation>
-    </message>
-    <message>
-        <source>Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).</source>
+        <source>You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.
+
+To do this you first have to pair that device with this smartphone.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Введите код %1 в %2 на другом вашем устройстве, чтобы использовать смартфон в качестве устройства чтения карт (SaC).</translation>
+        <translation>Можно использовать данный смартфон в качестве устройства чтения карт для %1 в других устройствах, например в ноутбуке.
+
+Для этого сначала следует выполнить сопряжение данного устройства с этим смартфоном.</translation>
+    </message>
+    <message>
+        <source>Card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Устройство чтения карт</translation>
+    </message>
+    <message>
+        <source>Paired Devices</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Сопряженные устройства</translation>
+    </message>
+    <message>
+        <source>Pair new device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Выполнить сопряжение нового устройства</translation>
+    </message>
+    <message>
+        <source>Waiting for pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ожидание сопряжения</translation>
+    </message>
+    <message>
+        <source>Start pairing of a new device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Начать сопряжение нового устройства</translation>
+    </message>
+    <message>
+        <source>Where do I enter the pairing code?</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Где следует вводить код сопряжения?</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code %1 in the %2 on your other device.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Введите код сопряжения %1 в поле %2 в другом вашем устройстве.</translation>
+    </message>
+    <message>
+        <source>Cancel pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Отменить сопряжение</translation>
+    </message>
+    <message>
+        <source>Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Разрешите подключение к сопряженным устройствам, чтобы использовать этот смартфон в качестве устройства чтения карт, а также для сопряжения с другим устройством.</translation>
+    </message>
+    <message>
+        <source>Paired devices may use this Smartphone as a card reader now.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Теперь сопряженные устройства могут использовать этот смартфон в качестве устройства чтения карт.</translation>
     </message>
 </context>
 <context>
     <name>RemoteServiceViewRemote</name>
-    <message>
-        <source>Paired devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Сопряженные устройства</translation>
-    </message>
-    <message>
-        <source>No device is paired.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Нет сопряженных устройств.</translation>
-    </message>
-    <message>
-        <source>Click to remove device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Нажмите для удаления устройства</translation>
-    </message>
     <message>
         <source>Remove pairing</source>
         <extracomment>INFO ANDROID IOS</extracomment>
@@ -3762,16 +3823,6 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Удалить</translation>
     </message>
     <message>
-        <source>Available devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Доступные устройства</translation>
-    </message>
-    <message>
-        <source>No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated and that both devices are connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.</extracomment>
-        <translation>Нет доступных сопряженных смартфонов, используемых как устройство чтения карт (SaC). Убедитесь в том, что смартфон активирован в AusweisApp2 на другом устройстве в качестве устройства чтения карт (SaC) и оба устройства подключены к одной сети Wi-Fi.</translation>
-    </message>
-    <message>
         <source>Please connect your WiFi to use another smartphone as card reader (SaC).</source>
         <extracomment>INFO ANDROID IOS Wifi is not enabled and no new devices can be paired.</extracomment>
         <translation>Подключитесь к сети Wi-Fi, чтобы использовать другой смартфон в качестве устройства чтения карт (SaC).</translation>
@@ -3782,42 +3833,55 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Активировать Wi-Fi</translation>
     </message>
     <message>
+        <source>Pairing code</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Код сопряжения</translation>
+    </message>
+    <message>
+        <source>Add pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Добавить сопряжение</translation>
+    </message>
+    <message>
+        <source>Click to remove device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Нажмите для удаления устройства</translation>
+    </message>
+    <message>
+        <source>Last connected</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Последние подключенные</translation>
+    </message>
+    <message>
+        <source>Available</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Доступно</translation>
+    </message>
+    <message>
+        <source>Paired devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Сопряженные устройства</translation>
+    </message>
+    <message>
         <source>Click to pair</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Нажмите для сопряжения</translation>
     </message>
+</context>
+<context>
+    <name>RemoteServiceWifiInfo</name>
     <message>
-        <source>Pairing mode</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Режим сопряжения</translation>
-    </message>
-    <message>
-        <source>Start the pairing mode on your smartphone if you haven&apos;t done it already.</source>
-        <extracomment>INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smartphone.</extracomment>
-        <translation>Запустите режим сопряжения на смартфоне, если вы еще не сделали это.</translation>
-    </message>
-    <message>
-        <source>Pairing code</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Код сопряжения</translation>
+        <source>Both devices have to be connected to the same WiFi.</source>
+        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
+        <translation>Оба устройства должны быть подключены к одной сети Wi-Fi.</translation>
     </message>
 </context>
 <context>
     <name>RemoteWorkflow</name>
     <message>
-        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
-        <translation>Сопряжение устройства %1 не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
-    </message>
-    <message>
         <source>Enable WiFi</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Активировать Wi-Fi</translation>
-    </message>
-    <message>
-        <source>Pair device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Выполнить сопряжение устройства</translation>
     </message>
     <message>
         <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
@@ -3825,19 +3889,9 @@ If you have not already paired a device, start the pairing now to set up this sm
         <translation>Для использования удаленной службы необходимо активировать Wi-Fi. Активируйте Wi-Fi в настройках устройства.</translation>
     </message>
     <message>
-        <source>No paired smartphone as card reader (SaC) with activated &quot;remote service&quot; available.</source>
-        <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
-        <translation>Нет доступных смартфонов, используемых в качестве устройства чтения карт (SaC), с активированной удаленной службой.</translation>
-    </message>
-    <message>
         <source>Wifi disabled</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Wi-Fi деактивирован</translation>
-    </message>
-    <message>
-        <source>Waiting for connection</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ожидание соединения</translation>
     </message>
     <message>
         <source>Determine card</source>
@@ -3853,6 +3907,21 @@ If you have not already paired a device, start the pairing now to set up this sm
         <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
         <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
         <translation>Подключено к %1. Разместите интерфейс NFC смартфона на идентификационной карте.</translation>
+    </message>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Управление сопряжениями</translation>
+    </message>
+    <message>
+        <source>No smartphone as card reader connected</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Смартфон в качестве устройства чтения карт не подключен</translation>
+    </message>
+    <message>
+        <source>Allow a connection on a paired smartphone or pair a new smartphone.</source>
+        <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
+        <translation>Разрешите подключение к сопряженному смартфону или выполните сопряжение нового смартфона.</translation>
     </message>
 </context>
 <context>
@@ -4249,16 +4318,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ввести PIN-код на этом устройстве</translation>
     </message>
     <message>
-        <source>Remote card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Удаленное устройство чтения карт</translation>
-    </message>
-    <message>
-        <source>Configure remote service for another device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Сконфигурировать удаленную службу для другого устройства</translation>
-    </message>
-    <message>
         <source>Save history</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Сохранить журнал</translation>
@@ -4374,6 +4433,26 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>15 days old Logfile</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Файл журнала, созданный 15 дней назад</translation>
+    </message>
+    <message>
+        <source>Show requested rights on this device as well</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Показывать запрошенные права также и в этом устройстве</translation>
+    </message>
+    <message>
+        <source>Show access rights</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Показывать права доступа</translation>
+    </message>
+    <message>
+        <source>Manage paired devices and add new devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Управление сопряженными устройствами и добавление новых устройств</translation>
+    </message>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Управление сопряжениями</translation>
     </message>
 </context>
 <context>
@@ -4758,6 +4837,15 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Continue</source>
         <translation>Продолжить</translation>
     </message>
+    <message>
+        <source>You have not yet set up a Smart-eID or it is no longer usable.
+
+To proceed use your ID card by selecting the NFC interface. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Вы еще не создали электронную идентификационную карту Smart-eID, или же она более не пригодна для использования.
+
+Для продолжения используйте вашу идентификационную карту, выбрав интерфейс NFC. Если вы хотите создать новую электронную идентификационную карту Smart-eID, отмените текущий процесс и запустите настройку Smart-eID на начальном экране.</translation>
+    </message>
 </context>
 <context>
     <name>StoreFeedbackPopup</name>
@@ -5015,7 +5103,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>App on Android smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <translation>Приложение на смартфоне с ОС Android &lt;b&gt;с&lt;/b&gt; чипсетом NFC в качестве устройства чтения карт</translation>
+        <translation>Приложение на смартфоне &lt;b&gt;с&lt;/b&gt; ОС Android с чипсетом NFC в качестве устройства чтения карт</translation>
     </message>
     <message>
         <source>Smartphone as card reader tutorial</source>
@@ -5158,7 +5246,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>You can read our &lt;b&gt;FAQs&lt;/b&gt; or &lt;b&gt;write&lt;/b&gt; to us...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Прочитайте раздел &lt;b&gt;Часто задаваемые вопросы&lt;/b&gt; или &lt;b&gt;напишите&lt;/b&gt; нам…</translation>
+        <translation>Прочитайте раздел «Часто задаваемые вопросы» или &lt;b&gt;напишите&lt;/b&gt; нам…</translation>
     </message>
     <message>
         <source>or</source>
@@ -5204,7 +5292,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>App on Android smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
         <extracomment>LABEL ANDROID</extracomment>
-        <translation>Приложение на смартфоне с ОС Android &lt;b&gt;с&lt;/b&gt; чипсетом NFC в качестве устройства чтения карт</translation>
+        <translation>Приложение на смартфоне &lt;b&gt;с&lt;/b&gt; ОС Android с чипсетом NFC в качестве устройства чтения карт</translation>
     </message>
     <message>
         <source>Click link on the website of the provider.</source>
@@ -5325,9 +5413,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Оба устройства должны быть подключены к одной сети Wi-Fi.</translation>
     </message>
     <message>
-        <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
+        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Далее выберите «Удаленный доступ» в AusweisApp2 на смартфоне…</translation>
+        <translation>Далее выберите «Устройство чтения карт» в AusweisApp2 на смартфоне…</translation>
     </message>
     <message>
         <source>Now</source>
@@ -5335,9 +5423,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>сейчас</translation>
     </message>
     <message>
-        <source>Start pairing</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Запустить сопряжение</translation>
+        <translation>Выполнить сопряжение устройства</translation>
     </message>
     <message>
         <source>Pairing code</source>
@@ -5362,7 +5450,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>Select the &lt;b&gt;Smartphone as card reader&lt;/b&gt; tab.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Выберите вкладку &lt;b&gt;Смартфон в качестве устройства чтения карт&lt;/b&gt;.</translation>
+        <translation>Выберите вкладку «Смартфон в качестве устройства чтения карт».</translation>
     </message>
     <message>
         <source>Select smartphone from list</source>
@@ -5483,9 +5571,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Оба устройства должны быть подключены к одной сети Wi-Fi.</translation>
     </message>
     <message>
-        <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
+        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Далее выберите «Удаленный доступ» в AusweisApp2 на смартфоне…</translation>
+        <translation>Далее выберите «Устройство чтения карт» в AusweisApp2 на смартфоне…</translation>
     </message>
     <message>
         <source>Now</source>
@@ -5493,9 +5581,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>сейчас</translation>
     </message>
     <message>
-        <source>Start pairing</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Запустить сопряжение</translation>
+        <translation>Выполнить сопряжение устройства</translation>
     </message>
     <message>
         <source>Pairing code</source>
@@ -5513,19 +5601,19 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>При первом использовании смартфона в качестве устройства чтения карт (SaC) iOS запрашивает разрешение на доступ к локальной сети. Разрешение необходимо, чтобы обнаружить ваш SaC и подключиться к нему. После первого запроса вы всегда можете отменить разрешение в настройках iOS для этого приложения.</translation>
     </message>
     <message>
-        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Configure remote service&lt;/b&gt;.</source>
+        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Manage pairings&lt;/b&gt;.</source>
         <extracomment>LABEL IOS</extracomment>
-        <translation>Откройте AusweisApp2 на вашем устройстве &lt;b&gt;без&lt;/b&gt; NFC и выберите &lt;b&gt;Сконфигурировать удаленную службу&lt;/b&gt;.</translation>
+        <translation>Теперь откройте приложение AusweisApp2 в своем устройстве &lt;b&gt;без&lt;/b&gt; NFC и выберите меню «Управление сопряжениями».</translation>
     </message>
     <message>
         <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Smartphone as card reader&lt;/b&gt;.</source>
         <extracomment>LABEL ANDROID</extracomment>
-        <translation>Откройте AusweisApp2 на вашем устройстве &lt;b&gt;без&lt;/b&gt; NFC и выберите &lt;b&gt;Смартфон в качестве устройства чтения карт&lt;/b&gt;.</translation>
+        <translation>Откройте AusweisApp2 на вашем устройстве &lt;b&gt;без&lt;/b&gt; NFC и выберите «Смартфон в качестве устройства чтения карт».</translation>
     </message>
     <message>
         <source>Now select &lt;b&gt;Settings&lt;/b&gt;.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Далее выберите &lt;b&gt;Настройки&lt;/b&gt;.</translation>
+        <translation>Далее выберите «Настройки».</translation>
     </message>
     <message>
         <source>Choose smartphone from list</source>
@@ -5681,7 +5769,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>On every authentication you get displayed &lt;b&gt;who&lt;/b&gt; wants to access &lt;b&gt;which&lt;/b&gt; data</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>При каждой аутентификации отображается, &lt;b&gt;кто&lt;/b&gt; и к &lt;b&gt;каким&lt;/b&gt; данным запрашивает доступ,</translation>
+        <translation>При каждой аутентификации отображается, &lt;b&gt;кто&lt;/b&gt; и к &lt;b&gt;каким&lt;/b&gt; данным запрашивает доступ.</translation>
     </message>
     <message>
         <source>and you consent to the request with your six-digit PIN.</source>
@@ -5923,6 +6011,24 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Checksum link:</source>
         <extracomment>LABEL DESKTOP Link to download checksum to verify the downloaded update file.</extracomment>
         <translation>Ссылка для контрольной суммы:</translation>
+    </message>
+</context>
+<context>
+    <name>Utils</name>
+    <message>
+        <source>today</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>сегодня</translation>
+    </message>
+    <message>
+        <source>yesterday</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>вчера</translation>
+    </message>
+    <message>
+        <source>dd.MM.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
     </message>
 </context>
 <context>
@@ -6318,7 +6424,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>d. MMMM yyyy, hh:mm:ss AP</source>
-        <extracomment>LABEL DESKTOP Timestamp, formatted according to the selected language</extracomment>
+        <extracomment>LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>d MMMM yyyy г., hh:mm:ss</translation>
     </message>
     <message>
@@ -6528,8 +6634,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy, hh:mm:ss</source>
-        <extracomment>LABEL DESKTOP Timestamp</extracomment>
-        <translation>дд.ММ.гггг, чч:мм:сс</translation>
+        <extracomment>LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
+        <translation>dd.MM.yyyy, hh:mm:ss</translation>
     </message>
     <message>
         <source>Last connection: %1</source>
@@ -6793,9 +6899,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Сбой аутентификации.</translation>
     </message>
     <message>
-        <source>Your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.</source>
-        <extracomment>ERROR ALL_PLATFORMS DidAuthenticateEAC2 was not able to send the certificates to the card because the card reader does not support extended length.</extracomment>
-        <translation>Ваше устройство чтения карт не поддерживает связь по протоколу с расширенной длиной и не может использоваться для считывания идентификационной карты. К сожалению, %1 не влияет на это ограничение.</translation>
+        <source>The length of the data sent to the ID card was not accepted. Either the data is faulty or your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.</source>
+        <extracomment>ERROR ALL_PLATFORMS A card command failed because the data length was wrong or the card reader does not support Extended Length.</extracomment>
+        <translation>Размер данных, отправленных на идентификационную карту, не был принят. Либо данные неверны, либо ваше устройство чтения карт не поддерживает связь по протоколу с расширенной длиной и не может использоваться для считывания идентификационной карты. К сожалению, %1 не влияет на это ограничение.</translation>
     </message>
     <message>
         <source>No certificate description available.</source>
@@ -7095,7 +7201,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <name>governikus::HistoryModelSearchFilter</name>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
     </message>
 </context>
 <context>
@@ -7147,6 +7254,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm:ss</source>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy, hh:mm:ss</translation>
     </message>
     <message>
@@ -7206,7 +7314,8 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <name>governikus::NotificationModel</name>
     <message>
         <source>hh:mm:ss</source>
-        <translation>чч:мм:сс</translation>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
+        <translation>hh:mm:ss</translation>
     </message>
 </context>
 <context>
@@ -7277,7 +7386,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Office for Information Security.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>AusweisApp2 является продуктом компании Governikus GmbH &amp; Co. KG — по заказу Федерального управления по информационной безопасности.</translation>
+        <translation>AusweisApp2 является продуктом компании Governikus GmbH  Co. KG — по заказу Федерального управления по информационной безопасности.</translation>
     </message>
     <message>
         <source>For further information, please see %1</source>
@@ -7299,7 +7408,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy hh:mm</translation>
     </message>
     <message>
@@ -7324,12 +7433,12 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>дд.ММ.гггг</translation>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>hh:mm</translation>
     </message>
     <message>
@@ -7475,6 +7584,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>hh:mm:ss AP</source>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>hh:mm:ss</translation>
     </message>
     <message>
@@ -7531,11 +7641,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Сопряжено, но не поддерживается</translation>
     </message>
     <message>
-        <source>Paired, but unavailable</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Сопряжено, но недоступно</translation>
-    </message>
-    <message>
         <source>Unsupported</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Не поддерживается</translation>
@@ -7547,6 +7652,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy hh:mm</translation>
     </message>
     <message>
@@ -7558,6 +7664,16 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
         <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
         <translation>Нет доступных смартфонов, используемых в качестве устройства чтения карт (SaC). Убедитесь в том, что удаленная служба активирована на вашем смартфоне и оба устройства подключены к одной сети Wi-Fi. Подробную информацию об использовании см. здесь: %1.</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Недоступно</translation>
+    </message>
+    <message>
+        <source>Click to pair</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Нажмите для сопряжения</translation>
     </message>
 </context>
 <context>
@@ -7590,6 +7706,11 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
 
 Активируйте NFC, чтобы использовать смартфон в качестве устройства чтения карт (SaC).</translation>
     </message>
+    <message>
+        <source>Pairing with %1 successful.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Сопряжение с %1 выполнено успешно.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::RemoteServiceSettings</name>
@@ -7613,15 +7734,18 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>дд.ММ.гггг</translation>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>xx.MM.yyyy</source>
-        <translation>хх.ММ.гггг</translation>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day</extracomment>
+        <translation>xx.MM.yyyy</translation>
     </message>
     <message>
         <source>xx.xx.yyyy</source>
-        <translation>хх.хх.гггг</translation>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month</extracomment>
+        <translation>xx.xx.yyyy</translation>
     </message>
     <message>
         <source>Family name</source>
@@ -7761,6 +7885,14 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <source>Access denied.</source>
         <extracomment>INFO IOS The current session was interrupted because of a wrong password.</extracomment>
         <translation>Доступ отклонен.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::StateEstablishPaceChannel</name>
+    <message>
+        <source>The secure channel is opened</source>
+        <extracomment>INFO ALL_PLATFORMS First status message after the PIN was entered.</extracomment>
+        <translation>Защищенный канал открыт</translation>
     </message>
 </context>
 <context>
@@ -8096,7 +8228,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>
         <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.</extracomment>
-        <translation type="unfinished">Программа по-прежнему доступна через значок на панели задач. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
+        <translation>Программа по-прежнему доступна через значок в строке меню. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
     </message>
 </context>
 </TS>

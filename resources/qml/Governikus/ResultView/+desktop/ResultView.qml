@@ -25,10 +25,10 @@ SectionPage {
 	property alias header: resultHeader.text
 	property alias hintButtonText: hintItem.buttonText
 	property alias hintText: hintItem.text
+	property alias mailButtonVisible: mailButton.visible
 	property alias popupText: detailedResultPopup.text
 	property alias popupTitle: detailedResultPopup.title
 	property int resultType: ResultView.Type.IsSuccess
-	property alias supportButtonsVisible: supportButtonsLayout.visible
 	property alias text: resultText.text
 
 	signal emailButtonPressed
@@ -88,17 +88,18 @@ SectionPage {
 			}
 		}
 		RowLayout {
-			id: supportButtonsLayout
 			Layout.alignment: Qt.AlignHCenter
 			Layout.fillWidth: true
 			spacing: Constants.component_spacing
-			visible: false
+			visible: popupTitle !== "" || popupText !== ""
 
 			GButton {
+				id: mailButton
 				icon.source: "qrc:///images/material_mail.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Send email")
 				tintIcon: true
+				visible: false
 
 				onClicked: baseItem.emailButtonPressed()
 			}
@@ -127,7 +128,7 @@ SectionPage {
 				}
 			}
 			GButton {
-				icon.source: "qrc:/images/info.svg"
+				icon.source: "qrc:/images/desktop/info_white.svg"
 				//: LABEL DESKTOP
 				text: qsTr("See details")
 				tintIcon: true

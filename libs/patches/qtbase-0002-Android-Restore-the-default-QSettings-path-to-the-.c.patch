@@ -1,0 +1,89 @@
+From bdd9f0e3a243977858df6691b734b7f596a9729b Mon Sep 17 00:00:00 2001
+From: Bartlomiej Moskal <bartlomiej.moskal@qt.io>
+Date: Tue, 30 May 2023 14:17:19 +0200
+Subject: Android: Restore the default QSettings path to the .config directory
+
+After 140ca89a3c2b8d78889d27217f977cd4de10041b commit, the path of the
+QSettings default file location changed. That caused the problem with
+updating the app (old settings file is not used anymore). That is why we
+should still use old (.config) directory for QSettings file if the file
+exists.
+
+Pick-to: 6.2 6.5 6.6
+Fixes: QTBUG-109405
+Fixes: QTBUG-109369
+Change-Id: I8ce53e0a80e4c2d16802b27b000ab3fbed198628
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit beaaa0bf02fee696b03f2839bea8e0e6bc685a62)
+---
+ src/corelib/io/qsettings.cpp | 40 +++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
+
+diff --git x/qtbase/src/corelib/io/qsettings.cpp y/qtbase/src/corelib/io/qsettings.cpp
+index 60622e3aaa..9fb2e0b522 100644
+--- x/qtbase/src/corelib/io/qsettings.cpp
++++ y/qtbase/src/corelib/io/qsettings.cpp
+@@ -954,26 +954,43 @@ static inline int pathHashKey(QSettings::Format format, QSettings::Scope scope)
+ }
+ 
+ #ifndef Q_OS_WIN
+-static QString make_user_path()
++static constexpr QChar sep = u'/';
++
++#if !defined(QSETTINGS_USE_QSTANDARDPATHS) || defined(Q_OS_ANDROID)
++static QString make_user_path_without_qstandard_paths()
+ {
+-    static constexpr QChar sep = u'/';
+-#ifndef QSETTINGS_USE_QSTANDARDPATHS
+-    // Non XDG platforms (OS X, iOS, Android...) have used this code path erroneously
+-    // for some time now. Moving away from that would require migrating existing settings.
+     QByteArray env = qgetenv("XDG_CONFIG_HOME");
+     if (env.isEmpty()) {
+         return QDir::homePath() + "/.config/"_L1;
+     } else if (env.startsWith('/')) {
+         return QFile::decodeName(env) + sep;
+-    } else {
+-        return QDir::homePath() + sep + QFile::decodeName(env) + sep;
+     }
++
++    return QDir::homePath() + sep + QFile::decodeName(env) + sep;
++}
++#endif // !QSETTINGS_USE_QSTANDARDPATHS || Q_OS_ANDROID
++
++static QString make_user_path()
++{
++#ifndef QSETTINGS_USE_QSTANDARDPATHS
++    // Non XDG platforms (OS X, iOS, Android...) have used this code path erroneously
++    // for some time now. Moving away from that would require migrating existing settings.
++    // The migration has already been done for Android.
++    return make_user_path_without_qstandard_paths();
+ #else
+-    // When using a proper XDG platform, use QStandardPaths rather than the above hand-written code;
+-    // it makes the use of test mode from unit tests possible.
++
++#ifdef Q_OS_ANDROID
++    // If an old settings path exists, use it instead of creating a new one
++    QString ret = make_user_path_without_qstandard_paths();
++    if (QFile(ret).exists())
++        return ret;
++#endif // Q_OS_ANDROID
++
++    // When using a proper XDG platform or Android platform, use QStandardPaths rather than the
++    // above hand-written code. It makes the use of test mode from unit tests possible.
+     // Ideally all platforms should use this, but see above for the migration issue.
+     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + sep;
+-#endif
++#endif // !QSETTINGS_USE_QSTANDARDPATHS
+ }
+ #endif // !Q_OS_WIN
+ 
+@@ -1338,8 +1355,7 @@ void QConfFileSettingsPrivate::syncConfFile(QConfFile *confFile)
+     // On android and if it is a content URL put the lock file in a
+     // writable location to prevent permissions issues and invalid paths.
+     if (confFile->name.startsWith("content:"_L1))
+-        lockFileName = QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+-                + QFileInfo(lockFileName).fileName();
++        lockFileName = make_user_path() + QFileInfo(lockFileName).fileName();
+ #    endif
+     /*
+         Use a lockfile in order to protect us against other QSettings instances

@@ -103,7 +103,7 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Unexpected_Transmit_Status, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_NewPin_Invalid_Length, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_AlreadyInProgress_Error, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_No_Extended_Length_Error, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Wrong_Length_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Not_Found, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Communication_Error, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Card_Input_TimeOut, Minor::AL_Unknown_Error);

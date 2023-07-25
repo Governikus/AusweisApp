@@ -18,6 +18,8 @@ Item {
 	property bool settingsPushed: remoteServiceSettings.visible
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
 
+	signal deviceUnpaired(var pDeviceName)
+
 	onFoundSelectedReaderChanged: {
 		if (baseItem.settingsPushed && foundSelectedReader) {
 			remoteServiceSettings.pop();
@@ -26,22 +28,18 @@ Item {
 
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
-			//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
-			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName));
+			deviceUnpaired(pDeviceName);
 		}
 
 		target: RemoteServiceModel
 	}
-	ProgressIndicator {
+	RemoteProgressIndicator {
 		id: progressIndicator
 		Accessible.ignored: true
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.top: parent.top
-		height: parent.height / 2
-		imageIconSource: "qrc:///images/mobile/icon_remote.svg"
-		imagePhoneSource: "qrc:///images/mobile/phone_remote.svg"
-		state: foundSelectedReader ? "two" : "off"
+		foundSelectedReader: baseItem.foundSelectedReader
 	}
 	TechnologyInfo {
 		id: techInfo
@@ -51,7 +49,7 @@ Item {
 				return qsTr("Enable WiFi");
 			} else if (!foundSelectedReader) {
 				//: LABEL ANDROID IOS
-				return qsTr("Pair device");
+				return qsTr("Manage pairings");
 			} else {
 				return "";
 			}
@@ -62,7 +60,7 @@ Item {
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				return qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.");
+				return qsTr("Allow a connection on a paired smartphone or pair a new smartphone.");
 			} else {
 				return "";
 			}
@@ -87,7 +85,7 @@ Item {
 				return qsTr("Wifi disabled");
 			} else if (!foundSelectedReader) {
 				//: LABEL ANDROID IOS
-				return qsTr("Waiting for connection");
+				return qsTr("No smartphone as card reader connected");
 			} else {
 				//: LABEL ANDROID IOS
 				return qsTr("Determine card");

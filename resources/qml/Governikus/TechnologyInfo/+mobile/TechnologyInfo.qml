@@ -24,6 +24,7 @@ Item {
 	GFlickableColumnLayout {
 		anchors.fill: parent
 		spacing: 0
+		topMargin: 0
 
 		GText {
 			id: title

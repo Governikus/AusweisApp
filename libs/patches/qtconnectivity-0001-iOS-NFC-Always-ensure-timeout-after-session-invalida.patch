@@ -1,0 +1,137 @@
+From 37c9240e9d6d295118fcabedbaaf403310af8dba Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Thu, 26 Jan 2023 19:19:21 +0100
+Subject: iOS NFC: Always ensure timeout after session invalidation
+
+iOS needs some time after invalidating a session before a new session
+can be started. Otherwise the NFC dialog of iOS will not show up.
+
+For restarting a session inside the iOS NearfieldManager, this was
+already solved with a timeout of 2 seconds.
+
+This commit fixes the case, that a user of the Nearfieldmanager
+restarts a session manually too fast.
+
+Change-Id: Ic91ad225a9cab13ba92523f33a19f44af68575a0
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+(cherry picked from commit 849ba86ba9a073a266219b6a39786e20f4f3ed7b)
+(cherry picked from commit 5052cd14c28bbf0ff93c465a4e33bf1dbd48c7dd)
+---
+ src/nfc/qnearfieldmanager_ios.mm  | 44 +++++++++++++++++++++----------
+ src/nfc/qnearfieldmanager_ios_p.h |  5 +++-
+ 2 files changed, 34 insertions(+), 15 deletions(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
+index 6fd71451..a0651626 100644
+--- x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
++++ y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
+@@ -25,6 +25,10 @@ QNearFieldManagerPrivateImpl::QNearFieldManagerPrivateImpl()
+     connect(this, &QNearFieldManagerPrivateImpl::didInvalidateWithError,
+             this, &QNearFieldManagerPrivateImpl::onDidInvalidateWithError,
+             Qt::QueuedConnection);
++
++    sessionTimer.setInterval(2000);
++    sessionTimer.setSingleShot(true);
++    connect(&sessionTimer, &QTimer::timeout, this, &QNearFieldManagerPrivateImpl::onSessionTimer);
+ }
+ 
+ QNearFieldManagerPrivateImpl::~QNearFieldManagerPrivateImpl()
+@@ -62,7 +66,7 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(QNearFieldTarget::Access
+         if (@available(iOS 13, *))
+             if (NFCTagReaderSession.readingAvailable) {
+                 detectionRunning = true;
+-                startSession();
++                scheduleSession();
+                 return true;
+             }
+         return false;
+@@ -71,16 +75,28 @@ bool QNearFieldManagerPrivateImpl::startTargetDetection(QNearFieldTarget::Access
+ 
+ void QNearFieldManagerPrivateImpl::stopTargetDetection(const QString &errorMessage)
+ {
+-    if (detectionRunning) {
+-       stopSession(errorMessage);
+-       detectionRunning = false;
+-       Q_EMIT targetDetectionStopped();
+-    }
++    if (!detectionRunning)
++        return;
++
++    isSessionScheduled = false;
++    stopSession(errorMessage);
++    detectionRunning = false;
++    Q_EMIT targetDetectionStopped();
+ }
+ 
++void QNearFieldManagerPrivateImpl::scheduleSession()
++{
++    if (sessionTimer.isActive()) {
++        isSessionScheduled = true;
++        return;
++    }
++
++    startSession();
++}
+ 
+ void QNearFieldManagerPrivateImpl::startSession()
+ {
++    isSessionScheduled = false;
+     if (detectionRunning)
+         if (@available(iOS 13, *))
+             [delegate startSession];
+@@ -132,17 +148,11 @@ void QNearFieldManagerPrivateImpl::onTargetLost(QNearFieldTargetPrivateImpl *tar
+ void QNearFieldManagerPrivateImpl::onDidInvalidateWithError(bool doRestart)
+ {
+     clearTargets();
++    sessionTimer.start();
+ 
+     if (detectionRunning && doRestart)
+     {
+-        if (!isRestarting) {
+-            isRestarting = true;
+-            using namespace std::chrono_literals;
+-            QTimer::singleShot(2s, this, [this](){
+-                        isRestarting = false;
+-                        startSession();
+-                    });
+-        }
++        scheduleSession();
+         return;
+     }
+ 
+@@ -150,4 +160,10 @@ void QNearFieldManagerPrivateImpl::onDidInvalidateWithError(bool doRestart)
+     Q_EMIT targetDetectionStopped();
+ }
+ 
++void QNearFieldManagerPrivateImpl::onSessionTimer()
++{
++    if (isSessionScheduled)
++        scheduleSession();
++}
++
+ QT_END_NAMESPACE
+diff --git x/qtconnectivity/src/nfc/qnearfieldmanager_ios_p.h y/qtconnectivity/src/nfc/qnearfieldmanager_ios_p.h
+index 6aa1574e..b3668ff6 100644
+--- x/qtconnectivity/src/nfc/qnearfieldmanager_ios_p.h
++++ y/qtconnectivity/src/nfc/qnearfieldmanager_ios_p.h
+@@ -54,9 +54,11 @@ Q_SIGNALS:
+ private:
+     QT_MANGLE_NAMESPACE(QIosTagReaderDelegate) *delegate API_AVAILABLE(ios(13.0)) = nullptr;
+     bool detectionRunning = false;
+-    bool isRestarting = false;
++    bool isSessionScheduled = false;
++    QTimer sessionTimer;
+     QList<QNearFieldTargetPrivateImpl *> detectedTargets;
+ 
++    void scheduleSession();
+     void startSession();
+     void stopSession(const QString &error);
+     void clearTargets();
+@@ -65,6 +67,7 @@ private Q_SLOTS:
+     void onTagDiscovered(void *target);
+     void onTargetLost(QNearFieldTargetPrivateImpl *target);
+     void onDidInvalidateWithError(bool doRestart);
++    void onSessionTimer();
+ };
+ 
+ 

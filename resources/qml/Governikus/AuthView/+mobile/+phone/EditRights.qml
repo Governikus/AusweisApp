@@ -19,6 +19,8 @@ SectionPage {
 	property alias dataText: dataPasswordText.text
 	property var workflowModel: AuthModel
 
+	signal rightsAccepted
+
 	//: LABEL IOS_PHONE ANDROID_PHONE
 	title: qsTr("Identify")
 
@@ -119,10 +121,7 @@ SectionPage {
 					qsTr("PIN"))
 				tintIcon: true
 
-				onClicked: {
-					ChatModel.transferAccessRights();
-					workflowModel.continueWorkflow();
-				}
+				onClicked: rightsAccepted()
 			}
 			GText {
 				id: dataPasswordText
@@ -138,7 +137,7 @@ SectionPage {
 
 				//: LABEL IOS_PHONE ANDROID_PHONE
 				title: qsTr("Transactional information")
-				visible: !!AuthModel.transactionInfo || (!writeData.visible && !readData.visible)
+				visible: !!workflowModel.transactionInfo || (!writeData.visible && !readData.visible)
 
 				anchors {
 					left: parent.left

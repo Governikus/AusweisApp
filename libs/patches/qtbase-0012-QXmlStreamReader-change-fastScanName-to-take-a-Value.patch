@@ -1,0 +1,105 @@
+From f9a1c8668e5f4787e9b0b3136076138f4fda5563 Mon Sep 17 00:00:00 2001
+From: Ahmad Samir <a.samirh78@gmail.com>
+Date: Wed, 12 Apr 2023 13:10:26 +0200
+Subject: QXmlStreamReader: change fastScanName() to take a Value*
+
+For easier debugging, e.g. to print out value.len and value.prefix.
+
+Pick-to: 6.6 6.5 6.5.2 6.2 5.15
+Change-Id: Ib0eed38772f899502962f578775d34ea2744fdde
+Reviewed-by: Marc Mutz <marc.mutz@qt.io>
+(cherry picked from commit 1a423ce4372d18a779f3c0d746d5283d9a425839)
+---
+ src/corelib/serialization/qxmlstream.cpp       | 16 ++++++++--------
+ src/corelib/serialization/qxmlstream.g         |  3 ++-
+ src/corelib/serialization/qxmlstream_p.h       |  2 +-
+ src/corelib/serialization/qxmlstreamparser_p.h |  3 ++-
+ 4 files changed, 13 insertions(+), 11 deletions(-)
+
+diff --git x/qtbase/src/corelib/serialization/qxmlstream.cpp y/qtbase/src/corelib/serialization/qxmlstream.cpp
+index a6a2bc41af..f64db47867 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream.cpp
++++ y/qtbase/src/corelib/serialization/qxmlstream.cpp
+@@ -1243,7 +1243,7 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanContentCharList()
+     return n;
+ }
+ 
+-inline qsizetype QXmlStreamReaderPrivate::fastScanName(qint16 *prefix)
++inline qsizetype QXmlStreamReaderPrivate::fastScanName(Value *val)
+ {
+     qsizetype n = 0;
+     uint c;
+@@ -1280,16 +1280,16 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanName(qint16 *prefix)
+         case '+':
+         case '*':
+             putChar(c);
+-            if (prefix && *prefix == n+1) {
+-                *prefix = 0;
++            if (val && val->prefix == n + 1) {
++                val->prefix = 0;
+                 putChar(':');
+                 --n;
+             }
+             return n;
+         case ':':
+-            if (prefix) {
+-                if (*prefix == 0) {
+-                    *prefix = qint16(n + 2);
++            if (val) {
++                if (val->prefix == 0) {
++                    val->prefix = qint16(n + 2);
+                 } else { // only one colon allowed according to the namespace spec.
+                     putChar(c);
+                     return n;
+@@ -1305,8 +1305,8 @@ inline qsizetype QXmlStreamReaderPrivate::fastScanName(qint16 *prefix)
+         }
+     }
+ 
+-    if (prefix)
+-        *prefix = 0;
++    if (val)
++        val->prefix = 0;
+     qsizetype pos = textBuffer.size() - n;
+     putString(textBuffer, pos);
+     textBuffer.resize(pos);
+diff --git x/qtbase/src/corelib/serialization/qxmlstream.g y/qtbase/src/corelib/serialization/qxmlstream.g
+index d06c371eb8..f3152bff37 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream.g
++++ y/qtbase/src/corelib/serialization/qxmlstream.g
+@@ -1419,7 +1419,8 @@ space_opt ::= space;
+ qname ::= LETTER;
+ /.
+         case $rule_number: {
+-            sym(1).len += fastScanName(&sym(1).prefix);
++            Value &val = sym(1);
++            val.len += fastScanName(&val);
+             if (atEnd) {
+                 resume($rule_number);
+                 return false;
+diff --git x/qtbase/src/corelib/serialization/qxmlstream_p.h y/qtbase/src/corelib/serialization/qxmlstream_p.h
+index 8e523f9c67..5da1f4aa5a 100644
+--- x/qtbase/src/corelib/serialization/qxmlstream_p.h
++++ y/qtbase/src/corelib/serialization/qxmlstream_p.h
+@@ -471,7 +471,7 @@ public:
+     qsizetype fastScanLiteralContent();
+     qsizetype fastScanSpace();
+     qsizetype fastScanContentCharList();
+-    qsizetype fastScanName(qint16 *prefix = nullptr);
++    qsizetype fastScanName(Value *val = nullptr);
+     inline qsizetype fastScanNMTOKEN();
+ 
+ 
+diff --git x/qtbase/src/corelib/serialization/qxmlstreamparser_p.h y/qtbase/src/corelib/serialization/qxmlstreamparser_p.h
+index e3ae6faa44..59370a9310 100644
+--- x/qtbase/src/corelib/serialization/qxmlstreamparser_p.h
++++ y/qtbase/src/corelib/serialization/qxmlstreamparser_p.h
+@@ -947,7 +947,8 @@ bool QXmlStreamReaderPrivate::parse()
+         break;
+ 
+         case 262: {
+-            sym(1).len += fastScanName(&sym(1).prefix);
++            Value &val = sym(1);
++            val.len += fastScanName(&val);
+             if (atEnd) {
+                 resume(262);
+                 return false;

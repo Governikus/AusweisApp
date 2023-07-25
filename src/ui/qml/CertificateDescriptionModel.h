@@ -10,7 +10,7 @@
 
 #include "Env.h"
 #include "asn1/CertificateDescription.h"
-#include "context/AuthContext.h"
+#include "context/WorkflowContext.h"
 
 #include <QAbstractListModel>
 #include <QPair>
@@ -32,7 +32,7 @@ class CertificateDescriptionModel
 
 	private:
 		QVector<QPair<QString, QString>> mData;
-		QSharedPointer<AuthContext> mContext;
+		QSharedPointer<WorkflowContext> mContext;
 
 		CertificateDescriptionModel();
 		~CertificateDescriptionModel()override = default;
@@ -54,7 +54,7 @@ class CertificateDescriptionModel
 			TEXT
 		};
 
-		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
+		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		[[nodiscard]] QString getSubjectName() const;
 		[[nodiscard]] QString getSubjectUrl() const;

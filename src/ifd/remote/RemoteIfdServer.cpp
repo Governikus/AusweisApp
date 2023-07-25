@@ -32,7 +32,8 @@ void RemoteIfdServer::onConnectedChanged(bool pConnected)
 		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 		const auto& ifdId = QString::fromLatin1(remoteServiceSettings.getCertificate().toPem());
 		quint16 port = mWebSocketServer->getServerPort();
-		mRemoteReaderAdvertiser.reset(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port));
+		bool isPairing = mWebSocketServer->isPairingAnnounced();
+		mRemoteReaderAdvertiser.reset(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, isPairing));
 	}
 
 	Q_EMIT fireConnectedChanged(pConnected);

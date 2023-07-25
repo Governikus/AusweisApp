@@ -33,6 +33,7 @@ Item {
 
 		Column {
 			spacing: Constants.component_spacing
+			visible: availablePairedDeviceList.count > 0
 			width: parent.usableWidth
 
 			TitledSeparator {
@@ -43,23 +44,49 @@ Item {
 				title: qsTr("Paired devices")
 				width: parent.width
 			}
-			GText {
-				Accessible.name: text
-				Accessible.role: Accessible.StaticText
+			ListView {
+				id: availablePairedDeviceList
+				height: childrenRect.height
+				interactive: false
+				model: RemoteServiceModel.availablePairedDevices
+				spacing: Constants.component_spacing
+				width: parent.width
 
+				delegate: DevicesListDelegate {
+					//: LABEL ANDROID IOS
+					description: qsTr("Available")
+					linkInactive: !isNetworkVisible
+					linkQuality: linkQualityInPercent
+					title: remoteDeviceName
+					width: availablePairedDeviceList.width
+
+					onClicked: {
+						deleteDevicePopup.deviceId = deviceId;
+						deleteDevicePopup.deviceName = remoteDeviceName;
+						deleteDevicePopup.open();
+					}
+				}
+			}
+		}
+		Column {
+			spacing: Constants.component_spacing
+			visible: unavailablePairedDeviceList.count > 0
+			width: parent.usableWidth
+
+			TitledSeparator {
+				contentMarginBottom: 0
+				contentMarginLeft: 0
+				contentMarginRight: 0
 				//: LABEL ANDROID IOS
-				text: qsTr("No device is paired.")
-				textStyle: Style.text.normal_secondary
-				visible: !knownDeviceList.visible
+				title: qsTr("Last connected")
 				width: parent.width
 			}
 			ListView {
-				id: knownDeviceList
+				id: unavailablePairedDeviceList
 				height: childrenRect.height
 				interactive: false
-				model: RemoteServiceModel.knownDevices
+				model: RemoteServiceModel.unavailablePairedDevices
 				spacing: Constants.component_spacing
-				visible: count > 0
 				width: parent.width
 
 				delegate: DevicesListDelegate {
@@ -68,7 +95,7 @@ Item {
 					linkInactive: !isNetworkVisible
 					linkQuality: linkQualityInPercent
 					title: remoteDeviceName
-					width: knownDeviceList.width
+					width: unavailablePairedDeviceList.width
 
 					onClicked: {
 						deleteDevicePopup.deviceId = deviceId;
@@ -102,19 +129,39 @@ Item {
 				contentMarginBottom: 0
 				contentMarginLeft: 0
 				contentMarginRight: 0
-
 				//: LABEL ANDROID IOS
-				title: qsTr("Available devices")
+				title: qsTr("Add pairing")
 				width: parent.width
 			}
+			GListView {
+				id: searchDeviceList
+				height: childrenRect.height
+				model: RemoteServiceModel.availableDevicesInPairingMode
+				spacing: Constants.component_spacing
+				visible: ApplicationModel.wifiEnabled && count > 0
+				width: parent.width
+
+				delegate: DevicesListDelegate {
+					//: LABEL ANDROID IOS
+					description: qsTr("Click to pair")
+					linkQuality: linkQualityInPercent
+					title: remoteDeviceName + (isSupported ? "" : (" (" + remoteDeviceStatus + ")"))
+					width: searchDeviceList.width
+
+					onClicked: {
+						if (isSupported && RemoteServiceModel.rememberServer(deviceId)) {
+							d.oldLockedAndHiddenStatus = getLockedAndHidden();
+							setLockedAndHidden();
+							push(enterPinView);
+						}
+					}
+				}
+			}
 			GText {
-				text: ApplicationModel.wifiEnabled ?
-				//: INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.
-				qsTr("No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated and that both devices are connected to the same WiFi.") :
 				//: INFO ANDROID IOS Wifi is not enabled and no new devices can be paired.
-				qsTr("Please connect your WiFi to use another smartphone as card reader (SaC).")
-				textStyle: ApplicationModel.wifiEnabled ? Style.text.normal_secondary : Style.text.normal_warning
-				visible: !searchDeviceList.visible
+				text: qsTr("Please connect your WiFi to use another smartphone as card reader (SaC).")
+				textStyle: Style.text.normal_warning
+				visible: !ApplicationModel.wifiEnabled
 				width: parent.width
 			}
 			GButton {
@@ -131,43 +178,14 @@ Item {
 				visible: RemoteServiceModel.requiresLocalNetworkPermission && !RemoteServiceModel.remoteReaderVisible
 				width: parent.width
 			}
-			ListView {
-				id: searchDeviceList
-				height: childrenRect.height
-				interactive: false
-				model: RemoteServiceModel.availableRemoteDevices
-				spacing: Constants.component_spacing
-				visible: ApplicationModel.wifiEnabled && count > 0
+			PairingProcessInfo {
+				visible: !searchDeviceList.visible && ApplicationModel.wifiEnabled
 				width: parent.width
-
-				delegate: DevicesListDelegate {
-					//: LABEL ANDROID IOS
-					description: qsTr("Click to pair")
-					linkQuality: linkQualityInPercent
-					title: remoteDeviceName + (isSupported ? "" : (" (" + remoteDeviceStatus + ")"))
-					width: searchDeviceList.width
-
-					onClicked: {
-						if (isSupported && RemoteServiceModel.rememberServer(deviceId)) {
-							informationPairingPopup.open();
-						}
-					}
-				}
 			}
-		}
-	}
-	ConfirmationPopup {
-		id: informationPairingPopup
-		style: ConfirmationPopup.PopupStyle.OkButton
-		//: INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smartphone.
-		text: qsTr("Start the pairing mode on your smartphone if you haven't done it already.")
-		//: INFO ANDROID IOS
-		title: qsTr("Pairing mode")
-
-		onConfirmed: {
-			d.oldLockedAndHiddenStatus = getLockedAndHidden();
-			setLockedAndHidden();
-			push(enterPinView);
+			RemoteServiceWifiInfo {
+				visible: !searchDeviceList.visible && ApplicationModel.wifiEnabled
+				width: parent.width
+			}
 		}
 	}
 	PasswordInfoData {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64.8" height="64.8" viewBox="0 0 37 37">
+  <use xlink:href="./adaptive_monochrome_release.svg#background" />
+  <use xlink:href="./adaptive_monochrome_release.svg#circle" transform="translate(7 7) scale(0.622 0.622)" />
+  <!-- <text style="font-weight:bold; font-size:10px; font-family:sans-serif;" x="15" y="22">B</text> -->
+  <path id="beta" d="m 15.82,22 h 3.28 c 0.84,0 1.4,-0.16 1.84,-0.53 0.44,-0.37 0.72,-0.98 0.72,-1.57 0,-0.72 -0.38,-1.29 -1.21,-1.77 0.72,-0.46 1,-0.88 1,-1.5 0,-0.51 -0.25,-1.03 -0.66,-1.39 -0.43,-0.37 -0.94,-0.53 -1.72,-0.53 h -3.25 z m 1.5,-6.04 h 1.63 c 0.7,0 1.06,0.28 1.06,0.82 0,0.55 -0.36,0.83 -1.06,0.83 h -1.63 z m 0,2.9 h 1.79 c 0.73,0 1.11,0.32 1.11,0.95 0,0.62 -0.38,0.94 -1.11,0.94 h -1.79 z" />
+</svg>

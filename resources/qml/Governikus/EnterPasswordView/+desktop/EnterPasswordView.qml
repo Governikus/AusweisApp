@@ -200,7 +200,7 @@ SectionPage {
 			}
 			if (passwordType === PasswordType.REMOTE_PIN) {
 				//: INFO DESKTOP The pairing code needs to be supplied.
-				return qsTr("Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).");
+				return qsTr("Enter the pairing code shown on your smartphone.");
 			}
 
 			//: INFO DESKTOP Error message during PIN/CAN/PUK input procedure, the requested password type is unknown; internal error.

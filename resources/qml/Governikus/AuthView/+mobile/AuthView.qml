@@ -14,6 +14,7 @@ import Governikus.View 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.AuthModel 1.0
+import Governikus.Type.ChatModel 1.0
 import Governikus.Type.LogModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.PasswordType 1.0
@@ -81,6 +82,10 @@ ProgressView {
 	Component {
 		id: editRights
 		EditRights {
+			onRightsAccepted: {
+				ChatModel.transferAccessRights();
+				AuthModel.continueWorkflow();
+			}
 		}
 	}
 	Component {

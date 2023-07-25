@@ -29,10 +29,7 @@ void StateProcessIfdMessages::run()
 	const QSharedPointer<IfdServer> server = context->getIfdServer();
 	Q_ASSERT(server);
 
-	mConnections += connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireStatusChanged, this, &StateProcessIfdMessages::onReaderStatusChanged);
-	mConnections += connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderPropertiesUpdated, this, &StateProcessIfdMessages::onReaderPropertiesUpdated);
 	mConnections += connect(server.data(), &IfdServer::fireMessageHandlerAdded, this, &StateProcessIfdMessages::onMessageHandlerAdded);
-	mConnections += connect(server.data(), &IfdServer::fireConnectedChanged, this, &StateProcessIfdMessages::onConnectedChanged);
 
 	const auto messageHandler = server->getMessageHandler();
 	if (messageHandler)
@@ -54,26 +51,12 @@ void StateProcessIfdMessages::onMessageHandlerAdded(const QSharedPointer<ServerM
 	}
 
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardConnected, this, &StateProcessIfdMessages::onCardConnected, Qt::UniqueConnection);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireDisplayTextChanged, this, &StateProcessIfdMessages::onDisplayTextChanged, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireEstablishPaceChannel, this, &StateProcessIfdMessages::onEstablishPaceChannel, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireModifyPin, this, &StateProcessIfdMessages::onModifyPin, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardDisconnected, this, &StateProcessIfdMessages::onCardDisconnected, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::destroyed, this, &StateProcessIfdMessages::onClosed, Qt::UniqueConnection);
 	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireSecureMessagingStopped, this, &StateProcessIfdMessages::fireSecureMessagingStopped, Qt::UniqueConnection);
-}
-
-
-void StateProcessIfdMessages::onConnectedChanged(bool pConnected)
-{
-	if (pConnected && !getContext()->getIfdServer()->isPairingConnection())
-	{
-		startNfcScanIfNecessary();
-		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::SMART);
-	}
-	else
-	{
-		stopNfcScanIfNecessary();
-		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::SMART);
-	}
 }
 
 
@@ -90,42 +73,15 @@ void StateProcessIfdMessages::onClosed()
 }
 
 
-void StateProcessIfdMessages::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
-{
-	if (pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
-	{
-		return;
-	}
-
-	if (Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
-	{
-		return;
-	}
-
-	const auto& context = getContext();
-	if (context->getIfdServer()->isConnected())
-	{
-		qCDebug(statemachine) << "Stopping IfdService because NFC was disabled.";
-		Q_EMIT fireContinue();
-	}
-}
-
-
-void StateProcessIfdMessages::onReaderPropertiesUpdated(const ReaderInfo& pInfo)
-{
-	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-	{
-		if (pInfo.isInsertable() && pInfo.getCardInfo().getCardType() == CardType::NONE)
-		{
-			Env::getSingleton<ReaderManager>()->insert(pInfo);
-		}
-	}
-}
-
-
 void StateProcessIfdMessages::onCardConnected()
 {
 	mResetContextOnDisconnect = false;
+}
+
+
+void StateProcessIfdMessages::onDisplayTextChanged(const QString& pDisplayText) const
+{
+	getContext()->setDisplayText(pDisplayText);
 }
 
 
@@ -158,18 +114,11 @@ void StateProcessIfdMessages::onModifyPin(const QSharedPointer<const IfdModifyPi
 
 void StateProcessIfdMessages::onCardDisconnected()
 {
+	getContext()->setDisplayText(QString());
 	if (mResetContextOnDisconnect)
 	{
 		getContext()->reset();
 	}
-}
-
-
-void StateProcessIfdMessages::onEntry(QEvent* pEvent)
-{
-	onConnectedChanged(getContext()->getIfdServer()->isConnected());
-
-	AbstractState::onEntry(pEvent);
 }
 
 

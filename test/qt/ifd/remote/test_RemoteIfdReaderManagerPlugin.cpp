@@ -111,9 +111,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			Env::set(RemoteIfdClient::staticMetaObject, mIfdClient.data());
 
 			mDispatcher1.reset(new MockIfdDispatcher());
+			mDispatcher1->setPairingConnection(false);
 			mDispatcher1->moveToThread(&mNetworkThread);
 
 			mDispatcher2.reset(new MockIfdDispatcher());
+			mDispatcher2->setPairingConnection(true);
 			mDispatcher2->moveToThread(&mNetworkThread);
 
 			mPlugin.reset(new RemoteIfdReaderManagerPlugIn());
@@ -522,6 +524,34 @@ class test_RemoteIfdReaderManagerPlugIn
 
 				spySend.clear();
 			}
+		}
+
+
+		void testKeepNormalConnection()
+		{
+			QSignalSpy spySend(mDispatcher1.data(), &MockIfdDispatcher::fireSend);
+
+			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher1);
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+			spySend.clear();
+
+			mPlugin->onContextEstablished(QStringLiteral("MAC-MINI"), mDispatcher1->getId());
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+			QSharedPointer<const IfdMessage> result = qvariant_cast<QSharedPointer<const IfdMessage>>(spySend.takeFirst().at(0));
+			QCOMPARE(result->getType(), IfdMessageType::IFDGetStatus);
+		}
+
+
+		void testClosePairingConnection()
+		{
+			QSignalSpy spySend(mDispatcher2.data(), &MockIfdDispatcher::fireSend);
+			QSignalSpy spyClosed(mDispatcher2.data(), &MockIfdDispatcher::fireClosed);
+
+			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher2);
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+
+			mPlugin->onContextEstablished(QStringLiteral("MAC-MINI"), mDispatcher2->getId());
+			QTRY_COMPARE(spyClosed.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

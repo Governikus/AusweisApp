@@ -31,8 +31,8 @@ Item {
 			module: UiModule.PROVIDER
 		}
 		ListElement {
-			desc: QT_TR_NOOP("Remote")
-			image: "qrc:///images/mobile/platform_specific_phone.svg"
+			desc: QT_TR_NOOP("Card reader")
+			image: "qrc:///images/mobile/phone_card_reader.svg"
 			module: UiModule.REMOTE_SERVICE
 		}
 		ListElement {

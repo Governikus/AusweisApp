@@ -49,11 +49,8 @@ if(NOT CONTAINER_SDK)
 endif()
 
 if(NOT INTEGRATED_SDK)
-	list(APPEND QT_COMPONENTS Svg WebSockets Qml Quick QuickControls2 QuickTemplates2)
+	list(APPEND QT_COMPONENTS Svg WebSockets Qml Quick QuickControls2 QuickTemplates2 QmlWorkerScript)
 
-	if(QT_VERSION VERSION_GREATER_EQUAL "5.14")
-		list(APPEND QT_COMPONENTS QmlWorkerScript)
-	endif()
 	if(NOT DESKTOP AND NOT QT6)
 		list(APPEND QT_COMPONENTS QuickShapes)
 	endif()

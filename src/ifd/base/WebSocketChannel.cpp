@@ -5,6 +5,7 @@
 #include "WebSocketChannel.h"
 
 #include "RemoteServiceSettings.h"
+#include "SecureStorage.h"
 
 #include <QLoggingCategory>
 #include <QThread>
@@ -91,6 +92,13 @@ void WebSocketChannel::close()
 			qCWarning(ifd) << "Tried to close web socket from the wrong thread: skipping";
 		}
 	}
+}
+
+
+bool WebSocketChannel::isPairingConnection() const
+{
+	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
+	return pairingCiphers.contains(mConnection->sslConfiguration().sessionCipher());
 }
 
 

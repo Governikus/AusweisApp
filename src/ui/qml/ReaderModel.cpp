@@ -255,6 +255,7 @@ QString ReaderModel::getLastUpdatedInformation() const
 		return QString();
 	}
 
+	//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 	const auto& updateTime = LanguageLoader::getInstance().getUsedLocale().toString(mConnectedReadersUpdateTime, tr("hh:mm:ss AP"));
 	//: LABEL ALL_PLATFORMS
 	return tr("The list of card readers was last updated at %1.").arg(updateTime);

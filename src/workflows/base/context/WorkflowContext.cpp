@@ -47,6 +47,7 @@ WorkflowContext::WorkflowContext(const Action pAction)
 	, mProgressMessage()
 	, mShowRemoveCardFeedback(false)
 	, mClaimedBy()
+	, mInterruptRequested(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -595,4 +596,16 @@ bool WorkflowContext::isPhysicalCardRequired() const
 		   && !(acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED)
 		   || acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED)
 		   || acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE));
+}
+
+
+bool WorkflowContext::interruptRequested() const
+{
+	return mInterruptRequested;
+}
+
+
+void WorkflowContext::setInterruptRequested(bool pInterruptRequested)
+{
+	mInterruptRequested = pInterruptRequested;
 }

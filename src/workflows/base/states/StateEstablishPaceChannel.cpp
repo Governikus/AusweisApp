@@ -22,21 +22,24 @@ StateEstablishPaceChannel::StateEstablishPaceChannel(const QSharedPointer<Workfl
 
 void StateEstablishPaceChannel::run()
 {
-	if (getContext()->getStatus().isError())
+	const auto& context = getContext();
+	Q_ASSERT(context);
+
+	if (context->getStatus().isError())
 	{
-		Q_ASSERT(getContext()->getFailureCode().has_value());
+		Q_ASSERT(context->getFailureCode().has_value());
 		Q_EMIT firePaceChannelFailed();
 		return;
 	}
 
 	QByteArray effectiveChat;
 	QByteArray certificateDescription;
-	auto authContext = getContext().objectCast<AuthContext>();
-	mPasswordId = getContext()->getEstablishPaceChannelType();
+	const auto& authContext = context.objectCast<AuthContext>();
+	mPasswordId = context->getEstablishPaceChannelType();
 	Q_ASSERT(mPasswordId != PacePasswordId::UNKNOWN);
 
 	if (mPasswordId == PacePasswordId::PACE_PIN ||
-			(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
+			(mPasswordId == PacePasswordId::PACE_CAN && context->isCanAllowedMode()))
 	{
 		if (authContext && authContext->getDidAuthenticateEac1())
 		{
@@ -55,15 +58,15 @@ void StateEstablishPaceChannel::run()
 	switch (mPasswordId)
 	{
 		case PacePasswordId::PACE_CAN:
-			password = getContext()->getCan().toLatin1();
+			password = context->getCan().toLatin1();
 			break;
 
 		case PacePasswordId::PACE_PIN:
-			password = getContext()->getPin().toLatin1();
+			password = context->getPin().toLatin1();
 			break;
 
 		case PacePasswordId::PACE_PUK:
-			password = getContext()->getPuk().toLatin1();
+			password = context->getPuk().toLatin1();
 			break;
 
 		case PacePasswordId::UNKNOWN:
@@ -72,11 +75,11 @@ void StateEstablishPaceChannel::run()
 			break;
 	}
 
-	auto cardConnection = getContext()->getCardConnection();
+	auto cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		getContext()->setLastPaceResult(CardReturnCode::CARD_NOT_FOUND);
+		context->setLastPaceResult(CardReturnCode::CARD_NOT_FOUND);
 		Q_EMIT fireNoCardConnection();
 		return;
 	}
@@ -91,12 +94,15 @@ void StateEstablishPaceChannel::run()
 		return;
 	}
 
+	//: INFO ALL_PLATFORMS First status message after the PIN was entered.
+	context->setProgress(0, tr("The secure channel is opened"));
+
 	qDebug() << "Establish connection using" << mPasswordId;
 	Q_ASSERT(!password.isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
 
 	if (mPasswordId == PacePasswordId::PACE_PIN && !cardConnection->getReaderInfo().isBasicReader())
 	{
-		const auto pinContext = getContext().objectCast<ChangePinContext>();
+		const auto pinContext = context.objectCast<ChangePinContext>();
 		if (pinContext && pinContext->isRequestTransportPin())
 		{
 			password = QByteArray(5, 0);

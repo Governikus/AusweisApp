@@ -62,8 +62,8 @@ void StateDidAuthenticateEac2::onCardCommandDone(QSharedPointer<BaseCardCommand>
 				newStatus = GlobalStatus::Code::Workflow_Card_Removed;
 				break;
 
-			case CardReturnCode::EXTENDED_LENGTH_MISSING:
-				newStatus = GlobalStatus::Code::Workflow_No_Extended_Length_Error;
+			case CardReturnCode::WRONG_LENGTH:
+				newStatus = GlobalStatus::Code::Workflow_Wrong_Length_Error;
 				break;
 
 			default:

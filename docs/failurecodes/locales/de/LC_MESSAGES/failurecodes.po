@@ -360,7 +360,7 @@ msgstr ""
 "TLS-Zertifikate in der Beschreibung des Diensteanbieterzertifikats "
 "enthalten sind. Diese Bedingung ist nicht erfüllt."
 
-msgid "**Pre_Verfication_No_Test_Environment**"
+msgid "**Pre_Verification_No_Test_Environment**"
 msgstr ""
 
 msgid ""
@@ -380,7 +380,7 @@ msgstr ""
 "dieser nur die Inbetriebnahme von Diensten mit Testausweisen erleichtern "
 "soll."
 
-msgid "**Pre_Verfication_Invalid_Certificate_Chain**"
+msgid "**Pre_Verification_Invalid_Certificate_Chain**"
 msgstr ""
 
 msgid ""
@@ -390,7 +390,7 @@ msgstr ""
 "Vom Server wurde eine Zertifikatskette gesendet, die der AusweisApp2 "
 "nicht bekannt ist."
 
-msgid "**Pre_Verfication_Invalid_Certificate_Signature**"
+msgid "**Pre_Verification_Invalid_Certificate_Signature**"
 msgstr ""
 
 msgid ""
@@ -400,7 +400,7 @@ msgstr ""
 "Mindestens eine Signatur in der vom Server genutzten Zertifikatskette ist"
 " nicht korrekt."
 
-msgid "**Pre_Verfication_Certificate_Expired**"
+msgid "**Pre_Verification_Certificate_Expired**"
 msgstr ""
 
 msgid "The certificate chain used by the server is currently not valid."
@@ -639,7 +639,7 @@ msgstr ""
 
 msgid ""
 "A message was sent by the server in the PAOS communication during "
-"authentication, that could be completely processed."
+"authentication, that could not be completely processed."
 msgstr ""
 "Bei einer Authentisierung ist eine Nachricht vom Server in der PAOS-"
 "Kommunikation gesendet worden, die nicht vollständig verarbeitet werden "
@@ -655,7 +655,7 @@ msgstr ""
 "Bei einer Authentisierung ist ein Netzwerkfehler in der PAOS-"
 "Kommunikation aufgetreten."
 
-msgid "**Generic_Send_Receive_Ssl_Error**"
+msgid "**Generic_Send_Receive_Tls_Error**"
 msgstr ""
 
 msgid ""
@@ -766,7 +766,7 @@ msgstr ""
 "geliefert. Die AusweisApp2 oder die Karte hat sich nicht entsprechend der"
 " Erwartung des Servers verhalten."
 
-msgid "**Check_Refresh_Address_Fatal_Ssl_Error_Before_Reply**"
+msgid "**Check_Refresh_Address_Fatal_Tls_Error_Before_Reply**"
 msgstr ""
 
 msgid ""
@@ -815,7 +815,7 @@ msgstr ""
 " Proxyserver konfiguriert. Dieser hat für die Überprüfung der "
 "Rücksprungadresse nicht funktioniert."
 
-msgid "**Check_Refresh_Address_Fatal_Ssl_Error_After_Reply**"
+msgid "**Check_Refresh_Address_Fatal_Tls_Error_After_Reply**"
 msgstr ""
 
 msgid ""
@@ -976,7 +976,7 @@ msgstr ""
 "aus der AusweisApp2 heraus gestartet werden, wie zum Beispiel die "
 "Selbstauskunft."
 
-msgid "**Generic_Provider_Communication_Ssl_Error**"
+msgid "**Generic_Provider_Communication_Tls_Error**"
 msgstr ""
 
 msgid ""

@@ -11,7 +11,7 @@ import Governikus.View 1.0
 SectionPage {
 	id: rootPage
 	//: LABEL ANDROID IOS
-	title: qsTr("Configure remote service")
+	title: qsTr("Manage pairings")
 
 	content: RemoteServiceViewRemote {
 		width: rootPage.width

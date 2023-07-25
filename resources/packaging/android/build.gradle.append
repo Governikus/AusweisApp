@@ -37,6 +37,15 @@ android {
         exclude 'META-INF/native-image/**'
         exclude 'META-INF/native/**'
         exclude 'META-INF/license/**'
+        exclude '**/libplugins_tls_qcertonlybackend_*.so'
+        exclude '**/libplugins_networkinformation_*.so'
+        exclude '**/libplugins_imageformats_qgif_*.so'
+        exclude '**/libplugins_imageformats_qicns_*.so'
+        exclude '**/libplugins_imageformats_qico_*.so'
+        exclude '**/libplugins_imageformats_qtga_*.so'
+        exclude '**/libplugins_imageformats_qtiff_*.so'
+        exclude '**/libplugins_imageformats_qwebp_*.so'
+        exclude '**/libplugins_imageformats_qwbmp_*.so'
 
         jniLibs {
             useLegacyPackaging = true

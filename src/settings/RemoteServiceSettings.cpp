@@ -29,6 +29,7 @@ namespace
 SETTINGS_NAME(SETTINGS_GROUP_NAME_REMOTEREADER, "remotereader")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_NAME, "serverName")
 SETTINGS_NAME(SETTINGS_NAME_PIN_PAD_MODE, "pinPadMode")
+SETTINGS_NAME(SETTINGS_NAME_SHOW_ACCESS_RIGHTS, "showAccessRights")
 SETTINGS_NAME(SETTINGS_ARRAY_NAME_TRUSTED_CERTIFICATES, "trustedCertificates")
 SETTINGS_NAME(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM, "certificate")
 SETTINGS_NAME(SETTINGS_NAME_TRUSTED_REMOTE_INFO, "trustedRemoteInfo")
@@ -84,13 +85,26 @@ void RemoteServiceSettings::setServerName(const QString& pName)
 
 bool RemoteServiceSettings::getPinPadMode() const
 {
-	return mStore->value(SETTINGS_NAME_PIN_PAD_MODE(), false).toBool();
+	return mStore->value(SETTINGS_NAME_PIN_PAD_MODE(), true).toBool();
 }
 
 
 void RemoteServiceSettings::setPinPadMode(bool pPinPadMode)
 {
 	mStore->setValue(SETTINGS_NAME_PIN_PAD_MODE(), pPinPadMode);
+	save(mStore);
+}
+
+
+bool RemoteServiceSettings::getShowAccessRights() const
+{
+	return mStore->value(SETTINGS_NAME_SHOW_ACCESS_RIGHTS(), false).toBool();
+}
+
+
+void RemoteServiceSettings::setShowAccessRights(bool pShowAccessRights)
+{
+	mStore->setValue(SETTINGS_NAME_SHOW_ACCESS_RIGHTS(), pShowAccessRights);
 	save(mStore);
 }
 
@@ -229,6 +243,11 @@ void RemoteServiceSettings::setKey(const QSslKey& pKey) const
 
 RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QSslCertificate& pCertificate) const
 {
+	if (pCertificate.isNull())
+	{
+		return RemoteInfo();
+	}
+
 	return getRemoteInfo(generateFingerprint(pCertificate));
 }
 
@@ -322,8 +341,13 @@ bool RemoteServiceSettings::updateRemoteInfo(const RemoteInfo& pInfo)
 		iter.next();
 		if (iter.value().getFingerprint() == pInfo.getFingerprint())
 		{
+			const bool hadNoNameYet = iter.value().mName.isEmpty();
 			iter.setValue(pInfo);
 			setRemoteInfos(infos);
+			if (hadNoNameYet)
+			{
+				Q_EMIT fireInitialDeviceNameSet(pInfo.getNameEscaped());
+			}
 			return true;
 		}
 	}

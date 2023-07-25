@@ -35,6 +35,7 @@ class WebSocketChannel
 
 		void send(const QByteArray& pDataBlock) override;
 		void close() override;
+		[[nodiscard]] bool isPairingConnection() const override;
 		[[nodiscard]] const QString& getId() const override;
 
 	private Q_SLOTS:

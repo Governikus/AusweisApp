@@ -38,11 +38,6 @@ Windows / macOS
 - Die visuelle Hervorhebung des aktiven Elements wird an einigen Stellen
   fälschlicherwiese auch aktiviert, wenn die Maus benutzt wurde.
 
-- Unter macOS werden im System hinterlegte Proxy-Server nicht erkannt und
-  damit auch nicht automatisch verwendet. Um manuell einen Proxy-Server in
-  der AusweisApp2 zu hinterlegen beachten Sie die Anleitung zur Installation
-  in Firmennetzwerken.
-
 Android / iOS
 """""""""""""
 

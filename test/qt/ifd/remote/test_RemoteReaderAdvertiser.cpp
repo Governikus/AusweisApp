@@ -19,9 +19,9 @@ namespace governikus
 {
 
 
-template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, int&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, int& pTimerInterval, bool& pPairing)
+template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, int&, bool&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, int& pInterval, bool& pPairing)
 {
-	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pTimerInterval, pPairing);
+	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pPairing, pInterval);
 }
 
 

@@ -163,7 +163,7 @@ Item {
 				id: settingsButton
 				Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name)
 				height: rightTitleBarActions.height
-				source: "qrc:///images/material_settings.svg"
+				source: "qrc:///images/desktop/material_settings_white.svg"
 				text: qsTr("Settings")
 				visible: rightMostAction.showSettings
 
@@ -173,7 +173,7 @@ Item {
 				id: helpButton
 				Accessible.description: qsTr("Open online help of %1 in browser").arg(Qt.application.name)
 				height: rightTitleBarActions.height
-				source: "qrc:///images/desktop/material_menu_book.svg"
+				source: "qrc:///images/desktop/material_menu_book_white.svg"
 				text: qsTr("Open online help in browser")
 				visible: rightMostAction.showHelp
 

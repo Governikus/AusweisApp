@@ -13,13 +13,6 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-	#define HEX hex
-#else
-	#define HEX Qt::hex
-#endif
-
-
 constexpr std::byte CLA {0x00};
 constexpr std::byte CLA_PROPRIETARY {0x80};
 constexpr std::byte CLA_COMMAND_CHAINING {0x10};
@@ -128,12 +121,12 @@ CommandApdu::CommandApdu(const QByteArray& pHeader, const QByteArray& pData, int
 
 	if (mData.size() > EXTENDED_MAX_LC)
 	{
-		qCCritical(card).nospace() << "Command data exceeds maximum of 0x" << HEX << EXTENDED_MAX_LC;
+		qCCritical(card).nospace() << "Command data exceeds maximum of 0x" << Qt::hex << EXTENDED_MAX_LC;
 	}
 
 	if (mLe > EXTENDED_MAX_LE)
 	{
-		qCCritical(card).nospace() << "Expected length exceeds maximum value of 0x" << HEX << EXTENDED_MAX_LE;
+		qCCritical(card).nospace() << "Expected length exceeds maximum value of 0x" << Qt::hex << EXTENDED_MAX_LE;
 	}
 }
 
@@ -148,12 +141,12 @@ CommandApdu::CommandApdu(Ins pIns, uchar pP1, uchar pP2, const QByteArray& pData
 {
 	if (mData.size() > EXTENDED_MAX_LC)
 	{
-		qCCritical(card).nospace() << "Command data exceeds maximum of 0x" << HEX << EXTENDED_MAX_LC;
+		qCCritical(card).nospace() << "Command data exceeds maximum of 0x" << Qt::hex << EXTENDED_MAX_LC;
 	}
 
 	if (mLe > EXTENDED_MAX_LE)
 	{
-		qCCritical(card).nospace() << "Expected length exceeds maximum value of 0x" << HEX << EXTENDED_MAX_LE;
+		qCCritical(card).nospace() << "Expected length exceeds maximum value of 0x" << Qt::hex << EXTENDED_MAX_LE;
 	}
 }
 
@@ -210,7 +203,7 @@ Ins CommandApdu::getINS() const
 		return Ins(mIns);
 	}
 
-	qCCritical(card).nospace().noquote() << "Unknown INS value, returning UNKNOWN, value: 0x" << HEX << mIns;
+	qCCritical(card).nospace().noquote() << "Unknown INS value, returning UNKNOWN, value: 0x" << Qt::hex << mIns;
 	return Ins::UNKNOWN;
 }
 

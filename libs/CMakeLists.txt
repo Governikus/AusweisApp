@@ -109,11 +109,7 @@ if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
 endif()
 
 ################################## Versions
-set(QT 6.4.1)
-set(QT_HASH e20b850b6134098a7f2e7701cfddfb213c6cf394b9e848e6fbc5b0e89dcfcc09)
-
-set(OPENSSL 3.0.8)
-set(OPENSSL_HASH 6c13d2bf38fdf31eac3ce2a347073673f5d63263398f1f69d0df4a41253e4b3e)
+include(Versions.cmake)
 
 ################################## Files
 set(QT_FILE qt-everywhere-src-${QT}.tar.xz)

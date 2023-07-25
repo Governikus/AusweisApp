@@ -35,8 +35,8 @@ class test_StateProcessIfdMessages
 			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
 			StateProcessIfdMessages state(context);
 			state.run();
-			QCOMPARE(state.mConnections.size(), 4);
-			QCOMPARE(state.mMessageConnections.size(), 6);
+			QCOMPARE(state.mConnections.size(), 1);
+			QCOMPARE(state.mMessageConnections.size(), 7);
 		}
 
 
@@ -50,7 +50,7 @@ class test_StateProcessIfdMessages
 			QCOMPARE(state.mMessageConnections.size(), 0);
 
 			state.onMessageHandlerAdded(messageHandler);
-			QCOMPARE(state.mMessageConnections.size(), 6);
+			QCOMPARE(state.mMessageConnections.size(), 7);
 		}
 
 
@@ -112,6 +112,21 @@ class test_StateProcessIfdMessages
 
 			workerThread.quit();
 			workerThread.wait();
+		}
+
+
+		void test_OnDisplayTextChanged()
+		{
+			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
+			StateProcessIfdMessages state(context);
+			QSignalSpy spy(context.data(), &IfdServiceContext::fireDisplayTextChanged);
+
+			state.onDisplayTextChanged(QStringLiteral("dummy text"));
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(context->getDisplayText(), QStringLiteral("dummy text"));
+			state.onCardDisconnected();
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(context->getDisplayText(), QStringLiteral(""));
 		}
 
 

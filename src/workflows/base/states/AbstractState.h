@@ -47,7 +47,6 @@ class AbstractState
 		void updateStatus(const GlobalStatus& pStatus);
 		void updateStartPaosResult(const ECardApiResult& pStartPaosResult);
 
-		void startNfcScanIfNecessary();
 		void stopNfcScanIfNecessary(const QString& pError = QString());
 
 	public:

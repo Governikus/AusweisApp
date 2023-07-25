@@ -11,8 +11,8 @@ Rectangle {
 	property alias busy: busyIndicator.visible
 	property alias contentBackgroundColor: content.color
 	property alias source: image.source
-	property alias text: text.text
-	property alias textStyle: text.textStyle
+	property alias text: iconText.text
+	property alias textStyle: iconText.textStyle
 
 	border.color: borderEnabled ? Style.color.accent : Style.color.transparent
 	border.width: height / 40
@@ -48,7 +48,7 @@ Rectangle {
 			visible: source.toString().length > 0
 		}
 		GText {
-			id: text
+			id: iconText
 			Accessible.ignored: true
 			anchors.centerIn: parent
 			textStyle: Style.text.title_accent

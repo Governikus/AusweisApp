@@ -32,7 +32,7 @@ class RemoteTlsServer
 		void onSslErrors(const QList<QSslError>& pErrors) override;
 
 	Q_SIGNALS:
-		void firePairingCompleted();
+		void firePairingCompleted(const QSslCertificate& pCertificate);
 };
 
 } // namespace governikus

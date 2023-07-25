@@ -1,0 +1,54 @@
+From 6d6832fc530c9296d92dd924f6f6bca0effa6412 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <jan.moeller@governikus.de>
+Date: Thu, 6 Apr 2023 09:27:16 +0200
+Subject: Ignore removed/changed screens if no QIOSIntegration instance exists
+
+QIOSTracker registers itself as handlers for system notifications about
+changes of the screen environment. If no QIOSIntegration instance
+exists, newly detected screens are not added to the list of known
+screens (see screenConnected()). This, in turn, will result in a crash
+if a screen is disconnected and removed in screenDisconnected() as it
+is not known to qtPlatformScreenFor() and the function returns a
+nullptr.
+
+Consider the QIOSIntegration also whenever a screen is "changed". This
+is more of a safety measure do avoid crashes for unknown screens.
+
+This situation occurs if an iOS device is used to mirror the display
+via AirPlay and no actual QGuiApplication exists, e.g. Qt is only
+embedded in a Framework.
+
+Pick-to: 6.5 6.2
+Fixes: QTBUG-106701
+Change-Id: Id778fc5afa7c284b0536ee02b1ba2c10321cc5b1
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+Reviewed-by: Lars Schmertmann <lars.schmertmann@governikus.de>
+(cherry picked from commit ffdfafc4b47b8267395370199073c292da33dd42)
+---
+ src/plugins/platforms/ios/qiosscreen.mm | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiosscreen.mm y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+index 3d660189af..e0216ce652 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosscreen.mm
++++ y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+@@ -80,6 +80,9 @@ static QIOSScreen* qtPlatformScreenFor(UIScreen *uiScreen)
+ 
+ + (void)screenDisconnected:(NSNotification*)notification
+ {
++    if (!QIOSIntegration::instance())
++        return;
++
+     QIOSScreen *screen = qtPlatformScreenFor([notification object]);
+     Q_ASSERT_X(screen, Q_FUNC_INFO, "Screen disconnected that we didn't know about");
+ 
+@@ -88,6 +91,9 @@ static QIOSScreen* qtPlatformScreenFor(UIScreen *uiScreen)
+ 
+ + (void)screenModeChanged:(NSNotification*)notification
+ {
++    if (!QIOSIntegration::instance())
++        return;
++
+     QIOSScreen *screen = qtPlatformScreenFor([notification object]);
+     Q_ASSERT_X(screen, Q_FUNC_INFO, "Screen changed that we didn't know about");
+ 

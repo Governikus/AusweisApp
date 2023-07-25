@@ -27,6 +27,7 @@ class DataChannel
 
 		Q_INVOKABLE virtual void send(const QByteArray& pDataBlock) = 0;
 		Q_INVOKABLE virtual void close() = 0;
+		[[nodiscard]] virtual bool isPairingConnection() const = 0;
 		[[nodiscard]] virtual const QString& getId() const = 0;
 
 	Q_SIGNALS:

@@ -39,6 +39,7 @@ class WorkflowModel
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback WRITE setRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
+	Q_PROPERTY(bool hasCard READ hasCard NOTIFY fireHasCardChanged)
 	friend class ::test_WorkflowModel;
 
 	private:
@@ -65,6 +66,7 @@ class WorkflowModel
 
 		[[nodiscard]] bool isBasicReader() const;
 		[[nodiscard]] bool isRemoteReader() const;
+		[[nodiscard]] bool hasCard() const;
 
 		[[nodiscard]] bool isSmartCardAllowed() const;
 
@@ -86,7 +88,7 @@ class WorkflowModel
 		Q_INVOKABLE void insertSmartCard();
 		Q_INVOKABLE void insertSimulator();
 		Q_INVOKABLE void cancelWorkflow();
-		Q_INVOKABLE void startScanIfNecessary();
+		Q_INVOKABLE void startScanExplicitly();
 		Q_INVOKABLE void continueWorkflow();
 		Q_INVOKABLE void setInitialPluginType();
 		[[nodiscard]] Q_INVOKABLE bool shouldSkipResultView() const;
@@ -104,13 +106,14 @@ class WorkflowModel
 	Q_SIGNALS:
 		void fireCurrentStateChanged(const QString& pState);
 		void fireResultChanged();
-		void fireReaderPlugInTypeChanged();
+		void fireReaderPlugInTypeChanged(bool pExplicitStart = false);
 		void fireSelectedReaderChanged();
 		void fireIsSmartCardAllowedChanged();
 		void fireReaderImageChanged();
 		void fireNextWorkflowPendingChanged();
 		void fireSupportedPlugInTypesChanged();
 		void fireRemoveCardFeedbackChanged();
+		void fireHasCardChanged();
 };
 
 

@@ -108,17 +108,21 @@ void IfdReaderManagerPlugIn::handleIFDStatus(const QJsonObject& pJsonObject, con
 void IfdReaderManagerPlugIn::onContextEstablished(const QString& pIfdName, const QString& pId)
 {
 	const auto& dispatcher = mDispatcherList.value(pId);
-	if (isInitialPairing(pIfdName, pId))
+
+	if (getInfo().getPlugInType() == ReaderManagerPlugInType::REMOTE_IFD)
 	{
-		QMetaObject::invokeMethod(dispatcher.data(), &IfdDispatcher::close, Qt::QueuedConnection);
+		dispatcher->saveRemoteNameInSettings(pIfdName);
+		if (dispatcher->isPairingConnection())
+		{
+			QMetaObject::invokeMethod(dispatcher.data(), &IfdDispatcher::close, Qt::QueuedConnection);
+			return;
+		}
 	}
-	else
-	{
-		QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
-				const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
-				dispatcher->send(ifdGetStatus);
-			}, Qt::QueuedConnection);
-	}
+
+	QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
+			const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
+			dispatcher->send(ifdGetStatus);
+		}, Qt::QueuedConnection);
 }
 
 

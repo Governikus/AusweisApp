@@ -89,6 +89,9 @@ class RemoteServiceSettings
 		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
 
+		[[nodiscard]] bool getShowAccessRights() const;
+		void setShowAccessRights(bool pShowAccessRights);
+
 		[[nodiscard]] QList<QSslCertificate> getTrustedCertificates() const;
 		void addTrustedCertificate(const QSslCertificate& pCertificate);
 		void removeTrustedCertificate(const QSslCertificate& pCertificate);
@@ -112,6 +115,7 @@ class RemoteServiceSettings
 	Q_SIGNALS:
 		void fireTrustedCertificatesChanged();
 		void fireTrustedRemoteInfosChanged();
+		void fireInitialDeviceNameSet(const QString& pName);
 };
 
 

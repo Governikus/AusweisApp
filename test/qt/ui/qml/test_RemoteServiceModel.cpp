@@ -28,19 +28,6 @@ class test_RemoteServiceModel
 		RemoteServiceModel* mModel = nullptr;
 		QSharedPointer<IfdServiceContext> mContext;
 
-		static EstablishPaceChannel createDataToParse(const PacePasswordId& pinId)
-		{
-			const QByteArray chat = QByteArray::fromHex("7F4C12060904007F00070301020253050000000F0F");
-			const QByteArray certDescription = QByteArray::fromHex("30 8202A4"
-																   "        06 0A 04007F00070301030103"
-																   "        A1 0E 0C0C442D547275737420476D6248"
-																   "        A3 3A 0C38476573616D7476657262616E64206465722064657574736368656E20566572736963686572756E67737769727473636861667420652E562E"
-																   "        A5 820248"
-																   "            04 820244 4E616D652C20416E7363687269667420756E6420452D4D61696C2D4164726573736520646573204469656E737465616E626965746572733A0D0A476573616D7476657262616E64206465722064657574736368656E20566572736963686572756E67737769727473636861667420652E562E0D0A57696C68656C6D73747261C39F652034332F3433670D0A3130313137204265726C696E0D0A6265726C696E406764762E64650D0A0D0A4765736368C3A46674737A7765636B3A0D0A2D52656769737472696572756E6720756E64204C6F67696E20616D204744562D4D616B6C6572706F7274616C2D0D0A0D0A48696E7765697320617566206469652066C3BC722064656E204469656E737465616E626965746572207A757374C3A46E646967656E205374656C6C656E2C20646965206469652045696E68616C74756E672064657220566F7273636872696674656E207A756D20446174656E73636875747A206B6F6E74726F6C6C696572656E3A0D0A4265726C696E6572204265617566747261677465722066C3BC7220446174656E73636875747A20756E6420496E666F726D6174696F6E7366726569686569740D0A416E20646572205572616E696120342D31300D0A3130373837204265726C696E0D0A3033302F3133382038392D300D0A6D61696C626F7840646174656E73636875747A2D6265726C696E2E64650D0A687474703A2F2F7777772E646174656E73636875747A2D6265726C696E2E64650D0A416E737072656368706172746E65723A2044722E20416C6578616E64657220446978");
-
-			return EstablishPaceChannel(pinId, chat, certDescription);
-		}
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -150,6 +137,86 @@ class test_RemoteServiceModel
 
 			mModel->setPairing(false);
 			QVERIFY(!server->getPairing());
+		}
+
+
+		void test_TransactionInfo()
+		{
+			mModel->resetRemoteServiceContext(mContext);
+			QCOMPARE(mModel->getTransactionInfo(), QString());
+		}
+
+
+		void test_getSupportedReaderPlugInTypes()
+		{
+			QVector<ReaderManagerPlugInType> supportedPlugIns {ReaderManagerPlugInType::NFC};
+#if __has_include("SmartManager.h")
+			supportedPlugIns << ReaderManagerPlugInType::SMART;
+#endif
+			QCOMPARE(mModel->getSupportedReaderPlugInTypes(), supportedPlugIns);
+		}
+
+
+		void test_DisplayText_data()
+		{
+			QTest::addColumn<QString>("inputText");
+			QTest::addColumn<QString>("outputText");
+			QTest::addColumn<int>("expectedPercentage");
+
+			QTest::newRow("positive two digits") << "Dummy Text\n15%" << "Dummy Text" << 15;
+			QTest::newRow("positive two digits with space") << "Dummy Text\n15 %" << "Dummy Text" << 15;
+			QTest::newRow("negative two digits") << "Dummy Text\n-15%" << "Dummy Text\n-15%" << 0;
+			QTest::newRow("positive two digits with percentage") << "Dummy Text\n15%" << "Dummy Text" << 15;
+			QTest::newRow("Whitespace input") << "   " << "   " << 0;
+			QTest::newRow("Special characters") << "!@#$%^&*()" << "!@#$%^&*()" << 0;
+			QTest::newRow("Digits only") << "12345" << "12345" << 0;
+			QTest::newRow("Single Digit") << "Dummy Text\n1%" << "Dummy Text" << 1;
+			QTest::newRow("Triple Digit") << "Dummy Text\n111%" << "Dummy Text\n111%" << 0;
+			QTest::newRow("100 Percent") << "Dummy Text\n100%" << "Dummy Text" << 100;
+			QTest::newRow("Quadruple Digit") << "Dummy Text\n1111%" << "Dummy Text\n1111%" << 0;
+			QTest::newRow("Real Number") << "Dummy Text\n11.1%" << "Dummy Text\n11.1%" << 0;
+			QTest::newRow("Zero Digit without Space") << "%" << "%" << 0;
+			QTest::newRow("Single Digit without Space") << "1%" << "" << 1;
+			QTest::newRow("Double Digit without Space") << "42%" << "" << 42;
+			QTest::newRow("Triple Digit without Space") << "100%" << "" << 100;
+			QTest::newRow("Zero Digit with Space") << " %" << " %" << 0;
+			QTest::newRow("Single Digit with Space") << "1 %" << "" << 1;
+			QTest::newRow("Double Digit with Space") << "42 %" << "" << 42;
+			QTest::newRow("Triple Digit with Space") << "100 %" << "" << 100;
+
+		}
+
+
+		void test_DisplayText()
+		{
+			QFETCH(QString, inputText);
+			QFETCH(QString, outputText);
+			QFETCH(int, expectedPercentage);
+
+			QSignalSpy spyDisplayTextChanged(mModel, &RemoteServiceModel::fireDisplayTextChanged);
+
+			mModel->resetRemoteServiceContext(mContext);
+			mContext->setDisplayText(inputText);
+			QCOMPARE(spyDisplayTextChanged.count(), 1);
+			QCOMPARE(mModel->getDisplayText(), outputText);
+			QCOMPARE(mModel->getPercentage(), expectedPercentage);
+		}
+
+
+		void test_DisplayTextSignals()
+		{
+			QSignalSpy spyDisplayTextChanged(mModel, &RemoteServiceModel::fireDisplayTextChanged);
+
+			QCOMPARE(mModel->getDisplayText(), "");
+			QCOMPARE(mModel->getPercentage(), 0);
+
+			mModel->resetRemoteServiceContext(mContext);
+			QCOMPARE(spyDisplayTextChanged.count(), 0);
+			mContext->setDisplayText("Dummy");
+			QCOMPARE(spyDisplayTextChanged.count(), 1);
+			mContext->setDisplayText("Dummy");
+			QCOMPARE(spyDisplayTextChanged.count(), 1);
+
 		}
 
 

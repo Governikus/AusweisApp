@@ -31,6 +31,7 @@ SectionPage {
 		Progress,
 		AccessRights,
 		Workflow,
+		WorkflowError,
 		Password,
 		PasswordInfo,
 		CardPosition,
@@ -159,7 +160,23 @@ SectionPage {
 			return Workflow.WaitingFor.None;
 		}
 
+		onDeviceUnpaired: function (pDeviceName) {
+			deviceUnpairedView.deviceName = pDeviceName;
+			showWithPrecedingView(AuthView.SubViews.WorkflowError);
+		}
 		onSettingsRequested: authView.showSettings()
+	}
+	ResultView {
+		id: deviceUnpairedView
+
+		property string deviceName
+
+		resultType: ResultView.Type.IsError
+		//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
+		text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
+		visible: d.activeView === AuthView.SubViews.WorkflowError
+
+		onNextView: d.view = AuthView.SubViews.Workflow
 	}
 	EnterPasswordView {
 		id: enterPasswordView
@@ -286,11 +303,11 @@ SectionPage {
 		header: AuthModel.errorHeader
 		hintButtonText: AuthModel.statusHintActionText
 		hintText: AuthModel.statusHintText
+		mailButtonVisible: AuthModel.errorIsMasked
 		popupText: AuthModel.errorText
 		//: INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.
 		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCodeString)
 		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
-		supportButtonsVisible: AuthModel.errorIsMasked
 		text: AuthModel.resultString
 		visible: d.activeView === AuthView.SubViews.Result
 

@@ -387,9 +387,10 @@ MsgHandler MessageDispatcher::interrupt()
 #ifdef Q_OS_IOS
 	{
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
-		const auto lastPaceResult = mContext.getContext()->getLastPaceResult();
-		return handleCurrentState(cmdType, allowedStates, [lastPaceResult] {
-				switch (lastPaceResult)
+		const auto& workflowContext = mContext.getContext();
+		return handleCurrentState(cmdType, allowedStates, [&workflowContext] {
+				workflowContext->setInterruptRequested(true);
+				switch (workflowContext->getLastPaceResult())
 				{
 						case CardReturnCode::OK:
 						case CardReturnCode::OK_PUK:

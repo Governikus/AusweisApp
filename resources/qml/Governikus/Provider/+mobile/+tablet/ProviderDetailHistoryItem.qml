@@ -23,9 +23,7 @@ ListItem {
 	contentMarginRight: 0
 	//: LABEL ANDROID IOS
 	footerText: purposeText !== "" ? purposeText : qsTr("Touch for more details")
-
-	//: LABEL ANDROID IOS
-	headerText: (Utils.isToday(dateTime) ? qsTr("today") : Utils.isYesterday(dateTime) ? qsTr("yesterday") : Utils.isThisWeek(dateTime) ? dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") : dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy")))
+	headerText: Utils.historyDateString(dateTime)
 	height: 72
 	//: LABEL ANDROID IOS
 	text: (!!providerName ? providerName : qsTr("Touch for more details"))

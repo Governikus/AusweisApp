@@ -25,6 +25,7 @@ bool HistoryModelSearchFilter::filterAcceptsRow(int pSourceRow, const QModelInde
 	}
 
 	const QModelIndex& modelIndex = dataSourceModel->index(pSourceRow, 0);
+	//: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 	if (dataSourceModel->data(modelIndex, HistoryModel::DATETIME).toDateTime().toString(tr("dd.MM.yyyy")).contains(mFilterString, Qt::CaseInsensitive)
 			|| dataSourceModel->data(modelIndex, HistoryModel::SUBJECT).toString().contains(mFilterString, Qt::CaseInsensitive)
 			|| dataSourceModel->data(modelIndex, HistoryModel::PURPOSE).toString().contains(mFilterString, Qt::CaseInsensitive)

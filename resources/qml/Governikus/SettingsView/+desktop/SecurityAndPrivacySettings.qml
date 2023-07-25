@@ -83,6 +83,7 @@ ColumnLayout {
 	}
 	GSeparator {
 		Layout.fillWidth: true
+		visible: SettingsModel.autoUpdateAvailable
 	}
 	GText {
 		activeFocusOnTab: true
@@ -90,16 +91,18 @@ ColumnLayout {
 		//: LABEL DESKTOP
 		text: qsTr("Software updates")
 		textStyle: Style.text.header_accent
+		visible: SettingsModel.autoUpdateAvailable
 
 		FocusFrame {
 		}
 	}
 	GCheckBox {
 		checked: SettingsModel.autoUpdateCheck
-		enabled: !SettingsModel.autoUpdateCheckSetByAdmin && SettingsModel.autoUpdateAvailable
+		enabled: !SettingsModel.autoUpdateCheckSetByAdmin
 
 		//: LABEL DESKTOP
 		text: qsTr("Check at program start")
+		visible: SettingsModel.autoUpdateAvailable
 
 		onCheckedChanged: SettingsModel.autoUpdateCheck = checked
 	}
@@ -109,9 +112,9 @@ ColumnLayout {
 
 		Layout.fillWidth: true
 		spacing: Constants.component_spacing
+		visible: SettingsModel.autoUpdateAvailable
 
 		GButton {
-			enabled: SettingsModel.autoUpdateAvailable
 			text: (parent.updateAvailable ?
 				//: LABEL DESKTOP
 				qsTr("Show update") :

@@ -19,6 +19,12 @@
 using namespace governikus;
 
 
+namespace
+{
+const QRegularExpression percentMatcher = QRegularExpression(QStringLiteral("(\\s|^)(100|\\d{1,2}) ?%"));
+} // namespace
+
+
 RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
 	, mContext()
@@ -28,8 +34,10 @@ RemoteServiceModel::RemoteServiceModel()
 	, mPairingRequested(false)
 	, mErrorMessage()
 	, mPsk()
-	, mAvailableRemoteDevices(this, false, true)
-	, mKnownDevices(this, true, false)
+	, mAllDevices(this, true, true)
+	, mAvailableDevicesInPairingMode(&mAllDevices, RemoteDeviceFilterModel::showActivePairingMode)
+	, mAvailablePairedDevices(&mAllDevices, RemoteDeviceFilterModel::showAvailableAndPaired)
+	, mUnavailablePairedDevices(&mAllDevices, RemoteDeviceFilterModel::showUnavailableAndPaired)
 	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
 	, mRememberedServerEntry()
@@ -42,6 +50,11 @@ RemoteServiceModel::RemoteServiceModel()
 	, mRequiresLocalNetworkPermission(false)
 #endif
 {
+	QQmlEngine::setObjectOwnership(&mAllDevices, QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(&mAvailableDevicesInPairingMode, QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(&mAvailablePairedDevices, QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(&mUnavailablePairedDevices, QQmlEngine::CppOwnership);
+
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::firePluginAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &RemoteServiceModel::onEnvironmentChanged);
@@ -58,6 +71,14 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
+
+	connect(this, &WorkflowModel::fireReaderPlugInTypeChanged, this, &RemoteServiceModel::onReaderPlugInTypesChanged);
+
+	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	connect(&settings, &RemoteServiceSettings::fireInitialDeviceNameSet, this, [](const QString& pName){
+			//: LABEL ALL_PLATFORMS
+			Env::getSingleton<ApplicationModel>()->showFeedback(tr("Pairing with %1 successful.").arg(pName));
+		});
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -114,9 +135,41 @@ void RemoteServiceModel::onApplicationStateChanged(bool pIsAppInForeground)
 }
 
 
+void RemoteServiceModel::onPairingCompleted(const QSslCertificate& pCertificate)
+{
+	mAllDevices.setLastPairedReader(pCertificate);
+	Q_EMIT firePairingCompleted();
+}
+
+
 void RemoteServiceModel::onTranslationChanged()
 {
 	onEnvironmentChanged();
+}
+
+
+void RemoteServiceModel::onReaderPlugInTypesChanged(bool pExplicitStart)
+{
+	if (!mContext)
+	{
+		return;
+	}
+
+	const auto& plugInType = getReaderPlugInType();
+	if (mContext->getIfdServer() && mContext->getIfdServer()->getMessageHandler())
+	{
+		mContext->getIfdServer()->getMessageHandler()->setAllowedCardTypes({plugInType});
+	}
+	auto* readerManager = Env::getSingleton<ReaderManager>();
+	readerManager->stopScanAll();
+#ifdef Q_OS_IOS
+	if (plugInType != ReaderManagerPlugInType::NFC || pExplicitStart)
+#else
+	Q_UNUSED(pExplicitStart)
+#endif
+	{
+		readerManager->startScan(plugInType);
+	}
 }
 
 
@@ -170,22 +223,33 @@ bool RemoteServiceModel::isStarting() const
 }
 
 
-RemoteDeviceModel* RemoteServiceModel::getAvailableRemoteDevices()
+RemoteDeviceModel* RemoteServiceModel::getAllDevices()
 {
-	return &mAvailableRemoteDevices;
+	return &mAllDevices;
 }
 
 
-RemoteDeviceModel* RemoteServiceModel::getKnownDevices()
+RemoteDeviceFilterModel* RemoteServiceModel::getAvailablePairedDevices()
 {
-	return &mKnownDevices;
+	return &mAvailablePairedDevices;
+}
+
+
+RemoteDeviceFilterModel* RemoteServiceModel::getAvailableDevicesInPairingMode()
+{
+	return &mAvailableDevicesInPairingMode;
+}
+
+
+RemoteDeviceFilterModel* RemoteServiceModel::getUnavailablePairedDevices()
+{
+	return &mUnavailablePairedDevices;
 }
 
 
 void RemoteServiceModel::setDetectRemoteDevices(bool pNewStatus)
 {
-	mAvailableRemoteDevices.setDetectRemoteDevices(pNewStatus);
-	mKnownDevices.setDetectRemoteDevices(pNewStatus);
+	mAllDevices.setDetectRemoteDevices(pNewStatus);
 }
 
 
@@ -208,9 +272,21 @@ void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 }
 
 
+QVector<ReaderManagerPlugInType> RemoteServiceModel::getSupportedReaderPlugInTypes() const
+{
+#if __has_include("SmartManager.h")
+	return {ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SMART};
+
+#else
+	return {ReaderManagerPlugInType::NFC};
+
+#endif
+}
+
+
 bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
 {
-	mRememberedServerEntry = mAvailableRemoteDevices.getRemoteDeviceListEntry(pDeviceId);
+	mRememberedServerEntry = mAllDevices.getRemoteDeviceListEntry(pDeviceId);
 	return !mRememberedServerEntry.isNull();
 }
 
@@ -227,7 +303,7 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<IfdListE
 	}
 	else
 	{
-		Q_EMIT firePairingSuccess(deviceName);
+		Q_EMIT firePairingSuccess();
 	}
 }
 
@@ -236,11 +312,13 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 {
 	if (mContext && pConnected)
 	{
-		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const QString peerName = settings.getRemoteInfo(mContext->getIfdServer()->getCurrentCertificate()).getNameEscaped();
 		//: INFO ANDROID IOS The smartphone is connected as card reader (SaK) and currently processing an authentication request. The user is asked to pay attention the its screen.
-		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(peerName);
+		mConnectionInfo = tr("Please pay attention to the display on your other device \"%1\".").arg(getConnectedClientName());
 		Q_EMIT fireConnectionInfoChanged();
+	}
+	else if (mContext)
+	{
+		mContext->setReaderPlugInTypes({});
 	}
 	Q_EMIT fireConnectedChanged();
 }
@@ -275,8 +353,9 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 				mPsk = pPsk;
 			});
 		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
+		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
-		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::firePairingCompleted);
+		connect(mContext->getIfdServer().data(), &IfdServer::firePairingCompleted, this, &RemoteServiceModel::onPairingCompleted);
 		connect(mContext.data(), &IfdServiceContext::fireCardConnected, this, &RemoteServiceModel::onCardConnected);
 		connect(mContext.data(), &IfdServiceContext::fireCardDisconnected, this, &RemoteServiceModel::onCardDisconnected);
 		connect(mContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &RemoteServiceModel::fireEstablishPaceChannelUpdated);
@@ -357,6 +436,20 @@ QByteArray RemoteServiceModel::getPsk() const
 }
 
 
+QString RemoteServiceModel::getDisplayText() const
+{
+	QString displayText = mContext ? mContext->getDisplayText() : QString();
+	return displayText.remove(percentMatcher);
+}
+
+
+int RemoteServiceModel::getPercentage() const
+{
+	QString displayText = mContext ? mContext->getDisplayText() : QString();
+	return percentMatcher.match(displayText).captured(2).toInt();
+}
+
+
 QString RemoteServiceModel::getConnectionInfo() const
 {
 	return mConnectionInfo;
@@ -372,6 +465,25 @@ QString RemoteServiceModel::getConnectedServerDeviceNames() const
 bool RemoteServiceModel::getRemoteReaderVisible() const
 {
 	return Env::getSingleton<RemoteIfdClient>()->hasAnnouncingRemoteDevices();
+}
+
+
+QString RemoteServiceModel::getTransactionInfo() const
+{
+	return QString();
+}
+
+
+QString RemoteServiceModel::getConnectedClientName() const
+{
+	if (mContext)
+	{
+		const auto& sslCertificate = mContext->getIfdServer()->getCurrentCertificate();
+		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		return settings.getRemoteInfo(sslCertificate).getNameEscaped();
+	}
+
+	return QString();
 }
 
 
@@ -405,7 +517,7 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcP
 
 void RemoteServiceModel::forgetDevice(const QString& pId)
 {
-	mKnownDevices.forgetDevice(pId);
+	mAllDevices.forgetDevice(pId);
 }
 
 

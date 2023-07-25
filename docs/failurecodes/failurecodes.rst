@@ -157,21 +157,21 @@ Codes
       the description of the service provider certificate. This condition is not met.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
-  - | **Pre_Verfication_No_Test_Environment**
+  - | **Pre_Verification_No_Test_Environment**
     | Occurs when the development mode of AusweisApp2 is activated and a genuine ID card is used.
     | **Possible Solutions:** Disable developer mode. The use of genuine ID cards is not permitted with
       activated developer mode, as this is only intended to facilitate the commissioning of services
       with test ID cards.
 
-  - | **Pre_Verfication_Invalid_Certificate_Chain**
+  - | **Pre_Verification_Invalid_Certificate_Chain**
     | A certificate chain was sent from the server that is unknown to AusweisApp2.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
-  - | **Pre_Verfication_Invalid_Certificate_Signature**
+  - | **Pre_Verification_Invalid_Certificate_Signature**
     | At least one signature in the certificate chain used by the server is incorrect.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
-  - | **Pre_Verfication_Certificate_Expired**
+  - | **Pre_Verification_Certificate_Expired**
     | The certificate chain used by the server is currently not valid.
     | **Possible Solutions:** Make sure your system time is set correctly. If the problem persists,
       see :ref:`failure_code_inform_service_provider`.
@@ -262,14 +262,14 @@ Codes
 
   - | **Generic_Send_Receive_Paos_Unhandled**
     | A message was sent by the server in the PAOS communication during authentication, that
-      could be completely processed.
+      could not be completely processed.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
   - | **Generic_Send_Receive_Network_Error**
     | A network error has occurred in the PAOS communication during authentication.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
 
-  - | **Generic_Send_Receive_Ssl_Error**
+  - | **Generic_Send_Receive_Tls_Error**
     | An authentication error occurred in the PAOS communication during the TLS handshake. The TLS
       certificate is incorrect.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
@@ -318,7 +318,7 @@ Codes
       did not behave as expected by the server.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
-  - | **Check_Refresh_Address_Fatal_Ssl_Error_Before_Reply**
+  - | **Check_Refresh_Address_Fatal_Tls_Error_Before_Reply**
     | An error occurred during the TLS handshake when checking the return address after a successful
       authentication. The TLS certificate is incorrect.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
@@ -341,7 +341,7 @@ Codes
       didn't work for checking the return address.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
 
-  - | **Check_Refresh_Address_Fatal_Ssl_Error_After_Reply**
+  - | **Check_Refresh_Address_Fatal_Tls_Error_After_Reply**
     | When checking the return address after successful authentication, the TLS handshake could not
       be completed successfully.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
@@ -413,7 +413,7 @@ Codes
       self-authentication.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
-  - | **Generic_Provider_Communication_Ssl_Error**
+  - | **Generic_Provider_Communication_Tls_Error**
     | An error occurred during the TLS handshake when communicating with a service provider. The TLS
       certificate is incorrect. This only applies to services that are started from AusweisApp2,
       such as self-authentication.

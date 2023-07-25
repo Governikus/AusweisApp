@@ -57,6 +57,7 @@ class test_RemoteTlsServer
 			RemoteTlsServer server;
 			server.setPairing(serverPairing);
 			server.startListening(0);
+			QCOMPARE(server.hasPsk(), serverPairing);
 
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(clientConfig).getConfiguration();
 			config.setPrivateKey(pair.getKey());
@@ -91,6 +92,7 @@ class test_RemoteTlsServer
 				});
 			server.setPairing();
 			server.startListening(0);
+			QVERIFY(server.hasPsk());
 
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());

@@ -22,15 +22,17 @@ class MockDataChannel
 	Q_OBJECT
 
 	private:
+		bool mPairing;
 		QString mId;
 		QVector<QByteArray> mReceivedDataBlocks;
 
 	public:
-		MockDataChannel();
+		explicit MockDataChannel(bool pPairing = false);
 		~MockDataChannel() override;
 
 		void send(const QByteArray& pDataBlock) override;
 		void close() override;
+		[[nodiscard]] bool isPairingConnection() const override;
 		[[nodiscard]] const QString& getId() const override;
 		void closeAbnormal();
 

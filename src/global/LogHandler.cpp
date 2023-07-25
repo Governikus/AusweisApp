@@ -284,6 +284,9 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 {
 	QByteArray function(pFunction);
 
+	// Remove anonymous namespace
+	function.replace(QByteArrayLiteral("(anonymous namespace)::"), "");
+
 	// Remove the parameter list
 	function = function.left(function.indexOf('('));
 
@@ -291,9 +294,13 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 	function.replace(QByteArrayLiteral("governikus::"), "");
 
 	// Remove the return type (if any)
-	if (function.indexOf(' ') != -1)
+	if (const auto index = function.lastIndexOf(' ') + 1; index > 0)
 	{
-		function = function.mid(function.lastIndexOf(' ') + 1);
+		function = function.mid(index);
+		if (!function.isEmpty() && function.at(0) == '*')
+		{
+			function.remove(0, 1);
+		}
 	}
 
 	// Trim function name

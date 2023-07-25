@@ -66,6 +66,7 @@ class WorkflowContext
 		QString mProgressMessage;
 		bool mShowRemoveCardFeedback;
 		QString mClaimedBy;
+		bool mInterruptRequested;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -73,7 +74,7 @@ class WorkflowContext
 	Q_SIGNALS:
 		void fireStateApprovedChanged(bool pApproved);
 		void fireStateChanged(const QString& pNewState);
-		void fireReaderPlugInTypesChanged();
+		void fireReaderPlugInTypesChanged(bool pExplicitStart = false);
 		void fireReaderInfoChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
@@ -220,6 +221,9 @@ class WorkflowContext
 		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const = 0;
 
 		bool isPhysicalCardRequired() const;
+
+		[[nodiscard]] bool interruptRequested() const;
+		void setInterruptRequested(bool pInterruptRequested);
 };
 
 } // namespace governikus

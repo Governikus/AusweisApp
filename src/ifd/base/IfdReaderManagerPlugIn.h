@@ -13,6 +13,10 @@
 #include <QMap>
 #include <QSharedPointer>
 
+
+class test_RemoteIfdReaderManagerPlugIn;
+
+
 namespace governikus
 {
 
@@ -21,6 +25,7 @@ class IfdReaderManagerPlugIn
 	: public ReaderManagerPlugIn
 {
 	Q_OBJECT
+	friend class ::test_RemoteIfdReaderManagerPlugIn;
 
 	private:
 		QMultiMap<QString, QString> mReadersForDispatcher;
@@ -40,7 +45,6 @@ class IfdReaderManagerPlugIn
 		void removeDispatcher(const QString& pId);
 		[[nodiscard]] const QMap<QString, QSharedPointer<IfdDispatcherClient>>& getDispatchers() const;
 
-		virtual bool isInitialPairing(const QString& pIfdName, const QString& pId) = 0;
 		virtual IfdClient* getIfdClient() = 0;
 
 	public:

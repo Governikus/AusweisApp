@@ -4,6 +4,7 @@
 import QtQuick 2.15
 import Governikus.Global 1.0
 import Governikus.TechnologyInfo 1.0
+import Governikus.Style 1.0
 
 Item {
 	id: baseItem
@@ -12,7 +13,7 @@ Item {
 
 	Item {
 		id: progressIndicator
-		height: parent.height / 2
+		height: Style.dimens.workflow_progress_indicator_size
 
 		anchors {
 			left: parent.left
@@ -23,8 +24,8 @@ Item {
 			id: icon
 			anchors.centerIn: parent
 			desaturate: true
-			height: Math.ceil(parent.height * 0.25) * 2
 			source: "qrc:///images/mobile/phone_simulator.svg"
+			sourceSize.height: Style.dimens.header_icon_size
 			tintEnabled: false
 		}
 	}

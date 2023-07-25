@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>efee4b38a0c7</translation>
+        <translation>b9ade3b30f3d</translation>
     </message>
 </context>
 <context>
@@ -177,6 +177,11 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
     <message>
         <source>Do you know your six-digit ID card PIN?</source>
         <translation>Kennen Sie Ihre sechsstellige Karten-PIN?</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
     </message>
 </context>
 <context>
@@ -495,6 +500,11 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.</source>
         <extracomment>INFO ANDROID IOS The ID card PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.</extracomment>
         <translation>Sie haben dreimal eine falsche, sechsstellige Karten-PIN eingegeben, Ihre Karten-PIN ist nun gesperrt. Um die Sperre aufzuheben, muss zunächst die zehnstellige PUK eingegeben werden.</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
     </message>
 </context>
 <context>
@@ -985,10 +995,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Das Gerät wird gekoppelt ...</translation>
     </message>
     <message>
-        <source>The device &quot;%1&quot; has been paired.</source>
-        <translation>Das Gerät &quot;%1&quot; wurde gekoppelt.</translation>
-    </message>
-    <message>
         <source>Pairing to &quot;%1&quot; failed:</source>
         <extracomment>ERROR DESKTOP An error occurred while pairing the device.</extracomment>
         <translation>Die Kopplung mit &quot;%1&quot; ist fehlgeschlagen:</translation>
@@ -1469,11 +1475,6 @@ INFO ANDROID IOS The new ID card PIN needs to be confirmed.</extracomment>
         <translation>Bitte wiederholen Sie die Eingabe Ihrer neuen sechsstelligen Karten-PIN.</translation>
     </message>
     <message>
-        <source>Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).</source>
-        <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
-        <translation>Starten Sie die Kopplung auf Ihrem Smartphone und geben Sie den dort angezeigten Kopplungscode ein um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
-    </message>
-    <message>
         <source>Unknown password type:</source>
         <extracomment>INFO DESKTOP Error message during PIN/CAN/PUK input procedure, the requested password type is unknown; internal error.</extracomment>
         <translation>Unbekannter Passwort-Typ:</translation>
@@ -1612,6 +1613,11 @@ LABEL ANDROID IOS</extracomment>
 LABEL ANDROID IOS</extracomment>
         <translation>Karten-PIN senden</translation>
     </message>
+    <message>
+        <source>Enter the pairing code shown on your smartphone.</source>
+        <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
+        <translation>Geben Sie den Kopplungscode ein, der auf Ihrem Smartphone angezeigt wird.</translation>
+    </message>
 </context>
 <context>
     <name>GProgressBar</name>
@@ -1686,11 +1692,6 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>GeneralWorkflow</name>
     <message>
-        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
-    </message>
-    <message>
         <source>Attempts</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Versuche</translation>
@@ -1753,6 +1754,11 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>INFO DESKTOP</extracomment>
         <translation>Zu den Einstellungen</translation>
     </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
+    </message>
 </context>
 <context>
     <name>Hint</name>
@@ -1765,20 +1771,8 @@ LABEL ANDROID IOS</extracomment>
     <name>HistoryListItem</name>
     <message>
         <source>Click to view details of history entry.</source>
-        <translation>Zeige Details des Verlaufseintrags.</translation>
-    </message>
-    <message>
-        <source>today</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>heute</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>gestern</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>dd.MM.yyyy</translation>
+        <translation>Zeige Details des Verlaufseintrags.</translation>
     </message>
     <message>
         <source>Tap for more details</source>
@@ -1858,18 +1852,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Search in history</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Im Verlauf suchen</translation>
-    </message>
-    <message>
-        <source>today</source>
-        <translation>heute</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>gestern</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Clear history</source>
@@ -1959,6 +1941,9 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
+        <extracomment>LABEL DESKTOP Date format according to https://doc.qt.io/qt/qdate.html#toString
+----------
+LABEL ANDROID IOS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
@@ -2053,14 +2038,14 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>LocalNetworkInfo</name>
     <message>
-        <source>To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed.</source>
-        <extracomment>INFO IOS Let user know to check the application settings for local network permission</extracomment>
-        <translation>Um Ihr Smartphone als Kartenleser (SaK) nutzen zu können, stellen Sie bitte sicher, dass der Zugriff auf das lokale Netzwerk erlaubt ist.</translation>
-    </message>
-    <message>
         <source>Go to application settings</source>
         <extracomment>INFO IOS Link to application settings</extracomment>
         <translation>Zu den Anwendungseinstellungen</translation>
+    </message>
+    <message>
+        <source>Ensure that access to the local network is allowed in your settings.</source>
+        <extracomment>INFO IOS Let user know to check the application settings for local network permission</extracomment>
+        <translation>In den Einstellungen muss der Zugriff auf das lokale Netzwerk erlaubt sein.</translation>
     </message>
 </context>
 <context>
@@ -2577,16 +2562,16 @@ LABEL ANDROID IOS</extracomment>
         <translation>Anbieter</translation>
     </message>
     <message>
-        <source>Remote</source>
-        <translation>Fernzugriff</translation>
-    </message>
-    <message>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
         <source>Help</source>
         <translation>Hilfe</translation>
+    </message>
+    <message>
+        <source>Card reader</source>
+        <translation>Kartenleser</translation>
     </message>
 </context>
 <context>
@@ -2623,12 +2608,12 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>NFC scan is not running.</source>
-        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>Der NFC-Scan ist nicht aktiv.</translation>
     </message>
     <message>
         <source>Please start the NFC scan.</source>
-        <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>Bitte starten Sie den NFC-Scan.</translation>
     </message>
     <message>
@@ -2665,6 +2650,11 @@ LABEL ANDROID IOS</extracomment>
         <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
         <translation>Bitte platzieren Sie Ihren Ausweis direkt an der Geräterückseite.&lt;br/&gt;&lt;br/&gt;Die genaue Position des Ausweises ist modellabhängig. Die Animationen zeigen Ihnen mögliche Positionen. Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; wants to use this smartphone as card reader and connect to your id card.</source>
+        <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; möchte dieses Smartphone als Kartenleser nutzen und sich mit Ihrem Ausweis verbinden.</translation>
     </message>
 </context>
 <context>
@@ -2725,6 +2715,52 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Disabled</source>
         <translation>Deaktiviert</translation>
+    </message>
+</context>
+<context>
+    <name>PairingCodeInfoView</name>
+    <message>
+        <source>Pairing Information</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Informationen zur Kopplung</translation>
+    </message>
+    <message>
+        <source>Open %1 on your %2other device%3.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 3</extracomment>
+        <translation>Öffnen Sie auf Ihrem %2anderen Gerät%3 die %1.</translation>
+    </message>
+    <message>
+        <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 3. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>Gehen Sie dort in die %1Einstellungen%2 und dann zu %1Smartphone als Kartenleser%2 bzw. %1Kopplungen verwalten%2.</translation>
+    </message>
+    <message>
+        <source>Choose this smartphone in the list to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 3</extracomment>
+        <translation>Wählen Sie in der angezeigten Liste dieses Smartphone aus, um es zu koppeln.</translation>
+    </message>
+</context>
+<context>
+    <name>PairingProcessInfo</name>
+    <message>
+        <source>Open %1 on your smartphone as card reader.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Öffnen Sie die %1 auf Ihrem Smartphone als Kartenleser.</translation>
+    </message>
+    <message>
+        <source>On that device choose %1Card reader%2 and then %1Pair device%2 resp. %1Pair new device%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>Wählen Sie dort unter %1Kartenleser%2 die Option %1Gerät koppeln%2 bzw. %1Neues Gerät koppeln%2.</translation>
+    </message>
+    <message>
+        <source>Choose the smartphone in the list shown here to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 4</extracomment>
+        <translation>Klicken Sie zum Koppeln auf das hier angezeigte Gerät.</translation>
+    </message>
+    <message>
+        <source>Ensure that the %1 on your Smartphone as card reader has at least version %2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Stellen Sie sicher, dass die %1 auf Ihrem Smartphone als Kartenleser mindestens die Version %2 hat.</translation>
     </message>
 </context>
 <context>
@@ -3316,19 +3352,6 @@ INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</ext
 <context>
     <name>ProviderDetailHistoryItem</name>
     <message>
-        <source>today</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>heute</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <translation>gestern</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <translation>dd.MM.yyyy</translation>
-    </message>
-    <message>
         <source>Service:</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Dienst:</translation>
@@ -3591,10 +3614,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Drücken Sie die Leertaste um das Smartphone &quot;%1&quot; zu koppeln.</translation>
     </message>
     <message>
-        <source>Click to pair</source>
-        <translation>Klicken zum Koppeln</translation>
-    </message>
-    <message>
         <source>Remove remote device</source>
         <translation>Entferne das Gerät</translation>
     </message>
@@ -3602,38 +3621,70 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteReaderView</name>
     <message>
-        <source>Paired remote devices</source>
-        <translation>Gekoppelte Netzwerkgeräte</translation>
+        <source>Paired devices</source>
+        <translation>Gekoppelte Geräte</translation>
     </message>
     <message>
-        <source>Available remote devices</source>
-        <translation>Verfügbare Netzwerkgeräte</translation>
+        <source>Add pairing</source>
+        <translation>Kopplung hinzufügen</translation>
     </message>
     <message>
-        <source>Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.</source>
-        <translation>Nur Geräte die bereits gekoppelt wurden, oder sich mit aktiviertem Fernzugriff im selben WLAN-Netz befinden, werden hier angezeigt.</translation>
+        <source>Open the %1 on your Smartphone as card reader.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Öffnen Sie die %1 auf Ihrem Smartphone als Kartenleser.</translation>
     </message>
     <message>
-        <source>More information</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Mehr Informationen</translation>
+        <source>Both devices have to be connected to the same WiFi.</source>
+        <translation>Beide Geräte müssen mit demselben WLAN verbunden sein.</translation>
+    </message>
+    <message>
+        <source>On that device go to %1Card reader%2 and then %1Pair device%2 rsp. %1Pair new device%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4. %1 and %2 are surrounding tags for bold font</extracomment>
+        <translation>Wählen Sie dort unter %1Kartenleser%2 die Option %1Gerät koppeln%2 bzw. %1Neues Gerät koppeln%2.</translation>
+    </message>
+    <message>
+        <source>Choose the device in the list to pair it.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 4</extracomment>
+        <translation>Klicken Sie zum Koppeln auf das hier angezeigte Gerät.</translation>
+    </message>
+    <message>
+        <source>Last connected</source>
+        <translation>Zuletzt verbunden</translation>
+    </message>
+    <message>
+        <source>Ensure that the %1 on your Smartphone as card reader has at least version %2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.</extracomment>
+        <translation>Stellen Sie sicher, dass die %1 auf Ihrem Smartphone als Kartenleser mindestens die Version %2 hat.</translation>
     </message>
 </context>
 <context>
-    <name>RemoteServiceSettings</name>
+    <name>RemoteServiceController</name>
     <message>
-        <source>Configure remote service</source>
+        <source>You are about to identify yourself towards the following provider using the device &quot;%1&quot;:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff konfigurieren</translation>
+        <translation>Sie möchten sich mit dem Gerät %1 bei folgendem Anbieter ausweisen:</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceView</name>
+    <message>
+        <source>Card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kartenleser</translation>
+    </message>
     <message>
         <source>Remote service</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Fernzugriff</translation>
     </message>
+</context>
+<context>
+    <name>RemoteServiceSettings</name>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungen verwalten</translation>
+    </message>
+</context>
+<context>
+    <name>RemoteServiceView</name>
     <message>
         <source>Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code.</source>
         <extracomment>ERROR ANDROID IOS An error occurred while pairing the device.</extracomment>
@@ -3665,33 +3716,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Warte auf Verbindung</translation>
     </message>
     <message>
-        <source>Remote service ready</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff startbereit</translation>
-    </message>
-    <message>
         <source>Waiting for connection from a paired device...</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Warte auf eine Verbindung eines gekoppelten Gerätes...</translation>
     </message>
     <message>
-        <source>Start the remote access in order to make this smartphone visible and use it as a card reader (SaC).
-
-If you have not already paired a device, start the pairing now to set up this smartphone as a card reader.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Starten Sie den Fernzugriff, um dieses Smartphone sichtbar und damit als Kartenleser (SaK) nutzbar zu machen.
-
-Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um dieses Smartphone als Kartenleser einzurichten.</translation>
-    </message>
-    <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplungscode: &lt;b&gt;%1&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <source>Both of your devices have to be connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
-        <translation>Ihre beiden Geräte müssen mit dem selben WLAN-Netz verbunden sein.</translation>
     </message>
     <message>
         <source>Enable WiFi</source>
@@ -3704,48 +3736,77 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <translation>NFC aktivieren</translation>
     </message>
     <message>
-        <source>Stop remote service</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff stoppen</translation>
+        <translation>Gerät koppeln</translation>
     </message>
     <message>
-        <source>Start remote service</source>
+        <source>Allow connection</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff starten</translation>
+        <translation>Verbindung erlauben</translation>
     </message>
     <message>
-        <source>Stop pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung stoppen</translation>
-    </message>
-    <message>
-        <source>Start pairing</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung starten</translation>
-    </message>
-    <message>
-        <source>Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).</source>
+        <source>You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.
+
+To do this you first have to pair that device with this smartphone.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Geben Sie den Code %1 in der %2 auf Ihrem anderen Gerät ein, um Ihr Smartphone als Kartenleser (SaK) zu verwenden.</translation>
+        <translation>Sie können dieses Smartphone als Kartenleser für die %1 auf einem anderen Gerät, z.B. Ihrem Laptop, nutzen.
+
+Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppeln.</translation>
+    </message>
+    <message>
+        <source>Card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kartenleser</translation>
+    </message>
+    <message>
+        <source>Paired Devices</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Gekoppelte Geräte</translation>
+    </message>
+    <message>
+        <source>Pair new device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Neues Gerät koppeln</translation>
+    </message>
+    <message>
+        <source>Waiting for pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Warte auf Kopplung</translation>
+    </message>
+    <message>
+        <source>Start pairing of a new device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplung mit einem neuen Gerät starten.</translation>
+    </message>
+    <message>
+        <source>Where do I enter the pairing code?</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Wo gebe ich den Kopplungscode ein?</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code %1 in the %2 on your other device.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Geben Sie den Kopplungscode %1 in der %2 auf Ihrem anderen Gerät ein.</translation>
+    </message>
+    <message>
+        <source>Cancel pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplung abbrechen</translation>
+    </message>
+    <message>
+        <source>Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Erlauben Sie eine Verbindung mit gekoppelten Geräten, um dieses Smartphone als Kartenleser zu nutzen oder koppeln Sie weitere Geräte.</translation>
+    </message>
+    <message>
+        <source>Paired devices may use this Smartphone as a card reader now.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Gekoppelte Geräte können dieses Smartphone jetzt als Kartenleser nutzen.</translation>
     </message>
 </context>
 <context>
     <name>RemoteServiceViewRemote</name>
-    <message>
-        <source>Paired devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gekoppelte Geräte</translation>
-    </message>
-    <message>
-        <source>No device is paired.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kein Gerät gekoppelt.</translation>
-    </message>
-    <message>
-        <source>Click to remove device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Klicken, um das Gerät zu entfernen</translation>
-    </message>
     <message>
         <source>Remove pairing</source>
         <extracomment>INFO ANDROID IOS</extracomment>
@@ -3762,16 +3823,6 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <translation>Entfernen</translation>
     </message>
     <message>
-        <source>Available devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verfügbare Geräte</translation>
-    </message>
-    <message>
-        <source>No unpaired smartphone as card reader (SaC) available. Please make sure that the smartphone as card reader (SaC) functionality in AusweisApp2 on your other device is activated and that both devices are connected to the same WiFi.</source>
-        <extracomment>INFO ANDROID IOS No SaC was found on the network, both devices need to be connected to the same WiFi network.</extracomment>
-        <translation>Kein ungekoppeltes Smartphone als Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind.</translation>
-    </message>
-    <message>
         <source>Please connect your WiFi to use another smartphone as card reader (SaC).</source>
         <extracomment>INFO ANDROID IOS Wifi is not enabled and no new devices can be paired.</extracomment>
         <translation>Bitte verbinden Sie sich mit Ihrem WLAN, um ein anderes Smartphone als Kartenleser (SaK) benutzen zu können.</translation>
@@ -3782,42 +3833,55 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <translation>WLAN aktivieren</translation>
     </message>
     <message>
+        <source>Pairing code</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungscode</translation>
+    </message>
+    <message>
+        <source>Add pairing</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplung hinzufügen</translation>
+    </message>
+    <message>
+        <source>Click to remove device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Klicken, um das Gerät zu entfernen</translation>
+    </message>
+    <message>
+        <source>Last connected</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zuletzt verbunden</translation>
+    </message>
+    <message>
+        <source>Available</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Verfügbar</translation>
+    </message>
+    <message>
+        <source>Paired devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Gekoppelte Geräte</translation>
+    </message>
+    <message>
         <source>Click to pair</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Klicken zum Koppeln</translation>
     </message>
+</context>
+<context>
+    <name>RemoteServiceWifiInfo</name>
     <message>
-        <source>Pairing mode</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Kopplungsmodus</translation>
-    </message>
-    <message>
-        <source>Start the pairing mode on your smartphone if you haven&apos;t done it already.</source>
-        <extracomment>INFO ANDROID IOS Information dialog that requests the user to start the pairing mode on the smartphone.</extracomment>
-        <translation>Starten Sie den Kopplungsmodus auf Ihrem Smartphone, falls noch nicht geschehen.</translation>
-    </message>
-    <message>
-        <source>Pairing code</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplungscode</translation>
+        <source>Both devices have to be connected to the same WiFi.</source>
+        <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
+        <translation>Beide Geräte müssen mit demselben WLAN verbunden sein.</translation>
     </message>
 </context>
 <context>
     <name>RemoteWorkflow</name>
     <message>
-        <source>The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
-        <translation>Das Gerät %1 wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
-    </message>
-    <message>
         <source>Enable WiFi</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>WLAN aktivieren</translation>
-    </message>
-    <message>
-        <source>Pair device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät koppeln</translation>
     </message>
     <message>
         <source>To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.</source>
@@ -3825,19 +3889,9 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <translation>Um den Fernzugriff zu nutzen, muss WLAN aktiviert werden. Bitte aktivieren Sie WLAN in Ihren Einstellungen.</translation>
     </message>
     <message>
-        <source>No paired smartphone as card reader (SaC) with activated &quot;remote service&quot; available.</source>
-        <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
-        <translation>Kein gekoppeltes Smartphone als Kartenleser mit aktiviertem &quot;Fernzugriff&quot; verfügbar.</translation>
-    </message>
-    <message>
         <source>Wifi disabled</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>WLAN ist deaktiviert</translation>
-    </message>
-    <message>
-        <source>Waiting for connection</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Warte auf Verbindung</translation>
     </message>
     <message>
         <source>Determine card</source>
@@ -3853,6 +3907,21 @@ Falls Sie noch kein Gerät gekoppelt haben, starten Sie jetzt die Kopplung, um d
         <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
         <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
         <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
+    </message>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungen verwalten</translation>
+    </message>
+    <message>
+        <source>No smartphone as card reader connected</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kein Smartphone als Kartenleser verbunden</translation>
+    </message>
+    <message>
+        <source>Allow a connection on a paired smartphone or pair a new smartphone.</source>
+        <extracomment>INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.</extracomment>
+        <translation>Erlauben Sie die Verbindung auf einem bereits gekoppelten Smartphone oder koppeln Sie ein neues Smartphone.</translation>
     </message>
 </context>
 <context>
@@ -4249,16 +4318,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>PIN-Eingabe auf diesem Gerät</translation>
     </message>
     <message>
-        <source>Remote card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Configure remote service for another device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ein anderes Gerät für den Fernzugriff konfigurieren</translation>
-    </message>
-    <message>
         <source>Save history</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Verlauf speichern</translation>
@@ -4374,6 +4433,26 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>15 days old Logfile</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>15 Tage alte Protokolldatei</translation>
+    </message>
+    <message>
+        <source>Show requested rights on this device as well</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Angefragte Berechtigung auch auf diesem Gerät anzeigen</translation>
+    </message>
+    <message>
+        <source>Show access rights</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Berechtigungsanzeige</translation>
+    </message>
+    <message>
+        <source>Manage paired devices and add new devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Gekoppelte Geräte verwalten und neue Geräte hinzufügen</translation>
+    </message>
+    <message>
+        <source>Manage pairings</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungen verwalten</translation>
     </message>
 </context>
 <context>
@@ -4757,6 +4836,15 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <message>
         <source>Continue</source>
         <translation>Weiter</translation>
+    </message>
+    <message>
+        <source>You have not yet set up a Smart-eID or it is no longer usable.
+
+To proceed use your ID card by selecting the NFC interface. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie haben noch keine Smart-eID eingerichtet oder diese ist nicht mehr nutzbar.
+
+Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID-Einrichtung vom Startbildschirm.</translation>
     </message>
 </context>
 <context>
@@ -5325,9 +5413,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Beide Geräte müssen im selben WLAN sein</translation>
     </message>
     <message>
-        <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
+        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone die Ansicht &quot;Fernzugriff&quot;...</translation>
+        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone die Ansicht &quot;Kartenleser&quot;...</translation>
     </message>
     <message>
         <source>Now</source>
@@ -5335,9 +5423,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Jetzt</translation>
     </message>
     <message>
-        <source>Start pairing</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung starten</translation>
+        <translation>Gerät koppeln</translation>
     </message>
     <message>
         <source>Pairing code</source>
@@ -5483,9 +5571,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Beide Geräte müssen im selben WLAN sein</translation>
     </message>
     <message>
-        <source>Now choose &quot;Remote&quot; in the AusweisApp2 on your smartphone...</source>
+        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Fernzugriff&quot;...</translation>
+        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Kartenleser&quot;...</translation>
     </message>
     <message>
         <source>Now</source>
@@ -5493,9 +5581,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Jetzt</translation>
     </message>
     <message>
-        <source>Start pairing</source>
+        <source>Pair device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplung starten</translation>
+        <translation>Gerät koppeln</translation>
     </message>
     <message>
         <source>Pairing code</source>
@@ -5513,9 +5601,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Bei der ersten Verwendung des Smartphones als Kartenleser (SaK) bittet iOS Sie um Ihre Erlaubnis um auf das lokale Netzwerk zugreifen zu dürfen. Diese Berechtigung ist erforderlich, um Ihr SaK zu finden und eine Verbindung zu ihm herzustellen. Nach der ersten Anfrage können Sie jederzeit auf die Berechtigung in den iOS-Einstellungen für diese App zugreifen.</translation>
     </message>
     <message>
-        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Configure remote service&lt;/b&gt;.</source>
+        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Manage pairings&lt;/b&gt;.</source>
         <extracomment>LABEL IOS</extracomment>
-        <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen Sie &lt;b&gt;Fernzugriff konfigurieren&lt;/b&gt; aus.</translation>
+        <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen Sie &lt;b&gt;Kopplungen verwalten&lt;/b&gt; aus.</translation>
     </message>
     <message>
         <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Smartphone as card reader&lt;/b&gt;.</source>
@@ -5926,6 +6014,24 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
+    <name>Utils</name>
+    <message>
+        <source>today</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>heute</translation>
+    </message>
+    <message>
+        <source>yesterday</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>gestern</translation>
+    </message>
+    <message>
+        <source>dd.MM.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
+        <translation>dd.MM.yyyy</translation>
+    </message>
+</context>
+<context>
     <name>VersionInformation</name>
     <message>
         <source>Developer options activated.</source>
@@ -6318,7 +6424,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>d. MMMM yyyy, hh:mm:ss AP</source>
-        <extracomment>LABEL DESKTOP Timestamp, formatted according to the selected language</extracomment>
+        <extracomment>LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>d. MMMM yyyy, HH:mm:ss &apos;Uhr&apos;</translation>
     </message>
     <message>
@@ -6528,7 +6634,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>dd.MM.yyyy, hh:mm:ss</source>
-        <extracomment>LABEL DESKTOP Timestamp</extracomment>
+        <extracomment>LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy, hh:mm:ss</translation>
     </message>
     <message>
@@ -6793,9 +6899,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Authentisierung ist fehlgeschlagen.</translation>
     </message>
     <message>
-        <source>Your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.</source>
-        <extracomment>ERROR ALL_PLATFORMS DidAuthenticateEAC2 was not able to send the certificates to the card because the card reader does not support extended length.</extracomment>
-        <translation>Ihr Kartenleser unterstützt keine Extended Length Kommunikation und kann nicht zum Auslesen des Ausweises genutzt werden. Auf diese Einschränkung hat die %1 leider keinen Einfluss.</translation>
+        <source>The length of the data sent to the ID card was not accepted. Either the data is faulty or your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.</source>
+        <extracomment>ERROR ALL_PLATFORMS A card command failed because the data length was wrong or the card reader does not support Extended Length.</extracomment>
+        <translation>Die Länge der an den Ausweis gesendeten Daten wurde nicht akzeptiert. Entweder sind die Daten fehlerhaft oder Ihr Kartenleser unterstützt keine Extended Length Kommunikation und kann nicht zum Auslesen des Ausweises genutzt werden. Auf diese Einschränkung hat die %1 leider keinen Einfluss.</translation>
     </message>
     <message>
         <source>No certificate description available.</source>
@@ -7095,6 +7201,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <name>governikus::HistoryModelSearchFilter</name>
     <message>
         <source>dd.MM.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
         <translation>dd.MM.yyyy</translation>
     </message>
 </context>
@@ -7147,6 +7254,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm:ss</source>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy hh:mm:ss</translation>
     </message>
     <message>
@@ -7206,6 +7314,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <name>governikus::NotificationModel</name>
     <message>
         <source>hh:mm:ss</source>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>HH:mm:ss</translation>
     </message>
 </context>
@@ -7299,7 +7408,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy HH:mm</translation>
     </message>
     <message>
@@ -7324,12 +7433,12 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>HH:mm</translation>
     </message>
     <message>
@@ -7475,6 +7584,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>hh:mm:ss AP</source>
+        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>HH:mm:ss</translation>
     </message>
     <message>
@@ -7531,11 +7641,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Gekoppelt, aber nicht unterstützt</translation>
     </message>
     <message>
-        <source>Paired, but unavailable</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Gekoppelt, aber nicht verfügbar</translation>
-    </message>
-    <message>
         <source>Unsupported</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Nicht unterstützt</translation>
@@ -7547,6 +7652,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>dd.MM.yyyy hh:mm AP</source>
+        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy HH:mm</translation>
     </message>
     <message>
@@ -7558,6 +7664,16 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
         <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
         <translation>Kein Smartphone als Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung finden Sie in der %1.</translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Nicht verfügbar</translation>
+    </message>
+    <message>
+        <source>Click to pair</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Klicken zum Koppeln</translation>
     </message>
 </context>
 <context>
@@ -7590,6 +7706,11 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
 
 Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu können.</translation>
     </message>
+    <message>
+        <source>Pairing with %1 successful.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Die Kopplung mit %1 war erfolgreich.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::RemoteServiceSettings</name>
@@ -7613,14 +7734,17 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     </message>
     <message>
         <source>dd.MM.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
         <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>xx.MM.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day</extracomment>
         <translation>xx.MM.yyyy</translation>
     </message>
     <message>
         <source>xx.xx.yyyy</source>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month</extracomment>
         <translation>xx.xx.yyyy</translation>
     </message>
     <message>
@@ -7761,6 +7885,14 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <source>Access denied.</source>
         <extracomment>INFO IOS The current session was interrupted because of a wrong password.</extracomment>
         <translation>Zugriff verweigert.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::StateEstablishPaceChannel</name>
+    <message>
+        <source>The secure channel is opened</source>
+        <extracomment>INFO ALL_PLATFORMS First status message after the PIN was entered.</extracomment>
+        <translation>Der sichere Kanal wird geöffnet</translation>
     </message>
 </context>
 <context>

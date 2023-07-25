@@ -160,8 +160,8 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
     <false/>
     <key>remindToClose</key>
     <false/>
-    <key>showSetupAssistant</key>
-    <false/>
+    <key>uiStartupModule</key>
+    <string>DEFAULT</string>
     <key>transportPinReminder</key>
     <false/>
     <key>customProxyType</key>
@@ -170,8 +170,6 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
     <string>proxy.example.org</string>
     <key>customProxyPort</key>
     <integer>1337</integer>
-    <key>autoUpdateCheck</key>
-    <false/>
     <key>keylessPassword</key>
     <true/>
     <key>shuffleScreenKeyboard</key>
@@ -195,12 +193,11 @@ macOS                   Windows
 ======================= =======================
 autoCloseWindow         AUTOHIDE
 remindToClose           REMINDTOCLOSE
-showSetupAssistant      ASSISTANT
+uiStartupModule         ASSISTANT
 transportPinReminder    TRANSPORTPINREMINDER
 customProxyType         CUSTOMPROXYTYPE
 customProxyPort         CUSTOMPROXYPORT
 customProxyHost         CUSTOMPROXYHOST
-autoUpdateCheck         UPDATECHECK
 keylessPassword         ONSCREENKEYBOARD
 shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
 visualPrivacy           SECURESCREENKEYBOARD
@@ -251,7 +248,7 @@ the requests.
 
 Broadcast on UDP port 24727 in the local subnet have to be receivable by the
 AusweisApp2 to use the "Smartphone as Card Reader" functionality.
-It may be necessary to deactive AP isolation on your router.
+It may be necessary to deactivate AP isolation on your router.
 
 .. _communicationmodel_en:
 .. figure:: CommunicationModel_en.pdf

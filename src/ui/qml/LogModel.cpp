@@ -125,6 +125,7 @@ QStringList LogModel::getLogFileNames() const
 	{
 		if (!entry.isEmpty())
 		{
+			//: LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 			logFileNames += LanguageLoader::getInstance().getUsedLocale().toString(LogHandler::getFileDate(QFileInfo(entry)), tr("dd.MM.yyyy hh:mm:ss"));
 		}
 	}

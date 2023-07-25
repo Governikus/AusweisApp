@@ -40,12 +40,13 @@ void RemoteIfdReaderManagerPlugIn::continueConnectToPairedReaders(const QVector<
 	const RemoteServiceSettings& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	for (const QSharedPointer<IfdListEntry>& remoteDevice : pRemoteDevices)
 	{
-		if (!remoteDevice->getIfdDescriptor().isSupported())
+		const auto& ifdDescriptor = remoteDevice->getIfdDescriptor();
+		if (!ifdDescriptor.isSupported() || ifdDescriptor.isPairingAnnounced())
 		{
 			continue;
 		}
 
-		const QString ifdId = remoteDevice->getIfdDescriptor().getIfdId();
+		const QString ifdId = ifdDescriptor.getIfdId();
 
 		// If already connected: skip.
 		if (getDispatchers().contains(ifdId))
@@ -105,20 +106,4 @@ void RemoteIfdReaderManagerPlugIn::stopScan(const QString& pError)
 IfdClient* RemoteIfdReaderManagerPlugIn::getIfdClient()
 {
 	return Env::getSingleton<RemoteIfdClient>();
-}
-
-
-bool RemoteIfdReaderManagerPlugIn::isInitialPairing(const QString& pIfdName, const QString& pId)
-{
-	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	auto info = settings.getRemoteInfo(pId);
-	bool initialPairing = false;
-	if (info.getNameEscaped().isEmpty())
-	{
-		initialPairing = true;
-	}
-	info.setNameUnescaped(pIfdName);
-	settings.updateRemoteInfo(info);
-
-	return initialPairing;
 }
