@@ -46,6 +46,7 @@ class IfdDispatcher
 		explicit IfdDispatcher(IfdVersion::Version pVersion, const QSharedPointer<DataChannel>& pDataChannel);
 		~IfdDispatcher() override;
 
+		[[nodiscard]] virtual bool isPairingConnection() const;
 		[[nodiscard]] virtual QString getId() const;
 		[[nodiscard]] virtual const QString& getContextHandle() const;
 		[[nodiscard]] IfdVersion::Version getVersion() const;

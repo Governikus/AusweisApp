@@ -201,7 +201,7 @@ SectionPage {
 					horizontalAlignment: Text.AlignHCenter
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Now choose \"Remote\" in the AusweisApp2 on your smartphone...")
+					text: qsTr("Now choose \"Card reader\" in the AusweisApp2 on your smartphone...")
 					textStyle: Style.text.tutorial_header
 					width: parent.width * 0.9
 
@@ -240,7 +240,7 @@ SectionPage {
 					animationsDisabled: true
 
 					//: LABEL ANDROID IOS
-					text: qsTr("Start pairing")
+					text: qsTr("Pair device")
 
 					Accessible.onScrollDownAction: baseItem.Accessible.scrollDownAction()
 					Accessible.onScrollUpAction: baseItem.Accessible.scrollUpAction()

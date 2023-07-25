@@ -1,0 +1,41 @@
+From d967022bcd7061771f10e4d36d38ab8ffe5aef98 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Thu, 15 Dec 2022 16:40:34 +0100
+Subject: iOS: Don't assume screens will not be connected before
+ QIOSIntegration
+
+When an external screen is connected to an iPad, and the application is
+starting up on that screen, we will get a connection notification about
+that screen as part of the initial bootstrap of UIApplicationMain,
+before we call the user's main().
+
+Since we initialize and add all available screen on QIOSIntegration
+creation, we can just ignore the early connection notification.
+
+This avoids a crash, but the window will not show anything on the
+external screen, which is a separate issue.
+
+Pick-to: 6.5 6.4 6.2
+Fixes: QTBUG-106701
+Change-Id: I9e0a9736bf602277316bd004e0d01c640feaf319
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit dd49793bc3b4dd3808f0f24b717c442a5095db14)
+---
+ src/plugins/platforms/ios/qiosscreen.mm | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiosscreen.mm y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+index f144c00fb0..3d660189af 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosscreen.mm
++++ y/qtbase/src/plugins/platforms/ios/qiosscreen.mm
+@@ -72,8 +72,8 @@ static QIOSScreen* qtPlatformScreenFor(UIScreen *uiScreen)
+ 
+ + (void)screenConnected:(NSNotification*)notification
+ {
+-    Q_ASSERT_X(QIOSIntegration::instance(), Q_FUNC_INFO,
+-        "Screen connected before QIOSIntegration creation");
++    if (!QIOSIntegration::instance())
++        return; // Will be added when QIOSIntegration is created
+ 
+     QWindowSystemInterface::handleScreenAdded(new QIOSScreen([notification object]));
+ }

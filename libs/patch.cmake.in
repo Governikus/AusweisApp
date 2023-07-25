@@ -15,11 +15,11 @@ endfunction()
 function(PATCH_SOURCES _component)
 	set(PATCHES_DIR @PROJECT_SOURCE_DIR@/patches)
 
-	file(GLOB PATCHES "${PATCHES_DIR}/${_component}-*.patch")
+	file(GLOB PATCHES "${PATCHES_DIR}/${_component}*.patch")
 	PATCH_SOURCES_EXECUTE("${PATCHES}")
 
 	if("@CMAKE_BUILD_TYPE@" STREQUAL "DEBUG")
-		file(GLOB PATCHES_DEBUG "${PATCHES_DIR}/debug/${_component}-*.patch")
+		file(GLOB PATCHES_DEBUG "${PATCHES_DIR}/debug/${_component}*.patch")
 		PATCH_SOURCES_EXECUTE("${PATCHES_DEBUG}")
 	endif()
 endfunction()

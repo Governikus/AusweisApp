@@ -113,7 +113,7 @@ bool PdfExporter::exportHistory()
 			{tr("Date"),
 			 //: LABEL ALL_PLATFORMS
 			 tr("Details")});
-	//: LABEL ALL_PLATFORMS
+	//: LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString
 	const auto& dateTimeFormat = tr("dd.MM.yyyy hh:mm AP");
 	const auto& infos = Env::getSingleton<AppSettings>()->getHistorySettings().getHistoryInfos();
 	for (const auto& entry : infos)
@@ -142,9 +142,9 @@ bool PdfExporter::exportHistory()
 	closeTable();
 
 	const auto& now = QDateTime::currentDateTime();
-	//: LABEL ALL_PLATFORMS
+	//: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 	QString date = locale.toString(now, tr("dd.MM.yyyy"));
-	//: LABEL ALL_PLATFORMS
+	//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 	QString time = locale.toString(now, tr("hh:mm AP"));
 	//: LABEL ALL_PLATFORMS
 	const auto& headline = tr("At %1 %2 the following data were saved:").arg(date, time);
@@ -181,9 +181,9 @@ bool PdfExporter::exportSelfInfo(const QDateTime& pDate, const QVector<QPair<QSt
 	closeTable();
 
 	const auto& locale = LanguageLoader::getInstance().getUsedLocale();
-	//: LABEL ALL_PLATFORMS
+	//: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 	QString date = locale.toString(pDate, tr("dd.MM.yyyy"));
-	//: LABEL ALL_PLATFORMS
+	//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 	QString time = locale.toString(pDate, tr("hh:mm AP"));
 	//: LABEL ALL_PLATFORMS
 	const auto& headline = tr("At %1 %2 the following data has been read out of your ID card:").arg(date, time);

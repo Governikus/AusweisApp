@@ -36,7 +36,6 @@ class LocalIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		bool isInitialPairing(const QString& pIfdName, const QString& pId) override;
 		LocalIfdClient* getIfdClient() override;
 		void addDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher) override;
 

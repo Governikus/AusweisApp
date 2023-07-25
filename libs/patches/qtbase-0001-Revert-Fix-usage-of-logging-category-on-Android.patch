@@ -1,0 +1,40 @@
+From 68bc2e3fae6480d6315f524c2ee9acf3a33a435a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
+Date: Mon, 25 Jul 2022 17:08:54 +0200
+Subject: Revert "Fix usage of logging category on Android"
+
+This reverts commit 87d8ee755bfdef8e72a122789c2e3ed382881a12.
+
+Change-Id: If19a9d615e01d61c79955cda4789ba1646520ee1
+---
+ src/corelib/global/qlogging.cpp | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git x/qtbase/src/corelib/global/qlogging.cpp y/qtbase/src/corelib/global/qlogging.cpp
+index 9ac70b3340..737a91dc6e 100644
+--- x/qtbase/src/corelib/global/qlogging.cpp
++++ y/qtbase/src/corelib/global/qlogging.cpp
+@@ -1450,10 +1450,7 @@ QString qFormatLogMessage(QtMsgType type, const QMessageLogContext &context, con
+         } else if (token == messageTokenC) {
+             message.append(str);
+         } else if (token == categoryTokenC) {
+-#ifndef Q_OS_ANDROID
+-            // Don't add the category to the message on Android
+             message.append(QLatin1StringView(context.category));
+-#endif
+         } else if (token == typeTokenC) {
+             switch (type) {
+             case QtDebugMsg:   message.append("debug"_L1); break;
+@@ -1701,11 +1698,7 @@ static bool android_default_message_handler(QtMsgType type,
+         break;
+     };
+ 
+-    // If application name is a tag ensure it has no spaces
+-    // If a category is defined, use it as an Android logging tag
+-    __android_log_print(priority, isDefaultCategory(context.category) ?
+-                        qPrintable(QCoreApplication::applicationName().replace(u' ', u'_')) : context.category,
+-                        "%s\n", qPrintable(formattedMessage));
++    __android_log_print(priority, qPrintable(QCoreApplication::applicationName()), "%s\n", qPrintable(formattedMessage));
+ 
+     return true; // Prevent further output to stderr
+ }

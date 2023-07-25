@@ -57,7 +57,7 @@ class GlobalStatus
 			Workflow_No_Unique_AtCvc,
 			Workflow_No_Unique_DvCvc,
 			Workflow_No_Permission_Error,
-			Workflow_No_Extended_Length_Error,
+			Workflow_Wrong_Length_Error,
 			Workflow_Certificate_No_Description,
 			Workflow_Certificate_No_Url_In_Description,
 			Workflow_Certificate_Hash_Error,

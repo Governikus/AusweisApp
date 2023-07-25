@@ -105,7 +105,7 @@ SectionPage {
 						id: detailsButton
 						Accessible.description: qsTr("Show more information about the service provider")
 						activeFocusOnTab: true
-						icon.source: "qrc:///images/info.svg"
+						icon.source: "qrc:///images/desktop/info_white.svg"
 
 						//: LABEL DESKTOP
 						text: qsTr("Details about the provider")

@@ -25,14 +25,16 @@ void Service::doAppUpdate(UpdateType pType, bool pForceUpdate)
 	{
 		case UpdateType::APPCAST:
 			mExplicitSuccessMessage = pForceUpdate;
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
-			mTimer.start(mOneDayInMs);
-			if (pForceUpdate || Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
+			if (Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateAvailable())
 			{
-				Q_UNUSED(Env::getSingleton<AppUpdater>()->checkAppUpdate(pForceUpdate))
-				break;
+				mTimer.start(mOneDayInMs);
+				if (pForceUpdate || Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
+				{
+					Q_UNUSED(Env::getSingleton<AppUpdater>()->checkAppUpdate(pForceUpdate))
+					break;
+				}
 			}
-#endif
+
 			Q_FALLTHROUGH();
 
 		case UpdateType::PROVIDER:

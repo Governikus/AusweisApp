@@ -219,18 +219,16 @@
 				"": "Auskunft aus den Zentralen Registern des Kraftfahrt-Bundesamtes"
 			},
 			"longDescription": {
-				"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister (Punkteauskunft), dem Zentralen Fahrzeugregister (Fahrzeugzulassungen), dem Zentralen Fahrerlaubnisregister (Führerschein) sowie dem Berufskraftfahrerqualifikationsregister des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind.<br/><ul><li>Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der letzten Haupt- bzw. Sicherheitsüberprüfung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ereignissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.</li><li>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und Löschungsdatum.</li><li>Die Online-Auskunft aus dem Zentralen Fahrerlaubnisregister umfasst Informationen zu Fahrerlaubnissen, die seit dem 01.01.1999 erteilt, erweitert oder umgeschrieben wurden. Über die anderen vor dem 01.01.1999 ausgestellten Führerscheine führt nur die jeweils ausstellende Fahrerlaubnisbehörde eine Kartei/Datei.</li><li>Die Online-Auskunft aus dem Berufskraftfahrerqualifikationsregister umfasst Informationen zu Fahrerqualifizierungsnachweisen sowie Teilnahmebescheinigungen zu Grundqualifikationen, Weiterbildungen und anderen abgeschlossenen Maßnahmen von Berufskraftfahrerinnen und -fahrern.</li></ul>"
+				"": "Mit der Anwendung können Privatpersonen eine Auskunft aus dem Fahreignungsregister (Punkteauskunft), dem Zentralen Fahrzeugregister (Fahrzeugzulassungen), dem Zentralen Fahrerlaubnisregister (Führerschein) sowie dem Berufskraftfahrerqualifikationsregister des Kraftfahrt-Bundesamtes erhalten. Diese umfasst ausgewählte Daten, die zu der jeweiligen Person gespeichert sind.<br/><ul><li>Die Online-Auskunft aus dem Fahreignungsregister umfasst Informationen zu den eingetragenen Verkehrsverstößen, deren Punktbewertung und Löschungsdatum.</li><li>Die Online-Auskunft aus dem Zentralen Fahrzeugregister umfasst Informationen zur Fahrzeugbeschreibung, den Halterdaten, der Haftpflichtversicherung, der letzten Haupt- bzw. Sicherheitsüberprüfung, der Fahrzeughistorie und den zulassungsrechtlich relevanten Ergebnissen. Daten von vormaligen Haltern und interne Verwaltungsdaten sind von der Auskunft ausgenommen.</li><li>Die Online-Auskunft aus dem Zentralen Fahrerlaubnisregister umfasst Informationen zu Fahrerlaubnissen, die seit dem 01.01.1999 erteilt, erweitert oder umgeschrieben wurden. Über die anderen vor dem 01.01.1999 ausgestellten Führerscheine führt nur die jeweils ausstellende Fahrerlaubnisbehörde eine Kartei/Datei.</li><li>Die Online-Auskunft aus dem Berufskraftfahrerqualifikationsregister umfasst Informationen zu Fahrerqualifizierungsnachweisen sowie Teilnahmebescheinigungen zu Grundqualifikationen, Weiterbildungen und anderen abgeschlossenen Maßnahmen von Berufskraftfahrerinnen und -fahrern.</li></ul>"
 			},
-			"address": "https://www.kba-online.de/registerauskunft/ora/web",
+			"address": "https://www.kba-online.de/registerauskunft/app",
 			"homepage": "https://www.kba.de",
 			"phone": "+49 461 316 0",
 			"email": "kba@kba.de",
 			"postalAddress": "Kraftfahrt-Bundesamt<br/>Fördestraße 16<br/>24944 Flensburg",
-			"icon": "KraftfahrtBundesamt_icon.png",
+			"icon": "KraftfahrtBundesamt_icon.svg",
 			"category": "citizen",
-			"subjectUrls": [
-				"https://www.kba-online.de"
-			]
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
 		},
 		{
 			"shortName": {
@@ -289,9 +287,7 @@
 			"postalAddress": "Ministerium für Wissenschaft, Energie, Klimaschutz und Umwelt des Landes Sachsen-Anhalt<br/>Leipziger Straße 58<br/>39112 Magdeburg",
 			"icon": "BafoegDigital_icon.svg",
 			"category": "citizen",
-			"subjectUrls": [
-				"https://id.bund.de"
-			]
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
 		},
 		{
 			"shortName": {
@@ -460,24 +456,6 @@
 			"icon": "StadtDueren_icon.jpg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
-		},
-		{
-			"shortName": {
-				"": "Stadt Magdeburg - iKFZ"
-			},
-			"longName": {
-				"": "Stadt Magdeburg - Internetbasierte Fahrzeugzulassung"
-			},
-			"longDescription": {
-				"": "Die internetbasierte Außerbetriebsetzung und Wiederzulassung eines Kraftfahrzeuges können über das Portal der Landeshauptstadt Magdeburg beantragt werden."
-			},
-			"address": "https://www.magdeburg.de/loadDocument.phtml?ObjSvrID=37&ObjID=27929",
-			"homepage": "https://www.magdeburg.de/Start/B%C3%BCrger-Stadt/Verwaltung-Service/B%C3%BCrgerService",
-			"phone": "+49 391 54 00",
-			"email": "info@magdeburg.de",
-			"postalAddress": "Landeshauptstadt Magdeburg<br/>Alter Markt 6<br/>39104 Magdeburg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://bk.sachsen-anhalt-connect.de)"
 		},
 		{
 			"shortName": {
@@ -656,7 +634,8 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://www.buergerserviceportal.de",
-				"https://bayernid.freistaat.bayern"
+				"https://bayernid.freistaat.bayern",
+				"https://id.bayernportal.de"
 			]
 		},
 		{
@@ -2129,20 +2108,22 @@
 		},
 		{
 			"shortName": {
-				"": "Online-Bürgerdienste Nürnberg"
+				"": "Mein Nürnberg"
 			},
 			"longName": {
-				"": "Online-Bürgerdienste der Stadt Nürnberg"
+				"": "Mein Nürnberg - Die digitale Serviceplattform der Stadt Nürnberg"
 			},
 			"longDescription": {
-				"": "Die Stadt Nürnberg bietet Ihnen mit ihrem Bürgerserviceportal ,Mein.Nürnberg' erstmals die Möglichkeit, Ihre Verwaltungsangelegenheiten komplett elektronisch abzuwickeln - von der Antragstellung bis zur Rückmeldung der Bescheide oder Schriftstücke in Ihren persönlichen Bereich auf dem Portal. Alle Online-Dienste der Stadt Nürnberg wurden zudem für die Nutzung mit mobilen Endgeräten optimiert.<br/>Bei immer mehr Verfahren akzeptiert die Stadtverwaltung einen Unterschriftersatz durch die Online-Ausweisfunktion.<br/>Jeder Online-Dienst der Stadt Nürnberg, der die Online-Ausweisfunktion nutzt, ist an dem Hinweis 'mit eID' erkennbar. Derzeit sind dies z. B.:<br/><ul><li>Aufenthaltstitel beantragen</li><li>Gaststättenrechtliche Erlaubnis für den Ausschank von Alkohol beantragen</li><li>Hunde - Negativzeugnis für Kampfhunde beantragen</li><li>Kfz-Halterauskunft beantragen</li><li>Melderegister - Widerspruch gegen Datenübermittlung</li><li>Veranstaltung, Messe, Markt beantragen</li></ul>"
+				"": "Über die Serviceplattform 'Mein Nürnberg' können Sie schnell, einfach und von zuhause aus Ihre Behördengänge erledigen! Kein langes Anstehen, Warten oder Nummer Ziehen. Mit einem persönlichen 'Mein Nürnberg'-Account bleiben Sie bequem zuhause und erledigen alles von dort - und das rund um die Uhr. Sie sparen sich nicht nur den Weg in die Behörde, sondern können auch den aktuellen Status Ihres Antrages einsehen. Melden Sie sich jetzt an! Das Angebot an Online-Diensten wird ständig erweitert. Ob Sie Ihr Anliegen bereits digital erledigen können, finden Sie über den Behördenwegweiser Nürnberg oder direkt über die Internetseiten der jeweiligen Ämter heraus."
 			},
-			"address": "https://www.nuernberg.de/internet/onlinedienste",
-			"homepage": "https://www.nuernberg.de",
-			"phone": "+49 9 11 2 31 8613",
-			"email": "poststelle@stadt.nuernberg.de",
-			"postalAddress": "Amt für Organisation, Informationsverarbeitung und Zentrale Dienste<br/>E-Government-Büro<br/>Rathausplatz 2<br/>III. OG<br/>90403 Nürnberg",
+			"address": "https://www.nuernberg.de/internet/mein_nuernberg",
+			"homepage": "https://www.nuernberg.de/internet/stadtportal",
+			"phone": "+49 9 11 2 31 4 50 00",
+			"email": "online-services@stadt.nuernberg.de",
+			"postalAddress": "Stadt Nürnberg<br/>Amt für Digitalisierung und Prozessorganisation Rathausplatz 2<br/>90403 Nürnberg",
 			"category": "citizen",
+			"image": "MeinNuernberg_image.jpg",
+			"icon": "MeinNuernberg_icon.png",
 			"subjectUrls": [
 				"https://meinkonto.nuernberg.de"
 			]
@@ -2345,6 +2326,159 @@
 			"subjectUrls": [
 				"https://www.foerderportal-zeus.de"
 			]
+		},
+		{
+			"shortName": {
+				"": "Landkreis Elbe-Elster"
+			},
+			"longName": {
+				"": "Landkreis Elbe-Elster - Online Dienste"
+			},
+			"longDescription": {
+				"": "Bürgerinnen und Bürger im Landkreis Elbe-Elster können viele Behördengänge digital erledigen.<br/>Je nach Anforderung der jeweiligen Verwaltungsleistung benötigen Sie ein kostenloses Bürgerkonto 'BundID'. Damit können Sie sich elektronisch identifizieren. Sie weisen sich also online gegenüber diesen Leistungen aus."
+			},
+			"address": "https://www.lkee.de/Service-Verwaltung/Online-Dienste",
+			"homepage": "https://www.lkee.de",
+			"phone": "+49 3535 460",
+			"email": "eap@lkee.de",
+			"postalAddress": "Landkreis Elbe-Elster<br/>Der Landrat<br/>Ludwig-Jahn-Str. 2<br/>04916 Herzberg / Elster",
+			"image": "lkee_image.jpg",
+			"icon": "lkee_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+		},
+		{
+			"shortName": {
+				"": "Online-Services der Landeshauptstadt München"
+			},
+			"longName": {
+				"": "Online-Services der Landeshauptstadt München"
+			},
+			"longDescription": {
+				"": "Die Landeshauptstadt München verfügt über eine Vielzahl an Online-Services. Diese können Sie hier einsehen und nutzen."
+			},
+			"address": "https://stadt.muenchen.de/infos/online-services.html",
+			"homepage": "https://www.muenchen.de",
+			"email": "rathaus@muenchen.de",
+			"postalAddress": "Landeshauptstadt München<br/>80313 München",
+			"image": "LandeshauptstadtMuenchen_image.png",
+			"icon": "LandeshauptstadtMuenchen_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+		},
+		{
+			"shortName": {
+				"": "Antrag auf Elterngeld in Bayern"
+			},
+			"longName": {
+				"": "Antrag auf Elterngeld in Bayern"
+			},
+			"longDescription": {
+				"": "Den Antrag auf Elterngeld können Sie in Bayern bei der Landesbehörde Zentrum Bayern Familie und Soziales (ZBFS) stellen. Die Abfragen im Online-Verfahren werden individuell auf Ihre Angaben abgestimmt und Sie erhalten eine Checkliste mit den benötigten Unterlagen. Der Antrag kann digital unterschieben werden."
+			},
+			"address": "https://www.elterngeld.bayern.de/onlineantrag/default.aspx",
+			"homepage": "https://www.zbfs.bayern.de",
+			"email": "poststelle@zbfs.bayern.de",
+			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
+			"icon": "ZBFS_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+		},
+		{
+			"shortName": {
+				"": "bundID"
+			},
+			"longName": {
+				"": "bundID - Ihr Zugang zur digitalen Verwaltung. Einfach. Sicher."
+			},
+			"address": "https://id.bund.de",
+			"homepage": "https://id.bund.de",
+			"longDescription": {
+				"": " Die BundID bietet Ihnen ein zentrales Konto zur Identifizierung für alle Ihre Online-Anträge (z. B. mit einem Online-Ausweis). Sie können das Formular Ihres Online-Antrags durch das Hinterlegen Ihrer persönlichen Daten vorausfüllen lassen. Das spart Zeit, ist sicher und bewahrt Sie vor Tippfehlern.<br/><br/>Sie erhalten alle Bescheide und Nachrichten in Bezug auf den Online-Antrag bequem in Ihr elektronisches Postfach in Ihrem BundID-Konto."
+			},
+			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
+			"category": "citizen",
+			"subjectUrls": [
+				"https://id.bund.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Stadt Oberhausen"
+			},
+			"longName": {
+				"": "Stadt Oberhausen"
+			},
+			"address": "https://serviceportal.oberhausen.de/home",
+			"homepage": "https://www.oberhausen.de",
+			"email": "info@oberhausen.de",
+			"longDescription": {
+				"": "Im Serviceportal der Stadt Oberhausen finden Sie alle Online-Leistungen der Stadtverwaltung, von der Beantragung einer Personenstandsurkunde über die Anmeldung eines Autos bis zur Beantragung eines Bewohnerparkausweises. Einzelne Leistungen erfordern hierbei auch die Authentifizierung mit dem elektronischen Personalausweis und der AusweisApp2."
+			},
+			"postalAddress": "Stadt Oberhausen<br/>Schwartzstraße 72<br/>46042 Oberhausen",
+			"icon": "StadtOberhausen_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
+				"": "Digitale Rentenübersicht"
+			},
+			"longName": {
+				"": "Digitale Rentenübersicht - Zentrale Stelle für die Digitale Rentenübersicht (Deutsche Rentenversicherung Bund)"
+			},
+			"address": "https://app.rentenuebersicht.de",
+			"homepage": "https://www.rentenuebersicht.de",
+			"phone": "+49 800 1000 787",
+			"email": "digitalerentenuebersicht@drv-bund.de",
+			"longDescription": {
+				"": "Mit der Online-Ausweisfunktion im neuen Personalausweis können Sie ...<br/><ul><li>Ihre individuellen Altersvorsorge-Ansprüche der gesetzlichen, betrieblichen und privaten Altersvorsorge bequem digital abrufen und</li><li>die Informationen zum Stand Ihrer Altersvorsorge-Ansprüche als Grundlage für eine weitere unabhängige Beratung herunterladen.</li></ul>"
+			},
+			"postalAddress": "Deutsche Rentenversicherung Bund Zentrale Stelle für die Digitale Rentenübersicht<br/>10868 Berlin",
+			"icon": "DigitaleRentenuebersicht_icon.svg",
+			"category": "citizen",
+			"subjectUrls": [
+				"https://login.deutsche-rentenversicherung.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Zoll-Portal"
+			},
+			"longName": {
+				"": "Zoll-Portal"
+			},
+			"address": "https://www.zoll-portal.de",
+			"homepage": "https://www.zoll-portal.de",
+			"email": "Zoll-Portal@zoll.bund.de",
+			"longDescription": {
+				"": "Das Zoll-Portal bietet Ihnen einen einfachen und effizienten Zugang zu den Dienstleistungen des Zolls (z.B. Kraftfahrzeugsteuer, Agrardieselvergütung oder Energiesteuer). Nach einmaliger Registrierung können Sie Anträge online abwickeln und Bescheide rechtssicher abrufen. Verwenden Sie für die Registrierung und den Login Ihre Online-Ausweisfunktion und Sie können alle Dienstleistungen und Features uneingeschränkt in Anspruch nehmen."
+			},
+			"postalAddress": "Generalzolldirektion<br/>Am Propsthof 78a<br/>53121 Bonn",
+			"icon": "ZollPortal_icon.svg",
+			"image": "ZollPortal_image.svg",
+			"category": "citizen",
+			"subjectUrls": [
+				"https://www.zoll-portal.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Stadt Augsburg - Digitale Bürgerservices nutzen"
+			},
+			"longName": {
+				"": "Stadt Augsburg - Digitale Bürgerservices nutzen"
+			},
+			"address": "https://www.augsburg.de/online-services",
+			"homepage": "https://www.augsburg.de",
+			"email": "augsburg@augsburg.de",
+			"longDescription": {
+				"": "Für viele Leistungen ist der Weg ins Amt nicht nötig: Sie können zahlreiche Leistungen online beantragen und falls nötig bequem von zu Hause aus bezahlen. Eine Liste der Online-Services finden Sie auf der Webseite der Stadt Augsburg.<br/><br/>Voraussetzung für einige Online-Services ist die BayernID. Zur Registrierung können Sie Ihren Online-Ausweis mit dazugehöriger PIN, einem geeigneten Smartphone oder Tablet und der installierten AusweisApp2 nutzen.<br/><br/>Informationen zur Registrierung in der BayernID können Sie nachlesen (https://id.bayernportal.de/).<br/><br/>Ein Beispiel ist die internetbasierte Fahrzeugzulassung und Fahrzeugabmeldung, die von der Kfz-Zulassungsbehörde in Augsburg angeboten wird. Weitere Informationen finden Sie auf der Internetseite der Online-Zulassungsbehörde."
+			},
+			"postalAddress": "Stadt Augsburg<br/>Rathausplatz 1<br/>86150 Augsburg",
+			"icon": "StadtAugsburg_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
 		}
 	]
 }

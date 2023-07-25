@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/macos/appIcon.svg</file>
+        <file>images/desktop/info_white.svg</file>
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/material_assistant.svg</file>
         <file>images/desktop/material_bug_report.svg</file>
@@ -13,6 +14,8 @@
         <file>images/desktop/material_question_answer.svg</file>
         <file>images/desktop/material_highlight.svg</file>
         <file>images/desktop/material_menu_book.svg</file>
+        <file>images/desktop/material_menu_book_white.svg</file>
+        <file>images/desktop/material_settings_white.svg</file>
         <file>images/desktop/material_open_in_browser.svg</file>
         <file>images/desktop/material_a11y.svg</file>
         <file>images/desktop/material_privacy.svg</file>

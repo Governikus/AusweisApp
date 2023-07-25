@@ -1,0 +1,36 @@
+AusweisApp2 1.26.5
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 25. Juli 2023
+
+
+Anwender
+""""""""
+- Überarbeitung des Kopplungsprozesses der Funktion Smartphone als Kartenleser.
+  Beide an der Kopplung beteiligten Geräte müssen auf Version 1.26.5 aktualisiert werden.
+  Versionen kleiner als 1.26.5 lassen sich nicht mit einer AusweisApp2 1.26.5 koppeln.
+
+- Die Anzeige des Fortschritts erfolgt jetzt auch auf einem Smartphone als Kartenleser.
+
+- Der Tastaturmodus auf einem Smartphone als Kartenleser ist jetzt standardmäßig aktiviert.
+
+- Bei Nutzung des Tastaturmodus auf einem Smartphone als Kartenleser kann in den Einstellungen eine
+  erneute Anzeige der Berechtigungen aktiviert werden.
+
+- Ergänzung eines monochromen Icons unter Android.
+
+- Berücksichtigung von Command + W unter macOS.
+
+- Entfernung der Updatefunktion auf macOS zugunsten des Mac App Store.
+
+- Kleinere Fehlerbehebungen und Optimierungen.
+
+
+Entwickler
+""""""""""
+- Die Dokumentation für die Installation in Firmennetzwerken unter macOS für die Einstellung zum
+  Einrichtungsassistenten wurde korrigiert.
+
+- Optimierung der Größe des Android SDK.
+
+- Aktualisierung von OpenSSL auf die Version 3.0.9.

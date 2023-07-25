@@ -9,8 +9,10 @@
 #include "ApplicationModel.h"
 
 #include "MockActivationContext.h"
+#include "MockIfdServer.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
+#include "context/IfdServiceContext.h"
 #include "context/SelfAuthContext.h"
 #if __has_include("context/PersonalizationContext.h")
 	#include "context/PersonalizationContext.h"
@@ -58,6 +60,7 @@ class test_ApplicationModel
 			QTest::addRow("No Context") << QSharedPointer<WorkflowContext>() << ApplicationModel::Workflow::WORKFLOW_NONE;
 			QTest::addRow("AuthContext") << QSharedPointer<WorkflowContext>(new AuthContext(QSharedPointer<MockActivationContext>::create())) << ApplicationModel::Workflow::WORKFLOW_AUTHENTICATION;
 			QTest::addRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << ApplicationModel::Workflow::WORKFLOW_CHANGE_PIN;
+			QTest::addRow("IfdServiceContext") << QSharedPointer<WorkflowContext>(new IfdServiceContext(QSharedPointer<MockIfdServer>::create())) << ApplicationModel::Workflow::WORKFLOW_REMOTE_SERVICE;
 			QTest::addRow("SelfAuthContext") << QSharedPointer<WorkflowContext>(new SelfAuthContext()) << ApplicationModel::Workflow::WORKFLOW_SELF_AUTHENTICATION;
 #if __has_include("context/PersonalizationContext.h")
 			QTest::addRow("PersonalizationContext") << QSharedPointer<WorkflowContext>(new PersonalizationContext(QString())) << ApplicationModel::Workflow::WORKFLOW_SMART;

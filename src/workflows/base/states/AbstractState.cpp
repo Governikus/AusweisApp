@@ -195,17 +195,6 @@ bool AbstractState::isStartStopEnabled() const
 }
 
 
-void AbstractState::startNfcScanIfNecessary()
-{
-#if defined(Q_OS_IOS)
-	if (isStartStopEnabled())
-	{
-		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::NFC);
-	}
-#endif
-}
-
-
 void AbstractState::stopNfcScanIfNecessary(const QString& pError)
 {
 #if defined(Q_OS_IOS)

@@ -273,6 +273,18 @@ class test_WorkflowContext
 		}
 
 
+		void test_setInterruptRequested()
+		{
+			QVERIFY(!mContext->interruptRequested());
+
+			mContext->setInterruptRequested(true);
+			QVERIFY(mContext->interruptRequested());
+
+			mContext->setInterruptRequested(false);
+			QVERIFY(!mContext->interruptRequested());
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_WorkflowContext)

@@ -42,7 +42,7 @@ void StateMaintainCardConnection::run()
 		case CardReturnCode::UNDEFINED:
 		case CardReturnCode::COMMAND_FAILED:
 		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+		case CardReturnCode::WRONG_LENGTH:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		{
 			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));

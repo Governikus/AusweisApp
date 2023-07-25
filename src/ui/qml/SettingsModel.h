@@ -31,6 +31,7 @@ class SettingsModel
 	Q_PROPERTY(bool showBetaTesting MEMBER mShowBetaTesting NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
+	Q_PROPERTY(bool showAccessRights READ getShowAccessRights WRITE setShowAccessRights NOTIFY fireShowAccessRightsChanged)
 	Q_PROPERTY(QString serverName READ getServerName WRITE setServerName NOTIFY fireDeviceNameChanged)
 	Q_PROPERTY(bool historyEnabled READ isHistoryEnabled WRITE setHistoryEnabled NOTIFY fireHistoryEnabledChanged)
 	Q_PROPERTY(bool useScreenKeyboard READ isUseScreenKeyboard WRITE setUseScreenKeyboard NOTIFY fireScreenKeyboardChanged)
@@ -88,6 +89,9 @@ class SettingsModel
 
 		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
+
+		[[nodiscard]] bool getShowAccessRights() const;
+		void setShowAccessRights(bool pShowAccessRights);
 
 		[[nodiscard]] bool isHistoryEnabled() const;
 		void setHistoryEnabled(bool pEnabled);
@@ -156,6 +160,7 @@ class SettingsModel
 		void fireDeveloperOptionsChanged();
 		void fireDeviceNameChanged();
 		void firePinPadModeChanged();
+		void fireShowAccessRightsChanged();
 		void fireHistoryEnabledChanged();
 		void fireScreenKeyboardChanged();
 		void fireCanAllowedChanged();

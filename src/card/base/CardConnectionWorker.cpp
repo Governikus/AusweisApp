@@ -133,7 +133,7 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 	ResponseApduResult result = card->transmit(commandApdu);
 	if (result.mResponseApdu.getStatusCode() == StatusCode::WRONG_LENGTH)
 	{
-		return {CardReturnCode::EXTENDED_LENGTH_MISSING};
+		return {CardReturnCode::WRONG_LENGTH};
 	}
 
 	if (mSecureMessaging)
@@ -141,7 +141,7 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 		result.mResponseApdu = mSecureMessaging->decrypt(result.mResponseApdu);
 		if (result.mResponseApdu.isEmpty())
 		{
-			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must no be re-used.";
+			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must not be re-used.";
 			stopSecureMessaging();
 
 			return {CardReturnCode::COMMAND_FAILED};

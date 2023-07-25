@@ -165,8 +165,29 @@ bool SettingsModel::getPinPadMode() const
 
 void SettingsModel::setPinPadMode(bool pPinPadMode)
 {
-	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	settings.setPinPadMode(pPinPadMode);
+	if (getPinPadMode() != pPinPadMode)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		settings.setPinPadMode(pPinPadMode);
+		Q_EMIT firePinPadModeChanged();
+	}
+}
+
+
+bool SettingsModel::getShowAccessRights() const
+{
+	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getShowAccessRights();
+}
+
+
+void SettingsModel::setShowAccessRights(bool pShowAccessRights)
+{
+	if (getShowAccessRights() != pShowAccessRights)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		settings.setShowAccessRights(pShowAccessRights);
+		Q_EMIT fireShowAccessRightsChanged();
+	}
 }
 
 

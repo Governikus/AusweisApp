@@ -1,0 +1,127 @@
+From e2402debef95b7ccc2050f331ee9f5076332ae91 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Mon, 12 Dec 2022 14:33:41 +0100
+Subject: macOS: Use NSStatusItem.menu to manage system tray menu
+
+Using [NSStatusItem popUpStatusItemMenu:] to manually show the menu is
+deprecated, and was causing various issues when right clicking the menu,
+such as not unhighlighting the menu item when dismissing the menu, or
+worse, not quitting the application if a 'Quit' item was triggered from
+a right click.
+
+The reason we were using popUpStatusItemMenu instead of the menu
+property of NSStatusItem was that the latter prevented us from seeing
+the action message of the NSStatusItem button, which we used to emit
+the system tray's activated signal, but this can be solved by listing
+for the menu's tracking state starting.
+
+Fixes: QTBUG-103515
+Pick-to: 6.4
+Change-Id: I686550ebac7d94d8d11b2e3c49ed16a8240cb214
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit da754d5b6589c9877f0325edb3da5cbc64d966c7)
+---
+ .../platforms/cocoa/qcocoasystemtrayicon.h    |  3 +-
+ .../platforms/cocoa/qcocoasystemtrayicon.mm   | 36 ++++++++++++-------
+ 2 files changed, 24 insertions(+), 15 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.h y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.h
+index 414560e119..75c33cc5a3 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.h
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.h
+@@ -45,12 +45,11 @@ public:
+     bool isSystemTrayAvailable() const override;
+     bool supportsMessages() const override;
+ 
+-    void statusItemClicked();
++    void emitActivated();
+ 
+ private:
+     NSStatusItem *m_statusItem = nullptr;
+     QStatusItemDelegate *m_delegate = nullptr;
+-    QCocoaMenu *m_menu = nullptr;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
+index c004cd69b5..2f7f73b481 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
+@@ -64,6 +64,8 @@ void QCocoaSystemTrayIcon::init()
+ 
+     m_delegate = [[QStatusItemDelegate alloc] initWithSysTray:this];
+ 
++    // In case the status item does not have a menu assigned to it
++    // we fall back to the item's button to detect activation.
+     m_statusItem.button.target = m_delegate;
+     m_statusItem.button.action = @selector(statusItemClicked);
+     [m_statusItem.button sendActionOn:NSEventMaskLeftMouseDown | NSEventMaskRightMouseDown | NSEventMaskOtherMouseDown];
+@@ -81,8 +83,6 @@ void QCocoaSystemTrayIcon::cleanup()
+ 
+     [m_delegate release];
+     m_delegate = nil;
+-
+-    m_menu = nullptr;
+ }
+ 
+ QRect QCocoaSystemTrayIcon::geometry() const
+@@ -178,12 +178,20 @@ void QCocoaSystemTrayIcon::updateIcon(const QIcon &icon)
+ 
+ void QCocoaSystemTrayIcon::updateMenu(QPlatformMenu *menu)
+ {
+-    // We don't set the menu property of the NSStatusItem here,
+-    // as that would prevent us from receiving the action for the
+-    // click, and we wouldn't be able to emit the activated signal.
+-    // Instead we show the menu manually when the status item is
+-    // clicked.
+-    m_menu = static_cast<QCocoaMenu *>(menu);
++    m_statusItem.menu = menu ? static_cast<QCocoaMenu *>(menu)->nsMenu() : nil;
++
++    if (m_statusItem.menu) {
++        // When a menu is assigned, NSStatusBarButtonCell will intercept the mouse
++        // down to pop up the menu, and we never see the NSStatusBarButton action.
++        // To ensure we emit the 'activated' signal in both cases we detect when
++        // menu starts tracking, which happens before the menu delegate is sent
++        // the menuWillOpen callback we use to emit aboutToShow for the menu.
++        [NSNotificationCenter.defaultCenter addObserver:m_delegate
++            selector:@selector(statusItemMenuBeganTracking:)
++            name:NSMenuDidBeginTrackingNotification
++            object:m_statusItem.menu
++        ];
++    }
+ }
+ 
+ void QCocoaSystemTrayIcon::updateToolTip(const QString &toolTip)
+@@ -226,7 +234,7 @@ void QCocoaSystemTrayIcon::showMessage(const QString &title, const QString &mess
+     }
+ }
+ 
+-void QCocoaSystemTrayIcon::statusItemClicked()
++void QCocoaSystemTrayIcon::emitActivated()
+ {
+     auto *mouseEvent = NSApp.currentEvent;
+ 
+@@ -245,9 +253,6 @@ void QCocoaSystemTrayIcon::statusItemClicked()
+     }
+ 
+     emit activated(activationReason);
+-
+-    if (NSMenu *menu = m_menu ? m_menu->nsMenu() : nil)
+-        QT_IGNORE_DEPRECATIONS([m_statusItem popUpStatusItemMenu:menu]);
+ }
+ 
+ QT_END_NAMESPACE
+@@ -270,7 +275,12 @@ QT_END_NAMESPACE
+ 
+ - (void)statusItemClicked
+ {
+-    self.platformSystemTray->statusItemClicked();
++    self.platformSystemTray->emitActivated();
++}
++
++- (void)statusItemMenuBeganTracking:(NSNotification*)notification
++{
++    self.platformSystemTray->emitActivated();
+ }
+ 
+ - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification

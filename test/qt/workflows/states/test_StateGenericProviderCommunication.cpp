@@ -131,7 +131,7 @@ class test_StateGenericProviderCommunication
 			QCOMPARE(spy.count(), 1);
 
 			const auto& failureCode = mState->getContext()->getFailureCode();
-			QCOMPARE(failureCode, FailureCode::Reason::Generic_Provider_Communication_Ssl_Error);
+			QCOMPARE(failureCode, FailureCode::Reason::Generic_Provider_Communication_Tls_Error);
 			QCOMPARE(failureCode->getFailureInfoMap()[FailureCode::Info::Network_Error], mState->mReply->errorString());
 			QCOMPARE(failureCode->getFailureInfoMap()[FailureCode::Info::Ssl_Errors], TlsChecker::sslErrorsToString(errorList));
 		}

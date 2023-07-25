@@ -1,0 +1,5 @@
+android {
+    packagingOptions {
+        exclude '**/libplugins_imageformats_*.so'
+    }
+}

@@ -71,6 +71,18 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 }
 
 
+AccessRightManager::AccessRightManager(QSharedPointer<CHAT> pRequiredChat)
+	: QObject()
+	, mTerminalCvc()
+	, mDIDAuthenticateEAC1()
+	, mOptionalAccessRights()
+	, mEffectiveAccessRights(pRequiredChat->getAccessRights())
+	, mRequiredAccessRights(pRequiredChat->getAccessRights())
+{
+
+}
+
+
 void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessRights)
 {
 	if (!mTerminalCvc)

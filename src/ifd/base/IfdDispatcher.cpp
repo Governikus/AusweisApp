@@ -89,6 +89,17 @@ void IfdDispatcher::setVersion(IfdVersion::Version pVersion)
 }
 
 
+bool IfdDispatcher::isPairingConnection() const
+{
+	if (!mDataChannel)
+	{
+		return false;
+	}
+
+	return mDataChannel->isPairingConnection();
+}
+
+
 QString IfdDispatcher::getId() const
 {
 	if (!mDataChannel)

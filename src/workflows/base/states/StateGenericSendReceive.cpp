@@ -102,7 +102,7 @@ void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 			{FailureCode::Info::State_Name, getStateName()},
 			{FailureCode::Info::Ssl_Errors, TlsChecker::sslErrorsToString(pErrors)}
 		};
-		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Ssl_Error, infoMap});
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Tls_Error, infoMap});
 	}
 }
 

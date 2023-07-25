@@ -117,7 +117,7 @@ SectionPage {
 		}
 		sectionDelegate: TabbedPaneDelegateIconAndThreeLineText {
 			footerText: model ? model.purpose : ""
-			headerText: (model ? (Utils.isToday(model.dateTime) ? qsTr("today") : Utils.isYesterday(model.dateTime) ? qsTr("yesterday") : Utils.isThisWeek(model.dateTime) ? model.dateTime.toLocaleString(Qt.locale(SettingsModel.language), "dddd") : model.dateTime.toLocaleString(Qt.locale(), qsTr("dd.MM.yyyy"))) : "")
+			headerText: model ? Utils.historyDateString(model.dateTime) : ""
 			iconPath: model ? model.providerIcon : ""
 			sectionName: model ? model.subject : ""
 		}

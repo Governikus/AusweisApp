@@ -24,7 +24,7 @@ into the connected card reader.
 
 .. code-block:: json
 
-  {"cmd": "RUN_AUTH", "tcTokenURL": "https://test.governikus-eid.de/DEMO"}
+  {"cmd": "RUN_AUTH", "tcTokenURL": "https://test.governikus-eid.de/AusweisAuskunft/WebServiceRequesterServlet"}
 
   {"msg": "AUTH"}
 

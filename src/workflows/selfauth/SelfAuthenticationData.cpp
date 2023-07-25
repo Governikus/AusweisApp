@@ -248,8 +248,11 @@ void SelfAuthenticationData::SelfData::addAddress(OrderedSelfData& pSelfData) co
 QString SelfAuthenticationData::SelfData::formatDate(const QString& pDate)
 {
 	static const QVector<QPair<QString, QLatin1String>> formattingPattern({
+	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 				qMakePair(QStringLiteral("yyyy-MM-dd+hh:mm"), QLatin1String(QT_TR_NOOP("dd.MM.yyyy"))),
+	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day
 				qMakePair(QStringLiteral("yyyy-MM"), QLatin1String(QT_TR_NOOP("xx.MM.yyyy"))),
+	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month
 				qMakePair(QStringLiteral("yyyy"), QLatin1String(QT_TR_NOOP("xx.xx.yyyy"))),
 			});
 

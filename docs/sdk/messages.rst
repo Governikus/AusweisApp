@@ -810,6 +810,8 @@ until a card with enabled eID function is inserted.
       to unblock the PIN.
 
     - **deactivated**: True if eID function is deactivated, otherwise false.
+      The scan dialog on iOS won't be closed if this is True. You need to
+      send :ref:`interrupt` yourself to show an error message.
 
     - **retryCounter**: Count of possible retries for the PIN. If you enter a PIN
       with command :ref:`set_pin` it will be decreased if PIN was incorrect.

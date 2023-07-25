@@ -114,6 +114,11 @@ ApplicationWindow {
 			let initialSize = plugin.initialWindowSize;
 			ApplicationModel.scaleFactor = Math.min(width / initialSize.width, height / initialSize.height);
 		}
+		function showDetachedLogViewIfPresent() {
+			if (d.detachedLogView !== null) {
+				d.detachedLogView.show();
+			}
+		}
 		function showMainWindow() {
 			d.suppressAbortWarning = false;
 			if (active) {
@@ -187,6 +192,7 @@ ApplicationWindow {
 		function onFireShowRequest(pModule) {
 			d.showMainWindow();
 			d.closeOpenDialogs();
+			d.showDetachedLogViewIfPresent();
 			switch (pModule) {
 			case UiModule.CURRENT:
 				break;
@@ -235,6 +241,12 @@ ApplicationWindow {
 		sequence: StandardKey.HelpContents
 
 		onActivated: ApplicationModel.openOnlineHelp(menuBar.rightMostAction.helpTopic)
+	}
+	Shortcut {
+		enabled: Qt.platform.os === "osx"
+		sequence: "Ctrl+W"
+
+		onActivated: close()
 	}
 	Image {
 		anchors.centerIn: parent
@@ -414,6 +426,12 @@ ApplicationWindow {
 				d.detachedLogView = null;
 			}
 
+			Shortcut {
+				enabled: Qt.platform.os === "osx"
+				sequence: "Ctrl+W"
+
+				onActivated: close()
+			}
 			DetachedLogView {
 				anchors.fill: parent
 				focus: true

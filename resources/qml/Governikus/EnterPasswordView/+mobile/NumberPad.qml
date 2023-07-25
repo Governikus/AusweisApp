@@ -56,6 +56,7 @@ GridLayout {
 		enabled: baseItem.deleteEnabled
 		icon.source: "qrc:///images/mobile/material_backspace.svg"
 		text: qsTr("Delete last digit")
+		visualPrivacy: SettingsModel.visualPrivacy
 
 		onClicked: baseItem.deletePressed()
 	}
@@ -74,6 +75,7 @@ GridLayout {
 		enabled: baseItem.submitEnabled
 		icon.source: "qrc:///images/material_check.svg"
 		text: qsTr("Submit")
+		visualPrivacy: SettingsModel.visualPrivacy
 
 		onClicked: baseItem.submitPressed()
 	}

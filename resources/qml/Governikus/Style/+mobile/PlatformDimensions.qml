@@ -4,11 +4,12 @@
 import QtQml 2.15
 import Governikus.Global 1.0
 import Governikus.Type.SettingsModel 1.0
+import QtQuick.Window 2.15
 
 BrandDimensions {
 	readonly property int button_radius: 6
 	readonly property int corner_radius: 10
-	readonly property int header_icon_size: Constants.is_tablet ? 240 : huge_icon_size
+	readonly property int header_icon_size: Constants.is_tablet ? Math.min(Screen.height / 5, 240) : huge_icon_size
 	readonly property int high_contrast_item_border: 0
 	readonly property int huge_icon_size: 160
 	readonly property int icon_size: 48
@@ -33,4 +34,5 @@ BrandDimensions {
 	readonly property int tutorial_component_spacing: 40
 	readonly property int tutorial_header_font_size: 26
 	readonly property int tutorial_title_font_size: 60
+	readonly property int workflow_progress_indicator_size: 1.5 * header_icon_size
 }

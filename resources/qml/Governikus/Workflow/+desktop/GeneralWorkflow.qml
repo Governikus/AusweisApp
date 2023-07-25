@@ -19,6 +19,7 @@ SectionPage {
 	property bool isPinChange: false
 	property int waitingFor: 0
 
+	signal deviceUnpaired(var pDeviceName)
 	signal settingsRequested
 
 	onWaitingForChanged: if (visible)
@@ -33,8 +34,7 @@ SectionPage {
 	}
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
-			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
-			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName));
+			deviceUnpaired(pDeviceName);
 		}
 
 		target: RemoteServiceModel

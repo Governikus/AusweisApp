@@ -207,11 +207,22 @@ public class MainActivity extends QtActivity
 	}
 
 
+	private void convertChromeOsIntent(Intent pIntent)
+	{
+		if (pIntent != null && pIntent.getAction().equals("org.chromium.arc.intent.action.VIEW"))
+		{
+			LogHandler.getLogger().info("Convert Intent action " + pIntent.getAction() + " to " + Intent.ACTION_VIEW);
+			pIntent.setAction(Intent.ACTION_VIEW);
+		}
+	}
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		setTheme(R.style.AppTheme);
 
+		convertChromeOsIntent(getIntent());
 		LogHandler.getLogger().info("onCreate: " + getIntent());
 		super.onCreate(savedInstanceState);
 
@@ -256,6 +267,7 @@ public class MainActivity extends QtActivity
 	@Override
 	protected void onNewIntent(Intent newIntent)
 	{
+		convertChromeOsIntent(newIntent);
 		cIntent = newIntent;
 		setIntent(newIntent);
 		LogHandler.getLogger().info("onNewIntent: " + newIntent);

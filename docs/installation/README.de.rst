@@ -173,8 +173,8 @@ dargestellt:
     <false/>
     <key>remindToClose</key>
     <false/>
-    <key>showSetupAssistant</key>
-    <false/>
+    <key>uiStartupModule</key>
+    <string>DEFAULT</string>
     <key>transportPinReminder</key>
     <false/>
     <key>customProxyType</key>
@@ -183,8 +183,6 @@ dargestellt:
     <string>proxy.example.org</string>
     <key>customProxyPort</key>
     <integer>1337</integer>
-    <key>autoUpdateCheck</key>
-    <false/>
     <key>keylessPassword</key>
     <true/>
     <key>shuffleScreenKeyboard</key>
@@ -209,12 +207,11 @@ macOS                   Windows
 ======================= =======================
 autoCloseWindow         AUTOHIDE
 remindToClose           REMINDTOCLOSE
-showSetupAssistant      ASSISTANT
+uiStartupModule         ASSISTANT
 transportPinReminder    TRANSPORTPINREMINDER
 customProxyType         CUSTOMPROXYTYPE
 customProxyPort         CUSTOMPROXYPORT
 customProxyHost         CUSTOMPROXYHOST
-autoUpdateCheck         UPDATECHECK
 keylessPassword         ONSCREENKEYBOARD
 shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
 visualPrivacy           SECURESCREENKEYBOARD

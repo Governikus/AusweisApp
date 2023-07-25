@@ -1,0 +1,119 @@
+From 26cac8dada39c83cfcebd8b0bbcacf92f1ce9e9f Mon Sep 17 00:00:00 2001
+From: Sami Shalayel <sami.shalayel@qt.io>
+Date: Mon, 17 Apr 2023 18:03:09 +0200
+Subject: QQuickItem: item stays pressed after DoubleClicks
+
+Amends 72651a50f83aa72998822312c7b5c6235d28978f.
+This commit decided to ignore double clicks in the virtual
+QQuickItem::mouseDoubleClickEvent().
+If a subclass inheriting from QQuickItem wants to not ignore
+a double click, it should override mouseDoubleClickEvent()
+and handle the double click event accordingly.
+
+Fix QQuickMouseArea::mouseDoubleClickEvent(QMouseEvent *event) to *not*
+call the base implementation in QQuickItem after handling a double
+click, because QQuickItem sets that double-click MouseEvent back to
+the ignored state.
+
+This was leading to weird behavior on platforms with touch
+screens like Android or IOS where buttons "got stuck" after
+a double click.
+
+Fixes: QTBUG-112434
+Fixes: QTBUG-109393
+Pick-to: 6.5
+Change-Id: I774189fbcb356b07336f35f053e05a12c34ce602
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+(cherry picked from commit d7fac6923a6d4e4ac7dc22458256366968acbdb3)
+---
+ src/quick/items/qquickmousearea.cpp           |  5 ++++
+ .../data/doubleClickInMouseArea.qml           | 23 +++++++++++++++++++
+ .../tst_mousearea_interop.cpp                 | 21 +++++++++++++++++
+ 3 files changed, 49 insertions(+)
+ create mode 100644 tests/auto/quick/pointerhandlers/mousearea_interop/data/doubleClickInMouseArea.qml
+
+diff --git x/qtdeclarative/src/quick/items/qquickmousearea.cpp y/qtdeclarative/src/quick/items/qquickmousearea.cpp
+index 75b67d01e3..db338c7ae5 100644
+--- x/qtdeclarative/src/quick/items/qquickmousearea.cpp
++++ y/qtdeclarative/src/quick/items/qquickmousearea.cpp
+@@ -795,6 +795,11 @@ void QQuickMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
+             d->propagate(&me, QQuickMouseAreaPrivate::DoubleClick);
+         if (d->pressed)
+             d->doubleClick = d->isDoubleClickConnected() || me.isAccepted();
++
++        // do not call the base implementation if the event is accepted
++        // because it will revert the event back to ignored state
++        if (me.isAccepted())
++            return;
+     }
+     QQuickItem::mouseDoubleClickEvent(event);
+ }
+diff --git x/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/data/doubleClickInMouseArea.qml y/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/data/doubleClickInMouseArea.qml
+new file mode 100644
+index 0000000000..e43a2f3160
+--- /dev/null
++++ y/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/data/doubleClickInMouseArea.qml
+@@ -0,0 +1,23 @@
++import QtQuick
++import QtQuick.Controls
++import QtQuick.Window
++
++Rectangle {
++    width: 200; height: 200
++    color: mouseArea.pressed ? "red" : "orange"
++
++    Popup {
++        visible: true
++        closePolicy: Popup.NoAutoClose
++        width: 100
++        height: 100
++        contentItem: MouseArea {
++            id: mouseArea
++
++            anchors.fill: parent
++        }
++        background: Rectangle {
++            color: "green"
++        }
++    }
++}
+diff --git x/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/tst_mousearea_interop.cpp y/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/tst_mousearea_interop.cpp
+index c4059a1fbd..bc0dfbc736 100644
+--- x/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/tst_mousearea_interop.cpp
++++ y/qtdeclarative/tests/auto/quick/pointerhandlers/mousearea_interop/tst_mousearea_interop.cpp
+@@ -31,6 +31,7 @@ private slots:
+     void dragHandlerInSiblingStealingGrabFromMouseAreaViaTouch();
+     void hoverHandlerDoesntHoverOnPress();
+     void doubleClickInMouseAreaWithDragHandlerInGrandparent();
++    void doubleClickInMouseArea();
+ 
+ private:
+     void createView(QScopedPointer<QQuickView> &window, const char *fileName);
+@@ -203,6 +204,26 @@ void tst_MouseAreaInterop::doubleClickInMouseAreaWithDragHandlerInGrandparent()
+     QCOMPARE(dragActiveSpy.count(), 0);
+ }
+ 
++void tst_MouseAreaInterop::doubleClickInMouseArea()
++{
++    QQuickView window;
++    QVERIFY(QQuickTest::showView(window, testFileUrl("doubleClickInMouseArea.qml")));
++
++    auto *ma = window.rootObject()->findChild<QQuickMouseArea *>();
++    QVERIFY(ma);
++    QSignalSpy doubleClickSpy(ma, &QQuickMouseArea::doubleClicked);
++    QSignalSpy longPressSpy(ma, &QQuickMouseArea::pressAndHold);
++    QPoint p = ma->mapToScene(ma->boundingRect().center()).toPoint();
++
++    // check with normal double click
++    QTest::mouseDClick(&window, Qt::LeftButton, Qt::NoModifier, p);
++    QCOMPARE(doubleClickSpy.count(), 1);
++
++    // wait enough time for a wrong long press to happen
++    QTest::qWait(QGuiApplication::styleHints()->mousePressAndHoldInterval() + 10);
++    QCOMPARE(longPressSpy.count(), 0);
++}
++
+ QTEST_MAIN(tst_MouseAreaInterop)
+ 
+ #include "tst_mousearea_interop.moc"

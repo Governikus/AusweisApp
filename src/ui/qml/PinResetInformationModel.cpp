@@ -4,9 +4,12 @@
 
 #include "PinResetInformationModel.h"
 
+#include "LanguageLoader.h"
 #include "ProviderConfiguration.h"
 
+
 using namespace governikus;
+
 
 PinResetInformationModel::PinResetInformationModel()
 	: QObject()
@@ -25,6 +28,11 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 	if (homepage.isEmpty())
 	{
 		return tr("https://www.personalausweisportal.de/EN");
+	}
+
+	if (LanguageLoader::getLocaleCode() != QStringLiteral("de"))
+	{
+		return homepage + QStringLiteral("/en");
 	}
 
 	return homepage;

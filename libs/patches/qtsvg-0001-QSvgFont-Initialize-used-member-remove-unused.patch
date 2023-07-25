@@ -1,0 +1,56 @@
+From c3b8e687ca723262f15f31b181a3e5db847afb68 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Robert=20L=C3=B6hning?= <robert.loehning@qt.io>
+Date: Mon, 24 Apr 2023 15:27:17 +0200
+Subject: QSvgFont: Initialize used member, remove unused
+
+Credit to OSS-Fuzz
+
+[ChangeLog][QtSvg] Fixed undefined behavior from using uninitialized
+variable.
+
+Pick-to: 6.5 6.2 5.15
+Coverity-Id: 22618
+Change-Id: Id52277bb0e2845f4d342e187dbb8093e9276b70c
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+(cherry picked from commit ff22c3ccf8ccf813fdcfda23f7740ba73ba5ce0a)
+---
+ src/svg/qsvgfont_p.h    | 5 ++---
+ src/svg/qsvghandler.cpp | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git x/qtsvg/src/svg/qsvgfont_p.h y/qtsvg/src/svg/qsvgfont_p.h
+index a7cc98b..9cf3dfe 100644
+--- x/qtsvg/src/svg/qsvgfont_p.h
++++ y/qtsvg/src/svg/qsvgfont_p.h
+@@ -38,6 +38,7 @@ public:
+ class Q_SVG_PRIVATE_EXPORT QSvgFont : public QSvgRefCounted
+ {
+ public:
++    static constexpr qreal DEFAULT_UNITS_PER_EM = 1000;
+     QSvgFont(qreal horizAdvX);
+ 
+     void setFamilyName(const QString &name);
+@@ -50,9 +51,7 @@ public:
+     void draw(QPainter *p, const QPointF &point, const QString &str, qreal pixelSize, Qt::Alignment alignment) const;
+ public:
+     QString m_familyName;
+-    qreal m_unitsPerEm;
+-    qreal m_ascent;
+-    qreal m_descent;
++    qreal m_unitsPerEm = DEFAULT_UNITS_PER_EM;
+     qreal m_horizAdvX;
+     QHash<QChar, QSvgGlyph> m_glyphs;
+ };
+diff --git x/qtsvg/src/svg/qsvghandler.cpp y/qtsvg/src/svg/qsvghandler.cpp
+index e88e83b..1e2b2fc 100644
+--- x/qtsvg/src/svg/qsvghandler.cpp
++++ y/qtsvg/src/svg/qsvghandler.cpp
+@@ -2622,7 +2622,7 @@ static bool parseFontFaceNode(QSvgStyleProperty *parent,
+ 
+     qreal unitsPerEm = toDouble(unitsPerEmStr);
+     if (!unitsPerEm)
+-        unitsPerEm = 1000;
++        unitsPerEm = QSvgFont::DEFAULT_UNITS_PER_EM;
+ 
+     if (!name.isEmpty())
+         font->setFamilyName(name);

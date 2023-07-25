@@ -33,6 +33,7 @@ class ServerMessageHandlerImpl
 	private:
 		const QSharedPointer<IfdDispatcherServer> mDispatcher;
 		QVector<ReaderManagerPlugInType> mAllowedPlugInTypes;
+		QVector<ReaderManagerPlugInType> mAllowedCardTypes;
 		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
 		[[nodiscard]] QString slotHandleForReaderName(const QString& pReaderName) const;
@@ -54,10 +55,11 @@ class ServerMessageHandlerImpl
 
 	public:
 		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
-				const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes = Enum<ReaderManagerPlugInType>::getList());
+				const QVector<ReaderManagerPlugInType>& pAllowedTypes = Enum<ReaderManagerPlugInType>::getList());
 
 		void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
 		void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;
+		void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) override;
 };
 
 

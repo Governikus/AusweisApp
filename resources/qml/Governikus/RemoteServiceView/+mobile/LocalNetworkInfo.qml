@@ -13,7 +13,7 @@ Column {
 	GText {
 		horizontalAlignment: Text.AlignHCenter
 		//: INFO IOS Let user know to check the application settings for local network permission
-		text: qsTr("To be able to use your smartphone as card reader (SaC), please make sure that access to the local network is allowed.")
+		text: qsTr("Ensure that access to the local network is allowed in your settings.")
 		textStyle: Style.text.normal_secondary
 		width: parent.width
 	}

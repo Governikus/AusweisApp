@@ -44,6 +44,7 @@ class TlsServer
 		void setPsk(const QByteArray& pPsk);
 		void stopListening();
 		virtual bool startListening(quint16 pPort) = 0;
+		[[nodiscard]] bool hasPsk() const;
 
 	Q_SIGNALS:
 		void fireNewConnection(QTcpSocket* pSocket);

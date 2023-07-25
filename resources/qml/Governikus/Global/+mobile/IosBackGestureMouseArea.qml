@@ -18,7 +18,7 @@ MouseArea {
 	enabled: visible
 	preventStealing: enabled
 
-	onPositionChanged: {
+	onPositionChanged: mouse => {
 		let currentVelocity = mouse.x - previousPosX;
 		velocity = (velocity + currentVelocity) / 2.0;
 		previousPosX = mouse.x;
@@ -33,7 +33,7 @@ MouseArea {
 			mouse.accepted = false;
 		}
 	}
-	onReleased: {
+	onReleased: mouse => {
 		let swipeDistance = mouse.x - startPosX;
 		if (swipeDistance > minSwipeDistance && velocity > minVelocity) {
 			backGestureTriggered();

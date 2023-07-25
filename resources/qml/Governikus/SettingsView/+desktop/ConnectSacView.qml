@@ -110,8 +110,7 @@ SectionPage {
 				pairingFailedView.errorMessage = pErrorMessage;
 				d.view = ConnectSacView.SubView.PairingFailed;
 			}
-			function onFirePairingSuccess(pDeviceName) {
-				ApplicationModel.showFeedback(qsTr("The device \"%1\" has been paired.").arg(pDeviceName));
+			function onFirePairingSuccess() {
 				root.closeView();
 			}
 

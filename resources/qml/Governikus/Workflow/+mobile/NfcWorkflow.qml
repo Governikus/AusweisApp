@@ -8,10 +8,12 @@ import Governikus.TechnologyInfo 1.0
 import Governikus.Type.ApplicationModel 1.0
 import Governikus.Type.ReaderPlugIn 1.0
 import Governikus.Type.NumberModel 1.0
+import Governikus.Type.RemoteServiceModel 1.0
 
 Item {
 	id: baseItem
 
+	readonly property bool isRemoteWorkflow: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_REMOTE_SERVICE
 	readonly property int nfcState: visible ? ApplicationModel.nfcState : ApplicationModel.NFC_UNAVAILABLE
 
 	signal startScanIfNecessary
@@ -22,7 +24,6 @@ Item {
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.top: parent.top
-		height: baseItem.height / 2
 		state: nfcState === ApplicationModel.NFC_READY ? "on" : "off"
 	}
 	TechnologyInfo {
@@ -52,9 +53,9 @@ Item {
 				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
 				qsTr("Please enable NFC in your system settings.");
 			case ApplicationModel.NFC_INACTIVE:
-				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+				//: INFO ANDROID IOS NFC is available and enabled but needs to be started.
 				return qsTr("NFC scan is not running.") + "<br/>" +
-				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+				//: INFO ANDROID IOS NFC is available and enabled but needs to be started.
 				qsTr("Please start the NFC scan.");
 			default:
 				return "";
@@ -76,6 +77,10 @@ Item {
 			}
 		}
 		titleText: {
+			if (isRemoteWorkflow && RemoteServiceModel.connectedClientName !== "") {
+				//: INFO ANDROID IOS %1 will be replaced with the name of the device.
+				return qsTr("The device \"%1\" wants to use this smartphone as card reader and connect to your id card.").arg(RemoteServiceModel.connectedClientName);
+			}
 			switch (nfcState) {
 			case ApplicationModel.NFC_UNAVAILABLE:
 				//: INFO ANDROID IOS

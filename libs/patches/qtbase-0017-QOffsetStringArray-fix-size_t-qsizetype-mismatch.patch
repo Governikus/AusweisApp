@@ -1,0 +1,31 @@
+From 72533c561d6952e63f86f11d9e4f0c6ffe8ed5a1 Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Mon, 5 Sep 2022 08:59:23 +0200
+Subject: QOffsetStringArray: fix size_t/qsizetype mismatch
+
+The sizeof operator returns, and both minifyValue and makeStaticString
+accept, size_t. Don't funnel it through a qsizetype variable, then,
+but maintain it as a size_t all the way.
+
+Pick-to: 6.4 6.3 6.2
+Task-number: QTBUG-103533
+Change-Id: I05c6a6c5da3d02daabbf1d25a15531c6f44a80ce
+Reviewed-by: Sona Kurazyan <sona.kurazyan@qt.io>
+(cherry picked from commit 8932eee9a652d8a325410b147955c9939278f9ed)
+---
+ src/corelib/tools/qoffsetstringarray_p.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtbase/src/corelib/tools/qoffsetstringarray_p.h y/qtbase/src/corelib/tools/qoffsetstringarray_p.h
+index 68afef57d5..fbe714aca6 100644
+--- x/qtbase/src/corelib/tools/qoffsetstringarray_p.h
++++ y/qtbase/src/corelib/tools/qoffsetstringarray_p.h
+@@ -119,7 +119,7 @@ template <typename StringExtractor, typename... T>
+ constexpr auto makeOffsetStringArray(StringExtractor extractString, const T &... entries)
+ {
+     constexpr size_t Count = sizeof...(T);
+-    constexpr qsizetype StringLength = (sizeof(extractString(T{})) + ...);
++    constexpr size_t StringLength = (sizeof(extractString(T{})) + ...);
+     using MinifiedOffsetType = decltype(QtPrivate::minifyValue<StringLength>());
+ 
+     size_t offset = 0;

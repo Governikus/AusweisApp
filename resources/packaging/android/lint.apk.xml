@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Class is not registered in the manifest.
-
-        Activities, services and content providers should be registered in the
-        AndroidManifest.xml file using <activity>, <service> and <provider> tags.
-
-        If your activity is simply a parent class intended to be subclassed
-        by other "real" activities, make it an abstract class.
-
-        We can not make the classes abstract, because Qt provides
-        it and it should be possible to use it without subclassing.
-    -->
-    <issue id="Registered">
-        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java" />
-        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtService.java" />
-    </issue>
-
     <!-- Obsolete Gradle Dependency.
 
         The used version is provided by Qt in the build.gradle. Its not
@@ -27,48 +11,15 @@
         <ignore path="build.gradle" />
     </issue>
 
-    <!-- Obsolete custom lint check
-
-        Lint can be extended with custom checks: additional checks implemented by developers and libraries to for example
-        enforce specific API usages required by a library or a company coding style guideline.
-        The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working,
-        or provide wrong results.
-        This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated
-        to run in the current lint environment.
-        It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer
-        version of lint (or Android Studio or Gradle plugin etc) to work with these checks.
-    -->
-    <issue id="ObsoleteLintCustomCheck">
-        <ignore path="**/appcompat-1.**/**/lint.jar" />
-    </issue>
-
     <!-- Unused resources.
 
         Unused resources make applications larger and slow down builds.
 
-        https://bugreports.qt.io/browse/QTBUG-72976
-
         Qt includes some resources like strings, which are seen by lint to be unused.
     -->
     <issue id="UnusedResources">
-        <ignore path="**/dist/src/android/java/res/layout/splash.xml" />
         <ignore path="**/libs.xml" />
         <ignore path="**/strings.xml" />
-    </issue>
-
-    <!-- Unused Exported service does not require permission.
-
-         Exported services (services which either set exported=true or contain
-         an intent-filter and do not specify exported=false) should define a
-         permission that an entity must have in order to launch the service or
-         bind to it. Without this, any application can use this service.
-
-         We decided to ignore this warning because we do not want to limit the
-         access to the service. Any application should be able to use the
-         service without additional barriers.
-    -->
-    <issue id="ExportedService">
-        <ignore path="AndroidManifest.xml" />
     </issue>
 
     <!-- Activity is set to be non resizeable
@@ -80,37 +31,6 @@
         We can ignore it as the AusweisApp2 still doesn't properly support multi-window environments.
     -->
     <issue id="NonResizeableActivity">
-        <ignore path="AndroidManifest.xml" />
-    </issue>
-
-    <!-- Missing registered class
-
-        If a class is referenced in the manifest or in a layout file, it must also exist in the project (or in one of
-        the libraries included by the project. This check helps uncover typos in registration names, or attempts to
-        rename or move classes without updating the XML references properly.
-
-        Somehow android lint isn't able to find the classes like the MainActivity, when checking the app.
-        We can just ignore it for now, as it will be pretty obvious, if the MainActivity is missing and nothing is shown.
-    -->
-    <issue id="MissingClass">
-        <ignore path="AndroidManifest.xml" />
-    </issue>
-
-    <!-- Missing data extraction rules
-
-        The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in
-        future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml`
-        resource which configures cloud backups and device transfers on Android 12 and higher.
-        Before Android 12, the attributes `android:allowBackup` and `android:fullBackupContent` were used
-        to configure all orms of backup, including cloud backups, device-to-device transfers and adb backup.
-
-        In Android 12 and higher, these attributes have been deprecated and will only apply to cloud backups.
-        You should instead use the attribute `android:dataExtractionRules`, specifying an `@xml` resource that
-        configures which files to back up, for cloud backups and for device-to-device transfers, separately.
-        If your `minSdkVersion` supports older versions, you'll still want to specify an
-        `android:fullBackupContent` resource if the default behavior is not right for your app.
-    -->
-    <issue id="DataExtractionRules">
         <ignore path="AndroidManifest.xml" />
     </issue>
 
@@ -147,13 +67,5 @@
     -->
     <issue id="DiscouragedApi">
         <ignore path="**/QtLoader.java" />
-    </issue>
-
-    <!-- Unused attribute
-
-        We are setting some flags that are only available in later api version, which get flagged by lint as unused.
-    -->
-    <issue id="UnusedAttribute">
-        <ignore path="AndroidManifest.xml" />
     </issue>
 </lint>

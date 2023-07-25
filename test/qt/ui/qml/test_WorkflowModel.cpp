@@ -8,12 +8,16 @@
 
 #include "WorkflowModel.h"
 
+#include "Env.h"
 #include "MockCardConnectionWorker.h"
+#include "MockReaderManagerPlugIn.h"
+#include "ReaderManager.h"
 #include "TestWorkflowContext.h"
 
 #include <QDebug>
 #include <QtTest>
 
+Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
 using namespace governikus;
 
@@ -106,6 +110,46 @@ class test_WorkflowModel
 		void test_isSmartCardAllowed()
 		{
 			QVERIFY(true);
+		}
+
+
+		void test_startScanExplicitly()
+		{
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->isScanRunning(); // just to wait until initialization finished
+
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
+
+			WorkflowModel model;
+			model.resetWorkflowContext(context);
+
+			model.startScanExplicitly();
+			QTRY_COMPARE(spy.count(), 1);
+			QCOMPARE(spy.takeFirst().at(0).toBool(), true);
+		}
+
+
+		void test_hasCard()
+		{
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->init();
+			readerManager->isScanRunning(); // just to wait until initialization finished
+
+			WorkflowModel model;
+			QCOMPARE(model.hasCard(), false);
+
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			model.resetWorkflowContext(context);
+			QCOMPARE(model.hasCard(), false);
+
+			auto mockReader = MockReaderManagerPlugIn::getInstance().addReader("SomeReaderWithCard");
+			auto info = mockReader->getReaderInfo();
+			info.setCardInfo(CardInfo(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false, false));
+			mockReader->setReaderInfo(info);
+			model.setReaderPlugInType(ReaderManagerPlugInType::MOCK);
+			QCOMPARE(model.hasCard(), true);
 		}
 
 

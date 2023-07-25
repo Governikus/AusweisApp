@@ -5,6 +5,8 @@ Mit der Version 1.28.0 der AusweisApp2 wird die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 
 - macOS Catalina 10.15
+- Android 7
+- iOS 13
 - Online-Hilfe
 - PDF-Export-Funktion der Selbstauskunft
 

@@ -160,7 +160,8 @@ void ConnectRequest::onError(QAbstractSocket::SocketError pError)
 	qCWarning(ifd) << "Connection error:" << pError;
 
 	mTimer.stop();
-	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError)
+	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError
+			|| pError == QAbstractSocket::SocketError::SslHandshakeFailedError)
 	{
 		Q_EMIT fireConnectionError(mIfdDescriptor, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
 	}

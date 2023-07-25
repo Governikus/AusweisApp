@@ -11,13 +11,15 @@
 #include "AppSettings.h"
 #include "asn1/AccessRoleAndRight.h"
 #include "asn1/CVCertificate.h"
+#include "context/AuthContext.h"
+#include "context/IfdServiceContext.h"
 #include "context/SelfAuthContext.h"
 
 using namespace governikus;
 
 ChatModel::ChatModel()
 	: QAbstractListModel()
-	, mAuthContext()
+	, mContext()
 	, mAllRights()
 	, mOptionalRights()
 	, mSelectedRights()
@@ -49,9 +51,9 @@ void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemMode
 }
 
 
-void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
+void ChatModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 {
-	mAuthContext = pContext;
+	mContext = pContext;
 
 	beginResetModel();
 
@@ -61,9 +63,13 @@ void ChatModel::resetContext(const QSharedPointer<AuthContext>& pContext)
 
 	endResetModel();
 
-	if (!pContext.isNull())
+	if (auto authContext = pContext.objectCast<AuthContext>())
 	{
-		connect(pContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &ChatModel::onAuthenticationDataChanged);
+		connect(authContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &ChatModel::onAuthenticationDataChanged);
+	}
+	else if (auto ifdContext = pContext.objectCast<IfdServiceContext>())
+	{
+		connect(ifdContext.data(), &IfdServiceContext::fireAccessRightManagerCreated, this, &ChatModel::onAuthenticationDataChanged);
 	}
 }
 
@@ -113,32 +119,41 @@ int ChatModel::rowCount(const QModelIndex&) const
 
 QVariant ChatModel::data(const QModelIndex& pIndex, int pRole) const
 {
-	if (pIndex.isValid() && pIndex.row() < rowCount())
+	if (!pIndex.isValid() || pIndex.row() >= rowCount())
 	{
-		auto right = mAllRights.at(pIndex.row());
-		if (pRole == Qt::DisplayRole || pRole == NAME_ROLE)
+		return QVariant();
+	}
+
+	const auto& right = mAllRights.at(pIndex.row());
+	switch (pRole)
+	{
+		case Qt::DisplayRole:
+		case NAME_ROLE:
 		{
 			QString displayText = AccessRoleAndRightsUtil::toDisplayText(right);
 			if (right == AccessRight::AGE_VERIFICATION)
 			{
-				displayText += QStringLiteral(" (%1)").arg(mAuthContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge());
+				if (auto authContext = mContext.objectCast<AuthContext>())
+				{
+					displayText += QStringLiteral(" (%1)").arg(authContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge());
+				}
 			}
 			return displayText;
 		}
-		if (pRole == OPTIONAL_ROLE)
-		{
+
+		case OPTIONAL_ROLE:
 			return mOptionalRights.contains(right);
-		}
-		if (pRole == SELECTED_ROLE)
-		{
+
+		case SELECTED_ROLE:
 			return mSelectedRights.contains(right);
-		}
-		if (pRole == WRITE_RIGHT)
-		{
+
+		case WRITE_RIGHT:
 			return AccessRoleAndRightsUtil::isWriteAccessRight(right);
-		}
+
+		default:
+			Q_UNREACHABLE();
+			return QVariant();
 	}
-	return QVariant();
 }
 
 
@@ -185,9 +200,11 @@ bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int p
 
 void ChatModel::transferAccessRights()
 {
-	Q_ASSERT(mAuthContext->getAccessRightManager());
-
-	*mAuthContext->getAccessRightManager() = mSelectedRights;
+	if (auto authContext = mContext.objectCast<AuthContext>())
+	{
+		Q_ASSERT(authContext->getAccessRightManager());
+		*authContext->getAccessRightManager() = mSelectedRights;
+	}
 }
 
 

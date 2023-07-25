@@ -48,6 +48,12 @@ void TlsServer::stopListening()
 }
 
 
+bool TlsServer::hasPsk() const
+{
+	return !mPsk.isEmpty();
+}
+
+
 void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 {
 	if (mSocket.isNull())

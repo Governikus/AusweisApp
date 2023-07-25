@@ -407,6 +407,8 @@ void UIPlugInQml::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
 	if (auto remoteServiceContext = pContext.objectCast<IfdServiceContext>())
 	{
 		Env::getSingleton<RemoteServiceModel>()->resetRemoteServiceContext(remoteServiceContext);
+		Env::getSingleton<ChatModel>()->resetContext(remoteServiceContext);
+		Env::getSingleton<CertificateDescriptionModel>()->resetContext(remoteServiceContext);
 	}
 }
 
@@ -456,6 +458,8 @@ void UIPlugInQml::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
 	if (pContext.objectCast<IfdServiceContext>())
 	{
 		Env::getSingleton<RemoteServiceModel>()->resetRemoteServiceContext();
+		Env::getSingleton<ChatModel>()->resetContext();
+		Env::getSingleton<CertificateDescriptionModel>()->resetContext();
 	}
 
 #if __has_include("context/PersonalizationContext.h")

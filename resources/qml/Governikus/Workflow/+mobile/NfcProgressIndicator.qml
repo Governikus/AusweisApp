@@ -14,6 +14,8 @@ Item {
 	property var cardPosition: null
 	property bool startPositionLeft: true
 
+	height: Style.dimens.workflow_progress_indicator_size
+
 	states: [
 		State {
 			name: "off"
@@ -156,9 +158,9 @@ Item {
 		anchors.centerIn: parent
 		clip: true
 		desaturate: true
-		height: Math.ceil(parent.height * 0.25) * 2
 		opacity: tintEnabled ? 0.7 : 1.0
 		source: "qrc:///images/mobile/phone_nfc.svg"
+		sourceSize.height: Style.dimens.header_icon_size
 		z: 0
 
 		Image {

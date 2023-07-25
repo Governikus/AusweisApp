@@ -110,10 +110,11 @@ void RemoteTlsServer::onEncrypted()
 	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
 	if (pairingCiphers.contains(cfg.sessionCipher()))
 	{
-		qCDebug(ifd) << "Pairing completed | Add certificate:" << cfg.peerCertificate();
-		settings.addTrustedCertificate(cfg.peerCertificate());
+		const auto& sslCertificate = cfg.peerCertificate();
+		qCDebug(ifd) << "Pairing completed | Add certificate:" << sslCertificate;
+		settings.addTrustedCertificate(sslCertificate);
 		setPairing(false);
-		Q_EMIT firePairingCompleted();
+		Q_EMIT firePairingCompleted(sslCertificate);
 	}
 	else
 	{

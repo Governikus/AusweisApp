@@ -2,7 +2,7 @@
 # So this file will be called two times and the check needs to respect that
 # with a "VALIDATOR function" or "if(NOT VARIABLE)".
 
-if(NOT QMLFORMAT)
+if(NOT TARGET format.qml)
 	set(QMLFORMAT_MIN_VERSION 6)
 	function(qmlformat_validator validator_result binary)
 		execute_process(COMMAND ${binary} --version OUTPUT_VARIABLE QMLFORMAT_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)

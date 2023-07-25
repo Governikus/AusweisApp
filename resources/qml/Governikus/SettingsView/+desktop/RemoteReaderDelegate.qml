@@ -50,12 +50,7 @@ Item {
 			}
 			GText {
 				id: subtext
-				text: {
-					if (!isPaired) {
-						return qsTr("Click to pair");
-					}
-					return remoteDeviceStatus;
-				}
+				text: remoteDeviceStatus
 				textStyle: Style.text.normal
 				width: parent.width
 			}
@@ -75,7 +70,7 @@ Item {
 				source: "qrc:///images/material_delete.svg"
 				sourceSize.height: iconHeight
 				tintColor: Style.color.accent
-				visible: isPaired
+				visible: isPaired && !isPairing
 
 				MouseArea {
 					id: trashMouse
@@ -99,7 +94,7 @@ Item {
 	MouseArea {
 		anchors.fill: parent
 		cursorShape: Qt.PointingHandCursor
-		visible: !isPaired
+		visible: !trashMouse.visible
 
 		onClicked: pairDevice(deviceId)
 	}

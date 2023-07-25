@@ -6,6 +6,7 @@
 
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
+#include "context/IfdServiceContext.h"
 #include "context/SelfAuthContext.h"
 
 #include "BuildHelper.h"
@@ -225,6 +226,10 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 	if (mContext.objectCast<AuthContext>())
 	{
 		return Workflow::WORKFLOW_AUTHENTICATION;
+	}
+	if (mContext.objectCast<IfdServiceContext>())
+	{
+		return Workflow::WORKFLOW_REMOTE_SERVICE;
 	}
 	return Workflow::WORKFLOW_NONE;
 }

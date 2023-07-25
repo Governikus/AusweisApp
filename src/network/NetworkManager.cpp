@@ -5,11 +5,8 @@
 #include "NetworkManager.h"
 
 #include "AppSettings.h"
-#include "NetworkReplyError.h"
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-	#include "NetworkReplyTimeout.h"
-#endif
 #include "LogHandler.h"
+#include "NetworkReplyError.h"
 #include "SecureStorage.h"
 #include "TlsChecker.h"
 #include "VersionInfo.h"
@@ -335,10 +332,6 @@ QSharedPointer<QNetworkReply> NetworkManager::trackConnection(QNetworkReply* pRe
 				--mOpenConnectionCount;
 			});
 		connect(this, &NetworkManager::fireShutdown, pResponse, &QNetworkReply::abort, Qt::QueuedConnection);
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-		NetworkReplyTimeout::setTimeout(this, pResponse, 30000);
-#endif
 	}
 
 	return QSharedPointer<QNetworkReply>(pResponse, &QObject::deleteLater);

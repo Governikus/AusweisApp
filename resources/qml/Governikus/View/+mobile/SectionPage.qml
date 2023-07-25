@@ -25,7 +25,6 @@ Controller {
 	property color titleBarColor: Style.color.accent
 	property real titleBarOpacity: 1
 	property bool titleBarVisible: true
-	readonly property bool topLevelPage: StackView.index === 0
 
 	signal reset
 

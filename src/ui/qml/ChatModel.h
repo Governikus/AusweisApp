@@ -15,7 +15,8 @@
 #include <QSortFilterProxyModel>
 
 #include "Env.h"
-#include "context/AuthContext.h"
+#include "context/AccessRightManager.h"
+#include "context/WorkflowContext.h"
 
 class test_ChatModel;
 
@@ -36,7 +37,7 @@ class ChatModel
 	Q_PROPERTY(QSortFilterProxyModel * write READ getFilterWriteModel CONSTANT)
 
 	private:
-		QSharedPointer<AuthContext> mAuthContext;
+		QSharedPointer<WorkflowContext> mContext;
 		QList<AccessRight> mAllRights;
 		QSet<AccessRight> mOptionalRights;
 		QSet<AccessRight> mSelectedRights;
@@ -63,7 +64,7 @@ class ChatModel
 		void onAuthenticationDataChanged(QSharedPointer<AccessRightManager> pAccessRightManager);
 
 	public:
-		void resetContext(const QSharedPointer<AuthContext>& pContext = QSharedPointer<AuthContext>());
+		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

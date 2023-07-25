@@ -81,13 +81,13 @@ void IfdStatus::parsePinPad(const QJsonObject& pMessageObject)
 }
 
 
-IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
+IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo, bool pPublishCard)
 	: IfdMessage(IfdMessageType::IFDStatus)
 	, mSlotName(pReaderInfo.getName())
 	, mHasPinPad(!pReaderInfo.isBasicReader())
 	, mMaxApduLength(pReaderInfo.getMaxApduLength())
 	, mConnectedReader(pReaderInfo.isValid())
-	, mCardAvailable(pReaderInfo.hasCard())
+	, mCardAvailable(pReaderInfo.hasCard() && pPublishCard)
 {
 	if (!mHasPinPad && pReaderInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
 	{

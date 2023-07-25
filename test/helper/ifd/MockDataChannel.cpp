@@ -10,8 +10,9 @@
 using namespace governikus;
 
 
-MockDataChannel::MockDataChannel()
-	: mId(QUuid::createUuid().toString())
+MockDataChannel::MockDataChannel(bool pPairing)
+	: mPairing(pPairing)
+	, mId(QUuid::createUuid().toString())
 	, mReceivedDataBlocks()
 {
 }
@@ -25,6 +26,12 @@ MockDataChannel::~MockDataChannel()
 void MockDataChannel::close()
 {
 	Q_EMIT fireClosed(GlobalStatus::Code::No_Error);
+}
+
+
+bool MockDataChannel::isPairingConnection() const
+{
+	return mPairing;
 }
 
 

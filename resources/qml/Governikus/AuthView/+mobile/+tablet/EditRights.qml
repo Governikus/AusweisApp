@@ -19,6 +19,8 @@ SectionPage {
 	property alias dataText: dataPasswordText.text
 	property var workflowModel: AuthModel
 
+	signal rightsAccepted
+
 	//: LABEL ANDROID_TABLET IOS_TABLET
 	title: qsTr("Identify")
 
@@ -80,10 +82,7 @@ SectionPage {
 							qsTr("PIN"))
 						tintIcon: true
 
-						onClicked: {
-							ChatModel.transferAccessRights();
-							workflowModel.continueWorkflow();
-						}
+						onClicked: rightsAccepted()
 
 						anchors {
 							right: parent.right

@@ -98,6 +98,12 @@ class RemoteWebSocketServerMock
 		}
 
 
+		[[nodiscard]] bool isPairingAnnounced() const override
+		{
+			return mPairing;
+		}
+
+
 		void setPairing(bool pEnabled = true) override
 		{
 			mPairing = pEnabled;
@@ -159,11 +165,11 @@ class test_RemoteIfdServer
 	private Q_SLOTS:
 		void init()
 		{
-			std::function<RemoteReaderAdvertiser* (const QString&, const QString&, quint16&)> creator = [this](const QString& pIfdName, const QString& pIfdId, quint16& pPort){
+			std::function<RemoteReaderAdvertiser* (const QString&, const QString&, quint16&, bool&)> creator = [this](const QString& pIfdName, const QString& pIfdId, quint16& pPort, bool&){
 						mAdvertiserMock = new RemoteReaderAdvertiserMock(pIfdName, pIfdId, pPort);
 						return mAdvertiserMock;
 					};
-			Env::setCreator<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&>(creator);
+			Env::setCreator<RemoteReaderAdvertiser*>(creator);
 			std::function<RemoteWebSocketServer* ()> creator2 = [this](){
 						mWebSocketMock = new RemoteWebSocketServerMock();
 						return mWebSocketMock;

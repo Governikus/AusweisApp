@@ -40,10 +40,12 @@ template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedP
 }
 
 
-ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel, const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes)
+ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
+		const QVector<ReaderManagerPlugInType>& pAllowedTypes)
 	: ServerMessageHandler()
 	, mDispatcher(Env::create<IfdDispatcherServer*>(pDataChannel), &QObject::deleteLater)
-	, mAllowedPlugInTypes(pAllowedPlugInTypes)
+	, mAllowedPlugInTypes(pAllowedTypes)
+	, mAllowedCardTypes(pAllowedTypes)
 	, mCardConnections()
 {
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireReceived, this, &ServerMessageHandlerImpl::onMessage);
@@ -216,6 +218,7 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 	if (!progressMessage.isNull())
 	{
 		cardConnection->setProgressMessage(progressMessage);
+		Q_EMIT fireDisplayTextChanged(progressMessage);
 	}
 
 	qCDebug(ifd) << "Transmit card APDU for" << slotHandle;
@@ -337,6 +340,12 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 }
 
 
+void ServerMessageHandlerImpl::setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes)
+{
+	mAllowedCardTypes = pAllowedCardTypes;
+}
+
+
 void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCardCommand> pCommand)
 {
 	auto transmitCommand = pCommand.staticCast<TransmitCommand>();
@@ -444,7 +453,7 @@ void ServerMessageHandlerImpl::onReaderChanged(const ReaderInfo& pInfo)
 		}
 	}
 
-	mDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo));
+	mDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo, mAllowedCardTypes.contains(pInfo.getPlugInType())));
 }
 
 

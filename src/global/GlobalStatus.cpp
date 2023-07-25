@@ -162,9 +162,9 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the ID card declined the certificates.
 			return tr("Authentication failed.");
 
-		case Code::Workflow_No_Extended_Length_Error:
-			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2 was not able to send the certificates to the card because the card reader does not support extended length.
-			return tr("Your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.").arg(QCoreApplication::applicationName());
+		case Code::Workflow_Wrong_Length_Error:
+			//: ERROR ALL_PLATFORMS A card command failed because the data length was wrong or the card reader does not support Extended Length.
+			return tr("The length of the data sent to the ID card was not accepted. Either the data is faulty or your card reader does not support Extended Length communication and cannot be used to read the ID card. Unfortunately, the %1 has no influence on this restriction.").arg(QCoreApplication::applicationName());
 
 		case Code::Workflow_Certificate_No_Description:
 			//: ERROR_MASKED ALL_PLATFORMS

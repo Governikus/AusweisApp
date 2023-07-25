@@ -24,9 +24,22 @@ using namespace governikus;
 MockIfdDispatcher::MockIfdDispatcher(DispatcherState pState)
 	: IfdDispatcherClient(IfdVersion::Version::v2, QSharedPointer<MockDataChannel>::create())
 	, mState(pState)
+	, mPairing(false)
 	, mId(QUuid::createUuid().toString())
 	, mContextHandle(QStringLiteral("#TestContext"))
 {
+}
+
+
+void MockIfdDispatcher::setPairingConnection(bool pPairing)
+{
+	mPairing = pPairing;
+}
+
+
+bool MockIfdDispatcher::isPairingConnection() const
+{
+	return mPairing;
 }
 
 

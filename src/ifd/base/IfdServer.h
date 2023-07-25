@@ -45,7 +45,7 @@ class IfdServer
 		void firePskChanged(const QByteArray& pPsk);
 		void fireConnectedChanged(bool pConnected);
 		void fireIsRunningChanged();
-		void firePairingCompleted();
+		void firePairingCompleted(const QSslCertificate& pCertificate);
 };
 
 } // namespace governikus

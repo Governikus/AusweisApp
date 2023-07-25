@@ -97,10 +97,14 @@ class test_StateEstablishPaceChannel
 			mAuthContext->setCardConnection(connection);
 			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 
+			QCOMPARE(mAuthContext->getProgressValue(), 0);
+			QCOMPARE(mAuthContext->getProgressMessage(), QString());
 			QTest::ignoreMessage(QtDebugMsg, "Establish connection using PACE_PIN");
 			mState->run();
 			QCOMPARE(mAuthContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PIN);
 			QCOMPARE(mState->mPasswordId, PacePasswordId::PACE_PIN);
+			QCOMPARE(mAuthContext->getProgressValue(), 0);
+			QCOMPARE(mAuthContext->getProgressMessage(), tr("The secure channel is opened"));
 		}
 
 

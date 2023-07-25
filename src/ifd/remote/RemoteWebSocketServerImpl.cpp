@@ -103,6 +103,12 @@ bool RemoteWebSocketServerImpl::isPairingConnection() const
 }
 
 
+bool RemoteWebSocketServerImpl::isPairingAnnounced() const
+{
+	return mRemoteTlsServer->hasPsk();
+}
+
+
 void RemoteWebSocketServerImpl::setPairing(bool pEnable)
 {
 	mRemoteTlsServer->setPairing(pEnable);

@@ -53,7 +53,7 @@ class RemoteReaderAdvertiserImpl
 
 	public:
 		~RemoteReaderAdvertiserImpl() override;
-		RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, int pTimerInterval = 1000, bool pPairing = false);
+		RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, bool pPairing = false, int pTimerInterval = 1000);
 
 		void setPairing(bool pEnabled) override;
 };

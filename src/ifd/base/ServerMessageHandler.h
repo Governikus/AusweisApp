@@ -35,9 +35,11 @@ class ServerMessageHandler
 
 		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput&) = 0;
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) = 0;
+		virtual void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) = 0;
 
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);
+		void fireDisplayTextChanged(const QString& pDisplayText);
 		void fireEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void fireModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void fireCardDisconnected(const QSharedPointer<CardConnection>& pConnection);

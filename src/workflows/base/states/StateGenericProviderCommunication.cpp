@@ -124,7 +124,7 @@ void StateGenericProviderCommunication::onSslErrors(const QList<QSslError>& pErr
 		}
 
 		const GlobalStatus& status = {GlobalStatus::Code::Network_Ssl_Establishment_Error, infoMap};
-		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Ssl_Error,
+		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Tls_Error,
 									{
 										{FailureCode::Info::Network_Error, mReply->errorString()},
 										{FailureCode::Info::Ssl_Errors, TlsChecker::sslErrorsToString(pErrors)},

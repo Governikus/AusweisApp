@@ -1,4 +1,4 @@
-From 8e011194bf8b4e4275f51f76b75a1b22e45e9564 Mon Sep 17 00:00:00 2001
+From 8353ce61f188109953e327b4bddf65c95e4baf92 Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Tue, 19 Jan 2021 17:07:51 +0100
 Subject: android shlib_variant
@@ -41,6 +41,3 @@ index 41ad9223e0..f804aeb11b 100644
      },
  
      ####################################################################
--- 
-2.35.1
-

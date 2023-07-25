@@ -25,6 +25,9 @@ class StateEnterPacePassword
 		explicit StateEnterPacePassword(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 
+	private Q_SLOTS:
+		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const;
+
 	public:
 		void onEntry(QEvent* pEvent) override;
 

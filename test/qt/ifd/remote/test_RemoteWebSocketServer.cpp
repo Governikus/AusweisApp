@@ -176,6 +176,7 @@ class test_RemoteWebSocketServer
 			PskHandler pskHandler(&client, mServer.data());
 			mServer->setPairing();
 			QVERIFY(mServer->listen(QStringLiteral("TestServer")));
+			QVERIFY(mServer->isPairingAnnounced());
 
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
@@ -279,6 +280,7 @@ class test_RemoteWebSocketServer
 			PskHandler pskHandler(&client, mServer.data());
 			mServer->setPairing();
 			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			QVERIFY(mServer->isPairingAnnounced());
 
 			QTRY_COMPARE(newConnectionSpy.count(), 1); // clazy:exclude=qstring-allocations
 			QTRY_COMPARE(serverConnectedSpy.count(), 1); // clazy:exclude=qstring-allocations

@@ -447,7 +447,7 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 
 bool GeneralSettings::isAutoUpdateAvailable() const
 {
-#if !defined(QT_NO_DEBUG) || defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if !defined(QT_NO_DEBUG) || defined(Q_OS_WIN)
 	return true;
 
 #else

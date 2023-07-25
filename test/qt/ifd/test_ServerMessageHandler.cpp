@@ -603,6 +603,82 @@ class test_ServerMessageHandler
 		}
 
 
+		void ifdTransmit_data()
+		{
+			QTest::addColumn<bool>("sendProgressMessage");
+
+			QTest::newRow("Send message") << true;
+			QTest::newRow("Don't send message") << false;
+		}
+
+
+		void ifdTransmit()
+		{
+			QFETCH(bool, sendProgressMessage);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			ServerMessageHandlerImpl serverMessageHandler(mDataChannel);
+			QString contextHandle;
+			ensureContext(contextHandle);
+
+			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
+
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			reader->setCard(MockCardConfig({
+						{CardReturnCode::OK, QByteArray("9000")}
+					}));
+			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
+			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			ReaderInfo info = reader->getReaderInfo();
+			info.setCardInfo(cardInfo);
+			reader->setReaderInfo(info);
+			QTRY_COMPARE(sendSpy.count(), 3); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+
+			const QByteArray ifdConnectMsg = IfdConnect(QStringLiteral("test-reader"), true).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdConnectMsg);
+
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+
+			const QList<QVariant>& connectResponseArguments = sendSpy.last();
+			const QVariant connectResponseVariant = connectResponseArguments.at(0);
+			QVERIFY(connectResponseVariant.canConvert<QByteArray>());
+
+			const IfdConnectResponse connectResponse(IfdMessage::parseByteArray(connectResponseVariant.toByteArray()));
+			QVERIFY(!connectResponse.isIncomplete());
+			QCOMPARE(connectResponse.getType(), IfdMessageType::IFDConnectResponse);
+			QCOMPARE(connectResponse.getContextHandle(), contextHandle);
+			QVERIFY(!connectResponse.getSlotHandle().isEmpty());
+
+			QVERIFY(!connectResponse.resultHasError());
+			QCOMPARE(connectResponse.getResultMinor(), ECardApiResult::Minor::null);
+
+			sendSpy.clear();
+
+			QSignalSpy displayTextSpy(&serverMessageHandler, &ServerMessageHandler::fireDisplayTextChanged);
+			// Card connected, try to provoke message.
+			const QByteArray ifdTransmitMsg = IfdTransmit(connectResponse.getSlotHandle(), QByteArray("ABCDEF"), sendProgressMessage ? QStringLiteral("DummyText") : QString()).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdTransmitMsg);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+
+			const QList<QVariant>& transmitResponseArguments = sendSpy.last();
+			const QVariant transmitResponseVariant = transmitResponseArguments.at(0);
+			QVERIFY(transmitResponseVariant.canConvert<QByteArray>());
+
+			const IfdTransmitResponse transmitResponse(IfdMessage::parseByteArray(transmitResponseVariant.toByteArray()));
+			QVERIFY(!transmitResponse.isIncomplete());
+			QCOMPARE(transmitResponse.getType(), IfdMessageType::IFDTransmitResponse);
+			QCOMPARE(transmitResponse.getContextHandle(), contextHandle);
+			QCOMPARE(transmitResponse.getSlotHandle(), connectResponse.getSlotHandle());
+			QVERIFY(!transmitResponse.resultHasError());
+			QCOMPARE(transmitResponse.getResultMinor(), ECardApiResult::Minor::null);
+			QCOMPARE(displayTextSpy.count(), sendProgressMessage ? 1 : 0);
+
+			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
+		}
+
+
 		void ifdEstablishPACEChannelWithBasicReaderNameSendsAL_Unknown_Error()
 		{
 			const bool pinpadModeToSave = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();

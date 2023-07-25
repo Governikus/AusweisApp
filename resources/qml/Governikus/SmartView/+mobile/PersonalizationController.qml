@@ -12,6 +12,7 @@ import Governikus.View 1.0
 import Governikus.WhiteListClient 1.0
 import Governikus.Workflow 1.0
 import Governikus.Type.ConnectivityManager 1.0
+import Governikus.Type.ChatModel 1.0
 import Governikus.Type.NumberModel 1.0
 import Governikus.Type.PasswordType 1.0
 import Governikus.Type.PersonalizationModel 1.0
@@ -269,6 +270,11 @@ Controller {
 			title: qsTr("Set up Smart-eID")
 			titleBarColor: Style.color.accent_smart
 			workflowModel: PersonalizationModel
+
+			onRightsAccepted: {
+				ChatModel.transferAccessRights();
+				PersonalizationModel.continueWorkflow();
+			}
 		}
 	}
 	Component {

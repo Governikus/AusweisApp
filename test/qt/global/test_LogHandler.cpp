@@ -447,6 +447,12 @@ class test_LogHandler
 			QTest::newRow("createSingleton") << QByteArray("T* governikus::Env::createSingleton() [with T = governikus::AppUpdater]")
 											 << QByteArray("Env::createSingleton");
 
+			QTest::newRow("createSingletonPtr") << QByteArray("T *governikus::Env::createSingleton() [T = governikus::NetworkManager]")
+												<< QByteArray("Env::createSingleton");
+
+			QTest::newRow("processUpdaterRequest") << QByteArray("auto governikus::NetworkManager::processUpdaterRequest(QNetworkRequest &, const std::function<QSharedPointer<QNetworkReply> (QNetworkRequest &)> &)::(anonymous class)::operator()() const")
+												   << QByteArray("NetworkManager::processUpdaterRequest");
+
 			QTest::newRow("printInfo") << QByteArray("void printInfo()")
 									   << QByteArray("printInfo");
 
@@ -466,6 +472,8 @@ class test_LogHandler
 			QTest::newRow("UILoader::load") << QByteArray("std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> governikus::UILoader::load() const [with T = governikus::UIPlugInJson; std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> = bool]")
 											<< QByteArray("UILoader::load");
 
+			QTest::newRow("anonymous") << QByteArray("virtual QList<QNetworkProxy> (anonymous namespace)::SystemProxyFactory::queryProxy(const QNetworkProxyQuery &)")
+									   << QByteArray("SystemProxyFactory::queryProxy");
 		}
 
 
@@ -478,6 +486,15 @@ class test_LogHandler
 			const auto& formattedFunction = handler->formatFunction(function.constData(), QByteArray(), 194);
 
 			QCOMPARE(formattedFunction, result);
+		}
+
+
+		void formatFunctionNullptr()
+		{
+			const auto* handler = Env::getSingleton<LogHandler>();
+			const auto& formattedFunction = handler->formatFunction(nullptr, QByteArray(), 1811);
+
+			QCOMPARE(formattedFunction, QByteArray());
 		}
 
 

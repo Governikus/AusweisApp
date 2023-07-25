@@ -32,17 +32,13 @@ TestCase {
 	}
 	function test_size(data) {
 		let button = createTemporaryQmlObject("import Governikus.Global 1.0; GButton {icon.source: \"" + data.icon + "\"; text: \"" + data.text + "\"}", testCase);
-		waitForRendering(button);
-		compare(button.height, data.height);
-		compare(button.width, data.width);
+		tryCompare(button, "height", data.height);
+		tryCompare(button, "width", data.width);
 	}
 	function test_size_data() {
-		if (Qt.platform.os !== "osx") {
-			skip();
-		}
 		let text = createTemporaryQmlObject("import Governikus.Global 1.0; import Governikus.Style 1.0; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
-		waitForRendering(text);
-		let longTextWidth = Math.round(text.width + 0.1);
+		verify(waitForRendering(text));
+		let longTextWidth = Math.ceil(text.width);
 		return [{
 				"tag": "noIconNoText",
 				"icon": "",
@@ -72,7 +68,7 @@ TestCase {
 				"icon": "qrc:///images/identify.svg",
 				"text": "t",
 				"height": Constants.is_desktop ? 39 : 40,
-				"width": Constants.is_desktop ? 59 : 112
+				"width": Constants.is_desktop ? (Qt.platform.os === "linux" ? 64 : 59) : 112
 			}, {
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/identify.svg",

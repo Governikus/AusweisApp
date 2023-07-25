@@ -100,6 +100,10 @@ PlatformTextStyles {
 	readonly property var normal_accent: TextStyle {
 		textColor: Style.color.accent_text
 	}
+	readonly property var normal_accent_highlight: TextStyle {
+		bold: true
+		textColor: Style.color.accent_text
+	}
 	readonly property var normal_highlight: TextStyle {
 		bold: true
 	}

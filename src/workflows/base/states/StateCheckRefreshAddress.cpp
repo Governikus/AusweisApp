@@ -173,7 +173,7 @@ void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 	if (TlsChecker::containsFatalError(mReply, pErrors))
 	{
 		reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-				}, FailureCode::Reason::Check_Refresh_Address_Fatal_Ssl_Error_Before_Reply);
+				}, FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_Before_Reply);
 	}
 }
 
@@ -273,7 +273,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 
 			case NetworkManager::NetworkError::SecurityError:
 				reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Fatal_Ssl_Error_After_Reply, mReply->errorString());
+						}, FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_After_Reply, mReply->errorString());
 				break;
 
 			case NetworkManager::NetworkError::OtherError:
