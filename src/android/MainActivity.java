@@ -209,7 +209,7 @@ public class MainActivity extends QtActivity
 
 	private void convertChromeOsIntent(Intent pIntent)
 	{
-		if (pIntent != null && pIntent.getAction().equals("org.chromium.arc.intent.action.VIEW"))
+		if (pIntent != null && "org.chromium.arc.intent.action.VIEW".equals(pIntent.getAction()))
 		{
 			LogHandler.getLogger().info("Convert Intent action " + pIntent.getAction() + " to " + Intent.ACTION_VIEW);
 			pIntent.setAction(Intent.ACTION_VIEW);

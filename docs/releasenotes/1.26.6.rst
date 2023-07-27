@@ -1,0 +1,13 @@
+AusweisApp2 1.26.6
+^^^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 27. Juli 2023
+
+
+Anwender
+""""""""
+- Ein möglicher Absturz beim Start unter Android wurde behoben.
+
+
+Entwickler
+""""""""""
