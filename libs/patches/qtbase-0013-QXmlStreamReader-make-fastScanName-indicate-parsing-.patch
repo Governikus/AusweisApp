@@ -1,4 +1,4 @@
-From 836d7df23ec9b6cb3dea1bb68b7c8bc75090702e Mon Sep 17 00:00:00 2001
+From ecf9967e196afa80bb3117d794387aba8b536f32 Mon Sep 17 00:00:00 2001
 From: Ahmad Samir <a.samirh78@gmail.com>
 Date: Thu, 22 Jun 2023 15:56:07 +0300
 Subject: QXmlStreamReader: make fastScanName() indicate parsing status to

@@ -1,4 +1,4 @@
-From ce9ffbc726f7a0d90561db7206f3061371126190 Mon Sep 17 00:00:00 2001
+From 625af289b43f8e665b83eb4c86aeef91140e59ab Mon Sep 17 00:00:00 2001
 From: Axel Spoerl <axel.spoerl@qt.io>
 Date: Fri, 30 Jun 2023 12:43:59 +0200
 Subject: QXmlStreamReader: Raise error on unexpected tokens

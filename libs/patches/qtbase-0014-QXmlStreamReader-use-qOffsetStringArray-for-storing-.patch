@@ -1,4 +1,4 @@
-From 6f79fea4b7ee471adbed09d7e4b6da688a571c80 Mon Sep 17 00:00:00 2001
+From 472133b864b04e359aba2f5db1f1b1fe2890121a Mon Sep 17 00:00:00 2001
 From: Sona Kurazyan <sona.kurazyan@qt.io>
 Date: Fri, 2 Sep 2022 16:52:04 +0200
 Subject: QXmlStreamReader: use qOffsetStringArray for storing token types

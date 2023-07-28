@@ -1,4 +1,4 @@
-From 72533c561d6952e63f86f11d9e4f0c6ffe8ed5a1 Mon Sep 17 00:00:00 2001
+From 5d3108ae7f32a0489833d358aced86cb27184d49 Mon Sep 17 00:00:00 2001
 From: Marc Mutz <marc.mutz@qt.io>
 Date: Mon, 5 Sep 2022 08:59:23 +0200
 Subject: QOffsetStringArray: fix size_t/qsizetype mismatch
