@@ -1,4 +1,4 @@
-From f9a1c8668e5f4787e9b0b3136076138f4fda5563 Mon Sep 17 00:00:00 2001
+From da582e1a6ca1ed0dbdb63f95749bef5c44ef401d Mon Sep 17 00:00:00 2001
 From: Ahmad Samir <a.samirh78@gmail.com>
 Date: Wed, 12 Apr 2023 13:10:26 +0200
 Subject: QXmlStreamReader: change fastScanName() to take a Value*

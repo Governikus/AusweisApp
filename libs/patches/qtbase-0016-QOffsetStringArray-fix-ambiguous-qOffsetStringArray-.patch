@@ -1,4 +1,4 @@
-From e6d25e8d3b67cf7d9601d3fdd07131280f8ff056 Mon Sep 17 00:00:00 2001
+From 335a97b94afdfe8c0156ac3d3a0dab8ec784f00d Mon Sep 17 00:00:00 2001
 From: Marc Mutz <marc.mutz@qt.io>
 Date: Sun, 4 Sep 2022 12:31:10 +0200
 Subject: QOffsetStringArray: fix ambiguous qOffsetStringArray overloads

@@ -1,4 +1,4 @@
-From bdc4845cd844e674f17161435a11e60dde2769cc Mon Sep 17 00:00:00 2001
+From f0f55fda3a29ca4f53fcd9d93476e5658cf6f9f4 Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Wed, 5 Jul 2023 09:33:03 +0200
 Subject: Improve Intent source app detection
@@ -17,7 +17,7 @@ Change-Id: I33d1edd52de98486d9616713e531ea20ada87bcb
  1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git x/qtbase/src/android/java/src/org/qtproject/qt/android/bindings/QtActivity.java y/qtbase/src/android/java/src/org/qtproject/qt/android/bindings/QtActivity.java
-index 9cef8146fd..f862f6aaee 100644
+index 9cef8146fd..c22a4f4278 100644
 --- x/qtbase/src/android/java/src/org/qtproject/qt/android/bindings/QtActivity.java
 +++ y/qtbase/src/android/java/src/org/qtproject/qt/android/bindings/QtActivity.java
 @@ -16,6 +16,7 @@ import android.graphics.Canvas;
@@ -36,7 +36,7 @@ index 9cef8146fd..f862f6aaee 100644
 -        if (referrer != null)
 -            sourceInformation = referrer.toString().replaceFirst("android-app://", "");
 +        String browserApplicationId = intent.getExtras() == null ? "" : intent.getExtras().getString(Browser.EXTRA_APPLICATION_ID);
-+        if (!browserApplicationId.isEmpty())
++        if (browserApplicationId != null && !browserApplicationId.isEmpty())
 +        {
 +            sourceInformation = browserApplicationId;
 +        }
