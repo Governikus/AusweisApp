@@ -9,6 +9,10 @@
 using namespace governikus;
 using namespace std::placeholders;
 
+INIT_FUNCTION([] {
+			qRegisterMetaType<RemoteDeviceFilterModel *>("RemoteDeviceFilterModel*");
+		})
+
 
 RemoteDeviceFilterModel::RemoteDeviceFilterModel(QAbstractItemModel* pSourceModel, const FilterFunctionType& pFilterFunction)
 	: QSortFilterProxyModel()
