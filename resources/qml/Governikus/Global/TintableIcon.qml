@@ -16,7 +16,6 @@ Item {
 	property alias sourceSize: image.sourceSize
 	property color tintColor: Style.color.primary_text
 	property bool tintEnabled: true
-	property alias transformOrigin: image.transformOrigin
 
 	implicitHeight: image.implicitHeight
 	implicitWidth: image.implicitWidth
@@ -26,6 +25,7 @@ Item {
 		anchors.fill: parent
 		asynchronous: true
 		fillMode: Image.PreserveAspectFit
+		transformOrigin: root.transformOrigin
 		layer.enabled: root.tintEnabled && GraphicsInfo.api !== GraphicsInfo.Software
 
 		layer.effect: ShaderEffect {

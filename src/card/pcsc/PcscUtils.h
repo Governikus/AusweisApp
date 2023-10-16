@@ -43,7 +43,7 @@ using PCSC_CHAR = char;
 using PCSC_CHAR_PTR = char*;
 using PCSC_CUCHAR_PTR = const uchar*;
 using PCSC_INT = DWORD;
-using PCSC_RETURNCODE = LONG;
+using PCSC_RETURNCODE = qint64;
 using PCSC_UCHAR_PTR = uchar*;
 #endif
 
