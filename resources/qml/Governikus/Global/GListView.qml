@@ -1,16 +1,17 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
 
 ListView {
 	id: baseItem
 
 	property bool scrollBarAutohide: !Constants.is_desktop
 	property real scrollBarBottomPadding: 0
+	property color scrollBarColor: Style.color.control
 	property bool scrollBarEnabled: true
 	property real scrollBarTopPadding: 0
 
@@ -54,9 +55,11 @@ ListView {
 
 	Component {
 		id: scrollBar
+
 		GScrollBar {
 			autohide: scrollBarAutohide
 			bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
+			color: baseItem.scrollBarColor
 			topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
 		}
 	}

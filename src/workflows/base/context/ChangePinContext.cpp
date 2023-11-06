@@ -7,8 +7,8 @@
 using namespace governikus;
 
 
-ChangePinContext::ChangePinContext(bool pRequestTransportPin)
-	: WorkflowContext(Action::PIN)
+ChangePinContext::ChangePinContext(bool pRequestTransportPin, bool pActivateUi)
+	: WorkflowContext(Action::PIN, pActivateUi)
 	, mNewPin()
 	, mSuccessMessage()
 	, mRequestTransportPin(pRequestTransportPin)

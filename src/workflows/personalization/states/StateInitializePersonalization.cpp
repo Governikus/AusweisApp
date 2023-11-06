@@ -31,20 +31,21 @@ void StateInitializePersonalization::run()
 	//: LABEL ANDROID IOS
 	context->setProgress(20, tr("Personalizing the Smart-eID"));
 
-	const auto& pin = context->getPin();
+	const auto& smartEidType = context->getSmartEidType();
+	const auto& pin = smartEidType == SmartEidType::NON_APPLET ? context->getNewPin() : QString();
 	const auto& challenge = context->getChallenge();
 	const auto func = [pin, challenge] {
 				const auto& smartManager = SmartManager::get(true);
 				const auto& result = smartManager->initializePersonalization(challenge, pin);
 				if (result.mResult != EidServiceResult::SUCCESS)
 				{
-					smartManager->releaseConnection();
+					SmartManager::releaseConnection();
 				}
 
 				return QVariant::fromValue(result);
 			};
 
-	mConnections += Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateInitializePersonalization::onCommandDone);
+	*this << Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateInitializePersonalization::onCommandDone);
 }
 
 

@@ -1,24 +1,26 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.EnterPasswordView 1.0
-import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.ProgressView 1.0
-import Governikus.ResultView 1.0
-import Governikus.SettingsView 1.0
-import Governikus.View 1.0
-import Governikus.Workflow 1.0
-import Governikus.Type.ChangePinModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.EnterPasswordView
+import Governikus.Global
+import Governikus.TitleBar
+import Governikus.PasswordInfoView
+import Governikus.ProgressView
+import Governikus.ResultView
+import Governikus.SettingsView
+import Governikus.Style
+import Governikus.View
+import Governikus.Workflow
+import Governikus.Type.ChangePinModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.UiModule
 
 SectionPage {
 	id: baseItem
+
 	enum SubViews {
 		Start,
 		Workflow,
@@ -54,14 +56,13 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		customSettingsHandler: baseItem.showSettings
-		helpTopic: "pinManagement"
 		rootEnabled: d.activeView === ChangePinView.SubViews.Start || d.activeView === ChangePinView.SubViews.NoPassword
 		showSettings: changePinController.workflowState === ChangePinController.WorkflowStates.Reader
 		//: LABEL DESKTOP
 		text: qsTr("Change PIN")
 
-		customSubAction: CancelAction {
-			visible: d.cancelAllowed
+		customSubAction: NavigationAction {
+			enabled: d.cancelAllowed
 
 			onClicked: {
 				if (pinResult.visible) {
@@ -89,6 +90,7 @@ SectionPage {
 
 		readonly property int activeView: inputError.visible ? ChangePinView.SubViews.InputError : pinUnlocked.visible ? ChangePinView.SubViews.PinUnlocked : view
 		readonly property bool cancelAllowed: view !== ChangePinView.SubViews.NoPassword && view !== ChangePinView.SubViews.Start && (ChangePinModel.isBasicReader || generalWorkflow.waitingFor !== Workflow.WaitingFor.Password)
+		property int enteredPasswordType: PasswordType.PIN
 		readonly property int passwordType: NumberModel.passwordType
 		property int precedingView: ChangePinView.SubViews.Start
 		property var view: ChangePinView.SubViews.Start
@@ -103,6 +105,7 @@ SectionPage {
 	}
 	ChangePinController {
 		id: changePinController
+
 		onNextView: pName => {
 			if (pName === ChangePinView.SubViews.ReturnToMain) {
 				baseItem.nextView(UiModule.DEFAULT);
@@ -118,12 +121,15 @@ SectionPage {
 			anchors.fill: parent
 			moreInformationText: infoData.linkText
 
+			onChangePin: ChangePinModel.startWorkflow(false)
+			onChangeTransportPin: ChangePinModel.startWorkflow(true)
 			onMoreInformationRequested: baseItem.showPasswordInfo()
 			onNoPinAvailable: d.view = ChangePinView.SubViews.NoPassword
 		}
 	}
 	PasswordInfoView {
 		id: noPasswordView
+
 		visible: d.activeView === ChangePinView.SubViews.NoPassword
 
 		infoContent: PasswordInfoData {
@@ -134,6 +140,7 @@ SectionPage {
 	}
 	GeneralWorkflow {
 		id: generalWorkflow
+
 		isPinChange: true
 		visible: d.activeView === ChangePinView.SubViews.Workflow
 		waitingFor: switch (changePinController.workflowState) {
@@ -156,7 +163,7 @@ SectionPage {
 
 		property string deviceName
 
-		resultType: ResultView.Type.IsError
+		icon: "qrc:///images/workflow_error_no_sak_%1.svg".arg(Style.currentTheme.name)
 		//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
 		text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
 		visible: d.activeView === ChangePinView.SubViews.WorkflowError
@@ -165,21 +172,38 @@ SectionPage {
 	}
 	EnterPasswordView {
 		id: enterPasswordView
+
 		moreInformationText: infoData.linkText
 		visible: d.activeView === ChangePinView.SubViews.Password
 
-		onPasswordEntered: pWasNewPin => {
-			d.view = pWasNewPin ? ChangePinView.SubViews.ProgressNewPin : ChangePinView.SubViews.Progress;
-			ChangePinModel.continueWorkflow();
+		onPasswordEntered: pPasswordType => {
+			d.enteredPasswordType = pPasswordType;
+			switch (pPasswordType) {
+			case PasswordType.NEW_PIN:
+			case PasswordType.NEW_SMART_PIN:
+				break;
+			case PasswordType.NEW_PIN_CONFIRMATION:
+			case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+				if (NumberModel.commitNewPin()) {
+					d.view = ChangePinView.SubViews.ProgressNewPin;
+					ChangePinModel.continueWorkflow();
+				}
+				break;
+			default:
+				ChangePinModel.continueWorkflow();
+				d.view = ChangePinView.SubViews.Progress;
+			}
 		}
 		onRequestPasswordInfo: baseItem.showPasswordInfo()
 	}
 	PasswordInfoData {
 		id: infoData
+
 		contentType: changePinController.workflowState === ChangePinController.WorkflowStates.Initial ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType)
 	}
 	PasswordInfoView {
 		id: passwordInfoView
+
 		infoContent: infoData
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
@@ -191,6 +215,7 @@ SectionPage {
 	}
 	ProgressView {
 		id: pinProgressView
+
 		//: INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
 		subText: qsTr("Please do not move the ID card.")
 		text: d.activeView === ChangePinView.SubViews.ProgressNewPin ?
@@ -204,9 +229,23 @@ SectionPage {
 		id: inputError
 
 		property bool errorConfirmed: false
+		//: INFO DESKTOP
+		readonly property string transportPinHint: qsTr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.")
 
-		resultType: ResultView.Type.IsError
-		text: NumberModel.inputError
+		icon: switch (d.enteredPasswordType) {
+		case PasswordType.TRANSPORT_PIN:
+			return "qrc:///images/workflow_error_wrong_transportpin_%1.svg".arg(Style.currentTheme.name);
+		case PasswordType.SMART_PIN:
+		case PasswordType.PIN:
+			return "qrc:///images/workflow_error_wrong_pin_%1.svg".arg(Style.currentTheme.name);
+		case PasswordType.CAN:
+			return "qrc:///images/workflow_error_wrong_can_%1.svg".arg(Style.currentTheme.name);
+		case PasswordType.PUK:
+			return "qrc:///images/workflow_error_wrong_puk_%1.svg".arg(Style.currentTheme.name);
+		default:
+			return "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name);
+		}
+		text: NumberModel.inputError + (NumberModel.inputError !== "" && ChangePinModel.requestTransportPin ? "<br><br>%1".arg(transportPinHint) : "")
 		visible: !errorConfirmed && NumberModel.hasPasswordError && d.view !== ChangePinView.SubViews.Result
 
 		onNextView: errorConfirmed = true
@@ -224,7 +263,7 @@ SectionPage {
 
 		property bool confirmed: true
 
-		resultType: ResultView.Type.IsSuccess
+		animatedIcon: "qrc:///images/puk_%1.webp".arg(Style.currentTheme.name)
 		//: INFO DESKTOP The ID card has just been unblocked and the user can now continue with their ID card PIN change.
 		text: qsTr("Your ID card PIN is unblocked. You now have three more attempts to change your PIN.")
 		visible: !confirmed && (d.view === ChangePinView.SubViews.Password || generalWorkflow.waitingFor === Workflow.WaitingFor.Password)
@@ -241,7 +280,8 @@ SectionPage {
 	}
 	ResultView {
 		id: cardPositionView
-		resultType: ResultView.Type.IsInfo
+
+		icon: "qrc:///images/workflow_error_nfc_%1.svg".arg(Style.currentTheme.name)
 		text: ChangePinModel.isRemoteReader ?
 		//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
 		qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") :
@@ -253,10 +293,11 @@ SectionPage {
 	}
 	ResultView {
 		id: pinResult
+
 		hintButtonText: ChangePinModel.statusHintActionText
 		hintText: ChangePinModel.statusHintText
+		icon: ChangePinModel.error ? ChangePinModel.statusCodeImage.arg(Style.currentTheme.name) : "qrc:///images/workflow_success_changepin_%1.svg".arg(Style.currentTheme.name)
 		mailButtonVisible: ChangePinModel.errorIsMasked
-		resultType: ChangePinModel.error ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: ChangePinModel.resultString
 		visible: d.activeView === ChangePinView.SubViews.Result
 

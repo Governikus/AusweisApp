@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="493" height="312" viewBox="0 0 493 312">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="1" />
+  </filter>
+  <rect fill="#ffffff" width="493" height="312" />
+  <image filter="url(#blur)" transform="scale(10) rotate(20) translate(-1 -3)" opacity="0.6" xlink:href="../npa.svg" width="37" height="37" />
+  <rect fill="#ffffff" opacity="0.7" x="162" width="331" height="312" />
+  <image x="10" y="27" width="31" height="31" xlink:href="../npa.svg" />
+  <text x="48" y="50" fill="#808080" font-family="Arial" font-size="18">AusweisApp</text>
+</svg>

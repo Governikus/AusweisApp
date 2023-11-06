@@ -1,13 +1,12 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
 
 SectionPage {
 	id: baseItem
@@ -19,24 +18,24 @@ SectionPage {
 	property alias subTextColor: subText.color
 	property alias text: text.text
 
-	StatusIcon {
-		id: circle
+	TintableAnimation {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: baseItem.height / 4
-		borderEnabled: false
-		busy: true
-		height: Style.dimens.status_icon_large
-		source: "qrc:///images/sandglass.svg"
+		fillMode: Image.PreserveAspectFit
+		height: Style.dimens.header_icon_size
+		source: "qrc:///images/sandglass.webp"
+		tintColor: Style.color.control
 	}
 	GText {
 		id: text
+
 		Accessible.name: text.text
 		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: parent.verticalCenter
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header
+		textStyle: Style.text.headline
 		visible: text.text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
@@ -45,13 +44,14 @@ SectionPage {
 	}
 	GText {
 		id: subText
+
 		Accessible.name: subText.text
 		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: text.bottom
 		anchors.topMargin: Constants.text_spacing
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header_secondary
+		textStyle: Style.text.subline
 		visible: subText.text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
@@ -60,6 +60,7 @@ SectionPage {
 	}
 	GText {
 		id: progressText
+
 		Accessible.name: progressText.text
 		activeFocusOnTab: true
 		anchors.bottom: progressBar.top
@@ -74,6 +75,7 @@ SectionPage {
 	}
 	GProgressBar {
 		id: progressBar
+
 		activeFocusOnTab: true
 		value: progressValue
 		visible: false
@@ -81,7 +83,7 @@ SectionPage {
 		anchors {
 			bottom: parent.bottom
 			left: parent.left
-			margins: ApplicationModel.scaleFactor * 80
+			margins: plugin.scaleFactor * 80
 			right: parent.right
 		}
 	}

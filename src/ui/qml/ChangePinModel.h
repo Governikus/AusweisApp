@@ -18,6 +18,10 @@
 #include <QSharedPointer>
 #include <QString>
 
+
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -26,6 +30,8 @@ class ChangePinModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
+	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireWorkflowStarted)
 
 	private:
 		QSharedPointer<ChangePinContext> mContext;
@@ -35,16 +41,16 @@ class ChangePinModel
 	public:
 		void resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
-		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin);
+		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true);
 		[[nodiscard]] QString getResultString() const override;
 		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] bool isRequestTransportPin() const;
 
 	private Q_SLOTS:
 		void onPaceResultUpdated();
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
-		void fireNewContextSet();
 		void fireOnPinUnlocked();
 };
 

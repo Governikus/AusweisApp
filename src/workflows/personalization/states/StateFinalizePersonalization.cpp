@@ -31,13 +31,14 @@ void StateFinalizePersonalization::run()
 	//: LABEL ANDROID IOS
 	context->setProgress(90, tr("Finalizing the Smart-eID"));
 
-	const auto func = [] {
-				const auto& result = QVariant::fromValue(SmartManager::get()->finalizePersonalization());
+	const int finalizeStatus = context->getFinalizeStatus();
+	const auto func = [finalizeStatus] {
+				const auto& result = QVariant::fromValue(SmartManager::get()->finalizePersonalization(finalizeStatus));
 				SmartManager::releaseConnection();
 				return result;
 			};
 
-	mConnections += Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateFinalizePersonalization::onCommandDone);
+	*this << Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateFinalizePersonalization::onCommandDone);
 }
 
 

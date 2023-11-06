@@ -5,7 +5,7 @@
     <name>DvcsAttributes</name>
     <message>
         <source>revision</source>
-        <translation>b9ade3b30f3d</translation>
+        <translation>56dc58807a8c</translation>
     </message>
 </context>
 <context>
@@ -27,34 +27,56 @@
     </message>
 </context>
 <context>
-    <name>AdditionalResultsFooterItem</name>
+    <name>AuthController</name>
     <message>
-        <source>Additional results in other categories: %1. Click here to remove filter.</source>
-        <translation>Weitere Ergebnisse in anderen Kategorien: %1. Klicken Sie hier, um den Filter zu entfernen.</translation>
+        <source>Identify</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ausweisen</translation>
     </message>
     <message>
-        <source>Additional results in other categories:</source>
-        <extracomment>LABEL DESKTOP IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Weitere Ergebnisse in anderen Kategorien:</translation>
+        <source>Cancel authentication process</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Beende Ausweisvorgang</translation>
     </message>
     <message>
-        <source>Show</source>
-        <translation>Anzeigen</translation>
-    </message>
-</context>
-<context>
-    <name>AdditionalResultsItem</name>
-    <message>
-        <source>%1 additional results in other categories</source>
-        <translation>%1 Ergebnisse in anderen Kategorien</translation>
+        <source>Acquiring provider certificate</source>
+        <extracomment>INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
+        <translation>Berechtigungszertifikat wird heruntergeladen</translation>
     </message>
     <message>
-        <source>Click to remove category filter and show additional results.</source>
-        <translation>Klicken Sie hier, um den Filter zu entfernen.</translation>
+        <source>Authentication in progress</source>
+        <extracomment>INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
+        <translation>Ausweisvorgang wird durchgeführt</translation>
     </message>
     <message>
-        <source>Additional results:</source>
-        <translation>Weitere Ergebnisse:</translation>
+        <source>Please wait a moment.</source>
+        <extracomment>INFO ANDROID IOS Generic status message during the authentication process.</extracomment>
+        <translation>Bitte warten Sie einen Moment.</translation>
+    </message>
+    <message>
+        <source>Please do not move the ID card.</source>
+        <extracomment>INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.</extracomment>
+        <translation>Bitte den Ausweis nicht bewegen.</translation>
+    </message>
+    <message>
+        <source>Please observe the display of your card reader.</source>
+        <extracomment>INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomment>
+        <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
+    </message>
+    <message>
+        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
+        <extracomment>INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.</extracomment>
+        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie rechts unten auf der Vorderseite Ihres Ausweises.</translation>
+    </message>
+    <message>
+        <source>Send log</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Protokoll senden</translation>
+    </message>
+    <message>
+        <source>Authenticate with provider</source>
+        <extracomment>LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication</extracomment>
+        <translation>Bei Anbieter ausweisen</translation>
     </message>
 </context>
 <context>
@@ -107,9 +129,7 @@ LABEL ANDROID IOS</extracomment>
 ----------
 INFO DESKTOP Generic progress status message while no card communication is active.
 ----------
-INFO DESKTOP Generic progress status message during authentication.
-----------
-INFO ANDROID IOS Generic status message during the authentication process.</extracomment>
+INFO DESKTOP Generic progress status message during authentication.</extracomment>
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
@@ -119,23 +139,17 @@ INFO ANDROID IOS Generic status message during the authentication process.</extr
     </message>
     <message>
         <source>Acquiring provider certificate</source>
-        <extracomment>INFO DESKTOP Header of the progress information during the authentication process.
-----------
-INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
+        <extracomment>INFO DESKTOP Header of the progress information during the authentication process.</extracomment>
         <translation>Berechtigungszertifikat wird heruntergeladen</translation>
     </message>
     <message>
         <source>Authentication in progress</source>
-        <extracomment>INFO DESKTOP Header of the progress information during the authentication process.
-----------
-INFO ANDROID IOS Header of the progress status message during the authentication process.</extracomment>
+        <extracomment>INFO DESKTOP Header of the progress information during the authentication process.</extracomment>
         <translation>Ausweisvorgang wird durchgeführt</translation>
     </message>
     <message>
         <source>Please do not move the ID card.</source>
-        <extracomment>INFO DESKTOP Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
-----------
-INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.</extracomment>
+        <extracomment>INFO DESKTOP Second line text if a basic card reader is used and data is exchanged with the card/server in the background. Is not actually visible since the basic reader password handling is done by EnterPasswordView.</extracomment>
         <translation>Bitte den Ausweis nicht bewegen.</translation>
     </message>
     <message>
@@ -144,30 +158,8 @@ INFO ANDROID IOS Second line text if a basic card reader is used and background 
         <translation>Fehlercode: %1</translation>
     </message>
     <message>
-        <source>Cancel authentication process</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Beende Ausweisvorgang</translation>
-    </message>
-    <message>
-        <source>Please observe the display of your card reader.</source>
-        <extracomment>INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomment>
-        <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
-    </message>
-    <message>
-        <source>A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.</extracomment>
-        <translation>Die PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie rechts unten auf der Vorderseite Ihres Ausweises.</translation>
-    </message>
-    <message>
-        <source>Send log</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Protokoll senden</translation>
-    </message>
-    <message>
         <source>Authenticate with provider</source>
-        <extracomment>LABEL DESKTOP A11y button to confirm the PIN and start the provider authentication
-----------
-LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication</extracomment>
+        <extracomment>LABEL DESKTOP A11y button to confirm the PIN and start the provider authentication</extracomment>
         <translation>Bei Anbieter ausweisen</translation>
     </message>
     <message>
@@ -208,52 +200,6 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
         <source>You may now remove your ID card from the device.</source>
         <extracomment>INFO ALL_PLATFORMS The workflow is completed, the ID card may (and should) be removed from the card reader.</extracomment>
         <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
-    </message>
-</context>
-<context>
-    <name>BaseHistoryView</name>
-    <message>
-        <source>History</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Currently there are no history entries.</source>
-        <extracomment>INFO ANDROID IOS No authentication history, placeholder text.</extracomment>
-        <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
-    </message>
-</context>
-<context>
-    <name>BaseProviderView</name>
-    <message>
-        <source>No results matching your search query found</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE The text entered into the provider search field results in no matches</extracomment>
-        <translation>Keine Ergebnisse zu Ihrer Suche gefunden</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <extracomment>LABEL IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>Citizen services</source>
-        <extracomment>LABEL IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Bürgerdienste</translation>
-    </message>
-    <message>
-        <source>Financials</source>
-        <extracomment>LABEL IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Finanzen</translation>
-    </message>
-    <message>
-        <source>Insurances</source>
-        <extracomment>LABEL IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Versicherungen</translation>
-    </message>
-    <message>
-        <source>Other services</source>
-        <extracomment>LABEL IOS_TABLET ANDROID_TABLET</extracomment>
-        <translation>Weitere Dienste</translation>
     </message>
 </context>
 <context>
@@ -308,13 +254,6 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
     </message>
 </context>
 <context>
-    <name>CancelAction</name>
-    <message>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
-    </message>
-</context>
-<context>
     <name>CardPositionView</name>
     <message>
         <source>Retry</source>
@@ -344,6 +283,7 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
     <name>CardReaderView</name>
     <message>
         <source>Connected USB card readers</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Verbundene USB-Kartenleser</translation>
     </message>
     <message>
@@ -358,32 +298,9 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
         <source>After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only connected card readers are shown here. %1</source>
         <translation>Nachdem ein neuer Kartenleser angeschlossen worden ist, kann es einige Sekunden dauern bis der Treiber erkannt wird. Unter Umständen kann ein Neustart Ihres Betriebssystems notwendig sein. Es werden hier nur angeschlossene Kartenleser angezeigt. %1</translation>
     </message>
-</context>
-<context>
-    <name>Category</name>
     <message>
-        <source>Provider</source>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>All</source>
-        <translation>Alle</translation>
-    </message>
-    <message>
-        <source>Citizen services</source>
-        <translation>Bürgerdienste</translation>
-    </message>
-    <message>
-        <source>Insurances</source>
-        <translation>Versicherungen</translation>
-    </message>
-    <message>
-        <source>Financials</source>
-        <translation>Finanzen</translation>
-    </message>
-    <message>
-        <source>Other services</source>
-        <translation>Weitere Dienste</translation>
+        <source>No connected card reader found.</source>
+        <translation>Keine angeschlossenen Kartenleser gefunden.</translation>
     </message>
 </context>
 <context>
@@ -395,71 +312,13 @@ LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authenti
 LABEL ANDROID IOS</extracomment>
         <translation>Anbieterinformationen</translation>
     </message>
-    <message>
-        <source>Close</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Schließen</translation>
-    </message>
 </context>
 <context>
-    <name>ChangePinView</name>
-    <message>
-        <source>Change PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>PIN ändern</translation>
-    </message>
-    <message>
-        <source>Setting new PIN</source>
-        <extracomment>LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.</extracomment>
-        <translation>Neue PIN wird gesetzt</translation>
-    </message>
-    <message>
-        <source>Please do not move the ID card.</source>
-        <extracomment>INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
-----------
-INFO ANDROID IOS Loading screen during PIN change process, data communication is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.</extracomment>
-        <translation>Bitte den Ausweis nicht bewegen.</translation>
-    </message>
+    <name>ChangePinController</name>
     <message>
         <source>Your ID card PIN is unblocked. You now have three more attempts to change your PIN.</source>
-        <extracomment>INFO DESKTOP The ID card has just been unblocked and the user can now continue with their ID card PIN change.
-----------
-INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.</extracomment>
+        <extracomment>INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.</extracomment>
         <translation>Ihre Karten-PIN wurde entsperrt. Sie haben nun drei weitere Versuche, um Ihre PIN zu ändern.</translation>
-    </message>
-    <message>
-        <source>Weak NFC signal. Please
-- change the card position
-- remove the mobile phone case (if present)
-- connect the smartphone with a charging cable</source>
-        <extracomment>INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
-        <translation>Schwacher NFC-Empfang. Bitte
-- ändern Sie die Position des Ausweises
-- entfernen Sie Handyhüllen (falls vorhanden)
-- verbinden Sie das Smartphone mit dem Ladegerät</translation>
-    </message>
-    <message>
-        <source>Weak NFC signal. Please
-- make sure the card is positioned correctly on the reader
-- do note move the card while it is being accessed</source>
-        <extracomment>INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.</extracomment>
-        <translation>Schwacher NFC-Empfang. Bitte
-- stellen Sie sicher, dass der Ausweis korrekt auf dem Kartenleser positioniert ist
-- bewegen Sie den Ausweis nicht, während auf diesen zugegriffen wird</translation>
-    </message>
-    <message>
-        <source>Change my (Transport) PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Meine (Transport-)&#x200b;PIN ändern</translation>
-    </message>
-    <message>
-        <source>Change Transport PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Transport-PIN ändern</translation>
     </message>
     <message>
         <source>Setting new Smart-eID PIN</source>
@@ -487,14 +346,19 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
+        <source>Please do not move the ID card.</source>
+        <extracomment>INFO ANDROID IOS Loading screen during PIN change process, data communication is currently ongoing. Message is usually not visible since the password handling with basic reader is handled by EnterPasswordView.</extracomment>
+        <translation>Bitte den Ausweis nicht bewegen.</translation>
+    </message>
+    <message>
         <source>Please observe the display of your card reader.</source>
         <extracomment>INFO ANDROID IOS Either an comfort card reader or smartphone-as-card-reader is used, the user needs to react to request on that device.</extracomment>
         <translation>Bitte beachten Sie die Anzeige Ihres Kartenlesers.</translation>
     </message>
     <message>
         <source>A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verification via CAN.</extracomment>
-        <translation>Die Karten-PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie unten rechts auf der Vorderseite Ihres Ausweises.</translation>
+        <extracomment>INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verifcation via CAN.</extracomment>
+        <translation>Die Karten-PIN Ihres Ausweises wurde zweimal falsch eingegeben. Für einen dritten Versuch geben Sie bitte zunächst die sechsstellige Zugangsnummer (CAN) ein. Diese finden Sie rechts unten auf der Vorderseite Ihres Ausweises.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.</source>
@@ -502,9 +366,71 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Sie haben dreimal eine falsche, sechsstellige Karten-PIN eingegeben, Ihre Karten-PIN ist nun gesperrt. Um die Sperre aufzuheben, muss zunächst die zehnstellige PUK eingegeben werden.</translation>
     </message>
     <message>
+        <source>Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Bitte beachten Sie, dass Sie die fünfstellige Transport-PIN nur einmalig zum Ändern in eine sechsstellige Karten-PIN verwenden können. Wenn Sie bereits eine sechsstellige Karten-PIN festgelegt haben, ist die fünfstellige Transport-PIN nicht mehr gültig.</translation>
+    </message>
+</context>
+<context>
+    <name>ChangePinView</name>
+    <message>
+        <source>Change PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>PIN ändern</translation>
+    </message>
+    <message>
+        <source>Setting new PIN</source>
+        <extracomment>LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.</extracomment>
+        <translation>Neue PIN wird gesetzt</translation>
+    </message>
+    <message>
+        <source>Please do not move the ID card.</source>
+        <extracomment>INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.</extracomment>
+        <translation>Bitte den Ausweis nicht bewegen.</translation>
+    </message>
+    <message>
+        <source>Your ID card PIN is unblocked. You now have three more attempts to change your PIN.</source>
+        <extracomment>INFO DESKTOP The ID card has just been unblocked and the user can now continue with their ID card PIN change.</extracomment>
+        <translation>Ihre Karten-PIN wurde entsperrt. Sie haben nun drei weitere Versuche, um Ihre PIN zu ändern.</translation>
+    </message>
+    <message>
+        <source>Weak NFC signal. Please
+- change the card position
+- remove the mobile phone case (if present)
+- connect the smartphone with a charging cable</source>
+        <extracomment>INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
+        <translation>Schwacher NFC-Empfang. Bitte
+- ändern Sie die Position des Ausweises
+- entfernen Sie Handyhüllen (falls vorhanden)
+- verbinden Sie das Smartphone mit dem Ladegerät</translation>
+    </message>
+    <message>
+        <source>Weak NFC signal. Please
+- make sure the card is positioned correctly on the reader
+- do note move the card while it is being accessed</source>
+        <extracomment>INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.</extracomment>
+        <translation>Schwacher NFC-Empfang. Bitte
+- stellen Sie sicher, dass der Ausweis korrekt auf dem Kartenleser positioniert ist
+- bewegen Sie den Ausweis nicht, während auf diesen zugegriffen wird</translation>
+    </message>
+    <message>
+        <source>Change Transport PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Transport-PIN ändern</translation>
+    </message>
+    <message>
         <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
         <extracomment>INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.</extracomment>
         <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
+    </message>
+    <message>
+        <source>Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.</source>
+        <extracomment>INFO DESKTOP</extracomment>
+        <translation>Bitte beachten Sie, dass Sie die fünfstellige Transport-PIN nur einmalig zum Ändern in eine sechsstellige Karten-PIN verwenden können. Wenn Sie bereits eine sechsstellige Karten-PIN festgelegt haben, ist die fünfstellige Transport-PIN nicht mehr gültig.</translation>
     </message>
 </context>
 <context>
@@ -797,81 +723,9 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
 <context>
     <name>CheckSmartResultView</name>
     <message>
-        <source>Check Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID prüfen</translation>
-    </message>
-    <message>
-        <source>Result of Smart-eID check</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ergebnis der Smart-eID-Prüfung</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fortsetzen</translation>
-    </message>
-    <message>
-        <source>What does that mean?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Was bedeutet das?</translation>
-    </message>
-    <message>
-        <source>You may now try the function: &quot;See my personal data&quot;. Press the Continue button to do so now.</source>
-        <translation>Probieren Sie zum Abschluss der Prüfung die Funktion &quot;Meine Daten einsehen&quot;. Drücken Sie Fortsetzen um fortzufahren.</translation>
-    </message>
-    <message>
-        <source>Supported</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Unterstützt</translation>
-    </message>
-    <message>
-        <source>Not supported</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Prepared</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Vorbereitet</translation>
-    </message>
-    <message>
-        <source>Not prepared</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Nicht vorbereitet</translation>
-    </message>
-    <message>
-        <source>Set up</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingerichtet</translation>
-    </message>
-    <message>
-        <source>Not set up</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Nicht eingerichtet</translation>
-    </message>
-    <message>
-        <source>Invalid</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ungültig</translation>
-    </message>
-    <message>
-        <source>Ready for use</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Einsatzbereit</translation>
-    </message>
-</context>
-<context>
-    <name>CheckSmartSuggestionView</name>
-    <message>
         <source>Unknown result code: %1</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Unbekannter Ergebniscode: %1</translation>
-    </message>
-    <message>
-        <source>Updating Smart-eID status...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Status der Smart-eID wird aktualisiert...</translation>
     </message>
     <message>
         <source>Please wait a moment.</source>
@@ -879,14 +733,9 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
-        <source>Smart-eID not supported</source>
+        <source>Updating Smart-eID status...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID function.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen für die Smart-eID.&lt;br&gt;&lt;br&gt;Sie können stattdessen prüfen, ob Ihr Gerät und Ihr Ausweis für die Online-Ausweisfunktion geeignet sind.</translation>
+        <translation>Status der Smart-eID wird aktualisiert...</translation>
     </message>
     <message>
         <source>Check device and ID card</source>
@@ -894,14 +743,14 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Gerät und Ausweis prüfen</translation>
     </message>
     <message>
-        <source>Smart-eID invalid</source>
+        <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID function.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID ungültig</translation>
+        <translation>Ihr Gerät erfüllt leider nicht die technischen Voraussetzungen für die Smart-eID.&lt;br&gt;&lt;br&gt;Sie können stattdessen prüfen, ob Ihr Gerät und Ihr Ausweis für die Online-Ausweisfunktion geeignet sind.</translation>
     </message>
     <message>
-        <source>Your device meets the technical requirements for Smart-eID, however, the Smart-eID that was set up is invalid.</source>
-        <extracomment>LABEL ANDROID IOS LABEL ANDROID IOS</extracomment>
-        <translation>Ihr Gerät erfüllt die technischen Voraussetzungen für die Smart-eID, allerdings ist die eingerichtete Smart-eID ungültig.</translation>
+        <source>Smart-eID not supported</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID nicht unterstützt</translation>
     </message>
     <message>
         <source>Possible causes are:</source>
@@ -914,72 +763,54 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Die Einrichtung wurde nicht vollständig abgeschlossen.</translation>
     </message>
     <message>
-        <source>The preparation for the Smart-eID is defective.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die Vorbereitung für die Smart-eID ist defekt.</translation>
-    </message>
-    <message>
         <source>The Smart-eID PIN has been entered incorrectly three times.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Die Smart-eID-PIN wurde drei mal falsch eingegeben.</translation>
     </message>
     <message>
-        <source>The AusweisApp2 has been uninstalled temporarily.</source>
+        <source>The %1 has been uninstalled temporarily.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die AusweisApp2 wurde zwischenzeitlich deinstalliert.</translation>
+        <translation>Die %1 wurde zwischenzeitlich deinstalliert.</translation>
     </message>
     <message>
-        <source>Please restart the setup of the Smart-eID.</source>
+        <source>You may continue with the setup of the Smart-eID.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bitte starten Sie die Einrichtung der Smart-eID erneut.</translation>
+        <translation>Sie können mit der Einrichtung der Smart-eID fortfahren.</translation>
     </message>
     <message>
-        <source>Set up Smart-eID</source>
+        <source>Continue</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID einrichten</translation>
+        <translation>Fortsetzen</translation>
     </message>
     <message>
-        <source>Smart-eID not prepared</source>
+        <source>Your device meets the technical requirements for Smart-eID. You may now continue the setup process.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID nicht vorbereitet</translation>
+        <translation>Ihr Gerät erfüllt die technischen Voraussetzung für die Smart-eID. Sie können mit der Einrichtung fortfahren.</translation>
     </message>
     <message>
-        <source>Your device meets the technical requirements for Smart-eID, but is not yet provisioned for setup. The provisioning is done automatically during the Smart-eID setup process.</source>
+        <source>Smart-eID supported</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihr Gerät erfüllt die technischen Voraussetzungen für die Smart-eID, ist jedoch noch nicht für die Einrichtung vorbereitet. Die Vorbereitung erfolgt während der Smart-eID-Einrichtung automatisch.</translation>
+        <translation>Smart-eID unterstützt</translation>
     </message>
     <message>
-        <source>Smart-eID not set up</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID nicht eingerichtet</translation>
+        <source>Your device meets the technical requirements for Smart-eID, however, the Smart-eID that was set up is invalid.</source>
+        <extracomment>LABEL ANDROID IOS LABEL ANDROID IOS</extracomment>
+        <translation>Ihr Gerät erfüllt die technischen Voraussetzungen für die Smart-eID, allerdings ist die eingerichtete Smart-eID ungültig.</translation>
     </message>
     <message>
-        <source>Your device meets the technical requirements for Smart-eID and is already provisioned for setup. You can now start the Smart-eID setup.</source>
+        <source>Smart-eID invalid</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihr Gerät erfüllt die technischen Voraussetzungen für die Smart-eID und ist bereits für die Einrichtung vorbereitet. Sie können nun mit der Smart-eID-Einrichtung beginnen.</translation>
-    </message>
-</context>
-<context>
-    <name>CheckSmartView</name>
-    <message>
-        <source>Check Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID prüfen</translation>
+        <translation>Smart-eID ungültig</translation>
     </message>
     <message>
-        <source>Your device needs to meet the technical requirements to use the Smart-eID function.</source>
+        <source>Smart-eID check failed</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Um die Smart-eID-Funktion nutzen zu können, muss Ihr Gerät die technischen Voraussetzungen erfüllen.</translation>
+        <translation>Smart-eID-Prüfung fehlgeschlagen</translation>
     </message>
     <message>
-        <source>Check here if your device is suitable to set up a Smart-eID.</source>
+        <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Prüfen Sie hier, ob Ihr Gerät für die Einrichtung einer Smart-eID geeignet ist.</translation>
-    </message>
-    <message>
-        <source>Start check</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Prüfung starten</translation>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -998,6 +829,39 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Pairing to &quot;%1&quot; failed:</source>
         <extracomment>ERROR DESKTOP An error occurred while pairing the device.</extracomment>
         <translation>Die Kopplung mit &quot;%1&quot; ist fehlgeschlagen:</translation>
+    </message>
+</context>
+<context>
+    <name>DarkModeButtons</name>
+    <message>
+        <source>System</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Systemeinstellungen</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Dunkel</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Hell</translation>
+    </message>
+    <message>
+        <source>Set the app appearance to system mode</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Setzt das Erscheinungsbild der Anwendung auf die Systemeinstellungen</translation>
+    </message>
+    <message>
+        <source>Set the app appearance to dark mode</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Setzt das Erscheinungsbild der Anwendung auf dunkel</translation>
+    </message>
+    <message>
+        <source>Set the app appearance to light mode</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Setzt das Erscheinungsbild der Anwendung auf hell</translation>
     </message>
 </context>
 <context>
@@ -1024,11 +888,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Protokolldatei</translation>
     </message>
     <message>
-        <source>History</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
         <source>Show beta testing image</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Zeige Beta-Test-Symbol</translation>
@@ -1043,6 +902,16 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Überspringe Berechtigungen-Seite im CAN-erlaubt-Modus</translation>
     </message>
+    <message>
+        <source>Reset hideable dialogs</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Setze versteckbare Dialoge zurück</translation>
+    </message>
+    <message>
+        <source>Show Transport PIN reminder, store feedback and close reminder dialogs.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Zeige Transport-PIN Hinweis, Store Feedback und Fenster-Schließ Hinweis Dialoge.</translation>
+    </message>
 </context>
 <context>
     <name>DecisionView</name>
@@ -1050,11 +919,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>No</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Nein</translation>
-    </message>
-    <message>
-        <source>Maybe</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Vielleicht</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -1126,11 +990,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Testmodus für die Selbstauskunft</translation>
     </message>
     <message>
-        <source>Enable internal card simulator</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Aktiviere den internen Kartensimulator</translation>
-    </message>
-    <message>
         <source>The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Der interne Kartensimulator ermöglicht die Durchführung einer Authentisierung in der Test-PKI ohne Ausweis oder Kartenleser. Beachten Sie, dass kein anderer Kartenleser verwendet werden kann, während der Simulator aktiviert ist.</translation>
@@ -1139,11 +998,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <source>Developer mode</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Entwicklermodus</translation>
-    </message>
-    <message>
-        <source>The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Der Entwicklermodus richtet sich an Integratoren / Entwickler für neue Dienste. Aus diesem Grund funktioniert der Entwicklermodus lediglich in der Test-PKI. Durch Aktivierung des Entwicklermodus werden einige Sicherheitsprüfungen abgestellt. Die Authentisierung wird auch dann weitergeführt, wenn die AusweisApp2 im Normalbetrieb die Authentisierung mit einer Fehlermeldung abbrechen würde. Der übergangene Fehler im Entwicklermodus wird im angehängten Fenster unterhalb der AusweisApp2 angezeigt.</translation>
     </message>
     <message>
         <source>Custom config.json</source>
@@ -1170,6 +1024,21 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>JSON-Konfigurationsdatei (*.json)</translation>
     </message>
+    <message>
+        <source>Allow test sample card usage</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Testmusterkarten erlauben</translation>
+    </message>
+    <message>
+        <source>Internal card simulator</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Interner Kartensimulator</translation>
+    </message>
+    <message>
+        <source>The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Im Entwicklermodus werden einige Sicherheitsprüfungen abgestellt und die Authentisierung bei bestimmten Fehlern trotzdem fortgesetzt. Übergangene Fehler werden in den Benachrichtigungen angezeigt. Der Entwicklermodus funktioniert nur in der Test-PKI.</translation>
+    </message>
 </context>
 <context>
     <name>DevicesListDelegate</name>
@@ -1180,15 +1049,6 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
 </context>
 <context>
     <name>DiagnosisView</name>
-    <message>
-        <source>Diagnosis</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Diagnose</translation>
-    </message>
-    <message>
-        <source>Save diagnosis to textfile</source>
-        <translation>Speichere Diagnose in Textdatei</translation>
-    </message>
     <message>
         <source>Save to file</source>
         <extracomment>LABEL DESKTOP</extracomment>
@@ -1210,138 +1070,111 @@ INFO ANDROID IOS The ID card has just been unblocked and the user can now contin
         <translation>Textdateien (*.txt)</translation>
     </message>
     <message>
-        <source>Save diagnosis</source>
+        <source>System data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Diagnose speichern</translation>
+        <translation>Systemdaten</translation>
+    </message>
+    <message>
+        <source>Save system data to textfile</source>
+        <translation>Speichere Systemdaten in Textdatei</translation>
+    </message>
+    <message>
+        <source>SystemData</source>
+        <translation>Systemdaten</translation>
+    </message>
+    <message>
+        <source>Save system data</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Systemdaten speichern</translation>
     </message>
 </context>
 <context>
     <name>EditRights</name>
     <message>
-        <source>You are about to identify yourself towards the following provider</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Sie möchten sich bei folgendem Anbieter ausweisen</translation>
-    </message>
-    <message>
-        <source>Show more information about the service provider</source>
-        <translation>Zeige mehr Informationen über den Anbieter</translation>
-    </message>
-    <message>
-        <source>Details about the provider</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Details zum Anbieter</translation>
-    </message>
-    <message>
         <source>Proceed to %1 entry</source>
         <extracomment>LABEL DESKTOP %1 can be &quot;CAN&quot; or &quot;PIN&quot;
 ----------
-LABEL IOS_PHONE ANDROID_PHONE %1 can be &quot;CAN&quot; or &quot;PIN&quot;
-----------
-LABEL ANDROID_TABLET IOS_TABLET %1 can be &quot;CAN&quot; or &quot;PIN&quot;</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE %1 can be &quot;CAN&quot; or &quot;PIN&quot;</extracomment>
         <translation>Weiter zur %1-Eingabe</translation>
     </message>
     <message>
         <source>CAN</source>
         <extracomment>LABEL DESKTOP Inserted into &quot;Proceed to %1 entry&quot;
 ----------
-LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
-----------
-LABEL ANDROID_TABLET IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
+LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
         <translation>CAN</translation>
     </message>
     <message>
         <source>PIN</source>
         <extracomment>LABEL DESKTOP Inserted into &quot;Proceed to %1 entry&quot;
 ----------
-LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;
-----------
-LABEL ANDROID_TABLET IOS_TABLET Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
+LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
         <translation>PIN</translation>
     </message>
     <message>
         <source>By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Mit Eingabe der CAN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf den Ausweis:</translation>
     </message>
     <message>
         <source>By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Mit Eingabe Ihrer PIN gewähren Sie dem oben genannten Anbieter folgende Datenzugriffe auf Ihren Ausweis:</translation>
     </message>
     <message>
         <source>Transactional information</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Transaktionsinformationen</translation>
     </message>
     <message>
         <source>The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Der oben genannte Anbieter benötigt keine Daten von Ihrem Ausweis. Dieser möchte lediglich sicherstellen, dass Sie im Besitz eines gültigen Ausweises sind.</translation>
     </message>
     <message>
         <source>Write access (update)</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Schreibzugriff (Aktualisierung)</translation>
     </message>
     <message>
         <source>Read access</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Lesezugriff</translation>
     </message>
     <message>
         <source>Read access (optional)</source>
         <extracomment>LABEL DESKTOP
 ----------
-LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Lesezugriff (optional)</translation>
     </message>
     <message>
         <source>Identify</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+        <extracomment>LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Ausweisen</translation>
     </message>
     <message>
         <source>You are about to identify yourself towards the following provider:</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE
+        <extracomment>LABEL DESKTOP
 ----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Sie möchten sich bei folgendem Anbieter ausweisen:</translation>
     </message>
     <message>
         <source>Provider</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
+        <extracomment>LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Anbieter</translation>
     </message>
     <message>
@@ -1356,11 +1189,6 @@ LABEL ANDROID_TABLET IOS_TABLET</extracomment>
         <source>Attempts</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Versuche</translation>
-    </message>
-    <message>
-        <source>Remaining ID card PIN attempts: %1</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verbleibende Karten-PIN Versuche: %1</translation>
     </message>
     <message>
         <source>Enter CAN</source>
@@ -1410,13 +1238,6 @@ LABEL ANDROID IOS</extracomment>
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Karten-PIN eingeben</translation>
-    </message>
-    <message>
-        <source>The new ID card PIN and the confirmation do not match. Please correct your input.</source>
-        <extracomment>INFO DESKTOP The changed ID card PIN was entered wrongfully during the confirmation process.
-----------
-INFO ANDROID IOS The changed ID card PIN was entered wrongfully during confirmation.</extracomment>
-        <translation>Die neue Karten-PIN und ihre Wiederholung stimmen nicht überein. Bitte korrigieren Sie Ihre Eingabe.</translation>
     </message>
     <message>
         <source>Please enter the five-digit Transport PIN.</source>
@@ -1506,17 +1327,8 @@ LABEL ANDROID IOS</extracomment>
         <translation>Neue Smart-eID-PIN bestätigen</translation>
     </message>
     <message>
-        <source>The new Smart-eID PIN and the confirmation do not match. Please correct your input.</source>
-        <extracomment>INFO DESKTOP The changed Smart-eID PIN was entered wrongfully during the confirmation process.
-----------
-INFO ANDROID IOS The changed Smart-eID PIN was entered wrongfully during confirmation.</extracomment>
-        <translation>Die neue Smart-eID-PIN und ihre Wiederholung stimmen nicht überein. Bitte korrigieren Sie Ihre Eingabe.</translation>
-    </message>
-    <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.</source>
-        <extracomment>INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID
-----------
-INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
+        <extracomment>INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
         <translation>Sie haben zweimal eine falsche, sechsstellige Smart-eID-PIN eingegeben. Ein dritter Fehlversuch wird Ihre Smart-eID ungültig machen und Sie müssen sie neu einrichten.</translation>
     </message>
     <message>
@@ -1556,6 +1368,11 @@ INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentic
         <source>Do you have a six-digit ID card PIN?</source>
         <extracomment>LABEL ANDROID IOS Button to switch to a six-digit ID card PIN.</extracomment>
         <translation>Haben Sie eine sechsstellige Karten-PIN?</translation>
+    </message>
+    <message>
+        <source>You have entered an incorrect, six-digit Smart-eID PIN twice. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
+        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
+        <translation>Sie haben zweimal eine falsche, sechsstellige Smart-eID-PIN eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
     </message>
     <message>
         <source>Send CAN</source>
@@ -1614,9 +1431,37 @@ LABEL ANDROID IOS</extracomment>
         <translation>Karten-PIN senden</translation>
     </message>
     <message>
+        <source>Send confirmation of new ID card PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bestätigung der neuen Karten-PIN senden</translation>
+    </message>
+    <message>
+        <source>Send confirmation of new Smart-eID PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bestätigung der neuen Smart-eID-PIN senden</translation>
+    </message>
+    <message>
         <source>Enter the pairing code shown on your smartphone.</source>
         <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
         <translation>Geben Sie den Kopplungscode ein, der auf Ihrem Smartphone angezeigt wird.</translation>
+    </message>
+</context>
+<context>
+    <name>GCollapsible</name>
+    <message>
+        <source>collapse</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>einklappen</translation>
+    </message>
+    <message>
+        <source>expand</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>ausklappen</translation>
+    </message>
+    <message>
+        <source>Currently selected is %1</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Aktuell ausgewählt ist %1</translation>
     </message>
 </context>
 <context>
@@ -1659,21 +1504,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>%1 automatisch beim Hochfahren starten und als Eintrag der Menüleiste hinzufügen</translation>
     </message>
     <message>
-        <source>Auto-start %1 after boot</source>
-        <extracomment>LABEL WINDOWS Text for auto-start option</extracomment>
-        <translation>%1 automatisch beim Hochfahren starten</translation>
-    </message>
-    <message>
-        <source>Close after authentication</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Nach Authentisierung schließen</translation>
-    </message>
-    <message>
-        <source>Use internal notifications</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Interne Benachrichtigungen aktivieren</translation>
-    </message>
-    <message>
         <source>Using the developer mode forces the notifications to be enabled.</source>
         <extracomment>LABEL DESKTOP Only visible when the user activates the developer mode in the settings.</extracomment>
         <translation>Im Entwicklermodus werden die internen Benachrichtigungen erzwungen.</translation>
@@ -1688,6 +1518,36 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Benutze den bei der Installation angegebenen Proxy (%1).</translation>
     </message>
+    <message>
+        <source>Appearance</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Erscheinungsbild</translation>
+    </message>
+    <message>
+        <source>Use the system font</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Systemschriftart verwenden</translation>
+    </message>
+    <message>
+        <source>Toggling will restart the %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Ein Umschalten startet die %1 neu</translation>
+    </message>
+    <message>
+        <source>Close %1 after authentication</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>%1 nach Authentisierung schließen</translation>
+    </message>
+    <message>
+        <source>Show notifications inside of %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Benachrichtigungen in der %1 anzeigen</translation>
+    </message>
+    <message>
+        <source>Auto-start %1 after boot and add a tray icon</source>
+        <extracomment>LABEL WINDOWS Text for auto-start option</extracomment>
+        <translation>%1 automatisch beim Hochfahren starten und im Benachrichtigungsfeld hinzufügen</translation>
+    </message>
 </context>
 <context>
     <name>GeneralWorkflow</name>
@@ -1695,10 +1555,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Attempts</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Versuche</translation>
-    </message>
-    <message>
-        <source>Remaining ID card PIN attempts: %1</source>
-        <translation>Verbleibende Karten-PIN Versuche: %1</translation>
     </message>
     <message>
         <source>Step %1 of 3</source>
@@ -1730,16 +1586,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Es wurde kein Ausweis erkannt. Bitte stellen Sie sicher, dass Ihr Ausweis auf dem Kartenleser aufliegt.</translation>
     </message>
     <message>
-        <source>No ID card detected. Please make sure that the NFC interface of the smartphone (connected to %1) is correctly placed on your ID card.</source>
-        <extracomment>INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.</extracomment>
-        <translation>Es wurde kein Ausweis erkannt. Bitte stellen Sie sicher, dass die NFC-Schnittstelle des Smartphones (verbunden mit %1) korrekt auf Ihrem Ausweis platziert ist.</translation>
-    </message>
-    <message>
-        <source>Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.</source>
-        <extracomment>INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
-        <translation>Bitte platzieren Sie das Smartphone (verbunden mit %1) auf Ihrem Ausweis oder legen Sie den Ausweis auf den Kartenleser.</translation>
-    </message>
-    <message>
         <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the reader settings to configure readers and get more information about supported readers.</source>
         <extracomment>INFO DESKTOP AA2 is waiting for the card reader or the ID card.</extracomment>
         <translation>Es wurde kein Kartenleser gefunden. Bitte überprüfen Sie, ob ein USB-Kartenleser angeschlossen bzw. ein Smartphone als Kartenleser gekoppelt und verfügbar ist. Öffnen Sie die Einstellungen, um Kartenleser zu konfigurieren und weitere Hinweise zu erhalten.</translation>
@@ -1755,229 +1601,28 @@ LABEL ANDROID IOS</extracomment>
         <translation>Zu den Einstellungen</translation>
     </message>
     <message>
-        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
-        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
+        <source>No ID card detected. Please follow the instructions on your smartphone (connected to %1) to use it as card reader.</source>
+        <extracomment>INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.</extracomment>
+        <translation>Es wurde kein Ausweis erkannt. Bitte folgen Sie den Anweisungen auf Ihrem Smartphone (verbunden mit %1), um es als Kartenleser zu verwenden.</translation>
+    </message>
+    <message>
+        <source>Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.</source>
+        <extracomment>INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
+        <translation>Bitte folgen Sie den Anweisungen auf Ihrem Smartphone (verbunden mit %1) oder legen Sie den Ausweis auf den Kartenleser.</translation>
     </message>
 </context>
 <context>
     <name>Hint</name>
     <message>
         <source>Hint</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Tipp</translation>
     </message>
 </context>
 <context>
-    <name>HistoryListItem</name>
-    <message>
-        <source>Click to view details of history entry.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zeige Details des Verlaufseintrags.</translation>
-    </message>
-    <message>
-        <source>Tap for more details</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Berühren Sie hier für mehr Details</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryListViewDelegate</name>
-    <message>
-        <source>Delete entry</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Lösche Eintrag</translation>
-    </message>
-    <message>
-        <source>Delete history entry: %1</source>
-        <extracomment>INFO IOS Accessible name for the trash icon of a history entry.</extracomment>
-        <translation>Lösche Verlaufseintrag: %1</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryRemovalTimePeriodControl</name>
-    <message>
-        <source>Time period</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Zeitspanne</translation>
-    </message>
-    <message>
-        <source>Past hour</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Letzte Stunde</translation>
-    </message>
-    <message>
-        <source>Past day</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Letzter Tag</translation>
-    </message>
-    <message>
-        <source>Past week</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Letzte Woche</translation>
-    </message>
-    <message>
-        <source>Last four weeks</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Letzte vier Wochen</translation>
-    </message>
-    <message>
-        <source>All history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Gesamter Zeitraum</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryView</name>
-    <message>
-        <source>Delete history?</source>
-        <extracomment>INFO DESKTOP Header of the confirmation dialog to clear the entire authentication history.</extracomment>
-        <translation>Verlauf löschen?</translation>
-    </message>
-    <message>
-        <source>All history entries will be deleted.</source>
-        <extracomment>INFO DESKTOP Content of the confirmation dialog to clear the entire authentication history.</extracomment>
-        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
-    </message>
-    <message>
-        <source>Deleted %1 entries from the history.</source>
-        <extracomment>INFO DESKTOP Feedback how many history entries were removed.</extracomment>
-        <translation>Es wurden %1 Einträge aus dem Verlauf gelöscht.</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Search in history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Im Verlauf suchen</translation>
-    </message>
-    <message>
-        <source>Clear history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Lösche Verlauf</translation>
-    </message>
-    <message>
-        <source>Save as PDF...</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Als PDF speichern...</translation>
-    </message>
-    <message>
-        <source>Portable Document Format (*.pdf)</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Portables Dokumentenformat (*.pdf)</translation>
-    </message>
-    <message>
-        <source>Currently there are no history entries.</source>
-        <extracomment>INFO DESKTOP No authentication history, placeholder text.</extracomment>
-        <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
-    </message>
-    <message>
-        <source>No history entries match your search term.</source>
-        <extracomment>INFO DESKTOP No authentication history entries match the search, placeholder text.</extracomment>
-        <translation>Es wurden keine Verlaufseinträge zu Ihrer Suche gefunden.</translation>
-    </message>
-    <message>
-        <source>Delete all entries</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Alle Einträge löschen</translation>
-    </message>
-    <message>
-        <source>Save history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf speichern</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryViewConfirmationPopup</name>
-    <message>
-        <source>Delete history</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verlauf löschen</translation>
-    </message>
-    <message>
-        <source>All history entries will be deleted.</source>
-        <extracomment>LABEL ANDROID IOS Confirmaton popup to clear all history entries.</extracomment>
-        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Löschen</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryViewDetails</name>
-    <message>
-        <source>Details for history entry</source>
-        <translation>Details des Verlaufseintrags</translation>
-    </message>
-    <message>
-        <source>Provider Information</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Anbieterinformationen</translation>
-    </message>
-    <message>
-        <source>Provider name</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>Purpose</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Zweck</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <extracomment>LABEL DESKTOP Date format according to https://doc.qt.io/qt/qdate.html#toString
-----------
-LABEL ANDROID IOS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
-        <translation>dd.MM.yyyy</translation>
-    </message>
-    <message>
-        <source>Write access (update)</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Schreibzugriff (Aktualisierung)</translation>
-    </message>
-    <message>
-        <source>Read access</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Lesezugriff</translation>
-    </message>
-    <message>
-        <source>Terms of usage</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Nutzungsbedingungen</translation>
-    </message>
-</context>
-<context>
-    <name>HistoryViewTitleBarControls</name>
-    <message>
-        <source>Delete all entries</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Lösche alle Einträge</translation>
-    </message>
-</context>
-<context>
-    <name>LanguageButtons</name>
+    <name>LanguageButtonData</name>
     <message>
         <source>German</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
@@ -2017,14 +1662,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Set language to russian</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Verwende russische Sprache</translation>
-    </message>
-</context>
-<context>
-    <name>LanguageSelectionPopup</name>
-    <message>
-        <source>Select language</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sprache auswählen</translation>
     </message>
 </context>
 <context>
@@ -2165,6 +1802,14 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
     </message>
 </context>
 <context>
+    <name>LogViewDelegate</name>
+    <message>
+        <source>The log entry was copied to the clipboard.</source>
+        <extracomment>INFO DESKTOP Toast message used to confirm the copy of a log entry.</extracomment>
+        <translation>Der Protokolleintrag wurde in die Zwischenablage kopiert.</translation>
+    </message>
+</context>
+<context>
     <name>MainView</name>
     <message>
         <source>See my&lt;br&gt;personal data</source>
@@ -2172,26 +1817,9 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Meine Daten&lt;br&gt;einsehen</translation>
     </message>
     <message>
-        <source>Provider</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
         <source>Settings</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Einstellungen</translation>
-    </message>
-    <message>
-        <source>Change my&lt;br&gt;(Transport) PIN</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Meine (Transport-)&lt;br&gt;PIN ändern</translation>
     </message>
     <message>
         <source>Help</source>
@@ -2209,11 +1837,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Gerät und Ausweis prüfen</translation>
     </message>
     <message>
-        <source>Change my (Transport) PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Meine (Transport-)&#x200b;PIN ändern</translation>
-    </message>
-    <message>
         <source>See my personal data</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Meine Daten einsehen</translation>
@@ -2222,6 +1845,25 @@ LABEL ANDROID IOS</extracomment>
         <source>Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID</translation>
+    </message>
+    <message>
+        <source>Two finger swipe to scroll.</source>
+        <translation>Mit zwei Fingern wischem zum Scrollen.</translation>
+    </message>
+    <message>
+        <source>List of workflows with %1 items.</source>
+        <translation>Liste mit %1 Vorgängen.</translation>
+    </message>
+    <message>
+        <source>Item %1 of %2</source>
+        <translation>Element %1 von %2</translation>
+    </message>
+    <message>
+        <source>Change PIN</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>PIN ändern</translation>
     </message>
 </context>
 <context>
@@ -2247,11 +1889,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <source>Diagnosis and logs</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Diagnose und Protokolle</translation>
-    </message>
-    <message>
         <source>Version information</source>
         <extracomment>LABEL DESKTOP
 ----------
@@ -2260,9 +1897,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Software license</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Softwarelizenz</translation>
     </message>
     <message>
@@ -2278,64 +1913,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Hilfe &amp; Feedback</translation>
     </message>
     <message>
-        <source>Tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial</translation>
-    </message>
-    <message>
-        <source>Do you want to know how to use %1?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie wissen, wie die %1 verwendet wird?</translation>
-    </message>
-    <message>
-        <source>Video tutorials</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Videotutorials</translation>
-    </message>
-    <message>
-        <source>Do you want to see the video tutorials?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Videotutorials ansehen?</translation>
-    </message>
-    <message>
-        <source>FAQ</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>FAQ</translation>
-    </message>
-    <message>
-        <source>Do you have further questions about %1?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Haben Sie weitere Fragen zur %1?</translation>
-    </message>
-    <message>
-        <source>Support</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Support</translation>
-    </message>
-    <message>
-        <source>Do you need further support?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Benötigen Sie weitergehende Unterstützung?</translation>
-    </message>
-    <message>
         <source>Privacy statement</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Datenschutzerklärung</translation>
     </message>
     <message>
-        <source>Do you want to read the privacy statement?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Datenschutzerklärung einsehen?</translation>
-    </message>
-    <message>
         <source>Accessibility statement</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Barrierefreiheitserklärung</translation>
-    </message>
-    <message>
-        <source>Do you want to read the accessibility statement?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Barrierefreiheitserklärung einsehen?</translation>
     </message>
     <message>
         <source>Rate %1</source>
@@ -2343,38 +1928,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Bewerten Sie die %1</translation>
     </message>
     <message>
-        <source>Do you want to rate us in the App Store?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie uns im App Store bewerten?</translation>
-    </message>
-    <message>
-        <source>Do you want to rate us in the Google Play Store?</source>
-        <translation>Möchten Sie uns im Google Play Store bewerten?</translation>
-    </message>
-    <message>
-        <source>Diagnosis</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Diagnose</translation>
-    </message>
-    <message>
         <source>Logs</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Protokolle</translation>
-    </message>
-    <message>
-        <source>Do you want to view the logs of %1?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Protokolle der %1 ansehen?</translation>
-    </message>
-    <message>
-        <source>Report error</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Melden Sie einen Fehler</translation>
-    </message>
-    <message>
-        <source>Did you find a bug? Please help us by sending us the log file together with a description of the error.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Haben Sie einen Fehler entdeckt? Helfen Sie uns, indem Sie uns die Protokolldatei zusammen mit einer Fehlerbeschreibung zusenden.</translation>
     </message>
     <message>
         <source>Information</source>
@@ -2382,47 +1938,47 @@ LABEL ANDROID IOS</extracomment>
         <translation>Information</translation>
     </message>
     <message>
-        <source>Do you want to see detailed information about %1?</source>
+        <source>List of Providers</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie detaillierte Informationen über die %1 ansehen?</translation>
+        <translation>Anbieterliste</translation>
     </message>
     <message>
-        <source>Do you want to read the software licenses?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Software-Lizenzen lesen?</translation>
+        <source>Data and logs</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Daten und Protokolle</translation>
     </message>
     <message>
-        <source>Do you want to view the release notes of %1?</source>
+        <source>FAQ - Frequently asked questions</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Möchten Sie die Release Notes der %1 ansehen?</translation>
+        <translation>FAQ – Häufig gestellte Fragen</translation>
+    </message>
+    <message>
+        <source>Contact</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kontakt</translation>
+    </message>
+    <message>
+        <source>Show Logs</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Protokolle anzeigen</translation>
+    </message>
+    <message>
+        <source>Send log to the support</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Protokoll an den Support senden</translation>
+    </message>
+    <message>
+        <source>Terms of use and software license</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Nutzungsbedingungen und Softwarelizenz</translation>
     </message>
 </context>
 <context>
     <name>MoreViewDiagnosis</name>
     <message>
-        <source>Diagnosis</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Diagnose</translation>
-    </message>
-    <message>
-        <source>You can view and save the diagnosis information of the AusweisApp2 and your system here.</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Sie können die Diagnose-Informationen der AusweisApp2 und Ihres System hier einsehen und speichern.</translation>
-    </message>
-    <message>
-        <source>Show diagnosis</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Zeige Diagnose</translation>
-    </message>
-    <message>
         <source>Logs</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Protokolle</translation>
-    </message>
-    <message>
-        <source>Do you want to view the logs of %1?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Möchten Sie die Protokolle der %1 ansehen?</translation>
     </message>
     <message>
         <source>Show logs</source>
@@ -2430,67 +1986,22 @@ LABEL ANDROID IOS</extracomment>
         <translation>Zeige Protokolle</translation>
     </message>
     <message>
-        <source>Report error</source>
+        <source>Show system data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Melden Sie einen Fehler</translation>
+        <translation>Zeige Systemdaten</translation>
     </message>
     <message>
-        <source>Did you find a bug? Please help us by sending us the log file together with a description of the error.</source>
+        <source>System data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Haben Sie einen Fehler entdeckt? Helfen Sie uns, indem Sie uns die Protokolldatei zusammen mit einer Fehlerbeschreibung zusenden.</translation>
-    </message>
-    <message>
-        <source>Open website</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Öffne Webseite</translation>
+        <translation>Systemdaten</translation>
     </message>
 </context>
 <context>
     <name>MoreViewGeneral</name>
     <message>
-        <source>Online help</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Online-Hilfe</translation>
-    </message>
-    <message>
-        <source>Do you have questions about %1?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Haben Sie Fragen zur %1?</translation>
-    </message>
-    <message>
         <source>Open website</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Öffne Webseite</translation>
-    </message>
-    <message>
-        <source>Video tutorials</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Videotutorials</translation>
-    </message>
-    <message>
-        <source>Do you want to see the video tutorials?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Möchten Sie die Videotutorials ansehen?</translation>
-    </message>
-    <message>
-        <source>FAQ</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>FAQ</translation>
-    </message>
-    <message>
-        <source>Do you have further questions about %1?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Haben Sie weitere Fragen zur %1?</translation>
-    </message>
-    <message>
-        <source>Support</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Support</translation>
-    </message>
-    <message>
-        <source>Do you need further support?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Benötigen Sie weitergehende Unterstützung?</translation>
     </message>
     <message>
         <source>Privacy statement</source>
@@ -2498,34 +2009,40 @@ LABEL ANDROID IOS</extracomment>
         <translation>Datenschutzerklärung</translation>
     </message>
     <message>
-        <source>Do you want to read the privacy statement?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Möchten Sie die Datenschutzerklärung einsehen?</translation>
-    </message>
-    <message>
         <source>Accessibility statement</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Barrierefreiheitserklärung</translation>
     </message>
     <message>
-        <source>Do you want to read the accessibility statement?</source>
+        <source>Do you want to see a list of service providers?</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Möchten Sie die Barrierefreiheitserklärung einsehen?</translation>
+        <translation>Möchten Sie eine Liste mit Diensteanbietern sehen?</translation>
     </message>
     <message>
-        <source>Setup assistant</source>
+        <source>List of Providers</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Einrichtungsassistent</translation>
+        <translation>Anbieterliste</translation>
     </message>
     <message>
-        <source>Do you want to run the setup assistant again?</source>
+        <source>FAQ - Frequently asked questions</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Möchten Sie den Einrichtungsassistenten erneut durchführen?</translation>
+        <translation>FAQ – Häufig gestellte Fragen</translation>
     </message>
     <message>
-        <source>Start setup assistant</source>
+        <source>Contact</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Starte Einrichtungsassistenten</translation>
+        <translation>Kontakt</translation>
+    </message>
+</context>
+<context>
+    <name>NavigationAction</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation>Zurück</translation>
     </message>
 </context>
 <context>
@@ -2550,16 +2067,8 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>NavigationView</name>
     <message>
-        <source>History</source>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
         <source>Start</source>
         <translation>Start</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <translation>Anbieter</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -2702,6 +2211,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Delete last digit, disabled until input is present.</source>
+        <extracomment>LABEL ANDROID IOS A11y text for the &quot;delete&quot; button text when the button is disabled.</extracomment>
         <translation>Lösche letzte Ziffer, deaktiviert da keine Eingabe vorliegt.</translation>
     </message>
     <message>
@@ -2784,19 +2294,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>PIN-Information</translation>
     </message>
     <message>
-        <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
-        <translation>Die Karten-PIN ist eine sechsstellige PIN, die Sie selbst gesetzt haben. Diese PIN brauchen Sie immer, wenn Sie die Online-Ausweisfunktion nutzen möchten.</translation>
-    </message>
-    <message>
         <source>Where can I find the card PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Wo finde ich die Karten-PIN?</translation>
-    </message>
-    <message>
-        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in AusweisApp2 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos;</extracomment>
-        <translation>Sie haben die Karten-PIN entweder direkt bei der Abholung des Ausweises im Bürgeramt oder später in der AusweisApp2 mithilfe der fünfstelligen Transport-PIN gesetzt. Erst wenn Sie eine selbstgewählte, sechsstellige PIN gesetzt haben, können Sie die Online-Ausweisfunktion nutzen.</translation>
     </message>
     <message>
         <source>How do I choose a secure PIN?</source>
@@ -2815,7 +2315,9 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Keep your PIN secret and change it if another person becomes aware of it.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 3/3</extracomment>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure PIN?&apos; paragraph 3/3
+----------
+INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 3/3</extracomment>
         <translation>Halten Sie Ihre PIN geheim und ändern Sie diese, wenn eine andere Person hiervon Kenntnis erlangt.</translation>
     </message>
     <message>
@@ -2842,21 +2344,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Once you have set a card PIN, the Transport PIN loses its validity.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 3/3</extracomment>
         <translation>Sobald Sie eine Karten-PIN gesetzt haben, verliert die Transport-PIN Ihre Gültigkeit.</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader information</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Smartphone als Kartenleser-Information</translation>
-    </message>
-    <message>
-        <source>You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text of SaC pairing</extracomment>
-        <translation>Es besteht die Möglichkeit, Ihr Smartphone als Kartenleser mit der AusweisApp2 zu verwenden. Das Smartphone muss einen unterstützten NFC-Chip verwenden und beide Geräte, sowohl das Smartphone als auch Ihr Rechner, müssen mit dem selben WLAN-Netz verbunden sein.</translation>
-    </message>
-    <message>
-        <source>To use your smartphone as a card reader you&apos;ll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you&apos;ll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text of SaC pairing</extracomment>
-        <translation>Um Ihr Smartphone als Kartenleser zu verwenden muss stets der Fernzugriff in der AusweisApp2 auf Ihrem Smartphone aktiviert sein. Für eine initiale Verbindung der Geräte muss zusätzlich der Kopplungsmodus auf dem Smartphone aktiviert werden, wählen Sie danach das Gerät aus der Liste der verfügbaren Geräte auf Ihrem Rechner und geben Sie den von Ihrem Smartphone dargestellten Kopplungscode ein.</translation>
     </message>
     <message>
         <source>Where do I find the PUK?</source>
@@ -2987,7 +2474,7 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
     <message>
         <source>Your ID card comes with a five-digit &apos;Transport PIN&apos; which you need to replace with a six-digit PIN that you choose yourself.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/6</extracomment>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/7</extracomment>
         <translation>Ihr Ausweis wurde bei Erstellung mit einer fünfstelligen „Transport-PIN“ versehen, die Sie durch eine sechsstellige, selbstgewählte PIN ersetzen müssen.</translation>
     </message>
     <message>
@@ -2996,34 +2483,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Fünfstellige Transport-PIN</translation>
     </message>
     <message>
-        <source>The five-digit Transport PIN was sent to you by post after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/6</extracomment>
-        <translation>Die fünfstellige Transport-PIN wurde Ihnen per Post zugesandt, nachdem Sie Ihren Ausweis beantragt haben.</translation>
-    </message>
-    <message>
-        <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit PIN with a six-digit PIN that you choose yourself.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/6</extracomment>
-        <translation>Diese PIN kann nur einmal verwendet werden. Wenn Sie Ihren Online-Ausweis einrichten, ersetzen Sie diese fünfstellige Transport-PIN durch eine sechsstellige, selbstgewählte PIN.</translation>
-    </message>
-    <message>
         <source>Six-digit PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Sechsstellige PIN</translation>
-    </message>
-    <message>
-        <source>This is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/6</extracomment>
-        <translation>Die sechsstellige PIN ist eine Zahlenkombination, die Sie selbst wählen, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie ersetzt Ihre fünfstellige Transport-PIN.</translation>
-    </message>
-    <message>
-        <source>This PIN allows you to prove online that the ID card belongs to you. No one can use your ID card online without this PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/6</extracomment>
-        <translation>Mit der sechsstelligen, selbstgewählten PIN weisen Sie online nach, dass der Ausweis Ihnen gehört. Keiner kann Ihren Ausweis online benutzen ohne diese PIN.</translation>
-    </message>
-    <message>
-        <source>You can change your six-digit PIN at any time in AusweisApp2.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/6</extracomment>
-        <translation>Sie können Ihre PIN jederzeit in der AusweisApp2 ändern.</translation>
     </message>
     <message>
         <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
@@ -3039,6 +2501,96 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
         <translation>Wenn Sie Ihre Karten-PIN vergessen haben, können Sie mit dem PIN-Rücksetzdienst kostenlos eine neue PIN anfordern.</translation>
+    </message>
+    <message>
+        <source>The five-digit Transport PIN was sent to you by mail after you applied for your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/7</extracomment>
+        <translation>Die fünfstellige Transport-PIN wurde Ihnen per Post zugesandt, nachdem Sie Ihren Ausweis beantragt haben.</translation>
+    </message>
+    <message>
+        <source>What is the Smart-eID PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Was ist die Smart-eID-PIN?</translation>
+    </message>
+    <message>
+        <source>Set up Smart-eID</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Smart-eID einrichten</translation>
+    </message>
+    <message>
+        <source>The Smart-eID PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the Smart-eID pin?&apos;</extracomment>
+        <translation>Die Smart-eID-PIN ist eine sechsstellige PIN, die Sie selbst setzen. Diese PIN brauchen Sie immer, wenn Sie die Smart-eID nutzen möchten.</translation>
+    </message>
+    <message>
+        <source>For your six-digit Smart-eID PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 1/3</extracomment>
+        <translation>Wählen Sie für Ihre sechsstellige Smart-eID-Pin eine Zahlenkombination, die nicht leicht zu erraten ist - also weder „123456“, noch Ihr Geburtsdatum oder andere Zahlen, die auf dem Ausweis aufgedruckt sind.</translation>
+    </message>
+    <message>
+        <source>You can change your six-digit Smart-eID PIN at any time and an unlimited number of times as long as you know your valid Smart-eID PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 2/3</extracomment>
+        <translation>Sie können Ihre sechsstellige Smart-eID-PIN jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige Smart-eID-PIN bekannt ist.</translation>
+    </message>
+    <message>
+        <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit Transport PIN with a six-digit card PIN that you choose yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
+        <translation>Diese PIN kann nur einmal verwendet werden. Wenn Sie Ihren Online-Ausweis einrichten, ersetzen Sie diese fünfstellige Transport-PIN durch eine sechsstellige, selbstgewählte Karten-PIN.</translation>
+    </message>
+    <message>
+        <source>The six-digit card PIN is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
+        <translation>Die sechsstellige Karten-PIN ist eine Zahlenkombination, die Sie selbst vergeben, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie ersetzt Ihre fünfstellige Transport-PIN.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/7</extracomment>
+        <translation>Auch die Smart-eID-PIN ist sechsstellig. Sie vergeben auch diese PIN selbst, wenn Sie die Smart-eID zum ersten Mal einrichten.</translation>
+    </message>
+    <message>
+        <source>You can change your card PIN and your Smart-eID PIN at any time in %1.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
+        <translation>Sie können die Karten-PIN und die Smart-eID-PIN jederzeit in der %1 ändern.</translation>
+    </message>
+    <message>
+        <source>With this six-digit PIN you prove online that the ID card or Smart-eID belongs to you. No one can use the eID function without this PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
+        <translation>Mit der sechsstelligen PIN weisen Sie online nach, dass der Ausweis bzw. die Smart-eID Ihnen gehören. Keiner kann die Online-Ausweisfunktion benutzen ohne diese PIN.</translation>
+    </message>
+    <message>
+        <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function with your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
+        <translation>Die Karten-PIN ist eine sechsstellige PIN, die Sie selbst gesetzt haben. Diese PIN brauchen Sie immer, wenn Sie die Online-Ausweisfunktion mit Ihrer Ausweiskarte nutzen möchten.</translation>
+    </message>
+    <message>
+        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in %1 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function and set up a Smart-eID.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; (%1 is replaced with the application name)</extracomment>
+        <translation>Sie haben die Karten-PIN entweder direkt bei der Abholung des Ausweises im Bürgeramt oder später in der %1 mithilfe der fünfstelligen Transport-PIN gesetzt. Erst wenn Sie eine selbstgewählte, sechsstellige PIN gesetzt haben, können Sie die Online-Ausweisfunktion nutzen und eine Smart-eID einrichten.</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Wenn Sie Ihre Smart-eID-PIN vergessen haben, können Sie Ihre Smart-eID erneuern und hierbei eine neue PIN setzen.</translation>
+    </message>
+    <message>
+        <source>Where can I find the Smart-eID PIN?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Wo finde ich die Smart-eID-PIN?</translation>
+    </message>
+    <message>
+        <source>You have set the Smart-eID PIN while setting up the Smart-eID.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the Smart-eID PIN?&apos;</extracomment>
+        <translation>Sie haben die Smart-eID-PIN bei der Einrichtung der Smart-eID gesetzt.</translation>
+    </message>
+    <message>
+        <source>With this six-digit PIN you prove online that the ID card belongs to you. No one can use the eID function without this PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
+        <translation>Mit der sechsstelligen PIN weisen Sie online nach, dass der Ausweis Ihnen gehört. Keiner kann die Online-Ausweisfunktion benutzen ohne diese PIN.</translation>
+    </message>
+    <message>
+        <source>You can change your card PIN at any time in %1.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
+        <translation>Sie können die Karten-PIN jederzeit in der %1 ändern.</translation>
     </message>
 </context>
 <context>
@@ -3106,6 +2658,11 @@ LABEL ALL_PLATFORMS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Löschen Sie Ihre Smart-eID, bevor Sie Ihr Smartphone verschenken oder verkaufen.</translation>
     </message>
+    <message>
+        <source>If you uninstall the %1 or reset your smartphone, the Smart-eID must be set up again.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Wenn Sie die %1 deinstallieren oder Ihr Smartphone zurücksetzen, muss die Smart-eID neu eingerichtet werden.</translation>
+    </message>
 </context>
 <context>
     <name>PersonalizationProgressView</name>
@@ -3164,6 +2721,11 @@ LABEL ALL_PLATFORMS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID</translation>
     </message>
+    <message>
+        <source>Please wait a moment, the current process is being finished.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bitte warten Sie einen Moment, der laufende Vorgang wird noch abgeschlossen.</translation>
+    </message>
 </context>
 <context>
     <name>PersonalizationResultView</name>
@@ -3201,11 +2763,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>The Smart-eID setup finished successfully but no blocking code was retrieved. For security reasons, you should delete your Smart-eID and restart the setup.</source>
         <extracomment>INFO ANDROID IOS Placeholder (error) text if the Smart-eID setup finished successfully but for some reason no blocking code was retrieved</extracomment>
         <translation>Die Smart-eID-Einrichtung wurde erfolgreich abgeschlossen, jedoch konnte kein Sperrkennwort abgerufen werden. Aus Sicherheitsgründen sollten Sie Ihre Smart-eID löschen und die Einrichtung neu starten.</translation>
-    </message>
-    <message>
-        <source>You have reached the allowed amount of Smart-eID setups for the current period. You may set up another Smart-eID with your ID card on %1.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie haben die erlaubte Anzahl an Smart-eID-Einrichtungen für den aktuellen Zeitraum erreicht. Sie können ab dem %1 wieder eine Smart-eID mit Ihrem Ausweis einrichten.</translation>
     </message>
     <message>
         <source>Attention: you may only set up &lt;b&gt;&lt;u&gt;one&lt;/u&gt;&lt;/b&gt; more Smart-eID with your ID card. Further setups may be carried out on %1.</source>
@@ -3255,258 +2812,21 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
-    <name>ProviderContactInfo</name>
-    <message>
-        <source>Provider contact information</source>
-        <translation>Kontaktinformationen des Anbieters</translation>
-    </message>
-    <message>
-        <source>Contact information of the selected provider.</source>
-        <translation>Kontaktinformationen des ausgewählten Anbieters.</translation>
-    </message>
-    <message>
-        <source>Contact</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Kontakt</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Unbekannt</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailButtonBar</name>
-    <message>
-        <source>To provider</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Zum Anbieter</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailDescription</name>
-    <message>
-        <source>Description</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Beschreibung</translation>
-    </message>
-    <message>
-        <source>The provider did not provide a description.</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Der Anbieter hat keine Beschreibung zur Verfügung gestellt.</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailHistory</name>
-    <message>
-        <source>List of your past interactions with this provider</source>
-        <translation>Ihre vergangenen Interaktionen mit diesem Anbieter</translation>
-    </message>
-    <message>
-        <source>The list is empty, no recorded interaction with this provider.</source>
-        <translation>Die Liste ist leer, keine Interaktion mit diesem Anbieter aufgezeichnet.</translation>
-    </message>
-    <message>
-        <source>Currently there are no history entries.</source>
-        <extracomment>INFO DESKTOP No authentication history, placeholder text.
-----------
-INFO ANDROID_TABLET IOS_TABLET No authentication history, placeholder text.</extracomment>
-        <translation>Derzeit gibt es keine Einträge im Verlauf.</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Purpose for reading out requested data</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Zweck des Auslesevorgangs</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailHistoryInfo</name>
-    <message>
-        <source>Provider</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>Purpose for reading out requested data</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Zweck des Auslesevorgangs</translation>
-    </message>
-    <message>
-        <source>Read data</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Ausgelesene Daten</translation>
-    </message>
-    <message>
-        <source>Terms of usage</source>
-        <extracomment>LABEL ANDROID_TABLET IOS_TABLET</extracomment>
-        <translation>Nutzungsbedingungen</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailHistoryItem</name>
-    <message>
-        <source>Service:</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Dienst:</translation>
-    </message>
-    <message>
-        <source>Provider:</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Anbieter:</translation>
-    </message>
-    <message>
-        <source>Click to view details of history entry.</source>
-        <translation>Zeige Details des Verlaufseintrags.</translation>
-    </message>
-    <message>
-        <source>Touch for more details</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Berühren Sie hier für mehr Details</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderDetailView</name>
-    <message>
-        <source>Description</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Beschreibung</translation>
-    </message>
-    <message>
-        <source>The provider did not provide a description.</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Der Anbieter hat keine Beschreibung zur Verfügung gestellt.</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderGridView</name>
-    <message>
-        <source>No results matching your search query found</source>
-        <extracomment>LABEL DESKTOP IOS_TABLET ANDROID_TABLET The text entered into the provider search field results in no matches</extracomment>
-        <translation>Keine Ergebnisse zu Ihrer Suche gefunden</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderHeader</name>
-    <message>
-        <source>To provider</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zum Anbieter</translation>
-    </message>
-</context>
-<context>
     <name>ProviderInfoSection</name>
     <message>
         <source>See details under &quot;more...&quot;</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Weitere Details unter &quot;mehr...&quot;</translation>
     </message>
-</context>
-<context>
-    <name>ProviderListItemDelegate</name>
     <message>
-        <source>Open provider details for %1</source>
-        <translation>Öffne Details vom Anbieter %1</translation>
-    </message>
-    <message>
-        <source>Click to set category filter to %1</source>
-        <translation>Klicken Sie hier um den Kategoriefilter auf %1 zu setzen</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderModelItem</name>
-    <message>
-        <source>Click to open homepage.</source>
-        <extracomment>INFO ALL_PLATFORMS A11y action text appended to provider homepage to be read read by screen reader.</extracomment>
-        <translation>Klicken, um die Homepage zu öffnen.</translation>
-    </message>
-    <message>
-        <source>Click to send email.</source>
-        <extracomment>INFO ALL_PLATFORMS A11y action text appended to provider mail to be read read by screen reader.</extracomment>
-        <translation>Klicken, um eine E-Mail zu senden.</translation>
-    </message>
-    <message>
-        <source>Costs</source>
+        <source>Show more information about the service provider</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Kosten</translation>
+        <translation>Zeige mehr Informationen über den Anbieter</translation>
     </message>
     <message>
-        <source>Click to call.</source>
-        <extracomment>INFO ALL_PLATFORMS A11y action text appended to provider phone number to be read read by screen reader.</extracomment>
-        <translation>Klicken, um anzurufen.</translation>
-    </message>
-    <message>
-        <source>Click to open map.</source>
-        <extracomment>INFO ALL_PLATFORMS A11y action text appended to provider address maps url to be read read by screen reader.</extracomment>
-        <translation>Klicken, um Karte zu öffnen.</translation>
-    </message>
-    <message>
-        <source>Homepage</source>
-        <translation>Homepage</translation>
-    </message>
-    <message>
-        <source>E-Mail</source>
-        <translation>E-Mail</translation>
-    </message>
-    <message>
-        <source>Phone</source>
-        <translation>Telefon</translation>
-    </message>
-    <message>
-        <source>Address</source>
-        <translation>Adresse</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderOverview</name>
-    <message>
-        <source>All provider</source>
+        <source>Details about the provider</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Alle Anbieter</translation>
-    </message>
-    <message>
-        <source>Citizen services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Bürgerdienste</translation>
-    </message>
-    <message>
-        <source>Financials</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Finanzen</translation>
-    </message>
-    <message>
-        <source>Insurances</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Versicherungen</translation>
-    </message>
-    <message>
-        <source>Other services</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Weitere Dienste</translation>
-    </message>
-</context>
-<context>
-    <name>ProviderView</name>
-    <message>
-        <source>Provider</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Anbieter</translation>
-    </message>
-    <message>
-        <source>Search providers</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Anbieter suchen</translation>
+        <translation>Details zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -3622,10 +2942,12 @@ LABEL ANDROID IOS</extracomment>
     <name>RemoteReaderView</name>
     <message>
         <source>Paired devices</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Gekoppelte Geräte</translation>
     </message>
     <message>
         <source>Add pairing</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Kopplung hinzufügen</translation>
     </message>
     <message>
@@ -3649,6 +2971,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Last connected</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Zuletzt verbunden</translation>
     </message>
     <message>
@@ -3660,6 +2983,11 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteServiceController</name>
     <message>
+        <source>Remote service</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Fernzugriff</translation>
+    </message>
+    <message>
         <source>You are about to identify yourself towards the following provider using the device &quot;%1&quot;:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Sie möchten sich mit dem Gerät %1 bei folgendem Anbieter ausweisen:</translation>
@@ -3668,11 +2996,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Card reader</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kartenleser</translation>
-    </message>
-    <message>
-        <source>Remote service</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fernzugriff</translation>
     </message>
 </context>
 <context>
@@ -3761,7 +3084,7 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
     </message>
     <message>
         <source>Paired Devices</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gekoppelte Geräte</translation>
     </message>
     <message>
@@ -3808,6 +3131,11 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
 <context>
     <name>RemoteServiceViewRemote</name>
     <message>
+        <source>Click to remove device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Klicken, um das Gerät zu entfernen</translation>
+    </message>
+    <message>
         <source>Remove pairing</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Kopplung entfernen</translation>
@@ -3841,11 +3169,6 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <source>Add pairing</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplung hinzufügen</translation>
-    </message>
-    <message>
-        <source>Click to remove device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Klicken, um das Gerät zu entfernen</translation>
     </message>
     <message>
         <source>Last connected</source>
@@ -3904,9 +3227,9 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <translation>Das verbundene Smartphone als Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>Connected to %1. Please place the NFC interface of the smartphone on your ID card.</source>
+        <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
         <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
-        <translation>Verbunden mit %1. Bitte platzieren Sie das Smartphone mit der NFC-Schnittstelle auf Ihrem Ausweis.</translation>
+        <translation>Verbunden mit %1. Bitte folgen Sie den Anweisungen auf dem verbundenen Smartphone.</translation>
     </message>
     <message>
         <source>Manage pairings</source>
@@ -3926,10 +3249,6 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
 </context>
 <context>
     <name>ResultErrorView</name>
-    <message>
-        <source>Show error details</source>
-        <translation>Fehlerdetails anzeigen</translation>
-    </message>
     <message>
         <source>Details</source>
         <translation>Details</translation>
@@ -3969,109 +3288,15 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
     </message>
 </context>
 <context>
-    <name>ScreenOrientationSelectionPopup</name>
+    <name>RetryCounter</name>
     <message>
-        <source>Select screen orientation</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Bildschirmausrichtung wählen</translation>
-    </message>
-    <message>
-        <source>Set screen orientation to portrait</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Bildschirmausrichtung auf Hochformat setzen</translation>
-    </message>
-    <message>
-        <source>Portrait</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Hochformat</translation>
-    </message>
-    <message>
-        <source>recommended</source>
-        <translation>empfohlen</translation>
-    </message>
-    <message>
-        <source>Set screen orientation to landscape</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Bildschirmausrichtung auf Querformat setzen</translation>
-    </message>
-    <message>
-        <source>Landscape</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Querformat</translation>
-    </message>
-    <message>
-        <source>Using a screen orientation unfit for your device may result in display errors.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Die Ver­wen­dung ei­ner, für Ihr Ge­rät nicht ge­eig­ne­ten Bild­schirm­aus­rich­tung kann zu An­zei­ge­feh­lern füh­ren.</translation>
-    </message>
-</context>
-<context>
-    <name>SearchBar</name>
-    <message>
-        <source>Search</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID</extracomment>
-        <translation>Suchen</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation>Löschen</translation>
-    </message>
-    <message>
-        <source>Type provider to search for</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Tippen Sie den Namen des Anbieters ein, nach dem Sie suchen möchten</translation>
-    </message>
-    <message>
-        <source>Abort search</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Suche abbrechen</translation>
-    </message>
-    <message>
-        <source>Search provider list</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Durchsuchen der Anbieterliste</translation>
-    </message>
-    <message>
-        <source>Enter search string</source>
-        <translation>Sucheingabe</translation>
-    </message>
-    <message>
-        <source>Search providers</source>
-        <translation>Anbieter suchen</translation>
-    </message>
-    <message>
-        <source>Clear search string</source>
-        <translation>Lösche Sucheingabe</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Abbrechen</translation>
+        <source>Remaining ID card PIN attempts: %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Verbleibende Karten-PIN Versuche: %1</translation>
     </message>
 </context>
 <context>
     <name>SecurityAndPrivacySettings</name>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Save authentication history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf der Ausweisvorgänge speichern</translation>
-    </message>
-    <message>
-        <source>Clear entire history</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Lösche gesamten Verlauf</translation>
-    </message>
-    <message>
-        <source>History is empty</source>
-        <translation>Es gibt keine Einträge im Verlauf</translation>
-    </message>
     <message>
         <source>Onscreen keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
@@ -4081,16 +3306,6 @@ LABEL ANDROID</extracomment>
         <source>Use on screen keypad for PIN entry</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Bildschirmtastatur für die PIN-Eingabe verwenden</translation>
-    </message>
-    <message>
-        <source>Shuffle keypad buttons</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Zufällige Anordnung der Ziffern</translation>
-    </message>
-    <message>
-        <source>Visual feedback when pressing keypad buttons</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Animation der Tasten auf der Bildschirmtastatur</translation>
     </message>
     <message>
         <source>Software updates</source>
@@ -4133,19 +3348,19 @@ LABEL ANDROID</extracomment>
         <translation>Keine Aktualisierungsinformationen vorhanden, bitte prüfen Sie manuell auf verfügbare Aktualisierungen.</translation>
     </message>
     <message>
-        <source>Delete history</source>
+        <source>Shuffle digits of on screen keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlauf löschen</translation>
+        <translation>Ziffern der Bildschirmtastatur zufällig anordnen</translation>
     </message>
     <message>
-        <source>All history entries will be deleted.</source>
-        <extracomment>INFO DESKTOP The current history is about to be removed, user confirmation required.</extracomment>
-        <translation>Alle im Verlauf gespeicherten Informationen werden gelöscht.</translation>
+        <source>Button animation</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Tasten-Animationen</translation>
     </message>
     <message>
-        <source>Deleted %1 entries from the history.</source>
-        <extracomment>INFO DESKTOP Feedback how many history entries were removed.</extracomment>
-        <translation>Es wurden %1 Einträge aus dem Verlauf gelöscht.</translation>
+        <source>Visually highlight key presses on screen keypad</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Eingaben auf der Bildschirmtastatur optisch hervorheben</translation>
     </message>
 </context>
 <context>
@@ -4166,33 +3381,16 @@ LABEL ANDROID</extracomment>
         <translation>Ausgelesene Daten</translation>
     </message>
     <message>
-        <source>Save as PDF...</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Als PDF speichern...</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Information</translation>
-    </message>
-    <message>
-        <source>Portable Document Format (*.pdf)</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Portables Dokumentenformat (*.pdf)</translation>
-    </message>
-    <message>
         <source>OK</source>
-        <extracomment>LABEL DESKTOP</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
     </message>
     <message>
         <source>Identify</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ausweisen</translation>
-    </message>
-    <message>
-        <source>Save read self-authentication data</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Ausgelesene Daten der Selbstauskunft speichern</translation>
     </message>
 </context>
 <context>
@@ -4231,6 +3429,16 @@ LABEL ANDROID IOS</extracomment>
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Meine Daten einsehen</translation>
+    </message>
+    <message>
+        <source>Self-authentication</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Selbstauskunft</translation>
+    </message>
+    <message>
+        <source>Hint</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tipp</translation>
     </message>
 </context>
 <context>
@@ -4288,61 +3496,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sprache wechseln</translation>
     </message>
     <message>
-        <source>Screen orientation</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Bildschirmausrichtung</translation>
-    </message>
-    <message>
-        <source>Landscape</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Querformat</translation>
-    </message>
-    <message>
-        <source>Portrait</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Hochformat</translation>
-    </message>
-    <message>
         <source>Device name</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gerätename</translation>
     </message>
     <message>
-        <source>PIN pad mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tastaturmodus</translation>
-    </message>
-    <message>
         <source>Enter PIN on this device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>PIN-Eingabe auf diesem Gerät</translation>
-    </message>
-    <message>
-        <source>Save history</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verlauf speichern</translation>
-    </message>
-    <message>
-        <source>Save authentication history</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verlauf der Ausweisvorgänge speichern</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL ANDROID IOS
-----------
-LABEL ALL_PLATFORMS</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>View authentication history</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verlauf der Ausweisvorgänge anzeigen</translation>
-    </message>
-    <message>
-        <source>Shuffle keypad buttons</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zufällige Anordnung der Ziffern</translation>
     </message>
     <message>
         <source>Randomize the order of the on screen keypad buttons</source>
@@ -4355,34 +3516,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Tasten-Animationen</translation>
     </message>
     <message>
-        <source>Visual feedback when pressing keypad buttons</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Animation der Tasten auf der Bildschirmtastatur</translation>
-    </message>
-    <message>
-        <source>CAN allowed mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>CAN-allowed-Modus</translation>
-    </message>
-    <message>
-        <source>Support CAN allowed mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>CAN-allowed-Modus unterstützen</translation>
-    </message>
-    <message>
-        <source>Allow the id card to be used with only the CAN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Unterstütze die Verwendung des Ausweis nur mit der CAN</translation>
-    </message>
-    <message>
         <source>Skip rights page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Anzeige der Berechtigungen überspringen</translation>
-    </message>
-    <message>
-        <source>Do not show the rights page, when in can allowed mode</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Überspringe die Anzeige der Berechtigungen im CAN-allowed-Modus</translation>
     </message>
     <message>
         <source>Testmode for the self-authentication</source>
@@ -4390,19 +3526,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Testmodus für die Selbstauskunft</translation>
     </message>
     <message>
-        <source>Use the test environment during a self-authentication</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Benutze die Test-Umgebung während der Selbstauskunft</translation>
-    </message>
-    <message>
         <source>Internal card simulator</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Interner Kartensimulator</translation>
-    </message>
-    <message>
-        <source>Enable internal card simulator</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Aktiviere den internen Kartensimulator</translation>
     </message>
     <message>
         <source>Developer mode</source>
@@ -4435,38 +3561,88 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>15 Tage alte Protokolldatei</translation>
     </message>
     <message>
+        <source>Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID</translation>
+    </message>
+    <message>
+        <source>Reset Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Reset Smart-eID data on your device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID auf Ihrem Gerät zurücksetzen</translation>
+    </message>
+    <message>
         <source>Show requested rights on this device as well</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Angefragte Berechtigung auch auf diesem Gerät anzeigen</translation>
-    </message>
-    <message>
-        <source>Show access rights</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Berechtigungsanzeige</translation>
-    </message>
-    <message>
-        <source>Manage paired devices and add new devices</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gekoppelte Geräte verwalten und neue Geräte hinzufügen</translation>
     </message>
     <message>
         <source>Manage pairings</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplungen verwalten</translation>
     </message>
+    <message>
+        <source>Show Transport PIN reminder, store feedback and close reminder dialogs.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zeige Transport-PIN Hinweis, Store Feedback und Fenster-Schließ Hinweis Dialoge.</translation>
+    </message>
+    <message>
+        <source>Reset hideable dialogs</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Setze versteckbare Dialoge zurück</translation>
+    </message>
+    <message>
+        <source>Toggling will restart the %1</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ein Umschalten startet die %1 neu</translation>
+    </message>
+    <message>
+        <source>Use system font</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Systemschriftart verwenden</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Erscheinungsbild</translation>
+    </message>
+    <message>
+        <source>Add and remove devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Geräte hinzufügen oder entfernen</translation>
+    </message>
+    <message>
+        <source>On-site reading</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Vor-Ort-Auslesen</translation>
+    </message>
+    <message>
+        <source>Support CAN allowed mode for on-site reading</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>CAN-Allowed Modus für Vor-Ort-Auslesen unterstützen</translation>
+    </message>
+    <message>
+        <source>Allow test sample card usage</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Testmusterkarten erlauben</translation>
+    </message>
+    <message>
+        <source>Simulate a test sample card in authentications</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bei der Authentisierung eine Testmusterkarte simulieren</translation>
+    </message>
+    <message>
+        <source>Visually highlight key presses on screen keypad</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Eingaben auf der Bildschirmtastatur optisch hervorheben</translation>
+    </message>
 </context>
 <context>
-    <name>SetupAssistantView</name>
-    <message>
-        <source>Setup Assistant</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Einrichtungsassistent</translation>
-    </message>
-    <message>
-        <source>Welcome to the AusweisApp2. Please take a few moments to set up the environment to your needs. Every decision you make can later be changed in the settings menu.</source>
-        <extracomment>INFO DESKTOP Welcome message when starting the setup assistant.</extracomment>
-        <translation>Willkommen in der AusweisApp2. Bitte nehmen Sie sich einen Moment Zeit, um die App nach Ihren Wünschen anzupassen. Jede Einstellung kann später wieder im Einstellungsmenü geändert werden.</translation>
-    </message>
+    <name>SetupAutostartView</name>
     <message>
         <source>Do you want to automatically start the %1 after boot?</source>
         <extracomment>INFO DESKTOP Question if the App shall be started automatically after boot</extracomment>
@@ -4479,53 +3655,18 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
     <message>
         <source>The launch will add an icon to the menu bar.</source>
-        <extracomment>INFO MACOS Additional information that macOS auto-start add a symbol to the menu bar</extracomment>
+        <extracomment>INFO MACOS Additional information that macOS auto-start adds a symbol to the menu bar</extracomment>
         <translation>Der Start erfolgt hierbei als Eintrag in der Menüleiste.</translation>
     </message>
     <message>
-        <source>Auto-start Setting</source>
+        <source>Autostart Settings</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Autostart-Einstellung</translation>
+        <translation>Autostart Einstellungen</translation>
     </message>
     <message>
-        <source>Do you want to save a history of performed authentications on your device?</source>
-        <extracomment>INFO DESKTOP Question if the authentication history shall be stored.</extracomment>
-        <translation>Möchten Sie einen Verlauf durchgeführter Authentisierungen auf diesem Gerät speichern?</translation>
-    </message>
-    <message>
-        <source>The history is only saved locally. You can use it to see on what date you transmitted which data to which party. After enabling the history you can view and delete the entries anytime.</source>
-        <extracomment>INFO DESKTOP Information text which data is stored in the history record.</extracomment>
-        <translation>Der Verlauf wird nur lokal angelegt. Dort können Sie jederzeit nachschauen, wann Sie wem welche Daten übermittelt haben. Sie können nach aktivieren der Funktion jederzeit Verlaufseinträge einsehen und löschen.</translation>
-    </message>
-    <message>
-        <source>History Setting</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Verlaufseinstellungen</translation>
-    </message>
-    <message>
-        <source>Do you want to set up a card reader &lt;u&gt;now&lt;/u&gt;?</source>
-        <extracomment>INFO DESKTOP Question if the the user wants to setup any card readers now.</extracomment>
-        <translation>Möchten Sie &lt;u&gt;jetzt&lt;/u&gt; einen Kartenleser einrichten?</translation>
-    </message>
-    <message>
-        <source>In order to use the online identification feature on the computer, you need to set up a suitable smartphone or card reader before the first authentication process.</source>
-        <extracomment>INFO DESKTOP Information text why a card reader is required to use the online</extracomment>
-        <translation>Für die Nutzung der Online-Ausweisfunktion am Computer müssen Sie vor dem ersten Ausweisvorgang ein geeignetes Smartphone oder einen separaten Kartenleser einrichten.</translation>
-    </message>
-    <message>
-        <source>Card Readers</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Kartenleser</translation>
-    </message>
-    <message>
-        <source>You have completed the setup of the AusweisApp2 successfully.</source>
-        <extracomment>INFO DESKTOP Success message after completing the setup assistant.</extracomment>
-        <translation>Sie haben die Einrichtung der AusweisApp2 erfolgreich abgeschlossen.</translation>
-    </message>
-    <message>
-        <source>Proceed to start page</source>
-        <extracomment>INFO DESKTOP A11y button text to exit the setup assistant.</extracomment>
-        <translation>Weiter zur Startseite</translation>
+        <source>The launch will add a tray icon to the notification area.</source>
+        <extracomment>INFO WINDOWS Additional information that Windows auto-start adds a symbol to the notification area.</extracomment>
+        <translation>Der Start erfolgt hierbei als Tray-Icon im Infobereich.</translation>
     </message>
 </context>
 <context>
@@ -4542,26 +3683,21 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
-    <name>SmartDeleteStartView</name>
-    <message>
-        <source>Delete Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID löschen</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to delete the Smart-eID?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sind Sie sicher, dass Sie die Smart-eID löschen wollen?</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Löschen</translation>
-    </message>
+    <name>SmartDeleteBaseView</name>
     <message>
         <source>Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID</translation>
+    </message>
+    <message>
+        <source>Please wait a moment.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bitte warten Sie einen Moment.</translation>
+    </message>
+    <message>
+        <source>Send log</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Protokoll senden</translation>
     </message>
     <message>
         <source>If you want to use that functionality again, you need to set up a new Smart-eID first.</source>
@@ -4575,6 +3711,54 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
+    <name>SmartDeleteView</name>
+    <message>
+        <source>Delete Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID löschen</translation>
+    </message>
+    <message>
+        <source>You have successfuly deleted your Smart-eID.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie haben Ihre Smart-eID erfolgreich gelöscht.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID could not be successfully deleted from your device.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Die Smart-eID konnte nicht erfolgreich von Ihrem Gerät gelöscht werden.</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zur Startseite</translation>
+    </message>
+    <message>
+        <source>You are about to delete the Smart-eID data that is currently stored on your device.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie sind dabei, die Daten der Smart-eID von Ihrem Gerät zu löschen.</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete the Smart-eID?</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sind Sie sicher, dass Sie die Smart-eID löschen wollen?</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <source>Deleting Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Lösche Smart-eID</translation>
+    </message>
+    <message>
+        <source>Delete the Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Löschen der Smart-eID</translation>
+    </message>
+</context>
+<context>
     <name>SmartMainView</name>
     <message>
         <source>Updating Smart-eID status...</source>
@@ -4582,24 +3766,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Status der Smart-eID wird aktualisiert...</translation>
     </message>
     <message>
-        <source>Smart-eID not supported</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID nicht unterstützt</translation>
-    </message>
-    <message>
-        <source>Smart-eID invalid</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID ungültig</translation>
-    </message>
-    <message>
         <source>Smart-eID ready for use</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID einsatzbereit</translation>
-    </message>
-    <message>
-        <source>Smart-eID supported</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID unterstützt</translation>
     </message>
     <message>
         <source>Please wait a moment.</source>
@@ -4607,24 +3776,62 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Bitte warten Sie einen Moment.</translation>
     </message>
     <message>
-        <source>Unfortunately, this functionality is not supported by your device.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Leider wird diese Funktion von Ihrem Gerät nicht unterstützt.</translation>
-    </message>
-    <message>
-        <source>Your Smart-eID is in an invalid state. You need to set it up again to perform online identifications without your ID card.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihre Smart-eID ist in einem ungültigen Zustand. Sie müssen sie erneut einrichten, um die Online-Ausweisfunktion auch ohne Ausweiskarte nutzen zu können.</translation>
-    </message>
-    <message>
         <source>Your Smart-eID is set up and ready for use. You can now perform online identifications without your ID card if supported by the provider.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ihre Smart-eID ist eingerichtet und einsatzbereit. Sie können die Online-Ausweisfunktion jetzt auch ohne Ausweiskarte nutzen, wenn der jeweilige Diensteanbieter dies unterstützt.</translation>
     </message>
     <message>
-        <source>Set up a Smart-eID in order to perform online identifications without your ID card if supported by the provider.</source>
+        <source>Check here if your device is suitable to set up a Smart-eID.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Richten Sie eine Smart-eID ein, um die Online-Ausweisfunktion auch ohne Ausweiskarte nutzen zu können, wenn der jeweilige Diensteanbieter dies unterstützt.</translation>
+        <translation>Prüfen Sie hier, ob Ihr Gerät für die Einrichtung einer Smart-eID geeignet ist.</translation>
+    </message>
+    <message>
+        <source>Start check</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Prüfung starten</translation>
+    </message>
+    <message>
+        <source>With the Smart-eID you may also use the online identification function without the ID card.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Mit der Smart-eID können Sie die Online-Ausweisfunktion auch ohne Ausweiskarte nutzen.</translation>
+    </message>
+</context>
+<context>
+    <name>SmartResetView</name>
+    <message>
+        <source>Reset Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID zurücksetzen</translation>
+    </message>
+    <message>
+        <source>You have successfully reset your Smart-eID.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie haben Ihre Smart-eID erfolgreich zurückgesetzt.</translation>
+    </message>
+    <message>
+        <source>You are about to reset your Smart-eID data. This can also be used for troubleshooting as well.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sie sind dabei, die Daten der Smart-eID auf Ihrem Gerät zurücksetzen. Dies kann auch zur Problembeseitigung verwendet werden.</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reset the Smart-eID?</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Sind Sie sicher, dass Sie die Smart-eID zurücksetzen wollen?</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Resetting Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Setze Smart-eID zurück</translation>
+    </message>
+    <message>
+        <source>Reset the Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Zurücksetzen der Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -4633,26 +3840,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID</translation>
-    </message>
-    <message>
-        <source>Check Smart-eID status</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID-Status prüfen</translation>
-    </message>
-    <message>
-        <source>Check device compatibility and the current state of any present Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Unterstützung des Geräts sowie den aktuellen Zustand der Smart-eID prüfen</translation>
-    </message>
-    <message>
-        <source>Set up Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID einrichten</translation>
-    </message>
-    <message>
-        <source>Set up Smart-eID on this device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID auf diesem Gerät einrichten</translation>
     </message>
     <message>
         <source>Renew Smart-eID</source>
@@ -4670,19 +3857,29 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Smart-eID löschen</translation>
     </message>
     <message>
-        <source>Remove Smart-eID data from your device</source>
+        <source>Delete Smart-eID data from your device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID Daten von diesem Gerät löschen</translation>
     </message>
     <message>
-        <source>Reset Smart-eID</source>
+        <source>Try Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID zurücksetzen</translation>
+        <translation>Smart-eID ausprobieren</translation>
     </message>
     <message>
-        <source>Remove Smart-eID data and provisioning from your device</source>
+        <source>Show Smart-eID data</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID Daten und Vorbereitung entfernen</translation>
+        <translation>Smart-eID-Daten anzeigen</translation>
+    </message>
+    <message>
+        <source>Change Smart-eID PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID-PIN ändern</translation>
+    </message>
+    <message>
+        <source>Change the chosen Smart-eID PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Selbstgewählte PIN der Smart-eID ändern</translation>
     </message>
 </context>
 <context>
@@ -4702,14 +3899,14 @@ LABEL ALL_PLATFORMS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID einrichten</translation>
     </message>
+    <message>
+        <source>Smart-eID setup</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID-Einrichtung</translation>
+    </message>
 </context>
 <context>
     <name>SmartUpdateStartView</name>
-    <message>
-        <source>Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID</translation>
-    </message>
     <message>
         <source>You are about to renew your Smart-eID. In order to proceed, you need your ID card, your six-digit ID card PIN and an internet connection.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
@@ -4725,6 +3922,16 @@ LABEL ALL_PLATFORMS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Smart-eID erneuern</translation>
     </message>
+    <message>
+        <source>Renew the Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Erneuern der Smart-eID</translation>
+    </message>
+    <message>
+        <source>Smart-eID renewal</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Smart-eID-Erneuerung</translation>
+    </message>
 </context>
 <context>
     <name>SmartView</name>
@@ -4734,39 +3941,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Smart-eID</translation>
     </message>
     <message>
-        <source>Please wait a moment.</source>
+        <source>Check Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bitte warten Sie einen Moment.</translation>
-    </message>
-    <message>
-        <source>You are about to delete the Smart-eID data that is currently stored on your device.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie sind dabei, die Daten der Smart-eID von Ihrem Gerät zu löschen.</translation>
-    </message>
-    <message>
-        <source>Delete Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID löschen</translation>
-    </message>
-    <message>
-        <source>Deleting Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Lösche Smart-eID</translation>
-    </message>
-    <message>
-        <source>You are about to delete the Smart-eID data from your device and also remove the Smart-eID provisioning. This can a be used for troubleshooting as well.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie sind dabei, die Daten der Smart-eID von Ihrem Gerät zu löschen und auch die Smart-eID Vorbereitung zu entfernen. Dies kann auch zur Fehlerbehebung genutzt werden.</translation>
-    </message>
-    <message>
-        <source>Reset Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID zurücksetzen</translation>
-    </message>
-    <message>
-        <source>Resetting Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Setze Smart-eID zurück</translation>
+        <translation>Smart-eID prüfen</translation>
     </message>
 </context>
 <context>
@@ -4831,7 +4008,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Sie haben noch keine Smart-eID eingerichtet oder diese ist nicht mehr nutzbar.
 
-Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen, oder wählen Sie &quot;WLAN&quot;, um sich mit einem anderen Smartphone als Kartenleser zu verbinden. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID Einrichtung vom Startbildschirm.</translation>
+Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen, oder wählen Sie &quot;WLAN&quot;, um sich mit einem anderen Smartphone als Kartenleser zu verbinden. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID-Einrichtung vom Startbildschirm.</translation>
     </message>
     <message>
         <source>Continue</source>
@@ -4846,13 +4023,18 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
 
 Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle auswählen. Möchten Sie stattdessen eine Smart-eID einrichten, brechen Sie den aktuellen Vorgang bitte ab und starten Sie die Smart-eID-Einrichtung vom Startbildschirm.</translation>
     </message>
+    <message>
+        <source>The device &quot;%1&quot; wants to access your Smart-eID.</source>
+        <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; möchte auf Ihre Smart-eID zugreifen.</translation>
+    </message>
 </context>
 <context>
     <name>StoreFeedbackPopup</name>
     <message>
-        <source>Are you satisfied with AusweisApp2?</source>
+        <source>Are you satisfied with %1?</source>
         <extracomment>INFO ANDROID Header of the app rating popup.</extracomment>
-        <translation>Zufrieden mit der AusweisApp2?</translation>
+        <translation>Zufrieden mit der %1?</translation>
     </message>
     <message>
         <source>We would be very grateful if you could leave a rating on the Google Play Store!</source>
@@ -4912,26 +4094,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
 <context>
     <name>TitleBar</name>
     <message>
-        <source>Navigation bar</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Navigationsleiste</translation>
-    </message>
-    <message>
-        <source>List</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Liste</translation>
-    </message>
-    <message>
-        <source>%1 elements</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>%1 Elemente</translation>
-    </message>
-    <message>
-        <source>1 element</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>1 Element</translation>
-    </message>
-    <message>
         <source>Start page</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Startseite</translation>
@@ -4945,43 +4107,17 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Öffne die %1 Einstellungen</translation>
     </message>
     <message>
-        <source>Open online help in browser</source>
-        <translation>Öffne die Online-Hilfe im Browser</translation>
-    </message>
-    <message>
-        <source>Open online help of %1 in browser</source>
-        <translation>Öffne die Online-Hilfe der %1 im Browser</translation>
-    </message>
-    <message>
         <source>Notifications</source>
-        <translation>Benachrichtungen</translation>
+        <translation>Benachrichtigungen</translation>
     </message>
     <message>
         <source>Show in-app notifications of %1</source>
         <translation>Zeige den interne Benachrichtigungsdialog der %1</translation>
     </message>
-</context>
-<context>
-    <name>TitleBarAction</name>
     <message>
-        <source>Navigating to %1 in current context disabled</source>
+        <source>Title bar</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Navigation zu %1 ist im aktuellen Kontext deaktiviert</translation>
-    </message>
-    <message>
-        <source>element %1 of %2</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Element %1 von %2</translation>
-    </message>
-    <message>
-        <source>Current context: %1</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Aktueller Kontext: %1</translation>
-    </message>
-    <message>
-        <source>Navigate to %1</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Navigiere zu %1</translation>
+        <translation>Titelleiste</translation>
     </message>
 </context>
 <context>
@@ -4995,24 +4131,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zurück</translation>
-    </message>
-</context>
-<context>
-    <name>TransportPinAssistantView</name>
-    <message>
-        <source>Transport PIN</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Transport-PIN</translation>
-    </message>
-    <message>
-        <source>Do you want to change your (Transport) PIN now?</source>
-        <extracomment>INFO DESKTOP Inquiry message if the five-digit Transport PIN should be changed to an ordinary PIN (now).</extracomment>
-        <translation>Möchten Sie Ihre (Transport-)PIN jetzt ändern?</translation>
-    </message>
-    <message>
-        <source>If you have not already done so you have to change your five-digit Transport PIN to a six-digit PIN before you can use the online-ID function.</source>
-        <extracomment>INFO DESKTOP Hint that a six-digit PIN is required to use the online identification feature of the ID card.</extracomment>
-        <translation>Falls noch nicht geschehen, müssen Sie vor der erstmaligen Nutzung der Online-Ausweisfunktion die fünfstellige Transport-PIN in eine sechsstellige PIN ändern.</translation>
     </message>
 </context>
 <context>
@@ -5037,857 +4155,10 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Die Benutzung der Online-Ausweisfunktion mit der Transport-PIN ist nicht möglich. Die selbstgewählte, sechsstellige Karten-PIN wird zur Nutzung der Online-Ausweisfunktion zwingend benötigt.</translation>
     </message>
-</context>
-<context>
-    <name>TutorialFooter</name>
     <message>
-        <source>Fold in</source>
+        <source>To set up a Smart-eID you also need to have assigned a six-digit PIN beforehand.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Einklappen</translation>
-    </message>
-    <message>
-        <source>Quit tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial beenden</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialHow</name>
-    <message>
-        <source>How can I use the AusweisApp2 on my iPhone?</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Wie kann ich die AusweisApp2 auf meinem iPhone nutzen?</translation>
-    </message>
-    <message>
-        <source>How can I use the AusweisApp2 on my smartphone?</source>
-        <translation>Wie kann ich die AusweisApp2 auf meinem Smartphone nutzen?</translation>
-    </message>
-    <message>
-        <source>Many iPhones (iPhone 7 and newer) can access the ID card via the built-in NFC interface.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Viele iPhones (iPhone 7 und neuer) können direkt über die im Gerät verbaute NFC-Schnittstelle auf die Online-Ausweisfunktion des Ausweises zugreifen.</translation>
-    </message>
-    <message>
-        <source>Many Android devices can access the ID card via the built-in NFC interface.</source>
-        <translation>Viele Android-Geräte können direkt über die im Gerät verbaute NFC-Schnittstelle auf die Online-Ausweisfunktion des Ausweises zugreifen.</translation>
-    </message>
-    <message>
-        <source>You can test the capabilities of your device and your card by choosing &quot;Check device and ID card&quot; on the start page:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Indem Sie &quot;Gerät und Ausweis prüfen&quot; auf der Startseite auswählen, können die Funktionalität Ihres Geräts und Ihrer Karte testen:</translation>
-    </message>
-    <message>
-        <source>You can also find a list of compatible NFC-capable smartphones here:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Außerdem finden Sie hier eine Liste kompatibler NFC-fähiger Smartphones:</translation>
-    </message>
-    <message>
-        <source>The AusweisApp2 offers the following options to access your ID card:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die AusweisApp2 bietet zum Auslesen die folgenden Möglichkeiten:</translation>
-    </message>
-    <message>
-        <source>Direct connection via NFC chip tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial zum direkten Auslesen über NFC</translation>
-    </message>
-    <message>
-        <source>Direct connection via NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Direktes Auslesen über NFC-Chip</translation>
-    </message>
-    <message>
-        <source>App on iPhone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>App auf iPhone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on Android smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <translation>App auf Android-Telefon &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial zum Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on computer &lt;b&gt;without&lt;/b&gt; NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>App auf Computer &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
-    </message>
-    <message>
-        <source>Smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader mobile tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Mobilgeräte-Tutorial zum Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on tablet or smartphone &lt;b&gt;without&lt;/b&gt; NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>App auf Tablet oder Telefon &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
-    </message>
-    <message>
-        <source>Another tip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Noch ein Tipp</translation>
-    </message>
-    <message>
-        <source>For lengthy forms, e.g. a BAföG application, we recommend you to use the AusweisApp2 on a computer...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Für aufwändigere Formulare wie z.B. den BAföG-Antrag empfehlen wir Ihnen die AusweisApp2 am Computer zu verwenden...</translation>
-    </message>
-    <message>
-        <source>Filling long forms is no fun on a smartphone!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Längere Anträge ausfüllen macht am Mobiltelefon keinen Spaß!</translation>
-    </message>
-    <message>
-        <source>... and to use a smartphone to communicate with your ID card. A USB reader is of course also an alternative.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>... und zum Lesen des Ausweises das Smartphone als Kartenleser zu nutzen. Alternativ geht natürlich auch ein USB-Lesegerät.</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialImportant</name>
-    <message>
-        <source>Please exchange your</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bitte tauschen Sie Ihre</translation>
-    </message>
-    <message>
-        <source>Before you use the online ID function please change the</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Vor der erstmaligen Nutzung der Online-Ausweisfunktion bitte die</translation>
-    </message>
-    <message>
-        <source>five-digit</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>fünfstellige</translation>
-    </message>
-    <message>
-        <source>Transport PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Transport-PIN</translation>
-    </message>
-    <message>
-        <source>with a</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>mit einer</translation>
-    </message>
-    <message>
-        <source>six-digit PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>sechsstelligen PIN</translation>
-    </message>
-    <message>
-        <source>before you use the online ID function!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>bevor Sie die Online-Ausweisfunktion verwenden!</translation>
-    </message>
-    <message>
-        <source>change!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>ersetzen!</translation>
-    </message>
-    <message>
-        <source>The Transport PIN is sent to you by the Bundesdruckerei via mail.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die Transport-PIN wird Ihnen von der Bundesdruckerei per Brief zugesandt.</translation>
-    </message>
-    <message>
-        <source>Select for this purpose the menu item &quot;Change my (Transport) PIN&quot; from the start page. Later you can also change your six-digit PIN here</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wählen Sie zu diesem Zweck den Menüeintrag &quot;Meine (Transport-)PIN ändern&quot; auf der Startseite. Später können Sie an dieser Stelle auch Ihre sechsstellige PIN ändern</translation>
-    </message>
-    <message>
-        <source>... or click this button to change your PIN right now:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>... oder auf diesen Button klicken um die PIN jetzt zu ändern:</translation>
-    </message>
-    <message>
-        <source>Change my (Transport) PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Meine (Transport-)&#x200b;PIN ändern</translation>
-    </message>
-    <message>
-        <source>Please note: The Transport PIN can only be used for your first PIN change. If you have already set your six-digit PIN (e.g. while picking up your ID card) only the set PIN is valid.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Hinweis: Die Transport-PIN kann nur für die erstmalige PIN-Änderung verwendet werden. Sollten Sie (z.B. bei der Abholung Ihres Ausweises) bereits eine sechsstellige PIN gesetzt haben, ist nur noch diese gültig.</translation>
-    </message>
-    <message>
-        <source>Open YouTube video</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffne das YouTube-Video</translation>
-    </message>
-    <message>
-        <source>Learn more about this in the YouTube video</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können mehr dazu im YouTube-Video erfahren</translation>
-    </message>
-    <message>
-        <source>Let&apos;s go</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Los geht&apos;s</translation>
-    </message>
-    <message>
-        <source>Do you still have questions?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Oder haben Sie noch Fragen?</translation>
-    </message>
-    <message>
-        <source>You can read our &lt;b&gt;FAQs&lt;/b&gt; or &lt;b&gt;write&lt;/b&gt; to us...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Dann können Sie in unsere &lt;b&gt;FAQs&lt;/b&gt; schauen oder uns &lt;b&gt;schreiben&lt;/b&gt;...</translation>
-    </message>
-    <message>
-        <source>or</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>oder</translation>
-    </message>
-    <message>
-        <source>You can always access this tutorial again from the &quot;Help&quot; section in the menu bar.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können dieses Tutorial jederzeit wieder über den Bereich &quot;Hilfe&quot; aufrufen.</translation>
-    </message>
-    <message>
-        <source>If you cannot recall your six-digit PIN or cannot find your PIN letter, you may request a new PIN using the PIN Reset Service.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Falls Sie sich nicht an Ihre sechsstellige PIN erinnern oder den PIN-Brief nicht finden können, können Sie eine neue PIN mithilfe des PIN-Rücksetzdienstes beantragen.</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialReaderMethodFooter</name>
-    <message>
-        <source>Back</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zurück</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialReaderMethodNfc</name>
-    <message>
-        <source>Tutorial: NFC</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial: NFC</translation>
-    </message>
-    <message>
-        <source>Direct connection via NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Direktes Auslesen über NFC Chip</translation>
-    </message>
-    <message>
-        <source>App on iPhone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>App auf iPhone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on Android smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>App auf Android-Telefon &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Click link on the website of the provider.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Link auf Webseite des Anbieters klicken.</translation>
-    </message>
-    <message>
-        <source>The App opens automatically.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die App öffnet sich automatisch.</translation>
-    </message>
-    <message>
-        <source>The AusweisApp2 will display who wants to access which data.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihnen wird angezeigt, wer welche Ihrer Daten abfragen will.</translation>
-    </message>
-    <message>
-        <source>Start the process with a click on:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Starten Sie den Vorgang mit:</translation>
-    </message>
-    <message>
-        <source>Proceed to PIN entry</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Weiter zur PIN-Eingabe</translation>
-    </message>
-    <message>
-        <source>... and place the top of the iPhone onto the ID card.</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>...und platzieren Sie die Oberkante des iPhones auf dem Ausweis.</translation>
-    </message>
-    <message>
-        <source>... and place the ID card flat onto the NFC interface.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>...und platzieren Sie den Ausweis flach an der NFC-Schnittstelle.</translation>
-    </message>
-    <message>
-        <source>Do not move device or ID card!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät und Ausweis nicht bewegen!</translation>
-    </message>
-    <message>
-        <source>The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Die korrekte Position ist abhängig von Ihrem Gerät. Probieren Sie andere Positionen aus wenn eine nicht funktionieren sollte. Die AusweisApp2 zeigt verschiedene typische Positionen.</translation>
-    </message>
-    <message>
-        <source>If your device is unable to detect your ID card try to check the device capabilities by clicking on &quot;Check device and ID card&quot; on the start page.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Wenn Ihr Gerät keinen Ausweis erkennen kann versuchen Sie die Gerätefähigkeiten zu testen indem Sie &quot;Gerät und Ausweis prüfen&quot; auf der Startseite auswählen.</translation>
-    </message>
-    <message>
-        <source>You can find more information on compatible devices on our %1mobile device list%2.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Mehr Informationen zu kompatiblen Geräten finden Sie auf unserer %1Mobilgeräteliste%2.</translation>
-    </message>
-    <message>
-        <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the third line.</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>six-digit PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>sechsstellige PIN</translation>
-    </message>
-    <message>
-        <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated accoording to the first line.</extracomment>
-        <translation>eingeben!</translation>
-    </message>
-    <message>
-        <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in eine sechsstellige PIN geändert haben.</translation>
-    </message>
-    <message>
-        <source>Open YouTube video</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffne das YouTube-Video</translation>
-    </message>
-    <message>
-        <source>You can also watch this YouTube video explaining the process.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialReaderMethodSacDesktop</name>
-    <message>
-        <source>Tutorial: Smartphone as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial: Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Smartphone as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on computer &lt;b&gt;without&lt;/b&gt; NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>App auf Computer &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
-    </message>
-    <message>
-        <source>Smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Install AusweisApp2 on both your computer &lt;b&gt;and&lt;/b&gt; your smartphone with NFC capability.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Installieren Sie die AusweisApp2 &lt;b&gt;sowohl&lt;/b&gt; auf Ihrem Rechner &lt;b&gt;als auch&lt;/b&gt; auf Ihrem NFC-fähigen Smartphone.</translation>
-    </message>
-    <message>
-        <source>Both devices have to be connected to the same WiFi network</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Beide Geräte müssen im selben WLAN sein</translation>
-    </message>
-    <message>
-        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone die Ansicht &quot;Kartenleser&quot;...</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>Pair device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät koppeln</translation>
-    </message>
-    <message>
-        <source>Pairing code</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplungscode</translation>
-    </message>
-    <message>
-        <source>appears!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>erscheint!</translation>
-    </message>
-    <message>
-        <source>On the first use of the Smartphone as card reader (SaC), iOS will asks for your permission to access the local network. This permission is required in order find and connect to your SaC. After the first request you can always access the permission in the iOS settings for this app.</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Bei der ersten Verwendung des Smartphones als Kartenleser (SaK) bittet iOS Sie um Ihre Erlaubnis um auf das lokale Netzwerk zugreifen zu dürfen. Diese Berechtigung ist erforderlich, um Ihr SaK zu finden und eine Verbindung zu ihm herzustellen. Nach der ersten Anfrage können Sie jederzeit auf die Berechtigung in den iOS-Einstellungen für diese App zugreifen.</translation>
-    </message>
-    <message>
-        <source>Start the App now on your computer and enter the settings.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffnen Sie nun die App auf dem Computer und gehen auf Einstellungen.</translation>
-    </message>
-    <message>
-        <source>Select the &lt;b&gt;Smartphone as card reader&lt;/b&gt; tab.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Den Reiter &lt;b&gt;Smartphone als Kartenleser&lt;/b&gt; auswählen.</translation>
-    </message>
-    <message>
-        <source>Select smartphone from list</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone in der Liste auswählen</translation>
-    </message>
-    <message>
-        <source>Enter pairing code next.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Dann Kopplungscode eingeben.</translation>
-    </message>
-    <message>
-        <source>Click link on the website of the provider.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Link auf Webseite des Anbieters klicken.</translation>
-    </message>
-    <message>
-        <source>The App opens automatically.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die App öffnet sich automatisch.</translation>
-    </message>
-    <message>
-        <source>The AusweisApp2 will display who wants to access which data.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihnen wird angezeigt, wer welche Ihrer Daten abfragen will.</translation>
-    </message>
-    <message>
-        <source>Start the process with a click on:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Starten Sie den Vorgang mit:</translation>
-    </message>
-    <message>
-        <source>Proceed to PIN entry</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Weiter zur PIN-Eingabe</translation>
-    </message>
-    <message>
-        <source>... and place the ID card onto the NFC interface.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>...und platzieren Sie den Ausweis auf die NFC-Schnittstelle.</translation>
-    </message>
-    <message>
-        <source>Do not move device or ID card!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät und Ausweis nicht bewegen!</translation>
-    </message>
-    <message>
-        <source>The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die korrekte Position ist abhängig von Ihrem Gerät. Probieren Sie andere Positionen aus wenn eine nicht funktionieren sollte. Die AusweisApp2 zeigt verschiedene typische Positionen.</translation>
-    </message>
-    <message>
-        <source>If your device is unable to detect your ID card try to check the device capabilities by clicking on &quot;Check device and ID card&quot; on the start page.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wenn Ihr Gerät keinen Ausweis erkennen kann versuchen Sie die Gerätefähigkeiten zu testen indem Sie &quot;Gerät und Ausweis prüfen&quot; auf der Startseite auswählen.</translation>
-    </message>
-    <message>
-        <source>You can find more information on compatible devices on our %1mobile device list%2.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Mehr Informationen zu kompatiblen Geräten finden Sie auf unserer %1Mobilgeräteliste%2.</translation>
-    </message>
-    <message>
-        <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>six-digit PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>sechsstellige PIN</translation>
-    </message>
-    <message>
-        <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
-        <translation>eingeben!</translation>
-    </message>
-    <message>
-        <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in eine sechsstellige PIN geändert haben.</translation>
-    </message>
-    <message>
-        <source>Open YouTube video</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffne das YouTube-Video</translation>
-    </message>
-    <message>
-        <source>You can also watch this YouTube video explaining the process.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können sich auch dieses YouTube-Video ansehen das den Prozess erläutert.</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialReaderMethodSacMobile</name>
-    <message>
-        <source>Tutorial: Smartphone as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial: Smartphone als Kartenleser</translation>
-    </message>
-    <message>
-        <source>App on tablet or smartphone &lt;b&gt;without&lt;/b&gt; NFC chip</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>App auf Tablet oder Telefon &lt;b&gt;ohne&lt;/b&gt; NFC-Chip</translation>
-    </message>
-    <message>
-        <source>Smartphone &lt;b&gt;with&lt;/b&gt; NFC chip as card reader</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone &lt;b&gt;mit&lt;/b&gt; NFC-Chip als Kartenleser</translation>
-    </message>
-    <message>
-        <source>Install AusweisApp2 on both your device without NFC &lt;b&gt;and&lt;/b&gt; your smartphone with NFC capability.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Installieren Sie die AusweisApp2 auf Ihrem Gerät ohne NFC &lt;b&gt;und&lt;/b&gt; auf Ihrem NFC-fähigen Smartphone.</translation>
-    </message>
-    <message>
-        <source>Both devices have to be connected to the same WiFi network</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Beide Geräte müssen im selben WLAN sein</translation>
-    </message>
-    <message>
-        <source>Now choose &quot;Card reader&quot; in the AusweisApp2 on your smartphone...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffnen Sie nun in der AusweisApp2 auf dem Smartphone den Bereich &quot;Kartenleser&quot;...</translation>
-    </message>
-    <message>
-        <source>Now</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>Pair device</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät koppeln</translation>
-    </message>
-    <message>
-        <source>Pairing code</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplungscode</translation>
-    </message>
-    <message>
-        <source>appears!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>erscheint!</translation>
-    </message>
-    <message>
-        <source>On the first use of the Smartphone as card reader (SaC), iOS will asks for your permission to access the local network. This permission is required in order find and connect to your SaC. After the first request you can always access the permission in the iOS settings for this app.</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Bei der ersten Verwendung des Smartphones als Kartenleser (SaK) bittet iOS Sie um Ihre Erlaubnis um auf das lokale Netzwerk zugreifen zu dürfen. Diese Berechtigung ist erforderlich, um Ihr SaK zu finden und eine Verbindung zu ihm herzustellen. Nach der ersten Anfrage können Sie jederzeit auf die Berechtigung in den iOS-Einstellungen für diese App zugreifen.</translation>
-    </message>
-    <message>
-        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Manage pairings&lt;/b&gt;.</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen Sie &lt;b&gt;Kopplungen verwalten&lt;/b&gt; aus.</translation>
-    </message>
-    <message>
-        <source>Now open the AusweisApp2 on your device &lt;b&gt;without&lt;/b&gt; NFC and select &lt;b&gt;Smartphone as card reader&lt;/b&gt;.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Öffnen Sie nun die AusweisApp2 auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC und wählen &lt;b&gt;Smartphone als Kartenleser&lt;/b&gt; aus.</translation>
-    </message>
-    <message>
-        <source>Now select &lt;b&gt;Settings&lt;/b&gt;.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Dort &lt;b&gt;Einstellungen&lt;/b&gt; auswählen.</translation>
-    </message>
-    <message>
-        <source>Choose smartphone from list</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smartphone aus Liste wählen</translation>
-    </message>
-    <message>
-        <source>Enter pairing code next.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Dann Kopplungscode eingeben.</translation>
-    </message>
-    <message>
-        <source>Click link on the website of the provider on the device &lt;b&gt;without&lt;/b&gt; NFC.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Auf dem Gerät &lt;b&gt;ohne&lt;/b&gt; NFC Link auf Webseite des Anbieters klicken.</translation>
-    </message>
-    <message>
-        <source>The App opens automatically.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die App öffnet sich automatisch.</translation>
-    </message>
-    <message>
-        <source>The AusweisApp2 will display who wants to access which data.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihnen wird angezeigt, wer welche Ihrer Daten abfragen will.</translation>
-    </message>
-    <message>
-        <source>Start the process with a click on:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Den Vorgang starten mit:</translation>
-    </message>
-    <message>
-        <source>Proceed to PIN entry</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Weiter zur PIN-Eingabe</translation>
-    </message>
-    <message>
-        <source>Tap on WiFi</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tap auf WLAN</translation>
-    </message>
-    <message>
-        <source>... and place the ID card onto the NFC interface.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>...und platzieren Sie den Ausweis auf die NFC-Schnittstelle.</translation>
-    </message>
-    <message>
-        <source>Do not move device or ID card!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Gerät und Ausweis nicht bewegen!</translation>
-    </message>
-    <message>
-        <source>The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die korrekte Position ist abhängig von Ihrem Gerät. Probieren Sie andere Positionen aus wenn eine nicht funktionieren sollte. Die AusweisApp2 zeigt verschiedene typische Positionen.</translation>
-    </message>
-    <message>
-        <source>If your device is unable to detect your ID card try to check the device capabilities by clicking on &quot;Check device and ID card&quot; on the start page.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wenn Ihr Gerät keinen Ausweis erkennen kann versuchen Sie die Gerätefähigkeiten zu testen indem Sie &quot;Gerät und Ausweis prüfen&quot; auf der Startseite auswählen.</translation>
-    </message>
-    <message>
-        <source>You can find more information on compatible devices on our %1mobile device list%2.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Mehr Informationen zu kompatiblen Geräten finden Sie auf unserer %1Mobilgeräteliste%2.</translation>
-    </message>
-    <message>
-        <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>six-digit PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>sechsstellige PIN</translation>
-    </message>
-    <message>
-        <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
-        <translation>eingeben!</translation>
-    </message>
-    <message>
-        <source>This is only possible if you have exchanged the five-digit Transport PIN with a six-digit PIN beforehand.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Funktioniert nur, wenn Sie die fünfstellige Transport-PIN bereits in eine sechsstellige PIN geändert haben.</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialView</name>
-    <message>
-        <source>Tutorial</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tutorial</translation>
-    </message>
-    <message>
-        <source>What?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Was?</translation>
-    </message>
-    <message>
-        <source>Where?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wo?</translation>
-    </message>
-    <message>
-        <source>How?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wie?</translation>
-    </message>
-    <message>
-        <source>Important!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wichtig!</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialWhat</name>
-    <message>
-        <source>What is the online ID function?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Was ist die Online-Ausweisfunktion?</translation>
-    </message>
-    <message>
-        <source>You can use it to authenticate yourself in the internet</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Mit ihr weisen Sie sich sicher im Internet aus</translation>
-    </message>
-    <message>
-        <source>and also to deal with administrative paperwork and business matters electronically!</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>und erledigen damit Behördengänge oder geschäftliche Angelegenheiten einfach elektronisch!</translation>
-    </message>
-    <message>
-        <source>Alright, but is it secure?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Alles klar, nur ist das auch sicher?</translation>
-    </message>
-    <message>
-        <source>Of course, because we use a so called</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Natürlich, dafür haben wir die sogenannte</translation>
-    </message>
-    <message>
-        <source>Mutual authentication</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>gegenseitige Authentifizierung</translation>
-    </message>
-    <message>
-        <source>... it establishes a secure connection between ID card and provider.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>...sie stellt eine sichere Verbindung zwischen Ausweis und Anbieter her.</translation>
-    </message>
-    <message>
-        <source>On every authentication you get displayed &lt;b&gt;who&lt;/b&gt; wants to access &lt;b&gt;which&lt;/b&gt; data</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ihnen wird immer zuerst angezeigt, &lt;b&gt;wer welche&lt;/b&gt; Daten auslesen möchte</translation>
-    </message>
-    <message>
-        <source>and you consent to the request with your six-digit PIN.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>und Sie stimmen der Abfrage mit Ihrer sechsstelligen PIN zu.</translation>
-    </message>
-    <message>
-        <source>... is the provider authorized for this?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>... und darf der das?</translation>
-    </message>
-    <message>
-        <source>The provider needs an authorization of the Federal Office of Administration.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Der Anbieter benötigt eine Berechtigung vom Bundesverwaltungsamt.</translation>
-    </message>
-    <message>
-        <source>Certificate</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zertifikat</translation>
-    </message>
-    <message>
-        <source>Every time both participants authenticate each other...</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Es weisen sich also immer beide Seiten eindeutig aus...</translation>
-    </message>
-    <message>
-        <source>... and therefore your data is protected and securely transferred.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>... so werden Ihre Daten geschützt und sicher übermittelt.</translation>
-    </message>
-    <message>
-        <source>You can also watch a video on YouTube on this topic</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Sie können sich hierzu auch ein Video auf YouTube anschauen</translation>
-    </message>
-    <message>
-        <source>Open YouTube video</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Öffne das YouTube-Video</translation>
-    </message>
-</context>
-<context>
-    <name>TutorialWhere</name>
-    <message>
-        <source>Where can I use the online ID function?</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Wo kann ich die Online-Ausweisfunktion nutzen?</translation>
-    </message>
-    <message>
-        <source>On every website of a provider where you see this icon:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Überall, wo Sie auf der Webseite eines Online-Dienstes folgendes Logo sehen:</translation>
-    </message>
-    <message>
-        <source>By the way, you can find many services directly in the AusweisApp2 &lt;b&gt;provider list&lt;/b&gt;.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Übrigens, viele Dienste finden Sie direkt in der &lt;b&gt;Anbieterliste&lt;/b&gt; der AusweisApp2.</translation>
-    </message>
-    <message>
-        <source>The &lt;b&gt;integrated self-authentication&lt;/b&gt; is a special service to view the data saved on your ID card.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die &lt;b&gt;integrierte Selbstauskunft&lt;/b&gt; ist ein spezieller Dienst, um Daten einzusehen, die auf Ihrem Ausweis gespeichert sind.</translation>
-    </message>
-    <message>
-        <source>And this is how it works</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Und so funktioniert&apos;s</translation>
-    </message>
-    <message>
-        <source>The AusweisApp2 will always display &lt;b&gt;who&lt;/b&gt; wants to access &lt;b&gt;which&lt;/b&gt; of your data.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Die AusweisApp2 zeigt Ihnen immer an, wer welche Ihrer Daten abfragen will.</translation>
-    </message>
-    <message>
-        <source>To allow the shown service access to the requested data click &quot;Proceed to PIN entry&quot;</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Um dem angezeigten Dienst Zugriff auf die angefragten Daten zu gewähren drücken Sie auf &quot;Weiter zur PIN-Eingabe&quot;</translation>
-    </message>
-    <message>
-        <source>Now lay down your ID card and hold the top of your iPhone to the ID card.</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>Legen Sie nun Ihren Ausweis vor sich hin und halten Sie die Oberkante des iPhones an den Ausweis.</translation>
-    </message>
-    <message>
-        <source>Now place your ID card on the NFC-interface of your smartphone.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Platzieren Sie nun Ihren Ausweis auf die NFC-Schnittstelle Ihres Smartphones.</translation>
-    </message>
-    <message>
-        <source>The correct position is specific for your device. If a position does not work try a different one. The AusweisApp2 shows different common positions. If your device is unable to detect your ID card try to check the device capabilities by clicking on &quot;Check device and ID card&quot; on the start page.</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Die korrekte Position ist abhängig von Ihrem Gerät. Probieren Sie andere Positionen aus wenn eine nicht funktionieren sollte. Die AusweisApp2 zeigt verschiedene typische Positionen. Wenn Ihr Gerät keinen Ausweis erkennen kann versuchen Sie die Gerätefähigkeiten zu testen indem Sie &quot;Gerät und Ausweis prüfen&quot; auf der Startseite auswählen.</translation>
-    </message>
-    <message>
-        <source>Do not move your iPhone during the procedure!</source>
-        <extracomment>LABEL IOS</extracomment>
-        <translation>iPhone während des gesamten Vorgangs nicht bewegen!</translation>
-    </message>
-    <message>
-        <source>Do not move your device during the procedure!</source>
-        <extracomment>LABEL ANDROID</extracomment>
-        <translation>Gerät während des gesamten Vorgangs nicht bewegen!</translation>
-    </message>
-    <message>
-        <source>Enter</source>
-        <extracomment>LABEL ANDROID IOS This is the first of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the third line.</extracomment>
-        <translation>Jetzt</translation>
-    </message>
-    <message>
-        <source>six-digit PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>sechsstellige PIN</translation>
-    </message>
-    <message>
-        <source>now!</source>
-        <extracomment>LABEL ANDROID IOS This is the third of three lines &quot;Enter&quot; &quot;six-digit PIN&quot; &quot;now!&quot; and should be translated according to the first line.</extracomment>
-        <translation>eingeben!</translation>
+        <translation>Auch für die Einrichtung der Smart-eID müssen Sie zuvor die sechsstellige Karten-PIN gesetzt haben.</translation>
     </message>
 </context>
 <context>
@@ -6014,24 +4285,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
-    <name>Utils</name>
-    <message>
-        <source>today</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>heute</translation>
-    </message>
-    <message>
-        <source>yesterday</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>gestern</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
-        <translation>dd.MM.yyyy</translation>
-    </message>
-</context>
-<context>
     <name>VersionInformation</name>
     <message>
         <source>Developer options activated.</source>
@@ -6077,14 +4330,14 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Gerätedaten senden?</translation>
     </message>
     <message>
-        <source>Would you like to help us to improve the AusweisApp2?</source>
+        <source>Would you like to help us to improve the %1?</source>
         <extracomment>INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text</extracomment>
-        <translation>Möchten Sie uns helfen, die AusweisApp2 zu verbessern?</translation>
+        <translation>Möchten Sie uns helfen, die %1 zu verbessern?</translation>
     </message>
     <message>
         <source>Supplying your device characteristics helps us to gather reliable information about the compatibility of your device.</source>
         <extracomment>INFO ANDROID IOS Request to the user if the device information should be shared for statistics (Whitelist) - Part of content text</extracomment>
-        <translation>Mit der Übermittlung Ihrer Gerätedaten helfen Sie uns, verlässliche Aussagen über die Kompatibilität Ihres Gerätes mit der AusweisApp2 zu treffen.</translation>
+        <translation>Mit der Übermittlung Ihrer Gerätedaten helfen Sie uns, verlässliche Aussagen über die Kompatibilität Ihres Gerätes zu treffen.</translation>
     </message>
     <message>
         <source>The transmission is anonymous. No personal data is collected or transmitted!</source>
@@ -6109,6 +4362,14 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Send</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Senden</translation>
+    </message>
+</context>
+<context>
+    <name>WorkflowInfoList</name>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
+        <translation>Das Gerät &quot;%1&quot; wurde entkoppelt, da es nicht auf Verbindungsversuche reagiert hat. Koppeln Sie das Gerät erneut, um es wieder als Kartenleser zu verwenden.</translation>
     </message>
 </context>
 <context>
@@ -6563,9 +4824,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Firewalls von Drittanbietern</translation>
     </message>
     <message>
-        <source>Outgoing AusweisApp2 rule</source>
+        <source>Outgoing %1 rule</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Ausgehende AusweisApp2-Regel</translation>
+        <translation>Ausgehende %1-Regel</translation>
     </message>
     <message>
         <source>Exists: %1</source>
@@ -6573,9 +4834,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Existiert: %1</translation>
     </message>
     <message>
-        <source>Incoming AusweisApp2 rule</source>
+        <source>Incoming %1 rule</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Eingehende AusweisApp2-Regel</translation>
+        <translation>Eingehende %1-Regel</translation>
     </message>
     <message>
         <source>Windows firewall rules</source>
@@ -6929,7 +5190,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Anwendung hat einen Fehler vom Server erhalten.</translation>
     </message>
     <message>
-        <source>Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.</source>
+        <source>Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus software and firewall are not interfering with TLS traffic.</source>
         <extracomment>ERROR ALL_PLATFORMS The TLS certificate was not folded with the Authorization Certificate, thus violating the security requirements. Might also be caused by a firewall and/or the antivirus software.</extracomment>
         <translation>Der Hashwert des TLS-Zertifikats ist nicht in der Zertifikatsbeschreibung vorhanden (Aussteller: %1). Dies deutet auf eine Fehlkonfiguration oder Manipulation des Zertifikats hin. Bitte überprüfen Sie, dass weder eine Antivirus-Software noch eine Firewall in den TLS-Verkehr eingreifen.</translation>
     </message>
@@ -6947,11 +5208,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>The device does not support Smart-eID.</source>
         <extracomment>ERROR ALL_PLATFORMS The device does not support the Smart-eID function</extracomment>
         <translation>Dieses Gerät unterstützt keine Smart-eID.</translation>
-    </message>
-    <message>
-        <source>The preparation of the Smart-eID Applet failed.</source>
-        <extracomment>ERROR ANDROID The preparation of the Smart-eID Applet failed</extracomment>
-        <translation>Die Vorbereitung des Smart-eID-Applet ist fehlgeschlagen.</translation>
     </message>
     <message>
         <source>Initialization of Personalization of Smart-eID failed.</source>
@@ -7069,9 +5325,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Bei der Kommunikation mit dem Ausweis ist ein Fehler aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <source>A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1AusweisApp2 Support%2.</source>
-        <extracomment>ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received,</extracomment>
-        <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter %1AusweisApp2 Support%2.</translation>
+        <source>A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1.</source>
+        <extracomment>ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received. %1 is a html link to the support.</extracomment>
+        <translation>Ein Protokollfehler ist aufgetreten. Bitte überprüfen Sie, dass der Ausweis korrekt aufgelegt ist und versuchen Sie es erneut. Wenn das Problem wieder auftritt kontaktieren Sie bitte unseren Support unter %1.</translation>
     </message>
     <message>
         <source>The given PIN is not correct.</source>
@@ -7119,11 +5375,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Gültigkeitsprüfung der Karte ist fehlgeschlagen.</translation>
     </message>
     <message>
-        <source>The Smart-eID is invalid. This might have been caused by entering the wrong Smart-eID PIN three times.</source>
-        <extracomment>ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.</extracomment>
-        <translation>Die Smart-eID ist ungültig. Dies kann an der dreifachen, fehlerhaften Eingabe der Smart-eID-PIN liegen.</translation>
-    </message>
-    <message>
         <source>The smartphone as card reader (SaC) connection was aborted.</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.</extracomment>
         <translation>Die Verbindung zum Smartphone als Kartenleser wurde abgebrochen.</translation>
@@ -7134,9 +5385,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Verbindungsanforderung zum Smartphone als Kartenleser (SaK) war fehlerhaft.</translation>
     </message>
     <message>
-        <source>Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.</source>
+        <source>Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).</extracomment>
-        <translation>Die Version Ihres Smartphones als Kartenleser (SaK) ist inkompatibel. Bitte aktualisieren Sie Ihre Installation.</translation>
+        <translation>Die Version Ihres Smartphones als Kartenleser (SaK) ist inkompatibel. Installieren Sie bitte auf Ihrem Smartphone und Ihrem Computer die aktuellste %1 Version.</translation>
     </message>
     <message>
         <source>A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
@@ -7184,25 +5435,54 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Ein neuer Prozess zur Durchführung der Aktualisierung konnte nicht gestartet werden.</translation>
     </message>
     <message>
+        <source>You have reached the allowed amount of Smart-eID setups for the current period. You may set up another Smart-eID with your ID card on %1.</source>
+        <extracomment>ERROR ALL_PLATFORMS Personalization of Smart-eID is not allowed, no remaining attempts are left.</extracomment>
+        <translation>Sie haben die erlaubte Anzahl an Smart-eID-Einrichtungen für den aktuellen Zeitraum erreicht. Sie können ab dem %1 wieder eine Smart-eID mit Ihrem Ausweis einrichten.</translation>
+    </message>
+    <message>
+        <source>Failed to get the ServiceInformation of the Smart-eID.</source>
+        <extracomment>ERROR ALL_PLATFORMS Failed to get the ServiceInformation of the Smart-eID</extracomment>
+        <translation>Die Service-Informationen zu Ihrer Smart-eID konnten nicht abgerufen werden.</translation>
+    </message>
+    <message>
+        <source>The authentication to the personalization service failed.</source>
+        <extracomment>ERROR ALL_PLATFORMS No sessionID, required for a personalization, was received</extracomment>
+        <translation>Die Authentisierung gegenüber dem Personalisierungsservice ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN three times. You may personalize a new Smart-eID to resolve the issue.</source>
+        <extracomment>ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.</extracomment>
+        <translation>Die Smart-eID ist nicht mehr einsatzbereit. Dies kann an einer dreifachen, fehlerhaften Eingabe der Smart-eID-PIN liegen. Um dieses Problem zu beheben, können Sie eine neue Smart-eID personalisieren.</translation>
+    </message>
+    <message>
+        <source>The preparation of the Smart-eID failed.</source>
+        <extracomment>ERROR ANDROID The preparation of the Smart-eID Applet failed</extracomment>
+        <translation>Die Vorbereitung der Smart-eID ist fehlgeschlagen.</translation>
+    </message>
+    <message>
         <source>The program did not receive a StartPaosResponse message from the server.</source>
         <extracomment>ERROR_MASKED ALL_PLATFORMS The PAOS message StartPaosResponse was not received.</extracomment>
         <translation>Die Anwendung hat keine StartPaosResponse Nachricht vom Server erhalten.</translation>
     </message>
-</context>
-<context>
-    <name>governikus::HistoryModel</name>
     <message>
-        <source>No data stored on your ID card was read, only confirmed whether you are in possession of a valid ID card.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Es wurden keine Daten von Ihrem Ausweis ausgelesen, sondern lediglich sichergestellt, dass Sie im Besitz eines gültigen Ausweises sind.</translation>
+        <source>The server could not process the client request.</source>
+        <extracomment>ERROR_MASKED ALL_PLATFORMS</extracomment>
+        <translation>Der Server konnte die Anfrage des Clients nicht verarbeiten.</translation>
     </message>
-</context>
-<context>
-    <name>governikus::HistoryModelSearchFilter</name>
     <message>
-        <source>dd.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
-        <translation>dd.MM.yyyy</translation>
+        <source>The service encountered an internal error while processing a request.</source>
+        <extracomment>ERROR ALL_PLATFORMS A server has responded with an HTTP error code 5xx.</extracomment>
+        <translation>Bei der Bearbeitung der Anfrage ist beim Dienstanbieter ein Fehler aufgetreten.</translation>
+    </message>
+    <message>
+        <source>The service reported an error while processing a client request.</source>
+        <extracomment>ERROR ALL_PLATFORMS A server has responded with an HTTP error code 4xx.</extracomment>
+        <translation>Der Dienstanbieter hat bei der Verarbeitung der Anfrage Fehler festgestellt.</translation>
+    </message>
+    <message>
+        <source>%1 Support</source>
+        <extracomment>LABEL ALL_PLATFORMS Link text to the app support. %1 is the app name.</extracomment>
+        <translation>%1 Support</translation>
     </message>
 </context>
 <context>
@@ -7326,11 +5606,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Sie haben eine falsche, fünfstellige Transport-PIN eingegeben. Sie haben zwei weitere Versuche, die korrekte Transport-PIN einzugeben.</translation>
     </message>
     <message>
-        <source>Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.</source>
-        <extracomment>INFO ALL_PLATFORMS</extracomment>
-        <translation>Bitte beachten Sie, dass Sie die fünfstellige Transport-PIN nur einmalig zum Ändern in eine sechsstellige Karten-PIN verwenden können. Wenn Sie bereits eine sechsstellige Karten-PIN festgelegt haben, ist die fünfstellige Transport-PIN nicht mehr gültig.</translation>
-    </message>
-    <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN. You have two further attempts to enter the correct Smart-eID PIN.</source>
         <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.</extracomment>
         <translation>Sie haben eine falsche, sechsstellige Smart-eID-PIN eingegeben. Sie haben zwei weitere Versuche, die richtige Smart-eID-PIN einzugeben.</translation>
@@ -7344,11 +5619,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>You have entered an incorrect, five-digit Transport PIN twice. For a third attempt, the six-digit Card Access Number (CAN) must be entered first. You can find your CAN in the bottom right on the front of your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
         <translation>Sie haben zweimal eine falsche, fünfstellige Transport-PIN eingegeben. Für den dritten Versuch muss zunächst die sechsstellige Zugangsnummer (CAN) eingegeben werden. Sie finden Ihre CAN unten rechts auf der Vorderseite Ihres Ausweises.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a third wrong attempt could invalidate the Smart-eID.</extracomment>
-        <translation>Sie haben zweimal eine falsche, sechsstellige Smart-eID-PIN eingegeben. Ein dritter Fehlversuch wird Ihre Smart-eID ungültig machen und Sie müssen sie neu einrichten.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, six-digit ID card PIN twice. For a third attempt, the six-digit Card Access Number (CAN) must be entered first. You can find your CAN in the bottom right on the front of your ID card.</source>
@@ -7380,96 +5650,19 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <extracomment>INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.</extracomment>
         <translation>Sie haben einen falschen, zehnstelligen PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
-</context>
-<context>
-    <name>governikus::PdfCreator</name>
     <message>
-        <source>AusweisApp2 is a product of Governikus GmbH &amp; Co. KG - on behalf of the Federal Office for Information Security.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Die AusweisApp2 ist ein Produkt der Governikus GmbH &amp; Co. KG - im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik.</translation>
+        <source>You have entered an incorrect, six-digit Smart-eID PIN twice. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
+        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a third wrong attempt could invalidate the Smart-eID.</extracomment>
+        <translation>Sie haben zweimal eine falsche, sechsstellige Smart-eID-PIN eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
     </message>
     <message>
-        <source>For further information, please see %1</source>
-        <extracomment>LABEL ALL_PLATFORMS Footer in a generated PDF document. %1 is an URL.</extracomment>
-        <translation>Mehr Information finden Sie auf %1</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::PdfExporter</name>
-    <message>
-        <source>Date</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Datum</translation>
+        <source>The input does not match. Please choose a new Smart-eID PIN.</source>
+        <extracomment>ALL_PLATFORMS Error message if the new pin confirmation mismatches.</extracomment>
+        <translation>Die Eingaben stimmen nicht überein. Bitte wählen Sie eine neue Smart-eID-PIN.</translation>
     </message>
     <message>
-        <source>Details</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Details</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
-        <translation>dd.MM.yyyy HH:mm</translation>
-    </message>
-    <message>
-        <source>Provider:</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Anbieter:</translation>
-    </message>
-    <message>
-        <source>Purpose:</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Zweck:</translation>
-    </message>
-    <message>
-        <source>Read access:</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Lesezugriff:</translation>
-    </message>
-    <message>
-        <source>Write access (update):</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Schreibzugriff (Aktualisierung):</translation>
-    </message>
-    <message>
-        <source>dd.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
-        <translation>dd.MM.yyyy</translation>
-    </message>
-    <message>
-        <source>hh:mm AP</source>
-        <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
-        <translation>HH:mm</translation>
-    </message>
-    <message>
-        <source>At %1 %2 the following data were saved:</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Die folgenden Daten wurden hier %1 %2 gespeichert:</translation>
-    </message>
-    <message>
-        <source>History</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Verlauf</translation>
-    </message>
-    <message>
-        <source>Entry</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Eintrag</translation>
-    </message>
-    <message>
-        <source>Content</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Inhalt</translation>
-    </message>
-    <message>
-        <source>At %1 %2 the following data has been read out of your ID card:</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Die folgenden Daten wurden hier %1 %2 aus Ihrem Ausweis ausgelesen:</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Information</translation>
+        <source>The input does not match. Please choose a new ID card PIN.</source>
+        <translation>Die Eingaben stimmen nicht überein. Bitte wählen Sie eine neue Karten-PIN.</translation>
     </message>
 </context>
 <context>
@@ -7505,47 +5698,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
-    <name>governikus::ProviderModel</name>
-    <message>
-        <source>%1/min</source>
-        <extracomment>INFO ALL_PLATFORMS Unit for expenses for calling the hotline (per minute).</extracomment>
-        <translation>%1/min</translation>
-    </message>
-    <message>
-        <source>%1/call</source>
-        <extracomment>INFO ALL_PLATFORMS Unit for expenses for calling the hotline (per call).</extracomment>
-        <translation>%1/Anruf</translation>
-    </message>
-    <message>
-        <source>%1 EUR</source>
-        <extracomment>INFO ALL_PLATFORMS Currency unit for expenses for calling the hotline (Euro/Cent).</extracomment>
-        <translation>%1 EUR</translation>
-    </message>
-    <message>
-        <source>%1 ct</source>
-        <translation>%1 ct</translation>
-    </message>
-    <message>
-        <source>%1 seconds free, afterwards </source>
-        <extracomment>INFO ALL_PLATFORMS Free of charge seconds when calling the hotline.</extracomment>
-        <translation>%1 Sekunde frei, danach </translation>
-    </message>
-    <message>
-        <source>landline costs %1; </source>
-        <extracomment>INFO ALL_PLATFORMS Land line charges when calling the hotline.</extracomment>
-        <translation>Festnetzpreis %1; </translation>
-    </message>
-    <message>
-        <source>mobile costs may vary.</source>
-        <extracomment>INFO ALL_PLATFORMS Cell phone charges when calling the hotline.</extracomment>
-        <translation>Mobilfunkpreise abweichen.</translation>
-    </message>
-    <message>
-        <source>mobile costs %1</source>
-        <translation>Mobilfunkpreise max. %1</translation>
-    </message>
-</context>
-<context>
     <name>governikus::ReaderModel</name>
     <message>
         <source>Driver installed</source>
@@ -7573,16 +5725,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Der Kartenleser wird nicht offiziell unterstützt und funktioniert möglicherweise nicht richtig.</translation>
     </message>
     <message>
-        <source>online help</source>
-        <extracomment>Is embedded in a sentence.</extracomment>
-        <translation>Online-Hilfe</translation>
-    </message>
-    <message>
-        <source>No connected card reader found. See %1 for installation of card readers.</source>
-        <extracomment>INFO ALL_PLATFORMS No card reader was found, the message contains a link to the installation section of the manual.</extracomment>
-        <translation>Es wurde kein Kartenleser gefunden. Details zur Installation finden Sie in der %1.</translation>
-    </message>
-    <message>
         <source>hh:mm:ss AP</source>
         <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>HH:mm:ss</translation>
@@ -7596,14 +5738,14 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
 <context>
     <name>governikus::RedirectRequest</name>
     <message>
-        <source>Cannot reach local AusweisApp2</source>
+        <source>Cannot reach local %1</source>
         <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
-        <translation>Die lokale AusweisApp2 ist nicht erreichbar</translation>
+        <translation>Die lokale %1 ist nicht erreichbar</translation>
     </message>
     <message>
-        <source>Your local AusweisApp2 is not running. Please start your local AusweisApp2 and try again.</source>
+        <source>Your local %1 is not running. Please start your local %1 and try again.</source>
         <extracomment>ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.</extracomment>
-        <translation>Ihre lokale AusweisApp2 läuft nicht. Bitte starten Sie Ihre lokale AusweisApp2 und versuchen Sie es erneut.</translation>
+        <translation>Ihre lokale %1 läuft nicht. Bitte starten Sie Ihre lokale %1 und versuchen Sie es erneut.</translation>
     </message>
     <message>
         <source>Would you like to try again?</source>
@@ -7654,16 +5796,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>dd.MM.yyyy hh:mm AP</source>
         <extracomment>LABEL ALL_PLATFORMS Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
         <translation>dd.MM.yyyy HH:mm</translation>
-    </message>
-    <message>
-        <source>online help</source>
-        <extracomment>Is embedded in a sentence.</extracomment>
-        <translation>Online-Hilfe</translation>
-    </message>
-    <message>
-        <source>No smartphone as card reader (Sac) available. Please make sure to activate the &quot;remote service&quot; on your smartphone and to connect both devices to the same WiFi. See %1 for details of use.</source>
-        <extracomment>INFO ALL_PLATFORMS No smartphone with enabled remote service was found on the same network.</extracomment>
-        <translation>Kein Smartphone als Kartenleser verfügbar. Bitte stellen Sie sicher, dass die Funktion &quot;Fernzugriff&quot; in der AusweisApp2 auf Ihrem Smartphone aktiviert ist und beide Geräte mit demselben WLAN verbunden sind. Informationen zur Verwendung finden Sie in der %1.</translation>
     </message>
     <message>
         <source>Unavailable</source>
@@ -7811,24 +5943,74 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
 <context>
     <name>governikus::SmartModel</name>
     <message>
-        <source>Delete data was successful.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Daten erfolgreich gelöscht.</translation>
+        <source>The online check for the Smart-eID support on your device failed. Please note that this process requires an internet connection.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed without any specific reason.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Bitte beachten Sie, dass für diesen Vorgang eine Internetverbindung erforderlich ist.</translation>
     </message>
     <message>
-        <source>Delete data failed.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Löschen der Daten ist fehlgeschlagen.</translation>
+        <source>The online check for the Smart-eID support on your device failed because the server is currently facing too many requests. Please try again later.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the server is overloaded.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen da der Server derzeit überlastet ist. Bitte versuchen Sie es später erneut.</translation>
     </message>
     <message>
-        <source>Delete Smart-eID was successful.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Smart-eID erfolgreich gelöscht.</translation>
+        <source>The online check for the Smart-eID support on your device failed because the server is currently under maintenance. Please try again later.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the server is being maintained.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen da der Server derzeit gewartet wird. Bitte versuchen Sie es später erneut.</translation>
     </message>
     <message>
-        <source>Delete Smart-eID failed.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Löschen der Smart-eID ist fehlgeschlagen.</translation>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please note that this process requires an internet connection.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed without a specific reason.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Bitte beachten Sie, dass für diesen Vorgang eine Internetverbindung erforderlich ist.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently facing too many requests. Please try again later.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is overloaded.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden da der Server derzeit überlastet ist. Bitte versuchen Sie es später erneut.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently under maintenance. Please try again later.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is being maintained.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden da der Server derzeit gewartet wird. Bitte versuchen Sie es später erneut.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and restart the process.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because NFC is not activated.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Eine aktive NFC-Funktionalität ist erforderlich, um auf die notwendigen Gerätespeicher zuzugreifen. Bitte aktivieren Sie NFC und starten Sie den Löschvorgang erneut.</translation>
+    </message>
+    <message>
+        <source>The online check for the Smart-eID support on your device failed. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and try again.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the NFC functionality is not activated.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Eine aktive NFC-Funktionalität ist erforderlich, um auf die notwendigen Gerätespeicher zuzugreifen. Bitte aktivieren Sie NFC und versuchen Sie es erneut.</translation>
+    </message>
+    <message>
+        <source>The online check for the Smart-eID support on your device failed. The Google Play Integrity Check failed.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because Google Play Integrity Check failed.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Die Google Play-Integritätsprüfung ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>The online check for the Smart-eID support on your device failed. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because an authorization issue occurred.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Ein Authorisierungsproblem ist aufgetreten (z.B. erfolgte ein Resourcenzugriff ohne Authorisierung oder eine nicht autorisierte App versuchte auf eine Sicherheitskomponente zuzugreifen).</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. The Google Play Integrity Check failed.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the Google Play Integrity Check failed.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Die Google Play-Integritätsprüfung ist fehlgeschlagen.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because an authorization issue occurred.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Ein Authorisierungsproblem ist aufgetreten (z.B. erfolgte ein Resourcenzugriff ohne Authorisierung oder eine nicht autorisierte App versuchte auf eine Sicherheitskomponente zuzugreifen).</translation>
+    </message>
+    <message>
+        <source>The online check for the Smart-eID support on your device failed. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
+        <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because a network connection error occurred.</extracomment>
+        <translation>Die Online-Prüfung zur Unterstützung der Smart-eID auf Ihrem Gerät ist fehlgeschlagen. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind und weder eine Antivirus-Software noch eine Firewall die Verbindung blockiert.</translation>
+    </message>
+    <message>
+        <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
+        <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because a network connection error occurred.</extracomment>
+        <translation>Die Smart-eID und Provisionierung konnte nicht erfolgreich von Ihrem Gerät gelöscht werden. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind und weder eine Antivirus-Software noch eine Firewall die Verbindung blockiert.</translation>
     </message>
 </context>
 <context>
@@ -7856,11 +6038,21 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     <name>governikus::StateConnectCard</name>
     <message>
         <source>The used card reader does not meet the technical requirements (Extended Length not supported).</source>
+        <extracomment>INFO IOS</extracomment>
         <translation>Der verwendete Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>The provider requires a physical ID card.</source>
-        <translation>Der Anbieter verlangt einen physischen Ausweis.</translation>
+        <source>The used ID card type is not accepted by the server.</source>
+        <extracomment>INFO IOS</extracomment>
+        <translation>Der verwendete Ausweistyp wird vom Server nicht akzeptiert.</translation>
+    </message>
+</context>
+<context>
+    <name>governikus::StateDeleteApplet</name>
+    <message>
+        <source>Cleaning up old Smart-eID</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bereinige alte Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -7943,21 +6135,11 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     </message>
 </context>
 <context>
-    <name>governikus::StatePrepareApplet</name>
-    <message>
-        <source>Checking Smart-eID status</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Überprüfe Smart-eID-Status</translation>
-    </message>
+    <name>governikus::StateInstallApplet</name>
     <message>
         <source>Installing Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Installiere Smart-eID</translation>
-    </message>
-    <message>
-        <source>Cleaning up old Smart-eID</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Bereinige alte Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -7983,18 +6165,11 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
     </message>
 </context>
 <context>
-    <name>governikus::StateWriteHistory</name>
+    <name>governikus::StateUpdateSupportInfo</name>
     <message>
-        <source>Validity:
-%1 - %2</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Gültigkeit:
-%1 - %2</translation>
-    </message>
-    <message>
-        <source>Preparing results</source>
-        <extracomment>INFO ALL_PLATFORMS Status message after the authentication was completed, the results are prepared for the user and the process will be continued in the browser</extracomment>
-        <translation>Ergebnisse werden vorbereitet</translation>
+        <source>Checking Smart-eID status</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Überprüfe Smart-eID-Status</translation>
     </message>
 </context>
 <context>
@@ -8028,8 +6203,8 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <translation>Max. NFC Paketlänge</translation>
     </message>
     <message>
-        <source>AusweisApp2 Version</source>
-        <translation>AusweisApp2-Version</translation>
+        <source>%1 Version</source>
+        <translation>%1-Version</translation>
     </message>
     <message>
         <source>NFC Tag Type</source>
@@ -8049,9 +6224,9 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <translation>Öffnen</translation>
     </message>
     <message>
-        <source>Quit AusweisApp2</source>
+        <source>Quit %1</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>AusweisApp2 beenden</translation>
+        <translation>%1 beenden</translation>
     </message>
 </context>
 <context>
@@ -8081,26 +6256,18 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <translation>Die Anwendung &quot;%1&quot; verwendet den benötigten Port (%2) bereits. Bitte beenden Sie &quot;%1&quot; und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <source>You tried to start a newer version (%1) of currently running AusweisApp2. Please stop the current version (%2) and start again!</source>
+        <source>You tried to start a newer version (%1) of currently running %2. Please stop the current version (%3) and start again!</source>
         <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested a newer version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte beenden Sie zuerst die andere Version (%2) und versuchen Sie es anschließend erneut!</translation>
+        <translation>Sie versuchen eine neuere Version (%1) der aktuell laufenden %2 zu starten. Bitte beenden Sie zuerst die andere Version (%3) und versuchen Sie es anschließend erneut!</translation>
     </message>
     <message>
-        <source>You tried to start an older version (%1) of currently running AusweisApp2. Please open the currently running version (%2)!</source>
+        <source>You tried to start an older version (%1) of currently running %2. Please open the currently running version (%3)!</source>
         <extracomment>ERROR ALL_PLATFORMS The external request to show the UI requested an older version than the one currently installed.</extracomment>
-        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden AusweisApp2 zu starten. Bitte öffnen Sie die aktuell laufende Version (%2)!</translation>
+        <translation>Sie versuchen eine ältere Version (%1) der aktuell laufenden %2 zu starten. Bitte öffnen Sie die aktuell laufende Version (%3)!</translation>
     </message>
     <message>
-        <source>Reverse-Proxy of AusweisApp2 is started and this instance cannot rebind port. Please ask your administrator!</source>
-        <translation>Der Reverse-Proxy der AusweisApp2 ist gestartet und diese Instanz konnte nicht auf einen anderen Port wechseln. Bitte wenden Sie sich an Ihren Administrator!</translation>
-    </message>
-</context>
-<context>
-    <name>governikus::WebserviceActivationContext</name>
-    <message>
-        <source>The browser connection was lost.</source>
-        <extracomment>ERROR ALL_PLATFORMS No HTTP connection present.</extracomment>
-        <translation>Die Verbindung zum Browser ging verloren.</translation>
+        <source>Reverse-Proxy of %1 is started and this instance cannot rebind port. Please ask your administrator!</source>
+        <translation>Der Reverse-Proxy der %1 ist gestartet und diese Instanz konnte nicht auf einen anderen Port wechseln. Bitte wenden Sie sich an Ihren Administrator!</translation>
     </message>
     <message>
         <source>Cannot start authentication</source>
@@ -8121,6 +6288,11 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <source>Try again</source>
         <extracomment>ERROR ALL_PLATFORMS A new authentication request was received while the previous one was still running. Part of an HTML error page.</extracomment>
         <translation>Erneut versuchen</translation>
+    </message>
+    <message>
+        <source>The browser connection was lost.</source>
+        <extracomment>ERROR ALL_PLATFORMS No HTTP connection present.</extracomment>
+        <translation>Die Verbindung zum Browser ging verloren.</translation>
     </message>
     <message>
         <source>Invalid request (%1)</source>
@@ -8156,12 +6328,37 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
 <context>
     <name>governikus::WorkflowModel</name>
     <message>
-        <source>AusweisApp2 error report - %1</source>
-        <translation>AusweisApp2 Fehlerbericht - %1</translation>
+        <source>%1 error report - %2</source>
+        <translation>%1 Fehlerbericht - %2</translation>
     </message>
     <message>
         <source>Contact your local citizens&apos; office (Bürgeramt) to apply for a new ID card or to unblock the ID card.</source>
         <translation>Bitte wenden Sie sich an das Bürgeramt, um ein neues Ausweisdokument zu beantragen oder die Sperrung des Ausweises aufzuheben.</translation>
+    </message>
+    <message>
+        <source>The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Die verwendete Smart-eID wird vom Server nicht akzeptiert. Bitte starten Sie den Fernzugriff auf Ihrem verbundenen Smartphone neu und versuchen Sie es erneut mit einem physischen Ausweis.</translation>
+    </message>
+    <message>
+        <source>The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Die verwendete Smart-eID wird vom Server nicht akzeptiert. Bitte stoppen Sie den Fernzugriff und verwenden Sie eine andere Smart-eID oder kontaktieren Sie den Diensteanbieter.</translation>
+    </message>
+    <message>
+        <source>The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Der verwendete Ausweistyp wird vom Server nicht akzeptiert. Bitte entfernen Sie den Ausweis vom Gerät oder Kartenleser und verwenden Sie eine Smart-eID oder kontaktieren Sie den Diensteanbieter.</translation>
+    </message>
+    <message>
+        <source>Renew your Smart-eID and set a new PIN in the Smart-eID menu.</source>
+        <extracomment>LABEL ANDROID IOS The hint text that is shwon right above the redirect button that appears when a user tried to usa an unusable Smart-eID</extracomment>
+        <translation>Erneuern Sie Ihre Smart-eID und vergeben Sie eine neue PIN im Smart-eID Menü.</translation>
+    </message>
+    <message>
+        <source>Go to Smart-eID menu</source>
+        <extracomment>LABEL ANDROID IOS The text on the redirect button that appears when the user tried to use an unusable Smart-eID</extracomment>
+        <translation>Zum Smart-eID Menü</translation>
     </message>
 </context>
 <context>
@@ -8229,6 +6426,21 @@ Bitte aktivieren Sie NFC, um Ihr Smartphone als Kartenleser (SaK) benutzen zu k�
         <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>
         <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.</extracomment>
         <translation>Das Programm steht weiterhin in der Menüleiste zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
+    </message>
+    <message>
+        <source>The %1 will be shut down and an authentication will no longer be possible. You will have to restart the %1 to identify yourself towards providers.</source>
+        <extracomment>INFO DESKTOP Text of the popup that is shown when the AA2 is quit for the first time.</extracomment>
+        <translation>Die %1 wird beendet und steht nicht länger für eine Authentisierung zur Verfügung. Sie müssen die %1 erneut starten, um sich gegenüber Dienstanbietern auszuweisen.</translation>
+    </message>
+    <message>
+        <source>The %1 is closed.</source>
+        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is quit for the first time.</extracomment>
+        <translation>Die %1 wird beendet.</translation>
+    </message>
+    <message>
+        <source>This will cancel the current operation and shut the %1 down. You will have to restart the %1 to restart the operation.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is shut down and a workflow is still active.</extracomment>
+        <translation>Hierdurch wird der aktuelle Vorgang abgebrochen und die %1 beendet. Sie müssen die %1 erneut starten, um den Vorgang neuzustarten.</translation>
     </message>
 </context>
 </TS>

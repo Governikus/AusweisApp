@@ -80,15 +80,7 @@ void IfdReader::updateStatus(const IfdStatus& pIfdStatus)
 	if (pIfdStatus.getCardAvailable())
 	{
 		mCard.reset(new IfdCard(mDispatcher, getName()));
-		QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-		fetchCardInfo(cardConnection);
-
-		if (getReaderInfo().getCardType() == CardType::SMART_EID)
-		{
-			qCDebug(card_remote) << "Card received but not inserted";
-			shelveCard();
-			return;
-		}
+		fetchCardInfo();
 
 		qCDebug(card_remote) << "Card inserted";
 		Q_EMIT fireCardInserted(getReaderInfo());

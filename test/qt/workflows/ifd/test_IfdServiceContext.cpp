@@ -80,6 +80,7 @@ class test_IfdServiceContext
 		{
 			IfdServiceContext context(mIfdServer);
 			context.reset();
+			QCOMPARE(context.getDisplayText(), QString());
 			QCOMPARE(context.getCardConnection(), QSharedPointer<CardConnection>());
 			QCOMPARE(context.getCan(), QString());
 			QCOMPARE(context.getPin(), QString());

@@ -17,6 +17,7 @@ Q_DECLARE_LOGGING_CATEGORY(rproxy)
 
 UIPlugInProxy::UIPlugInProxy()
 	: UIPlugIn()
+	, HttpHandler()
 	, mServer()
 {
 }
@@ -90,18 +91,23 @@ void UIPlugInProxy::onUiDominationReleased()
 }
 
 
-void UIPlugInProxy::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInProxy::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 }
 
 
-void UIPlugInProxy::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInProxy::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 }
 
 
 void UIPlugInProxy::doShutdown()
 {
+	if (mServer)
+	{
+		mServer->disconnect(this);
+		mServer.reset();
+	}
 }

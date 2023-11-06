@@ -77,7 +77,7 @@ class test_StateUpdateRetryCounter
 			QSignalSpy spyNoCardConnection(&counter, &StateUpdateRetryCounter::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "StateUpdateRetryCounter::onUpdateRetryCounterDone()");
-			QTest::ignoreMessage(QtCriticalMsg, "An error ( UNKNOWN ) occurred while communicating with the card reader, cannot determine retry counter, abort state");
+			QTest::ignoreMessage(QtCriticalMsg, "An error (UNKNOWN) occurred while communicating with the card reader, cannot determine retry counter, abort state");
 			counter.onUpdateRetryCounterDone(command);
 			QCOMPARE(spyAbort.count(), 0);
 			QCOMPARE(spyNoCardConnection.count(), 1);

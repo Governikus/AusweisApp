@@ -26,12 +26,13 @@ template<> LocalWebSocketServer* createNewObject<LocalWebSocketServer*>()
 LocalWebSocketServerImpl::LocalWebSocketServerImpl()
 	: LocalWebSocketServer()
 	, mLocalTlsServer(QSharedPointer<LocalTlsServer>::create())
-	, mWebSocketServer(mLocalTlsServer, {ReaderManagerPlugInType::SMART})
+	, mWebSocketServer(mLocalTlsServer, {ReaderManagerPlugInType::SMART, ReaderManagerPlugInType::UNKNOWN})
 {
 	connect(&mWebSocketServer, &WebSocketServer::fireNewConnection, this, &LocalWebSocketServerImpl::fireNewConnection);
 	connect(&mWebSocketServer, &WebSocketServer::fireConnectedChanged, this, &LocalWebSocketServerImpl::fireConnectedChanged);
 	connect(&mWebSocketServer, &WebSocketServer::fireMessageHandlerAdded, this, &LocalWebSocketServerImpl::fireMessageHandlerAdded);
 	connect(&mWebSocketServer, &WebSocketServer::firePskChanged, this, &LocalWebSocketServerImpl::firePskChanged);
+	connect(mLocalTlsServer.data(), &TlsServer::fireSocketError, this, &LocalWebSocketServerImpl::fireSocketError);
 }
 
 

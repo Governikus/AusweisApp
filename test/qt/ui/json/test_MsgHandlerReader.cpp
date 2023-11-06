@@ -11,6 +11,7 @@
 #include "MessageDispatcher.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -25,12 +26,19 @@ class test_MsgHandlerReader
 {
 	Q_OBJECT
 
+#if __has_include("SmartManager.h")
+	const QByteArray mEidType = QByteArray(R"("eidType":"CARD_CERTIFIED",)");
+#else
+	const QByteArray mEidType;
+#endif
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -90,7 +98,7 @@ class test_MsgHandlerReader
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false," + mEidType + "\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
 
@@ -117,10 +125,10 @@ class test_MsgHandlerReader
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false," + mEidType + "\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "ReaderMock"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMock\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false," + mEidType + "\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMock\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "ReaderMockXYZ"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMockXYZ\"}"));
@@ -129,9 +137,36 @@ class test_MsgHandlerReader
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "SpecialMockWithGermanCard"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true," + mEidType + "\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
 		}
 
+
+#if __has_include("SmartManager.h")
+		void eidType_data()
+		{
+			QTest::addColumn<QByteArray>("efCardAccess");
+			QTest::addColumn<QByteArray>("eidType");
+
+			QTest::newRow("CARD_CERTIFIED") << TestFileHelper::readFile(":/card/efCardAccess.hex") << QByteArray("CARD_CERTIFIED");
+			QTest::newRow("SE_ENDORSED") << TestFileHelper::readFile(":/card/smartEfCardAccess.hex") << QByteArray("SE_ENDORSED");
+		}
+
+
+		void eidType()
+		{
+			QFETCH(QByteArray, efCardAccess);
+			QFETCH(QByteArray, eidType);
+
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			reader->setCard(MockCardConfig(), EFCardAccess::decode(QByteArray::fromHex(efCardAccess)), CardType::SMART_EID);
+			MessageDispatcher dispatcher;
+
+			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false,\"eidType\":\"<EID_TYPE>\",\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}").replace("<EID_TYPE>", eidType));
+		}
+
+
+#endif
 
 };
 

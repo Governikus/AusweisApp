@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.NumberModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
+import Governikus.Type.NumberModel
 
-Item {
+ColumnLayout {
 	id: root
 
 	property alias additionalContent: additionalContentItem.data
@@ -19,63 +19,49 @@ Item {
 
 	signal enableClicked
 
-	clip: true
+	spacing: Constants.component_spacing
 
-	GFlickableColumnLayout {
-		anchors.fill: parent
-		spacing: 0
-		topMargin: 0
+	GText {
+		id: title
 
-		GText {
-			id: title
-			Layout.alignment: Qt.AlignHCenter
-			Layout.bottomMargin: Constants.text_spacing
-			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.header_accent
-			visible: text !== ""
-		}
-		GText {
-			id: subTitle
-			Layout.alignment: Qt.AlignHCenter
-			Layout.bottomMargin: Constants.component_spacing
-			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.normal_secondary
-			verticalAlignment: Text.AlignTop
-			visible: text !== ""
-		}
-		GText {
-			id: enableInfo
-			Layout.alignment: Qt.AlignHCenter
-			Layout.bottomMargin: Constants.component_spacing
-			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.normal_warning
-			verticalAlignment: Text.AlignBottom
-			visible: text !== ""
-		}
-		Column {
-			id: additionalContentItem
-			Layout.alignment: Qt.AlignHCenter
-			Layout.bottomMargin: Constants.component_spacing
-			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
-			visible: children.length !== 0
-		}
-		GSpacer {
-			Layout.fillHeight: true
-		}
-		GButton {
-			id: enableButton
-			Layout.alignment: Qt.AlignHCenter
-			Layout.bottomMargin: Constants.component_spacing
-			visible: text !== ""
+		Layout.alignment: Qt.AlignHCenter
+		horizontalAlignment: Text.AlignHCenter
+		textStyle: Style.text.headline
+		visible: text !== ""
+	}
+	GText {
+		id: subTitle
 
-			onClicked: enableClicked()
-		}
+		Layout.alignment: Qt.AlignHCenter
+		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignTop
+		visible: text !== ""
+	}
+	GText {
+		id: enableInfo
+
+		Layout.alignment: Qt.AlignHCenter
+		horizontalAlignment: Text.AlignHCenter
+		textStyle: Style.text.normal_warning
+		verticalAlignment: Text.AlignBottom
+		visible: text !== ""
+	}
+	Column {
+		id: additionalContentItem
+
+		Layout.fillWidth: true
+		visible: children.length !== 0
+	}
+	GSpacer {
+		Layout.fillHeight: true
+		visible: enableButton.visible
+	}
+	GButton {
+		id: enableButton
+
+		Layout.alignment: Qt.AlignHCenter
+		visible: text !== ""
+
+		onClicked: enableClicked()
 	}
 }

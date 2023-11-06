@@ -8,12 +8,14 @@
 #include "Initializer.h"
 #include "PortFile.h"
 #include "ReaderManager.h"
-#include "SecureStorage.h"
 #include "messages/IfdVersion.h"
 
 #include <QLoggingCategory>
 
 #ifdef Q_OS_ANDROID
+	#include "Randomizer.h"
+	#include "SecureStorage.h"
+
 	#include <QtCore/private/qandroidextras_p.h>
 #endif
 
@@ -68,7 +70,7 @@ void LocalIfdClient::startDetection()
 	const auto packageName = QJniObject::fromString(Env::getSingleton<SecureStorage>()->getLocalIfdPackageName());
 	handle.callObjectMethod("setPackage", "(Ljava/lang/String;)Landroid/content/Intent;", packageName.object<jstring>());
 	mPsk = Randomizer::getInstance().createUuid().toString(QUuid::Id128);
-	serviceIntent.putExtra(QStringLiteral("TLS_WEBSOCKET_PSK"), mPsk.toUtf8());
+	serviceIntent.putExtra(QStringLiteral("PSK"), mPsk.toUtf8());
 
 	QJniObject context = QNativeInterface::QAndroidApplication::context();
 	if (!context.isValid())
@@ -82,7 +84,7 @@ void LocalIfdClient::startDetection()
 	bool isBound = context.callMethod<jboolean>("bindService", "(Landroid/content/Intent;Landroid/content/ServiceConnection;I)Z", serviceIntent.handle().object(), mServiceConnection.object(), jint(QtAndroidPrivate::BindFlag::AutoCreate)) == JNI_TRUE;
 	if (!isBound)
 	{
-		qCWarning(ifd) << "Binding to LocalIfdService failed, is the correct AusweisApp2 version installed?";
+		qCWarning(ifd) << "Binding to LocalIfdService failed, is the correct AusweisApp version installed?";
 		serviceDisconnected();
 	}
 #endif

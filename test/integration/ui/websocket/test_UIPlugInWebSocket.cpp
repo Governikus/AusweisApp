@@ -37,7 +37,7 @@ class test_UIPlugInWebSocket
 		void init()
 		{
 			QString path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
-			QString app = path + "AusweisApp2";
+			QString app = path + "AusweisApp";
 #ifdef Q_OS_WIN
 			app += ".exe";
 #endif
@@ -58,7 +58,7 @@ class test_UIPlugInWebSocket
 			mApp2->waitForStarted(PROCESS_TIMEOUT);
 			QCOMPARE(mApp2->state(), QProcess::Running);
 
-			QFile portInfoFile(PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2")));
+			QFile portInfoFile(PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp")));
 			QTRY_COMPARE_WITH_TIMEOUT(portInfoFile.exists(), true, PROCESS_TIMEOUT); // clazy:exclude=qstring-allocations
 			QVERIFY(portInfoFile.open(QIODevice::ReadOnly));
 
@@ -73,7 +73,7 @@ class test_UIPlugInWebSocket
 
 		void cleanup()
 		{
-			const QString portFile = PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp2"));
+			const QString portFile = PortFile::getPortFilename(QString(), mApp2->processId(), QStringLiteral("AusweisApp"));
 			QVERIFY(QFile::exists(portFile));
 			mHelper.reset();
 
@@ -97,7 +97,7 @@ class test_UIPlugInWebSocket
 			// There will never be a clean shutdown on Windows.
 			if (mApp2->exitCode() != 0)
 			{
-				qDebug().noquote() << "Error output from AusweisApp2 process:\n" << mApp2->readAllStandardError();
+				qDebug().noquote() << "Error output from AusweisApp process:\n" << mApp2->readAllStandardError();
 			}
 			QCOMPARE(mApp2->exitCode(), 0);
 #endif
@@ -119,7 +119,7 @@ class test_UIPlugInWebSocket
 			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}");
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
 					return pMessage["msg"] == "INFO" &&
-						   pMessage["VersionInfo"].toObject()["Name"] == "AusweisApp2";
+						   pMessage["VersionInfo"].toObject()["Name"] == QLatin1String("AusweisApp2");
 				}));
 
 			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}");

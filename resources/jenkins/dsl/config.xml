@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.54">
-	<source>https://hg.govkg.de/AusweisApp/AusweisApp2</source>
+	<source>https://hg.governikus.de/AusweisApp/AusweisApp2</source>
 	<modules>resources/jenkins/dsl/</modules>
 	<revisionType>TAG</revisionType>
 	<revision>default</revision>

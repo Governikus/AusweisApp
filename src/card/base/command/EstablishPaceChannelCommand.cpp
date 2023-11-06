@@ -38,14 +38,13 @@ void EstablishPaceChannelCommand::internalExecute()
 		return;
 	}
 
-	if (mPacePasswordId == PacePasswordId::PACE_PUK)
+	if (mPacePasswordId == PacePasswordId::PACE_PUK
+			&& (getCardConnectionWorker()->getReaderInfo().getRetryCounter() > 0
+			|| getCardConnectionWorker()->getReaderInfo().isPinDeactivated()))
 	{
-		if (getCardConnectionWorker()->getReaderInfo().getRetryCounter() > 0 || getCardConnectionWorker()->getReaderInfo().isPinDeactivated())
-		{
-			mPaceOutput.setPaceReturnCode(CardReturnCode::PIN_NOT_BLOCKED);
-			setReturnCode(mPaceOutput.getPaceReturnCode());
-			return;
-		}
+		mPaceOutput.setPaceReturnCode(CardReturnCode::PIN_NOT_BLOCKED);
+		setReturnCode(mPaceOutput.getPaceReturnCode());
+		return;
 	}
 
 	if (getCardConnectionWorker()->getReaderInfo().isSoftwareSmartEid())

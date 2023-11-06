@@ -1,18 +1,20 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQml.Models 2.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.TitleBar 1.0
-import Governikus.FeedbackView 1.0
-import Governikus.InformationView 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQml.Models
+import Governikus.Global
+import Governikus.View
+import Governikus.TitleBar
+import Governikus.FeedbackView
+import Governikus.InformationView
+import Governikus.Type.ApplicationModel
 
 SectionPage {
 	id: sectionPage
+
 	enum SubViews {
 		None,
 		Diagnosis,
@@ -22,7 +24,6 @@ SectionPage {
 	property int activeSubView
 
 	titleBarAction: TitleBarAction {
-		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "helpSection")
 		//: LABEL DESKTOP
 		text: qsTr("Help")
 
@@ -39,13 +40,14 @@ SectionPage {
 
 	TabbedPane {
 		id: tabbedPane
+
 		anchors.fill: parent
-		anchors.margins: Constants.pane_spacing
+		contentRightMargin: currentContentItem instanceof LicenseInformation || currentContentItem instanceof ReleaseNotes ? 0 : Constants.pane_padding
 		sectionsModel: [
 			//: LABEL DESKTOP
 			qsTr("General"),
 			//: LABEL DESKTOP
-			qsTr("Diagnosis and logs"),
+			qsTr("Data and logs"),
 			//: LABEL DESKTOP
 			qsTr("Version information"),
 			//: LABEL DESKTOP
@@ -61,6 +63,8 @@ SectionPage {
 			}
 			Component {
 				MoreViewDiagnosis {
+					onShowDiagnosis: sectionPage.activeSubView = MoreView.SubViews.Diagnosis
+					onShowLogs: sectionPage.activeSubView = MoreView.SubViews.ApplicationLog
 				}
 			}
 			Component {
@@ -69,43 +73,30 @@ SectionPage {
 			}
 			Component {
 				LicenseInformation {
-					height: tabbedPane.availableHeight
-
-					anchors {
-						left: parent.left
-						right: parent.right
-						rightMargin: -Constants.pane_padding
-					}
+					Layout.preferredHeight: tabbedPane.availableHeight
 				}
 			}
 			Component {
 				ReleaseNotes {
-					height: tabbedPane.availableHeight
-
-					anchors {
-						left: parent.left
-						right: parent.right
-						rightMargin: -Constants.pane_padding
-					}
+					Layout.preferredHeight: tabbedPane.availableHeight
 				}
 			}
-		}
-		sectionDelegate: TabbedPaneDelegateText {
-			sectionName: model ? model.modelData : ""
 		}
 	}
 	Component {
 		id: diagnosisView
+
 		DiagnosisView {
 		}
 	}
 	Component {
 		id: logFileView
+
 		LogView {
 		}
 	}
 	Loader {
-		readonly property bool sectionPageTypeMarker: true
+		readonly property bool breadcrumpSearchPath: true
 		property var titleBarAction: item ? item.titleBarAction : undefined
 
 		anchors.fill: parent

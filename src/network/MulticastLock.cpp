@@ -41,7 +41,7 @@ MulticastLock::~MulticastLock() = default;
 #endif
 
 
-void MulticastLock::invokeJniMethod(const char* const pMethodName)
+void MulticastLock::invokeJniMethod(const char* const pMethodName) const
 {
 #if defined(Q_OS_ANDROID)
 	QJniEnvironment env;

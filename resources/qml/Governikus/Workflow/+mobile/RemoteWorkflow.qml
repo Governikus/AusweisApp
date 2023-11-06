@@ -1,17 +1,19 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.RemoteServiceView 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.NumberModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.RemoteServiceView
+import Governikus.TechnologyInfo
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.RemoteServiceModel
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.NumberModel
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
 	property bool foundSelectedReader: ApplicationModel.availableReader > 0
@@ -19,6 +21,11 @@ Item {
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
 
 	signal deviceUnpaired(var pDeviceName)
+
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
 
 	onFoundSelectedReaderChanged: {
 		if (baseItem.settingsPushed && foundSelectedReader) {
@@ -35,14 +42,15 @@ Item {
 	}
 	RemoteProgressIndicator {
 		id: progressIndicator
+
 		Accessible.ignored: true
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
+		Layout.alignment: Qt.AlignCenter
 		foundSelectedReader: baseItem.foundSelectedReader
 	}
 	TechnologyInfo {
 		id: techInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			if (!wifiEnabled) {
 				//: LABEL ANDROID IOS
@@ -71,12 +79,14 @@ Item {
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError;
+			} else if (!!AuthModel.eidTypeMismatchError) {
+				return AuthModel.eidTypeMismatchError;
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.
-				qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
+				return qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else {
 				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
-				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
+				return qsTr("Connected to %1. Please follow the instructions on the connected smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}
 		titleText: {
@@ -104,18 +114,10 @@ Item {
 				push(remoteServiceSettings);
 			}
 		}
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 	RemoteServiceSettings {
 		id: remoteServiceSettings
+
 		visible: false
 	}
 }

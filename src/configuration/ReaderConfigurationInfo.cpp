@@ -17,14 +17,14 @@ ReaderConfigurationInfo::ReaderConfigurationInfo()
 
 
 ReaderConfigurationInfo::ReaderConfigurationInfo(const QString& pReaderName)
-	: d(new InternalInfo(false, 0, 0, pReaderName, QString(), QString(), QStringLiteral("default_reader.png"), QStringLiteral("default_reader_mit_ausweis.png")))
+	: d(new InternalInfo(false, 0, {}, pReaderName, QString(), QString(), QStringLiteral("default_reader.png"), QStringLiteral("default_reader_mit_ausweis.png")))
 {
 }
 
 
-ReaderConfigurationInfo::ReaderConfigurationInfo(uint pVendorId, uint pProductId,
+ReaderConfigurationInfo::ReaderConfigurationInfo(uint pVendorId, const QSet<uint>& pProductIds,
 		const QString& pName, const QString& pUrl, const QString& pPattern, const QString& pIcon, const QString& pIconWithNPA)
-	: d(new InternalInfo(true, pVendorId, pProductId, pName, pUrl, pPattern, pIcon, pIconWithNPA))
+	: d(new InternalInfo(true, pVendorId, pProductIds, pName, pUrl, pPattern, pIcon, pIconWithNPA))
 {
 }
 
@@ -50,9 +50,9 @@ uint ReaderConfigurationInfo::getVendorId() const
 }
 
 
-uint ReaderConfigurationInfo::getProductId() const
+QSet<uint> ReaderConfigurationInfo::getProductIds() const
 {
-	return d->mProductId;
+	return d->mProductIds;
 }
 
 

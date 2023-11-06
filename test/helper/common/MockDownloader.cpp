@@ -24,8 +24,7 @@ QDateTime MockDownloader::getTimeStamp()
 
 QString MockDownloader::getTimeStampString()
 {
-	const QString dateFormat = QStringLiteral("yyyyMMddhhmmss");
-	return getTimeStamp().toString(dateFormat);
+	return getTimeStamp().toString(QStringLiteral("yyyyMMddhhmmsst"));
 }
 
 

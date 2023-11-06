@@ -17,6 +17,10 @@
 #include <QSharedPointer>
 #include <QString>
 
+
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -27,6 +31,9 @@ class SelfAuthModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
+
+	Q_PROPERTY(bool workflowCancelled READ isWorkflowCancelled NOTIFY fireCancelWorkflow FINAL)
 
 	private:
 		SelfAuthModel();
@@ -46,10 +53,10 @@ class SelfAuthModel
 
 		void resetContext(const QSharedPointer<SelfAuthContext>& pContext = QSharedPointer<SelfAuthContext>());
 
-		Q_INVOKABLE void startWorkflow();
+		Q_INVOKABLE void startWorkflow(bool pActivateUi = true);
 		Q_INVOKABLE void cancelWorkflow();
+		[[nodiscard]] bool isWorkflowCancelled() const;
 		[[nodiscard]] Q_INVOKABLE bool isBasicReader() const;
-		Q_INVOKABLE void exportData(const QUrl& pFilename) const;
 
 		[[nodiscard]] int rowCount(const QModelIndex& = QModelIndex()) const override;
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
@@ -59,6 +66,7 @@ class SelfAuthModel
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
+		void fireCancelWorkflow();
 };
 
 

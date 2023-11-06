@@ -167,24 +167,57 @@ class test_NumberModel
 
 		void test_NewPin()
 		{
-			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			const QSharedPointer<ChangePinContext> changePinContext(new ChangePinContext());
-			const QSharedPointer<IfdServiceContext> remoteServiceContext(new IfdServiceContext(QSharedPointer<IfdServer>(new RemoteIfdServer())));
 			const QString pin = QStringLiteral("111111");
 
-			mModel->resetContext(context);
 			mModel->setNewPin(pin);
 			QCOMPARE(mModel->getNewPin(), QString());
 
 			mModel->resetContext(changePinContext);
-			mModel->setNewPin(pin);
-			QCOMPARE(changePinContext->getNewPin(), pin);
-			QCOMPARE(mModel->getNewPin(), pin);
-
-			mModel->resetContext(remoteServiceContext);
-			mModel->setNewPin(pin);
-			QCOMPARE(remoteServiceContext->getNewPin(), pin);
 			QCOMPARE(mModel->getNewPin(), QString());
+			mModel->setNewPin(pin);
+			QCOMPARE(mModel->getNewPin(), pin);
+			QCOMPARE(changePinContext->getNewPin(), QString());
+		}
+
+
+		void test_NewPinConfirmation_data()
+		{
+			QTest::addColumn<QString>("newPin");
+			QTest::addColumn<QString>("newPinConfirmation");
+
+			QTest::newRow("Mismatch") << QStringLiteral("111111") << QStringLiteral("222222");
+			QTest::newRow("Match") << QStringLiteral("111111") << QStringLiteral("111111");
+
+		}
+
+
+		void test_NewPinConfirmation()
+		{
+			QFETCH(QString, newPin);
+			QFETCH(QString, newPinConfirmation);
+			const bool pinConfirmed = newPin == newPinConfirmation;
+
+			const QSharedPointer<ChangePinContext> changePinContext(new ChangePinContext());
+			QSignalSpy inputErrorSpy(mModel, &NumberModel::fireInputErrorChanged);
+
+			mModel->resetContext(changePinContext);
+			mModel->setNewPin(newPin);
+			mModel->setNewPinConfirmation(newPinConfirmation);
+
+			QCOMPARE(mModel->getNewPin(), newPin);
+			QCOMPARE(mModel->getNewPinConfirmation(), newPinConfirmation);
+
+			QCOMPARE(mModel->commitNewPin(), pinConfirmed);
+
+			if (pinConfirmed)
+			{
+				QCOMPARE(changePinContext->getNewPin(), newPin);
+			}
+			else
+			{
+				QCOMPARE(inputErrorSpy.count(), 2);
+			}
 		}
 
 
@@ -283,30 +316,21 @@ class test_NumberModel
 			QCOMPARE(mModel->getInputError(), QStringLiteral("%1 <a href=\"https://www.ausweisapp.bund.de/%2/aa2/support\">%3</a>.").arg(
 					tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at"),
 					LanguageLoader::getLocaleCode(),
-					tr("AusweisApp2 Support")));
+					tr("%1 Support").arg(QCoreApplication::applicationName())));
 
 			context.reset(new ChangePinContext(true));
 			mModel->resetContext(context);
 			context->setCardConnection(connection);
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN. "
-												 "You have two further attempts to enter the correct Transport PIN."
-												 "<br><br>"
-												 "Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-												 "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+												 "You have two further attempts to enter the correct Transport PIN."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN twice. "
 												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-												 "You can find your CAN in the bottom right on the front of your ID card."
-												 "<br><br>"
-												 "Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-												 "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+												 "You can find your CAN in the bottom right on the front of your ID card."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
-												 "To remove the block, the ten-digit PUK must be entered first."
-												 "<br><br>"
-												 "Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-												 "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+												 "To remove the block, the ten-digit PUK must be entered first."));
 
 			connectionThread.quit();
 			connectionThread.wait();
@@ -404,13 +428,21 @@ class test_NumberModel
 		void test_GetPasswordTypeNewPin()
 		{
 			const QSharedPointer<WorkflowContext> context(new ChangePinContext());
+			const QString pin = QStringLiteral("123456");
+
 			mModel->resetContext(context);
 
 			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
 			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
 
-			context->setPin(QStringLiteral("123456"));
+			context->setPin(pin);
 			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN);
+
+			mModel->setNewPin(pin);
+			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN_CONFIRMATION);
+
+			mModel->setNewPinConfirmation(pin);
+			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN_CONFIRMATION);
 		}
 
 
@@ -425,6 +457,8 @@ class test_NumberModel
 			QVERIFY(personalizationContext);
 			personalizationContext->setSessionIdentifier(QUuid::createUuid());
 			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_SMART_PIN);
+			mModel->setNewPin(QStringLiteral("123456"));
+			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_SMART_PIN_CONFIRMATION);
 #endif
 		}
 

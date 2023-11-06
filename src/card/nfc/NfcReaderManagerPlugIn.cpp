@@ -17,9 +17,12 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_nfc)
 
 
+QAtomicPointer<NfcReaderManagerPlugIn> NfcReaderManagerPlugIn::instance = nullptr;
+
+
 void NfcReaderManagerPlugIn::onNfcAdapterStateChanged(bool pEnabled)
 {
-	if (getInfo().isEnabled() == pEnabled)
+	if (getInfo().isEnabled() == pEnabled || !mNfcReader)
 	{
 		return;
 	}
@@ -52,18 +55,73 @@ void NfcReaderManagerPlugIn::onReaderDisconnected()
 }
 
 
+void NfcReaderManagerPlugIn::setReaderMode(bool pEnabled)
+{
+#ifdef Q_OS_ANDROID
+	if (QNativeInterface::QAndroidApplication::isActivityContext())
+	{
+		if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+		{
+			activity.callMethod<void>("setReaderMode", "(Z)V", pEnabled);
+		}
+	}
+#else
+	Q_UNUSED(pEnabled)
+#endif
+}
+
+
+void NfcReaderManagerPlugIn::enqueueReaderMode(bool pEnabled)
+{
+	if (auto* plugin = NfcReaderManagerPlugIn::instance.loadRelaxed())
+	{
+		QMetaObject::invokeMethod(plugin, [plugin, pEnabled] {
+				if (plugin->mNfcReader)
+				{
+					setReaderMode(pEnabled);
+				}
+			}, Qt::QueuedConnection);
+	}
+}
+
+
+#ifdef Q_OS_ANDROID
+extern "C"
+{
+
+// These functions need to be explicitly exported so that the JVM can bind to them.
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_setReaderModeNative(JNIEnv* pEnv, jobject pObj, jboolean pEnabled)
+{
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
+
+	NfcReaderManagerPlugIn::enqueueReaderMode(pEnabled);
+}
+
+
+}
+#endif
+
+
 NfcReaderManagerPlugIn::NfcReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::NFC,
 			QNearFieldManager().isSupported(QNearFieldTarget::TagTypeSpecificAccess)
 			)
 	, mNfcReader(nullptr)
 {
+	instance = this;
+}
+
+
+NfcReaderManagerPlugIn::~NfcReaderManagerPlugIn()
+{
+	instance = nullptr;
 }
 
 
 QList<Reader*> NfcReaderManagerPlugIn::getReaders() const
 {
-	if (getInfo().isEnabled())
+	if (getInfo().isEnabled() && mNfcReader)
 	{
 		return QList<Reader*>({mNfcReader.data()});
 	}
@@ -76,7 +134,7 @@ void NfcReaderManagerPlugIn::init()
 {
 	ReaderManagerPlugIn::init();
 
-	if (mNfcReader)
+	if (!getInfo().isAvailable() || mNfcReader)
 	{
 		return;
 	}
@@ -90,26 +148,37 @@ void NfcReaderManagerPlugIn::init()
 	connect(mNfcReader.data(), &NfcReader::fireReaderDisconnected, this, &NfcReaderManagerPlugIn::onReaderDisconnected);
 	qCDebug(card_nfc) << "Add reader" << mNfcReader->getName();
 
-	onNfcAdapterStateChanged(mNfcReader->isEnabled() && getInfo().isAvailable());
+	setReaderMode(true);
+	onNfcAdapterStateChanged(mNfcReader->isEnabled());
 }
 
 
 void NfcReaderManagerPlugIn::shutdown()
 {
-	onNfcAdapterStateChanged(false);
-	mNfcReader.reset();
+	if (mNfcReader)
+	{
+		onNfcAdapterStateChanged(false);
+		setReaderMode(false);
+		mNfcReader.reset();
+	}
 }
 
 
 void NfcReaderManagerPlugIn::startScan(bool pAutoConnect)
 {
-	mNfcReader->connectReader();
-	ReaderManagerPlugIn::startScan(pAutoConnect);
+	if (mNfcReader)
+	{
+		mNfcReader->connectReader();
+		ReaderManagerPlugIn::startScan(pAutoConnect);
+	}
 }
 
 
 void NfcReaderManagerPlugIn::stopScan(const QString& pError)
 {
-	mNfcReader->disconnectReader(pError);
-	ReaderManagerPlugIn::stopScan(pError);
+	if (mNfcReader)
+	{
+		mNfcReader->disconnectReader(pError);
+		ReaderManagerPlugIn::stopScan(pError);
+	}
 }

@@ -34,8 +34,9 @@ class QmlTestRunner
 	Q_PROPERTY(QVariantMap safeAreaMargins MEMBER mSafeAreaMargins CONSTANT)
 	Q_PROPERTY(bool highContrastEnabled MEMBER mFalse CONSTANT)
 	Q_PROPERTY(QString platformStyle MEMBER mPlatformStyle CONSTANT)
-	Q_PROPERTY(bool isTabletLayout MEMBER isTabletLayout CONSTANT)
 	Q_PROPERTY(QString fixedFontFamily MEMBER mFixedFontFamily CONSTANT)
+	Q_PROPERTY(qreal scaleFactor MEMBER mScaleFactor CONSTANT)
+	Q_PROPERTY(qreal fontScaleFactor MEMBER mFontScaleFactor CONSTANT)
 
 	private:
 		const bool mFalse = false;
@@ -44,7 +45,8 @@ class QmlTestRunner
 		};
 		QString mPlatformStyle;
 		QString mFixedFontFamily;
-		bool isTabletLayout;
+		static constexpr qreal mScaleFactor = 0.6;
+		static constexpr qreal mFontScaleFactor = 1.0;
 
 		QSharedPointer<MockNetworkManager> mMockNetworkManager;
 
@@ -81,17 +83,18 @@ class QmlTestRunner
 		void qmlEngineAvailable(QQmlEngine* pEngine)
 		{
 			pEngine->rootContext()->setContextProperty(QStringLiteral("plugin"), this);
+#if (QT_VERSION < QT_VERSION_CHECK(6, 4, 2))
+			pEngine->rootContext()->setContextProperty("hasBindingLoop", true);
+#else
+			pEngine->rootContext()->setContextProperty("hasBindingLoop", false);
+#endif
 
 			connect(pEngine, &QQmlEngine::warnings, [](const QList<QQmlError>& pWarnings){
 					bool fail = false;
 					for (auto& warning : pWarnings)
 					{
 						qCritical() << warning;
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 1))
-						fail |= !warning.description().contains("QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead:");
-#else
 						fail = true;
-#endif
 					}
 
 					if (fail)
@@ -103,7 +106,6 @@ class QmlTestRunner
 
 			const QStringList selectors = QQmlFileSelector(pEngine).selector()->extraSelectors();
 			mPlatformStyle = selectors.join(QLatin1String(","));
-			isTabletLayout = mPlatformStyle.contains("tablet");
 
 			mFixedFontFamily = QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
 		}

@@ -61,7 +61,7 @@ void ReaderScanEnabler::enableScanIfVisible()
 
 bool ReaderScanEnabler::isScanRunning() const
 {
-	return Env::getSingleton<ReaderManager>()->isScanRunning(mPlugInType);
+	return Env::getSingleton<ReaderManager>()->getPlugInInfo(mPlugInType).isScanRunning();
 }
 
 

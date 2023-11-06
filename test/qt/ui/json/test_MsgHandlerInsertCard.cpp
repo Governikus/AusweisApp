@@ -15,6 +15,7 @@
 
 #include "TestWorkflowContext.h"
 
+#include <QSignalSpy>
 #include <QTest>
 #include <QtPlugin>
 
@@ -37,8 +38,9 @@ class test_MsgHandlerInsertCard
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -73,7 +75,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
 		}
 
 
@@ -86,7 +88,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray("{\"msg\":\"INSERT_CARD\"}"));
 		}
 
 
@@ -99,7 +101,7 @@ class test_MsgHandlerInsertCard
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray());
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray());
 		}
 
 
@@ -107,7 +109,7 @@ class test_MsgHandlerInsertCard
 		{
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
 
 			QByteArray msg(R"({"cmd": "SET_API_LEVEL", "level": 1})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"current":1,"msg":"API_LEVEL"})"));
@@ -147,7 +149,7 @@ class test_MsgHandlerInsertCard
 		{
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
 
 			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReaderSimulator", ReaderManagerPlugInType::SIMULATOR);
 			auto info = reader->getReaderInfo();

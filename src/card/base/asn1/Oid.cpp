@@ -246,15 +246,9 @@ QByteArray Oid::getData() const
 		return QByteArray();
 	}
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	return QByteArray(reinterpret_cast<const char*>(mObject->data), mObject->length);
-
-#else
 	const size_t len = OBJ_length(mObject);
 	const uchar* const data = OBJ_get0_data(mObject);
 	return QByteArray(reinterpret_cast<const char*>(data), static_cast<int>(len));
-
-#endif
 }
 
 
@@ -272,7 +266,7 @@ Oid::operator QByteArray() const
 	}
 
 	QByteArray description(oidSize + 1, '\0'); // +1 = null termination
-	OBJ_obj2txt(description.data(), description.size(), mObject, 1);
+	OBJ_obj2txt(description.data(), static_cast<int>(description.size()), mObject, 1);
 	description.resize(oidSize); // remove null termination
 
 	if (const int nid = OBJ_obj2nid(mObject); nid != NID_undef)

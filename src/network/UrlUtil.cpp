@@ -2,12 +2,10 @@
  * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
-
 #include "UrlUtil.h"
 
 #include "AppSettings.h"
 #include "Env.h"
-#include "Initializer.h"
 
 #include <QHostAddress>
 #include <QLoggingCategory>

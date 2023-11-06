@@ -1,22 +1,21 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Window 2.2
-import Governikus.Global 1.0
+import QtQuick
+import QtQuick.Window
+import Governikus.Global
 
 QtObject {
-	readonly property int corner_radius_popup: corner_radius
-	readonly property int header_font_size: scaleText(20)
-	readonly property int hint_font_size: scaleText(14)
-	readonly property int navigation_font_size: scaleText(12)
-	readonly property int normal_font_size: scaleText(16)
-	readonly property int searchbar_height: 52
-	readonly property int title_font_size: scaleText(22)
+	// If this font size changes, it has to be changed in UIPlugInQml, too.
+	readonly property real text: scaleText(15) * plugin.fontScaleFactor
+	readonly property real text_headline: scaleText(26) * plugin.fontScaleFactor
+	readonly property real text_navigation: scaleText(12) * plugin.fontScaleFactor
+	readonly property real text_subline: scaleText(18) * plugin.fontScaleFactor
+	readonly property real text_title: scaleText(30) * plugin.fontScaleFactor
 
 	// Scale the text on small devices like the iPhone SE
 	function scaleText(value) {
-		var w = Screen.width;
+		let w = Screen.width;
 		if (w > 415) {
 			return value;
 		}

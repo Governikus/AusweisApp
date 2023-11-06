@@ -1,21 +1,20 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 SectionPage {
 	id: baseItem
+
 	enum ButtonStyle {
 		NoButtons,
 		AgreeButton,
-		DisagreeButton,
-		NeutralButton = 4,
-		AllButtons = 7 // Combination of all button values
+		DisagreeButton
 	}
 
 	property alias agreeButton: agreeButton
@@ -25,8 +24,6 @@ SectionPage {
 	property alias mainIconSource: image.source
 	property alias moreInformationText: moreInformation.text
 	property alias moreInformationVisible: moreInformation.visible
-	property alias neutralButton: neutralButton
-	property alias neutralText: neutralButton.subText
 	property alias questionSubText: subTextElement.text
 	property alias questionText: mainTextElement.text
 	property int style: DecisionView.ButtonStyle.AgreeButton | DecisionView.ButtonStyle.DisagreeButton
@@ -35,107 +32,98 @@ SectionPage {
 	signal agree
 	signal disagree
 	signal moreInformationClicked
-	signal neutral
 
 	activeFocusOnTab: false
 
-	TintableIcon {
-		id: image
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: baseItem.height / 4
-		height: Style.dimens.status_icon_large
-		source: "qrc:///images/info.svg"
-		sourceSize.height: Style.dimens.status_icon_large
-		tintColor: Style.color.accent
-	}
-	GText {
-		id: mainTextElement
-		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.verticalCenter
-		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header
-		verticalAlignment: Text.AlignVCenter
-		visible: mainTextElement.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+	ColumnLayout {
+		anchors.fill: parent
+		anchors.margins: Constants.pane_padding
+		spacing: Constants.component_spacing
 
-		onLinkActivated: baseItem.mainTextLinkActivated()
+		TintableIcon {
+			id: image
 
-		FocusFrame {
+			Layout.alignment: Qt.AlignHCenter
+			Layout.topMargin: Constants.pane_padding
+			source: "qrc:///images/info.svg"
+			sourceSize.height: Style.dimens.header_icon_size
+			tintColor: Style.color.control
 		}
-	}
-	GText {
-		id: subTextElement
-		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: mainTextElement.bottom
-		anchors.topMargin: Constants.text_spacing
-		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.header_secondary
-		verticalAlignment: Text.AlignVCenter
-		visible: subTextElement.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		GText {
+			id: mainTextElement
 
-		onLinkActivated: baseItem.subTextLinkActivated()
-
-		FocusFrame {
-		}
-	}
-	MoreInformationLink {
-		id: moreInformation
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: subTextElement.bottom
-		anchors.topMargin: Constants.component_spacing
-		visible: false
-
-		onClicked: baseItem.moreInformationClicked()
-	}
-	RowLayout {
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			margins: Constants.component_spacing
-			right: parent.right
-		}
-		NavigationButton {
-			id: disagreeButton
-			Layout.fillWidth: true
-			Layout.preferredWidth: baseItem.width / 3
+			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: Style.dimens.max_text_width
 			activeFocusOnTab: true
-			buttonType: NavigationButton.Type.Cancel
+			horizontalAlignment: Qt.AlignHCenter
+			textStyle: Style.text.headline
+			visible: mainTextElement.text !== ""
 
-			//: LABEL DESKTOP
-			subText: qsTr("No")
-			visible: style & DecisionView.ButtonStyle.DisagreeButton
+			onLinkActivated: baseItem.mainTextLinkActivated()
 
-			onClicked: baseItem.disagree()
+			FocusFrame {
+			}
 		}
-		NavigationButton {
-			id: neutralButton
-			Layout.fillWidth: true
-			Layout.preferredWidth: baseItem.width / 3
+		GText {
+			id: subTextElement
+
+			Layout.alignment: Qt.AlignHCenter
+			Layout.maximumWidth: Style.dimens.max_text_width
+			Layout.topMargin: Constants.text_spacing
 			activeFocusOnTab: true
-			buttonType: NavigationButton.Type.Check
+			horizontalAlignment: Qt.AlignHCenter
+			textStyle: Style.text.subline
+			visible: subTextElement.text !== ""
 
-			//: LABEL DESKTOP
-			subText: qsTr("Maybe")
-			visible: style & DecisionView.ButtonStyle.NeutralButton
+			onLinkActivated: baseItem.subTextLinkActivated()
 
-			onClicked: baseItem.neutral()
+			FocusFrame {
+			}
 		}
-		NavigationButton {
-			id: agreeButton
-			Layout.fillWidth: true
-			Layout.preferredWidth: baseItem.width / 3
-			activeFocusOnTab: true
-			buttonType: NavigationButton.Type.Check
+		MoreInformationLink {
+			id: moreInformation
 
-			//: LABEL DESKTOP
-			subText: qsTr("Yes")
-			visible: style & DecisionView.ButtonStyle.AgreeButton
+			Layout.alignment: Qt.AlignHCenter
+			Layout.topMargin: Constants.component_spacing
+			visible: false
 
-			onClicked: baseItem.agree()
+			onClicked: baseItem.moreInformationClicked()
+		}
+		GSpacer {
+			Layout.fillHeight: true
+		}
+		RowLayout {
+			Layout.alignment: Qt.AlignHCenter
+			Layout.bottomMargin: Style.dimens.huge_icon_size
+			Layout.topMargin: Constants.component_spacing
+			spacing: Style.dimens.huge_icon_size
+
+			NavigationButton {
+				id: disagreeButton
+
+				activeFocusOnTab: true
+				buttonType: NavigationButton.Type.Cancel
+				size: Style.dimens.huge_icon_size
+
+				//: LABEL DESKTOP
+				subText: qsTr("No")
+				visible: style & DecisionView.ButtonStyle.DisagreeButton
+
+				onClicked: baseItem.disagree()
+			}
+			NavigationButton {
+				id: agreeButton
+
+				activeFocusOnTab: true
+				buttonType: NavigationButton.Type.Check
+				size: Style.dimens.huge_icon_size
+
+				//: LABEL DESKTOP
+				subText: qsTr("Yes")
+				visible: style & DecisionView.ButtonStyle.AgreeButton
+
+				onClicked: baseItem.agree()
+			}
 		}
 	}
 }

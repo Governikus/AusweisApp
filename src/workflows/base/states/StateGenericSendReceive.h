@@ -34,7 +34,8 @@ class StateGenericSendReceive
 		const bool mPersonalization;
 		QSharedPointer<QNetworkReply> mReply;
 
-		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
+		void logRawData(const QByteArray& pMessage);
+		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage) const;
 		std::optional<FailureCode> checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
@@ -53,7 +54,7 @@ class StateGenericSendReceive
 
 	private Q_SLOTS:
 		void onReplyFinished();
-		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator);
+		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const;
 
 	public:
 		void onExit(QEvent* pEvent) override;

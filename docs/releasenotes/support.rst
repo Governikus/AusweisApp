@@ -2,14 +2,12 @@ Unterstützte Systeme
 ====================
 
 Folgende Systeme, Browser, Karten und Lesegeräte werden von
-der AusweisApp2 unterstützt.
+der |AppName| unterstützt.
 
 
 
 Betriebssysteme
 """""""""""""""
-- macOS 10.15
-
 - macOS 11.0
 
 - macOS 12.0
@@ -26,9 +24,9 @@ Betriebssysteme
 
 - Windows Server 2022
 
-- Android 7.0 und höher (armeabi-v7a, arm64-v8a)
+- Android 8.0 und höher (armeabi-v7a, arm64-v8a)
 
-- iOS 13 und höher
+- iOS 14 und höher
 
 
 Karten
@@ -48,19 +46,19 @@ Browser
 Das BSI hat die Online-Ausweisfunktion als einen Aufruf konzipiert,
 der unabhängig vom verwendeten Browser ist. Durch die strikte
 Einhaltung der Vorgaben aus den entsprechenden Technischen Richtlinie
-des BSI (BSI TR-03124) ist die AusweisApp2 generell browserunabhängig
+des BSI (BSI TR-03124) ist die |AppName| generell browserunabhängig
 und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 115
+- Chrome 119
 
-- Firefox 115
+- Firefox 119
 
-- Safari 16.5 (macOS)
+- Safari 17.0 (macOS)
 
-- Edge 115
+- Edge 119
 
 
 
@@ -98,7 +96,7 @@ https://www.ausweisapp.bund.de/aa2/cardreader
 
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Online-Ausweisfunktion
 unterstützen, können als Kartenleser verwendet werden.
-Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone
+Dabei ist es notwendig die mobile |AppName| auf dem jeweiligen Smartphone
 zu installieren und zu starten.
 
 Details hierzu befinden sich auf der Homepage:
@@ -113,18 +111,18 @@ Browser
 Das BSI hat die Online-Ausweisfunktion als einen Aufruf konzipiert,
 der unabhängig vom verwendeten Browser ist. Durch die strikte
 Einhaltung der Vorgaben aus den entsprechenden Technischen Richtlinie
-des BSI (BSI TR-03124) ist die AusweisApp2 generell browserunabhängig.
+des BSI (BSI TR-03124) ist die |AppName| generell browserunabhängig.
 Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 115 (iOS/Android)
+- Chrome 119 (iOS/Android)
 
-- Firefox 115 (iOS/Android)
+- Firefox 119 (iOS/Android)
 
-- Samsung Internet 22 (Android)
+- Samsung Internet 23 (Android)
 
-- Safari 16.5 (iOS)
+- Safari 17.0 (iOS)
 
 
 Kartenleser
@@ -134,5 +132,5 @@ unterstützen. Details hierzu befinden sich auf der Homepage:
 https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 Ebenfalls ist es möglich ein weiteres Smartphone als Kartenleser zu verwenden.
-Dabei ist es notwendig die mobile AusweisApp2 auf dem jeweiligen Smartphone zu
+Dabei ist es notwendig die mobile |AppName| auf dem jeweiligen Smartphone zu
 installieren und zu starten.

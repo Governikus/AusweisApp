@@ -5,8 +5,6 @@
 #include "AutoStart.h"
 
 #include "AbstractSettings.h"
-#include "Env.h"
-#include "VolatileSettings.h"
 
 #include <QCoreApplication>
 
@@ -63,4 +61,17 @@ bool AutoStart::setInternal(bool pEnabled)
 	}
 
 	return true;
+}
+
+
+bool AutoStart::removeOldAutostart()
+{
+	const auto& windowsBootUpSettings = getRegistryStore();
+	if (windowsBootUpSettings->contains(QStringLiteral("AusweisApp2")))
+	{
+		qDebug() << "Detected old autostart, migrating old autostart setting...";
+		windowsBootUpSettings->remove(QStringLiteral("AusweisApp2"));
+		return true;
+	}
+	return false;
 }

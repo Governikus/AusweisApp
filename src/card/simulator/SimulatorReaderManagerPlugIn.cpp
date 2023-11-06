@@ -23,6 +23,7 @@ SimulatorReaderManagerPlugIn::SimulatorReaderManagerPlugIn()
 void SimulatorReaderManagerPlugIn::init()
 {
 	ReaderManagerPlugIn::init();
+
 	onSettingsChanged();
 }
 
@@ -73,7 +74,7 @@ void SimulatorReaderManagerPlugIn::insert(const QString& pReaderName, const QVar
 {
 	Q_UNUSED(pReaderName)
 
-	if (!isScanRunning())
+	if (!getInfo().isScanRunning())
 	{
 		return;
 	}

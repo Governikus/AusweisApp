@@ -1,14 +1,21 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Workflow 1.0; NfcWorkflow {}", testCase);
+		return createTemporaryQmlObject("
+			import Governikus.Workflow
+			NfcWorkflow {
+				width: 420
+				height: 420
+			}
+		", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

@@ -28,7 +28,7 @@ void StateDidAuthenticateEac1::run()
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection);
 
-	mConnections += cardConnection->callDidAuthenticateEAC1Command(this, &StateDidAuthenticateEac1::onCardCommandDone);
+	*this << cardConnection->callDidAuthenticateEAC1Command(this, &StateDidAuthenticateEac1::onCardCommandDone);
 }
 
 

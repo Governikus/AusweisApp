@@ -1,4 +1,3 @@
 dependencies {
-    implementation "de.bdr.android.eid-applet-service-lib:eid-applet-service-lib:0.11.0-182"
-    implementation "com.tsystems.optimos.tsms:tsm-api-sdk:0.9.5"
+    runtimeOnly "de.bundesdruckerei.android.eid-applet-service-lib:eid-applet-service-lib:1.1.0"
 }

@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "GlobalStatus.h"
 #include "Reader.h"
 #include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
@@ -28,7 +27,6 @@ class ReaderManagerPlugIn
 
 	private:
 		ReaderManagerPlugInInfo mInfo;
-		bool mScanRunning;
 
 	protected:
 		void setPlugInEnabled(bool pEnabled)
@@ -65,12 +63,6 @@ class ReaderManagerPlugIn
 		}
 
 
-		[[nodiscard]] bool isScanRunning() const
-		{
-			return mScanRunning;
-		}
-
-
 		[[nodiscard]] virtual QList<Reader*> getReaders() const = 0;
 
 
@@ -99,7 +91,7 @@ class ReaderManagerPlugIn
 		}
 
 
-		void shelve();
+		void shelve() const;
 
 
 		virtual void startScan(bool pAutoConnect);

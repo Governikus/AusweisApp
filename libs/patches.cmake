@@ -26,9 +26,10 @@ cmake_minimum_required(VERSION 3.19.0)
 # - Upgrade Qt or OpenSSL
 # 1. Apply all patches with this script and do the following on each repository.
 #    The version is an example and should be adjusted!
-# 2. git checkout ausweisapp_6.4.3 -b ausweisapp_6.6.0
+# 2. git checkout ausweisapp_6.4.3
 # 3. git rebase --onto v6.6.0 v6.4.3 HEAD
-# 4. Bump version in Versions.cmake and use this script to generate the patches.
+# 4. git checkout -b ausweisapp_6.6.0
+# 5. Bump version in Versions.cmake and use this script to generate the patches.
 
 if(NOT CMAKE_SCRIPT_MODE_FILE OR NOT CMD)
 	message(FATAL_ERROR "Usage: cmake -DCMD=apply|generate -P libs/patches.cmake")
@@ -92,6 +93,9 @@ function(get_version_branch prefix _version _branch)
 		set(tmp_branch ${tmp_branch}_${OPENSSL})
 	elseif(prefix MATCHES "qt")
 		set(version v${QT})
+		if(version MATCHES "-rc$")
+			set(version ${version}1)
+		endif()
 		set(tmp_branch ${tmp_branch}_${QT})
 	endif()
 

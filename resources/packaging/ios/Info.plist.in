@@ -80,7 +80,7 @@
 	<key>LSRequiresCarbon</key>
 	<true/>
 	<key>UIRequiresFullScreen</key>
-	<true/>
+	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>launchscreen</string>
 	<key>UIStatusBarStyle</key>
@@ -89,18 +89,23 @@
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>NSHumanReadableCopyright</key>
 	<string>${MACOSX_BUNDLE_COPYRIGHT}</string>
 	<key>NFCReaderUsageDescription</key>
-	<string>AusweisApp2 needs NFC to access the ID card.</string>
+	<string>AusweisApp needs NFC to access the ID card.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>AusweisApp2 needs access to the local network in order to use "Smartphone as card reader (SaC)".</string>
+	<string>AusweisApp needs access to the local network in order to use "Smartphone as card reader (SaC)".</string>
 </dict>
 </plist>

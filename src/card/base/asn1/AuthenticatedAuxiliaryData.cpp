@@ -92,18 +92,10 @@ ASN1_ITEM_TEMPLATE(AgeVerificationDate) =
 			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_IMPTAG | ASN1_TFLG_APPLICATION, 0x13, AgeVerificationDate, ASN1_OCTET_STRING)
 ASN1_ITEM_TEMPLATE_END(AgeVerificationDate)
 
-
 IMPLEMENT_ASN1_FUNCTIONS(AgeVerificationDate)
 
 DECLARE_ASN1_FUNCTIONS(AuthenticatedAuxiliaryDataInternal)
 DECLARE_ASN1_OBJECT(AuthenticatedAuxiliaryDataInternal)
-
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	#define sk_AuxDataTemplate_num(data) SKM_sk_num(AuxDataTemplate, data)
-	#define sk_AuxDataTemplate_value(data, i) SKM_sk_value(AuxDataTemplate, data, i)
-#endif
-
 } // namespace governikus
 
 

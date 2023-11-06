@@ -8,6 +8,7 @@
 #include "ReaderManager.h"
 #include "UILoader.h"
 #include "VolatileSettings.h"
+#include "WorkflowRequest.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -72,20 +73,20 @@ bool UIPlugInWebSocket::initialize()
 }
 
 
-void UIPlugInWebSocket::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInWebSocket::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
 	if (mUiDomination)
 	{
-		pContext->claim(this);
-		pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE_IFD, ReaderManagerPlugInType::SIMULATOR});
-		mContext = pContext;
+		mContext = pRequest->getContext();
+		mContext->claim(this);
+		mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::REMOTE_IFD, ReaderManagerPlugInType::SIMULATOR});
 	}
 }
 
 
-void UIPlugInWebSocket::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInWebSocket::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 
 	mContext.clear();
 }
@@ -212,7 +213,13 @@ void UIPlugInWebSocket::doShutdown()
 	if (mConnection)
 	{
 		mConnection->close(QWebSocketProtocol::CloseCodeGoingAway);
+		mConnection->disconnect(this);
+		mConnection.reset();
 	}
 
-	mHttpServer.reset();
+	if (mHttpServer)
+	{
+		mHttpServer->disconnect(this);
+		mHttpServer.reset();
+	}
 }

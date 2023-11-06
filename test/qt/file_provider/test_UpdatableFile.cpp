@@ -8,6 +8,7 @@
 #include "Env.h"
 #include "MockDownloader.h"
 
+#include <QTimeZone>
 #include <QtTest>
 
 using namespace governikus;
@@ -18,10 +19,10 @@ class test_UpdatableFile
 	Q_OBJECT
 
 	private:
-		const QString mSection;
-		const QLatin1Char mSep;
+		static constexpr auto mSection = QLatin1String("reader");
+		static constexpr auto mSep = QLatin1Char('/');
 
-		void verifySectionCacheFolder(UpdatableFile& pUpdatableFile)
+		static void verifySectionCacheFolder(UpdatableFile& pUpdatableFile)
 		{
 			QDir folder(pUpdatableFile.getSectionCachePath());
 			QVERIFY(folder.exists());
@@ -29,20 +30,27 @@ class test_UpdatableFile
 		}
 
 
-		void touchFileInCache(const QString& pFilename, UpdatableFile& pUpdatableFile)
+		[[nodiscard]] static auto touchFileInCache(const QString& pFilename, UpdatableFile& pUpdatableFile)
 		{
 			verifySectionCacheFolder(pUpdatableFile);
 
-			const QString filePath = pUpdatableFile.getSectionCachePath() + mSep + pFilename;
-			QFile file(filePath);
-			QVERIFY(!file.exists());
-			QVERIFY(file.open(QIODevice::WriteOnly));
-			file.close();
-			QVERIFY(file.exists());
+			const auto& check = [](const auto& pFilePath){
+						QFile file(pFilePath);
+						QVERIFY(!file.exists());
+						QVERIFY(file.open(QIODevice::WriteOnly));
+						file.close();
+						QVERIFY(file.exists());
+					};
+			check(pUpdatableFile.getSectionCachePath() + mSep + pFilename);
+
+			return qScopeGuard([pFilename, &pUpdatableFile]{
+					removeFileFromCache(pFilename, pUpdatableFile);
+				});
+
 		}
 
 
-		void removeFileFromCache(const QString& pFilename, UpdatableFile& pUpdatableFile)
+		static void removeFileFromCache(const QString& pFilename, UpdatableFile& pUpdatableFile)
 		{
 			verifySectionCacheFolder(pUpdatableFile);
 
@@ -63,12 +71,12 @@ class test_UpdatableFile
 		void testFileOnlyInCache()
 		{
 			const QString filename("img_ACS_ACR1252V.png");
-			const QString filenameInCache = filename + QStringLiteral("_20170601102132");
+			const QString filenameInCache = filename + QStringLiteral("_20170601102132MST");
 			const QDate timestampDate(2017, 6, 1);
 			const QTime timestampTime(10, 21, 32);
-			const QDateTime timestamp(timestampDate, timestampTime);
+			const QDateTime timestamp(timestampDate, timestampTime, QTimeZone("MST"));
 			UpdatableFile updatableFile(mSection, filename);
-			touchFileInCache(filenameInCache, updatableFile);
+			const auto guard = touchFileInCache(filenameInCache, updatableFile);
 
 			QCOMPARE(updatableFile.getName(), filename);
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache);
@@ -80,8 +88,6 @@ class test_UpdatableFile
 					return true;
 				}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache}));
-
-			removeFileFromCache(filenameInCache, updatableFile);
 		}
 
 
@@ -102,9 +108,9 @@ class test_UpdatableFile
 		{
 			const QString filename("img_ACS_ACR1252U.png");
 			const QString expectedPath = ":/updatable-files/reader/" + filename;
-			const QString filenameInCache = filename + QStringLiteral("_20170601102132");
+			const QString filenameInCache = filename + QStringLiteral("_20170601102132GMT");
 			UpdatableFile updatableFile(mSection, filename);
-			touchFileInCache(filenameInCache, updatableFile);
+			const auto guard = touchFileInCache(filenameInCache, updatableFile);
 
 			QCOMPARE(updatableFile.getName(), filename);
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache);
@@ -115,25 +121,20 @@ class test_UpdatableFile
 					return false;
 				}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache, expectedPath}));
-
-			removeFileFromCache(filenameInCache, updatableFile);
 		}
 
 
 		void testMoreThanOneVersionInCache()
 		{
 			const QString filename("img_ACS_ACR1252U.png");
-			const QString filenameInCache1 = filename + QStringLiteral("_20170710120015");
-			const QString filenameInCache2 = filename + QStringLiteral("_20170601102132");
+			const QString filenameInCache1 = filename + QStringLiteral("_20170710120015WAST");
+			const QString filenameInCache2 = filename + QStringLiteral("_20170601102132UTC");
 			UpdatableFile updatableFile(mSection, filename);
-			touchFileInCache(filenameInCache1, updatableFile);
-			touchFileInCache(filenameInCache2, updatableFile);
+			const auto guard1 = touchFileInCache(filenameInCache1, updatableFile);
+			const auto guard2 = touchFileInCache(filenameInCache2, updatableFile);
 
 			QCOMPARE(updatableFile.getName(), filename);
 			QCOMPARE(updatableFile.lookupPath(), updatableFile.getSectionCachePath() + mSep + filenameInCache1);
-
-			removeFileFromCache(filenameInCache1, updatableFile);
-			removeFileFromCache(filenameInCache2, updatableFile);
 		}
 
 
@@ -156,10 +157,11 @@ class test_UpdatableFile
 
 			QVERIFY(!updatableFile.isDirty());
 
-			touchFileInCache(dirtyFilename, updatableFile);
-			QVERIFY(updatableFile.isDirty());
+			{
+				const auto guard = touchFileInCache(dirtyFilename, updatableFile);
+				QVERIFY(updatableFile.isDirty());
+			}
 
-			removeFileFromCache(dirtyFilename, updatableFile);
 			QVERIFY(!updatableFile.isDirty());
 		}
 
@@ -186,9 +188,10 @@ class test_UpdatableFile
 			const QString dirtyFilename = filename + QStringLiteral(".dirty");
 			UpdatableFile updatableFile(mSection, filename);
 
-			touchFileInCache(dirtyFilename, updatableFile);
+			auto guard = touchFileInCache(dirtyFilename, updatableFile);
 			QVERIFY(updatableFile.isDirty());
 
+			guard.dismiss();
 			updatableFile.clearDirty();
 			QVERIFY(!updatableFile.isDirty());
 		}
@@ -211,11 +214,12 @@ class test_UpdatableFile
 			QVERIFY(!updatableFile.isDirty());
 			QCOMPARE(updatableFile.lookupPath(), QStringLiteral("DEFAULT"));
 
-			touchFileInCache(dirtyFilename, updatableFile);
-			QVERIFY(!updatableFile.isDirty());
-			QCOMPARE(updatableFile.lookupPath(), QStringLiteral("DEFAULT"));
+			{
+				const auto guard = touchFileInCache(dirtyFilename, updatableFile);
+				QVERIFY(!updatableFile.isDirty());
+				QCOMPARE(updatableFile.lookupPath(), QStringLiteral("DEFAULT"));
+			}
 
-			removeFileFromCache(dirtyFilename, updatableFile);
 			QVERIFY(!updatableFile.isDirty());
 			QCOMPARE(updatableFile.lookupPath(), QStringLiteral("DEFAULT"));
 		}
@@ -263,13 +267,14 @@ class test_UpdatableFile
 			QCOMPARE(spy.count(), 1);
 			const QString fileName = updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
 			const QString filePath = updatableFile.getSectionCachePath() + "/" + fileName;
+			const auto guard = qScopeGuard([&fileName, &updatableFile]{
+					removeFileFromCache(fileName, updatableFile);
+				});
 			QFile testfile(filePath);
 			QVERIFY(testfile.exists());
 			QVERIFY(testfile.open(QIODevice::ReadOnly));
 			QCOMPARE(testfile.readAll(), downloader.getTestData(updateUrl));
 			testfile.close();
-
-			removeFileFromCache(fileName, updatableFile);
 		}
 
 
@@ -289,13 +294,6 @@ class test_UpdatableFile
 			const QString filePath = updatableFile.getSectionCachePath() + "/" + updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
 			QFile testfile(filePath);
 			QVERIFY(!testfile.exists());
-		}
-
-	public:
-		test_UpdatableFile()
-			: mSection("reader")
-			, mSep('/')
-		{
 		}
 
 

@@ -22,12 +22,19 @@ class test_MsgHandlerReaderList
 {
 	Q_OBJECT
 
+#if __has_include("SmartManager.h")
+	const QByteArray mEidType = QByteArray(R"("eidType":"CARD_CERTIFIED",)");
+#else
+	const QByteArray mEidType;
+#endif
+
 	private Q_SLOTS:
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -74,7 +81,7 @@ class test_MsgHandlerReaderList
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"readers\":[{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"msg\":\"READER_LIST\",\"readers\":[{\"attached\":true,\"card\":{\"deactivated\":false," + mEidType + "\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"}]}"));
 		}
 
 
@@ -103,12 +110,13 @@ class test_MsgHandlerReaderList
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
 
 			QByteArray expected("{\"msg\":\"READER_LIST\",\"readers\":["
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":false,\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"ReaderMock\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":false,<EID_TYPE>\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"MockReader 0815\"},"
+								"{\"attached\":true,\"card\":{\"deactivated\":false,<EID_TYPE>\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"name\":\"ReaderMock\"},"
 								"{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"name\":\"ReaderMockXYZ\"},"
 								"{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"name\":\"SpecialMock\"},"
-								"{\"attached\":true,\"card\":{\"deactivated\":true,\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"name\":\"SpecialMockWithGermanCard\"}"
+								"{\"attached\":true,\"card\":{\"deactivated\":true,<EID_TYPE>\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"name\":\"SpecialMockWithGermanCard\"}"
 								"]}");
+			expected.replace("<EID_TYPE>", mEidType);
 
 			QCOMPARE(dispatcher.processCommand(msg), expected);
 		}

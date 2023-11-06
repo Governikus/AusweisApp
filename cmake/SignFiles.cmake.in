@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.19.0)
 
 if(APPLE AND NOT IOS)
 	string(FIND "${CMAKE_BINARY_DIR}" "DragNDrop" IS_DMG)

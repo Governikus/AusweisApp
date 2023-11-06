@@ -6,8 +6,8 @@
 
 using namespace governikus;
 
-SelfAuthContext::SelfAuthContext()
-	: AuthContext(Action::SELF, QSharedPointer<ActivationContext>())
+SelfAuthContext::SelfAuthContext(bool pActivateUi)
+	: AuthContext(Action::SELF, pActivateUi)
 	, mSelfAuthenticationData()
 {
 }

@@ -46,7 +46,7 @@ MockReaderModel::MockReaderModel(const QVector<FakeReaderInfo>& readers)
 int MockReaderModel::rowCount(const QModelIndex& parent) const
 {
 	Q_UNUSED(parent)
-	return mReaders.count();
+	return static_cast<int>(mReaders.count());
 }
 
 

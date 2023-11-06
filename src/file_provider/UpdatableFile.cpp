@@ -34,18 +34,17 @@ const QString& UpdatableFile::getName() const
 
 QDateTime UpdatableFile::cacheTimestamp() const
 {
-	const QString timestampFormat = QStringLiteral("yyyyMMddhhmmss");
-	const auto timestampFormatSize = timestampFormat.size();
-	const QString pathInCache = cachePath();
+	const QString& pathInCache = cachePath();
+	const QStringView timestamp = QStringView(pathInCache).mid(pathInCache.lastIndexOf(QLatin1Char('_')) + 1);
 
 	// The path must contain at least 1 character for the filename,
 	// the '_' separator, and the timestamp.
-	if (pathInCache.size() < 2 + timestampFormatSize)
+	if (pathInCache.size() < 2 + timestamp.size())
 	{
 		return QDateTime();
 	}
 
-	return QDateTime::fromString(pathInCache.right(timestampFormatSize), timestampFormat);
+	return QDateTime::fromString(timestamp, QStringLiteral("yyyyMMddhhmmsst"));
 }
 
 
@@ -71,7 +70,7 @@ QString UpdatableFile::cachePath() const
 	const auto matchingFiles = folder.entryList(nameFilter, QDir::Files, QDir::Name | QDir::Reversed);
 
 	// Files are saved in the cache with the suffix _<timestamp>, where
-	// the timestamp has the format "yyyyMMddhhmmss".
+	// the timestamp has the format "yyyyMMddhhmmsst".
 	// Therefore, the first matching file in the list has the newest timestamp.
 	return matchingFiles.isEmpty() ? QString() : mSectionCachePath + Sep + matchingFiles.first();
 }
@@ -102,13 +101,17 @@ QString UpdatableFile::sectionCachePath(const QString& pSection) const
 		return QString();
 	}
 
-	const QString cacheBasePath = cachePaths.first();
+	QString cacheBasePath = cachePaths.first();
 	if (cacheBasePath.isEmpty())
 	{
 		qCWarning(fileprovider) << "Cache base folder is invalid (empty).";
 
 		return QString();
 	}
+
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	cacheBasePath.replace(QStringLiteral("AusweisApp"), QStringLiteral("AusweisApp2"));
+#endif
 
 	return cacheBasePath + Sep + pSection;
 }
@@ -163,7 +166,7 @@ void UpdatableFile::onDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& p
 {
 	if (pUpdateUrl == mUpdateUrl)
 	{
-		const QString dateFormat = QStringLiteral("yyyyMMddhhmmss");
+		const auto dateFormat = QStringLiteral("yyyyMMddhhmmsst");
 		const QString filePath = mSectionCachePath + Sep + mName + QLatin1Char('_') + pNewTimestamp.toString(dateFormat);
 
 		if (writeDataToFile(pData, filePath))
@@ -206,14 +209,16 @@ void UpdatableFile::onDownloadUnnecessary(const QUrl& pUpdateUrl)
 }
 
 
-bool UpdatableFile::writeDataToFile(const QByteArray& pData, const QString& pFilePath, bool pOverwrite)
+bool UpdatableFile::writeDataToFile(const QByteArray& pData, const QString& pFilePath) const
 {
 	QFile file(pFilePath);
-	if (!pOverwrite && file.exists())
+
+	if (file.exists())
 	{
-		qCCritical(fileprovider) << "File already exists, aborting writing file:" << pFilePath;
-		return false;
+		qCDebug(fileprovider) << "File already up to date:" << pFilePath;
+		return true;
 	}
+
 	if (!file.open(QIODevice::WriteOnly))
 	{
 		qCCritical(fileprovider) << "File could not be opened for writing:" << pFilePath;

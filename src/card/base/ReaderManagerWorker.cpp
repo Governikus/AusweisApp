@@ -173,7 +173,7 @@ void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoCon
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugIn(pType, [pAutoConnect](ReaderManagerPlugIn* pPlugIn){
-			if (!pPlugIn->isScanRunning())
+			if (!pPlugIn->getInfo().isScanRunning())
 			{
 				pPlugIn->startScan(pAutoConnect);
 			}
@@ -186,33 +186,11 @@ void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType, const QString&
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugIn(pType, [pError](ReaderManagerPlugIn* pPlugIn){
-			if (pPlugIn->isScanRunning())
+			if (pPlugIn->getInfo().isScanRunning())
 			{
 				pPlugIn->stopScan(pError);
 			}
 		}, "Stop scan on plugin");
-}
-
-
-bool ReaderManagerWorker::isScanRunning() const
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	return std::any_of(mPlugIns.constBegin(), mPlugIns.constEnd(), [](const auto* plugin)
-		{
-			return plugin->isScanRunning();
-		});
-}
-
-
-bool ReaderManagerWorker::isScanRunning(ReaderManagerPlugInType pType) const
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	return std::any_of(mPlugIns.constBegin(), mPlugIns.constEnd(), [pType](const auto* plugin)
-		{
-			return plugin->getInfo().getPlugInType() == pType && plugin->isScanRunning();
-		});
 }
 
 
@@ -278,24 +256,4 @@ void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
 		worker = reader->createCardConnectionWorker();
 	}
 	Q_EMIT fireCardConnectionWorkerCreated(worker);
-}
-
-
-void ReaderManagerWorker::updateRetryCounters()
-{
-	Q_ASSERT(QObject::thread() == QThread::currentThread());
-
-	const auto& readerInfos = getReaderInfos();
-	for (const auto& readerInfo : readerInfos)
-	{
-		QSharedPointer<CardConnectionWorker> worker;
-		if (const auto& reader = getReader(readerInfo.getName()))
-		{
-			worker = reader->createCardConnectionWorker();
-			if (worker)
-			{
-				worker->updateRetryCounter();
-			}
-		}
-	}
 }

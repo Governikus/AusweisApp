@@ -8,7 +8,6 @@
 
 #include "SecureStorage.h"
 
-#include "JsonValueRef.h"
 #include "ResourceLoader.h"
 #include "asn1/CVCertificate.h"
 
@@ -48,7 +47,7 @@ class test_SecureStorage
 
 			QStringList comments;
 			const auto& commentValueArray = commentValues.toArray();
-			for (JsonValueRef comment : commentValueArray)
+			for (const QJsonValueConstRef comment : commentValueArray)
 			{
 				if (comment.isString())
 				{
@@ -74,7 +73,7 @@ class test_SecureStorage
 		void testGetCVRootCertificatesUnique()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			static const int EXPECTED_CERTIFICATE_COUNT = 16;
+			static const int EXPECTED_CERTIFICATE_COUNT = 17;
 
 			QVector<QSharedPointer<const CVCertificate>> cvcs = CVCertificate::fromRaw(secureStorage->getCVRootCertificates(true))
 					+ CVCertificate::fromRaw(secureStorage->getCVRootCertificates(false));
@@ -115,7 +114,7 @@ class test_SecureStorage
 			QTest::addColumn<QString>("commentName");
 
 			QTest::newRow("production") << 5 << true << "_comment_2";
-			QTest::newRow("test") << 11 << false << "_comment_4";
+			QTest::newRow("test") << 12 << false << "_comment_4";
 		}
 
 
@@ -220,6 +219,7 @@ class test_SecureStorage
 			QFETCH(QString, expiryDate);
 			QFETCH(int, length);
 			QFETCH(QSsl::KeyAlgorithm, algorithm);
+			QFETCH(QString, ocsp);
 
 			QVERIFY(certificates.count() - index > 0);
 
@@ -232,18 +232,12 @@ class test_SecureStorage
 			QCOMPARE(cert.publicKey().algorithm(), algorithm);
 			QCOMPARE(cert.publicKey().type(), QSsl::PublicKey);
 
-			// Disable check on older Qt versions, since it leads to a memory leak.
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-			QFETCH(QString, ocsp);
-
 			const auto& ext = cert.extensions();
-
 			const bool foundOcspResponder = std::any_of(ext.cbegin(), ext.cend(), [&ocsp](const auto& entry){
 					return entry.name() == QLatin1String("authorityInfoAccess") &&
 						   entry.value().toMap().value(QStringLiteral("OCSP")).toString() == ocsp;
 				});
 			QCOMPARE(foundOcspResponder, !ocsp.isEmpty());
-#endif
 		}
 
 
@@ -293,13 +287,11 @@ class test_SecureStorage
 			if (secureStorage->getVendor().contains(QLatin1String("Governikus")))
 			{
 				QVERIFY(!secureStorage->getSmartServiceId().isEmpty());
-				QVERIFY(!secureStorage->getSmartVersionTag().isEmpty());
 				QVERIFY(!secureStorage->getSmartSsdAid().isEmpty());
 			}
 			else
 			{
 				QVERIFY(secureStorage->getSmartServiceId().isEmpty());
-				QVERIFY(secureStorage->getSmartVersionTag().isEmpty());
 				QVERIFY(secureStorage->getSmartSsdAid().isEmpty());
 			}
 		}
@@ -313,8 +305,9 @@ class test_SecureStorage
 			QCOMPARE(secureStorage->getLocalIfdMinPskSize(), 256);
 
 			const auto& certificateHashes = secureStorage->getLocalIfdAllowedCertificateHashes();
-			QCOMPARE(certificateHashes.size(), 2);
+			QCOMPARE(certificateHashes.size(), 3);
 			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("B02AC76B50A497AE810AEAC22598187B3D4290277D0851A7FA8E1AEA5A979870"))));
+			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("F4A4D85A22103EBB5F4D35AEDE5117F40E591AB5DDF43DF39C953D08E3895138"))));
 			QVERIFY(certificateHashes.contains(QByteArray::fromHex(QByteArrayLiteral("F96FD6BBA899845E06D3E6522F0843217681D473B6B09F1E313DEA1A21D6B8E7"))));
 		}
 

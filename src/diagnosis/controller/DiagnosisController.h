@@ -32,7 +32,6 @@ class DiagnosisController
 
 		QSharedPointer<DiagnosisContext> mContext;
 		QFutureWatcher<PcscInfo> mWatcherPcscInfo;
-		bool mScanHasToBeStopped;
 
 		void collectInterfaceInformation();
 

@@ -92,6 +92,7 @@ def main():
 
     cfg = ['extensions.hgext.purge=',
            'extensions.hgext.strip=',
+           'patch.eol=auto',
            'phases.new-commit=draft']
     client = hglib.open(configs=cfg)
 

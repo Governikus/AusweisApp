@@ -62,6 +62,7 @@ class TlsConfiguration final
 
 	public:
 		void load(const QJsonObject& pConfig);
+		[[nodiscard]] bool isValid() const;
 
 		[[nodiscard]] QSsl::SslProtocol getProtocolVersion() const;
 		[[nodiscard]] bool getOcspStapling() const;

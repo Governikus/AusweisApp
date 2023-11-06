@@ -40,7 +40,8 @@ void NotificationModel::onNewLogMsg(const QString& pMsg, const QString& pCategor
 			endRemoveRows();
 		}
 
-		beginInsertRows(QModelIndex(), mNotificationEntries.size(), mNotificationEntries.size());
+		const auto size = static_cast<int>(mNotificationEntries.size());
+		beginInsertRows(QModelIndex(), size, size);
 		//: LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString
 		const auto& time = QTime::currentTime().toString(tr("hh:mm:ss"));
 		mNotificationEntries.append({pCategoryName, time, pMsg});
@@ -54,7 +55,7 @@ void NotificationModel::onNewLogMsg(const QString& pMsg, const QString& pCategor
 int NotificationModel::rowCount(const QModelIndex& pIndex) const
 {
 	Q_UNUSED(pIndex)
-	return mNotificationEntries.count();
+	return static_cast<int>(mNotificationEntries.size());
 }
 
 

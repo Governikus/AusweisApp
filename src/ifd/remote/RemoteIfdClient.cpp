@@ -5,7 +5,6 @@
 #include "RemoteIfdClient.h"
 
 #include "AppSettings.h"
-#include "IfdConnectorImpl.h"
 #include "Initializer.h"
 #include "ReaderManager.h"
 #include "messages/Discovery.h"

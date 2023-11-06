@@ -213,7 +213,7 @@ QSharedPointer<EC_GROUP> EcdsaPublicKey::createGroup(const CurveData& pData) con
 
 QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const QByteArray& pPublicPoint) const
 {
-	return createKey(reinterpret_cast<const uchar*>(pPublicPoint.constData()), pPublicPoint.size());
+	return createKey(reinterpret_cast<const uchar*>(pPublicPoint.constData()), static_cast<int>(pPublicPoint.size()));
 }
 
 

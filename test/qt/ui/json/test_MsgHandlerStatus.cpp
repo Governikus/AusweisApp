@@ -11,7 +11,6 @@
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
-#include "context/InternalActivationContext.h"
 #include "context/SelfAuthContext.h"
 #include "states/StateConnectCard.h"
 #include "states/StateEditAccessRights.h"
@@ -48,8 +47,9 @@ class test_MsgHandlerStatus
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -148,13 +148,12 @@ class test_MsgHandlerStatus
 
 		void stateAccessRights()
 		{
-			const QSharedPointer<ActivationContext> activationContext(new InternalActivationContext(QUrl("http://dummy")));
-			const QSharedPointer<TestAuthContext> context(new TestAuthContext(activationContext, ":/paos/DIDAuthenticateEAC1.xml"));
+			const QSharedPointer<TestAuthContext> context(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 
-			QVERIFY(QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEditAccessRights>())).contains(QByteArray(R"("msg":"ACCESS_RIGHTS")")));
+			QVERIFY(QByteArray(dispatcher.processStateChange(StateBuilder::generateStateName<StateEditAccessRights>())).contains(QByteArray(R"("msg":"ACCESS_RIGHTS")")));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"ACCESS_RIGHTS","workflow":"AUTH"})"));
 		}
 
@@ -166,7 +165,7 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_PIN"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_PIN"})"));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"ENTER_PIN","workflow":"AUTH"})"));
 		}
 
@@ -177,7 +176,7 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::CHANGE_PIN);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEnterNewPacePin>()), QByteArray(R"({"msg":"ENTER_NEW_PIN"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterNewPacePin>()), QByteArray(R"({"msg":"ENTER_NEW_PIN"})"));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"ENTER_NEW_PIN","workflow":"CHANGE_PIN"})"));
 		}
 
@@ -189,7 +188,7 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_CAN"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_CAN"})"));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"ENTER_CAN","workflow":"AUTH"})"));
 		}
 
@@ -201,7 +200,7 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_PUK"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterPacePassword>()), QByteArray(R"({"msg":"ENTER_PUK"})"));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"ENTER_PUK","workflow":"AUTH"})"));
 		}
 
@@ -211,10 +210,10 @@ class test_MsgHandlerStatus
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":"INSERT_CARD","workflow":"AUTH"})"));
 
-			QCOMPARE(dispatcher.processStateChange(AbstractState::getClassName<StateConnectCard>()), QByteArray());
+			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateConnectCard>()), QByteArray());
 			QCOMPARE(dispatcher.processCommand(cmd), QByteArray(R"({"msg":"STATUS","progress":0,"state":null,"workflow":"AUTH"})"));
 		}
 

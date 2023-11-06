@@ -28,7 +28,7 @@ void StateChangePin::run()
 
 	Q_ASSERT(cardConnection);
 	qDebug() << "Invoke set Eid PIN command";
-	mConnections += cardConnection->callSetEidPinCommand(this, &StateChangePin::onSetEidPinDone, getContext()->getNewPin().toLatin1());
+	*this << cardConnection->callSetEidPinCommand(this, &StateChangePin::onSetEidPinDone, getContext()->getNewPin().toLatin1());
 }
 
 

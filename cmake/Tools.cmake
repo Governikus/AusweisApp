@@ -118,7 +118,7 @@ endif()
 find_program(PYTHON python CMAKE_FIND_ROOT_PATH_BOTH)
 if(PYTHON)
 	list(APPEND GLOB_JSON ${RESOURCES_DIR}/updatable-files/*.json)
-	list(APPEND GLOB_JSON ${RESOURCES_DIR}/json-schemas/*.json)
+	list(APPEND GLOB_JSON ${TEST_DIR}/json/*.json)
 	file(GLOB_RECURSE JSON_FILES ${GLOB_JSON})
 
 	foreach(JSON_FILE ${JSON_FILES})
@@ -154,7 +154,7 @@ endfunction()
 
 find_program(INKSCAPE inkscape CMAKE_FIND_ROOT_PATH_BOTH)
 if(INKSCAPE)
-	set(BACKGROUND_COLOR "#dcebf6")
+	set(BACKGROUND_COLOR "#ffffff")
 
 	add_custom_target(npaicons.general
 		COMMAND ${INKSCAPE} npa_release.svg -d 320 -y 0 -o npa.png
@@ -164,33 +164,6 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} playstore_release.svg -w 512 -h 512 -y 0 -o playstore_release.png
 		COMMAND ${INKSCAPE} playstore_preview.svg -w 512 -h 512 -y 0 -o playstore_preview.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
-	add_custom_target(npaicons.android.legacy
-		COMMAND ${INKSCAPE} npa_release.svg -d 120 -y 0 -o android/ldpi/npa.png
-		COMMAND ${INKSCAPE} npa_release.svg -d 160 -y 0 -o android/mdpi/npa.png
-		COMMAND ${INKSCAPE} npa_release.svg -d 240 -y 0 -o android/hdpi/npa.png
-		COMMAND ${INKSCAPE} npa_release.svg -d 320 -y 0 -o android/xhdpi/npa.png
-		COMMAND ${INKSCAPE} npa_release.svg -d 480 -y 0 -o android/xxhdpi/npa.png
-		COMMAND ${INKSCAPE} npa_release.svg -d 640 -y 0 -o android/xxxhdpi/npa.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
-
-	add_custom_target(npaicons.android.legacy.beta
-		COMMAND ${INKSCAPE} npa_beta.svg -d 120 -y 0 -o android/ldpi/npa_beta.png
-		COMMAND ${INKSCAPE} npa_beta.svg -d 160 -y 0 -o android/mdpi/npa_beta.png
-		COMMAND ${INKSCAPE} npa_beta.svg -d 240 -y 0 -o android/hdpi/npa_beta.png
-		COMMAND ${INKSCAPE} npa_beta.svg -d 320 -y 0 -o android/xhdpi/npa_beta.png
-		COMMAND ${INKSCAPE} npa_beta.svg -d 480 -y 0 -o android/xxhdpi/npa_beta.png
-		COMMAND ${INKSCAPE} npa_beta.svg -d 640 -y 0 -o android/xxxhdpi/npa_beta.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
-
-	add_custom_target(npaicons.android.legacy.preview
-		COMMAND ${INKSCAPE} npa_preview.svg -d 120 -y 0 -o android/ldpi/npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -d 160 -y 0 -o android/mdpi/npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -d 240 -y 0 -o android/hdpi/npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -d 320 -y 0 -o android/xhdpi/npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -d 480 -y 0 -o android/xxhdpi/npa_preview.png
-		COMMAND ${INKSCAPE} npa_preview.svg -d 640 -y 0 -o android/xxxhdpi/npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
 
 	add_custom_target(npaicons.android.adaptive.background
 		COMMAND ${INKSCAPE} adaptive_background.svg -d 120 -y 0 -o ldpi/background_npa.png
@@ -333,9 +306,6 @@ if(INKSCAPE)
 	add_custom_target(npaicons DEPENDS
 			npaicons.general
 			npaicons.android.playstore
-			npaicons.android.legacy
-			npaicons.android.legacy.beta
-			npaicons.android.legacy.preview
 			npaicons.android.adaptive.background
 			npaicons.android.adaptive.foreground
 			npaicons.android.adaptive.foreground.beta
@@ -359,11 +329,6 @@ if(INKSCAPE)
 		COMMAND ${INKSCAPE} img_Simulator.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator.png
 		COMMAND ${INKSCAPE} img_Simulator_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images/reader/src)
-
-	add_custom_target(tutorialimages
-		COMMAND ${INKSCAPE} phone_screen_de.svg -w 585 -h 622 -y 0 -o ${RESOURCES_DIR}/images/tutorial/phone_screen_de.png
-		COMMAND ${INKSCAPE} phone_screen_en.svg -w 585 -h 622 -y 0 -o ${RESOURCES_DIR}/images/tutorial/phone_screen_en.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/tutorial/src)
 endif()
 
 find_program(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
@@ -373,33 +338,6 @@ if(PNGQUANT)
 	add_custom_target(pngquant.general
 		COMMAND ${PNGQUANT_CMD} npa.png -- npa.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/images)
-
-	add_custom_target(pngquant.android.legacy
-		COMMAND ${PNGQUANT_CMD} ldpi/npa.png -- ldpi/npa.png
-		COMMAND ${PNGQUANT_CMD} mdpi/npa.png -- mdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} hdpi/npa.png -- hdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/npa.png -- xhdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/npa.png -- xxhdpi/npa.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/npa.png -- xxxhdpi/npa.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
-	add_custom_target(pngquant.android.legacy.beta
-		COMMAND ${PNGQUANT_CMD} ldpi/npa_beta.png -- ldpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} mdpi/npa_beta.png -- mdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} hdpi/npa_beta.png -- hdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/npa_beta.png -- xhdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/npa_beta.png -- xxhdpi/npa_beta.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/npa_beta.png -- xxxhdpi/npa_beta.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
-
-	add_custom_target(pngquant.android.legacy.preview
-		COMMAND ${PNGQUANT_CMD} ldpi/npa_preview.png -- ldpi/npa_preview.png
-		COMMAND ${PNGQUANT_CMD} mdpi/npa_preview.png -- mdpi/npa_preview.png
-		COMMAND ${PNGQUANT_CMD} hdpi/npa_preview.png -- hdpi/npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xhdpi/npa_preview.png -- xhdpi/npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxhdpi/npa_preview.png -- xxhdpi/npa_preview.png
-		COMMAND ${PNGQUANT_CMD} xxxhdpi/npa_preview.png -- xxxhdpi/npa_preview.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/android)
 
 	add_custom_target(pngquant.android.adaptive.background
 		COMMAND ${PNGQUANT_CMD} ldpi/background_npa.png -- ldpi/background_npa.png
@@ -541,9 +479,6 @@ if(PNGQUANT)
 
 	add_custom_target(pngquant DEPENDS
 			pngquant.general
-			pngquant.android.legacy
-			pngquant.android.legacy.beta
-			pngquant.android.legacy.preview
 			pngquant.android.adaptive.background
 			pngquant.android.adaptive.foreground
 			pngquant.android.adaptive.foreground.beta
@@ -567,11 +502,6 @@ if(PNGQUANT)
 		COMMAND ${PNGQUANT_CMD} img_Simulator.png -- img_Simulator.png
 		COMMAND ${PNGQUANT_CMD} img_Simulator_mit_ausweis.png -- img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/updatable-files/reader)
-
-	add_custom_target(pngquant.tutorialimages
-		COMMAND ${PNGQUANT_CMD} phone_screen_de.png -- phone_screen_de.png
-		COMMAND ${PNGQUANT_CMD} phone_screen_en.png -- phone_screen_en.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/tutorial)
 endif()
 
 find_program(CONVERT convert CMAKE_FIND_ROOT_PATH_BOTH)

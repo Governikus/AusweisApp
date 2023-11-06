@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Qt.labs.platform 1.1 as Labs
+import QtQuick
+import Qt.labs.platform as Labs
 
 Labs.FileDialog {
 	function selectFile(pDefaultFilename) {

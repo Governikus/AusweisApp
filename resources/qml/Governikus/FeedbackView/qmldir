@@ -2,7 +2,6 @@ module FeedbackView
 
 internal LogTitleBarControls LogTitleBarControls.qml
 internal LogViewDelegate LogViewDelegate.qml
-internal LogViewHighLight LogViewHighLight.qml
 
 DetachedLogView 1.0 DetachedLogView.qml
 LogView 1.0 LogView.qml

@@ -16,6 +16,7 @@ using namespace governikus;
 
 PaosHandler::PaosHandler(const QByteArray& pXmlData)
 	: ElementDetector(pXmlData)
+	, mXmlData(pXmlData)
 	, mDetectedType(PaosType::UNKNOWN)
 	, mParsedObject()
 {

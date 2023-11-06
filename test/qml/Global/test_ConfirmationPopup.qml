@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import QtQuick.Controls
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; ConfirmationPopup {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; ConfirmationPopup {}", testCase);
 	}
 	function test_cancelButtonText() {
 		let testObject = createTestObject();
@@ -67,6 +68,7 @@ TestCase {
 
 	ConfirmationPopup {
 		id: testObject
+
 		width: 1000
 
 		onCancelled: text = "cancelled"

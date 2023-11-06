@@ -36,12 +36,6 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::fromHex(const QByteArray& pHexStr
 
 QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 {
-#ifdef OPENSSL_NO_CMS
-	#error Cryptographic Message Syntax (CMS) is required. Do you use LibreSSL?
-	Q_UNUSED(pBytes)
-	return QSharedPointer<EFCardSecurity>();
-
-#else
 	const auto contentInfo = decodeObject<CMS_ContentInfo>(pBytes);
 	if (contentInfo == nullptr)
 	{
@@ -77,8 +71,6 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 	}
 
 	return QSharedPointer<EFCardSecurity>::create(securityInfos);
-
-#endif
 }
 
 

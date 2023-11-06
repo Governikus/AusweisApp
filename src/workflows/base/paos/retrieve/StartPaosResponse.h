@@ -25,6 +25,7 @@ class StartPaosResponse
 		QString mResultMajor;
 		QString mResultMinor;
 		QString mResultMessage;
+		int mStatusCode;
 		int mRemainingDays;
 		int mRemainingAttempts;
 		QString mBlockingCode;
@@ -32,6 +33,7 @@ class StartPaosResponse
 	public:
 		explicit StartPaosResponse(const QByteArray& pXmlData);
 
+		[[nodiscard]] int getStatusCode() const;
 		[[nodiscard]] int getRemainingDays() const;
 		[[nodiscard]] int getRemainingAttempts() const;
 		[[nodiscard]] const QString& getBlockingCode() const;

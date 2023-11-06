@@ -1,34 +1,35 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.VersionInformationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.VersionInformationModel
 
 Item {
 	id: baseItem
 
-	readonly property string helpTopic: "helpVersioninformation"
-
 	implicitHeight: column.implicitHeight
 	implicitWidth: column.implicitWidth
 
-	ColumnLayout {
+	GPane {
 		id: column
+
 		anchors.fill: parent
 		spacing: Constants.component_spacing
 
 		Repeater {
 			id: repeater
+
 			model: VersionInformationModel
 
 			delegate: LabeledText {
 				id: delegate
+
 				Accessible.name: model.label + ": " + model.text
 				label: model.label
 				text: model.text

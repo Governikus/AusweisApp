@@ -30,7 +30,7 @@ class EcdhGenericMapping
 
 		QSharedPointer<EC_POINT> createNewGenerator(const QSharedPointer<const EC_POINT>& pCardPubKey, const QSharedPointer<const BIGNUM>& pS);
 
-		bool setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator);
+		bool setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator) const;
 
 	public:
 		explicit EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve);

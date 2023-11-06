@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "AbstractState.h"
 
 #include <QSharedPointer>
 #include <QString>
@@ -24,12 +23,28 @@ class StateBuilder
 		StateBuilder() = delete;
 		~StateBuilder() = delete;
 
+		static QString getUnqualifiedClassName(const char* const pName);
+
 	public:
+		template<typename T>
+		[[nodiscard]] static QString generateStateName()
+		{
+			return getUnqualifiedClassName(T::staticMetaObject.className());
+		}
+
+
+		template<typename T>
+		static bool isState(const QString& pState)
+		{
+			return pState == generateStateName<T>();
+		}
+
+
 		template<typename T, typename C>
 		static T* createState(const QSharedPointer<C>& pContext)
 		{
 			auto state = new T(pContext);
-			state->setStateName(AbstractState::getClassName(state->metaObject()->className()));
+			state->setObjectName(getUnqualifiedClassName(state->metaObject()->className()));
 			return state;
 		}
 

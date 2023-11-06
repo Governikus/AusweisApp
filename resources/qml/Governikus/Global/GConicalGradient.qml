@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
+import QtQuick
 
 Item {
 	id: root
@@ -26,6 +26,7 @@ Item {
 
 	ShaderEffectSource {
 		id: baseSource
+
 		anchors.fill: parent
 		smooth: true
 		sourceItem: root.source

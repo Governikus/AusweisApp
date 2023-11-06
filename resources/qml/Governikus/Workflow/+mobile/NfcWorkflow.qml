@@ -1,16 +1,18 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TechnologyInfo
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.NumberModel
+import Governikus.Type.RemoteServiceModel
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
 	readonly property bool isRemoteWorkflow: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_REMOTE_SERVICE
@@ -18,16 +20,31 @@ Item {
 
 	signal startScanIfNecessary
 
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
+
 	NfcProgressIndicator {
 		id: progressIndicator
+
 		Accessible.ignored: true
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
-		state: nfcState === ApplicationModel.NFC_READY ? "on" : "off"
+		Layout.alignment: Qt.AlignCenter
+		state: {
+			switch (nfcState) {
+			case ApplicationModel.NFC_READY:
+				return "on";
+			case ApplicationModel.NFC_UNAVAILABLE:
+				return "unavailable";
+			default:
+				return "off";
+			}
+		}
 	}
 	TechnologyInfo {
 		id: technologyInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			switch (nfcState) {
 			case ApplicationModel.NFC_DISABLED:
@@ -65,6 +82,9 @@ Item {
 			if (nfcState !== ApplicationModel.NFC_READY) {
 				return "";
 			}
+			if (AuthModel.eidTypeMismatchError !== "") {
+				return AuthModel.eidTypeMismatchError;
+			}
 			if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
 				return qsTr("Your device does not meet the technical requirements (Extended Length not supported). However you can use a separate smartphone as card reader to utilize the eID function.");
@@ -98,14 +118,5 @@ Item {
 		}
 
 		onEnableClicked: nfcState === ApplicationModel.NFC_DISABLED ? ApplicationModel.showSettings(ApplicationModel.SETTING_NFC) : startScanIfNecessary()
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 }

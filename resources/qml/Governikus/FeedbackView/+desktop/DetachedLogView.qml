@@ -1,24 +1,27 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.LogModel 1.0
-import Governikus.Type.LogFilterModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.LogModel
+import Governikus.Type.LogFilterModel
+import Governikus.View
 
-Item {
+Rectangle {
 	id: root
+
+	color: Style.color.background
+
 	Keys.onPressed: event => {
 		listView.handleKeyPress(event.key);
 	}
 
 	LogFilterModel {
 		id: filterModel
+
 	}
 	ColumnLayout {
 		anchors.fill: parent
@@ -32,13 +35,12 @@ Item {
 			GText {
 				activeFocusOnTab: true
 				text: qsTr("Select log:")
-				textStyle: Style.text.normal
 
 				FocusFrame {
 				}
 			}
 			GComboBox {
-				Layout.preferredWidth: ApplicationModel.scaleFactor * 350
+				Layout.preferredWidth: plugin.scaleFactor * 350
 				model: LogModel.logFileNames
 
 				onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
@@ -46,16 +48,16 @@ Item {
 			GText {
 				activeFocusOnTab: true
 				text: qsTr("Font size:")
-				textStyle: Style.text.normal
 
 				FocusFrame {
 				}
 			}
 			SpinBox {
 				id: fontSize
+
 				from: 8
 				to: 20
-				value: 10
+				value: 12
 			}
 			GButton {
 				id: filterButton
@@ -67,7 +69,7 @@ Item {
 				qsTr("Filter. Activated.") :
 				//: LABEL DESKTOP
 				qsTr("Filter. Deactivated.")
-				icon.source: filter ? "qrc:///images/material_filter_off.svg" : "qrc:///images/material_filter.svg"
+				icon.source: filter ? "qrc:///images/filter_off.svg" : "qrc:///images/filter.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Filter")
 				tintIcon: true
@@ -78,7 +80,7 @@ Item {
 				Layout.fillWidth: true
 			}
 			GButton {
-				icon.source: "qrc:///images/desktop/material_save.svg"
+				icon.source: "qrc:///images/desktop/save_icon.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Save log")
 				tintIcon: true
@@ -90,6 +92,7 @@ Item {
 
 				GFileDialog {
 					id: fileDialog
+
 					defaultSuffix: "log"
 					//: LABEL DESKTOP
 					nameFilters: qsTr("Logfiles (*.log)")
@@ -119,7 +122,6 @@ Item {
 
 				//: LABEL DESKTOP
 				text: qsTr("Select level:")
-				textStyle: Style.text.normal
 
 				FocusFrame {
 				}
@@ -154,7 +156,6 @@ Item {
 
 				//: LABEL DESKTOP
 				text: qsTr("Select category:")
-				textStyle: Style.text.normal
 
 				FocusFrame {
 				}
@@ -167,6 +168,7 @@ Item {
 
 				GRepeater {
 					id: repeater
+
 					model: filterModel.categories
 
 					delegate: GCheckBox {
@@ -186,6 +188,7 @@ Item {
 		}
 		GListView {
 			id: listView
+
 			Layout.bottomMargin: Constants.groupbox_spacing
 			Layout.fillHeight: true
 			Layout.fillWidth: true
@@ -200,10 +203,6 @@ Item {
 				font.pixelSize: fontSize.value
 				width: listView.width - Constants.groupbox_spacing
 			}
-			highlight: LogViewHighLight {
-				currentItem: listView.currentItem
-				textSize: fontSize.value
-			}
 
 			Connections {
 				function onFireNewLogMsg() {
@@ -215,14 +214,15 @@ Item {
 			}
 			GText {
 				activeFocusOnTab: true
-				anchors.centerIn: parent
 				horizontalAlignment: Text.AlignHCenter
 				//: INFO DESKTOP No log entries, placeholder text.
 				text: qsTr("Currently there are no log entries matching your filter.")
-				textStyle: Style.text.normal_secondary
 				visible: listView.count === 0
-				width: Math.min(parent.width, contentWidth)
 
+				anchors {
+					fill: parent
+					rightMargin: Constants.groupbox_spacing
+				}
 				FocusFrame {
 				}
 			}

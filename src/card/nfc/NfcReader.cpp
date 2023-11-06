@@ -4,14 +4,10 @@
 
 #include "NfcReader.h"
 
-#include "CardConnectionWorker.h"
 #include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
-#if defined(Q_OS_ANDROID)
-	#include <QJniObject>
-#endif
 
 using namespace governikus;
 
@@ -49,8 +45,7 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 
 	mCard.reset(new NfcCard(pTarget));
 	connect(mCard.data(), &NfcCard::fireSetProgressMessage, this, &NfcReader::setProgressMessage);
-	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-	fetchCardInfo(cardConnection);
+	fetchCardInfo();
 
 	if (!getCard())
 	{
@@ -115,14 +110,6 @@ NfcReader::NfcReader()
 
 #if defined(Q_OS_ANDROID)
 	mNfManager.startTargetDetection(QNearFieldTarget::TagTypeSpecificAccess);
-
-	if (QNativeInterface::QAndroidApplication::isActivityContext())
-	{
-		if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
-		{
-			activity.callMethod<void>("enableNfcReaderMode");
-		}
-	}
 #endif
 }
 
@@ -130,13 +117,6 @@ NfcReader::NfcReader()
 #if defined(Q_OS_ANDROID)
 NfcReader::~NfcReader()
 {
-	if (QNativeInterface::QAndroidApplication::isActivityContext())
-	{
-		if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
-		{
-			activity.callMethod<void>("disableNfcReaderMode");
-		}
-	}
 	mNfManager.stopTargetDetection();
 }
 

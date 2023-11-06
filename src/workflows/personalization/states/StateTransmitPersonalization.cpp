@@ -28,7 +28,7 @@ void StateTransmitPersonalization::run()
 				return QVariant::fromValue(SmartManager::get()->performPersonalization(inputApduInfos));
 			};
 
-	mConnections += Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateTransmitPersonalization::onCommandDone);
+	*this << Env::getSingleton<ReaderManager>()->callExecuteCommand(func, this, &StateTransmitPersonalization::onCommandDone);
 }
 
 
@@ -48,6 +48,7 @@ void StateTransmitPersonalization::onCommandDone(const QVariant& pResult)
 		return;
 	}
 
-	context->setProgress(context->getProgressValue() + outputApduAsHex.size(), context->getProgressMessage());
+	const int newProgress = context->getProgressValue() + static_cast<int>(outputApduAsHex.size());
+	context->setProgress(qMin(90, newProgress), context->getProgressMessage());
 	Q_EMIT fireContinue();
 }

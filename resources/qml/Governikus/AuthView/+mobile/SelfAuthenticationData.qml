@@ -1,34 +1,40 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.ResultView 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.SelfAuthModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.SelfAuthModel
 
-ResultView {
+FlickableSectionPage {
 	id: root
-	signal done
 
-	header: qsTr("Read data")
+	signal done
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Identify")
 
-	onCancelClicked: done()
-	onContinueClicked: done()
+	navigationAction: NavigationAction {
+		action: NavigationAction.Action.Cancel
+
+		onClicked: done()
+	}
 
 	GridLayout {
 		id: grid
+
 		columnSpacing: Constants.text_spacing
-		columns: Constants.is_tablet ? 3 : 1
+		columns: Math.max(1, (width + columnSpacing) / (repeater.maxItemWidth + columnSpacing))
 		rowSpacing: Constants.text_spacing
 		width: parent.width
 
-		Repeater {
+		GRepeater {
+			id: repeater
+
 			model: SelfAuthModel
 
 			LabeledText {
@@ -40,5 +46,12 @@ ResultView {
 				Accessible.onScrollUpAction: root.scrollPageUp()
 			}
 		}
+	}
+	GButton {
+		Layout.alignment: Qt.AlignHCenter
+		//: LABEL ANDROID IOS
+		text: qsTr("OK")
+
+		onClicked: done()
 	}
 }

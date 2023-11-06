@@ -167,18 +167,30 @@ class test_VersionNumber
 			QTest::addColumn<bool>("beta");
 
 			QTest::newRow("") << true << false;
-			QTest::newRow("1.5.0+16-default-secret") << true << true;
+			QTest::newRow("1.5.0+16-default-secret") << true << false;
 			QTest::newRow("1.6.0+1-draft-t34t53+") << true << false;
-			QTest::newRow("1.5.0") << true << true;
+			QTest::newRow("1.5.0") << false << false;
 			QTest::newRow("1.6.0") << false << false;
-			QTest::newRow("1.5.0+0") << true << true;
+			QTest::newRow("1.5.0+0") << true << false;
 			QTest::newRow("1.6.0+0") << true << false;
 			QTest::newRow("1.6.0+422312-stable-2143eg435") << true << false;
-			QTest::newRow("1.9.0+422312-stable-2143eg435") << true << true;
+			QTest::newRow("1.9.0+422312-stable-2143eg435") << true << false;
 			QTest::newRow("3.28.1") << false << false;
 			QTest::newRow("3.28.1+23-default") << true << false;
 			QTest::newRow("  3.28.1+23-default   ") << true << false;
 			QTest::newRow("    1.10.0      ") << false << false;
+			QTest::newRow("1.100.0") << true << true;
+			QTest::newRow("1.100.100") << true << true;
+			QTest::newRow("1.200.0") << true << true;
+			QTest::newRow("1.200.199") << true << true;
+			QTest::newRow("2.99.0") << false << false;
+			QTest::newRow("2.1.0") << false << false;
+			QTest::newRow("2.1.100") << true << true;
+			QTest::newRow("2.1.199") << true << true;
+			QTest::newRow("2.2.0") << false << false;
+			QTest::newRow("2.2.100") << true << true;
+			QTest::newRow("2.2.100+0") << true << true;
+			QTest::newRow("2.3.0+0") << true << false;
 		}
 
 

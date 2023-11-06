@@ -1,7 +1,7 @@
 
-Name                  : AusweisApp2-Firewall-Rule
-DisplayName           : AusweisApp2
-Description           : AusweisApp2 firewall rule
+Name                  : AusweisApp-Firewall-Rule
+DisplayName           : AusweisApp
+Description           : AusweisApp firewall rule
 DisplayGroup          :
 Group                 :
 Enabled               : True

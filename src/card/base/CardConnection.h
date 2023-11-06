@@ -12,9 +12,7 @@
 #include "InputAPDUInfo.h"
 #include "ReaderInfo.h"
 #include "SmartCardDefinitions.h"
-#include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChain.h"
-#include "asn1/Chat.h"
 #include "command/BaseCardCommand.h"
 
 #include "command/DestroyPaceChannelCommand.h"

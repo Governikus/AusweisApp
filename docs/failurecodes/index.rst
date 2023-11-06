@@ -1,7 +1,7 @@
 .. only:: html
 
-  .. image:: ../sdk/Logo_AusweisApp2.png
-     :alt: AusweisApp2
+  .. image:: ../sdk/AusweisApp_Logo.svg
+     :alt: AusweisApp
      :align: center
      :width: 200pt
 

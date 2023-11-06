@@ -6,6 +6,7 @@
 
 #include "AppSettings.h"
 #include "ApplicationModel.h"
+#include "ReaderManager.h"
 #include "RemoteIfdClient.h"
 #include "RemoteIfdServer.h"
 #include "RemoteServiceSettings.h"
@@ -34,7 +35,7 @@ RemoteServiceModel::RemoteServiceModel()
 	, mPairingRequested(false)
 	, mErrorMessage()
 	, mPsk()
-	, mAllDevices(this, true, true)
+	, mAllDevices(this)
 	, mAvailableDevicesInPairingMode(&mAllDevices, RemoteDeviceFilterModel::showActivePairingMode)
 	, mAvailablePairedDevices(&mAllDevices, RemoteDeviceFilterModel::showAvailableAndPaired)
 	, mUnavailablePairedDevices(&mAllDevices, RemoteDeviceFilterModel::showUnavailableAndPaired)
@@ -160,15 +161,25 @@ void RemoteServiceModel::onReaderPlugInTypesChanged(bool pExplicitStart)
 	{
 		mContext->getIfdServer()->getMessageHandler()->setAllowedCardTypes({plugInType});
 	}
+
 	auto* readerManager = Env::getSingleton<ReaderManager>();
-	readerManager->stopScanAll();
-#ifdef Q_OS_IOS
-	if (plugInType != ReaderManagerPlugInType::NFC || pExplicitStart)
-#else
-	Q_UNUSED(pExplicitStart)
-#endif
+	const auto& readerPlugInTypes = Enum<ReaderManagerPlugInType>::getList();
+	for (const auto t : readerPlugInTypes)
 	{
-		readerManager->startScan(plugInType);
+		if (t != plugInType)
+		{
+			readerManager->stopScan(t);
+			continue;
+		}
+
+#ifdef Q_OS_IOS
+		if (plugInType != ReaderManagerPlugInType::NFC || pExplicitStart)
+#else
+		Q_UNUSED(pExplicitStart)
+#endif
+		{
+			readerManager->startScan(plugInType);
+		}
 	}
 }
 
@@ -204,7 +215,7 @@ void RemoteServiceModel::setRunning(bool pState, bool pEnablePairing)
 	{
 		setStarting(true);
 		const auto ifdServer = QSharedPointer<IfdServer>(new RemoteIfdServer());
-		const auto request = WorkflowRequest::createWorkflowRequest<IfdServiceController, IfdServiceContext>(ifdServer);
+		const auto request = WorkflowRequest::create<IfdServiceController, IfdServiceContext>(ifdServer);
 		Q_EMIT fireStartWorkflow(request);
 	}
 }
@@ -324,13 +335,13 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 }
 
 
-void RemoteServiceModel::onCardConnected(const QSharedPointer<CardConnection>& pConnection)
+void RemoteServiceModel::onCardConnected(const QSharedPointer<CardConnection>& pConnection) const
 {
 	pConnection->setProgressMessage(mConnectionInfo);
 }
 
 
-void RemoteServiceModel::onCardDisconnected(const QSharedPointer<CardConnection>& pConnection)
+void RemoteServiceModel::onCardDisconnected(const QSharedPointer<CardConnection>& pConnection) const
 {
 	pConnection->setProgressMessage(mConnectionInfo);
 }
@@ -375,7 +386,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 }
 
 
-void RemoteServiceModel::setPairing(bool pEnabled)
+void RemoteServiceModel::setPairing(bool pEnabled) const
 {
 	if (mContext)
 	{
@@ -384,7 +395,7 @@ void RemoteServiceModel::setPairing(bool pEnabled)
 }
 
 
-bool RemoteServiceModel::isPairing()
+bool RemoteServiceModel::isPairing() const
 {
 	if (!mContext)
 	{
@@ -536,6 +547,12 @@ void RemoteServiceModel::changePinLength()
 	{
 		mContext->changePinLength();
 	}
+}
+
+
+bool RemoteServiceModel::isPinAuthentication() const
+{
+	return mContext && mContext->isPinAuthentication();
 }
 
 

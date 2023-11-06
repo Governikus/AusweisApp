@@ -38,7 +38,7 @@ CommandData::CommandData(const QByteArray& pData)
 		long size = -1;
 		int tagNumber = -1;
 		int tagClass = -1;
-		const auto result = ASN1_get_object(&p, &size, &tagNumber, &tagClass, data.length());
+		const auto result = ASN1_get_object(&p, &size, &tagNumber, &tagClass, static_cast<long>(data.length()));
 		if (result & 0x80)
 		{
 			qCritical() << "Could not parse CommandData:" << getOpenSslError();

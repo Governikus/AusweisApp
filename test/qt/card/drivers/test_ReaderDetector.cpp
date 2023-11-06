@@ -37,7 +37,7 @@ class test_ReaderDetector
 		void verify_REINER_cyberJack_RFID_komfort(const ReaderConfigurationInfo& info)
 		{
 			QCOMPARE(info.getVendorId(), static_cast<uint>(0x0C4B));
-			QCOMPARE(info.getProductId(), static_cast<uint>(0x0501));
+			QCOMPARE(info.getProductIds(), QSet<uint>({static_cast<uint>(0x0501)}));
 			QCOMPARE(info.getName(), QStringLiteral("REINER SCT cyberJack RFID komfort"));
 			QCOMPARE(info.getPattern(), QStringLiteral("REINER SCT cyberJack RFID komfort"));
 			QCOMPARE(info.getUrl(), KOMFORT_DRIVER_URL);

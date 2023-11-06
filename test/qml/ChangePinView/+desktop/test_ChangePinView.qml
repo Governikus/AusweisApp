@@ -1,17 +1,18 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.ChangePinView 1.0
+import QtQuick
+import QtTest
+import Governikus.ChangePinView
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
 		return createTemporaryQmlObject("
-			import QtQuick 2.15
-			import QtQuick.Controls 2.15
-			import Governikus.ChangePinView 1.0
+			import QtQuick
+			import QtQuick.Controls
+			import Governikus.ChangePinView
 
 			ApplicationWindow {
 				readonly property alias _d: view._d

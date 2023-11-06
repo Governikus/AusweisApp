@@ -225,34 +225,6 @@ void ReaderManager::stopScanAll(const QString& pError)
 }
 
 
-bool ReaderManager::isScanRunning() const
-{
-	const QMutexLocker mutexLocker(&mMutex);
-
-	bool running = false;
-	if (mWorker)
-	{
-		QMetaObject::invokeMethod(mWorker.data(), qOverload<>(&ReaderManagerWorker::isScanRunning), Qt::BlockingQueuedConnection, &running);
-	}
-	return running;
-}
-
-
-bool ReaderManager::isScanRunning(ReaderManagerPlugInType pType) const
-{
-	const QMutexLocker mutexLocker(&mMutex);
-
-	bool running = false;
-	if (mWorker)
-	{
-		QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
-				return mWorker->isScanRunning(pType);
-			}, Qt::BlockingQueuedConnection, &running);
-	}
-	return running;
-}
-
-
 ReaderManagerPlugInInfo ReaderManager::getPlugInInfo(ReaderManagerPlugInType pType) const
 {
 	const QMutexLocker mutexLocker(&mMutex);
@@ -265,7 +237,7 @@ void ReaderManager::doUpdateCacheEntry(const ReaderInfo& pInfo)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	qCDebug(card) << "Update cache entry:" << pInfo.getName();
+	qCDebug(card).noquote() << "Update cache entry:" << pInfo.getName();
 	mReaderInfoCache.insert(pInfo.getName(), pInfo);
 }
 
@@ -274,7 +246,7 @@ void ReaderManager::doRemoveCacheEntry(const ReaderInfo& pInfo)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	qCDebug(card) << "Remove cache entry:" << pInfo.getName();
+	qCDebug(card).noquote() << "Remove cache entry:" << pInfo.getName();
 	mReaderInfoCache.remove(pInfo.getName());
 }
 
@@ -283,7 +255,7 @@ void ReaderManager::doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	qCDebug(card) << "Update cache entry:" << pInfo.getPlugInType();
+	qCDebug(card).noquote() << "Update cache entry:" << pInfo.getPlugInType();
 	mPlugInInfoCache.insert(pInfo.getPlugInType(), pInfo);
 }
 
@@ -292,14 +264,7 @@ QVector<ReaderInfo> ReaderManager::getReaderInfos(const ReaderFilter& pFilter) c
 {
 	Q_ASSERT(mThread.isRunning() || mThread.isFinished());
 	const QMutexLocker mutexLocker(&mMutex);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	const auto& list = mReaderInfoCache.values();
-#else
-	const auto& list = mReaderInfoCache.values().toVector(); // clazy:exclude=container-anti-pattern
-#endif
-
-	return pFilter.apply(list);
+	return pFilter.apply(mReaderInfoCache.values());
 }
 
 
@@ -319,13 +284,4 @@ void ReaderManager::updateReaderInfo(const QString& pReaderName)
 	QMetaObject::invokeMethod(mWorker.data(), [this, pReaderName] {
 			mWorker->updateReaderInfo(pReaderName);
 		}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
-}
-
-
-void ReaderManager::updateRetryCounters()
-{
-	Q_ASSERT(mWorker);
-	const QMutexLocker mutexLocker(&mMutex);
-
-	QMetaObject::invokeMethod(mWorker.data(), &ReaderManagerWorker::updateRetryCounters, Qt::QueuedConnection);
 }

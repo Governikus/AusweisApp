@@ -1,24 +1,25 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.EnterPasswordView 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.ProgressView 1.0
-import Governikus.ResultView 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.EnterPasswordView
+import Governikus.PasswordInfoView
+import Governikus.ProgressView
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.PasswordType
+import Governikus.Type.RemoteServiceModel
+import Governikus.View
 
 SectionPage {
 	id: root
+
 	enum SubView {
 		None,
 		EnterPassword,
-		PairingInfo,
 		WaitForPairing,
 		PairingFailed
 	}
@@ -27,29 +28,17 @@ SectionPage {
 
 	signal closeView
 
-	function showPairingInformation() {
-		d.view = ConnectSacView.SubView.PairingInfo;
-		d.externalMoreInformation = true;
-	}
-
 	titleBarAction: TitleBarAction {
 		id: mainTitleBarAction
-		helpTopic: "settingsRemoteReader"
+
 		rootEnabled: false
 		//: LABEL DESKTOP
 		text: qsTr("Pairing")
-		visible: d.view !== ConnectSacView.SubView.PairingInfo || !d.externalMoreInformation
 
-		customSubAction: CancelAction {
+		customSubAction: NavigationAction {
 			visible: true
 
 			onClicked: root.closeView()
-		}
-
-		onClicked: {
-			if (d.view === ConnectSacView.SubView.PairingInfo && !d.externalMoreInformation) {
-				d.view = ConnectSacView.SubView.EnterPassword;
-			}
 		}
 	}
 
@@ -58,7 +47,6 @@ SectionPage {
 			d.view = ConnectSacView.SubView.EnterPassword;
 		} else {
 			d.view = ConnectSacView.SubView.None;
-			d.externalMoreInformation = false;
 		}
 		updateTitleBarActions();
 	}
@@ -66,37 +54,13 @@ SectionPage {
 	QtObject {
 		id: d
 
-		property bool externalMoreInformation: false
 		property int view
 	}
 	EnterPasswordView {
 		passwordType: PasswordType.REMOTE_PIN
-		statusIcon: "qrc:///images/phone_to_pc.svg"
 		visible: d.view === ConnectSacView.SubView.EnterPassword
 
 		onPasswordEntered: d.view = ConnectSacView.SubView.WaitForPairing
-		onRequestPasswordInfo: {
-			d.view = ConnectSacView.SubView.PairingInfo;
-			updateTitleBarActions();
-		}
-	}
-	PasswordInfoView {
-		rootEnabled: mainTitleBarAction.rootEnabled
-		visible: d.view === ConnectSacView.SubView.PairingInfo
-
-		infoContent: PasswordInfoData {
-			contentType: PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER
-		}
-
-		onClose: {
-			if (d.externalMoreInformation) {
-				root.closeView();
-				d.externalMoreInformation = false;
-			} else {
-				d.view = ConnectSacView.SubView.EnterPassword;
-			}
-			updateTitleBarActions();
-		}
 	}
 	ProgressView {
 
@@ -124,7 +88,7 @@ SectionPage {
 		property string deviceName
 		property string errorMessage
 
-		resultType: ResultView.Type.IsError
+		icon: "qrc:///images/desktop/workflow_error_sak_connection_%1.svg".arg(Style.currentTheme.name)
 
 		//: ERROR DESKTOP An error occurred while pairing the device.
 		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage)

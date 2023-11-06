@@ -11,7 +11,6 @@
 #include "SecurityProtocol.h"
 #include "apdu/CommandApdu.h"
 #include "apdu/ResponseApdu.h"
-#include "asn1/ASN1TemplateUtil.h"
 #include "pace/CipherMac.h"
 #include "pace/SymmetricCipher.h"
 

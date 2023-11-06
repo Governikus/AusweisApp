@@ -1,24 +1,29 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.CheckSmartView 1.0
-import Governikus.Global 1.0
-import Governikus.ProgressView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.SmartModel 1.0
-import Governikus.Type.UiModule 1.0
-import Governikus.View 1.0
+import QtQuick
+import Governikus.AuthView
+import Governikus.ChangePinView
+import Governikus.Global
+import Governikus.SelfAuthenticationView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.ChangePinModel
+import Governikus.Type.ConnectivityManager
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.SmartModel
+import Governikus.Type.UiModule
 
-SectionPage {
+FlickableSectionPage {
 	id: root
-	sectionPageFlickable: smartMainView
 
+	smartEidUsed: true
+	title: smartMainView.visible ?
 	//: LABEL ANDROID IOS
-	title: qsTr("Smart-eID")
-	titleBarColor: Style.color.accent_smart
+	qsTr("Smart-eID") :
+	//: LABEL ANDROID IOS
+	qsTr("Check Smart-eID")
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
@@ -28,108 +33,108 @@ SectionPage {
 
 	PersonalizationController {
 		id: controller
+
+		stackView: root.stackView
 	}
 	Component {
 		id: setupStartView
+
 		SmartSetupStartView {
 		}
 	}
 	Component {
 		id: updateStartView
+
 		SmartUpdateStartView {
 		}
 	}
 	Component {
-		id: deleteProgressView
-		ProgressView {
-			progressValue: SmartModel.progress
-			//: LABEL ANDROID IOS
-			subText: qsTr("Please wait a moment.")
-			title: qsTr("Smart-eID")
-			titleBarColor: Style.color.accent_smart
-		}
-	}
-	Component {
 		id: deletePersonalizationStartview
-		SmartDeleteStartView {
-			//: LABEL ANDROID IOS
-			buttonText: qsTr("Delete Smart-eID")
 
-			//: LABEL ANDROID IOS
-			deleteDescriptionText: qsTr("You are about to delete the Smart-eID data that is currently stored on your device.")
+		SmartDeleteView {
+		}
+	}
+	Component {
+		id: changePinView
 
-			onDeleteConfirmed: {
-				setLockedAndHidden();
-				//: LABEL ANDROID IOS
-				push(deleteProgressView, {
-						"text": qsTr("Deleting Smart-eID")
-					});
-				SmartModel.deletePersonalization();
-			}
+		ChangePinView {
+			autoInsertCard: true
+			hidePinTypeSelection: true
+			hideTechnologySwitch: true
+			initialPlugIn: ReaderPlugIn.SMART
 
-			Connections {
-				function onFireDeletePersonalizationDone() {
-					setLockedAndHidden(false);
-					popAll();
-				}
+			Component.onCompleted: ChangePinModel.startWorkflow(false, false)
+			onWorkflowFinished: popAll()
+		}
+	}
+	Component {
+		id: selfAuthView
 
-				target: SmartModel
+		SelfAuthenticationView {
+			autoInsertCard: true
+			hideTechnologySwitch: true
+			initialPlugIn: ReaderPlugIn.SMART
+
+			onBack: pop()
+		}
+	}
+	Component {
+		id: checkConnectivityView
+
+		CheckConnectivityView {
+			smartEidUsed: root.smartEidUsed
+			title: root.title
+
+			Component.onCompleted: connectivityManager.watching = true
+			Component.onDestruction: connectivityManager.watching = false
+			onCancel: {
+				setLockedAndHidden(false);
+				popAll();
 			}
 		}
 	}
 	Component {
-		id: deleteStartview
-		SmartDeleteStartView {
-			//: LABEL ANDROID IOS
-			buttonText: qsTr("Reset Smart-eID")
+		id: checkSmartResultView
 
-			//: LABEL ANDROID IOS
-			deleteDescriptionText: qsTr("You are about to delete the Smart-eID data from your device and also remove the Smart-eID provisioning. This can a be used for troubleshooting as well.")
+		CheckSmartResultView {
+			result: SmartModel.smartState
 
-			onDeleteConfirmed: {
-				setLockedAndHidden();
-				push(deleteProgressView, {
-						//: LABEL ANDROID IOS
-						"text": qsTr("Resetting Smart-eID"),
-						"progressBarVisible": true,
-						//: LABEL ANDROID IOS
-						"progressText": qsTr("Resetting Smart-eID")
-					});
-				SmartModel.deleteSmart();
+			onCancelClicked: {
+				setLockedAndHidden(false);
+				popAll();
 			}
-
-			Connections {
-				function onFireDeleteSmartDone() {
-					setLockedAndHidden(false);
-					popAll();
-				}
-
-				target: SmartModel
-			}
-		}
-	}
-	Component {
-		id: checkSmartView
-		CheckSmartView {
 			onCheckDevice: {
 				show(UiModule.CHECK_ID_CARD);
 				popAll();
 			}
 			onRunSmartSetup: push(setupStartView)
-			onStartAuth: {
-				show(UiModule.SELF_AUTHENTICATION);
-				popAll();
+		}
+	}
+	ConnectivityManager {
+		id: connectivityManager
+
+		onNetworkInterfaceActiveChanged: {
+			if (networkInterfaceActive) {
+				pop();
+				SmartModel.updateSupportInfo();
 			}
 		}
 	}
 	SmartMainView {
 		id: smartMainView
-		anchors.fill: parent
 
-		onCheckSmart: push(checkSmartView)
+		onChangePin: push(changePinView)
 		onDeletePersonalization: push(deletePersonalizationStartview)
-		onDeleteSmart: push(deleteStartview)
-		onSetupSmart: push(setupStartView)
+		onShowCheckResult: {
+			setLockedAndHidden();
+			push(checkSmartResultView);
+			if (connectivityManager.checkConnectivity()) {
+				SmartModel.updateSupportInfo();
+			} else {
+				push(checkConnectivityView);
+			}
+		}
+		onStartSelfAuth: push(selfAuthView)
 		onUpdateSmart: push(updateStartView)
 	}
 }

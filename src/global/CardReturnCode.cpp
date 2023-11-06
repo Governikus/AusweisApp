@@ -4,7 +4,6 @@
 
 #include "CardReturnCode.h"
 
-#include "Initializer.h"
 #include "moc_CardReturnCode.cpp"
 
 using namespace governikus;
@@ -48,7 +47,6 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::INVALID_PIN:
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
 			return GlobalStatus::Code::Card_Invalid_Pin;
 
 		case CardReturnCode::INVALID_CAN:
@@ -105,7 +103,6 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::OK_PUK:
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
 		case CardReturnCode::INPUT_TIME_OUT:
 			return false;
 	}

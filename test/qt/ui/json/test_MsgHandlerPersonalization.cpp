@@ -46,7 +46,7 @@ class test_MsgHandlerPersonalization
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			setUpdateInfo(EidUpdateInfo::UP_TO_DATE);
+			setSmartEidSupportStatus(EidSupportStatus::UP_TO_DATE);
 			setSmartEidStatus(EidStatus::NO_PERSONALIZATION);
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 
@@ -236,8 +236,8 @@ class test_MsgHandlerPersonalization
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QTRY_VERIFY(mSmartAvailable); // clazy:exclude=qstring-allocations
@@ -253,7 +253,7 @@ class test_MsgHandlerPersonalization
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			ui->mMessageDispatcher.setSkipStateApprovedHook([&reachedStateGetTcToken](const QString& pState){
-					if (AbstractState::isState<StateGetTcToken>(pState))
+					if (StateBuilder::isState<StateGetTcToken>(pState))
 					{
 						reachedStateGetTcToken = true;
 						return true;
@@ -337,8 +337,8 @@ class test_MsgHandlerPersonalization
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QTRY_VERIFY(mSmartAvailable); // clazy:exclude=qstring-allocations
@@ -349,7 +349,7 @@ class test_MsgHandlerPersonalization
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			ui->mMessageDispatcher.setSkipStateApprovedHook([&reachedStateGetTcToken](const QString& pState){
-					if (AbstractState::isState<StateGetTcToken>(pState))
+					if (StateBuilder::isState<StateGetTcToken>(pState))
 					{
 						reachedStateGetTcToken = true;
 						return true;
@@ -420,8 +420,8 @@ class test_MsgHandlerPersonalization
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QTRY_VERIFY(mSmartAvailable); // clazy:exclude=qstring-allocations
@@ -432,7 +432,7 @@ class test_MsgHandlerPersonalization
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			ui->mMessageDispatcher.setSkipStateApprovedHook([&reachedStateGetTcToken](const QString& pState){
-					if (AbstractState::isState<StateGetTcToken>(pState))
+					if (StateBuilder::isState<StateGetTcToken>(pState))
 					{
 						reachedStateGetTcToken = true;
 						return true;
@@ -494,8 +494,8 @@ class test_MsgHandlerPersonalization
 			UILoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QTRY_VERIFY(mSmartAvailable); // clazy:exclude=qstring-allocations
@@ -507,7 +507,7 @@ class test_MsgHandlerPersonalization
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			ui->mMessageDispatcher.setSkipStateApprovedHook([&reachedStateGetTcToken](const QString& pState){
-					if (AbstractState::isState<StateGetTcToken>(pState))
+					if (StateBuilder::isState<StateGetTcToken>(pState))
 					{
 						reachedStateGetTcToken = true;
 						return true;

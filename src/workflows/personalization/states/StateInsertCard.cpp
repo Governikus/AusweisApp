@@ -7,8 +7,11 @@
 #include "Env.h"
 #include "ReaderFilter.h"
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
+
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
+
 
 using namespace governikus;
 
@@ -22,28 +25,36 @@ StateInsertCard::StateInsertCard(const QSharedPointer<WorkflowContext>& pContext
 
 void StateInsertCard::run()
 {
-	auto* readerManager = Env::getSingleton<ReaderManager>();
-
-	const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::SMART}));
-	if (readerInfos.isEmpty())
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || !defined(QT_NO_DEBUG)
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		qCWarning(statemachine) << "No Smart reader present";
-		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_No_SmartReader);
+		auto* readerManager = Env::getSingleton<ReaderManager>();
+
+		const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::SMART}));
+		if (readerInfos.isEmpty())
+		{
+			qCWarning(statemachine) << "No Smart reader present";
+			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_No_SmartReader);
+			return;
+		}
+		if (readerInfos.size() > 1)
+		{
+			qCWarning(statemachine) << "Multiple Smart readers present";
+			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
+			Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Multiple_SmartReader);
+			return;
+		}
+
+		getContext()->setReaderPlugInTypes({ReaderManagerPlugInType::SMART});
+		*this << connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &StateInsertCard::onCardInfoChanged);
+		*this << connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateInsertCard::onStatusChanged);
+		readerManager->startScan(ReaderManagerPlugInType::SMART);
 		return;
 	}
-	if (readerInfos.size() > 1)
-	{
-		qCWarning(statemachine) << "Multiple Smart readers present";
-		updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed);
-		Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_Multiple_SmartReader);
-		return;
-	}
+#endif
 
-	getContext()->setReaderPlugInTypes({ReaderManagerPlugInType::SMART});
-	mConnections += connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &StateInsertCard::onCardInfoChanged);
-	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateInsertCard::onStatusChanged);
-	readerManager->startScan(ReaderManagerPlugInType::SMART);
+	Q_EMIT fireContinue();
 }
 
 
@@ -68,7 +79,7 @@ void StateInsertCard::onCardInfoChanged(const ReaderInfo& pInfo)
 
 		case MobileEidType::HW_KEYSTORE:
 			qCDebug(statemachine) << "Skipping PIN change because of eID-Type:" << type;
-			Q_EMIT fireAbort(FailureCode::Reason::Insert_Card_HW_Keystore);
+			Q_EMIT fireSkipPinChange();
 			return;
 	}
 

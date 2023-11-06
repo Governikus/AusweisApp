@@ -71,7 +71,11 @@ int main()
 {
 	governikus::QtHooks::init();
 
+#if defined(GOVERNIKUS_QT)
 	start_aa2(nullptr);
+#else
+	start_aa2("--no-proxy");
+#endif
 
 	const int livingDeadCount = static_cast<int>(governikus::QtHooks::getQObjects().size());
 	if (livingDeadCount > 0)

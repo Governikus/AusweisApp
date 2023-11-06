@@ -47,7 +47,7 @@ class test_Asn1StringUtil
 		{
 			QString utf8Text("Dieß öst äin UTF8-Đext ɃϢݢૂૂૂ");
 			ASN1_UTF8STRING* asn1String = ASN1_UTF8STRING_new();
-			ASN1_STRING_set(asn1String, utf8Text.toUtf8().data(), utf8Text.toUtf8().length());
+			ASN1_STRING_set(asn1String, utf8Text.toUtf8().data(), static_cast<int>(utf8Text.toUtf8().length()));
 
 			QCOMPARE(Asn1StringUtil::getValue(asn1String), utf8Text);
 

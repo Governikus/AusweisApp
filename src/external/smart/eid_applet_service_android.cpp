@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Bundesdruckerei GmbH and Governikus GmbH
- *
+ * Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+ * Licensed under the EUPL-1.2
  */
 
 #include "eid_applet_service_android.h"
@@ -13,10 +13,8 @@
  * \param env The android JNI Environment pointer.
  * \param applicationContext The android application context.
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::EidAppletServiceAndroid(
-	JNIEnvironment* env, jobject applicationContext) : mEnv(env) {
-
+EidAppletServiceAndroid::EidAppletServiceAndroid(
+	JNIEnv* env, jobject applicationContext) : mEnv(env) {
 	if (mEnv) {
 		mApplicationContext = mEnv->NewGlobalRef(applicationContext);
 	}
@@ -26,16 +24,16 @@ EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::EidAppletServiceAnd
 /*!
  * Release all resources and shut down the eID-Applet-Service-Lib on Android
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::~EidAppletServiceAndroid() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidAppletServiceAndroid::~EidAppletServiceAndroid() {
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard)) {
 		return;
 	}
 
-	curThreadEnv->DeleteGlobalRef(mApplicationContext);
+	deleteGlobalRef(env, mJniServiceObj);
+	deleteGlobalRef(env, mJniServiceClz);
+	deleteGlobalRef(env, mApplicationContext);
 }
 
 
@@ -46,13 +44,19 @@ EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::~EidAppletServiceAn
  * \result mData is blank if mResult is equal to EidServiceResult::SUCCESS,
  *      otherwise it contains an error message
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::initializeService(
+GenericDataResult EidAppletServiceAndroid::initializeService(
 		const std::string& pServiceId,
-		const std::string& pVersionTag,
-		const std::string& pSsdAid) {
+		const std::string& pSsdAid,
+		const std::string& pVersionTag) {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
 	if (mEnv == nullptr) {
-		return {EidServiceResult::ERROR, "missing JNIEnvironment"};
+		return {EidServiceResult::ERROR, "missing JNIEnv"};
+	}
+
+	if (mApplicationContext == nullptr) {
+		return {EidServiceResult::ERROR, "missing ApplicationContext"};
 	}
 
 	jint getJavaVMResult = mEnv->GetJavaVM(&mJvm);
@@ -62,7 +66,7 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
 	}
 
 	jclass jniServiceClzRef = findClass(mEnv, mApplicationContext, jniService::path);
-	if (exceptionCheck<JNIEnvironment>(mEnv)) {
+	if (exceptionCheck(mEnv)) {
 		std::string msg = "missing class:";
 		msg.append(jniService::path);
 		return {EidServiceResult::ERROR, msg};
@@ -70,7 +74,7 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
 
 	mJniServiceClz = reinterpret_cast<jclass>(mEnv->NewGlobalRef(jniServiceClzRef));
 	jmethodID jniCtorMethodID = mEnv->GetMethodID(mJniServiceClz, jniService::stdInit, "()V");
-	if (exceptionCheck<JNIEnvironment>(mEnv)) {
+	if (exceptionCheck(mEnv)) {
 		std::string msg = "method not found:";
 		msg.append(jniService::path)
 		.append("#")
@@ -80,11 +84,12 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
 
 	jobject handler = mEnv->NewObject(mJniServiceClz, jniCtorMethodID);
 	mJniServiceObj = mEnv->NewGlobalRef(handler);
-
-	jmethodID jniInitMethodID = mEnv->GetMethodID(mJniServiceClz,
+	jmethodID jniInitMethodID = mEnv->GetMethodID(
+			mJniServiceClz,
 			jniService::init,
 			jniService::sig);
-	if (exceptionCheck<JNIEnvironment>(mEnv)) {
+	deleteLocalRef(mEnv, handler);
+	if (exceptionCheck(mEnv)) {
 		std::string msg = "method not found:";
 		msg.append(jniService::path)
 		.append("#")
@@ -101,12 +106,13 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
 			jniInitMethodID,
 			mApplicationContext,
 			serviceId,
-			versionTag,
-			ssdAid);
-	bool hasError = exceptionCheck<JNIEnvironment>(mEnv);
-	mEnv->DeleteLocalRef(serviceId);
-	mEnv->DeleteLocalRef(versionTag);
-	mEnv->DeleteLocalRef(ssdAid);
+			ssdAid,
+			versionTag);
+	bool hasError = exceptionCheck(mEnv);
+	deleteLocalRef(mEnv, serviceId);
+	deleteLocalRef(mEnv, versionTag);
+	deleteLocalRef(mEnv, ssdAid);
+	deleteLocalRef(mEnv, jniServiceClzRef);
 
 	if (hasError) {
 		std::string msg = "initialization of the eid_applet_service_lib failed";
@@ -118,15 +124,31 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
 			clazz,
 			jniGenericDataResult::result,
 			jniGenericDataResult::resultType);
-	int result = mEnv->GetIntField(obj, fidResult);
+	auto result = mEnv->GetObjectField(obj, fidResult);
 
 	auto fidData = mEnv->GetFieldID(
 			clazz,
 			jniGenericDataResult::data,
 			jniGenericDataResult::dataType);
-	auto jsData = reinterpret_cast<jstring>(mEnv->GetObjectField(obj, fidData));
 
-	return {getEidServiceResult(result), getString(mEnv, jsData)};
+	auto fidObjField = mEnv->GetObjectField(obj, fidData);
+	auto jsData = reinterpret_cast<jstring>(fidObjField);
+
+	jclass serviceResultClazz = findClass(mEnv, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = mEnv->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int serviceResultCode = mEnv->CallStaticIntMethod(serviceResultClazz, getValueMethodID, result);
+	GenericDataResult gDResult(getEidServiceResult(serviceResultCode), getString(mEnv, jsData));
+
+	deleteLocalRef(mEnv, result);
+	deleteLocalRef(mEnv, fidObjField);
+	deleteLocalRef(mEnv, obj);
+	deleteLocalRef(mEnv, clazz);
+	deleteLocalRef(mEnv, serviceResultClazz);
+
+	return gDResult;
 }
 
 
@@ -137,48 +159,46 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::i
  *
  * \return EidServiceResult
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::installSmartEid() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidServiceResult EidAppletServiceAndroid::installSmartEid() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return EidServiceResult::ERROR;
 	}
-	//call installApplet method
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID installSmartEidMethodID = curThreadEnv->GetMethodID(
-			serviceClass,
+
+	jmethodID installSmartEidMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::installSmartEidMethod,
 			jniService::installSmartEidMethodSig);
-	jobject resultCode = curThreadEnv->CallObjectMethod(
+	jobject resultCode = env->CallObjectMethod(
 			mJniServiceObj,
 			installSmartEidMethodID);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	//cast ServiceResult to int
-	jclass serviceResultClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniServiceResult::path);
-
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
+	jclass serviceResultClass = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(
 			serviceResultClass,
 			jniServiceResult::getValue,
 			jniServiceResult::sigGetValue);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
+	int serviceResultCode = env->CallStaticIntMethod(
 			serviceResultClass,
-			methodId,
+			getValueMethodID,
 			resultCode);
 
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	return EidServiceResult(intResultCode);
+	deleteLocalRef(env, resultCode);
+	deleteLocalRef(env, serviceResultClass);
+
+	return EidServiceResult(serviceResultCode);
 }
 
 
@@ -187,48 +207,47 @@ EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::in
  *
  * \return EidServiceResult
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::deleteSmartEid() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidServiceResult EidAppletServiceAndroid::deleteSmartEid() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return EidServiceResult::ERROR;
 	}
-	//call deleteApplet method
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID deleteSmartEidMethodID = curThreadEnv->GetMethodID(
-			serviceClass,
+
+	jmethodID deleteSmartEidMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::deleteSmartEidMethod,
 			jniService::deleteSmartEidMethodSig);
-	jobject resultCode = curThreadEnv->CallObjectMethod(
+	jobject resultCode = env->CallObjectMethod(
 			mJniServiceObj,
 			deleteSmartEidMethodID);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	//cast ServiceResult to int
-	jclass serviceResultClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniServiceResult::path);
+	jclass serviceResultClass = findClass(env, mApplicationContext, jniServiceResult::path);
 
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
+	jmethodID getValueMethodID = env->GetStaticMethodID(
 			serviceResultClass,
 			jniServiceResult::getValue,
 			jniServiceResult::sigGetValue);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
+	int serviceResultCode = env->CallStaticIntMethod(
 			serviceResultClass,
-			methodId,
+			getValueMethodID,
 			resultCode);
 
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	return EidServiceResult(intResultCode);
+	deleteLocalRef(env, resultCode);
+	deleteLocalRef(env, serviceResultClass);
+
+	return EidServiceResult(serviceResultCode);
 }
 
 
@@ -237,48 +256,46 @@ EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::de
  *
  * \return EidServiceResult
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::deletePersonalization() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidServiceResult EidAppletServiceAndroid::deletePersonalization() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return EidServiceResult::ERROR;
 	}
-	//call deletePersonalization method
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID deletePersonalizationMethodID = curThreadEnv->GetMethodID(
-			serviceClass,
+
+	jmethodID deletePersonalizationMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::deletePersonalizationMethod,
 			jniService::deletePersonalizationMethodSig);
-	jobject resultCode = curThreadEnv->CallObjectMethod(
+	jobject resultCode = env->CallObjectMethod(
 			mJniServiceObj,
 			deletePersonalizationMethodID);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	//cast ServiceResult to int
-	jclass serviceResultClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniServiceResult::path);
-
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
+	jclass serviceResultClass = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(
 			serviceResultClass,
 			jniServiceResult::getValue,
 			jniServiceResult::sigGetValue);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
+	int serviceResultCode = env->CallStaticIntMethod(
 			serviceResultClass,
-			methodId,
+			getValueMethodID,
 			resultCode);
 
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	return EidServiceResult(intResultCode);
+	deleteLocalRef(env, resultCode);
+	deleteLocalRef(env, serviceResultClass);
+
+	return EidServiceResult(serviceResultCode);
 }
 
 
@@ -288,55 +305,72 @@ EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::de
  * \param pCommandApdu byte2hex encoded APDU
  * \return GenericDataResult with byte2hex encoded APDU response
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::performAPDUCommand(
+GenericDataResult EidAppletServiceAndroid::performAPDUCommand(
 		const std::string& pCommandApdu) {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
 	if (pCommandApdu.empty()) {
 		return {EidServiceResult::ERROR, "command APDU should not be empty"};
 	}
 
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return {EidServiceResult::ERROR,
 				"Current thread of the caller could not be attached"};
 	}
 
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID performMethodID = curThreadEnv->GetMethodID(
-			serviceClass,
+	jmethodID performMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::performAPDUCommandMethod,
 			jniService::performAPDUCommandMethodSig);
-	jstring apdu = curThreadEnv->NewStringUTF(pCommandApdu.c_str());
-	jobject obj = curThreadEnv->CallObjectMethod(mJniServiceObj, performMethodID, apdu);
-	bool hasError = exceptionCheck<JNIEnvironment>(curThreadEnv);
-	curThreadEnv->DeleteLocalRef(apdu);
+	jstring apdu = env->NewStringUTF(pCommandApdu.c_str());
+	jobject obj = env->CallObjectMethod(mJniServiceObj, performMethodID, apdu);
+	bool hasError = exceptionCheck(env);
+	deleteLocalRef(env, apdu);
+
 	if (hasError) {
 		return {EidServiceResult::ERROR,
 				"call of the performAPDUCommand function failed"};
 	}
 
-	auto clazz = curThreadEnv->GetObjectClass(obj);
+	auto clazz = env->GetObjectClass(obj);
 
-	auto fidResult = curThreadEnv->GetFieldID(
+	auto fidResult = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::result,
 			jniGenericDataResult::resultType);
-	int result = curThreadEnv->GetIntField(obj, fidResult);
+	auto result = env->GetObjectField(obj, fidResult);
 
-	auto fidData = curThreadEnv->GetFieldID(
+	auto fidData = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::data,
 			jniGenericDataResult::dataType);
-	auto jsData = reinterpret_cast<jstring>(curThreadEnv->GetObjectField(obj, fidData));
-	std::string data = getString(curThreadEnv, jsData);
+	auto objField = env->GetObjectField(obj, fidData);
+	auto jsData = reinterpret_cast<jstring>(objField);
+
+	std::string data = getString(env, jsData);
 
 	if (data.empty()) {
 		return {EidServiceResult::ERROR, "response APDU should not be empty"};
 	}
 
-	return {getEidServiceResult(result), data};
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, getValueMethodID, result);
+	GenericDataResult gDResult(getEidServiceResult(serviceResultCode), data);
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, objField);
+	deleteLocalRef(env, obj);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+
+	return gDResult;
 }
 
 
@@ -347,10 +381,12 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::p
  * \param pChallenge challenge for key attestation
  * \return InitializeResult with public key and signed challenge
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-InitializeResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::initializePersonalization(
+InitializeResult EidAppletServiceAndroid::initializePersonalization(
 		const std::string& pPin,
 		const std::string& pChallenge) {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
 	if (pPin.empty()) {
 		// do nothing: Entering the eID-PIN is currently not necessary for Android here
 	}
@@ -359,51 +395,66 @@ InitializeResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::in
 		return {EidServiceResult::ERROR, "Challenge should not be empty"};
 	}
 
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return {EidServiceResult::ERROR,
 				"Current thread of the caller could not be attached"};
 	}
 
-	jmethodID initializePersonalizationMethodID = curThreadEnv->GetMethodID(
+	jmethodID initializePersonalizationMethodID = env->GetMethodID(
 			mJniServiceClz,
 			jniService::initializePersonalizationMethod,
 			jniService::initializePersonalizationMethodSig);
-	jstring challenge = curThreadEnv->NewStringUTF(pChallenge.c_str());
-	jobject obj = curThreadEnv->CallObjectMethod(mJniServiceObj,
+	jstring challenge = env->NewStringUTF(pChallenge.c_str());
+	jobject obj = env->CallObjectMethod(
+			mJniServiceObj,
 			initializePersonalizationMethodID,
 			challenge);
 
-	curThreadEnv->DeleteLocalRef(challenge);
-	if (exceptionCheck(curThreadEnv)) {
+	deleteLocalRef(env, challenge);
+	if (exceptionCheck(env)) {
 		return {EidServiceResult::ERROR,
 				"call of the initializePersonalization function failed"};
 	}
 
-	auto clazz = curThreadEnv->GetObjectClass(obj);
-	auto fidResult = curThreadEnv->GetFieldID(clazz, jniInitializeResult::result,
+	auto clazz = env->GetObjectClass(obj);
+	auto fidResult = env->GetFieldID(clazz, jniInitializeResult::result,
 			jniInitializeResult::resultType);
-	int result = curThreadEnv->GetIntField(obj, fidResult);
+	auto result = env->GetObjectField(obj, fidResult);
 
-	auto fidPPData = curThreadEnv->GetFieldID(clazz,
+	auto fidPPData = env->GetFieldID(clazz,
 			jniInitializeResult::ppData,
 			jniInitializeResult::ppDataType);
-	auto jsPPData = reinterpret_cast<jstring>(curThreadEnv->GetObjectField(obj,
-			fidPPData));
-	if (exceptionCheck(curThreadEnv)) {
+
+	auto objField = env->GetObjectField(obj, fidPPData);
+	auto jsPPData = reinterpret_cast<jstring>(objField);
+
+	if (exceptionCheck(env)) {
 		return {EidServiceResult::ERROR,
 				"call of the initializePersonalization function failed (cannot read result)"};
 	}
 
-	std::string ppData = getString(curThreadEnv, jsPPData);
+	std::string ppData = getString(env, jsPPData);
 
 	if (ppData.empty()) {
 		return {EidServiceResult::ERROR, "PreparePersonalizationData should not be empty"};
 	}
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
 
-	return {getEidServiceResult(result), ppData};
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, getValueMethodID, result);
+	InitializeResult initializeResult(getEidServiceResult(serviceResultCode), ppData);
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, objField);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, obj);
+
+	return initializeResult;
 }
 
 
@@ -413,54 +464,70 @@ InitializeResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::in
  * \param pCommandPersonalization base64 encoded personalization step
  * \return GenericDataResult with base64 encoded personalization step response
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::performPersonalization(const std::string& pCommandPersonalization) {
+GenericDataResult EidAppletServiceAndroid::performPersonalization(const std::string& pCommandPersonalization) {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
 	if (pCommandPersonalization.empty()) {
 		return {EidServiceResult::ERROR, "personalization C-APDU should not be empty"};
 	}
 
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return {EidServiceResult::ERROR,
 				"Current thread of the caller could not be attached"};
 	}
 
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID performMethodID = curThreadEnv->GetMethodID(
-			serviceClass,
+	jmethodID performMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::performPersonalizationMethod,
 			jniService::performPersonalizationMethodSig);
-	jstring apdu = curThreadEnv->NewStringUTF(pCommandPersonalization.c_str());
-	jobject obj = curThreadEnv->CallObjectMethod(mJniServiceObj, performMethodID, apdu);
-	bool hasError = exceptionCheck<JNIEnvironment>(curThreadEnv);
-	curThreadEnv->DeleteLocalRef(apdu);
+	jstring apdu = env->NewStringUTF(pCommandPersonalization.c_str());
+	jobject obj = env->CallObjectMethod(mJniServiceObj, performMethodID, apdu);
+	bool hasError = exceptionCheck(env);
+
+	deleteLocalRef(env, apdu);
+
 	if (hasError) {
 		return {EidServiceResult::ERROR,
 				"call of the performPersonalization function failed"};
 	}
 
-	auto clazz = curThreadEnv->GetObjectClass(obj);
+	auto clazz = env->GetObjectClass(obj);
 
-	auto fidResult = curThreadEnv->GetFieldID(
+	auto fidResult = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::result,
 			jniGenericDataResult::resultType);
-	int result = curThreadEnv->GetIntField(obj, fidResult);
+	auto result = env->GetObjectField(obj, fidResult);
 
-	auto fidData = curThreadEnv->GetFieldID(
+	auto fidData = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::data,
 			jniGenericDataResult::dataType);
-	auto jsData = reinterpret_cast<jstring>(curThreadEnv->GetObjectField(obj, fidData));
-	std::string data = getString(curThreadEnv, jsData);
+	auto objField = env->GetObjectField(obj, fidData);
+	auto jsData = reinterpret_cast<jstring>(objField);
+	std::string data = getString(env, jsData);
 
 	if (data.empty()) {
 		return {EidServiceResult::ERROR, "response APDU should not be empty"};
 	}
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
 
-	return {getEidServiceResult(result), data};
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, getValueMethodID, result);
+	GenericDataResult gDResult(getEidServiceResult(serviceResultCode), data);
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, objField);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, obj);
+
+	return gDResult;
 }
 
 
@@ -469,41 +536,59 @@ GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::p
  *
  * \return a PersonalizationResult object with the init-eID-PIN
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-PersonalizationResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::finalizePersonalization() {
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+PersonalizationResult EidAppletServiceAndroid::finalizePersonalization(int status) {
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return {EidServiceResult::ERROR};
 	}
 
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID finalizePersonalizationMethodId = curThreadEnv->GetMethodID(
-			serviceClass,
+	jmethodID finalizePersonalizationMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::finalizePersonalizationMethod,
 			jniService::finalizePersonalizationMethodSig);
-	jobject obj = curThreadEnv->CallObjectMethod(mJniServiceObj,
-			finalizePersonalizationMethodId);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	jobject obj = env->CallObjectMethod(
+			mJniServiceObj,
+			finalizePersonalizationMethodID,
+			status);
+	if (exceptionCheck(env)) {
 		return {EidServiceResult::ERROR};
 	}
 
-	auto clazz = curThreadEnv->GetObjectClass(obj);
+	auto clazz = env->GetObjectClass(obj);
 
-	auto fidResult = curThreadEnv->GetFieldID(
+	auto fidResult = env->GetFieldID(
 			clazz,
 			jniPersonalizationResult::result,
 			jniPersonalizationResult::resultType);
-	int result = curThreadEnv->GetIntField(obj, fidResult);
+	auto result = env->GetObjectField(obj, fidResult);
 
-	auto fidPin = curThreadEnv->GetFieldID(
+	auto fidPin = env->GetFieldID(
 			clazz,
 			jniPersonalizationResult::initPINData,
 			jniPersonalizationResult::initPINDataType);
-	auto jsData = reinterpret_cast<jstring>(curThreadEnv->GetObjectField(obj, fidPin));
-	std::string pin = getString(curThreadEnv, jsData);
+	auto objField = env->GetObjectField(obj, fidPin);
+	auto jsData = reinterpret_cast<jstring>(objField);
 
-	return {getEidServiceResult(result), pin};
+	std::string pin = getString(env, jsData);
+
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, getValueMethodID, result);
+	PersonalizationResult personalizationResult(getEidServiceResult(serviceResultCode), pin);
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, objField);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, obj);
+
+	return personalizationResult;
 }
 
 
@@ -512,46 +597,45 @@ PersonalizationResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine
  *
  * \return The status of the eID-Applet
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidStatus EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getSmartEidStatus() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidStatus EidAppletServiceAndroid::getSmartEidStatus() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return EidStatus::INTERNAL_ERROR;
 	}
 
-	jmethodID eIDStatusMethodID = curThreadEnv->GetMethodID(
+	jmethodID statusMethodID = env->GetMethodID(
 			mJniServiceClz,
 			jniService::eIDStatusMethod,
 			jniService::eIDStatusMethodSig);
 
-	jobject resultObj = curThreadEnv->CallObjectMethod(mJniServiceObj, eIDStatusMethodID);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	jobject resultObj = env->CallObjectMethod(mJniServiceObj, statusMethodID);
+	if (exceptionCheck(env)) {
 		return EidStatus::INTERNAL_ERROR;
 	}
 
-	//cast EidStatus to int
-	jclass statusClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniEidStatus::path);
-
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
+	jclass statusClass = findClass(env, mApplicationContext, jniEidStatus::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(
 			statusClass,
 			jniEidStatus::getValue,
 			jniEidStatus::sigGetValue);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
+	int statusCode = env->CallStaticIntMethod(
 			statusClass,
-			methodId,
+			getValueMethodID,
 			resultObj);
 
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidStatus::INTERNAL_ERROR;
 	}
 
-	return EidStatus(intResultCode);
+	deleteLocalRef(env, resultObj);
+	deleteLocalRef(env, statusClass);
+
+	return EidStatus(statusCode);
 }
 
 
@@ -559,48 +643,69 @@ EidStatus EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getSmartE
  * Provides information of available updates of the installed eID-Applet and/or CSP
  * implementation or whether the device is supported by TSMS.
  *
- * \return The Update-Info of the eID-Applet
+ * \return The Support-Info of the eID-Applet
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidUpdateInfo EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getUpdateInfo() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
-		return EidUpdateInfo::INTERNAL_ERROR;
+EidSupportStatusResult EidAppletServiceAndroid::getSmartEidSupportInfo() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
+		return {EidServiceResult::ERROR, EidSupportStatus::INTERNAL_ERROR};
 	}
 
-	jmethodID updateInfoMethodeId = curThreadEnv->GetMethodID(
+	jmethodID supportInfoMethodID = env->GetMethodID(
 			mJniServiceClz,
-			jniService::updateInfoMethod,
-			jniService::updateInfoMethodSig);
+			jniService::smartEidSupportInfo,
+			jniService::smartEidSupportInfoMethodSig);
 
-	jobject resultObj = curThreadEnv->CallObjectMethod(mJniServiceObj, updateInfoMethodeId);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
-		return EidUpdateInfo::INTERNAL_ERROR;
+	jobject resultObj = env->CallObjectMethod(mJniServiceObj, supportInfoMethodID);
+	if (exceptionCheck(env)) {
+		return {EidServiceResult::ERROR, EidSupportStatus::INTERNAL_ERROR};
 	}
 
-	//cast EidStatus to int
-	jclass statusClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniEidUpdateInfo::path);
+	auto clazz = env->GetObjectClass(resultObj);
 
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
-			statusClass,
-			jniEidUpdateInfo::getValue,
-			jniEidUpdateInfo::sigGetValue);
+	auto fidResult = env->GetFieldID(
+			clazz,
+			jniEidSupportStatusResult::result,
+			jniEidSupportStatusResult::resultType);
+	auto result = env->GetObjectField(resultObj, fidResult);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
-			statusClass,
-			methodId,
-			resultObj);
-
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
-		return EidUpdateInfo::INTERNAL_ERROR;
+	auto fidStatus = env->GetFieldID(
+			clazz,
+			jniEidSupportStatusResult::status,
+			jniEidSupportStatusResult::statusType);
+	auto status = env->GetObjectField(resultObj, fidStatus);
+	if (exceptionCheck(env)) {
+		return {EidServiceResult::ERROR, EidSupportStatus::INTERNAL_ERROR};
 	}
 
-	return EidUpdateInfo(intResultCode);
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID serviceResultGetValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, serviceResultGetValueMethodID, result);
+
+	jclass supportStatusClazz = findClass(env, mApplicationContext, jniEidSupportStatus::path);
+	jmethodID supportStatusGetValueMethodID = env->GetStaticMethodID(supportStatusClazz,
+			jniEidSupportStatus::getValue,
+			jniEidSupportStatus::sigGetValue);
+
+	int supportStatusCode = env->CallStaticIntMethod(supportStatusClazz,
+			supportStatusGetValueMethodID, status);
+	EidSupportStatusResult supportStatusResult(getEidServiceResult(serviceResultCode), getEidSupportStatus(supportStatusCode));
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, status);
+	deleteLocalRef(env, supportStatusClazz);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, resultObj);
+
+	return supportStatusResult;
 }
 
 
@@ -609,48 +714,46 @@ EidUpdateInfo EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getUp
  *
  * \return EidServiceResult
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::releaseAppletConnection() {
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+EidServiceResult EidAppletServiceAndroid::releaseAppletConnection() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return EidServiceResult::ERROR;
 	}
 
-	//call release method
-	jclass serviceClass = findClass(curThreadEnv, mApplicationContext, jniService::path);
-	jmethodID releaseAppletConnectionMethodId = curThreadEnv->GetMethodID(
-			serviceClass,
+	jmethodID releaseAppletConnectionMethodID = env->GetMethodID(
+			mJniServiceClz,
 			jniService::releaseAppletConnectionMethod,
 			jniService::releaseAppletConnectionMethodSig);
-	jobject resultCode = curThreadEnv->CallObjectMethod(
+	jobject resultCode = env->CallObjectMethod(
 			mJniServiceObj,
-			releaseAppletConnectionMethodId);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+			releaseAppletConnectionMethodID);
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	//cast ServiceResult to int
-	jclass serviceResultClass = findClass(
-			curThreadEnv,
-			mApplicationContext,
-			jniServiceResult::path);
-
-	jmethodID methodId = curThreadEnv->GetStaticMethodID(
+	jclass serviceResultClass = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(
 			serviceResultClass,
 			jniServiceResult::getValue,
 			jniServiceResult::sigGetValue);
 
-	int intResultCode = curThreadEnv->CallStaticIntMethod(
+	int serviceResultCode = env->CallStaticIntMethod(
 			serviceResultClass,
-			methodId,
+			getValueMethodID,
 			resultCode);
 
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return EidServiceResult::ERROR;
 	}
 
-	return EidServiceResult(intResultCode);
+	deleteLocalRef(env, resultCode);
+	deleteLocalRef(env, serviceResultClass);
+
+	return EidServiceResult(serviceResultCode);
 }
 
 
@@ -660,70 +763,167 @@ EidServiceResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::re
  * \return GenericDataResult mData is blank if mResult is equal to
  *              EidServiceResult::SUCCESS, otherwise it contains an error message
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-GenericDataResult EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::shutdownService() {
-	//get environment of current thread
-	JNIEnvironment* curThreadEnv;
-	ThreadGuard guard(mJvm);
-	if (!getJNIEnvForCurrentThread(curThreadEnv, guard)) {
+GenericDataResult EidAppletServiceAndroid::shutdownService() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
 		return {EidServiceResult::ERROR,
 				"Current thread of the caller could not be attached"};
 	}
 
-	jmethodID shutdownMethodID = curThreadEnv->GetMethodID(
+	jmethodID shutdownMethodID = env->GetMethodID(
 			mJniServiceClz,
 			jniService::shutdownMethod,
 			jniService::shutdownMethodSig);
-	if (exceptionCheck<JNIEnvironment>(curThreadEnv)) {
+	if (exceptionCheck(env)) {
 		return {EidServiceResult::ERROR,
 				"Couldn't shutdown eID Applet Service. Method not found."};
 	}
 
-	jobject obj = curThreadEnv->CallObjectMethod(mJniServiceObj, shutdownMethodID);
-	bool hasError = exceptionCheck<JNIEnvironment>(curThreadEnv);
-	if (hasError) {
-		return {EidServiceResult::ERROR,
-				"Couldn't shutdown eID Applet Service. Call of the shutdown function failed."};
+	jobject obj = env->CallObjectMethod(mJniServiceObj, shutdownMethodID);
+	if (exceptionCheck(env)) {
+		return {EidServiceResult::ERROR, "Couldn't shutdown eID Applet Service. Call of the shutdown function failed."};
 	}
 
-	curThreadEnv->DeleteGlobalRef(mJniServiceClz);
-	curThreadEnv->DeleteGlobalRef(mJniServiceObj);
-
-	auto clazz = curThreadEnv->GetObjectClass(obj);
-	auto fidResult = curThreadEnv->GetFieldID(
+	auto clazz = env->GetObjectClass(obj);
+	auto fidResult = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::result,
 			jniGenericDataResult::resultType);
-	int resultType = curThreadEnv->GetIntField(obj, fidResult);
+	auto resultType = env->GetObjectField(obj, fidResult);
 
-	auto fidData = curThreadEnv->GetFieldID(
+	auto fidData = env->GetFieldID(
 			clazz,
 			jniGenericDataResult::data,
 			jniGenericDataResult::dataType);
-	auto jsData = reinterpret_cast<jstring>(curThreadEnv->GetObjectField(obj, fidData));
-	std::string data = getString(curThreadEnv, jsData);
+	auto objField = env->GetObjectField(obj, fidData);
+	auto jsData = reinterpret_cast<jstring>(objField);
+	std::string data = getString(env, jsData);
 
-	return {getEidServiceResult(resultType), data};
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID getValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int serviceResultCode = env->CallStaticIntMethod(serviceResultClazz, getValueMethodID,
+			resultType);
+	GenericDataResult gDResult(getEidServiceResult(serviceResultCode), data);
+
+	deleteLocalRef(env, resultType);
+	deleteLocalRef(env, objField);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, obj);
+
+	return gDResult;
 }
 
 
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::ThreadGuard::ThreadGuard(JavaVirtualMachine* pJvm)
+ServiceInformationResult EidAppletServiceAndroid::getServiceInformation() {
+
+	const std::lock_guard<std::mutex> guard(serviceMutex);
+
+	JNIEnv* env;
+	ThreadGuard threadGuard(mJvm);
+	ServiceInformationResult mServiceInfoResult;
+	if (!getJNIEnvForCurrentThread(env, threadGuard) || mApplicationContext == nullptr || mJniServiceClz == nullptr || mJniServiceObj == nullptr) {
+		mServiceInfoResult.mResult = EidServiceResult::ERROR;
+		return mServiceInfoResult;
+	}
+
+	jmethodID updateInfoMethodID = env->GetMethodID(
+			mJniServiceClz,
+			jniService::getServiceInformationMethod,
+			jniService::getServiceInformationMethodSig);
+
+	jobject resultObj = env->CallObjectMethod(mJniServiceObj, updateInfoMethodID);
+	if (exceptionCheck(env)) {
+		mServiceInfoResult.mResult = EidServiceResult::ERROR;
+		return mServiceInfoResult;
+	}
+
+	auto clazz = env->GetObjectClass(resultObj);
+
+	auto fidResult = env->GetFieldID(
+			clazz,
+			jniServiceInformationResult::result,
+			jniServiceInformationResult::resultType);
+	auto result = env->GetObjectField(resultObj, fidResult);
+	jclass serviceResultClazz = findClass(env, mApplicationContext, jniServiceResult::path);
+	jmethodID gatValueMethodID = env->GetStaticMethodID(serviceResultClazz,
+			jniServiceResult::getValue,
+			jniServiceResult::sigGetValue);
+
+	int returnValue = env->CallStaticIntMethod(serviceResultClazz, gatValueMethodID, result);
+
+	mServiceInfoResult.mResult = static_cast<EidServiceResult>(returnValue);
+
+	auto fidEidType = env->GetFieldID(
+			clazz,
+			jniServiceInformationResult::eidType,
+			jniServiceInformationResult::eidTypeType);
+
+	auto eidType = env->GetObjectField(resultObj, fidEidType);
+	jclass eidTypeClazz = findClass(env, mApplicationContext, jniSmartEidType::path);
+	jmethodID eidTypeStaticMethodID = env->GetStaticMethodID(eidTypeClazz,
+			jniSmartEidType::getValue,
+			jniSmartEidType::sigGetValue);
+
+	int eidTypeValue = env->CallStaticIntMethod(eidTypeClazz, eidTypeStaticMethodID,
+			eidType);
+
+	mServiceInfoResult.mType = static_cast<SmartEidType>(eidTypeValue);
+
+	auto fidChallenge = env->GetFieldID(
+			clazz,
+			jniServiceInformationResult::challengeData,
+			jniServiceInformationResult::challengeDataType);
+
+	auto challegeField = env->GetObjectField(resultObj, fidChallenge);
+	auto jsData = reinterpret_cast<jstring>(challegeField);
+	std::string challenge = getString(env, jsData);
+	mServiceInfoResult.mChallengeType = challenge;
+
+	auto fidLibVersionName = env->GetFieldID(
+			clazz,
+			jniServiceInformationResult::libVersionName,
+			jniServiceInformationResult::libVersionNameType);
+
+	auto versionNameField = env->GetObjectField(resultObj, fidLibVersionName);
+	auto jsVersionName = reinterpret_cast<jstring>(versionNameField);
+	std::string versionName = getString(env, jsVersionName);
+	mServiceInfoResult.mLibVersionName = versionName;
+
+	deleteLocalRef(env, result);
+	deleteLocalRef(env, eidType);
+	deleteLocalRef(env, challegeField);
+	deleteLocalRef(env, versionNameField);
+	deleteLocalRef(env, serviceResultClazz);
+	deleteLocalRef(env, clazz);
+	deleteLocalRef(env, resultObj);
+	deleteLocalRef(env, eidTypeClazz);
+
+	return mServiceInfoResult;
+}
+
+
+EidAppletServiceAndroid::ThreadGuard::ThreadGuard(JavaVM* pJvm)
 	: mJvm(pJvm)
 	, mDoDetach(false) {
 }
 
 
-template<class JNIEnvironment, class JavaVirtualMachine>
-EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::ThreadGuard::~ThreadGuard() {
-	if (mDoDetach) {
+EidAppletServiceAndroid::ThreadGuard::~ThreadGuard() {
+	if (mDoDetach && mJvm) {
 		mJvm->DetachCurrentThread();
 	}
 }
 
 
-template<class JNIEnvironment, class JavaVirtualMachine>
-void EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::ThreadGuard::doDetach() {
+void EidAppletServiceAndroid::ThreadGuard::doDetach() {
 	mDoDetach = true;
 }
 
@@ -734,11 +934,10 @@ void EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::ThreadGuard::d
  * var env of the class is attached to another thread.
  *
  * \param _env the JNIEnv of the current thread (out param)
- * \param guard who can be ordered to detach the current thread on destruction
+ * \param threadGuard who can be ordered to detach the current thread on destruction
  * \return true = success, false = error
  */
-template<class JNIEnvironment, class JavaVirtualMachine>
-bool EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getJNIEnvForCurrentThread(JNIEnvironment*& _env, ThreadGuard& guard) {
+bool EidAppletServiceAndroid::getJNIEnvForCurrentThread(JNIEnv*& _env, ThreadGuard& threadGuard) {
 	int getEnvResult = mJvm->GetEnv(reinterpret_cast<void**>(&_env), JNI_VERSION_1_6);
 	if (getEnvResult == JNI_OK) {
 		return true;
@@ -750,14 +949,10 @@ bool EidAppletServiceAndroid<JNIEnvironment, JavaVirtualMachine>::getJNIEnvForCu
 #else
 		int attachResult = mJvm->AttachCurrentThread(reinterpret_cast<void**>(&mEnv), nullptr);
 #endif
-		guard.doDetach();
+		threadGuard.doDetach();
 
 		return attachResult == JNI_OK;
 	}
 
 	return false;
 }
-
-
-//Needed so the linker knows what kinda instance of the template class we need otherwise this .cpp cant be linked to the .h!
-template class EidAppletServiceAndroid<JNIEnv, JavaVM>;

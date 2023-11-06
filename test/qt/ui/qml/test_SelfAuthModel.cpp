@@ -117,6 +117,18 @@ class test_SelfAuthModel
 		}
 
 
+		void test_WorkflowCancelled()
+		{
+			QSignalSpy spy(mModel, &SelfAuthModel::fireCancelWorkflow);
+
+			mModel->resetContext(mContext);
+			QCOMPARE(mModel->isWorkflowCancelled(), false);
+			mModel->cancelWorkflow();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(mModel->isWorkflowCancelled(), true);
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_SelfAuthModel)

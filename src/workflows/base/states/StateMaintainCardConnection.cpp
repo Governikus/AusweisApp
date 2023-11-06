@@ -12,6 +12,26 @@ Q_DECLARE_LOGGING_CATEGORY(statemachine)
 using namespace governikus;
 
 
+void StateMaintainCardConnection::handleWrongPacePassword()
+{
+	auto context = getContext();
+
+	qCDebug(statemachine) << "Resetting all PACE passwords.";
+	context->resetPacePasswords();
+
+	if (context->getCardConnection())
+	{
+		qCDebug(statemachine) << "Trigger retry counter update.";
+		Q_EMIT fireForceUpdateRetryCounter();
+	}
+	else
+	{
+		qCDebug(statemachine) << "No card connection available.";
+		Q_EMIT fireNoCardConnection();
+	}
+}
+
+
 StateMaintainCardConnection::StateMaintainCardConnection(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
@@ -36,7 +56,6 @@ void StateMaintainCardConnection::run()
 	{
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
 		case CardReturnCode::INPUT_TIME_OUT:
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::UNDEFINED:
@@ -68,19 +87,7 @@ void StateMaintainCardConnection::run()
 		{
 			Q_ASSERT(CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
 
-			qCDebug(statemachine) << "Resetting all PACE passwords.";
-			context->resetPacePasswords();
-
-			if (context->getCardConnection())
-			{
-				qCDebug(statemachine) << "Trigger retry counter update.";
-				Q_EMIT fireForceUpdateRetryCounter();
-			}
-			else
-			{
-				qCDebug(statemachine) << "No card connection available.";
-				Q_EMIT fireNoCardConnection();
-			}
+			handleWrongPacePassword();
 			return;
 		}
 

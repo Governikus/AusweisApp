@@ -25,6 +25,7 @@ class StatePreparePace
 
 	private:
 		explicit StatePreparePace(const QSharedPointer<WorkflowContext>& pContext);
+		void handleRetryCounter(int pRetryCounter);
 		void run() override;
 
 		bool requestPaceCanIfStillRequired();

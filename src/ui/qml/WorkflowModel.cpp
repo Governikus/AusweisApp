@@ -37,7 +37,7 @@ WorkflowModel::WorkflowModel(QObject* pParent)
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::onReaderManagerSignal);
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::onReaderManagerSignal);
-	connect(Env::getSingleton<SmartModel>(), &SmartModel::fireSmartStateChanged, this, &WorkflowModel::fireIsSmartCardAllowedChanged);
+	connect(Env::getSingleton<SmartModel>(), &SmartModel::fireSmartStateChanged, this, &WorkflowModel::fireIsCurrentSmartCardAllowedChanged);
 
 	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireApplicationStateChanged, this, &WorkflowModel::onApplicationStateChanged);
 
@@ -53,18 +53,23 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 	if (mContext)
 	{
 		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &WorkflowModel::fireCurrentStateChanged);
+		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &WorkflowModel::fireStateEntered);
 		connect(mContext.data(), &WorkflowContext::fireResultChanged, this, &WorkflowModel::fireResultChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &WorkflowModel::fireReaderPlugInTypeChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &WorkflowModel::fireHasCardChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireSelectedReaderChanged);
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &WorkflowModel::fireHasCardChanged);
-		connect(mContext.data(), &WorkflowContext::fireIsSmartCardAllowedChanged, this, &WorkflowModel::fireIsSmartCardAllowedChanged);
+		connect(mContext.data(), &WorkflowContext::fireEidTypeMismatchChanged, this, &WorkflowModel::fireIsCurrentSmartCardAllowedChanged);
+		connect(mContext.data(), &WorkflowContext::fireEidTypeMismatchChanged, this, &WorkflowModel::fireEidTypeMismatchErrorChanged);
 		connect(mContext.data(), &WorkflowContext::fireNextWorkflowPending, this, &WorkflowModel::fireNextWorkflowPendingChanged);
 		connect(mContext.data(), &WorkflowContext::fireRemoveCardFeedbackChanged, this, &WorkflowModel::fireRemoveCardFeedbackChanged);
+		Q_EMIT fireWorkflowStarted();
+	}
+	else
+	{
+		Q_EMIT fireWorkflowFinished();
 	}
 
-	/*
-	 * Only this state change is emitted when the context is reset, i.e. after the end of the workflow
-	 */
 	Q_EMIT fireCurrentStateChanged(getCurrentState());
 	Q_EMIT fireResultChanged();
 }
@@ -118,7 +123,7 @@ void WorkflowModel::setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInTyp
 }
 
 
-void WorkflowModel::insertCard(ReaderManagerPlugInType pType)
+void WorkflowModel::insertCard(ReaderManagerPlugInType pType) const
 {
 	auto* const readerManager = Env::getSingleton<ReaderManager>();
 	const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({pType}));
@@ -204,35 +209,10 @@ bool WorkflowModel::hasCard() const
 }
 
 
-bool WorkflowModel::isSmartCardAllowed() const
+bool WorkflowModel::isCurrentSmartCardAllowed() const
 {
-	if (!mContext)
-	{
-		return false;
-	}
-
-	MobileEidType mobileEidType = Env::getSingleton<SmartModel>()->getMobileEidType();
-	if (mobileEidType == MobileEidType::UNKNOWN)
-	{
-		return false;
-	}
-
-	const auto& acceptedEidTypes = mContext->getAcceptedEidTypes();
-	switch (mobileEidType)
-	{
-		case MobileEidType::SE_CERTIFIED:
-			return acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED);
-
-		case MobileEidType::SE_ENDORSED:
-			return acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED);
-
-		case MobileEidType::HW_KEYSTORE:
-			return acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE);
-
-		case MobileEidType::UNKNOWN:
-			return false;
-	}
-	Q_UNREACHABLE();
+	const auto& mobileEidType = Env::getSingleton<SmartModel>()->getMobileEidType();
+	return mContext && mContext->isMobileEidTypeAllowed(mobileEidType);
 }
 
 
@@ -277,6 +257,56 @@ QString WorkflowModel::getReaderImage() const
 }
 
 
+QString WorkflowModel::getStatusCodeImage() const
+{
+	switch (getStatusCode())
+	{
+		case GlobalStatus::Code::Network_ServiceUnavailable:
+		case GlobalStatus::Code::Network_ServerError:
+		case GlobalStatus::Code::Network_ClientError:
+		case GlobalStatus::Code::Network_Ssl_Establishment_Error:
+		case GlobalStatus::Code::Network_TimeOut:
+		case GlobalStatus::Code::Network_Proxy_Error:
+		case GlobalStatus::Code::Network_Other_Error:
+			return QStringLiteral("qrc:///images/workflow_error_network_%1.svg");
+
+		case GlobalStatus::Code::Paos_Generic_Server_Error:
+		case GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity:
+		case GlobalStatus::Code::Card_Not_Found:
+		case GlobalStatus::Code::Card_Communication_Error:
+		case GlobalStatus::Code::Card_Protocol_Error:
+		case GlobalStatus::Code::Card_Unexpected_Transmit_Status:
+		case GlobalStatus::Code::Card_Cancellation_By_User:
+		case GlobalStatus::Code::Card_Input_TimeOut:
+		case GlobalStatus::Code::Card_Pin_Deactivated:
+		case GlobalStatus::Code::Card_Pin_Blocked:
+		case GlobalStatus::Code::Card_Pin_Not_Blocked:
+		case GlobalStatus::Code::Card_NewPin_Mismatch:
+		case GlobalStatus::Code::Card_NewPin_Invalid_Length:
+		case GlobalStatus::Code::Card_ValidityVerificationFailed:
+			return QStringLiteral("qrc:///images/workflow_error_card_%1.svg");
+
+		case GlobalStatus::Code::Card_Invalid_Pin:
+			return QStringLiteral("qrc:///images/workflow_error_wrong_pin_%1.svg");
+
+		case GlobalStatus::Code::Card_Invalid_Can:
+			return QStringLiteral("qrc:///images/workflow_error_wrong_can_%1.svg");
+
+		case GlobalStatus::Code::Card_Invalid_Puk:
+			return QStringLiteral("qrc:///images/workflow_error_wrong_puk_%1.svg");
+
+		case GlobalStatus::Code::Card_Puk_Blocked:
+			return QStringLiteral("qrc:///images/workflow_error_puk_blocked_%1.svg");
+
+		case GlobalStatus::Code::No_Error:
+			return QStringLiteral("qrc:///images/status_ok_%1.svg");
+
+		default:
+			return QStringLiteral("qrc:///images/status_error_%1.svg");
+	}
+}
+
+
 QString WorkflowModel::getStatusHintText() const
 {
 	switch (getStatusCode())
@@ -289,6 +319,10 @@ QString WorkflowModel::getStatusHintText() const
 
 		case GlobalStatus::Code::Card_ValidityVerificationFailed:
 			return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
+
+		case GlobalStatus::Code::Card_Smart_Invalid:
+			//: LABEL ANDROID IOS The hint text that is shwon right above the redirect button that appears when a user tried to usa an unusable Smart-eID
+			return tr("Renew your Smart-eID and set a new PIN in the Smart-eID menu.");
 
 		default:
 			return QString();
@@ -306,6 +340,10 @@ QString WorkflowModel::getStatusHintActionText() const
 		case GlobalStatus::Code::Card_Pin_Deactivated:
 			return Env::getSingleton<PinResetInformationModel>()->getActivateOnlineFunctionActionText();
 
+		case GlobalStatus::Code::Card_Smart_Invalid:
+			//: LABEL ANDROID IOS The text on the redirect button that appears when the user tried to use an unusable Smart-eID
+			return tr("Go to Smart-eID menu");
+
 		default:
 			return QString();
 	}
@@ -319,6 +357,10 @@ bool WorkflowModel::invokeStatusHintAction()
 		case GlobalStatus::Code::Card_Puk_Blocked:
 		case GlobalStatus::Code::Card_Pin_Deactivated:
 			QDesktopServices::openUrl(Env::getSingleton<PinResetInformationModel>()->getPinResetUrl());
+			return true;
+
+		case GlobalStatus::Code::Card_Smart_Invalid:
+			Q_EMIT fireShowUiRequest(UiModule::SMART_EID);
 			return true;
 
 		default:
@@ -395,7 +437,7 @@ QString WorkflowModel::getEmailHeader() const
 		return QString();
 	}
 
-	return tr("AusweisApp2 error report - %1").arg(mContext->getStatus().toErrorDescription());
+	return tr("%1 error report - %2").arg(QCoreApplication::applicationName(), mContext->getStatus().toErrorDescription());
 }
 
 
@@ -440,7 +482,7 @@ void WorkflowModel::onApplicationStateChanged(bool pIsAppInForeground)
 	}
 	else
 	{
-		mRemoteScanWasRunning = Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::REMOTE_IFD);
+		mRemoteScanWasRunning = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::REMOTE_IFD).isScanRunning();
 		if (mRemoteScanWasRunning)
 		{
 			Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::REMOTE_IFD);
@@ -481,4 +523,30 @@ void WorkflowModel::onReaderManagerSignal()
 	}
 
 	Q_EMIT fireHasCardChanged();
+}
+
+
+QString WorkflowModel::eidTypeMismatchError() const
+{
+	if (mContext && mContext->eidTypeMismatch())
+	{
+		if (mContext->isSmartCardUsed())
+		{
+			if (mContext->getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED))
+			{
+				//: INFO ALL_PLATFORMS
+				return tr("The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.");
+			}
+			else
+			{
+				//: INFO ALL_PLATFORMS
+				return tr("The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.");
+			}
+		}
+
+		//: INFO ALL_PLATFORMS
+		return tr("The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.");
+	}
+
+	return QString();
 }

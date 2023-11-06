@@ -1,5 +1,4 @@
 {
-	"$schema": "../json-schemas/supported-providers.json",
 	"callcosts": [
 		{
 			"prefixes": [
@@ -477,32 +476,17 @@
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
 		},
 		{
-			"shortName": {
-				"": "Bürgerservice-Portal Krz"
-			},
-			"longName": {
-				"": "Bürgerservice-Portal Kommunales Rechenzentrum Minden-Ravensberg/Lippe"
-			},
-			"address": "https://www.buergerserviceportal.nrw/krz",
-			"homepage": "https://www.buergerserviceportal.nrw",
-			"email": "bsp@support.krz.de",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.buergerserviceportal.nrw"
-			]
-		},
-		{
 			"eidSupport": false,
 			"shortName": {
-				"": "Bürgerservice-Portal Kreis Herford"
+				"": "Kreis Herford - Internetbasierte Fahrzeugzulassung"
 			},
 			"longName": {
-				"": "Bürgerservice-Portal Kreis Herford"
+				"": "Kreis Herford - Internetbasierte Fahrzeugzulassung"
 			},
 			"longDescription": {
 				"": "In unserem Bürgerservice-Portal können Sie Anträge an die Kreisverwaltung Herford online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."
 			},
-			"address": "https://www.buergerserviceportal.nrw/krz/lkrherford",
+			"address": "https://www.kreis-herford.de/i-KFZ-Stufe 4",
 			"homepage": "https://www.kreis-herford.de",
 			"phone": "+49 5223 988 500",
 			"email": "portal@kreis-herford.de",
@@ -515,15 +499,15 @@
 		{
 			"eidSupport": false,
 			"shortName": {
-				"": "Bürgerservice-Portal Kreis Minden-Lübbecke"
+				"": "Kreis Minden-Lübbecke - Internetbasierte Fahrzeugzulassung"
 			},
 			"longName": {
-				"": "Bürgerservice-Portal Kreis Minden-Lübbecke"
+				"": "Kreis Minden-Lübbecke - Internetbasierte Fahrzeugzulassung"
 			},
 			"longDescription": {
 				"": "In unserem Portal können Sie Ihren Antrag an den Kreis Minden-Lübbecke direkt online erfassen und elektronisch übermitteln."
 			},
-			"address": "https://www.buergerserviceportal.nrw/krz/mindenluebbecke",
+			"address": "https://www.minden-luebbecke.de/online-zulassung",
 			"homepage": "https://www.minden-luebbecke.de",
 			"phone": "+49 571 807 0",
 			"email": "info@minden-luebbecke.de",
@@ -682,20 +666,19 @@
 				"": "Deutsche Rentenversicherung"
 			},
 			"longName": {
-				"": "Deutsche Rentenversicherung"
+				"": "Kundenportal der Deutschen Rentenversicherung"
 			},
 			"longDescription": {
-				"": "Mit der Online-Ausweisfunktion im neuen Personalausweis können Sie ...<br/><ul><li>auf Informationen Ihres Rentenkontos im Kundenbereich ,eService' sicher zugreifen (z. B. Versicherungsverlauf und Beitragsrechnung),</li><li>Ihre Rentenauskunft online abrufen,</li><li>schnell und einfach Ihre persönlichen Daten ändern (z. B. Ihre Adresse und Bankverbindung).</li></ul>"
+				"": "Im Kundenportal konsolidiert die Deutsche Rentenversicherung verschiedene Online-Services übersichtlich an einem Ort und bietet Ihnen über eine sichere Authentifizierung den Zugriff auf Ihren persönlichen Bereich. Dort können Sie ihre Daten und Dokumente jederzeit selbständig, einfach und flexibel verwalten sowie mittels dem ePostfach elektronisch mit der Deutschen Rentenversicherung kommunizieren."
 			},
-			"address": "https://www.eservice-drv.de/OnlineDiensteWeb/init.do?npa=true&src=ausweisapp",
+			"address": "https://kundenportal.deutsche-rentenversicherung.de",
 			"homepage": "https://www.deutsche-rentenversicherung.de",
 			"phone": "+49 800 100 048070",
 			"email": "Online-Dienste@deutsche-rentenversicherung.de",
-			"postalAddress": "Ruhrstraße 2<br/>10709 Berlin",
+			"postalAddress": "Deutsche Rentenversicherung Bund<br/>Hohenzollerndamm 45 - 47<br/>10713 Berlin",
+			"icon": "DRV_icon.png",
 			"category": "citizen",
-			"subjectUrls": [
-				"https://www.eservice-drv.de"
-			]
+			"subjectUrlInfo": "Using service from Digitale Rentenübersicht (https://login.deutsche-rentenversicherung.de)."
 		},
 		{
 			"eidSupport": false,
@@ -911,6 +894,26 @@
 		},
 		{
 			"shortName": {
+				"": "Landeshauptstadt Potsdam - iKFZ"
+			},
+			"longName": {
+				"": "Landeshauptstadt Potsdam - Internetbasierte Fahrzeugzulassung"
+			},
+			"longDescription": {
+				"": "Mit der internetbasierten Fahrzeugzulassung (iKFZ) kann der gesamte Lebenszyklus Ihres Fahrzeuges aus zulassungsrechtlicher Sicht online abgewickelt werden, von der Neuzulassung bis zur Außerbetriebsetzung. Ohne Wartezeit oder Gang zur Kfz-Zulassungsbehörde.<br/><br/>Das Land Brandenburg hat dafür ein zentrales Portal geschaffen. Dort finden Sie alle teilnehmenden Zulassungsbehörden. Außerdem finden Sie dort weiterführende Erklärungen und Videos sowie die Voraussetzungen zur Nutzung des Services."
+			},
+			"address": "https://ikfz.brandenburg.de/ikfz/de/kfz-zulassungsbehoerden/p-potsdam",
+			"homepage": "https://ikfz.brandenburg.de/ikfz/de",
+			"phone": "+49 331 289 3297",
+			"email": "zulassungsstelle@rathaus.potsdam.de",
+			"postalAddress": "Landeshauptstadt Potsdam<br/>Bereich Bürgerservice<br/><br/>Kfz-Zulassungsbehörde<br/>Friedrich-Ebert-Str. 79/81<br/>14469 Potsdam",
+			"image": "Potsdam_image.png",
+			"icon": "Potsdam_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+		},
+		{
+			"shortName": {
 				"": "Digitaler Bürgerservice Stadt Leipzig"
 			},
 			"longDescription": {
@@ -1013,6 +1016,26 @@
 		},
 		{
 			"shortName": {
+				"": "Online-Dienste Kreis Steinfurt"
+			},
+			"longName": {
+				"": "Online-Dienste des Kreis Steinfurt"
+			},
+			"longDescription": {
+				"": "Einige Leistungen können beim Kreis Steinfurt direkt online beantragt werden. Ein schriftlicher Antrag oder ein Behördengang kann damit entfallen."
+			},
+			"address": "https://www.kreis-steinfurt.de/kv_steinfurt/live/Kreisverwaltung/Online-Dienste",
+			"homepage": "https://www.kreis-steinfurt.de",
+			"phone": "+49 2551 69 0",
+			"email": "post@kreis-steinfurt.de",
+			"postalAddress": "Kreis Steinfurt<br/>Tecklenburger Straße 10<br/>48565 Steinfurt",
+			"image": "KreisSteinfurt_image.jpg",
+			"icon": "KreisSteinfurt_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+		},
+		{
+			"shortName": {
 				"": "Serviceportal Solingen"
 			},
 			"longName": {
@@ -1029,25 +1052,6 @@
 			"icon": "KlingenstadtSolingen_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
-		},
-		{
-			"shortName": {
-				"": "Online-Portal Kreis Lippe"
-			},
-			"longName": {
-				"": "Online-Portal des Kreis Lippe"
-			},
-			"longDescription": {
-				"": "Mit der Online-Ausweisfunktion können Sie sich am Bürgerportal des Kreises Lippe registrieren, anmelden und den Online-Service 'Elternbeiträge' nutzen. Als Eltern können Sie nach der einmaligen Registrierung<br/><ul><li>Ihre Selbsteinschätzung für den Elternbeitrag online einreichen,</li><li>den Bearbeitungsstand nachverfolgen,</li><li>Bescheide elektronisch im Dokumentenbereich empfangen.</li></ul>"
-			},
-			"address": "https://portal.kreis-lippe.de",
-			"homepage": "https://portal.kreis-lippe.de",
-			"phone": "+49 5231 62 0",
-			"postalAddress": "Kreis Lippe<br/>Felix-Fechenbach-Str. 5<br/>32756 Detmold",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://egov-services.krz.de"
-			]
 		},
 		{
 			"shortName": {
@@ -1087,9 +1091,7 @@
 			"category": "citizen",
 			"image": "Hameln-Pyrmont_image.png",
 			"icon": "Hameln-Pyrmont_icon.png",
-			"subjectUrls": [
-				"https://idp.servicekonto.niedersachsen.de"
-			]
+			"subjectUrlInfo": "Using service from Servicekonto Niedersachsen (https://idp.servicekonto.niedersachsen.de)."
 		},
 		{
 			"shortName": {
@@ -1178,8 +1180,8 @@
 			"longDescription": {
 				"": "In diesem Portal haben Sie die Möglichkeit, Dienstleistungen Ihrer Zulassungsbehörde online zu beantragen und abzuwickeln. Kernbestandteil des Portals ist die internetbasierte Fahrzeugzulassung (i-Kfz)."
 			},
-			"address": "https://buergerportal.merzig-wadern.de/kfz",
-			"homepage": "https://buergerportal.merzig-wadern.de",
+			"address": "https://www.buergerservice-portal.de/saarland/lkrmerzigwadern",
+			"homepage": "https://www.merzig-wadern.de",
 			"phone": "+49 6861 80 101",
 			"email": "info@merzig-wadern.de",
 			"postalAddress": "Landkreis Merzig-Wadern<br/>Bahnhofstraße 44<br/>66663 Merzig",
@@ -1506,7 +1508,7 @@
 				"": "Selbstauskunft/ 'Meine Daten einsehen'"
 			},
 			"longDescription": {
-				"": "Die AusweisApp2 verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus GmbH & Co. KG, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp2 angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."
+				"": "Die AusweisApp verfügt über die Funktion 'Meine Daten einsehen'. Mit dieser Funktion können Sie eine Test-Authentisierung durchführen und die auf dem Personalausweis, elektronischen Aufenthaltstitel oder der eID-Karte gespeicherten Daten auslesen. Sie können also eine Selbstauskunft durchführen.<br/><br/>Der App-Hersteller, die Governikus GmbH & Co. KG, bietet diesen Dienst an und erscheint daher als Anbieter, bei dem Sie sich ausweisen möchten. Nach Eingabe Ihrer PIN und erfolgreicher Datenübertragung werden Ihnen Ihre persönlichen Ausweis-Daten in der AusweisApp angezeigt. Hierbei handelt es sich um einen reinen Demonstrationsdienst, d.h. die ausgelesenen Daten werden lediglich zur Anzeige gebracht und weder gespeichert noch weitergegeben."
 			},
 			"address": "https://www.ausweisapp.bund.de/aa2/download",
 			"homepage": "https://www.ausweisapp.bund.de",
@@ -1531,7 +1533,7 @@
 			"longDescription": {
 				"": "Das Service-Portal bietet Online-Dienste rund um die KFZ-Zulassung. Sie können Ihr Auto z.B. online abmelden. Weitere Angebote wie die komplette online KFZ-Wiederzulassung und -Zulassung sind im Aufbau."
 			},
-			"address": "https://www.buergerserviceportal.nrw/krz/lkrlippe",
+			"address": "https://www.kreis-lippe.de/kreis-lippe/verwaltung-und-service/buergerservice/kreisverwaltung/ikfz-service.php",
 			"homepage": "https://www.kreis-lippe.de",
 			"phone": "+49 5231 62 0",
 			"email": "stva@kreis-lippe.de",
@@ -1993,12 +1995,12 @@
 				"": "Mit sign-me, dem digitalen Service für Ihre sichere Online-Unterschrift, wickeln Sie Ihre papierbasierten Unterschriftsprozesse durchgängig elektronisch ab. Ob Sie europaweit Dokumente austauschen, Transaktionen absichern oder Verträge unterschreiben wollen - mit dem digitalen Signaturservice ist dies möglich: online, komfortabel und rechtsverbindlich. Mit sign-me senken Sie Kosten, optimieren Workflows, verringern Abbruchraten bei Vertragsabschlüssen und verbessern die Kundenzufriedenheit. sign-me ermöglicht die Nutzung aller Signaturniveaus der eIDAS-Verordnung - von der einfachen über die fortgeschrittene bis hin zur qualifizierten Online-Unterschrift. Letztere erfüllt das Schriftformerfordernis und ist in der Rechtswirkung der handschriftlichen Unterschrift gleichgestellt."
 			},
 			"address": "https://cloud.sign-me.de/signature/start",
-			"homepage": "https://www.bundesdruckerei.de/de/loesungen/sign-me",
+			"homepage": "https://www.d-trust.net/de/loesungen/sign-me",
 			"image": "SignMe_image.jpg",
 			"icon": "SignMe_icon.png",
 			"phone": "+49 30 25980",
 			"email": "vertrieb@d-trust.net",
-			"postalAddress": "Bundesdruckerei GmbH<br/>Kommandantenstraße 18<br/>10969 Berlin",
+			"postalAddress": "D-Trust GmbH<br/>Kommandantenstraße 15<br/>10969 Berlin",
 			"category": "other",
 			"subjectUrlInfo": "Using service from AusweisIDent (https://ausweisident.eid-service.de)."
 		},
@@ -2083,6 +2085,26 @@
 			"icon": "StadtHannover_icon.svg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+		},
+		{
+			"shortName": {
+				"": "Service-Portal der Stadt Herborn"
+			},
+			"longName": {
+				"": "Service-Portal der Stadt Herborn"
+			},
+			"longDescription": {
+				"": "Die Stadt Herborn bietet eine Vielzahl von Dienstleistungen an, die online abgewickelt werden können. Dieses Portal bietet einen jederzeit aktuellen Überblick über die zur Verfügung stehenden Dienste."
+			},
+			"address": "https://www.herborn.de/rathaus-politik/dienstleistungen-von-a-z/?online_only",
+			"homepage": "https://www.herborn.de",
+			"phone": "+49 2772 708 0",
+			"email": "info@herborn.de",
+			"postalAddress": "Magistrat der Stadt Herborn<br/>Hauptstraße 39<br/>35745 Herborn",
+			"image": "StadtHerborn_image.png",
+			"icon": "StadtHerborn_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Führungszeugnis und Auskunft aus dem Gewerbezentralregister (https://www.fuehrungszeugnis.bund.de)."
 		},
 		{
 			"shortName": {
@@ -2197,33 +2219,14 @@
 			"longDescription": {
 				"": "Der Unterhaltsvorschuss ist eine staatliche Leistung für Kinder von Alleinerziehenden. Er hilft, die finanzielle Lebensgrundlage Ihres Kindes zu sichern, wenn der andere Elternteil nicht oder nur teilweise oder nicht regelmäßig Unterhalt in Höhe des Unterhaltsvorschusses zahlt. Sie können Unterhaltsvorschuss mit diesem Online-Dienst oder mit dem Papierantrag in Ihrer zuständigen Unterhaltsvorschuss-Stelle beantragen. Bitte beachten Sie, dass der Onlineantrag Unterhaltsvorschuss Online noch nicht in allen deutschen UV-Stellen verfügbar ist."
 			},
-			"address": "https://serviceportal.gemeinsamonline.de/Onlinedienste/Service/Entry/UVORSCHUSS",
-			"homepage": "https://www.finanzen.bremen.de/digitalisierung/nachnutzbare-ozg-services/uvo-108593",
-			"email": "betrieb-onlinedienste@finanzen.bremen.de",
+			"address": "https://www.unterhaltsvorschuss-online.de",
+			"homepage": "https://www.unterhaltsvorschuss-online.de",
 			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
 			"category": "citizen",
 			"icon": "UVO_icon.svg",
 			"subjectUrls": [
 				"https://idp.serviceportal.gemeinsamonline.de"
 			]
-		},
-		{
-			"shortName": {
-				"": "UVOJahr"
-			},
-			"longName": {
-				"": "Unterhaltsvorschuss - Jährliche Überprüfung"
-			},
-			"longDescription": {
-				"": "Viele Kinder Alleinerziehender erhalten Unterhaltsvorschuss. Die Unterhaltsvorschuss-Stelle muss jährlich prüfen, ob dem Kind der Unterhaltsvorschuss noch zusteht. Hier können Bürgerinnen und Bürger die notwendigen Angaben machen. Bitte beachten Sie, dass der Onlineantrag Unterhaltsvorschuss Online noch nicht in allen deutschen UV-Stellen verfügbar ist."
-			},
-			"address": "https://serviceportal.gemeinsamonline.de/Onlinedienste/Service/Entry/UVOJAHR",
-			"homepage": "https://www.finanzen.bremen.de/digitalisierung/nachnutzbare-ozg-services/uvo-108593",
-			"email": "betrieb-onlinedienste@finanzen.bremen.de",
-			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
-			"category": "citizen",
-			"icon": "UVOJahr_icon.svg",
-			"subjectUrlInfo": "Using service from Unterhaltsvorschuss Online (https://idp.serviceportal.gemeinsamonline.de)."
 		},
 		{
 			"eidSupport": false,
@@ -2413,7 +2416,7 @@
 			"homepage": "https://www.oberhausen.de",
 			"email": "info@oberhausen.de",
 			"longDescription": {
-				"": "Im Serviceportal der Stadt Oberhausen finden Sie alle Online-Leistungen der Stadtverwaltung, von der Beantragung einer Personenstandsurkunde über die Anmeldung eines Autos bis zur Beantragung eines Bewohnerparkausweises. Einzelne Leistungen erfordern hierbei auch die Authentifizierung mit dem elektronischen Personalausweis und der AusweisApp2."
+				"": "Im Serviceportal der Stadt Oberhausen finden Sie alle Online-Leistungen der Stadtverwaltung, von der Beantragung einer Personenstandsurkunde über die Anmeldung eines Autos bis zur Beantragung eines Bewohnerparkausweises. Einzelne Leistungen erfordern hierbei auch die Authentifizierung mit dem elektronischen Personalausweis und der AusweisApp."
 			},
 			"postalAddress": "Stadt Oberhausen<br/>Schwartzstraße 72<br/>46042 Oberhausen",
 			"icon": "StadtOberhausen_icon.png",
@@ -2473,12 +2476,49 @@
 			"homepage": "https://www.augsburg.de",
 			"email": "augsburg@augsburg.de",
 			"longDescription": {
-				"": "Für viele Leistungen ist der Weg ins Amt nicht nötig: Sie können zahlreiche Leistungen online beantragen und falls nötig bequem von zu Hause aus bezahlen. Eine Liste der Online-Services finden Sie auf der Webseite der Stadt Augsburg.<br/><br/>Voraussetzung für einige Online-Services ist die BayernID. Zur Registrierung können Sie Ihren Online-Ausweis mit dazugehöriger PIN, einem geeigneten Smartphone oder Tablet und der installierten AusweisApp2 nutzen.<br/><br/>Informationen zur Registrierung in der BayernID können Sie nachlesen (https://id.bayernportal.de/).<br/><br/>Ein Beispiel ist die internetbasierte Fahrzeugzulassung und Fahrzeugabmeldung, die von der Kfz-Zulassungsbehörde in Augsburg angeboten wird. Weitere Informationen finden Sie auf der Internetseite der Online-Zulassungsbehörde."
+				"": "Für viele Leistungen ist der Weg ins Amt nicht nötig: Sie können zahlreiche Leistungen online beantragen und falls nötig bequem von zu Hause aus bezahlen. Eine Liste der Online-Services finden Sie auf der Webseite der Stadt Augsburg.<br/><br/>Voraussetzung für einige Online-Services ist die BayernID. Zur Registrierung können Sie Ihren Online-Ausweis mit dazugehöriger PIN, einem geeigneten Smartphone oder Tablet und der installierten AusweisApp nutzen.<br/><br/>Informationen zur Registrierung in der BayernID können Sie nachlesen (https://id.bayernportal.de/).<br/><br/>Ein Beispiel ist die internetbasierte Fahrzeugzulassung und Fahrzeugabmeldung, die von der Kfz-Zulassungsbehörde in Augsburg angeboten wird. Weitere Informationen finden Sie auf der Internetseite der Online-Zulassungsbehörde."
 			},
 			"postalAddress": "Stadt Augsburg<br/>Rathausplatz 1<br/>86150 Augsburg",
 			"icon": "StadtAugsburg_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+		},
+		{
+			"shortName": {
+				"": "Servicekonto Niedersachsen"
+			},
+			"longName": {
+				"": "Servicekonto Niedersachsen"
+			},
+			"address": "https://servicekonto.niedersachsen.de",
+			"homepage": "https://servicekonto.niedersachsen.de",
+			"longDescription": {
+				"": "Das Servicekonto ist Ihr persönlicher Online-Zugang zu den Leistungen der Behörden. Damit können Sie in Zukunft eine Vielzahl von Verwaltungsleistungen von zu Hause digital erledigen. Dies gilt insbesondere für Niedersachsen, das Konto können Sie aber auch deutschlandweit nutzen.<br/><br/>Egal welche Verwaltungsleistung Sie gerade benötigen, Sie werden sich dazu mit Ihrem Servicekonto anmelden und den zugehörigen Antrag rechtssicher bei der Behörde einreichen können. Außerdem werden Ihnen auf Wunsch Informationen und Bescheide zu Ihren Anträgen in Zukunft schnell und digital in Ihr Servicekonto-Postfach zugestellt.<br/><br/>Das Servicekonto ist ein Angebot der niedersächsischen Landesverwaltung an alle Nutzerinnen und Nutzer niedersächsischer Verwaltungsleistungen."
+			},
+			"category": "citizen",
+			"subjectUrls": [
+				"https://idp.servicekonto.niedersachsen.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Serviceportal Schaumburg"
+			},
+			"longName": {
+				"": "Regionales Serviceportal Schaumburg"
+			},
+			"phone": "+49 5721 703 0",
+			"address": "https://www.serviceportal-schaumburg.de",
+			"homepage": "https://www.serviceportal-schaumburg.de",
+			"email": "info@schaumburg.de",
+			"longDescription": {
+				"": "Das gemeinsame Online-Serviceportal des Landkreises Schaumburg und der kreisangehörigen Kommunen ermöglicht es den Bürgerinnen und Bürgern, Anträge wie beispielsweise zum eigenen Gewerbe oder zum Bürger- und Wohngeld sicher und unkompliziert online einzureichen sowie Bescheide und Mitteilungen im persönlichen Postfach digital empfangen zu können. Der Landkreis Schaumburg bietet außerdem die Möglichkeit zur online Fahrzeugzulassung (i-KFZ).<br/><br/>Bürgerinnen und Bürger können über das Online-Serviceportalaber nicht nur auf die Dienstleistungen der Kreisverwaltung zugreifen, sondern auch die Dienstleistungen der einzelnen kreisangehörigen Städte, Samtgemeinden und Gemeinden aufrufen. Das Serviceportal dient somit als zentrale Anlaufstelle für alle kommunalen Verwaltungsangelegenheiten."
+			},
+			"postalAddress": "Landkreis Schaumburg<br/>Jahnstraße 20<br/>31655 Stadthagen",
+			"icon": "Schaumburg_icon.svg",
+			"image": "Schaumburg_image.svg",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Servicekonto Niedersachsen (https://idp.servicekonto.niedersachsen.de)."
 		}
 	]
 }

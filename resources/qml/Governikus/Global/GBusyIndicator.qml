@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQml 2.2
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQml
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 BusyIndicator {
 	id: root
@@ -15,7 +15,8 @@ BusyIndicator {
 
 	contentItem: Item {
 		id: busyContent
-		Behavior on rotation  {
+
+		Behavior on rotation {
 			NumberAnimation {
 				duration: timer.interval
 				easing.type: Easing.Linear
@@ -24,6 +25,7 @@ BusyIndicator {
 
 		Rectangle {
 			id: rect
+
 			anchors.centerIn: parent
 			color: Style.color.background
 			height: parent.height * root.factor
@@ -32,6 +34,7 @@ BusyIndicator {
 		}
 		Timer {
 			id: timer
+
 			interval: 1000
 			repeat: true
 			running: root.running
@@ -45,6 +48,7 @@ BusyIndicator {
 		}
 		GConicalGradient {
 			id: green
+
 			anchors.fill: rect
 			source: rect
 
@@ -66,7 +70,7 @@ BusyIndicator {
 					position: 1.0
 				}
 			}
-			Behavior on rotation  {
+			Behavior on rotation {
 				NumberAnimation {
 					duration: timer.interval
 					easing.type: Easing.InOutQuad
@@ -75,6 +79,7 @@ BusyIndicator {
 		}
 		GConicalGradient {
 			id: blue
+
 			anchors.fill: rect
 			source: rect
 
@@ -96,7 +101,7 @@ BusyIndicator {
 					position: 1.0
 				}
 			}
-			Behavior on rotation  {
+			Behavior on rotation {
 				NumberAnimation {
 					duration: timer.interval
 					easing.type: Easing.InOutQuad

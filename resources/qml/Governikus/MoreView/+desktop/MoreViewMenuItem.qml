@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
 RowLayout {
 	id: baseItem
@@ -22,15 +22,19 @@ RowLayout {
 
 	TintableIcon {
 		id: icon
+
 		sourceSize.width: Style.dimens.icon_size
-		tintColor: Style.color.accent
+		tintColor: Style.color.text_subline
 	}
 	LabeledText {
 		id: labeledText
+
 		Layout.fillWidth: true
 	}
 	GButton {
 		id: button
+
+		iconSize: Style.dimens.small_icon_size
 		tintIcon: true
 
 		onClicked: baseItem.clicked()

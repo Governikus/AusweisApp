@@ -1,12 +1,12 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Exec=AusweisApp2
-Icon=AusweisApp2
+Exec=AusweisApp
+Icon=AusweisApp
 StartupNotify=true
 Terminal=false
 Categories=System;Security;
 GenericName=Authentication App
 Keywords=nPA,eID,eAT,Personalausweis,Aufenthaltstitel,Identity,Card
-Name=AusweisApp2
-StartupWMClass=AusweisApp2
+Name=AusweisApp
+StartupWMClass=AusweisApp

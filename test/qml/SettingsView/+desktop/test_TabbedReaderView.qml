@@ -1,16 +1,17 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
 		return createTemporaryQmlObject("
-			import QtQuick 2.15
-			import QtQuick.Controls 2.15
-			import Governikus.SettingsView 1.0
+			import QtQuick
+			import QtQuick.Controls
+			import Governikus.SettingsView
 
 			ApplicationWindow {
 				menuBar: Item {

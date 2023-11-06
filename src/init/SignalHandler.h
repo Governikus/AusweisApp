@@ -32,6 +32,7 @@ class SignalHandler
 
 	Q_DISABLE_COPY(SignalHandler)
 	friend class Env;
+	friend void shutdownApp();
 
 	private:
 		bool mInit;

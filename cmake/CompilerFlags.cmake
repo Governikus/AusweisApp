@@ -15,7 +15,7 @@ add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_CAST_FROM_ASCII>)
 
 if(QT_VENDOR STREQUAL "Governikus")
 	add_definitions(-DGOVERNIKUS_QT)
-	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060301)
+	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060502)
 endif()
 
 
@@ -40,6 +40,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(NOT DEFINED CMAKE_COMPILE_WARNING_AS_ERROR AND VENDOR_GOVERNIKUS)
 	set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+	add_definitions(-DOPENSSL_NO_DEPRECATED)
 endif()
 
 
@@ -55,10 +56,7 @@ if(MSVC)
 	ADD_FLAG(/HIGHENTROPYVA)
 	ADD_FLAG(/guard:cf)
 	ADD_FLAG(/Qcf-protection)
-
-	if (QT6)
-		ADD_FLAG(/Zc:__cplusplus)
-	endif()
+	ADD_FLAG(/Zc:__cplusplus)
 
 	if(CMAKE_CXX_COMPILER_LAUNCHER MATCHES "ccache")
 		string(REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
@@ -124,19 +122,11 @@ else()
 	ADD_FLAG(-Wunused)
 	ADD_FLAG(-Wunused-template)
 	ADD_FLAG(-Wextra-semi)
+	ADD_FLAG(-Wextra-semi-stmt)
 	ADD_FLAG(-Wempty-init-stmt)
+	ADD_FLAG(-Wuseless-cast)
+	ADD_FLAG(-Wconversion)
 	ADD_FLAG(-Wno-gnu-zero-variadic-macro-arguments) # Qt (qDebug) is not compatible
-
-	if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
-		ADD_FLAG(-Wextra-semi-stmt)
-		ADD_FLAG(-Wuseless-cast)
-	endif()
-
-	if(QT6)
-		ADD_FLAG(-Wno-shorten-64-to-32)
-	else()
-		ADD_FLAG(-Wconversion)
-	endif()
 
 	if(ANDROID OR (INTEGRATED_SDK AND (NOT BUILD_SHARED_LIBS OR NOT BUILD_TESTING)))
 		set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -187,6 +177,10 @@ else()
 
 	if(CMAKE_CXX_FLAGS MATCHES "-Wuseless-cast")
 		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-useless-cast")
+	endif()
+
+	if(CMAKE_CXX_FLAGS MATCHES "-Wconversion" AND MAC)
+		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-sign-conversion")
 	endif()
 endif()
 

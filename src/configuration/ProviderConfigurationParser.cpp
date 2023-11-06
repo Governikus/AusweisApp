@@ -4,7 +4,6 @@
 
 #include "ProviderConfigurationParser.h"
 
-#include "JsonValueRef.h"
 #include "LanguageString.h"
 
 #include <QJsonDocument>
@@ -36,7 +35,7 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 	const QJsonArray& array = doc[QLatin1String("provider")].toArray();
 	QVector<ProviderConfigurationInfo> providers;
 	providers.reserve(array.size());
-	for (JsonValueRef entry : array)
+	for (const QJsonValueConstRef entry : array)
 	{
 		const QJsonObject prov = entry.toObject();
 
@@ -79,11 +78,11 @@ QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteA
 
 	QMap<QString, CallCost> callCosts;
 	const auto& callCostArray = doc[QLatin1String("callcosts")].toArray();
-	for (JsonValueRef callCostElem : callCostArray)
+	for (const QJsonValueConstRef callCostElem : callCostArray)
 	{
 		const auto cost = CallCost(callCostElem);
 		const auto& prefixArray = callCostElem.toObject()[QLatin1String("prefixes")].toArray();
-		for (JsonValueRef prefixElem : prefixArray)
+		for (const QJsonValueConstRef prefixElem : prefixArray)
 		{
 			const auto& prefix = prefixElem.toString();
 			callCosts.insert(prefix, cost);

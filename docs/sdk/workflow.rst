@@ -1,7 +1,7 @@
 Workflow
 --------
 This section shows some possible workflows as an example
-communication between your application and the AusweisApp2.
+communication between your application and the |AppName|.
 
 The JSON structure can be identified by parameter **cmd**
 or parameter **msg** as described in section :doc:`commands`
@@ -9,7 +9,7 @@ and section :doc:`messages`.
 
 - **cmd**: Commands are sent by your application.
 
-- **msg**: Messages are sent by the AusweisApp2.
+- **msg**: Messages are sent by the |AppName|.
 
 
 

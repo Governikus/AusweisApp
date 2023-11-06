@@ -43,7 +43,7 @@ class test_StateProcessCertificatesFromEac2
 
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			QSharedPointer<DIDAuthenticateEAC2> didAuthEac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
 			mAuthContext->setDidAuthenticateEac2(didAuthEac2);
 
@@ -59,7 +59,6 @@ class test_StateProcessCertificatesFromEac2
 			mAuthContext->setPaceOutputData(paceOutput);
 
 			mState.reset(StateBuilder::createState<StateProcessCertificatesFromEac2>(mAuthContext));
-			mState->setStateName("StateProcessCertificatesFromEac2");
 			mState->onEntry(nullptr);
 		}
 

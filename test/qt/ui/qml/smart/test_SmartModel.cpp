@@ -11,14 +11,21 @@
 #include "Env.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
-#include "SmartManager.h"
 #include "mock/eid_applet_interface_mock.h"
 
+#include <QScopeGuard>
 #include <QtTest>
+
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+
 using namespace governikus;
+
+
+Q_DECLARE_METATYPE(EidStatus)
+Q_DECLARE_METATYPE(EidSupportStatus)
+Q_DECLARE_METATYPE(EidServiceResult)
 
 
 class test_SmartModel
@@ -43,8 +50,9 @@ class test_SmartModel
 		{
 			MockReader::cMOCKED_READERMANAGER_TYPE = ReaderManagerPlugInType::SMART;
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			setSmartEidStatus(EidStatus::PERSONALIZED);
 			mSmartReader = MockReaderManagerPlugIn::getInstance().addReader("SmartReader");
@@ -53,6 +61,15 @@ class test_SmartModel
 			const auto& smartModel = Env::getSingleton<SmartModel>();
 			// just to wait until initialization of SmartModel is finished
 			QTRY_COMPARE(smartModel->getSmartState(), SmartModel::QmlSmartState::SMART_READY);
+		}
+
+
+		void cleanup()
+		{
+			setupSmartReader(false, 3);
+			setSmartEidSupportStatusResult({EidServiceResult::SUCCESS, EidSupportStatus::AVAILABLE});
+			setSmartEidStatus(EidStatus::PERSONALIZED);
+			Env::getSingleton<SmartModel>()->mStatus = SmartModel::QmlSmartState::SMART_READY;
 		}
 
 
@@ -70,12 +87,12 @@ class test_SmartModel
 			QTest::addColumn<int>("retryCounter");
 			QTest::addColumn<SmartModel::QmlSmartState>("smartState");
 
-			QTest::newRow("Unusable") << EidStatus::APPLET_UNUSABLE << false << 3 << SmartModel::QmlSmartState::SMART_UNUSABLE;
+			QTest::newRow("Unusable") << EidStatus::UNUSABLE << false << 3 << SmartModel::QmlSmartState::SMART_UNUSABLE;
 			QTest::newRow("Internal error") << EidStatus::INTERNAL_ERROR << false << 3 << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
 			QTest::newRow("No personalization") << EidStatus::NO_PERSONALIZATION << false << 3 << SmartModel::QmlSmartState::SMART_NO_PERSONALIZATION;
 			QTest::newRow("No provisioning") << EidStatus::NO_PROVISIONING << false << 3 << SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
 			QTest::newRow("Personalized") << EidStatus::PERSONALIZED << false << 3 << SmartModel::QmlSmartState::SMART_READY;
-			QTest::newRow("Unavailable") << EidStatus::UNAVAILABLE << false << 3 << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("cert_expired") << EidStatus::CERT_EXPIRED << false << 3 << SmartModel::QmlSmartState::SMART_UNUSABLE;
 
 			QTest::newRow("Personalized - Retry Counter 0") << EidStatus::PERSONALIZED << false << 0 << SmartModel::QmlSmartState::SMART_UNUSABLE;
 			QTest::newRow("Personalized - Retry Counter -1") << EidStatus::PERSONALIZED << false << -1 << SmartModel::QmlSmartState::SMART_UNUSABLE;
@@ -148,7 +165,7 @@ class test_SmartModel
 
 			int signalCount = 0;
 
-			connect(smartModel, &SmartModel::fireSmartStateChanged, [&signalCount, smartModel](){
+			const auto connection = connect(smartModel, &SmartModel::fireSmartStateChanged, [&signalCount, smartModel](){
 					signalCount++;
 
 					switch (signalCount)
@@ -164,6 +181,9 @@ class test_SmartModel
 							default:
 								QFAIL("Expected only two signals");
 					}
+				});
+			const auto guard = qScopeGuard([connection] {
+					disconnect(connection);
 				});
 
 			smartModel->updateStatus();
@@ -197,7 +217,111 @@ class test_SmartModel
 		}
 
 
+		void test_updateSupportInfo_data()
+		{
+			QTest::addColumn<EidSupportStatus>("eidSupportStatus");
+			QTest::addColumn<EidStatus>("eidStatus");
+			QTest::addColumn<SmartModel::QmlSmartState>("smartState");
+
+			QTest::newRow("Unavailable1") << EidSupportStatus::UNAVAILABLE << EidStatus::NO_PROVISIONING << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("Unavailable2") << EidSupportStatus::UNAVAILABLE << EidStatus::NO_PERSONALIZATION << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("Unavailable3") << EidSupportStatus::UNAVAILABLE << EidStatus::PERSONALIZED << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("Unavailable4") << EidSupportStatus::UNAVAILABLE << EidStatus::UNUSABLE << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("Available1") << EidSupportStatus::AVAILABLE << EidStatus::NO_PROVISIONING << SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
+			QTest::newRow("Available2") << EidSupportStatus::AVAILABLE << EidStatus::NO_PERSONALIZATION << SmartModel::QmlSmartState::SMART_NO_PERSONALIZATION;
+			QTest::newRow("Available3") << EidSupportStatus::AVAILABLE << EidStatus::PERSONALIZED << SmartModel::QmlSmartState::SMART_READY;
+			QTest::newRow("Available4") << EidSupportStatus::AVAILABLE << EidStatus::UNUSABLE << SmartModel::QmlSmartState::SMART_UNUSABLE;
+			QTest::newRow("UpToDate1") << EidSupportStatus::UP_TO_DATE << EidStatus::NO_PROVISIONING << SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
+			QTest::newRow("UpToDate2") << EidSupportStatus::UP_TO_DATE << EidStatus::NO_PERSONALIZATION << SmartModel::QmlSmartState::SMART_NO_PERSONALIZATION;
+			QTest::newRow("UpToDate3") << EidSupportStatus::UP_TO_DATE << EidStatus::PERSONALIZED << SmartModel::QmlSmartState::SMART_READY;
+			QTest::newRow("UpToDate4") << EidSupportStatus::UP_TO_DATE << EidStatus::UNUSABLE << SmartModel::QmlSmartState::SMART_UNUSABLE;
+			QTest::newRow("UpdateAvailable1") << EidSupportStatus::UPDATE_AVAILABLE << EidStatus::NO_PROVISIONING << SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
+			QTest::newRow("UpdateAvailable2") << EidSupportStatus::UPDATE_AVAILABLE << EidStatus::NO_PERSONALIZATION << SmartModel::QmlSmartState::SMART_NO_PERSONALIZATION;
+			QTest::newRow("UpdateAvailable3") << EidSupportStatus::UPDATE_AVAILABLE << EidStatus::PERSONALIZED << SmartModel::QmlSmartState::SMART_READY;
+			QTest::newRow("UpdateAvailable4") << EidSupportStatus::UPDATE_AVAILABLE << EidStatus::UNUSABLE << SmartModel::QmlSmartState::SMART_UNUSABLE;
+			QTest::newRow("InternalError1") << EidSupportStatus::INTERNAL_ERROR << EidStatus::NO_PROVISIONING << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("InternalError2") << EidSupportStatus::INTERNAL_ERROR << EidStatus::NO_PERSONALIZATION << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("InternalError3") << EidSupportStatus::INTERNAL_ERROR << EidStatus::PERSONALIZED << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+			QTest::newRow("InternalError4") << EidSupportStatus::INTERNAL_ERROR << EidStatus::UNUSABLE << SmartModel::QmlSmartState::SMART_UNAVAILABLE;
+		}
+
+
+		void test_updateSupportInfo()
+		{
+			QFETCH(EidSupportStatus, eidSupportStatus);
+			QFETCH(EidStatus, eidStatus);
+			QFETCH(SmartModel::QmlSmartState, smartState);
+
+			const auto& smartModel = Env::getSingleton<SmartModel>();
+			smartModel->mStatus = SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
+
+			setSmartEidSupportStatus(eidSupportStatus);
+			setSmartEidStatus(eidStatus);
+			smartModel->updateSupportInfo();
+			QCOMPARE(smartModel->getSmartState(), SmartModel::QmlSmartState::SMART_UPDATING_STATUS);
+			QTRY_COMPARE(smartModel->getSmartState(), smartState);
+		}
+
+
+		void test_errorStringUpdateSupportInfo_data()
+		{
+			QTest::addColumn<EidServiceResult>("serviceResult");
+
+			QTest::addRow("Success") << EidServiceResult::SUCCESS;
+			QTest::addRow("Unsupported") << EidServiceResult::UNSUPPORTED;
+			QTest::addRow("Error") << EidServiceResult::ERROR;
+			QTest::addRow("Info") << EidServiceResult::INFO;
+			QTest::addRow("NFC not activated") << EidServiceResult::NFC_NOT_ACTIVATED;
+			QTest::addRow("Overload protection") << EidServiceResult::OVERLOAD_PROTECTION;
+			QTest::addRow("Undefined") << EidServiceResult::UNDEFINED;
+			QTest::addRow("Warn") << EidServiceResult::WARN;
+			QTest::addRow("Under maintenance") << EidServiceResult::UNDER_MAINTENANCE;
+		}
+
+
+		void test_errorStringUpdateSupportInfo()
+		{
+			QFETCH(EidServiceResult, serviceResult);
+
+			setSmartEidSupportStatusResult({serviceResult, EidSupportStatus::AVAILABLE});
+			auto* smartModel = Env::getSingleton<SmartModel>();
+			smartModel->mStatus = SmartModel::QmlSmartState::SMART_NO_PROVISIONING;
+			smartModel->updateSupportInfo();
+			QTRY_VERIFY(smartModel->getSmartState() != SmartModel::QmlSmartState::SMART_UPDATING_STATUS);
+			QCOMPARE(smartModel->getErrorString().isEmpty(), serviceResult == EidServiceResult::SUCCESS);
+		}
+
+
+		void test_errorStringDeleteSmart_data()
+		{
+			QTest::addColumn<EidServiceResult>("serviceResult");
+
+			QTest::addRow("Success") << EidServiceResult::SUCCESS;
+			QTest::addRow("Unsupported") << EidServiceResult::UNSUPPORTED;
+			QTest::addRow("Error") << EidServiceResult::ERROR;
+			QTest::addRow("Info") << EidServiceResult::INFO;
+			QTest::addRow("NFC not activated") << EidServiceResult::NFC_NOT_ACTIVATED;
+			QTest::addRow("Overload protection") << EidServiceResult::OVERLOAD_PROTECTION;
+			QTest::addRow("Undefined") << EidServiceResult::UNDEFINED;
+			QTest::addRow("Warn") << EidServiceResult::WARN;
+			QTest::addRow("Under maintenance") << EidServiceResult::UNDER_MAINTENANCE;
+		}
+
+
+		void test_errorStringDeleteSmart()
+		{
+			QFETCH(EidServiceResult, serviceResult);
+
+			setDeleteSmartEidResult(serviceResult);
+			auto* smartModel = Env::getSingleton<SmartModel>();
+			QSignalSpy spyDeleteDone(smartModel, &SmartModel::fireDeleteSmartDone);
+			smartModel->deleteSmart();
+			QTRY_COMPARE(spyDeleteDone.count(), 1);
+			QCOMPARE(smartModel->getErrorString().isEmpty(), serviceResult == EidServiceResult::SUCCESS);
+		}
+
+
 };
 
-QTEST_GUILESS_MAIN(test_SmartModel)
+QTEST_MAIN(test_SmartModel)
 #include "test_SmartModel.moc"

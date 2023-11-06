@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Bundesdruckerei GmbH and Governikus GmbH
- *
+ * Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+ * Licensed under the EUPL-1.2
  */
 
 #pragma once
@@ -9,6 +9,7 @@
 #include "eid_applet_results.h"
 #include "eid_applet_utils.h"
 #include <jni.h>
+#include <mutex>
 #include <stdexcept>
 
 
@@ -16,46 +17,48 @@ using namespace appletUtils;
 using namespace jniUtils;
 
 
-template<class JNIEnvironment, class JavaVirtualMachine>
 class EidAppletServiceAndroid {
 	public:
-		EidAppletServiceAndroid(JNIEnvironment* env, jobject applicationContext);
+		EidAppletServiceAndroid(JNIEnv* env, jobject applicationContext);
 		~EidAppletServiceAndroid();
 
 		GenericDataResult initializeService(
 			const std::string& pServiceId,
-			const std::string& pVersionTag,
-			const std::string& pSsdAid);
+			const std::string& pSsdAid,
+			const std::string& pVersionTag);
 		EidServiceResult installSmartEid();
 		EidServiceResult deleteSmartEid();
 		EidServiceResult deletePersonalization();
 		GenericDataResult performAPDUCommand(const std::string& pCommandApdu);
 		InitializeResult initializePersonalization(const std::string& pPin, const std::string& pChallenge);
 		GenericDataResult performPersonalization(const std::string& pCommandPersonalization);
-		PersonalizationResult finalizePersonalization();
+		PersonalizationResult finalizePersonalization(jint status);
 		EidStatus getSmartEidStatus();
-		EidUpdateInfo getUpdateInfo();
+		EidSupportStatusResult getSmartEidSupportInfo();
 		EidServiceResult releaseAppletConnection();
 		GenericDataResult shutdownService();
+		ServiceInformationResult getServiceInformation();
 
 	private:
 		class ThreadGuard {
 			private:
-				JavaVirtualMachine* mJvm;
+				JavaVM* mJvm;
 				bool mDoDetach;
 
 			public:
-				explicit ThreadGuard(JavaVirtualMachine* pJvm);
+				explicit ThreadGuard(JavaVM* pJvm);
 				~ThreadGuard();
 
 				void doDetach();
 		};
 
-		JNIEnvironment* mEnv;
-		JavaVirtualMachine* mJvm;
-		jclass mJniServiceClz;
-		jobject mJniServiceObj;
-		jobject mApplicationContext;
+		std::mutex serviceMutex;
 
-		bool getJNIEnvForCurrentThread(JNIEnvironment*& _env, ThreadGuard& guard);
+		JNIEnv* mEnv;
+		JavaVM* mJvm;
+		jobject mApplicationContext = nullptr;
+		jclass mJniServiceClz = nullptr;
+		jobject mJniServiceObj = nullptr;
+
+		bool getJNIEnvForCurrentThread(JNIEnv*& _env, ThreadGuard& threadGuard);
 };

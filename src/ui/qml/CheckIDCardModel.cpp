@@ -134,8 +134,6 @@ void CheckIDCardModel::startScan()
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &CheckIDCardModel::onReaderPropertiesUpdated);
 
 	startScanIfNecessary();
-
-	Q_EMIT fireIsRunningChanged();
 }
 
 
@@ -148,7 +146,7 @@ void CheckIDCardModel::startScanIfNecessary()
 
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 
-	if (readerManager->isScanRunning(ReaderManagerPlugInType::NFC))
+	if (readerManager->getPlugInInfo(ReaderManagerPlugInType::NFC).isScanRunning())
 	{
 		return;
 	}
@@ -192,7 +190,6 @@ void CheckIDCardModel::stopScan()
 
 	mIsRunning = false;
 	mReaderWithCard.clear();
-	Q_EMIT fireIsRunningChanged();
 }
 
 

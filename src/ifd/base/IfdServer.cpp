@@ -4,9 +4,6 @@
 
 #include "IfdServer.h"
 
-#include "AppSettings.h"
-#include "Env.h"
-
 using namespace governikus;
 
 

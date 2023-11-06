@@ -5,7 +5,6 @@
 #include "RemoteServiceSettings.h"
 
 #include "DeviceInfo.h"
-#include "JsonValueRef.h"
 #include "KeyPair.h"
 
 #include <QCryptographicHash>
@@ -13,12 +12,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QMutableListIterator>
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	#include <QMutableListIterator>
-#else
-	#include <QMutableVectorIterator>
-#endif
 
 using namespace governikus;
 
@@ -186,7 +181,7 @@ void RemoteServiceSettings::removeTrustedCertificate(const QString& pFingerprint
 }
 
 
-bool RemoteServiceSettings::checkAndGenerateKey(bool pForceGeneration)
+bool RemoteServiceSettings::checkAndGenerateKey(bool pForceGeneration) const
 {
 	if (getKey().isNull()
 			|| getCertificate().isNull()
@@ -228,6 +223,10 @@ QSslKey RemoteServiceSettings::getKey() const
 	if (data.contains("BEGIN RSA PRIVATE KEY"))
 	{
 		return QSslKey(data, QSsl::Rsa);
+	}
+	else if (data.contains("BEGIN EC PRIVATE KEY"))
+	{
+		return QSslKey(data, QSsl::Ec);
 	}
 
 	return QSslKey();
@@ -273,7 +272,7 @@ QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos
 
 	const auto& data = mStore->value(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QByteArray()).toByteArray();
 	const auto& array = QJsonDocument::fromJson(data).array();
-	for (JsonValueRef item : array)
+	for (const QJsonValueConstRef item : array)
 	{
 		infos << RemoteInfo::fromJson(item.toObject());
 	}

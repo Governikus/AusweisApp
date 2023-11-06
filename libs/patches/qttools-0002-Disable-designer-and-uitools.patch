@@ -1,0 +1,34 @@
+From 9852f44ab2b6c6e30d8c6ec4a5d45025bc13c2f4 Mon Sep 17 00:00:00 2001
+From: Andre Klitzing <andre.klitzing@governikus.de>
+Date: Wed, 21 Jun 2023 12:22:46 +0200
+Subject: Disable designer and uitools
+
+See https://bugreports.qt.io/browse/QTBUG-95236
+---
+ src/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git x/qttools/src/CMakeLists.txt y/qttools/src/CMakeLists.txt
+index 014e4c874..1574b1b20 100644
+--- x/qttools/src/CMakeLists.txt
++++ y/qttools/src/CMakeLists.txt
+@@ -18,8 +18,8 @@ qt_exclude_tool_directories_from_default_target(
+ qt_feature_evaluate_features("${CMAKE_CURRENT_SOURCE_DIR}/../configure.cmake")
+ 
+ if(TARGET Qt::Widgets)
+-    add_subdirectory(uiplugin)
+-    add_subdirectory(uitools)
++#    add_subdirectory(uiplugin)
++#    add_subdirectory(uitools)
+ endif()
+ 
+ add_subdirectory(global) # special case add as first directory
+@@ -28,7 +28,7 @@ if(QT_FEATURE_linguist)
+ endif()
+ # add_subdirectory(global) # special case remove
+ if(QT_FEATURE_designer)
+-    add_subdirectory(designer)
++#    add_subdirectory(designer)
+ endif()
+ if(QT_FEATURE_pixeltool)
+     add_subdirectory(pixeltool)

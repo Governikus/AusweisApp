@@ -22,13 +22,8 @@ class MockSocket
 
 	public:
 		QByteArray mReadBuffer;
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-		int mReaderBufferPosition;
-		int mReaderBufferChunk;
-#else
 		qint64 mReaderBufferPosition;
 		qint64 mReaderBufferChunk;
-#endif
 		QByteArray mWriteBuffer;
 
 		MockSocket();

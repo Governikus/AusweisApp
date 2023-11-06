@@ -1,20 +1,22 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.EnterPasswordView 1.0
-import Governikus.Global 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.EnterPasswordView
+import Governikus.Global
+import Governikus.PasswordInfoView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.RemoteServiceModel
 
 Item {
 	id: baseItem
-	height: mainColumn.height
+
+	implicitHeight: mainColumn.implicitHeight
 
 	QtObject {
 		id: d
@@ -26,26 +28,19 @@ Item {
 
 		readonly property int usableWidth: width - leftPadding - rightPadding
 
-		leftPadding: Constants.pane_padding
-		rightPadding: Constants.pane_padding
 		spacing: Constants.component_spacing
 		width: baseItem.width
 
-		Column {
-			spacing: Constants.component_spacing
+		GOptionsContainer {
+			containerPadding: Constants.pane_padding
+			//: LABEL ANDROID IOS
+			title: qsTr("Paired devices")
 			visible: availablePairedDeviceList.count > 0
 			width: parent.usableWidth
 
-			TitledSeparator {
-				contentMarginBottom: 0
-				contentMarginLeft: 0
-				contentMarginRight: 0
-				//: LABEL ANDROID IOS
-				title: qsTr("Paired devices")
-				width: parent.width
-			}
 			ListView {
 				id: availablePairedDeviceList
+
 				height: childrenRect.height
 				interactive: false
 				model: RemoteServiceModel.availablePairedDevices
@@ -68,21 +63,16 @@ Item {
 				}
 			}
 		}
-		Column {
-			spacing: Constants.component_spacing
+		GOptionsContainer {
+			containerPadding: Constants.pane_padding
+			//: LABEL ANDROID IOS
+			title: qsTr("Last connected")
 			visible: unavailablePairedDeviceList.count > 0
 			width: parent.usableWidth
 
-			TitledSeparator {
-				contentMarginBottom: 0
-				contentMarginLeft: 0
-				contentMarginRight: 0
-				//: LABEL ANDROID IOS
-				title: qsTr("Last connected")
-				width: parent.width
-			}
 			ListView {
 				id: unavailablePairedDeviceList
+
 				height: childrenRect.height
 				interactive: false
 				model: RemoteServiceModel.unavailablePairedDevices
@@ -121,20 +111,16 @@ Item {
 
 			onConfirmed: RemoteServiceModel.forgetDevice(deviceId)
 		}
-		Column {
-			spacing: Constants.component_spacing
+		GOptionsContainer {
+			containerPadding: Constants.pane_padding
+			containerSpacing: Constants.component_spacing
+			//: LABEL ANDROID IOS
+			title: qsTr("Add pairing")
 			width: parent.usableWidth
 
-			TitledSeparator {
-				contentMarginBottom: 0
-				contentMarginLeft: 0
-				contentMarginRight: 0
-				//: LABEL ANDROID IOS
-				title: qsTr("Add pairing")
-				width: parent.width
-			}
 			GListView {
 				id: searchDeviceList
+
 				height: childrenRect.height
 				model: RemoteServiceModel.availableDevicesInPairingMode
 				spacing: Constants.component_spacing
@@ -188,27 +174,15 @@ Item {
 			}
 		}
 	}
-	PasswordInfoData {
-		id: infoData
-		contentType: PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER
-	}
-	Component {
-		id: passwordInfoView
-		PasswordInfoView {
-			infoContent: infoData
-
-			onClose: pop()
-		}
-	}
 	Component {
 		id: enterPinView
+
 		EnterPasswordView {
 			function close() {
 				setLockedAndHidden(d.oldLockedAndHiddenStatus);
 				pop();
 			}
 
-			moreInformationText: infoData.linkText
 			passwordType: PasswordType.REMOTE_PIN
 			//: LABEL ANDROID IOS
 			title: qsTr("Pairing code")
@@ -220,7 +194,6 @@ Item {
 			}
 
 			onPasswordEntered: close()
-			onRequestPasswordInfo: push(passwordInfoView)
 		}
 	}
 }

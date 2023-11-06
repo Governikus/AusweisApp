@@ -46,17 +46,18 @@ QSslConfiguration LocalTlsServer::sslConfiguration() const
 
 void LocalTlsServer::onSslErrors(const QList<QSslError>& pErrors)
 {
-	qCDebug(ifd) << "Client is not allowed | cipher:" << mSocket->sessionCipher() << "| certificate:" << mSocket->peerCertificate() << "| error:" << pErrors;
+	const auto& socket = getSslSocket();
+	qCDebug(ifd) << "Client is not allowed | cipher:" << socket->sessionCipher() << "| certificate:" << socket->peerCertificate() << "| error:" << pErrors;
 }
 
 
 void LocalTlsServer::onEncrypted()
 {
-	const auto& cfg = mSocket->sslConfiguration();
-	TlsChecker::logSslConfig(cfg, spawnMessageLogger(ifd));
+	const auto& socket = getSslSocket();
+	TlsChecker::logSslConfig(socket->sslConfiguration(), spawnMessageLogger(ifd));
 
 	qCDebug(ifd) << "Client connected";
 
-	mSocket->disconnect(this);
-	Q_EMIT fireNewConnection(mSocket.data());
+	socket->disconnect(this);
+	Q_EMIT fireNewConnection(socket.data());
 }

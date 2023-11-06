@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQml 2.15
-import QtQuick 2.15
+import QtQml
+import QtQuick
 
 Repeater {
 	id: root

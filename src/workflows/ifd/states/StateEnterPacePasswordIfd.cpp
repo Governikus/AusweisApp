@@ -37,14 +37,14 @@ void StateEnterPacePasswordIfd::onCancelEstablishPaceChannel()
 
 void StateEnterPacePasswordIfd::onEntry(QEvent* pEvent)
 {
+	AbstractState::onEntry(pEvent);
 	stopNfcScanIfNecessary();
 
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
 		const auto& handler = getContext()->getIfdServer()->getMessageHandler();
-		mConnections += connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
+		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
 	}
 
-	mConnections += connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
-	AbstractState::onEntry(pEvent);
+	*this << connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
 }

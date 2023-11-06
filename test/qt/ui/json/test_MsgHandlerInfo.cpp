@@ -30,8 +30,9 @@ class test_MsgHandlerInfo
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -53,6 +54,21 @@ class test_MsgHandlerInfo
 			QVERIFY(data.contains(versionInfo));
 			QVERIFY(data.contains(R"("VersionInfo":{)"));
 			QVERIFY(data.contains(R"("msg":"INFO")"));
+		}
+
+
+		void localIfd()
+		{
+			const QByteArray msg(R"({"cmd": "GET_INFO"})");
+			MessageDispatcher dispatcher;
+			auto versionInfo = VersionInfo::getInstance().toJson(QJsonDocument::Compact);
+
+			const auto& result = dispatcher.processCommand(msg);
+			QCOMPARE(result, MsgType::INFO);
+			const QByteArray data = result;
+			QVERIFY(data.contains(versionInfo));
+			QVERIFY(data.contains(R"("msg":"INFO")"));
+			QVERIFY(data.contains(R"("AusweisApp")"));
 		}
 
 

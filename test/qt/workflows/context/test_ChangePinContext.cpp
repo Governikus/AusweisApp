@@ -81,19 +81,28 @@ class test_ChangePinContext
 		}
 
 
-		void test_isPhysicalCardRequired()
+		void test_AcceptedEidTypes()
 		{
 			{
 				ChangePinContext context;
-				QVERIFY(!context.isPhysicalCardRequired());
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::SE_CERTIFIED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::SE_ENDORSED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::HW_KEYSTORE));
 			}
 			{
 				ChangePinContext context(false);
-				QVERIFY(!context.isPhysicalCardRequired());
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::SE_CERTIFIED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::SE_ENDORSED));
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::HW_KEYSTORE));
 			}
 			{
 				ChangePinContext context(true);
-				QVERIFY(context.isPhysicalCardRequired());
+				QVERIFY(context.getAcceptedEidTypes().contains(AcceptedEidType::CARD_CERTIFIED));
+				QVERIFY(!context.getAcceptedEidTypes().contains(AcceptedEidType::SE_CERTIFIED));
+				QVERIFY(!context.getAcceptedEidTypes().contains(AcceptedEidType::SE_ENDORSED));
+				QVERIFY(!context.getAcceptedEidTypes().contains(AcceptedEidType::HW_KEYSTORE));
 			}
 		}
 

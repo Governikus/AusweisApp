@@ -48,7 +48,7 @@ FileCommand::FileCommand(const CommandApdu& pCommandApdu)
 }
 
 
-FileCommand::FileCommand(const FileRef& pFileRef, int pOffset, int pLe)
+FileCommand::FileCommand(const FileRef& pFileRef, qsizetype pOffset, int pLe)
 	: mFileRef(pFileRef)
 	, mOffset(pOffset)
 	, mLe(pLe)
@@ -62,7 +62,7 @@ const FileRef& FileCommand::getFileRef() const
 }
 
 
-int FileCommand::getOffset() const
+qsizetype FileCommand::getOffset() const
 {
 	return mOffset;
 }

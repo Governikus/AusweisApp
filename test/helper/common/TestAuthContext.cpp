@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
+
 #include "TestAuthContext.h"
 
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
@@ -12,8 +13,8 @@
 using namespace governikus;
 
 
-TestAuthContext::TestAuthContext(const QSharedPointer<ActivationContext>& pActivationContext, const QString& pFileName)
-	: AuthContext(QSharedPointer<ActivationContext>(pActivationContext))
+TestAuthContext::TestAuthContext(const QString& pFileName)
+	: AuthContext()
 	, mAcceptedEidTypes({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED})
 {
 	if (pFileName.isEmpty())

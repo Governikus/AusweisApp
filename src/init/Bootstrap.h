@@ -8,5 +8,6 @@ namespace governikus
 {
 
 int initApp(int& argc, char** argv);
+void shutdownApp();
 
 } // namespace governikus

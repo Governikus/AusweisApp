@@ -35,9 +35,9 @@ Q_IMPORT_PLUGIN(NfcReaderManagerPlugIn)
 
 	#ifndef INTEGRATED_SDK
 Q_IMPORT_PLUGIN(UIPlugInScheme)
-Q_IMPORT_PLUGIN(UIPlugInLocalIfd)
 
 		#ifdef USE_SMARTEID
+Q_IMPORT_PLUGIN(UIPlugInLocalIfd)
 Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
 		#endif
 

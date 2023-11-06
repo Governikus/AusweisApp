@@ -34,17 +34,13 @@ qint64 MockSocket::readData(char* pDestination, qint64 pMaxSize)
 {
 	Q_ASSERT(pMaxSize <= INT_MAX);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	auto chunk = pMaxSize;
-#else
-	auto chunk = static_cast<int>(pMaxSize);
-#endif
 	if (mReaderBufferChunk > -1 && mReaderBufferChunk < chunk)
 	{
 		chunk = mReaderBufferChunk;
 	}
 
-	const QByteArray data = mReadBuffer.mid(mReaderBufferPosition, chunk);
+	const QByteArray data = mReadBuffer.mid(static_cast<int>(mReaderBufferPosition), static_cast<int>(chunk));
 	const auto length = data.length();
 	if (length >= 0)
 	{

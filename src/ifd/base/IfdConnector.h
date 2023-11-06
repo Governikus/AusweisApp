@@ -11,7 +11,6 @@
 #include "EnumHelper.h"
 #include "IfdDescriptor.h"
 #include "IfdDispatcherClient.h"
-#include "messages/IfdMessage.h"
 
 #include <QObject>
 

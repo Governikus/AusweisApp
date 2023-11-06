@@ -54,7 +54,7 @@ class test_Asn1IntegerUtil
 			QFETCH(int, number);
 
 			const uchar* dataPointer = reinterpret_cast<uchar*>(data.data());
-			ASN1_INTEGER* asn1Integer = d2i_ASN1_INTEGER(nullptr, &dataPointer, data.length());
+			ASN1_INTEGER* asn1Integer = d2i_ASN1_INTEGER(nullptr, &dataPointer, static_cast<long>(data.length()));
 			QCOMPARE(Asn1IntegerUtil::getValue(asn1Integer), number);
 			ASN1_INTEGER_free(asn1Integer);
 		}

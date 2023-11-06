@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="320px" viewBox="0 0 600 320">
-  <image x="320" y="58" width="272px" height="190px" xlink:href="../ausweis.svg"/>
-  <image x="200" y="10" width="200px" height="300px" xlink:href="phone.svg"/>
-  <image x="230" y="80" width="150px" height="150px" xlink:href="nfc.svg"/>
-  <image x="140" y="90" width="140px" height="140px" xlink:href="../npa.svg"/>
-</svg>

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "CardReturnCode.h"
 #include "apdu/ResponseApdu.h"
 
 #include <QByteArray>

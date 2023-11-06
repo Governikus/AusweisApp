@@ -6,8 +6,11 @@
 
 #include "AppSettings.h"
 #include "ReaderManager.h"
-#include "SecureStorage.h"
+#include "VolatileSettings.h"
 #include "command/TransmitCommand.h"
+#ifdef Q_OS_ANDROID
+	#include "SecureStorage.h"
+#endif
 
 #include <QLoggingCategory>
 #include <QOperatingSystemVersion>
@@ -16,7 +19,6 @@
 	#include <QJniEnvironment>
 	#include <QJniObject>
 #endif
-
 #include <eid_applet_interface.h>
 
 
@@ -89,16 +91,16 @@ SmartManager::SmartManager()
 	const auto& storage = Env::getSingleton<SecureStorage>();
 	const auto [result, msg] = initializeService(env.jniEnv(), context.object<jobject>(),
 			storage->getSmartServiceId().toStdString(),
-			storage->getSmartVersionTag().toStdString(),
 			storage->getSmartSsdAid().toStdString());
+#else
+	const auto [result, msg] = initializeService();
+#endif
 
 	if (result != EidServiceResult::SUCCESS)
 	{
 		qCDebug(card_smart) << "Failed to initialize the service:" << QString::fromStdString(msg);
 		return;
 	}
-
-#endif
 
 	mInitialized = true;
 	qCDebug(card_smart) << "SmartManager created";
@@ -119,15 +121,40 @@ bool SmartManager::isValid() const
 
 SmartManager::~SmartManager()
 {
-#ifdef Q_OS_ANDROID
 	const auto [result, msg] = shutdownService();
 	if (result != EidServiceResult::SUCCESS)
 	{
 		qCDebug(card_smart) << "Failed to shutdown the service:" << QString::fromStdString(msg);
 	}
-#endif
 
 	qCDebug(card_smart) << "SmartManager destroyed";
+}
+
+
+bool SmartManager::smartAvailable() const
+{
+	if (!isValid())
+	{
+		return false;
+	}
+
+	const auto& eidStatus = status();
+	if (eidStatus != EidStatus::INTERNAL_ERROR && eidStatus != EidStatus::NO_PROVISIONING)
+	{
+		return true;
+	}
+
+	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK() && settings.doSmartUpdate())
+	{
+		const auto& [result, status] = updateSupportInfo();
+		if (result != EidServiceResult::SUCCESS || status == EidSupportStatus::INTERNAL_ERROR)
+		{
+			qCDebug(card_smart) << "updateSupportInfo() failed - Cache could not be initialized";
+		}
+	}
+
+	return settings.isSmartAvailable();
 }
 
 
@@ -135,7 +162,7 @@ EidStatus SmartManager::status() const
 {
 	if (!isValid())
 	{
-		return EidStatus::UNAVAILABLE;
+		return EidStatus::INTERNAL_ERROR;
 	}
 
 	const auto& status = getSmartEidStatus();
@@ -144,29 +171,68 @@ EidStatus SmartManager::status() const
 }
 
 
-EidUpdateInfo SmartManager::updateInfo()
+EidSupportStatusResult SmartManager::updateSupportInfo() const
 {
 	if (!isValid())
 	{
-		return EidUpdateInfo::UNAVAILABLE;
+		return {EidServiceResult::ERROR, EidSupportStatus::UNAVAILABLE};
 	}
 
-	const auto& updateInfo = getUpdateInfo();
-	qCDebug(card_smart) << "getUpdateInfo() finished with" << updateInfo;
-	return updateInfo;
+	const auto supportInfo = getSmartEidSupportInfo();
+	qCDebug(card_smart) << "getSmartEidSupportInfo() finished with result" << supportInfo.mResult << "and status" << supportInfo.mStatus;
+
+	if (supportInfo.mResult == EidServiceResult::SUCCESS)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		switch (supportInfo.mStatus)
+		{
+			case EidSupportStatus::AVAILABLE:
+			case EidSupportStatus::UP_TO_DATE:
+			case EidSupportStatus::UPDATE_AVAILABLE:
+				settings.setSmartAvailable(true);
+				break;
+
+			case EidSupportStatus::UNAVAILABLE:
+				settings.setSmartAvailable(false);
+				break;
+
+			case EidSupportStatus::INTERNAL_ERROR:
+				qCWarning(card_smart) << "Internal error of getSmartEidSupportInfo() - Cache update skipped";
+				break;
+		}
+	}
+	else
+	{
+		qCWarning(card_smart) << "getSmartEidSupportInfo() was not successful - Cache update skipped";
+	}
+
+	return supportInfo;
 }
 
 
-bool SmartManager::deleteSmart(const ProgressHandler& pHandler) const
+ServiceInformationResult SmartManager::serviceInformation() const
 {
 	if (!isValid())
 	{
-		return false;
+		return {EidServiceResult::UNDEFINED};
+	}
+
+	const auto& serviceInformation = getServiceInformation();
+	qCDebug(card_smart) << "getServiceInformation() finished with" << serviceInformation;
+	return serviceInformation;
+}
+
+
+EidServiceResult SmartManager::deleteSmart(const ProgressHandler& pHandler) const
+{
+	if (!isValid())
+	{
+		return EidServiceResult::ERROR;
 	}
 
 	const auto& deleteResult = deleteSmartEid(pHandler);
 	qCDebug(card_smart) << "deleteSmartEid() finished with" << deleteResult;
-	return deleteResult == EidServiceResult::SUCCESS;
+	return deleteResult;
 }
 
 
@@ -183,16 +249,16 @@ bool SmartManager::deletePersonalization() const
 }
 
 
-bool SmartManager::installSmart(const ProgressHandler& pHandler) const
+EidServiceResult SmartManager::installSmart(const ProgressHandler& pHandler) const
 {
 	if (!isValid())
 	{
-		return false;
+		return EidServiceResult::ERROR;
 	}
 
 	const auto& installResult = installSmartEid(pHandler);
 	qCDebug(card_smart) << "installSmartEid() finished with" << installResult;
-	return installResult == EidServiceResult::SUCCESS;
+	return installResult;
 }
 
 
@@ -239,20 +305,14 @@ QByteArrayList SmartManager::performPersonalization(const QVector<InputAPDUInfo>
 }
 
 
-PersonalizationResult SmartManager::finalizePersonalization() const
+PersonalizationResult SmartManager::finalizePersonalization(int pStatus) const
 {
 	if (!isValid())
 	{
 		return PersonalizationResult();
 	}
 
-#ifdef Q_OS_ANDROID
-	return ::finalizePersonalization();
-
-#else
-	return {EidServiceResult::SUCCESS};
-
-#endif
+	return ::finalizePersonalization(pStatus);
 }
 
 
@@ -263,7 +323,6 @@ EstablishPaceChannelOutput SmartManager::prepareIdentification(const QByteArray&
 		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
 
-#ifdef Q_OS_IOS
 	const auto& result = ::prepareIdentification(pChat.toHex().toStdString());
 
 	EstablishPaceChannelOutput establishPaceChannelOutput;
@@ -273,12 +332,6 @@ EstablishPaceChannelOutput SmartManager::prepareIdentification(const QByteArray&
 	establishPaceChannelOutput.setIdIcc(fromHex(result.mIdIcc));
 
 	return establishPaceChannelOutput;
-
-#else
-	Q_UNUSED(pChat)
-	return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
-
-#endif
 }
 
 
@@ -289,7 +342,6 @@ ResponseApduResult SmartManager::challenge() const
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-#ifdef Q_OS_IOS
 	const auto& result = getChallenge();
 
 	ResponseApduResult responseApduResult;
@@ -297,11 +349,6 @@ ResponseApduResult SmartManager::challenge() const
 	responseApduResult.mResponseApdu = ResponseApdu(fromHex(result.mData));
 
 	return responseApduResult;
-
-#else
-	return {CardReturnCode::COMMAND_FAILED};
-
-#endif
 }
 
 
@@ -312,7 +359,6 @@ TerminalAndChipAuthenticationResult SmartManager::performTAandCA(const CVCertifi
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-#ifdef Q_OS_IOS
 	std::list<std::string> terminalCvcChain;
 	for (const auto& certificate : pTerminalCvcChain)
 	{
@@ -333,16 +379,6 @@ TerminalAndChipAuthenticationResult SmartManager::performTAandCA(const CVCertifi
 	tAandCAResult.mNonce = fromHex(result.mNonce);
 
 	return tAandCAResult;
-
-#else
-	Q_UNUSED(pTerminalCvcChain)
-	Q_UNUSED(pAuxiliaryData)
-	Q_UNUSED(pSignature)
-	Q_UNUSED(pPin)
-	Q_UNUSED(pEphemeralPublicKey)
-	return {CardReturnCode::COMMAND_FAILED};
-
-#endif
 }
 
 
@@ -397,95 +433,160 @@ void SmartManager::abortSDKWorkflow() const
 
 QDebug operator<<(QDebug pDbg, const EidStatus& pStatus)
 {
-	const auto& toString = [](const EidStatus& status){
-				switch (status)
-				{
-					case EidStatus::UNAVAILABLE:
-						return QLatin1String("UNAVAILABLE");
+	QLatin1String status;
+	switch (pStatus)
+	{
+		case EidStatus::NO_PROVISIONING:
+			status = QLatin1String("NO_PROVISIONING");
+			break;
 
-					case EidStatus::NO_PROVISIONING:
-						return QLatin1String("NO_PROVISIONING");
+		case EidStatus::NO_PERSONALIZATION:
+			status = QLatin1String("NO_PERSONALIZATION");
+			break;
 
-					case EidStatus::NO_PERSONALIZATION:
-						return QLatin1String("NO_PERSONALIZATION");
+		case EidStatus::UNUSABLE:
+			status = QLatin1String("UNUSABLE");
+			break;
 
-					case EidStatus::APPLET_UNUSABLE:
-						return QLatin1String("APPLET_UNUSABLE");
+		case EidStatus::PERSONALIZED:
+			status = QLatin1String("PERSONALIZED");
+			break;
 
-					case EidStatus::PERSONALIZED:
-						return QLatin1String("PERSONALIZED");
+		case EidStatus::INTERNAL_ERROR:
+			status = QLatin1String("INTERNAL_ERROR");
+			break;
 
-					case EidStatus::INTERNAL_ERROR:
-						return QLatin1String("INTERNAL_ERROR");
-				}
-
-				Q_UNREACHABLE();
-			};
+		case EidStatus::CERT_EXPIRED:
+			status = QLatin1String("CERT_EXPIRED");
+			break;
+	}
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pStatus) << " 0x" << Qt::hex << static_cast<int>(pStatus);
+	pDbg.nospace() << status << " 0x" << Qt::hex << static_cast<int>(pStatus);
 	return pDbg;
 }
 
 
-QDebug operator<<(QDebug pDbg, const EidUpdateInfo& pInfo)
+QDebug operator<<(QDebug pDbg, const EidSupportStatus& pInfo)
 {
-	const auto& toString = [](const EidUpdateInfo& info){
-				switch (info)
-				{
-					case EidUpdateInfo::UNAVAILABLE:
-						return QLatin1String("UNAVAILABLE");
+	QLatin1String info;
+	switch (pInfo)
+	{
+		case EidSupportStatus::UNAVAILABLE:
+			info = QLatin1String("UNAVAILABLE");
+			break;
 
-					case EidUpdateInfo::NO_PROVISIONING:
-						return QLatin1String("NO_PROVISIONING");
+		case EidSupportStatus::UPDATE_AVAILABLE:
+			info = QLatin1String("UPDATE_AVAILABLE");
+			break;
 
-					case EidUpdateInfo::UPDATE_AVAILABLE:
-						return QLatin1String("UPDATE_AVAILABLE");
+		case EidSupportStatus::UP_TO_DATE:
+			info = QLatin1String("UP_TO_DATE");
+			break;
 
-					case EidUpdateInfo::UP_TO_DATE:
-						return QLatin1String("UP_TO_DATE");
+		case EidSupportStatus::INTERNAL_ERROR:
+			info = QLatin1String("INTERNAL_ERROR");
+			break;
 
-					case EidUpdateInfo::INTERNAL_ERROR:
-						return QLatin1String("INTERNAL_ERROR");
-				}
-
-				Q_UNREACHABLE();
-			};
+		case EidSupportStatus::AVAILABLE:
+			info = QLatin1String("AVAILABLE");
+			break;
+	}
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pInfo) << " 0x" << Qt::hex << static_cast<int>(pInfo);
+	pDbg.nospace() << info << " 0x" << Qt::hex << static_cast<int>(pInfo);
 	return pDbg;
 }
 
 
 QDebug operator<<(QDebug pDbg, const EidServiceResult& pResult)
 {
-	const auto& toString = [](const EidServiceResult& result){
-				switch (result)
-				{
-					case EidServiceResult::SUCCESS:
-						return QLatin1String("SUCCESS");
+	QLatin1String result;
+	switch (pResult)
+	{
+		case EidServiceResult::SUCCESS:
+			result = QLatin1String("SUCCESS");
+			break;
 
-					case EidServiceResult::UNDEFINED:
-						return QLatin1String("UNDEFINED");
+		case EidServiceResult::UNDEFINED:
+			result = QLatin1String("UNDEFINED");
+			break;
 
-					case EidServiceResult::INFO:
-						return QLatin1String("INFO");
+		case EidServiceResult::INFO:
+			result = QLatin1String("INFO");
+			break;
 
-					case EidServiceResult::WARN:
-						return QLatin1String("WARN");
+		case EidServiceResult::WARN:
+			result = QLatin1String("WARN");
+			break;
 
-					case EidServiceResult::ERROR:
-						return QLatin1String("ERROR");
+		case EidServiceResult::ERROR:
+			result = QLatin1String("ERROR");
+			break;
 
-					case EidServiceResult::UNSUPPORTED:
-						return QLatin1String("UNSUPPORTED");
-				}
+		case EidServiceResult::UNSUPPORTED:
+			result = QLatin1String("UNSUPPORTED");
+			break;
 
-				Q_UNREACHABLE();
-			};
+		case EidServiceResult::OVERLOAD_PROTECTION:
+			result = QLatin1String("OVERLOAD_PROTECTION");
+			break;
+
+		case EidServiceResult::UNDER_MAINTENANCE:
+			result = QLatin1String("UNDER_MAINTENANCE");
+			break;
+
+		case EidServiceResult::NFC_NOT_ACTIVATED:
+			result = QLatin1String("NFC_NOT_ACTIVATED");
+			break;
+
+		case EidServiceResult::INTEGRITY_CHECK_FAILED:
+			result = QLatin1String("INTEGRITY_CHECK_FAILED");
+			break;
+
+		case EidServiceResult::NOT_AUTHENTICATED:
+			result = QLatin1String("NOT_AUTHENTICATED");
+			break;
+
+		case EidServiceResult::NETWORK_CONNECTION_ERROR:
+			result = QLatin1String("NETWORK_CONNECTION_ERROR");
+			break;
+	}
 
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << toString(pResult) << " 0x" << Qt::hex << static_cast<int>(pResult);
+	pDbg.nospace() << result << " 0x" << Qt::hex << static_cast<int>(pResult);
+	return pDbg;
+}
+
+
+QDebug operator<<(QDebug pDbg, const SmartEidType& pType)
+{
+	QLatin1String type;
+	switch (pType)
+	{
+		case SmartEidType::UNKNOWN:
+			type = QLatin1String("UNKNOWN");
+			break;
+
+		case SmartEidType::APPLET:
+			type = QLatin1String("APPLET");
+			break;
+
+		case SmartEidType::NON_APPLET:
+			type = QLatin1String("NON_APPLET");
+			break;
+	}
+
+	QDebugStateSaver saver(pDbg);
+	pDbg.nospace() << type << " 0x" << Qt::hex << static_cast<int>(pType);
+	return pDbg;
+}
+
+
+QDebug operator<<(QDebug pDbg, const ServiceInformationResult& pResult)
+{
+	QDebugStateSaver saver(pDbg);
+	pDbg << "{" << pResult.mResult << "|" << pResult.mType << "|" << QString::fromStdString(pResult.mChallengeType) << "}";
+
 	return pDbg;
 }

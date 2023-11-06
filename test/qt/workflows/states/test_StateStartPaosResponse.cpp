@@ -26,7 +26,7 @@ class test_StateStartPaosResponse
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
+			mAuthContext.reset(new AuthContext());
 			mState.reset(StateBuilder::createState<StateStartPaosResponse>(mAuthContext));
 			mState->onEntry(nullptr);
 		}

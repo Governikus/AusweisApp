@@ -75,7 +75,7 @@ static QString getTemporaryLogFile(const QString& pSourceFile = QString())
 }
 
 
-void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg)
+void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg) const
 {
 	if (![MFMailComposeViewController canSendMail])
 	{
@@ -107,7 +107,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 }
 
 
-void LogModel::shareLog(const QPoint popupPosition)
+void LogModel::shareLog(const QPoint popupPosition) const
 {
 	const QString& logFile = mSelectedLogFile == 0 ? getTemporaryLogFile() : getTemporaryLogFile(mLogFiles.at(mSelectedLogFile));
 	if (logFile.isEmpty())

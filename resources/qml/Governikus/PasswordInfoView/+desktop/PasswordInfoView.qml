@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.PinResetInformationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.PinResetInformationModel
 
 SectionPage {
 	id: root
@@ -18,7 +18,7 @@ SectionPage {
 	readonly property string buttonText: infoContent.buttonText
 	readonly property var contentList: infoContent.contentList
 	readonly property string hint: infoContent.hint
-	readonly property int imageType: infoContent.imageType
+	readonly property string hintButtonText: infoContent.hintButtonText
 	property var infoContent: PasswordInfoContent {
 	}
 	property alias rootEnabled: titleBarAction.rootEnabled
@@ -29,6 +29,7 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		id: titleBarAction
+
 		rootEnabled: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE
 		showHelp: false
 		showSettings: false
@@ -42,109 +43,77 @@ SectionPage {
 	GFlickableColumnLayout {
 		anchors.fill: parent
 		anchors.margins: Constants.pane_padding
-		spacing: Constants.groupbox_spacing
+		maximumContentWidth: Style.dimens.max_text_width
+		spacing: Constants.pane_spacing
 
-		GridLayout {
-			Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-			Layout.fillWidth: true
-			columnSpacing: Constants.groupbox_spacing
-			columns: 2
-			rowSpacing: Constants.groupbox_spacing
+		Repeater {
+			model: root.contentList
 
-			ColumnLayout {
-				id: contentLayout
-				Layout.alignment: Qt.AlignTop
-				Layout.fillWidth: true
-				Layout.maximumWidth: Style.dimens.max_text_width
-				spacing: Constants.component_spacing
+			delegate: RowLayout {
+				Layout.alignment: headline ? Qt.AlignHCenter : Qt.AlignLeft
+				spacing: 2 * Constants.component_spacing
 
-				Repeater {
-					model: root.contentList
+				PasswordInfoImage {
+					Layout.alignment: Qt.AlignTop
+					imageType: blockHeaderImageType
+					scaleFactorGeneral: plugin.scaleFactor
+					visible: blockHeaderImageType !== PasswordInfoImage.Type.NONE
+				}
+				ColumnLayout {
+					Layout.alignment: Qt.AlignTop
+					spacing: Constants.groupbox_spacing
 
-					delegate: ColumnLayout {
-						Layout.alignment: Qt.AlignTop
-						Layout.fillWidth: true
-						spacing: Constants.component_spacing
+					GText {
+						Layout.alignment: headline ? Qt.AlignHCenter : Qt.AlignLeft
+						activeFocusOnTab: true
+						font.bold: true
+						horizontalAlignment: headline ? Text.AlignHCenter : Text.AlignLeft
+						text: blockTitle
+						textStyle: headline ? Style.text.headline : Style.text.subline
+						visible: text !== ""
 
-						PasswordInfoImage {
-							Layout.alignment: Qt.AlignHCenter
-							imageType: blockHeaderImageType
-							scaleFactorCan: 1 * ApplicationModel.scaleFactor
-							scaleFactorGeneral: 1.35 * ApplicationModel.scaleFactor
-							visible: blockHeaderImageType !== PasswordInfoImage.Type.NONE
+						FocusFrame {
 						}
-						ColumnLayout {
-							Layout.alignment: Qt.AlignTop
-							Layout.fillWidth: true
-							spacing: Constants.groupbox_spacing
+					}
+					Repeater {
+						model: paragraphList
 
-							GText {
-								Layout.alignment: Qt.AlignTop
-								Layout.fillWidth: true
-								Layout.maximumWidth: Style.dimens.max_text_width
-								activeFocusOnTab: true
-								horizontalAlignment: Text.AlignLeft
-								text: blockTitle
-								textStyle: Style.text.header_highlight
-								visible: text !== ""
-								wrapMode: Text.WordWrap
+						delegate: GText {
+							Layout.alignment: headline ? Qt.AlignHCenter : Qt.AlignLeft
+							activeFocusOnTab: true
+							horizontalAlignment: headline ? Text.AlignHCenter : Text.AlignLeft
+							text: modelData
 
-								FocusFrame {
-								}
-							}
-							Repeater {
-								model: paragraphList
-
-								delegate: GText {
-									Layout.alignment: Qt.AlignTop
-									Layout.fillWidth: true
-									Layout.maximumWidth: Style.dimens.max_text_width
-									activeFocusOnTab: true
-									horizontalAlignment: Text.AlignJustify
-									text: modelData
-									textStyle: Style.text.header
-
-									FocusFrame {
-									}
-								}
+							FocusFrame {
 							}
 						}
 					}
 				}
-				GButton {
-					Layout.alignment: Qt.AlignRight
-					Layout.topMargin: Constants.component_spacing
-					icon.source: "qrc:///images/material_open_in_new.svg"
-					text: root.buttonText
-					visible: text !== ""
+			}
+		}
+		GButton {
+			Layout.alignment: Qt.AlignRight
+			Layout.topMargin: Constants.component_spacing
+			icon.source: "qrc:///images/open_website.svg"
+			text: root.buttonText
+			visible: text !== ""
 
-					onClicked: Qt.openUrlExternally(root.buttonLink)
-				}
-			}
-			PasswordInfoImage {
-				imageType: root.imageType
-				scaleFactorCan: 1.5 * ApplicationModel.scaleFactor
-				scaleFactorGeneral: 2.7 * ApplicationModel.scaleFactor
-				visible: root.imageType !== PasswordInfoImage.Type.NONE
-			}
-			GSpacer {
-				Layout.columnSpan: 2
-				Layout.fillHeight: true
-				Layout.row: 1
-			}
-			Hint {
-				Layout.alignment: Qt.AlignHCenter
-				Layout.fillWidth: true
-				Layout.maximumWidth: contentLayout.width
-				Layout.row: 2
-				buttonText: PinResetInformationModel.pinResetActionText
-				text: root.hint
-				visible: text !== ""
+			onClicked: Qt.openUrlExternally(root.buttonLink)
+		}
+		GSpacer {
+			Layout.fillHeight: true
+		}
+		Hint {
+			Layout.alignment: Qt.AlignHCenter
+			Layout.fillWidth: true
+			buttonText: root.hintButtonText
+			buttonTooltip: PinResetInformationModel.pinResetUrl
+			text: root.hint
+			visible: text !== ""
 
-				onClicked: {
-					abortCurrentWorkflow();
-					Qt.openUrlExternally(PinResetInformationModel.pinResetUrl);
-				}
+			onClicked: {
+				abortCurrentWorkflow();
+				Qt.openUrlExternally(PinResetInformationModel.pinResetUrl);
 			}
 		}
 		NavigationButton {

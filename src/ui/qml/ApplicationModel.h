@@ -23,6 +23,9 @@
 Q_FORWARD_DECLARE_OBJC_CLASS(VoiceOverObserver);
 #endif
 
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -31,6 +34,7 @@ class ApplicationModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
 
 	Q_PROPERTY(QString storeUrl READ getStoreUrl NOTIFY fireStoreUrlChanged)
 	Q_PROPERTY(QUrl releaseNotesUrl READ getReleaseNotesUrl CONSTANT)
@@ -38,11 +42,10 @@ class ApplicationModel
 	Q_PROPERTY(QmlNfcState nfcState READ getNfcState NOTIFY fireNfcStateChanged)
 	Q_PROPERTY(bool extendedLengthApdusUnsupported READ isExtendedLengthApdusUnsupported NOTIFY fireReaderPropertiesUpdated)
 
-	Q_PROPERTY(qreal scaleFactor READ getScaleFactor WRITE setScaleFactor NOTIFY fireScaleFactorChanged)
 	Q_PROPERTY(bool wifiEnabled READ isWifiEnabled NOTIFY fireWifiEnabledChanged)
 
 	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
-	Q_PROPERTY(int availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
+	Q_PROPERTY(qsizetype availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 
@@ -52,8 +55,6 @@ class ApplicationModel
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
-		constexpr static qreal DEFAULT_SCALE_FACTOR = 0.6;
-		qreal mScaleFactor;
 		WifiInfo mWifiInfo;
 		bool mWifiEnabled;
 		QStringList mFeedback;
@@ -122,11 +123,8 @@ class ApplicationModel
 		[[nodiscard]] bool isExtendedLengthApdusUnsupported() const;
 
 		[[nodiscard]] bool isWifiEnabled() const;
-		[[nodiscard]] qreal getScaleFactor() const;
-		void setScaleFactor(qreal pScaleFactor);
-
 		[[nodiscard]] Workflow getCurrentWorkflow() const;
-		[[nodiscard]] int getAvailableReader() const;
+		[[nodiscard]] qsizetype getAvailableReader() const;
 
 		[[nodiscard]] QString getFeedback() const;
 
@@ -134,18 +132,17 @@ class ApplicationModel
 
 		[[nodiscard]] Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const;
 
-		Q_INVOKABLE void enableWifi();
+		Q_INVOKABLE void enableWifi()const;
 
 		Q_INVOKABLE void setClipboardText(const QString& pText) const;
-		Q_INVOKABLE void showSettings(const Settings& pAction);
+		Q_INVOKABLE void showSettings(const Settings& pAction) const;
 		Q_INVOKABLE void showFeedback(const QString& pMessage, bool pReplaceExisting = false);
-		Q_INVOKABLE void keepScreenOn(bool pActive);
+		Q_INVOKABLE void keepScreenOn(bool pActive) const;
+
 		[[nodiscard]] Q_INVOKABLE QStringList getLicenseText() const;
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-		[[nodiscard]] Q_INVOKABLE QString onlineHelpUrl(const QString& pHelpSectionName);
-		Q_INVOKABLE void openOnlineHelp(const QString& pHelpSectionName);
-		[[nodiscard]] Q_INVOKABLE QUrl getCustomConfigPath();
-		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename);
+		[[nodiscard]] Q_INVOKABLE QUrl getCustomConfigPath() const;
+		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename) const;
 #endif
 		[[nodiscard]] Q_INVOKABLE QString stripHtmlTags(QString pString) const;
 #ifdef Q_OS_IOS
@@ -164,7 +161,6 @@ class ApplicationModel
 		void fireCurrentWorkflowChanged();
 		void fireAvailableReaderChanged();
 
-		void fireScaleFactorChanged();
 		void fireWifiEnabledChanged();
 
 		void fireFeedbackChanged();

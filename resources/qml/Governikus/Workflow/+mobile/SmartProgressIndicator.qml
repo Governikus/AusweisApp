@@ -1,19 +1,21 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: baseItem
 
 	property alias disabled: icon.tintEnabled
 
-	height: Style.dimens.workflow_progress_indicator_size
+	implicitHeight: Style.dimens.workflow_progress_indicator_size
+	implicitWidth: icon.implicitWidth
 
 	TintableIcon {
 		id: icon
+
 		anchors.centerIn: parent
 		desaturate: true
 		opacity: tintEnabled ? 0.7 : 1.0

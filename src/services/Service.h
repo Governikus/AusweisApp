@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "AppUpdater.h"
+#include "AppUpdateData.h"
 #include "Env.h"
 
 #include <QTimer>

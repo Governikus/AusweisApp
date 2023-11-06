@@ -48,14 +48,8 @@ public class AusweisApp2Service
 	public void onDestroy()
 	{
 		LogHandler.getLogger().info("Android service destroyed.");
-
+		BootstrapHelper.triggerShutdown();
 		super.onDestroy();
-
-		// Workaround. When bound & unbound the QtService is in a funny state causing
-		// "WARNING: QApplication was not created in the main() thread." and a crash on
-		// first rebind.
-		// This workaround is inspired by https://bugreports.qt.io/browse/QTBUG-54012 .
-		System.exit(0); // NOPMD see comment above
 	}
 
 

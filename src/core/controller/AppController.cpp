@@ -15,7 +15,6 @@
 #include "UILoader.h"
 #include "UIPlugIn.h"
 #include "VolatileSettings.h"
-#include "controller/AuthController.h"
 #include "controller/ChangePinController.h"
 
 #include <QCoreApplication>
@@ -119,9 +118,9 @@ void AppController::start()
 			}, Qt::QueuedConnection);
 		});
 
-	if (!Env::getSingleton<SecureStorage>()->isLoaded())
+	if (!Env::getSingleton<SecureStorage>()->isValid())
 	{
-		qCCritical(init) << "SecureStorage not loaded";
+		qCCritical(init) << "SecureStorage not valid";
 		return;
 	}
 
@@ -191,23 +190,7 @@ void AppController::onWorkflowFinished()
 	qDebug() << controller->metaObject()->className() << "done";
 	disconnect(controller.data(), &WorkflowController::fireComplete, this, &AppController::onWorkflowFinished);
 
-	if (mActiveWorkflow->getContext()->getLastPaceResult() == CardReturnCode::NO_ACTIVE_PIN_SET)
-	{
-		switch (mActiveWorkflow->getAction())
-		{
-			case Action::AUTH:
-			case Action::SELF:
-			case Action::PERSONALIZATION:
-				onWorkflowRequested(ChangePinController::createWorkflowRequest(true));
-				break;
-
-			case Action::PIN:
-			case Action::REMOTE_SERVICE:
-				break;
-		}
-	}
-
-	Q_EMIT fireWorkflowFinished(mActiveWorkflow->getContext());
+	Q_EMIT fireWorkflowFinished(mActiveWorkflow);
 
 	qCInfo(support) << "Finish workflow" << mActiveWorkflow->getAction();
 	mActiveWorkflow.reset();
@@ -241,6 +224,7 @@ void AppController::onWorkflowRequested(const QSharedPointer<WorkflowRequest>& p
 	{
 		case WorkflowControl::UNHANDLED:
 			qWarning() << "Cannot start or enqueue workflow:" << pRequest->getAction();
+			Q_EMIT fireWorkflowUnhandled(pRequest);
 			break;
 
 		case WorkflowControl::SKIP:
@@ -249,6 +233,7 @@ void AppController::onWorkflowRequested(const QSharedPointer<WorkflowRequest>& p
 			{
 				qDebug() << "Waiting workflow:" << mWaitingRequest->getAction();
 			}
+			Q_EMIT fireWorkflowUnhandled(pRequest);
 			break;
 
 		case WorkflowControl::ENQUEUE:
@@ -342,10 +327,9 @@ void AppController::completeShutdown()
 	qCDebug(init) << "Emit fire shutdown";
 	Q_EMIT fireShutdown();
 
-	ResourceLoader::getInstance().shutdown();
-
 	const auto& uiShutdown = [this] {
 				const auto& exitApp = [this] {
+							ResourceLoader::getInstance().shutdown();
 							qCDebug(init) << "Quit event loop of QCoreApplication";
 							QCoreApplication::exit(mExitCode);
 						};
@@ -438,6 +422,7 @@ void AppController::onUiPlugin(const UIPlugIn* pPlugin)
 	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::QueuedConnection);
 	connect(this, &AppController::fireWorkflowStarted, pPlugin, &UIPlugIn::onWorkflowStarted);
 	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UIPlugIn::onWorkflowFinished);
+	connect(this, &AppController::fireWorkflowUnhandled, pPlugin, &UIPlugIn::onWorkflowUnhandled);
 	connect(this, &AppController::fireInitialized, pPlugin, &UIPlugIn::onApplicationInitialized);
 	connect(this, &AppController::fireStarted, pPlugin, &UIPlugIn::onApplicationStarted);
 	connect(this, &AppController::fireShowUi, pPlugin, &UIPlugIn::onShowUi);
@@ -482,7 +467,7 @@ bool AppController::startNewWorkflow(const QSharedPointer<WorkflowRequest>& pReq
 	controller->run();
 
 	//second: activate ui
-	Q_EMIT fireWorkflowStarted(mActiveWorkflow->getContext());
+	Q_EMIT fireWorkflowStarted(mActiveWorkflow);
 
 	if (!mActiveWorkflow->getContext()->wasClaimed())
 	{
@@ -495,11 +480,7 @@ bool AppController::startNewWorkflow(const QSharedPointer<WorkflowRequest>& pReq
 }
 
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult)
-#else
-bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult)
-#endif
 {
 	Q_UNUSED(pResult)
 #if !defined(Q_OS_WIN)
@@ -527,8 +508,9 @@ void AppController::clearCacheFolders()
 	qDebug() << "Try to find and clear cache folder";
 
 	const QStringList cachePaths = QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
-	for (const QString& cachePath : cachePaths)
+	for (QString cachePath : cachePaths)
 	{
+		cachePath.replace(QStringLiteral("AusweisApp"), QStringLiteral("AusweisApp2"));
 		auto cacheDir = QDir(cachePath);
 
 		if (!cacheDir.exists())

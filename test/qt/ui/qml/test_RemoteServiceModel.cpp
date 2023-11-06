@@ -3,12 +3,13 @@
  */
 
 /*!
- * \brief Unit tests for \ref ProviderModel
+ * \brief Unit tests for \ref RemoteServiceModel
  */
 
 #include "RemoteServiceModel.h"
 
 #include "MockIfdServer.h"
+#include "ReaderManager.h"
 #include "context/IfdServiceContext.h"
 
 #include <QDebug>
@@ -50,6 +51,11 @@ class test_RemoteServiceModel
 
 		void test_ReaderPlugInType()
 		{
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+
 			const ReaderManagerPlugInType input1 = ReaderManagerPlugInType::NFC;
 			const ReaderManagerPlugInType input2 = ReaderManagerPlugInType::UNKNOWN;
 
@@ -106,16 +112,22 @@ class test_RemoteServiceModel
 		void test_ResetContext()
 		{
 			QSignalSpy spyConnectedChanged(mModel, &RemoteServiceModel::fireConnectedChanged);
+			QSignalSpy spyWorkflowStarted(mModel, &WorkflowModel::fireWorkflowStarted);
 			QSignalSpy spyCurrentStateChanged(mModel, &WorkflowModel::fireCurrentStateChanged);
+			QSignalSpy spyStateEntered(mModel, &WorkflowModel::fireStateEntered);
 			QSignalSpy spyIsRunningChanged(mModel, &RemoteServiceModel::fireIsRunningChanged);
 			QSignalSpy spyPskChanged(mModel, &RemoteServiceModel::firePskChanged);
 			QSignalSpy spyConnectedClientDeviceNameChanged(mModel, &RemoteServiceModel::fireConnectionInfoChanged);
 
 			mModel->resetRemoteServiceContext(mContext);
+			QCOMPARE(spyWorkflowStarted.count(), 1);
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
+			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyConnectedChanged.count(), 1);
 
 			Q_EMIT mContext->fireStateChanged(QString());
+			QCOMPARE(spyCurrentStateChanged.count(), 2);
+			QCOMPARE(spyStateEntered.count(), 1);
 			QCOMPARE(spyIsRunningChanged.count(), 1);
 
 			Q_EMIT mContext->getIfdServer()->firePskChanged(QByteArray());
@@ -140,13 +152,6 @@ class test_RemoteServiceModel
 		}
 
 
-		void test_TransactionInfo()
-		{
-			mModel->resetRemoteServiceContext(mContext);
-			QCOMPARE(mModel->getTransactionInfo(), QString());
-		}
-
-
 		void test_getSupportedReaderPlugInTypes()
 		{
 			QVector<ReaderManagerPlugInType> supportedPlugIns {ReaderManagerPlugInType::NFC};
@@ -154,6 +159,13 @@ class test_RemoteServiceModel
 			supportedPlugIns << ReaderManagerPlugInType::SMART;
 #endif
 			QCOMPARE(mModel->getSupportedReaderPlugInTypes(), supportedPlugIns);
+		}
+
+
+		void test_TransactionInfo()
+		{
+			mModel->resetRemoteServiceContext(mContext);
+			QCOMPARE(mModel->getTransactionInfo(), QString());
 		}
 
 

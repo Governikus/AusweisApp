@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.UiModule
 
-Rectangle {
-	id: baseItem
+RowLayout {
+	id: navigation
 
 	readonly property int activeModule: d.activeModule
 	readonly property bool lockedAndHidden: d.lockedAndHidden
@@ -27,13 +28,13 @@ Rectangle {
 		}
 	}
 
-	color: Style.color.background_pane
 	enabled: !lockedAndHidden
-	height: lockedAndHidden ? 0 : (Style.dimens.navigation_bar_height + plugin.safeAreaMargins.bottom)
+	height: lockedAndHidden ? 0 : (navigationView.height + plugin.safeAreaMargins.bottom)
 	visible: height > 0
 
-	Behavior on height  {
+	Behavior on height {
 		id: heightAnimation
+
 		enabled: !ApplicationModel.isScreenReaderRunning()
 
 		NumberAnimation {
@@ -53,15 +54,12 @@ Rectangle {
 	}
 	NavigationView {
 		id: navigationView
-		Accessible.ignored: lockedAndHidden
-		height: Style.dimens.navigation_bar_height
 
-		anchors {
-			left: parent.left
-			leftMargin: plugin.safeAreaMargins.left
-			right: parent.right
-			rightMargin: plugin.safeAreaMargins.right
-			top: parent.top
-		}
+		Accessible.ignored: lockedAndHidden
+		Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+		Layout.fillWidth: true
+		Layout.minimumHeight: Style.dimens.navigation_bar_min_height
+		Layout.minimumWidth: Math.min(navigation.width, Style.dimens.max_text_width)
+		Layout.preferredHeight: Math.ceil(implicitHeight)
 	}
 }

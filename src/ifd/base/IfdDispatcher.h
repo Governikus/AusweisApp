@@ -50,7 +50,7 @@ class IfdDispatcher
 		[[nodiscard]] virtual QString getId() const;
 		[[nodiscard]] virtual const QString& getContextHandle() const;
 		[[nodiscard]] IfdVersion::Version getVersion() const;
-		void saveRemoteNameInSettings(const QString& pName);
+		void saveRemoteNameInSettings(const QString& pName) const;
 
 		void close();
 		Q_INVOKABLE virtual void send(const QSharedPointer<const IfdMessage>& pMessage);

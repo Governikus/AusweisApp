@@ -4,7 +4,6 @@
 
 #include "NumberModel.h"
 
-#include "ApplicationModel.h"
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
 #include "context/IfdServiceContext.h"
@@ -18,6 +17,8 @@ using namespace governikus;
 NumberModel::NumberModel()
 	: QObject()
 	, mContext()
+	, mNewPin()
+	, mNewPinConfirmation()
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &NumberModel::onReaderInfoChanged);
@@ -31,6 +32,8 @@ NumberModel::NumberModel()
 void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 {
 	mContext = pContext;
+	clearNewPinAndConfirmation();
+
 	if (mContext)
 	{
 		connect(mContext.data(), &WorkflowContext::fireCanChanged, this, &NumberModel::fireCanChanged);
@@ -53,6 +56,14 @@ void NumberModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 		{
 			connect(remoteServiceContext.data(), &IfdServiceContext::fireEstablishPaceChannelUpdated, this, &NumberModel::fireInputErrorChanged);
 		}
+
+#if __has_include("context/PersonalizationContext.h")
+		const auto personalizationContext = mContext.objectCast<PersonalizationContext>();
+		if (personalizationContext)
+		{
+			connect(personalizationContext.data(), &PersonalizationContext::fireSessionIdentifierChanged, this, &NumberModel::firePasswordTypeChanged);
+		}
+#endif
 
 		connect(mContext.data(), &WorkflowContext::fireCardConnectionChanged, this, &NumberModel::onCardConnectionChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &NumberModel::fireReaderInfoChanged);
@@ -79,22 +90,25 @@ PasswordType NumberModel::getPasswordType() const
 	}
 
 	const auto& changePinContext = mContext.objectCast<ChangePinContext>();
-	if (changePinContext && !changePinContext->getPin().isEmpty())
-	{
-		return mContext->isSmartCardUsed() ? PasswordType::NEW_SMART_PIN : PasswordType::NEW_PIN;
-	}
-
 	const auto& remoteServiceContext = mContext.objectCast<IfdServiceContext>();
-	if (remoteServiceContext && remoteServiceContext->modifyPinRunning())
+	if ((changePinContext && !changePinContext->getPin().isEmpty()) || (remoteServiceContext && remoteServiceContext->modifyPinRunning()))
 	{
-		return PasswordType::NEW_PIN;
+		if (mNewPin.isEmpty())
+		{
+			return mContext->isSmartCardUsed() ? PasswordType::NEW_SMART_PIN : PasswordType::NEW_PIN;
+		}
+		return mContext->isSmartCardUsed() ? PasswordType::NEW_SMART_PIN_CONFIRMATION : PasswordType::NEW_PIN_CONFIRMATION;
 	}
 
 #if __has_include("context/PersonalizationContext.h")
 	const auto& smartContext = mContext.objectCast<PersonalizationContext>();
 	if (smartContext && !smartContext->getSessionIdentifier().isNull())
 	{
-		return PasswordType::NEW_SMART_PIN;
+		if (mNewPin.isEmpty())
+		{
+			return PasswordType::NEW_SMART_PIN;
+		}
+		return PasswordType::NEW_SMART_PIN_CONFIRMATION;
 	}
 #endif
 
@@ -154,35 +168,83 @@ void NumberModel::setPin(const QString& pPin)
 
 QString NumberModel::getNewPin() const
 {
-	const auto changePinContext = mContext.objectCast<ChangePinContext>();
-
-	return changePinContext ? changePinContext->getNewPin() : QString();
+	return mNewPin;
 }
 
 
 void NumberModel::setNewPin(const QString& pNewPin)
 {
+	if (!mContext)
+	{
+		return;
+	}
+
+	if (mNewPin != pNewPin)
+	{
+		mNewPin = pNewPin;
+		Q_EMIT fireNewPinChanged();
+	}
+
+	Q_EMIT firePasswordTypeChanged();
+	if (!mNewPinConfirmation.isEmpty())
+	{
+		mNewPinConfirmation.clear();
+		Q_EMIT fireInputErrorChanged();
+	}
+}
+
+
+QString NumberModel::getNewPinConfirmation() const
+{
+	return mNewPinConfirmation;
+}
+
+
+void NumberModel::setNewPinConfirmation(const QString& pNewPinConfirmation)
+{
+	if (mNewPinConfirmation != pNewPinConfirmation)
+	{
+		mNewPinConfirmation = pNewPinConfirmation;
+		Q_EMIT fireNewPinConfirmationChanged();
+		Q_EMIT firePasswordTypeChanged();
+	}
+}
+
+
+bool NumberModel::commitNewPin()
+{
+	if (!newPinAndConfirmationMatch())
+	{
+		mNewPin.clear();
+		Q_EMIT firePasswordTypeChanged();
+		Q_EMIT fireInputErrorChanged();
+		return false;
+	}
+
 	const auto changePinContext = mContext.objectCast<ChangePinContext>();
 	if (changePinContext)
 	{
-		changePinContext->setNewPin(pNewPin);
+		changePinContext->setNewPin(mNewPin);
 	}
 
 	const auto remoteServiceContext = mContext.objectCast<IfdServiceContext>();
 	if (remoteServiceContext)
 	{
-		remoteServiceContext->setNewPin(pNewPin);
+		remoteServiceContext->setNewPin(mNewPin);
 	}
 
 #if __has_include("context/PersonalizationContext.h")
 	const auto smartContext = mContext.objectCast<PersonalizationContext>();
 	if (smartContext)
 	{
-		smartContext->setNewPin(pNewPin);
+		smartContext->setNewPin(mNewPin);
 	}
 #endif
 
+	clearNewPinAndConfirmation();
 	Q_EMIT firePasswordTypeChanged();
+
+	return true;
 }
 
 
@@ -221,11 +283,37 @@ CardReturnCode NumberModel::getInputErrorCode() const
 }
 
 
+void NumberModel::clearNewPinAndConfirmation()
+{
+	mNewPin.clear();
+	mNewPinConfirmation.clear();
+}
+
+
+bool NumberModel::newPinAndConfirmationMatch() const
+{
+	return !mNewPin.isEmpty() && !mNewPinConfirmation.isEmpty() && mNewPin == mNewPinConfirmation;
+}
+
+
 QString NumberModel::getInputError() const
 {
 	const CardReturnCode paceResult = getInputErrorCode();
 	const bool isRequestTransportPin = mContext && mContext->isRequestTransportPin();
 	const bool isSmartCard = mContext && mContext->isSmartCardUsed();
+
+	if (!mNewPinConfirmation.isEmpty() && !newPinAndConfirmationMatch())
+	{
+#if __has_include("context/PersonalizationContext.h")
+		return isSmartCard || (mContext && mContext.objectCast<PersonalizationContext>())
+#else
+		return isSmartCard
+#endif
+		       //: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
+				? tr("The input does not match. Please choose a new Smart-eID PIN.")
+		       //: ALL_PLATFORMS Error message if the new pin confirmation mismatches.
+				: tr("The input does not match. Please choose a new ID card PIN.");
+	}
 
 	switch (paceResult)
 	{
@@ -235,13 +323,9 @@ QString NumberModel::getInputError() const
 		case CardReturnCode::INVALID_PIN:
 			if (isRequestTransportPin)
 			{
-				return QStringLiteral("%1<br><br>%2")
-				       //: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.
-					   .arg(tr("You have entered an incorrect, five-digit Transport PIN. "
-							   "You have two further attempts to enter the correct Transport PIN."),
-						//: INFO ALL_PLATFORMS
-						tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-						   "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+				//: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.
+				return tr("You have entered an incorrect, five-digit Transport PIN. "
+						  "You have two further attempts to enter the correct Transport PIN.");
 			}
 			else if (isSmartCard)
 			{
@@ -257,21 +341,17 @@ QString NumberModel::getInputError() const
 		case CardReturnCode::INVALID_PIN_2:
 			if (isRequestTransportPin)
 			{
-				return QStringLiteral("%1<br><br>%2")
-				       //: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.
-					   .arg(tr("You have entered an incorrect, five-digit Transport PIN twice. "
-							   "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
-							   "You can find your CAN in the bottom right on the front of your ID card."),
-						//: INFO ALL_PLATFORMS
-						tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-						   "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+				//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.
+				return tr("You have entered an incorrect, five-digit Transport PIN twice. "
+						  "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+						  "You can find your CAN in the bottom right on the front of your ID card.");
 
 			}
 			else if (isSmartCard)
 			{
 				//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a third wrong attempt could invalidate the Smart-eID.
 				return tr("You have entered an incorrect, six-digit Smart-eID PIN twice. "
-						  "An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.");
+						  "After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
 			}
 			else
 			{
@@ -284,13 +364,9 @@ QString NumberModel::getInputError() const
 		case CardReturnCode::INVALID_PIN_3:
 			if (isRequestTransportPin)
 			{
-				return QStringLiteral("%1<br><br>%2")
-				       //: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
-					   .arg(tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
-							   "To remove the block, the ten-digit PUK must be entered first."),
-						//: INFO ALL_PLATFORMS
-						tr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. "
-						   "If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid."));
+				//: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
+				return tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
+						  "To remove the block, the ten-digit PUK must be entered first.");
 			}
 			else if (isSmartCard)
 			{

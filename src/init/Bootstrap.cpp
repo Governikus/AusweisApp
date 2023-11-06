@@ -14,6 +14,8 @@
 #include <openssl/crypto.h>
 
 #include <QLoggingCategory>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QProcess>
 #include <QScopedPointer>
 #include <QSslSocket>
@@ -49,6 +51,9 @@ using QAPP = QApplication;
 #endif
 
 
+static QMutex cMutex; // clazy:exclude=non-pod-global-static
+
+
 static inline void printInfo()
 {
 	qCDebug(init) << "Logging to" << *Env::getSingleton<LogHandler>();
@@ -61,11 +66,6 @@ static inline void printInfo()
 	}
 	qCInfo(init) << "##################################################";
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	#define OpenSSL_version SSLeay_version
-	#define OPENSSL_VERSION SSLEAY_VERSION
-#endif
-
 	if (QSslSocket::sslLibraryVersionString() != QLatin1String(OpenSSL_version(OPENSSL_VERSION)))
 	{
 		qCWarning(init) << "Linked OpenSSL Version differs:" << OpenSSL_version(OPENSSL_VERSION);
@@ -77,19 +77,12 @@ static inline void printInfo()
 		qCDebug(init) << "Library path:" << path;
 	}
 
-#if (QT_VERSION > QT_VERSION_CHECK(6, 0, 0))
 	qCDebug(init) << "TLS backends:" << QSslSocket::availableBackends() << "| using:" << QSslSocket::activeBackend();
-#endif
 }
 
 
 static inline QCoreApplication* initQt(int& argc, char** argv)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
-	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
 	QCoreApplication::setOrganizationName(QStringLiteral(VENDOR));
 	QCoreApplication::setOrganizationDomain(QStringLiteral(VENDOR_DOMAIN));
 	QCoreApplication::setApplicationName(QStringLiteral(PRODUCT));
@@ -138,7 +131,11 @@ static void restartApp(const QString& pApplicationFilePath, QStringList pArgumen
 		pArgumentList.removeFirst();
 	}
 
-	pArgumentList << QStringLiteral("--show");
+	const auto& show = QStringLiteral("--show");
+	if (!pArgumentList.contains(show))
+	{
+		pArgumentList << show;
+	}
 
 	qCInfo(init) << "Attempting to start new process:" << pApplicationFilePath << ", args:" << pArgumentList;
 	if (qint64 pid = -1; QProcess::startDetached(pApplicationFilePath, pArgumentList, QString(), &pid))
@@ -154,6 +151,24 @@ static void restartApp(const QString& pApplicationFilePath, QStringList pArgumen
 
 #endif
 
+
+void governikus::shutdownApp()
+{
+	if (cMutex.try_lock())
+	{
+		qCDebug(init) << "Shutdown trigger omitted";
+		cMutex.unlock();
+		return;
+	}
+
+	qCDebug(init) << "Trigger shutdown...";
+	Env::getSingleton<SignalHandler>()->quit();
+	qCDebug(init) << "Wait for MainThread to be finished...";
+	const QMutexLocker mutexLocker(&cMutex);
+	qCDebug(init) << "MainThread finished!";
+}
+
+
 int governikus::initApp(int& argc, char** argv)
 {
 	const QScopedPointer<QCoreApplication> app(initQt(argc, argv));
@@ -164,6 +179,7 @@ int governikus::initApp(int& argc, char** argv)
 	Env::getSingleton<SignalHandler>()->init();
 	printInfo();
 
+	const QMutexLocker mutexLocker(&cMutex);
 	AppController controller;
 	Env::getSingleton<SignalHandler>()->setController([&controller]{
 			QMetaObject::invokeMethod(&controller, [&controller]{
@@ -185,3 +201,18 @@ int governikus::initApp(int& argc, char** argv)
 	qCDebug(init) << "Leaving application... bye bye!";
 	return returnCode;
 }
+
+
+#ifdef Q_OS_ANDROID
+extern "C"
+{
+
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_BootstrapHelper_triggerShutdown(JNIEnv*, jobject)
+{
+	shutdownApp();
+}
+
+
+}
+
+#endif

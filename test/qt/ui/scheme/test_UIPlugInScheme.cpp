@@ -9,12 +9,10 @@
 #include "UIPlugInScheme.h"
 
 #include "WorkflowRequest.h"
-#include "context/ActivationContext.h"
 #include "context/AuthContext.h"
 
 #include <QDesktopServices>
 #include <QtTest>
-
 
 using namespace governikus;
 
@@ -24,6 +22,9 @@ class test_UIPlugInScheme
 	: public QObject
 {
 	Q_OBJECT
+
+	private:
+		QUrl mReceivedUrl;
 
 	private Q_SLOTS:
 		void authentication_data()
@@ -56,7 +57,7 @@ class test_UIPlugInScheme
 			QCOMPARE(spy.count(), 1);
 
 			const auto request = spy.at(0).at(0).value<QSharedPointer<WorkflowRequest>>();
-			QCOMPARE(request->getContext().objectCast<AuthContext>()->getActivationContext()->getActivationURL(), url);
+			QCOMPARE(request->getContext().objectCast<AuthContext>()->getActivationUrl(), url);
 		}
 
 
@@ -164,6 +165,74 @@ class test_UIPlugInScheme
 			QDesktopServices::openUrl(QUrl("eid://127.0.0.1:24727/eID-Client?foo=bar"));
 			QCOMPARE(spyUi.count(), 0);
 			QCOMPARE(spy.count(), 0);
+		}
+
+
+		void onCustomUrl()
+		{
+			UIPlugInScheme ui;
+
+			QUrl url;
+			QSignalSpy spy(&ui, &UIPlugIn::fireWorkflowRequested);
+			connect(&ui, &UIPlugIn::fireWorkflowRequested, this, [&url](const QSharedPointer<WorkflowRequest>& pRequest){
+					url = pRequest->getContext().objectCast<AuthContext>()->getActivationUrl();
+				});
+
+			QTest::ignoreMessage(QtDebugMsg, "Got new request");
+			QTest::ignoreMessage(QtDebugMsg, "Request URL: QUrl(\"http://crap\")");
+			QTest::ignoreMessage(QtDebugMsg, "Not our business. Using the appropriate mechanism for the user's desktop environment.");
+			ui.onCustomUrl(QUrl("http://crap"));
+			QCOMPARE(spy.count(), 0);
+
+			const QUrl testUrl("http://localhost:24727/eID-Client?tcTokenURL=http://bla");
+			QTest::ignoreMessage(QtDebugMsg, "Got new request");
+			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
+			ui.onCustomUrl(testUrl);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(url, testUrl);
+
+			QSignalSpy spyShowUi(&ui, &UIPlugIn::fireShowUiRequested);
+			QTest::ignoreMessage(QtDebugMsg, "Got new request");
+			QTest::ignoreMessage(QtDebugMsg, "Request type: showui");
+			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?showUi"));
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(spyShowUi.count(), 1);
+		}
+
+
+		void sendRedirectOnCustomUrl(const QUrl& pUrl)
+		{
+			mReceivedUrl = pUrl;
+		}
+
+
+		void sendRedirect()
+		{
+			UIPlugInScheme ui;
+
+			QSharedPointer<WorkflowRequest> request;
+			QSignalSpy spy(&ui, &UIPlugIn::fireWorkflowRequested);
+			connect(&ui, &UIPlugIn::fireWorkflowRequested, this, [&request](const QSharedPointer<WorkflowRequest>& pRequest){
+					request = pRequest;
+				});
+
+			QTest::ignoreMessage(QtDebugMsg, "Got new request");
+			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
+			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?tcTokenURL=https://bla"));
+			QVERIFY(request);
+			QVERIFY(request->getData().value<UIPlugInScheme::RedirectHandler>());
+
+			auto authContext = request->getContext().objectCast<AuthContext>();
+			QVERIFY(authContext);
+			authContext->setRefreshUrl(QUrl("https://www.example.com"));
+			authContext->setStatus(GlobalStatus::Code::No_Error);
+
+			QDesktopServices::setUrlHandler(QStringLiteral("https"), this, "sendRedirectOnCustomUrl");
+			QTest::ignoreMessage(QtDebugMsg, "Determined redirect URL QUrl(\"https://www.example.com?ResultMajor=ok\")");
+			ui.onWorkflowFinished(request);
+
+			QTRY_COMPARE(mReceivedUrl, QUrl("https://www.example.com?ResultMajor=ok")); // clazy:exclude=qstring-allocations
+			QDesktopServices::unsetUrlHandler(QStringLiteral("https"));
 		}
 
 

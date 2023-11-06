@@ -20,7 +20,7 @@ class MsgHandlerAuth
 {
 	private:
 		QUrl createUrl(const QString& pUrl);
-		void initAuth(const QUrl& pTcTokenUrl);
+		void initAuth(const QUrl& pTcTokenUrl) const;
 
 	public:
 		MsgHandlerAuth();

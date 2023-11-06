@@ -1,15 +1,14 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
-	height: selector.height
+	height: Math.max(circle1.maximumHeight, circle2.maximumHeight, circle3.maximumHeight)
 	state: "1"
-	width: d.stepWidth * 4 + height
+	width: d.stepWidth * 2 + height
 
 	states: [
 		State {
@@ -27,10 +26,6 @@ Item {
 				enabled: false
 				target: circle3
 			}
-			PropertyChanges {
-				anchors.leftMargin: 0
-				target: line
-			}
 		},
 		State {
 			name: "2"
@@ -46,10 +41,6 @@ Item {
 			PropertyChanges {
 				enabled: false
 				target: circle3
-			}
-			PropertyChanges {
-				anchors.leftMargin: -d.stepWidth
-				target: line
 			}
 		},
 		State {
@@ -67,20 +58,10 @@ Item {
 				enabled: true
 				target: circle3
 			}
-			PropertyChanges {
-				anchors.leftMargin: 2 * -d.stepWidth
-				target: line
-			}
 		}
 	]
 	transitions: [
 		Transition {
-			PropertyAnimation {
-				duration: 500
-				easing.type: Easing.InOutCubic
-				property: "anchors.leftMargin"
-				target: line
-			}
 			SequentialAnimation {
 				PauseAnimation {
 					duration: 200
@@ -104,42 +85,51 @@ Item {
 	QtObject {
 		id: d
 
-		readonly property int stepWidth: ApplicationModel.scaleFactor * 250
+		readonly property int stepWidth: plugin.scaleFactor * 250
 	}
 	Rectangle {
-		id: line
-		anchors.left: parent.horizontalCenter
+		id: line1
+
+		anchors.left: circle1.horizontalCenter
+		anchors.leftMargin: Constants.component_spacing + circle1.maximumHeight / 2
+		anchors.right: circle2.horizontalCenter
+		anchors.rightMargin: Constants.component_spacing + circle2.maximumHeight / 2
 		anchors.verticalCenter: parent.verticalCenter
 		color: Style.color.border
-		height: ApplicationModel.scaleFactor * 8
-		width: d.stepWidth * 2
+		height: Style.dimens.border_width
+		width: d.stepWidth
+	}
+	Rectangle {
+		id: line2
+
+		anchors.left: circle2.horizontalCenter
+		anchors.leftMargin: Constants.component_spacing + circle2.maximumHeight / 2
+		anchors.right: circle3.horizontalCenter
+		anchors.rightMargin: Constants.component_spacing + circle3.maximumHeight / 2
+		anchors.verticalCenter: parent.verticalCenter
+		color: Style.color.border
+		height: Style.dimens.border_width
+		width: d.stepWidth
 	}
 	TextCircle {
 		id: circle1
-		anchors.horizontalCenter: line.left
-		anchors.verticalCenter: line.verticalCenter
+
+		anchors.horizontalCenter: parent.left
+		anchors.verticalCenter: parent.verticalCenter
 		text: "1"
 	}
 	TextCircle {
 		id: circle2
-		anchors.horizontalCenter: line.horizontalCenter
-		anchors.verticalCenter: line.verticalCenter
+
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.verticalCenter: parent.verticalCenter
 		text: "2"
 	}
 	TextCircle {
 		id: circle3
-		anchors.horizontalCenter: line.right
-		anchors.verticalCenter: line.verticalCenter
+
+		anchors.horizontalCenter: parent.right
+		anchors.verticalCenter: parent.verticalCenter
 		text: "3"
-	}
-	Rectangle {
-		id: selector
-		anchors.centerIn: parent
-		border.color: Style.color.accent
-		border.width: ApplicationModel.scaleFactor * 6
-		color: Style.color.transparent
-		height: circle1.height + ApplicationModel.scaleFactor * 40
-		radius: height / 2
-		width: height
 	}
 }

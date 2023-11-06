@@ -22,7 +22,7 @@ class SelfAuthController
 	Q_OBJECT
 
 	public:
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest();
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pActivateUi = true);
 
 		explicit SelfAuthController(QSharedPointer<SelfAuthContext> pContext);
 		~SelfAuthController() override = default;

@@ -1,0 +1,57 @@
+From acf5a10d344f9e711a3c7c6d7d6629077c1ce1fc Mon Sep 17 00:00:00 2001
+From: Julian Greilich <j.greilich@gmx.de>
+Date: Fri, 27 Oct 2023 11:34:09 +0200
+Subject: Remove warnings about polish and binding loops
+
+Since the polish and binding loops are known problems we don't want
+them to spam into the log files.
+
+Change-Id: I72b73ed0652c3b2b6fff1def264c812add4377f6
+---
+ src/qml/qml/qqmlabstractbinding.cpp | 2 +-
+ src/qml/qml/qqmlpropertybinding.cpp | 1 -
+ src/quicklayouts/qquicklayout.cpp   | 3 ---
+ 3 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git x/qtdeclarative/src/qml/qml/qqmlabstractbinding.cpp y/qtdeclarative/src/qml/qml/qqmlabstractbinding.cpp
+index 78d1d68f55..87348a97e5 100644
+--- x/qtdeclarative/src/qml/qml/qqmlabstractbinding.cpp
++++ y/qtdeclarative/src/qml/qml/qqmlabstractbinding.cpp
+@@ -157,7 +157,7 @@ void QQmlAbstractBinding::removeFromObject()
+ 
+ void QQmlAbstractBinding::printBindingLoopError(const QQmlProperty &prop)
+ {
+-    qmlWarning(prop.object()) << QString(QLatin1String("Binding loop detected for property \"%1\"")).arg(prop.name());
++    Q_UNUSED(prop)
+ }
+ 
+ void QQmlAbstractBinding::getPropertyData(
+diff --git x/qtdeclarative/src/qml/qml/qqmlpropertybinding.cpp y/qtdeclarative/src/qml/qml/qqmlpropertybinding.cpp
+index 5f646b62de..7219cb0a0e 100644
+--- x/qtdeclarative/src/qml/qml/qqmlpropertybinding.cpp
++++ y/qtdeclarative/src/qml/qml/qqmlpropertybinding.cpp
+@@ -148,7 +148,6 @@ void QQmlPropertyBindingJS::expressionChanged()
+         else
+             err.setDescription(QString::fromLatin1("Binding loop detected"));
+         err.setObject(asBinding()->target());
+-        qmlWarning(this->scopeObject(), err);
+         return;
+     }
+     m_error.setTag(InEvaluationLoop);
+diff --git x/qtdeclarative/src/quicklayouts/qquicklayout.cpp y/qtdeclarative/src/quicklayouts/qquicklayout.cpp
+index fc2bcc130c..193f014f58 100644
+--- x/qtdeclarative/src/quicklayouts/qquicklayout.cpp
++++ y/qtdeclarative/src/quicklayouts/qquicklayout.cpp
+@@ -840,9 +840,6 @@ void QQuickLayout::invalidate(QQuickItem * /*childItem*/)
+             // (e.g QQuickText changes implicitHeight when its width gets changed)
+             qCDebug(lcQuickLayouts) << "QQuickLayout::invalidate(), polish()";
+             polish();
+-        } else {
+-            qmlWarning(this).nospace() << "Layout polish loop detected for " << this
+-                << ". Aborting after two iterations.";
+         }
+     }
+ }
+-- 
+2.42.0
+

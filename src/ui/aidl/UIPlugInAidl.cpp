@@ -7,6 +7,7 @@
 #include "Env.h"
 #include "ReaderManager.h"
 #include "UILoader.h"
+#include "WorkflowRequest.h"
 #ifdef Q_OS_ANDROID
 	#include "Randomizer.h"
 	#include <QMetaObject>
@@ -83,18 +84,18 @@ bool UIPlugInAidl::isSuccessfullInitialized() const
 }
 
 
-void UIPlugInAidl::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInAidl::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
 	mWorkflowIsActive.lock();
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::LOCAL_IFD, ReaderManagerPlugInType::SIMULATOR});
-	mContext = pContext;
+	mContext = pRequest->getContext();
+	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::LOCAL_IFD, ReaderManagerPlugInType::SIMULATOR});
 	mContext->claim(this);
 }
 
 
-void UIPlugInAidl::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInAidl::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 
 	mContext.clear();
 	mJson->blockSignals(false);
@@ -139,7 +140,7 @@ void UIPlugInAidl::startReaderManagerScans() const
 }
 
 
-void UIPlugInAidl::onToSend(const QByteArray& pMessage)
+void UIPlugInAidl::onToSend(const QByteArray& pMessage) const
 {
 #ifdef Q_OS_ANDROID
 	const QString json = QString::fromUtf8(pMessage);

@@ -1,28 +1,43 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: baseItem
 
 	property bool foundSelectedReader: false
 
-	height: Style.dimens.workflow_progress_indicator_size
+	implicitHeight: Style.dimens.workflow_progress_indicator_size
+	implicitWidth: phone.implicitWidth
 
 	TintableIcon {
 		id: phone
+
 		anchors.centerIn: parent
-		desaturate: true
-		opacity: tintEnabled ? 0.7 : 1.0
-		source: "qrc:///images/mobile/phone_remote.svg"
+		source: "qrc:///images/mobile/phone_remote_info.svg"
 		sourceSize.height: Style.dimens.header_icon_size
+		tintColor: Style.color.control
 		visible: !baseItem.foundSelectedReader
+
+		Image {
+			id: x
+
+			anchors.horizontalCenter: phone.right
+			anchors.horizontalCenterOffset: -phone.width * 0.19
+			anchors.verticalCenter: phone.bottom
+			anchors.verticalCenterOffset: -phone.height * 0.36
+			asynchronous: true
+			fillMode: Image.PreserveAspectFit
+			source: "qrc:///images/mobile/x.svg"
+			sourceSize.height: phone.height * 0.2
+		}
 	}
 	Item {
 		id: currentAction
+
 		anchors.bottom: pCircle.top
 		anchors.left: parent.left
 		anchors.margins: Constants.component_spacing
@@ -38,6 +53,7 @@ Item {
 	}
 	ProgressCircle {
 		id: pCircle
+
 		anchors.bottom: parent.bottom
 		anchors.left: parent.left
 		anchors.right: parent.right

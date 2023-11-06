@@ -31,7 +31,7 @@ class CardPositionModel
 
 	private:
 		int mCyclingClock;
-		int mCurrentIndex;
+		qsizetype mCurrentIndex;
 		QTimer mCyclingTimer;
 		const QVector<CardPosition> mCardPositions;
 

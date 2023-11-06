@@ -36,7 +36,7 @@ class test_StateGenericSendReceive
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 
 			QSharedPointer<TcToken> tcToken(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml")));
 			mAuthContext->setTcToken(tcToken);
@@ -44,7 +44,6 @@ class test_StateGenericSendReceive
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
 
 			mState.reset(StateBuilder::createState<StateSendInitializeFrameworkResponse>(mAuthContext));
-			mState->setStateName("StateSendInitializeFrameworkResponse");
 			mState->onEntry(nullptr);
 		}
 
@@ -253,7 +252,7 @@ class test_StateGenericSendReceive
 		{
 			const QVector<GlobalStatus::Code> states = QVector<GlobalStatus::Code>()
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error
-					<< GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server
+					<< GlobalStatus::Code::Workflow_TrustedChannel_Server_Error
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description
 					<< GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Certificate_Unsupported_Algorithm_Or_Length
@@ -343,6 +342,40 @@ class test_StateGenericSendReceive
 			mAuthContext->setStateApproved();
 			QTRY_COMPARE(spyMock.count(), 1);     // clazy:exclude=qstring-allocations
 			mNetworkManager->fireFinished();
+		}
+
+
+		void onReplyFinishedError_data()
+		{
+			QTest::addColumn<QNetworkReply::NetworkError>("networkError");
+			QTest::addColumn<GlobalStatus::Code>("globalStatus");
+			QTest::addColumn<FailureCode::Reason>("failureCode");
+			QTest::addColumn<int>("httpCode");
+
+			QTest::addRow("http service unavailable") << QNetworkReply::ServiceUnavailableError << GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable << FailureCode::Reason::Generic_Send_Receive_Service_Unavailable << 503;
+			QTest::addRow("http server error") << QNetworkReply::InternalServerError << GlobalStatus::Code::Workflow_TrustedChannel_Server_Error << FailureCode::Reason::Generic_Send_Receive_Server_Error << 500;
+			QTest::addRow("http not found") << QNetworkReply::ContentNotFoundError << GlobalStatus::Code::Workflow_TrustedChannel_Client_Error << FailureCode::Reason::Generic_Send_Receive_Client_Error << 404;
+			QTest::addRow("http other error") << QNetworkReply::ProtocolUnknownError << GlobalStatus::Code::Workflow_TrustedChannel_Other_Network_Error << FailureCode::Reason::Generic_Send_Receive_Network_Error << 301;
+		}
+
+
+		void onReplyFinishedError()
+		{
+			QFETCH(QNetworkReply::NetworkError, networkError);
+			QFETCH(GlobalStatus::Code, globalStatus);
+			QFETCH(FailureCode::Reason, failureCode);
+			QFETCH(int, httpCode);
+
+			auto reply = QSharedPointer<MockNetworkReply>::create();
+			reply->setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(httpCode));
+			reply->setError(networkError, QString());
+			mState->mReply = reply;
+
+			mState->onReplyFinished();
+
+			QCOMPARE(mAuthContext->getStatus().getStatusCode(), globalStatus);
+			QVERIFY(mAuthContext->getFailureCode().has_value());
+			QCOMPARE(mAuthContext->getFailureCode().value().getReason(), failureCode);
 		}
 
 

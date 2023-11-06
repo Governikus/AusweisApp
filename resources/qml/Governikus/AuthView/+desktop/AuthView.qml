@@ -1,28 +1,28 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.EnterPasswordView 1.0
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.ProgressView 1.0
-import Governikus.ResultView 1.0
-import Governikus.SettingsView 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Workflow 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.ConnectivityManager 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.EnterPasswordView
+import Governikus.Global
+import Governikus.Style
+import Governikus.PasswordInfoView
+import Governikus.ProgressView
+import Governikus.ResultView
+import Governikus.SettingsView
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Workflow
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.AuthModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.UiModule
 
 SectionPage {
 	id: authView
+
 	enum SubViews {
 		Undefined,
 		TransportPinReminder,
@@ -57,14 +57,13 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		customSettingsHandler: authView.showSettings
-		helpTopic: "authentication"
 		rootEnabled: false
 		showSettings: authController.workflowState === AuthController.WorkflowStates.Reader
 		//: LABEL DESKTOP
 		text: qsTr("Identify")
 
-		customSubAction: CancelAction {
-			visible: d.cancelAllowed
+		customSubAction: NavigationAction {
+			enabled: d.cancelAllowed
 
 			onClicked: {
 				if (authResult.visible) {
@@ -78,9 +77,17 @@ SectionPage {
 
 		onClicked: {
 			editRights.showProviderInformation(false);
-			if (d.activeView === AuthView.SubViews.TransportPinReminderInfo || d.activeView === AuthView.SubViews.PasswordInfo || d.activeView === AuthView.SubViews.ReaderSettings) {
+			switch (d.activeView) {
+			case AuthView.SubViews.TransportPinReminderInfo:
+			case AuthView.SubViews.PasswordInfo:
+			case AuthView.SubViews.ReaderSettings:
 				d.view = d.precedingView;
 				updateTitleBarActions();
+				break;
+			case AuthView.SubViews.Data:
+				authView.nextView(UiModule.SELF_AUTHENTICATION);
+				AuthModel.continueWorkflow();
+				break;
 			}
 		}
 	}
@@ -93,6 +100,7 @@ SectionPage {
 
 		readonly property int activeView: inputError.visible ? AuthView.SubViews.InputError : view
 		readonly property bool cancelAllowed: AuthModel.isBasicReader || generalWorkflow.waitingFor !== Workflow.WaitingFor.Password
+		property int enteredPasswordType: PasswordType.PIN
 		readonly property int passwordType: NumberModel.passwordType
 		property int precedingView: AuthView.SubViews.Undefined
 		property int view: AuthView.SubViews.Undefined
@@ -107,6 +115,7 @@ SectionPage {
 	}
 	AuthController {
 		id: authController
+
 		onNextView: pName => {
 			if (pName === AuthView.SubViews.ReturnToMain) {
 				if (AuthModel.showChangePinView) {
@@ -135,6 +144,7 @@ SectionPage {
 	}
 	ProgressView {
 		id: checkConnectivityView
+
 		//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
 		subText: qsTr("Please establish an internet connection.")
 		subTextColor: Constants.red
@@ -145,10 +155,12 @@ SectionPage {
 	}
 	EditRights {
 		id: editRights
+
 		visible: d.activeView === AuthView.SubViews.AccessRights
 	}
 	GeneralWorkflow {
 		id: generalWorkflow
+
 		isPinChange: false
 		visible: d.activeView === AuthView.SubViews.Workflow
 		waitingFor: switch (authController.workflowState) {
@@ -171,7 +183,7 @@ SectionPage {
 
 		property string deviceName
 
-		resultType: ResultView.Type.IsError
+		icon: "qrc:///images/workflow_error_no_sak_%1.svg".arg(Style.currentTheme.name)
 		//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
 		text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
 		visible: d.activeView === AuthView.SubViews.WorkflowError
@@ -180,12 +192,14 @@ SectionPage {
 	}
 	EnterPasswordView {
 		id: enterPasswordView
+
 		//: LABEL DESKTOP A11y button to confirm the PIN and start the provider authentication
 		accessibleContinueText: passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN || (passwordType === PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 		moreInformationText: infoData.linkText
 		visible: d.activeView === AuthView.SubViews.Password
 
-		onPasswordEntered: {
+		onPasswordEntered: pPasswordType => {
+			d.enteredPasswordType = pPasswordType;
 			d.view = AuthView.SubViews.Progress;
 			AuthModel.continueWorkflow();
 		}
@@ -193,14 +207,16 @@ SectionPage {
 	}
 	PasswordInfoData {
 		id: infoData
+
 		contentType: d.activeView === AuthView.SubViews.TransportPinReminder || d.activeView === AuthView.SubViews.TransportPinReminderInfo ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType, NumberModel.isCanAllowedMode)
 	}
 	PasswordInfoView {
 		id: passwordInfoView
+
 		infoContent: infoData
 		visible: d.activeView === AuthView.SubViews.PasswordInfo || d.activeView === AuthView.SubViews.TransportPinReminderInfo
 
-		titleBarAction.customSubAction: CancelAction {
+		titleBarAction.customSubAction: NavigationAction {
 			onClicked: passwordInfoView.close()
 		}
 
@@ -215,7 +231,17 @@ SectionPage {
 
 		property bool errorConfirmed: false
 
-		resultType: ResultView.Type.IsError
+		icon: switch (d.enteredPasswordType) {
+		case PasswordType.SMART_PIN:
+		case PasswordType.PIN:
+			return "qrc:///images/workflow_error_wrong_pin_%1.svg".arg(Style.currentTheme.name);
+		case PasswordType.CAN:
+			return "qrc:///images/workflow_error_wrong_can_%1.svg".arg(Style.currentTheme.name);
+		case PasswordType.PUK:
+			return "qrc:///images/workflow_error_wrong_puk_%1.svg".arg(Style.currentTheme.name);
+		default:
+			return "";
+		}
 		text: NumberModel.inputError
 		visible: !errorConfirmed && NumberModel.hasPasswordError && d.view !== AuthView.SubViews.Result
 
@@ -231,7 +257,8 @@ SectionPage {
 	}
 	ResultView {
 		id: cardPositionView
-		resultType: ResultView.Type.IsInfo
+
+		icon: "qrc:///images/workflow_error_nfc_%1.svg".arg(Style.currentTheme.name)
 		text: AuthModel.isRemoteReader ?
 		//: INFO DESKTOP A weak NFC signal was detected since the card communication was aborted. The card's position needs to be adjusted to hopefully achieve better signal strength.
 		qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") :
@@ -244,14 +271,14 @@ SectionPage {
 	ProgressView {
 		progressBarVisible: false
 		subText: {
-			if (ConnectivityManager.networkInterfaceActive) {
+			if (authController.networkInterfaceActive) {
 				//: INFO DESKTOP Information message about cancellation process with present network connectivity
 				return qsTr("Please wait a moment.");
 			}
 			//: INFO DESKTOP Information message about cancellation process without working network connectivity
 			return qsTr("Network problems detected, trying to reach server within 30 seconds.");
 		}
-		subTextColor: !ConnectivityManager.networkInterfaceActive ? Style.color.warning_text : Style.color.secondary_text
+		subTextColor: !authController.networkInterfaceActive ? Style.color.text_warning : Style.color.text
 
 		//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
 		text: qsTr("Aborting process and informing the service provider")
@@ -281,7 +308,7 @@ SectionPage {
 			//: INFO DESKTOP Generic progress status message during authentication.
 			return qsTr("Please wait a moment.");
 		}
-		subTextColor: !AuthModel.isBasicReader && NumberModel.inputError ? Style.color.warning_text : Style.color.secondary_text
+		subTextColor: !AuthModel.isBasicReader && NumberModel.inputError ? Style.color.text_warning : Style.color.text
 		text: (isInitialState ?
 			//: INFO DESKTOP Header of the progress information during the authentication process.
 			qsTr("Acquiring provider certificate") :
@@ -292,22 +319,23 @@ SectionPage {
 	SelfAuthenticationData {
 		visible: d.activeView === AuthView.SubViews.Data
 
-		onNextView: pName => {
-			authView.nextView(pName);
+		onAccept: {
+			authView.nextView(UiModule.DEFAULT);
 			AuthModel.continueWorkflow();
 		}
 		onVisibleChanged: updateTitleBarActions()
 	}
 	ResultView {
 		id: authResult
+
 		header: AuthModel.errorHeader
 		hintButtonText: AuthModel.statusHintActionText
 		hintText: AuthModel.statusHintText
+		icon: AuthModel.statusCodeImage !== "" ? AuthModel.statusCodeImage.arg(Style.currentTheme.name) : ""
 		mailButtonVisible: AuthModel.errorIsMasked
 		popupText: AuthModel.errorText
 		//: INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.
 		popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCodeString)
-		resultType: AuthModel.resultString ? ResultView.Type.IsError : ResultView.Type.IsSuccess
 		text: AuthModel.resultString
 		visible: d.activeView === AuthView.SubViews.Result
 

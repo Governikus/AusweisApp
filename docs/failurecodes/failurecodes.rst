@@ -1,6 +1,6 @@
 Failure Codes
 =============
-The AusweisApp2 will send failure codes indicating what went wrong and where it happened as well as
+The |AppName| will send failure codes indicating what went wrong and where it happened as well as
 how to solve it.
 
 Helpful tips
@@ -25,14 +25,14 @@ Contact support
 If the provided failure code did not help to resolve the issue, please contact the support
 (https://www.ausweisapp.bund.de/en/help-and-support), including the error code, situation
 description, and logfile, so that they can identify issues in your system configuration or
-AusweisApp2. If you are using the AusweisApp2 you will find the logfile in the Help section.
+|AppName|. If you are using the |AppName| you will find the logfile in the Help section.
 
 .. _failure_code_inform_service_provider:
 
 Inform service provider
 ^^^^^^^^^^^^^^^^^^^^^^^
 Directly notify the service provider if the failure code contained an incorrect TLS or service
-configuration. Usually the the service provider contact information are available on the website on
+configuration. Usually the service provider contact information are available on the website on
 which you have started the authentication.
 
 .. _failure_code_fix_connections_problems:
@@ -44,7 +44,7 @@ current connection. Verify an active internet connection, by opening e.g.
 https://www.ausweisapp.bund.de in the browser of your choice. This includes checking your firewall
 and antivirus configuration as well as your local network hardware. Ultimately the problem may be
 with your telecommunications provider, or the service provider. Please refer to the attached
-\"Network_Error\" for details. If you are using the AusweisApp2, the diagnosis, which is located in
+\"Network_Error\" for details. If you are using the |AppName|, the diagnosis, which is located in
 the help section, may assist you in finding issues.
 
 .. _failure_code_replace_card_or_card_reader:
@@ -80,11 +80,6 @@ Codes
     |   3 The card reader has to be attached during the whole workflow
     |   4 You must not cancel the remote access during the whole workflow
 
-  - | **Processing_Send_Status_Failed**
-    | Occurs if the browser could not be told to wait longer to prevent a timeout.
-    | **Possible Solutions:** Change the browser. If the problem persists,
-      :ref:`failure_code_contact_support`.
-
   - | **Parse_TcToken_Invalid_Url**
     | An authentication was started according to TR-03124-1 section 2.2.1.1. However, no valid
       tcTokenURL was transmitted.
@@ -118,6 +113,18 @@ Codes
     | The server responded to the request for the tcToken neither with content nor with a
       forwarding.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Get_TcToken_ServiceUnavailable**
+    | The server intended for providing the tcToken is temporarily unavailable.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Get_TcToken_Server_Error**
+    | A server error 5xx occurred on requesting the tcToken.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Get_TcToken_Client_Error**
+    | A client error 4xx occurred on requesting the tcToken.
+    | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
   - | **Get_TcToken_Empty_Data**
     | The server responded to the request for the tcToken with empty content.
@@ -158,13 +165,13 @@ Codes
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Pre_Verification_No_Test_Environment**
-    | Occurs when the development mode of AusweisApp2 is activated and a genuine ID card is used.
+    | Occurs when the development mode of |AppName| is activated and a genuine ID card is used.
     | **Possible Solutions:** Disable developer mode. The use of genuine ID cards is not permitted with
       activated developer mode, as this is only intended to facilitate the commissioning of services
       with test ID cards.
 
   - | **Pre_Verification_Invalid_Certificate_Chain**
-    | A certificate chain was sent from the server that is unknown to AusweisApp2.
+    | A certificate chain was sent from the server that is unknown to |AppName|.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Pre_Verification_Invalid_Certificate_Signature**
@@ -210,12 +217,6 @@ Codes
       PIN-attempts have been used.
     | **Possible Solutions:** The PIN is permanently disabled after 3 failed attempts. Please set up
       your Smart-eID again.
-
-  - | **Establish_Pace_Channel_No_Active_Pin**
-    | An authentication was aborted by a card reader in order to replace the five-digit Transport PIN.
-    | **Possible Solutions:** The AusweisApp2 automatically leads the user to the PIN change to set
-      a six-digit PIN. If this error occurs in a third-party app, you have to start a PIN change on
-      your own.
 
   - | **Establish_Pace_Channel_Basic_Reader_No_Pin**
     | An attempt was made to establish a PACE-channel with a basic reader. However the PIN, CAN, or
@@ -274,6 +275,10 @@ Codes
       certificate is incorrect.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
+  - | **Generic_Send_Receive_Service_Unavailable**
+    | The server intended for the PAOS communication during authentication is temporarily unavailable.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
   - | **Generic_Send_Receive_Server_Error**
     | A server error 5xx occurred in the PAOS communication during authentication.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
@@ -314,7 +319,7 @@ Codes
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
   - | **Start_Paos_Response_Error**
-    | The "StartPaosResponse" message from the server returned an error. The AusweisApp2 or the ID card
+    | The "StartPaosResponse" message from the server returned an error. The |AppName| or the ID card
       did not behave as expected by the server.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
@@ -329,15 +334,23 @@ Codes
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Check_Refresh_Address_Service_Unavailable**
-    | The return address cannot be reached.
+    | The server providing the return address is temporarily unavailable.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Check_Refresh_Address_Server_Error**
+    | A server error 5xx occurred on requesting the return address.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Check_Refresh_Address_Client_Error**
+    | A client error 4xx occurred on requesting the return address.
+    | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
   - | **Check_Refresh_Address_Service_Timeout**
     | The call to the return address did not provide an answer within 30 seconds.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
 
   - | **Check_Refresh_Address_Proxy_Error**
-    | A proxy server was configured by the operating system or the settings of AusweisApp2. This
+    | A proxy server was configured by the operating system or the settings of |AppName|. This
       didn't work for checking the return address.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
 
@@ -380,44 +393,47 @@ Codes
       provider certificate.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
-  - | **Redirect_Browser_Send_Error_Page_Failed**
-    | Like Redirect_Browser_Send_Redirect_Failed. However, this only applies to desktop systems, as
-      the AusweisApp2 only generates an error page there if no error address is available for
-      forwarding by the service provider. On mobile systems, the error details are displayed in the
-      AusweisApp2.
-    | **Possible Solutions:** If the problem occurs repeatedly and changing the browser does not
-      help, please :ref:`failure_code_contact_support`.
-
-  - | **Redirect_Browser_Send_Redirect_Failed**
-    | On desktop systems, the web browser waits for a response from AusweisApp2 after starting
-      authentication. However, for unknown reasons, the web browser did not wait long enough for the
-      response to be sent. On mobile systems it was not possible to open the answer in a web
-      browser.
+  - | **Browser_Send_Failed**
+    | On desktop systems, the web browser waits for a response from |AppName| after starting
+      authentication. However, for unknown reasons, the web browser connection to the browser is
+      lost and the answer cannot be sent.
     | **Possible Solutions:** If the problem occurs repeatedly and changing the browser does not
       help, please :ref:`failure_code_contact_support`.
 
   - | **Generic_Provider_Communication_Network_Error**
     | A network error occurred while communicating with a service provider. This only applies to
-      services that are started from AusweisApp2, such as self-authentication.
+      services that are started from |AppName|, such as self-authentication.
     | **Possible Solutions:** :ref:`failure_code_fix_connections_problems`.
 
   - | **Generic_Provider_Communication_Invalid_Ephemeral_Key_Length**
     | When communicating with a service provider, the symmetric key generated by the TLS handshake
-      is not long enough. This only applies to services that are started from AusweisApp2, such as
+      is not long enough. This only applies to services that are started from |AppName|, such as
       self-authentication.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Generic_Provider_Communication_Certificate_Error**
     | When communicating with a service provider, the TLS certificate uses key lengths that are
-      insufficient. This only applies to services that are started from AusweisApp2, such as
+      insufficient. This only applies to services that are started from |AppName|, such as
       self-authentication.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Generic_Provider_Communication_Tls_Error**
     | An error occurred during the TLS handshake when communicating with a service provider. The TLS
-      certificate is incorrect. This only applies to services that are started from AusweisApp2,
+      certificate is incorrect. This only applies to services that are started from |AppName|,
       such as self-authentication.
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Generic_Provider_Communication_ServiceUnavailable**
+    | The server of the service provider is temporarily unavailable.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Generic_Provider_Communication_Server_Error**
+    | A server error 5xx occurred in the communication with the service provider.
+    | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
+
+  - | **Generic_Provider_Communication_Client_Error**
+    | A client error 4xx occurred in the communication with the service provider.
+    | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
   - | **Get_SelfAuthData_Invalid_Or_Empty**
     | The authentication for the self-authentication was completed
@@ -425,7 +441,7 @@ Codes
     | **Possible Solutions:** :ref:`failure_code_inform_service_provider`.
 
   - | **Change_Pin_No_SetEidPinCommand_Response**
-    | The AusweisApp2 sent a PIN change command to its core, but received an answer for a
+    | The |AppName| sent a PIN change command to its core, but received an answer for a
       different command.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
@@ -470,7 +486,7 @@ Codes
   - | **Start_Ifd_Service_Failed**
     | The IFD service according to TR-03112-6 appendix "IFD Service" could not be started. Either no
       suitable TLS certificate could be found/generated or the start of the TLS server failed. This
-      applies to both remote access and the local service of AusweisApp2 on Android that is used
+      applies to both remote access and the local service of |AppName| on Android that is used
       through the SDK.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
@@ -496,6 +512,120 @@ Codes
       acting as a card reader with keyboard mode enabled.
     | **Possible Solutions:** :ref:`failure_code_contact_support`.
 
+  - | **Check_Status_Unavailable**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Check_Applet_Internal_Error**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_User_Cancelled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_User_Cancelled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Personalization_User_Cancelled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_User_Cancelled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Fail**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Unsupported**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Overload**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Maintenance**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Nfc_Disabled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Integrity_Check_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Not_Authenticated**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Install_Smart_Service_Response_Network_Connection_Error**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Call_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Fail**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Unsupported**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Overload**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Maintenance**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Nfc_Disabled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Integrity_Check_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Not_Authenticated**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Update_Support_Info_Service_Response_Network_Connection_Error**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Fail**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Unsupported**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Overload**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Maintenance**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Nfc_Disabled**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Integrity_Check_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Not_Authenticated**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Smart_Service_Response_Network_Connection_Error**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Delete_Personalization_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Get_Session_Id_Invalid**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Smart_ServiceInformation_Query_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Get_Challenge_Invalid**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Initialize_Personalization_Failed**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Smart_PrePersonalization_Wrong_Status**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
+  - | **Smart_PrePersonalization_Incomplete_Information**
+    | Is not yet included in the product and will only be relevant with version 2.0.0.
+
   - | **Transmit_Personalization_Size_Mismatch**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
@@ -505,28 +635,7 @@ Codes
   - | **Start_Paos_Response_Personalization_Invalid**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
-  - | **Prepare_Applet_User_Cancelled**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Status_Call_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Installation_Loop**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Installation_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Unavailable**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Delete_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_UpdateInfo_Call_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Prepare_Applet_Delete_Smart_Failed**
+  - | **Finalize_Personalization_Failed**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
   - | **Insert_Card_No_SmartReader**
@@ -538,37 +647,13 @@ Codes
   - | **Insert_Card_Unknown_Eid_Type**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
-  - | **Insert_Card_HW_Keystore**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
   - | **Insert_Card_Invalid_SmartReader**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
   - | **Insert_Card_Missing_Card**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
-  - | **Initialize_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Get_Session_Id_Invalid**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Get_Challenge_Invalid**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Finalize_Personalization_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
   - | **Change_Smart_Pin_Failed**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Check_Status_Unavailable**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Check_Applet_Error**
-    | Is not yet included in the product and will only be relevant with version 2.0.0.
-
-  - | **Check_Applet_Unavailable**
     | Is not yet included in the product and will only be relevant with version 2.0.0.
 
 .. _failure_code_solutions:

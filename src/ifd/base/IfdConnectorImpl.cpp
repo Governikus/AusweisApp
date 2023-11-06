@@ -5,17 +5,10 @@
 #include "IfdConnectorImpl.h"
 
 #include "Env.h"
-#include "IfdDispatcher.h"
-#include "SecureStorage.h"
 #include "WebSocketChannel.h"
 
 #include <QLoggingCategory>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	#include <QMutableListIterator>
-#else
-	#include <QMutableVectorIterator>
-#endif
+#include <QMutableListIterator>
 
 
 Q_DECLARE_LOGGING_CATEGORY(ifd)
@@ -100,7 +93,6 @@ void IfdConnectorImpl::onConnectRequest(const IfdDescriptor& pIfdDescriptor, con
 		return;
 	}
 
-	// Currently, we only support API level 1.
 	if (!pIfdDescriptor.isSupported())
 	{
 		Q_EMIT fireDispatcherError(pIfdDescriptor, IfdErrorCode::NO_SUPPORTED_API_LEVEL);

@@ -30,6 +30,8 @@ class GlobalStatus
 			No_Error,
 
 			Network_ServiceUnavailable,
+			Network_ServerError,
+			Network_ClientError,
 			Network_Ssl_Establishment_Error,
 			Network_TimeOut,
 			Network_Proxy_Error,
@@ -62,11 +64,10 @@ class GlobalStatus
 			Workflow_Certificate_No_Url_In_Description,
 			Workflow_Certificate_Hash_Error,
 			Workflow_Certificate_Sop_Error,
-			Workflow_Error_Page_Transmission_Error,
-			Workflow_Redirect_Transmission_Error,
-			Workflow_Processing_Error,
+			Workflow_Browser_Transmission_Error,
 			Workflow_TrustedChannel_Establishment_Error,
-			Workflow_TrustedChannel_Error_From_Server,
+			Workflow_TrustedChannel_Server_Error,
+			Workflow_TrustedChannel_Client_Error,
 			Workflow_TrustedChannel_Hash_Not_In_Description,
 			Workflow_TrustedChannel_No_Data_Received,
 			Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length,
@@ -88,8 +89,11 @@ class GlobalStatus
 			Workflow_Wrong_Parameter_Invocation,
 			Workflow_Smart_eID_Unavailable,
 			Workflow_Smart_eID_Applet_Preparation_Failed,
+			Workflow_Smart_eID_Authentication_Failed,
+			Workflow_Smart_eID_ServiceInformation_Query_Failed,
 			Workflow_Smart_eID_PrePersonalization_Failed,
 			Workflow_Smart_eID_Personalization_Failed,
+			Workflow_Smart_eID_Personalization_Denied,
 
 			Paos_Unexpected_Warning,
 
@@ -143,7 +147,8 @@ class GlobalStatus
 			REDIRECT_URL,
 			CERTIFICATE_ISSUER_NAME,
 			URL_SCHEME,
-			ACTIVATION_ERROR
+			ACTIVATION_ERROR,
+			PERSONALIZATION_RESTRICTION_DATE
 		};
 
 		using ExternalInfoMap = QMap<ExternalInformation, QString>;

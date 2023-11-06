@@ -27,7 +27,7 @@ class SelfAuthContext
 		void fireSelfAuthenticationDataChanged();
 
 	public:
-		SelfAuthContext();
+		explicit SelfAuthContext(bool pActivateUi = true);
 
 		[[nodiscard]] const SelfAuthenticationData& getSelfAuthenticationData() const
 		{

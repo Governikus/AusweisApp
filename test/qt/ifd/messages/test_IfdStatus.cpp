@@ -7,7 +7,7 @@
 #include "AppSettings.h"
 #include "LogHandler.h"
 #include "TestFileHelper.h"
-
+#include "VolatileSettings.h"
 
 #include <QtTest>
 
@@ -27,6 +27,7 @@ class test_IfdStatus
 		void initTestCase()
 		{
 			Env::getSingleton<LogHandler>()->init();
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 		}
 
 
@@ -432,7 +433,8 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), IfdMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QString());
 			QCOMPARE(ifdStatus.getSlotName(), slotName);
-			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || (type == ReaderManagerPlugInType::NFC && pinPadMode));
+			const bool isNfcOrSmart = type == ReaderManagerPlugInType::NFC || type == ReaderManagerPlugInType::SMART;
+			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || (isNfcOrSmart && pinPadMode));
 			QCOMPARE(ifdStatus.getMaxApduLength(), maxApduLength);
 			QCOMPARE(ifdStatus.getConnectedReader(), true);
 			QCOMPARE(ifdStatus.getCardAvailable(), cardAvailable);

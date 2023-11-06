@@ -7,7 +7,6 @@
 #include "AppSettings.h"
 #include "Initializer.h"
 #include "Randomizer.h"
-#include "messages/IfdError.h"
 #include "messages/IfdEstablishContext.h"
 #include "messages/IfdEstablishContextResponse.h"
 

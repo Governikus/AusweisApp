@@ -21,14 +21,14 @@ class TestWorkflowController
 	Q_OBJECT
 
 	public:
-		template<typename ... Args>
+		template<typename T = TestWorkflowContext, typename ... Args>
 		static QSharedPointer<WorkflowRequest> createWorkflowRequest(Args&& ... pArgs)
 		{
-			return WorkflowRequest::createWorkflowRequest<TestWorkflowController, TestWorkflowContext>(std::forward<Args>(pArgs) ...);
+			return WorkflowRequest::create<TestWorkflowController, T>(std::forward<Args>(pArgs) ...);
 		}
 
 
-		explicit TestWorkflowController(const QSharedPointer<TestWorkflowContext>& pContext);
+		explicit TestWorkflowController(const QSharedPointer<WorkflowContext>& pContext);
 };
 
 

@@ -29,7 +29,7 @@ class TransmitParser
 		PaosMessage* parseMessage() override;
 
 	private:
-		void parseSlotHandle();
+		void parseSlotHandle() const;
 		void parseInputApduInfo();
 
 	private:

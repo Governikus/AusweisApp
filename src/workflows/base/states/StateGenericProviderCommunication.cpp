@@ -9,6 +9,7 @@
 #include "NetworkManager.h"
 #include "TlsChecker.h"
 
+#include <http_parser.h>
 
 Q_DECLARE_LOGGING_CATEGORY(secure)
 Q_DECLARE_LOGGING_CATEGORY(network)
@@ -34,9 +35,6 @@ void StateGenericProviderCommunication::setProgress() const
 void StateGenericProviderCommunication::run()
 {
 	setProgress();
-#if !defined(GOVERNIKUS_QT) || QT_VERSION < QT_VERSION_CHECK(6, 2, 0)
-	Env::getSingleton<NetworkManager>()->clearConnections();
-#endif
 
 	const QUrl address = getRequestUrl();
 	qDebug() << address;
@@ -53,9 +51,9 @@ void StateGenericProviderCommunication::run()
 		request.setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("application/json"));
 		mReply = Env::getSingleton<NetworkManager>()->post(request, payload);
 	}
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericProviderCommunication::onSslErrors);
-	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericProviderCommunication::onSslHandshakeDone);
-	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericProviderCommunication::onNetworkReply);
+	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericProviderCommunication::onSslErrors);
+	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericProviderCommunication::onSslHandshakeDone);
+	*this << connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericProviderCommunication::onNetworkReply);
 }
 
 
@@ -147,36 +145,59 @@ void StateGenericProviderCommunication::onSslHandshakeDone()
 void StateGenericProviderCommunication::onNetworkReply()
 {
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
-	if (statusCode == HTTP_STATUS_OK)
+
+	if (mReply->error() != QNetworkReply::NoError || statusCode != HTTP_STATUS_OK)
 	{
-		const QByteArray message = mReply->readAll();
-		if (NetworkManager::isLoggingAllowed(mReply) && isLoggingAllowed())
+		const auto& status = NetworkManager::toTrustedChannelStatus(mReply);
+		qCCritical(network) << GlobalStatus(status);
+		updateStatus(status);
+		FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::Network_Error, mReply->errorString()},
+			{FailureCode::Info::State_Name, getStateName()}
+		};
+		if (statusCode > 0)
 		{
-			qCDebug(network).noquote() << "Received raw data:\n" << message;
+			infoMap[FailureCode::Info::Http_Status_Code] = QString::number(statusCode);
 		}
-		else
+		FailureCode::Reason reason;
+		switch (NetworkManager::toNetworkError(mReply))
 		{
-			if (secure().isDebugEnabled())
-			{
-				qCDebug(secure).noquote() << "Received raw data:\n" << message;
-			}
-			else
-			{
-				qCDebug(network) << "no-log was requested, skip logging of raw data";
-			}
+			case NetworkManager::NetworkError::ServiceUnavailable:
+				reason = FailureCode::Reason::Generic_Provider_Communication_ServiceUnavailable;
+				break;
+
+			case NetworkManager::NetworkError::ServerError:
+				reason = FailureCode::Reason::Generic_Provider_Communication_Server_Error;
+				break;
+
+			case NetworkManager::NetworkError::ClientError:
+				reason = FailureCode::Reason::Generic_Provider_Communication_Client_Error;
+				break;
+
+			default:
+				reason = FailureCode::Reason::Generic_Provider_Communication_Network_Error;
 		}
-		handleNetworkReply(message);
+		Q_EMIT fireAbort({reason, infoMap});
 		return;
 	}
 
-	qDebug() << "Network request failed";
-	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
-	const FailureCode::FailureInfoMap infoMap {
-		{FailureCode::Info::Network_Error, mReply->errorString()},
-		{FailureCode::Info::Http_Status_Code, QString::number(statusCode)},
-		{FailureCode::Info::State_Name, getStateName()}
-	};
-	Q_EMIT fireAbort({FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap});
+	const QByteArray message = mReply->readAll();
+	if (NetworkManager::isLoggingAllowed(mReply) && isLoggingAllowed())
+	{
+		qCDebug(network).noquote() << "Received raw data:\n" << message;
+	}
+	else
+	{
+		if (secure().isDebugEnabled())
+		{
+			qCDebug(secure).noquote() << "Received raw data:\n" << message;
+		}
+		else
+		{
+			qCDebug(network) << "no-log was requested, skip logging of raw data";
+		}
+	}
+	handleNetworkReply(message);
 }
 
 

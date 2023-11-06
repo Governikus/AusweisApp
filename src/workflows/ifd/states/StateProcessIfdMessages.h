@@ -10,6 +10,7 @@
 #pragma once
 
 
+#include "ReaderManager.h"
 #include "context/IfdServiceContext.h"
 #include "states/AbstractState.h"
 #include "states/GenericContextContainer.h"
@@ -37,11 +38,13 @@ class StateProcessIfdMessages
 	private Q_SLOTS:
 		void onMessageHandlerAdded(const QSharedPointer<ServerMessageHandler>& pHandler);
 		void onClosed();
+		void onConnectedChanged(bool pConnected) const;
+		void onReaderPropertiesUpdated(const ReaderInfo& pInfo) const;
 		void onCardConnected();
 		void onDisplayTextChanged(const QString& pDisplayText) const;
 		void onModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void onEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
-		void onCardDisconnected();
+		void onCardDisconnected() const;
 
 	protected:
 		void onExit(QEvent* pEvent) override;

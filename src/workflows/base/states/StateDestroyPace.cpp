@@ -29,7 +29,7 @@ void StateDestroyPace::run()
 		return;
 	}
 
-	mConnections += cardConnection->callDestroyPaceChannelCommand(this, &StateDestroyPace::onDestroyPaceDone);
+	*this << cardConnection->callDestroyPaceChannelCommand(this, &StateDestroyPace::onDestroyPaceDone);
 }
 
 

@@ -292,20 +292,58 @@ class test_LogHandler
 		}
 
 
+		void handleMessage_data()
+		{
+			QTest::addColumn<QByteArray>("file");
+			QTest::addColumn<int>("line");
+			QTest::addColumn<QByteArray>("function");
+			QTest::addColumn<QByteArray>("category");
+			QTest::addColumn<QString>("msg");
+			QTest::addColumn<QString>("result");
+
+			QTest::newRow("normal") << QByteArray("/src/ui/qml/ApplicationModel.cpp")
+									<< 411
+									<< QByteArray("bool ApplicationModel::isScreenReaderRunning()")
+									<< QByteArray("ui")
+									<< QStringLiteral("testMessage")
+									<< QStringLiteral("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage");
+
+			QTest::newRow("normal const") << QByteArray("/src/ui/qml/ApplicationModel.cpp")
+										  << 411
+										  << QByteArray("bool ApplicationModel::isScreenReaderRunning() const")
+										  << QByteArray("ui")
+										  << QStringLiteral("testMessage2")
+										  << QStringLiteral("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage2");
+
+			QTest::newRow("nullptr") << QByteArray()
+									 << 0
+									 << QByteArray()
+									 << QByteArray("qt.tlsbackend.ossl")
+									 << QStringLiteral("dummy")
+									 << QStringLiteral("(:0)                                                                       : dummy");
+		}
+
+
 		void handleMessage()
 		{
+			QFETCH(QByteArray, file);
+			QFETCH(int, line);
+			QFETCH(QByteArray, function);
+			QFETCH(QByteArray, category);
+			QFETCH(QString, msg);
+			QFETCH(QString, result);
+
+			QMessageLogContext ctx;
+			ctx.category = category.isNull() ? nullptr : category.constData();
+			ctx.file = file.isNull() ? nullptr : file.constData();
+			ctx.function = function.isNull() ? nullptr : function.constData();
+			ctx.line = line;
+
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			const auto& logger = Env::getSingleton<LogHandler>();
 
-			QMessageLogContext logContext1("/src/ui/qml/ApplicationModel.cpp", 411, "bool ApplicationModel::isScreenReaderRunning()", "ui");
-			logger->handleMessage(QtMsgType::QtDebugMsg, logContext1, "testMessage");
-			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage"));
-
-			QMessageLogContext logContext2("/src/ui/qml/ApplicationModel.cpp", 411, "bool ApplicationModel::isScreenReaderRunning() const", "ui");
-			logger->handleMessage(QtMsgType::QtDebugMsg, logContext2, "testMessage2");
-			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:411)   : testMessage2"));
+			logger->handleMessage(QtMsgType::QtDebugMsg, ctx, msg);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains(result));
 		}
 
 

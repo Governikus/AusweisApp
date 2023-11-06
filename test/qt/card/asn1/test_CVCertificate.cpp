@@ -121,15 +121,9 @@ class test_CVCertificate
 			auto cvca1 = CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DETESTeID00001.hex"));
 
 			auto ecdsaSignature = cvca1->getEcdsaSignature();
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-			const BIGNUM* r = ecdsaSignature->r;
-			const BIGNUM* s = ecdsaSignature->s;
-#else
 			const BIGNUM* r = nullptr;
 			const BIGNUM* s = nullptr;
 			ECDSA_SIG_get0(ecdsaSignature, &r, &s);
-#endif
 
 			QCOMPARE(valueOf(r).toHex(), QByteArray("9f25ebfaf4b91e4c60a1683754c5dc076a3179753ef97d9f8cb01fe1dcd3b8c8"));
 			QCOMPARE(valueOf(s).toHex(), QByteArray("3e7a26602ab1f344be5706006d79a9ff6a9716404dc83b9f30e1213b393128a2"));

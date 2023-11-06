@@ -1,17 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="128" viewBox="0 0 400 128">
-  <defs>
-    <g id="star">
-      <!-- <text style="font-size:310px; font-family:sans-serif;" x="-9" y="231">*</text> -->
-      <path d="M 40.6,5.01 42.15,39.73 9.29,27.95 3.4,46.24 36.88,55.54 15.49,83.13 30.99,94.29 50.52,65.46 69.74,94.29 85.55,83.13 63.85,55.54 97.33,46.24 91.44,27.95 58.58,39.73 60.13,5.01 Z"/>
-    </g>
-  </defs>
-  <rect x="0" y="0" width="400" height="128" rx="30" ry="30" fill="#9D0100"/>
-  <g fill="#ffffff" transform="translate(0 39) scale(0.5)">
-    <use xlink:href="#star" x="60" />
-    <use xlink:href="#star" x="205" />
-    <use xlink:href="#star" x="350" />
-    <use xlink:href="#star" x="495" />
-    <use xlink:href="#star" x="640" />
-  </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.2" baseProfile="tiny" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" viewBox="0 0 22 22" overflow="visible" xml:space="preserve">
+<g>
+	
+		<line fill="none" stroke="#576164" stroke-width="1.5" stroke-linecap="round" stroke-miterlimit="10" x1="14" y1="14.7" x2="14" y2="7.2"/>
+	
+		<line fill="none" stroke="#576164" stroke-width="1.5" stroke-linecap="round" stroke-miterlimit="10" x1="16.6" y1="13.6" x2="11.4" y2="8.3"/>
+	
+		<line fill="none" stroke="#576164" stroke-width="1.5" stroke-linecap="round" stroke-miterlimit="10" x1="17.7" y1="10.9" x2="10.3" y2="10.9"/>
+	
+		<line fill="none" stroke="#576164" stroke-width="1.5" stroke-linecap="round" stroke-miterlimit="10" x1="16.6" y1="8.3" x2="11.4" y2="13.6"/>
+</g>
+<path fill="none" stroke="#576164" stroke-width="1.5" stroke-miterlimit="10" d="M18.8,21.2H3.2c-1.4,0-2.5-1.1-2.5-2.5V3.2
+	c0-1.4,1.1-2.5,2.5-2.5h15.5c1.4,0,2.5,1.1,2.5,2.5v15.5C21.2,20.1,20.1,21.2,18.8,21.2z"/>
+<text transform="matrix(1 0 0 1 2.3368 15.1836)" fill="#576164" font-family="'Roboto-Medium'" font-size="12px">5</text>
 </svg>

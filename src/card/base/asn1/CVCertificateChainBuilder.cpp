@@ -20,7 +20,8 @@ bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate
 
 
 CVCertificateChainBuilder::CVCertificateChainBuilder(bool pProductive)
-	: CVCertificateChainBuilder(QVector<QSharedPointer<const CVCertificate>>(), pProductive)
+	: ChainBuilder(QVector<QSharedPointer<const CVCertificate>>(), &CVCertificateChainBuilder::isChild)
+	, mProductive(pProductive)
 {
 }
 

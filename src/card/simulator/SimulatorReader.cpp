@@ -35,8 +35,7 @@ void SimulatorReader::insertCard(const QVariant& pData)
 	const auto& filesystem = data.isEmpty() ? SimulatorFileSystem() : SimulatorFileSystem(data);
 
 	mCard.reset(new SimulatorCard(filesystem));
-	QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-	fetchCardInfo(cardConnection);
+	fetchCardInfo();
 
 	Q_EMIT fireCardInserted(getReaderInfo());
 }

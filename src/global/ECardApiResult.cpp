@@ -126,12 +126,15 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Card_Smart_Invalid, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Unavailable, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Authentication_Failed, Minor::AL_Unknown_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_ServiceInformation_Query_Failed, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Failed, Minor::AL_Unknown_Error);
 
 	addConversionElement(GlobalStatus::Code::Workflow_No_Permission_Error, Minor::AL_No_Permission);
 	addConversionElement(GlobalStatus::Code::Card_Pin_Deactivated, Minor::AL_No_Permission);
 	addConversionElement(GlobalStatus::Code::Card_Puk_Blocked, Minor::AL_No_Permission);
+	addConversionElement(GlobalStatus::Code::Workflow_Smart_eID_Personalization_Denied, Minor::AL_No_Permission);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Internal_Error, Minor::AL_Internal_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, Minor::AL_Internal_Error);
@@ -147,9 +150,7 @@ void ECardApiResult::initConversionMaps()
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_AL_Communication_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Redirect_Transmission_Error, Minor::AL_Communication_Error);
-	addConversionElement(GlobalStatus::Code::Workflow_Processing_Error, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Workflow_Browser_Transmission_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Reader_Became_Inaccessible, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_Ssl_Establishment_Error, Minor::AL_Communication_Error);
@@ -161,6 +162,8 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Invalid_Scheme, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_ServiceUnavailable, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_ServerError, Minor::AL_Communication_Error);
+	addConversionElement(GlobalStatus::Code::Network_ClientError, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_TimeOut, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_Proxy_Error, Minor::AL_Communication_Error);
 	addConversionElement(GlobalStatus::Code::Network_Other_Error, Minor::AL_Communication_Error);
@@ -171,7 +174,8 @@ void ECardApiResult::initConversionMaps()
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
-	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Server_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
+	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Client_Error, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, Minor::DP_Trusted_Channel_Establishment_Failed);
 	addConversionElement(GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length, Minor::DP_Trusted_Channel_Establishment_Failed);
@@ -191,10 +195,9 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Workflow_InternalError_BeforeTcToken, Minor::SAL_Cancellation_by_User);
 	addConversionElement(GlobalStatus::Code::Workflow_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
 	addConversionElement(GlobalStatus::Code::Card_Cancellation_By_User, Minor::SAL_Cancellation_by_User);
+	addConversionElement(GlobalStatus::Code::Workflow_Card_Removed, Minor::SAL_Cancellation_by_User);
 
 	addConversionElement(GlobalStatus::Code::Paos_Error_SAL_Invalid_Key, Minor::SAL_Invalid_Key);
-
-	addConversionElement(GlobalStatus::Code::Workflow_Card_Removed, Minor::IFDL_CancellationByUser);
 
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Unknown_API_Function);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::AL_Not_Initialized);
@@ -207,17 +210,18 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Cipher_Suite);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Unknown_Webservice_Binding);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::DP_Node_Not_Reachable);
-	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_SecurityConditionNotSatisfied);
-	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_AgeVerificationFailedWarning);
-	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_CommunityVerificationFailedWarning);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_Timeout_Error);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_UnknownSlot);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_InvalidSlotHandle);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_CancellationByUser);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IFD_SharingViolation);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_Terminal_NoCard);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IO_RepeatedDataMismatch);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::IFDL_IO_UnknownPINFormat);
 	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::KEY_KeyGenerationNotPossible);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_SecurityConditionNotSatisfied);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_AgeVerificationFailedWarning);
+	addConversionElement(GlobalStatus::Code::Paos_Generic_Server_Error, Minor::SAL_MEAC_CommunityVerificationFailedWarning);
 }
 
 

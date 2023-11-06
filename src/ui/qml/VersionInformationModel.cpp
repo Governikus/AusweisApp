@@ -10,7 +10,6 @@
 
 #include "AppSettings.h"
 #include "BuildHelper.h"
-#include "DeviceInfo.h"
 
 #include <QCoreApplication>
 #include <QSslSocket>
@@ -49,7 +48,7 @@ void VersionInformationModel::init()
 
 int VersionInformationModel::rowCount(const QModelIndex&) const
 {
-	return mData.size();
+	return static_cast<int>(mData.size());
 }
 
 

@@ -44,7 +44,7 @@ void StateDidAuthenticateEac2::run()
 		return;
 	}
 
-	mConnections += cardConnection->callDidAuthenticateEAC2Command(this,
+	*this << cardConnection->callDidAuthenticateEAC2Command(this,
 			&StateDidAuthenticateEac2::onCardCommandDone, cvcChain, ephemeralPublicKeyAsHex,
 			signatureAsHex, authenticatedAuxiliaryDataAsBinary, context->getPin().toLatin1());
 }

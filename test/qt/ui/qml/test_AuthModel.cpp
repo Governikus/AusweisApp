@@ -30,13 +30,17 @@ class test_AuthModel
 		void test_ResetContext()
 		{
 			const auto model = Env::getSingleton<AuthModel>();
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 
+			QSignalSpy spyWorkflowStarted(model, &WorkflowModel::fireWorkflowStarted);
 			QSignalSpy spyCurrentStateChanged(model, &WorkflowModel::fireCurrentStateChanged);
+			QSignalSpy spyStateEntered(model, &WorkflowModel::fireStateEntered);
 			QSignalSpy spyTransactionInfoChanged(model, &AuthModel::fireTransactionInfoChanged);
 
 			model->resetAuthContext(context);
+			QCOMPARE(spyWorkflowStarted.count(), 1);
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
+			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyTransactionInfoChanged.count(), 0);
 
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
@@ -47,7 +51,9 @@ class test_AuthModel
 			QVERIFY(model->getTransactionInfo().isEmpty());
 			Q_EMIT context->fireDidAuthenticateEac1Changed();
 			QCOMPARE(model->getTransactionInfo(), QString("this is a test for TransactionInfo"));
+			QCOMPARE(spyWorkflowStarted.count(), 2);
 			QCOMPARE(spyCurrentStateChanged.count(), 2);
+			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyTransactionInfoChanged.count(), 3);
 		}
 

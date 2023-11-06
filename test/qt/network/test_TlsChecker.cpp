@@ -34,7 +34,7 @@ class test_TlsChecker
 	static QSslKey createQSslKeyWithHandle(const QByteArray& pPemEncodedEvpPKey)
 	{
 		BIO* bio = BIO_new(BIO_s_mem());
-		BIO_write(bio, pPemEncodedEvpPKey.constData(), pPemEncodedEvpPKey.length());
+		BIO_write(bio, pPemEncodedEvpPKey.constData(), static_cast<int>(pPemEncodedEvpPKey.length()));
 		QSslKey key(PEM_read_bio_PUBKEY(bio, nullptr, nullptr, nullptr), QSsl::PublicKey);
 		BIO_free(bio);
 		return key;
@@ -306,7 +306,11 @@ class test_TlsChecker
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"));
+#if (QT_VERSION < QT_VERSION_CHECK(6, 5, 0))
 			QVERIFY(logSpy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""));
+#else
+			QVERIFY(logSpy.at(3).at(0).toString().contains(R"(Used peer certificate: QSslCertificate(Version="", SerialNumber="", Digest="1B2M2Y8AsgTpgAmY7PhCfg==", Issuer="", Subject="", AlternativeSubjectNames=QMultiMap(), EffectiveDate=QDateTime(Invalid), ExpiryDate=QDateTime(Invalid))"));
+#endif
 			QVERIFY(logSpy.at(4).at(0).toString().contains("Used ssl session: \"\""));
 			QVERIFY(logSpy.at(5).at(0).toString().contains("Handshake of tls connection done!"));
 		}

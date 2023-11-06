@@ -1,6 +1,6 @@
 Messages
 --------
-The AusweisApp2 (server) will send some proper
+The |AppName| (server) will send some proper
 messages (**msg**) to your application (client)
 during the whole workflow or as an answer to
 your :doc:`commands`.
@@ -12,8 +12,8 @@ your :doc:`commands`.
 
 ACCESS_RIGHTS
 ^^^^^^^^^^^^^
-This message will be sent by AusweisApp2 once the authentication is started
-by :ref:`run_auth` and the AusweisApp2 got the certificate from the service.
+This message will be sent by |AppName| once the authentication is started
+by :ref:`run_auth` and the |AppName| got the certificate from the service.
 
 If your application receives this message you can call :ref:`set_access_rights`
 to change some optional access rights or you can call :ref:`get_access_rights`
@@ -30,17 +30,6 @@ the whole workflow.
   - **error**: This optional parameter indicates an error of a :ref:`set_access_rights` call
     if the command contained invalid data.
 
-  - **aux**: Optional auxiliary data of the provider.
-
-    - **ageVerificationDate**: Optional required date of birth for AgeVerification as ISO 8601.
-
-    - **requiredAge**: Optional required age for AgeVerification. It is calculated
-      by AusweisApp2 on the basis of ageVerificationDate and current date.
-
-    - **validityDate**: Optional validity date as ISO 8601.
-
-    - **communityId**: Optional id of community.
-
   - **chat**: Access rights of the provider.
 
     - **effective**: Indicates the enabled access rights of **optional** and **required**.
@@ -51,19 +40,24 @@ the whole workflow.
 
   - **transactionInfo**: Optional transaction information.
 
+  - **aux**: Optional auxiliary data of the provider.
+
+    - **ageVerificationDate**: Optional required date of birth for AgeVerification as ISO 8601.
+
+    - **requiredAge**: Optional required age for AgeVerification. It is calculated
+      by |AppName| on the basis of ageVerificationDate and current date.
+
+    - **validityDate**: Optional validity date as ISO 8601.
+
+    - **communityId**: Optional id of community.
+
+
 
 .. code-block:: json
 
  {
    "msg": "ACCESS_RIGHTS",
    "error": "some optional error message",
-   "aux":
-        {
-         "ageVerificationDate": "1999-07-20",
-         "requiredAge": "18",
-         "validityDate": "2017-07-20",
-         "communityId": "02760400110000"
-        },
    "chat":
          {
           "effective": ["Address", "FamilyName", "GivenNames", "AgeVerification", "CanAllowed"],
@@ -71,6 +65,13 @@ the whole workflow.
           "required": ["Address", "FamilyName"]
          },
    "transactionInfo": "this is an example",
+   "aux":
+        {
+         "ageVerificationDate": "1999-07-20",
+         "requiredAge": "18",
+         "validityDate": "2017-07-20",
+         "communityId": "02760400110000"
+        }
  }
 
 
@@ -173,14 +174,14 @@ Also it indicates the **current** selected API level.
     "current": 4
   }
 
-Your application should always set the compatible API level. The AusweisApp2
+Your application should always set the compatible API level. The |AppName|
 will support multiple API levels to give you enough time to add support
 for the new API.
 
 Even if you added support for the new API, your application should still support
 the old API level in case the user updates your application but
-does not update the AusweisApp2. Otherwise you need to show a message to the user
-that they need to update the AusweisApp2.
+does not update the |AppName|. Otherwise you need to show a message to the user
+that they need to update the |AppName|.
 
 The API level will be increased for **incompatible** changes only. If we can add
 additional commands, messages or information without breaking the previous API
@@ -202,7 +203,7 @@ This documentation will mark every API change with a flag like the following:
 
 AUTH
 ^^^^
-This message will be sent by AusweisApp2 if an authentication
+This message will be sent by |AppName| if an authentication
 is initially started. The next message should be :ref:`access_rights`
 or :ref:`auth` again if the authentication immediately results
 in an error.
@@ -223,7 +224,7 @@ started at all.
 
 
 
-If the workflow is finished the AusweisApp2 will send a message with
+If the workflow is finished the |AppName| will send a message with
 a result and an url parameter to indicate the end of an authentication.
 
 .. versionadded:: 1.26.3
@@ -358,7 +359,7 @@ Provides information about the used certificate.
 
 CHANGE_PIN
 ^^^^^^^^^^
-This message will be sent by AusweisApp2 if a change PIN workflow
+This message will be sent by |AppName| if a change PIN workflow
 is initially started.
 
 If you receive a :ref:`change_pin` message with a parameter **success**
@@ -405,12 +406,12 @@ ENTER_CAN
 ^^^^^^^^^
 Indicates that a CAN is required to continue workflow.
 
-If the AusweisApp2 sends this message, you will have to
+If the |AppName| sends this message, you will have to
 provide the CAN of the inserted card with :ref:`set_can`.
 
 The CAN is required to enable the last attempt of PIN input if
 the retryCounter is **1**. The workflow continues automatically with
-the correct CAN and the AusweisApp2 will send an :ref:`enter_pin` message.
+the correct CAN and the |AppName| will send an :ref:`enter_pin` message.
 Despite the correct CAN being entered, the retryCounter remains at **1**.
 
 The CAN is also required, if the authentication terminal has an approved
@@ -418,11 +419,11 @@ The CAN is also required, if the authentication terminal has an approved
 an additional PIN.
 
 If your application provides an invalid :ref:`set_can` command
-the AusweisApp2 will send an :ref:`enter_can` message with an error
+the |AppName| will send an :ref:`enter_can` message with an error
 parameter.
 
 If your application provides a valid :ref:`set_can` command
-and the CAN was incorrect the AusweisApp2 will send :ref:`enter_can`
+and the CAN was incorrect the |AppName| will send :ref:`enter_can`
 again but without an error parameter.
 
 .. versionadded:: 1.14.2
@@ -467,7 +468,7 @@ ENTER_PIN
 ^^^^^^^^^
 Indicates that a PIN is required to continue the workflow.
 
-If the AusweisApp2 sends this message, you will have to
+If the |AppName| sends this message, you will have to
 provide the PIN of the inserted card with :ref:`set_pin`.
 
 The workflow will automatically continue if the PIN was correct.
@@ -475,20 +476,20 @@ Otherwise you will receive another message :ref:`enter_pin`.
 If the correct PIN is entered the retryCounter will be set to **3**.
 
 If your application provides an invalid :ref:`set_pin` command
-the AusweisApp2 will send an :ref:`enter_pin` message with an error
+the |AppName| will send an :ref:`enter_pin` message with an error
 parameter and the retryCounter of the card is **not** decreased.
 
 If your application provides a valid :ref:`set_pin` command
-and the PIN was incorrect the AusweisApp2 will send :ref:`enter_pin`
+and the PIN was incorrect the |AppName| will send :ref:`enter_pin`
 again with a decreased retryCounter but without an error parameter.
 
-If the value of retryCounter is **1** the AusweisApp2 will initially send an
+If the value of retryCounter is **1** the |AppName| will initially send an
 :ref:`enter_can` message. Once your application provides a correct CAN the
-AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **1**.
+|AppName| will send an :ref:`enter_pin` again with a retryCounter of **1**.
 
-If the value of retryCounter is **0** the AusweisApp2 will initially send an
+If the value of retryCounter is **0** the |AppName| will initially send an
 :ref:`enter_puk` message. Once your application provides a correct PUK the
-AusweisApp2 will send an :ref:`enter_pin` again with a retryCounter of **3**.
+|AppName| will send an :ref:`enter_pin` again with a retryCounter of **3**.
 
 
   - **error**: Optional error message if your command :ref:`set_pin`
@@ -527,7 +528,7 @@ ENTER_NEW_PIN
 ^^^^^^^^^^^^^
 Indicates that a new PIN is required to continue the workflow.
 
-If the AusweisApp2 sends this message, you will have to
+If the |AppName| sends this message, you will have to
 provide the new PIN of the inserted card with :ref:`set_new_pin`.
 
 
@@ -571,23 +572,23 @@ ENTER_PUK
 ^^^^^^^^^
 Indicates that a PUK is required to continue the workflow.
 
-If the AusweisApp2 sends this message, you will have to
+If the |AppName| sends this message, you will have to
 provide the PUK of the inserted card with :ref:`set_puk`.
 
 The workflow will automatically continue if the PUK was correct
-and the AusweisApp2 will send an :ref:`enter_pin` message.
+and the |AppName| will send an :ref:`enter_pin` message.
 Otherwise you will receive another message :ref:`enter_puk`.
 If the correct PUK is entered the retryCounter will be set to **3**.
 
 If your application provides an invalid :ref:`set_puk` command
-the AusweisApp2 will send an :ref:`enter_puk` message with an error
+the |AppName| will send an :ref:`enter_puk` message with an error
 parameter.
 
 If your application provides a valid :ref:`set_puk` command
-and the PUK was incorrect the AusweisApp2 will send :ref:`enter_puk`
+and the PUK was incorrect the |AppName| will send :ref:`enter_puk`
 again but without an error parameter.
 
-If AusweisApp2 sends :ref:`enter_puk` with field "inoperative" of embedded
+If |AppName| sends :ref:`enter_puk` with field "inoperative" of embedded
 :ref:`reader` message set true it is not possible to unblock the PIN.
 You will have to show a message to the user that the card is inoperative
 and the user should contact the authority responsible for issuing the
@@ -626,7 +627,7 @@ Please see the note for more information.
   There is no retry limit for an incorrect PUK. But
   be aware that the PUK can only be used 10 times to
   unblock the PIN. There is no readable counter for this.
-  The AusweisApp2 is not able to provide any counter information
+  The |AppName| is not able to provide any counter information
   of PUK usage.
   If the PUK is used 10 times it is not possible to unblock
   the PIN anymore and the card will remain in PUK state.
@@ -641,7 +642,7 @@ Please see the note for more information.
 
 INFO
 ^^^^
-Provides information about the AusweisApp2.
+Provides information about the |AppName|.
 
 Especially if you want to get a specific **Implementation-Version**
 to check if the current installation supports some additional
@@ -667,6 +668,20 @@ increased for **incompatible** changes.
 
     - **Specification-Version**: Version of specification.
 
+  - **AusweisApp**: Indicates the state of the connection to
+    the AusweisApp2 for integrated SDK (**Android only**).
+    The following states are possible.
+
+    - **CONNECTED**: The SDK is connected.
+
+    - **DISCONNECTED**: The SDK is not connected.
+
+    - **INVALID_CERTIFICATE**: The certificate of LocalIfd is not valid.
+
+    - **INCOMPATIBLE_VERSION**: The version of LocalIfd is not compatible.
+
+    - **UNKNOWN**: The state could not be recognized.
+
 .. code-block:: json
 
   {
@@ -676,11 +691,12 @@ increased for **incompatible** changes.
                    "Name": "AusweisApp2",
                    "Implementation-Title": "AusweisApp2",
                    "Implementation-Vendor": "Governikus GmbH & Co. KG",
-                   "Implementation-Version": "1.10.0",
-                   "Specification-Title": "TR-03124",
+                   "Implementation-Version": "2.0.0",
+                   "Specification-Title": "TR-03124-1",
                    "Specification-Vendor": "Federal Office for Information Security",
-                   "Specification-Version": "1.2"
-                  }
+                   "Specification-Version": "1.4"
+                  },
+     "AusweisApp": "CONNECTED"
   }
 
 
@@ -690,9 +706,9 @@ increased for **incompatible** changes.
 
 INSERT_CARD
 ^^^^^^^^^^^
-Indicates that the AusweisApp2 requires a card to continue.
+Indicates that the |AppName| requires a card to continue.
 
-If the AusweisApp2 needs a card to continue the workflow
+If the |AppName| needs a card to continue the workflow
 this message will be sent as a notification.
 If your application receives this message it should
 show a hint to the user.
@@ -703,7 +719,7 @@ to provide a "virtual" card by calling :ref:`set_card`.
 After the user or your application inserted a card, the workflow will
 continue automatically, unless both the eID function and
 CAN allowed mode are disabled.
-CAN allowed mode is enabled if the AusweisApp2 is used as SDK and the
+CAN allowed mode is enabled if the |AppName| is used as SDK and the
 certificate contains the CAN allowed right.
 In this case, the workflow will be paused until another card is inserted.
 If the user already inserted a card this message will not be sent at all.
@@ -752,7 +768,7 @@ INVALID
 Indicates a broken JSON message.
 
 If your application receives this message you
-passed a broken JSON structure to the AusweisApp2.
+passed a broken JSON structure to the |AppName|.
 
 Please fix your JSON document and send it again!
 
@@ -776,7 +792,7 @@ READER
 ^^^^^^
 Provides information about a connected or disconnected card reader.
 
-This message will be sent by the AusweisApp2 if a card reader was added
+This message will be sent by the |AppName| if a card reader was added
 or removed to the operating system. Also if a card was inserted into a
 card reader or removed from a card reader.
 
@@ -886,7 +902,7 @@ STATUS
 ^^^^^^
 Provides information about the current workflow and state.
 This message indicates if a workflow is in progress or the
-workflow is paused. This can occur if the AusweisApp2 needs
+workflow is paused. This can occur if the |AppName| needs
 additional data like :ref:`access_rights` or :ref:`insert_card`.
 
 The messages will be sent by default if not disabled in :ref:`run_auth`
@@ -925,7 +941,7 @@ UNKNOWN_COMMAND
 Indicates that the command type is unknown.
 
 If your application receives this message you
-passed a wrong command to the AusweisApp2.
+passed a wrong command to the |AppName|.
 
 Please fix your command and send it again!
 

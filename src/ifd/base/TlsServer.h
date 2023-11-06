@@ -25,18 +25,21 @@ class TlsServer
 	Q_OBJECT
 
 	private:
+		QPointer<QSslSocket> mSocket;
+		QByteArray mPsk;
+
 		void incomingConnection(qintptr pSocketDescriptor) override;
 		virtual QSslConfiguration sslConfiguration() const = 0;
 
 	private Q_SLOTS:
-		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator);
+		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const;
 		void onError(QAbstractSocket::SocketError pSocketError);
 		virtual void onSslErrors(const QList<QSslError>& pErrors) = 0;
 		virtual void onEncrypted() = 0;
 
 	protected:
-		QPointer<QSslSocket> mSocket;
-		QByteArray mPsk;
+		[[nodiscard]] const QPointer<QSslSocket>& getSslSocket() const;
+		[[nodiscard]] const QByteArray& getPsk() const;
 
 	public:
 		TlsServer();
@@ -49,6 +52,7 @@ class TlsServer
 	Q_SIGNALS:
 		void fireNewConnection(QTcpSocket* pSocket);
 		void firePskChanged(const QByteArray& pPsk);
+		void fireSocketError(QAbstractSocket::SocketError pSocketError);
 };
 
 } // namespace governikus

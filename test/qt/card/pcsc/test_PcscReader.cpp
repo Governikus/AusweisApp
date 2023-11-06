@@ -37,7 +37,7 @@ class test_PcscReader
 			QTest::ignoreMessage(QtDebugMsg, QStringLiteral("\"%1\"").arg(readerName).toUtf8().data());
 			reader.reset(new PcscReader(readerName));
 
-			QCOMPARE(reader->init(), PcscUtils::Scard_S_Success);
+			QCOMPARE(reader->init(), pcsc::Scard_S_Success);
 			QVERIFY(reader->hasFeature(FeatureID::TLV_PROPERTIES));
 			QCOMPARE(reader->getFeatureValue(FeatureID::TLV_PROPERTIES), 1110638610);
 

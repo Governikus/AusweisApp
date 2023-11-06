@@ -95,7 +95,7 @@ void StateEstablishPaceChannel::run()
 	}
 
 	//: INFO ALL_PLATFORMS First status message after the PIN was entered.
-	context->setProgress(0, tr("The secure channel is opened"));
+	context->setProgress(context->getProgressValue(), tr("The secure channel is opened"));
 
 	qDebug() << "Establish connection using" << mPasswordId;
 	Q_ASSERT(!password.isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
@@ -109,7 +109,7 @@ void StateEstablishPaceChannel::run()
 		}
 	}
 
-	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
+	*this << cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannel::onEstablishConnectionDone,
 			mPasswordId,
 			password,
@@ -125,19 +125,7 @@ void StateEstablishPaceChannel::onUserCancelled()
 }
 
 
-void StateEstablishPaceChannel::abortToChangePin(FailureCode::Reason pReason)
-{
-	if (auto authContext = getContext().objectCast<AuthContext>())
-	{
-		authContext->setSkipRedirect(true);
-		authContext->setLastPaceResult(CardReturnCode::NO_ACTIVE_PIN_SET);
-	}
-	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
-	Q_EMIT fireAbort(pReason);
-}
-
-
-void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode)
+void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode) const
 {
 	if (pReturnCode == CardReturnCode::CARD_NOT_FOUND || pReturnCode == CardReturnCode::RETRY_ALLOWED)
 	{
@@ -205,10 +193,6 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 		case CardReturnCode::CANCELLATION_BY_USER:
 			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
 			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_User_Cancelled);
-			return;
-
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
-			abortToChangePin(FailureCode::Reason::Establish_Pace_Channel_No_Active_Pin);
 			return;
 
 		case CardReturnCode::INVALID_PIN:

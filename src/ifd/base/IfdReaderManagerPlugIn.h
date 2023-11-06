@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "IfdClient.h"
 #include "IfdDispatcherClient.h"
 #include "ReaderManagerPlugIn.h"
@@ -35,7 +34,7 @@ class IfdReaderManagerPlugIn
 		void handleIFDStatus(const QJsonObject& pJsonObject, const QString& pId);
 
 	private Q_SLOTS:
-		void onContextEstablished(const QString& pIfdName, const QString& pId);
+		void onContextEstablished(const QString& pIfdName, const QString& pId) const;
 		void onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId);
 		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
 

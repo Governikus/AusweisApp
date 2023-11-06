@@ -20,7 +20,6 @@ DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>&
 	: QObject(pParent)
 	, mContext(pContext)
 	, mWatcherPcscInfo()
-	, mScanHasToBeStopped(false)
 {
 	connect(&mWatcherPcscInfo, &QFutureWatcher<PcscInfo>::finished, this, &DiagnosisController::onPcscInfoRetrieved);
 
@@ -37,28 +36,15 @@ DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>&
 
 DiagnosisController::~DiagnosisController()
 {
-	if (mScanHasToBeStopped)
-	{
-		const auto& readerManager = Env::getSingleton<ReaderManager>();
-		if (readerManager->isScanRunning(ReaderManagerPlugInType::PCSC))
-		{
-			qCDebug(diagnosis) << "Stopping PCSC scan.";
-			readerManager->stopScan(ReaderManagerPlugInType::PCSC);
-		}
-		mScanHasToBeStopped = false;
-	}
+	qCDebug(diagnosis) << "Stopping PCSC scan.";
+	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::PCSC);
 }
 
 
 void DiagnosisController::run()
 {
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	if (!readerManager->isScanRunning(ReaderManagerPlugInType::PCSC))
-	{
-		qCDebug(diagnosis) << "PCSC scan not running, starting scan ourself and stop it afterwards.";
-		readerManager->startScan(ReaderManagerPlugInType::PCSC);
-		mScanHasToBeStopped = true;
-	}
+	qCDebug(diagnosis) << "Starting PCSC scan.";
+	Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::PCSC);
 
 	mWatcherPcscInfo.setFuture(QtConcurrent::run(&DiagnosisController::retrievePcscInfo));
 	collectInterfaceInformation();

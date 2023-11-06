@@ -33,8 +33,9 @@ class test_StateTransmitPersonalization
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -101,11 +102,7 @@ class test_StateTransmitPersonalization
 			QSignalSpy spyAbort(&state, &StateTransmitPersonalization::fireAbort);
 			QSignalSpy spyContinue(&state, &StateTransmitPersonalization::fireContinue);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtWarningMsg, "Transmit unsuccessful. StatusCode does not start with acceptable status code QList(\"9001\")");
-#else
-			QTest::ignoreMessage(QtWarningMsg, "Transmit unsuccessful. StatusCode does not start with acceptable status code (\"9001\")");
-#endif
 			state.run();
 
 			QTRY_COMPARE(spyAbort.size(), 1);  // clazy:exclude=qstring-allocations

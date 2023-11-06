@@ -5,8 +5,7 @@ task sourcesJar(type: Jar) {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:1.4.0"
-    implementation "androidx.core:core:1.4.0"
+    implementation "androidx.core:core:1.12.0"
 }
 
 allprojects {
@@ -44,7 +43,6 @@ android {
         exclude '**/libplugins_imageformats_qico_*.so'
         exclude '**/libplugins_imageformats_qtga_*.so'
         exclude '**/libplugins_imageformats_qtiff_*.so'
-        exclude '**/libplugins_imageformats_qwebp_*.so'
         exclude '**/libplugins_imageformats_qwbmp_*.so'
 
         jniLibs {

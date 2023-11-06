@@ -1,51 +1,68 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
-Item {
-	readonly property color itemColor: selected ? Style.text.hint_accent.textColor : Style.text.hint_secondary.textColor
-	property var selected: false
+AbstractButton {
+	id: root
+
+	property bool flowHorizontally: true
+	readonly property color itemColor: selected ? Style.color.text_navigation : Style.color.text_navigation_unchecked
+	property bool selected: false
 	property alias source: tabImage.source
-	property alias text: tabText.text
-
-	signal clicked
 
 	Accessible.name: text
 	Accessible.role: Accessible.Button
+	Layout.minimumWidth: tabImage.implicitWidth + leftPadding + rightPadding
+	padding: Constants.text_spacing / 2
 
-	Accessible.onPressAction: clicked()
+	background: Rectangle {
+		color: selected ? Style.color.control : Style.color.transparent
+		radius: Style.dimens.control_radius
+	}
+	contentItem: Item {
+		implicitHeight: grid.implicitHeight
+		implicitWidth: Math.ceil(tabImage.implicitWidth + grid.columnSpacing + tabText.implicitWidth)
 
-	TintableIcon {
-		id: tabImage
-		sourceSize.height: Style.dimens.navigation_bar_height
-		tintColor: parent.itemColor
+		GridLayout {
+			id: grid
 
-		anchors {
-			bottom: tabText.top
-			bottomMargin: Style.dimens.navigation_bar_text_padding
-			left: parent.left
-			right: parent.right
-			top: parent.top
+			Accessible.ignored: true
+			anchors.centerIn: parent
+			columnSpacing: Constants.text_spacing
+			columns: 2
+			flow: root.flowHorizontally ? GridLayout.LeftToRight : GridLayout.TopToBottom
+			rowSpacing: Style.dimens.navigation_bar_text_padding
+			rows: 2
+
+			Accessible.onPressAction: root.clicked()
+
+			TintableIcon {
+				id: tabImage
+
+				Accessible.ignored: true
+				Layout.alignment: root.flowHorizontally ? Qt.AlignRight : Qt.AlignCenter
+				Layout.maximumWidth: implicitWidth
+				sourceSize.height: Style.dimens.navigation_bar_icon_size
+				tintColor: root.itemColor
+			}
+			GText {
+				id: tabText
+
+				Accessible.ignored: true
+				Layout.alignment: root.flowHorizontally ? Qt.AlignLeft : Qt.AlignCenter
+				Layout.preferredWidth: Math.min(Math.ceil(implicitWidth), root.contentItem.width)
+				color: root.itemColor
+				elide: Text.ElideRight
+				horizontalAlignment: Text.AlignHCenter
+				maximumLineCount: 1
+				text: root.text
+				textStyle: Style.text.navigation
+			}
 		}
-	}
-	GText {
-		id: tabText
-		Accessible.ignored: true
-		anchors.bottom: parent.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		color: parent.itemColor
-		elide: Text.ElideRight
-		horizontalAlignment: Text.AlignHCenter
-		maximumLineCount: 1
-		textStyle: Style.text.navigation
-		width: parent.width
-	}
-	MouseArea {
-		anchors.fill: parent
-
-		onClicked: parent.clicked()
 	}
 }

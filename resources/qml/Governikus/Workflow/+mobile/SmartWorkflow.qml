@@ -1,38 +1,48 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SmartModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PersonalizationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TechnologyInfo
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SmartModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PersonalizationModel
+import Governikus.Type.RemoteServiceModel
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
+	property bool autoInsertCard: false
 	readonly property bool canUseSmart: smartState === SmartModel.SMART_READY && isSmartCardAllowed && SmartModel.isScanRunning
 	readonly property bool isRemoteWorkflow: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_REMOTE_SERVICE
-	readonly property bool isSmartCardAllowed: workflowModel.isSmartCardAllowed
+	readonly property bool isSmartCardAllowed: workflowModel.isCurrentSmartCardAllowed
 	readonly property int smartState: SmartModel.smartState
 	property var workflowModel
 
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
+
+	onCanUseSmartChanged: if (autoInsertCard)
+		technologyInfo.enableClicked()
+
 	SmartProgressIndicator {
 		id: progressIndicator
-		Accessible.ignored: true
-		disabled: !canUseSmart
 
-		anchors {
-			left: parent.left
-			right: parent.right
-			top: parent.top
-		}
+		Accessible.ignored: true
+		Layout.alignment: Qt.AlignCenter
+		disabled: !canUseSmart
 	}
 	TechnologyInfo {
 		id: technologyInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
-			if (canUseSmart) {
+			if (canUseSmart && !autoInsertCard) {
 				return qsTr("Continue");
 			}
 			return "";
@@ -65,13 +75,17 @@ Item {
 			}
 		}
 		subTitleText: {
-			if (canUseSmart) {
+			if (canUseSmart && !autoInsertCard) {
 				//: LABEL ANDROID IOS
 				return qsTr("Your Smart-eID is ready for use, press \"Continue\" to proceed.");
 			}
 			return "";
 		}
 		titleText: {
+			if (isRemoteWorkflow && RemoteServiceModel.connectedClientName !== "") {
+				//: INFO ANDROID IOS %1 will be replaced with the name of the device.
+				return qsTr("The device \"%1\" wants to access your Smart-eID.").arg(RemoteServiceModel.connectedClientName);
+			}
 			switch (smartState) {
 			case SmartModel.SMART_UPDATING_STATUS:
 				//: LABEL ANDROID IOS
@@ -99,14 +113,5 @@ Item {
 
 		onEnableClicked: if (canUseSmart)
 			workflowModel.insertSmartCard()
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 }

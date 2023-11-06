@@ -35,11 +35,7 @@ struct securityinfo_st
 };
 
 DECLARE_ASN1_FUNCTIONS(securityinfo_st)
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-DECLARE_STACK_OF(securityinfo_st)
-#else
 DEFINE_STACK_OF(securityinfo_st)
-#endif
 DECLARE_ASN1_OBJECT(securityinfo_st)
 
 /*

@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	property alias text: t.text
@@ -66,6 +66,7 @@ Item {
 
 	GBusyIndicator {
 		id: busy
+
 		anchors.centerIn: parent
 		height: rec.height * 1.1
 		running: false
@@ -73,18 +74,20 @@ Item {
 	}
 	Rectangle {
 		id: rec
+
 		anchors.centerIn: parent
 		border.color: Constants.blue
 		border.width: 1
-		color: parent.state === "active" ? Style.color.accent : Constants.white
+		color: parent.state === "active" ? Style.color.control : Constants.white
 		height: parent.state === "active" ? parent.height : parent.height / 2
 		radius: width * 0.5
 		width: height
 	}
 	GText {
 		id: t
+
 		anchors.centerIn: rec
-		color: parent.state === "active" ? Constants.white : Style.color.accent
-		textStyle: parent.state === "active" ? Style.text.normal_highlight : Style.text.normal
+		color: parent.state === "active" ? Constants.white : Style.color.control
+		font.bold: parent.state === "active"
 	}
 }

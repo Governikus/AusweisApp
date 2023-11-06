@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Style
+import Governikus.View
 
 Button {
 	id: control
+
 	enum Type {
 		Forward,
 		Back,
@@ -21,6 +21,7 @@ Button {
 	property int buttonType: NavigationButton.Type.Forward
 	property string iconSource
 	property string iconText
+	property double size: plugin.scaleFactor * 160
 	property string subText
 
 	Accessible.name: accessibleText !== "" ? accessibleText : text
@@ -36,15 +37,17 @@ Button {
 
 	ColumnLayout {
 		id: column
+
 		anchors.fill: parent
 		spacing: Constants.component_spacing
 
 		Rectangle {
 			id: icon
+
 			Layout.alignment: Qt.AlignHCenter
 			Layout.preferredHeight: Layout.preferredWidth
-			Layout.preferredWidth: ApplicationModel.scaleFactor * 160
-			color: enabled ? Style.color.button : Style.color.button_disabled
+			Layout.preferredWidth: control.size
+			color: enabled ? Style.color.control : Style.color.control_disabled
 			radius: height / 2
 
 			TintableIcon {
@@ -60,22 +63,22 @@ Button {
 					return buttonType === NavigationButton.Type.Check ? "qrc:///images/material_check.svg" : buttonType === NavigationButton.Type.Cancel ? "qrc:///images/material_clear.svg" : "qrc:///images/desktop/material_arrow_forward.svg";
 				}
 				sourceSize.height: Style.dimens.large_icon_size
-				tintColor: Style.color.button_text
-				transformOrigin: Item.Center
+				tintColor: Style.color.control_content
 			}
 			GText {
 				anchors.centerIn: parent
 				text: iconText
-				textStyle: Style.text.title_inverse
+				textStyle: Style.text.headline
 				visible: iconText !== ""
 			}
 		}
 		GText {
 			id: buttonText
-			Layout.fillWidth: true
+
+			Layout.alignment: Qt.AlignHCenter
 			horizontalAlignment: Text.AlignHCenter
 			text: control.subText
-			textStyle: Style.text.header
+			textStyle: Style.text.headline
 			visible: control.subText !== ""
 		}
 	}

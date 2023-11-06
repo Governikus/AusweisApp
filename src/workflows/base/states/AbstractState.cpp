@@ -5,7 +5,9 @@
 #include "AbstractState.h"
 
 #include "ReaderManager.h"
-#include "VolatileSettings.h"
+#if defined(Q_OS_IOS)
+	#include "VolatileSettings.h"
+#endif
 
 #include <QLoggingCategory>
 #include <QStateMachine>
@@ -22,9 +24,9 @@ const char* const AbstractState::cFORCE_START_STOP_SCAN = "FORCE_START_STOP_SCAN
 
 AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 	: mContext(pContext)
+	, mConnections()
 	, mAbortOnCardRemoved(false)
 	, mKeepCardConnectionAlive(false)
-	, mConnections()
 {
 	Q_ASSERT(mContext);
 	connect(this, &AbstractState::fireAbort, this, &AbstractState::onAbort);
@@ -50,12 +52,6 @@ QString AbstractState::getStateName() const
 }
 
 
-void AbstractState::setStateName(const QString& pName)
-{
-	setObjectName(pName);
-}
-
-
 void AbstractState::onAbort(const FailureCode& pFailure) const
 {
 	if (mContext)
@@ -63,17 +59,6 @@ void AbstractState::onAbort(const FailureCode& pFailure) const
 		qCDebug(statemachine) << "Abort with FailureCode" << pFailure;
 		mContext->setFailureCode(pFailure);
 	}
-}
-
-
-QString AbstractState::getClassName(const char* const pName)
-{
-	QString className = QString::fromLatin1(pName);
-	if (className.contains(QLatin1Char(':')))
-	{
-		className = className.mid(className.lastIndexOf(QLatin1Char(':')) + 1);
-	}
-	return className;
 }
 
 
@@ -89,6 +74,12 @@ void AbstractState::onStateApprovedChanged(bool pApproved)
 
 void AbstractState::onEntry(QEvent* pEvent)
 {
+	if (!mConnections.isEmpty())
+	{
+		dumpObjectInfo();
+	}
+	Q_ASSERT(mConnections.isEmpty());
+
 	if (mAbortOnCardRemoved)
 	{
 		const auto readerManager = Env::getSingleton<ReaderManager>();
@@ -108,7 +99,7 @@ void AbstractState::onEntry(QEvent* pEvent)
 
 	if (mContext->isWorkflowCancelled() && !mContext->isWorkflowCancelledInState())
 	{
-		onUserCancelled();
+		QMetaObject::invokeMethod(this, &AbstractState::onUserCancelled, Qt::QueuedConnection);
 	}
 
 	QState::onEntry(pEvent);
@@ -130,6 +121,12 @@ void AbstractState::onExit(QEvent* pEvent)
 }
 
 
+void AbstractState::operator<<(const QMetaObject::Connection& connection)
+{
+	mConnections += connection;
+}
+
+
 void AbstractState::clearConnections()
 {
 	for (const auto& connection : std::as_const(mConnections))
@@ -140,7 +137,7 @@ void AbstractState::clearConnections()
 }
 
 
-bool AbstractState::isCancellationByUser()
+bool AbstractState::isCancellationByUser() const
 {
 	return mContext->getStatus().isCancellationByUser();
 }
@@ -195,7 +192,7 @@ bool AbstractState::isStartStopEnabled() const
 }
 
 
-void AbstractState::stopNfcScanIfNecessary(const QString& pError)
+void AbstractState::stopNfcScanIfNecessary(const QString& pError) const
 {
 #if defined(Q_OS_IOS)
 	const auto& volatileSettings = Env::getSingleton<VolatileSettings>();

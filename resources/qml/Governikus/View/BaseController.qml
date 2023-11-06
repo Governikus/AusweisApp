@@ -1,12 +1,13 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Type.ApplicationModel
 
 Item {
 	id: root
+
 	function showRemoveCardFeedback(workflowModel, success) {
 		if (workflowModel.showRemoveCardFeedback) {
 			workflowModel.showRemoveCardFeedback = false;
@@ -45,6 +46,7 @@ Item {
 
 	QtObject {
 		id: d
+
 		function forceFocusFirstA11yItem(view) {
 			if (!view.visible) {
 				return false;
@@ -54,8 +56,8 @@ Item {
 				view.forceActiveFocus(Qt.MouseFocusReason);
 				return true;
 			}
-			for (var i = 0; i < view.children.length; i++) {
-				var child = view.children[i];
+			for (let i = 0; i < view.children.length; i++) {
+				let child = view.children[i];
 				if (forceFocusFirstA11yItem(child)) {
 					return true;
 				}

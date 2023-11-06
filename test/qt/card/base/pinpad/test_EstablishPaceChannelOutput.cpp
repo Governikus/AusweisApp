@@ -281,6 +281,7 @@ class test_EstablishPaceChannelOutput
 											 "9000");
 
 			EstablishPaceChannelOutput channelOutput;
+			QTest::ignoreMessage(QtWarningMsg, "Determine at least PACE return code by regular expression");
 			QVERIFY(channelOutput.parseFromCcid(QByteArray::fromHex(hexBytes)));
 
 			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::INVALID_PASSWORD);
@@ -576,6 +577,27 @@ class test_EstablishPaceChannelOutput
 			QVERIFY(channelOutput2.parseFromCcid(channelOutput1.toCcid()));
 
 			QCOMPARE(channelOutput2, channelOutput1);
+		}
+
+
+		void outputDataWrongSize_data()
+		{
+			QTest::addColumn<QByteArray>("data");
+
+			QTest::newRow("efCardAccess") << QByteArray::fromHex("9000020061");
+			QTest::newRow("carCurr") << QByteArray::fromHex("900000000261");
+			QTest::newRow("carPrev") << QByteArray::fromHex("90000000000261");
+			QTest::newRow("idIcc") << QByteArray::fromHex("900000000000020061");
+		}
+
+
+		void outputDataWrongSize()
+		{
+			QFETCH(QByteArray, data);
+
+			EstablishPaceChannelOutput output;
+			QTest::ignoreMessage(QtDebugMsg, "Decapsulation of command failed. Wrong size.");
+			QVERIFY(!output.parseOutputData(data));
 		}
 
 

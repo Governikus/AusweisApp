@@ -90,9 +90,9 @@ void StateGetTcToken::sendRequest(const QUrl& pUrl)
 	qCDebug(network) << "Fetch TCToken URL:" << pUrl;
 	QNetworkRequest request(pUrl);
 	mReply = Env::getSingleton<NetworkManager>()->get(request);
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetTcToken::onSslErrors);
-	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetTcToken::onSslHandshakeDone);
-	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGetTcToken::onNetworkReply);
+	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGetTcToken::onSslErrors);
+	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGetTcToken::onSslHandshakeDone);
+	*this << connect(mReply.data(), &QNetworkReply::finished, this, &StateGetTcToken::onNetworkReply);
 }
 
 
@@ -172,28 +172,54 @@ void StateGetTcToken::onNetworkReply()
 		return;
 	}
 
-	const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
-	if (!isValidRedirectUrl(redirectUrl))
+	if (statusCode == HTTP_STATUS_SEE_OTHER || statusCode == HTTP_STATUS_FOUND || statusCode == HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
-		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
+		const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+		if (!isValidRedirectUrl(redirectUrl))
+		{
+			Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
+			return;
+		}
+		sendRequest(redirectUrl);
 		return;
 	}
 
-	if (statusCode != HTTP_STATUS_SEE_OTHER && statusCode != HTTP_STATUS_FOUND && statusCode != HTTP_STATUS_TEMPORARY_REDIRECT)
+	qCritical() << "Error while connecting to the provider. The server returns an unexpected status code:" << statusCode;
+
+	GlobalStatus::Code errorStatus = GlobalStatus::Code::No_Error;
+	FailureCode::Reason reason;
+	if (statusCode >= 500)
 	{
-		qCritical() << "Error while connecting to the provider. The server returns an unexpected status code:" << statusCode;
-		const GlobalStatus::ExternalInfoMap infoMap {
-			{GlobalStatus::ExternalInformation::HTTP_STATUS_CODE, QString::number(statusCode)},
-			{GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-		};
-		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error, infoMap});
-		Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Invalid_Server_Reply,
-						  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
-				});
-		return;
+		if (statusCode == 503)
+		{
+			errorStatus = GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable;
+			reason = FailureCode::Reason::Get_TcToken_ServiceUnavailable;
+		}
+		else
+		{
+			errorStatus = GlobalStatus::Code::Workflow_TrustedChannel_Server_Error;
+			reason = FailureCode::Reason::Get_TcToken_Server_Error;
+		}
+	}
+	else if (statusCode >= 400)
+	{
+		errorStatus = GlobalStatus::Code::Workflow_TrustedChannel_Client_Error;
+		reason = FailureCode::Reason::Get_TcToken_Client_Error;
+	}
+	else
+	{
+		errorStatus = GlobalStatus::Code::Workflow_TrustedChannel_Server_Format_Error;
+		reason = FailureCode::Reason::Get_TcToken_Invalid_Server_Reply;
 	}
 
-	sendRequest(redirectUrl);
+	const GlobalStatus::ExternalInfoMap infoMap {
+		{GlobalStatus::ExternalInformation::HTTP_STATUS_CODE, QString::number(statusCode)},
+		{GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
+	};
+	updateStatus({errorStatus, infoMap});
+	Q_EMIT fireAbort({reason,
+					  {FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
+			});
 }
 
 

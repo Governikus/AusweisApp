@@ -5,7 +5,6 @@
 #include "IfdClientImpl.h"
 
 #include "AppSettings.h"
-#include "IfdConnectorImpl.h"
 
 #include <QLoggingCategory>
 

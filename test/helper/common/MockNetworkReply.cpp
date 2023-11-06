@@ -10,7 +10,6 @@ using namespace governikus;
 MockNetworkReply::MockNetworkReply(const QByteArray& pData, http_status pStatusCode, QObject* pParent)
 	: QNetworkReply(pParent)
 	, mSocket()
-	, mFinished(false)
 {
 	mSocket.mReadBuffer = pData;
 	setOpenMode(QIODevice::ReadOnly);
@@ -31,9 +30,9 @@ qint64 MockNetworkReply::readData(char* pDst, qint64 pMaxSize)
 
 void MockNetworkReply::fireFinished()
 {
-	if (!mFinished)
+	if (!isFinished())
 	{
-		mFinished = true;
+		setFinished(true);
 		Q_EMIT finished();
 	}
 }

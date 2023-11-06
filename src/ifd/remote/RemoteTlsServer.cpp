@@ -20,14 +20,15 @@ using namespace governikus;
 
 QSslConfiguration RemoteTlsServer::sslConfiguration() const
 {
-	const auto cipherCfg = mPsk.isEmpty() ? SecureStorage::TlsSuite::DEFAULT : SecureStorage::TlsSuite::PSK;
+	const auto& psk = getPsk();
+	const auto cipherCfg = psk.isEmpty() ? SecureStorage::TlsSuite::DEFAULT : SecureStorage::TlsSuite::PSK;
 	QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(cipherCfg).getConfiguration();
 	const auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	config.setPrivateKey(settings.getKey());
 	config.setLocalCertificate(settings.getCertificate());
 	config.setPeerVerifyMode(QSslSocket::VerifyPeer);
 
-	if (mPsk.isEmpty())
+	if (psk.isEmpty())
 	{
 		config.setCaCertificates(settings.getTrustedCertificates());
 	}
@@ -76,31 +77,33 @@ bool RemoteTlsServer::startListening(quint16 pPort)
 
 void RemoteTlsServer::onSslErrors(const QList<QSslError>& pErrors)
 {
+	const auto& socket = getSslSocket();
 	if (pErrors.size() == 1 && pErrors.first().error() == QSslError::SelfSignedCertificate)
 	{
 		const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
-		if (pairingCiphers.contains(mSocket->sessionCipher()))
+		if (pairingCiphers.contains(socket->sessionCipher()))
 		{
-			qCDebug(ifd) << "Client requests pairing | cipher:" << mSocket->sessionCipher() << "| certificate:" << mSocket->peerCertificate();
-			mSocket->ignoreSslErrors(pErrors);
+			qCDebug(ifd) << "Client requests pairing | cipher:" << socket->sessionCipher() << "| certificate:" << socket->peerCertificate();
+			socket->ignoreSslErrors(pErrors);
 			return;
 		}
 	}
 
-	qCDebug(ifd) << "Client is not allowed | cipher:" << mSocket->sessionCipher() << "| certificate:" << mSocket->peerCertificate() << "| error:" << pErrors;
+	qCDebug(ifd) << "Client is not allowed | cipher:" << socket->sessionCipher() << "| certificate:" << socket->peerCertificate() << "| error:" << pErrors;
 }
 
 
 void RemoteTlsServer::onEncrypted()
 {
-	const auto& cfg = mSocket->sslConfiguration();
+	const auto& socket = getSslSocket();
+	const auto& cfg = socket->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(ifd));
 
 	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
 	{
 		qCCritical(ifd) << "Client denied... abort connection!";
-		mSocket->abort();
-		mSocket->deleteLater();
+		socket->abort();
+		socket->deleteLater();
 		return;
 	}
 
@@ -123,8 +126,8 @@ void RemoteTlsServer::onEncrypted()
 		settings.updateRemoteInfo(info);
 	}
 
-	mSocket->disconnect(this);
-	Q_EMIT fireNewConnection(mSocket.data());
+	socket->disconnect(this);
+	Q_EMIT fireNewConnection(socket.data());
 }
 
 
@@ -146,5 +149,6 @@ void RemoteTlsServer::setPairing(bool pEnable)
 
 QSslCertificate RemoteTlsServer::getCurrentCertificate() const
 {
-	return mSocket ? mSocket->sslConfiguration().peerCertificate() : QSslCertificate();
+	const auto& socket = getSslSocket();
+	return socket ? socket->sslConfiguration().peerCertificate() : QSslCertificate();
 }

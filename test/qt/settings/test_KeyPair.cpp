@@ -26,13 +26,31 @@ class test_KeyPair
 		KeyPair pair2 = KeyPair::generate();
 
 	private Q_SLOTS:
+		void validKey_data()
+		{
+			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
+			QTest::addColumn<int>("size");
+			QTest::addColumn<QLatin1String>("curve");
+
+			QTest::newRow("RSA") << QSsl::Rsa << 2048 << QLatin1String();
+			QTest::newRow("prime256v1") << QSsl::Ec << 256 << QLatin1String("prime256v1");
+			QTest::newRow("secp384r1") << QSsl::Ec << 384 << QLatin1String("secp384r1");
+			QTest::newRow("brainpoolP512r1") << QSsl::Ec << 512 << QLatin1String("brainpoolP512r1");
+		}
+
+
 		void validKey()
 		{
-			QVERIFY(pair1.isValid());
-			const auto& key = pair1.getKey();
+			QFETCH(QSsl::KeyAlgorithm, algorithm);
+			QFETCH(int, size);
+			QFETCH(QLatin1String, curve);
+
+			KeyPair pair = KeyPair::generate(curve.data());
+			QVERIFY(pair.isValid());
+			const auto& key = pair.getKey();
 			QVERIFY(!key.isNull());
-			QCOMPARE(key.length(), 2048);
-			QCOMPARE(key.algorithm(), QSsl::Rsa);
+			QCOMPARE(key.length(), size);
+			QCOMPARE(key.algorithm(), algorithm);
 			QCOMPARE(key.type(), QSsl::PrivateKey);
 		}
 
@@ -47,10 +65,28 @@ class test_KeyPair
 		}
 
 
+		void validCertificate_data()
+		{
+			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
+			QTest::addColumn<int>("size");
+			QTest::addColumn<QLatin1String>("curve");
+
+			QTest::newRow("RSA") << QSsl::Rsa << 2048 << QLatin1String();
+			QTest::newRow("prime256v1") << QSsl::Ec << 256 << QLatin1String("prime256v1");
+			QTest::newRow("secp384r1") << QSsl::Ec << 384 << QLatin1String("secp384r1");
+			QTest::newRow("brainpoolP512r1") << QSsl::Ec << 512 << QLatin1String("brainpoolP512r1");
+		}
+
+
 		void validCertificate()
 		{
-			QVERIFY(pair1.isValid());
-			const auto& cert = pair1.getCertificate();
+			QFETCH(QSsl::KeyAlgorithm, algorithm);
+			QFETCH(int, size);
+			QFETCH(QLatin1String, curve);
+
+			KeyPair pair = KeyPair::generate(curve.data());
+			QVERIFY(pair.isValid());
+			const auto& cert = pair.getCertificate();
 			QVERIFY(!cert.isNull());
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).size(), 1);
 			QCOMPARE(cert.issuerInfo(QSslCertificate::CommonName).at(0), QCoreApplication::applicationName());
@@ -66,8 +102,8 @@ class test_KeyPair
 			QVERIFY(QByteArray::number(serialNumberValue).size() < 21);
 
 			const auto& key = cert.publicKey();
-			QCOMPARE(key.length(), 2048);
-			QCOMPARE(key.algorithm(), QSsl::Rsa);
+			QCOMPARE(key.length(), size);
+			QCOMPARE(key.algorithm(), algorithm);
 			QCOMPARE(key.type(), QSsl::PublicKey);
 			QVERIFY(TlsChecker::hasValidCertificateKeyLength(cert));
 

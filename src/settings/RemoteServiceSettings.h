@@ -97,7 +97,7 @@ class RemoteServiceSettings
 		void removeTrustedCertificate(const QSslCertificate& pCertificate);
 		void removeTrustedCertificate(const QString& pFingerprint);
 
-		bool checkAndGenerateKey(bool pForceGeneration = false);
+		bool checkAndGenerateKey(bool pForceGeneration = false) const;
 
 		[[nodiscard]] QSslCertificate getCertificate() const;
 		void setCertificate(const QSslCertificate& pCert) const;

@@ -35,7 +35,7 @@ class test_StateProcessIfdMessages
 			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
 			StateProcessIfdMessages state(context);
 			state.run();
-			QCOMPARE(state.mConnections.size(), 1);
+			QCOMPARE(state.mConnections.size(), 3);
 			QCOMPARE(state.mMessageConnections.size(), 7);
 		}
 

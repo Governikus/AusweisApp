@@ -1,13 +1,14 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.CheckResultView 1.0; CheckResultView {}", testCase);
+		return createTemporaryQmlObject("import Governikus.CheckResultView; CheckResultView { title: \"CheckResultView\"; result: 0 }", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

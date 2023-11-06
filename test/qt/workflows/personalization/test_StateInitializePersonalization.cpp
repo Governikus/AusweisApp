@@ -6,6 +6,7 @@
 
 #include "LogHandler.h"
 #include "ReaderManager.h"
+#include "SmartManager.h"
 #include "context/PersonalizationContext.h"
 
 #include "mock/eid_applet_interface_mock.h"
@@ -32,8 +33,9 @@ class test_StateInitializePersonalization
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -47,6 +49,12 @@ class test_StateInitializePersonalization
 		{
 			Env::getSingleton<LogHandler>()->init();
 			mContext = QSharedPointer<PersonalizationContext>::create(QString());
+		}
+
+
+		void cleanup()
+		{
+			SmartManager::releaseConnection();
 		}
 
 
@@ -64,13 +72,33 @@ class test_StateInitializePersonalization
 			QCOMPARE(spyContinue.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
 			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Initialize_Personalization_Failed);
+
+			QCOMPARE(dequeueReceivedParameter(), QString());
+			QCOMPARE(dequeueReceivedParameter(), QString());
+		}
+
+
+		void success_data()
+		{
+			QTest::addColumn<SmartEidType>("type");
+			QTest::addColumn<QString>("pin");
+
+			QTest::newRow("UNKNOWN") << SmartEidType::UNKNOWN << QString();
+			QTest::newRow("APPLET") << SmartEidType::APPLET << QString();
+			QTest::newRow("NON_APPLET") << SmartEidType::NON_APPLET << QString("123456");
 		}
 
 
 		void success()
 		{
+			QFETCH(SmartEidType, type);
+			QFETCH(QString, pin);
+
 			setSmartEidStatus(EidStatus::NO_PERSONALIZATION);
 			setInitializePersonalizationResult({EidServiceResult::SUCCESS, std::string("data containing the PIN when Smart-eID is of type HWKeyStore")});
+			mContext->setServiceInformation(type, QString(), QString());
+			mContext->setNewPin(QString("123456"));
+			mContext->setChallenge(QString("FooBar"));
 
 			StateInitializePersonalization state(mContext);
 			QSignalSpy spyAbort(&state, &StateInitializePersonalization::fireAbort);
@@ -88,6 +116,9 @@ class test_StateInitializePersonalization
 			{
 				QVERIFY(!entry.at(0).toString().contains(QLatin1String("data containing the PIN")));
 			}
+
+			QCOMPARE(dequeueReceivedParameter(), QString("FooBar"));
+			QCOMPARE(dequeueReceivedParameter(), pin);
 		}
 
 

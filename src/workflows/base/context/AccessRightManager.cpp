@@ -42,7 +42,7 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 		mOptionalAccessRights = optionalChat.data()->getAccessRights();
 		removeForbiddenAccessRights(mOptionalAccessRights);
 
-		if (mOptionalAccessRights.size() > 0 && mRequiredAccessRights.size() > 0)
+		if (!mOptionalAccessRights.isEmpty() && !mRequiredAccessRights.isEmpty())
 		{
 			mOptionalAccessRights -= mRequiredAccessRights;
 		}

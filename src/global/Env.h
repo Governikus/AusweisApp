@@ -27,10 +27,6 @@
 #include <QWriteLocker>
 
 #ifndef QT_NO_DEBUG
-	#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-		#include <QMutableVectorIterator>
-	#endif
-
 	#include <QVector>
 #endif
 

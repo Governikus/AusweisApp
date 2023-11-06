@@ -9,6 +9,7 @@
 #pragma once
 
 #include "BaseCardCommand.h"
+#include "CardConnectionWorker.h"
 
 class test_DestroyPaceChannelCommand;
 

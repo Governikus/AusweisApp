@@ -5,7 +5,6 @@
 #include "SettingsModel.h"
 
 #include "AppSettings.h"
-#include "HistorySettings.h"
 #include "LanguageLoader.h"
 #include "Service.h"
 
@@ -25,9 +24,6 @@ SettingsModel::SettingsModel()
 	, mIsStartedByAuth(false)
 	, mShowBetaTesting(true)
 {
-	const auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
-	connect(&settings, &HistorySettings::fireEnabledChanged, this, &SettingsModel::fireHistoryEnabledChanged);
-
 	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
 
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
@@ -35,6 +31,8 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireShowInAppNotificationsChanged, this, &SettingsModel::fireShowInAppNotificationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsModel::fireDeveloperOptionsChanged);
 	connect(&generalSettings, &GeneralSettings::fireProxyChanged, this, &SettingsModel::fireUseCustomProxyChanged);
+	connect(&generalSettings, &GeneralSettings::fireUseSystemFontChanged, this, &SettingsModel::fireUseSystemFontChanged);
+	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -48,7 +46,7 @@ QString SettingsModel::getLanguage() const
 }
 
 
-void SettingsModel::setLanguage(const QString& pLanguage)
+void SettingsModel::setLanguage(const QString& pLanguage) const
 {
 	if (getLanguage() != pLanguage)
 	{
@@ -87,7 +85,7 @@ bool SettingsModel::isDeveloperOptions() const
 }
 
 
-void SettingsModel::setDeveloperOptions(bool pEnable)
+void SettingsModel::setDeveloperOptions(bool pEnable) const
 {
 	if (isDeveloperOptions() != pEnable)
 	{
@@ -103,7 +101,7 @@ bool SettingsModel::isDeveloperMode() const
 }
 
 
-void SettingsModel::setDeveloperMode(bool pEnable)
+void SettingsModel::setDeveloperMode(bool pEnable) const
 {
 	if (isDeveloperMode() != pEnable)
 	{
@@ -119,7 +117,7 @@ bool SettingsModel::useSelfauthenticationTestUri() const
 }
 
 
-void SettingsModel::setUseSelfauthenticationTestUri(bool pUse)
+void SettingsModel::setUseSelfauthenticationTestUri(bool pUse) const
 {
 	if (useSelfauthenticationTestUri() != pUse)
 	{
@@ -143,17 +141,9 @@ void SettingsModel::setServerName(const QString& name)
 }
 
 
-void SettingsModel::removeTrustedCertificate(const QString& pFingerprint)
+void SettingsModel::removeTrustedCertificate(const QString& pFingerprint) const
 {
 	Env::getSingleton<AppSettings>()->getRemoteServiceSettings().removeTrustedCertificate(pFingerprint);
-}
-
-
-int SettingsModel::removeHistory(const QString& pPeriodToRemove)
-{
-	auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
-	int removedItemCount = settings.deleteSettings(Enum<TimePeriod>::fromString(pPeriodToRemove, TimePeriod::UNKNOWN));
-	return removedItemCount;
 }
 
 
@@ -188,30 +178,6 @@ void SettingsModel::setShowAccessRights(bool pShowAccessRights)
 		settings.setShowAccessRights(pShowAccessRights);
 		Q_EMIT fireShowAccessRightsChanged();
 	}
-}
-
-
-bool SettingsModel::isHistoryEnabled() const
-{
-	const auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
-	return settings.isEnabled();
-}
-
-
-void SettingsModel::setHistoryEnabled(bool pEnabled)
-{
-	if (isHistoryEnabled() != pEnabled)
-	{
-		auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
-		settings.setEnabled(pEnabled);
-	}
-}
-
-
-int SettingsModel::removeEntireHistory()
-{
-	auto& settings = Env::getSingleton<AppSettings>()->getHistorySettings();
-	return settings.deleteSettings(TimePeriod::ALL_HISTORY);
 }
 
 
@@ -306,7 +272,7 @@ bool SettingsModel::isSimulatorEnabled() const
 }
 
 
-void SettingsModel::setSimulatorEnabled(bool pEnabled)
+void SettingsModel::setSimulatorEnabled(bool pEnabled) const
 {
 	if (isSimulatorEnabled() != pEnabled)
 	{
@@ -370,6 +336,7 @@ void SettingsModel::setAutoStart(bool pEnabled)
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setAutoStart(pEnabled);
 		Q_EMIT fireAutoStartChanged();
+		Q_EMIT fireShowTrayIconChanged();
 	}
 }
 
@@ -388,7 +355,7 @@ bool SettingsModel::requestStoreFeedback() const
 }
 
 
-void SettingsModel::hideFutureStoreFeedbackDialogs()
+void SettingsModel::hideFutureStoreFeedbackDialogs() const
 {
 	Env::getSingleton<AppSettings>()->getGeneralSettings().setRequestStoreFeedback(false);
 }
@@ -440,6 +407,12 @@ void SettingsModel::setAutoUpdateCheck(bool pAutoUpdateCheck)
 }
 
 
+bool SettingsModel::showTrayIcon() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().showTrayIcon();
+}
+
+
 bool SettingsModel::isRemindUserToClose() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isRemindUserToClose();
@@ -481,7 +454,7 @@ bool SettingsModel::isShowInAppNotifications() const
 }
 
 
-void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications)
+void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications) const
 {
 	if (isShowInAppNotifications() != pShowInAppNotifications)
 	{
@@ -491,7 +464,7 @@ void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications)
 }
 
 
-void SettingsModel::updateAppcast()
+void SettingsModel::updateAppcast() const
 {
 	Env::getSingleton<Service>()->updateAppcast();
 }
@@ -541,7 +514,47 @@ bool SettingsModel::isUseCustomProxy() const
 }
 
 
-void SettingsModel::setUseCustomProxy(bool pUseCustomProxy)
+void SettingsModel::setUseCustomProxy(bool pUseCustomProxy) const
 {
 	Env::getSingleton<AppSettings>()->getGeneralSettings().setUseCustomProxy(pUseCustomProxy);
 }
+
+
+bool SettingsModel::isUseSystemFont() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isUseSystemFont();
+}
+
+
+void SettingsModel::setUseSystemFont(bool pUseSystemFont) const
+{
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setUseSystemFont(pUseSystemFont);
+}
+
+
+ModeOption SettingsModel::getDarkMode() const
+{
+	return Enum<ModeOption>::fromString(
+			Env::getSingleton<AppSettings>()->getGeneralSettings().getDarkMode(),
+			ModeOption::OFF);
+}
+
+
+void SettingsModel::setDarkMode(ModeOption pMode)
+{
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setDarkMode(
+			Enum<ModeOption>::getName(pMode));
+}
+
+
+#ifndef QT_NO_DEBUG
+void SettingsModel::resetHideableDialogs() const
+{
+	GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	settings.setTransportPinReminder(true);
+	settings.setRemindUserToClose(true);
+	settings.setRequestStoreFeedback(true);
+}
+
+
+#endif

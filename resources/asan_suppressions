@@ -1,5 +1,5 @@
 # Recommended usage:
-# LSAN_OPTIONS=suppressions=/home/dev/AusweisApp2.src/resources/asan_suppressions ./AusweisApp2
+# LSAN_OPTIONS=suppressions=/home/dev/AusweisApp.src/resources/asan_suppressions ./AusweisApp
 
 leak:g_malloc*
 leak:libxcb*

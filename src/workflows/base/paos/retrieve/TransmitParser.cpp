@@ -45,7 +45,7 @@ PaosMessage* TransmitParser::parseMessage()
 }
 
 
-void TransmitParser::parseSlotHandle()
+void TransmitParser::parseSlotHandle() const
 {
 }
 

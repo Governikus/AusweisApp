@@ -17,8 +17,6 @@
 namespace governikus
 {
 
-class ReaderManagerPlugIn;
-
 class ReaderFilter
 {
 	public:

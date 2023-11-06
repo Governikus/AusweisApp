@@ -1,27 +1,32 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.TechnologyInfo
+import Governikus.Style
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
 	property var workflowModel
 
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
+
 	Item {
 		id: progressIndicator
-		height: Style.dimens.workflow_progress_indicator_size
 
-		anchors {
-			left: parent.left
-			right: parent.right
-			top: parent.top
-		}
+		Layout.alignment: Qt.AlignCenter
+		implicitHeight: Style.dimens.workflow_progress_indicator_size
+		implicitWidth: icon.implicitWidth
+
 		TintableIcon {
 			id: icon
+
 			anchors.centerIn: parent
 			desaturate: true
 			source: "qrc:///images/mobile/phone_simulator.svg"
@@ -31,6 +36,8 @@ Item {
 	}
 	TechnologyInfo {
 		id: technologyInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		//: LABEL ANDROID IOS
 		enableButtonText: qsTr("Continue")
 
@@ -38,14 +45,5 @@ Item {
 		titleText: qsTr("Simulator")
 
 		onEnableClicked: workflowModel.insertSimulator()
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 }

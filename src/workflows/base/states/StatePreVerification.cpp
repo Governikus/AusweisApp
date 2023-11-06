@@ -99,7 +99,7 @@ void StatePreVerification::run()
 }
 
 
-bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates)
+bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const
 {
 	qDebug() << "Check certificate chain validity on" << mValidationDateTime.toString(Qt::ISODate);
 
@@ -132,7 +132,7 @@ bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertific
 }
 
 
-void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates)
+void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const
 {
 	const auto& contains = [](const QVector<QSharedPointer<const CVCertificate>>& pStore, const CVCertificate& pCert)
 			{

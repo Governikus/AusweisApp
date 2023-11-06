@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Style
 
 Image {
 	id: img
@@ -13,21 +13,21 @@ Image {
 	fillMode: Image.PreserveAspectFit
 	source: {
 		if (inactive) {
-			return "qrc:///images/icon_remote_inactive.svg";
+			return "qrc:///images/icon_remote_inactive_%1.svg".arg(Style.currentTheme.name);
 		}
 		if (percent >= 80) {
-			return "qrc:///images/icon_remote_100.svg";
+			return "qrc:///images/icon_remote_100_%1.svg".arg(Style.currentTheme.name);
 		}
 		if (percent >= 60) {
-			return "qrc:///images/icon_remote_75.svg";
+			return "qrc:///images/icon_remote_75_%1.svg".arg(Style.currentTheme.name);
 		}
 		if (percent >= 40) {
-			return "qrc:///images/icon_remote_50.svg";
+			return "qrc:///images/icon_remote_50_%1.svg".arg(Style.currentTheme.name);
 		}
 		if (percent >= 20) {
-			return "qrc:///images/icon_remote_25.svg";
+			return "qrc:///images/icon_remote_25_%1.svg".arg(Style.currentTheme.name);
 		}
-		return "qrc:///images/icon_remote_0.svg";
+		return "qrc:///images/icon_remote_inactive_%1.svg".arg(Style.currentTheme.name);
 	}
 	sourceSize.width: Style.dimens.icon_size
 }

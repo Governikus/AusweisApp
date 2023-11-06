@@ -24,7 +24,7 @@
                 <SlotHandle>00</SlotHandle>
             </ConnectionHandle>
             <UserAgent>
-                <Name>Test_workflows_paos_invoke_StartPaos</Name>
+                <Name>AusweisApp2</Name>
                 <VersionMajor>123</VersionMajor>
                 <VersionMinor>456</VersionMinor>
                 <VersionSubminor>789</VersionSubminor>

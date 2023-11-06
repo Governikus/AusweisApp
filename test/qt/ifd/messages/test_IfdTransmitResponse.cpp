@@ -353,7 +353,7 @@ class test_IfdTransmitResponse
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first ResponseAPDU. Command chaining ist not supported yet")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first ResponseAPDU. Command chaining is not supported yet")));
 		}
 
 

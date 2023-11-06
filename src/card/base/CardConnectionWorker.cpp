@@ -9,7 +9,7 @@
 #include "pace/PaceHandler.h"
 
 #include <QLoggingCategory>
-
+#include <QThread>
 
 using namespace governikus;
 
@@ -46,7 +46,18 @@ CardConnectionWorker::~CardConnectionWorker()
 
 QSharedPointer<CardConnectionWorker> CardConnectionWorker::create(Reader* pReader)
 {
-	return QSharedPointer<CardConnectionWorker>(new CardConnectionWorker(pReader), &QObject::deleteLater);
+	const auto& customDeleter = [](CardConnectionWorker* pWorker){
+				if (QThread::currentThread() == pWorker->thread())
+				{
+					delete pWorker;
+				}
+				else
+				{
+					pWorker->deleteLater();
+				}
+			};
+
+	return QSharedPointer<CardConnectionWorker>(new CardConnectionWorker(pReader), customDeleter);
 }
 
 

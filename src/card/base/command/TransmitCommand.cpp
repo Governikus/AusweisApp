@@ -4,7 +4,6 @@
 
 #include "TransmitCommand.h"
 
-#include "CardConnection.h"
 #include "CardReturnCode.h"
 #include "GlobalStatus.h"
 #include "InputAPDUInfo.h"

@@ -6,11 +6,7 @@ if(MAC OR LINUX OR WIN32)
 		string(TIMESTAMP APPCAST_DATE "%Y-%m-%dT%H:%M:%S")
 
 		foreach(filePath ${_files})
-			if(CMAKE_VERSION VERSION_LESS "3.14")
-				FILE_SIZE(fileSize ${filePath})
-			else()
-				file(SIZE ${filePath} fileSize)
-			endif()
+			file(SIZE ${filePath} fileSize)
 			get_filename_component(file ${filePath} NAME)
 
 			if(NOT DEFINED fileSize)

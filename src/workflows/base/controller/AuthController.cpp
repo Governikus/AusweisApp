@@ -5,17 +5,14 @@
 #include "controller/AuthController.h"
 
 #include "context/AuthContext.h"
-#include "context/InternalActivationContext.h"
 #include "states/CompositeStateTrustedChannel.h"
 #include "states/FinalState.h"
 #include "states/StateActivateStoreFeedbackDialog.h"
 #include "states/StateCheckError.h"
 #include "states/StateCheckRefreshAddress.h"
 #include "states/StateParseTcTokenUrl.h"
-#include "states/StateProcessing.h"
 #include "states/StateRedirectBrowser.h"
 #include "states/StateSendWhitelistSurvey.h"
-#include "states/StateWriteHistory.h"
 
 #include <QDebug>
 #include <initializer_list>
@@ -27,21 +24,14 @@ using namespace governikus;
 AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	: WorkflowController(pContext)
 {
-	auto sProcessing = addState<StateProcessing>();
-	mStateMachine.setInitialState(sProcessing);
-	auto sParseTcTokenUrl = addState<StateParseTcTokenUrl>();
-	auto sTrustedChannel = new CompositeStateTrustedChannel(pContext);
-	mStateMachine.addState(sTrustedChannel);
+	auto sParseTcTokenUrl = addInitialState<StateParseTcTokenUrl>();
+	auto sTrustedChannel = addState<CompositeStateTrustedChannel>();
 	auto sCheckRefreshAddress = addState<StateCheckRefreshAddress>();
 	auto sCheckError = addState<StateCheckError>();
 	auto sActivateStoreFeedbackDialog = addState<StateActivateStoreFeedbackDialog>();
-	auto sWriteHistory = addState<StateWriteHistory>();
 	auto sSendWhitelistSurvey = addState<StateSendWhitelistSurvey>();
 	auto sRedirectBrowser = addState<StateRedirectBrowser>();
 	auto sFinal = addState<FinalState>();
-
-	sProcessing->addTransition(sProcessing, &AbstractState::fireContinue, sParseTcTokenUrl);
-	sProcessing->addTransition(sProcessing, &AbstractState::fireAbort, sCheckRefreshAddress);
 
 	sParseTcTokenUrl->addTransition(sParseTcTokenUrl, &AbstractState::fireContinue, sTrustedChannel);
 	sParseTcTokenUrl->addTransition(sParseTcTokenUrl, &AbstractState::fireAbort, sCheckRefreshAddress);
@@ -56,11 +46,8 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 	sCheckError->addTransition(sCheckError, &AbstractState::fireAbort, sRedirectBrowser);
 	sCheckError->addTransition(sCheckError, &StateCheckError::firePropagateAbort, sRedirectBrowser);
 
-	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sWriteHistory);
-	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sWriteHistory);
-
-	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sSendWhitelistSurvey);
-	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireAbort, sRedirectBrowser);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sSendWhitelistSurvey);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sRedirectBrowser);
 
 	sSendWhitelistSurvey->addTransition(sSendWhitelistSurvey, &AbstractState::fireContinue, sRedirectBrowser);
 	sSendWhitelistSurvey->addTransition(sSendWhitelistSurvey, &AbstractState::fireAbort, sRedirectBrowser);
@@ -70,9 +57,9 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 }
 
 
-QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QSharedPointer<ActivationContext>& pActivationContext)
+QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QUrl& pUrl, const QVariant& pData, const AuthContext::BrowserHandler& pBrowserHandler)
 {
-	const auto& handler = [](const WorkflowRequest& pRequest, const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
+	const auto& handler = [](const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
 				if (QVector<Action>{Action::AUTH, Action::SELF, Action::PIN}.contains(pActiveWorkflow->getAction()))
 				{
 					const auto activeContext = pActiveWorkflow->getContext();
@@ -87,20 +74,8 @@ QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QSha
 					}
 				}
 
-				auto context = pRequest.getContext().objectCast<AuthContext>();
-				if (context && !context->getActivationContext()->sendOperationAlreadyActive())
-				{
-					qCritical() << "Cannot send \"Operation already active\" to caller:" << context->getActivationContext()->getSendError();
-				}
-
 				return WorkflowControl::SKIP;
 			};
 
-	return WorkflowRequest::createWorkflowRequestHandler<AuthController, AuthContext>(handler, pActivationContext);
-}
-
-
-QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QUrl& pUrl)
-{
-	return createWorkflowRequest(QSharedPointer<InternalActivationContext>::create(pUrl));
+	return WorkflowRequest::createHandler<AuthController, AuthContext>(handler, pData, true, pUrl, pBrowserHandler);
 }

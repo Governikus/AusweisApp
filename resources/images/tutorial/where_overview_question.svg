@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="600px" viewBox="0 0 600 600">
-  <g fill="none" stroke="#73d7b3" stroke-width="7">
-    <path fill="#fff" d="M300 100 L 500 250 450 500 150 500 100 250Z"/>
-  </g>
-  <image x="25" y="275" width="200px" height="200px" xlink:href="../npa.svg"/>
-  <image x="300" y="275" width="287px" height="200px" xlink:href="../ausweis.svg"/>
-  <image x="230" y="25" width="133px" height="200px" xlink:href="questionmark.svg"/>
-</svg>

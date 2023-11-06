@@ -1,12 +1,20 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQml 2.15
-import QtQuick 2.15
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQml
+import QtQuick
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
 MouseArea {
+	id: root
+
+	required property string functionName
+
+	Accessible.name: functionName
+	Accessible.role: Accessible.Button
+
+	Accessible.onPressAction: root.clicked(null)
 	onClicked: {
 		d.counter += 1;
 		switch (d.counter) {

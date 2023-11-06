@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtTest 1.15
+import QtTest
 
 TestCase {
 	id: parent
+
 	function test_load_Style() {
-		var item = createTemporaryQmlObject("
-			import QtQuick 2.15;
-			import Governikus.Style 1.0;
+		let item = createTemporaryQmlObject("
+			import QtQuick
+			import Governikus.Style
 			Item {}
 			", parent);
 		item.destroy();

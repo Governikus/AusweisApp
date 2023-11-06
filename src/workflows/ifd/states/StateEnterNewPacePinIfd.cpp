@@ -34,14 +34,15 @@ void StateEnterNewPacePinIfd::onCancelChangePin()
 
 void StateEnterNewPacePinIfd::onEntry(QEvent* pEvent)
 {
+	AbstractState::onEntry(pEvent);
+
 	stopNfcScanIfNecessary();
 
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
 		const auto& handler = getContext()->getIfdServer()->getMessageHandler();
-		mConnections += connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterNewPacePinIfd::onCancelChangePin);
+		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterNewPacePinIfd::onCancelChangePin);
 	}
 
-	mConnections += connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterNewPacePinIfd::onCancelChangePin);
-	AbstractState::onEntry(pEvent);
+	*this << connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterNewPacePinIfd::onCancelChangePin);
 }

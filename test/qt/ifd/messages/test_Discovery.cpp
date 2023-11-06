@@ -400,16 +400,16 @@ class test_Discovery
 			QTest::addColumn<bool>("incomplete");
 
 			QTest::newRow("v0 - fingerprint") << QByteArray(R"("IFDInterface_WebSocket_v0")") << fingerprint << fingerprint << false;
-			QTest::newRow("v0 - certificate") << QByteArray(R"("IFDInterface_WebSocket_v0")") << certificate << fingerprint << true;
-			QTest::newRow("v0 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v0")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << true;
+			QTest::newRow("v0 - certificate") << QByteArray(R"("IFDInterface_WebSocket_v0")") << certificate << fingerprint << false;
+			QTest::newRow("v0 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v0")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << false;
 			QTest::newRow("v0 - empty") << QByteArray(R"("IFDInterface_WebSocket_v0")") << QByteArray() << QByteArray() << true;
-			QTest::newRow("v2 - fingerprint") << QByteArray(R"("IFDInterface_WebSocket_v2")") << fingerprint << fingerprint << true;
+			QTest::newRow("v2 - fingerprint") << QByteArray(R"("IFDInterface_WebSocket_v2")") << fingerprint << fingerprint << false;
 			QTest::newRow("v2 - certificate") << QByteArray(R"("IFDInterface_WebSocket_v2")") << certificate << fingerprint << false;
-			QTest::newRow("v2 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v2")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << true;
+			QTest::newRow("v2 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v2")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << false;
 			QTest::newRow("v2 - empty") << QByteArray(R"("IFDInterface_WebSocket_v2")") << QByteArray() << QByteArray() << true;
-			QTest::newRow("02 - fingerprint") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << fingerprint << fingerprint << true;
+			QTest::newRow("02 - fingerprint") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << fingerprint << fingerprint << false;
 			QTest::newRow("02 - certificate") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << certificate << fingerprint << false;
-			QTest::newRow("02 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << true;
+			QTest::newRow("02 - not empty") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << QByteArray("0123456789ABCDEF") << QByteArray("0123456789ABCDEF") << false;
 			QTest::newRow("02 - empty") << QByteArray(R"("IFDInterface_WebSocket_v0", "IFDInterface_WebSocket_v2")") << QByteArray() << QByteArray() << true;
 
 		}
@@ -444,14 +444,7 @@ class test_Discovery
 			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
-				if (discovery.getSupportedApis().contains(IfdVersion::Version::v2))
-				{
-					QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"IFDID\" should be of type \"X.509 certificate (PEM)\"")));
-				}
-				else
-				{
-					QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"IFDID\" should be of type \"certificate fingerprint (SHA256)\"")));
-				}
+				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of IFDID should not be emtpy")));
 			}
 		}
 

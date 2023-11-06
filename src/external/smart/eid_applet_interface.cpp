@@ -1,10 +1,12 @@
-//
-// Copyright (C) 2021 Bundesdruckerei GmbH
-//
+/*
+ * Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+ * Licensed under the EUPL-1.2
+ */
 
 #include "eid_applet_interface.h"
 #include "eid_applet_service_android.h"
 #include "eid_applet_utils.h"
+#include <mutex>
 #include <string>
 
 
@@ -13,7 +15,9 @@ using namespace appletUtils;
 
 #if defined(__ANDROID__)
 
-EidAppletServiceAndroid<JNIEnv, JavaVM>* eidAppletService = nullptr;
+EidAppletServiceAndroid* eidAppletService = nullptr;
+
+std::mutex interfaceMutex;
 
 //! Static ProgressHandler object
 static ProgressHandler progressHandler = nullptr;
@@ -24,10 +28,10 @@ static ProgressHandler progressHandler = nullptr;
    \return The status of the Smart-eID e.g. EidStatus::NO_PERSONALIZATION for the eID-Applet.
  */
 EidStatus getSmartEidStatus() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->getSmartEidStatus();
 	}
-
 	return EidStatus::INTERNAL_ERROR;
 }
 
@@ -37,14 +41,16 @@ EidStatus getSmartEidStatus() {
 //! an online-check.
 
 /*!
-   \return The updateInfo of the Smart-eID e.g. EidUpdateInfo::UPDATE_AVAILABLE for the eID-Applet.
+   \return EidSupportStatusResult with supportInfo of the Smart-eID e.g.
+                                 EidSupportStatus::UPDATE_AVAILABLE for the eID-Applet.
  */
-EidUpdateInfo getUpdateInfo() {
+EidSupportStatusResult getSmartEidSupportInfo() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
-		return eidAppletService->getUpdateInfo();
+		return eidAppletService->getSmartEidSupportInfo();
 	}
 
-	return EidUpdateInfo::INTERNAL_ERROR;
+	return {EidServiceResult::ERROR, EidSupportStatus::INTERNAL_ERROR};
 }
 
 
@@ -61,14 +67,15 @@ GenericDataResult initializeService(
 		JNIEnv* env,
 		jobject applicationContext,
 		const std::string& pServiceId,
-		const std::string& pVersionTag,
-		const std::string& pSsdAid) {
+		const std::string& pSsdAid,
+		const std::string& pVersionTag) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return {EidServiceResult::ERROR, "Service is already initialized"};
 	}
 
-	eidAppletService = new EidAppletServiceAndroid<JNIEnv, JavaVM>(env, applicationContext);
-	return eidAppletService->initializeService(pServiceId, pVersionTag, pSsdAid);
+	eidAppletService = new EidAppletServiceAndroid(env, applicationContext);
+	return eidAppletService->initializeService(pServiceId, pSsdAid, pVersionTag);
 }
 
 
@@ -79,6 +86,7 @@ GenericDataResult initializeService(
    \return GenericDataResult with byte2hex encoded APDU response
  */
 GenericDataResult performAPDUCommand(const std::string& pCommandApdu) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->performAPDUCommand(pCommandApdu);
 	}
@@ -95,6 +103,7 @@ GenericDataResult performAPDUCommand(const std::string& pCommandApdu) {
    \return EidServiceResult
  */
 EidServiceResult installSmartEid(const ProgressHandler& pHandler) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		progressHandler = pHandler;
 		EidServiceResult result = eidAppletService->installSmartEid();
@@ -114,6 +123,7 @@ EidServiceResult installSmartEid(const ProgressHandler& pHandler) {
    \return EidServiceResult
  */
 EidServiceResult deleteSmartEid(const ProgressHandler& pHandler) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		progressHandler = pHandler;
 		EidServiceResult result = eidAppletService->deleteSmartEid();
@@ -131,11 +141,27 @@ EidServiceResult deleteSmartEid(const ProgressHandler& pHandler) {
    \return EidServiceResult
  */
 EidServiceResult deletePersonalization() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->deletePersonalization();
 	}
 
 	return EidServiceResult::ERROR;
+}
+
+
+//! Return the ServiceInformationResult object.
+
+/*!
+   \return ServiceInformationResult
+ */
+ServiceInformationResult getServiceInformation() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
+	if (eidAppletService) {
+		return eidAppletService->getServiceInformation();
+	}
+
+	return {EidServiceResult::ERROR};
 }
 
 
@@ -146,6 +172,7 @@ EidServiceResult deletePersonalization() {
    \return GenericDataResult with byte2hex encoded command response for the personalization step
  */
 GenericDataResult performPersonalization(const std::string& pCommand) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->performPersonalization(pCommand);
 	}
@@ -163,6 +190,7 @@ GenericDataResult performPersonalization(const std::string& pCommand) {
    \return InitializeResult with base64 encoded public key and signed challenge
  */
 InitializeResult initializePersonalization(const std::string& pChallenge, const std::string& pPin) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->initializePersonalization(pPin, pChallenge);
 	}
@@ -177,6 +205,7 @@ InitializeResult initializePersonalization(const std::string& pChallenge, const 
    \return EidServiceResult
  */
 EidServiceResult releaseAppletConnection() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		return eidAppletService->releaseAppletConnection();
 	}
@@ -194,9 +223,10 @@ EidServiceResult releaseAppletConnection() {
    \return PersonalizationResult mInitPin contains the initial-eID-PIN used for personalization.
                                 If the mInitPIN is blank, a new personalization must be started.
  */
-PersonalizationResult finalizePersonalization() {
+PersonalizationResult finalizePersonalization(int status) {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
-		return eidAppletService->finalizePersonalization();
+		return eidAppletService->finalizePersonalization(status);
 	}
 
 	return {EidServiceResult::ERROR};
@@ -210,14 +240,86 @@ PersonalizationResult finalizePersonalization() {
                            otherwise it contains an error message
  */
 GenericDataResult shutdownService() {
+	const std::lock_guard<std::mutex> guard(interfaceMutex);
 	if (eidAppletService) {
 		GenericDataResult result = eidAppletService->shutdownService();
-		delete eidAppletService;
-		eidAppletService = nullptr;
+		if (result.mResult != EidServiceResult::ERROR) {
+			delete eidAppletService;
+			eidAppletService = nullptr;
+		}
 		return result;
 	}
 
 	return {EidServiceResult::ERROR, "Service not initialized"};
+}
+
+
+//! Performs the terminal and chip authentication.
+//! Placeholder Impl for Android
+
+/*!
+   \param pTerminalCvcChain List representing the terminal certificate chain according to EAC1InputType in TR-03112-7 3.6.4.1.
+                           The first element is the terminal certificate, the last element is the certificate signed by the
+                           certificate referenced by the CAR in the prepareIdentification response.
+                           The elements of the list are byte2hex encoded. Example:
+                           7f218201487f4e8201005f29010042104445445674494447564b333030303132
+                           7f494f060a04007f00070202020203864104a7ba9a8cd0f294ea653ab42cb713
+                           54af775d6fa98091dfe3af602cfe3837225a2e8573384b16d6fc9215815a9c47
+                           fbdd3fb0224a184a6146198d7ee5c77837585f200e444544454d4f5041413030
+                           3436347f4c12060904007f0007030102025305000513ff075f25060201000301
+                           015f2406020100040100655e732d060904007f00070301030180204ebb52e497
+                           c3549ca1102ecf55b6626c1afb00d2cdfcad369d37083ece26139e732d060904
+                           007f00070301030280206ccf8efd02e71b274c8c4f29122310ef2d7ffdfb4c61
+                           1fe267f8576da42e7ba25f37402b096b45c029b2184cba8d745431a6820e4bcb
+                           b7ba14d3c7745dddec147cc1d208fe0547ebcc44e7384a52aafb39f7d83e43e6
+                           15ad9a22b84cd911e75171e555
+   \param pAuxiliaryData Authenticated Auxiliary Data according to EAC1InputType in TR-03112-7 3.6.4.1.
+                        byte2hex encoded. Example: 67177315060904007f00070301040253083230323130333136
+   \param pSignature Signature according to EAC2InputType TR-03112-7 3.6.4.2.
+                    byte2hex encoded. Example:
+                    0d472d904137c057a9d7c34d675413326050549f71fc04aa625791dc5debedca
+                    20d6dce02bc11c2ad6b0b749e9440099924b429101255dfdb02029e720f06714
+   \param pPin from AA2 validated 6 digit PIN, once the user entered the mobile-ID-PIN 2 times.
+   \param pEphemeralPublicKey EphemeralPublicKey according to EAC2InputType TR-03112-7 3.6.4.2.
+                             byte2hex encoded. Example:
+                             045e5297e977a637b30834632934d1e00ade870053d740d64a5df9efb938bd29c4
+                             682b803fc5857fc9ffe6aae16e4254c02b2cc8d861226501e152776954d6643d
+   \return TAandCAResult according to EAC2OutputType TR-03112-7 3.6.4.2., byte2hex encoded
+ */
+TAandCAResult performTAandCA(const std::list<std::string>& pTerminalCvcChain, const std::string& pAuxiliaryData,
+		const std::string& pSignature, const std::string& pPin,
+		const std::string& pEphemeralPublicKey) {
+	(void) pTerminalCvcChain;
+	(void) pAuxiliaryData;
+	(void) pSignature;
+	(void) pPin;
+	(void) pEphemeralPublicKey;
+	return TAandCAResult {EidServiceResult::UNSUPPORTED, nullptr, nullptr, nullptr};
+}
+
+
+//! Prepares the identification and returns the PrepareIdentificationResult.
+//! Placeholder Impl for Android
+
+/*!
+   \param pChat CertificateHolderAuthorizationTemplate according to EAC1OutputType in TR-03112-7 3.6.4.1.
+               byte2hex encoded. Example: 7f4c12060904007f0007030102025305000513ff00
+   \return UserAuthenticationResult according to EAC1OutputType in TR-03112-7 3.6.4.1., byte2hex encoded
+ */
+PrepareIdentificationResult prepareIdentification(const std::string& pChat) {
+	(void) pChat;
+	return PrepareIdentificationResult {EidServiceResult::UNSUPPORTED, nullptr, nullptr, nullptr};
+}
+
+
+//! Get Challenge
+
+/*!
+   \return GenericDataResult with challenge according to EAC1OutputType in TR-03112-7 3.6.4.1.
+          byte2hex encoded and terminated with 9000.
+ */
+GenericDataResult getChallenge() {
+	return GenericDataResult {EidServiceResult::UNSUPPORTED};
 }
 
 
@@ -227,9 +329,8 @@ GenericDataResult shutdownService() {
 /**
  * function for relaying the info if handler is present
  */
-
 extern "C"
-JNIEXPORT void JNICALL Java_de_bdr_eid_1applet_1service_1lib_tsm_ProgressUpdater_notify(JNIEnv* env __unused,
+JNIEXPORT void JNICALL Java_de_bundesdruckerei_android_eid_1applet_1service_1lib_jni_NativeBridgeEventListener_notify(JNIEnv* env __unused,
 		jobject thiz __unused, jint progress) {
 	if (progressHandler != nullptr) {
 		progressHandler(progress);

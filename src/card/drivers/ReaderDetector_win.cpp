@@ -80,7 +80,7 @@ static QStringList attachedDevStringIds()
 static uint getId(const QString& pDevId, const QString& pPrefix)
 {
 	static const int ID_LENGTH = 4;
-	const int prefixPosition = pDevId.indexOf(pPrefix, 0, Qt::CaseInsensitive);
+	const auto prefixPosition = pDevId.indexOf(pPrefix, 0, Qt::CaseInsensitive);
 	if (prefixPosition == -1 || pDevId.size() < prefixPosition + pPrefix.size() + ID_LENGTH)
 	{
 		return 0;
@@ -127,7 +127,7 @@ QVector<UsbId> ReaderDetector::attachedDevIds() const
 }
 
 
-bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMessage, EventFilterResultType* pResult)
+bool ReaderDetector::nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult)
 {
 	Q_UNUSED(pResult)
 

@@ -1,14 +1,13 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.NotificationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.NotificationModel
+import Governikus.Type.SettingsModel
+import Governikus.View
 
 Item {
 	id: baseItem
@@ -17,11 +16,11 @@ Item {
 		if (d.unreadMsg) {
 			if (NotificationModel.lastType === "developermode")
 				return Constants.red;
-			if (NotificationModel.lastType === "feedback")
-				return Constants.green;
+			return Style.color.text_subline;
 		}
-		return Style.text.header_inverse.textColor;
+		return Style.color.text;
 	}
+	readonly property bool unreadMessages: d.unreadMsg
 
 	signal newNotification
 
@@ -45,26 +44,28 @@ Item {
 	}
 	Timer {
 		id: fadeOutTimer
+
 		interval: 1800 // The notification button blinks 3 times for 600ms
 
 		onTriggered: d.fadeIn = false
 	}
 	Rectangle {
 		id: logList
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: d.fadeIn ? radius - height : 0
-		anchors.right: parent.right
-		anchors.rightMargin: -radius
-		border.color: Constants.blue
-		border.width: Math.max(1, ApplicationModel.scaleFactor * 3)
-		color: Style.color.background
-		height: ApplicationModel.scaleFactor * 200
-		radius: logEntryList.spacing
-		width: ApplicationModel.scaleFactor * 800
 
-		Behavior on anchors.bottomMargin  {
+		anchors.left: parent.left
+		anchors.leftMargin: d.fadeIn ? -(width + Constants.pane_spacing) : 0
+		anchors.top: parent.top
+		border.color: Style.color.control_border
+		border.width: Style.dimens.border_width
+		color: Style.color.control
+		height: plugin.scaleFactor * 200
+		radius: Style.dimens.control_radius
+		width: plugin.scaleFactor * 800
+
+		Behavior on anchors.leftMargin {
 			PropertyAnimation {
 				id: fadingAnimation
+
 				duration: Constants.animation_duration
 				easing.type: Easing.InOutQuad
 			}
@@ -75,18 +76,17 @@ Item {
 		}
 		GListView {
 			id: logEntryList
-			anchors.bottomMargin: logList.border.width
+
 			anchors.fill: parent
-			anchors.rightMargin: spacing
-			anchors.topMargin: logList.radius
-			bottomMargin: spacing
+			anchors.leftMargin: Constants.pane_padding
+			bottomMargin: Constants.pane_padding
 			clip: true
-			leftMargin: spacing
 			model: NotificationModel
 			scrollBarBottomPadding: spacing
+			scrollBarColor: Style.color.control_content
 			scrollBarTopPadding: spacing
 			spacing: Constants.text_spacing
-			topMargin: spacing
+			topMargin: Constants.pane_padding
 
 			delegate: Item {
 				Accessible.name: notificationTime.text + " " + notificationBody.text
@@ -96,6 +96,7 @@ Item {
 
 				Row {
 					id: row
+
 					spacing: logEntryList.spacing
 
 					Component.onCompleted: {
@@ -114,12 +115,15 @@ Item {
 
 					GText {
 						id: notificationTime
+
 						text: model.time
+						textStyle: Style.text.button
 					}
 					GText {
 						id: notificationBody
+
 						text: model.text
-						textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.normal
+						textStyle: model.type === "developermode" ? Style.text.normal_warning : Style.text.button
 						width: logEntryList.width - notificationTime.width - 3 * logEntryList.spacing
 					}
 				}
@@ -129,6 +133,7 @@ Item {
 
 			Timer {
 				id: positionViewAtEndTimer
+
 				interval: 1
 
 				onTriggered: logEntryList.positionViewAtEnd()
