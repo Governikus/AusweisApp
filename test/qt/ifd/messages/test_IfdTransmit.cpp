@@ -406,7 +406,7 @@ class test_IfdTransmit
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray::fromHex("00A402022F00"));
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first CommandAPDU. Command chaining ist not supported yet")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Only using the first CommandAPDU. Command chaining is not supported yet")));
 		}
 
 

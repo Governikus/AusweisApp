@@ -56,7 +56,7 @@ j.with
 	{
 		shell('cd source; resources/jenkins/notify_rb.sh')
 
-		shell('cd source; hg import --no-commit ../patch.diff')
+		shell('cd source; hg --config patch.eol=auto import --no-commit ../patch.diff')
 
 		phase('General', 'UNSTABLE')
 		{

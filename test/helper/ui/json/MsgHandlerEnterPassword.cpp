@@ -62,7 +62,11 @@ void governikus::setValidState(MessageDispatcher& pDispatcher,
 QByteArray governikus::addReaderData(const char* pData, bool pKeyPad)
 {
 	const QByteArray data(pData);
+#if __has_include("SmartManager.h")
+	const QByteArray part1(R"(,"reader":{"attached":true,"card":{"deactivated":false,"eidType":"CARD_CERTIFIED","inoperative":false,"retryCounter":-1},"insertable":false,"keypad":)");
+#else
 	const QByteArray part1(R"(,"reader":{"attached":true,"card":{"deactivated":false,"inoperative":false,"retryCounter":-1},"insertable":false,"keypad":)");
+#endif
 	const QByteArray keypad = pKeyPad ? QByteArrayLiteral("true") : QByteArrayLiteral("false");
 	const QByteArray part2(R"(,"name":"MockReader CARD"})");
 	return data.mid(0, data.size() - 1) + part1 + keypad + part2 + QByteArrayLiteral("}");

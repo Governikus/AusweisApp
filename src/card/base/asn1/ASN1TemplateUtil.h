@@ -118,7 +118,7 @@ QSharedPointer<T> decodeObject(const QByteArray& pData, bool pLogging = true)
 	const auto** dataPointer = reinterpret_cast<unsigned const char**>(&tmp);
 
 	T* object = nullptr;
-	if (!decodeAsn1Object(&object, dataPointer, pData.length()) && pLogging)
+	if (!decodeAsn1Object(&object, dataPointer, static_cast<long>(pData.length())) && pLogging)
 	{
 		qCWarning(card) << "Cannot decode ASN.1 object:" << getOpenSslError();
 	}

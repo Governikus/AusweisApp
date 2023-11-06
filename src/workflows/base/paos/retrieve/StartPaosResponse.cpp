@@ -12,12 +12,19 @@ StartPaosResponse::StartPaosResponse(const QByteArray& pXmlData)
 	, mResultMajor()
 	, mResultMinor()
 	, mResultMessage()
+	, mStatusCode(0)
 	, mRemainingDays(-1)
 	, mRemainingAttempts(-1)
 	, mBlockingCode()
 {
 	parse();
 	setResult(ECardApiResult(mResultMajor, mResultMinor, mResultMessage, ECardApiResult::Origin::Server));
+}
+
+
+int StartPaosResponse::getStatusCode() const
+{
+	return mStatusCode;
 }
 
 
@@ -47,6 +54,7 @@ void StartPaosResponse::parse()
 				QStringLiteral("ResultMajor"),
 				QStringLiteral("ResultMinor"),
 				QStringLiteral("ResultMessage"),
+				QStringLiteral("statusCode"),
 				QStringLiteral("remainingDays"),
 				QStringLiteral("remainingAttempts"),
 				QStringLiteral("blockingCode")
@@ -73,6 +81,10 @@ bool StartPaosResponse::handleFoundElement(const QString& pElementName, const QS
 	else if (pElementName == QLatin1String("ResultMessage"))
 	{
 		mResultMessage = pValue;
+	}
+	else if (pElementName == QLatin1String("statusCode"))
+	{
+		mStatusCode = valuetoInt(pValue);
 	}
 	else if (pElementName == QLatin1String("remainingDays"))
 	{

@@ -1,6 +1,6 @@
 Nutzungsbedingungen
 
-Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp2 durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/aa2/privacy abrufbar.
+Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die Überlassung und Nutzung der AusweisApp durch. Nachdem Sie diesen zugestimmt haben, können Sie die Installation fortsetzen. Datenschutzrechtliche Hinweise sind unter https://www.ausweisapp.bund.de/aa2/privacy abrufbar.
 
 
 ÜBERSICHT
@@ -17,7 +17,7 @@ Bitte lesen Sie zunächst die Lizenzbestimmungen und deren Ergänzungen für die
 
 A. LIZENZBEDINGUNGEN
 
-Der Quellcode der AusweisApp2 wird unter der EUPL v1.2 bereitgestellt.
+Der Quellcode der AusweisApp wird unter der EUPL v1.2 bereitgestellt.
 
 
 
@@ -318,12 +318,12 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.0.9
+  Version: 3.1.4
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 6.4.1
+  Version: 6.5.3
   Adresse: https://www.qt.io/
 
 http_parser
@@ -331,9 +331,9 @@ http_parser
   Version: 2.9.4
   Adresse: https://github.com/nodejs/http-parser/
 
-AndroidX Support Library
+AndroidX Core Library
   Lizenz: Apache 2.0
-  Version: 1.1.0
+  Version: 1.9.0
   Adresse: https://developer.android.com/jetpack/androidx
 
 

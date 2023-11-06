@@ -46,7 +46,7 @@ class test_AuthContext
 
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(usedAsSdk);
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(enabled);
-			TestAuthContext context(nullptr, ":/paos/DIDAuthenticateEAC1.xml");
+			TestAuthContext context(":/paos/DIDAuthenticateEAC1.xml");
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 			QSignalSpy spy(&context, &TestAuthContext::fireCanAllowedModeChanged);
@@ -68,7 +68,7 @@ class test_AuthContext
 
 		void test_ErrorReportedToServer()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 
 			QVERIFY(!context.isErrorReportedToServer());
 
@@ -82,7 +82,7 @@ class test_AuthContext
 
 		void test_DidAuthenticateEacResponse1()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QSharedPointer<DIDAuthenticateResponseEAC1> eac(new DIDAuthenticateResponseEAC1());
 
 			QCOMPARE(context.getDidAuthenticateResponseEac1(), nullptr);
@@ -94,7 +94,7 @@ class test_AuthContext
 
 		void test_DidAuthenticateResponseEacAdditionalInputType()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QSharedPointer<DIDAuthenticateResponseEAC2> eac(new DIDAuthenticateResponseEAC2());
 
 			QCOMPARE(context.getDidAuthenticateResponseEacAdditionalInputType(), nullptr);
@@ -106,7 +106,7 @@ class test_AuthContext
 
 		void test_DidAuthenticateEacAdditional()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QSharedPointer<DIDAuthenticateEACAdditional> eac(new DIDAuthenticateEACAdditional());
 
 			QCOMPARE(context.getDidAuthenticateEacAdditional(), nullptr);
@@ -118,7 +118,7 @@ class test_AuthContext
 
 		void test_DidAuthenticateResponseEac2()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QSharedPointer<DIDAuthenticateResponseEAC2> eac(new DIDAuthenticateResponseEAC2());
 
 			QCOMPARE(context.getDidAuthenticateResponseEac2(), nullptr);
@@ -130,7 +130,7 @@ class test_AuthContext
 
 		void test_TransmitResponse()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			QSharedPointer<TransmitResponse> response(new TransmitResponse());
 
 			QCOMPARE(context.getTransmitResponse(), nullptr);
@@ -142,7 +142,7 @@ class test_AuthContext
 
 		void test_Transmit()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QSharedPointer<Transmit> transmit(new Transmit());
 
 			QCOMPARE(context.getTransmit(), nullptr);
@@ -154,7 +154,7 @@ class test_AuthContext
 
 		void test_StartPaos()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QByteArray data("paos");
 			const QSharedPointer<StartPaos> paos(new StartPaos(data));
 
@@ -167,7 +167,7 @@ class test_AuthContext
 
 		void test_SslSession()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 			const QByteArray session("session");
 
 			context.setSslSession(session);
@@ -177,7 +177,7 @@ class test_AuthContext
 
 		void test_MultiCertificatesUrl()
 		{
-			AuthContext context(nullptr);
+			AuthContext context;
 
 			QCOMPARE(context.getCertificateList().size(), 0);
 			context.addCertificateData(QUrl("https://governikus.de"), QSslCertificate());

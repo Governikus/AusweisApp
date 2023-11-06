@@ -30,7 +30,7 @@ class StateGetSessionId
 		QUrl getRequestUrl() const override;
 		void setProgress() const override;
 
-		[[nodiscard]] bool parseSessionId(const QByteArray& pData);
+		[[nodiscard]] bool parseResponse(const QByteArray& pData) const;
 
 		void handleNetworkReply(const QByteArray& pContent) override;
 };

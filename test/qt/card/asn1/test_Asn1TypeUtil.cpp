@@ -34,7 +34,7 @@ class test_Asn1TypeUtil
 			ASN1_TYPE* asn1Type = ASN1_TYPE_new();
 			ASN1_OCTET_STRING* asn1OctetString = ASN1_OCTET_STRING_new();
 			QByteArray octetBytes = QByteArray::fromHex("0123456789ABCDEF");
-			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<uchar*>(octetBytes.data()), octetBytes.length());
+			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<uchar*>(octetBytes.data()), static_cast<int>(octetBytes.length()));
 			ASN1_TYPE_set(asn1Type, V_ASN1_OCTET_STRING, asn1OctetString);
 
 			QCOMPARE(Asn1TypeUtil::encode(asn1Type).toHex(), QByteArray("0408").append(octetBytes.toHex()));

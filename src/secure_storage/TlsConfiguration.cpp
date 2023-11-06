@@ -4,12 +4,11 @@
 
 #include "TlsConfiguration.h"
 
-#include "JsonValueRef.h"
-
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QMetaEnum>
+#include <QSslDiffieHellmanParameters>
 
 using namespace governikus;
 
@@ -64,14 +63,14 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 
 	SslCipherList ciphers;
 	const QJsonArray& pskCiphers = readJsonArray(pConfig, SETTINGS_GROUP_NAME_CIPHERS);
-	for (JsonValueRef line : pskCiphers)
+	for (const QJsonValueConstRef line : pskCiphers)
 	{
 		ciphers += line.toString();
 	}
 
 	SslEllipticCurveVector ellipticCurves;
 	const QJsonArray& allowedEcs = readJsonArray(pConfig, SETTINGS_GROUP_NAME_ELLIPTIC_CURVES);
-	for (JsonValueRef line : allowedEcs)
+	for (const QJsonValueConstRef line : allowedEcs)
 	{
 		ellipticCurves += line.toString();
 	}
@@ -86,6 +85,17 @@ void TlsConfiguration::load(const QJsonObject& pConfig)
 	mConfiguration.setCiphers(ciphers);
 	mConfiguration.setEllipticCurves(ellipticCurves);
 	mConfiguration.setBackendConfigurationOption(QByteArrayLiteral("SignatureAlgorithms"), signatureAlgorithms.join(':'));
+
+#if defined(GOVERNIKUS_QT) || (QT_VERSION >= QT_VERSION_CHECK(6, 7, 0))
+	mConfiguration.setDiffieHellmanParameters(QSslDiffieHellmanParameters()); // use SSL_CTX_set_dh_auto
+#endif
+}
+
+
+bool TlsConfiguration::isValid() const
+{
+	return !getCiphers().isEmpty()
+		   && !getSignatureAlgorithms().isEmpty();
 }
 
 
@@ -208,7 +218,7 @@ QByteArrayList TlsConfiguration::readSignatureAlgorithms(const QJsonObject& pCon
 	const QJsonArray& array = tmp.toArray();
 
 	QByteArrayList algorithms;
-	for (JsonValueRef line : array)
+	for (const QJsonValueConstRef line : array)
 	{
 		const auto& value = line.toString();
 		if (value.count(QStringLiteral("+")) != 1)

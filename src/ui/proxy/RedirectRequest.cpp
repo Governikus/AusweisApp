@@ -7,6 +7,7 @@
 #include "LanguageLoader.h"
 #include "Template.h"
 
+#include <QCoreApplication>
 #include <QHostAddress>
 #include <QLoggingCategory>
 
@@ -84,12 +85,12 @@ RedirectRequest::~RedirectRequest()
 	{
 		Template htmlTemplate = Template::fromFile(QStringLiteral(":/template.html"));
 		//: ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.
-		htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Cannot reach local AusweisApp2"));
+		htmlTemplate.setContextParameter(QStringLiteral("TITLE"), tr("Cannot reach local %1").arg(QCoreApplication::applicationName()));
 		htmlTemplate.setContextParameter(QStringLiteral("APPLICATION_LINK"), QStringLiteral("https://www.ausweisapp.bund.de/%1").arg(LanguageLoader::getLocaleCode()));
 		//: ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.
-		htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Cannot reach local AusweisApp2"));
+		htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER"), tr("Cannot reach local %1").arg(QCoreApplication::applicationName()));
 		//: ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.
-		htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your local AusweisApp2 is not running. Please start your local AusweisApp2 and try again."));
+		htmlTemplate.setContextParameter(QStringLiteral("MESSAGE_HEADER_EXPLANATION"), tr("Your local %1 is not running. Please start your local %1 and try again.").arg(QCoreApplication::applicationName()));
 		//: ERROR ALL_PLATFORMS The local AusweisApp (access via reverse proxy) is not reachable, part of an HTML error page.
 		htmlTemplate.setContextParameter(QStringLiteral("CONTENT_HEADER"), tr("Would you like to try again?"));
 		htmlTemplate.setContextParameter(QStringLiteral("CONTENT_LINK"), mRequest->getUrl().toString());

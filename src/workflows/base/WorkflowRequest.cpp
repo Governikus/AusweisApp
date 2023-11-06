@@ -13,10 +13,12 @@ INIT_FUNCTION([] {
 
 WorkflowRequest::WorkflowRequest(const std::function<QSharedPointer<WorkflowController>(const QSharedPointer<WorkflowContext>&)>& pGeneratorController,
 		const std::function<QSharedPointer<WorkflowContext>()>& pGeneratorContext,
-		const BusyHandler& pBusyHandler)
+		const BusyHandler& pHandler,
+		const QVariant& pData)
 	: mGeneratorController(pGeneratorController)
 	, mGeneratorContext(pGeneratorContext)
-	, mBusyHandler(pBusyHandler)
+	, mBusyHandler(pHandler)
+	, mData(pData)
 	, mController()
 	, mContext(mGeneratorContext())
 {
@@ -56,7 +58,13 @@ QSharedPointer<WorkflowContext> WorkflowRequest::getContext() const
 }
 
 
-WorkflowControl WorkflowRequest::handleBusyWorkflow(const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow)
+QVariant WorkflowRequest::getData() const
 {
-	return mBusyHandler ? mBusyHandler(*this, pActiveWorkflow, pWaitingWorkflow) : WorkflowControl::UNHANDLED;
+	return mData;
+}
+
+
+WorkflowControl WorkflowRequest::handleBusyWorkflow(const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow) const
+{
+	return mBusyHandler ? mBusyHandler(pActiveWorkflow, pWaitingWorkflow) : WorkflowControl::UNHANDLED;
 }

@@ -64,7 +64,6 @@ class CheckIDCardModel
 		void stopScanWithResult(CheckIDCardResult result);
 
 	Q_SIGNALS:
-		void fireIsRunningChanged();
 		void fireResultChanged();
 		void fireScanCompleted();
 };

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "apdu/CommandApdu.h"
-
 #include <QByteArray>
 
 

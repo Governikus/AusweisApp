@@ -15,6 +15,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -44,11 +45,11 @@ public class MainActivity extends QtActivity
 
 	private NfcForegroundDispatcher mNfcForegroundDispatcher;
 	private NfcReaderMode mNfcReaderMode;
-	private boolean mReaderModeRequested;
 	private boolean mIsResumed;
 
-	// Native method provided by UIPlugInQml
+	// Native methods provided by UIPlugInQml
 	public static native void notifySafeAreaMarginsChanged();
+	public static native void notifyConfigurationChanged();
 
 	private class NfcForegroundDispatcher
 	{
@@ -68,14 +69,7 @@ public class MainActivity extends QtActivity
 				}
 			};
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-			{
-				mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), PendingIntent.FLAG_MUTABLE);
-			}
-			else
-			{
-				mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), 0);
-			}
+			mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
 		}
 
 
@@ -160,14 +154,7 @@ public class MainActivity extends QtActivity
 		void vibrate()
 		{
 			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) // API 26, Android 8.0
-			{
-				v.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
-				return;
-			}
-
-			v.vibrate(250);
+			v.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE));
 		}
 
 
@@ -275,6 +262,9 @@ public class MainActivity extends QtActivity
 	}
 
 
+	private native void setReaderModeNative(boolean pEnabled);
+
+
 	@Override
 	public void onResume()
 	{
@@ -282,18 +272,16 @@ public class MainActivity extends QtActivity
 		mIsResumed = true;
 
 		mNfcForegroundDispatcher.enable();
-		if (mReaderModeRequested)
-		{
-			mNfcReaderMode.enable();
-		}
+		setReaderModeNative(true);
 	}
 
 
 	@Override
 	public void onPause()
 	{
-		mNfcReaderMode.disable();
+		setReaderModeNative(false);
 		mNfcForegroundDispatcher.disable();
+
 		mIsResumed = false;
 		super.onPause();
 	}
@@ -307,22 +295,17 @@ public class MainActivity extends QtActivity
 	}
 
 
-	// used by NfcReader
-	public void enableNfcReaderMode()
+	// used by NfcReaderManagerPlugIn
+	public void setReaderMode(boolean pEnabled)
 	{
-		mReaderModeRequested = true;
-		if (mIsResumed)
+		if (pEnabled)
 		{
 			mNfcReaderMode.enable();
 		}
-	}
-
-
-	// used by NfcReader
-	public void disableNfcReaderMode()
-	{
-		mReaderModeRequested = false;
-		mNfcReaderMode.disable();
+		else
+		{
+			mNfcReaderMode.disable();
+		}
 	}
 
 
@@ -391,6 +374,14 @@ public class MainActivity extends QtActivity
 			return false;
 		}
 		return true;
+	}
+
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
+		notifyConfigurationChanged();
 	}
 
 

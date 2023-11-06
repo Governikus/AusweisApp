@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "EnumHelper.h"
 #include "IfdReaderManagerPlugIn.h"
 #include "LocalIfdClient.h"
@@ -44,7 +43,7 @@ class LocalIfdReaderManagerPlugIn
 
 	private:
 		bool mServiceConnected;
-		[[nodiscard]] bool isAusweisApp2Installed();
+		[[nodiscard]] bool isAusweisAppInstalled();
 		void setState(LocalIfdState pState);
 		void updateState();
 

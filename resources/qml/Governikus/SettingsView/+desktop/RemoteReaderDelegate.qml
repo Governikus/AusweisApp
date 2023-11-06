@@ -1,25 +1,24 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.RemoteServiceView 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.RemoteServiceView
+import Governikus.View
 
-Item {
+RoundedRectangle {
 	id: root
 
-	property int iconHeight: ApplicationModel.scaleFactor * 80
+	property int iconHeight: Style.dimens.icon_size
 
 	signal pairDevice(string pDeviceId)
 	signal unpairDevice(string pDeviceId)
 
 	Accessible.name: {
-		var msg = qsTr("Smartphone named \"%1\"").arg(remoteDeviceName) + subtext.text;
+		let msg = qsTr("Smartphone named \"%1\"").arg(remoteDeviceName) + subtext.text;
 		if (isPaired) {
 			return msg + qsTr("Press space to unpair the smartphone \"%1\".").arg(remoteDeviceName);
 		}
@@ -27,7 +26,9 @@ Item {
 	}
 	Accessible.role: Accessible.Button
 	activeFocusOnTab: true
-	implicitHeight: rowLayout.implicitHeight
+	color: Style.color.pane_sublevel
+	implicitHeight: rowLayout.implicitHeight + 2 * rowLayout.anchors.margins
+	implicitWidth: rowLayout.implicitWidth + 2 * rowLayout.anchors.margins
 
 	Keys.onSpacePressed: isPaired ? unpairDevice(deviceId) : pairDevice(deviceId)
 
@@ -35,8 +36,10 @@ Item {
 	}
 	RowLayout {
 		id: rowLayout
+
+		anchors.fill: parent
+		anchors.margins: Constants.pane_padding
 		spacing: Constants.component_spacing
-		width: parent.width
 
 		Column {
 			Layout.fillWidth: true
@@ -45,17 +48,18 @@ Item {
 				elide: Text.ElideRight
 				maximumLineCount: 1
 				text: remoteDeviceName
-				textStyle: Style.text.header
+				textStyle: Style.text.headline
 				width: parent.width
 			}
 			GText {
 				id: subtext
+
 				text: remoteDeviceStatus
-				textStyle: Style.text.normal
 				width: parent.width
 			}
 		}
 		Row {
+			Layout.alignment: Qt.AlignVCenter
 			Layout.preferredHeight: iconHeight
 			spacing: Constants.component_spacing
 
@@ -66,14 +70,16 @@ Item {
 			}
 			TintableIcon {
 				id: removeIcon
+
 				fillMode: Image.PreserveAspectFit
-				source: "qrc:///images/material_delete.svg"
+				source: "qrc:///images/trash_icon.svg"
 				sourceSize.height: iconHeight
-				tintColor: Style.color.accent
+				tintColor: Style.color.control
 				visible: isPaired && !isPairing
 
 				MouseArea {
 					id: trashMouse
+
 					ToolTip.delay: Constants.toolTipDelay
 					ToolTip.text: qsTr("Remove remote device")
 					ToolTip.visible: trashMouse.containsMouse

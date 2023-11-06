@@ -5,7 +5,6 @@
 #include "SimulatorFileSystem.h"
 
 #include "FileRef.h"
-#include "JsonValueRef.h"
 #include "apdu/CommandApdu.h"
 #include "apdu/ResponseApdu.h"
 #include "asn1/ASN1TemplateUtil.h"
@@ -154,7 +153,7 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 	initMandatoryData();
 
 	const auto& files = pData[QLatin1String("files")].toArray();
-	for (JsonValueRef value : files)
+	for (const QJsonValueConstRef value : files)
 	{
 		if (!value.isObject())
 		{
@@ -178,7 +177,7 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 	}
 
 	const auto& keys = pData[QLatin1String("keys")].toArray();
-	for (JsonValueRef value : keys)
+	for (const QJsonValueConstRef value : keys)
 	{
 		if (!value.isObject())
 		{
@@ -222,7 +221,7 @@ StatusCode SimulatorFileSystem::select(const QByteArray& pFileId)
 }
 
 
-QByteArray SimulatorFileSystem::read(int pOffset, int pLength, bool pExtendedLen)
+QByteArray SimulatorFileSystem::read(qsizetype pOffset, int pLength, bool pExtendedLen) const
 {
 	if (pLength <= CommandApdu::NO_LE || pLength > CommandApdu::EXTENDED_MAX_LE)
 	{
@@ -256,7 +255,7 @@ QByteArray SimulatorFileSystem::read(int pOffset, int pLength, bool pExtendedLen
 }
 
 
-StatusCode SimulatorFileSystem::write(int pOffset, const QByteArray& pData)
+StatusCode SimulatorFileSystem::write(qsizetype pOffset, const QByteArray& pData)
 {
 	if (!mFiles.contains(mSelectedFile))
 	{
@@ -285,7 +284,7 @@ QByteArray SimulatorFileSystem::getPrivateKey(int pKeyId) const
 }
 
 
-StatusCode SimulatorFileSystem::verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData)
+StatusCode SimulatorFileSystem::verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData) const
 {
 	if (!pAuxiliaryData)
 	{

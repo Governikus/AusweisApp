@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Style
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; TintableIcon {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; TintableIcon {}", testCase);
 	}
 	function test_fillMode() {
 		let testObject = createTestObject();
@@ -27,7 +28,7 @@ TestCase {
 	}
 	function test_tintColor() {
 		let testObject = createTestObject();
-		compare(testObject.tintColor, Style.color.primary_text, "Initial tintColor: primary_text");
+		compare(testObject.tintColor, Style.color.text, "Initial tintColor: text");
 		testObject.tintColor = "#000000";
 		compare(testObject.tintColor, "#000000", "Set tintColor");
 	}

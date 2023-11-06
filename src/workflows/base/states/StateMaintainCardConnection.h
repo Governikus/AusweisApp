@@ -18,6 +18,9 @@ class StateMaintainCardConnection
 	Q_OBJECT
 	friend class StateBuilder;
 
+	private:
+		void handleWrongPacePassword();
+
 	public:
 		explicit StateMaintainCardConnection(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;

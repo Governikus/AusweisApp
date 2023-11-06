@@ -5,7 +5,7 @@
 #include "Service.h"
 
 #include "AppSettings.h"
-#include "AppUpdateData.h"
+#include "AppUpdater.h"
 #include "ProviderConfiguration.h"
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))

@@ -1,47 +1,57 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
 
 CheckBox {
 	id: control
 
+	property alias descriptionItem: descriptionItemLoader.sourceComponent
 	property alias maximumLineCount: description.maximumLineCount
 	property alias textStyle: description.textStyle
 
-	activeFocusOnTab: true
 	padding: 0
 
-	contentItem: GText {
-		id: description
-		Accessible.ignored: true
-		elide: Text.ElideRight
-		leftPadding: control.indicator.width + control.spacing
-		maximumLineCount: 1
-		text: control.text
-		textStyle: enabled ? Style.text.normal : Style.text.normal_secondary
-		verticalAlignment: Text.AlignVCenter
+	contentItem: ColumnLayout {
+		spacing: Constants.text_spacing
+
+		GText {
+			id: description
+
+			Accessible.ignored: true
+			elide: Text.ElideRight
+			leftPadding: control.indicator.implicitWidth + control.spacing
+			maximumLineCount: 1
+			text: control.text
+			textStyle: enabled ? Style.text.normal : Style.text.normal
+		}
+		Loader {
+			id: descriptionItemLoader
+
+			Layout.fillWidth: true
+			Layout.leftMargin: description.leftPadding
+			visible: sourceComponent
+		}
 	}
 	indicator: Rectangle {
-		border.color: enabled ? Style.color.accent : Style.color.button_disabled
-		border.width: Math.max(ApplicationModel.scaleFactor * 4, 1)
-		color: enabled ? (control.checked ? Style.color.button : Style.color.transparent) : Style.color.button_disabled
-		implicitHeight: ApplicationModel.scaleFactor * 33
+		border.color: enabled ? Style.color.control : Style.color.control_disabled
+		border.width: Math.max(plugin.scaleFactor * 4, 1)
+		color: enabled ? (control.checked ? Style.color.control : Style.color.transparent) : Style.color.control_disabled
+		implicitHeight: plugin.scaleFactor * 33
 		implicitWidth: implicitHeight
-		radius: Math.max(ApplicationModel.scaleFactor * 4, 1)
+		radius: Math.max(plugin.scaleFactor * 4, 1)
 
 		TintableIcon {
 			anchors.fill: parent
-			anchors.margins: Math.max(ApplicationModel.scaleFactor * 4, 1)
+			anchors.margins: Math.max(plugin.scaleFactor * 4, 1)
 			fillMode: Image.PreserveAspectFit
 			source: "qrc:///images/checkbox_indicator.svg"
-			tintColor: Style.color.button_text
+			tintColor: Style.color.control_content
 			visible: control.checked
 		}
 	}
@@ -58,5 +68,10 @@ CheckBox {
 		onClicked: control.toggle()
 	}
 	FocusFrame {
+		anchors.fill: null
+		height: indicator.height - 2 * anchors.margins
+		width: description.x + description.width - 2 * anchors.margins
+		x: indicator.x + anchors.margins
+		y: indicator.y + anchors.margins
 	}
 }

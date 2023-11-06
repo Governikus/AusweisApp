@@ -4,7 +4,6 @@
 
 #include "StateGetSessionId.h"
 
-#include "LogHandler.h"
 #include "context/PersonalizationContext.h"
 
 #include <QJsonDocument>
@@ -37,7 +36,7 @@ void StateGetSessionId::setProgress() const
 }
 
 
-bool StateGetSessionId::parseSessionId(const QByteArray& pData)
+bool StateGetSessionId::parseResponse(const QByteArray& pData) const
 {
 	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
@@ -47,16 +46,15 @@ bool StateGetSessionId::parseSessionId(const QByteArray& pData)
 		return false;
 	}
 
-	const auto& context = qobject_cast<PersonalizationContext*>(getContext());
-	Q_ASSERT(context);
-
-	const auto obj = json.object();
-	const auto sessionId = QUuid(obj.value(QLatin1String("sessionID")).toString());
+	const auto sessionId = QUuid(json.object().value(QLatin1String("sessionID")).toString());
 	if (sessionId.isNull())
 	{
+		qDebug() << "No valid sessionID to prepare personalization";
 		return false;
 	}
 
+	const auto& context = qobject_cast<PersonalizationContext*>(getContext());
+	Q_ASSERT(context);
 	context->setSessionIdentifier(sessionId);
 	return true;
 }
@@ -64,13 +62,12 @@ bool StateGetSessionId::parseSessionId(const QByteArray& pData)
 
 void StateGetSessionId::handleNetworkReply(const QByteArray& pContent)
 {
-	if (parseSessionId(pContent))
+	if (parseResponse(pContent))
 	{
 		Q_EMIT fireContinue();
 		return;
 	}
 
-	qDebug() << "No valid sessionID to prepare personalization";
-	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+	updateStatus(GlobalStatus::Code::Workflow_Smart_eID_Authentication_Failed);
 	Q_EMIT fireAbort(FailureCode::Reason::Get_Session_Id_Invalid);
 }

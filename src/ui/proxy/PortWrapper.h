@@ -30,10 +30,10 @@ class PortWrapper
 #ifdef Q_OS_WIN
 		static QString getUserOfProcessID(DWORD pPid);
 		static QString getExecutableOfProcessID(DWORD pPid);
-		static quint16 getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, int pSelfPort, const in_addr& pRemoteAddr);
-		static QString getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, int pLocalPort, int pRemotePort, const in_addr& pProxyAddr);
+		static quint16 getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pRemoteAddr);
+		static QString getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pProxyAddr);
 		static QVector<MIB_TCPROW_OWNER_PID> getConnections();
-		static quint16 getProcessPort(int pLocalPort, int pRemotePort);
+		static quint16 getProcessPort(quint16 pLocalPort, quint16 pRemotePort);
 #else
 		static quint16 readPortFile(const QString& pFile);
 #endif

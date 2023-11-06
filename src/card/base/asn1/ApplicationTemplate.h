@@ -10,7 +10,6 @@
 
 #include "ASN1TemplateUtil.h"
 #include "FileRef.h"
-#include "SecurityProtocol.h"
 
 #include <QDebug>
 #include <QSharedPointer>
@@ -65,12 +64,7 @@ inline QDebug operator<<(QDebug pDbg, const QSharedPointer<ApplicationTemplate>&
 }
 
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-DECLARE_STACK_OF(ApplicationTemplate)
-#else
 DEFINE_STACK_OF(ApplicationTemplate)
-#endif
-
 DECLARE_ASN1_FUNCTIONS(ApplicationTemplate)
 DECLARE_ASN1_OBJECT(ApplicationTemplate)
 

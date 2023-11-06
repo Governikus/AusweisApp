@@ -18,6 +18,7 @@ ReaderManagerPlugInInfo::ReaderManagerPlugInInfo(ReaderManagerPlugInType pType, 
 	, mValues()
 	, mEnabled(pEnabled)
 	, mAvailable(pAvailable)
+	, mScanRunning(false)
 {
 }
 

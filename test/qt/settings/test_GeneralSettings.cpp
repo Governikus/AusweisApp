@@ -9,9 +9,11 @@
 #include "GeneralSettings.h"
 
 #include "AppSettings.h"
-#include "AutoStart.h"
 #include "Env.h"
 #include "VolatileSettings.h"
+#ifdef Q_OS_WIN
+	#include "AutoStart.h"
+#endif
 
 #include <QCoreApplication>
 #include <QFile>
@@ -263,6 +265,8 @@ class test_GeneralSettings
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
 			QCOMPARE(settings.isNewAppVersion(), false);
 			QCOMPARE(settings.getLastReaderPluginType(), QString());
+			QCOMPARE(settings.isUseSystemFont(), false);
+			QCOMPARE(settings.getDarkMode(), QString());
 		}
 
 
@@ -471,6 +475,89 @@ class test_GeneralSettings
 			QCOMPARE(settings.isRequestStoreFeedback(), true);
 			settings.setRequestStoreFeedback(false);
 			QCOMPARE(settings.isRequestStoreFeedback(), false);
+		}
+
+
+		void testSmartUpdate()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QSignalSpy smartSpy(&settings, &GeneralSettings::fireSmartAvailableChanged);
+
+			QCOMPARE(smartSpy.count(), 0);
+			QCOMPARE(settings.doSmartUpdate(), true);
+			QCOMPARE(settings.isSmartAvailable(), false);
+
+			settings.setSmartAvailable(false);
+			QCOMPARE(smartSpy.count(), 0);
+			QCOMPARE(settings.doSmartUpdate(), false);
+			QCOMPARE(settings.isSmartAvailable(), false);
+
+			settings.setSmartAvailable(true);
+			QCOMPARE(smartSpy.count(), 1);
+			QCOMPARE(smartSpy.at(0).at(0), true);
+			QCOMPARE(settings.doSmartUpdate(), false);
+			QCOMPARE(settings.isSmartAvailable(), true);
+
+			settings.setSmartAvailable(true);
+			QCOMPARE(smartSpy.count(), 1);
+			QCOMPARE(settings.doSmartUpdate(), false);
+			QCOMPARE(settings.isSmartAvailable(), true);
+
+			settings.setSmartAvailable(false);
+			QCOMPARE(smartSpy.count(), 2);
+			QCOMPARE(smartSpy.at(1).at(0), false);
+			QCOMPARE(settings.doSmartUpdate(), false);
+			QCOMPARE(settings.isSmartAvailable(), false);
+		}
+
+
+		void testUseSystemFont()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QSignalSpy fontSpy(&settings, &GeneralSettings::fireUseSystemFontChanged);
+
+			QCOMPARE(fontSpy.count(), 0);
+			QCOMPARE(settings.isUseSystemFont(), false);
+
+			settings.setUseSystemFont(true);
+			QCOMPARE(fontSpy.count(), 1);
+			QCOMPARE(settings.isUseSystemFont(), true);
+
+			settings.setUseSystemFont(false);
+			QCOMPARE(fontSpy.count(), 2);
+			QCOMPARE(settings.isUseSystemFont(), false);
+		}
+
+
+		void testDarkMode()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QSignalSpy darkSpy(&settings, &GeneralSettings::fireDarkModeChanged);
+			QCOMPARE(darkSpy.count(), 0);
+
+			const auto initialMode = settings.getDarkMode();
+
+			const auto systemMode = QStringLiteral("AUTO");
+			settings.setDarkMode(systemMode);
+			QCOMPARE(darkSpy.count(), 1);
+			QCOMPARE(settings.getDarkMode(), systemMode);
+
+			settings.setDarkMode(initialMode);
+			QCOMPARE(darkSpy.count(), 2);
+			QCOMPARE(settings.getDarkMode(), initialMode);
+		}
+
+
+		void testShowTrayIcon()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+			QCOMPARE(settings.showTrayIcon(), settings.isAutoStart());
+			settings.setAutoStart(!settings.isAutoStart());
+			QCOMPARE(settings.showTrayIcon(), settings.isAutoStart());
+#else
+			QCOMPARE(settings.showTrayIcon(), true);
+#endif
 		}
 
 

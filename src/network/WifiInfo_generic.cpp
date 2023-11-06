@@ -22,13 +22,13 @@ WifiInfo::WifiInfo()
 }
 
 
-bool WifiInfo::getCurrentWifiEnabled()
+bool WifiInfo::getCurrentWifiEnabled() const
 {
 	return true;
 }
 
 
-bool WifiInfo::isWifiEnabled()
+bool WifiInfo::isWifiEnabled() const
 {
 	return mWifiEnabled;
 }

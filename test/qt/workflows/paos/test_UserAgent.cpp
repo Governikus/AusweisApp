@@ -24,7 +24,7 @@ class test_UserAgent
 			QCoreApplication::setApplicationVersion("1.32.4");
 
 			UserAgent obj;
-			QCOMPARE(obj.getName(), QString("Test_workflows_paos_UserAgent"));
+			QCOMPARE(obj.getName(), QString("AusweisApp2"));
 			QCOMPARE(obj.getVersionMajor(), QString("1"));
 			QCOMPARE(obj.getVersionMinor(), QString("32"));
 			QCOMPARE(obj.getVersionSubminor(), QString("4"));

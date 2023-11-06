@@ -27,8 +27,9 @@ class test_WorkflowRequest
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -40,7 +41,7 @@ class test_WorkflowRequest
 
 		void initialize()
 		{
-			auto request = WorkflowRequest::createWorkflowRequest<TestWorkflowController, TestWorkflowContext>();
+			auto request = WorkflowRequest::create<TestWorkflowController, TestWorkflowContext>();
 
 			QVERIFY(!request->isInitialized());
 			QCOMPARE(request->getAction(), Action::AUTH);

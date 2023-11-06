@@ -46,9 +46,7 @@ HttpRequest::HttpRequest(QTcpSocket* pSocket, QObject* pParent)
 
 QTcpSocket* HttpRequest::take()
 {
-	disconnect(mSocket, &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
-	disconnect(mSocket, &QAbstractSocket::stateChanged, this, &HttpRequest::fireSocketStateChanged);
-
+	mSocket->disconnect(this);
 	auto socket = mSocket;
 	socket->setParent(nullptr);
 	mSocket.clear();

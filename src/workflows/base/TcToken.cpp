@@ -102,7 +102,7 @@ void TcToken::parse(const QByteArray& pData)
 }
 
 
-QString TcToken::readElementValue(QXmlStreamReader& pReader)
+QString TcToken::readElementValue(QXmlStreamReader& pReader) const
 {
 	// helper method to distinguish between the cases,
 	// 1) where the element was present but empty (so the value is not null but empty) and

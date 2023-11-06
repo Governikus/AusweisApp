@@ -25,7 +25,7 @@ LocalIfdReaderManagerPlugIn::LocalIfdReaderManagerPlugIn()
 	updateState();
 	if (!getInfo().isAvailable())
 	{
-		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp2 version";
+		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp version";
 	}
 }
 
@@ -35,7 +35,7 @@ void LocalIfdReaderManagerPlugIn::startScan(bool pAutoConnect)
 	updateState();
 	if (!getInfo().isAvailable())
 	{
-		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp2 version";
+		qCWarning(ifd) << "Smart-eID not available, could not find correct AusweisApp version";
 		return;
 	}
 
@@ -97,7 +97,7 @@ void LocalIfdReaderManagerPlugIn::onLocalIfdConnectionClosed(GlobalStatus::Code 
 }
 
 
-bool LocalIfdReaderManagerPlugIn::isAusweisApp2Installed()
+bool LocalIfdReaderManagerPlugIn::isAusweisAppInstalled()
 {
 	if (mServiceConnected)
 	{
@@ -113,7 +113,7 @@ bool LocalIfdReaderManagerPlugIn::isAusweisApp2Installed()
 	const auto& packageInfo = BuildHelper::getPackageInfo(aa2PackageName);
 	if (!packageInfo.isValid())
 	{
-		qCWarning(ifd) << "Could not find installed AusweisApp2";
+		qCWarning(ifd) << "Could not find installed AusweisApp";
 		setState(LocalIfdState::NOT_INSTALLED);
 		return false;
 	}
@@ -122,7 +122,7 @@ bool LocalIfdReaderManagerPlugIn::isAusweisApp2Installed()
 	const auto& versionNumber = VersionNumber(versionName);
 	if (versionNumber < aa2MinVersion)
 	{
-		qCWarning(ifd) << "Invalid AusweisApp2:" << versionNumber << ", required version >=" << aa2MinVersion.getVersionNumber().toString();
+		qCWarning(ifd) << "Invalid AusweisApp:" << versionNumber << ", required version >=" << aa2MinVersion.getVersionNumber().toString();
 		setState(LocalIfdState::INCOMPATIBLE_VERSION);
 		return false;
 	}
@@ -133,7 +133,7 @@ bool LocalIfdReaderManagerPlugIn::isAusweisApp2Installed()
 		});
 	if (!hasValidCertificate)
 	{
-		qCWarning(ifd) << "Invalid AusweisApp2 certificate";
+		qCWarning(ifd) << "Invalid AusweisApp certificate";
 		setState(LocalIfdState::INVALID_CERTIFICATE);
 		return false;
 	}
@@ -156,10 +156,10 @@ void LocalIfdReaderManagerPlugIn::setState(LocalIfdState pState)
 
 void LocalIfdReaderManagerPlugIn::updateState()
 {
-	const bool ausweisApp2Installed = isAusweisApp2Installed();
-	if (getInfo().isAvailable() != ausweisApp2Installed)
+	const bool ausweisAppInstalled = isAusweisAppInstalled();
+	if (getInfo().isAvailable() != ausweisAppInstalled)
 	{
-		setPlugInAvailable(ausweisApp2Installed);
+		setPlugInAvailable(ausweisAppInstalled);
 	}
 }
 

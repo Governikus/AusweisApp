@@ -2,10 +2,9 @@
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 
-#include  "AppUpdateDataModel.h"
+#include "AppUpdateDataModel.h"
 
 #include "AppUpdater.h"
-#include "Env.h"
 
 #include <QDir>
 #include <QLoggingCategory>

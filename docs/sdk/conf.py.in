@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'AusweisApp2 SDK'
+project = '@PROJECT_NAME@ SDK'
 copyright = '2016-2023, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
@@ -96,7 +96,7 @@ html_show_copyright = True
 html_scaled_image_link = False
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'AusweisApp2ReleaseNotes'
+htmlhelp_basename = '@PROJECT_NAME@ReleaseNotes'
 
 html_context = {
     'display_github': False,
@@ -119,7 +119,7 @@ latex_elements = {
 # Additional stuff for the LaTeX preamble.
 'preamble': '''
 \hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
-            pdftitle={AusweisApp2},
+            pdftitle={@PROJECT_NAME@},
             pdfsubject={SDK},
             pdfkeywords={sdk, api},
             pdfproducer={LaTeX},
@@ -143,7 +143,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'AusweisApp2-@VERSION_DVCS@-SDK.tex', 'AusweisApp2 SDK',
+  (master_doc, '@PROJECT_NAME@-@VERSION_DVCS@-SDK.tex', '@PROJECT_NAME@ SDK',
    'Governikus GmbH \& Co. KG', 'howto'),
 ]
 
@@ -166,3 +166,7 @@ latex_show_urls = 'footnote'
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+rst_epilog = """
+.. |AppName| replace:: @PROJECT_NAME@
+"""

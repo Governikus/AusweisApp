@@ -1,7 +1,9 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
+import QtQuick
+import Governikus.ResultView
+import Governikus.Style
 
 QtObject {
 	property url actionButtonIcon
@@ -11,6 +13,7 @@ QtObject {
 	property string header
 	property string hintButtonText
 	property string hintText
+	property url icon: "qrc:///images/status_info_%1.svg".arg(Style.currentTheme.name)
 	property string text
 	property int textFormat: Text.AutoText
 	property string title

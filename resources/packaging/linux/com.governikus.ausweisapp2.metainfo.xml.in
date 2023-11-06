@@ -4,12 +4,12 @@
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>EUPL-1.2</project_license>
   <developer_name>Governikus GmbH &amp; Co. KG</developer_name>
-  <name>AusweisApp2</name>
+  <name>AusweisApp</name>
   <summary>Official authentication app for German ID card and residence permit</summary>
   <description>
-    <p>The AusweisApp2 is a software, that you can install on your Computer/Smartphone/Tablet, to identify yourself online with your ID card or your electronic residence permit.
+    <p>The AusweisApp is a software, that you can install on your Computer/Smartphone/Tablet, to identify yourself online with your ID card or your electronic residence permit.
        The App is available for the most used operating systems and works in all common browsers.</p>
-    <p>The AusweisApp2 offers you an intigrated self-assessment where you are able to view your data that is stored on the online ID.</p>
+    <p>The AusweisApp offers you an intigrated self-assessment where you are able to view your data that is stored on the online ID.</p>
     <p>In the app you will also find an overview with the available services, a running overview and you can manage your PIN there.</p>
     <p>This app is on behalf of the Federal Office for Information Security.</p>
   </description>
@@ -19,6 +19,6 @@
   <url type="homepage">https://www.ausweisapp.bund.de/en</url>
   <launchable type="desktop-id">com.governikus.ausweisapp2.desktop</launchable>
   <provides>
-    <binary>AusweisApp2</binary>
+    <binary>AusweisApp</binary>
   </provides>
 </component>

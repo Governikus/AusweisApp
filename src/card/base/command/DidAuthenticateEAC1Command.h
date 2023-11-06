@@ -9,7 +9,7 @@
 #pragma once
 
 #include "BaseCardCommand.h"
-#include "asn1/Chat.h"
+#include "CardConnectionWorker.h"
 
 class test_DidAuthenticateEAC1Command;
 class test_StateDidAuthenticateEac1;

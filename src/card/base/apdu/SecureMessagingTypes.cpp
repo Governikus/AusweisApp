@@ -4,9 +4,6 @@
 
 #include "SecureMessagingTypes.h"
 
-#include "asn1/ASN1Util.h"
-
-
 using namespace governikus;
 
 

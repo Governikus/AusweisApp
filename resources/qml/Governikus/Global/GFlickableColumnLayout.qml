@@ -1,42 +1,37 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
 
 GFlickable {
 	id: root
 
-	default property alias children: contentLayout.children
-	readonly property real effectiveContentWidth: maximumContentWidth > 0 ? Math.min(contentWidth, maximumContentWidth) : contentWidth
-	property bool fillHeight: true
-	readonly property real implicitContentHeight: contentLayout.implicitHeight
+	default property alias data: contentLayout.data
 	property real maximumContentWidth: -1
-	property real minimumContentHeight: implicitContentHeight
 	property alias spacing: contentLayout.spacing
 
-	bottomMargin: Constants.component_spacing
-	contentHeight: (fillHeight && d.contentHeightFitsOnScreen) ? d.availableContentHeight : root.minimumContentHeight
-	contentWidth: root.width - leftMargin - rightMargin
-	leftMargin: Constants.component_spacing
-	rightMargin: Constants.component_spacing
-	topMargin: Constants.component_spacing
+	bottomMargin: Constants.pane_padding
+	contentHeight: contentLayout.height
+	contentWidth: limitingLayout.width
+	implicitHeight: contentLayout.implicitHeight + topMargin + bottomMargin
+	implicitWidth: contentLayout.implicitWidth + leftMargin + rightMargin
+	leftMargin: Constants.pane_padding
+	rightMargin: Constants.pane_padding
+	topMargin: Constants.pane_padding
 
-	QtObject {
-		id: d
-
-		property real availableContentHeight: root.height - topMargin - bottomMargin
-		property bool contentHeightFitsOnScreen: root.minimumContentHeight <= availableContentHeight
-	}
 	ColumnLayout {
-		id: contentLayout
-		anchors.horizontalCenter: parent.horizontalCenter
-		width: effectiveContentWidth
+		id: limitingLayout
 
-		Binding on height  {
-			delayed: fillHeight
-			value: root.contentHeight
+		height: root.height - root.topMargin - root.bottomMargin
+		width: root.width - root.leftMargin - root.rightMargin
+
+		ColumnLayout {
+			id: contentLayout
+
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+			Layout.maximumWidth: root.maximumContentWidth
 		}
 	}
 }

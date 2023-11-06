@@ -2,7 +2,7 @@
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
 pragma Singleton
-import QtQuick 2.15
+import QtQuick
 
 PlatformConstants {
 	readonly property int animation_duration: 250

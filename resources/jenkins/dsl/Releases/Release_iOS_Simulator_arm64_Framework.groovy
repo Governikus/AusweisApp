@@ -18,7 +18,7 @@ j.with
 		shell('cd source; cmake --preset ci-ios-framework-simulator-arm64')
 
 		shell('cd build; xcodebuild -configuration MinSizeRel')
-		shell('cmake -E tar cf AusweisApp2_BuildDir.tar.zstd --zstd build')
+		shell('cmake -E tar cf AusweisApp_BuildDir.tar.zstd --zstd build')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target zip')
 	}
 }

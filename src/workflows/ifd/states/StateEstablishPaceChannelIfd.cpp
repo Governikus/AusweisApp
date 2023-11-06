@@ -60,7 +60,7 @@ void StateEstablishPaceChannelIfd::run()
 	qDebug() << "Establish connection using" << mPasswordId;
 	Q_ASSERT(!pacePassword.isEmpty() && cardConnection);
 
-	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
+	*this << cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannelIfd::onEstablishConnectionDone,
 			mPasswordId,
 			pacePassword,

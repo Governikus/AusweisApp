@@ -11,7 +11,6 @@
 
 #include "Env.h"
 #include "GlobalStatus.h"
-#include "NetworkManager.h"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>

@@ -1,11 +1,10 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
 
 ConfirmationPopup {
 	id: proxyCredentials
@@ -39,6 +38,7 @@ ConfirmationPopup {
 
 	Grid {
 		id: formGrid
+
 		columns: 2
 		spacing: Constants.component_spacing
 		verticalItemAlignment: Text.AlignVCenter
@@ -56,8 +56,8 @@ ConfirmationPopup {
 		}
 		GTextField {
 			id: userInput
-			textStyle: Style.text.normal
-			width: 500 * ApplicationModel.scaleFactor
+
+			width: 500 * plugin.scaleFactor
 		}
 		GText {
 			//: LABEL DESKTOP Accessible name.
@@ -72,9 +72,9 @@ ConfirmationPopup {
 		}
 		GTextField {
 			id: passwordInput
+
 			echoMode: TextInput.Password
-			textStyle: Style.text.normal
-			width: 500 * ApplicationModel.scaleFactor
+			width: 500 * plugin.scaleFactor
 		}
 	}
 }

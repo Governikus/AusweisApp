@@ -1,7 +1,36 @@
 /*
- * Copyright (C) 2021 Bundesdruckerei GmbH and Governikus GmbH
+ * Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+ * Licensed under the EUPL-1.2
  *
- * v0.17.0
+ * v0.23.0
+ *
+ * +------------------------------+--------------+---------------+---------------+
+ * | Function               TOPIC | SE_CERTIFIED |  SE_ENDORSED  |  HW_KEYSTORE  |
+ * +------------------------------+--------------+---------------+---------------+
+ * |                      GENERAL |--------------+---------------+---------------|
+ * | initializeService            |      X       |       X       |       X       |
+ * | shutdownService              |      X       |       X       |       X       |
+ * | getServiceInformation        |      X       |       X       |       X       |
+ * | getSmartEidSupportInfo       |      X       |       X       |       X       |
+ * | getSmartEidStatus            |      X       |       X       |       X       |
+ * |           DEVICE PREPARATION |--------------+---------------+---------------|
+ * | installSmartEid              |      X       |               |               |
+ * | deleteSmartEid               |      X       |               |               |
+ * |              PERSONALIZATION |--------------+---------------+---------------|
+ * | initializePersonalization    |      X       |       X       |       X       |
+ * | performPersonalization       |      X       |       X       |       X       |
+ * | finalizePersonalization      |      X       |       X       |       X       |
+ * | deletePersonalization        |      X       |       X       |       X       |
+ * | releaseAppletConnection      |      X       |               |               |
+ * |               IDENTIFICATION |--------------+---------------+---------------|
+ * | performAPDUCommand           |      X       |       X       |       X 1)    |
+ * | prepareIdentification        |              |               |       X 1)    |
+ * | getChallenge                 |              |               |       X 1)    |
+ * | performTAandCA               |              |               |       X 1)    |
+ * +------------------------------+--------------+---------------+---------------+
+ *
+ * 1) performAPDUCommand is only partially implemented
+      and is supplemented by additional functions.
  */
 
 #pragma once
@@ -12,10 +41,10 @@
 #include <list>
 #include <string>
 
-#if defined(__APPLE__)
-	#include <TargetConditionals.h>
-#elif defined(__ANDROID__)
+#if defined(__ANDROID__)
 	#include <jni.h>
+#elif defined(__APPLE__)
+	#include <TargetConditionals.h>
 #endif
 
 
@@ -27,14 +56,70 @@
  */
 using ProgressHandler = std::function<void (int progress)>;
 
+// -------------------------------------------------------------------------------------------------
+// GENERAL
+// -------------------------------------------------------------------------------------------------
+
+#if defined(__ANDROID__)
+
+//! Performs initialization of eID-Applet-Service-Lib on Android. This method should be called from
+//! the main thread / the thread that created the JVM
+
+/*!
+   \param env The android JNI Environment pointer.
+   \param applicationContext The android application context.
+   \param pServiceId The id of the service from the Trusted Service Management System.
+   \param pSsdAid AID of the specific security domain that is created for the given
+                 Trusted Service Management Service.
+   \param pVersionTag Optional ServiceVersionTag for the Trusted Service Management usage.
+                     By default, this string can be left blank. Passing a specific ServiceVersionTag
+                     is required only in debug case.
+   \return GenericDataResult mData is blank if mResult is equal to EidServiceResult::SUCCESS,
+                            otherwise it contains an error message
+ */
+GenericDataResult initializeService(
+	JNIEnv* env,
+	jobject applicationContext,
+	const std::string& pServiceId,
+	const std::string& pSsdAid,
+	const std::string& pVersionTag = "");
+
+#else
+
+//! Performs initialization of eID-Applet-Service-Lib.
+
+/*!
+   \return GenericDataResult mData is blank if mResult is equal to EidServiceResult::SUCCESS,
+                            otherwise it contains an error message
+ */
+GenericDataResult initializeService();
+
+#endif
+
+//! Release all resources and shut down the eID-Applet-Service-Lib on Android
+
+/*!
+   \return GenericDataResult mData is blank if mResult is equal to EidServiceResult::SUCCESS,
+                           otherwise it contains an error message
+ */
+GenericDataResult shutdownService();
+
+//! Request the service information of the Smart-eID. This function does not include an online-check.
+
+/*!
+   \return ServiceInformationResult
+ */
+ServiceInformationResult getServiceInformation();
+
 //! Provides information of available updates of the installed eID-Applet and/or CSP implementation
 //! or whether the device is supported by Trusted Service Management System. The function includes
 //! an online-check.
 
 /*!
-   \return The updateInfo of the Smart-eID e.g. EidUpdateInfo::UPDATE_AVAILABLE for the eID-Applet.
+   \return EidSupportStatusResult with the supportInfo of the Smart-eID
+                                 e.g. EidSupportStatus::UPDATE_AVAILABLE for the eID-Applet.
  */
-EidUpdateInfo getUpdateInfo();
+EidSupportStatusResult getSmartEidSupportInfo();
 
 //! Provides the current Smart-eID Status. This function does not include an online-check.
 
@@ -42,6 +127,10 @@ EidUpdateInfo getUpdateInfo();
    \return The status of the Smart-eID e.g. EidStatus::NO_PERSONALIZATION for the eID-Applet.
  */
 EidStatus getSmartEidStatus();
+
+// -------------------------------------------------------------------------------------------------
+// DEVICE PREPARATION
+// -------------------------------------------------------------------------------------------------
 
 //! Performs the remote provisioning of the eID-applet from the Trusted Service Management System
 //! to the eSE on this device, or the ATM module initialization and the license check.
@@ -61,21 +150,9 @@ EidServiceResult installSmartEid(const ProgressHandler& pHandler);
  */
 EidServiceResult deleteSmartEid(const ProgressHandler& pHandler);
 
-//! Performs APDU command
-
-/*!
-   \param pCommandApdu byte2hex encoded APDU
-   \return GenericDataResult with byte2hex encoded APDU response
- */
-GenericDataResult performAPDUCommand(const std::string& pCommandApdu);
-
-//! Performs personalization in a generic way controlled by Personalization Service
-
-/*!
-   \param pCommand byte2hex encoded Command e.g APDU for Android
-   \return GenericDataResult with byte2hex encoded command response for the personalization step
- */
-GenericDataResult performPersonalization(const std::string& pCommand);
+// -------------------------------------------------------------------------------------------------
+// PERSONALIZATION
+// -------------------------------------------------------------------------------------------------
 
 //! Performs initialization of the Personalization
 
@@ -87,8 +164,28 @@ GenericDataResult performPersonalization(const std::string& pCommand);
  */
 InitializeResult initializePersonalization(
 	const std::string& pChallenge,
-	const std::string& pPin = ""
-	);
+	const std::string& pPin = "");
+
+//! Performs personalization in a generic way controlled by Personalization Service
+
+/*!
+   \param pCommand byte2hex encoded Command e.g APDU for Android
+   \return GenericDataResult with byte2hex encoded command response for the personalization step
+ */
+GenericDataResult performPersonalization(const std::string& pCommand);
+
+//! Finalize the personalization flow and provide the init-eID-PIN as a return value. This function call
+//! also closes the channel to the Supplementary Security Domain from the Service Provider and adjusts
+//! the EidStatus in an error event accordingly.
+//! Thus, this function must also be called in the event of an error, e.g. if personalization flow has
+//! been interrupted.
+
+/*!
+   \param status The status code of the performed personalization.
+   \return PersonalizationResult mInitPin contains the initial-eID-PIN used for personalization.
+                                If the mInitPIN is blank, a new personalization must be started.
+ */
+PersonalizationResult finalizePersonalization(int status = 0);
 
 //! Delete Personalization from eID Applet.
 
@@ -97,16 +194,24 @@ InitializeResult initializePersonalization(
  */
 EidServiceResult deletePersonalization();
 
-
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-
-//! Get Challenge
+//! Closes any open channel to the SE.
 
 /*!
-   \return GenericDataResult with challenge according to EAC1OutputType in TR-03112-7 3.6.4.1.
-          byte2hex encoded and terminated with 9000.
+   \return EidServiceResult
  */
-GenericDataResult getChallenge();
+EidServiceResult releaseAppletConnection();
+
+// -------------------------------------------------------------------------------------------------
+// IDENTIFICATION
+// -------------------------------------------------------------------------------------------------
+
+//! Performs APDU command
+
+/*!
+   \param pCommandApdu byte2hex encoded APDU
+   \return GenericDataResult with byte2hex encoded APDU response
+ */
+GenericDataResult performAPDUCommand(const std::string& pCommandApdu);
 
 //! Prepares the identification and returns the PrepareIdentificationResult.
 
@@ -116,6 +221,14 @@ GenericDataResult getChallenge();
    \return UserAuthenticationResult according to EAC1OutputType in TR-03112-7 3.6.4.1., byte2hex encoded
  */
 PrepareIdentificationResult prepareIdentification(const std::string& pChat);
+
+//! Get Challenge
+
+/*!
+   \return GenericDataResult with challenge according to EAC1OutputType in TR-03112-7 3.6.4.1.
+          byte2hex encoded and terminated with 9000.
+ */
+GenericDataResult getChallenge();
 
 //! Performs the terminal and chip authentication.
 
@@ -154,54 +267,3 @@ TAandCAResult performTAandCA(
 	const std::string& pSignature,
 	const std::string& pPin,
 	const std::string& pEphemeralPublicKey);
-
-#elif defined(__ANDROID__)
-
-//! Performs initialization of eID-Applet-Service-Lib on Android. This method should be called from
-//! the main thread / the thread that created the JVM
-
-/*!
-   \param env The android JNI Environment pointer.
-   \param applicationContext The android application context.
-   \param pServiceId The id of the service from the Trusted Service Management System.
-   \param pVersionTag The version tag of the Trusted Service Management Service.
-   \param pSsdAid AID of the specific security domain that is created for the given
-                 Trusted Service Management Service.
-   \return GenericDataResult mData is blank if mResult is equal to EidServiceResult::SUCCESS,
-                            otherwise it contains an error message
- */
-GenericDataResult initializeService(
-	JNIEnv* env,
-	jobject applicationContext,
-	const std::string& pServiceId,
-	const std::string& pVersionTag,
-	const std::string& pSsdAid
-	);
-
-//! Finalize the personalization flow and provide the init-eID-PIN as a return value. This function call
-//! also closes the channel to the Supplementary Security Domain from the Service Provider.
-//! Thus, this function must also be called in the event of an error, e.g. if personalization flow has
-//! been interrupted.
-
-/*!
-   \return PersonalizationResult mInitPin contains the initial-eID-PIN used for personalization.
-                                If the mInitPIN is blank, a new personalization must be started.
- */
-PersonalizationResult finalizePersonalization();
-
-//! Closes any open channel to the SE.
-
-/*!
-   \return EidServiceResult
- */
-EidServiceResult releaseAppletConnection();
-
-//! Release all resources and shut down the eID-Applet-Service-Lib on Android
-
-/*!
-   \return GenericDataResult mData is blank if mResult is equal to EidServiceResult::SUCCESS,
-                           otherwise it contains an error message
- */
-GenericDataResult shutdownService();
-
-#endif

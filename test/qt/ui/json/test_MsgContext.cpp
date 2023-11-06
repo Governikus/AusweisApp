@@ -10,7 +10,6 @@
 
 #include "ReaderManager.h"
 #include "context/AuthContext.h"
-#include "context/InternalActivationContext.h"
 #include "messages/MsgHandler.h"
 #include "messages/MsgHandlerEnterPin.h"
 #include "messages/MsgHandlerInsertCard.h"
@@ -30,8 +29,9 @@ class test_MsgContext
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -94,7 +94,7 @@ class test_MsgContext
 			QVERIFY(!ctx.getContext<AuthContext>());
 			QVERIFY(!readOnly.getContext());
 
-			ctx.setWorkflowContext(QSharedPointer<AuthContext>(new AuthContext(QSharedPointer<InternalActivationContext>::create(QUrl("http://www.bla.de")))));
+			ctx.setWorkflowContext(QSharedPointer<AuthContext>(new AuthContext(true, QUrl("http://www.bla.de"))));
 			QVERIFY(readOnly.isActiveWorkflow());
 			QVERIFY(readOnly.getContext<AuthContext>());
 			QVERIFY(ctx.getContext<AuthContext>());

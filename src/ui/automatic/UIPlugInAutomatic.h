@@ -36,8 +36,8 @@ class UIPlugInAutomatic
 	private Q_SLOTS:
 		void onApplicationStarted() override;
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
 		void onUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted) override;
 		void onUiDominationReleased() override;
 		void onStateChanged(const QString& pState);

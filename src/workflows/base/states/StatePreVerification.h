@@ -33,8 +33,8 @@ class StatePreVerification
 		explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 
-		bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
-		void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates);
+		bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const;
+		void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const;
 };
 
 } // namespace governikus

@@ -8,7 +8,6 @@
 
 #include "ApplicationModel.h"
 
-#include "MockActivationContext.h"
 #include "MockIfdServer.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
@@ -58,7 +57,7 @@ class test_ApplicationModel
 			QTest::addColumn<ApplicationModel::Workflow>("workflow");
 
 			QTest::addRow("No Context") << QSharedPointer<WorkflowContext>() << ApplicationModel::Workflow::WORKFLOW_NONE;
-			QTest::addRow("AuthContext") << QSharedPointer<WorkflowContext>(new AuthContext(QSharedPointer<MockActivationContext>::create())) << ApplicationModel::Workflow::WORKFLOW_AUTHENTICATION;
+			QTest::addRow("AuthContext") << QSharedPointer<WorkflowContext>(new AuthContext()) << ApplicationModel::Workflow::WORKFLOW_AUTHENTICATION;
 			QTest::addRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << ApplicationModel::Workflow::WORKFLOW_CHANGE_PIN;
 			QTest::addRow("IfdServiceContext") << QSharedPointer<WorkflowContext>(new IfdServiceContext(QSharedPointer<MockIfdServer>::create())) << ApplicationModel::Workflow::WORKFLOW_REMOTE_SERVICE;
 			QTest::addRow("SelfAuthContext") << QSharedPointer<WorkflowContext>(new SelfAuthContext()) << ApplicationModel::Workflow::WORKFLOW_SELF_AUTHENTICATION;

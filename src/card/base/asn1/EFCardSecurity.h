@@ -6,9 +6,7 @@
  * \brief Implementation of EFCardSecurity
  */
 
-
 #pragma once
-
 
 #include "SecurityInfos.h"
 

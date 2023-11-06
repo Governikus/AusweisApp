@@ -10,6 +10,7 @@
 
 #include "ReaderManager.h"
 #include "VolatileSettings.h"
+#include "WorkflowRequest.h"
 #include "states/StateEnterPacePassword.h"
 #include "states/StateSelectReader.h"
 
@@ -17,6 +18,7 @@
 #include "MockReaderManagerPlugIn.h"
 #include "TestAuthContext.h"
 #include "TestWorkflowContext.h"
+#include "TestWorkflowController.h"
 
 #include <QScopeGuard>
 #include <QSignalSpy>
@@ -34,8 +36,8 @@ class DummyUI
 
 	public:
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
 };
 
 void DummyUI::doShutdown()
@@ -43,15 +45,15 @@ void DummyUI::doShutdown()
 }
 
 
-void DummyUI::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void DummyUI::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 }
 
 
-void DummyUI::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void DummyUI::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 }
 
 
@@ -64,8 +66,9 @@ class test_UIPlugInAutomatic
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -84,11 +87,7 @@ class test_UIPlugInAutomatic
 		void startUpShutDown()
 		{
 			UIPlugInAutomatic ui;
-
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 3, 0))
 			QTest::failOnWarning(QRegularExpression(".*"));
-#endif
-
 			ui.onApplicationStarted();
 			ui.doShutdown();
 		}
@@ -128,13 +127,16 @@ class test_UIPlugInAutomatic
 			ui.onUiDomination(&dummy, QString(), true);
 			QVERIFY(ui.isDominated());
 
-			const auto& context = QSharedPointer<TestWorkflowContext>::create();
-			ui.onWorkflowStarted(context);
+			const auto& request = TestWorkflowController::createWorkflowRequest();
+			const auto& context = request->getContext();
+			QVERIFY(context);
+
+			ui.onWorkflowStarted(request);
 			QVERIFY(!context->wasClaimed());
 
 			QVERIFY(ui.mContext.isNull());
 			ui.mContext = context;
-			ui.onWorkflowFinished(context);
+			ui.onWorkflowFinished(request);
 			QVERIFY(!ui.mContext.isNull()); // should be cleared if not dominated
 		}
 
@@ -142,12 +144,13 @@ class test_UIPlugInAutomatic
 		void workflowKilled()
 		{
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestWorkflowContext>::create();
+			const auto& request = TestWorkflowController::createWorkflowRequest();
+			const auto& context = request->getContext();
 
 			QTest::ignoreMessage(QtDebugMsg, R"(Claim workflow by "governikus::UIPlugInAutomatic")");
 			QTest::ignoreMessage(QtWarningMsg, "Cannot handle context... abort automatic workflow");
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QVERIFY(context->wasClaimed());
 			QVERIFY(context->isWorkflowKilled());
 		}
@@ -158,20 +161,21 @@ class test_UIPlugInAutomatic
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 
 			QVERIFY(ui.mContext.isNull());
 			QVERIFY(!Env::getSingleton<VolatileSettings>()->isUsedAsSDK());
 			QTest::ignoreMessage(QtDebugMsg, R"(Claim workflow by "governikus::UIPlugInAutomatic")");
 			QTest::ignoreMessage(QtDebugMsg, "Fallback to full automatic UI");
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QVERIFY(!ui.mContext.isNull());
 			QVERIFY(context->wasClaimed());
 			QVERIFY(!context->isWorkflowKilled());
 			QVERIFY(Env::getSingleton<VolatileSettings>()->isUsedAsSDK());
 			QVERIFY(!ui.mPrevUsedAsSDK);
 
-			ui.onWorkflowFinished(context);
+			ui.onWorkflowFinished(request);
 			QVERIFY(!Env::getSingleton<VolatileSettings>()->isUsedAsSDK());
 			QVERIFY(!ui.mPrevUsedAsSDK);
 			QVERIFY(ui.mContext.isNull());
@@ -182,10 +186,11 @@ class test_UIPlugInAutomatic
 		{
 			UIPlugInAutomatic ui;
 			ui.onStateChanged(QStringLiteral("do nothing"));
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 
 			QVERIFY(!context->isStateApproved());
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QVERIFY(!context->isStateApproved());
 
 			context->setCurrentState(QStringLiteral("approve me"));
@@ -196,13 +201,14 @@ class test_UIPlugInAutomatic
 		void insertNoCard()
 		{
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 
 			QTest::ignoreMessage(QtWarningMsg, "Cannot insert card... abort automatic workflow");
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
-			context->setCurrentState(AbstractState::getClassName<StateSelectReader>());
+			context->setCurrentState(StateBuilder::generateStateName<StateSelectReader>());
 			QVERIFY(context->isWorkflowKilled());
 		}
 
@@ -215,12 +221,13 @@ class test_UIPlugInAutomatic
 			QVERIFY(!reader->getReaderInfo().isInsertable());
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QVERIFY(!context->isStateApproved());
 			QTest::ignoreMessage(QtDebugMsg, "Use existing card...");
-			context->setCurrentState(AbstractState::getClassName<StateSelectReader>());
+			context->setCurrentState(StateBuilder::generateStateName<StateSelectReader>());
 			QVERIFY(!context->isWorkflowKilled());
 			QVERIFY(context->isStateApproved());
 		}
@@ -247,13 +254,14 @@ class test_UIPlugInAutomatic
 			QVERIFY(readerInfo.wasShelved());
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 
 			QSignalSpy spyCard(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted);
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QVERIFY(!context->isStateApproved());
 			QTest::ignoreMessage(QtDebugMsg, R"(Automatically insert card into: "MockReader2")");
-			context->setCurrentState(AbstractState::getClassName<StateSelectReader>());
+			context->setCurrentState(StateBuilder::generateStateName<StateSelectReader>());
 			QVERIFY(!context->isWorkflowKilled());
 			QVERIFY(context->isStateApproved());
 
@@ -266,13 +274,14 @@ class test_UIPlugInAutomatic
 		{
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 			context->setLastPaceResult(CardReturnCode::PROTOCOL_ERROR);
 
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QTest::ignoreMessage(QtWarningMsg, "Previous PACE failed... abort automatic workflow");
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
-			context->setCurrentState(AbstractState::getClassName<StateEnterPacePassword>());
+			context->setCurrentState(StateBuilder::generateStateName<StateEnterPacePassword>());
 			QVERIFY(context->isWorkflowKilled());
 		}
 
@@ -295,12 +304,13 @@ class test_UIPlugInAutomatic
 			reader->setInfoBasicReader(false);
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 			context->setLastPaceResult(returnCode);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 
-			ui.onWorkflowStarted(context);
-			context->setCurrentState(AbstractState::getClassName<StateEnterPacePassword>());
+			ui.onWorkflowStarted(request);
+			context->setCurrentState(StateBuilder::generateStateName<StateEnterPacePassword>());
 			QVERIFY(!context->isWorkflowKilled());
 			QVERIFY(context->isStateApproved());
 		}
@@ -313,14 +323,15 @@ class test_UIPlugInAutomatic
 			reader->setInfoBasicReader(false);
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 			context->setLastPaceResult(CardReturnCode::OK);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			QTest::ignoreMessage(QtWarningMsg, "Cannot handle password... abort automatic workflow");
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
-			context->setCurrentState(AbstractState::getClassName<StateEnterPacePassword>());
+			context->setCurrentState(StateBuilder::generateStateName<StateEnterPacePassword>());
 			QVERIFY(context->isWorkflowKilled());
 		}
 
@@ -386,18 +397,19 @@ class test_UIPlugInAutomatic
 			reader->setInfoBasicReader(true);
 
 			UIPlugInAutomatic ui;
-			const auto& context = QSharedPointer<TestAuthContext>::create(nullptr);
+			const auto& request = TestWorkflowController::createWorkflowRequest<TestAuthContext>();
+			const auto& context = request->getContext();
 			context->setLastPaceResult(CardReturnCode::OK);
 			context->setEstablishPaceChannelType(passwordId);
 			context->setCardConnection(QSharedPointer<MockCardConnection>::create(reader->getReaderInfo()));
 
-			ui.onWorkflowStarted(context);
+			ui.onWorkflowStarted(request);
 			if (killWorkflow)
 			{
 				QTest::ignoreMessage(QtWarningMsg, "Cannot handle password... abort automatic workflow");
 				QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
 			}
-			context->setCurrentState(AbstractState::getClassName<StateEnterPacePassword>());
+			context->setCurrentState(StateBuilder::generateStateName<StateEnterPacePassword>());
 			QCOMPARE(context->isWorkflowKilled(), killWorkflow);
 			QVERIFY(context->isStateApproved());
 

@@ -7,6 +7,7 @@
 #include "context/WorkflowContext.h"
 
 #include <QPair>
+#include <QVariant>
 
 #include <functional>
 #include <utility>
@@ -25,12 +26,13 @@ class WorkflowRequest final
 {
 	Q_GADGET
 
-	using BusyHandler = std::function<WorkflowControl (WorkflowRequest&, const QSharedPointer<WorkflowRequest>&, const QSharedPointer<WorkflowRequest>&)>;
+	using BusyHandler = std::function<WorkflowControl (const QSharedPointer<WorkflowRequest>&, const QSharedPointer<WorkflowRequest>&)>;
 
 	private:
 		const std::function<QSharedPointer<WorkflowController>(const QSharedPointer<WorkflowContext>& pContext)> mGeneratorController;
 		const std::function<QSharedPointer<WorkflowContext>()> mGeneratorContext;
 		const BusyHandler mBusyHandler;
+		const QVariant mData;
 
 		QSharedPointer<WorkflowController> mController;
 		QSharedPointer<WorkflowContext> mContext;
@@ -51,7 +53,7 @@ class WorkflowRequest final
 
 	public:
 		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest(Args&& ... pArgs)
+		static QSharedPointer<WorkflowRequest> create(Args&& ... pArgs)
 		{
 			auto [controller, context] = getGenerator<Controller, Context, Args...>(std::forward<Args>(pArgs) ...);
 			return QSharedPointer<Request>::create(controller, context);
@@ -59,23 +61,39 @@ class WorkflowRequest final
 
 
 		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
-		static QSharedPointer<WorkflowRequest> createWorkflowRequestHandler(const BusyHandler& pBusyHandler, Args&& ... pArgs)
+		static QSharedPointer<WorkflowRequest> createHandler(const BusyHandler& pBusyHandler, Args&& ... pArgs)
+		{
+			return createHandler<Controller, Context, Request, Args...>(pBusyHandler, QVariant(), std::forward<Args>(pArgs) ...);
+		}
+
+
+		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
+		static QSharedPointer<WorkflowRequest> createHandler(const QVariant& pData, Args&& ... pArgs)
+		{
+			return createHandler<Controller, Context, Request, Args...>(BusyHandler(), pData, std::forward<Args>(pArgs) ...);
+		}
+
+
+		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
+		static QSharedPointer<WorkflowRequest> createHandler(const BusyHandler& pBusyHandler, const QVariant& pData, Args&& ... pArgs)
 		{
 			auto [controller, context] = getGenerator<Controller, Context, Args...>(std::forward<Args>(pArgs) ...);
-			return QSharedPointer<Request>::create(controller, context, pBusyHandler);
+			return QSharedPointer<Request>::create(controller, context, pBusyHandler, pData);
 		}
 
 
 		WorkflowRequest(const std::function<QSharedPointer<WorkflowController>(const QSharedPointer<WorkflowContext>& pContext)>& pGeneratorController,
 				const std::function<QSharedPointer<WorkflowContext>()>& pGeneratorContext,
-				const BusyHandler& pBusyHandler = BusyHandler());
+				const BusyHandler& pHandler = BusyHandler(),
+				const QVariant& pData = QVariant());
 
 		void initialize();
 		[[nodiscard]] bool isInitialized() const;
 		[[nodiscard]] Action getAction() const;
 		[[nodiscard]] QSharedPointer<WorkflowController> getController() const;
 		[[nodiscard]] QSharedPointer<WorkflowContext> getContext() const;
-		[[nodiscard]] WorkflowControl handleBusyWorkflow(const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow);
+		[[nodiscard]] QVariant getData() const;
+		[[nodiscard]] WorkflowControl handleBusyWorkflow(const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow) const;
 };
 
 } // namespace governikus

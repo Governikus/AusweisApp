@@ -37,7 +37,7 @@ class PcscReaderManagerPlugIn
 		QMap<QString, Reader*> mReaders;
 
 	private:
-		PCSC_RETURNCODE readReaderNames(QStringList& pReaderNames);
+		PCSC_RETURNCODE readReaderNames(QStringList& pReaderNames) const;
 		void updateReaders();
 		inline QString extractReaderName(const PCSC_CHAR_PTR pReaderPointer) const;
 		void addReaders(const QStringList& pReaderNames);

@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtTest 1.15
-import Governikus.PasswordInfoView 1.0
+import QtTest
+import Governikus.PasswordInfoView
 
 TestCase {
 	id: parent
+
 	function test_load_PasswordInfoView(data) {
-		var item = createTemporaryQmlObject("
-			import Governikus.PasswordInfoView 1.0;
+		let item = createTemporaryQmlObject("
+			import Governikus.PasswordInfoView
 			PasswordInfoView {
 				infoContent: PasswordInfoData {
 					contentType: %1
@@ -24,8 +25,6 @@ TestCase {
 				"contentType": PasswordInfoContent.Type.CAN
 			}, {
 				"contentType": PasswordInfoContent.Type.PUK
-			}, {
-				"contentType": PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER
 			}];
 	}
 

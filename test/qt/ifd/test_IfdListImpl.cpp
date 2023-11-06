@@ -2,7 +2,7 @@
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
-#include "IfdList.h"
+#include "IfdListImpl.h"
 
 #include "messages/Discovery.h"
 

@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "EnumHelper.h"
 #include "SecurityInfo.h"
 
 class test_PaceInfo;

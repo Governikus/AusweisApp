@@ -50,7 +50,7 @@ class test_StateDidAuthenticateEac2
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			mState.reset(new StateDidAuthenticateEac2(mAuthContext));
 			workerThread.start();
 		}

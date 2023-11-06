@@ -5,25 +5,34 @@
 #include "StateChangeSmartPin.h"
 
 #include "AppSettings.h"
-#include "ReaderManager.h"
+#include "ReaderManagerPlugInInfo.h"
+#include "VolatileSettings.h"
+
 
 using namespace governikus;
+
 
 StateChangeSmartPin::StateChangeSmartPin(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setKeepCardConnectionAlive();
 }
 
 
 void StateChangeSmartPin::run()
 {
-	const auto& context = getContext();
-	if (context->getNewPin().isEmpty())
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS) || !defined(QT_NO_DEBUG)
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		mConnections += connect(context.data(), &PersonalizationContext::fireNewPinChanged, this, &StateChangeSmartPin::callSetEidPin);
-		return;
+		const auto& context = getContext();
+		if (context->getNewPin().isEmpty())
+		{
+			*this << connect(context.data(), &PersonalizationContext::fireNewPinChanged, this, &StateChangeSmartPin::callSetEidPin);
+			return;
+		}
 	}
+#endif
 
 	callSetEidPin();
 }
@@ -35,7 +44,7 @@ void StateChangeSmartPin::callSetEidPin()
 
 	Q_ASSERT(cardConnection);
 	qDebug() << "Invoke set Eid PIN command";
-	mConnections += cardConnection->callSetEidPinCommand(this, &StateChangeSmartPin::onSetEidPinDone, getContext()->getNewPin().toLatin1());
+	*this << cardConnection->callSetEidPinCommand(this, &StateChangeSmartPin::onSetEidPinDone, getContext()->getNewPin().toLatin1());
 }
 
 

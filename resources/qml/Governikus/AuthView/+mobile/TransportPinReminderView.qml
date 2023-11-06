@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.WorkflowModel
 
-SectionPage {
+FlickableSectionPage {
 	id: root
 
 	property alias moreInformationText: moreInformationLink.text
@@ -18,74 +19,76 @@ SectionPage {
 	signal pinUnknown
 	signal showInfoView
 
+	margins: Constants.pane_padding * 2
+	spacing: Constants.component_spacing
+
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
 
 		onClicked: cancel()
 	}
 
-	GFlickableColumnLayout {
-		id: layout
-		anchors.fill: parent
+	TintableIcon {
+		Layout.alignment: Qt.AlignHCenter
+		source: "qrc:///images/info.svg"
+		sourceSize.height: Style.dimens.header_icon_size
+		tintColor: Style.color.control
+	}
+	PaneTitle {
+		Layout.alignment: Qt.AlignHCenter
+		//: LABEL ANDROID IOS
+		text: qsTr("Do you know your six-digit ID card PIN?")
+	}
+	GText {
+		Layout.alignment: Qt.AlignHCenter
+		horizontalAlignment: Text.AlignHCenter
+		//: LABEL ANDROID IOS
+		text: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
+	}
+	GText {
+		Layout.alignment: Qt.AlignHCenter
+		horizontalAlignment: Text.AlignHCenter
+		//: LABEL ANDROID IOS
+		text: qsTr("To set up a Smart-eID you also need to have assigned a six-digit PIN beforehand.")
+		visible: WorkflowModel.isSmartSupported
+	}
+	MoreInformationLink {
+		id: moreInformationLink
+
+		Layout.alignment: Qt.AlignCenter
+		Layout.topMargin: Constants.component_spacing
+
+		onClicked: root.showInfoView()
+	}
+	GSpacer {
+		Layout.fillHeight: true
+	}
+	RowLayout {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
 		spacing: Constants.component_spacing
 
-		StatusIcon {
-			Layout.alignment: Qt.AlignHCenter
-			Layout.preferredHeight: Style.dimens.header_icon_size
-			Layout.preferredWidth: Style.dimens.header_icon_size
-			source: "qrc:///images/status_info.svg"
-		}
-		GPane {
-			Layout.alignment: Qt.AlignHCenter
+		GButton {
+			Layout.alignment: Qt.AlignVCenter
 			Layout.fillWidth: true
-			Layout.maximumWidth: Style.dimens.max_text_width
+			Layout.maximumWidth: Style.dimens.max_text_width / 2
+			Layout.preferredWidth: Style.dimens.max_text_width / 2
 
 			//: LABEL ANDROID IOS
-			title: qsTr("Do you know your six-digit ID card PIN?")
+			text: qsTr("No")
 
-			GText {
-
-				//: LABEL ANDROID IOS
-				text: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
-				width: parent.width
-			}
+			onClicked: pinUnknown()
 		}
-		MoreInformationLink {
-			id: moreInformationLink
-			Layout.alignment: Qt.AlignCenter
-			Layout.maximumWidth: layout.effectiveContentWidth
-			Layout.topMargin: Constants.component_spacing
-
-			onClicked: root.showInfoView()
-		}
-		GSpacer {
-			Layout.fillHeight: true
-		}
-		RowLayout {
-			Layout.alignment: Qt.AlignHCenter
+		GButton {
+			Layout.alignment: Qt.AlignVCenter
 			Layout.fillWidth: true
-			spacing: Constants.component_spacing
+			Layout.maximumWidth: Style.dimens.max_text_width / 2
+			Layout.preferredWidth: Style.dimens.max_text_width / 2
 
-			GButton {
-				Layout.alignment: Qt.AlignVCenter
-				Layout.fillWidth: true
-				Layout.maximumWidth: Style.dimens.max_text_width / 2
+			//: LABEL ANDROID IOS
+			text: qsTr("Yes")
 
-				//: LABEL ANDROID IOS
-				text: qsTr("No")
-
-				onClicked: pinUnknown()
-			}
-			GButton {
-				Layout.alignment: Qt.AlignVCenter
-				Layout.fillWidth: true
-				Layout.maximumWidth: Style.dimens.max_text_width / 2
-
-				//: LABEL ANDROID IOS
-				text: qsTr("Yes")
-
-				onClicked: pinKnown()
-			}
+			onClicked: pinKnown()
 		}
 	}
 }

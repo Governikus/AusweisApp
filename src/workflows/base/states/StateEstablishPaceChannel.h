@@ -34,8 +34,7 @@ class StateEstablishPaceChannel
 		void run() override;
 		void onUserCancelled() override;
 
-		void abortToChangePin(FailureCode::Reason pReason);
-		void handleNpaPosition(CardReturnCode pReturnCode);
+		void handleNpaPosition(CardReturnCode pReturnCode) const;
 
 	private Q_SLOTS:
 		void onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand);

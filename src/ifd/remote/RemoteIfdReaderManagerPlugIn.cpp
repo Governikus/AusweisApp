@@ -5,8 +5,6 @@
 #include "RemoteIfdReaderManagerPlugIn.h"
 
 #include "AppSettings.h"
-#include "IfdReader.h"
-#include "Reader.h"
 #include "RemoteIfdClient.h"
 
 #include <QLoggingCategory>
@@ -19,14 +17,15 @@ Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
 void RemoteIfdReaderManagerPlugIn::connectToPairedReaders()
 {
-	if (!mConnectToPairedReaders || mConnectionCheckInProgress)
+	if (!mConnectToPairedReaders)
 	{
 		return;
 	}
 
-	mConnectionCheckInProgress = true;
 	const auto ifdClient = getIfdClient();
 	connect(ifdClient, &IfdClient::fireRemoteDevicesInfo, this, &RemoteIfdReaderManagerPlugIn::continueConnectToPairedReaders);
+	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteIfdReaderManagerPlugIn::onDeviceVanished);
+	connect(ifdClient, &IfdClient::fireEstablishConnectionDone, this, &RemoteIfdReaderManagerPlugIn::onEstablishConnectionDone);
 	QMetaObject::invokeMethod(ifdClient, &IfdClient::requestRemoteDevices, Qt::QueuedConnection);
 }
 
@@ -51,19 +50,42 @@ void RemoteIfdReaderManagerPlugIn::continueConnectToPairedReaders(const QVector<
 		// If already connected: skip.
 		if (getDispatchers().contains(ifdId))
 		{
+			mConnectionAttempts.removeAll(ifdId);
 			continue;
 		}
 
 		const RemoteServiceSettings::RemoteInfo remoteInfo = remoteServiceSettings.getRemoteInfo(ifdId);
 		// If we find a remote info for this fingerprint (IfdId), then the remote device is paired.
-		if (remoteInfo.getFingerprint() == ifdId)
+		if (remoteInfo.getFingerprint() == ifdId && !mConnectionAttempts.contains(ifdId))
 		{
+			mConnectionAttempts << ifdId;
 			QMetaObject::invokeMethod(ifdClient, [ifdClient, remoteDevice] {
 					ifdClient->establishConnection(remoteDevice, QString());
 				}, Qt::QueuedConnection);
 		}
 	}
-	mConnectionCheckInProgress = false;
+}
+
+
+void RemoteIfdReaderManagerPlugIn::onDeviceVanished(const QSharedPointer<IfdListEntry>& pEntry)
+{
+	const auto& ifdId = pEntry->getIfdDescriptor().getIfdId();
+	if (mConnectionAttempts.contains(ifdId))
+	{
+		qCInfo(card_remote) << "Removing" << ifdId << "from connection attempt list as it has vanished";
+		mConnectionAttempts.removeAll(ifdId);
+	}
+}
+
+
+void RemoteIfdReaderManagerPlugIn::onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus)
+{
+	const auto& ifdId = pEntry->getIfdDescriptor().getIfdId();
+	if (mConnectionAttempts.contains(ifdId))
+	{
+		qCInfo(card_remote) << "Removing" << ifdId << "from connection attempt list as the request finished with" << pStatus;
+		mConnectionAttempts.removeAll(ifdId);
+	}
 }
 
 
@@ -71,7 +93,7 @@ RemoteIfdReaderManagerPlugIn::RemoteIfdReaderManagerPlugIn()
 	: IfdReaderManagerPlugIn(ReaderManagerPlugInType::REMOTE_IFD, true)
 	, mScanTimer()
 	, mConnectToPairedReaders(true)
-	, mConnectionCheckInProgress(false)
+	, mConnectionAttempts()
 {
 	mScanTimer.setInterval(1000);
 	connect(&mScanTimer, &QTimer::timeout, this, &RemoteIfdReaderManagerPlugIn::connectToPairedReaders);

@@ -4,8 +4,6 @@
 
 #include "MsgHandlerAccessRights.h"
 
-#include "JsonValueRef.h"
-
 #include <QJsonArray>
 
 using namespace governikus;
@@ -49,7 +47,7 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 
 	if (!pContext->getAccessRightManager()->getOptionalAccessRights().isEmpty())
 	{
-		for (JsonValueRef entry : pChat)
+		for (const QJsonValueConstRef entry : pChat)
 		{
 			if (!entry.isString())
 			{
@@ -93,13 +91,27 @@ QJsonArray MsgHandlerAccessRights::getAccessRights(const QSet<AccessRight>& pRig
 
 	QList<AccessRight> accessRights = pRights.values();
 	std::sort(accessRights.rbegin(), accessRights.rend());
-	for (auto entry : std::as_const(accessRights))
+	for (const auto& entry : std::as_const(accessRights))
 	{
 		const QLatin1String name = AccessRoleAndRightsUtil::toTechnicalName(entry);
 		if (name.size())
 		{
 			array += name;
 		}
+	}
+
+	return array;
+}
+
+
+QJsonArray MsgHandlerAccessRights::getAcceptedEidTypes(const QSharedPointer<const AuthContext>& pContext) const
+{
+	QJsonArray array;
+
+	const auto& eidTypes = pContext->getAcceptedEidTypes();
+	for (const auto& type : eidTypes)
+	{
+		array += Enum<AcceptedEidType>::getName(type);
 	}
 
 	return array;
@@ -115,8 +127,12 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	chat[QLatin1String("required")] = getAccessRights(accessRightManager->getRequiredAccessRights());
 	chat[QLatin1String("optional")] = getAccessRights(accessRightManager->getOptionalAccessRights());
 	chat[QLatin1String("effective")] = getAccessRights(accessRightManager->getEffectiveAccessRights());
-
 	mJsonObject[QLatin1String("chat")] = chat;
+
+#if __has_include("SmartManager.h")
+	mJsonObject[QLatin1String("acceptedEidTypes")] = getAcceptedEidTypes(pContext);
+#endif
+
 	if (const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo(); !transactionInfo.isEmpty())
 	{
 		mJsonObject[QLatin1String("transactionInfo")] = transactionInfo;

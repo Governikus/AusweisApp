@@ -5,8 +5,6 @@
 #include "MobileEIDTypeInfo.h"
 
 #include "ASN1TemplateUtil.h"
-#include "ASN1Util.h"
-#include "SecurityProtocol.h"
 
 
 using namespace governikus;

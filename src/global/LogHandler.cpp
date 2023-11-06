@@ -205,7 +205,7 @@ bool LogHandler::hasCriticalLog() const
 }
 
 
-int LogHandler::getCriticalLogCapacity() const
+qsizetype LogHandler::getCriticalLogCapacity() const
 {
 	return mCriticalLogWindow.capacity();
 }
@@ -259,9 +259,9 @@ void LogHandler::copyMessageLogContext(const QMessageLogContext& pSource,
 		const QByteArray& pFunction,
 		const QByteArray& pCategory) const
 {
-	pDestination.file = pFilename.isNull() ? pSource.file : pFilename.constData();
-	pDestination.function = pFunction.isNull() ? pSource.function : pFunction.constData();
-	pDestination.category = pCategory.isNull() ? pSource.category : pCategory.constData();
+	pDestination.file = pFilename.isNull() ? "" : pFilename.constData();
+	pDestination.function = pFunction.isNull() ? "" : pFunction.constData();
+	pDestination.category = pCategory.isNull() ? "" : pCategory.constData();
 
 	pDestination.line = pSource.line;
 	pDestination.version = pSource.version;
@@ -304,7 +304,7 @@ QByteArray LogHandler::formatFunction(const char* const pFunction, const QByteAr
 	}
 
 	// Trim function name
-	const auto size = mFunctionFilenameSize - 3 - pFilename.size() - QString::number(pLine).size();
+	const auto size = mFunctionFilenameSize - 3 - pFilename.size() - QByteArray::number(pLine).size();
 
 	if (size >= function.size())
 	{
@@ -338,9 +338,11 @@ QByteArray LogHandler::formatCategory(const QByteArray& pCategory) const
 
 QString LogHandler::getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const
 {
-	const auto paddingSize = (pContext.function == nullptr && pContext.file == nullptr && pContext.line == 0) ?
-			mFunctionFilenameSize - 18 : // padding for nullptr == "unknown(unknown:0)"
-			mFunctionFilenameSize - 3 - static_cast<int>(qstrlen(pContext.function)) - static_cast<int>(qstrlen(pContext.file)) - QString::number(pContext.line).size();
+	const auto paddingSize = mFunctionFilenameSize
+			- 3
+			- static_cast<int>(qstrlen(pContext.function))
+			- static_cast<int>(qstrlen(pContext.file))
+			- QByteArray::number(pContext.line).size();
 
 	QString padding;
 	padding.reserve(paddingSize + pMsg.size() + 3);

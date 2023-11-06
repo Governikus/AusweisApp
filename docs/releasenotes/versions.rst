@@ -1,6 +1,14 @@
 Versionen
 =========
 
+Versionszweig 2.0
+-----------------
+.. toctree::
+   :maxdepth: 1
+
+   2.0.0
+
+
 Versionszweig 1.26
 ------------------
 .. toctree::

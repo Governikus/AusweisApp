@@ -1,11 +1,11 @@
 iOS
 ===
-This chapter deals with the iOS specific properties of the AusweisApp2 SDK.
-The AusweisApp2 core is encapsulated into an **XCFramework** which needs to
+This chapter deals with the iOS specific properties of the |AppName| SDK.
+The |AppName| core is encapsulated into an **XCFramework** which needs to
 be linked into your application.
 
 Subsequent sections deal with the SDK interface itself and explain which
-steps are necessary in order to communicate with the AusweisApp2 SDK.
+steps are necessary in order to communicate with the |AppName| SDK.
 
 .. important::
    Apple released the necessary NFC API with iOS 13.0!
@@ -18,9 +18,9 @@ Use XCFramework
 The interface ``AusweisApp2.h`` of the SDK for iOS is provided as **C-Header**
 that you need to import/include into your application. It grants access to
 start and shutdown a separate background thread with the integrated
-AusweisApp2 core.
+|AppName| core.
 
-After you established a connection to the AusweisApp2 SDK your application
+After you established a connection to the |AppName| SDK your application
 can send :doc:`commands` and receive :doc:`messages`.
 
 
@@ -56,14 +56,14 @@ in Objective-C classes and call the functions of the ``AusweisApp2.h`` header.
    Added optional parameter ``pCmdline`` to function ``ausweisapp2_init``.
 
 
-First, you need to define a callback function that will be called by the AusweisApp2
+First, you need to define a callback function that will be called by the |AppName|
 to request or provide additional information. If your application initializes the
 SDK you must pass that callback to ``ausweisapp2_init``. That function will return
 ``false`` if the callback is ``NULL`` or the SDK is already running.
 The Parameter ``pCmdline`` is optional and can be ``NULL``. This allows your application
 to provide additional commandline arguments like ``--no-loghandler``.
 
-After you called that function the AusweisApp2 SDK will start up. If the
+After you called that function the |AppName| SDK will start up. If the
 initialization is finished the SDK calls your callback function once with
 ``NULL`` as parameter to indicate that it is ready to accept :doc:`commands`.
 Do not call ``ausweisapp2_send`` until your callback received that message, otherwise
@@ -72,17 +72,17 @@ that command will be ignored.
 Once the SDK is ready to go you can send :doc:`commands` by ``ausweisapp2_send``.
 Your callback will receive the :doc:`messages`.
 
-If you call ``ausweisapp2_shutdown`` the AusweisApp2 SDK will be terminated. This
-function joins the thread of the AusweisApp2 and blocks until the AusweisApp2 is
+If you call ``ausweisapp2_shutdown`` the |AppName| SDK will be terminated. This
+function joins the thread of the |AppName| and blocks until the |AppName| is
 finished. You should not call this function in your callback as it is called
-by the AusweisApp2 thread. In that case ``ausweisapp2_shutdown`` cannot be a
+by the |AppName| thread. In that case ``ausweisapp2_shutdown`` cannot be a
 blocking call to avoid a deadlock.
 If you call this function while a workflow is running the workflow will be
 canceled automatically before the shutdown.
 
 
 .. important::
-   Your callback will be called by the separate AusweisApp2 thread. Do **not**
+   Your callback will be called by the separate |AppName| thread. Do **not**
    make long running or blocking calls! It is recommended to use an async dispatcher.
 
    Also, you should not call ``ausweisapp2_send`` or ``ausweisapp2_shutdown`` within
@@ -104,7 +104,7 @@ a message why your application needs access to the NFC hardware.
   </array>
 
   <key>NFCReaderUsageDescription</key>
-  <string>AusweisApp2 needs NFC to access the ID card.</string>
+  <string>AusweisApp needs NFC to access the ID card.</string>
 
 
 .. seealso::
@@ -141,7 +141,7 @@ of reader sessions.
 Logging
 -------
 
-The AusweisApp2 uses default logging of iOS and has its own log file.
+The |AppName| uses default logging of iOS and has its own log file.
 It is **recommended** to collect that log file if an error occurs in
 your application to receive better support.
 
@@ -149,14 +149,14 @@ The log file is in your application path:
 
 .. code-block:: text
 
-    NSTemporaryDirectory() + /AusweisApp2.XXXXXX.log
+    NSTemporaryDirectory() + /AusweisApp.XXXXXX.log
 
 The *XXXXXX* characters will be replaced by an automatically generated
 portion of the filename to avoid conflicts with previous instances.
 
-A new log file will be created for each new instance of the AusweisApp2 and
+A new log file will be created for each new instance of the |AppName| and
 will be deleted after a correct shutdown.
 In case of old or multiple log files, it is highly probable that the
 previous instance crashed.
 
-The AusweisApp2 deletes any log files that are older than 14 days.
+The |AppName| deletes any log files that are older than 14 days.

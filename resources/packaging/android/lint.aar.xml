@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Obsolete Gradle Dependency.
-
-        The used version is provided by Qt in the build.gradle. Its not
-        practical to update Qt on every new version. Providing our own
-        build.gradle would bind us to take over the changes in Qt into
-        our own build.gradle frequently.
-    -->
-    <issue id="GradleDependency">
-        <ignore path="build.gradle" />
-    </issue>
-
     <!-- Unused resources.
 
         Unused resources make applications larger and slow down builds.

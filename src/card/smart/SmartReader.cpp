@@ -15,8 +15,8 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_smart)
 
 
-SmartReader::SmartReader()
-	: ConnectableReader(ReaderManagerPlugInType::SMART, QStringLiteral("Smart"))
+SmartReader::SmartReader(const QString& pName)
+	: ConnectableReader(ReaderManagerPlugInType::SMART, pName)
 	, mCard()
 {
 }
@@ -30,22 +30,17 @@ Card* SmartReader::getCard() const
 
 void SmartReader::connectReader()
 {
-	switch (const auto& status = SmartManager::get()->status())
+	const auto& smartManager = SmartManager::get();
+	if (const auto& status = smartManager->status(); status != EidStatus::PERSONALIZED)
 	{
-		case EidStatus::PERSONALIZED:
-		{
-			qCDebug(card_smart) << "targetDetected, type: Smart";
-
-			mCard.reset(new SmartCard());
-			QSharedPointer<CardConnectionWorker> cardConnection = createCardConnectionWorker();
-			fetchCardInfo(cardConnection);
-			shelveCard();
-			break;
-		}
-
-		default:
-			qCDebug(card_smart) << "Skipped to connect the reader because the Smart-eID is not personalized:" << status;
+		qCDebug(card_smart) << "Skipped to connect the reader because the Smart-eID is not personalized:" << status;
+		return;
 	}
+
+	qCDebug(card_smart) << "targetDetected, type: Smart";
+	mCard.reset(new SmartCard());
+	fetchCardInfo();
+	shelveCard();
 }
 
 

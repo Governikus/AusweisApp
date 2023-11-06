@@ -36,14 +36,14 @@ class AppUpdater
 
 		void clearDownloaderConnection();
 		bool download(const QUrl& pUrl);
-		QString save(const QByteArray& pData, const QString& pFilename);
+		QString save(const QByteArray& pData, const QString& pFilename) const;
 
 	public:
-		bool abortDownload();
+		bool abortDownload() const;
 		bool downloadUpdate();
 		bool checkAppUpdate(bool pForceUpdate = false);
 		[[nodiscard]] const AppUpdateData& getUpdateData() const;
-		void skipVersion(const QString& pVersion);
+		void skipVersion(const QString& pVersion) const;
 
 #ifndef QT_NO_DEBUG
 		[[nodiscard]] QString getDownloadPath() const;

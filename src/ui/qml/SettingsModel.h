@@ -18,6 +18,12 @@
 namespace governikus
 {
 
+defineEnumType(ModeOption,
+		ON,
+		OFF,
+		AUTO
+		)
+
 class SettingsModel
 	: public QObject
 {
@@ -33,7 +39,6 @@ class SettingsModel
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
 	Q_PROPERTY(bool showAccessRights READ getShowAccessRights WRITE setShowAccessRights NOTIFY fireShowAccessRightsChanged)
 	Q_PROPERTY(QString serverName READ getServerName WRITE setServerName NOTIFY fireDeviceNameChanged)
-	Q_PROPERTY(bool historyEnabled READ isHistoryEnabled WRITE setHistoryEnabled NOTIFY fireHistoryEnabledChanged)
 	Q_PROPERTY(bool useScreenKeyboard READ isUseScreenKeyboard WRITE setUseScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool visualPrivacy READ isVisualPrivacy WRITE setVisualPrivacy NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
@@ -43,6 +48,7 @@ class SettingsModel
 	Q_PROPERTY(UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
+	Q_PROPERTY(bool showTrayIcon READ showTrayIcon NOTIFY fireShowTrayIconChanged)
 	Q_PROPERTY(bool autoStartSetByAdmin READ autoStartIsSetByAdmin CONSTANT)
 	Q_PROPERTY(bool autoUpdateAvailable READ isAutoUpdateAvailable CONSTANT)
 	Q_PROPERTY(bool autoCloseWindowAfterAuthentication READ isAutoCloseWindowAfterAuthentication WRITE setAutoCloseWindowAfterAuthentication NOTIFY fireAutoCloseWindowAfterAuthenticationChanged)
@@ -55,6 +61,8 @@ class SettingsModel
 	Q_PROPERTY(QUrl customProxyUrl READ getCustomProxyUrl CONSTANT)
 	Q_PROPERTY(bool customProxyAttributesPresent READ isCustomProxyAttributesPresent CONSTANT)
 	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy NOTIFY fireUseCustomProxyChanged)
+	Q_PROPERTY(bool useSystemFont READ isUseSystemFont WRITE setUseSystemFont NOTIFY fireUseSystemFontChanged)
+	Q_PROPERTY(ModeOption userDarkMode READ getDarkMode WRITE setDarkMode NOTIFY fireDarkModeChanged)
 
 	private:
 		bool mAdvancedSettings;
@@ -66,35 +74,30 @@ class SettingsModel
 
 	public:
 		[[nodiscard]] QString getLanguage() const;
-		void setLanguage(const QString& pLanguage);
+		void setLanguage(const QString& pLanguage) const;
 
 		[[nodiscard]] bool isAdvancedSettings() const;
 		void setAdvancedSettings(bool pEnabled);
 
 		[[nodiscard]] bool isDeveloperOptions() const;
-		void setDeveloperOptions(bool pEnabled);
+		void setDeveloperOptions(bool pEnabled) const;
 
 		[[nodiscard]] bool isDeveloperMode() const;
-		void setDeveloperMode(bool pEnabled);
+		void setDeveloperMode(bool pEnabled) const;
 
 		[[nodiscard]] bool useSelfauthenticationTestUri() const;
-		void setUseSelfauthenticationTestUri(bool pUse);
+		void setUseSelfauthenticationTestUri(bool pUse) const;
 
 		[[nodiscard]] QString getServerName() const;
 		void setServerName(const QString& name);
 
-		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint);
-		[[nodiscard]] Q_INVOKABLE int removeHistory(const QString& pPeriodToRemove);
-		[[nodiscard]] Q_INVOKABLE int removeEntireHistory();
+		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint) const;
 
 		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
 
 		[[nodiscard]] bool getShowAccessRights() const;
 		void setShowAccessRights(bool pShowAccessRights);
-
-		[[nodiscard]] bool isHistoryEnabled() const;
-		void setHistoryEnabled(bool pEnabled);
 
 		[[nodiscard]] bool isUseScreenKeyboard() const;
 		void setUseScreenKeyboard(bool pUseScreenKeyboard);
@@ -112,7 +115,7 @@ class SettingsModel
 		void setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed);
 
 		[[nodiscard]] bool isSimulatorEnabled() const;
-		void setSimulatorEnabled(bool pEnabled);
+		void setSimulatorEnabled(bool pEnabled) const;
 
 		[[nodiscard]] UiModule getStartupModule() const;
 		void setStartupModule(UiModule pModule);
@@ -129,6 +132,7 @@ class SettingsModel
 		[[nodiscard]] bool isAutoUpdateCheck() const;
 		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
+		[[nodiscard]] bool showTrayIcon() const;
 
 		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
@@ -137,19 +141,29 @@ class SettingsModel
 		void setTransportPinReminder(bool pTransportPinReminder);
 
 		[[nodiscard]] bool isShowInAppNotifications() const;
-		void setShowInAppNotifications(bool pShowInAppNotifications);
+		void setShowInAppNotifications(bool pShowInAppNotifications) const;
 
 		[[nodiscard]] QUrl getCustomProxyUrl() const;
 		[[nodiscard]] bool isCustomProxyAttributesPresent() const;
 		[[nodiscard]] bool isUseCustomProxy() const;
-		void setUseCustomProxy(bool pUseCustomProxy);
+		void setUseCustomProxy(bool pUseCustomProxy) const;
+
+		[[nodiscard]] bool isUseSystemFont() const;
+		void setUseSystemFont(bool pUseSystemFont) const;
+
+		[[nodiscard]] ModeOption getDarkMode() const;
+		void setDarkMode(ModeOption pMode);
 
 		[[nodiscard]] Q_INVOKABLE bool requestStoreFeedback() const;
-		Q_INVOKABLE void hideFutureStoreFeedbackDialogs();
+		Q_INVOKABLE void hideFutureStoreFeedbackDialogs() const;
 
-		Q_INVOKABLE void updateAppcast();
+		Q_INVOKABLE void updateAppcast() const;
 
 		[[nodiscard]] AppUpdateDataModel* getAppUpdateData() const;
+
+#ifndef QT_NO_DEBUG
+		Q_INVOKABLE void resetHideableDialogs() const;
+#endif
 
 	public Q_SLOTS:
 		void onTranslationChanged();
@@ -161,7 +175,6 @@ class SettingsModel
 		void fireDeviceNameChanged();
 		void firePinPadModeChanged();
 		void fireShowAccessRightsChanged();
-		void fireHistoryEnabledChanged();
 		void fireScreenKeyboardChanged();
 		void fireCanAllowedChanged();
 		void fireStartupModuleChanged();
@@ -173,6 +186,9 @@ class SettingsModel
 		void fireAppUpdateDataChanged();
 		void fireShowInAppNotificationsChanged();
 		void fireUseCustomProxyChanged();
+		void fireUseSystemFontChanged();
+		void fireDarkModeChanged();
+		void fireShowTrayIconChanged();
 
 };
 

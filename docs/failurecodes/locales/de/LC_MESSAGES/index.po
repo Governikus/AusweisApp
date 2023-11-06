@@ -19,16 +19,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
-
-msgid "AusweisApp2"
+ 
+msgid "AusweisApp"
 msgstr ""
 
-msgid ".. image:: ../sdk/Logo_AusweisApp2.png"
+msgid ".. image:: ../sdk/AusweisApp_Logo.svg"
 msgstr ""
 
 msgid "Table of contents"
 msgstr "Inhaltsverzeichnis"
-
-#~ msgid ".. image:: Logo_AusweisApp2.png"
-#~ msgstr ""
 

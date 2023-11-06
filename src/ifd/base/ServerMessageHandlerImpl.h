@@ -44,6 +44,7 @@ class ServerMessageHandlerImpl
 		void handleIfdTransmit(const QJsonObject& pJsonObject);
 		void handleIfdEstablishPaceChannel(const QJsonObject& pJsonObject);
 		void handleIfdModifyPIN(const QJsonObject& pJsonObject);
+		void sendIfdStatus(const ReaderInfo& pReaderInfo);
 
 	private Q_SLOTS:
 		void onCreateCardConnectionCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);

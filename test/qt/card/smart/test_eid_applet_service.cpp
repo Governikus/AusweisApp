@@ -24,7 +24,7 @@ class test_EidAppletService
 
 		void getSetSmartEidStatus()
 		{
-			QCOMPARE(getSmartEidStatus(), EidStatus::UNAVAILABLE);
+			QCOMPARE(getSmartEidStatus(), EidStatus::INTERNAL_ERROR);
 			setSmartEidStatus(EidStatus::PERSONALIZED);
 			QCOMPARE(getSmartEidStatus(), EidStatus::PERSONALIZED);
 			QCOMPARE(getSmartEidStatus(), EidStatus::PERSONALIZED);

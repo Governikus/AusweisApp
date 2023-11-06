@@ -26,18 +26,15 @@ class test_ChangePinModel
 			QSharedPointer<ChangePinContext> context(new ChangePinContext());
 
 			QSignalSpy resultChanged(model, &ChangePinModel::fireResultChanged);
-			QSignalSpy newContextSet(model, &ChangePinModel::fireNewContextSet);
 
 			model->resetChangePinContext();
 			QCOMPARE(resultChanged.count(), 1);
-			QCOMPARE(newContextSet.count(), 0);
 
 			Q_EMIT context->fireSuccessMessageChanged();
 			QCOMPARE(resultChanged.count(), 1);
 
 			model->resetChangePinContext(context);
 			QCOMPARE(resultChanged.count(), 2);
-			QCOMPARE(newContextSet.count(), 1);
 
 			Q_EMIT context->fireSuccessMessageChanged();
 			QCOMPARE(resultChanged.count(), 3);

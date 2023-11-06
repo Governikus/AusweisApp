@@ -39,15 +39,14 @@ void PlatformTools::restoreToTaskbar()
 void ensureNotificationPermission(std::function<void()> pCallback)
 {
 #ifdef QT_NO_DEBUG
-	if (@available(macOS 10.14, *))
-	{
-		UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
-		[center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* _Nonnull settings){
-			if (settings.authorizationStatus == UNAuthorizationStatusAuthorized)
-			{
-				pCallback();
-				return;
-			}
+	UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+	[center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings* _Nonnull settings){
+		if (settings.authorizationStatus == UNAuthorizationStatusAuthorized)
+		{
+			pCallback();
+		}
+		else
+		{
 			const auto& requestedOptions = UNAuthorizationOptionProvidesAppNotificationSettings & UNAuthorizationOptionAlert;
 			[center requestAuthorizationWithOptions:requestedOptions completionHandler:^(BOOL granted, NSError* _Nullable error){
 				if (error != nil)
@@ -59,8 +58,8 @@ void ensureNotificationPermission(std::function<void()> pCallback)
 					pCallback();
 				}
 			}];
-		}];
-	}
+		}
+	}];
 #else
 	Q_UNUSED(pCallback)
 #endif
@@ -70,22 +69,19 @@ void ensureNotificationPermission(std::function<void()> pCallback)
 void PlatformTools::postNotification(const QString& pTitle, const QString& pMessage)
 {
 #ifdef QT_NO_DEBUG
-	if (@available(macOS 10.14, *))
-	{
-		ensureNotificationPermission([pTitle, pMessage]{
-				UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
-				UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-				content.title = pTitle.toNSString();
-				content.body = pMessage.toNSString();
-				UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"AA2Notification" content:content trigger:nil];
-				[center addNotificationRequest:request withCompletionHandler:^(NSError* _Nullable error){
-					if (error != nil)
-					{
-						qCDebug(gui) << "Failed to post notification:" << error.localizedDescription;
-					}
-				}];
-			});
-	}
+	ensureNotificationPermission([pTitle, pMessage]{
+			UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+			UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+			content.title = pTitle.toNSString();
+			content.body = pMessage.toNSString();
+			UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"AA2Notification" content:content trigger:nil];
+			[center addNotificationRequest:request withCompletionHandler:^(NSError* _Nullable error){
+				if (error != nil)
+				{
+					qCDebug(gui) << "Failed to post notification:" << error.localizedDescription;
+				}
+			}];
+		});
 #else
 	Q_UNUSED(pTitle)
 	Q_UNUSED(pMessage)

@@ -35,22 +35,13 @@ SymmetricCipher::SymmetricCipher(const SecurityProtocol& pSecurityProtocol, cons
 	}
 
 	mCtx = EVP_CIPHER_CTX_new();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	EVP_CIPHER_CTX_init(mCtx);
-#else
 	EVP_CIPHER_CTX_reset(mCtx);
-#endif
 }
 
 
 SymmetricCipher::~SymmetricCipher()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	EVP_CIPHER_CTX_cleanup(mCtx);
-#else
 	EVP_CIPHER_CTX_reset(mCtx);
-#endif
-
 	EVP_CIPHER_CTX_free(mCtx);
 }
 
@@ -76,7 +67,10 @@ QByteArray SymmetricCipher::encrypt(const QByteArray& pPlainData)
 	}
 	EVP_CIPHER_CTX_set_padding(mCtx, 0);
 
-	if (pPlainData.size() % EVP_CIPHER_block_size(EVP_CIPHER_CTX_cipher(mCtx)) != 0)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+	#define EVP_CIPHER_CTX_get0_cipher(x) EVP_CIPHER_CTX_cipher(x)
+#endif
+	if (pPlainData.size() % EVP_CIPHER_block_size(EVP_CIPHER_CTX_get0_cipher(mCtx)) != 0)
 	{
 		qCCritical(card) << "Plain data length is not a multiple of the block size";
 		return QByteArray();
@@ -84,7 +78,7 @@ QByteArray SymmetricCipher::encrypt(const QByteArray& pPlainData)
 
 	QVector<uchar> cryptogram(pPlainData.size());
 	int update_len = 0;
-	if (!EVP_EncryptUpdate(mCtx, cryptogram.data(), &update_len, reinterpret_cast<const uchar*>(pPlainData.constData()), pPlainData.size()))
+	if (!EVP_EncryptUpdate(mCtx, cryptogram.data(), &update_len, reinterpret_cast<const uchar*>(pPlainData.constData()), static_cast<int>(pPlainData.size())))
 	{
 		qCCritical(card) << "Error on EVP_EncryptUpdate";
 		return QByteArray();
@@ -138,7 +132,10 @@ QByteArray SymmetricCipher::decrypt(const QByteArray& pEncryptedData)
 	}
 	EVP_CIPHER_CTX_set_padding(mCtx, 0);
 
-	if (pEncryptedData.size() % EVP_CIPHER_block_size(EVP_CIPHER_CTX_cipher(mCtx)) != 0)
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+	#define EVP_CIPHER_CTX_get0_cipher(x) EVP_CIPHER_CTX_cipher(x)
+#endif
+	if (pEncryptedData.size() % EVP_CIPHER_block_size(EVP_CIPHER_CTX_get0_cipher(mCtx)) != 0)
 	{
 		qCCritical(card) << "Encrypted data length is not a multiple of the block size";
 		return QByteArray();
@@ -146,7 +143,7 @@ QByteArray SymmetricCipher::decrypt(const QByteArray& pEncryptedData)
 
 	QVector<uchar> plaintext(pEncryptedData.size());
 	int update_len = 0;
-	if (!EVP_DecryptUpdate(mCtx, plaintext.data(), &update_len, reinterpret_cast<const uchar*>(pEncryptedData.constData()), pEncryptedData.size()))
+	if (!EVP_DecryptUpdate(mCtx, plaintext.data(), &update_len, reinterpret_cast<const uchar*>(pEncryptedData.constData()), static_cast<int>(pEncryptedData.size())))
 	{
 		qCCritical(card) << "Error on EVP_DecryptUpdate";
 		return QByteArray();

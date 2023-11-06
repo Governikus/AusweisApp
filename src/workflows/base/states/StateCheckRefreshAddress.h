@@ -44,7 +44,7 @@ class StateCheckRefreshAddress
 		[[nodiscard]] bool isMatchingSameOriginPolicyInDevMode() const;
 		void run() override;
 
-		QUrl determineSubjectUrl();
+		QUrl determineSubjectUrl() const;
 
 		void sendGetRequest();
 		void fetchServerCertificate();

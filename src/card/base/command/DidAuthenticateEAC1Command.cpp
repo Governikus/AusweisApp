@@ -4,8 +4,6 @@
 
 #include "DidAuthenticateEAC1Command.h"
 
-#include "BaseCardCommand.h"
-#include "CardConnection.h"
 #include "apdu/CommandApdu.h"
 
 #include <QLoggingCategory>

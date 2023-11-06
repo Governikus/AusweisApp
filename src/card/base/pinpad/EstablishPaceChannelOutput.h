@@ -9,8 +9,6 @@
 #pragma once
 
 #include "CardReturnCode.h"
-#include "SmartCardDefinitions.h"
-#include "asn1/CertificateDescription.h"
 #include "asn1/SecurityInfos.h"
 #include "pace/EstablishPaceChannelCode.h"
 
@@ -61,6 +59,7 @@ class EstablishPaceChannelOutput
 
 		void initMseStatusSetAt();
 		void initEfCardAccess();
+		bool findErrorCode(const QString& pOutputData);
 
 	public:
 		explicit EstablishPaceChannelOutput(CardReturnCode pPaceReturnCode = CardReturnCode::COMMAND_FAILED);

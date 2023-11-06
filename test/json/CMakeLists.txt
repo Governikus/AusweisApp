@@ -10,7 +10,7 @@ if(JSONSCHEMA_BIN)
 		endif()
 
 		get_filename_component(filename ${file} NAME)
-		set(schema ${RESOURCES_DIR}/json-schemas/${filename})
+		set(schema ${TEST_DIR}/json/${filename})
 
 		add_test(NAME ${filename} COMMAND ${JSONSCHEMA_BIN} -i ${file} ${schema})
 		set_tests_properties(${filename} PROPERTIES LABELS "json" TIMEOUT 10)

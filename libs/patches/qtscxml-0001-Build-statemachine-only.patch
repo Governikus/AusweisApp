@@ -1,0 +1,40 @@
+From 4766db9f067c4121e77d5e80767bbe83ecf59ffc Mon Sep 17 00:00:00 2001
+From: Andre Klitzing <andre.klitzing@governikus.de>
+Date: Tue, 12 Apr 2022 11:39:12 +0200
+Subject: Build statemachine only
+
+---
+ src/CMakeLists.txt   | 8 ++++----
+ tools/CMakeLists.txt | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git x/qtscxml/src/CMakeLists.txt y/qtscxml/src/CMakeLists.txt
+index 5fbfbd9d..2f94949d 100644
+--- x/qtscxml/src/CMakeLists.txt
++++ y/qtscxml/src/CMakeLists.txt
+@@ -2,10 +2,10 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ 
+ 
+-add_subdirectory(scxml)
++#add_subdirectory(scxml)
+ add_subdirectory(statemachine)
+ if(TARGET Qt::Qml)
+-    add_subdirectory(statemachineqml)
+-    add_subdirectory(scxmlqml)
++#    add_subdirectory(statemachineqml)
++#    add_subdirectory(scxmlqml)
+ endif()
+-add_subdirectory(plugins)
++#add_subdirectory(plugins)
+diff --git x/qtscxml/tools/CMakeLists.txt y/qtscxml/tools/CMakeLists.txt
+index c5831a40..234fa606 100644
+--- x/qtscxml/tools/CMakeLists.txt
++++ y/qtscxml/tools/CMakeLists.txt
+@@ -3,5 +3,5 @@
+ 
+ 
+ if(QT_FEATURE_commandlineparser)
+-    add_subdirectory(qscxmlc)
++    #add_subdirectory(qscxmlc)
+ endif()

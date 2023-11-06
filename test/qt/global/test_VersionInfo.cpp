@@ -47,11 +47,11 @@ class test_VersionInfo
 			QCOMPARE(jsonError.error, QJsonParseError::NoError);
 
 			const auto obj = json.object();
-			QCOMPARE(obj["Name"].toString(), QLatin1String("Test_global_VersionInfo"));
-			QCOMPARE(obj["Specification-Title"].toString(), QLatin1String("TR-03124"));
-			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.3"));
+			QCOMPARE(obj["Name"].toString(), QLatin1String("AusweisApp2"));
+			QCOMPARE(obj["Specification-Title"].toString(), QLatin1String("TR-03124-1"));
+			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.4"));
 			QCOMPARE(obj["Specification-Vendor"].toString(), QLatin1String("Federal Office for Information Security"));
-			QCOMPARE(obj["Implementation-Title"].toString(), QLatin1String("Test_global_VersionInfo"));
+			QCOMPARE(obj["Implementation-Title"].toString(), QLatin1String("AusweisApp2"));
 			QCOMPARE(obj["Implementation-Version"].toString(), QLatin1String("x.y.z"));
 			QCOMPARE(obj["Implementation-Vendor"].toString(), QLatin1String("Governikus GmbH & Co. KG"));
 		}
@@ -99,11 +99,11 @@ class test_VersionInfo
 		{
 			auto text = VersionInfo::getInstance().toText();
 
-			QVERIFY(text.contains(QLatin1String("Name: Test_global_VersionInfo")));
-			QVERIFY(text.contains(QLatin1String("Specification-Title: TR-03124")));
-			QVERIFY(text.contains(QLatin1String("Specification-Version: 1.3")));
+			QVERIFY(text.contains(QLatin1String("Name: AusweisApp2")));
+			QVERIFY(text.contains(QLatin1String("Specification-Title: TR-03124-1")));
+			QVERIFY(text.contains(QLatin1String("Specification-Version: 1.4")));
 			QVERIFY(text.contains(QLatin1String("Specification-Vendor: Federal Office for Information Security")));
-			QVERIFY(text.contains(QLatin1String("Implementation-Title: Test_global_VersionInfo")));
+			QVERIFY(text.contains(QLatin1String("Implementation-Title: AusweisApp2")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Version: x.y.z")));
 			QVERIFY(text.contains(QLatin1String("Implementation-Vendor: Governikus GmbH & Co. KG")));
 		}

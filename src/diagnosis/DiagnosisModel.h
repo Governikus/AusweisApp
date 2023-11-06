@@ -10,14 +10,19 @@
 #include "DiagnosisFirewallDetection.h"
 #include "SectionModel.h"
 #include "context/DiagnosisContext.h"
+#include "controller/DiagnosisController.h"
 
 #include <QAbstractListModel>
 #include <QMap>
-#include <QPair>
+#include <QScopedPointer>
 #include <QSharedPointer>
+#include <QString>
+#include <QUrl>
 #include <QVector>
 
+
 class test_DiagnosisModel;
+
 
 namespace governikus
 {
@@ -28,6 +33,8 @@ class DiagnosisModel
 	Q_OBJECT
 
 	friend class ::test_DiagnosisModel;
+
+	Q_PROPERTY(bool running READ isRunning NOTIFY fireRunningChanged)
 
 	private:
 		enum ContentRoles
@@ -45,8 +52,9 @@ class DiagnosisModel
 
 		QMap<Section, QSharedPointer<SectionModel>> mSections;
 		QSharedPointer<DiagnosisContext> mContext;
+		DiagnosisController mDiagnosisController;
 
-		QVector<ContentItem> mAusweisApp2Section;
+		QVector<ContentItem> mAusweisAppSection;
 		QVector<ContentItem> mTimestampSection;
 
 		bool mRemoteDeviceSectionRunning;
@@ -80,19 +88,21 @@ class DiagnosisModel
 		void disconnectSignals();
 
 		[[nodiscard]] QString boolToString(bool pBoolean) const;
+		[[nodiscard]] QString getAsPlaintext() const;
+
+		void initContent();
 
 	public:
-		explicit DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext);
+		explicit DiagnosisModel();
 		~DiagnosisModel() override;
 
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
-		[[nodiscard]] QString getCreationTime() const;
-		[[nodiscard]] QString getAsPlaintext() const;
+		[[nodiscard]] Q_INVOKABLE QString getCreationTime() const;
+		Q_INVOKABLE void saveToFile(const QUrl& pFilename) const;
 		[[nodiscard]] bool isRunning() const;
-		void reloadContent();
 
 	Q_SIGNALS:
 		void fireRunningChanged();

@@ -1,20 +1,20 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.LogModel 1.0
-import Governikus.Type.LogFilterModel 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.LogModel
+import Governikus.Type.LogFilterModel
+import Governikus.Type.ApplicationModel
 
 SectionPage {
 	id: root
-	sectionPageFlickable: logView
+
 	//: LABEL ANDROID IOS
 	title: qsTr("Log")
 
@@ -40,8 +40,14 @@ SectionPage {
 		}
 	}
 
+	Connections {
+		function onActivate() {
+			logView.highlightScrollbar();
+		}
+	}
 	LogFilterModel {
 		id: filterModel
+
 	}
 	ColumnLayout {
 		anchors.fill: parent
@@ -49,12 +55,14 @@ SectionPage {
 
 		Rectangle {
 			id: logSelector
+
 			Layout.fillWidth: true
-			Layout.preferredHeight: comboBox.height + Constants.text_spacing
-			color: Style.color.accent
+			Layout.preferredHeight: comboBox.height + Constants.pane_padding * 2
+			color: Style.color.pane_sublevel
 
 			GComboBox {
 				id: comboBox
+
 				Accessible.description: qsTr("Select log from list.")
 				model: LogModel.logFileNames
 
@@ -62,13 +70,14 @@ SectionPage {
 
 				anchors {
 					left: parent.left
-					leftMargin: Constants.text_spacing
+					leftMargin: Constants.pane_padding
 					right: filterButton.left
-					rightMargin: Constants.text_spacing
+					rightMargin: Constants.component_spacing
 					top: parent.top
+					topMargin: Constants.pane_padding
 				}
 			}
-			TitleBarButton {
+			TitleBarAction {
 				id: filterButton
 
 				property bool filter: false
@@ -76,13 +85,14 @@ SectionPage {
 				Accessible.checked: filter
 				Accessible.name: qsTr("Filter")
 				Accessible.role: Accessible.CheckBox
-				source: filter ? "qrc:///images/material_filter_off.svg" : "qrc:///images/material_filter.svg"
+				icon: filter ? "qrc:///images/filter_off.svg" : "qrc:///images/filter.svg"
+				iconTintColor: comboBox.textStyle.textColor
 
 				onClicked: filter = !filter
 
 				anchors {
-					margins: Constants.text_spacing
 					right: parent.right
+					rightMargin: Constants.pane_padding
 					verticalCenter: comboBox.verticalCenter
 				}
 			}
@@ -94,69 +104,70 @@ SectionPage {
 			spacing: Constants.text_spacing
 			visible: filterButton.filter
 
-			TitledSeparator {
+			GOptionsContainer {
 				Layout.fillWidth: true
-				contentMarginLeft: 0
-				contentMarginRight: 0
-				contentMarginTop: 0
-
+				containerPadding: Constants.pane_padding
+				containerSpacing: Constants.groupbox_spacing
 				//: LABEL ANDROID IOS
 				title: qsTr("Filter")
-			}
-			GText {
-				//: LABEL ANDROID IOS
-				text: qsTr("Level")
-				textStyle: Style.text.normal_accent
-			}
-			GridLayout {
-				Layout.fillWidth: true
-				columnSpacing: Constants.groupbox_spacing
-				columns: (width + columnSpacing) / (levelRepeater.maxItemWidth + columnSpacing)
-				rowSpacing: Constants.groupbox_spacing
 
-				GRepeater {
-					id: levelRepeater
-					model: filterModel.levels
+				GText {
+					font.bold: true
+					//: LABEL ANDROID IOS
+					text: qsTr("Level")
+					textStyle: Style.text.subline
+				}
+				Grid {
+					columnSpacing: Constants.groupbox_spacing
+					columns: (width + columnSpacing) / (levelRepeater.maxItemWidth + columnSpacing)
+					rowSpacing: Constants.groupbox_spacing
+					width: parent.width
 
-					delegate: GCheckBox {
-						Layout.fillWidth: true
-						checked: filterModel.selectedLevels.indexOf(text) !== -1
-						text: modelData
+					GRepeater {
+						id: levelRepeater
 
-						onCheckedChanged: filterModel.configureLevel(text, checked)
+						model: filterModel.levels
+
+						delegate: GCheckBox {
+							checked: filterModel.selectedLevels.indexOf(text) !== -1
+							text: modelData
+							width: levelRepeater.maxItemWidth
+
+							onCheckedChanged: filterModel.configureLevel(text, checked)
+						}
 					}
 				}
-			}
-			GText {
-				//: LABEL ANDROID IOS
-				text: qsTr("Category")
-				textStyle: Style.text.normal_accent
-			}
-			GridLayout {
-				Layout.fillWidth: true
-				columnSpacing: Constants.groupbox_spacing
-				columns: (width + columnSpacing) / (categoryRepeater.maxItemWidth + columnSpacing)
-				rowSpacing: Constants.groupbox_spacing
+				GText {
+					font.bold: true
+					//: LABEL ANDROID IOS
+					text: qsTr("Category")
+					textStyle: Style.text.subline
+				}
+				Grid {
+					columnSpacing: Constants.groupbox_spacing
+					columns: (width + columnSpacing) / (categoryRepeater.maxItemWidth + columnSpacing)
+					rowSpacing: Constants.groupbox_spacing
+					width: parent.width
 
-				GRepeater {
-					id: categoryRepeater
-					model: filterModel.categories
+					GRepeater {
+						id: categoryRepeater
 
-					delegate: GCheckBox {
-						Layout.fillWidth: true
-						checked: filterModel.selectedCategories.indexOf(text) !== -1
-						text: modelData
+						model: filterModel.categories
 
-						onCheckedChanged: filterModel.configureCategory(text, checked)
+						delegate: GCheckBox {
+							checked: filterModel.selectedCategories.indexOf(text) !== -1
+							text: modelData
+							width: categoryRepeater.maxItemWidth
+
+							onCheckedChanged: filterModel.configureCategory(text, checked)
+						}
 					}
 				}
-			}
-			GSpacer {
-				Layout.fillHeight: true
 			}
 		}
 		GListView {
 			id: logView
+
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			clip: true
@@ -194,7 +205,6 @@ SectionPage {
 				horizontalAlignment: Text.AlignHCenter
 				//: INFO ANDROID IOS No log entries, placeholder text.
 				text: qsTr("Currently there are no log entries matching your filter.")
-				textStyle: Style.text.normal_secondary
 				visible: logView.count === 0
 				width: parent.width - 2 * Constants.component_spacing
 			}

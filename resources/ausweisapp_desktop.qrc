@@ -1,25 +1,39 @@
 <RCC>
     <qresource prefix="/">
         <file>images/macos/appIcon.svg</file>
+        <file>images/desktop/autostart.svg</file>
         <file>images/desktop/info_white.svg</file>
+        <file>images/desktop/help.svg</file>
+        <file>images/desktop/help_icon.svg</file>
+        <file>images/desktop/home.svg</file>
         <file>images/desktop/titlebar_arrow.svg</file>
         <file>images/desktop/material_assistant.svg</file>
-        <file>images/desktop/material_bug_report.svg</file>
         <file>images/desktop/material_new_releases.svg</file>
         <file>images/desktop/material_rate_review.svg</file>
-        <file>images/desktop/material_save.svg</file>
-        <file>images/desktop/material_view_list.svg</file>
-        <file>images/desktop/material_notifications.svg</file>
+        <file>images/desktop/notifications_on.svg</file>
+        <file>images/desktop/notifications_off.svg</file>
         <file>images/desktop/material_arrow_forward.svg</file>
         <file>images/desktop/material_question_answer.svg</file>
-        <file>images/desktop/material_highlight.svg</file>
-        <file>images/desktop/material_menu_book.svg</file>
-        <file>images/desktop/material_menu_book_white.svg</file>
         <file>images/desktop/material_settings_white.svg</file>
         <file>images/desktop/material_open_in_browser.svg</file>
-        <file>images/desktop/material_a11y.svg</file>
-        <file>images/desktop/material_privacy.svg</file>
-        <file>images/desktop/material_video.svg</file>
+        <file>images/desktop/a11y_icon.svg</file>
+        <file>images/desktop/list_icon.svg</file>
+        <file>images/desktop/save_icon.svg</file>
+        <file>images/desktop/settings.svg</file>
+        <file>images/desktop/status_ok_darkmode.svg</file>
+        <file>images/desktop/status_ok_highcontrast.svg</file>
+        <file>images/desktop/status_ok_lightmode.svg</file>
+        <file>images/desktop/privacy_icon.svg</file>
+        <file>images/desktop/trash_icon_white.svg</file>
+        <file>images/desktop/warning.svg</file>
+        <file>images/desktop/workflow_idcard_nfc.svg</file>
+        <file>images/desktop/workflow_idcard_usb.svg</file>
+        <file>images/desktop/workflow_waitfor_idcard_sak.webp</file>
+        <file>images/desktop/workflow_waitfor_idcard_usb.webp</file>
+        <file>images/desktop/workflow_waitfor_reader.webp</file>
+        <file>images/desktop/workflow_error_sak_connection_darkmode.svg</file>
+        <file>images/desktop/workflow_error_sak_connection_highcontrast.svg</file>
+        <file>images/desktop/workflow_error_sak_connection_lightmode.svg</file>
         <file>images/reader/default_more_reader.png</file>
         <file>images/reader/default_no_reader.png</file>
         <file>images/reader/default_reader.png</file>

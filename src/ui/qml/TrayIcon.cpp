@@ -77,15 +77,13 @@ void TrayIcon::create()
 
 	mTrayIcon->setToolTip(QCoreApplication::applicationName());
 
-	const auto& autoStartEnabled = Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoStart();
-	#ifdef Q_OS_MACOS
-	if (autoStartEnabled)
-	#endif
+	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	if (generalSettings.showTrayIcon())
 	{
 		mTrayIcon->show();
 	}
 
-	if (!autoStartEnabled)
+	if (!generalSettings.isAutoStart())
 	{
 		//: LABEL DESKTOP
 		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Application was started."));
@@ -120,7 +118,7 @@ void TrayIcon::updateMenu()
 	#endif
 
 	//: LABEL DESKTOP
-	const auto quitAction = new QAction(tr("Quit AusweisApp2"), trayIconMenu);
+	const auto quitAction = new QAction(tr("Quit %1").arg(QCoreApplication::applicationName()), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);
 }

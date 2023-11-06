@@ -31,10 +31,9 @@ using namespace governikus;
 IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pContext)
 	: WorkflowController(pContext)
 {
-	mStateMachine.setProperty(AbstractState::cFORCE_START_STOP_SCAN, true);
+	forceStartStopScan();
 
-	auto sStartIfdService = addState<StateStartIfdService>();
-	mStateMachine.setInitialState(sStartIfdService);
+	auto sStartIfdService = addInitialState<StateStartIfdService>();
 	auto sProcessIfdMessages = addState<StateProcessIfdMessages>();
 	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
 	auto sVerifyRetryCounter = addState<StateVerifyRetryCounter>();

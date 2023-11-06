@@ -38,7 +38,7 @@ static QString getPublicLogFileName(const QDateTime& pDateTime = QDateTime::curr
 }
 
 
-void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg)
+void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg) const
 {
 	QJniEnvironment env;
 	const QJniObject javaActivity(QNativeInterface::QAndroidApplication::context());
@@ -81,7 +81,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 }
 
 
-void LogModel::shareLog(const QPoint /*popupPosition*/)
+void LogModel::shareLog(const QPoint /*popupPosition*/) const
 {
 	QJniEnvironment env;
 	const QJniObject javaActivity(QNativeInterface::QAndroidApplication::context());

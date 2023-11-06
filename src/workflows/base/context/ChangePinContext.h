@@ -24,7 +24,7 @@ class ChangePinContext
 		const bool mRequestTransportPin;
 
 	public:
-		explicit ChangePinContext(bool pRequestTransportPin = false);
+		explicit ChangePinContext(bool pRequestTransportPin = false, bool pActivateUi = true);
 		~ChangePinContext() override;
 
 		[[nodiscard]] const QString& getNewPin() const;

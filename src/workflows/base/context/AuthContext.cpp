@@ -13,13 +13,13 @@
 using namespace governikus;
 
 
-AuthContext::AuthContext(const Action pAction, const QSharedPointer<ActivationContext>& pActivationContext)
-	: WorkflowContext(pAction)
+AuthContext::AuthContext(const Action pAction, bool pActivateUi, const QUrl& pActivationUrl, const BrowserHandler& pHandler)
+	: WorkflowContext(pAction, pActivateUi)
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
-	, mSkipRedirect(false)
+	, mSkipMobileRedirect(false)
 	, mShowChangePinView(false)
-	, mActivationContext(pActivationContext)
+	, mActivationUrl(pActivationUrl)
 	, mTcTokenUrl()
 	, mTcToken()
 	, mRefreshUrl()
@@ -42,12 +42,13 @@ AuthContext::AuthContext(const Action pAction, const QSharedPointer<ActivationCo
 	, mCvcChainBuilderProd()
 	, mCvcChainBuilderTest()
 	, mSslSession()
+	, mBrowserHandler(pHandler)
 {
 }
 
 
-AuthContext::AuthContext(const QSharedPointer<ActivationContext>& pActivationContext)
-	: AuthContext(Action::AUTH, pActivationContext)
+AuthContext::AuthContext(bool pActivateUi, const QUrl& pActivationUrl, const BrowserHandler& pHandler)
+	: AuthContext(Action::AUTH, pActivateUi, pActivationUrl, pHandler)
 {
 }
 
@@ -59,7 +60,7 @@ void AuthContext::requestChangePinView()
 		return;
 	}
 
-	mSkipRedirect = true;
+	setMobileSkipRedirect();
 	mShowChangePinView = true;
 	Q_EMIT fireShowChangePinViewChanged();
 }

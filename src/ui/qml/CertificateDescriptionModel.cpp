@@ -147,7 +147,7 @@ QString CertificateDescriptionModel::getValidity() const
 
 int CertificateDescriptionModel::rowCount(const QModelIndex&) const
 {
-	return mData.size();
+	return static_cast<int>(mData.size());
 }
 
 

@@ -21,7 +21,7 @@ class test_StateEnterPacePassword
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			mState.reset(new StateEnterPacePassword(mAuthContext));
 		}
 

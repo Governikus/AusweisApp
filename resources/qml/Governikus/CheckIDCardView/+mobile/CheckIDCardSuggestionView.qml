@@ -1,16 +1,16 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.CheckResultView 1.0
-import Governikus.Type.CheckIDCardModel 1.0
-import Governikus.Type.PinResetInformationModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick
+import Governikus.CheckResultView
+import Governikus.Type.CheckIDCardModel
+import Governikus.Type.PinResetInformationModel
+import Governikus.Type.SettingsModel
 
 CheckResultSuggestionView {
 	id: root
 
-	property int result
+	required property int result
 
 	signal restartCheck
 	signal startAuth
@@ -45,7 +45,8 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: noNfcSuggestionData
-		continueButtonIcon: "qrc:///images/material_open_in_new.svg"
+
+		continueButtonIcon: "qrc:///images/open_website.svg"
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Open website")
 		//: LABEL ANDROID IOS
@@ -58,7 +59,8 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: unknownCardSuggestionData
-		continueButtonIcon: "qrc:///images/mobile/device.svg"
+
+		continueButtonIcon: "qrc:///images/mobile/device_button.svg"
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Retry")
 		//: LABEL ANDROID IOS
@@ -71,7 +73,8 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: insufficientApduLengthSuggestionData
-		continueButtonIcon: "qrc:///images/material_open_in_new.svg"
+
+		continueButtonIcon: "qrc:///images/open_website.svg"
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Open website")
 		//: LABEL ANDROID IOS
@@ -87,7 +90,7 @@ CheckResultSuggestionView {
 
 		readonly property string deviceUrl: "https://www.ausweisapp.bund.de/%1/aa2/mobile-devices".arg(SettingsModel.language)
 
-		continueButtonIcon: "qrc:///images/mobile/device.svg"
+		continueButtonIcon: "qrc:///images/mobile/device_button.svg"
 
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Retry")
@@ -100,6 +103,7 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: pinDeactivatedSuggestionData
+
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("OK")
 		hintButtonText: PinResetInformationModel.pinResetActionText
@@ -114,6 +118,7 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: pinSuspendedSuggestionData
+
 		continueButtonIcon: "qrc:///images/identify.svg"
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Continue")
@@ -127,6 +132,7 @@ CheckResultSuggestionView {
 	}
 	SuggestionData {
 		id: pinBlockedSuggestionData
+
 		continueButtonIcon: "qrc:///images/identify.svg"
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Continue")

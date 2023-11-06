@@ -48,11 +48,7 @@ class LengthValue
 			Q_ASSERT(sizeof(T) < INT_MAX);
 
 			const int maxSize = std::numeric_limits<T>::max();
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-			const int size = std::min(maxSize, pValue.size());
-#else
 			const int size = std::min(maxSize, static_cast<int>(pValue.size()));
-#endif
 
 			const auto it = pOutput.size();
 			pOutput.resize(it + static_cast<int>(sizeof(T)));

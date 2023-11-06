@@ -19,7 +19,7 @@ defineSingleton(ResourceLoader)
 ResourceLoader::ResourceLoader()
 	: mFilenames(
 		{
-			QStringLiteral("AusweisApp2.rcc")
+			QStringLiteral("AusweisApp.rcc")
 		})
 	, mLoadedResources()
 {

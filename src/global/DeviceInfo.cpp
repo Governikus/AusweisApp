@@ -50,7 +50,7 @@ QString DeviceInfo::getBuildNumber()
 	size_t bufferSize = 0;
 	sysctl(mib, namelen, nullptr, &bufferSize, nullptr, 0);
 
-	QByteArray buffer(bufferSize, '\0');
+	QByteArray buffer(static_cast<qsizetype>(bufferSize), '\0');
 	if (int error = sysctl(mib, namelen, buffer.data(), &bufferSize, nullptr, 0); error)
 	{
 		qDebug() << "Error trying to retrieve iOS build number:" << strerror(errno);

@@ -14,7 +14,7 @@ bool IfdServiceContext::isPaceRequestingRights() const
 }
 
 
-void IfdServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler)
+void IfdServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler) const
 {
 	connect(pHandler.data(), &ServerMessageHandler::fireCardConnected, this, &IfdServiceContext::fireCardConnected);
 	connect(pHandler.data(), &ServerMessageHandler::fireCardDisconnected, this, &IfdServiceContext::fireCardDisconnected);
@@ -266,6 +266,7 @@ void IfdServiceContext::reset()
 {
 	qDebug() << "Resetting all PACE passwords and further relevant context information.";
 
+	setDisplayText(QString());
 	resetPacePasswords();
 	resetCardConnection();
 	resetLastPaceResult();

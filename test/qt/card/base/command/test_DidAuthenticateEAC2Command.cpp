@@ -8,6 +8,7 @@
 
 #include "MockCardConnectionWorker.h"
 #include "TestFileHelper.h"
+#include "asn1/ASN1Util.h"
 
 #include <QByteArrayList>
 #include <QtTest>
@@ -54,7 +55,7 @@ class test_DidAuthenticateEAC2Command
 		{
 			const auto& data = Asn1Util::encode(V_ASN1_UNIVERSAL, 17, pSecurityInfos.join(), true);
 			QSharedPointer<BIO> bio(BIO_new(BIO_s_mem()), &BIO_free);
-			BIO_write(bio.data(), data.data(), data.size());
+			BIO_write(bio.data(), data.data(), static_cast<int>(data.size()));
 
 			QSharedPointer<CMS_ContentInfo> cms(CMS_sign(mCert.data(), mKey.data(), nullptr, nullptr, CMS_PARTIAL | CMS_NOSMIMECAP), &CMS_ContentInfo_free);
 			CMS_set1_eContentType(cms.data(), OBJ_txt2obj("0.4.0.127.0.7.3.2.1", 1));

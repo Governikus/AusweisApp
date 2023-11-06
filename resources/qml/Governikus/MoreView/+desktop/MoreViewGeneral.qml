@@ -1,65 +1,27 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.UiModule
 
-ColumnLayout {
+GPane {
 	spacing: Constants.component_spacing
 
 	MoreViewMenuItem {
 		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
-		//: LABEL DESKTOP
-		buttonText: qsTr("Open website")
-		buttonTooltip: ApplicationModel.onlineHelpUrl("index")
-		//: LABEL DESKTOP
-		description: qsTr("Do you have questions about %1?").arg(Qt.application.name)
-		iconSource: "qrc:/images/desktop/material_menu_book.svg"
-
-		//: LABEL DESKTOP
-		title: qsTr("Online help")
-
-		onClicked: ApplicationModel.openOnlineHelp("index")
-	}
-	GSeparator {
-		Layout.fillWidth: true
-	}
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
-		//: LABEL DESKTOP
-		buttonText: qsTr("Open website")
-		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/videotutorials".arg(SettingsModel.language)
-		//: LABEL DESKTOP
-		description: qsTr("Do you want to see the video tutorials?")
-		iconSource: "qrc:///images/desktop/material_video.svg"
-
-		//: LABEL DESKTOP
-		title: qsTr("Video tutorials")
-
-		onClicked: Qt.openUrlExternally(buttonTooltip)
-	}
-	GSeparator {
-		Layout.fillWidth: true
-	}
-	MoreViewMenuItem {
-		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		buttonIconSource: "qrc:///images/open_website.svg"
 		//: LABEL DESKTOP
 		buttonText: qsTr("Open website")
 		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/faq".arg(SettingsModel.language)
-		//: LABEL DESKTOP
-		description: qsTr("Do you have further questions about %1?").arg(Qt.application.name)
-		iconSource: "qrc:/images/material_live_help.svg"
+		iconSource: "qrc:/images/faq_icon.svg"
 
 		//: LABEL DESKTOP
-		title: qsTr("FAQ")
+		title: qsTr("FAQ - Frequently asked questions")
 
 		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
@@ -68,16 +30,14 @@ ColumnLayout {
 	}
 	MoreViewMenuItem {
 		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		buttonIconSource: "qrc:///images/open_website.svg"
 		//: LABEL DESKTOP
 		buttonText: qsTr("Open website")
 		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/support".arg(SettingsModel.language)
-		//: LABEL DESKTOP
-		description: qsTr("Do you need further support?")
-		iconSource: "qrc:/images/material_help.svg"
+		iconSource: "qrc:/images/desktop/help_icon.svg"
 
 		//: LABEL DESKTOP
-		title: qsTr("Support")
+		title: qsTr("Contact")
 
 		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
@@ -86,13 +46,11 @@ ColumnLayout {
 	}
 	MoreViewMenuItem {
 		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		buttonIconSource: "qrc:///images/open_website.svg"
 		//: LABEL DESKTOP
 		buttonText: qsTr("Open website")
 		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
-		//: LABEL DESKTOP
-		description: qsTr("Do you want to read the privacy statement?")
-		iconSource: "qrc:/images/desktop/material_privacy.svg"
+		iconSource: "qrc:/images/desktop/privacy_icon.svg"
 
 		//: LABEL DESKTOP
 		title: qsTr("Privacy statement")
@@ -104,13 +62,11 @@ ColumnLayout {
 	}
 	MoreViewMenuItem {
 		Layout.fillWidth: true
-		buttonIconSource: "qrc:///images/material_open_in_new.svg"
+		buttonIconSource: "qrc:///images/open_website.svg"
 		//: LABEL DESKTOP
 		buttonText: qsTr("Open website")
 		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
-		//: LABEL DESKTOP
-		description: qsTr("Do you want to read the accessibility statement?")
-		iconSource: "qrc:/images/desktop/material_a11y.svg"
+		iconSource: "qrc:/images/desktop/a11y_icon.svg"
 
 		//: LABEL DESKTOP
 		title: qsTr("Accessibility statement")
@@ -122,15 +78,17 @@ ColumnLayout {
 	}
 	MoreViewMenuItem {
 		Layout.fillWidth: true
+		buttonIconSource: "qrc:///images/open_website.svg"
 		//: LABEL DESKTOP
-		buttonText: qsTr("Start setup assistant")
+		buttonText: qsTr("Open website")
+		buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/providerlist".arg(SettingsModel.language)
 		//: LABEL DESKTOP
-		description: qsTr("Do you want to run the setup assistant again?")
-		iconSource: "qrc:/images/desktop/material_assistant.svg"
+		description: qsTr("Do you want to see a list of service providers?")
+		iconSource: "qrc:/images/identify.svg"
 
 		//: LABEL DESKTOP
-		title: qsTr("Setup assistant")
+		title: qsTr("List of Providers")
 
-		onClicked: sectionPage.nextView(UiModule.TUTORIAL)
+		onClicked: Qt.openUrlExternally(buttonTooltip)
 	}
 }

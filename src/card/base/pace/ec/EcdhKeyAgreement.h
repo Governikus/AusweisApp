@@ -5,9 +5,8 @@
 #pragma once
 
 #include "CardConnectionWorker.h"
-#include "asn1/SecurityInfo.h"
+#include "EcdhGenericMapping.h"
 #include "pace/KeyAgreement.h"
-#include "pace/ec/EcdhGenericMapping.h"
 
 #include <QSharedPointer>
 #include <openssl/ec.h>

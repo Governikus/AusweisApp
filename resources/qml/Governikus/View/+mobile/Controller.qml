@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Workflow 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Workflow
 
 BaseController {
 	readonly property var navBar: typeof (navigation) !== "undefined" ? navigation : parent ? parent.navBar : null
-	readonly property var stackView: StackView.view ? StackView.view : (parent && parent.stackView ? parent.stackView : parent)
+	property var stackView: StackView.view ? StackView.view : (parent && parent.stackView ? parent.stackView : parent)
 	readonly property bool workflowActive: stackView ? (stackView.currentItem instanceof GeneralWorkflow) : false
 
 	function getLockedAndHidden() {
@@ -17,9 +17,9 @@ BaseController {
 		console.log("Controller cannot find navBar");
 		return false;
 	}
-	function pop() {
+	function pop(pItem) {
 		if (stackView) {
-			stackView.pop();
+			stackView.pop(pItem);
 		} else {
 			console.log("Controller not attached to StackView");
 		}

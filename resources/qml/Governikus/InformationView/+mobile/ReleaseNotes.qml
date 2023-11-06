@@ -1,17 +1,19 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.ReleaseInformationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.ReleaseInformationModel
 
 SectionPage {
 	id: root
-	sectionPageFlickable: releaseNotes
+
+	contentIsScrolled: !releaseNotes.atYBeginning
+
 	//: LABEL ANDROID IOS
 	title: qsTr("Release notes")
 
@@ -23,39 +25,45 @@ SectionPage {
 
 	Component.onCompleted: releaseInformationModel.update()
 
+	Connections {
+		function onActivate() {
+			releaseNotes.highlightScrollbar();
+		}
+	}
 	ReleaseInformationModel {
 		id: releaseInformationModel
+
 	}
-	GPane {
-		id: pane
-		clip: true
+	ColumnLayout {
+		ReleaseNotesView {
+			id: releaseNotes
 
-		anchors {
-			fill: parent
-			margins: Constants.pane_padding
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+			maximumContentWidth: Style.dimens.max_text_width
+			model: releaseInformationModel.currentRelease
 		}
-		ColumnLayout {
-			height: pane.height - pane.anchors.topMargin - pane.anchors.bottomMargin
-			width: pane.width - pane.anchors.leftMargin
+		GSpacer {
+			Layout.fillHeight: retryButton.visible
+		}
+		GButton {
+			id: retryButton
 
-			ReleaseNotesView {
-				id: releaseNotes
-				Layout.fillHeight: true
-				Layout.fillWidth: true
-				model: releaseInformationModel.currentRelease
-			}
-			GButton {
-				Layout.alignment: Qt.AlignHCenter
-				Layout.rightMargin: pane.anchors.rightMargin
-				icon.source: "qrc:///images/material_refresh.svg"
+			Layout.alignment: Qt.AlignHCenter
+			Layout.rightMargin: Constants.pane_padding
+			icon.source: "qrc:///images/material_refresh.svg"
+			//: LABEL ANDROID IOS
+			text: qsTr("Retry")
+			tintIcon: true
+			visible: releaseInformationModel.allowRetry
 
-				//: LABEL ANDROID IOS
-				text: qsTr("Retry")
-				tintIcon: true
-				visible: releaseInformationModel.allowRetry
-
-				onClicked: releaseInformationModel.update()
-			}
+			onClicked: releaseInformationModel.update()
+		}
+		anchors {
+			bottomMargin: Constants.pane_padding
+			fill: parent
+			leftMargin: Constants.pane_padding
+			topMargin: Constants.pane_padding
 		}
 	}
 }

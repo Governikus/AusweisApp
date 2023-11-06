@@ -19,7 +19,6 @@ namespace
 VALUE_NAME(SLOT_HANDLE, "SlotHandle")
 VALUE_NAME(INPUT_DATA, "InputData")
 VALUE_NAME(EXPECTED_PIN_LENGTH, "ExpectedPINLength")
-VALUE_NAME(PREFERRED_PIN_LENGTH, "PreferredPinLength")
 } // namespace
 
 
@@ -78,11 +77,6 @@ IfdEstablishPaceChannel::IfdEstablishPaceChannel(const QJsonObject& pMessageObje
 
 	parseInputData(pMessageObject);
 
-	if (pMessageObject.contains(PREFERRED_PIN_LENGTH()))
-	{
-		mExpectedPinLength = getIntValue(pMessageObject, PREFERRED_PIN_LENGTH(), 0);
-	}
-
 	if (pMessageObject.contains(EXPECTED_PIN_LENGTH()))
 	{
 		mExpectedPinLength = getIntValue(pMessageObject, EXPECTED_PIN_LENGTH(), 0);
@@ -124,7 +118,6 @@ QByteArray IfdEstablishPaceChannel::toByteArray(IfdVersion::Version pIfdVersion,
 		if (mExpectedPinLength > 0)
 		{
 			result[EXPECTED_PIN_LENGTH()] = mExpectedPinLength;
-			result[PREFERRED_PIN_LENGTH()] = mExpectedPinLength;
 		}
 	}
 	else

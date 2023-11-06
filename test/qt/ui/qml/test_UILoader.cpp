@@ -38,12 +38,7 @@ class test_UILoader
 			QVERIFY(!loader.getLoaded<UIPlugInJson>());
 			QCOMPARE(spyLoaded.count(), 0);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
-#else
-			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: ()");
-#endif
-
 			loader.shutdown();
 		}
 
@@ -71,11 +66,7 @@ class test_UILoader
 			QCOMPARE(ui->property("passive"), QVariant());
 			QCOMPARE(ui->property("readerManager"), QVariant());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("websocket"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("websocket"))");
-#endif
 		}
 
 
@@ -91,11 +82,7 @@ class test_UILoader
 			QVERIFY(loader.getLoaded<UIPlugInWebSocket>());
 			QCOMPARE(spyLoaded.count(), 1);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("websocket"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("websocket"))");
-#endif
 		}
 
 

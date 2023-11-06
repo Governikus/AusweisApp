@@ -1,6 +1,0 @@
-module CheckSmartView
-
-internal CheckSmartResultView CheckSmartResultView.qml
-internal CheckSmartSuggestionView CheckSmartSuggestionView.qml
-
-CheckSmartView 1.0 CheckSmartView.qml

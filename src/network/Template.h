@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 #include <QFile>
 #include <QMap>
 #include <QSet>

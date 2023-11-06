@@ -26,7 +26,6 @@ class ReaderModel
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireModelChanged)
 	Q_PROPERTY(QString lastUpdatedInformation READ getLastUpdatedInformation NOTIFY fireModelChanged)
 	Q_PROPERTY(SortedReaderModel * sortedModel READ getSortedModel CONSTANT)
 
@@ -36,12 +35,18 @@ class ReaderModel
 		QTime mConnectedReadersUpdateTime;
 		SortedReaderModel mSortedModel;
 
-		[[nodiscard]] QString getStatus(const ReaderConfigurationInfo& pReaderConfigurationInfo) const;
+		[[nodiscard]] QString getLastUpdatedInformation() const;
+		[[nodiscard]] SortedReaderModel* getSortedModel();
+
 		void collectReaderData();
-
 		[[nodiscard]] bool indexIsValid(const QModelIndex& pIndex) const;
-
 		[[nodiscard]] QUrl getReaderImageUrl(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString getHTMLDescription(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool isSupportedReader(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool isInstalledReader(const QModelIndex& pIndex) const;
+
+	private Q_SLOTS:
+		void onUpdateContent();
 
 	public:
 		enum UserRoles
@@ -59,17 +64,6 @@ class ReaderModel
 		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
-
-		[[nodiscard]] QString getHTMLDescription(const QModelIndex& pIndex) const;
-		[[nodiscard]] QString getEmptyListDescriptionString() const;
-		[[nodiscard]] bool isSupportedReader(const QModelIndex& pIndex) const;
-		[[nodiscard]] bool isInstalledReader(const QModelIndex& pIndex) const;
-		[[nodiscard]] QString getLastUpdatedInformation() const;
-
-		[[nodiscard]] SortedReaderModel* getSortedModel();
-
-	private Q_SLOTS:
-		void onUpdateContent();
 
 	public Q_SLOTS:
 		void onTranslationChanged();

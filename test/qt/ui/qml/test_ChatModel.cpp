@@ -11,7 +11,6 @@
 #include "context/SelfAuthContext.h"
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
-#include "MockActivationContext.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -28,7 +27,6 @@ class test_ChatModel
 {
 	Q_OBJECT
 	QPointer<ChatModel> mModel;
-	QSharedPointer<MockActivationContext> mActContext;
 	QSharedPointer<AuthContext> mAuthContext;
 
 	private Q_SLOTS:
@@ -36,15 +34,13 @@ class test_ChatModel
 		{
 			Q_ASSERT(mModel.isNull());
 			mModel = new ChatModel();
-			mActContext.reset(new MockActivationContext());
-			mAuthContext.reset(new TestAuthContext(mActContext));
+			mAuthContext.reset(new TestAuthContext());
 		}
 
 
 		void cleanup()
 		{
 			delete mModel.data();
-			mActContext.clear();
 			mAuthContext.clear();
 		}
 

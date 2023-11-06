@@ -147,9 +147,9 @@ set(ENABLED_TARGETS)
 list(APPEND ENABLED_TARGETS openssl)
 
 set(OPENSSL_CONFIGURE_FLAGS no-camellia no-bf no-aria no-seed no-poly1305 no-srp no-gost no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-srtp no-sm2 no-sm3 no-sm4)
-set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ct no-dgram no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-ct no-dgram no-cast no-chacha no-blake2 no-rmd160 no-scrypt no-siphash no-whirlpool no-md4 no-des no-ec2m)
 set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-tls1 no-tls1-method no-tls1_1 no-tls1_1-method no-tls1_3 no-ssl3 no-ssl3-method no-dtls no-dtls1-method no-dtls1_2-method)
-set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-engine no-async no-dso no-comp no-ts no-makedepend no-tests no-legacy shared)
+set(OPENSSL_CONFIGURE_FLAGS ${OPENSSL_CONFIGURE_FLAGS} no-deprecated no-engine no-async no-dso no-comp no-ts no-makedepend no-tests no-legacy shared)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
 	set(OPENSSL_CONFIGURE_FLAGS --debug ${OPENSSL_CONFIGURE_FLAGS})
@@ -280,9 +280,9 @@ ExternalProject_Add_Step(openssl configdata
 if(MAC)
 	set(OPENSSL_FILE_VERSION 3)
 	add_custom_command(TARGET openssl POST_BUILD
-		COMMAND install_name_tool -id libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
-		COMMAND install_name_tool -id libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
-		COMMAND install_name_tool -change ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+		COMMAND install_name_tool -id @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+		COMMAND install_name_tool -id @rpath/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX}
+		COMMAND install_name_tool -change ${DESTINATION_DIR}/lib/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} @rpath/libcrypto.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${DESTINATION_DIR}/lib/libssl.${OPENSSL_FILE_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
 if(IOS)
@@ -345,9 +345,9 @@ list(APPEND NO_FEATURES_SHARED designer testlib_selfcover)
 list(APPEND NO_FEATURES_SHARED imageformat_bmp imageformat_ppm imageformat_xbm)
 list(APPEND NO_FEATURES_SHARED sharedmemory textodfwriter)
 list(APPEND NO_FEATURES_SHARED undocommand undogroup undostack)
-list(APPEND NO_FEATURES_SHARED printsupport dtls dom sql xml)
+list(APPEND NO_FEATURES_SHARED printsupport dtls dom sql xml pdf)
 if(CONTAINER_SDK)
-	list(APPEND NO_FEATURES_SHARED testlib)
+	list(APPEND NO_FEATURES_SHARED testlib androiddeployqt)
 endif()
 foreach(feature ${NO_FEATURES_SHARED})
 	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-feature-${feature})
@@ -363,18 +363,17 @@ foreach(feature ${NO_FEATURES})
 endforeach()
 
 
-list(APPEND SKIP_MODULES qtopcua qtwebchannel qtlanguageserver qtspeech)
-list(APPEND SKIP_MODULES qtwebengine qtactiveqt qtserialbus qt5compat qtsensors)
-list(APPEND SKIP_MODULES qtserialport qtvirtualkeyboard qtcharts)
-list(APPEND SKIP_MODULES qtdatavis3d qt3d qtwayland qtremoteobjects)
-list(APPEND SKIP_MODULES qtwebview qtmultimedia qtlottie qtquick3d qtquick3dphysics)
-list(APPEND SKIP_MODULES qtnetworkauth qtmqtt qtcoap qtquicktimeline qtdoc qtpositioning)
-if(INTEGRATED_SDK)
-	list(APPEND SKIP_MODULES qttranslations qtsensors qtdeclarative qtquickcontrols2 qtgraphicaleffects qtimageformats qttools qtsvg qtconnectivity)
+set(QT_MODULES qtbase,qtwebsockets,qtscxml)
+if(NOT INTEGRATED_SDK)
+	set(QT_MODULES ${QT_MODULES},qttranslations,qtdeclarative,qtimageformats,qttools,qtsvg,qtconnectivity,qtshadertools)
 endif()
-foreach(module ${SKIP_MODULES})
-	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -skip ${module})
-endforeach()
+set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -submodules ${QT_MODULES})
+
+set(QT_MODULES_SKIP qtactiveqt,qtlanguageserver) # enabled by dependency but not necessary
+if(INTEGRATED_SDK)
+	set(QT_MODULES_SKIP ${QT_MODULES_SKIP},qtdeclarative) # otherwise qtwebsockets and qtscxml enables it
+endif()
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -skip ${QT_MODULES_SKIP})
 
 
 set(QT_CONFIGURE_FLAGS_OTHER -no-journald -no-directfb -no-linuxfb)
@@ -470,13 +469,8 @@ if (BUILD_HOST_QT AND (IOS OR ANDROID))
 
 	set(QT_HOST_CONFIGURE_FLAGS -prefix ${QT_HOST_PATH} -release -optimize-size -shared -no-widgets -no-openssl -no-zstd -no-opengl)
 	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_SHARED})
-
-	set(QT_HOST_CMAKE_FLAGS	${QT_HOST_CMAKE_FLAGS} -DCMAKE_PREFIX_PATH=${QT_HOST_PATH})
-
-	list(APPEND SKIP_HOST_MODULES qtsvg qtimageformats qtconnectivity qttranslations qtwebsockets)
-	foreach(module ${SKIP_HOST_MODULES})
-		set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} -skip ${module})
-	endforeach()
+	set(QT_HOST_CMAKE_FLAGS ${QT_HOST_CMAKE_FLAGS} -DCMAKE_PREFIX_PATH=${QT_HOST_PATH})
+	set(QT_HOST_CONFIGURE_FLAGS ${QT_HOST_CONFIGURE_FLAGS} -submodules qtbase,qtdeclarative,qtshadertools,qttools)
 
 	ExternalProject_Add(qt-host
 		URL ${QT_URLS}

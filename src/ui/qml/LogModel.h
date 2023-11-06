@@ -74,10 +74,10 @@ class LogModel
 
 		Q_INVOKABLE void mailLog(const QString& pEmail = QStringLiteral("support@ausweisapp.de"),
 				const QString& pSubject = tr("Mobile logfile"),
-				const QString& pMsg = tr("<Please describe the error>"));
+				const QString& pMsg = tr("<Please describe the error>")) const;
 
 		// \a popupPosition will be used on an iPad as the origin of the share bubble
-		Q_INVOKABLE void shareLog(QPoint popupPosition);
+		Q_INVOKABLE void shareLog(QPoint popupPosition) const;
 
 		int rowCount(const QModelIndex& pIndex = QModelIndex()) const override;
 		QHash<int, QByteArray> roleNames() const override;

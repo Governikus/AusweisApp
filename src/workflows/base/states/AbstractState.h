@@ -9,10 +9,23 @@
 #pragma once
 
 #include "FailureCode.h"
+#include "StateBuilder.h"
 #include "context/WorkflowContext.h"
 
 #include <QSharedPointer>
 #include <QState>
+
+
+class test_StateChangePinIfd;
+class test_StateChangeSmartPin;
+class test_StateEstablishPaceChannelIfd;
+class test_StateProcessIfdMessages;
+class test_StateChangePin;
+class test_StateDestroyPace;
+class test_StateDidAuthenticateEac1;
+class test_StateDidAuthenticateEac2;
+class test_StateGetTcToken;
+class test_StateTransmit;
 
 
 namespace governikus
@@ -22,9 +35,21 @@ class AbstractState
 	: public QState
 {
 	Q_OBJECT
+	friend class ::test_StateChangePinIfd;
+	friend class ::test_StateChangeSmartPin;
+	friend class ::test_StateEstablishPaceChannelIfd;
+	friend class ::test_StateProcessIfdMessages;
+	friend class ::test_StateChangePin;
+	friend class ::test_StateDestroyPace;
+	friend class ::test_StateDidAuthenticateEac1;
+	friend class ::test_StateDidAuthenticateEac2;
+	friend class ::test_StateGetTcToken;
+	friend class ::test_StateTransmit;
+	friend class ::test_StateChangeSmartPin;
 
 	private:
 		const QSharedPointer<WorkflowContext> mContext;
+		QVector<QMetaObject::Connection> mConnections;
 		bool mAbortOnCardRemoved;
 		bool mKeepCardConnectionAlive;
 
@@ -32,8 +57,6 @@ class AbstractState
 		[[nodiscard]] bool isStartStopEnabled() const;
 
 	protected:
-		QVector<QMetaObject::Connection> mConnections;
-
 		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext);
 
 		void setAbortOnCardRemoved();
@@ -42,35 +65,21 @@ class AbstractState
 		void onEntry(QEvent* pEvent) override;
 		void onExit(QEvent* pEvent) override;
 
+		void operator<<(const QMetaObject::Connection& connection);
+
 		void clearConnections();
-		bool isCancellationByUser();
+		bool isCancellationByUser() const;
 		void updateStatus(const GlobalStatus& pStatus);
 		void updateStartPaosResult(const ECardApiResult& pStartPaosResult);
 
-		void stopNfcScanIfNecessary(const QString& pError = QString());
+		void stopNfcScanIfNecessary(const QString& pError = QString()) const;
 
 	public:
 		static const char* const cFORCE_START_STOP_SCAN;
-		static QString getClassName(const char* const pName);
-
-		template<typename T>
-		[[nodiscard]] static QString getClassName()
-		{
-			return getClassName(T::staticMetaObject.className());
-		}
-
-
-		template<typename T>
-		static bool isState(const QString& pState)
-		{
-			return pState == getClassName<T>();
-		}
-
 
 		~AbstractState() override = default;
 
 		[[nodiscard]] QString getStateName() const;
-		void setStateName(const QString& pName);
 
 	Q_SIGNALS:
 		void fireContinue();

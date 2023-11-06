@@ -14,6 +14,8 @@ namespace governikus
 class RemoteDeviceFilterModel
 	: public QSortFilterProxyModel
 {
+	Q_OBJECT
+
 	friend class ::test_RemoteDeviceFilterModel;
 
 	private:

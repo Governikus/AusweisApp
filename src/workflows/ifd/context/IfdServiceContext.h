@@ -47,7 +47,7 @@ class IfdServiceContext
 		[[nodiscard]] bool isPaceRequestingRights() const;
 
 	public Q_SLOTS:
-		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
+		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler) const;
 
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);

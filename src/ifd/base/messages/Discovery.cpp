@@ -6,7 +6,6 @@
 #include "Discovery.h"
 
 #include "Initializer.h"
-#include "JsonValueRef.h"
 #include "RemoteServiceSettings.h"
 
 #include <QJsonArray>
@@ -52,7 +51,7 @@ void Discovery::parseSupportedApi(const QJsonObject& pMessageObject)
 	}
 
 	const auto& array = value.toArray();
-	for (JsonValueRef entry : array)
+	for (const QJsonValueConstRef entry : array)
 	{
 		if (entry.isString())
 		{
@@ -73,38 +72,16 @@ void Discovery::parseIfdId(const QJsonObject& pMessageObject)
 		return;
 	}
 
-	QVector<IfdVersion::Version> sorted(mSupportedApis);
-	std::sort(sorted.rbegin(), sorted.rend());
-	const bool expectCertificate = !sorted.isEmpty() && sorted.first() >= IfdVersion::Version::v2;
-
-	const bool isFingerprint = mIfdId.size() == 64;
-	if (isFingerprint)
+	if (mIfdId.isEmpty())
 	{
-		if (expectCertificate)
-		{
-			invalidType(IFD_ID(), QLatin1String("X.509 certificate (PEM)"));
-		}
+		markIncomplete(QStringLiteral("The value of IFDID should not be emtpy"));
 		return;
 	}
 
 	const QSslCertificate ifdCertificate(mIfdId.toLatin1());
 	if (!ifdCertificate.isNull())
 	{
-		if (!expectCertificate)
-		{
-			invalidType(IFD_ID(), QLatin1String("certificate fingerprint (SHA256)"));
-		}
 		mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
-		return;
-	}
-
-	if (expectCertificate)
-	{
-		invalidType(IFD_ID(), QLatin1String("X.509 certificate (PEM)"));
-	}
-	else
-	{
-		invalidType(IFD_ID(), QLatin1String("certificate fingerprint (SHA256)"));
 	}
 }
 

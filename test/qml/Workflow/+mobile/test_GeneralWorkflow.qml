@@ -1,23 +1,29 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Type.ReaderPlugIn 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Type.ReaderPlugIn
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
 		return createTemporaryQmlObject("
-			import QtQuick 2.15
-			import Governikus.Workflow 1.0
-			import Governikus.Type.ReaderPlugIn 1.0
-			GeneralWorkflow {
-				workflowModel: Item {
-					property var readerPlugInType: ReaderPlugIn.NFC
-					property bool isSmartCardAllowed: false
-					property var supportedPlugInTypes: [ReaderPlugIn.NFC, ReaderPlugIn.REMOTE_IFD, ReaderPlugIn.SMART]
+			import QtQuick
+			import QtQuick.Controls
+			import Governikus.Workflow
+			import Governikus.Type.ReaderPlugIn
+
+			ApplicationWindow {
+				menuBar: Item {}
+				GeneralWorkflow {
+					workflowModel: Item {
+						property var readerPlugInType: ReaderPlugIn.NFC
+						property bool isCurrentSmartCardAllowed: false
+						property var supportedPlugInTypes: [ReaderPlugIn.NFC, ReaderPlugIn.REMOTE_IFD, ReaderPlugIn.SMART]
+					}
 				}
 			}
 			", testCase);

@@ -5,8 +5,8 @@
   <artifactId>ausweisapp</artifactId>
   <version>@PROJECT_VERSION@@POM_SNAPSHOT@</version>
   <packaging>aar</packaging>
-  <name>Governikus AusweisApp2</name>
-  <description>The AusweisApp2 is a software, that you can use to identify yourself online with your electronic residence permit or your eID card.</description>
+  <name>AusweisApp</name>
+  <description>The AusweisApp is a software, that you can use to identify yourself online with your electronic residence permit or your eID card.</description>
   <url>https://github.com/Governikus/AusweisApp2/</url>
   <licenses>
     <license>

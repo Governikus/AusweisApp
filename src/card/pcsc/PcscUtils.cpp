@@ -7,7 +7,7 @@
 using namespace governikus;
 
 
-QString PcscUtils::toString(PCSC_RETURNCODE pCode)
+QString pcsc::toString(PCSC_RETURNCODE pCode)
 {
 	const auto& metaEnum = QMetaEnum::fromType<PcscReturnCode>();
 	const char* const name = metaEnum.valueToKey(static_cast<int>(pCode));
@@ -17,4 +17,19 @@ QString PcscUtils::toString(PCSC_RETURNCODE pCode)
 	}
 
 	return QString::fromLatin1(name);
+}
+
+
+QDataStream& pcsc::operator<<(QDataStream& pStream, const PcscReturnCode& pCode)
+{
+	return pStream << static_cast<qint64>(pCode);
+}
+
+
+QDataStream& pcsc::operator>>(QDataStream& pStream, PcscReturnCode& pCode)
+{
+	qint64 tmp;
+	pStream >> tmp;
+	pCode = static_cast<PcscReturnCode>(tmp);
+	return pStream;
 }

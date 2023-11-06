@@ -207,7 +207,7 @@ class test_efCardSecurity
 													  "    020145");
 			QSharedPointer<BIO> bio(BIO_new(BIO_s_mem()), &BIO_free);
 			QVERIFY(bio);
-			QVERIFY(BIO_write(bio.data(), secInfos.data(), secInfos.size()) > 0);
+			QVERIFY(BIO_write(bio.data(), secInfos.data(), static_cast<int>(secInfos.size())) > 0);
 
 			QSharedPointer<CMS_ContentInfo> cms(CMS_sign(cert.data(), key, nullptr, nullptr, CMS_PARTIAL | CMS_NOSMIMECAP), &CMS_ContentInfo_free);
 			QVERIFY(cms);

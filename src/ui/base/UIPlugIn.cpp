@@ -28,6 +28,12 @@ bool UIPlugIn::initialize()
 }
 
 
+void UIPlugIn::onWorkflowUnhandled(const QSharedPointer<WorkflowRequest>& pRequest)
+{
+	Q_UNUSED(pRequest)
+}
+
+
 void UIPlugIn::onHideUi()
 {
 }

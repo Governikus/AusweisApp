@@ -1,2 +1,2 @@
-NFCReaderUsageDescription = "Die AusweisApp2 nutzt NFC, um auf den Ausweis zuzugreifen.";
-NSLocalNetworkUsageDescription = "Die AusweisApp2 benötigt Zugriff auf das lokale Netzwerk, um \"Smartphone als Kartenleser (SaK)\" verwenden zu können.";
+NFCReaderUsageDescription = "Die AusweisApp nutzt NFC, um auf den Ausweis zuzugreifen.";
+NSLocalNetworkUsageDescription = "Die AusweisApp benötigt Zugriff auf das lokale Netzwerk, um \"Smartphone als Kartenleser (SaK)\" verwenden zu können.";

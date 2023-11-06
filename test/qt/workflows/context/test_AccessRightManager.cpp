@@ -66,7 +66,7 @@ class test_AccessRightManager
 		{
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
-			mTestAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_accessRightsEmpty.xml"));
+			mTestAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_accessRightsEmpty.xml"));
 			mEac1Changed.reset(new QSignalSpy(mTestAuthContext.data(), &AuthContext::fireDidAuthenticateEac1Changed));
 			mARMCreated.reset(new QSignalSpy(mTestAuthContext.data(), &AuthContext::fireAccessRightManagerCreated));
 		}
@@ -81,7 +81,7 @@ class test_AccessRightManager
 
 		void test_AuthContext_00()
 		{
-			TestAuthContext context(nullptr, ":/paos/DIDAuthenticateEAC1_accessRightsMissing.xml");
+			TestAuthContext context(":/paos/DIDAuthenticateEAC1_accessRightsMissing.xml");
 			QCOMPARE(context.getAccessRightManager()->getRequiredAccessRights().size(), 0);
 			QCOMPARE(context.getAccessRightManager()->getOptionalAccessRights().size(), 16);
 			QCOMPARE(context.getAccessRightManager()->getEffectiveAccessRights().size(), 16);
@@ -211,7 +211,7 @@ class test_AccessRightManager
 
 		void test_Testbed_C2_01()
 		{
-			TestAuthContext context(nullptr, ":/testbed/DIDAuthenticateEAC1_C2_01.xml");
+			TestAuthContext context(":/testbed/DIDAuthenticateEAC1_C2_01.xml");
 			*context.getAccessRightManager() -= AccessRight::CAN_ALLOWED;
 			QVERIFY(context.encodeEffectiveChat().toHex().endsWith("3c0f13ffe4"));
 		}
@@ -219,7 +219,7 @@ class test_AccessRightManager
 
 		void test_Testbed_C2_02()
 		{
-			TestAuthContext context(nullptr, ":/testbed/DIDAuthenticateEAC1_C2_02.xml");
+			TestAuthContext context(":/testbed/DIDAuthenticateEAC1_C2_02.xml");
 			*context.getAccessRightManager() = {};
 			QVERIFY(context.encodeEffectiveChat().toHex().endsWith("0000000000"));
 		}

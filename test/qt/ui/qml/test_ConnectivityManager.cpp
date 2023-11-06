@@ -38,15 +38,25 @@ class test_ConnectivityManager
 
 			QVERIFY(!manager.isNetworkInterfaceActive());
 
-			manager.setActive(true, name);
+			manager.setActive(true);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Found active network interface"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("A network interface is now available"));
 			QCOMPARE(signalSpy.count(), 1);
 			QVERIFY(manager.isNetworkInterfaceActive());
 
-			manager.setActive(false, name);
+			manager.setActive(true);
+			QCOMPARE(logSpy.count(), 0);
+			QCOMPARE(signalSpy.count(), 1);
+			QVERIFY(manager.isNetworkInterfaceActive());
+
+			manager.setActive(false);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Found no active network interface"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("An active network interface is no longer available"));
+			QCOMPARE(signalSpy.count(), 2);
+			QVERIFY(!manager.isNetworkInterfaceActive());
+
+			manager.setActive(false);
+			QCOMPARE(logSpy.count(), 0);
 			QCOMPARE(signalSpy.count(), 2);
 			QVERIFY(!manager.isNetworkInterfaceActive());
 		}
@@ -55,22 +65,23 @@ class test_ConnectivityManager
 		void test_Watching()
 		{
 			ConnectivityManager manager;
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			QSignalSpy signalSpy(&manager, &ConnectivityManager::fireWatchingChanged);
 
-			manager.startWatching();
+			manager.setWatching(true);
 			QVERIFY(manager.mTimerId != 0);
-			QCOMPARE(logSpy.count(), 1);
+			QCOMPARE(signalSpy.count(), 1);
 
-			manager.startWatching();
-			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Already started, skip"));
+			manager.setWatching(true);
+			QVERIFY(manager.mTimerId != 0);
+			QCOMPARE(signalSpy.count(), 1);
 
-			manager.stopWatching();
+			manager.setWatching(false);
 			QCOMPARE(manager.mTimerId, 0);
+			QCOMPARE(signalSpy.count(), 2);
 
-			manager.stopWatching();
-			QCOMPARE(logSpy.count(), 3);
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Already stopped, skip"));
+			manager.setWatching(false);
+			QCOMPARE(manager.mTimerId, 0);
+			QCOMPARE(signalSpy.count(), 2);
 		}
 
 

@@ -1,23 +1,19 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
-Item {
+GPaneBackground {
 	id: root
 
-	readonly property int availableContentHeight: {
-		var availableHeight = height - containerCol.topPadding - containerCol.bottomPadding;
-		if (title === "") {
-			return availableHeight;
-		}
-		return availableHeight - titleText.height - containerCol.spacing;
-	}
 	property alias content: paneContent
 	default property alias data: paneContent.data
+	property bool drawShadow: true
+	property alias spacing: paneContent.spacing
 	property alias title: titleText.text
 	property alias titleTextStyle: titleText.textStyle
 
@@ -28,11 +24,15 @@ Item {
 	implicitHeight: containerCol.implicitHeight
 	implicitWidth: containerCol.implicitWidth
 
-	GPaneBackground {
-		anchors.fill: parent
+	layer {
+		enabled: GraphicsInfo.api !== GraphicsInfo.Software && drawShadow
+
+		effect: GDropShadow {
+		}
 	}
 	Column {
 		id: containerCol
+
 		anchors.left: parent.left
 		anchors.leftMargin: Constants.pane_padding
 		anchors.right: parent.right
@@ -43,17 +43,19 @@ Item {
 
 		GText {
 			id: titleText
+
 			elide: Text.ElideRight
 			maximumLineCount: 1
-			textStyle: Style.text.header_accent
-			width: Math.min(parent.width, implicitWidth)
+			textStyle: Style.text.subline
+			width: Math.min(parent.width, Math.ceil(implicitWidth))
 
 			FocusFrame {
 				scope: root
 			}
 		}
-		Column {
+		ColumnLayout {
 			id: paneContent
+
 			spacing: Constants.pane_spacing
 			width: parent.width
 		}

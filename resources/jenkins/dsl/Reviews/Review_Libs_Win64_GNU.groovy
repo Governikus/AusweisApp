@@ -17,6 +17,7 @@ j.with
 		environmentVariables
 		{
 			env('MSYS2_PATH_TYPE', 'inherit')
+			env('PATH', '$WORKSPACE/build/dist/bin;$PATH')
 		}
 	}
 

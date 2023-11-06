@@ -46,7 +46,7 @@ class test_StateSendWhitelistSurvey
 	private Q_SLOTS:
 		void init()
 		{
-			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			mState.reset(StateBuilder::createState<StateSendWhitelistSurvey>(mContext));
 			mState->onEntry(nullptr);
 		}

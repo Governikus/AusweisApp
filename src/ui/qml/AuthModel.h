@@ -17,6 +17,10 @@
 #include <QSharedPointer>
 #include <QString>
 
+
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -25,6 +29,7 @@ class AuthModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
 
 	Q_PROPERTY(QString transactionInfo READ getTransactionInfo NOTIFY fireTransactionInfoChanged)
 	Q_PROPERTY(int progressValue READ getProgressValue NOTIFY fireProgressChanged)

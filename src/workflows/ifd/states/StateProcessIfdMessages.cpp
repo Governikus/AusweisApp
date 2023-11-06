@@ -29,7 +29,9 @@ void StateProcessIfdMessages::run()
 	const QSharedPointer<IfdServer> server = context->getIfdServer();
 	Q_ASSERT(server);
 
-	mConnections += connect(server.data(), &IfdServer::fireMessageHandlerAdded, this, &StateProcessIfdMessages::onMessageHandlerAdded);
+	*this << connect(server.data(), &IfdServer::fireMessageHandlerAdded, this, &StateProcessIfdMessages::onMessageHandlerAdded);
+	*this << connect(server.data(), &IfdServer::fireConnectedChanged, this, &StateProcessIfdMessages::onConnectedChanged);
+	*this << connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderPropertiesUpdated, this, &StateProcessIfdMessages::onReaderPropertiesUpdated);
 
 	const auto messageHandler = server->getMessageHandler();
 	if (messageHandler)
@@ -73,6 +75,38 @@ void StateProcessIfdMessages::onClosed()
 }
 
 
+void StateProcessIfdMessages::onConnectedChanged(bool pConnected) const
+{
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		return;
+	}
+
+	if (pConnected && !getContext()->getIfdServer()->isPairingConnection())
+	{
+		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::SMART);
+	}
+	else
+	{
+		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::SMART);
+	}
+}
+
+
+void StateProcessIfdMessages::onReaderPropertiesUpdated(const ReaderInfo& pInfo) const
+{
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
+	{
+		return;
+	}
+
+	if (pInfo.isInsertable() && pInfo.getCardInfo().getCardType() == CardType::NONE)
+	{
+		Env::getSingleton<ReaderManager>()->insert(pInfo);
+	}
+}
+
+
 void StateProcessIfdMessages::onCardConnected()
 {
 	mResetContextOnDisconnect = false;
@@ -112,7 +146,7 @@ void StateProcessIfdMessages::onModifyPin(const QSharedPointer<const IfdModifyPi
 }
 
 
-void StateProcessIfdMessages::onCardDisconnected()
+void StateProcessIfdMessages::onCardDisconnected() const
 {
 	getContext()->setDisplayText(QString());
 	if (mResetContextOnDisconnect)

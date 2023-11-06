@@ -1,24 +1,33 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ReleaseInformationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.ReleaseInformationModel
 
 ColumnLayout {
 	id: root
+
 	Component.onCompleted: releaseInformationModel.update()
 
 	ReleaseInformationModel {
 		id: releaseInformationModel
+
 	}
 	ReleaseNotesView {
 		Layout.fillHeight: true
 		Layout.fillWidth: true
 		model: releaseInformationModel.currentRelease
+
+		layer {
+			enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+			effect: GDropShadow {
+			}
+		}
 	}
 	GButton {
 		Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom

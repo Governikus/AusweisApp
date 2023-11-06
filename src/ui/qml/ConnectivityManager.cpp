@@ -8,9 +8,38 @@
 #include <QNetworkInterface>
 #include <QTimerEvent>
 
+
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(network)
+
+
+void ConnectivityManager::setActive(bool pActive)
+{
+	if (mActive != pActive)
+	{
+		if (pActive)
+		{
+			qCDebug(network) << "A network interface is now available";
+		}
+		else
+		{
+			qCDebug(network) << "An active network interface is no longer available";
+		}
+		mActive = pActive;
+		Q_EMIT fireNetworkInterfaceActiveChanged(mActive);
+	}
+}
+
+
+void ConnectivityManager::timerEvent(QTimerEvent* pTimerEvent)
+{
+	if (pTimerEvent->timerId() == mTimerId)
+	{
+		setActive(checkConnectivity());
+	}
+}
 
 
 ConnectivityManager::ConnectivityManager()
@@ -23,32 +52,41 @@ ConnectivityManager::ConnectivityManager()
 
 ConnectivityManager::~ConnectivityManager()
 {
-	if (mTimerId != 0)
+	if (isWatching())
 	{
 		killTimer(mTimerId);
 	}
 }
 
 
-void ConnectivityManager::setActive(bool pActive, const QString& pInterfaceName)
+bool ConnectivityManager::isWatching() const
 {
-	if (mActive != pActive)
-	{
-		if (pActive)
-		{
-			qCDebug(network) << "Found active network interface" << pInterfaceName;
-		}
-		else
-		{
-			qCDebug(network) << "Found no active network interface";
-		}
-		mActive = pActive;
-		Q_EMIT fireNetworkInterfaceActiveChanged(mActive);
-	}
+	return mTimerId != 0;
 }
 
 
-void ConnectivityManager::updateConnectivity()
+void ConnectivityManager::setWatching(bool pWatching)
+{
+	if (pWatching == isWatching())
+	{
+		return;
+	}
+
+	if (pWatching)
+	{
+		mTimerId = startTimer(1000);
+		Q_EMIT fireWatchingChanged();
+		setActive(checkConnectivity());
+		return;
+	}
+
+	killTimer(mTimerId);
+	mTimerId = 0;
+	Q_EMIT fireWatchingChanged();
+}
+
+
+bool ConnectivityManager::checkConnectivity()
 {
 	const auto& allInterfaces = QNetworkInterface::allInterfaces();
 	for (const auto& iface : allInterfaces)
@@ -79,47 +117,32 @@ void ConnectivityManager::updateConnectivity()
 			continue;
 		}
 
-		setActive(true, iface.name());
-		return;
+		if (!mActive)
+		{
+			qCDebug(network) << "Found active network interface" << iface.name();
+		}
+		return true;
 	}
-	setActive(false);
-}
 
-
-void ConnectivityManager::timerEvent(QTimerEvent* pTimerEvent)
-{
-	if (pTimerEvent->timerId() == mTimerId)
+	// QNetworkInterface has no operator== so we use allAddresses()
+	// to check if something changed. We don't want to log
+	// all interfaces for every check here.
+	const auto& addresses = QNetworkInterface::allAddresses();
+	if (mAllAddresses != addresses)
 	{
-		updateConnectivity();
+		mAllAddresses = addresses;
+		qCDebug(network) << "No active network interface found";
+		for (const auto& interface : allInterfaces)
+		{
+			qCDebug(network) << interface;
+		}
 	}
+
+	return false;
 }
 
 
 bool ConnectivityManager::isNetworkInterfaceActive() const
 {
 	return mActive;
-}
-
-
-void ConnectivityManager::startWatching()
-{
-	if (mTimerId != 0)
-	{
-		qCWarning(network) << "Already started, skip";
-		return;
-	}
-	mTimerId = startTimer(1000);
-	updateConnectivity();
-}
-
-
-void ConnectivityManager::stopWatching()
-{
-	if (mTimerId == 0)
-	{
-		qCWarning(network) << "Already stopped, skip";
-		return;
-	}
-	killTimer(mTimerId);
-	mTimerId = 0;
 }

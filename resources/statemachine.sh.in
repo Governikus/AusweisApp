@@ -1,7 +1,7 @@
 #!/bin/sh
 
 RULE='
-s/[[:alnum:]]+\.setInitialState\(s([[:alnum:]]+)\)\;/[*] --> \1/p
+s/auto[[:space:]]s([[:alnum:]]+)[[:space:]]=[[:space:]]addInitialState<[[:alnum:]]+>\(\);/[*] --> \1/p
 s/setInitialState\(s([[:alnum:]]+)\)\;/[*] --> \1/p
 s/auto[[:space:]]sFinal[[:space:]]=[[:space:]]addState<FinalState>\(\)\;/state Final #DarkSeaGreen/p
 s/[[:alnum:]]+\-.addTransition\(s([[:alnum:]]+)\,[[:space:]]+\&[[:alnum:]]+\:\:fire([[:alnum:]]+)\,[[:space:]]+s([[:alnum:]]+)\)\;/\1 --> \3 : \2/p
@@ -22,6 +22,7 @@ function createImage {
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStatePace.cpp @PROJECT_BINARY_DIR@/uml_CompositeStatePace
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateProcessCvcsAndSetRights.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateProcessCvcsAndSetRights
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/states/CompositeStateTrustedChannel.cpp @PROJECT_BINARY_DIR@/uml_CompositeStateTrustedChannel
+createImage @PROJECT_SOURCE_DIR@/src/workflows/personalization/states/CompositeStatePrepareApplet.cpp @PROJECT_BINARY_DIR@/uml_CompositeStatePrepareApplet
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/ChangePinController.cpp @PROJECT_BINARY_DIR@/uml_ChangePinController
 createImage @PROJECT_SOURCE_DIR@/src/workflows/selfauth/controller/SelfAuthController.cpp @PROJECT_BINARY_DIR@/uml_SelfAuthController
 createImage @PROJECT_SOURCE_DIR@/src/workflows/base/controller/AuthController.cpp @PROJECT_BINARY_DIR@/uml_AuthController

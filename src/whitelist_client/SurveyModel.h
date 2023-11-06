@@ -69,9 +69,9 @@ class SurveyModel
 		void setReaderInfo(const ReaderInfo& pReaderInfo);
 		void setAuthWasSuccessful(bool pSuccess);
 
-		Q_INVOKABLE [[nodiscard]] bool askForDeviceSurvey();
-		[[nodiscard]] bool isDeviceSurveyPending();
-		Q_INVOKABLE void setDeviceSurveyPending(bool pValue);
+		[[nodiscard]] Q_INVOKABLE bool askForDeviceSurvey() const;
+		[[nodiscard]] bool isDeviceSurveyPending() const;
+		Q_INVOKABLE void setDeviceSurveyPending(bool pValue) const;
 
 
 		void transmitSurvey();

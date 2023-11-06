@@ -1,5 +1,5 @@
 Name                  : {F6A3D26B-B2A3-4301-911A-C6CF3BC1941A}
-DisplayName           : AusweisApp2-SaC
+DisplayName           : AusweisApp-SaC
 Description           : Allow inbound udp connections for Smartphone as card reader.
 DisplayGroup          :
 Group                 :

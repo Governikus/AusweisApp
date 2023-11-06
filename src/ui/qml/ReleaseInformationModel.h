@@ -47,7 +47,7 @@ class ReleaseInformationModel
 		~ReleaseInformationModel() override = default;
 		[[nodiscard]] FormattedTextModel* getCurrentRelease() const;
 		[[nodiscard]] FormattedTextModel* getUpdateRelease() const;
-		Q_INVOKABLE void update();
+		Q_INVOKABLE void update() const;
 		[[nodiscard]] bool allowRetry() const;
 
 	public Q_SLOTS:

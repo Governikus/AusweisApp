@@ -29,6 +29,9 @@ class StateInsertCard
 	private Q_SLOTS:
 		void onCardInfoChanged(const ReaderInfo& pInfo);
 		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+
+	Q_SIGNALS:
+		void fireSkipPinChange();
 };
 
 } // namespace governikus

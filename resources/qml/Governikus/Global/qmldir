@@ -5,11 +5,11 @@ internal BrandConstants BrandConstants.qml
 internal DeviceConstants DeviceConstants.qml
 internal PlatformConstants PlatformConstants.qml
 
-singleton Category 1.0 Category.qml
 singleton Constants 1.0 Constants.qml
 singleton Utils 1.0 Utils.qml
 
 ConfirmationPopup 1.0 ConfirmationPopup.qml
+Crossed 1.0 Crossed.qml
 DecisionView 1.0 DecisionView.qml
 
 GBusyIndicator 1.0 GBusyIndicator.qml
@@ -18,6 +18,7 @@ GInformativeButton 1.0 GInformativeButton.qml
 GCheckBox 1.0 GCheckBox.qml
 GComboBox 1.0 GComboBox.qml
 GConicalGradient 1.0 GConicalGradient.qml
+GControl 1.0 GControl.qml
 GFileDialog 1.0 GFileDialog.qml
 GFlickable 1.0 GFlickable.qml
 GFlickableColumnLayout 1.0 GFlickableColumnLayout.qml
@@ -25,6 +26,7 @@ GGridView 1.0 GGridView.qml
 GListView 1.0 GListView.qml
 GPane 1.0 GPane.qml
 GPaneBackground 1.0 GPaneBackground.qml
+GPaneBackgroundDelegate 1.0 GPaneBackgroundDelegate.qml
 GProgressBar 1.0 GProgressBar.qml
 GRadioButton 1.0 GRadioButton.qml
 GRepeater 1.0 GRepeater.qml
@@ -44,20 +46,21 @@ NavigationButton 1.0 NavigationButton.qml
 NumberField 1.0 NumberField.qml
 PaneTitle 1.0 PaneTitle.qml
 ProxyCredentialsPopup 1.0 ProxyCredentialsPopup.qml
+RetryCounter 1.0 RetryCounter.qml
 RoundedRectangle 1.0 RoundedRectangle.qml
 RegExpValidatorCompat 1.0 RegExpValidatorCompat.qml
 ScrollGradients 1.0 ScrollGradients.qml
 ScrollablePane 1.0 ScrollablePane.qml
-SearchBar 1.0 SearchBar.qml
-StatusIcon 1.0 StatusIcon.qml
 SwipeActionDelegate 1.0 SwipeActionDelegate.qml
 TabbedPane 1.0 TabbedPane.qml
-TabbedPaneDelegateIconAndText 1.0 TabbedPaneDelegateIconAndText.qml
-TabbedPaneDelegateIconAndThreeLineText 1.0 TabbedPaneDelegateIconAndThreeLineText.qml
-TabbedPaneDelegateText 1.0 TabbedPaneDelegateText.qml
 PkiSwitch 1.0 PkiSwitch.qml
+TintableAnimation 1.0 TintableAnimation.qml
 TintableIcon 1.0 TintableIcon.qml
 TitledSeparator 1.0 TitledSeparator.qml
 PrivacyStatement 1.0 PrivacyStatement.qml
 Hint 1.0 Hint.qml
 MoreInformationLink 1.0 MoreInformationLink.qml
+GDropShadow 1.0 GDropShadow.qml
+GCollapsible 1.0 GCollapsible.qml
+GCollapsibleSubButton 1.0 GCollapsibleSubButton.qml
+GOptionsContainer 1.0 GOptionsContainer.qml

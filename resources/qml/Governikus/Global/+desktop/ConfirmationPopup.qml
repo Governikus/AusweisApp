@@ -1,18 +1,17 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
 BaseConfirmationPopup {
 	id: root
+
 	buttons: Row {
-		bottomPadding: Constants.pane_padding
 		layoutDirection: Qt.RightToLeft
-		rightPadding: Constants.pane_padding
 		spacing: Constants.component_spacing
 		width: parent.width
 

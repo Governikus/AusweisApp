@@ -6,8 +6,7 @@ Table of contents
     \clearpage
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Installation
+   :maxdepth: 5
 
    README.de
    README.en

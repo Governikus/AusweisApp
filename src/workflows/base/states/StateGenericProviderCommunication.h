@@ -38,9 +38,10 @@ class StateGenericProviderCommunication
 	friend class ::test_StateGetSessionId;
 	friend class ::test_StateGetChallenge;
 
-	protected:
+	private:
 		QSharedPointer<QNetworkReply> mReply;
 
+	protected:
 		explicit StateGenericProviderCommunication(const QSharedPointer<WorkflowContext>& pContext);
 
 		virtual void handleNetworkReply(const QByteArray& pContent) = 0;

@@ -27,15 +27,15 @@
 
 int main()
 {
-	// It is required that Qt and AusweisApp2 uses the library and the same version.
+	// It is required that Qt and AusweisApp uses the library and the same version.
 	// Also this binary will crash if your libraries aren't binary compatible. For example
-	// this occurs if you link Qt against OpenSSL and the AusweisApp2 against LibreSSL.
+	// this occurs if you link Qt against OpenSSL and the AusweisApp against LibreSSL.
 	if (QSslSocket::sslLibraryVersionString() != QLatin1String(OpenSSL_version(OPENSSL_VERSION)))
 	{
 		return 1;
 	}
 
-	// The AusweisApp2 requires at least one of an RSA-PSK cipher. LibreSSL and OpenSSL <= 1.0.2 does not support that!
+	// The AusweisApp requires at least one of an RSA-PSK cipher. LibreSSL and OpenSSL <= 1.0.2 does not support that!
 	const QStringList ciphers({"RSA-PSK-AES256-GCM-SHA384", "RSA-PSK-AES256-CBC-SHA384", "RSA-PSK-AES128-GCM-SHA256", "RSA-PSK-AES128-CBC-SHA256", "RSA-PSK-AES256-CBC-SHA"});
 	return std::any_of(ciphers.constBegin(), ciphers.constEnd(), [](const QString& pCipherName)
 		{

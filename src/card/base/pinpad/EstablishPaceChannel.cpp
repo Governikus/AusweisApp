@@ -6,7 +6,6 @@
 
 #include "LengthValue.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/ResponseApdu.h"
 #include "asn1/ASN1Util.h"
 
 #include <QDataStream>
@@ -97,26 +96,14 @@ bool EstablishPaceChannel::fromCcid(const QByteArray& pInput)
 		return false;
 	}
 
-	Q_ASSERT(channelInput->mPasswordID);
-	if (channelInput->mPasswordID)
+	const auto asn1_char = static_cast<char>(ASN1_INTEGER_get(channelInput->mPasswordID));
+	if (!Enum<PacePasswordId>::isValue(asn1_char))
 	{
-		const auto asn1_char = static_cast<char>(ASN1_INTEGER_get(channelInput->mPasswordID));
-		if (Enum<PacePasswordId>::isValue(asn1_char))
-		{
-			mPasswordId = PacePasswordId(asn1_char);
-		}
-		else
-		{
-			qCDebug(card) << "Decapsulation: Bad PIN ID!";
-			Q_ASSERT(false);
-		}
-	}
-	else
-	{
-		qCDebug(card) << "Decapsulation: No PIN ID!";
-		Q_ASSERT(false);
+		qCDebug(card) << "Decapsulation: Bad PIN ID!";
+		return false;
 	}
 
+	mPasswordId = PacePasswordId(asn1_char);
 	// Chat and certificate description are only available in authentications via PIN mode or CAN allowed mode
 	if (mPasswordId == PacePasswordId::PACE_PIN || mPasswordId == PacePasswordId::PACE_CAN)
 	{
@@ -288,7 +275,7 @@ QByteArray EstablishPaceChannel::createCommandDataCcid() const
 	if (!mCertificateDescription.isEmpty())
 	{
 		const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(mCertificateDescription.constData());
-		decodeAsn1Object(&channelInput->mCertificateDescription, &unsignedCharPointer, mCertificateDescription.size());
+		decodeAsn1Object(&channelInput->mCertificateDescription, &unsignedCharPointer, static_cast<long>(mCertificateDescription.size()));
 	}
 
 	QByteArray data = encodeObject(channelInput.data());

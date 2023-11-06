@@ -36,6 +36,7 @@ class WorkflowContext
 
 	private:
 		const Action mAction;
+		const bool mActivateUi;
 		bool mStateApproved;
 		bool mWorkflowKilled;
 		QString mCurrentState;
@@ -66,7 +67,6 @@ class WorkflowContext
 		QString mProgressMessage;
 		bool mShowRemoveCardFeedback;
 		QString mClaimedBy;
-		bool mInterruptRequested;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -78,7 +78,8 @@ class WorkflowContext
 		void fireReaderInfoChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
-		void fireIsSmartCardAllowedChanged();
+		void fireAcceptedEidTypesChanged();
+		void fireEidTypeMismatchChanged();
 		void fireCanChanged();
 		void firePinChanged();
 		void firePukChanged();
@@ -94,12 +95,18 @@ class WorkflowContext
 		void fireNextWorkflowPending();
 
 	public:
-		explicit WorkflowContext(const Action mAction);
+		explicit WorkflowContext(const Action mAction, bool pActivateUi = true);
 		~WorkflowContext() override;
 
 		[[nodiscard]] Action getAction() const
 		{
 			return mAction;
+		}
+
+
+		[[nodiscard]] bool isActivateUi() const
+		{
+			return mActivateUi;
 		}
 
 
@@ -220,10 +227,8 @@ class WorkflowContext
 
 		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const = 0;
 
-		bool isPhysicalCardRequired() const;
-
-		[[nodiscard]] bool interruptRequested() const;
-		void setInterruptRequested(bool pInterruptRequested);
+		[[nodiscard]] bool eidTypeMismatch() const;
+		[[nodiscard]] bool isMobileEidTypeAllowed(const MobileEidType& mobileEidType) const;
 };
 
 } // namespace governikus

@@ -44,11 +44,7 @@ class test_UILoader
 			QCOMPARE(ui->property("userInteractive"), QVariant());
 			QCOMPARE(ui->property("readerManager"), QVariant());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("json"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("json"))");
-#endif
 		}
 
 
@@ -63,12 +59,7 @@ class test_UILoader
 			QVERIFY(!loader.load());
 			QVERIFY(!loader.isLoaded());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
-#else
-			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: ()");
-#endif
-
 			loader.shutdown();
 		}
 
@@ -86,11 +77,7 @@ class test_UILoader
 			QCOMPARE(spyLoaded.count(), 1);
 			QVERIFY(loader.getLoaded<UIPlugInJson>());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("json"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("json"))");
-#endif
 		}
 
 
@@ -105,12 +92,7 @@ class test_UILoader
 			QVERIFY(loader.initialize()); // empty list is ok
 			QCOMPARE(spyLoaded.count(), 0);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
-#else
-			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: ()");
-#endif
-
 			loader.shutdown();
 		}
 
@@ -124,12 +106,7 @@ class test_UILoader
 			QVERIFY(!loader.isLoaded());
 			QCOMPARE(spyLoaded.count(), 0);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
-#else
-			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: ()");
-#endif
-
 			loader.shutdown();
 		}
 
@@ -139,11 +116,7 @@ class test_UILoader
 			auto loader = QSharedPointer<UILoader>::create();
 			QSignalSpy spyShutdown(loader.get(), &UILoader::fireRemovedAllPlugins);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: QList()");
-#else
-			QTest::ignoreMessage(QtDebugMsg, "Shutdown UILoader: ()");
-#endif
 			loader->shutdown();
 			QCoreApplication::processEvents(); // cannot use QTRY_COMPARE here
 			QCOMPARE(spyShutdown.count(), 0);
@@ -158,11 +131,7 @@ class test_UILoader
 			QTest::ignoreMessage(QtDebugMsg, R"(Try to load UI plugin: "json")");
 			QVERIFY(loader->load<UIPlugInJson>());
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("json"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("json"))");
-#endif
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UI: "json")");
 			loader->shutdown();
 			QTRY_COMPARE(spyShutdown.count(), 1); // clazy:exclude=qstring-allocations

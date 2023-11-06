@@ -1,17 +1,17 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.TitleBar 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.TitleBar
+import Governikus.Style
+import Governikus.View
 
 Controller {
 	id: controller
 
+	readonly property bool breadcrumpSearchPath: true
 	property bool isAbstract: false
-	readonly property bool sectionPageTypeMarker: true
 	property TitleBarAction titleBarAction: null
 
 	function setActive() {

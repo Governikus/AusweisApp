@@ -60,12 +60,7 @@ class test_EcdsaPublicKey
 		const EC_GROUP* ecGroup = EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(pKey.data()));
 		EC_GROUP_get_cofactor(ecGroup, *pCofactor, nullptr);
 		EC_GROUP_get_order(ecGroup, *pOrder, nullptr);
-
-	#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
-		EC_GROUP_get_curve_GFp(ecGroup, *pP, *pA, *pB, nullptr);
-	#else
 		EC_GROUP_get_curve(ecGroup, *pP, *pA, *pB, nullptr);
-	#endif
 
 		const EC_POINT* generator = EC_GROUP_get0_generator(ecGroup);
 		auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);

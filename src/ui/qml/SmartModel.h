@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderInfo.h"
 #include "ReaderManagerPlugInInfo.h"
 #include "context/WorkflowContext.h"
 
@@ -32,6 +31,7 @@ class SmartModel
 	friend class ::test_SmartModel;
 
 	Q_PROPERTY(QmlSmartState smartState READ getSmartState NOTIFY fireSmartStateChanged)
+	Q_PROPERTY(QString errorString READ getErrorString NOTIFY fireErrorStringChanged)
 	Q_PROPERTY(int progress READ getProgress NOTIFY fireProgressChanged)
 	Q_PROPERTY(bool isScanRunning READ isScanRunning NOTIFY fireScanRunningChanged)
 
@@ -50,40 +50,46 @@ class SmartModel
 	private:
 		SmartModel();
 		QmlSmartState mStatus;
+		QString mErrorString;
 		CardInfo mCachedCardInfo;
 		int mProgress;
 
 		void updateStatus();
+		void setErrorString(const QString& pError);
 		void updatePinStatus();
 		void setProgress(int pProgress);
 		void setStatus(QmlSmartState pNewStatus);
 
-		bool isScanRunning() const;
+		[[nodiscard]] bool isScanRunning() const;
 
 	private Q_SLOTS:
+		void onUpdateSupportInfoDone(const QVariant& pResult);
 		void onDeletePersonalizationDone(const QVariant& pResult);
 		void onDeleteSmartDone(const QVariant& pResult);
 		void onUpdateStatusDone(const QVariant& pResult);
-		void onUpdatePinStatusDone(const ReaderManagerPlugInInfo& pInfo);
+		void onUpdatePinStatusDone(const ReaderInfo& pInfo);
 		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
 
 	public:
 		QmlSmartState getSmartState() const;
+		[[nodiscard]] QString getErrorString() const;
 		[[nodiscard]] int getProgress() const;
 
 		void workflowFinished(QSharedPointer<WorkflowContext> pContext);
 
-		[[nodiscard]] MobileEidType getMobileEidType();
+		[[nodiscard]] MobileEidType getMobileEidType() const;
 
+		Q_INVOKABLE void updateSupportInfo();
 		Q_INVOKABLE void deletePersonalization();
 		Q_INVOKABLE void deleteSmart();
 
 	Q_SIGNALS:
 		void fireSmartStateChanged();
 		void fireDeleteSmartDone();
-		void fireDeletePersonalizationDone();
+		void fireDeletePersonalizationDone(bool pSuccess);
 		void fireProgressChanged();
 		void fireScanRunningChanged();
+		void fireErrorStringChanged();
 };
 
 } // namespace governikus

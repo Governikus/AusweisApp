@@ -4,7 +4,6 @@
 
 #include "states/StateRedirectBrowser.h"
 
-#include "MockActivationContext.h"
 #include "TestFileHelper.h"
 #include "states/StateBuilder.h"
 
@@ -18,168 +17,44 @@ class test_StateRedirectBrowser
 	: public QObject
 {
 	Q_OBJECT
-	QScopedPointer<StateRedirectBrowser> mState;
-	QSharedPointer<AuthContext> mAuthContext;
 
-	Q_SIGNALS:
-		void fireStateStart(QEvent* pEvent);
+	QSharedPointer<StateRedirectBrowser> getStateRedirectBrowser(AuthContext::BrowserHandler pHandler = AuthContext::BrowserHandler())
+	{
+		const auto& context = QSharedPointer<AuthContext>::create(true, QUrl(), pHandler);
+		QSharedPointer<StateRedirectBrowser> state(StateBuilder::createState<StateRedirectBrowser>(context));
+		state->onEntry(nullptr);
+		return state;
+	}
 
 	private Q_SLOTS:
-		void init()
+		void noError()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
-			mState.reset(StateBuilder::createState<StateRedirectBrowser>(mAuthContext));
-			mState->onEntry(nullptr);
+			auto state = getStateRedirectBrowser();
+			QSignalSpy spyAbort(state.data(), &StateRedirectBrowser::fireAbort);
+			QSignalSpy spyContinue(state.data(), &StateRedirectBrowser::fireContinue);
+
+			state->run();
+			QCOMPARE(state->getContext()->getStatus(), GlobalStatus::Code::No_Error);
+			QCOMPARE(spyAbort.count(), 0);
+			QCOMPARE(spyContinue.count(), 1);
 		}
 
 
-		void cleanup()
+		void error()
 		{
-			mAuthContext.clear();
-			mState.reset();
-		}
+			auto state = getStateRedirectBrowser([](const QSharedPointer<AuthContext>&){
+					return QStringLiteral("failing");
+				});
 
+			QSignalSpy spyAbort(state.data(), &StateRedirectBrowser::fireAbort);
+			QSignalSpy spyContinue(state.data(), &StateRedirectBrowser::fireContinue);
 
-		void tcTokenNotFound_sendErrorPageSuccess()
-		{
-			mAuthContext->setTcTokenNotFound(true);
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-		}
-
-
-		void tcTokenNotFound_sendErrorPageFailure()
-		{
-			mAuthContext->setTcTokenNotFound(true);
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true, "send error"));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
-		}
-
-
-		void noRefreshUrl_noTcToken_sendErrorPageErrorSuccess()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-		}
-
-
-		void noRefreshUrl_noTcToken_sendErrorPageErrorFailure()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
-		}
-
-
-		void noRefreshUrl_tcTokenWithoutCommunicationErrorAddress_sendErrorPageErrorSuccess()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/withoutCommunicationErrorAddress.xml"))));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-		}
-
-
-		void noRefreshUrl_tcTokenWithoutCommunicationErrorAddress_sendErrorPageErrorFailure()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/withoutCommunicationErrorAddress.xml"))));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, false, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendErroPageCalled());
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
-		}
-
-
-		void noRefreshUrl_sendRedirectSuccess()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
-		}
-
-
-		void noRefreshUrl_sendRedirectFailure()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
-		}
-
-
-		void refreshUrl_sendRedirectSuccess()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
-			mAuthContext->setRefreshUrl(QUrl("https://bla.de"));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, true));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireContinue);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
-		}
-
-
-		void refreshUrl_sendRedirectFailure()
-		{
-			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setTcToken(QSharedPointer<TcToken>(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"))));
-			mAuthContext->setRefreshUrl(QUrl("https://bla.de"));
-			mAuthContext->mActivationContext.reset(new MockActivationContext(true, true, true, false));
-			QSignalSpy spy(mState.data(), &StateRedirectBrowser::fireAbort);
-
-			mAuthContext->setStateApproved();
-
-			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QVERIFY(qobject_cast<MockActivationContext*>(mAuthContext->getActivationContext())->isSendRedirectCalled());
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
+			QTest::ignoreMessage(QtCriticalMsg, "Cannot send page to caller: \"failing\"");
+			state->run();
+			QCOMPARE(state->getContext()->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_Browser_Transmission_Error);
+			QCOMPARE(state->getContext()->getStatus().getExternalInfo(), QLatin1String("failing"));
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(spyContinue.count(), 0);
 		}
 
 

@@ -6,11 +6,14 @@
 	<Fragment>
 		<Property Id="SYSTEMSETTINGS" Secure="yes"/>
 		<Property Id="SYSTEMSETTINGS_FOUND" Secure="yes">
-			<RegistrySearch Id="SystemSettingsRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" Name="AusweisApp2-Firewall-Rule" Type="raw"/>
+			<RegistrySearch Id="SystemSettingsRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" Name="AusweisApp-Firewall-Rule" Type="raw"/>
+		</Property>
+		<Property Id="SYSTEMSETTINGS_OLD_FOUND" Secure="yes">
+			<RegistrySearch Id="SystemSettingsOldRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules" Name="AusweisApp2-Firewall-Rule" Type="raw"/>
 		</Property>
 		<SetProperty Before="CostFinalize" Id="SYSTEMSETTINGS" Value="true" Sequence="first">
 			(NOT SYSTEMSETTINGS) AND (
-				((WIX_UPGRADE_DETECTED OR REINSTALL) AND SYSTEMSETTINGS_FOUND)
+				((WIX_UPGRADE_DETECTED OR REINSTALL) AND (SYSTEMSETTINGS_FOUND OR SYSTEMSETTINGS_OLD_FOUND))
 				OR (NOT (WIX_UPGRADE_DETECTED OR REINSTALL))
 			)
 		</SetProperty>
@@ -91,7 +94,7 @@
 
 				<!-- Add/remove outgoing data port to/from Windows Firewall -->
 				<RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules">
-					<RegistryValue Type="string" Name="AusweisApp2-Firewall-Rule" Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp2|Desc=AusweisApp2 firewall rule|" />
+					<RegistryValue Type="string" Name="AusweisApp-Firewall-Rule" Value="v2.20|Action=Allow|Active=TRUE|Dir=Out|App=[INSTALL_ROOT][ProductName].exe|Name=AusweisApp|Desc=AusweisApp firewall rule|" />
 				</RegistryKey>
 
 				<!-- Add/remove SaC listening port to/from Windows Firewall -->
@@ -101,7 +104,7 @@
 									Protocol="udp"
 									Profile="all"
 									Scope="localSubnet"
-									Name="AusweisApp2-SaC"
+									Name="AusweisApp-SaC"
 									Description="Allow inbound udp connections for Smartphone as card reader." />
 			</Component>
 

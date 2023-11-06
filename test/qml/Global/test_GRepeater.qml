@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQml.Models 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtQml.Models
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GRepeater {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GRepeater {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();
@@ -39,9 +40,11 @@ TestCase {
 
 	Text {
 		id: expected
+
 	}
 	ListModel {
 		id: testModel
+
 		ListElement {
 			name: "Apple"
 		}
@@ -54,6 +57,7 @@ TestCase {
 	}
 	GRepeater {
 		id: testObject1
+
 		model: testModel
 
 		Text {

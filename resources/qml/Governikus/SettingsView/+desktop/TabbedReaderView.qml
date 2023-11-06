@@ -1,17 +1,18 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQml.Models 2.15
-import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQml.Models
+import Governikus.Global
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.NumberModel
+import Governikus.Type.RemoteServiceModel
+import Governikus.View
 
 SectionPage {
 	id: root
+
 	enum SubView {
 		None,
 		ConnectSacView
@@ -27,13 +28,13 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		id: titleBarAction
-		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
+
 		rootEnabled: false
 
 		//: LABEL DESKTOP
 		text: qsTr("Card Readers")
 
-		customSubAction: CancelAction {
+		customSubAction: NavigationAction {
 			onClicked: closeView()
 		}
 
@@ -57,6 +58,7 @@ SectionPage {
 	}
 	TabbedPane {
 		id: tabbedPane
+
 		sectionsModel: [qsTr("Smartphone as card reader"), qsTr("USB card reader")]
 		visible: d.view === TabbedReaderView.SubView.None
 
@@ -105,6 +107,7 @@ SectionPage {
 	}
 	ConnectSacView {
 		id: connectSacView
+
 		rootEnabled: root.rootEnabled
 		visible: d.view === TabbedReaderView.SubView.ConnectSacView
 

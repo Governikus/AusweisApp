@@ -7,6 +7,7 @@
 #include "FileRef.h"
 #include "VolatileSettings.h"
 #include "apdu/CommandData.h"
+#include "apdu/FileCommand.h"
 #include "apdu/GeneralAuthenticateResponse.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
@@ -180,7 +181,7 @@ ResponseApduResult SimulatorCard::setEidPin(quint8 pTimeoutSeconds)
 ResponseApduResult SimulatorCard::executeFileCommand(const CommandApdu& pCmd)
 {
 	const FileCommand fileCommand(pCmd);
-	const int offset = fileCommand.getOffset();
+	const auto offset = fileCommand.getOffset();
 	const auto fileRef = fileCommand.getFileRef();
 	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 
@@ -306,7 +307,7 @@ QByteArray SimulatorCard::brainpoolP256r1Multiplication(const QByteArray& pPoint
 	}
 
 	QSharedPointer<BIGNUM> scalar = EcUtil::create(BN_new());
-	if (!BN_bin2bn(reinterpret_cast<const uchar*>(pScalar.data()), pScalar.size(), scalar.data()))
+	if (!BN_bin2bn(reinterpret_cast<const uchar*>(pScalar.data()), static_cast<int>(pScalar.size()), scalar.data()))
 	{
 		qCCritical(card) << "Interpreting the scalar failed";
 	}
@@ -346,7 +347,7 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 }
 
 
-QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey)
+QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey) const
 {
 	// const Oid oid(KnownOid::ID_RI_ECDH_SHA_256);
 
@@ -359,7 +360,7 @@ QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey)
 StatusCode SimulatorCard::verifyAuxiliaryData(const QByteArray& pCommandData)
 {
 	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(pCommandData.constData());
-	ASN1_OBJECT* obj = d2i_ASN1_OBJECT(nullptr, &unsignedCharPointer, pCommandData.size());
+	ASN1_OBJECT* obj = d2i_ASN1_OBJECT(nullptr, &unsignedCharPointer, static_cast<long>(pCommandData.size()));
 	const auto guard = qScopeGuard([obj] {ASN1_OBJECT_free(obj);});
 	return mFileSystem.verify(Oid(obj), mAuxiliaryData);
 }

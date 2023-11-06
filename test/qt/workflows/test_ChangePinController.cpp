@@ -34,24 +34,6 @@ class test_ChangePinController
 		bool mRetryCounterUpdated = false;
 
 
-		void onCardInfoChanged(const ReaderInfo& pInfo)
-		{
-			if (pInfo.isInsertable())
-			{
-				Env::getSingleton<ReaderManager>()->insert(pInfo);
-			}
-		}
-
-
-		void onCardInserted(const ReaderInfo& pInfo)
-		{
-			if (pInfo.hasEid())
-			{
-				Q_EMIT fireEidCardInserted();
-			}
-		}
-
-
 		void onStateChanged(const QString& pNextState)
 		{
 			if (mRetryCounterUpdated)
@@ -65,7 +47,7 @@ class test_ChangePinController
 				}
 			}
 
-			if (AbstractState::isState<StateUpdateRetryCounter>(pNextState))
+			if (StateBuilder::isState<StateUpdateRetryCounter>(pNextState))
 			{
 				mRetryCounterUpdated = true;
 			}
@@ -76,21 +58,25 @@ class test_ChangePinController
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			QSignalSpy eidCardDetected(this, &test_ChangePinController::fireEidCardInserted);
-
 			const auto readerManager = Env::getSingleton<ReaderManager>();
-			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &test_ChangePinController::onCardInfoChanged);
-			connect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, [] (const ReaderInfo& pInfo){
+					if (pInfo.isInsertable())
+					{
+						Env::getSingleton<ReaderManager>()->insert(pInfo);
+					}
+				});
+
 			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
 		void cleanupTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			readerManager->disconnect(this);
 			readerManager->shutdown();
-			disconnect(readerManager, &ReaderManager::fireCardInserted, this, &test_ChangePinController::onCardInserted);
-			disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &test_ChangePinController::onCardInfoChanged);
 		}
 
 
@@ -108,8 +94,7 @@ class test_ChangePinController
 
 		void cleanup()
 		{
-			disconnect(mChangePinContext.data(), &WorkflowContext::fireStateChanged, this, &test_ChangePinController::onStateChanged);
-
+			mChangePinContext->disconnect(this);
 			mChangePinController.reset();
 			mChangePinContext.reset();
 		}
@@ -117,19 +102,14 @@ class test_ChangePinController
 
 		void testSuccess()
 		{
-			qDebug() << "START: testSuccess";
-
 			QSignalSpy controllerFinishedSpy(mChangePinController.data(), &ChangePinController::fireComplete);
 
 			mChangePinController->run();
-
 			QVERIFY(controllerFinishedSpy.wait());
-
 			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::No_Error);
 		}
 
-	Q_SIGNALS:
-		void fireEidCardInserted();
+
 };
 
 QTEST_GUILESS_MAIN(test_ChangePinController)

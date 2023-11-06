@@ -10,10 +10,8 @@
 
 #include "AppSettings.h"
 #include "asn1/AccessRoleAndRight.h"
-#include "asn1/CVCertificate.h"
 #include "context/AuthContext.h"
 #include "context/IfdServiceContext.h"
-#include "context/SelfAuthContext.h"
 
 using namespace governikus;
 
@@ -43,7 +41,7 @@ ChatModel::ChatModel()
 }
 
 
-void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemModel* pSourceModel, int pFilterRole, const QString& pFilter)
+void ChatModel::initFilterModel(QSortFilterProxyModel& pModel, QAbstractItemModel* pSourceModel, int pFilterRole, const QString& pFilter) const
 {
 	pModel.setSourceModel(pSourceModel);
 	pModel.setFilterRole(pFilterRole);
@@ -113,7 +111,7 @@ void ChatModel::setOrderedAllRights(const QSet<AccessRight>& pAllRights)
 
 int ChatModel::rowCount(const QModelIndex&) const
 {
-	return mAllRights.size();
+	return static_cast<int>(mAllRights.size());
 }
 
 
@@ -198,7 +196,7 @@ bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int p
 }
 
 
-void ChatModel::transferAccessRights()
+void ChatModel::transferAccessRights() const
 {
 	if (auto authContext = mContext.objectCast<AuthContext>())
 	{

@@ -57,7 +57,7 @@ void LogModel::addLogEntry(const QString& pEntry)
 
 	mLogEntries.append(pEntry);
 
-	QModelIndex idx = index(mLogEntries.size() - 1, 0);
+	QModelIndex idx = index(static_cast<int>(mLogEntries.size()) - 1, 0);
 
 	const auto& level = data(idx, LogModel::LogModelRoles::LevelRole).toString();
 	if (!mLevels.contains(level))
@@ -102,7 +102,8 @@ void LogModel::onNewLogMsg(const QString& pMsg)
 {
 	if (mSelectedLogFile == 0)
 	{
-		beginInsertRows(QModelIndex(), mLogEntries.size(), mLogEntries.size());
+		const auto size = static_cast<int>(mLogEntries.size());
+		beginInsertRows(QModelIndex(), size, size);
 		addLogEntry(pMsg);
 		endInsertRows();
 		Q_EMIT fireNewLogMsg();
@@ -204,10 +205,6 @@ void LogModel::setLogFile(int pIndex)
 	if (pIndex == 0)
 	{
 		QTextStream in(logHandler->useLogFile() ? logHandler->getBacklog() : tr("The logfile is disabled.").toUtf8());
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-		in.setCodec("UTF-8");
-#endif
-
 		setLogEntries(in);
 		connect(logHandler->getEventHandler(), &LogEventHandler::fireLog, this, &LogModel::onNewLogMsg);
 	}
@@ -218,9 +215,6 @@ void LogModel::setLogFile(int pIndex)
 		if (inputFile.open(QIODevice::ReadOnly))
 		{
 			QTextStream in(&inputFile);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-			in.setCodec("UTF-8");
-#endif
 			setLogEntries(in);
 			inputFile.close();
 		}
@@ -270,7 +264,7 @@ void LogModel::saveDummyLogFile(const QDateTime& pTimestamp)
 int LogModel::rowCount(const QModelIndex& pIndex) const
 {
 	Q_UNUSED(pIndex)
-	return mLogEntries.size();
+	return static_cast<int>(mLogEntries.size());
 }
 
 

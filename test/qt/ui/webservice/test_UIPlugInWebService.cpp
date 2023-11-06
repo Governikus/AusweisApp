@@ -9,13 +9,15 @@
 #include "UIPlugInWebService.h"
 
 #include "HttpServerRequestor.h"
+#include "MockNetworkManager.h"
 #include "ResourceLoader.h"
+#include "VersionInfo.h"
 #include "WorkflowRequest.h"
-#include "context/ActivationContext.h"
-#include "context/AuthContext.h"
 
+#include <QScopedValueRollback>
 #include <QtCore>
 #include <QtTest>
+
 
 using namespace governikus;
 
@@ -36,7 +38,7 @@ class test_UIPlugInWebService
 
 	QString getUserAgentVersion(const QString& pVersion)
 	{
-		return QStringLiteral("%1/%2 (TR-03124-1/1.3)").arg(QCoreApplication::applicationName(), pVersion);
+		return QStringLiteral("%1/%2 (TR-03124-1/1.4)").arg(VersionInfo::getInstance().getImplementationTitle(), pVersion);
 	}
 
 	private Q_SLOTS:
@@ -77,10 +79,11 @@ class test_UIPlugInWebService
 			QTest::newRow("Settings") << QString("/eID-Client?ShowUI=SETTINGS") << UiModule::SETTINGS;
 
 			QTest::newRow("Tutorial") << QString("/eID-Client?ShowUI=TUTORIAL") << UiModule::TUTORIAL;
-			QTest::newRow("History") << QString("/eID-Client?ShowUI=HISTORY") << UiModule::HISTORY;
 			QTest::newRow("Help") << QString("/eID-Client?ShowUI=HELP") << UiModule::HELP;
-			QTest::newRow("Provider") << QString("/eID-Client?ShowUI=PROVIDER") << UiModule::PROVIDER;
 			QTest::newRow("Self AUth") << QString("/eID-Client?ShowUI=SELF_AUTHENTICATION") << UiModule::SELF_AUTHENTICATION;
+
+			QTest::newRow("SMART_EID") << QString("/eID-Client?ShowUI=SMART_EID") << UiModule::SMART_EID;
+			QTest::newRow("Smart-eID") << QString("/eID-Client?ShowUI=Smart-eID") << UiModule::SMART_EID;
 		}
 
 
@@ -146,7 +149,7 @@ class test_UIPlugInWebService
 			QTest::addColumn<QNetworkReply::NetworkError>("error");
 
 			QTest::newRow("favicon") << QString("/favicon.ico") << QString("image/x-icon") << 94921 << QNetworkReply::NoError;
-			QTest::newRow("logo") << QString("/images/html_templates/Logo_AusweisApp2.png") << QString("image/png") << 3291 << QNetworkReply::NoError;
+			QTest::newRow("smallicon") << QString("/images/html_templates/icon_attention.svg") << QString("image/svg+xml") << 957 << QNetworkReply::NoError;
 			QTest::newRow("nothing") << QString("/images/html_templates/nothing.gif") << QString() << 0 << QNetworkReply::ContentNotFoundError;
 		}
 
@@ -171,17 +174,55 @@ class test_UIPlugInWebService
 
 		void authentication()
 		{
+			connect(mUi.data(), &UIPlugIn::fireWorkflowRequested, mUi.data(), &UIPlugIn::onWorkflowStarted); // fake AppController
+
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
-
-			connect(mUi.data(), &UIPlugIn::fireWorkflowRequested, this, [](const QSharedPointer<WorkflowRequest>& pRequest)
-				{
-					pRequest->getContext().objectCast<AuthContext>()->getActivationContext()->sendProcessing();
-				});
-
 			HttpServerRequestor requestor;
 			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
+
+			QCOMPARE(mShowUiSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mAuthenticationSpy->count(), 1);
+		}
+
+
+		void authenticationConnectionLost()
+		{
+			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
+
+			connect(mUi.data(), &UIPlugIn::fireWorkflowRequested, this, [this](const QSharedPointer<WorkflowRequest>& pRequest)
+				{
+					const auto request = pRequest->getData().value<QSharedPointer<HttpRequest>>();
+					request->send(HTTP_STATUS_NO_CONTENT); // send something to avoid retry of Qt
+					auto* socket = request->take();
+					socket->close();
+					socket->deleteLater();
+					mUi->onWorkflowStarted(pRequest);
+				});
+
+			QTest::ignoreMessage(QtCriticalMsg, "Cannot send 'Processing' to caller as connection is lost");
+			HttpServerRequestor requestor;
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
+			QVERIFY(reply);
+			QCOMPARE(reply->error(), QNetworkReply::NoError);
+
+			QCOMPARE(mShowUiSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mAuthenticationSpy->count(), 1);
+		}
+
+
+		void authenticationAlreadyActive()
+		{
+			connect(mUi.data(), &UIPlugIn::fireWorkflowRequested, mUi.data(), &UIPlugIn::onWorkflowUnhandled);
+
+			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
+			HttpServerRequestor requestor;
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
+			QVERIFY(reply);
+			QCOMPARE(reply->error(), QNetworkReply::ContentConflictError);
 
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 0);
@@ -249,6 +290,51 @@ class test_UIPlugInWebService
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 1);
 			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start a newer version"));
+		}
+
+
+		void proxyDetection_data()
+		{
+			QTest::addColumn<int>("httpStatusCode");
+			QTest::addColumn<int>("existingAppResult");
+
+			QTest::newRow("timeout") << 0 << static_cast<int>(UIPlugInWebService::ExistingAppResult::SHOWUI_TIMEOUT);
+			QTest::newRow("no-proxy") << 200 << static_cast<int>(UIPlugInWebService::ExistingAppResult::SHOWUI_SUCCEED);
+			QTest::newRow("proxy-failed") << 502 << static_cast<int>(UIPlugInWebService::ExistingAppResult::REBIND_FAILED);
+			QTest::newRow("proxy-succedd") << 502 << static_cast<int>(UIPlugInWebService::ExistingAppResult::REBIND_SUCCEED);
+		}
+
+
+		void proxyDetection()
+		{
+			QFETCH(int, httpStatusCode);
+			QFETCH(int, existingAppResult);
+			const auto existingAppResultType = static_cast<UIPlugInWebService::ExistingAppResult>(existingAppResult);
+
+			const auto testAddress = HttpServer::cAddresses.constFirst();
+			QScopedValueRollback guard(HttpServer::cAddresses);
+
+			MockNetworkManager networkManager;
+			Env::set(NetworkManager::staticMetaObject, &networkManager);
+
+			if (existingAppResultType == UIPlugInWebService::ExistingAppResult::SHOWUI_TIMEOUT)
+			{
+				QTest::ignoreMessage(QtWarningMsg, "ShowUI request timed out");
+			}
+			else
+			{
+				auto reply = new MockNetworkReply();
+				reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, httpStatusCode);
+				reply->fireFinished();
+				networkManager.setNextReply(reply);
+
+				if (existingAppResultType == UIPlugInWebService::ExistingAppResult::REBIND_FAILED)
+				{
+					HttpServer::cAddresses.clear();
+				}
+			}
+
+			QCOMPARE(mUi->handleExistingApp(HttpServer::cPort, testAddress), existingAppResultType);
 		}
 
 

@@ -4,7 +4,7 @@
 
 #include "SmartReaderManagerPlugIn.h"
 
-#include "Env.h"
+#include "AppSettings.h"
 #include "SmartManager.h"
 #include "VolatileSettings.h"
 
@@ -17,32 +17,43 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_smart)
 
 
-bool SmartReaderManagerPlugIn::initializeSmart(const QSharedPointer<SmartManager>& pSmartManager) const
+static QString READER_NAME()
 {
-	const auto& smartAvailable = isSmartAvailable(pSmartManager);
-	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || smartAvailable)
-	{
-		return smartAvailable;
-	}
-
-	qCDebug(card_smart) << "Updating Smart-eID info";
-	pSmartManager->updateInfo();
-
-	return isSmartAvailable(pSmartManager);
+	return QStringLiteral("Smart");
 }
 
 
-bool SmartReaderManagerPlugIn::isSmartAvailable(const QSharedPointer<SmartManager>& pSmartManager) const
+void SmartReaderManagerPlugIn::publishReader(const ReaderInfo& pInfo)
 {
-	const auto& eidStatus = pSmartManager->status();
-	return eidStatus != EidStatus::INTERNAL_ERROR && eidStatus != EidStatus::UNAVAILABLE;
+	if (mReaderAdded)
+	{
+		Q_EMIT fireReaderPropertiesUpdated(pInfo);
+		return;
+	}
+
+	Q_EMIT fireReaderAdded(pInfo);
+	mReaderAdded = true;
+}
+
+
+void SmartReaderManagerPlugIn::onSmartAvailableChanged(bool pSmartAvailable)
+{
+	if (pSmartAvailable)
+	{
+		init();
+		return;
+	}
+
+	shutdown();
 }
 
 
 SmartReaderManagerPlugIn::SmartReaderManagerPlugIn()
 	: ReaderManagerPlugIn(ReaderManagerPlugInType::SMART)
+	, mReaderAdded(false)
 	, mSmartReader(nullptr)
 {
+	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSmartAvailableChanged, this, &SmartReaderManagerPlugIn::onSmartAvailableChanged);
 }
 
 
@@ -59,11 +70,6 @@ QList<Reader*> SmartReaderManagerPlugIn::getReaders() const
 
 void SmartReaderManagerPlugIn::init()
 {
-	if (getInfo().isAvailable())
-	{
-		return;
-	}
-
 	ReaderManagerPlugIn::init();
 
 	const auto& smartManager = SmartManager::get();
@@ -72,20 +78,26 @@ void SmartReaderManagerPlugIn::init()
 		smartManager->abortSDKWorkflow();
 	}
 
-	if (!initializeSmart(smartManager))
+	if (!smartManager->smartAvailable())
 	{
-		qCWarning(card_smart) << "Smart-eID was not initialized";
+		qCWarning(card_smart) << "Smart-eID is not available";
+		publishReader(ReaderInfo(READER_NAME()));
+		return;
+	}
+
+	if (getInfo().isAvailable())
+	{
 		return;
 	}
 
 	setPlugInAvailable(true);
-	mSmartReader.reset(new SmartReader());
+	mSmartReader.reset(new SmartReader(READER_NAME()));
 	connect(mSmartReader.data(), &SmartReader::fireReaderPropertiesUpdated, this, &SmartReaderManagerPlugIn::fireReaderPropertiesUpdated);
 	connect(mSmartReader.data(), &SmartReader::fireCardInfoChanged, this, &SmartReaderManagerPlugIn::fireCardInfoChanged);
 	connect(mSmartReader.data(), &SmartReader::fireCardInserted, this, &SmartReaderManagerPlugIn::fireCardInserted);
 	connect(mSmartReader.data(), &SmartReader::fireCardRemoved, this, &SmartReaderManagerPlugIn::fireCardRemoved);
 	qCDebug(card_smart) << "Add reader" << mSmartReader->getName();
-	Q_EMIT fireReaderAdded(mSmartReader->getReaderInfo());
+	publishReader(mSmartReader->getReaderInfo());
 }
 
 
@@ -96,8 +108,9 @@ void SmartReaderManagerPlugIn::shutdown()
 		return;
 	}
 
-	setPlugInAvailable(false);
 	mSmartReader.reset();
+	Q_EMIT fireReaderPropertiesUpdated(ReaderInfo(READER_NAME()));
+	setPlugInAvailable(false);
 }
 
 
@@ -109,7 +122,7 @@ void SmartReaderManagerPlugIn::insert(const QString& pReaderName, const QVariant
 		return;
 	}
 
-	if (!isScanRunning())
+	if (!getInfo().isScanRunning())
 	{
 		qCDebug(card_smart) << "Skipping insert because the scan is not running";
 		return;

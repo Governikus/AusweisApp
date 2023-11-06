@@ -24,13 +24,15 @@ class UIPlugInLocalIfd
 
 	private Q_SLOTS:
 		void onStateChanged(const QString& pNewState);
+		void onConnectedChanged(bool pConnected);
+		void onSocketError(QAbstractSocket::SocketError pSocketError);
 
 	public:
 		UIPlugInLocalIfd();
 
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
 
 	public Q_SLOTS:
 		bool onStartWorkflowRequested(const QString& pPsk);

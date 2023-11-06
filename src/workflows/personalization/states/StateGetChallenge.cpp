@@ -38,7 +38,7 @@ QByteArray StateGetChallenge::getPayload() const
 
 	QJsonObject body;
 	body[QLatin1String("sessionID")] = context->getSessionIdentifier().toString(QUuid::WithoutBraces);
-	body[QLatin1String("osType")] = getOsType();
+	body[QLatin1String("challengeType")] = context->getChallengeType();
 
 	return QJsonDocument(body).toJson(QJsonDocument::Compact);
 }
@@ -50,24 +50,6 @@ void StateGetChallenge::setProgress() const
 	Q_ASSERT(context);
 	//: LABEL ANDROID IOS
 	context->setProgress(10, tr("Getting challenge from server"));
-}
-
-
-QString StateGetChallenge::getOsType() const
-{
-#if defined(Q_OS_IOS)
-	return QStringLiteral("iOS");
-
-#elif defined(Q_OS_ANDROID)
-	return QStringLiteral("Android");
-
-#else
-	static const char* SMART_EID_MOCK_OS_TYPE = "AUSWEISAPP2_SMART_EID_MOCK_OS_TYPE";
-	const auto os = qEnvironmentVariable(SMART_EID_MOCK_OS_TYPE, QStringLiteral("Unknown"));
-	qDebug() << "Using" << SMART_EID_MOCK_OS_TYPE << ":" << os;
-	return os;
-
-#endif
 }
 
 

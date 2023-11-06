@@ -19,7 +19,7 @@ import org.qtproject.qt.android.bindings.QtService;
 public final class AusweisApp2LocalIfdService extends QtService
 {
 	private static final String ACTION_ABORT_WORKFLOW = AusweisApp2LocalIfdService.class.getCanonicalName() + ".abort";
-	public static final String PARAM_TLS_WEBSOCKET_PSK = "TLS_WEBSOCKET_PSK";
+	public static final String PARAM_TLS_WEBSOCKET_PSK = "PSK";
 	public static final String PARAM_SERVICE_TOKEN = "SERVICE_TOKEN";
 
 	private final IBinder mBinder = new AusweisApp2LocalIfdServiceBinder();
@@ -175,13 +175,8 @@ public final class AusweisApp2LocalIfdService extends QtService
 	public void onDestroy()
 	{
 		LogHandler.getLogger().info("LocalIfdService destroyed");
+		BootstrapHelper.triggerShutdown();
 		super.onDestroy();
-
-		// Workaround. When bound & unbound the QtService is in a funny state causing
-		// "WARNING: QApplication was not created in the main() thread." and a crash on
-		// first rebind.
-		// This workaround is inspired by https://bugreports.qt.io/browse/QTBUG-54012 .
-		System.exit(0); // NOPMD see comment above
 	}
 
 

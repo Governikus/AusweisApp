@@ -1,20 +1,20 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQml 2.15
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.InformationView 1.0
-import Governikus.ResultView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.GlobalStatus 1.0
-import Governikus.Type.ReleaseInformationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.View 1.0
+import QtQml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.InformationView
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.GlobalStatus
+import Governikus.Type.ReleaseInformationModel
+import Governikus.Type.SettingsModel
+import Governikus.View
 
 SectionPage {
 	id: root
@@ -25,14 +25,13 @@ SectionPage {
 	signal leaveView
 
 	titleBarAction: TitleBarAction {
-		helpTopic: "applicationUpdate"
 		//: LABEL DESKTOP
 		text: qsTr("Application update")
 	}
 
 	ResultView {
 		buttonType: NavigationButton.Type.Back
-		resultType: ResultView.Type.IsError
+		icon: root.update.missingPlatform ? "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name) : "qrc:///images/workflow_error_network_%1.svg".arg(Style.currentTheme.name)
 		text: root.update.missingPlatform ?
 		//: LABEL DESKTOP Resulttext if no update information is available for the current platform.
 		qsTr("An update information for your platform is not available.") :
@@ -44,7 +43,7 @@ SectionPage {
 	}
 	ResultView {
 		buttonType: NavigationButton.Type.Back
-		resultType: ResultView.Type.IsSuccess
+		icon: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
 		//: LABEL DESKTOP The currently installed version is the most recent one, no action is required.
 		text: qsTr("Your version %1 of %2 is up to date!").arg(Qt.application.version).arg(Qt.application.name)
 		visible: !SettingsModel.appUpdateAvailable && root.update.valid
@@ -53,6 +52,7 @@ SectionPage {
 	}
 	GPane {
 		id: pane
+
 		activeFocusOnTab: true
 		title: qsTr("An update is available (installed version %1)").arg(Qt.application.version)
 		visible: root.update.valid && root.update.updateAvailable
@@ -61,65 +61,63 @@ SectionPage {
 			fill: parent
 			margins: Constants.pane_padding
 		}
-		ColumnLayout {
-			height: pane.availableContentHeight
-			width: parent.width
+		UpdateViewInformation {
+			id: updateInformation
 
-			UpdateViewInformation {
-				id: updateInformation
-				Layout.fillWidth: true
-				downloadSize: root.update.size
-				releaseDate: root.update.date
-				version: root.update.version
-			}
-			GSeparator {
-				Layout.bottomMargin: Layout.topMargin
-				Layout.fillWidth: true
-				Layout.topMargin: Constants.text_spacing
-			}
-			Item {
-				Layout.fillHeight: true
-				Layout.fillWidth: true
-				clip: true
+			Layout.fillWidth: true
+			downloadSize: root.update.size
+			releaseDate: root.update.date
+			version: root.update.version
+		}
+		GSeparator {
+			Layout.bottomMargin: Layout.topMargin
+			Layout.fillWidth: true
+			Layout.topMargin: Constants.text_spacing
+		}
+		Item {
+			Layout.fillHeight: true
+			Layout.fillWidth: true
+			clip: true
 
-				ReleaseNotesView {
-					model: releaseInformationModel.updateRelease
+			ReleaseNotesView {
+				model: releaseInformationModel.updateRelease
 
-					anchors {
-						bottomMargin: Constants.pane_padding
-						fill: parent
-						leftMargin: Constants.pane_padding
-						topMargin: Constants.pane_padding
-					}
-					ReleaseInformationModel {
-						id: releaseInformationModel
-					}
+				anchors {
+					bottomMargin: Constants.pane_padding
+					fill: parent
+					leftMargin: Constants.pane_padding
+					topMargin: Constants.pane_padding
 				}
-				ScrollGradients {
-					anchors.fill: parent
-					color: Style.color.background_pane
-					leftMargin: 0
-					rightMargin: 0
+				ReleaseInformationModel {
+					id: releaseInformationModel
+
 				}
 			}
-			GSeparator {
-				Layout.bottomMargin: Layout.topMargin
-				Layout.fillWidth: true
-				Layout.topMargin: Constants.text_spacing
+			ScrollGradients {
+				anchors.fill: parent
+				color: Style.color.pane
+				leftMargin: 0
+				rightMargin: 0
 			}
-			UpdateViewButtonRow {
-				id: updateButtons
-				Layout.fillWidth: true
-				progressText: "%1 KiB / %2 KiB".arg(root.update.downloadProgress.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)).arg(root.update.downloadTotal.toLocaleString(Qt.locale(SettingsModel.language), "f", 0))
-				progressValue: root.update.downloadProgress * 100 / root.update.downloadTotal
+		}
+		GSeparator {
+			Layout.bottomMargin: Layout.topMargin
+			Layout.fillWidth: true
+			Layout.topMargin: Constants.text_spacing
+		}
+		UpdateViewButtonRow {
+			id: updateButtons
 
-				onRemindLater: root.leaveView()
-				onSkipUpdate: {
-					root.update.skipUpdate();
-					root.leaveView();
-				}
-				onToggleUpdate: root.downloadRunning ? root.update.abortDownload() : download.exec()
+			Layout.fillWidth: true
+			progressText: "%1 KiB / %2 KiB".arg(root.update.downloadProgress.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)).arg(root.update.downloadTotal.toLocaleString(Qt.locale(SettingsModel.language), "f", 0))
+			progressValue: root.update.downloadProgress * 100 / root.update.downloadTotal
+
+			onRemindLater: root.leaveView()
+			onSkipUpdate: {
+				root.update.skipUpdate();
+				root.leaveView();
 			}
+			onToggleUpdate: root.downloadRunning ? root.update.abortDownload() : download.exec()
 		}
 	}
 	Connections {
@@ -134,6 +132,7 @@ SectionPage {
 	}
 	ConfirmationPopup {
 		id: download
+
 		function exec() {
 			if (root.update.compatible || Qt.platform.os === "osx")
 				load();

@@ -18,6 +18,10 @@
 #include <QString>
 #include <QVector>
 
+
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -26,6 +30,7 @@ class CertificateDescriptionModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
 
 	Q_PROPERTY(QString subjectName READ getSubjectName NOTIFY fireChanged)
 	Q_PROPERTY(QString purpose READ getPurpose NOTIFY fireChanged)

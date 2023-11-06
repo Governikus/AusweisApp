@@ -1,10 +1,10 @@
 Container
 =========
-This chapter deals with the container specific properties of the AusweisApp2 SDK.
-The AusweisApp2 core is reachable over a :ref:`websocket` like the :doc:`desktop`
+This chapter deals with the container specific properties of the |AppName| SDK.
+The |AppName| core is reachable over a :ref:`websocket` like the :doc:`desktop`
 variant and also enables the :ref:`automatic` mode by default.
 Subsequent sections deal with the container itself and explain which steps are
-necessary in order to communicate with the AusweisApp2 SDK in the container.
+necessary in order to communicate with the |AppName| SDK in the container.
 
 
 .. note::
@@ -22,7 +22,7 @@ If you need to restore the configuration you can add a
 
 .. code-block:: sh
 
-  docker run --rm -p 127.0.0.1:24727:24727 governikus/ausweisapp2
+  docker run --rm -p 127.0.0.1:24727:24727 governikus/ausweisapp
 
 
 
@@ -36,7 +36,7 @@ by ``docker run -e https_proxy=IP:PORT -e http_proxy=IP:PORT``.
 
 Behaviour
 ---------
-The AusweisApp2 uses the :ref:`automatic` mode with the default :doc:`simulator`
+The |AppName| uses the :ref:`automatic` mode with the default :doc:`simulator`
 if there is no connected :ref:`websocket` client. That mode will be disabled
 if a client is connected and enabled again after disconnection. If the client
 disconnects during an active workflow the workflow will be canceled.

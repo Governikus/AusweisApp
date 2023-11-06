@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Type.ApplicationModel
 
 StackView {
 	id: root
@@ -12,8 +12,8 @@ StackView {
 	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning()
 
 	function doActivate() {
-		if (visible && currentItem && typeof currentItem.activated === "function") {
-			currentItem.activated();
+		if (visible && currentItem && typeof currentItem.activate === "function") {
+			currentItem.activate();
 		}
 	}
 
@@ -33,6 +33,7 @@ StackView {
 
 	Component {
 		id: enterAnimation
+
 		Transition {
 			readonly property bool reversed: false
 
@@ -58,6 +59,7 @@ StackView {
 	}
 	Component {
 		id: exitAnimation
+
 		Transition {
 			enabled: animationEnabled
 

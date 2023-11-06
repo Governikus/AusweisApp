@@ -34,7 +34,7 @@ class test_ReaderConfigurationParser
 		void verify_REINER_cyberJack_RFID_komfort(const ReaderConfigurationInfo& info)
 		{
 			QCOMPARE(info.getVendorId(), static_cast<uint>(0x0C4B));
-			QCOMPARE(info.getProductId(), static_cast<uint>(0x0501));
+			QCOMPARE(info.getProductIds(), QSet<uint>({static_cast<uint>(0x0501)}));
 			QCOMPARE(info.getName(), QStringLiteral("REINER SCT cyberJack RFID komfort"));
 			QCOMPARE(info.getPattern(), QStringLiteral("REINER SCT cyberJack RFID komfort"));
 			QCOMPARE(info.getUrl(), KOMFORT_DRIVER_URL);
@@ -44,11 +44,11 @@ class test_ReaderConfigurationParser
 		QStringList incompleteKeyValuePairs(int skipIndex, bool skipOnlyValue)
 		{
 			const QStringList keys = {
-				"ReaderType", "VendorId", "ProductId", "Name", "Drivers"
+				"VendorId", "ProductIds", "Name", "Drivers"
 			};
 			const QStringList vals = {
-				"REINER_cyberJack_RFID_komfort", "0x0C4B", "0x0501",
-				"REINER SCT cyberJack RFID komfort",
+				"\"0x0C4B\"", "[\"0x0501\"]",
+				"\"REINER SCT cyberJack RFID komfort\"",
 				"        [\n"
 				"          {\n"
 				"              \"Platforms\": [{\"os\": \"win\"}],\n"
@@ -74,8 +74,8 @@ class test_ReaderConfigurationParser
 				if (index != skipIndex || skipOnlyValue)
 				{
 					const QString key = keys.at(index);
-					const QString val = index != skipIndex ? vals.at(index) : QString();
-					result += QString("\"%1\": \"%2\"\n").arg(key, val);
+					const QString val = index != skipIndex ? vals.at(index) : QStringLiteral("\"\"");
+					result += QString("\"%1\": %2\n").arg(key, val);
 				}
 			}
 
@@ -128,9 +128,11 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
 													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -166,7 +168,7 @@ class test_ReaderConfigurationParser
 		void validJsonDocumentWithOneInvalidEntry_parseErrorAndEmptyDeviceInfo()
 		{
 			// Check that a missing property is reported as a parse error.
-			for (int skipIndex = 0; skipIndex < 5; skipIndex++)
+			for (int skipIndex = 0; skipIndex < 4; skipIndex++)
 			{
 				// Key with index skipIndex is not in the test Json data.
 				const QString devicesPair = jsonSingleDeviceString(incompleteKeyValuePairs(skipIndex,
@@ -177,7 +179,7 @@ class test_ReaderConfigurationParser
 			}
 
 			// Check that a property with an empty value is reported as a parse error.
-			for (int skipIndex = 0; skipIndex < 5; skipIndex++)
+			for (int skipIndex = 0; skipIndex < 4; skipIndex++)
 			{
 				// Key with index skipIndex is in the test Json data but has the invalid value ""
 				const QString devicesPair = jsonSingleDeviceString(incompleteKeyValuePairs(skipIndex,
@@ -195,9 +197,11 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
 													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -205,9 +209,11 @@ class test_ReaderConfigurationParser
 													  "        ]\n"
 													  "    },\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"SCM_SDI011\",\n"
 													  "        \"VendorId\": \"0x04E6\",\n"
 													  "        \"ProductId\": \"0x512B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x512B\"\n"
+													  "         ],"
 													  "        \"Name\": \"SDI011 Contactless Reader\",\n"
 													  "        \"Pattern\": \"SDI011 (USB )?(Smart Card|Contactless) Reader\",\n"
 													  "        \"Drivers\":\n"
@@ -227,9 +233,10 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
-													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"\",\n"
 													  "        \"Drivers\":\n"
@@ -237,9 +244,10 @@ class test_ReaderConfigurationParser
 													  "        ]\n"
 													  "    },\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"SCM_SDI011\",\n"
 													  "        \"VendorId\": \"0x04E6\",\n"
-													  "        \"ProductId\": \"0x512B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x512B\"\n"
+													  "         ],"
 													  "        \"Name\": \"SDI011 Contactless Reader\",\n"
 													  "        \"Pattern\": \"\",\n"
 													  "        \"Drivers\":\n"
@@ -259,9 +267,10 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
-													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -269,9 +278,10 @@ class test_ReaderConfigurationParser
 													  "        ]\n"
 													  "    },\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"SCM_SDI011\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
-													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"SDI011 Contactless Reader\",\n"
 													  "        \"Pattern\": \"SDI011 (USB )?(Smart Card|Contactless) Reader\",\n"
 													  "        \"Drivers\":\n"
@@ -291,9 +301,10 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
-													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -301,9 +312,10 @@ class test_ReaderConfigurationParser
 													  "        ]\n"
 													  "    },\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"SCM_SDI011\",\n"
 													  "        \"VendorId\": \"0x04E6\",\n"
-													  "        \"ProductId\": \"0x512B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x512B\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"SDI011 (USB )?(Smart Card|Contactless) Reader\",\n"
 													  "        \"Drivers\":\n"
@@ -323,9 +335,10 @@ class test_ReaderConfigurationParser
 													  "  \"SupportedDevices\":\n"
 													  "  [\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"REINER_cyberJack_RFID_komfort\",\n"
 													  "        \"VendorId\": \"0x0C4B\",\n"
-													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0501\"\n"
+													  "         ],"
 													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -333,9 +346,10 @@ class test_ReaderConfigurationParser
 													  "        ]\n"
 													  "    },\n"
 													  "    {\n"
-													  "        \"ReaderType\": \"SCM_SDI011\",\n"
 													  "        \"VendorId\": \"0x04E6\",\n"
-													  "        \"ProductId\": \"0x512B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x512B\"\n"
+													  "         ],"
 													  "        \"Name\": \"SDI011 Contactless Reader\",\n"
 													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
 													  "        \"Drivers\":\n"
@@ -346,6 +360,93 @@ class test_ReaderConfigurationParser
 													  "}");
 
 			QCOMPARE(ReaderConfigurationParser::parse(data).size(), 0);
+		}
+
+
+		void acceptLegacyProductId()
+		{
+			const QByteArray data = QByteArrayLiteral("{"
+													  "  \"SupportedDevices\":\n"
+													  "  [\n"
+													  "    {\n"
+													  "        \"VendorId\": \"0x0C4B\",\n"
+													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Drivers\":\n"
+													  "        [\n"
+													  "        ]\n"
+													  "    }\n"
+													  "  ]\n"
+													  "}");
+			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+
+			QCOMPARE(infos.at(0).getProductIds(), QSet<uint>({static_cast<uint>(0x0501)}));
+
+		}
+
+
+		void ignoreProductIdWhenProductIdsPresent()
+		{
+			const QByteArray data = QByteArrayLiteral("{"
+													  "  \"SupportedDevices\":\n"
+													  "  [\n"
+													  "    {\n"
+													  "        \"VendorId\": \"0x0C4B\",\n"
+													  "        \"ProductId\": \"0x0501\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0502\",\n"
+													  "              \"0x0503\"\n"
+													  "         ],"
+													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Drivers\":\n"
+													  "        [\n"
+													  "        ]\n"
+													  "    }\n"
+													  "  ]\n"
+													  "}");
+
+			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+			const QSet<uint> ids = {static_cast<uint>(0x0502), static_cast<uint>(0x0503)};
+
+			QCOMPARE(infos.at(0).getProductIds(), ids);
+
+		}
+
+
+		void checkForUniqueProductIds()
+		{
+			const QByteArray data = QByteArrayLiteral("{"
+													  "  \"SupportedDevices\":\n"
+													  "  [\n"
+													  "    {\n"
+													  "        \"VendorId\": \"0x0C4B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0502\",\n"
+													  "              \"0x0503\"\n"
+													  "         ],"
+													  "        \"Name\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Pattern\": \"REINER SCT cyberJack RFID komfort\",\n"
+													  "        \"Drivers\":\n"
+													  "        [\n"
+													  "        ]\n"
+													  "    },\n"
+													  "    {\n"
+													  "        \"VendorId\": \"0x0C4B\",\n"
+													  "        \"ProductIds\": [\n"
+													  "              \"0x0502\"\n"
+													  "         ],"
+													  "        \"Name\": \"REINER SCT cyberJack RFID standard\",\n"
+													  "        \"Pattern\": \"REINER SCT cyberJack RFID standard\",\n"
+													  "        \"Drivers\":\n"
+													  "        [\n"
+													  "        ]\n"
+													  "    }\n"
+													  "  ]\n"
+													  "}");
+			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+			QCOMPARE(infos.size(), 0);
 		}
 
 

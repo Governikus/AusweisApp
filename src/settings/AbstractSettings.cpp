@@ -39,10 +39,10 @@ QSharedPointer<QSettings> AbstractSettings::getStore(const QString& pFilename, Q
 			Q_ASSERT(mTestDir->isValid());
 		}
 		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, mTestDir->path());
-		return QSharedPointer<QSettings>::create(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
+		return QSharedPointer<QSettings>::create(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QStringLiteral("AusweisApp2"));
 	}
 #endif
 
 	Q_ASSERT(pFilename.isEmpty() == (pFormat == QSettings::InvalidFormat));
-	return pFilename.isEmpty() ? QSharedPointer<QSettings>::create() : QSharedPointer<QSettings>::create(pFilename, pFormat);
+	return pFilename.isEmpty() ? QSharedPointer<QSettings>::create(QCoreApplication::organizationName(), QStringLiteral("AusweisApp2")) : QSharedPointer<QSettings>::create(pFilename, pFormat);
 }

@@ -4,7 +4,6 @@
 
 #include "WebSocketServerImpl.h"
 
-#include "AppSettings.h"
 #include "Env.h"
 #include "WebSocketChannel.h"
 

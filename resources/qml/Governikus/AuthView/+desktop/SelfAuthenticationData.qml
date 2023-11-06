@@ -1,20 +1,23 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.SelfAuthModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.SelfAuthModel
+import Governikus.Type.UiModule
 
 SectionPage {
 	id: baseItem
+
+	signal accept
+
 	titleBarAction: TitleBarAction {
 		rootEnabled: false
 		showHelp: false
@@ -26,105 +29,92 @@ SectionPage {
 	Keys.onEscapePressed: okButton.onClicked()
 	Keys.onReturnPressed: okButton.onClicked()
 
+	Connections {
+		function onFireCancelWorkflow() {
+			if (SelfAuthModel.workflowCancelled) {
+				accept();
+			}
+		}
+
+		enabled: visible
+		target: SelfAuthModel
+	}
 	ColumnLayout {
 		anchors.fill: parent
-		anchors.margins: Constants.pane_padding
+		anchors.margins: Constants.pane_padding * 2
+		spacing: Constants.component_spacing
 
 		Row {
 			id: statusRow
-			Layout.alignment: Qt.AlignHCenter
+
 			Layout.preferredHeight: baseItem.height / 4
 			spacing: Constants.component_spacing
 
-			StatusIcon {
+			TintableIcon {
 				anchors.verticalCenter: parent.verticalCenter
 				height: Style.dimens.status_icon_medium
-				source: "qrc:///images/status_ok.svg"
+				source: "qrc:///images/desktop/status_ok_%1.svg".arg(Style.currentTheme.name)
+				tintEnabled: false
 			}
 			GText {
 				id: successText
+
 				Accessible.name: successText.text
 				activeFocusOnTab: true
 				anchors.verticalCenter: parent.verticalCenter
 
 				//: INFO DESKTOP Status message that the self authentication successfully completed.
 				text: qsTr("Successfully read data")
-				textStyle: Style.text.header
+				textStyle: Style.text.headline
 
 				FocusFrame {
 				}
 			}
 		}
-		Item {
+		ScrollablePane {
+			id: pane
+
 			Layout.fillHeight: true
 			Layout.fillWidth: true
+			Layout.maximumHeight: implicitHeight
+			activeFocusOnTab: true
+			enableDropShadow: true
 
-			ScrollablePane {
-				id: pane
-				activeFocusOnTab: true
-				height: Math.min(parent.height, implicitHeight)
+			//: LABEL DESKTOP Title of the self authentication result data view
+			title: qsTr("Read data")
 
-				//: LABEL DESKTOP Title of the self authentication result data view
-				title: qsTr("Read data")
-				width: parent.width
+			Grid {
+				id: grid
 
-				Grid {
-					id: grid
-					columns: 3
-					spacing: Constants.groupbox_spacing
-					verticalItemAlignment: Grid.AlignTop
-					width: parent.width
+				columns: 3
+				spacing: Constants.groupbox_spacing
+				verticalItemAlignment: Grid.AlignTop
 
-					Repeater {
-						id: dataRepeater
-						model: SelfAuthModel
+				Repeater {
+					id: dataRepeater
 
-						LabeledText {
-							label: name
-							text: value === "" ? "---" : value
-							width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
-						}
-					}
-				}
-				RowLayout {
-					anchors.right: parent.right
-					spacing: Constants.component_spacing
+					model: SelfAuthModel
 
-					GButton {
-						id: saveDataToPdfButton
-						icon.source: "qrc:///images/desktop/material_save.svg"
-						//: LABEL DESKTOP
-						text: qsTr("Save as PDF...")
-						tintIcon: true
-
-						onClicked: {
-							let now = new Date().toLocaleDateString(Qt.locale(), "yyyy-MM-dd");
-							let filenameSuggestion = "%1.%2.%3.pdf".arg(Qt.application.name).arg(qsTr("Information")).arg(now);
-							fileDialog.selectFile(filenameSuggestion);
-						}
-
-						GFileDialog {
-							id: fileDialog
-							defaultSuffix: "pdf"
-							//: LABEL DESKTOP
-							nameFilters: qsTr("Portable Document Format (*.pdf)")
-
-							//: LABEL DESKTOP
-							title: qsTr("Save read self-authentication data")
-
-							onAccepted: SelfAuthModel.exportData(file)
-						}
-					}
-					GButton {
-						id: okButton
-
-						//: LABEL DESKTOP
-						text: qsTr("OK")
-
-						onClicked: baseItem.nextView(UiModule.DEFAULT)
+					LabeledText {
+						label: name
+						text: value === "" ? "---" : value
+						width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
 					}
 				}
 			}
+		}
+		GButton {
+			id: okButton
+
+			Layout.alignment: Qt.AlignHCenter
+
+			//: LABEL DESKTOP
+			text: qsTr("OK")
+
+			onClicked: baseItem.accept()
+		}
+		GSpacer {
+			Layout.fillHeight: true
 		}
 	}
 }

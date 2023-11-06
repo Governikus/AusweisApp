@@ -147,7 +147,7 @@ QString PortWrapper::getExecutableOfProcessID(DWORD pPid)
 }
 
 
-quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, int pSelfPort, const in_addr& pProxyAddr)
+quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pProxyAddr)
 {
 	for (const auto& connection : pConnections)
 	{
@@ -162,7 +162,7 @@ quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>
 			continue;
 		}
 
-		if (ntohs(connection.dwLocalPort) == pSelfPort)
+		if (ntohs(static_cast<quint16>(connection.dwLocalPort)) == pSelfPort)
 		{
 			continue;
 		}
@@ -173,14 +173,14 @@ quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>
 			continue;
 		}
 
-		return ntohs(connection.dwLocalPort);
+		return ntohs(static_cast<quint16>(connection.dwLocalPort));
 	}
 
 	return 0;
 }
 
 
-QString PortWrapper::getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, int pLocalPort, int pRemotePort, const in_addr& pRemoteAddr)
+QString PortWrapper::getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pRemoteAddr)
 {
 	for (const auto& connection : pConnections)
 	{
@@ -191,8 +191,8 @@ QString PortWrapper::getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pC
 			continue;
 		}
 
-		if (ntohs(connection.dwLocalPort) == pRemotePort
-				&& ntohs(connection.dwRemotePort) == pLocalPort)
+		if (ntohs(static_cast<quint16>(connection.dwLocalPort)) == pRemotePort
+				&& ntohs(static_cast<quint16>(connection.dwRemotePort)) == pLocalPort)
 		{
 			return getUserOfProcessID(connection.dwOwningPid);
 		}
@@ -234,9 +234,13 @@ QVector<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 }
 
 
-quint16 PortWrapper::getProcessPort(int pLocalPort, int pRemotePort)
+quint16 PortWrapper::getProcessPort(quint16 pLocalPort, quint16 pRemotePort)
 {
-	struct in_addr localhost = {127, 0, 0, 1};
+	struct in_addr localhost = {
+		{
+			{127, 0, 0, 1}
+		}
+	};
 	const auto& connections = getConnections();
 	const auto& user = getUserOfConnection(connections, pLocalPort, pRemotePort, localhost);
 	if (user.isEmpty())

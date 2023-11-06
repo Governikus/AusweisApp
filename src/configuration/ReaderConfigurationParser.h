@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "ReaderConfiguration.h"
+#include "ReaderConfigurationInfo.h"
 
 #include <QJsonValue>
 #include <QOperatingSystemVersion>
@@ -35,6 +35,7 @@ class ReaderConfigurationParser
 				[[nodiscard]] QString getDriverUrl(const QJsonObject& pObject) const;
 				[[nodiscard]] bool matchPlatform(const QJsonArray& pPlatforms, const QOperatingSystemVersion& pCurrentVersion = QOperatingSystemVersion::current()) const;
 				[[nodiscard]] ReaderConfigurationInfo fail(const QString& logMessage) const;
+				[[nodiscard]] QSet<uint> getProductIds(const QJsonObject& object, bool* parseOk) const;
 
 			public:
 				explicit EntryParser(const QJsonValue& pJsonValue);

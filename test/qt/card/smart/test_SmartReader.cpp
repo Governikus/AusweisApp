@@ -21,8 +21,9 @@ class test_SmartReader
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -36,7 +37,7 @@ class test_SmartReader
 		{
 			QTest::addColumn<EidStatus>("status");
 
-			QTest::newRow("unavailable") << EidStatus::UNAVAILABLE;
+			QTest::newRow("internal_error") << EidStatus::INTERNAL_ERROR;
 			QTest::newRow("no_provisioning") << EidStatus::NO_PROVISIONING;
 			QTest::newRow("no_personalization") << EidStatus::NO_PERSONALIZATION;
 			QTest::newRow("personalized") << EidStatus::PERSONALIZED;
@@ -50,7 +51,7 @@ class test_SmartReader
 			Env::getSingleton<ReaderManager>()->callExecute([status] {
 					setSmartEidStatus(status);
 
-					SmartReader reader;
+					SmartReader reader(QStringLiteral("Smart"));
 					QCOMPARE(reader.getCard(), nullptr);
 					QCOMPARE(reader.getReaderInfo().isInsertable(), false);
 

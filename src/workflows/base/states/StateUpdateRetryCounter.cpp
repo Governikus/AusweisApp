@@ -31,7 +31,7 @@ void StateUpdateRetryCounter::run()
 	}
 
 	Q_ASSERT(cardConnection != nullptr);
-	mConnections += cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
+	*this << cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
 }
 
 
@@ -42,7 +42,7 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 	const auto& returnCode = pCommand->getReturnCode();
 	if (returnCode != CardReturnCode::OK)
 	{
-		qCCritical(statemachine) << "An error (" << returnCode << ") occurred while communicating with the card reader, cannot determine retry counter, abort state";
+		qCCritical(statemachine).nospace() << "An error (" << returnCode << ") occurred while communicating with the card reader, cannot determine retry counter, abort state";
 		getContext()->resetCardConnection();
 		Q_EMIT fireNoCardConnection();
 		return;

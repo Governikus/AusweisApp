@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ReaderManagerPlugInInfo.h"
+#include "UIPlugIn.h"
 #include "context/WorkflowContext.h"
 
 #include <QObject>
@@ -33,11 +34,13 @@ class WorkflowModel
 	Q_PROPERTY(QVector<ReaderManagerPlugInType> supportedPlugInTypes READ getSupportedReaderPlugInTypes NOTIFY fireSupportedPlugInTypesChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isRemoteReader READ isRemoteReader NOTIFY fireSelectedReaderChanged)
-	Q_PROPERTY(bool isSmartCardAllowed READ isSmartCardAllowed NOTIFY fireIsSmartCardAllowedChanged)
+	Q_PROPERTY(bool isCurrentSmartCardAllowed READ isCurrentSmartCardAllowed NOTIFY fireIsCurrentSmartCardAllowedChanged)
+	Q_PROPERTY(QString eidTypeMismatchError READ eidTypeMismatchError NOTIFY fireEidTypeMismatchErrorChanged)
 	Q_PROPERTY(QString readerImage READ getReaderImage NOTIFY fireReaderImageChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusCodeImage READ getStatusCodeImage NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback WRITE setRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
 	Q_PROPERTY(bool hasCard READ hasCard NOTIFY fireHasCardChanged)
 	friend class ::test_WorkflowModel;
@@ -48,7 +51,7 @@ class WorkflowModel
 #if defined(Q_OS_IOS)
 		bool mRemoteScanWasRunning;
 #endif
-		void insertCard(ReaderManagerPlugInType pType);
+		void insertCard(ReaderManagerPlugInType pType) const;
 
 	public:
 		explicit WorkflowModel(QObject* pParent = nullptr);
@@ -68,7 +71,7 @@ class WorkflowModel
 		[[nodiscard]] bool isRemoteReader() const;
 		[[nodiscard]] bool hasCard() const;
 
-		[[nodiscard]] bool isSmartCardAllowed() const;
+		[[nodiscard]] bool isCurrentSmartCardAllowed() const;
 
 		[[nodiscard]] bool isSmartSupported() const;
 		[[nodiscard]] virtual QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
@@ -77,6 +80,8 @@ class WorkflowModel
 
 		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
 		[[nodiscard]] QString getReaderImage() const;
+		[[nodiscard]] QString getStatusCodeImage() const;
+
 
 		[[nodiscard]] QString getStatusHintText() const;
 		[[nodiscard]] QString getStatusHintActionText() const;
@@ -97,6 +102,8 @@ class WorkflowModel
 		[[nodiscard]] Q_INVOKABLE QString getEmailBody(bool pPercentEncoding = false, bool pAddLogNotice = false) const;
 		Q_INVOKABLE void sendResultMail() const;
 
+		[[nodiscard]] QString eidTypeMismatchError() const;
+
 	private Q_SLOTS:
 		void onApplicationStateChanged(bool pIsAppInForeground);
 
@@ -104,16 +111,21 @@ class WorkflowModel
 		void onReaderManagerSignal();
 
 	Q_SIGNALS:
+		void fireWorkflowStarted();
 		void fireCurrentStateChanged(const QString& pState);
+		void fireStateEntered(const QString& pState);
 		void fireResultChanged();
 		void fireReaderPlugInTypeChanged(bool pExplicitStart = false);
 		void fireSelectedReaderChanged();
-		void fireIsSmartCardAllowedChanged();
+		void fireIsCurrentSmartCardAllowedChanged();
 		void fireReaderImageChanged();
 		void fireNextWorkflowPendingChanged();
 		void fireSupportedPlugInTypesChanged();
 		void fireRemoveCardFeedbackChanged();
 		void fireHasCardChanged();
+		void fireEidTypeMismatchErrorChanged();
+		void fireShowUiRequest(UiModule pModule);
+		void fireWorkflowFinished();
 };
 
 

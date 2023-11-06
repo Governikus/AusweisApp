@@ -10,7 +10,6 @@
 #include "controller/ChangePinController.h"
 #include "controller/SelfAuthController.h"
 
-#include "MockActivationContext.h"
 #include "TestWorkflowController.h"
 
 #include <QDir>
@@ -34,8 +33,9 @@ class test_AppController
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -59,16 +59,16 @@ class test_AppController
 
 		void test_StartNewWorkflow()
 		{
-			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this);
+			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest> pRequest){
+					pRequest->getContext()->claim(this);
 				});
 
 			QSignalSpy spy(mController.data(), &AppController::fireWorkflowStarted);
 			QTest::ignoreMessage(QtInfoMsg, "Started new workflow PIN");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::ChangePinController");
 			QVERIFY(mController->startNewWorkflow(ChangePinController::createWorkflowRequest()));
-			QVERIFY(mController->mActiveWorkflow->getController()->getContext()->wasClaimed());
-			QCOMPARE(mController->mActiveWorkflow->getController()->getAction(), Action::PIN);
+			QVERIFY(mController->mActiveWorkflow->getController()->mContext->wasClaimed());
+			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::PIN);
 			QCOMPARE(spy.count(), 1);
 
 			QTest::ignoreMessage(QtWarningMsg, "Cannot start new workflow: PIN | Current workflow: PIN");
@@ -114,7 +114,7 @@ class test_AppController
 			QCOMPARE(spyWorkflowFinished.count(), 1);
 			QVERIFY(!mController->mWaitingRequest);
 			QVERIFY(mController->mActiveWorkflow);
-			QCOMPARE(mController->mActiveWorkflow->getController()->getAction(), Action::PIN);
+			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::PIN);
 		}
 
 
@@ -123,7 +123,7 @@ class test_AppController
 			QSignalSpy spyWorkflowFinished(mController.data(), &AppController::fireWorkflowFinished);
 
 			mController->onWorkflowRequested(SelfAuthController::createWorkflowRequest());
-			mController->mActiveWorkflow->getController()->getContext()->setWorkflowFinished(true);
+			mController->mActiveWorkflow->getController()->mContext->setWorkflowFinished(true);
 			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl(QStringLiteral("https://localhost"))));
 			QTest::ignoreMessage(QtDebugMsg, "governikus::SelfAuthController done");
 			QTest::ignoreMessage(QtInfoMsg, "Finish workflow SELF");
@@ -132,30 +132,46 @@ class test_AppController
 			mController->onWorkflowFinished();
 			QCOMPARE(spyWorkflowFinished.count(), 1);
 			QVERIFY(!mController->mWaitingRequest);
-			QCOMPARE(mController->mActiveWorkflow->getController()->getAction(), Action::AUTH);
+			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::AUTH);
+		}
+
+
+		void test_OnWorkflowUnhandled()
+		{
+			QSignalSpy spyWorkflowStarted(mController.data(), &AppController::fireWorkflowStarted);
+			QSignalSpy spyWorkflowUnhandled(mController.data(), &AppController::fireWorkflowUnhandled);
+
+			QTest::ignoreMessage(QtInfoMsg, "Started new workflow AUTH");
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
+			QCOMPARE(spyWorkflowUnhandled.count(), 0);
+			QCOMPARE(spyWorkflowStarted.count(), 1);
+
+			QTest::ignoreMessage(QtWarningMsg, "Skip workflow: AUTH | Current workflow: AUTH");
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
+			QCOMPARE(spyWorkflowUnhandled.count(), 1);
+			QCOMPARE(spyWorkflowStarted.count(), 1);
 		}
 
 
 		void test_OnAuthenticationRequestSELF()
 		{
-			const QSharedPointer<MockActivationContext> context(new MockActivationContext());
-			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this);
+			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest> pRequest){
+					pRequest->getContext()->claim(this);
 				});
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::SelfAuthController");
 			QTest::ignoreMessage(QtInfoMsg, "Started new workflow SELF");
 			mController->onWorkflowRequested(SelfAuthController::createWorkflowRequest());
-			QVERIFY(mController->mActiveWorkflow->getController()->getContext()->wasClaimed());
-			mController->mActiveWorkflow->getController()->getContext()->setWorkflowFinished(true);
-			QVERIFY(!mController->mActiveWorkflow->getController()->getContext()->isStateApproved());
+			QVERIFY(mController->mActiveWorkflow->getController()->mContext->wasClaimed());
+			mController->mActiveWorkflow->getController()->mContext->setWorkflowFinished(true);
+			QVERIFY(!mController->mActiveWorkflow->getController()->mContext->isStateApproved());
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Auto-approving the current state");
 			QTest::ignoreMessage(QtDebugMsg, "Enqueue workflow: AUTH");
-			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
-			QVERIFY(mController->mActiveWorkflow->getController()->getContext()->isStateApproved());
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
+			QVERIFY(mController->mActiveWorkflow->getController()->mContext->isStateApproved());
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
 			QTest::ignoreMessage(QtWarningMsg, "Cannot start or enqueue workflow: SELF");
@@ -164,18 +180,7 @@ class test_AppController
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
 			QTest::ignoreMessage(QtWarningMsg, "Skip workflow: AUTH | Current workflow: SELF");
 			QTest::ignoreMessage(QtDebugMsg, "Waiting workflow: AUTH");
-			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
-		}
-
-
-		void test_OnAuthenticationRequestCannotSendOperationAlreadyActive()
-		{
-			const QString sendError("send error");
-			const QSharedPointer<MockActivationContext> context(new MockActivationContext(false, false, false, false, sendError));
-			mController->onWorkflowRequested(ChangePinController::createWorkflowRequest());
-			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
-			QTest::ignoreMessage(QtCriticalMsg, R"(Cannot send "Operation already active" to caller: "send error")");
-			mController->onWorkflowRequested(AuthController::createWorkflowRequest(context));
+			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
 		}
 
 
@@ -188,7 +193,7 @@ class test_AppController
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
 
 			mController->onWorkflowRequested(SelfAuthController::createWorkflowRequest());
-			QVERIFY(!mController->mActiveWorkflow->getController()->getContext()->wasClaimed());
+			QVERIFY(!mController->mActiveWorkflow->getController()->mContext->wasClaimed());
 		}
 
 
@@ -200,7 +205,7 @@ class test_AppController
 			mController->onWorkflowRequested(ChangePinController::createWorkflowRequest());
 			mController->doShutdown();
 			QVERIFY(!mController->mWaitingRequest);
-			QVERIFY(mController->mActiveWorkflow->getController()->getContext()->isWorkflowKilled());
+			QVERIFY(mController->mActiveWorkflow->getController()->mContext->isWorkflowKilled());
 			QCOMPARE(spyHideUi.count(), 1);
 		}
 

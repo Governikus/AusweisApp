@@ -34,14 +34,14 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 			case UrlQueryRequest::SHOWUI:
 			{
 				qCDebug(network) << "Request type: showui";
-				handleShowUiRequest(value.toUpper(), pRequest);
+				handleShowUiRequest(value, pRequest);
 				return;
 			}
 
 			case UrlQueryRequest::STATUS:
 			{
 				qCDebug(network) << "Request type: status";
-				StatusFormat statusFormat = Enum<StatusFormat>::fromString(value.toUpper(), StatusFormat::PLAIN);
+				const StatusFormat statusFormat = UrlUtil::prepareToEnum(value, StatusFormat::PLAIN);
 				handleStatusRequest(statusFormat, pRequest);
 				return;
 			}

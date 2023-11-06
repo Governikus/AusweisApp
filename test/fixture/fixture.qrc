@@ -65,6 +65,7 @@
         <file>card/efCardAccess.hex</file>
         <file>card/efCardSecurity.hex</file>
         <file>card/simulatorFiles.json</file>
+        <file>card/smartEfCardAccess.hex</file>
         <file>core/network/CERT_TLS_ESERVICE_1.der</file>
         <file>updatable-files/reader/img_ACS_ACR1252U.png</file>
         <file>tctoken/ok.xml</file>
@@ -92,7 +93,7 @@
         <file>paos/StartPAOSResponse1.xml</file>
         <file>paos/StartPAOSResponse2.xml</file>
         <file>paos/StartPAOSResponse3.xml</file>
-        <file>paos/StartPAOSResponse4.xml</file>
+        <file>paos/StartPAOSResponse_template.xml</file>
         <file>paos/Transmit_template.xml</file>
         <file>paos/Transmit.xml</file>
         <file>paos/Transmit2.xml</file>

@@ -21,7 +21,7 @@ StateParseTcTokenUrl::StateParseTcTokenUrl(const QSharedPointer<WorkflowContext>
 
 void StateParseTcTokenUrl::run()
 {
-	QUrlQuery query(getContext()->getActivationContext()->getActivationURL());
+	QUrlQuery query(getContext()->getActivationUrl());
 	QUrl tcTokenURL(query.queryItemValue(QStringLiteral("tcTokenURL"), QUrl::FullyDecoded));
 	if (tcTokenURL.isValid())
 	{

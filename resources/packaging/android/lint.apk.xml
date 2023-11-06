@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Obsolete Gradle Dependency.
-
-        The used version is provided by Qt in the build.gradle. Its not
-        practical to update Qt on every new version. Providing our own
-        build.gradle would bind us to take over the changes in Qt into
-        our own build.gradle frequently.
-    -->
-    <issue id="GradleDependency">
-        <ignore path="build.gradle" />
-    </issue>
-
     <!-- Unused resources.
 
         Unused resources make applications larger and slow down builds.
@@ -22,26 +11,18 @@
         <ignore path="**/strings.xml" />
     </issue>
 
-    <!-- Activity is set to be non resizeable
+    <!-- Unused Exported service does not require permission.
 
-        The `<activity>` element should be allowed to be resized to allow users to take advantage of the multi-window
-        environments available on larger screen Android devices. To fix the issue, consider declaring the corresponding
-        activity element with `resizableActivity="true"` attribute.
+         Exported services (services which either set exported=true or contain
+         an intent-filter and do not specify exported=false) should define a
+         permission that an entity must have in order to launch the service or
+         bind to it. Without this, any application can use this service.
 
-        We can ignore it as the AusweisApp2 still doesn't properly support multi-window environments.
+         We decided to ignore this warning because we do not want to limit the
+         access to the service. Any application should be able to use the
+         service without additional barriers.
     -->
-    <issue id="NonResizeableActivity">
-        <ignore path="AndroidManifest.xml" />
-    </issue>
-
-    <!-- Data tags should only declare unique attributes
-
-        Consider splitting data tag into multiple tags with individual attributes to avoid confusion `data`
-        tags should only declare a single unique attribute (i.e. scheme OR host, but not both). This better
-        matches the runtime behavior of intent filters, as they combine all of the declared data attributes
-        into a single matcher which is allowed to handle any combination across attribute types.
-    -->
-    <issue id="	IntentFilterUniqueDataAttributes">
+    <issue id="ExportedService">
         <ignore path="AndroidManifest.xml" />
     </issue>
 
@@ -67,5 +48,19 @@
     -->
     <issue id="DiscouragedApi">
         <ignore path="**/QtLoader.java" />
+    </issue>
+
+    <!-- TrustAllX509TrustManager
+
+        checkClientTrusted is empty, which could cause insecure network
+        traffic due to trusting arbitrary TLS/SSL certificates presented by peers.
+
+        This check looks for X509TrustManager implementations whose checkServerTrusted or
+        checkClientTrusted methods do nothing (thus trusting any certificate chain) which
+        could result in insecure network traffic caused by trusting arbitrary TLS/SSL
+        certificates presented by peers.
+    -->
+    <issue id="TrustAllX509TrustManager">
+        <ignore path="**/bcpkix-jdk15on-1.70.jar" />
     </issue>
 </lint>

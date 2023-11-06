@@ -2,9 +2,9 @@
  * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
-#include "pace/ec/EcdhGenericMapping.h"
+#include "EcdhGenericMapping.h"
 
-#include "pace/ec/EcUtil.h"
+#include "EcUtil.h"
 
 #include <QLoggingCategory>
 #include <QScopeGuard>
@@ -69,7 +69,7 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pCa
 	}
 
 	QSharedPointer<BIGNUM> s = EcUtil::create(BN_new());
-	if (!BN_bin2bn(reinterpret_cast<const uchar*>(pNonce.constData()), pNonce.size(), s.data()))
+	if (!BN_bin2bn(reinterpret_cast<const uchar*>(pNonce.constData()), static_cast<int>(pNonce.size()), s.data()))
 	{
 		qCCritical(card) << "Cannot convert nonce to BIGNUM";
 		return false;
@@ -111,7 +111,7 @@ QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPoi
 }
 
 
-bool EcdhGenericMapping::setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator)
+bool EcdhGenericMapping::setGenerator(const QSharedPointer<const EC_POINT>& pNewGenerator) const
 {
 	QSharedPointer<BIGNUM> curveOrder = EcUtil::create(BN_new());
 	if (!EC_GROUP_get_order(mCurve.data(), curveOrder.data(), nullptr))

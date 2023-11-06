@@ -10,10 +10,13 @@
 
 #include "MockCardConnection.h"
 #include "MockCardConnectionWorker.h"
+#include "VolatileSettings.h"
 
 #include <QtTest>
 
+
 using namespace governikus;
+
 
 class MockEstablishPaceChannelCommand
 	: public BaseCardCommand
@@ -43,6 +46,12 @@ class test_StateChangeSmartPin
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+		}
+
+
 		void test_RunWithNewPin()
 		{
 			QThread workerThread;

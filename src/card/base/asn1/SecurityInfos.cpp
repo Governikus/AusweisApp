@@ -21,16 +21,8 @@ ASN1_ITEM_TEMPLATE(securityinfos_st) =
 			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_SET_OF, 0x00, securityinfos_st, securityinfo_st)
 ASN1_ITEM_TEMPLATE_END(securityinfos_st)
 
-
 IMPLEMENT_ASN1_FUNCTIONS(securityinfos_st)
-
 IMPLEMENT_ASN1_OBJECT(securityinfos_st)
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	#define sk_securityinfo_st_num(data) SKM_sk_num(securityinfo_st, data)
-	#define sk_securityinfo_st_value(data, i) SKM_sk_value(securityinfo_st, data, i)
-#endif
-
 } // namespace governikus
 
 

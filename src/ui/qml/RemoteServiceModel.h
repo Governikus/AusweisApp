@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderManager.h"
 #include "RemoteDeviceFilterModel.h"
 #include "RemoteDeviceModel.h"
 #include "WorkflowModel.h"
@@ -19,6 +18,10 @@
 #include <QObject>
 #include <QQmlEngine>
 
+
+class test_UIPlugInQml;
+
+
 namespace governikus
 {
 
@@ -27,6 +30,7 @@ class RemoteServiceModel
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_UIPlugInQml;
 
 	Q_PROPERTY(bool running READ isRunning NOTIFY fireIsRunningChanged)
 	Q_PROPERTY(bool isStarting READ isStarting NOTIFY fireIsStartingChanged)
@@ -82,8 +86,8 @@ class RemoteServiceModel
 	private Q_SLOTS:
 		void onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus);
 		void onConnectionInfoChanged(bool pConnected);
-		void onCardConnected(const QSharedPointer<CardConnection>& pConnection);
-		void onCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
+		void onCardConnected(const QSharedPointer<CardConnection>& pConnection) const;
+		void onCardDisconnected(const QSharedPointer<CardConnection>& pConnection) const;
 		void onConnectedDevicesChanged();
 		void onEnvironmentChanged();
 		void onApplicationStateChanged(const bool pIsAppInForeground);
@@ -110,8 +114,8 @@ class RemoteServiceModel
 		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
-		void setPairing(bool pEnabled);
-		[[nodiscard]] bool isPairing();
+		void setPairing(bool pEnabled) const;
+		[[nodiscard]] bool isPairing() const;
 		[[nodiscard]] bool isConnectedToPairedDevice() const;
 		[[nodiscard]] bool enableTransportPinLink() const;
 		[[nodiscard]] bool isRunnable() const;
@@ -130,6 +134,7 @@ class RemoteServiceModel
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
 		Q_INVOKABLE void changePinLength();
+		[[nodiscard]] Q_INVOKABLE bool isPinAuthentication() const;
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);

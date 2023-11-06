@@ -4,7 +4,7 @@ Contributing
 Patches
 -------
 
-Wir nehmen gerne Patches für die AusweisApp2 an.
+Wir nehmen gerne Patches für die AusweisApp an.
 Bitte gehen Sie dafür wie folgt vor:
 
 #. Forken des `Repository`_ in das eigene GitHub-Konto.

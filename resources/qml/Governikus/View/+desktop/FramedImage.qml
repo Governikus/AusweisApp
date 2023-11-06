@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: baseItem
@@ -14,6 +14,7 @@ Item {
 
 	Rectangle {
 		id: frame
+
 		anchors.centerIn: parent
 		anchors.fill: parent
 		border.color: baseItem.tintColor
@@ -23,6 +24,7 @@ Item {
 	}
 	TintableIcon {
 		id: image
+
 		anchors.fill: frame
 		anchors.margins: frame.border.width * 2
 		sourceSize.height: frame.height

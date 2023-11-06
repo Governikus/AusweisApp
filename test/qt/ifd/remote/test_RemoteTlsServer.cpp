@@ -73,11 +73,7 @@ class test_RemoteTlsServer
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
 			QTRY_COMPARE(clientErrors.count(), 1); // clazy:exclude=qstring-allocations
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::SslHandshakeFailedError);
-#else
-			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::RemoteHostClosedError);
-#endif
 			QCOMPARE(clientEncrypted.count(), 0);
 			QCOMPARE(clientPsk.count(), 0);
 		}

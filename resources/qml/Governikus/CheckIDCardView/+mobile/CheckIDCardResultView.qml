@@ -1,20 +1,21 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQml.Models 2.15
-import Governikus.CheckResultView 1.0
-import Governikus.Global 1.0
-import Governikus.ResultView 1.0
-import Governikus.Style 1.0
-import Governikus.Type.CheckIDCardModel 1.0
+import QtQuick
+import QtQml.Models
+import Governikus.CheckResultView
+import Governikus.Global
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.Type.CheckIDCardModel
 
 CheckResultView {
 	id: root
+
 	signal restartCheck
 	signal startAuth
 
-	buttonIcon: result === CheckIDCardModel.SUCCESS ? "qrc:///images/identify.svg" : "qrc:///images/material_help.svg"
+	buttonIcon: result === CheckIDCardModel.SUCCESS ? "qrc:///images/mydata.svg" : "qrc:///images/mobile/help.svg"
 	//: LABEL ANDROID IOS
 	buttonText: {
 		switch (result) {
@@ -33,8 +34,8 @@ CheckResultView {
 	}
 	//: LABEL ANDROID IOS
 	header: qsTr("Test Result")
+	icon: result === CheckIDCardModel.SUCCESS ? "qrc:///images/mobile/workflow_success_nfc_%1.svg".arg(Style.currentTheme.name) : "qrc:///images/workflow_error_nfc_%1.svg".arg(Style.currentTheme.name)
 	model: resultModel
-	resultType: result === CheckIDCardModel.SUCCESS ? ResultView.Type.IsSuccess : ResultView.Type.IsError
 	//: LABEL ANDROID IOS
 	title: qsTr("Check device and ID card")
 
@@ -49,14 +50,18 @@ CheckResultView {
 	}
 
 	GText {
+		font.bold: true
+		horizontalAlignment: Text.AlignHCenter
 		text: result === CheckIDCardModel.SUCCESS ? qsTr("You may now try the function: \"See my personal data\". Press the Continue button to do so now.") : ""
-		textStyle: Style.text.normal_highlight
 		visible: text !== ""
 		width: parent.width
 	}
 	Component {
 		id: checkIDCardSuggestionView
+
 		CheckIDCardSuggestionView {
+			title: root.title
+
 			onCancelClicked: root.cancelClicked()
 			onRestartCheck: root.restartCheck()
 			onStartAuth: root.startAuth()
@@ -64,10 +69,11 @@ CheckResultView {
 	}
 	ObjectModel {
 		id: resultModel
+
 		ResultEntry {
 			readonly property bool nfcSupported: result !== CheckIDCardModel.NO_NFC
 
-			resultType: nfcSupported ? ResultView.Type.IsSuccess : ResultView.Type.IsError
+			resultType: nfcSupported ? ResultEntry.Type.IsSuccess : ResultEntry.Type.IsError
 
 			//: LABEL ANDROID IOS
 			text: nfcSupported ?
@@ -83,7 +89,7 @@ CheckResultView {
 			visible: result > CheckIDCardModel.NO_NFC
 		}
 		ResultEntry {
-			resultType: ResultView.Type.IsInfo
+			resultType: ResultEntry.Type.IsInfo
 
 			//: LABEL ANDROID IOS
 			text: qsTr("No supported card detected")
@@ -98,7 +104,7 @@ CheckResultView {
 		ResultEntry {
 			readonly property bool insufficientApduLength: result === CheckIDCardModel.INSUFFICIENT_APDU_LENGTH
 
-			resultType: insufficientApduLength ? ResultView.Type.IsError : ResultView.Type.IsSuccess
+			resultType: insufficientApduLength ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 
 			//: LABEL ANDROID IOS
 			text: insufficientApduLength ?
@@ -111,7 +117,7 @@ CheckResultView {
 		ResultEntry {
 			readonly property bool cardAccessFailed: result === CheckIDCardModel.CARD_ACCESS_FAILED
 
-			resultType: cardAccessFailed ? ResultView.Type.IsError : ResultView.Type.IsSuccess
+			resultType: cardAccessFailed ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: cardAccessFailed ?
 			//: LABEL ANDROID IOS
 			qsTr("ID card access failed") :
@@ -122,7 +128,7 @@ CheckResultView {
 		ResultEntry {
 			readonly property bool pinDeactivated: result === CheckIDCardModel.PIN_DEACTIVATED
 
-			resultType: pinDeactivated ? ResultView.Type.IsError : ResultView.Type.IsSuccess
+			resultType: pinDeactivated ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: pinDeactivated ?
 			//: LABEL ANDROID IOS
 			qsTr("Online identification feature disabled") :
@@ -131,14 +137,14 @@ CheckResultView {
 			visible: result >= CheckIDCardModel.PIN_DEACTIVATED
 		}
 		ResultEntry {
-			resultType: ResultView.Type.IsInfo
+			resultType: ResultEntry.Type.IsInfo
 
 			//: LABEL ANDROID IOS
 			text: qsTr("ID card PIN suspended")
 			visible: result === CheckIDCardModel.PIN_SUSPENDED
 		}
 		ResultEntry {
-			resultType: ResultView.Type.IsInfo
+			resultType: ResultEntry.Type.IsInfo
 
 			//: LABEL ANDROID IOS
 			text: qsTr("ID card PIN blocked")

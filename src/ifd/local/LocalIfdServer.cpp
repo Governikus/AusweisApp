@@ -4,7 +4,6 @@
 
 #include "LocalIfdServer.h"
 
-#include "AppSettings.h"
 #include "Env.h"
 #include "PortFile.h"
 
@@ -17,6 +16,7 @@ LocalIfdServer::LocalIfdServer()
 {
 	connect(mWebSocketServer.data(), &LocalWebSocketServer::fireMessageHandlerAdded, this, &IfdServer::fireMessageHandlerAdded);
 	connect(mWebSocketServer.data(), &LocalWebSocketServer::fireConnectedChanged, this, &IfdServer::fireConnectedChanged);
+	connect(mWebSocketServer.data(), &LocalWebSocketServer::fireSocketError, this, &IfdServer::fireSocketError);
 }
 
 

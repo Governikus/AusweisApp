@@ -8,12 +8,12 @@
 
 #pragma once
 
-
-#include "Env.h"
-
+#include <QHostAddress>
+#include <QList>
 #include <QObject>
 
 class test_ConnectivityManager;
+
 
 namespace governikus
 {
@@ -22,28 +22,30 @@ class ConnectivityManager
 	: public QObject
 {
 	Q_OBJECT
-	friend class Env;
 	friend class ::test_ConnectivityManager;
 
+	Q_PROPERTY(bool watching READ isWatching WRITE setWatching NOTIFY fireWatchingChanged)
 	Q_PROPERTY(bool networkInterfaceActive READ isNetworkInterfaceActive NOTIFY fireNetworkInterfaceActiveChanged)
 
 	private:
 		int mTimerId;
 		bool mActive;
+		QList<QHostAddress> mAllAddresses;
 
-		ConnectivityManager();
-		~ConnectivityManager() override;
-
-		void setActive(bool pActive, const QString& pInterfaceName = QString());
-		void updateConnectivity();
+		void setActive(bool pActive);
 		void timerEvent(QTimerEvent* pEvent) override;
 
 	public:
+		ConnectivityManager();
+		~ConnectivityManager() override;
+
+		[[nodiscard]] bool isWatching() const;
+		void setWatching(bool pWatching);
+		Q_INVOKABLE bool checkConnectivity();
 		[[nodiscard]] bool isNetworkInterfaceActive() const;
-		void startWatching();
-		void stopWatching();
 
 	Q_SIGNALS:
+		void fireWatchingChanged();
 		void fireNetworkInterfaceActiveChanged(bool pActive);
 };
 

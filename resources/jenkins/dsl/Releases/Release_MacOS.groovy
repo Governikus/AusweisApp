@@ -13,7 +13,7 @@ j.with
 {
 	parameters
 	{
-		booleanParam("UPLOAD", true, "Upload AusweisApp2 to the AppStore")
+		booleanParam("UPLOAD", true, "Upload AusweisApp to the AppStore")
 	}
 
 	steps
@@ -28,7 +28,7 @@ j.with
 			cmake --build build --target package --config MinSizeRel
 			'''.stripIndent().trim())
 
-		shell('cd build/src/MinSizeRel/; cmake -E tar cf ../../AusweisApp2.app.dSYM.zip --format=zip AusweisApp2.app.dSYM')
+		shell('cd build/src/MinSizeRel/; cmake -E tar cf ../../AusweisApp.app.dSYM.zip --format=zip AusweisApp.app.dSYM')
 
 		shell('cd build/_CPack_Packages/Darwin/; codesign -vvvv **/**/*.app')
 		shell('cd build/_CPack_Packages/Darwin/DragNDrop; spctl -a -vv **/*.app')

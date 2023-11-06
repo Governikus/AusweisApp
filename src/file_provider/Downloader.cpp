@@ -5,6 +5,7 @@
 #include "Downloader.h"
 
 #include "LogHandler.h"
+#include "NetworkManager.h"
 
 #include <QFile>
 #include <QLocale>

@@ -32,9 +32,6 @@ void StateStopIfdService::onExit(QEvent* pEvent)
 	server->setPairing(false);
 	server->stop();
 
-	// Request an asynchronous update of all retry counters
-	Env::getSingleton<ReaderManager>()->updateRetryCounters();
-
 	stopNfcScanIfNecessary();
 	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::SMART);
 

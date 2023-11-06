@@ -1,13 +1,14 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Style
 
 Rectangle {
 	id: root
-	border.color: Style.color.high_contrast_item_border
-	border.width: Style.dimens.high_contrast_item_border
-	color: Style.color.background_pane
-	radius: Style.dimens.corner_radius
+
+	border.color: Style.color.pane_border
+	border.width: Style.dimens.border_width
+	color: Style.color.pane
+	radius: Style.dimens.pane_radius
 }

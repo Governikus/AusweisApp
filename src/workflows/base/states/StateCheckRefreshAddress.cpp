@@ -128,7 +128,7 @@ void StateCheckRefreshAddress::run()
 }
 
 
-QUrl StateCheckRefreshAddress::determineSubjectUrl()
+QUrl StateCheckRefreshAddress::determineSubjectUrl() const
 {
 	QUrl subjectUrl;
 	auto eac1 = getContext()->getDidAuthenticateEac1();
@@ -162,9 +162,10 @@ void StateCheckRefreshAddress::sendGetRequest()
 	qDebug() << "Send GET request to URL:" << mUrl.toString();
 	QNetworkRequest request(mUrl);
 	mReply = Env::getSingleton<NetworkManager>()->get(request);
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
-	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDone);
-	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateCheckRefreshAddress::onNetworkReply);
+
+	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
+	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDone);
+	*this << connect(mReply.data(), &QNetworkReply::finished, this, &StateCheckRefreshAddress::onNetworkReply);
 }
 
 
@@ -222,30 +223,30 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 	}
 
 	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), mUrl, context);
-	if (statusCode != CertificateChecker::CertificateStatus::Good)
+	if (statusCode == CertificateChecker::CertificateStatus::Good)
 	{
-		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
-		switch (statusCode)
-		{
-			case CertificateChecker::CertificateStatus::Good:
-				break;
-
-			case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
-				reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
-						FailureCode::Reason::Check_Refresh_Address_Unsupported_Certificate);
-				break;
-
-			case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
-				reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
-						FailureCode::Reason::Check_Refresh_Address_Hash_Missing_In_Certificate);
-
-		}
-
-		return false;
+		mVerifiedRefreshUrlHosts << mUrl;
+		return true;
 	}
 
-	mVerifiedRefreshUrlHosts << mUrl;
-	return true;
+	infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
+	switch (statusCode)
+	{
+		case CertificateChecker::CertificateStatus::Good:
+			break;
+
+		case CertificateChecker::CertificateStatus::Unsupported_Algorithm_Or_Length:
+			reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
+					FailureCode::Reason::Check_Refresh_Address_Unsupported_Certificate);
+			break;
+
+		case CertificateChecker::CertificateStatus::Hash_Not_In_Description:
+			reportCommunicationError({CertificateChecker::getGlobalStatus(statusCode, false), infoMap},
+					FailureCode::Reason::Check_Refresh_Address_Hash_Missing_In_Certificate);
+
+	}
+
+	return false;
 }
 
 
@@ -259,6 +260,16 @@ void StateCheckRefreshAddress::onNetworkReply()
 			case NetworkManager::NetworkError::ServiceUnavailable:
 				reportCommunicationError({GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
 						}, FailureCode::Reason::Check_Refresh_Address_Service_Unavailable, mReply->errorString());
+				break;
+
+			case NetworkManager::NetworkError::ServerError:
+				reportCommunicationError({GlobalStatus::Code::Network_ServerError, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						}, FailureCode::Reason::Check_Refresh_Address_Server_Error, mReply->errorString());
+				break;
+
+			case NetworkManager::NetworkError::ClientError:
+				reportCommunicationError({GlobalStatus::Code::Network_ClientError, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
+						}, FailureCode::Reason::Check_Refresh_Address_Client_Error, mReply->errorString());
 				break;
 
 			case NetworkManager::NetworkError::TimeOut:
@@ -386,9 +397,9 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	Env::getSingleton<NetworkManager>()->clearConnections();
 	mReply = Env::getSingleton<NetworkManager>()->get(request);
 
-	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
-	mConnections += connect(mReply.data(), &QNetworkReply::errorOccurred, this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
+	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
+	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);
+	*this << connect(mReply.data(), &QNetworkReply::errorOccurred, this, &StateCheckRefreshAddress::onNetworkErrorFetchingServerCertificate);
 }
 
 

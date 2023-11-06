@@ -45,7 +45,7 @@ class test_CertificateDescriptionModel
 	private Q_SLOTS:
 		void init()
 		{
-			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			mModel = Env::getSingleton<CertificateDescriptionModel>();
 		}
 
@@ -96,7 +96,7 @@ class test_CertificateDescriptionModel
 
 		void test_Validity()
 		{
-			mContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"));
+			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"));
 			mContext->initAccessRightManager(mContext->getDidAuthenticateEac1()->getCvCertificates().last());
 			mModel->resetContext(mContext);
 

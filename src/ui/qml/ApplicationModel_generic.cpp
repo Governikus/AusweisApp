@@ -8,7 +8,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
-void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
+void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) const
 {
 	qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
 }

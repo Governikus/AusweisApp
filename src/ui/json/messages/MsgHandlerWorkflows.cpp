@@ -18,7 +18,7 @@ void MsgHandlerWorkflows::handleWorkflowProperties(const QJsonObject& pObj, MsgC
 }
 
 
-void MsgHandlerWorkflows::initMessages(const QJsonObject& pUi)
+void MsgHandlerWorkflows::initMessages(const QJsonObject& pUi) const
 {
 	if (!pUi.isEmpty())
 	{
@@ -32,7 +32,7 @@ void MsgHandlerWorkflows::initMessages(const QJsonObject& pUi)
 }
 
 
-void MsgHandlerWorkflows::initHandleInterrupt(const QJsonValue& pValue, const MsgContext& pContext)
+void MsgHandlerWorkflows::initHandleInterrupt(const QJsonValue& pValue, const MsgContext& pContext) const
 {
 	if (pContext.getApiLevel() < MsgLevel::v2)
 	{
@@ -41,7 +41,7 @@ void MsgHandlerWorkflows::initHandleInterrupt(const QJsonValue& pValue, const Ms
 }
 
 
-void MsgHandlerWorkflows::initDeveloperMode(const QJsonValue& pValue)
+void MsgHandlerWorkflows::initDeveloperMode(const QJsonValue& pValue) const
 {
 	if (pValue.isBool())
 	{
@@ -51,7 +51,7 @@ void MsgHandlerWorkflows::initDeveloperMode(const QJsonValue& pValue)
 }
 
 
-void MsgHandlerWorkflows::initProgressStatus(const QJsonValue& pValue, MsgContext& pContext)
+void MsgHandlerWorkflows::initProgressStatus(const QJsonValue& pValue, MsgContext& pContext) const
 {
 	if (pValue.isBool())
 	{

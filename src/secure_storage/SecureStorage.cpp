@@ -64,7 +64,6 @@ CONFIG_NAME(CONFIGURATION_GROUP_NAME_SMART, "smart")
 CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_URL, "personalizationUrl")
 CONFIG_NAME(CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL, "personalizationTestUrl")
 CONFIG_NAME(CONFIGURATION_NAME_SMART_SERVICEID, "serviceId")
-CONFIG_NAME(CONFIGURATION_NAME_SMART_VERSIONTAG, "versionTag")
 CONFIG_NAME(CONFIGURATION_NAME_SMART_SSDAID, "ssdAid")
 
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_LOCAL_IFD, "localIfd")
@@ -79,8 +78,7 @@ defineSingleton(SecureStorage)
 
 
 SecureStorage::SecureStorage()
-	: mLoaded(false)
-	, mCvcas()
+	: mCvcas()
 	, mCvcasTest()
 	, mUpdateCertificates()
 	, mSelfAuthenticationUrl()
@@ -92,7 +90,6 @@ SecureStorage::SecureStorage()
 	, mSmartPersonalizationUrl()
 	, mSmartPersonalizationTestUrl()
 	, mSmartServiceId()
-	, mSmartVersionTag()
 	, mSmartSsdAid()
 	, mLocalIfdPackageName()
 	, mLocalIfdMinVersion()
@@ -107,12 +104,6 @@ SecureStorage::SecureStorage()
 	, mMinEphemeralKeySizes()
 {
 	load();
-}
-
-
-bool SecureStorage::isLoaded() const
-{
-	return mLoaded;
 }
 
 
@@ -259,7 +250,6 @@ void SecureStorage::load()
 	mSmartPersonalizationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_URL());
 	mSmartPersonalizationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_PERSONALIZATION_TEST_URL());
 	mSmartServiceId = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SERVICEID());
-	mSmartVersionTag = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_VERSIONTAG());
 	mSmartSsdAid = readGroup(config, CONFIGURATION_GROUP_NAME_SMART(), CONFIGURATION_NAME_SMART_SSDAID());
 
 	QJsonValue localIfdValue = config.value(CONFIGURATION_GROUP_NAME_LOCAL_IFD());
@@ -272,13 +262,30 @@ void SecureStorage::load()
 		mLocalIfdMinPskSize = localIfdValueObject.value(CONFIGURATION_NAME_LOCAL_IFD_MIN_PSK_SIZE()).toInt();
 	}
 
-	mLoaded = true;
-	qCDebug(securestorage) << "SecureStorage successfully loaded";
+	qCDebug(securestorage) << "SecureStorage loaded:" << isValid();
 	qCInfo(securestorage) << "Vendor" << mVendor;
 }
 
 
-QByteArrayList SecureStorage::loadTestCvcsFromAppDir()
+bool SecureStorage::isValid() const
+{
+	// check some eID required member
+	return !mCvcas.isEmpty()
+		   && !mCvcasTest.isEmpty()
+		   && !mSelfAuthenticationUrl.isEmpty()
+		   && !mSelfAuthenticationTestUrl.isEmpty()
+		   && mTlsConfig.isValid()
+		   && mTlsConfigPsk.isValid()
+		   && mTlsConfigRemoteIfd.isValid()
+		   && mTlsConfigRemoteIfdPairing.isValid()
+		   && mTlsConfigLocalIfd.isValid()
+		   && !mMinStaticKeySizes.isEmpty()
+		   && !mMinEphemeralKeySizes.isEmpty()
+		   && mLocalIfdMinPskSize > 0;
+}
+
+
+QByteArrayList SecureStorage::loadTestCvcsFromAppDir() const
 {
 	QByteArrayList testCvcs;
 	const QDir appDir(QCoreApplication::applicationDirPath());
@@ -373,12 +380,6 @@ const QString& SecureStorage::getSmartPersonalizationUrl(bool pTest) const
 const QString& SecureStorage::getSmartServiceId() const
 {
 	return mSmartServiceId;
-}
-
-
-const QString& SecureStorage::getSmartVersionTag() const
-{
-	return mSmartVersionTag;
 }
 
 

@@ -1,17 +1,18 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.ChatModel 1.0
-import Governikus.Type.ConnectivityManager 1.0
+import QtQuick
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.NumberModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.ChatModel
+import Governikus.Type.ConnectivityManager
 
 Controller {
 	id: controller
+
 	enum WorkflowStates {
 		Initial,
 		Reader,
@@ -20,16 +21,15 @@ Controller {
 		Processing
 	}
 
+	readonly property alias networkInterfaceActive: connectivityManager.networkInterfaceActive
 	property bool workflowProgressVisible: false
 	property int workflowState: 0
 
-	function processStateChange() {
-		switch (AuthModel.currentState) {
-		case "Initial":
-			break;
+	function processStateChange(pState) {
+		switch (pState) {
 		case "StateGetTcToken":
 			controller.workflowState = AuthController.WorkflowStates.Initial;
-			if (!ConnectivityManager.networkInterfaceActive) {
+			if (!networkInterfaceActive) {
 				controller.nextView(AuthView.SubViews.Connectivity);
 			} else {
 				controller.nextView(AuthView.SubViews.Progress);
@@ -80,7 +80,7 @@ Controller {
 			}
 			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
 			break;
-		case "StateWriteHistory":
+		case "StateActivateStoreFeedbackDialog":
 			showRemoveCardFeedback(AuthModel, true);
 			AuthModel.continueWorkflow();
 			break;
@@ -110,24 +110,28 @@ Controller {
 		AuthModel.continueWorkflow();
 	}
 
-	Component.onCompleted: if (AuthModel.currentState === "StateProcessing")
-		processStateChange()
+	Component.onCompleted: if (AuthModel.currentState === "StateParseTcTokenUrl")
+		processStateChange(AuthModel.currentState)
 
 	Connections {
-		// This is necessary because onCurrentStateChanged is not
-		// working, when we need to process a state a second time.
-		function onFireCurrentStateChanged(pState) {
-			processStateChange();
+		function onFireStateEntered(pState) {
+			processStateChange(pState);
+		}
+		function onFireWorkflowFinished() {
+			connectivityManager.watching = false;
+		}
+		function onFireWorkflowStarted() {
+			connectivityManager.watching = true;
 		}
 
 		target: AuthModel
 	}
-	Connections {
-		function onFireNetworkInterfaceActiveChanged(pActive) {
-			processStateChange();
-		}
+	ConnectivityManager {
+		id: connectivityManager
 
-		enabled: AuthModel.currentState === "StateGetTcToken"
-		target: ConnectivityManager
+		onNetworkInterfaceActiveChanged: {
+			if (AuthModel.currentState === "StateGetTcToken")
+				processStateChange(AuthModel.currentState);
+		}
 	}
 }

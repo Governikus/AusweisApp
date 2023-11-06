@@ -26,7 +26,7 @@ FormattedTextModel* ReleaseInformationModel::createModel(const ReleaseInformatio
 	fileList << pInformation.pathAnnouncements();
 	fileList << pInformation.pathIssues();
 
-	const int emptyFilepathCount = fileList.removeAll(QString());
+	const auto emptyFilepathCount = fileList.removeAll(QString());
 	if (emptyFilepathCount > 0)
 	{
 		qCWarning(qml) << "Missing" << emptyFilepathCount << "release information file(s)";
@@ -98,7 +98,7 @@ FormattedTextModel* ReleaseInformationModel::getUpdateRelease() const
 }
 
 
-void ReleaseInformationModel::update()
+void ReleaseInformationModel::update() const
 {
 	Env::getSingleton<ReleaseInformationConfiguration>()->update();
 }

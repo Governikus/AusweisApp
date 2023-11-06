@@ -12,10 +12,13 @@
 #include "MockCardConnectionWorker.h"
 #include "MockReaderManagerPlugIn.h"
 #include "ReaderManager.h"
+#include "ResourceLoader.h"
 #include "TestWorkflowContext.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QtTest>
+
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
@@ -28,26 +31,53 @@ class test_WorkflowModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
+
+			ResourceLoader::getInstance().init();
+		}
+
+
+		void cleanupTestCase()
+		{
+			Env::getSingleton<ReaderManager>()->shutdown();
+		}
+
+
 		void test_ResetContext()
 		{
 			WorkflowModel model;
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
+			QSignalSpy spyWorkflowStarted(&model, &WorkflowModel::fireWorkflowStarted);
 			QSignalSpy spyCurrentStateChanged(&model, &WorkflowModel::fireCurrentStateChanged);
+			QSignalSpy spyStateEntered(&model, &WorkflowModel::fireStateEntered);
 			QSignalSpy spyResultChanged(&model, &WorkflowModel::fireResultChanged);
 			QSignalSpy spyReaderPlugInTypeChanged(&model, &WorkflowModel::fireReaderPlugInTypeChanged);
 			QSignalSpy spySelectedReaderChanged(&model, &WorkflowModel::fireSelectedReaderChanged);
+			QSignalSpy spyWorkflowFinished(&model, &WorkflowModel::fireWorkflowFinished);
 
 			model.resetWorkflowContext();
+			QCOMPARE(spyWorkflowStarted.count(), 0);
 			QCOMPARE(spyCurrentStateChanged.count(), 1);
+			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyResultChanged.count(), 1);
+			QCOMPARE(spyWorkflowFinished.count(), 1);
 
 			model.resetWorkflowContext(context);
+			QCOMPARE(spyWorkflowStarted.count(), 1);
 			QCOMPARE(spyCurrentStateChanged.count(), 2);
+			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyResultChanged.count(), 2);
+			QCOMPARE(spyWorkflowFinished.count(), 1);
 
 			Q_EMIT context->fireStateChanged(QString("state"));
 			QCOMPARE(spyCurrentStateChanged.count(), 3);
+			QCOMPARE(spyStateEntered.count(), 1);
 
 			Q_EMIT context->fireResultChanged();
 			QCOMPARE(spyResultChanged.count(), 3);
@@ -107,18 +137,15 @@ class test_WorkflowModel
 		}
 
 
-		void test_isSmartCardAllowed()
+		void test_isCurrentSmartCardAllowed()
 		{
-			QVERIFY(true);
+			WorkflowModel workflowModel;
+			QVERIFY2(!workflowModel.isCurrentSmartCardAllowed(), "Ensure that this will not crash when the model has no WorkflowContext.");
 		}
 
 
 		void test_startScanExplicitly()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
-			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
-
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
 
@@ -133,10 +160,6 @@ class test_WorkflowModel
 
 		void test_hasCard()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
-			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
-
 			WorkflowModel model;
 			QCOMPARE(model.hasCard(), false);
 
@@ -150,6 +173,56 @@ class test_WorkflowModel
 			mockReader->setReaderInfo(info);
 			model.setReaderPlugInType(ReaderManagerPlugInType::MOCK);
 			QCOMPARE(model.hasCard(), true);
+		}
+
+
+		void test_statusCodeImage_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+
+			QMetaEnum e = QMetaEnum::fromType<GlobalStatus::Code>();
+
+			for (int k = 0; k < e.keyCount(); k++)
+			{
+				QTest::addRow("%s", e.key(k)) << GlobalStatus::Code(e.value(k));
+			}
+		}
+
+
+		void test_statusCodeImage()
+		{
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
+
+			QFETCH(GlobalStatus::Code, statusCode);
+			context->setStatus(statusCode);
+
+			WorkflowModel model;
+			model.resetWorkflowContext(context);
+
+			auto image = model.getStatusCodeImage();
+			image = image.replace("qrc://", ":");
+			if (image.isEmpty())
+			{
+				return;
+			}
+
+			if (image.contains("%1"))
+			{
+				QStringList themes;
+				themes << QStringLiteral("darkmode") << QStringLiteral("lightmode") << QStringLiteral("highcontrast");
+
+				for (const auto& theme : themes)
+				{
+					const auto fileName = image.arg(theme);
+					QVERIFY2(QFile(fileName).exists(), qPrintable(QString("%1 not found").arg(fileName)));
+				}
+			}
+			else
+			{
+				QVERIFY(QFile::exists(image));
+			}
+
 		}
 
 

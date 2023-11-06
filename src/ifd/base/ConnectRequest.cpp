@@ -178,7 +178,7 @@ void ConnectRequest::onTimeout()
 }
 
 
-void ConnectRequest::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator)
+void ConnectRequest::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const
 {
 	qCDebug(ifd) << "Request pairing...";
 	pAuthenticator->setPreSharedKey(mPsk);
@@ -215,11 +215,7 @@ void ConnectRequest::onSslErrors(const QList<QSslError>& pErrors)
 
 	if (ignoreErrors)
 	{
-#if defined(GOVERNIKUS_QT) || (QT_VERSION >= QT_VERSION_CHECK(6, 2, 0))
 		mSocket->ignoreSslErrors(pErrors);
-#else
-		mSocket->ignoreSslErrors();
-#endif
 		return;
 	}
 

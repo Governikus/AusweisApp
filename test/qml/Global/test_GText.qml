@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Style
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GText {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GText {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();
@@ -24,8 +25,8 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal");
-		testObject.textStyle = Style.text.hint_warning;
-		compare(testObject.textStyle, Style.text.hint_warning, "textStyle: hint_warning");
+		testObject.textStyle = Style.text.normal_warning;
+		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GText"
@@ -34,6 +35,9 @@ TestCase {
 
 	GText {
 		id: testObject
+
+		text: "initial text"
+
 		onLinkActivated: testObject.text = "link activated"
 
 		TestCase {
@@ -42,6 +46,50 @@ TestCase {
 				testObject.forceActiveFocus();
 				keyClick(Qt.Key_Space);
 				compare(testObject.text, "link activated", "Link activated");
+			}
+
+			when: windowShown
+		}
+	}
+	GText {
+		id: testObject1
+
+		maximumLineCount: 3
+		text: "initial text"
+
+		TestCase {
+			function test_effectiveMaxLinesHeight_lineHeight() {
+				compare(testObject1.effectiveFirstLineHeight, testObject1.height);
+				compare(testObject1.effectiveMaxLinesHeight, testObject1.maximumLineCount * testObject1.height);
+
+				// textStyle should change lineheights
+				let height_single = testObject1.effectiveFirstLineHeight;
+				let height_multi = testObject1.effectiveMaxLinesHeight;
+				testObject1.textStyle = Style.text.title;
+				verify(testObject1.effectiveFirstLineHeight !== height_single);
+				verify(testObject1.effectiveMaxLinesHeight !== height_multi);
+
+				// lineHeight should change lineheights
+				height_single = testObject1.effectiveFirstLineHeight;
+				height_multi = testObject1.effectiveMaxLinesHeight;
+				testObject1.lineHeight = 2;
+				verify(testObject1.effectiveFirstLineHeight !== height_single);
+				verify(testObject1.effectiveMaxLinesHeight !== height_multi);
+
+				// textStyle should no longer changelineheights because we
+				// replaced the binding of lineHeight to textStyle with 2 before
+				height_single = testObject1.effectiveFirstLineHeight;
+				height_multi = testObject1.effectiveMaxLinesHeight;
+				testObject1.textStyle = Style.text.normal;
+				verify(testObject1.effectiveFirstLineHeight === height_single);
+				verify(testObject1.effectiveMaxLinesHeight === height_multi);
+
+				// lineHeight should still change lineheights
+				height_single = testObject1.effectiveFirstLineHeight;
+				height_multi = testObject1.effectiveMaxLinesHeight;
+				testObject1.lineHeight = 4;
+				verify(testObject1.effectiveFirstLineHeight !== height_single);
+				verify(testObject1.effectiveMaxLinesHeight !== height_multi);
 			}
 
 			when: windowShown

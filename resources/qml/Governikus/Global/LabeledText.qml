@@ -1,11 +1,12 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Style 1.0
-import Governikus.View 1.0
+import QtQuick
+import Governikus.Style
+import Governikus.View
 
 Item {
+	property int alignment: Text.AlignLeft
 	property alias bodyElide: bodyText.elide
 	readonly property double focusFrameMargins: focusFrame.anchors.margins
 	property alias label: labelText.text
@@ -31,24 +32,31 @@ Item {
 	}
 	FocusFrame {
 		id: focusFrame
+
 	}
 	Column {
 		id: column
+
+		spacing: Constants.subtext_spacing
+
 		anchors {
 			left: parent.left
 			right: parent.right
 		}
 		GText {
 			id: labelText
+
 			Accessible.ignored: true
-			textStyle: Style.text.normal_accent
+			horizontalAlignment: alignment
+			textStyle: Style.text.subline
 			visible: !!text
 			width: parent.width
 		}
 		GText {
 			id: bodyText
+
 			Accessible.ignored: true
-			textStyle: Constants.is_desktop ? Style.text.normal : Style.text.normal_secondary
+			horizontalAlignment: alignment
 			visible: !!text
 			width: parent.width
 

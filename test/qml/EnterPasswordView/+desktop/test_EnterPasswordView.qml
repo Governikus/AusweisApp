@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtTest 1.15
-import Governikus.Type.PasswordType 1.0
+import QtTest
+import Governikus.Type.PasswordType
 
 TestCase {
 	id: parent
+
 	function test_load_EnterPasswordView(data) {
-		var item = createTemporaryQmlObject("
-			import Governikus.EnterPasswordView 1.0;
+		let item = createTemporaryQmlObject("
+			import Governikus.EnterPasswordView
 			EnterPasswordView {
 				passwordType: %1
 			}

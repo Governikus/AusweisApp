@@ -7,6 +7,7 @@
 #include "Env.h"
 #include "ReaderManager.h"
 #include "VolatileSettings.h"
+#include "WorkflowRequest.h"
 #include "context/AuthContext.h"
 #include "states/StateEnterPacePassword.h"
 #include "states/StateSelectReader.h"
@@ -36,19 +37,20 @@ void UIPlugInAutomatic::doShutdown()
 }
 
 
-void UIPlugInAutomatic::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInAutomatic::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
 	if (isDominated())
 	{
 		return;
 	}
 
-	pContext->claim(this);
-	if (pContext.objectCast<AuthContext>())
+	const auto& context = pRequest->getContext();
+	context->claim(this);
+	if (context.objectCast<AuthContext>())
 	{
 		qCDebug(automatic) << "Fallback to full automatic UI";
 
-		mContext = pContext;
+		mContext = context;
 		mContext->setReaderPlugInTypes({ReaderManagerPlugInType::SIMULATOR, ReaderManagerPlugInType::PCSC});
 		connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInAutomatic::onStateChanged);
 		mPrevUsedAsSDK = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
@@ -65,14 +67,14 @@ void UIPlugInAutomatic::onWorkflowStarted(QSharedPointer<WorkflowContext> pConte
 	else
 	{
 		qCWarning(automatic) << "Cannot handle context... abort automatic workflow";
-		pContext->killWorkflow();
+		context->killWorkflow();
 	}
 }
 
 
-void UIPlugInAutomatic::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInAutomatic::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 
 	if (isDominated())
 	{
@@ -90,11 +92,11 @@ void UIPlugInAutomatic::onStateChanged(const QString& pState)
 {
 	if (mContext)
 	{
-		if (AbstractState::isState<StateSelectReader>(pState))
+		if (StateBuilder::isState<StateSelectReader>(pState))
 		{
 			handleInsertCard();
 		}
-		else if (AbstractState::isState<StateEnterPacePassword>(pState))
+		else if (StateBuilder::isState<StateEnterPacePassword>(pState))
 		{
 			handlePassword();
 		}

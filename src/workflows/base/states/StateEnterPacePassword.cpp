@@ -4,7 +4,6 @@
 
 #include "StateEnterPacePassword.h"
 
-#include "ReaderManager.h"
 #include "VolatileSettings.h"
 
 
@@ -15,9 +14,6 @@ StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowCont
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateEnterPacePassword::onReaderStatusChanged);
-
 	setKeepCardConnectionAlive();
 }
 
@@ -52,30 +48,4 @@ void StateEnterPacePassword::onEntry(QEvent* pEvent)
 	}
 
 	AbstractState::onEntry(pEvent);
-}
-
-
-void StateEnterPacePassword::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const
-{
-#if defined(Q_OS_IOS)
-	const auto& volatileSettings = Env::getSingleton<VolatileSettings>();
-	if (!volatileSettings->isUsedAsSDK() || pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
-	{
-		return;
-	}
-
-	if (!Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
-	{
-		if (getContext()->interruptRequested())
-		{
-			getContext()->setInterruptRequested(false);
-		}
-		else
-		{
-			Q_EMIT getContext()->fireCancelWorkflow();
-		}
-	}
-#else
-	Q_UNUSED(pInfo)
-#endif
 }

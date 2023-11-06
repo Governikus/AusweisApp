@@ -95,16 +95,14 @@ class test_IfdEstablishPaceChannel
 							   "    \"ContextHandle\": \"TestContext\",\n"
 							   "[LENGTH]"
 							   "    \"InputData\": \"[DATA]\",\n"
-							   "[LENGTH_OLD]"
 							   "    \"SlotHandle\": \"SlotHandle\",\n"
 							   "    \"msg\": \"IFDEstablishPACEChannel\"\n"
 							   "}\n")
 					.replace("[DATA]", inputApdu)
-					.replace("[LENGTH]", version >= IfdVersion::Version::v2 ? QByteArray("    \"ExpectedPINLength\": 6,\n") : QByteArray())
-					.replace("[LENGTH_OLD]", version >= IfdVersion::Version::v2 ? QByteArray("    \"PreferredPinLength\": 6,\n") : QByteArray()));
+					.replace("[LENGTH]", version >= IfdVersion::Version::v2 ? QByteArray("    \"ExpectedPINLength\": 6,\n") : QByteArray()));
 
 			const QJsonObject obj = QJsonDocument::fromJson(byteArray).object();
-			QCOMPARE(obj.size(), version >= IfdVersion::Version::v2 ? 6 : 4);
+			QCOMPARE(obj.size(), version >= IfdVersion::Version::v2 ? 5 : 4);
 			QCOMPARE(obj.value(QLatin1String("msg")).toString(), QStringLiteral("IFDEstablishPACEChannel"));
 			QCOMPARE(obj.value(QLatin1String("ContextHandle")).toString(), QStringLiteral("TestContext"));
 			QCOMPARE(obj.value(QLatin1String("SlotHandle")).toString(), QStringLiteral("SlotHandle"));
@@ -334,46 +332,6 @@ class test_IfdEstablishPaceChannel
 			QCOMPARE(ifdEstablishPaceChannel.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdEstablishPaceChannel.getInputData(), EstablishPaceChannel(PacePasswordId::PACE_PIN));
 			QCOMPARE(ifdEstablishPaceChannel.getExpectedPinLength(), expectedPinLength);
-		}
-
-
-		void preferredPinLength_data()
-		{
-			QTest::addColumn<QByteArray>("json");
-			QTest::addColumn<int>("preferredPinLength");
-
-			QTest::newRow("0") << QByteArray(R"("PreferredPinLength": 0,)") << 0;
-			QTest::newRow("5") << QByteArray(R"("PreferredPinLength": 5,)") << 5;
-			QTest::newRow("6") << QByteArray(R"("PreferredPinLength": 6,)") << 6;
-			QTest::newRow("both1") << QByteArray(R"("PreferredPinLength": 5, "ExpectedPINLength": 6,)") << 6;
-			QTest::newRow("both2") << QByteArray(R"("PreferredPinLength": 6, "ExpectedPINLength": 5,)") << 5;
-			QTest::newRow("both3") << QByteArray(R"("ExpectedPINLength": 5, "PreferredPinLength": 6,)") << 5;
-			QTest::newRow("both4") << QByteArray(R"("ExpectedPINLength": 6, "PreferredPinLength": 5,)") << 6;
-		}
-
-
-		void preferredPinLength()
-		{
-			QFETCH(QByteArray, json);
-			QFETCH(int, preferredPinLength);
-
-			QByteArray message(R"({
-									"ContextHandle": "TestContext",
-									"InputData": "0300000000",
-									[JSON]
-									"SlotHandle": "SlotHandle",
-									"msg": "IFDEstablishPACEChannel"
-								 })");
-			message.replace("[JSON]", json);
-
-			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
-			const IfdEstablishPaceChannel ifdEstablishPaceChannel(obj);
-			QVERIFY(!ifdEstablishPaceChannel.isIncomplete());
-			QCOMPARE(ifdEstablishPaceChannel.getType(), IfdMessageType::IFDEstablishPACEChannel);
-			QCOMPARE(ifdEstablishPaceChannel.getContextHandle(), QStringLiteral("TestContext"));
-			QCOMPARE(ifdEstablishPaceChannel.getSlotHandle(), QStringLiteral("SlotHandle"));
-			QCOMPARE(ifdEstablishPaceChannel.getInputData(), EstablishPaceChannel(PacePasswordId::PACE_PIN));
-			QCOMPARE(ifdEstablishPaceChannel.getExpectedPinLength(), preferredPinLength);
 		}
 
 

@@ -95,11 +95,26 @@ class ReaderManagerPlugInInfo
 			mAvailable = pAvailable;
 		}
 
+
+		[[nodiscard]] bool isScanRunning() const
+		{
+			return mScanRunning;
+		}
+
+
+		void setScanRunning(bool pScanRunning)
+		{
+			mScanRunning = pScanRunning;
+		}
+
 	private:
 		ReaderManagerPlugInType mType;
 		QMap<Key, QVariant> mValues;
 		bool mEnabled;
 		bool mAvailable;
+		bool mScanRunning;
+
+
 };
 
 } // namespace governikus

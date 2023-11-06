@@ -29,7 +29,7 @@ class ConnectRequest
 		void onConnected();
 		void onError(QAbstractSocket::SocketError pError);
 		void onTimeout();
-		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator);
+		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const;
 		void onSslErrors(const QList<QSslError>& pErrors);
 
 	public:

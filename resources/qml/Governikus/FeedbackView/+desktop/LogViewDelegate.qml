@@ -1,25 +1,37 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
-TextEdit {
-	readonly property var textStyle: Style.text.hint
+GText {
+	id: root
 
-	Accessible.name: text
-	Accessible.role: Accessible.StaticText
-	color: level === "C" ? Style.color.warning_text : (level === "W" ? Style.color.accent : textStyle.textColor)
-	readOnly: true
-	selectByMouse: true
-	selectedTextColor: Style.color.primary_text_inverse
-	selectionColor: Style.color.accent
+	function copyTextToClipboard() {
+		ApplicationModel.setClipboardText(root.text);
+		//: INFO DESKTOP Toast message used to confirm the copy of a log entry.
+		ApplicationModel.showFeedback(qsTr("The log entry was copied to the clipboard."));
+	}
+
+	color: level === "C" ? Style.color.text_warning : (level === "W" ? Style.color.control : textStyle.textColor)
+	font.bold: activeFocus
+	font.family: plugin.fixedFontFamily
 	text: "%1 %2".arg(origin).arg(message)
 	textFormat: Text.PlainText
 	wrapMode: Text.Wrap
 
-	font {
-		family: plugin.fixedFontFamily
-		pixelSize: textStyle.textSize
+	Action {
+		enabled: root.activeFocus
+		shortcut: StandardKey.Copy
+
+		onTriggered: root.copyTextToClipboard()
+	}
+	MouseArea {
+		anchors.fill: parent
+
+		onPressAndHold: root.copyTextToClipboard()
 	}
 }

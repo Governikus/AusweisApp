@@ -11,17 +11,24 @@
 #include "LanguageLoader.h"
 #include "RemoteServiceSettings.h"
 
-#include <QOperatingSystemVersion>
+#include <QCoreApplication>
+#include <QDateTime>
+#include <QFile>
+#if defined(Q_OS_WIN)
+	#include <QOperatingSystemVersion>
+#endif
 #include <QQmlEngine>
+#include <QStringList>
 
 
 using namespace governikus;
 
 
-DiagnosisModel::DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext)
+DiagnosisModel::DiagnosisModel()
 	: mSections()
-	, mContext(pContext)
-	, mAusweisApp2Section()
+	, mContext(new DiagnosisContext())
+	, mDiagnosisController(mContext)
+	, mAusweisAppSection()
 	, mTimestampSection()
 	, mRemoteDeviceSectionRunning(false)
 	, mRemoteDeviceSection()
@@ -50,6 +57,10 @@ DiagnosisModel::DiagnosisModel(const QSharedPointer<DiagnosisContext>& pContext)
 
 	mSections[Section::SECURITY].reset(new SectionModel());
 	QQmlEngine::setObjectOwnership(mSections[Section::SECURITY].data(), QQmlEngine::CppOwnership);
+
+
+	initContent();
+	mDiagnosisController.run();
 }
 
 
@@ -85,9 +96,9 @@ QString DiagnosisModel::getSectionName(Section pSection) const
 
 void DiagnosisModel::initGeneralSections()
 {
-	mAusweisApp2Section.clear();
+	mAusweisAppSection.clear();
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-			mAusweisApp2Section << ContentItem(pKey, pValue);
+			mAusweisAppSection << ContentItem(pKey, pValue);
 		});
 
 	//: LABEL DESKTOP
@@ -101,7 +112,7 @@ void DiagnosisModel::initGeneralSections()
 void DiagnosisModel::updateGeneralSection()
 {
 	mSections[Section::GENERAL]->removeAllItems();
-	mSections[Section::GENERAL]->addContent(mAusweisApp2Section);
+	mSections[Section::GENERAL]->addContent(mAusweisAppSection);
 	mSections[Section::GENERAL]->addContent(mTimestampSection);
 }
 
@@ -258,6 +269,63 @@ QString DiagnosisModel::boolToString(bool pBoolean) const
 }
 
 
+QString DiagnosisModel::getAsPlaintext() const
+{
+
+#ifdef Q_OS_WIN
+	static const QString endl = QStringLiteral("\r\n");
+#else
+	static const QString endl(QLatin1Char('\n'));
+#endif
+
+	QStringList modelPlaintext;
+
+	const auto& sections = mSections.keys();
+	for (const auto& section : sections)
+	{
+		modelPlaintext << getSectionName(section);
+		modelPlaintext << mSections[section]->getAsPlaintext();
+		modelPlaintext << endl;
+	}
+
+	return modelPlaintext.join(endl);
+}
+
+
+void DiagnosisModel::initContent()
+{
+	disconnectSignals();
+
+	beginResetModel();
+
+	initGeneralSections();
+	updateGeneralSection();
+
+	initCardReaderSections();
+	updateCardReaderSection(false);
+
+	initNetworkSections();
+	updateNetworkSection(false);
+
+	initAntiVirusAndFirewallSection();
+	updateAntiVirusAndFirewallSection(false);
+
+	onRemoteInfosChanged();
+
+	endResetModel();
+
+	connectSignals();
+
+	mConnectionTest.startConnectionTest();
+
+#ifdef Q_OS_WIN
+	mAntivirusDetection.startInformationProcess();
+	mFirewallDetection.startDetection();
+#endif
+
+}
+
+
 QVariant DiagnosisModel::data(const QModelIndex& pIndex, int pRole) const
 {
 	const auto section = static_cast<Section>(pIndex.row());
@@ -284,7 +352,7 @@ QVariant DiagnosisModel::data(const QModelIndex& pIndex, int pRole) const
 int DiagnosisModel::rowCount(const QModelIndex& pParent) const
 {
 	Q_UNUSED(pParent)
-	return mSections.size();
+	return static_cast<int>(mSections.size());
 }
 
 
@@ -303,26 +371,14 @@ QString DiagnosisModel::getCreationTime() const
 }
 
 
-QString DiagnosisModel::getAsPlaintext() const
+void DiagnosisModel::saveToFile(const QUrl& pFilename) const
 {
-
-#ifdef Q_OS_WIN
-	static const QString endl = QStringLiteral("\r\n");
-#else
-	static const QString endl(QLatin1Char('\n'));
-#endif
-
-	QStringList modelPlaintext;
-
-	const auto& sections = mSections.keys();
-	for (const auto& section : sections)
+	QFile file(pFilename.toLocalFile());
+	if (file.open(QIODevice::WriteOnly))
 	{
-		modelPlaintext << getSectionName(section);
-		modelPlaintext << mSections[section]->getAsPlaintext();
-		modelPlaintext << endl;
+		QString diagnosisLog = getAsPlaintext();
+		file.write(diagnosisLog.toUtf8());
 	}
-
-	return modelPlaintext.join(endl);
 }
 
 
@@ -576,7 +632,7 @@ void DiagnosisModel::onFirewallInformationReady()
 	QString firstRuleExists = boolToString(mFirewallDetection.getFirstRuleExists());
 	QString firstRuleEnabled = boolToString(mFirewallDetection.getFirstRuleEnabled());
 	//: LABEL DESKTOP
-	windowsFirewallSettings << tr("Outgoing AusweisApp2 rule");
+	windowsFirewallSettings << tr("Outgoing %1 rule").arg(QCoreApplication::applicationName());
 	//: LABEL DESKTOP
 	windowsFirewallSettings << tr("Exists: %1").arg(firstRuleExists);
 	//: LABEL DESKTOP
@@ -585,7 +641,7 @@ void DiagnosisModel::onFirewallInformationReady()
 	QString secondRuleExists = boolToString(mFirewallDetection.getSecondRuleExists());
 	QString secondRuleEnabled = boolToString(mFirewallDetection.getSecondRuleEnabled());
 	//: LABEL DESKTOP
-	windowsFirewallSettings << tr("Incoming AusweisApp2 rule");
+	windowsFirewallSettings << tr("Incoming %1 rule").arg(QCoreApplication::applicationName());
 	//: LABEL DESKTOP
 	windowsFirewallSettings << tr("Exists: %1").arg(secondRuleExists);
 	//: LABEL DESKTOP
@@ -770,36 +826,4 @@ void DiagnosisModel::onReaderInfosChanged()
 
 	updateCardReaderSection();
 	Q_EMIT fireRunningChanged();
-}
-
-
-void DiagnosisModel::reloadContent()
-{
-	disconnectSignals();
-
-	beginResetModel();
-
-	initGeneralSections();
-	updateGeneralSection();
-
-	initCardReaderSections();
-	updateCardReaderSection(false);
-
-	initNetworkSections();
-	updateNetworkSection(false);
-
-	initAntiVirusAndFirewallSection();
-	updateAntiVirusAndFirewallSection(false);
-
-	onRemoteInfosChanged();
-	mConnectionTest.startConnectionTest();
-
-#ifdef Q_OS_WIN
-	mAntivirusDetection.startInformationProcess();
-	mFirewallDetection.startDetection();
-#endif
-
-	connectSignals();
-
-	endResetModel();
 }

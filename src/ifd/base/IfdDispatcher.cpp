@@ -5,7 +5,6 @@
 #include "IfdDispatcher.h"
 
 #include "AppSettings.h"
-#include "Initializer.h"
 #include "messages/IfdError.h"
 #include "messages/IfdVersion.h"
 
@@ -123,7 +122,7 @@ IfdVersion::Version IfdDispatcher::getVersion() const
 }
 
 
-void IfdDispatcher::saveRemoteNameInSettings(const QString& pName)
+void IfdDispatcher::saveRemoteNameInSettings(const QString& pName) const
 {
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto info = settings.getRemoteInfo(getId());

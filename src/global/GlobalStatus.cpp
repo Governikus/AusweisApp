@@ -37,10 +37,9 @@ bool GlobalStatus::isMessageMasked() const
 		case Code::Workflow_Certificate_No_Url_In_Description:
 		case Code::Workflow_Certificate_Hash_Error:
 		case Code::Workflow_Certificate_Sop_Error:
-		case Code::Workflow_Error_Page_Transmission_Error:
-		case Code::Workflow_Processing_Error:
 		case Code::Workflow_TrustedChannel_Establishment_Error:
-		case Code::Workflow_TrustedChannel_Error_From_Server:
+		case Code::Workflow_TrustedChannel_Server_Error:
+		case Code::Workflow_TrustedChannel_Client_Error:
 		case Code::Workflow_TrustedChannel_No_Data_Received:
 		case Code::Workflow_TrustedChannel_Other_Network_Error:
 		case Code::Network_Other_Error:
@@ -182,19 +181,21 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR_MASKED ALL_PLATFORMS
 			return tr("The subject URL in the certificate description and the TCToken URL do not satisfy the same origin policy.");
 
-		case Code::Workflow_Error_Page_Transmission_Error:
-		case Code::Workflow_Processing_Error:
-		case Code::Workflow_Redirect_Transmission_Error:
+		case Code::Workflow_Browser_Transmission_Error:
 			return getExternalInfo();
 
-		case Code::Workflow_TrustedChannel_Error_From_Server:
+		case Code::Workflow_TrustedChannel_Server_Error:
 			//: ERROR_MASKED ALL_PLATFORMS
 			return tr("The program received an error from the server.");
+
+		case Code::Workflow_TrustedChannel_Client_Error:
+			//: ERROR_MASKED ALL_PLATFORMS
+			return tr("The server could not process the client request.");
 
 		case Code::Workflow_TrustedChannel_Hash_Not_In_Description:
 		case Code::Workflow_Network_Ssl_Hash_Not_In_Certificate_Description:
 			//: ERROR ALL_PLATFORMS The TLS certificate was not folded with the Authorization Certificate, thus violating the security requirements. Might also be caused by a firewall and/or the antivirus software.
-			return tr("Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus-software and firewalls are not interfering with TLS traffic.").arg(getExternalInfo(ExternalInformation::CERTIFICATE_ISSUER_NAME));
+			return tr("Hash of TLS certificate not in certificate description (issuer: %1). This indicates a misconfiguration or manipulation of the certificate. Please check that your antivirus software and firewall are not interfering with TLS traffic.").arg(getExternalInfo(ExternalInformation::CERTIFICATE_ISSUER_NAME));
 
 		case Code::Workflow_TrustedChannel_No_Data_Received:
 			//: ERROR_MASKED ALL_PLATFORMS Received an empty TC token.
@@ -205,13 +206,29 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			//: ERROR ALL_PLATFORMS A server has responded with an HTTP error code 503.
 			return tr("The service is temporarily not available. Please try again later.");
 
+		case Code::Network_ServerError:
+			//: ERROR ALL_PLATFORMS A server has responded with an HTTP error code 5xx.
+			return tr("The service encountered an internal error while processing a request.");
+
+		case Code::Network_ClientError:
+			//: ERROR ALL_PLATFORMS A server has responded with an HTTP error code 4xx.
+			return tr("The service reported an error while processing a client request.");
+
 		case Code::Workflow_Smart_eID_Unavailable:
 			//: ERROR ALL_PLATFORMS The device does not support the Smart-eID function
 			return tr("The device does not support Smart-eID.");
 
 		case Code::Workflow_Smart_eID_Applet_Preparation_Failed:
 			//: ERROR ANDROID The preparation of the Smart-eID Applet failed
-			return tr("The preparation of the Smart-eID Applet failed.");
+			return tr("The preparation of the Smart-eID failed.");
+
+		case Code::Workflow_Smart_eID_Authentication_Failed:
+			//: ERROR ALL_PLATFORMS No sessionID, required for a personalization, was received
+			return tr("The authentication to the personalization service failed.");
+
+		case Code::Workflow_Smart_eID_ServiceInformation_Query_Failed:
+			//: ERROR ALL_PLATFORMS Failed to get the ServiceInformation of the Smart-eID
+			return tr("Failed to get the ServiceInformation of the Smart-eID.");
 
 		case Code::Workflow_Smart_eID_PrePersonalization_Failed:
 			//: ERROR ALL_PLATFORMS Initialization of Personalization failed
@@ -220,6 +237,10 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::Workflow_Smart_eID_Personalization_Failed:
 			//: ERROR ALL_PLATFORMS Personalization of Smart-eID failed
 			return tr("Personalization of Smart-eID failed.");
+
+		case Code::Workflow_Smart_eID_Personalization_Denied:
+			//: ERROR ALL_PLATFORMS Personalization of Smart-eID is not allowed, no remaining attempts are left.
+			return tr("You have reached the allowed amount of Smart-eID setups for the current period. You may set up another Smart-eID with your ID card on %1.").arg(getExternalInfo(ExternalInformation::PERSONALIZATION_RESTRICTION_DATE));
 
 		case Code::Network_TimeOut:
 		case Code::Workflow_TrustedChannel_TimeOut:
@@ -323,10 +344,12 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Card_Protocol_Error:
 		case Code::Card_Unexpected_Transmit_Status:
-			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received,
-			return tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1AusweisApp2 Support%2.").arg(
-					QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocaleCode()),
-					QStringLiteral("</a>"));
+			//: ERROR ALL_PLATFORMS Communication with the card failed due to the specification of the TR (Technische Richtlinie). The protocol was faulty or invalid values were requested/received. %1 is a html link to the support.
+			return tr("A protocol error occurred. Please make sure that your ID card is placed correctly on the card reader and try again. If the problem occurs again, please contact our support at %1.").arg(
+					QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">%2</a>").arg(
+					LanguageLoader::getLocaleCode(),
+							//: LABEL ALL_PLATFORMS Link text to the app support. %1 is the app name.
+					tr("%1 Support").arg(QCoreApplication::applicationName())));
 
 		case Code::Card_Invalid_Pin:
 			//: ERROR ALL_PLATFORMS The ID card declined the PIN.
@@ -366,7 +389,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Card_Smart_Invalid:
 			//: ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.
-			return tr("The Smart-eID is invalid. This might have been caused by entering the wrong Smart-eID PIN three times.");
+			return tr("The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN three times. You may personalize a new Smart-eID to resolve the issue.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.
@@ -378,7 +401,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::IfdConnector_NoSupportedApiLevel:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).
-			return tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest AusweisApp2 version on both your smartphone and your computer.");
+			return tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
 
 		case Code::IfdConnector_ConnectionTimeout:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.

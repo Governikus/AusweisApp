@@ -20,7 +20,7 @@ const MsgHandler MsgHandler::Void = MsgHandler();
 
 MsgType MsgHandler::getStateMsgType(const QString& pState, PacePasswordId pPasswordId)
 {
-	if (AbstractState::isState<StateEnterPacePassword>(pState))
+	if (StateBuilder::isState<StateEnterPacePassword>(pState))
 	{
 		if (pPasswordId == PacePasswordId::PACE_PIN)
 		{
@@ -35,15 +35,15 @@ MsgType MsgHandler::getStateMsgType(const QString& pState, PacePasswordId pPassw
 			return MsgType::ENTER_PUK;
 		}
 	}
-	else if (AbstractState::isState<StateEnterNewPacePin>(pState))
+	else if (StateBuilder::isState<StateEnterNewPacePin>(pState))
 	{
 		return MsgType::ENTER_NEW_PIN;
 	}
-	else if (AbstractState::isState<StateEditAccessRights>(pState))
+	else if (StateBuilder::isState<StateEditAccessRights>(pState))
 	{
 		return MsgType::ACCESS_RIGHTS;
 	}
-	else if (AbstractState::isState<StateSelectReader>(pState))
+	else if (StateBuilder::isState<StateSelectReader>(pState))
 	{
 		return MsgType::INSERT_CARD;
 	}

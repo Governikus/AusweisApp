@@ -2,10 +2,6 @@
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Unit tests for \ref PcscUtils
- */
-
 #include "PcscUtils.h"
 
 #include <QtTest>
@@ -46,7 +42,7 @@ class test_PcscUtils
 		{
 			QFETCH(PCSC_RETURNCODE, code);
 
-			QCOMPARE(PcscUtils::toString(code), QString::fromLatin1(QTest::currentDataTag()));
+			QCOMPARE(pcsc::toString(code), QString::fromLatin1(QTest::currentDataTag()));
 		}
 
 
@@ -54,16 +50,34 @@ class test_PcscUtils
 		{
 			using uPCSC_RETURNCODE = std::make_unsigned_t<PCSC_RETURNCODE>;
 
-			const auto& getString = [](PcscUtils::PcscReturnCode pCode){
+			const auto& getString = [](pcsc::PcscReturnCode pCode){
 						return QByteArray::fromStdString(std::to_string(static_cast<uPCSC_RETURNCODE>(pCode)));
 					};
 
 			const auto& str = QByteArray::fromStdString(std::to_string(static_cast<uPCSC_RETURNCODE>(SCARD_F_INTERNAL_ERROR)));
-			QCOMPARE(getString(PcscUtils::Scard_F_Internal_Error), str);
-			QCOMPARE(getString(PcscUtils::Scard_F_Internal_Error), QByteArray("2148532225")); // 80100001
-			QCOMPARE(getString(PcscUtils::Scard_E_Timeout), QByteArray("2148532234")); // 8010000a
-			QCOMPARE(getString(PcscUtils::Scard_S_Success), QByteArray("0"));
-			QCOMPARE(sizeof(PcscUtils::PcscReturnCode), sizeof(SCARD_F_INTERNAL_ERROR));
+			QCOMPARE(getString(pcsc::Scard_F_Internal_Error), str);
+			QCOMPARE(getString(pcsc::Scard_F_Internal_Error), QByteArray("2148532225")); // 80100001
+			QCOMPARE(getString(pcsc::Scard_E_Timeout), QByteArray("2148532234")); // 8010000a
+			QCOMPARE(getString(pcsc::Scard_S_Success), QByteArray("0"));
+			QCOMPARE(sizeof(pcsc::PcscReturnCode), sizeof(SCARD_F_INTERNAL_ERROR));
+		}
+
+
+		void stream()
+		{
+			QByteArray data;
+			{
+				QDataStream outStream(&data, QIODeviceBase::WriteOnly);
+				outStream << pcsc::Scard_E_No_Service;
+			}
+
+			pcsc::PcscReturnCode destination;
+			{
+				QDataStream inStream(data);
+				inStream >> destination;
+			}
+
+			QCOMPARE(destination, pcsc::Scard_E_No_Service);
 		}
 
 

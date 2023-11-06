@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderConfiguration.h"
+#include "ReaderConfigurationInfo.h"
 #include "UsbId.h"
 
 #ifdef Q_OS_LINUX
@@ -22,11 +22,6 @@
 #endif
 
 #ifdef Q_OS_WIN
-	#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-using EventFilterResultType = long;
-	#else
-using EventFilterResultType = qintptr;
-	#endif
 	#include <QAbstractNativeEventFilter>
 #endif
 
@@ -67,7 +62,7 @@ class ReaderDetector
 		[[nodiscard]] virtual QVector<UsbId> attachedDevIds() const;
 
 #ifdef Q_OS_WIN
-		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, EventFilterResultType* pResult) override;
+		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
 #endif
 
 		/*!

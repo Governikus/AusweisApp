@@ -30,10 +30,10 @@ class KeyPair
 
 		static QByteArray rewriteCertificate(X509* pX509);
 		static QSharedPointer<X509> createCertificate(EVP_PKEY* pPkey);
-		static EVP_PKEY* createKey();
+		static EVP_PKEY* createKey(const char* pCurve);
 
 	public:
-		static KeyPair generate();
+		static KeyPair generate(const char* pCurve = nullptr);
 
 		[[nodiscard]] const QSslKey& getKey() const;
 		[[nodiscard]] const QSslCertificate& getCertificate() const;

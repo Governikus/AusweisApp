@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include <QVector>
-
 #include "asn1/CVCertificate.h"
 
+#include <QVector>
 
 namespace governikus
 {

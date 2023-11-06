@@ -6,11 +6,14 @@
 	<Fragment>
 		<Property Id="PROXYSERVICE" Secure="yes"/>
 		<Property Id="PROXYSERVICE_FOUND" Secure="yes">
-			<RegistrySearch Id="ProxyServiceRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisApp2Proxy" Name="ImagePath" Type="raw"/>
+			<RegistrySearch Id="ProxyServiceRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisAppProxy" Name="ImagePath" Type="raw"/>
+		</Property>
+		<Property Id="PROXYSERVICE_OLD_FOUND" Secure="yes">
+			<RegistrySearch Id="ProxyServiceOldRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisApp2Proxy" Name="ImagePath" Type="raw"/>
 		</Property>
 		<SetProperty Before="CostFinalize" Id="PROXYSERVICE" Value="true" Sequence="first">
 			(NOT PROXYSERVICE) AND (
-				((WIX_UPGRADE_DETECTED OR REINSTALL) AND PROXYSERVICE_FOUND)
+				((WIX_UPGRADE_DETECTED OR REINSTALL) AND (PROXYSERVICE_FOUND OR PROXYSERVICE_OLD_FOUND))
 				OR (NOT (WIX_UPGRADE_DETECTED OR REINSTALL) AND (WIX_SUITE_TERMINAL="1") AND NOT (WIX_SUITE_SINGLEUSERTS))
 			)
 		</SetProperty>
@@ -30,15 +33,15 @@
 		<DirectoryRef Id="INSTALL_ROOT">
 			<Component Id="AusweisApp2" Guid="{391CF345-5AA2-45CD-E001-C24861C9AB8D}">
 				<Condition>NOT (PROXYSERVICE = "true")</Condition>
-				<File Id="AusweisApp2" Source="AusweisApp2.exe" />
+				<File Id="AusweisApp2" Source="AusweisApp.exe" />
 			</Component>
 
 			<Component Id="ProxyService" Guid="{391CF345-5AA2-45CD-E002-C24861C9AB8D}">
 				<Condition>PROXYSERVICE = "true"</Condition>
-				<File Id="ProxyService" Source="AusweisApp2.exe" />
-				<ServiceInstall Id="AusweisApp2Proxy"
-								Name="AusweisApp2Proxy"
-								DisplayName="AusweisApp2-Proxy"
+				<File Id="ProxyService" Source="AusweisApp.exe" />
+				<ServiceInstall Id="AusweisAppProxy"
+								Name="AusweisAppProxy"
+								DisplayName="AusweisApp-Proxy"
 								Description="!(loc.ServiceDescription)"
 								Start="auto"
 								Type="ownProcess"
@@ -47,8 +50,8 @@
 								Arguments="--ui proxy --no-logfile"
 								Vital="yes"
 								Interactive="no" />
-				<ServiceControl Id="AusweisApp2Proxy"
-								Name="AusweisApp2Proxy"
+				<ServiceControl Id="AusweisAppProxy"
+								Name="AusweisAppProxy"
 								Start="install"
 								Stop="uninstall"
 								Remove="uninstall"

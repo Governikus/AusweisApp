@@ -1,28 +1,59 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.AuthView 1.0
-import Governikus.EnterPasswordView 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Workflow 1.0
-import Governikus.Type.ChatModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.AuthView
+import Governikus.EnterPasswordView
+import Governikus.PasswordInfoView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Workflow
+import Governikus.Type.ChatModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.RemoteServiceModel
+import Governikus.Type.SettingsModel
 
 Controller {
 	id: controller
 
+	readonly property bool editRightsShown: stackView.currentItem instanceof EditRights
 	readonly property bool enterPasswordShown: stackView.currentItem instanceof EnterPasswordView
+	readonly property bool isSmartWorkflow: RemoteServiceModel.readerPlugInType === ReaderPlugIn.SMART
 	readonly property bool workflowShown: stackView.currentItem instanceof GeneralWorkflow
 
+	function processStateChange(pState) {
+		switch (pState) {
+		case "StateStartIfdService":
+			setLockedAndHidden();
+			RemoteServiceModel.continueWorkflow();
+			break;
+		case "StateEnterPacePasswordIfd":
+			if (SettingsModel.showAccessRights && RemoteServiceModel.isPinAuthentication()) {
+				push(editRights);
+			} else {
+				requestInput();
+			}
+			break;
+		case "StateEstablishPaceChannelIfd":
+		case "StateChangePinIfd":
+			requestCard();
+			RemoteServiceModel.continueWorkflow();
+			break;
+		case "StateEnterNewPacePinIfd":
+			requestInput();
+			break;
+		case "FinalState":
+			RemoteServiceModel.continueWorkflow();
+			setLockedAndHidden(false);
+			break;
+		default:
+			RemoteServiceModel.continueWorkflow();
+		}
+	}
 	function requestCard() {
 		if (RemoteServiceModel.hasCard && workflowShown) {
 			pop();
@@ -32,7 +63,10 @@ Controller {
 	}
 	function requestInput(pState) {
 		if (RemoteServiceModel.isBasicReader && RemoteServiceModel.pinPadModeOn()) {
-			push(enterPinView);
+			push(enterPinView, {
+					"passwordType": NumberModel.passwordType,
+					"inputError": NumberModel.inputError
+				});
 		} else {
 			RemoteServiceModel.continueWorkflow();
 		}
@@ -41,57 +75,30 @@ Controller {
 	Connections {
 		function onFireConnectedChanged() {
 			if (RemoteServiceModel.connectedToPairedDevice && !workflowShown) {
+				requestCard();
 				RemoteServiceModel.setInitialPluginType();
-				requestCard();
-			} else if (!RemoteServiceModel.connectedToPairedDevice && workflowShown) {
+			} else if (!RemoteServiceModel.connectedToPairedDevice && (workflowShown || enterPasswordShown || editRightsShown)) {
 				pop();
-			}
-		}
-		function onFireCurrentStateChanged() {
-			switch (RemoteServiceModel.currentState) {
-			case "Initial":
-				break;
-			case "StateStartIfdService":
-				setLockedAndHidden();
-				RemoteServiceModel.continueWorkflow();
-				break;
-			case "StateEnterPacePasswordIfd":
-				if (SettingsModel.showAccessRights) {
-					push(editRights);
-				} else {
-					requestInput();
-				}
-				break;
-			case "StateEstablishPaceChannelIfd":
-			case "StateChangePinIfd":
-				requestCard();
-				RemoteServiceModel.continueWorkflow();
-				break;
-			case "StateEnterNewPacePinIfd":
-				requestInput();
-				break;
-			case "FinalState":
-				RemoteServiceModel.continueWorkflow();
-				setLockedAndHidden(false);
-				break;
-			default:
-				RemoteServiceModel.continueWorkflow();
 			}
 		}
 		function onFireHasCardChanged() {
 			if (!RemoteServiceModel.connectedToPairedDevice) {
 				return;
 			}
-			if (enterPasswordShown) {
+			if (enterPasswordShown || editRightsShown) {
 				return;
 			}
 			requestCard();
+		}
+		function onFireStateEntered(pState) {
+			processStateChange(pState);
 		}
 
 		target: RemoteServiceModel
 	}
 	Component {
 		id: editRights
+
 		EditRights {
 			//: LABEL ANDROID IOS
 			actionText: qsTr("You are about to identify yourself towards the following provider using the device \"%1\":").arg(RemoteServiceModel.connectedClientName)
@@ -117,8 +124,9 @@ Controller {
 	}
 	Component {
 		id: generalWorkflow
+
 		GeneralWorkflow {
-			titleBarColor: RemoteServiceModel.readerPlugInType === ReaderPlugIn.SMART ? Style.color.accent_smart : Style.color.accent
+			smartEidUsed: RemoteServiceModel.readerPlugInType === ReaderPlugIn.SMART
 			workflowModel: RemoteServiceModel
 			//: LABEL ANDROID IOS
 			workflowTitle: qsTr("Remote service")
@@ -134,10 +142,12 @@ Controller {
 	}
 	PasswordInfoData {
 		id: infoData
+
 		contentType: fromPasswordType(NumberModel.passwordType)
 	}
 	Component {
 		id: passwordInfoView
+
 		PasswordInfoView {
 			infoContent: infoData
 
@@ -150,10 +160,13 @@ Controller {
 	}
 	Component {
 		id: enterPinView
+
 		EnterPasswordView {
 			id: passwordView
+
 			enableTransportPinLink: RemoteServiceModel.enableTransportPinLink
 			moreInformationText: infoData.linkText
+			smartEidUsed: isSmartWorkflow
 			//: LABEL ANDROID IOS
 			title: qsTr("Card reader")
 
@@ -168,11 +181,29 @@ Controller {
 
 			onChangePinLength: {
 				RemoteServiceModel.changePinLength();
+				passwordView.passwordType = NumberModel.passwordType;
 			}
-			onPasswordEntered: {
-				pop();
-				RemoteServiceModel.startScanExplicitly();
-				RemoteServiceModel.continueWorkflow();
+			onPasswordEntered: pPasswordType => {
+				switch (pPasswordType) {
+				case PasswordType.NEW_PIN:
+				case PasswordType.NEW_SMART_PIN:
+					controller.processStateChange(RemoteServiceModel.currentState);
+					break;
+				case PasswordType.NEW_PIN_CONFIRMATION:
+				case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+					if (NumberModel.commitNewPin()) {
+						popAll();
+						RemoteServiceModel.startScanExplicitly();
+						RemoteServiceModel.continueWorkflow();
+					} else {
+						controller.processStateChange(RemoteServiceModel.currentState);
+					}
+					break;
+				default:
+					pop();
+					RemoteServiceModel.startScanExplicitly();
+					RemoteServiceModel.continueWorkflow();
+				}
 			}
 			onRequestPasswordInfo: push(passwordInfoView)
 

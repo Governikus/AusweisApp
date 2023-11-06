@@ -144,7 +144,7 @@ class LogHandler
 		QByteArray getBacklog(bool pAll = false);
 		QByteArray getCriticalLogWindow();
 		[[nodiscard]] bool hasCriticalLog() const;
-		[[nodiscard]] int getCriticalLogCapacity() const;
+		[[nodiscard]] qsizetype getCriticalLogCapacity() const;
 		void setCriticalLogCapacity(int pSize);
 
 		static QDateTime getFileDate(const QFileInfo& pInfo);

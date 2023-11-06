@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: baseItem
@@ -78,6 +78,7 @@ Item {
 
 	Rectangle {
 		id: rec1
+
 		anchors.left: baseItem.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
 		color: Constants.blue
@@ -86,6 +87,7 @@ Item {
 	}
 	Rectangle {
 		id: tCircle1
+
 		anchors.horizontalCenter: rec1.left
 		anchors.verticalCenter: rec1.verticalCenter
 		border.color: Constants.white
@@ -129,25 +131,27 @@ Item {
 
 		Rectangle {
 			id: innerDisc
+
 			anchors.centerIn: parent
 			border.color: Constants.blue
 			border.width: 1
-			color: tCircle1.state === "active" ? Style.color.accent : Constants.white
+			color: tCircle1.state === "active" ? Style.color.control : Constants.white
 			height: width
 			radius: width / 2
 
 			GText {
 				Accessible.ignored: true
 				anchors.centerIn: parent
-				color: tCircle1.state === "active" ? Constants.white : Style.color.accent
+				color: tCircle1.state === "active" ? Constants.white : Style.color.control
+				font.bold: true
 				font.pixelSize: parent.height / 3
 				text: "1"
-				textStyle: Style.text.normal_highlight
 			}
 		}
 	}
 	TextCircle {
 		id: tCircle2
+
 		anchors.horizontalCenter: rec1.right
 		anchors.verticalCenter: rec1.verticalCenter
 		text: "2"

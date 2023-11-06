@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "EnumHelper.h"
 #include "HttpServerRequestor.h"
 #include "VersionInfo.h"
 

@@ -4,7 +4,6 @@
 
 #include "StatePreparePersonalization.h"
 
-#include "DeviceInfo.h"
 #include "context/PersonalizationContext.h"
 
 #include <QJsonDocument>
@@ -45,8 +44,57 @@ QByteArray StatePreparePersonalization::getPayload() const
 }
 
 
+bool StatePreparePersonalization::parseStatusCode(const QByteArray& pData) const
+{
+	QJsonParseError jsonError {};
+	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
+	if (jsonError.error != QJsonParseError::NoError)
+	{
+		qDebug() << "JSON parsing failed:" << jsonError.errorString();
+		return false;
+	}
+
+	const auto obj = json.object();
+	if (!obj.contains(QLatin1String("statusCode")))
+	{
+		qDebug() << "JSON parsing failed: statusCode is missing";
+		return false;
+	}
+
+	const auto statusCode = obj.value(QLatin1String("statusCode"));
+	if (!statusCode.isDouble())
+	{
+		qDebug() << "JSON parsing failed: statusCode has wrong format";
+		return false;
+	}
+
+	const auto& context = qobject_cast<PersonalizationContext*>(getContext());
+	Q_ASSERT(context);
+
+	context->setFinalizeStatus(statusCode.toInt());
+	return true;
+}
+
+
 void StatePreparePersonalization::handleNetworkReply(const QByteArray& pContent)
 {
-	Q_UNUSED(pContent)
-	Q_EMIT fireContinue();
+	if (parseStatusCode(pContent))
+	{
+		const auto& statusCode = qobject_cast<PersonalizationContext*>(getContext())->getFinalizeStatus();
+		if (statusCode < 0)
+		{
+			qWarning() << "preparePersonalization failed with statusCode" << statusCode;
+			updateStatus(GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
+			Q_EMIT fireAbort(FailureCode::Reason::Smart_PrePersonalization_Wrong_Status);
+			return;
+		}
+
+		qDebug() << "preparePersonalization finished with statusCode" << statusCode;
+		Q_EMIT fireContinue();
+		return;
+	}
+
+	qDebug() << "No valid network response";
+	updateStatus(GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+	Q_EMIT fireAbort(FailureCode::Reason::Smart_PrePersonalization_Incomplete_Information);
 }

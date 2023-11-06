@@ -5,6 +5,7 @@
 #include "Reader.h"
 
 #include "CardConnectionWorker.h"
+#include "CardInfoFactory.h"
 #include "apdu/CommandApdu.h"
 #include "apdu/CommandData.h"
 #include "apdu/PacePinStatus.h"
@@ -59,11 +60,13 @@ void Reader::removeCardInfo()
 }
 
 
-void Reader::fetchCardInfo(QSharedPointer<CardConnectionWorker> pCardConnection)
+void Reader::fetchCardInfo()
 {
-	setInfoCardInfo(CardInfoFactory::create(pCardConnection));
+	const auto& cardConnection = createCardConnectionWorker();
 
-	if (pCardConnection && pCardConnection->updateRetryCounter() != CardReturnCode::OK)
+	setInfoCardInfo(CardInfoFactory::create(cardConnection));
+
+	if (cardConnection && cardConnection->updateRetryCounter() != CardReturnCode::OK)
 	{
 		qCWarning(card) << "Update of the retry counter failed";
 		setInfoCardInfo(CardInfo(CardType::UNKNOWN));
@@ -71,7 +74,7 @@ void Reader::fetchCardInfo(QSharedPointer<CardConnectionWorker> pCardConnection)
 }
 
 
-int Reader::getTimerId()
+int Reader::getTimerId() const
 {
 	return mTimerId;
 }
@@ -85,11 +88,7 @@ void Reader::setTimerId(int pTimerId)
 
 void Reader::insertCard(const QVariant& pData)
 {
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	const bool skipCheck = pData.type() == QVariant::Bool && pData.toBool();
-#else
 	const bool skipCheck = pData.typeId() == QMetaType::Bool && pData.toBool();
-#endif
 	if (!skipCheck && !mReaderInfo.isInsertable())
 	{
 		qCDebug(card) << "Skipping insert because at least the personalization is missing";

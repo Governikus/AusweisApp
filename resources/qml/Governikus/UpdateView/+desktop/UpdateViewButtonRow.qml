@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
 RowLayout {
 	id: root
@@ -23,9 +23,10 @@ RowLayout {
 
 	GProgressBar {
 		id: bar
+
 		Layout.fillWidth: true
 		activeFocusOnTab: true
-		backgroundColor: Style.color.background_pane_inactive
+		backgroundColor: Style.color.control
 		visible: downloadInProgress
 	}
 	GButton {

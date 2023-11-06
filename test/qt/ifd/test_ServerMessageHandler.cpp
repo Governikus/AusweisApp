@@ -116,8 +116,9 @@ class test_ServerMessageHandler
 		{
 			Env::getSingleton<LogHandler>()->init();
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			Env::setCreator<IfdDispatcherServer*>(std::function<IfdDispatcherServer* (const QSharedPointer<DataChannel>& pDataChannel)>([this](const QSharedPointer<DataChannel>){
 					mDispatcher = new MockIfdMessageDispatcherServer(mDataChannel);

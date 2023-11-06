@@ -4,19 +4,23 @@
 
 #include "controller/WorkflowController.h"
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	#include "ReaderManager.h"
-#endif
+#include "states/AbstractState.h"
 
-#include <QDebug>
 
 using namespace governikus;
+
 
 WorkflowController::WorkflowController(const QSharedPointer<WorkflowContext>& pContext)
 	: mStateMachine()
 	, mContext(pContext)
 {
 	connect(&mStateMachine, &QStateMachine::finished, this, &WorkflowController::fireComplete, Qt::QueuedConnection);
+}
+
+
+void WorkflowController::forceStartStopScan()
+{
+	mStateMachine.setProperty(AbstractState::cFORCE_START_STOP_SCAN, true);
 }
 
 

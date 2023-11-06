@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "AppUpdateData.h"
 #include "Env.h"
 #include "GlobalStatus.h"
 
+#include <QDateTime>
 #include <QUrl>
 
 
