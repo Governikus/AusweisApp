@@ -1,0 +1,14 @@
+AusweisApp 2.0.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 8. November 2023
+
+
+Anwender
+""""""""
+- Vermeidung des Verlusts der Einstellungen auf iOS und macOS.
+
+
+Entwickler
+""""""""""
+- Entitlements unter macOS korrigiert.

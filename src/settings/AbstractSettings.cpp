@@ -44,5 +44,13 @@ QSharedPointer<QSettings> AbstractSettings::getStore(const QString& pFilename, Q
 #endif
 
 	Q_ASSERT(pFilename.isEmpty() == (pFormat == QSettings::InvalidFormat));
-	return pFilename.isEmpty() ? QSharedPointer<QSettings>::create(QCoreApplication::organizationName(), QStringLiteral("AusweisApp2")) : QSharedPointer<QSettings>::create(pFilename, pFormat);
+#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
+	const auto& organization = QCoreApplication::organizationDomain();
+
+#else
+	const auto& organization = QCoreApplication::organizationName();
+
+#endif
+
+	return pFilename.isEmpty() ? QSharedPointer<QSettings>::create(organization, QStringLiteral("AusweisApp2")) : QSharedPointer<QSettings>::create(pFilename, pFormat);
 }

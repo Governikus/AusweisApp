@@ -12,9 +12,5 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
-	<key>com.apple.security.temporary-exception.shared-preference.read-only</key>
-	<array>
-		<string>/Library/Preferences/com.governikus.AusweisApp2.plist</string>
-	</array>
 </dict>
 </plist>
