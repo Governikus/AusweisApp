@@ -300,7 +300,7 @@ INFO DESKTOP Generic progress status message during authentication.</extracommen
     </message>
     <message>
         <source>No connected card reader found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Подключенные устройства чтения карт не найдены.</translation>
     </message>
 </context>
 <context>
@@ -614,11 +614,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Поддерживаемые карты не обнаружены</translation>
     </message>
     <message>
-        <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.&lt;br&gt;&lt;br&gt;Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Поддерживаемые идентификационные карты не обнаружены. %1 поддерживает:&lt;p&gt;&lt;ul&gt;&lt;li&gt;идентификационные карты Германии;&lt;/li&gt;&lt;li&gt;электронные разрешения на временное пребывание (РВП);&lt;/li&gt;&lt;li&gt;карты eID.&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Если вы используете один из перечисленных документов, но данное сообщение об ошибке все равно появляется, перезапустите проверку.&lt;br&gt;&lt;br&gt;Совет: попробуйте изменить положение карты; убедитесь в том, что идентификационная карта не смещается во время проверки и рядом с устройством нет других карт с NFC (например, банковских карт).</translation>
-    </message>
-    <message>
         <source>Retry</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Повторить попытку</translation>
@@ -678,6 +673,16 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>PIN-код идентификационной карты введен неправильно трижды. Поэтому при следующем процессе аутентификации сначала необходимо ввести 10-значный PUK-код. Он указан в письме с PIN-кодом, которое вы получили после заказа идентификационной карты.&lt;br&gt;&lt;br&gt;Проверьте функцию: «Просмотреть персональные данные». Подготовьте PUK-код для разблокировки PIN-кода идентификационной карты.</translation>
     </message>
+    <message>
+        <source>Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>попробуйте изменить положение карты; убедитесь в том, что идентификационная карта не смещается во время проверки и рядом с устройством нет других карт с NFC (например, банковских карт).</translation>
+    </message>
+    <message>
+        <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards for citizen of the EU/EEA/&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CheckIDCardView</name>
@@ -725,92 +730,92 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Unknown result code: %1</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Неизвестный код результата: %1</translation>
+        <translation>Неизвестный код результата: %1</translation>
     </message>
     <message>
         <source>Please wait a moment.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Подождите.</translation>
+        <translation>Подождите.</translation>
     </message>
     <message>
         <source>Updating Smart-eID status...</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Обновление статуса Smart-eID…</translation>
+        <translation>Обновление статуса Smart-eID…</translation>
     </message>
     <message>
         <source>Check device and ID card</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Проверить устройство и идентификационную карту</translation>
+        <translation>Проверить устройство и идентификационную карту</translation>
     </message>
     <message>
         <source>Your mobile device does not meet the technical requirements for Smart-eID.&lt;br&gt;&lt;br&gt;You may check if your device and ID card are suitable to use the eID function.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Ваше мобильное устройство не соответствует техническим требованиям для Smart-eID.&lt;br&gt;&lt;br&gt;Вы можете проверить пригодность вашего устройства и идентификационной карты для использования функции eID.</translation>
+        <translation>Ваше мобильное устройство не соответствует техническим требованиям для Smart-eID.&lt;br&gt;&lt;br&gt;Вы можете проверить пригодность своего устройства и идентификационной карты для использования функции eID.</translation>
     </message>
     <message>
         <source>Smart-eID not supported</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Smart-eID не поддерживается</translation>
+        <translation>Smart-eID не поддерживается</translation>
     </message>
     <message>
         <source>Possible causes are:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Возможные причины</translation>
+        <translation>Возможные причины</translation>
     </message>
     <message>
         <source>The setup has not been completed.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Создание не завершено.</translation>
+        <translation>Создание не завершено.</translation>
     </message>
     <message>
         <source>The Smart-eID PIN has been entered incorrectly three times.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">PIN-код для Smart-eID трижды введен неправильно.</translation>
+        <translation>PIN-код для Smart-eID трижды введен неправильно.</translation>
     </message>
     <message>
         <source>The %1 has been uninstalled temporarily.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Приложение %1 удалено.</translation>
+        <translation>%1 временно удалено.</translation>
     </message>
     <message>
         <source>You may continue with the setup of the Smart-eID.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете продолжить настройку Smart-eID.</translation>
     </message>
     <message>
         <source>Continue</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Продолжить</translation>
+        <translation>Продолжить</translation>
     </message>
     <message>
         <source>Your device meets the technical requirements for Smart-eID. You may now continue the setup process.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ваше устройство соответствует техническим требованиям для Smart-eID. Теперь можно продолжить процесс настройки.</translation>
     </message>
     <message>
         <source>Smart-eID supported</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Электронная идентификационная карта Smart-eID не поддерживается</translation>
     </message>
     <message>
         <source>Your device meets the technical requirements for Smart-eID, however, the Smart-eID that was set up is invalid.</source>
         <extracomment>LABEL ANDROID IOS LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ваше устройство соответствует техническим требованиям для Smart-eID, однако созданная электронная идентификационная карта Smart-eID недействительна.</translation>
     </message>
     <message>
         <source>Smart-eID invalid</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Электронная идентификационная карта Smart-eID недействительна</translation>
     </message>
     <message>
         <source>Smart-eID check failed</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой проверки Smart-eID</translation>
     </message>
     <message>
         <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Назад</translation>
+        <translation>Назад</translation>
     </message>
 </context>
 <context>
@@ -825,54 +830,38 @@ LABEL ANDROID IOS</extracomment>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Сопряжение устройства…</translation>
     </message>
-    <message>
-        <source>Pairing to &quot;%1&quot; failed:</source>
-        <extracomment>ERROR DESKTOP An error occurred while pairing the device.</extracomment>
-        <translation>Сбой сопряжения «%1»:</translation>
-    </message>
 </context>
 <context>
     <name>DarkModeButtons</name>
     <message>
         <source>System</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">Система</translation>
+        <translation>Система</translation>
     </message>
     <message>
         <source>Dark</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Темная тема</translation>
     </message>
     <message>
         <source>Light</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Светлая тема</translation>
     </message>
     <message>
         <source>Set the app appearance to system mode</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Установить для приложения тему в зависимости от режима системы</translation>
     </message>
     <message>
         <source>Set the app appearance to dark mode</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Установить для приложения темную тему</translation>
     </message>
     <message>
         <source>Set the app appearance to light mode</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DataGroup</name>
-    <message>
-        <source>selected</source>
-        <translation>выбрано</translation>
-    </message>
-    <message>
-        <source>not selected</source>
-        <translation>не выбрано</translation>
+        <translation>Установить для приложения светлую тему</translation>
     </message>
 </context>
 <context>
@@ -905,12 +894,12 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Reset hideable dialogs</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить скрываемые диалоговые окна</translation>
     </message>
     <message>
         <source>Show Transport PIN reminder, store feedback and close reminder dialogs.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Показывать напоминание временного PIN-кода, сохранять обратную связь и закрывать диалоговые окна с напоминаниями.</translation>
     </message>
 </context>
 <context>
@@ -1027,17 +1016,17 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Allow test sample card usage</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить использование тестовой карты</translation>
     </message>
     <message>
         <source>Internal card simulator</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Внутренний симулятор карт</translation>
+        <translation>Внутренний симулятор карт</translation>
     </message>
     <message>
         <source>The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Режим разработчика предназначен для интеграторов/разработчиков новых сервисных приложений. Поэтому режим разработчика функционирует только в тестовой ИОК. При активации режима разработчика некоторые проверки безопасности деактивируются. При этом процесс аутентификации продолжается, хотя при использовании в стандартном режиме %1 обычно прерывает процесс с сообщением об ошибке. Проигнорированная ошибка в режиме разработчика отображается на дисплее в дополнительном окне под окном приложения %1.</translation>
+        <translation>Режим разработчика деактивирует некоторые проверки безопасности, и процесс аутентификации продолжается даже при возникновении ошибок. Пропущенные ошибки будут отображены как уведомления. Режим разработчика можно использовать только с тестовой ИОК.</translation>
     </message>
 </context>
 <context>
@@ -1072,20 +1061,20 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>System data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Диагностика</translation>
+        <translation>Системные данные</translation>
     </message>
     <message>
         <source>Save system data to textfile</source>
-        <translation type="unfinished">Сохранить данные диагностики в текстовый файл</translation>
+        <translation>Сохранить системные данные в текстовый файл</translation>
     </message>
     <message>
         <source>SystemData</source>
-        <translation type="unfinished">Диагностика</translation>
+        <translation>Системные данные</translation>
     </message>
     <message>
         <source>Save system data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Сохранить диагностику</translation>
+        <translation>Сохранить системные данные</translation>
     </message>
 </context>
 <context>
@@ -1167,20 +1156,8 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
     </message>
     <message>
         <source>You are about to identify yourself towards the following provider:</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL IOS_PHONE ANDROID_PHONE</extracomment>
+        <extracomment>LABEL IOS ANDROID</extracomment>
         <translation>Вы собираетесь пройти самоидентификацию для следующего провайдера:</translation>
-    </message>
-    <message>
-        <source>Provider</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE</extracomment>
-        <translation>Провайдер</translation>
-    </message>
-    <message>
-        <source>Touch for more details</source>
-        <extracomment>LABEL IOS_PHONE ANDROID_PHONE</extracomment>
-        <translation>Нажмите для получения подробной информации</translation>
     </message>
 </context>
 <context>
@@ -1372,7 +1349,7 @@ INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentic
     <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN twice. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
         <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. После третьей попытки неправильного ввода вы больше не сможете использовать Smart-eID, и ее придется настроить еще раз.</translation>
     </message>
     <message>
         <source>Send CAN</source>
@@ -1433,12 +1410,12 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Send confirmation of new ID card PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Отправить подтверждение нового PIN-кода идентификационной карты</translation>
     </message>
     <message>
         <source>Send confirmation of new Smart-eID PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Отправить подтверждение нового PIN-кода для Smart-eID</translation>
     </message>
     <message>
         <source>Enter the pairing code shown on your smartphone.</source>
@@ -1449,19 +1426,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>GCollapsible</name>
     <message>
-        <source>collapse</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>expand</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Currently selected is %1</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>В настоящее время выбрано %1</translation>
     </message>
 </context>
 <context>
@@ -1488,11 +1455,6 @@ LABEL ANDROID IOS</extracomment>
 </context>
 <context>
     <name>GeneralSettings</name>
-    <message>
-        <source>Language selection</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Выбор языка</translation>
-    </message>
     <message>
         <source>Behavior</source>
         <extracomment>LABEL DESKTOP</extracomment>
@@ -1521,32 +1483,37 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Appearance</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Внешний вид</translation>
     </message>
     <message>
         <source>Use the system font</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Использовать системный шрифт</translation>
     </message>
     <message>
         <source>Toggling will restart the %1</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Переключение приведет к перезапуску %1</translation>
     </message>
     <message>
         <source>Close %1 after authentication</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Закрытие после аутентификации</translation>
+        <translation>Закрыть %1 после аутентификации</translation>
     </message>
     <message>
         <source>Show notifications inside of %1</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Включение внутренних оповещений</translation>
+        <translation>Показывать уведомления внутри %1</translation>
     </message>
     <message>
         <source>Auto-start %1 after boot and add a tray icon</source>
         <extracomment>LABEL WINDOWS Text for auto-start option</extracomment>
         <translation type="unfinished">Автозапуск %1 после загрузки</translation>
+    </message>
+    <message>
+        <source>Change language</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Изменить язык</translation>
     </message>
 </context>
 <context>
@@ -1603,12 +1570,12 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>No ID card detected. Please follow the instructions on your smartphone (connected to %1) to use it as card reader.</source>
         <extracomment>INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Идентификационная карта не обнаружена. Следуйте инструкциям в смартфоне (подключен к %1), чтобы использовать его в качестве устройства чтения карт.</translation>
     </message>
     <message>
         <source>Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.</source>
         <extracomment>INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Следуйте инструкциям в смартфоне (подключен к %1) или вставьте идентификационную карту в устройство чтения карт.</translation>
     </message>
 </context>
 <context>
@@ -1692,10 +1659,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Поделиться файлом журнала</translation>
     </message>
     <message>
-        <source>Delete log</source>
-        <translation>Удалить файл журнала</translation>
-    </message>
-    <message>
         <source>Delete all logs</source>
         <translation>Удалить все файлы журнала</translation>
     </message>
@@ -1718,29 +1681,12 @@ LABEL ANDROID IOS</extracomment>
         <translation>Файлы журнала (*.log)</translation>
     </message>
     <message>
-        <source>Delete log</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Удалить файл журнала</translation>
-    </message>
-    <message>
         <source>The current log will be automatically deleted at exit.</source>
         <translation>Текущий файл журнала будет автоматически удален при выходе.</translation>
     </message>
     <message>
-        <source>Delete old logs</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Удалить старые файлы журнала</translation>
-    </message>
-    <message>
         <source>Detach log viewer</source>
         <translation>Показать файл журнала отдельно</translation>
-    </message>
-    <message>
-        <source>Delete selected log</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Удалить выбранный файл журнала</translation>
     </message>
     <message>
         <source>All old logs will be deleted.</source>
@@ -1748,13 +1694,6 @@ LABEL ANDROID IOS</extracomment>
 ----------
 INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.</extracomment>
         <translation>Все старые файлы журнала будут удалены.</translation>
-    </message>
-    <message>
-        <source>The log will be deleted.</source>
-        <extracomment>INFO DESKTOP The current logfile is about to be removed, user confirmation required.
-----------
-INFO ANDROID IOS The current logfile is about to be removed, user confirmation required.</extracomment>
-        <translation>Файл журнала будет удален.</translation>
     </message>
     <message>
         <source>Log</source>
@@ -1767,12 +1706,16 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
     </message>
     <message>
         <source>Delete all logs</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Удалить все файлы журнала</translation>
     </message>
     <message>
         <source>Delete</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Удалить</translation>
     </message>
     <message>
@@ -1806,7 +1749,7 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
     <message>
         <source>The log entry was copied to the clipboard.</source>
         <extracomment>INFO DESKTOP Toast message used to confirm the copy of a log entry.</extracomment>
-        <translation type="unfinished">Запись журнала скопирована в буфер обмена.</translation>
+        <translation>Запись журнала скопирована в буфер обмена.</translation>
     </message>
 </context>
 <context>
@@ -1827,11 +1770,6 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
         <translation>Справка</translation>
     </message>
     <message>
-        <source>Start page</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Начальная страница</translation>
-    </message>
-    <message>
         <source>Check device and ID card</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Проверить устройство и идентификационную карту</translation>
@@ -1848,15 +1786,11 @@ INFO ANDROID IOS The current logfile is about to be removed, user confirmation r
     </message>
     <message>
         <source>Two finger swipe to scroll.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>List of workflows with %1 items.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пролистывание двумя пальцами.</translation>
     </message>
     <message>
         <source>Item %1 of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Элемент %1 из %2</translation>
     </message>
     <message>
         <source>Change PIN</source>
@@ -1885,14 +1819,14 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>General</source>
-        <extracomment>LABEL DESKTOP</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Общая информация</translation>
     </message>
     <message>
         <source>Version information</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Информация о версии</translation>
     </message>
     <message>
@@ -1906,11 +1840,6 @@ LABEL ANDROID IOS</extracomment>
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Примечания к версии</translation>
-    </message>
-    <message>
-        <source>Help &amp; Feedback</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Помощь и обратная связь</translation>
     </message>
     <message>
         <source>Privacy statement</source>
@@ -1934,43 +1863,45 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Information</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Информация</translation>
     </message>
     <message>
         <source>List of Providers</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Список провайдеров</translation>
     </message>
     <message>
         <source>Data and logs</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Диагностика и файлы журнала</translation>
+        <translation>Данные и файлы журнала</translation>
     </message>
     <message>
         <source>FAQ - Frequently asked questions</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Часто задаваемые вопросы</translation>
+        <translation>Часто задаваемые вопросы</translation>
     </message>
     <message>
         <source>Contact</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Поддержка</translation>
+        <translation>Контакты</translation>
     </message>
     <message>
         <source>Show Logs</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Файлы журнала</translation>
+        <translation>Показать файлы журнала</translation>
     </message>
     <message>
         <source>Send log to the support</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Сообщить об ошибке</translation>
+        <translation>Отправить файл журнала в службу поддержки</translation>
     </message>
     <message>
         <source>Terms of use and software license</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Лицензия на программное обеспечение</translation>
+        <translation>Условия использования и лицензия на программное обеспечение</translation>
     </message>
 </context>
 <context>
@@ -1988,12 +1919,12 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Show system data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Показать диагностику</translation>
+        <translation>Показать системные данные</translation>
     </message>
     <message>
         <source>System data</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Диагностика</translation>
+        <translation>Системные данные</translation>
     </message>
 </context>
 <context>
@@ -2004,34 +1935,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Открыть сайт</translation>
     </message>
     <message>
-        <source>Privacy statement</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Положение о конфиденциальности</translation>
-    </message>
-    <message>
-        <source>Accessibility statement</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Заявление о доступности</translation>
-    </message>
-    <message>
-        <source>Do you want to see a list of service providers?</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>List of Providers</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Список провайдеров</translation>
     </message>
     <message>
         <source>FAQ - Frequently asked questions</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Часто задаваемые вопросы</translation>
+        <translation>Часто задаваемые вопросы</translation>
     </message>
     <message>
         <source>Contact</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Поддержка</translation>
+        <translation>Контакты</translation>
     </message>
 </context>
 <context>
@@ -2039,25 +1955,6 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Cancel</source>
         <translation>Отмена</translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <translation>Назад</translation>
-    </message>
-</context>
-<context>
-    <name>NavigationButton</name>
-    <message>
-        <source>Yes</source>
-        <translation>Да</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation>Нет</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation>Продолжить</translation>
     </message>
     <message>
         <source>Back</source>
@@ -2203,20 +2100,30 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Delete last digit</source>
+        <extracomment>LABEL DESKTOP A11y text for the &quot;delete&quot; button image.
+----------
+LABEL ANDROID IOS A11y text for the &quot;delete&quot; button image.</extracomment>
         <translation>Удалить последний знак</translation>
     </message>
     <message>
         <source>Submit</source>
+        <extracomment>LABEL DESKTOP A11y text for the &quot;submit&quot; button image.
+----------
+LABEL ANDROID IOS A11y text for the &quot;submit&quot; button image.</extracomment>
         <translation>Подтвердить</translation>
     </message>
     <message>
         <source>Delete last digit, disabled until input is present.</source>
-        <extracomment>LABEL ANDROID IOS A11y text for the &quot;delete&quot; button text when the button is disabled.</extracomment>
+        <extracomment>LABEL DESKTOP A11y text for the &quot;delete&quot; button text when the button is disabled.
+----------
+LABEL ANDROID IOS A11y text for the &quot;delete&quot; button text when the button is disabled.</extracomment>
         <translation>Удалить последнюю цифру, деактивировано до начала ввода данных.</translation>
     </message>
     <message>
         <source>, disabled until input is complete.</source>
-        <extracomment>LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.</extracomment>
+        <extracomment>LABEL DESKTOP A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.
+----------
+LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.</extracomment>
         <translation>, деактивировано до завершения ввода данных.</translation>
     </message>
 </context>
@@ -2251,6 +2158,14 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>PairingFailedView</name>
+    <message>
+        <source>Pairing to &quot;%1&quot; failed:</source>
+        <extracomment>ERROR ALL_PLATFORMS An error occurred while pairing the device.</extracomment>
+        <translation>Сбой сопряжения «%1»:</translation>
+    </message>
+</context>
+<context>
     <name>PairingProcessInfo</name>
     <message>
         <source>Open %1 on your smartphone as card reader.</source>
@@ -2271,6 +2186,18 @@ LABEL ANDROID IOS</extracomment>
         <source>Ensure that the %1 on your Smartphone as card reader has at least version %2.</source>
         <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.</extracomment>
         <translation>Убедитесь, что программа %1, установленная на смартфоне в качестве устройства чтения карт, имеет версию не ниже %2.</translation>
+    </message>
+</context>
+<context>
+    <name>PairingSuccessView</name>
+    <message>
+        <source>Pairing with %1 successful, it will be listed under &quot;Paired devices&quot;.</source>
+        <extracomment>INFO ALL_PLATFORMS The pairing with the SaC server was successful.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The device may now be used as a card reader.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2488,109 +2415,94 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>6-значный PIN-код</translation>
     </message>
     <message>
-        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Вы можете воспользоваться службой сброса PIN-кода, чтобы бесплатно запросить новый PIN-код карты.</translation>
-    </message>
-    <message>
-        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Если вы не знаете ни своего временного PIN-кода, ни PIN-кода карты, вы можете бесплатно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Если вы забыли PIN-код карты, вы можете бесплатно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
-    </message>
-    <message>
         <source>The five-digit Transport PIN was sent to you by mail after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/7</extracomment>
-        <translation type="unfinished">5-значный временный PIN-код был отправлен вам по почте после того, как вы заказали идентификационную карту.</translation>
+        <translation>5-значный временный PIN-код был отправлен вам по почте после того, как вы заказали идентификационную карту.</translation>
     </message>
     <message>
         <source>What is the Smart-eID PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Что такое PIN-код для Smart-eID?</translation>
     </message>
     <message>
         <source>Set up Smart-eID</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished">Создание Smart-eID</translation>
+        <translation>Создание Smart-eID</translation>
     </message>
     <message>
         <source>The Smart-eID PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the Smart-eID pin?&apos;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>PIN-код для Smart-eID — это 6-значный PIN-код, который пользователь создает самостоятельно. Этот PIN-код необходим для использования Smart-eID.</translation>
     </message>
     <message>
         <source>For your six-digit Smart-eID PIN, choose a combination of numbers that cannot be guessed - i.e. neither &quot;123456&quot;, nor your date of birth, nor any other numbers printed on your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 1/3</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Не выбирайте для 6-значного PIN-кода Smart-eID комбинации, которые легко отгадать (например, «123456», дату своего рождения или любые другие цифры с идентификационной карты).</translation>
     </message>
     <message>
         <source>You can change your six-digit Smart-eID PIN at any time and an unlimited number of times as long as you know your valid Smart-eID PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-eID) PIN?&apos; paragraph 2/3</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Изменить 6-значный PIN-код для Smart-eID можно в любое время и неограниченное количество раз, если вы знаете свой действительный PIN-код для Smart-eID.</translation>
     </message>
     <message>
         <source>The PIN can only be used once. When you set up the eID function, you will replace this five-digit Transport PIN with a six-digit card PIN that you choose yourself.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Этот PIN-код можно использовать только один раз. Настроив функцию eID, вы замените этот 5-значный временный PIN-код 6-значным PIN-кодом карты, который выберете сами.</translation>
     </message>
     <message>
         <source>The six-digit card PIN is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>6-значный PIN-код — это номер, который вы выбираете сами при настройке функции eID в первый раз. Он заменяет 5-значный временный PIN-код.</translation>
     </message>
     <message>
         <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>PIN-код для Smart-eID состоит из шести знаков. Вы выбираете этот PIN-код сами при первой настройке Smart-eID.</translation>
     </message>
     <message>
         <source>You can change your card PIN and your Smart-eID PIN at any time in %1.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете изменить PIN-код для своей Smart-eID в любое время в меню %1.</translation>
     </message>
     <message>
         <source>With this six-digit PIN you prove online that the ID card or Smart-eID belongs to you. No one can use the eID function without this PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ввод 6-значного PIN-кода подтверждает в режиме онлайн то, что идентификационная карта или Smart-eID принадлежит вам. Никто не сможет использовать функцию eID без этого PIN-кода.</translation>
     </message>
     <message>
         <source>The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function with your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>PIN-код карты — это 6-значный PIN-код, который пользователь создает самостоятельно. Этот PIN-код необходим, если планируется использовать функцию eID с вашей идентификационной картой.</translation>
     </message>
     <message>
         <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in %1 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function and set up a Smart-eID.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; (%1 is replaced with the application name)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы устанавливаете PIN-код карты либо непосредственно при получении идентификационной карты в ведомстве по делам граждан (Bürgeramt), либо позже в %1, используя для этого 5-значный временный PIN-код. Только установив 6-значный PIN-код по своему выбору, вы можете использовать функцию eID и настраивать Smart-eID.</translation>
     </message>
     <message>
         <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Если вы забыли PIN-код для Smart-eID, вы можете обновить свою Smart-eID и установить новый PIN-код.</translation>
     </message>
     <message>
         <source>Where can I find the Smart-eID PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Где найти PIN-код для Smart-eID?</translation>
     </message>
     <message>
         <source>You have set the Smart-eID PIN while setting up the Smart-eID.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the Smart-eID PIN?&apos;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы устанавливаете PIN-код для Smart-eID при настройке Smart-eID.</translation>
     </message>
     <message>
         <source>With this six-digit PIN you prove online that the ID card belongs to you. No one can use the eID function without this PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ввод 6-значного PIN-кода подтверждает в режиме онлайн то, что идентификационная карта принадлежит вам. Никто не сможет использовать функцию eID без этого PIN-кода.</translation>
     </message>
     <message>
         <source>You can change your card PIN at any time in %1.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете изменить PIN-код карты в любое время в %1.</translation>
     </message>
 </context>
 <context>
@@ -2661,7 +2573,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>If you uninstall the %1 or reset your smartphone, the Smart-eID must be set up again.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>При удалении %1 или сбросе настроек смартфона необходимо заново настраивать Smart-eID.</translation>
     </message>
 </context>
 <context>
@@ -2724,7 +2636,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>Please wait a moment, the current process is being finished.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Подождите, текущий процесс завершается.</translation>
     </message>
 </context>
 <context>
@@ -2812,21 +2724,36 @@ LABEL ALL_PLATFORMS</extracomment>
     </message>
 </context>
 <context>
-    <name>ProviderInfoSection</name>
+    <name>ProviderInfo</name>
     <message>
         <source>See details under &quot;more...&quot;</source>
-        <extracomment>LABEL DESKTOP</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Подробнее см. в пункте «Дополнительные сведения».</translation>
     </message>
     <message>
         <source>Show more information about the service provider</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Показать больше информации о провайдере службы</translation>
+        <translation>Показать больше информации о провайдере службы</translation>
+    </message>
+    <message>
+        <source>You are about to identify yourself towards the following provider:</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Вы собираетесь пройти самоидентификацию для следующего провайдера:</translation>
+    </message>
+    <message>
+        <source>Provider</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Провайдер</translation>
+    </message>
+    <message>
+        <source>Touch for more details</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Нажмите для получения подробной информации</translation>
     </message>
     <message>
         <source>Details about the provider</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Подробная информация о провайдере</translation>
+        <translation>Подробная информация о провайдере</translation>
     </message>
 </context>
 <context>
@@ -3009,11 +2936,6 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteServiceView</name>
     <message>
-        <source>Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code.</source>
-        <extracomment>ERROR ANDROID IOS An error occurred while pairing the device.</extracomment>
-        <translation>Сбой сопряжения. Перезапустите сопряжение на другом устройстве и введите указанный код сопряжения.</translation>
-    </message>
-    <message>
         <source>WiFi not active</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Wi-Fi не активирован</translation>
@@ -3190,6 +3112,11 @@ To do this you first have to pair that device with this smartphone.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Нажмите для сопряжения</translation>
     </message>
+    <message>
+        <source>Pairing the device ...</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Сопряжение устройства…</translation>
+    </message>
 </context>
 <context>
     <name>RemoteServiceWifiInfo</name>
@@ -3229,7 +3156,7 @@ To do this you first have to pair that device with this smartphone.</source>
     <message>
         <source>Connected to %1. Please follow the instructions on the connected smartphone.</source>
         <extracomment>INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Подключено к %1. Следуйте инструкциям в подключенном смартфоне.</translation>
     </message>
     <message>
         <source>Manage pairings</source>
@@ -3350,17 +3277,17 @@ To do this you first have to pair that device with this smartphone.</source>
     <message>
         <source>Shuffle digits of on screen keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Случайное расположение кнопок клавиатуры</translation>
+        <translation>Перетасовать цифры экранной клавиатуры</translation>
     </message>
     <message>
         <source>Button animation</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished">Анимация кнопок экранной клавиатуры при нажатии</translation>
+        <translation>Анимация кнопок</translation>
     </message>
     <message>
         <source>Visually highlight key presses on screen keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
     </message>
 </context>
 <context>
@@ -3433,7 +3360,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Self-authentication</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Самоаутентификация</translation>
     </message>
     <message>
         <source>Hint</source>
@@ -3563,27 +3490,17 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Smart-eID</translation>
+        <translation>Smart-eID</translation>
     </message>
     <message>
         <source>Reset Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Сбросить Smart-eID</translation>
+        <translation>Сбросить Smart-eID</translation>
     </message>
     <message>
         <source>Reset Smart-eID data on your device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show Transport PIN reminder, store feedback and close reminder dialogs.</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset hideable dialogs</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить данные Smart-eID на вашем устройстве</translation>
     </message>
     <message>
         <source>Show requested rights on this device as well</source>
@@ -3596,49 +3513,59 @@ LABEL ANDROID IOS</extracomment>
         <translation>Управление сопряжениями</translation>
     </message>
     <message>
+        <source>Show Transport PIN reminder, store feedback and close reminder dialogs.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Показывать напоминание временного PIN-кода, сохранять обратную связь и закрывать диалоговые окна с напоминаниями.</translation>
+    </message>
+    <message>
+        <source>Reset hideable dialogs</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Сбросить скрываемые диалоговые окна</translation>
+    </message>
+    <message>
         <source>Toggling will restart the %1</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Переключение приведет к перезапуску %1</translation>
     </message>
     <message>
         <source>Use system font</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Использовать системный шрифт</translation>
     </message>
     <message>
         <source>Appearance</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Внешний вид</translation>
     </message>
     <message>
         <source>Add and remove devices</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Управление сопряженными устройствами и добавление новых устройств</translation>
+        <translation>Добавить/удалить устройства</translation>
     </message>
     <message>
         <source>On-site reading</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Режим «Код CAN разрешен»</translation>
+        <translation>Чтение данных на месте</translation>
     </message>
     <message>
         <source>Support CAN allowed mode for on-site reading</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Поддержка режима «Код CAN разрешен»</translation>
+        <translation>Поддержка режима «Код CAN разрешен» для чтения данных на месте</translation>
     </message>
     <message>
         <source>Allow test sample card usage</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить использование тестовой карты</translation>
     </message>
     <message>
         <source>Simulate a test sample card in authentications</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Моделировать тестовую карту в процессах аутентификации</translation>
     </message>
     <message>
         <source>Visually highlight key presses on screen keypad</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
     </message>
 </context>
 <context>
@@ -3687,27 +3614,27 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Smart-eID</translation>
+        <translation>Smart-eID</translation>
     </message>
     <message>
         <source>Please wait a moment.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Подождите.</translation>
+        <translation>Подождите.</translation>
     </message>
     <message>
         <source>Send log</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Отправить файл журнала</translation>
+        <translation>Отправить файл журнала</translation>
     </message>
     <message>
         <source>If you want to use that functionality again, you need to set up a new Smart-eID first.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Если вы хотите в будущем снова использовать этот функционал, необходимо сначала создать новую Smart-eID.</translation>
+        <translation>Если вы хотите в будущем снова использовать этот функционал, необходимо сначала создать новую Smart-eID.</translation>
     </message>
     <message>
         <source>Reset Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Сбросить Smart-eID</translation>
+        <translation>Сбросить Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3715,47 +3642,47 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Delete Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Удалить Smart-eID</translation>
+        <translation>Удалить Smart-eID</translation>
     </message>
     <message>
         <source>You have successfuly deleted your Smart-eID.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы успешно удалили Smart-eID.</translation>
     </message>
     <message>
         <source>The Smart-eID could not be successfully deleted from your device.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить Smart-eID из вашего устройства.</translation>
     </message>
     <message>
         <source>Back to start page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Назад к начальной странице</translation>
     </message>
     <message>
         <source>You are about to delete the Smart-eID data that is currently stored on your device.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Вы собираетесь удалить данные Smart-eID, сохраненные на вашем устройстве.</translation>
+        <translation>Вы собираетесь удалить данные Smart-eID, сохраненные на вашем устройстве.</translation>
     </message>
     <message>
         <source>Are you sure you want to delete the Smart-eID?</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Удалить Smart-eID?</translation>
+        <translation>Удалить Smart-eID?</translation>
     </message>
     <message>
         <source>Delete</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Deleting Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Удаление Smart-eID</translation>
+        <translation>Удаление Smart-eID</translation>
     </message>
     <message>
         <source>Delete the Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3793,7 +3720,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>With the Smart-eID you may also use the online identification function without the ID card.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>С помощью Smart-eID вы также можете использовать функцию онлайн-идентификации без идентификационной карты.</translation>
     </message>
 </context>
 <context>
@@ -3801,37 +3728,37 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Reset Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Сбросить Smart-eID</translation>
+        <translation>Сбросить Smart-eID</translation>
     </message>
     <message>
         <source>You have successfully reset your Smart-eID.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы успешно сбросили настройки Smart-eID.</translation>
     </message>
     <message>
         <source>You are about to reset your Smart-eID data. This can also be used for troubleshooting as well.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы собираетесь сбросить данные Smart-eID. Это также может потребоваться для устранения ошибок.</translation>
     </message>
     <message>
         <source>Are you sure you want to reset the Smart-eID?</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить настройки Smart-eID?</translation>
     </message>
     <message>
         <source>Reset</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить</translation>
     </message>
     <message>
         <source>Resetting Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Сброс Smart-eID</translation>
+        <translation>Сброс Smart-eID</translation>
     </message>
     <message>
         <source>Reset the Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3859,27 +3786,27 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Delete Smart-eID data from your device</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Удалить данные Smart-eID из вашего устройства</translation>
     </message>
     <message>
         <source>Try Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Попробовать Smart-eID</translation>
     </message>
     <message>
         <source>Show Smart-eID data</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Показать данные Smart-eID</translation>
     </message>
     <message>
         <source>Change Smart-eID PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Изменить PIN-код для Smart-eID</translation>
+        <translation>Изменить PIN-код для Smart-eID</translation>
     </message>
     <message>
         <source>Change the chosen Smart-eID PIN</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Изменить PIN-код для выбранной Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3902,7 +3829,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Smart-eID setup</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Настройка Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -3925,12 +3852,12 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Renew the Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Обновить Smart-eID</translation>
     </message>
     <message>
         <source>Smart-eID renewal</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Обновление Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -4026,7 +3953,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>The device &quot;%1&quot; wants to access your Smart-eID.</source>
         <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Устройство «%1» запрашивает доступ к вашей Smart-eID.</translation>
     </message>
 </context>
 <context>
@@ -4053,6 +3980,18 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     </message>
 </context>
 <context>
+    <name>TabbedPane</name>
+    <message>
+        <source>Tab selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You may navigate to different tabs by using the up/down arrows.</source>
+        <extracomment>LABEL DESKTOP Additional description of TabbedPane behavior for a11y.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TabbedReaderView</name>
     <message>
         <source>Card Readers</source>
@@ -4066,6 +4005,10 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>USB card reader</source>
         <translation>USB-устройство чтения карт</translation>
+    </message>
+    <message>
+        <source>Found new USB card reader that is suitable for the ID card. The workflow may now be continued.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4117,7 +4060,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>Title bar</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Строка заголовка</translation>
     </message>
 </context>
 <context>
@@ -4153,7 +4096,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Онлайн-идентификация с помощью временного PIN-кода невозможна. Для использования функции eID необходим 6-значный PIN-код идентификационной карты, который пользователь создает самостоятельно.</translation>
+        <translation>Онлайн-идентификация с помощью временного PIN-кода невозможна. Для использования функции eID необходим 6-значный PIN-код идентификационной карты, который пользователь создает самостоятельно. Чтобы настроить Smart-eID, необходимо предварительно задать 6-значный PIN-код.</translation>
     </message>
     <message>
         <source>To set up a Smart-eID you also need to have assigned a six-digit PIN beforehand.</source>
@@ -4315,6 +4258,21 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <source>Advanced settings deactivated.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Расширенные настройки деактивированы.</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Открыть сайт</translation>
+    </message>
+    <message>
+        <source>Privacy statement</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Положение о конфиденциальности</translation>
+    </message>
+    <message>
+        <source>Accessibility statement</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Заявление о доступности</translation>
     </message>
 </context>
 <context>
@@ -4896,7 +4854,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>dd.MM.yyyy, hh:mm:ss</source>
         <extracomment>LABEL DESKTOP Datetime format according to https://doc.qt.io/qt/qdate.html#toString and https://doc.qt.io/qt/qtime.html#toString</extracomment>
-        <translation>dd.MM.yyyy, hh:mm:ss</translation>
+        <translation>дд.ММ.гггг, чч:мм:сс</translation>
     </message>
     <message>
         <source>Last connection: %1</source>
@@ -5442,22 +5400,22 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>Failed to get the ServiceInformation of the Smart-eID.</source>
         <extracomment>ERROR ALL_PLATFORMS Failed to get the ServiceInformation of the Smart-eID</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось получить сервисную информацию о Smart-eID.</translation>
     </message>
     <message>
         <source>The authentication to the personalization service failed.</source>
         <extracomment>ERROR ALL_PLATFORMS No sessionID, required for a personalization, was received</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой аутентификации в службе персонализации.</translation>
     </message>
     <message>
         <source>The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN three times. You may personalize a new Smart-eID to resolve the issue.</source>
         <extracomment>ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Smart-eID больше не готова к использованию. Причиной может быть неправильный ввод PIN-кода для Smart-eID трижды. Вы можете персонализировать новую Smart-eID, чтобы устранить проблему.</translation>
     </message>
     <message>
         <source>The preparation of the Smart-eID failed.</source>
         <extracomment>ERROR ANDROID The preparation of the Smart-eID Applet failed</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой подготовки Smart-eID.</translation>
     </message>
     <message>
         <source>The program did not receive a StartPaosResponse message from the server.</source>
@@ -5467,22 +5425,22 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>The server could not process the client request.</source>
         <extracomment>ERROR_MASKED ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Серверу не удалось обработать клиентский запрос.</translation>
     </message>
     <message>
         <source>The service encountered an internal error while processing a request.</source>
         <extracomment>ERROR ALL_PLATFORMS A server has responded with an HTTP error code 5xx.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Служба столкнулась с внутренней ошибкой при обработке запроса.</translation>
     </message>
     <message>
         <source>The service reported an error while processing a client request.</source>
         <extracomment>ERROR ALL_PLATFORMS A server has responded with an HTTP error code 4xx.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Служба сообщила об ошибке при обработке клиентского запроса.</translation>
     </message>
     <message>
         <source>%1 Support</source>
         <extracomment>LABEL ALL_PLATFORMS Link text to the app support. %1 is the app name.</extracomment>
-        <translation>%1 Support</translation>
+        <translation>%1 Поддержка</translation>
     </message>
 </context>
 <context>
@@ -5595,7 +5553,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>hh:mm:ss</source>
         <extracomment>LABEL ALL_PLATFORMS Time format according to https://doc.qt.io/qt/qtime.html#toString</extracomment>
-        <translation>hh:mm:ss</translation>
+        <translation>чч:мм:сс</translation>
     </message>
 </context>
 <context>
@@ -5653,16 +5611,16 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>You have entered an incorrect, six-digit Smart-eID PIN twice. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
         <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a third wrong attempt could invalidate the Smart-eID.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. После третьей попытки неправильного ввода вы больше не сможете использовать Smart-eID, и ее придется настроить еще раз.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new Smart-eID PIN.</source>
         <extracomment>ALL_PLATFORMS Error message if the new pin confirmation mismatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Введенные данные не совпадают. Выберите новый PIN-код для Smart-eID.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new ID card PIN.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введенные данные не совпадают. Выберите новый PIN-код идентификационной карты.</translation>
     </message>
 </context>
 <context>
@@ -5670,6 +5628,36 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>https://www.personalausweisportal.de/EN</source>
         <translation>https://www.personalausweisportal.de/EN</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your ID card PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
+        <translation>Если вы забыли PIN-код идентификационной карты или у вас нет доступа к PUK-коду, то вы можете обратиться в ответственное учреждение и установить новый PIN-код.&lt;br/&gt;&lt;br/&gt;Подробную информацию см. на портале идентификационных карт.</translation>
+    </message>
+    <message>
+        <source>If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation>Если вы не знаете временный PIN-код и PIN-код идентификационной карты, то вы можете обратиться в ответственное учреждение и установить новый PIN-код.&lt;br/&gt;&lt;br/&gt;Подробную информацию см. на портале идентификационных карт.</translation>
+    </message>
+    <message>
+        <source>If you cannot recall your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Если вы не можете вспомнить PIN-код идентификационной карты, обратитесь в ответственное учреждение для создания нового PIN-кода.&lt;br/&gt;&lt;br/&gt;Подробную информацию см. на портале идентификационных карт.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new ID card PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
+        <translation>Вы можете обратиться в ответственное учреждение и установить там новый PIN-код идентификационной карты.&lt;br/&gt;&lt;br/&gt;Подробную информацию см. на портале идентификационных карт.</translation>
+    </message>
+    <message>
+        <source>Please contact the competent authority to activate the eID function.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation>Чтобы активировать функцию онлайн-идентификации, обратитесь в ответственное учреждение.&lt;br/&gt;&lt;br/&gt;Дополнительную информацию см. на портале идентификационных карт.</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Открыть сайт</translation>
     </message>
     <message>
         <source>You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.</source>
@@ -5695,6 +5683,26 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <source>Request a new card PIN free of charge to be able to use the eID function again.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
         <translation>Запросите новый PIN-код карты бесплатно, чтобы снова иметь возможность использовать функцию eID.</translation>
+    </message>
+    <message>
+        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Если вы не знаете ни своего временного PIN-кода, ни PIN-кода карты, вы можете бесплатно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your ID card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Если вы забыли PIN-код карты, вы можете бесплатно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
+    </message>
+    <message>
+        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Вы можете воспользоваться службой сброса PIN-кода, чтобы бесплатно запросить новый PIN-код карты.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5838,11 +5846,6 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
 
 Активируйте NFC, чтобы использовать смартфон в качестве устройства чтения карт (SaC).</translation>
     </message>
-    <message>
-        <source>Pairing with %1 successful.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Сопряжение с %1 выполнено успешно.</translation>
-    </message>
 </context>
 <context>
     <name>governikus::RemoteServiceSettings</name>
@@ -5867,17 +5870,17 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>dd.MM.yyyy</source>
         <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString</extracomment>
-        <translation>dd.MM.yyyy</translation>
+        <translation>дд.ММ.гггг</translation>
     </message>
     <message>
         <source>xx.MM.yyyy</source>
         <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day</extracomment>
-        <translation>xx.MM.yyyy</translation>
+        <translation>хх.ММ.гггг</translation>
     </message>
     <message>
         <source>xx.xx.yyyy</source>
         <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day and month</extracomment>
-        <translation>xx.xx.yyyy</translation>
+        <translation>хх.хх.гггг</translation>
     </message>
     <message>
         <source>Family name</source>
@@ -5945,72 +5948,72 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>The online check for the Smart-eID support on your device failed. Please note that this process requires an internet connection.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed without any specific reason.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством. Обратите внимание на то, что для данного процесса требуется интернет-соединение.</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed because the server is currently facing too many requests. Please try again later.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the server is overloaded.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством, поскольку в данный момент на сервер поступает слишком много запросов. Повторите попытку позднее.</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed because the server is currently under maintenance. Please try again later.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the server is being maintained.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством из-за технических работ на сервере. Повторите попытку позднее.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please note that this process requires an internet connection.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed without a specific reason.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства. Обратите внимание на то, что для данного процесса требуется интернет-соединение.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently facing too many requests. Please try again later.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is overloaded.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства, поскольку в данный момент на сервер поступает слишком много запросов. Повторите попытку позднее.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device because the server is currently under maintenance. Please try again later.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the server is being maintained.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства из-за технических работ на сервере. Повторите попытку позднее.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and restart the process.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because NFC is not activated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства. Для доступа к требуемой памяти устройства необходимо активировать функцию NFC. Активируйте NFC и перезапустите процесс.</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed. In order to access the necessary device storage, active NFC functionality is required. Please activate NFC and try again.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because the NFC functionality is not activated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством. Для доступа к требуемой памяти устройства необходимо активировать функцию NFC. Активируйте NFC и повторите попытку.</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed. The Google Play Integrity Check failed.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because Google Play Integrity Check failed.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством. Сбой проверки целостности Google Play.</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because an authorization issue occurred.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством. Возникла проблема при аутентификации (например, доступ к ресурсу получен без авторизации, или неавторизованное приложение попыталось получить доступ к компоненту безопасности).</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device. The Google Play Integrity Check failed.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because the Google Play Integrity Check failed.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства. Сбой проверки целостности Google Play.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device. An authentication issue occurred (e.g. a resource was accessed without authorization or an unauthorized app tried to access a security component).</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because an authorization issue occurred.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства. Возникла проблема при аутентификации (например, доступ к ресурсу получен без авторизации, или неавторизованное приложение попыталось получить доступ к компоненту безопасности).</translation>
     </message>
     <message>
         <source>The online check for the Smart-eID support on your device failed. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
         <extracomment>ERROR ANDROID IOS The check for Smart-eID support failed because a network connection error occurred.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Сбой онлайн-проверки поддержки Smart-eID вашим устройством. Убедитесь в том, что установлено интернет-соединение и что антивирусное ПО и брандмауэр не блокируют соединение.</translation>
     </message>
     <message>
         <source>The Smart-eID data and provisioning could not be successfully deleted from your device. Please ensure that you have an internet connection and your antivirus software and firewall are not blocking the connection.</source>
         <extracomment>ERROR ANDROID IOS Deletion of the Smart-eID failed because a network connection error occurred.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить данные и подготовку Smart-eID из вашего устройства. Убедитесь в том, что установлено интернет-соединение и что антивирусное ПО и брандмауэр не блокируют соединение.</translation>
     </message>
 </context>
 <context>
@@ -6044,7 +6047,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>The used ID card type is not accepted by the server.</source>
         <extracomment>INFO IOS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Тип используемой идентификационной карты не принимается сервером.</translation>
     </message>
 </context>
 <context>
@@ -6052,7 +6055,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>Cleaning up old Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Очистка старой Smart-eID</translation>
+        <translation>Очистка старой Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -6139,7 +6142,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>Installing Smart-eID</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Установка Smart-eID</translation>
+        <translation>Установка Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -6169,7 +6172,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>Checking Smart-eID status</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation type="unfinished">Проверка статуса Smart-eID</translation>
+        <translation>Проверка статуса Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -6338,27 +6341,27 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     <message>
         <source>The used Smart-eID is not accepted by the server. Please restart the remote service on your connected smartphone and try again with a physical ID card.</source>
         <extracomment>INFO ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Используемая Smart-eID не принимается сервером. Перезапустите удаленную службу в подключенном смартфоне и повторите попытку, используя физическую идентификационную карту.</translation>
     </message>
     <message>
         <source>The used Smart-eID is not accepted by the server. Please stop the remote service and use another Smart-eID or contact the service provider.</source>
         <extracomment>INFO ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Используемая Smart-eID не принимается сервером. Остановите удаленную службу и используйте другую Smart-eID или свяжитесь с провайдером услуг.</translation>
     </message>
     <message>
         <source>The used ID card is not accepted by the server. Please remove the ID card from your device or card reader and use a Smart-eID or contact the service provider.</source>
         <extracomment>INFO ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Используемая идентификационная карта не принимается сервером. Удалите идентификационную карту из вашего устройства или из устройства чтения карт и используйте Smart-eID или свяжитесь с провайдером услуг.</translation>
     </message>
     <message>
         <source>Renew your Smart-eID and set a new PIN in the Smart-eID menu.</source>
         <extracomment>LABEL ANDROID IOS The hint text that is shwon right above the redirect button that appears when a user tried to usa an unusable Smart-eID</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Обновите Smart-eID и установите новый PIN-код в меню Smart-eID.</translation>
     </message>
     <message>
         <source>Go to Smart-eID menu</source>
         <extracomment>LABEL ANDROID IOS The text on the redirect button that appears when the user tried to use an unusable Smart-eID</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Перейти в меню Smart-eID</translation>
     </message>
 </context>
 <context>
@@ -6418,9 +6421,9 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <translation>Средство просмотра файлов журнала</translation>
     </message>
     <message>
-        <source>To close the app, quickly press the back button twice.</source>
+        <source>To close the app, press the back button twice.</source>
         <extracomment>INFO ANDROID IOS Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
-        <translation>Чтобы закрыть приложение, дважды быстро нажмите кнопку «Назад».</translation>
+        <translation>Чтобы закрыть приложение, дважды нажмите кнопку «Назад».</translation>
     </message>
     <message>
         <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>

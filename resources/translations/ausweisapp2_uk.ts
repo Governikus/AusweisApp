@@ -2488,21 +2488,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Шестизначний PIN-код</translation>
     </message>
     <message>
-        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Ви можете скористатися службою скидання PIN-коду, щоб безкоштовно надіслати запит на новий PIN-код картки.</translation>
-    </message>
-    <message>
-        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Якщо ви не знаєте ні транспортний PIN-код, ні PIN-код картки, ви можете безкоштовно надіслати запит на новий PIN-код, скориставшись службою скидання PIN-коду.</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Якщо ви забули PIN-код картки, ви можете безкоштовно надіслати запит на новий PIN-код, скориставшись службою скидання PIN-коду.</translation>
-    </message>
-    <message>
         <source>The five-digit Transport PIN was sent to you by mail after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/7</extracomment>
         <translation type="unfinished">5-значний транспортний PIN-код був надісланий вам у листі поштою після того, як ви подали заяву на отримання ID-картки.</translation>
@@ -5672,6 +5657,36 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <translation>https://www.personalausweisportal.de/EN</translation>
     </message>
     <message>
+        <source>If you have forgotten your ID card PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
+        <translation>Якщо ви забули PIN-код своєї ID-картки або не маєте доступу до PUK-коду, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
+    </message>
+    <message>
+        <source>If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation>Якщо ви не знаєте ні транспортного PIN-коду, ні PIN-коду своєї ID-картки, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
+    </message>
+    <message>
+        <source>If you cannot recall your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Якщо ви не можете згадати PIN-код своєї ID-картки, ви можете звернутися до компетентного органа й установити там новий PIN-код.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new ID card PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
+        <translation>Ви можете звернутися до компетентного органа й установити там новий PIN-код ID-картки.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
+    </message>
+    <message>
+        <source>Please contact the competent authority to activate the eID function.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation>Зверніться до компетентного органа, щоб активувати функцію онлайн-ідентифікації.&lt;br/&gt;&lt;br/&gt;Для отримання додаткової інформації відвідайте портал ID-карток.</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Відкрити сайт</translation>
+    </message>
+    <message>
         <source>You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
         <translation>Ви не можете використовувати PUK-код для скидання раніше встановленого PIN-коду картки. Якщо ви забули PIN-код своєї картки, ви можете скористатися службою скидання PIN-коду, щоб надіслати запит на новий PIN-код.</translation>
@@ -5695,6 +5710,26 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <source>Request a new card PIN free of charge to be able to use the eID function again.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
         <translation>Надішліть безкоштовно запит на новий PIN-код картки, щоб знову мати змогу користуватися функцією eID.</translation>
+    </message>
+    <message>
+        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Якщо ви не знаєте ні транспортний PIN-код, ні PIN-код картки, ви можете безкоштовно надіслати запит на новий PIN-код, скориставшись службою скидання PIN-коду.</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your ID card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Якщо ви забули PIN-код картки, ви можете безкоштовно надіслати запит на новий PIN-код, скориставшись службою скидання PIN-коду.</translation>
+    </message>
+    <message>
+        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Ви можете скористатися службою скидання PIN-коду, щоб безкоштовно надіслати запит на новий PIN-код картки.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
