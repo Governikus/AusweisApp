@@ -83,8 +83,7 @@ Item {
 	PasswordInfoContent {
 		id: pinInfo
 
-		//: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		hint: qsTr("If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.")
+		hint: PinResetInformationModel.pinResetHint
 		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
@@ -193,8 +192,7 @@ Item {
 	PasswordInfoContent {
 		id: transportPinInfo
 
-		//: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		hint: qsTr("If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.")
+		hint: PinResetInformationModel.pinResetHintTransportPin
 		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
@@ -378,8 +376,7 @@ Item {
 	PasswordInfoContent {
 		id: noPin
 
-		//: LABEL ALL_PLATFORMS
-		hint: qsTr("You can use the PIN Reset Service to request a new card PIN free of charge.")
+		hint: PinResetInformationModel.pinResetHintNoPin
 		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS

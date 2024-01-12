@@ -2488,21 +2488,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Sechsstellige PIN</translation>
     </message>
     <message>
-        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Dann fordern Sie jetzt mithilfe des PIN-Rücksetzdienstes kostenlos eine neue Karten-PIN an.</translation>
-    </message>
-    <message>
-        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Wenn Ihnen weder Ihre Transport-PIN noch Ihre Karten-PIN bekannt ist, können Sie mit dem PIN-Rücksetzdienst kostenlos eine neue PIN anfordern.</translation>
-    </message>
-    <message>
-        <source>If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Wenn Sie Ihre Karten-PIN vergessen haben, können Sie mit dem PIN-Rücksetzdienst kostenlos eine neue PIN anfordern.</translation>
-    </message>
-    <message>
         <source>The five-digit Transport PIN was sent to you by mail after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/7</extracomment>
         <translation>Die fünfstellige Transport-PIN wurde Ihnen per Post zugesandt, nachdem Sie Ihren Ausweis beantragt haben.</translation>
@@ -5672,6 +5657,36 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>https://www.personalausweisportal.de/DE</translation>
     </message>
     <message>
+        <source>If you have forgotten your ID card PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
+        <translation>Sollten Sie Ihre Karten-PIN vergessen haben oder Ihnen die PUK nicht vorliegen, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation>Ist Ihnen weder Ihre Transport-PIN noch Ihre Karten-PIN bekannt, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>If you cannot recall your ID card PIN, you may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Wenn Sie Ihre Karten-PIN vergessen haben, können Sie sich an die zuständige Behörde wenden und dort eine neue PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new ID card PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
+        <translation>Sie können sich an die zuständige Behörde wenden und dort eine neue Karten-PIN festlegen.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>Please contact the competent authority to activate the eID function.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation>Bitte wenden Sie sich an die zuständige Behörde, um die Online-Ausweisfunktion zu aktivieren.&lt;br/&gt;&lt;br/&gt;Weitere Informationen erhalten Sie auf dem Personalausweisportal.</translation>
+    </message>
+    <message>
+        <source>Open website</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Öffne Webseite</translation>
+    </message>
+    <message>
         <source>You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
         <translation>Mit der PUK können Sie Ihre gesetzte Karten-PIN nicht zurücksetzen. Sollten Sie Ihre Karten-PIN vergessen haben, können Sie den PIN-Rücksetzdienst nutzen, um eine neue PIN anzufordern.</translation>
@@ -5695,6 +5710,26 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Request a new card PIN free of charge to be able to use the eID function again.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK</extracomment>
         <translation>Fordern Sie kostenlos eine neue Karten-PIN an, um die Online-Ausweisfunktion wieder nutzen zu können.</translation>
+    </message>
+    <message>
+        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Wenn Ihnen weder Ihre Transport-PIN noch Ihre Karten-PIN bekannt ist, können Sie mit dem PIN-Rücksetzdienst kostenlos eine neue PIN anfordern.</translation>
+    </message>
+    <message>
+        <source>If you have forgotten your ID card PIN, you can request a new PIN free of charge using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation>Wenn Sie Ihre Karten-PIN vergessen haben, können Sie mit dem PIN-Rücksetzdienst kostenlos eine neue PIN anfordern.</translation>
+    </message>
+    <message>
+        <source>You can use the PIN Reset Service to request a new card PIN free of charge.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation>Dann fordern Sie jetzt mithilfe des PIN-Rücksetzdienstes kostenlos eine neue Karten-PIN an.</translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
