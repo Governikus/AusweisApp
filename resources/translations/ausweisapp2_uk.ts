@@ -5726,11 +5726,6 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
         <translation>Ви можете скористатися службою скидання PIN-коду, щоб безкоштовно надіслати запит на новий PIN-код картки.</translation>
     </message>
-    <message>
-        <source>You may turn to the competent authority and set a new PIN there.&lt;br/&gt;&lt;br/&gt;For further information, please visit the ID card portal.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>governikus::ReaderModel</name>
