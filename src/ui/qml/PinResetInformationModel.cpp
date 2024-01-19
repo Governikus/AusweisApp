@@ -99,7 +99,7 @@ QString PinResetInformationModel::getPinResetHintNoPin() const
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
 		   tr("You can use the PIN Reset Service to request a new card PIN free of charge.") :
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-		   tr("You may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("You may turn to the competent authority and set a new ID card PIN there.<br/><br/>For further information, please visit the ID card portal.");
 }
 
 

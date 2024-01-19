@@ -1,0 +1,17 @@
+AusweisApp 2.0.3
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 19. Januar 2024
+
+
+Anwender
+""""""""
+- Absturz unter macOS 11 korrigiert.
+
+- Fehlende deutsche Übersetzung ergänzt.
+
+- Anzeige der Release Notes korrigiert.
+
+
+Entwickler
+""""""""""
