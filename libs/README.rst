@@ -93,12 +93,7 @@ Beispiel: Innerhalb von /Users/governikus/AusweisApp befindet sich der Quellcode
 Linux / Unix
 ^^^^^^^^^^^^
 Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannten Einstellungen. Die meisten Distributionen haben den C Compiler bereits vorinstalliert, aber er kann auch nachträglich installiert werden.
- Beispiel: Innerhalb von Linux/Unix /home/governikus/AusweisApp2 befindet sich der Quellcode
- 
- Install dependencies : 
- 
-` sudo apt install  libpcsclite1 libpcsclite-dev qttools5-dev libqt5svg5-dev libqt5websockets5-dev libqt5qml5  libqt5qml5-dev qtdeclarative5-dev qtbase5-dev  qt-quickcontrols2-5-dev
-`
+ Beispiel: Innerhalb von Linux/Unix /home/governikus/AusweisApp2 befindet sich der Quellcode 
  
 ::
 
