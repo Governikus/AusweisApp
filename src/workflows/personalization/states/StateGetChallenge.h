@@ -31,7 +31,6 @@ class StateGetChallenge
 		[[nodiscard]] QByteArray getPayload() const override;
 		void setProgress() const override;
 
-		[[nodiscard]] QString getOsType() const;
 		[[nodiscard]] bool parseChallenge(const QByteArray& pData);
 
 		void handleNetworkReply(const QByteArray& pContent) override;

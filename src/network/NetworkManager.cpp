@@ -5,11 +5,8 @@
 #include "NetworkManager.h"
 
 #include "AppSettings.h"
-#include "NetworkReplyError.h"
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-	#include "NetworkReplyTimeout.h"
-#endif
 #include "LogHandler.h"
+#include "NetworkReplyError.h"
 #include "SecureStorage.h"
 #include "TlsChecker.h"
 #include "VersionInfo.h"
@@ -193,11 +190,12 @@ QSharedPointer<QNetworkReply> NetworkManager::processUpdaterRequest(QNetworkRequ
 }
 
 
-QString NetworkManager::getUserAgentHeader() const
+QString NetworkManager::getUserAgentServerHeader()
 {
+	// According to TR-03124-1, chapter 2.2.2.1, the Server-header shall have the following form:
 	const auto& info = VersionInfo::getInstance();
 	const QString spec = QStringLiteral(" (%1/%2)").arg(info.getSpecificationTitle(), info.getSpecificationVersion());
-	return QCoreApplication::applicationName() % QLatin1Char('/') % QCoreApplication::applicationVersion() % spec;
+	return info.getImplementationTitle() % QLatin1Char('/') % info.getImplementationVersion() % spec;
 }
 
 
@@ -210,7 +208,7 @@ void NetworkManager::onShutdown()
 }
 
 
-void NetworkManager::onProxyChanged()
+void NetworkManager::onProxyChanged() const
 {
 	setApplicationProxyFactory();
 }
@@ -219,15 +217,30 @@ void NetworkManager::onProxyChanged()
 NetworkManager::NetworkError NetworkManager::toNetworkError(const QSharedPointer<const QNetworkReply>& pNetworkReply)
 {
 	qCDebug(network) << "Select error message for:" << pNetworkReply->error();
-	switch (pNetworkReply->error())
+	switch (pNetworkReply->error()) // See qtbase/src/network/access/qhttpthreaddelegate.cpp for details
 	{
 		case QNetworkReply::TimeoutError:
 			return NetworkError::TimeOut;
 
-		case QNetworkReply::ServiceUnavailableError:
+		case QNetworkReply::ServiceUnavailableError: // 503
 			return NetworkError::ServiceUnavailable;
 
-		case QNetworkReply::ProxyAuthenticationRequiredError:
+		case QNetworkReply::InternalServerError: // 500
+		case QNetworkReply::OperationNotImplementedError: // 501
+		case QNetworkReply::UnknownServerError: // > 500
+			return NetworkError::ServerError;
+
+		case QNetworkReply::ProtocolInvalidOperationError: // 400
+		case QNetworkReply::AuthenticationRequiredError: // 401
+		case QNetworkReply::ContentAccessDenied: // 403
+		case QNetworkReply::ContentNotFoundError: // 404
+		case QNetworkReply::ContentOperationNotPermittedError: // 405
+		case QNetworkReply::ContentConflictError: // 409
+		case QNetworkReply::ContentGoneError: // 410
+		case QNetworkReply::UnknownContentError: // >= 400
+			return NetworkError::ClientError;
+
+		case QNetworkReply::ProxyAuthenticationRequiredError: // 407
 		case QNetworkReply::ProxyConnectionClosedError:
 		case QNetworkReply::ProxyConnectionRefusedError:
 		case QNetworkReply::ProxyNotFoundError:
@@ -256,6 +269,12 @@ GlobalStatus NetworkManager::toTrustedChannelStatus(const QSharedPointer<const Q
 		case NetworkManager::NetworkError::ServiceUnavailable:
 			return {GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, infoMap};
 
+		case NetworkManager::NetworkError::ServerError:
+			return {GlobalStatus::Code::Workflow_TrustedChannel_Server_Error, infoMap};
+
+		case NetworkManager::NetworkError::ClientError:
+			return {GlobalStatus::Code::Workflow_TrustedChannel_Client_Error, infoMap};
+
 		case NetworkManager::NetworkError::TimeOut:
 			return {GlobalStatus::Code::Workflow_TrustedChannel_TimeOut, infoMap};
 
@@ -283,6 +302,12 @@ GlobalStatus NetworkManager::toStatus(const QSharedPointer<const QNetworkReply>&
 		case NetworkManager::NetworkError::ServiceUnavailable:
 			return {GlobalStatus::Code::Network_ServiceUnavailable, infoMap};
 
+		case NetworkManager::NetworkError::ServerError:
+			return {GlobalStatus::Code::Network_ServerError, infoMap};
+
+		case NetworkManager::NetworkError::ClientError:
+			return {GlobalStatus::Code::Network_ClientError, infoMap};
+
 		case NetworkManager::NetworkError::TimeOut:
 			return {GlobalStatus::Code::Network_TimeOut, infoMap};
 
@@ -300,7 +325,7 @@ GlobalStatus NetworkManager::toStatus(const QSharedPointer<const QNetworkReply>&
 }
 
 
-bool NetworkManager::prepareConnection(QNetworkRequest& pRequest)
+bool NetworkManager::prepareConnection(QNetworkRequest& pRequest) const
 {
 	if (mApplicationExitInProgress)
 	{
@@ -310,7 +335,7 @@ bool NetworkManager::prepareConnection(QNetworkRequest& pRequest)
 	pRequest.setTransferTimeout();
 	if (pRequest.header(QNetworkRequest::UserAgentHeader).isNull())
 	{
-		pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentHeader());
+		pRequest.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentServerHeader());
 	}
 
 	if (pRequest.sslConfiguration() == QSslConfiguration::defaultConfiguration())
@@ -335,10 +360,6 @@ QSharedPointer<QNetworkReply> NetworkManager::trackConnection(QNetworkReply* pRe
 				--mOpenConnectionCount;
 			});
 		connect(this, &NetworkManager::fireShutdown, pResponse, &QNetworkReply::abort, Qt::QueuedConnection);
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
-		NetworkReplyTimeout::setTimeout(this, pResponse, 30000);
-#endif
 	}
 
 	return QSharedPointer<QNetworkReply>(pResponse, &QObject::deleteLater);
@@ -428,12 +449,6 @@ class SystemProxyFactory
 	: public QNetworkProxyFactory
 {
 	public:
-		SystemProxyFactory()
-			: QNetworkProxyFactory()
-		{
-		}
-
-
 		QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
 		{
 			qCDebug(network) << pInputQuery;
@@ -449,12 +464,6 @@ class CustomProxyFactory
 	: public QNetworkProxyFactory
 {
 	public:
-		CustomProxyFactory()
-			: QNetworkProxyFactory()
-		{
-		}
-
-
 		QList<QNetworkProxy> queryProxy(const QNetworkProxyQuery& pInputQuery = QNetworkProxyQuery()) override
 		{
 			qCDebug(network) << pInputQuery;

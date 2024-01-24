@@ -9,7 +9,6 @@
 #include "GeneralSettings.h"
 
 #include "AutoStart.h"
-#include "BuildHelper.h"
 #include "Env.h"
 #include "LanguageLoader.h"
 #include "Randomizer.h"
@@ -38,7 +37,6 @@ SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
 SETTINGS_NAME(SETTINGS_NAME_SIMULATOR, "simulator")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
-SETTINGS_NAME(SETTINGS_NAME_SCREEN_ORIENTATION, "screenOrientation")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
 SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
 SETTINGS_NAME(SETTINGS_NAME_IN_APP_NOTIFICATIONS, "showInAppNotifications")
@@ -51,9 +49,12 @@ SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_HOST, "customProxyHost")
 SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_PORT, "customProxyPort")
 SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_TYPE, "customProxyType")
 SETTINGS_NAME(SETTINGS_NAME_USE_CUSTOM_PROXY, "useCustomProxy")
+SETTINGS_NAME(SETTINGS_NAME_DARK_MODE, "darkMode")
+SETTINGS_NAME(SETTINGS_NAME_USE_SYSTEM_FONT, "useSystemFont")
 SETTINGS_NAME(SETTINGS_NAME_ENABLE_CAN_ALLOWED, "enableCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
+SETTINGS_NAME(SETTINGS_NAME_SMART_AVAILABLE, "smartAvailable")
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -68,6 +69,18 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 	, mStore(std::move(pStore))
 	, mIsNewAppVersion(false)
 {
+	// With 2.0.0 the option to change the screen orientation was removed
+	mStore->remove(QStringLiteral("screenOrientation"));
+
+	// With 2.0.0 the history was removed
+	const auto& history = QStringLiteral("history");
+	if (mStore->childGroups().contains(history))
+	{
+		mStore->beginGroup(history);
+		mStore->remove(QString());
+		mStore->endGroup();
+	}
+
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
 	{
@@ -123,6 +136,18 @@ bool GeneralSettings::isAutoStart() const
 bool GeneralSettings::autoStartIsSetByAdmin() const
 {
 	return AutoStart::isSetByAdmin();
+}
+
+
+bool GeneralSettings::showTrayIcon() const
+{
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+	return isAutoStart();
+
+#else
+	return true;
+
+#endif
 }
 
 
@@ -365,23 +390,6 @@ void GeneralSettings::setLanguage(const QLocale::Language pLanguage)
 }
 
 
-QString GeneralSettings::getScreenOrientation() const
-{
-	return mStore->value(SETTINGS_NAME_SCREEN_ORIENTATION(), QStringLiteral("auto")).toString();
-}
-
-
-void GeneralSettings::setScreenOrientation(const QString& pScreenOrientation)
-{
-	if (pScreenOrientation != getScreenOrientation())
-	{
-		mStore->setValue(SETTINGS_NAME_SCREEN_ORIENTATION(), pScreenOrientation);
-		save(mStore);
-		Q_EMIT fireSettingsChanged();
-	}
-}
-
-
 bool GeneralSettings::askForDeviceSurvey() const
 {
 	return !mStore->contains(SETTINGS_NAME_DEVICE_SURVEY_PENDING());
@@ -447,7 +455,7 @@ void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginTy
 
 bool GeneralSettings::isAutoUpdateAvailable() const
 {
-#if !defined(QT_NO_DEBUG) || defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if !defined(QT_NO_DEBUG) || defined(Q_OS_WIN)
 	return true;
 
 #else
@@ -677,6 +685,40 @@ void GeneralSettings::setUseCustomProxy(bool pUseCustomProxy)
 }
 
 
+bool GeneralSettings::isUseSystemFont() const
+{
+	return mStore->value(SETTINGS_NAME_USE_SYSTEM_FONT(), false).toBool();
+}
+
+
+void GeneralSettings::setUseSystemFont(bool pUseSystemFont)
+{
+	if (isUseSystemFont() != pUseSystemFont)
+	{
+		mStore->setValue(SETTINGS_NAME_USE_SYSTEM_FONT(), pUseSystemFont);
+		save(mStore);
+		Q_EMIT fireUseSystemFontChanged();
+	}
+}
+
+
+QString GeneralSettings::getDarkMode() const
+{
+	return mStore->value(SETTINGS_NAME_DARK_MODE(), QString()).toString();
+}
+
+
+void GeneralSettings::setDarkMode(const QString& pMode)
+{
+	if (getDarkMode() != pMode)
+	{
+		mStore->setValue(SETTINGS_NAME_DARK_MODE(), pMode);
+		save(mStore);
+		Q_EMIT fireDarkModeChanged();
+	}
+}
+
+
 QString GeneralSettings::getIfdServiceToken()
 {
 	if (!mStore->contains(SETTINGS_NAME_IFD_SERVICE_TOKEN()))
@@ -688,3 +730,48 @@ QString GeneralSettings::getIfdServiceToken()
 
 	return mStore->value(SETTINGS_NAME_IFD_SERVICE_TOKEN(), QString()).toString();
 }
+
+
+bool GeneralSettings::doSmartUpdate() const
+{
+	return !mStore->contains(SETTINGS_NAME_SMART_AVAILABLE());
+}
+
+
+bool GeneralSettings::isSmartAvailable() const
+{
+	return mStore->value(SETTINGS_NAME_SMART_AVAILABLE(), false).toBool();
+}
+
+
+void GeneralSettings::setSmartAvailable(bool pSmartAvailable)
+{
+	const bool valueChanged = pSmartAvailable != isSmartAvailable();
+	if (doSmartUpdate() || valueChanged)
+	{
+		mStore->setValue(SETTINGS_NAME_SMART_AVAILABLE(), pSmartAvailable);
+		save(mStore);
+	}
+	if (valueChanged)
+	{
+		Q_EMIT fireSmartAvailableChanged(pSmartAvailable);
+	}
+}
+
+
+#ifdef Q_OS_WIN
+void GeneralSettings::migrateSettings()
+{
+	if (!isAutoStartAvailable())
+	{
+		qCDebug(settings) << "AutoStart is not available, migration not possible.";
+		return;
+	}
+	if (AutoStart::removeOldAutostart())
+	{
+		setAutoStart(true);
+	}
+}
+
+
+#endif

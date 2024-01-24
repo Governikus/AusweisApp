@@ -14,12 +14,13 @@
 
 using namespace governikus;
 
-WorkflowContext::WorkflowContext(const Action pAction)
+WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	: QObject()
 	, mAction(pAction)
+	, mActivateUi(pActivateUi)
 	, mStateApproved(false)
 	, mWorkflowKilled(false)
-	, mCurrentState(QStringLiteral("Initial"))
+	, mCurrentState()
 	, mReaderPlugInTypes()
 	, mReaderName()
 	, mCardConnection()
@@ -220,7 +221,9 @@ void WorkflowContext::setCardConnection(const QSharedPointer<CardConnection>& pC
 	if (mCardConnection != pCardConnection)
 	{
 		mCardConnection = pCardConnection;
+
 		Q_EMIT fireCardConnectionChanged();
+		Q_EMIT fireEidTypeMismatchChanged();
 	}
 }
 
@@ -588,11 +591,47 @@ void WorkflowContext::setRemoveCardFeedback(bool pEnabled)
 }
 
 
-bool WorkflowContext::isPhysicalCardRequired() const
+bool WorkflowContext::eidTypeMismatch() const
+{
+	if (!getCardConnection())
+	{
+		return false;
+	}
+
+	const auto& acceptedEidTypes = getAcceptedEidTypes();
+	const auto& cardType = getCardConnection()->getReaderInfo().getCardInfo().getCardType();
+	const auto& mobileEidType = getCardConnection()->getReaderInfo().getCardInfo().getMobileEidType();
+
+	if (cardType == CardType::NONE)
+	{
+		return false;
+	}
+
+	if (cardType == CardType::EID_CARD)
+	{
+		return !acceptedEidTypes.contains(AcceptedEidType::CARD_CERTIFIED);
+	}
+
+	return !isMobileEidTypeAllowed(mobileEidType);
+}
+
+
+bool WorkflowContext::isMobileEidTypeAllowed(const MobileEidType& mobileEidType) const
 {
 	const auto& acceptedEidTypes = getAcceptedEidTypes();
-	return acceptedEidTypes.contains(AcceptedEidType::CARD_CERTIFIED)
-		   && !(acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED)
-		   || acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED)
-		   || acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE));
+	switch (mobileEidType)
+	{
+		case MobileEidType::SE_CERTIFIED:
+			return acceptedEidTypes.contains(AcceptedEidType::SE_CERTIFIED);
+
+		case MobileEidType::SE_ENDORSED:
+			return acceptedEidTypes.contains(AcceptedEidType::SE_ENDORSED);
+
+		case MobileEidType::HW_KEYSTORE:
+			return acceptedEidTypes.contains(AcceptedEidType::HW_KEYSTORE);
+
+		case MobileEidType::UNKNOWN:
+			return false;
+	}
+	Q_UNREACHABLE();
 }

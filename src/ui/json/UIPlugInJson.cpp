@@ -5,6 +5,7 @@
 #include "UIPlugInJson.h"
 
 #include "ReaderManager.h"
+#include "WorkflowRequest.h"
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
 #include "messages/MsgTypes.h"
@@ -69,25 +70,28 @@ void UIPlugInJson::callFireMessage(const QByteArray& pMsg, bool pLogging)
 }
 
 
-void UIPlugInJson::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInJson::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
 	if (!mEnabled)
 	{
 		return;
 	}
 
-	if (pContext.objectCast<AuthContext>() || pContext.objectCast<ChangePinContext>())
+	const auto& context = pRequest->getContext();
+	if (context.objectCast<AuthContext>() || context.objectCast<ChangePinContext>())
 	{
-		connect(pContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInJson::onStateChanged);
-		connect(pContext.data(), &WorkflowContext::fireProgressChanged, this, &UIPlugInJson::onProgressChanged);
+		connect(context.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInJson::onStateChanged);
+		connect(context.data(), &WorkflowContext::fireProgressChanged, this, &UIPlugInJson::onProgressChanged);
 	}
 
-	callFireMessage(mMessageDispatcher.init(pContext));
+	callFireMessage(mMessageDispatcher.init(context));
 }
 
 
-void UIPlugInJson::onWorkflowFinished(QSharedPointer<WorkflowContext>)
+void UIPlugInJson::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
+	Q_UNUSED(pRequest)
+
 	if (!mEnabled)
 	{
 		mMessageDispatcher.reset();

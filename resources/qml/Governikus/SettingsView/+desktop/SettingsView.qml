@@ -1,19 +1,20 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQml.Models 2.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.UpdateView 1.0
+import QtQuick
+import QtQml.Models
+import Governikus.Global
+import Governikus.View
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.UiModule
+import Governikus.Type.RemoteServiceModel
+import Governikus.UpdateView
 
 SectionPage {
 	id: sectionPage
+
 	enum SubView {
 		None,
 		ConnectSacView,
@@ -22,16 +23,9 @@ SectionPage {
 
 	titleBarAction: TitleBarAction {
 		id: titleBarAction
-		helpTopic: Utils.helpTopicOf(tabbedPane.currentContentItem, "settings")
 
 		//: LABEL DESKTOP
 		text: qsTr("Settings")
-
-		customSubAction: CancelAction {
-			visible: d.view === SettingsView.SubView.EnterPassword || d.view === SettingsView.SubView.WaitForPairing
-
-			onClicked: d.view = SettingsView.SubView.None
-		}
 
 		onClicked: {
 			d.view = SettingsView.SubView.None;
@@ -61,10 +55,10 @@ SectionPage {
 	}
 	TabbedPane {
 		id: tabbedPane
+
 		anchors.fill: parent
-		anchors.margins: Constants.pane_spacing
 		sectionsModel: {
-			var model = [
+			let model = [
 				//: LABEL DESKTOP
 				qsTr("General"),
 				//: LABEL DESKTOP
@@ -90,19 +84,17 @@ SectionPage {
 		contentObjectModel: ObjectModel {
 			Component {
 				GeneralSettings {
+					Connections {
+						function onFireUseSystemFontChanged() {
+							sectionPage.nextView(UiModule.DEFAULT);
+						}
+
+						target: SettingsModel
+					}
 				}
 			}
 			Component {
 				RemoteReaderView {
-					height: Math.max(implicitHeight, tabbedPane.availableHeight)
-					width: parent.width
-
-					onMoreInformation: {
-						d.precedingView = d.view;
-						d.view = TabbedReaderView.SubView.ConnectSacView;
-						connectSacView.showPairingInformation();
-						updateTitleBarActions();
-					}
 					onPairDevice: pDeviceId => {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
 							d.view = SettingsView.SubView.ConnectSacView;
@@ -114,17 +106,12 @@ SectionPage {
 			}
 			Component {
 				CardReaderView {
-					height: Math.max(implicitHeight, tabbedPane.availableHeight)
-					width: parent.width
 				}
 			}
 			Component {
 				SecurityAndPrivacySettings {
 				}
 			}
-		}
-		sectionDelegate: TabbedPaneDelegateText {
-			sectionName: model ? model.modelData : ""
 		}
 
 		Component.onCompleted: {
@@ -138,11 +125,13 @@ SectionPage {
 
 		Component {
 			id: debugSettings
+
 			DebugSettings {
 			}
 		}
 		Component {
 			id: developerSettings
+
 			DeveloperSettings {
 			}
 		}
@@ -155,6 +144,7 @@ SectionPage {
 	}
 	ConnectSacView {
 		id: connectSacView
+
 		rootEnabled: titleBarAction.rootEnabled
 		visible: d.view === SettingsView.SubView.ConnectSacView
 

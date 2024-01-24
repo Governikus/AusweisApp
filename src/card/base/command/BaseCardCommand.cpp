@@ -4,9 +4,7 @@
 
 #include "BaseCardCommand.h"
 
-#include "CardConnection.h"
 #include "Initializer.h"
-#include "asn1/SecurityInfos.h"
 
 #include <QLoggingCategory>
 #include <QSharedPointer>

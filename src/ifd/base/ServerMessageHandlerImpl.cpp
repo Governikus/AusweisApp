@@ -13,7 +13,6 @@
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
 #include "messages/IfdError.h"
-#include "messages/IfdEstablishContext.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdEstablishPaceChannelResponse.h"
 #include "messages/IfdGetStatus.h"
@@ -40,10 +39,12 @@ template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedP
 }
 
 
-ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel, const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes)
+ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
+		const QVector<ReaderManagerPlugInType>& pAllowedTypes)
 	: ServerMessageHandler()
 	, mDispatcher(Env::create<IfdDispatcherServer*>(pDataChannel), &QObject::deleteLater)
-	, mAllowedPlugInTypes(pAllowedPlugInTypes)
+	, mAllowedPlugInTypes(pAllowedTypes)
+	, mAllowedCardTypes(pAllowedTypes)
 	, mCardConnections()
 {
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireReceived, this, &ServerMessageHandlerImpl::onMessage);
@@ -76,8 +77,7 @@ void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject
 			return;
 		}
 
-		const auto& ifdStatusMsg = QSharedPointer<IfdStatus>::create(readerInfo);
-		mDispatcher->send(ifdStatusMsg);
+		sendIfdStatus(readerInfo);
 		return;
 	}
 
@@ -94,8 +94,7 @@ void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject
 			continue;
 		}
 
-		const auto& ifdStatusMsg = QSharedPointer<IfdStatus>::create(readerInfo);
-		mDispatcher->send(ifdStatusMsg);
+		sendIfdStatus(readerInfo);
 	}
 }
 
@@ -216,6 +215,7 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 	if (!progressMessage.isNull())
 	{
 		cardConnection->setProgressMessage(progressMessage);
+		Q_EMIT fireDisplayTextChanged(progressMessage);
 	}
 
 	qCDebug(ifd) << "Transmit card APDU for" << slotHandle;
@@ -299,6 +299,16 @@ void ServerMessageHandlerImpl::handleIfdModifyPIN(const QJsonObject& pJsonObject
 }
 
 
+void ServerMessageHandlerImpl::sendIfdStatus(const ReaderInfo& pReaderInfo)
+{
+	if (!mDispatcher->getContextHandle().isEmpty())
+	{
+		const bool isCardAllowed = mAllowedCardTypes.contains(pReaderInfo.getPlugInType());
+		mDispatcher->send(QSharedPointer<IfdStatus>::create(pReaderInfo, isCardAllowed));
+	}
+}
+
+
 void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu)
 {
 	PinModifyOutput pinModifyOutput(pResponseApdu);
@@ -334,6 +344,21 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 
 	const auto& response = QSharedPointer<IfdModifyPinResponse>::create(pSlotHandle, ccid, minor);
 	mDispatcher->send(response);
+}
+
+
+void ServerMessageHandlerImpl::setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes)
+{
+	if (mAllowedCardTypes != pAllowedCardTypes)
+	{
+		mAllowedCardTypes = pAllowedCardTypes;
+
+		const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mAllowedPlugInTypes));
+		for (const auto& readerInfo : readerInfos)
+		{
+			sendIfdStatus(readerInfo);
+		}
+	}
 }
 
 
@@ -444,7 +469,7 @@ void ServerMessageHandlerImpl::onReaderChanged(const ReaderInfo& pInfo)
 		}
 	}
 
-	mDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo));
+	sendIfdStatus(pInfo);
 }
 
 
@@ -455,7 +480,7 @@ void ServerMessageHandlerImpl::onReaderRemoved(const ReaderInfo& pInfo)
 		return;
 	}
 
-	mDispatcher->send(QSharedPointer<IfdStatus>::create(pInfo));
+	sendIfdStatus(pInfo);
 }
 
 

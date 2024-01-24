@@ -26,10 +26,11 @@ StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pCon
 void StateSelectReader::run()
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
-	mConnections += connect(readerManager, &ReaderManager::fireReaderAdded, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
-	mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	*this << connect(readerManager, &ReaderManager::fireReaderAdded, this, &StateSelectReader::onReaderInfoChanged);
+	*this << connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	*this << connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
+	*this << connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
+	*this << connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateSelectReader::onReaderStatusChanged);
 
 	onReaderInfoChanged();
 
@@ -94,8 +95,28 @@ void StateSelectReader::onReaderInfoChanged()
 }
 
 
+void StateSelectReader::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const
+{
+#if defined(Q_OS_IOS)
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
+	{
+		return;
+	}
+
+	if (!pInfo.isScanRunning())
+	{
+		Q_EMIT getContext()->fireCancelWorkflow();
+	}
+#else
+	Q_UNUSED(pInfo)
+#endif
+}
+
+
 void StateSelectReader::onEntry(QEvent* pEvent)
 {
+	AbstractState::onEntry(pEvent);
+
 	const WorkflowContext* const context = getContext().data();
 	Q_ASSERT(context);
 
@@ -103,7 +124,6 @@ void StateSelectReader::onEntry(QEvent* pEvent)
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.
 	 * Changing the plugin types in the context, e.g. from {NFC} to {REMOTE}, causes the state to be left with a fireRetry signal.
 	 */
-	mConnections += connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateSelectReader::fireRetry);
+	*this << connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateSelectReader::fireRetry);
 
-	AbstractState::onEntry(pEvent);
 }

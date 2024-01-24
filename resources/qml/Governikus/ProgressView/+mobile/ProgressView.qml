@@ -1,16 +1,17 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
 
-SectionPage {
+FlickableSectionPage {
 	id: root
 
+	property alias icon: statusIcon.source
 	property alias progressBarVisible: progressBar.visible
 	property alias progressText: progressText.text
 	property int progressValue
@@ -18,66 +19,48 @@ SectionPage {
 	property alias subTextColor: subText.color
 	property alias text: text.text
 
-	sectionPageFlickable: contentItem
+	AnimatedImage {
+		id: statusIcon
 
-	GFlickableColumnLayout {
-		id: contentItem
+		Layout.alignment: Qt.AlignHCenter
+		Layout.preferredHeight: Style.dimens.header_icon_size
+		fillMode: Image.PreserveAspectFit
+		source: "qrc:///images/sandglass.webp"
+	}
+	GText {
+		id: text
 
-		readonly property var maxIconHeight: Style.dimens.header_icon_size
-		readonly property var minIconHeight: Style.dimens.medium_icon_size
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.component_spacing
+		horizontalAlignment: Text.AlignHCenter
+		textStyle: Style.text.headline
+	}
+	GText {
+		id: subText
 
-		anchors.fill: parent
-		maximumContentWidth: Style.dimens.max_text_width
-		minimumContentHeight: implicitContentHeight - (maxIconHeight - minIconHeight)
-		spacing: 0
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.text_spacing
+		horizontalAlignment: Text.AlignHCenter
+		textStyle: Style.text.subline
+	}
+	GSpacer {
+		Layout.fillHeight: true
+	}
+	GProgressBar {
+		id: progressBar
 
-		StatusIcon {
-			id: statusIcon
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillHeight: true
-			Layout.maximumHeight: contentItem.maxIconHeight
-			Layout.minimumHeight: contentItem.minIconHeight
-			Layout.preferredHeight: contentItem.maxIconHeight
-			borderEnabled: false
-			busy: root.visible
-			implicitWidth: height
-			source: "qrc:///images/sandglass.svg"
-		}
-		GText {
-			id: text
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.component_spacing
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.header_accent
-		}
-		GText {
-			id: subText
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.text_spacing
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.normal_secondary
-		}
-		GSpacer {
-			Layout.fillHeight: true
-		}
-		GProgressBar {
-			id: progressBar
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillWidth: true
-			Layout.topMargin: 2 * Constants.component_spacing
-			value: progressValue
-			visible: false
-		}
-		GText {
-			id: progressText
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.text_spacing
-			horizontalAlignment: Text.AlignHCenter
-			textStyle: Style.text.normal_secondary
-			visible: progressBar.visible
-		}
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		Layout.topMargin: 2 * Constants.component_spacing
+		value: progressValue
+		visible: false
+	}
+	GText {
+		id: progressText
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.text_spacing
+		horizontalAlignment: Text.AlignHCenter
+		visible: progressBar.visible
 	}
 }

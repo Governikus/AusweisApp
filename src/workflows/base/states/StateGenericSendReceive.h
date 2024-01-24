@@ -34,7 +34,8 @@ class StateGenericSendReceive
 		const bool mPersonalization;
 		QSharedPointer<QNetworkReply> mReply;
 
-		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage);
+		void logRawData(const QByteArray& pMessage);
+		void setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage) const;
 		std::optional<FailureCode> checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void onSslErrors(const QList<QSslError>& pErrors);
 		void onSslHandshakeDone();
@@ -53,10 +54,13 @@ class StateGenericSendReceive
 
 	private Q_SLOTS:
 		void onReplyFinished();
-		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator);
+		void onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const;
 
 	public:
 		void onExit(QEvent* pEvent) override;
+
+	Q_SIGNALS:
+		void fireReceivedStartPaosResponse();
 };
 
 class StateSendStartPaos
@@ -70,8 +74,7 @@ class StateSendStartPaos
 			: StateGenericSendReceive(pContext,
 					PaosType::INITIALIZE_FRAMEWORK,
 					{
-						PaosType::DID_AUTHENTICATE_EAC1,
-						PaosType::STARTPAOS_RESPONSE
+						PaosType::DID_AUTHENTICATE_EAC1
 					})
 		{
 		}
@@ -95,15 +98,10 @@ class StateSendStartPaos
 			{
 				Q_EMIT fireReceivedExtractCvcsFromEac1InputType();
 			}
-			else if (pResponseType == PaosType::STARTPAOS_RESPONSE)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
 		}
 
 	Q_SIGNALS:
 		void fireReceivedExtractCvcsFromEac1InputType();
-		void fireReceivedStartPaosResponse();
 
 
 };
@@ -117,10 +115,7 @@ class StateSendInitializeFrameworkResponse
 	private:
 		explicit StateSendInitializeFrameworkResponse(const QSharedPointer<WorkflowContext>& pContext)
 			: StateGenericSendReceive(pContext,
-					PaosType::DID_AUTHENTICATE_EAC1,
-					{
-						PaosType::STARTPAOS_RESPONSE
-					})
+					PaosType::DID_AUTHENTICATE_EAC1)
 		{
 		}
 
@@ -137,18 +132,6 @@ class StateSendInitializeFrameworkResponse
 		}
 
 
-		void emitStateMachineSignal(PaosType pResponseType) override
-		{
-			if (pResponseType == PaosType::STARTPAOS_RESPONSE)
-			{
-				Q_EMIT fireReceivedStartPaosResponse();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedStartPaosResponse();
-
-
 };
 
 class StateSendDIDAuthenticateResponseEAC1
@@ -160,10 +143,7 @@ class StateSendDIDAuthenticateResponseEAC1
 	private:
 		explicit StateSendDIDAuthenticateResponseEAC1(const QSharedPointer<WorkflowContext>& pContext)
 			: StateGenericSendReceive(pContext,
-					PaosType::DID_AUTHENTICATE_EAC2,
-					{
-						PaosType::STARTPAOS_RESPONSE
-					})
+					PaosType::DID_AUTHENTICATE_EAC2)
 		{
 			setAbortOnCardRemoved();
 		}
@@ -192,10 +172,7 @@ class StateSendDIDAuthenticateResponseEACAdditionalInputType
 	private:
 		explicit StateSendDIDAuthenticateResponseEACAdditionalInputType(const QSharedPointer<WorkflowContext>& pContext)
 			: StateGenericSendReceive(pContext,
-					PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE,
-					{
-						PaosType::STARTPAOS_RESPONSE
-					})
+					PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE)
 		{
 			setAbortOnCardRemoved();
 		}
@@ -224,10 +201,7 @@ class StateSendDIDAuthenticateResponseEAC2
 	private:
 		explicit StateSendDIDAuthenticateResponseEAC2(const QSharedPointer<WorkflowContext>& pContext)
 			: StateGenericSendReceive(pContext,
-					PaosType::TRANSMIT,
-					{
-						PaosType::STARTPAOS_RESPONSE
-					})
+					PaosType::TRANSMIT)
 		{
 			setAbortOnCardRemoved();
 		}
@@ -256,10 +230,7 @@ class StateSendTransmitResponse
 	private:
 		explicit StateSendTransmitResponse(const QSharedPointer<WorkflowContext>& pContext)
 			: StateGenericSendReceive(pContext,
-					PaosType::STARTPAOS_RESPONSE,
-					{
-						PaosType::TRANSMIT
-					})
+					PaosType::TRANSMIT)
 		{
 			setAbortOnCardRemoved();
 		}
@@ -276,17 +247,6 @@ class StateSendTransmitResponse
 			return getContext()->getTransmitResponse();
 		}
 
-
-		void emitStateMachineSignal(PaosType pResponseType) override
-		{
-			if (pResponseType == PaosType::TRANSMIT)
-			{
-				Q_EMIT fireReceivedTransmit();
-			}
-		}
-
-	Q_SIGNALS:
-		void fireReceivedTransmit();
 
 };
 

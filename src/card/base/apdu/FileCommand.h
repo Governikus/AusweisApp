@@ -16,15 +16,15 @@ class FileCommand
 {
 	private:
 		FileRef mFileRef;
-		int mOffset;
+		qsizetype mOffset;
 		int mLe;
 
 	public:
 		explicit FileCommand(const CommandApdu& pCommandApdu);
-		explicit FileCommand(const FileRef& pFileRef, int pOffset = 0, int pLe = CommandApdu::NO_LE);
+		explicit FileCommand(const FileRef& pFileRef, qsizetype pOffset = 0, int pLe = CommandApdu::NO_LE);
 
 		[[nodiscard]] const FileRef& getFileRef() const;
-		[[nodiscard]] int getOffset() const;
+		[[nodiscard]] qsizetype getOffset() const;
 		[[nodiscard]] int getLe() const;
 
 		operator CommandApdu() const;

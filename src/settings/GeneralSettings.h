@@ -50,6 +50,7 @@ class GeneralSettings
 		[[nodiscard]] bool isAutoStartAvailable() const;
 		[[nodiscard]] bool isAutoStart() const;
 		[[nodiscard]] bool autoStartIsSetByAdmin() const;
+		[[nodiscard]] bool showTrayIcon() const;
 		void setAutoStart(bool pAutoStart);
 
 		[[nodiscard]] QString getSkipVersion() const;
@@ -83,9 +84,6 @@ class GeneralSettings
 
 		[[nodiscard]] QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
-
-		[[nodiscard]] QString getScreenOrientation() const;
-		void setScreenOrientation(const QString& pScreenOrientation);
 
 		[[nodiscard]] bool askForDeviceSurvey() const;
 		[[nodiscard]] bool isDeviceSurveyPending() const;
@@ -134,13 +132,30 @@ class GeneralSettings
 		[[nodiscard]] bool useCustomProxy() const;
 		void setUseCustomProxy(bool pUseCustomProxy);
 
+		[[nodiscard]] bool isUseSystemFont() const;
+		void setUseSystemFont(bool pUseSystemFont);
+
+		[[nodiscard]] QString getDarkMode() const;
+		void setDarkMode(const QString& pMode);
+
 		[[nodiscard]] QString getIfdServiceToken();
+
+		[[nodiscard]] bool doSmartUpdate() const;
+		[[nodiscard]] bool isSmartAvailable() const;
+		void setSmartAvailable(bool pSmartAvailable);
+
+#ifdef Q_OS_WIN
+		void migrateSettings();
+#endif
 
 	Q_SIGNALS:
 		void fireLanguageChanged();
 		void fireDeveloperOptionsChanged();
 		void fireShowInAppNotificationsChanged();
 		void fireProxyChanged();
+		void fireUseSystemFontChanged();
+		void fireDarkModeChanged();
+		void fireSmartAvailableChanged(bool pSmartAvailable);
 };
 
 

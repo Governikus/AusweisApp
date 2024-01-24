@@ -34,14 +34,14 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 			case UrlQueryRequest::SHOWUI:
 			{
 				qCDebug(network) << "Request type: showui";
-				handleShowUiRequest(value.toUpper(), pRequest);
+				handleShowUiRequest(value, pRequest);
 				return;
 			}
 
 			case UrlQueryRequest::STATUS:
 			{
 				qCDebug(network) << "Request type: status";
-				StatusFormat statusFormat = Enum<StatusFormat>::fromString(value.toUpper(), StatusFormat::PLAIN);
+				const StatusFormat statusFormat = UrlUtil::prepareToEnum(value, StatusFormat::PLAIN);
 				handleStatusRequest(statusFormat, pRequest);
 				return;
 			}
@@ -110,7 +110,6 @@ void HttpHandler::handleImageRequest(const QSharedPointer<HttpRequest>& pRequest
 	{
 		qCCritical(network) << "Unknown image file requested" << pImagePath;
 		response.setStatus(HTTP_STATUS_NOT_FOUND);
-		response.setBody(QByteArrayLiteral("Not found"), QByteArrayLiteral("text/plain; charset=utf-8"));
 	}
 
 	pRequest->send(response);

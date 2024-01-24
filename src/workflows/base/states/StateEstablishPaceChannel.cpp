@@ -22,21 +22,24 @@ StateEstablishPaceChannel::StateEstablishPaceChannel(const QSharedPointer<Workfl
 
 void StateEstablishPaceChannel::run()
 {
-	if (getContext()->getStatus().isError())
+	const auto& context = getContext();
+	Q_ASSERT(context);
+
+	if (context->getStatus().isError())
 	{
-		Q_ASSERT(getContext()->getFailureCode().has_value());
-		Q_EMIT firePropagateAbort();
+		Q_ASSERT(context->getFailureCode().has_value());
+		Q_EMIT firePaceChannelFailed();
 		return;
 	}
 
 	QByteArray effectiveChat;
 	QByteArray certificateDescription;
-	auto authContext = getContext().objectCast<AuthContext>();
-	mPasswordId = getContext()->getEstablishPaceChannelType();
+	const auto& authContext = context.objectCast<AuthContext>();
+	mPasswordId = context->getEstablishPaceChannelType();
 	Q_ASSERT(mPasswordId != PacePasswordId::UNKNOWN);
 
 	if (mPasswordId == PacePasswordId::PACE_PIN ||
-			(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
+			(mPasswordId == PacePasswordId::PACE_CAN && context->isCanAllowedMode()))
 	{
 		if (authContext && authContext->getDidAuthenticateEac1())
 		{
@@ -55,20 +58,15 @@ void StateEstablishPaceChannel::run()
 	switch (mPasswordId)
 	{
 		case PacePasswordId::PACE_CAN:
-			password = getContext()->getCan().toLatin1();
+			password = context->getCan().toLatin1();
 			break;
 
 		case PacePasswordId::PACE_PIN:
-			password = getContext()->getPin().toLatin1();
-			if (authContext && password.size() == 5)
-			{
-				abortToChangePin(FailureCode::Reason::Establish_Pace_Channel_Transport_Pin);
-				return;
-			}
+			password = context->getPin().toLatin1();
 			break;
 
 		case PacePasswordId::PACE_PUK:
-			password = getContext()->getPuk().toLatin1();
+			password = context->getPuk().toLatin1();
 			break;
 
 		case PacePasswordId::UNKNOWN:
@@ -77,11 +75,12 @@ void StateEstablishPaceChannel::run()
 			break;
 	}
 
-	auto cardConnection = getContext()->getCardConnection();
+	auto cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		abort(FailureCode::Reason::Establish_Pace_Channel_No_Card_Connection);
+		context->setLastPaceResult(CardReturnCode::CARD_NOT_FOUND);
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 
@@ -90,26 +89,27 @@ void StateEstablishPaceChannel::run()
 		qCCritical(statemachine) << "We hit an invalid state! PACE password is empty for basic reader.";
 		Q_ASSERT(false);
 
-		qCDebug(statemachine) << "Resetting all PACE passwords.";
-		getContext()->resetPacePasswords();
-
-		abort(FailureCode::Reason::Establish_Pace_Channel_Basic_Reader_No_Pin);
+		updateStatus(GlobalStatus::Code::Card_Invalid_Pin);
+		Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Basic_Reader_No_Pin);
 		return;
 	}
+
+	//: INFO ALL_PLATFORMS First status message after the PIN was entered.
+	context->setProgress(context->getProgressValue(), tr("The secure channel is opened"));
 
 	qDebug() << "Establish connection using" << mPasswordId;
 	Q_ASSERT(!password.isEmpty() || !cardConnection->getReaderInfo().isBasicReader());
 
 	if (mPasswordId == PacePasswordId::PACE_PIN && !cardConnection->getReaderInfo().isBasicReader())
 	{
-		const auto pinContext = getContext().objectCast<ChangePinContext>();
+		const auto pinContext = context.objectCast<ChangePinContext>();
 		if (pinContext && pinContext->isRequestTransportPin())
 		{
 			password = QByteArray(5, 0);
 		}
 	}
 
-	mConnections += cardConnection->callEstablishPaceChannelCommand(this,
+	*this << cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannel::onEstablishConnectionDone,
 			mPasswordId,
 			password,
@@ -125,26 +125,7 @@ void StateEstablishPaceChannel::onUserCancelled()
 }
 
 
-void StateEstablishPaceChannel::abort(FailureCode::Reason pReason)
-{
-	getContext()->resetLastPaceResult();
-	Q_EMIT fireAbort(pReason);
-}
-
-
-void StateEstablishPaceChannel::abortToChangePin(FailureCode::Reason pReason)
-{
-	if (auto authContext = getContext().objectCast<AuthContext>())
-	{
-		authContext->setSkipRedirect(true);
-		authContext->setLastPaceResult(CardReturnCode::NO_ACTIVE_PIN_SET);
-	}
-	updateStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
-	Q_EMIT fireAbort(pReason);
-}
-
-
-void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode)
+void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode) const
 {
 	if (pReturnCode == CardReturnCode::CARD_NOT_FOUND || pReturnCode == CardReturnCode::RETRY_ALLOWED)
 	{
@@ -214,10 +195,6 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_User_Cancelled);
 			return;
 
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
-			abortToChangePin(FailureCode::Reason::Establish_Pace_Channel_No_Active_Pin);
-			return;
-
 		case CardReturnCode::INVALID_PIN:
 		{
 			CardReturnCode paceResult;
@@ -248,9 +225,7 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 				return;
 			}
 
-			Q_EMIT fireAbort({FailureCode::Reason::Establish_Pace_Channel_Invalid_Card_Return_Code,
-							  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
-					});
+			Q_EMIT firePaceChannelFailed();
 			return;
 	}
 

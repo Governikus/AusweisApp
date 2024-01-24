@@ -53,7 +53,11 @@ ConnectRequest::ConnectRequest(const IfdDescriptor& pIfdDescriptor,
 
 	mSocket->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
 	connect(mSocket.data(), &QWebSocket::connected, this, &ConnectRequest::onConnected);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+	connect(mSocket.data(), &QWebSocket::errorOccurred, this, &ConnectRequest::onError);
+#else
 	connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &ConnectRequest::onError);
+#endif
 
 	mTimer.setSingleShot(true);
 	mTimer.setInterval(pTimeoutMs);
@@ -156,7 +160,8 @@ void ConnectRequest::onError(QAbstractSocket::SocketError pError)
 	qCWarning(ifd) << "Connection error:" << pError;
 
 	mTimer.stop();
-	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError)
+	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError
+			|| pError == QAbstractSocket::SocketError::SslHandshakeFailedError)
 	{
 		Q_EMIT fireConnectionError(mIfdDescriptor, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
 	}
@@ -173,7 +178,7 @@ void ConnectRequest::onTimeout()
 }
 
 
-void ConnectRequest::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator)
+void ConnectRequest::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const
 {
 	qCDebug(ifd) << "Request pairing...";
 	pAuthenticator->setPreSharedKey(mPsk);
@@ -210,11 +215,7 @@ void ConnectRequest::onSslErrors(const QList<QSslError>& pErrors)
 
 	if (ignoreErrors)
 	{
-#if defined(GOVERNIKUS_QT) || (QT_VERSION >= QT_VERSION_CHECK(6, 2, 0))
 		mSocket->ignoreSslErrors(pErrors);
-#else
-		mSocket->ignoreSslErrors();
-#endif
 		return;
 	}
 

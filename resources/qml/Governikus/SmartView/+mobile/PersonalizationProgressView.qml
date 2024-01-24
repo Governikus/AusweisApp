@@ -1,14 +1,14 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.ProgressView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.PersonalizationModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.ProgressView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.AuthModel
+import Governikus.Type.PersonalizationModel
 
 ProgressView {
 	id: root
@@ -19,14 +19,17 @@ ProgressView {
 
 	progressText: PersonalizationModel.progressMessage
 	progressValue: PersonalizationModel.progressValue
+	smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
 	subText: {
 		switch (workflowState) {
 		case PersonalizationController.WorkflowStates.CheckStatus:
 		case PersonalizationController.WorkflowStates.InstallApplet:
 		case PersonalizationController.WorkflowStates.TcToken:
-		case PersonalizationController.WorkflowStates.Abort:
 			//: LABEL ANDROID IOS
 			return qsTr("Please wait a moment.");
+		case PersonalizationController.WorkflowStates.Abort:
+			//: LABEL ANDROID IOS
+			return qsTr("Please wait a moment, the current process is being finished.");
 		case PersonalizationController.WorkflowStates.ProcessingPhysicalEid:
 			return PersonalizationModel.isBasicReader ?
 			//: LABEL ANDROID IOS
@@ -65,7 +68,6 @@ ProgressView {
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Smart-eID")
-	titleBarColor: workflowState === PersonalizationController.WorkflowStates.ProcessingPhysicalEid ? Style.color.accent : Style.color.accent_smart
 
 	navigationAction: NavigationAction {
 		action: workflowState === PersonalizationController.WorkflowStates.Abort ? NavigationAction.Action.None : NavigationAction.Action.Cancel

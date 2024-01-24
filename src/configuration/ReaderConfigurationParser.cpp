@@ -4,8 +4,6 @@
 
 #include "ReaderConfigurationParser.h"
 
-#include "JsonValueRef.h"
-
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -36,7 +34,7 @@ QString ReaderConfigurationParser::EntryParser::getDriverUrl(const QJsonObject& 
 	}
 
 	const QJsonArray& driversArray = driversValue.toArray();
-	for (JsonValueRef entry : driversArray)
+	for (const QJsonValueConstRef entry : driversArray)
 	{
 		const QJsonObject& obj = entry.toObject();
 		if (obj.isEmpty())
@@ -100,7 +98,7 @@ bool ReaderConfigurationParser::EntryParser::matchPlatform(const QJsonArray& pPl
 				return QOperatingSystemVersion(pCurrentVersion.type(), number.majorVersion(), minor, micro);
 			};
 
-	for (JsonValueRef entry : pPlatforms)
+	for (const QJsonValueConstRef entry : pPlatforms)
 	{
 		const auto& obj = entry.toObject();
 		if (obj.value(QLatin1String("os")).toString() == currentOS)
@@ -116,6 +114,46 @@ bool ReaderConfigurationParser::EntryParser::matchPlatform(const QJsonArray& pPl
 	}
 
 	return false;
+}
+
+
+QSet<uint> ReaderConfigurationParser::EntryParser::getProductIds(const QJsonObject& object, bool* parseOk) const
+{
+	static const auto productIdsKey = QLatin1String("ProductIds");
+	if (object.contains(productIdsKey) && object[productIdsKey].isArray())
+	{
+		QSet<uint> productIds;
+		const QJsonArray productIdsArray = object[productIdsKey].toArray();
+		for (const QJsonValueConstRef value : productIdsArray)
+		{
+			if (!value.isString())
+			{
+				*parseOk = false;
+				return {};
+			}
+			const uint parsedUInt = value.toString().toUInt(parseOk, 16);
+			if (!*parseOk)
+			{
+				return {};
+			}
+			productIds.insert(parsedUInt);
+		}
+		return productIds;
+	}
+
+	static const auto productIdKey = QLatin1String("ProductId");
+	if (object.contains(productIdKey) && object.value(productIdKey).isString())
+	{
+		const uint parsedUInt = object.value(productIdKey).toString().toUInt(parseOk, 16);
+		if (!*parseOk)
+		{
+			return {};
+		}
+		return {parsedUInt};
+	}
+
+	*parseOk = false;
+	return {};
 }
 
 
@@ -135,10 +173,10 @@ ReaderConfigurationInfo ReaderConfigurationParser::EntryParser::parse() const
 		return fail(QStringLiteral("Invalid or missing vendor id"));
 	}
 
-	const uint productId = object.value(QLatin1String("ProductId")).toString().toUInt(&parseOk, 16);
-	if (!parseOk)
+	const QSet<uint> productIds = getProductIds(object, &parseOk);
+	if (!parseOk || productIds.isEmpty())
 	{
-		return fail(QStringLiteral("Invalid or missing product id"));
+		return fail(QStringLiteral("Invalid or missing product ids"));
 	}
 
 	const QString& name = object.value(QLatin1String("Name")).toString();
@@ -159,7 +197,7 @@ ReaderConfigurationInfo ReaderConfigurationParser::EntryParser::parse() const
 	const QString& icon = object.value(QLatin1String("Icon")).toString();
 	const QString& iconWithNPA = object.value(QLatin1String("IconWithNPA")).toString();
 
-	return ReaderConfigurationInfo(vendorId, productId, name, url, pattern, icon, iconWithNPA);
+	return ReaderConfigurationInfo(vendorId, productIds, name, url, pattern, icon, iconWithNPA);
 }
 
 
@@ -200,7 +238,7 @@ QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArr
 
 	const QJsonArray& devicesArray = devicesValue.toArray();
 	QVector<ReaderConfigurationInfo> infos;
-	for (JsonValueRef entry : devicesArray)
+	for (const QJsonValueConstRef entry : devicesArray)
 	{
 		auto info = EntryParser(entry).parse();
 		if (info.isKnownReader())
@@ -235,13 +273,13 @@ QVector<ReaderConfigurationInfo> ReaderConfigurationParser::fail(const QString& 
 bool ReaderConfigurationParser::hasUniqueId(const ReaderConfigurationInfo& pInfo, const QVector<ReaderConfigurationInfo>& pInfos)
 {
 	const uint vendorId = pInfo.getVendorId();
-	const uint productId = pInfo.getProductId();
+	const QSet<uint> productIds = pInfo.getProductIds();
 	const QString& name = pInfo.getName();
 	const QString& pattern = pInfo.getPattern();
 
 	for (const ReaderConfigurationInfo& info : pInfos)
 	{
-		if (vendorId > 0 && productId > 0 && vendorId == info.getVendorId() && productId == info.getProductId())
+		if (vendorId > 0 && !productIds.isEmpty() && vendorId == info.getVendorId() && productIds.intersects(info.getProductIds()))
 		{
 			return false;
 		}

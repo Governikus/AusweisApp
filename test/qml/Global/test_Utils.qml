@@ -1,23 +1,16 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function test_escapeHtml() {
 		compare(Utils.escapeHtml("a&b"), "a&amp;b", "escape &");
 		compare(Utils.escapeHtml("<br/>"), "&lt;br/&gt;", "escape < and >");
 		compare(Utils.escapeHtml("\"Hello\""), "&quot;Hello&quot;", "escape \"");
-	}
-	function test_helpTopicOf() {
-		let defaultHelpTopic = "defaultHelp";
-		let componentWithoutHelp = createTemporaryQmlObject("import QtQuick 2.15; Item {}", testCase);
-		let componentWithHelp = createTemporaryQmlObject("import QtQuick 2.15; Item {property string helpTopic: \"dummyHelp\";}", testCase);
-		compare(Utils.helpTopicOf(null, defaultHelpTopic), defaultHelpTopic, "Get default help topic if component is null");
-		compare(Utils.helpTopicOf(componentWithoutHelp, defaultHelpTopic), defaultHelpTopic, "Get default help topic if component got no helpTopic");
-		compare(Utils.helpTopicOf(componentWithHelp, defaultHelpTopic), "dummyHelp", "Get component help topic");
 	}
 	function test_isSameDate() {
 		let today = new Date;

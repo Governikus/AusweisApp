@@ -1,19 +1,19 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: titleBar
 
-	property var color
-	property alias contentHeight: contentLayout.height
-	property bool enableTitleMoveAnimation: Constants.is_layout_ios
 	property NavigationAction navigationAction
 	property var rightAction
+	property bool showSeparator: false
+	property bool smartEidUsed: false
 	property alias title: titleText.text
 	property alias titleBarOpacity: background.opacity
 	property var topSafeAreaMargin: plugin.safeAreaMargins.top
@@ -22,14 +22,15 @@ Item {
 		titleText.forceActiveFocus(Qt.MouseFocusReason);
 	}
 
-	height: contentLayout.height + topSafeAreaMargin
+	height: contentLayout.implicitHeight + topSafeAreaMargin + Style.dimens.titlebar_padding
 
 	Rectangle {
 		id: safeAreaBackground
-		color: titleBar.color ? titleBar.color : Style.color.accent
+
+		color: smartEidUsed ? Style.color.card_smart : Style.color.card_eid
 		height: topSafeAreaMargin
 
-		Behavior on color  {
+		Behavior on color {
 			ColorAnimation {
 				duration: Constants.animation_duration
 			}
@@ -43,9 +44,10 @@ Item {
 	}
 	Rectangle {
 		id: background
-		color: titleBar.color ? titleBar.color : Style.color.accent
 
-		Behavior on color  {
+		color: Style.color.background
+
+		Behavior on color {
 			ColorAnimation {
 				duration: Constants.animation_duration
 			}
@@ -58,57 +60,40 @@ Item {
 			top: safeAreaBackground.bottom
 		}
 	}
-	Column {
+	ColumnLayout {
 		id: contentLayout
+
+		spacing: Constants.text_spacing
+		width: Math.min(parent.width - 2 * Style.dimens.titlebar_padding - plugin.safeAreaMargins.left - plugin.safeAreaMargins.right, Style.dimens.max_text_width)
+
 		anchors {
 			bottom: parent.bottom
-			left: parent.left
-			leftMargin: plugin.safeAreaMargins.left
-			right: parent.right
-			rightMargin: plugin.safeAreaMargins.right
+			horizontalCenter: parent.horizontalCenter
+			horizontalCenterOffset: (plugin.safeAreaMargins.left - plugin.safeAreaMargins.right) / 2
 		}
-		Item {
-			id: firstLine
-			height: Style.dimens.titlebar_height
-			width: parent.width
+		TitleBarNavigation {
+			id: leftAction
 
-			TitleBarNavigation {
-				id: leftAction
-				action: titleBar.navigationAction ? titleBar.navigationAction.action : NavigationAction.Action.None
-				enabled: titleBar.navigationAction ? titleBar.navigationAction.enabled : false
-				width: titleText.moreSpacePreferred ? minimumWidth : implicitWidth
+			Layout.minimumHeight: Style.dimens.small_icon_size
+			action: titleBar.navigationAction ? titleBar.navigationAction.action : NavigationAction.Action.None
+			enabled: titleBar.navigationAction ? titleBar.navigationAction.enabled : false
 
-				onClicked: titleBar.navigationAction.clicked()
+			onClicked: titleBar.navigationAction.clicked()
+		}
+		RowLayout {
+			spacing: Constants.component_spacing
 
-				anchors {
-					bottom: parent.bottom
-					left: parent.left
-					top: parent.top
-				}
-			}
 			GText {
 				id: titleText
 
-				readonly property int availableWidth: parent.width - leftAction.width - rightActionStack.width
-				readonly property int centerX: (parent.width / 2) - (width / 2)
-				readonly property int implicitAvailableWidth: parent.width - leftAction.implicitWidth - rightActionStack.implicitWidth
-				readonly property int leftX: leftAction.width
-				readonly property bool moreSpacePreferred: implicitWidth > implicitAvailableWidth
-
 				Accessible.focusable: true
 				Accessible.role: Accessible.Heading
+				Layout.maximumWidth: Style.dimens.max_text_width
 				elide: Text.ElideRight
-				height: Style.dimens.titlebar_height
-				leftPadding: Style.dimens.titlebar_padding
-				maximumLineCount: 1
-				rightPadding: Style.dimens.titlebar_padding
-				textStyle: Style.text.header_inverse_highlight
-				verticalAlignment: Text.AlignVCenter
-				width: Math.min(implicitWidth, availableWidth)
-				wrapMode: Text.NoWrap
-				x: Math.max(leftX, centerX)
+				maximumLineCount: 2
+				textStyle: Style.text.title
 
-				Behavior on text  {
+				Behavior on text {
 					SequentialAnimation {
 						PropertyAnimation {
 							duration: Constants.animation_duration
@@ -130,20 +115,9 @@ Item {
 						}
 					}
 				}
-				Behavior on x  {
-					enabled: enableTitleMoveAnimation
-
-					NumberAnimation {
-						duration: Constants.animation_duration
-						easing.type: Easing.OutQuart
-						from: parent.width * 0.75
-					}
-				}
-
-				anchors {
-					bottom: parent.bottom
-					top: parent.top
-				}
+			}
+			GSpacer {
+				Layout.fillWidth: true
 			}
 			Item {
 				id: rightActionStack
@@ -151,21 +125,18 @@ Item {
 				property var actionItem: rightAction
 				property var activeActionItem
 
+				Layout.alignment: Qt.AlignRight
 				children: activeActionItem ? [activeActionItem] : []
+				implicitHeight: activeActionItem ? activeActionItem.implicitHeight : 0
 				implicitWidth: activeActionItem ? activeActionItem.implicitWidth : 0
-				width: activeActionItem ? activeActionItem.width : 0
+				width: activeActionItem ? activeActionItem.implicitWidth : 0
 
 				onActionItemChanged: rightActionStackAnimateOut.start()
 				onActiveActionItemChanged: rightActionStackAnimateIn.start()
 
-				anchors {
-					bottom: parent.bottom
-					right: parent.right
-					rightMargin: Style.dimens.titlebar_padding
-					top: parent.top
-				}
 				PropertyAnimation {
 					id: rightActionStackAnimateOut
+
 					duration: Constants.animation_duration
 					easing.type: Easing.InCubic
 					property: "opacity"
@@ -176,6 +147,7 @@ Item {
 				}
 				PropertyAnimation {
 					id: rightActionStackAnimateIn
+
 					duration: Constants.animation_duration
 					easing.type: Easing.OutCubic
 					property: "opacity"
@@ -183,6 +155,15 @@ Item {
 					to: 1
 				}
 			}
+		}
+	}
+	GSeparator {
+		visible: titleBar.showSeparator
+		width: contentLayout.width
+
+		anchors {
+			horizontalCenter: contentLayout.horizontalCenter
+			top: parent.bottom
 		}
 	}
 }

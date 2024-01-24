@@ -10,7 +10,6 @@
 
 #include "ReaderManager.h"
 #include "context/AuthContext.h"
-#include "context/InternalActivationContext.h"
 #include "states/StateEnterPacePassword.h"
 
 #include "TestWorkflowContext.h"
@@ -112,7 +111,7 @@ class test_Message
 			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
 			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-			const auto& msg = dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>());
+			const auto& msg = dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterPacePassword>());
 			QCOMPARE(msg, QByteArray("{\"msg\":\"ENTER_PIN\"}"));
 		}
 
@@ -146,7 +145,7 @@ class test_Message
 			QCOMPARE(dispatcher.processCommand(msg), expectedBadState);
 
 			dispatcher.mContext.getContext()->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
-			QVERIFY(!QByteArray(dispatcher.processStateChange(AbstractState::getClassName<StateEnterPacePassword>())).isEmpty());
+			QVERIFY(!QByteArray(dispatcher.processStateChange(StateBuilder::generateStateName<StateEnterPacePassword>())).isEmpty());
 			QVERIFY(!context->isStateApproved());
 
 			auto expectedEnterCan = QByteArray(R"({"error":"You must provide 6 digits","msg":"ENTER_CAN"})");
@@ -225,7 +224,7 @@ class test_Message
 
 		void finishAuthContext()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(QSharedPointer<InternalActivationContext>::create(QUrl("http://dummy"))));
+			const QSharedPointer<AuthContext> context(new AuthContext(true, QUrl("http://dummy")));
 			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setRefreshUrl(QUrl("http://dummy"));
 			MessageDispatcher dispatcher;

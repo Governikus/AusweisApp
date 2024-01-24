@@ -111,7 +111,7 @@ ReaderConfigurationInfo ReaderConfiguration::getReaderConfigurationInfoById(cons
 {
 	for (const auto& info : std::as_const(mReaderConfigurationInfos))
 	{
-		if (pId.getVendorId() == info.getVendorId() && pId.getProductId() == info.getProductId())
+		if (pId.getVendorId() == info.getVendorId() && info.getProductIds().contains(pId.getProductId()))
 		{
 			return info;
 		}

@@ -46,9 +46,7 @@ HttpRequest::HttpRequest(QTcpSocket* pSocket, QObject* pParent)
 
 QTcpSocket* HttpRequest::take()
 {
-	disconnect(mSocket, &QAbstractSocket::readyRead, this, &HttpRequest::onReadyRead);
-	disconnect(mSocket, &QAbstractSocket::stateChanged, this, &HttpRequest::fireSocketStateChanged);
-
+	mSocket->disconnect(this);
 	auto socket = mSocket;
 	socket->setParent(nullptr);
 	mSocket.clear();
@@ -58,9 +56,13 @@ QTcpSocket* HttpRequest::take()
 
 HttpRequest::~HttpRequest()
 {
-	if (mSocket && mSocket->state() == QAbstractSocket::ConnectedState)
+	if (mSocket && mSocket->bytesToWrite() && mSocket->state() == QAbstractSocket::ConnectedState && !mSocket->flush())
 	{
-		mSocket->flush();
+		qCDebug(network) << "Flush socket failed. Waiting for bytes:" << mSocket->bytesToWrite();
+		if (!mSocket->waitForBytesWritten())
+		{
+			qCWarning(network) << "Cannot wait for socket anymore... abort!";
+		}
 	}
 }
 

@@ -30,6 +30,8 @@ class StatePreparePersonalization
 		[[nodiscard]] QUrl getRequestUrl() const override;
 		[[nodiscard]] QByteArray getPayload() const override;
 
+		[[nodiscard]] bool parseStatusCode(const QByteArray& pData) const;
+
 		void handleNetworkReply(const QByteArray& pContent) override;
 };
 

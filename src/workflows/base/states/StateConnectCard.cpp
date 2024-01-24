@@ -25,9 +25,9 @@ StateConnectCard::StateConnectCard(const QSharedPointer<WorkflowContext>& pConte
 void StateConnectCard::run()
 {
 	const auto readerManager = Env::getSingleton<ReaderManager>();
-	mConnections += connect(readerManager, &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
-	mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onReaderRemoved);
-	mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateConnectCard::onReaderStatusChanged);
+	*this << connect(readerManager, &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
+	*this << connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateConnectCard::onUnusableCardConnectionLost);
+	*this << connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onUnusableCardConnectionLost);
 	onCardInserted();
 }
 
@@ -41,7 +41,7 @@ void StateConnectCard::onCardInserted()
 	if (readerInfo.hasEid())
 	{
 		qCDebug(statemachine) << "Card has been inserted, trying to connect";
-		mConnections += readerManager->callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);
+		*this << readerManager->callCreateCardConnectionCommand(readerInfo.getName(), this, &StateConnectCard::onCommandDone);
 	}
 }
 
@@ -66,13 +66,15 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	const auto& readerInfo = cardConnection->getReaderInfo();
 	if (readerInfo.insufficientApduLength())
 	{
+		//: INFO IOS
 		context->getCardConnection()->setProgressMessage(tr("The used card reader does not meet the technical requirements (Extended Length not supported)."));
 		return;
 	}
 
-	if (context->isSmartCardUsed() && context->isPhysicalCardRequired())
+	if (context->eidTypeMismatch())
 	{
-		context->getCardConnection()->setProgressMessage(tr("The provider requires a physical ID card."));
+		//: INFO IOS
+		context->getCardConnection()->setProgressMessage(tr("The used ID card type is not accepted by the server."));
 		return;
 	}
 
@@ -96,34 +98,12 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 }
 
 
-void StateConnectCard::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo)
-{
-	Q_UNUSED(pInfo)
-
-#if defined(Q_OS_IOS)
-	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
-	{
-		return;
-	}
-
-	const auto activePlugins = getContext()->getReaderPlugInTypes();
-	if (activePlugins.size() > 1 || !activePlugins.contains(ReaderManagerPlugInType::NFC))
-	{
-		return;
-	}
-
-	if (!Env::getSingleton<ReaderManager>()->isScanRunning(ReaderManagerPlugInType::NFC))
-	{
-		Q_EMIT getContext()->fireCancelWorkflow();
-	}
-#endif
-}
-
-
-void StateConnectCard::onReaderRemoved(const ReaderInfo& pInfo)
+void StateConnectCard::onUnusableCardConnectionLost(const ReaderInfo& pInfo)
 {
 	if (pInfo.getName() == getContext()->getReaderName())
 	{
+		getContext()->setReaderName(QString());
+		getContext()->resetCardConnection();
 		Q_EMIT fireRetry();
 	}
 }
@@ -131,6 +111,8 @@ void StateConnectCard::onReaderRemoved(const ReaderInfo& pInfo)
 
 void StateConnectCard::onEntry(QEvent* pEvent)
 {
+	AbstractState::onEntry(pEvent);
+
 	const WorkflowContext* const context = getContext().data();
 	Q_ASSERT(context);
 
@@ -138,7 +120,5 @@ void StateConnectCard::onEntry(QEvent* pEvent)
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.
 	 * Changing the plugin types in the context, e.g. from {NFC} to {REMOTE}, causes the state to be left with a fireRetry signal.
 	 */
-	mConnections += connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateConnectCard::fireRetry);
-
-	AbstractState::onEntry(pEvent);
+	*this << connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateConnectCard::fireRetry);
 }

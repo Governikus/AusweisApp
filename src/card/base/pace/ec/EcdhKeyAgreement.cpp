@@ -2,10 +2,11 @@
  * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
  */
 
-#include "pace/ec/EcdhKeyAgreement.h"
+#include "EcdhKeyAgreement.h"
 
+#include "EcUtil.h"
+#include "asn1/ASN1Util.h"
 #include "asn1/PaceInfo.h"
-#include "pace/ec/EcUtil.h"
 
 #include <QLoggingCategory>
 

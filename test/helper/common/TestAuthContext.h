@@ -26,7 +26,7 @@ class TestAuthContext
 		const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1) const;
 
 	public:
-		explicit TestAuthContext(const QSharedPointer<ActivationContext>& pActivationContext, const QString& pFileName = QString());
+		explicit TestAuthContext(const QString& pFileName = QString());
 		~TestAuthContext() override;
 
 		void setRequiredAccessRights(const QSet<AccessRight>& pAccessRights);

@@ -95,7 +95,7 @@ void CardPositionModel::setIsRunning(bool pRunning)
 
 int CardPositionModel::getCardPositionCount() const
 {
-	return mCardPositions.count();
+	return static_cast<int>(mCardPositions.count());
 }
 
 

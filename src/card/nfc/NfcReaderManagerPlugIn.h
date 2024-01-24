@@ -11,6 +11,7 @@
 #include "NfcReader.h"
 #include "ReaderManagerPlugIn.h"
 
+#include <QAtomicPointer>
 #include <QScopedPointer>
 
 
@@ -25,6 +26,8 @@ class NfcReaderManagerPlugIn
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
 	private:
+		static QAtomicPointer<NfcReaderManagerPlugIn> instance;
+
 		QScopedPointer<NfcReader> mNfcReader;
 
 	private Q_SLOTS:
@@ -32,8 +35,11 @@ class NfcReaderManagerPlugIn
 		void onReaderDisconnected();
 
 	public:
+		static void setReaderMode(bool pEnabled);
+		static void enqueueReaderMode(bool pEnabled);
+
 		NfcReaderManagerPlugIn();
-		~NfcReaderManagerPlugIn() override = default;
+		~NfcReaderManagerPlugIn() override;
 
 		[[nodiscard]] QList<Reader*> getReaders() const override;
 

@@ -1,20 +1,29 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Workflow 1.0
-import Governikus.View 1.0
-import Governikus.Type.ReaderPlugIn 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.TechnologyInfo
+import Governikus.TitleBar
+import Governikus.Workflow
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ReaderPlugIn
 
 SectionPage {
 	id: baseItem
 
-	property var workflowModel
+	property alias autoInsertCard: technologyInfo.autoInsertCard
+	property bool hideSwitch: false
+	property var initialPlugIn: null
+	readonly property bool isLandscape: ApplicationWindow.window && ApplicationWindow.menuBar ? ApplicationWindow.window.height - ApplicationWindow.menuBar.height < ApplicationWindow.window.width : false
+	property alias workflowModel: technologyInfo.workflowModel
 	property string workflowTitle
 
+	contentIsScrolled: technologyInfo.contentIsScrolled || isLandscape && !technologySwitch.atYBeginning
 	title: workflowTitle
 
 	navigationAction: NavigationAction {
@@ -23,61 +32,45 @@ SectionPage {
 		onClicked: workflowModel.cancelWorkflow()
 	}
 
-	NfcWorkflow {
-		visible: workflowModel.readerPlugInType === ReaderPlugIn.NFC
-
-		onStartScanIfNecessary: workflowModel.startScanIfNecessary()
-
-		anchors {
-			bottom: technologySwitch.top
-			left: parent.left
-			right: parent.right
-			top: parent.top
+	Component.onCompleted: {
+		if (initialPlugIn != null) {
+			technologySwitch.requestPluginType(initialPlugIn);
 		}
 	}
-	SmartWorkflow {
-		visible: workflowModel.readerPlugInType === ReaderPlugIn.SMART
-		workflowModel: baseItem.workflowModel
 
-		anchors {
-			bottom: technologySwitch.top
-			left: parent.left
-			right: parent.right
-			top: parent.top
+	GridLayout {
+		anchors.fill: parent
+		columns: 3
+		flow: isLandscape ? Flow.LeftToRight : Flow.TopToBottom
+		rows: 3
+
+		WorkflowInfoList {
+			id: technologyInfo
+
+			Layout.fillHeight: true
+			Layout.fillWidth: true
 		}
-	}
-	RemoteWorkflow {
-		visible: workflowModel.readerPlugInType === ReaderPlugIn.REMOTE_IFD || workflowModel.readerPlugInType === ReaderPlugIn.PCSC
+		GSeparator {
+			id: separator
 
-		anchors {
-			bottom: technologySwitch.top
-			left: parent.left
-			right: parent.right
-			top: parent.top
+			readonly property real shorteningFactor: 0.75
+
+			Layout.alignment: Qt.AlignCenter
+			Layout.preferredHeight: isLandscape ? parent.height * shorteningFactor : Style.dimens.separator_size
+			Layout.preferredWidth: isLandscape ? Style.dimens.separator_size : parent.width * shorteningFactor
+			visible: technologySwitch.visible
 		}
-	}
-	SimulatorWorkflow {
-		visible: workflowModel.readerPlugInType === ReaderPlugIn.SIMULATOR
-		workflowModel: baseItem.workflowModel
+		TechnologySwitch {
+			id: technologySwitch
 
-		anchors {
-			bottom: technologySwitch.top
-			left: parent.left
-			right: parent.right
-			top: parent.top
-		}
-	}
-	TechnologySwitch {
-		id: technologySwitch
-		selectedTechnology: workflowModel.readerPlugInType
-		supportedTechnologies: workflowModel.supportedPlugInTypes
+			Layout.fillHeight: isLandscape
+			Layout.fillWidth: !isLandscape
+			flowVertically: isLandscape
+			selectedTechnology: workflowModel.readerPlugInType
+			supportedTechnologies: workflowModel.supportedPlugInTypes
+			visible: !hideSwitch && workflowModel.supportedPlugInTypes.length > 1
 
-		onRequestPluginType: pReaderPlugInType => workflowModel.readerPlugInType = pReaderPlugInType
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			right: parent.right
+			onRequestPluginType: pReaderPlugInType => workflowModel.readerPlugInType = pReaderPlugInType
 		}
 	}
 }

@@ -29,11 +29,10 @@ class test_StateCertificateDescriptionCheck
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 			mAuthContext->setTcTokenUrl(QUrl("https://test.governikus-eid.de:443/Autent-DemoApplication/RequestServlet?provider=demo_epa_can&redirect=true"));
 
 			mState.reset(StateBuilder::createState<StateCertificateDescriptionCheck>(mAuthContext));
-			mState->setStateName("StateCertificateDescriptionCheck");
 
 			mState->onEntry(nullptr);
 		}

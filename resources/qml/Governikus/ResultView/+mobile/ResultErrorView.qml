@@ -1,9 +1,10 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
 ResultView {
 	id: baseItem
@@ -19,48 +20,28 @@ ResultView {
 	onCancelClicked: continueClicked()
 	onVisibleChanged: errorDetailsShown = false
 
-	GButton {
-		Accessible.name: qsTr("Show error details")
-		anchors.horizontalCenter: parent.horizontalCenter
-		buttonColor: Style.color.transparent
-		text: qsTr("Details") + (baseItem.errorDetailsShown ? "▲" : "▼")
-		textStyle: Style.text.normal_accent
-		visible: baseItem.hasErrorDetails
+	GCollapsible {
+		Layout.fillWidth: true
+		Layout.leftMargin: -Constants.pane_padding * 2
+		Layout.rightMargin: -Constants.pane_padding * 2
+		horizontalMargin: Constants.pane_padding * 2
+		title: qsTr("Details")
+		visible: hasErrorDetails
 
-		onClicked: baseItem.errorDetailsShown = !baseItem.errorDetailsShown
-	}
-	GSeparator {
-		visible: baseItem.errorDetailsShown
-
-		anchors {
-			left: parent.left
-			right: parent.right
+		GText {
+			font.bold: true
+			//: LABEL ANDROID IOS
+			text: "%1 %2".arg(qsTr("Error code:")).arg(errorCode)
 		}
-	}
-	GText {
-		//: LABEL ANDROID IOS
-		text: "%1 %2".arg(qsTr("Error code:")).arg(errorCode)
-		textStyle: Style.text.normal_highlight
-		visible: baseItem.errorDetailsShown
+		GText {
+			id: textErrorDescription
 
-		anchors {
-			left: parent.left
-			right: parent.right
-		}
-	}
-	GText {
-		id: textErrorDescription
-		visible: baseItem.errorDetailsShown
-
-		anchors {
-			left: parent.left
-			right: parent.right
-			topMargin: Constants.pane_spacing
 		}
 	}
 	GButton {
 		id: mailButton
-		anchors.horizontalCenter: parent.horizontalCenter
+
+		Layout.alignment: Qt.AlignHCenter
 		icon.source: "qrc:///images/material_mail.svg"
 		tintIcon: true
 		visible: text !== ""

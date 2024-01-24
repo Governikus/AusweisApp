@@ -23,7 +23,7 @@ class ChangePinController
 	Q_OBJECT
 
 	public:
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pRequestTransportPin = false);
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pRequestTransportPin = false, bool pActivateUi = true);
 
 		explicit ChangePinController(QSharedPointer<ChangePinContext> pContext);
 		~ChangePinController() override = default;

@@ -159,7 +159,14 @@ void DiagnosisConnectionTest::startConnectionTest()
 	mConnectionTestWithProxyDone = false;
 	mConnectionTestWithoutProxyDone = false;
 
-	const auto& proxy = QNetworkProxy::applicationProxy();
+	const QUrl& testUrl = QUrl(Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl());
+	const auto& proxies = QNetworkProxyFactory::proxyForQuery(QNetworkProxyQuery(testUrl));
+	const auto& proxy = proxies.constFirst();
+	if (proxies.size() > 1)
+	{
+		qDebug() << "More than one proxy found, using first proxy:" << proxy;
+	}
+
 	if (proxy.type() == QNetworkProxy::ProxyType::NoProxy)
 	{
 		mIsProxySet = false;
@@ -175,7 +182,6 @@ void DiagnosisConnectionTest::startConnectionTest()
 		mProxyCapabilities = getProxyCapabilitiesAsQString(proxy.capabilities());
 	}
 
-	const QUrl& testUrl = QUrl(Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl());
 	if (mIsProxySet)
 	{
 		mPingSocketToProxy.reset();

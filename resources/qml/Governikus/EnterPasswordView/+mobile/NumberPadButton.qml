@@ -1,69 +1,60 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.SettingsModel
 
 Button {
 	id: numberPadButton
 
 	property string a11yDisabledText: qsTr("Disabled")
 	property string a11yText
-	property bool visualPrivacy: false
+	property bool visualPrivacy: SettingsModel.visualPrivacy
 
 	Accessible.name: numberPadButton.enabled ? a11yText !== "" ? a11yText : text : a11yDisabledText
-	Layout.fillHeight: true
-	Layout.fillWidth: true
-	implicitHeight: 36
-	implicitWidth: 36
+	Layout.maximumHeight: implicitHeight
+	Layout.maximumWidth: implicitWidth
+	Layout.minimumHeight: Layout.minimumWidth * d.aspectRatio
+	Layout.minimumWidth: 36
+	implicitHeight: implicitWidth * d.aspectRatio
+	implicitWidth: 75
 
-	background: TintableIcon {
-		anchors.centerIn: numberPadButton
-		source: numberPadButton.icon.source
-		sourceSize.height: numberPadButton.implicitHeight
-		visible: numberPadButton.icon.source != "" && numberPadButton.enabled
+	background: Rectangle {
+		anchors.fill: numberPadButton
+		color: numberPadButton.enabled ? (numberPadButton.down && !visualPrivacy ? Style.color.control : Style.color.pane_sublevel) : Style.color.control_disabled
+		radius: Style.dimens.control_radius
+
+		TintableIcon {
+			anchors.centerIn: parent
+			fillMode: Image.Pad
+			source: numberPadButton.icon.source
+			sourceSize.height: contentItem.font.pixelSize * 1.5
+			tintColor: numberPadButton.down && !visualPrivacy ? Style.color.control_pressed : contentText.textStyle.textColor
+			tintEnabled: true
+			visible: numberPadButton.icon.source != ""
+		}
 	}
 	contentItem: GText {
+		id: contentText
+
 		Accessible.ignored: true
+		color: numberPadButton.down && !visualPrivacy ? Style.color.control_pressed : textStyle.textColor
 		horizontalAlignment: Text.AlignHCenter
 		text: numberPadButton.text
-		textStyle: Style.text.title
-		verticalAlignment: Text.AlignVCenter
-		visible: numberPadButton.icon.source == "" && numberPadButton.enabled
+		textStyle: Style.text.headline
+		visible: numberPadButton.icon.source == ""
 	}
 
 	Accessible.onPressAction: if (numberPadButton.enabled)
 		clicked()
 
-	Rectangle {
-		id: darkLayer
-		anchors.centerIn: parent
-		color: Constants.black
-		height: width
-		opacity: 0.1
-		radius: width / 2
+	QtObject {
+		id: d
 
-		NumberAnimation on opacity  {
-			from: 0.1
-			running: !visualPrivacy && !numberPadButton.down
-			to: 0.0
-		}
-		SequentialAnimation on width  {
-			alwaysRunToEnd: true
-			running: !visualPrivacy && numberPadButton.down
-
-			PropertyAction {
-				property: "opacity"
-				target: darkLayer
-				value: 0.1
-			}
-			NumberAnimation {
-				from: 0
-				to: Math.SQRT2 * numberPadButton.width
-			}
-		}
+		readonly property real aspectRatio: 0.7
 	}
 }

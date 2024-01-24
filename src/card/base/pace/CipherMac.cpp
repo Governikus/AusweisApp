@@ -4,8 +4,6 @@
 
 #include "pace/CipherMac.h"
 
-#include "ec/EcUtil.h"
-
 #include <QLoggingCategory>
 #include <QScopeGuard>
 
@@ -39,34 +37,7 @@ CipherMac::CipherMac(const SecurityProtocol& pSecurityProtocol, const QByteArray
 		qCCritical(card) << "Key has wrong size (expected/got):" << EVP_CIPHER_key_length(cipher) << '/' << pKeyBytes.size();
 		return;
 	}
-#endif
 
-#if OPENSSL_VERSION_NUMBER < 0x10101000L || defined(LIBRESSL_VERSION_NUMBER)
-	const auto ctx = EcUtil::create(EVP_PKEY_CTX_new_id(EVP_PKEY_CMAC, nullptr));
-	if (ctx.isNull() || !EVP_PKEY_keygen_init(ctx.data()))
-	{
-		qCCritical(card) << "Cannot init ctx";
-		return;
-	}
-
-	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_CIPHER, 0, const_cast<EVP_CIPHER*>(cipher)) <= 0)
-	{
-		qCCritical(card) << "Cannot set cipher";
-		return;
-	}
-
-	if (EVP_PKEY_CTX_ctrl(ctx.data(), -1, EVP_PKEY_OP_KEYGEN, EVP_PKEY_CTRL_SET_MAC_KEY, pKeyBytes.size(), const_cast<char*>(pKeyBytes.data())) <= 0)
-	{
-		qCCritical(card) << "Cannot set key";
-		return;
-	}
-
-	if (!EVP_PKEY_keygen(ctx.data(), &mKey))
-	{
-		qCCritical(card) << "Cannot generate EVP pkey";
-	}
-
-#elif OPENSSL_VERSION_NUMBER < 0x30000000L
 	mKey = EVP_PKEY_new_CMAC_key(nullptr, reinterpret_cast<const uchar*>(pKeyBytes.constData()), static_cast<size_t>(pKeyBytes.size()), cipher);
 
 #else

@@ -29,7 +29,7 @@ FormattedTextModel::FormattedTextModel(QObject* pParent, const QStringList& pLin
 int FormattedTextModel::rowCount(const QModelIndex& pIndex) const
 {
 	Q_UNUSED(pIndex)
-	return mLines.size();
+	return static_cast<int>(mLines.size());
 }
 
 
@@ -162,10 +162,6 @@ FormattedTextModel::ReadLinesResult FormattedTextModel::readLines(const QString&
 	}
 
 	QTextStream in(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	in.setCodec("UTF-8");
-#endif
-
 	QStringList lines;
 	while (!in.atEnd())
 	{

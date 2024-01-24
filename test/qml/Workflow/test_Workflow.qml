@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Workflow 1.0; Workflow {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Workflow; Workflow {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

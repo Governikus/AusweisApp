@@ -4,6 +4,7 @@
 
 #include "UserAgent.h"
 
+#include "VersionInfo.h"
 #include "VersionNumber.h"
 
 #include <QCoreApplication>
@@ -24,7 +25,7 @@ UserAgent::UserAgent()
 
 QString UserAgent::getName() const
 {
-	return QCoreApplication::applicationName();
+	return VersionInfo::getInstance().getImplementationTitle();
 }
 
 

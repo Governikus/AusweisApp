@@ -1,12 +1,12 @@
 module Workflow
 
-internal BusyImageIndicator BusyImageIndicator.qml
 internal CardReader CardReader.qml
 internal NfcProgressIndicator NfcProgressIndicator.qml
 internal ProgressCircle ProgressCircle.qml
-internal ProgressIndicator ProgressIndicator.qml
+internal RemoteProgressIndicator RemoteProgressIndicator.qml
 internal RemoteWorkflow RemoteWorkflow.qml
 internal SmartProgressIndicator SmartProgressIndicator.qml
+internal WorkflowInfoList WorkflowInfoList.qml
 internal TextCircle TextCircle.qml
 
 GeneralWorkflow 1.0 GeneralWorkflow.qml

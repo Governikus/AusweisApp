@@ -9,6 +9,8 @@
 #include <QString>
 #include <QUuid>
 
+#include <eid_applet_results.h>
+
 
 namespace governikus
 {
@@ -22,12 +24,16 @@ class PersonalizationContext
 
 	private:
 		bool mAllowSmartEidInstallation;
+		SmartEidType mSmartEidType;
+		QString mChallengeType;
+		int mFinalizeStatus;
 		QUuid mSessionIdentifier;
 		QString mChallenge;
 		QString mPreparePersonalizationData;
 		QString mNewPin;
 		QString mBlockingCode;
 		QString mAppletServiceUrl;
+		QString mLibVersion;
 		int mRemainingAttempts;
 		int mRemainingDays;
 
@@ -36,12 +42,19 @@ class PersonalizationContext
 		void fireBlockingCodeChanged();
 		void fireRemainingAttemptsChanged();
 		void fireRemainingDaysChanged();
+		void fireServiceInformationChanged();
+		void fireSessionIdentifierChanged();
 
 	public:
 		explicit PersonalizationContext(const QString& pAppletServiceUrl);
 
-		[[nodiscard]] bool allowSmartEidInstallation() const;
-		void smartEidInstallationSuccessfull();
+		[[nodiscard]] SmartEidType getSmartEidType() const;
+		[[nodiscard]] const QString& getChallengeType() const;
+		[[nodiscard]] const QString& getLibVersion() const;
+		void setServiceInformation(SmartEidType pType, const QString& pChallengeType, const QString& pLibVersion);
+
+		[[nodiscard]] int getFinalizeStatus() const;
+		void setFinalizeStatus(int pStatus);
 
 		[[nodiscard]] const QUuid& getSessionIdentifier() const;
 		void setSessionIdentifier(const QUuid& pSessionIdentifier);
@@ -61,12 +74,15 @@ class PersonalizationContext
 		[[nodiscard]] int getRemainingAttempts() const;
 		void setRemainingAttempts(int pRemainingAttempts);
 
-		[[nodiscard]] int getRemainingDays() const;
+		[[nodiscard]] QString getRestrictionDate() const;
 		void setRemainingDays(int pRemainingDays);
 
 		[[nodiscard]] QUrl getAppletServiceUrl(const QString& pArg) const;
 
 		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+
+		using WorkflowContext::setProgress;
+		void setProgress(int pProgress, const QString& pMessage, int pInitialValue, int pMaxValue = 100);
 
 
 };

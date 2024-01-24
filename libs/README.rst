@@ -1,7 +1,7 @@
 Libraries
 =========
 
-Um die AusweisApp2 zu bauen ist eine Toolchain erforderlich, die die
+Um die AusweisApp zu bauen ist eine Toolchain erforderlich, die die
 Abhängigkeiten und die Compilertools beinhaltet.
 
 Unterstützte C++17 Compiler:
@@ -50,10 +50,10 @@ Der Build umfasst unter anderem das Qt-Framework, daher kann (je nach Rechenleis
 der Build einige Stunden dauern.
 
 Wichtig bei der Angabe in CMake ist der Verweis auf den Ordner "libs". Ein Verweis
-direkt auf "AusweisApp2" würde den Build für die "AusweisApp2" konfigurieren.
+direkt auf "AusweisApp" würde den Build für die "AusweisApp" konfigurieren.
 
 Nach dem Aufruf "nmake"/"mingw32-make"/"ninja" werden nun alle Bibliotheken gebaut und
-in dem Ordner ./dist installiert. Dieser Ordner kann beim Build von der AusweisApp2
+in dem Ordner ./dist installiert. Dieser Ordner kann beim Build von der AusweisApp
 mittels -DCMAKE_PREFIX_PATH als Toolchain angegeben werden.
 Zusätzlich kann mit dem make Target "compress" der Inhalt der dist-Ordner bereinigt und
 ein Tarball aus den gebauten Bibliotheken erzeugt werden.
@@ -86,6 +86,9 @@ Es wird der von Apple ausgelieferte clang compiler verwendet.
    $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2/libs
    $ make
 
+=======
+Beispiel: Innerhalb von /Users/governikus/AusweisApp befindet sich der Quellcode.
+
 
 Linux / Unix
 ^^^^^^^^^^^^
@@ -102,7 +105,7 @@ Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannte
    $ cd /home/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp/libs
    $ make
 
 
@@ -265,7 +268,7 @@ Dabei wird Qt über Windows-CLI und OpenSSL unter MSYS2 gebaut.
 
 #. cd c:\msys64\home\user\qt
 
-#. cmake -DCMAKE_BUILD_TYPE=release C:/AusweisApp2/libs -G "MinGW Makefiles"
+#. cmake -DCMAKE_BUILD_TYPE=release C:/AusweisApp/libs -G "MinGW Makefiles"
 
 #. MSYS2 Shell starten ("msys2_shell.cmd -use-full-path")
 
@@ -294,7 +297,7 @@ OpenSSL / Qt mit MSVC
 
 #. call vcvarsall.bat amd64
 
-#. cmake -DCMAKE_BUILD_TYPE=release C:/AusweisApp2/libs -G "NMake Makefiles"
+#. cmake -DCMAKE_BUILD_TYPE=release C:/AusweisApp/libs -G "NMake Makefiles"
 
 #. nmake
 
@@ -308,14 +311,14 @@ auf dem Mac vorhanden sein. Die folgende Anleitung wurde unter macOS 10.12 getes
 Ebenfalls muss für den Build-Vorgang von Qt ein iOS Developer-Zertifikat mit Wildcard (*)
 im Keystore von MacOS hinterlegt sein.
 
-Beispiel: Innerhalb von /Users/governikus/AusweisApp2 befindet sich der Quellcode.
+Beispiel: Innerhalb von /Users/governikus/AusweisApp befindet sich der Quellcode.
 
 ::
 
    $ cd /Users/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake ../AusweisApp2/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/iOS.toolchain.cmake ../AusweisApp/libs
    $ make
 
 
@@ -357,14 +360,14 @@ Komponenten vorhanden sein:
 
 
 
-Beispiel: Innerhalb von /home/governikus/AusweisApp2 befindet sich der Quellcode.
+Beispiel: Innerhalb von /home/governikus/AusweisApp befindet sich der Quellcode.
 
 ::
 
    $ cd /home/governikus
    $ mkdir build
    $ cd build
-   $ cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/android.toolchain.cmake ../AusweisApp2/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/android.toolchain.cmake ../AusweisApp/libs
    $ make
 
 Standardmäßig wird die Architektur "armeabi-v7a" gewählt. Um zum Beispiel die Toolchain für x86-Architektur

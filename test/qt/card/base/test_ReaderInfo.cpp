@@ -31,12 +31,11 @@ class test_ReaderInfo
 			QTest::addColumn<CardType>("type");
 			QTest::addColumn<bool>("hasCard");
 			QTest::addColumn<bool>("hasEid");
-			QTest::addColumn<bool>("physicalCard");
 
-			QTest::newRow("none") << CardType::NONE << false << false << false;
-			QTest::newRow("unknown") << CardType::UNKNOWN << true << false << false;
-			QTest::newRow("eid-card") << CardType::EID_CARD << true << true << true;
-			QTest::newRow("smart-eid") << CardType::SMART_EID << true << true << false;
+			QTest::newRow("none") << CardType::NONE << false << false;
+			QTest::newRow("unknown") << CardType::UNKNOWN << true << false;
+			QTest::newRow("eid-card") << CardType::EID_CARD << true << true;
+			QTest::newRow("smart-eid") << CardType::SMART_EID << true << true;
 		}
 
 
@@ -45,14 +44,12 @@ class test_ReaderInfo
 			QFETCH(CardType, type);
 			QFETCH(bool, hasCard);
 			QFETCH(bool, hasEid);
-			QFETCH(bool, physicalCard);
 
 			const ReaderInfo info(QStringLiteral("Reader"), ReaderManagerPlugInType::UNKNOWN, CardInfo(type, nullptr, 3, false, false));
 
 			QCOMPARE(info.getCardType(), type);
 			QCOMPARE(info.hasCard(), hasCard);
 			QCOMPARE(info.hasEid(), hasEid);
-			QCOMPARE(info.isPhysicalCard(), physicalCard);
 		}
 
 

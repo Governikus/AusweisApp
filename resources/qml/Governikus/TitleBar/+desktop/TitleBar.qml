@@ -1,202 +1,165 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
-Item {
+Rectangle {
 	id: titleBar
 
 	property var contentRoot
-	property var rightMostAction: actionRow.lastAction
+	readonly property alias title: title.text
 
 	signal rootClicked
 
-	function addRecursive(root) {
-		for (var i in root.children) {
-			var child = root.children[i];
-			if (child.sectionPageTypeMarker && child.visible) {
-				if (child.titleBarAction) {
-					actionRow.children.push(child.titleBarAction);
-				}
-				addRecursive(child);
-			}
-		}
-	}
-	function buildAccessibleName(visibleActionsCount) {
-		//: LABEL DESKTOP
-		var accessible_name = qsTr("Navigation bar") + ", ";
-		//: LABEL DESKTOP
-		accessible_name += qsTr("List") + ", ";
-		if (actionRow.children.length > 1) {
-			//: LABEL DESKTOP
-			accessible_name += qsTr("%1 elements").arg(visibleActionsCount);
-		} else {
-			//: LABEL DESKTOP
-			accessible_name += qsTr("1 element");
-		}
-		return accessible_name;
-	}
-	function getVisibleTitleBarActionCount() {
-		var count = 0;
-		for (var i = 0; i < actionRow.children.length; i++) {
-			if (actionRow.children[i].visible) {
-				count += 1;
-			}
-		}
-		return count;
-	}
 	function setActiveFocus() {
 		forceActiveFocus(Qt.MouseFocusReason);
 	}
 	function updateActions() {
-		actionRow.children = [rootAction];
-		addRecursive(contentRoot);
-		let visibleActionsCount = getVisibleTitleBarActionCount();
-		Accessible.name = buildAccessibleName(visibleActionsCount);
-		updateListIndexAndLength(visibleActionsCount);
-	}
-	function updateListIndexAndLength(visibleActionsCount) {
-		var idx = 1;
-		for (var i = 0; i < actionRow.children.length; i++) {
-			if (actionRow.children[i].visible) {
-				actionRow.children[i].list_index = idx;
-				actionRow.children[i].list_length = visibleActionsCount;
-				idx += 1;
-			}
-		}
+		d.actions = [rootAction];
+		d.addRecursive(contentRoot);
 	}
 
+	//: LABEL DESKTOP
+	Accessible.name: qsTr("Title bar")
 	Accessible.role: Accessible.Grouping
 	activeFocusOnTab: true
-	height: actionRow.height + 2 * Style.dimens.titlebar_padding
+	color: Style.color.background
+	height: titleBarColumn.height
 
-	Rectangle {
-		anchors.fill: parent
-		color: Style.color.navigation
+	QtObject {
+		id: d
 
-		GSeparator {
-			color: Style.color.high_contrast_item_border
-			height: Style.dimens.high_contrast_item_border
+		property list<Item> actions
+		readonly property TitleBarAction currentAction: actions && actions.length > 0 ? actions[actions.length - 1] : rootAction
+		readonly property TitleBarAction prevAction: actions && actions.length > 1 ? actions[actions.length - 2] : rootAction
 
-			anchors {
-				bottom: parent.bottom
-				left: parent.left
-				right: parent.right
+		function addRecursive(root) {
+			for (let i in root.children) {
+				let child = root.children[i];
+				if (child.breadcrumpSearchPath && child.visible) {
+					if (child instanceof SectionPage && child.titleBarAction) {
+						actions.push(child.titleBarAction);
+					}
+					addRecursive(child);
+				}
 			}
 		}
-		FocusPoint {
-			isOnLightBackground: false
-			scope: titleBar
-		}
+	}
+	FocusPoint {
+	}
+	Column {
+		id: titleBarColumn
+
+		width: parent.width
+
 		Item {
-			anchors.left: parent.left
-			anchors.right: rightTitleBarActions.left
-			anchors.rightMargin: Style.dimens.titlebar_padding
-			clip: true
-			height: parent.height
+			id: firstRow
 
-			Row {
-				id: actionRow
+			height: rootAction.height + 2 * Style.dimens.titlebar_padding
+			width: parent.width
 
-				readonly property bool childrenFitSpace: childrenRect.width <= width
-				readonly property Item lastAction: children && children.length > 0 ? children[children.length - 1] : rootAction
+			TitleBarAction {
+				id: rootAction
 
+				activeFocusOnTab: true
 				anchors.left: parent.left
-				anchors.leftMargin: Style.dimens.titlebar_padding
-				anchors.right: parent.right
 				anchors.verticalCenter: parent.verticalCenter
-				height: rootAction.height
+				enabled: d.currentAction.rootEnabled
+				icon.source: "qrc:///images/desktop/home.svg"
+				//: LABEL DESKTOP
+				text: qsTr("Start page")
+
+				onClicked: titleBar.rootClicked()
+			}
+			Row {
+				id: rightTitleBarActions
+
+				anchors.bottom: parent.bottom
+				anchors.margins: Style.dimens.titlebar_padding
+				anchors.right: parent.right
+				anchors.top: parent.top
 				spacing: Style.dimens.titlebar_padding
 
-				TitleBarAction {
-					id: rootAction
-					active: rightMostAction.rootEnabled
-					activeFocusOnTab: true
-					helpTopic: "applicationOverview"
-					showArrow: false
-					//: LABEL DESKTOP
-					text: qsTr("Start page")
+				TitleBarButton {
+					Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name)
+					height: rightTitleBarActions.height
+					source: "qrc:///images/desktop/material_settings_white.svg"
+					text: qsTr("Settings")
+					visible: d.currentAction.showSettings
 
-					onClicked: titleBar.rootClicked()
+					onClicked: d.currentAction.settingsHandler()
+				}
+				TitleBarButton {
+					id: notifyButton
+
+					Accessible.description: qsTr("Show in-app notifications of %1").arg(Qt.application.name)
+					height: rightTitleBarActions.height
+					iconColor: notifications.iconColor
+					source: notifications.unreadMessages ? "qrc:///images/desktop/notifications_on.svg" : "qrc:///images/desktop/notifications_off.svg"
+					text: qsTr("Notifications")
+					visible: SettingsModel.showInAppNotifications
+
+					onClicked: notifications.toggle()
 				}
 			}
 		}
-		Rectangle {
-			anchors.right: rightTitleBarActions.left
-			anchors.rightMargin: Style.dimens.titlebar_padding
-			height: parent.height
-			visible: !actionRow.childrenFitSpace
-			width: Constants.pane_padding
+		TitlePane {
+			id: titlePane
 
-			gradient: Gradient {
-				orientation: Gradient.Horizontal
-
-				GradientStop {
-					color: Style.color.transparent
-					position: 0.0
-				}
-				GradientStop {
-					color: Style.color.navigation
-					position: 1.0
-				}
-			}
+			visible: d.actions.length > 1
+			width: parent.width
 		}
 		Row {
-			id: rightTitleBarActions
-			anchors.bottom: parent.bottom
-			anchors.margins: Style.dimens.titlebar_padding
-			anchors.right: parent.right
-			anchors.top: parent.top
-			spacing: Style.dimens.titlebar_padding
+			height: title.height
+			leftPadding: Constants.pane_padding
+			visible: titlePane.visible
+			width: parent.width
 
 			Item {
-				data: rightMostAction.customSubAction
+				data: d.currentAction.customSubAction
 				height: parent.height
-				width: childrenRect.width
+				width: d.currentAction.customSubAction.visible ? Math.max(childrenRect.width, backAction.width) : 0
 			}
-			TitleBarButton {
-				id: settingsButton
-				Accessible.description: qsTr("Open settings view of %1").arg(Qt.application.name)
-				height: rightTitleBarActions.height
-				source: "qrc:///images/material_settings.svg"
-				text: qsTr("Settings")
-				visible: rightMostAction.showSettings
+			NavigationAction {
+				id: backAction
 
-				onClicked: rightMostAction.settingsHandler()
-			}
-			TitleBarButton {
-				id: helpButton
-				Accessible.description: qsTr("Open online help of %1 in browser").arg(Qt.application.name)
-				height: rightTitleBarActions.height
-				source: "qrc:///images/desktop/material_menu_book.svg"
-				text: qsTr("Open online help in browser")
-				visible: rightMostAction.showHelp
+				height: parent.height
+				type: NavigationAction.Action.Back
+				visible: !d.currentAction.customSubAction.visible
+				width: 1.5 * implicitWidth
 
-				onClicked: ApplicationModel.openOnlineHelp(rightMostAction.helpTopic)
+				onClicked: d.prevAction.clicked()
 			}
-			TitleBarButton {
-				id: notifyButton
-				Accessible.description: qsTr("Show in-app notifications of %1").arg(Qt.application.name)
-				height: rightTitleBarActions.height
-				iconColor: notifications.iconColor
-				source: "qrc:///images/desktop/material_notifications.svg"
-				text: qsTr("Notifications")
-				visible: SettingsModel.showInAppNotifications
+			GText {
+				id: title
 
-				onClicked: notifications.toggle()
+				font.bold: true
+				text: d.currentAction.text
+				textStyle: Style.text.title
 			}
+		}
+	}
+	GSeparator {
+		color: Style.color.pane_border
+		height: Style.dimens.border_width
+
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
+			right: parent.right
 		}
 	}
 	Notifications {
 		id: notifications
-		anchors.right: parent.right
-		anchors.top: parent.bottom
-		z: -1 // Draw below the title bar, but place Notifications after the notifyButton, so that the tab order makes sense
+
+		anchors.left: parent.right
+		anchors.top: parent.top
+		anchors.topMargin: firstRow.height
 
 		onNewNotification: notifyButton.notify()
 	}

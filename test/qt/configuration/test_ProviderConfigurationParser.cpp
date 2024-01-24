@@ -224,8 +224,8 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int all = 112;
-			const int withEidSupport = 90;
+			const int all = 122;
+			const int withEidSupport = 100;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;

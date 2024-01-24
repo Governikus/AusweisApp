@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.17
+ARG ALPINE_VERSION=3.18
 
 FROM alpine:$ALPINE_VERSION as builder
 # Install development stuff
@@ -6,7 +6,7 @@ RUN apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs perl python3 linux-headers
 
 # Use optional remote ccache
-# redis://YOUR_SERVER:6379|share-hits=false
+# redis://YOUR_SERVER:6379
 ARG CCACHE_REMOTE_STORAGE=""
 ENV CCACHE_REMOTE_STORAGE=$CCACHE_REMOTE_STORAGE CCACHE_REMOTE_ONLY=true CCACHE_RESHARE=true CCACHE_DIR=/build/ccache
 
@@ -21,7 +21,7 @@ RUN cmake /src/libs/ -B /build/libs \
     cmake --build /build/libs && \
     ccache -s -vv && rm -rf /build
 
-# Build AusweisApp2
+# Build AusweisApp
 COPY docs/ /src/ausweisapp/docs/
 COPY CMakeLists.txt /src/ausweisapp/
 COPY cmake/ /src/ausweisapp/cmake/
@@ -39,7 +39,7 @@ RUN cmake /src/ausweisapp -B /build/app \
 RUN find /usr/local/ -type d -empty -delete && \
     find /usr/local/lib/ -type f -not -name "*.so*" -delete && \
     find /usr/local/lib/ -type f -name "*.so*" -exec strip {} + && \
-    strip /usr/local/bin/AusweisApp2
+    strip /usr/local/bin/AusweisApp
 
 
 
@@ -48,7 +48,7 @@ FROM alpine:$ALPINE_VERSION
 COPY --from=builder /usr/local/plugins /usr/local/plugins
 COPY --from=builder /usr/local/lib /usr/local/lib
 COPY --from=builder /usr/local/share /usr/local/share
-COPY --from=builder /usr/local/bin/AusweisApp2 /usr/local/bin/AusweisApp2
+COPY --from=builder /usr/local/bin/AusweisApp /usr/local/bin/AusweisApp
 
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add tini pcsc-lite pcsc-lite-libs ccid pcsc-cyberjack acsccid eudev-libs doas && \
@@ -60,4 +60,4 @@ USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]
 ENTRYPOINT ["/sbin/tini", "--"]
 EXPOSE 24727
-CMD ["AusweisApp2", "--address", "0.0.0.0"]
+CMD ["AusweisApp", "--address", "0.0.0.0"]

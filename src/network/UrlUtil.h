@@ -10,6 +10,8 @@
 
 #include "ECardApiResult.h"
 
+#include "EnumHelper.h"
+
 #include <QString>
 #include <QUrl>
 #include <QUrlQuery>
@@ -55,6 +57,14 @@ class UrlUtil
 
 		static void setHiddenSettings(const QUrlQuery& pUrl);
 		static QPair<UrlQueryRequest, QString> getRequest(const QUrlQuery& pUrl);
+
+		template<typename T>
+		static T prepareToEnum(const QString& pStr, T pDefault)
+		{
+			return Enum<T>::fromString(pStr.toUpper().replace(QLatin1Char('-'), QLatin1Char('_')), pDefault);
+		}
+
+
 };
 
 } // namespace governikus

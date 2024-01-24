@@ -28,7 +28,7 @@ class ReaderConfigurationInfo
 			public:
 				const bool mKnown;
 				const uint mVendorId;
-				const uint mProductId;
+				const QSet<uint> mProductIds;
 				const QString mName;
 				const QString mUrl;
 				const QString mPattern;
@@ -36,11 +36,11 @@ class ReaderConfigurationInfo
 				const QString mIconWithNPA;
 
 
-				InternalInfo(bool pKnown, uint pVendorId, uint pProductId, const QString& pName, const QString& pUrl,
+				InternalInfo(bool pKnown, uint pVendorId, const QSet<uint>& pProductIds, const QString& pName, const QString& pUrl,
 						const QString& pPattern, const QString& pIcon, const QString& pIconWithNPA)
 					: mKnown(pKnown)
 					, mVendorId(pVendorId)
-					, mProductId(pProductId)
+					, mProductIds(pProductIds)
 					, mName(pName)
 					, mUrl(pUrl)
 					, mPattern(pPattern)
@@ -54,7 +54,7 @@ class ReaderConfigurationInfo
 				{
 					return !(mKnown != pOther.mKnown ||
 						   mVendorId != pOther.mVendorId ||
-						   mProductId != pOther.mProductId ||
+						   mProductIds != pOther.mProductIds ||
 						   mName != pOther.mName ||
 						   mUrl != pOther.mUrl ||
 						   mPattern != pOther.mPattern ||
@@ -70,7 +70,7 @@ class ReaderConfigurationInfo
 	public:
 		ReaderConfigurationInfo();
 		explicit ReaderConfigurationInfo(const QString& pReaderName);
-		ReaderConfigurationInfo(uint pVendorId, uint pProductId,
+		ReaderConfigurationInfo(uint pVendorId, const QSet<uint>& pProductIds,
 				const QString& pName, const QString& pUrl, const QString& pPattern,
 				const QString& pIcon, const QString& pIconWithNPA);
 
@@ -80,7 +80,7 @@ class ReaderConfigurationInfo
 
 		[[nodiscard]] bool isKnownReader() const;
 		[[nodiscard]] uint getVendorId() const;
-		[[nodiscard]] uint getProductId() const;
+		[[nodiscard]] QSet<uint> getProductIds() const;
 		[[nodiscard]] const QString& getName() const;
 		[[nodiscard]] const QString& getUrl() const;
 		[[nodiscard]] const QString& getPattern() const;

@@ -30,12 +30,15 @@ class MockIfdDispatcher
 
 	private:
 		DispatcherState mState;
+		bool mPairing;
 		QString mId;
 		QString mContextHandle;
 
 	public:
 		MockIfdDispatcher(DispatcherState pState = DispatcherState::WithoutReader);
 
+		void setPairingConnection(bool pPairing);
+		[[nodiscard]] bool isPairingConnection() const override;
 		[[nodiscard]] QString getId() const override;
 		[[nodiscard]] const QString& getContextHandle() const override;
 		Q_INVOKABLE void send(const QSharedPointer<const IfdMessage>& pMessage) override;

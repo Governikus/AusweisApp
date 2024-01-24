@@ -13,7 +13,7 @@ j.with
 {
 	parameters
 	{
-		booleanParam("USE_DISTRIBUTION_PROFILE", true, "Use the provisioning profile necessary to upload AusweisApp2 to the AppStore")
+		booleanParam("USE_DISTRIBUTION_PROFILE", true, "Use the provisioning profile necessary to upload AusweisApp to the AppStore")
 	}
 
 	steps
@@ -24,9 +24,9 @@ j.with
 
 		shell('cd source; cmake --preset ci-ios -DUSE_DISTRIBUTION_PROFILE=${USE_DISTRIBUTION_PROFILE}')
 
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive')
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
-		shell('cmake -E tar cf AusweisApp2_BuildDir.tar.zstd --zstd build')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
+		shell('cmake -E tar cf AusweisApp_BuildDir.tar.zstd --zstd build')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
 
 		conditionalSteps

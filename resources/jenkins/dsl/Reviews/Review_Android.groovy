@@ -10,7 +10,7 @@ def j = new Review
 		name: 'Android_APK_' + ARCH,
 		libraries: ['Android_' + ARCH],
 		label: 'Android',
-		artifacts: 'build/dist/**/AusweisApp2-*.apk*,build/debug.symbols/*'
+		artifacts: 'build/dist/**/AusweisApp-*.apk*,build/debug.symbols/*'
 	).generate(this)
 
 

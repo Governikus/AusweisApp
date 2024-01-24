@@ -18,7 +18,34 @@ class test_WorkflowContext
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<WorkflowContext> mContext;
+	QSharedPointer<TestWorkflowContext> mContext;
+
+	private:
+		QVector<AcceptedEidType> allow_all_types()
+		{
+			return QVector<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::HW_KEYSTORE, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED});
+		}
+
+
+		QVector<AcceptedEidType> allow_all_types_but(const AcceptedEidType& pType)
+		{
+			auto types = allow_all_types();
+			types.removeOne(pType);
+			return types;
+		}
+
+
+		QVector<AcceptedEidType> allow_only(std::initializer_list<AcceptedEidType> pTypes)
+		{
+			return QVector<AcceptedEidType>(pTypes);
+		}
+
+
+		QSharedPointer<CardConnection> createCardConnection(CardType pCardType)
+		{
+			auto readerInfo = ReaderInfo("reader", ReaderManagerPlugInType::UNKNOWN, CardInfo(pCardType));
+			return QSharedPointer<CardConnection>(new MockCardConnection(readerInfo));
+		}
 
 	private Q_SLOTS:
 		void init()
@@ -270,6 +297,72 @@ class test_WorkflowContext
 			QTest::ignoreMessage(QtWarningMsg, "FailureCode already set to Card_Removed - ignoring User_Cancelled");
 			mContext->setFailureCode(FailureCode::Reason::User_Cancelled);
 			QCOMPARE(firstFailureCode->getReason(), FailureCode::Reason::Card_Removed);
+		}
+
+
+		void test_eidTypeMismatch_data()
+		{
+			QTest::addColumn<QSharedPointer<CardConnection>>("cardConnection");
+			QTest::addColumn<QVector<AcceptedEidType>>("acceptedTypes");
+			QTest::addColumn<bool>("result");
+
+			QTest::addRow("No error when no cardconnection 1") << QSharedPointer<CardConnection>() << QVector<AcceptedEidType>() << false;
+			QTest::addRow("No error when no cardconnection 2") << QSharedPointer<CardConnection>() << allow_all_types() << false;
+
+			QTest::addRow("No error when no card") << createCardConnection(CardType::NONE) << QVector<AcceptedEidType>() << false;
+
+			QTest::addRow("ID card allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types() << false;
+			QTest::addRow("ID card not allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types_but(AcceptedEidType::CARD_CERTIFIED) << true;
+
+			QTest::addRow("Smart-eID with unknown EidType not allowed") << createCardConnection(CardType::SMART_EID) << allow_only({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED}) << true;
+		}
+
+
+		void test_eidTypeMismatch()
+		{
+			QFETCH(QSharedPointer<CardConnection>, cardConnection);
+			QFETCH(QVector<AcceptedEidType>, acceptedTypes);
+			QFETCH(bool, result);
+
+			mContext->setAcceptedEidTypes(acceptedTypes);
+			mContext->setCardConnection(cardConnection);
+
+			QCOMPARE(mContext->eidTypeMismatch(), result);
+		}
+
+
+		void test_isMobileEidTypeAllowed_data()
+		{
+			QTest::addColumn<MobileEidType>("mobileEidType");
+			QTest::addColumn<QVector<AcceptedEidType>>("acceptedTypes");
+			QTest::addColumn<bool>("result");
+
+			QTest::addRow("UNKNOWN not allowed") << MobileEidType::UNKNOWN << allow_all_types() << false;
+			QTest::addRow("All allowed 1") << MobileEidType::HW_KEYSTORE << allow_all_types() << true;
+			QTest::addRow("All allowed 2") << MobileEidType::SE_CERTIFIED << allow_all_types() << true;
+			QTest::addRow("All allowed 3") << MobileEidType::SE_ENDORSED << allow_all_types() << true;
+
+			QTest::addRow("Only id card allowed 1") << MobileEidType::HW_KEYSTORE << allow_only({AcceptedEidType::CARD_CERTIFIED}) << false;
+			QTest::addRow("Only id card allowed 2") << MobileEidType::SE_CERTIFIED << allow_only({AcceptedEidType::CARD_CERTIFIED}) << false;
+			QTest::addRow("Only id card allowed 3") << MobileEidType::SE_ENDORSED << allow_only({AcceptedEidType::CARD_CERTIFIED}) << false;
+
+			QTest::addRow("Specific type not allowed") << MobileEidType::SE_ENDORSED << allow_all_types_but(AcceptedEidType::SE_ENDORSED) << false;
+
+			QTest::addRow("Specific type allowed 1") << MobileEidType::HW_KEYSTORE << allow_only({AcceptedEidType::HW_KEYSTORE}) << true;
+			QTest::addRow("Specific type allowed 2") << MobileEidType::SE_CERTIFIED << allow_only({AcceptedEidType::SE_CERTIFIED}) << true;
+			QTest::addRow("Specific type allowed 3") << MobileEidType::SE_ENDORSED << allow_only({AcceptedEidType::SE_ENDORSED}) << true;
+		}
+
+
+		void test_isMobileEidTypeAllowed()
+		{
+			QFETCH(MobileEidType, mobileEidType);
+			QFETCH(QVector<AcceptedEidType>, acceptedTypes);
+			QFETCH(bool, result);
+
+			mContext->setAcceptedEidTypes(acceptedTypes);
+
+			QCOMPARE(mContext->isMobileEidTypeAllowed(mobileEidType), result);
 		}
 
 

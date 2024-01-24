@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.PinResetInformationModel 1.0
-import Governikus.Type.WorkflowModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Type.PasswordType
+import Governikus.Type.PinResetInformationModel
+import Governikus.Type.WorkflowModel
 
 Item {
 	id: root
@@ -15,17 +15,19 @@ Item {
 	readonly property var contentList: infoContent.contentList
 	property int contentType
 	readonly property string hint: infoContent.hint
-	readonly property int imageType: infoContent.imageType
+	readonly property string hintButtonText: infoContent.hintButtonText
 	readonly property PasswordInfoContent infoContent: {
 		switch (contentType) {
 		case PasswordInfoContent.Type.PIN:
 			return pinInfo;
+		case PasswordInfoContent.Type.SMART_PIN:
+			return smartPinInfo;
 		case PasswordInfoContent.Type.CHOOSE_PIN:
 			return choosePinInfo;
+		case PasswordInfoContent.Type.CHOOSE_SMART_PIN:
+			return chooseSmartPinInfo;
 		case PasswordInfoContent.Type.TRANSPORT_PIN:
 			return transportPinInfo;
-		case PasswordInfoContent.Type.SMARTPHONE_AS_CARD_READER:
-			return smartphoneAsCardReaderInfo;
 		case PasswordInfoContent.Type.PUK:
 			return pukInfo;
 		case PasswordInfoContent.Type.CAN:
@@ -38,6 +40,8 @@ Item {
 			return smartBlockingCodeInfo;
 		case PasswordInfoContent.Type.NO_PIN:
 			return noPin;
+		case PasswordInfoContent.Type.EMPTY:
+			return empty;
 		default:
 			return pinInfo;
 		}
@@ -49,23 +53,38 @@ Item {
 		switch (pPasswordType) {
 		case PasswordType.PIN:
 			return PasswordInfoContent.Type.PIN;
+		case PasswordType.SMART_PIN:
+			return PasswordInfoContent.Type.SMART_PIN;
 		case PasswordType.CAN:
 			return pIsCanAllowedMode ? PasswordInfoContent.Type.CAN_ALLOWED : PasswordInfoContent.Type.CAN;
 		case PasswordType.PUK:
 			return PasswordInfoContent.Type.PUK;
 		case PasswordType.NEW_PIN:
 			return PasswordInfoContent.Type.CHOOSE_PIN;
+		case PasswordType.NEW_SMART_PIN:
+			return PasswordInfoContent.Type.CHOOSE_SMART_PIN;
+		case PasswordType.NEW_PIN_CONFIRMATION:
+		case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+			return PasswordInfoContent.Type.EMPTY;
 		case PasswordType.TRANSPORT_PIN:
 			return PasswordInfoContent.Type.TRANSPORT_PIN;
+		case PasswordType.SMART_BLOCKING_CODE:
+			return PasswordInfoContent.Type.SMART_BLOCKING_CODE;
 		default:
 			return PasswordInfoContent.Type.PIN;
 		}
 	}
 
 	PasswordInfoContent {
+		id: empty
+
+		linkText: ""
+	}
+	PasswordInfoContent {
 		id: pinInfo
-		//: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		hint: qsTr("If you have forgotten your card PIN, you can request a new PIN free of charge using the PIN Reset Service.")
+
+		hint: PinResetInformationModel.pinResetHint
+		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
 		linkText: qsTr("What is the card PIN?")
@@ -74,18 +93,46 @@ Item {
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.PIN
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("What is the card PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'what is the card pin?'
-					qsTr("The card PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use the eID function.")]
+					qsTr("The card PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use the eID function with your ID card.")]
 			},
 			PasswordInfoContentBlock {
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("Where can I find the card PIN?")
 				paragraphList: [
-					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?'
-					qsTr("You set the card PIN either directly when you picked up your ID card at the citizens' office (Bürgeramt) or later in AusweisApp2 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function.")]
+					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the card PIN?' (%1 is replaced with the application name)
+					qsTr("You set the card PIN either directly when you picked up your ID card at the citizens' office (Bürgeramt) or later in %1 using the five-digit Transport PIN. Only when you have set a six-digit PIN of your own choice can you use the eID function and set up a Smart-eID.").arg(Qt.application.name)]
+			}
+		]
+	}
+	PasswordInfoContent {
+		id: smartPinInfo
+
+		//: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
+		hint: qsTr("If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.")
+		//: LABEL ALL_PLATFORMS
+		linkText: qsTr("What is the Smart-eID PIN?")
+		//: LABEL ALL_PLATFORMS
+		title: qsTr("PIN information")
+
+		contentList: [
+			PasswordInfoContentBlock {
+				//: LABEL ALL_PLATFORMS
+				blockTitle: qsTr("What is the Smart-eID PIN?")
+				paragraphList: [
+					//: INFO ALL_PLATFORMS Answer to the question 'what is the Smart-eID pin?'
+					qsTr("The Smart-eID PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.")]
+			},
+			PasswordInfoContentBlock {
+				//: LABEL ALL_PLATFORMS
+				blockTitle: qsTr("Where can I find the Smart-eID PIN?")
+				paragraphList: [
+					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the Smart-eID PIN?'
+					qsTr("You have set the Smart-eID PIN while setting up the Smart-eID.")]
 			}
 		]
 	}
@@ -104,19 +151,49 @@ Item {
 				blockTitle: qsTr("How do I choose a secure PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 1/3
-					qsTr("For your 6-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
+					qsTr("For your six-digit PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 2/3
-					qsTr("You can change your 6-digit PIN at any time and an unlimited number of times as long as you know your valid PIN."),
+					qsTr("You can change your six-digit PIN at any time and an unlimited number of times as long as you know your valid PIN."),
 					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure PIN?' paragraph 3/3
 					qsTr("Keep your PIN secret and change it if another person becomes aware of it.")]
 			}
 		]
 	}
 	PasswordInfoContent {
+		id: chooseSmartPinInfo
+
+		//: LABEL ALL_PLATFORMS
+		linkText: qsTr("What is the Smart-eID PIN?")
+
+		//: LABEL ALL_PLATFORMS
+		title: qsTr("Set up Smart-eID")
+
+		contentList: [
+			PasswordInfoContentBlock {
+				//: LABEL ALL_PLATFORMS
+				blockTitle: qsTr("What is the Smart-eID PIN?")
+				paragraphList: [
+					//: INFO ALL_PLATFORMS Answer to the question 'what is the Smart-eID pin?'
+					qsTr("The Smart-eID PIN is a six-digit PIN that you set yourself. You always need this PIN if you want to use your Smart-eID.")]
+			},
+			PasswordInfoContentBlock {
+				//: LABEL ALL_PLATFORMS
+				blockTitle: qsTr("How do I choose a secure PIN?")
+				paragraphList: [
+					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 1/3
+					qsTr("For your six-digit Smart-eID PIN, choose a combination of numbers that cannot be guessed - i.e. neither \"123456\", nor your date of birth, nor any other numbers printed on your ID card."),
+					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 2/3
+					qsTr("You can change your six-digit Smart-eID PIN at any time and an unlimited number of times as long as you know your valid Smart-eID PIN."),
+					//: INFO ALL_PLATFORMS Answer to the question 'How do I choose a secure (Smart-eID) PIN?' paragraph 3/3
+					qsTr("Keep your PIN secret and change it if another person becomes aware of it.")]
+			}
+		]
+	}
+	PasswordInfoContent {
 		id: transportPinInfo
-		//: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		hint: qsTr("If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.")
-		imageType: PasswordInfoImage.LETTER
+
+		hint: PinResetInformationModel.pinResetHintTransportPin
+		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
 		linkText: qsTr("What is the Transport PIN?")
@@ -125,41 +202,24 @@ Item {
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.LETTER
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("What is the Transport PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 1/3
-					qsTr("The 5-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card."),
+					qsTr("The five-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card."),
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 2/3
-					qsTr("If you did not set a self-selected 6-digit card PIN when you picked up your ID card, you can do so using the Transport PIN."),
+					qsTr("If you did not set a self-selected six-digit card PIN when you picked up your ID card, you can do so using the Transport PIN."),
 					//: INFO ALL_PLATFORMS Answer to the question 'What is the Transport PIN?' paragraph 3/3
 					qsTr("Once you have set a card PIN, the Transport PIN loses its validity.")]
 			}
 		]
 	}
 	PasswordInfoContent {
-		id: smartphoneAsCardReaderInfo
-		imageType: PasswordInfoImage.SMARTPHONE_AS_CARD_READER
-
-		//: LABEL ALL_PLATFORMS
-		title: qsTr("Smartphone as card reader information")
-
-		contentList: [
-			PasswordInfoContentBlock {
-				//: LABEL ALL_PLATFORMS
-				blockTitle: qsTr("Smartphone as card reader information")
-				paragraphList: [
-					//: INFO ALL_PLATFORMS Description text of SaC pairing
-					qsTr("You may use your smartphone as a card reader with AusweisApp2. The smartphone needs to feature a supported NFC chipset and both devices, your smartphone and this machine, need to be connected to the same WiFi network."),
-					//: INFO ALL_PLATFORMS Description text of SaC pairing
-					qsTr("To use your smartphone as a card reader you'll always need to activate the remote service in the AusweisApp2 on the smartphone. For the first time you'll also need to start the pairing mode on your smartphone, select the device from the list of available devices on this machine and then enter the pairing code shown on the phone.")]
-			}
-		]
-	}
-	PasswordInfoContent {
 		id: pukInfo
+
 		hint: PinResetInformationModel.noPinAndNoPukHint
-		imageType: PasswordInfoImage.LETTER_PUK
+		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
 		linkText: qsTr("Where do I find the PUK?")
@@ -168,11 +228,12 @@ Item {
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.LETTER_PUK
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("Where do I find the PUK?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'Where do I find the PUK?'
-					qsTr("The PUK is a 10-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.")]
+					qsTr("The PUK is a ten-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.")]
 			},
 			PasswordInfoContentBlock {
 				//: LABEL ALL_PLATFORMS
@@ -192,7 +253,6 @@ Item {
 	}
 	PasswordInfoContent {
 		id: canInfo
-		imageType: PasswordInfoImage.CAN
 
 		//: LABEL ALL_PLATFORMS
 		linkText: qsTr("Why is the CAN required?")
@@ -201,6 +261,7 @@ Item {
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.CAN
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("When is the card access number (CAN) required?")
 				paragraphList: [
@@ -219,19 +280,22 @@ Item {
 				blockTitle: qsTr("Where can I find the CAN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS Answer to the question 'Where can I find the CAN?'
-					qsTr("The CAN is a 6-digit number that can be found on the bottom right of the front of the ID card.")]
+					qsTr("The CAN is a six-digit number that can be found on the bottom right of the front of the ID card.")]
 			}
 		]
 	}
 	PasswordInfoContent {
 		id: canAllowedInfo
-		imageType: PasswordInfoImage.CAN
 
+		//: LABEL ALL_PLATFORMS
+		linkText: qsTr("Why is the CAN required?")
 		//: LABEL ALL_PLATFORMS
 		title: qsTr("CAN information")
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.CAN
+
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("CAN information")
 				paragraphList: [
@@ -252,31 +316,42 @@ Item {
 			PasswordInfoContentBlock {
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("Learn more about the two types of PIN")
+				headline: true
 				paragraphList: [
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 1/6
-					qsTr("Your ID card comes with a 5-digit 'Transport PIN' which you need to replace with a 6-digit PIN that you choose yourself.")]
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 1/7
+					qsTr("Your ID card comes with a five-digit 'Transport PIN' which you need to replace with a six-digit PIN that you choose yourself.")]
 			},
 			PasswordInfoContentBlock {
 				blockHeaderImageType: PasswordInfoImage.Type.LETTER
 				//: LABEL ALL_PLATFORMS
-				blockTitle: qsTr("5-digit Transport PIN")
+				blockTitle: qsTr("Five-digit Transport PIN")
 				paragraphList: [
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 2/6
-					qsTr("The 5-digit Transport PIN was sent to you by post after you applied for your ID card."),
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 3/6
-					qsTr("The PIN can only be used once. When you set up the eID function, you will replace this 5-digit PIN with a 6-digit PIN that you choose yourself.")]
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 2/7
+					qsTr("The five-digit Transport PIN was sent to you by mail after you applied for your ID card."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 3/7
+					qsTr("The PIN can only be used once. When you set up the eID function, you will replace this five-digit Transport PIN with a six-digit card PIN that you choose yourself.")]
 			},
 			PasswordInfoContentBlock {
 				blockHeaderImageType: PasswordInfoImage.Type.PIN
 				//: LABEL ALL_PLATFORMS
-				blockTitle: qsTr("6-digit PIN")
-				paragraphList: [
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 4/6
-					qsTr("This is a number that you choose yourself when you set up the eID function for the first time. It replaces your 5-digit Transport PIN."),
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 5/6
-					qsTr("This PIN allows you to prove online that the ID card belongs to you. No one can use your ID card online without this PIN."),
-					//: INFO ALL_PLATFORMS Description text explaining the PINs 6/6
-					qsTr("You can change your 6-digit PIN at any time in AusweisApp2.")]
+				blockTitle: qsTr("Six-digit PIN")
+				paragraphList: WorkflowModel.isSmartSupported ? [
+
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 4/7
+					qsTr("The six-digit card PIN is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 5/7
+					qsTr("The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 6/7
+					qsTr("With this six-digit PIN you prove online that the ID card or Smart-eID belongs to you. No one can use the eID function without this PIN."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7
+					qsTr("You can change your card PIN and your Smart-eID PIN at any time in %1.").arg(Qt.application.name)] : [
+
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 4/7
+					qsTr("The six-digit card PIN is a number that you choose yourself when you set up the eID function for the first time. It replaces your five-digit Transport PIN."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs 6/7
+					qsTr("With this six-digit PIN you prove online that the ID card belongs to you. No one can use the eID function without this PIN."),
+					//: INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7
+					qsTr("You can change your card PIN at any time in %1.").arg(Qt.application.name)]
 			}
 		]
 	}
@@ -300,20 +375,22 @@ Item {
 	}
 	PasswordInfoContent {
 		id: noPin
-		//: LABEL ALL_PLATFORMS
-		hint: qsTr("You can use the PIN Reset Service to request a new card PIN free of charge.")
-		imageType: Constants.is_desktop ? PasswordInfoImage.NONE : PasswordInfoImage.NO_PIN
+
+		hint: PinResetInformationModel.pinResetHintNoPin
+		hintButtonText: PinResetInformationModel.pinResetActionText
 
 		//: LABEL ALL_PLATFORMS
 		title: qsTr("No PIN known")
 
 		contentList: [
 			PasswordInfoContentBlock {
+				blockHeaderImageType: PasswordInfoImage.NO_PIN
+
 				//: LABEL ALL_PLATFORMS
 				blockTitle: qsTr("You do not know your PIN?")
 				paragraphList: [
 					//: INFO ALL_PLATFORMS
-					qsTr("You have not yet set a 6-digit card PIN and cannot find the PIN letter with the Transport PIN?"),
+					qsTr("You have not yet set a six-digit card PIN and cannot find the PIN letter with the Transport PIN?"),
 					//: INFO ALL_PLATFORMS
 					qsTr("You set a card PIN when picking up your ID card or later by yourself, but you can no longer remember it?")]
 			}

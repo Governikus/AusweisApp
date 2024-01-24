@@ -3,7 +3,7 @@
  */
 
 /*!
- * \brief Helper state that installs the Smart-eID applet
+ * \brief Helper state that checks the current Smart-eID state
  */
 
 #pragma once
@@ -37,7 +37,9 @@ class StateCheckApplet
 		void onCommandDone(const QVariant& pResult);
 
 	Q_SIGNALS:
-		void fireFurtherStepRequired();
+		void fireInstallApplet();
+		void fireDeleteApplet();
+		void fireDeletePersonalization();
 
 };
 

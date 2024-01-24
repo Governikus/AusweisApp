@@ -11,7 +11,10 @@
 #include "IfdList.h"
 #include "IfdReaderManagerPlugIn.h"
 
+#include <QStringList>
 #include <QTimer>
+
+class test_RemoteIfdReaderManagerPlugIn;
 
 namespace governikus
 {
@@ -23,14 +26,18 @@ class RemoteIfdReaderManagerPlugIn
 	Q_PLUGIN_METADATA(IID "governikus.ReaderManagerPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
+	friend class ::test_RemoteIfdReaderManagerPlugIn;
+
 	private:
 		QTimer mScanTimer;
 		bool mConnectToPairedReaders;
-		bool mConnectionCheckInProgress;
+		QStringList mConnectionAttempts;
 
 	private Q_SLOTS:
 		void connectToPairedReaders();
 		void continueConnectToPairedReaders(const QVector<QSharedPointer<IfdListEntry>>& pRemoteDevices);
+		void onDeviceVanished(const QSharedPointer<IfdListEntry>& pEntry);
+		void onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus);
 
 	public:
 		RemoteIfdReaderManagerPlugIn();
@@ -40,7 +47,6 @@ class RemoteIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		bool isInitialPairing(const QString& pIfdName, const QString& pId) override;
 		IfdClient* getIfdClient() override;
 
 };

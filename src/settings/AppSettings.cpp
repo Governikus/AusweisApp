@@ -11,7 +11,6 @@ AppSettings::AppSettings()
 	: QObject()
 	, mGeneralSettings()
 	, mPreVerificationSettings()
-	, mHistorySettings()
 	, mRemoteReaderSettings()
 {
 }
@@ -26,12 +25,6 @@ GeneralSettings& AppSettings::getGeneralSettings()
 PreVerificationSettings& AppSettings::getPreVerificationSettings()
 {
 	return mPreVerificationSettings;
-}
-
-
-HistorySettings& AppSettings::getHistorySettings()
-{
-	return mHistorySettings;
 }
 
 

@@ -24,7 +24,7 @@ void StateTransmit::run()
 
 	auto cardConnection = getContext()->getCardConnection();
 	Q_ASSERT(cardConnection != nullptr);
-	mConnections += cardConnection->callTransmitCommand(this, &StateTransmit::onCardCommandDone, transmit->getInputApduInfos());
+	*this << cardConnection->callTransmitCommand(this, &StateTransmit::onCardCommandDone, transmit->getInputApduInfos());
 }
 
 

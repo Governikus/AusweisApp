@@ -1,16 +1,17 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
 
 Popup {
 	id: root
+
 	enum PopupStyle {
 		NoButtons,
 		OkButton,
@@ -21,7 +22,7 @@ Popup {
 	//: LABEL ALL_PLATFORMS
 	property string cancelButtonText: qsTr("Cancel")
 	default property alias children: customContent.children
-	property var horizontalTextAlignment: Text.AlignLeft
+	property int horizontalTextAlignment: Text.AlignLeft
 	//: LABEL ALL_PLATFORMS
 	property string okButtonText: qsTr("OK")
 	property int style: ConfirmationPopup.PopupStyle.OkButton | ConfirmationPopup.PopupStyle.CancelButton
@@ -45,95 +46,73 @@ Popup {
 	}
 
 	anchors.centerIn: Overlay.overlay
+	bottomMargin: Overlay.overlay ? 0.125 * Overlay.overlay.height : 0
 	closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
-	contentWidth: Overlay.overlay ? Math.min(0.75 * Overlay.overlay.width, Style.dimens.max_text_width) : 0
 	focus: true
-	margins: Constants.pane_padding
+	leftMargin: Overlay.overlay ? 0.125 * Overlay.overlay.width : 0
 	modal: true
-	padding: 0
+	padding: Constants.pane_padding / 2
 	parent: Overlay.overlay
-	topPadding: Constants.pane_padding
+	rightMargin: leftMargin
+	rightPadding: 0
+	topMargin: bottomMargin
 
 	background: Rectangle {
 		border.color: Style.color.border
 		border.width: Style.dimens.popup_border
-		color: Style.color.background_popup
-		radius: Style.dimens.corner_radius_popup
+		color: Style.color.background
+		radius: Style.dimens.pane_radius
 	}
-
-	Item {
-		id: contentItem
-		implicitHeight: contentLayout.height
-		implicitWidth: root.availableWidth
+	contentItem: GFlickableColumnLayout {
+		bottomMargin: Constants.pane_padding / 2
+		clip: true
+		leftMargin: Constants.pane_padding / 2
+		rightMargin: Constants.pane_padding
+		spacing: Constants.component_spacing
+		topMargin: Constants.pane_padding / 2
+		width: availableWidth
 
 		Keys.onEnterPressed: if (style & ConfirmationPopup.PopupStyle.OkButton)
 			root.accept()
 		Keys.onReturnPressed: if (style & ConfirmationPopup.PopupStyle.OkButton)
 			root.accept()
 
-		ColumnLayout {
-			id: contentLayout
-			spacing: Constants.pane_padding
-			width: parent.width
+		GText {
+			activeFocusOnTab: true
+			elide: Text.ElideRight
+			focus: true
+			font.bold: true
+			horizontalAlignment: root.horizontalTextAlignment
+			maximumLineCount: 5
+			text: root.title
+			textStyle: Style.text.headline
+			visible: root.title !== ""
 
-			GText {
-				Layout.fillWidth: true
-				Layout.leftMargin: Constants.pane_padding
-				Layout.rightMargin: Constants.pane_padding
-				activeFocusOnTab: true
-				elide: Text.ElideRight
-				focus: true
-				horizontalAlignment: root.horizontalTextAlignment
-				maximumLineCount: 5
-				text: root.title
-				textStyle: Style.text.header_highlight
-				visible: text !== ""
+			FocusFrame {
+			}
+		}
+		GText {
+			activeFocusOnTab: true
+			horizontalAlignment: root.horizontalTextAlignment
+			text: root.text
+			visible: root.text !== ""
 
-				FocusFrame {
-				}
+			FocusFrame {
 			}
-			Item {
-				Layout.fillWidth: true
-				implicitHeight: infoTextFlickable.implicitHeight
-				visible: infoText.text !== ""
+		}
+		Item {
+			id: customContent
 
-				GFlickable {
-					id: infoTextFlickable
-					anchors.fill: parent
-					anchors.leftMargin: Constants.pane_padding
-					anchors.rightMargin: Constants.pane_padding
-					clip: true
-					contentHeight: infoText.implicitHeight
-					contentWidth: width
-					implicitHeight: root.Overlay.overlay ? Math.min(infoText.height, 0.5 * root.Overlay.overlay.height) : 0
+			Layout.fillWidth: true
+			implicitHeight: childrenRect.height
+			visible: children.length > 0
+		}
+		Item {
+			id: buttonContainer
 
-					GText {
-						id: infoText
-						activeFocusOnTab: true
-						height: implicitHeight
-						horizontalAlignment: root.horizontalTextAlignment
-						rightPadding: Constants.pane_padding
-						text: root.text
-						width: parent.width
-					}
-				}
-				FocusFrame {
-					framee: infoTextFlickable
-					scope: infoText
-				}
-			}
-			Column {
-				id: customContent
-				Layout.fillWidth: true
-				Layout.leftMargin: Constants.pane_padding
-				Layout.rightMargin: Constants.pane_padding
-				visible: children.length > 0
-			}
-			Item {
-				id: buttonContainer
-				Layout.fillWidth: true
-				Layout.preferredHeight: childrenRect.height
-			}
+			Layout.fillWidth: true
+			implicitHeight: childrenRect.height
+			visible: style !== ConfirmationPopup.PopupStyle.NoButtons
 		}
 	}
 }

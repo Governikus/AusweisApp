@@ -4,8 +4,6 @@
 
 #include "DestroyPaceChannelCommand.h"
 
-#include "CardConnection.h"
-
 using namespace governikus;
 
 

@@ -25,7 +25,7 @@ WifiInfo::WifiInfo()
 }
 
 
-bool WifiInfo::getCurrentWifiEnabled()
+bool WifiInfo::getCurrentWifiEnabled() const
 {
 	QJniEnvironment env;
 	const QJniObject context(QNativeInterface::QAndroidApplication::context());
@@ -68,7 +68,7 @@ void WifiInfo::timerEvent(QTimerEvent* pEvent)
 }
 
 
-bool WifiInfo::isWifiEnabled()
+bool WifiInfo::isWifiEnabled() const
 {
 	return mWifiEnabled;
 }

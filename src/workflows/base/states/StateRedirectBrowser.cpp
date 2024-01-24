@@ -4,12 +4,7 @@
 
 #include "StateRedirectBrowser.h"
 
-#include "UrlUtil.h"
-
-#include <QCoreApplication>
 #include <QDebug>
-#include <QUrlQuery>
-
 
 using namespace governikus;
 
@@ -23,92 +18,17 @@ StateRedirectBrowser::StateRedirectBrowser(const QSharedPointer<WorkflowContext>
 
 void StateRedirectBrowser::run()
 {
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	// Only skip redirects on mobile platforms because it induces a forced focus change
-	if (getContext()->isSkipRedirect())
+	if (const auto& handler = getContext()->getBrowserHandler(); handler)
 	{
-		qDebug() << "Skipping redirect, Workflow pending";
-		Q_EMIT fireContinue();
-	}
-	else
-#endif
-	if (getContext()->getStatus() == GlobalStatus::Code::Workflow_InternalError_BeforeTcToken)
-	{
-		sendErrorPage(HTTP_STATUS_INTERNAL_SERVER_ERROR);
-	}
-	else if (getContext()->isTcTokenNotFound())
-	{
-		sendErrorPage(HTTP_STATUS_NOT_FOUND);
-	}
-	else if (getContext()->getRefreshUrl().isEmpty())
-	{
-		reportCommunicationError();
-	}
-	else
-	{
-		bool redirectSuccess;
-		if (getContext()->getStartPaosResult().isOk())
+		if (const auto& error = handler(getContext()); !error.isEmpty())
 		{
-			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), ECardApiResult(getContext()->getStatus()));
-		}
-		else
-		{
-			redirectSuccess = sendRedirect(getContext()->getRefreshUrl(), getContext()->getStartPaosResult());
-		}
-
-		if (redirectSuccess)
-		{
-			Q_EMIT fireContinue();
+			qCritical() << "Cannot send page to caller:" << error;
+			updateStatus({GlobalStatus::Code::Workflow_Browser_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, error}
+					});
+			Q_EMIT fireAbort(FailureCode::Reason::Browser_Send_Failed);
+			return;
 		}
 	}
-}
 
-
-void StateRedirectBrowser::sendErrorPage(http_status pStatus)
-{
-	auto activationContext = getContext()->getActivationContext();
-	if (activationContext->sendErrorPage(pStatus, getContext()->getStatus()))
-	{
-		Q_EMIT fireContinue();
-	}
-	else
-	{
-		qCritical() << "Cannot send error page to caller:" << activationContext->getSendError();
-		updateStatus({GlobalStatus::Code::Workflow_Error_Page_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
-				});
-		Q_EMIT fireAbort(FailureCode::Reason::Redirect_Browser_Send_Error_Page_Failed);
-	}
-}
-
-
-void StateRedirectBrowser::reportCommunicationError()
-{
-	qDebug() << "Report communication error";
-	if (getContext()->getTcToken() != nullptr && getContext()->getTcToken()->getCommunicationErrorAddress().isValid())
-	{
-		if (sendRedirect(getContext()->getTcToken()->getCommunicationErrorAddress(), ECardApiResult(GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url)))
-		{
-			Q_EMIT fireContinue();
-		}
-	}
-	else
-	{
-		sendErrorPage(HTTP_STATUS_BAD_REQUEST);
-	}
-}
-
-
-bool StateRedirectBrowser::sendRedirect(const QUrl& pRedirectAddress, const ECardApiResult& pResult)
-{
-	auto activationContext = getContext()->getActivationContext();
-	if (!activationContext->sendRedirect(pRedirectAddress, GlobalStatus(pResult)))
-	{
-		qCritical() << "Cannot send redirect to caller:" << activationContext->getSendError();
-		updateStatus({GlobalStatus::Code::Workflow_Redirect_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, activationContext->getSendError()}
-				});
-		Q_EMIT fireAbort(FailureCode::Reason::Redirect_Browser_Send_Redirect_Failed);
-		return false;
-	}
-
-	return true;
+	Q_EMIT fireContinue();
 }

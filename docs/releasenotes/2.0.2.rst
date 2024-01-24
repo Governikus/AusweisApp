@@ -1,0 +1,13 @@
+AusweisApp 2.0.2
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 12. Januar 2024
+
+
+Anwender
+""""""""
+- Vermeidung von Verweisen auf den PIN-Rücksetzdienst.
+
+
+Entwickler
+""""""""""

@@ -5,7 +5,7 @@ def j = new Build
 	(
 		name: 'Container',
 		label: 'Docker',
-		artifacts: 'build/AusweisApp2*.tar'
+		artifacts: 'build/AusweisApp*.tar'
 	).generate(this)
 
 
@@ -21,15 +21,17 @@ j.with
 
 	steps
 	{
+		shell('docker container prune -f')
+
 		shell(strip('''\
 			docker build --pull
-			-t dev-docker.govkg.de/ausweisapp2/sdk:${TAG//-default/""}
-			--build-arg CCACHE_REMOTE_STORAGE="redis://${CCACHE_REMOTE_STORAGE_HOST}|share-hits=false"
+			-t dev-docker.govkg.de/ausweisapp/sdk:${TAG//-default/""}
+			--build-arg CCACHE_REMOTE_STORAGE="redis://${CCACHE_REMOTE_STORAGE_HOST}"
 			source
 			'''))
 
-		shell('docker save -o build/AusweisApp2-${MERCURIAL_REVISION_SHORT}.tar dev-docker.govkg.de/ausweisapp2/sdk:${TAG//-default/""}')
-		shell('docker push dev-docker.govkg.de/ausweisapp2/sdk:${TAG//-default/""}')
+		shell('docker save -o build/AusweisApp-${MERCURIAL_REVISION_SHORT}.tar dev-docker.govkg.de/ausweisapp/sdk:${TAG//-default/""}')
+		shell('docker push dev-docker.govkg.de/ausweisapp/sdk:${TAG//-default/""}')
 
 		shell('''\
 			IMAGES=`docker images --filter "dangling=true" -q | tail -n +50`

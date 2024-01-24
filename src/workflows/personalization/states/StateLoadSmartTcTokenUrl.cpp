@@ -4,10 +4,9 @@
 
 #include "StateLoadSmartTcTokenUrl.h"
 
-#include "AppSettings.h"
-#include "SecureStorage.h"
 
 using namespace governikus;
+
 
 StateLoadSmartTcTokenUrl::StateLoadSmartTcTokenUrl(const QSharedPointer<WorkflowContext>& pContext)
 	: AbstractState(pContext)
@@ -18,10 +17,7 @@ StateLoadSmartTcTokenUrl::StateLoadSmartTcTokenUrl(const QSharedPointer<Workflow
 
 void StateLoadSmartTcTokenUrl::run()
 {
-	const auto& context = qobject_cast<PersonalizationContext*>(getContext());
-	Q_ASSERT(context);
-
-	const QUrl url = context->getAppletServiceUrl(QStringLiteral("tcToken"));
+	const QUrl url = getContext()->getAppletServiceUrl(QStringLiteral("tcToken"));
 	qDebug() << "Loaded tcTokenUrl for Smart-eID personalization:" << url;
 	getContext()->setTcTokenUrl(url);
 

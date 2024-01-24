@@ -24,7 +24,6 @@ class MockNetworkReply
 
 	private:
 		MockSocket mSocket;
-		bool mFinished;
 
 	public:
 		MockNetworkReply(const QByteArray& pData = QByteArray(), http_status pStatusCode = HTTP_STATUS_OK, QObject* pParent = nullptr);

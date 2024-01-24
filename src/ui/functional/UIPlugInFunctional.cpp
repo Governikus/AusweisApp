@@ -10,6 +10,7 @@
 #include "Env.h"
 #include "ReaderManager.h"
 #include "UILoader.h"
+#include "WorkflowRequest.h"
 
 #include <QDebug>
 #include <QPluginLoader>
@@ -60,16 +61,16 @@ void UIPlugInFunctional::onApplicationStarted()
 }
 
 
-void UIPlugInFunctional::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInFunctional::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SIMULATOR});
-#else
-	pContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::SIMULATOR});
-#endif
+	mContext = pRequest->getContext();
+	mContext->claim(this);
 
-	pContext->claim(this);
-	mContext = pContext;
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SIMULATOR});
+#else
+	mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::SIMULATOR});
+#endif
 
 #if !defined(Q_OS_IOS)
 	Env::getSingleton<ReaderManager>()->startScanAll();
@@ -77,9 +78,9 @@ void UIPlugInFunctional::onWorkflowStarted(QSharedPointer<WorkflowContext> pCont
 }
 
 
-void UIPlugInFunctional::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInFunctional::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_UNUSED(pContext)
+	Q_UNUSED(pRequest)
 
 #if !defined(Q_OS_IOS)
 	Env::getSingleton<ReaderManager>()->stopScanAll();

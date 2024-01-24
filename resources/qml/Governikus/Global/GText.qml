@@ -1,27 +1,32 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 Text {
-	id: baseItem
+	id: root
 
+	readonly property real effectiveFirstLineHeight: topPadding + Math.ceil(lineHeight) + bottomPadding
+	readonly property real effectiveMaxLinesHeight: topPadding + maximumLineCount * Math.ceil(lineHeight) + bottomPadding
 	property TextStyle textStyle: Style.text.normal
 
 	Accessible.ignored: text === ""
 	//: INFO ALL_PLATFORMS Text read by screen reader if the text contains a weblink which may be opened.
 	Accessible.name: ApplicationModel.stripHtmlTags(text) + (Constants.is_desktop && d.hasLink ? " " + qsTr("Press space to open link: %1").arg(d.link) : "")
 	Accessible.role: Accessible.StaticText
+	Layout.fillWidth: true
+	Layout.maximumWidth: Math.ceil(implicitWidth)
 	color: textStyle.textColor
-	font.bold: textStyle.bold
-	font.italic: textStyle.italic
 	font.pixelSize: textStyle.textSize
-	font.underline: textStyle.underline
-	linkColor: textStyle.linkColor
+	lineHeight: textStyle.lineHeight
+	lineHeightMode: Text.FixedHeight
+	linkColor: color
+	verticalAlignment: Text.AlignVCenter
 	wrapMode: d.nonMultilineElided ? Text.NoWrap : Text.Wrap
 
 	Component.onCompleted: d.checkForLinks()
@@ -34,11 +39,6 @@ Text {
 		Qt.openUrlExternally(pLink);
 	}
 	onTextChanged: d.checkForLinks()
-	onTextStyleChanged: {
-		if (textStyle.textFamily !== "") {
-			font.family = textStyle.textFamily;
-		}
-	}
 
 	QtObject {
 		id: d
@@ -64,6 +64,7 @@ Text {
 	}
 	MouseArea {
 		id: mouseArea
+
 		acceptedButtons: Qt.NoButton
 		anchors.fill: parent
 		cursorShape: parent.hoveredLink !== "" ? Qt.PointingHandCursor : undefined
@@ -72,8 +73,8 @@ Text {
 	Item {
 		ToolTip {
 			delay: Constants.toolTipDelay
-			text: baseItem.hoveredLink
-			visible: Constants.is_desktop && baseItem.hoveredLink !== ""
+			text: root.hoveredLink
+			visible: Constants.is_desktop && root.hoveredLink !== ""
 
 			onAboutToShow: {
 				parent.x = mouseArea.mouseX;

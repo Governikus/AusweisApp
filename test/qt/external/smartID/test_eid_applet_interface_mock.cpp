@@ -10,7 +10,7 @@
 
 using namespace governikus;
 
-Q_DECLARE_METATYPE(EidUpdateInfo)
+Q_DECLARE_METATYPE(EidSupportStatus)
 Q_DECLARE_METATYPE(EidStatus)
 Q_DECLARE_METATYPE(EidServiceResult)
 
@@ -25,21 +25,21 @@ class test_eid_applet_interface_mock
 		void testInitialReturnValues_data()
 		{
 			QTest::addColumn<bool>("restInterfaceEnabled");
-			QTest::addColumn<EidUpdateInfo>("updateInfo");
+			QTest::addColumn<EidSupportStatus>("supportInfo");
 			QTest::addColumn<EidStatus>("eidStatus");
 			QTest::addColumn<EidServiceResult>("installResult");
 			QTest::addColumn<EidServiceResult>("deleteSmartResult");
 			QTest::addColumn<EidServiceResult>("deletePersonalizationResult");
 
-			QTest::addRow("Rest Enabled") << true << EidUpdateInfo::UP_TO_DATE << EidStatus::NO_PERSONALIZATION << EidServiceResult::SUCCESS << EidServiceResult::SUCCESS << EidServiceResult::SUCCESS;
-			QTest::addRow("Rest disabled") << false << EidUpdateInfo::UNAVAILABLE << EidStatus::UNAVAILABLE << EidServiceResult::UNSUPPORTED << EidServiceResult::UNSUPPORTED << EidServiceResult::UNSUPPORTED;
+			QTest::addRow("Rest Enabled") << true << EidSupportStatus::UP_TO_DATE << EidStatus::NO_PERSONALIZATION << EidServiceResult::SUCCESS << EidServiceResult::SUCCESS << EidServiceResult::SUCCESS;
+			QTest::addRow("Rest disabled") << false << EidSupportStatus::UNAVAILABLE << EidStatus::INTERNAL_ERROR << EidServiceResult::UNSUPPORTED << EidServiceResult::UNSUPPORTED << EidServiceResult::UNSUPPORTED;
 		}
 
 
 		void testInitialReturnValues()
 		{
 			QFETCH(bool, restInterfaceEnabled);
-			QFETCH(EidUpdateInfo, updateInfo);
+			QFETCH(EidSupportStatus, supportInfo);
 			QFETCH(EidStatus, eidStatus);
 			QFETCH(EidServiceResult, installResult);
 			QFETCH(EidServiceResult, deleteSmartResult);
@@ -55,7 +55,7 @@ class test_eid_applet_interface_mock
 			}
 			initMock();
 
-			QCOMPARE(getUpdateInfo(), updateInfo);
+			QCOMPARE(getSmartEidSupportInfo().mStatus, supportInfo);
 			QCOMPARE(getSmartEidStatus(), eidStatus);
 			QCOMPARE(installSmartEid(ProgressHandler()), installResult);
 			QCOMPARE(deleteSmartEid(ProgressHandler()), deleteSmartResult);

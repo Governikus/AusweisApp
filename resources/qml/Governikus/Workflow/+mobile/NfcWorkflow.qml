@@ -1,32 +1,50 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.NumberModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TechnologyInfo
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.NumberModel
+import Governikus.Type.RemoteServiceModel
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
+	readonly property bool isRemoteWorkflow: ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_REMOTE_SERVICE
 	readonly property int nfcState: visible ? ApplicationModel.nfcState : ApplicationModel.NFC_UNAVAILABLE
 
 	signal startScanIfNecessary
 
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
+
 	NfcProgressIndicator {
 		id: progressIndicator
+
 		Accessible.ignored: true
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
-		height: baseItem.height / 2
-		state: nfcState === ApplicationModel.NFC_READY ? "on" : "off"
+		Layout.alignment: Qt.AlignCenter
+		state: {
+			switch (nfcState) {
+			case ApplicationModel.NFC_READY:
+				return "on";
+			case ApplicationModel.NFC_UNAVAILABLE:
+				return "unavailable";
+			default:
+				return "off";
+			}
+		}
 	}
 	TechnologyInfo {
 		id: technologyInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			switch (nfcState) {
 			case ApplicationModel.NFC_DISABLED:
@@ -52,9 +70,9 @@ Item {
 				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
 				qsTr("Please enable NFC in your system settings.");
 			case ApplicationModel.NFC_INACTIVE:
-				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+				//: INFO ANDROID IOS NFC is available and enabled but needs to be started.
 				return qsTr("NFC scan is not running.") + "<br/>" +
-				//: INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.
+				//: INFO ANDROID IOS NFC is available and enabled but needs to be started.
 				qsTr("Please start the NFC scan.");
 			default:
 				return "";
@@ -63,6 +81,9 @@ Item {
 		subTitleText: {
 			if (nfcState !== ApplicationModel.NFC_READY) {
 				return "";
+			}
+			if (AuthModel.eidTypeMismatchError !== "") {
+				return AuthModel.eidTypeMismatchError;
 			}
 			if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The NFC interface does not meet the minimum requirements, using a different smartphone is suggested.
@@ -76,6 +97,10 @@ Item {
 			}
 		}
 		titleText: {
+			if (isRemoteWorkflow && RemoteServiceModel.connectedClientName !== "") {
+				//: INFO ANDROID IOS %1 will be replaced with the name of the device.
+				return qsTr("The device \"%1\" wants to use this smartphone as card reader and connect to your id card.").arg(RemoteServiceModel.connectedClientName);
+			}
 			switch (nfcState) {
 			case ApplicationModel.NFC_UNAVAILABLE:
 				//: INFO ANDROID IOS
@@ -93,14 +118,5 @@ Item {
 		}
 
 		onEnableClicked: nfcState === ApplicationModel.NFC_DISABLED ? ApplicationModel.showSettings(ApplicationModel.SETTING_NFC) : startScanIfNecessary()
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 }

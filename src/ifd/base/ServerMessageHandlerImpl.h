@@ -33,6 +33,7 @@ class ServerMessageHandlerImpl
 	private:
 		const QSharedPointer<IfdDispatcherServer> mDispatcher;
 		QVector<ReaderManagerPlugInType> mAllowedPlugInTypes;
+		QVector<ReaderManagerPlugInType> mAllowedCardTypes;
 		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
 		[[nodiscard]] QString slotHandleForReaderName(const QString& pReaderName) const;
@@ -43,6 +44,7 @@ class ServerMessageHandlerImpl
 		void handleIfdTransmit(const QJsonObject& pJsonObject);
 		void handleIfdEstablishPaceChannel(const QJsonObject& pJsonObject);
 		void handleIfdModifyPIN(const QJsonObject& pJsonObject);
+		void sendIfdStatus(const ReaderInfo& pReaderInfo);
 
 	private Q_SLOTS:
 		void onCreateCardConnectionCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
@@ -54,10 +56,11 @@ class ServerMessageHandlerImpl
 
 	public:
 		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
-				const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes = Enum<ReaderManagerPlugInType>::getList());
+				const QVector<ReaderManagerPlugInType>& pAllowedTypes = Enum<ReaderManagerPlugInType>::getList());
 
 		void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
 		void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;
+		void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) override;
 };
 
 

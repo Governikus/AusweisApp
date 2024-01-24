@@ -33,7 +33,7 @@ class IfdStatus
 		void parsePinPad(const QJsonObject& pMessageObject);
 
 	public:
-		explicit IfdStatus(const ReaderInfo& pReaderInfo);
+		explicit IfdStatus(const ReaderInfo& pReaderInfo, bool pPublishCard = true);
 		explicit IfdStatus(const QJsonObject& pMessageObject);
 		~IfdStatus() override = default;
 

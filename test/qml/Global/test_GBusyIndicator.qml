@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GBusyIndicator {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GBusyIndicator {}", testCase);
 	}
 	function test_factor() {
 		let testObject = createTestObject();

@@ -2,37 +2,31 @@
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
 pragma Singleton
-import QtQuick 2.15
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
 QtObject {
-	function escapeHtml(str) {
-		return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+	function escapeHtml(pStr) {
+		return String(pStr).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 	}
-	function helpTopicOf(pComponent, pDefaultHelpTopic) {
-		if (pComponent && typeof (pComponent.helpTopic) !== "undefined") {
-			return pComponent.helpTopic;
-		} else {
-			return pDefaultHelpTopic;
-		}
+	function isSameDate(pOne, pAnother) {
+		return pOne.getFullYear() === pAnother.getFullYear() && pOne.getMonth() === pAnother.getMonth() && pOne.getDate() === pAnother.getDate();
 	}
-	function isSameDate(one, another) {
-		return one.getFullYear() === another.getFullYear() && one.getMonth() === another.getMonth() && one.getDate() === another.getDate();
-	}
-	function isThisWeek(date) {
-		var monday = new Date;
+	function isThisWeek(pDate) {
+		let monday = new Date;
 		monday.setDate(monday.getDate() - monday.getDay());
-		date.setDate(date.getDate() - date.getDay());
-		return isSameDate(monday, date);
+		pDate.setDate(pDate.getDate() - pDate.getDay());
+		return isSameDate(monday, pDate);
 	}
-	function isToday(date) {
-		var today = new Date;
-		return isSameDate(today, date);
+	function isToday(pDate) {
+		let today = new Date;
+		return isSameDate(today, pDate);
 	}
-	function isYesterday(date) {
-		var yesterday = new Date;
+	function isYesterday(pDate) {
+		let yesterday = new Date;
 		yesterday.setDate(yesterday.getDate() - 1);
-		return isSameDate(yesterday, date);
+		return isSameDate(yesterday, pDate);
 	}
 	function scrollPageDown(pFlickable) {
 		if (pFlickable.height >= pFlickable.contentHeight) {

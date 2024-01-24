@@ -17,7 +17,7 @@
 #include "asn1/CVCertificateChain.h"
 #include "asn1/SecurityInfos.h"
 #include "pace/SecureMessaging.h"
-#include "pinpad/EstablishPaceChannel.h"
+#include "pinpad/EstablishPaceChannelOutput.h"
 
 #include <QByteArray>
 #include <QTimer>

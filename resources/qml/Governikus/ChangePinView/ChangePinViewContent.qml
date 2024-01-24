@@ -1,99 +1,95 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ChangePinModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.NumberModel
+import Governikus.Type.ApplicationModel
 
 GFlickableColumnLayout {
 	id: root
 
+	readonly property double buttonHeight: Math.max(sixDigitButton.implicitHeight, fiveDigitButton.implicitHeight, dontKnowButton.implicitHeight)
+	readonly property double buttonWidth: Math.max(sixDigitButton.implicitWidth, fiveDigitButton.implicitWidth, dontKnowButton.implicitWidth)
 	property alias moreInformationText: moreInformationLink.text
 
+	signal changePin
+	signal changeTransportPin
 	signal moreInformationRequested
 	signal noPinAvailable
 
 	maximumContentWidth: Style.dimens.max_text_width
-	spacing: 0
+	spacing: Constants.component_spacing
 
 	GText {
 		id: pinDescWhatType
-		Layout.alignment: Qt.AlignCenter
-		Layout.maximumWidth: root.effectiveContentWidth
+
+		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Constants.component_spacing
-		horizontalAlignment: Text.AlignLeft
 
 		//: LABEL ALL_PLATFORMS
 		text: qsTr("What kind of PIN do you have?")
-		textStyle: Style.text.title_highlight
+		textStyle: Style.text.headline
 		wrapMode: Text.WordWrap
 	}
 	MoreInformationLink {
 		id: moreInformationLink
-		Layout.alignment: Qt.AlignCenter
-		Layout.maximumWidth: root.effectiveContentWidth
-		Layout.topMargin: Constants.component_spacing
+
+		Layout.alignment: Qt.AlignHCenter
 
 		onClicked: root.moreInformationRequested()
 	}
-	ColumnLayout {
-		id: buttonLayout
+	GInformativeButton {
+		id: sixDigitButton
 
-		readonly property double buttonHeight: Math.max(sixDigitButton.implicitHeight, fiveDigitButton.implicitHeight, dontKnowButton.implicitHeight)
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		Layout.maximumWidth: root.buttonWidth
+		Layout.preferredHeight: root.buttonHeight
+		//: LABEL ALL_PLATFORMS
+		description: qsTr("Set by yourself")
+		icon.source: "qrc:///images/icon_six_digit_pin.svg"
 
-		Layout.alignment: Qt.AlignCenter
-		Layout.fillWidth: false
-		Layout.maximumWidth: root.effectiveContentWidth
-		Layout.topMargin: Constants.component_spacing
-		spacing: Constants.component_spacing
+		//: LABEL ALL_PLATFORMS
+		text: qsTr("Six-digit PIN")
+		tintIcon: true
 
-		GInformativeButton {
-			id: sixDigitButton
-			Layout.fillWidth: true
-			Layout.preferredHeight: buttonLayout.buttonHeight
-			//: LABEL ALL_PLATFORMS
-			description: qsTr("Set by yourself")
-			icon.source: "qrc:///images/icon_six_digit_pin_white.svg"
-
-			//: LABEL ALL_PLATFORMS
-			text: qsTr("6-digit PIN")
-
-			onClicked: ChangePinModel.startWorkflow(false)
-		}
-		GInformativeButton {
-			id: fiveDigitButton
-			Layout.fillWidth: true
-			Layout.preferredHeight: buttonLayout.buttonHeight
-			//: LABEL ALL_PLATFORMS
-			description: qsTr("Received by mail in PIN letter")
-			icon.source: "qrc:///images/icon_five_digit_pin.svg"
-
-			//: LABEL ALL_PLATFORMS
-			text: qsTr("5-digit Transport PIN")
-
-			onClicked: ChangePinModel.startWorkflow(true)
-		}
-		GInformativeButton {
-			id: dontKnowButton
-			Layout.fillWidth: true
-			Layout.preferredHeight: buttonLayout.buttonHeight
-			//: LABEL ALL_PLATFORMS
-			description: qsTr("Lost, forgotten, or never received it")
-			icon.source: "qrc:///images/material_block.svg"
-			scaleIcon: 0.5
-
-			//: LABEL ALL_PLATFORMS
-			text: qsTr("No PIN")
-			tintIcon: true
-
-			onClicked: root.noPinAvailable()
-		}
+		onClicked: root.changePin()
 	}
-	GSpacer {
-		Layout.fillHeight: true
+	GInformativeButton {
+		id: fiveDigitButton
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		Layout.maximumWidth: root.buttonWidth
+		Layout.preferredHeight: root.buttonHeight
+		//: LABEL ALL_PLATFORMS
+		description: qsTr("Received by mail in PIN letter")
+		icon.source: "qrc:///images/icon_five_digit_pin.svg"
+
+		//: LABEL ALL_PLATFORMS
+		text: qsTr("Five-digit Transport PIN")
+		tintIcon: true
+
+		onClicked: root.changeTransportPin()
+	}
+	GInformativeButton {
+		id: dontKnowButton
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		Layout.maximumWidth: root.buttonWidth
+		Layout.preferredHeight: root.buttonHeight
+		//: LABEL ALL_PLATFORMS
+		description: qsTr("Lost, forgotten, or never received it")
+		icon.source: "qrc:///images/material_block.svg"
+
+		//: LABEL ALL_PLATFORMS
+		text: qsTr("No PIN")
+		tintIcon: true
+
+		onClicked: root.noPinAvailable()
 	}
 }

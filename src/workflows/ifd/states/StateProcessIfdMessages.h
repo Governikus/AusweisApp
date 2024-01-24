@@ -38,16 +38,15 @@ class StateProcessIfdMessages
 	private Q_SLOTS:
 		void onMessageHandlerAdded(const QSharedPointer<ServerMessageHandler>& pHandler);
 		void onClosed();
-		void onConnectedChanged(bool pConnected);
-		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo);
-		void onReaderPropertiesUpdated(const ReaderInfo& pInfo);
+		void onConnectedChanged(bool pConnected) const;
+		void onReaderPropertiesUpdated(const ReaderInfo& pInfo) const;
 		void onCardConnected();
+		void onDisplayTextChanged(const QString& pDisplayText) const;
 		void onModifyPin(const QSharedPointer<const IfdModifyPin>& pMessage, const QSharedPointer<CardConnection>& pConnection);
 		void onEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage, const QSharedPointer<CardConnection>& pConnection);
-		void onCardDisconnected();
+		void onCardDisconnected() const;
 
 	protected:
-		void onEntry(QEvent* pEvent) override;
 		void onExit(QEvent* pEvent) override;
 
 	public:

@@ -89,7 +89,7 @@ QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 }
 
 
-void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl)
+void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl) const
 {
 	auto* ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
 	Q_ASSERT(ui);

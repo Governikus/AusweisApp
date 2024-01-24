@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
-FocusScope {
-	id: tile
+RoundedRectangle {
+	id: root
 
 	property alias image: image.source
 	property alias title: text.text
@@ -17,42 +18,50 @@ FocusScope {
 
 	Accessible.name: ApplicationModel.stripHtmlTags(title)
 	Accessible.role: Accessible.Button
+	borderColor: Style.color.pane_border
+	color: mouseArea.pressed ? Style.color.control : Style.color.pane
+	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+	opacity: SettingsModel.showBetaTesting ? 0.9 : 1.0
 
-	Keys.onSpacePressed: tile.clicked()
+	layer.effect: GDropShadow {
+	}
+
+	Keys.onSpacePressed: clicked()
 
 	MouseArea {
+		id: mouseArea
+
 		anchors.fill: parent
 		cursorShape: Qt.PointingHandCursor
 
-		onClicked: tile.clicked()
-		onPressed: tile.focus = true
+		onClicked: root.clicked()
 	}
 	FocusFrame {
 	}
-	TintableIcon {
-		id: image
-
-		readonly property int imageHeight: Style.dimens.huge_icon_size
-
-		sourceSize.height: imageHeight
-		tintColor: text.textStyle.textColor
-
-		anchors {
-			bottom: parent.verticalCenter
-			bottomMargin: imageHeight * -(1 / 4)
-			horizontalCenter: parent.horizontalCenter
-		}
-	}
-	GText {
-		id: text
-		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.title_accent_highlight
+	Column {
+		spacing: Constants.component_spacing
 
 		anchors {
 			left: parent.left
+			margins: 2 * Constants.pane_padding
 			right: parent.right
-			top: image.bottom
-			topMargin: Constants.component_spacing
+			top: parent.top
+		}
+		TintableIcon {
+			id: image
+
+			readonly property int imageHeight: Style.dimens.huge_icon_size
+
+			sourceSize.height: imageHeight
+			tintColor: mouseArea.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_subline
+		}
+		GText {
+			id: text
+
+			color: mouseArea.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_title
+			horizontalAlignment: Text.AlignLeft
+			textStyle: Style.text.navigation
+			width: parent.width
 		}
 	}
 }

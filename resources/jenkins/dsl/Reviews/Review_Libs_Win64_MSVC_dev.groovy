@@ -11,6 +11,14 @@ j.with
 {
 	customWorkspace('workspace/' + MERCURIAL_REVISION_BRANCH + '_RLW64MD')
 
+	wrappers
+	{
+		environmentVariables
+		{
+			env('PATH', '$WORKSPACE/build/dist/bin;$PATH')
+		}
+	}
+
 	steps
 	{
 		batchFile('cd source & cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')

@@ -4,8 +4,6 @@
 
 #include "asn1/ASN1Util.h"
 
-#include "apdu/SecureMessagingResponse.h"
-
 #include <QDate>
 #include <QLoggingCategory>
 #include <QScopeGuard>
@@ -19,7 +17,7 @@ using namespace governikus;
 
 void Asn1OctetStringUtil::setValue(const QByteArray& pValue, ASN1_OCTET_STRING* pAsn1OctetString)
 {
-	ASN1_OCTET_STRING_set(pAsn1OctetString, reinterpret_cast<unsigned const char*>(pValue.data()), pValue.length());
+	ASN1_OCTET_STRING_set(pAsn1OctetString, reinterpret_cast<unsigned const char*>(pValue.data()), static_cast<int>(pValue.length()));
 }
 
 
@@ -37,7 +35,7 @@ QByteArray Asn1OctetStringUtil::getValue(ASN1_OCTET_STRING* pAsn1OctetString)
 void Asn1StringUtil::setValue(const QString& pString, ASN1_STRING* pOut)
 {
 	QByteArray bytes = pString.toUtf8();
-	ASN1_STRING_set(pOut, bytes.data(), bytes.length());
+	ASN1_STRING_set(pOut, bytes.data(), static_cast<int>(bytes.length()));
 }
 
 
@@ -151,11 +149,11 @@ QDate Asn1BCDDateUtil::convertFromUnpackedBCDToQDate(const ASN1_OCTET_STRING* pD
 QByteArray Asn1Util::encode(int pClass, int pTag, const QByteArray& pData, bool pConstructed)
 {
 	const int constructed = pConstructed ? V_ASN1_CONSTRUCTED : 0;
-	const int size = ASN1_object_size(constructed, pData.length(), pTag);
+	const int size = ASN1_object_size(constructed, static_cast<int>(pData.length()), pTag);
 	QByteArray result(size, 0);
 
 	auto* p = reinterpret_cast<uchar*>(result.data());
-	ASN1_put_object(&p, constructed, pData.length(), pTag, pClass);
+	ASN1_put_object(&p, constructed, static_cast<int>(pData.length()), pTag, pClass);
 	Q_ASSERT(reinterpret_cast<uchar*>(result.data()) + result.length() == p + pData.length());
 	memcpy(p, pData.data(), static_cast<size_t>(pData.length()));
 

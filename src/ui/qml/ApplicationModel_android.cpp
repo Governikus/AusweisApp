@@ -37,7 +37,7 @@ static void showSystemSettings(const QString& pAction)
 }
 
 
-void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
+void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) const
 {
 	const auto& androidQ = QOperatingSystemVersion(QOperatingSystemVersion::Android, 10);
 

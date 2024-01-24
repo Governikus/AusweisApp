@@ -42,6 +42,23 @@ QList<Reader*> MockReaderManagerPlugIn::getReaders() const
 }
 
 
+void MockReaderManagerPlugIn::startScan(bool pAutoConnect)
+{
+	ReaderManagerPlugIn::startScan(pAutoConnect);
+	for (MockReader* reader : std::as_const(mReaders))
+	{
+		const auto& readerInfo = reader->getReaderInfo();
+		if (readerInfo.isInsertable())
+		{
+			Q_EMIT fireReaderPropertiesUpdated(reader->getReaderInfo());
+			return;
+		}
+
+		Q_EMIT fireCardInfoChanged(readerInfo);
+	}
+}
+
+
 MockReader* MockReaderManagerPlugIn::addReader(const QString& pReaderName, ReaderManagerPlugInType pType)
 {
 	MockReader* mockReader = nullptr;

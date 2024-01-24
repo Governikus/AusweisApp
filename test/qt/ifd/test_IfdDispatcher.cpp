@@ -338,6 +338,22 @@ class test_IfdDispatcher
 		}
 
 
+		void isNormalConnection()
+		{
+			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel(false));
+			const QSharedPointer<IfdDispatcherClient> clientDispatcher(new IfdDispatcherClient(IfdVersion::Version::v2, clientChannel));
+			QVERIFY(!clientDispatcher->isPairingConnection());
+		}
+
+
+		void isPairingConnection()
+		{
+			const QSharedPointer<MockDataChannel> clientChannel(new MockDataChannel(true));
+			const QSharedPointer<IfdDispatcherClient> clientDispatcher(new IfdDispatcherClient(IfdVersion::Version::v2, clientChannel));
+			QVERIFY(clientDispatcher->isPairingConnection());
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_IfdDispatcher)

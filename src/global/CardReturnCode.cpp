@@ -4,7 +4,6 @@
 
 #include "CardReturnCode.h"
 
-#include "Initializer.h"
 #include "moc_CardReturnCode.cpp"
 
 using namespace governikus;
@@ -32,8 +31,8 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::PROTOCOL_ERROR:
 			return GlobalStatus::Code::Card_Protocol_Error;
 
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
-			return GlobalStatus::Code::Workflow_No_Extended_Length_Error;
+		case CardReturnCode::WRONG_LENGTH:
+			return GlobalStatus::Code::Workflow_Wrong_Length_Error;
 
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 			return GlobalStatus::Code::Card_Unexpected_Transmit_Status;
@@ -48,7 +47,6 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 		case CardReturnCode::INVALID_PIN:
 		case CardReturnCode::INVALID_PIN_2:
 		case CardReturnCode::INVALID_PIN_3:
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
 			return GlobalStatus::Code::Card_Invalid_Pin;
 
 		case CardReturnCode::INVALID_CAN:
@@ -99,13 +97,12 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::COMMAND_FAILED:
 		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+		case CardReturnCode::WRONG_LENGTH:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
 		case CardReturnCode::INPUT_TIME_OUT:
 			return false;
 	}

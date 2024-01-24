@@ -42,7 +42,7 @@ void StateChangePinIfd::run()
 	const quint8 timeoutSeconds = pinModify.getTimeoutSeconds();
 
 	Q_ASSERT(cardConnection);
-	mConnections += cardConnection->callSetEidPinCommand(this,
+	*this << cardConnection->callSetEidPinCommand(this,
 			&StateChangePinIfd::onChangePinDone,
 			context->getNewPin().toLatin1(),
 			timeoutSeconds);

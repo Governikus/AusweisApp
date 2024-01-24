@@ -1,16 +1,16 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.RemoteServiceModel
 
 SectionPage {
 	id: baseItem
@@ -18,49 +18,56 @@ SectionPage {
 	property string accessibleContinueText
 	property alias moreInformationText: moreInformation.text
 	property int passwordType: NumberModel.passwordType
-	property alias statusIcon: statusIcon.source
 
-	signal passwordEntered(bool pWasNewPin)
+	signal passwordEntered(var pPasswordType)
 	signal requestPasswordInfo
 
 	Keys.onPressed: event => {
 		event.accepted = numberField.handleKeyEvent(event.key, event.modifiers);
 	}
-	onPasswordTypeChanged: numberField.inputConfirmation = ""
 	onVisibleChanged: if (!visible)
 		numberField.number = ""
 
 	QtObject {
 		id: d
+
 		function setPassword() {
-			if (!numberField.validInput) {
-				return;
-			}
-			let wasNewPin = false;
-			if (passwordType === PasswordType.PIN || passwordType === PasswordType.TRANSPORT_PIN || passwordType === PasswordType.SMART_PIN) {
+			let currentPasswordType = passwordType; // The passwordType binding changes once we set any PIN/CAN/whatever
+			switch (currentPasswordType) {
+			case PasswordType.PIN:
+			case PasswordType.TRANSPORT_PIN:
+			case PasswordType.SMART_PIN:
 				NumberModel.pin = numberField.number;
-			} else if (passwordType === PasswordType.CAN) {
+				baseItem.passwordEntered(currentPasswordType);
+				break;
+			case PasswordType.NEW_SMART_PIN:
+			case PasswordType.NEW_PIN:
+				NumberModel.newPin = numberField.number;
+				mainText.forceActiveFocus(Qt.MouseFocusReason);
+				baseItem.passwordEntered(currentPasswordType);
+				break;
+			case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+			case PasswordType.NEW_PIN_CONFIRMATION:
+				NumberModel.newPinConfirmation = numberField.number;
+				mainText.forceActiveFocus(Qt.MouseFocusReason);
+				baseItem.passwordEntered(currentPasswordType);
+				break;
+			case PasswordType.CAN:
 				NumberModel.can = numberField.number;
-			} else if (passwordType === PasswordType.PUK) {
+				baseItem.passwordEntered(currentPasswordType);
+				break;
+			case PasswordType.PUK:
 				NumberModel.puk = numberField.number;
-			} else if (passwordType === PasswordType.NEW_PIN || passwordType === PasswordType.NEW_SMART_PIN) {
-				if (numberField.inputConfirmation === "") {
-					numberField.inputConfirmation = numberField.number;
-					mainText.forceActiveFocus(Qt.MouseFocusReason);
-				} else {
-					NumberModel.newPin = numberField.number;
-					numberField.inputConfirmation = "";
-					wasNewPin = true;
-				}
-			} else if (passwordType === PasswordType.REMOTE_PIN) {
+				baseItem.passwordEntered(currentPasswordType);
+				break;
+			case PasswordType.REMOTE_PIN:
 				RemoteServiceModel.connectToRememberedServer(numberField.number);
+				baseItem.passwordEntered(currentPasswordType);
+				break;
 			}
 			numberField.number = "";
 			if (!visible)
 				mainText.forceActiveFocus(Qt.MouseFocusReason);
-			if (numberField.inputConfirmation === "") {
-				baseItem.passwordEntered(wasNewPin);
-			}
 		}
 	}
 	GText {
@@ -68,44 +75,55 @@ SectionPage {
 		anchors.bottom: retryCounter.top
 		anchors.bottomMargin: Constants.component_spacing
 		anchors.horizontalCenter: retryCounter.horizontalCenter
-
+		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
 		visible: retryCounter.visible
 	}
-	StatusIcon {
+	RetryCounter {
 		id: retryCounter
-		//: LABEL DESKTOP
-		Accessible.name: qsTr("Remaining ID card PIN attempts: %1").arg(NumberModel.retryCounter)
-		Accessible.role: Accessible.StaticText
-		activeFocusOnTab: true
+
 		anchors.left: parent.left
 		anchors.margins: height
 		anchors.top: parent.top
-		contentBackgroundColor: Style.color.accent
-		height: Style.dimens.status_icon_small
-		text: NumberModel.retryCounter
-		textStyle: Style.text.title_inverse
 		visible: NumberModel.retryCounter >= 0 && (passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN)
-
-		FocusFrame {
-		}
 	}
-	StatusIcon {
-		id: statusIcon
+	TintableAnimation {
+		id: animatedIcon
+
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: parent.height / 4
-		borderEnabled: false
-		busy: true
-		height: Style.dimens.status_icon_large
-		source: AuthModel.readerImage
+		height: Style.dimens.header_icon_size
+		source: switch (passwordType) {
+		case PasswordType.TRANSPORT_PIN:
+			return "qrc:///images/transportpin_%1.webp".arg(Style.currentTheme.name);
+		case PasswordType.CAN:
+			return "qrc:///images/can.webp";
+		case PasswordType.SMART_PIN:
+		case PasswordType.NEW_SMART_PIN:
+		case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+		case PasswordType.NEW_PIN_CONFIRMATION:
+		case PasswordType.NEW_PIN:
+		case PasswordType.PIN:
+			return "qrc:///images/pin_person.webp";
+		case PasswordType.PUK:
+			return "qrc:///images/puk_%1.webp".arg(Style.currentTheme.name);
+		case PasswordType.REMOTE_PIN:
+			return "qrc:///images/pairingCode.webp";
+		default:
+			return "";
+		}
+		tintColor: Style.color.control
+		tintEnabled: passwordType !== PasswordType.PUK && passwordType !== PasswordType.TRANSPORT_PIN
+		visible: source.toString() !== ""
 	}
 	GText {
 		id: mainText
+
 		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: statusIcon.bottom
+		anchors.top: animatedIcon.bottom
 		anchors.topMargin: Constants.component_spacing
 		horizontalAlignment: Text.AlignHCenter
 
@@ -116,20 +134,20 @@ SectionPage {
 		//: LABEL DESKTOP
 		passwordType === PasswordType.REMOTE_PIN ? qsTr("Enter pairing code") :
 		//: LABEL DESKTOP
-		passwordType === PasswordType.NEW_PIN && numberField.inputConfirmation === "" ? qsTr("Enter new ID card PIN") :
+		passwordType === PasswordType.NEW_PIN ? qsTr("Enter new ID card PIN") :
 		//: LABEL DESKTOP
-		passwordType === PasswordType.NEW_PIN ? qsTr("Confirm new ID card PIN") :
+		passwordType === PasswordType.NEW_PIN_CONFIRMATION ? qsTr("Confirm new ID card PIN") :
 		//: LABEL DESKTOP
 		passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Enter Transport PIN") :
 		//: LABEL DESKTOP
 		passwordType === PasswordType.SMART_PIN ? qsTr("Enter Smart-eID PIN") :
 		//: LABEL DESKTOP
-		(passwordType === PasswordType.NEW_SMART_PIN && numberField.inputConfirmation === "") ? qsTr("Enter new Smart-eID PIN") :
+		passwordType === PasswordType.NEW_SMART_PIN ? qsTr("Enter new Smart-eID PIN") :
 		//: LABEL DESKTOP
-		(passwordType === PasswordType.NEW_SMART_PIN) ? qsTr("Confirm new Smart-eID PIN") :
+		passwordType === PasswordType.NEW_SMART_PIN_CONFIRMATION ? qsTr("Confirm new Smart-eID PIN") :
 		//: LABEL DESKTOP
 		qsTr("Enter ID card PIN")
-		textStyle: Style.text.header
+		textStyle: Style.text.headline
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
@@ -138,18 +156,16 @@ SectionPage {
 	}
 	GText {
 		id: subText
+
 		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: mainText.bottom
 		anchors.topMargin: Constants.text_spacing
+		color: NumberModel.inputError !== "" ? Style.color.text_warning : Style.color.text
 		horizontalAlignment: Text.AlignHCenter
 		text: {
-			if (!numberField.confirmedInput) {
-				return passwordType === PasswordType.NEW_SMART_PIN ?
-				//: INFO DESKTOP The changed Smart-eID PIN was entered wrongfully during the confirmation process.
-				qsTr("The new Smart-eID PIN and the confirmation do not match. Please correct your input.") :
-				//: INFO DESKTOP The changed ID card PIN was entered wrongfully during the confirmation process.
-				qsTr("The new ID card PIN and the confirmation do not match. Please correct your input.");
+			if (NumberModel.inputError !== "") {
+				return NumberModel.inputError;
 			}
 			if (passwordType === PasswordType.TRANSPORT_PIN) {
 				//: INFO DESKTOP The AA2 expects the Transport PIN with five digits.
@@ -185,29 +201,29 @@ SectionPage {
 				return qsTr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.");
 			}
 			if (passwordType === PasswordType.NEW_PIN) {
-				return numberField.inputConfirmation === "" ?
 				//: INFO DESKTOP A new six-digit ID card PIN needs to be supplied.
-				qsTr("Please enter a new six-digit ID card PIN now.") :
+				return qsTr("Please enter a new six-digit ID card PIN now.");
+			}
+			if (passwordType === PasswordType.NEW_PIN_CONFIRMATION) {
 				//: INFO DESKTOP The new ID card PIN needs to be entered again for verification.
-				qsTr("Please confirm your new six-digit ID card PIN.");
+				return qsTr("Please confirm your new six-digit ID card PIN.");
 			}
 			if (passwordType === PasswordType.NEW_SMART_PIN) {
-				return numberField.inputConfirmation === "" ?
 				//: INFO DESKTOP A new six-digit Smart-eID PIN needs to be supplied.
-				qsTr("Please enter a new six-digit Smart-eID PIN now.") :
+				return qsTr("Please enter a new six-digit Smart-eID PIN now.");
+			}
+			if (passwordType === PasswordType.NEW_SMART_PIN_CONFIRMATION) {
 				//: INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
-				qsTr("Please confirm your new six-digit Smart-eID PIN.");
+				return qsTr("Please confirm your new six-digit Smart-eID PIN.");
 			}
 			if (passwordType === PasswordType.REMOTE_PIN) {
 				//: INFO DESKTOP The pairing code needs to be supplied.
-				return qsTr("Start the pairing on your smartphone and enter the pairing code shown there in order to use your smartphone as a card reader (SaC).");
+				return qsTr("Enter the pairing code shown on your smartphone.");
 			}
 
 			//: INFO DESKTOP Error message during PIN/CAN/PUK input procedure, the requested password type is unknown; internal error.
 			return qsTr("Unknown password type:") + " " + passwordType;
 		}
-		textFormat: Text.StyledText
-		textStyle: numberField.confirmedInput ? Style.text.header_secondary : Style.text.header_warning
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
@@ -216,33 +232,80 @@ SectionPage {
 	}
 	MoreInformationLink {
 		id: moreInformation
+
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: subText.bottom
-		anchors.topMargin: Constants.component_spacing
-		visible: numberField.confirmedInput
+		anchors.topMargin: Constants.component_spacing * 3
+		visible: text !== "" && passwordType !== PasswordType.REMOTE_PIN
 
 		onClicked: baseItem.requestPasswordInfo()
 	}
 	Item {
-		anchors.bottom: button.top
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: moreInformation.bottom
+		RoundedRectangle {
+			id: numberFieldContainer
 
-		NumberField {
-			id: numberField
-			passwordLength: passwordType === PasswordType.TRANSPORT_PIN ? 5 : passwordType === PasswordType.PUK ? 10 : passwordType === PasswordType.REMOTE_PIN ? 4 : 6
+			anchors.centerIn: parent
+			borderColor: Style.color.border
+			height: numberField.height + Constants.component_spacing
+			width: numberField.width + 2 * Constants.component_spacing
 
-			onAccepted: d.setPassword()
+			NumberField {
+				id: numberField
+
+				anchors.centerIn: parent
+				passwordLength: passwordType === PasswordType.TRANSPORT_PIN ? 5 : passwordType === PasswordType.PUK ? 10 : passwordType === PasswordType.REMOTE_PIN ? 4 : 6
+
+				onAccepted: d.setPassword()
+			}
+		}
+		anchors {
+			bottom: parent.bottom
+			horizontalCenter: parent.horizontalCenter
+			top: moreInformation.bottom
+		}
+		NavigationButton {
+			id: button
+
+			accessibleText: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.CAN ? qsTr("Send CAN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.PUK ? qsTr("Send PUK") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.REMOTE_PIN ? qsTr("Send pairing code") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.NEW_PIN ? qsTr("Send new ID card PIN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.NEW_PIN_CONFIRMATION ? qsTr("Confirm new ID card PIN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Send Transport PIN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.SMART_PIN ? qsTr("Send Smart-eID PIN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.NEW_SMART_PIN ? qsTr("Send new Smart-eID PIN") :
+			//: LABEL DESKTOP
+			passwordType === PasswordType.NEW_SMART_PIN_CONFIRMATION ? qsTr("Confirm new Smart-eID PIN") :
+			//: LABEL DESKTOP
+			qsTr("Send ID card PIN")
+			activeFocusOnTab: true
+			buttonType: NavigationButton.Type.Forward
+			enabled: numberField.validInput
+			size: Style.dimens.huge_icon_size
+
+			onClicked: {
+				d.setPassword();
+			}
 
 			anchors {
-				centerIn: parent
-				horizontalCenterOffset: eyeWidth / 2
+				left: numberFieldContainer.right
+				leftMargin: Constants.component_spacing * 2
+				verticalCenter: numberFieldContainer.verticalCenter
 			}
 		}
 	}
 	NumberPad {
 		anchors.bottom: parent.bottom
-		anchors.right: parent.right
+		anchors.left: parent.left
 		deleteEnabled: numberField.number.length > 0
 		submitAccessibleText: button.accessibleText
 		submitEnabled: numberField.validInput
@@ -254,42 +317,5 @@ SectionPage {
 		}
 		onDigitPressed: digit => numberField.append(digit)
 		onSubmitPressed: d.setPassword()
-	}
-	NavigationButton {
-		id: button
-		accessibleText: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.CAN ? qsTr("Send CAN") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.PUK ? qsTr("Send PUK") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.REMOTE_PIN ? qsTr("Send pairing code") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.NEW_PIN && numberField.inputConfirmation === "" ? qsTr("Send new ID card PIN") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.NEW_PIN ? qsTr("Confirm new ID card PIN") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.TRANSPORT_PIN ? qsTr("Send Transport PIN") :
-		//: LABEL DESKTOP
-		passwordType === PasswordType.SMART_PIN ? qsTr("Send Smart-eID PIN") :
-		//: LABEL DESKTOP
-		(passwordType === PasswordType.NEW_SMART_PIN && numberField.inputConfirmation === "") ? qsTr("Send new Smart-eID PIN") :
-		//: LABEL DESKTOP
-		(passwordType === PasswordType.NEW_SMART_PIN) ? qsTr("Confirm new Smart-eID PIN") :
-		//: LABEL DESKTOP
-		qsTr("Send ID card PIN")
-		activeFocusOnTab: true
-		buttonType: NavigationButton.Type.Forward
-		enabled: numberField.validInput
-
-		onClicked: {
-			d.setPassword();
-		}
-
-		anchors {
-			bottom: parent.bottom
-			horizontalCenter: parent.horizontalCenter
-			margins: Constants.component_spacing
-		}
 	}
 }

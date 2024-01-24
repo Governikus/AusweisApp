@@ -1,16 +1,20 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQml 2.15
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQml
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Style
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GButton {}", testCase);
+		return createTemporaryQmlObject("
+			import Governikus.Global
+			GButton {}
+		", testCase);
 	}
 	function test_enableButton() {
 		let testObject = createTestObject();
@@ -31,54 +35,88 @@ TestCase {
 		verify(testObject, "Object loaded");
 	}
 	function test_size(data) {
-		let button = createTemporaryQmlObject("import Governikus.Global 1.0; GButton {icon.source: \"" + data.icon + "\"; text: \"" + data.text + "\"}", testCase);
-		waitForRendering(button);
-		compare(button.height, data.height);
-		compare(button.width, data.width);
+		let button = createTemporaryQmlObject("
+			import Governikus.Global
+			GButton {
+				icon.source: \"" + data.icon + "\"
+				text: \"" + data.text + "\"
+			}
+		", testCase);
+		tryCompare(button, "height", data.height);
+		tryCompare(button, "width", data.width);
+		let buttonInLayout = createTemporaryQmlObject("
+			import Governikus.Global
+			import QtQuick.Layouts
+			ColumnLayout {
+				readonly property alias buttonHeight: mybutton.height
+				readonly property alias buttonWidth: mybutton.width
+				width: 1000
+				GButton {
+					id: mybutton
+					icon.source: \"" + data.icon + "\"
+					text: \"" + data.text + "\"
+				}
+			}
+		", testCase);
+		tryCompare(buttonInLayout, "buttonHeight", data.height);
+		tryCompare(buttonInLayout, "buttonWidth", data.width);
+		let buttonSmallLayout = createTemporaryQmlObject("
+			import Governikus.Global
+			import QtQuick.Layouts
+			ColumnLayout {
+				readonly property alias buttonHeight: mybutton.height
+				readonly property alias buttonWidth: mybutton.width
+				width: 75
+				GButton {
+					id: mybutton
+					icon.source: \"" + data.icon + "\"
+					text: \"" + data.text + "\"
+				}
+			}
+		", testCase);
+		tryCompare(buttonSmallLayout, "buttonHeight", data.height);
+		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, Constants.is_desktop ? 120 : 80));
 	}
 	function test_size_data() {
-		if (Qt.platform.os !== "osx") {
-			skip();
-		}
-		let text = createTemporaryQmlObject("import Governikus.Global 1.0; import Governikus.Style 1.0; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
-		waitForRendering(text);
-		let longTextWidth = Math.round(text.width + 0.1);
+		let longText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
+		verify(waitForRendering(longText));
+		let longTextWidth = Math.ceil(longText.width);
 		return [{
 				"tag": "noIconNoText",
 				"icon": "",
 				"text": "",
-				"height": 12,
-				"width": 16
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": Constants.is_desktop ? 120 : 80
 			}, {
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
-				"height": Constants.is_desktop ? 39 : 40,
-				"width": Constants.is_desktop ? 59 : 112
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": Constants.is_desktop ? 120 : 80
 			}, {
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 39 : 40,
+				"height": Constants.is_desktop ? 40 : 39,
 				"width": 16 + longTextWidth
 			}, {
 				"tag": "withIconNoText",
-				"icon": "qrc:///images/identify.svg",
+				"icon": "qrc:///images/npa.svg",
 				"text": "",
-				"height": Constants.is_desktop ? 39 : 40,
-				"width": Constants.is_desktop ? 43 : 44
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": Constants.is_desktop ? 120 : 80
 			}, {
 				"tag": "withIconSmallText",
-				"icon": "qrc:///images/identify.svg",
+				"icon": "qrc:///images/npa.svg",
 				"text": "t",
-				"height": Constants.is_desktop ? 39 : 40,
-				"width": Constants.is_desktop ? 59 : 112
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": Constants.is_desktop ? 120 : 80
 			}, {
 				"tag": "withIconLongText",
-				"icon": "qrc:///images/identify.svg",
+				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 39 : 40,
-				"width": (Constants.is_desktop ? 49 : 54) + longTextWidth
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": (Constants.is_desktop ? 50 : 53) + longTextWidth
 			}];
 	}
 	function test_text() {
@@ -90,8 +128,8 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.button, "Initial textStyle: button");
-		testObject.textStyle = Style.text.hint_warning;
-		compare(testObject.textStyle, Style.text.hint_warning, "textStyle: hint_warning");
+		testObject.textStyle = Style.text.normal_warning;
+		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 	function test_tooltipText() {
 		let testObject = createTestObject();
@@ -110,6 +148,7 @@ TestCase {
 
 	GButton {
 		id: testObject
+
 		icon.source: "qrc:///images/material_check.svg"
 		text: "test"
 

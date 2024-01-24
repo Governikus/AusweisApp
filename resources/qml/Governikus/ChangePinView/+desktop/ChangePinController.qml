@@ -1,13 +1,14 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.View 1.0
-import Governikus.Type.ChangePinModel 1.0
-import Governikus.Type.NumberModel 1.0
+import QtQuick
+import Governikus.View
+import Governikus.Type.ChangePinModel
+import Governikus.Type.NumberModel
 
 Controller {
 	id: controller
+
 	enum WorkflowStates {
 		Initial,
 		Reader,
@@ -18,11 +19,8 @@ Controller {
 
 	property int workflowState: ChangePinController.WorkflowStates.Initial
 
-	function processStateChange() {
-		switch (ChangePinModel.currentState) {
-		case "Initial":
-			ChangePinModel.setInitialPluginType();
-			break;
+	function processStateChange(pState) {
+		switch (pState) {
 		case "StateSelectReader":
 			controller.nextView(ChangePinView.SubViews.Workflow);
 			setPinWorkflowStateAndContinue(ChangePinController.WorkflowStates.Reader);
@@ -66,10 +64,11 @@ Controller {
 	}
 
 	Connections {
-		// This is necessary because onCurrentStateChanged is not
-		// working, when we need to process a state a second time.
-		function onFireCurrentStateChanged() {
-			processStateChange();
+		function onFireStateEntered(pState) {
+			processStateChange(pState);
+		}
+		function onFireWorkflowStarted() {
+			ChangePinModel.setInitialPluginType();
 		}
 
 		target: ChangePinModel

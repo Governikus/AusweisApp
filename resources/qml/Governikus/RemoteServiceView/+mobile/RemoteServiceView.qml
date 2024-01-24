@@ -1,40 +1,68 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.TitleBar
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.RemoteServiceModel
 
-SectionPage {
+FlickableSectionPage {
 	id: baseItem
+
 	hiddenNavbarPadding: true
-	sectionPageFlickable: contentItem
 
 	//: LABEL ANDROID IOS
-	title: qsTr("Remote service")
+	title: qsTr("Card reader")
 
 	navigationAction: NavigationAction {
 		action: RemoteServiceModel.running ? NavigationAction.Action.Cancel : NavigationAction.Action.None
 
 		onClicked: RemoteServiceModel.setRunning(false)
 	}
+	states: [
+		State {
+			name: "PAIRING"
+			when: RemoteServiceModel.running && RemoteServiceModel.isPairing
+
+			PropertyChanges {
+				target: knownDevicesContainer
+				visible: false
+			}
+			PropertyChanges {
+				target: pairingCode
+				visible: true
+			}
+			PropertyChanges {
+				target: paringCodeLink
+				visible: true
+			}
+		},
+		State {
+			name: "CONNECTED_OR_STOPPED"
+			when: !RemoteServiceModel.running || (RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice)
+
+			PropertyChanges {
+				target: wifiInfo
+				visible: false
+			}
+			PropertyChanges {
+				target: networkPermissionText
+				visible: false
+			}
+		}
+	]
 
 	Connections {
 		function onFireIsRunningChanged() {
 			setLockedAndHidden(RemoteServiceModel.running);
-			pairingButton.didPairInSaKSession = false;
 		}
-		function onFirePairingCompleted() {
-			pairingButton.didPairInSaKSession = true;
-		}
-		//: ERROR ANDROID IOS An error occurred while pairing the device.
 		function onFirePairingFailed() {
+			//: ERROR ANDROID IOS An error occurred while pairing the device.
 			ApplicationModel.showFeedback(qsTr("Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code."));
 		}
 
@@ -42,202 +70,288 @@ SectionPage {
 	}
 	RemoteServiceController {
 		id: controller
+
+		stackView: baseItem.stackView
 	}
-	GFlickableColumnLayout {
-		id: contentItem
-		anchors.fill: parent
-		maximumContentWidth: Style.dimens.max_text_width
-		spacing: 0
+	GOptionsContainer {
+		containerPadding: Constants.pane_padding
+		//: LABEL ANDROID IOS
+		title: !ApplicationModel.wifiEnabled ? qsTr("WiFi not active") :
+		//: LABEL ANDROID IOS
+		RemoteServiceModel.canEnableNfc ? qsTr("NFC not active") :
+		//: LABEL ANDROID IOS
+		!RemoteServiceModel.runnable ? qsTr("Remote service not available") :
+		//: LABEL ANDROID IOS
+		RemoteServiceModel.connectedToPairedDevice ? qsTr("Card access in progress") :
+		//: LABEL ANDROID IOS
+		RemoteServiceModel.isPairing ? qsTr("Waiting for pairing") :
+		//: LABEL ANDROID IOS
+		RemoteServiceModel.running ? qsTr("Waiting for connection") : ""
+
+		ColumnLayout {
+			spacing: Constants.component_spacing
+			width: parent.width
+
+			TintableIcon {
+				Layout.alignment: Qt.AlignHCenter
+				Layout.preferredHeight: Style.dimens.medium_icon_size
+				fillMode: Image.PreserveAspectFit
+				source: "qrc:///images/phone_to_pc.svg"
+				sourceSize.height: Style.dimens.medium_icon_size
+				tintColor: Style.color.control
+			}
+			GText {
+				id: infoText
+
+				readonly property string currentPin: RemoteServiceModel.psk
+				//: INFO ANDROID IOS
+				readonly property string enterCodeString: qsTr("Enter the pairing code %1 in the %2 on your other device.")
+
+				Accessible.name: text
+				Layout.alignment: Qt.AlignHCenter
+				Layout.topMargin: Constants.text_spacing
+				horizontalAlignment: Text.AlignHCenter
+				//: INFO ANDROID IOS
+				text: qsTr("You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.\n\nTo do this you first have to pair that device with this smartphone.").arg(Qt.application.name)
+				textStyle: RemoteServiceModel.runnable ? Style.text.normal : Style.text.normal_warning
+
+				states: [
+					State {
+						when: !RemoteServiceModel.runnable && RemoteServiceModel.errorMessage !== ""
+
+						PropertyChanges {
+							target: infoText
+							text: RemoteServiceModel.errorMessage
+						}
+					},
+					State {
+						when: RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice
+
+						PropertyChanges {
+							target: infoText
+							text: RemoteServiceModel.connectionInfo
+						}
+					},
+					State {
+						when: RemoteServiceModel.isPairing
+
+						PropertyChanges {
+							Accessible.name: enterCodeString.arg(currentPin.split("").join(" ")).arg(Qt.application.name)
+							target: infoText
+							text: enterCodeString.arg(currentPin).arg(Qt.application.name)
+						}
+					},
+					State {
+						when: !RemoteServiceModel.running && knownDeviceList.count > 0
+
+						PropertyChanges {
+							target: infoText
+							//: INFO ANDROID IOS
+							text: qsTr("Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.")
+						}
+					},
+					State {
+						when: RemoteServiceModel.running && knownDeviceList.count > 0
+
+						PropertyChanges {
+							target: infoText
+							//: INFO ANDROID IOS
+							text: qsTr("Paired devices may use this Smartphone as a card reader now.")
+						}
+					},
+					State {
+						when: RemoteServiceModel.running
+
+						PropertyChanges {
+							target: infoText
+							//: INFO ANDROID IOS
+							text: qsTr("Waiting for connection from a paired device...")
+						}
+					}
+				]
+			}
+			GText {
+				id: pairingCode
+
+				readonly property string currentPin: RemoteServiceModel.psk.toString()
+
+				Accessible.ignored: true
+				Layout.alignment: Qt.AlignHCenter
+				Layout.topMargin: Constants.component_spacing
+				horizontalAlignment: Text.AlignHCenter
+
+				//: LABEL ANDROID IOS
+				text: qsTr("Pairing code: <b>%1</b>").arg(RemoteServiceModel.isPairing ? currentPin : "0000")
+				textStyle: Style.text.headline
+				visible: false
+			}
+			MoreInformationLink {
+				id: paringCodeLink
+
+				Layout.alignment: Qt.AlignCenter
+				Layout.topMargin: Constants.component_spacing
+				//: LABEL ANDROID IOS
+				text: qsTr("Where do I enter the pairing code?")
+				visible: false
+
+				onClicked: push(pairingCodeInfoView)
+
+				Component {
+					id: pairingCodeInfoView
+
+					PairingCodeInfoView {
+						text: paringCodeLink.text
+
+						onNavActionClicked: pop()
+					}
+				}
+			}
+		}
+	}
+	GOptionsContainer {
+		id: knownDevicesContainer
+
+		Layout.topMargin: Constants.component_spacing
+		containerPadding: Constants.pane_padding
+		//: LABEL ANDROID IOS
+		title: qsTr("Paired Devices")
+		visible: RemoteServiceModel.runnable && knownDeviceList.count > 0
+
+		ColumnLayout {
+			id: knownDevices
+
+			spacing: Constants.text_spacing
+			width: parent.width
+
+			Repeater {
+				id: knownDeviceList
+
+				model: RemoteServiceModel.allDevices
+
+				delegate: DevicesListDelegate {
+					highlightTitle: isLastAddedDevice
+					linkQualityVisible: false
+					title: remoteDeviceName
+				}
+			}
+			GButton {
+				//: LABEL ANDROID IOS
+				Accessible.name: qsTr("Start pairing of a new device")
+				Layout.alignment: Qt.AlignLeft
+				Layout.topMargin: knownDevices.spacing
+				background: null
+				icon.source: "qrc:///images/material_add.svg"
+				padding: 0
+				//: LABEL ANDROID IOS
+				text: qsTr("Pair new device")
+				textStyle: Style.text.link
+				tintIcon: true
+				visible: !RemoteServiceModel.isPairing && !RemoteServiceModel.running
+
+				onClicked: RemoteServiceModel.setRunning(!RemoteServiceModel.running, !RemoteServiceModel.isPairing)
+			}
+		}
+	}
+	GSpacer {
+		Layout.fillHeight: true
+	}
+	RemoteServiceWifiInfo {
+		id: wifiInfo
+
+		Layout.fillWidth: true
+		Layout.topMargin: Constants.component_spacing
+	}
+	LocalNetworkInfo {
+		id: networkPermissionText
+
+		Layout.bottomMargin: Constants.text_spacing
+		Layout.fillWidth: true
+		Layout.topMargin: Constants.component_spacing
+		visible: RemoteServiceModel.requiresLocalNetworkPermission
+	}
+	GProgressBar {
+		id: progressBar
+
+		Layout.fillWidth: true
+		Layout.topMargin: Constants.component_spacing
+		value: RemoteServiceModel.percentage
+		visible: progressText.visible
+	}
+	GText {
+		id: progressText
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.text_spacing
+		text: RemoteServiceModel.displayText
+		visible: text !== ""
+	}
+	GButton {
+		id: pairConnectButton
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.component_spacing
+		enabled: !RemoteServiceModel.isStarting
+		visible: text !== ""
 
 		states: [
 			State {
-				name: "PAIRING"
-				when: RemoteServiceModel.running && RemoteServiceModel.isPairing
+				when: !ApplicationModel.wifiEnabled
 
 				PropertyChanges {
-					target: pairingCode
-					visible: true
-				}
-				PropertyChanges {
-					target: wifiInfo
-					visible: true
-				}
-				PropertyChanges {
-					target: networkPermissionText
-					visible: RemoteServiceModel.requiresLocalNetworkPermission
+					target: pairConnectButton
+					//: LABEL ANDROID IOS
+					text: qsTr("Enable WiFi")
+
+					onClicked: ApplicationModel.enableWifi()
 				}
 			},
 			State {
-				name: "UNCONNECTED"
-				when: RemoteServiceModel.running && !RemoteServiceModel.connectedToPairedDevice
+				when: RemoteServiceModel.canEnableNfc
 
 				PropertyChanges {
-					target: pairingCode
-					visible: false
-				}
-				PropertyChanges {
-					target: wifiInfo
-					visible: true
-				}
-				PropertyChanges {
-					target: networkPermissionText
-					visible: RemoteServiceModel.requiresLocalNetworkPermission
+					target: pairConnectButton
+					//: LABEL ANDROID IOS
+					text: qsTr("Enable NFC")
+
+					onClicked: ApplicationModel.showSettings(ApplicationModel.SETTING_NFC)
 				}
 			},
 			State {
-				name: "CONNECTED_OR_STOPPED"
-				when: !RemoteServiceModel.running || (RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice)
+				when: RemoteServiceModel.runnable && knownDeviceList.count > 0 && !RemoteServiceModel.isPairing && !RemoteServiceModel.running
 
 				PropertyChanges {
-					target: pairingCode
-					visible: false
+					target: pairConnectButton
+					//: LABEL ANDROID IOS
+					text: qsTr("Allow connection")
+
+					onClicked: RemoteServiceModel.setRunning(true)
 				}
+			},
+			State {
+				when: RemoteServiceModel.runnable && knownDeviceList.count < 1 && !RemoteServiceModel.isPairing
+
 				PropertyChanges {
-					target: wifiInfo
-					visible: false
+					target: pairConnectButton
+					//: LABEL ANDROID IOS
+					text: qsTr("Pair device")
+
+					onClicked: RemoteServiceModel.setRunning(true, true)
 				}
+			},
+			State {
+				when: RemoteServiceModel.isPairing
+
 				PropertyChanges {
-					target: networkPermissionText
-					visible: false
+					target: pairConnectButton
+					//: LABEL ANDROID IOS
+					text: qsTr("Cancel pairing")
+					visible: true
+
+					onClicked: RemoteServiceModel.setRunning(false, false)
 				}
 			}
 		]
 
-		Image {
-			Layout.alignment: Qt.AlignHCenter
-			Layout.preferredHeight: Style.dimens.medium_icon_size
-			fillMode: Image.PreserveAspectFit
-			source: "qrc:///images/phone_to_pc.svg"
-			sourceSize.height: Style.dimens.medium_icon_size
-		}
-		GText {
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.component_spacing
-			horizontalAlignment: Text.AlignHCenter
-
-			//: LABEL ANDROID IOS
-			text: !ApplicationModel.wifiEnabled ? qsTr("WiFi not active") :
-			//: LABEL ANDROID IOS
-			RemoteServiceModel.canEnableNfc ? qsTr("NFC not active") :
-			//: LABEL ANDROID IOS
-			!RemoteServiceModel.runnable ? qsTr("Remote service not available") :
-			//: LABEL ANDROID IOS
-			RemoteServiceModel.connectedToPairedDevice ? qsTr("Card access in progress") :
-			//: LABEL ANDROID IOS
-			RemoteServiceModel.isPairing || RemoteServiceModel.running ? qsTr("Waiting for connection") :
-			//: LABEL ANDROID IOS
-			qsTr("Remote service ready")
-			textStyle: Style.text.header_accent
-		}
-		GText {
-			readonly property string currentPin: RemoteServiceModel.psk
-			//: INFO ANDROID IOS
-			readonly property string enterCodeString: qsTr("Enter the code %1 in the %2 on your other device to use your smartphone as a card reader (SaC).")
-
-			Accessible.name: RemoteServiceModel.isPairing ? enterCodeString.arg(currentPin.split("").join(" ")).arg(Qt.application.name) : text
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.text_spacing
-			horizontalAlignment: Text.AlignHCenter
-			text: !RemoteServiceModel.runnable ? RemoteServiceModel.errorMessage : RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice ? RemoteServiceModel.connectionInfo : RemoteServiceModel.isPairing ? enterCodeString.arg(currentPin).arg(Qt.application.name) :
-			//: INFO ANDROID IOS
-			RemoteServiceModel.running ? qsTr("Waiting for connection from a paired device...") :
-			//: INFO ANDROID IOS
-			qsTr("Start the remote access in order to make this smartphone visible and use it as a card reader (SaC).\n\nIf you have not already paired a device, start the pairing now to set up this smartphone as a card reader.")
-			textStyle: RemoteServiceModel.runnable ? Style.text.normal_secondary : Style.text.normal_warning
-		}
-		GText {
-			id: pairingCode
-
-			readonly property string currentPin: RemoteServiceModel.psk.toString()
-
-			Accessible.ignored: true
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.component_spacing
-			horizontalAlignment: Text.AlignHCenter
-
-			//: LABEL ANDROID IOS
-			text: qsTr("Pairing code: <b>%1</b>").arg(RemoteServiceModel.isPairing ? currentPin : "0000")
-			textStyle: Style.text.title_accent
-			visible: false
-		}
-		GSpacer {
-			Layout.fillHeight: true
-		}
-		RowLayout {
-			id: wifiInfo
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.component_spacing
-			spacing: Constants.text_spacing
-
-			TintableIcon {
-				source: "qrc:/images/info.svg"
-				sourceSize.width: Style.dimens.small_icon_size
-				tintColor: Style.text.normal_secondary.textColor
-			}
-			GText {
-				Layout.fillWidth: true
-
-				//: INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.
-				text: qsTr("Both of your devices have to be connected to the same WiFi.")
-				textStyle: Style.text.normal_secondary
-			}
-		}
-		LocalNetworkInfo {
-			id: networkPermissionText
-			Layout.bottomMargin: Constants.text_spacing
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.component_spacing
-			visible: false
-		}
-		GButton {
-			id: startButton
-
-			readonly property int minButtonWidth: Math.max(Math.max(pairingButton.implicitWidth, startButton.implicitWidth), parent.width / 2)
-
-			Layout.alignment: Qt.AlignHCenter
-			Layout.minimumWidth: startButton.minButtonWidth
-			Layout.topMargin: Constants.component_spacing
-			buttonColor: (!ApplicationModel.wifiEnabled || RemoteServiceModel.canEnableNfc) ? Style.color.button : (RemoteServiceModel.running ? Constants.red : Constants.green)
-			enabled: (RemoteServiceModel.canEnableNfc || RemoteServiceModel.runnable || RemoteServiceModel.running || !ApplicationModel.wifiEnabled) && !RemoteServiceModel.isStarting
-			//: LABEL ANDROID IOS
-			text: !ApplicationModel.wifiEnabled ? qsTr("Enable WiFi") :
-			//: LABEL ANDROID IOS
-			RemoteServiceModel.canEnableNfc ? qsTr("Enable NFC") :
-			//: LABEL ANDROID IOS
-			RemoteServiceModel.running ? qsTr("Stop remote service") :
-			//: LABEL ANDROID IOS
-			qsTr("Start remote service")
-
-			onClicked: {
-				if (!ApplicationModel.wifiEnabled) {
-					ApplicationModel.enableWifi();
-				} else if (RemoteServiceModel.canEnableNfc) {
-					ApplicationModel.showSettings(ApplicationModel.SETTING_NFC);
-				} else {
-					RemoteServiceModel.setRunning(!RemoteServiceModel.running);
-				}
-			}
-		}
-		GButton {
-			id: pairingButton
-
-			property bool didPairInSaKSession: false
-
-			Layout.alignment: Qt.AlignHCenter
-			Layout.minimumWidth: startButton.minButtonWidth
-			Layout.topMargin: Constants.component_spacing
-			enabled: RemoteServiceModel.runnable && !RemoteServiceModel.connectedToPairedDevice && !RemoteServiceModel.isStarting && !didPairInSaKSession
-
-			// Set opacity instead of visibility to hide button so it keeps its size
-			opacity: RemoteServiceModel.connectedToPairedDevice || didPairInSaKSession ? 0 : 1
-			text: RemoteServiceModel.isPairing ?
-			//: LABEL ANDROID IOS
-			qsTr("Stop pairing") :
-			//: LABEL ANDROID IOS
-			qsTr("Start pairing")
-			visible: RemoteServiceModel.runnable
-
-			onClicked: RemoteServiceModel.setRunning(true, !RemoteServiceModel.isPairing)
-		}
+		onClicked: RemoteServiceModel.setRunning(true, !RemoteServiceModel.isPairing)
 	}
 }

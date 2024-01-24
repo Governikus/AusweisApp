@@ -40,7 +40,7 @@ class test_Asn1OctetStringUtil
 			const auto guard = qScopeGuard([asn1OctetString] {
 					ASN1_STRING_free(asn1OctetString);
 				});
-			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<uchar*>(bytes.data()), bytes.length());
+			ASN1_OCTET_STRING_set(asn1OctetString, reinterpret_cast<uchar*>(bytes.data()), static_cast<int>(bytes.length()));
 
 			QCOMPARE(Asn1OctetStringUtil::getValue(asn1OctetString), bytes);
 		}

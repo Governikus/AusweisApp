@@ -1,23 +1,20 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.CheckIDCardView 1.0
-import Governikus.ChangePinView 1.0
-import Governikus.HistoryView 1.0
-import Governikus.MainView 1.0
-import Governikus.MoreView 1.0
-import Governikus.AuthView 1.0
-import Governikus.ProviderView 1.0
-import Governikus.SettingsView 1.0
-import Governikus.SelfAuthenticationView 1.0
-import Governikus.SmartView 1.0
-import Governikus.TutorialView 1.0
-import Governikus.RemoteServiceView 1.0
-import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.CheckIDCardView
+import Governikus.ChangePinView
+import Governikus.MainView
+import Governikus.MoreView
+import Governikus.AuthView
+import Governikus.SettingsView
+import Governikus.SelfAuthenticationView
+import Governikus.SmartView
+import Governikus.RemoteServiceView
+import Governikus.View
+import Governikus.Type.SettingsModel
+import Governikus.Type.UiModule
 
 Item {
 	id: baseItem
@@ -29,14 +26,24 @@ Item {
 
 	TabBarView {
 		id: authView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.IDENTIFY
 
 		initialItem: AuthView {
+			onShowChangePinView: {
+				show(UiModule.PINMANAGEMENT);
+				popAll();
+			}
+			onWorkflowFinished: {
+				show(UiModule.DEFAULT);
+				popAll();
+			}
 		}
 	}
 	TabBarView {
 		id: mainView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.DEFAULT
 
@@ -45,14 +52,17 @@ Item {
 	}
 	TabBarView {
 		id: selfAuthenticationView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.SELF_AUTHENTICATION
 
 		initialItem: SelfAuthenticationView {
+			onBack: show(UiModule.DEFAULT)
 		}
 	}
 	TabBarView {
 		id: checkIDCardView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.CHECK_ID_CARD
 
@@ -61,38 +71,27 @@ Item {
 	}
 	TabBarView {
 		id: smartView
+
 		anchors.fill: parent
-		visible: baseItem.activeModule === UiModule.SMART
+		visible: baseItem.activeModule === UiModule.SMART_EID
 
 		initialItem: SmartView {
 		}
 	}
 	TabBarView {
-		id: providerView
-		anchors.fill: parent
-		visible: baseItem.activeModule === UiModule.PROVIDER
-
-		initialItem: ProviderView {
-		}
-	}
-	TabBarView {
-		id: historyView
-		anchors.fill: parent
-		visible: baseItem.activeModule === UiModule.HISTORY
-
-		initialItem: HistoryView {
-		}
-	}
-	TabBarView {
 		id: changePinView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.PINMANAGEMENT
 
 		initialItem: ChangePinView {
+			onClose: show(UiModule.DEFAULT)
+			onWorkflowFinished: popAll()
 		}
 	}
 	TabBarView {
 		id: remoteView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.REMOTE_SERVICE
 
@@ -101,6 +100,7 @@ Item {
 	}
 	TabBarView {
 		id: settingsView
+
 		anchors.fill: parent
 		visible: baseItem.activeModule === UiModule.SETTINGS
 
@@ -109,8 +109,9 @@ Item {
 	}
 	TabBarView {
 		id: helpView
+
 		anchors.fill: parent
-		visible: baseItem.activeModule === UiModule.HELP
+		visible: baseItem.activeModule === UiModule.HELP || baseItem.activeModule === UiModule.TUTORIAL
 
 		initialItem: MoreView {
 		}

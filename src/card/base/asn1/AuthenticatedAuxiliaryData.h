@@ -50,13 +50,8 @@ using AuxDataTemplate = struct auxdatatemplate_st
 	ASN1_TYPE* mExtInfo;
 };
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-DECLARE_STACK_OF(AuxDataTemplate)
-using AuthenticatedAuxiliaryDataInternal = stack_st_AuxDataTemplate;
-#else
 DEFINE_STACK_OF(AuxDataTemplate)
 using AuthenticatedAuxiliaryDataInternal = STACK_OF(AuxDataTemplate);
-#endif
 
 class AuthenticatedAuxiliaryData
 {

@@ -45,8 +45,6 @@ endfunction()
 
 
 macro(CHECK_DVCS)
-	set(VERSION_DVCS ${PROJECT_VERSION})
-
 	if(HG_FOUND)
 		DVCS_CALL("tag" "" id -t)
 	elseif(GIT_FOUND)
@@ -96,7 +94,7 @@ macro(GET_DVCS_INFO)
 	endif()
 endmacro()
 
-
+set(VERSION_DVCS ${PROJECT_VERSION})
 FIND_DVCS(${PROJECT_SOURCE_DIR})
 if(DVCS_FOUND)
 	option(ENABLE_DVCS "Check consistency of version/tag and get additional revision data" true)
@@ -106,15 +104,13 @@ if(DVCS_FOUND)
 endif()
 
 function(CHECK_VERSION _out)
-	if(PROJECT_VERSION_MINOR)
-		math(EXPR _odd "${PROJECT_VERSION_MINOR} % 2")
-		if(_odd OR dvcs_revision)
-			set(${_out} TRUE PARENT_SCOPE)
-			return()
-		endif()
+	if(PROJECT_VERSION_MINOR GREATER_EQUAL 100 OR PROJECT_VERSION_PATCH GREATER_EQUAL 100 OR dvcs_revision)
+		set(${_out} TRUE PARENT_SCOPE)
+		return()
 	endif()
 
 	set(${_out} FALSE PARENT_SCOPE)
 endfunction()
 
-CHECK_VERSION(IS_DEVELOPER_VERSION)
+CHECK_VERSION(IS_BETA_VERSION)
+message(STATUS "DVCS beta: ${IS_BETA_VERSION}")

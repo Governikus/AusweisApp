@@ -60,9 +60,8 @@ class test_StateEstablishPaceChannel
 		void init()
 		{
 			mWorkerThread.start();
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
-			mState.reset(new StateEstablishPaceChannel(mAuthContext));
-			mState->setStateName("StateEstablishPaceChannel");
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mState.reset(StateBuilder::createState<StateEstablishPaceChannel>(mAuthContext));
 		}
 
 
@@ -78,29 +77,50 @@ class test_StateEstablishPaceChannel
 		void test_Run_NoConnection()
 		{
 			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-			QSignalSpy spyAbort(mState.data(), &StateEstablishPaceChannel::fireAbort);
+			QSignalSpy spyNoCardConnection(mState.data(), &StateEstablishPaceChannel::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
-			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Establish_Pace_Channel_No_Card_Connection);
+			QCOMPARE(spyNoCardConnection.count(), 1);
+			QVERIFY(!mAuthContext->getFailureCode().has_value());
+		}
+
+
+		void test_Run_data()
+		{
+			QTest::addColumn<int>("initialProgress");
+
+			QTest::newRow("0") << 0;
+			QTest::newRow("42") << 42;
+			QTest::newRow("50") << 42;
+			QTest::newRow("90") << 90;
+			QTest::newRow("100") << 100;
 		}
 
 
 		void test_Run()
 		{
+			QFETCH(int, initialProgress);
+
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			const QString password("0000000");
+
 			mAuthContext->setPin(password);
 			mAuthContext->setCardConnection(connection);
 			mAuthContext->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+
+			mAuthContext->setProgress(initialProgress, QString());
+			QCOMPARE(mAuthContext->getProgressValue(), initialProgress);
+			QCOMPARE(mAuthContext->getProgressMessage(), QString());
 
 			QTest::ignoreMessage(QtDebugMsg, "Establish connection using PACE_PIN");
 			mState->run();
 			QCOMPARE(mAuthContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PIN);
 			QCOMPARE(mState->mPasswordId, PacePasswordId::PACE_PIN);
+			QCOMPARE(mAuthContext->getProgressValue(), initialProgress);
+			QCOMPARE(mAuthContext->getProgressMessage(), tr("The secure channel is opened"));
 		}
 
 
@@ -108,27 +128,26 @@ class test_StateEstablishPaceChannel
 		{
 			mAuthContext->setStatus(GlobalStatus::Code::Card_Cancellation_By_User);
 			mAuthContext->setFailureCode(FailureCode::Reason::User_Cancelled);
-			QSignalSpy spyPropagateAbort(mState.data(), &StateEstablishPaceChannel::firePropagateAbort);
+			QSignalSpy spyPaceChannelFailed(mState.data(), &StateEstablishPaceChannel::firePaceChannelFailed);
 
 			mState->run();
 
-			QCOMPARE(spyPropagateAbort.count(), 1);
+			QCOMPARE(spyPaceChannelFailed.count(), 1);
 		}
 
 
 		void test_OnKillWorkflow()
 		{
 			QSignalSpy spyAbort(mState.data(), &AbstractState::fireAbort);
-			QSignalSpy spyPropagateAbort(mState.data(), &StateEstablishPaceChannel::firePropagateAbort);
-			mState->setStateName("StateEstablishPaceChannel");
+			QSignalSpy spyPaceChannelFailed(mState.data(), &StateEstablishPaceChannel::firePaceChannelFailed);
 			mState->onEntry(nullptr);
 			QCOMPARE(spyAbort.count(), 0);
-			QCOMPARE(spyPropagateAbort.count(), 0);
+			QCOMPARE(spyPaceChannelFailed.count(), 0);
 
 			mAuthContext->killWorkflow();
 
 			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
-			QTRY_COMPARE(spyPropagateAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyPaceChannelFailed.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

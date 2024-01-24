@@ -34,7 +34,10 @@
 		NSArray* mainBundleComponents = [helperBundlePathComponents subarrayWithRange:NSMakeRange(0, [helperBundlePathComponents count] - 4)];
 		NSString* mainBundlePath = [NSString pathWithComponents:mainBundleComponents];
 		NSLog(@"Launching application at: %@", mainBundlePath);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 		BOOL result = [[NSWorkspace sharedWorkspace] launchApplication:mainBundlePath];
+#pragma clang diagnostic pop
 		if (!result)
 		{
 			NSLog(@"Launching failed");

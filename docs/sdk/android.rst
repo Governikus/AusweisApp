@@ -1,15 +1,15 @@
 Android
 =======
-This chapter deals with the Android specific properties of the AusweisApp2 SDK.
-The AusweisApp2 core is encapsulated into an **Android service** which is
+This chapter deals with the Android specific properties of the |AppName| SDK.
+The |AppName| core is encapsulated into an **Android service** which is
 running in the background without a user interface. This service is interfaced
 via an Android specific interprocess communication (IPC) mechanism. The basics
 of this mechanism - the **Android Interface Definition Language** (AIDL) -
 are introduced in the following section. Subsequent sections deal with the
 SDK interface itself and explain which steps are necessary in order to
-communicate with the AusweisApp2 SDK.
+communicate with the |AppName| SDK.
 
-The AusweisApp2 is available as an AAR package that can automatically
+The |AppName| is available as an AAR package that can automatically
 be fetched by Android's default build system **gradle**.
 
 .. important::
@@ -22,14 +22,14 @@ be fetched by Android's default build system **gradle**.
    This can be checked via the Android API methods **getMaxTransceiveLength()**
    and **isExtendedLengthApduSupported()**.
 
-   https://developer.android.com/reference/android/nfc/tech/NfcA
-   https://developer.android.com/reference/android/nfc/tech/IsoDep
+   | https://developer.android.com/reference/android/nfc/tech/NfcA
+   | https://developer.android.com/reference/android/nfc/tech/IsoDep
 
 
 
 SDK
 ---
-The AusweisApp2 SDK is distributed as an AAR package that contains
+The |AppName| SDK is distributed as an AAR package that contains
 native **arm64-v8a** libraries only.
 The AAR package is available in the default repository of Android.
 The following listing shows the required **mavenCentral** in **build.gradle**.
@@ -43,9 +43,9 @@ The following listing shows the required **mavenCentral** in **build.gradle**.
   }
 
 
-The AusweisApp2 SDK will be fetched automatically as a dependency by
+The |AppName| SDK will be fetched automatically as a dependency by
 your **app/build.gradle** file.
-It is recommended to always use the latest version (|version|) of AusweisApp2.
+It is recommended to always use the latest version (|version|) of |AppName|.
 
 .. code-block:: groovy
 
@@ -71,7 +71,7 @@ It is recommended to always use the latest version (|version|) of AusweisApp2.
 App Bundle
 ^^^^^^^^^^
 
-The AusweisApp2 SDK uses native libraries which need to be extracted when
+The |AppName| SDK uses native libraries which need to be extracted when
 used in an App Bundle, otherwise the SDK will not work correctly.
 
 Add the following statement to your app's build.gradle file:
@@ -84,7 +84,7 @@ Add the following statement to your app's build.gradle file:
 Logging
 ^^^^^^^
 
-The AusweisApp2 SDK uses default logging of Android and has its own log file.
+The |AppName| SDK uses default logging of Android and has its own log file.
 It is **recommended** to collect that log file if an error occurs in
 your application to receive better support.
 
@@ -92,22 +92,22 @@ The log file is in your application path:
 
 .. code-block:: text
 
-    /data/data/your.application.name/files/AusweisApp2.XXXXXX.log
+    /data/data/your.application.name/files/AusweisApp.XXXXXX.log
 
 The *XXXXXX* characters will be replaced by an automatically generated
 portion of the filename to avoid conflicts with previous instances.
 
-A new log file will be created for each new instance of the AusweisApp2 and
+A new log file will be created for each new instance of the |AppName| and
 will be deleted after a correct shutdown.
 In case of old or multiple log files, it is highly probable that the
 previous instance crashed.
 
-The AusweisApp2 deletes any log files that are older than 14 days.
+The |AppName| deletes any log files that are older than 14 days.
 
 
 Initialization of the Android Application
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The AusweisApp2 SDK creates a fork of the Android "main" Application if started.
+The |AppName| SDK creates a fork of the Android "main" Application if started.
 Due to this, the Application is instantiated a second time. Thus, it must
 ensure that any initialization (e.g. Firebase connections) is only carried out
 once. To do so the following snippet may prove useful:
@@ -162,7 +162,7 @@ The Android SDK generates the necessary interface implementations from supplied
 AIDL files in order to perform IPC, as if this function had been called directly
 in the current process.
 
-In order to interact with the AusweisApp2 SDK there are two AIDL interfaces.
+In order to interact with the |AppName| SDK there are two AIDL interfaces.
 The first one is given to the client application by the SDK and allows the
 client to establish a session with the SDK,
 to send JSON commands to the SDK and to pass discovered NFC tags to the SDK.
@@ -216,14 +216,14 @@ Callback
 
 Background service
 ------------------
-The AusweisApp2 SDK is an embedded background service in your own application.
+The |AppName| SDK is an embedded background service in your own application.
 
 
 .. _android_binding_service:
 
 Binding to the service
 ^^^^^^^^^^^^^^^^^^^^^^
-In order to start the AusweisApp2 SDK it is necessary to bind to the
+In order to start the |AppName| SDK it is necessary to bind to the
 Android service supplied by the SDK.
 This binding fulfils two purposes:
 
@@ -280,13 +280,13 @@ methods are invoked by Android on service connection and disconnection.
 Bind service to raw connection
 """"""""""""""""""""""""""""""
 In order to perform the actual binding a directed Intent, which identifies
-the AusweisApp2 SDK, is created.
+the |AppName| SDK, is created.
 This Intent is sent to the Android API along with the ServiceConnection
 created above. This API call either starts up the SDK if it is the
 first client, or connects to the running SDK instance if there is already
 another client bound.
 
-You need to pass your own package name as the AusweisApp2 SDK is a background
+You need to pass your own package name as the |AppName| SDK is a background
 service of your application.
 
 
@@ -315,7 +315,7 @@ service of your application.
 
 Initializing the AIDL connection
 """"""""""""""""""""""""""""""""
-Once the Android service of the AusweisApp2 SDK is successfully started
+Once the Android service of the |AppName| SDK is successfully started
 and bound to by the client,
 the Android system calls the onServiceConnected method of the ServiceConnection
 created and supplied above.
@@ -369,9 +369,9 @@ The example below stores this instance in the member variable mSdk.
 
 .. _android_create_session:
 
-Create session to AusweisApp2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Once your client is bound to the AusweisApp2 SDK service and you have initialized
+Create session to |AppName|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Once your client is bound to the |AppName| SDK service and you have initialized
 the AIDL IPC mechanism, you are ready to use the actual SDK API.
 
 Since the Android system does not allow to limit the number of clients which
@@ -460,7 +460,7 @@ and establishing a session.
 
 Send command
 """"""""""""
-In order to send a JSON command to the AusweisApp2 SDK, you need to invoke
+In order to send a JSON command to the |AppName| SDK, you need to invoke
 the **send** function of your instance of **IAusweisApp2Sdk**. For this command
 to be processed by the SDK you need to supply the session ID which you have
 previously received. The listing below shows an example.
@@ -487,7 +487,7 @@ previously received. The listing below shows an example.
 
 Receive message
 """""""""""""""
-Messages from the AusweisApp2 SDK are passed to you via the same instance of
+Messages from the |AppName| SDK are passed to you via the same instance of
 **IAusweisApp2SdkCallback** in which you have received the session ID.
 The **receive** method is called each time the SDK sends a message.
 
@@ -500,7 +500,7 @@ The **receive** method is called each time the SDK sends a message.
 
 Disconnect from SDK
 ^^^^^^^^^^^^^^^^^^^
-In order to disconnect from the AusweisApp2 SDK you need to invalidate your
+In order to disconnect from the |AppName| SDK you need to invalidate your
 instance of **IBinder**. There are two possibilities to do this. The first
 one is to unbind from the SDK Android service to undo your binding, like
 shown in the code listing below. The second one is to return false in the
@@ -583,7 +583,7 @@ As it is common on the Android platform, information is sent to applications
 encapsulated in instances of the **Intent** class. In order to process newly
 discovered NFC tags, Intents which are given to the application need to be
 checked for the parcelable NFC extra as shown in the code listing below.
-Subsequently the client is required to send them to the AusweisApp2 SDK by
+Subsequently the client is required to send them to the |AppName| SDK by
 calling the **updateNfcTag** method of the previously acquired **IAusweisApp2Sdk**
 instance.
 The listing below shows an example for the described process.
@@ -625,7 +625,7 @@ for discovered NFC tags by Android if multiple applications which are able to
 dispatch NFC tags are installed. An application can suppress this App Chooser
 if it registers itself for **foreground dispatching** at runtime. This way NFC
 tags are handled directly by the application without a chooser being displayed.
-Subsequently the client is required to send them to the AusweisApp2 SDK by
+Subsequently the client is required to send them to the |AppName| SDK by
 calling the **updateNfcTag** method of the previously acquired **IAusweisApp2Sdk**
 instance.
 The required steps to handle NFC tags directly are shown in the code listing below

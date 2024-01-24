@@ -11,10 +11,4 @@ if(DESKTOP)
 endif()
 
 # Enable QtHooks
-if(QT5)
-	set(QtCore_PRIVATE_INCLUDE_DIRS "${Qt5Core_PRIVATE_INCLUDE_DIRS}")
-elseif(QT6)
-	set(QtCore_PRIVATE_INCLUDE_DIRS "${Qt6Core_PRIVATE_INCLUDE_DIRS}")
-endif()
-
-target_include_directories(AusweisAppTestHelperCommon SYSTEM PRIVATE ${QtCore_PRIVATE_INCLUDE_DIRS})
+target_include_directories(AusweisAppTestHelperCommon SYSTEM PRIVATE ${Qt6Core_PRIVATE_INCLUDE_DIRS})

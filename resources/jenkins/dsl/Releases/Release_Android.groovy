@@ -12,7 +12,7 @@ def j = new Release
 		name: 'Android_APK_' + ARCH,
 		libraries: ['Android_' + ARCH],
 		label: 'Android',
-		artifacts: 'libs/build/Toolchain_*,build/dist/**/AusweisApp2-*.apk*,build/debug.symbols/*'
+		artifacts: 'libs/build/Toolchain_*,build/dist/**/AusweisApp-*.apk*,build/debug.symbols/*'
 	).generate(this)
 
 

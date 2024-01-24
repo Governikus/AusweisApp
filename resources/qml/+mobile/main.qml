@@ -1,27 +1,29 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Navigation 1.0
-import Governikus.View 1.0
-import Governikus.FeedbackView 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.UiModule 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.TitleBar
+import Governikus.Navigation
+import Governikus.View
+import Governikus.FeedbackView
+import Governikus.Type.ApplicationModel
+import Governikus.Type.RemoteServiceModel
+import Governikus.Type.SettingsModel
+import Governikus.Type.UiModule
+import Governikus.Style
 
 ApplicationWindow {
 	id: appWindow
+
+	property var feedbackPopup: null
 
 	// Workaround for qt 5.12 not calculating the highdpi scaling factor correctly. On some devices (like the pixel 3)
 	// this leads to a small light stripe above the dark statusbar. By setting the background to black and filling the
 	// rest of the window with the background color, it's still there but not noticeable.
 	color: "#000000"
-	flags: Qt.Window | Qt.MaximizeUsingFullscreenGeometryHint
+	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.MaximizeUsingFullscreenGeometryHint : Qt.Window
 	visible: true
 
 	background: Rectangle {
@@ -31,15 +33,19 @@ ApplicationWindow {
 		readonly property var currentSectionPage: contentArea.currentSectionPage
 		readonly property bool isBackAction: navigationAction && navigationAction.action === NavigationAction.Action.Back
 
-		color: currentSectionPage ? currentSectionPage.titleBarColor : null
 		navigationAction: currentSectionPage ? currentSectionPage.navigationAction : null
 		rightAction: currentSectionPage ? currentSectionPage.rightTitleBarAction : null
+		showSeparator: currentSectionPage ? currentSectionPage.contentIsScrolled : false
+		smartEidUsed: currentSectionPage ? currentSectionPage.smartEidUsed : false
 		title: currentSectionPage ? currentSectionPage.title : ""
 		titleBarOpacity: currentSectionPage ? currentSectionPage.titleBarOpacity : 1
 		visible: !currentSectionPage || currentSectionPage.titleBarVisible
 	}
 
 	Component.onCompleted: {
+		Style.dimens.screenHeight = Qt.binding(function () {
+				return appWindow.height;
+			});
 		feedback.showIfNecessary();
 	}
 	onClosing: pClose => {
@@ -47,7 +53,7 @@ ApplicationWindow {
 		pClose.accepted = false;
 		if (contentArea.visibleItem) {
 			if (contentArea.activeModule === UiModule.DEFAULT) {
-				var currentTime = new Date().getTime();
+				let currentTime = new Date().getTime();
 				if (currentTime - d.lastCloseInvocation < 1000) {
 					plugin.fireQuitApplicationRequest();
 					pClose.accepted = true;
@@ -58,9 +64,9 @@ ApplicationWindow {
 				ApplicationModel.showFeedback(qsTr("To close the app, quickly press the back button twice."));
 				return;
 			}
-			var activeStackView = contentArea.visibleItem;
-			var navigationAction = contentArea.currentSectionPage.navigationAction;
-			if (activeStackView.depth <= 1 && (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel) && contentArea.activeModule !== UiModule.PROVIDER) {
+			let activeStackView = contentArea.visibleItem;
+			let navigationAction = contentArea.currentSectionPage.navigationAction;
+			if (activeStackView.depth <= 1 && (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel)) {
 				navigation.show(UiModule.DEFAULT);
 			} else if (navigationAction) {
 				navigationAction.clicked(undefined);
@@ -116,6 +122,7 @@ ApplicationWindow {
 	}
 	ContentArea {
 		id: contentArea
+
 		function reset() {
 			currentSectionPage.popAll();
 			currentSectionPage.reset();
@@ -125,14 +132,14 @@ ApplicationWindow {
 
 		anchors {
 			bottom: navigation.top
-			bottomMargin: !navigation.lockedAndHidden || !currentSectionPage ? 0 : (currentSectionPage.automaticSafeAreaMarginHandling ? plugin.safeAreaMargins.bottom : 0) + (currentSectionPage.hiddenNavbarPadding ? Style.dimens.navigation_bar_height : 0)
+			bottomMargin: !navigation.lockedAndHidden || !currentSectionPage ? 0 : plugin.safeAreaMargins.bottom + (currentSectionPage.hiddenNavbarPadding ? navigation.height : 0)
 			left: parent.left
 			leftMargin: plugin.safeAreaMargins.left
 			right: parent.right
 			rightMargin: plugin.safeAreaMargins.right
 			top: parent.top
 
-			Behavior on bottomMargin  {
+			Behavior on bottomMargin {
 				enabled: !ApplicationModel.isScreenReaderRunning()
 
 				NumberAnimation {
@@ -143,12 +150,15 @@ ApplicationWindow {
 	}
 	Navigation {
 		id: navigation
+
 		onResetContentArea: contentArea.reset()
 
 		anchors {
 			bottom: parent.bottom
 			left: parent.left
+			leftMargin: plugin.safeAreaMargins.left
 			right: parent.right
+			rightMargin: plugin.safeAreaMargins.right
 		}
 	}
 	IosBackGestureMouseArea {
@@ -157,19 +167,38 @@ ApplicationWindow {
 
 		onBackGestureTriggered: menuBar.navigationAction.clicked()
 	}
-	ConfirmationPopup {
-		id: toast
-		closePolicy: Popup.NoAutoClose
-		dim: true
-		modal: ApplicationModel.isScreenReaderRunning()
-		style: ApplicationModel.isScreenReaderRunning() ? ConfirmationPopup.PopupStyle.OkButton : ConfirmationPopup.PopupStyle.NoButtons
-		text: ApplicationModel.feedback
-		visible: ApplicationModel.feedback !== ""
+	Connections {
+		function onFireFeedbackChanged() {
+			if (feedbackPopup) {
+				feedbackPopup.close();
+				feedbackPopup.destroy();
+				feedbackPopup = null;
+			}
+			if (ApplicationModel.feedback !== "") {
+				feedbackPopup = toast.createObject(appWindow, {
+						"text": ApplicationModel.feedback
+					});
+				feedbackPopup.open();
+			}
+		}
 
-		onConfirmed: ApplicationModel.onShowNextFeedback()
+		target: ApplicationModel
+	}
+	Component {
+		id: toast
+
+		ConfirmationPopup {
+			closePolicy: Popup.NoAutoClose
+			dim: true
+			modal: ApplicationModel.isScreenReaderRunning()
+			style: ApplicationModel.isScreenReaderRunning() ? ConfirmationPopup.PopupStyle.OkButton : ConfirmationPopup.PopupStyle.NoButtons
+
+			onConfirmed: ApplicationModel.onShowNextFeedback()
+		}
 	}
 	StoreFeedbackPopup {
 		id: feedback
+
 		function showIfNecessary() {
 			if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_NONE && !RemoteServiceModel.running && SettingsModel.requestStoreFeedback()) {
 				SettingsModel.hideFutureStoreFeedbackDialogs();

@@ -12,7 +12,6 @@
 
 #pragma once
 
-
 #include <QVector>
 #include <algorithm>
 #include <functional>

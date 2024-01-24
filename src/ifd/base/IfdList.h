@@ -9,40 +9,13 @@
 #pragma once
 
 #include "IfdDescriptor.h"
+#include "IfdListEntry.h"
 
-#include <QTime>
-#include <QTimer>
+#include <QVector>
 
 
 namespace governikus
 {
-
-class IfdListEntry
-{
-	Q_DISABLE_COPY(IfdListEntry)
-
-	private:
-		IfdDescriptor mIfdDescriptor;
-		QTime mLastSeen;
-		QVector<QTime> mLastSeenHistory;
-
-	public:
-		explicit IfdListEntry(const IfdDescriptor& pIfdDescriptor);
-
-		void setLastSeenToNow();
-		bool cleanUpSeenTimestamps(int pReaderResponsiveTimeout);
-		[[nodiscard]] int getPercentSeen(int pCheckInterval = 1000, int pTimeFrame = 5000) const;
-
-		void setIfdDescriptor(const IfdDescriptor& pIfdDescriptor);
-
-		[[nodiscard]] bool containsEquivalent(const IfdDescriptor& pIfdDescriptor) const;
-		bool isEqual(const IfdListEntry* const pOther) const;
-
-		[[nodiscard]] const QTime& getLastSeen() const;
-		[[nodiscard]] const IfdDescriptor& getIfdDescriptor() const;
-
-};
-
 
 class IfdList
 	: public QObject
@@ -62,29 +35,5 @@ class IfdList
 		virtual void clear() = 0;
 		[[nodiscard]] virtual QVector<QSharedPointer<IfdListEntry>> getIfdList() const;
 };
-
-
-class IfdListImpl
-	: public IfdList
-{
-	Q_OBJECT
-
-	private:
-		QTimer mTimer;
-		const int mReaderResponsiveTimeout;
-		QVector<QSharedPointer<IfdListEntry>> mResponsiveList;
-
-	private Q_SLOTS:
-		void onProcessUnresponsiveRemoteReaders();
-
-	public:
-		IfdListImpl(int pCheckInterval = 1000, int pReaderResponsiveTimeout = 5000);
-		~IfdListImpl() override;
-
-		void update(const IfdDescriptor& pDescriptor) override;
-		void clear() override;
-		[[nodiscard]] QVector<QSharedPointer<IfdListEntry>> getIfdList() const override;
-};
-
 
 } // namespace governikus

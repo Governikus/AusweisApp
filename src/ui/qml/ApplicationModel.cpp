@@ -6,11 +6,11 @@
 
 #include "context/AuthContext.h"
 #include "context/ChangePinContext.h"
+#include "context/IfdServiceContext.h"
 #include "context/SelfAuthContext.h"
 
 #include "BuildHelper.h"
 #include "Env.h"
-#include "HelpAction.h"
 #include "LanguageLoader.h"
 #include "Randomizer.h"
 #include "ReaderFilter.h"
@@ -53,7 +53,6 @@ void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 
 ApplicationModel::ApplicationModel()
 	: mContext()
-	, mScaleFactor(DEFAULT_SCALE_FACTOR)
 	, mWifiInfo()
 	, mWifiEnabled(false)
 	, mFeedback()
@@ -76,7 +75,7 @@ ApplicationModel::ApplicationModel()
 	mFeedbackTimer.setSingleShot(true);
 	connect(&mFeedbackTimer, &QTimer::timeout, this, &ApplicationModel::onShowNextFeedback, Qt::QueuedConnection);
 
-	onApplicationStateChanged(qGuiApp->applicationState());
+	onApplicationStateChanged(QGuiApplication::applicationState());
 	connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, &ApplicationModel::onApplicationStateChanged);
 }
 
@@ -155,7 +154,7 @@ ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
 		return QmlNfcState::NFC_DISABLED;
 	}
 
-	if (!Env::getSingleton<ReaderManager>()->isScanRunning(type))
+	if (!pluginInfo.isScanRunning())
 	{
 		return QmlNfcState::NFC_INACTIVE;
 	}
@@ -188,24 +187,6 @@ bool ApplicationModel::isWifiEnabled() const
 }
 
 
-qreal ApplicationModel::getScaleFactor() const
-{
-	return mScaleFactor;
-}
-
-
-void ApplicationModel::setScaleFactor(qreal pScaleFactor)
-{
-	pScaleFactor *= DEFAULT_SCALE_FACTOR;
-
-	if (qAbs(pScaleFactor - mScaleFactor) > 0)
-	{
-		mScaleFactor = pScaleFactor;
-		Q_EMIT fireScaleFactorChanged();
-	}
-}
-
-
 ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 {
 	if (mContext.objectCast<ChangePinContext>())
@@ -216,21 +197,25 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 	{
 		return Workflow::WORKFLOW_SELF_AUTHENTICATION;
 	}
-	if (mContext.objectCast<AuthContext>())
-	{
-		return Workflow::WORKFLOW_AUTHENTICATION;
-	}
 #if __has_include("context/PersonalizationContext.h")
 	if (mContext.objectCast<PersonalizationContext>())
 	{
 		return Workflow::WORKFLOW_SMART;
 	}
 #endif
+	if (mContext.objectCast<AuthContext>())
+	{
+		return Workflow::WORKFLOW_AUTHENTICATION;
+	}
+	if (mContext.objectCast<IfdServiceContext>())
+	{
+		return Workflow::WORKFLOW_REMOTE_SERVICE;
+	}
 	return Workflow::WORKFLOW_NONE;
 }
 
 
-int ApplicationModel::getAvailableReader() const
+qsizetype ApplicationModel::getAvailableReader() const
 {
 	if (!mContext)
 	{
@@ -304,13 +289,18 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 	qCInfo(feedback).noquote() << pMessage;
 
 #if defined(Q_OS_ANDROID)
-	Q_UNUSED(pReplaceExisting)
-	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage](){
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage, pReplaceExisting](){
 			QJniEnvironment env;
+			static thread_local QJniObject toast;
+
+			if (toast.isValid() && pReplaceExisting)
+			{
+				toast.callMethod<void>("cancel");
+			}
 
 			QJniObject context = QNativeInterface::QAndroidApplication::context();
 			const QJniObject& jMessage = QJniObject::fromString(pMessage);
-			const QJniObject& toast = QJniObject::callStaticObjectMethod(
+			toast = QJniObject::callStaticObjectMethod(
 					"android/widget/Toast",
 					"makeText",
 					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
@@ -351,7 +341,7 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 
 
 #ifndef Q_OS_IOS
-void ApplicationModel::keepScreenOn(bool pActive)
+void ApplicationModel::keepScreenOn(bool pActive) const
 {
 	#if defined(Q_OS_ANDROID)
 	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pActive](){
@@ -387,9 +377,6 @@ QStringList ApplicationModel::getLicenseText() const
 	}
 
 	QTextStream in(&licenseFile);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	in.setCodec("UTF-8");
-#endif
 	while (!in.atEnd())
 	{
 		lines << in.readLine();
@@ -401,19 +388,7 @@ QStringList ApplicationModel::getLicenseText() const
 
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-QString ApplicationModel::onlineHelpUrl(const QString& pHelpSectionName)
-{
-	return HelpAction::getOnlineUrl(pHelpSectionName);
-}
-
-
-void ApplicationModel::openOnlineHelp(const QString& pHelpSectionName)
-{
-	HelpAction::openContextHelp(pHelpSectionName);
-}
-
-
-QUrl ApplicationModel::getCustomConfigPath()
+QUrl ApplicationModel::getCustomConfigPath() const
 {
 	QFileInfo info(Env::getSingleton<SecureStorage>()->getCustomConfig());
 	QUrl url(info.absolutePath());
@@ -422,7 +397,7 @@ QUrl ApplicationModel::getCustomConfigPath()
 }
 
 
-void ApplicationModel::saveEmbeddedConfig(const QUrl& pFilename)
+void ApplicationModel::saveEmbeddedConfig(const QUrl& pFilename) const
 {
 	bool success = true;
 	if (QFile::exists(pFilename.toLocalFile()))
@@ -465,7 +440,7 @@ void ApplicationModel::onTranslationChanged()
 }
 
 
-void ApplicationModel::enableWifi()
+void ApplicationModel::enableWifi() const
 {
 #ifdef Q_OS_ANDROID
 	showSettings(Settings::SETTING_WIFI);

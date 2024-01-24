@@ -109,18 +109,6 @@ QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 		case QSsl::SslProtocol::SecureProtocols:
 			return QStringLiteral("SecureProtocols");
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0)) || QT_DEPRECATED_SINCE(5, 15) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-		case QSsl::SslProtocol::SslV2:
-			return QStringLiteral("SslV2");
-
-		case QSsl::SslProtocol::SslV3:
-			return QStringLiteral("SslV3");
-
-		case QSsl::SslProtocol::TlsV1SslV3:
-			return QStringLiteral("TlsV1SslV3");
-
-#endif
-
 			QT_WARNING_PUSH
 					QT_WARNING_DISABLE_DEPRECATED
 

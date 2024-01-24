@@ -10,11 +10,19 @@
 
 		<Property Id="AUTOSTART" Secure="yes"/>
 		<Property Id="AUTOSTART_FOUND" Secure="yes">
-			<RegistrySearch Id="AutoStartRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp2" Type="raw"/>
+			<RegistrySearch Id="AutoStartRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp" Type="raw"/>
+		</Property>
+		<Property Id="AUTOSTART_OLD_FOUND" Secure="yes">
+			<RegistrySearch Id="AutoStartRegistryOldRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp2" Type="raw"/>
 		</Property>
 		<SetProperty Before="CostFinalize" Id="AUTOSTART" Value="true">
 			(NOT AUTOSTART) AND (
 				(WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_FOUND
+			)
+		</SetProperty>
+		<SetProperty Action="SetAUTOSTART_REGISTRY_OLD_OVERWRITE" Before="CostFinalize" Id="AUTOSTART" Value="true">
+			(NOT AUTOSTART) AND (
+				(WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_OLD_FOUND
 			)
 		</SetProperty>
 
@@ -148,15 +156,6 @@
 			)
 		</SetProperty>
 
-		<Property Id="HISTORY" Secure="yes"/>
-		<Property Id="HISTORY_FOUND" Secure="yes">
-			<RegistrySearch Id="HistoryRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)\history" Name="enable" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="HISTORY" Value="[HISTORY_FOUND]">
-			(NOT HISTORY) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND HISTORY_FOUND
-			)
-		</SetProperty>
 
 
 
@@ -175,7 +174,6 @@
 			<ComponentRef Id="SecureScreenKeyboard"/>
 			<ComponentRef Id="EnableCanAllowed"/>
 			<ComponentRef Id="SkipRightsOnCanAllowed"/>
-			<ComponentRef Id="History"/>
 		</Feature>
 
 
@@ -184,7 +182,7 @@
 			<Component Id="AutoStart" Guid="{391CF345-5AA2-45CD-C001-C24861C9AB8D}">
 				<Condition>AUTOSTART = "true"</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.WindowsAutoStartKey)">
-					<RegistryValue Type="string" Name="AusweisApp2" Value="[INSTALL_ROOT][ProductName].exe"  />
+					<RegistryValue Type="string" Name="AusweisApp" Value="[INSTALL_ROOT][ProductName].exe"  />
 				</RegistryKey>
 			</Component>
 
@@ -276,13 +274,6 @@
 				<Condition>SKIPRIGHTSONCANALLOWED</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="skipRightsOnCanAllowed" Type="string" Value="[SKIPRIGHTSONCANALLOWED]" />
-				</RegistryKey>
-			</Component>
-
-			<Component Id="History" Guid="{391CF345-5AA2-45CD-C014-C24861C9AB8D}">
-				<Condition>HISTORY</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)\history">
-					<RegistryValue Name="enable" Type="string" Value="[HISTORY]" />
 				</RegistryKey>
 			</Component>
 		</DirectoryRef>

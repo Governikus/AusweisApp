@@ -1,5 +1,5 @@
-AusweisApp2
-===========
+AusweisApp
+==========
 
 Kontakt
 -------
@@ -13,7 +13,7 @@ Lizenz
 ------
 Der vorliegende Quellcode wird unter der EUPL v1.2 bereitgestellt.
 Die Datei ``LICENSE.officially.txt`` gilt ausschließlich für
-die offizielle Version der AusweisApp2, welche von der Governikus GmbH & Co. KG
+die offizielle Version der AusweisApp, welche von der Governikus GmbH & Co. KG
 im Auftrag des Bundes unter https://www.ausweisapp.bund.de bereitgestellt wird.
 
 
@@ -30,7 +30,7 @@ notwendigen Bibliotheken mit den entsprechenden Patches.
 
 Build
 -----
-Um die AusweisApp2 zu bauen, ist es notwendig, ein Makefile mittels CMake zu
+Um die AusweisApp zu bauen, ist es notwendig, ein Makefile mittels CMake zu
 generieren. Dazu kann CMake auf der Kommandozeile oder mit der von CMake
 mitgelieferten CMake-GUI ausgeführt werden.
 
@@ -42,7 +42,7 @@ für den Build eingetragen wurden, über diesen Mechanismus an CMake übergeben 
 Als Generator für Makefiles sollte unter Windows für MinGW "MinGW Makefiles" und
 für MSVC "NMake Makefiles" oder "Ninja" gewählt werden.
 
-Beim Generieren des Makefiles ist zu beachten, dass die AusweisApp2 nur sogenannte
+Beim Generieren des Makefiles ist zu beachten, dass die AusweisApp nur sogenannte
 "out of source tree"-Builds erlaubt. Daher ist die empfohlene Variante von CMake
 zwingend einzuhalten, und der Build-Ordner darf sich nicht im Source-Ordner
 befinden.
@@ -51,14 +51,14 @@ Beispiel über die CLI:
 
 ::
 
-   C:/AusweisApp2/
+   C:/AusweisApp/
    C:/qt/
    C:/build/
 
 ::
 
    C:>cd C:/build
-   C:\build>cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:/qt/dist C:/AusweisApp2 -DCMAKE_BUILD_TYPE=release
+   C:\build>cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:/qt/dist C:/AusweisApp -DCMAKE_BUILD_TYPE=release
    -- The CXX compiler identification is GNU 11.2.0
    -- Detecting CXX compiler ABI info
    -- Detecting CXX compiler ABI info - done
@@ -76,12 +76,12 @@ Beispiel über die CLI:
    -- DVCS phase: public
    -- DVCS revision: 283adbf18b4e+
    -- No documentation will be generated
-   -- CMAKE_INSTALL_PREFIX: C:/Program Files (x86)/AusweisApp2
+   -- CMAKE_INSTALL_PREFIX: C:/Program Files (x86)/AusweisApp
    -- CMAKE_BUILD_TYPE: RELEASE
    -- CMAKE_PREFIX_PATH: C:/qt/dist
    -- CMAKE_INCLUDE_PATH:
    -- CMAKE_LIBRARY_PATH:
-   -- CMAKE_SYSTEM_PREFIX_PATH: C:/Program Files;C:/Program Files (x86);C:/Program Files/CMake;C:/Program Files (x86)/AusweisApp2
+   -- CMAKE_SYSTEM_PREFIX_PATH: C:/Program Files;C:/Program Files (x86);C:/Program Files/CMake;C:/Program Files (x86)/AusweisApp
    -- CMAKE_SYSTEM_INCLUDE_PATH:
    -- CMAKE_VERSION: 3.23.2
    -- CMAKE_SYSTEM_PROCESSOR: AMD64
@@ -90,7 +90,7 @@ Beispiel über die CLI:
    [...]
 
 
-Um die mobile Variante der AusweisApp2 zu bauen, benötigt man je nach Plattform zusätzliche
+Um die mobile Variante der AusweisApp zu bauen, benötigt man je nach Plattform zusätzliche
 externe Komponenten, die in der README in ``./libs`` im Abschnitt Android / iOS beschrieben
 sind.
 
@@ -103,19 +103,19 @@ Bei Android ist zu beachten, dass ein CMAKE_TOOLCHAIN_FILE angegeben werden muss
 ::
 
    $ cd build
-   $ cmake -DCMAKE_PREFIX_PATH=/home/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/android.toolchain.cmake ../AusweisApp2
+   $ cmake -DCMAKE_PREFIX_PATH=/home/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/android.toolchain.cmake ../AusweisApp
    $ make
    $ make install
    $ make apk
 
-Unter dem Ordner "./dist/bin" ist nun ein "AusweisApp2...apk" erstellt worden.
+Unter dem Ordner "./dist/bin" ist nun ein "AusweisApp...apk" erstellt worden.
 
 Sofern der Parameter *CMAKE_BUILD_TYPE* auf RELEASE gesetzt wird, sind folgende CMake
 Parameter notwendig um das APK zu signieren.
 
 ::
 
-   -DAPK_SIGN_KEYSTORE=/home/governikus/ausweisapp2.apk.keystore.jks
+   -DAPK_SIGN_KEYSTORE=/home/governikus/AusweisApp.apk.keystore.jks
    -DAPK_SIGN_KEYSTORE_ALIAS=ausweisapp
    -DAPK_SIGN_KEYSTORE_PSW=123456
 
@@ -137,14 +137,14 @@ freizuschalten bzw. den Schlüsselbund freizugeben.
 
 security unlock-keychain -pPASSWORD ${HOME}/Library/Keychains/login.keychain
 
-Für iOS wird die AusweisApp2 mittels XCode gebaut!
+Für iOS wird die AusweisApp mittels XCode gebaut!
 
 ::
 
    $ cd build
-   $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp2/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../AusweisApp2 -GXcode
-   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive
-   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .
+   $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../AusweisApp -GXcode
+   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive
+   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .
 
 
 Im Build-Ordner befindet sich nun ein *.ipa und ein *.xcarchive, welches jeweils das
@@ -158,9 +158,9 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
 - Unter Windows ist hierfür noch das WiX Toolset (http://wixtoolset.org/ Getestet: 3.8 bis 3.10)
   notwendig.
-  Mittels "mingw32-make package" wird die AusweisApp2 gebaut und ein MSI Paket bereitgestellt.
+  Mittels "mingw32-make package" wird die AusweisApp gebaut und ein MSI Paket bereitgestellt.
 
-- Unter macOS wird mittels "make package" die AusweisApp2 gebaut und ein DMG bereitgestellt.
+- Unter macOS wird mittels "make package" die AusweisApp gebaut und ein DMG bereitgestellt.
 
 - Um ein APK für Android zu bauen, sind zwei Schritte notwendig, da CMake das Format bisher
   nicht unterstützt. Daher sind nach der Konfiguration des Projektes folgende Befehle notwendig,
@@ -175,7 +175,7 @@ Nachdem die Build-Umgebung eingerichtet ist, kann je nach System ein Package ers
 
 Reproduzierbarer Build
 ----------------------
-Wir sind stets bemüht, den Build des offiziellen Binaries der AusweisApp2 nachvollziehbar zu gestalten.
+Wir sind stets bemüht, den Build des offiziellen Binaries der AusweisApp nachvollziehbar zu gestalten.
 Daher haben wir unter anderem eine README in dem Unterordner ``./libs`` hinterlegt, die den Aufbau
 der Buildumgebung und den Build der externen Bibliotheken beschreibt.
 Anhand dieser Anleitung können Sie nachvollziehen, wie unser internes Buildsystem aufgebaut ist und
@@ -184,7 +184,7 @@ welche Compiler bzw. Compiler-Versionen wir verwenden.
 Im Unterordner ``./resources/jenkins/`` ist es möglich, unsere Konfiguration des CI-Servers einzusehen.
 Die Konfiguration besteht aus mehreren Dockerfiles und JobDSL-Dateien.
 
-Anhand dieser Skripte ist es möglich, den Build der AusweisApp2 zu reproduzieren.
+Anhand dieser Skripte ist es möglich, den Build der AusweisApp zu reproduzieren.
 Ein Unterschied zum offiziellen Binary sollte lediglich in eventuellen Pfaden,
 einem Datum bzw. Zeitstempel und Signaturen bestehen.
 

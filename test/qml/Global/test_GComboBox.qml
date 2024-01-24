@@ -1,21 +1,22 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Style
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GComboBox {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GComboBox {}", testCase);
 	}
 	function test_initial() {
 		let testObject = createTestObject();
 		compare(testObject.count, 0, "count: -1");
 		compare(testObject.currentIndex, -1, "currentIndex: -1");
-		verify(!testObject.indicator.visible, "Indicator visible: false");
+		verify(testObject.indicator.visible, "Indicator visible has to be: true");
 	}
 	function test_load() {
 		let testObject = createTestObject();
@@ -24,8 +25,8 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal");
-		testObject.textStyle = Style.text.hint_warning;
-		compare(testObject.textStyle, Style.text.hint_warning, "textStyle: hint_warning");
+		testObject.textStyle = Style.text.normal_warning;
+		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GComboBox"
@@ -34,8 +35,8 @@ TestCase {
 
 	GComboBox {
 		id: testObject
+
 		model: ["a", "b", "c", "d"]
-		textStyle: Style.text.hint
 
 		TestCase {
 			function test_click() {

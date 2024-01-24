@@ -8,33 +8,71 @@
 
 #include "PersonalizationContext.h"
 
+#include "LanguageLoader.h"
+
+#include <QDate>
+
 
 using namespace governikus;
 
 
 PersonalizationContext::PersonalizationContext(const QString& pAppletServiceUrl)
-	: AuthContext(Action::PERSONALIZATION, QSharedPointer<ActivationContext>())
+	: AuthContext(Action::PERSONALIZATION)
 	, mAllowSmartEidInstallation(true)
+	, mSmartEidType(SmartEidType::UNKNOWN)
+	, mChallengeType()
+	, mFinalizeStatus(0)
 	, mSessionIdentifier()
 	, mChallenge()
 	, mPreparePersonalizationData()
 	, mNewPin()
 	, mAppletServiceUrl(pAppletServiceUrl)
+	, mLibVersion()
 	, mRemainingAttempts(-1)
 	, mRemainingDays(-1)
 {
 }
 
 
-[[nodiscard]] bool PersonalizationContext::allowSmartEidInstallation() const
+SmartEidType PersonalizationContext::getSmartEidType() const
 {
-	return mAllowSmartEidInstallation;
+	return mSmartEidType;
 }
 
 
-void PersonalizationContext::smartEidInstallationSuccessfull()
+const QString& PersonalizationContext::getChallengeType() const
 {
-	mAllowSmartEidInstallation = false;
+	return mChallengeType;
+}
+
+
+[[nodiscard]] const QString& PersonalizationContext::getLibVersion() const
+{
+	return mLibVersion;
+}
+
+
+void PersonalizationContext::setServiceInformation(SmartEidType pType, const QString& pChallengeType, const QString& pLibVersion)
+{
+	if (mSmartEidType != pType || mChallenge != pChallengeType || mLibVersion != pLibVersion)
+	{
+		mSmartEidType = pType;
+		mChallengeType = pChallengeType;
+		mLibVersion = pLibVersion;
+		Q_EMIT fireServiceInformationChanged();
+	}
+}
+
+
+int PersonalizationContext::getFinalizeStatus() const
+{
+	return mFinalizeStatus;
+}
+
+
+void PersonalizationContext::setFinalizeStatus(int pStatus)
+{
+	mFinalizeStatus = pStatus;
 }
 
 
@@ -46,7 +84,11 @@ const QUuid& PersonalizationContext::getSessionIdentifier() const
 
 void PersonalizationContext::setSessionIdentifier(const QUuid& pSessionIdentifier)
 {
-	mSessionIdentifier = pSessionIdentifier;
+	if (mSessionIdentifier != pSessionIdentifier)
+	{
+		mSessionIdentifier = pSessionIdentifier;
+		Q_EMIT fireSessionIdentifierChanged();
+	}
 }
 
 
@@ -122,9 +164,12 @@ void PersonalizationContext::setRemainingAttempts(int pRemainingAttempts)
 }
 
 
-int PersonalizationContext::getRemainingDays() const
+QString PersonalizationContext::getRestrictionDate() const
 {
-	return mRemainingDays;
+	QDate restrictionDate = QDate::currentDate();
+	restrictionDate = restrictionDate.addDays(qAbs(mRemainingDays));
+	const auto& usedLocale = LanguageLoader::getInstance().getUsedLocale();
+	return usedLocale.toString(restrictionDate, QStringLiteral("d. MMMM yyyy"));
 }
 
 
@@ -152,4 +197,13 @@ QVector<AcceptedEidType> PersonalizationContext::getAcceptedEidTypes() const
 	}
 
 	return AuthContext::getAcceptedEidTypes();
+}
+
+
+void PersonalizationContext::setProgress(int pProgress, const QString& pMessage, int pInitialValue, int pMaxValue)
+{
+	Q_ASSERT(pMaxValue > pInitialValue);
+
+	// rewrite progress to combine two progresses from 0-100 in single progress bar.
+	setProgress(pInitialValue + static_cast<int>((pMaxValue - pInitialValue) / 100.0 * pProgress), pMessage);
 }

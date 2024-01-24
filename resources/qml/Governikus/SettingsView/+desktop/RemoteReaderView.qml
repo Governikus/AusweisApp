@@ -1,23 +1,21 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.ReaderScanEnabler 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.View 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.NumberModel
+import Governikus.Type.RemoteServiceModel
+import Governikus.Type.ReaderScanEnabler
+import Governikus.Type.ReaderPlugIn
+import Governikus.View
 
 Item {
 	id: root
 
-	readonly property string helpTopic: "settingsRemoteReader"
-
-	signal moreInformation
 	signal pairDevice(string pDeviceId)
 	signal unpairDevice(string pDeviceId)
 
@@ -29,102 +27,134 @@ Item {
 	}
 	Column {
 		id: column
+
 		anchors.fill: parent
 		spacing: Constants.component_spacing
 
-		GText {
-			activeFocusOnTab: true
-			text: qsTr("Paired remote devices")
-			textStyle: Style.text.header_accent
-			visible: knownDevices.count > 0
-			width: parent.width
-
-			FocusFrame {
-			}
-		}
-		Column {
+		GPane {
+			spacing: Constants.component_spacing
+			//: LABEL DESKTOP
+			title: qsTr("Paired devices")
+			visible: availablePairedDevices.count > 0
 			width: parent.width
 
 			Repeater {
-				id: knownDevices
-				model: RemoteServiceModel.knownDevices
+				id: availablePairedDevices
+
+				model: RemoteServiceModel.availablePairedDevices
 
 				delegate: RemoteReaderDelegate {
-					height: implicitHeight + Constants.pane_padding
-					width: parent.width
+					Layout.fillWidth: true
 
 					onUnpairDevice: pDeviceId => root.unpairDevice(pDeviceId)
 				}
 			}
 		}
-		GSeparator {
-			visible: knownDevices.count > 0
-			width: parent.width
-		}
-		GText {
-			activeFocusOnTab: true
-			text: qsTr("Available remote devices")
-			textStyle: Style.text.header_accent
+		GPane {
+			spacing: Constants.component_spacing
+
+			//: LABEL DESKTOP
+			title: qsTr("Last connected")
+			visible: unavailablePairedDevices.count > 0
 			width: parent.width
 
-			FocusFrame {
-			}
-		}
-		GListView {
-			id: availableDevices
-			height: contentHeight
-			model: RemoteServiceModel.availableRemoteDevices
-			width: parent.width
+			Repeater {
+				id: unavailablePairedDevices
 
-			delegate: RemoteReaderDelegate {
-				height: implicitHeight + Constants.pane_padding
-				width: availableDevices.width
+				model: RemoteServiceModel.unavailablePairedDevices
 
-				onPairDevice: pDeviceId => root.pairDevice(pDeviceId)
-			}
-		}
-		GText {
-			activeFocusOnTab: true
-			text: RemoteServiceModel.availableRemoteDevices.emptyListDescriptionString
-			textStyle: Style.text.normal
-			visible: availableDevices.count === 0
-			width: parent.width
+				delegate: RemoteReaderDelegate {
+					Layout.fillWidth: true
 
-			FocusFrame {
-			}
-		}
-		GSeparator {
-			width: parent.width
-		}
-		RowLayout {
-			id: hint
-			spacing: Constants.text_spacing
-			width: parent.width
-
-			TintableIcon {
-				source: "qrc:/images/info.svg"
-				sourceSize.height: Style.dimens.icon_size
-				tintColor: Style.color.accent
-			}
-			GText {
-				id: hintText
-				Layout.alignment: Qt.AlignVCenter
-				Layout.fillWidth: true
-				activeFocusOnTab: true
-				text: qsTr("Only devices that are already paired or are connected to the same WiFi network and have the remote service enabled are shown here.")
-				textStyle: Style.text.hint
-				verticalAlignment: Text.AlignBottom
-				wrapMode: Text.WordWrap
-
-				FocusFrame {
+					onUnpairDevice: pDeviceId => root.unpairDevice(pDeviceId)
 				}
 			}
 		}
-		GButton {
-			//: LABEL DESKTOP
-			text: qsTr("More information")
+		GPane {
+			spacing: Constants.component_spacing
 
-			onClicked: moreInformation()
+			//: LABEL DESKTOP
+			title: qsTr("Add pairing")
+			width: parent.width
+
+			GListView {
+				id: availableDevices
+
+				Layout.fillWidth: true
+				implicitHeight: contentHeight
+				model: RemoteServiceModel.availableDevicesInPairingMode
+
+				delegate: RemoteReaderDelegate {
+					height: implicitHeight + Constants.pane_padding
+					width: availableDevices.width
+
+					onPairDevice: pDeviceId => root.pairDevice(pDeviceId)
+				}
+			}
+			Column {
+				Layout.fillWidth: true
+				spacing: Constants.text_spacing
+				visible: availableDevices.count === 0
+
+				Repeater {
+					model: [
+						//: LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4. %1 is a placeholder-tag for the app name.
+						qsTr("Ensure that the %1 on your Smartphone as card reader has at least version %2.").arg(Qt.application.name).arg("1.26.5"),
+						//: LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 is a placeholder-tag for the app name.
+						qsTr("Open the %1 on your Smartphone as card reader.").arg(Qt.application.name),
+						//: LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4. %1 and %2 are surrounding tags for bold font
+						qsTr("On that device go to %1Card reader%2 and then %1Pair device%2 rsp. %1Pair new device%2.").arg("<b>").arg("</b>"),
+						//: LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 4
+						qsTr("Choose the device in the list to pair it.")]
+
+					RowLayout {
+						spacing: Constants.component_spacing
+						width: parent.width
+
+						GText {
+							Accessible.ignored: true
+							Layout.alignment: Qt.AlignTop
+							text: (index + 1) + "."
+						}
+						GText {
+							Accessible.name: (index + 1) + ". " + ApplicationModel.stripHtmlTags(modelData)
+							Layout.alignment: Qt.AlignTop
+							Layout.maximumWidth: Number.POSITIVE_INFINITY
+							activeFocusOnTab: true
+							text: modelData
+
+							FocusFrame {
+							}
+						}
+					}
+				}
+			}
+			GSeparator {
+				Layout.fillWidth: true
+				visible: availableDevices.count === 0
+			}
+			RowLayout {
+				Layout.fillWidth: true
+				spacing: Constants.component_spacing
+				visible: availableDevices.count === 0
+
+				TintableIcon {
+					source: "qrc:/images/info.svg"
+					sourceSize.height: Style.dimens.large_icon_size
+					tintColor: Style.color.control
+				}
+				GText {
+					Layout.alignment: Qt.AlignVCenter
+					activeFocusOnTab: true
+					color: Style.color.control
+					text: qsTr("Both devices have to be connected to the same WiFi.")
+					verticalAlignment: Text.AlignBottom
+					wrapMode: Text.WordWrap
+
+					FocusFrame {
+					}
+				}
+			}
 		}
 	}
 }

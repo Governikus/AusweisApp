@@ -1,63 +1,72 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.HistoryModel 1.0
-import Governikus.Type.LogModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.ApplicationModel
+import Governikus.Type.LogModel
+import Governikus.Type.SettingsModel
 
 ColumnLayout {
 	spacing: Constants.component_spacing
 
-	GText {
-		//: LABEL DESKTOP
-		text: qsTr("Create dummy entries")
-		textStyle: Style.text.header_accent
-	}
-	RowLayout {
-		GButton {
-			//: LABEL DESKTOP
-			text: qsTr("Logfile")
+	GPane {
+		Layout.fillWidth: true
+		spacing: Constants.component_spacing
 
-			onClicked: {
-				LogModel.saveDummyLogFile();
-				ApplicationModel.showFeedback("Created new logfile.");
+		//: LABEL DESKTOP
+		title: qsTr("Create dummy entries")
+
+		RowLayout {
+			GButton {
+				//: LABEL DESKTOP
+				text: qsTr("Logfile")
+
+				onClicked: {
+					LogModel.saveDummyLogFile();
+					ApplicationModel.showFeedback("Created new logfile.");
+				}
 			}
+		}
+		LabeledSwitch {
+			checked: SettingsModel.showBetaTesting
+			//: LABEL DESKTOP
+			title: qsTr("Show beta testing image")
+
+			onCheckedChanged: SettingsModel.showBetaTesting = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.enableCanAllowed
+			//: LABEL DESKTOP
+			title: qsTr("Support CAN allowed mode")
+
+			onCheckedChanged: SettingsModel.enableCanAllowed = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.skipRightsOnCanAllowed
+			enabled: SettingsModel.enableCanAllowed
+			//: LABEL DESKTOP
+			title: qsTr("Skip rights page in CAN allowed mode")
+
+			onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
 		}
 		GButton {
 			//: LABEL DESKTOP
-			text: qsTr("History")
+			text: qsTr("Reset hideable dialogs")
 
 			onClicked: {
-				HistoryModel.createDummyEntry();
-				ApplicationModel.showFeedback("Created new history entry.");
+				SettingsModel.resetHideableDialogs();
 			}
 		}
-	}
-	GCheckBox {
-		checked: SettingsModel.showBetaTesting
-		//: LABEL DESKTOP
-		text: qsTr("Show beta testing image")
+		GText {
+			activeFocusOnTab: true
+			//: LABEL DESKTOP
+			text: qsTr("Show Transport PIN reminder, store feedback and close reminder dialogs.")
 
-		onCheckedChanged: SettingsModel.showBetaTesting = checked
-	}
-	GCheckBox {
-		checked: SettingsModel.enableCanAllowed
-		//: LABEL DESKTOP
-		text: qsTr("Support CAN allowed mode")
-
-		onCheckedChanged: SettingsModel.enableCanAllowed = checked
-	}
-	GCheckBox {
-		checked: SettingsModel.skipRightsOnCanAllowed
-		enabled: SettingsModel.enableCanAllowed
-		//: LABEL DESKTOP
-		text: qsTr("Skip rights page in CAN allowed mode")
-
-		onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
+			FocusFrame {
+			}
+		}
 	}
 }

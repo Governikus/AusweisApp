@@ -1,0 +1,1337 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2023, Governikus GmbH & Co. KG
+# This file is distributed under the same license as the AusweisApp2 Failure
+# Codes package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: AusweisApp2 Failure Codes 1.26.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-31 05:28+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+msgid "Failure Codes"
+msgstr "Fehlercodes"
+
+msgid ""
+"The |AppName| will send failure codes indicating what went wrong and "
+"where it happened as well as how to solve it."
+msgstr ""
+"Die |AppName| sendet Fehlercodes, um mitzuteilen, welche Fehler an "
+"welcher Stelle aufgetreten sind und wie sie behoben werden können."
+
+msgid "Helpful tips"
+msgstr "Hilfreiche Tipps"
+
+msgid ""
+"The following tips will help you to prevent many of the failures "
+"mentioned in the next section. Also they assist you in receiving further "
+"guidance and help."
+msgstr ""
+"Die folgenden Tipps helfen, eine Vielzahl der im Nachfolgenden "
+"beschriebenen Fehlersituationen zu verhindern oder an weiterführende "
+"Hilfestellung zu gelangen."
+
+msgid "Check ID card position"
+msgstr "Ausweis-Position überprüfen"
+
+msgid ""
+"Check the position of your ID card on the smartphone or card reader. "
+"Especially with smartphones, the field strength for the power supply of "
+"the ID card is not always sufficient. If you place your smartphone on "
+"your ID card, please also ensure that your surface is not electrically "
+"conductive, as this can then disrupt or prevent communication with the ID"
+" card. If all of the above does not work, please see "
+":ref:`failure_code_replace_card_or_card_reader`."
+msgstr ""
+"Überprüfen Sie die Position Ihres Ausweises auf dem Smartphone oder "
+"Kartenleser. Speziell bei Smartphones ist die Feldstärke für die "
+"Stromversorgung des Ausweises nicht immer ausreichend. Sollten Sie Ihr "
+"Smartphone auf Ihren Ausweis legen, achten Sie bitte auch darauf, dass "
+"die Oberfläche nicht elektrisch leitend ist, da diese dann die "
+"Kommunikation mit dem Ausweis stört bzw. verhindern kann. Falls keiner "
+"der genannten Tipps hilft, lesen Sie bitte "
+":ref:`failure_code_replace_card_or_card_reader`."
+
+msgid "Contact support"
+msgstr "Support kontaktieren"
+
+msgid ""
+"If the provided failure code did not help to resolve the issue, please "
+"contact the support (https://www.ausweisapp.bund.de/en/help-and-support),"
+" including the error code, situation description, and logfile, so that "
+"they can identify issues in your system configuration or |AppName|. If "
+"you are using the |AppName| you will find the logfile in the Help "
+"section."
+msgstr ""
+"Wenn der gezeigte Fehlercode Ihnen nicht hilft, das Problem eigenständig "
+"zu lösen, kontaktieren Sie unseren Support "
+"(https://www.ausweisapp.bund.de/hilfe-und-support), inklusive dem "
+"Fehlercode, einer Situationsbeschreibung und einer Protokolldatei, um "
+"Probleme in Ihrer Systemkonfiguration oder der |AppName| zu "
+"identifizieren. Wenn Sie die |AppName| verwenden, finden Sie die "
+"Protokolldatei im Hilfebereich."
+
+msgid "Inform service provider"
+msgstr "Diensteanbieter informieren"
+
+msgid ""
+"Directly notify the service provider if the failure code contained an "
+"incorrect TLS or service configuration. Usually the service provider "
+"contact information are available on the website on which you have "
+"started the authentication."
+msgstr ""
+"Bitte wenden Sie sich für Fehlercodes, welche eine ungültige TLS- oder "
+"Dienstekonfiguration beinhalten direkt an den jeweiligen Diensteanbieter."
+" Sie finden die Kontaktinformationen zum jeweiligen Diensteanbieter "
+"i.d.R. auf der Website, auf der Sie eine Authentisierung gestartet haben."
+
+msgid "Fix connection problems"
+msgstr "Verbindungsprobleme beheben"
+
+msgid ""
+"For any failure code that mentions connection issues in its cause, it is "
+"recommended to check your current connection. Verify an active internet "
+"connection, by opening e.g. https://www.ausweisapp.bund.de in the browser"
+" of your choice. This includes checking your firewall and antivirus "
+"configuration as well as your local network hardware. Ultimately the "
+"problem may be with your telecommunications provider, or the service "
+"provider. Please refer to the attached \\\"Network_Error\\\" for details."
+" If you are using the |AppName|, the diagnosis, which is located in the"
+" help section, may assist you in finding issues."
+msgstr ""
+"Bei sämtlichen Fehlercodes, welche Verbindungsprobleme als Ursache "
+"aufzeigen, empfiehlt sich vorab eine Überprüfung der aktuellen "
+"Internetverbindung. Stellen Sie dazu eine aktive Internetverbindung "
+"sicher, indem Sie z.B. https://www.ausweisapp.bund.de im Browser Ihrer "
+"Wahl öffnen. Prüfen Sie auch Ihre Firewall- und Antivirus-Einstellungen, "
+"sowie Ihre lokale Netzwerkhardware. Schlussendlich kann das Problem auch "
+"bei Ihrem Telekommunikationsanbieter oder dem Diensteanbieter liegen. "
+"Details entnehmen Sie bitte dem beiliegenden \"Network_Error\". Sofern "
+"Sie die |AppName| verwenden, können die Diagnosefunktionen im "
+"Hilfebereich bei der Problemfeststellung unterstützen."
+
+msgid "Replace ID card of card reader"
+msgstr "Ausweis oder Kartenleser ersetzen"
+
+msgid ""
+"It cannot be ruled out that your ID card is defective or, due to "
+"necessary updates, initially requires more power than your current "
+"smartphone or card reader can supply. If possible, try other card readers"
+" or smartphones. If the ID card still does not work you might need to "
+"replace it with a new one at your responsible authority."
+msgstr ""
+"Es kann nicht ausgeschlossen werden, dass Ihr Ausweis defekt ist oder "
+"aufgrund notwendiger Updates zunächst mehr Strom benötigt, als Ihr "
+"aktuelles Smartphone oder Kartenleser liefern kann. Probieren Sie nach "
+"Möglichkeit weitere Kartenleser oder Smartphones. Falls Ihr Ausweis dann "
+"immer noch nicht funktioniert, müssen Sie ihn möglicherweise bei Ihrer "
+"zuständigen Behörde ersetzen."
+
+msgid "Codes"
+msgstr ""
+
+msgid "**User_Cancelled**"
+msgstr ""
+
+msgid ""
+"The user canceled the workflow. In the SDK case, the user can also be a "
+"third-party application that has disconnected from the SDK."
+msgstr ""
+"Der Benutzer hat den Arbeitsablauf abgebrochen. Im SDK-Fall kann der "
+"\"Benutzer\" auch eine Fremdanwendung sein, welche die Verbindung zum SDK"
+" getrennt hat."
+
+msgid "**Possible Solutions:** Complete the workflow without canceling."
+msgstr "**Mögliche Lösungen:** Den Vorgang ohne Abbruch durchführen."
+
+msgid "**Card_Removed**"
+msgstr ""
+
+msgid "Possible causes for this failure are:"
+msgstr "Mögliche Ursachen für diesen Fehler sind:"
+
+msgid "1 Unstable NFC connection"
+msgstr "1 Instabile NFC-Verbindung"
+
+msgid "2 Removal of the ID card"
+msgstr "2 Die Karte wurde entfernt"
+
+msgid "3 Removal of the card reader"
+msgstr "3 Der Kartenleser wurde entfernt"
+
+msgid "4 Cancellation of the remote access"
+msgstr "4 Der Fernzugriff wurde gestoppt"
+
+msgid "**Possible Solutions:**"
+msgstr "**Mögliche Lösungen:**"
+
+msgid "1 :ref:`failure_code_card_position`"
+msgstr "1 :ref:`failure_code_card_position`"
+
+msgid "2 The ID card has to be present on the reader during the whole workflow"
+msgstr "2 Die Karte muss während des gesamten Vorgangs verfügbar sein"
+
+msgid "3 The card reader has to be attached during the whole workflow"
+msgstr "3 Der Kartenleser muss während des gesamten Vorgangs angeschlossen sein"
+
+msgid "4 You must not cancel the remote access during the whole workflow"
+msgstr "4 Sie dürfen den Fernzugriff nicht während des Vorgangs stoppen"
+
+msgid "**Parse_TcToken_Invalid_Url**"
+msgstr ""
+
+msgid ""
+"An authentication was started according to TR-03124-1 section 2.2.1.1. "
+"However, no valid tcTokenURL was transmitted."
+msgstr ""
+"Eine Authentisierung wurde gemäß TR-03124-1 Abschnitt 2.2.1.1 gestartet. "
+"Es wurde aber keine gültige tcTokenURL übermittelt."
+
+msgid "**Possible Solutions:** :ref:`failure_code_inform_service_provider`."
+msgstr "**Mögliche Lösungen:** :ref:`failure_code_inform_service_provider`."
+
+msgid "**Parse_TcToken_Missing_Url**"
+msgstr ""
+
+msgid ""
+"An authentication was started according to TR-03124-1 section 2.2.1.1. "
+"However, the query \"tcTokenURL\" is missing."
+msgstr ""
+"Eine Authentisierung wurde gemäß TR-03124-1 Abschnitt 2.2.1.1 gestartet. "
+"Es fehlt jedoch der Query „tcTokenURL“."
+
+msgid "**Get_TcToken_Invalid_Url**"
+msgstr ""
+
+msgid ""
+"An authentication was started according to TR-03124-1 section 2.2.1.1. "
+"However, no valid tcTokenURL using the https scheme was transmitted."
+msgstr ""
+"Eine Authentisierung wurde gemäß TR-03124-1 Abschnitt 2.2.1.1 gestartet. "
+"Es wurde aber keine gültige tcTokenURL übermittelt, die das https-Schema "
+"benutzt."
+
+msgid "**Get_TcToken_Invalid_Redirect_Url**"
+msgstr ""
+
+msgid ""
+"The tcTokenURL call was answered with a redirect. The URL provided there "
+"is invalid or does not use the https scheme."
+msgstr ""
+"Der Aufruf der tcTokenURL wurde mit einer Weiterleitung beantwortet. Die "
+"dort gelieferte URL ist ungültig oder nutzt kein https-Schema."
+
+msgid "**Get_TcToken_Invalid_Certificate_Key_Length**"
+msgstr ""
+
+msgid ""
+"The TLS certificate transmitted by the server when retrieving the tcToken"
+" uses an insufficient key length."
+msgstr ""
+"Das vom Server übermittelte TLS-Zertifikat beim Abruf des tcToken nutzt "
+"eine unzureichende Schlüssellänge."
+
+msgid "**Get_TcToken_Invalid_Ephemeral_Key_Length**"
+msgstr ""
+
+msgid ""
+"The ephemeral key length generated by the TLS handshake to get the "
+"tcToken is insufficient."
+msgstr ""
+"Die durch den TLS-Handshake generierte Schlüssellänge für den Abruf des "
+"tcToken ist unzureichend."
+
+msgid "**Get_TcToken_Invalid_Server_Reply**"
+msgstr ""
+
+msgid ""
+"The server responded to the request for the tcToken neither with content "
+"nor with a forwarding."
+msgstr ""
+"Der Server hat auf die Anfrage nach dem tcToken weder mit einem korrekten"
+" Inhalt noch mit einer Weiterleitung reagiert."
+
+msgid "**Get_TcToken_ServiceUnavailable**"
+msgstr ""
+
+msgid "The server intended for providing the tcToken is temporarily unavailable."
+msgstr ""
+"Der für das Bereitstellen des tcToken vorgesehene Server ist temporär "
+"nicht verfügbar."
+
+msgid "**Get_TcToken_Server_Error**"
+msgstr ""
+
+msgid "A server error 5xx occurred on requesting the tcToken."
+msgstr "Bei dem Abruf des tcToken ist ein Serverfehler 5xx aufgetreten."
+
+msgid "**Get_TcToken_Client_Error**"
+msgstr ""
+
+msgid "A client error 4xx occurred on requesting the tcToken."
+msgstr "Bei dem Abruf des tcToken ist ein Clientfehler 4xx aufgetreten."
+
+msgid "**Possible Solutions:** :ref:`failure_code_contact_support`."
+msgstr "**Mögliche Lösungen:** :ref:`failure_code_contact_support`."
+
+msgid "**Get_TcToken_Empty_Data**"
+msgstr ""
+
+msgid "The server responded to the request for the tcToken with empty content."
+msgstr ""
+"Der Server hat auf die Anfrage nach dem tcToken mit leerem Inhalt "
+"reagiert."
+
+msgid "**Get_TcToken_Invalid_Data**"
+msgstr ""
+
+msgid ""
+"The server responded to the request for the tcToken with content that "
+"does not comply with TR-03124-1 section 2.6."
+msgstr ""
+"Der Server hat auf die Anfrage nach dem tcToken mit Inhalt geantwortet, "
+"der nicht TR-03124-1 Abschnitt 2.6 entspricht."
+
+msgid "**Get_TcToken_Network_Error**"
+msgstr ""
+
+msgid "A network error occurred while retrieving the tcToken."
+msgstr "Bei dem Abruf des tcToken ist ein Netzwerkfehler aufgetreten."
+
+msgid "**Possible Solutions:** :ref:`failure_code_fix_connections_problems`."
+msgstr "**Mögliche Lösungen:** :ref:`failure_code_fix_connections_problems`."
+
+msgid "**Certificate_Check_Failed_No_Description**"
+msgstr ""
+
+msgid ""
+"TR-03112-7 section 3.6.4.1 requires a description of the service provider"
+" certificate. However, this was not transmitted by the service provider "
+"in the EAC1InputType."
+msgstr ""
+"TR-03112-7 Abschnitt 3.6.4.1 erfordert eine Beschreibung des "
+"Diensteanbieter-Zertifikats. Diese wurde im EAC1InputType jedoch vom "
+"Diensteanbieter nicht übermittelt."
+
+msgid "**Certificate_Check_Failed_No_SubjectUrl_In_Description**"
+msgstr ""
+
+msgid ""
+"TR-03124-1 section 2.7.3 requires that the service provider's URL is "
+"included in the description of the certificate. The URL does not exist."
+msgstr ""
+"TR-03124-1 Abschnitt 2.7.3 erfordert, dass die URL des Diensteanbieters "
+"in der Beschreibung des Zertifikats enthalten ist. Die URL ist nicht "
+"vorhanden."
+
+msgid "**Certificate_Check_Failed_Hash_Mismatch**"
+msgstr ""
+
+msgid ""
+"TR-03124-1 section 2.7.3 requires that the hash of the certificate "
+"description matches that stored in the certificate. These don't match."
+msgstr ""
+"TR-03124-1 Abschnitt 2.7.3 erfordert, dass der Hash der "
+"Zertifikatsbeschreibung dem entspricht, der im Zertifikat hinterlegt "
+"wurde. Diese stimmen nicht überein."
+
+msgid "**Certificate_Check_Failed_Same_Origin_Policy_Violation**"
+msgstr ""
+
+msgid ""
+"TR-03124-1 section 2.7.3 requires that the tcTokenUrl has the same origin"
+" as the service provider's URL from the certificate description. This "
+"condition is not met."
+msgstr ""
+"TR-03124-1 Abschnitt 2.7.3 erfordert, dass die tcTokenUrl den selben "
+"Ursprung hat wie die URL des Diensteanbieters aus der Beschreibung des "
+"Zertifikats. Diese Bedingung ist nicht erfüllt."
+
+msgid "**Certificate_Check_Failed_Hash_Missing_In_Description**"
+msgstr ""
+
+msgid ""
+"TR-03124-1 Section 2.7.3 requires that the hashes of all TLS certificates"
+" used are included in the description of the service provider "
+"certificate. This condition is not met."
+msgstr ""
+"TR-03124-1 Abschnitt 2.7.3 erfordert, dass die Hashes aller verwendeten "
+"TLS-Zertifikate in der Beschreibung des Diensteanbieterzertifikats "
+"enthalten sind. Diese Bedingung ist nicht erfüllt."
+
+msgid "**Pre_Verification_No_Test_Environment**"
+msgstr ""
+
+msgid ""
+"Occurs when the development mode of |AppName| is activated and a "
+"genuine ID card is used."
+msgstr ""
+"Tritt auf, wenn der Entwicklermodus der |AppName| aktiviert ist und ein"
+" Echtausweis verwendet wird."
+
+msgid ""
+"**Possible Solutions:** Disable developer mode. The use of genuine ID "
+"cards is not permitted with activated developer mode, as this is only "
+"intended to facilitate the commissioning of services with test ID cards."
+msgstr ""
+"**Mögliche Lösungen:** Deaktivieren des Entwicklermodus. Die Nutzung von "
+"Echtausweisen ist mit aktiviertem Entwicklermodus nicht gestattet, da "
+"dieser nur die Inbetriebnahme von Diensten mit Testausweisen erleichtern "
+"soll."
+
+msgid "**Pre_Verification_Invalid_Certificate_Chain**"
+msgstr ""
+
+msgid ""
+"A certificate chain was sent from the server that is unknown to "
+"|AppName|."
+msgstr ""
+"Vom Server wurde eine Zertifikatskette gesendet, die der |AppName| "
+"nicht bekannt ist."
+
+msgid "**Pre_Verification_Invalid_Certificate_Signature**"
+msgstr ""
+
+msgid ""
+"At least one signature in the certificate chain used by the server is "
+"incorrect."
+msgstr ""
+"Mindestens eine Signatur in der vom Server genutzten Zertifikatskette ist"
+" nicht korrekt."
+
+msgid "**Pre_Verification_Certificate_Expired**"
+msgstr ""
+
+msgid "The certificate chain used by the server is currently not valid."
+msgstr ""
+"Die vom Server genutzte Zertifikatskette ist zum aktuellen Zeitpunkt "
+"nicht gültig."
+
+msgid ""
+"**Possible Solutions:** Make sure your system time is set correctly. If "
+"the problem persists, see :ref:`failure_code_inform_service_provider`."
+msgstr ""
+"**Mögliche Lösungen:** Stellen Sie sicher, dass Ihre Systemzeit korrekt "
+"eingestellt ist. Falls das Problem weiterhin auftritt, beachten Sie auch "
+":ref:`failure_code_inform_service_provider`."
+
+msgid "**Extract_Cvcs_From_Eac1_No_Unique_At**"
+msgstr ""
+
+msgid ""
+"The server submitted a certificate chain that contained more than one "
+"terminal certificate."
+msgstr ""
+"Der Server hat eine Zertifikatskette übermittelt, in der mehr als ein "
+"Terminal-Zertifikat enthalten ist."
+
+msgid "**Extract_Cvcs_From_Eac1_No_Unique_Dv**"
+msgstr ""
+
+msgid ""
+"The server transmitted a certificate chain containing more than one DV "
+"certificate."
+msgstr ""
+"Der Server hat eine Zertifikatskette übermittelt, in der mehr als ein DV-"
+"Zertifikat enthalten ist."
+
+msgid "**Extract_Cvcs_From_Eac1_At_Missing**"
+msgstr ""
+
+msgid ""
+"The server transmitted a certificate chain that does not contain a "
+"terminal certificate."
+msgstr ""
+"Der Server hat eine Zertifikatskette übermittelt, in der kein Terminal-"
+"Zertifikat enthalten ist."
+
+msgid "**Extract_Cvcs_From_Eac1_Dv_Missing**"
+msgstr ""
+
+msgid ""
+"The server transmitted a certificate chain that does not contain a DV "
+"certificate."
+msgstr ""
+"Der Server hat eine Zertifikatskette übermittelt, in der kein DV-"
+"Zertifikat enthalten ist."
+
+msgid "**Connect_Card_Connection_Failed**"
+msgstr ""
+
+msgid ""
+"In order to communicate with the ID card, a connection must first be "
+"established. This process failed."
+msgstr ""
+"Für die Kommunikation mit der Karte muss zunächst eine Verbindung "
+"hergestellt werden. Dieser Prozess ist fehlgeschlagen."
+
+msgid "**Possible Solutions:** :ref:`failure_code_card_position`."
+msgstr "**Mögliche Lösungen:** :ref:`failure_code_card_position`."
+
+msgid "**Connect_Card_Eid_Inactive**"
+msgstr ""
+
+msgid ""
+"The PIN of the card is deactivated. The card can currently only be used "
+"with the CAN for on-site reading."
+msgstr ""
+"Die PIN der Karte ist deaktiviert. Die Karte kann derzeit nur mit der CAN"
+" beim Vor-Ort-Auslesen verwendet werden."
+
+msgid ""
+"**Possible Solutions:** When your ID card was issued, the online ID card "
+"function (the PIN) was not activated or you had the function deactivated "
+"afterwards. You can have the function activated at the citizens' office "
+"(Bürgeramt) or activate it with the CAN at https://www.pin-"
+"ruecksetzbrief-bestellen.de."
+msgstr ""
+"**Mögliche Lösungen:** Bei der Ausgabe Ihres Ausweises wurde die Online-"
+"Ausweisfunktion (die PIN) nicht aktiviert oder Sie haben die Funktion im "
+"Nachhinein deaktivieren lassen. Sie können die Funktion im Bürgeramt "
+"aktivieren lassen oder auf https://www.pin-ruecksetzbrief-bestellen.de "
+"mit der CAN aktivieren."
+
+msgid "**Prepace_Pace_Smart_Eid_Invalidated**"
+msgstr ""
+
+msgid ""
+"The attempt to establish a connection with a PIN to a Smart-eID failed, "
+"because all PIN-attempts have been used."
+msgstr ""
+"Der Versuch eine Verbindung mit der PIN zu einer Smart-eID aufzubauen ist"
+" gescheitert, da bereits alle verfügbaren PIN-Versuche aufgebraucht "
+"wurden."
+
+msgid ""
+"**Possible Solutions:** The PIN is permanently disabled after 3 failed "
+"attempts. Please set up your Smart-eID again."
+msgstr ""
+"**Mögliche Lösungen:** Im Gegensatz zu einem Ausweis kann die PIN nach 3 "
+"Fehlversuchen nicht freigeschaltet werden. Bitte richten Sie Ihre Smart-"
+"eID erneut ein."
+
+msgid ""
+"**Possible Solutions:** The |AppName| automatically leads the user to "
+"the PIN change to set a six-digit PIN. If this error occurs in a third-"
+"party app, you have to start a PIN change on your own."
+msgstr ""
+"**Mögliche Lösungen:** Die |AppName| führt den Benutzer direkt zur PIN-"
+"Änderung, damit dieser eine sechsstellige PIN festlegen kann. Tritt der "
+"Fall im SDK auf, muss sich die Anwendung selbst darum kümmern."
+
+msgid "**Establish_Pace_Channel_Basic_Reader_No_Pin**"
+msgstr ""
+
+msgid ""
+"An attempt was made to establish a PACE-channel with a basic reader. "
+"However the PIN, CAN, or PUK could not be taken over after the user-"
+"input."
+msgstr ""
+"Bei der Verwendung eines Basislesers wurde versucht ein PACE-Kanal "
+"aufzubauen. Jedoch wurde die PIN, CAN oder PUK nach der Nutzereingabe "
+"nicht übernommen."
+
+msgid "**Possible Solutions:** :ref:`failure_code_contact_support`."
+msgstr "**Mögliche Lösungen:** :ref:`failure_code_contact_support`."
+
+msgid "**Establish_Pace_Channel_Puk_Inoperative**"
+msgstr ""
+
+msgid ""
+"An attempt was made to set up a PACE channel with the PUK to unlock the "
+"PIN. However, the PUK can no longer be used because it has already been "
+"used 10 times."
+msgstr ""
+"Es wurde versucht ein PACE-Kanal mit der PUK aufzubauen um die PIN zu "
+"entsperren. Die PUK ist jedoch nicht mehr nutzbar, da sie bereits zehn "
+"Mal verwendet wurde."
+
+msgid ""
+"**Possible Solutions:** The PIN can be unlocked with the PUK after three "
+"incorrect entries. However, this is only possible ten times and you have "
+"reached that limit. However you can set a new PIN at the citizens' office"
+" (Bürgeramt) or let it be set with the CAN at https://www.pin-"
+"ruecksetzbrief-bestellen.de."
+msgstr ""
+"**Mögliche Lösungen:** Die PIN kann nach dreimaliger Falscheingabe mit "
+"der PUK freigeschaltet werden. Dies ist jedoch nur zehn Mal möglich und "
+"Sie haben diese Grenze erreicht. Sie können dennoch im Bürgeramt eine "
+"neue PIN setzen oder auf https://www.pin-ruecksetzbrief-bestellen.de mit "
+"der CAN setzen lassen."
+
+msgid "**Establish_Pace_Channel_User_Cancelled**"
+msgstr ""
+
+msgid ""
+"The user canceled the workflow on a comfort USB reader or a smartphone as"
+" a card reader with keyboard mode enabled."
+msgstr ""
+"Der Benutzer hat den Arbeitsablauf auf einem USB-Komfortleser oder einem "
+"Smartphone als Kartenleser mit aktiviertem Tastaturmodus abgebrochen."
+
+msgid "**Maintain_Card_Connection_Pace_Unrecoverable**"
+msgstr ""
+
+msgid ""
+"An error occurred while setting up the PACE channel that was not due to "
+"user error."
+msgstr ""
+"Beim Aufbau des PACE-Kanals ist ein Fehler aufgetreten, der nicht auf "
+"Benutzerfehler zurückzuführen ist."
+
+msgid ""
+"**Possible Solutions:** The connection to the ID card could not be "
+"established with the PIN, CAN, or PUK. The entered passwords have no "
+"influence on this. Please note :ref:`failure_code_card_position`."
+msgstr ""
+"**Mögliche Lösungen:** Die Verbindung zum Ausweis konnte mit der PIN, CAN"
+" oder PUK nicht hergestellt werden. Die eingegebenen Passwörter haben "
+"darauf keinen Einfluss. Bitte beachten Sie "
+":ref:`failure_code_card_position`."
+
+msgid "**Did_Authenticate_Eac1_Card_Command_Failed**"
+msgstr ""
+
+msgid ""
+"The 4th card command of the terminal authentication according to "
+"TR-0110-3 section B.3 failed."
+msgstr ""
+"Das 4. Kartenkommando der Terminal-Authentisierung gemäß TR-0110-3 "
+"Abschnitt B.3 ist fehlgeschlagen."
+
+msgid "**Process_Certificates_From_Eac2_Cvc_Chain_Missing**"
+msgstr ""
+
+msgid ""
+"When setting up the PACE channel with PIN or CAN, the ID card "
+"communicated which certificate it knew. However, the server sent a "
+"certificate chain that does not contain this certificate."
+msgstr ""
+"Beim Aufbau des PACE-Kanals mit PIN oder CAN hat die Karte mitgeteilt, "
+"welches Zertifikat ihr bekannt ist. Der Server hat aber eine "
+"Zertifikatskette gesendet, in der dieses Zertifikat nicht enthalten ist."
+
+msgid "**Did_Authenticate_Eac2_Invalid_Cvc_Chain**"
+msgstr ""
+
+msgid "**Did_Authenticate_Eac2_Card_Command_Failed**"
+msgstr ""
+
+msgid ""
+"A terminal or chip authentication card command according to TR-0110-3 "
+"sections B.2 and B.3 failed."
+msgstr ""
+"Ein Kartenkommando der Terminal- oder Chip-Authentisierung gemäß "
+"TR-0110-3 Abschnitt B.2 und B.3 ist fehlgeschlagen."
+
+msgid "**Generic_Send_Receive_Paos_Unhandled**"
+msgstr ""
+
+msgid ""
+"A message was sent by the server in the PAOS communication during "
+"authentication, that could not be completely processed."
+msgstr ""
+"Bei einer Authentisierung ist eine Nachricht vom Server in der PAOS-"
+"Kommunikation gesendet worden, die nicht vollständig verarbeitet werden "
+"konnte."
+
+msgid "**Generic_Send_Receive_Network_Error**"
+msgstr ""
+
+msgid ""
+"A network error has occurred in the PAOS communication during "
+"authentication."
+msgstr ""
+"Bei einer Authentisierung ist ein Netzwerkfehler in der PAOS-"
+"Kommunikation aufgetreten."
+
+msgid "**Generic_Send_Receive_Tls_Error**"
+msgstr ""
+
+msgid ""
+"An authentication error occurred in the PAOS communication during the TLS"
+" handshake. The TLS certificate is incorrect."
+msgstr ""
+"Bei einer Authentisierung ist während des TLS-Handshakes in der PAOS-"
+"Kommunikation ein Fehler aufgetreten. Das TLS-Zertifikat ist fehlerhaft."
+
+msgid "**Generic_Send_Receive_Service_Unavailable**"
+msgstr ""
+
+msgid ""
+"The server intended for the PAOS communication during authentication is "
+"temporarily unavailable."
+msgstr ""
+"Der für PAOS-Kommunikation vorgesehene Server ist temporär "
+"nicht verfügbar."
+
+msgid "**Generic_Send_Receive_Server_Error**"
+msgstr ""
+
+msgid ""
+"A server error 5xx occurred in the PAOS communication during "
+"authentication."
+msgstr ""
+"Bei einer Authentisierung ist ein Serverfehler 5xx in der PAOS-"
+"Kommunikation aufgetreten."
+
+msgid "**Generic_Send_Receive_Client_Error**"
+msgstr ""
+
+msgid ""
+"A client error 4xx occurred in the PAOS communication during "
+"authentication."
+msgstr ""
+"Bei einer Authentisierung ist ein Clientfehler 4xx in der PAOS-"
+"Kommunikation aufgetreten."
+
+msgid "**Generic_Send_Receive_Paos_Unknown**"
+msgstr ""
+
+msgid ""
+"An unknown message was sent by the server in the PAOS communication "
+"during authentication."
+msgstr ""
+"Bei einer Authentisierung ist vom Server eine unbekannte Nachricht in der"
+" PAOS-Kommunikation gesendet worden."
+
+msgid "**Generic_Send_Receive_Paos_Unexpected**"
+msgstr ""
+
+msgid ""
+"An unexpected message was sent by the server in the PAOS communication "
+"during authentication."
+msgstr ""
+"Bei einer Authentisierung ist eine unerwartete Nachricht vom Server in "
+"der PAOS-Kommunikation gesendet worden."
+
+msgid "**Generic_Send_Receive_Invalid_Ephemeral_Key_Length**"
+msgstr ""
+
+msgid ""
+"The symmetric key generated by the TLS handshake for PAOS communication "
+"is not long enough."
+msgstr ""
+"Der durch den TLS-Handshake generierte symmetrische Schlüssel für die "
+"PAOS-Kommunikation ist nicht lang genug."
+
+msgid "**Generic_Send_Receive_Certificate_Error**"
+msgstr ""
+
+msgid ""
+"The TLS certificate for PAOS communication uses key lengths that are too "
+"small or is not included in the description of the service provider "
+"certificate."
+msgstr ""
+"Das TLS-Zertifikat für die PAOS-Kommunikation verwendet zu kleine "
+"Schlüssellängen oder ist nicht in der Beschreibung des "
+"Diensteanbieterzertifikats enthalten."
+
+msgid "**Generic_Send_Receive_Session_Resumption_Failed**"
+msgstr ""
+
+msgid "Failed to resume TLS session during PAOS communication."
+msgstr ""
+"Die Wiederaufnahme der TLS-Session während der PAOS-Kommunikation ist "
+"fehlgeschlagen."
+
+msgid "**Transmit_Card_Command_Failed**"
+msgstr ""
+
+msgid ""
+"During authentication, card commands transmitted in PAOS communication "
+"could not be correctly transmitted to the card."
+msgstr ""
+"Bei der Authentisierung konnten in der PAOS-Kommunikation übertragene "
+"Kartenkommandos nicht korrekt an die Karte übermittelt werden."
+
+msgid "**Start_Paos_Response_Missing**"
+msgstr ""
+
+msgid ""
+"The message \"StartPaosResponse\" from the server could not be evaluated "
+"because it does not exist."
+msgstr ""
+"Die Nachricht \"StartPaosResponse\" vom Server konnte nicht ausgewertet "
+"werden, da sie nicht vorhanden ist."
+
+msgid "**Start_Paos_Response_Error**"
+msgstr ""
+
+msgid ""
+"The \"StartPaosResponse\" message from the server returned an error. The "
+"|AppName| or the ID card did not behave as expected by the server."
+msgstr ""
+"Die Nachricht \"StartPaosResponse\" vom Server hat einen Fehler "
+"geliefert. Die |AppName| oder die Karte hat sich nicht entsprechend der"
+" Erwartung des Servers verhalten."
+
+msgid "**Check_Refresh_Address_Fatal_Tls_Error_Before_Reply**"
+msgstr ""
+
+msgid ""
+"An error occurred during the TLS handshake when checking the return "
+"address after a successful authentication. The TLS certificate is "
+"incorrect."
+msgstr ""
+"Bei der Überprüfung der Rücksprungadresse nach einer erfolgreichen "
+"Authentisierung ist während des TLS-Handshakes ein Fehler aufgetreten. "
+"Das TLS-Zertifikat ist fehlerhaft."
+
+msgid "**Check_Refresh_Address_Invalid_Ephemeral_Key_Length**"
+msgstr ""
+
+msgid ""
+"The symmetric key generated by the TLS handshake when calling the return "
+"address is not long enough."
+msgstr ""
+"Der durch den TLS-Handshake generierte symmetrische Schlüssel beim Aufruf"
+" der Rücksprungadresse ist nicht lang genug."
+
+msgid "**Check_Refresh_Address_Service_Unavailable**"
+msgstr ""
+
+msgid "The server providing the return address is temporarily unavailable."
+msgstr ""
+"Der für das Bereitstellen der Rücksprungadresse vorgesehene Server ist temporär "
+"nicht verfügbar."
+
+msgid "**Check_Refresh_Address_Server_Error**"
+msgstr ""
+
+msgid "A server error 5xx occurred on requesting the return address."
+msgstr ""
+"Bei der Anfrage der Rücksprungadresse ist ein Serverfehler 5xx aufgetreten."
+
+msgid "**Check_Refresh_Address_Client_Error**"
+msgstr ""
+
+msgid "A client error 4xx occurred on requesting the return address."
+msgstr ""
+"Bei der Anfrage der Rücksprungadresse ist ein Clientfehler 4xx aufgetreten."
+
+msgid "**Check_Refresh_Address_Service_Timeout**"
+msgstr ""
+
+msgid ""
+"The call to the return address did not provide an answer within 30 "
+"seconds."
+msgstr ""
+"Der Aufruf der Rücksprungadresse hat keine Antwort innerhalb von 30 "
+"Sekunden geliefert."
+
+msgid "**Check_Refresh_Address_Proxy_Error**"
+msgstr ""
+
+msgid ""
+"A proxy server was configured by the operating system or the settings of "
+"|AppName|. This didn't work for checking the return address."
+msgstr ""
+"Durch das Betriebssystem oder die Einstellungen der |AppName| wurde ein"
+" Proxyserver konfiguriert. Dieser hat für die Überprüfung der "
+"Rücksprungadresse nicht funktioniert."
+
+msgid "**Check_Refresh_Address_Fatal_Tls_Error_After_Reply**"
+msgstr ""
+
+msgid ""
+"When checking the return address after successful authentication, the TLS"
+" handshake could not be completed successfully."
+msgstr ""
+"Bei der Überprüfung der Rücksprungadresse nach einer erfolgreichen "
+"Authentisierung konnte der TLS-Handshake nicht erfolgreich beendet "
+"werden."
+
+msgid "**Check_Refresh_Address_Unknown_Network_Error**"
+msgstr ""
+
+msgid ""
+"A unknown error occurred when checking the return address after "
+"successful authentication."
+msgstr ""
+"Bei der Überprüfung der Rücksprungadresse nach einer erfolgreichen "
+"Authentisierung ist ein nicht erwarteter Fehler aufgetreten."
+
+msgid "**Check_Refresh_Address_Invalid_Http_Response**"
+msgstr ""
+
+msgid "The call to the return address did not result in forwarding."
+msgstr "Der Aufruf der Rücksprungadresse hat nicht zu einer Weiterleitung geführt."
+
+msgid "**Check_Refresh_Address_Empty**"
+msgstr ""
+
+msgid "The call to the return address led to a redirect but no URL was supplied."
+msgstr ""
+"Der Aufruf der Rücksprungadresse hat zu einer Weiterleitung geführt aber "
+"keine URL mitgeliefert."
+
+msgid "**Check_Refresh_Address_Invalid_Url**"
+msgstr ""
+
+msgid ""
+"The call to the return address led to a redirect, but no correct URL was "
+"supplied."
+msgstr ""
+"Der Aufruf der Rücksprungadresse hat zu einer Weiterleitung geführt aber "
+"keine korrekte URL mitgeliefert."
+
+msgid "**Check_Refresh_Address_No_Https_Scheme**"
+msgstr ""
+
+msgid ""
+"The call to the return address led to a redirect, but delivered an URL "
+"without https scheme."
+msgstr ""
+"Der Aufruf der Rücksprungadresse hat zu einer Weiterleitung geführt aber "
+"eine URL ohne https-Schema mitgeliefert."
+
+msgid "**Check_Refresh_Address_Fetch_Certificate_Error**"
+msgstr ""
+
+msgid "The server certificate could not be obtained after tracing all redirects."
+msgstr ""
+"Das Server-Zertifikat konnte nach Verfolgung aller Weiterleitungen nicht "
+"abgerufen werden."
+
+msgid "**Check_Refresh_Address_Unsupported_Certificate**"
+msgstr ""
+
+msgid ""
+"The check of the return address after a successful authentication was "
+"interrupted because the server uses a TLS certificate with unsupported "
+"algorithms or key lengths."
+msgstr ""
+"Die Überprüfung der Rücksprungadresse nach einer erfolgreichen "
+"Authentisierung wurde unterbrochen, da der Server ein TLS-Zertifikat mit "
+"nicht unterstützten Algorithmen oder Schlüssellängen nutzt."
+
+msgid "**Check_Refresh_Address_Hash_Missing_In_Certificate**"
+msgstr ""
+
+msgid ""
+"The server certificate of the return address is not included in the "
+"description of the service provider certificate."
+msgstr ""
+"Das Server-Zertifikat der Rücksprungadresse ist nicht in der Beschreibung"
+" des Diensteanbieterzertifikats enthalten."
+
+msgid ""
+"**Possible Solutions:** If the problem occurs repeatedly and changing the"
+" browser does not help, please :ref:`failure_code_contact_support`."
+msgstr ""
+"**Mögliche Lösungen:** Versuchen Sie einen anderen Browser. Falls das "
+"Problem bestehen bleibt, beachten Sie "
+":ref:`failure_code_contact_support`."
+
+msgid "**Browser_Send_Failed**"
+msgstr ""
+
+msgid ""
+"On desktop systems, the web browser waits for a response from |AppName| "
+"after starting authentication. However, for unknown reasons, the web browser "
+"connection to the browser is lost and the answer cannot be sent."
+msgstr ""
+"Auf Desktop-Systemen wartet der Webbrowser nach Start einer Authentisierung "
+"auf eine Antwort der |AppName|. Aus unbekannten Gründen ist die Verbindung "
+"zum Browser abgebrochen, sodass die Antwort nicht mehr gesendet werden kann."
+
+msgid "**Generic_Provider_Communication_Network_Error**"
+msgstr ""
+
+msgid ""
+"A network error occurred while communicating with a service provider. "
+"This only applies to services that are started from |AppName|, such as "
+"self-authentication."
+msgstr ""
+"Bei der Kommunikation mit einem Diensteanbieter ist ein Netzwerkfehler "
+"aufgetreten. Das betrifft nur Dienste, die aus der |AppName| heraus "
+"gestartet werden, wie zum Beispiel die Selbstauskunft."
+
+msgid "**Generic_Provider_Communication_Invalid_Ephemeral_Key_Length**"
+msgstr ""
+
+msgid ""
+"When communicating with a service provider, the symmetric key generated "
+"by the TLS handshake is not long enough. This only applies to services "
+"that are started from |AppName|, such as self-authentication."
+msgstr ""
+"Bei der Kommunikation mit einem Diensteanbieter ist der durch den TLS-"
+"Handshake generierte symmetrische Schlüssel nicht lang genug. Das "
+"betrifft nur Dienste, die aus der |AppName| heraus gestartet werden, "
+"wie zum Beispiel die Selbstauskunft."
+
+msgid "**Generic_Provider_Communication_Certificate_Error**"
+msgstr ""
+
+msgid ""
+"When communicating with a service provider, the TLS certificate uses key "
+"lengths that are insufficient. This only applies to services that are "
+"started from |AppName|, such as self-authentication."
+msgstr ""
+"Bei der Kommunikation mit einem Diensteanbieter verwendet das TLS-"
+"Zertifikat unzureichende Schlüssellängen. Das betrifft nur Dienste, die "
+"aus der |AppName| heraus gestartet werden, wie zum Beispiel die "
+"Selbstauskunft."
+
+msgid "**Generic_Provider_Communication_Tls_Error**"
+msgstr ""
+
+msgid ""
+"An error occurred during the TLS handshake when communicating with a "
+"service provider. The TLS certificate is incorrect. This only applies to "
+"services that are started from |AppName|, such as self-authentication."
+msgstr ""
+"Bei der Kommunikation mit einem Diensteanbieter ist während des TLS-"
+"Handshakes ein Fehler aufgetreten. Das TLS-Zertifikat ist fehlerhaft. Das"
+" betrifft nur Dienste, die aus der |AppName| heraus gestartet werden, "
+"wie zum Beispiel die Selbstauskunft."
+
+msgid "**Generic_Provider_Communication_ServiceUnavailable**"
+msgstr ""
+
+msgid "The server of the service provider is temporarily unavailable."
+msgstr ""
+"Der Server des Diensteanbieters ist temporär nicht verfügbar."
+
+msgid "**Generic_Provider_Communication_Server_Error**"
+msgstr ""
+
+msgid ""
+"A server error 5xx occurred in the communication with the service "
+"provider."
+msgstr ""
+"Bei der Kommunikation mit dem Diensteanbieter ist ein Serverfehler 5xx aufgetreten."
+
+msgid "**Generic_Provider_Communication_Client_Error**"
+msgstr ""
+
+msgid ""
+"A client error 4xx occurred in the communication with the service "
+"provider."
+msgstr ""
+"Bei der Kommunikation mit dem Diensteanbieter ist ein Clientfehler 4xx aufgetreten."
+
+msgid "**Get_SelfAuthData_Invalid_Or_Empty**"
+msgstr ""
+
+msgid ""
+"The authentication for the self-authentication was completed "
+"successfully, but the server then did not transmit the read data "
+"correctly."
+msgstr ""
+"Die Authentisierung für die Selbstauskunft wurde erfolgreich durchlaufen,"
+" der Server hat die ausgelesenen Daten im Anschluss aber nicht korrekt "
+"übermittelt."
+
+msgid "**Change_Pin_No_SetEidPinCommand_Response**"
+msgstr ""
+
+msgid ""
+"The |AppName| sent a PIN change command to its core, but received an "
+"answer for a different command."
+msgstr ""
+"Die |AppName| hat ein Kommando zur Änderung der PIN an ihren Kern "
+"gesendet, jedoch eine Antwort für ein anderes Kommando erhalten."
+
+msgid "**Change_Pin_Input_Timeout**"
+msgstr ""
+
+msgid ""
+"When changing a PIN, the user took too long to set the new PIN. Timeouts "
+"are currently only known from card readers with a PIN pad, which also "
+"affects smartphones as card readers with activated keyboard mode."
+msgstr ""
+"Der Benutzer hat bei einer PIN-Änderung zu lange gebraucht, um die neue "
+"PIN festzulegen. Timeouts sind aktuell nur von Kartenlesern mit PIN-Pad "
+"bekannt, was auch ein Smartphone als Kartenleser mit aktiviertem "
+"Tastaturmodus betrifft."
+
+msgid "**Possible Solutions:** Enter the PIN within 60 seconds."
+msgstr "**Mögliche Lösungen:** Die PIN innerhalb von 60 Sekunden eingeben."
+
+msgid "**Change_Pin_User_Cancelled**"
+msgstr ""
+
+msgid ""
+"The user canceled the PIN change after entering the current valid PIN. "
+"Can only occur with card readers with a PIN pad, which also affects "
+"smartphones as card readers with activated keyboard mode."
+msgstr ""
+"Der Benutzer hat die PIN-Änderung nach Eingabe der aktuellen gültigen PIN"
+" abgebrochen. Kann nur bei Kartenlesern mit PIN-Pad auftreten, was auch "
+"ein Smartphone als Kartenleser mit aktiviertem Tastaturmodus betrifft."
+
+msgid "**Possible Solutions:** Carry out the PIN change without abortion."
+msgstr "**Mögliche Lösungen:** Die PIN-Änderung ohne Abbruch durchführen."
+
+msgid "**Change_Pin_New_Pin_Mismatch**"
+msgstr ""
+
+msgid ""
+"When changing a PIN, the user entered an incorrect confirmation of the "
+"new PIN. Can only occur with USB card readers with a PIN pad. Smartphone "
+"as a card reader with activated keyboard mode does not allow this "
+"behavior."
+msgstr ""
+"Der Benutzer hat bei einer PIN-Änderung eine falsche Bestätigung der "
+"neuen PIN eingegeben. Kann nur bei USB-Kartenlesern mit PIN-Pad "
+"auftreten. Ein Smartphone als Kartenleser mit aktiviertem Tastaturmodus "
+"lässt dieses Verhalten nicht zu."
+
+msgid "**Possible Solutions:** Confirm the new PIN correctly."
+msgstr "**Mögliche Lösungen:** Die neue PIN korrekt bestätigen."
+
+msgid "**Change_Pin_New_Pin_Invalid_Length**"
+msgstr ""
+
+msgid ""
+"When changing a PIN, the user entered a new PIN with an incorrect length."
+" Can only occur with USB card readers with a PIN pad. However, there is "
+"no known device/case that allows this possibility. Smartphone as a card "
+"reader with activated keyboard mode does not allow this behavior."
+msgstr ""
+"Der Benutzer hat bei einer PIN-Änderung eine neue PIN mit einer falschen "
+"Länge eingegeben. Kann nur bei USB-Kartenlesern mit PIN-Pad auftreten. Es"
+" ist jedoch kein Gerät/Fall bekannt, das diese Möglichkeit zulässt. Ein "
+"Smartphone als Kartenleser mit aktiviertem Tastaturmodus lässt dieses "
+"Verhalten nicht zu."
+
+msgid "**Change_Pin_Unexpected_Transmit_Status**"
+msgstr ""
+
+msgid ""
+"The command to change the PIN has been transmitted and answered. However,"
+" the answer is blank, unknown, or unexpected."
+msgstr ""
+"Das Kommando zur Änderung der PIN wurde übertragen und beantwortet. Die "
+"Antwort ist jedoch leer, unbekannt oder unerwartet."
+
+msgid "**Change_Pin_Card_New_Pin_Mismatch**"
+msgstr ""
+
+msgid "Like Change_Pin_New_Pin_Mismatch but at a higher protocol level."
+msgstr "Wie Change_Pin_New_Pin_Mismatch aber auf einer höheren Protokollebene."
+
+msgid "**Change_Pin_Card_User_Cancelled**"
+msgstr ""
+
+msgid "Like Change_Pin_User_Cancelled but at a higher log level."
+msgstr "Wie Change_Pin_User_Cancelled aber auf einer höheren Protokollebene."
+
+msgid "**Start_Ifd_Service_Failed**"
+msgstr ""
+
+msgid ""
+"The IFD service according to TR-03112-6 appendix \"IFD Service\" could "
+"not be started. Either no suitable TLS certificate could be "
+"found/generated or the start of the TLS server failed. This applies to "
+"both remote access and the local service of |AppName| on Android that "
+"is used through the SDK."
+msgstr ""
+"Der IFD-Service gemäß TR-03112-6 Anhang „IFD Service“ konnte nicht "
+"gestartet werden. Entweder konnte kein passendes TLS-Zertifikat "
+"gefunden/generiert werden oder der Start des TLS-Servers ist "
+"fehlgeschlagen. Das betrifft sowohl den Fernzugriff als auch den lokalen "
+"Service der |AppName| auf Android, der durch das SDK genutzt wird."
+
+msgid "**Prepare_Pace_Ifd_Unknown**"
+msgstr ""
+
+msgid ""
+"The establishment of a PACE channel was requested by the client on a "
+"smartphone as a card reader with activated keyboard mode. However, an "
+"unsupported password type was requested (PIN, CAN, PUK are supported)."
+msgstr ""
+"Auf einem Smartphone als Kartenleser mit aktiviertem Tastaturmodus wurde "
+"der Aufbau eines PACE-Kanals durch den Client angefordert. Dabei wurde "
+"jedoch ein nicht unterstützter Passworttyp angefragt (Unterstützt werden "
+"PIN, CAN, PUK)."
+
+msgid "**Establish_Pace_Ifd_Unknown**"
+msgstr ""
+
+msgid "**Enter_Pace_Password_Ifd_User_Cancelled**"
+msgstr ""
+
+msgid ""
+"Occurs when the user canceled entering the PIN, CAN, or PUK on a "
+"smartphone acting as a card reader with keyboard mode enabled."
+msgstr ""
+"Tritt auf, wenn der Benutzer die Eingabe der PIN, CAN oder PUK auf einem "
+"Smartphone als Kartenleser mit aktiviertem Tastaturmodus abgebrochen hat."
+
+msgid "**Enter_New_Pace_Pin_Ifd_User_Cancelled**"
+msgstr ""
+
+msgid ""
+"Occurs when the user has canceled entering the new PIN during a PIN "
+"change on a smartphone acting as a card reader with keyboard mode "
+"enabled."
+msgstr ""
+"Tritt auf, wenn der Benutzer die Eingabe der neuen PIN bei einer PIN-"
+"Änderung auf einem Smartphone als Kartenleser mit aktiviertem "
+"Tastaturmodus abgebrochen hat."
+
+msgid "**Check_Status_Unavailable**"
+msgstr ""
+
+msgid ""
+"Is not yet included in the product and will only be relevant with version"
+" 2.0.0."
+msgstr ""
+"Ist noch nicht im Produkt enthalten und wird erst mit der Version 2.0.0 "
+"relevant."
+
+msgid "**Check_Applet_Internal_Error**"
+msgstr ""
+
+msgid "**Install_Smart_User_Cancelled**"
+msgstr ""
+
+msgid "**Delete_Smart_User_Cancelled**"
+msgstr ""
+
+msgid "**Delete_Personalization_User_Cancelled**"
+msgstr ""
+
+msgid "**Update_Support_Info_User_Cancelled**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Fail**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Unsupported**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Overload**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Maintenance**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Nfc_Disabled**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Integrity_Check_Failed**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Not_Authenticated**"
+msgstr ""
+
+msgid "**Install_Smart_Service_Response_Network_Connection_Error**"
+msgstr ""
+
+msgid "**Update_Support_Info_Call_Failed**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Fail**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Unsupported**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Overload**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Maintenance**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Nfc_Disabled**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Integrity_Check_Failed**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Not_Authenticated**"
+msgstr ""
+
+msgid "**Update_Support_Info_Service_Response_Network_Connection_Error**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Fail**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Unsupported**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Overload**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Maintenance**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Nfc_Disabled**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Integrity_Check_Failed**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Not_Authenticated**"
+msgstr ""
+
+msgid "**Delete_Smart_Service_Response_Network_Connection_Error**"
+msgstr ""
+
+msgid "**Delete_Personalization_Failed**"
+msgstr ""
+
+msgid "**Get_Session_Id_Invalid**"
+msgstr ""
+
+msgid "**Smart_ServiceInformation_Query_Failed**"
+msgstr ""
+
+msgid "**Get_Challenge_Invalid**"
+msgstr ""
+
+msgid "**Initialize_Personalization_Failed**"
+msgstr ""
+
+msgid "**Smart_PrePersonalization_Wrong_Status**"
+msgstr ""
+
+msgid "**Smart_PrePersonalization_Incomplete_Information**"
+msgstr ""
+
+msgid "**Transmit_Personalization_Size_Mismatch**"
+msgstr ""
+
+msgid "**Start_Paos_Response_Personalization_Empty**"
+msgstr ""
+
+msgid "**Start_Paos_Response_Personalization_Invalid**"
+msgstr ""
+
+msgid "**Finalize_Personalization_Failed**"
+msgstr ""
+
+msgid "**Insert_Card_No_SmartReader**"
+msgstr ""
+
+msgid "**Insert_Card_Multiple_SmartReader**"
+msgstr ""
+
+msgid "**Insert_Card_Unknown_Eid_Type**"
+msgstr ""
+
+msgid "**Insert_Card_Invalid_SmartReader**"
+msgstr ""
+
+msgid "**Insert_Card_Missing_Card**"
+msgstr ""
+
+msgid "**Change_Smart_Pin_Failed**"
+msgstr ""
+

@@ -23,6 +23,7 @@ class PaosHandler
 	Q_DISABLE_COPY(PaosHandler)
 
 	private:
+		const QByteArray mXmlData;
 		PaosType mDetectedType;
 		QSharedPointer<PaosMessage> mParsedObject;
 

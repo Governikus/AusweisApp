@@ -23,6 +23,7 @@ SimulatorReaderManagerPlugIn::SimulatorReaderManagerPlugIn()
 void SimulatorReaderManagerPlugIn::init()
 {
 	ReaderManagerPlugIn::init();
+
 	onSettingsChanged();
 }
 
@@ -60,9 +61,12 @@ void SimulatorReaderManagerPlugIn::stopScan(const QString& pError)
 	if (mSimulatorReader)
 	{
 		mSimulatorReader->disconnectReader(pError);
+
+		auto info = mSimulatorReader->getReaderInfo();
+		mSimulatorReader.reset();
+		Q_EMIT fireReaderRemoved(info);
 	}
 	ReaderManagerPlugIn::stopScan(pError);
-	mSimulatorReader.reset();
 }
 
 
@@ -70,7 +74,7 @@ void SimulatorReaderManagerPlugIn::insert(const QString& pReaderName, const QVar
 {
 	Q_UNUSED(pReaderName)
 
-	if (!isScanRunning())
+	if (!getInfo().isScanRunning())
 	{
 		return;
 	}

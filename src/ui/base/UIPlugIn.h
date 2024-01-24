@@ -28,9 +28,7 @@ defineEnumType(UiModule,
 		IDENTIFY,
 		SETTINGS,
 		PINMANAGEMENT,
-		HISTORY,
 		HELP,
-		PROVIDER,
 		SELF_AUTHENTICATION,
 
 		// Desktop only
@@ -40,7 +38,7 @@ defineEnumType(UiModule,
 		// Mobile only
 		REMOTE_SERVICE,
 		CHECK_ID_CARD,
-		SMART
+		SMART_EID
 		)
 
 class UIPlugIn
@@ -56,8 +54,9 @@ class UIPlugIn
 
 	public Q_SLOTS:
 		virtual void doShutdown() = 0;
-		virtual void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) = 0;
-		virtual void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) = 0;
+		virtual void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) = 0;
+		virtual void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) = 0;
+		virtual void onWorkflowUnhandled(const QSharedPointer<WorkflowRequest>& pRequest);
 		virtual void onApplicationInitialized();
 		virtual void onApplicationStarted();
 		virtual void onShowUi(UiModule pModule);

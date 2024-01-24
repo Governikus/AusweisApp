@@ -4,9 +4,6 @@
 
 #include "AppUpdateData.h"
 
-#include "AppSettings.h"
-#include "VersionNumber.h"
-
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
@@ -74,7 +71,7 @@ AppUpdateData::AppUpdateData(const QByteArray& pData)
 				mNotesUrl = QUrl(jsonObject[QLatin1String("notes")].toString());
 				mDate = QDateTime::fromString(jsonObject[QLatin1String("date")].toString(), Qt::ISODate);
 				mChecksumUrl = QUrl(jsonObject[QLatin1String("checksum")].toString());
-				mSize = qMax(-1, jsonObject[QLatin1String("size")].toInt(-1));
+				mSize = std::max(-1, jsonObject[QLatin1String("size")].toInt(-1));
 				return;
 			}
 		}
@@ -112,16 +109,7 @@ const GlobalStatus& AppUpdateData::getParsingResult() const
 bool AppUpdateData::isCompatible() const
 {
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-
-	#if (QT_VERSION < QT_VERSION_CHECK(6, 1, 0))
-	const auto osv = QOperatingSystemVersion::current();
-	const auto currentVersion = QVersionNumber(osv.majorVersion(), osv.minorVersion(), osv.microVersion());
-	return currentVersion >= mMinOsVersion;
-
-	#else
 	return QOperatingSystemVersion::current().version() >= mMinOsVersion;
-
-	#endif
 
 #else
 	return true;

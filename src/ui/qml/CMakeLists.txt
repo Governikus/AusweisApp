@@ -5,11 +5,9 @@
 ADD_PLATFORM_LIBRARY(AusweisAppUiQml)
 
 target_link_libraries(AusweisAppUiQml ${Qt}::Core ${Qt}::Svg ${Qt}::Qml ${Qt}::Quick ${Qt}::QuickControls2)
-target_link_libraries(AusweisAppUiQml AusweisAppGlobal AusweisAppUi AusweisAppIfdRemote AusweisAppExport AusweisAppServices AusweisAppWorkflowsSelfAuth)
+target_link_libraries(AusweisAppUiQml AusweisAppGlobal AusweisAppUi AusweisAppIfdRemote AusweisAppServices AusweisAppWorkflowsSelfAuth)
 
-if(QT6)
-	target_link_libraries(AusweisAppUiQml ${Qt}::CorePrivate)
-endif()
+target_link_libraries(AusweisAppUiQml ${Qt}::CorePrivate)
 
 if(TARGET ${Qt}::Widgets)
 	target_link_libraries(AusweisAppUiQml ${Qt}::Widgets) # QSystemTrayIcon
@@ -17,10 +15,6 @@ endif()
 
 if(TARGET ${Qt}::QmlWorkerScript)
 	target_link_libraries(AusweisAppUiQml ${Qt}::QmlWorkerScript)
-endif()
-
-if(NOT DESKTOP AND NOT QT6)
-	target_link_libraries(AusweisAppUiQml ${Qt}::QuickShapes)
 endif()
 
 if(TARGET AusweisAppDiagnosis)

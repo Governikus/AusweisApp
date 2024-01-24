@@ -7,7 +7,7 @@
 using namespace governikus;
 
 
-TestWorkflowController::TestWorkflowController(const QSharedPointer<TestWorkflowContext>& pContext)
+TestWorkflowController::TestWorkflowController(const QSharedPointer<WorkflowContext>& pContext)
 	: WorkflowController(pContext)
 {
 }

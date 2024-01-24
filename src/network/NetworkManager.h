@@ -40,18 +40,16 @@ class NetworkManager
 		QAtomicInt mOpenConnectionCount;
 		QSet<QByteArray> mUpdaterSessions;
 
-		bool prepareConnection(QNetworkRequest& pRequest);
+		bool prepareConnection(QNetworkRequest& pRequest) const;
 		[[nodiscard]] QSharedPointer<QNetworkReply> trackConnection(QNetworkReply* pResponse);
 		[[nodiscard]] QSharedPointer<QNetworkReply> processRequest(QNetworkRequest& pRequest,
 				const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke);
 		[[nodiscard]] QSharedPointer<QNetworkReply> processUpdaterRequest(QNetworkRequest& pRequest,
 				const std::function<QSharedPointer<QNetworkReply>(QNetworkRequest&)>& pInvoke);
 
-		[[nodiscard]] QString getUserAgentHeader() const;
-
 	public Q_SLOTS:
 		void onShutdown();
-		void onProxyChanged();
+		void onProxyChanged() const;
 
 	protected:
 		NetworkManager();
@@ -61,6 +59,8 @@ class NetworkManager
 		enum class NetworkError
 		{
 			ServiceUnavailable,
+			ServerError,
+			ClientError,
 			TimeOut,
 			ProxyError,
 			SecurityError,
@@ -68,6 +68,7 @@ class NetworkManager
 		};
 		Q_ENUM(NetworkError)
 
+		[[nodiscard]] static QString getUserAgentServerHeader();
 		static void setApplicationProxyFactory();
 		static void lockProxy(bool pLocked)
 		{

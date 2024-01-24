@@ -57,6 +57,7 @@ class test_RemoteTlsServer
 			RemoteTlsServer server;
 			server.setPairing(serverPairing);
 			server.startListening(0);
+			QCOMPARE(server.hasPsk(), serverPairing);
 
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(clientConfig).getConfiguration();
 			config.setPrivateKey(pair.getKey());
@@ -72,11 +73,7 @@ class test_RemoteTlsServer
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
 			QTRY_COMPARE(clientErrors.count(), 1); // clazy:exclude=qstring-allocations
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::SslHandshakeFailedError);
-#else
-			QCOMPARE(clientErrors.takeFirst().at(0).value<QAbstractSocket::SocketError>(), QAbstractSocket::SocketError::RemoteHostClosedError);
-#endif
 			QCOMPARE(clientEncrypted.count(), 0);
 			QCOMPARE(clientPsk.count(), 0);
 		}
@@ -91,6 +88,7 @@ class test_RemoteTlsServer
 				});
 			server.setPairing();
 			server.startListening(0);
+			QVERIFY(server.hasPsk());
 
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair.getKey());

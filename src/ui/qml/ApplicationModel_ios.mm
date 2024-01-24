@@ -73,7 +73,7 @@ bool ApplicationModel::isScreenReaderRunning() const
 }
 
 
-void ApplicationModel::keepScreenOn(bool pActive)
+void ApplicationModel::keepScreenOn(bool pActive) const
 {
 	if (pActive)
 	{
@@ -89,11 +89,14 @@ void ApplicationModel::keepScreenOn(bool pActive)
 void ApplicationModel::showAppStoreRatingDialog()
 {
 	qCDebug(feedback) << "Requesting iOS AppStore review";
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	[SKStoreReviewController requestReview];
+#pragma clang diagnostic pop
 }
 
 
-void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction)
+void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) const
 {
 	if (pAction == Settings::SETTING_APP)
 	{

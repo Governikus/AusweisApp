@@ -1,19 +1,20 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: roundedRectangle
 
-	property color borderColor: Style.color.border
-	property real borderWidth: 0
+	property color borderColor: color
+	property real borderWidth: Style.dimens.border_width
 	property bool bottomLeftCorner: true
 	property bool bottomRightCorner: true
 	property color color: Style.color.background
-	property real radius: Style.dimens.corner_radius
+	property color gradientColor: color
+	property real radius: Style.dimens.pane_radius
 	property bool topLeftCorner: true
 	property bool topRightCorner: true
 
@@ -29,6 +30,7 @@ Item {
 
 	Canvas {
 		id: canvas
+
 		anchors.fill: parent
 
 		onPaint: {
@@ -36,10 +38,11 @@ Item {
 			if (context === null) {
 				return;
 			}
+			let oddHeight = height + (Constants.is_desktop || height % 2 ? 0 : 1);
 			context.save();
 			context.reset();
 			context.beginPath();
-			context.moveTo(0, height / 2);
+			context.moveTo(0, oddHeight / 2);
 			if (topLeftCorner) {
 				context.lineTo(0, radius);
 				context.arcTo(0, 0, radius, 0, radius);
@@ -53,20 +56,27 @@ Item {
 				context.lineTo(width, 0);
 			}
 			if (bottomRightCorner) {
-				context.lineTo(width, height - radius);
-				context.arcTo(width, height, width - radius, height, radius);
+				context.lineTo(width, oddHeight - radius);
+				context.arcTo(width, oddHeight, width - radius, oddHeight, radius);
 			} else {
-				context.lineTo(width, height);
+				context.lineTo(width, oddHeight);
 			}
 			if (bottomLeftCorner) {
-				context.lineTo(radius, height);
-				context.arcTo(0, height, 0, height - radius, radius);
+				context.lineTo(radius, oddHeight);
+				context.arcTo(0, oddHeight, 0, oddHeight - radius, radius);
 			} else {
-				context.lineTo(0, height);
+				context.lineTo(0, oddHeight);
 			}
-			context.lineTo(height / 2);
+			context.lineTo(oddHeight / 2);
 			context.closePath();
-			context.fillStyle = color;
+			if (gradientColor != color) {
+				let gradient = context.createLinearGradient(0, 0, 0, 100);
+				gradient.addColorStop(0.0, color);
+				gradient.addColorStop(1.0, gradientColor);
+				context.fillStyle = gradient;
+			} else {
+				context.fillStyle = color;
+			}
 			context.fill();
 			if (borderWidth > 0) {
 				context.clip();

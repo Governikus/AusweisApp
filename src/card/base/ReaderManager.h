@@ -80,16 +80,6 @@ class ReaderManager
 		void stopScanAll(const QString& pError = QString());
 
 		/*!
-		 * Queries if any plugin is currently scanning
-		 */
-		bool isScanRunning() const;
-
-		/*!
-		 * Queries if a plugin with the requested type is currently scanning
-		 */
-		bool isScanRunning(ReaderManagerPlugInType pType) const;
-
-		/*!
 		 * Stops started scan for devices.
 		 * Be aware that some plugins don't finish the whole scan if you
 		 * abort it with stopScan!
@@ -104,6 +94,13 @@ class ReaderManager
 		bool isWorkerThread() const
 		{
 			return QThread::currentThread() == &mThread;
+		}
+
+
+		template<typename T>
+		static bool isResultType(const QVariant& pResult)
+		{
+			return pResult.metaType() == QMetaType::fromType<T>();
 		}
 
 
@@ -194,9 +191,6 @@ class ReaderManager
 
 			return connection;
 		}
-
-
-		void updateRetryCounters();
 
 	Q_SIGNALS:
 		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);

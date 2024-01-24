@@ -43,8 +43,8 @@ class ReaderConfiguration
 		void onFileUpdated();
 
 	public:
-		static QString getNoReaderFoundIconPath();
-		static QString getMultipleReaderIconPath();
+		[[nodiscard]] static QString getNoReaderFoundIconPath();
+		[[nodiscard]] static QString getMultipleReaderIconPath();
 
 		void update();
 		[[nodiscard]] const QVector<ReaderConfigurationInfo>& getReaderConfigurationInfos() const;

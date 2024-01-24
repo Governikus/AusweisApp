@@ -263,9 +263,6 @@ function(ADD_PLATFORM_LIBRARY _name)
 	endif()
 
 	if(INCOMPATIBLE_QT_COMPILER_FLAGS)
-		if(CMAKE_VERSION VERSION_LESS "3.14")
-			message(WARNING "Compiler flags for mocs with 3.13.x and earlier leads to linker errors")
-		endif()
 		set_source_files_properties("${_name}_autogen/mocs_compilation.cpp" PROPERTIES COMPILE_OPTIONS "${INCOMPATIBLE_QT_COMPILER_FLAGS}")
 	endif()
 endfunction()
@@ -326,28 +323,6 @@ if((WIN32 AND NOT WINDOWS_STORE) OR LINUX OR MAC OR CYGWIN OR BSD)
 	set(DESKTOP true)
 endif()
 
-
-if(CMAKE_VERSION VERSION_LESS "3.14") # Use file(SIZE)
-	function(FILE_SIZE _outSize _file)
-		if(LINUX)
-			set(SIZE_COMMAND stat -c "%s" "${_file}")
-		elseif(MAC)
-			set(SIZE_COMMAND stat -f "%z" "${_file}")
-		else()
-			return()
-		endif()
-
-		execute_process(COMMAND ${SIZE_COMMAND}
-				OUTPUT_VARIABLE SIZE_OUTPUT
-				RESULT_VARIABLE SIZE_RESULT
-				ERROR_QUIET
-				OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-		if(${SIZE_RESULT} EQUAL 0)
-			set(${_outSize} ${SIZE_OUTPUT} PARENT_SCOPE)
-		endif()
-	endfunction()
-endif()
 
 if(NOT COMMAND FIND_HOST_PACKAGE)
 	macro(FIND_HOST_PACKAGE)
@@ -448,7 +423,7 @@ if(WIN32)
 			if(NOT WIN_SIGN_HASHALGO)
 				set(WIN_SIGN_HASHALGO SHA256)
 			endif()
-			set(SIGNTOOL_PARAMS sign /v /fd ${WIN_SIGN_HASHALGO} /d AusweisApp2 /du https://www.ausweisapp.bund.de)
+			set(SIGNTOOL_PARAMS sign /v /fd ${WIN_SIGN_HASHALGO} /d AusweisApp /du https://www.ausweisapp.bund.de)
 
 			if(WIN_SIGN_SUBJECT_NAME)
 				set(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /n ${WIN_SIGN_SUBJECT_NAME})

@@ -8,9 +8,7 @@
 
 #pragma once
 
-
 #include "CVCertificateBody.h"
-
 
 #include <QByteArrayList>
 #include <QDebug>

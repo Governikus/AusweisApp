@@ -4,12 +4,10 @@
 
 #include "states/StateGetChallenge.h"
 
-#include "LogHandler.h"
 #include "ResourceLoader.h"
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkReply.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -36,10 +34,8 @@ class test_StateGetChallenge
 
 		void init()
 		{
-			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/v1/%1")));
-			mState.reset(new StateGetChallenge(mContext));
-			mState->setStateName("StateGetChallenge");
+			mState.reset(StateBuilder::createState<StateGetChallenge>(mContext));
 			QVERIFY(mContext->getChallenge().isEmpty());
 		}
 
@@ -63,6 +59,7 @@ class test_StateGetChallenge
 		void test_CheckPayload()
 		{
 			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+			mContext->setServiceInformation(SmartEidType::APPLET, QStringLiteral("FooBar"), QString());
 
 			const auto& payload = mState->getPayload();
 			QJsonParseError jsonError {};
@@ -72,7 +69,7 @@ class test_StateGetChallenge
 			const auto obj = json.object();
 			QCOMPARE(obj.size(), 2);
 			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), QString("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
-			QCOMPARE(obj.value(QLatin1String("osType")).toString(), QString("Unknown"));
+			QCOMPARE(obj.value(QLatin1String("challengeType")).toString(), QString("FooBar"));
 		}
 
 
@@ -80,12 +77,10 @@ class test_StateGetChallenge
 		{
 			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
 
+			QTest::ignoreMessage(QtDebugMsg, "No valid challenge to prepare personalization");
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("No valid challenge to prepare personalization"));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
 			QCOMPARE(mState->getContext()->getFailureCode() == FailureCode::Reason::Get_Challenge_Invalid, true);
@@ -112,24 +107,22 @@ class test_StateGetChallenge
 			auto reply = new MockNetworkReply();
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
+			reply->setError(QNetworkReply::NetworkError::InternalServerError, QString());
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StateGetChallenge::fireAbort);
 
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_Server_Error);
 
 			const FailureCode::FailureInfoMap infoMap {
 				{FailureCode::Info::State_Name, "StateGetChallenge"},
 				{FailureCode::Info::Http_Status_Code, QString::number(500)},
 				{FailureCode::Info::Network_Error, "Unknown error"}
 			};
-			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
-			QCOMPARE(mState->getContext()->getFailureCode() == failureCode, true);
-			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Server_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);
+			QCOMPARE(mState->getContext()->getFailureCode()->getFailureInfoMap(), infoMap);
 
 			QVERIFY(mContext->getChallenge().isEmpty());
 		}

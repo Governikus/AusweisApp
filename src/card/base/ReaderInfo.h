@@ -113,13 +113,6 @@ class ReaderInfo
 		}
 
 
-		[[nodiscard]] bool isPhysicalCard() const
-		{
-			const auto& cardType = mCardInfo.getCardType();
-			return cardType == CardType::EID_CARD;
-		}
-
-
 		[[nodiscard]] bool isSoftwareSmartEid() const
 		{
 			return mCardInfo.getMobileEidType() == MobileEidType::HW_KEYSTORE;

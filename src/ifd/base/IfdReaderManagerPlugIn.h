@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "IfdClient.h"
 #include "IfdDispatcherClient.h"
 #include "ReaderManagerPlugIn.h"
@@ -12,6 +11,10 @@
 
 #include <QMap>
 #include <QSharedPointer>
+
+
+class test_RemoteIfdReaderManagerPlugIn;
+
 
 namespace governikus
 {
@@ -21,6 +24,7 @@ class IfdReaderManagerPlugIn
 	: public ReaderManagerPlugIn
 {
 	Q_OBJECT
+	friend class ::test_RemoteIfdReaderManagerPlugIn;
 
 	private:
 		QMultiMap<QString, QString> mReadersForDispatcher;
@@ -30,7 +34,7 @@ class IfdReaderManagerPlugIn
 		void handleIFDStatus(const QJsonObject& pJsonObject, const QString& pId);
 
 	private Q_SLOTS:
-		void onContextEstablished(const QString& pIfdName, const QString& pId);
+		void onContextEstablished(const QString& pIfdName, const QString& pId) const;
 		void onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId);
 		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
 
@@ -40,7 +44,6 @@ class IfdReaderManagerPlugIn
 		void removeDispatcher(const QString& pId);
 		[[nodiscard]] const QMap<QString, QSharedPointer<IfdDispatcherClient>>& getDispatchers() const;
 
-		virtual bool isInitialPairing(const QString& pIfdName, const QString& pId) = 0;
 		virtual IfdClient* getIfdClient() = 0;
 
 	public:

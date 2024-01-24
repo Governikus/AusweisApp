@@ -48,6 +48,12 @@ void TlsServer::stopListening()
 }
 
 
+bool TlsServer::hasPsk() const
+{
+	return !mPsk.isEmpty();
+}
+
+
 void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 {
 	if (mSocket.isNull())
@@ -85,7 +91,7 @@ void TlsServer::incomingConnection(qintptr pSocketDescriptor)
 }
 
 
-void TlsServer::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator)
+void TlsServer::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const
 {
 	qCDebug(ifd) << "Client requests PSK authentication | identity:" << pAuthenticator->identity() << "| hint:" << pAuthenticator->identityHint();
 	pAuthenticator->setPreSharedKey(mPsk);
@@ -96,4 +102,17 @@ void TlsServer::onError(QAbstractSocket::SocketError pSocketError)
 {
 	qCDebug(ifd) << "Socket error:" << pSocketError << mSocket->errorString();
 	mSocket->deleteLater();
+	Q_EMIT fireSocketError(pSocketError);
+}
+
+
+const QByteArray& TlsServer::getPsk() const
+{
+	return mPsk;
+}
+
+
+const QPointer<QSslSocket>& TlsServer::getSslSocket() const
+{
+	return mSocket;
 }

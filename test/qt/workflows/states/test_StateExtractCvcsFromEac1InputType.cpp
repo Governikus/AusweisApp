@@ -46,10 +46,9 @@ class test_StateExtractCvcsFromEac1InputType
 
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1_3.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_3.xml"));
 
 			mState.reset(StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mAuthContext));
-			mState->setStateName("StateExtractCvcsFromEac1InputType");
 
 			mAuthContext->clearCvCertificates();
 			mState->onEntry(nullptr);

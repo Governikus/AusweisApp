@@ -1,7 +1,7 @@
 .. only:: html
 
-  .. image:: Logo_AusweisApp2.png
-     :alt: AusweisApp2
+  .. image:: AusweisApp_Logo.svg
+     :alt: AusweisApp
      :align: center
      :width: 200pt
 
@@ -55,6 +55,7 @@ Table of contents
    commands
    messages
    workflow
+   failurecodes
 
 
 .. raw:: latex

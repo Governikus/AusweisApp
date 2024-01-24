@@ -4,7 +4,6 @@
 
 #include "SelfAuthModel.h"
 
-#include "PdfExporter.h"
 #include "context/SelfAuthContext.h"
 #include "controller/SelfAuthController.h"
 
@@ -53,14 +52,15 @@ void SelfAuthModel::resetContext(const QSharedPointer<SelfAuthContext>& pContext
 	if (mContext)
 	{
 		connect(mContext.data(), &SelfAuthContext::fireSelfAuthenticationDataChanged, this, &SelfAuthModel::onSelfAuthenticationDataChanged);
+		connect(mContext.data(), &SelfAuthContext::fireCancelWorkflow, this, &SelfAuthModel::fireCancelWorkflow);
 	}
 	onSelfAuthenticationDataChanged();
 }
 
 
-void SelfAuthModel::startWorkflow()
+void SelfAuthModel::startWorkflow(bool pActivateUi)
 {
-	Q_EMIT fireStartWorkflow(SelfAuthController::createWorkflowRequest());
+	Q_EMIT fireStartWorkflow(SelfAuthController::createWorkflowRequest(pActivateUi));
 }
 
 
@@ -70,6 +70,16 @@ void SelfAuthModel::cancelWorkflow()
 	{
 		Q_EMIT mContext->fireCancelWorkflow();
 	}
+}
+
+
+bool SelfAuthModel::isWorkflowCancelled() const
+{
+	if (mContext)
+	{
+		return mContext->isWorkflowCancelled();
+	}
+	return false;
 }
 
 
@@ -84,23 +94,9 @@ bool SelfAuthModel::isBasicReader() const
 }
 
 
-void SelfAuthModel::exportData(const QUrl& pFilename) const
-{
-	const auto& selfdata = mContext->getSelfAuthenticationData();
-	const auto& orderedSelfData = selfdata.getOrderedSelfData();
-	if (!orderedSelfData.isEmpty())
-	{
-		const auto& dataTime = selfdata.getDateTime();
-
-		PdfExporter exporter(pFilename.toLocalFile());
-		exporter.exportSelfInfo(dataTime, orderedSelfData);
-	}
-}
-
-
 int SelfAuthModel::rowCount(const QModelIndex&) const
 {
-	return mSelfData.size();
+	return static_cast<int>(mSelfData.size());
 }
 
 

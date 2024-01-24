@@ -8,6 +8,7 @@
 #include "Randomizer.h"
 
 #include <openssl/bio.h>
+#include <openssl/ec.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
@@ -58,7 +59,7 @@ KeyPair::KeyPair(const QSslKey& pKey, const QSslCertificate& pCert)
 }
 
 
-KeyPair KeyPair::generate()
+KeyPair KeyPair::generate(const char* pCurve)
 {
 	if (!Randomizer::getInstance().isSecureRandom())
 	{
@@ -66,7 +67,7 @@ KeyPair KeyPair::generate()
 		return KeyPair();
 	}
 
-	if (auto* pkey = createKey(); pkey)
+	if (auto* pkey = createKey(pCurve); pkey)
 	{
 		auto cert = createCertificate(pkey);
 		if (cert)
@@ -95,9 +96,9 @@ const QSslCertificate& KeyPair::getCertificate() const
 }
 
 
-EVP_PKEY* KeyPair::createKey()
+EVP_PKEY* KeyPair::createKey(const char* pCurve)
 {
-	QScopedPointer<EVP_PKEY_CTX, OpenSslCustomDeleter> pkeyCtx(EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr));
+	QScopedPointer<EVP_PKEY_CTX, OpenSslCustomDeleter> pkeyCtx(EVP_PKEY_CTX_new_id(pCurve ? EVP_PKEY_EC : EVP_PKEY_RSA, nullptr));
 
 	if (pkeyCtx.isNull())
 	{
@@ -107,20 +108,28 @@ EVP_PKEY* KeyPair::createKey()
 
 	if (!EVP_PKEY_keygen_init(pkeyCtx.data()))
 	{
-		qCCritical(settings) << "Cannot init rsa key ctx";
+		qCCritical(settings) << "Cannot init key ctx";
 		return nullptr;
 	}
 
-	if (!EVP_PKEY_CTX_set_rsa_keygen_bits(pkeyCtx.data(), 2048))
+	if (pCurve)
 	{
-		qCCritical(settings) << "Cannot generate rsa key bits";
+		if (!EVP_PKEY_CTX_ctrl_str(pkeyCtx.data(), "ec_paramgen_curve", pCurve))
+		{
+			qCCritical(settings) << "Cannot set curve";
+			return nullptr;
+		}
+	}
+	else if (!EVP_PKEY_CTX_set_rsa_keygen_bits(pkeyCtx.data(), 2048))
+	{
+		qCCritical(settings) << "Cannot generate key bits";
 		return nullptr;
 	}
 
 	EVP_PKEY* pkey = nullptr;
 	if (!EVP_PKEY_keygen(pkeyCtx.data(), &pkey))
 	{
-		qCCritical(settings) << "Cannot generate rsa key";
+		qCCritical(settings) << "Cannot generate key";
 		return nullptr;
 	}
 
@@ -140,11 +149,6 @@ QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
 	auto& randomizer = Randomizer::getInstance().getGenerator();
 	std::uniform_int_distribution<long> uni_long(1);
 	std::uniform_int_distribution<qulonglong> uni_qulonglong(1);
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	#define X509_getm_notBefore X509_get_notBefore
-	#define X509_getm_notAfter X509_get_notAfter
-#endif
 
 	ASN1_INTEGER_set(X509_get_serialNumber(x509.data()), uni_long(randomizer));
 	// see: https://tools.ietf.org/html/rfc5280#section-4.1.2.5

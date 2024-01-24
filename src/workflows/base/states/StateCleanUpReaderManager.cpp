@@ -21,9 +21,7 @@ StateCleanUpReaderManager::StateCleanUpReaderManager(const QSharedPointer<Workfl
 void StateCleanUpReaderManager::run()
 {
 	const QSharedPointer<WorkflowContext> context = getContext();
-
-	const auto& reader = context->getReaderName();
-	if (!reader.isEmpty() && !context->getStatus().isError())
+	if (const auto& reader = context->getReaderName(); !reader.isEmpty())
 	{
 		const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(reader);
 		if (readerInfo.hasCard() && readerInfo.getCardInfo().getCardType() != CardType::SMART_EID)

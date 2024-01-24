@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file alias="images/mobile/platform_specific_phone.svg">images/ios/material_phone_iphone.svg</file>
-        <file alias="images/mobile/platform_specific_share.svg">images/ios/share.svg</file>
-    </qresource>
-</RCC>

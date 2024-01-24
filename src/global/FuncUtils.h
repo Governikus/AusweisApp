@@ -16,29 +16,6 @@
 namespace governikus
 {
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-
-/*
- * Usage example: map<Reader, QString>([](const Reader& r){ return r.getName(); }, readers)
- *
- * where readers has type QVector<Reader>
- */
-template<typename S, typename T>
-std::enable_if_t<!std::is_void_v<T>, QVector<T>> map(const std::function<T(const S&)>& pFunc, const QVector<S>& pItems)
-{
-	const auto sz = pItems.size();
-	QVector<T> result(sz);
-	for (int index = 0; index < sz; ++index)
-	{
-		result[index] = pFunc(pItems[index]);
-	}
-
-	return result;
-}
-
-
-#endif
-
 
 /*
  * Usage example: map<Reader, QString>([](const Reader& r){ return r.getName(); }, readers)

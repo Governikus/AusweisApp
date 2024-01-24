@@ -11,6 +11,14 @@ j.with
 {
 	customWorkspace('workspace/' + MERCURIAL_REVISION_BRANCH + '_LW64M')
 
+	wrappers
+	{
+		environmentVariables
+		{
+			env('PATH', '$WORKSPACE/build/dist/bin;$PATH')
+		}
+	}
+
 	steps
 	{
 		batchFile('''\

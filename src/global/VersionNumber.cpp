@@ -17,16 +17,8 @@ VersionNumber::VersionNumber(const QString& pVersion)
 	: mVersionNumber()
 	, mSuffix()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 4, 0))
 	qsizetype idx = 0;
-#else
-	int idx = 0;
-#endif
-
 	mVersionNumber = QVersionNumber::fromString(pVersion, &idx);
-#ifdef Q_CC_GNU
-	__sync_synchronize(); // QTBUG-62185
-#endif
 	mSuffix = pVersion.mid(idx).trimmed();
 }
 
@@ -51,33 +43,20 @@ bool VersionNumber::isDeveloperVersion() const
 
 bool VersionNumber::isBetaVersion() const
 {
-	return mVersionNumber.minorVersion() & 1;
+	return mVersionNumber.minorVersion() >= 100 || mVersionNumber.microVersion() >= 100;
 }
 
 
 auto VersionNumber::getInfoFromSuffix(QLatin1Char pStart, QLatin1Char pEnd) const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	QStringView view;
-#else
-	QStringRef view;
-#endif
 
 	if (const auto indexStart = mSuffix.indexOf(pStart) + 1; indexStart > 0)
 	{
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 		view = QStringView(mSuffix).sliced(indexStart);
-#else
-		view = mSuffix.midRef(indexStart);
-#endif
-
 		if (const auto indexEnd = view.indexOf(pEnd); indexEnd > 0)
 		{
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			view = view.sliced(0, indexEnd);
-#else
-			view = view.mid(0, indexEnd);
-#endif
 		}
 	}
 

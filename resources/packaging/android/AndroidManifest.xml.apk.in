@@ -6,7 +6,7 @@
     android:versionCode="@ANDROID_VERSION_CODE@"
     android:versionName="@ANDROID_VERSION_NAME@">
 
-    <uses-sdk tools:overrideLibrary="de.bdr.eid_applet_service_lib, com.tsystems.optimos.tsms.tsm_api_sdk" />
+    <uses-sdk tools:overrideLibrary="de.bundesdruckerei.android.eid_applet_service_lib, com.tsystems.optimos.tsms.tsm_api_sdk" />
 
     <!-- Normal Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -38,7 +38,9 @@
         android:name="org.qtproject.qt.android.bindings.QtApplication"
         android:allowBackup="false"
         android:allowNativeHeapPointerTagging="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:extractNativeLibs="true"
+        android:fullBackupContent="@xml/full_backup_content"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/npa"
         android:label="@string/app_name"
@@ -71,7 +73,9 @@
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:exported="true"
             android:launchMode="singleTask"
-            android:resizeableActivity="false">
+            android:resizeableActivity="true"
+            android:screenOrientation="user"
+            android:supportsPictureInPicture="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -82,16 +86,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="127.0.0.1"
-                    android:path="/eID-Client"
-                    android:port="24727"
-                    android:scheme="eid" />
-                <data
-                    android:host="localhost"
-                    android:path="/eID-Client"
-                    android:port="24727"
-                    android:scheme="http" />
+                <data android:host="localhost" android:port="24727" />
+                <data android:host="127.0.0.1" android:port="24727" />
+                <data android:path="/eID-Client" />
+                <data android:scheme="eid" />
+                <data android:scheme="http" />
             </intent-filter>
 
             <!-- Splash screen -->

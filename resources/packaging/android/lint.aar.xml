@@ -1,57 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <!-- Class is not registered in the manifest.
-
-        Activities, services and content providers should be registered in the
-        AndroidManifest.xml file using <activity>, <service> and <provider> tags.
-
-        If your activity is simply a parent class intended to be subclassed
-        by other "real" activities, make it an abstract class.
-
-        We can not make the classes abstract, because Qt provides
-        it and it should be possible to use it without subclassing.
-    -->
-    <issue id="Registered">
-        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java" />
-        <ignore path="**/dist/src/android/java/src/org/qtproject/qt5/android/bindings/QtService.java" />
-    </issue>
-
-    <!-- Obsolete Gradle Dependency.
-
-        The used version is provided by Qt in the build.gradle. Its not
-        practical to update Qt on every new version. Providing our own
-        build.gradle would bind us to take over the changes in Qt into
-        our own build.gradle frequently.
-    -->
-    <issue id="GradleDependency">
-        <ignore path="build.gradle" />
-    </issue>
-
-    <!-- Obsolete custom lint check
-
-        Lint can be extended with custom checks: additional checks implemented by developers and libraries to for example
-        enforce specific API usages required by a library or a company coding style guideline.
-        The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working,
-        or provide wrong results.
-        This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated
-        to run in the current lint environment.
-        It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer
-        version of lint (or Android Studio or Gradle plugin etc) to work with these checks.
-    -->
-    <issue id="ObsoleteLintCustomCheck">
-        <ignore path="**/appcompat-1.**/**/lint.jar" />
-    </issue>
-
     <!-- Unused resources.
 
         Unused resources make applications larger and slow down builds.
 
-        https://bugreports.qt.io/browse/QTBUG-72976
-
         Qt includes some resources like strings, which are seen by lint to be unused.
     -->
     <issue id="UnusedResources">
-        <ignore path="**/dist/src/android/java/res/layout/splash.xml" />
         <ignore path="**/libs.xml" />
         <ignore path="**/strings.xml" />
     </issue>

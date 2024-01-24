@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GCheckBox {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GCheckBox {}", testCase);
 	}
 	function test_checked() {
 		let testObject = createTestObject();
@@ -34,6 +35,7 @@ TestCase {
 
 	GCheckBox {
 		id: testObject
+
 		TestCase {
 			function test_click() {
 				testObject.checked = false;

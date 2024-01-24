@@ -5,15 +5,11 @@
 #include "states/StateCheckApplet.h"
 
 #include "ReaderManager.h"
-#include "SmartManager.h"
 #include "context/PersonalizationContext.h"
-#include "paos/retrieve/TransmitParser.h"
 
-#include "TestFileHelper.h"
 #include "mock/eid_applet_interface_mock.h"
 
 #include <QSharedPointer>
-
 #include <QtTest>
 
 
@@ -21,6 +17,9 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 using namespace governikus;
+
+
+Q_DECLARE_METATYPE(EidStatus)
 
 
 class test_StateCheckApplet
@@ -32,8 +31,9 @@ class test_StateCheckApplet
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -46,63 +46,31 @@ class test_StateCheckApplet
 		void run_data()
 		{
 			QTest::addColumn<EidStatus>("status");
-			QTest::addColumn<GlobalStatus::Code>("code");
+			QTest::addColumn<QString>("signal");
 
-			QTest::newRow("internal_error") << EidStatus::INTERNAL_ERROR << GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed;
-			QTest::newRow("unavailable") << EidStatus::UNAVAILABLE << GlobalStatus::Code::Workflow_Smart_eID_Unavailable;
-			QTest::newRow("no_provisioning") << EidStatus::NO_PROVISIONING << GlobalStatus::Code::No_Error;
-			QTest::newRow("no_personalization") << EidStatus::NO_PERSONALIZATION << GlobalStatus::Code::No_Error;
-			QTest::newRow("applet_unusable") << EidStatus::APPLET_UNUSABLE << GlobalStatus::Code::No_Error;
-			QTest::newRow("personalized") << EidStatus::PERSONALIZED << GlobalStatus::Code::No_Error;
+			QTest::newRow("internal_error") << EidStatus::INTERNAL_ERROR << SIGNAL(fireAbort(const FailureCode&));
+			QTest::newRow("cert_expired") << EidStatus::CERT_EXPIRED << SIGNAL(fireDeletePersonalization());
+			QTest::newRow("no_provisioning") << EidStatus::NO_PROVISIONING << SIGNAL(fireInstallApplet());
+			QTest::newRow("no_personalization") << EidStatus::NO_PERSONALIZATION << SIGNAL(fireContinue());
+			QTest::newRow("unusable") << EidStatus::UNUSABLE << SIGNAL(fireDeleteApplet());
+			QTest::newRow("personalized") << EidStatus::PERSONALIZED << SIGNAL(fireDeletePersonalization());
 		}
 
 
 		void run()
 		{
 			QFETCH(EidStatus, status);
-			QFETCH(GlobalStatus::Code, code);
+			QFETCH(QString, signal);
 
 			setSmartEidStatus(status);
 			auto context = QSharedPointer<PersonalizationContext>::create(QString());
 
 			StateCheckApplet state(context);
-			QSignalSpy spyAbort(&state, &StateCheckApplet::fireAbort);
-			QSignalSpy spyContinue(&state, &StateCheckApplet::fireContinue);
-			QSignalSpy spyFurtherStepRequired(&state, &StateCheckApplet::fireFurtherStepRequired);
+			QSignalSpy spy(&state, qPrintable(signal));
+			QVERIFY(spy.isValid());
 
 			state.run();
-
-			switch (code)
-			{
-				case GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed:
-					QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
-					QCOMPARE(spyContinue.size(), 0);
-					QCOMPARE(spyFurtherStepRequired.size(), 0);
-					QCOMPARE(context->getFailureCode(), FailureCode::Reason::Check_Applet_Error);
-					break;
-
-				case GlobalStatus::Code::Workflow_Smart_eID_Unavailable:
-					QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
-					QCOMPARE(spyContinue.size(), 0);
-					QCOMPARE(spyFurtherStepRequired.size(), 0);
-					QCOMPARE(context->getFailureCode(), FailureCode::Reason::Check_Applet_Unavailable);
-					break;
-
-				default:
-					if (status == EidStatus::NO_PERSONALIZATION)
-					{
-						QCOMPARE(spyAbort.size(), 0);
-						QTRY_COMPARE(spyContinue.size(), 1); // clazy:exclude=qstring-allocations
-						QCOMPARE(spyFurtherStepRequired.size(), 0);
-					}
-					else
-					{
-						QCOMPARE(spyAbort.size(), 0);
-						QCOMPARE(spyContinue.size(), 0);
-						QTRY_COMPARE(spyFurtherStepRequired.size(), 1); // clazy:exclude=qstring-allocations
-					}
-			}
-			QCOMPARE(context->getStatus(), code);
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

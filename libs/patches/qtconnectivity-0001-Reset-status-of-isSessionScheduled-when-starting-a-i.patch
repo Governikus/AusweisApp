@@ -1,0 +1,28 @@
+From 7436b286698ff67a1834fc1e8e6d4a8446ab7a5d Mon Sep 17 00:00:00 2001
+From: Jens Trillmann <jens.trillmann@governikus.de>
+Date: Thu, 5 Oct 2023 14:56:43 +0200
+Subject: Reset status of isSessionScheduled when starting a iOS NFC session
+
+If a user cancels the NFC popup and then starts a new session immediately
+after then isSessionScheduled gets set to true. This value has to be reset
+when the session gets started as isSessionScheduled==true leads to the
+QTimer always triggering a new NFC session.
+
+Pick-to: 6.6 6.5
+Change-Id: I53d71d5c9b419d334ac6a229cff3e32aa81e9230
+---
+ src/nfc/qnearfieldmanager_ios.mm | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
+index 2709e2c7..259c3c17 100644
+--- x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
++++ y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
+@@ -143,6 +143,7 @@ bool QNearFieldManagerPrivateImpl::scheduleSession(QNearFieldTarget::AccessMetho
+         isSessionScheduled = true;
+         return true;
+     }
++    isSessionScheduled = false;
+ 
+     if (accessMethod == QNearFieldTarget::TagTypeSpecificAccess) {
+         startSession();

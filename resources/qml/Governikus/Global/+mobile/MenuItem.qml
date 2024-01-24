@@ -1,19 +1,18 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
-Rectangle {
+RoundedRectangle {
 	id: baseItem
 
-	property real contentMarginLeft: Constants.component_spacing
-	property real contentMarginRight: Constants.component_spacing
-	property real contentMarginVertical: Constants.component_spacing
 	property alias description: descriptionText.text
-	property var icon: "qrc:///images/mobile/material_arrow_right.svg"
+	property bool drawBottomCorners: false
+	property bool drawTopCorners: false
+	property var icon: "qrc:///images/material_arrow_right.svg"
 	property alias tintIcon: iconItem.tintEnabled
 	property alias title: titleText.text
 
@@ -21,51 +20,54 @@ Rectangle {
 
 	Accessible.name: title + ". " + description
 	Accessible.role: Accessible.Button
-	color: mouseArea.pressed ? Style.color.background_item_pressed : Style.color.transparent
-	height: implicitHeight
-	implicitHeight: Math.max(textContainer.height, iconItem.height) + contentMarginVertical
+	bottomLeftCorner: drawBottomCorners
+	bottomRightCorner: drawBottomCorners
+	color: mouseArea.pressed ? Style.color.pane_active : Style.color.transparent
+	implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
+	implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
+	topLeftCorner: drawTopCorners
+	topRightCorner: drawTopCorners
 
 	Accessible.onPressAction: clicked()
 
-	Item {
-		id: textContainer
-		anchors.left: parent.left
-		anchors.leftMargin: contentMarginLeft
-		anchors.right: iconItem.left
-		anchors.rightMargin: Constants.component_spacing * 2
-		anchors.verticalCenter: parent.verticalCenter
-		height: titleText.height + descriptionText.height
+	RowLayout {
+		id: layout
 
-		GText {
-			id: titleText
-			Accessible.ignored: true
-			anchors.left: parent.left
-			anchors.right: parent.right
-			textStyle: Style.text.normal_accent
+		anchors.fill: parent
+		anchors.margins: Constants.pane_padding
+		spacing: 0
+
+		ColumnLayout {
+			GText {
+				id: titleText
+
+				Accessible.ignored: true
+				color: mouseArea.pressed ? Style.color.text_subline_pressed : textStyle.textColor
+				textStyle: Style.text.subline
+				visible: text !== ""
+			}
+			GText {
+				id: descriptionText
+
+				Accessible.ignored: true
+				color: mouseArea.pressed ? Style.color.text_pressed : textStyle.textColor
+				visible: text !== ""
+			}
 		}
-		GText {
-			id: descriptionText
+		TintableIcon {
+			id: iconItem
+
 			Accessible.ignored: true
-			anchors.left: parent.left
-			anchors.right: parent.right
-			anchors.top: titleText.bottom
-			anchors.topMargin: 2
-			textStyle: Style.text.normal_secondary
+			Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+			Layout.preferredWidth: Style.dimens.icon_size
+			source: baseItem.icon
+			sourceSize.height: Style.dimens.small_icon_size
+			tintColor: Style.color.text
 		}
-	}
-	TintableIcon {
-		id: iconItem
-		Accessible.ignored: true
-		anchors.right: parent.right
-		anchors.rightMargin: contentMarginRight
-		anchors.verticalCenter: parent.verticalCenter
-		source: baseItem.icon
-		sourceSize.height: Style.dimens.small_icon_size
-		tintColor: Style.color.secondary_text
-		width: Style.dimens.icon_size
 	}
 	MouseArea {
 		id: mouseArea
+
 		anchors.fill: parent
 
 		onClicked: baseItem.clicked()

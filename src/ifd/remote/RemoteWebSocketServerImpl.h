@@ -45,6 +45,7 @@ class RemoteWebSocketServerImpl
 		const QSharedPointer<ServerMessageHandler>& getMessageHandler() const override;
 
 		[[nodiscard]] bool isPairingConnection() const override;
+		[[nodiscard]] bool isPairingAnnounced() const override;
 		void setPairing(bool pEnable = true) override;
 		[[nodiscard]] QSslCertificate getCurrentCertificate() const override;
 };

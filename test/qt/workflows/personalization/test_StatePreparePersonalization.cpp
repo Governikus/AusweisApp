@@ -9,7 +9,6 @@
 #include "context/PersonalizationContext.h"
 
 #include "MockNetworkManager.h"
-#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -39,8 +38,7 @@ class test_StatePreparePersonalization
 		{
 			Env::getSingleton<LogHandler>()->init();
 			mContext.reset(new PersonalizationContext(QStringLiteral("https://dummy/%1")));
-			mState.reset(new StatePreparePersonalization(mContext));
-			mState->setStateName("StatePreparePersonalization");
+			mState.reset(StateBuilder::createState<StatePreparePersonalization>(mContext));
 
 			mNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
@@ -79,14 +77,80 @@ class test_StatePreparePersonalization
 		}
 
 
-		void test_OnNetworkReplySuccess()
+		void test_OnNetworkReplyNoValidData()
 		{
-			mState->mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
+			const QByteArray data(".");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+
+			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
+
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("No valid network response"));
+			mState->onNetworkReply();
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mContext->getFinalizeStatus(), 0);
+		}
+
+
+		void test_OnNetworkReplyValidDataFail()
+		{
+			const QByteArray data(R"({ "statusCode": -1 })");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+
+			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
+
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -1"));
+			mState->onNetworkReply();
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mContext->getFinalizeStatus(), -1);
+		}
+
+
+		void test_OnNetworkReplyValidData()
+		{
+			const QByteArray data(R"({ "statusCode": 1 })");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyContinue(mState.data(), &StatePreparePersonalization::fireContinue);
 
 			mState->onNetworkReply();
+			const QString logMsg(logSpy.takeLast().at(0).toString());
+			QVERIFY(logMsg.contains("preparePersonalization finished with statusCode 1"));
 			QCOMPARE(spyContinue.count(), 1);
-			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::No_Error);
+			QCOMPARE(mContext->getFinalizeStatus(), 1);
+		}
+
+
+		void test_OnNetworkReplyWrongStatusCode()
+		{
+			const QByteArray data(R"({ "statusCode": -2 })");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+
+			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
+
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -2"));
+			mState->onNetworkReply();
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Smart_PrePersonalization_Wrong_Status);
+			QCOMPARE(mContext->getFinalizeStatus(), -2);
+		}
+
+
+		void test_OnNetworkReplyWrongContent()
+		{
+			const QByteArray data(R"({ "fooBar": 1 })");
+			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
+
+			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
+
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("JSON parsing failed: statusCode is missing"));
+			mState->onNetworkReply();
+			QCOMPARE(spyAbort.count(), 1);
+			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Smart_PrePersonalization_Incomplete_Information);
+			QCOMPARE(mContext->getFinalizeStatus(), 0);
 		}
 
 
@@ -95,23 +159,22 @@ class test_StatePreparePersonalization
 			auto reply = new MockNetworkReply();
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
+			reply->setError(QNetworkReply::NetworkError::InternalServerError, QString());
 
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
 			mState->onNetworkReply();
-			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("Network request failed"));
 			QCOMPARE(spyAbort.count(), 1);
-			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
+			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_Server_Error);
 			const FailureCode::FailureInfoMap infoMap {
 				{FailureCode::Info::State_Name, "StatePreparePersonalization"},
 				{FailureCode::Info::Http_Status_Code, QString::number(500)},
 				{FailureCode::Info::Network_Error, "Unknown error"}
 			};
-			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Network_Error, infoMap);
-			QCOMPARE(mState->getContext()->getFailureCode() == failureCode, true);
-			QVERIFY(mState->getContext()->getFailureCode()->getFailureInfoMap() == infoMap);
+			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Server_Error, infoMap);
+			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);
+			QCOMPARE(mState->getContext()->getFailureCode()->getFailureInfoMap(), infoMap);
+			QCOMPARE(mContext->getFinalizeStatus(), 0);
 		}
 
 
@@ -119,9 +182,8 @@ class test_StatePreparePersonalization
 		{
 			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
 			mContext->setPreparePersonalizationData(QString("data containing the PIN when Smart-eID is of type HWKeyStore"));
-			mState->setStateName(QStringLiteral("StatePreparePersonalization"));
 			mState->onEntry(nullptr);
-			mNetworkManager->setNextReply(new MockNetworkReply(QByteArrayLiteral("TEST")));
+			mNetworkManager->setNextReply(new MockNetworkReply(QByteArrayLiteral(R"({ "statusCode": 1 })")));
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 

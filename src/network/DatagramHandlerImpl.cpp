@@ -238,17 +238,18 @@ void DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 
 	for (const QHostAddress& broadcastAddr : std::as_const(broadcastAddresses))
 	{
-		const auto alreadyFailed = mFailedAddresses.contains(broadcastAddr);
+		const auto& addrString = broadcastAddr.toString(); // QTBUG-112528
+		const auto alreadyFailed = mFailedAddresses.contains(addrString);
 		const auto sendSuccess = sendToAddress(pData, broadcastAddr, pPort, !alreadyFailed);
 
 		if (sendSuccess && alreadyFailed)
 		{
-			mFailedAddresses.removeAll(broadcastAddr);
+			mFailedAddresses.removeAll(addrString);
 		}
 		else if (!sendSuccess && !alreadyFailed)
 		{
 			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
-			mFailedAddresses << broadcastAddr;
+			mFailedAddresses << addrString;
 		}
 	}
 }

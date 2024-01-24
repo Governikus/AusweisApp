@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
 
 Flickable {
 	id: baseItem
@@ -56,6 +56,7 @@ Flickable {
 
 	Component {
 		id: scrollBar
+
 		GScrollBar {
 			bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
 			topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical

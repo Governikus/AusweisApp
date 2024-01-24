@@ -25,7 +25,7 @@ class test_CommandLineParser
 #endif
 
 			const QString& path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
-			const QString& app = path + "AusweisApp2";
+			const QString& app = path + "AusweisApp";
 
 			QStringList args;
 			args << "--help";

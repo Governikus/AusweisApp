@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; NumberField {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; NumberField {}", testCase);
 	}
 	function test_append() {
 		let testObject = createTestObject();
@@ -59,27 +60,6 @@ TestCase {
 		testObject.removeLast();
 		testObject.removeLast();
 		compare(testObject.number, "", "Empty number");
-	}
-	function test_validInput() {
-		let testObject = createTestObject();
-		verify(!testObject.validInput, "Initial validInput: false");
-		verify(testObject.confirmedInput, "Initial confirmedInput: true");
-		testObject.number = "123456";
-		testObject.inputConfirmation = "123456";
-		verify(testObject.validInput, "validInput: true");
-		verify(testObject.confirmedInput, "confirmedInput: true");
-		testObject.number = "12345";
-		testObject.inputConfirmation = "123456";
-		verify(!testObject.validInput, "short password validInput: false");
-		verify(testObject.confirmedInput, "short password confirmedInput: false");
-		testObject.number = "1";
-		testObject.inputConfirmation = "123456";
-		verify(!testObject.validInput, "mismatch password validInput: false");
-		verify(testObject.confirmedInput, "mismatch password confirmedInput: false");
-		testObject.number = "12345a";
-		testObject.inputConfirmation = "123456";
-		verify(!testObject.validInput, "invalid character password validInput: false");
-		verify(!testObject.confirmedInput, "invalid character confirmedInput: false");
 	}
 
 	name: "test_NumberField"

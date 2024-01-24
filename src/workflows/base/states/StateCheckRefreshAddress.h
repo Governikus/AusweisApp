@@ -44,13 +44,13 @@ class StateCheckRefreshAddress
 		[[nodiscard]] bool isMatchingSameOriginPolicyInDevMode() const;
 		void run() override;
 
-		QUrl determineSubjectUrl();
+		QUrl determineSubjectUrl() const;
 
 		void sendGetRequest();
 		void fetchServerCertificate();
 		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void doneSuccess();
-		void reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure);
+		void reportCommunicationError(const GlobalStatus& pStatus, FailureCode::Reason pFailure, const QString& pErrorString = QString());
 
 	private Q_SLOTS:
 		void onSslHandshakeDone();

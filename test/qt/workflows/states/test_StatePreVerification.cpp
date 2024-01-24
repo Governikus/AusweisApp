@@ -42,12 +42,11 @@ class test_StatePreVerification
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
-			mAuthContext.reset(new TestAuthContext(nullptr, ":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
 
 			mAuthContext->initCvcChainBuilder();
 
-			mState.reset(new StatePreVerification(mAuthContext));
-			mState->setStateName("StatePreVerification");
+			mState.reset(StateBuilder::createState<StatePreVerification>(mAuthContext));
 			mState->onEntry(nullptr);
 		}
 
@@ -91,7 +90,7 @@ class test_StatePreVerification
 			QTRY_COMPARE(spyAbort.count(), isValid ? 0 : 1); // clazy:exclude=qstring-allocations
 			if (!isValid)
 			{
-				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+				QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 			}
 		}
 
@@ -104,7 +103,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 		}
 
 
@@ -116,7 +115,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Chain);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Invalid_Certificate_Chain);
 		}
 
 
@@ -124,19 +123,16 @@ class test_StatePreVerification
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
 			auto signature = mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->getEcdsaSignature();
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-			BIGNUM* signaturePart = signature->r;
-#else
+
 			const BIGNUM* signaturePart = nullptr;
 			ECDSA_SIG_get0(signature, &signaturePart, nullptr);
-#endif
 			BN_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Invalid_Certificate_Signature);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Invalid_Certificate_Signature);
 		}
 
 
@@ -148,7 +144,7 @@ class test_StatePreVerification
 			mAuthContext->setStateApproved();
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verfication_Certificate_Expired);
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Pre_Verification_Certificate_Expired);
 		}
 
 
@@ -185,7 +181,7 @@ class test_StatePreVerification
 				settings.removeLinkCertificate(cvc);
 			}
 
-			const int expectedCvcaSize = 16;
+			const int expectedCvcaSize = 17;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
 			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate>>&>(mState->mTrustedCvcas);

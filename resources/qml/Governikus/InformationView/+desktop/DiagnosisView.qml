@@ -1,58 +1,63 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.View 1.0
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.SelfDiagnosisModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.View
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type.ApplicationModel
+import Governikus.Type.DiagnosisModel
 
 SectionPage {
 	id: sectionPage
+
 	anchors.centerIn: parent
 
 	titleBarAction: TitleBarAction {
-		helpTopic: "diagnosis"
 		//: LABEL DESKTOP
-		text: qsTr("Diagnosis")
+		text: qsTr("System data")
 	}
 
-	Component.onCompleted: SelfDiagnosisModel.startController()
-	Component.onDestruction: SelfDiagnosisModel.stopController()
+	DiagnosisModel {
+		id: diagnosisModel
 
+	}
 	TabbedPane {
 		id: sectionContent
+
 		anchors.fill: parent
-		anchors.margins: Constants.pane_padding
-		contentDelegate: sectionDelegate
+		contentDelegate: diagnosisContentDelegate
 		footerItem: footerDelegate
-		sectionsModel: SelfDiagnosisModel.sectionsModel
+		sectionsModel: diagnosisModel
 	}
 	Component {
-		id: sectionDelegate
-		Column {
-			height: implicitHeight
-			spacing: Constants.pane_spacing
+		id: diagnosisContentDelegate
 
-			Repeater {
-				model: sectionContent.currentItemModel.content
+		GPane {
+			Column {
+				Layout.fillWidth: true
+				spacing: Constants.pane_spacing
 
-				delegate: LabeledText {
-					activeFocusOnTab: true
-					label: title
-					labelStyle: (title !== "" && content === "") ? Style.text.header_accent : Style.text.normal_accent
-					text: content
-					width: parent.width
+				Repeater {
+					model: sectionContent.currentItemModel.content
 
-					onActiveFocusChanged: {
-						if (activeFocus) {
-							if (focusFrameMargins < 0)
-								sectionContent.scrollYPositionIntoView(y + height - focusFrameMargins);
-							else
-								sectionContent.scrollYPositionIntoView(y + height);
+					delegate: LabeledText {
+						activeFocusOnTab: true
+						label: title
+						labelStyle: (title !== "" && content === "") ? Style.text.headline : Style.text.subline
+						text: content
+						width: parent.width
+
+						onActiveFocusChanged: {
+							if (activeFocus) {
+								if (focusFrameMargins < 0)
+									sectionContent.scrollYPositionIntoView(y + height - focusFrameMargins);
+								else
+									sectionContent.scrollYPositionIntoView(y + height);
+							}
 						}
 					}
 				}
@@ -61,43 +66,47 @@ SectionPage {
 	}
 	Component {
 		id: footerDelegate
+
 		Item {
 			height: saveToFile.height
 
 			GButton {
 				id: saveToFile
-				Accessible.description: qsTr("Save diagnosis to textfile")
+
+				Accessible.description: qsTr("Save system data to textfile")
 				anchors.fill: parent
 				anchors.rightMargin: Constants.groupbox_spacing
 				//: LABEL DESKTOP
 				disabledTooltipText: qsTr("Diagnosis is still running")
-				enableButton: !SelfDiagnosisModel.running || !timeout.running
+				enableButton: !diagnosisModel.running || !timeout.running
 				//: LABEL DESKTOP
-				enabledTooltipText: SelfDiagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
-				icon.source: "qrc:///images/desktop/material_save.svg"
+				enabledTooltipText: diagnosisModel.running ? qsTr("Diagnosis may be incomplete") : ""
+				icon.source: "qrc:///images/desktop/save_icon.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Save to file")
 				tintIcon: true
 
 				onClicked: {
-					var filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("Diagnosis")).arg(SelfDiagnosisModel.getCreationTime());
+					let filenameSuggestion = "%1.%2.%3.txt".arg(Qt.application.name).arg(qsTr("SystemData")).arg(diagnosisModel.getCreationTime());
 					fileDialog.selectFile(filenameSuggestion);
 				}
 
 				GFileDialog {
 					id: fileDialog
+
 					defaultSuffix: "txt"
 					//: LABEL DESKTOP
 					nameFilters: qsTr("Textfiles (*.txt)")
 
 					//: LABEL DESKTOP
-					title: qsTr("Save diagnosis")
+					title: qsTr("Save system data")
 
-					onAccepted: SelfDiagnosisModel.saveToFile(file)
+					onAccepted: diagnosisModel.saveToFile(file)
 				}
 			}
 			Timer {
 				id: timeout
+
 				interval: 10000
 				repeat: false
 				running: true

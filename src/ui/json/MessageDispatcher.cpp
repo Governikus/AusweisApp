@@ -20,7 +20,6 @@
 #include "messages/MsgHandlerInternalError.h"
 #include "messages/MsgHandlerInvalid.h"
 #include "messages/MsgHandlerLog.h"
-#include "messages/MsgHandlerPersonalization.h"
 #include "messages/MsgHandlerReader.h"
 #include "messages/MsgHandlerReaderList.h"
 #include "messages/MsgHandlerStatus.h"
@@ -34,6 +33,7 @@
 
 #if __has_include("context/PersonalizationContext.h")
 	#include "context/PersonalizationContext.h"
+	#include "messages/MsgHandlerPersonalization.h"
 #endif
 
 #include <QLoggingCategory>
@@ -387,8 +387,19 @@ MsgHandler MessageDispatcher::interrupt()
 #ifdef Q_OS_IOS
 	{
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
-		return handleCurrentState(cmdType, allowedStates, [] {
-				Env::getSingleton<ReaderManager>()->stopScanAll(QLatin1String("")); // Null string is interpreted as 'success'
+		const auto lastPaceResult = mContext.getContext()->getLastPaceResult();
+		return handleCurrentState(cmdType, allowedStates, [lastPaceResult] {
+				switch (lastPaceResult)
+				{
+						case CardReturnCode::OK:
+						case CardReturnCode::OK_PUK:
+							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC); // Null string is interpreted as 'success'
+							break;
+
+						default:
+							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
+				}
+
 				return MsgHandler::Void;
 			});
 	}

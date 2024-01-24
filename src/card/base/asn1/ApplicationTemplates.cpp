@@ -6,7 +6,6 @@
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "FileRef.h"
 
 #include <QLoggingCategory>
 #include <QtEndian>
@@ -24,16 +23,8 @@ ASN1_ITEM_TEMPLATE(ApplicationTemplatesInternal) =
 			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_SET_OF, 0x00, ApplicationTemplatesInternal, ApplicationTemplate)
 ASN1_ITEM_TEMPLATE_END(ApplicationTemplatesInternal)
 
-
 IMPLEMENT_ASN1_FUNCTIONS(ApplicationTemplatesInternal)
-
 IMPLEMENT_ASN1_OBJECT(ApplicationTemplatesInternal)
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	#define sk_ApplicationTemplate_num(data) SKM_sk_num(ApplicationTemplate, data)
-	#define sk_ApplicationTemplate_value(data, i) SKM_sk_value(ApplicationTemplate, data, i)
-#endif
-
 } // namespace governikus
 
 
@@ -100,7 +91,7 @@ bool ApplicationTemplates::contains(const QByteArray& pIdentifier)
 }
 
 
-int ApplicationTemplates::count() const
+qsizetype ApplicationTemplates::count() const
 {
 	return mApplicationTemplates.size();
 }

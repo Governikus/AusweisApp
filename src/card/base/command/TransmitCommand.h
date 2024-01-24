@@ -9,6 +9,7 @@
 #pragma once
 
 #include "BaseCardCommand.h"
+#include "CardConnectionWorker.h"
 #include "InputAPDUInfo.h"
 
 class test_TransmitCommand;

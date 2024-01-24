@@ -1,5 +1,5 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <color name="background_color">#dcebf6</color>
+    <color name="background_color">#ffffff</color>
 
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/bg_splash_screen</item>

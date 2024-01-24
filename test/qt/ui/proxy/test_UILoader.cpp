@@ -41,11 +41,7 @@ class test_UILoader
 			QCOMPARE(ui->property("passive"), QVariant());
 			QCOMPARE(ui->property("readerManager"), QVariant(false));
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: QList("proxy"))");
-#else
-			QTest::ignoreMessage(QtDebugMsg, R"(Shutdown UILoader: ("proxy"))");
-#endif
 		}
 
 

@@ -6,6 +6,7 @@
 
 #include "LengthValue.h"
 #include "apdu/ResponseApdu.h"
+#include "asn1/ASN1Util.h"
 
 #include <QDataStream>
 #include <QIODevice>
@@ -47,6 +48,7 @@ CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCo
 			// no error
 			return CardReturnCode::OK;
 
+		case EstablishPaceChannelErrorCode::NoActivePinSet:
 		case EstablishPaceChannelErrorCode::InconsistentLengthsInInput:
 		case EstablishPaceChannelErrorCode::UnexpectedDataInInput:
 		case EstablishPaceChannelErrorCode::UnexpectedCombinationOfDataInInput:
@@ -68,9 +70,6 @@ CardReturnCode EstablishPaceChannelOutput::parseReturnCode(quint32 pPaceReturnCo
 
 		case EstablishPaceChannelErrorCode::Timeout:
 			return CardReturnCode::INPUT_TIME_OUT;
-
-		case EstablishPaceChannelErrorCode::NoActivePinSet:
-			return CardReturnCode::NO_ACTIVE_PIN_SET;
 
 		default:
 			break;
@@ -115,7 +114,7 @@ EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(Car
 		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::PROTOCOL_ERROR:
-		case CardReturnCode::EXTENDED_LENGTH_MISSING:
+		case CardReturnCode::WRONG_LENGTH:
 			return EstablishPaceChannelErrorCode::UnexpectedDataInInput;
 
 		case CardReturnCode::INVALID_CAN:
@@ -142,9 +141,6 @@ EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(Car
 
 		case CardReturnCode::CANCELLATION_BY_USER:
 			return EstablishPaceChannelErrorCode::Abort;
-
-		case CardReturnCode::NO_ACTIVE_PIN_SET:
-			return EstablishPaceChannelErrorCode::NoActivePinSet;
 	}
 
 	Q_UNREACHABLE();
@@ -160,6 +156,27 @@ void EstablishPaceChannelOutput::initMseStatusSetAt()
 void EstablishPaceChannelOutput::initEfCardAccess()
 {
 	mEfCardAccess = QByteArray::fromHex("3100");
+}
+
+
+bool EstablishPaceChannelOutput::findErrorCode(const QString& pOutputData)
+{
+	// Try to parse the value of EstablishPaceChannelOutput.errorCode
+	// the regular expression is determined by the ASN.1 structure of EstablishPaceChannelOutput
+
+	QRegularExpression regExp(QStringLiteral("(.*)a1060404(?<a1>([[:xdigit:]]){8})a2040402"));
+	auto match = regExp.match(pOutputData);
+	if (!match.hasMatch())
+	{
+		return false;
+	}
+
+	qCWarning(card) << "Determine at least PACE return code by regular expression";
+	const QByteArray paceReturnCodeBytes = QByteArray::fromHex(match.captured(QStringLiteral("a1")).toUtf8());
+	mPaceReturnCode = parseReturnCode(qFromBigEndian<quint32>(paceReturnCodeBytes.data()));
+	qCDebug(card) << "mPaceReturnCode:" << paceReturnCodeBytes.toHex() << mPaceReturnCode;
+
+	return true;
 }
 
 
@@ -261,9 +278,12 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 		return true;
 	}
 
+	auto debugGuard = qScopeGuard([] {
+			qCDebug(card) << "Decapsulation of command failed. Wrong size.";
+		});
+
 	if (it > pOutput.size())
 	{
-		qCDebug(card) << "Decapsulation of command failed. Wrong size.";
 		return false;
 	}
 
@@ -271,7 +291,6 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 	qCDebug(card) << "mCarCurr:" << mCarCurr;
 	if (it > pOutput.size())
 	{
-		qCDebug(card) << "Decapsulation of command failed. Wrong size.";
 		return false;
 	}
 
@@ -279,7 +298,6 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 	qCDebug(card) << "mCarPrev:" << mCarPrev;
 	if (it > pOutput.size())
 	{
-		qCDebug(card) << "Decapsulation of command failed. Wrong size.";
 		return false;
 	}
 
@@ -287,10 +305,10 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 	qCDebug(card) << "mIdIcc:" << mIdIcc.toHex();
 	if (it != pOutput.size())
 	{
-		qCDebug(card) << "Decapsulation of command failed. Wrong size.";
 		return false;
 	}
 
+	debugGuard.dismiss();
 	return true;
 }
 
@@ -315,25 +333,9 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 	const auto channelOutput = decodeObject<ESTABLISHPACECHANNELOUTPUT>(outputData);
 	if (channelOutput == nullptr)
 	{
-		auto outputDataHex = QString::fromLatin1(outputData.toHex());
+		const auto& outputDataHex = QString::fromLatin1(outputData.toHex());
 		qCCritical(card) << "Parsing EstablishPaceChannelOutput failed" << outputDataHex;
-
-		// Try to parse the value of EstablishPaceChannelOutput.errorCode
-		// the regular expression is determined by the ASN.1 structure of EstablishPaceChannelOutput
-
-		QRegularExpression regExp(QStringLiteral("(.*)a1060404(?<a1>([[:xdigit:]]){8})a2040402"));
-		auto match = regExp.match(outputDataHex);
-		if (match.hasMatch())
-		{
-			qCWarning(card) << "Determine at least PACE return code by regular expression";
-			const QByteArray paceReturnCodeBytes = QByteArray::fromHex(match.captured(QStringLiteral("a1")).toUtf8());
-			mPaceReturnCode = parseReturnCode(qFromBigEndian<quint32>(paceReturnCodeBytes.data()));
-			qCDebug(card) << "mPaceReturnCode:" << paceReturnCodeBytes.toHex() << mPaceReturnCode;
-
-			return true;
-		}
-
-		return false;
+		return findErrorCode(outputDataHex);
 	}
 
 	const QByteArray paceReturnCodeBytes = Asn1OctetStringUtil::getValue(channelOutput->mErrorCode);
@@ -505,7 +507,7 @@ QByteArray EstablishPaceChannelOutput::toCcid() const
 	Asn1OctetStringUtil::setValue(mStatusMseSetAt, establishPaceChannelOutput->mStatusMSESetAt);
 
 	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(mEfCardAccess.constData());
-	decodeAsn1Object(&establishPaceChannelOutput->mEfCardAccess, &unsignedCharPointer, mEfCardAccess.size());
+	decodeAsn1Object(&establishPaceChannelOutput->mEfCardAccess, &unsignedCharPointer, static_cast<long>(mEfCardAccess.size()));
 
 	if (!mIdIcc.isEmpty())
 	{

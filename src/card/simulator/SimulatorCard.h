@@ -10,7 +10,6 @@
 
 #include "Card.h"
 #include "SimulatorFileSystem.h"
-#include "apdu/FileCommand.h"
 #include "asn1/AuthenticatedAuxiliaryData.h"
 #include "pace/SecureMessaging.h"
 
@@ -31,6 +30,7 @@ class SimulatorCard
 		QSharedPointer<AuthenticatedAuxiliaryData> mAuxiliaryData;
 		std::unique_ptr<SecureMessaging> mSecureMessaging;
 		std::unique_ptr<SecureMessaging> mNewSecureMessaging;
+		int mCaKeyId;
 		int mRiKeyId;
 
 	public:
@@ -54,7 +54,7 @@ class SimulatorCard
 		ResponseApduResult executeGeneralAuthenticate(const CommandApdu& pCmd);
 		QByteArray brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar) const;
 		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce);
-		QByteArray generateRestrictedId(const QByteArray& pPublicKey);
+		QByteArray generateRestrictedId(const QByteArray& pPublicKey) const;
 		StatusCode verifyAuxiliaryData(const QByteArray& pCommandData);
 };
 

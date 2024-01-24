@@ -1,10 +1,10 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 Item {
 	id: baseItem
@@ -37,6 +37,7 @@ Item {
 	}
 	Timer {
 		id: offTimer
+
 		interval: 500
 
 		onTriggered: {
@@ -49,6 +50,7 @@ Item {
 	}
 	Rectangle {
 		id: reader
+
 		anchors.bottom: parent.bottom
 		color: Style.color.card_reader
 		height: parent.height * 5 / 7
@@ -57,6 +59,7 @@ Item {
 
 		Rectangle {
 			id: slot
+
 			anchors.left: parent.left
 			anchors.leftMargin: parent.width * 0.2
 			anchors.right: parent.right
@@ -69,8 +72,9 @@ Item {
 		}
 		Rectangle {
 			id: card
+
 			anchors.horizontalCenter: parent.horizontalCenter
-			color: Style.color.accent
+			color: Style.color.control
 			height: baseItem.height * 1.5 / 7
 			radius: height * 0.05
 			width: baseItem.width * 0.5
@@ -105,6 +109,7 @@ Item {
 
 			Rectangle {
 				id: cardStripe1
+
 				anchors.left: parent.left
 				anchors.leftMargin: parent.width * 0.1
 				anchors.right: parent.right
@@ -117,6 +122,7 @@ Item {
 			}
 			Rectangle {
 				id: cardStripe2
+
 				anchors.left: parent.left
 				anchors.leftMargin: parent.width * 0.1
 				anchors.right: parent.right
@@ -148,6 +154,7 @@ Item {
 		}
 		Grid {
 			id: pinGrid
+
 			anchors.bottom: reader.bottom
 			anchors.left: parent.left
 			anchors.margins: display.margin
@@ -158,6 +165,7 @@ Item {
 
 			Repeater {
 				id: repeater
+
 				model: 9
 
 				Item {
@@ -171,13 +179,14 @@ Item {
 
 					Rectangle {
 						id: pinButtonCircle
+
 						anchors.centerIn: parent
 						height: width
 						radius: width * 0.5
 						state: "off"
 						width: pinButton._size
 
-						Behavior on color  {
+						Behavior on color {
 							ColorAnimation {
 								duration: 250
 							}
@@ -208,7 +217,7 @@ Item {
 								}
 							}
 						]
-						Behavior on width  {
+						Behavior on width {
 							NumberAnimation {
 								duration: 1000
 								easing.type: Easing.OutElastic

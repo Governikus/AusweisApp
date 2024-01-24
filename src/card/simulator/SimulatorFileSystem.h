@@ -25,22 +25,24 @@ class SimulatorFileSystem
 {
 	private:
 		QByteArray mSelectedFile;
+		QMap<int, QByteArray> mKeys;
 		QMap<QByteArray, QByteArray> mFiles;
 		QMap<QByteArray, QByteArray> mFileIds;
+
+		void initMandatoryData();
 
 	public:
 		SimulatorFileSystem();
 		explicit SimulatorFileSystem(const QJsonObject& pData);
 
 		[[nodiscard]] StatusCode select(const QByteArray& pFileId);
-		[[nodiscard]] QByteArray read(int pOffset, int pLength, bool pExtendedLen);
-		[[nodiscard]] StatusCode write(int pOffset, const QByteArray& pData);
+		[[nodiscard]] QByteArray read(qsizetype pOffset, int pLength, bool pExtendedLen) const;
+		[[nodiscard]] StatusCode write(qsizetype pOffset, const QByteArray& pData);
 
 		[[nodiscard]] QByteArray getEfCardAccess() const;
-		[[nodiscard]] QByteArray getCardAuthenticationKey() const;
-		[[nodiscard]] QByteArray getRestrictedIdentificationKey(int pKeyId) const;
+		[[nodiscard]] QByteArray getPrivateKey(int pKeyId) const;
 
-		[[nodiscard]] StatusCode verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData);
+		[[nodiscard]] StatusCode verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData) const;
 
 	private:
 		void createFile(const QByteArray& pFileId, const QByteArray& pShortFileId, const QByteArray& pContent);

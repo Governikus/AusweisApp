@@ -14,7 +14,6 @@
 #include "asn1/CVCertificate.h"
 #include "asn1/CVCertificateChainBuilder.h"
 #include "context/AccessRightManager.h"
-#include "context/ActivationContext.h"
 #include "context/WorkflowContext.h"
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 #include "paos/invoke/DidAuthenticateResponseEac2.h"
@@ -34,6 +33,8 @@
 #include <QSslCertificate>
 #include <QUrl>
 
+#include <functional>
+
 class test_StateRedirectBrowser;
 class test_StatePreVerification;
 class test_StateCertificateDescriptionCheck;
@@ -52,13 +53,16 @@ class AuthContext
 	friend class ::test_StateCertificateDescriptionCheck;
 	friend class TestAuthContext;
 
+	public:
+		using BrowserHandler = std::function<QString (const QSharedPointer<AuthContext>&)>;
+
 	private:
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
-		bool mSkipRedirect;
+		bool mSkipMobileRedirect;
 		bool mShowChangePinView;
 
-		QSharedPointer<ActivationContext> mActivationContext;
+		QUrl mActivationUrl;
 		QUrl mTcTokenUrl;
 		QSharedPointer<const TcToken> mTcToken;
 		QUrl mRefreshUrl;
@@ -81,6 +85,7 @@ class AuthContext
 		CVCertificateChainBuilder mCvcChainBuilderProd;
 		CVCertificateChainBuilder mCvcChainBuilderTest;
 		QByteArray mSslSession;
+		BrowserHandler mBrowserHandler;
 
 	Q_SIGNALS:
 		void fireShowChangePinViewChanged();
@@ -88,10 +93,16 @@ class AuthContext
 		void fireAccessRightManagerCreated(QSharedPointer<AccessRightManager> pAccessRightManager);
 
 	protected:
-		explicit AuthContext(const Action pAction, const QSharedPointer<ActivationContext>& pActivationContext);
+		explicit AuthContext(const Action pAction, bool pActivateUi = true, const QUrl& pActivationUrl = QUrl(), const BrowserHandler& pHandler = BrowserHandler());
 
 	public:
-		explicit AuthContext(const QSharedPointer<ActivationContext>& pActivationContext);
+		explicit AuthContext(bool pActivateUi = true, const QUrl& pActivationUrl = QUrl(), const BrowserHandler& pHandler = BrowserHandler());
+
+		[[nodiscard]] QUrl getActivationUrl() const
+		{
+			return mActivationUrl;
+		}
+
 
 		[[nodiscard]] bool isErrorReportedToServer() const
 		{
@@ -138,15 +149,15 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] bool isSkipRedirect() const
+		[[nodiscard]] bool isSkipMobileRedirect() const
 		{
-			return mSkipRedirect;
+			return mSkipMobileRedirect;
 		}
 
 
-		void setSkipRedirect(bool pSkipRedirect)
+		void setMobileSkipRedirect(bool pSkipRedirect = true)
 		{
-			mSkipRedirect = pSkipRedirect;
+			mSkipMobileRedirect = pSkipRedirect;
 		}
 
 
@@ -164,9 +175,9 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] ActivationContext* getActivationContext() const
+		[[nodiscard]] BrowserHandler getBrowserHandler() const
 		{
-			return mActivationContext.data();
+			return mBrowserHandler;
 		}
 
 
@@ -228,7 +239,8 @@ class AuthContext
 		{
 			mDIDAuthenticateEAC1 = pDIDAuthenticateEAC1;
 			Q_EMIT fireDidAuthenticateEac1Changed();
-			Q_EMIT fireIsSmartCardAllowedChanged();
+			Q_EMIT fireAcceptedEidTypesChanged();
+			Q_EMIT fireEidTypeMismatchChanged();
 		}
 
 

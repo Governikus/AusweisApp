@@ -18,15 +18,21 @@ class test_DiagnosisModel
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<DiagnosisContext> mContext;
 	QSharedPointer<DiagnosisModel> mModel;
 
 	private:
 		QString getTestData(const QString& pFilename)
 		{
-			QString filePath = QStringLiteral(":/core/diagnosis/") + pFilename;
-			QByteArray rawData = TestFileHelper::readFile(filePath);
-			return QString::fromUtf8(rawData);
+			const QString filePath = QStringLiteral(":/core/diagnosis/") + pFilename;
+			const QByteArray rawData = TestFileHelper::readFile(filePath);
+			QString stringData = QString::fromUtf8(rawData);
+
+			Q_ASSERT(stringData.count("\r\n") == 0);
+			const qsizetype linebreaks = stringData.count('\n');
+			stringData.replace('\n', "\r\n");
+			Q_ASSERT(stringData.count("\r\n") == linebreaks);
+
+			return stringData;
 		}
 
 
@@ -34,11 +40,7 @@ class test_DiagnosisModel
 			const QVector<QVector<ContentItem>>& pOrder)
 		{
 			const auto& content = pSection->mContentItems;
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 			qsizetype offset = 0;
-#else
-			int offset = 0;
-#endif
 			for (const auto& subsection : pOrder)
 			{
 				const auto& slice = content.mid(offset, subsection.size());
@@ -55,22 +57,18 @@ class test_DiagnosisModel
 	private Q_SLOTS:
 		void init()
 		{
-			mContext.reset(new DiagnosisContext());
-			mModel.reset(new DiagnosisModel(mContext));
-			mModel->reloadContent();
+			mModel.reset(new DiagnosisModel());
 		}
 
 
 		void cleanup()
 		{
 			mModel.clear();
-			mContext.clear();
 		}
 
 
 		void test_newDiagnosisModel()
 		{
-			QCOMPARE(mModel->mContext, mContext);
 			QCOMPARE(mModel->rowCount(), mModel->mSections.size());
 
 			QCOMPARE(mModel->getSectionName(DiagnosisModel::Section::GENERAL), QCoreApplication::applicationName());
@@ -79,7 +77,6 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->getSectionName(DiagnosisModel::Section::SECURITY), QString("Antivirus and firewall"));
 
 			QCOMPARE(mModel->mSections[DiagnosisModel::Section::GENERAL]->mContentItems.last().mTitle, QString("Time of diagnosis"));
-			QCOMPARE(mModel->mSections[DiagnosisModel::Section::GENERAL]->mContentItems.last().mContent, QString("Initial diagnosis running, please wait."));
 
 			QCOMPARE(mModel->mSections[DiagnosisModel::Section::READER]->mContentItems.at(0).mTitle, QString("Paired smartphones"));
 			QCOMPARE(mModel->mSections[DiagnosisModel::Section::READER]->mContentItems.at(1).mContent, QString("No devices paired."));
@@ -108,7 +105,7 @@ class test_DiagnosisModel
 			ReaderInfo comfortReaderInfo(QString("name"), ReaderManagerPlugInType::REMOTE_IFD, CardInfo(CardType::UNKNOWN));
 			comfortReaderInfo.setBasicReader(false);
 			const QVector<ReaderInfo> readerInfos = {defaultInfo, infoEidCard, comfortReaderInfo};
-			mContext->setReaderInfos(readerInfos);
+			mModel->mContext->setReaderInfos(readerInfos);
 			mModel->onReaderInfosChanged();
 
 			QCOMPARE(mModel->mCardReaderSection.size(), 4);
@@ -152,7 +149,7 @@ class test_DiagnosisModel
 			const DiagnosisContext::ComponentInfo driver2(QString("/path/to/driver2"), QString("description2"), QString("version2"), QString("vendor2"));
 			QVector<DiagnosisContext::ComponentInfo> components = {component1, component2};
 			QVector<DiagnosisContext::ComponentInfo> drivers = {driver1, driver2};
-			mContext->setPcscInfo(version, components, drivers);
+			mModel->mContext->setPcscInfo(version, components, drivers);
 			mModel->onPcscInfoChanged();
 
 			QCOMPARE(mModel->mPcscSection.size(), 4);
@@ -177,12 +174,12 @@ class test_DiagnosisModel
 			const QTime time(12, 0);
 			const QDateTime valid(date, time);
 
-			mContext->setTimestamp(invalid);
+			mModel->mContext->setTimestamp(invalid);
 			mModel->onTimestampChanged();
 			QCOMPARE(mModel->mTimestampSection.last().mTitle, QString("Time of diagnosis"));
 			QCOMPARE(mModel->mTimestampSection.last().mContent, QString("Failed to retrieve date & time"));
 
-			mContext->setTimestamp(valid);
+			mModel->mContext->setTimestamp(valid);
 			mModel->onTimestampChanged();
 			QCOMPARE(mModel->mTimestampSection.last().mTitle, QString("Time of diagnosis"));
 			QCOMPARE(mModel->mTimestampSection.last().mContent, QString("12. October 2018, 12:00:00 PM"));
@@ -195,7 +192,7 @@ class test_DiagnosisModel
 			const QNetworkInterface interface2;
 			const QNetworkInterface interface3;
 			QList<QNetworkInterface> interfaces = {interface1, interface2, interface3};
-			mContext->setNetworkInterfaces(interfaces);
+			mModel->mContext->setNetworkInterfaces(interfaces);
 			mModel->onNetworkInfoChanged();
 
 			QCOMPARE(mModel->mNetworkInterfaceSection.size(), 3);
@@ -300,6 +297,56 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mNetworkConnectionSection.at(0).mContent, QStringLiteral("Not bound"));
 			QCOMPARE(mModel->mNetworkConnectionSection.at(1).mContent, contentString);
 			QVERIFY(verifyOrder(mModel->mSections[DiagnosisModel::Section::NETWORK], {mModel->mNetworkConnectionSection, mModel->mNetworkInterfaceSection}));
+		}
+
+
+		void test_SavePlainText()
+		{
+			static const QRegularExpression re(R"(^Test_diagnosis_DiagnosisModel\r?
+Application\r?
+Test_diagnosis_DiagnosisModel\r?
+Application Version\r?
+Organization\r?
+Organization Domain\r?
+System\r?
+.+\r?
+Kernel\r?
+.+\r?
+Architecture\r?
+.+\r?
+Device\r?
+.+\r?
+Qt Version\r?
+.+\r?
+OpenSSL Version\r?
+.+\r?
+Time of diagnosis\r?
+.+\r?
+\r?
+\r?
+Card reader\r?
+Paired smartphones\r?
+No devices paired\.\r?
+Card reader\r?
+Diagnosis is running\.\.\.\r?
+PC\/SC driver information\r?
+Diagnosis is running\.\.\.\r?
+\r?
+\r?
+Network\r?
+(?:\N+\r?\n)*\r?
+\r?
+Antivirus and firewall\r?
+Antivirus information\r?
+.+\r?
+Firewall information\r?
+.+)");
+			QVERIFY(re.match(mModel->getAsPlaintext()).hasMatch());
+
+			QTemporaryFile file;
+			QVERIFY(file.open());
+			mModel->saveToFile(QUrl::fromLocalFile(file.fileName()));
+			QVERIFY(re.match(QString::fromUtf8(file.readAll())).hasMatch());
 		}
 
 

@@ -12,12 +12,11 @@ ReaderManagerPlugIn::ReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType,
 		bool pAvailable,
 		bool pPlugInEnabled)
 	: mInfo(pPlugInType, pPlugInEnabled, pAvailable)
-	, mScanRunning(false)
 {
 }
 
 
-void ReaderManagerPlugIn::shelve()
+void ReaderManagerPlugIn::shelve() const
 {
 	const auto& readers = getReaders();
 	for (const auto& reader : readers)
@@ -32,9 +31,9 @@ void ReaderManagerPlugIn::shelve()
 
 void ReaderManagerPlugIn::startScan(bool /*pAutoConnect*/)
 {
-	if (!mScanRunning)
+	if (!mInfo.isScanRunning())
 	{
-		mScanRunning = true;
+		mInfo.setScanRunning(true);
 		Q_EMIT fireStatusChanged(mInfo);
 	}
 }
@@ -44,9 +43,9 @@ void ReaderManagerPlugIn::stopScan(const QString& pError)
 {
 	Q_UNUSED(pError)
 
-	if (mScanRunning)
+	if (mInfo.isScanRunning())
 	{
-		mScanRunning = false;
+		mInfo.setScanRunning(false);
 		Q_EMIT fireStatusChanged(mInfo);
 	}
 }

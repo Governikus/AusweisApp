@@ -32,6 +32,8 @@ class RootTrigger
 			{
 				buildDescription('', '${REVIEWBOARD_REVIEW_ID} / ${REVIEWBOARD_DIFF_REVISION}')
 
+				shell('rbt status-update set --url ${BUILD_URL} --url-text "See trigger" -r ${REVIEWBOARD_REVIEW_ID} -s ${REVIEWBOARD_STATUS_UPDATE_ID} --server ${REVIEWBOARD_SERVER} --username ${REVIEWBOARD_USER} --api-token ${REVIEWBOARD_TOKEN}')
+
 				shell('rbt patch --write patch.diff --server ${REVIEWBOARD_SERVER} --diff-revision ${REVIEWBOARD_DIFF_REVISION} ${REVIEWBOARD_REVIEW_ID}')
 
 				downstreamParameterized

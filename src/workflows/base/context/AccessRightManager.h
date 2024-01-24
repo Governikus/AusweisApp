@@ -29,6 +29,7 @@ class AccessRightManager
 
 	public:
 		explicit AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc);
+		explicit AccessRightManager(QSharedPointer<CHAT> pRequiredChat);
 
 
 		[[nodiscard]] const QSharedPointer<const CVCertificate>& getTerminalCvc() const

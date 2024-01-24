@@ -1,89 +1,89 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.UiModule 1.0
-import Governikus.Type.WorkflowModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.UiModule
+import Governikus.Type.WorkflowModel
 
-Item {
-	id: content
-	Component.onCompleted: if (!WorkflowModel.isSmartSupported) {
-		navModel.set(1, {
-				"image": "qrc:///images/material_history.svg",
-				"desc": QT_TR_NOOP("History"),
-				"module": UiModule.HISTORY
-			});
-	}
+GControl {
+	id: root
 
-	ListModel {
-		id: navModel
-		ListElement {
-			desc: QT_TR_NOOP("Start")
-			image: "qrc:///images/mobile/material_home.svg"
-			module: UiModule.DEFAULT
-		}
-		ListElement {
-			desc: QT_TR_NOOP("Provider")
-			image: "qrc:///images/provider.svg"
-			module: UiModule.PROVIDER
-		}
-		ListElement {
-			desc: QT_TR_NOOP("Remote")
-			image: "qrc:///images/mobile/platform_specific_phone.svg"
-			module: UiModule.REMOTE_SERVICE
-		}
-		ListElement {
-			desc: QT_TR_NOOP("Settings")
-			image: "qrc:///images/material_settings.svg"
-			module: UiModule.SETTINGS
-		}
-		ListElement {
-			desc: QT_TR_NOOP("Help")
-			image: "qrc:///images/material_help.svg"
-			module: UiModule.HELP
+	Layout.maximumWidth: Math.max(Layout.preferredWidth, Style.dimens.max_text_width)
+	Layout.minimumWidth: navigationRow.Layout.minimumWidth + leftPadding + rightPadding
+	Layout.preferredWidth: contentItem.Layout.preferredWidth + leftPadding + rightPadding
+	bottomInset: -plugin.safeAreaMargins.bottom
+	bottomPadding: Constants.is_layout_android ? Style.dimens.navigation_bar_padding : Style.dimens.navigation_bar_text_padding
+	horizontalPadding: Style.dimens.navigation_bar_padding
+	topPadding: Style.dimens.navigation_bar_padding
+
+	background: RoundedRectangle {
+		bottomLeftCorner: false
+		bottomRightCorner: false
+		color: Style.color.pane
+		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+		radius: Style.dimens.pane_radius
+
+		layer.effect: GDropShadow {
+			verticalOffset: -3
 		}
 	}
-	GSeparator {
-		id: topBorderLine
-		width: parent.width
-	}
-	RowLayout {
-		anchors {
-			bottom: parent.bottom
-			bottomMargin: Constants.is_layout_android ? Style.dimens.navigation_bar_padding : Style.dimens.navigation_bar_text_padding
-			left: parent.left
-			leftMargin: Style.dimens.navigation_bar_padding
-			right: parent.right
-			rightMargin: Style.dimens.navigation_bar_padding
-			top: topBorderLine.bottom
-			topMargin: Style.dimens.navigation_bar_padding
-		}
-		Repeater {
+	contentItem: RowLayout {
+		id: navigationRow
+
+		readonly property bool horizontalIcons: width >= Layout.preferredWidth
+
+		Layout.preferredWidth: repeater.maxItemWidth * visibleChildren.length + spacing * (visibleChildren.length - 1)
+
+		GRepeater {
 			id: repeater
+
 			model: navModel
 
 			delegate: NavigationItem {
-				readonly property var mainViewSubViews: {
-					let subViews = [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD];
-					subViews.push(WorkflowModel.isSmartSupported ? UiModule.SMART : UiModule.PROVIDER);
-					return subViews;
-				}
+				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD, UiModule.SMART_EID]
 
-				Accessible.ignored: content.Accessible.ignored
+				Accessible.ignored: root.Accessible.ignored
 				Layout.fillHeight: true
 				Layout.fillWidth: true
-				selected: baseItem.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(baseItem.activeModule))
+				Layout.preferredWidth: repeater.maxItemWidth
+				flowHorizontally: navigationRow.horizontalIcons
+				selected: navigation.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(navigation.activeModule))
 				source: image
 				text: qsTr(desc)
 
 				onClicked: {
-					baseItem.resetContentArea();
-					baseItem.show(module);
+					navigation.resetContentArea();
+					navigation.show(module);
 				}
 			}
+		}
+	}
+
+	ListModel {
+		id: navModel
+
+		ListElement {
+			desc: QT_TR_NOOP("Start")
+			image: "qrc:///images/mobile/home.svg"
+			module: UiModule.DEFAULT
+		}
+		ListElement {
+			desc: QT_TR_NOOP("Card reader")
+			image: "qrc:///images/mobile/phone_card_reader.svg"
+			module: UiModule.REMOTE_SERVICE
+		}
+		ListElement {
+			desc: QT_TR_NOOP("Settings")
+			image: "qrc:///images/mobile/settings.svg"
+			module: UiModule.SETTINGS
+		}
+		ListElement {
+			desc: QT_TR_NOOP("Help")
+			image: "qrc:///images/mobile/help.svg"
+			module: UiModule.HELP
 		}
 	}
 }

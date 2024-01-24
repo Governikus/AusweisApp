@@ -1,67 +1,56 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.SmartModel 1.0
-import Governikus.Type.PersonalizationModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.SmartModel
+import Governikus.Type.PersonalizationModel
+import Governikus.Type.UiModule
 
-GFlickableColumnLayout {
+ColumnLayout {
 	id: root
 
+	readonly property bool showCheck: smartState !== SmartModel.SMART_UPDATING_STATUS && smartState !== SmartModel.SMART_READY
 	readonly property int smartState: SmartModel.smartState
 
-	signal checkSmart
+	signal changePin
 	signal deletePersonalization
-	signal deleteSmart
-	signal setupSmart
+	signal showCheckResult
+	signal startSelfAuth
 	signal updateSmart
 
-	fillHeight: false
 	spacing: 0
 
 	SmartCardView {
 		Layout.alignment: Qt.AlignHCenter
+		Layout.bottomMargin: Constants.component_spacing
 		Layout.maximumHeight: Style.dimens.header_icon_size
-		Layout.maximumWidth: Style.dimens.max_text_width
 	}
 	GText {
-		Layout.alignment: Qt.AlignCenter
-		Layout.fillWidth: true
-		Layout.maximumWidth: Style.dimens.max_text_width
-		Layout.topMargin: Constants.component_spacing
+		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 		text: {
 			switch (root.smartState) {
 			case SmartModel.SMART_UPDATING_STATUS:
 				//: LABEL ANDROID IOS
 				return qsTr("Updating Smart-eID status...");
-			case SmartModel.SMART_UNAVAILABLE:
-				//: LABEL ANDROID IOS
-				return qsTr("Smart-eID not supported");
-			case SmartModel.SMART_UNUSABLE:
-				//: LABEL ANDROID IOS
-				return qsTr("Smart-eID invalid");
 			case SmartModel.SMART_READY:
 				//: LABEL ANDROID IOS
 				return qsTr("Smart-eID ready for use");
 			default:
-				//: LABEL ANDROID IOS
-				return qsTr("Smart-eID supported");
+				return "";
 			}
 		}
-		textStyle: Style.text.header_accent
+		textStyle: Style.text.headline
+		visible: !root.showCheck
 		wrapMode: Text.WordWrap
 	}
 	GText {
-		Layout.alignment: Qt.AlignCenter
-		Layout.fillWidth: true
-		Layout.maximumWidth: Style.dimens.max_text_width
+		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Constants.text_spacing
 		horizontalAlignment: Text.AlignHCenter
 		text: {
@@ -69,32 +58,55 @@ GFlickableColumnLayout {
 			case SmartModel.SMART_UPDATING_STATUS:
 				//: LABEL ANDROID IOS
 				return qsTr("Please wait a moment.");
-			case SmartModel.SMART_UNAVAILABLE:
-				//: LABEL ANDROID IOS
-				return qsTr("Unfortunately, this functionality is not supported by your device.");
-			case SmartModel.SMART_UNUSABLE:
-				//: LABEL ANDROID IOS
-				return qsTr("Your Smart-eID is in an invalid state. You need to set it up again to perform online identifications without your ID card.");
 			case SmartModel.SMART_READY:
 				//: LABEL ANDROID IOS
 				return qsTr("Your Smart-eID is set up and ready for use. You can now perform online identifications without your ID card if supported by the provider.");
 			default:
-				//: LABEL ANDROID IOS
-				return qsTr("Set up a Smart-eID in order to perform online identifications without your ID card if supported by the provider.");
+				return "";
 			}
 		}
-		textStyle: Style.text.normal_secondary
+		visible: !root.showCheck
 		wrapMode: Text.WordWrap
 	}
 	SmartSettingsView {
-		Layout.fillWidth: true
 		Layout.topMargin: Constants.component_spacing
-		visible: root.smartState !== SmartModel.SMART_UPDATING_STATUS
+		visible: root.smartState === SmartModel.SMART_READY
 
-		onCheckSmart: root.checkSmart()
+		onChangePin: root.changePin()
 		onDeletePersonalization: root.deletePersonalization()
-		onDeleteSmart: root.deleteSmart()
-		onSetupSmart: root.setupSmart()
+		onStartSelfAuth: root.startSelfAuth()
 		onUpdateSmart: root.updateSmart()
+	}
+	GPane {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		visible: root.showCheck
+
+		GText {
+
+			//: LABEL ANDROID IOS
+			text: qsTr("With the Smart-eID you may also use the online identification function without the ID card.")
+			width: parent.width
+		}
+		GText {
+
+			//: LABEL ANDROID IOS
+			text: qsTr("Check here if your device is suitable to set up a Smart-eID.")
+			width: parent.width
+		}
+	}
+	GSpacer {
+		Layout.fillHeight: true
+	}
+	GButton {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.topMargin: Constants.component_spacing
+		icon.source: "qrc:///images/mobile/device_button.svg"
+		//: LABEL ANDROID IOS
+		text: qsTr("Start check")
+		tintIcon: true
+		visible: root.showCheck
+
+		onClicked: root.showCheckResult()
 	}
 }

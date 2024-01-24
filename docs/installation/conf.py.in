@@ -41,7 +41,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'AusweisApp2 Installation'
+project = '@PROJECT_NAME@ Erweiterte Dokumentation für Administratoren und Entwickler'
 copyright = '2018-2023, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
@@ -61,7 +61,7 @@ today = ' '
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = '@SPHINX_LANG@'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -98,7 +98,7 @@ html_show_copyright = True
 html_scaled_image_link = False
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'AusweisApp2Installation'
+htmlhelp_basename = '@PROJECT_NAME@InstallationIntegration'
 
 html_context = {
     'display_github': False,
@@ -122,9 +122,9 @@ latex_elements = {
 'preamble': '''
 \\usepackage{lscape}
 \\hypersetup{pdfauthor={Governikus GmbH \& Co. KG},
-            pdftitle={AusweisApp2},
-            pdfsubject={Installation},
-            pdfkeywords={installation},
+            pdftitle={@PROJECT_NAME@},
+            pdfsubject={Erweiterte Dokumentation für Administratoren und Entwickler},
+            pdfkeywords={installation, integration},
             pdfproducer={LaTeX},
             pdfcreator={Sphinx}
 }
@@ -132,7 +132,15 @@ latex_elements = {
 
 # Override tableofcontents
 'tableofcontents': '''
-\\tableofcontents
+% Remove header of tableofcontent
+\\makeatletter
+\\@starttoc{toc}
+\\makeatother
+
+% Only show part title without "Part I"
+\\renewcommand{\\thepart}{}
+\\renewcommand{\\partname}{}
+
 \\newpage
 \\pagestyle{plain}
 \\pagenumbering{arabic}
@@ -146,7 +154,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'AusweisApp2-@VERSION_DVCS@-NetInstallation.tex', 'AusweisApp2 Installation',
+  (master_doc, '@PROJECT_NAME@-@VERSION_DVCS@-NetInstallation_Integration.tex', '@PROJECT_NAME@ \\linebreak Erweiterte Dokumentation für Administratoren und Entwickler',
    'Governikus GmbH \& Co. KG', 'howto'),
 ]
 
@@ -169,3 +177,9 @@ latex_show_urls = 'footnote'
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+latex_toplevel_sectioning = 'part'
+
+rst_epilog = """
+.. |AppName| replace:: @PROJECT_NAME@
+"""

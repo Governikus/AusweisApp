@@ -1,13 +1,9 @@
 # Set CMAKE_PREFIX_PATH with toolchain directory
 
-if(MINGW AND CMAKE_VERSION VERSION_LESS 3.17.0)
-	set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll.a" ".a" ".lib")
-endif()
-
 if(DESKTOP)
-	set(MIN_QT_VERSION 5.15)
+	set(MIN_QT_VERSION 6.4)
 else()
-	set(MIN_QT_VERSION 6.2)
+	set(MIN_QT_VERSION 6.5)
 endif()
 
 if(IOS OR ANDROID)
@@ -29,44 +25,23 @@ if(IOS OR ANDROID)
 	set(CMAKE_FIND_ROOT_PATH ${CMAKE_FIND_ROOT_PATH} ${QT_HOST_PATH} )
 endif()
 
-if(NOT DEFINED Qt)
-	find_package(Qt6 ${MIN_QT_VERSION} COMPONENTS Core CMAKE_FIND_ROOT_PATH_BOTH)
-	if(TARGET Qt6::Core)
-		set(Qt Qt6)
-	else()
-		set(Qt Qt5)
-	endif()
-endif()
-find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS Core Concurrent Network REQUIRED CMAKE_FIND_ROOT_PATH_BOTH)
-include(Compat)
-
-if(QT6)
-	list(APPEND QT_COMPONENTS StateMachine)
-endif()
+set(Qt Qt6)
+find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS Core Concurrent Network StateMachine REQUIRED CMAKE_FIND_ROOT_PATH_BOTH)
+set(QT_VERSION "${Qt6Core_VERSION}")
 
 if(NOT CONTAINER_SDK)
 	list(APPEND QT_COMPONENTS LinguistTools)
 endif()
 
 if(NOT INTEGRATED_SDK)
-	list(APPEND QT_COMPONENTS Svg WebSockets Qml Quick QuickControls2 QuickTemplates2)
-
-	if(QT_VERSION VERSION_GREATER_EQUAL "5.14")
-		list(APPEND QT_COMPONENTS QmlWorkerScript)
-	endif()
-	if(NOT DESKTOP AND NOT QT6)
-		list(APPEND QT_COMPONENTS QuickShapes)
-	endif()
-	if(QT6)
-		list(APPEND QT_COMPONENTS ShaderTools)
-	endif()
+	list(APPEND QT_COMPONENTS Svg WebSockets Qml Quick QuickControls2 QuickTemplates2 QmlWorkerScript ShaderTools)
 endif()
 
 if(DESKTOP AND NOT INTEGRATED_SDK)
 	list(APPEND QT_COMPONENTS Widgets)
 endif()
 
-if(ANDROID OR IOS OR WINDOWS_STORE OR (QT6 AND CMAKE_BUILD_TYPE STREQUAL "DEBUG"))
+if(ANDROID OR IOS OR WINDOWS_STORE OR CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	list(APPEND QT_COMPONENTS Nfc)
 endif()
 
@@ -101,7 +76,7 @@ if(MINGW AND NOT CMAKE_CROSSCOMPILING)
 	set(CMAKE_CROSSCOMPILING ON)
 endif()
 
-set(MIN_OPENSSL_VERSION 1.1)
+set(MIN_OPENSSL_VERSION 1.1.1)
 find_package(OpenSSL ${MIN_OPENSSL_VERSION} REQUIRED)
 
 if(tmp_crosscompile_enabled)

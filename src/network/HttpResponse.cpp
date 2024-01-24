@@ -34,14 +34,7 @@ HttpResponse::HttpResponse(http_status pStatus, const QByteArray& pBody, const Q
 	, mBody()
 {
 	setBody(pBody, pContentType);
-
-	// According to TR-03124-1, chapter 2.2.2.1, the Server-header shall have the following form:
-	auto version = QCoreApplication::applicationVersion().toUtf8();
-	if (!version.isEmpty())
-	{
-		version.prepend('/');
-	}
-	setHeader(HEADER_SERVER(), QCoreApplication::applicationName().toUtf8() % version % QByteArrayLiteral(" (TR-03124-1/1.3)"));
+	setHeader(HEADER_SERVER(), NetworkManager::getUserAgentServerHeader().toUtf8());
 	setHeader(HEADER_DATE(), QLocale::c().toString(QDateTime::currentDateTimeUtc(), QStringLiteral("ddd, dd MMM yyyy hh:mm:ss")).toUtf8() + QByteArrayLiteral(" GMT"));
 	setHeader(HEADER_CONTENT_LENGTH(), QByteArray::number(mBody.size()));
 }

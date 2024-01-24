@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 ConfirmationPopup {
 	//: LABEL ANDROID
@@ -15,7 +15,7 @@ ConfirmationPopup {
 	//: INFO ANDROID Content of the app rating popup.
 	text: qsTr("We would be very grateful if you could leave a rating on the Google Play Store!")
 	//: INFO ANDROID Header of the app rating popup.
-	title: qsTr("Are you satisfied with AusweisApp2?")
+	title: qsTr("Are you satisfied with %1?").arg(Qt.application.name)
 
 	onConfirmed: Qt.openUrlExternally(ApplicationModel.storeUrl)
 }

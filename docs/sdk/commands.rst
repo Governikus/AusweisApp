@@ -1,7 +1,7 @@
 Commands
 --------
 Your application (client) can send some commands (**cmd**) to
-control the AusweisApp2. The AusweisApp2 (server) will send
+control the |AppName|. The |AppName| (server) will send
 some proper :doc:`messages` during the whole workflow or as an
 answer to your command.
 
@@ -12,9 +12,9 @@ answer to your command.
 
 GET_INFO
 ^^^^^^^^
-Returns information about the current installation of AusweisApp2.
+Returns information about the current installation of |AppName|.
 
-The AusweisApp2 will send an :ref:`info` message as an answer.
+The |AppName| will send an :ref:`info` message as an answer.
 
 
 .. code-block:: json
@@ -28,9 +28,9 @@ The AusweisApp2 will send an :ref:`info` message as an answer.
 
 GET_STATUS
 ^^^^^^^^^^
-Returns information about the current workflow and state of AusweisApp2.
+Returns information about the current workflow and state of |AppName|.
 
-The AusweisApp2 will send a :ref:`status` message as an answer.
+The |AppName| will send a :ref:`status` message as an answer.
 
 .. versionadded:: 1.24.0
    Support of GET_STATUS command in :ref:`api_level` **2**.
@@ -49,7 +49,7 @@ GET_API_LEVEL
 ^^^^^^^^^^^^^
 Returns information about the available and current API level.
 
-The AusweisApp2 will send an :ref:`api_level` message as an answer.
+The |AppName| will send an :ref:`api_level` message as an answer.
 
 
 .. code-block:: json
@@ -66,12 +66,12 @@ SET_API_LEVEL
 Set supported API level of your application.
 
 If you initially develop your application against the
-AusweisApp2 SDK you should check with :ref:`get_api_level`
+|AppName| SDK you should check with :ref:`get_api_level`
 the highest supported level and set this value with this command
 if you connect to the SDK. This will set the SDK to act with
 the defined level even if a newer level is available.
 
-The AusweisApp2 will send an :ref:`api_level` message as an answer.
+The |AppName| will send an :ref:`api_level` message as an answer.
 
 
   - **level**:
@@ -96,7 +96,7 @@ Returns information about the requested reader.
 If you explicitly want to ask for information of a known
 reader name you can request it with this command.
 
-The AusweisApp2 will send a :ref:`reader` message as an answer.
+The |AppName| will send a :ref:`reader` message as an answer.
 
 
   - **name**:
@@ -121,7 +121,7 @@ Returns information about all connected readers.
 If you explicitly want to ask for information of all connected
 readers you can request it with this command.
 
-The AusweisApp2 will send a :ref:`reader_list` message as an answer.
+The |AppName| will send a :ref:`reader_list` message as an answer.
 
 
 .. code-block:: json
@@ -137,7 +137,7 @@ RUN_AUTH
 ^^^^^^^^
 Starts an authentication.
 
-The AusweisApp2 will send an :ref:`auth` message when the authentication is started.
+The |AppName| will send an :ref:`auth` message when the authentication is started.
 
 The system dialog on iOS can be customized by **messages**.
 This dialog won't be stopped by default after an :ref:`enter_pin`, :ref:`enter_can`
@@ -204,7 +204,7 @@ Command :ref:`interrupt` allows to stop the dialog manually, if needed.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 has no running
+  This command is allowed only if the |AppName| has no running
   authentication or other workflow. Otherwise you will get
   a :ref:`bad_state` message as an answer.
 
@@ -217,7 +217,7 @@ RUN_CHANGE_PIN
 ^^^^^^^^^^^^^^
 Starts a change PIN workflow.
 
-The AusweisApp2 will send a :ref:`change_pin` message when the workflow is started.
+The |AppName| will send a :ref:`change_pin` message when the workflow is started.
 
 The system dialog on iOS can be customized by **messages**.
 This dialog won't be stopped by default after an :ref:`enter_pin`, :ref:`enter_can`,
@@ -275,7 +275,7 @@ Command :ref:`interrupt` allows to stop the dialog manually, if needed.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 has no running
+  This command is allowed only if the |AppName| has no running
   authentication or other workflow. Otherwise you will get
   a :ref:`bad_state` message as an answer.
 
@@ -288,7 +288,7 @@ GET_ACCESS_RIGHTS
 ^^^^^^^^^^^^^^^^^
 Returns information about the requested access rights.
 
-The AusweisApp2 will send an :ref:`access_rights` message as an answer.
+The |AppName| will send an :ref:`access_rights` message as an answer.
 
 
 .. code-block:: json
@@ -296,7 +296,7 @@ The AusweisApp2 will send an :ref:`access_rights` message as an answer.
   {"cmd": "GET_ACCESS_RIGHTS"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -313,7 +313,7 @@ By default the **effective** access rights are **optional** + **required**.
 If you want to enable or disable some **optional** access rights you can
 send this command to modify the **effective** access rights.
 
-The AusweisApp2 will send an :ref:`access_rights` message as an answer.
+The |AppName| will send an :ref:`access_rights` message as an answer.
 
 
   - **chat**:
@@ -335,7 +335,7 @@ The AusweisApp2 will send an :ref:`access_rights` message as an answer.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -359,12 +359,17 @@ in a :ref:`reader` message.
 .. versionadded:: 1.24.0
    This command was introduced in :ref:`api_level` **2**.
 
+.. versionadded:: 1.26.4
+   Parameter **keys** added.
+
 
 - **name**: Name of the :ref:`reader`.
 
 - **simulator**: Specific data for :doc:`simulator`. (optional)
 
   - **files**: Content of card :ref:`filesystem`.
+
+  - **keys**: Keys of card :ref:`filesystem`.
 
 .. code-block:: json
 
@@ -373,12 +378,13 @@ in a :ref:`reader` message.
     "name": "reader name",
     "simulator":
     {
-       "files": []
+       "files": [],
+       "keys": []
     }
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`insert_card` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -391,7 +397,7 @@ GET_CERTIFICATE
 ^^^^^^^^^^^^^^^
 Returns the certificate of current authentication.
 
-The AusweisApp2 will send a :ref:`certificate` message as an answer.
+The |AppName| will send a :ref:`certificate` message as an answer.
 
 
 .. code-block:: json
@@ -399,7 +405,7 @@ The AusweisApp2 will send a :ref:`certificate` message as an answer.
   {"cmd": "GET_CERTIFICATE"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -412,7 +418,7 @@ CANCEL
 ^^^^^^
 Cancel the whole workflow.
 
-If your application sends this command the AusweisApp2 will cancel the
+If your application sends this command the |AppName| will cancel the
 workflow. You can send this command in any state of a running workflow
 to abort it.
 
@@ -422,7 +428,7 @@ to abort it.
   {"cmd": "CANCEL"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 started an authentication or
+  This command is allowed only if the |AppName| started an authentication or
   the :ref:`change_pin` workflow.
   Otherwise you will get a :ref:`bad_state` message as an answer.
 
@@ -435,7 +441,7 @@ ACCEPT
 ^^^^^^
 Accept the current state.
 
-If the AusweisApp2 will send the message :ref:`access_rights` the user
+If the |AppName| will send the message :ref:`access_rights` the user
 needs to **accept** or **cancel**. So the workflow is paused until
 your application sends this command to accept the requested information.
 
@@ -443,7 +449,7 @@ If the user does not accept the requested information your application
 needs to send the command :ref:`cancel` to abort the whole workflow.
 
 This command will be used later for additional requested information
-if the AusweisApp2 needs to pause the workflow. In :ref:`api_level` v1
+if the |AppName| needs to pause the workflow. In :ref:`api_level` v1
 only :ref:`access_rights` needs to be accepted.
 
 
@@ -452,7 +458,7 @@ only :ref:`access_rights` needs to be accepted.
   {"cmd": "ACCEPT"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`access_rights` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -482,7 +488,7 @@ the iOS system dialog can be interrupted.
   {"cmd": "INTERRUPT"}
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends a :ref:`enter_pin`,
+  This command is allowed only if the |AppName| sends a :ref:`enter_pin`,
   :ref:`enter_can`, :ref:`enter_new_pin` or :ref:`enter_puk` message.
   Otherwise you will get a :ref:`bad_state` message as an answer.
 
@@ -495,17 +501,17 @@ SET_PIN
 ^^^^^^^
 Set PIN of inserted card.
 
-If the AusweisApp2 sends message :ref:`enter_pin` you need
+If the |AppName| sends message :ref:`enter_pin` you need
 to send this command to unblock the card with the PIN.
 
-The AusweisApp2 will send an :ref:`enter_pin` message on error
+The |AppName| will send an :ref:`enter_pin` message on error
 or message :ref:`enter_can` if the retryCounter of the card
 is decreased to **1**.
 For detailed information see message :ref:`enter_pin`.
 
 If the PIN was correct, the workflow will continue.
 
-If the last attempt to enter the PIN failed, AusweisApp2
+If the last attempt to enter the PIN failed, |AppName|
 will send the message :ref:`enter_puk` as the retryCounter
 is decreased to **0**.
 
@@ -528,7 +534,7 @@ is decreased to **0**.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`enter_pin` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -541,7 +547,7 @@ SET_NEW_PIN
 ^^^^^^^^^^^
 Set new PIN of inserted card.
 
-If the AusweisApp2 sends message :ref:`enter_new_pin` you need
+If the |AppName| sends message :ref:`enter_new_pin` you need
 to send this command to set the new PIN of the card.
 
 .. versionadded:: 1.22.0
@@ -560,7 +566,7 @@ to send this command to set the new PIN of the card.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`enter_new_pin` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -573,10 +579,10 @@ SET_CAN
 ^^^^^^^
 Set CAN of inserted card.
 
-If the AusweisApp2 sends message :ref:`enter_can` you need
+If the |AppName| sends message :ref:`enter_can` you need
 to send this command to unblock the last retry of :ref:`set_pin`.
 
-The AusweisApp2 will send an :ref:`enter_can` message on error.
+The |AppName| will send an :ref:`enter_can` message on error.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 
 .. versionchanged:: 1.16.0
@@ -596,7 +602,7 @@ Otherwise the workflow will continue with :ref:`enter_pin`.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`enter_can` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
 
@@ -609,10 +615,10 @@ SET_PUK
 ^^^^^^^
 Set PUK of inserted card.
 
-If the AusweisApp2 sends message :ref:`enter_puk` you need
+If the |AppName| sends message :ref:`enter_puk` you need
 to send this command to unblock :ref:`set_pin`.
 
-The AusweisApp2 will send an :ref:`enter_puk` message on error
+The |AppName| will send an :ref:`enter_puk` message on error
 or if the PUK is operative.
 Otherwise the workflow will continue with :ref:`enter_pin`.
 For detailed information see message :ref:`enter_puk`.
@@ -634,6 +640,6 @@ For detailed information see message :ref:`enter_puk`.
   }
 
 .. note::
-  This command is allowed only if the AusweisApp2 sends an initial
+  This command is allowed only if the |AppName| sends an initial
   :ref:`enter_puk` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.

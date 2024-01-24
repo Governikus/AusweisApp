@@ -1,17 +1,17 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.NotificationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.NotificationModel
 
 Button {
 	id: button
 
-	property color iconColor: Style.text.header_inverse.textColor
+	property color iconColor: Style.text.headline.textColor
 	property alias source: image.source
 
 	function notify() {
@@ -41,6 +41,7 @@ Button {
 		}
 		Rectangle {
 			id: blinker
+
 			anchors.fill: parent
 			anchors.margins: image.height / -4
 			color: NotificationModel.lastType === "developermode" ? Constants.red : Constants.green
@@ -49,6 +50,7 @@ Button {
 
 			SequentialAnimation {
 				id: blinkerAnimation
+
 				loops: 3
 
 				PropertyAnimation {
@@ -70,10 +72,10 @@ Button {
 	}
 
 	FocusFrame {
-		isOnLightBackground: false
 	}
 	MouseArea {
 		id: mouseArea
+
 		anchors.fill: parent
 		cursorShape: Qt.PointingHandCursor
 		hoverEnabled: true

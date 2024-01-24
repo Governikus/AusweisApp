@@ -10,7 +10,6 @@
 
 #include "Env.h"
 #include "GeneralSettings.h"
-#include "HistorySettings.h"
 #include "PreVerificationSettings.h"
 #include "RemoteServiceSettings.h"
 
@@ -36,13 +35,11 @@ class AppSettings
 
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
-		HistorySettings mHistorySettings;
 		RemoteServiceSettings mRemoteReaderSettings;
 
 	public:
 		virtual GeneralSettings& getGeneralSettings();
 		virtual PreVerificationSettings& getPreVerificationSettings();
-		virtual HistorySettings& getHistorySettings();
 		virtual RemoteServiceSettings& getRemoteServiceSettings();
 };
 

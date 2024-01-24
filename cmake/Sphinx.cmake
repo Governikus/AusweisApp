@@ -13,13 +13,11 @@ if(SPHINX_BIN)
 		list(APPEND _LOCALES ${_defaultLang})
 
 		set(_TMP_DIR "${CMAKE_BINARY_DIR}/_tmp/${_target}/${_builder}")
-		set(_CONFIG_DIR "${_TMP_DIR}/config")
 
 		set(SPHINX_CONF_PY_IN "${SPHINX_DOCS_DIR}/${_builder}.conf.py.in")
 		if(NOT EXISTS "${SPHINX_CONF_PY_IN}")
 			set(SPHINX_CONF_PY_IN "${SPHINX_DOCS_DIR}/conf.py.in")
 		endif()
-		configure_file("${SPHINX_CONF_PY_IN}" "${_CONFIG_DIR}/conf.py" @ONLY) # Use @SPHINX_DOCS_DIR@ here
 
 		file(GLOB_RECURSE _FILES
 			"${SPHINX_DOCS_DIR}/*.rst"
@@ -28,14 +26,17 @@ if(SPHINX_BIN)
 			"${SPHINX_DOCS_DIR}/*.jpg"
 			"${SPHINX_DOCS_DIR}/*.svg")
 
-		foreach(lang ${_LOCALES})
-			get_filename_component(lang "${lang}" NAME)
-			message(STATUS "Generate (${_builder}) ${_target}: ${lang}")
+		foreach(SPHINX_LANG ${_LOCALES})
+			get_filename_component(SPHINX_LANG "${SPHINX_LANG}" NAME)
+			message(STATUS "Generate (${_builder}) ${_target}: ${SPHINX_LANG}")
 
-			set(target_dir "${_output}/${_target}/${_builder}/${lang}")
-			set(TARGET_CMD ${SPHINX_BIN} -c "${_CONFIG_DIR}" -Dlanguage=${lang} ${_options} -d "${_TMP_DIR}/${lang}" -b ${_builder} "${SPHINX_DOCS_DIR}" "${target_dir}")
+			set(_CONFIG_DIR "${_TMP_DIR}/config/${SPHINX_LANG}")
+			configure_file("${SPHINX_CONF_PY_IN}" "${_CONFIG_DIR}/conf.py" @ONLY) # Use @SPHINX_DOCS_DIR@ / @SPHINX_LANG@ here
+
+			set(target_dir "${_output}/${_target}/${_builder}/${SPHINX_LANG}")
+			set(TARGET_CMD ${SPHINX_BIN} -c "${_CONFIG_DIR}" ${_options} -d "${_TMP_DIR}/${SPHINX_LANG}" -b ${_builder} "${SPHINX_DOCS_DIR}" "${target_dir}")
 			add_custom_command(OUTPUT ${target_dir} COMMAND ${TARGET_CMD} DEPENDS ${_FILES})
-			set(subtarget ${_target}.${_builder}.${lang})
+			set(subtarget ${_target}.${_builder}.${SPHINX_LANG})
 			add_custom_target(${subtarget} DEPENDS ${target_dir} SOURCES ${_FILES})
 			list(APPEND target_list ${subtarget})
 

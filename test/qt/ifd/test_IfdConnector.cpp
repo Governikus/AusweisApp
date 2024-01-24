@@ -427,11 +427,7 @@ class test_IfdConnector
 			QTRY_COMPARE(spyConnectorError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyConnectorSuccess.count(), 0);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-			verifyErrorSignal(spyConnectorError, {IfdErrorCode::CONNECTION_ERROR}, serverPort, QStringLiteral("Smartphone1"));
-#else
 			verifyErrorSignal(spyConnectorError, {IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION}, serverPort, QStringLiteral("Smartphone1"));
-#endif
 
 			QCOMPARE(spySocketError.count(), 0);
 			QCOMPARE(spySocketSuccess.count(), 0);

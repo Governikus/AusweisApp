@@ -53,7 +53,7 @@ QVariant SectionModel::data(const QModelIndex& pIndex, int pRole) const
 int SectionModel::rowCount(const QModelIndex& pParent) const
 {
 	Q_UNUSED(pParent)
-	return mContentItems.size();
+	return static_cast<int>(mContentItems.size());
 }
 
 
@@ -87,7 +87,8 @@ void SectionModel::addContent(const QVector<ContentItem>& pContent)
 		return;
 	}
 
-	beginInsertRows(index(mContentItems.size()), mContentItems.size(), mContentItems.size() + pContent.size() - 1);
+	const auto contentItemSize = static_cast<int>(mContentItems.size());
+	beginInsertRows(index(contentItemSize), contentItemSize, contentItemSize + static_cast<int>(pContent.size()) - 1);
 	mContentItems << pContent;
 	endInsertRows();
 }

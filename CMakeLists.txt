@@ -1,52 +1,9 @@
-if(WIN32)
-	cmake_minimum_required(VERSION 3.19.0)
-else()
-	cmake_minimum_required(VERSION 3.13.0)
-endif()
+cmake_minimum_required(VERSION 3.19.0)
 
-if(POLICY CMP0020)
-	cmake_policy(SET CMP0020 NEW)
-endif()
+set(CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_DIR}")
 
-if(POLICY CMP0023)
-	cmake_policy(SET CMP0023 NEW)
-endif()
-
-if(POLICY CMP0046)
-	cmake_policy(SET CMP0046 NEW)
-endif()
-
-if(POLICY CMP0048)
-	cmake_policy(SET CMP0048 NEW)
-endif()
-
-if(POLICY CMP0054)
-	cmake_policy(SET CMP0054 NEW)
-endif()
-
-if(POLICY CMP0063)
-	cmake_policy(SET CMP0063 NEW)
-endif()
-
-if(POLICY CMP0071)
-	cmake_policy(SET CMP0071 NEW)
-endif()
-
-if(POLICY CMP0072)
-	cmake_policy(SET CMP0072 NEW)
-endif()
-
-if(POLICY CMP0074)
-	cmake_policy(SET CMP0074 NEW)
-endif()
-
-if(POLICY CMP0076)
-	cmake_policy(SET CMP0076 NEW)
-endif()
-
-if(POLICY CMP0092)
-	cmake_policy(SET CMP0092 NEW)
-endif()
+include(Policies)
 
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
@@ -57,10 +14,10 @@ else()
 endif()
 
 if(UNIX AND NOT IOS)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15 CACHE STRING "Required macOS version")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp2 VERSION 1.26.3 LANGUAGES ${LANGUAGES})
+project(AusweisApp VERSION 2.0.3 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it
@@ -68,15 +25,14 @@ if(NOT PROJECT_VERSION_TWEAK)
 	set(PROJECT_VERSION_TWEAK 0)
 endif()
 
-if(APPLE AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.16" AND NOT tools.only)
+if(APPLE AND NOT tools.only)
 	enable_language(OBJCXX)
 endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND (IOS OR ANDROID))
 	set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist" CACHE PATH "default install path" FORCE)
 endif()
-set(CMAKE_DIR "${PROJECT_SOURCE_DIR}/cmake")
-set(CMAKE_MODULE_PATH "${CMAKE_DIR}")
+
 option(BUILD_SHARED_LIBS "Enable build of shared libraries")
 option(INTEGRATED_SDK "Build platform specific SDK" OFF)
 option(CONTAINER_SDK "Build container specific SDK" OFF)
@@ -93,7 +49,7 @@ if(NOT VENDOR)
 	elseif(LINUX OR BSD)
 		set(VENDOR "") # Qt uses Organization for paths
 	else()
-		set(VENDOR AusweisApp2_CE) # CommunityEdition
+		set(VENDOR AusweisApp_CE) # CommunityEdition
 	endif()
 endif()
 if(VENDOR MATCHES "Governikus")
@@ -182,6 +138,7 @@ endif()
 option(USE_SMARTEID "Enable Smart-eID" OFF)
 
 include(Libraries)
+include(Tools.Libraries)
 include(CompilerFlags)
 
 if(LINUX OR BSD)
@@ -200,3 +157,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 endif()
 
 include(Packaging)
+
+include(FeatureSummary)
+FEATURE_SUMMARY(WHAT ALL)

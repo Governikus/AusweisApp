@@ -31,10 +31,9 @@ using namespace governikus;
 IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pContext)
 	: WorkflowController(pContext)
 {
-	mStateMachine.setProperty(AbstractState::cFORCE_START_STOP_SCAN, true);
+	forceStartStopScan();
 
-	auto sStartIfdService = addState<StateStartIfdService>();
-	mStateMachine.setInitialState(sStartIfdService);
+	auto sStartIfdService = addInitialState<StateStartIfdService>();
 	auto sProcessIfdMessages = addState<StateProcessIfdMessages>();
 	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
 	auto sVerifyRetryCounter = addState<StateVerifyRetryCounter>();
@@ -61,9 +60,11 @@ IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pCo
 
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireContinue, sVerifyRetryCounter);
 	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &AbstractState::fireAbort, sEstablishPaceChannelResponse);
+	sUpdateRetryCounter->addTransition(sUpdateRetryCounter, &StateUpdateRetryCounter::fireNoCardConnection, sEstablishPaceChannelResponse);
 
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireContinue, sPreparePaceIfd);
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireAbort, sEstablishPaceChannelResponse);
+	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &StateVerifyRetryCounter::fireNoCardConnection, sEstablishPaceChannelResponse);
 
 	sPreparePaceIfd->addTransition(sPreparePaceIfd, &AbstractState::fireContinue, sEstablishPaceChannelIfd);
 	sPreparePaceIfd->addTransition(sPreparePaceIfd, &AbstractState::fireAbort, sEstablishPaceChannelResponse);

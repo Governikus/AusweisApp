@@ -24,9 +24,16 @@ class test_DiagnosisAntivirusDetection
 		const QString mTestFileLocation = QStringLiteral(":/core/diagnosis/");
 		QString getTestData(const QString& pFilename)
 		{
-			QString filePath = mTestFileLocation + pFilename;
-			QByteArray rawData = TestFileHelper::readFile(filePath);
-			return QString::fromUtf8(rawData);
+			const QString filePath = QStringLiteral(":/core/diagnosis/") + pFilename;
+			const QByteArray rawData = TestFileHelper::readFile(filePath);
+			QString stringData = QString::fromUtf8(rawData);
+
+			Q_ASSERT(stringData.count("\r\n") == 0);
+			const qsizetype linebreaks = stringData.count('\n');
+			stringData.replace('\n', "\r\n");
+			Q_ASSERT(stringData.count("\r\n") == linebreaks);
+
+			return stringData;
 		}
 
 	private Q_SLOTS:

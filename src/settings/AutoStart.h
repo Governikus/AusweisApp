@@ -31,6 +31,9 @@ class AutoStart
 		[[nodiscard]] static bool enabled();
 		[[nodiscard]] static bool isSetByAdmin();
 		[[nodiscard]] static bool set(bool pEnabled);
+#ifdef Q_OS_WIN
+		[[nodiscard]] static bool removeOldAutostart();
+#endif
 };
 
 

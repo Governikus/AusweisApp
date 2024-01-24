@@ -9,7 +9,7 @@
 #include "pace/PaceHandler.h"
 
 #include <QLoggingCategory>
-
+#include <QThread>
 
 using namespace governikus;
 
@@ -46,7 +46,18 @@ CardConnectionWorker::~CardConnectionWorker()
 
 QSharedPointer<CardConnectionWorker> CardConnectionWorker::create(Reader* pReader)
 {
-	return QSharedPointer<CardConnectionWorker>(new CardConnectionWorker(pReader), &QObject::deleteLater);
+	const auto& customDeleter = [](CardConnectionWorker* pWorker){
+				if (QThread::currentThread() == pWorker->thread())
+				{
+					delete pWorker;
+				}
+				else
+				{
+					pWorker->deleteLater();
+				}
+			};
+
+	return QSharedPointer<CardConnectionWorker>(new CardConnectionWorker(pReader), customDeleter);
 }
 
 
@@ -133,7 +144,7 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 	ResponseApduResult result = card->transmit(commandApdu);
 	if (result.mResponseApdu.getStatusCode() == StatusCode::WRONG_LENGTH)
 	{
-		return {CardReturnCode::EXTENDED_LENGTH_MISSING};
+		return {CardReturnCode::WRONG_LENGTH};
 	}
 
 	if (mSecureMessaging)
@@ -141,7 +152,7 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 		result.mResponseApdu = mSecureMessaging->decrypt(result.mResponseApdu);
 		if (result.mResponseApdu.isEmpty())
 		{
-			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must no be re-used.";
+			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must not be re-used.";
 			stopSecureMessaging();
 
 			return {CardReturnCode::COMMAND_FAILED};

@@ -1,15 +1,16 @@
 /**
  * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
+import Governikus.Style
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global 1.0; GInformativeButton {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; GInformativeButton {}", testCase);
 	}
 	function test_description() {
 		let testObject = createTestObject();
@@ -42,8 +43,8 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.button, "Initial textStyle: button");
-		testObject.textStyle = Style.text.hint_warning;
-		compare(testObject.textStyle, Style.text.hint_warning, "textStyle: hint_warning");
+		testObject.textStyle = Style.text.normal_warning;
+		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GInformativeButton"
@@ -52,6 +53,7 @@ TestCase {
 
 	GInformativeButton {
 		id: testObject
+
 		icon.source: "qrc:///images/material_check.svg"
 		scaleIcon: 0.5
 		text: "test"

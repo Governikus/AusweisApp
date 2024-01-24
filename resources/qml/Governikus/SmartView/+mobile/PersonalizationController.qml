@@ -1,27 +1,29 @@
 /**
  * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.AuthView 1.0
-import Governikus.EnterPasswordView 1.0
-import Governikus.ResultView 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.PasswordInfoView 1.0
-import Governikus.View 1.0
-import Governikus.WhiteListClient 1.0
-import Governikus.Workflow 1.0
-import Governikus.Type.ConnectivityManager 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.PersonalizationModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.SurveyModel 1.0
-import Governikus.Type.UiModule 1.0
+import QtQuick
+import Governikus.AuthView
+import Governikus.EnterPasswordView
+import Governikus.ResultView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.PasswordInfoView
+import Governikus.View
+import Governikus.WhiteListClient
+import Governikus.Workflow
+import Governikus.Type.ConnectivityManager
+import Governikus.Type.ChatModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.PersonalizationModel
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.SettingsModel
+import Governikus.Type.SurveyModel
+import Governikus.Type.UiModule
 
 Controller {
 	id: controller
+
 	enum WorkflowStates {
 		Initial,
 		CheckStatus,
@@ -36,7 +38,6 @@ Controller {
 		Abort
 	}
 
-	readonly property string currentState: PersonalizationModel.currentState
 	property bool skipSelectReader: false
 	//: LABEL ANDROID IOS
 	readonly property string smartEidTitle: qsTr("Smart-eID")
@@ -46,25 +47,21 @@ Controller {
 	function done() {
 		PersonalizationModel.continueWorkflow();
 		popAll();
-		show(UiModule.SMART);
+		show(UiModule.SMART_EID);
 	}
-	function processStateChange() {
-		switch (currentState) {
-		case "Initial":
-			popAll();
-			skipSelectReader = false;
-			break;
+	function processStateChange(pState) {
+		switch (pState) {
 		case "StateCheckStatus":
-			show(UiModule.SMART, true);
+			show(UiModule.SMART_EID, true);
 			popAll();
-			if (!ConnectivityManager.networkInterfaceActive) {
-				push(checkConnectivityView);
-			} else {
+			if (connectivityManager.networkInterfaceActive) {
 				push(smartProgress);
 				setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.CheckStatus);
+			} else {
+				push(checkConnectivityView);
 			}
 			break;
-		case "StatePrepareApplet":
+		case "StateCheckApplet":
 			setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.InstallApplet);
 			workflowProgressVisible = true;
 			break;
@@ -127,10 +124,9 @@ Controller {
 			break;
 		case "StateEnterNewPacePin":
 			setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
-			break;
-		case "StateGetChallenge":
-			setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.Personalization);
-			replace(smartProgress);
+			if (PersonalizationModel.applet) {
+				PersonalizationModel.continueWorkflow();
+			}
 			break;
 		case "StateShowResult":
 			if (!PersonalizationModel.error)
@@ -167,7 +163,10 @@ Controller {
 	function setWorkflowStateAndRequestInput(pState) {
 		controller.workflowState = pState;
 		if (PersonalizationModel.isBasicReader) {
-			replace(enterPinView);
+			replace(enterPinView, {
+					"passwordType": NumberModel.passwordType,
+					"inputError": NumberModel.inputError
+				});
 		} else {
 			replace(smartProgress);
 			PersonalizationModel.continueWorkflow();
@@ -175,28 +174,35 @@ Controller {
 	}
 
 	Connections {
-		// This is necessary because onCurrentStateChanged is not
-		// working, when we need to process a state a second time
-		function onFireCurrentStateChanged() {
-			processStateChange();
+		function onFireStateEntered(pState) {
+			processStateChange(pState);
+		}
+		function onFireWorkflowFinished() {
+			connectivityManager.watching = false;
+		}
+		function onFireWorkflowStarted() {
+			popAll();
+			skipSelectReader = false;
+			connectivityManager.watching = true;
 		}
 
 		target: PersonalizationModel
 	}
-	Connections {
-		function onFireNetworkInterfaceActiveChanged() {
-			processStateChange();
-		}
+	ConnectivityManager {
+		id: connectivityManager
 
-		enabled: currentState === "StateCheckStatus"
-		target: ConnectivityManager
+		onNetworkInterfaceActiveChanged: {
+			if (PersonalizationModel.currentState === "StateCheckStatus")
+				processStateChange(PersonalizationModel.currentState);
+		}
 	}
 	Component {
 		id: transportPinReminder
+
 		TransportPinReminderView {
 			moreInformationText: transportPinReminderInfoData.linkText
+			smartEidUsed: false
 			title: smartEidTitle
-			titleBarColor: Style.color.accent
 
 			onCancel: PersonalizationModel.cancelWorkflow()
 			onPinKnown: {
@@ -208,36 +214,41 @@ Controller {
 				PersonalizationModel.cancelWorkflowToChangePin();
 			}
 			onShowInfoView: {
-				push(transportPinReminderInfoDataView);
+				push(transportPinReminderInfoView);
 			}
 		}
 	}
 	PasswordInfoData {
 		id: transportPinReminderInfoData
+
 		contentType: PasswordInfoContent.Type.CHANGE_PIN
 	}
 	Component {
 		id: transportPinReminderInfoView
+
 		PasswordInfoView {
 			infoContent: transportPinReminderInfoData
+			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
 
 			onClose: pop()
 		}
 	}
 	Component {
 		id: checkConnectivityView
+
 		CheckConnectivityView {
+			smartEidUsed: true
 			title: smartEidTitle
-			titleBarColor: Style.color.accent_smart
 
 			onCancel: PersonalizationModel.cancelWorkflow()
 		}
 	}
 	Component {
 		id: cardPositionView
+
 		CardPositionView {
+			smartEidUsed: PersonalizationModel.readerPlugInType === ReaderPlugIn.SMART
 			title: smartEidTitle
-			titleBarColor: PersonalizationModel.readerPlugInType === ReaderPlugIn.SMART ? Style.color.accent_smart : Style.color.accent
 
 			onCancelClicked: PersonalizationModel.cancelWorkflow()
 			onContinueClicked: {
@@ -248,8 +259,10 @@ Controller {
 	}
 	Component {
 		id: smartProgress
+
 		PersonalizationProgressView {
 			progressBarVisible: workflowProgressVisible
+			title: smartEidTitle
 			workflowState: controller.workflowState
 
 			onAbortWorkflow: {
@@ -260,31 +273,55 @@ Controller {
 	}
 	Component {
 		id: editRights
+
 		EditRights {
 			//: INFO ANDROID IOS The user is informed that the ID card needs to be read to create a Smart-eID.
 			actionText: qsTr("The Smart-eID issuing authority needs to read your ID card's data in order to store it on this device:")
 			//: LABEL IOS_PHONE ANDROID_PHONE
 			dataText: qsTr("By entering your ID card PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
+			smartEidUsed: true
 			//: LABEL ANDROID IOS
 			title: qsTr("Set up Smart-eID")
-			titleBarColor: Style.color.accent_smart
 			workflowModel: PersonalizationModel
+
+			onRightsAccepted: {
+				ChatModel.transferAccessRights();
+				PersonalizationModel.continueWorkflow();
+			}
 		}
 	}
 	Component {
 		id: smartWorkflow
+
 		GeneralWorkflow {
-			titleBarColor: Style.color.accent
+			smartEidUsed: false
 			workflowModel: PersonalizationModel
 			workflowTitle: smartEidTitle
 		}
 	}
+	PasswordInfoData {
+		id: infoData
+
+		contentType: fromPasswordType(NumberModel.passwordType, NumberModel.isCanAllowedMode)
+	}
+	Component {
+		id: passwordInfoView
+
+		PasswordInfoView {
+			infoContent: infoData
+			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+
+			onClose: pop()
+		}
+	}
 	Component {
 		id: enterPinView
+
 		EnterPasswordView {
+			moreInformationText: infoData.linkText
+			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.Pin
 			//: LABEL ANDROID IOS
 			title: qsTr("Set up Smart-eID")
-			titleBarColor: workflowState === PersonalizationController.WorkflowStates.Pin ? Style.color.accent : Style.color.accent_smart
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
@@ -294,24 +331,47 @@ Controller {
 				}
 			}
 
-			onPasswordEntered: {
-				replace(smartProgress);
-				PersonalizationModel.continueWorkflow();
+			onPasswordEntered: pPasswordType => {
+				switch (pPasswordType) {
+				case PasswordType.NEW_SMART_PIN:
+					setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
+					break;
+				case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+					if (NumberModel.commitNewPin()) {
+						replace(smartProgress);
+						if (PersonalizationModel.applet) {
+							controller.workflowState = PersonalizationController.WorkflowStates.Personalization;
+						} else {
+							setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.Personalization);
+						}
+					} else {
+						setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
+					}
+					break;
+				default:
+					replace(smartProgress);
+					PersonalizationModel.continueWorkflow();
+				}
 			}
+			onRequestPasswordInfo: push(passwordInfoView)
 		}
 	}
 	Component {
 		id: abortedProgressView
+
 		AbortedProgressView {
-			titleBarColor: workflowState === PersonalizationController.WorkflowStates.ProcessingPhysicalEid ? Style.color.accent : Style.color.accent_smart
+			networkInterfaceActive: connectivityManager.networkInterfaceActive
+			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+			title: smartEidTitle
 
 			onCancel: PersonalizationModel.cancelWorkflow()
 		}
 	}
 	Component {
 		id: resultView
+
 		PersonalizationResultView {
-			titleBarColor: workflowState === PersonalizationController.WorkflowStates.ProcessingPhysicalEid ? Style.color.accent : Style.color.accent_smart
+			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
 
 			onContinueClicked: {
 				if (PersonalizationModel.error) {
@@ -324,14 +384,16 @@ Controller {
 	}
 	Component {
 		id: legalInformation
+
 		PersonalizationLegalInformationView {
 			onContinueClicked: done()
 		}
 	}
 	Component {
 		id: whiteListSurveyView
+
 		WhiteListSurveyView {
-			titleBarColor: root.titleBarColor
+			smartEidUsed: root.smartEidUsed
 
 			onDone: pUserAccepted => {
 				SurveyModel.setDeviceSurveyPending(pUserAccepted);

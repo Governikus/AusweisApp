@@ -26,12 +26,12 @@ void StateUpdateRetryCounter::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "No card connection available.";
-		Q_EMIT fireAbort(FailureCode::Reason::Update_Retry_Counter_No_Card_Connection);
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 
 	Q_ASSERT(cardConnection != nullptr);
-	mConnections += cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
+	*this << cardConnection->callUpdateRetryCounterCommand(this, &StateUpdateRetryCounter::onUpdateRetryCounterDone);
 }
 
 
@@ -42,11 +42,9 @@ void StateUpdateRetryCounter::onUpdateRetryCounterDone(QSharedPointer<BaseCardCo
 	const auto& returnCode = pCommand->getReturnCode();
 	if (returnCode != CardReturnCode::OK)
 	{
-		qCCritical(statemachine) << "An error occurred while communicating with the card reader, cannot determine retry counter, abort state";
+		qCCritical(statemachine).nospace() << "An error (" << returnCode << ") occurred while communicating with the card reader, cannot determine retry counter, abort state";
 		getContext()->resetCardConnection();
-		Q_EMIT fireAbort({FailureCode::Reason::Update_Retry_Counter_Communication_Error,
-						  {FailureCode::Info::Card_Return_Code, Enum<CardReturnCode>::getName(returnCode)}
-				});
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 

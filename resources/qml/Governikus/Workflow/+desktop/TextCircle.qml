@@ -1,26 +1,48 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
 
 Rectangle {
+	id: root
+
+	readonly property double maximumHeight: enabledFontMetrics.height * 2.5
 	property alias text: number.text
 
-	border.color: Style.color.high_contrast_item_border
-	border.width: Style.dimens.high_contrast_item_border
-	color: enabled ? Style.color.accent : Style.color.background_pane
+	border.color: Style.color.control_border
+	border.width: Style.dimens.border_width
+	color: Style.color.transparent
 	enabled: false
-	height: number.height * 2
+	height: maximumHeight * d.scaleFactor
 	radius: width * 0.5
 	width: height
 
+	QtObject {
+		id: d
+
+		property double scaleFactor: root.enabled ? 1.0 : 0.7
+
+		Behavior on scaleFactor {
+			PropertyAnimation {
+				duration: 500
+				easing.type: Easing.InOutCubic
+			}
+		}
+	}
 	GText {
 		id: number
+
 		Accessible.ignored: true
 		anchors.centerIn: parent
-		textStyle: parent.enabled ? Style.text.header_inverse_highlight : Style.text.header_accent_highlight
+		font.pixelSize: Style.dimens.text_headline * d.scaleFactor
+		textStyle: Style.text.headline
+	}
+	FontMetrics {
+		id: enabledFontMetrics
+
+		font.pixelSize: Style.dimens.text_headline
 	}
 }

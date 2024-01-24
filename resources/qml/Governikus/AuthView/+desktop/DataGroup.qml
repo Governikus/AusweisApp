@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
 
-Column {
+ColumnLayout {
 	id: root
 
 	property alias chat: repeater.model
@@ -16,28 +17,34 @@ Column {
 	readonly property alias count: repeater.count
 	property alias title: dataTitle.text
 	property alias titleStyle: dataTitle.textStyle
+	property bool writeAccess: false
 
 	spacing: Constants.pane_spacing
 	visible: count > 0
 
 	GText {
 		id: dataTitle
+
 		Accessible.name: dataTitle.text
 		activeFocusOnTab: true
-		textStyle: Style.text.header_accent
+		color: writeAccess ? Style.color.text_warning : titleStyle.textColor
+		textStyle: Style.text.headline
 
 		FocusFrame {
 		}
 	}
 	Grid {
 		id: grid
+
+		Layout.fillWidth: true
+		Layout.preferredWidth: repeater.maxItemWidth * columns + grid.columnSpacing * (columns - 1)
 		columnSpacing: Constants.pane_spacing
 		flow: Grid.TopToBottom
 		verticalItemAlignment: Grid.AlignBottom
-		width: parent.width
 
-		Repeater {
+		GRepeater {
 			id: repeater
+
 			visible: count > 0
 
 			Item {
@@ -48,14 +55,16 @@ Column {
 				Accessible.name: dataText.text + (optional ? ": " + (selected ? qsTr("selected") : qsTr("not selected")) : "")
 				Accessible.role: optional ? Accessible.CheckBox : Accessible.StaticText
 				activeFocusOnTab: true
-				height: dataText.height * 1.5
-				width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
+				implicitHeight: dataText.height * 1.5
+				implicitWidth: dataText.implicitWidth + (checkBox.visible ? checkBox.implicitWidth : 0)
+				width: (grid.width - (grid.columnSpacing * (grid.columns - 1))) / grid.columns
 
 				Keys.onSpacePressed: if (optional)
 					selected = !selected
 
 				GText {
 					id: dataText
+
 					anchors.left: parent.left
 					anchors.right: parent.right
 					anchors.rightMargin: checkBox.visible ? checkBox.width + Constants.pane_spacing : 0
@@ -75,6 +84,7 @@ Column {
 				}
 				GCheckBox {
 					id: checkBox
+
 					activeFocusOnTab: false
 					anchors.right: parent.right
 					anchors.verticalCenter: parent.verticalCenter
@@ -89,10 +99,10 @@ Column {
 
 					Rectangle {
 						anchors.fill: parent
-						color: Style.color.accent
+						color: Style.color.control
 						opacity: parent.pressed ? 0.5 : 0
 
-						Behavior on opacity  {
+						Behavior on opacity {
 							NumberAnimation {
 								duration: 100
 							}

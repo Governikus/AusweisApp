@@ -33,19 +33,19 @@ class test_StateGetTcToken
 
 		void test_Run()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			const QUrl validUrl(QString("https://a.not.existing.valid.test.url.com"));
 			const QUrl invalidUrl(QString("test"));
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
 			context->setTcTokenUrl(validUrl);
-			QTest::ignoreMessage(QtDebugMsg, "Got TC Token URL: QUrl(\"https://a.not.existing.valid.test.url.com\")");
+			QTest::ignoreMessage(QtDebugMsg, "Fetch TCToken URL: QUrl(\"https://a.not.existing.valid.test.url.com\")");
 			state.run();
 			QCOMPARE(spyAbort.count(), 0);
 
 			context->setTcTokenUrl(invalidUrl);
-			QTest::ignoreMessage(QtDebugMsg, "Got TC Token URL: QUrl(\"test\")");
+			QTest::ignoreMessage(QtCriticalMsg, "TCToken URL is invalid: QUrl(\"test\")");
 			state.run();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Invalid_Url);
@@ -54,7 +54,7 @@ class test_StateGetTcToken
 
 		void test_IsValidRedirectUrl()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Error while connecting to the provider. The server returns an invalid or empty redirect URL.");
@@ -71,7 +71,7 @@ class test_StateGetTcToken
 
 		void test_SendRequest()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
@@ -86,7 +86,7 @@ class test_StateGetTcToken
 
 		void test_ParseTcTokenNoData()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			state.mReply.reset(new MockNetworkReply(), &QObject::deleteLater);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
@@ -113,7 +113,7 @@ class test_StateGetTcToken
 								  "  </PathSecurity-Parameters>"
 								  "</TCTokenType>");
 
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			state.mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyContinue(&state, &StateGetTcToken::fireContinue);
@@ -129,7 +129,7 @@ class test_StateGetTcToken
 		void test_ParseTcTokenWithDataNoPsk()
 		{
 			const QByteArray data("invalid data");
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
 			state.mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);

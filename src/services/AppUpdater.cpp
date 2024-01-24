@@ -60,7 +60,7 @@ bool AppUpdater::download(const QUrl& pUrl)
 }
 
 
-QString AppUpdater::save(const QByteArray& pData, const QString& pFilename)
+QString AppUpdater::save(const QByteArray& pData, const QString& pFilename) const
 {
 	const QDir dir(mDownloadPath);
 	if (!dir.exists())
@@ -90,7 +90,7 @@ QString AppUpdater::save(const QByteArray& pData, const QString& pFilename)
 }
 
 
-bool AppUpdater::abortDownload()
+bool AppUpdater::abortDownload() const
 {
 	if (mDownloadInProgress)
 	{
@@ -120,7 +120,7 @@ const AppUpdateData& AppUpdater::getUpdateData() const
 }
 
 
-void AppUpdater::skipVersion(const QString& pVersion)
+void AppUpdater::skipVersion(const QString& pVersion) const
 {
 	qCInfo(appupdate) << "Skip application update:" << pVersion;
 	Env::getSingleton<AppSettings>()->getGeneralSettings().skipVersion(pVersion);

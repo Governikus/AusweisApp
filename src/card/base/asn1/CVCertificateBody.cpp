@@ -94,13 +94,6 @@ ASN1_ITEM_TEMPLATE_END(CVCertificateBody)
 
 IMPLEMENT_ASN1_FUNCTIONS(CVCertificateBody)
 IMPLEMENT_ASN1_OBJECT(CVCertificateBody)
-
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-	#define sk_CERTIFICATEEXTENSION_num(data) SKM_sk_num(CERTIFICATEEXTENSION, data)
-	#define sk_CERTIFICATEEXTENSION_value(data, i) SKM_sk_value(CERTIFICATEEXTENSION, data, i)
-#endif
-
 } // namespace governikus
 
 

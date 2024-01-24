@@ -5,6 +5,8 @@
 #include "CertificateDescriptionModel.h"
 
 #include "LanguageLoader.h"
+#include "context/AuthContext.h"
+#include "context/IfdServiceContext.h"
 
 
 using namespace governikus;
@@ -21,9 +23,14 @@ CertificateDescriptionModel::CertificateDescriptionModel()
 
 QSharedPointer<const CertificateDescription> CertificateDescriptionModel::getCertificateDescription() const
 {
-	if (mContext && mContext->getDidAuthenticateEac1())
+	if (const auto authContext = mContext.objectCast<AuthContext>(); authContext && authContext->getDidAuthenticateEac1())
 	{
-		return mContext->getDidAuthenticateEac1()->getCertificateDescription();
+		return authContext->getDidAuthenticateEac1()->getCertificateDescription();
+	}
+
+	if (const auto ifdContext = mContext.objectCast<IfdServiceContext>(); ifdContext && ifdContext->getCertificateDescription())
+	{
+		return ifdContext->getCertificateDescription();
 	}
 
 	return QSharedPointer<const CertificateDescription>();
@@ -85,13 +92,17 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 }
 
 
-void CertificateDescriptionModel::resetContext(const QSharedPointer<AuthContext>& pContext)
+void CertificateDescriptionModel::resetContext(const QSharedPointer<WorkflowContext>& pContext)
 {
 	mContext = pContext;
-	if (mContext)
+	if (auto authContext = pContext.objectCast<AuthContext>())
 	{
-		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
-		connect(mContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+		connect(authContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+		connect(authContext.data(), &AuthContext::fireAccessRightManagerCreated, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
+	}
+	else if (auto ifdContext = pContext.objectCast<IfdServiceContext>())
+	{
+		connect(ifdContext.data(), &IfdServiceContext::fireAccessRightManagerCreated, this, &CertificateDescriptionModel::onDidAuthenticateEac1Changed);
 	}
 
 	onDidAuthenticateEac1Changed();
@@ -121,9 +132,9 @@ QString CertificateDescriptionModel::getPurpose() const
 
 QString CertificateDescriptionModel::getValidity() const
 {
-	if (mContext && mContext->getAccessRightManager() && mContext->getAccessRightManager()->getTerminalCvc())
+	if (const auto authContext = mContext.objectCast<AuthContext>(); authContext&& authContext->getAccessRightManager() && authContext->getAccessRightManager()->getTerminalCvc())
 	{
-		const CVCertificateBody body = mContext->getAccessRightManager()->getTerminalCvc()->getBody();
+		const CVCertificateBody body = authContext->getAccessRightManager()->getTerminalCvc()->getBody();
 		const auto locale = LanguageLoader::getInstance().getUsedLocale();
 		const auto effectiveDate = locale.toString(body.getCertificateEffectiveDate(), QLocale::ShortFormat);
 		const auto expirationDate = locale.toString(body.getCertificateExpirationDate(), QLocale::ShortFormat);
@@ -136,7 +147,7 @@ QString CertificateDescriptionModel::getValidity() const
 
 int CertificateDescriptionModel::rowCount(const QModelIndex&) const
 {
-	return mData.size();
+	return static_cast<int>(mData.size());
 }
 
 

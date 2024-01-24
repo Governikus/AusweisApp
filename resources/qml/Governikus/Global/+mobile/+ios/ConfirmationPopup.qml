@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
 
 BaseConfirmationPopup {
 	id: root
+
 	horizontalTextAlignment: Text.AlignHCenter
 
 	buttons: ColumnLayout {
@@ -25,9 +26,9 @@ BaseConfirmationPopup {
 
 			GButton {
 				Layout.fillWidth: true
-				buttonColor: Style.color.transparent
+				background: null
 				text: root.cancelButtonText
-				textStyle: Style.text.normal_accent
+				textStyle: Style.text.normal
 				visible: style & ConfirmationPopup.PopupStyle.CancelButton
 
 				onClicked: root.cancel()
@@ -39,9 +40,9 @@ BaseConfirmationPopup {
 			}
 			GButton {
 				Layout.fillWidth: true
-				buttonColor: Style.color.transparent
+				background: null
 				text: root.okButtonText
-				textStyle: Style.text.normal_accent
+				textStyle: Style.text.normal
 				visible: style & ConfirmationPopup.PopupStyle.OkButton
 
 				onClicked: root.accept()

@@ -47,10 +47,10 @@ class UIPlugInAidl
 
 	private Q_SLOTS:
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
 
-		void onToSend(const QByteArray& pMessage);
+		void onToSend(const QByteArray& pMessage) const;
 };
 
 } // namespace governikus

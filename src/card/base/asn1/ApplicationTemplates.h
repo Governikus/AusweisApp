@@ -10,8 +10,6 @@
 #pragma once
 
 #include "ApplicationTemplate.h"
-#include "ChipAuthenticationInfo.h"
-#include "PaceInfo.h"
 
 #include <QByteArray>
 #include <QSharedPointer>
@@ -27,12 +25,7 @@ namespace governikus
  * defined in ISO 7816-4:2005 8.2.1.1
  */
 
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-using ApplicationTemplatesInternal = stack_st_ApplicationTemplate;
-#else
 using ApplicationTemplatesInternal = STACK_OF(ApplicationTemplate);
-#endif
-
 DECLARE_ASN1_FUNCTIONS(ApplicationTemplatesInternal)
 DECLARE_ASN1_OBJECT(ApplicationTemplatesInternal)
 
@@ -57,7 +50,7 @@ class ApplicationTemplates
 
 		[[nodiscard]] const QByteArray& getContentBytes() const;
 		[[nodiscard]] const QVector<QSharedPointer<const ApplicationTemplate>>& getApplicationTemplates() const;
-		[[nodiscard]] int count() const;
+		[[nodiscard]] qsizetype count() const;
 };
 
 

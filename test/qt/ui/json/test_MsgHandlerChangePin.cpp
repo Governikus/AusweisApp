@@ -155,8 +155,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			const QByteArray msg("{"
@@ -226,8 +226,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
@@ -286,8 +286,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
-			connect(&controller, &AppController::fireWorkflowStarted, this, [this](QSharedPointer<WorkflowContext> pContext){
-					pContext->claim(this); // UIPlugInJson is internal API and does not claim by itself
+			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
+					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";

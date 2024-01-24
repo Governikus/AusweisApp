@@ -44,7 +44,27 @@ void StateGenericSendReceive::emitStateMachineSignal(PaosType pResponseType)
 }
 
 
-void StateGenericSendReceive::setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage)
+void StateGenericSendReceive::logRawData(const QByteArray& pMessage)
+{
+	if (NetworkManager::isLoggingAllowed(mReply))
+	{
+		qCDebug(network).noquote() << "Received raw data:\n" << pMessage;
+	}
+	else
+	{
+		if (secure().isDebugEnabled())
+		{
+			qCDebug(secure).noquote() << "Received raw data:\n" << pMessage;
+		}
+		else
+		{
+			qCDebug(network) << "no-log was requested, skip logging of raw data";
+		}
+	}
+}
+
+
+void StateGenericSendReceive::setReceivedMessage(const QSharedPointer<PaosMessage>& pMessage) const
 {
 	getContext()->setReceivedMessageId(pMessage->getMessageId());
 
@@ -102,7 +122,7 @@ void StateGenericSendReceive::onSslErrors(const QList<QSslError>& pErrors)
 			{FailureCode::Info::State_Name, getStateName()},
 			{FailureCode::Info::Ssl_Errors, TlsChecker::sslErrorsToString(pErrors)}
 		};
-		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Ssl_Error, infoMap});
+		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Tls_Error, infoMap});
 	}
 }
 
@@ -147,7 +167,7 @@ void StateGenericSendReceive::onSslHandshakeDone()
 }
 
 
-void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator)
+void StateGenericSendReceive::onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator* pAuthenticator) const
 {
 	qCDebug(network) << "pre-shared key authentication requested:" << pAuthenticator->identityHint();
 
@@ -252,10 +272,10 @@ void StateGenericSendReceive::run()
 	const QByteArray& paosNamespace = PaosCreator::getNamespace(PaosCreator::Namespace::PAOS).toUtf8();
 	const auto& session = token->usePsk() ? QByteArray() : getContext()->getSslSession();
 	mReply = Env::getSingleton<NetworkManager>()->paos(request, paosNamespace, data, token->usePsk(), session);
-	mConnections += connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericSendReceive::onSslErrors);
-	mConnections += connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericSendReceive::onSslHandshakeDone);
-	mConnections += connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericSendReceive::onReplyFinished);
-	mConnections += connect(mReply.data(), &QNetworkReply::preSharedKeyAuthenticationRequired, this, &StateGenericSendReceive::onPreSharedKeyAuthenticationRequired);
+	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateGenericSendReceive::onSslErrors);
+	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateGenericSendReceive::onSslHandshakeDone);
+	*this << connect(mReply.data(), &QNetworkReply::finished, this, &StateGenericSendReceive::onReplyFinished);
+	*this << connect(mReply.data(), &QNetworkReply::preSharedKeyAuthenticationRequired, this, &StateGenericSendReceive::onPreSharedKeyAuthenticationRequired);
 }
 
 
@@ -269,56 +289,39 @@ void StateGenericSendReceive::onReplyFinished()
 		const auto& channelStatus = NetworkManager::toTrustedChannelStatus(mReply);
 		qCCritical(network) << GlobalStatus(channelStatus);
 		updateStatus(channelStatus);
-		const FailureCode::FailureInfoMap infoMap {
+		FailureCode::FailureInfoMap infoMap {
 			{FailureCode::Info::Network_Error, mReply->errorString()},
 			{FailureCode::Info::State_Name, getStateName()}
 		};
-		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Network_Error, infoMap});
-		return;
-	}
-
-	if (statusCode >= 500)
-	{
-		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server);
-		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Error_From_Server, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-				});
-		const FailureCode::FailureInfoMap infoMap {
-			{FailureCode::Info::State_Name, getStateName()},
-			{FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
-		};
-		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Server_Error, infoMap});
-		return;
-	}
-
-	if (statusCode >= 400)
-	{
-		qCCritical(network) << GlobalStatus(GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer);
-		updateStatus({GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
-				});
-		const FailureCode::FailureInfoMap infoMap {
-			{FailureCode::Info::State_Name, getStateName()},
-			{FailureCode::Info::Http_Status_Code, QString::number(statusCode)}
-		};
-		Q_EMIT fireAbort({FailureCode::Reason::Generic_Send_Receive_Client_Error, infoMap});
-		return;
-	}
-
-	QByteArray message = mReply->readAll();
-	if (NetworkManager::isLoggingAllowed(mReply))
-	{
-		qCDebug(network).noquote() << "Received raw data:\n" << message;
-	}
-	else
-	{
-		if (secure().isDebugEnabled())
+		if (statusCode > 0)
 		{
-			qCDebug(secure).noquote() << "Received raw data:\n" << message;
+			infoMap[FailureCode::Info::Http_Status_Code] = QString::number(statusCode);
 		}
-		else
+		FailureCode::Reason reason;
+		switch (NetworkManager::toNetworkError(mReply))
 		{
-			qCDebug(network) << "no-log was requested, skip logging of raw data";
+			case NetworkManager::NetworkError::ServiceUnavailable:
+				reason = FailureCode::Reason::Generic_Send_Receive_Service_Unavailable;
+				break;
+
+			case NetworkManager::NetworkError::ServerError:
+				reason = FailureCode::Reason::Generic_Send_Receive_Server_Error;
+				break;
+
+			case NetworkManager::NetworkError::ClientError:
+				reason = FailureCode::Reason::Generic_Send_Receive_Client_Error;
+				break;
+
+			default:
+				reason = FailureCode::Reason::Generic_Send_Receive_Network_Error;
 		}
+
+		Q_EMIT fireAbort({reason, infoMap});
+		return;
 	}
+
+	const auto& message = mReply->readAll();
+	logRawData(message);
 
 	PaosHandler paosHandler(message);
 	const auto receivedType = paosHandler.getDetectedPaosType();
@@ -328,6 +331,13 @@ void StateGenericSendReceive::onReplyFinished()
 	{
 		setReceivedMessage(paosHandler.getPaosMessage());
 		Q_EMIT fireContinue();
+		return;
+	}
+
+	if (receivedType == PaosType::STARTPAOS_RESPONSE)
+	{
+		setReceivedMessage(paosHandler.getPaosMessage());
+		Q_EMIT fireReceivedStartPaosResponse();
 		return;
 	}
 

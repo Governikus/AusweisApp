@@ -41,7 +41,7 @@ class TcToken
 				const QString& pRefreshAddress) const;
 		[[nodiscard]] bool isAnyUri(const QString& pCandidate) const;
 		[[nodiscard]] bool isHexBinary(const QString& pCandidate) const;
-		QString readElementValue(QXmlStreamReader& pReader);
+		QString readElementValue(QXmlStreamReader& pReader) const;
 
 	public:
 		explicit TcToken(const QByteArray& pData);

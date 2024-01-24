@@ -6,7 +6,6 @@
  * \brief Provides information about the WiFi status
  */
 
-
 #pragma once
 
 #include <QHostAddress>
@@ -32,7 +31,7 @@ class WifiInfo
 		static bool isPrivateIp(const QHostAddress& pAddress);
 		static bool hasPrivateIpAddress();
 
-		[[nodiscard]] bool getCurrentWifiEnabled();
+		[[nodiscard]] bool getCurrentWifiEnabled() const;
 
 #if defined(Q_OS_ANDROID)
 
@@ -44,7 +43,7 @@ class WifiInfo
 		WifiInfo();
 		~WifiInfo() override = default;
 
-		[[nodiscard]] bool isWifiEnabled();
+		[[nodiscard]] bool isWifiEnabled() const;
 
 	Q_SIGNALS:
 		void fireWifiEnabledChanged(bool pEnabled);

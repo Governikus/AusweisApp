@@ -4,14 +4,13 @@
 
 #include "PersonalizationModel.h"
 
+#include "GlobalStatus.h"
 #include "LanguageLoader.h"
 #if __has_include("controller/PersonalizationController.h")
 	#include "AppSettings.h"
 	#include "SecureStorage.h"
 	#include "controller/PersonalizationController.h"
 #endif
-
-#include <QDate>
 
 using namespace governikus;
 
@@ -22,7 +21,7 @@ PersonalizationModel::PersonalizationModel()
 }
 
 
-void PersonalizationModel::startWorkflow()
+void PersonalizationModel::startWorkflow() const
 {
 #if __has_include("controller/PersonalizationController.h")
 	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
@@ -58,15 +57,35 @@ int PersonalizationModel::getRemainingAttempts() const
 
 QString PersonalizationModel::getRestrictionDate() const
 {
-	QDate restrictionDate = QDate::currentDate();
 #if __has_include("context/PersonalizationContext.h")
 	if (mContext)
 	{
-		restrictionDate = restrictionDate.addDays(qAbs(mContext->getRemainingDays()));
+		return mContext->getRestrictionDate();
 	}
 #endif
-	const auto& usedLocale = LanguageLoader::getInstance().getUsedLocale();
-	return usedLocale.toString(restrictionDate, QStringLiteral("d. MMMM yyyy"));
+	return QStringLiteral("N/A");
+}
+
+
+QString PersonalizationModel::getBlockingPeriodMessage() const
+{
+	const auto& restrictionDate = getRestrictionDate();
+	const GlobalStatus status = {GlobalStatus::Code::Workflow_Smart_eID_Personalization_Denied,
+								 {GlobalStatus::ExternalInformation::PERSONALIZATION_RESTRICTION_DATE, restrictionDate}
+	};
+	return status.toErrorDescription();
+}
+
+
+bool PersonalizationModel::isApplet() const
+{
+#if __has_include("context/PersonalizationContext.h")
+	return mContext->getSmartEidType() == SmartEidType::APPLET;
+
+#else
+	return false;
+
+#endif
 }
 
 
@@ -81,6 +100,7 @@ void PersonalizationModel::resetPersonalizationContext(const QSharedPointer<Pers
 		connect(mContext.data(), &PersonalizationContext::fireBlockingCodeChanged, this, &PersonalizationModel::fireBlockingCodeChanged);
 		connect(mContext.data(), &PersonalizationContext::fireRemainingAttemptsChanged, this, &PersonalizationModel::fireRemainingAttemptsChanged);
 		connect(mContext.data(), &PersonalizationContext::fireRemainingDaysChanged, this, &PersonalizationModel::fireRestrictionDateChanged);
+		connect(mContext.data(), &PersonalizationContext::fireServiceInformationChanged, this, &PersonalizationModel::fireIsAppletChanged);
 	}
 }
 

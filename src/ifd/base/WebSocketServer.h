@@ -44,6 +44,7 @@ class WebSocketServer
 		void fireConnectedChanged(bool pConnected);
 		void fireMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
 		void firePskChanged(const QByteArray& pPsk);
+		void fireSocketError(QAbstractSocket::SocketError pSocketError);
 };
 
 } // namespace governikus

@@ -66,12 +66,12 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_NoConnection()
 		{
-			QSignalSpy spyAbort(mState.data(), &StateVerifyRetryCounter::fireAbort);
+			QSignalSpy spyNoCardConnection(mState.data(), &StateVerifyRetryCounter::fireNoCardConnection);
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection lost.");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mContext->getFailureCode(), FailureCode::Reason::Verify_Retry_Counter_No_Card_Connection);
+			QTRY_COMPARE(spyNoCardConnection.count(), 1); // clazy:exclude=qstring-allocations
+			QVERIFY(!mContext->getFailureCode().has_value());
 		}
 
 

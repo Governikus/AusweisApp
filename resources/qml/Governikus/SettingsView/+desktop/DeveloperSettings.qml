@@ -1,124 +1,96 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.View 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.HistoryModel 1.0
-import Governikus.Type.LogModel 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQml
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.View
+import Governikus.Style
+import Governikus.Type.ApplicationModel
+import Governikus.Type.LogModel
+import Governikus.Type.SettingsModel
 
 ColumnLayout {
-	readonly property string helpTopic: "settingsDeveloper"
-
 	spacing: Constants.component_spacing
 
-	GText {
-		activeFocusOnTab: true
-
-		//: LABEL DESKTOP
-		text: qsTr("Developer options")
-		textStyle: Style.text.header_accent
-
-		FocusFrame {
-		}
-	}
-	GCheckBox {
-		checked: SettingsModel.useSelfauthenticationTestUri
-
-		//: LABEL DESKTOP
-		text: qsTr("Testmode for the self-authentication")
-
-		onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
-	}
-	GCheckBox {
-		checked: SettingsModel.enableSimulator
-		//: LABEL DESKTOP
-		text: qsTr("Enable internal card simulator")
-
-		onCheckedChanged: SettingsModel.enableSimulator = checked
-	}
-	GText {
+	GPane {
 		Layout.fillWidth: true
-		activeFocusOnTab: true
+		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
-		text: qsTr("The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.")
-		textStyle: Style.text.hint_warning
+		title: qsTr("Developer options")
 
-		FocusFrame {
-		}
-	}
-	GCheckBox {
-		checked: SettingsModel.developerMode
-
-		//: LABEL DESKTOP
-		text: qsTr("Developer mode")
-
-		onCheckedChanged: SettingsModel.developerMode = checked
-	}
-	GText {
-		Layout.fillWidth: true
-		activeFocusOnTab: true
-		//: LABEL DESKTOP
-		text: qsTr("The developer mode is aimed at integrators / developers for new service applications. For this reason, the developer mode works only in the test PKI. By activating the developer mode, some safety tests are deactivated. This means that the authentication process continues although the AusweisApp2 would usually abort the process with an error message when used in normal operation mode. Information on the disregarded error in the developer mode is displayed in the attached window below the AusweisApp2.")
-		textStyle: Style.text.hint_warning
-
-		FocusFrame {
-		}
-	}
-	GSeparator {
-		Layout.fillWidth: true
-	}
-	GText {
-		activeFocusOnTab: true
-
-		//: LABEL DESKTOP
-		text: qsTr("Custom config.json")
-		textStyle: Style.text.header_accent
-
-		FocusFrame {
-		}
-	}
-	GText {
-		Layout.fillWidth: true
-		activeFocusOnTab: true
-
-		//: LABEL DESKTOP
-		text: qsTr("Place the config.json into the application folder to override the embedded config.")
-		textStyle: Style.text.normal
-
-		FocusFrame {
-		}
-	}
-	GText {
-		Layout.fillWidth: true
-
-		//: LABEL DESKTOP
-		text: qsTr("Application folder: %1").arg(ApplicationModel.customConfigPath)
-		textStyle: Style.text.hint_secondary
-	}
-	GButton {
-		//: LABEL DESKTOP
-		text: qsTr("Save config.json")
-
-		onClicked: {
-			let filenameSuggestion = "config";
-			fileDialog.selectFile(filenameSuggestion);
-		}
-
-		GFileDialog {
-			id: fileDialog
-			defaultSuffix: "json"
-			folder: ApplicationModel.customConfigPath
+		LabeledSwitch {
+			checked: SettingsModel.useSelfauthenticationTestUri
 			//: LABEL DESKTOP
-			nameFilters: qsTr("JSON config (*.json)")
+			description: qsTr("Allow test sample card usage")
 
 			//: LABEL DESKTOP
-			title: qsTr("Save config.json")
+			title: qsTr("Testmode for the self-authentication")
 
-			onAccepted: ApplicationModel.saveEmbeddedConfig(file)
+			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.enableSimulator
+
+			//: LABEL DESKTOP
+			description: qsTr("The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.")
+			//: LABEL DESKTOP
+			title: qsTr("Internal card simulator")
+
+			onCheckedChanged: SettingsModel.enableSimulator = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.developerMode
+
+			//: LABEL DESKTOP
+			description: qsTr("The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.").arg(Qt.application.name)
+			//: LABEL DESKTOP
+			title: qsTr("Developer mode")
+
+			onCheckedChanged: SettingsModel.developerMode = checked
+		}
+	}
+	GPane {
+		Layout.fillWidth: true
+		spacing: Constants.component_spacing
+		//: LABEL DESKTOP
+		title: qsTr("Custom config.json")
+
+		GText {
+			activeFocusOnTab: true
+
+			//: LABEL DESKTOP
+			text: qsTr("Place the config.json into the application folder to override the embedded config.")
+
+			FocusFrame {
+			}
+		}
+		GText {
+			//: LABEL DESKTOP
+			text: qsTr("Application folder: %1").arg(ApplicationModel.customConfigPath)
+		}
+		GButton {
+			//: LABEL DESKTOP
+			text: qsTr("Save config.json")
+
+			onClicked: {
+				let filenameSuggestion = "config";
+				fileDialog.selectFile(filenameSuggestion);
+			}
+
+			GFileDialog {
+				id: fileDialog
+
+				defaultSuffix: "json"
+				folder: ApplicationModel.customConfigPath
+				//: LABEL DESKTOP
+				nameFilters: qsTr("JSON config (*.json)")
+
+				//: LABEL DESKTOP
+				title: qsTr("Save config.json")
+
+				onAccepted: ApplicationModel.saveEmbeddedConfig(file)
+			}
 		}
 	}
 }

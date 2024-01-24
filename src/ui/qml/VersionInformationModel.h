@@ -21,7 +21,7 @@ class VersionInformationModel
 	friend class Env;
 
 	private:
-		enum HistoryRoles
+		enum VersionRoles
 		{
 			LABEL = Qt::UserRole + 1,
 			TEXT

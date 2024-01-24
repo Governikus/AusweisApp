@@ -28,7 +28,7 @@ class SmartReader
 		QScopedPointer<SmartCard, QScopedPointerDeleteLater> mCard;
 
 	public:
-		SmartReader();
+		explicit SmartReader(const QString& pName);
 
 		[[nodiscard]] Card* getCard() const override;
 		void connectReader() override;

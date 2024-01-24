@@ -1,22 +1,31 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.RemoteServiceView 1.0
-import Governikus.TechnologyInfo 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.RemoteServiceModel 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.NumberModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.RemoteServiceView
+import Governikus.TechnologyInfo
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.RemoteServiceModel
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.NumberModel
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
 	property bool foundSelectedReader: ApplicationModel.availableReader > 0
 	property bool settingsPushed: remoteServiceSettings.visible
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
+
+	signal deviceUnpaired(var pDeviceName)
+
+	clip: true
+	maximumContentWidth: Style.dimens.max_text_width
+	spacing: 0
+	topMargin: 0
 
 	onFoundSelectedReaderChanged: {
 		if (baseItem.settingsPushed && foundSelectedReader) {
@@ -26,32 +35,29 @@ Item {
 
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
-			//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
-			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName));
+			deviceUnpaired(pDeviceName);
 		}
 
 		target: RemoteServiceModel
 	}
-	ProgressIndicator {
+	RemoteProgressIndicator {
 		id: progressIndicator
+
 		Accessible.ignored: true
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
-		height: parent.height / 2
-		imageIconSource: "qrc:///images/mobile/icon_remote.svg"
-		imagePhoneSource: "qrc:///images/mobile/phone_remote.svg"
-		state: foundSelectedReader ? "two" : "off"
+		Layout.alignment: Qt.AlignCenter
+		foundSelectedReader: baseItem.foundSelectedReader
 	}
 	TechnologyInfo {
 		id: techInfo
+
+		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
 			if (!wifiEnabled) {
 				//: LABEL ANDROID IOS
 				return qsTr("Enable WiFi");
 			} else if (!foundSelectedReader) {
 				//: LABEL ANDROID IOS
-				return qsTr("Pair device");
+				return qsTr("Manage pairings");
 			} else {
 				return "";
 			}
@@ -62,7 +68,7 @@ Item {
 				return qsTr("To use the remote service WiFi has to be activated. Please activate WiFi in your device settings.");
 			} else if (!foundSelectedReader) {
 				//: INFO ANDROID IOS No paired and reachable device was found, hint that the remote device needs to be actually started for this feature.
-				return qsTr("No paired smartphone as card reader (SaC) with activated \"remote service\" available.");
+				return qsTr("Allow a connection on a paired smartphone or pair a new smartphone.");
 			} else {
 				return "";
 			}
@@ -73,12 +79,14 @@ Item {
 			}
 			if (!!NumberModel.inputError) {
 				return NumberModel.inputError;
+			} else if (!!AuthModel.eidTypeMismatchError) {
+				return AuthModel.eidTypeMismatchError;
 			} else if (ApplicationModel.extendedLengthApdusUnsupported) {
 				//: INFO ANDROID IOS The device does not support Extended Length and can not be used as card reader.
-				qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
+				return qsTr("The connected smartphone as card reader (SaC) unfortunately does not meet the technical requirements (Extended Length not supported).");
 			} else {
 				//: INFO ANDROID IOS The connection to the smartphone was established, the ID card may be inserted.
-				return qsTr("Connected to %1. Please place the NFC interface of the smartphone on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
+				return qsTr("Connected to %1. Please follow the instructions on the connected smartphone.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 		}
 		titleText: {
@@ -87,7 +95,7 @@ Item {
 				return qsTr("Wifi disabled");
 			} else if (!foundSelectedReader) {
 				//: LABEL ANDROID IOS
-				return qsTr("Waiting for connection");
+				return qsTr("No smartphone as card reader connected");
 			} else {
 				//: LABEL ANDROID IOS
 				return qsTr("Determine card");
@@ -106,18 +114,10 @@ Item {
 				push(remoteServiceSettings);
 			}
 		}
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			leftMargin: Constants.component_spacing
-			right: parent.right
-			rightMargin: Constants.component_spacing
-			top: progressIndicator.bottom
-		}
 	}
 	RemoteServiceSettings {
 		id: remoteServiceSettings
+
 		visible: false
 	}
 }

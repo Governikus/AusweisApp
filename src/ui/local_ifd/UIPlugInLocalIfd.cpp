@@ -4,15 +4,16 @@
 
 #include "UIPlugInLocalIfd.h"
 
-#include "AppSettings.h"
 #include "Env.h"
 #include "LocalIfdServer.h"
 #include "SecureStorage.h"
-#include "UILoader.h"
 #include "context/IfdServiceContext.h"
 #include "controller/IfdServiceController.h"
 
 #ifdef Q_OS_ANDROID
+	#include "AppSettings.h"
+	#include "UILoader.h"
+
 	#include <QJniEnvironment>
 	#include <jni.h>
 #endif
@@ -32,6 +33,22 @@ void UIPlugInLocalIfd::onStateChanged(const QString& pNewState)
 }
 
 
+void UIPlugInLocalIfd::onConnectedChanged(bool pConnected)
+{
+	if (!pConnected)
+	{
+		Q_EMIT fireQuitApplicationRequest();
+	}
+}
+
+
+void UIPlugInLocalIfd::onSocketError(QAbstractSocket::SocketError pSocketError)
+{
+	Q_UNUSED(pSocketError)
+	Q_EMIT fireQuitApplicationRequest(EXIT_FAILURE);
+}
+
+
 UIPlugInLocalIfd::UIPlugInLocalIfd()
 	: UIPlugIn()
 	, mContext()
@@ -45,17 +62,17 @@ void UIPlugInLocalIfd::doShutdown()
 }
 
 
-void UIPlugInLocalIfd::onWorkflowStarted(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInLocalIfd::onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	pContext->claim(this);
-	mContext = pContext;
+	mContext = pRequest->getContext();
+	mContext->claim(this);
 	connect(mContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInLocalIfd::onStateChanged);
 }
 
 
-void UIPlugInLocalIfd::onWorkflowFinished(QSharedPointer<WorkflowContext> pContext)
+void UIPlugInLocalIfd::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest)
 {
-	Q_ASSERT(mContext == pContext);
+	Q_ASSERT(mContext == pRequest->getContext());
 
 	disconnect(mContext.data(), &WorkflowContext::fireStateChanged, this, &UIPlugInLocalIfd::onStateChanged);
 	mContext.reset();
@@ -78,7 +95,9 @@ bool UIPlugInLocalIfd::onStartWorkflowRequested(const QString& pPsk)
 		return false;
 	}
 
-	Q_EMIT fireWorkflowRequested(WorkflowRequest::createWorkflowRequest<IfdServiceController, IfdServiceContext>(localIfdServer));
+	connect(localIfdServer.data(), &IfdServer::fireConnectedChanged, this, &UIPlugInLocalIfd::onConnectedChanged);
+	connect(localIfdServer.data(), &IfdServer::fireSocketError, this, &UIPlugInLocalIfd::onSocketError);
+	Q_EMIT fireWorkflowRequested(WorkflowRequest::create<IfdServiceController, IfdServiceContext>(localIfdServer));
 
 	return localIfdServer->isRunning();
 }

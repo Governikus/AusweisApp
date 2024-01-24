@@ -6,6 +6,7 @@
 #include "IfdStatus.h"
 
 #include "AppSettings.h"
+#include "VolatileSettings.h"
 
 #include <QLoggingCategory>
 
@@ -81,17 +82,28 @@ void IfdStatus::parsePinPad(const QJsonObject& pMessageObject)
 }
 
 
-IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo)
+IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo, bool pPublishCard)
 	: IfdMessage(IfdMessageType::IFDStatus)
 	, mSlotName(pReaderInfo.getName())
 	, mHasPinPad(!pReaderInfo.isBasicReader())
 	, mMaxApduLength(pReaderInfo.getMaxApduLength())
 	, mConnectedReader(pReaderInfo.isValid())
-	, mCardAvailable(pReaderInfo.hasCard())
+	, mCardAvailable(pReaderInfo.hasCard() && pPublishCard)
 {
-	if (!mHasPinPad && pReaderInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
+	if (mHasPinPad || Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
-		mHasPinPad = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+		return;
+	}
+
+	switch (pReaderInfo.getPlugInType())
+	{
+		case ReaderManagerPlugInType::NFC:
+		case ReaderManagerPlugInType::SMART:
+			mHasPinPad = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -108,7 +120,7 @@ IfdStatus::IfdStatus(const QJsonObject& pMessageObject)
 	parsePinPad(pMessageObject);
 
 	mMaxApduLength = getIntValue(pMessageObject, MAX_APDU_LENGTH(), -1);
-	// Support SaC with AusweisApp2 < 1.22.0
+	// Support SaC with AusweisApp < 1.22.0
 	if (IfdVersion(IfdVersion::Version::v0).isSupported() && mMaxApduLength == 0)
 	{
 		mMaxApduLength = -1;

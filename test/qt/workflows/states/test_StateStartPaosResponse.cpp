@@ -26,7 +26,7 @@ class test_StateStartPaosResponse
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
+			mAuthContext.reset(new AuthContext());
 			mState.reset(StateBuilder::createState<StateStartPaosResponse>(mAuthContext));
 			mState->onEntry(nullptr);
 		}
@@ -36,6 +36,24 @@ class test_StateStartPaosResponse
 		{
 			mState.reset();
 			mAuthContext.reset();
+		}
+
+
+		void missingStartPAOSResponse()
+		{
+			QSignalSpy spyAbort(mState.data(), &StateStartPaosResponse::fireAbort);
+
+			mAuthContext->setStateApproved();
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+
+			const GlobalStatus& status = mState->getContext()->getStatus();
+			QCOMPARE(status.getStatusCode(), GlobalStatus::Code::Workflow_Start_Paos_Response_Missing);
+
+			const ECardApiResult& result = mState->getContext()->getStartPaosResult();
+			QCOMPARE(result.getMajor(), ECardApiResult::Major::Ok);
+			QCOMPARE(result.getMinor(), ECardApiResult::Minor::null);
+
+			QCOMPARE(mAuthContext->getFailureCode(), FailureCode::Reason::Start_Paos_Response_Missing);
 		}
 
 

@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "EnumHelper.h"
 #include "IfdReaderManagerPlugIn.h"
 #include "LocalIfdClient.h"
@@ -36,7 +35,6 @@ class LocalIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		bool isInitialPairing(const QString& pIfdName, const QString& pId) override;
 		LocalIfdClient* getIfdClient() override;
 		void addDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher) override;
 
@@ -45,7 +43,7 @@ class LocalIfdReaderManagerPlugIn
 
 	private:
 		bool mServiceConnected;
-		[[nodiscard]] bool isAusweisApp2Installed();
+		[[nodiscard]] bool isAusweisAppInstalled();
 		void setState(LocalIfdState pState);
 		void updateState();
 

@@ -48,8 +48,6 @@ class test_StateStopIfdService
 
 		void test_OnExit()
 		{
-			const QString name("name");
-			mState->setStateName(name);
 			Q_EMIT mContext->fireCancelWorkflow();
 			QVERIFY(!mContext->getIfdServer()->isRunning());
 		}

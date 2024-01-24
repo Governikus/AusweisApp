@@ -9,78 +9,36 @@
 #pragma once
 
 #include "GlobalStatus.h"
-#include "IfdDescriptor.h"
-#include "IfdDispatcher.h"
-#include "IfdList.h"
-#include "ReaderConfigurationInfo.h"
+#include "RemoteDeviceModelEntry.h"
 #include "RemoteServiceSettings.h"
 
-#include <QAbstractTableModel>
-#include <QSet>
+#include <QAbstractListModel>
+#include <QMap>
+#include <QSharedPointer>
 #include <QSslCertificate>
+#include <QString>
+#include <QTimer>
 #include <QVector>
 
+
 class test_RemoteDeviceModel;
+class test_RemoteDeviceFilterModel;
+
 
 namespace governikus
 {
-
-class RemoteDeviceModelEntry
-{
-	friend class ::test_RemoteDeviceModel;
-
-	private:
-		QString mDeviceName;
-		QString mId;
-		bool mPaired;
-		bool mNetworkVisible;
-		bool mConnected;
-		bool mSupported;
-		QDateTime mLastConnected;
-		QSharedPointer<IfdListEntry> mRemoteDeviceListEntry;
-
-	public:
-		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-				const QString& mId,
-				const QSharedPointer<IfdListEntry>& pRemoteDeviceListEntry);
-		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-				const QString& mId,
-				bool pNetworkVisible,
-				bool pConnected,
-				bool pSupported,
-				const QDateTime& pLastConnected,
-				const QSharedPointer<IfdListEntry>& pRemoteDeviceListEntry);
-		explicit RemoteDeviceModelEntry(const QString& pDeviceNameEscaped = QStringLiteral("UnknownReader"));
-
-		[[nodiscard]] bool isPaired() const;
-		void setPaired(bool pPaired);
-		[[nodiscard]] const QString& getId() const;
-		void setId(const QString& pId);
-		[[nodiscard]] bool isNetworkVisible() const;
-		[[nodiscard]] int getLinkQuality() const;
-		[[nodiscard]] bool isSupported() const;
-		void setNetworkVisible(bool pNetworkVisible);
-		[[nodiscard]] const QDateTime& getLastConnected() const;
-		void setLastConnected(const QDateTime& pLastConnected);
-		[[nodiscard]] bool operator==(const RemoteDeviceModelEntry& pOther) const;
-
-		[[nodiscard]] const QSharedPointer<IfdListEntry>& getRemoteDeviceListEntry() const;
-		[[nodiscard]] QString getDeviceNameEscaped() const;
-
-};
 
 class RemoteDeviceModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
-	Q_PROPERTY(QString emptyListDescriptionString READ getEmptyListDescriptionString NOTIFY fireModelChanged)
 	friend class ::test_RemoteDeviceModel;
+	friend class ::test_RemoteDeviceFilterModel;
 
 	private:
 		QMap<QString, RemoteServiceSettings::RemoteInfo> mPairedReaders;
 		QVector<RemoteDeviceModelEntry> mAllRemoteReaders;
-		const bool mShowPairedReaders;
-		const bool mShowUnpairedReaders;
+		RemoteServiceSettings::RemoteInfo mLastPairedDevice;
 		QTimer mTimer;
 		bool mIsDetectingRemoteDevices;
 #if defined(Q_OS_IOS)
@@ -112,10 +70,12 @@ class RemoteDeviceModel
 			IS_NETWORK_VISIBLE,
 			IS_SUPPORTED,
 			IS_PAIRED,
-			LINK_QUALITY
+			IS_PAIRING,
+			LINK_QUALITY,
+			IS_LAST_ADDED_DEVICE
 		};
 
-		RemoteDeviceModel(QObject* pParent = nullptr, bool pShowPairedReaders = true, bool pShowUnpairedReaders = true);
+		explicit RemoteDeviceModel(QObject* pParent = nullptr);
 
 		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;
@@ -124,11 +84,11 @@ class RemoteDeviceModel
 		[[nodiscard]] QSharedPointer<IfdListEntry> getRemoteDeviceListEntry(const QModelIndex& pIndex) const;
 		[[nodiscard]] QSharedPointer<IfdListEntry> getRemoteDeviceListEntry(const QString& pDeviceId) const;
 		[[nodiscard]] bool isPaired(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool isPairing(const QModelIndex& pIndex) const;
 		[[nodiscard]] bool isSupported(const QModelIndex& pIndex) const;
 		void forgetDevice(const QModelIndex& pIndex);
 		void forgetDevice(const QString& pDeviceId);
-
-		[[nodiscard]] QString getEmptyListDescriptionString() const;
+		void setLastPairedReader(const QSslCertificate& pCert);
 
 	public Q_SLOTS:
 		void setDetectRemoteDevices(bool pNewStatus);

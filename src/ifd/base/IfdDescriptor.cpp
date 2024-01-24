@@ -38,11 +38,13 @@ QUrl urlFromMsgAndHost(const Discovery& pDiscovery,
 IfdDescriptor::IfdDescriptorData::IfdDescriptorData(const QString& pIfdName,
 		const QString& pIfdId,
 		const QVector<IfdVersion::Version>& pApiVersions,
+		const bool pIsPairingAnnounced,
 		const QUrl& pRemoteUrl,
 		bool pIsLocalIfd)
 	: mIfdName(pIfdName)
 	, mIfdId(pIfdId)
 	, mApiVersions(pApiVersions)
+	, mIsPairingAnnounced(pIsPairingAnnounced)
 	, mUrl(pRemoteUrl)
 	, mIsLocalIfd(pIsLocalIfd)
 {
@@ -57,6 +59,7 @@ bool IfdDescriptor::IfdDescriptorData::operator==(const IfdDescriptorData& pOthe
 	return mIfdName == pOther.mIfdName &&
 		   mIfdId == pOther.mIfdId &&
 		   mApiVersions == pOther.mApiVersions &&
+		   mIsPairingAnnounced == pOther.mIsPairingAnnounced &&
 		   mUrl == pOther.mUrl;
 }
 
@@ -79,7 +82,8 @@ IfdDescriptor::IfdDescriptor(const Discovery& pDiscovery, const QHostAddress& pH
 	const QString& ifdName = pDiscovery.getIfdName();
 	const QString& ifdId = pDiscovery.getIfdId();
 	const QVector<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
-	d = new IfdDescriptorData(ifdName, ifdId, supportedApis, url, pLocalIfd);
+	const bool isPairing = pDiscovery.getPairing();
+	d = new IfdDescriptorData(ifdName, ifdId, supportedApis, isPairing, url, pLocalIfd);
 }
 
 
@@ -110,6 +114,12 @@ const QVector<IfdVersion::Version>& IfdDescriptor::getApiVersions() const
 bool IfdDescriptor::isSupported() const
 {
 	return IfdVersion(IfdVersion::selectLatestSupported(getApiVersions())).isValid();
+}
+
+
+bool IfdDescriptor::isPairingAnnounced() const
+{
+	return !isNull() && d->mIsPairingAnnounced;
 }
 
 

@@ -27,8 +27,9 @@ class test_SmartManager
 		void initTestCase()
 		{
 			const auto readerManager = Env::getSingleton<ReaderManager>();
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
-			readerManager->isScanRunning(); // just to wait until initialization finished
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -77,23 +78,23 @@ class test_SmartManager
 
 		void test_updateInfo_data()
 		{
-			QTest::addColumn<EidUpdateInfo>("updateInfo");
+			QTest::addColumn<EidSupportStatus>("supportInfo");
 
-			QTest::addRow("INTERNAL_ERROR") << EidUpdateInfo::INTERNAL_ERROR;
-			QTest::addRow("NO_PROVISIONING") << EidUpdateInfo::NO_PROVISIONING;
-			QTest::addRow("UNAVAILABLE") << EidUpdateInfo::UNAVAILABLE;
-			QTest::addRow("UPDATE_AVAILABLE") << EidUpdateInfo::UPDATE_AVAILABLE;
-			QTest::addRow("UP_TO_DATE") << EidUpdateInfo::UP_TO_DATE;
+			QTest::addRow("INTERNAL_ERROR") << EidSupportStatus::INTERNAL_ERROR;
+			QTest::addRow("AVAILABLE") << EidSupportStatus::AVAILABLE;
+			QTest::addRow("UNAVAILABLE") << EidSupportStatus::UNAVAILABLE;
+			QTest::addRow("UPDATE_AVAILABLE") << EidSupportStatus::UPDATE_AVAILABLE;
+			QTest::addRow("UP_TO_DATE") << EidSupportStatus::UP_TO_DATE;
 		}
 
 
 		void test_updateInfo()
 		{
-			QFETCH(EidUpdateInfo, updateInfo);
+			QFETCH(EidSupportStatus, supportInfo);
 
-			Env::getSingleton<ReaderManager>()->callExecute([updateInfo] {
-					setUpdateInfo(updateInfo);
-					QCOMPARE(SmartManager::get()->updateInfo(), updateInfo);
+			Env::getSingleton<ReaderManager>()->callExecute([supportInfo] {
+					setSmartEidSupportStatus(supportInfo);
+					QCOMPARE(SmartManager::get()->updateSupportInfo().mStatus, supportInfo);
 				});
 		}
 
@@ -103,11 +104,11 @@ class test_SmartManager
 			Env::getSingleton<ReaderManager>()->callExecute([] {
 					const auto& smartManager = SmartManager::get();
 
-					QVERIFY(!smartManager->deleteSmart());
+					QCOMPARE(smartManager->deleteSmart(), EidServiceResult::UNSUPPORTED);
 
 					setDeleteSmartEidResult(EidServiceResult::SUCCESS);
 
-					QVERIFY(smartManager->deleteSmart());
+					QCOMPARE(smartManager->deleteSmart(), EidServiceResult::SUCCESS);
 					QVERIFY(smartManager->status() == EidStatus::NO_PROVISIONING);
 				});
 		}
@@ -118,11 +119,11 @@ class test_SmartManager
 			Env::getSingleton<ReaderManager>()->callExecute([] {
 					const auto& smartManager = SmartManager::get();
 
-					QVERIFY(!smartManager->installSmart());
+					QCOMPARE(smartManager->installSmart(), EidServiceResult::UNSUPPORTED);
 
 					setInstallSmartEidResult(EidServiceResult::SUCCESS);
 
-					QVERIFY(smartManager->installSmart());
+					QCOMPARE(smartManager->installSmart(), EidServiceResult::SUCCESS);
 					QVERIFY(smartManager->status() == EidStatus::NO_PERSONALIZATION);
 				});
 		}

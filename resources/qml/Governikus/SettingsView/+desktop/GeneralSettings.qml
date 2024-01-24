@@ -1,109 +1,97 @@
 /**
  * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.SettingsModel 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.SettingsModel
 
 ColumnLayout {
-	readonly property string helpTopic: "settingsGeneral"
-
 	spacing: Constants.component_spacing
 
-	GText {
-		activeFocusOnTab: true
-
+	GPane {
+		Layout.fillWidth: true
+		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
-		text: qsTr("Language selection")
-		textStyle: Style.text.header_accent
+		title: qsTr("Language selection")
 
-		FocusFrame {
+		LanguageButtons {
+			columns: 4
 		}
 	}
-	LanguageButtons {
-		columns: 2
-	}
-	GSeparator {
+	GPane {
 		Layout.fillWidth: true
-	}
-	GText {
-		activeFocusOnTab: true
-
+		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
-		text: qsTr("Behavior")
-		textStyle: Style.text.header_accent
+		title: qsTr("Appearance")
 
-		FocusFrame {
+		DarkModeButtons {
+		}
+		LabeledSwitch {
+			checked: SettingsModel.useSystemFont
+
+			//: LABEL DESKTOP
+			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
+			//: LABEL DESKTOP
+			title: qsTr("Use the system font")
+
+			onCheckedChanged: SettingsModel.useSystemFont = checked
 		}
 	}
-	GCheckBox {
+	GPane {
 		Layout.fillWidth: true
-		checked: SettingsModel.autoStartApp
-		enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
-		maximumLineCount: 2
-		text: Qt.platform.os === "osx" ?
-		//: LABEL MACOS Text for auto-start option
-		qsTr("Auto-start %1 after boot and add to menu bar").arg(Qt.application.name) :
-		//: LABEL WINDOWS Text for auto-start option
-		qsTr("Auto-start %1 after boot").arg(Qt.application.name)
-
-		onCheckedChanged: SettingsModel.autoStartApp = checked
-	}
-	GCheckBox {
-		checked: SettingsModel.autoCloseWindowAfterAuthentication
-
+		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
-		text: qsTr("Close after authentication")
+		title: qsTr("Behavior")
 
-		onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
-	}
-	GCheckBox {
-		checked: SettingsModel.showInAppNotifications
-		enabled: !SettingsModel.developerMode
+		LabeledSwitch {
+			checked: SettingsModel.autoStartApp
+			enabled: !SettingsModel.autoStartSetByAdmin && SettingsModel.autoStartAvailable
+			title: Qt.platform.os === "osx" ?
+			//: LABEL MACOS Text for auto-start option
+			qsTr("Auto-start %1 after boot and add to menu bar").arg(Qt.application.name) :
+			//: LABEL WINDOWS Text for auto-start option
+			qsTr("Auto-start %1 after boot and add a tray icon").arg(Qt.application.name)
 
-		//: LABEL DESKTOP
-		text: qsTr("Use internal notifications")
+			onCheckedChanged: SettingsModel.autoStartApp = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.autoCloseWindowAfterAuthentication
 
-		onCheckedChanged: SettingsModel.showInAppNotifications = checked
-	}
-	GText {
-		Layout.fillWidth: true
-		activeFocusOnTab: true
+			//: LABEL DESKTOP
+			title: qsTr("Close %1 after authentication").arg(Qt.application.name)
 
-		//: LABEL DESKTOP Only visible when the user activates the developer mode in the settings.
-		text: qsTr("Using the developer mode forces the notifications to be enabled.")
-		textStyle: Style.text.hint_warning
-		visible: SettingsModel.developerMode
+			onCheckedChanged: SettingsModel.autoCloseWindowAfterAuthentication = checked
+		}
+		LabeledSwitch {
+			checked: SettingsModel.showInAppNotifications
 
-		FocusFrame {
+			//: LABEL DESKTOP Only visible when the user activates the developer mode in the settings.
+			description: SettingsModel.developerMode ? qsTr("Using the developer mode forces the notifications to be enabled.") : ""
+			enabled: !SettingsModel.developerMode
+
+			//: LABEL DESKTOP
+			title: qsTr("Show notifications inside of %1").arg(Qt.application.name)
+
+			onCheckedChanged: SettingsModel.showInAppNotifications = checked
 		}
 	}
-	GSeparator {
+	GPane {
 		Layout.fillWidth: true
-		visible: customProxySetting.visible
-	}
-	GText {
-		activeFocusOnTab: true
-
+		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
-		text: qsTr("Network")
-		textStyle: Style.text.header_accent
-		visible: customProxySetting.visible
-
-		FocusFrame {
-		}
-	}
-	GCheckBox {
-		id: customProxySetting
-		checked: SettingsModel.useCustomProxy
-
-		//: LABEL DESKTOP
-		text: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl)
+		title: qsTr("Network")
 		visible: SettingsModel.customProxyAttributesPresent
 
-		onCheckedChanged: SettingsModel.useCustomProxy = checked
+		LabeledSwitch {
+			checked: SettingsModel.useCustomProxy
+
+			//: LABEL DESKTOP
+			title: qsTr("Use the proxy (%1) specified during the installation.").arg(SettingsModel.customProxyUrl)
+
+			onCheckedChanged: SettingsModel.useCustomProxy = checked
+		}
 	}
 }

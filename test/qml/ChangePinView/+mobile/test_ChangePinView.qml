@@ -1,13 +1,14 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
+import QtQuick
+import QtTest
 
 TestCase {
 	id: testCase
+
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.ChangePinView 1.0; ChangePinView {}", testCase);
+		return createTemporaryQmlObject("import Governikus.ChangePinView; ChangePinView {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

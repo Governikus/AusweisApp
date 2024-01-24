@@ -6,7 +6,6 @@
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-#include "pace/ec/EcUtil.h"
 
 #include <QLoggingCategory>
 
@@ -60,17 +59,11 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 			QByteArray sigValue = Asn1OctetStringUtil::getValue(cvc->mSignature);
 
 			const auto* const sig = reinterpret_cast<const uchar*>(sigValue.data());
-			int siglen = sigValue.size();
+			const auto siglen = static_cast<int>(sigValue.size());
 
 			BIGNUM* r = BN_bin2bn(sig, siglen / 2, nullptr);
 			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, nullptr);
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-			cvc->mEcdsaSignature->r = r;
-			cvc->mEcdsaSignature->s = s;
-#else
 			ECDSA_SIG_set0(cvc->mEcdsaSignature, r, s);
-#endif
 		}
 	}
 	else if (pOperation == ASN1_OP_FREE_POST)

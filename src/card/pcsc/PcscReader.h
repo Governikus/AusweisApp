@@ -40,6 +40,7 @@ class PcscReader
 
 	public:
 		explicit PcscReader(const QString& pReaderName);
+		[[nodiscard]] PCSC_RETURNCODE init();
 		~PcscReader() override;
 
 		[[nodiscard]] Card* getCard() const override;

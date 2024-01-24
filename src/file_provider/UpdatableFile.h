@@ -50,7 +50,7 @@ class UpdatableFile
 		[[nodiscard]] QString sectionCachePath(const QString& pSection) const;
 		[[nodiscard]] QString makeSectionCachePath(const QString& pSection) const;
 		void cleanupAfterUpdate(const std::function<void()>& pCustomAction);
-		bool writeDataToFile(const QByteArray& pData, const QString& pFilePath, bool pOverwrite = false);
+		bool writeDataToFile(const QByteArray& pData, const QString& pFilePath) const;
 
 	private Q_SLOTS:
 		void onDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& pNewTimestamp, const QByteArray& pData);

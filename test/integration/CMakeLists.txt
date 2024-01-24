@@ -10,7 +10,7 @@ function(ADD_INTEGRATION_TEST_EXECUTABLES)
 
 		add_executable(${TESTNAME} ${sourcefile})
 		target_link_libraries(${TESTNAME} ${Qt}::Test AusweisAppTestHelper)
-		target_compile_definitions(${TESTNAME} PUBLIC AUSWEISAPP_BINARY_DIR="$<TARGET_FILE_DIR:AusweisApp>/")
+		target_compile_definitions(${TESTNAME} PUBLIC AUSWEISAPP_BINARY_DIR="$<TARGET_FILE_DIR:AusweisAppBinary>/")
 
 		GET_TEST_ENV(TESTENV ${TESTNAME})
 

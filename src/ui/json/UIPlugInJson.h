@@ -42,8 +42,8 @@ class UIPlugInJson
 
 	private Q_SLOTS:
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
 		void onCardInfoChanged(const ReaderInfo& pInfo);
 		void onReaderEvent(const ReaderInfo& pInfo);
 		void onStateChanged(const QString& pNewState);

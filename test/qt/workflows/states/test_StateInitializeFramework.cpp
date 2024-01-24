@@ -29,7 +29,7 @@ class test_StateInitializeFramework
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mAuthContext.reset(new AuthContext(nullptr));
+			mAuthContext.reset(new AuthContext());
 			auto fileContent = TestFileHelper::readFile(":/paos/InitializeFramework.xml");
 			mAuthContext->setInitializeFramework(QSharedPointer<InitializeFramework>(new InitializeFramework(fileContent)));
 

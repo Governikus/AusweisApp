@@ -37,7 +37,7 @@ j.with
 
 		shell('$WORKSPACE/sonarqubetools/sonar-build-wrapper/build-wrapper-linux-x86-64 --out-dir build cmake --build build')
 
-		shell('ctest -LE qml -E Test_ui_qml_UIPlugInQml --test-dir build --output-on-failure')
+		shell('ctest -LE qml -E Test_ui_qml_Qml --test-dir build --output-on-failure')
 
 		shell('cmake --build build --target gcovr.sonar')
 

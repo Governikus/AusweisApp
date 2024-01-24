@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Global 1.0
+import QtQuick
+import QtTest
+import Governikus.Global
 
 TestCase {
 	id: testCase
@@ -13,7 +13,7 @@ TestCase {
 	}
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.InformationView 1.0; LicenseInformation {}", testCase);
+		return createTemporaryQmlObject("import Governikus.InformationView; LicenseInformation {}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

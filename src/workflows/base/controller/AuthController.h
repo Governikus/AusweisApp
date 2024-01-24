@@ -10,12 +10,10 @@
 
 #include "WorkflowController.h"
 #include "WorkflowRequest.h"
-#include "context/ActivationContext.h"
+#include "context/AuthContext.h"
 
 namespace governikus
 {
-
-class AuthContext;
 
 class AuthController
 	: public WorkflowController
@@ -23,8 +21,9 @@ class AuthController
 	Q_OBJECT
 
 	public:
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest(const QSharedPointer<ActivationContext>& pActivationContext);
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest(const QUrl& pUrl);
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(const QUrl& pUrl,
+				const QVariant& pData = QVariant(),
+				const AuthContext::BrowserHandler& pBrowserHandler = AuthContext::BrowserHandler());
 
 		explicit AuthController(QSharedPointer<AuthContext> pContext);
 		~AuthController() override = default;

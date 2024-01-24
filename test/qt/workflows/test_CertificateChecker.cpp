@@ -12,8 +12,6 @@
 #include "SecureStorage.h"
 #include "context/AuthContext.h"
 
-#include "MockActivationContext.h"
-
 #include <QtTest>
 
 using namespace governikus;
@@ -36,7 +34,7 @@ class test_CertificateChecker
 
 		void validUpdateCert()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(QSharedPointer<MockActivationContext>::create()));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 
 			QCOMPARE(context->getCertificateList().size(), 0);
 			QCOMPARE(CertificateChecker::checkAndSaveCertificate(certs.at(0), QUrl("dummy"), context), CertificateChecker::CertificateStatus::Good);

@@ -1,27 +1,25 @@
 /**
  * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.NumberModel 1.0
-import Governikus.Type.PasswordType 1.0
-import Governikus.Type.ReaderPlugIn 1.0
-import Governikus.Type.RemoteServiceModel 1.0
+import QtQuick
+import QtQuick.Controls
+import Governikus.Global
+import Governikus.Style
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.NumberModel
+import Governikus.Type.PasswordType
+import Governikus.Type.ReaderPlugIn
+import Governikus.Type.RemoteServiceModel
 
 SectionPage {
 	id: root
 
 	property bool isPinChange: false
-	//: LABEL DESKTOP
-	property string passwordInfoLinkText: qsTr("More information")
 	property int waitingFor: 0
 
-	signal requestPasswordInfo
+	signal deviceUnpaired(var pDeviceName)
 	signal settingsRequested
 
 	onWaitingForChanged: if (visible)
@@ -36,8 +34,7 @@ SectionPage {
 	}
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
-			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
-			ApplicationModel.showFeedback(qsTr("The device %1 was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(pDeviceName));
+			deviceUnpaired(pDeviceName);
 		}
 
 		target: RemoteServiceModel
@@ -47,38 +44,53 @@ SectionPage {
 		anchors.bottom: retryCounter.top
 		anchors.bottomMargin: Constants.component_spacing
 		anchors.horizontalCenter: retryCounter.horizontalCenter
+		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
-		textStyle: Style.text.normal_highlight
 		visible: retryCounter.visible
 	}
-	StatusIcon {
+	RetryCounter {
 		id: retryCounter
-		Accessible.name: qsTr("Remaining ID card PIN attempts: %1").arg(NumberModel.retryCounter)
-		activeFocusOnTab: true
+
 		anchors.left: parent.left
 		anchors.margins: height
 		anchors.top: parent.top
-		contentBackgroundColor: Style.color.accent
-		height: Style.dimens.status_icon_small
-		text: NumberModel.retryCounter
-		textStyle: Style.text.title_inverse
 		visible: NumberModel.retryCounter >= 0 && NumberModel.passwordType === PasswordType.PIN
-
-		FocusFrame {
-		}
 	}
-	StatusIcon {
+	TintableAnimation {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.top
 		anchors.verticalCenterOffset: parent.height / 4
-		borderEnabled: false
-		busy: true
-		height: Style.dimens.status_icon_large
-		source: AuthModel.readerImage
+		height: Style.dimens.header_icon_size
+		source: {
+			if (d.foundRemoteReader) {
+				return "qrc:///images/desktop/workflow_waitfor_idcard_sak.webp";
+			}
+			if (d.foundPCSCReader) {
+				return "qrc:///images/desktop/workflow_waitfor_idcard_usb.webp";
+			}
+			return "qrc:///images/desktop/workflow_waitfor_reader.webp";
+		}
+		tintColor: Style.color.control
+		visible: waitingFor === Workflow.WaitingFor.Reader
+	}
+	TintableIcon {
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.verticalCenter: parent.top
+		anchors.verticalCenterOffset: parent.height / 4
+		source: {
+			if (d.foundRemoteReader) {
+				return "qrc:///images/desktop/workflow_idcard_nfc.svg";
+			}
+			return "qrc:///images/desktop/workflow_idcard_usb.svg";
+		}
+		sourceSize.height: Style.dimens.header_icon_size
+		tintColor: Style.color.control
+		visible: waitingFor === Workflow.WaitingFor.Password
 	}
 	ProgressCircle {
 		id: progressCircle
+
 		Accessible.focusable: true
 		Accessible.name: qsTr("Step %1 of 3").arg(state)
 		Accessible.role: Accessible.ProgressBar
@@ -100,6 +112,7 @@ SectionPage {
 	}
 	GText {
 		id: mainText
+
 		Accessible.name: mainText.text
 		activeFocusOnTab: true
 		anchors.horizontalCenter: parent.horizontalCenter
@@ -109,6 +122,9 @@ SectionPage {
 		text: {
 			switch (waitingFor) {
 			case Workflow.WaitingFor.Reader:
+				if (!!AuthModel.eidTypeMismatchError) {
+					return AuthModel.eidTypeMismatchError;
+				}
 				if (ApplicationModel.extendedLengthApdusUnsupported) {
 					//: ERROR DESKTOP
 					return qsTr("The used card reader does not meet the technical requirements (Extended Length not supported).");
@@ -125,7 +141,7 @@ SectionPage {
 				return "";
 			}
 		}
-		textStyle: Style.text.header
+		textStyle: Style.text.headline
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
@@ -141,11 +157,11 @@ SectionPage {
 				return qsTr("No ID card detected. Please ensure that your ID card is placed on the card reader.");
 			} else if (!d.foundPCSCReader && d.foundRemoteReader) {
 				//: INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.
-				return qsTr("No ID card detected. Please make sure that the NFC interface of the smartphone (connected to %1) is correctly placed on your ID card.").arg(RemoteServiceModel.connectedServerDeviceNames);
+				return qsTr("No ID card detected. Please follow the instructions on your smartphone (connected to %1) to use it as card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 
 			//: INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
-			return qsTr("Please place the smartphone (connected to %1) on your ID card or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
+			return qsTr("Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 		}
 
 		activeFocusOnTab: true
@@ -153,7 +169,6 @@ SectionPage {
 		anchors.top: mainText.bottom
 		anchors.topMargin: Constants.text_spacing
 		horizontalAlignment: Text.AlignHCenter
-		linkColor: Style.text.header.textColor
 		text: {
 			switch (waitingFor) {
 			case Workflow.WaitingFor.Reader:
@@ -167,48 +182,23 @@ SectionPage {
 			}
 		}
 		textFormat: Text.StyledText
-		textStyle: Style.text.header_secondary
-		visible: text !== "" && !ApplicationModel.extendedLengthApdusUnsupported
+		visible: text !== "" && !ApplicationModel.extendedLengthApdusUnsupported && AuthModel.eidTypeMismatchError === ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
 		FocusFrame {
 		}
 	}
-	MoreInformationLink {
-		id: moreInfo
+	GButton {
+		id: readerSettingsLink
+
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.top: subText.bottom
 		anchors.topMargin: Constants.component_spacing
-		visible: false
 
-		states: [
-			State {
-				name: "readerSettings"
-				when: waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
+		//: INFO DESKTOP
+		text: qsTr("Go to reader settings")
+		visible: waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
 
-				PropertyChanges {
-					iconVisible: false
-					target: moreInfo
-					//: INFO DESKTOP
-					text: qsTr("Go to reader settings")
-					visible: true
-
-					onClicked: root.settingsRequested()
-				}
-			},
-			State {
-				name: "moreInformation"
-				when: waitingFor === Workflow.WaitingFor.Password
-
-				PropertyChanges {
-					iconVisible: true
-					target: moreInfo
-					text: root.passwordInfoLinkText
-					visible: true
-
-					onClicked: root.requestPasswordInfo()
-				}
-			}
-		]
+		onClicked: root.settingsRequested()
 	}
 }

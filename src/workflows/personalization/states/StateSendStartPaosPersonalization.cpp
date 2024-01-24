@@ -12,9 +12,8 @@ using namespace governikus;
 StateSendStartPaosPersonalization::StateSendStartPaosPersonalization(const QSharedPointer<WorkflowContext>& pContext)
 	: StateGenericSendReceive(pContext,
 			PaosType::TRANSMIT,
-			{
-				PaosType::STARTPAOS_RESPONSE
-			}, true)
+			{},
+			true)
 {
 }
 
@@ -28,13 +27,4 @@ QSharedPointer<ResponseType> StateSendStartPaosPersonalization::getAsResponse()
 QSharedPointer<PaosCreator> StateSendStartPaosPersonalization::getAsCreator()
 {
 	return getContext()->getStartPaos();
-}
-
-
-void StateSendStartPaosPersonalization::emitStateMachineSignal(PaosType pResponseType)
-{
-	if (pResponseType == PaosType::STARTPAOS_RESPONSE)
-	{
-		Q_EMIT fireReceivedStartPaosResponse();
-	}
 }

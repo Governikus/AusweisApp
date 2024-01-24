@@ -25,9 +25,13 @@ class SmartReaderManagerPlugIn
 	Q_INTERFACES(governikus::ReaderManagerPlugIn)
 
 	private:
+		bool mReaderAdded;
 		QScopedPointer<SmartReader> mSmartReader;
-		bool initializeSmart(const QSharedPointer<SmartManager>& pSmartManager) const;
-		bool isSmartAvailable(const QSharedPointer<SmartManager>& pSmartManager) const;
+
+		void publishReader(const ReaderInfo& pInfo);
+
+	private Q_SLOTS:
+		void onSmartAvailableChanged(bool pSmartAvailable);
 
 	public:
 		SmartReaderManagerPlugIn();

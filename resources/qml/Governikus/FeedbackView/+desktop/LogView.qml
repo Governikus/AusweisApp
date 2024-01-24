@@ -1,22 +1,21 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.TitleBar 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.LogModel 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.View
+import Governikus.Type.LogModel
 
 SectionPage {
 	id: root
+
 	signal keyPressed(int key)
 
 	titleBarAction: TitleBarAction {
-		helpTopic: "applicationLog"
 		//: LABEL DESKTOP
 		text: qsTr("Logs")
 	}
@@ -27,10 +26,10 @@ SectionPage {
 
 	TabbedPane {
 		id: tabbedPane
+
 		anchors.fill: parent
-		anchors.margins: Constants.pane_padding
-		contentDelegate: logSectionDelegate
-		contentPadding: 0
+		contentDelegate: logContentDelegate
+		contentRightMargin: 0
 		sectionsModel: LogModel.logFileNames
 
 		footerItem: Item {
@@ -38,6 +37,7 @@ SectionPage {
 
 			ColumnLayout {
 				id: buttonLayout
+
 				spacing: Constants.groupbox_spacing
 
 				anchors {
@@ -47,9 +47,10 @@ SectionPage {
 				}
 				GButton {
 					id: saveLog
-					Layout.fillWidth: true
+
+					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					enabled: tabbedPane.sectionsModel.length > 0
-					icon.source: "qrc:///images/desktop/material_save.svg"
+					icon.source: "qrc:///images/desktop/save_icon.svg"
 					//: LABEL DESKTOP
 					text: qsTr("Save log")
 					tintIcon: true
@@ -61,6 +62,7 @@ SectionPage {
 
 					GFileDialog {
 						id: fileDialog
+
 						defaultSuffix: "log"
 						//: LABEL DESKTOP
 						nameFilters: qsTr("Logfiles (*.log)")
@@ -73,10 +75,11 @@ SectionPage {
 				}
 				GButton {
 					id: removeLog
-					Layout.fillWidth: true
+
+					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					disabledTooltipText: qsTr("The current log will be automatically deleted at exit.")
 					enableButton: tabbedPane.currentIndex > 0
-					icon.source: "qrc:///images/material_delete.svg"
+					icon.source: "qrc:///images/desktop/trash_icon_white.svg"
 					//: LABEL DESKTOP
 					text: qsTr("Delete log")
 					tintIcon: true
@@ -88,9 +91,10 @@ SectionPage {
 				}
 				GButton {
 					id: removeAllLogs
-					Layout.fillWidth: true
+
+					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					enableButton: tabbedPane.sectionsModel.length > 1
-					icon.source: "qrc:///images/trash_icon_all.svg"
+					icon.source: "qrc:///images/trash_icon_old.svg"
 					//: LABEL DESKTOP
 					text: qsTr("Delete old logs")
 					tintIcon: true
@@ -103,7 +107,7 @@ SectionPage {
 				GButton {
 					property QtObject detachedLogViewItem: null
 
-					Layout.fillWidth: true
+					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					icon.source: "qrc:///images/desktop/material_open_in_browser.svg"
 					text: qsTr("Detach log viewer")
 					tintIcon: true
@@ -116,47 +120,67 @@ SectionPage {
 		onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
 	}
 	Component {
-		id: logSectionDelegate
-		Item {
-			height: tabbedPane.availableHeight
-			width: parent.width
+		id: logContentDelegate
 
-			GListView {
-				id: logView
-				activeFocusOnTab: true
-				displayMarginBeginning: Constants.pane_padding
-				displayMarginEnd: Constants.pane_padding
-				model: LogModel
-				spacing: Constants.text_spacing
+		GListView {
+			id: logView
 
-				delegate: LogViewDelegate {
-					width: logView.width - 2 * Constants.pane_padding
-				}
-				highlight: LogViewHighLight {
-					currentItem: logView.currentItem
-				}
+			activeFocusOnTab: true
+			displayMarginBeginning: Constants.pane_padding
+			displayMarginEnd: Constants.pane_padding
+			implicitHeight: tabbedPane.availableHeight
+			model: LogModel
 
-				anchors {
-					bottomMargin: Constants.component_spacing
-					fill: parent
-					leftMargin: Constants.component_spacing
-					topMargin: Constants.component_spacing
+			delegate: FocusScope {
+				readonly property bool isFirstItem: index === 0
+				readonly property bool isLastItem: index === ListView.view.count - 1
+
+				implicitHeight: logDelegate.implicitHeight + logDelegate.anchors.topMargin + logDelegate.anchors.bottomMargin
+				width: logView.width - Constants.pane_padding
+
+				RoundedRectangle {
+					anchors.fill: parent
+					bottomLeftCorner: isLastItem
+					bottomRightCorner: isLastItem
+					color: Style.color.pane
+					topLeftCorner: isFirstItem
+					topRightCorner: isFirstItem
 				}
-				Connections {
-					function onFireNewLogMsg() {
-						if (logView.atYEnd)
-							logView.positionViewAtEnd();
+				LogViewDelegate {
+					id: logDelegate
+
+					focus: true
+
+					anchors {
+						bottomMargin: isLastItem ? Constants.pane_padding : 0
+						fill: parent
+						leftMargin: Constants.pane_padding
+						rightMargin: Constants.pane_padding
+						topMargin: isFirstItem ? Constants.pane_padding : Constants.text_spacing
 					}
-
-					target: LogModel
 				}
-				Connections {
-					function onKeyPressed(pKey) {
-						logView.handleKeyPress(pKey);
-					}
+			}
 
-					target: root
+			layer {
+				enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+				effect: GDropShadow {
 				}
+			}
+			Connections {
+				function onFireNewLogMsg() {
+					if (logView.atYEnd)
+						logView.positionViewAtEnd();
+				}
+
+				target: LogModel
+			}
+			Connections {
+				function onKeyPressed(pKey) {
+					logView.handleKeyPress(pKey);
+				}
+
+				target: root
 			}
 		}
 	}
@@ -174,7 +198,7 @@ SectionPage {
 			qsTr("Delete old logs") :
 			//: LABEL DESKTOP
 			qsTr("Delete selected log"))
-		width: ApplicationModel.scaleFactor * 600
+		width: plugin.scaleFactor * 600
 
 		onConfirmed: deleteAll ? LogModel.removeOtherLogFiles() : LogModel.removeCurrentLogFile()
 	}

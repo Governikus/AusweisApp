@@ -31,6 +31,6 @@
 		<string>https</string>
 	</array>
 	<key>NFCReaderUsageDescription</key>
-	<string>AusweisApp2 needs NFC to access the ID card.</string>
+	<string>AusweisApp needs NFC to access the ID card.</string>
 </dict>
 </plist>

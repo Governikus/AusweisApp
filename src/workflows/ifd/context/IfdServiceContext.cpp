@@ -14,7 +14,7 @@ bool IfdServiceContext::isPaceRequestingRights() const
 }
 
 
-void IfdServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler)
+void IfdServiceContext::onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler) const
 {
 	connect(pHandler.data(), &ServerMessageHandler::fireCardConnected, this, &IfdServiceContext::fireCardConnected);
 	connect(pHandler.data(), &ServerMessageHandler::fireCardDisconnected, this, &IfdServiceContext::fireCardDisconnected);
@@ -28,10 +28,12 @@ IfdServiceContext::IfdServiceContext(const QSharedPointer<IfdServer>& pIfdServer
 	, mIfdServer(pIfdServer)
 	, mNewPin()
 	, mSlotHandle()
+	, mDisplayText()
 	, mEstablishPaceChannel()
 	, mRequestTransportPin(false)
 	, mAllowToChangePinLength(false)
 	, mEstablishPaceChannelOutput()
+	, mAccessRightManager()
 	, mModifyPinMessage()
 	, mModifyPinMessageResponseApdu()
 {
@@ -116,10 +118,18 @@ void IfdServiceContext::setEstablishPaceChannel(const QSharedPointer<const IfdEs
 		mEstablishPaceChannel = pMessage->getInputData();
 		mRequestTransportPin = pMessage->getExpectedPinLength() == 5;
 		mAllowToChangePinLength = isPinChangeWorkflow() && pMessage->getExpectedPinLength() == 0;
+		const auto& chat = mEstablishPaceChannel.getChat();
+		if (!chat.isEmpty())
+		{
+			const auto& requiredChat = CHAT::decode(chat);
+			mAccessRightManager = QSharedPointer<AccessRightManager>::create(requiredChat);
+			Q_EMIT fireAccessRightManagerCreated(mAccessRightManager);
+		}
 	}
 	else
 	{
 		mSlotHandle.clear();
+		mAccessRightManager.clear();
 		mEstablishPaceChannel = EstablishPaceChannel();
 		mRequestTransportPin = false;
 		mAllowToChangePinLength = false;
@@ -139,9 +149,43 @@ const QString& IfdServiceContext::getSlotHandle() const
 }
 
 
+void IfdServiceContext::setDisplayText(const QString& pDisplayText)
+{
+	if (mDisplayText != pDisplayText)
+	{
+		mDisplayText = pDisplayText;
+		Q_EMIT fireDisplayTextChanged();
+	}
+}
+
+
+const QString& IfdServiceContext::getDisplayText() const
+{
+	return mDisplayText;
+}
+
+
 const EstablishPaceChannel& IfdServiceContext::getEstablishPaceChannel() const
 {
 	return mEstablishPaceChannel;
+}
+
+
+QSharedPointer<AccessRightManager> IfdServiceContext::getAccessRightManager() const
+{
+	return mAccessRightManager;
+}
+
+
+QSharedPointer<const CertificateDescription> IfdServiceContext::getCertificateDescription() const
+{
+	const auto& certDescription = mEstablishPaceChannel.getCertificateDescription();
+	if (certDescription.isEmpty())
+	{
+		return QSharedPointer<const CertificateDescription>();
+	}
+
+	return CertificateDescription::decode(certDescription);
 }
 
 
@@ -222,6 +266,7 @@ void IfdServiceContext::reset()
 {
 	qDebug() << "Resetting all PACE passwords and further relevant context information.";
 
+	setDisplayText(QString());
 	resetPacePasswords();
 	resetCardConnection();
 	resetLastPaceResult();
@@ -232,9 +277,5 @@ void IfdServiceContext::reset()
 
 [[nodiscard]] QVector<AcceptedEidType> IfdServiceContext::getAcceptedEidTypes() const
 {
-	if (mIfdServer->isLocal())
-	{
-		return {AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED, AcceptedEidType::HW_KEYSTORE};
-	}
-	return {AcceptedEidType::CARD_CERTIFIED};
+	return {AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED, AcceptedEidType::HW_KEYSTORE};
 }

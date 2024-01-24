@@ -6,6 +6,7 @@
 
 #include "MockSmartEidRestClient.h"
 
+#include <QQueue>
 #include <QSharedPointer>
 
 #include <cassert>
@@ -17,14 +18,18 @@ QSharedPointer<governikus::MockSmartEidRestClient> mRestInterface(new governikus
 struct Data
 {
 	bool ephemeralResult = true;
-	EidUpdateInfo updateInfo = mRestInterface->isEnabled() ? EidUpdateInfo::UP_TO_DATE : EidUpdateInfo::UNAVAILABLE;
-	EidStatus smartEidStatus = mRestInterface->isEnabled() ? EidStatus::NO_PERSONALIZATION : EidStatus::UNAVAILABLE;
+	EidSupportStatusResult supportInfo = EidSupportStatusResult(EidServiceResult::SUCCESS, mRestInterface->isEnabled() ? EidSupportStatus::UP_TO_DATE : EidSupportStatus::UNAVAILABLE);
+	EidStatus smartEidStatus = mRestInterface->isEnabled() ? EidStatus::NO_PERSONALIZATION : EidStatus::INTERNAL_ERROR;
+	ServiceInformationResult serviceInformation = mRestInterface->isEnabled()
+			? ServiceInformationResult(EidServiceResult::SUCCESS, SmartEidType::APPLET, std::string("uuid"))
+			: ServiceInformationResult();
 	EidServiceResult installSmartEidResult = mRestInterface->isEnabled() ? EidServiceResult::SUCCESS : EidServiceResult::UNSUPPORTED;
 	EidServiceResult deleteSmartEidResult = mRestInterface->isEnabled() ? EidServiceResult::SUCCESS : EidServiceResult::UNSUPPORTED;
 	GenericDataResult apduCommandResult;
 	GenericDataResult personalizationResult;
 	InitializeResult initializePersonalizationResult;
 	EidServiceResult deletePersonalizationResult = mRestInterface->isEnabled() ? EidServiceResult::SUCCESS : EidServiceResult::UNSUPPORTED;
+	QQueue<QString> receivedParameter;
 }
 mData;
 
@@ -35,15 +40,15 @@ void governikus::setEphemeralResult(bool pEphemeral)
 }
 
 
-void governikus::setUpdateInfo(EidUpdateInfo pStatus)
+void governikus::setSmartEidSupportStatus(EidSupportStatus pStatus)
 {
-	mData.updateInfo = pStatus;
+	mData.supportInfo.mStatus = pStatus;
 }
 
 
-EidUpdateInfo getUpdateInfo()
+EidSupportStatusResult getSmartEidSupportInfo()
 {
-	return mData.updateInfo;
+	return mData.supportInfo;
 }
 
 
@@ -56,6 +61,18 @@ void governikus::setSmartEidStatus(EidStatus pStatus)
 EidStatus getSmartEidStatus()
 {
 	return mData.smartEidStatus;
+}
+
+
+void governikus::setServiceInformation(const ServiceInformationResult& pResult)
+{
+	mData.serviceInformation = pResult;
+}
+
+
+ServiceInformationResult getServiceInformation()
+{
+	return mData.serviceInformation;
 }
 
 
@@ -147,6 +164,8 @@ void governikus::setInitializePersonalizationResult(const InitializeResult& pRes
 
 InitializeResult initializePersonalization(const std::string& pChallenge, const std::string& pPin)
 {
+	mData.receivedParameter.enqueue(QString::fromStdString(pChallenge));
+	mData.receivedParameter.enqueue(QString::fromStdString(pPin));
 	std::cout << "Mock result for:" << pChallenge << " | " << pPin << std::endl;
 
 	if (mRestInterface->isEnabled())
@@ -179,8 +198,6 @@ EidServiceResult deletePersonalization()
 }
 
 
-#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
-
 PrepareIdentificationResult prepareIdentification(const std::string& pChat)
 {
 	(void) pChat;
@@ -210,7 +227,7 @@ TAandCAResult performTAandCA(
 }
 
 
-#elif defined(__ANDROID__)
+#if defined(__ANDROID__)
 
 GenericDataResult initializeService(JNIEnv* env, jobject applicationContext)
 {
@@ -220,13 +237,26 @@ GenericDataResult initializeService(JNIEnv* env, jobject applicationContext)
 }
 
 
-PersonalizationResult finalizePersonalization()
+#else
+
+GenericDataResult initializeService()
 {
+	return {EidServiceResult::SUCCESS, ""};
+}
+
+
+#endif
+
+
+PersonalizationResult finalizePersonalization(int pStatus)
+{
+	(void) pStatus;
+
 	if (mRestInterface->isEnabled())
 	{
 		return mRestInterface->deleteSession();
 	}
-	return {EidServiceResult::ERROR, ""};
+	return {EidServiceResult::SUCCESS, ""};
 }
 
 
@@ -242,10 +272,21 @@ GenericDataResult shutdownService()
 }
 
 
-#endif
-
 void governikus::initMock()
 {
 	mRestInterface.reset(new MockSmartEidRestClient());
 	mData = Data {};
+}
+
+
+QString governikus::dequeueReceivedParameter()
+{
+	Q_ASSERT(!mData.receivedParameter.isEmpty());
+	return mData.receivedParameter.dequeue();
+}
+
+
+void governikus::setSmartEidSupportStatusResult(EidSupportStatusResult pStatus)
+{
+	mData.supportInfo = pStatus;
 }

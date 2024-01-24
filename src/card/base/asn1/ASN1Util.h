@@ -14,15 +14,7 @@
 #include <QSharedPointer>
 #include <QString>
 
-
-/*!
- * OpenSSL type declarations
- */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-DECLARE_STACK_OF(ASN1_OCTET_STRING)
-#else
 DEFINE_STACK_OF(ASN1_OCTET_STRING)
-#endif
 
 namespace governikus
 {

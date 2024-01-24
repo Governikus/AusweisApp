@@ -1,70 +1,98 @@
 /**
  * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import Governikus.Global 1.0
-import Governikus.Style 1.0
-import Governikus.Type.ReaderPlugIn 1.0
+import QtQuick
+import QtQuick.Layouts
+import Governikus.Global
+import Governikus.Style
+import Governikus.Type.ReaderPlugIn
 
-Item {
+GFlickableColumnLayout {
 	id: baseItem
 
+	property bool flowVertically: false
+	readonly property int maxItemHeight: Math.max(nfc.implicitHeight, smart.implicitHeight, remote.implicitHeight, sim.implicitHeight)
+	readonly property int maxItemWidth: Math.max(nfc.implicitWidth, smart.implicitWidth, remote.implicitWidth, sim.implicitWidth)
 	property int selectedTechnology
 	property var supportedTechnologies
 
 	signal requestPluginType(int pReaderPlugInType)
 
-	height: technologyRow.height
+	clip: true
+	implicitHeight: maxItemHeight + 2 * Constants.pane_padding
+	implicitWidth: maxItemWidth + 2 * Constants.pane_padding
+	leftMargin: 0
+	rightMargin: 0
 
-	Row {
-		id: technologyRow
-		anchors.bottom: parent.bottom
-		anchors.horizontalCenter: parent.horizontalCenter
-		spacing: Constants.component_spacing * 2
+	GSpacer {
+		Layout.fillHeight: true
+		visible: flowVertically
+	}
+	GridLayout {
+		id: switcher
 
-		TechnologySwitchButton {
-			buttonActive: selectedTechnology !== ReaderPlugIn.NFC
-			imageSource: "qrc:///images/mobile/icon_nfc.svg"
+		readonly property int columnCount: 1 + (baseItem.width - maxItemWidth) / (maxItemWidth + columnSpacing)
+
+		Layout.alignment: Qt.AlignCenter
+		columnSpacing: Constants.component_spacing * 2
+		columns: flowVertically ? 1 : columnCount
+		rowSpacing: Constants.component_spacing
+
+		GButton {
+			id: nfc
+
+			checkable: !checked
+			checked: selectedTechnology === ReaderPlugIn.NFC
+			icon.source: "qrc:///images/mobile/icon_nfc.svg"
 			//: LABEL ANDROID IOS
 			text: qsTr("NFC")
+			tintIcon: true
 			visible: supportedTechnologies.includes(ReaderPlugIn.NFC)
 
 			onClicked: baseItem.requestPluginType(ReaderPlugIn.NFC)
 		}
-		TechnologySwitchButton {
-			buttonActive: selectedTechnology !== ReaderPlugIn.SMART
-			imageSource: "qrc:///images/mobile/icon_smart.svg"
+		GButton {
+			id: smart
+
+			checkable: !checked
+			checked: selectedTechnology === ReaderPlugIn.SMART
+			icon.source: "qrc:///images/mobile/icon_smart.svg"
 			//: LABEL ANDROID IOS
 			text: qsTr("SMART")
+			tintIcon: true
 			visible: supportedTechnologies.includes(ReaderPlugIn.SMART)
 
 			onClicked: baseItem.requestPluginType(ReaderPlugIn.SMART)
 		}
-		TechnologySwitchButton {
-			buttonActive: selectedTechnology !== ReaderPlugIn.REMOTE_IFD
-			imageSource: "qrc:///images/mobile/icon_remote.svg"
+		GButton {
+			id: remote
+
+			checkable: !checked
+			checked: selectedTechnology === ReaderPlugIn.REMOTE_IFD
+			icon.source: "qrc:///images/mobile/icon_remote.svg"
 			//: LABEL ANDROID IOS
 			text: qsTr("WiFi")
+			tintIcon: true
 			visible: supportedTechnologies.includes(ReaderPlugIn.REMOTE_IFD)
 
 			onClicked: baseItem.requestPluginType(ReaderPlugIn.REMOTE_IFD)
 		}
-		TechnologySwitchButton {
-			buttonActive: selectedTechnology !== ReaderPlugIn.SIMULATOR
-			imageSource: "qrc:///images/mobile/icon_simulator.svg"
+		GButton {
+			id: sim
+
+			checkable: !checked
+			checked: selectedTechnology === ReaderPlugIn.SIMULATOR
+			icon.source: "qrc:///images/mobile/icon_simulator.svg"
 			//: LABEL ANDROID IOS
 			text: qsTr("SIM")
+			tintIcon: true
 			visible: supportedTechnologies.includes(ReaderPlugIn.SIMULATOR)
 
 			onClicked: baseItem.requestPluginType(ReaderPlugIn.SIMULATOR)
 		}
 	}
-	GSeparator {
-		width: technologyRow.width * 1.5
-
-		anchors {
-			horizontalCenter: technologyRow.horizontalCenter
-			top: technologyRow.top
-		}
+	GSpacer {
+		Layout.fillHeight: true
+		visible: flowVertically
 	}
 }

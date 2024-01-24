@@ -17,8 +17,8 @@ j.with
 
 		shell('cd source; cmake --preset ci-ios')
 
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -scheme AusweisApp archive')
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp2.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive')
+		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
 	}
 }

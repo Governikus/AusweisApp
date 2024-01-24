@@ -25,8 +25,7 @@ using namespace governikus;
 ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pContext)
 	: WorkflowController(pContext)
 {
-	auto sStatePace = new CompositeStatePace(pContext);
-	mStateMachine.addState(sStatePace);
+	auto sStatePace = addInitialState<CompositeStatePace>();
 	auto sPrepareChangePin = addState<StatePrepareChangePin>();
 	auto sEnterNewPacePin = addState<StateEnterNewPacePin>();
 	auto sChangePin = addState<StateChangePin>();
@@ -34,9 +33,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	auto sDestroyPace = addState<StateDestroyPace>();
 	auto sUpdateRetryCounterFinal = addState<StateUpdateRetryCounter>();
 	auto sCleanUpReaderManager = addState<StateCleanUpReaderManager>();
-
 	auto sFinal = addState<FinalState>();
-	mStateMachine.setInitialState(sStatePace);
 
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireContinue, sPrepareChangePin);
 	sStatePace->addTransition(sStatePace, &CompositeStatePace::fireAbort, sClearPacePasswords);
@@ -61,16 +58,16 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireContinue, sCleanUpReaderManager);
 	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &AbstractState::fireAbort, sCleanUpReaderManager);
+	sUpdateRetryCounterFinal->addTransition(sUpdateRetryCounterFinal, &StateUpdateRetryCounter::fireNoCardConnection, sCleanUpReaderManager);
 
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireContinue, sFinal);
 	sCleanUpReaderManager->addTransition(sCleanUpReaderManager, &AbstractState::fireAbort, sFinal);
 }
 
 
-QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool pRequestTransportPin)
+QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool pRequestTransportPin, bool pActivateUi)
 {
-	const auto& handler = [](const WorkflowRequest& pRequest, const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
-				Q_UNUSED(pRequest)
+	const auto& handler = [](const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
 				Q_UNUSED(pActiveWorkflow)
 
 				if (pWaitingWorkflow.isNull())
@@ -81,5 +78,5 @@ QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool 
 				return WorkflowControl::SKIP;
 			};
 
-	return WorkflowRequest::createWorkflowRequestHandler<ChangePinController, ChangePinContext>(handler, pRequestTransportPin);
+	return WorkflowRequest::createHandler<ChangePinController, ChangePinContext>(handler, pRequestTransportPin, pActivateUi);
 }

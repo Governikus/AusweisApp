@@ -11,6 +11,7 @@
 
 #include "ServerMessageHandler.h"
 
+#include <QAbstractSocket>
 #include <QByteArray>
 #include <QObject>
 #include <QScopedPointer>
@@ -45,7 +46,8 @@ class IfdServer
 		void firePskChanged(const QByteArray& pPsk);
 		void fireConnectedChanged(bool pConnected);
 		void fireIsRunningChanged();
-		void firePairingCompleted();
+		void firePairingCompleted(const QSslCertificate& pCertificate);
+		void fireSocketError(QAbstractSocket::SocketError pSocketError);
 };
 
 } // namespace governikus

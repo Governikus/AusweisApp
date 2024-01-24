@@ -24,7 +24,7 @@ void StateVerifyRetryCounter::run()
 	if (!cardConnection)
 	{
 		qCDebug(statemachine) << "Card connection lost.";
-		Q_EMIT fireAbort(FailureCode::Reason::Verify_Retry_Counter_No_Card_Connection);
+		Q_EMIT fireNoCardConnection();
 		return;
 	}
 

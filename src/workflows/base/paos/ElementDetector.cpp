@@ -15,7 +15,6 @@ Q_DECLARE_LOGGING_CATEGORY(paos)
 
 ElementDetector::ElementDetector(const QByteArray& pXmlData)
 	: mReader(pXmlData)
-	, mXmlData(pXmlData)
 {
 }
 

@@ -13,7 +13,7 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 using namespace governikus;
 
 
-void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg)
+void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QString& pMsg) const
 {
 	Q_UNUSED(pEmail)
 	Q_UNUSED(pSubject)
@@ -23,7 +23,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 }
 
 
-void LogModel::shareLog(const QPoint /*popupPosition*/)
+void LogModel::shareLog(const QPoint /*popupPosition*/) const
 {
 	qCWarning(qml) << "NOT IMPLEMENTED";
 }

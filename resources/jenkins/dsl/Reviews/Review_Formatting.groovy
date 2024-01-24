@@ -35,7 +35,7 @@ j.with
 			  hg commit -m "fix formatting" -s
 			fi
 
-			(hg --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' ../patch.diff)
+			(hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' ../patch.diff)
 			if [ "$?" != "0" ]; then
 			  echo 'FORMATTING FAILED: Patch cannot be applied'
 			  exit 0

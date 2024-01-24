@@ -14,7 +14,6 @@
 #include "states/StateLoadTcTokenUrl.h"
 #include "states/StateSendWhitelistSurvey.h"
 #include "states/StateShowResult.h"
-#include "states/StateWriteHistory.h"
 
 #include <QDebug>
 #include <initializer_list>
@@ -26,14 +25,11 @@ using namespace governikus;
 SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	: WorkflowController(pContext)
 {
-	auto sLoadTcTokenUrl = addState<StateLoadTcTokenUrl>();
-	mStateMachine.setInitialState(sLoadTcTokenUrl);
-	auto sTrustedChannel = new CompositeStateTrustedChannel(pContext);
-	mStateMachine.addState(sTrustedChannel);
+	auto sLoadTcTokenUrl = addInitialState<StateLoadTcTokenUrl>();
+	auto sTrustedChannel = addState<CompositeStateTrustedChannel>();
 	auto sCheckError = addState<StateCheckError>();
 	auto sCheckRefreshAddress = addState<StateCheckRefreshAddress>();
 	auto sActivateStoreFeedbackDialog = addState<StateActivateStoreFeedbackDialog>();
-	auto sWriteHistory = addState<StateWriteHistory>();
 	auto sSendWhitelistSurvey = addState<StateSendWhitelistSurvey>();
 	auto sGetSelfAuthenticationData = addState<StateGetSelfAuthenticationData>();
 	auto sShowResult = addState<StateShowResult>();
@@ -51,11 +47,8 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireContinue, sActivateStoreFeedbackDialog);
 	sCheckRefreshAddress->addTransition(sCheckRefreshAddress, &AbstractState::fireAbort, sFinal);
 
-	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sWriteHistory);
-	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sWriteHistory);
-
-	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireContinue, sGetSelfAuthenticationData);
-	sWriteHistory->addTransition(sWriteHistory, &AbstractState::fireAbort, sGetSelfAuthenticationData);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireContinue, sGetSelfAuthenticationData);
+	sActivateStoreFeedbackDialog->addTransition(sActivateStoreFeedbackDialog, &AbstractState::fireAbort, sGetSelfAuthenticationData);
 
 	sGetSelfAuthenticationData->addTransition(sGetSelfAuthenticationData, &AbstractState::fireContinue, sShowResult);
 	sGetSelfAuthenticationData->addTransition(sGetSelfAuthenticationData, &AbstractState::fireAbort, sFinal);
@@ -68,7 +61,7 @@ SelfAuthController::SelfAuthController(QSharedPointer<SelfAuthContext> pContext)
 }
 
 
-QSharedPointer<WorkflowRequest> SelfAuthController::createWorkflowRequest()
+QSharedPointer<WorkflowRequest> SelfAuthController::createWorkflowRequest(bool pActivateUi)
 {
-	return WorkflowRequest::createWorkflowRequest<SelfAuthController, SelfAuthContext>();
+	return WorkflowRequest::create<SelfAuthController, SelfAuthContext>(pActivateUi);
 }

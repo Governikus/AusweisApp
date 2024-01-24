@@ -13,6 +13,7 @@
 
 namespace governikus
 {
+class CardConnectionWorker;
 
 class Reader
 	: public QObject
@@ -26,9 +27,9 @@ class Reader
 		void setInfoCardInfo(const CardInfo& pCardInfo);
 		void setCardInfoTagType(CardInfo::TagType pTagType);
 		void removeCardInfo();
-		void fetchCardInfo(QSharedPointer<CardConnectionWorker> pCardConnection);
+		void fetchCardInfo();
 
-		[[nodiscard]] int getTimerId();
+		[[nodiscard]] int getTimerId() const;
 		void setTimerId(int pTimerId);
 
 		void timerEvent(QTimerEvent* pEvent) override;

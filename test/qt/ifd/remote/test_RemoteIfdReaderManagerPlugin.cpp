@@ -13,6 +13,7 @@
 #include "MockIfdDispatcher.h"
 #include "Reader.h"
 #include "RemoteIfdClient.h"
+#include "VolatileSettings.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdDisconnect.h"
@@ -46,11 +47,15 @@ class MockIfdClient
 		MockIfdClient() = default;
 		~MockIfdClient() override = default;
 
+		void populateRemoteDevices();
 		void startDetection() override;
 		void stopDetection() override;
 		bool isDetecting() override;
 		void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) override;
 		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		void requestRemoteDevices() override;
+
+		QVector<QSharedPointer<IfdListEntry>> mRemoteDevices;
 };
 
 
@@ -83,6 +88,53 @@ QVector<RemoteServiceSettings::RemoteInfo> MockIfdClient::getConnectedDeviceInfo
 }
 
 
+void MockIfdClient::requestRemoteDevices()
+{
+	Q_EMIT fireRemoteDevicesInfo(mRemoteDevices);
+}
+
+
+void MockIfdClient::populateRemoteDevices()
+{
+	const Discovery discovery("TestIfdName", "3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd", 1337, {IfdVersion::Version::latest});
+	const IfdDescriptor ifdDescriptor(discovery, QHostAddress("127.0.0.1"), true);
+	mRemoteDevices = {QSharedPointer<IfdListEntry>::create(ifdDescriptor)};
+	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+	const QByteArray certData = R"(-----BEGIN CERTIFICATE-----
+					MIIFWDCCA0ACCQD1pPOO77lbczANBgkqhkiG9w0BAQsFADBuMQswCQYDVQQGEwJk
+					ZTEPMA0GA1UECAwGQnJlbWVuMQ8wDQYDVQQHDAZCcmVtZW4xEzARBgNVBAoMCkdv
+					dmVybmlrdXMxFDASBgNVBAsMC0F1c3dlaXNBcHAyMRIwEAYDVQQDDAlUZXN0SWZk
+					SWQwHhcNMjMwMzIxMTA0NzU3WhcNMjQwMzIwMTA0NzU3WjBuMQswCQYDVQQGEwJk
+					ZTEPMA0GA1UECAwGQnJlbWVuMQ8wDQYDVQQHDAZCcmVtZW4xEzARBgNVBAoMCkdv
+					dmVybmlrdXMxFDASBgNVBAsMC0F1c3dlaXNBcHAyMRIwEAYDVQQDDAlUZXN0SWZk
+					SWQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDBctLxnKgZ0JXt/Ylz
+					rCNV5urbEfOkGmta73yLxa8KS7okeQCWxytNtxaEpoq3pm/x9jHqaE6hmhEt/6iw
+					8YeuiZj88+idY/L8iQDmuUGafkXl51BKRYP9LG4VokpZ68xGG2r83x7d0CFnSKpX
+					jvP8VlXKHtymXm+zCkGiea9urmYl1GvrlKbm92+vn/FKolfEqPL26UKx+Z96B/ld
+					dA44cq4zEDL3DGOoAtkZXFfdhkgCHr4hedp8+C3kOVTzZgxGpkjQ/Hl1vt0GU0rE
+					GvRfKKQYHcJqWor43sdtOL8k9h6LcvBKuG91LST0W/CpOKYjyri1rdf2jDpL/ziA
+					FWnAukwNcHb+Mstxuy6kfcZHQOb6YwTTV4LyFjvwcEaOsEoPIhOrFDvgsWBCz2+J
+					ILs+4GlN4hGu705cU+4Arg4SkIeuhZd2LiXfk/rZvXUZ+tEvTvVgFUpR3kowMI9i
+					FuHNHK7Sffp1ekyd139t864M96dyfNrrhYQpMOLaxz0wdgx2es5L3Bv9ZobLdtDh
+					F3ztfZvDqOF27EWiIOCoZfI/mf2T4dS9D40T9lxLm5F937yC3bG5NpyLA1EVCgbF
+					NrfTN19Cg0FkuUZLVUlPXs09NgkvsXAuTh3J2ar8bTr9T+aWuErdus7y0+dizz7p
+					r7MZmVLZfHZjKuIY5hfS33osBwIDAQABMA0GCSqGSIb3DQEBCwUAA4ICAQB0T2PE
+					f6FrFSjc0TBb+waI4Fr7iOu10IolXDRPZz/INTniHQ5mX6rb2FwMoq/YlVA16QFt
+					ZD5f2tUXOkYjFFwf7wZOkJAoTDmMrc7IA8HoRAVvNVCK7ub/1IczQrq4lZim7/jI
+					ZkwjN38j2CXqgMmZbhybkvVs4AAydQuLeATVhdFkgmpghU+9zDnUAuayMgAFOeiO
+					+mCVRG1fdVrWhxUcOVbn5GFSEZKLCzS+O8ak5FNza61Vm5jl0VVDkX9yFmnjiryz
+					/s7clpt0N4lAGiLPNWdmWkOdF1iJ23mJLveC/mOurImxqlYVa7djfR8MmJzQw1vM
+					IlnAGgKYEYjx5+n++EYv2h/GQZv+o+qaOLq8bebak6lVYqS/0jjDQw1tsA2d29SW
+					y3A92KgkXO8ks+hxTEdCZQrbYIOG+9DvgO9NsZc0qLM2WKTPJhcBfWDg+cRJvw9G
+					iA4KpHtGJf3SU1fUlQrhxzUcRZhs4LQFugO5VSHPq8fYdrkt/Fm9fgQ8JchG8khj
+					kXIFNWkrffo2EQDVmYANdKeX3jWdLqDmhNiikZOsmk55HYvC1weve3o3e8gQ6HzA
+					2bTkcBAcG6AkIvadj8/nwm6wSp+1r3X+6Sor1Eml2K1p30j4ArEgTZWUwpd6jqy3
+					Scj66lxkQJPrpseT8+JcB/ob+qspBKH7zvTTuQ==
+					-----END CERTIFICATE-----)";
+	remoteServiceSettings.addTrustedCertificate(QSslCertificate(certData));
+}
+
+
 class test_RemoteIfdReaderManagerPlugIn
 	: public QObject
 {
@@ -102,6 +154,12 @@ class test_RemoteIfdReaderManagerPlugIn
 		}
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+		}
+
+
 		void init()
 		{
 			mNetworkThread.setObjectName(QStringLiteral("NetworkThread"));
@@ -111,9 +169,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			Env::set(RemoteIfdClient::staticMetaObject, mIfdClient.data());
 
 			mDispatcher1.reset(new MockIfdDispatcher());
+			mDispatcher1->setPairingConnection(false);
 			mDispatcher1->moveToThread(&mNetworkThread);
 
 			mDispatcher2.reset(new MockIfdDispatcher());
+			mDispatcher2->setPairingConnection(true);
 			mDispatcher2->moveToThread(&mNetworkThread);
 
 			mPlugin.reset(new RemoteIfdReaderManagerPlugIn());
@@ -150,6 +210,46 @@ class test_RemoteIfdReaderManagerPlugIn
 		}
 
 
+		void testDisconnectWithAdvertisedReader()
+		{
+			QSignalSpy spySend(mDispatcher1.data(), &MockIfdDispatcher::fireSend);
+
+			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher1);
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+			spySend.clear();
+
+			QSharedPointer<IfdStatus> message;
+			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
+			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
+
+			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			info.setBasicReader(true);
+			info.setMaxApduLength(500);
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
+			message.reset(new IfdStatus(info));
+			message->mConnectedReader = false;
+			mDispatcher1->onReceived(message);
+			QCOMPARE(mPlugin->getReaders().size(), 0);
+			QCOMPARE(spySend.size(), 0);
+			QCOMPARE(spyAdded.size(), 1);
+			QCOMPARE(getReaderInfo(spyAdded).getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(spyUpdated.size(), 0);
+			QCOMPARE(spyRemoved.size(), 0);
+			QCOMPARE(mPlugin->getReaders().size(), 0);
+
+			mDispatcher1->onClosed();
+			QCOMPARE(spySend.size(), 0);
+			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 0);
+			QCOMPARE(spyRemoved.size(), 1);
+			const auto removedInfo = getReaderInfo(spyRemoved);
+			QCOMPARE(removedInfo.getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(removedInfo.isValid(), false);
+			QCOMPARE(mPlugin->getReaders().size(), 0);
+		}
+
+
 		void testSingleDispatcherSingleReaderAddRemoveWithoutCard()
 		{
 			QSignalSpy spySend(mDispatcher1.data(), &MockIfdDispatcher::fireSend);
@@ -160,6 +260,7 @@ class test_RemoteIfdReaderManagerPlugIn
 
 			QSharedPointer<IfdStatus> message;
 			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
 			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
 
 			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
@@ -172,8 +273,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spySend.size(), 0);
 			QCOMPARE(spyAdded.size(), 1);
 			QCOMPARE(getReaderInfo(spyAdded).getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(spyUpdated.size(), 0);
+			QCOMPARE(spyRemoved.size(), 0);
 			QCOMPARE(mPlugin->getReaders().size(), 1);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(mPlugin->getReaders().at(0)->getReaderInfo().isValid(), true);
 			QCOMPARE(mPlugin->getReaders().at(0)->getReaderInfo().isBasicReader(), true);
 			QCOMPARE(mPlugin->getReaders().at(0)->getReaderInfo().getMaxApduLength(), 500);
 
@@ -183,21 +287,33 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(mPlugin->getReaders().size(), 0);
 			QCOMPARE(spySend.size(), 0);
 			QCOMPARE(spyAdded.size(), 0);
-			QCOMPARE(spyRemoved.size(), 1);
-			QCOMPARE(getReaderInfo(spyRemoved).getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(spyUpdated.size(), 1);
+			const auto updateInfo1 = getReaderInfo(spyUpdated);
+			QCOMPARE(updateInfo1.getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(updateInfo1.isValid(), false);
+			QCOMPARE(spyRemoved.size(), 0);
+			QCOMPARE(mPlugin->getReaders().size(), 0);
 
 			message.reset(new IfdStatus(info));
 			message->mConnectedReader = true;
 			mDispatcher1->onReceived(message);
+			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 1);
+			const auto updateInfo2 = getReaderInfo(spyUpdated);
+			QCOMPARE(updateInfo2.getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(updateInfo2.isValid(), true);
+			QCOMPARE(spyRemoved.size(), 0);
 			QCOMPARE(mPlugin->getReaders().size(), 1);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader#TestContext"));
-			spyAdded.clear();
 
 			mDispatcher1->onClosed();
 			QCOMPARE(spySend.size(), 0);
 			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 0);
 			QCOMPARE(spyRemoved.size(), 1);
-			QCOMPARE(getReaderInfo(spyRemoved).getName(), QStringLiteral("NFC Reader#TestContext"));
+			const auto removedInfo = getReaderInfo(spyRemoved);
+			QCOMPARE(removedInfo.getName(), QStringLiteral("NFC Reader#TestContext"));
+			QCOMPARE(removedInfo.isValid(), true);
 			QCOMPARE(mPlugin->getReaders().size(), 0);
 		}
 
@@ -246,6 +362,7 @@ class test_RemoteIfdReaderManagerPlugIn
 
 			QSharedPointer<IfdStatus> message;
 			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
 			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
 
 			ReaderInfo info1(QStringLiteral("NFC Reader 1"), ReaderManagerPlugInType::NFC);
@@ -266,6 +383,7 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spyAdded.size(), 2);
 			QCOMPARE(getReaderInfo(spyAdded).getName(), QStringLiteral("NFC Reader 1#TestContext"));
 			QCOMPARE(getReaderInfo(spyAdded).getName(), QStringLiteral("NFC Reader 2#TestContext"));
+			QCOMPARE(spyUpdated.size(), 0);
 			QCOMPARE(spyRemoved.size(), 0);
 			QCOMPARE(mPlugin->getReaders().size(), 2);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader 1#TestContext"));
@@ -278,8 +396,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spySend1.size(), 0);
 			QCOMPARE(spySend2.size(), 0);
 			QCOMPARE(spyAdded.size(), 0);
-			QCOMPARE(spyRemoved.size(), 1);
-			QCOMPARE(getReaderInfo(spyRemoved).getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			QCOMPARE(spyUpdated.size(), 1);
+			const auto updateInfo1 = getReaderInfo(spyUpdated);
+			QCOMPARE(updateInfo1.getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			QCOMPARE(updateInfo1.isValid(), false);
+			QCOMPARE(spyRemoved.size(), 0);
 			QCOMPARE(mPlugin->getReaders().size(), 1);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader 2#TestContext"));
 
@@ -289,8 +410,11 @@ class test_RemoteIfdReaderManagerPlugIn
 
 			QCOMPARE(spySend1.size(), 0);
 			QCOMPARE(spySend2.size(), 0);
-			QCOMPARE(spyAdded.size(), 1);
-			QCOMPARE(getReaderInfo(spyAdded).getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 1);
+			const auto updateInfo2 = getReaderInfo(spyUpdated);
+			QCOMPARE(updateInfo2.getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			QCOMPARE(updateInfo2.isValid(), true);
 			QCOMPARE(spyRemoved.size(), 0);
 			QCOMPARE(mPlugin->getReaders().size(), 2);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader 1#TestContext"));
@@ -300,8 +424,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spySend1.size(), 0);
 			QCOMPARE(spySend2.size(), 0);
 			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 0);
 			QCOMPARE(spyRemoved.size(), 1);
-			QCOMPARE(getReaderInfo(spyRemoved).getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			const auto removedInfo1 = getReaderInfo(spyRemoved);
+			QCOMPARE(removedInfo1.getName(), QStringLiteral("NFC Reader 1#TestContext"));
+			QCOMPARE(removedInfo1.isValid(), true);
 			QCOMPARE(mPlugin->getReaders().size(), 1);
 			QCOMPARE(mPlugin->getReaders().at(0)->getName(), QStringLiteral("NFC Reader 2#TestContext"));
 
@@ -309,8 +436,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spySend1.size(), 0);
 			QCOMPARE(spySend2.size(), 0);
 			QCOMPARE(spyAdded.size(), 0);
+			QCOMPARE(spyUpdated.size(), 0);
 			QCOMPARE(spyRemoved.size(), 1);
-			QCOMPARE(getReaderInfo(spyRemoved).getName(), QStringLiteral("NFC Reader 2#TestContext"));
+			const auto removedInfo2 = getReaderInfo(spyRemoved);
+			QCOMPARE(removedInfo2.getName(), QStringLiteral("NFC Reader 2#TestContext"));
+			QCOMPARE(removedInfo2.isValid(), true);
 			QCOMPARE(mPlugin->getReaders().size(), 0);
 		}
 
@@ -522,6 +652,72 @@ class test_RemoteIfdReaderManagerPlugIn
 
 				spySend.clear();
 			}
+		}
+
+
+		void testConnectionAttemptConnectionNeverFinished()
+		{
+			mIfdClient->populateRemoteDevices();
+
+			mPlugin->connectToPairedReaders();
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
+
+			mPlugin->connectToPairedReaders();
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
+		}
+
+
+		void testConnectionAttemptDeviceVanished()
+		{
+			mIfdClient->populateRemoteDevices();
+
+			mPlugin->connectToPairedReaders();
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
+
+			QTest::ignoreMessage(QtInfoMsg, "Removing \"3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd\" from connection attempt list as it has vanished");
+			Q_EMIT mIfdClient->fireDeviceVanished(mIfdClient->mRemoteDevices.first());
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 0); // clazy:exclude=qstring-allocations
+		}
+
+
+		void testConnectionAttemptConnectionDone()
+		{
+			mIfdClient->populateRemoteDevices();
+
+			mPlugin->connectToPairedReaders();
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
+
+			QTest::ignoreMessage(QtInfoMsg, "Removing \"3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd\" from connection attempt list as the request finished with No_Error | \"No error occurred.\"");
+			Q_EMIT mIfdClient->fireEstablishConnectionDone(mIfdClient->mRemoteDevices.first(), GlobalStatus::Code::No_Error);
+			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 0); // clazy:exclude=qstring-allocations
+		}
+
+
+		void testKeepNormalConnection()
+		{
+			QSignalSpy spySend(mDispatcher1.data(), &MockIfdDispatcher::fireSend);
+
+			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher1);
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+			spySend.clear();
+
+			mPlugin->onContextEstablished(QStringLiteral("MAC-MINI"), mDispatcher1->getId());
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+			QSharedPointer<const IfdMessage> result = qvariant_cast<QSharedPointer<const IfdMessage>>(spySend.takeFirst().at(0));
+			QCOMPARE(result->getType(), IfdMessageType::IFDGetStatus);
+		}
+
+
+		void testClosePairingConnection()
+		{
+			QSignalSpy spySend(mDispatcher2.data(), &MockIfdDispatcher::fireSend);
+			QSignalSpy spyClosed(mDispatcher2.data(), &MockIfdDispatcher::fireClosed);
+
+			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher2);
+			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
+
+			mPlugin->onContextEstablished(QStringLiteral("MAC-MINI"), mDispatcher2->getId());
+			QTRY_COMPARE(spyClosed.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

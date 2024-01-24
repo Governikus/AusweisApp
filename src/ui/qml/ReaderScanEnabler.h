@@ -28,7 +28,7 @@ class ReaderScanEnabler
 
 		void enableScan(const bool pEnable);
 		void enableScanIfVisible();
-		bool isScanRunning() const;
+		[[nodiscard]] bool isScanRunning() const;
 
 	private Q_SLOTS:
 		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);

@@ -65,7 +65,7 @@ SurveyModel::SurveyModel()
 
 int SurveyModel::rowCount(const QModelIndex&) const
 {
-	return mData.size();
+	return static_cast<int>(mData.size());
 }
 
 
@@ -107,7 +107,7 @@ void SurveyModel::buildDataObject()
 	mData += qMakePair(tr("OS version"), mOsVersion);
 	mData += qMakePair(tr("Kernel version"), mKernelVersion);
 	mData += qMakePair(tr("Max. NFC Packet Length"), QString::number(mMaximumNfcPacketLength));
-	mData += qMakePair(tr("AusweisApp2 Version"), mAusweisAppVersionNumber);
+	mData += qMakePair(tr("%1 Version").arg(QCoreApplication::applicationName()), mAusweisAppVersionNumber);
 	mData += qMakePair(tr("NFC Tag Type"), mNfcTagType);
 	endResetModel();
 }
@@ -195,21 +195,21 @@ void SurveyModel::setAuthWasSuccessful(bool pSuccess)
 }
 
 
-bool SurveyModel::askForDeviceSurvey()
+bool SurveyModel::askForDeviceSurvey() const
 {
 	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	return mNfcDataAvailable && mAuthWasSuccessful && settings.askForDeviceSurvey();
 }
 
 
-bool SurveyModel::isDeviceSurveyPending()
+bool SurveyModel::isDeviceSurveyPending() const
 {
 	const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	return mNfcDataAvailable && mAuthWasSuccessful && settings.isDeviceSurveyPending();
 }
 
 
-void SurveyModel::setDeviceSurveyPending(bool pValue)
+void SurveyModel::setDeviceSurveyPending(bool pValue) const
 {
 	Env::getSingleton<AppSettings>()->getGeneralSettings().setDeviceSurveyPending(pValue);
 }

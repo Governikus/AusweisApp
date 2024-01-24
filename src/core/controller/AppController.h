@@ -51,12 +51,7 @@ class AppController final
 		AppController();
 
 		bool eventFilter(QObject* pObj, QEvent* pEvent) override;
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
-#else
-		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, long* pResult) override;
-#endif
 
 		void start();
 
@@ -66,8 +61,9 @@ class AppController final
 		void fireInitialized();
 		void fireStarted();
 		void fireShutdown();
-		void fireWorkflowStarted(QSharedPointer<WorkflowContext> pContext);
-		void fireWorkflowFinished(QSharedPointer<WorkflowContext> pContext);
+		void fireWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest);
+		void fireWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest);
+		void fireWorkflowUnhandled(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireShowUi(UiModule pModule);
 		void fireHideUi();
 		void fireShowUserInformation(const QString& pInformationMessage);

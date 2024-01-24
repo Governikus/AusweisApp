@@ -9,6 +9,8 @@
 #pragma once
 
 #include "IfdServer.h"
+#include "asn1/CertificateDescription.h"
+#include "context/AccessRightManager.h"
 #include "context/WorkflowContext.h"
 #include "messages/IfdEstablishPaceChannel.h"
 #include "messages/IfdModifyPin.h"
@@ -32,10 +34,12 @@ class IfdServiceContext
 		QString mNewPin;
 
 		QString mSlotHandle;
+		QString mDisplayText;
 		EstablishPaceChannel mEstablishPaceChannel;
 		bool mRequestTransportPin;
 		bool mAllowToChangePinLength;
 		EstablishPaceChannelOutput mEstablishPaceChannelOutput;
+		QSharedPointer<AccessRightManager> mAccessRightManager;
 
 		QSharedPointer<const IfdModifyPin> mModifyPinMessage;
 		ResponseApdu mModifyPinMessageResponseApdu;
@@ -43,14 +47,16 @@ class IfdServiceContext
 		[[nodiscard]] bool isPaceRequestingRights() const;
 
 	public Q_SLOTS:
-		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
+		void onMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler) const;
 
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);
+		void fireDisplayTextChanged();
 		void fireCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
 		void fireCancelPasswordRequest();
 		void fireEstablishPaceChannelUpdated();
 		void fireIsRunningChanged();
+		void fireAccessRightManagerCreated(QSharedPointer<AccessRightManager> pAccessRightManager);
 
 	public:
 		explicit IfdServiceContext(const QSharedPointer<IfdServer>& pIfdServer);
@@ -70,7 +76,11 @@ class IfdServiceContext
 
 		void setEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 		[[nodiscard]] const QString& getSlotHandle() const;
+		void setDisplayText(const QString& pDisplayText);
+		[[nodiscard]] const QString& getDisplayText() const;
 		[[nodiscard]] const EstablishPaceChannel& getEstablishPaceChannel() const;
+		[[nodiscard]] QSharedPointer<AccessRightManager> getAccessRightManager() const;
+		[[nodiscard]] QSharedPointer<const CertificateDescription> getCertificateDescription() const;
 
 		void changePinLength();
 		[[nodiscard]] bool allowToChangePinLength() const;

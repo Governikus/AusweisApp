@@ -50,13 +50,13 @@ VersionInfo::VersionInfo()
 VersionInfo VersionInfo::getInstance()
 {
 	return VersionInfo({
-				{NAME(), QCoreApplication::applicationName()},
-				{IMPL_TITLE(), QCoreApplication::applicationName()},
+				{NAME(), QStringLiteral("AusweisApp2")},
+				{IMPL_TITLE(), QStringLiteral("AusweisApp2")},
 				{IMPL_VENDOR(), QCoreApplication::organizationName()},
 				{IMPL_VERSION(), QCoreApplication::applicationVersion()},
-				{SPEC_TITLE(), QStringLiteral("TR-03124")},
+				{SPEC_TITLE(), QStringLiteral("TR-03124-1")},
 				{SPEC_VENDOR(), QStringLiteral("Federal Office for Information Security")},
-				{SPEC_VERSION(), QStringLiteral("1.3")}
+				{SPEC_VERSION(), QStringLiteral("1.4")}
 			});
 }
 
@@ -65,12 +65,7 @@ VersionInfo VersionInfo::fromText(const QString& pText)
 {
 	QMap<QString, QString> infos;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 	const auto& header = QStringView(pText).split(QLatin1Char('\n'));
-#else
-	const auto& header = pText.splitRef(QLatin1Char('\n'));
-#endif
-
 	for (const auto& line : header)
 	{
 		const auto pair = line.split(QLatin1Char(':'));

@@ -62,7 +62,7 @@
 
 		<WixVariable Id="WixUILicenseRtf" Value="$(var.CPACK_WIX_LICENSE_RTF)"/>
 
-		<WixVariable Id="CompanyRootKey" Value="Software\$(var.CPACK_PACKAGE_VENDOR)\$(var.CPACK_PACKAGE_NAME)"/>
+		<WixVariable Id="CompanyRootKey" Value="Software\$(var.CPACK_PACKAGE_VENDOR)\AusweisApp2"/> <!-- use var.CPACK_PACKAGE_NAME after migrating to new registry key -->
 
 		<?ifdef CPACK_WIX_PRODUCT_ICON?>
 			<Property Id="ARPPRODUCTICON">ProductIcon.ico</Property>

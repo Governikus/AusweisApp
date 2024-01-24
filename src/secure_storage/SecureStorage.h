@@ -38,7 +38,6 @@ class SecureStorage
 	friend class ::test_SecureStorage;
 
 	private:
-		bool mLoaded;
 		QString mVendor;
 		QByteArrayList mCvcas;
 		QByteArrayList mCvcasTest;
@@ -52,7 +51,6 @@ class SecureStorage
 		QString mSmartPersonalizationUrl;
 		QString mSmartPersonalizationTestUrl;
 		QString mSmartServiceId;
-		QString mSmartVersionTag;
 		QString mSmartSsdAid;
 		QString mLocalIfdPackageName;
 		QString mLocalIfdMinVersion;
@@ -75,7 +73,7 @@ class SecureStorage
 		[[nodiscard]] QJsonObject loadFile(const QStringList& pFiles) const;
 		void load();
 
-		QByteArrayList loadTestCvcsFromAppDir();
+		QByteArrayList loadTestCvcsFromAppDir() const;
 		[[nodiscard]] QByteArray loadTestCvc(const QString& pPath) const;
 
 	protected:
@@ -99,7 +97,6 @@ class SecureStorage
 		[[nodiscard]] const QUrl& getAppcastBetaUpdateUrl() const;
 		[[nodiscard]] const QString& getSmartPersonalizationUrl(bool pTest = false) const;
 		[[nodiscard]] const QString& getSmartServiceId() const;
-		[[nodiscard]] const QString& getSmartVersionTag() const;
 		[[nodiscard]] const QString& getSmartSsdAid() const;
 		[[nodiscard]] const QString& getLocalIfdPackageName() const;
 		[[nodiscard]] const QString& getLocalIfdMinVersion() const;
@@ -110,7 +107,7 @@ class SecureStorage
 		[[nodiscard]] const TlsConfiguration& getTlsConfigLocalIfd() const;
 		[[nodiscard]] int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
 		[[nodiscard]] int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
-		[[nodiscard]] bool isLoaded() const;
+		[[nodiscard]] bool isValid() const;
 
 		[[nodiscard]] QString getDeveloperConfig() const;
 		[[nodiscard]] QString getCustomConfig() const;

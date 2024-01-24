@@ -1,35 +1,13 @@
 eid-applet-service jni bridge
 =============================
 
-- Current `eid_applet_interface.h` version: `0.16.0`
-- Current `eid-applet-service-lib.aar` version: `0.10.3-180`
+- Current `eid_applet_interface.h` version: `0.23.0`
+- Current `eid-applet-service-lib.aar` version: `1.1.0`
 
-## Availability
+## Description
 
-If you have access to the `partner.bdr.de` network, the
-`eid-applet-service-lib` library is also available through the
-artifactory maven repository. `app/build.gradle` integration:
-
-```gradle
-    implementation "de.bdr.android.eid-applet-service-lib:eid-applet-service-lib:0.10.3-180"
-```
-
-Parse and set the credentials within the root `build.gradle`.
-
-```gradle
-allprojects {
-    repositories {
-        // ...
-        maven {
-            url 'https://partner.bdr.de/artifactory/mid-mvn/'
-            credentials {
-                username "Your_User_Name"
-                password "Your_Password_Or_API_Key"
-            }
-        }
-    }
-}
-```
+Creates the interface between the `eID Client` (AA2) application and the
+`eid-applet-service-lib` (delivered as .aar - android archive)
 
 ## Usage
 
@@ -45,12 +23,30 @@ successfully.
 
 ## Additional remarks
 
-- Currently used ndk version: `21.3.6528147`
+- Currently used ndk version: `25.2.9519653`
 
 License
 -------
 
+EN version:
+
 ```
-Copyright (C) 2021 Bundesdruckerei GmbH and Governikus GmbH
+Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+
+The Software is licensed under EUPL-1.2, which can be downloaded from
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12 in a language of the European Union.
+The German version of the EUPL-1.2 is available in LICENSE-DE.txt, the English version in
+the LICENSE.txt.
+```
+
+DE version:
+
+```
+Copyright (C) 2023 by Bundesdruckerei GmbH and Governikus GmbH & Co. KG
+
+Die vorliegende Software steht unter der Lizenz EUPL-1.2, die unter
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12 in einer Sprache der Europäischen
+Union heruntergeladen werden kann. Die deutsche Fassung der EUPL-1.2 liegt als Datei LICENSE-DE.txt
+vor, die englische Fassung in der LICENSE.txt.
 ```
 

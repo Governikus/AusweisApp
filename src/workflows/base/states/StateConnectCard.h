@@ -28,8 +28,7 @@ class StateConnectCard
 	private Q_SLOTS:
 		void onCardInserted();
 		void onCommandDone(QSharedPointer<CreateCardConnectionCommand> pCommand);
-		void onReaderRemoved(const ReaderInfo& pInfo);
-		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void onUnusableCardConnectionLost(const ReaderInfo& pInfo);
 
 	public:
 		void onEntry(QEvent* pEvent) override;

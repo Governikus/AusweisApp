@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
+import QtQuick
 
 BrandConstants {
 	readonly property int component_spacing: 20
@@ -9,5 +9,6 @@ BrandConstants {
 	readonly property bool is_desktop: false
 	readonly property int pane_padding: 20
 	readonly property int pane_spacing: 20
+	readonly property int subtext_spacing: 2
 	readonly property int text_spacing: 10
 }

@@ -4,7 +4,10 @@
 
 #pragma once
 
+#include "GlobalStatus.h"
 #include "UIPlugIn.h"
+
+class test_UIPlugInScheme;
 
 namespace governikus
 {
@@ -21,11 +24,19 @@ class UIPlugInScheme
 	Q_PLUGIN_METADATA(IID "governikus.UIPlugIn" FILE "metadata.json")
 	Q_INTERFACES(governikus::UIPlugIn)
 
+	friend class ::test_UIPlugInScheme;
+
+	using RedirectHandler = std::function<void (const QUrl&, const GlobalStatus&)>;
+
+	private:
+		void handleTcTokenUrl(const QUrl& pActivationUrl, const QString& pReferrer);
+
 	private Q_SLOTS:
 		void onCustomUrl(const QUrl& pUrl);
 		void doShutdown() override;
-		void onWorkflowStarted(QSharedPointer<WorkflowContext> pContext) override;
-		void onWorkflowFinished(QSharedPointer<WorkflowContext> pContext) override;
+		void onWorkflowStarted(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pRequest) override;
+		void onWorkflowUnhandled(const QSharedPointer<WorkflowRequest>& pRequest) override;
 
 	public:
 		UIPlugInScheme();

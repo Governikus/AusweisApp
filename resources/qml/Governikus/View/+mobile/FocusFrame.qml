@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
+import QtQuick
 
 Item {
+	property color borderColor
 	property Item framee
-	property bool isOnLightBackground
 	property real marginFactor
 	property real radius
 	property Item scope

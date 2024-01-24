@@ -59,7 +59,7 @@ class test_StateTransmit
 				const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 				worker->moveToThread(&workerThread);
 				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-				const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+				const QSharedPointer<AuthContext> context(new AuthContext());
 				context->setCardConnection(connection);
 				StateTransmit stateTransmit(context);
 
@@ -87,7 +87,7 @@ class test_StateTransmit
 
 		void test_OnCardCommandDone()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(nullptr));
+			const QSharedPointer<AuthContext> context(new AuthContext());
 			const QSharedPointer<TransmitResponse> response(new TransmitResponse());
 			context->setTransmitResponse(response);
 			StateTransmit stateTransmit(context);

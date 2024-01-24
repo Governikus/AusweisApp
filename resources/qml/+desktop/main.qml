@@ -1,38 +1,52 @@
 /**
  * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
  */
-import Governikus.Global 1.0
-import Governikus.TitleBar 1.0
-import Governikus.FeedbackView 1.0
-import Governikus.MainView 1.0
-import Governikus.HistoryView 1.0
-import Governikus.SelfAuthenticationView 1.0
-import Governikus.AuthView 1.0
-import Governikus.ChangePinView 1.0
-import Governikus.ProgressView 1.0
-import Governikus.ProviderView 1.0
-import Governikus.MoreView 1.0
-import Governikus.SettingsView 1.0
-import Governikus.TutorialView 1.0
-import Governikus.UpdateView 1.0
-import Governikus.View 1.0
-import Governikus.Type.ApplicationModel 1.0
-import Governikus.Type.AuthModel 1.0
-import Governikus.Type.UiModule 1.0
-import Governikus.Type.SettingsModel 1.0
-import Governikus.Type.SelfAuthModel 1.0
-import Governikus.Type.ChangePinModel 1.0
-import Governikus.Style 1.0
-import QtQml 2.15
-import QtQml.Models 2.15
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import Governikus.Global
+import Governikus.TitleBar
+import Governikus.FeedbackView
+import Governikus.MainView
+import Governikus.SelfAuthenticationView
+import Governikus.AuthView
+import Governikus.ChangePinView
+import Governikus.ProgressView
+import Governikus.MoreView
+import Governikus.SettingsView
+import Governikus.SetupAssistantView
+import Governikus.UpdateView
+import Governikus.View
+import Governikus.Type.ApplicationModel
+import Governikus.Type.AuthModel
+import Governikus.Type.UiModule
+import Governikus.Type.SettingsModel
+import Governikus.Type.SelfAuthModel
+import Governikus.Type.ChangePinModel
+import Governikus.Style
+import QtQml
+import QtQml.Models
+import QtQuick
+import QtQuick.Controls
 
 ApplicationWindow {
 	id: appWindow
+
+	property var dominationPopup: null
+
+	function closingPopup() {
+		if (SettingsModel.showTrayIcon) {
+			return closeWarning;
+		}
+		return quitWarning;
+	}
+	function handleClosing() {
+		if (SettingsModel.showTrayIcon) {
+			d.hideUiAndTaskbarEntry();
+			return;
+		}
+		plugin.fireQuitApplicationRequest();
+	}
 	function showDetachedLogView() {
 		if (d.detachedLogView === null) {
-			d.detachedLogView = detachedLogViewWindow.createObject(appWindow);
+			d.detachedLogView = detachedLogViewWindow.createObject();
 		} else {
 			d.detachedLogView.raise();
 		}
@@ -41,7 +55,7 @@ ApplicationWindow {
 	color: Style.color.background
 	minimumHeight: 360
 	minimumWidth: 480
-	title: menuBar.rightMostAction.text
+	title: menuBar.title
 	visible: false
 
 	menuBar: TitleBar {
@@ -52,20 +66,21 @@ ApplicationWindow {
 
 	Component.onCompleted: menuBar.forceActiveFocus(Qt.MouseFocusReason)
 	onClosing: close => {
-		if (ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE) {
+		if (ApplicationModel.currentWorkflow !== ApplicationModel.WORKFLOW_NONE && !d.suppressAbortWarning) {
 			abortWorkflowWarning.open();
 			close.accepted = false;
 			return;
 		}
-		if (Qt.platform.os === "osx" && !SettingsModel.autoStartApp) {
-			close.accepted = true;
+		if (d.detachedLogView !== null) {
+			visibility = ApplicationWindow.Minimized;
+			close.accepted = false;
 			return;
 		}
-		if (SettingsModel.remindUserToClose) {
-			closeWarning.open();
+		if (SettingsModel.remindUserToClose && !d.suppressAbortWarning) {
+			closingPopup().open();
 			close.accepted = false;
 		} else {
-			d.hideUiAndTaskbarEntry();
+			handleClosing();
 		}
 	}
 	onHeightChanged: d.setScaleFactor()
@@ -75,12 +90,27 @@ ApplicationWindow {
 	}
 	onWidthChanged: d.setScaleFactor()
 
+	Item {
+		Component.onCompleted: {
+			Style.software_renderer = GraphicsInfo.api === GraphicsInfo.Software;
+		}
+	}
 	QtObject {
 		id: d
 
 		property int activeView: UiModule.DEFAULT
 		property ApplicationWindow detachedLogView: null
+		readonly property string hideToTrayText: {
+			if (Qt.platform.os === "osx") {
+				//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.
+				return qsTr("The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
+			}
+
+			//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled.
+			return qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name);
+		}
 		property int lastVisibility: ApplicationWindow.Windowed
+		property bool suppressAbortWarning: false
 
 		function abortCurrentWorkflow() {
 			if (ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_AUTHENTICATION) {
@@ -101,13 +131,19 @@ ApplicationWindow {
 		}
 		function setScaleFactor() {
 			let initialSize = plugin.initialWindowSize;
-			ApplicationModel.scaleFactor = Math.min(width / initialSize.width, height / initialSize.height);
+			plugin.scaleFactor = Math.min(width / initialSize.width, height / initialSize.height);
+		}
+		function showDetachedLogViewIfPresent() {
+			if (d.detachedLogView !== null) {
+				d.detachedLogView.show();
+			}
 		}
 		function showMainWindow() {
+			d.suppressAbortWarning = false;
 			if (active) {
 				return;
 			}
-			var currentFlags = flags;
+			let currentFlags = flags;
 			// Force the window to the foreground if it was minimized or is behind other windows (not closed to tray)
 			if (Qt.platform.os === "windows") {
 				flags = currentFlags | Qt.WindowStaysOnTopHint | Qt.WindowTitleHint;
@@ -122,31 +158,51 @@ ApplicationWindow {
 			requestActivate();
 		}
 	}
-	ConfirmationPopup {
+	Component {
 		id: domination
-		closePolicy: Popup.NoAutoClose
-		style: ConfirmationPopup.PopupStyle.NoButtons
-		text: plugin.dominator
-		//: INFO DESKTOP The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.
-		title: qsTr("Another application uses %1").arg(Qt.application.name)
-		visible: plugin.dominated
+
+		ConfirmationPopup {
+			closePolicy: Popup.NoAutoClose
+			style: ConfirmationPopup.PopupStyle.NoButtons
+			//: INFO DESKTOP The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.
+			title: qsTr("Another application uses %1").arg(Qt.application.name)
+		}
 	}
 	ConfirmationPopup {
 		id: closeWarning
+
 		closePolicy: Popup.NoAutoClose
 		style: ConfirmationPopup.PopupStyle.OkButton
-		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed for the first time.
-		text: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
+		text: d.hideToTrayText
 		//: INFO DESKTOP Header of the popup that is shown when the AA2 is closed for the first time.
 		title: qsTr("The user interface of the %1 is closed.").arg(Qt.application.name)
 
-		onConfirmed: d.hideUiAndTaskbarEntry()
+		onConfirmed: handleClosing()
 
 		GCheckBox {
 			checked: !SettingsModel.remindUserToClose
 			//: LABEL DESKTOP
 			text: qsTr("Do not show this dialog again.")
-			textStyle: Style.text.normal
+
+			onCheckedChanged: SettingsModel.remindUserToClose = !checked
+		}
+	}
+	ConfirmationPopup {
+		id: quitWarning
+
+		closePolicy: Popup.NoAutoClose
+		style: ConfirmationPopup.PopupStyle.OkButton
+		//: INFO DESKTOP Text of the popup that is shown when the AA2 is quit for the first time.
+		text: qsTr("The %1 will be shut down and an authentication will no longer be possible. You will have to restart the %1 to identify yourself towards providers.").arg(Qt.application.name)
+		//: INFO DESKTOP Header of the popup that is shown when the AA2 is quit for the first time.
+		title: qsTr("The %1 is closed.").arg(Qt.application.name)
+
+		onConfirmed: handleClosing()
+
+		GCheckBox {
+			checked: !SettingsModel.remindUserToClose
+			//: LABEL DESKTOP
+			text: qsTr("Do not show this dialog again.")
 
 			onCheckedChanged: SettingsModel.remindUserToClose = !checked
 		}
@@ -154,29 +210,48 @@ ApplicationWindow {
 	ConfirmationPopup {
 		id: abortWorkflowWarning
 
-		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active.
-		readonly property string abortText: qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name)
-		//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active and the close/minimize info was not disabled.
-		readonly property string hideToTrayText: qsTr("The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.").arg(Qt.application.name)
+		readonly property string abortText: {
+			if (SettingsModel.showTrayIcon) {
+				//: INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active.
+				return qsTr("This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.").arg(Qt.application.name);
+			}
+			//: INFO DESKTOP Content of the popup that is shown when the AA2 is shut down and a workflow is still active.
+			return qsTr("This will cancel the current operation and shut the %1 down. You will have to restart the %1 to restart the operation.").arg(Qt.application.name);
+		}
 
 		closePolicy: Popup.NoAutoClose
-		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose ? "<br/><br/>%1".arg(hideToTrayText) : "")
+		text: "%1%2".arg(abortText).arg(SettingsModel.remindUserToClose && SettingsModel.showTrayIcon ? "<br/><br/>%1".arg(d.hideToTrayText) : "")
 		//: INFO DESKTOP Header of the popup that is shown when the AA2 is closed and a workflow is still active
 		title: qsTr("Abort operation")
 
 		onCancelled: close()
 		onConfirmed: {
 			d.abortCurrentWorkflow();
-			d.hideUiAndTaskbarEntry();
+			d.suppressAbortWarning = true;
+			appWindow.close();
 		}
 	}
 	Connections {
+		function onFireDominatorChanged() {
+			if (dominationPopup) {
+				dominationPopup.close();
+				dominationPopup.destroy();
+				dominationPopup = null;
+			}
+			if (plugin.dominated) {
+				dominationPopup = domination.createObject(appWindow, {
+						"text": plugin.dominator
+					});
+				dominationPopup.open();
+			}
+		}
 		function onFireHideRequest() {
 			hide();
 		}
 		function onFireShowRequest(pModule) {
 			d.showMainWindow();
 			d.closeOpenDialogs();
+			d.showDetachedLogViewIfPresent();
 			switch (pModule) {
 			case UiModule.CURRENT:
 				break;
@@ -222,9 +297,10 @@ ApplicationWindow {
 		target: SettingsModel
 	}
 	Shortcut {
-		sequence: StandardKey.HelpContents
+		enabled: Qt.platform.os === "osx"
+		sequence: "Ctrl+W"
 
-		onActivated: ApplicationModel.openOnlineHelp(menuBar.rightMostAction.helpTopic)
+		onActivated: close()
 	}
 	Image {
 		anchors.centerIn: parent
@@ -237,6 +313,7 @@ ApplicationWindow {
 	}
 	Loader {
 		id: contentLoader
+
 		anchors.fill: parent
 		sourceComponent: switch (d.activeView) {
 		case UiModule.SELF_AUTHENTICATION:
@@ -245,16 +322,15 @@ ApplicationWindow {
 			return auth;
 		case UiModule.PINMANAGEMENT:
 			return pinmanagement;
-		case UiModule.PROVIDER:
-			return provider;
 		case UiModule.HELP:
 			return help;
 		case UiModule.SETTINGS:
 			return settings;
-		case UiModule.HISTORY:
-			return history;
 		case UiModule.TUTORIAL:
-			return tutorial;
+			if (SettingsModel.autoStartAvailable && !SettingsModel.autoStartSetByAdmin) {
+				return tutorial;
+			}
+			return main;
 		case UiModule.UPDATEINFORMATION:
 			return updateinformation;
 		default:
@@ -273,51 +349,49 @@ ApplicationWindow {
 
 		Component {
 			id: main
+
 			MainView {
 			}
 		}
 		Component {
 			id: selfauthentication
+
 			SelfAuthenticationView {
 			}
 		}
 		Component {
 			id: auth
+
 			AuthView {
 			}
 		}
 		Component {
 			id: pinmanagement
+
 			ChangePinView {
 			}
 		}
 		Component {
-			id: provider
-			ProviderView {
-			}
-		}
-		Component {
 			id: help
+
 			MoreView {
 			}
 		}
 		Component {
 			id: settings
+
 			SettingsView {
 			}
 		}
 		Component {
-			id: history
-			HistoryView {
-			}
-		}
-		Component {
 			id: tutorial
-			SetupAssistantView {
+
+			SetupAutostartView {
 			}
 		}
 		Component {
 			id: updateinformation
+
 			UpdateView {
 				onLeaveView: d.activeView = UiModule.DEFAULT
 			}
@@ -334,18 +408,17 @@ ApplicationWindow {
 		}
 	}
 	Rectangle {
-		color: Constants.white
+		color: Style.color.pane_sublevel
 		height: childrenRect.height
 		opacity: 0.7
-		radius: ApplicationModel.scaleFactor * 4
+		radius: Style.dimens.pane_radius
 		visible: SettingsModel.developerMode && d.activeView !== UiModule.SETTINGS
 		width: childrenRect.width
 
 		anchors {
 			bottom: parent.bottom
 			bottomMargin: 4
-			right: parent.right
-			rightMargin: 4
+			horizontalCenter: parent.horizontalCenter
 		}
 		Row {
 			padding: Constants.pane_padding / 2
@@ -366,17 +439,10 @@ ApplicationWindow {
 			}
 		}
 	}
-	Rectangle {
-		id: developerWarning
-		anchors.verticalCenter: parent.bottom
-		antialiasing: true
-		color: Constants.red
-		height: ApplicationModel.scaleFactor * 50
-		opacity: 0.5
-		rotation: -Math.atan(contentLoader.height / contentLoader.width) * 180 / Math.PI
-		transformOrigin: Item.Left
+	Crossed {
+		height: contentLoader.height
 		visible: SettingsModel.developerMode && d.activeView !== UiModule.SETTINGS
-		width: Math.sqrt(contentLoader.width * contentLoader.width + contentLoader.height * contentLoader.height)
+		width: contentLoader.width
 	}
 	Connections {
 		function onFireProxyAuthenticationRequired(pProxyCredentials) {
@@ -388,9 +454,11 @@ ApplicationWindow {
 	}
 	ProxyCredentialsPopup {
 		id: proxyCredentials
+
 	}
 	Component {
 		id: detachedLogViewWindow
+
 		ApplicationWindow {
 			height: plugin.initialWindowSize.height
 			minimumHeight: appWindow.minimumHeight
@@ -404,6 +472,12 @@ ApplicationWindow {
 				d.detachedLogView = null;
 			}
 
+			Shortcut {
+				enabled: Qt.platform.os === "osx"
+				sequence: "Ctrl+W"
+
+				onActivated: close()
+			}
 			DetachedLogView {
 				anchors.fill: parent
 				focus: true
