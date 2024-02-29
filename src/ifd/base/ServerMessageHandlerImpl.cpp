@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandlerImpl.h"
@@ -32,15 +32,15 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 namespace governikus
 {
 
-template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedPointer<governikus::DataChannel>&, QVector<governikus::ReaderManagerPlugInType>&>
-	(QSharedPointer<DataChannel>& pChannel, QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes)
+template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedPointer<governikus::DataChannel>&, QList<governikus::ReaderManagerPlugInType>&>
+	(QSharedPointer<DataChannel>& pChannel, QList<ReaderManagerPlugInType>& pAllowedPlugInTypes)
 {
 	return new ServerMessageHandlerImpl(pChannel, pAllowedPlugInTypes);
 }
 
 
 ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
-		const QVector<ReaderManagerPlugInType>& pAllowedTypes)
+		const QList<ReaderManagerPlugInType>& pAllowedTypes)
 	: ServerMessageHandler()
 	, mDispatcher(Env::create<IfdDispatcherServer*>(pDataChannel), &QObject::deleteLater)
 	, mAllowedPlugInTypes(pAllowedTypes)
@@ -49,6 +49,7 @@ ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChan
 {
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireReceived, this, &ServerMessageHandlerImpl::onMessage);
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireClosed, this, &ServerMessageHandlerImpl::onClosed);
+	connect(mDispatcher.data(), &IfdDispatcherServer::fireNameChanged, this, &ServerMessageHandler::fireNameChanged);
 
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireContextEstablished, this, [this] {
 			const auto readerManager = Env::getSingleton<ReaderManager>();
@@ -347,7 +348,7 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 }
 
 
-void ServerMessageHandlerImpl::setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes)
+void ServerMessageHandlerImpl::setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes)
 {
 	if (mAllowedCardTypes != pAllowedCardTypes)
 	{

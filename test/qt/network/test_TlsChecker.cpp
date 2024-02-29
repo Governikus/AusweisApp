@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -20,6 +20,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QSsl::KeyAlgorithm)
@@ -29,7 +30,7 @@ class test_TlsChecker
 {
 	Q_OBJECT
 
-	QVector<QSslCertificate> certs;
+	QList<QSslCertificate> certs;
 
 	static QSslKey createQSslKeyWithHandle(const QByteArray& pPemEncodedEvpPKey)
 	{
@@ -95,9 +96,9 @@ class test_TlsChecker
 
 		void checkCertificateHash()
 		{
-			QVERIFY(!TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << "bla bla"));
-			const QString hash = QStringLiteral("9B:87:54:6D:28:D9:A5:CF:49:C8:B1:AB:3F:C6:0D:EA:63:4B:77:64:44:3A:A8:B1:87:9B:51:44:7E:97:D2:CA").remove(QLatin1Char(':'));
-			QVERIFY(TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy" << hash << "bla bla"));
+			QVERIFY(!TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy"_L1 << "bla bla"_L1));
+			const QString hash = QStringLiteral("9B:87:54:6D:28:D9:A5:CF:49:C8:B1:AB:3F:C6:0D:EA:63:4B:77:64:44:3A:A8:B1:87:9B:51:44:7E:97:D2:CA").remove(':'_L1);
+			QVERIFY(TlsChecker::checkCertificate(certs.at(0), QCryptographicHash::Algorithm::Sha256, QSet<QString>() << "dummy"_L1 << hash << "bla bla"_L1));
 		}
 
 
@@ -303,16 +304,16 @@ class test_TlsChecker
 			TlsChecker::logSslConfig(cfg, spawnMessageLogger(network));
 
 			QCOMPARE(logSpy.count(), 6);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"_L1));
 #if (QT_VERSION < QT_VERSION_CHECK(6, 5, 0))
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""_L1));
 #else
-			QVERIFY(logSpy.at(3).at(0).toString().contains(R"(Used peer certificate: QSslCertificate(Version="", SerialNumber="", Digest="1B2M2Y8AsgTpgAmY7PhCfg==", Issuer="", Subject="", AlternativeSubjectNames=QMultiMap(), EffectiveDate=QDateTime(Invalid), ExpiryDate=QDateTime(Invalid))"));
+			QVERIFY(logSpy.at(3).at(0).toString().contains(R"(Used peer certificate: QSslCertificate(Version="", SerialNumber="", Digest="1B2M2Y8AsgTpgAmY7PhCfg==", Issuer="", Subject="", AlternativeSubjectNames=QMultiMap(), EffectiveDate=QDateTime(Invalid), ExpiryDate=QDateTime(Invalid))"_L1));
 #endif
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Used ssl session: \"\""));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Handshake of tls connection done!"));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Used ssl session: \"\""_L1));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Handshake of tls connection done!"_L1));
 		}
 
 

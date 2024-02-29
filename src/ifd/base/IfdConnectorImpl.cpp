@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdConnectorImpl.h"
@@ -30,7 +30,7 @@ using namespace governikus;
 
 void IfdConnectorImpl::removeRequest(const IfdDescriptor& pIfdDescriptor)
 {
-	QMutableVectorIterator<QSharedPointer<ConnectRequest>> requestIterator(mPendingRequests);
+	QMutableListIterator<QSharedPointer<ConnectRequest>> requestIterator(mPendingRequests);
 	while (requestIterator.hasNext())
 	{
 		const QSharedPointer<ConnectRequest> item = requestIterator.next();

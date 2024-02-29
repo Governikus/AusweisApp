@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,12 +22,12 @@ class TestWorkflowContext
 		void setCanAllowedMode(bool pCanAllowed);
 
 
-		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const override;
-		void setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes);
+		[[nodiscard]] virtual QList<AcceptedEidType> getAcceptedEidTypes() const override;
+		void setAcceptedEidTypes(const QList<AcceptedEidType>& pAcceptedEidTypes);
 
 	private:
 		bool mCanAllowed;
-		QVector<AcceptedEidType> mAcceptedEidTypes;
+		QList<AcceptedEidType> mAcceptedEidTypes;
 };
 
 } // namespace governikus

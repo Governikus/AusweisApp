@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -19,6 +19,7 @@ import Governikus.Type.UiModule
 FlickableSectionPage {
 	id: baseItem
 
+	enableTileStyle: false
 	//: LABEL ANDROID IOS
 	title: qsTr("Help")
 
@@ -28,10 +29,10 @@ FlickableSectionPage {
 
 		GOptionsContainer {
 			//: LABEL ANDROID IOS
-			title: qsTr("Help & Feedback")
+			title: qsTr("General")
 			width: parent.width
 
-			MenuItem {
+			GMenuItem {
 				drawTopCorners: true
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
@@ -46,7 +47,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
 				title: qsTr("Contact")
@@ -60,7 +61,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
 				title: qsTr("Privacy statement")
@@ -74,7 +75,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
 				title: qsTr("Accessibility statement")
@@ -88,7 +89,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
 				title: qsTr("List of Providers")
@@ -102,7 +103,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				drawBottomCorners: true
 				icon: "qrc:///images/open_website.svg"
 				//: LABEL ANDROID IOS
@@ -117,7 +118,7 @@ FlickableSectionPage {
 			title: qsTr("Logs")
 			width: parent.width
 
-			MenuItem {
+			GMenuItem {
 				drawTopCorners: true
 				//: LABEL ANDROID IOS
 				title: qsTr("Show Logs")
@@ -129,6 +130,7 @@ FlickableSectionPage {
 					id: logPage
 
 					LogView {
+						enableTileStyle: baseItem.enableTileStyle
 					}
 				}
 			}
@@ -138,9 +140,9 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				drawBottomCorners: true
-				icon: "qrc:///images/material_mail.svg"
+				icon: "qrc:///images/email_icon.svg"
 				//: LABEL ANDROID IOS
 				title: qsTr("Send log to the support")
 				width: parent.width
@@ -153,7 +155,7 @@ FlickableSectionPage {
 			title: qsTr("Information")
 			width: parent.width
 
-			MenuItem {
+			GMenuItem {
 				drawTopCorners: true
 				//: LABEL ANDROID IOS
 				title: qsTr("Version information")
@@ -165,6 +167,7 @@ FlickableSectionPage {
 					id: versionInformation
 
 					VersionInformation {
+						enableTileStyle: baseItem.enableTileStyle
 					}
 				}
 			}
@@ -174,7 +177,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				//: LABEL ANDROID IOS
 				title: qsTr("Terms of use and software license")
 				width: parent.width
@@ -185,6 +188,7 @@ FlickableSectionPage {
 					id: licenseInformation
 
 					LicenseInformation {
+						enableTileStyle: baseItem.enableTileStyle
 					}
 				}
 			}
@@ -194,7 +198,7 @@ FlickableSectionPage {
 				anchors.right: parent.right
 				anchors.rightMargin: Constants.component_spacing
 			}
-			MenuItem {
+			GMenuItem {
 				drawBottomCorners: true
 				//: LABEL ANDROID IOS
 				title: qsTr("Release notes")
@@ -206,6 +210,7 @@ FlickableSectionPage {
 					id: releaseNotes
 
 					ReleaseNotes {
+						enableTileStyle: baseItem.enableTileStyle
 					}
 				}
 			}

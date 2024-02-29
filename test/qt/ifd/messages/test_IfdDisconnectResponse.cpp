@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdDisconnectResponse.h"
@@ -9,6 +9,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,13 +37,13 @@ class test_IfdDisconnectResponse
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 7);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Missing value \"SlotHandle\""));
-			QVERIFY(logSpy.at(6).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""_L1));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""_L1));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Missing value \"SlotHandle\""_L1));
+			QVERIFY(logSpy.at(6).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"_L1));
 		}
 
 
@@ -156,14 +157,14 @@ class test_IfdDisconnectResponse
 			if (type == IfdMessageType::UNDEFINED)
 			{
 				QCOMPARE(logSpy.count(), 2);
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""));
-				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
+				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"_L1));
 
 				return;
 			}
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDDisconnectResponse"_L1));
 		}
 
 
@@ -189,7 +190,7 @@ class test_IfdDisconnectResponse
 			QCOMPARE(ifdDisconnectResponse.getResultMinor(), ECardApiResult::Minor::null);
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""_L1));
 		}
 
 

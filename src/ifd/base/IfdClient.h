@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -34,7 +34,8 @@ class IfdClient
 		void fireEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus);
 
 		void fireNewDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
-		void fireRemoteDevicesInfo(const QVector<QSharedPointer<IfdListEntry>>& pRemoteDevices);
+		void fireDispatcherChanged(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
+		void fireRemoteDevicesInfo(const QList<QSharedPointer<IfdListEntry>>& pRemoteDevices);
 		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
 		void fireDetectionChanged();
 		void fireCertificateRemoved(const QString& pDeviceName);
@@ -49,11 +50,11 @@ class IfdClient
 
 		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) = 0;
 
-		[[nodiscard]] virtual QVector<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const;
+		[[nodiscard]] virtual QList<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const;
 		[[nodiscard]] bool hasAnnouncingRemoteDevices() const;
 		Q_INVOKABLE virtual void requestRemoteDevices();
 		[[nodiscard]] virtual QStringList getConnectedDeviceIDs() const;
-		virtual QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;
+		virtual QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;
 };
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -17,6 +17,10 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 using namespace governikus;
 
 
+const std::function<int(QSsl::KeyAlgorithm)> TlsChecker::cDefaultFuncMinKeySize = [](QSsl::KeyAlgorithm pKeyAlgorithm){
+			return Env::getSingleton<SecureStorage>()->getMinimumKeySize(pKeyAlgorithm);
+		};
+
 bool TlsChecker::checkCertificate(const QSslCertificate& pCertificate,
 		QCryptographicHash::Algorithm pAlgorithm,
 		const QSet<QString>& pAcceptedCertificateHashes)
@@ -33,7 +37,7 @@ bool TlsChecker::checkCertificate(const QSslCertificate& pCertificate,
 }
 
 
-bool TlsChecker::hasValidCertificateKeyLength(const QSslCertificate& pCertificate)
+bool TlsChecker::hasValidCertificateKeyLength(const QSslCertificate& pCertificate, const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize)
 {
 	if (pCertificate.isNull())
 	{
@@ -44,11 +48,11 @@ bool TlsChecker::hasValidCertificateKeyLength(const QSslCertificate& pCertificat
 	auto keyLength = pCertificate.publicKey().length();
 	auto keyAlgorithm = pCertificate.publicKey().algorithm();
 	qDebug() << "Check certificate key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
-	return isValidKeyLength(keyLength, keyAlgorithm, false);
+	return isValidKeyLength(keyLength, keyAlgorithm, pFuncMinKeySize(keyAlgorithm));
 }
 
 
-bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
+bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey, const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize)
 {
 	int keyLength = pEphemeralServerKey.length();
 	QSsl::KeyAlgorithm keyAlgorithm = pEphemeralServerKey.algorithm();
@@ -59,7 +63,7 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey)
 	}
 
 	qDebug() << "Check ephemeral key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
-	return isValidKeyLength(keyLength, keyAlgorithm, true);
+	return isValidKeyLength(keyLength, keyAlgorithm, pFuncMinKeySize(keyAlgorithm));
 }
 
 
@@ -74,14 +78,25 @@ QString TlsChecker::getCertificateIssuerName(const QSslCertificate& pCertificate
 }
 
 
-bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral)
+QSslCertificate TlsChecker::getRootCertificate(const QList<QSslCertificate>& pCertificates)
 {
-	const auto* secureStorage = Env::getSingleton<SecureStorage>();
-	const int minKeySize = pIsEphemeral ? secureStorage->getMinimumEphemeralKeySize(pKeyAlgorithm) : secureStorage->getMinimumStaticKeySize(pKeyAlgorithm);
+	for (const auto& cert : pCertificates)
+	{
+		if (cert.isSelfSigned())
+		{
+			return cert;
+		}
+	}
 
-	qDebug() << "Minimum requested key size" << minKeySize;
+	return QSslCertificate();
+}
 
-	bool sufficient = pKeyLength >= minKeySize;
+
+bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, int pMinKeySize)
+{
+	qDebug() << "Minimum requested key size" << pMinKeySize;
+
+	bool sufficient = pKeyLength >= pMinKeySize;
 	if (!sufficient)
 	{
 		auto keySizeError = QStringLiteral("%1 key with insufficient key size found %2").arg(toString(pKeyAlgorithm)).arg(pKeyLength);

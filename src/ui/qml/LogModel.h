@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -65,7 +65,6 @@ class LogModel
 		[[nodiscard]] const QSet<QString>& getCategories() const;
 		Q_INVOKABLE QDateTime getCurrentLogFileDate() const;
 		Q_INVOKABLE void removeOtherLogFiles();
-		Q_INVOKABLE void removeCurrentLogFile();
 		Q_INVOKABLE void setLogFile(int pIndex);
 		Q_INVOKABLE void saveCurrentLogFile(const QUrl& pFilename) const;
 #ifndef QT_NO_DEBUG

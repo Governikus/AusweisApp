@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -273,6 +273,7 @@ CardReturnCode NumberModel::getInputErrorCode() const
 {
 	if (mContext.isNull()
 			|| mContext->getLastPaceResult() == CardReturnCode::OK
+			|| mContext->getLastPaceResult() == CardReturnCode::OK_PUK
 			|| mContext->getLastPaceResult() == CardReturnCode::CANCELLATION_BY_USER
 			|| mContext->getCardConnection().isNull())
 	{
@@ -324,40 +325,40 @@ QString NumberModel::getInputError() const
 			if (isRequestTransportPin)
 			{
 				//: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.
-				return tr("You have entered an incorrect, five-digit Transport PIN. "
-						  "You have two further attempts to enter the correct Transport PIN.");
+				return tr("You have entered an incorrect, 5-digit Transport PIN. "
+						  "You have 2 further attempts to enter the correct Transport PIN.");
 			}
 			else if (isSmartCard)
 			{
 				//: INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.
-				return tr("You have entered an incorrect, six-digit Smart-eID PIN. You have two further attempts to enter the correct Smart-eID PIN.");
+				return tr("You have entered an incorrect, 6-digit Smart-eID PIN. You have 2 further attempts to enter the correct Smart-eID PIN.");
 			}
 			else
 			{
 				//: INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt.
-				return tr("You have entered an incorrect, six-digit ID card PIN. You have two further attempts to enter the correct ID card PIN.");
+				return tr("You have entered an incorrect, 6-digit ID card PIN. You have 2 further attempts to enter the correct ID card PIN.");
 			}
 
 		case CardReturnCode::INVALID_PIN_2:
 			if (isRequestTransportPin)
 			{
 				//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.
-				return tr("You have entered an incorrect, five-digit Transport PIN twice. "
-						  "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+				return tr("You have entered an incorrect, 5-digit Transport PIN 2 times. "
+						  "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
 						  "You can find your CAN in the bottom right on the front of your ID card.");
 
 			}
 			else if (isSmartCard)
 			{
-				//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a third wrong attempt could invalidate the Smart-eID.
-				return tr("You have entered an incorrect, six-digit Smart-eID PIN twice. "
+				//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID.
+				return tr("You have entered an incorrect, 6-digit Smart-eID PIN 2 times. "
 						  "After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
 			}
 			else
 			{
 				//: INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification.
-				return tr("You have entered an incorrect, six-digit ID card PIN twice. "
-						  "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+				return tr("You have entered an incorrect, 6-digit ID card PIN 2 times. "
+						  "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
 						  "You can find your CAN in the bottom right on the front of your ID card.");
 			}
 
@@ -365,30 +366,30 @@ QString NumberModel::getInputError() const
 			if (isRequestTransportPin)
 			{
 				//: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
-				return tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
-						  "To remove the block, the ten-digit PUK must be entered first.");
+				return tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your Transport PIN is now blocked. "
+						  "To remove the block, the 10-digit PUK must be entered first.");
 			}
 			else if (isSmartCard)
 			{
 				//: INFO ANDROID IOS The Smart-eID PIN was entered wrongfully three times, the Smart-eID has been invalidated.
-				return tr("You have entered an incorrect, six-digit Smart-eID PIN thrice. "
+				return tr("You have entered an incorrect, 6-digit Smart-eID PIN 3 times. "
 						  "Your Smart-eID is now invalidated. "
 						  "To use a Smart-eID again you have to set one up in the guided setup on the start page.");
 			}
 			else
 			{
 				//: INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
-				return tr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. "
-						  "To remove the block, the ten-digit PUK must be entered first.");
+				return tr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. "
+						  "To remove the block, the 10-digit PUK must be entered first.");
 			}
 
 		case CardReturnCode::INVALID_CAN:
 			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.
-			return tr("You have entered an incorrect, six-digit Card Access Number (CAN). Please try again.");
+			return tr("You have entered an incorrect, 6-digit Card Access Number (CAN). Please try again.");
 
 		case CardReturnCode::INVALID_PUK:
 			//: INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.
-			return tr("You have entered an incorrect, ten-digit PUK. Please try again.");
+			return tr("You have entered an incorrect, 10-digit PUK. Please try again.");
 
 		default:
 			return CardReturnCodeUtil::toGlobalStatus(paceResult).toErrorDescription(true);

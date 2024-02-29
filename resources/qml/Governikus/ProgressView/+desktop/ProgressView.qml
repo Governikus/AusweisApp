@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -18,27 +19,30 @@ SectionPage {
 	property alias subTextColor: subText.color
 	property alias text: text.text
 
-	TintableAnimation {
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: baseItem.height / 4
-		fillMode: Image.PreserveAspectFit
-		height: Style.dimens.header_icon_size
-		source: "qrc:///images/sandglass.webp"
-		tintColor: Style.color.control
+	HourglassAnimation {
+		visible: GraphicsInfo.api !== GraphicsInfo.Software
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: Constants.component_spacing
+		}
 	}
 	GText {
 		id: text
 
 		Accessible.name: text.text
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.verticalCenter
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.headline
 		visible: text.text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.verticalCenter
+			topMargin: Constants.component_spacing * 2
+		}
 		FocusFrame {
 		}
 	}
@@ -47,14 +51,16 @@ SectionPage {
 
 		Accessible.name: subText.text
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: text.bottom
-		anchors.topMargin: Constants.text_spacing
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.subline
 		visible: subText.text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: text.bottom
+			topMargin: Constants.text_spacing
+		}
 		FocusFrame {
 		}
 	}
@@ -63,13 +69,15 @@ SectionPage {
 
 		Accessible.name: progressText.text
 		activeFocusOnTab: true
-		anchors.bottom: progressBar.top
-		anchors.bottomMargin: Constants.component_spacing
-		anchors.horizontalCenter: parent.horizontalCenter
 		horizontalAlignment: Text.AlignHCenter
 		visible: progressBar.visible
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			bottom: progressBar.top
+			bottomMargin: Constants.component_spacing
+			horizontalCenter: parent.horizontalCenter
+		}
 		FocusFrame {
 		}
 	}

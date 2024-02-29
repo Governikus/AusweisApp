@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -17,18 +17,17 @@ import Governikus.Type.ChatModel
 SectionPage {
 	id: root
 
-	property bool detailView: false
-
 	function showProviderInformation(show) {
-		detailView = show;
-		if (!detailView)
-			onVisibleChanged();
-		updateTitleBarActions();
+		d.detailView = show;
+		if (!d.detailView) {
+			root.visibleChanged();
+		}
+		root.updateTitleBarActions();
 	}
 
 	Keys.onEnterPressed: event => d.onKeyboardConfirmPressed(event)
 	Keys.onEscapePressed: event => {
-		if (!detailView) {
+		if (!d.detailView) {
 			event.accepted = false;
 			return;
 		}
@@ -36,26 +35,16 @@ SectionPage {
 	}
 	Keys.onReturnPressed: event => d.onKeyboardConfirmPressed(event)
 
-	QtObject {
-		id: d
-
-		function onKeyboardConfirmPressed(event) {
-			if (detailView) {
-				showProviderInformation(false);
-			} else {
-				confirmButton.onClicked();
-			}
-		}
-	}
-	ColumnLayout {
+	FlickableSectionPage {
 		anchors.fill: parent
-		anchors.topMargin: Constants.pane_padding * 2
+		fillWidth: true
 		spacing: Constants.pane_spacing
-		visible: !root.detailView
+		visible: !d.detailView
 
 		RowLayout {
 			Layout.alignment: Qt.AlignHCenter
-			Layout.maximumWidth: parent.width * 0.65
+			Layout.maximumWidth: Style.dimens.max_text_width * 1.2
+			Layout.topMargin: Constants.pane_padding
 			spacing: Constants.pane_spacing
 
 			Image {
@@ -64,21 +53,12 @@ SectionPage {
 				source: "qrc:///images/npa.svg"
 				sourceSize.height: Style.dimens.huge_icon_size
 			}
-			GPane {
-				id: providerInfoSectionPane
-
+			ProviderInfo {
 				Layout.fillWidth: true
+				activeFocusOnTab: true
+				name: CertificateDescriptionModel.subjectName
 
-				ProviderInfoSection {
-					Layout.fillWidth: true
-					activeFocusOnTab: true
-					image: "qrc:///images/info.svg"
-					name: CertificateDescriptionModel.subjectName
-					//: LABEL DESKTOP
-					title: qsTr("You are about to identify yourself towards the following provider:")
-
-					onClicked: showProviderInformation(true)
-				}
+				onClicked: showProviderInformation(true)
 			}
 		}
 		GButton {
@@ -105,8 +85,7 @@ SectionPage {
 			id: dataIntroduction
 
 			Accessible.name: dataIntroduction.text
-			Layout.leftMargin: Constants.pane_padding
-			Layout.rightMargin: Constants.pane_padding
+			Layout.alignment: Qt.AlignLeft
 			activeFocusOnTab: true
 			text: NumberModel.isCanAllowedMode ?
 			//: LABEL DESKTOP
@@ -117,14 +96,10 @@ SectionPage {
 			FocusFrame {
 			}
 		}
-		ScrollablePane {
+		GPane {
 			Layout.fillWidth: true
-			Layout.leftMargin: Constants.pane_padding
-			Layout.maximumHeight: parent.height / parent.children.length
-			Layout.rightMargin: Constants.pane_padding
 			activeFocusOnTab: true
-			backgroundColor: Style.color.pane_sublevel
-			minimumVisibleContentHeight: transactionText.effectiveFirstLineHeight
+			color: Style.color.pane_sublevel
 
 			//: LABEL DESKTOP
 			title: qsTr("Transactional information")
@@ -160,20 +135,16 @@ SectionPage {
 
 			readonly property int maxColumns: 3
 
+			Layout.alignment: Qt.AlignHCenter
 			Layout.fillWidth: true
-			Layout.leftMargin: Constants.pane_padding
-			Layout.maximumHeight: implicitHeight
-			Layout.rightMargin: Constants.pane_padding
 			spacing: Constants.pane_spacing
 			visible: writeData.count > 0 || requiredData.count > 0 || optionalData.count > 0
 
-			ScrollablePane {
+			GPane {
 				id: writeDataPane
 
-				Layout.alignment: Qt.AlignTop
-				Layout.fillHeight: true
 				Layout.fillWidth: true
-				backgroundColor: Style.color.pane_sublevel
+				color: Style.color.pane_sublevel
 				visible: writeData.count > 0
 
 				DataGroup {
@@ -189,13 +160,11 @@ SectionPage {
 					writeAccess: true
 				}
 			}
-			ScrollablePane {
+			GPane {
 				id: readDataPane
 
-				Layout.alignment: Qt.AlignTop
-				Layout.fillHeight: true
 				Layout.fillWidth: true
-				backgroundColor: Style.color.pane_sublevel
+				color: Style.color.pane_sublevel
 				visible: requiredData.count > 0 || optionalData.count > 0
 
 				RowLayout {
@@ -232,14 +201,22 @@ SectionPage {
 				}
 			}
 		}
-		GSpacer {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
-		}
 	}
 	CertificateDescriptionPage {
-		id: certificateDescriptionPage
+		anchors.fill: parent
+		visible: d.detailView
+	}
+	QtObject {
+		id: d
 
-		visible: root.detailView
+		property bool detailView: false
+
+		function onKeyboardConfirmPressed(event) {
+			if (d.detailView) {
+				showProviderInformation(false);
+			} else {
+				confirmButton.onClicked();
+			}
+		}
 	}
 }

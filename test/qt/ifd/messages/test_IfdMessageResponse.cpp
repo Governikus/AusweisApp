@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdMessageResponse.h"
@@ -9,6 +9,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,11 +37,11 @@ class test_IfdMessageResponse
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 5);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""_L1));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""_L1));
 		}
 
 
@@ -132,7 +133,7 @@ class test_IfdMessageResponse
 			QCOMPARE(logSpy.count(), spyCount);
 			if (spyCount > 0)
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"ResultMinor\" should be of type \"string\""));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"ResultMinor\" should be of type \"string\""_L1));
 			}
 		}
 

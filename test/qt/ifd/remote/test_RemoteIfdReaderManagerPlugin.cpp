@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -31,6 +31,8 @@
 #include <QtCore>
 #include <QtTest>
 
+
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -52,10 +54,10 @@ class MockIfdClient
 		void stopDetection() override;
 		bool isDetecting() override;
 		void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) override;
-		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 		void requestRemoteDevices() override;
 
-		QVector<QSharedPointer<IfdListEntry>> mRemoteDevices;
+		QList<QSharedPointer<IfdListEntry>> mRemoteDevices;
 };
 
 
@@ -82,9 +84,9 @@ void MockIfdClient::establishConnection(const QSharedPointer<IfdListEntry>& pEnt
 }
 
 
-QVector<RemoteServiceSettings::RemoteInfo> MockIfdClient::getConnectedDeviceInfos()
+QList<RemoteServiceSettings::RemoteInfo> MockIfdClient::getConnectedDeviceInfos()
 {
-	return QVector<RemoteServiceSettings::RemoteInfo>();
+	return QList<RemoteServiceSettings::RemoteInfo>();
 }
 
 
@@ -96,8 +98,8 @@ void MockIfdClient::requestRemoteDevices()
 
 void MockIfdClient::populateRemoteDevices()
 {
-	const Discovery discovery("TestIfdName", "3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd", 1337, {IfdVersion::Version::latest});
-	const IfdDescriptor ifdDescriptor(discovery, QHostAddress("127.0.0.1"), true);
+	const Discovery discovery("TestIfdName"_L1, "3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd"_L1, 1337, {IfdVersion::Version::latest});
+	const IfdDescriptor ifdDescriptor(discovery, QHostAddress("127.0.0.1"_L1), true);
 	mRemoteDevices = {QSharedPointer<IfdListEntry>::create(ifdDescriptor)};
 	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const QByteArray certData = R"(-----BEGIN CERTIFICATE-----
@@ -146,7 +148,7 @@ class test_RemoteIfdReaderManagerPlugIn
 		QSharedPointer<RemoteIfdReaderManagerPlugIn> mPlugin;
 		QSharedPointer<MockIfdDispatcher> mDispatcher1;
 		QSharedPointer<MockIfdDispatcher> mDispatcher2;
-		QVector<QSharedPointer<const IfdMessage>> mClientMessages;
+		QList<QSharedPointer<const IfdMessage>> mClientMessages;
 
 		ReaderInfo getReaderInfo(QSignalSpy& pSpy)
 		{
@@ -621,13 +623,13 @@ class test_RemoteIfdReaderManagerPlugIn
 			QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
 			spySend.clear();
 
-			const QVector<QSharedPointer<const IfdMessage>> clientMessages({
-						QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::latest, "MAC-MINI")),
-						QSharedPointer<const IfdMessage>(new IfdGetStatus("Remote Reader")),
-						QSharedPointer<const IfdMessage>(new IfdConnect("NFC Reader")),
-						QSharedPointer<const IfdMessage>(new IfdDisconnect("NFC Reader")),
-						QSharedPointer<const IfdMessage>(new IfdTransmit("NFC Reader", "00A402022F00")),
-						QSharedPointer<const IfdMessage>(new IfdEstablishPaceChannel("SlotHandle", EstablishPaceChannel(), 6))
+			const QList<QSharedPointer<const IfdMessage>> clientMessages({
+						QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::latest, "MAC-MINI"_L1)),
+						QSharedPointer<const IfdMessage>(new IfdGetStatus("Remote Reader"_L1)),
+						QSharedPointer<const IfdMessage>(new IfdConnect("NFC Reader"_L1)),
+						QSharedPointer<const IfdMessage>(new IfdDisconnect("NFC Reader"_L1)),
+						QSharedPointer<const IfdMessage>(new IfdTransmit("NFC Reader"_L1, "00A402022F00")),
+						QSharedPointer<const IfdMessage>(new IfdEstablishPaceChannel("SlotHandle"_L1, EstablishPaceChannel(), 6))
 					}
 					);
 			for (const auto& clientMessage : clientMessages)

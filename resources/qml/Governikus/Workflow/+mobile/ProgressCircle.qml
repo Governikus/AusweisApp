@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -8,9 +8,9 @@ import Governikus.Style
 Item {
 	id: baseItem
 
-	readonly property int _stepWidth: 60
+	readonly property int stepWidth: 60
 
-	height: 70
+	implicitHeight: 70
 	state: "inactive"
 
 	states: [
@@ -18,48 +18,27 @@ Item {
 			name: "inactive"
 
 			PropertyChanges {
-				state: "inactive"
-				target: tCircle1
-			}
-			PropertyChanges {
-				state: "inactive"
-				target: tCircle2
-			}
-			PropertyChanges {
-				anchors.leftMargin: 0
-				target: rec1
+				rec1.anchors.leftMargin: 0
+				tCircle1.state: "inactive"
+				tCircle2.state: "inactive"
 			}
 		},
 		State {
 			name: "one"
 
 			PropertyChanges {
-				state: "active"
-				target: tCircle1
-			}
-			PropertyChanges {
-				state: "inactive"
-				target: tCircle2
-			}
-			PropertyChanges {
-				anchors.leftMargin: 0
-				target: rec1
+				rec1.anchors.leftMargin: 0
+				tCircle1.state: "active"
+				tCircle2.state: "inactive"
 			}
 		},
 		State {
 			name: "two"
 
 			PropertyChanges {
-				state: "inactive"
-				target: tCircle1
-			}
-			PropertyChanges {
-				state: "active"
-				target: tCircle2
-			}
-			PropertyChanges {
-				anchors.leftMargin: -_stepWidth
-				target: rec1
+				rec1.anchors.leftMargin: -stepWidth
+				tCircle1.state: "inactive"
+				tCircle2.state: "active"
 			}
 		}
 	]
@@ -83,7 +62,7 @@ Item {
 		anchors.verticalCenter: parent.verticalCenter
 		color: Constants.blue
 		height: 2
-		width: _stepWidth
+		width: stepWidth
 	}
 	Rectangle {
 		id: tCircle1
@@ -103,16 +82,14 @@ Item {
 				name: "active"
 
 				PropertyChanges {
-					target: innerDisc
-					width: 50
+					innerDisc.width: 50
 				}
 			},
 			State {
 				name: "inactive"
 
 				PropertyChanges {
-					target: innerDisc
-					width: 25
+					innerDisc.width: 25
 				}
 			}
 		]

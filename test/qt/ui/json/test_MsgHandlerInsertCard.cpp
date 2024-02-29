@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -21,6 +21,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_MsgHandlerInsertCard
@@ -81,9 +82,9 @@ class test_MsgHandlerInsertCard
 
 		void readerWithoutCard()
 		{
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1");
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2");
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 3");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1"_L1);
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2"_L1);
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 3"_L1);
 
 			MessageDispatcher dispatcher;
 			setContext(dispatcher);
@@ -94,8 +95,8 @@ class test_MsgHandlerInsertCard
 
 		void readerWithCard()
 		{
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1");
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1"_L1);
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD"_L1);
 			reader->setCard(MockCardConfig());
 
 			MessageDispatcher dispatcher;
@@ -126,12 +127,12 @@ class test_MsgHandlerInsertCard
 			msg = R"({"cmd": "SET_CARD", "name": false})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"Invalid name","msg":"INSERT_CARD"})"));
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReaderNfc", ReaderManagerPlugInType::NFC);
+			MockReaderManagerPlugIn::getInstance().addReader("MockReaderNfc"_L1, ReaderManagerPlugInType::NFC);
 
 			msg = R"({"cmd": "SET_CARD", "name": "dummy"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"Unknown reader name","msg":"INSERT_CARD"})"));
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReaderSmart", ReaderManagerPlugInType::SMART);
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReaderSmart"_L1, ReaderManagerPlugInType::SMART);
 
 			msg = R"({"cmd": "SET_CARD", "name": "MockReaderSmart"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"Card is not insertable","msg":"INSERT_CARD"})"));
@@ -151,7 +152,7 @@ class test_MsgHandlerInsertCard
 			setContext(dispatcher);
 			QCOMPARE(dispatcher.processStateChange(StateBuilder::generateStateName<StateSelectReader>()), QByteArray(R"({"msg":"INSERT_CARD"})"));
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReaderSimulator", ReaderManagerPlugInType::SIMULATOR);
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReaderSimulator"_L1, ReaderManagerPlugInType::SIMULATOR);
 			auto info = reader->getReaderInfo();
 			info.setCardInfo(CardInfo(CardType::EID_CARD));
 			info.shelveCard();

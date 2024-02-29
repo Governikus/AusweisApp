@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -99,7 +99,7 @@ class IfdServiceContext
 		void resetPacePasswords() override;
 		Q_INVOKABLE void reset();
 
-		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override;
 
 
 };

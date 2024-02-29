@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -17,7 +17,6 @@ GFlickableColumnLayout {
 	id: baseItem
 
 	property bool foundSelectedReader: ApplicationModel.availableReader > 0
-	property bool settingsPushed: remoteServiceSettings.visible
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
 
 	signal deviceUnpaired(var pDeviceName)
@@ -27,12 +26,6 @@ GFlickableColumnLayout {
 	spacing: 0
 	topMargin: 0
 
-	onFoundSelectedReaderChanged: {
-		if (baseItem.settingsPushed && foundSelectedReader) {
-			remoteServiceSettings.pop();
-		}
-	}
-
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
 			deviceUnpaired(pDeviceName);
@@ -41,10 +34,8 @@ GFlickableColumnLayout {
 		target: RemoteServiceModel
 	}
 	RemoteProgressIndicator {
-		id: progressIndicator
-
 		Accessible.ignored: true
-		Layout.alignment: Qt.AlignCenter
+		Layout.alignment: Qt.AlignHCenter
 		foundSelectedReader: baseItem.foundSelectedReader
 	}
 	TechnologyInfo {
@@ -104,20 +95,21 @@ GFlickableColumnLayout {
 
 		additionalContent: LocalNetworkInfo {
 			visible: RemoteServiceModel.requiresLocalNetworkPermission && baseItem.wifiEnabled && !baseItem.foundSelectedReader
-			width: parent.width
 		}
 
 		onEnableClicked: {
 			if (!wifiEnabled) {
 				ApplicationModel.enableWifi();
-			} else if (!baseItem.settingsPushed) {
+			} else if (!foundSelectedReader) {
 				push(remoteServiceSettings);
 			}
 		}
 	}
-	RemoteServiceSettings {
+	Component {
 		id: remoteServiceSettings
 
-		visible: false
+		RemoteServiceSettings {
+			onPairingSuccessful: pop()
+		}
 	}
 }

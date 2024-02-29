@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -18,6 +18,7 @@
 #include <QtQuickTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(init)
@@ -41,7 +42,7 @@ class QmlTestRunner
 	private:
 		const bool mFalse = false;
 		const QVariantMap mSafeAreaMargins = {
-			{"top", 0}, {"right", 0}, {"bottom", 0}, {"left", 0}
+			{"top"_L1, 0}, {"right"_L1, 0}, {"bottom"_L1, 0}, {"left"_L1, 0}
 		};
 		QString mPlatformStyle;
 		QString mFixedFontFamily;
@@ -60,7 +61,7 @@ class QmlTestRunner
 		void applicationAvailable()
 		{
 			QStandardPaths::setTestModeEnabled(true);
-			QCoreApplication::setApplicationName("TestQmlRunner");
+			QCoreApplication::setApplicationName("TestQmlRunner"_L1);
 			QQuickStyle::setStyle(QStringLiteral("Basic"));
 			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
 			ResourceLoader::getInstance().init();
@@ -82,11 +83,11 @@ class QmlTestRunner
 
 		void qmlEngineAvailable(QQmlEngine* pEngine)
 		{
-			pEngine->rootContext()->setContextProperty(QStringLiteral("plugin"), this);
+			pEngine->rootContext()->setContextProperty("plugin"_L1, this);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 4, 2))
-			pEngine->rootContext()->setContextProperty("hasBindingLoop", true);
+			pEngine->rootContext()->setContextProperty("hasBindingLoop"_L1, true);
 #else
-			pEngine->rootContext()->setContextProperty("hasBindingLoop", false);
+			pEngine->rootContext()->setContextProperty("hasBindingLoop"_L1, false);
 #endif
 
 			connect(pEngine, &QQmlEngine::warnings, [](const QList<QQmlError>& pWarnings){

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,6 +17,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(ReaderInfo)
@@ -51,11 +52,11 @@ class test_MsgHandlerReader
 		void ctor()
 		{
 			QSignalSpy spy(&MockReaderManagerPlugIn::getInstance(), &ReaderManagerPlugIn::fireReaderAdded);
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			QCOMPARE(spy.count(), 1);
 			ReaderInfo info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
 
-			MsgHandlerReader noReader(ReaderInfo("MockReader"));
+			MsgHandlerReader noReader(ReaderInfo("MockReader"_L1));
 			QCOMPARE(noReader.toJson(), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader\"}"));
 
 			MsgHandlerReader reader(info);
@@ -76,7 +77,7 @@ class test_MsgHandlerReader
 
 		void oneReaderWithoutCard()
 		{
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 081"})");
@@ -85,7 +86,7 @@ class test_MsgHandlerReader
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
-			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 0815");
+			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 0815"_L1);
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
@@ -93,7 +94,7 @@ class test_MsgHandlerReader
 
 		void oneReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig());
 
 			MessageDispatcher dispatcher;
@@ -104,19 +105,19 @@ class test_MsgHandlerReader
 
 		void multipleReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig());
-			reader = MockReaderManagerPlugIn::getInstance().addReader("ReaderMock");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("ReaderMock"_L1);
 			reader->setCard(MockCardConfig());
-			MockReaderManagerPlugIn::getInstance().addReader("ReaderMockXYZ");
+			MockReaderManagerPlugIn::getInstance().addReader("ReaderMockXYZ"_L1);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock"_L1);
 			reader->setCard(MockCardConfig());
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(CardInfo(CardType::UNKNOWN));
 			reader->setReaderInfo(info);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard"_L1);
 			reader->setCard(MockCardConfig());
 			auto cardInfo = CardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
 			info = reader->getReaderInfo();
@@ -147,8 +148,8 @@ class test_MsgHandlerReader
 			QTest::addColumn<QByteArray>("efCardAccess");
 			QTest::addColumn<QByteArray>("eidType");
 
-			QTest::newRow("CARD_CERTIFIED") << TestFileHelper::readFile(":/card/efCardAccess.hex") << QByteArray("CARD_CERTIFIED");
-			QTest::newRow("SE_ENDORSED") << TestFileHelper::readFile(":/card/smartEfCardAccess.hex") << QByteArray("SE_ENDORSED");
+			QTest::newRow("CARD_CERTIFIED") << TestFileHelper::readFile(":/card/efCardAccess.hex"_L1) << QByteArray("CARD_CERTIFIED");
+			QTest::newRow("SE_ENDORSED") << TestFileHelper::readFile(":/card/smartEfCardAccess.hex"_L1) << QByteArray("SE_ENDORSED");
 		}
 
 
@@ -157,7 +158,7 @@ class test_MsgHandlerReader
 			QFETCH(QByteArray, efCardAccess);
 			QFETCH(QByteArray, eidType);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig(), EFCardAccess::decode(QByteArray::fromHex(efCardAccess)), CardType::SMART_EID);
 			MessageDispatcher dispatcher;
 

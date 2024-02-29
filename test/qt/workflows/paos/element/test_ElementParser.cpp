@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 const auto dummyXmlData = "<rootElement>"
@@ -39,12 +40,12 @@ class test_ElementParser
 		{
 			mParser.initData(dummyXmlData);
 
-			QVERIFY(nextElementNameEquals("rootElement"));
+			QVERIFY(nextElementNameEquals("rootElement"_L1));
 
 			mParser.initData(dummyXmlData);
 
-			QVERIFY(nextElementNameEquals("rootElement"));
-			QVERIFY(nextElementNameEquals("subElement"));
+			QVERIFY(nextElementNameEquals("rootElement"_L1));
+			QVERIFY(nextElementNameEquals("subElement"_L1));
 
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,10 +11,10 @@
 #include "ReaderInfo.h"
 
 #include <QDateTime>
+#include <QList>
 #include <QNetworkInterface>
 #include <QObject>
 #include <QStringList>
-#include <QVector>
 
 namespace governikus
 {
@@ -29,10 +29,10 @@ class DiagnosisContext
 
 	private:
 		QString mPcscVersion;
-		QVector<ComponentInfo> mPcscComponents;
-		QVector<ComponentInfo> mPcscDrivers;
-		QVector<ReaderInfo> mReaderInfos;
-		QVector<ReaderConfigurationInfo> mReaderInfosNoDriver;
+		QList<ComponentInfo> mPcscComponents;
+		QList<ComponentInfo> mPcscDrivers;
+		QList<ReaderInfo> mReaderInfos;
+		QList<ReaderConfigurationInfo> mReaderInfosNoDriver;
 		QDateTime mTimestamp;
 		QList<QNetworkInterface> mNetworkInterfaces;
 
@@ -45,36 +45,36 @@ class DiagnosisContext
 		}
 
 
-		[[nodiscard]] const QVector<ComponentInfo>& getPcscComponents() const
+		[[nodiscard]] const QList<ComponentInfo>& getPcscComponents() const
 		{
 			return mPcscComponents;
 		}
 
 
-		[[nodiscard]] const QVector<ComponentInfo>& getPcscDrivers() const
+		[[nodiscard]] const QList<ComponentInfo>& getPcscDrivers() const
 		{
 			return mPcscDrivers;
 		}
 
 
-		void setPcscInfo(const QString& pVersion, const QVector<ComponentInfo>& pComponents, const QVector<ComponentInfo>& pDrivers);
+		void setPcscInfo(const QString& pVersion, const QList<ComponentInfo>& pComponents, const QList<ComponentInfo>& pDrivers);
 
-		[[nodiscard]] const QVector<ReaderInfo>& getReaderInfos() const
+		[[nodiscard]] const QList<ReaderInfo>& getReaderInfos() const
 		{
 			return mReaderInfos;
 		}
 
 
-		void setReaderInfos(const QVector<ReaderInfo>& mInfos);
+		void setReaderInfos(const QList<ReaderInfo>& mInfos);
 
 
-		[[nodiscard]] const QVector<ReaderConfigurationInfo>& getReaderInfosNoDriver() const
+		[[nodiscard]] const QList<ReaderConfigurationInfo>& getReaderInfosNoDriver() const
 		{
 			return mReaderInfosNoDriver;
 		}
 
 
-		void setReaderInfosNoDriver(const QVector<ReaderConfigurationInfo>& pInfos);
+		void setReaderInfosNoDriver(const QList<ReaderConfigurationInfo>& pInfos);
 
 		[[nodiscard]] const QDateTime& getTimestamp() const
 		{

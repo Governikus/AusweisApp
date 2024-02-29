@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,7 +14,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -23,7 +23,7 @@ class test_Reader
 {
 	Q_OBJECT
 	QSharedPointer<MockReader> mReader;
-	QString mReaderName = QString("test reader");
+	QString mReaderName = "test reader"_L1;
 	QSharedPointer<MockCardConnectionWorker> mWorker;
 
 	private Q_SLOTS:
@@ -71,7 +71,7 @@ class test_Reader
 
 		void test_UpdateRetryCounterUnknown()
 		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
 			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, false, false);
 			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
@@ -83,7 +83,7 @@ class test_Reader
 
 		void test_UpdateRetryCounter_OK_RetryCounterChanged()
 		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
 			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 2, true, false);
 			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
@@ -134,7 +134,7 @@ class test_Reader
 
 		void test_UpdateRetryCounter_InitialPinChanged()
 		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
 			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, true, false);
 			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);

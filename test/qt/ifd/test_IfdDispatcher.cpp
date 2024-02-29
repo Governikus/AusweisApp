@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -32,9 +32,9 @@ class IfdDispatcherSpy
 		const QSharedPointer<IfdDispatcher> mDispatcher;
 		bool mClosed;
 		GlobalStatus::Code mCloseCode;
-		QVector<IfdMessageType> mReceivedMessageTypes;
-		QVector<QJsonObject> mReceivedMessages;
-		QVector<QString> mReceivedSignalSenders;
+		QList<IfdMessageType> mReceivedMessageTypes;
+		QList<QJsonObject> mReceivedMessages;
+		QList<QString> mReceivedSignalSenders;
 
 	public:
 		IfdDispatcherSpy(const QSharedPointer<IfdDispatcher> pDispatcher);
@@ -42,9 +42,9 @@ class IfdDispatcherSpy
 
 		[[nodiscard]] bool isClosed() const;
 		[[nodiscard]] GlobalStatus::Code getCloseCode() const;
-		[[nodiscard]] const QVector<IfdMessageType>& getReceivedMessageTypes() const;
-		[[nodiscard]] const QVector<QJsonObject>& getReceivedMessages() const;
-		[[nodiscard]] const QVector<QString>& getReceivedSignalSenders() const;
+		[[nodiscard]] const QList<IfdMessageType>& getReceivedMessageTypes() const;
+		[[nodiscard]] const QList<QJsonObject>& getReceivedMessages() const;
+		[[nodiscard]] const QList<QString>& getReceivedSignalSenders() const;
 
 	private Q_SLOTS:
 		void onClosed(GlobalStatus::Code pCloseCode, const QString& pId);
@@ -107,19 +107,19 @@ GlobalStatus::Code IfdDispatcherSpy::getCloseCode() const
 }
 
 
-const QVector<IfdMessageType>& IfdDispatcherSpy::getReceivedMessageTypes() const
+const QList<IfdMessageType>& IfdDispatcherSpy::getReceivedMessageTypes() const
 {
 	return mReceivedMessageTypes;
 }
 
 
-const QVector<QJsonObject>& IfdDispatcherSpy::getReceivedMessages() const
+const QList<QJsonObject>& IfdDispatcherSpy::getReceivedMessages() const
 {
 	return mReceivedMessages;
 }
 
 
-const QVector<QString>& IfdDispatcherSpy::getReceivedSignalSenders() const
+const QList<QString>& IfdDispatcherSpy::getReceivedSignalSenders() const
 {
 	return mReceivedSignalSenders;
 }
@@ -158,7 +158,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -174,7 +174,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -190,7 +190,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose);
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -206,7 +206,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose);
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -230,8 +230,8 @@ class test_IfdDispatcher
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdTransmit(QStringLiteral("NFC Reader"), QByteArray::fromHex("00A402022F00"))));
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdDisconnect(QStringLiteral("NFC Reader"))));
 
-			const QVector<IfdMessageType> receivedMessageTypes = spy.getReceivedMessageTypes();
-			const QVector<QJsonObject> receivedMessages = spy.getReceivedMessages();
+			const QList<IfdMessageType> receivedMessageTypes = spy.getReceivedMessageTypes();
+			const QList<QJsonObject> receivedMessages = spy.getReceivedMessages();
 			QCOMPARE(receivedMessageTypes.size(), 3);
 			QCOMPARE(receivedMessages.size(), 3);
 
@@ -251,7 +251,7 @@ class test_IfdDispatcher
 			QCOMPARE(ifdDisconnect.getType(), IfdMessageType::IFDDisconnect);
 			QCOMPARE(ifdDisconnect.getSlotHandle(), QStringLiteral("NFC Reader"));
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 3);
 			QCOMPARE(senders.at(0), serverDispatcher->getId());
 			QCOMPARE(senders.at(1), serverDispatcher->getId());
@@ -277,7 +277,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QVector<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QString>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.at(0), serverDispatcher->getId());
 		}
@@ -297,7 +297,7 @@ class test_IfdDispatcher
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::v2, DeviceInfo::getName())));
 
-			const QVector<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
+			const QList<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 2);
 
 			const IfdEstablishContextResponse message1(IfdMessage::parseByteArray(clientReceivedDataBlocks.at(0)));
@@ -327,7 +327,7 @@ class test_IfdDispatcher
 
 			clientDispatcher->send(QSharedPointer<const IfdMessage>(new IfdEstablishContext(IfdVersion::Version::Unknown, DeviceInfo::getName())));
 
-			const QVector<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
+			const QList<QByteArray>& clientReceivedDataBlocks = clientChannel->getReceivedDataBlocks();
 			QCOMPARE(clientReceivedDataBlocks.size(), 1);
 
 			const IfdEstablishContextResponse message(IfdMessage::parseByteArray(clientReceivedDataBlocks.at(0)));

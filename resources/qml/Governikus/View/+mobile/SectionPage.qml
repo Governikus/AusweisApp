@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -11,17 +11,16 @@ import Governikus.Type.ApplicationModel
 Controller {
 	id: root
 
-	property bool contentIsScrolled: false
-	property bool hiddenNavbarPadding: false
+	property bool enableTileStyle: true
 	property var navigationAction: null
 	property var rightTitleBarAction: null
+	property bool showTitleBarContent: true
 	property bool smartEidUsed: false
 	required property string title
-	property real titleBarOpacity: 1
-	property bool titleBarVisible: true
 
-	signal activate
 	signal reset
+
+	clip: true
 
 	Connections {
 		function onActivate() {

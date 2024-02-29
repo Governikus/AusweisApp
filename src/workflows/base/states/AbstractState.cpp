@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AbstractState.h"
@@ -26,6 +26,7 @@ AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 	: mContext(pContext)
 	, mConnections()
 	, mAbortOnCardRemoved(false)
+	, mHandleNfcStop(false)
 	, mKeepCardConnectionAlive(false)
 {
 	Q_ASSERT(mContext);
@@ -36,6 +37,12 @@ AbstractState::AbstractState(const QSharedPointer<WorkflowContext>& pContext)
 void AbstractState::setAbortOnCardRemoved()
 {
 	mAbortOnCardRemoved = true;
+}
+
+
+void AbstractState::setHandleNfcStop()
+{
+	mHandleNfcStop = true;
 }
 
 
@@ -80,11 +87,15 @@ void AbstractState::onEntry(QEvent* pEvent)
 	}
 	Q_ASSERT(mConnections.isEmpty());
 
+	const auto readerManager = Env::getSingleton<ReaderManager>();
 	if (mAbortOnCardRemoved)
 	{
-		const auto readerManager = Env::getSingleton<ReaderManager>();
 		mConnections += connect(readerManager, &ReaderManager::fireCardRemoved, this, &AbstractState::onCardRemoved);
 		mConnections += connect(readerManager, &ReaderManager::fireReaderRemoved, this, &AbstractState::onCardRemoved);
+	}
+	if (mHandleNfcStop)
+	{
+		mConnections += connect(readerManager, &ReaderManager::fireStatusChanged, this, &AbstractState::onReaderStatusChanged);
 	}
 	mConnections += connect(mContext.data(), &WorkflowContext::fireCancelWorkflow, this, &AbstractState::onUserCancelled);
 	mConnections += connect(mContext.data(), &WorkflowContext::fireStateApprovedChanged, this, &AbstractState::onStateApprovedChanged, Qt::QueuedConnection);
@@ -206,5 +217,30 @@ void AbstractState::stopNfcScanIfNecessary(const QString& pError) const
 	}
 #else
 	Q_UNUSED(pError)
+#endif
+}
+
+
+void AbstractState::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const
+{
+#if defined(Q_OS_IOS)
+	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
+	{
+		return;
+	}
+
+	if (!pInfo.isScanRunning())
+	{
+		if (mContext->interruptRequested())
+		{
+			mContext->setInterruptRequested(false);
+		}
+		else
+		{
+			Q_EMIT mContext->fireCancelWorkflow();
+		}
+	}
+#else
+	Q_UNUSED(pInfo)
 #endif
 }

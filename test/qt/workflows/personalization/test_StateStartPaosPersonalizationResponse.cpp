@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -10,6 +10,7 @@
 #include <QTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -75,7 +76,7 @@ class test_StateStartPaosPersonalizationResponse
 
 		void testPersonalization_data()
 		{
-			const auto& dateFormat = "d. MMMM yyyy";
+			const auto& dateFormat = "d. MMMM yyyy"_L1;
 
 			QTest::addColumn<int>("finalizeStatus");
 			QTest::addColumn<QString>("restrictionDate");
@@ -124,7 +125,7 @@ class test_StateStartPaosPersonalizationResponse
 			QFETCH(QByteArray, resultContent);
 			QFETCH(QByteArray, outputsContent);
 
-			QByteArray content = TestFileHelper::readFile(":/paos/StartPAOSResponse_template.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/StartPAOSResponse_template.xml"_L1);
 			content.replace("<!-- RESULT -->", resultContent);
 			content.replace("<!-- OPTIONALOUTPUTS -->", outputsContent);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,7 +15,7 @@
 #include <QDebug>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(EstablishPaceChannel)
@@ -154,7 +154,7 @@ class test_RemoteServiceModel
 
 		void test_getSupportedReaderPlugInTypes()
 		{
-			QVector<ReaderManagerPlugInType> supportedPlugIns {ReaderManagerPlugInType::NFC};
+			QList<ReaderManagerPlugInType> supportedPlugIns {ReaderManagerPlugInType::NFC};
 #if __has_include("SmartManager.h")
 			supportedPlugIns << ReaderManagerPlugInType::SMART;
 #endif
@@ -208,8 +208,9 @@ class test_RemoteServiceModel
 			QSignalSpy spyDisplayTextChanged(mModel, &RemoteServiceModel::fireDisplayTextChanged);
 
 			mModel->resetRemoteServiceContext(mContext);
-			mContext->setDisplayText(inputText);
 			QCOMPARE(spyDisplayTextChanged.count(), 1);
+			mContext->setDisplayText(inputText);
+			QCOMPARE(spyDisplayTextChanged.count(), 2);
 			QCOMPARE(mModel->getDisplayText(), outputText);
 			QCOMPARE(mModel->getPercentage(), expectedPercentage);
 		}
@@ -219,15 +220,15 @@ class test_RemoteServiceModel
 		{
 			QSignalSpy spyDisplayTextChanged(mModel, &RemoteServiceModel::fireDisplayTextChanged);
 
-			QCOMPARE(mModel->getDisplayText(), "");
+			QCOMPARE(mModel->getDisplayText(), ""_L1);
 			QCOMPARE(mModel->getPercentage(), 0);
 
 			mModel->resetRemoteServiceContext(mContext);
-			QCOMPARE(spyDisplayTextChanged.count(), 0);
-			mContext->setDisplayText("Dummy");
 			QCOMPARE(spyDisplayTextChanged.count(), 1);
-			mContext->setDisplayText("Dummy");
-			QCOMPARE(spyDisplayTextChanged.count(), 1);
+			mContext->setDisplayText("Dummy"_L1);
+			QCOMPARE(spyDisplayTextChanged.count(), 2);
+			mContext->setDisplayText("Dummy"_L1);
+			QCOMPARE(spyDisplayTextChanged.count(), 2);
 
 		}
 

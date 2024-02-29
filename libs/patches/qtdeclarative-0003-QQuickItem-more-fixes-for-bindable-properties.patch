@@ -1,0 +1,96 @@
+From 2807b7cc3697b4f01f76dea1b2539e683b7e3065 Mon Sep 17 00:00:00 2001
+From: Ivan Solovev <ivan.solovev@qt.io>
+Date: Mon, 16 Oct 2023 15:58:54 +0200
+Subject: QQuickItem: more fixes for bindable properties
+
+A more detailed look revealed some more places where the properties
+were incorrectly accessed from the setters.
+Use the usual (set)ValueBypassingBindings() approach to fix it.
+
+The exceptions from the usual property handling are the setSize()
+and setPosition() setters. The first one is documented to not
+remove the binding, and the second one has a comment stating the
+same. So, do not call removeBindingUnlessInWrapper() in these
+setters.
+
+This commit amends f85de757355889f534e9e5e858547874eb377ec5
+
+Task-number: QTBUG-117899
+Pick-to: 6.6 6.5
+Change-Id: I97a94cbf2b38c57e9a260e54c9894c2ffd47271d
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit e8c8ddeb942f4410533e5e808c4138efb3ce4b2a)
+---
+ src/quick/items/qquickitem.cpp | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
+index 30bbf505da..7cc03936fc 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.cpp
++++ y/qtdeclarative/src/quick/items/qquickitem.cpp
+@@ -7111,11 +7111,12 @@ void QQuickItem::setY(qreal v)
+ void QQuickItem::setPosition(const QPointF &pos)
+ {
+     Q_D(QQuickItem);
+-    if (QPointF(d->x, d->y) == pos)
+-        return;
+ 
+-    const qreal oldx = d->x;
+-    const qreal oldy = d->y;
++    const qreal oldx = d->x.valueBypassingBindings();
++    const qreal oldy = d->y.valueBypassingBindings();
++
++    if (QPointF(oldx, oldy) == pos)
++        return;
+ 
+     /* This preserves the bindings, because that was what the code used to do
+        The effect of this is that you can have
+@@ -7135,7 +7136,8 @@ void QQuickItem::setPosition(const QPointF &pos)
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+-    const qreal w = d->width, h = d->height;
++    const qreal w = d->width.valueBypassingBindings();
++    const qreal h = d->height.valueBypassingBindings();
+     geometryChange(QRectF(pos.x(), pos.y(), w, h), QRectF(oldx, oldy, w, h));
+ }
+ 
+@@ -7493,11 +7495,11 @@ void QQuickItem::setImplicitSize(qreal w, qreal h)
+     const qreal oldHeight = height;
+     if (!wDone) {
+         width = w;
+-        d->width = w;
++        d->width.setValueBypassingBindings(w);
+     }
+     if (!hDone) {
+         height = h;
+-        d->height = h;
++        d->height.setValueBypassingBindings(h);
+     }
+ 
+     d->dirty(QQuickItemPrivate::Size);
+@@ -7553,17 +7555,19 @@ void QQuickItem::setSize(const QSizeF &size)
+     d->heightValidFlag = true;
+     d->widthValidFlag = true;
+ 
+-    if (d->width == size.width() && d->height == size.height())
++    const qreal oldHeight = d->height.valueBypassingBindings();
++    const qreal oldWidth = d->width.valueBypassingBindings();
++
++    if (oldWidth == size.width() && oldHeight == size.height())
+         return;
+ 
+-    const qreal oldHeight = d->height;
+-    const qreal oldWidth = d->width;
+     d->height.setValueBypassingBindings(size.height());
+     d->width.setValueBypassingBindings(size.width());
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    const qreal x = d->x, y = d->y;
++    const qreal x = d->x.valueBypassingBindings();
++    const qreal y = d->y.valueBypassingBindings();
+     geometryChange(QRectF(x, y, size.width(), size.height()), QRectF(x, y, oldWidth, oldHeight));
+ }
+ 

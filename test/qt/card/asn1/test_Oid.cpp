@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/Oid.h"
@@ -11,6 +11,7 @@
 #include <QtTest>
 #include <openssl/objects.h>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_Oid
@@ -323,14 +324,15 @@ class test_Oid
 			QTest::newRow("099") << KnownOid::ID_PLAIN_FORMAT << QByteArray("0.4.0.127.0.7.3.1.3.1.1") << QByteArray("id-plainFormat") << QByteArray("BSI TR-03110 Part 4 Version 2.21 Plain Text Format 2.2.6.1");
 			QTest::newRow("100") << KnownOid::ID_HTML_FORMAT << QByteArray("0.4.0.127.0.7.3.1.3.1.2") << QByteArray("id-htmlFormat") << QByteArray("BSI TR-03110 Part 4 Version 2.21 HTML Format 2.2.6.2");
 			QTest::newRow("101") << KnownOid::ID_PFD_FORMAT << QByteArray("0.4.0.127.0.7.3.1.3.1.3") << QByteArray("id-pdfFormat") << QByteArray("BSI TR-03110 Part 4 Version 2.21 PDF Format 2.2.6.3");
-			QTest::newRow("102") << KnownOid::ID_SECTOR << QByteArray("0.4.0.127.0.7.3.1.3.2") << QByteArray("id-sector") << QByteArray("BSI TR-03110 Part 3 Version 2.21  Terminal Sector for Restricted Identification C.3.2.1");
+			QTest::newRow("102") << KnownOid::ID_SECTOR_RI << QByteArray("0.4.0.127.0.7.3.1.3.2") << QByteArray("id-sector-ri") << QByteArray("BSI TR-03110 Part 3 Version 2.21 Terminal Sector for Restricted Identification C.3.2.1");
+			QTest::newRow("103") << KnownOid::ID_SECTOR_PS << QByteArray("0.4.0.127.0.7.3.1.3.3") << QByteArray("id-sector-ps") << QByteArray("BSI TR-03110 Part 3 Version 2.21 Terminal Sector for Pseudonymous Signatures C.3.2.2");
 
-			QTest::newRow("103") << KnownOid::ID_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3") << QByteArray("id-eIDType") << QByteArray("Draft Smart-eID");
-			QTest::newRow("104") << KnownOid::ID_CARD_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3.1") << QByteArray("id-cardEIDType") << QByteArray("Draft Smart-eID - 1");
-			QTest::newRow("105") << KnownOid::ID_MOBILE_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3.2") << QByteArray("id-mobileEIDType") << QByteArray("Draft Smart-eID - 2");
-			QTest::newRow("106") << KnownOid::ID_MOBILE_EID_TYPE_SE_CERTIFIED << QByteArray("0.4.0.127.0.7.3.2.3.2.1") << QByteArray("id-mobileEIDType-SECertified") << QByteArray("Draft Smart-eID - 2.1");
-			QTest::newRow("107") << KnownOid::ID_MOBILE_EID_TYPE_SE_ENDORSED << QByteArray("0.4.0.127.0.7.3.2.3.2.2") << QByteArray("id-mobileEIDType-SEEndorsed") << QByteArray("Draft Smart-eID - 2.2");
-			QTest::newRow("108") << KnownOid::ID_MOBILE_EID_TYPE_HW_KEYSTORE << QByteArray("0.4.0.127.0.7.3.2.3.2.3") << QByteArray("id-mobileEIDType-HWKeyStore") << QByteArray("Draft Smart-eID - 2.3");
+			QTest::newRow("104") << KnownOid::ID_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3") << QByteArray("id-eIDType") << QByteArray("Draft Smart-eID");
+			QTest::newRow("105") << KnownOid::ID_CARD_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3.1") << QByteArray("id-cardEIDType") << QByteArray("Draft Smart-eID - 1");
+			QTest::newRow("106") << KnownOid::ID_MOBILE_EID_TYPE << QByteArray("0.4.0.127.0.7.3.2.3.2") << QByteArray("id-mobileEIDType") << QByteArray("Draft Smart-eID - 2");
+			QTest::newRow("107") << KnownOid::ID_MOBILE_EID_TYPE_SE_CERTIFIED << QByteArray("0.4.0.127.0.7.3.2.3.2.1") << QByteArray("id-mobileEIDType-SECertified") << QByteArray("Draft Smart-eID - 2.1");
+			QTest::newRow("108") << KnownOid::ID_MOBILE_EID_TYPE_SE_ENDORSED << QByteArray("0.4.0.127.0.7.3.2.3.2.2") << QByteArray("id-mobileEIDType-SEEndorsed") << QByteArray("Draft Smart-eID - 2.2");
+			QTest::newRow("109") << KnownOid::ID_MOBILE_EID_TYPE_HW_KEYSTORE << QByteArray("0.4.0.127.0.7.3.2.3.2.3") << QByteArray("id-mobileEIDType-HWKeyStore") << QByteArray("Draft Smart-eID - 2.3");
 
 			mTestAllKnownOids = true;
 		}
@@ -384,21 +386,21 @@ class test_Oid
 
 		void logging()
 		{
-			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Invalid NID, was not able to create a valid OID for: 9999999$"));
+			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Invalid NID, was not able to create a valid OID for: 9999999$"_L1));
 			Oid invalidNid(static_cast<KnownOid>(9999999));
 
-			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Copying failed, was not able to create a valid OID$"));
+			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Copying failed, was not able to create a valid OID$"_L1));
 			Oid nullObject(nullptr);
 
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Unknown OID: 1.2.3.4.5.6$"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Unknown OID: 1.2.3.4.5.6$"_L1));
 			ASN1_OBJECT* obj = OBJ_txt2obj("1.2.3.4.5.6", 0);
 			Oid undefined1(obj);
 			ASN1_OBJECT_free(obj);
 
-			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Invalid text input, was not able to create a valid OID for: \"invalid\"$"));
+			QTest::ignoreMessage(QtCriticalMsg, QRegularExpression("Invalid text input, was not able to create a valid OID for: \"invalid\"$"_L1));
 			Oid invalid(QByteArray("invalid"));
 
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Unknown OID: 1.2.3.4.5.6$"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Unknown OID: 1.2.3.4.5.6$"_L1));
 			Oid undefined2(QByteArray("1.2.3.4.5.6"));
 		}
 

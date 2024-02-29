@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -11,8 +11,7 @@ ListView {
 
 	property bool scrollBarAutohide: !Constants.is_desktop
 	property real scrollBarBottomPadding: 0
-	property color scrollBarColor: Style.color.control
-	property bool scrollBarEnabled: true
+	property alias scrollBarColor: scrollbar.color
 	property real scrollBarTopPadding: 0
 
 	function handleKeyPress(key) {
@@ -36,14 +35,20 @@ ListView {
 		Utils.scrollPageUp(baseItem);
 	}
 
-	Accessible.focusable: false
-	Accessible.role: Accessible.ScrollBar
-	ScrollBar.vertical: scrollBarEnabled ? scrollBar.createObject() : null
+	Accessible.ignored: true
 	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
 	boundsMovement: Flickable.FollowBoundsBehavior
 	flickDeceleration: Constants.flickDeceleration
 	flickableDirection: Flickable.VerticalFlick
 	maximumFlickVelocity: Constants.scrolling_speed
+
+	ScrollBar.vertical: GScrollBar {
+		id: scrollbar
+
+		autohide: scrollBarAutohide
+		bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
+		topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
+	}
 
 	Accessible.onDecreaseAction: scrollPageUp()
 	Accessible.onIncreaseAction: scrollPageDown()
@@ -52,15 +57,4 @@ ListView {
 	}
 	onVisibleChanged: if (visible)
 		highlightScrollbar()
-
-	Component {
-		id: scrollBar
-
-		GScrollBar {
-			autohide: scrollBarAutohide
-			bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
-			color: baseItem.scrollBarColor
-			topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
-		}
-	}
 }

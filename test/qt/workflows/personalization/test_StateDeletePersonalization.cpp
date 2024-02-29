@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateDeletePersonalization.h"
@@ -13,6 +13,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -56,42 +57,42 @@ class test_StateDeletePersonalization
 
 			QTest::addRow("SUCCESS")
 				<< EidServiceResult::SUCCESS
-				<< QStringList {"Successfully deleted the Smart-eID personalization"}
+				<< QStringList {"Successfully deleted the Smart-eID personalization"_L1}
 				<< GlobalStatus::Code::No_Error
 				<< std::optional<FailureCode>();
 			QTest::addRow("ERROR")
 				<< EidServiceResult::ERROR
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("UNSUPPORTED")
 				<< EidServiceResult::UNSUPPORTED
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("OVERLOAD_PROTECTION")
 				<< EidServiceResult::OVERLOAD_PROTECTION
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("UNDER_MAINTENANCE")
 				<< EidServiceResult::UNDER_MAINTENANCE
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("NFC_NOT_ACTIVATED")
 				<< EidServiceResult::NFC_NOT_ACTIVATED
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("INTEGRITY_CHECK_FAILED")
 				<< EidServiceResult::INTEGRITY_CHECK_FAILED
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 			QTest::addRow("NOT_AUTHENTICATED")
 				<< EidServiceResult::NOT_AUTHENTICATED
-				<< QStringList {"Deletion of Smart-eID personalization failed"}
+				<< QStringList {"Deletion of Smart-eID personalization failed"_L1}
 				<< GlobalStatus::Code::Workflow_Smart_eID_Applet_Preparation_Failed
 				<< std::optional<FailureCode>(FailureCode::Reason::Delete_Personalization_Failed);
 		}

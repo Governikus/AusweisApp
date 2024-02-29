@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,20 +14,20 @@
 
 #include "CVCertificate.h"
 
-#include <QVector>
+#include <QList>
 
 namespace governikus
 {
 
 class CVCertificateChain
-	: public QVector<QSharedPointer<const CVCertificate>>
+	: public QList<QSharedPointer<const CVCertificate>>
 {
 	private:
 		bool mProductive;
 
 	public:
 		explicit CVCertificateChain(bool pProductive = true);
-		explicit CVCertificateChain(const QVector<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive);
+		explicit CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive);
 
 		/*!
 		 * Return the document verifier certificate.

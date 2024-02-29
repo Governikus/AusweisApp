@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/EstablishPaceChannelCommand.h"
@@ -143,23 +143,6 @@ class test_EstablishPaceChannelCommand
 			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::OK);
-		}
-
-
-		void test_InternalExecutePukInoperative()
-		{
-			MockReader reader(QStringLiteral("reader"));
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
-			reader.setInfoCardInfo(info);
-			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
-
-			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex("6900"));
-			worker->addPaceCode(CardReturnCode::OK);
-			const QByteArray puk("00000000000");
-			EstablishPaceChannelCommand command(worker, PacePasswordId::PACE_PUK, puk, nullptr, nullptr);
-			command.internalExecute();
-			QCOMPARE(command.getReturnCode(), CardReturnCode::PUK_INOPERATIVE);
-			QVERIFY(worker->getReaderInfo().getCardInfo().isPukInoperative());
 		}
 
 

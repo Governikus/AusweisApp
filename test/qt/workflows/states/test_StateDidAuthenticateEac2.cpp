@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class MockDidAuthenticateEAC2Command
@@ -50,7 +51,7 @@ class test_StateDidAuthenticateEac2
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 			mState.reset(new StateDidAuthenticateEac2(mAuthContext));
 			workerThread.start();
 		}

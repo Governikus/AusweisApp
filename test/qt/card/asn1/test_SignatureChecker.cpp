@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -22,6 +22,7 @@
 #include <openssl/obj_mac.h>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -30,7 +31,7 @@ class test_SignatureChecker
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	QList<QSharedPointer<const CVCertificate>> cvcs;
 
 	static QSharedPointer<const CVCertificate> load(const QString& pName)
 	{
@@ -42,11 +43,11 @@ class test_SignatureChecker
 		void init()
 		{
 			cvcs.clear();
-			cvcs.append(load(":/card/cvca-DETESTeID00001.hex"));
-			cvcs.append(load(":/card/cvca-DETESTeID00002_DETESTeID00001.hex"));
-			cvcs.append(load(":/card/cvca-DETESTeID00004_DETESTeID00002.hex"));
-			cvcs.append(load(":/card/cvdv-DEDVeIDDPST00035.hex"));
-			cvcs.append(load(":/card/cvat-DEDEMODEV00038.hex"));
+			cvcs.append(load(":/card/cvca-DETESTeID00001.hex"_L1));
+			cvcs.append(load(":/card/cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			cvcs.append(load(":/card/cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			cvcs.append(load(":/card/cvdv-DEDVeIDDPST00035.hex"_L1));
+			cvcs.append(load(":/card/cvat-DEDEMODEV00038.hex"_L1));
 			ERR_clear_error();
 		}
 
@@ -59,7 +60,7 @@ class test_SignatureChecker
 
 		void verifyEmptyList()
 		{
-			QVector<QSharedPointer<const CVCertificate>> certs;
+			QList<QSharedPointer<const CVCertificate>> certs;
 			SignatureChecker checker(certs);
 
 			QVERIFY(!checker.check());
@@ -68,7 +69,7 @@ class test_SignatureChecker
 
 		void verifyNotSelfSigned()
 		{
-			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
+			QList<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(0);
 			SignatureChecker checker(certs);
 
@@ -78,7 +79,7 @@ class test_SignatureChecker
 
 		void verifyNoCertificateWithCurveParameters()
 		{
-			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
+			QList<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(2);
 			certs.removeAt(1);
 			certs.removeAt(0);
@@ -90,7 +91,7 @@ class test_SignatureChecker
 
 		void verifyNoValidChain()
 		{
-			QVector<QSharedPointer<const CVCertificate>> certs(cvcs);
+			QList<QSharedPointer<const CVCertificate>> certs(cvcs);
 			certs.removeAt(2);
 			SignatureChecker checker(certs);
 

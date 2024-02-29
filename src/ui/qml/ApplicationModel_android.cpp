@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -24,7 +24,7 @@ static void showSystemSettings(const QString& pAction)
 
 	if (intent.isValid())
 	{
-		qCCritical(qml) << "Call action:" << pAction;
+		qCDebug(qml) << "Call action:" << pAction;
 		QtAndroidPrivate::startActivity(intent, 0);
 	}
 

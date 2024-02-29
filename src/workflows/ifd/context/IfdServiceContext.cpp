@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdServiceContext.h"
@@ -228,6 +228,7 @@ void IfdServiceContext::setModifyPinMessage(const QSharedPointer<const IfdModify
 {
 	mModifyPinMessage = pMessage;
 	mModifyPinMessageResponseApdu = ResponseApdu();
+	Q_EMIT firePasswordTypeChanged();
 }
 
 
@@ -275,7 +276,7 @@ void IfdServiceContext::reset()
 }
 
 
-[[nodiscard]] QVector<AcceptedEidType> IfdServiceContext::getAcceptedEidTypes() const
+[[nodiscard]] QList<AcceptedEidType> IfdServiceContext::getAcceptedEidTypes() const
 {
 	return {AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED, AcceptedEidType::HW_KEYSTORE};
 }

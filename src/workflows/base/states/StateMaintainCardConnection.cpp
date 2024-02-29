@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateMaintainCardConnection.h"
@@ -107,10 +107,8 @@ void StateMaintainCardConnection::run()
 		{
 			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
 
-			if (lastPaceResult == CardReturnCode::OK_PUK)
+			if (lastPaceResult == CardReturnCode::OK_PUK && context->getCardConnection())
 			{
-				getContext()->resetLastPaceResult();
-
 				qCDebug(statemachine) << "PIN unblocked! Triggering retry counter update.";
 				Q_EMIT fireForceUpdateRetryCounter();
 				return;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,7 +13,7 @@
 #include <QByteArrayList>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class MockTransmitCommand
@@ -22,7 +22,7 @@ class MockTransmitCommand
 	Q_OBJECT
 
 	public:
-		MockTransmitCommand(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const QVector<InputAPDUInfo>& info, const QString& slot)
+		MockTransmitCommand(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const QList<InputAPDUInfo>& info, const QString& slot)
 			: TransmitCommand(pCardConnectionWorker, info, slot)
 		{
 		}
@@ -63,7 +63,7 @@ class test_StateTransmit
 				context->setCardConnection(connection);
 				StateTransmit stateTransmit(context);
 
-				const QString slotHandle("slot");
+				const QString slotHandle("slot"_L1);
 				const InputAPDUInfo info;
 				const QSharedPointer<Transmit> transmit(new Transmit());
 				transmit->setSlotHandle(slotHandle);
@@ -92,7 +92,7 @@ class test_StateTransmit
 			context->setTransmitResponse(response);
 			StateTransmit stateTransmit(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
-			QVector<InputAPDUInfo> vector(5);
+			QList<InputAPDUInfo> vector(5);
 			const InputAPDUInfo info(QByteArray("info"));
 			vector.insert(0, info);
 			const QSharedPointer<MockTransmitCommand> command(new MockTransmitCommand(worker, vector, QString()));

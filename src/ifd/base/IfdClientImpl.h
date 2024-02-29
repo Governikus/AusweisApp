@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,7 @@ class IfdClientImpl
 		QMap<QString, int> mErrorCounter;
 		QThread mIfdConnectorThread;
 		QPointer<IfdConnector> mIfdConnector;
-		QVector<QSharedPointer<IfdListEntry>> mIfdConnectorPending;
+		QList<QSharedPointer<IfdListEntry>> mIfdConnectorPending;
 		QStringList mConnectedDeviceIds;
 
 		void bootstrapConnectorThread();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
@@ -37,7 +37,6 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mFailureCode()
 	, mStartPaosResult(ECardApiResult::createOk())
 	, mErrorReportedToUser(true)
-	, mPaceResultReportedToUser(false)
 	, mWorkflowFinished(false)
 	, mWorkflowCancelled(false)
 	, mWorkflowCancelledInState(false)
@@ -48,6 +47,7 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mProgressMessage()
 	, mShowRemoveCardFeedback(false)
 	, mClaimedBy()
+	, mInterruptRequested(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -106,18 +106,6 @@ void WorkflowContext::setErrorReportedToUser(bool pErrorReportedToUser)
 }
 
 
-bool WorkflowContext::isPaceResultReportedToUser() const
-{
-	return mPaceResultReportedToUser;
-}
-
-
-void WorkflowContext::setPaceResultReportedToUser(bool pReported)
-{
-	mPaceResultReportedToUser = pReported;
-}
-
-
 void WorkflowContext::setStateApproved(bool pApproved)
 {
 	if (mStateApproved != pApproved)
@@ -172,13 +160,13 @@ void WorkflowContext::setCurrentState(const QString& pNewState)
 }
 
 
-const QVector<ReaderManagerPlugInType>& WorkflowContext::getReaderPlugInTypes() const
+const QList<ReaderManagerPlugInType>& WorkflowContext::getReaderPlugInTypes() const
 {
 	return mReaderPlugInTypes;
 }
 
 
-void WorkflowContext::setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes)
+void WorkflowContext::setReaderPlugInTypes(const QList<ReaderManagerPlugInType>& pReaderPlugInTypes)
 {
 	if (mReaderPlugInTypes != pReaderPlugInTypes)
 	{
@@ -381,7 +369,6 @@ CardReturnCode WorkflowContext::getLastPaceResult() const
 
 void WorkflowContext::setLastPaceResult(CardReturnCode pLastPaceResult)
 {
-	mPaceResultReportedToUser = false;
 	mLastPaceResult = pLastPaceResult;
 	Q_EMIT firePaceResultUpdated();
 }
@@ -634,4 +621,10 @@ bool WorkflowContext::isMobileEidTypeAllowed(const MobileEidType& mobileEidType)
 			return false;
 	}
 	Q_UNREACHABLE();
+}
+
+
+void WorkflowContext::setInterruptRequested(bool pInterruptRequested)
+{
+	mInterruptRequested = pInterruptRequested;
 }

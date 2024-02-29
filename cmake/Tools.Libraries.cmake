@@ -26,7 +26,7 @@ if(NOT TARGET format.qml)
 			unset(QMLFORMAT CACHE) # let's retry later
 		else()
 			file(GLOB_RECURSE FILES_QML ${PROJECT_SOURCE_DIR}/*.qml)
-			set(QMLFORMAT_CMD ${QMLFORMAT} -i -n -l unix -t -w 4)
+			set(QMLFORMAT_CMD ${QMLFORMAT} -v -i -n -l unix -t -w 4)
 
 			set(FORMATTING_FILE ${PROJECT_BINARY_DIR}/formatting.files.qml)
 			file(WRITE ${FORMATTING_FILE} "")

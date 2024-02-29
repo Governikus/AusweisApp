@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -22,12 +22,12 @@ class DestroyPaceChannelBuilder
 		/**
 		 * Defined in pcsc10_v2.02.08_amd1.1
 		 */
-		[[nodiscard]] QByteArray createCommandData() const;
+		[[nodiscard]] QByteArray createASN1Struct() const;
 
 		/**
 		 * Defined in BSI-TR-03119_V1_pdf
 		 */
-		[[nodiscard]] CommandApdu createCommandDataCcid() const;
+		[[nodiscard]] CommandApdu createASN1StructCcid() const;
 };
 
 

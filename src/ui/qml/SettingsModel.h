@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -38,7 +38,7 @@ class SettingsModel
 	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
 	Q_PROPERTY(bool showAccessRights READ getShowAccessRights WRITE setShowAccessRights NOTIFY fireShowAccessRightsChanged)
-	Q_PROPERTY(QString serverName READ getServerName WRITE setServerName NOTIFY fireDeviceNameChanged)
+	Q_PROPERTY(QString deviceName READ getDeviceName WRITE setDeviceName NOTIFY fireDeviceNameChanged)
 	Q_PROPERTY(bool useScreenKeyboard READ isUseScreenKeyboard WRITE setUseScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool visualPrivacy READ isVisualPrivacy WRITE setVisualPrivacy NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
@@ -62,6 +62,7 @@ class SettingsModel
 	Q_PROPERTY(bool customProxyAttributesPresent READ isCustomProxyAttributesPresent CONSTANT)
 	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy NOTIFY fireUseCustomProxyChanged)
 	Q_PROPERTY(bool useSystemFont READ isUseSystemFont WRITE setUseSystemFont NOTIFY fireUseSystemFontChanged)
+	Q_PROPERTY(bool useAnimations READ isUseAnimations WRITE setUseAnimations NOTIFY fireUseAnimationsChanged)
 	Q_PROPERTY(ModeOption userDarkMode READ getDarkMode WRITE setDarkMode NOTIFY fireDarkModeChanged)
 
 	private:
@@ -88,8 +89,8 @@ class SettingsModel
 		[[nodiscard]] bool useSelfauthenticationTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse) const;
 
-		[[nodiscard]] QString getServerName() const;
-		void setServerName(const QString& name);
+		[[nodiscard]] QString getDeviceName() const;
+		void setDeviceName(const QString& name);
 
 		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint) const;
 
@@ -151,6 +152,9 @@ class SettingsModel
 		[[nodiscard]] bool isUseSystemFont() const;
 		void setUseSystemFont(bool pUseSystemFont) const;
 
+		bool isUseAnimations() const;
+		void setUseAnimations(bool pUseAnimations) const;
+
 		[[nodiscard]] ModeOption getDarkMode() const;
 		void setDarkMode(ModeOption pMode);
 
@@ -187,6 +191,7 @@ class SettingsModel
 		void fireShowInAppNotificationsChanged();
 		void fireUseCustomProxyChanged();
 		void fireUseSystemFontChanged();
+		void fireUseAnimationsChanged();
 		void fireDarkModeChanged();
 		void fireShowTrayIconChanged();
 

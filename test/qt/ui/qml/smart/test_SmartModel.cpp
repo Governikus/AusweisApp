@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -20,6 +20,7 @@
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -55,7 +56,7 @@ class test_SmartModel
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			setSmartEidStatus(EidStatus::PERSONALIZED);
-			mSmartReader = MockReaderManagerPlugIn::getInstance().addReader("SmartReader");
+			mSmartReader = MockReaderManagerPlugIn::getInstance().addReader("SmartReader"_L1);
 			setupSmartReader(false, 3);
 
 			const auto& smartModel = Env::getSingleton<SmartModel>();

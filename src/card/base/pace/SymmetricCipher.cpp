@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/SymmetricCipher.h"
@@ -76,7 +76,7 @@ QByteArray SymmetricCipher::encrypt(const QByteArray& pPlainData)
 		return QByteArray();
 	}
 
-	QVector<uchar> cryptogram(pPlainData.size());
+	QList<uchar> cryptogram(pPlainData.size());
 	int update_len = 0;
 	if (!EVP_EncryptUpdate(mCtx, cryptogram.data(), &update_len, reinterpret_cast<const uchar*>(pPlainData.constData()), static_cast<int>(pPlainData.size())))
 	{
@@ -141,7 +141,7 @@ QByteArray SymmetricCipher::decrypt(const QByteArray& pEncryptedData)
 		return QByteArray();
 	}
 
-	QVector<uchar> plaintext(pEncryptedData.size());
+	QList<uchar> plaintext(pEncryptedData.size());
 	int update_len = 0;
 	if (!EVP_DecryptUpdate(mCtx, plaintext.data(), &update_len, reinterpret_cast<const uchar*>(pEncryptedData.constData()), static_cast<int>(pEncryptedData.size())))
 	{

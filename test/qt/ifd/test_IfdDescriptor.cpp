@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDescriptor.h"
@@ -8,7 +8,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -52,7 +52,7 @@ class test_IfdDescriptor
 		void testValidDescriptorIsDifferentFromInvalid()
 		{
 			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
-			const Discovery invalidMsg("", "", 0, {});
+			const Discovery invalidMsg(""_L1, ""_L1, 0, {});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const IfdDescriptor valid(validMsg, address);

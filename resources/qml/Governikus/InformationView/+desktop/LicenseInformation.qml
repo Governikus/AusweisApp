@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -20,20 +20,24 @@ GListView {
 	delegate: RoundedRectangle {
 		readonly property bool isFirstItem: index === 0
 		readonly property bool isLastItem: index === ListView.view.count - 1
+		readonly property alias text: delegateText.text
 
+		Accessible.ignored: delegateText.text === ""
+		Accessible.name: delegateText.text
+		Accessible.role: Accessible.StaticText
 		bottomLeftCorner: isLastItem
 		bottomRightCorner: isLastItem
 		color: Style.color.pane
-		implicitHeight: delegateText.implicitHeight + delegateText.anchors.bottomMargin + delegateText.anchors.topMargin
+		implicitHeight: Math.ceil(delegateText.implicitHeight) + delegateText.anchors.bottomMargin + delegateText.anchors.topMargin
 		topLeftCorner: isFirstItem
 		topRightCorner: isFirstItem
 		width: listView.width - Constants.pane_padding
-		z: currentIndex === index ? 1 : 0
+		z: 0
 
 		GText {
 			id: delegateText
 
-			Accessible.ignored: text === ""
+			Accessible.ignored: true
 			text: model.modelData
 
 			anchors {
@@ -44,8 +48,14 @@ GListView {
 				topMargin: isFirstItem ? Constants.pane_padding : Constants.text_spacing
 			}
 		}
+	}
+	highlight: Item {
+		z: 2
+
 		FocusFrame {
-			framee: delegateText
+			anchors.leftMargin: 0
+			anchors.rightMargin: 0
+			scope: listView
 		}
 	}
 

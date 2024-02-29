@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalTlsServer.h"
@@ -23,7 +23,7 @@ bool LocalTlsServer::startListening(quint16 pPort)
 		return false;
 	}
 
-	const QVector<QHostAddress> localHosts = {QHostAddress::LocalHostIPv6, QHostAddress::LocalHost};
+	const QList<QHostAddress> localHosts = {QHostAddress::LocalHostIPv6, QHostAddress::LocalHost};
 	for (const auto& localHost : localHosts)
 	{
 		if (listen(localHost, pPort))

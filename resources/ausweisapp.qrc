@@ -1,6 +1,26 @@
 <RCC>
     <qresource prefix="/">
-        <file>fonts/Roboto-Medium.ttf</file>
+        <file>animations/enter_can.svg</file>
+        <file>animations/enter_new_pin.svg</file>
+        <file>animations/enter_no_pin.svg</file>
+        <file>animations/enter_password_star.svg</file>
+        <file>animations/enter_pin.svg</file>
+        <file>animations/enter_puk.svg</file>
+        <file>animations/enter_remote_pin.svg</file>
+        <file>animations/enter_transport_pin.svg</file>
+        <file>animations/hourglass.svg</file>
+        <file>animations/hourglass_arrows.svg</file>
+        <file>animations/hourglass_background.svg</file>
+        <file>animations/hourglass_mask_bottom.svg</file>
+        <file>animations/hourglass_mask_top.svg</file>
+        <file>animations/hourglass_sand.svg</file>
+        <file>animations/wait_for_idcard_sac.svg</file>
+        <file>animations/wait_for_idcard_usb.svg</file>
+        <file>animations/wait_for_questionmark.svg</file>
+        <file>animations/wait_for_reader.svg</file>
+        <file>fonts/AusweisApp_Roboto_Regular.ttf</file>
+        <file>fonts/AusweisApp_Roboto_Medium.ttf</file>
+        <file>fonts/AusweisApp_Roboto_Bold.ttf</file>
         <file>images/appearance_dark_mode.svg</file>
         <file>images/appearance_light_mode.svg</file>
         <file>images/appearance_system_mode.svg</file>
@@ -14,7 +34,7 @@
         <file>images/lock.svg</file>
         <file>images/open_website.svg</file>
         <file>images/material_location.svg</file>
-        <file>images/material_mail.svg</file>
+        <file>images/email_icon.svg</file>
         <file>images/material_phone.svg</file>
         <file>images/material_close.svg</file>
         <file>images/material_clear.svg</file>
@@ -25,18 +45,10 @@
         <file>images/material_expand_less.svg</file>
         <file>images/material_expand_more.svg</file>
         <file>images/material_arrow_right.svg</file>
+        <file>images/material_backspace.svg</file>
         <file>images/checkbox_indicator.svg</file>
         <file>images/npa.svg</file>
-        <file>images/can.svg</file>
         <file>images/signature.jp2</file>
-        <file>images/pin_letter_pinpuk.svg</file>
-        <file>images/transportpin_lightmode.svg</file>
-        <file>images/transportpin_darkmode.svg</file>
-        <file>images/transportpin_highcontrast.svg</file>
-        <file>images/pin_person.svg</file>
-        <file>images/pin_person.webp</file>
-        <file>images/pin_unknown.svg</file>
-        <file>images/can.webp</file>
         <file>images/logo_beta_background.svg</file>
         <file>images/logo_beta_testing.svg</file>
         <file>images/status_error_darkmode.svg</file>
@@ -53,16 +65,6 @@
         <file>images/ausweis_outline.svg</file>
         <file>images/identify.svg</file>
         <file>images/info.svg</file>
-        <file>images/pairingCode.webp</file>
-        <file>images/puk_darkmode.webp</file>
-        <file>images/puk_highcontrast.webp</file>
-        <file>images/puk_lightmode.webp</file>
-        <file>images/puk_darkmode.svg</file>
-        <file>images/puk_highcontrast.svg</file>
-        <file>images/puk_lightmode.svg</file>
-        <file>images/transportpin_darkmode.webp</file>
-        <file>images/transportpin_highcontrast.webp</file>
-        <file>images/transportpin_lightmode.webp</file>
         <file>updatable-files/supported-providers.json</file>
         <file>images/icon_five_digit_pin.svg</file>
         <file>images/icon_six_digit_pin.svg</file>
@@ -89,10 +91,10 @@
         <file>images/siteWithLogo_darkmode.svg</file>
         <file>images/siteWithLogo_highcontrast.svg</file>
         <file>images/siteWithLogo_lightmode.svg</file>
-        <file>images/sandglass.svg</file>
-        <file>images/sandglass.webp</file>
         <file>images/trash_icon.svg</file>
-        <file>images/trash_icon_old.svg</file>
+        <file>images/puk_correct_darkmode.svg</file>
+        <file>images/puk_correct_lightmode.svg</file>
+        <file>images/puk_correct_highcontrast.svg</file>
         <file>images/workflow_error_card_darkmode.svg</file>
         <file>images/workflow_error_card_highcontrast.svg</file>
         <file>images/workflow_error_card_lightmode.svg</file>
@@ -111,6 +113,9 @@
         <file>images/workflow_error_wrong_transportpin_darkmode.svg</file>
         <file>images/workflow_error_wrong_transportpin_highcontrast.svg</file>
         <file>images/workflow_error_wrong_transportpin_lightmode.svg</file>
+        <file>images/workflow_error_sak_connection_darkmode.svg</file>
+        <file>images/workflow_error_sak_connection_highcontrast.svg</file>
+        <file>images/workflow_error_sak_connection_lightmode.svg</file>
         <file>images/workflow_error_no_sak_darkmode.svg</file>
         <file>images/workflow_error_no_sak_highcontrast.svg</file>
         <file>images/workflow_error_no_sak_lightmode.svg</file>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -44,7 +44,7 @@ class IfdReaderManagerPlugIn
 		void removeDispatcher(const QString& pId);
 		[[nodiscard]] const QMap<QString, QSharedPointer<IfdDispatcherClient>>& getDispatchers() const;
 
-		virtual IfdClient* getIfdClient() = 0;
+		virtual IfdClient* getIfdClient() const = 0;
 
 	public:
 		IfdReaderManagerPlugIn(ReaderManagerPlugInType pPlugInType, bool pAvailable = false, bool pPlugInEnabled = false);

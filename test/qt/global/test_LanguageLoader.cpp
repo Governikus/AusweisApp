@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_LanguageLoader
@@ -161,8 +162,8 @@ class test_LanguageLoader
 
 		void defaultPath()
 		{
-			LanguageLoader::getInstance().setPath("dummy");
-			QCOMPARE(LanguageLoader::getInstance().getPath(), QString("dummy"));
+			LanguageLoader::getInstance().setPath("dummy"_L1);
+			QCOMPARE(LanguageLoader::getInstance().getPath(), "dummy"_L1);
 		}
 
 

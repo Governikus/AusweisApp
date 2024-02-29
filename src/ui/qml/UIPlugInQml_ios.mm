@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -93,5 +93,5 @@ QVariantMap UIPlugInQml::getSafeAreaMargins() const
 qreal UIPlugInQml::getSystemFontScaleFactor() const
 {
 	UIFont* font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-	return font.pointSize / 14.0;
+	return font.pointSize / 15.0;
 }

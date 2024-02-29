@@ -1,0 +1,17 @@
+module Animations
+
+internal EnterPasswordAnimation EnterPasswordAnimation.qml
+internal WaitForAnimation WaitForAnimation.qml
+
+AnimationLoader 1.0 AnimationLoader.qml
+EnterCanAnimation 1.0 EnterCanAnimation.qml
+EnterNewPinAnimation 1.0 EnterNewPinAnimation.qml
+EnterNoPinAnimation 1.0 EnterNoPinAnimation.qml
+EnterPinAnimation 1.0 EnterPinAnimation.qml
+EnterPukAnimation 1.0 EnterPukAnimation.qml
+EnterRemotePinAnimation 1.0 EnterRemotePinAnimation.qml
+EnterTransportPinAnimation 1.0 EnterTransportPinAnimation.qml
+HourglassAnimation 1.0 HourglassAnimation.qml
+WaitForCardSacAnimation 1.0 WaitForCardSacAnimation.qml
+WaitForCardUsbAnimation 1.0 WaitForCardUsbAnimation.qml
+WaitForReaderAnimation 1.0 WaitForReaderAnimation.qml

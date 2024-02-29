@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -35,7 +35,7 @@ class ServerMessageHandler
 
 		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput&) = 0;
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) = 0;
-		virtual void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) = 0;
+		virtual void setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes) = 0;
 
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);
@@ -45,6 +45,7 @@ class ServerMessageHandler
 		void fireCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
 		void fireClosed();
 		void fireSecureMessagingStopped();
+		void fireNameChanged();
 };
 
 } // namespace governikus

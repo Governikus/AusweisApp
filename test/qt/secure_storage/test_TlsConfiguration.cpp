@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,7 +11,7 @@
 #include <QtCore>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -68,8 +68,8 @@ class test_TlsConfiguration
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
 
 			QCOMPARE(mTlsConfiguration.getCiphers().size(), 2);
-			QCOMPARE(mTlsConfiguration.getCiphers().at(0), QSslCipher("ECDHE-ECDSA-AES256-GCM-SHA384"));
-			QCOMPARE(mTlsConfiguration.getCiphers().at(1), QSslCipher("DHE-RSA-AES256-SHA256"));
+			QCOMPARE(mTlsConfiguration.getCiphers().at(0), QSslCipher("ECDHE-ECDSA-AES256-GCM-SHA384"_L1));
+			QCOMPARE(mTlsConfiguration.getCiphers().at(1), QSslCipher("DHE-RSA-AES256-SHA256"_L1));
 		}
 
 
@@ -82,8 +82,8 @@ class test_TlsConfiguration
 			mTlsConfiguration.load(QJsonDocument::fromJson(config).object());
 
 			QCOMPARE(mTlsConfiguration.getEllipticCurves().size(), 2);
-			QCOMPARE(mTlsConfiguration.getEllipticCurves().at(0), QSslEllipticCurve::fromLongName("brainpoolP512r1"));
-			QCOMPARE(mTlsConfiguration.getEllipticCurves().at(1), QSslEllipticCurve::fromLongName("brainpoolP384r1"));
+			QCOMPARE(mTlsConfiguration.getEllipticCurves().at(0), QSslEllipticCurve::fromLongName("brainpoolP512r1"_L1));
+			QCOMPARE(mTlsConfiguration.getEllipticCurves().at(1), QSslEllipticCurve::fromLongName("brainpoolP384r1"_L1));
 		}
 
 

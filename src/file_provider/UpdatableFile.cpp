@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -56,8 +56,8 @@ const QString& UpdatableFile::getSectionCachePath() const
 
 QString UpdatableFile::qrcPath() const
 {
-	const QString prefix = QStringLiteral("updatable-files");
-	const QString path = QStringLiteral(":/") + prefix + Sep + mSection + Sep + mName;
+	const auto prefix = QStringLiteral("updatable-files");
+	const auto path = QStringLiteral(":/") + prefix + Sep + mSection + Sep + mName;
 
 	return QFile::exists(path) ? path : QString();
 }

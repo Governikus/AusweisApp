@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -57,7 +58,7 @@ class test_AuxiliaryAuthenticatedData
 
 			QVERIFY(auxData != nullptr);
 			QVERIFY(auxData->hasAgeVerificationDate());
-			QCOMPARE(auxData->getAgeVerificationDate(), QDate::fromString("1978-08-16", Qt::DateFormat::ISODate));
+			QCOMPARE(auxData->getAgeVerificationDate(), QDate::fromString("1978-08-16"_L1, Qt::DateFormat::ISODate));
 		}
 
 
@@ -162,7 +163,7 @@ class test_AuxiliaryAuthenticatedData
 
 			QVERIFY(auxData != nullptr);
 			QVERIFY(auxData->hasValidityDate());
-			QCOMPARE(auxData->getValidityDate(), QDate::fromString("2015-06-30", Qt::DateFormat::ISODate));
+			QCOMPARE(auxData->getValidityDate(), QDate::fromString("2015-06-30"_L1, Qt::DateFormat::ISODate));
 		}
 
 

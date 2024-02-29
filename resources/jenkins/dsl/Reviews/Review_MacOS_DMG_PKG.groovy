@@ -3,7 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'MacOS_DMG_PKG',
-		libraries: ['MacOS'],
+		libraries: 'MacOS',
 		label: 'MacOS',
 		artifacts: 'build/*.dmg,build/*.pkg'
 	).generate(this)
@@ -20,8 +20,6 @@ j.with
 		shell('cd source; cmake --preset ci-macos-release -DOSX_TIMESTAMP=OFF')
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			cmake --build build --target package --config MinSizeRel
 			'''.stripIndent().trim())
 

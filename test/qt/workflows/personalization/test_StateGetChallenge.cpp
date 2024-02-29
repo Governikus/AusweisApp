@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetChallenge.h"
@@ -14,7 +14,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -49,16 +49,16 @@ class test_StateGetChallenge
 
 		void test_CheckRequestUrl()
 		{
-			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1));
 
 			const auto& url = mState->getRequestUrl().toString();
-			QCOMPARE(url, QString("https://dummy/v1/challenge"));
+			QCOMPARE(url, "https://dummy/v1/challenge"_L1);
 		}
 
 
 		void test_CheckPayload()
 		{
-			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1));
 			mContext->setServiceInformation(SmartEidType::APPLET, QStringLiteral("FooBar"), QString());
 
 			const auto& payload = mState->getPayload();
@@ -68,8 +68,8 @@ class test_StateGetChallenge
 
 			const auto obj = json.object();
 			QCOMPARE(obj.size(), 2);
-			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), QString("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
-			QCOMPARE(obj.value(QLatin1String("challengeType")).toString(), QString("FooBar"));
+			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), "135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1);
+			QCOMPARE(obj.value(QLatin1String("challengeType")).toString(), "FooBar"_L1);
 		}
 
 
@@ -98,7 +98,7 @@ class test_StateGetChallenge
 
 			mState->onNetworkReply();
 			QCOMPARE(spyContinue.count(), 1);
-			QCOMPARE(mContext->getChallenge(), QString("Q2hhbGxlbmdl"));
+			QCOMPARE(mContext->getChallenge(), "Q2hhbGxlbmdl"_L1);
 		}
 
 
@@ -116,9 +116,9 @@ class test_StateGetChallenge
 			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_Server_Error);
 
 			const FailureCode::FailureInfoMap infoMap {
-				{FailureCode::Info::State_Name, "StateGetChallenge"},
+				{FailureCode::Info::State_Name, "StateGetChallenge"_L1},
 				{FailureCode::Info::Http_Status_Code, QString::number(500)},
-				{FailureCode::Info::Network_Error, "Unknown error"}
+				{FailureCode::Info::Network_Error, "Unknown error"_L1}
 			};
 			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Server_Error, infoMap);
 			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);

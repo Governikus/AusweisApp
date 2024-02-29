@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebSocketServerImpl.h"
@@ -30,6 +30,7 @@ void WebSocketServerImpl::onWebsocketConnection()
 	QSharedPointer<DataChannel> channel(new WebSocketChannel(connection), &QObject::deleteLater);
 	mServerMessageHandler.reset(Env::create<ServerMessageHandler*>(channel, mAllowedPlugInTypes));
 	connect(mServerMessageHandler.data(), &ServerMessageHandler::fireClosed, this, &WebSocketServerImpl::onConnectionClosed);
+	connect(mServerMessageHandler.data(), &ServerMessageHandler::fireNameChanged, this, &WebSocketServer::fireNameChanged);
 	Q_EMIT fireMessageHandlerAdded(mServerMessageHandler);
 	Q_EMIT fireNewConnection(connection);
 	Q_EMIT fireConnectedChanged(isConnected());
@@ -49,7 +50,7 @@ void WebSocketServerImpl::onServerError(QWebSocketProtocol::CloseCode pCloseCode
 }
 
 
-WebSocketServerImpl::WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes)
+WebSocketServerImpl::WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QList<ReaderManagerPlugInType>& pAllowedPlugInTypes)
 	: WebSocketServer()
 	, mServer(QString(), QWebSocketServer::NonSecureMode)
 	, mTlsServer(pTlsServer)

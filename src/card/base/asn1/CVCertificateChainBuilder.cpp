@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChainBuilder.h"
@@ -20,13 +20,13 @@ bool CVCertificateChainBuilder::isChild(const QSharedPointer<const CVCertificate
 
 
 CVCertificateChainBuilder::CVCertificateChainBuilder(bool pProductive)
-	: ChainBuilder(QVector<QSharedPointer<const CVCertificate>>(), &CVCertificateChainBuilder::isChild)
+	: ChainBuilder(QList<QSharedPointer<const CVCertificate>>(), &CVCertificateChainBuilder::isChild)
 	, mProductive(pProductive)
 {
 }
 
 
-CVCertificateChainBuilder::CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive)
+CVCertificateChainBuilder::CVCertificateChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive)
 	: ChainBuilder(pCvcPool, &CVCertificateChainBuilder::isChild)
 	, mProductive(pProductive)
 {

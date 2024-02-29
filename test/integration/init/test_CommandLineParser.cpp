@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -8,6 +8,8 @@
 
 #include <QProcess>
 #include <QtTest>
+
+using namespace Qt::Literals::StringLiterals;
 
 class test_CommandLineParser
 	: public QObject
@@ -25,11 +27,11 @@ class test_CommandLineParser
 #endif
 
 			const QString& path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
-			const QString& app = path + "AusweisApp";
+			const QString& app = path + "AusweisApp"_L1;
 
 			QStringList args;
-			args << "--help";
-			args << "-platform" << "offscreen";
+			args << "--help"_L1;
+			args << "-platform"_L1 << "offscreen"_L1;
 
 			QProcess process;
 			process.setProgram(app);
@@ -43,7 +45,11 @@ class test_CommandLineParser
 			out << QString();
 			out << QStringLiteral("Options:");
 			out << QStringLiteral("  -h, --help                       Displays help on commandline options.");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 6, 0))
+			out << QStringLiteral("  --help-all                       Displays help, including generic Qt options.");
+#else
 			out << QStringLiteral("  --help-all                       Displays help including Qt specific options.");
+#endif
 			out << QStringLiteral("  -v, --version                    Displays version information.");
 			out << QStringLiteral("  --keep                           Keep logfile.");
 			out << QStringLiteral("  --no-logfile                     Disable logfile.");
@@ -56,7 +62,7 @@ class test_CommandLineParser
 			out << QString();
 
 			const auto& standardOut = process.readAllStandardOutput();
-			const auto& expected = out.join(QLatin1Char('\n')).toLocal8Bit();
+			const auto& expected = out.join('\n'_L1).toLocal8Bit();
 
 			// helps to debug if QCOMPARE fails
 			qDebug().noquote() << '\n' << standardOut;

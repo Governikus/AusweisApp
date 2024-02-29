@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TrayIcon.h"
@@ -109,7 +109,7 @@ void TrayIcon::updateMenu()
 
 	trayIconMenu->clear();
 
-	#if defined(Q_OS_MACOS)
+	#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
 	//: LABEL DESKTOP
 	QAction* showApplicationAction = new QAction(tr("Open"), trayIconMenu);
 	connect(showApplicationAction, &QAction::triggered, this, &TrayIcon::fireShow);

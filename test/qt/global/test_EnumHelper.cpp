@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 namespace
@@ -75,11 +76,11 @@ class test_EnumHelper
 
 		void operatorString()
 		{
-			QString str = "this is a dummy: ";
+			QString str = "this is a dummy: "_L1;
 			str += TestEnum1::FIRST;
 			QCOMPARE(str, QStringLiteral("this is a dummy: FIRST"));
 
-			QString str2 = "other text" + TestEnum1::FIRST + str + TestEnum1::SECOND + " test";
+			QString str2 = "other text"_L1 + TestEnum1::FIRST + str + TestEnum1::SECOND + " test"_L1;
 			QCOMPARE(str, QStringLiteral("this is a dummy: FIRST"));
 			QCOMPARE(str2, QStringLiteral("other textFIRSTthis is a dummy: FIRSTSECOND test"));
 		}
@@ -116,10 +117,10 @@ class test_EnumHelper
 
 		void list()
 		{
-			const QVector<TestEnum2>& list1 = Enum<TestEnum2>::getList();
+			const QList<TestEnum2>& list1 = Enum<TestEnum2>::getList();
 			QCOMPARE(list1.size(), 3);
 
-			const QVector<TestEnum2>& list2 = Enum<TestEnum2>::getList();
+			const QList<TestEnum2>& list2 = Enum<TestEnum2>::getList();
 			QCOMPARE(list2.size(), 3);
 
 			QCOMPARE(list1, list2);
@@ -177,7 +178,7 @@ class test_EnumHelper
 			QCOMPARE(Enum<TestEnum1>::fromString("abc", TestEnum1::THIRD), TestEnum1::THIRD);
 			QVERIFY(Enum<TestEnum1>::fromString("FIRST", TestEnum1::THIRD) != TestEnum1::THIRD);
 
-			QString value = "FIRST";
+			QString value = "FIRST"_L1;
 			QVERIFY(Enum<TestEnum1>::fromString(value, TestEnum1::THIRD) != TestEnum1::THIRD);
 		}
 

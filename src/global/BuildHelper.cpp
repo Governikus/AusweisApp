@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
@@ -149,9 +149,9 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 
 #endif
 
-QVector<QPair<QLatin1String, QString>> BuildHelper::getInformationHeader()
+QList<QPair<QLatin1String, QString>> BuildHelper::getInformationHeader()
 {
-	QVector<QPair<QLatin1String, QString>> data;
+	QList<QPair<QLatin1String, QString>> data;
 	const auto& add = [&data](const char* pKey, const QString& pStr)
 			{
 				data << qMakePair(QLatin1String(pKey), pStr);

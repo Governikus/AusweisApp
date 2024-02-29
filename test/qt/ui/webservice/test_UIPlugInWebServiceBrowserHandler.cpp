@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInWebService.h"
@@ -12,6 +12,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_UIPlugInWebServiceBrowserHandler
@@ -40,7 +41,7 @@ class test_UIPlugInWebServiceBrowserHandler
 			mSocket = new MockSocket();
 			mSocket->setSocketState(QAbstractSocket::ConnectedState);
 			mRequest.reset(new HttpRequest(mSocket));
-			mAuthContext.reset(new AuthContext(true, QUrl("http://activationUrl")));
+			mAuthContext.reset(new AuthContext(true, QUrl("http://activationUrl"_L1)));
 
 			ResourceLoader::getInstance().init(); // html templates
 		}
@@ -75,8 +76,8 @@ class test_UIPlugInWebServiceBrowserHandler
 
 			// lost for correct redirect
 			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setRefreshUrl(QUrl("http://dummy"));
-			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QLatin1String("The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: <a href='http://dummy?ResultMajor=ok'>dummy</a>"));
+			mAuthContext->setRefreshUrl(QUrl("http://dummy"_L1));
+			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), "The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: <a href='http://dummy?ResultMajor=ok'>dummy</a>"_L1);
 		}
 
 
@@ -166,7 +167,7 @@ class test_UIPlugInWebServiceBrowserHandler
 		{
 			UIPlugInWebService ui;
 			mAuthContext->setTcTokenNotFound(false);
-			mAuthContext->setRefreshUrl(QUrl("http://dummy"));
+			mAuthContext->setRefreshUrl(QUrl("http://dummy"_L1));
 
 			QTest::ignoreMessage(QtDebugMsg, "Redirect URL: QUrl(\"http://dummy?ResultMajor=ok\")");
 			QCOMPARE(ui.sendRedirect(mRequest, mAuthContext), QString());

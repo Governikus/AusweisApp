@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -45,11 +46,11 @@ class test_FailureCode
 
 			QTest::newRow("Empty") << FailureCode::FailureInfoMap();
 			QTest::newRow("One entry") << FailureCode::FailureInfoMap({
-						{FailureCode::Info::State_Name, "MyStateName"}
+						{FailureCode::Info::State_Name, "MyStateName"_L1}
 					});
 			QTest::newRow("Two entries") << FailureCode::FailureInfoMap({
-						{FailureCode::Info::State_Name, "MyStateName"},
-						{FailureCode::Info::Card_Return_Code, "MyReturnCode"}
+						{FailureCode::Info::State_Name, "MyStateName"_L1},
+						{FailureCode::Info::Card_Return_Code, "MyReturnCode"_L1}
 					});
 		}
 

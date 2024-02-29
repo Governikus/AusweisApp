@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -15,48 +15,27 @@ Item {
 			name: "1"
 
 			PropertyChanges {
-				enabled: true
-				target: circle1
-			}
-			PropertyChanges {
-				enabled: false
-				target: circle2
-			}
-			PropertyChanges {
-				enabled: false
-				target: circle3
+				circle1.enabled: true
+				circle2.enabled: false
+				circle3.enabled: false
 			}
 		},
 		State {
 			name: "2"
 
 			PropertyChanges {
-				enabled: false
-				target: circle1
-			}
-			PropertyChanges {
-				enabled: true
-				target: circle2
-			}
-			PropertyChanges {
-				enabled: false
-				target: circle3
+				circle1.enabled: false
+				circle2.enabled: true
+				circle3.enabled: false
 			}
 		},
 		State {
 			name: "3"
 
 			PropertyChanges {
-				enabled: false
-				target: circle1
-			}
-			PropertyChanges {
-				enabled: false
-				target: circle2
-			}
-			PropertyChanges {
-				enabled: true
-				target: circle3
+				circle1.enabled: false
+				circle2.enabled: false
+				circle3.enabled: true
 			}
 		}
 	]

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -39,7 +39,9 @@ ScrollBar {
 			id: handler
 
 			anchors.left: parent.left
-			color: Style.color.control
+			border.color: colors.control_border
+			border.width: 2 * Style.dimens.border_width
+			color: colors.control
 			height: parent.height
 			radius: width / 2
 			width: Style.dimens.scrollbar_width
@@ -49,6 +51,12 @@ ScrollBar {
 	onPolicyChanged: if (policy === ScrollBar.AlwaysOn)
 		highlight()
 
+	StatefulColors {
+		id: colors
+
+		statefulControl: baseItem
+		uncheckedCondition: false
+	}
 	Timer {
 		id: highlightTimer
 

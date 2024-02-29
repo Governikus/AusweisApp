@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -38,9 +38,9 @@ class RemoteIfdClient
 		Q_INVOKABLE void stopDetection() override;
 		Q_INVOKABLE bool isDetecting() override;
 
-		[[nodiscard]] QVector<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const override;
+		[[nodiscard]] QList<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const override;
 		Q_INVOKABLE void requestRemoteDevices()  override;
-		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 };
 
 

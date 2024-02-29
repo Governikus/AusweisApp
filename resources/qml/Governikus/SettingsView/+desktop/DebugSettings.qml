@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick.Layouts
 import Governikus.Global
@@ -14,12 +14,17 @@ ColumnLayout {
 
 	GPane {
 		Layout.fillWidth: true
+		contentPadding: 0
 		spacing: Constants.component_spacing
 
 		//: LABEL DESKTOP
 		title: qsTr("Create dummy entries")
 
 		RowLayout {
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Constants.pane_padding
+			Layout.topMargin: Constants.pane_padding
+
 			GButton {
 				//: LABEL DESKTOP
 				text: qsTr("Logfile")
@@ -30,29 +35,38 @@ ColumnLayout {
 				}
 			}
 		}
-		LabeledSwitch {
-			checked: SettingsModel.showBetaTesting
-			//: LABEL DESKTOP
-			title: qsTr("Show beta testing image")
+		ColumnLayout {
+			spacing: 0
 
-			onCheckedChanged: SettingsModel.showBetaTesting = checked
-		}
-		LabeledSwitch {
-			checked: SettingsModel.enableCanAllowed
-			//: LABEL DESKTOP
-			title: qsTr("Support CAN allowed mode")
+			GSwitch {
+				Layout.fillWidth: true
+				checked: SettingsModel.showBetaTesting
+				//: LABEL DESKTOP
+				text: qsTr("Show beta testing image")
 
-			onCheckedChanged: SettingsModel.enableCanAllowed = checked
-		}
-		LabeledSwitch {
-			checked: SettingsModel.skipRightsOnCanAllowed
-			enabled: SettingsModel.enableCanAllowed
-			//: LABEL DESKTOP
-			title: qsTr("Skip rights page in CAN allowed mode")
+				onCheckedChanged: SettingsModel.showBetaTesting = checked
+			}
+			GSwitch {
+				Layout.fillWidth: true
+				checked: SettingsModel.enableCanAllowed
+				//: LABEL DESKTOP
+				text: qsTr("Support CAN allowed mode")
 
-			onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
+				onCheckedChanged: SettingsModel.enableCanAllowed = checked
+			}
+			GSwitch {
+				Layout.fillWidth: true
+				checked: SettingsModel.skipRightsOnCanAllowed
+				enabled: SettingsModel.enableCanAllowed
+				//: LABEL DESKTOP
+				text: qsTr("Skip rights page in CAN allowed mode")
+
+				onCheckedChanged: SettingsModel.skipRightsOnCanAllowed = checked
+			}
 		}
 		GButton {
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Constants.pane_padding
 			//: LABEL DESKTOP
 			text: qsTr("Reset hideable dialogs")
 
@@ -61,6 +75,9 @@ ColumnLayout {
 			}
 		}
 		GText {
+			Layout.bottomMargin: Constants.pane_padding
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Constants.pane_padding
 			activeFocusOnTab: true
 			//: LABEL DESKTOP
 			text: qsTr("Show Transport PIN reminder, store feedback and close reminder dialogs.")

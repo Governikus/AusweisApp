@@ -1,6 +1,7 @@
 add_definitions(-DUNICODE)
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 add_definitions(-DQT_NO_CAST_FROM_BYTEARRAY)
+add_definitions(-DQT_NO_CAST_FROM_ASCII)
 add_definitions(-DQT_NO_CAST_TO_ASCII)
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_NO_KEYWORDS)
@@ -9,9 +10,6 @@ add_definitions(-DQT_NO_EXCEPTIONS)
 if(NOT MSVC AND NOT CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC" AND QT5)
 	add_definitions(-DQT_STRICT_ITERATORS)
 endif()
-
-add_compile_definitions($<$<CONFIG:Debug>:QT_RESTRICTED_CAST_FROM_ASCII>)
-add_compile_definitions($<$<NOT:$<CONFIG:Debug>>:QT_NO_CAST_FROM_ASCII>)
 
 if(QT_VENDOR STREQUAL "Governikus")
 	add_definitions(-DGOVERNIKUS_QT)

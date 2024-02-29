@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -17,18 +17,13 @@ AbstractButton {
 	property alias tintIcon: icon.tintEnabled
 	property alias title: label.text
 
-	implicitHeight: layout.implicitHeight + Constants.component_spacing
-	implicitWidth: layout.implicitWidth + 2 * Constants.component_spacing
+	horizontalPadding: Constants.component_spacing * 2
+	verticalPadding: Constants.component_spacing / 2
 
 	background: Rectangle {
-		color: root.pressed ? Style.color.control_content_pressed : Style.color.transparent
+		color: colors.control_preferredPaneBackground
 	}
 	contentItem: RowLayout {
-		id: layout
-
-		anchors.left: parent.left
-		anchors.leftMargin: Constants.component_spacing * 2
-		anchors.verticalCenter: parent.verticalCenter
 		spacing: Constants.component_spacing
 
 		TintableIcon {
@@ -41,8 +36,15 @@ AbstractButton {
 		GText {
 			id: label
 
+			Accessible.ignored: true
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
-			color: root.pressed ? Style.color.control_content_hover : Style.color.text
+			color: colors.text
 		}
+	}
+
+	StatefulColors {
+		id: colors
+
+		statefulControl: root
 	}
 }

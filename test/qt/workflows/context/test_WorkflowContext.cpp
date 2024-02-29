@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/WorkflowContext.h"
@@ -10,7 +10,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -21,13 +21,13 @@ class test_WorkflowContext
 	QSharedPointer<TestWorkflowContext> mContext;
 
 	private:
-		QVector<AcceptedEidType> allow_all_types()
+		QList<AcceptedEidType> allow_all_types()
 		{
-			return QVector<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::HW_KEYSTORE, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED});
+			return QList<AcceptedEidType>({AcceptedEidType::CARD_CERTIFIED, AcceptedEidType::HW_KEYSTORE, AcceptedEidType::SE_CERTIFIED, AcceptedEidType::SE_ENDORSED});
 		}
 
 
-		QVector<AcceptedEidType> allow_all_types_but(const AcceptedEidType& pType)
+		QList<AcceptedEidType> allow_all_types_but(const AcceptedEidType& pType)
 		{
 			auto types = allow_all_types();
 			types.removeOne(pType);
@@ -35,15 +35,15 @@ class test_WorkflowContext
 		}
 
 
-		QVector<AcceptedEidType> allow_only(std::initializer_list<AcceptedEidType> pTypes)
+		QList<AcceptedEidType> allow_only(std::initializer_list<AcceptedEidType> pTypes)
 		{
-			return QVector<AcceptedEidType>(pTypes);
+			return QList<AcceptedEidType>(pTypes);
 		}
 
 
 		QSharedPointer<CardConnection> createCardConnection(CardType pCardType)
 		{
-			auto readerInfo = ReaderInfo("reader", ReaderManagerPlugInType::UNKNOWN, CardInfo(pCardType));
+			auto readerInfo = ReaderInfo("reader"_L1, ReaderManagerPlugInType::UNKNOWN, CardInfo(pCardType));
 			return QSharedPointer<CardConnection>(new MockCardConnection(readerInfo));
 		}
 
@@ -169,8 +169,8 @@ class test_WorkflowContext
 
 		void test_ReaderPlugInTypes()
 		{
-			QVector<ReaderManagerPlugInType> vector1({ReaderManagerPlugInType::PCSC});
-			QVector<ReaderManagerPlugInType> vector2({ReaderManagerPlugInType::REMOTE_IFD});
+			QList<ReaderManagerPlugInType> vector1({ReaderManagerPlugInType::PCSC});
+			QList<ReaderManagerPlugInType> vector2({ReaderManagerPlugInType::REMOTE_IFD});
 			QSignalSpy spy(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
 
 			mContext->setReaderPlugInTypes(vector1);
@@ -303,13 +303,13 @@ class test_WorkflowContext
 		void test_eidTypeMismatch_data()
 		{
 			QTest::addColumn<QSharedPointer<CardConnection>>("cardConnection");
-			QTest::addColumn<QVector<AcceptedEidType>>("acceptedTypes");
+			QTest::addColumn<QList<AcceptedEidType>>("acceptedTypes");
 			QTest::addColumn<bool>("result");
 
-			QTest::addRow("No error when no cardconnection 1") << QSharedPointer<CardConnection>() << QVector<AcceptedEidType>() << false;
+			QTest::addRow("No error when no cardconnection 1") << QSharedPointer<CardConnection>() << QList<AcceptedEidType>() << false;
 			QTest::addRow("No error when no cardconnection 2") << QSharedPointer<CardConnection>() << allow_all_types() << false;
 
-			QTest::addRow("No error when no card") << createCardConnection(CardType::NONE) << QVector<AcceptedEidType>() << false;
+			QTest::addRow("No error when no card") << createCardConnection(CardType::NONE) << QList<AcceptedEidType>() << false;
 
 			QTest::addRow("ID card allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types() << false;
 			QTest::addRow("ID card not allowed") << createCardConnection(CardType::EID_CARD) << allow_all_types_but(AcceptedEidType::CARD_CERTIFIED) << true;
@@ -321,7 +321,7 @@ class test_WorkflowContext
 		void test_eidTypeMismatch()
 		{
 			QFETCH(QSharedPointer<CardConnection>, cardConnection);
-			QFETCH(QVector<AcceptedEidType>, acceptedTypes);
+			QFETCH(QList<AcceptedEidType>, acceptedTypes);
 			QFETCH(bool, result);
 
 			mContext->setAcceptedEidTypes(acceptedTypes);
@@ -334,7 +334,7 @@ class test_WorkflowContext
 		void test_isMobileEidTypeAllowed_data()
 		{
 			QTest::addColumn<MobileEidType>("mobileEidType");
-			QTest::addColumn<QVector<AcceptedEidType>>("acceptedTypes");
+			QTest::addColumn<QList<AcceptedEidType>>("acceptedTypes");
 			QTest::addColumn<bool>("result");
 
 			QTest::addRow("UNKNOWN not allowed") << MobileEidType::UNKNOWN << allow_all_types() << false;
@@ -357,7 +357,7 @@ class test_WorkflowContext
 		void test_isMobileEidTypeAllowed()
 		{
 			QFETCH(MobileEidType, mobileEidType);
-			QFETCH(QVector<AcceptedEidType>, acceptedTypes);
+			QFETCH(QList<AcceptedEidType>, acceptedTypes);
 			QFETCH(bool, result);
 
 			mContext->setAcceptedEidTypes(acceptedTypes);

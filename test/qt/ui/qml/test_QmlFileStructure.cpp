@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ResourceLoader.h"
@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_QmlFileStructure
@@ -52,7 +53,7 @@ class test_QmlFileStructure
 			QFETCH(QFileInfo, qmlFile);
 
 			QDir dir = qmlFile.dir();
-			while (dir.dirName().startsWith(QLatin1Char('+')))
+			while (dir.dirName().startsWith('+'_L1))
 			{
 				dir.cdUp();
 				const QString fileInParentFolder = dir.path() + QDir::separator() + qmlFile.fileName();

@@ -1,9 +1,9 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
- * \brief Template functions that allow to map and filter over QVectors.
+ * \brief Template functions that allow to map and filter over QLists.
  */
 
 #pragma once
@@ -11,7 +11,7 @@
 #include <functional>
 #include <type_traits>
 
-#include <QVector>
+#include <QList>
 
 namespace governikus
 {
@@ -39,12 +39,12 @@ std::enable_if_t<!std::is_void_v<T>, QList<T>> map(const std::function<T(const S
 /*
  * Usage example: filter<Reader>([](const Reader& r){ return r.getCard() != nullptr; }, readers)
  *
- * where readers has type QVector<Reader>
+ * where readers has type QList<Reader>
  */
 template<typename T>
-std::enable_if_t<!std::is_void_v<T>, QVector<T>> filter(const std::function<bool(const T&)>& pFunc, const QVector<T>& pItems)
+std::enable_if_t<!std::is_void_v<T>, QList<T>> filter(const std::function<bool(const T&)>& pFunc, const QList<T>& pItems)
 {
-	QVector<T> result;
+	QList<T> result;
 	for (const T& item : pItems)
 	{
 		if (pFunc(item))

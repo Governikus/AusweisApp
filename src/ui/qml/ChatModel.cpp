@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -188,7 +188,7 @@ bool ChatModel::setData(const QModelIndex& pIndex, const QVariant& pValue, int p
 			return false;
 		}
 
-		Q_EMIT dataChanged(pIndex, pIndex, QVector<int>({SELECTED_ROLE}));
+		Q_EMIT dataChanged(pIndex, pIndex, QList<int>({SELECTED_ROLE}));
 		return true;
 	}
 

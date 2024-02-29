@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -33,11 +33,10 @@ class ReaderConfigurationInfo
 				const QString mUrl;
 				const QString mPattern;
 				const QString mIcon;
-				const QString mIconWithNPA;
 
 
 				InternalInfo(bool pKnown, uint pVendorId, const QSet<uint>& pProductIds, const QString& pName, const QString& pUrl,
-						const QString& pPattern, const QString& pIcon, const QString& pIconWithNPA)
+						const QString& pPattern, const QString& pIcon)
 					: mKnown(pKnown)
 					, mVendorId(pVendorId)
 					, mProductIds(pProductIds)
@@ -45,7 +44,6 @@ class ReaderConfigurationInfo
 					, mUrl(pUrl)
 					, mPattern(pPattern)
 					, mIcon(pIcon)
-					, mIconWithNPA(pIconWithNPA)
 				{
 				}
 
@@ -58,8 +56,7 @@ class ReaderConfigurationInfo
 						   mName != pOther.mName ||
 						   mUrl != pOther.mUrl ||
 						   mPattern != pOther.mPattern ||
-						   mIcon != pOther.mIcon ||
-						   mIconWithNPA != pOther.mIconWithNPA);
+						   mIcon != pOther.mIcon);
 				}
 
 
@@ -72,7 +69,7 @@ class ReaderConfigurationInfo
 		explicit ReaderConfigurationInfo(const QString& pReaderName);
 		ReaderConfigurationInfo(uint pVendorId, const QSet<uint>& pProductIds,
 				const QString& pName, const QString& pUrl, const QString& pPattern,
-				const QString& pIcon, const QString& pIconWithNPA);
+				const QString& pIcon);
 
 		virtual ~ReaderConfigurationInfo();
 
@@ -85,7 +82,6 @@ class ReaderConfigurationInfo
 		[[nodiscard]] const QString& getUrl() const;
 		[[nodiscard]] const QString& getPattern() const;
 		[[nodiscard]] QSharedPointer<UpdatableFile> getIcon() const;
-		[[nodiscard]] QSharedPointer<UpdatableFile> getIconWithNPA() const;
 };
 
 

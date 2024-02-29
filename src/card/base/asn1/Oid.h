@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -122,7 +122,8 @@ defineEnumType(KnownOid
 		, ID_PLAIN_FORMAT
 		, ID_HTML_FORMAT
 		, ID_PFD_FORMAT
-		, ID_SECTOR
+		, ID_SECTOR_RI
+		, ID_SECTOR_PS
 		, ID_EID_TYPE
 		, ID_CARD_EID_TYPE
 		, ID_MOBILE_EID_TYPE

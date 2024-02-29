@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessCertificatesFromEac2.h"
@@ -27,7 +27,7 @@ void StateProcessCertificatesFromEac2::run()
 		return;
 	}
 
-	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	QList<QSharedPointer<const CVCertificate>> cvcs;
 	for (const auto& cvc : getContext()->getDidAuthenticateEac2()->getCvCertificates())
 	{
 		// according to TR-03112-7, paragraph 3.6.4.2, AT certs must be ignored

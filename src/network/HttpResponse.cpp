@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpResponse.h"
@@ -100,7 +100,7 @@ QByteArray HttpResponse::getStatusMessage() const
 
 QByteArray HttpResponse::getMessage() const
 {
-	static const QByteArray CR_LF = QByteArrayLiteral("\r\n");
+	static const auto CR_LF = QByteArrayLiteral("\r\n");
 	QByteArrayList list;
 	list += QByteArrayLiteral("HTTP/1.0 ") % QByteArray::number(mStatus) % ' ' % getStatusMessage();
 

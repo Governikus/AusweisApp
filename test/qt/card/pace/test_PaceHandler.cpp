@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,6 +17,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -29,7 +30,7 @@ class test_PaceHandler
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mEfCardAccessBytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			mEfCardAccessBytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 		}
 
 
@@ -42,7 +43,7 @@ class test_PaceHandler
 
 		void getPaceProtocol()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			paceHandler->initialize(reader->getReaderInfo().getCardInfo().getEfCardAccess());
@@ -65,7 +66,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_GM_3DES_CBC_CBC_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040101"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -77,7 +78,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_GM_AES_CBC_CMAC_128_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040102"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -89,7 +90,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_GM_AES_CBC_CMAC_192_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040103"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -101,7 +102,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_GM_AES_CBC_CMAC_256_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040104"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -113,7 +114,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_ECDH_GM_3DES_CBC_CBC_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040201"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -125,7 +126,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_IM_3DES_CBC_CBC_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040301"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -137,7 +138,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_IM_AES_CBC_CMAC_128_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040302"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -149,7 +150,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_IM_AES_CBC_CMAC_192_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040303"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -161,7 +162,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_DH_IM_AES_CBC_CMAC_256_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040304"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -173,7 +174,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_ECDH_IM_3DES_CBC_CBC_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040401"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -185,7 +186,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_ECDH_IM_AES_CBC_CMAC_128_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040402"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -197,7 +198,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_ECDH_IM_AES_CBC_CMAC_192_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040403"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -209,7 +210,7 @@ class test_PaceHandler
 		void establishPaceChannel_id_PACE_ECDH_IM_AES_CBC_CMAC_256_unsupported()
 		{
 			QByteArray efCardAccess = QByteArray::fromHex(mEfCardAccessBytes.toHex().replace("04007f00070202040202", "04007f00070202040404"));
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), efCardAccess));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), efCardAccess));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(reader->createCardConnectionWorker()));
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
@@ -220,7 +221,7 @@ class test_PaceHandler
 
 		void establishPaceChannel_RetryAllowed()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 
@@ -232,7 +233,7 @@ class test_PaceHandler
 
 		void establishPaceChannel_KeyAgreementRetryAllowed()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 
@@ -245,7 +246,7 @@ class test_PaceHandler
 		// testcase TS_PACE_2.5.1c TR-03105
 		void failureOnMseSetAt()
 		{
-			QVector<TransmitConfig> transmitConfigs;
+			QList<TransmitConfig> transmitConfigs;
 			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000"))); // Select file
 			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6A80"))); // MSE:Set AT
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccessBytes));
@@ -259,7 +260,7 @@ class test_PaceHandler
 
 		void transmitMSESetAT_OK()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 			QByteArray bytes = QByteArray::fromHex("30 0F"
@@ -282,7 +283,7 @@ class test_PaceHandler
 
 		void transmitMSESetAT_ErrorMseSetAT_PROTOCOL_ERROR()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 			QByteArray bytes = QByteArray::fromHex("30 0F"
@@ -306,7 +307,7 @@ class test_PaceHandler
 
 		void transmitMSESetAT_ErrorMseSetAT_RETRY_ALLOWED()
 		{
-			QScopedPointer<MockReader> reader(MockReader::createMockReader(QVector<TransmitConfig>(), mEfCardAccessBytes));
+			QScopedPointer<MockReader> reader(MockReader::createMockReader(QList<TransmitConfig>(), mEfCardAccessBytes));
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(reader.data()));
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(worker));
 			QByteArray bytes = QByteArray::fromHex("30 0F"

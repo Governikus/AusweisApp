@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -7,22 +7,24 @@ import QtQuick.Controls
 import Governikus.Global
 import Governikus.Style
 
-Item {
+Rectangle {
 	id: titleBar
 
+	property alias enableTileStyle: titlePane.visible
 	property NavigationAction navigationAction
 	property var rightAction
+	property alias showContent: contentLayout.visible
 	property bool showSeparator: false
 	property bool smartEidUsed: false
 	property alias title: titleText.text
-	property alias titleBarOpacity: background.opacity
 	property var topSafeAreaMargin: plugin.safeAreaMargins.top
 
 	function setActiveFocus() {
 		titleText.forceActiveFocus(Qt.MouseFocusReason);
 	}
 
-	height: contentLayout.implicitHeight + topSafeAreaMargin + Style.dimens.titlebar_padding
+	color: Style.color.background
+	height: Math.ceil((showContent ? contentLayout.implicitHeight : 0) + topSafeAreaMargin + titlePane.shadowHeight)
 
 	Rectangle {
 		id: safeAreaBackground
@@ -42,16 +44,8 @@ Item {
 			top: parent.top
 		}
 	}
-	Rectangle {
-		id: background
-
-		color: Style.color.background
-
-		Behavior on color {
-			ColorAnimation {
-				duration: Constants.animation_duration
-			}
-		}
+	TitlePane {
+		id: titlePane
 
 		anchors {
 			bottom: parent.bottom
@@ -75,6 +69,7 @@ Item {
 			id: leftAction
 
 			Layout.minimumHeight: Style.dimens.small_icon_size
+			Layout.topMargin: Style.dimens.titlebar_padding
 			action: titleBar.navigationAction ? titleBar.navigationAction.action : NavigationAction.Action.None
 			enabled: titleBar.navigationAction ? titleBar.navigationAction.enabled : false
 
@@ -83,7 +78,7 @@ Item {
 		RowLayout {
 			spacing: Constants.component_spacing
 
-			GText {
+			GCrossBlendedText {
 				id: titleText
 
 				Accessible.focusable: true
@@ -92,29 +87,6 @@ Item {
 				elide: Text.ElideRight
 				maximumLineCount: 2
 				textStyle: Style.text.title
-
-				Behavior on text {
-					SequentialAnimation {
-						PropertyAnimation {
-							duration: Constants.animation_duration
-							easing.type: Easing.InCubic
-							property: "opacity"
-							target: titleText
-							to: 0
-						}
-						PropertyAction {
-							property: "text"
-							target: titleText
-						}
-						PropertyAnimation {
-							duration: Constants.animation_duration
-							easing.type: Easing.OutCubic
-							property: "opacity"
-							target: titleText
-							to: 1
-						}
-					}
-				}
 			}
 			GSpacer {
 				Layout.fillWidth: true
@@ -156,14 +128,9 @@ Item {
 				}
 			}
 		}
-	}
-	GSeparator {
-		visible: titleBar.showSeparator
-		width: contentLayout.width
-
-		anchors {
-			horizontalCenter: contentLayout.horizontalCenter
-			top: parent.bottom
+		GSeparator {
+			Layout.fillWidth: true
+			opacity: titleBar.showSeparator
 		}
 	}
 }

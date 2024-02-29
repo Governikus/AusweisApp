@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerInfo.h"
@@ -18,7 +18,7 @@ MsgHandlerInfo::MsgHandlerInfo()
 {
 	mJsonObject[QLatin1String("VersionInfo")] = VersionInfo::getInstance().toJsonObject();
 
-	QString localIfd = QStringLiteral("UNKNOWN");
+	auto localIfd = QStringLiteral("UNKNOWN");
 #ifdef Q_OS_ANDROID
 	const auto& localIfdInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::LOCAL_IFD);
 	if (localIfdInfo.hasValue(ReaderManagerPlugInInfo::Key::LOCAL_IFD_STATE))

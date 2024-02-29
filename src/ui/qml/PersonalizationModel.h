@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -54,7 +54,7 @@ class PersonalizationModel
 		[[nodiscard]] QString getRestrictionDate() const;
 		[[nodiscard]] QString getBlockingPeriodMessage() const;
 		[[nodiscard]] bool isApplet() const;
-		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

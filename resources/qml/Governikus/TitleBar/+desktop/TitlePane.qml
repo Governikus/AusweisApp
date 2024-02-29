@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -15,7 +15,7 @@ Item {
 
 		bottomLeftCorner: false
 		bottomRightCorner: false
-		color: Style.color.pane_title
+		color: Style.color.pane_sublevel
 		height: bottomRectangle.height / 2
 		radius: Style.dimens.titlepane_radius
 		width: bottomRectangle.width - 2 * Style.dimens.titlepane_radius
@@ -33,8 +33,8 @@ Item {
 		bottomLeftCorner: false
 		bottomRightCorner: false
 		color: Style.color.background
-		height: Style.dimens.titlepane_radius
-		radius: Style.dimens.titlepane_radius
+		height: Math.ceil(Style.dimens.titlepane_radius)
+		radius: height
 		width: root.width
 
 		layer {

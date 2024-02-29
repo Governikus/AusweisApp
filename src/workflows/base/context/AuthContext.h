@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -137,7 +137,7 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override
+		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override
 		{
 
 			if (isCanAllowedMode() || !mDIDAuthenticateEAC1)
@@ -396,7 +396,7 @@ class AuthContext
 		[[nodiscard]] CVCertificateChain getChainForCertificationAuthority(const EstablishPaceChannelOutput& pPaceOutput) const;
 
 
-		void initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pAdditionalCertificates = QVector<QSharedPointer<const CVCertificate>>());
+		void initCvcChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pAdditionalCertificates = QList<QSharedPointer<const CVCertificate>>());
 
 
 		[[nodiscard]] const QSharedPointer<const CVCertificate>& getDvCvc() const

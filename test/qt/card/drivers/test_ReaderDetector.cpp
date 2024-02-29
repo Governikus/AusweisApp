@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -52,7 +52,7 @@ class test_ReaderDetector
 
 		void noAttachedDeviceWithVIDAndPID_noAttachedDevicesFound()
 		{
-			const QVector<UsbId> pDevIds({});
+			const QList<UsbId> pDevIds({});
 			MockReaderDetector readerDetector(pDevIds);
 
 			QCOMPARE(readerDetector.getAttachedSupportedDevices().size(), 0);
@@ -61,7 +61,7 @@ class test_ReaderDetector
 
 		void nonSupportedDeviceAttached_noAttachedDevicesFound()
 		{
-			const QVector<UsbId> pDevIds({UsbId(0x413C, 0x2107)});
+			const QList<UsbId> pDevIds({UsbId(0x413C, 0x2107)});
 			MockReaderDetector readerDetector(pDevIds);
 
 			QCOMPARE(readerDetector.getAttachedSupportedDevices().size(), 0);
@@ -70,7 +70,7 @@ class test_ReaderDetector
 
 		void supportedDeviceAttachedButNoDriverInstalled_attachedDeviceFound()
 		{
-			const QVector<UsbId> pDevIds({UsbId(0x0C4B, 0x0501)});
+			const QList<UsbId> pDevIds({UsbId(0x0C4B, 0x0501)});
 			MockReaderDetector readerDetector(pDevIds);
 			const auto devs = readerDetector.getAttachedSupportedDevices();
 

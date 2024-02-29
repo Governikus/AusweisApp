@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_AppUpdatData
@@ -25,7 +26,7 @@ class test_AppUpdatData
 			data.setChecksum(QByteArray("broken"), QCryptographicHash::Sha1);
 			QVERIFY(!data.isChecksumValid());
 
-			const QString dummyFile(":/card/efCardAccess.hex");
+			const QString dummyFile(":/card/efCardAccess.hex"_L1);
 			QTest::ignoreMessage(QtDebugMsg, "Verify checksum with algorithm: QCryptographicHash::Sha1");
 			data.setUpdatePackagePath(dummyFile);
 			QVERIFY(!data.isChecksumValid());

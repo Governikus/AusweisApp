@@ -1,25 +1,32 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
+import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 
-Item {
+ColumnLayout {
 	id: baseItem
 
 	property bool foundSelectedReader: false
 
-	implicitHeight: Style.dimens.workflow_progress_indicator_size
-	implicitWidth: phone.implicitWidth
+	Layout.maximumHeight: Style.dimens.workflow_progress_indicator_size
+	Layout.minimumHeight: Style.dimens.workflow_progress_indicator_size
+	Layout.preferredHeight: Style.dimens.workflow_progress_indicator_size
+	spacing: 0
 
+	GSpacer {
+		Layout.fillHeight: true
+	}
 	TintableIcon {
 		id: phone
 
-		anchors.centerIn: parent
+		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/mobile/phone_remote_info.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 		visible: !baseItem.foundSelectedReader
 
 		Image {
@@ -35,28 +42,18 @@ Item {
 			sourceSize.height: phone.height * 0.2
 		}
 	}
-	Item {
-		id: currentAction
-
-		anchors.bottom: pCircle.top
-		anchors.left: parent.left
-		anchors.margins: Constants.component_spacing
-		anchors.right: parent.right
-		anchors.top: parent.top
-
-		CardReader {
-			anchors.centerIn: parent
-			height: parent.height
-			pinFieldAnimation: false
-			visible: baseItem.foundSelectedReader
-		}
+	WaitForCardSacAnimation {
+		Layout.alignment: Qt.AlignHCenter
+		sourceSize.height: Style.dimens.medium_icon_size
+		visible: baseItem.foundSelectedReader
+	}
+	GSpacer {
+		Layout.fillHeight: true
 	}
 	ProgressCircle {
 		id: pCircle
 
-		anchors.bottom: parent.bottom
-		anchors.left: parent.left
-		anchors.right: parent.right
+		Layout.alignment: Qt.AlignHCenter
 		state: baseItem.foundSelectedReader ? "two" : "off"
 		visible: baseItem.foundSelectedReader
 	}

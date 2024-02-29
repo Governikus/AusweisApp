@@ -45,3 +45,7 @@ endif()
 if(POLICY CMP0099)
 	cmake_policy(SET CMP0099 NEW)
 endif()
+
+if(POLICY CMP0133)
+	cmake_policy(SET CMP0133 NEW)
+endif()

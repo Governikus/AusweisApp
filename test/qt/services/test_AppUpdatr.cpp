@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -62,6 +62,7 @@ const char* test_checksum = "85b1e5ba7c499ab30959febf8d9ea39d08c863617995d7dce20
 
 } // namespace
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_AppUpdatr
@@ -109,7 +110,7 @@ class test_AppUpdatr
 
 		void setJsonItemField(QJsonDocument& pDocument, const QString& pField, const QString& pValue)
 		{
-			auto itemArray = pDocument.object()["items"].toArray();
+			auto itemArray = pDocument.object()["items"_L1].toArray();
 			int i = 0;
 			for (auto item : itemArray)
 			{
@@ -119,7 +120,7 @@ class test_AppUpdatr
 				i++;
 			}
 			QJsonObject newRootObject;
-			newRootObject[QLatin1String("items")] = itemArray;
+			newRootObject["items"_L1] = itemArray;
 			pDocument.setObject(newRootObject);
 		}
 
@@ -127,27 +128,27 @@ class test_AppUpdatr
 		QJsonValue getJsonItemField(QJsonDocument& pDocument, const QString& pField)
 		{
 #ifdef Q_OS_WIN
-			QString platform = "win";
+			const auto platform = "win"_L1;
 #endif
 
 #ifdef Q_OS_MACOS
-			QString platform = "mac";
+			const auto platform = "mac"_L1;
 #endif
 
 #if !defined(Q_OS_MACOS) && !defined(Q_OS_WIN)
-			QString platform = "src";
+			const auto platform = "src"_L1;
 #endif
 
-			auto itemArray = pDocument.object()["items"].toArray();
+			auto itemArray = pDocument.object()["items"_L1].toArray();
 			for (auto item : itemArray)
 			{
 				QJsonObject itemObject = item.toObject();
-				if (itemObject["platform"] == platform)
+				if (itemObject["platform"_L1] == platform)
 				{
 					return itemObject[pField];
 				}
 			}
-			return QString("NO_INFO");
+			return "NO_INFO"_L1;
 		}
 
 	private Q_SLOTS:
@@ -157,7 +158,7 @@ class test_AppUpdatr
 
 			mAppCastLocation = mAppUpdater.mAppUpdateJsonUrl;
 			mJsonDocument = QJsonDocument::fromJson(test_jsonData);
-			mReleaseNoteLocation = getJsonItemField(mJsonDocument, "notes").toString();
+			mReleaseNoteLocation = getJsonItemField(mJsonDocument, "notes"_L1).toString();
 		}
 
 
@@ -167,10 +168,10 @@ class test_AppUpdatr
 			mDownloader.setTestData(mAppCastLocation, test_jsonData);
 			mDownloader.setTestData(mReleaseNoteLocation, test_releaseNotes);
 
-			mAppPackage = getJsonItemField(mJsonDocument, "url").toString();
+			mAppPackage = getJsonItemField(mJsonDocument, "url"_L1).toString();
 			mDownloader.setTestData(mAppPackage, test_package);
 
-			mChecksum = getJsonItemField(mJsonDocument, "checksum").toString();
+			mChecksum = getJsonItemField(mJsonDocument, "checksum"_L1).toString();
 			QByteArray checksum(test_checksum);
 			checksum += mAppPackage.fileName().toUtf8();
 			mDownloader.setTestData(mChecksum, checksum);
@@ -226,7 +227,7 @@ class test_AppUpdatr
 			QVERIFY(!mAppUpdater.getUpdateData().isChecksumValid());
 			QCOMPARE(mAppUpdater.getUpdateData().getChecksum(), QByteArray("broken"));
 
-			const QString expectedDest = QDir::toNativeSeparators(dir.path() + QLatin1Char('/') + mAppPackage.fileName());
+			const QString expectedDest = QDir::toNativeSeparators(dir.path() + '/'_L1 + mAppPackage.fileName());
 			QCOMPARE(mAppUpdater.getUpdateData().getUpdatePackagePath(), expectedDest);
 			QVERIFY(QFile::exists(expectedDest));
 		}
@@ -253,7 +254,7 @@ class test_AppUpdatr
 			const QByteArray expectedChecksum("85b1e5ba7c499ab30959febf8d9ea39d08c863617995d7dce20ddc42cd0eb291");
 			QCOMPARE(mAppUpdater.getUpdateData().getChecksum(), expectedChecksum);
 
-			const QString expectedDest = QDir::toNativeSeparators(dir.path() + QLatin1Char('/') + mAppPackage.fileName());
+			const QString expectedDest = QDir::toNativeSeparators(dir.path() + '/'_L1 + mAppPackage.fileName());
 			QCOMPARE(mAppUpdater.getUpdateData().getUpdatePackagePath(), expectedDest);
 			QVERIFY(QFile::exists(expectedDest));
 
@@ -261,10 +262,10 @@ class test_AppUpdatr
 
 			// trigger re-download but use downloaded package
 			spyDownload.clear();
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Checksum file downloaded successfully: .*"));
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Checksum file downloaded successfully: .*"_L1));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Verify checksum with algorithm: QCryptographicHash::Sha256");
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package already exists: .*"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package already exists: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Re-use valid package...");
 			QVERIFY(mAppUpdater.downloadUpdate());
 			checkDlResult(spyDownload, GlobalStatus::Code::No_Error);
@@ -277,14 +278,14 @@ class test_AppUpdatr
 
 			// trigger re-download and replace package
 			spyDownload.clear();
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Checksum file downloaded successfully: .*"));
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Checksum file downloaded successfully: .*"_L1));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Verify checksum with algorithm: QCryptographicHash::Sha256");
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package already exists: .*"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package already exists: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Checksum of package invalid...");
 			QTest::ignoreMessage(QtDebugMsg, "Download package...");
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package downloaded successfully: .*"));
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package downloaded successfully: .*"_L1));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Verify checksum with algorithm: QCryptographicHash::Sha256");
 			QVERIFY(mAppUpdater.downloadUpdate());
 			checkDlResult(spyDownload, GlobalStatus::Code::No_Error);
@@ -302,12 +303,12 @@ class test_AppUpdatr
 			checkResult(spy, true, GlobalStatus::Code::No_Error);
 			AppUpdateData updateData = mAppUpdater.getUpdateData();
 
-			QCOMPARE(updateData.getDate(), QDateTime::fromString(getJsonItemField(document, "date").toString(), Qt::ISODate));
-			QCOMPARE(updateData.getVersion(), getJsonItemField(document, "version").toString());
-			QCOMPARE(updateData.getNotesUrl(), QUrl(getJsonItemField(document, "notes").toString()));
-			QCOMPARE(updateData.getUrl(), QUrl(getJsonItemField(document, "url").toString()));
-			QCOMPARE(updateData.getChecksumUrl(), QUrl(getJsonItemField(document, "checksum").toString()));
-			QCOMPARE(updateData.getSize(), getJsonItemField(document, "size").toInt());
+			QCOMPARE(updateData.getDate(), QDateTime::fromString(getJsonItemField(document, "date"_L1).toString(), Qt::ISODate));
+			QCOMPARE(updateData.getVersion(), getJsonItemField(document, "version"_L1).toString());
+			QCOMPARE(updateData.getNotesUrl(), QUrl(getJsonItemField(document, "notes"_L1).toString()));
+			QCOMPARE(updateData.getUrl(), QUrl(getJsonItemField(document, "url"_L1).toString()));
+			QCOMPARE(updateData.getChecksumUrl(), QUrl(getJsonItemField(document, "checksum"_L1).toString()));
+			QCOMPARE(updateData.getSize(), getJsonItemField(document, "size"_L1).toInt());
 			QVERIFY(mAppUpdater.getUpdateData().getNotes() != QString());
 		}
 
@@ -337,34 +338,10 @@ class test_AppUpdatr
 		}
 
 
-		void testSkipCurrentVersion()
-		{
-			QSignalSpy spy(&mAppUpdater, &AppUpdater::fireAppcastCheckFinished);
-			mAppUpdater.skipVersion(getJsonItemField(mJsonDocument, "version").toString());
-
-			QVERIFY(mAppUpdater.checkAppUpdate());
-
-			checkResult(spy, false, GlobalStatus::Code::No_Error);
-			mAppUpdater.skipVersion("");
-		}
-
-
-		void testSkipCurrentVersionButDoNotRespectIt()
-		{
-			QSignalSpy spy(&mAppUpdater, &AppUpdater::fireAppcastCheckFinished);
-			mAppUpdater.skipVersion(getJsonItemField(mJsonDocument, "version").toString());
-
-			QVERIFY(mAppUpdater.checkAppUpdate(true));
-
-			checkResult(spy, true, GlobalStatus::Code::No_Error);
-			mAppUpdater.skipVersion("");
-		}
-
-
 		void testNoNewVersion()
 		{
 			QJsonDocument document = QJsonDocument::fromJson(test_jsonData);
-			setJsonItemField(document, QString("version"), QString(" "));
+			setJsonItemField(document, "version"_L1, " "_L1);
 			QByteArray newJson = document.toJson();
 			mDownloader.setTestData(mAppCastLocation, newJson);
 
@@ -391,7 +368,7 @@ class test_AppUpdatr
 		void testReleaseNoteDownloadFailed()
 		{
 			QJsonDocument document = QJsonDocument::fromJson(test_jsonData);
-			setJsonItemField(document, QString("notes"), QString("httb://notarealurl.org"));
+			setJsonItemField(document, "notes"_L1, "httb://notarealurl.org"_L1);
 			mDownloader.setTestData(mAppCastLocation, document.toJson());
 
 			QSignalSpy spy(&mAppUpdater, &AppUpdater::fireAppcastCheckFinished);
@@ -406,7 +383,7 @@ class test_AppUpdatr
 		void testCheckSumDownloadFailed()
 		{
 			QJsonDocument document = QJsonDocument::fromJson(test_jsonData);
-			setJsonItemField(document, QString("checksum"), QString("httb://notarealurl.org/checksum"));
+			setJsonItemField(document, "checksum"_L1, "httb://notarealurl.org/checksum"_L1);
 			mDownloader.setTestData(mAppCastLocation, document.toJson());
 
 			QSignalSpy spy(&mAppUpdater, &AppUpdater::fireAppcastCheckFinished);
@@ -424,7 +401,7 @@ class test_AppUpdatr
 		void testPackageDownloadFailed()
 		{
 			QJsonDocument document = QJsonDocument::fromJson(test_jsonData);
-			setJsonItemField(document, QString("url"), QString("httb://notarealurl.org/nonexisting"));
+			setJsonItemField(document, "url"_L1, "httb://notarealurl.org/nonexisting"_L1);
 			mDownloader.setTestData(mAppCastLocation, document.toJson());
 
 			QSignalSpy spy(&mAppUpdater, &AppUpdater::fireAppcastCheckFinished);

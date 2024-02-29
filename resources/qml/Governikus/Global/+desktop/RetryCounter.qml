@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -13,7 +13,7 @@ Rectangle {
 	Accessible.name: qsTr("Remaining ID card PIN attempts: %1").arg(iconText.text)
 	Accessible.role: Accessible.StaticText
 	activeFocusOnTab: true
-	border.color: Style.color.control
+	border.color: Style.color.control_border
 	border.width: height / 40
 	color: Style.color.transparent
 	implicitHeight: Style.dimens.status_icon_small

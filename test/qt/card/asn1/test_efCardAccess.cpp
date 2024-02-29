@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -9,6 +9,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_efCardAccess
@@ -24,7 +25,7 @@ class test_efCardAccess
 
 		void parseEFCardAccess()
 		{
-			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"));
+			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 
 			auto efCardAccess = EFCardAccess::decode(bytes);
 

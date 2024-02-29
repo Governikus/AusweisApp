@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,9 +10,9 @@
 
 #include "CardPosition.h"
 
+#include <QList>
 #include <QObject>
 #include <QTimer>
-#include <QVector>
 
 class test_CardPositionModel;
 
@@ -33,7 +33,7 @@ class CardPositionModel
 		int mCyclingClock;
 		qsizetype mCurrentIndex;
 		QTimer mCyclingTimer;
-		const QVector<CardPosition> mCardPositions;
+		const QList<CardPosition> mCardPositions;
 
 		void startTimer();
 		void stopTimer();

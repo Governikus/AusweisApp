@@ -1,62 +1,48 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Style
 
-Item {
+Image {
 	id: root
 
-	property alias asynchronous: image.asynchronous
 	property bool desaturate: false
-	property alias fillMode: image.fillMode
-	property alias paintedHeight: image.paintedHeight
-	property alias paintedWidth: image.paintedWidth
 	property alias playAnimation: animation.enabled
-	property alias source: image.source
-	property alias sourceSize: image.sourceSize
 	property color tintColor: Style.color.text
 	property bool tintEnabled: true
 
-	implicitHeight: image.implicitHeight
-	implicitWidth: image.implicitWidth
+	fillMode: Image.PreserveAspectFit
+	layer.enabled: root.tintEnabled && GraphicsInfo.api !== GraphicsInfo.Software
 
-	Image {
-		id: image
+	layer.effect: ShaderEffect {
+		property color color: root.tintColor
 
-		anchors.fill: parent
-		fillMode: Image.PreserveAspectFit
-		layer.enabled: root.tintEnabled && GraphicsInfo.api !== GraphicsInfo.Software
+		fragmentShader: root.desaturate ? "qrc:/shader/DesaturateShader.frag" : "qrc:/shader/ColorOverlayShader.frag"
+	}
+	Behavior on source {
+		id: animation
 
-		layer.effect: ShaderEffect {
-			property color color: root.tintColor
+		enabled: false
 
-			fragmentShader: root.desaturate ? "qrc:/shader/DesaturateShader.frag" : "qrc:/shader/ColorOverlayShader.frag"
-		}
-		Behavior on source {
-			id: animation
-
-			enabled: false
-
-			SequentialAnimation {
-				PropertyAnimation {
-					duration: Constants.animation_duration
-					easing.type: Easing.InCubic
-					property: "opacity"
-					targets: image
-					to: 0
-				}
-				PropertyAction {
-					property: "source"
-					target: image
-				}
-				PropertyAnimation {
-					duration: Constants.animation_duration
-					easing.type: Easing.OutCubic
-					property: "opacity"
-					targets: image
-					to: 1
-				}
+		SequentialAnimation {
+			PropertyAnimation {
+				duration: source == "" ? 0 : Constants.animation_duration
+				easing.type: Easing.InCubic
+				property: "opacity"
+				targets: root
+				to: 0
+			}
+			PropertyAction {
+				property: "source"
+				target: root
+			}
+			PropertyAnimation {
+				duration: source == "" ? Constants.animation_duration * 2 : Constants.animation_duration
+				easing.type: source == "" ? Easing.InOutCubic : Easing.InCubic
+				property: "opacity"
+				targets: root
+				to: 1
 			}
 		}
 	}

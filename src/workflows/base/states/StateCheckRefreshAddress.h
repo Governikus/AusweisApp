@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -37,7 +37,7 @@ class StateCheckRefreshAddress
 		QUrl mUrl;
 		QUrl mSubjectUrl;
 		bool mCertificateFetched;
-		QVector<QUrl> mVerifiedRefreshUrlHosts;
+		QList<QUrl> mVerifiedRefreshUrlHosts;
 
 		explicit StateCheckRefreshAddress(const QSharedPointer<WorkflowContext>& pContext);
 

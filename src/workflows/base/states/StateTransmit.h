@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,7 +10,6 @@
 
 #include "AbstractState.h"
 #include "GenericContextContainer.h"
-#include "command/TransmitCommand.h"
 #include "context/AuthContext.h"
 
 class test_StateTransmit;

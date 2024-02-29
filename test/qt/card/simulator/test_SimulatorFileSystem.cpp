@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -14,6 +14,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -33,7 +34,7 @@ class test_SimulatorFileSystem
 			ResourceLoader::getInstance().init();
 			QTest::newRow("Default") << SimulatorFileSystem();
 
-			const QByteArray bytes = TestFileHelper::readFile(":/card/simulatorFiles.json");
+			const QByteArray bytes = TestFileHelper::readFile(":/card/simulatorFiles.json"_L1);
 			const auto& files = QJsonDocument::fromJson(bytes).object();
 			QTest::newRow("Json") << SimulatorFileSystem(files);
 		}

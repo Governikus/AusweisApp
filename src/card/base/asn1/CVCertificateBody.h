@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,21 +21,6 @@
 namespace governikus
 {
 
-using CERTIFICATEEXTENSION = struct CERTIFICATEEXTENSION_st
-{
-	ASN1_OBJECT* mOid;
-	ASN1_OCTET_STRING* mObject1;
-	ASN1_OCTET_STRING* mObject2;
-	ASN1_OCTET_STRING* mObject3;
-	ASN1_OCTET_STRING* mObject4;
-	ASN1_OCTET_STRING* mObject5;
-	ASN1_OCTET_STRING* mObject6;
-	ASN1_OCTET_STRING* mObject7;
-	ASN1_OCTET_STRING* mObject8;
-};
-DECLARE_ASN1_FUNCTIONS(CERTIFICATEEXTENSION)
-DEFINE_STACK_OF(CERTIFICATEEXTENSION)
-
 using CVCertificateBody = struct certificateprofilebody_st
 {
 	ASN1_OCTET_STRING* mCertificateProfileIdentifier;
@@ -45,7 +30,7 @@ using CVCertificateBody = struct certificateprofilebody_st
 	CHAT* mChat;
 	ASN1_OCTET_STRING* mEffectiveDate;
 	ASN1_OCTET_STRING* mExpirationDate;
-	STACK_OF(CERTIFICATEEXTENSION) * mExtensions;
+	STACK_OF(ASN1_TYPE) * mExtensions;
 
 	static QSharedPointer<certificateprofilebody_st> decode(const QByteArray& pBytes);
 	QByteArray encode();
@@ -65,7 +50,7 @@ using CVCertificateBody = struct certificateprofilebody_st
 	[[nodiscard]] QDate getCertificateEffectiveDate() const;
 
 	[[nodiscard]] QCryptographicHash::Algorithm getHashAlgorithm() const;
-	[[nodiscard]] QHash<Oid, QByteArray> getExtensions() const;
+	[[nodiscard]] QByteArray getExtension(const Oid& pOid) const;
 };
 
 DECLARE_ASN1_FUNCTIONS(CVCertificateBody)

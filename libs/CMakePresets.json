@@ -105,36 +105,6 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "DEBUG"
       }
-    },
-    {
-      "name": "base",
-      "hidden": true,
-      "binaryDir": "${sourceParentDir}/../AusweisApp2-build/libs/${presetName}"
-    },
-    {
-      "name": "default",
-      "inherits": "base",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "DEBUG"
-      }
-    },
-    {
-      "name": "container",
-      "inherits": "default",
-      "cacheVariables": {
-        "CONTAINER_SDK": "ON"
-      }
-    },
-    {
-      "name": "android",
-      "inherits": "default",
-      "toolchainFile": "${sourceParentDir}/cmake/android.toolchain.cmake"
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "default",
-      "configurePreset": "default"
     }
   ]
 }

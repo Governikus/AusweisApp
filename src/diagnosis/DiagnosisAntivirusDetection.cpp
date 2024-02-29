@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisAntivirusDetection.h"
@@ -89,7 +89,7 @@ void DiagnosisAntivirusDetection::onError(QProcess::ProcessError pError)
 #endif
 
 
-const QVector<QSharedPointer<AntivirInfo>>& DiagnosisAntivirusDetection::getAntivirusInformations() const
+const QList<QSharedPointer<AntivirInfo>>& DiagnosisAntivirusDetection::getAntivirusInformations() const
 {
 	return mAntivirInfos;
 }

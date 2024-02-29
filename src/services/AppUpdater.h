@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +23,6 @@ class AppUpdater
 	friend class ::test_AppUpdatr;
 
 	private:
-		bool mForceUpdate;
 		QUrl mAppUpdateJsonUrl;
 		AppUpdateData mAppUpdateData;
 		QString mDownloadPath;
@@ -41,9 +40,8 @@ class AppUpdater
 	public:
 		bool abortDownload() const;
 		bool downloadUpdate();
-		bool checkAppUpdate(bool pForceUpdate = false);
+		bool checkAppUpdate();
 		[[nodiscard]] const AppUpdateData& getUpdateData() const;
-		void skipVersion(const QString& pVersion) const;
 
 #ifndef QT_NO_DEBUG
 		[[nodiscard]] QString getDownloadPath() const;

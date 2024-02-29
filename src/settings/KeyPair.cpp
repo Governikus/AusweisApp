@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -11,7 +11,6 @@
 #include <openssl/ec.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
-#include <openssl/x509.h>
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
@@ -59,28 +58,45 @@ KeyPair::KeyPair(const QSslKey& pKey, const QSslCertificate& pCert)
 }
 
 
-KeyPair KeyPair::generate(const char* pCurve)
+KeyPair KeyPair::generatePair(EVP_PKEY* pKey, const QByteArray& pSignerKey, const QByteArray& pSignerCert)
 {
-	if (!Randomizer::getInstance().isSecureRandom())
+	if (pKey)
 	{
-		qCCritical(settings) << "Cannot get enough entropy";
-		return KeyPair();
-	}
-
-	if (auto* pkey = createKey(pCurve); pkey)
-	{
-		auto cert = createCertificate(pkey);
+		const auto cert = createCertificate(pKey, parseKey(pSignerKey), parseCertificate(pSignerCert));
 		if (cert)
 		{
-			return KeyPair(QSslKey(Qt::HANDLE(pkey), QSsl::PrivateKey), QSslCertificate(rewriteCertificate(cert.data())));
+			return KeyPair(QSslKey(Qt::HANDLE(pKey), QSsl::PrivateKey), QSslCertificate(rewriteCertificate(cert.data())));
 		}
 		else
 		{
-			OpenSslCustomDeleter::cleanup(pkey);
+			OpenSslCustomDeleter::cleanup(pKey);
 		}
 	}
 
 	return KeyPair();
+}
+
+
+KeyPair KeyPair::generate(const char* pCurve, const QByteArray& pSignerKey, const QByteArray& pSignerCert)
+{
+	if (!pCurve)
+	{
+		return KeyPair();
+	}
+
+	const auto& func = [pCurve](EVP_PKEY_CTX* pCtx) {
+				return EVP_PKEY_CTX_ctrl_str(pCtx, "ec_paramgen_curve", pCurve);
+			};
+	return generatePair(createKey(EVP_PKEY_EC, func), pSignerKey, pSignerCert);
+}
+
+
+KeyPair KeyPair::generate(int pKeySize, const QByteArray& pSignerKey, const QByteArray& pSignerCert)
+{
+	const auto& func = [pKeySize](EVP_PKEY_CTX* pCtx) {
+				return EVP_PKEY_CTX_set_rsa_keygen_bits(pCtx, pKeySize);
+			};
+	return generatePair(createKey(EVP_PKEY_RSA, func), pSignerKey, pSignerCert);
 }
 
 
@@ -96,9 +112,15 @@ const QSslCertificate& KeyPair::getCertificate() const
 }
 
 
-EVP_PKEY* KeyPair::createKey(const char* pCurve)
+EVP_PKEY* KeyPair::createKey(int pKeyCtxNid, const std::function<bool(EVP_PKEY_CTX*)>& pFunc)
 {
-	QScopedPointer<EVP_PKEY_CTX, OpenSslCustomDeleter> pkeyCtx(EVP_PKEY_CTX_new_id(pCurve ? EVP_PKEY_EC : EVP_PKEY_RSA, nullptr));
+	if (!Randomizer::getInstance().isSecureRandom())
+	{
+		qCCritical(settings) << "Cannot get enough entropy";
+		return nullptr;
+	}
+
+	QScopedPointer<EVP_PKEY_CTX, OpenSslCustomDeleter> pkeyCtx(EVP_PKEY_CTX_new_id(pKeyCtxNid, nullptr));
 
 	if (pkeyCtx.isNull())
 	{
@@ -106,28 +128,20 @@ EVP_PKEY* KeyPair::createKey(const char* pCurve)
 		return nullptr;
 	}
 
-	if (!EVP_PKEY_keygen_init(pkeyCtx.data()))
+	if (EVP_PKEY_keygen_init(pkeyCtx.data()) != 1)
 	{
 		qCCritical(settings) << "Cannot init key ctx";
 		return nullptr;
 	}
 
-	if (pCurve)
+	if (pFunc && pFunc(pkeyCtx.data()) != 1)
 	{
-		if (!EVP_PKEY_CTX_ctrl_str(pkeyCtx.data(), "ec_paramgen_curve", pCurve))
-		{
-			qCCritical(settings) << "Cannot set curve";
-			return nullptr;
-		}
-	}
-	else if (!EVP_PKEY_CTX_set_rsa_keygen_bits(pkeyCtx.data(), 2048))
-	{
-		qCCritical(settings) << "Cannot generate key bits";
+		qCCritical(settings) << "Cannot set parameters";
 		return nullptr;
 	}
 
 	EVP_PKEY* pkey = nullptr;
-	if (!EVP_PKEY_keygen(pkeyCtx.data(), &pkey))
+	if (EVP_PKEY_keygen(pkeyCtx.data(), &pkey) != 1)
 	{
 		qCCritical(settings) << "Cannot generate key";
 		return nullptr;
@@ -137,7 +151,31 @@ EVP_PKEY* KeyPair::createKey(const char* pCurve)
 }
 
 
-QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
+QSharedPointer<EVP_PKEY> KeyPair::parseKey(const QByteArray& pData)
+{
+	if (pData.isEmpty())
+	{
+		return nullptr;
+	}
+
+	QScopedPointer<BIO, OpenSslCustomDeleter> bio(BIO_new_mem_buf(pData.constData(), -1));
+	return QSharedPointer<EVP_PKEY>(PEM_read_bio_PrivateKey(bio.data(), nullptr, nullptr, nullptr), &EVP_PKEY_free);
+}
+
+
+QSharedPointer<X509> KeyPair::parseCertificate(const QByteArray& pData)
+{
+	if (pData.isEmpty())
+	{
+		return nullptr;
+	}
+
+	QScopedPointer<BIO, OpenSslCustomDeleter> bio(BIO_new_mem_buf(pData.constData(), -1));
+	return QSharedPointer<X509>(PEM_read_bio_X509(bio.data(), nullptr, nullptr, nullptr), &X509_free);
+}
+
+
+QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey, const QSharedPointer<EVP_PKEY>& pSignerKey, const QSharedPointer<X509>& pSignerCert)
 {
 	QSharedPointer<X509> x509(X509_new(), &X509_free);
 	if (x509.isNull())
@@ -163,9 +201,16 @@ QSharedPointer<X509> KeyPair::createCertificate(EVP_PKEY* pPkey)
 	X509_NAME_add_entry_by_txt(name.data(), "serialNumber", MBSTRING_ASC,
 			reinterpret_cast<const uchar*>(randomSerial.constData()), -1, -1, 0);
 	X509_set_subject_name(x509.data(), name.data());
+	EVP_PKEY* signer = pPkey;
+
+	if (pSignerKey && pSignerCert)
+	{
+		signer = pSignerKey.data();
+		name.reset(X509_NAME_dup(X509_get_subject_name(pSignerCert.data())));
+	}
 	X509_set_issuer_name(x509.data(), name.data());
 
-	if (!X509_sign(x509.data(), pPkey, EVP_sha256()))
+	if (!X509_sign(x509.data(), signer, EVP_sha256()))
 	{
 		qCCritical(settings) << "Cannot sign certificate";
 		return nullptr;

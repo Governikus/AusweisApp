@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateTransmitPersonalization.h"
@@ -18,7 +18,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -48,7 +48,7 @@ class test_StateTransmitPersonalization
 		void init()
 		{
 			mContext = QSharedPointer<PersonalizationContext>::create(QString());
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml"_L1);
 			QSharedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			mContext->setTransmit(transmit);
@@ -114,7 +114,7 @@ class test_StateTransmitPersonalization
 
 		void performPersonalizationSuccess()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml"_L1);
 			QSharedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			mContext->setTransmit(transmit);

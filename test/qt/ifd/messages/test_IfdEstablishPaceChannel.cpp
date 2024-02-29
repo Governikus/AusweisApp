@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdEstablishPaceChannel.h"
@@ -9,7 +9,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -60,7 +60,7 @@ class test_IfdEstablishPaceChannel
 		void values()
 		{
 			EstablishPaceChannel establishPaceChannel;
-			const IfdEstablishPaceChannel ifdEstablishPaceChannel("SlotHandle", establishPaceChannel, 6);
+			const IfdEstablishPaceChannel ifdEstablishPaceChannel("SlotHandle"_L1, establishPaceChannel, 6);
 
 			QVERIFY(!ifdEstablishPaceChannel.isIncomplete());
 			QCOMPARE(ifdEstablishPaceChannel.getType(), IfdMessageType::IFDEstablishPACEChannel);
@@ -87,7 +87,7 @@ class test_IfdEstablishPaceChannel
 			QFETCH(IfdVersion::Version, version);
 			QFETCH(QByteArray, inputApdu);
 
-			const IfdEstablishPaceChannel ifdEstablishPaceChannel(QStringLiteral("SlotHandle"), EstablishPaceChannel(PacePasswordId::PACE_PIN), 6);
+			const IfdEstablishPaceChannel ifdEstablishPaceChannel("SlotHandle"_L1, EstablishPaceChannel(PacePasswordId::PACE_PIN), 6);
 
 			const QByteArray& byteArray = ifdEstablishPaceChannel.toByteArray(version, QStringLiteral("TestContext"));
 			QCOMPARE(byteArray,

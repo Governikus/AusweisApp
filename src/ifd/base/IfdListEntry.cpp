@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdListEntry.h"
@@ -13,7 +13,7 @@ using namespace governikus;
 
 INIT_FUNCTION([] {
 			qRegisterMetaType<QSharedPointer<IfdListEntry>>("QSharedPointer<IfdListEntry>");
-			qRegisterMetaType<QVector<QSharedPointer<IfdListEntry>>>("QVector<QSharedPointer<IfdListEntry>>");
+			qRegisterMetaType<QList<QSharedPointer<IfdListEntry>>>("QList<QSharedPointer<IfdListEntry>>");
 		})
 
 
@@ -42,7 +42,7 @@ bool IfdListEntry::cleanUpSeenTimestamps(int pReaderResponsiveTimeout)
 	const auto visibilityOld = getPercentSeen();
 
 	const QTime threshold(QTime::currentTime().addMSecs(-pReaderResponsiveTimeout));
-	QMutableVectorIterator<QTime> i(mLastSeenHistory);
+	QMutableListIterator<QTime> i(mLastSeenHistory);
 	while (i.hasNext())
 	{
 		if (i.next() < threshold)

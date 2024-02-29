@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include "TestAuthContext.h"
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_MsgHandlerCertificate
@@ -23,7 +24,7 @@ class test_MsgHandlerCertificate
 
 	QSharedPointer<AuthContext> getContext()
 	{
-		QSharedPointer<TestAuthContext> context(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+		QSharedPointer<TestAuthContext> context(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 		context->setRequiredAccessRights({AccessRight::READ_DG01});
 		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION});
 		return context;

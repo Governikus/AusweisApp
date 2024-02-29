@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,7 +16,7 @@
 #include <QByteArrayList>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StateVerifyRetryCounter
@@ -77,7 +77,7 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_NoReader()
 		{
-			const QString password("000000");
+			const QString password("000000"_L1);
 			mContext->setPin(password);
 			mContext->setCan(password);
 			mContext->setPuk(password);
@@ -85,10 +85,10 @@ class test_StateVerifyRetryCounter
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo(QString("test reader"), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
-			mContext->setReaderName(QString("test reader"));
+			mContext->setReaderName("test reader"_L1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: -1");
@@ -104,7 +104,7 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_NotExpectedReader()
 		{
-			const QString password("000000");
+			const QString password("000000"_L1);
 			mContext->setPin(password);
 			mContext->setCan(password);
 			mContext->setPuk(password);
@@ -112,11 +112,11 @@ class test_StateVerifyRetryCounter
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo(QString("test reader"), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->rememberReader();
-			mContext->setReaderName(QString("other reader"));
+			mContext->setReaderName("other reader"_L1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: 2");
@@ -133,7 +133,7 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_ActualNotEqualExpectedRetryCounter()
 		{
-			const QString password("000000");
+			const QString password("000000"_L1);
 			mContext->setPin(password);
 			mContext->setCan(password);
 			mContext->setPuk(password);
@@ -141,11 +141,11 @@ class test_StateVerifyRetryCounter
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo(QString("test reader"), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->rememberReader();
-			mContext->setReaderName(QString("test reader"));
+			mContext->setReaderName("test reader"_L1);
 			mContext->setExpectedRetryCounter(1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 

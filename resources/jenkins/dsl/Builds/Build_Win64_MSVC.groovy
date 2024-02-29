@@ -3,7 +3,7 @@ import common.Build
 def j = new Build
 	(
 		name: 'Win64_MSVC',
-		libraries: ['Win64_MSVC_dev'],
+		libraries: 'Win64_MSVC_dev',
 		label: 'MSVC',
 		xunit: true
 	).generate(this)
@@ -24,9 +24,9 @@ j.with
 			'''.stripIndent().trim())
 
 		batchFile('''\
-			set PATH=%WORKSPACE%/libs/build/dist/bin;%PATH%
-			set QT_PLUGIN_PATH=%WORKSPACE%/libs/build/dist/plugins
-			set QML2_IMPORT_PATH=%WORKSPACE%/libs/build/dist/qml
+			set PATH=%WORKSPACE%/libs/dist/bin;%PATH%
+			set QT_PLUGIN_PATH=%WORKSPACE%/libs/dist/plugins
+			set QML2_IMPORT_PATH=%WORKSPACE%/libs/dist/qml
 			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 	}

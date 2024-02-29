@@ -1,24 +1,27 @@
 /**
- * Copyright (c) 2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type.ApplicationModel
 
 ColumnLayout {
 	id: root
 
-	property bool alwaysReserveSelectionTitleHight: false
-	property alias backgroundColor: background.color
+	property bool alwaysReserveSelectionTitleHeight: false
+	property alias backgroundColor: collapsibleContentBackground.color
 	property int contentBottomMargin: Constants.groupbox_spacing
+	property int contentHorizontalMargin: horizontalMargin
 	property alias contentSpacing: contentItem.spacing
 	property int contentTopMargin: Constants.groupbox_spacing
 	property bool drawBottomCorners: false
 	property bool drawTopCorners: false
 	default property alias expandableData: contentItem.data
 	property bool expanded: false
+	readonly property bool expandedOrScreenReaderRunning: expanded || ApplicationModel.isScreenReaderRunning()
 	property int horizontalMargin: Constants.component_spacing
 	property alias selectionIcon: selectionIcon.source
 	property alias selectionTitle: selectionTitle.text
@@ -30,22 +33,19 @@ ColumnLayout {
 	AbstractButton {
 		id: expandButton
 
-		Accessible.name: root.title + ". " +
 		//: LABEL ANDROID IOS
-		(expanded ? qsTr("collapse") :
-			//: LABEL ANDROID IOS
-			qsTr("expand") + ". ") +
-		//: LABEL ANDROID IOS
-		(root.selectionTitle !== "" ? qsTr("Currently selected is %1").arg(root.selectionTitle) : "")
-		Accessible.role: Accessible.Button
+		Accessible.name: "%1 . %2".arg(root.title).arg(root.selectionTitle !== "" ? qsTr("Currently selected is %1").arg(root.selectionTitle) : "")
+		Accessible.role: Accessible.StaticText
 		Layout.fillWidth: true
 		implicitHeight: bannerLayout.implicitHeight + Constants.component_spacing * 2
 		implicitWidth: bannerLayout.implicitWidth
 
 		background: RoundedRectangle {
-			bottomLeftCorner: drawBottomCorners && !expanded
-			bottomRightCorner: drawBottomCorners && !expanded
-			color: expandButton.pressed ? Style.color.pane_active : Style.color.transparent
+			id: background
+
+			bottomLeftCorner: drawBottomCorners && !expandedOrScreenReaderRunning
+			bottomRightCorner: drawBottomCorners && !expandedOrScreenReaderRunning
+			color: Style.color.transparent
 			topLeftCorner: drawTopCorners
 			topRightCorner: drawTopCorners
 		}
@@ -65,7 +65,6 @@ ColumnLayout {
 					id: title
 
 					Accessible.ignored: true
-					color: expandButton.pressed ? Style.color.text_subline_pressed : textStyle.textColor
 					textStyle: Style.text.subline
 					visible: text !== ""
 				}
@@ -73,8 +72,7 @@ ColumnLayout {
 					id: selectionTitle
 
 					Accessible.ignored: true
-					color: expandButton.pressed ? Style.color.text_pressed : textStyle.textColor
-					visible: alwaysReserveSelectionTitleHight || text !== ""
+					visible: alwaysReserveSelectionTitleHeight || text !== ""
 
 					Behavior on text {
 						SequentialAnimation {
@@ -107,10 +105,11 @@ ColumnLayout {
 				id: selectionIcon
 
 				Layout.maximumHeight: Style.dimens.small_icon_size
-				Layout.maximumWidth: Math.ceil(paintedWidth)
 				Layout.preferredHeight: Style.dimens.small_icon_size
-				tintColor: arrow.tintColor
+				Layout.preferredWidth: Style.dimens.icon_size
+				tintColor: Style.color.text
 				tintEnabled: false
+				visible: source.toString() !== ""
 			}
 			TintableIcon {
 				id: arrow
@@ -120,8 +119,8 @@ ColumnLayout {
 				Layout.preferredHeight: Style.dimens.small_icon_size
 				Layout.preferredWidth: Layout.preferredHeight
 				Layout.rightMargin: horizontalMargin
-				source: expanded ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
-				tintColor: expandButton.pressed ? Style.color.text_pressed : Style.color.text
+				source: expandedOrScreenReaderRunning ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
+				tintColor: Style.color.text
 				tintEnabled: true
 			}
 		}
@@ -129,14 +128,14 @@ ColumnLayout {
 		onClicked: expanded = !expanded
 	}
 	RoundedRectangle {
-		id: background
+		id: collapsibleContentBackground
 
 		Layout.fillWidth: true
 		bottomLeftCorner: drawBottomCorners
 		bottomRightCorner: drawBottomCorners
 		clip: true
 		color: Style.color.pane_sublevel
-		implicitHeight: expanded ? (contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin) : 0
+		implicitHeight: expandedOrScreenReaderRunning ? (contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin) : 0
 		implicitWidth: contentItem.implicitWidth + contentItem.anchors.leftMargin + contentItem.anchors.rightMargin
 		topLeftCorner: false
 		topRightCorner: false
@@ -155,10 +154,31 @@ ColumnLayout {
 			anchors {
 				bottomMargin: contentBottomMargin
 				fill: parent
-				leftMargin: root.horizontalMargin
-				rightMargin: root.horizontalMargin
+				leftMargin: contentHorizontalMargin
+				rightMargin: contentHorizontalMargin
 				topMargin: contentTopMargin
 			}
 		}
+	}
+	Item {
+		states: [
+			State {
+				name: "pressed"
+				when: expandButton.pressed
+
+				PropertyChanges {
+					arrow.tintColor: Style.color.text_pressed
+					background.color: Style.color.pane_pressed
+					selectionIcon.tintColor: Style.color.text_pressed
+					selectionTitle.color: Style.color.text_pressed
+					title.color: Style.color.text_subline_pressed
+				}
+			}
+		]
+		transitions: [
+			EaseInPressedTransition {
+				targets: [background, selectionTitle, arrow, selectionIcon, title]
+			}
+		]
 	}
 }

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/ios/material_more_horiz.svg</file>
         <file>images/material_add.svg</file>
         <file>images/mobile/x.svg</file>
         <file>images/mobile/questionmark.svg</file>
@@ -17,7 +16,6 @@
         <file>images/mobile/icon_smart.svg</file>
         <file>images/mobile/share.svg</file>
         <file>images/mobile/material_arrow_left.svg</file>
-        <file>images/mobile/material_backspace.svg</file>
         <file>images/mobile/material_view_headline.svg</file>
         <file>images/mobile/phone_card_reader.svg</file>
         <file>images/mobile/phone_nfc.svg</file>

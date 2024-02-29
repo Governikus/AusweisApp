@@ -20,7 +20,7 @@ aufgenommen und mit dem nächsten Major-Release veröffentlicht. In der Zwischen
 wird die Änderung ebenfalls in dem ``community`` branch angenommen und beim
 offiziellen Release synchronisiert.
 
-.. _`Repository`: https://github.com/Governikus/AusweisApp2
+.. _`Repository`: https://github.com/Governikus/AusweisApp
 
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -11,6 +11,7 @@
 #include <openssl/x509.h>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -140,7 +141,7 @@ class test_efCardSecurity
 		{
 			QTest::addColumn<QByteArray>("bytes");
 
-			QTest::newRow("file") << QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"));
+			QTest::newRow("file") << QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"_L1));
 
 			QSharedPointer<EVP_PKEY_CTX> keyCtx(EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr), &EVP_PKEY_CTX_free);
 			QVERIFY(keyCtx);

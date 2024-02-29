@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -66,7 +66,7 @@ class test_GlobalStatus
 			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::IfdConnector_NoSupportedApiLevel << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
 			QTest::newRow("connectionTimeout") << GlobalStatus::Code::IfdConnector_ConnectionTimeout << tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 			QTest::newRow("connectionError") << GlobalStatus::Code::IfdConnector_ConnectionError << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
-			QTest::newRow("hostRefused") << GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
+			QTest::newRow("hostRefused") << GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code.");
 			QTest::newRow("fileNotFound") << GlobalStatus::Code::Downloader_File_Not_Found << tr("File not found.");
 			QTest::newRow("cannotSaveFile") << GlobalStatus::Code::Downloader_Cannot_Save_File << tr("Cannot save file.");
 			QTest::newRow("dataCorrupted") << GlobalStatus::Code::Downloader_Data_Corrupted << tr("Received data were corrupted.");

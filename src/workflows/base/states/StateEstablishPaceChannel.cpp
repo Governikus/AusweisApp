@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -178,16 +178,11 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 			{
 				getContext()->setLastPaceResult(CardReturnCode::OK_PUK);
 
-				Q_EMIT firePaceChannelInoperative();
+				Q_EMIT firePacePukEstablished();
 				return;
 			}
 
 			Q_EMIT fireContinue();
-			return;
-
-		case CardReturnCode::PUK_INOPERATIVE:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
-			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
 			return;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
@@ -197,24 +192,24 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 
 		case CardReturnCode::INVALID_PIN:
 		{
-			CardReturnCode paceResult;
 			switch (getContext()->getCardConnection()->getReaderInfo().getRetryCounter())
 			{
 				case 2:
 					// Old retryCounter is 2: 2nd try failed
-					paceResult = CardReturnCode::INVALID_PIN_2;
+					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
+					Q_EMIT fireWrongPin();
 					break;
 
 				case 1:
 					// Old retryCounter is 1: 3rd try failed
-					paceResult = CardReturnCode::INVALID_PIN_3;
+					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
+					Q_EMIT fireThirdPinAttemptFailed();
 					break;
 
 				default:
-					paceResult = CardReturnCode::INVALID_PIN;
+					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN);
+					Q_EMIT fireWrongPin();
 			}
-			getContext()->setLastPaceResult(paceResult);
-			Q_EMIT firePaceChannelInoperative();
 			return;
 		}
 

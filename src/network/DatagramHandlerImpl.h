@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -39,7 +39,7 @@ class DatagramHandlerImpl
 
 		void resetSocket();
 		[[nodiscard]] bool isValidBroadcastInterface(const QNetworkInterface& pInterface) const;
-		[[nodiscard]] QVector<QHostAddress> getAllBroadcastAddresses(const QNetworkInterface& pInterface) const;
+		[[nodiscard]] QList<QHostAddress> getAllBroadcastAddresses(const QNetworkInterface& pInterface) const;
 		[[nodiscard]] bool sendToAddress(const QByteArray& pData, const QHostAddress& pAddress, quint16 pPort = 0, bool pLogError = true);
 		void sendToAllAddressEntries(const QByteArray& pData, quint16 pPort);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QtMsgType)
@@ -31,8 +32,8 @@ class test_TcToken
 
 	public:
 		test_TcToken()
-			: tokenXmlOk(":/tctoken/ok.xml")
-			, tokenXmlBroken(":/tctoken/broken.xml")
+			: tokenXmlOk(":/tctoken/ok.xml"_L1)
+			, tokenXmlBroken(":/tctoken/broken.xml"_L1)
 		{
 			checkAndOpenFile(tokenXmlOk);
 			checkAndOpenFile(tokenXmlBroken);
@@ -43,11 +44,11 @@ class test_TcToken
 		{
 			TcToken token(tokenXmlOk.readAll());
 			QVERIFY(token.isValid());
-			QCOMPARE(token.getBinding(), QString("urn:liberty:paos:2006-08"));
+			QCOMPARE(token.getBinding(), "urn:liberty:paos:2006-08"_L1);
 			QCOMPARE(token.getSessionIdentifier(), QByteArray("1A2BB129"));
-			QCOMPARE(token.getServerAddress().toString(), QString("https://eid-server.example.de/entrypoint"));
-			QCOMPARE(token.getRefreshAddress().toString(), QString("https://service.example.de/loggedin?7eb39f62"));
-			QCOMPARE(token.getCommunicationErrorAddress().toString(), QString("https://service.example.de/ComError?7eb39f62"));
+			QCOMPARE(token.getServerAddress().toString(), "https://eid-server.example.de/entrypoint"_L1);
+			QCOMPARE(token.getRefreshAddress().toString(), "https://service.example.de/loggedin?7eb39f62"_L1);
+			QCOMPARE(token.getCommunicationErrorAddress().toString(), "https://service.example.de/ComError?7eb39f62"_L1);
 			QCOMPARE(token.getPsk(), QByteArray("4BC1A0B5"));
 		}
 
@@ -353,12 +354,12 @@ class test_TcToken
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("Binding is no valid anyUri: \"://://\"")
-				<< QString("://://") << pathProtocol << psk << identifier
+				<< u"://://"_s << pathProtocol << psk << identifier
 				<< serverAdress << errorAdress << refreshAdress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("PathSecurity-Protocol is no valid URI: \"\"")
-				<< binding << QString("") << psk << identifier
+				<< binding << u""_s << psk << identifier
 				<< serverAdress << errorAdress << refreshAdress
 				<< QtCriticalMsg << true;
 
@@ -379,12 +380,12 @@ class test_TcToken
 
 			QTest::newRow("ServerAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< QString("://://") << errorAdress << refreshAdress
+				<< u"://://"_s << errorAdress << refreshAdress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("CommunicationErrorAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< serverAdress << QString("://://") << refreshAdress
+				<< serverAdress << u"://://"_s << refreshAdress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("RefreshAddress no valid anyUri: \"\"")
@@ -394,7 +395,7 @@ class test_TcToken
 
 			QTest::newRow("RefreshAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< serverAdress << errorAdress << QString("://://")
+				<< serverAdress << errorAdress << u"://://"_s
 				<< QtCriticalMsg << false;
 		}
 

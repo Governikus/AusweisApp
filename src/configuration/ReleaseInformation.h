@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,10 +11,10 @@
 #include "UpdatableFile.h"
 #include "VersionNumber.h"
 
+#include <QList>
 #include <QObject>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 namespace governikus
 {
@@ -25,13 +25,13 @@ class ReleaseInformation
 	Q_OBJECT
 
 	private:
-		const QVector<QSharedPointer<UpdatableFile>> mReleaseNotes;
+		const QList<QSharedPointer<UpdatableFile>> mReleaseNotes;
 		const QSharedPointer<UpdatableFile> mAnnouncements;
 		const QSharedPointer<UpdatableFile> mIssues;
 		const VersionNumber mVersion;
 
 		static QSharedPointer<UpdatableFile> getFile(const QString& pFile);
-		static QVector<QSharedPointer<UpdatableFile>> getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion);
+		static QList<QSharedPointer<UpdatableFile>> getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion);
 
 	Q_SIGNALS:
 		void fireInformationChanged();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -13,11 +13,12 @@ GButton {
 	}
 	property bool rootEnabled: true
 	readonly property var settingsHandler: customSettingsHandler ? customSettingsHandler : function () {}
-	property bool showHelp: true
 	property bool showSettings: false
 
 	background: null
-	textDisabledColor: Style.color.text_subline_disabled
+	iconSize: Style.dimens.icon_size
+	textDisabledColor: Style.color.text_title_disabled
+	textHighlightColor: plugin.highContrastEnabled ? Style.color.control_pressed : Style.color.control_content_pressed
 	textStyle: Style.text.navigation
 	tintIcon: true
 	verticalPadding: 0

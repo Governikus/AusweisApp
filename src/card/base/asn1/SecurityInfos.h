@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,8 +14,8 @@
 #include "SecurityInfo.h"
 
 #include <QByteArray>
+#include <QList>
 #include <QSharedPointer>
-#include <QVector>
 
 
 namespace governikus
@@ -37,15 +37,15 @@ class SecurityInfos
 
 	private:
 		const QByteArray mContentBytes;
-		const QVector<QSharedPointer<const SecurityInfo>> mSecurityInfos;
-		const QVector<QSharedPointer<const PaceInfo>> mPaceInfos;
-		const QVector<QSharedPointer<const ChipAuthenticationInfo>> mChipAuthenticationInfos;
+		const QList<QSharedPointer<const SecurityInfo>> mSecurityInfos;
+		const QList<QSharedPointer<const PaceInfo>> mPaceInfos;
+		const QList<QSharedPointer<const ChipAuthenticationInfo>> mChipAuthenticationInfos;
 		const QSharedPointer<const MobileEIDTypeInfo> mMobileEIDTypeInfo;
 
 		SecurityInfos(const QByteArray& pBytes,
-				const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
-				const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
-				const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
+				const QList<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
+				const QList<QSharedPointer<const PaceInfo>>& pPaceInfos,
+				const QList<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
 				const QSharedPointer<const MobileEIDTypeInfo>& pMobileEIDTypeInfo);
 
 	public:
@@ -53,9 +53,9 @@ class SecurityInfos
 		static QSharedPointer<SecurityInfos> decode(const QByteArray& pBytes);
 
 		[[nodiscard]] const QByteArray& getContentBytes() const;
-		[[nodiscard]] const QVector<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
-		[[nodiscard]] const QVector<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
-		[[nodiscard]] const QVector<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
+		[[nodiscard]] const QList<QSharedPointer<const SecurityInfo>>& getSecurityInfos() const;
+		[[nodiscard]] const QList<QSharedPointer<const PaceInfo>>& getPaceInfos() const;
+		[[nodiscard]] const QList<QSharedPointer<const ChipAuthenticationInfo>>& getChipAuthenticationInfos() const;
 		[[nodiscard]] const QSharedPointer<const MobileEIDTypeInfo>& getMobileEIDTypeInfo() const;
 };
 

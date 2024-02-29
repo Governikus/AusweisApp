@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdater.h"
@@ -21,8 +21,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(appupdate)
 
 AppUpdater::AppUpdater()
-	: mForceUpdate(false)
-	, mAppUpdateJsonUrl()
+	: mAppUpdateJsonUrl()
 	, mAppUpdateData()
 	, mDownloadPath(QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QLatin1Char('/'))
 	, mDownloadInProgress(false)
@@ -33,9 +32,8 @@ AppUpdater::AppUpdater()
 }
 
 
-bool AppUpdater::checkAppUpdate(bool pForceUpdate)
+bool AppUpdater::checkAppUpdate()
 {
-	mForceUpdate = pForceUpdate;
 	mAppUpdateData = AppUpdateData();
 	return download(mAppUpdateJsonUrl);
 }
@@ -120,13 +118,6 @@ const AppUpdateData& AppUpdater::getUpdateData() const
 }
 
 
-void AppUpdater::skipVersion(const QString& pVersion) const
-{
-	qCInfo(appupdate) << "Skip application update:" << pVersion;
-	Env::getSingleton<AppSettings>()->getGeneralSettings().skipVersion(pVersion);
-}
-
-
 #ifndef QT_NO_DEBUG
 QString AppUpdater::getDownloadPath() const
 {
@@ -195,18 +186,9 @@ void AppUpdater::handleVersionInfoDownloadFinished(const QByteArray& pData)
 
 		if (VersionNumber(version) > VersionNumber::getApplicationVersion())
 		{
-			if (!mForceUpdate && version == Env::getSingleton<AppSettings>()->getGeneralSettings().getSkipVersion())
-			{
-				qCInfo(appupdate) << "Version will be skipped:" << version;
-				Q_EMIT fireAppcastCheckFinished(false, GlobalStatus::Code::No_Error);
-			}
-			else
-			{
-				mForceUpdate = false;
-				qCInfo(appupdate) << "Found new version:" << version << ", greater than old version" << QCoreApplication::applicationVersion();
-				Env::getSingleton<Downloader>()->download(mAppUpdateData.getNotesUrl());
-				return;
-			}
+			qCInfo(appupdate) << "Found new version:" << version << ", greater than old version" << QCoreApplication::applicationVersion();
+			Env::getSingleton<Downloader>()->download(mAppUpdateData.getNotesUrl());
+			return;
 		}
 		else
 		{

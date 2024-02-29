@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -197,10 +197,10 @@ void RemoteDeviceModel::removeVanishedReaders()
 }
 
 
-QVector<RemoteDeviceModelEntry> RemoteDeviceModel::presentReaders() const
+QList<RemoteDeviceModelEntry> RemoteDeviceModel::presentReaders() const
 {
 	const auto& announcingRemoteDevices = Env::getSingleton<RemoteIfdClient>()->getAnnouncingRemoteDevices();
-	QVector<RemoteDeviceModelEntry> presentReaders;
+	QList<RemoteDeviceModelEntry> presentReaders;
 
 	for (auto& deviceListEntry : announcingRemoteDevices)
 	{

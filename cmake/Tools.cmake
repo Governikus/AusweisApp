@@ -323,12 +323,9 @@ if(INKSCAPE)
 
 	add_custom_target(readerimages
 		COMMAND ${INKSCAPE} img_RemoteReader.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_RemoteReader.png
-		COMMAND ${INKSCAPE} img_RemoteReader_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_RemoteReader_mit_ausweis.png
 		COMMAND ${INKSCAPE} img_PersoSim.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_PersoSim.png
-		COMMAND ${INKSCAPE} img_PersoSim_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_PersoSim_mit_ausweis.png
 		COMMAND ${INKSCAPE} img_Simulator.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator.png
-		COMMAND ${INKSCAPE} img_Simulator_mit_ausweis.svg -w 512 -h 512 -y 0 -o ${RESOURCES_DIR}/updatable-files/reader/img_Simulator_mit_ausweis.png
-		WORKING_DIRECTORY ${RESOURCES_DIR}/images/reader/src)
+		WORKING_DIRECTORY ${RESOURCES_DIR}/images/src)
 endif()
 
 find_program(PNGQUANT pngquant CMAKE_FIND_ROOT_PATH_BOTH)
@@ -496,11 +493,8 @@ if(PNGQUANT)
 
 	add_custom_target(pngquant.readerimages
 		COMMAND ${PNGQUANT_CMD} img_RemoteReader.png -- img_RemoteReader.png
-		COMMAND ${PNGQUANT_CMD} img_RemoteReader_mit_ausweis.png -- img_RemoteReader_mit_ausweis.png
 		COMMAND ${PNGQUANT_CMD} img_PersoSim.png -- img_PersoSim.png
-		COMMAND ${PNGQUANT_CMD} img_PersoSim_mit_ausweis.png -- img_PersoSim_mit_ausweis.png
 		COMMAND ${PNGQUANT_CMD} img_Simulator.png -- img_Simulator.png
-		COMMAND ${PNGQUANT_CMD} img_Simulator_mit_ausweis.png -- img_Simulator_mit_ausweis.png
 		WORKING_DIRECTORY ${RESOURCES_DIR}/updatable-files/reader)
 endif()
 
@@ -527,7 +521,7 @@ if(INKSCAPE AND APPLE AND NOT IOS)
 			COMMAND ${INKSCAPE} appIcon.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_256x256@2x.png
 			COMMAND ${INKSCAPE} appIcon.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512.png
 			COMMAND ${INKSCAPE} appIcon.svg -w 1024 -h 1024 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512@2x.png
-			COMMAND ${ICONUTIL} -c icns --output AusweisApp2.icns ${BUNDLE_ICON_SET_DIR}
+			COMMAND ${ICONUTIL} -c icns --output "${PROJECT_NAME}.icns" ${BUNDLE_ICON_SET_DIR}
 			COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUNDLE_ICON_SET_DIR}
 			WORKING_DIRECTORY ${RESOURCES_DIR}/images/macos)
 
@@ -543,7 +537,7 @@ if(INKSCAPE AND APPLE AND NOT IOS)
 			COMMAND ${INKSCAPE} appIconBeta.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_256x256@2x.png
 			COMMAND ${INKSCAPE} appIconBeta.svg -w 512 -h 512 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512.png
 			COMMAND ${INKSCAPE} appIconBeta.svg -w 1024 -h 1024 -y 0 -o ${BUNDLE_ICON_SET_DIR}/icon_512x512@2x.png
-			COMMAND ${ICONUTIL} -c icns --output beta/AusweisApp2.icns ${BUNDLE_ICON_SET_DIR}
+			COMMAND ${ICONUTIL} -c icns --output "beta/${PROJECT_NAME}.icns" ${BUNDLE_ICON_SET_DIR}
 			COMMAND ${CMAKE_COMMAND} -E remove_directory ${BUNDLE_ICON_SET_DIR}
 			WORKING_DIRECTORY ${RESOURCES_DIR}/images/macos)
 	endif()
@@ -569,11 +563,10 @@ if(DOT)
 		# 1. Strip line of plugins as it is misleading
 		# 2. Strip "AusweisApp" prefix
 		add_custom_target(architecture.sed
-			COMMAND ${SED} -i -E '/AusweisApp -> AusweisApp\(Ui|Card|Activation\).+/d' ${architecture_file}
-			COMMAND ${SED} -i'' -e 's/"AusweisApp"/"AusweisApp2"/' ${architecture_file}
-			COMMAND ${SED} -i'' -e 's/"AusweisApp2"/"REPLACE"/' ${architecture_file}
+			COMMAND ${SED} -i -E '/AusweisAppBinary -> AusweisApp\(Ui|Card|Activation\).+/d' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/"AusweisApp"/"REPLACE"/' ${architecture_file}
 			COMMAND ${SED} -i'' -e 's/AusweisApp//' ${architecture_file}
-			COMMAND ${SED} -i'' -e 's/"REPLACE"/"AusweisApp2"/' ${architecture_file}
+			COMMAND ${SED} -i'' -e 's/"REPLACE"/"AusweisApp"/' ${architecture_file}
 			COMMAND ${SED} -i'' -e 's/diamond/box/' ${architecture_file}
 			DEPENDS ${ARCHI_PDF_DEPENDS}
 			WORKING_DIRECTORY ${PROJECT_BINARY_DIR})

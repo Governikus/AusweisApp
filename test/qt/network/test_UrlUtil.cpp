@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -28,20 +29,20 @@ class test_UrlUtil
 			QTest::addColumn<QUrl>("url2");
 			QTest::addColumn<bool>("valid");
 
-			QTest::newRow("none_80") << QUrl("http://www.web.de/index.html") << QUrl("http://www.web.de:80") << true;
-			QTest::newRow("8080_8080") << QUrl("http://www.web.de:8080/index.html") << QUrl("http://www.web.de:8080") << true;
-			QTest::newRow("none_443") << QUrl("https://www.web.de/index.html") << QUrl("https://www.web.de:443") << true;
-			QTest::newRow("8443_8443") << QUrl("https://www.web.de:8443/index.html") << QUrl("https://www.web.de:8443") << true;
+			QTest::newRow("none_80") << QUrl("http://www.web.de/index.html"_L1) << QUrl("http://www.web.de:80"_L1) << true;
+			QTest::newRow("8080_8080") << QUrl("http://www.web.de:8080/index.html"_L1) << QUrl("http://www.web.de:8080"_L1) << true;
+			QTest::newRow("none_443") << QUrl("https://www.web.de/index.html"_L1) << QUrl("https://www.web.de:443"_L1) << true;
+			QTest::newRow("8443_8443") << QUrl("https://www.web.de:8443/index.html"_L1) << QUrl("https://www.web.de:8443"_L1) << true;
 
-			QTest::newRow("false_8443_8444") << QUrl("https://www.web.de:8443/index.html") << QUrl("https://www.web.de:8444") << false;
-			QTest::newRow("false_999_999") << QUrl("https://www.web.de:999/index.html") << QUrl("http://www.web.de:999") << false;
-			QTest::newRow("false_different_domain") << QUrl("http://www.google.de:999/index.html") << QUrl("http://www.web.de:999") << false;
+			QTest::newRow("false_8443_8444") << QUrl("https://www.web.de:8443/index.html"_L1) << QUrl("https://www.web.de:8444"_L1) << false;
+			QTest::newRow("false_999_999") << QUrl("https://www.web.de:999/index.html"_L1) << QUrl("http://www.web.de:999"_L1) << false;
+			QTest::newRow("false_different_domain") << QUrl("http://www.google.de:999/index.html"_L1) << QUrl("http://www.web.de:999"_L1) << false;
 
-			QTest::newRow("no_scheme_https_with_port") << QUrl("de.dummy.cz") << QUrl("https://de.dummy.cz:443") << false;
-			QTest::newRow("no_scheme_https_without_port") << QUrl("de.dummy.cz") << QUrl("https://de.dummy.cz") << false;
+			QTest::newRow("no_scheme_https_with_port") << QUrl("de.dummy.cz"_L1) << QUrl("https://de.dummy.cz:443"_L1) << false;
+			QTest::newRow("no_scheme_https_without_port") << QUrl("de.dummy.cz"_L1) << QUrl("https://de.dummy.cz"_L1) << false;
 
-			QTest::newRow("no_scheme_http_with_port") << QUrl("de.dummy.cz") << QUrl("http://de.dummy.cz:80") << false;
-			QTest::newRow("no_scheme_http_without_port") << QUrl("de.dummy.cz") << QUrl("http://de.dummy.cz") << false;
+			QTest::newRow("no_scheme_http_with_port") << QUrl("de.dummy.cz"_L1) << QUrl("http://de.dummy.cz:80"_L1) << false;
+			QTest::newRow("no_scheme_http_without_port") << QUrl("de.dummy.cz"_L1) << QUrl("http://de.dummy.cz"_L1) << false;
 		}
 
 
@@ -57,32 +58,32 @@ class test_UrlUtil
 
 		void majorMinor()
 		{
-			const QString URL_PREFIX("https://www.der-pott-kocht.net:8443/index.html");
+			const QString URL_PREFIX("https://www.der-pott-kocht.net:8443/index.html"_L1);
 			const QUrl url(URL_PREFIX);
 
 			// Ok
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Ok, ECardApiResult::Minor::null))).toString(),
-					URL_PREFIX + "?ResultMajor=ok");
+					URL_PREFIX + "?ResultMajor=ok"_L1);
 
 			// General server error
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Unknown_Error, QString(), ECardApiResult::Origin::Server))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=serverError");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=serverError"_L1);
 
 			// Minors defined in TR-03112-1 and TR-03124-1 2.5.4.2
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Communication_Error))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=communicationError");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=communicationError"_L1);
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=trustedChannelEstablishmentFailed");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=trustedChannelEstablishmentFailed"_L1);
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser"_L1);
 
 			// No difference between client and server origin
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User, QString(), ECardApiResult::Origin::Server))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser"_L1);
 
 			// General client error
 			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Not_Initialized))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=clientError");
+					URL_PREFIX + "?ResultMajor=error&ResultMinor=clientError"_L1);
 		}
 
 
@@ -90,24 +91,24 @@ class test_UrlUtil
 		{
 			QTest::addColumn<QUrl>("url");
 			QTest::addColumn<UrlQueryRequest>("type");
-			QTest::addColumn<QString>("value");
+			QTest::addColumn<QLatin1String>("value");
 
-			QTest::newRow("empty") << QUrl("") << UrlQueryRequest::UNKNOWN << QString();
-			QTest::newRow("no query") << QUrl("example.com") << UrlQueryRequest::UNKNOWN << QString();
-			QTest::newRow("empty value") << QUrl("?showui=") << UrlQueryRequest::SHOWUI << QString();
-			QTest::newRow("showui - l") << QUrl("?showui=test") << UrlQueryRequest::SHOWUI << QString("test");
-			QTest::newRow("showui - h") << QUrl("?SHOWUI=test") << UrlQueryRequest::SHOWUI << QString("test");
-			QTest::newRow("status - l") << QUrl("?status=test") << UrlQueryRequest::STATUS << QString("test");
-			QTest::newRow("status - h") << QUrl("?STATUS=test") << UrlQueryRequest::STATUS << QString("test");
-			QTest::newRow("tctokenurl - l") << QUrl("?tctokenurl=test") << UrlQueryRequest::TCTOKENURL << QString("test");
-			QTest::newRow("tctokenurl - h") << QUrl("?TCTOKENURL=test") << UrlQueryRequest::TCTOKENURL << QString("test");
-			QTest::newRow("multi 1") << QUrl("?showui=test1&status=test2") << UrlQueryRequest::SHOWUI << QString("test1");
-			QTest::newRow("multi 2") << QUrl("?status=test1&showui=test2") << UrlQueryRequest::STATUS << QString("test1");
-			QTest::newRow("multi 3") << QUrl("?foo=test1&showui=test2") << UrlQueryRequest::SHOWUI << QString("test2");
-			QTest::newRow("multi 4") << QUrl("?foo=&showui=test2") << UrlQueryRequest::SHOWUI << QString("test2");
-			QTest::newRow("multi 5") << QUrl("?foo=test1&showui=") << UrlQueryRequest::SHOWUI << QString();
-			QTest::newRow("multi 6") << QUrl("?showui=&showui=test1") << UrlQueryRequest::SHOWUI << QString();
-			QTest::newRow("multi 7") << QUrl("?foo=test1&bar=test2") << UrlQueryRequest::UNKNOWN << QString();
+			QTest::newRow("empty") << QUrl(""_L1) << UrlQueryRequest::UNKNOWN << QLatin1String();
+			QTest::newRow("no query") << QUrl("example.com"_L1) << UrlQueryRequest::UNKNOWN << QLatin1String();
+			QTest::newRow("empty value") << QUrl("?showui="_L1) << UrlQueryRequest::SHOWUI << QLatin1String();
+			QTest::newRow("showui - l") << QUrl("?showui=test"_L1) << UrlQueryRequest::SHOWUI << "test"_L1;
+			QTest::newRow("showui - h") << QUrl("?SHOWUI=test"_L1) << UrlQueryRequest::SHOWUI << "test"_L1;
+			QTest::newRow("status - l") << QUrl("?status=test"_L1) << UrlQueryRequest::STATUS << "test"_L1;
+			QTest::newRow("status - h") << QUrl("?STATUS=test"_L1) << UrlQueryRequest::STATUS << "test"_L1;
+			QTest::newRow("tctokenurl - l") << QUrl("?tctokenurl=test"_L1) << UrlQueryRequest::TCTOKENURL << "test"_L1;
+			QTest::newRow("tctokenurl - h") << QUrl("?TCTOKENURL=test"_L1) << UrlQueryRequest::TCTOKENURL << "test"_L1;
+			QTest::newRow("multi 1") << QUrl("?showui=test1&status=test2"_L1) << UrlQueryRequest::SHOWUI << "test1"_L1;
+			QTest::newRow("multi 2") << QUrl("?status=test1&showui=test2"_L1) << UrlQueryRequest::STATUS << "test1"_L1;
+			QTest::newRow("multi 3") << QUrl("?foo=test1&showui=test2"_L1) << UrlQueryRequest::SHOWUI << "test2"_L1;
+			QTest::newRow("multi 4") << QUrl("?foo=&showui=test2"_L1) << UrlQueryRequest::SHOWUI << "test2"_L1;
+			QTest::newRow("multi 5") << QUrl("?foo=test1&showui="_L1) << UrlQueryRequest::SHOWUI << QLatin1String();
+			QTest::newRow("multi 6") << QUrl("?showui=&showui=test1"_L1) << UrlQueryRequest::SHOWUI << QLatin1String();
+			QTest::newRow("multi 7") << QUrl("?foo=test1&bar=test2"_L1) << UrlQueryRequest::UNKNOWN << QLatin1String();
 		}
 
 
@@ -115,12 +116,12 @@ class test_UrlUtil
 		{
 			QFETCH(QUrl, url);
 			QFETCH(UrlQueryRequest, type);
-			QFETCH(QString, value);
+			QFETCH(QLatin1String, value);
 
 			const auto queryUrl = QUrlQuery(url);
 			const auto [parsedType, parsedValue] = UrlUtil::getRequest(queryUrl);
-			QCOMPARE(type, parsedType);
-			QCOMPARE(value, parsedValue);
+			QCOMPARE(parsedType, type);
+			QCOMPARE(parsedValue, value);
 		}
 
 
@@ -130,13 +131,13 @@ class test_UrlUtil
 			QTest::addColumn<bool>("useTestUri");
 			QTest::addColumn<bool>("enableSimulator");
 
-			QTest::newRow("empty") << QUrl("") << false << false;
-			QTest::newRow("useTestUri") << QUrl("?useTestUri=true") << true << false;
-			QTest::newRow("!useTestUri") << QUrl("?useTestUri=false") << false << false;
-			QTest::newRow("enableSimulator") << QUrl("?enableSimulator=true") << false << true;
-			QTest::newRow("!enableSimulator") << QUrl("?enableSimulator=false") << false << false;
-			QTest::newRow("multi 1") << QUrl("?useTestUri=true&enableSimulator=true") << true << true;
-			QTest::newRow("multi 2") << QUrl("?useTestUri=true&enableSimulator=false") << true << false;
+			QTest::newRow("empty") << QUrl(""_L1) << false << false;
+			QTest::newRow("useTestUri") << QUrl("?useTestUri=true"_L1) << true << false;
+			QTest::newRow("!useTestUri") << QUrl("?useTestUri=false"_L1) << false << false;
+			QTest::newRow("enableSimulator") << QUrl("?enableSimulator=true"_L1) << false << true;
+			QTest::newRow("!enableSimulator") << QUrl("?enableSimulator=false"_L1) << false << false;
+			QTest::newRow("multi 1") << QUrl("?useTestUri=true&enableSimulator=true"_L1) << true << true;
+			QTest::newRow("multi 2") << QUrl("?useTestUri=true&enableSimulator=false"_L1) << true << false;
 		}
 
 

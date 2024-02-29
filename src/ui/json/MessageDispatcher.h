@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -54,7 +54,7 @@ class MessageDispatcher
 		[[nodiscard]] Msg processCommand(const QByteArray& pMsg);
 		[[nodiscard]] Msg processStateChange(const QString& pState);
 		[[nodiscard]] Msg processProgressChange() const;
-		[[nodiscard]] QVector<Msg> processReaderChange(const ReaderInfo& pInfo);
+		[[nodiscard]] QList<Msg> processReaderChange(const ReaderInfo& pInfo);
 
 #ifndef QT_NO_DEBUG
 		void setSkipStateApprovedHook(const SkipStateApprovedHook& pHook);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -19,14 +19,6 @@ TestCase {
 		verify(!testObject.tintIcon, "Initial tintIcon: false");
 		testObject.tintIcon = true;
 		verify(testObject.tintIcon, "tintIcon: true");
-	}
-	function test_linkIcon() {
-		let testObject = createTestObject();
-		compare(testObject.showLinkIcon, Constants.is_layout_ios, "Initial showLinkIcon: false");
-		testObject.showLinkIcon = false;
-		verify(!testObject.showLinkIcon, "tintIcon: false");
-		testObject.showLinkIcon = true;
-		verify(testObject.showLinkIcon, "tintIcon: true");
 	}
 	function test_load() {
 		let testObject = createTestObject();

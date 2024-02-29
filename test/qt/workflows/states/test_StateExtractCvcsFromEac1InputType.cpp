@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -24,7 +25,7 @@ class test_StateExtractCvcsFromEac1InputType
 {
 	Q_OBJECT
 
-	QVector<QSharedPointer<const CVCertificate>> mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
+	QList<QSharedPointer<const CVCertificate>> mTerminalCvcs, mDvCvcs, mLinkCvcs, mCvcas;
 	QScopedPointer<StateExtractCvcsFromEac1InputType> mState;
 	QSharedPointer<TestAuthContext> mAuthContext;
 
@@ -34,19 +35,19 @@ class test_StateExtractCvcsFromEac1InputType
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"));
-			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"));
-			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"));
-			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"));
-			mLinkCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"));
-			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"));
-			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"));
+			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"_L1));
+			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"_L1));
+			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"_L1));
+			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"_L1));
+			mLinkCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"_L1));
+			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1));
+			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"_L1));
 		}
 
 
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_3.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_3.xml"_L1));
 
 			mState.reset(StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mAuthContext));
 

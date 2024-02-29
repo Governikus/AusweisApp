@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -17,14 +17,14 @@ Q_DECLARE_LOGGING_CATEGORY(update)
 
 using namespace governikus;
 
-QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS)
+QList<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS)
 {
 	QJsonParseError jsonError {};
 	const auto& json = QJsonDocument::fromJson(pData, &jsonError);
 	if (jsonError.error != QJsonParseError::NoError)
 	{
 		qCCritical(update) << "Cannot parse providers:" << jsonError.errorString();
-		return QVector<ProviderConfigurationInfo>();
+		return QList<ProviderConfigurationInfo>();
 	}
 
 	const bool eidIsRequired =
@@ -33,7 +33,7 @@ QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(co
 
 	const QJsonObject doc = json.object();
 	const QJsonArray& array = doc[QLatin1String("provider")].toArray();
-	QVector<ProviderConfigurationInfo> providers;
+	QList<ProviderConfigurationInfo> providers;
 	providers.reserve(array.size());
 	for (const QJsonValueConstRef entry : array)
 	{
@@ -93,7 +93,7 @@ QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteA
 }
 
 
-QVector<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData)
+QList<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(const QByteArray& pData)
 {
 	return parseProvider(pData, QOperatingSystemVersion::current());
 }

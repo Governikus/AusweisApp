@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Oid.h"
@@ -144,7 +144,8 @@ void Oid::createKnownOids()
 	cKnownOids[KnownOid::ID_PLAIN_FORMAT] = OBJ_create("0.4.0.127.0.7.3.1.3.1.1", "id-plainFormat", "BSI TR-03110 Part 4 Version 2.21 Plain Text Format 2.2.6.1");
 	cKnownOids[KnownOid::ID_HTML_FORMAT] = OBJ_create("0.4.0.127.0.7.3.1.3.1.2", "id-htmlFormat", "BSI TR-03110 Part 4 Version 2.21 HTML Format 2.2.6.2");
 	cKnownOids[KnownOid::ID_PFD_FORMAT] = OBJ_create("0.4.0.127.0.7.3.1.3.1.3", "id-pdfFormat", "BSI TR-03110 Part 4 Version 2.21 PDF Format 2.2.6.3");
-	cKnownOids[KnownOid::ID_SECTOR] = OBJ_create("0.4.0.127.0.7.3.1.3.2", "id-sector", "BSI TR-03110 Part 3 Version 2.21  Terminal Sector for Restricted Identification C.3.2.1");
+	cKnownOids[KnownOid::ID_SECTOR_RI] = OBJ_create("0.4.0.127.0.7.3.1.3.2", "id-sector-ri", "BSI TR-03110 Part 3 Version 2.21 Terminal Sector for Restricted Identification C.3.2.1");
+	cKnownOids[KnownOid::ID_SECTOR_PS] = OBJ_create("0.4.0.127.0.7.3.1.3.3", "id-sector-ps", "BSI TR-03110 Part 3 Version 2.21 Terminal Sector for Pseudonymous Signatures C.3.2.2");
 
 	cKnownOids[KnownOid::ID_EID_TYPE] = OBJ_create("0.4.0.127.0.7.3.2.3", "id-eIDType", "Draft Smart-eID");
 	cKnownOids[KnownOid::ID_CARD_EID_TYPE] = OBJ_create("0.4.0.127.0.7.3.2.3.1", "id-cardEIDType", "Draft Smart-eID - 1");

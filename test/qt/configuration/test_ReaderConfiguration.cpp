@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -18,6 +18,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -39,7 +40,7 @@ class test_ReaderConfiguration
 	private:
 		static const int cCardReadersInConfigurationFile;
 
-		QVector<UsbId> mUsbIds;
+		QList<UsbId> mUsbIds;
 		MockReaderDetector mMockReaderDetector;
 
 		void checkPlatformsMinMax(const QJsonObject& pObject, const QLatin1String& pValue)
@@ -82,14 +83,13 @@ class test_ReaderConfiguration
 		void checkDefaultReader()
 		{
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap"_L1);
 #else
-			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo("crap");
+			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo("crap"_L1);
 #endif
-			QCOMPARE(readerSettingsInfo.getName(), QString("crap"));
-			QCOMPARE(readerSettingsInfo.getIcon()->getName(), QString("default_reader.png"));
-			QCOMPARE(readerSettingsInfo.getIconWithNPA()->getName(), QString("default_reader_mit_ausweis.png"));
-			QCOMPARE(readerSettingsInfo.getPattern(), QString(""));
+			QCOMPARE(readerSettingsInfo.getName(), "crap"_L1);
+			QCOMPARE(readerSettingsInfo.getIcon()->getName(), "default_reader.png"_L1);
+			QCOMPARE(readerSettingsInfo.getPattern(), QString());
 		}
 
 
@@ -114,12 +114,14 @@ class test_ReaderConfiguration
 			QTest::newRow("REINER SCT cyberJack RFID basis") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis" << "img_Reiner_SCT_cyberjack_RFID_basis" << "REINER SCT cyberJack RFID basis";
 			QTest::newRow("REINER SCT cyberJack wave") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave" << "img_cyberjack_wave" << "REINER SCT cyberJack wave( USB)?( \\d{1,1})?$";
 
-			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken( \\d{1,1})?$";
+			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken";
 
-			QTest::newRow("Identiv SDI011") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
+			QTest::newRow("Identiv SDI011B") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
+			QTest::newRow("Identiv SDI011C") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader" << "img_Identive_SDI011" << "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$";
 			QTest::newRow("Identiv SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
 
 			QTest::newRow("ACS-ACR1281U") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U" << "img_ACS_ACR1281U" << "ACS ACR1281 PICC Reader( 0)?";
+			QTest::newRow("ACS-ACR1581U-C1") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader PICC" << "ACS ACR1581U-C1" << "img_ACS_ACR1581U-C1" << "ACS ACR1581 1S Dual Reader PICC( 0)?";
 
 			QTest::newRow("HID OMNIKEY 5021") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL";
 			QTest::newRow("HID OMNIKEY 5022") << UsbId(0x076B, 0x5022) << "HID Global OMNIKEY 5022 Smart Card Reader 0" << "HID OMNIKEY 5022-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$";
@@ -133,7 +135,7 @@ class test_ReaderConfiguration
 			QTest::newRow("Gemalto-Prox-SU") << UsbId(0x08E6, 0x5504) << "Gemalto Prox-SU Contactless_" << "Gemalto Prox-SU Contactless" << "img_Gemalto_Prox_SU" << R"(Gemalto Prox( |-)SU( Contactless_| USB PC LinkReader(\(1\)|\(2\))))";
 
 			QTest::newRow("Identiv-SCL-3711") << UsbId(0x04E6, 0x5591) << "SCM Microsystems SCL3711 reader & NFC device 0" << "Identiv SCL3711" << "img_Identive_SCL3711" << "(SCM Microsystems SCL3711 reader & NFC device 0|SCL3711 Reader and NFC device)";
-			QTest::newRow("Identiv-3700-F") << UsbId(0x04E6, 0x5790) << "Identiv CLOUD 3700 F Contactless Reader 0" << "Identiv 3700 F" << "img_Identive_XXXX_F" << "^Identiv (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$";
+			QTest::newRow("Identiv-3700-F") << UsbId(0x04E6, 0x5790) << "Identiv CLOUD 3700 F Contactless Reader 0" << "Identiv 3700 F" << "img_Identive_XXXX_F" << "^Identiv[e]? (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$";
 			QTest::newRow("Identiv 3720 F") << UsbId(0x04E6, 0x5612) << "Identiv uTrust 3720 Contactless Reader 0" << "Identiv 3720 F" << "img_Identive_XXXX_F" << "^Identiv (uTrust|cloud|CLOUD) 3720 (Contactless|CL) Reader( 0|\\(1\\))$";
 			QTest::newRow("Identiv 3721 F") << UsbId(0x04E6, 0x5613) << "Identiv uTrust 3721 Contactless Reader 0" << "Identiv 3721 F" << "img_Identive_XXXX_F" << "^Identiv (uTrust|cloud|CLOUD) 3721 (Contactless|CL) Reader( 0|\\(1\\))$";
 			QTest::newRow("Identiv-Cloud-4700-F") << UsbId(0x04E6, 0x5720) << "Identive CLOUD 4700 F Contactless Reader 1" << "Identiv Cloud 4700 F" << "img_Identive_Cloud_4700_F" << "(Identive CLOUD 4700 F Contactless Reader( 0| 1)|Identiv uTrust 4700 F Dual Interface Reader\\(2\\))";
@@ -158,13 +160,12 @@ class test_ReaderConfiguration
 
 			mUsbIds += usbId;
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap"_L1);
 #else
 			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(readerName);
 #endif
 			QCOMPARE(readerSettingsInfo.getName(), readerViewName);
-			QCOMPARE(readerSettingsInfo.getIcon()->getName(), readerIcon + ".png");
-			QCOMPARE(readerSettingsInfo.getIconWithNPA()->getName(), readerIcon + "_mit_ausweis.png");
+			QCOMPARE(readerSettingsInfo.getIcon()->getName(), readerIcon + ".png"_L1);
 			QCOMPARE(readerSettingsInfo.getPattern(), readerPattern);
 		}
 
@@ -186,17 +187,17 @@ class test_ReaderConfiguration
 
 			QTest::newRow("Simulator") << UsbId(0x0000, 0x0002) << "Simulator" << "Simulator";
 
-			QTest::newRow("REINER SCT cyberJack RFID komfort-windows-7-10") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort USB 1" << "REINER SCT cyberJack RFID komfort";
-			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-10.13-11.0") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
+			QTest::newRow("REINER SCT cyberJack RFID komfort-windows-10-11") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort USB 1" << "REINER SCT cyberJack RFID komfort";
+			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-12-14") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-windows-7-10") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON USB 52" << "REINER SCT cyberJack RFID komfort FON";
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-macosx-10.13-11.0") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON" << "REINER SCT cyberJack RFID komfort FON";
 
-			QTest::newRow("REINER SCT cyberJack RFID standard-windows-7-10") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard USB 1" << "REINER SCT cyberJack RFID standard";
-			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-10.13-11.0") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
+			QTest::newRow("REINER SCT cyberJack RFID standard-windows-10-11") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard USB 1" << "REINER SCT cyberJack RFID standard";
+			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-12-14") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
 
-			QTest::newRow("REINER SCT cyberJack RFID basis-windows-7-10") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis 0" << "REINER SCT cyberJack RFID basis";
-			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-10.13-11.0") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
+			QTest::newRow("REINER SCT cyberJack RFID basis-windows-10-11") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis 0" << "REINER SCT cyberJack RFID basis";
+			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-11-13") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
 
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 0" << "REINER SCT cyberJack wave";
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 1" << "REINER SCT cyberJack wave";
@@ -210,16 +211,29 @@ class test_ReaderConfiguration
 			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-1") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken";
 			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-2") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken 0" << "KOBIL IDToken";
 			QTest::newRow("KOBIL IDToken-macosx-10.13-11.0-3") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken 1" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-unknown-1") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken (NS1252PT18716) 01 00" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-unknown-2") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken (NS1228PT186BD) 01 00" << "KOBIL IDToken";
+			QTest::newRow("KOBIL IDToken-unknown-3") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken (0123456789ABCD) 02 01" << "KOBIL IDToken";
 
-			QTest::newRow("Identiv SDI011-windows-10-11-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-windows-10-11-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
-			QTest::newRow("Identiv SDI011-windows-10-11-3") << UsbId(0x04E6, 0x512B) << "SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-windows-10-11-4") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-windows-10-11-5") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Smart Card Reader 0" << "SCM Microsystems Inc. SDI011G Smart Card Reader 0";
-			QTest::newRow("Identiv SDI011-macosx-11-13") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-macosx-11-13") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-macosx-11-13-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
-			QTest::newRow("Identiv SDI011-macosx-11-13-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-windows-10-11-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-windows-10-11-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011B-windows-10-11-3") << UsbId(0x04E6, 0x512B) << "SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-windows-10-11-4") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-windows-10-11-5") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011G Smart Card Reader 0" << "SCM Microsystems Inc. SDI011G Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011B-macosx-11-13") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-macosx-11-13") << UsbId(0x04E6, 0x512B) << "SDI011 USB Smart Card Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-macosx-11-13-1") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011B-macosx-11-13-2") << UsbId(0x04E6, 0x512B) << "SCM Microsystems Inc. SDI011 Contactless Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+
+			QTest::newRow("Identiv SDI011C-windows-10-11-1") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011 Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-windows-10-11-2") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011 Smart Card Reader 0" << "SCM Microsystems Inc. SDI011 Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011C-windows-10-11-3") << UsbId(0x04E6, 0x512C) << "SDI011 Contactless Reader" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-windows-10-11-4") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011G Contactless Reader 0" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-windows-10-11-5") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011G Smart Card Reader 0" << "SCM Microsystems Inc. SDI011G Smart Card Reader 0";
+			QTest::newRow("Identiv SDI011C-macosx-11-13") << UsbId(0x04E6, 0x512C) << "SDI011 USB Smart Card Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-macosx-11-13") << UsbId(0x04E6, 0x512C) << "SDI011 USB Smart Card Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-macosx-11-13-1") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011 Contactless Reader(1)" << "Identiv SDI011 Dual Interface Smart Card Reader";
+			QTest::newRow("Identiv SDI011C-macosx-11-13-2") << UsbId(0x04E6, 0x512C) << "SCM Microsystems Inc. SDI011 Contactless Reader(2)" << "Identiv SDI011 Dual Interface Smart Card Reader";
 
 			QTest::newRow("Identiv SCL011-windows-10-11-1") << UsbId(0x04E6, 0x5292) << "SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader";
 			QTest::newRow("Identiv SCL011-windows-10-11-2") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL010 Contactless Reader" << "SCM Microsystems Inc. SCL010 Contactless Reader";
@@ -230,6 +244,12 @@ class test_ReaderConfiguration
 
 			QTest::newRow("ACS-ACR1281U-windows-7-10") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader 0" << "ACS ACR1281U";
 			QTest::newRow("ACS-ACR1281U-macosx-10.13-11.0") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U";
+
+			QTest::newRow("ACS-ACR1581-windows-7-11-1") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader PICC 0" << "ACS ACR1581U-C1";
+			QTest::newRow("ACS-ACR1581-windows-7-11-2") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader SAM 0" << "ACS ACR1581 1S Dual Reader SAM 0";
+			QTest::newRow("ACS-ACR1581-windows-7-11-3") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader ICC 0" << "ACS ACR1581 1S Dual Reader ICC 0";
+			QTest::newRow("ACS-ACR1581-macosx-11-14-1") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader PICC" << "ACS ACR1581U-C1";
+			QTest::newRow("ACS-ACR1581-macosx-11-14-2") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader SAM" << "ACS ACR1581 1S Dual Reader SAM";
 
 			QTest::newRow("HID OMNIKEY 5021-windows-10-11") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL";
 			QTest::newRow("HID OMNIKEY 5021-macosx-11-13") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan (076B:5340) 5021 CL" << "HID OMNIKEY 5021-CL";
@@ -351,7 +371,7 @@ class test_ReaderConfiguration
 
 			mUsbIds += usbId;
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap");
+			const ReaderConfigurationInfo readerSettingsInfo = ReaderConfigurationInfo("crap"_L1);
 #else
 			const ReaderConfigurationInfo readerSettingsInfo = Env::getSingleton<ReaderDetector>()->getReaderConfigurationInfo(readerName);
 #endif
@@ -370,19 +390,6 @@ class test_ReaderConfiguration
 		}
 
 
-		void checkIconNames()
-		{
-			for (const auto& readerSettingsInfo : std::as_const(Env::getSingleton<ReaderConfiguration>()->getReaderConfigurationInfos()))
-			{
-				const auto& iconName = readerSettingsInfo.getIcon()->getName();
-				const auto& iconNameWithNPA = readerSettingsInfo.getIconWithNPA()->getName();
-				QString iconNameWithoutPng = iconName.mid(0, iconName.size() - 4);
-				QVERIFY2(iconNameWithNPA.startsWith(iconNameWithoutPng),
-						qPrintable(QString("%1 does not starts with: %2").arg(iconNameWithNPA, iconNameWithoutPng)));
-			}
-		}
-
-
 		void checkOsVersion()
 		{
 			ResourceLoader::getInstance().init();
@@ -391,14 +398,14 @@ class test_ReaderConfiguration
 			const QJsonDocument& json = QJsonDocument::fromJson(data, &jsonError);
 			QVERIFY(jsonError.error == QJsonParseError::NoError);
 			QJsonObject doc = json.object();
-			const QJsonArray& array = doc[QLatin1String("SupportedDevices")].toArray();
+			const QJsonArray& array = doc["SupportedDevices"_L1].toArray();
 			for (const QJsonValueConstRef entry : array)
 			{
 				QVERIFY(entry.isObject());
 				auto object = entry.toObject();
 
-				checkPlatformsMinMax(object, QLatin1String("Drivers"));
-				checkPlatformsMinMax(object, QLatin1String("Information"));
+				checkPlatformsMinMax(object, "Drivers"_L1);
+				checkPlatformsMinMax(object, "Information"_L1);
 			}
 		}
 
@@ -406,7 +413,7 @@ class test_ReaderConfiguration
 };
 
 
-const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 31;
+const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 32;
 
 QTEST_GUILESS_MAIN(test_ReaderConfiguration)
 #include "test_ReaderConfiguration.moc"

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestWorkflowContext.h"
@@ -29,13 +29,13 @@ void TestWorkflowContext::setCanAllowedMode(bool pCanAllowed)
 }
 
 
-QVector<AcceptedEidType> TestWorkflowContext::getAcceptedEidTypes() const
+QList<AcceptedEidType> TestWorkflowContext::getAcceptedEidTypes() const
 {
 	return mAcceptedEidTypes;
 }
 
 
-void TestWorkflowContext::setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes)
+void TestWorkflowContext::setAcceptedEidTypes(const QList<AcceptedEidType>& pAcceptedEidTypes)
 {
 	mAcceptedEidTypes = pAcceptedEidTypes;
 }

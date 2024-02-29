@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_transmit
@@ -38,12 +39,12 @@ class test_transmit
 
 		void parseXml()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit.xml"_L1);
 			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
-			QCOMPARE(transmit->getSlotHandle(), QString("34366364653038392D623031322D346664372D386233362D343664346232393537636236"));
+			QCOMPARE(transmit->getSlotHandle(), "34366364653038392D623031322D346664372D386233362D343664346232393537636236"_L1);
 			QCOMPARE(inputApdusInfos.size(), 7);
 
 			QCOMPARE(inputApdusInfos[0].getInputApdu(),
@@ -73,14 +74,14 @@ class test_transmit
 
 		void parseXmlWithAddressing()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit3.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit3.xml"_L1);
 			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApdusInfos = transmit->getInputApduInfos();
 
-			QCOMPARE(transmit->getSlotHandle(), QString("34366364653038392D623031322D346664372D386233362D343664346232393537636236"));
-			QCOMPARE(transmit->getMessageId(), QString("urn:uuid:015c4aba-4b51-463d-95e4-df127c94a5ce"));
-			QCOMPARE(transmit->getRelatesTo(), QString("urn:uuid:04b2b166-77ad-42c9-bb7d-0c5e9798d337"));
+			QCOMPARE(transmit->getSlotHandle(), "34366364653038392D623031322D346664372D386233362D343664346232393537636236"_L1);
+			QCOMPARE(transmit->getMessageId(), "urn:uuid:015c4aba-4b51-463d-95e4-df127c94a5ce"_L1);
+			QCOMPARE(transmit->getRelatesTo(), "urn:uuid:04b2b166-77ad-42c9-bb7d-0c5e9798d337"_L1);
 			QCOMPARE(inputApdusInfos.size(), 7);
 
 			QCOMPARE(inputApdusInfos[0].getInputApdu(),
@@ -110,12 +111,12 @@ class test_transmit
 
 		void parseAnswerAutent()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit2.xml"_L1);
 			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));
 			QVERIFY(!transmit.isNull());
 			auto inputApduInfos = transmit->getInputApduInfos();
 
-			QCOMPARE(transmit->getSlotHandle(), QString("33393236303635313532"));
+			QCOMPARE(transmit->getSlotHandle(), "33393236303635313532"_L1);
 			QCOMPARE(inputApduInfos.size(), 26);
 
 			QByteArrayList expectedInputApdus;
@@ -173,7 +174,7 @@ class test_transmit
 			const QByteArray tag = QByteArray(QTest::currentDataTag());
 			const QByteArray data = '<' + tag + '>' + replaceContent + "</" + tag + '>';
 
-			QByteArray content = TestFileHelper::readFile(":/paos/Transmit_template.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/Transmit_template.xml"_L1);
 			content = content.replace(replaceIdentifier, data + data);
 
 			QScopedPointer<Transmit> transmit(static_cast<Transmit*>(TransmitParser().parse(content)));

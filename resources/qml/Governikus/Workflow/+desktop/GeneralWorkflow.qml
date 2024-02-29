@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -41,43 +42,49 @@ SectionPage {
 	}
 	GText {
 		Accessible.ignored: true
-		anchors.bottom: retryCounter.top
-		anchors.bottomMargin: Constants.component_spacing
-		anchors.horizontalCenter: retryCounter.horizontalCenter
 		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
 		visible: retryCounter.visible
+
+		anchors {
+			bottom: retryCounter.top
+			bottomMargin: Constants.component_spacing
+			horizontalCenter: retryCounter.horizontalCenter
+		}
 	}
 	RetryCounter {
 		id: retryCounter
 
-		anchors.left: parent.left
-		anchors.margins: height
-		anchors.top: parent.top
 		visible: NumberModel.retryCounter >= 0 && NumberModel.passwordType === PasswordType.PIN
-	}
-	TintableAnimation {
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: parent.height / 4
-		height: Style.dimens.header_icon_size
-		source: {
-			if (d.foundRemoteReader) {
-				return "qrc:///images/desktop/workflow_waitfor_idcard_sak.webp";
-			}
-			if (d.foundPCSCReader) {
-				return "qrc:///images/desktop/workflow_waitfor_idcard_usb.webp";
-			}
-			return "qrc:///images/desktop/workflow_waitfor_reader.webp";
+
+		anchors {
+			left: parent.left
+			margins: height
+			top: parent.top
 		}
-		tintColor: Style.color.control
-		visible: waitingFor === Workflow.WaitingFor.Reader
+	}
+	AnimationLoader {
+		type: {
+			if (waitingFor === Workflow.WaitingFor.Reader) {
+				if (d.foundRemoteReader) {
+					return AnimationLoader.Type.WAIT_FOR_CARD_SAC;
+				}
+				if (d.foundPCSCReader) {
+					return AnimationLoader.Type.WAIT_FOR_CARD_USB;
+				}
+				return AnimationLoader.Type.WAIT_FOR_READER;
+			}
+			return AnimationLoader.Type.NONE;
+		}
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: Constants.component_spacing
+		}
 	}
 	TintableIcon {
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: parent.height / 4
 		source: {
 			if (d.foundRemoteReader) {
 				return "qrc:///images/desktop/workflow_idcard_nfc.svg";
@@ -85,8 +92,14 @@ SectionPage {
 			return "qrc:///images/desktop/workflow_idcard_usb.svg";
 		}
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 		visible: waitingFor === Workflow.WaitingFor.Password
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: Constants.component_spacing
+		}
 	}
 	ProgressCircle {
 		id: progressCircle
@@ -95,8 +108,6 @@ SectionPage {
 		Accessible.name: qsTr("Step %1 of 3").arg(state)
 		Accessible.role: Accessible.ProgressBar
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: parent.verticalCenter
 		state: switch (waitingFor) {
 		case Workflow.WaitingFor.Reader:
 			return d.foundSelectedReader ? "2" : "1";
@@ -107,6 +118,11 @@ SectionPage {
 		}
 		visible: waitingFor !== Workflow.WaitingFor.None
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: 3 * Constants.component_spacing + Style.dimens.header_icon_size
+		}
 		FocusFrame {
 		}
 	}
@@ -115,9 +131,6 @@ SectionPage {
 
 		Accessible.name: mainText.text
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: progressCircle.bottom
-		anchors.topMargin: Constants.component_spacing
 		horizontalAlignment: Text.AlignHCenter
 		text: {
 			switch (waitingFor) {
@@ -145,6 +158,11 @@ SectionPage {
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: progressCircle.bottom
+			topMargin: Constants.component_spacing * 2
+		}
 		FocusFrame {
 		}
 	}
@@ -165,9 +183,6 @@ SectionPage {
 		}
 
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: mainText.bottom
-		anchors.topMargin: Constants.text_spacing
 		horizontalAlignment: Text.AlignHCenter
 		text: {
 			switch (waitingFor) {
@@ -185,20 +200,27 @@ SectionPage {
 		visible: text !== "" && !ApplicationModel.extendedLengthApdusUnsupported && AuthModel.eidTypeMismatchError === ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: mainText.bottom
+			topMargin: Constants.text_spacing * 2
+		}
 		FocusFrame {
 		}
 	}
 	GButton {
 		id: readerSettingsLink
 
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: subText.bottom
-		anchors.topMargin: Constants.component_spacing
-
 		//: INFO DESKTOP
 		text: qsTr("Go to reader settings")
 		visible: waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
 
 		onClicked: root.settingsRequested()
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: subText.bottom
+			topMargin: Constants.component_spacing
+		}
 	}
 }

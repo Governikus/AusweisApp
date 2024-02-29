@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -23,6 +23,7 @@
 #include <QtNetwork>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QSharedPointer<GlobalStatus>)
@@ -59,22 +60,22 @@ class test_NetworkManager
 
 		void paosRequestAttached()
 		{
-			QNetworkRequest request(QUrl("https://dummy"));
+			QNetworkRequest request(QUrl("https://dummy"_L1));
 			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", false, QByteArray());
 			reply->abort();
 			QVERIFY(request.hasRawHeader("PAOS"));
 			QCOMPARE(request.rawHeader("PAOS"), QByteArray("ver=\"paosNamespace\""));
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 5);
-			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1")));
+			QVERIFY(request.sslConfiguration().ellipticCurves().contains(QSslEllipticCurve::fromLongName("prime256v1"_L1)));
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig().getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("ECDHE-RSA-AES256-GCM-SHA384")));
+			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("ECDHE-RSA-AES256-GCM-SHA384"_L1)));
 		}
 
 
 		void paosRequestPsk()
 		{
-			QNetworkRequest request(QUrl("https://dummy"));
+			QNetworkRequest request(QUrl("https://dummy"_L1));
 			auto reply = Env::getSingleton<NetworkManager>()->paos(request, "paosNamespace", "content", true, QByteArray());
 			reply->abort();
 			QVERIFY(request.hasRawHeader("PAOS"));
@@ -82,17 +83,17 @@ class test_NetworkManager
 			QCOMPARE(request.sslConfiguration().ellipticCurves().size(), 0);
 			const auto cipherCount = Env::getSingleton<SecureStorage>()->getTlsConfig(SecureStorage::TlsSuite::PSK).getCiphers().size();
 			QCOMPARE(request.sslConfiguration().ciphers().size(), cipherCount);
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256")));
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256")));
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-CBC-SHA384")));
-			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-GCM-SHA384")));
+			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-CBC-SHA256"_L1)));
+			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES128-GCM-SHA256"_L1)));
+			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-CBC-SHA384"_L1)));
+			QVERIFY(request.sslConfiguration().ciphers().contains(QSslCipher("RSA-PSK-AES256-GCM-SHA384"_L1)));
 		}
 
 
 		void serviceUnavailableEnums()
 		{
 			auto reply = QSharedPointer<MockNetworkReply>::create();
-			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy error msg");
+			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy error msg"_L1);
 
 			QCOMPARE(NetworkManager::toNetworkError(reply), NetworkManager::NetworkError::ServiceUnavailable);
 			QCOMPARE(NetworkManager::toTrustedChannelStatus(reply), GlobalStatus(GlobalStatus::Code::Workflow_TrustedChannel_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, reply->url().toString()}));
@@ -137,7 +138,7 @@ class test_NetworkManager
 				}, Qt::QueuedConnection);
 
 			auto reply = new MockNetworkReply();
-			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy");
+			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy"_L1);
 			networkManager.setNextReply(reply);
 
 			auto context = QSharedPointer<SelfAuthContext>::create();

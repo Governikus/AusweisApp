@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdReaderManagerPlugIn.h"
@@ -75,7 +75,7 @@ void LocalIfdReaderManagerPlugIn::stopScan(const QString& pError)
 }
 
 
-LocalIfdClient* LocalIfdReaderManagerPlugIn::getIfdClient()
+LocalIfdClient* LocalIfdReaderManagerPlugIn::getIfdClient() const
 {
 	return Env::getSingleton<LocalIfdClient>();
 }
@@ -164,7 +164,7 @@ void LocalIfdReaderManagerPlugIn::updateState()
 }
 
 
-void LocalIfdReaderManagerPlugIn::connectToReader(const QSharedPointer<IfdListEntry> pIfdDevice)
+void LocalIfdReaderManagerPlugIn::connectToReader(const QSharedPointer<IfdListEntry> pIfdDevice) const
 {
 	const auto ifdClient = getIfdClient();
 	ifdClient->establishConnection(pIfdDevice, ifdClient->getPsk());

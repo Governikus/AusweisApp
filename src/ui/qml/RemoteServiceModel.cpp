@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -68,18 +68,13 @@ RemoteServiceModel::RemoteServiceModel()
 	const auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
 	connect(ifdClient, &IfdClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
 	connect(ifdClient, &IfdClient::fireNewDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
+	connect(ifdClient, &IfdClient::fireDispatcherChanged, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
 
 	connect(this, &WorkflowModel::fireReaderPlugInTypeChanged, this, &RemoteServiceModel::onReaderPlugInTypesChanged);
-
-	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	connect(&settings, &RemoteServiceSettings::fireInitialDeviceNameSet, this, [](const QString& pName){
-			//: LABEL ALL_PLATFORMS
-			Env::getSingleton<ApplicationModel>()->showFeedback(tr("Pairing with %1 successful.").arg(pName));
-		});
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -283,7 +278,7 @@ void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 }
 
 
-QVector<ReaderManagerPlugInType> RemoteServiceModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPlugInType> RemoteServiceModel::getSupportedReaderPlugInTypes() const
 {
 #if __has_include("SmartManager.h")
 	return {ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SMART};
@@ -314,7 +309,7 @@ void RemoteServiceModel::onEstablishConnectionDone(const QSharedPointer<IfdListE
 	}
 	else
 	{
-		Q_EMIT firePairingSuccess();
+		Q_EMIT firePairingSuccess(deviceName);
 	}
 }
 
@@ -363,6 +358,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, [this](const QByteArray& pPsk){
 				mPsk = pPsk;
 			});
+		connect(mContext->getIfdServer().data(), &IfdServer::fireNameChanged, this, &RemoteServiceModel::onNameChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
 		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::fireConnectedChanged, this, &RemoteServiceModel::onConnectionInfoChanged);
@@ -383,6 +379,7 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 	Q_EMIT fireIsRunningChanged();
 	Q_EMIT fireConnectedChanged();
 	Q_EMIT fireEstablishPaceChannelUpdated();
+	Q_EMIT fireDisplayTextChanged();
 }
 
 
@@ -567,4 +564,10 @@ void RemoteServiceModel::onConnectedDevicesChanged()
 	}
 	mConnectedServerDeviceNames = deviceNames.join(QLatin1String(", "));
 	Q_EMIT fireConnectedServerDeviceNamesChanged();
+}
+
+
+void RemoteServiceModel::onNameChanged()
+{
+	onConnectionInfoChanged(true);
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -133,9 +133,9 @@ template<typename EnumTypeT> class Enum
 		}
 
 
-		[[nodiscard]] static QVector<EnumTypeT> getList()
+		[[nodiscard]] static QList<EnumTypeT> getList()
 		{
-			QVector<EnumTypeT> list;
+			QList<EnumTypeT> list;
 
 			const QMetaEnum metaEnum = getQtEnumMetaEnum();
 			list.reserve(metaEnum.keyCount());

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -37,7 +37,7 @@ class ChangePinContext
 
 		[[nodiscard]] bool isRequestTransportPin() const override;
 
-		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override;
 
 	Q_SIGNALS:
 		void fireNewPinChanged();

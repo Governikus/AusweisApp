@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -9,20 +9,18 @@ import Governikus.TitleBar
 import Governikus.View
 import Governikus.Type.CertificateDescriptionModel
 
-SectionPage {
+FlickableSectionPage {
+	fillWidth: true
+
 	titleBarAction: TitleBarAction {
 		rootEnabled: false
-		showHelp: false
 		//: LABEL DESKTOP
 		text: qsTr("Provider Information")
 	}
 
-	ScrollablePane {
-		id: pane
-
-		activeFocusOnTab: true
-		anchors.fill: parent
-		anchors.margins: Constants.pane_padding
+	ColumnLayout {
+		Layout.maximumWidth: Number.POSITIVE_INFINITY
+		spacing: Constants.pane_spacing
 
 		Repeater {
 			id: listView
@@ -31,7 +29,8 @@ SectionPage {
 
 			LabeledText {
 				Layout.fillWidth: true
-				alignment: Text.AlignHCenter
+				Layout.leftMargin: Constants.pane_padding
+				Layout.maximumWidth: implicitWidth
 				label: model.label
 				text: model.text
 				textFormat: Text.PlainText

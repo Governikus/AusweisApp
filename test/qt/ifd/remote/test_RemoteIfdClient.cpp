@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdClient.h"
@@ -13,6 +13,7 @@
 #include <QPointer>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -184,9 +185,9 @@ class test_RemoteIfdClient
 			client.startDetection();
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(unparsableJson, QHostAddress("192.168.1.88"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(unparsableJson, QHostAddress("192.168.1.88"_L1));
 			QCOMPARE(logSpy.count(), 6);
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"_L1));
 		}
 
 
@@ -199,10 +200,10 @@ class test_RemoteIfdClient
 			QVERIFY(!mDatagramHandlerMock.isNull());
 
 			const auto& json = IfdEstablishContext(IfdVersion::Version::latest, DeviceInfo::getName()).toByteArray(IfdVersion::Version::latest, QStringLiteral("TestContext"));
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(json, QHostAddress("192.168.1.88"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(json, QHostAddress("192.168.1.88"_L1));
 			QCOMPARE(logSpy.count(), 6);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be REMOTE_IFD"));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be REMOTE_IFD"_L1));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Discarding unparsable message"_L1));
 		}
 
 
@@ -220,12 +221,12 @@ class test_RemoteIfdClient
 		{
 			QFETCH(QString, hostAddress);
 
-			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_L1);
 			IfdVersion::Version version = IfdVersion::Version::latest;
 
 			if (IfdVersion::supported().contains(IfdVersion::Version::v2))
 			{
-				ifdId = R"({
+				ifdId = QLatin1StringView(R"({
 							-----BEGIN CERTIFICATE-----
 							MIIC4zCCAcsCBEQvMpowDQYJKoZIhvcNAQELBQAwNDEUMBIGA1UEAwwLQXVzd2Vp
 							c0FwcDIxHDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwIhgPMTk3MDAxMDEw
@@ -244,10 +245,10 @@ class test_RemoteIfdClient
 							oQu+/VZgDkJaSdDJ4LqVFIvUy3CFGh6ahDVsHGC5kTDm5EQWh3puWR0AkIjUWMPi
 							xU/nr0Jsab99VgX4/nnCW92v/DIRc1c=
 							-----END CERTIFICATE-----
-						})";
+						})");
 				version = IfdVersion::Version::v2;
 			}
-			const QByteArray offerJson = Discovery("Sony Xperia Z5 compact", ifdId, 24728, {version}).toByteArray(version);
+			const QByteArray offerJson = Discovery("Sony Xperia Z5 compact"_L1, ifdId, 24728, {version}).toByteArray(version);
 
 			RemoteIfdClient client;
 			client.startDetection();
@@ -292,14 +293,14 @@ class test_RemoteIfdClient
 			RemoteIfdClient client;
 			client.startDetection();
 			QVERIFY(!mDatagramHandlerMock.isNull());
-			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("192.168.1.88"));
+			Q_EMIT mDatagramHandlerMock->fireNewMessage(offerJson, QHostAddress("192.168.1.88"_L1));
 
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QSignalSpy spyConnectionRequest(mRemoteConnectorMock.data(), &RemoteConnectorMock::fireConnectionRequestReceived);
-			const Discovery discovery("", QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
-			const IfdDescriptor descr(discovery, QHostAddress("192.168.1.88"));
+			const Discovery discovery(QString(), QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
+			const IfdDescriptor descr(discovery, QHostAddress("192.168.1.88"_L1));
 			QSharedPointer<IfdListEntry> emptyEntry(new IfdListEntry(descr));
-			client.establishConnection(emptyEntry, QString("password1"));
+			client.establishConnection(emptyEntry, "password1"_L1);
 
 			QTRY_COMPARE(spyConnectionRequest.count(), 1); // clazy:exclude=qstring-allocations
 

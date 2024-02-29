@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -79,7 +79,7 @@ static QString getWindowsFileVersionString(LPVOID pVersionData, const char* cons
 }
 
 
-static void addWindowsComponentInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents, const QString& pFileName)
+static void addWindowsComponentInfo(QList<DiagnosisContext::ComponentInfo>& pComponents, const QString& pFileName)
 {
 	std::wstring fileName = pFileName.toStdWString();
 
@@ -243,8 +243,8 @@ static QString getWindowsServiceDriverFileName(const QString& pServiceName)
 #endif
 
 
-void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
-		QVector<DiagnosisContext::ComponentInfo>& pDrivers)
+void DiagnosisController::getPcscInfo(QList<DiagnosisContext::ComponentInfo>& pComponents,
+		QList<DiagnosisContext::ComponentInfo>& pDrivers)
 {
 #ifndef Q_OS_WINRT
 	addWindowsComponentInfo(pComponents, toAbsoluteWindowsDirectoryPath(QStringLiteral("System32\\WinSCard.dll")));

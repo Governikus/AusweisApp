@@ -3,7 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'iOS_Simulator_Framework',
-		libraries: ['iOS_Simulator'],
+		libraries: 'iOS_Simulator',
 		label: 'iOS',
 		artifacts: 'build/*.zip,build/*.bcsymbolmap'
 	).generate(this)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick.Layouts
@@ -15,37 +15,42 @@ ColumnLayout {
 
 	GPane {
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
+		contentPadding: 0
+		spacing: 0
 		//: LABEL DESKTOP
 		title: qsTr("Developer options")
 
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.useSelfauthenticationTestUri
 			//: LABEL DESKTOP
 			description: qsTr("Allow test sample card usage")
 
 			//: LABEL DESKTOP
-			title: qsTr("Testmode for the self-authentication")
+			text: qsTr("Testmode for the self-authentication")
 
 			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
 		}
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.enableSimulator
 
 			//: LABEL DESKTOP
 			description: qsTr("The internal card simulator allows to run an authentication in the test PKI without any ID card or card reader. Note that no other card reader can be used while the simulator is activated.")
 			//: LABEL DESKTOP
-			title: qsTr("Internal card simulator")
+			text: qsTr("Internal card simulator")
 
 			onCheckedChanged: SettingsModel.enableSimulator = checked
 		}
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.developerMode
 
 			//: LABEL DESKTOP
-			description: qsTr("The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.").arg(Qt.application.name)
+			description: qsTr("The developer mode deactivates some security checks and the authentication process will continue even if some errors occur. Skipped errors will be shown as notifications. The developer mode is only usable with the test PKI.")
+			drawBottomCorners: true
 			//: LABEL DESKTOP
-			title: qsTr("Developer mode")
+			text: qsTr("Developer mode")
 
 			onCheckedChanged: SettingsModel.developerMode = checked
 		}

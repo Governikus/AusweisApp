@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateMaintainCardConnection.h"
@@ -9,6 +9,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StateMaintainCardConnection
@@ -97,7 +98,7 @@ class test_StateMaintainCardConnection
 			QSignalSpy spyNoCardConnection(mState.data(), &StateMaintainCardConnection::fireNoCardConnection);
 			QSignalSpy spyUpdateRetryCounter(mState.data(), &StateMaintainCardConnection::fireForceUpdateRetryCounter);
 
-			const QString password("111111");
+			const QString password("111111"_L1);
 			mContext->setPin(password);
 			mContext->setCan(password);
 			mContext->setPuk(password);
@@ -158,7 +159,7 @@ class test_StateMaintainCardConnection
 			}
 			else
 			{
-				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Last PACE result: .*"));
+				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Last PACE result: .*"_L1));
 				QTest::ignoreMessage(QtDebugMsg, "Last PACE result is unrecoverable. Aborting.");
 			}
 			mState->run();
@@ -197,7 +198,7 @@ class test_StateMaintainCardConnection
 			QTest::ignoreMessage(QtDebugMsg, "PIN unblocked! Triggering retry counter update.");
 			mState->run();
 			QCOMPARE(spyUpdateRetryCounter.count(), 1);
-			QCOMPARE(mContext->getLastPaceResult(), CardReturnCode::OK);
+			QCOMPARE(mContext->getLastPaceResult(), CardReturnCode::OK_PUK);
 		}
 
 

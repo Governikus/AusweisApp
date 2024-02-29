@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -332,7 +332,7 @@ EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswo
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
 	EstablishPaceChannel builder(pPasswordId, pChat, pCertificateDescription);
-	auto [returnCode, controlRes] = control(cmdID, builder.createCommandData());
+	auto [returnCode, controlRes] = control(cmdID, builder.createASN1Struct());
 	if (returnCode != pcsc::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to establish PACE channel failed";
@@ -357,7 +357,7 @@ CardReturnCode PcscCard::destroyPaceChannel()
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 
 	DestroyPaceChannelBuilder builder;
-	auto [returnCode, controlRes] = control(cmdID, builder.createCommandData());
+	auto [returnCode, controlRes] = control(cmdID, builder.createASN1Struct());
 	if (returnCode != pcsc::Scard_S_Success)
 	{
 		qCWarning(card_pcsc) << "Control to destroy PACE channel failed";

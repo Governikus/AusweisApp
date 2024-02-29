@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -145,9 +145,9 @@ bool DatagramHandlerImpl::isValidBroadcastInterface(const QNetworkInterface& pIn
 }
 
 
-QVector<QHostAddress> DatagramHandlerImpl::getAllBroadcastAddresses(const QNetworkInterface& pInterface) const
+QList<QHostAddress> DatagramHandlerImpl::getAllBroadcastAddresses(const QNetworkInterface& pInterface) const
 {
-	QVector<QHostAddress> broadcastAddresses;
+	QList<QHostAddress> broadcastAddresses;
 
 	if (!isValidBroadcastInterface(pInterface))
 	{
@@ -225,7 +225,7 @@ void DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint
 		}
 	}
 
-	QVector<QHostAddress> broadcastAddresses;
+	QList<QHostAddress> broadcastAddresses;
 	for (const QNetworkInterface& interface : allInterfaces)
 	{
 		broadcastAddresses << getAllBroadcastAddresses(interface);

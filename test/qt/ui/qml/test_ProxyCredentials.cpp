@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -8,12 +8,11 @@
 
 #include "ProxyCredentials.h"
 
-
 #include <QElapsedTimer>
 #include <QTimer>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -45,7 +44,7 @@ class test_ProxyCredentials
 			QFETCH(QNetworkProxy::ProxyType, type);
 			QFETCH(QString, url);
 
-			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com", 1337, "Test");
+			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com"_L1, 1337, "Test"_L1);
 			proxy.setType(type);
 			QAuthenticator authenticator;
 
@@ -56,19 +55,19 @@ class test_ProxyCredentials
 
 		void test_Credentials()
 		{
-			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com", 1337, "Test");
+			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com"_L1, 1337, "Test"_L1);
 			QAuthenticator authenticator;
 
 			ProxyCredentials proxyCredentials(proxy, &authenticator);
-			QCOMPARE(proxyCredentials.getProposedUser(), "Test");
+			QCOMPARE(proxyCredentials.getProposedUser(), "Test"_L1);
 
-			QCOMPARE(proxyCredentials.getUser(), "");
-			proxyCredentials.setUser("TestUser");
-			QCOMPARE(proxyCredentials.getUser(), "TestUser");
+			QCOMPARE(proxyCredentials.getUser(), ""_L1);
+			proxyCredentials.setUser("TestUser"_L1);
+			QCOMPARE(proxyCredentials.getUser(), "TestUser"_L1);
 
-			QCOMPARE(proxyCredentials.getPassword(), "");
-			proxyCredentials.setPassword("TestPassword");
-			QCOMPARE(proxyCredentials.getPassword(), "TestPassword");
+			QCOMPARE(proxyCredentials.getPassword(), ""_L1);
+			proxyCredentials.setPassword("TestPassword"_L1);
+			QCOMPARE(proxyCredentials.getPassword(), "TestPassword"_L1);
 		}
 
 
@@ -77,7 +76,7 @@ class test_ProxyCredentials
 			const int waitFor = 500;
 			const int tolerance = 10;
 
-			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com", 1337, "Test");
+			QNetworkProxy proxy(QNetworkProxy::HttpProxy, "proxy.example.com"_L1, 1337, "Test"_L1);
 			QAuthenticator authenticator;
 			ProxyCredentials proxyCredentials(proxy, &authenticator);
 

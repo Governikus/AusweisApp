@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SecurityInfos.h"
@@ -40,9 +40,9 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 		return QSharedPointer<SecurityInfos>();
 	}
 
-	QVector<QSharedPointer<const SecurityInfo>> securityInfos;
-	QVector<QSharedPointer<const PaceInfo>> paceInfos;
-	QVector<QSharedPointer<const ChipAuthenticationInfo>> chipAuthenticationInfos;
+	QList<QSharedPointer<const SecurityInfo>> securityInfos;
+	QList<QSharedPointer<const PaceInfo>> paceInfos;
+	QList<QSharedPointer<const ChipAuthenticationInfo>> chipAuthenticationInfos;
 	QSharedPointer<const MobileEIDTypeInfo> mobileEIDTypeInfo;
 
 	for (int i = 0; i < sk_securityinfo_st_num(securityInfosStruct.data()); ++i)
@@ -87,9 +87,9 @@ QSharedPointer<SecurityInfos> SecurityInfos::decode(const QByteArray& pBytes)
 
 
 SecurityInfos::SecurityInfos(const QByteArray& pBytes,
-		const QVector<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
-		const QVector<QSharedPointer<const PaceInfo>>& pPaceInfos,
-		const QVector<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
+		const QList<QSharedPointer<const SecurityInfo>>& pSecurityInfos,
+		const QList<QSharedPointer<const PaceInfo>>& pPaceInfos,
+		const QList<QSharedPointer<const ChipAuthenticationInfo>>& pChipAuthenticationInfos,
 		const QSharedPointer<const MobileEIDTypeInfo>& pMobileEIDTypeInfo)
 	: mContentBytes(pBytes)
 	, mSecurityInfos(pSecurityInfos)
@@ -106,19 +106,19 @@ const QByteArray& SecurityInfos::getContentBytes() const
 }
 
 
-const QVector<QSharedPointer<const SecurityInfo>>& SecurityInfos::getSecurityInfos() const
+const QList<QSharedPointer<const SecurityInfo>>& SecurityInfos::getSecurityInfos() const
 {
 	return mSecurityInfos;
 }
 
 
-const QVector<QSharedPointer<const PaceInfo>>& SecurityInfos::getPaceInfos() const
+const QList<QSharedPointer<const PaceInfo>>& SecurityInfos::getPaceInfos() const
 {
 	return mPaceInfos;
 }
 
 
-const QVector<QSharedPointer<const ChipAuthenticationInfo>>& SecurityInfos::getChipAuthenticationInfos() const
+const QList<QSharedPointer<const ChipAuthenticationInfo>>& SecurityInfos::getChipAuthenticationInfos() const
 {
 	return mChipAuthenticationInfos;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -44,8 +44,8 @@ class ReaderConfigurationParser
 				[[nodiscard]] ReaderConfigurationInfo parse() const;
 		};
 
-		static QVector<ReaderConfigurationInfo> fail(const QString& logMessage);
-		static bool hasUniqueId(const ReaderConfigurationInfo& pInfo, const QVector<ReaderConfigurationInfo>& pInfos);
+		static QList<ReaderConfigurationInfo> fail(const QString& logMessage);
+		static bool hasUniqueId(const ReaderConfigurationInfo& pInfo, const QList<ReaderConfigurationInfo>& pInfos);
 
 		ReaderConfigurationParser() = delete;
 		~ReaderConfigurationParser() = delete;
@@ -55,7 +55,7 @@ class ReaderConfigurationParser
 		 * Parses the configuration data and returns ReaderConfiguration.
 		 * In case of any errors, the QSharedPointer is empty.
 		 */
-		static QVector<ReaderConfigurationInfo> parse(const QByteArray& pData);
+		static QList<ReaderConfigurationInfo> parse(const QByteArray& pData);
 };
 
 

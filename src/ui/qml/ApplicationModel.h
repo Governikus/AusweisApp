@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -46,6 +46,7 @@ class ApplicationModel
 
 	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
 	Q_PROPERTY(qsizetype availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
+	Q_PROPERTY(qsizetype availablePcscReader READ getAvailablePcscReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 
@@ -125,6 +126,7 @@ class ApplicationModel
 		[[nodiscard]] bool isWifiEnabled() const;
 		[[nodiscard]] Workflow getCurrentWorkflow() const;
 		[[nodiscard]] qsizetype getAvailableReader() const;
+		[[nodiscard]] qsizetype getAvailablePcscReader() const;
 
 		[[nodiscard]] QString getFeedback() const;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -21,6 +21,7 @@ Item {
 	property alias currentIndex: sectionNameList.currentIndex
 	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
 	property Component footerItem: null
+	property int highlightedIndex: -1
 	readonly property real relativeListViewWidth: 0.3
 	property alias sectionCount: sectionNameList.count
 	property var sectionsModel: undefined
@@ -134,18 +135,61 @@ Item {
 		Item {
 			id: delegateItem
 
-			readonly property bool isCurrentItem: ListView.isCurrentItem
+			//: LABEL DESKTOP Additional description of TabbedPane behavior for a11y.
+			readonly property string a11yDescription: qsTr("You may navigate to different tabs by using the up/down arrows.")
 			readonly property bool isFirstItem: index === 0
 			readonly property bool isLastItem: index === ListView.view.count - 1
-			readonly property bool isPreviousToCurrentItem: index === ListView.view.currentIndex - 1
 			readonly property var itemModel: model
+			readonly property bool nextItemIsHighlighted: index === ListView.view.currentIndex - 1 || index === root.highlightedIndex - 1
 
+			Accessible.description: a11yDescription
 			Accessible.focusable: true
-			Accessible.name: sectionName.text
-			Accessible.role: Accessible.Button
+			Accessible.name: {
+				if (Qt.platform.os === "windows") {
+					return sectionName.text + ", " + a11yDescription;
+				}
+				return sectionName.text + ", " + qsTr("Tab selected");
+			}
+			Accessible.role: Accessible.PageTab
 			activeFocusOnTab: false
 			height: sectionName.height + 2 * Constants.pane_padding
 			width: sectionNameList.width
+
+			states: [
+				State {
+					name: "pressed"
+					when: mouseArea.pressed
+
+					PropertyChanges {
+						background.borderColor: Style.color.pane_border_pressed
+						background.color: Style.color.pane_pressed
+						horizontalSeparator.visible: false
+						sectionName.color: Style.color.text_pressed
+					}
+				},
+				State {
+					name: "hovered"
+					when: mouseArea.containsMouse
+
+					PropertyChanges {
+						background.borderColor: Style.color.pane_border_hovered
+						background.color: Style.color.pane_hovered
+						horizontalSeparator.visible: false
+						sectionName.color: Style.color.text_hovered
+					}
+				},
+				State {
+					name: "active"
+					when: delegateItem.ListView.isCurrentItem
+
+					PropertyChanges {
+						background.borderColor: Style.color.pane_border_active
+						background.color: Style.color.pane_active
+						horizontalSeparator.visible: false
+						sectionName.color: Style.color.text_active
+					}
+				}
+			]
 
 			RoundedRectangle {
 				id: background
@@ -154,7 +198,7 @@ Item {
 				borderColor: Style.color.pane_border
 				bottomLeftCorner: isLastItem
 				bottomRightCorner: isLastItem
-				color: isCurrentItem ? Style.color.control : Style.color.pane
+				color: Style.color.pane
 				radius: Style.dimens.pane_radius
 				topLeftCorner: isFirstItem
 				topRightCorner: isFirstItem
@@ -162,7 +206,7 @@ Item {
 			GText {
 				id: sectionName
 
-				color: isCurrentItem ? Style.color.control_content : Style.color.text
+				color: Style.color.text
 				elide: Text.ElideRight
 				maximumLineCount: 2
 				text: model.display ? model.display : model.modelData
@@ -179,7 +223,7 @@ Item {
 			GSeparator {
 				id: horizontalSeparator
 
-				visible: !isLastItem && !isCurrentItem && !isPreviousToCurrentItem
+				visible: !isLastItem && !nextItemIsHighlighted && GraphicsInfo.api !== GraphicsInfo.Software
 
 				anchors {
 					bottom: parent.bottom
@@ -194,13 +238,27 @@ Item {
 				framee: sectionName
 			}
 			MouseArea {
+				id: mouseArea
+
+				function updateHighlight() {
+					if (containsMouse || pressed) {
+						root.highlightedIndex = index;
+					} else {
+						if (root.highlightedIndex === index) {
+							root.highlightedIndex = -1;
+						}
+					}
+				}
+
 				anchors.fill: parent
-				cursorShape: index === currentIndex ? Qt.ArrowCursor : Qt.PointingHandCursor
+				hoverEnabled: true
 
 				onClicked: {
 					delegateItem.ListView.view.itemAtIndex(index).forceActiveFocus(Qt.MouseFocusReason);
 					delegateItem.ListView.view.currentIndex = index;
 				}
+				onContainsMouseChanged: updateHighlight()
+				onPressedChanged: updateHighlight()
 			}
 		}
 	}

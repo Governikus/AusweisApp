@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -15,10 +15,8 @@ Rectangle {
 	property alias footerText: footerItem.text
 	property alias headerText: headerItem.text
 	property alias icon: imageItem.source
-	property string linkIconSource: "qrc:///images/material_arrow_right.svg"
 	property alias mouseAreaEnabled: mouseArea.enabled
 	property bool pressed: mouseArea.pressed
-	property bool showLinkIcon: Constants.is_layout_ios
 	property bool showSeparator: true
 	property alias text: textItem.text
 	property alias tintIcon: imageItem.tintEnabled
@@ -94,12 +92,6 @@ Rectangle {
 				maximumLineCount: fixedHeight ? (headerText === "" ? 2 : 1) : 8
 				visible: baseItem.footerText !== ""
 			}
-		}
-		TintableIcon {
-			source: linkIconSource
-			sourceSize.height: Style.dimens.small_icon_size
-			tintColor: Style.color.text
-			visible: showLinkIcon
 		}
 	}
 	MouseArea {

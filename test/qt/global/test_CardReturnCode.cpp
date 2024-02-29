@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QString>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -25,7 +26,7 @@ class test_CardReturnCode
 		void check_errorCodeToMessage()
 		{
 			QCOMPARE(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER).toErrorDescription(),
-					QString("The process has been cancelled by the card reader."));
+					"The process has been cancelled by the card reader."_L1);
 		}
 
 
@@ -39,7 +40,7 @@ class test_CardReturnCode
 		{
 			const ECardApiResult& result = ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::SAL_Cancellation_by_User);
-			QCOMPARE(result.getMessage(), QString("The process has been cancelled by the card reader."));
+			QCOMPARE(result.getMessage(), "The process has been cancelled by the card reader."_L1);
 		}
 
 

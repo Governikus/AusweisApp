@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -10,7 +10,7 @@ GridLayout {
 	id: baseItem
 
 	property bool deleteEnabled: true
-	property string submitAccessibleText
+	property alias submitAccessibleText: submitButton.a11yText
 	property bool submitEnabled: true
 
 	signal deletePressed
@@ -55,9 +55,10 @@ GridLayout {
 
 		//: LABEL ANDROID IOS A11y text for the "delete" button text when the button is disabled.
 		a11yDisabledText: qsTr("Delete last digit, disabled until input is present.")
+		//: LABEL ANDROID IOS A11y text for the "delete" button image.
+		a11yText: qsTr("Delete last digit")
 		enabled: baseItem.deleteEnabled
-		icon.source: "qrc:///images/mobile/material_backspace.svg"
-		text: qsTr("Delete last digit")
+		icon.source: "qrc:///images/material_backspace.svg"
 
 		onClicked: baseItem.deletePressed()
 	}
@@ -71,15 +72,17 @@ GridLayout {
 		onClicked: baseItem.digitPressed(text)
 	}
 	NumberPadButton {
+		id: submitButton
+
 		Layout.fillHeight: true
 		Layout.fillWidth: true
 
 		//: LABEL ANDROID IOS A11y text, appended onto the "submit" button text when the button is disabled.
 		a11yDisabledText: a11yText + qsTr(", disabled until input is complete.")
-		a11yText: submitAccessibleText !== "" ? submitAccessibleText : text
+		//: LABEL ANDROID IOS A11y text for the "submit" button image.
+		a11yText: qsTr("Submit")
 		enabled: baseItem.submitEnabled
 		icon.source: "qrc:///images/material_check.svg"
-		text: qsTr("Submit")
 
 		onClicked: baseItem.submitPressed()
 	}

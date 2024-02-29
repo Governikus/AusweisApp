@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,7 +13,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -65,7 +65,7 @@ class test_IfdServiceContext
 		void test_ModifyPinMessage()
 		{
 			IfdServiceContext context(mIfdServer);
-			const QSharedPointer<const IfdModifyPin> message(new IfdModifyPin(QString("message"), QByteArray("message")));
+			const QSharedPointer<const IfdModifyPin> message(new IfdModifyPin("message"_L1, QByteArray("message")));
 			const QSharedPointer<const IfdModifyPin> emptyMessage(new IfdModifyPin(QString(), QByteArray()));
 
 			context.setModifyPinMessage(message);
@@ -95,7 +95,7 @@ class test_IfdServiceContext
 		void test_EstablishPaceChannelMessage()
 		{
 			IfdServiceContext context(mIfdServer);
-			const QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel(QString("SlotHandle"), EstablishPaceChannel(), 6));
+			const QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("SlotHandle"_L1, EstablishPaceChannel(), 6));
 
 			context.setEstablishPaceChannel(message);
 			QVERIFY(!context.getSlotHandle().isEmpty());

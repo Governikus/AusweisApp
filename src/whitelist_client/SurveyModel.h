@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -42,7 +42,7 @@ class SurveyModel
 		bool mNfcDataAvailable;
 		bool mAuthWasSuccessful;
 
-		QVector<QPair<QString, QString>> mData;
+		QList<QPair<QString, QString>> mData;
 		QSharedPointer<QNetworkReply> mReply;
 
 		enum UserRoles

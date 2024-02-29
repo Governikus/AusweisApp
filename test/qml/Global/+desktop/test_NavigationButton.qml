@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -15,17 +15,15 @@ TestCase {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
 	}
-	function test_subtext() {
+	function test_text() {
 		let testObject = createTestObject();
-		compare(testObject.text, "Continue", "Initial subText: Continue");
-		testObject.subText = "test";
-		compare(testObject.text, "test", "subText: test");
+		compare(testObject.text, "", "No initial text");
+		testObject.text = "test";
+		compare(testObject.text, "test", "text: test");
 	}
 	function test_type() {
 		let testObject = createTestObject();
 		compare(testObject.buttonType, NavigationButton.Type.Forward, "Initial type: Forward");
-		testObject.buttonType = NavigationButton.Type.Back;
-		compare(testObject.buttonType, NavigationButton.Type.Back, "type: Back");
 		testObject.buttonType = NavigationButton.Type.Check;
 		compare(testObject.buttonType, NavigationButton.Type.Check, "type: Check");
 		testObject.buttonType = NavigationButton.Type.Cancel;

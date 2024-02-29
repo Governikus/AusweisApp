@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.18
+ARG ALPINE_VERSION=3.19
 
 FROM alpine:$ALPINE_VERSION as builder
 # Install development stuff

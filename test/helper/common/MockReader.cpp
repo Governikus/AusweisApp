@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReader.h"
@@ -11,7 +11,7 @@ using namespace governikus;
 
 ReaderManagerPlugInType MockReader::cMOCKED_READERMANAGER_TYPE = ReaderManagerPlugInType::MOCK;
 
-MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QByteArray& pEfCardAccess)
+MockReader* MockReader::createMockReader(const QList<TransmitConfig>& pTransmitConfig, const QByteArray& pEfCardAccess)
 {
 	if (pEfCardAccess.isNull())
 	{
@@ -24,7 +24,7 @@ MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmi
 }
 
 
-MockReader* MockReader::createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess)
+MockReader* MockReader::createMockReader(const QList<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess)
 {
 	MockCardConfig cardConfig(pTransmitConfig);
 	MockReader* reader = new MockReader();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QProcess>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -37,16 +38,16 @@ class test_UIPlugInWebSocket
 		void init()
 		{
 			QString path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
-			QString app = path + "AusweisApp";
+			QString app = path + "AusweisApp"_L1;
 #ifdef Q_OS_WIN
-			app += ".exe";
+			app += ".exe"_L1;
 #endif
 
 			QStringList args;
-			args << "--ui" << "websocket";
-			args << "--port" << "0";
+			args << "--ui"_L1 << "websocket"_L1;
+			args << "--port"_L1 << "0"_L1;
 #ifndef Q_OS_WIN
-			args << "-platform" << "offscreen";
+			args << "-platform"_L1 << "offscreen"_L1;
 #endif
 
 			mApp2.reset(new QProcess());
@@ -116,16 +117,16 @@ class test_UIPlugInWebSocket
 
 		void getInfoAndApiLevel()
 		{
-			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}");
+			mHelper->sendMessage("{\"cmd\": \"GET_INFO\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-					return pMessage["msg"] == "INFO" &&
-						   pMessage["VersionInfo"].toObject()["Name"] == QLatin1String("AusweisApp2");
+					return pMessage["msg"_L1] == "INFO"_L1 &&
+						   pMessage["VersionInfo"_L1].toObject()["Name"_L1] == QLatin1String("AusweisApp2");
 				}));
 
-			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}");
+			mHelper->sendMessage("{\"cmd\": \"GET_API_LEVEL\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-					return pMessage["msg"] == "API_LEVEL" &&
-						   pMessage["available"].toArray().size() >= 1;
+					return pMessage["msg"_L1] == "API_LEVEL"_L1 &&
+						   pMessage["available"_L1].toArray().size() >= 1;
 				}));
 		}
 
@@ -136,13 +137,13 @@ class test_UIPlugInWebSocket
 			QSKIP("Not supported");
 #endif
 
-			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}");
+			mHelper->sendMessage("{\"cmd\": \"RUN_AUTH\", \"tcTokenURL\" : \"https://localhost/\"}"_L1);
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-					return pMessage["msg"] == "AUTH";
+					return pMessage["msg"_L1] == "AUTH"_L1;
 				}));
 
 			QVERIFY(mHelper->waitForMessage([](const QJsonObject& pMessage){
-					return pMessage["result"].toObject()["major"].toString().endsWith("#error");
+					return pMessage["result"_L1].toObject()["major"_L1].toString().endsWith("#error"_L1);
 				}));
 		}
 

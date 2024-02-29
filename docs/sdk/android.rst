@@ -50,7 +50,7 @@ It is recommended to always use the latest version (|version|) of |AppName|.
 .. code-block:: groovy
 
   dependencies {
-      implementation 'com.governikus:ausweisapp:1.x.y'
+      implementation 'com.governikus:ausweisapp:x.y.z'
   }
 
 

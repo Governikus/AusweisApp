@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -61,7 +61,7 @@ class DiagnosisAntivirusDetection
 #if defined(Q_OS_WIN)
 		QSharedPointer<QProcess> mProcess;
 #endif
-		QVector<QSharedPointer<AntivirInfo>> mAntivirInfos;
+		QList<QSharedPointer<AntivirInfo>> mAntivirInfos;
 		void parseAntivirInfos(const QString& pAntivirInfos);
 
 	private Q_SLOTS:
@@ -77,7 +77,7 @@ class DiagnosisAntivirusDetection
 	public:
 		DiagnosisAntivirusDetection();
 		void startInformationProcess();
-		[[nodiscard]] const QVector<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
+		[[nodiscard]] const QList<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
 };
 
 } // namespace governikus

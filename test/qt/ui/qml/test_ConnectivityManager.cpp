@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -40,7 +40,7 @@ class test_ConnectivityManager
 
 			manager.setActive(true);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("A network interface is now available"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("A network interface is now available"_L1));
 			QCOMPARE(signalSpy.count(), 1);
 			QVERIFY(manager.isNetworkInterfaceActive());
 
@@ -51,7 +51,7 @@ class test_ConnectivityManager
 
 			manager.setActive(false);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("An active network interface is no longer available"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("An active network interface is no longer available"_L1));
 			QCOMPARE(signalSpy.count(), 2);
 			QVERIFY(!manager.isNetworkInterfaceActive());
 

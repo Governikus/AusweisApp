@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
 import Governikus.Type.ApplicationModel
+import Governikus.Type.SettingsModel
 
 StackView {
 	id: root
 
-	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning()
+	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning() && SettingsModel.useAnimations
 
 	function doActivate() {
 		if (visible && currentItem && typeof currentItem.activate === "function") {

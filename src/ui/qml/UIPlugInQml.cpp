@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UIPlugInQml.h"
@@ -84,6 +84,7 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
 	#include <QStyleHints>
 #endif
+#include <QScopeGuard>
 #include <QtPlugin>
 #include <QtQml>
 
@@ -179,7 +180,9 @@ UIPlugInQml::UIPlugInQml()
 {
 	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
-	QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/Roboto-Medium.ttf"));
+	QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/AusweisApp_Roboto_Regular.ttf"));
+	QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/AusweisApp_Roboto_Medium.ttf"));
+	QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/AusweisApp_Roboto_Bold.ttf"));
 	onUseSystemFontChanged();
 
 #ifdef Q_OS_WIN
@@ -262,8 +265,11 @@ void UIPlugInQml::init()
 	}
 #endif
 
-	// https://bugreports.qt.io/browse/QTBUG-98098
-	QQuickStyle::setStyle(QStringLiteral("Basic"));
+	const auto basicStyle = QStringLiteral("Basic");
+	if (QQuickStyle::name() != basicStyle)
+	{
+		QQuickStyle::setStyle(basicStyle);
+	}
 
 	mEngine.reset(new QQmlApplicationEngine());
 
@@ -326,14 +332,14 @@ QString UIPlugInQml::getPlatformSelectors() const
 #endif
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	const QString platform = QStringLiteral("mobile,");
+	const auto platform = QStringLiteral("mobile,");
 	const QString brand = QGuiApplication::platformName();
 #else
-	const QString platform = QStringLiteral("desktop,");
+	const auto platform = QStringLiteral("desktop,");
 	#if defined(Q_OS_WIN)
-	const QString brand = QStringLiteral("win");
+	const auto brand = QStringLiteral("win");
 	#else
-	const QString brand = QStringLiteral("nowin");
+	const auto brand = QStringLiteral("nowin");
 	#endif
 #endif
 
@@ -991,6 +997,11 @@ void UIPlugInQml::onWindowPaletteChanged()
 
 void UIPlugInQml::onUseSystemFontChanged() const
 {
+	const auto guard = qScopeGuard([] {
+			const auto& family = QGuiApplication::font().family();
+			qDebug() << "Using" << family << "with styles" << QFontDatabase::styles(family);
+		});
+
 	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isUseSystemFont())
 	{
 		auto font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
@@ -1005,21 +1016,18 @@ void UIPlugInQml::onUseSystemFontChanged() const
 		return;
 	}
 
-	const auto robotoMedium = QStringLiteral("Roboto Medium");
-	const auto roboto = QStringLiteral("Roboto");
-	const auto families = QFontDatabase::families();
-	if (families.contains(robotoMedium))
+	const auto& knownFamilies = QFontDatabase::families();
+	const QStringList families = {QStringLiteral("AusweisApp_Roboto"), QStringLiteral("Roboto")};
+	for (const auto& family : families)
 	{
-		QGuiApplication::setFont(QFont(robotoMedium));
+		if (knownFamilies.contains(family))
+		{
+			QGuiApplication::setFont(QFont(family));
+			return;
+		}
 	}
-	else if (families.contains(roboto))
-	{
-		QGuiApplication::setFont(QFont(roboto));
-	}
-	else
-	{
-		qCCritical(qml) << "Roboto was not found in the FontDatabase. Staying on system default.";
-	}
+
+	qCCritical(qml) << "Roboto was not found in the FontDatabase. Staying on system default.";
 }
 
 

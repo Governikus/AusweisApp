@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -10,48 +10,86 @@ import Governikus.Type.ApplicationModel
 import Governikus.Type.SettingsModel
 import Governikus.Type.VersionInformationModel
 
-Item {
-	id: baseItem
-
-	implicitHeight: column.implicitHeight
-	implicitWidth: column.implicitWidth
+ColumnLayout {
+	spacing: Constants.component_spacing
 
 	GPane {
-		id: column
-
-		anchors.fill: parent
+		Layout.fillWidth: true
 		spacing: Constants.component_spacing
 
-		Repeater {
-			id: repeater
+		GMenuItem {
+			Layout.fillWidth: true
+			buttonIconSource: "qrc:///images/open_website.svg"
+			//: LABEL DESKTOP
+			buttonText: qsTr("Open website")
+			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/privacy".arg(SettingsModel.language)
+			iconSource: "qrc:/images/desktop/privacy_icon.svg"
 
-			model: VersionInformationModel
+			//: LABEL DESKTOP
+			title: qsTr("Privacy statement")
 
-			delegate: LabeledText {
-				id: delegate
+			onClicked: Qt.openUrlExternally(buttonTooltip)
+		}
+		GSeparator {
+			Layout.fillWidth: true
+		}
+		GMenuItem {
+			Layout.fillWidth: true
+			buttonIconSource: "qrc:///images/open_website.svg"
+			//: LABEL DESKTOP
+			buttonText: qsTr("Open website")
+			buttonTooltip: "https://www.ausweisapp.bund.de/%1/aa2/a11y".arg(SettingsModel.language)
+			iconSource: "qrc:/images/desktop/a11y_icon.svg"
 
-				Accessible.name: model.label + ": " + model.text
-				label: model.label
-				text: model.text
-				width: baseItem.width
-			}
+			//: LABEL DESKTOP
+			title: qsTr("Accessibility statement")
+
+			onClicked: Qt.openUrlExternally(buttonTooltip)
 		}
 	}
-	MouseArea {
-		property int counter: 0
+	Item {
+		id: baseItem
 
-		anchors.fill: parent
+		Layout.fillWidth: true
+		Layout.preferredHeight: column.implicitHeight
 
-		onClicked: {
-			counter += 1;
-			if (counter === 10) {
-				SettingsModel.developerOptions = !SettingsModel.developerOptions;
-				ApplicationModel.showFeedback(SettingsModel.developerOptions ?
-					//: LABEL DESKTOP
-					qsTr("Developer options activated.") :
-					//: LABEL DESKTOP
-					qsTr("Developer options deactivated."));
-				counter = 0;
+		GPane {
+			id: column
+
+			anchors.fill: parent
+			spacing: Constants.component_spacing
+
+			Repeater {
+				id: repeater
+
+				model: VersionInformationModel
+
+				delegate: LabeledText {
+					id: delegate
+
+					Accessible.name: model.label + ": " + model.text
+					label: model.label
+					text: model.text
+					width: baseItem.width
+				}
+			}
+		}
+		MouseArea {
+			property int counter: 0
+
+			anchors.fill: parent
+
+			onClicked: {
+				counter += 1;
+				if (counter === 10) {
+					SettingsModel.developerOptions = !SettingsModel.developerOptions;
+					ApplicationModel.showFeedback(SettingsModel.developerOptions ?
+						//: LABEL DESKTOP
+						qsTr("Developer options activated.") :
+						//: LABEL DESKTOP
+						qsTr("Developer options deactivated."));
+					counter = 0;
+				}
 			}
 		}
 	}

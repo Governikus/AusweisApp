@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdTransmit.h"
@@ -9,7 +9,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -173,7 +173,7 @@ class test_IfdTransmit
 			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"InputAPDU\""));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"InputAPDU\""_L1));
 			}
 		}
 
@@ -241,25 +241,25 @@ class test_IfdTransmit
 		void displayText_data()
 		{
 			QTest::addColumn<IfdVersion::Version>("version");
-			QTest::addColumn<QString>("displayText");
+			QTest::addColumn<QLatin1String>("displayText");
 			QTest::addColumn<bool>("included");
 
-			QTest::newRow("vu - Null") << IfdVersion::Version::Unknown << QString() << false;
-			QTest::newRow("vu - Empty") << IfdVersion::Version::Unknown << QString("") << false;
-			QTest::newRow("vu - Text") << IfdVersion::Version::Unknown << QString("Text") << false;
-			QTest::newRow("v0 - Null") << IfdVersion::Version::v0 << QString() << false;
-			QTest::newRow("v0 - Empty") << IfdVersion::Version::v0 << QString("") << false;
-			QTest::newRow("v0 - Text") << IfdVersion::Version::v0 << QString("Text") << false;
-			QTest::newRow("v2 - Null") << IfdVersion::Version::v2 << QString() << false;
-			QTest::newRow("v2 - Empty") << IfdVersion::Version::v2 << QString("") << true;
-			QTest::newRow("v2 - Text") << IfdVersion::Version::v2 << QString("Text") << true;
+			QTest::newRow("vu - Null") << IfdVersion::Version::Unknown << QLatin1String() << false;
+			QTest::newRow("vu - Empty") << IfdVersion::Version::Unknown << ""_L1 << false;
+			QTest::newRow("vu - Text") << IfdVersion::Version::Unknown << "Text"_L1 << false;
+			QTest::newRow("v0 - Null") << IfdVersion::Version::v0 << QLatin1String() << false;
+			QTest::newRow("v0 - Empty") << IfdVersion::Version::v0 << ""_L1 << false;
+			QTest::newRow("v0 - Text") << IfdVersion::Version::v0 << "Text"_L1 << false;
+			QTest::newRow("v2 - Null") << IfdVersion::Version::v2 << QLatin1String() << false;
+			QTest::newRow("v2 - Empty") << IfdVersion::Version::v2 << ""_L1 << true;
+			QTest::newRow("v2 - Text") << IfdVersion::Version::v2 << "Text"_L1 << true;
 		}
 
 
 		void displayText()
 		{
 			QFETCH(IfdVersion::Version, version);
-			QFETCH(QString, displayText);
+			QFETCH(QLatin1String, displayText);
 			QFETCH(bool, included);
 
 			const IfdTransmit transmit(QStringLiteral("SlotHandle"), QByteArray("00A402022F00"), displayText);
@@ -330,7 +330,7 @@ class test_IfdTransmit
 			QVERIFY(ifdTransmit.isIncomplete());
 			QCOMPARE(ifdTransmit.getType(), IfdMessageType::IFDTransmit);
 			QCOMPARE(ifdTransmit.getContextHandle(), QStringLiteral("TestContext"));
-			QCOMPARE(ifdTransmit.getSlotHandle(), QString("SlotHandle"));
+			QCOMPARE(ifdTransmit.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray());
 
 			QCOMPARE(logSpy.count(), 1);
@@ -364,7 +364,7 @@ class test_IfdTransmit
 			QVERIFY(ifdTransmit.isIncomplete());
 			QCOMPARE(ifdTransmit.getType(), IfdMessageType::IFDTransmit);
 			QCOMPARE(ifdTransmit.getContextHandle(), QStringLiteral("TestContext"));
-			QCOMPARE(ifdTransmit.getSlotHandle(), QString("SlotHandle"));
+			QCOMPARE(ifdTransmit.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmit.getInputApdu(), QByteArray());
 
 			QCOMPARE(logSpy.count(), 1);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -79,7 +79,7 @@ class PersonalizationContext
 
 		[[nodiscard]] QUrl getAppletServiceUrl(const QString& pArg) const;
 
-		[[nodiscard]] QVector<AcceptedEidType> getAcceptedEidTypes() const override;
+		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override;
 
 		using WorkflowContext::setProgress;
 		void setProgress(int pProgress, const QString& pMessage, int pInitialValue, int pMaxValue = 100);

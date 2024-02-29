@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetServiceInformation.h"
@@ -17,7 +17,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -58,7 +58,7 @@ class test_StateGetServiceInformation
 			QSignalSpy spyContinue(&state, &StateGetServiceInformation::fireContinue);
 
 			setServiceInformation({EidServiceResult::ERROR});
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("ServiceInformation query failed"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("ServiceInformation query failed"_L1));
 			state.run();
 
 			QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
@@ -85,7 +85,7 @@ class test_StateGetServiceInformation
 			QCOMPARE(spyAbort.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::No_Error);
 			QCOMPARE(mContext->getSmartEidType(), SmartEidType::APPLET);
-			QCOMPARE(mContext->getChallengeType(), QString("UUID"));
+			QCOMPARE(mContext->getChallengeType(), "UUID"_L1);
 		}
 
 

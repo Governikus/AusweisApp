@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,9 +15,9 @@
 #include "pinpad/EstablishPaceChannelOutput.h"
 
 #include <QDebug>
+#include <QList>
 #include <QObject>
 #include <QSharedPointer>
-#include <QVector>
 #include <QWeakPointer>
 
 #include <eid_applet_results.h>
@@ -69,7 +69,7 @@ class SmartManager
 		bool deletePersonalization() const;
 		[[nodiscard]] EidServiceResult installSmart(const ProgressHandler& pHandler = ProgressHandler()) const;
 		InitializeResult initializePersonalization(const QString& pChallenge, const QString& pPin) const;
-		QByteArrayList performPersonalization(const QVector<InputAPDUInfo>& pInputApdus) const;
+		QByteArrayList performPersonalization(const QList<InputAPDUInfo>& pInputApdus) const;
 		[[nodiscard]] PersonalizationResult finalizePersonalization(int pStatus) const;
 		EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat) const;
 		[[nodiscard]] ResponseApduResult challenge() const;

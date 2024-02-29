@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -373,7 +373,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Card_Puk_Blocked:
 			//: ERROR ALL_PLATFORMS The card declined the PUK since it was entered wrongfully 10 times.
-			return tr("The entered PUK has already been used ten times and can no longer be used to unblock the PIN.");
+			return tr("The entered PUK has already been used 10 times and can no longer be used to unblock the PIN.");
 
 		case Code::Card_NewPin_Mismatch:
 			//: ERROR ALL_PLATFORMS The card reader signalled that the new PIN was not confirmed correctly.
@@ -389,7 +389,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Card_Smart_Invalid:
 			//: ERROR ALL_PLATFORMS The existing Smart-eID was invalidated.
-			return tr("The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN three times. You may personalize a new Smart-eID to resolve the issue.");
+			return tr("The Smart-eID is no longer ready for use. This might have been caused by entering the wrong Smart-eID PIN 3 times. You may personalize a new Smart-eID to resolve the issue.");
 
 		case Code::RemoteReader_CloseCode_AbnormalClose:
 			//: ERROR ALL_PLATFORMS The connection to the smartphone card reader (SaK) was lost.
@@ -413,7 +413,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::IfdConnector_RemoteHostRefusedConnection:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was rejected by the device.
-			return tr("The smartphone to be paired has rejected the connection. Please check the pairing code. If no pairing code is shown activate the pairing mode.");
+			return tr("The smartphone to be paired has rejected the connection. Please check the pairing code.");
 
 		case Code::Downloader_File_Not_Found:
 			//: ERROR ALL_PLATFORMS Download of the file failed with HTTP error code 404.

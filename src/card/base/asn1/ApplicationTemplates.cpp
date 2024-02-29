@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationTemplates.h"
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
+#include "asn1/ASN1Struct.h"
 
 #include <QLoggingCategory>
 #include <QtEndian>
@@ -31,7 +32,7 @@ IMPLEMENT_ASN1_OBJECT(ApplicationTemplatesInternal)
 QSharedPointer<ApplicationTemplates> ApplicationTemplates::decode(const QByteArray& pBytes)
 {
 	// Add "SET OF" class/tag and add length, as they are not part of the card data structure.
-	const QByteArray setBytes = Asn1Util::encode(V_ASN1_UNIVERSAL, 17, pBytes, true);
+	const QByteArray setBytes = Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_SET, pBytes, true);
 
 	auto applicationTemplatesStruct = decodeObject<ApplicationTemplatesInternal>(setBytes);
 	if (applicationTemplatesStruct == nullptr)
@@ -39,7 +40,7 @@ QSharedPointer<ApplicationTemplates> ApplicationTemplates::decode(const QByteArr
 		return QSharedPointer<ApplicationTemplates>();
 	}
 
-	QVector<QSharedPointer<const ApplicationTemplate>> applicationTemplates;
+	QList<QSharedPointer<const ApplicationTemplate>> applicationTemplates;
 	for (int i = 0; i < sk_ApplicationTemplate_num(applicationTemplatesStruct.data()); ++i)
 	{
 		ApplicationTemplate* applicationTemplateStruct = sk_ApplicationTemplate_value(applicationTemplatesStruct.data(), i);
@@ -63,7 +64,7 @@ QSharedPointer<ApplicationTemplates> ApplicationTemplates::decode(const QByteArr
 
 
 ApplicationTemplates::ApplicationTemplates(const QByteArray& pBytes,
-		const QVector<QSharedPointer<const ApplicationTemplate>>& pApplicationTemplates)
+		const QList<QSharedPointer<const ApplicationTemplate>>& pApplicationTemplates)
 	: mContentBytes(pBytes)
 	, mApplicationTemplates(pApplicationTemplates)
 {
@@ -76,7 +77,7 @@ const QByteArray& ApplicationTemplates::getContentBytes() const
 }
 
 
-const QVector<QSharedPointer<const ApplicationTemplate>>& ApplicationTemplates::getApplicationTemplates() const
+const QList<QSharedPointer<const ApplicationTemplate>>& ApplicationTemplates::getApplicationTemplates() const
 {
 	return mApplicationTemplates;
 }

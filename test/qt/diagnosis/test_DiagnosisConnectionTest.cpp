@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DiagnosisConnectionTest
@@ -53,18 +54,9 @@ class test_DiagnosisConnectionTest
 		void test_OnSocketConnectionTestWithProxyDone()
 		{
 			mTest->onSocketConnectionTestWithProxyDone();
-			QVERIFY(mTest->mConnectionTestWithProxySuccessful);
-			QVERIFY(mTest->mConnectionTestWithProxyDone);
-			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::UnconnectedState);
-		}
-
-
-		void test_OnSocketConnectionTestWithProxyError()
-		{
-			QTest::ignoreMessage(QtDebugMsg, "Could not connect to test server with proxy: QAbstractSocket::NetworkError");
-			mTest->onSocketConnectionTestWithProxyError(QAbstractSocket::NetworkError);
 			QVERIFY(!mTest->mConnectionTestWithProxySuccessful);
 			QVERIFY(mTest->mConnectionTestWithProxyDone);
+			QVERIFY(mTest->mReplyWithProxy.isNull());
 		}
 
 
@@ -73,7 +65,7 @@ class test_DiagnosisConnectionTest
 			mTest->onSocketConnectionTestWithoutProxyDone();
 			QVERIFY(mTest->mConnectionTestWithoutProxySuccessful);
 			QVERIFY(mTest->mConnectionTestWithoutProxyDone);
-			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::UnconnectedState);
+			QVERIFY(mTest->mReplyWithProxy.isNull());
 		}
 
 
@@ -116,7 +108,7 @@ class test_DiagnosisConnectionTest
 			QNetworkProxy::Capabilities caps = {QNetworkProxy::TunnelingCapability, QNetworkProxy::ListeningCapability, QNetworkProxy::UdpTunnelingCapability,
 												QNetworkProxy::CachingCapability, QNetworkProxy::HostNameLookupCapability, QNetworkProxy::SctpTunnelingCapability,
 												QNetworkProxy::SctpListeningCapability};
-			QCOMPARE(mTest->getProxyCapabilitiesAsQString(caps), QString("Tunnel, Listen, UDP, Caching, NameLookup, SctpTunnel, SctpListen"));
+			QCOMPARE(mTest->getProxyCapabilitiesAsQString(caps), "Tunnel, Listen, UDP, Caching, NameLookup, SctpTunnel, SctpListen"_L1);
 		}
 
 
@@ -149,18 +141,18 @@ class test_DiagnosisConnectionTest
 			mTest->startConnectionTest();
 			QVERIFY(mTest->mIsProxySet);
 			QCOMPARE(mTest->mProxyHostName, QString());
-			QCOMPARE(mTest->mProxyPort, QString("0"));
-			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
-			QCOMPARE(mTest->mProxyType, QString("HttpProxy"));
+			QCOMPARE(mTest->mProxyPort, "0"_L1);
+			QCOMPARE(mTest->mProxyType, "HttpProxy"_L1);
+			QCOMPARE(mTest->mProxyType, "HttpProxy"_L1);
 			QCOMPARE(mTest->mPingSocketToProxy.proxy(), QNetworkProxy::NoProxy);
 			QCOMPARE(mTest->mPingSocketToProxy.state(), QAbstractSocket::SocketState::HostLookupState);
-			QCOMPARE(mTest->mTcpSocketWithProxy.proxy(), testProxy);
-			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::SocketState::ConnectingState);
+			QVERIFY(!mTest->mReplyWithProxy.isNull());
+			QVERIFY(mTest->mReplyWithProxy->isRunning());
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mTest->mProxyPingDone);
 			QVERIFY(mTest->mConnectionTestWithProxyDone);
-			QCOMPARE(mTest->mTcpSocketWithProxy.state(), QAbstractSocket::SocketState::UnconnectedState);
+			QVERIFY(mTest->mReplyWithProxy.isNull());
 		}
 
 

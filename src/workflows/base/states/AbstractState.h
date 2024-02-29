@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -49,8 +49,9 @@ class AbstractState
 
 	private:
 		const QSharedPointer<WorkflowContext> mContext;
-		QVector<QMetaObject::Connection> mConnections;
+		QList<QMetaObject::Connection> mConnections;
 		bool mAbortOnCardRemoved;
+		bool mHandleNfcStop;
 		bool mKeepCardConnectionAlive;
 
 		virtual void run() = 0;
@@ -60,6 +61,7 @@ class AbstractState
 		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext);
 
 		void setAbortOnCardRemoved();
+		void setHandleNfcStop();
 		void setKeepCardConnectionAlive();
 
 		void onEntry(QEvent* pEvent) override;
@@ -87,6 +89,7 @@ class AbstractState
 
 	private Q_SLOTS:
 		void onAbort(const FailureCode& pFailure) const;
+		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const;
 
 	public Q_SLOTS:
 		void onStateApprovedChanged(bool pApproved);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -88,16 +89,16 @@ class test_ProviderConfigurationParser
 			auto provider = providers[0];
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)kasten"));
 
-			LanguageLoader::getInstance().mUsedLocale = QLocale("om");
+			LanguageLoader::getInstance().mUsedLocale = QLocale("om"_L1);
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)kasten"));
 
-			LanguageLoader::getInstance().mUsedLocale = QLocale("de");
+			LanguageLoader::getInstance().mUsedLocale = QLocale("de"_L1);
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-de-kasten"));
 
-			LanguageLoader::getInstance().mUsedLocale = QLocale("fr");
+			LanguageLoader::getInstance().mUsedLocale = QLocale("fr"_L1);
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 
-			LanguageLoader::getInstance().mUsedLocale = QLocale("fr_FR");
+			LanguageLoader::getInstance().mUsedLocale = QLocale("fr_FR"_L1);
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
 
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral(":::(bit)-fr-kasten"));
@@ -108,8 +109,8 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getEMail(), QString());
 			QCOMPARE(provider.getPostalAddress(), QString());
 			QCOMPARE(provider.getCategory(), QStringLiteral("other"));
-			QVERIFY(provider.getIcon()->lookupPath().endsWith("/other_button.svg"));
-			QVERIFY(provider.getImage()->lookupPath().endsWith("/other_bg.svg"));
+			QVERIFY(provider.getIcon()->lookupPath().endsWith("/other_button.svg"_L1));
+			QVERIFY(provider.getImage()->lookupPath().endsWith("/other_bg.svg"_L1));
 
 			provider = providers[1];
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Selbstauskunft"));
@@ -121,8 +122,8 @@ class test_ProviderConfigurationParser
 			QCOMPARE(provider.getEMail(), QStringLiteral("support@ausweisapp.de"));
 			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes fuer Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>D-28359 Bremen"));
 			QCOMPARE(provider.getCategory(), QStringLiteral("citizen"));
-			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"));
-			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"));
+			QVERIFY(provider.getIcon()->lookupPath().endsWith("/citizen_button.svg"_L1));
+			QVERIFY(provider.getImage()->lookupPath().endsWith("/citizen_bg.svg"_L1));
 			QVERIFY(provider.getInternalId().isEmpty());
 
 			provider = providers[2];
@@ -152,13 +153,13 @@ class test_ProviderConfigurationParser
 
 			QCOMPARE(providers.size(), 1);
 			auto provider = providers[0];
-			QCOMPARE(provider.getShortName().toString(), QString(":::(bit)kasten"));
-			QCOMPARE(provider.getLongName().toString(), QString(":::(bit)kasten"));
-			QCOMPARE(provider.getAddress(), QString("https://www.bitkasten.de/"));
-			QCOMPARE(provider.getPhone(), QString(""));
-			QCOMPARE(provider.getEMail(), QString(""));
-			QCOMPARE(provider.getPostalAddress(), QString(""));
-			QCOMPARE(provider.getCategory(), QString("other"));
+			QCOMPARE(provider.getShortName().toString(), ":::(bit)kasten"_L1);
+			QCOMPARE(provider.getLongName().toString(), ":::(bit)kasten"_L1);
+			QCOMPARE(provider.getAddress(), "https://www.bitkasten.de/"_L1);
+			QCOMPARE(provider.getPhone(), QString());
+			QCOMPARE(provider.getEMail(), QString());
+			QCOMPARE(provider.getPostalAddress(), QString());
+			QCOMPARE(provider.getCategory(), "other"_L1);
 		}
 
 
@@ -200,7 +201,7 @@ class test_ProviderConfigurationParser
 
 		void defaultProviders()
 		{
-			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
+			QByteArray data = TestFileHelper::readFile(":/updatable-files/supported-providers.json"_L1);
 
 			const auto providers = ProviderConfigurationParser::parseProvider(data);
 
@@ -210,7 +211,7 @@ class test_ProviderConfigurationParser
 
 		void parseCallCosts()
 		{
-			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
+			QByteArray data = TestFileHelper::readFile(":/updatable-files/supported-providers.json"_L1);
 
 			const auto callCosts = ProviderConfigurationParser::parseCallCosts(data);
 
@@ -224,8 +225,8 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int all = 122;
-			const int withEidSupport = 100;
+			const int all = 126;
+			const int withEidSupport = 104;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;
@@ -242,7 +243,7 @@ class test_ProviderConfigurationParser
 			QFETCH(int, majorVersion);
 			QFETCH(int, count);
 
-			QByteArray data = TestFileHelper::readFile(QStringLiteral(":/updatable-files/supported-providers.json"));
+			QByteArray data = TestFileHelper::readFile(":/updatable-files/supported-providers.json"_L1);
 			const auto providers = ProviderConfigurationParser::parseProvider(data, QOperatingSystemVersion(osType, majorVersion));
 			QCOMPARE(providers.size(), count);
 		}

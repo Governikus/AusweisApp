@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,9 +12,9 @@
 #include "messages/Discovery.h"
 
 #include <QHostAddress>
+#include <QList>
 #include <QSharedDataPointer>
 #include <QUrl>
-#include <QVector>
 
 
 namespace governikus
@@ -29,7 +29,7 @@ class IfdDescriptor
 			public:
 				IfdDescriptorData(const QString& pIfdName,
 						const QString& pIfdId,
-						const QVector<IfdVersion::Version>& pApiVersions,
+						const QList<IfdVersion::Version>& pApiVersions,
 						const bool pIsPairingAnnounced,
 						const QUrl& pUrl,
 						bool pIsLocalIfd);
@@ -38,7 +38,7 @@ class IfdDescriptor
 
 				const QString mIfdName;
 				const QString mIfdId;
-				const QVector<IfdVersion::Version> mApiVersions;
+				const QList<IfdVersion::Version> mApiVersions;
 				const bool mIsPairingAnnounced;
 				const QUrl mUrl;
 				const bool mIsLocalIfd;
@@ -57,7 +57,7 @@ class IfdDescriptor
 
 		[[nodiscard]] const QString& getIfdName() const;
 		[[nodiscard]] const QString& getIfdId() const;
-		[[nodiscard]] const QVector<IfdVersion::Version>& getApiVersions() const;
+		[[nodiscard]] const QList<IfdVersion::Version>& getApiVersions() const;
 		[[nodiscard]] bool isSupported() const;
 		[[nodiscard]] bool isPairingAnnounced() const;
 		[[nodiscard]] const QUrl& getUrl() const;

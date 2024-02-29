@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -30,7 +30,7 @@ class StateProcessIfdMessages
 
 	private:
 		bool mResetContextOnDisconnect;
-		QVector<QMetaObject::Connection> mMessageConnections;
+		QList<QMetaObject::Connection> mMessageConnections;
 
 		explicit StateProcessIfdMessages(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;

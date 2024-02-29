@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,6 +24,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QLatin1String)
@@ -87,7 +88,7 @@ class test_UIPlugInAutomatic
 		void startUpShutDown()
 		{
 			UIPlugInAutomatic ui;
-			QTest::failOnWarning(QRegularExpression(".*"));
+			QTest::failOnWarning(QRegularExpression(".*"_L1));
 			ui.onApplicationStarted();
 			ui.doShutdown();
 		}
@@ -215,7 +216,7 @@ class test_UIPlugInAutomatic
 
 		void insertCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader"_L1);
 			reader->setCard(MockCardConfig());
 			QVERIFY(reader->getReaderInfo().hasEid());
 			QVERIFY(!reader->getReaderInfo().isInsertable());
@@ -235,8 +236,8 @@ class test_UIPlugInAutomatic
 
 		void insertableCard()
 		{
-			MockReader* unusedReader = MockReaderManagerPlugIn::getInstance().addReader("MockReader1");
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader2");
+			MockReader* unusedReader = MockReaderManagerPlugIn::getInstance().addReader("MockReader1"_L1);
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader2"_L1);
 			reader->setCard(MockCardConfig());
 
 			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderPropertiesUpdated);
@@ -299,7 +300,7 @@ class test_UIPlugInAutomatic
 		{
 			QFETCH(CardReturnCode, returnCode);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader", ReaderManagerPlugInType::SIMULATOR);
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader"_L1, ReaderManagerPlugInType::SIMULATOR);
 			reader->setCard(MockCardConfig());
 			reader->setInfoBasicReader(false);
 
@@ -318,7 +319,7 @@ class test_UIPlugInAutomatic
 
 		void handlePasswordNonBasic()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader"_L1);
 			reader->setCard(MockCardConfig());
 			reader->setInfoBasicReader(false);
 
@@ -392,7 +393,7 @@ class test_UIPlugInAutomatic
 				qputenv(envVariable.data(), envValue);
 			}
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader"_L1);
 			reader->setCard(MockCardConfig());
 			reader->setInfoBasicReader(true);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppSettings.h"
@@ -8,6 +8,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(RemoteDeviceModel::SettingsRemoteRoles)
@@ -157,28 +158,28 @@ class test_RemoteDeviceModel
 		{
 			RemoteDeviceModelEntry entry;
 
-			QCOMPARE(mModel->getStatus(entry), QString("Not connected"));
+			QCOMPARE(mModel->getStatus(entry), "Not connected"_L1);
 
 			mModel->mAllRemoteReaders.insert(0, entry);
 
-			QCOMPARE(mModel->getStatus(entry), QString("Unsupported"));
+			QCOMPARE(mModel->getStatus(entry), "Unsupported"_L1);
 
 			entry.mSupported = true;
-			QCOMPARE(mModel->getStatus(entry), QString("Not paired"));
+			QCOMPARE(mModel->getStatus(entry), "Not paired"_L1);
 
 			entry.setPaired(true);
-			QCOMPARE(mModel->getStatus(entry), QString("Unavailable"));
+			QCOMPARE(mModel->getStatus(entry), "Unavailable"_L1);
 
 			entry.setNetworkVisible(true);
-			QCOMPARE(mModel->getStatus(entry), QString("Available"));
+			QCOMPARE(mModel->getStatus(entry), "Available"_L1);
 
 			entry.mSupported = false;
-			QCOMPARE(mModel->getStatus(entry), QString("Paired, but unsupported"));
+			QCOMPARE(mModel->getStatus(entry), "Paired, but unsupported"_L1);
 
 			entry.setNetworkVisible(true);
 			entry.mSupported = true;
 			entry.mIsPairing = true;
-			QCOMPARE(mModel->getStatus(entry), QString("Click to pair"));
+			QCOMPARE(mModel->getStatus(entry), "Click to pair"_L1);
 		}
 
 
@@ -186,14 +187,14 @@ class test_RemoteDeviceModel
 		{
 			RemoteDeviceModelEntry entry1;
 			RemoteDeviceModelEntry entry2;
-			entry1.setId(QString("id"));
+			entry1.setId("id"_L1);
 
-			QCOMPARE(mModel->getRemoteDeviceListEntry(QString("id")), QSharedPointer<IfdListEntry>());
+			QCOMPARE(mModel->getRemoteDeviceListEntry("id"_L1), QSharedPointer<IfdListEntry>());
 
 			mModel->mAllRemoteReaders.insert(0, entry1);
 			mModel->mAllRemoteReaders.insert(1, entry2);
 
-			QCOMPARE(mModel->getRemoteDeviceListEntry(QString("id")), nullptr);
+			QCOMPARE(mModel->getRemoteDeviceListEntry("id"_L1), nullptr);
 		}
 
 
@@ -204,7 +205,7 @@ class test_RemoteDeviceModel
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(descriptor));
 			RemoteDeviceModelEntry entry1(listEntry);
 
-			RemoteDeviceModelEntry entry2(QString("entry 2"));
+			RemoteDeviceModelEntry entry2("entry 2"_L1);
 			mModel->mAllRemoteReaders << entry1 << entry2;
 
 			const auto& index1 = mModel->createIndex(0, 0);
@@ -222,10 +223,10 @@ class test_RemoteDeviceModel
 			QTest::addColumn<int>("column");
 			QTest::addColumn<QVariant>("output");
 
-			QTest::newRow("device name") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME << 0 << 0 << QVariant(QString("reader 1"));
-			QTest::newRow("device status") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_STATUS << 1 << 0 << QVariant(QString("Unsupported"));
-			QTest::newRow("last connected") << RemoteDeviceModel::SettingsRemoteRoles::LAST_CONNECTED << 0 << 0 << QVariant(QString("14.05.2019 12:00 AM"));
-			QTest::newRow("device id") << RemoteDeviceModel::SettingsRemoteRoles::DEVICE_ID << 0 << 0 << QVariant(QString("test id"));
+			QTest::newRow("device name") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME << 0 << 0 << QVariant("reader 1"_L1);
+			QTest::newRow("device status") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_STATUS << 1 << 0 << QVariant("Unsupported"_L1);
+			QTest::newRow("last connected") << RemoteDeviceModel::SettingsRemoteRoles::LAST_CONNECTED << 0 << 0 << QVariant("14.05.2019 12:00 AM"_L1);
+			QTest::newRow("device id") << RemoteDeviceModel::SettingsRemoteRoles::DEVICE_ID << 0 << 0 << QVariant("test id"_L1);
 			QTest::newRow("network visible") << RemoteDeviceModel::SettingsRemoteRoles::IS_NETWORK_VISIBLE << 1 << 0 << QVariant(bool(false));
 			QTest::newRow("supported") << RemoteDeviceModel::SettingsRemoteRoles::IS_SUPPORTED << 0 << 0 << QVariant(bool(true));
 			QTest::newRow("paired") << RemoteDeviceModel::SettingsRemoteRoles::IS_PAIRED << 0 << 0 << QVariant(bool(true));
@@ -242,10 +243,10 @@ class test_RemoteDeviceModel
 			QFETCH(int, column);
 			QFETCH(QVariant, output);
 
-			QVector<RemoteDeviceModelEntry> readers;
+			QList<RemoteDeviceModelEntry> readers;
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(IfdDescriptor()));
-			const RemoteDeviceModelEntry entry1(QString("reader 1"), QString("test id"), true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
-			const RemoteDeviceModelEntry entry2(QString("reader 2"));
+			const RemoteDeviceModelEntry entry1("reader 1"_L1, "test id"_L1, true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
+			const RemoteDeviceModelEntry entry2("reader 2"_L1);
 			readers << entry1 << entry2;
 			mModel->mAllRemoteReaders = readers;
 			const auto& index = mModel->createIndex(row, column);

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Style
+import Governikus.Type.SettingsModel
 
 Image {
 	id: img
@@ -14,6 +15,9 @@ Image {
 	source: {
 		if (inactive) {
 			return "qrc:///images/icon_remote_inactive_%1.svg".arg(Style.currentTheme.name);
+		}
+		if (!SettingsModel.useAnimations && percent >= 20) {
+			return "qrc:///images/icon_remote_100_%1.svg".arg(Style.currentTheme.name);
 		}
 		if (percent >= 80) {
 			return "qrc:///images/icon_remote_100_%1.svg".arg(Style.currentTheme.name);

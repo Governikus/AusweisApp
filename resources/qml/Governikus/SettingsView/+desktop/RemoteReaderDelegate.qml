@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -74,7 +74,7 @@ RoundedRectangle {
 				fillMode: Image.PreserveAspectFit
 				source: "qrc:///images/trash_icon.svg"
 				sourceSize.height: iconHeight
-				tintColor: Style.color.control
+				tintColor: Style.color.image
 				visible: isPaired && !isPairing
 
 				MouseArea {

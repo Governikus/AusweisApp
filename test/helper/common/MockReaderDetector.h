@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -18,7 +18,7 @@ namespace governikus
 class ReaderDetector
 	: public QObject
 {
-	virtual QVector<UsbId> attachedDevIds() const;
+	virtual QList<UsbId> attachedDevIds() const;
 };
 } // namespace governikus
 #else
@@ -34,14 +34,14 @@ class MockReaderDetector
 	Q_OBJECT
 
 	public:
-		MockReaderDetector(const QVector<UsbId>& pDevIds);
+		MockReaderDetector(const QList<UsbId>& pDevIds);
 
 		~MockReaderDetector() override;
 
-		[[nodiscard]] QVector<UsbId> attachedDevIds() const override;
+		[[nodiscard]] QList<UsbId> attachedDevIds() const override;
 
 	private:
-		const QVector<UsbId>& mDevIds;
+		const QList<UsbId>& mDevIds;
 };
 
 } // namespace governikus

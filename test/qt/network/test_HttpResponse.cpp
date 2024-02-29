@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -21,7 +22,7 @@ class test_HttpResponse
 	private Q_SLOTS:
 		void init()
 		{
-			QCoreApplication::setApplicationVersion("1.2");
+			QCoreApplication::setApplicationVersion("1.2"_L1);
 		}
 
 

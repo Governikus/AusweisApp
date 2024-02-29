@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificate.h"
@@ -78,9 +78,9 @@ int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_
 }
 
 
-QVector<QSharedPointer<const CVCertificate>> CVCertificate::fromRaw(const QByteArrayList& pByteList)
+QList<QSharedPointer<const CVCertificate>> CVCertificate::fromRaw(const QByteArrayList& pByteList)
 {
-	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	QList<QSharedPointer<const CVCertificate>> cvcs;
 	for (const auto& data : pByteList)
 	{
 		if (const auto& cvc = CVCertificate::fromRaw(data))
@@ -198,10 +198,10 @@ QDebug operator<<(QDebug pDbg, const QSharedPointer<governikus::CVCertificate>& 
 }
 
 
-QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate>>& pCvcs)
+QDebug operator<<(QDebug pDbg, const QList<QSharedPointer<governikus::CVCertificate>>& pCvcs)
 {
 	QDebugStateSaver saver(pDbg);
-	pDbg.nospace() << "QVector(";
+	pDbg.nospace() << "QList(";
 	for (const auto& cvc : pCvcs)
 	{
 		pDbg.nospace() << cvc << ",";

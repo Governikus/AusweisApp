@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,9 +11,9 @@
 #include "paos/PaosType.h"
 #include "paos/invoke/PaosCreator.h"
 
+#include <QList>
 #include <QSharedPointer>
 #include <QSslPreSharedKeyAuthenticator>
-#include <QVector>
 #include <optional>
 
 class test_StateGenericSendReceive;
@@ -30,7 +30,7 @@ class StateGenericSendReceive
 
 	private:
 		const PaosType mExpectedResponseType;
-		const QVector<PaosType> mOtherResponseTypes;
+		const QList<PaosType> mOtherResponseTypes;
 		const bool mPersonalization;
 		QSharedPointer<QNetworkReply> mReply;
 
@@ -45,7 +45,7 @@ class StateGenericSendReceive
 		explicit StateGenericSendReceive(
 			const QSharedPointer<WorkflowContext>& pContext,
 			PaosType pExpectedResponseType,
-			const QVector<PaosType>& pOtherResponseTypes = {},
+			const QList<PaosType>& pOtherResponseTypes = {},
 			bool pPersonalization = false);
 
 		virtual QSharedPointer<ResponseType> getAsResponse() = 0;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReleaseInformation.h"
@@ -40,17 +40,22 @@ QSharedPointer<UpdatableFile> ReleaseInformation::getFile(const QString& pFile)
 }
 
 
-QVector<QSharedPointer<UpdatableFile>> ReleaseInformation::getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion)
+QList<QSharedPointer<UpdatableFile>> ReleaseInformation::getReleaseNotes(const VersionNumber& pVersion, bool pConsiderOnlyThisVersion)
 {
 	const auto versionNumber = pVersion.getVersionNumber();
+
+	if (versionNumber.microVersion() >= 100)
+	{
+		const auto betaVersion = QVersionNumber(versionNumber.majorVersion(), versionNumber.minorVersion(), 100);
+		return {getFile(QStringLiteral("%1.txt").arg(betaVersion.toString()))};
+	}
 
 	if (pConsiderOnlyThisVersion)
 	{
 		return {getFile(QStringLiteral("%1.txt").arg(versionNumber.toString()))};
 	}
 
-	QVector<QSharedPointer<UpdatableFile>> releaseNotes;
-
+	QList<QSharedPointer<UpdatableFile>> releaseNotes;
 	for (int i = versionNumber.microVersion(); i >= 0; --i)
 	{
 		const auto previousVersion = QVersionNumber(versionNumber.majorVersion(), versionNumber.minorVersion(), i);
@@ -75,6 +80,11 @@ void ReleaseInformation::update()
 
 bool ReleaseInformation::requiresInitialUpdate() const
 {
+	if (mVersion.isBetaVersion())
+	{
+		return true;
+	}
+
 	for (const auto& releaseNotesFile : mReleaseNotes)
 	{
 		if (releaseNotesFile->lookupPath().isEmpty())

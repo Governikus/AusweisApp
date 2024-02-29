@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,7 +24,7 @@ class test_ResponseApdu
 
 	private:
 		bool mTestAllKnownStatusCode;
-		QVector<StatusCode> mStatusCodeToTest;
+		QList<StatusCode> mStatusCodeToTest;
 
 	private Q_SLOTS:
 		void initTestCase_data()

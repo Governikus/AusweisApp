@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -283,6 +283,9 @@ class test_NumberModel
 			mModel->resetContext(context);
 			QCOMPARE(mModel->getInputError(), QString());
 
+			context->setLastPaceResult(CardReturnCode::OK_PUK);
+			QCOMPARE(mModel->getInputError(), QString());
+
 			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
 			QCOMPARE(mModel->getInputError(), QString());
 
@@ -292,22 +295,22 @@ class test_NumberModel
 			context->setCardConnection(connection);
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN. You have two further attempts to enter the correct ID card PIN."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN. You have 2 further attempts to enter the correct ID card PIN."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN twice. "
-												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 2 times. "
+												 "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
 												 "You can find your CAN in the bottom right on the front of your ID card."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. "
-												 "To remove the block, the ten-digit PUK must be entered first."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. "
+												 "To remove the block, the 10-digit PUK must be entered first."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, six-digit Card Access Number (CAN). Please try again."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit Card Access Number (CAN). Please try again."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, ten-digit PUK. Please try again."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 10-digit PUK. Please try again."));
 
 			context->setLastPaceResult(CardReturnCode::UNKNOWN);
 			QCOMPARE(mModel->getInputError(), tr("An unexpected error has occurred during processing."));
@@ -322,15 +325,15 @@ class test_NumberModel
 			mModel->resetContext(context);
 			context->setCardConnection(connection);
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN. "
-												 "You have two further attempts to enter the correct Transport PIN."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN. "
+												 "You have 2 further attempts to enter the correct Transport PIN."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN twice. "
-												 "For a third attempt, the six-digit Card Access Number (CAN) must be entered first. "
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 2 times. "
+												 "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
 												 "You can find your CAN in the bottom right on the front of your ID card."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, five-digit Transport PIN thrice, your Transport PIN is now blocked. "
-												 "To remove the block, the ten-digit PUK must be entered first."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your Transport PIN is now blocked. "
+												 "To remove the block, the 10-digit PUK must be entered first."));
 
 			connectionThread.quit();
 			connectionThread.wait();

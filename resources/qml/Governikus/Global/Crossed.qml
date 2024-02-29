@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Style
@@ -60,12 +60,12 @@ Item {
 		anchors.leftMargin: d.gap
 		source: "qrc:///images/desktop/warning.svg"
 		sourceSize.height: Style.dimens.huge_icon_size - 10
-		tintColor: Style.color.text_warning
+		tintColor: Style.color.warning
 	}
 
 	component Line: Rectangle {
 		antialiasing: true
-		color: Style.color.text_warning
+		color: Style.color.warning
 		height: Style.dimens.separator_size_large
 		width: d.c
 	}

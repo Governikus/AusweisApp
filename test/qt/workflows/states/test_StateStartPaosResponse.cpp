@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QThread>
@@ -10,6 +10,7 @@
 #include "states/StateBuilder.h"
 #include "states/StateStartPaosResponse.h"
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -59,7 +60,7 @@ class test_StateStartPaosResponse
 
 		void takeResultFromStartPAOSResponse()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
+			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml"_L1)));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 			mAuthContext->setStatus(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 
@@ -81,7 +82,7 @@ class test_StateStartPaosResponse
 
 		void emitErrorIfResultError()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml")));
+			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse3.xml"_L1)));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireAbort);
@@ -95,7 +96,7 @@ class test_StateStartPaosResponse
 
 		void emitSuccessIfResultOk()
 		{
-			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml")));
+			QSharedPointer<StartPaosResponse> startPAOSResponse(new StartPaosResponse(TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml"_L1)));
 			mAuthContext->setStartPaosResponse(startPAOSResponse);
 
 			QSignalSpy spy(mState.data(), &StateStartPaosResponse::fireContinue);

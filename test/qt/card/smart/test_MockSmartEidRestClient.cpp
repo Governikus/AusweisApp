@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "mock/MockSmartEidRestClient.h"
@@ -16,6 +16,7 @@
 #include <eid_applet_results.h>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -48,7 +49,7 @@ class test_MockSmartEidRestClient
 
 		void test_preserveUrlPath()
 		{
-			QVERIFY(qputenv(SMART_EID_MOCK_URL, mServer.getAddress("/foo").toString().toUtf8()));
+			QVERIFY(qputenv(SMART_EID_MOCK_URL, mServer.getAddress("/foo"_L1).toString().toUtf8()));
 
 			MockSmartEidRestClient restInterface;
 			QCOMPARE(restInterface.isEnabled(), true);

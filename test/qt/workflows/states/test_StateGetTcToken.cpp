@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,7 +15,7 @@
 #include <QByteArrayList>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -35,8 +35,8 @@ class test_StateGetTcToken
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext());
 			StateGetTcToken state(context);
-			const QUrl validUrl(QString("https://a.not.existing.valid.test.url.com"));
-			const QUrl invalidUrl(QString("test"));
+			const QUrl validUrl("https://a.not.existing.valid.test.url.com"_L1);
+			const QUrl invalidUrl("test"_L1);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
 			context->setTcTokenUrl(validUrl);
@@ -61,10 +61,10 @@ class test_StateGetTcToken
 			const QUrl emptyUrl;
 			QVERIFY(!state.isValidRedirectUrl(emptyUrl));
 
-			const QUrl invalidUrl(QString("test"));
+			const QUrl invalidUrl("test"_L1);
 			QVERIFY(!state.isValidRedirectUrl(invalidUrl));
 
-			const QUrl validUrl(QString("https://a.not.existing.valid.test.url.com"));
+			const QUrl validUrl("https://a.not.existing.valid.test.url.com"_L1);
 			QVERIFY(state.isValidRedirectUrl(validUrl));
 		}
 
@@ -75,7 +75,7 @@ class test_StateGetTcToken
 			StateGetTcToken state(context);
 			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
 
-			const QUrl url(QString("https://a.not.existing.valid.test.url.com"));
+			const QUrl url("https://a.not.existing.valid.test.url.com"_L1);
 			state.sendRequest(url);
 			QCOMPARE(state.mConnections.size(), 3);
 

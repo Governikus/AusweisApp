@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,7 +12,7 @@
 #include "ReaderManagerPlugInInfo.h"
 
 #include <QFlags>
-#include <QVector>
+#include <QList>
 
 namespace governikus
 {
@@ -30,14 +30,14 @@ class ReaderFilter
 
 	private:
 		const ReaderFilter::FilterTypes mFilterType;
-		const QVector<ReaderManagerPlugInType> mPluginTypes;
+		const QList<ReaderManagerPlugInType> mPluginTypes;
 
 	public:
 		ReaderFilter();
 		ReaderFilter(const ReaderFilter::FilterType pFilterType);
-		explicit ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes);
+		explicit ReaderFilter(const QList<ReaderManagerPlugInType>& pPluginTypes);
 
-		[[nodiscard]] QVector<ReaderInfo> apply(const QVector<ReaderInfo>& pInputList) const;
+		[[nodiscard]] QList<ReaderInfo> apply(const QList<ReaderInfo>& pInputList) const;
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_CommandApdu
@@ -108,19 +109,19 @@ class test_CommandApdu
 		void test_Ins_unknown_data()
 		{
 			QTest::addColumn<QByteArray>("header");
-			QTest::addColumn<QString>("logMsg");
+			QTest::addColumn<QLatin1String>("logMsg");
 
-			QTest::newRow("00") << QByteArray("00000000") << QString("Unknown INS value, returning UNKNOWN, value: 0x0");
-			QTest::newRow("42") << QByteArray("00420000") << QString("Unknown INS value, returning UNKNOWN, value: 0x42");
-			QTest::newRow("AA") << QByteArray("00AA0000") << QString("Unknown INS value, returning UNKNOWN, value: 0xaa");
-			QTest::newRow("FF") << QByteArray("00FF0000") << QString("Unknown INS value, returning UNKNOWN, value: 0xff");
+			QTest::newRow("00") << "00000000"_ba << "Unknown INS value, returning UNKNOWN, value: 0x0"_L1;
+			QTest::newRow("42") << "00420000"_ba << "Unknown INS value, returning UNKNOWN, value: 0x42"_L1;
+			QTest::newRow("AA") << "00AA0000"_ba << "Unknown INS value, returning UNKNOWN, value: 0xaa"_L1;
+			QTest::newRow("FF") << "00FF0000"_ba << "Unknown INS value, returning UNKNOWN, value: 0xff"_L1;
 		}
 
 
 		void test_Ins_unknown()
 		{
 			QFETCH(QByteArray, header);
-			QFETCH(QString, logMsg);
+			QFETCH(QLatin1String, logMsg);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
@@ -215,39 +216,39 @@ class test_CommandApdu
 
 			CommandApdu apdu1(QByteArray("aicd"), QByteArray(65536, 'w'), 1);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Command data exceeds maximum of 0xffff"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Command data exceeds maximum of 0xffff"_L1));
 
 			CommandApdu apdu2(QByteArray("aicd"), QByteArray("abc"), 65537);
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Expected length exceeds maximum value of 0x10000"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Expected length exceeds maximum value of 0x10000"_L1));
 		}
 
 
 		void test_Invalid_data()
 		{
 			QTest::addColumn<QByteArray>("data");
-			QTest::addColumn<QString>("logMessage");
+			QTest::addColumn<QLatin1String>("logMessage");
 
-			QTest::newRow("incomplete header 1") << QByteArray::fromHex("00") << QString("Wrong command header size!");
-			QTest::newRow("incomplete header 2") << QByteArray::fromHex("0000") << QString("Wrong command header size!");
-			QTest::newRow("incomplete header 3") << QByteArray::fromHex("000000") << QString("Wrong command header size!");
+			QTest::newRow("incomplete header 1") << QByteArray::fromHex("00") << "Wrong command header size!"_L1;
+			QTest::newRow("incomplete header 2") << QByteArray::fromHex("0000") << "Wrong command header size!"_L1;
+			QTest::newRow("incomplete header 3") << QByteArray::fromHex("000000") << "Wrong command header size!"_L1;
 
-			QTest::newRow("unexpected end - short lc - incomplete data") << QByteArray::fromHex("00000000 02 00") << QString("Unexpected end of data");
-			QTest::newRow("unexpected end - extended le - incomplete le") << QByteArray::fromHex("00000000 0000") << QString("Unexpected end of data");
-			QTest::newRow("unexpected end - extended lc - incomplete data") << QByteArray::fromHex("00000000 000002 00") << QString("Unexpected end of data");
+			QTest::newRow("unexpected end - short lc - incomplete data") << QByteArray::fromHex("00000000 02 00") << "Unexpected end of data"_L1;
+			QTest::newRow("unexpected end - extended le - incomplete le") << QByteArray::fromHex("00000000 0000") << "Unexpected end of data"_L1;
+			QTest::newRow("unexpected end - extended lc - incomplete data") << QByteArray::fromHex("00000000 000002 00") << "Unexpected end of data"_L1;
 
-			QTest::newRow("mixed extended / short length") << QByteArray::fromHex("00000000 00000100 00") << QString("Extended length expected");
+			QTest::newRow("mixed extended / short length") << QByteArray::fromHex("00000000 00000100 00") << "Extended length expected"_L1;
 
-			QTest::newRow("mixed short / extended length") << QByteArray::fromHex("00000000 0100 0000") << QString("Unexpected additional data: \"00\"");
-			QTest::newRow("unexpected additional data - short") << QByteArray::fromHex("00000000 0100 00 00") << QString("Unexpected additional data: \"00\"");
-			QTest::newRow("unexpected additional data - extended") << QByteArray::fromHex("00000000 00000100 0000 00") << QString("Unexpected additional data: \"00\"");
+			QTest::newRow("mixed short / extended length") << QByteArray::fromHex("00000000 0100 0000") << "Unexpected additional data: \"00\""_L1;
+			QTest::newRow("unexpected additional data - short") << QByteArray::fromHex("00000000 0100 00 00") << "Unexpected additional data: \"00\""_L1;
+			QTest::newRow("unexpected additional data - extended") << QByteArray::fromHex("00000000 00000100 0000 00") << "Unexpected additional data: \"00\""_L1;
 		}
 
 
 		void test_Invalid()
 		{
 			QFETCH(QByteArray, data);
-			QFETCH(QString, logMessage);
+			QFETCH(QLatin1String, logMessage);
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 

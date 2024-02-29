@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdClientImpl.h"
@@ -64,7 +64,7 @@ void IfdClientImpl::shutdownConnectorThread()
 
 QSharedPointer<IfdListEntry> IfdClientImpl::mapToAndTakeConnectorPending(const IfdDescriptor& pIfdDescriptor)
 {
-	QMutableVectorIterator<QSharedPointer<IfdListEntry>> i(mIfdConnectorPending);
+	QMutableListIterator<QSharedPointer<IfdListEntry>> i(mIfdConnectorPending);
 	while (i.hasNext())
 	{
 		QSharedPointer<IfdListEntry> entry = i.next();

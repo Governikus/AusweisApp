@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import Governikus.EnterPasswordView
 import Governikus.PasswordInfoView
 import Governikus.ProgressView
-import Governikus.ResultView
+import Governikus.RemoteServiceView
 import Governikus.Style
 import Governikus.TitleBar
 import Governikus.Type.ApplicationModel
@@ -21,12 +21,14 @@ SectionPage {
 		None,
 		EnterPassword,
 		WaitForPairing,
-		PairingFailed
+		PairingFailed,
+		PairingSuccess
 	}
 
 	property alias rootEnabled: mainTitleBarAction.rootEnabled
 
-	signal closeView
+	signal pairingFailed
+	signal pairingSuccessful
 
 	titleBarAction: TitleBarAction {
 		id: mainTitleBarAction
@@ -36,9 +38,10 @@ SectionPage {
 		text: qsTr("Pairing")
 
 		customSubAction: NavigationAction {
+			type: d.view === ConnectSacView.SubView.PairingSuccess || d.view === ConnectSacView.SubView.PairingFailed ? NavigationAction.Action.Back : NavigationAction.Action.Cancel
 			visible: true
 
-			onClicked: root.closeView()
+			onClicked: d.view === ConnectSacView.SubView.PairingSuccess ? root.pairingSuccessful() : root.pairingFailed()
 		}
 	}
 
@@ -74,26 +77,30 @@ SectionPage {
 				pairingFailedView.errorMessage = pErrorMessage;
 				d.view = ConnectSacView.SubView.PairingFailed;
 			}
-			function onFirePairingSuccess() {
-				root.closeView();
+			function onFirePairingSuccess(pDeviceName) {
+				pairingSuccessView.deviceName = pDeviceName;
+				d.view = ConnectSacView.SubView.PairingSuccess;
 			}
 
 			enabled: visible
 			target: RemoteServiceModel
 		}
 	}
-	ResultView {
+	PairingFailedView {
 		id: pairingFailedView
 
-		property string deviceName
-		property string errorMessage
-
-		icon: "qrc:///images/desktop/workflow_error_sak_connection_%1.svg".arg(Style.currentTheme.name)
-
-		//: ERROR DESKTOP An error occurred while pairing the device.
-		text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>\"%2\"".arg(errorMessage)
+		deviceName: ""
+		errorMessage: ""
 		visible: d.view === ConnectSacView.SubView.PairingFailed
 
-		onNextView: root.closeView()
+		onNextView: root.pairingFailed()
+	}
+	PairingSuccessView {
+		id: pairingSuccessView
+
+		deviceName: ""
+		visible: d.view === ConnectSacView.SubView.PairingSuccess
+
+		onNextView: root.pairingSuccessful()
 	}
 }

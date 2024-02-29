@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdClient.h"
@@ -134,7 +134,7 @@ const QString& LocalIfdClient::getPsk() const
 }
 
 
-QVector<RemoteServiceSettings::RemoteInfo> LocalIfdClient::getConnectedDeviceInfos()
+QList<RemoteServiceSettings::RemoteInfo> LocalIfdClient::getConnectedDeviceInfos()
 {
 	return {};
 }

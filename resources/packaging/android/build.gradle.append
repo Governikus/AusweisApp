@@ -43,6 +43,7 @@ android {
         exclude '**/libplugins_imageformats_qico_*.so'
         exclude '**/libplugins_imageformats_qtga_*.so'
         exclude '**/libplugins_imageformats_qtiff_*.so'
+        exclude '**/libplugins_imageformats_qwebp_*.so'
         exclude '**/libplugins_imageformats_qwbmp_*.so'
 
         jniLibs {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -28,23 +28,11 @@ TestCase {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
 	}
-	function test_scaleIcon() {
-		let testObject = createTestObject();
-		compare(testObject.scaleIcon, 1.0, "Initial scale factor 1.0");
-		testObject.scaleIcon = 0.75;
-		compare(testObject.scaleIcon, 0.75, "scaleIcon: 1.0");
-	}
 	function test_text() {
 		let testObject = createTestObject();
 		compare(testObject.text, "", "Initial empty text");
 		testObject.text = "test";
 		compare(testObject.text, "test", "text: test");
-	}
-	function test_textStyle() {
-		let testObject = createTestObject();
-		compare(testObject.textStyle, Style.text.button, "Initial textStyle: button");
-		testObject.textStyle = Style.text.normal_warning;
-		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GInformativeButton"
@@ -55,7 +43,6 @@ TestCase {
 		id: testObject
 
 		icon.source: "qrc:///images/material_check.svg"
-		scaleIcon: 0.5
 		text: "test"
 
 		TestCase {
@@ -69,13 +56,6 @@ TestCase {
 				tryVerify(function () {
 						return !testObject.pressed;
 					});
-			}
-			function test_tintIcon() {
-				verify(!testObject.tintIcon, "Initial tintIcon: false");
-				testObject.tintIcon = true;
-				verify(testObject.tintIcon, "tintIcon: true");
-				testObject.tintIcon = false;
-				verify(!testObject.tintIcon, "tintIcon: false");
 			}
 
 			when: windowShown

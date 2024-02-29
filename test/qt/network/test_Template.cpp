@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -34,7 +35,7 @@ class test_Template
 
 		void emptyTemplate()
 		{
-			Template tplt("");
+			Template tplt(""_L1);
 			QCOMPARE(tplt.getContextKeys().size(), 0);
 		}
 
@@ -88,15 +89,15 @@ class test_Template
 
 		void renderErrorPage()
 		{
-			QString title("test titel");
-			QString application_link("application_link");
-			QString msg_header("nachrichten header");
-			QString msg_header_expl("nachricht");
-			QString error_msg("fehler");
-			QString error_msg_label("fehler label");
-			QString report_header("report_header");
-			QString report_link("report_link");
-			QString report_button("report_button");
+			QString title("test titel"_L1);
+			QString application_link("application_link"_L1);
+			QString msg_header("nachrichten header"_L1);
+			QString msg_header_expl("nachricht"_L1);
+			QString error_msg("fehler"_L1);
+			QString error_msg_label("fehler label"_L1);
+			QString report_header("report_header"_L1);
+			QString report_link("report_link"_L1);
+			QString report_button("report_button"_L1);
 
 			Template tplt = Template::fromFile(QStringLiteral(":/template.html"));
 
@@ -112,7 +113,7 @@ class test_Template
 
 			const auto& errorPage = tplt.render();
 			QCOMPARE(tplt.getContextKeys().size(), 9);
-			QVERIFY(!errorPage.contains(QLatin1Char('$')));
+			QVERIFY(!errorPage.contains('$'_L1));
 			QVERIFY(errorPage.contains(title));
 			QVERIFY(errorPage.contains(application_link));
 			QVERIFY(errorPage.contains(msg_header));
@@ -127,13 +128,13 @@ class test_Template
 
 		void renderAlreadyActivePage()
 		{
-			QString title("test titel");
-			QString application_link("application_link");
-			QString msg_header("nachrichten header");
-			QString msg_header_expl("nachricht");
-			QString content_header("inhalt header");
-			QString content_link("inhalt link");
-			QString content_button("inhalt button");
+			QString title("test titel"_L1);
+			QString application_link("application_link"_L1);
+			QString msg_header("nachrichten header"_L1);
+			QString msg_header_expl("nachricht"_L1);
+			QString content_header("inhalt header"_L1);
+			QString content_link("inhalt link"_L1);
+			QString content_button("inhalt button"_L1);
 
 			Template tplt = Template::fromFile(QStringLiteral(":/template.html"));
 
@@ -149,7 +150,7 @@ class test_Template
 			QTest::ignoreMessage(QtDebugMsg, "No parameter specified, replace with empty string: \"MESSAGE_SUBHEADER_LABEL\"");
 			const auto& errorPage = tplt.render();
 			QCOMPARE(tplt.getContextKeys().size(), 9);
-			QVERIFY(!errorPage.contains(QLatin1Char('$')));
+			QVERIFY(!errorPage.contains('$'_L1));
 			QVERIFY(errorPage.contains(title));
 			QVERIFY(errorPage.contains(application_link));
 			QVERIFY(errorPage.contains(msg_header));

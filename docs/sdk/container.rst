@@ -22,7 +22,7 @@ If you need to restore the configuration you can add a
 
 .. code-block:: sh
 
-  docker run --rm -p 127.0.0.1:24727:24727 governikus/ausweisapp
+  docker run --rm -p 127.0.0.1:24727:24727 governikus/ausweisapp2
 
 
 

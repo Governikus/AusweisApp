@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,10 +7,10 @@
 #include "ContentItem.h"
 
 #include <QAbstractListModel>
+#include <QList>
 #include <QSharedPointer>
 #include <QString>
 #include <QStringList>
-#include <QVector>
 
 class test_DiagnosisModel;
 
@@ -32,7 +32,7 @@ class SectionModel
 			ContentRole
 		};
 
-		QVector<ContentItem> mContentItems;
+		QList<ContentItem> mContentItems;
 
 	public:
 		explicit SectionModel(QObject* pParent = nullptr);
@@ -42,7 +42,7 @@ class SectionModel
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 		void removeAllItems();
-		void addContent(const QVector<ContentItem>& pContent);
+		void addContent(const QList<ContentItem>& pContent);
 		[[nodiscard]] QStringList getAsPlaintext(const QString& pPrependString = QString()) const;
 };
 

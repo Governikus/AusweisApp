@@ -15,7 +15,7 @@ Unterstützte C++17 Compiler:
 
 Notwendige Bibliotheken:
 
-- Qt >= 5.15
+- Qt >= 6.4
 
   - http://www.qt.io/download/
 
@@ -30,7 +30,7 @@ Notwendige Bibliotheken:
 
 Notwendige Tools:
 
-- CMake >= 3.13.0 (3.14.0 >= für iOS)
+- CMake >= 3.19.0
 
   - http://www.cmake.org
 
@@ -122,7 +122,7 @@ CMake
 
 - https://cmake.org/download/
 
-  - Getestet: 3.23.2
+  - Getestet: 3.28.3
 
   - Pfad zur CMake-Executable muss zur Path-Umgebungsvariable hinzugefügt werden
 
@@ -188,7 +188,7 @@ Python
 
 - https://www.python.org/downloads/
 
-  - Getestet: 3.10.5
+  - Getestet: 3.11.8
 
   - Pfad zur Python-Executable muss zur Path-Umgebungsvariable hinzugefügt werden
 
@@ -196,8 +196,8 @@ Python
 Perl
 """"
 
-- Sowohl für Qt als auch für OpenSSL ist Perl erforderlich. Für OpenSSL ist
-  relevant, welche Art von Pfaden (Unix oder Windows) Perl verwendet.
+- Für OpenSSL ist Perl erforderlich und relevant,
+  welche Art von Pfaden (Unix oder Windows) Perl verwendet.
 
     - Für Builds mit MinGW wird MSYS2 Perl benötigt.
 
@@ -221,10 +221,9 @@ Perl
 - ActivePerl/StrawberryPerl
 
     - Es kann entweder ActivePerl(https://www.activestate.com/products/perl/) oder
-      StrawberryPerl(https://strawberryperl.com/, hierbei den QTBUG-102828[1]
-      beachten) verwendet werden.
+      StrawberryPerl(https://strawberryperl.com/) verwendet werden.
 
-    - Getestet: strawberry-perl-5.32.1.1-64bit.msi
+    - Getestet: strawberry-perl-5.38.0.1-64bit-portable.zip (Nur der "perl" Ordner)
 
     - Pfad zur Perl-Executable muss zur Path-Umgebungsvariable hinzugefügt werden.
 
@@ -232,7 +231,6 @@ Perl
           vor andere Perl Installationen (z.B. MSYS2) aufgeführt wird, sodass
           diese Version anderen Perl Installationen vorgezogen wird.
 
-[2] https://bugreports.qt.io/browse/QTBUG-102828
 
 
 OpenSSL / Qt mit MinGW
@@ -311,25 +309,19 @@ Komponenten vorhanden sein:
 
   - https://developer.android.com/tools/sdk/ndk/index.html
 
-  - Getestet: r21e (https://wiki.qt.io/Qt_for_Android_known_issues)
+  - Getestet: r26c (https://wiki.qt.io/Qt_for_Android_known_issues)
 
 - Android SDK (cmdline) mit gesetztem ANDROID_SDK_ROOT
 
   - https://developer.android.com/studio#cmdline-tools
 
-  - Getestet: 26.1.1 / 3.0
+  - Getestet: 12.0
 
 - SDK build tools
 
   - https://developer.android.com/studio/releases/build-tools
 
-  - Getestet: 30.0.3
-
-- SDK platform tools
-
-  - https://developer.android.com/studio/releases/platform-tools
-
-  - Getestet: 30.0.3
+  - Getestet: 34.0.0
 
 - Um Qt erfolgreich zu bauen, ist mindestens ein API-Levelpaket von Android notwendig.
   Dieses sollte mindestens Level 21 sein. Nähere Informationen dazu

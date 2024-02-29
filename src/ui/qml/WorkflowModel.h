@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -31,12 +31,11 @@ class WorkflowModel
 	Q_PROPERTY(bool errorIsMasked READ isMaskedError NOTIFY fireResultChanged)
 	Q_PROPERTY(ReaderManagerPlugInType readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
 	Q_PROPERTY(bool isSmartSupported READ isSmartSupported NOTIFY fireSupportedPlugInTypesChanged)
-	Q_PROPERTY(QVector<ReaderManagerPlugInType> supportedPlugInTypes READ getSupportedReaderPlugInTypes NOTIFY fireSupportedPlugInTypesChanged)
+	Q_PROPERTY(QList<ReaderManagerPlugInType> supportedPlugInTypes READ getSupportedReaderPlugInTypes NOTIFY fireSupportedPlugInTypesChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isRemoteReader READ isRemoteReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isCurrentSmartCardAllowed READ isCurrentSmartCardAllowed NOTIFY fireIsCurrentSmartCardAllowedChanged)
 	Q_PROPERTY(QString eidTypeMismatchError READ eidTypeMismatchError NOTIFY fireEidTypeMismatchErrorChanged)
-	Q_PROPERTY(QString readerImage READ getReaderImage NOTIFY fireReaderImageChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
@@ -47,7 +46,6 @@ class WorkflowModel
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
-		QString mReaderImage;
 #if defined(Q_OS_IOS)
 		bool mRemoteScanWasRunning;
 #endif
@@ -74,12 +72,11 @@ class WorkflowModel
 		[[nodiscard]] bool isCurrentSmartCardAllowed() const;
 
 		[[nodiscard]] bool isSmartSupported() const;
-		[[nodiscard]] virtual QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
+		[[nodiscard]] virtual QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
 
 		[[nodiscard]] bool getNextWorkflowPending() const;
 
 		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
-		[[nodiscard]] QString getReaderImage() const;
 		[[nodiscard]] QString getStatusCodeImage() const;
 
 
@@ -106,9 +103,6 @@ class WorkflowModel
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(bool pIsAppInForeground);
-
-	public Q_SLOTS:
-		void onReaderManagerSignal();
 
 	Q_SIGNALS:
 		void fireWorkflowStarted();

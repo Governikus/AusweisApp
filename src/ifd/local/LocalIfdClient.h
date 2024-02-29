@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,7 +35,7 @@ class LocalIfdClient
 		void startDetection() override;
 		void stopDetection() override;
 		bool isDetecting() override;
-		QVector<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
+		QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 
 		[[nodiscard]] const QString& getPsk() const;
 

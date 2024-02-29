@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,7 +17,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -98,7 +98,7 @@ class test_Message
 		void createMsgHandlerReader()
 		{
 			MessageDispatcher dispatcher;
-			const auto& msg = dispatcher.processReaderChange(ReaderInfo("dummy reader"));
+			const auto& msg = dispatcher.processReaderChange(ReaderInfo("dummy reader"_L1));
 			QCOMPARE(msg.size(), 1);
 			QCOMPARE(msg.first(), QByteArray(R"({"attached":false,"msg":"READER","name":"dummy reader"})"));
 		}
@@ -134,7 +134,7 @@ class test_Message
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::VOID);
 
-			context->setReaderName("dummy");
+			context->setReaderName("dummy"_L1);
 			QVERIFY(!context->isStateApproved());
 			QCOMPARE(dispatcher.processStateChange(QStringLiteral("SomeUnknownState")), QByteArray());
 			QVERIFY(context->isStateApproved());
@@ -224,9 +224,9 @@ class test_Message
 
 		void finishAuthContext()
 		{
-			const QSharedPointer<AuthContext> context(new AuthContext(true, QUrl("http://dummy")));
+			const QSharedPointer<AuthContext> context(new AuthContext(true, QUrl("http://dummy"_L1)));
 			context->setStatus(GlobalStatus::Code::No_Error);
-			context->setRefreshUrl(QUrl("http://dummy"));
+			context->setRefreshUrl(QUrl("http://dummy"_L1));
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 

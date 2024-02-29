@@ -1,10 +1,8 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannelCommand.h"
-
-#include "apdu/CommandApdu.h"
 
 
 using namespace governikus;
@@ -57,17 +55,4 @@ void EstablishPaceChannelCommand::internalExecute()
 		mPaceOutput = getCardConnectionWorker()->establishPaceChannel(mPacePasswordId, mPacePassword, mEffectiveChat, mCertificateDescription);
 	}
 	setReturnCode(mPaceOutput.getPaceReturnCode());
-
-	if (mPacePasswordId == PacePasswordId::PACE_PUK && getReturnCode() == CardReturnCode::OK)
-	{
-		const CommandApdu cmdApdu(Ins::RESET_RETRY_COUNTER, CommandApdu::UNBLOCK, CommandApdu::PIN);
-		auto [returnCode, response] = getCardConnectionWorker()->transmit(cmdApdu);
-		setReturnCode(returnCode);
-		if (getReturnCode() == CardReturnCode::OK && response.getSW1() == SW1::ERROR_COMMAND_NOT_ALLOWED)
-		{
-			getCardConnectionWorker()->setPukInoperative();
-			mPaceOutput.setPaceReturnCode(CardReturnCode::PUK_INOPERATIVE);
-			setReturnCode(mPaceOutput.getPaceReturnCode());
-		}
-	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.CheckResultView
@@ -64,7 +64,9 @@ CheckResultSuggestionView {
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Retry")
 		//: LABEL ANDROID IOS
-		text: qsTr("No supported ID card was detected. The %1 supports:<p><ul><li>German ID cards</li><li>Electronic residence permits (eAT)</li><li>eID cards</li></ul></p>If you have used one of the above documents and this error message still appears, please restart the check.<br><br>Tip: Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.").arg(Qt.application.name)
+		hintText: qsTr("Try a different card position, make sure that you do not move the ID card during the check and that there are no other NFC cards (e.g. credit cards) near the device.")
+		//: LABEL ANDROID IOS
+		text: qsTr("No supported ID card was detected. The %1 supports:<p><ul><li>German ID cards</li><li>Electronic residence permits (eAT)</li><li>eID cards for citizen of the EU/EEA/</li></ul></p>If you have used one of the above documents and this error message still appears, please restart the check.").arg(Qt.application.name)
 
 		//: LABEL ANDROID IOS
 		title: qsTr("No supported card detected")
@@ -123,7 +125,7 @@ CheckResultSuggestionView {
 		//: LABEL ANDROID IOS
 		continueButtonText: qsTr("Continue")
 		//: LABEL ANDROID IOS
-		text: qsTr("The ID card PIN has been entered incorrectly twice in a row. This is why you must first enter the six-digit Card Access Number (CAN) for the next identification process. You can find it at the bottom right of the front of your ID card.<br><br>You may now try the function: \"See my personal data\". There you can also use the CAN to unblock the ID card PIN.")
+		text: qsTr("The ID card PIN has been entered incorrectly 2 times in a row. This is why you must first enter the 6-digit Card Access Number (CAN) for the next identification process. You can find it at the bottom right of the front of your ID card.<br><br>You may now try the function: \"See my personal data\". There you can also use the CAN to unblock the ID card PIN.")
 
 		//: LABEL ANDROID IOS
 		title: qsTr("ID card PIN suspended")
@@ -139,7 +141,7 @@ CheckResultSuggestionView {
 		hintButtonText: PinResetInformationModel.pinResetActionText
 		hintText: PinResetInformationModel.noPinAndNoPukHint
 		//: LABEL ANDROID IOS
-		text: qsTr("The ID card PIN has been entered incorrectly thrice. Therefore, you must first enter the ten-digit PUK during the next authentication process. You can find it in the PIN letter you received after applying for your ID card.<br><br>You may now try the function: \"See my personal data\". Have your PUK ready to unlock the ID card PIN.")
+		text: qsTr("The ID card PIN has been entered incorrectly 3 times. Therefore, you must first enter the 10-digit PUK during the next authentication process. You can find it in the PIN letter you received after applying for your ID card.<br><br>You may now try the function: \"See my personal data\". Have your PUK ready to unlock the ID card PIN.")
 
 		//: LABEL ANDROID IOS
 		title: qsTr("ID card PIN blocked")

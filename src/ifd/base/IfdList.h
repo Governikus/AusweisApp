@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,7 +11,7 @@
 #include "IfdDescriptor.h"
 #include "IfdListEntry.h"
 
-#include <QVector>
+#include <QList>
 
 
 namespace governikus
@@ -33,7 +33,7 @@ class IfdList
 
 		virtual void update(const IfdDescriptor& pDescriptor) = 0;
 		virtual void clear() = 0;
-		[[nodiscard]] virtual QVector<QSharedPointer<IfdListEntry>> getIfdList() const;
+		[[nodiscard]] virtual QList<QSharedPointer<IfdListEntry>> getIfdList() const;
 };
 
 } // namespace governikus

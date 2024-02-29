@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class BaseCardCommandDummy
@@ -56,7 +57,7 @@ class test_BaseCardCommand
 
 		void commandDone()
 		{
-			MockReader reader("dummy reader");
+			MockReader reader("dummy reader"_L1);
 			BaseCardCommandDummy command(&reader);
 			QCOMPARE(command.getReturnCode(), CardReturnCode::UNKNOWN);
 

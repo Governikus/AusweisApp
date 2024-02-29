@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -60,7 +60,7 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 
 	for (const auto& filePart : testFiles)
 	{
-		QFile file(dir.path() + QStringLiteral("/ausweisapp2_") + filePart + QStringLiteral(".qm"));
+		QFile file(dir.path() + QStringLiteral("/ausweisapp_") + filePart + QStringLiteral(".qm"));
 		QVERIFY(file.open(QIODevice::WriteOnly));
 		QVERIFY(file.write(reinterpret_cast<const char*>(qm_magic), sizeof(qm_magic)));
 		QVERIFY(file.write(reinterpret_cast<const char*>(qm_content), sizeof(qm_content)));

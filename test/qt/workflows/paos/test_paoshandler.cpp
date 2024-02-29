@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QByteArray>
@@ -11,6 +11,7 @@
 #include "paos/PaosHandler.h"
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -22,7 +23,7 @@ class test_paoshandler
 	private Q_SLOTS:
 		void parseDIDAuthenticateEAC1()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_AUTHENTICATE_EAC1);
 		}
@@ -31,7 +32,7 @@ class test_paoshandler
 		// test data of testbed (the attribute value of xsi:type contains a namespace identifier)
 		void parseDIDAuthenticateEAC1_fromTestbed()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_2.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_2.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_AUTHENTICATE_EAC1);
 		}
@@ -39,7 +40,7 @@ class test_paoshandler
 
 		void parseDIDAuthenticateEAC2()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_AUTHENTICATE_EAC2);
 		}
@@ -47,7 +48,7 @@ class test_paoshandler
 
 		void parseDIDAuthenticateEACAdditionalInputType()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEACAdditionalInput.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/DIDAuthenticateEACAdditionalInput.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::DID_AUTHENTICATE_EAC_ADDITIONAL_INPUT_TYPE);
 		}
@@ -55,7 +56,7 @@ class test_paoshandler
 
 		void parseInitializeFramework()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/InitializeFramework.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/InitializeFramework.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::INITIALIZE_FRAMEWORK);
 		}
@@ -63,7 +64,7 @@ class test_paoshandler
 
 		void parseStartPAOSResponse()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/StartPAOSResponse1.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::STARTPAOS_RESPONSE);
 		}
@@ -71,7 +72,7 @@ class test_paoshandler
 
 		void parseTransmit()
 		{
-			QByteArray initFW = TestFileHelper::readFile(":/paos/Transmit.xml");
+			QByteArray initFW = TestFileHelper::readFile(":/paos/Transmit.xml"_L1);
 			PaosHandler handler(initFW);
 			QVERIFY(handler.getDetectedPaosType() == PaosType::TRANSMIT);
 		}

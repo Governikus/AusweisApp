@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(ProviderConfigurationInfo)
@@ -93,8 +94,8 @@ class test_ProviderConfiguration
 			QCOMPARE(provider.getPhone(), QStringLiteral("0421 123456"));
 			QCOMPARE(provider.getEMail(), QStringLiteral("abc@def.de"));
 			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Am Fallturm 9\n28359 Bremen"));
-			QVERIFY(provider.getIcon()->lookupPath().endsWith("/CategoryA_button.svg"));
-			QVERIFY(provider.getImage()->lookupPath().endsWith("/CategoryA_bg.svg"));
+			QVERIFY(provider.getIcon()->lookupPath().endsWith("/CategoryA_button.svg"_L1));
+			QVERIFY(provider.getImage()->lookupPath().endsWith("/CategoryA_bg.svg"_L1));
 			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
 		}
 
@@ -140,14 +141,14 @@ class test_ProviderConfiguration
 			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
 			for (const auto& provider : providers)
 			{
-				QVERIFY(provider.getPhone().isEmpty() || provider.getPhone().startsWith("+49 "));
+				QVERIFY(provider.getPhone().isEmpty() || provider.getPhone().startsWith("+49 "_L1));
 			}
 		}
 
 
 		void checkCallCost_data()
 		{
-			QTest::addColumn<QString>("phone");
+			QTest::addColumn<QLatin1String>("phone");
 			QTest::addColumn<bool>("notNull");
 			QTest::addColumn<int>("freeSeconds");
 			QTest::addColumn<double>("landlineCentsPerMinute");
@@ -155,33 +156,33 @@ class test_ProviderConfiguration
 			QTest::addColumn<double>("mobileCentsPerMinute");
 			QTest::addColumn<double>("mobileCentsPerCall");
 
-			QTest::newRow("delimiter") << "+49  1-8/05-123456789" << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
-			QTest::newRow("notExisting") << "+49 123456" << false << 0 << 0.0 << 0.0 << 0.0 << 0.0;
-			QTest::newRow("01") << "+49 1371" << true << 0 << 0.0 << 14.0 << 0.0 << 0.0;
-			QTest::newRow("02") << "+49 1372" << true << 0 << 14.0 << 0.0 << 0.0 << 0.0;
-			QTest::newRow("03") << "+49 1376" << true << 0 << 0.0 << 25.0 << 0.0 << 0.0;
-			QTest::newRow("04") << "+49 1377" << true << 0 << 0.0 << 100.0 << 0.0 << 0.0;
-			QTest::newRow("05") << "+49 1378" << true << 0 << 0.0 << 50.0 << 0.0 << 0.0;
-			QTest::newRow("06") << "+49 1801" << true << 0 << 3.9 << 0.0 << 42.0 << 0.0;
-			QTest::newRow("07") << "+49 1802" << true << 0 << 0.0 << 6.0 << 42.0 << 0.0;
-			QTest::newRow("08") << "+49 1803" << true << 0 << 9.0 << 0.0 << 42.0 << 0.0;
-			QTest::newRow("09") << "+49 1804" << true << 0 << 0.0 << 20.0 << 42.0 << 0.0;
-			QTest::newRow("10") << "+49 1805" << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
-			QTest::newRow("11") << "+49 1806" << true << 0 << 0.0 << 20.0 << 0.0 << 60.0;
-			QTest::newRow("12") << "+49 1807" << true << 30 << 14.0 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("delimiter") << "+49  1-8/05-123456789"_L1 << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("notExisting") << "+49 123456"_L1 << false << 0 << 0.0 << 0.0 << 0.0 << 0.0;
+			QTest::newRow("01") << "+49 1371"_L1 << true << 0 << 0.0 << 14.0 << 0.0 << 0.0;
+			QTest::newRow("02") << "+49 1372"_L1 << true << 0 << 14.0 << 0.0 << 0.0 << 0.0;
+			QTest::newRow("03") << "+49 1376"_L1 << true << 0 << 0.0 << 25.0 << 0.0 << 0.0;
+			QTest::newRow("04") << "+49 1377"_L1 << true << 0 << 0.0 << 100.0 << 0.0 << 0.0;
+			QTest::newRow("05") << "+49 1378"_L1 << true << 0 << 0.0 << 50.0 << 0.0 << 0.0;
+			QTest::newRow("06") << "+49 1801"_L1 << true << 0 << 3.9 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("07") << "+49 1802"_L1 << true << 0 << 0.0 << 6.0 << 42.0 << 0.0;
+			QTest::newRow("08") << "+49 1803"_L1 << true << 0 << 9.0 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("09") << "+49 1804"_L1 << true << 0 << 0.0 << 20.0 << 42.0 << 0.0;
+			QTest::newRow("10") << "+49 1805"_L1 << true << 0 << 14.0 << 0.0 << 42.0 << 0.0;
+			QTest::newRow("11") << "+49 1806"_L1 << true << 0 << 0.0 << 20.0 << 0.0 << 60.0;
+			QTest::newRow("12") << "+49 1807"_L1 << true << 30 << 14.0 << 0.0 << 42.0 << 0.0;
 		}
 
 
 		void checkCallCost()
 		{
-			QFETCH(QString, phone);
+			QFETCH(QLatin1String, phone);
 			QFETCH(bool, notNull);
 			QFETCH(int, freeSeconds);
 			QFETCH(double, landlineCentsPerMinute);
 			QFETCH(double, landlineCentsPerCall);
 			QFETCH(double, mobileCentsPerMinute);
 			QFETCH(double, mobileCentsPerCall);
-			const ProviderConfigurationInfo provider(QString(), QString(), QString(), QString(), QString(), QString(""), phone);
+			const ProviderConfigurationInfo provider(QString(), QString(), QString(), QString(), QString(), ""_L1, phone);
 			const CallCost& callCost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
 
 			QVERIFY(notNull || callCost.isNull());
@@ -212,11 +213,11 @@ class test_ProviderConfiguration
 
 			const auto& address = QUrl(provider.getAddress());
 			QVERIFY(!address.host().isEmpty());
-			QCOMPARE(address.scheme(), QString("https"));
+			QCOMPARE(address.scheme(), "https"_L1);
 
 			const auto& homepage = QUrl(provider.getHomepage());
 			QVERIFY(!homepage.host().isEmpty());
-			QCOMPARE(homepage.scheme(), QString("https"));
+			QCOMPARE(homepage.scheme(), "https"_L1);
 
 			const auto& subjectUrls = provider.getSubjectUrls();
 			for (const auto& url : subjectUrls)
@@ -225,7 +226,7 @@ class test_ProviderConfiguration
 				{
 					const auto& subjectUrl = QUrl(url);
 					QVERIFY(!subjectUrl.host().isEmpty());
-					QCOMPARE(subjectUrl.scheme(), QString("https"));
+					QCOMPARE(subjectUrl.scheme(), "https"_L1);
 				}
 			}
 		}
@@ -329,7 +330,7 @@ class test_ProviderConfiguration
 				{
 					QUrl url(urlString);
 					QVERIFY(url.isValid());
-					QCOMPARE(urlString, QString("https://%1").arg(url.host()));
+					QCOMPARE(urlString, QStringLiteral("https://%1").arg(url.host()));
 
 					subjectUrls += urlString;
 					subjectUrlCounter++;
@@ -346,25 +347,25 @@ class test_ProviderConfiguration
 			for (const auto& provider : providers)
 			{
 				QVERIFY(QUrl(provider.getAddress()).isValid());
-				QVERIFY(!provider.getAddress().endsWith('/'));
-				QVERIFY(!provider.getAddress().endsWith('#'));
+				QVERIFY(!provider.getAddress().endsWith('/'_L1));
+				QVERIFY(!provider.getAddress().endsWith('#'_L1));
 				QVERIFY(QUrl(provider.getHomepage()).isValid());
-				QVERIFY(!provider.getHomepage().endsWith('/'));
-				QVERIFY(!provider.getHomepage().endsWith('#'));
+				QVERIFY(!provider.getHomepage().endsWith('/'_L1));
+				QVERIFY(!provider.getHomepage().endsWith('#'_L1));
 			}
 		}
 
 
 		void testInternalIds()
 		{
-			const QStringList internalIds = {"pinResetService"};
+			const QStringList internalIds = {};
 			const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
 
 			const ProviderConfigurationInfo empty;
 			QVERIFY(providerConfiguration->getProviderInfo(QStringLiteral("nonExistentId")) == empty);
 			for (const auto& id : internalIds)
 			{
-				QVERIFY2(providerConfiguration->getProviderInfo(id) != empty, qPrintable(QString("Internal ID %1 is not present").arg(id)));
+				QVERIFY2(providerConfiguration->getProviderInfo(id) != empty, qPrintable(QStringLiteral("Internal ID %1 is not present").arg(id)));
 			}
 
 			for (const auto& info : providerConfiguration->getProviderConfigurationInfos())
@@ -372,7 +373,7 @@ class test_ProviderConfiguration
 				const auto& id = info.getInternalId();
 				if (!id.isEmpty())
 				{
-					QVERIFY2(internalIds.contains(id), qPrintable(QString("Internal ID %1 is not known to test").arg(id)));
+					QVERIFY2(internalIds.contains(id), qPrintable(QStringLiteral("Internal ID %1 is not known to test").arg(id)));
 				}
 			}
 		}
@@ -388,7 +389,7 @@ class test_ProviderConfiguration
 				const auto& id = info.getInternalId();
 				if (!id.isEmpty())
 				{
-					QVERIFY2(!internalIds.contains(id), qPrintable(QString("Internal IDs must be unique, %1 already present").arg(id)));
+					QVERIFY2(!internalIds.contains(id), qPrintable(QStringLiteral("Internal IDs must be unique, %1 already present").arg(id)));
 					internalIds << id;
 				}
 			}

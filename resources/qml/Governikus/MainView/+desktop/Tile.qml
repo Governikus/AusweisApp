@@ -1,67 +1,92 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
 import Governikus.Type.ApplicationModel
 import Governikus.Type.SettingsModel
 
-RoundedRectangle {
+AbstractButton {
 	id: root
 
-	property alias image: image.source
-	property alias title: text.text
+	Accessible.name: ApplicationModel.stripHtmlTags(text)
+	Layout.fillHeight: true
+	Layout.fillWidth: true
+	implicitHeight: 1
+	implicitWidth: 1
+	padding: 2 * Constants.pane_padding
 
-	signal clicked
+	background: GPaneBackground {
+		id: pane
 
-	Accessible.name: ApplicationModel.stripHtmlTags(title)
-	Accessible.role: Accessible.Button
-	borderColor: Style.color.pane_border
-	color: mouseArea.pressed ? Style.color.control : Style.color.pane
-	layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
-	opacity: SettingsModel.showBetaTesting ? 0.9 : 1.0
+		opacity: SettingsModel.showBetaTesting ? 0.9 : 1.0
 
-	layer.effect: GDropShadow {
+		FocusFrame {
+			marginFactor: 0.8
+			radius: parent.radius * 1.2
+			scope: root
+		}
 	}
-
-	Keys.onSpacePressed: clicked()
-
-	MouseArea {
-		id: mouseArea
-
-		anchors.fill: parent
-		cursorShape: Qt.PointingHandCursor
-
-		onClicked: root.clicked()
-	}
-	FocusFrame {
-	}
-	Column {
+	contentItem: Column {
 		spacing: Constants.component_spacing
 
-		anchors {
-			left: parent.left
-			margins: 2 * Constants.pane_padding
-			right: parent.right
-			top: parent.top
-		}
 		TintableIcon {
 			id: image
 
-			readonly property int imageHeight: Style.dimens.huge_icon_size
-
-			sourceSize.height: imageHeight
-			tintColor: mouseArea.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_subline
+			source: root.icon.source
+			sourceSize.height: Style.dimens.huge_icon_size
+			tintColor: Style.color.text_title_focus
 		}
 		GText {
-			id: text
+			id: label
 
-			color: mouseArea.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_title
+			color: Style.color.text_title
 			horizontalAlignment: Text.AlignLeft
-			textStyle: Style.text.navigation
+			text: root.text
+			textStyle: Style.text.tile
 			width: parent.width
 		}
+	}
+
+	Item {
+		id: d
+
+		states: [
+			State {
+				name: "pressed"
+				when: root.pressed
+
+				PropertyChanges {
+					image.tintColor: Style.color.text_title_pressed
+					label.color: Style.color.text_title_pressed
+					pane.border.color: Style.color.pane_border_pressed
+					pane.color: Style.color.pane_pressed
+				}
+			},
+			State {
+				name: "hovered"
+				when: root.hovered
+
+				PropertyChanges {
+					image.tintColor: Style.color.text_title_hovered
+					label.color: Style.color.text_title_hovered
+					pane.border.color: Style.color.pane_border_hovered
+					pane.color: Style.color.pane_hovered
+				}
+			},
+			State {
+				name: "focus"
+				when: root.activeFocus && plugin.showFocusIndicator
+
+				PropertyChanges {
+					image.tintColor: Style.color.text_title_focus
+					label.color: Style.color.text_title_focus
+				}
+			}
+		]
 	}
 }

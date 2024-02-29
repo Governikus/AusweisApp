@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -29,13 +29,14 @@ AbstractButton {
 	Accessible.name: text
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
-	Layout.minimumWidth: Style.dimens.min_button_width
+	Layout.minimumWidth: background ? Style.dimens.min_button_width : -1
 	ToolTip.delay: Constants.toolTipDelay
 	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
 	ToolTip.visible: hovered && ToolTip.text !== ""
 	activeFocusOnTab: enableButton
 	font.pixelSize: textStyle.textSize
-	horizontalPadding: 8
+	font.weight: textStyle.fontWeight
+	horizontalPadding: Constants.pane_padding
 	verticalPadding: 6
 
 	background: Rectangle {
@@ -45,7 +46,6 @@ AbstractButton {
 		radius: Style.dimens.control_radius
 
 		FocusFrame {
-			borderColor: Style.color.control_border
 			marginFactor: 0.8
 			radius: parent.radius * 1.2
 			scope: root
@@ -57,16 +57,16 @@ AbstractButton {
 
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
 			Layout.minimumHeight: root.font.pixelSize + topPadding + bottomPadding
-			Layout.minimumWidth: Style.dimens.min_button_width - leftPadding - rightPadding
+			Layout.minimumWidth: background ? Style.dimens.min_button_width - leftPadding - rightPadding : -1
 			spacing: 0
 			z: 1
 
 			TintableIcon {
 				id: buttonIcon
 
-				Layout.rightMargin: Constants.text_spacing
+				Layout.rightMargin: Constants.groupbox_spacing
 				source: root.icon.source
-				sourceSize.height: contentLayout.Layout.minimumHeight
+				sourceSize.height: 1.2 * buttonText.effectiveFirstLineHeight
 				tintColor: d.contentColor
 				tintEnabled: tintIcon
 				visible: source != ""
@@ -84,12 +84,6 @@ AbstractButton {
 				maximumLineCount: 1
 				text: root.text
 				visible: text !== ""
-
-				FocusFrame {
-					marginFactor: 0.7
-					scope: root
-					visible: !root.background
-				}
 			}
 			GSpacer {
 				Layout.fillWidth: true
@@ -115,10 +109,9 @@ AbstractButton {
 				when: !root.enabled || !root.enableButton
 
 				PropertyChanges {
-					borderColor: Style.color.control_border_disabled
-					color: Style.color.control_disabled
-					contentColor: root.textDisabledColor
-					target: d
+					d.borderColor: Style.color.control_border_disabled
+					d.color: Style.color.control_disabled
+					d.contentColor: root.textDisabledColor
 				}
 			},
 			State {
@@ -126,21 +119,19 @@ AbstractButton {
 				when: root.pressed
 
 				PropertyChanges {
-					borderColor: Style.color.control_border_pressed
-					color: Style.color.control_pressed
-					contentColor: root.textHighlightColor
-					target: d
+					d.borderColor: Style.color.control_border_pressed
+					d.color: Style.color.control_pressed
+					d.contentColor: root.textHighlightColor
 				}
 			},
 			State {
-				name: "hover"
+				name: "hovered"
 				when: root.hovered
 
 				PropertyChanges {
-					borderColor: Style.color.control_border_hover
-					color: Style.color.control_hover
-					contentColor: root.textStyle === Style.text.button ? Style.color.control_content_hover : root.textHighlightColor
-					target: d
+					d.borderColor: Style.color.control_border_hovered
+					d.color: Style.color.control_hovered
+					d.contentColor: root.textStyle === Style.text.button ? Style.color.control_content_hovered : root.textHighlightColor
 				}
 			},
 			State {
@@ -148,13 +139,20 @@ AbstractButton {
 				when: !root.checked && checkable
 
 				PropertyChanges {
-					borderColor: Style.color.control_border_unchecked
-					color: Style.color.control_unchecked
-					contentColor: Style.color.control_content_unchecked
-					target: d
+					d.borderColor: Style.color.control_border_unchecked
+					d.color: Style.color.control_unchecked
+					d.contentColor: Style.color.control_content_unchecked
 				}
 			}
 		]
+		transitions: [
+			EaseInPressedTransition {
+				target: d
+			}
+		]
+	}
+	FocusFrame {
+		visible: !root.background
 	}
 	MouseArea {
 		id: mouseArea

@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
 
 #include "SecurityProtocol.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/CommandData.h"
 #include "apdu/PacePinStatus.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/PaceInfo.h"
 #include "pace/KeyAgreement.h"
 
@@ -146,10 +146,10 @@ bool PaceHandler::isSupportedProtocol(const QSharedPointer<const PaceInfo>& pPac
 
 CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
-	CommandData cmdData;
-	cmdData.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, mPaceInfo->getOid());
-	cmdData.append(CommandData::PUBLIC_KEY_REFERENCE, pPasswordId);
-	cmdData.append(CommandData::PRIVATE_KEY_REFERENCE, mPaceInfo->getParameterId());
+	ASN1Struct cmdData;
+	cmdData.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, mPaceInfo->getOid());
+	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, pPasswordId);
+	cmdData.append(ASN1Struct::PRIVATE_KEY_REFERENCE, mPaceInfo->getParameterId());
 	if (!mChat.isNull())
 	{
 		cmdData.append(mChat);

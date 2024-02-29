@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdEstablishPaceChannel.h"
@@ -122,7 +122,7 @@ QByteArray IfdEstablishPaceChannel::toByteArray(IfdVersion::Version pIfdVersion,
 	}
 	else
 	{
-		result[INPUT_DATA()] = QString::fromLatin1(mInputData.createCommandDataCcid().toHex());
+		result[INPUT_DATA()] = QString::fromLatin1(mInputData.createASN1StructCcid().toHex());
 	}
 
 	return IfdMessage::toByteArray(result);

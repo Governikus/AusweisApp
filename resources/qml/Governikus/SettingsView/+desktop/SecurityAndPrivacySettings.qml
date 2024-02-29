@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -15,52 +15,59 @@ ColumnLayout {
 
 	GPane {
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
+		contentPadding: 0
+		spacing: 0
 		//: LABEL DESKTOP
 		title: qsTr("Onscreen keypad")
 
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.useScreenKeyboard
 
 			//: LABEL DESKTOP
-			title: qsTr("Use on screen keypad for PIN entry")
+			text: qsTr("Use on screen keypad for PIN entry")
 
 			onCheckedChanged: SettingsModel.useScreenKeyboard = checked
 		}
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
 			enabled: SettingsModel.useScreenKeyboard
 
 			//: LABEL DESKTOP
-			title: qsTr("Shuffle digits of on screen keypad")
+			text: qsTr("Shuffle digits of on screen keypad")
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 		}
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: !SettingsModel.visualPrivacy
 			//: LABEL DESKTOP
 			description: qsTr("Visually highlight key presses on screen keypad")
+			drawBottomCorners: true
 			enabled: SettingsModel.useScreenKeyboard
 
 			//: LABEL DESKTOP
-			title: qsTr("Button animation")
+			text: qsTr("Button animation")
 
 			onCheckedChanged: SettingsModel.visualPrivacy = !checked
 		}
 	}
 	GPane {
 		Layout.fillWidth: true
+		contentPadding: 0
 		spacing: Constants.component_spacing
 		//: LABEL DESKTOP
 		title: qsTr("Software updates")
 		visible: SettingsModel.autoUpdateAvailable
 
-		LabeledSwitch {
+		GSwitch {
+			Layout.fillWidth: true
 			checked: SettingsModel.autoUpdateCheck
 			enabled: !SettingsModel.autoUpdateCheckSetByAdmin
 
 			//: LABEL DESKTOP
-			title: qsTr("Check at program start")
+			text: qsTr("Check at program start")
 
 			onCheckedChanged: SettingsModel.autoUpdateCheck = checked
 		}
@@ -68,7 +75,9 @@ ColumnLayout {
 			readonly property bool updateAvailable: SettingsModel.appUpdateData.updateAvailable
 			readonly property bool updateValid: SettingsModel.appUpdateData.valid
 
-			Layout.fillWidth: true
+			Layout.bottomMargin: Constants.pane_padding
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Constants.pane_padding
 			spacing: Constants.component_spacing
 
 			GButton {
@@ -82,7 +91,7 @@ ColumnLayout {
 			}
 			GText {
 				activeFocusOnTab: true
-				color: (parent.updateAvailable || !parent.updateValid) ? Style.color.text_warning : Style.color.control
+				color: (parent.updateAvailable || !parent.updateValid) ? Style.color.warning : Style.color.text_subline
 				text: {
 					if (parent.updateAvailable && parent.updateValid) {
 						//: LABEL DESKTOP An update is available, the new version is supplied to the user.

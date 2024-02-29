@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,6 +15,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_MsgHandlerReaderList
@@ -66,7 +67,7 @@ class test_MsgHandlerReaderList
 
 		void oneReaderWithoutCard()
 		{
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER_LIST"})");
@@ -76,7 +77,7 @@ class test_MsgHandlerReaderList
 
 		void oneReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig());
 
 			MessageDispatcher dispatcher;
@@ -87,19 +88,19 @@ class test_MsgHandlerReaderList
 
 		void multipleReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig());
-			reader = MockReaderManagerPlugIn::getInstance().addReader("ReaderMock");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("ReaderMock"_L1);
 			reader->setCard(MockCardConfig());
-			MockReaderManagerPlugIn::getInstance().addReader("ReaderMockXYZ");
+			MockReaderManagerPlugIn::getInstance().addReader("ReaderMockXYZ"_L1);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock"_L1);
 			reader->setCard(MockCardConfig());
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(CardInfo(CardType::UNKNOWN));
 			reader->setReaderInfo(info);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard");
+			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard"_L1);
 			reader->setCard(MockCardConfig());
 			auto cardInfo = CardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
 			info = reader->getReaderInfo();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -189,7 +189,7 @@ QUrl PersonalizationContext::getAppletServiceUrl(const QString& pArg) const
 }
 
 
-QVector<AcceptedEidType> PersonalizationContext::getAcceptedEidTypes() const
+QList<AcceptedEidType> PersonalizationContext::getAcceptedEidTypes() const
 {
 	if (!getDidAuthenticateEac1())
 	{

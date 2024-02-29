@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateDataModel.h"
@@ -166,15 +166,6 @@ const QUrl& AppUpdateDataModel::getNotesUrl() const
 const QString& AppUpdateDataModel::getNotes() const
 {
 	return Env::getSingleton<AppUpdater>()->getUpdateData().getNotes();
-}
-
-
-void AppUpdateDataModel::skipUpdate() const
-{
-	if (isValid())
-	{
-		Env::getSingleton<AppUpdater>()->skipVersion(getVersion());
-	}
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSelfAuthenticationData.h"
@@ -8,19 +8,19 @@
 
 #include "MockNetworkManager.h"
 
+#include <QList>
 #include <QPair>
-#include <QVector>
 #include <QtTest>
 
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
 using Pair = QPair<QByteArray, QByteArray>;
-Q_DECLARE_METATYPE(QVector<Pair>)
+Q_DECLARE_METATYPE(QList<Pair>)
 
 
 class StateGenericProviderCommunicationImpl
@@ -111,7 +111,7 @@ class test_StateGenericProviderCommunication
 			QTest::ignoreMessage(QtDebugMsg, "Operation aborted");
 			mState->onSslHandshakeDone();
 
-			QTest::ignoreMessage(QtInfoMsg, QRegularExpression("^Used session cipher"));
+			QTest::ignoreMessage(QtInfoMsg, QRegularExpression("^Used session cipher"_L1));
 			mState->mReply->setSslConfiguration(QSslConfiguration());
 			mState->onSslHandshakeDone();
 		}
@@ -138,40 +138,40 @@ class test_StateGenericProviderCommunication
 
 		void logging_data()
 		{
-			QTest::addColumn<QVector<Pair>>("attributes");
+			QTest::addColumn<QList<Pair>>("attributes");
 			QTest::addColumn<bool>("enabled");
 
-			QTest::newRow("no attr") << QVector<Pair>() << true;
+			QTest::newRow("no attr") << QList<Pair>() << true;
 
-			QTest::newRow("single attr lower-case single") << QVector<Pair>({
+			QTest::newRow("single attr lower-case single") << QList<Pair>({
 						{QByteArray("pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("single attr upper-case single") << QVector<Pair>({
+			QTest::newRow("single attr upper-case single") << QList<Pair>({
 						{QByteArray("Pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("single attr lower-case multi") << QVector<Pair>({
+			QTest::newRow("single attr lower-case multi") << QList<Pair>({
 						{QByteArray("pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("single attr upper-case multi") << QVector<Pair>({
+			QTest::newRow("single attr upper-case multi") << QList<Pair>({
 						{QByteArray("Pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("single attr other") << QVector<Pair>({
+			QTest::newRow("single attr other") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")}
 					}) << true;
 
-			QTest::newRow("multi attr lower-case single") << QVector<Pair>({
+			QTest::newRow("multi attr lower-case single") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("multi attr upper-case single") << QVector<Pair>({
+			QTest::newRow("multi attr upper-case single") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("Pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("multi attr lower-case multi") << QVector<Pair>({
+			QTest::newRow("multi attr lower-case multi") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("multi attr upper-case multi") << QVector<Pair>({
+			QTest::newRow("multi attr upper-case multi") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("Pragma"), QByteArray("no-log no-cache")}
 					}) << false;
@@ -180,7 +180,7 @@ class test_StateGenericProviderCommunication
 
 		void logging()
 		{
-			QFETCH(QVector<Pair>, attributes);
+			QFETCH(QList<Pair>, attributes);
 			QFETCH(bool, enabled);
 
 			MockNetworkReply* reply = new MockNetworkReply(QByteArrayLiteral("TEST"));
@@ -190,14 +190,14 @@ class test_StateGenericProviderCommunication
 			}
 			mNetworkManager->setNextReply(reply);
 
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Status Code: 200 \"OK\""));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Status Code: 200 \"OK\""_L1));
 			if (enabled)
 			{
-				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Received raw data:\n TEST"));
+				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Received raw data:\n TEST"_L1));
 			}
 			else
 			{
-				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("no-log was requested, skip logging of raw data"));
+				QTest::ignoreMessage(QtDebugMsg, QRegularExpression("no-log was requested, skip logging of raw data"_L1));
 			}
 
 			QSignalSpy spyMock(mNetworkManager.data(), &MockNetworkManager::fireReply);
@@ -249,9 +249,9 @@ class test_StateGenericProviderCommunication
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), globalStatusCode);
 			const FailureCode::FailureInfoMap infoMap {
-				{FailureCode::Info::State_Name, "StateGenericProviderCommunicationImpl"},
+				{FailureCode::Info::State_Name, "StateGenericProviderCommunicationImpl"_L1},
 				{FailureCode::Info::Http_Status_Code, QString::number(httpStatus)},
-				{FailureCode::Info::Network_Error, "Unknown error"}
+				{FailureCode::Info::Network_Error, "Unknown error"_L1}
 			};
 			const FailureCode failureCode(failureCodeReason, infoMap);
 			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);

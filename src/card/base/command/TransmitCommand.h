@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -26,7 +26,7 @@ class TransmitCommand
 	friend class ::test_CardConnection;
 
 	private:
-		const QVector<InputAPDUInfo> mInputApduInfos;
+		const QList<InputAPDUInfo> mInputApduInfos;
 		const QString mSlotHandle;
 		QByteArrayList mOutputApduAsHex;
 		bool mSecureMessagingStopped;
@@ -37,7 +37,7 @@ class TransmitCommand
 
 	public:
 		explicit TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-				const QVector<InputAPDUInfo>& pInputApduInfos,
+				const QList<InputAPDUInfo>& pInputApduInfos,
 				const QString& pSlotHandle);
 
 		static bool isAcceptable(const InputAPDUInfo& pInputApduInfo, const ResponseApdu& pResponse);

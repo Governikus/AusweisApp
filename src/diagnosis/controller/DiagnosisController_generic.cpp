@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,8 +13,8 @@
 using namespace governikus;
 
 
-void DiagnosisController::getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
-		QVector<DiagnosisContext::ComponentInfo>& pDrivers)
+void DiagnosisController::getPcscInfo(QList<DiagnosisContext::ComponentInfo>& pComponents,
+		QList<DiagnosisContext::ComponentInfo>& pDrivers)
 {
 	Q_UNUSED(pComponents)
 	Q_UNUSED(pDrivers)

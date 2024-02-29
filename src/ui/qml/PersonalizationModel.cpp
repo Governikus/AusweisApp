@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PersonalizationModel.h"
@@ -108,7 +108,7 @@ void PersonalizationModel::resetPersonalizationContext(const QSharedPointer<Pers
 #endif
 
 
-QVector<ReaderManagerPlugInType> PersonalizationModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPlugInType> PersonalizationModel::getSupportedReaderPlugInTypes() const
 {
 	auto plugins = WorkflowModel::getSupportedReaderPlugInTypes();
 	plugins.removeOne(ReaderManagerPlugInType::SMART);

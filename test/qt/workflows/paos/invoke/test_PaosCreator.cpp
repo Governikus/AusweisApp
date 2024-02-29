@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(PaosCreator::Namespace)
@@ -68,12 +69,12 @@ class test_PaosCreator
 
 			QVERIFY(elem.contains("<content></content>"));
 
-			creator.mText = "some test";
+			creator.mText = "some test"_L1;
 			elem = creator.marshall();
 			QVERIFY(elem.contains("<content></content>")); // marshall() can be called once!
 
 			test_PaosCreatorDummy creator2;
-			creator2.mText = "hello again";
+			creator2.mText = "hello again"_L1;
 			creator2.mNamespace = true;
 			elem = creator2.marshall();
 			QVERIFY(elem.contains("<soap:content>hello again</soap:content>"));
@@ -105,29 +106,29 @@ class test_PaosCreator
 		void namespaces_data()
 		{
 			QTest::addColumn<PaosCreator::Namespace>("namespaceName");
-			QTest::addColumn<QString>("suffix");
-			QTest::addColumn<QString>("namespaceString");
-			QTest::addColumn<QString>("prefixString");
-			QTest::addColumn<QString>("type");
+			QTest::addColumn<QLatin1String>("suffix");
+			QTest::addColumn<QLatin1String>("namespaceString");
+			QTest::addColumn<QLatin1String>("prefixString");
+			QTest::addColumn<QLatin1String>("type");
 
-			QTest::newRow("addressing") << PaosCreator::Namespace::ADDRESSING << QString("test") << QString("http://www.w3.org/2005/03/addressing") << QString("wsa:test") << QString("wsa:test");
-			QTest::newRow("dss") << PaosCreator::Namespace::DSS << QString() << QString("urn:oasis:names:tc:dss:1.0:core:schema") << QString("xmlns:dss") << QString("dss:");
-			QTest::newRow("ecard") << PaosCreator::Namespace::ECARD << QString("ecard") << QString("http://www.bsi.bund.de/ecard/api/1.1") << QString("ecard:ecard") << QString("ecard:ecard");
-			QTest::newRow("paos") << PaosCreator::Namespace::PAOS << QString("") << QString("urn:liberty:paos:2006-08") << QString("paos:") << QString("paos:");
-			QTest::newRow("techschema") << PaosCreator::Namespace::TECHSCHEMA << QString(" ") << QString("urn:iso:std:iso-iec:24727:tech:schema") << QString("iso: ") << QString("iso: ");
-			QTest::newRow("xsd") << PaosCreator::Namespace::XSD << QString() << QString("http://www.w3.org/2001/XMLSchema") << QString("xmlns:xsd") << QString("xsd:");
-			QTest::newRow("xsi") << PaosCreator::Namespace::XSI << QString() << QString("http://www.w3.org/2001/XMLSchema-instance") << QString("xmlns:xsi") << QString("xsi:");
-			QTest::newRow("soap") << PaosCreator::Namespace::SOAP << QString("test") << QString("http://schemas.xmlsoap.org/soap/envelope/") << QString("soap:test") << QString("soap:test");
+			QTest::newRow("addressing") << PaosCreator::Namespace::ADDRESSING << "test"_L1 << "http://www.w3.org/2005/03/addressing"_L1 << "wsa:test"_L1 << "wsa:test"_L1;
+			QTest::newRow("dss") << PaosCreator::Namespace::DSS << QLatin1String() << "urn:oasis:names:tc:dss:1.0:core:schema"_L1 << "xmlns:dss"_L1 << "dss:"_L1;
+			QTest::newRow("ecard") << PaosCreator::Namespace::ECARD << "ecard"_L1 << "http://www.bsi.bund.de/ecard/api/1.1"_L1 << "ecard:ecard"_L1 << "ecard:ecard"_L1;
+			QTest::newRow("paos") << PaosCreator::Namespace::PAOS << ""_L1 << "urn:liberty:paos:2006-08"_L1 << "paos:"_L1 << "paos:"_L1;
+			QTest::newRow("techschema") << PaosCreator::Namespace::TECHSCHEMA << " "_L1 << "urn:iso:std:iso-iec:24727:tech:schema"_L1 << "iso: "_L1 << "iso: "_L1;
+			QTest::newRow("xsd") << PaosCreator::Namespace::XSD << QLatin1String() << "http://www.w3.org/2001/XMLSchema"_L1 << "xmlns:xsd"_L1 << "xsd:"_L1;
+			QTest::newRow("xsi") << PaosCreator::Namespace::XSI << QLatin1String() << "http://www.w3.org/2001/XMLSchema-instance"_L1 << "xmlns:xsi"_L1 << "xsi:"_L1;
+			QTest::newRow("soap") << PaosCreator::Namespace::SOAP << "test"_L1 << "http://schemas.xmlsoap.org/soap/envelope/"_L1 << "soap:test"_L1 << "soap:test"_L1;
 		}
 
 
 		void namespaces()
 		{
 			QFETCH(PaosCreator::Namespace, namespaceName);
-			QFETCH(QString, suffix);
-			QFETCH(QString, namespaceString);
-			QFETCH(QString, prefixString);
-			QFETCH(QString, type);
+			QFETCH(QLatin1String, suffix);
+			QFETCH(QLatin1String, namespaceString);
+			QFETCH(QLatin1String, prefixString);
+			QFETCH(QLatin1String, type);
 
 			QCOMPARE(PaosCreator::getNamespace(namespaceName), namespaceString);
 			QCOMPARE(PaosCreator::getNamespacePrefix(namespaceName, suffix), prefixString);

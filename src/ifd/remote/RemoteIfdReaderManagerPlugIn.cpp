@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdReaderManagerPlugIn.h"
@@ -15,7 +15,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
-void RemoteIfdReaderManagerPlugIn::connectToPairedReaders()
+void RemoteIfdReaderManagerPlugIn::connectToPairedReaders() const
 {
 	if (!mConnectToPairedReaders)
 	{
@@ -30,7 +30,7 @@ void RemoteIfdReaderManagerPlugIn::connectToPairedReaders()
 }
 
 
-void RemoteIfdReaderManagerPlugIn::continueConnectToPairedReaders(const QVector<QSharedPointer<IfdListEntry>>& pRemoteDevices)
+void RemoteIfdReaderManagerPlugIn::continueConnectToPairedReaders(const QList<QSharedPointer<IfdListEntry>>& pRemoteDevices)
 {
 	const auto ifdClient = getIfdClient();
 
@@ -125,7 +125,7 @@ void RemoteIfdReaderManagerPlugIn::stopScan(const QString& pError)
 }
 
 
-IfdClient* RemoteIfdReaderManagerPlugIn::getIfdClient()
+IfdClient* RemoteIfdReaderManagerPlugIn::getIfdClient() const
 {
 	return Env::getSingleton<RemoteIfdClient>();
 }

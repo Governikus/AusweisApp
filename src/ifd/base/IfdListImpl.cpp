@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdListImpl.h"
@@ -63,7 +63,7 @@ void IfdListImpl::clear()
 }
 
 
-QVector<QSharedPointer<IfdListEntry>> IfdListImpl::getIfdList() const
+QList<QSharedPointer<IfdListEntry>> IfdListImpl::getIfdList() const
 {
 	return mResponsiveList;
 }
@@ -72,7 +72,7 @@ QVector<QSharedPointer<IfdListEntry>> IfdListImpl::getIfdList() const
 void IfdListImpl::onProcessUnresponsiveRemoteReaders()
 {
 	const QTime threshold(QTime::currentTime().addMSecs(-mReaderResponsiveTimeout));
-	QMutableVectorIterator<QSharedPointer<IfdListEntry>> i(mResponsiveList);
+	QMutableListIterator<QSharedPointer<IfdListEntry>> i(mResponsiveList);
 	while (i.hasNext())
 	{
 		const QSharedPointer<IfdListEntry> entry = i.next();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,7 +16,7 @@
 #include "TestAuthContext.h"
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -42,7 +42,7 @@ class test_MsgHandlerAccessRights
 	QSharedPointer<TestAuthContext> getContextWithChat(bool pCanAllowed = false)
 	{
 		Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(pCanAllowed);
-		auto context = QSharedPointer<TestAuthContext>::create(":/paos/DIDAuthenticateEAC1.xml");
+		auto context = QSharedPointer<TestAuthContext>::create(":/paos/DIDAuthenticateEAC1.xml"_L1);
 		context->setRequiredAccessRights({AccessRight::READ_DG01, AccessRight::READ_DG04, AccessRight::READ_DG17});
 		context->setOptionalAccessRights({AccessRight::AGE_VERIFICATION, AccessRight::READ_DG05});
 		Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
@@ -75,7 +75,7 @@ class test_MsgHandlerAccessRights
 
 		void nonExistingTransactionInfo()
 		{
-			const auto& context = QSharedPointer<TestAuthContext>::create(":/paos/DIDAuthenticateEAC1_2.xml");
+			const auto& context = QSharedPointer<TestAuthContext>::create(":/paos/DIDAuthenticateEAC1_2.xml"_L1);
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::AUTH);
 

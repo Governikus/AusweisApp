@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -88,7 +88,7 @@ void Discovery::parseIfdId(const QJsonObject& pMessageObject)
 
 void Discovery::parsePairing(const QJsonObject& pMessageObject)
 {
-	QVector<IfdVersion::Version> sorted(mSupportedApis);
+	QList<IfdVersion::Version> sorted(mSupportedApis);
 	std::sort(sorted.rbegin(), sorted.rend());
 
 	if (sorted.isEmpty() || sorted.first() < IfdVersion::Version::v2)
@@ -106,7 +106,7 @@ void Discovery::parsePairing(const QJsonObject& pMessageObject)
 }
 
 
-Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis, bool pPairing)
+Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing)
 	: IfdMessage(IfdMessageType::UNDEFINED)
 	, mIfdName(pIfdName)
 	, mIfdId(pIfdId)
@@ -156,7 +156,7 @@ quint16 Discovery::getPort() const
 }
 
 
-const QVector<IfdVersion::Version>& Discovery::getSupportedApis() const
+const QList<IfdVersion::Version>& Discovery::getSupportedApis() const
 {
 	return mSupportedApis;
 }

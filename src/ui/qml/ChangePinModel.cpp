@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinModel.h"
 
 #include "controller/ChangePinController.h"
+
 
 using namespace governikus;
 
@@ -42,7 +43,7 @@ QString ChangePinModel::getResultString() const
 }
 
 
-QVector<ReaderManagerPlugInType> ChangePinModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPlugInType> ChangePinModel::getSupportedReaderPlugInTypes() const
 {
 	auto plugins = WorkflowModel::getSupportedReaderPlugInTypes();
 	if (mContext && mContext->isRequestTransportPin())
@@ -68,5 +69,8 @@ void ChangePinModel::onPaceResultUpdated()
 	if (mContext->getLastPaceResult() == CardReturnCode::OK_PUK)
 	{
 		Q_EMIT fireOnPinUnlocked();
+		return;
 	}
+
+	Q_EMIT fireOnPasswordUsed();
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -62,7 +62,6 @@ GControl {
 	Layout.minimumWidth: contentItem.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredWidth: implicitWidth
 	activeFocusOnTab: true
-	implicitHeight: Math.max(grid.implicitHeight, eye.Layout.preferredHeight) + topPadding + bottomPadding
 
 	contentItem: RowLayout {
 		id: layout

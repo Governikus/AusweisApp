@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,7 +11,7 @@
 #include "DataChannel.h"
 
 #include <QByteArray>
-#include <QVector>
+#include <QList>
 
 namespace governikus
 {
@@ -24,7 +24,7 @@ class MockDataChannel
 	private:
 		bool mPairing;
 		QString mId;
-		QVector<QByteArray> mReceivedDataBlocks;
+		QList<QByteArray> mReceivedDataBlocks;
 
 	public:
 		explicit MockDataChannel(bool pPairing = false);
@@ -36,7 +36,7 @@ class MockDataChannel
 		[[nodiscard]] const QString& getId() const override;
 		void closeAbnormal();
 
-		[[nodiscard]] const QVector<QByteArray>& getReceivedDataBlocks() const;
+		[[nodiscard]] const QList<QByteArray>& getReceivedDataBlocks() const;
 
 	public Q_SLOTS:
 		void onReceived(const QByteArray& pDataBlock);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DidAuthenticateEacAdditional
@@ -38,19 +39,19 @@ class test_DidAuthenticateEacAdditional
 
 		void parse()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput.xml");
+			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput.xml"_L1);
 			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
 
 			QScopedPointer<DIDAuthenticateEACAdditional> eacAdd(static_cast<DIDAuthenticateEACAdditional*>(paosMessage));
 
 			QVERIFY(eacAdd);
-			QCOMPARE(eacAdd->getSignature(), QString("86E24ACCE25E2B4623A3558EED7AA65658FEE70CC7B46CB9D34BD50B2F27E1E2221473D5B871497563693E0F28BE9C8896062A9C02CE3959AD4BD58DEA0E984B"));
+			QCOMPARE(eacAdd->getSignature(), "86E24ACCE25E2B4623A3558EED7AA65658FEE70CC7B46CB9D34BD50B2F27E1E2221473D5B871497563693E0F28BE9C8896062A9C02CE3959AD4BD58DEA0E984B"_L1);
 		}
 
 
 		void noSignature()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_noSignature.xml");
+			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_noSignature.xml"_L1);
 			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
 
 			QVERIFY(paosMessage == nullptr);
@@ -59,7 +60,7 @@ class test_DidAuthenticateEacAdditional
 
 		void manySignature()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_manySignature.xml");
+			QByteArray content = TestFileHelper::readFile(":paos/DIDAuthenticateEACAdditionalInput_manySignature.xml"_L1);
 			PaosMessage* paosMessage = DidAuthenticateEacAdditionalParser().parse(content);
 
 			QVERIFY(paosMessage == nullptr);
@@ -72,8 +73,8 @@ class test_DidAuthenticateEacAdditional
 			QTest::addColumn<QByteArray>("replaceContent");
 			QTest::addColumn<QString>("templateXml");
 
-			const QString templ1(":/paos/DIDAuthenticateEACAdditionalInput_template.xml");
-			const QString templ2(":/paos/DIDAuthenticateEACAdditionalInput_template2.xml");
+			const QString templ1(":/paos/DIDAuthenticateEACAdditionalInput_template.xml"_L1);
+			const QString templ2(":/paos/DIDAuthenticateEACAdditionalInput_template2.xml"_L1);
 
 			QTest::newRow("ConnectionHandle") << QByteArray("<!-- CONNECTIONHANDLE -->") << QByteArray("<ns3:SlotHandle>3189905F82823FB6F8EF871E315CC9F0</ns3:SlotHandle>") << templ1;
 			QTest::newRow("DIDName") << QByteArray("<!-- DIDNAME -->") << QByteArray("PIN") << templ1;

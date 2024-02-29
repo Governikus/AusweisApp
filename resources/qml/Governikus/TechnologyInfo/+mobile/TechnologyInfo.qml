@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -34,7 +34,6 @@ ColumnLayout {
 
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
-		verticalAlignment: Text.AlignTop
 		visible: text !== ""
 	}
 	GText {
@@ -43,14 +42,12 @@ ColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.normal_warning
-		verticalAlignment: Text.AlignBottom
 		visible: text !== ""
 	}
-	Column {
+	ColumnLayout {
 		id: additionalContentItem
 
-		Layout.fillWidth: true
-		visible: children.length !== 0
+		visible: visibleChildren.length !== 0
 	}
 	GSpacer {
 		Layout.fillHeight: true

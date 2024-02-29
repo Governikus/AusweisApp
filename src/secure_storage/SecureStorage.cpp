@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -43,8 +43,7 @@ CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_PSK, "tlsSettingsPsk")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD, "tlsSettingsRemoteIfd")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_REMOTE_IFD_PAIRING, "tlsSettingsRemoteIfdPairing")
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_TLS_CONFIGURATION_LOCAL_IFD, "tlsSettingsLocalIfd")
-CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_STATIC_KEY_SIZES, "minStaticKeySizes")
-CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES, "minEphemeralKeySizes")
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_MIN_KEY_SIZES, "minKeySizes")
 
 CONFIG_NAME(CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION, "selfAuthentication")
 CONFIG_NAME(CONFIGURATION_NAME_SELF_AUTHENTICATION_URL, "url")
@@ -71,6 +70,10 @@ CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_PACKAGE_NAME, "packageName")
 CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_MIN_VERSION, "minVersion")
 CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_ALLOWED_CERTIFICATE_HASHES, "allowedCertificateHashes")
 CONFIG_NAME(CONFIGURATION_NAME_LOCAL_IFD_MIN_PSK_SIZE, "minPskSize")
+
+CONFIG_NAME(CONFIGURATION_GROUP_NAME_SIZES_IFD, "sizesIfd")
+CONFIG_NAME(CONFIGURATION_NAME_SIZES_IFD_CREATE, "createRsa")
+CONFIG_NAME(CONFIGURATION_NAME_SIZES_IFD_MIN, "min")
 
 } // namespace
 
@@ -100,8 +103,9 @@ SecureStorage::SecureStorage()
 	, mTlsConfigRemoteIfd()
 	, mTlsConfigRemoteIfdPairing()
 	, mTlsConfigLocalIfd()
-	, mMinStaticKeySizes()
-	, mMinEphemeralKeySizes()
+	, mMinKeySizes()
+	, mMinKeySizesIfd()
+	, mCreateKeySizeIfd()
 {
 	load();
 }
@@ -235,8 +239,11 @@ void SecureStorage::load()
 		mTlsConfigLocalIfd.load(tlsLocalIfd.toObject());
 	}
 
-	mMinStaticKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_STATIC_KEY_SIZES());
-	mMinEphemeralKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_EPHEMERAL_KEY_SIZES());
+	mMinKeySizes = readKeySizes(config, CONFIGURATION_GROUP_NAME_MIN_KEY_SIZES());
+
+	const QJsonObject obj = config.value(CONFIGURATION_GROUP_NAME_SIZES_IFD()).toObject();
+	mMinKeySizesIfd = readKeySizes(obj, CONFIGURATION_NAME_SIZES_IFD_MIN());
+	mCreateKeySizeIfd = obj.value(CONFIGURATION_NAME_SIZES_IFD_CREATE()).toInt();
 
 	mSelfAuthenticationUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_URL());
 	mSelfAuthenticationTestUrl = readGroup(config, CONFIGURATION_GROUP_NAME_SELF_AUTHENTICATION(), CONFIGURATION_NAME_SELF_AUTHENTICATION_TEST_URL());
@@ -279,8 +286,7 @@ bool SecureStorage::isValid() const
 		   && mTlsConfigRemoteIfd.isValid()
 		   && mTlsConfigRemoteIfdPairing.isValid()
 		   && mTlsConfigLocalIfd.isValid()
-		   && !mMinStaticKeySizes.isEmpty()
-		   && !mMinEphemeralKeySizes.isEmpty()
+		   && !mMinKeySizes.isEmpty()
 		   && mLocalIfdMinPskSize > 0;
 }
 
@@ -335,7 +341,7 @@ const QByteArrayList& SecureStorage::getCVRootCertificates(bool pProductive) con
 }
 
 
-const QVector<QSslCertificate>& SecureStorage::getUpdateCertificates() const
+const QList<QSslCertificate>& SecureStorage::getUpdateCertificates() const
 {
 	return mUpdateCertificates;
 }
@@ -431,23 +437,29 @@ int SecureStorage::getLocalIfdMinPskSize() const
 }
 
 
-int SecureStorage::getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
+int SecureStorage::getMinimumKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
 {
-	if (!mMinStaticKeySizes.contains(pKeyAlgorithm))
+	if (!mMinKeySizes.contains(pKeyAlgorithm))
 	{
-		qCWarning(securestorage) << "No minimum ephemeral key size specified, returning default";
+		qCWarning(securestorage) << "No minimum key size specified, returning default";
 	}
-	return mMinStaticKeySizes.value(pKeyAlgorithm, 0);
+	return mMinKeySizes.value(pKeyAlgorithm, 0);
 }
 
 
-int SecureStorage::getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
+int SecureStorage::getMinimumIfdKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const
 {
-	if (!mMinEphemeralKeySizes.contains(pKeyAlgorithm))
+	if (!mMinKeySizesIfd.contains(pKeyAlgorithm))
 	{
-		qCWarning(securestorage) << "No minimum ephemeral key size specified, returning default";
+		qCWarning(securestorage) << "No minimum key size specified, returning default";
 	}
-	return mMinEphemeralKeySizes.value(pKeyAlgorithm, 0);
+	return mMinKeySizesIfd.value(pKeyAlgorithm, 0);
+}
+
+
+int SecureStorage::getIfdCreateSize() const
+{
+	return mCreateKeySizeIfd;
 }
 
 

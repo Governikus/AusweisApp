@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -29,6 +29,7 @@ Q_IMPORT_PLUGIN(UIPlugInJson)
 Q_IMPORT_PLUGIN(SmartReaderManagerPlugIn)
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -147,7 +148,7 @@ class test_MsgHandlerPersonalization
 			QCOMPARE(request->getAction(), Action::PERSONALIZATION);
 			QVERIFY(request->getContext().objectCast<PersonalizationContext>());
 			QCOMPARE(request->getContext().objectCast<PersonalizationContext>()->getAppletServiceUrl(QStringLiteral("testMe")),
-					QUrl("https://www.governikus.de/token/testMe"));
+					QUrl("https://www.governikus.de/token/testMe"_L1));
 #else
 
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray(R"({"error":"RUN_PERSONALIZATION","msg":"UNKNOWN_COMMAND"})"));
@@ -189,7 +190,7 @@ class test_MsgHandlerPersonalization
 #if __has_include("context/PersonalizationContext.h")
 			const auto& ctx = QSharedPointer<PersonalizationContext>::create(QString());
 			ctx->setStatus(GlobalStatus::Code::No_Error);
-			ctx->setRefreshUrl(QUrl("http://www.governikus.de")); // not provided in PERSONALIZATION, like in AUTH
+			ctx->setRefreshUrl(QUrl("http://www.governikus.de"_L1)); // not provided in PERSONALIZATION, like in AUTH
 
 			MsgHandlerPersonalization msg(ctx);
 			QByteArray response = R"({"msg":"PERSONALIZATION","result":{"major":"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok"}})";

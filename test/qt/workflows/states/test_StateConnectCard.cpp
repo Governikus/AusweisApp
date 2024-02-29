@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StateConnectCard
@@ -62,7 +63,7 @@ class test_StateConnectCard
 
 		void init()
 		{
-			mReaderInfo = ReaderInfo(QString("test"), ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::EID_CARD));
+			mReaderInfo = ReaderInfo("test"_L1, ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::EID_CARD));
 
 			mContext.reset(new TestWorkflowContext());
 			mState.reset(new StateConnectCard(mContext));
@@ -81,7 +82,7 @@ class test_StateConnectCard
 			QThread workerThread;
 			workerThread.start();
 
-			const QString rName("reader name");
+			const QString rName("reader name"_L1);
 
 			QSignalSpy spyContinue(mState.data(), &StateConnectCard::fireContinue);
 			QSignalSpy spyAbort(mState.data(), &StateConnectCard::fireAbort);

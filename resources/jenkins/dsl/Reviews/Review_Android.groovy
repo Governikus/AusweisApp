@@ -8,7 +8,7 @@ for(ARCH in Constants.AndroidArchAPKReview)
 def j = new Review
 	(
 		name: 'Android_APK_' + ARCH,
-		libraries: ['Android_' + ARCH],
+		libraries: 'Android_' + ARCH,
 		label: 'Android',
 		artifacts: 'build/dist/**/AusweisApp-*.apk*,build/debug.symbols/*'
 	).generate(this)
@@ -50,16 +50,13 @@ j.with
 
 
 // ----------------------------------------------------------------- AAR
-def neededLibraries = []
 for(ARCH in Constants.AndroidArchAAR)
 {
-	neededLibraries.add('Android_' + ARCH)
-}
 
 def j = new Review
 	(
 		name: 'Android_AAR',
-		libraries: neededLibraries,
+		libraries: 'Android_' + ARCH,
 		label: 'Android',
 		artifacts: 'build/dist/**/ausweisapp-*.aar,build/dist/**/ausweisapp-*.pom,build/dist/**/ausweisapp-*.jar,build/debug.symbols/*'
 	).generate(this)
@@ -91,4 +88,6 @@ j.with
 			}
 		}
 	}
+}
+
 }

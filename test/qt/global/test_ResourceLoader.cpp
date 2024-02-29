@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_ResourceLoader
@@ -46,8 +47,8 @@ class test_ResourceLoader
 
 			QVERIFY(logSpy.count() > 0);
 			auto param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Register resource: "));
-			QVERIFY(param.at(0).toString().contains(" | true"));
+			QVERIFY(param.at(0).toString().contains("Register resource: "_L1));
+			QVERIFY(param.at(0).toString().contains(" | true"_L1));
 		}
 
 
@@ -63,8 +64,8 @@ class test_ResourceLoader
 
 			QVERIFY(logSpy.count() > 1);
 			auto param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Unregister resource: "));
-			QVERIFY(param.at(0).toString().contains(" | true"));
+			QVERIFY(param.at(0).toString().contains("Unregister resource: "_L1));
+			QVERIFY(param.at(0).toString().contains(" | true"_L1));
 		}
 
 
@@ -73,8 +74,8 @@ class test_ResourceLoader
 			QVERIFY(!ResourceLoader::getInstance().isLoaded());
 			ResourceLoader::getInstance().init();
 
-			QVERIFY(!QFile(":/non_existing_dummy_test").exists());
-			QVERIFY(QFile(":/images/ausweis.svg").exists());
+			QVERIFY(!QFile(":/non_existing_dummy_test"_L1).exists());
+			QVERIFY(QFile(":/images/ausweis.svg"_L1).exists());
 		}
 
 

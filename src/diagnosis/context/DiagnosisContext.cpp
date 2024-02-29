@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisContext.h"
@@ -21,8 +21,8 @@ DiagnosisContext::DiagnosisContext()
 }
 
 
-void DiagnosisContext::setPcscInfo(const QString& pVersion, const QVector<ComponentInfo>& pComponents,
-		const QVector<ComponentInfo>& pDrivers)
+void DiagnosisContext::setPcscInfo(const QString& pVersion, const QList<ComponentInfo>& pComponents,
+		const QList<ComponentInfo>& pDrivers)
 {
 	mPcscVersion = pVersion;
 	mPcscComponents = pComponents;
@@ -32,7 +32,7 @@ void DiagnosisContext::setPcscInfo(const QString& pVersion, const QVector<Compon
 }
 
 
-void DiagnosisContext::setReaderInfos(const QVector<ReaderInfo>& mInfos)
+void DiagnosisContext::setReaderInfos(const QList<ReaderInfo>& mInfos)
 {
 	mReaderInfos = mInfos;
 
@@ -40,7 +40,7 @@ void DiagnosisContext::setReaderInfos(const QVector<ReaderInfo>& mInfos)
 }
 
 
-void DiagnosisContext::setReaderInfosNoDriver(const QVector<ReaderConfigurationInfo>& pInfos)
+void DiagnosisContext::setReaderInfosNoDriver(const QList<ReaderConfigurationInfo>& pInfos)
 {
 	mReaderInfosNoDriver = pInfos;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -11,6 +11,7 @@
 #include <QTimeZone>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_UpdatableFile
@@ -70,7 +71,7 @@ class test_UpdatableFile
 
 		void testFileOnlyInCache()
 		{
-			const QString filename("img_ACS_ACR1252V.png");
+			const QString filename("img_ACS_ACR1252V.png"_L1);
 			const QString filenameInCache = filename + QStringLiteral("_20170601102132MST");
 			const QDate timestampDate(2017, 6, 1);
 			const QTime timestampTime(10, 21, 32);
@@ -93,8 +94,8 @@ class test_UpdatableFile
 
 		void testFileOnlyInBundle()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
-			const QString expectedPath = ":/updatable-files/reader/" + filename;
+			const QString filename("img_ACS_ACR1252U.png"_L1);
+			const QString expectedPath = ":/updatable-files/reader/"_L1 + filename;
 			UpdatableFile updatableFile(mSection, filename);
 
 			verifySectionCacheFolder(updatableFile);
@@ -106,8 +107,8 @@ class test_UpdatableFile
 
 		void testFileInCacheAndInBundle()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
-			const QString expectedPath = ":/updatable-files/reader/" + filename;
+			const QString filename("img_ACS_ACR1252U.png"_L1);
+			const QString expectedPath = ":/updatable-files/reader/"_L1 + filename;
 			const QString filenameInCache = filename + QStringLiteral("_20170601102132GMT");
 			UpdatableFile updatableFile(mSection, filename);
 			const auto guard = touchFileInCache(filenameInCache, updatableFile);
@@ -126,7 +127,7 @@ class test_UpdatableFile
 
 		void testMoreThanOneVersionInCache()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
+			const QString filename("img_ACS_ACR1252U.png"_L1);
 			const QString filenameInCache1 = filename + QStringLiteral("_20170710120015WAST");
 			const QString filenameInCache2 = filename + QStringLiteral("_20170601102132UTC");
 			UpdatableFile updatableFile(mSection, filename);
@@ -140,7 +141,7 @@ class test_UpdatableFile
 
 		void testFileNeitherInCacheNorInBundle()
 		{
-			const QString filename("img_ACS_ACR1252V.png");
+			const QString filename("img_ACS_ACR1252V.png"_L1);
 			UpdatableFile updatableFile(mSection, filename, QStringLiteral("DEFAULT_TEST"));
 
 			verifySectionCacheFolder(updatableFile);
@@ -151,7 +152,7 @@ class test_UpdatableFile
 
 		void testIsDirty()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
+			const QString filename("img_ACS_ACR1252U.png"_L1);
 			const QString dirtyFilename = filename + QStringLiteral(".dirty");
 			UpdatableFile updatableFile(mSection, filename);
 
@@ -168,7 +169,7 @@ class test_UpdatableFile
 
 		void testMarkDirty()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
+			const QString filename("img_ACS_ACR1252U.png"_L1);
 			const QString dirtyFilename = filename + QStringLiteral(".dirty");
 			UpdatableFile updatableFile(mSection, filename);
 
@@ -184,7 +185,7 @@ class test_UpdatableFile
 
 		void testClearDirty()
 		{
-			const QString filename("img_ACS_ACR1252U.png");
+			const QString filename("img_ACS_ACR1252U.png"_L1);
 			const QString dirtyFilename = filename + QStringLiteral(".dirty");
 			UpdatableFile updatableFile(mSection, filename);
 
@@ -230,7 +231,7 @@ class test_UpdatableFile
 			MockDownloader downloader;
 			Env::set(Downloader::staticMetaObject, &downloader);
 
-			const QString filename("img_ACS_ACR1252U.png");
+			const QString filename("img_ACS_ACR1252U.png"_L1);
 			const QString filenameInCache = filename + QLatin1Char('_') + downloader.getTimeStampString();
 
 			UpdatableFile updatableFile(mSection, filename);
@@ -254,7 +255,7 @@ class test_UpdatableFile
 			MockDownloader downloader;
 			Env::set(Downloader::staticMetaObject, &downloader);
 
-			const QString filename("img_updatetest.png");
+			const QString filename("img_updatetest.png"_L1);
 
 			UpdatableFile updatableFile(mSection, filename);
 			QSignalSpy spy(&updatableFile, &UpdatableFile::fireUpdated);
@@ -266,7 +267,7 @@ class test_UpdatableFile
 
 			QCOMPARE(spy.count(), 1);
 			const QString fileName = updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
-			const QString filePath = updatableFile.getSectionCachePath() + "/" + fileName;
+			const QString filePath = updatableFile.getSectionCachePath() + QLatin1Char('/') + fileName;
 			const auto guard = qScopeGuard([&fileName, &updatableFile]{
 					removeFileFromCache(fileName, updatableFile);
 				});
@@ -283,7 +284,7 @@ class test_UpdatableFile
 			MockDownloader downloader(GlobalStatus::Code::Downloader_File_Not_Found);
 			Env::set(Downloader::staticMetaObject, &downloader);
 
-			const QString filename("img_updatetest.png");
+			const QString filename("img_updatetest.png"_L1);
 
 			UpdatableFile updatableFile(mSection, filename);
 			QSignalSpy spy(&updatableFile, &UpdatableFile::fireUpdated);
@@ -291,7 +292,7 @@ class test_UpdatableFile
 			updatableFile.update();
 
 			QCOMPARE(spy.count(), 0);
-			const QString filePath = updatableFile.getSectionCachePath() + "/" + updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
+			const QString filePath = updatableFile.getSectionCachePath() + QLatin1Char('/') + updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
 			QFile testfile(filePath);
 			QVERIFY(!testfile.exists());
 		}

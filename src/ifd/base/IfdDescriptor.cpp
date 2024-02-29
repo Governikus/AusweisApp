@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDescriptor.h"
@@ -37,7 +37,7 @@ QUrl urlFromMsgAndHost(const Discovery& pDiscovery,
 
 IfdDescriptor::IfdDescriptorData::IfdDescriptorData(const QString& pIfdName,
 		const QString& pIfdId,
-		const QVector<IfdVersion::Version>& pApiVersions,
+		const QList<IfdVersion::Version>& pApiVersions,
 		const bool pIsPairingAnnounced,
 		const QUrl& pRemoteUrl,
 		bool pIsLocalIfd)
@@ -81,7 +81,7 @@ IfdDescriptor::IfdDescriptor(const Discovery& pDiscovery, const QHostAddress& pH
 
 	const QString& ifdName = pDiscovery.getIfdName();
 	const QString& ifdId = pDiscovery.getIfdId();
-	const QVector<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
+	const QList<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
 	const bool isPairing = pDiscovery.getPairing();
 	d = new IfdDescriptorData(ifdName, ifdId, supportedApis, isPairing, url, pLocalIfd);
 }
@@ -103,9 +103,9 @@ const QString& IfdDescriptor::getIfdId() const
 }
 
 
-const QVector<IfdVersion::Version>& IfdDescriptor::getApiVersions() const
+const QList<IfdVersion::Version>& IfdDescriptor::getApiVersions() const
 {
-	static const QVector<IfdVersion::Version> EMPTY_VECTOR;
+	static const QList<IfdVersion::Version> EMPTY_VECTOR;
 
 	return d.data() == nullptr ? EMPTY_VECTOR : d->mApiVersions;
 }

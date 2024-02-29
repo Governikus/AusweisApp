@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQml.Models
 import Governikus.Global
+import Governikus.ResultView
 import Governikus.TitleBar
 import Governikus.Type.ApplicationModel
 import Governikus.Type.NumberModel
@@ -15,10 +16,11 @@ SectionPage {
 
 	enum SubView {
 		None,
-		ConnectSacView
+		ConnectSacView,
+		PcscReaderFoundView
 	}
 
-	readonly property int availableReader: ApplicationModel.availableReader
+	readonly property int availableReader: ApplicationModel.availablePcscReader
 	readonly property int currentView: d.view
 	property int lastReaderCount: 0
 	property alias paneAnchors: tabbedPane.anchors
@@ -35,6 +37,8 @@ SectionPage {
 		text: qsTr("Card Readers")
 
 		customSubAction: NavigationAction {
+			type: NavigationAction.Action.Back
+
 			onClicked: closeView()
 		}
 
@@ -44,7 +48,8 @@ SectionPage {
 	Component.onCompleted: lastReaderCount = availableReader
 	onAvailableReaderChanged: {
 		if (visible && availableReader > lastReaderCount) {
-			root.closeView();
+			d.view = TabbedReaderView.SubView.PcscReaderFoundView;
+			updateTitleBarActions();
 		}
 		lastReaderCount = availableReader;
 	}
@@ -55,6 +60,13 @@ SectionPage {
 
 		property int precedingView
 		property int view
+	}
+	ResultView {
+		icon: "qrc:///images/desktop/workflow_idcard_usb.svg"
+		text: qsTr("Found new USB card reader that is suitable for the ID card. The workflow may now be continued.")
+		visible: d.view === TabbedReaderView.SubView.PcscReaderFoundView
+
+		onNextView: root.closeView()
 	}
 	TabbedPane {
 		id: tabbedPane
@@ -93,27 +105,16 @@ SectionPage {
 			top: parent.top
 		}
 	}
-	NavigationButton {
-		buttonType: NavigationButton.Type.Back
-		visible: tabbedPane.visible
-
-		onClicked: root.closeView()
-
-		anchors {
-			bottom: parent.bottom
-			left: parent.left
-			margins: Constants.pane_padding
-		}
-	}
 	ConnectSacView {
 		id: connectSacView
 
 		rootEnabled: root.rootEnabled
 		visible: d.view === TabbedReaderView.SubView.ConnectSacView
 
-		onCloseView: {
+		onPairingFailed: {
 			d.view = d.precedingView;
 			updateTitleBarActions();
 		}
+		onPairingSuccessful: root.closeView()
 	}
 }

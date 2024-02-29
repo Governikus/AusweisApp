@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import Governikus.EnterPasswordView
 import Governikus.Global
 import Governikus.PasswordInfoView
+import Governikus.ProgressView
 import Governikus.Style
 import Governikus.TitleBar
 import Governikus.Type.ApplicationModel
@@ -16,12 +17,23 @@ import Governikus.Type.RemoteServiceModel
 Item {
 	id: baseItem
 
+	property string title
+
+	signal pairingFailed
+	signal pairingSuccessful
+
 	implicitHeight: mainColumn.implicitHeight
 
 	QtObject {
 		id: d
 
 		property bool oldLockedAndHiddenStatus
+
+		function close(pSignal) {
+			setLockedAndHidden(oldLockedAndHiddenStatus);
+			pop();
+			pSignal();
+		}
 	}
 	Column {
 		id: mainColumn
@@ -160,7 +172,6 @@ Item {
 				onClicked: ApplicationModel.enableWifi()
 			}
 			LocalNetworkInfo {
-				topPadding: Constants.component_spacing
 				visible: RemoteServiceModel.requiresLocalNetworkPermission && !RemoteServiceModel.remoteReaderVisible
 				width: parent.width
 			}
@@ -178,11 +189,6 @@ Item {
 		id: enterPinView
 
 		EnterPasswordView {
-			function close() {
-				setLockedAndHidden(d.oldLockedAndHiddenStatus);
-				pop();
-			}
-
 			passwordType: PasswordType.REMOTE_PIN
 			//: LABEL ANDROID IOS
 			title: qsTr("Pairing code")
@@ -190,10 +196,65 @@ Item {
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
 
-				onClicked: close()
+				onClicked: d.close(pairingFailed)
 			}
 
-			onPasswordEntered: close()
+			onPasswordEntered: replace(pairingProgressView)
+		}
+	}
+	Component {
+		id: pairingProgressView
+
+		ProgressView {
+			//: LABEL ANDROID IOS
+			text: qsTr("Pairing the device ...")
+			title: baseItem.title
+
+			Connections {
+				function onFirePairingFailed(pDeviceName, pErrorMessage) {
+					replace(pairingFailedView, {
+							"deviceName": pDeviceName,
+							"errorMessage": pErrorMessage
+						});
+				}
+				function onFirePairingSuccess(pDeviceName) {
+					replace(pairingSuccessView, {
+							"deviceName": pDeviceName
+						});
+				}
+
+				target: RemoteServiceModel
+			}
+		}
+	}
+	Component {
+		id: pairingFailedView
+
+		PairingFailedView {
+			title: baseItem.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: d.close(pairingFailed)
+			}
+
+			onContinueClicked: d.close(pairingFailed)
+		}
+	}
+	Component {
+		id: pairingSuccessView
+
+		PairingSuccessView {
+			title: baseItem.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: d.close(pairingSuccessful)
+			}
+
+			onContinueClicked: d.close(pairingSuccessful)
 		}
 	}
 }

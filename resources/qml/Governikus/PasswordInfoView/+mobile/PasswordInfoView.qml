@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.View
 import Governikus.Style
@@ -17,7 +18,7 @@ FlickableSectionPage {
 	readonly property var contentList: infoContent.contentList
 	readonly property string hint: infoContent.hint
 	readonly property string hintButtonText: infoContent.hintButtonText
-	property var infoContent: PasswordInfoContent {
+	property PasswordInfoData infoContent: PasswordInfoData {
 	}
 	readonly property string infoContentTitle: infoContent.title
 
@@ -46,18 +47,16 @@ FlickableSectionPage {
 				spacing: Constants.component_spacing
 				width: parent.width
 
-				PasswordInfoImage {
+				AnimationLoader {
 					anchors.horizontalCenter: parent.horizontalCenter
-					imageType: blockHeaderImageType
-					visible: blockHeaderImageType !== PasswordInfoImage.Type.NONE
-					width: parent.width * 0.3
+					animated: false
+					type: blockHeaderAnimation
 				}
 				Column {
 					spacing: Constants.groupbox_spacing
 					width: parent.width
 
 					GText {
-						font.bold: true
 						text: blockTitle
 						textStyle: headline ? Style.text.headline : Style.text.subline
 						width: parent.width

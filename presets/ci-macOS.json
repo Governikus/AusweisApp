@@ -1,0 +1,33 @@
+{
+  "version": 6,
+  "include": [
+    "ci.json"
+  ],
+  "configurePresets": [
+     {
+      "name": "ci-macos",
+      "inherits": "ci-with-libs",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
+        "SANITIZER": "ON"
+      }
+    },
+    {
+      "name": "ci-macos-release",
+      "inherits": "ci-with-libs",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    },
+    {
+      "name": "ci-macos-integrated",
+      "inherits": "ci-with-libs",
+      "cacheVariables": {
+        "INTEGRATED_SDK": "ON",
+        "SANITIZER": "ON"
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,7 +24,9 @@ namespace governikus
 class TlsChecker
 {
 	private:
-		[[nodiscard]] static bool isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, bool pIsEphemeral);
+		static const std::function<int(QSsl::KeyAlgorithm)> cDefaultFuncMinKeySize;
+
+		[[nodiscard]] static bool isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorithm, int pMinKeySize);
 
 		TlsChecker() = delete;
 		~TlsChecker() = delete;
@@ -48,17 +50,21 @@ class TlsChecker
 		/*!
 		 * Checks, whether the key length of the SSL certificate is of sufficient length.
 		 */
-		[[nodiscard]] static bool hasValidCertificateKeyLength(const QSslCertificate& pCertificate);
+		[[nodiscard]] static bool hasValidCertificateKeyLength(const QSslCertificate& pCertificate,
+				const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize = cDefaultFuncMinKeySize);
 
 		/*!
 		 * Checks, whether the length of the ephemeral key is of sufficient length.
 		 */
-		[[nodiscard]] static bool hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey);
+		[[nodiscard]] static bool hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey,
+				const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize = cDefaultFuncMinKeySize);
 
 		/*!
 		 * This method is only needed until QSslCertificate provides its own method issuerDisplayName in Qt 5.12
 		 */
 		[[nodiscard]] static QString getCertificateIssuerName(const QSslCertificate& pCertificate);
+
+		[[nodiscard]] static QSslCertificate getRootCertificate(const QList<QSslCertificate>& pCertificates);
 };
 
 } // namespace governikus

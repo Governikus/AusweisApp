@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDispatcherClient.h"
@@ -70,6 +70,6 @@ void IfdDispatcherClient::sendEstablishContext()
 	qCDebug(ifd) << "Try to establish context with version" << ifdVersion;
 
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const QSharedPointer<const IfdEstablishContext>& establishContext = QSharedPointer<IfdEstablishContext>::create(ifdVersion, settings.getServerName());
+	const QSharedPointer<const IfdEstablishContext>& establishContext = QSharedPointer<IfdEstablishContext>::create(ifdVersion, settings.getDeviceName());
 	send(establishContext);
 }

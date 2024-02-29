@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -67,15 +67,15 @@ QString IfdVersion::toString() const
 }
 
 
-QVector<IfdVersion::Version> IfdVersion::supported()
+QList<IfdVersion::Version> IfdVersion::supported()
 {
-	return QVector<IfdVersion::Version>({Version::v2});
+	return QList<IfdVersion::Version>({Version::v2});
 }
 
 
-IfdVersion::Version IfdVersion::selectLatestSupported(const QVector<IfdVersion::Version>& pVersions)
+IfdVersion::Version IfdVersion::selectLatestSupported(const QList<IfdVersion::Version>& pVersions)
 {
-	QVector<IfdVersion::Version> sorted(pVersions);
+	QList<IfdVersion::Version> sorted(pVersions);
 	std::sort(sorted.rbegin(), sorted.rend());
 
 	for (const IfdVersion::Version version : sorted)

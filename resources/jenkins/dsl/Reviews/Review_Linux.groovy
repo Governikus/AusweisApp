@@ -5,7 +5,7 @@ import static common.Constants.strip
 def j = new Review
 	(
 		name: 'Linux',
-		libraries: ['Linux'],
+		libraries: 'Linux',
 		label: 'Linux',
 		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
@@ -20,7 +20,7 @@ j.with
 	{
 		environmentVariables
 		{
-			env("QT_PLUGIN_PATH", '$WORKSPACE/libs/build/dist/plugins')
+			env("QT_PLUGIN_PATH", '$WORKSPACE/libs/dist/plugins')
 		}
 	}
 
@@ -44,7 +44,7 @@ j.with
 			'''.stripIndent().trim())
 
 		shell('''\
-			export QML2_IMPORT_PATH=${WORKSPACE}/libs/build/dist/qml
+			export QML2_IMPORT_PATH=${WORKSPACE}/libs/dist/qml
 			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 

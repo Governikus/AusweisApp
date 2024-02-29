@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -13,10 +13,10 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 quint16 HttpServer::cPort = PortFile::cDefaultPort;
-QVector<QHostAddress> HttpServer::cAddresses = {QHostAddress::LocalHost, QHostAddress::LocalHostIPv6};
+QList<QHostAddress> HttpServer::cAddresses = {QHostAddress::LocalHost, QHostAddress::LocalHostIPv6};
 
 
-HttpServer::HttpServer(quint16 pPort, const QVector<QHostAddress>& pAddresses)
+HttpServer::HttpServer(quint16 pPort, const QList<QHostAddress>& pAddresses)
 	: QObject()
 	, mServer()
 	, mPortFile()
@@ -45,7 +45,7 @@ void HttpServer::shutdown()
 }
 
 
-void HttpServer::bindAddresses(quint16 pPort, const QVector<QHostAddress>& pAddresses)
+void HttpServer::bindAddresses(quint16 pPort, const QList<QHostAddress>& pAddresses)
 {
 	auto port = pPort;
 
@@ -121,7 +121,7 @@ quint16 HttpServer::getServerPort() const
 }
 
 
-void HttpServer::rebind(quint16 pPort, const QVector<QHostAddress>& pAddresses)
+void HttpServer::rebind(quint16 pPort, const QList<QHostAddress>& pAddresses)
 {
 	qCDebug(network) << "Rebind HttpServer:" << pPort << '|' << pAddresses;
 	mPortFile.remove();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdListImpl.h"
@@ -8,6 +8,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -22,10 +23,10 @@ class test_IfdListImpl
 			IfdListImpl deviceList(10, 1);
 			QSignalSpy spyVanished(&deviceList, &IfdListImpl::fireDeviceVanished);
 
-			const Discovery offerMsg1 = Discovery("Dev1", QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::latest});
-			const Discovery offerMsg2 = Discovery("Dev1", QStringLiteral("0123456789ABCDFF"), 1234, {IfdVersion::Version::latest});
-			const QHostAddress addr1 = QHostAddress(QString("5.6.7.8"));
-			const QHostAddress addr2 = QHostAddress(QString("5.6.7.9"));
+			const Discovery offerMsg1 = Discovery("Dev1"_L1, QStringLiteral("0123456789ABCDEF"), 1234, {IfdVersion::Version::latest});
+			const Discovery offerMsg2 = Discovery("Dev1"_L1, QStringLiteral("0123456789ABCDFF"), 1234, {IfdVersion::Version::latest});
+			const QHostAddress addr1 = QHostAddress("5.6.7.8"_L1);
+			const QHostAddress addr2 = QHostAddress("5.6.7.9"_L1);
 
 			{
 				const IfdDescriptor descr(offerMsg1, addr1);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -23,6 +23,7 @@ Text {
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	color: textStyle.textColor
 	font.pixelSize: textStyle.textSize
+	font.weight: textStyle.fontWeight
 	lineHeight: textStyle.lineHeight
 	lineHeightMode: Text.FixedHeight
 	linkColor: color

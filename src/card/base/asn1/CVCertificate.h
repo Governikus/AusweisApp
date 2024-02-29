@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -48,7 +48,7 @@ using CVCertificate = struct cvcertificate_st
 	SIGNATURE* mSignature;
 	ECDSA_SIG* mEcdsaSignature;
 
-	static QVector<QSharedPointer<const cvcertificate_st>> fromRaw(const QByteArrayList& pByteList);
+	static QList<QSharedPointer<const cvcertificate_st>> fromRaw(const QByteArrayList& pByteList);
 	static QSharedPointer<const cvcertificate_st> fromRaw(const QByteArray& pBytes);
 #ifndef QT_NO_DEBUG
 	static QSharedPointer<const cvcertificate_st> fromHex(const QByteArray& pBytes);
@@ -89,4 +89,4 @@ inline bool operator!=(const CVCertificate& pLeft, const CVCertificate& pRight)
 QDebug operator<<(QDebug pDbg, const governikus::CVCertificate& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<const governikus::CVCertificate>& pCvc);
 QDebug operator<<(QDebug pDbg, const QSharedPointer<governikus::CVCertificate>& pCvc);
-QDebug operator<<(QDebug pDbg, const QVector<QSharedPointer<governikus::CVCertificate>>& pCvcs);
+QDebug operator<<(QDebug pDbg, const QList<QSharedPointer<governikus::CVCertificate>>& pCvcs);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -13,6 +13,7 @@ RowLayout {
 	id: navigation
 
 	readonly property int activeModule: d.activeModule
+	readonly property real effectiveHeight: plugin.safeAreaMargins.bottom + (lockedAndHidden ? 0 : implicitHeight)
 	readonly property bool lockedAndHidden: d.lockedAndHidden
 
 	signal resetContentArea
@@ -29,7 +30,7 @@ RowLayout {
 	}
 
 	enabled: !lockedAndHidden
-	height: lockedAndHidden ? 0 : (navigationView.height + plugin.safeAreaMargins.bottom)
+	height: lockedAndHidden ? 0 : effectiveHeight
 	visible: height > 0
 
 	Behavior on height {

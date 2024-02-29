@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,10 +13,10 @@
 #include "ProviderConfigurationInfo.h"
 #include "UpdatableFile.h"
 
+#include <QList>
 #include <QMap>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 namespace governikus
 {
@@ -29,7 +29,7 @@ class ProviderConfiguration
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;
-		QVector<ProviderConfigurationInfo> mProviderConfigurationInfos;
+		QList<ProviderConfigurationInfo> mProviderConfigurationInfos;
 		QMap<QString, CallCost> mCallCosts;
 
 		ProviderConfiguration();
@@ -41,7 +41,7 @@ class ProviderConfiguration
 
 	public:
 		void update();
-		[[nodiscard]] const QVector<ProviderConfigurationInfo>& getProviderConfigurationInfos() const;
+		[[nodiscard]] const QList<ProviderConfigurationInfo>& getProviderConfigurationInfos() const;
 		[[nodiscard]] CallCost getCallCost(const ProviderConfigurationInfo& pProvider) const;
 		[[nodiscard]] ProviderConfigurationInfo getProviderInfo(const QString& pInternalId) const;
 

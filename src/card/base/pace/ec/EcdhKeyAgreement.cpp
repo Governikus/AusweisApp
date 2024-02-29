@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EcdhKeyAgreement.h"
 
 #include "EcUtil.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/ASN1Util.h"
 #include "asn1/PaceInfo.h"
 
@@ -20,9 +21,9 @@ Q_DECLARE_LOGGING_CATEGORY(secure)
 QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
 {
 	const QByteArray& publicKeyData =
-			Asn1Util::encode(V_ASN1_UNIVERSAL, 6, pPaceInfo->getOid().getData()) +
-			Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 6, EcUtil::point2oct(pCurve, pPoint.data()));
-	const QByteArray publicKey = Asn1Util::encode(V_ASN1_APPLICATION, 73, publicKeyData, true);
+			Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER, pPaceInfo->getOid().getData()) +
+			Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT, EcUtil::point2oct(pCurve, pPoint.data()));
+	const QByteArray publicKey = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::PUBLIC_KEY, publicKeyData, true);
 
 	return publicKey;
 }

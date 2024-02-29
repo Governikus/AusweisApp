@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationParser.h"
@@ -195,9 +195,8 @@ ReaderConfigurationInfo ReaderConfigurationParser::EntryParser::parse() const
 	const QString& pattern = object.value(QLatin1String("Pattern")).toString();
 
 	const QString& icon = object.value(QLatin1String("Icon")).toString();
-	const QString& iconWithNPA = object.value(QLatin1String("IconWithNPA")).toString();
 
-	return ReaderConfigurationInfo(vendorId, productIds, name, url, pattern, icon, iconWithNPA);
+	return ReaderConfigurationInfo(vendorId, productIds, name, url, pattern, icon);
 }
 
 
@@ -209,7 +208,7 @@ ReaderConfigurationInfo ReaderConfigurationParser::EntryParser::fail(const QStri
 }
 
 
-QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArray& pData)
+QList<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArray& pData)
 {
 	QJsonParseError error {};
 	QJsonDocument doc = QJsonDocument::fromJson(pData, &error);
@@ -237,7 +236,7 @@ QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArr
 	}
 
 	const QJsonArray& devicesArray = devicesValue.toArray();
-	QVector<ReaderConfigurationInfo> infos;
+	QList<ReaderConfigurationInfo> infos;
 	for (const QJsonValueConstRef entry : devicesArray)
 	{
 		auto info = EntryParser(entry).parse();
@@ -263,14 +262,14 @@ QVector<ReaderConfigurationInfo> ReaderConfigurationParser::parse(const QByteArr
 }
 
 
-QVector<ReaderConfigurationInfo> ReaderConfigurationParser::fail(const QString& pLogMessage)
+QList<ReaderConfigurationInfo> ReaderConfigurationParser::fail(const QString& pLogMessage)
 {
 	qCWarning(card_drivers) << pLogMessage;
-	return QVector<ReaderConfigurationInfo>();
+	return QList<ReaderConfigurationInfo>();
 }
 
 
-bool ReaderConfigurationParser::hasUniqueId(const ReaderConfigurationInfo& pInfo, const QVector<ReaderConfigurationInfo>& pInfos)
+bool ReaderConfigurationParser::hasUniqueId(const ReaderConfigurationInfo& pInfo, const QList<ReaderConfigurationInfo>& pInfos)
 {
 	const uint vendorId = pInfo.getVendorId();
 	const QSet<uint> productIds = pInfo.getProductIds();

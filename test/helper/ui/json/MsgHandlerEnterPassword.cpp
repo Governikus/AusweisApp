@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterPassword.h"
@@ -10,6 +10,7 @@
 
 #include <QTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 void governikus::setValidState(MessageDispatcher& pDispatcher,
@@ -45,12 +46,12 @@ void governikus::setValidState(MessageDispatcher& pDispatcher,
 
 	if (pSelectReader)
 	{
-		auto* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD");
+		auto* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD"_L1);
 		auto info = reader->getReaderInfo();
 		info.setBasicReader(pBasicReader);
 		reader->setReaderInfo(info);
 		reader->setCard(MockCardConfig());
-		pContext->setReaderName("MockReader CARD");
+		pContext->setReaderName("MockReader CARD"_L1);
 
 		QSharedPointer<CardConnection> cardConnection(new MockCardConnection(reader->getReaderInfo()));
 		pContext->setCardConnection(cardConnection);

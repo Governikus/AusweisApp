@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -19,5 +19,5 @@ Rectangle {
 	border.color: baseItem.borderColor
 	border.width: scope.activeFocus && plugin.showFocusIndicator ? size : 0
 	color: Style.color.transparent
-	radius: size * 2
+	radius: Math.min(height / 4, Style.dimens.control_radius)
 }

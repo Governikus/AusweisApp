@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -39,7 +39,7 @@ static bool listenTo(const io_name_t notificationType, ReaderDetector* readerDet
 	//https://developer.apple.com/library/mac/documentation/DeviceDrivers/Conceptual/AccessingHardware/AH_Finding_Devices/AH_Finding_Devices.html
 
 	CFMutableDictionaryRef matchingDict = IOServiceMatching(kIOUSBDeviceClassName);
-	IONotificationPortRef notificationObject = IONotificationPortCreate(kIOMasterPortDefault);
+	IONotificationPortRef notificationObject = IONotificationPortCreate(kIOMainPortDefault);
 	CFRunLoopSourceRef notificationRunLoopSource = IONotificationPortGetRunLoopSource(notificationObject);
 	CFRunLoopAddSource(CFRunLoopGetCurrent(), notificationRunLoopSource, kCFRunLoopDefaultMode);
 	kern_return_t kr = IOServiceAddMatchingNotification(
@@ -146,22 +146,20 @@ static UsbId getDeviceIds(io_object_t pDevice)
 }
 
 
-QVector<UsbId> ReaderDetector::attachedDevIds() const
+QList<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<UsbId> result;
-	mach_port_t myMasterPort = kIOMasterPortDefault;
+	QList<UsbId> result;
 	io_iterator_t deviceIterator = 0;
-	io_object_t currentDevice = 0;
 
-	kern_return_t createIteratorResult = IORegistryCreateIterator(myMasterPort, kIOUSBPlane, kIORegistryIterateRecursively, &deviceIterator);
+	kern_return_t createIteratorResult = IORegistryCreateIterator(kIOMainPortDefault, kIOUSBPlane, kIORegistryIterateRecursively, &deviceIterator);
 	if (createIteratorResult != kIOReturnSuccess)
 	{
 		qCWarning(card_drivers) << "creation of device iterator failed, exiting";
 
-		return QVector<UsbId>();
+		return QList<UsbId>();
 	}
 
-	currentDevice = IOIteratorNext(deviceIterator);
+	io_object_t currentDevice = IOIteratorNext(deviceIterator);
 	while (currentDevice != 0)
 	{
 		UsbId ids = getDeviceIds(currentDevice);

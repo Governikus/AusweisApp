@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,7 +7,7 @@
 #include "IfdMessage.h"
 #include "IfdVersion.h"
 
-#include <QVector>
+#include <QList>
 
 
 namespace governikus
@@ -19,7 +19,7 @@ class Discovery
 		QString mIfdName;
 		QString mIfdId;
 		quint16 mPort;
-		QVector<IfdVersion::Version> mSupportedApis;
+		QList<IfdVersion::Version> mSupportedApis;
 		bool mPairing;
 
 		void parseSupportedApi(const QJsonObject& pMessageObject);
@@ -27,14 +27,14 @@ class Discovery
 		void parsePairing(const QJsonObject& pMessageObject);
 
 	public:
-		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QVector<IfdVersion::Version>& pSupportedApis, bool pPairing = false);
+		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing = false);
 		explicit Discovery(const QJsonObject& pMessageObject);
 		~Discovery() override = default;
 
 		[[nodiscard]] const QString& getIfdName() const;
 		[[nodiscard]] const QString& getIfdId() const;
 		[[nodiscard]] quint16 getPort() const;
-		[[nodiscard]] const QVector<IfdVersion::Version>& getSupportedApis() const;
+		[[nodiscard]] const QList<IfdVersion::Version>& getSupportedApis() const;
 
 		void setPairing(bool pEnabled);
 		[[nodiscard]] bool getPairing() const;

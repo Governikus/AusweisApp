@@ -1,4 +1,4 @@
-From 7436b286698ff67a1834fc1e8e6d4a8446ab7a5d Mon Sep 17 00:00:00 2001
+From 11858ce383f00cbc37f863585829304d6d314df5 Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Thu, 5 Oct 2023 14:56:43 +0200
 Subject: Reset status of isSessionScheduled when starting a iOS NFC session
@@ -10,6 +10,8 @@ QTimer always triggering a new NFC session.
 
 Pick-to: 6.6 6.5
 Change-Id: I53d71d5c9b419d334ac6a229cff3e32aa81e9230
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+(cherry picked from commit 550e1c8ad5e8204c9942814bccc558c10faf197f)
 ---
  src/nfc/qnearfieldmanager_ios.mm | 1 +
  1 file changed, 1 insertion(+)

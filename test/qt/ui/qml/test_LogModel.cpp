@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_LogModel
@@ -54,39 +54,39 @@ class test_LogModel
 
 		void test_AddLogEntry_data()
 		{
-			QTest::addColumn<QString>("input");
-			QTest::addColumn<QString>("origin");
-			QTest::addColumn<QString>("level");
-			QTest::addColumn<QString>("category");
-			QTest::addColumn<QString>("message");
+			QTest::addColumn<QLatin1String>("input");
+			QTest::addColumn<QLatin1String>("origin");
+			QTest::addColumn<QLatin1String>("level");
+			QTest::addColumn<QLatin1String>("category");
+			QTest::addColumn<QLatin1String>("message");
 
-			QTest::newRow("validEntry") << QString("input : test") << QString("input") << QString("D") << QString("input") << QString("test");
-			QTest::newRow("empty") << QString(" : ") << QString() << QString("D") << QString() << QString();
-			QTest::newRow("leftEmpty") << QString(" : test") << QString() << QString("D") << QString() << QString("test");
-			QTest::newRow("rightEmpty") << QString("input : ") << QString("input") << QString("D") << QString("input") << QString();
-			QTest::newRow("NoSpaceRight") << QString("input :test") << QString("input :test") << QString("D") << QString("input") << QString();
-			QTest::newRow("NoSpaceLeft") << QString("input: test") << QString("input: test") << QString("D") << QString("input:") << QString();
-			QTest::newRow("invalidEntry") << QString("inputTest") << QString("inputTest") << QString("D") << QString("inputTest") << QString();
-			QTest::newRow("NoSpaces") << QString("input:test") << QString("input:test") << QString("D") << QString("input:test") << QString();
-			QTest::newRow("emptyString") << QString() << QString() << QString("D") << QString() << QString();
-			QTest::newRow("::") << QString("::") << QString("::") << QString("D") << QString("::") << QString();
-			QTest::newRow("a : b : c") << QString("a : b : c") << QString("a") << QString("D") << QString("a") << QString("b : c");
-			QTest::newRow("categorySpacesRight") << QString("cat        abc : test") << QString("cat        abc") << QString("D") << QString("cat") << QString("test");
-			QTest::newRow("categorySpaceLeft") << QString(" cat       abc : test") << QString("cat       abc") << QString("D") << QString("") << QString("test");
-			QTest::newRow("levelW") << QString("cat 123 W abc : test") << QString("cat 123 W abc") << QString("W") << QString("cat") << QString("test");
-			QTest::newRow("levelA") << QString("cat 123 A abc : test") << QString("cat 123 A abc") << QString("A") << QString("cat") << QString("test");
-			QTest::newRow("levelLongPid") << QString("cat 12345 W abc : test") << QString("cat 12345 W abc") << QString("W") << QString("cat") << QString("test");
-			QTest::newRow("levelWrongFormat") << QString("cat 123W abc : test") << QString("cat 123W abc") << QString("D") << QString("cat") << QString("test");
+			QTest::newRow("validEntry") << QLatin1String("input : test") << QLatin1String("input") << QLatin1String("D") << QLatin1String("input") << QLatin1String("test");
+			QTest::newRow("empty") << QLatin1String(" : ") << QLatin1String() << QLatin1String("D") << QLatin1String() << QLatin1String();
+			QTest::newRow("leftEmpty") << QLatin1String(" : test") << QLatin1String() << QLatin1String("D") << QLatin1String() << QLatin1String("test");
+			QTest::newRow("rightEmpty") << QLatin1String("input : ") << QLatin1String("input") << QLatin1String("D") << QLatin1String("input") << QLatin1String();
+			QTest::newRow("NoSpaceRight") << QLatin1String("input :test") << QLatin1String("input :test") << QLatin1String("D") << QLatin1String("input") << QLatin1String();
+			QTest::newRow("NoSpaceLeft") << QLatin1String("input: test") << QLatin1String("input: test") << QLatin1String("D") << QLatin1String("input:") << QLatin1String();
+			QTest::newRow("invalidEntry") << QLatin1String("inputTest") << QLatin1String("inputTest") << QLatin1String("D") << QLatin1String("inputTest") << QLatin1String();
+			QTest::newRow("NoSpaces") << QLatin1String("input:test") << QLatin1String("input:test") << QLatin1String("D") << QLatin1String("input:test") << QLatin1String();
+			QTest::newRow("emptyString") << QLatin1String() << QLatin1String() << QLatin1String("D") << QLatin1String() << QLatin1String();
+			QTest::newRow("::") << QLatin1String("::") << QLatin1String("::") << QLatin1String("D") << QLatin1String("::") << QLatin1String();
+			QTest::newRow("a : b : c") << QLatin1String("a : b : c") << QLatin1String("a") << QLatin1String("D") << QLatin1String("a") << QLatin1String("b : c");
+			QTest::newRow("categorySpacesRight") << QLatin1String("cat        abc : test") << QLatin1String("cat        abc") << QLatin1String("D") << QLatin1String("cat") << QLatin1String("test");
+			QTest::newRow("categorySpaceLeft") << QLatin1String(" cat       abc : test") << QLatin1String("cat       abc") << QLatin1String("D") << QLatin1String("") << QLatin1String("test");
+			QTest::newRow("levelW") << QLatin1String("cat 123 W abc : test") << QLatin1String("cat 123 W abc") << QLatin1String("W") << QLatin1String("cat") << QLatin1String("test");
+			QTest::newRow("levelA") << QLatin1String("cat 123 A abc : test") << QLatin1String("cat 123 A abc") << QLatin1String("A") << QLatin1String("cat") << QLatin1String("test");
+			QTest::newRow("levelLongPid") << QLatin1String("cat 12345 W abc : test") << QLatin1String("cat 12345 W abc") << QLatin1String("W") << QLatin1String("cat") << QLatin1String("test");
+			QTest::newRow("levelWrongFormat") << QLatin1String("cat 123W abc : test") << QLatin1String("cat 123W abc") << QLatin1String("D") << QLatin1String("cat") << QLatin1String("test");
 		}
 
 
 		void test_AddLogEntry()
 		{
-			QFETCH(QString, input);
-			QFETCH(QString, origin);
-			QFETCH(QString, level);
-			QFETCH(QString, category);
-			QFETCH(QString, message);
+			QFETCH(QLatin1String, input);
+			QFETCH(QLatin1String, origin);
+			QFETCH(QLatin1String, level);
+			QFETCH(QLatin1String, category);
+			QFETCH(QLatin1String, message);
 
 			QSignalSpy spyLevel(mModel, &LogModel::fireLevelsChanged);
 			QSignalSpy spyCategorie(mModel, &LogModel::fireCategoriesChanged);
@@ -115,70 +115,70 @@ class test_LogModel
 			QSignalSpy spyLevel(mModel, &LogModel::fireLevelsChanged);
 			QSignalSpy spyCategorie(mModel, &LogModel::fireCategoriesChanged);
 
-			mModel->addLogEntry(QString("cat           0000.00.00 00:00:00.000 000 W test : test"));
+			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 W test : test"_L1);
 			QCOMPARE(spyLevel.size(), 1);
-			QCOMPARE(mModel->getLevels(), QSet({QString("W")}));
+			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1}));
 			QCOMPARE(spyCategorie.size(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("cat")}));
+			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
-			mModel->addLogEntry(QString("cat           0000.00.00 00:00:00.000 000 W test : test"));
+			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 W test : test"_L1);
 			QCOMPARE(spyLevel.size(), 1);
-			QCOMPARE(mModel->getLevels(), QSet({QString("W")}));
+			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1}));
 			QCOMPARE(spyCategorie.size(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("cat")}));
+			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
-			mModel->addLogEntry(QString("cat           0000.00.00 00:00:00.000 000 I test : test"));
+			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
-			QCOMPARE(mModel->getLevels(), QSet({QString("W"), QString("I")}));
+			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
 			QCOMPARE(spyCategorie.size(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("cat")}));
+			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
-			mModel->addLogEntry(QString("dog           0000.00.00 00:00:00.000 000 I test : test"));
+			mModel->addLogEntry("dog           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
-			QCOMPARE(mModel->getLevels(), QSet({QString("W"), QString("I")}));
+			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
 			QCOMPARE(spyCategorie.size(), 2);
-			QCOMPARE(mModel->getCategories(), QSet({QString("cat"), QString("dog")}));
+			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1, "dog"_L1}));
 
-			mModel->addLogEntry(QString("dog           0000.00.00 00:00:00.000 000 I test : test"));
+			mModel->addLogEntry("dog           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
-			QCOMPARE(mModel->getLevels(), QSet({QString("W"), QString("I")}));
+			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
 			QCOMPARE(spyCategorie.size(), 2);
-			QCOMPARE(mModel->getCategories(), QSet({QString("cat"), QString("dog")}));
+			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1, "dog"_L1}));
 		}
 
 
 		void test_AddMultilineLogEntry()
 		{
-			mModel->addLogEntry(QString("FooBar"));
+			mModel->addLogEntry(QLatin1String("FooBar"));
 			QCOMPARE(mModel->mLogEntries.size(), 1);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar"));
 
-			mModel->addLogEntry(QString("FooBar"));
+			mModel->addLogEntry(QLatin1String("FooBar"));
 			QCOMPARE(mModel->mLogEntries.size(), 1);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar\nFooBar"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 
-			mModel->addLogEntry(QString("cat           0000.00.00 00:00:00.000 000 test"));
+			mModel->addLogEntry(QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 2);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar\nFooBar"));
-			QCOMPARE(mModel->mLogEntries.at(1), QString("cat           0000.00.00 00:00:00.000 000 test"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
+			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
 
-			mModel->addLogEntry(QString("cat           0001.02.03 04:05:06.007 0000008 test"));
+			mModel->addLogEntry(QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar\nFooBar"));
-			QCOMPARE(mModel->mLogEntries.at(1), QString("cat           0000.00.00 00:00:00.000 000 test"));
-			QCOMPARE(mModel->mLogEntries.at(2), QString("cat           0001.02.03 04:05:06.007 0000008 test"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
+			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
+			QCOMPARE(mModel->mLogEntries.at(2), QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test"));
 
-			mModel->addLogEntry(QString("BarFoo"));
+			mModel->addLogEntry(QLatin1String("BarFoo"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar\nFooBar"));
-			QCOMPARE(mModel->mLogEntries.at(1), QString("cat           0000.00.00 00:00:00.000 000 test"));
-			QCOMPARE(mModel->mLogEntries.at(2), QString("cat           0001.02.03 04:05:06.007 0000008 test\nBarFoo"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
+			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
+			QCOMPARE(mModel->mLogEntries.at(2), QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test\nBarFoo"));
 
-			mModel->addLogEntry(QString("cat 0000.00.00 00:00:00.000 000 test"));
+			mModel->addLogEntry(QLatin1String("cat 0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
-			QCOMPARE(mModel->mLogEntries.at(0), QString("FooBar\nFooBar"));
-			QCOMPARE(mModel->mLogEntries.at(1), QString("cat           0000.00.00 00:00:00.000 000 test"));
-			QCOMPARE(mModel->mLogEntries.at(2), QString("cat           0001.02.03 04:05:06.007 0000008 test\nBarFoo\ncat 0000.00.00 00:00:00.000 000 test"));
+			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
+			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
+			QCOMPARE(mModel->mLogEntries.at(2), QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test\nBarFoo\ncat 0000.00.00 00:00:00.000 000 test"));
 		}
 
 
@@ -194,21 +194,21 @@ class test_LogModel
 
 		void test_SetLogEntries_data()
 		{
-			QTest::addColumn<QString>("fileName");
+			QTest::addColumn<QLatin1String>("fileName");
 			QTest::addColumn<int>("logEntriesSize");
 			QTest::addColumn<int>("logLevelSize");
 			QTest::addColumn<int>("logCategoriesSize");
 
-			QTest::newRow("empty") << QString(":/logfiles/empty.txt") << 0 << 0 << 0;
-			QTest::newRow("size1") << QString(":/logfiles/size1.txt") << 1 << 1 << 1;
-			QTest::newRow("size42") << QString(":/logfiles/size42.txt") << 42 << 1 << 1;
-			QTest::newRow("auth") << QString(":/logfiles/auth.txt") << 1223 << 4 << 19;
+			QTest::newRow("empty") << QLatin1String(":/logfiles/empty.txt") << 0 << 0 << 0;
+			QTest::newRow("size1") << QLatin1String(":/logfiles/size1.txt") << 1 << 1 << 1;
+			QTest::newRow("size42") << QLatin1String(":/logfiles/size42.txt") << 42 << 1 << 1;
+			QTest::newRow("auth") << QLatin1String(":/logfiles/auth.txt") << 1223 << 4 << 19;
 		}
 
 
 		void test_SetLogEntries()
 		{
-			QFETCH(QString, fileName);
+			QFETCH(QLatin1String, fileName);
 			QFETCH(int, logEntriesSize);
 			QFETCH(int, logLevelSize);
 			QFETCH(int, logCategoriesSize);
@@ -233,24 +233,24 @@ class test_LogModel
 
 		void test_OnNewLogMsg_data()
 		{
-			QTest::addColumn<QString>("msg");
-			QTest::addColumn<QString>("fileName");
+			QTest::addColumn<QLatin1String>("msg");
+			QTest::addColumn<QLatin1String>("fileName");
 			QTest::addColumn<int>("selectedFile");
 			QTest::addColumn<int>("newLogMsgCounter");
 			QTest::addColumn<int>("logEntriesSizeChange");
 
-			QTest::newRow("emptyFile_MsgAdded") << QString("test : input") << QString(":/logfiles/empty.txt") << 0 << 1 << 1;
-			QTest::newRow("emptyFile_MsgNotAdded") << QString(" : ") << QString(":/logfiles/empty.txt") << 1 << 0 << 0;
+			QTest::newRow("emptyFile_MsgAdded") << QLatin1String("test : input") << QLatin1String(":/logfiles/empty.txt") << 0 << 1 << 1;
+			QTest::newRow("emptyFile_MsgNotAdded") << QLatin1String(" : ") << QLatin1String(":/logfiles/empty.txt") << 1 << 0 << 0;
 
-			QTest::newRow("size1_MsgAdded") << QString("test : input") << QString(":/logfiles/size1.txt") << 0 << 1 << 1;
-			QTest::newRow("size1_MsgNotAdded") << QString(" : ") << QString(":/logfiles/size1.txt") << 1 << 0 << 0;
+			QTest::newRow("size1_MsgAdded") << QLatin1String("test : input") << QLatin1String(":/logfiles/size1.txt") << 0 << 1 << 1;
+			QTest::newRow("size1_MsgNotAdded") << QLatin1String(" : ") << QLatin1String(":/logfiles/size1.txt") << 1 << 0 << 0;
 		}
 
 
 		void test_OnNewLogMsg()
 		{
-			QFETCH(QString, msg);
-			QFETCH(QString, fileName);
+			QFETCH(QLatin1String, msg);
+			QFETCH(QLatin1String, fileName);
 			QFETCH(int, selectedFile);
 			QFETCH(int, newLogMsgCounter);
 			QFETCH(int, logEntriesSizeChange);
@@ -283,10 +283,7 @@ class test_LogModel
 			resetModel(new LogModel());
 
 			QCOMPARE(mModel->getLogFileNames().size(), 2);
-			mModel->removeCurrentLogFile();
-			QCOMPARE(mModel->getLogFileNames().size(), 2);
-			mModel->setLogFile(1);
-			mModel->removeCurrentLogFile();
+			mModel->removeOtherLogFiles();
 			QCOMPARE(mModel->getLogFileNames().size(), 1);
 		}
 

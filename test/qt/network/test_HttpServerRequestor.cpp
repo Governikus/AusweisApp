@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 #include "HttpServerRequestor.h"
 
@@ -9,6 +9,7 @@
 #include <QHostAddress>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QHostAddress)
@@ -22,27 +23,27 @@ class test_HttpServerRequestor
 	private Q_SLOTS:
 		void createUrl_data()
 		{
-			QTest::addColumn<QString>("query");
+			QTest::addColumn<QLatin1String>("query");
 			QTest::addColumn<quint16>("port");
 			QTest::addColumn<QHostAddress>("host");
-			QTest::addColumn<QString>("path");
+			QTest::addColumn<QLatin1String>("path");
 			QTest::addColumn<QUrl>("result");
 
-			QTest::addRow("Localhost IPv4") << "foo=bar" << quint16(1337) << QHostAddress(QHostAddress::LocalHost) << "/some/path" << QUrl("http://127.0.0.1:1337/some/path?foo=bar");
-			QTest::addRow("Localhost IPv6") << "foo=bar" << quint16(1337) << QHostAddress(QHostAddress::LocalHostIPv6) << "/some/path" << QUrl("http://[::1]:1337/some/path?foo=bar");
+			QTest::addRow("Localhost IPv4") << "foo=bar"_L1 << quint16(1337) << QHostAddress(QHostAddress::LocalHost) << "/some/path"_L1 << QUrl("http://127.0.0.1:1337/some/path?foo=bar"_L1);
+			QTest::addRow("Localhost IPv6") << "foo=bar"_L1 << quint16(1337) << QHostAddress(QHostAddress::LocalHostIPv6) << "/some/path"_L1 << QUrl("http://[::1]:1337/some/path?foo=bar"_L1);
 		}
 
 
 		void createUrl()
 		{
-			QFETCH(QString, query);
+			QFETCH(QLatin1String, query);
 			QFETCH(quint16, port);
 			QFETCH(QHostAddress, host);
-			QFETCH(QString, path);
+			QFETCH(QLatin1String, path);
 			QFETCH(QUrl, result);
 
 			const auto& url = HttpServerRequestor::createUrl(query, port, host, path);
-			QCOMPARE(url.scheme(), "http");
+			QCOMPARE(url.scheme(), "http"_L1);
 			QCOMPARE(url.query(), query);
 			QCOMPARE(url.port(), port);
 			QCOMPARE(QHostAddress(url.host()), host);
@@ -54,27 +55,27 @@ class test_HttpServerRequestor
 		void getRequest_data()
 		{
 			QTest::addColumn<bool>("customManager");
-			QTest::addColumn<QString>("path");
+			QTest::addColumn<QByteArray>("path");
 			QTest::addColumn<HttpResponse>("response");
 
-			QTest::addRow("HTTP_STATUS_OK") << false << "/foo" << HttpResponse(HTTP_STATUS_OK, "bar");
-			QTest::addRow("HTTP_STATUS_NOT_FOUND") << false << "/foo" << HttpResponse(HTTP_STATUS_NOT_FOUND);
-			QTest::addRow("HTTP_STATUS_OK_customManager") << true << "/foo" << HttpResponse(HTTP_STATUS_OK, "bar");
-			QTest::addRow("HTTP_STATUS_NOT_FOUND_customManager") << true << "/foo" << HttpResponse(HTTP_STATUS_NOT_FOUND);
+			QTest::addRow("HTTP_STATUS_OK") << false << "/foo"_ba << HttpResponse(HTTP_STATUS_OK, "bar");
+			QTest::addRow("HTTP_STATUS_NOT_FOUND") << false << "/foo"_ba << HttpResponse(HTTP_STATUS_NOT_FOUND);
+			QTest::addRow("HTTP_STATUS_OK_customManager") << true << "/foo"_ba << HttpResponse(HTTP_STATUS_OK, "bar");
+			QTest::addRow("HTTP_STATUS_NOT_FOUND_customManager") << true << "/foo"_ba << HttpResponse(HTTP_STATUS_NOT_FOUND);
 		}
 
 
 		void getRequest()
 		{
 			QFETCH(bool, customManager);
-			QFETCH(QString, path);
+			QFETCH(QByteArray, path);
 			QFETCH(HttpResponse, response);
 
 			MockHttpServer server;
-			server.addMock(path.toLocal8Bit(), response, HTTP_GET);
+			server.addMock(path, response, HTTP_GET);
 
 			HttpServerRequestor requestor(customManager);
-			const auto& reply = requestor.getRequest(server.getAddress(path));
+			const auto& reply = requestor.getRequest(server.getAddress(QString::fromLatin1(path)));
 			QVERIFY(reply->isFinished());
 			QCOMPARE(reply->readAll(), response.getBody());
 			const auto& statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -84,24 +85,24 @@ class test_HttpServerRequestor
 
 		void postRequest_data()
 		{
-			QTest::addColumn<QString>("path");
+			QTest::addColumn<QByteArray>("path");
 			QTest::addColumn<HttpResponse>("response");
 
-			QTest::addRow("HTTP_STATUS_OK") << "/foo" << HttpResponse(HTTP_STATUS_OK, "bar");
-			QTest::addRow("HTTP_STATUS_NOT_FOUND") << "/foo" << HttpResponse(HTTP_STATUS_NOT_FOUND);
+			QTest::addRow("HTTP_STATUS_OK") << "/foo"_ba << HttpResponse(HTTP_STATUS_OK, "bar");
+			QTest::addRow("HTTP_STATUS_NOT_FOUND") << "/foo"_ba << HttpResponse(HTTP_STATUS_NOT_FOUND);
 		}
 
 
 		void postRequest()
 		{
-			QFETCH(QString, path);
+			QFETCH(QByteArray, path);
 			QFETCH(HttpResponse, response);
 
 			MockHttpServer server;
-			server.addMock(path.toLocal8Bit(), response, HTTP_POST);
+			server.addMock(path, response, HTTP_POST);
 
 			HttpServerRequestor requestor;
-			const auto& reply = requestor.postRequest(server.getAddress(path), "bar", "application/json");
+			const auto& reply = requestor.postRequest(server.getAddress(QString::fromLatin1(path)), "bar", "application/json"_L1);
 			QVERIFY(reply->isFinished());
 			QCOMPARE(reply->readAll(), response.getBody());
 			const auto& statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -111,24 +112,24 @@ class test_HttpServerRequestor
 
 		void deleteRequest_data()
 		{
-			QTest::addColumn<QString>("path");
+			QTest::addColumn<QByteArray>("path");
 			QTest::addColumn<HttpResponse>("response");
 
-			QTest::addRow("HTTP_STATUS_OK") << "/foo" << HttpResponse(HTTP_STATUS_OK, "bar");
-			QTest::addRow("HTTP_STATUS_NOT_FOUND") << "/foo" << HttpResponse(HTTP_STATUS_NOT_FOUND);
+			QTest::addRow("HTTP_STATUS_OK") << "/foo"_ba << HttpResponse(HTTP_STATUS_OK, "bar");
+			QTest::addRow("HTTP_STATUS_NOT_FOUND") << "/foo"_ba << HttpResponse(HTTP_STATUS_NOT_FOUND);
 		}
 
 
 		void deleteRequest()
 		{
-			QFETCH(QString, path);
+			QFETCH(QByteArray, path);
 			QFETCH(HttpResponse, response);
 
 			MockHttpServer server;
-			server.addMock(path.toLocal8Bit(), response, HTTP_DELETE);
+			server.addMock(path, response, HTTP_DELETE);
 
 			HttpServerRequestor requestor;
-			const auto& reply = requestor.deleteRequest(server.getAddress(path));
+			const auto& reply = requestor.deleteRequest(server.getAddress(QString::fromLatin1(path)));
 			QVERIFY(reply->isFinished());
 			QCOMPARE(reply->readAll(), response.getBody());
 			const auto& statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();

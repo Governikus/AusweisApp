@@ -92,7 +92,7 @@ if((DESKTOP AND NOT INTEGRATED_SDK) OR BUILD_TESTING)
 	list(APPEND QRC_FILES "ausweisapp_desktop.qrc")
 endif()
 
-if((DESKTOP OR INTEGRATED_SDK) OR BUILD_TESTING)
+if((DESKTOP OR CONTAINER_SDK) OR BUILD_TESTING)
 	list(APPEND QRC_FILES "ausweisapp_webservice.qrc")
 endif()
 

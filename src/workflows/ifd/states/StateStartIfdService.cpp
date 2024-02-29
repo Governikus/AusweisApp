@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateStartIfdService.h"
@@ -25,7 +25,7 @@ void StateStartIfdService::run()
 	QSharedPointer<IfdServer> server = context->getIfdServer();
 	Q_ASSERT(server);
 
-	const auto& serverName = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getServerName();
+	const auto& serverName = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getDeviceName();
 	if (!server->isRunning() && !server->start(serverName))
 	{
 		qCCritical(statemachine) << "Cannot start IfdServer.";

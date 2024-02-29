@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -39,7 +39,7 @@ class DIDAuthenticateEAC2
 		[[nodiscard]] const QString& getDidName() const;
 		[[nodiscard]] const QString& getSignature() const;
 		[[nodiscard]] const QString& getEphemeralPublicKey() const;
-		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] const QList<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 };
 
 } // namespace governikus

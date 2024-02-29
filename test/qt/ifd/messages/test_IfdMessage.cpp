@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdMessage.h"
@@ -9,6 +9,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -44,13 +45,13 @@ class test_IfdMessage
 			if (type != IfdMessageType::UNDEFINED)
 			{
 				QCOMPARE(logSpy.count(), 1);
-				QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Missing value \"ContextHandle\"")));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 				return;
 			}
 
 			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Invalid messageType received: \"")));
-			QVERIFY(logSpy.at(1).at(0).toString().contains(QString("Missing value \"ContextHandle\"")));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 		}
 
 
@@ -78,7 +79,7 @@ class test_IfdMessage
 
 			QVERIFY(msg.isIncomplete());
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Invalid messageType received: \"")));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 
 
@@ -104,7 +105,7 @@ class test_IfdMessage
 				return;
 			}
 
-			QCOMPARE(msg.getContextHandle(), QString("TestContext"));
+			QCOMPARE(msg.getContextHandle(), "TestContext"_L1);
 
 			if (type != IfdMessageType::UNDEFINED)
 			{
@@ -115,7 +116,7 @@ class test_IfdMessage
 
 			QVERIFY(msg.isIncomplete());
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Invalid messageType received: \"")));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 
 	private Q_SLOTS:
@@ -137,11 +138,11 @@ class test_IfdMessage
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 5);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Json parsing failed. 1 : \"illegal value\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Expected object at top level"));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ContextHandle\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Json parsing failed. 1 : \"illegal value\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Expected object at top level"_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 		}
 
 
@@ -157,10 +158,10 @@ class test_IfdMessage
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 4);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ContextHandle\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 		}
 
 
@@ -176,10 +177,10 @@ class test_IfdMessage
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 4);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ContextHandle\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Expected object at top level"_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
 		}
 
 
@@ -197,8 +198,8 @@ class test_IfdMessage
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Missing value \"msg\"")));
-			QVERIFY(logSpy.at(1).at(0).toString().contains(QString("Invalid messageType received: \"\"")));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
 		}
 
 
@@ -241,7 +242,7 @@ class test_IfdMessage
 
 			QVERIFY(msg.isIncomplete());
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains(QString("Invalid messageType received: \"")));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \""_L1));
 		}
 
 

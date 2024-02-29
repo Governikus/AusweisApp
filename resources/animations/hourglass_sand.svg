@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 52.82 43.16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #0077b6;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath>
+      <path class="cls-2" d="m0,0v16.75c0,15.05,11.35,26.41,26.41,26.41s26.41-11.35,26.41-26.41V0H0Z"/>
+    </clipPath>
+  </defs>
+  <g>
+    <g class="cls-3">
+      <path class="cls-1" d="m-2.8,6.79c9.11-4.93,19.5-2.88,29.53-.51,10.74,2.53,21.07,5.43,28.97.51v37.36H-2.8V6.79Z"/>
+    </g>
+  </g>
+</svg>

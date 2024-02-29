@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,6 +15,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -49,7 +50,7 @@ class test_SecureMessagingResponse
 			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 
 
@@ -69,7 +70,7 @@ class test_SecureMessagingResponse
 			QCOMPARE(response.getSecuredStatusCodeObjectEncoded(), QByteArray());
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 
 

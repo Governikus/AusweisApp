@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,12 +13,12 @@
 #include "RemoteServiceSettings.h"
 
 #include <QAbstractListModel>
+#include <QList>
 #include <QMap>
 #include <QSharedPointer>
 #include <QSslCertificate>
 #include <QString>
 #include <QTimer>
-#include <QVector>
 
 
 class test_RemoteDeviceModel;
@@ -37,7 +37,7 @@ class RemoteDeviceModel
 
 	private:
 		QMap<QString, RemoteServiceSettings::RemoteInfo> mPairedReaders;
-		QVector<RemoteDeviceModelEntry> mAllRemoteReaders;
+		QList<RemoteDeviceModelEntry> mAllRemoteReaders;
 		RemoteServiceSettings::RemoteInfo mLastPairedDevice;
 		QTimer mTimer;
 		bool mIsDetectingRemoteDevices;
@@ -50,7 +50,7 @@ class RemoteDeviceModel
 		void updatePairedReaders();
 		void updateUnpairedReaders();
 		void removeVanishedReaders();
-		[[nodiscard]] QVector<RemoteDeviceModelEntry> presentReaders() const;
+		[[nodiscard]] QList<RemoteDeviceModelEntry> presentReaders() const;
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:

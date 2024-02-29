@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,6 +40,7 @@ class PinResetInformationModel
 		[[nodiscard]] QString getPinResetHintTransportPin() const;
 		[[nodiscard]] QString getPinResetHint() const;
 		[[nodiscard]] QString getPinResetActionText() const;
+		[[nodiscard]] QString authorityFinderSuffix() const;
 
 	public Q_SLOTS:
 		void onTranslationChanged();

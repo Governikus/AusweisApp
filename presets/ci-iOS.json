@@ -1,0 +1,40 @@
+{
+  "version": 6,
+  "include": [
+    "ci.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-ios",
+      "inherits": "ci-with-libs",
+      "generator": "Xcode",
+      "toolchainFile": "${sourceDir}/cmake/iOS.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    },
+    {
+      "name": "ci-ios-framework",
+      "inherits": "ci-ios",
+      "cacheVariables": {
+        "INTEGRATED_SDK": "ON"
+      }
+    },
+    {
+      "name": "ci-ios-framework-simulator",
+      "inherits": "ci-ios-framework",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "CMAKE_OSX_SYSROOT": "iphonesimulator",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64"
+      }
+    },
+    {
+      "name": "ci-ios-framework-simulator-arm64",
+      "inherits": "ci-ios-framework-simulator",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64"
+      }
+    }
+  ]
+}

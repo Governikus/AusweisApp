@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QDesktopServices>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QSharedPointer<WorkflowRequest>)
@@ -31,18 +32,18 @@ class test_UIPlugInScheme
 		{
 			QTest::addColumn<QUrl>("url");
 
-			QTest::newRow(" 1") << QUrl("eid://127.0.0.1:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 2") << QUrl("eid://localhost:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 3") << QUrl("eid://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 4") << QUrl("eid://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 5") << QUrl("http://127.0.0.1:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 6") << QUrl("http://localhost:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 7") << QUrl("http://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 8") << QUrl("http://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 9") << QUrl("https://127.0.0.1:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow("10") << QUrl("https://localhost:24727/eID-Client?tctokenURL=bla");
-			QTest::newRow("11") << QUrl("https://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla");
-			QTest::newRow("12") << QUrl("https://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla");
+			QTest::newRow(" 1") << QUrl("eid://127.0.0.1:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 2") << QUrl("eid://localhost:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 3") << QUrl("eid://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 4") << QUrl("eid://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 5") << QUrl("http://127.0.0.1:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 6") << QUrl("http://localhost:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 7") << QUrl("http://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 8") << QUrl("http://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 9") << QUrl("https://127.0.0.1:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow("10") << QUrl("https://localhost:24727/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow("11") << QUrl("https://www.ausweisapp.bund.de/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow("12") << QUrl("https://www.ausweisapp.bund.de:24727/eID-Client?tctokenURL=bla"_L1);
 		}
 
 
@@ -64,23 +65,23 @@ class test_UIPlugInScheme
 		void showui_data()
 		{
 			QTest::addColumn<UiModule>("module");
-			QTest::addColumn<QString>("urlTemplate");
+			QTest::addColumn<QLatin1String>("urlTemplate");
 
 			const auto& uiModules = Enum<UiModule>::getList();
 			for (const auto& module : uiModules)
 			{
-				QTest::newRow(QString("%1 - eid - ip").arg(getEnumName(module)).toUtf8().constData()) << module << QString("eid://127.0.0.1:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - eid - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << QString("eid://localhost:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - eid - url").arg(getEnumName(module)).toUtf8().constData()) << module << QString("eid://www.ausweisapp.bund.de/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - eid - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << QString("eid://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - http - ip").arg(getEnumName(module)).toUtf8().constData()) << module << QString("http://127.0.0.1:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - http - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << QString("http://localhost:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - http - url").arg(getEnumName(module)).toUtf8().constData()) << module << QString("http://www.ausweisapp.bund.de/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - http - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << QString("http://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - https - ip").arg(getEnumName(module)).toUtf8().constData()) << module << QString("https://127.0.0.1:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - https - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << QString("https://localhost:24727/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - https - url").arg(getEnumName(module)).toUtf8().constData()) << module << QString("https://www.ausweisapp.bund.de/eID-Client?ShowUI=%1");
-				QTest::newRow(QString("%1 - https - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << QString("https://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1");
+				QTest::newRow(QStringLiteral("%1 - eid - ip").arg(getEnumName(module)).toUtf8().constData()) << module << "eid://127.0.0.1:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - eid - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << "eid://localhost:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - eid - url").arg(getEnumName(module)).toUtf8().constData()) << module << "eid://www.ausweisapp.bund.de/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - eid - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << "eid://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - http - ip").arg(getEnumName(module)).toUtf8().constData()) << module << "http://127.0.0.1:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - http - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << "http://localhost:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - http - url").arg(getEnumName(module)).toUtf8().constData()) << module << "http://www.ausweisapp.bund.de/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - http - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << "http://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - https - ip").arg(getEnumName(module)).toUtf8().constData()) << module << "https://127.0.0.1:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - https - localhost").arg(getEnumName(module)).toUtf8().constData()) << module << "https://localhost:24727/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - https - url").arg(getEnumName(module)).toUtf8().constData()) << module << "https://www.ausweisapp.bund.de/eID-Client?ShowUI=%1"_L1;
+				QTest::newRow(QStringLiteral("%1 - https - url - port").arg(getEnumName(module)).toUtf8().constData()) << module << "https://www.ausweisapp.bund.de:24727/eID-Client?ShowUI=%1"_L1;
 			}
 		}
 
@@ -88,7 +89,7 @@ class test_UIPlugInScheme
 		void showui()
 		{
 			QFETCH(UiModule, module);
-			QFETCH(QString, urlTemplate);
+			QFETCH(QLatin1String, urlTemplate);
 
 			UIPlugInScheme ui;
 			QSignalSpy spy(&ui, &UIPlugIn::fireShowUiRequested);
@@ -109,11 +110,11 @@ class test_UIPlugInScheme
 		{
 			QTest::addColumn<QUrl>("url");
 
-			QTest::newRow("1") << QUrl("https://127.0.0.1/eID-Client?tctokenURL=bla");
-			QTest::newRow("2") << QUrl("https://localhost/eID-Client?tctokenURL=bla");
-			QTest::newRow("3") << QUrl("https://localhost:24727/eID?tctokenURL=bla");
-			QTest::newRow("4") << QUrl("https://www.ausweisapp.bund.de/de/aa2/a11y");
-			QTest::newRow("5") << QUrl("https://www.ausweisapp.bund.de/en/aa2/a11y");
+			QTest::newRow("1") << QUrl("https://127.0.0.1/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow("2") << QUrl("https://localhost/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow("3") << QUrl("https://localhost:24727/eID?tctokenURL=bla"_L1);
+			QTest::newRow("4") << QUrl("https://www.ausweisapp.bund.de/de/aa2/a11y"_L1);
+			QTest::newRow("5") << QUrl("https://www.ausweisapp.bund.de/en/aa2/a11y"_L1);
 		}
 
 
@@ -134,11 +135,11 @@ class test_UIPlugInScheme
 		{
 			QTest::addColumn<QUrl>("url");
 
-			QTest::newRow(" 1") << QUrl("eid://127.0.0.1/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 2") << QUrl("eid://localhost/eID-Client?tctokenURL=bla");
-			QTest::newRow(" 3") << QUrl("eid://localhost:24727/eID?tctokenURL=bla");
-			QTest::newRow(" 4") << QUrl("eid://www.ausweisapp.bund.de/de/aa2/a11y");
-			QTest::newRow(" 5") << QUrl("eid://www.ausweisapp.bund.de/en/aa2/a11y");
+			QTest::newRow(" 1") << QUrl("eid://127.0.0.1/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 2") << QUrl("eid://localhost/eID-Client?tctokenURL=bla"_L1);
+			QTest::newRow(" 3") << QUrl("eid://localhost:24727/eID?tctokenURL=bla"_L1);
+			QTest::newRow(" 4") << QUrl("eid://www.ausweisapp.bund.de/de/aa2/a11y"_L1);
+			QTest::newRow(" 5") << QUrl("eid://www.ausweisapp.bund.de/en/aa2/a11y"_L1);
 		}
 
 
@@ -162,7 +163,7 @@ class test_UIPlugInScheme
 			QSignalSpy spy(&ui, &UIPlugIn::fireWorkflowRequested);
 
 			QTest::ignoreMessage(QtWarningMsg, "Unknown query type: QUrl(\"eid://127.0.0.1:24727/eID-Client?foo=bar\")");
-			QDesktopServices::openUrl(QUrl("eid://127.0.0.1:24727/eID-Client?foo=bar"));
+			QDesktopServices::openUrl(QUrl("eid://127.0.0.1:24727/eID-Client?foo=bar"_L1));
 			QCOMPARE(spyUi.count(), 0);
 			QCOMPARE(spy.count(), 0);
 		}
@@ -181,10 +182,10 @@ class test_UIPlugInScheme
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request URL: QUrl(\"http://crap\")");
 			QTest::ignoreMessage(QtDebugMsg, "Not our business. Using the appropriate mechanism for the user's desktop environment.");
-			ui.onCustomUrl(QUrl("http://crap"));
+			ui.onCustomUrl(QUrl("http://crap"_L1));
 			QCOMPARE(spy.count(), 0);
 
-			const QUrl testUrl("http://localhost:24727/eID-Client?tcTokenURL=http://bla");
+			const QUrl testUrl("http://localhost:24727/eID-Client?tcTokenURL=http://bla"_L1);
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
 			ui.onCustomUrl(testUrl);
@@ -194,7 +195,7 @@ class test_UIPlugInScheme
 			QSignalSpy spyShowUi(&ui, &UIPlugIn::fireShowUiRequested);
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request type: showui");
-			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?showUi"));
+			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?showUi"_L1));
 			QCOMPARE(spy.count(), 1);
 			QCOMPARE(spyShowUi.count(), 1);
 		}
@@ -218,20 +219,20 @@ class test_UIPlugInScheme
 
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
-			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?tcTokenURL=https://bla"));
+			ui.onCustomUrl(QUrl("http://localhost:24727/eID-Client?tcTokenURL=https://bla"_L1));
 			QVERIFY(request);
 			QVERIFY(request->getData().value<UIPlugInScheme::RedirectHandler>());
 
 			auto authContext = request->getContext().objectCast<AuthContext>();
 			QVERIFY(authContext);
-			authContext->setRefreshUrl(QUrl("https://www.example.com"));
+			authContext->setRefreshUrl(QUrl("https://www.example.com"_L1));
 			authContext->setStatus(GlobalStatus::Code::No_Error);
 
 			QDesktopServices::setUrlHandler(QStringLiteral("https"), this, "sendRedirectOnCustomUrl");
 			QTest::ignoreMessage(QtDebugMsg, "Determined redirect URL QUrl(\"https://www.example.com?ResultMajor=ok\")");
 			ui.onWorkflowFinished(request);
 
-			QTRY_COMPARE(mReceivedUrl, QUrl("https://www.example.com?ResultMajor=ok")); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(mReceivedUrl, QUrl("https://www.example.com?ResultMajor=ok"_L1)); // clazy:exclude=qstring-allocations
 			QDesktopServices::unsetUrlHandler(QStringLiteral("https"));
 		}
 

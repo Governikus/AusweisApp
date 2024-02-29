@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManagerWorker.h"
@@ -194,11 +194,11 @@ void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType, const QString&
 }
 
 
-QVector<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
+QList<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	QVector<ReaderInfo> list;
+	QList<ReaderInfo> list;
 	for (const auto& plugIn : std::as_const(mPlugIns))
 	{
 		const auto& readerList = plugIn->getReaders();

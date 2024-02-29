@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessIfdMessages.h"
@@ -13,7 +13,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StateProcessIfdMessages
@@ -71,7 +71,7 @@ class test_StateProcessIfdMessages
 
 			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
 			StateProcessIfdMessages state(context);
-			const QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("test", establishPaceChannel, 6));
+			const QSharedPointer<const IfdEstablishPaceChannel> message(new IfdEstablishPaceChannel("test"_L1, establishPaceChannel, 6));
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
@@ -79,7 +79,7 @@ class test_StateProcessIfdMessages
 
 			state.onEstablishPaceChannel(message, connection);
 			QVERIFY(!context->getSlotHandle().isEmpty());
-			QCOMPARE(context->getSlotHandle(), "test");
+			QCOMPARE(context->getSlotHandle(), "test"_L1);
 			const auto& paceChannel = context->getEstablishPaceChannel();
 			QCOMPARE(paceChannel.getPasswordId(), pinId);
 			QCOMPARE(paceChannel.getChat(), chat);

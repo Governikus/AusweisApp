@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,14 +24,14 @@ class ProviderConfigurationParser
 	friend class ::test_ProviderConfigurationParser;
 
 	private:
-		static QVector<ProviderConfigurationInfo> parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS);
+		static QList<ProviderConfigurationInfo> parseProvider(const QByteArray& pData, const QOperatingSystemVersion& pCurrentOS);
 
 		ProviderConfigurationParser() = delete;
 		~ProviderConfigurationParser() = delete;
 
 	public:
 		static QMap<QString, CallCost> parseCallCosts(const QByteArray& pData);
-		static QVector<ProviderConfigurationInfo> parseProvider(const QByteArray& pData);
+		static QList<ProviderConfigurationInfo> parseProvider(const QByteArray& pData);
 };
 
 

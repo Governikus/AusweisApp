@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,7 +37,7 @@ class test_HttpRequest
 			QCOMPARE(request.getHttpMethod(), HTTP_GET);
 			QCOMPARE(request.getHeader().size(), 1);
 			QCOMPARE(request.getHeader("host"), QByteArray("Dummy.de"));
-			QCOMPARE(request.getUrl(), QUrl("/favicon.ico"));
+			QCOMPARE(request.getUrl(), QUrl("/favicon.ico"_L1));
 			QCOMPARE(request.getBody().size(), 0);
 		}
 
@@ -64,7 +65,7 @@ class test_HttpRequest
 			QCOMPARE(request.getHeader("host"), QByteArray("server.example.com"));
 			QCOMPARE(request.getHeader("upgrade"), QByteArray("websocket"));
 			QCOMPARE(request.getHeader("connection"), QByteArray("Upgrade"));
-			QCOMPARE(request.getUrl(), QUrl("/"));
+			QCOMPARE(request.getUrl(), QUrl("/"_L1));
 			QCOMPARE(request.getBody().size(), 0);
 		}
 
@@ -100,7 +101,7 @@ class test_HttpRequest
 			QCOMPARE(request.getHttpMethod(), HTTP_GET);
 			QCOMPARE(request.getHeader().size(), 9);
 			QCOMPARE(request.getHeader("host"), QByteArray("127.0.0.1:24727"));
-			QCOMPARE(request.getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue"));
+			QCOMPARE(request.getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Ftest.governikus-eid.de%3A443%2FAutent-DemoApplication%2FRequestServlet%3Fprovider%3Ddemo_epa_20%26redirect%3Dtrue"_L1));
 			QCOMPARE(request.getBody().size(), 0);
 
 			request.triggerSocketBuffer();

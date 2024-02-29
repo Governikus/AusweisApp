@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,8 +11,8 @@
 #include "Card.h"
 
 #include <QByteArray>
+#include <QList>
 #include <QPair>
-#include <QVector>
 
 namespace governikus
 {
@@ -23,11 +23,11 @@ using TransmitConfig = QPair<CardReturnCode, QByteArray>;
 class MockCardConfig
 {
 	public:
-		QVector<TransmitConfig> mTransmits;
+		QList<TransmitConfig> mTransmits;
 		CardReturnCode mConnect = CardReturnCode::OK;
 		CardReturnCode mDisconnect = CardReturnCode::OK;
 
-		MockCardConfig(const QVector<TransmitConfig>& pTransmits = QVector<TransmitConfig>())
+		MockCardConfig(const QList<TransmitConfig>& pTransmits = QList<TransmitConfig>())
 			: mTransmits(pTransmits)
 		{
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -74,35 +74,15 @@ SectionPage {
 					}
 				}
 				GButton {
-					id: removeLog
-
 					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					disabledTooltipText: qsTr("The current log will be automatically deleted at exit.")
-					enableButton: tabbedPane.currentIndex > 0
-					icon.source: "qrc:///images/desktop/trash_icon_white.svg"
-					//: LABEL DESKTOP
-					text: qsTr("Delete log")
-					tintIcon: true
-
-					onClicked: {
-						confirmationPopup.deleteAll = false;
-						confirmationPopup.open();
-					}
-				}
-				GButton {
-					id: removeAllLogs
-
-					Layout.maximumWidth: Number.POSITIVE_INFINITY
 					enableButton: tabbedPane.sectionsModel.length > 1
-					icon.source: "qrc:///images/trash_icon_old.svg"
+					icon.source: "qrc:///images/trash_icon.svg"
 					//: LABEL DESKTOP
-					text: qsTr("Delete old logs")
+					text: qsTr("Delete all logs")
 					tintIcon: true
 
-					onClicked: {
-						confirmationPopup.deleteAll = true;
-						confirmationPopup.open();
-					}
+					onClicked: confirmationPopup.open()
 				}
 				GButton {
 					property QtObject detachedLogViewItem: null
@@ -187,19 +167,14 @@ SectionPage {
 	ConfirmationPopup {
 		id: confirmationPopup
 
-		property bool deleteAll: true
-
+		//: LABEL DESKTOP
+		okButtonText: qsTr("Delete")
 		//: INFO DESKTOP All logfiles are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("All old logs will be deleted.") :
-			//: INFO DESKTOP The current logfile is about to be removed, user confirmation required.
-			qsTr("The log will be deleted."))
-		title: (deleteAll ?
-			//: LABEL DESKTOP
-			qsTr("Delete old logs") :
-			//: LABEL DESKTOP
-			qsTr("Delete selected log"))
+		text: qsTr("All old logs will be deleted.")
+		//: LABEL DESKTOP
+		title: qsTr("Delete all logs")
 		width: plugin.scaleFactor * 600
 
-		onConfirmed: deleteAll ? LogModel.removeOtherLogFiles() : LogModel.removeCurrentLogFile()
+		onConfirmed: LogModel.removeOtherLogFiles()
 	}
 }

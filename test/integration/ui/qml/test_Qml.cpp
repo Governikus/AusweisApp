@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -12,6 +12,7 @@
 #include <QRegularExpression>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -31,12 +32,12 @@ class test_Qml
 			QString logData;
 			mHelper->sendMessage(QStringLiteral("{\"cmd\": \"GET_LOG\"}"));
 			if (!mHelper->waitForMessage([&logData](const QJsonObject& pMessage){
-						if (pMessage["msg"] != "LOG")
+						if (pMessage["msg"_L1] != "LOG"_L1)
 						{
 							return false;
 						}
 
-						auto jsonData = pMessage[QLatin1String("data")];
+						auto jsonData = pMessage["data"_L1];
 						if (!jsonData.isNull())
 						{
 							logData = jsonData.toString();
@@ -63,7 +64,7 @@ class test_Qml
 			const QString logData = getLogData();
 
 			bool initContainedAndSuccess = logData.contains(QLatin1String("QML engine initialization finished with 0 warnings."));
-			bool noQmlWarning = !logData.contains(QRegularExpression(" W .*\\.qml:"));
+			bool noQmlWarning = !logData.contains(QRegularExpression(" W .*\\.qml:"_L1));
 			bool success = initContainedAndSuccess && noQmlWarning;
 			if (!success)
 			{
@@ -90,12 +91,12 @@ class test_Qml
 		{
 			QTest::addColumn<QString>("platformSelector");
 
-			QTest::newRow("Android") << QString("mobile,android");
-			QTest::newRow("iOS") << QString("mobile,ios");
+			QTest::newRow("Android") << u"mobile,android"_s;
+			QTest::newRow("iOS") << u"mobile,ios"_s;
 #ifdef Q_OS_WIN
-			QTest::newRow("Windows") << QString("desktop,win");
+			QTest::newRow("Windows") << u"desktop,win"_s;
 #else
-			QTest::newRow("macOS") << QString("desktop,nowin");
+			QTest::newRow("macOS") << u"desktop,nowin"_s;
 #endif
 		}
 
@@ -105,16 +106,16 @@ class test_Qml
 			QFETCH(QString, platformSelector);
 
 			QString path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
-			QString app = path + "AusweisApp";
+			QString app = path + "AusweisApp"_L1;
 #ifdef Q_OS_WIN
-			app += ".exe";
+			app += ".exe"_L1;
 #endif
 
 			QStringList args;
-			args << "--ui" << "qml";
-			args << "--ui" << "websocket";
-			args << "--port" << "0";
-			args << "-platform" << "offscreen";
+			args << "--ui"_L1 << "qml"_L1;
+			args << "--ui"_L1 << "websocket"_L1;
+			args << "--port"_L1 << "0"_L1;
+			args << "-platform"_L1 << "offscreen"_L1;
 
 			mApp2.reset(new QProcess());
 			mApp2->setProgram(app);
@@ -122,9 +123,9 @@ class test_Qml
 			mApp2->setArguments(args);
 
 			QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-			env.insert("OVERRIDE_PLATFORM_SELECTOR", platformSelector);
-			env.insert("QT_QPA_OFFSCREEN_NO_GLX", QStringLiteral("1"));
-			env.insert("QML_DISABLE_DISK_CACHE", QStringLiteral("1"));
+			env.insert("OVERRIDE_PLATFORM_SELECTOR"_L1, platformSelector);
+			env.insert("QT_QPA_OFFSCREEN_NO_GLX"_L1, "1"_L1);
+			env.insert("QML_DISABLE_DISK_CACHE"_L1, "1"_L1);
 			mApp2->setProcessEnvironment(env);
 
 			mApp2->start();
@@ -149,35 +150,35 @@ class test_Qml
 			QNetworkAccessManager accessManager;
 			QSignalSpy logSpy(&accessManager, &QNetworkAccessManager::finished);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("IDENTIFY"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("IDENTIFY"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 1, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("IDENTIFY")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SETTINGS"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SETTINGS"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 2, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("SETTINGS")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("UPDATEINFORMATION"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("UPDATEINFORMATION"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 3, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("UPDATEINFORMATION")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PINMANAGEMENT"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PINMANAGEMENT"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 4, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("PINMANAGEMENT")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("TUTORIAL"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("TUTORIAL"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 5, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("TUTORIAL")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("HELP"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("HELP"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 6, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("HELP")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PROVIDER"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("PROVIDER"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 7, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("PROVIDER")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SELF_AUTHENTICATION"))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("SELF_AUTHENTICATION"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 8, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("SELF_AUTHENTICATION")), PROCESS_TIMEOUT);
 

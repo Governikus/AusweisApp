@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Eac2InputType.h"
@@ -15,7 +15,7 @@ const QString& Eac2InputType::getSignature() const
 }
 
 
-const QVector<QSharedPointer<const CVCertificate>>& Eac2InputType::getCvCertificates() const
+const QList<QSharedPointer<const CVCertificate>>& Eac2InputType::getCvCertificates() const
 {
 	return mCvCertificates;
 }

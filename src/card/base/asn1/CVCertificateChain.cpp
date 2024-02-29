@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificateChain.h"
@@ -9,13 +9,13 @@ using namespace governikus;
 
 
 CVCertificateChain::CVCertificateChain(bool pProductive)
-	: CVCertificateChain(QVector<QSharedPointer<const CVCertificate>>(), pProductive)
+	: CVCertificateChain(QList<QSharedPointer<const CVCertificate>>(), pProductive)
 {
 }
 
 
-CVCertificateChain::CVCertificateChain(const QVector<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive)
-	: QVector<QSharedPointer<const CVCertificate>>(pCvcs)
+CVCertificateChain::CVCertificateChain(const QList<QSharedPointer<const CVCertificate>>& pCvcs, bool pProductive)
+	: QList<QSharedPointer<const CVCertificate>>(pCvcs)
 	, mProductive(pProductive)
 {
 	if (!isValid())

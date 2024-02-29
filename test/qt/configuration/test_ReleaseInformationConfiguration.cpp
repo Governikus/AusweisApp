@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QSignalSpy>
 #include <QTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_ReleaseInformationConfiguration
@@ -39,7 +40,7 @@ class test_ReleaseInformationConfiguration
 		void init()
 		{
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* ()>([] {
-					auto* mock = new MockReleaseInformation(VersionNumber("1.2.3"), false);
+					auto* mock = new MockReleaseInformation(VersionNumber("1.2.3"_L1), false);
 					return mock;
 				}));
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
@@ -61,7 +62,7 @@ class test_ReleaseInformationConfiguration
 			QCOMPARE(spyCurrentInformationChanged.count(), 1);
 			QCOMPARE(spyUpdateInformationChanged.count(), 0);
 
-			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"_L1));
 
 			QCOMPARE(getUpdateInfoUpdateCallcount(), 1);
 			QCOMPARE(spyCurrentInformationChanged.count(), 1);
@@ -87,7 +88,7 @@ class test_ReleaseInformationConfiguration
 			QCOMPARE(spyCurrentInformationChanged.count(), 1);
 			QCOMPARE(spyUpdateInformationChanged.count(), 0);
 
-			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"_L1));
 			QCOMPARE(getUpdateInfoUpdateCallcount(), 1);
 			QCOMPARE(spyUpdateInformationChanged.count(), 1);
 
@@ -110,7 +111,7 @@ class test_ReleaseInformationConfiguration
 			QCOMPARE(spyCurrentInformationChanged.count(), 1);
 			QCOMPARE(spyUpdateInformationChanged.count(), 0);
 
-			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.4.2"));
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.4.2"_L1));
 
 			QCOMPARE(spyCurrentInformationChanged.count(), 1);
 			QCOMPARE(spyUpdateInformationChanged.count(), 1);

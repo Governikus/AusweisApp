@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -21,7 +21,7 @@ using namespace governikus;
 StateGenericSendReceive::StateGenericSendReceive(
 	const QSharedPointer<WorkflowContext>& pContext,
 	PaosType pExpectedResponseType,
-	const QVector<PaosType>& pOtherResponseTypes,
+	const QList<PaosType>& pOtherResponseTypes,
 	bool pPersonalization)
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -21,7 +21,7 @@ class MsgContext
 
 	private:
 		MsgLevel mApiLevel;
-		QVector<Msg> mStateMessages;
+		QList<Msg> mStateMessages;
 		bool mProgressStatus;
 		QSharedPointer<WorkflowContext> mContext;
 

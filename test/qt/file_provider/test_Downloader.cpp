@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_Downloader
@@ -101,7 +102,7 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
 
-			const QUrl url("http://server/reader/icons/icon.png");
+			const QUrl url("http://server/reader/icons/icon.png"_L1);
 			downloader->download(url);
 
 			mMockNetworkManager.fireFinished();
@@ -121,7 +122,7 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
 
-			const QUrl url("http://server/reader/icons/icon.png");
+			const QUrl url("http://server/reader/icons/icon.png"_L1);
 			downloader->download(url);
 
 			mMockNetworkManager.fireFinished();
@@ -138,7 +139,7 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
 
-			const QUrl url("http://server/reader/icons/icon.png");
+			const QUrl url("http://server/reader/icons/icon.png"_L1);
 			downloader->download(url);
 
 			mMockNetworkManager.fireFinished();
@@ -155,8 +156,8 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadFailed);
 
-			const QUrl urlCurrent("http://server/current");
-			const QUrl urlurlNext("http://server/next");
+			const QUrl urlCurrent("http://server/current"_L1);
+			const QUrl urlurlNext("http://server/next"_L1);
 
 			QTest::ignoreMessage(QtDebugMsg, "Try abort of download: QUrl(\"http://server/current\")");
 			QVERIFY(!downloader->abort(urlCurrent));
@@ -198,7 +199,7 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadSuccess);
 
-			const QUrl url("http://server/reader/icons/icon.png");
+			const QUrl url("http://server/reader/icons/icon.png"_L1);
 			const QDateTime timestampInCache(QDate(2017, 6, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			downloader->download(url, timestampInCache);
 
@@ -223,7 +224,7 @@ class test_Downloader
 			auto* const downloader = Env::getSingleton<Downloader>();
 			QSignalSpy spy(downloader, &Downloader::fireDownloadUnnecessary);
 
-			const QUrl url("http://server/reader/icons/icon.png");
+			const QUrl url("http://server/reader/icons/icon.png"_L1);
 			const QDateTime timestampInCache(QDate(2017, 7, 1), QTime(12, 00, 0, 0), QTimeZone::utc());
 			downloader->download(url, timestampInCache);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdClient.h"
@@ -91,7 +91,7 @@ bool RemoteIfdClient::isDetecting()
 }
 
 
-QVector<QSharedPointer<IfdListEntry>> RemoteIfdClient::getAnnouncingRemoteDevices() const
+QList<QSharedPointer<IfdListEntry>> RemoteIfdClient::getAnnouncingRemoteDevices() const
 {
 	return mIfdList->getIfdList();
 }
@@ -103,11 +103,11 @@ void RemoteIfdClient::requestRemoteDevices()
 }
 
 
-QVector<RemoteServiceSettings::RemoteInfo> RemoteIfdClient::getConnectedDeviceInfos()
+QList<RemoteServiceSettings::RemoteInfo> RemoteIfdClient::getConnectedDeviceInfos()
 {
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	auto remoteInfos = settings.getRemoteInfos();
-	QVector<RemoteServiceSettings::RemoteInfo> result;
+	QList<RemoteServiceSettings::RemoteInfo> result;
 	for (const auto& info : std::as_const(remoteInfos))
 	{
 		const auto& deviceIDs = getConnectedDeviceIDs();

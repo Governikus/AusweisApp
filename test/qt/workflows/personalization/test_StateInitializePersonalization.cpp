@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateInitializePersonalization.h"
@@ -19,6 +19,7 @@
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -65,7 +66,7 @@ class test_StateInitializePersonalization
 			QSignalSpy spyContinue(&state, &StateInitializePersonalization::fireContinue);
 
 			setInitializePersonalizationResult({EidServiceResult::ERROR});
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Initialization of personalization failed"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Initialization of personalization failed"_L1));
 			state.run();
 
 			QTRY_COMPARE(spyAbort.size(), 1); // clazy:exclude=qstring-allocations
@@ -81,24 +82,24 @@ class test_StateInitializePersonalization
 		void success_data()
 		{
 			QTest::addColumn<SmartEidType>("type");
-			QTest::addColumn<QString>("pin");
+			QTest::addColumn<QLatin1String>("pin");
 
-			QTest::newRow("UNKNOWN") << SmartEidType::UNKNOWN << QString();
-			QTest::newRow("APPLET") << SmartEidType::APPLET << QString();
-			QTest::newRow("NON_APPLET") << SmartEidType::NON_APPLET << QString("123456");
+			QTest::newRow("UNKNOWN") << SmartEidType::UNKNOWN << QLatin1String();
+			QTest::newRow("APPLET") << SmartEidType::APPLET << QLatin1String();
+			QTest::newRow("NON_APPLET") << SmartEidType::NON_APPLET << "123456"_L1;
 		}
 
 
 		void success()
 		{
 			QFETCH(SmartEidType, type);
-			QFETCH(QString, pin);
+			QFETCH(QLatin1String, pin);
 
 			setSmartEidStatus(EidStatus::NO_PERSONALIZATION);
 			setInitializePersonalizationResult({EidServiceResult::SUCCESS, std::string("data containing the PIN when Smart-eID is of type HWKeyStore")});
 			mContext->setServiceInformation(type, QString(), QString());
-			mContext->setNewPin(QString("123456"));
-			mContext->setChallenge(QString("FooBar"));
+			mContext->setNewPin("123456"_L1);
+			mContext->setChallenge("FooBar"_L1);
 
 			StateInitializePersonalization state(mContext);
 			QSignalSpy spyAbort(&state, &StateInitializePersonalization::fireAbort);
@@ -110,14 +111,14 @@ class test_StateInitializePersonalization
 			QTRY_COMPARE(spyContinue.size(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyAbort.size(), 0);
 			QCOMPARE(mContext->getStatus(), GlobalStatus::Code::No_Error);
-			QCOMPARE(mContext->getPreparePersonalizationData(), QString("data containing the PIN when Smart-eID is of type HWKeyStore"));
+			QCOMPARE(mContext->getPreparePersonalizationData(), "data containing the PIN when Smart-eID is of type HWKeyStore"_L1);
 
 			for (const auto& entry : logSpy)
 			{
-				QVERIFY(!entry.at(0).toString().contains(QLatin1String("data containing the PIN")));
+				QVERIFY(!entry.at(0).toString().contains("data containing the PIN"_L1));
 			}
 
-			QCOMPARE(dequeueReceivedParameter(), QString("FooBar"));
+			QCOMPARE(dequeueReceivedParameter(), "FooBar"_L1);
 			QCOMPARE(dequeueReceivedParameter(), pin);
 		}
 

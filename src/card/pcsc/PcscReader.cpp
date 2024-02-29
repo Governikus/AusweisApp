@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -219,10 +219,11 @@ void PcscReader::updateCard()
 	for (int tryCount = 0; tryCount < MAX_TRY_COUNT; ++tryCount)
 	{
 		mPcscCard.reset(new PcscCard(this));
-		fetchCardInfo();
+		const auto cardConnection = fetchCardInfo();
 
 		if (getReaderInfo().hasEid())
 		{
+			fetchGetReaderInfo(); // cardConnection is required
 			break;
 		}
 
@@ -230,7 +231,6 @@ void PcscReader::updateCard()
 	}
 
 	qCInfo(card_pcsc) << "Card inserted:" << getReaderInfo().getCardInfo();
-	fetchGetReaderInfo();
 	Q_EMIT fireCardInserted(getReaderInfo());
 }
 

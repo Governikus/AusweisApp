@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -11,48 +11,52 @@ import Governikus.View
 CheckBox {
 	id: control
 
-	property alias descriptionItem: descriptionItemLoader.sourceComponent
+	property alias focusFrameVisible: focusFrame.visible
+	property alias layoutDirection: contentLayout.layoutDirection
 	property alias maximumLineCount: description.maximumLineCount
+	property alias overwriteHovered: colors.overwriteHovered
+	property alias overwritePressed: colors.overwritePressed
+	readonly property color preferredBackgroundColor: colors.control_preferredPaneBackground
 	property alias textStyle: description.textStyle
 
-	padding: 0
+	horizontalPadding: Constants.component_spacing
+	indicator: null
+	verticalPadding: Constants.component_spacing / 2
 
-	contentItem: ColumnLayout {
-		spacing: Constants.text_spacing
+	contentItem: RowLayout {
+		id: contentLayout
 
+		readonly property int focusWidth: layoutDirection === Qt.RightToLeft ? width : implicitWidth
+
+		spacing: control.spacing
+
+		Rectangle {
+			border.color: colors.control_border
+			border.width: Style.dimens.border_width
+			color: colors.control
+			implicitHeight: Style.dimens.small_icon_size
+			implicitWidth: implicitHeight
+			radius: Math.max(plugin.scaleFactor * 4, 1)
+
+			TintableIcon {
+				anchors.fill: parent
+				anchors.margins: Math.max(plugin.scaleFactor * 4, 1)
+				fillMode: Image.PreserveAspectFit
+				source: "qrc:///images/checkbox_indicator.svg"
+				tintColor: colors.control_content
+				visible: control.checked
+			}
+		}
 		GText {
 			id: description
 
 			Accessible.ignored: true
+			Layout.maximumWidth: Number.POSITIVE_INFINITY
 			elide: Text.ElideRight
-			leftPadding: control.indicator.implicitWidth + control.spacing
 			maximumLineCount: 1
 			text: control.text
-			textStyle: enabled ? Style.text.normal : Style.text.normal
-		}
-		Loader {
-			id: descriptionItemLoader
-
-			Layout.fillWidth: true
-			Layout.leftMargin: description.leftPadding
-			visible: sourceComponent
-		}
-	}
-	indicator: Rectangle {
-		border.color: enabled ? Style.color.control : Style.color.control_disabled
-		border.width: Math.max(plugin.scaleFactor * 4, 1)
-		color: enabled ? (control.checked ? Style.color.control : Style.color.transparent) : Style.color.control_disabled
-		implicitHeight: plugin.scaleFactor * 33
-		implicitWidth: implicitHeight
-		radius: Math.max(plugin.scaleFactor * 4, 1)
-
-		TintableIcon {
-			anchors.fill: parent
-			anchors.margins: Math.max(plugin.scaleFactor * 4, 1)
-			fillMode: Image.PreserveAspectFit
-			source: "qrc:///images/checkbox_indicator.svg"
-			tintColor: Style.color.control_content
-			visible: control.checked
+			textStyle: Style.text.normal
+			visible: text !== ""
 		}
 	}
 
@@ -61,17 +65,20 @@ CheckBox {
 		toggled();
 	}
 
-	MouseArea {
-		anchors.fill: parent
-		cursorShape: Qt.PointingHandCursor
+	StatefulColors {
+		id: colors
 
-		onClicked: control.toggle()
+		control_content: Style.color.control_content_graphics
+		statefulControl: control
 	}
 	FocusFrame {
-		anchors.fill: null
-		height: indicator.height - 2 * anchors.margins
-		width: description.x + description.width - 2 * anchors.margins
-		x: indicator.x + anchors.margins
-		y: indicator.y + anchors.margins
+		id: focusFrame
+
+		anchors {
+			bottomMargin: control.bottomPadding / 2
+			leftMargin: control.leftPadding / 2
+			rightMargin: Math.max(0, contentItem.width - contentItem.focusWidth) + control.rightPadding / 2
+			topMargin: control.topPadding / 2
+		}
 	}
 }

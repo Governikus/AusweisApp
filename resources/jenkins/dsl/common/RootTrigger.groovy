@@ -21,11 +21,11 @@ class RootTrigger
 
 			parameters
 			{
-				stringParam('REVIEWBOARD_SERVER', Constants.ReviewBoardServer, 'Server')
+				stringParam('REVIEWBOARD_SERVER', '', 'Server')
 				stringParam('REVIEWBOARD_REVIEW_ID', '', 'ReviewID')
 				stringParam('REVIEWBOARD_DIFF_REVISION', '', 'ReviewDiffRev')
-				stringParam('REVIEWBOARD_REVIEW_BRANCH', '', 'ReviewBranch')
 				stringParam('REVIEWBOARD_STATUS_UPDATE_ID', '', 'StatusUpdateID')
+				stringParam('REVIEWBOARD_REVIEW_BRANCH', '', 'ReviewBranch')
 			}
 
 			steps

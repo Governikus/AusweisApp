@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DiagnosisAntivirusDetection
@@ -28,10 +29,10 @@ class test_DiagnosisAntivirusDetection
 			const QByteArray rawData = TestFileHelper::readFile(filePath);
 			QString stringData = QString::fromUtf8(rawData);
 
-			Q_ASSERT(stringData.count("\r\n") == 0);
-			const qsizetype linebreaks = stringData.count('\n');
-			stringData.replace('\n', "\r\n");
-			Q_ASSERT(stringData.count("\r\n") == linebreaks);
+			Q_ASSERT(stringData.count("\r\n"_L1) == 0);
+			const qsizetype linebreaks = stringData.count('\n'_L1);
+			stringData.replace('\n'_L1, "\r\n"_L1);
+			Q_ASSERT(stringData.count("\r\n"_L1) == linebreaks);
 
 			return stringData;
 		}
@@ -54,7 +55,7 @@ class test_DiagnosisAntivirusDetection
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
 			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
 			QCOMPARE(spy.count(), 0);
-			mAntivirusDetection->parseAntivirInfos("");
+			mAntivirusDetection->parseAntivirInfos(QString());
 			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
 			QCOMPARE(spy.count(), 1);
 		}
@@ -70,9 +71,9 @@ class test_DiagnosisAntivirusDetection
 			mAntivirusDetection->parseAntivirInfos(fileContent);
 			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
 			QVERIFY(!antivirusInfos.empty());
-			QCOMPARE(antivirusInfos[0]->getDisplayName(), QString("Windows Defender"));
-			QCOMPARE(antivirusInfos[0]->getLastUpdate(), QString("Mon, 26 Nov 2018 10:34:23 GMT"));
-			QCOMPARE(antivirusInfos[0]->getExePath(), QString("windowsdefender://"));
+			QCOMPARE(antivirusInfos[0]->getDisplayName(), "Windows Defender"_L1);
+			QCOMPARE(antivirusInfos[0]->getLastUpdate(), "Mon, 26 Nov 2018 10:34:23 GMT"_L1);
+			QCOMPARE(antivirusInfos[0]->getExePath(), "windowsdefender://"_L1);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -87,9 +88,9 @@ class test_DiagnosisAntivirusDetection
 			mAntivirusDetection->parseAntivirInfos(fileContent);
 			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
 			QVERIFY(!antivirusInfos.empty());
-			QCOMPARE(antivirusInfos[0]->getDisplayName(), QString("Windows Defender"));
-			QCOMPARE(antivirusInfos[0]->getLastUpdate(), QString(""));
-			QCOMPARE(antivirusInfos[0]->getExePath(), QString("windowsdefender://"));
+			QCOMPARE(antivirusInfos[0]->getDisplayName(), "Windows Defender"_L1);
+			QCOMPARE(antivirusInfos[0]->getLastUpdate(), QString());
+			QCOMPARE(antivirusInfos[0]->getExePath(), "windowsdefender://"_L1);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -104,12 +105,12 @@ class test_DiagnosisAntivirusDetection
 			mAntivirusDetection->parseAntivirInfos(fileContent);
 			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
 			QVERIFY(!antivirusInfos.empty());
-			QCOMPARE(antivirusInfos[0]->getDisplayName(), QString("BullGuard Antivirus"));
-			QCOMPARE(antivirusInfos[0]->getLastUpdate(), QString("Fri, 30 Nov 2018 15:04:13 GMT"));
-			QCOMPARE(antivirusInfos[0]->getExePath(), QString("C:\\Program Files\\BullGuard Ltd\\BullGuard\\BullGuard.exe"));
-			QCOMPARE(antivirusInfos[1]->getDisplayName(), QString("Windows Defender"));
-			QCOMPARE(antivirusInfos[1]->getLastUpdate(), QString("Mon, 26 Nov 2018 10:34:23 GMT"));
-			QCOMPARE(antivirusInfos[1]->getExePath(), QString("windowsdefender://"));
+			QCOMPARE(antivirusInfos[0]->getDisplayName(), "BullGuard Antivirus"_L1);
+			QCOMPARE(antivirusInfos[0]->getLastUpdate(), "Fri, 30 Nov 2018 15:04:13 GMT"_L1);
+			QCOMPARE(antivirusInfos[0]->getExePath(), "C:\\Program Files\\BullGuard Ltd\\BullGuard\\BullGuard.exe"_L1);
+			QCOMPARE(antivirusInfos[1]->getDisplayName(), "Windows Defender"_L1);
+			QCOMPARE(antivirusInfos[1]->getLastUpdate(), "Mon, 26 Nov 2018 10:34:23 GMT"_L1);
+			QCOMPARE(antivirusInfos[1]->getExePath(), "windowsdefender://"_L1);
 			QCOMPARE(spy.count(), 1);
 		}
 

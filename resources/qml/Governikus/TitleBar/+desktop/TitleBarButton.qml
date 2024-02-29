@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -44,7 +44,7 @@ Button {
 
 			anchors.fill: parent
 			anchors.margins: image.height / -4
-			color: NotificationModel.lastType === "developermode" ? Constants.red : Constants.green
+			color: NotificationModel.lastType === "developermode" ? Style.color.warning : Constants.green
 			opacity: 0
 			radius: height / 4
 

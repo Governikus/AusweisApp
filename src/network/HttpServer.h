@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,10 +11,10 @@
 #include "HttpRequest.h"
 #include "PortFile.h"
 
+#include <QList>
 #include <QMetaMethod>
 #include <QStringList>
 #include <QTcpServer>
-#include <QVector>
 
 namespace governikus
 {
@@ -25,26 +25,26 @@ class HttpServer
 	Q_OBJECT
 
 	private:
-		QVector<QTcpServer*> mServer;
+		QList<QTcpServer*> mServer;
 		PortFile mPortFile;
 
 		void shutdown();
-		void bindAddresses(quint16 pPort, const QVector<QHostAddress>& pAddresses);
+		void bindAddresses(quint16 pPort, const QList<QHostAddress>& pAddresses);
 		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
 
 	public:
 		static quint16 cPort;
-		static QVector<QHostAddress> cAddresses;
+		static QList<QHostAddress> cAddresses;
 		static QString getDefault();
 
 		explicit HttpServer(quint16 pPort = HttpServer::cPort,
-				const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);
+				const QList<QHostAddress>& pAddresses = HttpServer::cAddresses);
 		~HttpServer() override;
 
 		[[nodiscard]] QStringList boundAddresses() const;
 		[[nodiscard]] bool isListening() const;
 		[[nodiscard]] quint16 getServerPort() const;
-		void rebind(quint16 pPort = 0, const QVector<QHostAddress>& pAddresses = HttpServer::cAddresses);
+		void rebind(quint16 pPort = 0, const QList<QHostAddress>& pAddresses = HttpServer::cAddresses);
 
 	private Q_SLOTS:
 		void onNewConnection();

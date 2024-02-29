@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -39,7 +39,6 @@ GPane {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Constants.component_spacing
 		icon.source: "qrc:///images/open_website.svg"
-		iconSize: Style.dimens.small_icon_size
 		tintIcon: hintText.color
 		visible: text !== ""
 

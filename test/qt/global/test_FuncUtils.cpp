@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -60,20 +60,20 @@ class test_FuncUtils
 	Q_OBJECT
 
 	private:
-		QVector<Reader> mReaders;
+		QList<Reader> mReaders;
 
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mReaders = QVector<Reader>({Reader(QStringLiteral("NFC Reader"), true),
-										Reader(QStringLiteral("Remote Reader"), false),
-										Reader(QStringLiteral("PCSC Reader"), true)});
+			mReaders = QList<Reader>({Reader(QStringLiteral("NFC Reader"), true),
+									  Reader(QStringLiteral("Remote Reader"), false),
+									  Reader(QStringLiteral("PCSC Reader"), true)});
 		}
 
 
 		void testMapWithNonVoid()
 		{
-			const QVector<QString> readerNamesVector = map<Reader, QString>([](const Reader& r){
+			const QList<QString> readerNamesVector = map<Reader, QString>([](const Reader& r){
 					return r.getName();
 				}, mReaders);
 
@@ -95,7 +95,7 @@ class test_FuncUtils
 
 		void testFilter()
 		{
-			const QVector<Reader> connectedReaders = filter<Reader>([](const Reader& r){
+			const QList<Reader> connectedReaders = filter<Reader>([](const Reader& r){
 					return r.isConnected();
 				}, mReaders);
 

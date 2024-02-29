@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePersonalization.h"
@@ -15,7 +15,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -55,15 +55,15 @@ class test_StatePreparePersonalization
 		void test_CheckRequestUrl()
 		{
 			const auto& url = mState->getRequestUrl().toString();
-			QCOMPARE(url, QString("https://dummy/preparePersonalization"));
+			QCOMPARE(url, "https://dummy/preparePersonalization"_L1);
 
 		}
 
 
 		void test_CheckPayload()
 		{
-			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
-			mContext->setPreparePersonalizationData(QString("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="));
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1));
+			mContext->setPreparePersonalizationData("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="_L1);
 
 			const auto& payload = mState->getPayload();
 			QJsonParseError jsonError {};
@@ -72,8 +72,8 @@ class test_StatePreparePersonalization
 
 			const auto obj = json.object();
 			QCOMPARE(obj.size(), 2);
-			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), QString("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
-			QCOMPARE(obj.value(QLatin1String("preparePersonalizationData")).toString(), QString("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="));
+			QCOMPARE(obj.value(QLatin1String("sessionID")).toString(), "135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1);
+			QCOMPARE(obj.value(QLatin1String("preparePersonalizationData")).toString(), "UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="_L1);
 		}
 
 
@@ -84,7 +84,7 @@ class test_StatePreparePersonalization
 
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("No valid network response"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("No valid network response"_L1));
 			mState->onNetworkReply();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
@@ -99,7 +99,7 @@ class test_StatePreparePersonalization
 
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -1"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -1"_L1));
 			mState->onNetworkReply();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mContext->getFinalizeStatus(), -1);
@@ -116,7 +116,7 @@ class test_StatePreparePersonalization
 
 			mState->onNetworkReply();
 			const QString logMsg(logSpy.takeLast().at(0).toString());
-			QVERIFY(logMsg.contains("preparePersonalization finished with statusCode 1"));
+			QVERIFY(logMsg.contains("preparePersonalization finished with statusCode 1"_L1));
 			QCOMPARE(spyContinue.count(), 1);
 			QCOMPARE(mContext->getFinalizeStatus(), 1);
 		}
@@ -129,7 +129,7 @@ class test_StatePreparePersonalization
 
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
-			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -2"));
+			QTest::ignoreMessage(QtWarningMsg, QRegularExpression("preparePersonalization failed with statusCode -2"_L1));
 			mState->onNetworkReply();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Smart_eID_PrePersonalization_Failed);
@@ -145,7 +145,7 @@ class test_StatePreparePersonalization
 
 			QSignalSpy spyAbort(mState.data(), &StatePreparePersonalization::fireAbort);
 
-			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("JSON parsing failed: statusCode is missing"));
+			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("JSON parsing failed: statusCode is missing"_L1));
 			mState->onNetworkReply();
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus(), GlobalStatus::Code::Workflow_Server_Incomplete_Information_Provided);
@@ -167,9 +167,9 @@ class test_StatePreparePersonalization
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), GlobalStatus::Code::Workflow_TrustedChannel_Server_Error);
 			const FailureCode::FailureInfoMap infoMap {
-				{FailureCode::Info::State_Name, "StatePreparePersonalization"},
+				{FailureCode::Info::State_Name, "StatePreparePersonalization"_L1},
 				{FailureCode::Info::Http_Status_Code, QString::number(500)},
-				{FailureCode::Info::Network_Error, "Unknown error"}
+				{FailureCode::Info::Network_Error, "Unknown error"_L1}
 			};
 			const FailureCode failureCode(FailureCode::Reason::Generic_Provider_Communication_Server_Error, infoMap);
 			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);
@@ -180,8 +180,8 @@ class test_StatePreparePersonalization
 
 		void test_AvoidLoggingOfTheRequest()
 		{
-			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"));
-			mContext->setPreparePersonalizationData(QString("data containing the PIN when Smart-eID is of type HWKeyStore"));
+			mContext->setSessionIdentifier(QUuid("135a32d8-ccfa-11eb-b8bc-0242ac130003"_L1));
+			mContext->setPreparePersonalizationData("data containing the PIN when Smart-eID is of type HWKeyStore"_L1);
 			mState->onEntry(nullptr);
 			mNetworkManager->setNextReply(new MockNetworkReply(QByteArrayLiteral(R"({ "statusCode": 1 })")));
 

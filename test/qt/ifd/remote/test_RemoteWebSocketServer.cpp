@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -18,6 +18,7 @@
 #include <QWebSocket>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -65,6 +66,7 @@ class PskHandler
 			if (pairingCiphers.contains(config.sessionCipher()))
 			{
 				allowedErrors << QSslError::SelfSignedCertificate;
+				allowedErrors << QSslError::SelfSignedCertificateInChain;
 			}
 
 			bool ignoreErrors = true;
@@ -178,7 +180,7 @@ class test_RemoteWebSocketServer
 			QVERIFY(mServer->listen(QStringLiteral("TestServer")));
 			QVERIFY(mServer->isPairingAnnounced());
 
-			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			client.open(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
@@ -197,12 +199,12 @@ class test_RemoteWebSocketServer
 			auto config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd().getConfiguration();
 			config.setPrivateKey(pair.getKey());
 			config.setLocalCertificate(pair.getCertificate());
-			config.setCaCertificates({settings.getCertificate()});
+			config.setCaCertificates(settings.getCertificates());
 			client.setSslConfiguration(config);
 			QSignalSpy spy(&client, &QWebSocket::connected);
 
 			PskHandler pskHandler(&client);
-			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			client.open(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(client.state(), QAbstractSocket::SocketState::ConnectedState);
@@ -214,7 +216,7 @@ class test_RemoteWebSocketServer
 		{
 			QVERIFY(mServer->listen(QStringLiteral("TestServer")));
 
-			QUrl serverUrl(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			QUrl serverUrl(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 			mServer->close();
 
 			QWebSocket client;
@@ -247,10 +249,10 @@ class test_RemoteWebSocketServer
 			QSignalSpy spy1(&client1, &QWebSocket::connected);
 			QSignalSpy spy2(&client2, &QWebSocket::disconnected);
 
-			client1.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			client1.open(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 			QTRY_COMPARE(spy1.count(), 1); // clazy:exclude=qstring-allocations
 
-			client2.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			client2.open(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 			QTRY_COMPARE(spy2.count(), 1); // clazy:exclude=qstring-allocations
 
 			QCOMPARE(client1.state(), QAbstractSocket::SocketState::ConnectedState);
@@ -279,7 +281,7 @@ class test_RemoteWebSocketServer
 
 			PskHandler pskHandler(&client, mServer.data());
 			mServer->setPairing();
-			client.open(QString("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
+			client.open(QStringLiteral("wss://127.0.0.1:").append(QString::number(mServer->getServerPort())));
 			QVERIFY(mServer->isPairingAnnounced());
 
 			QTRY_COMPARE(newConnectionSpy.count(), 1); // clazy:exclude=qstring-allocations

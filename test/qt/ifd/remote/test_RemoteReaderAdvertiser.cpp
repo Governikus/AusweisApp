@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -28,6 +28,7 @@ template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, cons
 } // namespace governikus
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -92,8 +93,8 @@ class test_RemoteReaderAdvertiser
 		{
 			QFETCH(bool, pairing);
 
-			const QString ifdName("ServerName");
-			const QString ifdId("0123456789ABCDEF");
+			const QString ifdName("ServerName"_L1);
+			const QString ifdId("0123456789ABCDEF"_L1);
 			quint16 port = 12345;
 			int pTimerInterval = 99999;
 

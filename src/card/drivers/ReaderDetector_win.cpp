@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -109,9 +109,9 @@ static uint getProductId(const QString& pDevId)
 }
 
 
-QVector<UsbId> ReaderDetector::attachedDevIds() const
+QList<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<UsbId> result;
+	QList<UsbId> result;
 
 	for (auto stringDevId : attachedDevStringIds())
 	{

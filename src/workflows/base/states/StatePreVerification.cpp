@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreVerification.h"
@@ -9,7 +9,7 @@
 #include "SecureStorage.h"
 #include "asn1/SignatureChecker.h"
 
-#include <QVector>
+#include <QList>
 
 #include <algorithm>
 
@@ -99,11 +99,11 @@ void StatePreVerification::run()
 }
 
 
-bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const
+bool StatePreVerification::isValid(const QList<QSharedPointer<const CVCertificate>>& pCertificates) const
 {
 	qDebug() << "Check certificate chain validity on" << mValidationDateTime.toString(Qt::ISODate);
 
-	QVectorIterator<QSharedPointer<const CVCertificate>> i(pCertificates);
+	QListIterator<QSharedPointer<const CVCertificate>> i(pCertificates);
 	i.toBack();
 	while (i.hasPrevious())
 	{
@@ -132,9 +132,9 @@ bool StatePreVerification::isValid(const QVector<QSharedPointer<const CVCertific
 }
 
 
-void StatePreVerification::saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const
+void StatePreVerification::saveCvcaLinkCertificates(const QList<QSharedPointer<const CVCertificate>>& pCertificates) const
 {
-	const auto& contains = [](const QVector<QSharedPointer<const CVCertificate>>& pStore, const CVCertificate& pCert)
+	const auto& contains = [](const QList<QSharedPointer<const CVCertificate>>& pStore, const CVCertificate& pCert)
 			{
 				return std::any_of(pStore.constBegin(), pStore.constEnd(), [&pCert](const auto& pCertInStore)
 					{

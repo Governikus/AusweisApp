@@ -13,12 +13,12 @@ class Build
 	JobType jobType = JobType.Freestyle
 	String name
 	String namePrefix = ''
-	String[] libraries
+	String libraries
 	String artifacts
 	String label
 	String trigger = '@daily'
 	String excludePattern = 'source/**'
-	List oldBuilds = [7, 30]
+	List oldBuilds = [7, 10]
 	boolean releaseJob = false
 	boolean xunit = false
 	boolean sendMail = true
@@ -102,11 +102,32 @@ class Build
 			if(getWeight() > 1)
 				weight(getWeight())
 
+			String defaultArtifactJob = 'LIBRARY_ARTIFACT_JOB'
+			String defaultArtifactJobEval = 'LIBRARY_ARTIFACT_JOB_EVAL'
+			String defaultArtifactParam = 'LIBRARY_ARTIFACT'
+
 			environmentVariables
 			{
 				env('TEMP', '$WORKSPACE/tmp')
 				env('TMP', '$WORKSPACE/tmp')
 				env('TMPDIR', '$WORKSPACE/tmp')
+				env(defaultArtifactJobEval, '$' + defaultArtifactJob)
+			}
+
+			if(getLibraries())
+			{
+				parameters
+				{
+					stringParam(defaultArtifactJob, getLibName(getLibraries()), "Use job artifact source")
+					buildSelectorParam(defaultArtifactParam)
+					{
+						defaultBuildSelector
+						{
+							latestSuccessful(true)
+						}
+						description('Use build library job')
+					}
+				}
 			}
 
 			wrappers
@@ -158,31 +179,24 @@ class Build
 
 			steps
 			{
-				String[] requestedLibs = getLibraries()
-				String defaultTargetDestDir = 'libs'
-
-				for(String partLibName in requestedLibs)
+				if(getLibraries())
 				{
-					String targetDestDir = defaultTargetDestDir
-					if(requestedLibs.length > 1)
-					{
-						String arch = partLibName.split('_').last()
-						targetDestDir += '/' + arch
-					}
-
-					copyArtifacts(getLibName(partLibName))
+					String targetDestDir = 'libs'
+					copyArtifacts('${' + defaultArtifactJobEval + '}')
 					{
 						targetDirectory(targetDestDir)
 						buildSelector
 						{
-							latestSuccessful(true)
+							includePatterns('**/Toolchain_*')
+							flatten()
+							buildParameter(defaultArtifactParam)
 						}
 					}
 
 					if(getName().contains('_Win'))
-						batchFile("cd ${targetDestDir}/build & FOR %%a in (Toolchain_*) DO cmake -E tar xf %%a")
+						batchFile("cd ${targetDestDir} & FOR %%a in (Toolchain_*) DO cmake -E tar xf %%a")
 					else
-						shell("cd ${targetDestDir}/build; cmake -E tar xf Toolchain_*")
+						shell("cd ${targetDestDir}; cmake -E tar xf Toolchain_*")
 				}
 
 				if(getName().contains('_Win'))

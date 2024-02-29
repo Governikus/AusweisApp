@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.CheckResultView
@@ -57,7 +57,7 @@ CheckResultSuggestionView {
 	SuggestionData {
 		id: smartUpdatingData
 
-		icon: "qrc:///images/sandglass.svg"
+		icon: "qrc:///animations/hourglass.svg"
 		//: LABEL ANDROID IOS
 		text: qsTr("Please wait a moment.")
 
@@ -94,7 +94,7 @@ CheckResultSuggestionView {
 		//: LABEL ANDROID IOS
 		qsTr("The setup has not been completed.") + "</li><li>" +
 		//: LABEL ANDROID IOS
-		qsTr("The Smart-eID PIN has been entered incorrectly three times.") + "</li><li>" +
+		qsTr("The Smart-eID PIN has been entered incorrectly 3 times.") + "</li><li>" +
 		//: LABEL ANDROID IOS
 		qsTr("The %1 has been uninstalled temporarily.").arg(Qt.application.name) + "</li></ul>" + "<br>" +
 		//: LABEL ANDROID IOS

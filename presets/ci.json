@@ -1,0 +1,22 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "ci",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceParentDir}/build",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache"
+      }
+    },
+    {
+      "name": "ci-with-libs",
+      "hidden": true,
+      "inherits": "ci",
+      "cacheVariables": {
+        "CMAKE_PREFIX_PATH": "${sourceParentDir}/libs/dist"
+      }
+    }
+  ]
+}

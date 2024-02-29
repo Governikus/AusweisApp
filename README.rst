@@ -110,14 +110,14 @@ Bei Android ist zu beachten, dass ein CMAKE_TOOLCHAIN_FILE angegeben werden muss
 
 Unter dem Ordner "./dist/bin" ist nun ein "AusweisApp...apk" erstellt worden.
 
-Sofern der Parameter *CMAKE_BUILD_TYPE* auf RELEASE gesetzt wird, sind folgende CMake
-Parameter notwendig um das APK zu signieren.
+Sofern der Parameter *CMAKE_BUILD_TYPE* auf RELEASE gesetzt wird, sind folgende
+Umgebungsvariablen notwendig um das APK zu signieren.
 
 ::
 
-   -DAPK_SIGN_KEYSTORE=/home/governikus/AusweisApp.apk.keystore.jks
-   -DAPK_SIGN_KEYSTORE_ALIAS=ausweisapp
-   -DAPK_SIGN_KEYSTORE_PSW=123456
+   QT_ANDROID_KEYSTORE_PATH=/home/governikus/AusweisApp.apk.keystore.jks
+   QT_ANDROID_KEYSTORE_ALIAS=ausweisapp
+   QT_ANDROID_KEYSTORE_STORE_PASS=123456
 
 Wie schon bei der Toolchain wird standardmäßig die Architektur "armeabi-v7a" verwendet.
 Dies kann mittels CMake Parameter "-DCMAKE_ANDROID_ARCH_ABI=x86" verändert werden.

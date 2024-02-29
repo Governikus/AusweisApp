@@ -7,7 +7,16 @@
 		<string>E80704007F00070302</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
+	<string>de_DE</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>de</string>
+		<string>uk</string>
+		<string>ru</string>
+	</array>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>CFBundleExecutable</key>
 	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>

@@ -3,7 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'MacOS',
-		libraries: ['MacOS'],
+		libraries: 'MacOS',
 		label: 'MacOS',
 		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
@@ -22,16 +22,12 @@ j.with
 		shell('cd source; cmake --preset ci-macos')
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
-			export QT_PLUGIN_PATH=${WORKSPACE}/libs/build/dist/plugins
-			export QML2_IMPORT_PATH=${WORKSPACE}/libs/build/dist/qml
+			export QT_PLUGIN_PATH=${WORKSPACE}/libs/dist/plugins
+			export QML2_IMPORT_PATH=${WORKSPACE}/libs/dist/qml
 			ctest -C Debug --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 	}

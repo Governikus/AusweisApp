@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC1Command.h"
@@ -11,6 +11,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -45,7 +46,7 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(response.getStatusCode(), StatusCode::SUCCESS);
 			QCOMPARE(command.getChallenge(), QByteArray());
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("Challenge has wrong size. Expect 8 bytes, got"_L1));
 		}
 
 
@@ -76,7 +77,7 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(response1.getStatusCode(), StatusCode::PIN_BLOCKED);
 			QCOMPARE(command1.getChallenge(), QByteArray());
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"));
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("GetChallenge failed"_L1));
 
 			ResponseApdu response2(QByteArray::fromHex("19191919191919"));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, response2);
@@ -86,7 +87,7 @@ class test_DidAuthenticateEAC1Command
 			QCOMPARE(response2.getStatusCode(), StatusCode::UNKNOWN);
 			QCOMPARE(command2.getChallenge(), QByteArray());
 			QCOMPARE(logSpy.count(), 3);
-			QVERIFY(logSpy.at(1).at(0).toString().contains("GetChallenge failed"));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("GetChallenge failed"_L1));
 		}
 
 

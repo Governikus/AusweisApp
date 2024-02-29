@@ -1,5 +1,7 @@
-Deutsch
-=======
+.. raw:: latex
+
+  \part*{Deutsch}
+  \addcontentsline{toc}{part}{Deutsch}
 
 Installation
 ~~~~~~~~~~~~
@@ -44,10 +46,12 @@ PROXYSERVICE
 
 AUTOSTART
   Durch Angabe von AUTOSTART=true wird ein Autostart-Eintrag für alle Benutzer
-  erstellt. Die Deaktivierung des Autostarts ist den Benutzern in der |AppName|
+  erstellt und beim Schließen per Klick auf das X wird die |AppName| in den
+  Infobereich minimiert.
+  Die Deaktivierung des Autostarts ist den Benutzern in der |AppName|
   dadurch nicht möglich. Ohne Angabe wird der Autostart-Eintrag nicht erstellt
-  (false). In diesem Fall ist es jedoch jedem Benutzer möglich, die Autostart-
-  Funktion innerhalb der |AppName| für sich zu aktivieren.
+  (false). In diesem Fall ist es jedoch jedem Benutzer möglich, die
+  Autostart-Funktion innerhalb der |AppName| für sich zu aktivieren.
 
 AUTOHIDE
   Betrifft die automatische Minimierung nach Abschluss einer erfolgreichen
@@ -56,8 +60,10 @@ AUTOHIDE
 
 REMINDTOCLOSE
   Wenn der Benutzer die |AppName| per Klick auf das X schließt, wird er darauf
-  hingewiesen, dass nur die Benutzeroberfläche geschlossen wird und die
-  |AppName| weiterhin im Infobereich zur Verfügung steht. Zu diesem Zeitpunkt
+  hingewiesen, dass nur die Benutzeroberfläche geschlossen wird und die |AppName|
+  weiterhin im Infobereich zur Verfügung steht (falls der Autostart der |AppName|
+  aktiviert ist) bzw. dass die |AppName| geschlossen wird und erneut geöffnet
+  werden muss um sich gegenüber Diensteanbietern auszuweisen. Zu diesem Zeitpunkt
   ist es möglich, den Hinweis zukünftig zu unterdrücken. Durch REMINDTOCLOSE=false
   kann dieser Hinweis von vornherein deaktiviert werden. Ohne Angabe ist er
   aktiviert (true).
@@ -196,22 +202,22 @@ Für die einzelnen Werte gelten die gleichen Beschreibungen wie für die
 Windows-Version wobei die Bennennung der Attribute der folgenden Tabelle zu
 entnehmen ist.
 
-======================= =======================
-macOS                   Windows
-======================= =======================
-autoCloseWindow         AUTOHIDE
-remindToClose           REMINDTOCLOSE
-uiStartupModule         ASSISTANT
-transportPinReminder    TRANSPORTPINREMINDER
-customProxyType         CUSTOMPROXYTYPE
-customProxyPort         CUSTOMPROXYPORT
-customProxyHost         CUSTOMPROXYHOST
-keylessPassword         ONSCREENKEYBOARD
-shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
-visualPrivacy           SECURESCREENKEYBOARD
-enableCanAllowed        ENABLECANALLOWED
-skipRightsOnCanAllowed  SKIPRIGHTSONCANALLOWED
-======================= =======================
+======================== =======================
+macOS                    Windows
+======================== =======================
+autoCloseWindow          AUTOHIDE
+remindToClose [#dialog]_ REMINDTOCLOSE
+uiStartupModule          ASSISTANT
+transportPinReminder     TRANSPORTPINREMINDER
+customProxyType          CUSTOMPROXYTYPE
+customProxyPort          CUSTOMPROXYPORT
+customProxyHost          CUSTOMPROXYHOST
+keylessPassword          ONSCREENKEYBOARD
+shuffleScreenKeyboard    SHUFFLESCREENKEYBOARD
+visualPrivacy            SECURESCREENKEYBOARD
+enableCanAllowed         ENABLECANALLOWED
+skipRightsOnCanAllowed   SKIPRIGHTSONCANALLOWED
+======================== =======================
 
 Nach Änderung der Datei kann es notwending sein, ein erneutes Laden der vom
 Betriebssystem gecachten Daten zu erzwingen: :code:`killall -u $USER cfprefsd`
@@ -219,7 +225,7 @@ Betriebssystem gecachten Daten zu erzwingen: :code:`killall -u $USER cfprefsd`
 .. [#msiexecreturnvalues] https://docs.microsoft.com/de-de/windows/desktop/msi/error-codes
 .. [#standardarguments] https://docs.microsoft.com/de-de/windows/desktop/msi/standard-installer-command-line-options
 .. [#orca] https://docs.microsoft.com/de-de/windows/desktop/Msi/orca-exe
-
+.. [#dialog] Unter macOS wird die |AppName| in die Menüleiste minimiert.
 
 
 Anforderungen an die Einsatzumgebung
@@ -316,7 +322,7 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
    Diensteanbieter können durch Weiterleitungen beliebige andere Ports zum
    Einsatz kommen.
 .. [#TR-03112] Siehe TR-03112-6 des BSI
-.. [#govurl] Erreichbar unter dem URL https://appl.governikus-asp.de/ausweisapp2/
+.. [#govurl] Erreichbar unter dem URL https://updates.autentapp.de/
 .. [#updatecheck] Die Überprüfung auf neue |AppName|-Versionen kann deaktiviert werden, siehe
     Kommandozeilenparameter UPDATECHECK
 
@@ -336,32 +342,29 @@ CA-Zertifikate im Windows-Truststore werden daher ignoriert.
 Entwickleroptionen
 ~~~~~~~~~~~~~~~~~~
 
-Die |AppName| verfügt über sogenannte Entwickleroptionen. Diese sind
-für die unterstützten Betriebssystem Windows und macOS verfügbar. Sie
-unterstützen die Integration eines eID-Dienstes.
+Die |AppName| verfügt über sogenannte Entwickleroptionen. Diese bieten erweiterte
+Einstellmöglichkeiten und unterstützen die Integration eines eID-Dienstes.
+Die Entwickleroptionen werden standardmäßig ausgeblendet.
 
+Aktivieren der Entwickleroptionen
+---------------------------------
 
-Windows & macOS
----------------
+Um die Entwickleroptionen zu aktivieren, öffnen Sie im Menü „Hilfe“ den Punkt
+„Versionsinformationen“. Klicken Sie zehnmal auf den Inhalt der
+Versionsinformationen. Nach dem zehnten Klick erhalten Sie eine Benachrichtigung,
+dass die Entwickleroptionen aktiviert sind. Im Bereich Einstellungen befindet
+sich nun eine neue Kategorie „Entwickleroptionen“. In den mobilen Versionen
+erscheinen zusätzlich Optionen zum "Vor-Ort-Auslesen".
 
-Das Aktivieren der Entwickleroptionen erfolgt sowohl für Windows als auch
-für macOS über 10 Klicks auf die Versionsnummer im Bereich "Hilfe" ->
-"Versionsinformationen". Nach der Aktivierung sind die Entwickleroptionen
-über den Bereich "Einstellungen" erreichbar.
+Außerdem kann in den mobilen Versionen der |AppName| der Testmodus (Test-PKI)
+für die Selbstauskunft durch zehn Klicks auf die Lupe im Bereich
+"Meine Daten einsehen" aktiviert und deaktiviert werden.
 
+Erweiterte Einstellungen
+------------------------
 
-Android & iOS
--------------
-
-In den mobilen Versionen der |AppName| ist der Entwicklermodus nicht
-verfügbar. Lediglich der Testmodus (Test-PKI) für die Selbstauskunft kann
-durch 10 Klicks auf die Lupe auf der Startseite aktiviert und deaktiviert werden.
-
-
-Einstellungen
--------------
-
-Die Entwickleroptionen bieten zwei Einstellungsmöglichkeiten:
+Die Entwickleroptionen bieten erweiterte Einstellungsmöglichkeiten, die
+nachfolgend erläutert werden.
 
 Testmodus für die Selbstauskunft (Test-PKI)
 '''''''''''''''''''''''''''''''''''''''''''
@@ -371,20 +374,113 @@ nur mit Echtausweisen genutzt werden. Wird der Testmodus (Test-PKI) aktiviert,
 nutzt die |AppName| einen Test-Dienst, der es ermöglicht, eine Selbstauskunft
 mit einem Testausweis durchzuführen.
 
-Entwicklermodus
-'''''''''''''''
+Interner Kartensimulator
+''''''''''''''''''''''''
+
+Der interne Kartensimulator ermöglicht die Durchführung einer Authentisierung in
+der Test-PKI ohne Ausweis oder Kartenleser. Beachten Sie, dass in den stationären
+Versionen kein anderer Kartenleser verwendet werden kann, während der Simulator
+aktiviert ist.
+
+In der aktuellen Version ist ein einzelnes statisches Profil hinterlegt, das über
+die grafische Oberfläche nicht geändert werden kann. Lediglich im SDK ist es
+möglich die Daten über das Kommando SET_CARD zu beeinflussen.
+Weitere Informationen dazu finden Sie in der Dokumentation des
+|AppName| SDK (siehe :ref:`Software Development Kit (SDK) <SDK_De>`).
+
+Entwicklermodus (nur stationär)
+'''''''''''''''''''''''''''''''
 
 Mit der Aktivierung des Entwicklermodus werden einige Sicherheitsabfragen
 während einer Authentisierung ignoriert. In Entwicklungsszenarien, in denen
 ohnehin mit Test-Diensten gearbeitet wird, führt das Ignorieren der
 Sicherheitsabfragen dazu, dass eine Authentisierung erfolgreich durchgeführt
-werden kann. Dazu gehört beispielweise, dass neben sicheren TLS-Verbindungen
-(https) auch unsichere Verbindungen ohne TLS (http) akzeptiert werden. Auch
-werden abgelaufene Zertifikate ignoriert. Auf jede Sicherheitsverletzung wird
-in den internen Benachrichtigungen der |AppName| bzw. des Betriebssystems
+werden kann. Auf jede Sicherheitsverletzung wird in den internen
+Benachrichtigungen der |AppName| bzw. des Betriebssystems
 hingewiesen.
 
+Die folgenden Sicherheitsüberprüfungen sind im Entwicklermodus abgeschaltet:
+
+* Die verwendeten TLS-Schlüssel und ephemeralen TLS-Schlüssel haben die
+  notwendige Mindestlänge.
+* Die URL der Beschreibung des TLS-Zertifikats des eID-Servers und die
+  TcToken-URL müssen die Same-Origin-Policy erfüllen.
+* Die verwendeten TLS-Zertifikate müssen mit dem Berechtigungszertifikat
+  verschränkt sein.
+* Die RefreshAddress-URL und etwaige Redirect-URL müssen das HTTPS-Schema
+  erfüllen.
+
+Der Entwicklermodus ist nur unter Windows und macOS verfügbar.
 
 **Wichtig:** Der Entwicklermodus kann nur für Test-Dienste verwendet werden,
 eine Verwendung mit echten Berechtigungszertifikaten ist nicht möglich.
 
+CAN-Allowed Modus für Vor-Ort-Auslesen untertützen (nur mobil)
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Aktiviert die Unterstützung für den CAN-Allowed-Modus (Vor-Ort-Auslesen). Wenn
+ein entsprechendes Berechtigungszertifikat vorliegt, muss zum Auslesen die CAN
+anstelle der PIN eingegeben werden.
+
+Anzeige der Berechtigungen überspringen (nur mobil)
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Überspringt die Anzeige des Berechtigungszertifikat im CAN-Allowed-Modus und
+wechselt direkt zur CAN-Eingabe.
+
+
+.. _SDK_De:
+
+Software Development Kit (SDK)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Einsatzmöglichkeiten
+--------------------
+
+Mit dem Software Development Kit (SDK) der |AppName| ist es Ihnen möglich, die
+Online-Ausweisfunktion direkt in die eigene Anwendung bzw. App zu integrieren.
+Damit ermöglichen Sie Ihren Benutzern die medienbruchfreie Durchführung einer
+Authentisierung - z.B. für Registrierungen oder Logins.
+
+Das SDK bietet Ihnen dabei den Vorteil, die Online-Authentisierung durchgehend im
+eigenen Markendesign durchzuführen - ohne dass die Benutzer die gewohnte Umgebung
+verlassen müssen.
+
+Das |AppName| SDK ermöglicht auch die Integration des Vor-Ort-Auslesens.
+Hierbei wird anstelle der PIN zur Freigabe der Datenübertragung die CAN
+übermittelt. Diese ist auf der Vorderseite des Ausweises aufgedruckt und wird zur
+Freigabe des Auslesevorgangs benötigt.
+
+Integrationsmöglichkeiten
+-------------------------
+
+Bei der voll-integrierten Version des SDKs wird die |AppName| als AAR Package
+bzw. Swift Package in Ihre eigene Anwendung eingebunden.
+Der Vorteil: Die |AppName| wird direkt mit ausgeliefert, sodass Benutzer die
+|AppName| nicht separat auf Ihrem Smartphone installiert haben müssen.
+
+Bei der teil-integrierten Version des SDKs wird die |AppName| im Hintergrund
+aufgerufen. Ggf. kann die App jedoch trotz Teil-Integration mit dem Installer
+ausgeliefert werden.
+
+.. table:: Integrationsmöglichkeiten auf den verschiedenen Platformen
+
+  +-----------------+------------------+------------------+
+  |                 | Teil-Integration | Voll-Integration |
+  +=================+==================+==================+
+  | Windows / macOS | Ja               | Nein             |
+  +-----------------+------------------+------------------+
+  | Android         | Nein             | Ja               |
+  +-----------------+------------------+------------------+
+  | iOS             | Nein             | Ja               |
+  +-----------------+------------------+------------------+
+
+Entwicklerdokumentation
+-----------------------
+
+Eine ausführliche Entwicklerdokumentation des SDKs und eine Auflistung der
+möglichen Fehlercodes finden Sie unter https://www.ausweisapp.bund.de/sdk/.
+
+.. raw:: latex
+
+  \newpage

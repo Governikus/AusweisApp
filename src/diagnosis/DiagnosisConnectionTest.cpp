@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisConnectionTest.h"
 
+#include "NetworkManager.h"
 #include "SecureStorage.h"
+#include "TlsChecker.h"
 
 using namespace governikus;
 
@@ -15,6 +17,7 @@ DiagnosisConnectionTest::DiagnosisConnectionTest()
 	, mProxyPort()
 	, mProxyType()
 	, mProxyCapabilities()
+	, mErrorOfConnectionTestWithProxy()
 	, mConnectionTestWithProxySuccessful(false)
 	, mConnectionTestWithoutProxySuccessful(false)
 	, mPingTestOnProxySuccessful(false)
@@ -22,8 +25,8 @@ DiagnosisConnectionTest::DiagnosisConnectionTest()
 	, mConnectionTestWithProxyDone(false)
 	, mConnectionTestWithoutProxyDone(false)
 	, mPingSocketToProxy()
-	, mTcpSocketWithProxy()
 	, mTcpSocketWithoutProxy()
+	, mReplyWithProxy()
 {
 }
 
@@ -48,17 +51,15 @@ void DiagnosisConnectionTest::onProxyPingTestError(QAbstractSocket::SocketError 
 
 void DiagnosisConnectionTest::onSocketConnectionTestWithProxyDone()
 {
-	mConnectionTestWithProxySuccessful = true;
-	mTcpSocketWithProxy.disconnectFromHost();
-	mConnectionTestWithProxyDone = true;
-	checkIfAllProcessesDone();
-}
-
-
-void DiagnosisConnectionTest::onSocketConnectionTestWithProxyError(QAbstractSocket::SocketError pSocketError)
-{
-	qDebug() << "Could not connect to test server with proxy:" << pSocketError;
 	mConnectionTestWithProxySuccessful = false;
+	if (mReplyWithProxy)
+	{
+		mConnectionTestWithProxySuccessful = (mReplyWithProxy->error() == QNetworkReply::NetworkError::NoError);
+		mErrorOfConnectionTestWithProxy = mReplyWithProxy->errorString();
+		mReplyWithProxy->close();
+		mReplyWithProxy.reset();
+	}
+
 	mConnectionTestWithProxyDone = true;
 	checkIfAllProcessesDone();
 }
@@ -159,7 +160,7 @@ void DiagnosisConnectionTest::startConnectionTest()
 	mConnectionTestWithProxyDone = false;
 	mConnectionTestWithoutProxyDone = false;
 
-	const QUrl& testUrl = QUrl(Env::getSingleton<SecureStorage>()->getUpdateServerBaseUrl());
+	const QUrl& testUrl = QUrl(Env::getSingleton<SecureStorage>()->getAppcastUpdateUrl());
 	const auto& proxies = QNetworkProxyFactory::proxyForQuery(QNetworkProxyQuery(testUrl));
 	const auto& proxy = proxies.constFirst();
 	if (proxies.size() > 1)
@@ -190,11 +191,15 @@ void DiagnosisConnectionTest::startConnectionTest()
 		connect(&mPingSocketToProxy, &QAbstractSocket::errorOccurred, this, &DiagnosisConnectionTest::onProxyPingTestError);
 		mPingSocketToProxy.connectToHost(proxy.hostName(), proxy.port());
 
-		mTcpSocketWithProxy.reset();
-		mTcpSocketWithProxy.setProxy(proxy);
-		connect(&mTcpSocketWithProxy, &QAbstractSocket::connected, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyDone);
-		connect(&mTcpSocketWithProxy, &QAbstractSocket::errorOccurred, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyError);
-		mTcpSocketWithProxy.connectToHost(testUrl.host(), 443);
+		QNetworkRequest request(testUrl);
+		mReplyWithProxy = Env::getSingleton<NetworkManager>()->get(request);
+		connect(mReplyWithProxy.data(), &QNetworkReply::finished, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyDone);
+		connect(mReplyWithProxy.data(), &QNetworkReply::sslErrors, this, [this](const QList<QSslError>& pErrors) {
+				if (mReplyWithProxy && TlsChecker::containsFatalError(mReplyWithProxy, pErrors))
+				{
+					mReplyWithProxy->abort();
+				}
+			});
 	}
 
 	mTcpSocketWithoutProxy.reset();

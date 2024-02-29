@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,6 +11,7 @@
 #pragma once
 
 #include <QNetworkProxy>
+#include <QNetworkReply>
 #include <QObject>
 #include <QTcpSocket>
 
@@ -36,6 +37,7 @@ class DiagnosisConnectionTest
 		QString mProxyType;
 		QString mProxyCapabilities;
 
+		QString mErrorOfConnectionTestWithProxy;
 		bool mConnectionTestWithProxySuccessful;
 		bool mConnectionTestWithoutProxySuccessful;
 
@@ -46,8 +48,8 @@ class DiagnosisConnectionTest
 		bool mConnectionTestWithoutProxyDone;
 
 		QTcpSocket mPingSocketToProxy;
-		QTcpSocket mTcpSocketWithProxy;
 		QTcpSocket mTcpSocketWithoutProxy;
+		QSharedPointer<QNetworkReply> mReplyWithProxy;
 
 		void checkIfAllProcessesDone();
 		static QString getProxyTypeAsQString(QNetworkProxy::ProxyType pType);
@@ -57,7 +59,6 @@ class DiagnosisConnectionTest
 		void onProxyPingTestDone();
 		void onProxyPingTestError(QAbstractSocket::SocketError pSocketError);
 		void onSocketConnectionTestWithProxyDone();
-		void onSocketConnectionTestWithProxyError(QAbstractSocket::SocketError pSocketError);
 		void onSocketConnectionTestWithoutProxyDone();
 		void onSocketConnectionTestWithoutProxyError(QAbstractSocket::SocketError pSocketError);
 
@@ -98,6 +99,12 @@ class DiagnosisConnectionTest
 		[[nodiscard]] bool getConnectionTestWithProxySuccessful() const
 		{
 			return mConnectionTestWithProxySuccessful;
+		}
+
+
+		[[nodiscard]] const QString& getErrorOfConnectionTestWithProxy() const
+		{
+			return mErrorOfConnectionTestWithProxy;
 		}
 
 

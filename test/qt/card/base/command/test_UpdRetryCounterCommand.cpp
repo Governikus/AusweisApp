@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/UpdateRetryCounterCommand.h"
@@ -10,6 +10,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -21,7 +22,7 @@ class test_UpdateRetryCounterCommand
 	private Q_SLOTS:
 		void test_InternalExecuteNoCard()
 		{
-			MockReader reader(QString("name"));
+			MockReader reader("name"_L1);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 			UpdateRetryCounterCommand command(worker);
 			command.internalExecute();
@@ -31,7 +32,7 @@ class test_UpdateRetryCounterCommand
 
 		void test_InternalExecuteWithCard()
 		{
-			MockReader reader(QStringLiteral("reader"));
+			MockReader reader("reader"_L1);
 			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 1, true, true);
 			reader.setInfoCardInfo(info);
 

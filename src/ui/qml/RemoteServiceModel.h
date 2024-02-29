@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -92,6 +92,7 @@ class RemoteServiceModel
 		void onEnvironmentChanged();
 		void onApplicationStateChanged(const bool pIsAppInForeground);
 		void onPairingCompleted(const QSslCertificate& pCertificate);
+		void onNameChanged();
 
 	public Q_SLOTS:
 		void onTranslationChanged();
@@ -111,7 +112,7 @@ class RemoteServiceModel
 		[[nodiscard]] bool detectRemoteDevices() const;
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
 		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
-		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 
 		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
 		void setPairing(bool pEnabled) const;
@@ -147,7 +148,7 @@ class RemoteServiceModel
 		void fireServerPskChanged();
 		void fireDetectionChanged();
 		void firePairingFailed(const QString& pDeviceName, const QString& pErrorMessage);
-		void firePairingSuccess();
+		void firePairingSuccess(const QString& pDeviceName);
 		void firePairingCompleted();
 		void fireConnectionInfoChanged();
 		void fireConnectedServerDeviceNamesChanged();
