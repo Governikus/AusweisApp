@@ -5,3 +5,7 @@ exclude_patterns = ['appcast.rst', 'general.rst', 'support.rst', 'versions.rst',
 # Sphinx needs a master document even though we just want to convert
 # some .rst files to .txt, so supply a document that is required anyway.
 master_doc = 'announce'
+
+rst_epilog = """
+.. |AppName| replace:: @PROJECT_NAME@
+"""

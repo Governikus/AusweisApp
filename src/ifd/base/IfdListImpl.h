@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,7 +24,7 @@ class IfdListImpl
 	private:
 		QTimer mTimer;
 		const int mReaderResponsiveTimeout;
-		QVector<QSharedPointer<IfdListEntry>> mResponsiveList;
+		QList<QSharedPointer<IfdListEntry>> mResponsiveList;
 
 	private Q_SLOTS:
 		void onProcessUnresponsiveRemoteReaders();
@@ -35,7 +35,7 @@ class IfdListImpl
 
 		void update(const IfdDescriptor& pDescriptor) override;
 		void clear() override;
-		[[nodiscard]] QVector<QSharedPointer<IfdListEntry>> getIfdList() const override;
+		[[nodiscard]] QList<QSharedPointer<IfdListEntry>> getIfdList() const override;
 };
 
 } // namespace governikus

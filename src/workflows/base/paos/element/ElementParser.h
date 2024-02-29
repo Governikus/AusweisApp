@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,9 +10,9 @@
 
 #include "paos/element/ConnectionHandle.h"
 
+#include <QList>
 #include <QLoggingCategory>
 #include <QSharedPointer>
-#include <QVector>
 #include <QXmlStreamReader>
 
 
@@ -62,7 +62,7 @@ class ElementParser
 		 * \param pElementName the elements name used to generate the log message.
 		 * \return \c true, if the assertion holds, \c false otherwise.
 		 */
-		template<typename T> bool assertMandatoryList(const QVector<T>& pList, const char* const pElementName);
+		template<typename T> bool assertMandatoryList(const QList<T>& pList, const char* const pElementName);
 
 		/*!
 		 * \brief Issues a log warning and sets the error when a duplicate element has been encountered.
@@ -107,7 +107,7 @@ class ElementParser
 };
 
 
-template<typename T> bool ElementParser::assertMandatoryList(const QVector<T>& pList, const char* const pElementName)
+template<typename T> bool ElementParser::assertMandatoryList(const QList<T>& pList, const char* const pElementName)
 {
 	if (pList.isEmpty())
 	{

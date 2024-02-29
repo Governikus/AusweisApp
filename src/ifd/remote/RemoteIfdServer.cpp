@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdServer.h"
 
 #include "AppSettings.h"
 #include "Env.h"
+#include "TlsChecker.h"
 
 using namespace governikus;
 
@@ -30,7 +31,7 @@ void RemoteIfdServer::onConnectedChanged(bool pConnected)
 	{
 		const auto& ifdName = mWebSocketServer->getServerName();
 		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const auto& ifdId = QString::fromLatin1(remoteServiceSettings.getCertificate().toPem());
+		const auto& ifdId = QString::fromLatin1(TlsChecker::getRootCertificate(remoteServiceSettings.getCertificates()).toPem());
 		quint16 port = mWebSocketServer->getServerPort();
 		bool isPairing = mWebSocketServer->isPairingAnnounced();
 		mRemoteReaderAdvertiser.reset(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, isPairing));
@@ -50,6 +51,7 @@ RemoteIfdServer::RemoteIfdServer()
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireMessageHandlerAdded, this, &IfdServer::fireMessageHandlerAdded);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::firePairingCompleted, this, &IfdServer::firePairingCompleted);
 	connect(mWebSocketServer.data(), &RemoteWebSocketServer::fireSocketError, this, &IfdServer::fireSocketError);
+	connect(mWebSocketServer.data(), &WebSocketServer::fireNameChanged, this, &IfdServer::fireNameChanged);
 }
 
 

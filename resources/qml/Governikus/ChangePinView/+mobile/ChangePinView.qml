@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.EnterPasswordView
@@ -45,6 +45,9 @@ SectionPage {
 		onClicked: baseItem.close()
 	}
 
+	FadeInAnimation {
+		target: baseItem
+	}
 	Connections {
 		function onActivate() {
 			changePinViewContent.highlightScrollbar();
@@ -81,28 +84,21 @@ SectionPage {
 		id: changePinViewContent
 
 		anchors.fill: parent
-		moreInformationText: changePinInfo.linkText
 		visible: !baseItem.hidePinTypeSelection
 
 		onChangePin: ChangePinModel.startWorkflow(false)
+		onChangePinInfoRequested: push(changePinInfoView)
 		onChangeTransportPin: ChangePinModel.startWorkflow(true)
-		onMoreInformationRequested: push(changePinInfoView)
 		onNoPinAvailable: {
 			setLockedAndHidden();
 			push(pinUnknownView);
-		}
-
-		PasswordInfoData {
-			id: changePinInfo
-
-			contentType: PasswordInfoContent.Type.CHANGE_PIN
 		}
 	}
 	Component {
 		id: changePinInfoView
 
 		PasswordInfoView {
-			infoContent: changePinInfo
+			infoContent: changePinViewContent.pinInfo
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back
@@ -118,7 +114,7 @@ SectionPage {
 
 		PasswordInfoView {
 			infoContent: PasswordInfoData {
-				contentType: PasswordInfoContent.Type.NO_PIN
+				contentType: PasswordInfoData.Type.NO_PIN
 			}
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back

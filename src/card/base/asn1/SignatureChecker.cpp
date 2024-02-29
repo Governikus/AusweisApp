@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/SignatureChecker.h"
@@ -18,7 +18,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card)
 
 
-SignatureChecker::SignatureChecker(const QVector<QSharedPointer<const CVCertificate>>& pCertificateChain)
+SignatureChecker::SignatureChecker(const QList<QSharedPointer<const CVCertificate>>& pCertificateChain)
 	: mCertificateChain(pCertificateChain)
 {
 }

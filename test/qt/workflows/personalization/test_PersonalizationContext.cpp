@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/PersonalizationContext.h"
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -33,8 +33,8 @@ class test_PersonalizationContext
 
 			QCOMPARE(context.getChallenge(), QString());
 
-			context.setChallenge(QString("Q2hhbGxlbmdl"));
-			QCOMPARE(context.getChallenge(), QString("Q2hhbGxlbmdl"));
+			context.setChallenge("Q2hhbGxlbmdl"_L1);
+			QCOMPARE(context.getChallenge(), "Q2hhbGxlbmdl"_L1);
 		}
 
 
@@ -44,8 +44,8 @@ class test_PersonalizationContext
 
 			QCOMPARE(context.getPreparePersonalizationData(), QString());
 
-			context.setPreparePersonalizationData(QString("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="));
-			QCOMPARE(context.getPreparePersonalizationData(), QString("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="));
+			context.setPreparePersonalizationData("UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="_L1);
+			QCOMPARE(context.getPreparePersonalizationData(), "UHJlcGFyZVBlcnNvbmFsaXphdGlvbkRhdGE="_L1);
 		}
 
 

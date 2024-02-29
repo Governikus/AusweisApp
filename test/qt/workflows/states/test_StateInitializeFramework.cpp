@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -11,6 +11,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -30,7 +31,7 @@ class test_StateInitializeFramework
 		void initTestCase()
 		{
 			mAuthContext.reset(new AuthContext());
-			auto fileContent = TestFileHelper::readFile(":/paos/InitializeFramework.xml");
+			auto fileContent = TestFileHelper::readFile(":/paos/InitializeFramework.xml"_L1);
 			mAuthContext->setInitializeFramework(QSharedPointer<InitializeFramework>(new InitializeFramework(fileContent)));
 
 			mState.reset(StateBuilder::createState<StateInitializeFramework>(mAuthContext));

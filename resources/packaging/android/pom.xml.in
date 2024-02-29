@@ -7,7 +7,7 @@
   <packaging>aar</packaging>
   <name>AusweisApp</name>
   <description>The AusweisApp is a software, that you can use to identify yourself online with your electronic residence permit or your eID card.</description>
-  <url>https://github.com/Governikus/AusweisApp2/</url>
+  <url>https://github.com/Governikus/AusweisApp/</url>
   <licenses>
     <license>
       <name>EUPL-v1.2</name>
@@ -25,6 +25,6 @@
   </developers>
 
   <scm>
-    <url>https://github.com/Governikus/AusweisApp2</url>
+    <url>https://github.com/Governikus/AusweisApp</url>
   </scm>
 </project>

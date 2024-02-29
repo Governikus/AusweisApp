@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.EnterPasswordView
@@ -201,14 +201,14 @@ Controller {
 					return qsTr("Please observe the display of your card reader.");
 				}
 				if (rootController.workflowState === AuthController.WorkflowStates.Can) {
-					//: INFO ANDROID IOS The PIN was entered wrongfully two times, the third attempts requires additional CAN verification, hint where the CAN is found.
-					return qsTr("A wrong PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
+					//: INFO ANDROID IOS The PIN was entered wrongfully two times, the 3rd attempts requires additional CAN verification, hint where the CAN is found.
+					return qsTr("A wrong PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
 				}
 
 				//: INFO ANDROID IOS Generic status message during the authentication process.
 				return qsTr("Please wait a moment.");
 			}
-			subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || workflowState === AuthController.WorkflowStates.Can) ? Style.color.text_warning : Style.color.text
+			subTextColor: !AuthModel.isBasicReader && (NumberModel.inputError || workflowState === AuthController.WorkflowStates.Can) ? Style.color.warning : Style.color.text
 			//: LABEL ANDROID IOS
 			text: (AuthModel.error ? qsTr("Cancel authentication process") :
 				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
@@ -296,7 +296,7 @@ Controller {
 	PasswordInfoData {
 		id: transportPinReminderInfoData
 
-		contentType: PasswordInfoContent.Type.CHANGE_PIN
+		contentType: PasswordInfoData.Type.CHANGE_PIN
 	}
 	Component {
 		id: transportPinReminderInfoView
@@ -328,7 +328,7 @@ Controller {
 
 		EnterPasswordView {
 			//: LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication
-			accessibleContinueText: passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN || (passwordType === PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : undefined
+			accessibleContinueText: passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN || (passwordType === PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 			moreInformationText: infoData.linkText
 			smartEidUsed: rootController.smartEidUsed
 			title: rootController.title

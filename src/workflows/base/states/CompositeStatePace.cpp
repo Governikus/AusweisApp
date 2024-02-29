@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CompositeStatePace.h"
@@ -13,6 +13,7 @@
 #include "states/StateEstablishPaceChannel.h"
 #include "states/StateMaintainCardConnection.h"
 #include "states/StatePreparePace.h"
+#include "states/StateResetRetryCounter.h"
 #include "states/StateSelectReader.h"
 #include "states/StateUnfortunateCardPosition.h"
 #include "states/StateUpdateRetryCounter.h"
@@ -35,8 +36,9 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	auto sUnfortunateCardPosition = StateBuilder::createState<StateUnfortunateCardPosition>(mContext);
 	auto sEnterPacePassword = StateBuilder::createState<StateEnterPacePassword>(mContext);
 	auto sEstablishPaceChannel = StateBuilder::createState<StateEstablishPaceChannel>(mContext);
-	auto sClearPacePasswordsBeforeDestroy = StateBuilder::createState<StateClearPacePasswords>(mContext);
+	auto sResetRetryCounter = StateBuilder::createState<StateResetRetryCounter>(mContext);
 	auto sDestroyPace = StateBuilder::createState<StateDestroyPace>(mContext);
+	auto sClearPacePasswords = StateBuilder::createState<StateClearPacePasswords>(mContext);
 
 	sMaintainCardConnection->setParent(this);
 	sClearPacePasswordsOnError->setParent(this);
@@ -48,8 +50,9 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	sUnfortunateCardPosition->setParent(this);
 	sEnterPacePassword->setParent(this);
 	sEstablishPaceChannel->setParent(this);
-	sClearPacePasswordsBeforeDestroy->setParent(this);
+	sResetRetryCounter->setParent(this);
 	sDestroyPace->setParent(this);
+	sClearPacePasswords->setParent(this);
 
 	setInitialState(sMaintainCardConnection);
 
@@ -93,15 +96,21 @@ CompositeStatePace::CompositeStatePace(const QSharedPointer<WorkflowContext>& pC
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &AbstractState::fireAbort, sMaintainCardConnection);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelFailed, sMaintainCardConnection);
 	connect(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelEstablished, this, &CompositeStatePace::fireContinue);
-	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePaceChannelInoperative, sClearPacePasswordsBeforeDestroy);
+	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::fireWrongPin, sClearPacePasswords);
+	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::fireThirdPinAttemptFailed, sDestroyPace);
+	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::firePacePukEstablished, sResetRetryCounter);
 	sEstablishPaceChannel->addTransition(sEstablishPaceChannel, &StateEstablishPaceChannel::fireAbortAndUnfortunateCardPosition, sUnfortunateCardPosition);
+
+	sResetRetryCounter->addTransition(sResetRetryCounter, &AbstractState::fireAbort, sDestroyPace);
+	sResetRetryCounter->addTransition(sResetRetryCounter, &AbstractState::fireContinue, sDestroyPace);
+	sResetRetryCounter->addTransition(sResetRetryCounter, &StateResetRetryCounter::fireNoCardConnection, sMaintainCardConnection);
+
+	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sClearPacePasswords);
+	connect(sDestroyPace, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
 
 	sUnfortunateCardPosition->addTransition(sUnfortunateCardPosition, &AbstractState::fireContinue, sMaintainCardConnection);
 	sUnfortunateCardPosition->addTransition(sUnfortunateCardPosition, &AbstractState::fireAbort, sMaintainCardConnection);
 
-	sClearPacePasswordsBeforeDestroy->addTransition(sClearPacePasswordsBeforeDestroy, &AbstractState::fireContinue, sDestroyPace);
-	sClearPacePasswordsBeforeDestroy->addTransition(sClearPacePasswordsBeforeDestroy, &AbstractState::fireAbort, sDestroyPace);
-
-	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sMaintainCardConnection);
-	connect(sDestroyPace, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
+	connect(sClearPacePasswords, &AbstractState::fireAbort, this, &CompositeStatePace::fireAbort);
+	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireContinue, sMaintainCardConnection);
 }

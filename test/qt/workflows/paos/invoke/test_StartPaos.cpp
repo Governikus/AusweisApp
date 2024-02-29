@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StartPaos
@@ -23,7 +24,7 @@ class test_StartPaos
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			QCoreApplication::setApplicationVersion("123.456.789");
+			QCoreApplication::setApplicationVersion("123.456.789"_L1);
 		}
 
 
@@ -63,10 +64,10 @@ class test_StartPaos
 		void checkTemplate()
 		{
 			StartPaos startPaos("abcd");
-			startPaos.setRelatedMessageId("urn:uuid:dummy");
+			startPaos.setRelatedMessageId("urn:uuid:dummy"_L1);
 			auto data = QString::fromLatin1(startPaos.marshall());
-			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
-			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/StartPAOS.xml")));
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"_L1), "<wsa:MessageID>STRIP ME</wsa:MessageID>"_L1);
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/StartPAOS.xml"_L1)));
 		}
 
 

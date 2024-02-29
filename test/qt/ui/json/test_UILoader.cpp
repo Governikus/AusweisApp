@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_IMPORT_PLUGIN(UIPlugInJson)
@@ -164,20 +165,20 @@ class test_UILoader
 
 		void getName_data()
 		{
-			QTest::addColumn<QString>("name");
+			QTest::addColumn<QLatin1String>("name");
 
-			QTest::newRow("qml") << QString("UIPlugInQml");
-			QTest::newRow("json") << QString("governikus::UIPlugInJson");
-			QTest::newRow("websocket") << QString("WebSocket");
-			QTest::newRow("localifd") << QString("UIPlugInLocalIfd");
-			QTest::newRow("aidl") << QString("governikus::uipluginAidl");
-			QTest::newRow("functional") << QString("UIPluginFunctional");
+			QTest::newRow("qml") << "UIPlugInQml"_L1;
+			QTest::newRow("json") << "governikus::UIPlugInJson"_L1;
+			QTest::newRow("websocket") << "WebSocket"_L1;
+			QTest::newRow("localifd") << "UIPlugInLocalIfd"_L1;
+			QTest::newRow("aidl") << "governikus::uipluginAidl"_L1;
+			QTest::newRow("functional") << "UIPluginFunctional"_L1;
 		}
 
 
 		void getName()
 		{
-			QFETCH(QString, name);
+			QFETCH(QLatin1String, name);
 			QCOMPARE(UILoader::unify(name), QString::fromLatin1(QTest::currentDataTag()));
 		}
 

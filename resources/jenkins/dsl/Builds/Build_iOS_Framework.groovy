@@ -3,7 +3,7 @@ import common.Build
 def j = new Build
 	(
 		name: 'iOS_Framework',
-		libraries: ['iOS'],
+		libraries: 'iOS',
 		label: 'iOS',
 		artifacts: 'build/*.zip,build/*.bcsymbolmap'
 	).generate(this)

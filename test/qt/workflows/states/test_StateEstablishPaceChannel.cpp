@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannel.h"
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class MockEstablishPaceChannelCommand
@@ -60,7 +61,7 @@ class test_StateEstablishPaceChannel
 		void init()
 		{
 			mWorkerThread.start();
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 			mState.reset(StateBuilder::createState<StateEstablishPaceChannel>(mAuthContext));
 		}
 
@@ -105,7 +106,7 @@ class test_StateEstablishPaceChannel
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const QString password("0000000");
+			const QString password("0000000"_L1);
 
 			mAuthContext->setPin(password);
 			mAuthContext->setCardConnection(connection);
@@ -182,7 +183,6 @@ class test_StateEstablishPaceChannel
 			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
 			QTest::newRow("PIN_OK") << PacePasswordId::PACE_PIN << 3 << CardReturnCode::OK << CardReturnCode::OK << false << std::optional<FailureCode>();
-			QTest::newRow("PIN_PUK_INOPERATIVE") << PacePasswordId::PACE_PIN << 1 << CardReturnCode::PUK_INOPERATIVE << CardReturnCode::PUK_INOPERATIVE << false << std::optional<FailureCode>(FailureCode::Reason::Establish_Pace_Channel_Puk_Inoperative);
 			QTest::newRow("PIN_CANCELLATION_BY_USER") << PacePasswordId::PACE_PIN << 2 << CardReturnCode::CANCELLATION_BY_USER << CardReturnCode::CANCELLATION_BY_USER << false << std::optional<FailureCode>(FailureCode::Reason::Establish_Pace_Channel_User_Cancelled);
 			QTest::newRow("PIN_INVALID_PIN_RETRY_COUNTER_3") << PacePasswordId::PACE_PIN << 3 << CardReturnCode::INVALID_PIN << CardReturnCode::INVALID_PIN << false << std::optional<FailureCode>();
 			QTest::newRow("PIN_INVALID_PIN_RETRY_COUNTER_2") << PacePasswordId::PACE_PIN << 2 << CardReturnCode::INVALID_PIN << CardReturnCode::INVALID_PIN_2 << false << std::optional<FailureCode>();
@@ -205,7 +205,9 @@ class test_StateEstablishPaceChannel
 			QFETCH(std::optional<FailureCode>, failureCode);
 
 			QSignalSpy spyPaceChannelEstablished(mState.data(), &StateEstablishPaceChannel::firePaceChannelEstablished);
-			QSignalSpy spyPaceChannelInoperative(mState.data(), &StateEstablishPaceChannel::firePaceChannelInoperative);
+			QSignalSpy spyWrongPin(mState.data(), &StateEstablishPaceChannel::fireWrongPin);
+			QSignalSpy spyThirdPinAttemptFailed(mState.data(), &StateEstablishPaceChannel::fireThirdPinAttemptFailed);
+			QSignalSpy spyPacePukEstablished(mState.data(), &StateEstablishPaceChannel::firePacePukEstablished);
 			QSignalSpy spyAbort(mState.data(), &StateEstablishPaceChannel::fireAbort);
 			QSignalSpy spyContinue(mState.data(), &StateEstablishPaceChannel::fireContinue);
 
@@ -259,16 +261,13 @@ class test_StateEstablishPaceChannel
 				mState->onEstablishConnectionDone(command);
 				QCOMPARE(mAuthContext->getLastPaceResult(), result);
 				QCOMPARE(mAuthContext->getExpectedRetryCounter(), -1);
-				QCOMPARE(spyPaceChannelInoperative.count(), 1);
+				QCOMPARE(spyWrongPin.count(), 0);
+				QCOMPARE(spyThirdPinAttemptFailed.count(), 0);
+				QCOMPARE(spyPacePukEstablished.count(), 1);
 				return;
 			}
 
 			mState->onEstablishConnectionDone(command);
-
-			if (code == CardReturnCode::PUK_INOPERATIVE)
-			{
-				QCOMPARE(mAuthContext->getStatus().getStatusCode(), GlobalStatus::Code::Card_Puk_Blocked);
-			}
 
 			if (code == CardReturnCode::CANCELLATION_BY_USER)
 			{
@@ -277,13 +276,13 @@ class test_StateEstablishPaceChannel
 
 			QCOMPARE(mAuthContext->getLastPaceResult(), result);
 			if (password == PacePasswordId::PACE_PUK
-					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN
-					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN_2
-					|| mAuthContext->getLastPaceResult() == CardReturnCode::INVALID_PIN_3)
+					|| result == CardReturnCode::INVALID_PIN
+					|| result == CardReturnCode::INVALID_PIN_2
+					|| result == CardReturnCode::INVALID_PIN_3)
 			{
 				QCOMPARE(spyAbort.count(), 0);
-				QCOMPARE(spyPaceChannelInoperative.count(), 1);
-
+				QCOMPARE(spyWrongPin.count(), result != CardReturnCode::INVALID_PIN_3 ? 1 : 0);
+				QCOMPARE(spyThirdPinAttemptFailed.count(), result == CardReturnCode::INVALID_PIN_3 ? 1 : 0);
 			}
 			else
 			{

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,7 +12,7 @@
 #include "TlsServer.h"
 #include "WebSocketServer.h"
 
-#include <QVector>
+#include <QList>
 #include <QWebSocketServer>
 
 namespace governikus
@@ -27,7 +27,7 @@ class WebSocketServerImpl
 		QWebSocketServer mServer;
 		QSharedPointer<TlsServer> mTlsServer;
 		QSharedPointer<ServerMessageHandler> mServerMessageHandler;
-		QVector<ReaderManagerPlugInType> mAllowedPlugInTypes;
+		QList<ReaderManagerPlugInType> mAllowedPlugInTypes;
 
 	private Q_SLOTS:
 		void onWebsocketConnection();
@@ -35,7 +35,7 @@ class WebSocketServerImpl
 		void onServerError(QWebSocketProtocol::CloseCode pCloseCode) const;
 
 	public:
-		explicit WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QVector<ReaderManagerPlugInType>& pAllowedPlugInTypes);
+		explicit WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QList<ReaderManagerPlugInType>& pAllowedPlugInTypes);
 		~WebSocketServerImpl() override;
 
 		[[nodiscard]] bool isListening() const override;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -142,11 +142,11 @@ CVCertificateChain AuthContext::getChainForCertificationAuthority(const Establis
 }
 
 
-void AuthContext::initCvcChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pAdditionalCertificates)
+void AuthContext::initCvcChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pAdditionalCertificates)
 {
 	Q_ASSERT(mDIDAuthenticateEAC1);
 
-	QVector<QSharedPointer<const CVCertificate>> cvcs;
+	QList<QSharedPointer<const CVCertificate>> cvcs;
 	cvcs += CVCertificate::fromRaw(Env::getSingleton<AppSettings>()->getPreVerificationSettings().getLinkCertificates());
 	cvcs += getDidAuthenticateEac1()->getCvCertificates();
 	cvcs += pAdditionalCertificates;

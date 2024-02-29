@@ -1,9 +1,9 @@
 FROM dev-docker.governikus.de/ausweisapp2/ubuntu:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
-ARG ANDROID_CMDLINE_TOOLS=10406996
-ARG ANDROID_NDK_VERSION=26.1.10909125
-ARG CMAKE=3.27.7
+ARG ANDROID_CMDLINE_TOOLS=11076708
+ARG ANDROID_NDK_VERSION=26.2.11394342
+ARG CMAKE=3.28.3
 ENV NAME=Android LABELS="Android" PACKAGES_DIR=/home/governikus/packages
 
 ENV ANDROID_SDK_ROOT /opt/android-sdk
@@ -18,7 +18,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE/cmake-$CMAKE
 
 RUN mkdir -p /tmp/dl && cd /tmp/dl && wget -O sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip && \
     unzip sdk.zip && \
-    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;11.0" "build-tools;34.0.0" "platforms;android-33" "platforms;android-34" "ndk;${ANDROID_NDK_VERSION}" && \
+    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;12.0" "build-tools;34.0.0" "platforms;android-34" "ndk;${ANDROID_NDK_VERSION}" && \
     rm -rf /tmp/dl
 
 USER governikus

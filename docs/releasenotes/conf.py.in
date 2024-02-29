@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = '@PROJECT_NAME@'
-copyright = '2016-2023, Governikus GmbH & Co. KG'
+copyright = '2016-2024, Governikus GmbH & Co. KG'
 author = 'Governikus GmbH & Co. KG'
 
 # The version info for the project you're documenting, acts as replacement for

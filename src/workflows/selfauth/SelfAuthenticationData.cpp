@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
@@ -11,6 +11,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(secure)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -236,7 +237,7 @@ void SelfAuthenticationData::SelfData::addAddress(OrderedSelfData& pSelfData) co
 	if (!getValue(SelfAuthData::PlaceOfResidenceZipCode).isNull() || !getValue(SelfAuthData::PlaceOfResidenceCity).isNull())
 	{
 		//: LABEL ALL_PLATFORMS
-		add(pSelfData, getValue(SelfAuthData::PlaceOfResidenceStreet).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceZipCode) + QLatin1Char(' ') + getValue(SelfAuthData::PlaceOfResidenceCity));
+		add(pSelfData, getValue(SelfAuthData::PlaceOfResidenceStreet).isNull() ? tr("Address") : QString(), getValue(SelfAuthData::PlaceOfResidenceZipCode) + ' '_L1 + getValue(SelfAuthData::PlaceOfResidenceCity));
 	}
 	if (!getValue(SelfAuthData::PlaceOfResidenceCountry).isNull())
 	{
@@ -247,7 +248,7 @@ void SelfAuthenticationData::SelfData::addAddress(OrderedSelfData& pSelfData) co
 
 QString SelfAuthenticationData::SelfData::formatDate(const QString& pDate)
 {
-	static const QVector<QPair<QString, QLatin1String>> formattingPattern({
+	static const QList<QPair<QString, QLatin1String>> formattingPattern({
 	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString
 				qMakePair(QStringLiteral("yyyy-MM-dd+hh:mm"), QLatin1String(QT_TR_NOOP("dd.MM.yyyy"))),
 	            //: LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day

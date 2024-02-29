@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -25,7 +25,7 @@ QSslConfiguration RemoteTlsServer::sslConfiguration() const
 	QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(cipherCfg).getConfiguration();
 	const auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	config.setPrivateKey(settings.getKey());
-	config.setLocalCertificate(settings.getCertificate());
+	config.setLocalCertificateChain(settings.getCertificates());
 	config.setPeerVerifyMode(QSslSocket::VerifyPeer);
 
 	if (psk.isEmpty())
@@ -52,8 +52,7 @@ bool RemoteTlsServer::startListening(quint16 pPort)
 	}
 
 	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const bool invalidLength = !TlsChecker::hasValidCertificateKeyLength(remoteServiceSettings.getCertificate());
-	if (!remoteServiceSettings.checkAndGenerateKey(invalidLength))
+	if (!remoteServiceSettings.checkAndGenerateKey(Env::getSingleton<SecureStorage>()->getIfdCreateSize()))
 	{
 		qCCritical(ifd) << "Cannot get required key/certificate for tls";
 		return false;
@@ -78,7 +77,8 @@ bool RemoteTlsServer::startListening(quint16 pPort)
 void RemoteTlsServer::onSslErrors(const QList<QSslError>& pErrors)
 {
 	const auto& socket = getSslSocket();
-	if (pErrors.size() == 1 && pErrors.first().error() == QSslError::SelfSignedCertificate)
+	if (pErrors.size() == 1 &&
+			(pErrors.first().error() == QSslError::SelfSignedCertificate || pErrors.first().error() == QSslError::SelfSignedCertificateInChain))
 	{
 		const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
 		if (pairingCiphers.contains(socket->sessionCipher()))
@@ -99,29 +99,42 @@ void RemoteTlsServer::onEncrypted()
 	const auto& cfg = socket->sslConfiguration();
 	TlsChecker::logSslConfig(cfg, spawnMessageLogger(ifd));
 
-	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate()))
+	QLatin1String error;
+	const auto& minimalKeySizes = [](QSsl::KeyAlgorithm pKeyAlgorithm){
+				return Env::getSingleton<SecureStorage>()->getMinimumIfdKeySize(pKeyAlgorithm);
+			};
+	if (!TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate(), minimalKeySizes))
 	{
-		qCCritical(ifd) << "Client denied... abort connection!";
+		error = QLatin1String("Client denied... abort connection!");
+	}
+
+	const auto rootCert = TlsChecker::getRootCertificate(cfg.peerCertificateChain());
+	if (rootCert.isNull())
+	{
+		error = QLatin1String("Client denied... no root certificate found!");
+	}
+
+	if (!error.isEmpty())
+	{
+		qCCritical(ifd) << error;
 		socket->abort();
 		socket->deleteLater();
 		return;
 	}
 
 	qCDebug(ifd) << "Client connected";
-
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const auto& pairingCiphers = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getCiphers();
 	if (pairingCiphers.contains(cfg.sessionCipher()))
 	{
-		const auto& sslCertificate = cfg.peerCertificate();
-		qCDebug(ifd) << "Pairing completed | Add certificate:" << sslCertificate;
-		settings.addTrustedCertificate(sslCertificate);
+		qCDebug(ifd) << "Pairing completed | Add certificate:" << rootCert;
+		settings.addTrustedCertificate(rootCert);
 		setPairing(false);
-		Q_EMIT firePairingCompleted(sslCertificate);
+		Q_EMIT firePairingCompleted(rootCert);
 	}
 	else
 	{
-		auto info = settings.getRemoteInfo(cfg.peerCertificate());
+		auto info = settings.getRemoteInfo(rootCert);
 		info.setLastConnected(QDateTime::currentDateTime());
 		settings.updateRemoteInfo(info);
 	}

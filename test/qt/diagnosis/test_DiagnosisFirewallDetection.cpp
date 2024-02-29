@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DiagnosisFirewallDetection
@@ -28,10 +29,10 @@ class test_DiagnosisFirewallDetection
 			const QByteArray rawData = TestFileHelper::readFile(filePath);
 			QString stringData = QString::fromUtf8(rawData);
 
-			Q_ASSERT(stringData.count("\r\n") == 0);
-			const qsizetype linebreaks = stringData.count('\n');
-			stringData.replace('\n', "\r\n");
-			Q_ASSERT(stringData.count("\r\n") == linebreaks);
+			Q_ASSERT(stringData.count("\r\n"_L1) == 0);
+			const qsizetype linebreaks = stringData.count('\n'_L1);
+			stringData.replace('\n'_L1, "\r\n"_L1);
+			Q_ASSERT(stringData.count("\r\n"_L1) == linebreaks);
 
 			return stringData;
 		}
@@ -166,11 +167,11 @@ class test_DiagnosisFirewallDetection
 			QCOMPARE(firewallProfileInfos.size(), size);
 			if (size > 0)
 			{
-				QCOMPARE(firewallProfileInfos[0]->getName(), "Domain");
+				QCOMPARE(firewallProfileInfos[0]->getName(), "Domain"_L1);
 				QCOMPARE(firewallProfileInfos[0]->getEnabled(), enabledDomain);
-				QCOMPARE(firewallProfileInfos[1]->getName(), "Private");
+				QCOMPARE(firewallProfileInfos[1]->getName(), "Private"_L1);
 				QCOMPARE(firewallProfileInfos[1]->getEnabled(), enabledPrivate);
-				QCOMPARE(firewallProfileInfos[2]->getName(), "Public");
+				QCOMPARE(firewallProfileInfos[2]->getName(), "Public"_L1);
 				QCOMPARE(firewallProfileInfos[2]->getEnabled(), enabledPublic);
 			}
 
@@ -181,18 +182,18 @@ class test_DiagnosisFirewallDetection
 		void test_parsingFirewallSoftwareParameter_data()
 		{
 			QTest::addColumn<QString>("filename");
-			QTest::addColumn<QString>("name");
+			QTest::addColumn<QLatin1String>("name");
 
-			QTest::newRow("kaspersky") << QStringLiteral("firewallSoftwareParametersKaspersky.txt") << QString("Kaspersky Internet Security");
-			QTest::newRow("bullguard") << QStringLiteral("firewallSoftwareParametersBullguard.txt") << QString("BullGuard Firewall");
-			QTest::newRow("missing") << QStringLiteral("emptyResponse.txt") << QString("");
+			QTest::newRow("kaspersky") << QStringLiteral("firewallSoftwareParametersKaspersky.txt") << "Kaspersky Internet Security"_L1;
+			QTest::newRow("bullguard") << QStringLiteral("firewallSoftwareParametersBullguard.txt") << "BullGuard Firewall"_L1;
+			QTest::newRow("missing") << QStringLiteral("emptyResponse.txt") << ""_L1;
 		}
 
 
 		void test_parsingFirewallSoftwareParameter()
 		{
 			QFETCH(QString, filename);
-			QFETCH(QString, name);
+			QFETCH(QLatin1String, name);
 
 			QSignalSpy spy(mFirewallDetection.data(), &DiagnosisFirewallDetection::fireFirewallInformationReady);
 			QVERIFY(mFirewallDetection->getDetectedFirewalls().empty());

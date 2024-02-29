@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -28,46 +28,38 @@ SectionPage {
 			topMargin: Constants.component_spacing + Math.max(0, (sectionPage.height - sectionPage.width) / 2)
 		}
 		Tile {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
 			activeFocusOnTab: true
-			image: "qrc:/images/lock.svg"
+			icon.source: "qrc:/images/lock.svg"
 
 			//: LABEL DESKTOP
-			title: qsTr("Change PIN")
+			text: qsTr("Change PIN")
 
 			onClicked: sectionPage.nextView(UiModule.PINMANAGEMENT)
 		}
 		Tile {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
 			activeFocusOnTab: true
-			image: "qrc:/images/mydata.svg"
+			icon.source: "qrc:/images/mydata.svg"
 
 			//: LABEL DESKTOP
-			title: qsTr("See my<br>personal data")
+			text: qsTr("See my<br>personal data")
 
 			onClicked: sectionPage.nextView(UiModule.SELF_AUTHENTICATION)
 		}
 		Tile {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
 			activeFocusOnTab: true
-			image: "qrc:/images/desktop/settings.svg"
+			icon.source: "qrc:/images/desktop/settings.svg"
 
 			//: LABEL DESKTOP
-			title: qsTr("Settings")
+			text: qsTr("Settings")
 
 			onClicked: sectionPage.nextView(UiModule.SETTINGS)
 		}
 		Tile {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
 			activeFocusOnTab: true
-			image: "qrc:/images/desktop/help.svg"
+			icon.source: "qrc:/images/desktop/help.svg"
 
 			//: LABEL DESKTOP
-			title: qsTr("Help")
+			text: qsTr("Help")
 
 			onClicked: sectionPage.nextView(UiModule.HELP)
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -27,7 +27,6 @@ Q_DECLARE_LOGGING_CATEGORY(settings)
 namespace
 {
 SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVersion")
-SETTINGS_NAME(SETTINGS_NAME_SKIP_VERSION, "skipVersion")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
 SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
@@ -51,6 +50,7 @@ SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_TYPE, "customProxyType")
 SETTINGS_NAME(SETTINGS_NAME_USE_CUSTOM_PROXY, "useCustomProxy")
 SETTINGS_NAME(SETTINGS_NAME_DARK_MODE, "darkMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SYSTEM_FONT, "useSystemFont")
+SETTINGS_NAME(SETTINGS_NAME_ANIMATIONS, "animations")
 SETTINGS_NAME(SETTINGS_NAME_ENABLE_CAN_ALLOWED, "enableCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
@@ -70,16 +70,19 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 	, mIsNewAppVersion(false)
 {
 	// With 2.0.0 the option to change the screen orientation was removed
-	mStore->remove(QStringLiteral("screenOrientation"));
+	mStore->remove(QAnyStringView("screenOrientation"));
 
 	// With 2.0.0 the history was removed
-	const auto& history = QStringLiteral("history");
+	const QAnyStringView history("history");
 	if (mStore->childGroups().contains(history))
 	{
 		mStore->beginGroup(history);
 		mStore->remove(QString());
 		mStore->endGroup();
 	}
+
+	// With 2.1.0 the skipVersion was removed
+	mStore->remove(QAnyStringView("skipVersion"));
 
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
@@ -181,19 +184,6 @@ void GeneralSettings::setAutoStart(bool pAutoStart)
 QString GeneralSettings::getPersistentSettingsVersion() const
 {
 	return mStore->value(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QString()).toString();
-}
-
-
-QString GeneralSettings::getSkipVersion() const
-{
-	return mStore->value(SETTINGS_NAME_SKIP_VERSION(), QString()).toString();
-}
-
-
-void GeneralSettings::skipVersion(const QString& pVersion)
-{
-	mStore->setValue(SETTINGS_NAME_SKIP_VERSION(), pVersion);
-	save(mStore);
 }
 
 
@@ -485,7 +475,7 @@ bool GeneralSettings::isAutoUpdateCheck() const
 
 bool GeneralSettings::autoUpdateCheckIsSetByAdmin() const
 {
-	return QSettings(QSettings::Scope::SystemScope).contains(SETTINGS_NAME_AUTO());
+	return getStore(QSettings::Scope::SystemScope)->contains(SETTINGS_NAME_AUTO());
 }
 
 
@@ -698,6 +688,23 @@ void GeneralSettings::setUseSystemFont(bool pUseSystemFont)
 		mStore->setValue(SETTINGS_NAME_USE_SYSTEM_FONT(), pUseSystemFont);
 		save(mStore);
 		Q_EMIT fireUseSystemFontChanged();
+	}
+}
+
+
+bool GeneralSettings::isUseAnimations() const
+{
+	return mStore->value(SETTINGS_NAME_ANIMATIONS(), true).toBool();
+}
+
+
+void GeneralSettings::setUseAnimations(bool pUseAnimations)
+{
+	if (isUseAnimations() != pUseAnimations)
+	{
+		mStore->setValue(SETTINGS_NAME_ANIMATIONS(), pUseAnimations);
+		save(mStore);
+		Q_EMIT fireUseAnimationsChanged();
 	}
 }
 

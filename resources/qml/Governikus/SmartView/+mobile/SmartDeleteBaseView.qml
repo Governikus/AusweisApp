@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -78,7 +78,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/identify.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 	}
 	GPane {
 		Layout.alignment: Qt.AlignHCenter
@@ -103,7 +103,7 @@ FlickableSectionPage {
 		id: deleteButton
 
 		Layout.alignment: Qt.AlignHCenter
-		buttonColor: Style.color.text_warning
+		buttonColor: Style.color.warning
 		icon.source: "qrc:///images/identify.svg"
 
 		//: LABEL ANDROID IOS

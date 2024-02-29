@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -25,7 +25,7 @@ class test_CardConnectionWorker
 
 	void setCard()
 	{
-		QVector<TransmitConfig> transmitConfigs;
+		QList<TransmitConfig> transmitConfigs;
 		transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6982")));
 		transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000")));
 		MockCardConfig cardConfig(transmitConfigs);
@@ -141,40 +141,40 @@ class test_CardConnectionWorker
 
 		void test_readFile_data()
 		{
-			QTest::addColumn<QVector<TransmitConfig>>("responses");
+			QTest::addColumn<QList<TransmitConfig>>("responses");
 			QTest::addColumn<QByteArray>("expectedFileContent");
 
-			QTest::newRow("short file - success") << QVector<TransmitConfig>({
+			QTest::newRow("short file - success") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
 					}) << QByteArray(8, 0);
 
-			QTest::newRow("short file - end of file") << QVector<TransmitConfig>({
+			QTest::newRow("short file - end of file") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("6282")),
 						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
 					}) << QByteArray(8, 0);
 
-			QTest::newRow("short file - illegal offset") << QVector<TransmitConfig>({
+			QTest::newRow("short file - illegal offset") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6B00")),
 						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
 					}) << QByteArray(256, 0);
 
-			QTest::newRow("long file - success") << QVector<TransmitConfig>({
+			QTest::newRow("long file - success") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
 					}) << QByteArray(264, 0);
 
-			QTest::newRow("long file - end of file") << QVector<TransmitConfig>({
+			QTest::newRow("long file - end of file") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray(8, 0) + QByteArray::fromHex("6282")),
 						TransmitConfig(CardReturnCode::COMMAND_FAILED, QByteArray())
 					}) << QByteArray(264, 0);
 
-			QTest::newRow("long file - illegal offset") << QVector<TransmitConfig>({
+			QTest::newRow("long file - illegal offset") << QList<TransmitConfig>({
 						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray(256, 0) + QByteArray::fromHex("9000")),
 						TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6B00")),
@@ -185,7 +185,7 @@ class test_CardConnectionWorker
 
 		void test_readFile()
 		{
-			QFETCH(QVector<TransmitConfig>, responses);
+			QFETCH(QList<TransmitConfig>, responses);
 			QFETCH(QByteArray, expectedFileContent);
 
 			MockCardConfig cardConfig(responses);

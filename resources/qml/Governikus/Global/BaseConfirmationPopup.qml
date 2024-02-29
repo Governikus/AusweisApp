@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -81,7 +81,6 @@ Popup {
 			activeFocusOnTab: true
 			elide: Text.ElideRight
 			focus: true
-			font.bold: true
 			horizontalAlignment: root.horizontalTextAlignment
 			maximumLineCount: 5
 			text: root.title

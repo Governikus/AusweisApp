@@ -1,6 +1,5 @@
 module Workflow
 
-internal CardReader CardReader.qml
 internal NfcProgressIndicator NfcProgressIndicator.qml
 internal ProgressCircle ProgressCircle.qml
 internal RemoteProgressIndicator RemoteProgressIndicator.qml

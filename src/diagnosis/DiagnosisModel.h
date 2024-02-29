@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,12 +13,12 @@
 #include "controller/DiagnosisController.h"
 
 #include <QAbstractListModel>
+#include <QList>
 #include <QMap>
 #include <QScopedPointer>
 #include <QSharedPointer>
 #include <QString>
 #include <QUrl>
-#include <QVector>
 
 
 class test_DiagnosisModel;
@@ -54,26 +54,26 @@ class DiagnosisModel
 		QSharedPointer<DiagnosisContext> mContext;
 		DiagnosisController mDiagnosisController;
 
-		QVector<ContentItem> mAusweisAppSection;
-		QVector<ContentItem> mTimestampSection;
+		QList<ContentItem> mAusweisAppSection;
+		QList<ContentItem> mTimestampSection;
 
 		bool mRemoteDeviceSectionRunning;
-		QVector<ContentItem> mRemoteDeviceSection;
+		QList<ContentItem> mRemoteDeviceSection;
 		bool mCardReaderSectionRunning;
-		QVector<ContentItem> mCardReaderSection;
+		QList<ContentItem> mCardReaderSection;
 		bool mPcscSectionRunning;
-		QVector<ContentItem> mPcscSection;
+		QList<ContentItem> mPcscSection;
 
 		DiagnosisConnectionTest mConnectionTest;
-		QVector<ContentItem> mNetworkConnectionSection;
-		QVector<ContentItem> mNetworkInterfaceSection;
+		QList<ContentItem> mNetworkConnectionSection;
+		QList<ContentItem> mNetworkInterfaceSection;
 
 		bool mAntivirusSectionRunning;
 		DiagnosisAntivirusDetection mAntivirusDetection;
-		QVector<ContentItem> mAntivirusSection;
+		QList<ContentItem> mAntivirusSection;
 		bool mFirewallSectionRunning;
 		DiagnosisFirewallDetection mFirewallDetection;
-		QVector<ContentItem> mFirewallSection;
+		QList<ContentItem> mFirewallSection;
 
 		[[nodiscard]] QString getSectionName(Section pSection) const;
 		void initGeneralSections();

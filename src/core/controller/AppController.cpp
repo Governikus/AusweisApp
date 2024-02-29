@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -20,7 +20,6 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QLoggingCategory>
-#include <QSettings>
 #include <QStandardPaths>
 #include <QTimer>
 

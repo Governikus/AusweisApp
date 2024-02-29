@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreparePaceIfd.h"
@@ -10,7 +10,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StatePreparePaceIfd
@@ -23,7 +23,7 @@ class test_StatePreparePaceIfd
 	static QSharedPointer<const IfdEstablishPaceChannel> createMessage(PacePasswordId pId)
 	{
 		EstablishPaceChannel establishPaceChannel(pId);
-		return QSharedPointer<const IfdEstablishPaceChannel>(new IfdEstablishPaceChannel("slot", establishPaceChannel, 6));
+		return QSharedPointer<const IfdEstablishPaceChannel>(new IfdEstablishPaceChannel("slot"_L1, establishPaceChannel, 6));
 	}
 
 	private Q_SLOTS:
@@ -55,7 +55,7 @@ class test_StatePreparePaceIfd
 			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.count(), 0);
 
-			mContext->setPin(QString("111111"));
+			mContext->setPin("111111"_L1);
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
@@ -73,7 +73,7 @@ class test_StatePreparePaceIfd
 			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.count(), 0);
 
-			mContext->setCan(QString("111111"));
+			mContext->setCan("111111"_L1);
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
@@ -91,7 +91,7 @@ class test_StatePreparePaceIfd
 			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyContinue.count(), 0);
 
-			mContext->setPuk(QString("111111"));
+			mContext->setPuk("111111"_L1);
 			mContext->setStateApproved(false);
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations

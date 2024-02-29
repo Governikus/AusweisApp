@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_SelfAuthModel
@@ -103,7 +104,7 @@ class test_SelfAuthModel
 
 		void test_OnSelfAuthenticationDataChanged()
 		{
-			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataNoAddress.json");
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationDataNoAddress.json"_L1);
 			SelfAuthenticationData selfAuthenticationData(data);
 			mContext->setSelfAuthenticationData(selfAuthenticationData);
 			mModel->resetContext(mContext);

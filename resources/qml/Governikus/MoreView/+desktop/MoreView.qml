@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -49,7 +49,7 @@ SectionPage {
 			//: LABEL DESKTOP
 			qsTr("Data and logs"),
 			//: LABEL DESKTOP
-			qsTr("Version information"),
+			qsTr("Information"),
 			//: LABEL DESKTOP
 			qsTr("Software license"),
 			//: LABEL DESKTOP

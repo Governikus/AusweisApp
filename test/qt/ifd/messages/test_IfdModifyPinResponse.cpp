@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdModifyPinResponse.h"
@@ -8,7 +8,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,14 +36,14 @@ class test_IfdModifyPinResponse
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 8);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("Missing value \"SlotHandle\""));
-			QVERIFY(logSpy.at(6).at(0).toString().contains("Missing value \"OutputData\""));
-			QVERIFY(logSpy.at(7).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"ResultMajor\""_L1));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"ResultMinor\""_L1));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("Missing value \"SlotHandle\""_L1));
+			QVERIFY(logSpy.at(6).at(0).toString().contains("Missing value \"OutputData\""_L1));
+			QVERIFY(logSpy.at(7).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"_L1));
 		}
 
 
@@ -108,7 +108,7 @@ class test_IfdModifyPinResponse
 			const IfdModifyPinResponse ifdModifyPinResponse(obj);
 			QVERIFY(!ifdModifyPinResponse.isIncomplete());
 			QCOMPARE(ifdModifyPinResponse.getType(), IfdMessageType::IFDModifyPINResponse);
-			QCOMPARE(ifdModifyPinResponse.getContextHandle(), QString("TestContext"));
+			QCOMPARE(ifdModifyPinResponse.getContextHandle(), "TestContext"_L1);
 			QCOMPARE(ifdModifyPinResponse.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdModifyPinResponse.getOutputData(), QByteArray::fromHex("ABCD1234"));
 			QVERIFY(!ifdModifyPinResponse.resultHasError());
@@ -163,14 +163,14 @@ class test_IfdModifyPinResponse
 			if (type == IfdMessageType::UNDEFINED)
 			{
 				QCOMPARE(logSpy.count(), 2);
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""));
-				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
+				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"_L1));
 
 				return;
 			}
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDModifyPINResponse"_L1));
 		}
 
 
@@ -198,8 +198,8 @@ class test_IfdModifyPinResponse
 			QCOMPARE(ifdModifyPinResponse.getResultMinor(), ECardApiResult::Minor::null);
 
 			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"OutputData\" should be of type \"string\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"SlotHandle\" should be of type \"string\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"OutputData\" should be of type \"string\""_L1));
 		}
 
 

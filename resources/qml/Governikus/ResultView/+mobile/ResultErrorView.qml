@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -42,7 +42,7 @@ ResultView {
 		id: mailButton
 
 		Layout.alignment: Qt.AlignHCenter
-		icon.source: "qrc:///images/material_mail.svg"
+		icon.source: "qrc:///images/email_icon.svg"
 		tintIcon: true
 		visible: text !== ""
 

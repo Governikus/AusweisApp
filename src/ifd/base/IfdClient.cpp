@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdClient.h"
@@ -8,15 +8,15 @@
 using namespace governikus;
 
 
-QVector<QSharedPointer<IfdListEntry>> IfdClient::getAnnouncingRemoteDevices() const
+QList<QSharedPointer<IfdListEntry>> IfdClient::getAnnouncingRemoteDevices() const
 {
-	return QVector<QSharedPointer<IfdListEntry>>();
+	return QList<QSharedPointer<IfdListEntry>>();
 }
 
 
 void IfdClient::requestRemoteDevices()
 {
-	Q_EMIT fireRemoteDevicesInfo(QVector<QSharedPointer<IfdListEntry>>());
+	Q_EMIT fireRemoteDevicesInfo(QList<QSharedPointer<IfdListEntry>>());
 }
 
 

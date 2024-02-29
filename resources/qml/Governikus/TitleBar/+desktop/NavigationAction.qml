@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -22,10 +22,12 @@ GButton {
 	background: null
 	height: if (parent)
 		parent.height
+	horizontalPadding: 0
 	icon.source: root.type === NavigationAction.Action.Cancel ? "qrc:///images/material_close.svg" : "qrc:///images/material_arrow_back.svg"
-	iconSize: Style.dimens.icon_size
+	iconSize: Style.dimens.small_icon_size * 1.5
 	text: root.type === NavigationAction.Action.Cancel ? qsTr("Cancel") : qsTr("Back")
-	textDisabledColor: Style.color.text_subline_disabled
+	textDisabledColor: Style.color.text_disabled
+	textHighlightColor: plugin.highContrastEnabled ? Style.color.control_pressed : Style.color.control_content_pressed
 	textStyle: Style.text.normal
 	tintIcon: true
 	verticalPadding: 0

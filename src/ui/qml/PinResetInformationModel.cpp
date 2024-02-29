@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinResetInformationModel.h"
@@ -35,7 +35,7 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 
 	if (homepage.isEmpty())
 	{
-		return tr("https://www.personalausweisportal.de/EN");
+		return QStringLiteral("https://www.behoerdenfinder.de");
 	}
 
 	if (LanguageLoader::getLocaleCode() != QStringLiteral("de"))
@@ -53,7 +53,7 @@ QString PinResetInformationModel::getNoPinAndNoPukHint() const
 	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
 		   tr("You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.") :
 	       //: LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.
-		   tr("If you have forgotten your ID card PIN or do not have access to the PUK, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("If you don't have your Transport PIN letter and no access to the PUK, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
 }
 
 
@@ -61,9 +61,9 @@ QString PinResetInformationModel::getRequestNewPinHint() const
 {
 	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
-		   tr("Request a new card PIN free of charge to be able to use the eID function again.") :
+		   tr("Request a new card PIN to be able to use the eID function again.") :
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because of a blocked PUK
-		   tr("You may turn to the competent authority and set a new ID card PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("You may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
 }
 
 
@@ -71,9 +71,9 @@ QString PinResetInformationModel::getActivateOnlineFunctionHint() const
 {
 	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
-		   tr("You can request activation of the eID function without charge.") :
+		   tr("You can request activation of the eID function.") :
 	       //: LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
-		   tr("Please contact the competent authority to activate the eID function.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("Please contact the competent authority to activate the eID function.") + authorityFinderSuffix();
 }
 
 
@@ -89,7 +89,7 @@ QString PinResetInformationModel::getActivateOnlineFunctionActionText() const
 	       //: LABEL ALL_PLATFORMS
 		   tr("Go to Activation Service") :
 	       //: LABEL ALL_PLATFORMS
-		   tr("Open website");
+		   tr("Find competent authority");
 }
 
 
@@ -97,9 +97,9 @@ QString PinResetInformationModel::getPinResetHintNoPin() const
 {
 	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		   tr("You can use the PIN Reset Service to request a new card PIN free of charge.") :
+		   tr("You can use the PIN Reset Service to request a new card PIN.") :
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-		   tr("You may turn to the competent authority and set a new ID card PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("You may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
 }
 
 
@@ -107,9 +107,9 @@ QString PinResetInformationModel::getPinResetHintTransportPin() const
 {
 	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.
-		   tr("If you do not know either your Transport PIN or your card PIN, you can request a new PIN free of charge using the PIN Reset Service.") :
+		   tr("If you do not know either your Transport PIN or your card PIN, you can request a new PIN using the PIN Reset Service.") :
 	       //: LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.
-		   tr("If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
 }
 
 
@@ -117,9 +117,9 @@ QString PinResetInformationModel::getPinResetHint() const
 {
 	return hasPinResetService() ?
 	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		   tr("If you have forgotten your ID card PIN, you can request a new PIN free of charge using the PIN Reset Service.") :
+		   tr("If you have forgotten your ID card PIN, you can request a new PIN using the PIN Reset Service.") :
 	       //: LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.
-		   tr("If you cannot recall your ID card PIN, you may turn to the competent authority and set a new PIN there.<br/><br/>For further information, please visit the ID card portal.");
+		   tr("If you cannot recall your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.") + authorityFinderSuffix();
 }
 
 
@@ -129,7 +129,13 @@ QString PinResetInformationModel::getPinResetActionText() const
 	       //: LABEL ALL_PLATFORMS
 		   tr("Go to PIN Reset Service") :
 	       //: LABEL ALL_PLATFORMS
-		   tr("Open website");
+		   tr("Find competent authority");
+}
+
+
+QString PinResetInformationModel::authorityFinderSuffix() const
+{
+	return QStringLiteral("<br/><br/>") + tr("To find your competent authority you may visit www.behoerdenfinder.de.");
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -40,6 +40,17 @@ class test_CardConnection
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
 			UpdateRetryCounterCommand* command = connection.createUpdateRetryCounterCommand();
+			command->deleteLater();
+			QCOMPARE(command->mCardConnectionWorker, worker);
+		}
+
+
+		void test_CreateResetRetryCounterCommand()
+		{
+			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			worker->moveToThread(&workerThread);
+			CardConnection connection(worker);
+			ResetRetryCounterCommand* command = connection.createResetRetryCounterCommand();
 			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
 		}
@@ -93,7 +104,7 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			const QVector<InputAPDUInfo> apduInfos;
+			const QList<InputAPDUInfo> apduInfos;
 			const QString slotHandle = QStringLiteral("slot handle");
 			TransmitCommand* command = connection.createTransmitCommand(apduInfos, slotHandle);
 			command->deleteLater();

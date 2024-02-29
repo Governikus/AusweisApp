@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_ReleaseInformation
@@ -20,7 +21,7 @@ class test_ReleaseInformation
 	private Q_SLOTS:
 		void init()
 		{
-			QCoreApplication::setApplicationVersion("1.2.3");
+			QCoreApplication::setApplicationVersion("1.2.3"_L1);
 		}
 
 
@@ -40,8 +41,8 @@ class test_ReleaseInformation
 
 		void test_explicitVersionNumber()
 		{
-			ReleaseInformation information(VersionNumber("1.2.4"));
-			QCOMPARE(information.versionNumber(), VersionNumber("1.2.4"));
+			ReleaseInformation information(VersionNumber("1.2.4"_L1));
+			QCOMPARE(information.versionNumber(), VersionNumber("1.2.4"_L1));
 		}
 
 
@@ -54,14 +55,14 @@ class test_ReleaseInformation
 
 		void test_pathReleaseNotesForExplicitVersion()
 		{
-			ReleaseInformation information(VersionNumber("1.2.4"));
+			ReleaseInformation information(VersionNumber("1.2.4"_L1));
 			QCOMPARE(information.pathReleaseNotes().size(), 5);
 		}
 
 
 		void test_pathReleaseNotesForExplicitVersionOnly()
 		{
-			ReleaseInformation information(VersionNumber("1.2.4"), true);
+			ReleaseInformation information(VersionNumber("1.2.4"_L1), true);
 			QCOMPARE(information.pathReleaseNotes().size(), 1);
 		}
 

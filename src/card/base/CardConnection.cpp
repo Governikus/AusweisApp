@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -70,6 +70,12 @@ UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
 }
 
 
+ResetRetryCounterCommand* CardConnection::createResetRetryCounterCommand()
+{
+	return new ResetRetryCounterCommand(mCardConnectionWorker);
+}
+
+
 EstablishPaceChannelCommand* CardConnection::createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription)
 {
 	return new EstablishPaceChannelCommand(mCardConnectionWorker, pPacePasswordId, pPacePassword, pEffectiveChat, pCertificateDescription);
@@ -111,7 +117,7 @@ void CardConnection::onReaderInfoChanged(const ReaderInfo& pReaderInfo)
 }
 
 
-TransmitCommand* CardConnection::createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle)
+TransmitCommand* CardConnection::createTransmitCommand(const QList<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle)
 {
 	return new TransmitCommand(mCardConnectionWorker, pInputApduInfos, pSlotHandle);
 }

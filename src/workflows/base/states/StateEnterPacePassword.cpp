@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePassword.h"
@@ -15,6 +15,7 @@ StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowCont
 	, GenericContextContainer(pContext)
 {
 	setKeepCardConnectionAlive();
+	setHandleNfcStop();
 }
 
 

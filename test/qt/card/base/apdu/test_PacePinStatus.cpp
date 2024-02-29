@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/PacePinStatus.h"
@@ -15,7 +15,7 @@ class test_PacePinStatus
 
 	private:
 		bool mTestAllKnownStatusCode;
-		QVector<StatusCode> mStatusCodeToTest;
+		QList<StatusCode> mStatusCodeToTest;
 
 	private Q_SLOTS:
 		void cleanupTestCase()

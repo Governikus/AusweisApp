@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/DiagnosisContext.h"
@@ -40,7 +40,7 @@ class test_DiagnosisContext
 			const QString name2 = QStringLiteral("name2");
 			ReaderInfo info1(name1);
 			ReaderInfo info2(name2);
-			QVector<ReaderInfo> infoVector({info1, info2});
+			QList<ReaderInfo> infoVector({info1, info2});
 			QSignalSpy spy(&context, &DiagnosisContext::readerInfosChanged);
 
 			context.setReaderInfos(infoVector);
@@ -57,8 +57,8 @@ class test_DiagnosisContext
 		{
 			DiagnosisContext context;
 			const QString version = QStringLiteral("version");
-			QVector<DiagnosisContext::ComponentInfo> components({DiagnosisContext::ComponentInfo()});
-			QVector<DiagnosisContext::ComponentInfo> drivers({DiagnosisContext::ComponentInfo()});
+			QList<DiagnosisContext::ComponentInfo> components({DiagnosisContext::ComponentInfo()});
+			QList<DiagnosisContext::ComponentInfo> drivers({DiagnosisContext::ComponentInfo()});
 			QSignalSpy spy(&context, &DiagnosisContext::pcscInfoChanged);
 
 			context.setPcscInfo(version, components, drivers);

@@ -4,7 +4,7 @@ import common.Build.JobType
 def j = new Review
 	(
 		name: 'Configuration',
-		libraries: ['Linux'],
+		libraries: 'Linux',
 		label: 'Linux',
 		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
@@ -18,7 +18,7 @@ j.with
 	{
 		environmentVariables
 		{
-			env("QT_PLUGIN_PATH", '$WORKSPACE/libs/build/dist/plugins')
+			env("QT_PLUGIN_PATH", '$WORKSPACE/libs/dist/plugins')
 		}
 	}
 

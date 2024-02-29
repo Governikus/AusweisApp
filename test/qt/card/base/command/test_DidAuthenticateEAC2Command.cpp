@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC2Command.h"
@@ -8,6 +8,7 @@
 
 #include "MockCardConnectionWorker.h"
 #include "TestFileHelper.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/ASN1Util.h"
 
 #include <QByteArrayList>
@@ -16,7 +17,7 @@
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -32,20 +33,20 @@ class test_DidAuthenticateEAC2Command
 
 		static QByteArray readFile(const QString& pFileName)
 		{
-			return TestFileHelper::readFile(QString(":/card/").append(pFileName));
+			return TestFileHelper::readFile(QStringLiteral(":/card/").append(pFileName));
 		}
 
 
 		static CVCertificateChain createCVCertificateChain()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"));
-			list << CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"));
-			list << CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"));
+			QList<QSharedPointer<const CVCertificate>> list;
+			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
+			list << CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
 			CVCertificateChainBuilder builder(list, false);
 			return builder.getChainStartingWith(list.first());
 		}
@@ -53,7 +54,7 @@ class test_DidAuthenticateEAC2Command
 
 		QByteArray generateEfCardSecurity(const QByteArrayList& pSecurityInfos)
 		{
-			const auto& data = Asn1Util::encode(V_ASN1_UNIVERSAL, 17, pSecurityInfos.join(), true);
+			const auto& data = Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_SET, pSecurityInfos.join(), true);
 			QSharedPointer<BIO> bio(BIO_new(BIO_s_mem()), &BIO_free);
 			BIO_write(bio.data(), data.data(), static_cast<int>(data.size()));
 
@@ -259,7 +260,7 @@ class test_DidAuthenticateEAC2Command
 			}
 			else if (error == 2)
 			{
-				QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Cannot decode ASN.1 object: .*"));
+				QTest::ignoreMessage(QtWarningMsg, QRegularExpression("Cannot decode ASN.1 object: .*"_L1));
 				QTest::ignoreMessage(QtCriticalMsg, "No contentInfo");
 				QTest::ignoreMessage(QtCriticalMsg, "Cannot parse EF.CardSecurity");
 			}

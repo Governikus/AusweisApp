@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -11,7 +11,6 @@ TextField {
 
 	property int enterKeyType: Qt.EnterKeyDefault
 	property var textStyle: Style.text.normal
-	property bool valid: true
 
 	Accessible.editable: true
 	Accessible.name: echoMode === TextInput.Normal ? displayText : ""
@@ -28,9 +27,9 @@ TextField {
 	selectionColor: Style.color.control
 
 	background: Rectangle {
-		border.color: baseItem.valid ? Style.color.border : Constants.red
+		border.color: Style.color.border
 		border.width: Style.dimens.separator_size
-		color: baseItem.enabled ? Style.color.pane : Constants.grey
+		color: Style.color.pane
 		radius: Style.dimens.control_radius
 	}
 

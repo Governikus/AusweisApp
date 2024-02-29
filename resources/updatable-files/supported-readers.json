@@ -142,15 +142,21 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
-						},
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
 						{
 							"DE": "macOS",
 							"EN": "macOS",
 							"os": "mac"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -244,15 +250,21 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
-						},
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
 						{
 							"DE": "macOS",
 							"EN": "macOS",
 							"os": "mac"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -296,31 +308,31 @@
 				{
 					"Platforms": [
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						},
-						{
-							"DE": "bis Windows 8.1",
-							"EN": "up to Windows 8.1",
+							"DE": "bis Windows 10",
+							"EN": "up to Windows 10",
 							"os": "win",
-							"max": "6.3"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 10",
-							"EN": "from Windows 10",
-							"os": "win",
-							"min": "10"
+							"max": "10.0.19999"
 						}
 					],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab Windows 11",
+							"EN": "from Windows 11",
+							"os": "win",
+							"min": "10.0.20000"
+						},
+						{
+							"DE": "macOS",
+							"EN": "macOS",
+							"os": "mac"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader is compatible with the installed system driver."
 				}
 			]
 		},
@@ -386,7 +398,7 @@
 				"0x301D"
 			],
 			"Name": "KOBIL IDToken",
-			"Pattern": "^KOBIL (Systems )?IDToken( \\d{1,1})?$",
+			"Pattern": "^KOBIL (Systems )?IDToken",
 			"Icon": "img_KOBIL_ID_Token.png",
 			"IconWithNPA": "img_KOBIL_ID_Token_mit_ausweis.png",
 			"Drivers": [
@@ -447,7 +459,8 @@
 			"VendorId": "0x04E6",
 			"ProductId": "0x512B",
 			"ProductIds": [
-				"0x512B"
+				"0x512B",
+				"0x512C"
 			],
 			"Name": "Identiv SDI011 Dual Interface Smart Card Reader",
 			"Pattern": "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$",
@@ -473,17 +486,6 @@
 				{
 					"Platforms": [
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
-				},
-				{
-					"Platforms": [
-						{
 							"DE": "bis Windows 10",
 							"EN": "up to Windows 10",
 							"os": "win",
@@ -504,6 +506,17 @@
 					],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Bitte beachten Sie nach der Treiberinstallation die Windows-Informationen zur Einstellung der Gerätesicherheit.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. After the driver installation, please observe the Windows information notification regarding your device security settings."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "macOS",
+							"EN": "macOS",
+							"os": "mac"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -545,8 +558,8 @@
 				{
 					"Platforms": [
 						{
-							"DE": "MacOS",
-							"EN": "MacOS",
+							"DE": "macOS",
+							"EN": "macOS",
 							"os": "mac"
 						}
 					],
@@ -563,7 +576,7 @@
 				"0x5790"
 			],
 			"Name": "Identiv 3700 F",
-			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$",
+			"Pattern": "^Identiv[e]? (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$",
 			"Icon": "img_Identive_XXXX_F.png",
 			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
 			"Drivers": [
@@ -746,7 +759,7 @@
 							"os": "mac"
 						}
 					],
-					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider ist der vom Hersteller angebotene Treiber veraltert und funktioniert nicht.",
+					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider ist der vom Hersteller angebotene Treiber veraltet und funktioniert nicht.",
 					"EN": "The card reader is no longer supported, the driver offered by the manufacturer is unfortunately outdated and does not work."
 				}
 			]
@@ -1012,15 +1025,15 @@
 				{
 					"Platforms": [
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						},
-						{
 							"DE": "ab Windows 11",
 							"EN": "from Windows 11",
 							"os": "win",
 							"min": "10.0.20000"
+						},
+						{
+							"DE": "macOS",
+							"EN": "macOS",
+							"os": "mac"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
@@ -1637,6 +1650,64 @@
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
 					"EN": "The card reader operates with the driver automatically installed by the system. There is no driver from the manufacturer."
+				}
+			]
+		},
+		{
+			"VendorId": "0x072F",
+			"ProductId": "0x2301",
+			"ProductIds": [
+				"0x2301"
+			],
+			"Name": "ACS ACR1581U-C1",
+			"Pattern": "ACS ACR1581 1S Dual Reader PICC( 0)?",
+			"Icon": "img_ACS_ACR1581U-C1.png",
+			"IconWithNPA": "img_ACS_ACR1581U-C1_mit_ausweis.png",
+			"Drivers": [
+				{
+					"Platforms": [
+						{
+							"os": "win"
+						},
+						{
+							"os": "mac"
+						},
+						{
+							"os": "unknown"
+						}
+					],
+					"URL": "https://www.acs.com.hk/en/products/583/acr1581u-dualboost-iii-usb-dual-interface-reader/"
+				}
+			],
+			"Information": [
+				{
+					"Platforms": [
+						{
+							"DE": "Windows",
+							"EN": "Windows",
+							"os": "win"
+						},
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
+					"EN": "The card reader is compatible with the installed system driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "bis macOS 13",
+							"EN": "up to macOS 13",
+							"os": "mac",
+							"max": "13"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,7 +16,7 @@
 #include "paos/element/ConnectionHandle.h"
 #include "paos/element/Eac1InputType.h"
 
-#include <QVector>
+#include <QList>
 
 
 namespace governikus
@@ -48,12 +48,12 @@ class DIDAuthenticateEAC1
 		[[nodiscard]] const QSharedPointer<const CertificateDescription>& getCertificateDescription() const;
 		[[nodiscard]] const QByteArray& getCertificateDescriptionAsBinary() const;
 		[[nodiscard]] const ConnectionHandle& getConnectionHandle() const;
-		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] const QList<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 		[[nodiscard]] const QString& getDidName() const;
 		[[nodiscard]] const QSharedPointer<const CHAT>& getOptionalChat() const;
 		[[nodiscard]] const QSharedPointer<const CHAT>& getRequiredChat() const;
 		[[nodiscard]] const QString& getTransactionInfo() const;
-		[[nodiscard]] const QVector<AcceptedEidType>& getAcceptedEidTypes() const;
+		[[nodiscard]] const QList<AcceptedEidType>& getAcceptedEidTypes() const;
 };
 
 } // namespace governikus

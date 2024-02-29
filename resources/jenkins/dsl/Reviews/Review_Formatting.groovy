@@ -3,7 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'Formatting',
-		libraries: ['Linux'],
+		libraries: 'Linux',
 		label: 'Common'
 	).generate(this)
 

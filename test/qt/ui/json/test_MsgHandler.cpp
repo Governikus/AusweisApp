@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 namespace
@@ -56,11 +57,11 @@ class test_MsgHandler
 			MsgTest msg;
 			QJsonObject dummy;
 
-			dummy["unused"] = "this will be ignored";
+			dummy["unused"_L1] = "this will be ignored"_L1;
 			msg.setRequest(dummy);
 			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"INVALID\"}"));
 
-			dummy["request"] = "hello world";
+			dummy["request"_L1] = "hello world"_L1;
 			msg.setRequest(dummy);
 			QCOMPARE(msg.toJson(), QByteArray("{\"msg\":\"INVALID\",\"request\":\"hello world\"}"));
 		}

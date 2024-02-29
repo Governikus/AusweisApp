@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,8 +11,8 @@
 
 #include "ReleaseInformation.h"
 
+#include <QList>
 #include <QTemporaryFile>
-#include <QVector>
 
 namespace governikus
 {
@@ -28,7 +28,7 @@ class MockReleaseInformation
 
 		QSharedPointer<QTemporaryFile> mAnnounce;
 		QSharedPointer<QTemporaryFile> mIssues;
-		QVector<QSharedPointer<QTemporaryFile>> mNotes;
+		QList<QSharedPointer<QTemporaryFile>> mNotes;
 
 		static QSharedPointer<QTemporaryFile> createDummyContent(const QStringList& pContent);
 

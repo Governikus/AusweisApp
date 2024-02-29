@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -35,6 +35,9 @@ FlickableSectionPage {
 		push(selfAuthView);
 	}
 
+	FadeInAnimation {
+		target: root
+	}
 	Component {
 		id: selfAuthView
 
@@ -89,7 +92,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/mobile/device.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter

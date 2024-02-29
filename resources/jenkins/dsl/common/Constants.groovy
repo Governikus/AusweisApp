@@ -7,8 +7,6 @@ class Constants
 	static final AndroidArchAAR = ["arm64-v8a"]
 	static final AndroidArch = (AndroidArchAPK + AndroidArchAAR).unique()
 
-	static final ReviewBoardServer = "rb.governikus.de"
-
 	static String strip(String content)
 	{
 		content = content.stripIndent().trim()

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -23,9 +23,13 @@
 #include <QtPlugin>
 #include <QtTest>
 
+
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 Q_DECLARE_METATYPE(QSharedPointer<WorkflowContext>)
 
@@ -143,7 +147,7 @@ class test_MsgHandlerEnterNewPin
 			QTest::newRow("ChangePinContext") << QSharedPointer<ChangePinContext>::create().objectCast<WorkflowContext>();
 
 #if __has_include("context/PersonalizationContext.h")
-			QTest::newRow("PersonalizationContext") << QSharedPointer<PersonalizationContext>::create(QString("dummy")).objectCast<WorkflowContext>();
+			QTest::newRow("PersonalizationContext") << QSharedPointer<PersonalizationContext>::create("dummy"_L1).objectCast<WorkflowContext>();
 #endif
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -35,78 +35,20 @@ FlickableSectionPage {
 	GText {
 		id: actionText
 
-		//: LABEL IOS_PHONE ANDROID_PHONE
+		//: LABEL IOS ANDROID
 		text: qsTr("You are about to identify yourself towards the following provider:")
 	}
-	GPane {
+	ProviderInfo {
 		Layout.fillWidth: true
-		color: mouseArea.pressed ? Style.color.pane_active : Style.color.pane
+		name: CertificateDescriptionModel.subjectName
 
-		Item {
-			Accessible.description: providerInfoSection.title + ". " + providerInfoSection.name + ". " + providerInfoAction.text
-			Accessible.role: Accessible.Button
-			height: providerEntries.height
-			width: parent.width
+		onClicked: push(certificateDescriptionPage)
 
-			Accessible.onPressAction: mouseArea.clicked(null)
+		Component {
+			id: certificateDescriptionPage
 
-			Column {
-				id: providerEntries
-
-				spacing: Constants.groupbox_spacing
-
-				anchors {
-					left: parent.left
-					right: forwardAction.left
-					rightMargin: Constants.text_spacing
-					top: parent.top
-				}
-				ProviderInfoSection {
-					id: providerInfoSection
-
-					imageSource: "qrc:///images/info.svg"
-					name: CertificateDescriptionModel.subjectName
-					//: LABEL IOS_PHONE ANDROID_PHONE
-					title: qsTr("Provider")
-				}
-				GText {
-					id: providerInfoAction
-
-					Accessible.ignored: true
-
-					//: LABEL IOS_PHONE ANDROID_PHONE
-					text: qsTr("Touch for more details")
-					wrapMode: Text.WordWrap
-
-					anchors {
-						left: parent.left
-						leftMargin: Style.dimens.small_icon_size + Constants.groupbox_spacing
-						right: parent.right
-					}
-				}
-			}
-			TintableIcon {
-				id: forwardAction
-
-				anchors.right: parent.right
-				anchors.verticalCenter: providerEntries.verticalCenter
-				source: "qrc:///images/material_arrow_right.svg"
-				sourceSize.height: Style.dimens.small_icon_size
-				tintColor: Style.color.text
-			}
-			MouseArea {
-				id: mouseArea
-
-				anchors.fill: parent
-
-				onClicked: push(certificateDescriptionPage)
-			}
-			Component {
-				id: certificateDescriptionPage
-
-				CertificateDescriptionPage {
-					title: baseItem.title
-				}
+			CertificateDescriptionPage {
+				title: baseItem.title
 			}
 		}
 	}
@@ -183,6 +125,7 @@ FlickableSectionPage {
 		Layout.fillWidth: true
 		color: Style.color.pane_sublevel
 		drawShadow: false
+		padding: 0
 		visible: requiredData.count > 0 || optionalData.count > 0
 
 		DataGroup {

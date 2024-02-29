@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdVersion.h"
 
 #include <QtTest>
 
+
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -17,10 +19,10 @@ class test_IfdVersion
 	private Q_SLOTS:
 		void stringParsing()
 		{
-			QCOMPARE(IfdVersion("IFDInterface_WebSocket_Unknown"), IfdVersion::Version::Unknown);
-			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v0"), IfdVersion::Version::v0);
-			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v2"), IfdVersion::Version::v2);
-			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v9001"), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_Unknown"_L1), IfdVersion::Version::Unknown);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v0"_L1), IfdVersion::Version::v0);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v2"_L1), IfdVersion::Version::v2);
+			QCOMPARE(IfdVersion("IFDInterface_WebSocket_v9001"_L1), IfdVersion::Version::Unknown);
 		}
 
 
@@ -42,7 +44,7 @@ class test_IfdVersion
 
 		void supportedVersions()
 		{
-			QVector<IfdVersion::Version> versions({IfdVersion::Version::v2});
+			QList<IfdVersion::Version> versions({IfdVersion::Version::v2});
 			if (IfdVersion(IfdVersion::Version::v0).isSupported())
 			{
 				versions.prepend(IfdVersion::Version::v0);

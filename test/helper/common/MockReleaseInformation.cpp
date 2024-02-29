@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReleaseInformation.h"
 
 #include <QTextStream>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 QSharedPointer<QTemporaryFile> MockReleaseInformation::createDummyContent(const QStringList& pContent)
@@ -14,7 +15,7 @@ QSharedPointer<QTemporaryFile> MockReleaseInformation::createDummyContent(const 
 	if (tmpFile->open())
 	{
 		QTextStream ts(tmpFile.data());
-		const auto newLine(QLatin1Char('\n'));
+		const auto newLine('\n'_L1);
 		for (const auto& line : pContent)
 		{
 			ts << line << newLine;
@@ -39,11 +40,11 @@ void MockReleaseInformation::update()
 	mCallcountUpdate++;
 	if (!mWasUpdated)
 	{
-		mAnnounce = createDummyContent({"Dummy announcements"});
-		mIssues = createDummyContent({"Dummy issues"});
+		mAnnounce = createDummyContent({"Dummy announcements"_L1});
+		mIssues = createDummyContent({"Dummy issues"_L1});
 
-		mNotes << createDummyContent({"Dummy notes 0.1", "", "These are the updated notes."});
-		mNotes << createDummyContent({"Dummy notes 0.0", "", "These are the initial notes."});
+		mNotes << createDummyContent({"Dummy notes 0.1"_L1, ""_L1, "These are the updated notes."_L1});
+		mNotes << createDummyContent({"Dummy notes 0.0"_L1, ""_L1, "These are the initial notes."_L1});
 
 		mWasUpdated = true;
 		Q_EMIT fireInformationChanged();

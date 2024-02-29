@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,8 +12,8 @@
 #include "ApplicationTemplate.h"
 
 #include <QByteArray>
+#include <QList>
 #include <QSharedPointer>
-#include <QVector>
 
 
 namespace governikus
@@ -36,10 +36,10 @@ class ApplicationTemplates
 
 	private:
 		const QByteArray mContentBytes;
-		const QVector<QSharedPointer<const ApplicationTemplate>> mApplicationTemplates;
+		const QList<QSharedPointer<const ApplicationTemplate>> mApplicationTemplates;
 
 		ApplicationTemplates(const QByteArray& pBytes,
-				const QVector<QSharedPointer<const ApplicationTemplate>>& pApplicationTemplates);
+				const QList<QSharedPointer<const ApplicationTemplate>>& pApplicationTemplates);
 
 		static QByteArray buildAsn1LengthField(unsigned int pLength);
 
@@ -49,7 +49,7 @@ class ApplicationTemplates
 		bool contains(const QByteArray& pIdentifier);
 
 		[[nodiscard]] const QByteArray& getContentBytes() const;
-		[[nodiscard]] const QVector<QSharedPointer<const ApplicationTemplate>>& getApplicationTemplates() const;
+		[[nodiscard]] const QList<QSharedPointer<const ApplicationTemplate>>& getApplicationTemplates() const;
 		[[nodiscard]] qsizetype count() const;
 };
 

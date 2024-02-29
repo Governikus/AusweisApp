@@ -96,7 +96,7 @@
 					},
 					"phone": {
 						"type": "string",
-						"pattern": "^\\+49 [0-9 ]{6,}$"
+						"pattern": "^\\+49 ([\\d]{3}|[\\d ]{6,})$"
 					},
 					"mobileDesign": {
 						"type": "boolean"

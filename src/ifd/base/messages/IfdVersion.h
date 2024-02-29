@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <QDebug>
+#include <QList>
 #include <QString>
-#include <QVector>
 
 namespace governikus
 {
@@ -39,8 +39,8 @@ class IfdVersion
 
 		[[nodiscard]] QString toString() const;
 
-		static QVector<Version> supported();
-		static Version selectLatestSupported(const QVector<Version>& pVersions);
+		static QList<Version> supported();
+		static Version selectLatestSupported(const QList<Version>& pVersions);
 };
 
 

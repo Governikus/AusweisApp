@@ -4,7 +4,7 @@ def j = new Build
 	(
 		name: 'Translation',
 		excludePattern: '',
-		libraries: ['Linux'],
+		libraries: 'Linux',
 		label: 'Linux',
 		artifacts: 'source/resources/translations/*.ts'
 	).generate(this)

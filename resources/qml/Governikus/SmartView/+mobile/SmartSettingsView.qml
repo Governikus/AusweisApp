@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -27,7 +27,7 @@ ColumnLayout {
 		//: LABEL ANDROID IOS
 		title: qsTr("Smart-eID")
 
-		MenuItem {
+		GMenuItem {
 			//: LABEL ANDROID IOS
 			description: qsTr("Show Smart-eID data")
 
@@ -44,7 +44,7 @@ ColumnLayout {
 			anchors.right: parent.right
 			anchors.rightMargin: Constants.component_spacing
 		}
-		MenuItem {
+		GMenuItem {
 			//: LABEL ANDROID IOS
 			description: qsTr("Change the chosen Smart-eID PIN")
 
@@ -61,7 +61,7 @@ ColumnLayout {
 			anchors.right: parent.right
 			anchors.rightMargin: Constants.component_spacing
 		}
-		MenuItem {
+		GMenuItem {
 			//: LABEL ANDROID IOS
 			description: qsTr("Renew your Smart-eID with current data")
 
@@ -78,7 +78,7 @@ ColumnLayout {
 			anchors.right: parent.right
 			anchors.rightMargin: Constants.component_spacing
 		}
-		MenuItem {
+		GMenuItem {
 			//: LABEL ANDROID IOS
 			description: qsTr("Delete Smart-eID data from your device")
 

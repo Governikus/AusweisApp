@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*
@@ -27,7 +27,7 @@
 #include <QWriteLocker>
 
 #ifndef QT_NO_DEBUG
-	#include <QVector>
+	#include <QList>
 #endif
 
 class test_Env;
@@ -100,13 +100,13 @@ class Env
 		};
 
 		using Wrapper = QSharedPointer<FuncWrapperBase>;
-		QVector<Wrapper> mInstancesCreator;
+		QList<Wrapper> mInstancesCreator;
 		QMap<Identifier, void*> mInstancesSingleton;
 		mutable QReadWriteLock mLock;
 #endif
 
 		QPointer<QObjectCleanupHandler> mSingletonHandler;
-		QVector<std::function<void* (bool)>> mSingletonCreator;
+		QList<std::function<void* (bool)>> mSingletonCreator;
 
 		QMap<Identifier, QWeakPointer<QObject>> mSharedInstances;
 		mutable QReadWriteLock mSharedInstancesLock;
@@ -376,7 +376,7 @@ class Env
 			auto& holder = getInstance();
 			const QWriteLocker locker(&holder.mLock);
 
-			QMutableVectorIterator<Wrapper> iter(holder.mInstancesCreator);
+			QMutableListIterator<Wrapper> iter(holder.mInstancesCreator);
 			while (iter.hasNext())
 			{
 				iter.next();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,9 +15,9 @@
 #include "UsbId.h"
 
 #include <QDateTime>
+#include <QList>
 #include <QObject>
 #include <QString>
-#include <QVector>
 
 
 namespace governikus
@@ -33,7 +33,7 @@ class ReaderConfiguration
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;
-		QVector<ReaderConfigurationInfo> mReaderConfigurationInfos;
+		QList<ReaderConfigurationInfo> mReaderConfigurationInfos;
 
 		ReaderConfiguration();
 		~ReaderConfiguration() override = default;
@@ -43,13 +43,10 @@ class ReaderConfiguration
 		void onFileUpdated();
 
 	public:
-		[[nodiscard]] static QString getNoReaderFoundIconPath();
-		[[nodiscard]] static QString getMultipleReaderIconPath();
-
 		void update();
-		[[nodiscard]] const QVector<ReaderConfigurationInfo>& getReaderConfigurationInfos() const;
-		[[nodiscard]] QVector<ReaderConfigurationInfo> getSupportedReaderConfigurationInfos() const;
-		[[nodiscard]] QVector<ReaderConfigurationInfo> getVirtualReaderConfigurationInfos() const;
+		[[nodiscard]] const QList<ReaderConfigurationInfo>& getReaderConfigurationInfos() const;
+		[[nodiscard]] QList<ReaderConfigurationInfo> getSupportedReaderConfigurationInfos() const;
+		[[nodiscard]] QList<ReaderConfigurationInfo> getVirtualReaderConfigurationInfos() const;
 
 		[[nodiscard]] ReaderConfigurationInfo getReaderConfigurationInfoById(const UsbId& pId) const;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -7,7 +7,7 @@
 
 #include "GlobalStatus.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/CommandData.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/PaceInfo.h"
 #include "pace/CipherMac.h"
 #include "pace/KeyDerivationFunction.h"
@@ -181,7 +181,7 @@ KeyAgreementStatus KeyAgreement::performMutualAuthenticate()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 {
-	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
+	ASN1Struct cmdData(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
 
@@ -193,8 +193,8 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEncryptedNonce()
 
 KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteArray& pEphemeralPublicKey)
 {
-	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
-	cmdData.append(CommandData::PACE_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
+	ASN1Struct cmdData(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(ASN1Struct::PACE_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
 
@@ -207,8 +207,8 @@ KeyAgreement::CardResult KeyAgreement::transmitGAEphemeralPublicKey(const QByteA
 KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& pMappingData) const
 {
 	// sende den PublicKey (D.3.4.)
-	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
-	cmdData.append(CommandData::MAPPING_DATA, pMappingData);
+	ASN1Struct cmdData(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(ASN1Struct::MAPPING_DATA, pMappingData);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 	cmdApdu.enableCommandChaining();
 
@@ -220,8 +220,8 @@ KeyAgreement::CardResult KeyAgreement::transmitGAMappingData(const QByteArray& p
 
 GAMutualAuthenticationResponse KeyAgreement::transmitGAMutualAuthentication(const QByteArray& pMutualAuthenticationData)
 {
-	CommandData cmdData(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
-	cmdData.append(CommandData::AUTHENTICATION_TOKEN, pMutualAuthenticationData);
+	ASN1Struct cmdData(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA);
+	cmdData.append(ASN1Struct::AUTHENTICATION_TOKEN, pMutualAuthenticationData);
 	CommandApdu cmdApdu(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdData, CommandApdu::SHORT_MAX_LE);
 
 	auto [returnCode, responseApdu] = mCardConnectionWorker->transmit(cmdApdu);

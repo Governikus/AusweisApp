@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDispatcherServer.h"
@@ -63,7 +63,7 @@ void IfdDispatcherServer::createAndSendContext(const QJsonObject& pMessageObject
 	qCDebug(ifd) << "Got request to establish context with version" << ifdVersion;
 
 	const auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	const QString& serverName = settings.getServerName();
+	const QString& serverName = settings.getDeviceName();
 	if (fail != ECardApiResult::Minor::null)
 	{
 		qCDebug(ifd) << "Cannot create a new ContextHandle:" << fail;
@@ -88,6 +88,7 @@ bool IfdDispatcherServer::processContext(IfdMessageType pMsgType, const QJsonObj
 
 	IfdEstablishContext establishContext(pMsgObject);
 	saveRemoteNameInSettings(establishContext.getUdName());
+	Q_EMIT fireNameChanged();
 	createAndSendContext(pMsgObject);
 	return true;
 }

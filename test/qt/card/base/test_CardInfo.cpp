@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardInfo.h"
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_CardInfo
@@ -17,19 +18,19 @@ class test_CardInfo
 		void test_CardTypeString_data()
 		{
 			QTest::addColumn<CardType>("type");
-			QTest::addColumn<QString>("output");
+			QTest::addColumn<QLatin1String>("output");
 
-			QTest::newRow("none") << CardType::NONE << QString("not inserted");
-			QTest::newRow("unknown") << CardType::UNKNOWN << QString("unknown type");
-			QTest::newRow("eid-card") << CardType::EID_CARD << QString("ID card (PA/eAT/eID)");
-			QTest::newRow("smart-eid") << CardType::SMART_EID << QString("Smart-eID");
+			QTest::newRow("none") << CardType::NONE << "not inserted"_L1;
+			QTest::newRow("unknown") << CardType::UNKNOWN << "unknown type"_L1;
+			QTest::newRow("eid-card") << CardType::EID_CARD << "ID card (PA/eAT/eID)"_L1;
+			QTest::newRow("smart-eid") << CardType::SMART_EID << "Smart-eID"_L1;
 		}
 
 
 		void test_CardTypeString()
 		{
 			QFETCH(CardType, type);
-			QFETCH(QString, output);
+			QFETCH(QLatin1String, output);
 
 			const CardInfo info(type, QSharedPointer<EFCardAccess>(), 3, false, false);
 

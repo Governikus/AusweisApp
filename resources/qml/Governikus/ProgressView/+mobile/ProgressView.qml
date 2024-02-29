@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -19,13 +20,16 @@ FlickableSectionPage {
 	property alias subTextColor: subText.color
 	property alias text: text.text
 
-	AnimatedImage {
+	HourglassAnimation {
+		Layout.alignment: Qt.AlignHCenter
+		visible: !statusIcon.visible
+	}
+	TintableIcon {
 		id: statusIcon
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.preferredHeight: Style.dimens.header_icon_size
-		fillMode: Image.PreserveAspectFit
-		source: "qrc:///images/sandglass.webp"
+		sourceSize.height: Style.dimens.header_icon_size
+		visible: source.toString() !== ""
 	}
 	GText {
 		id: text

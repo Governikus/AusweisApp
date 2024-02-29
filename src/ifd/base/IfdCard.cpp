@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdCard.h"
@@ -52,6 +52,7 @@ bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdM
 
 	if (mWaitingForAnswer)
 	{
+		qCDebug(card_remote) << "Expected answer (" << pExpectedAnswer << ") was not received within" << pTimeout << "ms.";
 		mWaitingForAnswer = false;
 		return false;
 	}
@@ -74,7 +75,10 @@ void IfdCard::onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& p
 		mResponse = pJsonObject;
 		mWaitingForAnswer = false;
 		mWaitCondition.wakeOne();
+		return;
 	}
+
+	qCWarning(card_remote) << "Ignoring unexpected message type:" << pMessageTpe;
 }
 
 

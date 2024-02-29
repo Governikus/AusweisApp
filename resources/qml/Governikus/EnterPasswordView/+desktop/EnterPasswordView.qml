@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -72,59 +73,62 @@ SectionPage {
 	}
 	GText {
 		Accessible.ignored: true
-		anchors.bottom: retryCounter.top
-		anchors.bottomMargin: Constants.component_spacing
-		anchors.horizontalCenter: retryCounter.horizontalCenter
 		font.bold: true
 		//: LABEL DESKTOP
 		text: qsTr("Attempts")
 		visible: retryCounter.visible
+
+		anchors {
+			bottom: retryCounter.top
+			bottomMargin: Constants.component_spacing
+			horizontalCenter: retryCounter.horizontalCenter
+		}
 	}
 	RetryCounter {
 		id: retryCounter
 
-		anchors.left: parent.left
-		anchors.margins: height
-		anchors.top: parent.top
 		visible: NumberModel.retryCounter >= 0 && (passwordType === PasswordType.PIN || passwordType === PasswordType.SMART_PIN)
+
+		anchors {
+			left: parent.left
+			margins: height
+			top: parent.top
+		}
 	}
-	TintableAnimation {
+	AnimationLoader {
 		id: animatedIcon
 
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.top
-		anchors.verticalCenterOffset: parent.height / 4
-		height: Style.dimens.header_icon_size
-		source: switch (passwordType) {
+		type: switch (baseItem.passwordType) {
 		case PasswordType.TRANSPORT_PIN:
-			return "qrc:///images/transportpin_%1.webp".arg(Style.currentTheme.name);
+			return AnimationLoader.Type.ENTER_TRANSPORT_PIN;
 		case PasswordType.CAN:
-			return "qrc:///images/can.webp";
+			return AnimationLoader.Type.ENTER_CAN;
 		case PasswordType.SMART_PIN:
-		case PasswordType.NEW_SMART_PIN:
-		case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+		case PasswordType.PIN:
+			return AnimationLoader.Type.ENTER_PIN;
 		case PasswordType.NEW_PIN_CONFIRMATION:
 		case PasswordType.NEW_PIN:
-		case PasswordType.PIN:
-			return "qrc:///images/pin_person.webp";
+		case PasswordType.NEW_SMART_PIN:
+		case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+			return AnimationLoader.Type.ENTER_NEW_PIN;
 		case PasswordType.PUK:
-			return "qrc:///images/puk_%1.webp".arg(Style.currentTheme.name);
+			return AnimationLoader.Type.ENTER_PUK;
 		case PasswordType.REMOTE_PIN:
-			return "qrc:///images/pairingCode.webp";
+			return AnimationLoader.Type.ENTER_REMOTE_PIN;
 		default:
-			return "";
+			return AnimationLoader.Type.NONE;
 		}
-		tintColor: Style.color.control
-		tintEnabled: passwordType !== PasswordType.PUK && passwordType !== PasswordType.TRANSPORT_PIN
-		visible: source.toString() !== ""
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: Constants.component_spacing
+		}
 	}
 	GText {
 		id: mainText
 
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: animatedIcon.bottom
-		anchors.topMargin: Constants.component_spacing
 		horizontalAlignment: Text.AlignHCenter
 
 		//: LABEL DESKTOP
@@ -151,6 +155,11 @@ SectionPage {
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: animatedIcon.bottom
+			topMargin: Constants.component_spacing
+		}
 		FocusFrame {
 		}
 	}
@@ -158,10 +167,7 @@ SectionPage {
 		id: subText
 
 		activeFocusOnTab: true
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: mainText.bottom
-		anchors.topMargin: Constants.text_spacing
-		color: NumberModel.inputError !== "" ? Style.color.text_warning : Style.color.text
+		color: NumberModel.inputError !== "" ? Style.color.warning : Style.color.text
 		horizontalAlignment: Text.AlignHCenter
 		text: {
 			if (NumberModel.inputError !== "") {
@@ -169,52 +175,52 @@ SectionPage {
 			}
 			if (passwordType === PasswordType.TRANSPORT_PIN) {
 				//: INFO DESKTOP The AA2 expects the Transport PIN with five digits.
-				return qsTr("Please enter the five-digit Transport PIN.");
+				return qsTr("Please enter the 5-digit Transport PIN.");
 			}
 			if (passwordType === PasswordType.PIN) {
 				return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN ?
 				//: INFO DESKTOP The AA2 expects the current ID card PIN with six digits in a PIN change.
-				qsTr("Please enter your current six-digit ID card PIN.") :
+				qsTr("Please enter your current 6-digit ID card PIN.") :
 				//: INFO DESKTOP The AA2 expects a ID card PIN with six digits in an authentication.
-				qsTr("Please enter your six-digit ID card PIN.");
+				qsTr("Please enter your 6-digit ID card PIN.");
 			}
 			if (passwordType === PasswordType.SMART_PIN) {
 				if (NumberModel.retryCounter === 1) {
 					//: INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID
-					return qsTr("You have entered an incorrect, six-digit Smart-eID PIN twice. An incorrect third attempt will invalidate your Smart-eID and you will have to set it up again.");
+					return qsTr("You have entered an incorrect, 6-digit Smart-eID PIN 2 times. An incorrect 3rd attempt will invalidate your Smart-eID and you will have to set it up again.");
 				}
 				return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN ?
 				//: INFO DESKTOP The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
-				qsTr("Please enter your current six-digit Smart-eID PIN.") :
+				qsTr("Please enter your current 6-digit Smart-eID PIN.") :
 				//: INFO DESKTOP The AA2 expects a Smart-eID PIN with six digits in an authentication.
-				qsTr("Please enter your six-digit Smart-eID PIN.");
+				qsTr("Please enter your 6-digit Smart-eID PIN.");
 			}
 			if (passwordType === PasswordType.CAN) {
 				return NumberModel.isCanAllowedMode ?
-				//: INFO DESKTOP The user is required to enter the six-digit CAN in CAN-allowed authentication.
-				qsTr("Please enter the six-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.") :
-				//: INFO DESKTOP The wrong ID card PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
-				qsTr("A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
+				//: INFO DESKTOP The user is required to enter the 6-digit CAN in CAN-allowed authentication.
+				qsTr("Please enter the 6-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.") :
+				//: INFO DESKTOP The wrong ID card PIN was entered twice, the 3rd attempt requires the CAN for additional verification, hint where the CAN is found.
+				qsTr("A wrong ID card PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
 			}
 			if (passwordType === PasswordType.PUK) {
 				//: INFO DESKTOP The PUK is required to unlock the ID card since the wrong ID card PIN entered three times.
-				return qsTr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.");
+				return qsTr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.");
 			}
 			if (passwordType === PasswordType.NEW_PIN) {
-				//: INFO DESKTOP A new six-digit ID card PIN needs to be supplied.
-				return qsTr("Please enter a new six-digit ID card PIN now.");
+				//: INFO DESKTOP A new 6-digit ID card PIN needs to be supplied.
+				return qsTr("Please enter a new 6-digit ID card PIN now.");
 			}
 			if (passwordType === PasswordType.NEW_PIN_CONFIRMATION) {
 				//: INFO DESKTOP The new ID card PIN needs to be entered again for verification.
-				return qsTr("Please confirm your new six-digit ID card PIN.");
+				return qsTr("Please confirm your new 6-digit ID card PIN.");
 			}
 			if (passwordType === PasswordType.NEW_SMART_PIN) {
-				//: INFO DESKTOP A new six-digit Smart-eID PIN needs to be supplied.
-				return qsTr("Please enter a new six-digit Smart-eID PIN now.");
+				//: INFO DESKTOP A new 6-digit Smart-eID PIN needs to be supplied.
+				return qsTr("Please enter a new 6-digit Smart-eID PIN now.");
 			}
 			if (passwordType === PasswordType.NEW_SMART_PIN_CONFIRMATION) {
 				//: INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
-				return qsTr("Please confirm your new six-digit Smart-eID PIN.");
+				return qsTr("Please confirm your new 6-digit Smart-eID PIN.");
 			}
 			if (passwordType === PasswordType.REMOTE_PIN) {
 				//: INFO DESKTOP The pairing code needs to be supplied.
@@ -227,18 +233,26 @@ SectionPage {
 		visible: text !== ""
 		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
 
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: mainText.bottom
+			topMargin: Constants.text_spacing
+		}
 		FocusFrame {
 		}
 	}
 	MoreInformationLink {
 		id: moreInformation
 
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.top: subText.bottom
-		anchors.topMargin: Constants.component_spacing * 3
 		visible: text !== "" && passwordType !== PasswordType.REMOTE_PIN
 
 		onClicked: baseItem.requestPasswordInfo()
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: subText.bottom
+			topMargin: Constants.component_spacing * 3
+		}
 	}
 	Item {
 		RoundedRectangle {
@@ -260,13 +274,14 @@ SectionPage {
 		}
 		anchors {
 			bottom: parent.bottom
+			bottomMargin: Constants.component_spacing * 5
 			horizontalCenter: parent.horizontalCenter
 			top: moreInformation.bottom
 		}
 		NavigationButton {
 			id: button
 
-			accessibleText: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
+			Accessible.name: baseItem.accessibleContinueText !== "" ? baseItem.accessibleContinueText :
 			//: LABEL DESKTOP
 			passwordType === PasswordType.CAN ? qsTr("Send CAN") :
 			//: LABEL DESKTOP
@@ -288,9 +303,7 @@ SectionPage {
 			//: LABEL DESKTOP
 			qsTr("Send ID card PIN")
 			activeFocusOnTab: true
-			buttonType: NavigationButton.Type.Forward
 			enabled: numberField.validInput
-			size: Style.dimens.huge_icon_size
 
 			onClicked: {
 				d.setPassword();
@@ -304,10 +317,8 @@ SectionPage {
 		}
 	}
 	NumberPad {
-		anchors.bottom: parent.bottom
-		anchors.left: parent.left
 		deleteEnabled: numberField.number.length > 0
-		submitAccessibleText: button.accessibleText
+		submitAccessibleText: button.Accessible.name
 		submitEnabled: numberField.validInput
 
 		onDeletePressed: {
@@ -317,5 +328,10 @@ SectionPage {
 		}
 		onDigitPressed: digit => numberField.append(digit)
 		onSubmitPressed: d.setPassword()
+
+		anchors {
+			bottom: parent.bottom
+			left: parent.left
+		}
 	}
 }

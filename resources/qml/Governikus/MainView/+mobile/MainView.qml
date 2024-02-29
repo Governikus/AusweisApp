@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -15,11 +15,11 @@ import Governikus.Type.WorkflowModel
 FlickableSectionPage {
 	id: root
 
+	enableTileStyle: false
 	fillWidth: true
 	margins: 0
-
-	//: LABEL ANDROID IOS
-	title: qsTr("Start page")
+	showTitleBarContent: false
+	title: ""
 
 	Component.onCompleted: {
 		if (WorkflowModel.isSmartSupported) {
@@ -110,8 +110,8 @@ FlickableSectionPage {
 		snapMode: ListView.SnapOneItem
 
 		delegate: Tile {
-			Accessible.ignored: tileView.isIos ? false : index !== tileView.currentIndex
-			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.isIos ? "" : " . " + tileView.scrollHint)
+			Accessible.ignored: tileView.allItemsVisible || tileView.isIos ? false : index !== tileView.currentIndex
+			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible || tileView.isIos ? "" : " . " + tileView.scrollHint)
 			height: ListView.view.height
 			image: imagePath
 			title: titleText

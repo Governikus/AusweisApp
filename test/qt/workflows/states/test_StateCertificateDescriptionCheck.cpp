@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
@@ -16,6 +16,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -29,8 +30,8 @@ class test_StateCertificateDescriptionCheck
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
-			mAuthContext->setTcTokenUrl(QUrl("https://test.governikus-eid.de:443/Autent-DemoApplication/RequestServlet?provider=demo_epa_can&redirect=true"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
+			mAuthContext->setTcTokenUrl(QUrl("https://test.governikus-eid.de:443/Autent-DemoApplication/RequestServlet?provider=demo_epa_can&redirect=true"_L1));
 
 			mState.reset(StateBuilder::createState<StateCertificateDescriptionCheck>(mAuthContext));
 
@@ -77,7 +78,7 @@ class test_StateCertificateDescriptionCheck
 
 		void nonMatchingDescription()
 		{
-			QByteArray source = TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex");
+			QByteArray source = TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1);
 			auto cert = CVCertificate::fromHex(source);
 			mAuthContext->initAccessRightManager(cert);
 
@@ -104,7 +105,7 @@ class test_StateCertificateDescriptionCheck
 
 		void subjectUrlNoSameOrigin()
 		{
-			mAuthContext->setTcTokenUrl(QUrl("https://dev-demo.governikus-eid.de:8442/Autent-DemoApplication/RequestServlet;jsessionid=14w5aKuENyd2D4ZsMmuaeX2g"));
+			mAuthContext->setTcTokenUrl(QUrl("https://dev-demo.governikus-eid.de:8442/Autent-DemoApplication/RequestServlet;jsessionid=14w5aKuENyd2D4ZsMmuaeX2g"_L1));
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);
 

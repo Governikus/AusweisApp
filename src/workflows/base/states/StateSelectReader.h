@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,7 +24,6 @@ class StateSelectReader
 
 	private Q_SLOTS:
 		void onReaderInfoChanged();
-		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

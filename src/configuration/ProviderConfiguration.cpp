@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -84,7 +84,7 @@ void ProviderConfiguration::update()
 }
 
 
-const QVector<ProviderConfigurationInfo>& ProviderConfiguration::getProviderConfigurationInfos() const
+const QList<ProviderConfigurationInfo>& ProviderConfiguration::getProviderConfigurationInfos() const
 {
 	return mProviderConfigurationInfos;
 }

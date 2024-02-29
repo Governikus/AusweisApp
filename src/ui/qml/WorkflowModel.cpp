@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -23,7 +23,7 @@
 using namespace governikus;
 
 INIT_FUNCTION([] {
-			qRegisterMetaType<QVector<int>>("QVector<ReaderManagerPlugInType>");
+			qRegisterMetaType<QList<int>>("QList<ReaderManagerPlugInType>");
 		})
 
 WorkflowModel::WorkflowModel(QObject* pParent)
@@ -33,17 +33,15 @@ WorkflowModel::WorkflowModel(QObject* pParent)
 	, mRemoteScanWasRunning(false)
 #endif
 {
-	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted, this, &WorkflowModel::onReaderManagerSignal);
-	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::onReaderManagerSignal);
-	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::onReaderManagerSignal);
-	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::onReaderManagerSignal);
+	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted, this, &WorkflowModel::fireHasCardChanged);
+	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardRemoved, this, &WorkflowModel::fireHasCardChanged);
+	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded, this, &WorkflowModel::fireHasCardChanged);
+	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved, this, &WorkflowModel::fireHasCardChanged);
 	connect(Env::getSingleton<SmartModel>(), &SmartModel::fireSmartStateChanged, this, &WorkflowModel::fireIsCurrentSmartCardAllowedChanged);
 
 	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireApplicationStateChanged, this, &WorkflowModel::onApplicationStateChanged);
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireDeveloperOptionsChanged, this, &WorkflowModel::fireSupportedPlugInTypesChanged);
-
-	QMetaObject::invokeMethod(this, &WorkflowModel::onReaderManagerSignal, Qt::QueuedConnection);
 }
 
 
@@ -222,7 +220,7 @@ bool WorkflowModel::isSmartSupported() const
 }
 
 
-QVector<ReaderManagerPlugInType> WorkflowModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPlugInType> WorkflowModel::getSupportedReaderPlugInTypes() const
 {
 	auto supported = Enum<ReaderManagerPlugInType>::getList();
 
@@ -248,12 +246,6 @@ bool WorkflowModel::getNextWorkflowPending() const
 GlobalStatus::Code WorkflowModel::getStatusCode() const
 {
 	return mContext ? mContext->getStatus().getStatusCode() : GlobalStatus::Code::Unknown_Error;
-}
-
-
-QString WorkflowModel::getReaderImage() const
-{
-	return mReaderImage;
 }
 
 
@@ -491,38 +483,6 @@ void WorkflowModel::onApplicationStateChanged(bool pIsAppInForeground)
 #else
 	Q_UNUSED(pIsAppInForeground)
 #endif
-}
-
-
-void WorkflowModel::onReaderManagerSignal()
-{
-	QString newReaderImage;
-	const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter::UniqueReaderTypes);
-	const auto& readersWithEid = filter<ReaderInfo>([](const ReaderInfo& i){return i.hasEid();}, readerInfos);
-	if (readersWithEid.size() == 1)
-	{
-		newReaderImage = readersWithEid.at(0).getReaderConfigurationInfo().getIconWithNPA()->lookupUrl().toString();
-	}
-	else if (readerInfos.size() == 1)
-	{
-		newReaderImage = readerInfos.at(0).getReaderConfigurationInfo().getIcon()->lookupUrl().toString();
-	}
-	else if (readerInfos.size() > 1)
-	{
-		newReaderImage = ReaderConfiguration::getMultipleReaderIconPath().replace(QLatin1Char(':'), QLatin1String("qrc://"));
-	}
-	else
-	{
-		newReaderImage = ReaderConfiguration::getNoReaderFoundIconPath().replace(QLatin1Char(':'), QLatin1String("qrc://"));
-	}
-
-	if (newReaderImage != mReaderImage)
-	{
-		mReaderImage = newReaderImage;
-		Q_EMIT fireReaderImageChanged();
-	}
-
-	Q_EMIT fireHasCardChanged();
 }
 
 

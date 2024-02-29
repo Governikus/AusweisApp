@@ -8,8 +8,14 @@ foreach(file @TRANSLATION_FILES@)
 <context>\n\
     <name>DvcsAttributes</name>\n\
     <message>\n\
-        <source>revision</source>\n\
+        <source>@dvcs_revision@</source>\n\
+        <extracomment>revision</extracomment>\n\
         <translation>@dvcs_revision@</translation>\n\
+    </message>\n\
+    <message>\n\
+        <source>@PROJECT_VERSION@</source>\n\
+        <extracomment>version</extracomment>\n\
+        <translation>@PROJECT_VERSION@</translation>\n\
     </message>\n\
 </context>\n\
 <context>" TR_FILE "${TR_FILE}")

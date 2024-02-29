@@ -50,8 +50,7 @@ application uses the |AppName|.
 
 Integrated
 ^^^^^^^^^^
-You can deliver separate |AppName| binaries inside your own application or
-start an already installed |AppName|.
+You can start an already installed |AppName| for your application.
 If your application spawns a separate process you should provide the commandline
 parameter ``--port 0`` to avoid conflicts with a user started |AppName| and
 other processes that uses a specified port.
@@ -65,6 +64,9 @@ Example: **$TMPDIR/AusweisApp.12345.port**
 Your application can avoid the graphical interface of |AppName| by providing the
 commandline parameter ``--ui websocket``.
 
+.. important::
+  If your application changes the used port the "smartphone as card reader"
+  is not possible.
 
 
 .. _automatic:
@@ -122,13 +124,13 @@ the following information.
 .. code-block:: json
 
   {
-    "Implementation-Title": "AusweisApp",
+    "Name": "AusweisApp2",
+    "Implementation-Title": "AusweisApp2",
     "Implementation-Vendor": "Governikus GmbH & Co. KG",
-    "Implementation-Version": "1.16.0",
-    "Name": "AusweisApp",
-    "Specification-Title": "TR-03124",
+    "Implementation-Version": "2.0.0",
+    "Specification-Title": "TR-03124-1",
     "Specification-Vendor": "Federal Office for Information Security",
-    "Specification-Version": "1.3"
+    "Specification-Version": "1.4"
   }
 
 

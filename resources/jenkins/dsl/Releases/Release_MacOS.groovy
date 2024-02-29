@@ -3,9 +3,9 @@ import common.Release
 def j = new Release
 	(
 		name: 'MacOS_DMG_PKG',
-		libraries: ['MacOS'],
+		libraries: 'MacOS',
 		label: 'MacOS',
-		artifacts: 'libs/build/Toolchain_*,build/*.dmg,build/*.pkg,build/*.zip'
+		artifacts: 'libs/Toolchain_*,build/*.dmg,build/*.pkg,build/*.zip'
 	).generate(this)
 
 
@@ -13,18 +13,18 @@ j.with
 {
 	parameters
 	{
-		booleanParam("UPLOAD", true, "Upload AusweisApp to the AppStore")
+		booleanParam("USE_DISTRIBUTION_PROFILE", true, "Use the provisioning profile necessary to upload AusweisApp to the AppStore")
 	}
 
 	steps
 	{
+		buildDescription('', 'USE_DISTRIBUTION_PROFILE: ${USE_DISTRIBUTION_PROFILE}')
+
 		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
 
-		shell('cd source; cmake --preset ci-macos-release')
+		shell('cd source; cmake --preset ci-macos-release -DUSE_DISTRIBUTION_PROFILE=${USE_DISTRIBUTION_PROFILE}')
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			cmake --build build --target package --config MinSizeRel
 			'''.stripIndent().trim())
 
@@ -39,7 +39,7 @@ j.with
 		{
 			condition
 			{
-				booleanCondition('${UPLOAD}')
+				booleanCondition('${USE_DISTRIBUTION_PROFILE}')
 			}
 
 			steps

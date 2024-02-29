@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -19,6 +19,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -182,7 +183,7 @@ class test_ChatModel
 			QVERIFY(mModel->mSelectedRights.contains(AccessRight::READ_DG16));
 			QCOMPARE(spy.count(), 1);
 			auto arguments = spy.takeFirst();
-			auto role = arguments.at(2).value<QVector<int>>();
+			auto role = arguments.at(2).value<QList<int>>();
 			QCOMPARE(arguments.at(0), index);
 			QCOMPARE(arguments.at(1), index);
 			QCOMPARE(role.at(0), ChatModel::ChatRoles::SELECTED_ROLE);
@@ -192,7 +193,7 @@ class test_ChatModel
 		void test_DataNameRole()
 		{
 			mModel->resetContext(mAuthContext);
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			mAuthContext->setDidAuthenticateEac1(eac1);
 			mAuthContext->initAccessRightManager(eac1->getCvCertificates().at(0));
@@ -203,7 +204,7 @@ class test_ChatModel
 
 			QVERIFY(!requiredAge.isEmpty());
 			qDebug() << mModel->data(index, ChatModel::ChatRoles::NAME_ROLE);
-			QCOMPARE(mModel->data(index, ChatModel::ChatRoles::NAME_ROLE), "Age verification (" + requiredAge + ")");
+			QCOMPARE(mModel->data(index, ChatModel::ChatRoles::NAME_ROLE), "Age verification ("_L1 + requiredAge + ")"_L1);
 		}
 
 

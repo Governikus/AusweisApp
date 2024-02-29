@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -506,6 +506,8 @@ void DiagnosisModel::onConnectionTestDone()
 		{
 			//: LABEL DESKTOP
 			proxyInfo << tr("Connection test with proxy: Failed");
+			//: LABEL DESKTOP
+			proxyInfo << tr("Encountered error: %1").arg(mConnectionTest.getErrorOfConnectionTestWithProxy());
 		}
 	}
 	else
@@ -599,7 +601,7 @@ void DiagnosisModel::onFirewallInformationReady()
 		if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
 		{
 			//: LABEL DESKTOP
-			mFirewallSection << ContentItem(QString(), tr("Third party firewalls cannot be detected on Windows 7."));
+			mFirewallSection << ContentItem(QString(), tr("3rd party firewalls cannot be detected on Windows 7."));
 		}
 		else
 		{
@@ -607,7 +609,7 @@ void DiagnosisModel::onFirewallInformationReady()
 		{
 #endif
 			//: LABEL DESKTOP
-			mFirewallSection << ContentItem(QString(), tr("No third party firewalls detected"));
+			mFirewallSection << ContentItem(QString(), tr("No 3rd party firewalls detected"));
 		}
 	}
 	else
@@ -625,7 +627,7 @@ void DiagnosisModel::onFirewallInformationReady()
 			firewallInfos << tr("Up to date: %1").arg(uptodate);
 		}
 		//: LABEL DESKTOP
-		mFirewallSection << ContentItem(tr("Firewalls from third party vendors"), firewallInfos.join(QLatin1Char('\n')));
+		mFirewallSection << ContentItem(tr("Firewalls from 3rd party vendors"), firewallInfos.join(QLatin1Char('\n')));
 	}
 
 	QStringList windowsFirewallSettings;

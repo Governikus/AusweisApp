@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfigurationInfo.h"
@@ -17,14 +17,14 @@ ReaderConfigurationInfo::ReaderConfigurationInfo()
 
 
 ReaderConfigurationInfo::ReaderConfigurationInfo(const QString& pReaderName)
-	: d(new InternalInfo(false, 0, {}, pReaderName, QString(), QString(), QStringLiteral("default_reader.png"), QStringLiteral("default_reader_mit_ausweis.png")))
+	: d(new InternalInfo(false, 0, {}, pReaderName, QString(), QString(), QStringLiteral("default_reader.png")))
 {
 }
 
 
 ReaderConfigurationInfo::ReaderConfigurationInfo(uint pVendorId, const QSet<uint>& pProductIds,
-		const QString& pName, const QString& pUrl, const QString& pPattern, const QString& pIcon, const QString& pIconWithNPA)
-	: d(new InternalInfo(true, pVendorId, pProductIds, pName, pUrl, pPattern, pIcon, pIconWithNPA))
+		const QString& pName, const QString& pUrl, const QString& pPattern, const QString& pIcon)
+	: d(new InternalInfo(true, pVendorId, pProductIds, pName, pUrl, pPattern, pIcon))
 {
 }
 
@@ -68,7 +68,7 @@ const QString& ReaderConfigurationInfo::getUrl() const
 	if (QCoreApplication::applicationName() == QLatin1String("Test_configuration_ReaderConfiguration"))
 	{
 		// Make the reader available on all platforms
-		static const QString url = QStringLiteral("https://www.governikus.de/");
+		static const auto url = QStringLiteral("https://www.governikus.de/");
 		return url;
 	}
 #endif
@@ -85,11 +85,5 @@ const QString& ReaderConfigurationInfo::getPattern() const
 
 QSharedPointer<UpdatableFile> ReaderConfigurationInfo::getIcon() const
 {
-	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("reader"), d->mIcon, QStringLiteral(":/images/reader/default_reader.png"));
-}
-
-
-QSharedPointer<UpdatableFile> ReaderConfigurationInfo::getIconWithNPA() const
-{
-	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("reader"), d->mIconWithNPA, QStringLiteral(":/images/reader/default_reader_mit_ausweis.png"));
+	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("reader"), d->mIcon, QStringLiteral(":/images/desktop/default_reader.png"));
 }

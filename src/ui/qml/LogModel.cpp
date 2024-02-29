@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -168,24 +168,6 @@ void LogModel::removeOtherLogFiles()
 }
 
 
-void LogModel::removeCurrentLogFile()
-{
-	if (mSelectedLogFile == 0)
-	{
-		return;
-	}
-
-	if (!QFile::remove(mLogFiles[mSelectedLogFile]))
-	{
-		qDebug() << mLogFiles[mSelectedLogFile] << "could not be removed";
-		return;
-	}
-
-	mLogFiles.removeAt(mSelectedLogFile);
-	Q_EMIT fireLogFileNamesChanged();
-}
-
-
 void LogModel::setLogFile(int pIndex)
 {
 	if (pIndex < 0 || pIndex >= mLogFiles.size())
@@ -329,7 +311,7 @@ QVariant LogModel::data(const QModelIndex& pIndex, int pRole) const
 
 QString LogModel::createLogFileName(const QDateTime& pDateTime)
 {
-	QString dateFormat = QStringLiteral("yyyy-MM-dd_HH-mm");
+	auto dateFormat = QStringLiteral("yyyy-MM-dd_HH-mm");
 	QString logFileDate = pDateTime.toString(dateFormat);
 	return QStringLiteral("%1-%2.log").arg(QCoreApplication::applicationName(), logFileDate);
 }

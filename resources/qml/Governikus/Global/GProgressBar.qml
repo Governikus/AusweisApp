@@ -1,51 +1,51 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type.SettingsModel
 import Governikus.View
 
 ProgressBar {
 	id: progressBar
 
-	property color backgroundColor: Style.color.background
+	readonly property alias effectiveVisualPosition: bar.mutableVisualPosition
 	property alias text: progressText.text
 
 	Accessible.name: qsTr("%1 percent done").arg(value)
 	Accessible.role: Accessible.ProgressBar
+	background: null
 	from: 0
 	to: 100
 
-	background: Rectangle {
+	contentItem: Rectangle {
 		border.color: Style.color.control_border
 		border.width: Style.dimens.progress_bar_border
-		color: Style.color.transparent
-		radius: height / 2
-	}
-	contentItem: Item {
+		color: Style.color.background
 		implicitHeight: Style.dimens.progress_bar_height
+		radius: height / 2
 
 		Item {
 			anchors.fill: parent
 			anchors.margins: Style.dimens.progress_bar_border * 3
 
 			Rectangle {
-				color: progressBar.backgroundColor
-				height: parent.height
-				radius: height / 2
-				width: parent.width
-			}
-			Rectangle {
-				property real mutableVisualPosition: visualPosition
+				id: bar
 
+				property real mutableVisualPosition: SettingsModel.useAnimations || visualPosition === 1 ? visualPosition : 0.25
+
+				border.color: Style.color.control_border
+				border.width: Style.dimens.border_width
 				color: Style.color.control
 				height: parent.height
 				radius: height / 2
 				width: parent.width * mutableVisualPosition
 
 				Behavior on mutableVisualPosition {
+					enabled: SettingsModel.useAnimations
+
 					SmoothedAnimation {
 						velocity: 0.5
 					}
@@ -55,7 +55,9 @@ ProgressBar {
 		GText {
 			id: progressText
 
+			color: Style.color.progressbar_text
 			elide: Text.ElideMiddle
+			font.weight: Font.Bold
 			horizontalAlignment: Text.AlignHCenter
 			maximumLineCount: 1
 

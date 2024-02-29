@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -17,17 +17,14 @@ SectionPage {
 		DisagreeButton
 	}
 
-	property alias agreeButton: agreeButton
-	property alias agreeText: agreeButton.subText
-	property alias disagreeButton: disagreeButton
-	property alias disagreeText: disagreeButton.subText
+	readonly property alias agreeButton: agreeButton
+	readonly property alias disagreeButton: disagreeButton
 	property alias mainIconSource: image.source
 	property alias moreInformationText: moreInformation.text
 	property alias moreInformationVisible: moreInformation.visible
 	property alias questionSubText: subTextElement.text
 	property alias questionText: mainTextElement.text
 	property int style: DecisionView.ButtonStyle.AgreeButton | DecisionView.ButtonStyle.DisagreeButton
-	property alias tintEnabled: image.tintEnabled
 
 	signal agree
 	signal disagree
@@ -47,7 +44,7 @@ SectionPage {
 			Layout.topMargin: Constants.pane_padding
 			source: "qrc:///images/info.svg"
 			sourceSize.height: Style.dimens.header_icon_size
-			tintColor: Style.color.control
+			tintColor: Style.color.image
 		}
 		GText {
 			id: mainTextElement
@@ -103,10 +100,9 @@ SectionPage {
 
 				activeFocusOnTab: true
 				buttonType: NavigationButton.Type.Cancel
-				size: Style.dimens.huge_icon_size
 
 				//: LABEL DESKTOP
-				subText: qsTr("No")
+				text: qsTr("No")
 				visible: style & DecisionView.ButtonStyle.DisagreeButton
 
 				onClicked: baseItem.disagree()
@@ -116,10 +112,9 @@ SectionPage {
 
 				activeFocusOnTab: true
 				buttonType: NavigationButton.Type.Check
-				size: Style.dimens.huge_icon_size
 
 				//: LABEL DESKTOP
-				subText: qsTr("Yes")
+				text: qsTr("Yes")
 				visible: style & DecisionView.ButtonStyle.AgreeButton
 
 				onClicked: baseItem.agree()

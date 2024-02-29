@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -35,7 +35,7 @@ class test_EcdsaPublicKey
 			return QByteArray();
 		}
 
-		QVector<uchar> buf(BN_num_bytes(pBigNum));
+		QList<uchar> buf(BN_num_bytes(pBigNum));
 		BN_bn2bin(pBigNum, buf.data());
 		return QByteArray(reinterpret_cast<const char*>(buf.data()), buf.size());
 	}
@@ -66,7 +66,7 @@ class test_EcdsaPublicKey
 		auto bufLen = EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, nullptr, 0, nullptr);
 
 		Q_ASSERT(bufLen <= INT_MAX);
-		QVector<char> buf(static_cast<int>(bufLen));
+		QList<char> buf(static_cast<int>(bufLen));
 		EC_POINT_point2oct(ecGroup, generator, point_conversion_form_t::POINT_CONVERSION_UNCOMPRESSED, reinterpret_cast<uchar*>(buf.data()), static_cast<size_t>(buf.size()), nullptr);
 		return QByteArray(buf.data(), buf.size());
 

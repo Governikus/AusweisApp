@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,6 +15,7 @@
 #include <QSharedPointer>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_ReleaseInformationModel
@@ -31,7 +32,7 @@ class test_ReleaseInformationModel
 		void initTestCase()
 		{
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* ()>([] {
-					return new MockReleaseInformation(VersionNumber("1.2.3"), false);
+					return new MockReleaseInformation(VersionNumber("1.2.3"_L1), false);
 				}));
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
 					return new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
@@ -92,7 +93,7 @@ class test_ReleaseInformationModel
 		{
 			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 1);
 
-			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"_L1));
 
 			QCOMPARE(mSpyUpdateInformationChanged->count(), 1);
 			QCOMPARE(mModel->getUpdateRelease()->rowCount(), 11);
@@ -105,7 +106,7 @@ class test_ReleaseInformationModel
 
 			QCOMPARE(mSpyCurrentInformationChanged->count(), 1);
 
-			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"));
+			mReleaseInfoConfig->setUpdateVersion(VersionNumber("1.2.4"_L1));
 
 			QCOMPARE(mSpyUpdateInformationChanged->count(), 1);
 

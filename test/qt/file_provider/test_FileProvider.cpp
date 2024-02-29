@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FileProvider.h"
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_FileProvider
@@ -50,10 +51,10 @@ class test_FileProvider
 
 	public:
 		test_FileProvider()
-			: mSection("reader")
-			, mName1("img_ACS_ACR1252U.png")
-			, mName2("img_ACS_ACR1252V.png")
-			, mDefaultPath(":/images/reader/default_no_reader.png")
+			: mSection("reader"_L1)
+			, mName1("img_ACS_ACR1252U.png"_L1)
+			, mName2("img_ACS_ACR1252V.png"_L1)
+			, mDefaultPath(":/images/reader/default_reader.png"_L1)
 		{
 		}
 

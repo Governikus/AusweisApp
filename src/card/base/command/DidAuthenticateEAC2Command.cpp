@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateEAC2Command.h"
 
 #include "GlobalStatus.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/CommandData.h"
 #include "apdu/GeneralAuthenticateResponse.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/EFCardSecurity.h"
 
@@ -154,8 +154,8 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 	for (const auto& cvCertificate : pCvcChain)
 	{
 		QByteArray car = cvCertificate->getBody().getCertificationAuthorityReference();
-		CommandData cmdDataSet;
-		cmdDataSet.append(CommandData::PUBLIC_KEY_REFERENCE, car);
+		ASN1Struct cmdDataSet;
+		cmdDataSet.append(ASN1Struct::PUBLIC_KEY_REFERENCE, car);
 		CommandApdu cmdApduSet(Ins::MSE_SET, CommandApdu::VERIFICATION, CommandApdu::DIGITAL_SIGNATURE_TEMPLATE, cmdDataSet);
 
 		qCDebug(card) << "Performing TA MSE:Set DST with CAR" << car;
@@ -172,7 +172,7 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 			return CardReturnCode::PROTOCOL_ERROR;
 		}
 
-		CommandData cmdDataVerify;
+		ASN1Struct cmdDataVerify;
 		cmdDataVerify.append(cvCertificate->getRawBody());
 		cmdDataVerify.append(cvCertificate->getRawSignature());
 		CommandApdu cmdApduVerify(Ins::PSO_VERIFY, CommandApdu::IMPLICIT, CommandApdu::SELF_DESCRIPTIVE, cmdDataVerify);
@@ -208,11 +208,11 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const O
 		const QByteArray& pCompressedEphemeralPublicKey,
 		const QByteArray& pSignature)
 {
-	CommandData cmdData;
-	cmdData.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, pTaProtocol);
-	cmdData.append(CommandData::PUBLIC_KEY_REFERENCE, pChr);
+	ASN1Struct cmdData;
+	cmdData.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, pTaProtocol);
+	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, pChr);
 	cmdData.append(pAuxiliaryData);
-	cmdData.append(CommandData::TA_EPHEMERAL_PUBLIC_KEY, pCompressedEphemeralPublicKey);
+	cmdData.append(ASN1Struct::TA_EPHEMERAL_PUBLIC_KEY, pCompressedEphemeralPublicKey);
 	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::VERIFICATION, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
 
 	qCDebug(card) << "Performing TA MSE:Set AT";
@@ -251,11 +251,11 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const O
 CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPointer<const ChipAuthenticationInfo> pChipAuthInfo,
 		const QByteArray& pEphemeralPublicKey)
 {
-	CommandData cmdDataSet;
-	cmdDataSet.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, pChipAuthInfo->getOid());
+	ASN1Struct cmdDataSet;
+	cmdDataSet.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, pChipAuthInfo->getOid());
 	if (pChipAuthInfo->hasKeyId())
 	{
-		cmdDataSet.append(CommandData::PRIVATE_KEY_REFERENCE, pChipAuthInfo->getKeyId());
+		cmdDataSet.append(ASN1Struct::PRIVATE_KEY_REFERENCE, pChipAuthInfo->getKeyId());
 	}
 	CommandApdu cmdApduSet(Ins::MSE_SET, CommandApdu::CHIP_AUTHENTICATION, CommandApdu::AUTHENTICATION_TEMPLATE, cmdDataSet);
 
@@ -272,8 +272,8 @@ CardReturnCode DidAuthenticateEAC2Command::performChipAuthentication(QSharedPoin
 		return CardReturnCode::PROTOCOL_ERROR;
 	}
 
-	CommandData cmdDataCa(V_ASN1_APPLICATION, CommandData::DYNAMIC_AUTHENTICATION_DATA);
-	cmdDataCa.append(CommandData::CA_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
+	ASN1Struct cmdDataCa(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA);
+	cmdDataCa.append(ASN1Struct::CA_EPHEMERAL_PUBLIC_KEY, pEphemeralPublicKey);
 	CommandApdu cmdApduCa(Ins::GENERAL_AUTHENTICATE, 0, 0, cmdDataCa, CommandApdu::SHORT_MAX_LE);
 	qCDebug(card) << "Performing CA General Authenticate";
 	const auto& [gaReturnCode, gaGenericResponse] = getCardConnectionWorker()->transmit(cmdApduCa);

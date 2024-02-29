@@ -1,7 +1,7 @@
 # This toolchain is not officially supported!
-# It's just a helper to cross-compile the libraries and AusweisApp2 on Linux for Windows.
+# It's just a helper to cross-compile the libraries and AusweisApp on Linux for Windows.
 
-# You need to adjust your PATH variable to let AusweisApp2.exe find all necessary DLLs.
+# You need to adjust your PATH variable to let AusweisApp.exe find all necessary DLLs.
 # Another approach is to copy all DLLs.
 # $ cp /usr/i686-w64-mingw32/bin/*.dll .
 # $ cp ~/libs/dist/bin/*.dll .

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -27,6 +27,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_MsgHandlerStatus
@@ -148,7 +149,7 @@ class test_MsgHandlerStatus
 
 		void stateAccessRights()
 		{
-			const QSharedPointer<TestAuthContext> context(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			const QSharedPointer<TestAuthContext> context(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::AUTH);

@@ -8,11 +8,11 @@ der |AppName| unterstützt.
 
 Betriebssysteme
 """""""""""""""
-- macOS 11.0
-
 - macOS 12.0
 
 - macOS 13.0
+
+- macOS 14.0
 
 - Windows 10 (64 Bit) ab Version 1809
 
@@ -52,13 +52,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 119
+- Chrome 122
 
-- Firefox 119
+- Firefox 123
 
-- Safari 17.0 (macOS)
+- Safari 17.3 (macOS)
 
-- Edge 119
+- Edge 122
 
 
 
@@ -116,13 +116,13 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 119 (iOS/Android)
+- Chrome 122 (iOS/Android)
 
-- Firefox 119 (iOS/Android)
+- Firefox 123 (iOS/Android)
 
 - Samsung Internet 23 (Android)
 
-- Safari 17.0 (iOS)
+- Safari 17.3 (iOS)
 
 
 Kartenleser

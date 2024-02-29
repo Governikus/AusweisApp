@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"
@@ -102,6 +102,12 @@ void CardConnectionWorker::onKeepAliveTimeout()
 	{
 		qCDebug(card) << "Keep alive stopped because of targetLost";
 		mKeepAliveTimer.stop();
+		return;
+	}
+
+	if (mReader->getReaderInfo().getCardInfo().getCardType() != CardType::SMART_EID)
+	{
+		qCDebug(card) << "No Smart-eID - Skipping keep alive";
 		return;
 	}
 

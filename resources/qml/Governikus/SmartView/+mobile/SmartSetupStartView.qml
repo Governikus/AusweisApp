@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -29,7 +29,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/identify.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 
 		PkiSwitch {
 			anchors.fill: parent
@@ -43,7 +43,7 @@ FlickableSectionPage {
 		GText {
 
 			//: LABEL ANDROID IOS
-			text: qsTr("You are about to set up a Smart-eID on your device. In order to proceed, you need you ID card, your six-digit ID card PIN and an internet connection.")
+			text: qsTr("You are about to set up a Smart-eID on your device. In order to proceed, you need you ID card, your 6-digit ID card PIN and an internet connection.")
 			width: parent.width
 		}
 		PrivacyStatement {
@@ -56,7 +56,7 @@ FlickableSectionPage {
 	}
 	GButton {
 		Layout.alignment: Qt.AlignHCenter
-		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.text_warning : Style.color.control
+		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.warning : Style.color.control
 		icon.source: "qrc:///images/identify.svg"
 
 		//: LABEL ANDROID IOS

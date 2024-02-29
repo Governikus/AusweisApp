@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*
@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include <QList>
 #include <QLocale>
 #include <QSharedPointer>
 #include <QTranslator>
-#include <QVector>
 
 class test_LanguageLoader;
 class test_ProviderParser;
@@ -31,7 +31,7 @@ class LanguageLoader
 		static QLocale mDefaultLanguage;
 
 		QString mPath;
-		QVector<QSharedPointer<QTranslator>> mTranslatorList;
+		QList<QSharedPointer<QTranslator>> mTranslatorList;
 		const QStringList mComponentList;
 		QLocale mUsedLocale;
 

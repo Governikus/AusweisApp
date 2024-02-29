@@ -11,7 +11,7 @@ if(IOS OR ANDROID)
 		# If no QT_HOST_PATH is set, see if it was build as part of the toolchain
 		foreach(path ${CMAKE_PREFIX_PATH})
 			set(QT_HOST_PATH ${path}/qt-host/)
-			if(EXISTS QT_HOST_PATH)
+			if(EXISTS "${QT_HOST_PATH}")
 				break()
 			endif()
 		endforeach()

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -21,7 +21,7 @@ class TestAuthContext
 	Q_OBJECT
 
 	private:
-		QVector<AcceptedEidType> mAcceptedEidTypes;
+		QList<AcceptedEidType> mAcceptedEidTypes;
 
 		const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1) const;
 
@@ -34,8 +34,8 @@ class TestAuthContext
 		void addCvCertificate(const QSharedPointer<const CVCertificate>& pCvCertificate);
 		void clearCvCertificates();
 		void removeCvCertAt(int pPosition);
-		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const override;
-		void setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes);
+		[[nodiscard]] virtual QList<AcceptedEidType> getAcceptedEidTypes() const override;
+		void setAcceptedEidTypes(const QList<AcceptedEidType>& pAcceptedEidTypes);
 };
 
 } // namespace governikus

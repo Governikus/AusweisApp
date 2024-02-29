@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -27,7 +27,7 @@ ColumnLayout {
 
 		Accessible.name: dataTitle.text
 		activeFocusOnTab: true
-		color: writeAccess ? Style.color.text_warning : titleStyle.textColor
+		color: writeAccess ? Style.color.warning : titleStyle.textColor
 		textStyle: Style.text.headline
 
 		FocusFrame {
@@ -47,69 +47,74 @@ ColumnLayout {
 
 			visible: count > 0
 
-			Item {
+			Loader {
 				id: rightItem
 
-				property alias checked: checkBox.checked
+				property bool isLast: index === repeater.count - 1
+				property string modelName: name
+				property bool modelSelected: selected
+				property bool modelWriteRight: writeRight
 
-				Accessible.name: dataText.text + (optional ? ": " + (selected ? qsTr("selected") : qsTr("not selected")) : "")
-				Accessible.role: optional ? Accessible.CheckBox : Accessible.StaticText
-				activeFocusOnTab: true
-				implicitHeight: dataText.height * 1.5
-				implicitWidth: dataText.implicitWidth + (checkBox.visible ? checkBox.implicitWidth : 0)
+				function updateModel(checked) {
+					selected = checked;
+				}
+
+				height: fontMetrics.height * 2
+				sourceComponent: optional ? optionalDelegate : requiredDelegate
 				width: (grid.width - (grid.columnSpacing * (grid.columns - 1))) / grid.columns
 
 				Keys.onSpacePressed: if (optional)
 					selected = !selected
 
-				GText {
-					id: dataText
-
-					anchors.left: parent.left
-					anchors.right: parent.right
-					anchors.rightMargin: checkBox.visible ? checkBox.width + Constants.pane_spacing : 0
-					anchors.verticalCenter: parent.verticalCenter
-					text: name
-					textStyle: writeRight ? Style.text.normal_warning : Style.text.normal
-
-					FocusFrame {
-						marginFactor: 0.7
-						scope: rightItem
+				FocusFrame {
+					anchors {
+						bottomMargin: Style.dimens.separator_size * 2
+						leftMargin: 0
+						rightMargin: 0
+						topMargin: Style.dimens.separator_size
 					}
 				}
 				GSeparator {
 					anchors.bottom: parent.bottom
-					visible: !(index === repeater.count - 1 || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
+					visible: !(isLast || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
 					width: parent.width
 				}
-				GCheckBox {
-					id: checkBox
+				FontMetrics {
+					id: fontMetrics
 
-					activeFocusOnTab: false
-					anchors.right: parent.right
-					anchors.verticalCenter: parent.verticalCenter
-					checked: selected
-					visible: optional
-				}
-				MouseArea {
-					anchors.fill: parent
-					enabled: optional
-
-					onClicked: selected = !selected
-
-					Rectangle {
-						anchors.fill: parent
-						color: Style.color.control
-						opacity: parent.pressed ? 0.5 : 0
-
-						Behavior on opacity {
-							NumberAnimation {
-								duration: 100
-							}
-						}
-					}
+					font.pixelSize: Style.dimens.text
 				}
 			}
+		}
+	}
+	Component {
+		id: optionalDelegate
+
+		GCheckBox {
+			id: checkBox
+
+			checked: modelSelected
+			focusFrameVisible: false
+			horizontalPadding: Constants.text_spacing
+			layoutDirection: Qt.RightToLeft
+			text: modelName
+			textStyle: modelWriteRight ? Style.text.normal_warning : Style.text.normal
+			verticalPadding: 0
+
+			onCheckedChanged: updateModel(checked)
+		}
+	}
+	Component {
+		id: requiredDelegate
+
+		GText {
+			id: dataText
+
+			activeFocusOnTab: true
+			leftPadding: Constants.text_spacing
+			rightPadding: Constants.text_spacing
+			text: modelName
+			textStyle: modelWriteRight ? Style.text.normal_warning : Style.text.normal
 		}
 	}
 }

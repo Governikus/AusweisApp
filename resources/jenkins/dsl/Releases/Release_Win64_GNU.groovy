@@ -3,9 +3,9 @@ import common.Release
 def j = new Release
 	(
 		name: 'Win64_GNU_MSI',
-		libraries: ['Win64_GNU'],
+		libraries: 'Win64_GNU',
 		label: 'Windows',
-		artifacts: 'libs/build/Toolchain_*,build/*.msi',
+		artifacts: 'libs/Toolchain_*,build/*.msi',
 		weight: 2
 	).generate(this)
 

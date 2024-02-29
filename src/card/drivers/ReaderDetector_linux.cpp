@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -38,9 +38,9 @@ bool ReaderDetector::terminateNativeEvents()
 }
 
 
-QVector<UsbId> ReaderDetector::attachedDevIds() const
+QList<UsbId> ReaderDetector::attachedDevIds() const
 {
-	QVector<UsbId> result;
+	QList<UsbId> result;
 
 #if __has_include(<libudev.h>)
 	// http://www.signal11.us/oss/udev/

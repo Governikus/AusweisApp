@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -20,6 +20,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_GeneralSettings
@@ -152,14 +153,14 @@ class test_GeneralSettings
 			const auto& windowsBootUpSettings = AutoStart::getRegistryStore();
 			windowsBootUpSettings->setValue(QCoreApplication::applicationName(), QStringLiteral("dummy"));
 
-			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), QString("dummy"));
+			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), "dummy"_L1);
 
 			QVERIFY(!AutoStart::enabled());
-			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), QString("dummy"));
+			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), "dummy"_L1);
 
 			QCOMPARE(AutoStart::set(true), !useSdkMode);
 			QCOMPARE(AutoStart::enabled(), !useSdkMode);
-			const auto& expectedPath = useSdkMode ? QString("dummy") : AutoStart::appPath();
+			const auto& expectedPath = useSdkMode ? "dummy"_L1 : AutoStart::appPath();
 			QCOMPARE(windowsBootUpSettings->value(QCoreApplication::applicationName(), QString()).toString(), expectedPath);
 		}
 
@@ -258,7 +259,7 @@ class test_GeneralSettings
 			QCOMPARE(settings.isUseScreenKeyboard(), false);
 			QCOMPARE(settings.isEnableCanAllowed(), false);
 			QCOMPARE(settings.isSkipRightsOnCanAllowed(), false);
-			QCOMPARE(settings.getStartupModule(), "");
+			QCOMPARE(settings.getStartupModule(), ""_L1);
 			QCOMPARE(settings.isShowInAppNotifications(), getNotificationsOsDefault());
 			QCOMPARE(settings.isRemindUserToClose(), true);
 			QCOMPARE(settings.isTransportPinReminder(), true);
@@ -526,6 +527,32 @@ class test_GeneralSettings
 			settings.setUseSystemFont(false);
 			QCOMPARE(fontSpy.count(), 2);
 			QCOMPARE(settings.isUseSystemFont(), false);
+		}
+
+
+		void testAnimations()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QSignalSpy animationsSpy(&settings, &GeneralSettings::fireUseAnimationsChanged);
+
+			QCOMPARE(animationsSpy.count(), 0);
+			QCOMPARE(settings.isUseAnimations(), true);
+
+			settings.setUseAnimations(false);
+			QCOMPARE(animationsSpy.count(), 1);
+			QCOMPARE(settings.isUseAnimations(), false);
+
+			settings.setUseAnimations(false);
+			QCOMPARE(animationsSpy.count(), 1);
+			QCOMPARE(settings.isUseAnimations(), false);
+
+			settings.setUseAnimations(true);
+			QCOMPARE(animationsSpy.count(), 2);
+			QCOMPARE(settings.isUseAnimations(), true);
+
+			settings.setUseAnimations(true);
+			QCOMPARE(animationsSpy.count(), 2);
+			QCOMPARE(settings.isUseAnimations(), true);
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -22,6 +22,7 @@
 	#include <QOperatingSystemVersion>
 #endif
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -57,12 +58,12 @@ class test_DatagramHandlerImpl
 			QVERIFY(socket->isBound());
 			QCOMPARE(logSpy.count(), 1);
 			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Bound on port:"));
+			QVERIFY(param.at(0).toString().contains("Bound on port:"_L1));
 
 			socket.reset();
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Shutdown socket"));
+			QVERIFY(param.at(0).toString().contains("Shutdown socket"_L1));
 		}
 
 
@@ -92,7 +93,7 @@ class test_DatagramHandlerImpl
 			QVERIFY(!socket->isBound());
 			QCOMPARE(logSpy.count(), 1);
 			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Cannot bind socket: \"The address is protected\""));
+			QVERIFY(param.at(0).toString().contains("Cannot bind socket: \"The address is protected\""_L1));
 		}
 
 
@@ -175,7 +176,7 @@ class test_DatagramHandlerImpl
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			QJsonObject obj;
-			obj["test"] = "dummy";
+			obj["test"_L1] = "dummy"_L1;
 			QJsonDocument doc;
 			doc.setObject(obj);
 			if (broadcast)

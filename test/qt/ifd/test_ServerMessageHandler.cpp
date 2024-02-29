@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -36,6 +36,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(ECardApiResult::Minor)
@@ -206,10 +207,10 @@ class test_ServerMessageHandler
 
 			const QByteArrayList serverMessages({
 						status.toByteArray(IfdVersion::Version::v2, contextHandle),
-						IfdConnectResponse("NFC Reader").toByteArray(IfdVersion::Version::v2, contextHandle),
-						IfdDisconnectResponse("NFC Reader").toByteArray(IfdVersion::Version::v2, contextHandle),
-						IfdTransmitResponse("NFC Reader", "9000").toByteArray(IfdVersion::Version::v2, contextHandle),
-						IfdEstablishPaceChannelResponse("My little Reader", EstablishPaceChannelOutput()).toByteArray(IfdVersion::Version::v2, contextHandle)
+						IfdConnectResponse("NFC Reader"_L1).toByteArray(IfdVersion::Version::v2, contextHandle),
+						IfdDisconnectResponse("NFC Reader"_L1).toByteArray(IfdVersion::Version::v2, contextHandle),
+						IfdTransmitResponse("NFC Reader"_L1, "9000").toByteArray(IfdVersion::Version::v2, contextHandle),
+						IfdEstablishPaceChannelResponse("My little Reader"_L1, EstablishPaceChannelOutput()).toByteArray(IfdVersion::Version::v2, contextHandle)
 					});
 			for (const auto& serverMessage : serverMessages)
 			{
@@ -266,7 +267,7 @@ class test_ServerMessageHandler
 			ensureContext(contextHandle);
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
-			MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
 
@@ -300,7 +301,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -362,7 +363,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -423,7 +424,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -486,7 +487,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -549,7 +550,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -624,7 +625,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig({
 						{CardReturnCode::OK, QByteArray("9000")}
@@ -692,7 +693,7 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
@@ -769,7 +770,7 @@ class test_ServerMessageHandler
 			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDModifyPINResponse);
 			const auto& msg1 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
 			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
-			QCOMPARE(msg1->getSlotHandle(), "SlotHandle");
+			QCOMPARE(msg1->getSlotHandle(), "SlotHandle"_L1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("ModifyPin is only available in pin pad mode.")));
 
 			QVERIFY(!TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
@@ -802,7 +803,7 @@ class test_ServerMessageHandler
 			QFETCH(ECardApiResult::Minor, minor);
 
 			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
-			const QString slotHandle("Slot Handle");
+			const QString slotHandle("Slot Handle"_L1);
 			const ResponseApdu apdu(statusCode);
 
 			QString contextHandle;
@@ -831,7 +832,7 @@ class test_ServerMessageHandler
 			QFETCH(CardReturnCode, returnCode);
 			QFETCH(ECardApiResult::Minor, minor);
 
-			const QString slotHandle("Slot Handle");
+			const QString slotHandle("Slot Handle"_L1);
 			EstablishPaceChannelOutput output;
 			output.setPaceReturnCode(returnCode);
 

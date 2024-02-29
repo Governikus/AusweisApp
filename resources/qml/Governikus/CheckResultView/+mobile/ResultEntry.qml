@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -48,7 +48,7 @@ RowLayout {
 			case ResultEntry.Type.IsInfo:
 				return Style.color.text;
 			case ResultEntry.Type.IsError:
-				return Style.color.text_warning;
+				return Style.color.warning;
 			}
 		}
 	}

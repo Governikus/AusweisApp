@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -15,7 +15,6 @@ FlickableSectionPage {
 
 	signal navActionClicked
 
-	hiddenNavbarPadding: true
 	spacing: Constants.component_spacing
 
 	//: LABEL ANDROID IOS
@@ -45,7 +44,7 @@ FlickableSectionPage {
 				fillMode: Image.PreserveAspectFit
 				source: "qrc:///images/phone_to_pc.svg"
 				sourceSize.height: Style.dimens.medium_icon_size
-				tintColor: Style.color.control
+				tintColor: Style.color.image
 			}
 			Repeater {
 				model: [

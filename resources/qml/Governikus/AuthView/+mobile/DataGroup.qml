@@ -1,16 +1,16 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
 
-Item {
-	id: root
+Column {
+	id: column
 
 	property var chat
-	property int columns: 1
 	readonly property alias count: repeater.count
 	property alias title: dataTitle.text
 	property alias titleStyle: dataTitle.textStyle
@@ -19,100 +19,100 @@ Item {
 	signal scrollPageDown
 	signal scrollPageUp
 
-	height: column.height
 	visible: repeater.count > 0
 	width: parent.width
 
-	Column {
-		id: column
+	PaneTitle {
+		id: dataTitle
 
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.top: parent.top
+		color: writeAccess ? Style.color.warning : titleStyle.textColor
+		height: implicitHeight * 1.5
+		topPadding: Constants.pane_padding
+		verticalAlignment: Text.AlignTop
+		width: parent.width
 
-		PaneTitle {
-			id: dataTitle
-
-			color: writeAccess ? Style.color.text_warning : titleStyle.textColor
-			height: implicitHeight * 1.5
-			verticalAlignment: Text.AlignTop
-			width: parent.width
+		anchors {
+			left: parent.left
+			leftMargin: Constants.pane_padding
+			right: parent.right
+			rightMargin: Constants.pane_padding
 		}
-		Grid {
-			id: grid
+	}
+	ColumnLayout {
+		id: grid
 
-			columnSpacing: Constants.pane_spacing
-			columns: root.columns
-			flow: Grid.TopToBottom
-			verticalItemAlignment: Grid.AlignBottom
-			width: parent.width
+		spacing: 0
+		width: parent.width
 
-			Repeater {
-				id: repeater
+		Repeater {
+			id: repeater
 
-				model: chat
-				visible: repeater.count > 0
+			model: chat
+			visible: repeater.count > 0
 
-				Item {
-					Accessible.checkable: optional
-					Accessible.checked: checkBox.checked
-					Accessible.name: name
-					Accessible.role: Accessible.ListItem
-					height: text.implicitHeight + 2 * Constants.text_spacing
-					width: (grid.width - ((grid.columns - 1) * grid.columnSpacing)) / grid.columns
+			Loader {
+				id: delegateLoader
 
-					Accessible.onPressAction: if (optional)
-						selected = !selected
-					Accessible.onScrollDownAction: baseItem.scrollPageDown()
-					Accessible.onScrollUpAction: baseItem.scrollPageUp()
+				property bool isLast: index === repeater.count - 1
+				property string modelName: name
+				property bool modelSelected: selected
+				property bool modelWriteRight: writeRight
 
-					GText {
-						id: text
+				function updateModel(checked) {
+					selected = checked;
+				}
 
-						Accessible.ignored: true
-						anchors.left: parent.left
-						anchors.right: checkBox.left
-						anchors.verticalCenter: parent.verticalCenter
-						text: name
-						textStyle: writeRight ? Style.text.normal_warning : Style.text.normal
-					}
-					GSeparator {
-						anchors.top: parent.bottom
-						anchors.topMargin: -height
-						visible: !(index === repeater.count - 1 || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
-						width: parent.width
-					}
-					GCheckBox {
-						id: checkBox
+				Layout.fillWidth: true
+				sourceComponent: optional ? optionalDelegate : requiredDelegate
 
-						Accessible.ignored: true
-						anchors.right: parent.right
-						anchors.verticalCenter: parent.verticalCenter
-						checked: selected
-						visible: optional
-					}
-					MouseArea {
-						anchors.fill: parent
-						enabled: optional
+				GSeparator {
+					anchors.left: parent.left
+					visible: !isLast
 
-						onClicked: selected = !selected
-
-						Rectangle {
-							anchors.centerIn: parent
-							color: Style.color.control
-							height: parent.height
-							opacity: parent.pressed ? 0.5 : 0
-							width: root.width
-
-							Behavior on opacity {
-								NumberAnimation {
-									duration: 100
-								}
-							}
-						}
+					anchors {
+						leftMargin: Constants.pane_padding
+						right: parent.right
+						rightMargin: Constants.pane_padding
+						top: parent.bottom
 					}
 				}
 			}
+		}
+	}
+	Component {
+		id: optionalDelegate
+
+		GCheckBox {
+			id: checkBox
+
+			checked: modelSelected
+			horizontalPadding: Constants.pane_padding
+			layoutDirection: Qt.RightToLeft
+			text: modelName
+			textStyle: modelWriteRight ? Style.text.normal_warning : Style.text.normal
+			verticalPadding: Constants.text_spacing
+
+			background: RoundedRectangle {
+				bottomLeftCorner: isLast
+				bottomRightCorner: isLast
+				color: checkBox.preferredBackgroundColor
+				topLeftCorner: false
+				topRightCorner: false
+			}
+
+			onCheckedChanged: updateModel(checked)
+		}
+	}
+	Component {
+		id: requiredDelegate
+
+		GText {
+			bottomPadding: Constants.text_spacing
+			leftPadding: Constants.pane_padding
+			rightPadding: Constants.pane_padding
+			text: modelName
+			textStyle: modelWriteRight ? Style.text.normal_warning : Style.text.normal
+			topPadding: Constants.text_spacing
 		}
 	}
 }

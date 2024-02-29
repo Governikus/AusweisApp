@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -35,7 +35,7 @@ class LocalIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		LocalIfdClient* getIfdClient() override;
+		LocalIfdClient* getIfdClient() const override;
 		void addDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher) override;
 
 	private Q_SLOTS:
@@ -48,7 +48,7 @@ class LocalIfdReaderManagerPlugIn
 		void updateState();
 
 	private Q_SLOTS:
-		void connectToReader(const QSharedPointer<IfdListEntry> pIfdDevice);
+		void connectToReader(const QSharedPointer<IfdListEntry> pIfdDevice) const;
 };
 
 } // namespace governikus

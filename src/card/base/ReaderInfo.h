@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -85,7 +85,7 @@ class ReaderInfo
 
 		[[nodiscard]] bool hasEid() const
 		{
-			return QVector<CardType>({CardType::EID_CARD, CardType::SMART_EID}).contains(mCardInfo.getCardType());
+			return QList<CardType>({CardType::EID_CARD, CardType::SMART_EID}).contains(mCardInfo.getCardType());
 		}
 
 

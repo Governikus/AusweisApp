@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -17,7 +17,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(system)
 
-#define SERVICE_NAME TEXT("AusweisApp2")
+#define SERVICE_NAME TEXT("AusweisApp")
 
 namespace
 {

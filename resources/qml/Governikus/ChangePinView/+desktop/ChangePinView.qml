@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -118,12 +118,13 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.Start
 
 		ChangePinViewContent {
+			id: mainView
+
 			anchors.fill: parent
-			moreInformationText: infoData.linkText
 
 			onChangePin: ChangePinModel.startWorkflow(false)
+			onChangePinInfoRequested: baseItem.showPasswordInfo()
 			onChangeTransportPin: ChangePinModel.startWorkflow(true)
-			onMoreInformationRequested: baseItem.showPasswordInfo()
 			onNoPinAvailable: d.view = ChangePinView.SubViews.NoPassword
 		}
 	}
@@ -133,7 +134,7 @@ SectionPage {
 		visible: d.activeView === ChangePinView.SubViews.NoPassword
 
 		infoContent: PasswordInfoData {
-			contentType: PasswordInfoContent.Type.NO_PIN
+			contentType: PasswordInfoData.Type.NO_PIN
 		}
 
 		onClose: d.view = ChangePinView.SubViews.Start
@@ -199,12 +200,12 @@ SectionPage {
 	PasswordInfoData {
 		id: infoData
 
-		contentType: changePinController.workflowState === ChangePinController.WorkflowStates.Initial ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType)
+		contentType: fromPasswordType(d.passwordType)
 	}
 	PasswordInfoView {
 		id: passwordInfoView
 
-		infoContent: infoData
+		infoContent: changePinController.workflowState === ChangePinController.WorkflowStates.Initial ? mainView.pinInfo : infoData
 		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
 
 		onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
@@ -230,7 +231,7 @@ SectionPage {
 
 		property bool errorConfirmed: false
 		//: INFO DESKTOP
-		readonly property string transportPinHint: qsTr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.")
+		readonly property string transportPinHint: qsTr("Please note that you may use the 5-digit Transport PIN only once to change to a 6-digit ID card PIN. If you already set a 6-digit ID card PIN, the 5-digit Transport PIN is no longer valid.")
 
 		icon: switch (d.enteredPasswordType) {
 		case PasswordType.TRANSPORT_PIN:
@@ -246,6 +247,7 @@ SectionPage {
 			return "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name);
 		}
 		text: NumberModel.inputError + (NumberModel.inputError !== "" && ChangePinModel.requestTransportPin ? "<br><br>%1".arg(transportPinHint) : "")
+		textColor: Style.color.warning
 		visible: !errorConfirmed && NumberModel.hasPasswordError && d.view !== ChangePinView.SubViews.Result
 
 		onNextView: errorConfirmed = true
@@ -263,14 +265,17 @@ SectionPage {
 
 		property bool confirmed: true
 
-		animatedIcon: "qrc:///images/puk_%1.webp".arg(Style.currentTheme.name)
+		icon: "qrc:///images/puk_correct_%1.svg".arg(Style.currentTheme.name)
 		//: INFO DESKTOP The ID card has just been unblocked and the user can now continue with their ID card PIN change.
-		text: qsTr("Your ID card PIN is unblocked. You now have three more attempts to change your PIN.")
+		text: qsTr("Your ID card PIN is unblocked. You now have 3 more attempts to change your PIN.")
 		visible: !confirmed && (d.view === ChangePinView.SubViews.Password || generalWorkflow.waitingFor === Workflow.WaitingFor.Password)
 
 		onNextView: confirmed = true
 
 		Connections {
+			function onFireOnPasswordUsed() {
+				pinUnlocked.confirmed = true;
+			}
 			function onFireOnPinUnlocked() {
 				pinUnlocked.confirmed = false;
 			}

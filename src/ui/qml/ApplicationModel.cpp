@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -223,6 +223,17 @@ qsizetype ApplicationModel::getAvailableReader() const
 	}
 
 	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPlugInTypes())).size();
+}
+
+
+qsizetype ApplicationModel::getAvailablePcscReader() const
+{
+	if (!mContext)
+	{
+		return 0;
+	}
+
+	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::PCSC})).size();
 }
 
 

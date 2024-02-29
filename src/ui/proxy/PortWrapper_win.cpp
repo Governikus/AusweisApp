@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PortWrapper.h"
@@ -147,7 +147,7 @@ QString PortWrapper::getExecutableOfProcessID(DWORD pPid)
 }
 
 
-quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pProxyAddr)
+quint16 PortWrapper::getPortOfRunningProcess(const QList<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pProxyAddr)
 {
 	for (const auto& connection : pConnections)
 	{
@@ -180,7 +180,7 @@ quint16 PortWrapper::getPortOfRunningProcess(const QVector<MIB_TCPROW_OWNER_PID>
 }
 
 
-QString PortWrapper::getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pRemoteAddr)
+QString PortWrapper::getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pRemoteAddr)
 {
 	for (const auto& connection : pConnections)
 	{
@@ -202,7 +202,7 @@ QString PortWrapper::getUserOfConnection(const QVector<MIB_TCPROW_OWNER_PID>& pC
 }
 
 
-QVector<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
+QList<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 {
 	DWORD size = 0;
 	DWORD dwResult = NO_ERROR;
@@ -210,7 +210,7 @@ QVector<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 	if (dwResult != ERROR_INSUFFICIENT_BUFFER)
 	{
 		qCWarning(rproxy) << "Cannot get IP table size";
-		return QVector<MIB_TCPROW_OWNER_PID>();
+		return QList<MIB_TCPROW_OWNER_PID>();
 	}
 
 	auto* tcpInfo = static_cast<MIB_TCPTABLE_OWNER_PID*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size));
@@ -222,10 +222,10 @@ QVector<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 	if (dwResult != NO_ERROR)
 	{
 		qCWarning(rproxy) << "Cannot get IP table:" << dwResult;
-		return QVector<MIB_TCPROW_OWNER_PID>();
+		return QList<MIB_TCPROW_OWNER_PID>();
 	}
 
-	QVector<MIB_TCPROW_OWNER_PID> result;
+	QList<MIB_TCPROW_OWNER_PID> result;
 	for (DWORD dwLoop = 0; dwLoop < tcpInfo->dwNumEntries; ++dwLoop)
 	{
 		result += tcpInfo->table[dwLoop];

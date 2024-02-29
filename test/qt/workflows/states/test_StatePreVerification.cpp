@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -18,7 +18,7 @@
 #include <openssl/bn.h>
 #include <openssl/ecdsa.h>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -42,7 +42,7 @@ class test_StatePreVerification
 		void init()
 		{
 			AbstractSettings::mTestDir.clear();
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 
 			mAuthContext->initCvcChainBuilder();
 
@@ -109,7 +109,7 @@ class test_StatePreVerification
 
 		void testCvcaNotTrusted()
 		{
-			const_cast<QVector<QSharedPointer<const CVCertificate>>*>(&mState->mTrustedCvcas)->clear();
+			const_cast<QList<QSharedPointer<const CVCertificate>>*>(&mState->mTrustedCvcas)->clear();
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			mAuthContext->setStateApproved();
@@ -161,9 +161,9 @@ class test_StatePreVerification
 
 		void testSaveLinkCertificates()
 		{
-			const auto& remove = [](QVector<QSharedPointer<const CVCertificate>>& pVector, const QSharedPointer<const CVCertificate>& pCert)
+			const auto& remove = [](QList<QSharedPointer<const CVCertificate>>& pVector, const QSharedPointer<const CVCertificate>& pCert)
 					{
-						QMutableVectorIterator<QSharedPointer<const CVCertificate>> iter(pVector);
+						QMutableListIterator<QSharedPointer<const CVCertificate>> iter(pVector);
 						while (iter.hasNext())
 						{
 							iter.next();
@@ -181,10 +181,10 @@ class test_StatePreVerification
 				settings.removeLinkCertificate(cvc);
 			}
 
-			const int expectedCvcaSize = 17;
+			const int expectedCvcaSize = 19;
 			QCOMPARE(mState->mTrustedCvcas.size(), expectedCvcaSize);
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
-			auto& trustedCvcas = const_cast<QVector<QSharedPointer<const CVCertificate>>&>(mState->mTrustedCvcas);
+			auto& trustedCvcas = const_cast<QList<QSharedPointer<const CVCertificate>>&>(mState->mTrustedCvcas);
 
 			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(3));
 			remove(trustedCvcas, mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(2));

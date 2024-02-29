@@ -8,19 +8,24 @@ Anwender
 """"""""
 - Umbenennung der AusweisApp2 zu AusweisApp.
 
-- Überarbeitung der grafischen Oberfläche.
+- Komplett überarbeitete grafische Oberfläche.
 
-- Unterstützung des Dark-Modes.
+- Dark-Mode wird auf allen Plattformen unterstützt.
 
-- Das Querformat wird nun automatisch unterstützt.
+- Die Darstellung im Querformat wurde optimiert und wird nun automatisch eingestellt.
 
 - Berücksichtigung der Systemschriftgröße und Systemschriftart.
 
 - Optimierung der Bedienbarkeit der Titelleiste.
 
-- Online-Hilfe, Anbieterliste und Verlauf entfernt.
+- Online-Hilfe steht nicht mehr zur Verfügung.
 
-- PDF-Export-Funktion der Selbstauskunft entfernt.
+- Die Anbieterliste ist nicht mehr in der AusweisApp integriert, sondern wird über
+  das AusweisApp-Portal aufgerufen.
+
+- Verlauf der Authentisierungsvorgänge wurde entfernt.
+
+- PDF-Export-Funktion der Selbstauskunft wurde entfernt.
 
 - macOS Catalina 10.15 wird nicht mehr unterstützt.
 

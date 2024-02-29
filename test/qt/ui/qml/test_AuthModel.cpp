@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -18,6 +18,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -43,14 +44,14 @@ class test_AuthModel
 			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyTransactionInfoChanged.count(), 0);
 
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			context->setDidAuthenticateEac1(eac1);
-			QCOMPARE(model->getTransactionInfo(), QString("this is a test for TransactionInfo"));
+			QCOMPARE(model->getTransactionInfo(), "this is a test for TransactionInfo"_L1);
 			model->resetAuthContext(context);
 			QVERIFY(model->getTransactionInfo().isEmpty());
 			Q_EMIT context->fireDidAuthenticateEac1Changed();
-			QCOMPARE(model->getTransactionInfo(), QString("this is a test for TransactionInfo"));
+			QCOMPARE(model->getTransactionInfo(), "this is a test for TransactionInfo"_L1);
 			QCOMPARE(spyWorkflowStarted.count(), 2);
 			QCOMPARE(spyCurrentStateChanged.count(), 2);
 			QCOMPARE(spyStateEntered.count(), 0);

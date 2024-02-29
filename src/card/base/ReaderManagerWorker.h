@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -23,7 +23,7 @@ class ReaderManagerWorker
 	Q_OBJECT
 
 	private:
-		QVector<ReaderManagerPlugIn*> mPlugIns;
+		QList<ReaderManagerPlugIn*> mPlugIns;
 
 		void callOnPlugIn(ReaderManagerPlugInType pType, const std::function<void(ReaderManagerPlugIn* pPlugIn)>& pFunc, const char* pLog);
 		void registerPlugIns();
@@ -43,7 +43,7 @@ class ReaderManagerWorker
 		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
 		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType, const QString& pError);
 
-		[[nodiscard]] Q_INVOKABLE QVector<ReaderInfo> getReaderInfos() const;
+		[[nodiscard]] Q_INVOKABLE QList<ReaderInfo> getReaderInfos() const;
 		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
 		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
 

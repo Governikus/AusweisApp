@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdTransmitResponse.h"
@@ -9,7 +9,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -173,7 +173,7 @@ class test_IfdTransmitResponse
 			const IfdTransmitResponse ifdTransmitResponse(obj);
 			QCOMPARE(ifdTransmitResponse.isIncomplete(), incomplete);
 			QCOMPARE(ifdTransmitResponse.getType(), IfdMessageType::IFDTransmitResponse);
-			QCOMPARE(ifdTransmitResponse.getContextHandle(), QString("TestContext"));
+			QCOMPARE(ifdTransmitResponse.getContextHandle(), "TestContext"_L1);
 			QCOMPARE(ifdTransmitResponse.getSlotHandle(), QStringLiteral("SlotHandle"));
 			QCOMPARE(ifdTransmitResponse.getResponseApdu(), incomplete ? QByteArray() : QByteArray::fromHex("9000"));
 			QVERIFY(!ifdTransmitResponse.resultHasError());
@@ -182,7 +182,7 @@ class test_IfdTransmitResponse
 			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ResponseAPDU\""));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ResponseAPDU\""_L1));
 			}
 		}
 
@@ -310,7 +310,7 @@ class test_IfdTransmitResponse
 			QVERIFY(ifdTransmitResponse.isIncomplete());
 			QCOMPARE(ifdTransmitResponse.getType(), IfdMessageType::IFDTransmitResponse);
 			QCOMPARE(ifdTransmitResponse.getContextHandle(), QStringLiteral("TestContext"));
-			QCOMPARE(ifdTransmitResponse.getSlotHandle(), QString("SlotHandle"));
+			QCOMPARE(ifdTransmitResponse.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmitResponse.getResponseApdu(), QByteArray());
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);
@@ -347,7 +347,7 @@ class test_IfdTransmitResponse
 			QVERIFY(!ifdTransmitResponse.isIncomplete());
 			QCOMPARE(ifdTransmitResponse.getType(), IfdMessageType::IFDTransmitResponse);
 			QCOMPARE(ifdTransmitResponse.getContextHandle(), QStringLiteral("TestContext"));
-			QCOMPARE(ifdTransmitResponse.getSlotHandle(), QString("SlotHandle"));
+			QCOMPARE(ifdTransmitResponse.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdTransmitResponse.getResponseApdu(), QByteArray::fromHex("9000"));
 			QVERIFY(!ifdTransmitResponse.resultHasError());
 			QCOMPARE(ifdTransmitResponse.getResultMinor(), ECardApiResult::Minor::null);

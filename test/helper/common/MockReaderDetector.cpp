@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReaderDetector.h"
@@ -8,16 +8,16 @@
 using namespace governikus;
 
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-QVector<UsbId> ReaderDetector::attachedDevIds() const
+QList<UsbId> ReaderDetector::attachedDevIds() const
 {
-	return QVector<UsbId>();
+	return QList<UsbId>();
 }
 
 
 #endif
 
 
-MockReaderDetector::MockReaderDetector(const QVector<UsbId>& pDevIds)
+MockReaderDetector::MockReaderDetector(const QList<UsbId>& pDevIds)
 	: ReaderDetector()
 	, mDevIds(pDevIds)
 {
@@ -29,7 +29,7 @@ MockReaderDetector::~MockReaderDetector()
 }
 
 
-QVector<UsbId> MockReaderDetector::attachedDevIds() const
+QList<UsbId> MockReaderDetector::attachedDevIds() const
 {
 	return mDevIds;
 }

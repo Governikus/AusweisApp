@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -494,7 +494,7 @@ class test_Env
 
 		void mockArgs()
 		{
-			QScopedPointer<AbstractTestInstance> impl(Env::create<AbstractTestInstance*>(QString("flupp")));
+			QScopedPointer<AbstractTestInstance> impl(Env::create<AbstractTestInstance*>(QStringLiteral("flupp")));
 			QVERIFY(impl);
 			QCOMPARE(impl->dummy(), QLatin1String("flupp"));
 			impl.reset();
@@ -539,7 +539,7 @@ class test_Env
 			Env::setCreator<AbstractTestPodInstance*, QString>(funcString);
 			Env::setCreator<AbstractTestPodInstance*>(funcDefault);
 
-			QScopedPointer<AbstractTestPodInstance> catcher(Env::create<AbstractTestPodInstance*>(QString("bla")));
+			QScopedPointer<AbstractTestPodInstance> catcher(Env::create<AbstractTestPodInstance*>(QStringLiteral("bla")));
 			QVERIFY(catcher);
 			QCOMPARE(catcher->dummy(), QLatin1String("YEAH: bla"));
 
@@ -586,7 +586,7 @@ class test_Env
 
 		void mockMove()
 		{
-			auto obj = Env::create<TestMoveCtorAssign>(QString("huhu"));
+			auto obj = Env::create<TestMoveCtorAssign>(QStringLiteral("huhu"));
 			QCOMPARE(obj.data(), QLatin1String("huhu"));
 
 			std::function<TestMoveCtorAssign(QString)> func = [](const QString&){
@@ -594,7 +594,7 @@ class test_Env
 					};
 			Env::setCreator<TestMoveCtorAssign, QString>(func);
 
-			auto mock = Env::create<TestMoveCtorAssign>(QString("huhu"));
+			auto mock = Env::create<TestMoveCtorAssign>(QStringLiteral("huhu"));
 			QCOMPARE(mock.data(), QLatin1String("mocked"));
 			QCOMPARE(obj.data(), QLatin1String("huhu"));
 
@@ -602,7 +602,7 @@ class test_Env
 						return TestMoveCtorAssign(QStringLiteral("mocked2"));
 					};
 			Env::setCreator<TestMoveCtorAssign, QString>(func);
-			mock = Env::create<TestMoveCtorAssign>(QString("huhu2"));
+			mock = Env::create<TestMoveCtorAssign>(QStringLiteral("huhu2"));
 			QCOMPARE(mock.data(), QLatin1String("mocked2"));
 			QCOMPARE(obj.data(), QLatin1String("huhu"));
 		}
@@ -679,7 +679,7 @@ class test_Env
 					};
 
 			TestMockedInstance mock;
-			QVector<QFuture<void>> threads;
+			QList<QFuture<void>> threads;
 
 			for (int i = 0; i < 100; ++i)
 			{

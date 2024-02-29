@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdStatus.h"
@@ -12,6 +12,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -212,7 +213,7 @@ class test_IfdStatus
 			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"PINPad\""));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"PINPad\""_L1));
 			}
 		}
 
@@ -271,14 +272,14 @@ class test_IfdStatus
 			if (type == IfdMessageType::UNDEFINED)
 			{
 				QCOMPARE(logSpy.count(), 2);
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""));
-				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDStatus"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
+				QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDStatus"_L1));
 
 				return;
 			}
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDStatus"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of msg should be IFDStatus"_L1));
 		}
 
 
@@ -413,7 +414,7 @@ class test_IfdStatus
 
 		void constructionWithReaderInfo()
 		{
-			const QString slotName("SlotName");
+			const QString slotName("SlotName"_L1);
 			QFETCH(ReaderManagerPlugInType, type);
 			QFETCH(bool, isBasicReader);
 			QFETCH(int, maxApduLength);

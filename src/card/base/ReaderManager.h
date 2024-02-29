@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,7 +16,6 @@
 
 #include <functional>
 
-
 namespace governikus
 {
 
@@ -28,7 +27,7 @@ class ReaderManager
 	friend class Env;
 
 	private:
-		static QVector<std::function<void()>> cMainThreadInit;
+		static QList<std::function<void()>> cMainThreadInit;
 
 		mutable QMutex mMutex;
 		QThread mThread;
@@ -86,8 +85,8 @@ class ReaderManager
 		 */
 		void stopScan(ReaderManagerPlugInType pType, const QString& pError = QString());
 
-		ReaderManagerPlugInInfo getPlugInInfo(ReaderManagerPlugInType pType) const;
-		virtual QVector<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
+		virtual ReaderManagerPlugInInfo getPlugInInfo(ReaderManagerPlugInType pType) const;
+		virtual QList<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		void updateReaderInfo(const QString& pReaderName);
 

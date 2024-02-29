@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SectionModel.h"
@@ -80,7 +80,7 @@ void SectionModel::removeAllItems()
 }
 
 
-void SectionModel::addContent(const QVector<ContentItem>& pContent)
+void SectionModel::addContent(const QList<ContentItem>& pContent)
 {
 	if (pContent.empty())
 	{

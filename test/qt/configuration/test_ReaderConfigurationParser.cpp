@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -44,29 +45,31 @@ class test_ReaderConfigurationParser
 		QStringList incompleteKeyValuePairs(int skipIndex, bool skipOnlyValue)
 		{
 			const QStringList keys = {
-				"VendorId", "ProductIds", "Name", "Drivers"
+				"VendorId"_L1, "ProductIds"_L1, "Name"_L1, "Drivers"_L1
 			};
 			const QStringList vals = {
-				"\"0x0C4B\"", "[\"0x0501\"]",
-				"\"REINER SCT cyberJack RFID komfort\"",
-				"        [\n"
-				"          {\n"
-				"              \"Platforms\": [{\"os\": \"win\"}],\n"
-				"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
-				"          },\n"
-				"          {\n"
-				"              \"Platforms\": [{\"os\": \"mac\", \"max\": \"10.10\"}],\n"
-				"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
-				"          },\n"
-				"          {\n"
-				"              \"Platforms\": [{\"os\": \"mac\", \"min\": \"10.11\"}],\n"
-				"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
-				"          },\n"
-				"          {\n"
-				"              \"Platforms\": [{\"os\": \"unknown\"}],\n"
-				"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
-				"          }\n"
-				"        ]\n"
+				"\"0x0C4B\""_L1, "[\"0x0501\"]"_L1,
+				"\"REINER SCT cyberJack RFID komfort\""_L1,
+				QLatin1StringView(
+						"        [\n"
+						"          {\n"
+						"              \"Platforms\": [{\"os\": \"win\"}],\n"
+						"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
+						"          },\n"
+						"          {\n"
+						"              \"Platforms\": [{\"os\": \"mac\", \"max\": \"10.10\"}],\n"
+						"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
+						"          },\n"
+						"          {\n"
+						"              \"Platforms\": [{\"os\": \"mac\", \"min\": \"10.11\"}],\n"
+						"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
+						"          },\n"
+						"          {\n"
+						"              \"Platforms\": [{\"os\": \"unknown\"}],\n"
+						"              \"URL\": \"https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304822&q=driver#choice5\"\n"
+						"          }\n"
+						"        ]\n"
+						)
 			};
 			QStringList result;
 			for (int index = 0; index < keys.size(); index++)
@@ -75,7 +78,7 @@ class test_ReaderConfigurationParser
 				{
 					const QString key = keys.at(index);
 					const QString val = index != skipIndex ? vals.at(index) : QStringLiteral("\"\"");
-					result += QString("\"%1\": %2\n").arg(key, val);
+					result += "\"%1\": %2\n"_L1.arg(key, val);
 				}
 			}
 
@@ -379,7 +382,7 @@ class test_ReaderConfigurationParser
 													  "    }\n"
 													  "  ]\n"
 													  "}");
-			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+			const QList<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
 
 			QCOMPARE(infos.at(0).getProductIds(), QSet<uint>({static_cast<uint>(0x0501)}));
 
@@ -407,7 +410,7 @@ class test_ReaderConfigurationParser
 													  "  ]\n"
 													  "}");
 
-			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+			const QList<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
 			const QSet<uint> ids = {static_cast<uint>(0x0502), static_cast<uint>(0x0503)};
 
 			QCOMPARE(infos.at(0).getProductIds(), ids);
@@ -445,7 +448,7 @@ class test_ReaderConfigurationParser
 													  "    }\n"
 													  "  ]\n"
 													  "}");
-			const QVector<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
+			const QList<ReaderConfigurationInfo> infos = ReaderConfigurationParser::parse(data);
 			QCOMPARE(infos.size(), 0);
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateEstablishPaceChannelResponse.h"
@@ -11,6 +11,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class MockServerMsgHandler
@@ -41,7 +42,7 @@ class MockServerMsgHandler
 		}
 
 
-		void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) override
+		void setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes) override
 		{
 			Q_UNUSED(pAllowedCardTypes)
 		}
@@ -112,7 +113,7 @@ class test_StateEstablishPaceChannelResponse
 			QSignalSpy spyWrongPacePassword(mState.data(), &StateEstablishPaceChannelResponse::fireWrongPacePassword);
 			QSignalSpy spyContinue(mState.data(), &StateEstablishPaceChannelResponse::fireContinue);
 
-			const QString slotHandle("slot handle");
+			const QString slotHandle("slot handle"_L1);
 			const QSharedPointer<const IfdEstablishPaceChannel> msg(new IfdEstablishPaceChannel(slotHandle, EstablishPaceChannel(), 6));
 			mContext->setEstablishPaceChannel(msg);
 			EstablishPaceChannelOutput channelOutput;

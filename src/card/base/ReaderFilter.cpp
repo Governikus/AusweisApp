@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderFilter.h"
@@ -17,7 +17,7 @@ ReaderFilter::ReaderFilter()
 }
 
 
-ReaderFilter::ReaderFilter(const QVector<ReaderManagerPlugInType>& pPluginTypes)
+ReaderFilter::ReaderFilter(const QList<ReaderManagerPlugInType>& pPluginTypes)
 	: mFilterType(PluginTypeFilter)
 	, mPluginTypes(pPluginTypes)
 {
@@ -31,13 +31,13 @@ ReaderFilter::ReaderFilter(const ReaderFilter::FilterType pFilterType)
 }
 
 
-QVector<ReaderInfo> ReaderFilter::apply(const QVector<ReaderInfo>& pInputList) const
+QList<ReaderInfo> ReaderFilter::apply(const QList<ReaderInfo>& pInputList) const
 {
-	QVector<ReaderInfo> filtered = pInputList;
+	QList<ReaderInfo> filtered = pInputList;
 
 	if (mFilterType & PluginTypeFilter)
 	{
-		QMutableVectorIterator<ReaderInfo> iter(filtered);
+		QMutableListIterator<ReaderInfo> iter(filtered);
 		while (iter.hasNext())
 		{
 			const ReaderInfo entry = iter.next();
@@ -50,9 +50,9 @@ QVector<ReaderInfo> ReaderFilter::apply(const QVector<ReaderInfo>& pInputList) c
 
 	if (mFilterType & UniqueReaderTypes)
 	{
-		QVector<ReaderConfigurationInfo> alreadyContained;
+		QList<ReaderConfigurationInfo> alreadyContained;
 
-		QMutableVectorIterator<ReaderInfo> iter(filtered);
+		QMutableListIterator<ReaderInfo> iter(filtered);
 		while (iter.hasNext())
 		{
 			const ReaderConfigurationInfo configurationInfo = iter.next().getReaderConfigurationInfo();

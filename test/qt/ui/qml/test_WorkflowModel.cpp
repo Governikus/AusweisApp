@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -22,6 +22,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -75,7 +76,7 @@ class test_WorkflowModel
 			QCOMPARE(spyResultChanged.count(), 2);
 			QCOMPARE(spyWorkflowFinished.count(), 1);
 
-			Q_EMIT context->fireStateChanged(QString("state"));
+			Q_EMIT context->fireStateChanged("state"_L1);
 			QCOMPARE(spyCurrentStateChanged.count(), 3);
 			QCOMPARE(spyStateEntered.count(), 1);
 
@@ -167,7 +168,7 @@ class test_WorkflowModel
 			model.resetWorkflowContext(context);
 			QCOMPARE(model.hasCard(), false);
 
-			auto mockReader = MockReaderManagerPlugIn::getInstance().addReader("SomeReaderWithCard");
+			auto mockReader = MockReaderManagerPlugIn::getInstance().addReader("SomeReaderWithCard"_L1);
 			auto info = mockReader->getReaderInfo();
 			info.setCardInfo(CardInfo(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false, false));
 			mockReader->setReaderInfo(info);
@@ -201,13 +202,13 @@ class test_WorkflowModel
 			model.resetWorkflowContext(context);
 
 			auto image = model.getStatusCodeImage();
-			image = image.replace("qrc://", ":");
+			image = image.replace("qrc://"_L1, ":"_L1);
 			if (image.isEmpty())
 			{
 				return;
 			}
 
-			if (image.contains("%1"))
+			if (image.contains("%1"_L1))
 			{
 				QStringList themes;
 				themes << QStringLiteral("darkmode") << QStringLiteral("lightmode") << QStringLiteral("highcontrast");
@@ -215,7 +216,7 @@ class test_WorkflowModel
 				for (const auto& theme : themes)
 				{
 					const auto fileName = image.arg(theme);
-					QVERIFY2(QFile(fileName).exists(), qPrintable(QString("%1 not found").arg(fileName)));
+					QVERIFY2(QFile(fileName).exists(), qPrintable("%1 not found"_L1.arg(fileName)));
 				}
 			}
 			else

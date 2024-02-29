@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DidAuthenticateResponseEAC1
@@ -23,7 +24,7 @@ class test_DidAuthenticateResponseEAC1
 
 	QByteArray readFile(const QString& pFileName)
 	{
-		return TestFileHelper::readFile(QString(":/card/").append(pFileName));
+		return TestFileHelper::readFile(QStringLiteral(":/card/").append(pFileName));
 	}
 
 	private Q_SLOTS:
@@ -71,8 +72,8 @@ class test_DidAuthenticateResponseEAC1
 
 		void certificationAuthorityReference()
 		{
-			const auto& cvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"));
-			const auto& cvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"));
+			const auto& cvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			const auto& cvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
 
 			EstablishPaceChannelOutput channel;
 			channel.setCarCurr(cvca_DETESTeID00002->getBody().getCertificateHolderReference());
@@ -80,14 +81,14 @@ class test_DidAuthenticateResponseEAC1
 
 			DIDAuthenticateResponseEAC1 msg;
 			msg.setCertificationAuthorityReference(channel);
-			QVERIFY(msg.marshall().contains("<CertificationAuthorityReference>DETESTeID00002</CertificationAuthorityReference>\n                <CertificationAuthorityReference>DETESTeID00001</CertificationAuthorityReference>"));
+			QVERIFY(msg.marshall().contains("<CertificationAuthorityReference>DETESTeID00002</CertificationAuthorityReference>\n                <CertificationAuthorityReference>DETESTeID00001</CertificationAuthorityReference>"_L1));
 		}
 
 
 		void checkTemplate()
 		{
 			DIDAuthenticateResponseEAC1 msg;
-			msg.setRelatedMessageId("urn:uuid:A9CF4F0B8BFE483B8A5C7E6738C178FE");
+			msg.setRelatedMessageId("urn:uuid:A9CF4F0B8BFE483B8A5C7E6738C178FE"_L1);
 			msg.setCertificateHolderAuthorizationTemplate("a");
 			EstablishPaceChannelOutput output;
 			output.setCarCurr("b");
@@ -97,8 +98,8 @@ class test_DidAuthenticateResponseEAC1
 			msg.setChallenge("e");
 
 			auto data = QString::fromLatin1(msg.marshall());
-			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
-			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/DIDAuthenticateResponse2.xml")));
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"_L1), "<wsa:MessageID>STRIP ME</wsa:MessageID>"_L1);
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/DIDAuthenticateResponse2.xml"_L1)));
 		}
 
 

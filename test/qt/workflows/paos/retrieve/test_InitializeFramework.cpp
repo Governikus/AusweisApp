@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_InitializeFramework
@@ -28,11 +29,11 @@ class test_InitializeFramework
 
 		void parse()
 		{
-			QByteArray content = TestFileHelper::readFile(":paos/InitializeFramework_withMessageID.xml");
+			QByteArray content = TestFileHelper::readFile(":paos/InitializeFramework_withMessageID.xml"_L1);
 
 			InitializeFramework message(content);
 
-			QCOMPARE(message.getMessageId(), QString("urn:uuid:c0f05ac0-1a67-4a0b-acbd-78309fcdb002"));
+			QCOMPARE(message.getMessageId(), "urn:uuid:c0f05ac0-1a67-4a0b-acbd-78309fcdb002"_L1);
 			QCOMPARE(message.getRelatesTo(), QString());
 		}
 

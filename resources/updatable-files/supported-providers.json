@@ -149,6 +149,44 @@
 		},
 		{
 			"shortName": {
+				"": "Adoption Digital"
+			},
+			"longName": {
+				"": "Adoption Digital"
+			},
+			"longDescription": {
+				"": "Der Online-Dienst 'Adoption Digital' ist ein digitaler Dienst mit dem Ziel den Bürger:innen, die ein Kind adoptieren möchten, eine vereinfachte Möglichkeit anzubieten einen Antrag auf Adoption zu stellen. Mit Hilfe des Online-Dienstes können Antragstellende die nötigen Formulare bequem von zu Hause aus online ausfüllen. Neben eines Kontaktformulars zur ersten Kontaktaufnahme mit der entsprechenden Adoptionsvermittlungsstelle, bietet der Online-Dienst auch Formulare für die weitere Antragstellung. Interessierte Bürger:innen können das entsprechende Bewerbungsformular zur Fremdkind-, Stiefkind- oder Verwandtenkindadoption ebenfalls im Online-Dienst ausfüllen. Geforderte Nachweise können direkt hochgeladen und dem Formular angehängt werden oder zu einem späteren Zeitpunkt digital nachgereicht werden. Der Online-Dienst erspart nicht nur Antragstellenden, sondern auch den Adoptionsvermittlungsstellen und Behörden Zeit und Aufwand. Für Bürger:innen, die sich zunächst informieren möchten, stellt der Online-Dienst erste wichtige Informationen über eine Adoption und dessen Prozess zur Verfügung."
+			},
+			"address": "https://www.adoption-und-pflegekinderwesen.de",
+			"homepage": "https://www.adoption-und-pflegekinderwesen.de",
+			"email": "info@betriebskoordination.bremen.de",
+			"postalAddress": "Der Senator für Finanzen<br/>Am Tabakquartier 56<br/>28197 Bremen",
+			"image": "AdoptionDigital_image.png",
+			"icon": "AdoptionDigital_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+		},
+		{
+			"shortName": {
+				"": "Pflegekinderwesen Digital"
+			},
+			"longName": {
+				"": "Pflegekinderwesen Digital"
+			},
+			"longDescription": {
+				"": " Der Online Dienst 'Pflegekinderwesen Digital' ist ein digitaler Dienst mit dem Ziel den Bürger:innen, die ein Kind in Pflege nehmen möchten oder finanzielle Leistungen für ein Pflegekind beantragen möchten, eine vereinfachte Möglichkeit anzubieten diese Anträge zu stellen. Mit Hilfe des Online Dienstes können Antragstellende die nötigen Formulare bequem von zu Hause aus online ausfüllen. Neben eines Kontaktformulars zur ersten Kontaktaufnahme mit der entsprechenden Pflegestelle bietet der Online Dienst auch Formulare für die weitere Antragstellung. Interessierte Bürger:innen können das Bewerbungsformular für Pflegeeltern ebenso im Online Dienst ausfüllen. Für Eltern, die bereits ein Kind in Pflege genommen haben, gibt es weitere Formulare zur Beantragung von finanziellen Leistungen wie beispielsweise die Beitragsübernahme der Unfallversicherung, eine Bezuschussung der Altersabsicherung und Leistungen gemäß Paragraf 33 und 39 SGB VIII. Geforderte Nachweise können direkt hochgeladen und dem Formular angehängt werden oder zu einem späteren Zeitpunkt digital nachgereicht werden. Außerdem haben Antragstellende die Möglichkeit einen formlosen Antrag zu stellen. Der Online Dienst erspart nicht nur Antragstellenden, sondern auch den Pflegestellen und Behörden Zeit und Aufwand. Für Bürger:innen, die sich zunächst informieren möchten, stellt der Online Dienst erste wichtige Informationen über die Aufnahme eines Pflegekindes und dessen Prozess zur Verfügung."
+			},
+			"address": "https://www.adoption-und-pflegekinderwesen.de",
+			"homepage": "https://www.adoption-und-pflegekinderwesen.de",
+			"email": "info@betriebskoordination.bremen.de",
+			"postalAddress": "Der Senator für Finanzen<br/>Am Tabakquartier 56<br/>28197 Bremen",
+			"image": "PflegekinderwesenDigital_image.png",
+			"icon": "PflegekinderwesenDigital_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+		},
+		{
+			"shortName": {
 				"": "Akteneinsicht in Stasi-Unterlagen"
 			},
 			"longName": {
@@ -398,6 +436,26 @@
 			"subjectUrls": [
 				"https://servicekonto.bremen.de"
 			]
+		},
+		{
+			"shortName": {
+				"": "Bürgerservice Online Stadt Memmingen"
+			},
+			"longName": {
+				"": "Online Bürgerservice der Stadt Memmingen"
+			},
+			"longDescription": {
+				"": "Hier finden Sie eine Übersicht der Verwaltungs-Dienstleistungen, die Sie online erledigen können. Unser Bürgerservice Online ist Ihr Zugang zu den Onlineverfahren und dem Virtuellen Rathaus der Stadtverwaltung Memmingen mit den jeweiligen Ansprechpartnern und weiteren Informationen, wie z. B. die für die Behördendienstleistung notwendigen Papiere und ggf. Kosten innerhalb der Stadtverwaltung."
+			},
+			"address": "https://www.memmingen.de/buergerservice/virtuelles-rathaus/buergerservice-online.html",
+			"homepage": "https://www.memmingen.de",
+			"phone": "+49 8331 8500",
+			"email": "digitalisierung@memmingen.de",
+			"postalAddress": "Stadtverwaltung Memmingen<br/>Marktplatz 1<br/>87700 Memmingen",
+			"image": "StadtMemmingen_image.jpg",
+			"icon": "StadtMemmingen_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
 		},
 		{
 			"shortName": {
@@ -1288,45 +1346,6 @@
 			]
 		},
 		{
-			"internalId": "pinResetService",
-			"shortName": {
-				"": "Neue PIN für den Online-Ausweis bestellen"
-			},
-			"longName": {
-				"": "Neue PIN für den Online-Ausweis bestellen"
-			},
-			"longDescription": {
-				"": "Wenn Sie Ihre PIN für den Online-Ausweis vergessen haben, Sie Ihren PIN-Brief mit der Transport-PIN nicht mehr haben oder Ihre PIN blockiert ist, können Sie hier einen PIN-Rücksetzbrief bestellen.<br/><br/>Sie erhalten diesen Brief per Post an Ihre deutsche Meldeadresse. Er enthält einen Aktivierungscode und eine neue PIN für Ihren Online-Ausweis, sodass Sie diesen im Anschluss wieder nutzen können."
-			},
-			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
-			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
-			"phone": "+49 30 18 681 23333",
-			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
-			"icon": "BMI_PIN_Reset_icon.svg",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.pin-ruecksetzbrief-bestellen.de"
-			]
-		},
-		{
-			"shortName": {
-				"": "Online-Ausweis nachträglich aktivieren"
-			},
-			"longName": {
-				"": "Online-Ausweis nachträglich aktivieren"
-			},
-			"longDescription": {
-				"": "Wenn Ihre Online-Ausweisfunktion nicht aktiviert ist, können Sie diese nachträglich durch Bestellung eines PIN-Rücksetzbriefes aktivieren. Sie erhalten den Brief per Post an Ihre deutsche Meldeadresse. Der Brief enthält einen Aktivierungscode und eine neue PIN für Ihren Online-Ausweis, sodass Sie diesen im Anschluss nutzen können."
-			},
-			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
-			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
-			"phone": "+49 30 18 681 23333",
-			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
-			"icon": "BMI_Aktivierung_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Neue PIN für den Online-Ausweis bestellen (https://www.pin-ruecksetzbrief-bestellen.de)."
-		},
-		{
 			"shortName": {
 				"": "Siegburg Online"
 			},
@@ -1444,6 +1463,25 @@
 			"icon": "Coesfeld_icon.png",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+		},
+		{
+			"shortName": {
+				"": "Onlinedienste der Stadt Neuötting"
+			},
+			"longName": {
+				"": "Onlinedienste der Stadt Neuötting"
+			},
+			"longDescription": {
+				"": "Im Online-Portal der Stadt Neuötting können Sie immer mehr digitale Verwaltungsleistungen in Verbindung mit der Bayern-ID nutzen."
+			},
+			"address": "https://www.neuoetting.de/dienste-informationen/online-formulare",
+			"homepage": "https://www.neuoetting.de",
+			"phone": "+49 8671 9980 0",
+			"email": "rathaus@neuoetting.de",
+			"postalAddress": "Stadt Neuötting<br/>Ludwigstraße 62<br/>84524 Neuötting",
+			"icon": "Neuoetting_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://id.bayernportal.de)."
 		},
 		{
 			"shortName": {
@@ -1836,15 +1874,18 @@
 				"": "MV-Serviceportal"
 			},
 			"longName": {
-				"": "Serviceportal Mecklenburg-Vorpommern"
+				"": "Mecklenburg-Vorpommern-Serviceportal"
 			},
 			"longDescription": {
-				"": "Das MV-Serviceportal ist die zentrale Informationsplattform der öffentlichen Verwaltung von Mecklenburg-Vorpommern für Bürgerinnen und Bürger, Unternehmen und Verwaltungen."
+				"": "MV-Serviceportal: Suchen. Finden. Antrag stellen.<br>Das MV-SERVICEPORTAL ist die zentrale Informationsplattform der öffentlichen Verwaltung von Mecklenburg-Vorpommern für Bürgerinnen und Bürger, Unternehmen und Verwaltungen. Hier können Sie sich informieren, in Kontakt mit den zuständigen Stellen der Verwaltung treten und viele Behördengänge einfach online erledigen."
 			},
 			"address": "https://login.mv-serviceportal.de",
-			"homepage": "https://login.mv-serviceportal.de",
-			"email": "support@ego-mv.de",
-			"postalAddress": "Ministerium für Inneres, Bau und Digitalisierung Mecklenburg-Vorpommern<br/>Arsenal am Pfaffenteich<br/>Alexandrinenstraße 1<br/>19053 Schwerin",
+			"homepage": "https://www.dvz-mv.de",
+			"phone": "+49 115",
+			"email": "mv-serviceportal@dvz-mv.de",
+			"postalAddress": "DVZ Datenverarbeitungszentrum Mecklenburg-Vorpommern GmbH<br/>Lübecker Straße 283<br/>19059 Schwerin",
+			"image": "MV-ServicePortal_image.png",
+			"icon": "MV-ServicePortal_icon.png",
 			"category": "citizen",
 			"subjectUrls": [
 				"https://login.mv-serviceportal.de"
@@ -2022,6 +2063,28 @@
 			"category": "other",
 			"subjectUrls": [
 				"https://service.skidentity.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Girokonto"
+			},
+			"longName": {
+				"": "Sparkassen-Girokonto"
+			},
+			"longDescription": {
+				"": "Online-Eröffnung einer Sparkassen-Girokontos bei der Kreissparkasse Esslingen-Nürtingen mit Ihrem elektronischen Personalausweis in weniger als 3 Minuten."
+			},
+			"address": "https://www.ksk-es.de/de/home/privatkunden/girokonto/girokonto-online/online-ausweisfunktion.html",
+			"homepage": "https://www.ksk-es.de",
+			"phone": "+49 711 398 5000",
+			"email": "kundenservice@ksk-es.de",
+			"postalAddress": "Kreissparkasse Esslingen-Nürtingen<br/>Bahnhofstr. 8<br/>73728 Esslingen",
+			"image": "KSK-Esslingen-Nuertingen_image.png",
+			"icon": "KSK-Esslingen-Nuertingen_icon.png",
+			"category": "finance",
+			"subjectUrls": [
+				"https://www.ksk-es.de"
 			]
 		},
 		{
@@ -2519,6 +2582,26 @@
 			"image": "Schaumburg_image.svg",
 			"category": "citizen",
 			"subjectUrlInfo": "Using service from Servicekonto Niedersachsen (https://idp.servicekonto.niedersachsen.de)."
+		},
+		{
+			"shortName": {
+				"": "Stadt Freiburg im Breisgau - Bürgerservice"
+			},
+			"longName": {
+				"": "Stadt Freiburg im Breisgau - Bürgerservice"
+			},
+			"phone": "+49 761 201 0",
+			"address": "https://www.freiburg.de/pb/site/Freiburg/node/205252?QUERYSTRING=online%20dienste",
+			"homepage": "https://www.freiburg.de",
+			"email": "buergerservice@stadt.freiburg.de",
+			"longDescription": {
+				"": "Viele Dienstleistungen können Sie bereits jetzt online erledigen. Über das landesweite Portal Service-bw, über bundesweite Portale oder direkt bei der Stadt Freiburg i. Br.. Bei verschiedenen Dienstleistungen wie beispielsweise der KFZ-Zulassung, Meldebescheinigung, Abmeldung ins Ausland oder Abmeldung zahlen Sie bei einer online-Abwicklung weniger Gebühren als bei einem Besuch vor Ort."
+			},
+			"postalAddress": "Stadt Freiburg im Breisgau<br/>Fehrenbachallee 12<br/>79106 Freiburg",
+			"icon": "Freiburg_icon.png",
+			"image": "Freiburg_image.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Bürgerportal Baden-Württemberg (https://eid.service-bw.de)."
 		}
 	]
 }

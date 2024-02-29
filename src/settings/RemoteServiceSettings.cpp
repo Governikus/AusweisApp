@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -22,11 +22,10 @@ Q_DECLARE_LOGGING_CATEGORY(settings)
 namespace
 {
 SETTINGS_NAME(SETTINGS_GROUP_NAME_REMOTEREADER, "remotereader")
-SETTINGS_NAME(SETTINGS_NAME_DEVICE_NAME, "serverName")
+SETTINGS_NAME(SETTINGS_NAME_DEVICE_NAME, "deviceName")
 SETTINGS_NAME(SETTINGS_NAME_PIN_PAD_MODE, "pinPadMode")
 SETTINGS_NAME(SETTINGS_NAME_SHOW_ACCESS_RIGHTS, "showAccessRights")
-SETTINGS_NAME(SETTINGS_ARRAY_NAME_TRUSTED_CERTIFICATES, "trustedCertificates")
-SETTINGS_NAME(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM, "certificate")
+SETTINGS_NAME(SETTINGS_NAME_TRUSTED_CERTIFICATES, "trustedCAs")
 SETTINGS_NAME(SETTINGS_NAME_TRUSTED_REMOTE_INFO, "trustedRemoteInfo")
 SETTINGS_NAME(SETTINGS_NAME_KEY, "key")
 SETTINGS_NAME(SETTINGS_NAME_CERTIFICATE, "certificate")
@@ -44,14 +43,41 @@ RemoteServiceSettings::RemoteServiceSettings()
 	, mStore(getStore())
 {
 	mStore->beginGroup(SETTINGS_GROUP_NAME_REMOTEREADER());
-	if (!mStore->contains(SETTINGS_NAME_DEVICE_NAME()))
+
+	// With 2.1.0 serverName was renamed to deviceName
+	const QAnyStringView serverName("serverName");
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+	if (mStore->contains(serverName))
 	{
-		setServerName(QString());
+		setDeviceName(mStore->value(serverName).toString());
+	}
+#endif
+	mStore->remove(serverName);
+
+	// With 2.1.0 "trustedCertificates" moved from custom array to "trustedCAs" bytearray
+	const QAnyStringView trustedCertificates("trustedCertificates");
+	if (mStore->childGroups().contains(trustedCertificates))
+	{
+		const int itemCount = mStore->beginReadArray(trustedCertificates);
+		QSet<QSslCertificate> certificates;
+		certificates.reserve(itemCount);
+		for (int i = 0; i < itemCount; ++i)
+		{
+			mStore->setArrayIndex(i);
+			const auto& cert = mStore->value(QAnyStringView("certificate"), QByteArray()).toByteArray();
+			certificates << QSslCertificate(cert);
+		}
+		mStore->endArray();
+		setUniqueTrustedCertificates(certificates);
+
+		mStore->beginGroup(trustedCertificates);
+		mStore->remove(QString());
+		mStore->endGroup();
 	}
 }
 
 
-QString RemoteServiceSettings::getDefaultServerName() const
+QString RemoteServiceSettings::getDefaultDeviceName() const
 {
 	QString name = DeviceInfo::getName();
 	if (name.isEmpty())
@@ -64,16 +90,29 @@ QString RemoteServiceSettings::getDefaultServerName() const
 }
 
 
-QString RemoteServiceSettings::getServerName() const
+QString RemoteServiceSettings::getDeviceName() const
 {
-	return mStore->value(SETTINGS_NAME_DEVICE_NAME(), QString()).toString();
+
+	if (mStore->contains(SETTINGS_NAME_DEVICE_NAME()))
+	{
+		return mStore->value(SETTINGS_NAME_DEVICE_NAME(), QString()).toString();
+	}
+
+	return getDefaultDeviceName();
 }
 
 
-void RemoteServiceSettings::setServerName(const QString& pName)
+void RemoteServiceSettings::setDeviceName(const QString& pName)
 {
 	const QString serverName = pName.trimmed();
-	mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName.isEmpty() ? getDefaultServerName() : serverName);
+	if (serverName.isEmpty() || serverName == getDefaultDeviceName())
+	{
+		mStore->remove(SETTINGS_NAME_DEVICE_NAME());
+	}
+	else
+	{
+		mStore->setValue(SETTINGS_NAME_DEVICE_NAME(), serverName);
+	}
 	save(mStore);
 }
 
@@ -106,38 +145,18 @@ void RemoteServiceSettings::setShowAccessRights(bool pShowAccessRights)
 
 QList<QSslCertificate> RemoteServiceSettings::getTrustedCertificates() const
 {
-	const int itemCount = mStore->beginReadArray(SETTINGS_ARRAY_NAME_TRUSTED_CERTIFICATES());
-
-	QList<QSslCertificate> certificates;
-	certificates.reserve(itemCount);
-	for (int i = 0; i < itemCount; ++i)
-	{
-		mStore->setArrayIndex(i);
-		const auto& cert = mStore->value(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM(), QByteArray()).toByteArray();
-		certificates << QSslCertificate(cert);
-	}
-
-	mStore->endArray();
-	return certificates;
+	return QSslCertificate::fromData(mStore->value(SETTINGS_NAME_TRUSTED_CERTIFICATES(), QByteArray()).toByteArray());
 }
 
 
 void RemoteServiceSettings::setUniqueTrustedCertificates(const QSet<QSslCertificate>& pCertificates)
 {
-	mStore->beginGroup(SETTINGS_ARRAY_NAME_TRUSTED_CERTIFICATES());
-	mStore->remove(QString());
-	mStore->endGroup();
-
-	mStore->beginWriteArray(SETTINGS_ARRAY_NAME_TRUSTED_CERTIFICATES());
-	int i = 0;
+	QByteArrayList data;
 	for (const auto& cert : pCertificates)
 	{
-		mStore->setArrayIndex(i);
-		++i;
-		mStore->setValue(SETTINGS_NAME_TRUSTED_CERTIFICATE_ITEM(), cert.toPem());
+		data << cert.toPem();
 	}
-	mStore->endArray();
-	save(mStore);
+	mStore->setValue(SETTINGS_NAME_TRUSTED_CERTIFICATES(), data.join());
 
 	syncRemoteInfos(pCertificates);
 	Q_EMIT fireTrustedCertificatesChanged();
@@ -181,19 +200,22 @@ void RemoteServiceSettings::removeTrustedCertificate(const QString& pFingerprint
 }
 
 
-bool RemoteServiceSettings::checkAndGenerateKey(bool pForceGeneration) const
+bool RemoteServiceSettings::checkAndGenerateKey(int pCreateKeySize) const
 {
+	auto certs = getCertificates();
+	const auto& currentCert = certs.isEmpty() ? QSslCertificate() : certs.at(0);
 	if (getKey().isNull()
-			|| getCertificate().isNull()
-			|| getCertificate().expiryDate() < QDateTime::currentDateTime()
-			|| pForceGeneration)
+			|| currentCert.isNull()
+			|| currentCert.expiryDate() < QDateTime::currentDateTime()
+			|| currentCert.publicKey().length() < pCreateKeySize)
 	{
 		qCDebug(settings) << "Generate local keypair...";
-		const auto& pair = KeyPair::generate();
+		const auto& pair = KeyPair::generate(pCreateKeySize, getKey().toPem(), currentCert.toPem());
 		if (pair.isValid())
 		{
+			certs.prepend(pair.getCertificate());
 			setKey(pair.getKey());
-			setCertificate(pair.getCertificate());
+			setCertificates(certs);
 			return true;
 		}
 
@@ -204,15 +226,20 @@ bool RemoteServiceSettings::checkAndGenerateKey(bool pForceGeneration) const
 }
 
 
-QSslCertificate RemoteServiceSettings::getCertificate() const
+QList<QSslCertificate> RemoteServiceSettings::getCertificates() const
 {
-	return QSslCertificate(mStore->value(SETTINGS_NAME_CERTIFICATE(), QByteArray()).toByteArray());
+	return QSslCertificate::fromData(mStore->value(SETTINGS_NAME_CERTIFICATE(), QByteArray()).toByteArray());
 }
 
 
-void RemoteServiceSettings::setCertificate(const QSslCertificate& pCert) const
+void RemoteServiceSettings::setCertificates(const QList<QSslCertificate>& pCertChain) const
 {
-	mStore->setValue(SETTINGS_NAME_CERTIFICATE(), pCert.toPem());
+	QByteArrayList data;
+	for (const auto& cert : pCertChain)
+	{
+		data << cert.toPem();
+	}
+	mStore->setValue(SETTINGS_NAME_CERTIFICATE(), data.join());
 	save(mStore);
 }
 
@@ -266,9 +293,9 @@ RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QSt
 }
 
 
-QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos() const
+QList<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos() const
 {
-	QVector<RemoteInfo> infos;
+	QList<RemoteInfo> infos;
 
 	const auto& data = mStore->value(SETTINGS_NAME_TRUSTED_REMOTE_INFO(), QByteArray()).toByteArray();
 	const auto& array = QJsonDocument::fromJson(data).array();
@@ -281,7 +308,7 @@ QVector<RemoteServiceSettings::RemoteInfo> RemoteServiceSettings::getRemoteInfos
 }
 
 
-void RemoteServiceSettings::setRemoteInfos(const QVector<RemoteInfo>& pInfos)
+void RemoteServiceSettings::setRemoteInfos(const QList<RemoteInfo>& pInfos)
 {
 	QJsonArray array;
 	for (const auto& item : pInfos)
@@ -303,7 +330,7 @@ void RemoteServiceSettings::syncRemoteInfos(const QSet<QSslCertificate>& pCertif
 		trustedFingerprints << generateFingerprint(cert);
 	}
 
-	QVector<RemoteInfo> syncedInfo;
+	QList<RemoteInfo> syncedInfo;
 
 	// remove outdated entries
 	const auto& infos = getRemoteInfos();
@@ -334,7 +361,7 @@ bool RemoteServiceSettings::updateRemoteInfo(const RemoteInfo& pInfo)
 	}
 
 	auto infos = getRemoteInfos();
-	QMutableVectorIterator<RemoteServiceSettings::RemoteInfo> iter(infos);
+	QMutableListIterator iter(infos);
 	while (iter.hasNext())
 	{
 		iter.next();

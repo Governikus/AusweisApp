@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StartPAOSResponse
@@ -23,23 +24,23 @@ class test_StartPAOSResponse
 	private Q_SLOTS:
 		void parsing_data()
 		{
-			QTest::addColumn<QString>("filename");
+			QTest::addColumn<QLatin1String>("filename");
 			QTest::addColumn<ECardApiResult::Major>("major");
 			QTest::addColumn<ECardApiResult::Minor>("minor");
-			QTest::addColumn<QString>("message");
+			QTest::addColumn<QLatin1String>("message");
 
-			QTest::newRow("Major") << ":paos/StartPAOSResponse1.xml" << ECardApiResult::Major::Ok << ECardApiResult::Minor::null << QString();
-			QTest::newRow("MajorMinor") << ":paos/StartPAOSResponse2.xml" << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << QString();
-			QTest::newRow("MajorMinorMessage") << ":paos/StartPAOSResponse3.xml" << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << QString("Detail message");
+			QTest::newRow("Major") << ":paos/StartPAOSResponse1.xml"_L1 << ECardApiResult::Major::Ok << ECardApiResult::Minor::null << QLatin1String();
+			QTest::newRow("MajorMinor") << ":paos/StartPAOSResponse2.xml"_L1 << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << QLatin1String();
+			QTest::newRow("MajorMinorMessage") << ":paos/StartPAOSResponse3.xml"_L1 << ECardApiResult::Major::Error << ECardApiResult::Minor::DP_Timeout_Error << "Detail message"_L1;
 		}
 
 
 		void parsing()
 		{
-			QFETCH(QString, filename);
+			QFETCH(QLatin1String, filename);
 			QFETCH(ECardApiResult::Major, major);
 			QFETCH(ECardApiResult::Minor, minor);
-			QFETCH(QString, message);
+			QFETCH(QLatin1String, message);
 
 			QByteArray content = TestFileHelper::readFile(filename);
 			StartPaosResponse startPaosResponse(content);

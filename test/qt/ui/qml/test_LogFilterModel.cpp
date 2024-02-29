@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogFilterModel.h"
@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -22,9 +22,6 @@ class test_LogFilterModel
 {
 	Q_OBJECT
 
-	private:
-		QScopedPointer<LogFilterModel> mModel;
-
 	private Q_SLOTS:
 		void initTestCase()
 		{
@@ -32,70 +29,66 @@ class test_LogFilterModel
 		}
 
 
-		void init()
+		void filtering()
 		{
-			mModel.reset(new LogFilterModel());
+			LogFilterModel model;
 
 			qCDebug(card) << "test";
 			qCWarning(card) << "test";
-		}
 
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>());
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>());
+			QCOMPARE(model.rowCount(), 3);
 
-		void filtering()
-		{
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet<QString>());
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet<QString>());
-			QCOMPARE(mModel->rowCount(), 3);
-
-			QSignalSpy spyLevel(mModel.data(), &LogFilterModel::fireLevelsChanged);
-			QSignalSpy spyCategories(mModel.data(), &LogFilterModel::fireCategoriesChanged);
+			QSignalSpy spyLevel(&model, &LogFilterModel::fireLevelsChanged);
+			QSignalSpy spyCategories(&model, &LogFilterModel::fireCategoriesChanged);
 
 			qCDebug(gui) << "test";
 			QCOMPARE(spyLevel.count(), 0);
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet<QString>());
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>());
 			QCOMPARE(spyCategories.count(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card"), QString("gui")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet<QString>());
-			QCOMPARE(mModel->rowCount(), 4);
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1, "gui"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>());
+			QCOMPARE(model.rowCount(), 4);
 
 			qCInfo(gui) << "test";
 			QCOMPARE(spyLevel.count(), 1);
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W"), QString("I")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet<QString>());
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1, "I"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>());
 			QCOMPARE(spyCategories.count(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card"), QString("gui")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet<QString>());
-			QCOMPARE(mModel->rowCount(), 5);
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1, "gui"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>());
+			QCOMPARE(model.rowCount(), 5);
 
-			mModel->configureLevel(QString("D"), true);
+			model.configureLevel("D"_L1, true);
 			QCOMPARE(spyLevel.count(), 2);
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W"), QString("I")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet({QString("D")}));
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1, "I"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>({"D"_L1}));
 			QCOMPARE(spyCategories.count(), 1);
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card"), QString("gui")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet<QString>());
-			QCOMPARE(mModel->rowCount(), 3);
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1, "gui"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>());
+			QCOMPARE(model.rowCount(), 3);
 
-			mModel->configureCategory(QString("card"), true);
+			model.configureCategory("card"_L1, true);
 			QCOMPARE(spyLevel.count(), 2);
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W"), QString("I")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet({QString("D")}));
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1, "I"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>({"D"_L1}));
 			QCOMPARE(spyCategories.count(), 2);
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card"), QString("gui")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet({QString("card")}));
-			QCOMPARE(mModel->rowCount(), 1);
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1, "gui"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>({"card"_L1}));
+			QCOMPARE(model.rowCount(), 1);
 
-			mModel->configureLevel(QString("D"), false);
+			model.configureLevel("D"_L1, false);
 			QCOMPARE(spyLevel.count(), 3);
-			QCOMPARE(mModel->getLevels(), QSet({QString("D"), QString("W"), QString("I")}));
-			QCOMPARE(mModel->getSelectedLevels(), QSet<QString>());
+			QCOMPARE(model.getLevels(), QSet<QString>({"D"_L1, "W"_L1, "I"_L1}));
+			QCOMPARE(model.getSelectedLevels(), QSet<QString>());
 			QCOMPARE(spyCategories.count(), 2);
-			QCOMPARE(mModel->getCategories(), QSet({QString("default"), QString("card"), QString("gui")}));
-			QCOMPARE(mModel->getSelectedCategories(), QSet({QString("card")}));
-			QCOMPARE(mModel->rowCount(), 2);
+			QCOMPARE(model.getCategories(), QSet<QString>({"default"_L1, "card"_L1, "gui"_L1}));
+			QCOMPARE(model.getSelectedCategories(), QSet<QString>({"card"_L1}));
+			QCOMPARE(model.rowCount(), 2);
 		}
 
 

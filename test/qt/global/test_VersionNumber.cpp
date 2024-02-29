@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,6 +10,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_VersionNumber
@@ -20,40 +21,40 @@ class test_VersionNumber
 	private Q_SLOTS:
 		void compare()
 		{
-			VersionNumber number1("1.2.3.4.5");
-			VersionNumber number2("1.2.3.4.5");
+			VersionNumber number1("1.2.3.4.5"_L1);
+			VersionNumber number2("1.2.3.4.5"_L1);
 			QCOMPARE(number1, number2);
 
-			VersionNumber number3("4.5");
+			VersionNumber number3("4.5"_L1);
 			QVERIFY(number1 != number3);
 			QVERIFY(number1 < number3);
 			QVERIFY(number3 > number1);
 
-			VersionNumber number4("1.12.0+123");
-			VersionNumber number5("1.12.0+124");
+			VersionNumber number4("1.12.0+123"_L1);
+			VersionNumber number5("1.12.0+124"_L1);
 			QVERIFY(number4 < number5);
 			QVERIFY(number5 > number4);
 
-			VersionNumber number6("");
+			VersionNumber number6(""_L1);
 			QVERIFY(number1 != number6);
 
-			VersionNumber number7("1.12.0+123-default-abc123");
-			VersionNumber number8("1.12.0+123-default-abc123");
+			VersionNumber number7("1.12.0+123-default-abc123"_L1);
+			VersionNumber number8("1.12.0+123-default-abc123"_L1);
 			QVERIFY(number7 == number8);
 			QVERIFY(!(number7 < number8));
 			QVERIFY(!(number7 > number8));
 			QVERIFY(!(number8 < number7));
 			QVERIFY(!(number8 > number7));
 
-			VersionNumber number9("1.12.0+123-stable-xyz123");
+			VersionNumber number9("1.12.0+123-stable-xyz123"_L1);
 			QVERIFY(number7 != number9);
 			QVERIFY(!(number7 < number9));
 			QVERIFY(!(number7 > number9));
 			QVERIFY(!(number9 < number7));
 			QVERIFY(!(number9 > number7));
 
-			VersionNumber number10("1.01.0+123-default-abc123");
-			VersionNumber number11("1.1.0+123-default-abc123");
+			VersionNumber number10("1.01.0+123-default-abc123"_L1);
+			VersionNumber number11("1.1.0+123-default-abc123"_L1);
 			QVERIFY(number10 == number11);
 			QVERIFY(!(number10 < number11));
 			QVERIFY(!(number11 > number10));
@@ -62,12 +63,12 @@ class test_VersionNumber
 
 		void parser()
 		{
-			VersionNumber number("1.10.3.8");
+			VersionNumber number("1.10.3.8"_L1);
 			QCOMPARE(number.getVersionNumber().majorVersion(), 1);
 			QCOMPARE(number.getVersionNumber().minorVersion(), 10);
 			QCOMPARE(number.getVersionNumber().microVersion(), 3);
 
-			VersionNumber numberSpace("  1.20.0  ");
+			VersionNumber numberSpace("  1.20.0  "_L1);
 			QCOMPARE(numberSpace.getVersionNumber().majorVersion(), 1);
 			QCOMPARE(numberSpace.getVersionNumber().minorVersion(), 20);
 			QCOMPARE(numberSpace.getVersionNumber().microVersion(), 0);
@@ -103,19 +104,19 @@ class test_VersionNumber
 
 		void branch_data()
 		{
-			QTest::addColumn<QString>("branch");
+			QTest::addColumn<QLatin1StringView>("branch");
 
-			QTest::newRow("1.99+432") << QString();
-			QTest::newRow("1.99+98-default-et43t") << QString("default");
-			QTest::newRow("1.99+1-stable") << QString("stable");
-			QTest::newRow("1.99+98-default-et43t+") << QString("default");
-			QTest::newRow("1.99+98-default-draft-et43t+") << QString("default");
+			QTest::newRow("1.99+432") << QLatin1StringView();
+			QTest::newRow("1.99+98-default-et43t") << "default"_L1;
+			QTest::newRow("1.99+1-stable") << "stable"_L1;
+			QTest::newRow("1.99+98-default-et43t+") << "default"_L1;
+			QTest::newRow("1.99+98-default-draft-et43t+") << "default"_L1;
 		}
 
 
 		void branch()
 		{
-			QFETCH(QString, branch);
+			QFETCH(QLatin1StringView, branch);
 
 			const auto& version = QString::fromLatin1(QTest::currentDataTag());
 			QCOMPARE(VersionNumber(version).getBranch(), branch);
@@ -124,18 +125,18 @@ class test_VersionNumber
 
 		void revision_data()
 		{
-			QTest::addColumn<QString>("revision");
+			QTest::addColumn<QLatin1StringView>("revision");
 
-			QTest::newRow("1.99+432") << QString();
-			QTest::newRow("1.99+98-default-et43t") << QString("et43t");
-			QTest::newRow("1.99+1-stable") << QString();
-			QTest::newRow("1.99+98-default-draft-et43t+") << QString("et43t+");
+			QTest::newRow("1.99+432") << QLatin1StringView();
+			QTest::newRow("1.99+98-default-et43t") << "et43t"_L1;
+			QTest::newRow("1.99+1-stable") << QLatin1StringView();
+			QTest::newRow("1.99+98-default-draft-et43t+") << "et43t+"_L1;
 		}
 
 
 		void revision()
 		{
-			QFETCH(QString, revision);
+			QFETCH(QLatin1StringView, revision);
 
 			const auto& version = QString::fromLatin1(QTest::currentDataTag());
 			QCOMPARE(VersionNumber(version).getRevision(), revision);
@@ -207,15 +208,15 @@ class test_VersionNumber
 
 		void toString()
 		{
-			VersionNumber number1("1.6.0+422312-stable-2143eg435");
-			QCOMPARE(number1.getVersionNumber().toString(), QString("1.6.0"));
+			VersionNumber number1("1.6.0+422312-stable-2143eg435"_L1);
+			QCOMPARE(number1.getVersionNumber().toString(), "1.6.0"_L1);
 		}
 
 
 		void debugStream()
 		{
 			QTest::ignoreMessage(QtDebugMsg, "1.6.0+422312-stable-2143eg435");
-			VersionNumber number1("1.6.0+422312-stable-2143eg435");
+			VersionNumber number1("1.6.0+422312-stable-2143eg435"_L1);
 			qDebug() << number1;
 		}
 

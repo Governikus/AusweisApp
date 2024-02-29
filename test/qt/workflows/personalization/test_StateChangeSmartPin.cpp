@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,6 +15,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -62,7 +63,7 @@ class test_StateChangeSmartPin
 				worker->moveToThread(&workerThread);
 				const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 				const QSharedPointer<PersonalizationContext> context(new PersonalizationContext(QString()));
-				context->setNewPin("123456");
+				context->setNewPin("123456"_L1);
 				context->setCardConnection(connection);
 				StateChangeSmartPin state(context);
 
@@ -93,7 +94,7 @@ class test_StateChangeSmartPin
 				QCOMPARE(state.mConnections.size(), 1);
 
 				QTest::ignoreMessage(QtDebugMsg, "Invoke set Eid PIN command");
-				context->setNewPin("123456");
+				context->setNewPin("123456"_L1);
 				QCOMPARE(state.mConnections.size(), 2);
 			}
 
@@ -108,7 +109,7 @@ class test_StateChangeSmartPin
 			StateChangeSmartPin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker));
-			const ReaderInfo readerInfo("NFC", ReaderManagerPlugInType::SMART);
+			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPlugInType::SMART);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
 			context->setCardConnection(connection);
 

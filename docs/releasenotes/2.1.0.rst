@@ -1,0 +1,34 @@
+AusweisApp 2.1.0
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 29. Februar 2024
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Erkennung der Systemsprache auf macOS verbessert.
+
+- Entfernung des Zeitlimits von 5 Minuten zur Passworteingabe bei aufliegendem Ausweis.
+
+- Korrekte Anzeige geänderter Gerätenamen bei der Nutzung von "Smartphone als Kartenleser".
+
+- Deaktivierung von Animationen ermöglicht.
+
+- Verhaltenskorrektur von "Smartphone als Kartenleser" mit
+  aktivierter Passworteingabe bei der Verwendung eines PUKs.
+
+- Korrektur des Verbindungstests mit einem passwortgeschützten
+  Proxy in der Diagnose auf Desktop-Systemen.
+
+- macOS Big Sur 11 wird nicht mehr unterstützt.
+
+
+Entwickler
+""""""""""
+- Korrekte Verarbeitung von Zertifikaten mit CAv3-Extension.
+
+- Dokumentation zur Installation und Integration vereinheitlicht.
+
+- Aktualisierung von OpenSSL auf die Version 3.1.5.

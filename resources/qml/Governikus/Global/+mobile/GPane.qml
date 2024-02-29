@@ -1,16 +1,15 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
 import Governikus.Style
+import QtQuick.Layouts
 
 GPaneBackground {
 	id: root
 
-	property alias bold: titleText.font.bold
 	property alias contentSpacing: paneContent.spacing
-	property bool drawShadow: true
 	property alias horizontalTitleAlignment: titleText.horizontalAlignment
 	property int padding: Constants.pane_padding
 	default property alias paneData: paneContent.data
@@ -18,36 +17,28 @@ GPaneBackground {
 	property alias textStyle: titleText.textStyle
 	property alias title: titleText.text
 
-	height: childrenRect.height
-	implicitHeight: content.implicitHeight
+	implicitHeight: content.implicitHeight + 2 * padding
+	implicitWidth: content.implicitWidth + 2 * padding
 
-	Column {
+	ColumnLayout {
 		id: content
 
-		anchors.left: parent.left
-		anchors.leftMargin: root.padding
-		anchors.right: parent.right
-		anchors.rightMargin: root.padding
-		bottomPadding: root.padding
 		spacing: root.spacing
-		topPadding: root.padding
 
+		anchors {
+			fill: parent
+			margins: root.padding
+		}
 		PaneTitle {
 			id: titleText
 
-			width: parent.width
+			Layout.fillWidth: true
 		}
 		Column {
 			id: paneContent
 
+			Layout.fillWidth: true
 			spacing: root.spacing
-			width: parent.width
-		}
-	}
-	layer {
-		enabled: GraphicsInfo.api !== GraphicsInfo.Software && drawShadow
-
-		effect: GDropShadow {
 		}
 	}
 }

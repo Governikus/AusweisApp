@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -52,9 +52,6 @@ class GeneralSettings
 		[[nodiscard]] bool autoStartIsSetByAdmin() const;
 		[[nodiscard]] bool showTrayIcon() const;
 		void setAutoStart(bool pAutoStart);
-
-		[[nodiscard]] QString getSkipVersion() const;
-		void skipVersion(const QString& pVersion);
 
 		[[nodiscard]] bool isNewAppVersion() const;
 
@@ -135,6 +132,9 @@ class GeneralSettings
 		[[nodiscard]] bool isUseSystemFont() const;
 		void setUseSystemFont(bool pUseSystemFont);
 
+		[[nodiscard]] bool isUseAnimations() const;
+		void setUseAnimations(bool pUseAnimations);
+
 		[[nodiscard]] QString getDarkMode() const;
 		void setDarkMode(const QString& pMode);
 
@@ -154,6 +154,7 @@ class GeneralSettings
 		void fireShowInAppNotificationsChanged();
 		void fireProxyChanged();
 		void fireUseSystemFontChanged();
+		void fireUseAnimationsChanged();
 		void fireDarkModeChanged();
 		void fireSmartAvailableChanged(bool pSmartAvailable);
 };

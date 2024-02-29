@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,6 +17,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -29,7 +30,7 @@ class test_EcdhKeyAgreement
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			auto data = TestFileHelper::readFile(":/card/efCardAccess.hex");
+			auto data = TestFileHelper::readFile(":/card/efCardAccess.hex"_L1);
 			mEfCardAccess = EFCardAccess::fromHex(data);
 		}
 
@@ -39,7 +40,7 @@ class test_EcdhKeyAgreement
 		 */
 		void perform_failureOnGetNonce()
 		{
-			QVector<TransmitConfig> transmitConfigs;
+			QList<TransmitConfig> transmitConfigs;
 			transmitConfigs.append(TransmitConfig(CardReturnCode::OK, QByteArray::fromHex("6982")));
 			QScopedPointer<MockReader> reader(MockReader::createMockReader(transmitConfigs, mEfCardAccess));
 			QSharedPointer<const PaceInfo> paceInfo = mEfCardAccess->getPaceInfos().at(0);

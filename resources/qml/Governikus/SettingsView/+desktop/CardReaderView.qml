@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -49,7 +49,7 @@ Column {
 			TintableIcon {
 				source: "qrc:///images/status_warning.svg"
 				sourceSize.height: Style.dimens.large_icon_size
-				tintColor: Style.color.text_warning
+				tintColor: Style.color.warning
 			}
 			GText {
 				text: qsTr("The connection to your system's smartcard service could not be established. You can try to resolve this issue and restart the scan.")
@@ -85,14 +85,14 @@ Column {
 			TintableIcon {
 				source: "qrc:/images/info.svg"
 				sourceSize.height: Style.dimens.large_icon_size
-				tintColor: Style.color.control
+				tintColor: hintText.color
 			}
 			GText {
 				id: hintText
 
 				Layout.alignment: Qt.AlignVCenter
 				activeFocusOnTab: true
-				color: Style.color.control
+				color: Style.color.text_subline
 				text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only connected card readers are shown here. %1").arg(ReaderModel.lastUpdatedInformation)
 				verticalAlignment: Text.AlignBottom
 

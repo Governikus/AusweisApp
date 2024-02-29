@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -165,9 +165,9 @@ Msg MessageDispatcher::processProgressChange() const
 }
 
 
-QVector<Msg> MessageDispatcher::processReaderChange(const ReaderInfo& pInfo)
+QList<Msg> MessageDispatcher::processReaderChange(const ReaderInfo& pInfo)
 {
-	QVector<Msg> messages({MsgHandlerReader(pInfo)});
+	QList<Msg> messages({MsgHandlerReader(pInfo)});
 
 	const auto& lastStateMsg = mContext.getLastStateMsg();
 	if (lastStateMsg == MsgType::INSERT_CARD && !lastStateMsg)
@@ -387,9 +387,10 @@ MsgHandler MessageDispatcher::interrupt()
 #ifdef Q_OS_IOS
 	{
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
-		const auto lastPaceResult = mContext.getContext()->getLastPaceResult();
-		return handleCurrentState(cmdType, allowedStates, [lastPaceResult] {
-				switch (lastPaceResult)
+		const auto& workflowContext = mContext.getContext();
+		return handleCurrentState(cmdType, allowedStates, [&workflowContext] {
+				workflowContext->setInterruptRequested(true);
+				switch (workflowContext->getLastPaceResult())
 				{
 						case CardReturnCode::OK:
 						case CardReturnCode::OK_PUK:

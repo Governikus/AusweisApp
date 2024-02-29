@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisController.h"
@@ -99,7 +99,7 @@ DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 void DiagnosisController::onReaderEvent()
 {
 	const auto& readersWithDriver = Env::getSingleton<ReaderManager>()->getReaderInfos();
-	QVector<ReaderConfigurationInfo> readersWithDriverInfos;
+	QList<ReaderConfigurationInfo> readersWithDriverInfos;
 	for (const auto& reader : readersWithDriver)
 	{
 		readersWithDriverInfos << reader.getReaderConfigurationInfo();

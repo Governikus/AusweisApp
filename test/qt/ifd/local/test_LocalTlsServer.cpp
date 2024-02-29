@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -40,7 +40,7 @@ class test_LocalTlsServer
 
 		void listenAddress()
 		{
-			const QVector<QHostAddress> allowedHosts = {QHostAddress::LocalHostIPv6, QHostAddress::LocalHost};
+			const QList<QHostAddress> allowedHosts = {QHostAddress::LocalHostIPv6, QHostAddress::LocalHost};
 			QVERIFY(allowedHosts.contains(mServer.serverAddress()));
 		}
 

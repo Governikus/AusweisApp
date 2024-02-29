@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SurveyModel.h"
@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(CardInfo::TagType)
@@ -29,7 +30,7 @@ class test_SurveyModel
 		{
 			CardInfo cardInfo(hasEid ? CardType::EID_CARD : CardType::NONE);
 			cardInfo.setTagType(nfcTagType);
-			ReaderInfo readerInfo("TestReader", readerPlugInType, cardInfo);
+			ReaderInfo readerInfo("TestReader"_L1, readerPlugInType, cardInfo);
 			readerInfo.setMaxApduLength(maxApduLength);
 			model.setReaderInfo(readerInfo);
 		}
@@ -57,27 +58,27 @@ class test_SurveyModel
 			const QByteArray json = mNetworkManager->getLastData();
 			auto result = QJsonDocument::fromJson(json);
 
-			QVERIFY(result["Rom"].isObject());
-			auto rom = result["Rom"].toObject();
-			QVERIFY(rom["BuildNumber"].isString());
-			QCOMPARE(rom["BuildNumber"].toString(), DeviceInfo::getOSBuildNumber());
-			QVERIFY(rom["OsVersion"].isString());
-			QCOMPARE(rom["OsVersion"].toString(), DeviceInfo::getOSVersion());
-			QVERIFY(rom["KernelVersion"].isString());
-			QCOMPARE(rom["KernelVersion"].toString(), DeviceInfo::getKernelVersion());
-			QVERIFY(rom["MaximumNfcPacketLength"].isDouble());
-			QCOMPARE(rom["MaximumNfcPacketLength"].toDouble(), 0);
+			QVERIFY(result["Rom"_L1].isObject());
+			auto rom = result["Rom"_L1].toObject();
+			QVERIFY(rom["BuildNumber"_L1].isString());
+			QCOMPARE(rom["BuildNumber"_L1].toString(), DeviceInfo::getOSBuildNumber());
+			QVERIFY(rom["OsVersion"_L1].isString());
+			QCOMPARE(rom["OsVersion"_L1].toString(), DeviceInfo::getOSVersion());
+			QVERIFY(rom["KernelVersion"_L1].isString());
+			QCOMPARE(rom["KernelVersion"_L1].toString(), DeviceInfo::getKernelVersion());
+			QVERIFY(rom["MaximumNfcPacketLength"_L1].isDouble());
+			QCOMPARE(rom["MaximumNfcPacketLength"_L1].toDouble(), 0);
 
-			QVERIFY(result["Vendor"].isString());
-			QCOMPARE(result["Vendor"].toString(), DeviceInfo::getVendor());
-			QVERIFY(result["ModelNumber"].isString());
-			QCOMPARE(result["ModelNumber"].toString(), DeviceInfo::getModelNumber());
-			QVERIFY(result["ModelName"].isString());
-			QCOMPARE(result["ModelName"].toString(), DeviceInfo::getModelName());
-			QVERIFY(result["AusweisAppVersionNumber"].isString());
-			QCOMPARE(result["AusweisAppVersionNumber"].toString(), QCoreApplication::applicationVersion());
-			QVERIFY(result["NfcTagType"].isString());
-			QCOMPARE(result["NfcTagType"].toString(), "U");
+			QVERIFY(result["Vendor"_L1].isString());
+			QCOMPARE(result["Vendor"_L1].toString(), DeviceInfo::getVendor());
+			QVERIFY(result["ModelNumber"_L1].isString());
+			QCOMPARE(result["ModelNumber"_L1].toString(), DeviceInfo::getModelNumber());
+			QVERIFY(result["ModelName"_L1].isString());
+			QCOMPARE(result["ModelName"_L1].toString(), DeviceInfo::getModelName());
+			QVERIFY(result["AusweisAppVersionNumber"_L1].isString());
+			QCOMPARE(result["AusweisAppVersionNumber"_L1].toString(), QCoreApplication::applicationVersion());
+			QVERIFY(result["NfcTagType"_L1].isString());
+			QCOMPARE(result["NfcTagType"_L1].toString(), "U"_L1);
 		}
 
 
@@ -131,9 +132,9 @@ class test_SurveyModel
 			mNetworkManager->fireFinished();
 			QByteArray json = mNetworkManager->getLastData();
 			auto result = QJsonDocument::fromJson(json);
-			auto rom = result["Rom"].toObject();
-			QCOMPARE(rom["MaximumNfcPacketLength"].toDouble(), 0);
-			QCOMPARE(result["NfcTagType"].toString(), "U");
+			auto rom = result["Rom"_L1].toObject();
+			QCOMPARE(rom["MaximumNfcPacketLength"_L1].toDouble(), 0);
+			QCOMPARE(result["NfcTagType"_L1].toString(), "U"_L1);
 			QCOMPARE(model.askForDeviceSurvey(), false);
 
 			setReaderInfo(model, readerPlugInType, nfcTagType, maxNfcPacketLength, hasEid);
@@ -149,10 +150,10 @@ class test_SurveyModel
 			mNetworkManager->fireFinished();
 			json = mNetworkManager->getLastData();
 			result = QJsonDocument::fromJson(json);
-			rom = result["Rom"].toObject();
+			rom = result["Rom"_L1].toObject();
 			QCOMPARE(model.isDeviceSurveyPending(), askForDeviceSurvey);
-			QCOMPARE(rom["MaximumNfcPacketLength"].toDouble(), maxNfcPacketLengthJson);
-			QCOMPARE(result["NfcTagType"].toString(), nfcTagTypeJson);
+			QCOMPARE(rom["MaximumNfcPacketLength"_L1].toDouble(), maxNfcPacketLengthJson);
+			QCOMPARE(result["NfcTagType"_L1].toString(), nfcTagTypeJson);
 		}
 
 
@@ -171,10 +172,10 @@ class test_SurveyModel
 			mNetworkManager->fireFinished();
 			QByteArray json = mNetworkManager->getLastData();
 			auto result = QJsonDocument::fromJson(json);
-			auto rom = result["Rom"].toObject();
+			auto rom = result["Rom"_L1].toObject();
 			QCOMPARE(model.askForDeviceSurvey(), false);
-			QCOMPARE(rom["MaximumNfcPacketLength"].toDouble(), 0);
-			QCOMPARE(result["NfcTagType"].toString(), "U");
+			QCOMPARE(rom["MaximumNfcPacketLength"_L1].toDouble(), 0);
+			QCOMPARE(result["NfcTagType"_L1].toString(), "U"_L1);
 		}
 
 

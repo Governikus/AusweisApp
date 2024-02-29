@@ -1,5 +1,7 @@
-English
-=======
+.. raw:: latex
+
+  \part*{English}
+  \addcontentsline{toc}{part}{English}
 
 Installation
 ~~~~~~~~~~~~
@@ -41,10 +43,11 @@ PROXYSERVICE
   in application server mode.
 
 AUTOSTART
-  Setting AUTOSTART=true creates autostart entry for all users. Users are unable
-  to deactivate the autostart function in the |AppName|. Not specified, no
-  autostart entry is created (false). In that case, users are able to activate the
-  autostart function in the |AppName|.
+  By setting AUTOSTART=true, an autostart entry is created for all users and
+  closing |AppName| by clicking on the X, it is minimized into the info tray.
+  Users are unable to deactivate the autostart function in the |AppName|. Not
+  specified, no autostart entry is created (false). In that case, users are able
+  to activate the autostart function in the |AppName|.
 
 AUTOHIDE
   Concerns the automatic minimization after a successful authentication. Not
@@ -54,7 +57,9 @@ AUTOHIDE
 REMINDTOCLOSE
   Closing the |AppName| by clicking on the X, the user is notified that only the
   user interface is closed and that the |AppName| is still available in the info
-  tray. At this point, it is possible to prevent future notifications. Setting
+  tray (if autostart of |AppName| is enabled) or that the |AppName| will be shut
+  down and the user needs to restart it to identify towards providers.
+  At this point, it is possible to prevent future notifications. Setting
   REMINDTOCLOSE=false deactivates this notification from the outset. Not
   specified, it is activated (true).
 
@@ -183,22 +188,22 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
 The description for each value is applicable for both Windows and macOS,
 although the naming of the attributes differs, as shown in the following table:
 
-======================= =======================
-macOS                   Windows
-======================= =======================
-autoCloseWindow         AUTOHIDE
-remindToClose           REMINDTOCLOSE
-uiStartupModule         ASSISTANT
-transportPinReminder    TRANSPORTPINREMINDER
-customProxyType         CUSTOMPROXYTYPE
-customProxyPort         CUSTOMPROXYPORT
-customProxyHost         CUSTOMPROXYHOST
-keylessPassword         ONSCREENKEYBOARD
-shuffleScreenKeyboard   SHUFFLESCREENKEYBOARD
-visualPrivacy           SECURESCREENKEYBOARD
-enableCanAllowed        ENABLECANALLOWED
-skipRightsOnCanAllowed  SKIPRIGHTSONCANALLOWED
-======================= =======================
+======================== =======================
+macOS                    Windows
+======================== =======================
+autoCloseWindow          AUTOHIDE
+remindToClose [#dialog]_ REMINDTOCLOSE
+uiStartupModule          ASSISTANT
+transportPinReminder     TRANSPORTPINREMINDER
+customProxyType          CUSTOMPROXYTYPE
+customProxyPort          CUSTOMPROXYPORT
+customProxyHost          CUSTOMPROXYHOST
+keylessPassword          ONSCREENKEYBOARD
+shuffleScreenKeyboard    SHUFFLESCREENKEYBOARD
+visualPrivacy            SECURESCREENKEYBOARD
+enableCanAllowed         ENABLECANALLOWED
+skipRightsOnCanAllowed   SKIPRIGHTSONCANALLOWED
+======================== =======================
 
 It might be necessary to force a reload of the data cached by the operating
 system: :code:`killall -u $USER cfprefsd`
@@ -206,6 +211,7 @@ system: :code:`killall -u $USER cfprefsd`
 .. [#msiexecreturnvalues] https://docs.microsoft.com/en-us/windows/desktop/msi/error-codes
 .. [#standardarguments] https://docs.microsoft.com/en-us/windows/desktop/msi/standard-installer-command-line-options
 .. [#orca] https://docs.microsoft.com/en-us/windows/desktop/Msi/orca-exe
+.. [#dialog] On macOS the |AppName| is minimized to the menu bar.
 
 
 Operational Environment Requirements
@@ -294,7 +300,7 @@ TLS termination proxy.
    eID server. Due to configuration of the service on the service provider's
    behalf, any other port might be used by forwarding.
 .. [#TR-03112] See TR-03112-6 specifiaction from the BSI
-.. [#govurl] All updates are based on the URL https://appl.governikus-asp.de/ausweisapp2/
+.. [#govurl] All updates are based on the URL https://updates.autentapp.de/
 .. [#updatecheck] Automatic checks for new |AppName| versions can be deactivated, see commandline parameter
     UPDATECHECK.
 
@@ -314,52 +320,128 @@ TLS termination proxy.
 Developer Options
 ~~~~~~~~~~~~~~~~~
 
-|AppName| features so-called developer options, available for the
-supported operating systems of Windows and macOS. They facilitate
-the integration of eID services.
+|AppName| features so-called developer options. They provide advanced settings and
+facilitate the integration of eID services.
+The developer options are hidden by default.
 
+Activating the Developer Options
+--------------------------------
 
-Windows & macOS
----------------
+Developer options are activated by clicking the version number accessible via
+"Help" -> "Version Information" 10 times. After the 10th time, you will receive a
+notification that the developer options are activated. Once activated, you will
+find a new category "developer options" in the settings menu. In the mobile
+versions additional options for "on-site reading" appear.
 
-Developer options are activated by the version number accessible via
-"Help" -> "Version Information" 10 times. This is applicable for both
-Windows and macOS. Once activated, the developer options are accessible
-via "Settings".
+In the mobile versions of |AppName| you can also activate and deactivate the test
+mode (Test PKI) for self-authentication by clicking the magnifying glass on the
+start screen 10 times.
 
+Advanced Settings
+-----------------
 
-Android & iOS
--------------
+The developer options offer advanced settings, which are explained below.
 
-The mobile version of |AppName| does not feature the developer mode. Solely
-the test mode (Test-PKI) for self-authentication may be activated and
-deactivated by clicking the magnifying glass on the start screen 10 times.
-
-
-Settings
---------
-
-Developer options allow to adjust two different settings:
-
-Test mode for self-authentication (Test-PKI)
+Test mode for self-authentication (Test PKI)
 ''''''''''''''''''''''''''''''''''''''''''''
 
 In general, the self-authentication is a built-in service of |AppName| and
 can only be used with genuine ID cards. However, when in test mode, |AppName|
 uses a test service allowing for self-authentication with a test ID card.
 
-Developer mode
-''''''''''''''
+Internal card Simulator
+'''''''''''''''''''''''
+
+The internal card simulator allows to run an authentication in the Test PKI
+without any ID card or card reader. Note that no other card reader can be used in
+the stationary versions while the simulator is activated.
+
+A single static profile is stored in the current version, which cannot be changed
+via the graphical user interface. Only the SDK allows to change the profile's data
+using the SET_CARD command. Further information can be found at the documentation
+of |AppName| SDK (see :ref:`Software Development Kit (SDK) <SDK_En>`).
+
+Developer mode (stationary only)
+''''''''''''''''''''''''''''''''
 
 When the developer mode is activated, some safety measures during an
 authentication process are ignored. Ignoring the safety measures with test
 services usually employed in test scenarios, yields a successful authentication.
-For example, secure TLS connections (https) as well as insecure connections
-without TLS (http) are accepted. Invalid certificates will be ignored. Each
-safety breach will be highlighted as an internal notification in |AppName|
+Each safety breach will be highlighted as an internal notification in |AppName|
 or the operating system respectively.
 
+The following safety tests are disabled in the developer mode:
+
+* The used TLS keys and ephemeral TLS keys have the necessary minimum length.
+* The URL of the TLS certificate description of the eID server and the TcToken URL
+  must fulfill the same-origin policy.
+* The used TLS certificates must be entwined with the authorization certificate.
+* The RefreshAddress URL and possible redirect URLs must conform to the HTTPS
+  scheme.
 
 **Please note:**
 Developer mode can only be used for test services, usage with genuine provider
 certificates is not possible.
+
+Support CAN Allowed mode for on-site reading (mobile only)
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Enables support for the CAN allowed mode. If the provider got issued a
+corresponding authorization certificate the ID card can be read by entering the
+CAN instead of the PIN.
+
+Skip rights page
+''''''''''''''''
+
+Skips the page with the authorization certificate in the CAN allowed mode and asks
+directly for the CAN.
+
+.. _SDK_En:
+
+Software Development Kit (SDK)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Possible Uses
+-------------
+
+The software development kit (SDK) of |AppName| enables you to integrate the eID
+function directly into your own application or app. This enables users to
+authenticate themselves without media discontinuity.
+
+The SDK offers the advantage of being able to carry out an online
+authentication in your own brand design - without users having to leave the
+familiar environment.
+
+The |AppName| SDK also enables the integration of on-site reading. In this case,
+the CAN is transmitted instead of the PIN to enable data transmission. You find
+the CAN on the front of the ID card and you need it to enable the readout process.
+
+Integration Options
+-------------------
+
+With the fully integrated version of the SDK, |AppName| is integrated into your
+own application as an AAR package or Swift package. The advantage: |AppName| is
+delivered directly with the application so that users don't have to install
+|AppName| separately on their smartphone.
+
+With the partially integrated version of the SDK, |AppName| is called in the
+background. Where applicable, however, the app can be delivered with the installer
+regardless of partial integration.
+
+.. table:: Integration options for the different platforms
+
+  +-----------------+----------------------+------------------+
+  |                 | partially integrated | fully integrated |
+  +=================+======================+==================+
+  | Windows / macOS | Ja                   | Nein             |
+  +-----------------+----------------------+------------------+
+  | Android         | Nein                 | Ja               |
+  +-----------------+----------------------+------------------+
+  | iOS             | Nein                 | Ja               |
+  +-----------------+----------------------+------------------+
+
+Developer documentation
+-----------------------
+
+You can find a detailed developer documentation of the SDK with a list of possible
+failure codes at https://www.ausweisapp.bund.de/sdk/.

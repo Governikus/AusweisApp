@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -7,6 +7,7 @@ import Governikus.Style
 import Governikus.View
 import Governikus.Type.ApplicationModel
 import Governikus.Type.SettingsModel
+import QtQuick.Layouts
 
 Rectangle {
 	id: titleBar
@@ -68,8 +69,10 @@ Rectangle {
 
 				activeFocusOnTab: true
 				anchors.left: parent.left
+				anchors.leftMargin: Constants.pane_padding
 				anchors.verticalCenter: parent.verticalCenter
 				enabled: d.currentAction.rootEnabled
+				horizontalPadding: 0
 				icon.source: "qrc:///images/desktop/home.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Start page")
@@ -120,27 +123,36 @@ Rectangle {
 			visible: titlePane.visible
 			width: parent.width
 
-			Item {
-				data: d.currentAction.customSubAction
+			RowLayout {
 				height: parent.height
-				width: d.currentAction.customSubAction.visible ? Math.max(childrenRect.width, backAction.width) : 0
-			}
-			NavigationAction {
-				id: backAction
+				width: 1.5 * Math.max(backAction.implicitWidth, Style.dimens.min_button_width)
 
-				height: parent.height
-				type: NavigationAction.Action.Back
-				visible: !d.currentAction.customSubAction.visible
-				width: 1.5 * implicitWidth
+				Item {
+					Layout.alignment: Qt.AlignLeft
+					Layout.fillHeight: true
+					data: d.currentAction.customSubAction
+				}
+				NavigationAction {
+					id: backAction
 
-				onClicked: d.prevAction.clicked()
+					Layout.alignment: Qt.AlignLeft
+					Layout.fillHeight: true
+					type: NavigationAction.Action.Back
+					visible: !d.currentAction.customSubAction.visible
+
+					onClicked: d.prevAction.clicked()
+				}
 			}
 			GText {
 				id: title
 
-				font.bold: true
+				Accessible.role: Accessible.Heading
+				activeFocusOnTab: true
 				text: d.currentAction.text
 				textStyle: Style.text.title
+
+				FocusFrame {
+				}
 			}
 		}
 	}

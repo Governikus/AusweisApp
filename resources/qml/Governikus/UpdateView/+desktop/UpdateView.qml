@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick
@@ -16,7 +16,7 @@ import Governikus.Type.ReleaseInformationModel
 import Governikus.Type.SettingsModel
 import Governikus.View
 
-SectionPage {
+FlickableSectionPage {
 	id: root
 
 	property alias downloadRunning: updateButtons.downloadInProgress
@@ -24,14 +24,19 @@ SectionPage {
 
 	signal leaveView
 
+	fillWidth: true
+
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP
 		text: qsTr("Application update")
 	}
 
 	ResultView {
-		buttonType: NavigationButton.Type.Back
+		Layout.fillHeight: true
+		Layout.fillWidth: true
+		anchors.fill: null
 		icon: root.update.missingPlatform ? "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name) : "qrc:///images/workflow_error_network_%1.svg".arg(Style.currentTheme.name)
+		showOkButton: false
 		text: root.update.missingPlatform ?
 		//: LABEL DESKTOP Resulttext if no update information is available for the current platform.
 		qsTr("An update information for your platform is not available.") :
@@ -42,82 +47,80 @@ SectionPage {
 		onNextView: leaveView()
 	}
 	ResultView {
-		buttonType: NavigationButton.Type.Back
+		Layout.fillHeight: true
+		Layout.fillWidth: true
+		anchors.fill: null
 		icon: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
+		showOkButton: false
 		//: LABEL DESKTOP The currently installed version is the most recent one, no action is required.
 		text: qsTr("Your version %1 of %2 is up to date!").arg(Qt.application.version).arg(Qt.application.name)
-		visible: !SettingsModel.appUpdateAvailable && root.update.valid
+		visible: root.update.valid && !root.update.updateAvailable
 
 		onNextView: leaveView()
 	}
-	GPane {
-		id: pane
-
-		activeFocusOnTab: true
-		title: qsTr("An update is available (installed version %1)").arg(Qt.application.version)
+	ColumnLayout {
+		spacing: Constants.pane_spacing
 		visible: root.update.valid && root.update.updateAvailable
 
-		anchors {
-			fill: parent
-			margins: Constants.pane_padding
+		GText {
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Layout.leftMargin
+			elide: Text.ElideRight
+			maximumLineCount: 1
+			text: qsTr("An update is available (installed version %1)").arg(Qt.application.version)
+			textStyle: Style.text.subline
 		}
 		UpdateViewInformation {
 			id: updateInformation
 
 			Layout.fillWidth: true
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Layout.leftMargin
 			downloadSize: root.update.size
 			releaseDate: root.update.date
 			version: root.update.version
 		}
 		GSeparator {
-			Layout.bottomMargin: Layout.topMargin
 			Layout.fillWidth: true
-			Layout.topMargin: Constants.text_spacing
-		}
-		Item {
-			Layout.fillHeight: true
-			Layout.fillWidth: true
-			clip: true
-
-			ReleaseNotesView {
-				model: releaseInformationModel.updateRelease
-
-				anchors {
-					bottomMargin: Constants.pane_padding
-					fill: parent
-					leftMargin: Constants.pane_padding
-					topMargin: Constants.pane_padding
-				}
-				ReleaseInformationModel {
-					id: releaseInformationModel
-
-				}
-			}
-			ScrollGradients {
-				anchors.fill: parent
-				color: Style.color.pane
-				leftMargin: 0
-				rightMargin: 0
-			}
-		}
-		GSeparator {
-			Layout.bottomMargin: Layout.topMargin
-			Layout.fillWidth: true
-			Layout.topMargin: Constants.text_spacing
 		}
 		UpdateViewButtonRow {
 			id: updateButtons
 
 			Layout.fillWidth: true
+			Layout.leftMargin: Constants.pane_padding
+			Layout.rightMargin: Layout.leftMargin
 			progressText: "%1 KiB / %2 KiB".arg(root.update.downloadProgress.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)).arg(root.update.downloadTotal.toLocaleString(Qt.locale(SettingsModel.language), "f", 0))
 			progressValue: root.update.downloadProgress * 100 / root.update.downloadTotal
 
-			onRemindLater: root.leaveView()
-			onSkipUpdate: {
-				root.update.skipUpdate();
-				root.leaveView();
-			}
 			onToggleUpdate: root.downloadRunning ? root.update.abortDownload() : download.exec()
+		}
+		GSeparator {
+			Layout.fillWidth: true
+		}
+		GPane {
+			Layout.fillWidth: true
+			contentPadding: 0
+			shadowScale: 1.005
+			spacing: 0
+
+			ReleaseInformationModel {
+				id: releaseInformationModel
+
+			}
+			Repeater {
+				id: releaseInfoRepeater
+
+				model: releaseInformationModel.updateRelease
+
+				FormattedTextView {
+					Layout.fillWidth: true
+					color: Style.color.transparent
+					idx: index
+					lineType: model.lineType
+					text: model.content
+					totalItemCount: releaseInfoRepeater.count
+				}
+			}
 		}
 	}
 	Connections {

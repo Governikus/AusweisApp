@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -43,7 +43,7 @@ class ChangePinModel
 
 		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true);
 		[[nodiscard]] QString getResultString() const override;
-		[[nodiscard]] QVector<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
 		[[nodiscard]] bool isRequestTransportPin() const;
 
 	private Q_SLOTS:
@@ -52,6 +52,7 @@ class ChangePinModel
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireOnPinUnlocked();
+		void fireOnPasswordUsed();
 };
 
 

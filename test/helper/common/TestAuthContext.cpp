@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestAuthContext.h"
@@ -9,7 +9,7 @@
 
 #include "TestFileHelper.h"
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -28,7 +28,7 @@ TestAuthContext::TestAuthContext(const QString& pFileName)
 		initAccessRightManager(getTerminalCvc(eac1));
 		setDvCvc(eac1->getCvCertificates().at(1));
 
-		QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"))));
+		QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"_L1))));
 		setDidAuthenticateEac2(eac2);
 	}
 
@@ -102,13 +102,13 @@ void TestAuthContext::removeCvCertAt(int pPosition)
 }
 
 
-QVector<AcceptedEidType> TestAuthContext::getAcceptedEidTypes() const
+QList<AcceptedEidType> TestAuthContext::getAcceptedEidTypes() const
 {
 	return mAcceptedEidTypes;
 }
 
 
-void TestAuthContext::setAcceptedEidTypes(const QVector<AcceptedEidType>& pAcceptedEidTypes)
+void TestAuthContext::setAcceptedEidTypes(const QList<AcceptedEidType>& pAcceptedEidTypes)
 {
 	mAcceptedEidTypes = pAcceptedEidTypes;
 }

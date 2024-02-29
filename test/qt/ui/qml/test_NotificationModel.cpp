@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 #include <QLoggingCategory>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_NotificationModel
@@ -48,7 +49,7 @@ class test_NotificationModel
 		{
 			QSignalSpy spy(mModel, &NotificationModel::fireLastTypeChanged);
 
-			const QString msg("message");
+			const QLatin1String msg("message");
 			const QLoggingCategory develMode("developermode");
 
 			for (int i = 0; i < 20; i++)
@@ -59,7 +60,7 @@ class test_NotificationModel
 				QCOMPARE(mModel->mNotificationEntries.at(i).mType, QLatin1String(develMode.categoryName()));
 			}
 
-			const QString newMsg("new message");
+			const QLatin1String newMsg("new message");
 			const QLoggingCategory feedback("feedback");
 			qCDebug(feedback).noquote() << newMsg;
 
@@ -81,8 +82,8 @@ class test_NotificationModel
 
 			QTest::newRow("entriesEmpty") << 0 << 0 << 0 << QVariant();
 			QTest::newRow("RowNumberEqualsSize") << 2 << 2 << type << QVariant();
-			QTest::newRow("entriesFirstIndex0Type") << 4 << 5 << type << QVariant(QString("developermode"));
-			QTest::newRow("entriesFirstIndex2Text") << 3 << 22 << 5 << QVariant(QString("message"));
+			QTest::newRow("entriesFirstIndex0Type") << 4 << 5 << type << QVariant("developermode"_L1);
+			QTest::newRow("entriesFirstIndex2Text") << 3 << 22 << 5 << QVariant("message"_L1);
 			QTest::newRow("indexOutOfRange") << 10 << 5 << time << QVariant();
 		}
 
@@ -97,7 +98,7 @@ class test_NotificationModel
 			QSignalSpy spy(mModel, &NotificationModel::fireLastTypeChanged);
 			QModelIndex index = mModel->createIndex(row, 0);
 
-			const QString msg("message");
+			const QLatin1String msg("message");
 			const QLoggingCategory category("developermode");
 			for (int i = 0; i < size; i++)
 			{

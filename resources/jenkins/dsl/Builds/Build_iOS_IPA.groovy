@@ -3,7 +3,7 @@ import common.Build
 def j = new Build
 	(
 		name: 'iOS_IPA',
-		libraries: ['iOS'],
+		libraries: 'iOS',
 		label: 'iOS',
 		artifacts: 'build/*.ipa,build/*.zip,build/*.bcsymbolmap'
 	).generate(this)

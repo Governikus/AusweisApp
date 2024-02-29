@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -10,6 +10,9 @@ import Governikus.View
 
 FlickableSectionPage {
 	id: rootPage
+
+	signal pairingFailed
+	signal pairingSuccessful
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Manage pairings")
@@ -22,5 +25,9 @@ FlickableSectionPage {
 
 	RemoteServiceViewRemote {
 		Layout.fillWidth: true
+		title: rootPage.title
+
+		onPairingFailed: rootPage.pairingFailed()
+		onPairingSuccessful: rootPage.pairingSuccessful()
 	}
 }

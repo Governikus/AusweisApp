@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="315" height="314" viewBox="0 0 315 314">
-  <image x="0" y="0" width="315px" height="314px" xlink:href="../default_reader.png" />
-  <image x="-20" y="240" width="367px" height="241px" xlink:href="img_Personalausweis.png" transform="scale(0.5) rotate(-20)" style="opacity: 0.4;" />
-  <image x="60" y="260" width="367px" height="241px" xlink:href="img_Personalausweis.png" transform="scale(0.5) rotate(-20)" style="opacity: 0.4;" />
-  <image x="40" y="180" width="367px" height="241px" xlink:href="img_Personalausweis.png" transform="scale(0.5) rotate(-20)" />
-</svg>

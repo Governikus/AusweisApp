@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,6 +12,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_UIPlugInJson
@@ -56,7 +57,7 @@ class test_UIPlugInJson
 			QVERIFY(result.contains(R"("msg":"LOG")"));
 			auto json = getJsonObject(result);
 			QVERIFY(!json.isEmpty());
-			auto data = json["data"].toString();
+			auto data = json["data"_L1].toString();
 			QVERIFY(!data.isEmpty());
 
 			const QLatin1String loggedType("Process type: GET_LOG");
@@ -68,7 +69,7 @@ class test_UIPlugInJson
 			QVERIFY(!result.isEmpty());
 			json = getJsonObject(result);
 			QVERIFY(!json.isEmpty());
-			data = json["data"].toString();
+			data = json["data"_L1].toString();
 			QVERIFY(!data.isEmpty());
 			QCOMPARE(data.count(loggedType), 2);
 			QCOMPARE(data.count(testDummy), 1);

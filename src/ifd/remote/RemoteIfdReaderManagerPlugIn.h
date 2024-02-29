@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -34,8 +34,8 @@ class RemoteIfdReaderManagerPlugIn
 		QStringList mConnectionAttempts;
 
 	private Q_SLOTS:
-		void connectToPairedReaders();
-		void continueConnectToPairedReaders(const QVector<QSharedPointer<IfdListEntry>>& pRemoteDevices);
+		void connectToPairedReaders() const;
+		void continueConnectToPairedReaders(const QList<QSharedPointer<IfdListEntry>>& pRemoteDevices);
 		void onDeviceVanished(const QSharedPointer<IfdListEntry>& pEntry);
 		void onEstablishConnectionDone(const QSharedPointer<IfdListEntry>& pEntry, const GlobalStatus& pStatus);
 
@@ -47,7 +47,7 @@ class RemoteIfdReaderManagerPlugIn
 		void stopScan(const QString& pError = QString()) override;
 
 	protected:
-		IfdClient* getIfdClient() override;
+		IfdClient* getIfdClient() const override;
 
 };
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageLoader.h"
@@ -27,7 +27,7 @@ LanguageLoader::LanguageLoader()
 	, mTranslatorList()
 	, mComponentList(
 		{
-			QStringLiteral("ausweisapp2"), QStringLiteral("qtbase")
+			QStringLiteral("ausweisapp"), QStringLiteral("qtbase")
 		})
 	, mUsedLocale(mFallbackLanguage)
 {
@@ -101,7 +101,7 @@ QList<QLocale> LanguageLoader::getAvailableLocales() const
 	QDir path(mPath);
 	path.setFilter(QDir::Files);
 
-	const QRegularExpression regex(QStringLiteral("^ausweisapp2_([a-z]{2}(_[A-Z]{2})?)\\.qm$"));
+	const QRegularExpression regex(QStringLiteral("^ausweisapp_([a-z]{2}(_[A-Z]{2})?)\\.qm$"));
 	const auto entryList = path.entryInfoList();
 	for (const auto& info : entryList)
 	{

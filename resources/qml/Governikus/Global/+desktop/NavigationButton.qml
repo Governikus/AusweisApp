@@ -1,95 +1,100 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Governikus.Global
 import Governikus.Style
 import Governikus.View
 
-Button {
+AbstractButton {
 	id: control
 
 	enum Type {
 		Forward,
-		Back,
 		Check,
 		Cancel
 	}
 
-	property string accessibleText
 	property int buttonType: NavigationButton.Type.Forward
-	property string iconSource
-	property string iconText
-	property double size: plugin.scaleFactor * 160
-	property string subText
+	property double size: Style.dimens.huge_icon_size
 
-	Accessible.name: accessibleText !== "" ? accessibleText : text
-	Accessible.role: Accessible.Button
-	implicitHeight: column.implicitHeight
-	implicitWidth: column.implicitWidth
-	text: subText !== "" ? subText : (buttonType === NavigationButton.Type.Check ? qsTr("Yes") : buttonType === NavigationButton.Type.Cancel ? qsTr("No") : buttonType === NavigationButton.Type.Forward ? qsTr("Continue") : qsTr("Back"))
+	icon.source: buttonType === NavigationButton.Type.Check ? "qrc:///images/material_check.svg" : buttonType === NavigationButton.Type.Cancel ? "qrc:///images/material_clear.svg" : "qrc:///images/desktop/material_arrow_forward.svg"
 
 	background: Item {
 	}
-	contentItem: Item {
-	}
-
-	ColumnLayout {
-		id: column
-
-		anchors.fill: parent
-		spacing: Constants.component_spacing
+	contentItem: Column {
+		spacing: Constants.text_spacing
 
 		Rectangle {
-			id: icon
+			id: circle
 
-			Layout.alignment: Qt.AlignHCenter
-			Layout.preferredHeight: Layout.preferredWidth
-			Layout.preferredWidth: control.size
-			color: enabled ? Style.color.control : Style.color.control_disabled
+			anchors.horizontalCenter: parent.horizontalCenter
+			border.color: Style.color.control_border
+			border.width: Style.dimens.border_width
+			color: Style.color.control
+			implicitHeight: control.size
+			implicitWidth: control.size
 			radius: height / 2
 
 			TintableIcon {
+				id: icon
+
 				anchors.centerIn: parent
-				rotation: iconSource === "" && buttonType === NavigationButton.Type.Back ? 180 : 0
-				source: {
-					if (iconSource !== "") {
-						return iconSource;
-					}
-					if (iconText !== "") {
-						return "";
-					}
-					return buttonType === NavigationButton.Type.Check ? "qrc:///images/material_check.svg" : buttonType === NavigationButton.Type.Cancel ? "qrc:///images/material_clear.svg" : "qrc:///images/desktop/material_arrow_forward.svg";
-				}
+				source: control.icon.source
 				sourceSize.height: Style.dimens.large_icon_size
 				tintColor: Style.color.control_content
 			}
-			GText {
-				anchors.centerIn: parent
-				text: iconText
-				textStyle: Style.text.headline
-				visible: iconText !== ""
+			FocusFrame {
+				marginFactor: 0.8
+				radius: parent.radius * 1.2
+				scope: control
 			}
 		}
 		GText {
-			id: buttonText
-
-			Layout.alignment: Qt.AlignHCenter
+			anchors.horizontalCenter: parent.horizontalCenter
 			horizontalAlignment: Text.AlignHCenter
-			text: control.subText
-			textStyle: Style.text.headline
-			visible: control.subText !== ""
+			text: control.text
+			textStyle: Style.text.subline
+			visible: text !== ""
 		}
 	}
-	FocusFrame {
-	}
-	MouseArea {
-		anchors.fill: parent
-		cursorShape: Qt.PointingHandCursor
 
-		onPressed: mouse => {
-			mouse.accepted = false;
-		}
+	Item {
+		id: d
+
+		states: [
+			State {
+				name: "disabled"
+				when: !control.enabled
+
+				PropertyChanges {
+					circle.border.color: Style.color.control_border_disabled
+					circle.color: Style.color.control_disabled
+					icon.tintColor: Style.color.control_content_disabled
+				}
+			},
+			State {
+				name: "pressed"
+				when: control.pressed
+
+				PropertyChanges {
+					circle.border.color: Style.color.control_border_pressed
+					circle.color: Style.color.control_pressed
+					icon.tintColor: Style.color.control_content_pressed
+				}
+			},
+			State {
+				name: "hovered"
+				when: control.hovered
+
+				PropertyChanges {
+					circle.border.color: Style.color.control_border_hovered
+					circle.color: Style.color.control_hovered
+					icon.tintColor: Style.color.control_content_hovered
+				}
+			}
+		]
 	}
 }

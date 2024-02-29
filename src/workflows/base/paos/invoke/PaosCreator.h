@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -56,9 +56,9 @@ class PaosCreator
 		QByteArray marshall();
 
 		void setRelatedMessageId(const QString& pId);
-		static QString getNamespace(Namespace pPrefix);
-		static QString getNamespacePrefix(Namespace pPrefix, const QString& pSuffix = QString());
-		static QString getNamespaceType(Namespace pPrefix, const QString& pType);
+		[[nodiscard]] static QString getNamespace(Namespace pPrefix);
+		[[nodiscard]] static QString getNamespacePrefix(Namespace pPrefix, const QString& pSuffix = QString());
+		[[nodiscard]] static QString getNamespaceType(Namespace pPrefix, const QString& pType);
 };
 
 } // namespace governikus

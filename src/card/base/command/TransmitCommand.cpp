@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TransmitCommand.h"
@@ -18,7 +18,7 @@ using namespace governikus;
 
 
 TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
-		const QVector<InputAPDUInfo>& pInputApduInfos,
+		const QList<InputAPDUInfo>& pInputApduInfos,
 		const QString& pSlotHandle)
 	: BaseCardCommand(pCardConnectionWorker)
 	, mInputApduInfos(pInputApduInfos)

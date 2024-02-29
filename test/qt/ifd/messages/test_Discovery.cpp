@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/Discovery.h"
@@ -43,7 +43,7 @@ class test_Discovery
 			QCOMPARE(msg.getIfdName(), QString());
 			QCOMPARE(msg.getIfdId(), QString());
 			QVERIFY(msg.getPort() == 0);
-			QCOMPARE(msg.getSupportedApis(), QVector<IfdVersion::Version>());
+			QCOMPARE(msg.getSupportedApis(), QList<IfdVersion::Version>());
 			QCOMPARE(msg.getPairing(), false);
 
 			QCOMPARE(logSpy.count(), 6);
@@ -71,7 +71,7 @@ class test_Discovery
 			QCOMPARE(discovery.getIfdName(), QStringLiteral("Sony Xperia Z5 compact"));
 			QCOMPARE(discovery.getIfdId(), QStringLiteral("0123456789ABCDEF"));
 			QVERIFY(discovery.getPort() == static_cast<quint16>(24728));
-			QCOMPARE(discovery.getSupportedApis(), QVector<IfdVersion::Version>({IfdVersion::Version::v0, IfdVersion::Version::v2}));
+			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>({IfdVersion::Version::v0, IfdVersion::Version::v2}));
 			QVERIFY(!discovery.getPairing());
 
 			discovery.setPairing(true);
@@ -170,7 +170,7 @@ class test_Discovery
 			QCOMPARE(discovery.getIfdName(), QStringLiteral("Sony Xperia Z5 compact"));
 			QCOMPARE(discovery.getIfdId(), QStringLiteral("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"));
 			QVERIFY(discovery.getPort() == static_cast<quint16>(24728));
-			QCOMPARE(discovery.getSupportedApis(), QVector<IfdVersion::Version>({IfdVersion::Version::v0}));
+			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>({IfdVersion::Version::v0}));
 			QCOMPARE(discovery.getPairing(), pairing);
 		}
 
@@ -333,7 +333,7 @@ class test_Discovery
 			QCOMPARE(discovery.getIfdName(), QString());
 			QCOMPARE(discovery.getIfdId(), QString());
 			QVERIFY(discovery.getPort() == 0);
-			QCOMPARE(discovery.getSupportedApis(), QVector<IfdVersion::Version>());
+			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>());
 			QCOMPARE(discovery.getPairing(), false);
 
 			QCOMPARE(logSpy.count(), 5);
@@ -365,7 +365,7 @@ class test_Discovery
 			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
 			const Discovery discovery(obj);
 			QVERIFY(discovery.isIncomplete());
-			QCOMPARE(discovery.getSupportedApis(), QVector<IfdVersion::Version>({IfdVersion::Version::v0}));
+			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>({IfdVersion::Version::v0}));
 
 			QCOMPARE(logSpy.count(), 1);
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of \"SupportedAPI\" should be of type \"string array\"")));

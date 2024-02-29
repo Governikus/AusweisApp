@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -26,7 +26,7 @@ class VersionInformationModel
 			LABEL = Qt::UserRole + 1,
 			TEXT
 		};
-		QVector<QPair<QString, QString>> mData;
+		QList<QPair<QString, QString>> mData;
 
 		VersionInformationModel();
 		~VersionInformationModel() override = default;

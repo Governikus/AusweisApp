@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCertificateDescriptionCheck.h"
@@ -46,7 +46,7 @@ void StateCertificateDescriptionCheck::run()
 	QCryptographicHash hashCalculator(terminalCertificate->getBody().getHashAlgorithm());
 	hashCalculator.addData(getContext()->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary());
 
-	const QByteArray& hashOfDescription = terminalCertificate->getBody().getExtensions().value(KnownOid::ID_DESCRIPTION);
+	const QByteArray& hashOfDescription = terminalCertificate->getBody().getExtension(KnownOid::ID_DESCRIPTION);
 	if (hashCalculator.result() != hashOfDescription)
 	{
 		auto certificateHashError = QStringLiteral("The certificate description does not match the certificate.");

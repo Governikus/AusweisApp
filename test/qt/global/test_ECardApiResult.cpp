@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardReturnCode.h"
@@ -9,6 +9,7 @@
 #include <QString>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_ECardApiResult
@@ -60,8 +61,8 @@ class test_ECardApiResult
 			ECardApiResult result = ECardApiResult(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity, FailureCode::Reason::Change_Pin_User_Cancelled);
 			QCOMPARE(result.getMajor(), ECardApiResult::Major::Error);
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::AL_Internal_Error);
-			QCOMPARE(result.getMessage(), QString("The authenticity of your ID card could not be confirmed."));
-			QCOMPARE(result.getMessageLang(), QString("en"));
+			QCOMPARE(result.getMessage(), "The authenticity of your ID card could not be confirmed."_L1);
+			QCOMPARE(result.getMessageLang(), "en"_L1);
 			QCOMPARE(result.getFailureCode(), FailureCode::Reason::Change_Pin_User_Cancelled);
 		}
 
@@ -72,7 +73,7 @@ class test_ECardApiResult
 			QCOMPARE(result.getMajor(), ECardApiResult::Major::Ok);
 			QCOMPARE(result.getMinor(), ECardApiResult::Minor::null);
 			QCOMPARE(result.getMessage(), QString());
-			QCOMPARE(result.getMessageLang(), QString("en"));
+			QCOMPARE(result.getMessageLang(), "en"_L1);
 			QCOMPARE(result.getFailureCode(), std::optional<FailureCode>());
 		}
 
@@ -84,42 +85,42 @@ class test_ECardApiResult
 
 			QCOMPARE(logSpy.count(), 1);
 			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok |  | \""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok |  | \""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity);
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError | The authenticity of your ID card could not be confirmed.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError | The authenticity of your ID card could not be confirmed.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::CANCELLATION_BY_USER));
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(CardReturnCodeUtil::toGlobalStatus(CardReturnCode::UNDEFINED));
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError | An unexpected error has occurred during processing.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError | An unexpected error has occurred during processing.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Workflow_Preverification_Error);
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/il/signature#invalidCertificatePath | Pre-verification failed.\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/il/signature#invalidCertificatePath | Pre-verification failed.\""_L1));
 
 			logSpy.clear();
 
 			qDebug() << ECardApiResult(GlobalStatus::Code::Card_Cancellation_By_User, FailureCode::Reason::Change_Pin_User_Cancelled);
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader. | Change_Pin_User_Cancelled\""));
+			QVERIFY(param.at(0).toString().contains("Result: \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error | http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#cancellationByUser | The process has been cancelled by the card reader. | Change_Pin_User_Cancelled\""_L1));
 		}
 
 
@@ -162,33 +163,33 @@ class test_ECardApiResult
 
 		void convertToStatusMinorNull_data()
 		{
-			QTest::addColumn<QString>("message");
+			QTest::addColumn<QLatin1String>("message");
 			QTest::addColumn<ECardApiResult::Origin>("origin");
 
-			QTest::newRow("No msg - client") << QString() << ECardApiResult::Origin::Client;
-			QTest::newRow("No msg - server") << QString() << ECardApiResult::Origin::Server;
-			QTest::newRow("With msg - client") << QString("Game Over :(") << ECardApiResult::Origin::Client;
-			QTest::newRow("With msg - server") << QString("Game Over :(") << ECardApiResult::Origin::Server;
+			QTest::newRow("No msg - client") << QLatin1String() << ECardApiResult::Origin::Client;
+			QTest::newRow("No msg - server") << QLatin1String() << ECardApiResult::Origin::Server;
+			QTest::newRow("With msg - client") << "Game Over :("_L1 << ECardApiResult::Origin::Client;
+			QTest::newRow("With msg - server") << "Game Over :("_L1 << ECardApiResult::Origin::Server;
 		}
 
 
 		void convertToStatusMinorNull()
 		{
-			QFETCH(QString, message);
+			QFETCH(QLatin1String, message);
 			QFETCH(ECardApiResult::Origin, origin);
 
 			const ECardApiResult result1(ECardApiResult::Major::Error, ECardApiResult::Minor::null, message, origin);
 			QVERIFY(result1.toStatus().isError());
 
-			const QString error("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error");
+			const QString error("http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error"_L1);
 
 			const ECardApiResult result2(error, QString(), message, origin);
 			QVERIFY(result2.toStatus().isError());
 
-			const ECardApiResult result3(error, "invalid", message, origin);
+			const ECardApiResult result3(error, "invalid"_L1, message, origin);
 			QVERIFY(result3.toStatus().isError());
 
-			const ECardApiResult result4(error, "http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError", message, origin);
+			const ECardApiResult result4(error, "http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#unknownError"_L1, message, origin);
 			QVERIFY(result4.toStatus().isError());
 		}
 
@@ -216,7 +217,7 @@ class test_ECardApiResult
 		void convertToStatus()
 		{
 			QFETCH(ECardApiResult::Minor, minor);
-			const ECardApiResult result(ECardApiResult::Major::Error, minor, "Game Over :(", ECardApiResult::Origin::Client);
+			const ECardApiResult result(ECardApiResult::Major::Error, minor, "Game Over :("_L1, ECardApiResult::Origin::Client);
 			QVERIFY(result.toStatus().isError());
 		}
 
@@ -280,10 +281,10 @@ class test_ECardApiResult
 					break;
 			}
 
-			const ECardApiResult result_1(ECardApiResult::Major::Error, minor, "Game Over :(", ECardApiResult::Origin::Client);
+			const ECardApiResult result_1(ECardApiResult::Major::Error, minor, "Game Over :("_L1, ECardApiResult::Origin::Client);
 			QVERIFY(result_1 == ECardApiResult(result_1.toStatus()));
 
-			const ECardApiResult result_2(ECardApiResult::Major::Error, minor, "Game Over :(", ECardApiResult::Origin::Server);
+			const ECardApiResult result_2(ECardApiResult::Major::Error, minor, "Game Over :("_L1, ECardApiResult::Origin::Server);
 			QVERIFY(!(result_2 == ECardApiResult(result_2.toStatus())));
 
 			const ECardApiResult result_3(ECardApiResult::Major::Error, minor, ECardApiResult::getMessage(minor), ECardApiResult::Origin::Server);
@@ -295,10 +296,10 @@ class test_ECardApiResult
 
 		void illegalInitialization()
 		{
-			ECardApiResult internalError = ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Internal_Error, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr.", ECardApiResult::Origin::Client);
+			ECardApiResult internalError = ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Internal_Error, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."_L1, ECardApiResult::Origin::Client);
 
-			QCOMPARE(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr.", ECardApiResult::Origin::Client), internalError);
-			QCOMPARE(ECardApiResult(ECardApiResult::Major::Ok, ECardApiResult::Minor::AL_Parameter_Error, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr.", ECardApiResult::Origin::Client), internalError);
+			QCOMPARE(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::null, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."_L1, ECardApiResult::Origin::Client), internalError);
+			QCOMPARE(ECardApiResult(ECardApiResult::Major::Ok, ECardApiResult::Minor::AL_Parameter_Error, "Lorem ipsum dolor sit amet, consetetur sadipscing elitr."_L1, ECardApiResult::Origin::Client), internalError);
 		}
 
 

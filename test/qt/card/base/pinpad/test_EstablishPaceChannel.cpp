@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -39,7 +39,7 @@ class test_EstablishPaceChannel
 
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
 
-			QCOMPARE(builder.createCommandData(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1Struct(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -52,7 +52,7 @@ class test_EstablishPaceChannel
 
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
 
-			QCOMPARE(builder.createCommandDataCcid(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1StructCcid(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -67,7 +67,7 @@ class test_EstablishPaceChannel
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
 			builder.setPassword(QByteArray("123456"));
 
-			QCOMPARE(builder.createCommandData(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1Struct(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -82,7 +82,7 @@ class test_EstablishPaceChannel
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN);
 			builder.setPassword(QByteArray("123456"));
 
-			QCOMPARE(builder.createCommandDataCcid().toHex(), QByteArray::fromHex(hexBytes).toHex());
+			QCOMPARE(builder.createASN1StructCcid().toHex(), QByteArray::fromHex(hexBytes).toHex());
 		}
 
 
@@ -98,7 +98,7 @@ class test_EstablishPaceChannel
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN, QByteArray::fromHex(mChatHex));
 
 			QCOMPARE(builder.getChat(), QByteArray::fromHex(mChatHex));
-			QCOMPARE(builder.createCommandData(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1Struct(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -114,7 +114,7 @@ class test_EstablishPaceChannel
 			EstablishPaceChannel builder(PacePasswordId::PACE_PIN, QByteArray::fromHex(mChatHex));
 
 			QCOMPARE(builder.getChat(), QByteArray::fromHex(mChatHex));
-			QCOMPARE(builder.createCommandDataCcid(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1StructCcid(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -132,7 +132,7 @@ class test_EstablishPaceChannel
 
 			QCOMPARE(builder.getChat(), QByteArray::fromHex(mChatHex));
 			QCOMPARE(builder.getCertificateDescription(), QByteArray::fromHex(mCertHex));
-			QCOMPARE(builder.createCommandData(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1Struct(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -151,7 +151,7 @@ class test_EstablishPaceChannel
 
 			QCOMPARE(builder.getChat(), QByteArray::fromHex(mChatHex));
 			QCOMPARE(builder.getCertificateDescription(), QByteArray::fromHex(mCertHex));
-			QCOMPARE(builder.createCommandDataCcid(), QByteArray::fromHex(hexBytes));
+			QCOMPARE(builder.createASN1StructCcid(), QByteArray::fromHex(hexBytes));
 		}
 
 
@@ -179,7 +179,7 @@ class test_EstablishPaceChannel
 			const QByteArray certDescription = QByteArray::fromHex(mCertHex);
 
 			EstablishPaceChannel builder(pinId, chat, certDescription);
-			const auto buffer = builder.createCommandDataCcid();
+			const auto buffer = builder.createASN1StructCcid();
 
 			EstablishPaceChannel parser;
 			QVERIFY(parser.fromCcid(buffer));

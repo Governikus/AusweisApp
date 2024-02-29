@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -31,10 +32,10 @@ class test_PreVerificationSettings
 		{
 			ResourceLoader::getInstance().init();
 
-			cvcs.append(TestFileHelper::readFile(":/card/cvca-DETESTeID00002_DETESTeID00001.hex", true));
-			cvcs.append(TestFileHelper::readFile(":/card/cvca-DETESTeID00004_DETESTeID00002.hex", true));
-			cvcs.append(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00035.hex", true));
-			cvcs.append(TestFileHelper::readFile(":/card/cvat-DEDEMODEV00038.hex", true));
+			cvcs.append(TestFileHelper::readFile(":/card/cvca-DETESTeID00002_DETESTeID00001.hex"_L1, true));
+			cvcs.append(TestFileHelper::readFile(":/card/cvca-DETESTeID00004_DETESTeID00002.hex"_L1, true));
+			cvcs.append(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00035.hex"_L1, true));
+			cvcs.append(TestFileHelper::readFile(":/card/cvat-DEDEMODEV00038.hex"_L1, true));
 		}
 
 

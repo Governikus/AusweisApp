@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -27,7 +27,7 @@ template<> IfdList* createNewObject<IfdList*, int, int>(int&& pCheckInterval, in
 } // namespace governikus
 
 
-QVector<QSharedPointer<IfdListEntry>> IfdList::getIfdList() const
+QList<QSharedPointer<IfdListEntry>> IfdList::getIfdList() const
 {
-	return QVector<QSharedPointer<IfdListEntry>>();
+	return QList<QSharedPointer<IfdListEntry>>();
 }

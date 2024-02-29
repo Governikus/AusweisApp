@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.AuthView
@@ -221,7 +221,7 @@ Controller {
 	PasswordInfoData {
 		id: transportPinReminderInfoData
 
-		contentType: PasswordInfoContent.Type.CHANGE_PIN
+		contentType: PasswordInfoData.Type.CHANGE_PIN
 	}
 	Component {
 		id: transportPinReminderInfoView

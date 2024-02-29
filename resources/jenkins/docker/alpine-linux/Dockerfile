@@ -1,7 +1,7 @@
 FROM dev-docker.governikus.de/ausweisapp2/alpine:swarm
 MAINTAINER Governikus KG <support@ausweisapp.de>
 
-ENV NAME=Linux LABELS="Linux g++ clang++" PACKAGES_DIR=/home/governikus/packages
+ENV NAME=Linux LABELS="Linux g++ clang++ clazy" PACKAGES_DIR=/home/governikus/packages
 
 RUN apk --no-cache add g++ clang clang-analyzer ccache gcovr cloc clazy cppcheck pkgconf pcsc-lite-dev binutils-gold lld \
                        py3-setuptools py3-jsonschema mesa-dev libx11-dev libxkbcommon-dev xcb-util-wm-dev xcb-util-image-dev xcb-util-keysyms-dev && \

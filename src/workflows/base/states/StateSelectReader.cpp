@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateSelectReader.h"
@@ -20,6 +20,7 @@ StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pCon
 	: AbstractState(pContext)
 	, GenericContextContainer(pContext)
 {
+	setHandleNfcStop();
 }
 
 
@@ -30,7 +31,6 @@ void StateSelectReader::run()
 	*this << connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
 	*this << connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
 	*this << connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateSelectReader::onReaderInfoChanged);
-	*this << connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateSelectReader::onReaderStatusChanged);
 
 	onReaderInfoChanged();
 
@@ -51,9 +51,9 @@ void StateSelectReader::onReaderInfoChanged()
 	Q_ASSERT(context);
 	bool currentReaderHasEidCardButInsufficientApduLength = false;
 
-	const QVector<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
+	const QList<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
 	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(plugInTypes));
-	QVector<ReaderInfo> selectableReaders;
+	QList<ReaderInfo> selectableReaders;
 
 	for (const auto& info : allReaders)
 	{
@@ -92,24 +92,6 @@ void StateSelectReader::onReaderInfoChanged()
 	qCDebug(statemachine) << "Type:" << readerInfo.getPlugInType() << "BasicReader:" << readerInfo.isBasicReader();
 
 	Q_EMIT fireContinue();
-}
-
-
-void StateSelectReader::onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const
-{
-#if defined(Q_OS_IOS)
-	if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || pInfo.getPlugInType() != ReaderManagerPlugInType::NFC)
-	{
-		return;
-	}
-
-	if (!pInfo.isScanRunning())
-	{
-		Q_EMIT getContext()->fireCancelWorkflow();
-	}
-#else
-	Q_UNUSED(pInfo)
-#endif
 }
 
 

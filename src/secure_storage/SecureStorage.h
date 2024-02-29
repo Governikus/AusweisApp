@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,11 +16,11 @@
 #include <QDateTime>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QList>
 #include <QSslCertificate>
 #include <QSslCipher>
 #include <QString>
 #include <QUrl>
-#include <QVector>
 
 
 class test_SecureStorage;
@@ -41,7 +41,7 @@ class SecureStorage
 		QString mVendor;
 		QByteArrayList mCvcas;
 		QByteArrayList mCvcasTest;
-		QVector<QSslCertificate> mUpdateCertificates;
+		QList<QSslCertificate> mUpdateCertificates;
 		QUrl mSelfAuthenticationUrl;
 		QUrl mSelfAuthenticationTestUrl;
 		QUrl mUpdateServerBaseUrl;
@@ -62,8 +62,9 @@ class SecureStorage
 		TlsConfiguration mTlsConfigRemoteIfd;
 		TlsConfiguration mTlsConfigRemoteIfdPairing;
 		TlsConfiguration mTlsConfigLocalIfd;
-		QMap<QSsl::KeyAlgorithm, int> mMinStaticKeySizes;
-		QMap<QSsl::KeyAlgorithm, int> mMinEphemeralKeySizes;
+		QMap<QSsl::KeyAlgorithm, int> mMinKeySizes;
+		QMap<QSsl::KeyAlgorithm, int> mMinKeySizesIfd;
+		int mCreateKeySizeIfd;
 
 		[[nodiscard]] QJsonArray readJsonArray(const QJsonObject& pConfig, const QLatin1String pName) const;
 		[[nodiscard]] QString readGroup(const QJsonObject& pConfig, const QLatin1String pGroup, const QLatin1String pName) const;
@@ -89,7 +90,7 @@ class SecureStorage
 
 		[[nodiscard]] const QString& getVendor() const;
 		[[nodiscard]] const QByteArrayList& getCVRootCertificates(bool pProductive) const;
-		[[nodiscard]] const QVector<QSslCertificate>& getUpdateCertificates() const;
+		[[nodiscard]] const QList<QSslCertificate>& getUpdateCertificates() const;
 		[[nodiscard]] const QUrl& getSelfAuthenticationUrl(bool pTest = false) const;
 		[[nodiscard]] const QUrl& getUpdateServerBaseUrl() const;
 		[[nodiscard]] const QUrl& getWhitelistServerBaseUrl() const;
@@ -105,8 +106,9 @@ class SecureStorage
 		[[nodiscard]] const TlsConfiguration& getTlsConfig(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
 		[[nodiscard]] const TlsConfiguration& getTlsConfigRemoteIfd(TlsSuite pTlsSuite = TlsSuite::DEFAULT) const;
 		[[nodiscard]] const TlsConfiguration& getTlsConfigLocalIfd() const;
-		[[nodiscard]] int getMinimumStaticKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
-		[[nodiscard]] int getMinimumEphemeralKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		[[nodiscard]] int getMinimumKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		[[nodiscard]] int getMinimumIfdKeySize(QSsl::KeyAlgorithm pKeyAlgorithm) const;
+		[[nodiscard]] int getIfdCreateSize() const;
 		[[nodiscard]] bool isValid() const;
 
 		[[nodiscard]] QString getDeveloperConfig() const;

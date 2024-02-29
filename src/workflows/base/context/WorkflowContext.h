@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -40,7 +40,7 @@ class WorkflowContext
 		bool mStateApproved;
 		bool mWorkflowKilled;
 		QString mCurrentState;
-		QVector<ReaderManagerPlugInType> mReaderPlugInTypes;
+		QList<ReaderManagerPlugInType> mReaderPlugInTypes;
 		QString mReaderName;
 		QSharedPointer<CardConnection> mCardConnection;
 		int mCardVanishedDuringPacePinCount;
@@ -56,7 +56,6 @@ class WorkflowContext
 		std::optional<FailureCode> mFailureCode;
 		ECardApiResult mStartPaosResult;
 		bool mErrorReportedToUser;
-		bool mPaceResultReportedToUser;
 		bool mWorkflowFinished;
 		bool mWorkflowCancelled;
 		bool mWorkflowCancelledInState;
@@ -67,6 +66,7 @@ class WorkflowContext
 		QString mProgressMessage;
 		bool mShowRemoveCardFeedback;
 		QString mClaimedBy;
+		bool mInterruptRequested;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -116,9 +116,6 @@ class WorkflowContext
 		[[nodiscard]] bool isErrorReportedToUser() const;
 		void setErrorReportedToUser(bool pErrorReportedToUser = true);
 
-		[[nodiscard]] bool isPaceResultReportedToUser() const;
-		void setPaceResultReportedToUser(bool pReported = true);
-
 		void setStateApproved(bool pApproved = true);
 		[[nodiscard]] bool isStateApproved() const;
 
@@ -130,8 +127,8 @@ class WorkflowContext
 
 		[[nodiscard]] bool isSmartCardUsed() const;
 
-		[[nodiscard]] const QVector<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
-		void setReaderPlugInTypes(const QVector<ReaderManagerPlugInType>& pReaderPlugInTypes);
+		[[nodiscard]] const QList<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
+		void setReaderPlugInTypes(const QList<ReaderManagerPlugInType>& pReaderPlugInTypes);
 
 		[[nodiscard]] const QString& getReaderName() const;
 		void setReaderName(const QString& pReaderName);
@@ -223,9 +220,16 @@ class WorkflowContext
 		}
 
 
+		void setInterruptRequested(bool pInterruptRequested);
+		[[nodiscard]] bool interruptRequested() const
+		{
+			return mInterruptRequested;
+		}
+
+
 		void setRemoveCardFeedback(bool pEnabled);
 
-		[[nodiscard]] virtual QVector<AcceptedEidType> getAcceptedEidTypes() const = 0;
+		[[nodiscard]] virtual QList<AcceptedEidType> getAcceptedEidTypes() const = 0;
 
 		[[nodiscard]] bool eidTypeMismatch() const;
 		[[nodiscard]] bool isMobileEidTypeAllowed(const MobileEidType& mobileEidType) const;

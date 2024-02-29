@@ -122,5 +122,5 @@ if(APPLE AND NOT IOS)
 
 	file(GLOB_RECURSE APP_BINARY ${CMAKE_BINARY_DIR}/*/@PROJECT_NAME@)
 	message("Signing app bundle: ${APP_BINARY}")
-	execute_process(COMMAND "@SIGNTOOL_CMD@" ${BUNDLE_APPLE_CODESIGN_PARAMETER} --entitlements @PACKAGING_DIR@/macos/@PROJECT_NAME@.entitlements -i @BUNDLE_IDENTIFIER@ ${APP_BINARY})
+	execute_process(COMMAND "@SIGNTOOL_CMD@" ${BUNDLE_APPLE_CODESIGN_PARAMETER} --entitlements @CMAKE_BINARY_DIR@/entitlements.plist -i @BUNDLE_IDENTIFIER@ ${APP_BINARY})
 endif()

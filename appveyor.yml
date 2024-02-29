@@ -81,6 +81,6 @@ on_finish:
     - cd "%APPVEYOR_BUILD_FOLDER%"
 
     - ps: |
-        $version = Select-String -Path .\CMakeLists.txt -Pattern "AusweisApp2 VERSION ([0-9.]+)" | % { $_.Matches[0].Groups[1].Value }
+        $version = Select-String -Path .\CMakeLists.txt -Pattern "AusweisApp VERSION ([0-9.]+)" | % { $_.Matches[0].Groups[1].Value }
         Update-AppveyorBuild -Version "$version-$env:APPVEYOR_BUILD_NUMBER"
 

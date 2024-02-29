@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -23,8 +23,8 @@ ComboBox {
 
 	background: GPaneBackground {
 		border.color: control.textStyle.textColor
-		border.width: Style.dimens.border_width
 		color: Style.color.transparent
+		drawShadow: false
 	}
 	contentItem: GText {
 		elide: Text.ElideRight
@@ -53,7 +53,7 @@ ComboBox {
 			}
 		}
 		contentItem: GText {
-			color: highlighted ? Style.color.control_content_hover : control.textStyle.textColor
+			color: highlighted ? Style.color.control_content_hovered : control.textStyle.textColor
 			elide: Text.ElideRight
 			text: modelData
 			textStyle: control.textStyle

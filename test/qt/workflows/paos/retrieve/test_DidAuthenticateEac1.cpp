@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,6 +17,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DidAuthenticateEac1
@@ -39,17 +40,17 @@ class test_DidAuthenticateEac1
 
 		void parseXml()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			QVERIFY(!eac1.isNull());
 
-			QCOMPARE(eac1->getConnectionHandle().getCardApplication(), QString("4549445F49534F5F32343732375F42415345"));
-			QCOMPARE(eac1->getConnectionHandle().getContextHandle(), QString("4549445F4946445F434F4E544558545F42415345"));
-			QCOMPARE(eac1->getConnectionHandle().getIfdName(), QString("REINER SCT cyberJack RFID komfort USB 52"));
-			QCOMPARE(eac1->getConnectionHandle().getSlotHandle(), QString("37343139303333612D616163352D343331352D386464392D656166393664636661653361"));
-			QCOMPARE(eac1->getConnectionHandle().getSlotIndex(), QString("0"));
+			QCOMPARE(eac1->getConnectionHandle().getCardApplication(), "4549445F49534F5F32343732375F42415345"_L1);
+			QCOMPARE(eac1->getConnectionHandle().getContextHandle(), "4549445F4946445F434F4E544558545F42415345"_L1);
+			QCOMPARE(eac1->getConnectionHandle().getIfdName(), "REINER SCT cyberJack RFID komfort USB 52"_L1);
+			QCOMPARE(eac1->getConnectionHandle().getSlotHandle(), "37343139303333612D616163352D343331352D386464392D656166393664636661653361"_L1);
+			QCOMPARE(eac1->getConnectionHandle().getSlotIndex(), "0"_L1);
 
-			QCOMPARE(eac1->getDidName(), QString("PIN"));
+			QCOMPARE(eac1->getDidName(), "PIN"_L1);
 
 			QCOMPARE(eac1->getAuthenticatedAuxiliaryDataAsBinary(), QByteArray::fromHex("67447315060904007F000703010401530831393932313230367315060904007F000703010402530832303133313230367314060904007F000703010403530702760400110000"));
 			QCOMPARE(eac1->getAuthenticatedAuxiliaryData()->getAgeVerificationDate(), QDate(1992, 12, 6));
@@ -58,14 +59,14 @@ class test_DidAuthenticateEac1
 			QCOMPARE(eac1->getCertificateDescription()->getIssuerName(), QStringLiteral("Governikus Test DVCA"));
 			QVERIFY(eac1->getOptionalChat());
 			QVERIFY(eac1->getRequiredChat());
-			QCOMPARE(eac1->getTransactionInfo(), QString("this is a test for TransactionInfo"));
+			QCOMPARE(eac1->getTransactionInfo(), "this is a test for TransactionInfo"_L1);
 		}
 
 
 		// Test data from Test TS_TA_2.1.1 from TR-03105-5.2
 		void test_TS_TA_2_1_1()
 		{
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml");
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml"_L1);
 			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 
 			QVERIFY(eac1 == nullptr);
@@ -79,8 +80,8 @@ class test_DidAuthenticateEac1
 			QTest::addColumn<QString>("templateXml");
 
 			const QByteArray placeHolder("<!-- PLACEHOLDER -->");
-			const QString templ1(":/paos/DIDAuthenticateEAC1_template.xml");
-			const QString templ2(":/paos/DIDAuthenticateEAC1_template2.xml");
+			const QString templ1(":/paos/DIDAuthenticateEAC1_template.xml"_L1);
+			const QString templ2(":/paos/DIDAuthenticateEAC1_template2.xml"_L1);
 
 			QTest::newRow("DIDName") << QByteArray("<!-- DIDNAME -->") << QByteArray("PIN") << templ1;
 			QTest::newRow("CertificateDescription") << placeHolder << QByteArray("3082013b060a04007f00070301030101a1160c14476f7665726e696b757320546573742044564341a21a1318687474703a2f2f7777772e676f7665726e696b75732e6465a31a0c18476f7665726e696b757320476d6248202620436f2e204b47a420131e68747470733a2f2f746573742e676f7665726e696b75732d6569642e6465a581940c81914e616d652c20416e7363687269667420756e6420452d4d61696c2d4164726573736520646573204469656e737465616e626965746572733a0d0a476f7665726e696b757320476d6248202620436f2e204b470d0a486f6368736368756c72696e6720340d0a3238333539204272656d656e0d0a452d4d61696c3a206b6f6e74616b7440676f7665726e696b75732e646509a72431220420ccb65ac1d48e9cd43876ca82cfe83c43d711294d4a40f68811acb715aaa6c8ab") << templ1;
@@ -143,7 +144,7 @@ class test_DidAuthenticateEac1
 			QFETCH(bool, parsingSuccessful);
 			QFETCH(QList<AcceptedEidType>, acceptedEidTypes);
 
-			QByteArray content = TestFileHelper::readFile(QString(":/paos/DIDAuthenticateEAC1_template.xml"));
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_template.xml"_L1);
 			content = content.replace(QByteArray("<!-- PLACEHOLDER -->"), replaceContent);
 
 			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));

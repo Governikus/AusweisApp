@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,7 +12,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -29,9 +29,9 @@ class test_RemoteDeviceFilterModel
 			QSharedPointer<RemoteDeviceFilterModel> filterModelUnavail = QSharedPointer<RemoteDeviceFilterModel>::create(sourceModel.data(), RemoteDeviceFilterModel::showUnavailableAndPaired);
 			QSharedPointer<RemoteDeviceFilterModel> filterModelAvailPair = QSharedPointer<RemoteDeviceFilterModel>::create(sourceModel.data(), RemoteDeviceFilterModel::showActivePairingMode);
 
-			const RemoteDeviceModelEntry availableEntry(QString("reader 1"), QString("test id"), true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
-			const RemoteDeviceModelEntry unavailableEntry(QString("reader 2"), QString("test id"), false, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
-			const RemoteDeviceModelEntry availablePairingEntry(QString("reader 2"), QString("test id"), true, false, true, true, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
+			const RemoteDeviceModelEntry availableEntry("reader 1"_L1, "test id"_L1, true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
+			const RemoteDeviceModelEntry unavailableEntry("reader 2"_L1, "test id"_L1, false, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
+			const RemoteDeviceModelEntry availablePairingEntry("reader 2"_L1, "test id"_L1, true, false, true, true, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), nullptr);
 
 			sourceModel->mAllRemoteReaders.insert(0, availableEntry);
 			sourceModel->mAllRemoteReaders.insert(1, unavailableEntry);

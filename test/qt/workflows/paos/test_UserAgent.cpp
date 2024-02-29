@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_UserAgent
@@ -21,13 +22,13 @@ class test_UserAgent
 	private Q_SLOTS:
 		void getter()
 		{
-			QCoreApplication::setApplicationVersion("1.32.4");
+			QCoreApplication::setApplicationVersion("1.32.4"_L1);
 
 			UserAgent obj;
-			QCOMPARE(obj.getName(), QString("AusweisApp2"));
-			QCOMPARE(obj.getVersionMajor(), QString("1"));
-			QCOMPARE(obj.getVersionMinor(), QString("32"));
-			QCOMPARE(obj.getVersionSubminor(), QString("4"));
+			QCOMPARE(obj.getName(), "AusweisApp2"_L1);
+			QCOMPARE(obj.getVersionMajor(), "1"_L1);
+			QCOMPARE(obj.getVersionMinor(), "32"_L1);
+			QCOMPARE(obj.getVersionSubminor(), "4"_L1);
 		}
 
 

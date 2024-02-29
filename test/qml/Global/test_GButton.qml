@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick
@@ -75,7 +75,7 @@ TestCase {
 			}
 		", testCase);
 		tryCompare(buttonSmallLayout, "buttonHeight", data.height);
-		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, Constants.is_desktop ? 120 : 80));
+		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, Constants.is_desktop ? 132 : 104));
 	}
 	function test_size_data() {
 		let longText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
@@ -86,37 +86,128 @@ TestCase {
 				"icon": "",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 120 : 80
+				"width": Constants.is_desktop ? 132 : 104
 			}, {
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 120 : 80
+				"width": Constants.is_desktop ? 132 : 104
 			}, {
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": 16 + longTextWidth
+				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
 			}, {
 				"tag": "withIconNoText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 120 : 80
+				"width": Constants.is_desktop ? 132 : 104
 			}, {
 				"tag": "withIconSmallText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 120 : 80
+				"width": Constants.is_desktop ? 132 : 104
 			}, {
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": (Constants.is_desktop ? 50 : 53) + longTextWidth
+				"width": 68 + longTextWidth
+			}];
+	}
+	function test_size_withoutBackground(data) {
+		let button = createTemporaryQmlObject("
+			import Governikus.Global
+			GButton {
+				icon.source: \"" + data.icon + "\"
+				text: \"" + data.text + "\"
+				background: null
+			}
+		", testCase);
+		tryCompare(button, "height", data.height);
+		tryCompare(button, "width", data.width);
+		let buttonInLayout = createTemporaryQmlObject("
+			import Governikus.Global
+			import QtQuick.Layouts
+			ColumnLayout {
+				readonly property alias buttonHeight: mybutton.height
+				readonly property alias buttonWidth: mybutton.width
+				width: 1000
+				GButton {
+					id: mybutton
+					icon.source: \"" + data.icon + "\"
+					text: \"" + data.text + "\"
+					background: null
+				}
+			}
+		", testCase);
+		tryCompare(buttonInLayout, "buttonHeight", data.height);
+		tryCompare(buttonInLayout, "buttonWidth", data.width);
+		let buttonSmallLayout = createTemporaryQmlObject("
+			import Governikus.Global
+			import QtQuick.Layouts
+			ColumnLayout {
+				readonly property alias buttonHeight: mybutton.height
+				readonly property alias buttonWidth: mybutton.width
+				width: 75
+				GButton {
+					id: mybutton
+					icon.source: \"" + data.icon + "\"
+					text: \"" + data.text + "\"
+					background: null
+				}
+			}
+		", testCase);
+		tryCompare(buttonSmallLayout, "buttonHeight", data.height);
+		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, 75));
+	}
+	function test_size_withoutBackground_data() {
+		let longText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
+		verify(waitForRendering(longText));
+		let longTextWidth = Math.ceil(longText.width);
+		let smallText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"t\"}", testCase);
+		verify(waitForRendering(smallText));
+		let smallTextWidth = Math.ceil(smallText.width);
+		return [{
+				"tag": "noIconNoText",
+				"icon": "",
+				"text": "",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": Constants.is_desktop ? 36 : 40
+			}, {
+				"tag": "noIconSmallText",
+				"icon": "",
+				"text": "t",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": (Constants.is_desktop ? 36 : 40) + smallTextWidth
+			}, {
+				"tag": "noIconLongText",
+				"icon": "",
+				"text": "test test test test test test",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
+			}, {
+				"tag": "withIconNoText",
+				"icon": "qrc:///images/npa.svg",
+				"text": "",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": 68
+			}, {
+				"tag": "withIconSmallText",
+				"icon": "qrc:///images/npa.svg",
+				"text": "t",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": 68 + smallTextWidth
+			}, {
+				"tag": "withIconLongText",
+				"icon": "qrc:///images/npa.svg",
+				"text": "test test test test test test",
+				"height": Constants.is_desktop ? 40 : 39,
+				"width": 68 + longTextWidth
 			}];
 	}
 	function test_text() {

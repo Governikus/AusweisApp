@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -13,7 +13,7 @@ GPane {
 
 	spacing: Constants.component_spacing
 
-	MoreViewMenuItem {
+	GMenuItem {
 		Layout.fillWidth: true
 		//: LABEL DESKTOP
 		buttonText: qsTr("Show system data")
@@ -27,7 +27,7 @@ GPane {
 	GSeparator {
 		Layout.fillWidth: true
 	}
-	MoreViewMenuItem {
+	GMenuItem {
 		Layout.fillWidth: true
 		//: LABEL DESKTOP
 		buttonText: qsTr("Show logs")

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -21,12 +21,12 @@ BaseConfirmationPopup {
 			visible: style !== ConfirmationPopup.PopupStyle.NoButtons
 		}
 		RowLayout {
-			Layout.fillWidth: true
 			spacing: 0
 
 			GButton {
-				Layout.fillWidth: true
+				Layout.maximumWidth: Number.POSITIVE_INFINITY
 				background: null
+				implicitWidth: 1
 				text: root.cancelButtonText
 				textStyle: Style.text.normal
 				visible: style & ConfirmationPopup.PopupStyle.CancelButton
@@ -39,8 +39,9 @@ BaseConfirmationPopup {
 				visible: style & ConfirmationPopup.PopupStyle.CancelButton && style & ConfirmationPopup.PopupStyle.OkButton
 			}
 			GButton {
-				Layout.fillWidth: true
+				Layout.maximumWidth: Number.POSITIVE_INFINITY
 				background: null
+				implicitWidth: 1
 				text: root.okButtonText
 				textStyle: Style.text.normal
 				visible: style & ConfirmationPopup.PopupStyle.OkButton

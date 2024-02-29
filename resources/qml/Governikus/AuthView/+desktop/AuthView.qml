@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -131,8 +131,8 @@ SectionPage {
 	DecisionView {
 		moreInformationText: infoData.linkText
 		moreInformationVisible: true
-		questionSubText: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
-		questionText: qsTr("Do you know your six-digit ID card PIN?")
+		questionSubText: qsTr("Online identification with Transport PIN is not possible. The self-selected, 6-digit ID card PIN is mandatory to use the eID function.")
+		questionText: qsTr("Do you know your 6-digit ID card PIN?")
 		visible: d.activeView === AuthView.SubViews.TransportPinReminder
 
 		onAgree: {
@@ -147,7 +147,7 @@ SectionPage {
 
 		//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
 		subText: qsTr("Please establish an internet connection.")
-		subTextColor: Constants.red
+		subTextColor: Style.color.warning
 
 		//: INFO DESKTOP Header of the message that no network connection is present during the authentication procedure.
 		text: qsTr("No network connectivity")
@@ -208,7 +208,7 @@ SectionPage {
 	PasswordInfoData {
 		id: infoData
 
-		contentType: d.activeView === AuthView.SubViews.TransportPinReminder || d.activeView === AuthView.SubViews.TransportPinReminderInfo ? PasswordInfoContent.Type.CHANGE_PIN : fromPasswordType(d.passwordType, NumberModel.isCanAllowedMode)
+		contentType: d.activeView === AuthView.SubViews.TransportPinReminder || d.activeView === AuthView.SubViews.TransportPinReminderInfo ? PasswordInfoData.Type.CHANGE_PIN : fromPasswordType(d.passwordType, NumberModel.isCanAllowedMode)
 	}
 	PasswordInfoView {
 		id: passwordInfoView
@@ -243,6 +243,7 @@ SectionPage {
 			return "";
 		}
 		text: NumberModel.inputError
+		textColor: Style.color.warning
 		visible: !errorConfirmed && NumberModel.hasPasswordError && d.view !== AuthView.SubViews.Result
 
 		onNextView: errorConfirmed = true
@@ -278,7 +279,7 @@ SectionPage {
 			//: INFO DESKTOP Information message about cancellation process without working network connectivity
 			return qsTr("Network problems detected, trying to reach server within 30 seconds.");
 		}
-		subTextColor: !authController.networkInterfaceActive ? Style.color.text_warning : Style.color.text
+		subTextColor: !authController.networkInterfaceActive ? Style.color.warning : Style.color.text
 
 		//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
 		text: qsTr("Aborting process and informing the service provider")
@@ -308,7 +309,7 @@ SectionPage {
 			//: INFO DESKTOP Generic progress status message during authentication.
 			return qsTr("Please wait a moment.");
 		}
-		subTextColor: !AuthModel.isBasicReader && NumberModel.inputError ? Style.color.text_warning : Style.color.text
+		subTextColor: !AuthModel.isBasicReader && NumberModel.inputError ? Style.color.warning : Style.color.text
 		text: (isInitialState ?
 			//: INFO DESKTOP Header of the progress information during the authentication process.
 			qsTr("Acquiring provider certificate") :

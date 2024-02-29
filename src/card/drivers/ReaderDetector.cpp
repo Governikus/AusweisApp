@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderDetector.h"
@@ -31,10 +31,10 @@ ReaderDetector::~ReaderDetector()
 }
 
 
-QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() const
+QList<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() const
 {
 	const auto& readerConfiguration = Env::getSingleton<ReaderConfiguration>();
-	QVector<ReaderConfigurationInfo> attachedSupportedDevices;
+	QList<ReaderConfigurationInfo> attachedSupportedDevices;
 
 	const auto& devIds = attachedDevIds();
 	for (const auto& devId : devIds)
@@ -51,7 +51,7 @@ QVector<ReaderConfigurationInfo> ReaderDetector::getAttachedSupportedDevices() c
 
 ReaderConfigurationInfo ReaderDetector::getReaderConfigurationInfo(const QString& pReaderName) const
 {
-	QVector<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
+	QList<ReaderConfigurationInfo> attachedSupportedDevices = getAttachedSupportedDevices();
 	attachedSupportedDevices += Env::getSingleton<ReaderConfiguration>()->getVirtualReaderConfigurationInfos();
 
 	for (const auto& info : std::as_const(attachedSupportedDevices))

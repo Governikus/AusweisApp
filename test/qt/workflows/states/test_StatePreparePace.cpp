@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,7 +16,7 @@
 #include <QByteArrayList>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_StatePreparePace
@@ -125,7 +125,7 @@ class test_StatePreparePace
 
 			mContext->setStateApproved(false);
 
-			const QString puk("0987654321");
+			const QString puk("0987654321"_L1);
 			mContext->setPuk(puk);
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
@@ -151,7 +151,7 @@ class test_StatePreparePace
 
 			mContext->setStateApproved(false);
 
-			const QString can("000000");
+			const QString can("000000"_L1);
 			mContext->setCan(can);
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
@@ -181,7 +181,7 @@ class test_StatePreparePace
 
 			mContext->setStateApproved(false);
 
-			const QString pin("000000");
+			const QString pin("000000"_L1);
 			mContext->setPin(pin);
 			mContext->setStateApproved();
 			QCOMPARE(spyEnterPacePassword.count(), 1);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -42,9 +42,11 @@ class StateEstablishPaceChannel
 	Q_SIGNALS:
 		void fireNoCardConnection();
 		void firePaceChannelEstablished();
-		void firePaceChannelInoperative();
+		void fireWrongPin();
+		void fireThirdPinAttemptFailed();
 		void fireAbortAndUnfortunateCardPosition();
 		void firePaceChannelFailed();
+		void firePacePukEstablished();
 };
 
 } // namespace governikus

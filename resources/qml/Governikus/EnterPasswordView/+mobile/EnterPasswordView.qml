@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -27,6 +28,7 @@ FlickableSectionPage {
 
 	fillWidth: true
 
+	Component.onCompleted: d.forceRedraw = 0
 	Keys.onPressed: event => {
 		event.accepted = pinField.handleKeyEvent(event.key, event.modifiers);
 	}
@@ -34,6 +36,8 @@ FlickableSectionPage {
 
 	QtObject {
 		id: d
+
+		property int forceRedraw: 1
 
 		function setPassword() {
 			switch (passwordType) {
@@ -72,11 +76,13 @@ FlickableSectionPage {
 	GridLayout {
 		id: grid
 
-		readonly property bool isLandscape: width > Math.max(infoLayout.Layout.minimumWidth, pinField.Layout.preferredWidth) + separator.effectiveImplicitWidth + numberPad.implicitWidth
+		readonly property bool isLandscape: width > Math.max(infoLayout.Layout.minimumWidth, pinField.Layout.preferredWidth) + separator.implicitWidth + numberPad.implicitWidth
 
 		Layout.maximumHeight: Number.POSITIVE_INFINITY
 		Layout.maximumWidth: Number.POSITIVE_INFINITY
+		Layout.minimumHeight: isLandscape ? Math.max(infoLayout.Layout.minimumHeight, numberPad.Layout.minimumHeight) : (infoLayout.Layout.minimumHeight + rowSpacing + numberPad.Layout.minimumHeight)
 		Layout.minimumWidth: Math.max(infoLayout.Layout.minimumWidth, numberPad.Layout.minimumWidth)
+		Layout.preferredHeight: implicitHeight + d.forceRedraw
 		columnSpacing: 0
 		flow: isLandscape ? GridLayout.LeftToRight : GridLayout.TopToBottom
 		rowSpacing: Constants.component_spacing
@@ -88,6 +94,35 @@ FlickableSectionPage {
 			Layout.maximumWidth: Style.dimens.max_text_width
 			spacing: 0
 
+			AnimationLoader {
+				Layout.alignment: Qt.AlignHCenter
+				Layout.bottomMargin: Constants.component_spacing
+				type: {
+					if (grid.isLandscape) {
+						return AnimationLoader.Type.NONE;
+					}
+					switch (baseItem.passwordType) {
+					case PasswordType.TRANSPORT_PIN:
+						return AnimationLoader.Type.ENTER_TRANSPORT_PIN;
+					case PasswordType.CAN:
+						return AnimationLoader.Type.ENTER_CAN;
+					case PasswordType.SMART_PIN:
+					case PasswordType.PIN:
+						return AnimationLoader.Type.ENTER_PIN;
+					case PasswordType.NEW_PIN_CONFIRMATION:
+					case PasswordType.NEW_PIN:
+					case PasswordType.NEW_SMART_PIN:
+					case PasswordType.NEW_SMART_PIN_CONFIRMATION:
+						return AnimationLoader.Type.ENTER_NEW_PIN;
+					case PasswordType.PUK:
+						return AnimationLoader.Type.ENTER_PUK;
+					case PasswordType.REMOTE_PIN:
+						return AnimationLoader.Type.ENTER_REMOTE_PIN;
+					default:
+						return AnimationLoader.Type.NONE;
+					}
+				}
+			}
 			GText {
 				Layout.alignment: Qt.AlignHCenter
 				horizontalAlignment: Text.AlignHCenter
@@ -128,39 +163,39 @@ FlickableSectionPage {
 					}
 					if (passwordType === PasswordType.SMART_PIN && NumberModel.retryCounter === 1) {
 						//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID
-						return qsTr("You have entered an incorrect, six-digit Smart-eID PIN twice. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
+						return qsTr("You have entered an incorrect, 6-digit Smart-eID PIN 2 times. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
 					}
 					if (passwordType === PasswordType.CAN) {
 						if (NumberModel.isCanAllowedMode) {
-							//: INFO ANDROID IOS The user is required to enter the six-digit CAN in CAN-allowed authentication.
-							return qsTr("Please enter the six-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.");
+							//: INFO ANDROID IOS The user is required to enter the 6-digit CAN in CAN-allowed authentication.
+							return qsTr("Please enter the 6-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.");
 						}
-						//: INFO ANDROID IOS The wrong ID card PIN was entered twice, the third attempt requires the CAN for additional verification, hint where the CAN is found.
-						return qsTr("A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
+						//: INFO ANDROID IOS The wrong ID card PIN was entered twice, the 3rd attempt requires the CAN for additional verification, hint where the CAN is found.
+						return qsTr("A wrong ID card PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
 					}
 					if (passwordType === PasswordType.PUK) {
 						//: INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong ID card PIN entered three times.
-						return qsTr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.");
+						return qsTr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.");
 					}
 					if (passwordType === PasswordType.NEW_PIN) {
-						//: INFO ANDROID IOS A new six-digit ID card PIN needs to be supplied.
-						return qsTr("Please enter a new six-digit ID card PIN now.");
+						//: INFO ANDROID IOS A new 6-digit ID card PIN needs to be supplied.
+						return qsTr("Please enter a new 6-digit ID card PIN now.");
 					}
 					if (passwordType === PasswordType.NEW_PIN_CONFIRMATION) {
 						//: INFO ANDROID IOS The new ID card PIN needs to be confirmed.
-						return qsTr("Please confirm your new six-digit ID card PIN.");
+						return qsTr("Please confirm your new 6-digit ID card PIN.");
 					}
 					if (passwordType === PasswordType.NEW_SMART_PIN) {
-						//: INFO ANDROID IOS A new six-digit Smart-eID PIN needs to be supplied.
-						return qsTr("Please enter a new six-digit Smart-eID PIN now.");
+						//: INFO ANDROID IOS A new 6-digit Smart-eID PIN needs to be supplied.
+						return qsTr("Please enter a new 6-digit Smart-eID PIN now.");
 					}
 					if (passwordType === PasswordType.NEW_SMART_PIN_CONFIRMATION) {
 						//: INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.
-						return qsTr("Please confirm your new six-digit Smart-eID PIN.");
+						return qsTr("Please confirm your new 6-digit Smart-eID PIN.");
 					}
 					if (passwordType === PasswordType.TRANSPORT_PIN) {
 						//: INFO ANDROID IOS The Transport PIN is required by AA2, it needs to be change to an actual PIN.
-						return qsTr("Please enter the five-digit Transport PIN.");
+						return qsTr("Please enter the 5-digit Transport PIN.");
 					}
 					if (passwordType === PasswordType.REMOTE_PIN) {
 						//: INFO ANDROID IOS The pairing code for the smartphone is required.
@@ -169,15 +204,15 @@ FlickableSectionPage {
 					if (passwordType === PasswordType.SMART_PIN) {
 						return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN ?
 						//: INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
-						qsTr("Please enter your current six-digit Smart-eID PIN.") :
+						qsTr("Please enter your current 6-digit Smart-eID PIN.") :
 						//: INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.
-						qsTr("Please enter your six-digit Smart-eID PIN.");
+						qsTr("Please enter your 6-digit Smart-eID PIN.");
 					}
 					return ApplicationModel.currentWorkflow === ApplicationModel.WORKFLOW_CHANGE_PIN ?
 					//: INFO ANDROID IOS The AA2 expects the current ID card PIN with six digits in a PIN change.
-					qsTr("Please enter your current six-digit ID card PIN.") :
+					qsTr("Please enter your current 6-digit ID card PIN.") :
 					//: INFO ANDROID IOS The AA2 expects a ID card PIN with six digits in an authentication.
-					qsTr("Please enter your six-digit ID card PIN.");
+					qsTr("Please enter your 6-digit ID card PIN.");
 				}
 				textStyle: {
 					if (!!inputError || (passwordType === PasswordType.CAN && !NumberModel.isCanAllowedMode) || passwordType === PasswordType.PUK) {
@@ -205,10 +240,10 @@ FlickableSectionPage {
 				Layout.alignment: Qt.AlignHCenter
 				Layout.topMargin: Constants.text_spacing
 				text: (passwordType === PasswordType.TRANSPORT_PIN ?
-					//: LABEL ANDROID IOS Button to switch to a six-digit ID card PIN.
-					qsTr("Do you have a six-digit ID card PIN?") :
+					//: LABEL ANDROID IOS Button to switch to a 6-digit ID card PIN.
+					qsTr("Do you have a 6-digit ID card PIN?") :
 					//: LABEL ANDROID IOS Button to start a change of the Transport PIN.
-					qsTr("Do you have a five-digit Transport PIN?"))
+					qsTr("Do you have a 5-digit Transport PIN?"))
 				visible: false
 
 				onClicked: baseItem.changePinLength()
@@ -241,17 +276,26 @@ FlickableSectionPage {
 				onAccepted: d.setPassword()
 			}
 		}
-		GSeparator {
+		ColumnLayout {
 			id: separator
 
-			readonly property real effectiveImplicitWidth: Layout.leftMargin + implicitWidth + Layout.rightMargin
-
-			Layout.alignment: Qt.AlignCenter
-			Layout.leftMargin: Constants.component_spacing
-			Layout.preferredHeight: grid.height * 0.75
-			Layout.rightMargin: Constants.component_spacing
-			orientation: Qt.Vertical
 			visible: grid.isLandscape
+
+			GSpacer {
+				Layout.fillHeight: true
+				Layout.preferredHeight: 1 / 8
+			}
+			GSeparator {
+				Layout.fillHeight: true
+				Layout.leftMargin: Constants.component_spacing
+				Layout.preferredHeight: 6 / 8
+				Layout.rightMargin: Constants.component_spacing
+				orientation: Qt.Vertical
+			}
+			GSpacer {
+				Layout.fillHeight: true
+				Layout.preferredHeight: 1 / 8
+			}
 		}
 		GSpacer {
 			Layout.fillWidth: true

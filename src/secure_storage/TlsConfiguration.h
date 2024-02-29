@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,7 +15,6 @@
 #include <QSslConfiguration>
 #include <QSslEllipticCurve>
 #include <QStringList>
-#include <QVector>
 
 
 class test_TlsConfiguration;
@@ -36,7 +35,7 @@ class SslCipherList
 
 
 class SslEllipticCurveVector
-	: public QVector<QSslEllipticCurve>
+	: public QList<QSslEllipticCurve>
 {
 	public:
 		SslEllipticCurveVector& operator +=(const QString& pEllipticCurveName);
@@ -67,7 +66,7 @@ class TlsConfiguration final
 		[[nodiscard]] QSsl::SslProtocol getProtocolVersion() const;
 		[[nodiscard]] bool getOcspStapling() const;
 		[[nodiscard]] QList<QSslCipher> getCiphers() const;
-		[[nodiscard]] QVector<QSslEllipticCurve> getEllipticCurves() const;
+		[[nodiscard]] QList<QSslEllipticCurve> getEllipticCurves() const;
 		[[nodiscard]] QByteArrayList getSignatureAlgorithms() const;
 		[[nodiscard]] const QSslConfiguration& getConfiguration() const;
 };

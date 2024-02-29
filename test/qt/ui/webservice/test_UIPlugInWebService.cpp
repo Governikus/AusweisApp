@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -19,6 +19,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -44,7 +45,7 @@ class test_UIPlugInWebService
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			QCoreApplication::setApplicationVersion("1.0.0");
+			QCoreApplication::setApplicationVersion("1.0.0"_L1);
 			HttpServer::cPort = 0;
 			ResourceLoader::getInstance().init();
 		}
@@ -69,27 +70,27 @@ class test_UIPlugInWebService
 
 		void showUI_data()
 		{
-			QTest::addColumn<QString>("url");
+			QTest::addColumn<QLatin1String>("url");
 			QTest::addColumn<UiModule>("module");
 
-			QTest::newRow("noModule") << QString("/eID-Client?ShowUI") << UiModule::DEFAULT;
-			QTest::newRow("current") << QString("/eID-Client?ShowUI=current") << UiModule::CURRENT;
-			QTest::newRow("PINManagement") << QString("/eID-Client?ShowUI=PINManagement") << UiModule::PINMANAGEMENT;
-			QTest::newRow("PINManagement caseInsensitive") << QString("/eID-Client?ShowUI=PINManagement") << UiModule::PINMANAGEMENT;
-			QTest::newRow("Settings") << QString("/eID-Client?ShowUI=SETTINGS") << UiModule::SETTINGS;
+			QTest::newRow("noModule") << QLatin1String("/eID-Client?ShowUI") << UiModule::DEFAULT;
+			QTest::newRow("current") << QLatin1String("/eID-Client?ShowUI=current") << UiModule::CURRENT;
+			QTest::newRow("PINManagement") << QLatin1String("/eID-Client?ShowUI=PINManagement") << UiModule::PINMANAGEMENT;
+			QTest::newRow("PINManagement caseInsensitive") << QLatin1String("/eID-Client?ShowUI=PINManagement") << UiModule::PINMANAGEMENT;
+			QTest::newRow("Settings") << QLatin1String("/eID-Client?ShowUI=SETTINGS") << UiModule::SETTINGS;
 
-			QTest::newRow("Tutorial") << QString("/eID-Client?ShowUI=TUTORIAL") << UiModule::TUTORIAL;
-			QTest::newRow("Help") << QString("/eID-Client?ShowUI=HELP") << UiModule::HELP;
-			QTest::newRow("Self AUth") << QString("/eID-Client?ShowUI=SELF_AUTHENTICATION") << UiModule::SELF_AUTHENTICATION;
+			QTest::newRow("Tutorial") << QLatin1String("/eID-Client?ShowUI=TUTORIAL") << UiModule::TUTORIAL;
+			QTest::newRow("Help") << QLatin1String("/eID-Client?ShowUI=HELP") << UiModule::HELP;
+			QTest::newRow("Self AUth") << QLatin1String("/eID-Client?ShowUI=SELF_AUTHENTICATION") << UiModule::SELF_AUTHENTICATION;
 
-			QTest::newRow("SMART_EID") << QString("/eID-Client?ShowUI=SMART_EID") << UiModule::SMART_EID;
-			QTest::newRow("Smart-eID") << QString("/eID-Client?ShowUI=Smart-eID") << UiModule::SMART_EID;
+			QTest::newRow("SMART_EID") << QLatin1String("/eID-Client?ShowUI=SMART_EID") << UiModule::SMART_EID;
+			QTest::newRow("Smart-eID") << QLatin1String("/eID-Client?ShowUI=Smart-eID") << UiModule::SMART_EID;
 		}
 
 
 		void showUI()
 		{
-			QFETCH(QString, url);
+			QFETCH(QLatin1String, url);
 			QFETCH(UiModule, module);
 
 			QTest::ignoreMessage(QtDebugMsg, "Request type: showui");
@@ -108,22 +109,22 @@ class test_UIPlugInWebService
 
 		void status_data()
 		{
-			QTest::addColumn<QString>("url");
-			QTest::addColumn<QString>("header");
-			QTest::addColumn<QString>("name");
+			QTest::addColumn<QLatin1String>("url");
+			QTest::addColumn<QLatin1String>("header");
+			QTest::addColumn<QLatin1String>("name");
 
-			QTest::newRow("default") << QString("/eID-Client?status") << QString("text/plain; charset=utf-8") << QString("PLAIN");
-			QTest::newRow("plain") << QString("/eID-Client?status=plain") << QString("text/plain; charset=utf-8") << QString("PLAIN");
-			QTest::newRow("json") << QString("/eID-Client?status=json") << QString("application/json") << QString("JSON");
-			QTest::newRow("json caseInsensitive") << QString("/eID-Client?status=JsoN") << QString("application/json") << QString("JSON");
+			QTest::newRow("default") << QLatin1String("/eID-Client?status") << QLatin1String("text/plain; charset=utf-8") << QLatin1String("PLAIN");
+			QTest::newRow("plain") << QLatin1String("/eID-Client?status=plain") << QLatin1String("text/plain; charset=utf-8") << QLatin1String("PLAIN");
+			QTest::newRow("json") << QLatin1String("/eID-Client?status=json") << QLatin1String("application/json") << QLatin1String("JSON");
+			QTest::newRow("json caseInsensitive") << QLatin1String("/eID-Client?status=JsoN") << QLatin1String("application/json") << QLatin1String("JSON");
 		}
 
 
 		void status()
 		{
-			QFETCH(QString, url);
-			QFETCH(QString, header);
-			QFETCH(QString, name);
+			QFETCH(QLatin1String, url);
+			QFETCH(QLatin1String, header);
+			QFETCH(QLatin1String, name);
 
 			QTest::ignoreMessage(QtDebugMsg, "Request type: status");
 			QTest::ignoreMessage(QtDebugMsg, QRegularExpression(QStringLiteral("Create response with status format: ") + name));
@@ -143,21 +144,21 @@ class test_UIPlugInWebService
 
 		void imageRequest_data()
 		{
-			QTest::addColumn<QString>("url");
-			QTest::addColumn<QString>("header");
+			QTest::addColumn<QLatin1String>("url");
+			QTest::addColumn<QLatin1String>("header");
 			QTest::addColumn<int>("size");
 			QTest::addColumn<QNetworkReply::NetworkError>("error");
 
-			QTest::newRow("favicon") << QString("/favicon.ico") << QString("image/x-icon") << 94921 << QNetworkReply::NoError;
-			QTest::newRow("smallicon") << QString("/images/html_templates/icon_attention.svg") << QString("image/svg+xml") << 957 << QNetworkReply::NoError;
-			QTest::newRow("nothing") << QString("/images/html_templates/nothing.gif") << QString() << 0 << QNetworkReply::ContentNotFoundError;
+			QTest::newRow("favicon") << QLatin1String("/favicon.ico") << QLatin1String("image/x-icon") << 94921 << QNetworkReply::NoError;
+			QTest::newRow("smallicon") << QLatin1String("/images/html_templates/icon_attention.svg") << QLatin1String("image/svg+xml") << 957 << QNetworkReply::NoError;
+			QTest::newRow("nothing") << QLatin1String("/images/html_templates/nothing.gif") << QLatin1String() << 0 << QNetworkReply::ContentNotFoundError;
 		}
 
 
 		void imageRequest()
 		{
-			QFETCH(QString, url);
-			QFETCH(QString, header);
+			QFETCH(QLatin1String, url);
+			QFETCH(QLatin1String, header);
 			QFETCH(int, size);
 			QFETCH(QNetworkReply::NetworkError, error);
 
@@ -178,7 +179,7 @@ class test_UIPlugInWebService
 
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
 			HttpServerRequestor requestor;
-			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"_L1));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
 
@@ -204,7 +205,7 @@ class test_UIPlugInWebService
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot send 'Processing' to caller as connection is lost");
 			HttpServerRequestor requestor;
-			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"_L1));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
 
@@ -220,7 +221,7 @@ class test_UIPlugInWebService
 
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
 			HttpServerRequestor requestor;
-			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"));
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?tctokenURL=bla"_L1));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::ContentConflictError);
 
@@ -233,7 +234,7 @@ class test_UIPlugInWebService
 		void unknownRequest()
 		{
 			HttpServerRequestor requestor;
-			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?unknownRequest"));
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?unknownRequest"_L1));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::ContentNotFoundError);
 		}
@@ -242,7 +243,7 @@ class test_UIPlugInWebService
 		void sameUserAgentVersion()
 		{
 			HttpServerRequestor requestor;
-			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?ShowUI"));
+			QSharedPointer<QNetworkReply> reply = requestor.getRequest(getUrl("/eID-Client?ShowUI"_L1));
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
 
@@ -259,8 +260,8 @@ class test_UIPlugInWebService
 		{
 			QTest::ignoreMessage(QtWarningMsg, "Current version is higher than caller version");
 
-			QNetworkRequest request(getUrl("/eID-Client?ShowUI"));
-			request.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentVersion("0.0.0"));
+			QNetworkRequest request(getUrl("/eID-Client?ShowUI"_L1));
+			request.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentVersion("0.0.0"_L1));
 
 			HttpServerRequestor requestor;
 			QSharedPointer<QNetworkReply> reply = requestor.getRequest(request);
@@ -270,7 +271,7 @@ class test_UIPlugInWebService
 			QCOMPARE(mAuthenticationSpy->count(), 0);
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 1);
-			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start an older version"));
+			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start an older version"_L1));
 		}
 
 
@@ -278,8 +279,8 @@ class test_UIPlugInWebService
 		{
 			QTest::ignoreMessage(QtWarningMsg, "Current version is lower than caller version");
 
-			QNetworkRequest request(getUrl("/eID-Client?ShowUI"));
-			request.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentVersion("2.0.0"));
+			QNetworkRequest request(getUrl("/eID-Client?ShowUI"_L1));
+			request.setHeader(QNetworkRequest::UserAgentHeader, getUserAgentVersion("2.0.0"_L1));
 
 			HttpServerRequestor requestor;
 			QSharedPointer<QNetworkReply> reply = requestor.getRequest(request);
@@ -289,7 +290,7 @@ class test_UIPlugInWebService
 			QCOMPARE(mAuthenticationSpy->count(), 0);
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 1);
-			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start a newer version"));
+			QVERIFY(mShowUserInfoSpy->takeFirst().at(0).toString().contains("You tried to start a newer version"_L1));
 		}
 
 
@@ -340,26 +341,26 @@ class test_UIPlugInWebService
 
 		void test_GuessImageContentType_data()
 		{
-			QTest::addColumn<QString>("fileName");
+			QTest::addColumn<QLatin1String>("fileName");
 			QTest::addColumn<QByteArray>("output");
 
-			QTest::newRow("x-icon") << QString("test.ico") << QByteArrayLiteral("image/x-icon");
-			QTest::newRow("X-ICON") << QString("test.iCo") << QByteArrayLiteral("image/x-icon");
-			QTest::newRow("jpg") << QString("test.jpg") << QByteArrayLiteral("image/jpeg");
-			QTest::newRow("JPG") << QString("test.JPG") << QByteArrayLiteral("image/jpeg");
-			QTest::newRow("jpeg") << QString("test.jpeg") << QByteArrayLiteral("image/jpeg");
-			QTest::newRow("JPEG") << QString("test.Jpeg") << QByteArrayLiteral("image/jpeg");
-			QTest::newRow("png") << QString("test.png") << QByteArrayLiteral("image/png");
-			QTest::newRow("PNG") << QString("test.pNG") << QByteArrayLiteral("image/png");
-			QTest::newRow("svg") << QString("test.svg") << QByteArrayLiteral("image/svg+xml");
-			QTest::newRow("SVG") << QString("TEST.SVG") << QByteArrayLiteral("image/svg+xml");
-			QTest::newRow("other") << QString("test.test") << QByteArrayLiteral("image");
+			QTest::newRow("x-icon") << QLatin1String("test.ico") << QByteArrayLiteral("image/x-icon");
+			QTest::newRow("X-ICON") << QLatin1String("test.iCo") << QByteArrayLiteral("image/x-icon");
+			QTest::newRow("jpg") << QLatin1String("test.jpg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("JPG") << QLatin1String("test.JPG") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("jpeg") << QLatin1String("test.jpeg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("JPEG") << QLatin1String("test.Jpeg") << QByteArrayLiteral("image/jpeg");
+			QTest::newRow("png") << QLatin1String("test.png") << QByteArrayLiteral("image/png");
+			QTest::newRow("PNG") << QLatin1String("test.pNG") << QByteArrayLiteral("image/png");
+			QTest::newRow("svg") << QLatin1String("test.svg") << QByteArrayLiteral("image/svg+xml");
+			QTest::newRow("SVG") << QLatin1String("TEST.SVG") << QByteArrayLiteral("image/svg+xml");
+			QTest::newRow("other") << QLatin1String("test.test") << QByteArrayLiteral("image");
 		}
 
 
 		void test_GuessImageContentType()
 		{
-			QFETCH(QString, fileName);
+			QFETCH(QLatin1String, fileName);
 			QFETCH(QByteArray, output);
 
 			QCOMPARE(mUi->guessImageContentType(fileName), output);

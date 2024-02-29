@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -17,9 +17,9 @@
 #include "command/CreateCardConnectionCommand.h"
 #include "messages/IfdMessage.h"
 
+#include <QList>
 #include <QMap>
 #include <QPointer>
-#include <QVector>
 
 
 namespace governikus
@@ -32,8 +32,8 @@ class ServerMessageHandlerImpl
 
 	private:
 		const QSharedPointer<IfdDispatcherServer> mDispatcher;
-		QVector<ReaderManagerPlugInType> mAllowedPlugInTypes;
-		QVector<ReaderManagerPlugInType> mAllowedCardTypes;
+		QList<ReaderManagerPlugInType> mAllowedPlugInTypes;
+		QList<ReaderManagerPlugInType> mAllowedCardTypes;
 		QMap<QString, QSharedPointer<CardConnection>> mCardConnections;
 
 		[[nodiscard]] QString slotHandleForReaderName(const QString& pReaderName) const;
@@ -56,11 +56,11 @@ class ServerMessageHandlerImpl
 
 	public:
 		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
-				const QVector<ReaderManagerPlugInType>& pAllowedTypes = Enum<ReaderManagerPlugInType>::getList());
+				const QList<ReaderManagerPlugInType>& pAllowedTypes = Enum<ReaderManagerPlugInType>::getList());
 
 		void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput) override;
 		void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) override;
-		void setAllowedCardTypes(const QVector<ReaderManagerPlugInType>& pAllowedCardTypes) override;
+		void setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes) override;
 };
 
 

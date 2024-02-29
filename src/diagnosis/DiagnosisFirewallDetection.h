@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <QSharedPointer>
-#include <QVector>
 
 #if defined(Q_OS_WIN)
 	#include <QProcess>
@@ -81,8 +81,8 @@ class DiagnosisFirewallDetection
 		bool mFirstFirewallRuleEnabled;
 		bool mSecondFirewallRuleExists;
 		bool mSecondFirewallRuleEnabled;
-		QVector<QSharedPointer<FirewallSoftware>> mDetectedFirewalls;
-		QVector<QSharedPointer<FirewallProfile>> mFirewallProfiles;
+		QList<QSharedPointer<FirewallSoftware>> mDetectedFirewalls;
+		QList<QSharedPointer<FirewallProfile>> mFirewallProfiles;
 
 		bool mFirstRuleDone;
 		bool mSecondRuleDone;
@@ -140,13 +140,13 @@ class DiagnosisFirewallDetection
 		}
 
 
-		[[nodiscard]] const QVector<QSharedPointer<FirewallProfile>>& getFirewallProfiles() const
+		[[nodiscard]] const QList<QSharedPointer<FirewallProfile>>& getFirewallProfiles() const
 		{
 			return mFirewallProfiles;
 		}
 
 
-		[[nodiscard]] const QVector<QSharedPointer<FirewallSoftware>>& getDetectedFirewalls() const
+		[[nodiscard]] const QList<QSharedPointer<FirewallSoftware>>& getDetectedFirewalls() const
 		{
 			return mDetectedFirewalls;
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdEstablishPaceChannelResponse.h"
@@ -9,7 +9,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -181,8 +181,8 @@ class test_IfdEstablishPaceChannelResponse
 			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(obj);
 			QCOMPARE(ifdEstablishPaceChannelResponse.isIncomplete(), incomplete);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getType(), IfdMessageType::IFDEstablishPACEChannelResponse);
-			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), QString("TestContext"));
-			QCOMPARE(ifdEstablishPaceChannelResponse.getSlotHandle(), QStringLiteral("SlotHandle"));
+			QCOMPARE(ifdEstablishPaceChannelResponse.getContextHandle(), "TestContext"_L1);
+			QCOMPARE(ifdEstablishPaceChannelResponse.getSlotHandle(), "SlotHandle"_L1);
 			QCOMPARE(ifdEstablishPaceChannelResponse.getOutputData().getPaceReturnCode(), incomplete && !withResultCode ? CardReturnCode::COMMAND_FAILED : CardReturnCode::OK);
 			QVERIFY(!ifdEstablishPaceChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPaceChannelResponse.getResultMinor(), ECardApiResult::Minor::null);

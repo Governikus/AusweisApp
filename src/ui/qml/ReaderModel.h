@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,9 +13,9 @@
 
 #include <QAbstractTableModel>
 #include <QHash>
+#include <QList>
 #include <QSet>
 #include <QTime>
-#include <QVector>
 
 
 namespace governikus
@@ -31,7 +31,7 @@ class ReaderModel
 
 	private:
 		QSet<const ReaderConfigurationInfo> mKnownDrivers;
-		QVector<ReaderConfigurationInfo> mConnectedReaders;
+		QList<ReaderConfigurationInfo> mConnectedReaders;
 		QTime mConnectedReadersUpdateTime;
 		SortedReaderModel mSortedModel;
 

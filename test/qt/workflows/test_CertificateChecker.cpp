@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_CertificateChecker
@@ -21,7 +22,7 @@ class test_CertificateChecker
 {
 	Q_OBJECT
 
-	QVector<QSslCertificate> certs;
+	QList<QSslCertificate> certs;
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -37,7 +38,7 @@ class test_CertificateChecker
 			const QSharedPointer<AuthContext> context(new AuthContext());
 
 			QCOMPARE(context->getCertificateList().size(), 0);
-			QCOMPARE(CertificateChecker::checkAndSaveCertificate(certs.at(0), QUrl("dummy"), context), CertificateChecker::CertificateStatus::Good);
+			QCOMPARE(CertificateChecker::checkAndSaveCertificate(certs.at(0), QUrl("dummy"_L1), context), CertificateChecker::CertificateStatus::Good);
 			QCOMPARE(context->getCertificateList().size(), 1);
 		}
 

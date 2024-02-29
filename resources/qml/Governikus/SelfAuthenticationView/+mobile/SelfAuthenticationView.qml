@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -32,6 +32,9 @@ FlickableSectionPage {
 		onClicked: root.back()
 	}
 
+	FadeInAnimation {
+		target: root
+	}
 	Component {
 		id: authView
 
@@ -52,7 +55,7 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/mydata.svg"
 		sourceSize.height: Style.dimens.large_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 
 		PkiSwitch {
 			anchors.fill: parent
@@ -67,7 +70,6 @@ FlickableSectionPage {
 		horizontalAlignment: Text.AlignHCenter
 		//: LABEL ANDROID IOS
 		text: qsTr("Use the button \"See my personal data\" to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.").arg(Qt.application.name)
-		width: parent.width
 		wrapMode: Text.WordWrap
 	}
 	PrivacyStatement {
@@ -113,7 +115,7 @@ FlickableSectionPage {
 	GButton {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Constants.component_spacing
-		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.text_warning : Style.color.control
+		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.warning : Style.color.control
 		icon.source: "qrc:///images/identify.svg"
 		//: LABEL ANDROID IOS
 		text: qsTr("See my personal data")

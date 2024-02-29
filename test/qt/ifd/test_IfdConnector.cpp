@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include "RemoteWebSocketServer.h"
 #include "ResourceLoader.h"
 #include "SecureStorage.h"
+#include "TlsChecker.h"
 #include "messages/Discovery.h"
 
 #include <QWebSocket>
@@ -22,6 +23,7 @@
 
 #include <functional>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(IfdDescriptor)
@@ -40,7 +42,7 @@ class test_IfdConnector
 
 		Discovery getDiscovery(const QString& pIfdName, quint16 pPort)
 		{
-			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF");
+			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_L1);
 			IfdVersion::Version version = IfdVersion::Version::latest;
 
 			if (IfdVersion::supported().contains(IfdVersion::Version::v2))
@@ -64,7 +66,7 @@ class test_IfdConnector
 							oQu+/VZgDkJaSdDJ4LqVFIvUy3CFGh6ahDVsHGC5kTDm5EQWh3puWR0AkIjUWMPi
 							xU/nr0Jsab99VgX4/nnCW92v/DIRc1c=
 							-----END CERTIFICATE-----
-						)";
+						)"_L1;
 				version = IfdVersion::Version::v2;
 			}
 			return Discovery(pIfdName, ifdId, pPort, {version});
@@ -87,7 +89,7 @@ class test_IfdConnector
 			const quint16 pPort)
 		{
 			const static QHostAddress HOST_ADDRESS(QHostAddress::LocalHost);
-			const static QString IFD_NAME("Smartphone1");
+			const static QString IFD_NAME("Smartphone1"_L1);
 
 			bool signalFound = false;
 			for (const QList<QVariant>& arguments : pSignalSpy)
@@ -222,7 +224,7 @@ class test_IfdConnector
 		void requestWithEncryptedServerAndReconnectFails()
 		{
 			QScopedPointer<RemoteWebSocketServer> server(Env::create<RemoteWebSocketServer*>());
-			server->listen("dummy");
+			server->listen("dummy"_L1);
 			QThread clientThread;
 
 			const QSharedPointer<IfdConnectorImpl> connector(new IfdConnectorImpl());
@@ -285,7 +287,7 @@ class test_IfdConnector
 			// Correct request but no server is running.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
-			sendRequest(connector, hostAddress, discoveryMsg, QString("dummy"));
+			sendRequest(connector, hostAddress, discoveryMsg, "dummy"_L1);
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -303,37 +305,37 @@ class test_IfdConnector
 
 		void encryptedConnectionSucceeds_data()
 		{
-			QTest::addColumn<QString>("psk");
+			QTest::addColumn<QByteArray>("psk");
 			QTest::addColumn<QSslConfiguration>("sslConfigServer");
 			QTest::addColumn<QList<QSslCertificate>>("trustedCertificates");
 
 			auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-			QVERIFY(settings.checkAndGenerateKey());
+			QVERIFY(settings.checkAndGenerateKey(3072));
 
 			QVERIFY(pair1.isValid());
 
 			QSslConfiguration config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd().getConfiguration();
 			config.setPrivateKey(pair1.getKey());
 			config.setLocalCertificate(pair1.getCertificate());
-			config.setCaCertificates({pair2.getCertificate(), settings.getCertificate(), pair3.getCertificate()});
-			QTest::newRow("paired") << QString() << config << QList<QSslCertificate>({pair2.getCertificate(), pair1.getCertificate(), pair3.getCertificate()});
+			config.setCaCertificates({pair2.getCertificate(), TlsChecker::getRootCertificate(settings.getCertificates()), pair3.getCertificate()});
+			QTest::newRow("paired") << QByteArray() << config << QList<QSslCertificate>({pair2.getCertificate(), pair1.getCertificate(), pair3.getCertificate()});
 
 			config = Env::getSingleton<SecureStorage>()->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK).getConfiguration();
 			config.setPrivateKey(pair1.getKey());
 			config.setLocalCertificate(pair1.getCertificate());
-			QTest::newRow("unpaired") << QString("123456") << config << QList<QSslCertificate>();
+			QTest::newRow("unpaired") << "123456"_ba << config << QList<QSslCertificate>();
 		}
 
 
 		void encryptedConnectionSucceeds()
 		{
-			QFETCH(QString, psk);
+			QFETCH(QByteArray, psk);
 			QFETCH(QSslConfiguration, sslConfigServer);
 			QFETCH(QList<QSslCertificate>, trustedCertificates);
 
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
 			connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, this, [&psk](QSslPreSharedKeyAuthenticator* pAuthenticator){
-					pAuthenticator->setPreSharedKey(psk.toLatin1());
+					pAuthenticator->setPreSharedKey(psk);
 				});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
@@ -363,7 +365,7 @@ class test_IfdConnector
 				// Send valid encrypted connect request.
 				const QHostAddress hostAddress(QHostAddress::LocalHost);
 				const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
-				sendRequest(connector, hostAddress, discoveryMsg, psk);
+				sendRequest(connector, hostAddress, discoveryMsg, QString::fromLatin1(psk));
 
 				QTRY_COMPARE(spyConnectorSuccess.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(spyConnectorError.count(), 0);

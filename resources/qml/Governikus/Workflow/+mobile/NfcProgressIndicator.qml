@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type.CardPositionModel
+import Governikus.Type.SettingsModel
 
 Item {
 	id: root
@@ -22,63 +23,49 @@ Item {
 			name: "unavailable"
 
 			PropertyChanges {
-				source: "qrc:///images/mobile/x.svg"
-				target: symbol
-				tintColor: Style.color.text_warning
-				visible: true
+				modelActivationTimer.running: false
+				symbol.source: "qrc:///images/mobile/x.svg"
+				symbol.tintColor: Style.color.warning
+				symbol.visible: true
 			}
 			PropertyChanges {
-				opacity: 0
+				card.opacity: 0
+				cardPositionModel.running: false
 				restoreEntryValues: false
-				target: card
-			}
-			PropertyChanges {
-				running: false
-				target: modelActivationTimer
-			}
-			PropertyChanges {
-				restoreEntryValues: false
-				running: false
-				target: cardPositionModel
 			}
 		},
 		State {
 			name: "off"
 
 			PropertyChanges {
-				source: "qrc:///images/mobile/questionmark.svg"
-				target: symbol
-				tintColor: Style.color.control
-				visible: true
+				modelActivationTimer.running: false
+				symbol.source: "qrc:///images/mobile/questionmark.svg"
+				symbol.tintColor: Style.color.image
+				symbol.visible: true
 			}
 			PropertyChanges {
-				opacity: 0
+				card.opacity: 0
+				cardPositionModel.running: false
 				restoreEntryValues: false
-				target: card
-			}
-			PropertyChanges {
-				running: false
-				target: modelActivationTimer
-			}
-			PropertyChanges {
-				restoreEntryValues: false
-				running: false
-				target: cardPositionModel
 			}
 		},
 		State {
 			name: "on"
 
 			PropertyChanges {
-				target: symbol
-				visible: false
-			}
-			PropertyChanges {
-				running: true
-				target: modelActivationTimer
+				modelActivationTimer.running: SettingsModel.useAnimations
+				symbol.visible: false
 			}
 		}
 	]
+
+	Component.onCompleted: {
+		if (!SettingsModel.useAnimations) {
+			cardPosition = cardPositionModel.getCardPosition();
+			animation.start();
+			animation.complete();
+		}
+	}
 
 	Connections {
 		function onFireCardPositionChanged() {
@@ -165,7 +152,7 @@ Item {
 			easing.type: Easing.InCubic
 			property: "opacity"
 			target: card
-			to: 0
+			to: SettingsModel.useAnimations ? 0 : 1
 		}
 		PauseAnimation {
 			duration: animation.pauseDuration * 0.1
@@ -177,55 +164,54 @@ Item {
 		anchors.centerIn: parent
 		source: symbol.visible ? "qrc:///images/mobile/phone_nfc_info.svg" : "qrc:///images/mobile/phone_nfc.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 		z: 0
+	}
+	TintableIcon {
+		id: card
+
+		anchors.centerIn: fakephone
+		asynchronous: true
+		fillMode: Image.PreserveAspectFit
+		opacity: 0
+		source: "qrc:///images/mobile/card.svg"
+		sourceSize.height: fakephone.height * 0.5
+		tintColor: Style.color.image
+		visible: !symbol.visible
+	}
+	Item {
+		id: fakephone
+
+		anchors.bottom: phone.bottom
+		anchors.horizontalCenter: phone.horizontalCenter
+		anchors.horizontalCenterOffset: -phone.width * 0.06
+		anchors.top: phone.top
+		clip: true
+		width: phone.width * 0.43
 
 		TintableIcon {
-			id: card
-
-			anchors.centerIn: fakephone
 			asynchronous: true
 			fillMode: Image.PreserveAspectFit
-			opacity: 0
+			opacity: card.z < 0 ? card.opacity : 0
+			rotation: card.rotation
 			source: "qrc:///images/mobile/card.svg"
-			sourceSize.height: fakephone.height * 0.5
-			tintColor: Style.color.control
-			visible: !symbol.visible
+			sourceSize.height: card.sourceSize.height
+			tintColor: Style.color.control_disabled
+			visible: card.visible
+			x: card.x - fakephone.x
+			y: card.y - fakephone.y
+			z: 1
 		}
-		Item {
-			id: fakephone
+	}
+	TintableIcon {
+		id: symbol
 
-			anchors.bottom: parent.bottom
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.horizontalCenterOffset: -parent.width * 0.06
-			anchors.top: parent.top
-			clip: true
-			width: parent.width * 0.43
-
-			TintableIcon {
-				asynchronous: true
-				fillMode: Image.PreserveAspectFit
-				opacity: card.z < 0 ? card.opacity : 0
-				rotation: card.rotation
-				source: "qrc:///images/mobile/card.svg"
-				sourceSize.height: card.sourceSize.height
-				tintColor: Style.color.control_disabled
-				visible: card.visible
-				x: card.x - fakephone.x
-				y: card.y - fakephone.y
-				z: 1
-			}
-		}
-		TintableIcon {
-			id: symbol
-
-			anchors.horizontalCenter: phone.right
-			anchors.horizontalCenterOffset: -phone.width * 0.19
-			anchors.verticalCenter: phone.bottom
-			anchors.verticalCenterOffset: -phone.height * 0.36
-			asynchronous: true
-			fillMode: Image.PreserveAspectFit
-			sourceSize.height: phone.height * 0.2
-		}
+		anchors.horizontalCenter: phone.right
+		anchors.horizontalCenterOffset: -phone.width * 0.19
+		anchors.verticalCenter: phone.bottom
+		anchors.verticalCenterOffset: -phone.height * 0.36
+		asynchronous: true
+		fillMode: Image.PreserveAspectFit
+		sourceSize.height: phone.height * 0.2
 	}
 }

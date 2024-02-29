@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -49,7 +49,6 @@ void ReaderConfiguration::onFileUpdated()
 		for (const ReaderConfigurationInfo& info : std::as_const(mReaderConfigurationInfos))
 		{
 			info.getIcon()->markDirty();
-			info.getIconWithNPA()->markDirty();
 		}
 
 		Q_EMIT fireUpdated();
@@ -67,31 +66,19 @@ ReaderConfiguration::ReaderConfiguration()
 }
 
 
-QString ReaderConfiguration::getNoReaderFoundIconPath()
-{
-	return QStringLiteral(":/images/reader/default_no_reader.png");
-}
-
-
-QString ReaderConfiguration::getMultipleReaderIconPath()
-{
-	return QStringLiteral(":/images/reader/default_more_reader.png");
-}
-
-
 void ReaderConfiguration::update()
 {
 	mUpdatableFile->update();
 }
 
 
-const QVector<ReaderConfigurationInfo>& ReaderConfiguration::getReaderConfigurationInfos() const
+const QList<ReaderConfigurationInfo>& ReaderConfiguration::getReaderConfigurationInfos() const
 {
 	return mReaderConfigurationInfos;
 }
 
 
-QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
+QList<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
 			return !i.getUrl().isEmpty();
@@ -99,7 +86,7 @@ QVector<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigur
 }
 
 
-QVector<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurationInfos() const
+QList<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
 			return i.getVendorId() == 0x0;

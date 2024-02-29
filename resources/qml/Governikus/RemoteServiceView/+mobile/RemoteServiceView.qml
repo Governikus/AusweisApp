@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -14,7 +14,7 @@ import Governikus.Type.RemoteServiceModel
 FlickableSectionPage {
 	id: baseItem
 
-	hiddenNavbarPadding: true
+	enableTileStyle: false
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Card reader")
@@ -30,16 +30,9 @@ FlickableSectionPage {
 			when: RemoteServiceModel.running && RemoteServiceModel.isPairing
 
 			PropertyChanges {
-				target: knownDevicesContainer
-				visible: false
-			}
-			PropertyChanges {
-				target: pairingCode
-				visible: true
-			}
-			PropertyChanges {
-				target: paringCodeLink
-				visible: true
+				knownDevicesContainer.visible: false
+				pairingCode.visible: true
+				paringCodeLink.visible: true
 			}
 		},
 		State {
@@ -47,12 +40,8 @@ FlickableSectionPage {
 			when: !RemoteServiceModel.running || (RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice)
 
 			PropertyChanges {
-				target: wifiInfo
-				visible: false
-			}
-			PropertyChanges {
-				target: networkPermissionText
-				visible: false
+				networkPermissionText.visible: false
+				wifiInfo.visible: false
 			}
 		}
 	]
@@ -60,10 +49,6 @@ FlickableSectionPage {
 	Connections {
 		function onFireIsRunningChanged() {
 			setLockedAndHidden(RemoteServiceModel.running);
-		}
-		function onFirePairingFailed() {
-			//: ERROR ANDROID IOS An error occurred while pairing the device.
-			ApplicationModel.showFeedback(qsTr("Pairing failed. Please start a new pairing process on your other device and enter the shown pairing code."));
 		}
 
 		target: RemoteServiceModel
@@ -94,11 +79,10 @@ FlickableSectionPage {
 
 			TintableIcon {
 				Layout.alignment: Qt.AlignHCenter
-				Layout.preferredHeight: Style.dimens.medium_icon_size
-				fillMode: Image.PreserveAspectFit
+				Layout.topMargin: Constants.text_spacing
 				source: "qrc:///images/phone_to_pc.svg"
 				sourceSize.height: Style.dimens.medium_icon_size
-				tintColor: Style.color.control
+				tintColor: Style.color.image
 			}
 			GText {
 				id: infoText
@@ -120,52 +104,46 @@ FlickableSectionPage {
 						when: !RemoteServiceModel.runnable && RemoteServiceModel.errorMessage !== ""
 
 						PropertyChanges {
-							target: infoText
-							text: RemoteServiceModel.errorMessage
+							infoText.text: RemoteServiceModel.errorMessage
 						}
 					},
 					State {
 						when: RemoteServiceModel.running && RemoteServiceModel.connectedToPairedDevice
 
 						PropertyChanges {
-							target: infoText
-							text: RemoteServiceModel.connectionInfo
+							infoText.text: RemoteServiceModel.connectionInfo
 						}
 					},
 					State {
 						when: RemoteServiceModel.isPairing
 
 						PropertyChanges {
-							Accessible.name: enterCodeString.arg(currentPin.split("").join(" ")).arg(Qt.application.name)
-							target: infoText
-							text: enterCodeString.arg(currentPin).arg(Qt.application.name)
+							infoText.Accessible.name: infoText.enterCodeString.arg(infoText.currentPin.split("").join(" ")).arg(Qt.application.name)
+							infoText.text: infoText.enterCodeString.arg(infoText.currentPin).arg(Qt.application.name)
 						}
 					},
 					State {
 						when: !RemoteServiceModel.running && knownDeviceList.count > 0
 
 						PropertyChanges {
-							target: infoText
 							//: INFO ANDROID IOS
-							text: qsTr("Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.")
+							infoText.text: qsTr("Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.")
 						}
 					},
 					State {
 						when: RemoteServiceModel.running && knownDeviceList.count > 0
 
 						PropertyChanges {
-							target: infoText
 							//: INFO ANDROID IOS
-							text: qsTr("Paired devices may use this Smartphone as a card reader now.")
+							infoText.text: qsTr("Paired devices may use this Smartphone as a card reader now.")
 						}
 					},
 					State {
 						when: RemoteServiceModel.running
 
 						PropertyChanges {
-							target: infoText
 							//: INFO ANDROID IOS
-							text: qsTr("Waiting for connection from a paired device...")
+							infoText.text: qsTr("Waiting for connection from a paired device...")
 						}
 					}
 				]
@@ -265,7 +243,6 @@ FlickableSectionPage {
 		id: networkPermissionText
 
 		Layout.bottomMargin: Constants.text_spacing
-		Layout.fillWidth: true
 		Layout.topMargin: Constants.component_spacing
 		visible: RemoteServiceModel.requiresLocalNetworkPermission
 	}
@@ -298,56 +275,51 @@ FlickableSectionPage {
 				when: !ApplicationModel.wifiEnabled
 
 				PropertyChanges {
-					target: pairConnectButton
 					//: LABEL ANDROID IOS
-					text: qsTr("Enable WiFi")
+					pairConnectButton.text: qsTr("Enable WiFi")
 
-					onClicked: ApplicationModel.enableWifi()
+					pairConnectButton.onClicked: ApplicationModel.enableWifi()
 				}
 			},
 			State {
 				when: RemoteServiceModel.canEnableNfc
 
 				PropertyChanges {
-					target: pairConnectButton
 					//: LABEL ANDROID IOS
-					text: qsTr("Enable NFC")
+					pairConnectButton.text: qsTr("Enable NFC")
 
-					onClicked: ApplicationModel.showSettings(ApplicationModel.SETTING_NFC)
+					pairConnectButton.onClicked: ApplicationModel.showSettings(ApplicationModel.SETTING_NFC)
 				}
 			},
 			State {
 				when: RemoteServiceModel.runnable && knownDeviceList.count > 0 && !RemoteServiceModel.isPairing && !RemoteServiceModel.running
 
 				PropertyChanges {
-					target: pairConnectButton
 					//: LABEL ANDROID IOS
-					text: qsTr("Allow connection")
+					pairConnectButton.text: qsTr("Allow connection")
 
-					onClicked: RemoteServiceModel.setRunning(true)
+					pairConnectButton.onClicked: RemoteServiceModel.setRunning(true)
 				}
 			},
 			State {
 				when: RemoteServiceModel.runnable && knownDeviceList.count < 1 && !RemoteServiceModel.isPairing
 
 				PropertyChanges {
-					target: pairConnectButton
 					//: LABEL ANDROID IOS
-					text: qsTr("Pair device")
+					pairConnectButton.text: qsTr("Pair device")
 
-					onClicked: RemoteServiceModel.setRunning(true, true)
+					pairConnectButton.onClicked: RemoteServiceModel.setRunning(true, true)
 				}
 			},
 			State {
 				when: RemoteServiceModel.isPairing
 
 				PropertyChanges {
-					target: pairConnectButton
 					//: LABEL ANDROID IOS
-					text: qsTr("Cancel pairing")
-					visible: true
+					pairConnectButton.text: qsTr("Cancel pairing")
+					pairConnectButton.visible: true
 
-					onClicked: RemoteServiceModel.setRunning(false, false)
+					pairConnectButton.onClicked: RemoteServiceModel.setRunning(false, false)
 				}
 			}
 		]

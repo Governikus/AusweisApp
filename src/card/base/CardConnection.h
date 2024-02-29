@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -21,6 +21,7 @@
 
 #include "command/DidAuthenticateEAC1Command.h"
 #include "command/DidAuthenticateEAC2Command.h"
+#include "command/ResetRetryCounterCommand.h"
 #include "command/TransmitCommand.h"
 #include "command/UpdateRetryCounterCommand.h"
 
@@ -51,8 +52,9 @@ class CardConnection
 		bool mPaceCanSuccessful;
 		bool mPacePinSuccessful;
 
-		TransmitCommand* createTransmitCommand(const QVector<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle);
+		TransmitCommand* createTransmitCommand(const QList<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle);
 		UpdateRetryCounterCommand* createUpdateRetryCounterCommand();
+		ResetRetryCounterCommand* createResetRetryCounterCommand();
 
 		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 		SetEidPinCommand* createSetEidPinCommand(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
@@ -181,7 +183,7 @@ class CardConnection
 
 		template<typename T>
 		QMetaObject::Connection callTransmitCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
-			const QVector<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle = QString())
+			const QList<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle = QString())
 		{
 			auto command = createTransmitCommand(pInputApduInfos, pSlotHandle);
 			return call(command, pReceiver, pFunc);
@@ -192,6 +194,14 @@ class CardConnection
 		QMetaObject::Connection callUpdateRetryCounterCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
 		{
 			auto command = createUpdateRetryCounterCommand();
+			return call(command, pReceiver, pFunc);
+		}
+
+
+		template<typename T>
+		QMetaObject::Connection callResetRetryCounterCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
+		{
+			auto command = createResetRetryCounterCommand();
 			return call(command, pReceiver, pFunc);
 		}
 

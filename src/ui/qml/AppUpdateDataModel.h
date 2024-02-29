@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -64,7 +64,6 @@ class AppUpdateDataModel
 		[[nodiscard]] const QUrl& getChecksumUrl() const;
 		[[nodiscard]] const QUrl& getNotesUrl() const;
 		[[nodiscard]] const QString& getNotes() const;
-		Q_INVOKABLE void skipUpdate() const;
 		[[nodiscard]] Q_INVOKABLE bool download();
 		[[nodiscard]] Q_INVOKABLE bool abortDownload();
 

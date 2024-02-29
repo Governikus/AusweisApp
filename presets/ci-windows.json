@@ -1,0 +1,32 @@
+{
+  "version": 6,
+  "include": [
+    "ci.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-win",
+      "inherits": "ci-with-libs"
+    },
+    {
+      "name": "ci-win-release",
+      "inherits": "ci-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    },
+    {
+      "name": "ci-win-debug",
+      "inherits": "ci-win",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG",
+        "WIN_SIGN_KEYSTORE": "$env{WIN_SIGN_KEYSTORE}",
+        "WIN_SIGN_KEYSTORE_PSW": "$env{WIN_SIGN_KEYSTORE_PSW}",
+        "WIN_SIGN_SUBJECT_NAME": "$env{WIN_SIGN_SUBJECT_NAME}"
+      }
+    }
+  ]
+}

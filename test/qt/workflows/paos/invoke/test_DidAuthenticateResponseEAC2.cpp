@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_DidAuthenticateResponseEAC2
@@ -83,8 +84,8 @@ class test_DidAuthenticateResponseEAC2
 			msg.setAuthenticationToken("b");
 			msg.setNonce("c");
 			auto data = QString::fromLatin1(msg.marshall());
-			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"), "<wsa:MessageID>STRIP ME</wsa:MessageID>");
-			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/DIDAuthenticateResponse.xml")));
+			data.replace(QRegularExpression("<wsa:MessageID>.*</wsa:MessageID>"_L1), "<wsa:MessageID>STRIP ME</wsa:MessageID>"_L1);
+			QCOMPARE(data, QString::fromLatin1(TestFileHelper::readFile(":/paos/DIDAuthenticateResponse.xml"_L1)));
 		}
 
 

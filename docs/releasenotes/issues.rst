@@ -3,18 +3,6 @@ Bekannte Fehler
 
 Folgende Fehler und Einschränkungen sind zum Auslieferungszeitpunkt bekannt:
 
-Alle Plattformen
-""""""""""""""""
-
-- Ausgewählte Elemente sind nicht im Hochkontrastmodus erkennbar.
-  Im "Kontrast Weiß" Modus sind zusätzlich die Radiocontrols nicht sichtbar.
-
-- Einige Animationen/Illustrationen/Icons werden im Hochkontrastmodus nicht
-  abgebildet.
-
-- Einige Elemente sind im Dark Mode schlecht erkennbar.
-
-
 Windows / macOS
 """""""""""""""
 
@@ -43,9 +31,6 @@ Windows / macOS
 - Der Installationsdialog (bei Installation und auch Deinstallation) richtet
   sich nicht nach der Systemsprache.
 
-- Auf macOS kann es vorkommen, dass die Systemsprache von der AusweisApp nicht
-  erkannt wird.
-
 - Wenn mit einer MSI-Datei ein Update für die AusweisApp durchgeführt wird,
   während diese noch läuft, kann es zu einer falschen Fehlermeldung kommen,
   dass sie nicht beendet werden konnte.
@@ -64,10 +49,9 @@ Android / iOS
   |AppName| zu einem Absturz. Dazu zählt die Änderung der Systemsprache und
   die Änderung des Typs der Navigationsleiste (Gesten / Schaltflächen).
 
-- Unter iOS wird ein Workflow im SDK fälschlicherweise nicht abgebrochen, wenn
-  das SDK zur Eingabe einer PIN, CAN oder PUK aufgefordert hat aber der Benutzer
-  den NFC-Scan im Dialog abbricht, bevor das Passwort gesetzt oder ein INTERRUPT
-  ausgelöst wurde.
+- Bei der Verwendung eines "Smartphone als Kartenleser" mit aktivierter
+  Passworteingabe kommt es bei Verwendung des PUKs zu Fehlern, wenn der
+  Ausweis dauerhaft am Gerät anliegt.
 
 
 Barrierearmut
@@ -89,17 +73,8 @@ Barrierearmut
 - Die Toggle-Elemente, die Hilfeseiten und die Überschriften der Startseite
   besitzen zurzeit noch keine Sprachausgabe.
 
-- Die AusweisApp ist aktuell nicht mit dem Screenreader unter iOS einwandfrei
-  bedienbar.
-
-- Beim angeschlossenen Kartenleser Ausweisvorgang wird im Ausweisvorgang direkt
-  auf Schritt 2 gesprungen, ohne dass eine entsprechende Sprachausgabe erfolgt.
-
-- Bei der PIN-Eingabe erfolgt auf Android und iOS keine Sprachausgabe bei der
-  Betätigung der Tasten.
-
-- Es kann vorkommen, dass der Screenreader in einigen Dialogen die Überschriften
-  nicht vorliest.
+- Bei angeschlossenem Kartenleser wird im Ausweisvorgang direkt auf
+  Schritt 2 gesprungen, ohne dass eine entsprechende Sprachausgabe erfolgt.
 
 - In Texten wird zum Teil auf grafische Elemente hingewiesen, die keine textuelle
   Repräsentation desselben Inhalts besitzen.
@@ -108,5 +83,3 @@ Barrierearmut
   Screenreader ausgegeben.
 
 - Der Screenreader kann teilweise Informationen an einigen Stellen doppelt ausgeben.
-
-- Bewegte Inhalte können derzeit nicht ausgeschaltet werden.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteWebSocketServerImpl.h"
@@ -46,6 +46,7 @@ RemoteWebSocketServerImpl::RemoteWebSocketServerImpl()
 	connect(&mWebSocketServer, &WebSocketServer::fireConnectedChanged, this, &RemoteWebSocketServerImpl::fireConnectedChanged);
 	connect(&mWebSocketServer, &WebSocketServer::fireMessageHandlerAdded, this, &RemoteWebSocketServerImpl::fireMessageHandlerAdded);
 	connect(&mWebSocketServer, &WebSocketServer::firePskChanged, this, &RemoteWebSocketServerImpl::firePskChanged);
+	connect(&mWebSocketServer, &WebSocketServer::fireNameChanged, this, &RemoteWebSocketServer::fireNameChanged);
 }
 
 

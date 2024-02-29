@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ConnectRequest.h"
@@ -38,8 +38,7 @@ ConnectRequest::ConnectRequest(const IfdDescriptor& pIfdDescriptor,
 	else
 	{
 		auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const bool invalidLength = !TlsChecker::hasValidCertificateKeyLength(remoteServiceSettings.getCertificate());
-		if (!remoteServiceSettings.checkAndGenerateKey(invalidLength))
+		if (!remoteServiceSettings.checkAndGenerateKey(Env::getSingleton<SecureStorage>()->getIfdCreateSize()))
 		{
 			qCCritical(ifd) << "Cannot get required key/certificate for tls";
 			return;
@@ -90,7 +89,7 @@ void ConnectRequest::setTlsConfiguration() const
 		}
 
 		config.setPrivateKey(remoteServiceSettings.getKey());
-		config.setLocalCertificate(remoteServiceSettings.getCertificate());
+		config.setLocalCertificateChain(remoteServiceSettings.getCertificates());
 		config.setPeerVerifyMode(QSslSocket::VerifyPeer);
 	}
 
@@ -107,9 +106,14 @@ void ConnectRequest::onConnected()
 
 	bool isRemotePairing = false;
 	bool abortConnection = false;
+
+	const auto& minimalKeySizes = [](QSsl::KeyAlgorithm pKeyAlgorithm){
+				return Env::getSingleton<SecureStorage>()->getMinimumIfdKeySize(pKeyAlgorithm);
+			};
+
 	if (mIfdDescriptor.isLocalIfd())
 	{
-		abortConnection |= !TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey());
+		abortConnection |= !TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey(), minimalKeySizes);
 	}
 	else
 	{
@@ -117,8 +121,15 @@ void ConnectRequest::onConnected()
 		const auto& pairingTlsConfig = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK);
 		isRemotePairing = pairingTlsConfig.getCiphers().contains(cfg.sessionCipher());
 
-		abortConnection |= !TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate());
-		abortConnection |= (!isRemotePairing && !TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey()));
+		abortConnection |= !TlsChecker::hasValidCertificateKeyLength(cfg.peerCertificate(), minimalKeySizes);
+		abortConnection |= (!isRemotePairing && !TlsChecker::hasValidEphemeralKeyLength(cfg.ephemeralServerKey(), minimalKeySizes));
+	}
+
+	const auto rootCert = TlsChecker::getRootCertificate(cfg.peerCertificateChain());
+	if (rootCert.isNull())
+	{
+		qCCritical(ifd) << "No root certificate found!";
+		abortConnection = true;
 	}
 
 	if (abortConnection)
@@ -141,12 +152,12 @@ void ConnectRequest::onConnected()
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	if (isRemotePairing)
 	{
-		qCDebug(ifd) << "Pairing completed | Add certificate:" << cfg.peerCertificate();
-		settings.addTrustedCertificate(cfg.peerCertificate());
+		qCDebug(ifd) << "Pairing completed | Add certificate:" << rootCert;
+		settings.addTrustedCertificate(rootCert);
 	}
 	else
 	{
-		auto info = settings.getRemoteInfo(cfg.peerCertificate());
+		auto info = settings.getRemoteInfo(rootCert);
 		info.setLastConnected(QDateTime::currentDateTime());
 		settings.updateRemoteInfo(info);
 	}
@@ -201,6 +212,7 @@ void ConnectRequest::onSslErrors(const QList<QSslError>& pErrors)
 	if (pairingCiphers.contains(config.sessionCipher()))
 	{
 		allowedErrors << QSslError::SelfSignedCertificate;
+		allowedErrors << QSslError::SelfSignedCertificateInChain;
 	}
 
 	bool ignoreErrors = true;

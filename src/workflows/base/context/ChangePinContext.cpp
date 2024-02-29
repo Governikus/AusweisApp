@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinContext.h"
@@ -72,7 +72,7 @@ bool ChangePinContext::isRequestTransportPin() const
 }
 
 
-QVector<AcceptedEidType> ChangePinContext::getAcceptedEidTypes() const
+QList<AcceptedEidType> ChangePinContext::getAcceptedEidTypes() const
 {
 	if (mRequestTransportPin)
 	{

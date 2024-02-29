@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQml.Models
@@ -148,6 +148,7 @@ SectionPage {
 		rootEnabled: titleBarAction.rootEnabled
 		visible: d.view === SettingsView.SubView.ConnectSacView
 
-		onCloseView: d.view = SettingsView.SubView.None
+		onPairingFailed: d.view = SettingsView.SubView.None
+		onPairingSuccessful: d.view = SettingsView.SubView.None
 	}
 }

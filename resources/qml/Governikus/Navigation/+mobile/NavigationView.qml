@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -15,7 +15,7 @@ GControl {
 	Layout.minimumWidth: navigationRow.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredWidth: contentItem.Layout.preferredWidth + leftPadding + rightPadding
 	bottomInset: -plugin.safeAreaMargins.bottom
-	bottomPadding: Constants.is_layout_android ? Style.dimens.navigation_bar_padding : Style.dimens.navigation_bar_text_padding
+	bottomPadding: Style.dimens.navigation_bar_bottom_padding
 	horizontalPadding: Style.dimens.navigation_bar_padding
 	topPadding: Style.dimens.navigation_bar_padding
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -24,15 +24,9 @@ SectionPage {
 		onClicked: pop()
 	}
 	rightTitleBarAction: LogTitleBarControls {
-		allowRemove: comboBox.currentIndex > 0
 		allowRemoveAll: comboBox.model.length > 1 // comboBox.count doesn't seem to update reliably
 
-		onRemove: {
-			confirmationPopup.deleteAll = false;
-			confirmationPopup.open();
-		}
 		onRemoveAll: {
-			confirmationPopup.deleteAll = true;
 			confirmationPopup.open();
 		}
 		onShare: pPopupPosition => {
@@ -112,7 +106,6 @@ SectionPage {
 				title: qsTr("Filter")
 
 				GText {
-					font.bold: true
 					//: LABEL ANDROID IOS
 					text: qsTr("Level")
 					textStyle: Style.text.subline
@@ -138,7 +131,6 @@ SectionPage {
 					}
 				}
 				GText {
-					font.bold: true
 					//: LABEL ANDROID IOS
 					text: qsTr("Category")
 					textStyle: Style.text.subline
@@ -179,7 +171,6 @@ SectionPage {
 
 				fixedHeight: false
 				headerText: origin
-				showLinkIcon: false
 				showSeparator: !isLastItem
 				text: message
 
@@ -213,20 +204,13 @@ SectionPage {
 	ConfirmationPopup {
 		id: confirmationPopup
 
-		property bool deleteAll: true
-
 		//: LABEL ANDROID IOS
 		okButtonText: qsTr("Delete")
 		//: INFO ANDROID IOS All logfiles are about to be removed, user confirmation required.
-		text: (deleteAll ? qsTr("All old logs will be deleted.") :
-			//: INFO ANDROID IOS The current logfile is about to be removed, user confirmation required.
-			qsTr("The log will be deleted."))
-		title: (deleteAll ?
-			//: LABEL ANDROID IOS
-			qsTr("Delete all logs") :
-			//: LABEL ANDROID IOS
-			qsTr("Delete log"))
+		text: qsTr("All old logs will be deleted.")
+		//: LABEL ANDROID IOS
+		title: qsTr("Delete all logs")
 
-		onConfirmed: deleteAll ? LogModel.removeOtherLogFiles() : LogModel.removeCurrentLogFile()
+		onConfirmed: LogModel.removeOtherLogFiles()
 	}
 }

@@ -1,69 +1,92 @@
 /**
- * Copyright (c) 2022-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.Style
 import Governikus.View
 
-GButton {
+AbstractButton {
 	id: root
 
-	property alias description: subText.text
-	property real scaleIcon: 1.0
+	property alias description: description.text
 
 	Accessible.name: text + ". " + description
-	Layout.maximumWidth: Number.POSITIVE_INFINITY
 	horizontalPadding: Constants.component_spacing
-	verticalPadding: Constants.text_spacing
+	verticalPadding: Constants.component_spacing
 
+	background: GPaneBackground {
+		id: pane
+
+		FocusFrame {
+			marginFactor: 0.8
+			radius: parent.radius * 1.2
+			scope: root
+		}
+	}
 	contentItem: RowLayout {
-		readonly property color color: root.pressed ? Style.color.control_content_pressed : root.textStyle.textColor
+		id: rowLayout
 
 		spacing: Constants.component_spacing
-		z: 1
 
 		TintableIcon {
-			Layout.preferredHeight: Layout.preferredWidth
-			Layout.preferredWidth: Style.dimens.icon_size
-			fillMode: Image.Pad
 			source: root.icon.source
-			sourceSize.width: Layout.preferredWidth * scaleIcon
-			tintColor: contentItem.color
-			tintEnabled: root.tintIcon
+			sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
+			tintColor: title.color
 		}
-		Item {
-			Layout.fillWidth: true
-			implicitHeight: textColumn.implicitHeight
-			implicitWidth: textColumn.implicitWidth
+		ColumnLayout {
+			Layout.maximumWidth: Number.POSITIVE_INFINITY
+			spacing: Constants.text_spacing / 2
 
-			ColumnLayout {
-				id: textColumn
+			GText {
+				id: title
 
-				anchors.fill: parent
-				spacing: Constants.text_spacing / 2
+				Accessible.ignored: true
+				elide: Text.ElideRight
+				text: root.text
+				textStyle: Style.text.subline
+			}
+			GText {
+				id: description
 
-				GText {
-					Accessible.ignored: true
-					Layout.alignment: Qt.AlignBottom
-					color: contentItem.color
-					elide: Text.ElideRight
-					font.bold: true
-					maximumLineCount: 1
-					text: root.text
-					textStyle: root.textStyle
-				}
-				GText {
-					id: subText
-
-					Accessible.ignored: true
-					Layout.alignment: Qt.AlignTop
-					color: contentItem.color
-					elide: Text.ElideRight
-					maximumLineCount: 2
-					textStyle: root.textStyle
-				}
+				Accessible.ignored: true
+				elide: Text.ElideRight
 			}
 		}
+		TintableIcon {
+			source: "qrc:///images/material_arrow_right.svg"
+			sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
+			tintColor: description.color
+		}
+	}
+
+	Item {
+		id: d
+
+		states: [
+			State {
+				name: "pressed"
+				when: root.pressed
+
+				PropertyChanges {
+					description.color: Style.color.text_pressed
+					pane.border.color: Style.color.pane_border_pressed
+					pane.color: Style.color.pane_pressed
+					title.color: Style.color.text_subline_pressed
+				}
+			},
+			State {
+				name: "hovered"
+				when: root.hovered
+
+				PropertyChanges {
+					description.color: Style.color.text_hovered
+					pane.border.color: Style.color.pane_border_hovered
+					pane.color: Style.color.pane_hovered
+					title.color: Style.color.text_subline_hovered
+				}
+			}
+		]
 	}
 }

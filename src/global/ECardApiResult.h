@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -161,8 +161,8 @@ class ECardApiResult
 		[[nodiscard]] const QString& getMessageLang() const;
 		[[nodiscard]] const std::optional<FailureCode>& getFailureCode() const;
 
-		static QString getMajorString(Major pMajor);
-		static QString getMinorString(Minor pMinor);
+		[[nodiscard]] static QString getMajorString(Major pMajor);
+		[[nodiscard]] static QString getMinorString(Minor pMinor);
 
 		[[nodiscard]] QString getMajorString() const;
 		[[nodiscard]] QString getMinorString() const;

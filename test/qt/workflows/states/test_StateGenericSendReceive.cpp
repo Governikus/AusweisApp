@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -10,15 +10,16 @@
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
+#include <QList>
 #include <QPair>
-#include <QVector>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QSharedPointer<PaosMessage>)
 using Pair = QPair<QByteArray, QByteArray>;
-Q_DECLARE_METATYPE(QVector<Pair>)
+Q_DECLARE_METATYPE(QList<Pair>)
 
 class test_StateGenericSendReceive
 	: public QObject
@@ -36,9 +37,9 @@ class test_StateGenericSendReceive
 	private Q_SLOTS:
 		void init()
 		{
-			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 
-			QSharedPointer<TcToken> tcToken(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml")));
+			QSharedPointer<TcToken> tcToken(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"_L1)));
 			mAuthContext->setTcToken(tcToken);
 			mNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());
@@ -60,8 +61,8 @@ class test_StateGenericSendReceive
 			QTest::addColumn<bool>("personalization");
 			QTest::addColumn<QUrl>("url");
 
-			QTest::newRow("authentication") << false << QUrl("https://eid-server.example.de/entrypoint");
-			QTest::newRow("personalization") << true << QUrl("https://eid-server.example.de/personalization");
+			QTest::newRow("authentication") << false << QUrl("https://eid-server.example.de/entrypoint"_L1);
+			QTest::newRow("personalization") << true << QUrl("https://eid-server.example.de/personalization"_L1);
 		}
 
 
@@ -72,7 +73,7 @@ class test_StateGenericSendReceive
 
 			const_cast<bool&>(mState->mPersonalization) = personalization;
 
-			mNetworkManager->setFilename(":/paos/DIDList.xml");
+			mNetworkManager->setFilename(":/paos/DIDList.xml"_L1);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
@@ -196,7 +197,7 @@ class test_StateGenericSendReceive
 		void connectionError()
 		{
 			MockNetworkReply* reply = new MockNetworkReply();
-			reply->setError(QNetworkReply::ConnectionRefusedError, "forced connection refused");
+			reply->setError(QNetworkReply::ConnectionRefusedError, "forced connection refused"_L1);
 			mNetworkManager->setNextReply(reply);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
@@ -215,7 +216,7 @@ class test_StateGenericSendReceive
 
 		void sendInitializeFrameworkResponse_receiveDIDAuthenticateEAC1()
 		{
-			mNetworkManager->setFilename(":/paos/DIDAuthenticateEAC1.xml");
+			mNetworkManager->setFilename(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
@@ -232,7 +233,7 @@ class test_StateGenericSendReceive
 
 		void sendInitializeFrameworkResponse_unexpected()
 		{
-			mNetworkManager->setFilename(":/paos/Transmit.xml");
+			mNetworkManager->setFilename(":/paos/Transmit.xml"_L1);
 			QSharedPointer<InitializeFrameworkResponse> initializeFrameworkResponse(new InitializeFrameworkResponse());
 			mAuthContext->setInitializeFrameworkResponse(initializeFrameworkResponse);
 
@@ -250,7 +251,7 @@ class test_StateGenericSendReceive
 
 		void mappingToTrustedChannelError()
 		{
-			const QVector<GlobalStatus::Code> states = QVector<GlobalStatus::Code>()
+			const QList<GlobalStatus::Code> states = QList<GlobalStatus::Code>()
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Establishment_Error
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Server_Error
 					<< GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description
@@ -272,40 +273,40 @@ class test_StateGenericSendReceive
 
 		void logging_data()
 		{
-			QTest::addColumn<QVector<Pair>>("attributes");
+			QTest::addColumn<QList<Pair>>("attributes");
 			QTest::addColumn<bool>("enabled");
 
-			QTest::newRow("no attr") << QVector<Pair>() << true;
+			QTest::newRow("no attr") << QList<Pair>() << true;
 
-			QTest::newRow("single attr lower-case single") << QVector<Pair>({
+			QTest::newRow("single attr lower-case single") << QList<Pair>({
 						{QByteArray("pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("single attr upper-case single") << QVector<Pair>({
+			QTest::newRow("single attr upper-case single") << QList<Pair>({
 						{QByteArray("Pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("single attr lower-case multi") << QVector<Pair>({
+			QTest::newRow("single attr lower-case multi") << QList<Pair>({
 						{QByteArray("pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("single attr upper-case multi") << QVector<Pair>({
+			QTest::newRow("single attr upper-case multi") << QList<Pair>({
 						{QByteArray("Pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("single attr other") << QVector<Pair>({
+			QTest::newRow("single attr other") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")}
 					}) << true;
 
-			QTest::newRow("multi attr lower-case single") << QVector<Pair>({
+			QTest::newRow("multi attr lower-case single") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("multi attr upper-case single") << QVector<Pair>({
+			QTest::newRow("multi attr upper-case single") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("Pragma"), QByteArray("no-log")}
 					}) << false;
-			QTest::newRow("multi attr lower-case multi") << QVector<Pair>({
+			QTest::newRow("multi attr lower-case multi") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("pragma"), QByteArray("no-log no-cache")}
 					}) << false;
-			QTest::newRow("multi attr upper-case multi") << QVector<Pair>({
+			QTest::newRow("multi attr upper-case multi") << QList<Pair>({
 						{QByteArray("Connection"), QByteArray("keep-alive")},
 						{QByteArray("Pragma"), QByteArray("no-log no-cache")}
 					}) << false;
@@ -314,7 +315,7 @@ class test_StateGenericSendReceive
 
 		void logging()
 		{
-			QFETCH(QVector<Pair>, attributes);
+			QFETCH(QList<Pair>, attributes);
 			QFETCH(bool, enabled);
 
 			MockNetworkReply* reply = new MockNetworkReply(QByteArrayLiteral("TEST"));

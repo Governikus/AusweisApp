@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -34,7 +34,7 @@ class StateBuilder
 
 
 		template<typename T>
-		static bool isState(const QString& pState)
+		[[nodiscard]] static bool isState(const QString& pState)
 		{
 			return pState == generateStateName<T>();
 		}

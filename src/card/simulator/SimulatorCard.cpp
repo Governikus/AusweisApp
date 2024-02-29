@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SimulatorCard.h"
 
 #include "FileRef.h"
 #include "VolatileSettings.h"
-#include "apdu/CommandData.h"
 #include "apdu/FileCommand.h"
 #include "apdu/GeneralAuthenticateResponse.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
 #include "pace/CipherMac.h"
@@ -235,24 +235,24 @@ ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 {
 	if (pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
 	{
-		const CommandData cmdData(pCmd.getData());
+		const ASN1Struct cmdData(pCmd.getData());
 
 		if (pCmd.getP1() == CommandApdu::CHIP_AUTHENTICATION && pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
 		{
-			const auto& cmr = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE);
+			const auto& cmr = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE);
 			if (cmr == Oid(KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128).getData())
 			{
-				mCaKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::PRIVATE_KEY_REFERENCE).back();
+				mCaKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back();
 			}
 			if (cmr == Oid(KnownOid::ID_RI_ECDH_SHA_256).getData())
 			{
-				mRiKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::PRIVATE_KEY_REFERENCE).back();
+				mRiKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back();
 			}
 		}
 
 		if (pCmd.getP1() == CommandApdu::VERIFICATION)
 		{
-			const auto& aad = cmdData.getObject(V_ASN1_APPLICATION, CommandData::AUXILIARY_AUTHENTICATED_DATA);
+			const auto& aad = cmdData.getObject(V_ASN1_APPLICATION, ASN1Struct::AUXILIARY_AUTHENTICATED_DATA);
 			mAuxiliaryData = AuthenticatedAuxiliaryData::decode(aad);
 		}
 	}
@@ -263,8 +263,8 @@ ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 
 ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 {
-	const CommandData cmdData(pCmd.getData());
-	const auto& caKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::CA_EPHEMERAL_PUBLIC_KEY);
+	const ASN1Struct cmdData(pCmd.getData());
+	const auto& caKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::CA_EPHEMERAL_PUBLIC_KEY);
 	if (!caKey.isEmpty())
 	{
 		const QByteArray nonce = QByteArray::fromHex("0001020304050607");
@@ -276,10 +276,10 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 		return {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
 	}
 
-	const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
+	const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT);
 	if (!riKey.isEmpty())
 	{
-		const auto& oid = cmdData.getData(V_ASN1_UNIVERSAL, CommandData::RI_EPHEMERAL_PUBLIC_KEY);
+		const auto& oid = cmdData.getData(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER);
 		if (oid != Oid(KnownOid::ID_RI_ECDH_SHA_256).getData())
 		{
 			return {CardReturnCode::OK, ResponseApdu(StatusCode::NO_BINARY_FILE)};
@@ -287,8 +287,9 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 
 		const QByteArray& restrictedId = generateRestrictedId(riKey);
 
-		const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 1, restrictedId);
-		const auto response = Asn1Util::encode(V_ASN1_APPLICATION, 28, responseData, true);
+		const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::RI_FIRST_IDENTIFIER, restrictedId);
+		const auto response = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA, responseData, true);
+
 		return {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
 	}
 
@@ -336,9 +337,9 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 
 	mNewSecureMessaging.reset(new SecureMessaging(protocol, encKey, macKey));
 
-	const QByteArray oID = Asn1Util::encode(V_ASN1_UNIVERSAL, 6, oid.getData());
-	const QByteArray publicPoint = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, 6, pPublicKey);
-	const QByteArray& publicKey = Asn1Util::encode(V_ASN1_APPLICATION, 73, oID + publicPoint, true);
+	const QByteArray oID = Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER, oid.getData());
+	const QByteArray publicPoint = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT, pPublicKey);
+	const QByteArray& publicKey = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::PUBLIC_KEY, oID + publicPoint, true);
 
 	CipherMac cmac(protocol, macKey);
 	QByteArray mac = cmac.generate(publicKey);
@@ -357,10 +358,10 @@ QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey) con
 }
 
 
-StatusCode SimulatorCard::verifyAuxiliaryData(const QByteArray& pCommandData)
+StatusCode SimulatorCard::verifyAuxiliaryData(const QByteArray& pASN1Struct)
 {
-	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(pCommandData.constData());
-	ASN1_OBJECT* obj = d2i_ASN1_OBJECT(nullptr, &unsignedCharPointer, static_cast<long>(pCommandData.size()));
+	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(pASN1Struct.constData());
+	ASN1_OBJECT* obj = d2i_ASN1_OBJECT(nullptr, &unsignedCharPointer, static_cast<long>(pASN1Struct.size()));
 	const auto guard = qScopeGuard([obj] {ASN1_OBJECT_free(obj);});
 	return mFileSystem.verify(Oid(obj), mAuxiliaryData);
 }

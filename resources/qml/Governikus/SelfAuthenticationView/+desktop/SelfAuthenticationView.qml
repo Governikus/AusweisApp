@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -86,7 +86,7 @@ SectionPage {
 				id: startWorkflowButton
 
 				Layout.alignment: Qt.AlignHCenter
-				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Constants.red : Style.color.control
+				buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.warning : Style.color.control
 				icon.source: "qrc:///images/identify.svg"
 				//: LABEL DESKTOP
 				text: qsTr("See my personal data")

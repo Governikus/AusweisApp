@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,10 +13,10 @@
 #include "context/WorkflowContext.h"
 
 #include <QAbstractListModel>
+#include <QList>
 #include <QPair>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 
 class test_UIPlugInQml;
@@ -36,7 +36,7 @@ class CertificateDescriptionModel
 	Q_PROPERTY(QString purpose READ getPurpose NOTIFY fireChanged)
 
 	private:
-		QVector<QPair<QString, QString>> mData;
+		QList<QPair<QString, QString>> mData;
 		QSharedPointer<WorkflowContext> mContext;
 
 		CertificateDescriptionModel();

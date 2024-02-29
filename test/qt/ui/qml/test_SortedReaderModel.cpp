@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtTest>
 
 #include "ReaderModel.h"
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 struct FakeReaderInfo
@@ -22,10 +23,10 @@ class MockReaderModel
 	Q_OBJECT
 
 	private:
-		QVector<FakeReaderInfo> mReaders;
+		QList<FakeReaderInfo> mReaders;
 
 	public:
-		explicit MockReaderModel(const QVector<FakeReaderInfo>& readers);
+		explicit MockReaderModel(const QList<FakeReaderInfo>& readers);
 
 
 		int rowCount(const QModelIndex& parent) const override;
@@ -37,7 +38,7 @@ class MockReaderModel
 		QVariant data(const QModelIndex& index, int role) const override;
 };
 
-MockReaderModel::MockReaderModel(const QVector<FakeReaderInfo>& readers)
+MockReaderModel::MockReaderModel(const QList<FakeReaderInfo>& readers)
 	: mReaders(readers)
 {
 }
@@ -89,11 +90,11 @@ class test_SortedReaderModel
 	private Q_SLOTS:
 		void test_order()
 		{
-			QVector<FakeReaderInfo> readers = {
-				{"3", false, false},
-				{"0", true, true},
-				{"1", false, true},
-				{"2", true, false}
+			QList<FakeReaderInfo> readers = {
+				{"3"_L1, false, false},
+				{"0"_L1, true, true},
+				{"1"_L1, false, true},
+				{"2"_L1, true, false}
 			};
 			MockReaderModel sourceModel(readers);
 			SortedReaderModel sortedModel;
@@ -102,10 +103,10 @@ class test_SortedReaderModel
 			sortedModel.onDataChanged();
 
 			QVERIFY(sortedModel.rowCount() == 4);
-			QCOMPARE(sortedModel.data(sortedModel.index(0, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "0");
-			QCOMPARE(sortedModel.data(sortedModel.index(1, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "1");
-			QCOMPARE(sortedModel.data(sortedModel.index(2, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "2");
-			QCOMPARE(sortedModel.data(sortedModel.index(3, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "3");
+			QCOMPARE(sortedModel.data(sortedModel.index(0, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "0"_L1);
+			QCOMPARE(sortedModel.data(sortedModel.index(1, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "1"_L1);
+			QCOMPARE(sortedModel.data(sortedModel.index(2, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "2"_L1);
+			QCOMPARE(sortedModel.data(sortedModel.index(3, 0, QModelIndex()), ReaderModel::UserRoles::READER_NAME), "3"_L1);
 		}
 
 

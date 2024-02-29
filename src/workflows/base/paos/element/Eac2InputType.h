@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -24,7 +24,7 @@ class Eac2InputType
 	friend class ::test_StateProcessCertificatesFromEac2;
 
 	private:
-		QVector<QSharedPointer<const CVCertificate>> mCvCertificates;
+		QList<QSharedPointer<const CVCertificate>> mCvCertificates;
 		QString mSignature;
 		QString mEphemeralPublicKey;
 		void appendCvcert(const QSharedPointer<const CVCertificate>& pCert);
@@ -37,7 +37,7 @@ class Eac2InputType
 
 		[[nodiscard]] const QString& getSignature() const;
 		[[nodiscard]] const QString& getEphemeralPublicKey() const;
-		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] const QList<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
 };
 
 } // namespace governikus

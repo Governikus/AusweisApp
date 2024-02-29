@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,8 +14,8 @@
 #endif
 
 #define SETTINGS_NAME(_name, _key)\
-	QString _name(){\
-		return QStringLiteral(_key);\
+	QAnyStringView _name(){\
+		return QAnyStringView(_key);\
 	}
 
 namespace governikus
@@ -25,6 +25,9 @@ class AbstractSettings
 	: public QObject
 {
 	Q_OBJECT
+
+	private:
+		static QString getOrganization();
 
 	protected:
 		AbstractSettings();
@@ -37,6 +40,7 @@ class AbstractSettings
 		static QSharedPointer<QTemporaryDir> mTestDir;
 #endif
 
+		static QSharedPointer<QSettings> getStore(QSettings::Scope pScope, const QString& pFilename = QString(), QSettings::Format pFormat = QSettings::InvalidFormat);
 		static QSharedPointer<QSettings> getStore(const QString& pFilename = QString(), QSettings::Format pFormat = QSettings::InvalidFormat);
 
 	Q_SIGNALS:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -16,7 +16,7 @@ GText {
 		ApplicationModel.showFeedback(qsTr("The log entry was copied to the clipboard."));
 	}
 
-	color: level === "C" ? Style.color.text_warning : (level === "W" ? Style.color.control : textStyle.textColor)
+	color: level === "C" ? Style.color.warning : (level === "W" ? Style.color.text_subline : textStyle.textColor)
 	font.bold: activeFocus
 	font.family: plugin.fixedFontFamily
 	text: "%1 %2".arg(origin).arg(message)

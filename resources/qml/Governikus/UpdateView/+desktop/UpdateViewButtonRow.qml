@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -15,8 +15,6 @@ RowLayout {
 	property alias progressText: bar.text
 	property alias progressValue: bar.value
 
-	signal remindLater
-	signal skipUpdate
 	signal toggleUpdate
 
 	spacing: Constants.component_spacing
@@ -26,28 +24,11 @@ RowLayout {
 
 		Layout.fillWidth: true
 		activeFocusOnTab: true
-		backgroundColor: Style.color.control
 		visible: downloadInProgress
-	}
-	GButton {
-
-		//: LABEL DESKTOP User choice to skip this update, the automatic update check will *not* inform about this update again.
-		text: qsTr("Skip update")
-		visible: !downloadInProgress
-
-		onClicked: root.skipUpdate()
 	}
 	GSpacer {
 		Layout.fillWidth: true
 		visible: !downloadInProgress
-	}
-	GButton {
-
-		//: LABEL DESKTOP The available update is shown again after next automatic update check.
-		text: qsTr("Remind me later")
-		visible: !downloadInProgress
-
-		onClicked: root.remindLater()
 	}
 	GButton {
 		enabledTooltipText: SettingsModel.appUpdateData.url

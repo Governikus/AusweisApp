@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdEstablishContext.h"
@@ -8,7 +8,7 @@
 
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,12 +36,12 @@ class test_IfdEstablishContext
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 6);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""));
-			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"Protocol\""));
-			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"UDName\""));
-			QVERIFY(logSpy.at(5).at(0).toString().contains("The value of msg should be IFDEstablishContext"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"msg\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Invalid messageType received: \"\""_L1));
+			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+			QVERIFY(logSpy.at(3).at(0).toString().contains("Missing value \"Protocol\""_L1));
+			QVERIFY(logSpy.at(4).at(0).toString().contains("Missing value \"UDName\""_L1));
+			QVERIFY(logSpy.at(5).at(0).toString().contains("The value of msg should be IFDEstablishContext"_L1));
 		}
 
 
@@ -143,16 +143,16 @@ class test_IfdEstablishContext
 			if (type == IfdMessageType::UNDEFINED)
 			{
 				QCOMPARE(logSpy.count(), 3);
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""));
-				QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""));
-				QVERIFY(logSpy.at(2).at(0).toString().contains("The value of msg should be IFDEstablishContext"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Invalid messageType received: \"UNDEFINED\""_L1));
+				QVERIFY(logSpy.at(1).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+				QVERIFY(logSpy.at(2).at(0).toString().contains("The value of msg should be IFDEstablishContext"_L1));
 
 				return;
 			}
 
 			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ContextHandle\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDEstablishContext"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Missing value \"ContextHandle\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of msg should be IFDEstablishContext"_L1));
 		}
 
 
@@ -194,8 +194,8 @@ class test_IfdEstablishContext
 			QCOMPARE(ifdEstablishContext.getUdName(), QString());
 
 			QCOMPARE(logSpy.count(), 2);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"Protocol\" should be of type \"string\""));
-			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"UDName\" should be of type \"string\""));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("The value of \"Protocol\" should be of type \"string\""_L1));
+			QVERIFY(logSpy.at(1).at(0).toString().contains("The value of \"UDName\" should be of type \"string\""_L1));
 		}
 
 

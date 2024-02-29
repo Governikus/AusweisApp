@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Service.h"
@@ -30,7 +30,7 @@ void Service::doAppUpdate(UpdateType pType, bool pForceUpdate)
 				mTimer.start(mOneDayInMs);
 				if (pForceUpdate || Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateCheck())
 				{
-					Q_UNUSED(Env::getSingleton<AppUpdater>()->checkAppUpdate(pForceUpdate))
+					Q_UNUSED(Env::getSingleton<AppUpdater>()->checkAppUpdate())
 					break;
 				}
 			}

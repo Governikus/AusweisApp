@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -34,71 +34,24 @@ Item {
 			id: imageItem
 
 			Layout.preferredHeight: Layout.preferredWidth
-			implicitWidth: Style.dimens.small_icon_size
+			Layout.preferredWidth: Style.dimens.small_icon_size
+			Layout.rightMargin: Constants.text_spacing
 			playAnimation: true
 			sourceSize.width: width
 			tintColor: textItem.color
 			visible: imageItem.source != ""
 		}
-		GText {
+		GCrossBlendedText {
 			id: textItem
 
 			Accessible.ignored: true
+			Layout.alignment: Qt.AlignVCenter
 			color: Style.color.text
 			elide: Text.ElideRight
 			maximumLineCount: 1
 			textStyle: Style.text.navigation
-			visible: textItem.text !== ""
+			visible: text !== ""
 			wrapMode: Text.NoWrap
-
-			Behavior on text {
-				SequentialAnimation {
-					PropertyAnimation {
-						duration: Constants.animation_duration
-						easing.type: Easing.InCubic
-						property: "opacity"
-						target: textItem
-						to: 0
-					}
-					PropertyAction {
-						property: "text"
-						target: textItem
-					}
-					PropertyAnimation {
-						duration: Constants.animation_duration
-						easing.type: Easing.OutCubic
-						property: "opacity"
-						target: textItem
-						to: 1
-					}
-				}
-			}
-
-			onVisibleChanged: {
-				if (visible) {
-					fadeIn.start();
-				} else {
-					fadeOut.start();
-				}
-			}
-		}
-		PropertyAnimation {
-			id: fadeOut
-
-			duration: Constants.animation_duration
-			easing.type: Easing.InCubic
-			property: "opacity"
-			target: textItem
-			to: 0
-		}
-		PropertyAnimation {
-			id: fadeIn
-
-			duration: Constants.animation_duration
-			easing.type: Easing.OutCubic
-			property: "opacity"
-			target: textItem
-			to: 1
 		}
 	}
 	MouseArea {

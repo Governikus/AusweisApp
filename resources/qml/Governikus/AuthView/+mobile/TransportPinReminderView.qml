@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -32,24 +32,24 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		source: "qrc:///images/info.svg"
 		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.control
+		tintColor: Style.color.image
 	}
 	PaneTitle {
 		Layout.alignment: Qt.AlignHCenter
 		//: LABEL ANDROID IOS
-		text: qsTr("Do you know your six-digit ID card PIN?")
+		text: qsTr("Do you know your 6-digit ID card PIN?")
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 		//: LABEL ANDROID IOS
-		text: qsTr("Online identification with Transport PIN is not possible. The self-selected, six-digit ID card PIN is mandatory to use the eID function.")
+		text: qsTr("Online identification with Transport PIN is not possible. The self-selected, 6-digit ID card PIN is mandatory to use the eID function.")
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
 		horizontalAlignment: Text.AlignHCenter
 		//: LABEL ANDROID IOS
-		text: qsTr("To set up a Smart-eID you also need to have assigned a six-digit PIN beforehand.")
+		text: qsTr("To set up a Smart-eID you also need to have assigned a 6-digit PIN beforehand.")
 		visible: WorkflowModel.isSmartSupported
 	}
 	MoreInformationLink {

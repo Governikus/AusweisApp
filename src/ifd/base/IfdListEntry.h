@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,8 +10,8 @@
 
 #include "IfdDescriptor.h"
 
+#include <QList>
 #include <QTime>
-#include <QVector>
 
 
 namespace governikus
@@ -24,7 +24,7 @@ class IfdListEntry
 	private:
 		IfdDescriptor mIfdDescriptor;
 		QTime mLastSeen;
-		QVector<QTime> mLastSeenHistory;
+		QList<QTime> mLastSeenHistory;
 
 	public:
 		explicit IfdListEntry(const IfdDescriptor& pIfdDescriptor);

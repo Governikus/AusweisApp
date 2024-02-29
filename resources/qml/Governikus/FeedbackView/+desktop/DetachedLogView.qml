@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -197,7 +197,6 @@ Rectangle {
 			activeFocusOnTab: true
 			clip: true
 			model: filterModel
-			scrollBarEnabled: true
 
 			delegate: LogViewDelegate {
 				font.pixelSize: fontSize.value

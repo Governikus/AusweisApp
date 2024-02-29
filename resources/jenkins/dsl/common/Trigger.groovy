@@ -24,7 +24,7 @@ class Trigger extends Build
 			parameters
 			{
 				fileParam('patch.diff', 'Patch file that will be applied and tested')
-				stringParam('REVIEWBOARD_SERVER', Constants.ReviewBoardServer, 'Server')
+				stringParam('REVIEWBOARD_SERVER', '', 'Server')
 				stringParam('REVIEWBOARD_REVIEW_ID', '', 'ReviewID')
 				stringParam('REVIEWBOARD_DIFF_REVISION', '', 'ReviewDiffRev')
 				stringParam('REVIEWBOARD_STATUS_UPDATE_ID', '', 'StatusUpdateID')

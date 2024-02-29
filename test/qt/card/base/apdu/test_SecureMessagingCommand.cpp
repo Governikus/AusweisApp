@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -14,6 +14,7 @@
 #include <QtCore>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -45,7 +46,7 @@ class test_SecureMessagingCommand
 			QCOMPARE(command.getMac(), QByteArray());
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 		}
 
 
@@ -77,11 +78,11 @@ class test_SecureMessagingCommand
 			QCOMPARE(logSpy.count(), 1);
 			if (input.getData().isEmpty())
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 			}
 			else
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding mac"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding mac"_L1));
 			}
 		}
 
@@ -94,7 +95,7 @@ class test_SecureMessagingCommand
 			QVERIFY(!command.isValid());
 
 			QCOMPARE(logSpy.count(), 1);
-			QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding encrypted data"));
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding encrypted data"_L1));
 		}
 
 
@@ -126,11 +127,11 @@ class test_SecureMessagingCommand
 			QCOMPARE(logSpy.count(), 1);
 			if (input.getData().isEmpty())
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("No data to decrypt"_L1));
 			}
 			else
 			{
-				QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding mac"));
+				QVERIFY(logSpy.at(0).at(0).toString().contains("Error on decoding mac"_L1));
 			}
 		}
 

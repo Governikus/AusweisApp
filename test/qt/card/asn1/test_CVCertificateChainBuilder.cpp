@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -12,7 +12,7 @@
 #include "TestFileHelper.h"
 #include "asn1/CVCertificateChainBuilder.h"
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -36,7 +36,7 @@ class test_CVCertificateChainBuilder
 
 	QByteArray readFile(const QString& pFileName)
 	{
-		return TestFileHelper::readFile(QString(":/card/").append(pFileName));
+		return TestFileHelper::readFile(QStringLiteral(":/card/").append(pFileName));
 	}
 
 
@@ -60,18 +60,18 @@ class test_CVCertificateChainBuilder
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mCvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"));
-			mCvca_DETESTeID00002_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"));
-			mCvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"));
-			mCvca_DETESTeID00004_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"));
-			mCvca_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"));
-			mCvdv_DEDVeIDDPST00035 = CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex")); // DV issued from CVCA DETESTeID00004
-			mCvat_DEDEMODEV00038 = CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"));     // TA issued from DV DEDVeIDDPST00035
+			mCvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			mCvca_DETESTeID00002_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			mCvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			mCvca_DETESTeID00004_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			mCvca_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
+			mCvdv_DEDVeIDDPST00035 = CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1)); // DV issued from CVCA DETESTeID00004
+			mCvat_DEDEMODEV00038 = CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));     // TA issued from DV DEDVeIDDPST00035
 
-			mCvca_DETESTeID00005_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005_DETESTeID00004.hex"));
-			mCvca_DETESTeID00005 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005.hex"));
-			mCvdv_DEDVtIDGVNK00005 = CVCertificate::fromHex(readFile("cvdv-DEDVtIDGVNK00005.hex")); // DV issued from CVCA DETESTeID00005
-			mCvat_DEDEVDEMO00020 = CVCertificate::fromHex(readFile("cvat-DEDEVDEMO00020.hex"));     // TA issued from DV DEDVtIDGVNK00005
+			mCvca_DETESTeID00005_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005_DETESTeID00004.hex"_L1));
+			mCvca_DETESTeID00005 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005.hex"_L1));
+			mCvdv_DEDVtIDGVNK00005 = CVCertificate::fromHex(readFile("cvdv-DEDVtIDGVNK00005.hex"_L1)); // DV issued from CVCA DETESTeID00005
+			mCvat_DEDEVDEMO00020 = CVCertificate::fromHex(readFile("cvat-DEDEVDEMO00020.hex"_L1));     // TA issued from DV DEDVtIDGVNK00005
 		}
 
 
@@ -109,7 +109,7 @@ class test_CVCertificateChainBuilder
 
 		void noDV_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -129,7 +129,7 @@ class test_CVCertificateChainBuilder
 
 		void noDV_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -149,7 +149,7 @@ class test_CVCertificateChainBuilder
 
 		void noAT_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -169,7 +169,7 @@ class test_CVCertificateChainBuilder
 
 		void noAT_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -189,7 +189,7 @@ class test_CVCertificateChainBuilder
 
 		void onlyATandDV_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			// list.append(mCvca_DETESTeID00005);
 			// list.append(mCvca_DETESTeID00005_DETESTeID00004); do not include any CVCA certificates
 			// list.append(mCvca_DETESTeID00004);
@@ -209,7 +209,7 @@ class test_CVCertificateChainBuilder
 
 		void onlyATandDV_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			// list.append(mCvca_DETESTeID00005);
 			// list.append(mCvca_DETESTeID00005_DETESTeID00004); do not include any CVCA certificates
 			// list.append(mCvca_DETESTeID00004);
@@ -229,7 +229,7 @@ class test_CVCertificateChainBuilder
 
 		void missingLinkCert_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -254,7 +254,7 @@ class test_CVCertificateChainBuilder
 
 		void missingLinkCert_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -292,7 +292,7 @@ class test_CVCertificateChainBuilder
 		 */
 		void match_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -317,7 +317,7 @@ class test_CVCertificateChainBuilder
 
 		void match_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -342,7 +342,7 @@ class test_CVCertificateChainBuilder
 
 		void noMatch_getChainStartingWith()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -362,7 +362,7 @@ class test_CVCertificateChainBuilder
 
 		void noMatch_getChainForCertificationAuthority()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -382,7 +382,7 @@ class test_CVCertificateChainBuilder
 
 		void getChainForCertificationAuthority_forCarCurr()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);
@@ -405,7 +405,7 @@ class test_CVCertificateChainBuilder
 
 		void getChainForCertificationAuthority_forCarPrev()
 		{
-			QVector<QSharedPointer<const CVCertificate>> list;
+			QList<QSharedPointer<const CVCertificate>> list;
 			list.append(mCvca_DETESTeID00005);
 			list.append(mCvca_DETESTeID00005_DETESTeID00004);
 			list.append(mCvca_DETESTeID00004);

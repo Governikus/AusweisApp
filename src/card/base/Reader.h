@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,7 +27,7 @@ class Reader
 		void setInfoCardInfo(const CardInfo& pCardInfo);
 		void setCardInfoTagType(CardInfo::TagType pTagType);
 		void removeCardInfo();
-		void fetchCardInfo();
+		QSharedPointer<CardConnectionWorker> fetchCardInfo();
 
 		[[nodiscard]] int getTimerId() const;
 		void setTimerId(int pTimerId);

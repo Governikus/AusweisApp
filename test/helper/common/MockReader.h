@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -27,8 +27,8 @@ class MockReader
 	public:
 		static ReaderManagerPlugInType cMOCKED_READERMANAGER_TYPE;
 
-		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig = QVector<TransmitConfig>(), const QByteArray& pEfCardAccess = QByteArray());
-		static MockReader* createMockReader(const QVector<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess);
+		static MockReader* createMockReader(const QList<TransmitConfig>& pTransmitConfig = QList<TransmitConfig>(), const QByteArray& pEfCardAccess = QByteArray());
+		static MockReader* createMockReader(const QList<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess);
 
 		MockReader(const QString& pReaderName = QStringLiteral("MockReader"), ReaderManagerPlugInType pType = cMOCKED_READERMANAGER_TYPE);
 		~MockReader() override;

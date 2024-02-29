@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsConfiguration.h"
@@ -117,7 +117,7 @@ QList<QSslCipher> TlsConfiguration::getCiphers() const
 }
 
 
-QVector<QSslEllipticCurve> TlsConfiguration::getEllipticCurves() const
+QList<QSslEllipticCurve> TlsConfiguration::getEllipticCurves() const
 {
 	return mConfiguration.ellipticCurves();
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -13,6 +13,7 @@
 
 Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(ReaderInfo)
@@ -68,11 +69,11 @@ class test_ReaderManager
 		{
 			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderAdded);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711"_L1);
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			const auto info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
-			QCOMPARE(info.getName(), QString("MockReader 4711"));
+			QCOMPARE(info.getName(), "MockReader 4711"_L1);
 		}
 
 
@@ -81,11 +82,11 @@ class test_ReaderManager
 			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderRemoved);
 			fireReaderAdded();
 
-			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 4711");
+			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 4711"_L1);
 
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			const auto info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
-			QCOMPARE(info.getName(), QString("MockReader 4711"));
+			QCOMPARE(info.getName(), "MockReader 4711"_L1);
 		}
 
 
@@ -93,7 +94,7 @@ class test_ReaderManager
 		{
 			CreateCardConnectionCommandSlot commandSlot;
 
-			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader"_L1, &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
 			QTRY_COMPARE(commandSlot.mSlotCalled, true); // clazy:exclude=qstring-allocations
 			QVERIFY(commandSlot.mCardConnection.isNull());
@@ -103,9 +104,9 @@ class test_ReaderManager
 		void fireCreateCardConnection_noCard()
 		{
 			CreateCardConnectionCommandSlot commandSlot;
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711"_L1);
 
-			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("UnknownReader"_L1, &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
 			QTRY_COMPARE(commandSlot.mSlotCalled, true); // clazy:exclude=qstring-allocations
 			QVERIFY(commandSlot.mCardConnection.isNull());
@@ -115,12 +116,12 @@ class test_ReaderManager
 		void fireCreateCardConnection_cardConnectFail()
 		{
 			CreateCardConnectionCommandSlot commandSlot;
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711"_L1);
 			MockCardConfig cardConfig;
 			cardConfig.mConnect = CardReturnCode::COMMAND_FAILED;
 			reader->setCard(cardConfig);
 
-			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711"_L1, &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
 			QTRY_COMPARE(commandSlot.mSlotCalled, true); // clazy:exclude=qstring-allocations
 			QVERIFY(commandSlot.mCardConnection.isNull());
@@ -130,12 +131,12 @@ class test_ReaderManager
 		void fireCreateCardConnection()
 		{
 			CreateCardConnectionCommandSlot commandSlot;
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 4711"_L1);
 			MockCardConfig cardConfig;
 			cardConfig.mConnect = CardReturnCode::OK;
 			reader->setCard(cardConfig);
 
-			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711", &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
+			Env::getSingleton<ReaderManager>()->callCreateCardConnectionCommand("MockReader 4711"_L1, &commandSlot, &CreateCardConnectionCommandSlot::onCardCommandDone);
 
 			QTRY_COMPARE(commandSlot.mSlotCalled, true); // clazy:exclude=qstring-allocations
 			QVERIFY(!commandSlot.mCardConnection.isNull());
@@ -144,7 +145,7 @@ class test_ReaderManager
 
 		void getInvalidReaderInfo()
 		{
-			const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo("test dummy");
+			const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo("test dummy"_L1);
 			QCOMPARE(readerInfo.getPlugInType(), ReaderManagerPlugInType::UNKNOWN);
 			QCOMPARE(readerInfo.getName(), QStringLiteral("test dummy"));
 		}
@@ -158,12 +159,12 @@ class test_ReaderManager
 			auto readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 0);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1"_L1);
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 1);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2"_L1);
 			QTRY_COMPARE(spy.count(), 2); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 2);
@@ -178,12 +179,12 @@ class test_ReaderManager
 			auto readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 0);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader same");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader same"_L1);
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 1);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader same");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader same"_L1);
 			QTRY_COMPARE(spy.count(), 2); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 1);
@@ -192,20 +193,20 @@ class test_ReaderManager
 
 		void checkTypeReaderFilter_data()
 		{
-			QTest::addColumn<QVector<ReaderManagerPlugInType>>("types");
+			QTest::addColumn<QList<ReaderManagerPlugInType>>("types");
 			QTest::addColumn<int>("onceCount");
 			QTest::addColumn<int>("twiceCount");
 
-			QTest::newRow("0") << QVector<ReaderManagerPlugInType>({}) << 0 << 0;
-			QTest::newRow("1_existing") << QVector<ReaderManagerPlugInType>({ReaderManagerPlugInType::MOCK}) << 1 << 2;
-			QTest::newRow("1_non_existing") << QVector<ReaderManagerPlugInType>({ReaderManagerPlugInType::REMOTE_IFD}) << 0 << 0;
-			QTest::newRow("2_existing_non_existing") << QVector<ReaderManagerPlugInType>({ReaderManagerPlugInType::MOCK, ReaderManagerPlugInType::PCSC}) << 1 << 2;
+			QTest::newRow("0") << QList<ReaderManagerPlugInType>({}) << 0 << 0;
+			QTest::newRow("1_existing") << QList<ReaderManagerPlugInType>({ReaderManagerPlugInType::MOCK}) << 1 << 2;
+			QTest::newRow("1_non_existing") << QList<ReaderManagerPlugInType>({ReaderManagerPlugInType::REMOTE_IFD}) << 0 << 0;
+			QTest::newRow("2_existing_non_existing") << QList<ReaderManagerPlugInType>({ReaderManagerPlugInType::MOCK, ReaderManagerPlugInType::PCSC}) << 1 << 2;
 		}
 
 
 		void checkTypeReaderFilter()
 		{
-			QFETCH(QVector<ReaderManagerPlugInType>, types);
+			QFETCH(QList<ReaderManagerPlugInType>, types);
 			QFETCH(int, onceCount);
 			QFETCH(int, twiceCount);
 
@@ -215,12 +216,12 @@ class test_ReaderManager
 			auto readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), 0);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 1"_L1);
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), onceCount);
 
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2");
+			MockReaderManagerPlugIn::getInstance().addReader("MockReader 2"_L1);
 			QTRY_COMPARE(spy.count(), 2); // clazy:exclude=qstring-allocations
 			readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(filter);
 			QCOMPARE(readerInfos.count(), twiceCount);
@@ -229,7 +230,7 @@ class test_ReaderManager
 
 		void test_shelve()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader");
+			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader"_L1);
 			reader->setInfoCardInfo(CardInfo(CardType::EID_CARD));
 
 			QSignalSpy removed(reader, &Reader::fireCardRemoved);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
@@ -60,7 +60,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QUrl& pUrl, const QVariant& pData, const AuthContext::BrowserHandler& pBrowserHandler)
 {
 	const auto& handler = [](const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
-				if (QVector<Action>{Action::AUTH, Action::SELF, Action::PIN}.contains(pActiveWorkflow->getAction()))
+				if (QList<Action>{Action::AUTH, Action::SELF, Action::PIN}.contains(pActiveWorkflow->getAction()))
 				{
 					const auto activeContext = pActiveWorkflow->getContext();
 					if (activeContext->isWorkflowFinished())

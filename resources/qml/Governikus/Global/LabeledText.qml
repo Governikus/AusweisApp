@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Style
@@ -10,9 +10,11 @@ Item {
 	property alias bodyElide: bodyText.elide
 	readonly property double focusFrameMargins: focusFrame.anchors.margins
 	property alias label: labelText.text
+	property alias labelColor: labelText.color
 	property alias labelStyle: labelText.textStyle
 	property alias maximumBodyLineCount: bodyText.maximumLineCount
 	property alias text: bodyText.text
+	property alias textColor: bodyText.color
 	property alias textFormat: bodyText.textFormat
 	property alias textUppercase: bodyText.font.capitalization
 

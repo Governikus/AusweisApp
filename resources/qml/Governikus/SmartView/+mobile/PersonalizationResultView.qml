@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -40,7 +40,6 @@ ResultErrorView {
 		}
 		GText {
 			Layout.alignment: Qt.AlignHCenter
-			font.bold: true
 			horizontalAlignment: Text.AlignHCenter
 			text: PersonalizationModel.blockingCode
 			textStyle: Style.text.headline
@@ -83,7 +82,7 @@ ResultErrorView {
 	PasswordInfoData {
 		id: infoData
 
-		contentType: PasswordInfoContent.Type.SMART_BLOCKING_CODE
+		contentType: PasswordInfoData.Type.SMART_BLOCKING_CODE
 	}
 	Component {
 		id: passwordInfoView

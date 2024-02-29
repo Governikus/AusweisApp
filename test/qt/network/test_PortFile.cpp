@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class test_PortFile
@@ -53,7 +54,7 @@ class test_PortFile
 
 				if (!usage.isEmpty())
 				{
-					QVERIFY(filename.contains(QLatin1Char('.') + usage + QLatin1Char('.')));
+					QVERIFY(filename.contains('.'_L1 + usage + '.'_L1));
 				}
 			}
 

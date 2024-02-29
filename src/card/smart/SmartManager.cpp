@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SmartManager.h"
@@ -273,7 +273,7 @@ InitializeResult SmartManager::initializePersonalization(const QString& pChallen
 }
 
 
-QByteArrayList SmartManager::performPersonalization(const QVector<InputAPDUInfo>& pInputApdus) const
+QByteArrayList SmartManager::performPersonalization(const QList<InputAPDUInfo>& pInputApdus) const
 {
 	if (!isValid())
 	{

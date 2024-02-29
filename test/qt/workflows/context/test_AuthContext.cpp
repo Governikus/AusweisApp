@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,6 +16,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -46,7 +47,7 @@ class test_AuthContext
 
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(usedAsSdk);
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(enabled);
-			TestAuthContext context(":/paos/DIDAuthenticateEAC1.xml");
+			TestAuthContext context(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 			QSignalSpy spy(&context, &TestAuthContext::fireCanAllowedModeChanged);
@@ -180,9 +181,9 @@ class test_AuthContext
 			AuthContext context;
 
 			QCOMPARE(context.getCertificateList().size(), 0);
-			context.addCertificateData(QUrl("https://governikus.de"), QSslCertificate());
+			context.addCertificateData(QUrl("https://governikus.de"_L1), QSslCertificate());
 			QCOMPARE(context.getCertificateList().size(), 1);
-			context.addCertificateData(QUrl("https://governikus.de"), QSslCertificate());
+			context.addCertificateData(QUrl("https://governikus.de"_L1), QSslCertificate());
 			QCOMPARE(context.getCertificateList().size(), 2);
 		}
 

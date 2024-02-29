@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -39,36 +39,24 @@ RoundedRectangle {
 				name: "OK"
 
 				PropertyChanges {
-					source: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
-					target: statusIcon
-				}
-				PropertyChanges {
-					target: statusIcon
-					tintColor: Style.color.success
+					statusIcon.source: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
+					statusIcon.tintColor: Style.color.success
 				}
 			},
 			State {
 				name: "WARNING"
 
 				PropertyChanges {
-					source: "qrc:///images/status_warning.svg"
-					target: statusIcon
-				}
-				PropertyChanges {
-					target: statusIcon
-					tintColor: Style.color.fail
+					statusIcon.source: "qrc:///images/status_warning.svg"
+					statusIcon.tintColor: Style.color.fail
 				}
 			},
 			State {
 				name: "ERROR"
 
 				PropertyChanges {
-					source: "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name)
-					target: statusIcon
-				}
-				PropertyChanges {
-					target: statusIcon
-					tintColor: Style.color.text_warning
+					statusIcon.source: "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name)
+					statusIcon.tintColor: Style.color.warning
 				}
 			}
 		]

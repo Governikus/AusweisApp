@@ -3,7 +3,7 @@ import common.Review
 def j = new Review
 	(
 		name: 'MacOS_Integrated',
-		libraries: ['MacOS'],
+		libraries: 'MacOS',
 		label: 'MacOS',
 		artifacts: 'tmp/*.log',
 		allowEmptyArtifacts: true,
@@ -22,15 +22,11 @@ j.with
 		shell('cd source; cmake --preset ci-macos-integrated')
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
 			cmake --build build
 			'''.stripIndent().trim())
 
 		shell('''\
-			export DYLD_FRAMEWORK_PATH=${WORKSPACE}/libs/build/dist/lib
-			export DYLD_LIBRARY_PATH=${WORKSPACE}/libs/build/dist/lib
-			export QT_PLUGIN_PATH=${WORKSPACE}/libs/build/dist/plugins
+			export QT_PLUGIN_PATH=${WORKSPACE}/libs/dist/plugins
 			ctest --test-dir build --output-on-failure
 			'''.stripIndent().trim())
 	}

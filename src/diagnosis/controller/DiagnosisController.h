@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -26,8 +26,8 @@ class DiagnosisController
 		struct PcscInfo
 		{
 			QString mPcscVersion;
-			QVector<DiagnosisContext::ComponentInfo> mPcscComponents;
-			QVector<DiagnosisContext::ComponentInfo> mPcscDrivers;
+			QList<DiagnosisContext::ComponentInfo> mPcscComponents;
+			QList<DiagnosisContext::ComponentInfo> mPcscDrivers;
 		};
 
 		QSharedPointer<DiagnosisContext> mContext;
@@ -36,8 +36,8 @@ class DiagnosisController
 		void collectInterfaceInformation();
 
 		static PcscInfo retrievePcscInfo();
-		static void getPcscInfo(QVector<DiagnosisContext::ComponentInfo>& pComponents,
-				QVector<DiagnosisContext::ComponentInfo>& pDrivers);
+		static void getPcscInfo(QList<DiagnosisContext::ComponentInfo>& pComponents,
+				QList<DiagnosisContext::ComponentInfo>& pDrivers);
 
 	public:
 		explicit DiagnosisController(const QSharedPointer<DiagnosisContext>& pContext, QObject* pParent = nullptr);

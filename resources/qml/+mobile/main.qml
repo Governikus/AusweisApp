@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -33,13 +33,13 @@ ApplicationWindow {
 		readonly property var currentSectionPage: contentArea.currentSectionPage
 		readonly property bool isBackAction: navigationAction && navigationAction.action === NavigationAction.Action.Back
 
+		enableTileStyle: currentSectionPage ? currentSectionPage.enableTileStyle : false
 		navigationAction: currentSectionPage ? currentSectionPage.navigationAction : null
 		rightAction: currentSectionPage ? currentSectionPage.rightTitleBarAction : null
+		showContent: currentSectionPage ? currentSectionPage.showTitleBarContent : true
 		showSeparator: currentSectionPage ? currentSectionPage.contentIsScrolled : false
 		smartEidUsed: currentSectionPage ? currentSectionPage.smartEidUsed : false
 		title: currentSectionPage ? currentSectionPage.title : ""
-		titleBarOpacity: currentSectionPage ? currentSectionPage.titleBarOpacity : 1
-		visible: !currentSectionPage || currentSectionPage.titleBarVisible
 	}
 
 	Component.onCompleted: {
@@ -61,14 +61,14 @@ ApplicationWindow {
 				}
 				d.lastCloseInvocation = currentTime;
 				//: INFO ANDROID IOS Hint that is shown if the users pressed the "back" button on the top-most navigation level for the first time (a second press closes the app).
-				ApplicationModel.showFeedback(qsTr("To close the app, quickly press the back button twice."));
+				ApplicationModel.showFeedback(qsTr("To close the app, press the back button 2 times."));
 				return;
 			}
 			let activeStackView = contentArea.visibleItem;
 			let navigationAction = contentArea.currentSectionPage.navigationAction;
 			if (activeStackView.depth <= 1 && (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel)) {
 				navigation.show(UiModule.DEFAULT);
-			} else if (navigationAction) {
+			} else if (navigationAction && navigationAction.action !== NavigationAction.Action.None) {
 				navigationAction.clicked(undefined);
 			}
 		}
@@ -131,21 +131,10 @@ ApplicationWindow {
 		activeModule: navigation.activeModule
 
 		anchors {
-			bottom: navigation.top
-			bottomMargin: !navigation.lockedAndHidden || !currentSectionPage ? 0 : plugin.safeAreaMargins.bottom + (currentSectionPage.hiddenNavbarPadding ? navigation.height : 0)
-			left: parent.left
+			bottomMargin: navigation.effectiveHeight
+			fill: parent
 			leftMargin: plugin.safeAreaMargins.left
-			right: parent.right
 			rightMargin: plugin.safeAreaMargins.right
-			top: parent.top
-
-			Behavior on bottomMargin {
-				enabled: !ApplicationModel.isScreenReaderRunning()
-
-				NumberAnimation {
-					duration: Constants.animation_duration
-				}
-			}
 		}
 	}
 	Navigation {

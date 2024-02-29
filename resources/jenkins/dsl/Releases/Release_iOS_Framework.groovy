@@ -3,9 +3,9 @@ import common.Release
 def j = new Release
 	(
 		name: 'iOS_Framework',
-		libraries: ['iOS'],
+		libraries: 'iOS',
 		label: 'iOS',
-		artifacts: 'libs/build/Toolchain_*,build/*.zip,build/*.bcsymbolmap,*.tar.zstd'
+		artifacts: 'libs/Toolchain_*,build/*.zip,build/*.bcsymbolmap,*.tar.zstd'
 	).generate(this)
 
 

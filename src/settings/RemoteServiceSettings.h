@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,7 +16,6 @@
 #include <QSslCertificate>
 #include <QSslKey>
 #include <QString>
-#include <QVector>
 
 class test_RemoteServiceSettings;
 class test_IfdConnector;
@@ -72,19 +71,19 @@ class RemoteServiceSettings
 		QSharedPointer<QSettings> mStore;
 
 		RemoteServiceSettings();
-		[[nodiscard]] QString getDefaultServerName() const;
+		[[nodiscard]] QString getDefaultDeviceName() const;
 		void setTrustedCertificates(const QList<QSslCertificate>& pCertificates);
 		void setUniqueTrustedCertificates(const QSet<QSslCertificate>& pCertificates);
 
-		void setRemoteInfos(const QVector<RemoteInfo>& pInfos);
+		void setRemoteInfos(const QList<RemoteInfo>& pInfos);
 		void syncRemoteInfos(const QSet<QSslCertificate>& pCertificates);
 
 	public:
 		static QString generateFingerprint(const QSslCertificate& pCert);
 		~RemoteServiceSettings() override = default;
 
-		[[nodiscard]] QString getServerName() const;
-		void setServerName(const QString& pName);
+		[[nodiscard]] QString getDeviceName() const;
+		void setDeviceName(const QString& pName);
 
 		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
@@ -97,17 +96,17 @@ class RemoteServiceSettings
 		void removeTrustedCertificate(const QSslCertificate& pCertificate);
 		void removeTrustedCertificate(const QString& pFingerprint);
 
-		bool checkAndGenerateKey(bool pForceGeneration = false) const;
+		bool checkAndGenerateKey(int pCreateKeySize) const;
 
-		[[nodiscard]] QSslCertificate getCertificate() const;
-		void setCertificate(const QSslCertificate& pCert) const;
+		[[nodiscard]] QList<QSslCertificate> getCertificates() const;
+		void setCertificates(const QList<QSslCertificate>& pCertChain) const;
 
 		[[nodiscard]] QSslKey getKey() const;
 		void setKey(const QSslKey& pKey) const;
 
 		[[nodiscard]] RemoteInfo getRemoteInfo(const QSslCertificate& pCertificate) const;
 		[[nodiscard]] RemoteInfo getRemoteInfo(const QString& pFingerprint) const;
-		[[nodiscard]] QVector<RemoteInfo> getRemoteInfos() const;
+		[[nodiscard]] QList<RemoteInfo> getRemoteInfos() const;
 		bool updateRemoteInfo(const RemoteInfo& pInfo);
 
 		static QString escapeDeviceName(const QString& pDeviceNameUnescaped);

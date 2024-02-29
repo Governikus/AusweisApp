@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/SecureMessaging.h"
@@ -40,9 +40,9 @@ class test_SecureMessaging
 		QScopedPointer<SymmetricCipher> mCipher;
 
 
-		QVector<QByteArray> encryptResponse(const QByteArray& pBuffer, quint32& pSsc) const
+		QList<QByteArray> encryptResponse(const QByteArray& pBuffer, quint32& pSsc) const
 		{
-			QVector<QByteArray> result(4);
+			QList<QByteArray> result(4);
 
 			++pSsc;
 			QByteArray ssc = QByteArray(mCipher->getBlockSize() - QByteArray::number(pSsc, 16).size(), 0x00).append(ByteArrayUtil::fromValue(pSsc));

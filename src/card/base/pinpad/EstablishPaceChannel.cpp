@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannel.h"
@@ -232,7 +232,7 @@ QByteArray EstablishPaceChannel::createInputData() const
 }
 
 
-QByteArray EstablishPaceChannel::createCommandData() const
+QByteArray EstablishPaceChannel::createASN1Struct() const
 {
 	// Command data according to PC/SC Part 10 amendment 1.1
 	static const char INDEX_ESTABLISH_PACE_CHANNEL = 0x02;
@@ -255,7 +255,7 @@ QByteArray EstablishPaceChannel::createCommandData() const
 }
 
 
-QByteArray EstablishPaceChannel::createCommandDataCcid() const
+QByteArray EstablishPaceChannel::createASN1StructCcid() const
 {
 	auto channelInput = newObject<ESTABLISHPACECHANNELINPUT>();
 

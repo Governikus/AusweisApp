@@ -1,7 +1,8 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
+#include <QCoreApplication>
 #include <QSslCipher>
 #include <QSslSocket>
 
@@ -25,8 +26,11 @@
 	#error RSA-PSK is required.
 #endif
 
-int main()
+int main(int argc, char** argv)
 {
+	QCoreApplication app(argc, argv);
+	Q_UNUSED(app)
+
 	// It is required that Qt and AusweisApp uses the library and the same version.
 	// Also this binary will crash if your libraries aren't binary compatible. For example
 	// this occurs if you link Qt against OpenSSL and the AusweisApp against LibreSSL.

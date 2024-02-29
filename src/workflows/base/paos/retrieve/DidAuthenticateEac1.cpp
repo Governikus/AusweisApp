@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateEac1.h"
@@ -65,7 +65,7 @@ const ConnectionHandle& DIDAuthenticateEAC1::getConnectionHandle() const
 }
 
 
-const QVector<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC1::getCvCertificates() const
+const QList<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC1::getCvCertificates() const
 {
 	return mEac1InputType.getCvCertificates();
 }
@@ -95,7 +95,7 @@ const QString& DIDAuthenticateEAC1::getTransactionInfo() const
 }
 
 
-const QVector<AcceptedEidType>& DIDAuthenticateEAC1::getAcceptedEidTypes() const
+const QList<AcceptedEidType>& DIDAuthenticateEAC1::getAcceptedEidTypes() const
 {
 	return mEac1InputType.getAcceptedEidTypes();
 }

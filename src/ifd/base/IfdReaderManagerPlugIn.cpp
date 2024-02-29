@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdReaderManagerPlugIn.h"
 
+#include "AppSettings.h"
 #include "IfdReader.h"
 #include "messages/IfdError.h"
 #include "messages/IfdGetStatus.h"
@@ -137,7 +138,13 @@ void IfdReaderManagerPlugIn::onContextEstablished(const QString& pIfdName, const
 
 	if (getInfo().getPlugInType() == ReaderManagerPlugInType::REMOTE_IFD)
 	{
+		const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+		QString savedIfdName = settings.getRemoteInfo(pId).getNameEscaped();
 		dispatcher->saveRemoteNameInSettings(pIfdName);
+		if (savedIfdName != RemoteServiceSettings::escapeDeviceName(pIfdName))
+		{
+			Q_EMIT getIfdClient()->fireDispatcherChanged(dispatcher);
+		}
 		if (dispatcher->isPairingConnection())
 		{
 			QMetaObject::invokeMethod(dispatcher.data(), &IfdDispatcher::close, Qt::QueuedConnection);

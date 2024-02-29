@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateGetSelfAuthenticationData.h"
@@ -15,6 +15,7 @@
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -56,7 +57,7 @@ class test_StateGetSelfAuthenticationData
 
 		void test_OnNetworkReplyValidData()
 		{
-			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationData.json");
+			const auto& data = TestFileHelper::readFile(":/self/SelfAuthenticationData.json"_L1);
 			mState->mReply.reset(new MockNetworkReply(data), &QObject::deleteLater);
 			QSignalSpy spyContinue(mState.data(), &StateGetSelfAuthenticationData::fireContinue);
 
@@ -100,9 +101,9 @@ class test_StateGetSelfAuthenticationData
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getStatus().getStatusCode(), globalStatusCode);
 			const FailureCode::FailureInfoMap infoMap {
-				{FailureCode::Info::State_Name, "StateGetSelfAuthenticationData"},
+				{FailureCode::Info::State_Name, "StateGetSelfAuthenticationData"_L1},
 				{FailureCode::Info::Http_Status_Code, QString::number(httpStatus)},
-				{FailureCode::Info::Network_Error, "Unknown error"}
+				{FailureCode::Info::Network_Error, "Unknown error"_L1}
 			};
 			const FailureCode failureCode(failureCodeReason, infoMap);
 			QCOMPARE(mState->getContext()->getFailureCode(), failureCode);

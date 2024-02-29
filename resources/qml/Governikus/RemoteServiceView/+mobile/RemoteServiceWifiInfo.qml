@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -8,7 +12,7 @@ RowLayout {
 
 	TintableIcon {
 		source: "qrc:/images/info.svg"
-		sourceSize.width: Style.dimens.medium_icon_size
+		sourceSize.width: Style.dimens.icon_size
 		tintColor: infoText.color
 	}
 	GText {
@@ -17,7 +21,7 @@ RowLayout {
 		color: Style.color.text_subline
 
 		//: INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.
-		text: qsTr("Both devices have to be connected to the same WiFi.")
+		text: qsTr("Both devices have to be on the same network (e.g. WiFi).")
 	}
 	GSpacer {
 		Layout.fillWidth: true

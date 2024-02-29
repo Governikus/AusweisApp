@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -16,11 +16,11 @@
 #include <QDateTime>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QList>
 #include <QMap>
 #include <QPair>
 #include <QSharedData>
 #include <QString>
-#include <QVector>
 
 namespace governikus
 {
@@ -60,7 +60,7 @@ defineEnumType(SelfAuthData,
 class SelfAuthenticationData
 {
 	public:
-		using OrderedSelfData = QVector<QPair<QString, QString>>;
+		using OrderedSelfData = QList<QPair<QString, QString>>;
 
 	private:
 		class SelfData

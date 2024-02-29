@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -15,9 +15,9 @@
 #include "asn1/Chat.h"
 
 #include <QByteArray>
+#include <QList>
 #include <QSharedPointer>
 #include <QString>
-#include <QVector>
 
 
 namespace governikus
@@ -30,7 +30,7 @@ class Eac1InputType
 	friend class TestAuthContext;
 
 	private:
-		QVector<QSharedPointer<const CVCertificate>> mCvCertificates;
+		QList<QSharedPointer<const CVCertificate>> mCvCertificates;
 		QByteArray mCertificateDescriptionAsBinary;
 		QSharedPointer<const CertificateDescription> mCertificateDescription;
 		QSharedPointer<const CHAT> mRequiredChat;
@@ -38,7 +38,7 @@ class Eac1InputType
 		QByteArray mAuthenticatedAuxiliaryDataAsBinary;
 		QSharedPointer<const AuthenticatedAuxiliaryData> mAuthenticatedAuxiliaryData;
 		QString mTransactionInfo;
-		QVector<AcceptedEidType> mAcceptedEidTypes;
+		QList<AcceptedEidType> mAcceptedEidTypes;
 
 		void setAuthenticatedAuxiliaryData(const QSharedPointer<const AuthenticatedAuxiliaryData>& pAuthenticatedAuxiliaryData)
 		{
@@ -121,7 +121,7 @@ class Eac1InputType
 		}
 
 
-		[[nodiscard]] const QVector<QSharedPointer<const CVCertificate>>& getCvCertificates() const
+		[[nodiscard]] const QList<QSharedPointer<const CVCertificate>>& getCvCertificates() const
 		{
 			return mCvCertificates;
 		}
@@ -145,7 +145,7 @@ class Eac1InputType
 		}
 
 
-		[[nodiscard]] const QVector<AcceptedEidType>& getAcceptedEidTypes() const
+		[[nodiscard]] const QList<AcceptedEidType>& getAcceptedEidTypes() const
 		{
 			return mAcceptedEidTypes;
 		}

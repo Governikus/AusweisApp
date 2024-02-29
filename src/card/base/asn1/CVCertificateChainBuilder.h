@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -35,7 +35,7 @@ class CVCertificateChainBuilder
 		/*!
 		 * Creates a new instance. All chains are build using the CVCs passed in as parameter.
 		 */
-		explicit CVCertificateChainBuilder(const QVector<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive);
+		explicit CVCertificateChainBuilder(const QList<QSharedPointer<const CVCertificate>>& pCvcPool, bool pProductive);
 
 
 		/*!

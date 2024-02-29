@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Reader.h"
@@ -7,8 +7,8 @@
 #include "CardConnectionWorker.h"
 #include "CardInfoFactory.h"
 #include "apdu/CommandApdu.h"
-#include "apdu/CommandData.h"
 #include "apdu/PacePinStatus.h"
+#include "asn1/ASN1Struct.h"
 #include "asn1/PaceInfo.h"
 
 #include <QLoggingCategory>
@@ -60,7 +60,7 @@ void Reader::removeCardInfo()
 }
 
 
-void Reader::fetchCardInfo()
+QSharedPointer<CardConnectionWorker> Reader::fetchCardInfo()
 {
 	const auto& cardConnection = createCardConnectionWorker();
 
@@ -71,6 +71,8 @@ void Reader::fetchCardInfo()
 		qCWarning(card) << "Update of the retry counter failed";
 		setInfoCardInfo(CardInfo(CardType::UNKNOWN));
 	}
+
+	return cardConnection;
 }
 
 
@@ -210,12 +212,12 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 	// we don't need to establish PACE with this protocol (i.e. we don't need to support it), so we just take the fist one
 	const auto& paceInfo = mReaderInfo.getCardInfo().getEfCardAccess()->getPaceInfos().at(0);
 
-	CommandData cmdData;
-	cmdData.append(CommandData::CRYPTOGRAPHIC_MECHANISM_REFERENCE, paceInfo->getOid());
-	cmdData.append(CommandData::PUBLIC_KEY_REFERENCE, PacePasswordId::PACE_PIN);
+	ASN1Struct cmdData;
+	cmdData.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, paceInfo->getOid());
+	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, PacePasswordId::PACE_PIN);
 	if (paceInfo->hasParameterId())
 	{
-		cmdData.append(CommandData::PRIVATE_KEY_REFERENCE, paceInfo->getParameterId());
+		cmdData.append(ASN1Struct::PRIVATE_KEY_REFERENCE, paceInfo->getParameterId());
 	}
 	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::PACE, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
 

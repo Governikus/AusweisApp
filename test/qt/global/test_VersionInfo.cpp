@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtCore>
@@ -9,6 +9,7 @@
 #include "VersionInfo.h"
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -47,23 +48,23 @@ class test_VersionInfo
 			QCOMPARE(jsonError.error, QJsonParseError::NoError);
 
 			const auto obj = json.object();
-			QCOMPARE(obj["Name"].toString(), QLatin1String("AusweisApp2"));
-			QCOMPARE(obj["Specification-Title"].toString(), QLatin1String("TR-03124-1"));
-			QCOMPARE(obj["Specification-Version"].toString(), QLatin1String("1.4"));
-			QCOMPARE(obj["Specification-Vendor"].toString(), QLatin1String("Federal Office for Information Security"));
-			QCOMPARE(obj["Implementation-Title"].toString(), QLatin1String("AusweisApp2"));
-			QCOMPARE(obj["Implementation-Version"].toString(), QLatin1String("x.y.z"));
-			QCOMPARE(obj["Implementation-Vendor"].toString(), QLatin1String("Governikus GmbH & Co. KG"));
+			QCOMPARE(obj["Name"_L1].toString(), QLatin1String("AusweisApp2"));
+			QCOMPARE(obj["Specification-Title"_L1].toString(), QLatin1String("TR-03124-1"));
+			QCOMPARE(obj["Specification-Version"_L1].toString(), QLatin1String("1.4"));
+			QCOMPARE(obj["Specification-Vendor"_L1].toString(), QLatin1String("Federal Office for Information Security"));
+			QCOMPARE(obj["Implementation-Title"_L1].toString(), QLatin1String("AusweisApp2"));
+			QCOMPARE(obj["Implementation-Version"_L1].toString(), QLatin1String("x.y.z"));
+			QCOMPARE(obj["Implementation-Vendor"_L1].toString(), QLatin1String("Governikus GmbH & Co. KG"));
 		}
 
 
 		void fromTextInvalidData()
 		{
-			auto versionInfo = VersionInfo::fromText("skdkfsn sdnk fskdfn sdfk sflk nd\n"
-													 "\n"
-													 ":\n"
-													 "  :\r\t\n"
-													 "");
+			auto versionInfo = VersionInfo::fromText(QLatin1StringView("skdkfsn sdnk fskdfn sdfk sflk nd\n"
+																	   "\n"
+																	   ":\n"
+																	   "  :\r\t\n"
+																	   ""));
 
 			QVERIFY(versionInfo.getName().isNull());
 			QVERIFY(versionInfo.getSpecificationTitle().isNull());
@@ -77,13 +78,13 @@ class test_VersionInfo
 
 		void fromText()
 		{
-			auto versionInfo = VersionInfo::fromText("Name: MyName\n"
-													 "Specification-Title: MySpecTitle\n"
-													 "Specification-Version: MySpecVersion\n"
-													 "Specification-Vendor: MySpecVendor\n"
-													 "Implementation-Title: MyImplTitle\n"
-													 "Implementation-Version: MyImplVersion\n"
-													 "Implementation-Vendor: MyImplVendor");
+			auto versionInfo = VersionInfo::fromText(QLatin1StringView("Name: MyName\n"
+																	   "Specification-Title: MySpecTitle\n"
+																	   "Specification-Version: MySpecVersion\n"
+																	   "Specification-Vendor: MySpecVendor\n"
+																	   "Implementation-Title: MyImplTitle\n"
+																	   "Implementation-Version: MyImplVersion\n"
+																	   "Implementation-Vendor: MyImplVendor"));
 
 			QCOMPARE(versionInfo.getName(), QLatin1String("MyName"));
 			QCOMPARE(versionInfo.getSpecificationTitle(), QLatin1String("MySpecTitle"));

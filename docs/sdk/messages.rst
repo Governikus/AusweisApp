@@ -669,7 +669,7 @@ increased for **incompatible** changes.
     - **Specification-Version**: Version of specification.
 
   - **AusweisApp**: Indicates the state of the connection to
-    the AusweisApp2 for integrated SDK (**Android only**).
+    the AusweisApp for integrated SDK (**Android only**).
     The following states are possible.
 
     - **CONNECTED**: The SDK is connected.

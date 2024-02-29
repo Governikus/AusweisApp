@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -13,6 +13,7 @@
 
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 class MockEstablishPaceChannelCommand
@@ -148,7 +149,7 @@ class test_StateChangePin
 			StateChangePin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
-			const ReaderInfo readerInfo("NFC", ReaderManagerPlugInType::NFC);
+			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPlugInType::NFC);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
 			context->setCardConnection(connection);
 
@@ -192,7 +193,7 @@ class test_StateChangePin
 			StateChangePin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
-			const ReaderInfo readerInfo("SMART", type, CardInfo(CardType::SMART_EID));
+			const ReaderInfo readerInfo("SMART"_L1, type, CardInfo(CardType::SMART_EID));
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
 			context->setCardConnection(connection);
 

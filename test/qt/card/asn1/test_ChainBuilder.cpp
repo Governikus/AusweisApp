@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -44,7 +44,7 @@ class test_ChainBuilder
 	private Q_SLOTS:
 		void testEmpty()
 		{
-			const QVector<QByteArray> allElements;
+			const QList<QByteArray> allElements;
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QVERIFY(chainBuilder.getChains().isEmpty());
@@ -53,7 +53,7 @@ class test_ChainBuilder
 
 		void testOneShortChain()
 		{
-			const QVector<QByteArray> allElements({"AB"});
+			const QList<QByteArray> allElements({"AB"});
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 1);
@@ -63,7 +63,7 @@ class test_ChainBuilder
 
 		void testManyShortChain()
 		{
-			const QVector<QByteArray> allElements({"AB", "AC", "AD", "AE"});
+			const QList<QByteArray> allElements({"AB", "AC", "AD", "AE"});
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 4);
@@ -76,7 +76,7 @@ class test_ChainBuilder
 
 		void testShortChainWithDuplicates()
 		{
-			const QVector<QByteArray> allElements({"AB", "AC", "AB", "AC", "AC", "AB"});
+			const QList<QByteArray> allElements({"AB", "AC", "AB", "AC", "AC", "AB"});
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 2);
@@ -87,7 +87,7 @@ class test_ChainBuilder
 
 		void testOneLongChain()
 		{
-			const QVector<QByteArray> allElements({"AB", "BC", "CD", "DE", "EF", "FG"});
+			const QList<QByteArray> allElements({"AB", "BC", "CD", "DE", "EF", "FG"});
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 1);
@@ -97,7 +97,7 @@ class test_ChainBuilder
 
 		void testOneLongChainWithDuplicates()
 		{
-			const QVector<QByteArray> allElements({"AB", "BC", "BC", "CD", "BC", "CD", "DE", "DE", "EF", "BC", "FG"});
+			const QList<QByteArray> allElements({"AB", "BC", "BC", "CD", "BC", "CD", "DE", "DE", "EF", "BC", "FG"});
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 1);
@@ -118,13 +118,13 @@ class test_ChainBuilder
 			 * |
 			 * DE
 			 */
-			const QVector<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "BB"});
+			const QList<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "BB"});
 
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 2);
-			QVERIFY(chainBuilder.getChains().contains(QVector<QByteArray>({"AA", "AB", "BC", "CD", "DE"})));
-			QVERIFY(chainBuilder.getChains().contains(QVector<QByteArray>({"BB", "BC", "CD", "DE"})));
+			QVERIFY(chainBuilder.getChains().contains(QList<QByteArray>({"AA", "AB", "BC", "CD", "DE"})));
+			QVERIFY(chainBuilder.getChains().contains(QList<QByteArray>({"BB", "BC", "CD", "DE"})));
 		}
 
 
@@ -141,13 +141,13 @@ class test_ChainBuilder
 			 * |
 			 * DE
 			 */
-			const QVector<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "CF"});
+			const QList<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "CF"});
 
 			ChainBuilder<QByteArray> chainBuilder(allElements, &test_ChainBuilder::isChild);
 
 			QCOMPARE(chainBuilder.getChains().size(), 2);
-			QVERIFY(chainBuilder.getChains().contains(QVector<QByteArray>({"AA", "AB", "BC", "CD", "DE"})));
-			QVERIFY(chainBuilder.getChains().contains(QVector<QByteArray>({"AA", "AB", "BC", "CF"})));
+			QVERIFY(chainBuilder.getChains().contains(QList<QByteArray>({"AA", "AB", "BC", "CD", "DE"})));
+			QVERIFY(chainBuilder.getChains().contains(QList<QByteArray>({"AA", "AB", "BC", "CF"})));
 		}
 
 
@@ -166,11 +166,11 @@ class test_ChainBuilder
 			 */
 			QBENCHMARK
 			{
-				QVector<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "BB", "CF"});
-				const QVector<QByteArray> chain1({"AA", "AB", "BC", "CD", "DE"});
-				const QVector<QByteArray> chain2({"BB", "BC", "CD", "DE"});
-				const QVector<QByteArray> chain3({"AA", "AB", "BC", "CF"});
-				const QVector<QByteArray> chain4({"BB", "BC", "CF"});
+				QList<QByteArray> allElements({"AA", "AB", "BC", "CD", "DE", "BB", "CF"});
+				const QList<QByteArray> chain1({"AA", "AB", "BC", "CD", "DE"});
+				const QList<QByteArray> chain2({"BB", "BC", "CD", "DE"});
+				const QList<QByteArray> chain3({"AA", "AB", "BC", "CF"});
+				const QList<QByteArray> chain4({"BB", "BC", "CF"});
 
 				do
 				{

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/SecureMessagingCommand.h"
@@ -95,9 +95,9 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 	QByteArray formattedEncryptedData;
 	if (!pCommandApdu.getData().isEmpty())
 	{
-		QByteArray paddedCommandData = padToCipherBlockSize(pCommandApdu.getData());
+		QByteArray paddedASN1Struct = padToCipherBlockSize(pCommandApdu.getData());
 		mCipher.setIv(getEncryptedIv());
-		QByteArray encryptedData = mCipher.encrypt(paddedCommandData).prepend(0x01);
+		QByteArray encryptedData = mCipher.encrypt(paddedASN1Struct).prepend(0x01);
 
 		auto encryptedDataObject = newObject<SM_ENCRYPTED_DATA>();
 		Asn1OctetStringUtil::setValue(encryptedData, encryptedDataObject.data());

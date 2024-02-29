@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <QVector>
+#include <QList>
 
 #include "InputAPDUInfo.h"
 #include "paos/PaosMessage.h"
@@ -20,7 +20,7 @@ class Transmit
 {
 	private:
 		QString mSlotHandle;
-		QVector<InputAPDUInfo> mInputApduInfos;
+		QList<InputAPDUInfo> mInputApduInfos;
 
 	public:
 		Transmit();
@@ -39,7 +39,7 @@ class Transmit
 		}
 
 
-		[[nodiscard]] const QVector<InputAPDUInfo>& getInputApduInfos() const
+		[[nodiscard]] const QList<InputAPDUInfo>& getInputApduInfos() const
 		{
 			return mInputApduInfos;
 		}

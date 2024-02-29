@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.AuthView
@@ -40,7 +40,7 @@ Controller {
 	property bool smartEidUsed: false
 	property string title
 	//: INFO ANDROID IOS
-	readonly property string transportPinHint: qsTr("Please note that you may use the five-digit Transport PIN only once to change to a six-digit ID card PIN. If you already set a six-digit ID card PIN, the five-digit Transport PIN is no longer valid.")
+	readonly property string transportPinHint: qsTr("Please note that you may use the 5-digit Transport PIN only once to change to a 6-digit ID card PIN. If you already set a 6-digit ID card PIN, the 5-digit Transport PIN is no longer valid.")
 	property int workflowState: 0
 
 	signal workflowFinished
@@ -115,7 +115,7 @@ Controller {
 	Connections {
 		//: INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.
 		function onFireOnPinUnlocked() {
-			ApplicationModel.showFeedback(qsTr("Your ID card PIN is unblocked. You now have three more attempts to change your PIN."));
+			ApplicationModel.showFeedback(qsTr("Your ID card PIN is unblocked. You now have 3 more attempts to change your PIN."));
 		}
 		function onFireStateEntered(pState) {
 			processStateChange(pState);
@@ -188,11 +188,8 @@ Controller {
 			infoContent: infoData
 			smartEidUsed: rootController.smartEidUsed
 
-			navigationAction: NavigationAction {
-				action: NavigationAction.Action.Back
-
-				onClicked: pop()
-			}
+			onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
+			onClose: pop()
 		}
 	}
 	Component {
@@ -259,17 +256,17 @@ Controller {
 				}
 				if (rootController.workflowState === ChangePinController.WorkflowStates.Can) {
 					//: INFO ANDROID IOS The wrong ID card PIN was entered twice, the next attempt requires additional verifcation via CAN.
-					return qsTr("A wrong ID card PIN has been entered twice on your ID card. For a third attempt, please first enter the six-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
+					return qsTr("A wrong ID card PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
 				}
 				if (rootController.workflowState === ChangePinController.WorkflowStates.Puk) {
 					//: INFO ANDROID IOS The ID card PIN (including the CAN) was entered wrongfully three times, the PUK is required to unlock the ID card.
-					return qsTr("You have entered an incorrect, six-digit ID card PIN thrice, your ID card PIN is now blocked. To remove the block, the ten-digit PUK must be entered first.");
+					return qsTr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.");
 				}
 
 				//: INFO ANDROID IOS Generic progress message during PIN change process.
 				return qsTr("Please wait a moment.");
 			}
-			subTextColor: !ChangePinModel.isBasicReader && (NumberModel.inputError || rootController.workflowState === ChangePinController.WorkflowStates.Can || rootController.workflowState === ChangePinController.WorkflowStates.Puk) ? Constants.red : Style.color.text
+			subTextColor: !ChangePinModel.isBasicReader && (NumberModel.inputError || rootController.workflowState === ChangePinController.WorkflowStates.Can || rootController.workflowState === ChangePinController.WorkflowStates.Puk) ? Style.color.warning : Style.color.text
 			text: {
 				if (isSmartWorkflow) {
 					return rootController.isNewPin ?

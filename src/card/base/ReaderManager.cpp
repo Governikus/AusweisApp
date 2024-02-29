@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -10,7 +10,7 @@
 using namespace governikus;
 
 
-QVector<std::function<void()>> ReaderManager::cMainThreadInit;
+QList<std::function<void()>> ReaderManager::cMainThreadInit;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
@@ -260,7 +260,7 @@ void ReaderManager::doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo)
 }
 
 
-QVector<ReaderInfo> ReaderManager::getReaderInfos(const ReaderFilter& pFilter) const
+QList<ReaderInfo> ReaderManager::getReaderInfos(const ReaderFilter& pFilter) const
 {
 	Q_ASSERT(mThread.isRunning() || mThread.isFinished());
 	const QMutexLocker mutexLocker(&mMutex);

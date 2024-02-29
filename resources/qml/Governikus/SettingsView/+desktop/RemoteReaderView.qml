@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -141,13 +141,15 @@ Item {
 				TintableIcon {
 					source: "qrc:/images/info.svg"
 					sourceSize.height: Style.dimens.large_icon_size
-					tintColor: Style.color.control
+					tintColor: hintText.color
 				}
 				GText {
+					id: hintText
+
 					Layout.alignment: Qt.AlignVCenter
 					activeFocusOnTab: true
-					color: Style.color.control
-					text: qsTr("Both devices have to be connected to the same WiFi.")
+					color: Style.color.text_subline
+					text: qsTr("Both devices have to be on the same network (e.g. WiFi).")
 					verticalAlignment: Text.AlignBottom
 					wrapMode: Text.WordWrap
 

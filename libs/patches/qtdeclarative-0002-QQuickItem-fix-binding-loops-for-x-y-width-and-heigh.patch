@@ -1,0 +1,113 @@
+From f3a042b0a40721b2bfa1050948faa2bfde3b3038 Mon Sep 17 00:00:00 2001
+From: Ivan Solovev <ivan.solovev@qt.io>
+Date: Mon, 18 Sep 2023 15:16:12 +0200
+Subject: QQuickItem: fix binding loops for x, y, width, and height
+
+Use {set}ValueBypassingBinding() to read and write the value of the
+property.
+Use valueBypassingBinding() to get the values of other realted
+properties before calling geometryChanged().
+
+The tests for these bindable properties already exist. They will detect
+the binding loops as soon as the related qtbase patch is merged.
+
+Fixes: QTBUG-116540
+Pick-to: 6.6 6.5
+Change-Id: Ifb6caac2d5176fa6985a170fcdfe0dceeac10936
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
+(cherry picked from commit f85de757355889f534e9e5e858547874eb377ec5)
+---
+ src/quick/items/qquickitem.cpp | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
+
+diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
+index a2e8c989d1..30bbf505da 100644
+--- x/qtdeclarative/src/quick/items/qquickitem.cpp
++++ y/qtdeclarative/src/quick/items/qquickitem.cpp
+@@ -7068,15 +7068,17 @@ void QQuickItem::setX(qreal v)
+     if (qt_is_nan(v))
+         return;
+ 
+-    const qreal oldx = d->x;
++    const qreal oldx = d->x.valueBypassingBindings();
+     if (oldx == v)
+         return;
+ 
+-    d->x = v;
++    d->x.setValueBypassingBindings(v);
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+-    const qreal y = d->y, w = d->width, h = d->height;
++    const qreal y = d->y.valueBypassingBindings();
++    const qreal w = d->width.valueBypassingBindings();
++    const qreal h = d->height.valueBypassingBindings();
+     geometryChange(QRectF(v, y, w, h), QRectF(oldx, y, w, h));
+ }
+ 
+@@ -7087,17 +7089,19 @@ void QQuickItem::setY(qreal v)
+     if (qt_is_nan(v))
+         return;
+ 
+-    const qreal oldy = d->y;
++    const qreal oldy = d->y.valueBypassingBindings();
+     if (oldy == v)
+         return;
+ 
+-    d->y = v;
++    d->y.setValueBypassingBindings(v);
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+     // we use v instead of d->y, as that avoid a method call
+     // and we have v anyway in scope
+-    const qreal x = d->x, w = d->width, h = d->height;
++    const qreal x = d->x.valueBypassingBindings();
++    const qreal w = d->width.valueBypassingBindings();
++    const qreal h = d->height.valueBypassingBindings();
+     geometryChange(QRectF(x, v, w, h), QRectF(x, oldy, w, h));
+ }
+ 
+@@ -7167,15 +7171,17 @@ void QQuickItem::setWidth(qreal w)
+         return;
+ 
+     d->widthValidFlag = true;
+-    const qreal oldWidth = d->width;
++    const qreal oldWidth = d->width.valueBypassingBindings();
+     if (oldWidth == w)
+         return;
+ 
+-    d->width = w;
++    d->width.setValueBypassingBindings(w);
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    const qreal x = d->x, y = d->y, h = d->height;
++    const qreal x = d->x.valueBypassingBindings();
++    const qreal y = d->y.valueBypassingBindings();
++    const qreal h = d->height.valueBypassingBindings();
+     geometryChange(QRectF(x, y, w, h), QRectF(x, y, oldWidth, h));
+ }
+ 
+@@ -7373,15 +7379,17 @@ void QQuickItem::setHeight(qreal h)
+         return;
+ 
+     d->heightValidFlag = true;
+-    const qreal oldHeight = d->height;
++    const qreal oldHeight = d->height.valueBypassingBindings();
+     if (oldHeight == h)
+         return;
+ 
+-    d->height = h;
++    d->height.setValueBypassingBindings(h);
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    const qreal x = d->x, y = d->y, w = d->width;
++    const qreal x = d->x.valueBypassingBindings();
++    const qreal y = d->y.valueBypassingBindings();
++    const qreal w = d->width.valueBypassingBindings();
+     geometryChange(QRectF(x, y, w, h), QRectF(x, y, w, oldHeight));
+ }
+ 

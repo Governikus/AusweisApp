@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -21,6 +21,7 @@
 #include <QRegularExpressionMatch>
 #include <QtTest>
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -62,7 +63,7 @@ class test_HttpServer
 			QVERIFY(server->boundAddresses().size() < 3);
 
 			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"));
+			QVERIFY(param.at(0).toString().contains("Spawn shared instance: governikus::HttpServer"_L1));
 
 			param = logSpy.takeFirst();
 			const auto listenPort = param.at(0).toString();
@@ -104,7 +105,7 @@ class test_HttpServer
 			server.reset();
 			QCOMPARE(logSpy.count(), 1);
 			param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Shutdown server"));
+			QVERIFY(param.at(0).toString().contains("Shutdown server"_L1));
 		}
 
 
@@ -127,7 +128,7 @@ class test_HttpServer
 			QVERIFY(!server.isListening());
 			QCOMPARE(logSpy.count(), 2);
 			auto param = logSpy.takeFirst();
-			QVERIFY(param.at(0).toString().contains("Cannot start server: \"The address is protected\""));
+			QVERIFY(param.at(0).toString().contains("Cannot start server: \"The address is protected\""_L1));
 		}
 
 
@@ -137,7 +138,7 @@ class test_HttpServer
 			QVERIFY(server.isListening());
 			QSignalSpy spyServer(&server, &HttpServer::fireNewHttpRequest);
 
-			auto url = QUrl("http://127.0.0.1:" + QString::number(server.getServerPort()) + "/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de");
+			auto url = QUrl("http://127.0.0.1:"_L1 + QString::number(server.getServerPort()) + "/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de"_L1);
 			auto reply = mAccessManager.get(QNetworkRequest(url));
 			QSignalSpy spyClient(reply, &QNetworkReply::finished);
 
@@ -145,7 +146,7 @@ class test_HttpServer
 			auto param = spyServer.takeFirst();
 			auto httpRequest = qvariant_cast<QSharedPointer<HttpRequest>>(param.at(0));
 			QCOMPARE(httpRequest->getMethod(), QByteArray("GET"));
-			QCOMPARE(httpRequest->getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de"));
+			QCOMPARE(httpRequest->getUrl(), QUrl("/eID-Client?tcTokenURL=https%3A%2F%2Fdummy.de"_L1));
 
 			QVERIFY(httpRequest->send(HTTP_STATUS_NOT_FOUND));
 
@@ -161,7 +162,7 @@ class test_HttpServer
 			QVERIFY(server.isListening());
 			QSignalSpy spyServer(&server, &HttpServer::fireNewWebSocketRequest);
 
-			QNetworkRequest request(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
+			QNetworkRequest request(QUrl("http://127.0.0.1:"_L1 + QString::number(server.getServerPort())));
 			request.setRawHeader("upgrade", "websocket");
 			request.setRawHeader("connection", "upgrade");
 			mAccessManager.get(request);
@@ -178,7 +179,7 @@ class test_HttpServer
 			QVERIFY(requestData.contains("\r\n\r\n"));
 
 			param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Upgrade to websocket requested"));
+			QVERIFY(param.at(0).toString().contains("Upgrade to websocket requested"_L1));
 		}
 
 
@@ -187,7 +188,7 @@ class test_HttpServer
 			HttpServer server;
 			QVERIFY(server.isListening());
 
-			QNetworkRequest request(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
+			QNetworkRequest request(QUrl("http://127.0.0.1:"_L1 + QString::number(server.getServerPort())));
 			request.setRawHeader("upgrade", "unknown");
 			request.setRawHeader("connection", "upgrade");
 			auto reply = mAccessManager.get(request);
@@ -199,7 +200,7 @@ class test_HttpServer
 			QCOMPARE(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(), 404);
 
 			auto param = logSpy.takeLast();
-			QVERIFY(param.at(0).toString().contains("Unknown upgrade requested"));
+			QVERIFY(param.at(0).toString().contains("Unknown upgrade requested"_L1));
 		}
 
 
@@ -225,7 +226,7 @@ class test_HttpServer
 
 			HttpServer server;
 			QVERIFY(server.isListening());
-			request.setUrl(QUrl("http://127.0.0.1:" + QString::number(server.getServerPort())));
+			request.setUrl(QUrl("http://127.0.0.1:"_L1 + QString::number(server.getServerPort())));
 
 			auto reply = mAccessManager.get(request);
 

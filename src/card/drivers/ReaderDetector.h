@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -25,8 +25,8 @@
 	#include <QAbstractNativeEventFilter>
 #endif
 
+#include <QList>
 #include <QSharedPointer>
-#include <QVector>
 
 namespace governikus
 {
@@ -59,7 +59,7 @@ class ReaderDetector
 		~ReaderDetector() override;
 
 	public:
-		[[nodiscard]] virtual QVector<UsbId> attachedDevIds() const;
+		[[nodiscard]] virtual QList<UsbId> attachedDevIds() const;
 
 #ifdef Q_OS_WIN
 		bool nativeEventFilter(const QByteArray& pEventType, void* pMessage, qintptr* pResult) override;
@@ -69,7 +69,7 @@ class ReaderDetector
 		 * \brief getAttachedDevices produce a list of supported devices that are
 		 *        attached to the system
 		 */
-		[[nodiscard]] QVector<ReaderConfigurationInfo> getAttachedSupportedDevices() const;
+		[[nodiscard]] QList<ReaderConfigurationInfo> getAttachedSupportedDevices() const;
 
 		[[nodiscard]] ReaderConfigurationInfo getReaderConfigurationInfo(const QString& pReaderName) const;
 

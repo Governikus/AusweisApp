@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -34,12 +34,9 @@ AbstractButton {
 	topPadding: topInset + paddingBaseValue
 
 	background: GPaneBackground {
-		Accessible.ignored: true
-		color: root.pressed ? Style.color.control : Style.color.pane
-		layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+		id: pane
 
-		layer.effect: GDropShadow {
-		}
+		Accessible.ignored: true
 
 		Accessible.onPressAction: clicked()
 	}
@@ -59,22 +56,48 @@ AbstractButton {
 
 			Accessible.ignored: true
 			sourceSize.height: Style.dimens.medium_icon_size
-			tintColor: root.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_subline
+			tintColor: Style.color.text_title_focus
 		}
 		GText {
 			id: text
 
 			Accessible.ignored: true
-			color: root.pressed ? Style.color.mainbutton_content_pressed : Style.color.text_title
 			elide: Text.ElideRight
 			horizontalAlignment: Text.AlignLeft
 			maximumLineCount: 3
 			rightPadding: root.flowVertically ? paddingBaseValue : 0
-			textStyle: Style.text.title
+			textStyle: Style.text.tile
 		}
 		GSpacer {
 			Layout.fillHeight: true
 			visible: root.flowVertically
 		}
+	}
+
+	Item {
+		id: d
+
+		states: [
+			State {
+				name: "pressed"
+				when: Constants.is_desktop && root.pressed
+
+				PropertyChanges {
+					image.tintColor: Style.color.text_title_pressed
+					pane.color: Style.color.pane_pressed
+					text.color: Style.color.text_title_pressed
+				}
+			},
+			State {
+				name: "hovered"
+				when: Constants.is_desktop && root.hovered
+
+				PropertyChanges {
+					image.tintColor: Style.color.text_title_hovered
+					pane.color: Style.color.pane_hovered
+					text.color: Style.color.text_title_hovered
+				}
+			}
+		]
 	}
 }

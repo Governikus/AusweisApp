@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
@@ -32,6 +32,7 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsModel::fireDeveloperOptionsChanged);
 	connect(&generalSettings, &GeneralSettings::fireProxyChanged, this, &SettingsModel::fireUseCustomProxyChanged);
 	connect(&generalSettings, &GeneralSettings::fireUseSystemFontChanged, this, &SettingsModel::fireUseSystemFontChanged);
+	connect(&generalSettings, &GeneralSettings::fireUseAnimationsChanged, this, &SettingsModel::fireUseAnimationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
 
 #ifdef Q_OS_ANDROID
@@ -127,16 +128,16 @@ void SettingsModel::setUseSelfauthenticationTestUri(bool pUse) const
 }
 
 
-QString SettingsModel::getServerName() const
+QString SettingsModel::getDeviceName() const
 {
-	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getServerName();
+	return Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getDeviceName();
 }
 
 
-void SettingsModel::setServerName(const QString& name)
+void SettingsModel::setDeviceName(const QString& name)
 {
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	settings.setServerName(name);
+	settings.setDeviceName(name);
 	Q_EMIT fireDeviceNameChanged();
 }
 
@@ -529,6 +530,22 @@ bool SettingsModel::isUseSystemFont() const
 void SettingsModel::setUseSystemFont(bool pUseSystemFont) const
 {
 	Env::getSingleton<AppSettings>()->getGeneralSettings().setUseSystemFont(pUseSystemFont);
+}
+
+
+bool SettingsModel::isUseAnimations() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isUseAnimations();
+}
+
+
+void SettingsModel::setUseAnimations(bool pUseAnimations) const
+{
+	if (isUseAnimations() != pUseAnimations)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setUseAnimations(pUseAnimations);
+	}
 }
 
 

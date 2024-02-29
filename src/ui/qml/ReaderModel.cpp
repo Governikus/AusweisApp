@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderModel.h"
@@ -41,10 +41,9 @@ SortedReaderModel* ReaderModel::getSortedModel()
 
 void ReaderModel::collectReaderData()
 {
-	mKnownDrivers.clear();
 	mConnectedReaders.clear();
 
-	const QVector<ReaderInfo> installedReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({
+	const QList<ReaderInfo> installedReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({
 				ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::NFC
 			}));
 
@@ -56,7 +55,7 @@ void ReaderModel::collectReaderData()
 	}
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	QVector<ReaderConfigurationInfo> readersWithoutDriver;
+	QList<ReaderConfigurationInfo> readersWithoutDriver;
 	const auto& attachedSupportedDevices = Env::getSingleton<ReaderDetector>()->getAttachedSupportedDevices();
 	for (const auto& info : attachedSupportedDevices)
 	{
@@ -111,16 +110,16 @@ QString ReaderModel::getHTMLDescription(const QModelIndex& pIndex) const
 
 	if (readerSupported)
 	{
-		if (readerInstalled)
-		{
-			//: LABEL ALL_PLATFORMS
-			return tr("Driver installed");
-		}
-
 		if (!Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC).isScanRunning())
 		{
 			//: LABEL ALL_PLATFORMS
 			return tr("The smartcard service of your system is not reachable.");
+		}
+
+		if (readerInstalled)
+		{
+			//: LABEL ALL_PLATFORMS
+			return tr("Driver installed");
 		}
 
 		//: LABEL ALL_PLATFORMS
@@ -152,6 +151,11 @@ bool ReaderModel::isSupportedReader(const QModelIndex& pIndex) const
 bool ReaderModel::isInstalledReader(const QModelIndex& pIndex) const
 {
 	if (!indexIsValid(pIndex))
+	{
+		return false;
+	}
+
+	if (!Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC).isScanRunning())
 	{
 		return false;
 	}

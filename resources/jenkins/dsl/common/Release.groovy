@@ -9,7 +9,7 @@ class Release extends Build
 {
 	String namePrefix = 'Release_'
 	String trigger = null
-	List oldBuilds = null
+	List oldBuilds = [365, -1]
 	boolean releaseJob = true
 	boolean sendMail = false
 

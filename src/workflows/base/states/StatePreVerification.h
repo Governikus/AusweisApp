@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*
@@ -27,14 +27,14 @@ class StatePreVerification
 	friend class ::test_StatePreVerification;
 
 	private:
-		const QVector<QSharedPointer<const CVCertificate>> mTrustedCvcas;
+		const QList<QSharedPointer<const CVCertificate>> mTrustedCvcas;
 		const QDateTime mValidationDateTime;
 
 		explicit StatePreVerification(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 
-		bool isValid(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const;
-		void saveCvcaLinkCertificates(const QVector<QSharedPointer<const CVCertificate>>& pCertificates) const;
+		bool isValid(const QList<QSharedPointer<const CVCertificate>>& pCertificates) const;
+		void saveCvcaLinkCertificates(const QList<QSharedPointer<const CVCertificate>>& pCertificates) const;
 };
 
 } // namespace governikus

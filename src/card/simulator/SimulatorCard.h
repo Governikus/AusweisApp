@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -55,7 +55,7 @@ class SimulatorCard
 		QByteArray brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar) const;
 		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce);
 		QByteArray generateRestrictedId(const QByteArray& pPublicKey) const;
-		StatusCode verifyAuxiliaryData(const QByteArray& pCommandData);
+		StatusCode verifyAuxiliaryData(const QByteArray& pASN1Struct);
 };
 
 } // namespace governikus

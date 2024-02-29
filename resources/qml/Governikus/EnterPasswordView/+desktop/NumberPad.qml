@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -10,7 +10,7 @@ Item {
 	id: baseItem
 
 	property alias deleteEnabled: deleteButton.enabled
-	property string submitAccessibleText
+	property alias submitAccessibleText: submitButton.a11yText
 	property alias submitEnabled: submitButton.enabled
 
 	signal deletePressed
@@ -28,18 +28,27 @@ Item {
 			return numbers;
 		}
 	}
-	Rectangle {
+	RoundedRectangle {
 		id: numPadContainer
 
 		anchors.bottom: parent.bottom
 		anchors.left: parent.left
-		border.color: Style.color.control
-		border.width: Math.max(1, plugin.scaleFactor * 3)
+		borderColor: Style.color.pane_border
+		borderWidth: Math.max(1, plugin.scaleFactor * 3)
+		bottomLeftCorner: false
+		bottomRightCorner: false
 		color: Style.color.pane
 		height: grid.height + 2 * Constants.pane_padding
+		topLeftCorner: false
 		visible: SettingsModel.useScreenKeyboard
 		width: grid.width + 2 * Constants.pane_padding
 
+		layer {
+			enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+			effect: GDropShadow {
+			}
+		}
 		Grid {
 			id: grid
 
@@ -61,9 +70,12 @@ Item {
 			NumberPadButton {
 				id: deleteButton
 
+				//: LABEL DESKTOP A11y text for the "delete" button text when the button is disabled.
+				a11yDisabledText: qsTr("Delete last digit, disabled until input is present.")
+				//: LABEL DESKTOP A11y text for the "delete" button image.
+				a11yText: qsTr("Delete last digit")
 				enabled: baseItem.deleteEnabled
-				fontScale: 0.75
-				text: "C"
+				icon.source: "qrc:///images/material_backspace.svg"
 
 				onClicked: baseItem.deletePressed()
 			}
@@ -77,10 +89,12 @@ Item {
 			NumberPadButton {
 				id: submitButton
 
-				Accessible.name: submitAccessibleText !== "" ? submitAccessibleText : text
+				//: LABEL DESKTOP A11y text, appended onto the "submit" button text when the button is disabled.
+				a11yDisabledText: a11yText + qsTr(", disabled until input is complete.")
+				//: LABEL DESKTOP A11y text for the "submit" button image.
+				a11yText: qsTr("Submit")
 				enabled: baseItem.submitEnabled
-				fontScale: 0.75
-				text: "OK"
+				icon.source: "qrc:///images/material_check.svg"
 
 				onClicked: baseItem.submitPressed()
 			}

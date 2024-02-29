@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -10,13 +10,12 @@
 
 #include "MockIfdServer.h"
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
 #include "context/IfdServiceContext.h"
 
 #include <QDebug>
 #include <QtTest>
 
-
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -45,7 +44,7 @@ class test_CertificateDescriptionModel
 	private Q_SLOTS:
 		void init()
 		{
-			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"));
+			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 			mModel = Env::getSingleton<CertificateDescriptionModel>();
 		}
 
@@ -64,13 +63,13 @@ class test_CertificateDescriptionModel
 			QCOMPARE(mModel->rowCount(), 4);
 
 			const QString termsOfUsage = QStringLiteral("Name, Anschrift und E-Mail-Adresse des Diensteanbieters:\nGovernikus GmbH & Co. KG\nHochschulring 4\n28359 Bremen\nE-Mail: kontakt@governikus.de ");
-			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider"));
+			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), "Provider"_L1);
 			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus GmbH & Co. KG\nhttps://test.governikus-eid.de"));
-			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
+			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), "Certificate issuer"_L1);
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
-			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider information"));
+			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider information"_L1);
 			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::TEXT), termsOfUsage);
-			QCOMPARE(mModel->data(mModel->index(3), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
+			QCOMPARE(mModel->data(mModel->index(3), CertificateDescriptionModel::UserRoles::LABEL), "Validity"_L1);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -86,22 +85,22 @@ class test_CertificateDescriptionModel
 
 			const auto& validModel = mModel->index(1, 0);
 
-			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
+			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::LABEL), "Certificate issuer"_L1);
 			QCOMPARE(mModel->data(validModel, CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
 			QCOMPARE(mModel->data(validModel, 0), QVariant());
-			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
-			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), QString("5/21/20 - 6/20/20"));
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), "Validity"_L1);
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), "5/21/20 - 6/20/20"_L1);
 		}
 
 
 		void test_Validity()
 		{
-			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"));
+			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"_L1));
 			mContext->initAccessRightManager(mContext->getDidAuthenticateEac1()->getCvCertificates().last());
 			mModel->resetContext(mContext);
 
-			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), QString("Validity"));
-			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), QString("5/21/20 - 6/20/20"));
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), "Validity"_L1);
+			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::TEXT), "5/21/20 - 6/20/20"_L1);
 		}
 
 
@@ -120,11 +119,11 @@ class test_CertificateDescriptionModel
 			const auto& establishPaceChannel = createDataToParse(PacePasswordId::PACE_PIN);
 			ifdContext->setEstablishPaceChannel(QSharedPointer<IfdEstablishPaceChannel>::create(QString(), establishPaceChannel, 6));
 
-			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider"));
-			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QString("Gesamtverband der deutschen Versicherungswirtschaft e.V.\n"));
-			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), QString("Certificate issuer"));
-			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QString("D-Trust GmbH\n"));
-			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), QString("Provider information"));
+			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::LABEL), "Provider"_L1);
+			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), "Gesamtverband der deutschen Versicherungswirtschaft e.V.\n"_L1);
+			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), "Certificate issuer"_L1);
+			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), "D-Trust GmbH\n"_L1);
+			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider information"_L1);
 		}
 
 

@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2016-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
+import Governikus.PasswordInfoView
 import Governikus.Style
 import Governikus.Type.NumberModel
 import Governikus.Type.ApplicationModel
@@ -11,13 +12,12 @@ import Governikus.Type.ApplicationModel
 GFlickableColumnLayout {
 	id: root
 
-	readonly property double buttonHeight: Math.max(sixDigitButton.implicitHeight, fiveDigitButton.implicitHeight, dontKnowButton.implicitHeight)
 	readonly property double buttonWidth: Math.max(sixDigitButton.implicitWidth, fiveDigitButton.implicitWidth, dontKnowButton.implicitWidth)
-	property alias moreInformationText: moreInformationLink.text
+	readonly property alias pinInfo: infoData
 
 	signal changePin
+	signal changePinInfoRequested
 	signal changeTransportPin
-	signal moreInformationRequested
 	signal noPinAvailable
 
 	maximumContentWidth: Style.dimens.max_text_width
@@ -35,11 +35,16 @@ GFlickableColumnLayout {
 		wrapMode: Text.WordWrap
 	}
 	MoreInformationLink {
-		id: moreInformationLink
-
 		Layout.alignment: Qt.AlignHCenter
+		text: infoData.linkText
 
-		onClicked: root.moreInformationRequested()
+		onClicked: root.changePinInfoRequested()
+
+		PasswordInfoData {
+			id: infoData
+
+			contentType: PasswordInfoData.Type.CHANGE_PIN
+		}
 	}
 	GInformativeButton {
 		id: sixDigitButton
@@ -47,14 +52,12 @@ GFlickableColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 		Layout.maximumWidth: root.buttonWidth
-		Layout.preferredHeight: root.buttonHeight
 		//: LABEL ALL_PLATFORMS
 		description: qsTr("Set by yourself")
 		icon.source: "qrc:///images/icon_six_digit_pin.svg"
 
 		//: LABEL ALL_PLATFORMS
-		text: qsTr("Six-digit PIN")
-		tintIcon: true
+		text: qsTr("6-digit PIN")
 
 		onClicked: root.changePin()
 	}
@@ -64,14 +67,12 @@ GFlickableColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 		Layout.maximumWidth: root.buttonWidth
-		Layout.preferredHeight: root.buttonHeight
 		//: LABEL ALL_PLATFORMS
 		description: qsTr("Received by mail in PIN letter")
 		icon.source: "qrc:///images/icon_five_digit_pin.svg"
 
 		//: LABEL ALL_PLATFORMS
-		text: qsTr("Five-digit Transport PIN")
-		tintIcon: true
+		text: qsTr("5-digit Transport PIN")
 
 		onClicked: root.changeTransportPin()
 	}
@@ -81,14 +82,12 @@ GFlickableColumnLayout {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
 		Layout.maximumWidth: root.buttonWidth
-		Layout.preferredHeight: root.buttonHeight
 		//: LABEL ALL_PLATFORMS
 		description: qsTr("Lost, forgotten, or never received it")
 		icon.source: "qrc:///images/material_block.svg"
 
 		//: LABEL ALL_PLATFORMS
 		text: qsTr("No PIN")
-		tintIcon: true
 
 		onClicked: root.noPinAvailable()
 	}

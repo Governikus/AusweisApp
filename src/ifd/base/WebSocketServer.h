@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -45,6 +45,7 @@ class WebSocketServer
 		void fireMessageHandlerAdded(QSharedPointer<ServerMessageHandler> pHandler);
 		void firePskChanged(const QByteArray& pPsk);
 		void fireSocketError(QAbstractSocket::SocketError pSocketError);
+		void fireNameChanged();
 };
 
 } // namespace governikus

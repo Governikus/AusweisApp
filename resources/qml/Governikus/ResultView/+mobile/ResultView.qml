@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2023 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -25,6 +25,8 @@ FlickableSectionPage {
 	signal continueClicked
 	signal hintClicked
 
+	spacing: Constants.component_spacing
+
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
 
@@ -42,19 +44,17 @@ FlickableSectionPage {
 	ColumnLayout {
 		id: layout
 
-		Layout.margins: Constants.pane_padding
+		Layout.maximumWidth: Number.POSITIVE_INFINITY
 		spacing: Constants.pane_spacing
 
 		PaneTitle {
 			id: paneTitle
 
+			Layout.alignment: Qt.AlignHCenter
 		}
 		GText {
 			id: resultText
 
-			Layout.alignment: Qt.AlignCenter | Qt.AlignTop
-			Layout.maximumWidth: Style.dimens.max_text_width
-			Layout.topMargin: Constants.component_spacing
 			visible: text !== ""
 		}
 	}
@@ -64,10 +64,7 @@ FlickableSectionPage {
 	Hint {
 		id: hintItem
 
-		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		Layout.maximumWidth: Style.dimens.max_text_width
-		Layout.topMargin: Constants.component_spacing
 		visible: text !== ""
 
 		onClicked: hintClicked()
@@ -76,7 +73,6 @@ FlickableSectionPage {
 		id: buttonContinue
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
 
 		//: LABEL ANDROID IOS
 		text: qsTr("OK")
