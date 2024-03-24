@@ -192,6 +192,7 @@ UIPlugInQml::UIPlugInQml()
 #ifndef Q_OS_ANDROID
 	QGuiApplication::setWindowIcon(mTrayIcon.getIcon());
 #endif
+	QGuiApplication::setDesktopFileName(QStringLiteral("com.governikus.ausweisapp2"));
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UIPlugInQml::show);
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, [this] {
