@@ -35,7 +35,7 @@ j.with
 
 		shell(strip('''\
 			cd source;
-			cmake -Werror=dev --preset ci-linux
+			cmake --preset ci-linux
 			-DCMAKE_CXX_COMPILER=${Compiler}
 			'''))
 

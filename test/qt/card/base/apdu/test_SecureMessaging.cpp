@@ -6,6 +6,8 @@
 
 #include "LogHandler.h"
 #include "SecurityProtocol.h"
+#include "apdu/SecureMessagingCommand.h"
+#include "asn1/ASN1Util.h"
 
 #include <QtCore>
 #include <QtTest>
@@ -170,6 +172,31 @@ class test_SecureMessaging
 		}
 
 
+		void testExtendedLengthAfterEcryption()
+		{
+			const QByteArray data(250, 0x42);
+			const CommandApdu command(Ins::MSE_SET, 0x20, 0x30, data, 24);
+			QCOMPARE(command, QByteArray::fromHex("00222030 fa") + data + QByteArray::fromHex("18"));
+
+			const auto& encryptedCommand = mSecureMessagingTerminal->encrypt(command);
+			QCOMPARE(encryptedCommand,
+					QByteArray::fromHex("0c222030 000112"
+										"87820101 01"
+										"257c4674cfae012dd0da1d7ae3901cb0acd1789c30d31d6934092bc9db9f01dd7b7d17215a69f02fe4c24e7ad4019113"
+										"05984da2c4ceca18f41e0e1f55b4bc5d69fa55d73e9eb5c018b6f9edcb07cf171973d5d8612ffc20326e997083592d31"
+										"c0934f2c28d466535d6f4a024cf7068aa44daad8501a228b5dcba0766c6771b5761085d3f19801f92875b10cf17175f7"
+										"ec1714e7a9a99714386e518059360910e6d3a6f54111e5aa983f5cdf2d5f5597fc0f1387ab70a06b922fa45cc1d42bbe"
+										"9f831235d88edd78a14ca9d9abcd02d799161ddc8c231078303d1062b875eaa899a44824ed25e4673706f9d0063872fd"
+										"6dabca6f1fb03e4d4c1a68dd4c6d7488"
+										"970118"
+										"8e08543fdc3e1ff32dfb"
+										"0000"));
+
+			const auto& decryptedcommand = mSecureMessagingCard->decrypt(encryptedCommand);
+			QCOMPARE(decryptedcommand, command);
+		}
+
+
 		void testSendSequenceCounter()
 		{
 			QByteArray data = QByteArray::fromHex("D0D1D2D3");
@@ -327,6 +354,12 @@ class test_SecureMessaging
 			QTest::newRow("3E   256 0") << 256 << 0;
 			QTest::newRow("3E 65519 0") << 65519 << 0;
 
+			QTest::newRow("4E   255   257") << 255 << 257;
+			QTest::newRow("4E   255 65535") << 255 << 65535;
+			QTest::newRow("4E   255 65536") << 255 << 65536;
+			QTest::newRow("4E   256     1") << 256 << 1;
+			QTest::newRow("4E   256   255") << 256 << 255;
+			QTest::newRow("4E   256   256") << 256 << 256;
 			QTest::newRow("4E   256   257") << 256 << 257;
 			QTest::newRow("4E   256 65535") << 256 << 65535;
 			QTest::newRow("4E   256 65536") << 256 << 65536;
@@ -345,8 +378,13 @@ class test_SecureMessaging
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
 			const QByteArray data(lc, 0x42);
-			CommandApdu apdu(QByteArray::fromHex("00010203"), data, le);
-			QCOMPARE(mSecureMessagingCard->decrypt(mSecureMessagingTerminal->encrypt(apdu)), apdu);
+			const CommandApdu apdu(QByteArray::fromHex("00010203"), data, le);
+			const CommandApdu encryptedApdu = mSecureMessagingTerminal->encrypt(apdu);
+
+			SecureMessagingCommand smCmd(encryptedApdu);
+			QCOMPARE(Asn1OctetStringUtil::getValue(smCmd.mExpectedLength.data()).size(), le > 0 ? CommandApdu::isExtendedLength(data, le) ? 2 : 1 : 0);
+
+			QCOMPARE(mSecureMessagingCard->decrypt(encryptedApdu), apdu);
 
 			QCOMPARE(logSpy.count(), 0);
 			Env::getSingleton<LogHandler>()->reset();

@@ -50,7 +50,7 @@ class StateCheckRefreshAddress
 		void fetchServerCertificate();
 		bool checkSslConnectionAndSaveCertificate(const QSslConfiguration& pSslConfiguration);
 		void doneSuccess();
-		void reportCommunicationError(const GlobalStatus& pStatus, FailureCode::Reason pFailure, const QString& pErrorString = QString());
+		void reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure);
 
 	private Q_SLOTS:
 		void onSslHandshakeDone();

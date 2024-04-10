@@ -95,6 +95,8 @@ class NetworkManager
 		[[nodiscard]] virtual QSharedPointer<QNetworkReply> post(QNetworkRequest& pRequest,
 				const QByteArray& pData);
 		[[nodiscard]] virtual QSharedPointer<QNetworkReply> deleteResource(QNetworkRequest& pRequest);
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> head(QNetworkRequest& pRequest);
+		[[nodiscard]] virtual QSharedPointer<QNetworkReply> options(QNetworkRequest& pRequest);
 
 		[[nodiscard]] QSharedPointer<QNetworkReply> getAsUpdater(QNetworkRequest& pRequest);
 		[[nodiscard]] QSharedPointer<QNetworkReply> postAsUpdater(QNetworkRequest& pRequest,

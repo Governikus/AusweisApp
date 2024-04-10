@@ -143,6 +143,7 @@ SectionPage {
 			GPane {
 				id: writeDataPane
 
+				Layout.alignment: Qt.AlignTop
 				Layout.fillWidth: true
 				color: Style.color.pane_sublevel
 				visible: writeData.count > 0
@@ -163,6 +164,7 @@ SectionPage {
 			GPane {
 				id: readDataPane
 
+				Layout.alignment: Qt.AlignTop
 				Layout.fillWidth: true
 				color: Style.color.pane_sublevel
 				visible: requiredData.count > 0 || optionalData.count > 0

@@ -1,6 +1,6 @@
-#####################################################################
-# The qml plugin implements the ui interface for mobile systems.
-#####################################################################
+############################################################################
+# The qml plugin implements the ui interface for desktop and mobile systems.
+############################################################################
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiQml)
 

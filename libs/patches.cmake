@@ -205,7 +205,7 @@ function(generate_patches)
 					set(component "${dirname}/")
 				endif()
 
-				execute_dir("${dirname}" format-patch --no-signature --no-renames --no-binary --src-prefix=x/${component} --dst-prefix=y/${component} -k ${latesttag}..HEAD -o "${patch_dir}")
+				execute_dir("${dirname}" format-patch --full-index --no-signature --no-renames --no-binary --src-prefix=x/${component} --dst-prefix=y/${component} -k ${latesttag}..HEAD -o "${patch_dir}")
 				rename_patches(${dirname})
 			else()
 				message(STATUS "Skip patches of ${dirname} and branch ${current_branch}")

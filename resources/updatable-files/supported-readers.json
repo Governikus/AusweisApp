@@ -361,7 +361,7 @@
 							"os": "mac"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304828&q=driver#choice5"
+					"URL": "https://help.reiner-sct.com/de/support/solutions/articles/101000480002"
 				},
 				{
 					"Platforms": [
@@ -409,11 +409,7 @@
 						},
 						{
 							"os": "mac",
-							"max": "10.14"
-						},
-						{
-							"os": "mac",
-							"min": "11"
+							"max": "13"
 						},
 						{
 							"os": "unknown"
@@ -437,20 +433,26 @@
 				{
 					"Platforms": [
 						{
-							"DE": "bis macOS 10.14 (Mojave)",
-							"EN": "up to macOS 10.14 (Mojave)",
+							"DE": "bis macOS 13",
+							"EN": "up to macOS 13",
 							"os": "mac",
-							"max": "10.14"
-						},
-						{
-							"DE": "ab macOS 11 (Big Sur)",
-							"EN": "from macOS 11 (Big Sur)",
-							"os": "mac",
-							"min": "11"
+							"max": "13"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader is compatible with the installed system driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
+					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
 				}
 			],
 			"Internal information": "Der Hersteller stellt keinen Treiber mehr zur Verfügung."
@@ -592,7 +594,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://support.identiv.com/3700f/"
+					"URL": "https://support.identiv.com/3700f"
 				}
 			],
 			"Information": [
@@ -602,15 +604,34 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
-						},
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
 					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "bis macOS 13",
+							"EN": "up to macOS 13",
+							"os": "mac",
+							"max": "13"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -886,7 +907,7 @@
 							"os": "mac"
 						}
 					],
-					"URL": "https://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader/"
+					"URL": "https://www.acs.com.hk/en/driver/151/acr1281u-npa-contactless-reader"
 				}
 			],
 			"Information": [
@@ -898,19 +919,32 @@
 							"os": "win"
 						}
 					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Falls Sie jedoch den Treiber von der Webseite des Herstellers installieren möchten, ist anschließend ein Neustart erforderlich.",
-					"EN": "The card reader operates with the driver automatically installed by the system. In case you prefer to install the driver from the manufacturer's webseite, a reboot is required."
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
 				},
 				{
 					"Platforms": [
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
+							"DE": "bis macOS 13",
+							"EN": "up to macOS 13",
+							"os": "mac",
+							"max": "13"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -1267,7 +1301,7 @@
 							"os": "win"
 						}
 					],
-					"URL": "https://www.feig.de/login/"
+					"URL": "https://www.feig.de/login"
 				}
 			],
 			"Information": [
@@ -1309,31 +1343,32 @@
 				{
 					"Platforms": [
 						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
+							"os": "win",
+							"max": "10.0.19999"
 						},
 						{
 							"os": "unknown"
 						}
 					],
 					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016422"
+				},
+				{
+					"Platforms": [
+						{
+							"os": "mac"
+						}
+					],
+					"URL": "https://supportportal.gemalto.com/csm?sys_kb_id=fd704ab21bd53d1019913035464bcb30&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=6590372b1bed3d1019913035464bcb0e&sysparm_article=KB0027738"
 				}
 			],
 			"Information": [
 				{
 					"Platforms": [
 						{
-							"DE": "Windows",
-							"EN": "Windows",
-							"os": "win"
-						},
-						{
-							"DE": "bis macOS 10.15 (Catalina)",
-							"EN": "up to macOS 10.15 (Catalina)",
-							"os": "mac",
-							"max": "10.15"
+							"DE": "bis Windows 10",
+							"EN": "up to Windows 10",
+							"os": "win",
+							"max": "10.0.19999"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
@@ -1342,14 +1377,38 @@
 				{
 					"Platforms": [
 						{
-							"DE": "ab macOS 11 (Big Sur)",
-							"EN": "from macOS 11 (Big Sur)",
-							"os": "mac",
-							"min": "11"
+							"DE": "ab Windows 11",
+							"EN": "from Windows 11",
+							"os": "win",
+							"min": "10.0.20000"
 						}
 					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber, ein Neustart ist erforderlich. Es ist kein Treiber vom Hersteller vorhanden.",
-					"EN": "The card reader operates with the driver automatically installed by the system, a reboot is required. There is no driver from the manufacturer."
+					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
+					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "bis macOS 12",
+							"EN": "up to macOS 12",
+							"os": "mac",
+							"max": "12"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich. Trotz des Herstellertreibers ist es wichtig zu beachten, dass der Kartenleser nur funktioniert, solang er vor dem Start des Computers angeschlossen ist und nicht vom Gerät entfernt wird. Sollte er entfernt werden, müssen Sie Ihr Gerät neu starten.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver. Despite the manufacturer's driver, it is important to note that the card reader only works as long as it is connected before starting the computer and is not removed from the device. If it is removed, you will need to restart your device."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 13",
+							"EN": "from macOS 13",
+							"os": "mac",
+							"min": "13"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -1368,9 +1427,12 @@
 					"Platforms": [
 						{
 							"os": "win"
+						},
+						{
+							"os": "unknown"
 						}
 					],
-					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016422"
+					"URL": "https://supportportal.gemalto.com/csm"
 				},
 				{
 					"Platforms": [
@@ -1378,15 +1440,7 @@
 							"os": "mac"
 						}
 					],
-					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016424"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://supportportal.gemalto.com/csm/?id=kb_article_view&sysparm_article=KB0016423"
+					"URL": "https://supportportal.gemalto.com/csm?sys_kb_id=fd704ab21bd53d1019913035464bcb30&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=6590372b1bed3d1019913035464bcb0e&sysparm_article=KB0027738"
 				}
 			],
 			"Information": [
@@ -1396,12 +1450,6 @@
 							"DE": "Windows",
 							"EN": "Windows",
 							"os": "win"
-						},
-						{
-							"DE": "bis macOS 10.15 (Catalina)",
-							"EN": "up to macOS 10.15 (Catalina)",
-							"os": "mac",
-							"max": "10.15"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Es ist kein Treiber vom Hersteller vorhanden.",
@@ -1410,14 +1458,39 @@
 				{
 					"Platforms": [
 						{
-							"DE": "ab macOS 11 (Big Sur)",
-							"EN": "from macOS 11 (Big Sur)",
+							"DE": "bis macOS 12",
+							"EN": "up to macOS 12",
 							"os": "mac",
-							"min": "11"
+							"max": "12"
 						}
 					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber, ein Neustart ist erforderlich. Es ist kein Treiber vom Hersteller vorhanden.",
-					"EN": "The card reader operates with the driver automatically installed by the system, a reboot is required. There is no driver from the manufacturer."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "macOS 13",
+							"EN": "macOS 13",
+							"os": "mac",
+							"min": "13",
+							"max": "13"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -1444,25 +1517,44 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://cherry.de/download/de/download.php?product_id=307"
+					"URL": "https://cherry.de/service/downloads#21865"
 				}
 			],
 			"Information": [
 				{
 					"Platforms": [
 						{
-							"DE": "Windows",
-							"EN": "Windows",
-							"os": "win"
-						},
+							"DE": "bis Windows 10",
+							"EN": "up to Windows 10",
+							"os": "win",
+							"max": "10.0.19999"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab Windows 11",
+							"EN": "from Windows 11",
+							"os": "win",
+							"min": "10.0.20000"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
+				},
+				{
+					"Platforms": [
 						{
 							"DE": "macOS",
 							"EN": "macOS",
 							"os": "mac"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -1473,7 +1565,7 @@
 				"0x0092"
 			],
 			"Name": "Cherry TC-1300",
-			"Pattern": "(Cherry TC 1300|Cherry Smartcard Terminal TC 13xx-CL 0|Cherry SC Reader \\(046A:0092\\))",
+			"Pattern": "(Cherry Smartcard Terminal TC 13xx-CL 0|Cherry SC Reader \\(046A:0092\\))",
 			"Icon": "img_Cherry_TC_1300.png",
 			"IconWithNPA": "img_Cherry_TC_1300_mit_ausweis.png",
 			"Drivers": [
@@ -1489,16 +1581,17 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://cherry.de/download/de/download.php?product_id=306"
+					"URL": "https://www.cherry.de/service/downloads#21864"
 				}
 			],
 			"Information": [
 				{
 					"Platforms": [
 						{
-							"DE": "Windows",
-							"EN": "Windows",
-							"os": "win"
+							"DE": "bis Windows 10",
+							"EN": "up to Windows 10",
+							"os": "win",
+							"max": "10.0.19999"
 						},
 						{
 							"DE": "macOS",
@@ -1506,8 +1599,20 @@
 							"os": "mac"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab Windows 11",
+							"EN": "from Windows 11",
+							"os": "win",
+							"min": "10.0.20000"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
 				}
 			]
 		},
@@ -1528,26 +1633,36 @@
 							"os": "win"
 						},
 						{
-							"os": "mac"
-						},
-						{
 							"os": "unknown"
 						}
 					],
-					"URL": "https://cherry.de/download/de/download.php?product_id=170"
+					"URL": "https://www.cherry.de/service/downloads#21987"
 				}
 			],
 			"Information": [
 				{
 					"Platforms": [
 						{
-							"DE": "Windows",
-							"EN": "Windows",
-							"os": "win"
+							"DE": "bis Windows 10",
+							"EN": "up to Windows 10",
+							"os": "win",
+							"max": "10.0.19999"
 						}
 					],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
 					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab Windows 11",
+							"EN": "from Windows 11",
+							"os": "win",
+							"min": "10.0.20000"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Bitte beachten Sie nach Anschließen des Kartenlesers die Windows-Informationen zur Einstellung der Gerätesicherheit.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. After connecting the card reader, please observe the Windows information notification regarding your device security settings."
 				},
 				{
 					"Platforms": [
@@ -1557,8 +1672,8 @@
 							"os": "mac"
 						}
 					],
-					"DE": "Es ist kein Treiber vom Hersteller vorhanden.",
-					"EN": "There is no driver from the manufacturer."
+					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
+					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
 				}
 			],
 			"Internal information": "Unter Windows funktioniert nur NFC A. Reader wird nicht als unterstützt markiert, da er nicht zertifiziert ist."
@@ -1660,7 +1775,7 @@
 				"0x2301"
 			],
 			"Name": "ACS ACR1581U-C1",
-			"Pattern": "ACS ACR1581 1S Dual Reader PICC( 0)?",
+			"Pattern": "ACS ACR1581 1S Dual Reader (PICC|\\(1\\))( 0)?",
 			"Icon": "img_ACS_ACR1581U-C1.png",
 			"IconWithNPA": "img_ACS_ACR1581U-C1_mit_ausweis.png",
 			"Drivers": [
@@ -1676,7 +1791,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://www.acs.com.hk/en/products/583/acr1581u-dualboost-iii-usb-dual-interface-reader/"
+					"URL": "https://www.acs.com.hk/en/products/583/acr1581u-dualboost-iii-usb-dual-interface-reader"
 				}
 			],
 			"Information": [

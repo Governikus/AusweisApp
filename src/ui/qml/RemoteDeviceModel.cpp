@@ -114,6 +114,41 @@ QString RemoteDeviceModel::getStatus(const RemoteDeviceModelEntry& pRemoteDevice
 }
 
 
+QString RemoteDeviceModel::getCurrentDeviceName(const QModelIndex& pIndex) const
+{
+	const auto& availableReaders = presentReaders();
+	for (const auto& availableReader : availableReaders)
+	{
+		if (mAllRemoteReaders.at(pIndex.row()).getId() != availableReader.getId())
+		{
+			continue;
+		}
+
+		const QSharedPointer<IfdListEntry> deviceListEntry = availableReader.getRemoteDeviceListEntry();
+		if (deviceListEntry.isNull() || deviceListEntry->getIfdDescriptor().isNull())
+		{
+			break;
+		}
+
+		return deviceListEntry->getIfdDescriptor().getIfdName();
+	}
+	return {};
+}
+
+
+QString RemoteDeviceModel::constructDisplayDeviceName(const QModelIndex& pIndex) const
+{
+	const auto& storedName = mAllRemoteReaders.at(pIndex.row()).getDeviceNameEscaped();
+	const auto& newRemoteName = getCurrentDeviceName(pIndex);
+	if (newRemoteName.isNull() || storedName == newRemoteName)
+	{
+		return storedName;
+	}
+	//: LABEL ALL_PLATFORMS Describes the former name of the device and is shown as: "New_Name (was Old_Name)"
+	return newRemoteName + QStringLiteral(" (%1 %2)").arg(tr("was"), storedName);
+}
+
+
 void RemoteDeviceModel::updatePairedReaders()
 {
 	const auto& availableReaders = presentReaders();
@@ -249,7 +284,7 @@ QVariant RemoteDeviceModel::data(const QModelIndex& pIndex, int pRole) const
 	{
 		case Qt::DisplayRole:
 		case REMOTE_DEVICE_NAME:
-			return reader.getDeviceNameEscaped();
+			return constructDisplayDeviceName(pIndex);
 
 		case REMOTE_DEVICE_STATUS:
 			return getStatus(reader);

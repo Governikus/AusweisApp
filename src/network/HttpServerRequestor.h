@@ -51,6 +51,8 @@ class HttpServerRequestor
 		[[nodiscard]] QSharedPointer<QNetworkReply> getRequest(const QUrl& pUrl, int pTimeOut = 2000);
 		[[nodiscard]] QSharedPointer<QNetworkReply> postRequest(const QUrl& pUrl, const QByteArray& pData, const QString& pContentType, int pTimeOut = 2000);
 		[[nodiscard]] QSharedPointer<QNetworkReply> deleteRequest(const QUrl& pUrl, int pTimeOut = 2000);
+		[[nodiscard]] QSharedPointer<QNetworkReply> headRequest(const QUrl& pUrl, int pTimeOut = 2000);
+		[[nodiscard]] QSharedPointer<QNetworkReply> optionsRequest(const QUrl& pUrl, int pTimeOut = 2000);
 
 		static QUrl createUrl(const QString& pQuery, quint16 pPort, const QHostAddress& pHost, const QString& pPath = QStringLiteral("/eID-Client"));
 

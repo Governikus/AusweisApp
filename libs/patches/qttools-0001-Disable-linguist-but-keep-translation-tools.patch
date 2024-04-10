@@ -9,7 +9,7 @@ Change-Id: I1c54eb0e7bb86ec0861b54b5abe753c86bb57dd9
  1 file changed, 3 deletions(-)
 
 diff --git x/qttools/src/linguist/CMakeLists.txt y/qttools/src/linguist/CMakeLists.txt
-index d85254b32..dfcfe7271 100644
+index d85254b32ea501178fd6e948cf11e28bcdfef121..dfcfe727128412dd2291f010fc161e9b15bf1728 100644
 --- x/qttools/src/linguist/CMakeLists.txt
 +++ y/qttools/src/linguist/CMakeLists.txt
 @@ -14,9 +14,6 @@ add_subdirectory(lrelease)

@@ -20,8 +20,6 @@ GPane {
 	color: Style.color.pane_sublevel
 	drawShadow: false
 	spacing: 0
-	//: LABEL DESKTOP
-	title: qsTr("Hint")
 
 	GText {
 		id: hintText

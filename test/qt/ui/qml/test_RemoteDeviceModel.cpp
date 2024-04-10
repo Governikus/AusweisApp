@@ -13,6 +13,26 @@ using namespace governikus;
 
 Q_DECLARE_METATYPE(RemoteDeviceModel::SettingsRemoteRoles)
 
+class MockRemoteDeviceModel
+	: public RemoteDeviceModel
+{
+	[[nodiscard]] QList<RemoteDeviceModelEntry> presentReaders() const override;
+};
+
+QList<RemoteDeviceModelEntry> MockRemoteDeviceModel::presentReaders() const
+{
+	const auto dName = QStringLiteral("new_name");
+	const auto dId = QStringLiteral("myDeviceId");
+	const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
+	const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
+	const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
+	remoteDeviceListEntry->setIfdDescriptor(ifdDesc);
+	return QList {
+		RemoteDeviceModelEntry {remoteDeviceListEntry}
+	};
+}
+
+
 class test_RemoteDeviceModel
 	: public QObject
 {
@@ -273,6 +293,32 @@ class test_RemoteDeviceModel
 			mModel->setLastPairedReader(cert);
 			QTRY_COMPARE(spy.size(), 1);
 			QVERIFY(mModel->data(mModel->index(0), RemoteDeviceModel::IS_LAST_ADDED_DEVICE).toBool());
+		}
+
+
+		void test_ChangedName()
+		{
+			MockRemoteDeviceModel model;
+
+			RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
+			settings.addTrustedCertificate(QSslCertificate());
+
+			const auto dName = QStringLiteral("old_name");
+			const auto dId = QStringLiteral("myDeviceId");
+			const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
+			const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
+			const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
+
+			model.mAllRemoteReaders.clear();
+			model.addOrUpdateReader(RemoteDeviceModelEntry(remoteDeviceListEntry));
+
+			const auto newName = QStringLiteral("new_name");
+			const auto newDisco = Discovery(newName, dId, 12345, {IfdVersion::Version::latest}, false);
+			const auto newIfdDesc = IfdDescriptor(newDisco, QHostAddress(QStringLiteral("127.0.0.1")));
+			remoteDeviceListEntry->setIfdDescriptor(newIfdDesc);
+
+			const auto name = model.data(mModel->index(0), RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME).toString();
+			QCOMPARE(name, QStringLiteral("new_name (was old_name)"));
 		}
 
 

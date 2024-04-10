@@ -12,7 +12,7 @@ This reverts commit 6eefbf74149164eac316cea59a00b45f70976ad2.
  3 files changed, 5 insertions(+), 14 deletions(-)
 
 diff --git x/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.mm y/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.mm
-index f22782fb04..d54b7db57a 100644
+index f22782fb043cd6dfe6d2e364d6d4b7b2897d0c29..d54b7db57a35acbe68121a215ba96c602d29ac04 100644
 --- x/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.mm
 +++ y/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.mm
 @@ -25,6 +25,8 @@ void invalidateCache(QAccessibleInterface *iface)
@@ -53,7 +53,7 @@ index f22782fb04..d54b7db57a 100644
      default:
          break;
 diff --git x/qtbase/src/plugins/platforms/ios/qioswindow.mm y/qtbase/src/plugins/platforms/ios/qioswindow.mm
-index 8de094533b..99f9e38846 100644
+index 8de094533bfc97c4af0c79f71207056ca278f5fb..99f9e3884668555afd4a41db6c39828d1ef56194 100644
 --- x/qtbase/src/plugins/platforms/ios/qioswindow.mm
 +++ y/qtbase/src/plugins/platforms/ios/qioswindow.mm
 @@ -75,7 +75,6 @@ QIOSWindow::~QIOSWindow()
@@ -65,7 +65,7 @@ index 8de094533b..99f9e38846 100644
      [m_view removeFromSuperview];
      [m_view release];
 diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
-index 04e1f8cfb3..366141ef81 100644
+index 04e1f8cfb3098b9135703bc5e24e025288643111..366141ef8195728d900beaeb4fc9d2229476aab8 100644
 --- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
 +++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
 @@ -54,6 +54,7 @@

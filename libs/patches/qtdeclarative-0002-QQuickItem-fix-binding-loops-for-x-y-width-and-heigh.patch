@@ -22,7 +22,7 @@ Reviewed-by: Qt CI Bot <qt_ci_bot@qt-project.org>
  1 file changed, 20 insertions(+), 12 deletions(-)
 
 diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
-index a2e8c989d1..30bbf505da 100644
+index a2e8c989d1b893f357069b352f5f422da6c17768..30bbf505da10b8d9d4a22f3b7b424c3da7e25d94 100644
 --- x/qtdeclarative/src/quick/items/qquickitem.cpp
 +++ y/qtdeclarative/src/quick/items/qquickitem.cpp
 @@ -7068,15 +7068,17 @@ void QQuickItem::setX(qreal v)

@@ -12,5 +12,5 @@ ResultView {
 	icon: "qrc:///images/phone_to_pc.svg"
 
 	//: INFO ALL_PLATFORMS The pairing with the SaC server was successful.
-	text: qsTr("Pairing with %1 successful, it will be listed under \"Paired devices\".").arg(deviceName) + "<br/>" + qsTr("The device may now be used as a card reader.")
+	text: qsTr("Pairing with \"%1\" successful, it will be listed under \"Paired devices\".").arg(deviceName) + "<br/>" + qsTr("The device may now be used as a card reader.")
 }

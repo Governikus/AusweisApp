@@ -18,7 +18,7 @@ Change-Id: Ic851ba2ffcf13d268b3a53d926cb92f7bed7a3d9
  1 file changed, 1 insertion(+)
 
 diff --git x/qtdeclarative/src/qml/memory/qv4stacklimits.cpp y/qtdeclarative/src/qml/memory/qv4stacklimits.cpp
-index 68ef7a366a..429520e527 100644
+index 68ef7a366a173fa3df21b85af897912c69b9d654..429520e5273fc4c35ddd02710b68336b944b4742 100644
 --- x/qtdeclarative/src/qml/memory/qv4stacklimits.cpp
 +++ y/qtdeclarative/src/qml/memory/qv4stacklimits.cpp
 @@ -235,6 +235,7 @@ StackProperties stackPropertiesGeneric(qsizetype stackSize = 0)

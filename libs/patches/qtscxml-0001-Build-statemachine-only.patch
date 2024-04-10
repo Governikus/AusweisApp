@@ -9,7 +9,7 @@ Subject: Build statemachine only
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git x/qtscxml/src/CMakeLists.txt y/qtscxml/src/CMakeLists.txt
-index 5fbfbd9d..2f94949d 100644
+index 5fbfbd9d495ba5a926b3a44380a04a60bc06d5ee..2f94949dd4410973d577062533a449ef65a091a6 100644
 --- x/qtscxml/src/CMakeLists.txt
 +++ y/qtscxml/src/CMakeLists.txt
 @@ -2,10 +2,10 @@
@@ -28,7 +28,7 @@ index 5fbfbd9d..2f94949d 100644
 -add_subdirectory(plugins)
 +#add_subdirectory(plugins)
 diff --git x/qtscxml/tools/CMakeLists.txt y/qtscxml/tools/CMakeLists.txt
-index c5831a40..234fa606 100644
+index c5831a40460daefec3845fa34a2757b0232511fd..234fa6065eb30588d7015b5e90bc498d79981951 100644
 --- x/qtscxml/tools/CMakeLists.txt
 +++ y/qtscxml/tools/CMakeLists.txt
 @@ -3,5 +3,5 @@
