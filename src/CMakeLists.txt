@@ -198,7 +198,7 @@ if(MAC)
 		set_target_properties(AusweisAppBinary PROPERTIES XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER "macOS Release (Distribution)")
 		set_target_properties(AusweisAppBinary PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "3rd Party Mac Developer Application: Governikus GmbH & Co. KG (G7EQCJU4BR)")
 	else()
-		configure_file(${PACKAGING_DIR}/macos/entitlements.development.plist ${CMAKE_BINARY_DIR}/entitlements.plist @COPYONLY)
+		configure_file(${PACKAGING_DIR}/macos/entitlements.development.plist ${CMAKE_BINARY_DIR}/entitlements.plist COPYONLY)
 	endif()
 endif()
 

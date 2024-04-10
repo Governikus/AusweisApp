@@ -370,13 +370,13 @@
 			"longName": {
 				"": "Stadt Braunschweig - Internetbasierte Fahrzeugzulassung"
 			},
-			"address": "https://stadt-braunschweig.govconnect.de",
+			"address": "https://service.braunschweig.de",
 			"homepage": "https://braunschweig.de",
 			"phone": "+49 531 4701",
 			"email": "stadt@braunschweig.de",
 			"postalAddress": "Stadt Braunschweig<br/>Platz der Deutschen Einheit 1<br/>38100 Braunschweig",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
 		},
 		{
 			"shortName": {
@@ -396,6 +396,28 @@
 			"category": "citizen",
 			"subjectUrls": [
 				"https://formular.arbeitsagentur.de"
+			]
+		},
+		{
+			"shortName": {
+				"": "Bundesanzeiger Verlag GmbH"
+			},
+			"longName": {
+				"": "Bundesanzeiger Verlag GmbH"
+			},
+			"longDescription": {
+				"": "Für die Übermittlung von Rechnungslegungsunterlagen von den im Handels- oder Genossenschaftsregister eingetragenen Unternehmen an das Unternehmensregister muss nach den Vorgaben der URV im Rahmen einer Registrierung eine einmalige, elektronische Identitätsprüfung des Nutzers anhand bestimmter elektronischer Identifizierungsmittel, u.a. mit der Online-Ausweisfunktion des Personalausweises, erfolgen."
+			},
+			"address": "https://ident.bundesanzeiger-verlag.de",
+			"homepage": "https://www.bundesanzeiger-verlag.de",
+			"phone": "+49 221 97668 275",
+			"email": "service@bundesanzeiger.de",
+			"postalAddress": "Bundesanzeiger Verlag GmbH<br/>Amsterdamer Straße 192<br/>50735 Köln",
+			"image": "BundesanzeigerVerlag_image.jpg",
+			"icon": "BundesanzeigerVerlag_icon.svg",
+			"category": "other",
+			"subjectUrls": [
+				"https://ident.bundesanzeiger-verlag.de"
 			]
 		},
 		{
@@ -467,7 +489,7 @@
 			"longDescription": {
 				"": "Die Stadt Münster bietet auf ihrer Webseite eine Reihe von Online-Diensten an. Dort können Sie mit der Online-Ausweisfunktion unter anderem:<br/><ul><li>eine Personenstandsurkunde bestellen,</li><li>Ihr Wunschkennzeichen beantragen,</li><li>geografische Karten bestellen,</li><li>Elektroschrott zur Abholung anmelden,</li><li>eine Erklärung zum Elterneinkommen für die Festsetzung des Elternbeitrags für die Kindertagesbetreuung abgeben,</li><li>eine Sondernutzungserlaubnis für private Baumaßnahmen an öffentlichen Straßen beantragen,</li><li>eine Großanlage mit zentraler Trinkwassererwärmung anzeigen,</li><li>einen Fahrradfund melden,</li><li>ein Reitkennzeichen beantragen,</li><li>Mietspiegel-Broschüren bestellen.</li></ul>"
 			},
-			"address": "https://www.stadt-muenster.de/online-dienste",
+			"address": "https://www.stadt-muenster.de/service/online-services",
 			"homepage": "https://www.stadt-muenster.de",
 			"phone": "+49 251 4 92 0",
 			"email": "stadtverwaltung@stadt-muenster.de",
@@ -544,7 +566,7 @@
 			"longDescription": {
 				"": "In unserem Bürgerservice-Portal können Sie Anträge an die Kreisverwaltung Herford online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."
 			},
-			"address": "https://www.kreis-herford.de/i-KFZ-Stufe 4",
+			"address": "https://www.kreis-herford.de/i-KFZ-Stufe%204",
 			"homepage": "https://www.kreis-herford.de",
 			"phone": "+49 5223 988 500",
 			"email": "portal@kreis-herford.de",
@@ -941,7 +963,7 @@
 			"longDescription": {
 				"": "Mit i-Kfz können Sie Ihr Auto per Internet von zu Hause aus zulassen. Derzeit sind online folgende Dienstleistungen möglich:<br/><ul><li>Neuzulassung</li><li>Umschreibung</li><li>Wiederzulassung</li><li>Adressänderung</li><li>Außerbetriebsetzung</li></ul>"
 			},
-			"address": "https://ikfz.ikfz-sachsen.de/ikfz3/?LICENSEIDENTIFIER=nordsachsen_kreis",
+			"address": "https://www.landkreis-nordsachsen.de/was-erledige-ich-wo/dezernat/sachgebiet-kfz-zulassungsbehoerde",
 			"homepage": "https://www.landkreis-nordsachsen.de",
 			"phone": "+49 3421 758 5143",
 			"email": "ikfz@lra-nordsachsen.de",
@@ -1395,8 +1417,8 @@
 			"longDescription": {
 				"": "Wir stellen Online-Dienstleistungen aus Bad Oeynhausen, dem Kreis Minden-Lübbecke, dem Land NRW und den Bundesbehörden zur Verfügung.<br/><br/>Sie können unseren Service ohne Anmeldung oder mit einer Anmeldung über das Servicekonto.NRW nutzen. Für die Nutzung von ePayment ist eine Anmeldung mit dem Servicekonto Voraussetzung."
 			},
-			"address": "https://portal.kommunale.it/bad-oeynhausen/login",
-			"homepage": "https://portal.kommunale.it/bad-oeynhausen/services",
+			"address": "https://www.badoeynhausen.de/rathaus-service-politik",
+			"homepage": "https://www.badoeynhausen.de",
 			"phone": "+49 5731 14 0",
 			"email": "egov@badoeynhausen.de",
 			"postalAddress": "Stadt Bad Oeynhausen<br/>Der Bürgermeister<br/>Ostkorso 8<br/>32545 Bad Oeynhausen",
@@ -1436,7 +1458,7 @@
 				"": "In unserem Service-Portal können Sie Anträge an die Kreisverwaltung Soest online erfassen und direkt zur weiteren Bearbeitung an die zuständigen Stellen übermitteln."
 			},
 			"address": "https://serviceportal.kreis-soest.de",
-			"homepage": "https://www.kreis-soest.de/start",
+			"homepage": "https://www.kreis-soest.de",
 			"phone": "+49 2921 30 0",
 			"email": "service-portal@kreis-soest.de",
 			"postalAddress": "Kreisverwaltung Soest<br/>Hoher Weg 1-3<br/>59494 Soest",
@@ -1652,8 +1674,8 @@
 			"longDescription": {
 				"": "Mithilfe der internetbasierten Fahrzeugzulassung können Sie Ihr Fahrzeug ganz einfach anmelden, Adresse ändern und abmelden.<br/>Nähere Details zum Verfahren entnehmen Sie der Startseite des iKFZ-Portals."
 			},
-			"address": "https://region-hannover.govconnect.de",
-			"homepage": "https://region-hannover.govconnect.de",
+			"address": "https://region-hannover-ikfz4.govconnect.de/i4/ikfz4/?LICENSEIDENTIFIER=hannover_region",
+			"homepage": "https://www.hannover.de/Leben-in-der-Region-Hannover/Mobilit%C3%A4t/Kraftfahrzeug-Stra%C3%9Fe/KFZ-Zulassung-in-Stadt-und-Region/Kfz-Zulassungen-in-der-Region-Hannover/i-KFZ-Zulassungen,-Wiederzulassungen-und-Au%C3%9Ferbetriebsetzungen-online",
 			"phone": "+49 511 616 17444",
 			"email": "TeamKfz@Region-Hannover.de",
 			"postalAddress": "Region Hannover<br/>Fachbereich Öffentliche Sicherheit<br/>Team Kfz-Zulassungsangelegenheiten<br/>Hildesheimer Straße 20<br/>30169 Hannover",
@@ -1939,8 +1961,8 @@
 			"longDescription": {
 				"": "Der Landkreis Ludwigslust-Parchim bietet auf seinem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
 			},
-			"address": "https://service.kreis-lup.de",
-			"homepage": "https://www.kreis-lup.de",
+			"address": "https://service.kreis-lup.de/dienstleistungen",
+			"homepage": "https://service.kreis-lup.de",
 			"phone": "+49 3871 722 0",
 			"email": "info@kreis-lup.de",
 			"postalAddress": "Landkreis Ludwigslust-Parchim<br/>Postfach 16 02 20<br/>19092 Schwerin",
@@ -2245,7 +2267,7 @@
 				"": "Die Stadt Remscheid bietet auf ihrem Serviceportal eine Vielzahl von Online-Diensten (inkl. Bezahlvorgang bei gebührenpflichtigen Leistungen) an."
 			},
 			"address": "https://serviceportal.remscheid.de",
-			"homepage": "https://www.remscheid.de",
+			"homepage": "https://serviceportal.remscheid.de",
 			"phone": "+49 2191 16 00",
 			"email": "Serviceportal@remscheid.de",
 			"postalAddress": "Stadt Remscheid<br/>Theodor-Heuss-Platz 1<br/>42853 Remscheid",

@@ -11,7 +11,7 @@ Change-Id: If19a9d615e01d61c79955cda4789ba1646520ee1
  1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qlogging.cpp y/qtbase/src/corelib/global/qlogging.cpp
-index 7e708c9c41..96c3bc5dc6 100644
+index 7e708c9c41285b8d899e3f8c0380a7218771c538..96c3bc5dc617af2bae08773da60d975e1b34050a 100644
 --- x/qtbase/src/corelib/global/qlogging.cpp
 +++ y/qtbase/src/corelib/global/qlogging.cpp
 @@ -1593,10 +1593,7 @@ QString qFormatLogMessage(QtMsgType type, const QMessageLogContext &context, con

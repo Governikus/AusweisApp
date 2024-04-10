@@ -13,6 +13,7 @@ QtObject {
 	property string header
 	property string hintButtonText
 	property string hintText
+	property string hintTitle: qsTr("Hint")
 	property url icon: "qrc:///images/status_info_%1.svg".arg(Style.currentTheme.name)
 	property string text
 	property int textFormat: Text.AutoText

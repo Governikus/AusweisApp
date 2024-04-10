@@ -57,7 +57,7 @@ GControl {
 		qsTr("The password is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
 		//: LABEL DESKTOP Screenreader text for the password field
 		qsTr("The password is hidden.")) + (text === undefined ? " " + passwordState : "")
-	Accessible.role: Accessible.EditableText
+	Accessible.role: Accessible.StaticText
 	Layout.maximumWidth: contentItem.Layout.maximumWidth + leftPadding + rightPadding
 	Layout.minimumWidth: contentItem.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredWidth: implicitWidth

@@ -8,6 +8,10 @@
       "binaryDir": "${sourceParentDir}/build",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER_LAUNCHER": "ccache"
+      },
+      "errors": {
+        "dev": true,
+        "deprecated": true
       }
     },
     {

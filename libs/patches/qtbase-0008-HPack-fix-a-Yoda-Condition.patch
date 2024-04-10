@@ -25,7 +25,7 @@ Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/access/http2/hpacktable.cpp y/qtbase/src/network/access/http2/hpacktable.cpp
-index 74a09a207f..c8c5d098c8 100644
+index 74a09a207ffb5531093bf46841c0885f5bef70e4..c8c5d098c80ad15c24d1eaca022bd7846f590048 100644
 --- x/qtbase/src/network/access/http2/hpacktable.cpp
 +++ y/qtbase/src/network/access/http2/hpacktable.cpp
 @@ -27,7 +27,7 @@ HeaderSize entry_size(QByteArrayView name, QByteArrayView value)

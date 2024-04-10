@@ -567,16 +567,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ausweiszugriff erfolgreich</translation>
     </message>
     <message>
-        <source>Online identification feature disabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Online-Ausweisfunktion deaktiviert</translation>
-    </message>
-    <message>
-        <source>Online identification feature enabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Online-Ausweisfunktion aktiviert</translation>
-    </message>
-    <message>
         <source>ID card PIN suspended</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Karten-PIN pausiert</translation>
@@ -590,6 +580,16 @@ LABEL ANDROID IOS</extracomment>
         <source>ID card functional</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Ausweis einsatzbereit</translation>
+    </message>
+    <message>
+        <source>eID function disabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Online-Ausweisfunktion deaktiviert</translation>
+    </message>
+    <message>
+        <source>eID function enabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Online-Ausweisfunktion aktiviert</translation>
     </message>
 </context>
 <context>
@@ -645,11 +645,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Es war nicht möglich, eine stabile Verbindung mit Ihrem Ausweis herzustellen.&lt;br&gt;&lt;br&gt;Bitte starten Sie die Prüfung erneut. Versuchen Sie eine andere Kartenposition und achten Sie darauf, die Karte während der Prüfung nicht zu bewegen.&lt;br&gt;&lt;br&gt;Wenn auch bei unterschiedlichen Kartenpositionen keine Verbindung zur Ausweiskarte hergestellt werden kann, deutet dies darauf hin, dass die NFC-Schnittstelle Ihres mobilen Geräts die Ausweiskarte nicht ausreichend mit Strom versorgen kann.&lt;br&gt;&lt;br&gt;Mit der %1 kompatible Smartphones finden Sie auf unserer &lt;a href=&quot;%2&quot;&gt;Website&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>Online identification feature disabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Online-Ausweisfunktion deaktiviert</translation>
-    </message>
-    <message>
         <source>OK</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
@@ -688,6 +683,16 @@ LABEL ANDROID IOS</extracomment>
         <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards for citizen of the EU/EEA/&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Es wurde kein unterstützter Ausweis erkannt. Die %1 unterstützt:&lt;p&gt;&lt;ul&gt;&lt;li&gt;deutsche Personalausweise&lt;/li&gt;&lt;li&gt;elektronische Aufenthaltstitel (eAT)&lt;/li&gt;&lt;li&gt;eID-Karten für EU-/EWR-Bürger&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Haben Sie eines der genannten Dokumente verwendet und diese Fehlermeldung erscheint dennoch, starten Sie bitte die Prüfung erneut.</translation>
+    </message>
+    <message>
+        <source>eID function disabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Online-Ausweisfunktion deaktiviert</translation>
+    </message>
+    <message>
+        <source>Activate the eID function.</source>
+        <extracomment>LABEL ANDROID IOS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation>Online-Ausweisfunktion aktivieren</translation>
     </message>
 </context>
 <context>
@@ -1590,16 +1595,6 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
-    <name>Hint</name>
-    <message>
-        <source>Hint</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Tipp</translation>
-    </message>
-</context>
-<context>
     <name>LanguageButtonData</name>
     <message>
         <source>German</source>
@@ -2064,14 +2059,29 @@ LABEL ANDROID IOS</extracomment>
         <translation>Bitte platzieren Sie Ihren Ausweis oben an der Geräterückseite.</translation>
     </message>
     <message>
-        <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
-        <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
-        <translation>Bitte platzieren Sie Ihren Ausweis direkt an der Geräterückseite.&lt;br/&gt;&lt;br/&gt;Die genaue Position des Ausweises ist modellabhängig. Die Animationen zeigen Ihnen mögliche Positionen. Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
-    </message>
-    <message>
         <source>The device &quot;%1&quot; wants to use this smartphone as card reader and connect to your id card.</source>
         <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
         <translation>Das Gerät &quot;%1&quot; möchte dieses Smartphone als Kartenleser nutzen und sich mit Ihrem Ausweis verbinden.</translation>
+    </message>
+    <message>
+        <source>The animations depict possible positions.</source>
+        <extracomment>INFO ANDROID Text regarding ID card position animations</extracomment>
+        <translation>Die Animationen zeigen Ihnen mögliche Positionen.</translation>
+    </message>
+    <message>
+        <source>The exact position of the ID card is device dependent.</source>
+        <extracomment>INFO ANDROID Text regarding different NFC chip positions on different smartphones</extracomment>
+        <translation>Die genaue Position des Ausweises ist modellabhängig.</translation>
+    </message>
+    <message>
+        <source>Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
+        <extracomment>INFO ANDROID Text that one ID card position should be kept for several seconds</extracomment>
+        <translation>Halten Sie jede Position einige Sekunden, bevor Sie eine andere ausprobieren und bewegen Sie den Ausweis nicht mehr, sobald der Kontakt hergestellt wurde.</translation>
+    </message>
+    <message>
+        <source>Please place your ID card directly on the device&apos;s back side.</source>
+        <extracomment>INFO ANDROID Text regarding the ID card position on the device</extracomment>
+        <translation>Bitte platzieren Sie Ihren Ausweis direkt an der Geräterückseite.</translation>
     </message>
 </context>
 <context>
@@ -2202,9 +2212,9 @@ LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text wh
 <context>
     <name>PairingSuccessView</name>
     <message>
-        <source>Pairing with %1 successful, it will be listed under &quot;Paired devices&quot;.</source>
+        <source>Pairing with &quot;%1&quot; successful, it will be listed under &quot;Paired devices&quot;.</source>
         <extracomment>INFO ALL_PLATFORMS The pairing with the SaC server was successful.</extracomment>
-        <translation>Die Kopplung mit %1 war erfolgreich, es wird bei den &quot;Gekoppelten Geräten&quot; gelistet.</translation>
+        <translation>Die Kopplung mit &quot;%1&quot; war erfolgreich, es wird bei den &quot;Gekoppelten Geräten&quot; gelistet.</translation>
     </message>
     <message>
         <source>The device may now be used as a card reader.</source>
@@ -2519,6 +2529,29 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>You can change your card PIN at any time in %1.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
         <translation>Sie können die Karten-PIN jederzeit in der %1 ändern.</translation>
+    </message>
+    <message>
+        <source>I can&apos;t recall my PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Ich kenne meine PIN nicht</translation>
+    </message>
+    <message>
+        <source>I can&apos;t recall my PUK</source>
+        <translation>Ich kenne meine PUK nicht</translation>
+    </message>
+    <message>
+        <source>Set a new PIN</source>
+        <translation>Neue PIN setzen</translation>
+    </message>
+</context>
+<context>
+    <name>PasswordInfoView</name>
+    <message>
+        <source>Hint</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Tipp</translation>
     </message>
 </context>
 <context>
@@ -3228,6 +3261,13 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <source>OK</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
+    </message>
+    <message>
+        <source>Hint</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Tipp</translation>
     </message>
 </context>
 <context>
@@ -3998,6 +4038,13 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Rate app</source>
         <extracomment>LABEL ANDROID</extracomment>
         <translation>App bewerten</translation>
+    </message>
+</context>
+<context>
+    <name>SuggestionData</name>
+    <message>
+        <source>Hint</source>
+        <translation>Tipp</translation>
     </message>
 </context>
 <context>
@@ -5689,8 +5736,8 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
         <translation>Wenn Sie Ihre Karten-PIN nicht kennen, können Sie bei Ihrer zuständigen Ausweisbehörde eine neue Karten-PIN setzen.</translation>
     </message>
     <message>
-        <source>To find your competent authority you may visit www.behoerdenfinder.de.</source>
-        <translation>Ihre zuständige Behörde finden Sie beispielsweise unter www.behoerdenfinder.de.</translation>
+        <source>To find your competent authority you may visit servicesuche.bund.de.</source>
+        <translation>Ihre zuständige Behörde finden Sie beispielsweise unter servicesuche.bund.de.</translation>
     </message>
     <message>
         <source>Request a new card PIN to be able to use the eID function again.</source>
@@ -5827,6 +5874,11 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
         <source>Click to pair</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Klicken zum Koppeln</translation>
+    </message>
+    <message>
+        <source>was</source>
+        <extracomment>LABEL ALL_PLATFORMS Describes the former name of the device and is shown as: &quot;New_Name (was Old_Name)&quot;</extracomment>
+        <translation>ehem.</translation>
     </message>
 </context>
 <context>

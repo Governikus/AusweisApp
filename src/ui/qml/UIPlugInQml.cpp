@@ -88,6 +88,9 @@
 #include <QtPlugin>
 #include <QtQml>
 
+#ifdef Q_OS_WIN
+	#include <windows.h>
+#endif
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
@@ -192,6 +195,7 @@ UIPlugInQml::UIPlugInQml()
 #ifndef Q_OS_ANDROID
 	QGuiApplication::setWindowIcon(mTrayIcon.getIcon());
 #endif
+	QGuiApplication::setDesktopFileName(QStringLiteral("com.governikus.ausweisapp2"));
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UIPlugInQml::show);
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, [this] {
@@ -790,6 +794,11 @@ void UIPlugInQml::doRefresh()
 {
 	qCDebug(qml) << "Reload qml files";
 	QMetaObject::invokeMethod(this, &UIPlugInQml::init, Qt::QueuedConnection);
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
+	QMetaObject::invokeMethod(this, [this]{
+			Q_EMIT fireShowUiRequested(UiModule::CURRENT);
+		}, Qt::QueuedConnection);
+#endif
 }
 
 

@@ -16,6 +16,7 @@ ResultView {
 	header: suggestionData.header
 	hintButtonText: suggestionData.hintButtonText
 	hintText: suggestionData.hintText
+	hintTitle: suggestionData.hintTitle
 	icon: suggestionData.icon
 	text: suggestionData.text
 	textFormat: suggestionData.textFormat

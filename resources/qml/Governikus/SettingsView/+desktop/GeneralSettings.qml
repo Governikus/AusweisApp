@@ -39,7 +39,12 @@ ColumnLayout {
 			//: LABEL DESKTOP
 			text: qsTr("Use the system font")
 
-			onCheckedChanged: SettingsModel.useSystemFont = checked
+			onCheckedChanged: {
+				if (checked !== SettingsModel.useSystemFont) {
+					SettingsModel.useSystemFont = checked;
+					plugin.doRefresh();
+				}
+			}
 		}
 		GSwitch {
 			Layout.fillWidth: true

@@ -82,9 +82,11 @@ void StateGenericProviderCommunication::checkSslConnectionAndSaveCertificate(con
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
 		const GlobalStatus& status {GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap};
-		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Invalid_Ephemeral_Key_Length,
-									{FailureCode::Info::State_Name, getStateName()}
-		};
+
+		auto map = TlsChecker::getEphemeralKeyInfoMap(pSslConfiguration.ephemeralServerKey());
+		map.insert(FailureCode::Info::State_Name, getStateName());
+		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Invalid_Ephemeral_Key_Length, map};
+
 		reportCommunicationError(status, failure);
 		return;
 	}

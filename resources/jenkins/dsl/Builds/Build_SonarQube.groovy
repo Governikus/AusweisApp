@@ -46,7 +46,7 @@ j.with
 			$WORKSPACE/sonarqubetools/sonar-scanner/bin/sonar-scanner
 			-Dsonar.scanner.metadataFilePath=${WORKSPACE}/tmp/sonar-metadata.txt
 			-Dsonar.branch.name=${MERCURIAL_REVISION_BRANCH}
-			-Dsonar.login=${SONARQUBE_TOKEN}
+			-Dsonar.token=${SONARQUBE_TOKEN}
 			-Dsonar.qualitygate.wait=true
 			-Dsonar.qualitygate.timeout=90
 			'''))

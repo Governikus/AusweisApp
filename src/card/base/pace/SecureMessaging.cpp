@@ -109,7 +109,7 @@ CommandApdu SecureMessaging::encrypt(const CommandApdu& pCommandApdu)
 	if (pCommandApdu.getLe() > CommandApdu::NO_LE)
 	{
 		auto protectedLeObject = newObject<SM_PROTECTED_LE>();
-		Asn1OctetStringUtil::setValue(createSecuredLe(pCommandApdu.getLe()), protectedLeObject.data());
+		Asn1OctetStringUtil::setValue(pCommandApdu.generateLengthField(pCommandApdu.getLe()), protectedLeObject.data());
 		securedLe = encodeObject(protectedLeObject.data());
 	}
 	QByteArray mac = createMac(securedHeader, formattedEncryptedData, securedLe);
@@ -167,21 +167,6 @@ QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu)
 	CommandApdu apdu(pCommandApdu.getHeaderBytes());
 	apdu.setSecureMessaging(true);
 	return apdu.getHeaderBytes();
-}
-
-
-QByteArray SecureMessaging::createSecuredLe(int pLe) const
-{
-	QByteArray buffer;
-	if (pLe > CommandApdu::NO_LE)
-	{
-		if (pLe > CommandApdu::SHORT_MAX_LE)
-		{
-			buffer += static_cast<char>(pLe >> 0x08 & 0xFF);
-		}
-		buffer += static_cast<char>(pLe >> 0x00 & 0xFF);
-	}
-	return buffer;
 }
 
 

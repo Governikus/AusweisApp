@@ -67,6 +67,15 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey, 
 }
 
 
+FailureCode::FailureInfoMap TlsChecker::getEphemeralKeyInfoMap(const QSslKey& pEphemeralServerKey)
+{
+	FailureCode::FailureInfoMap infoMap;
+	infoMap.insert(FailureCode::Info::Ephemeral_Server_Key_Algorithm, TlsChecker::toString(pEphemeralServerKey.algorithm()));
+	infoMap.insert(FailureCode::Info::Ephemeral_Server_Key_Length, QString::number(pEphemeralServerKey.length()));
+	return infoMap;
+}
+
+
 QString TlsChecker::getCertificateIssuerName(const QSslCertificate& pCertificate)
 {
 	const auto& issuerNameList = pCertificate.issuerInfo(QSslCertificate::CommonName);

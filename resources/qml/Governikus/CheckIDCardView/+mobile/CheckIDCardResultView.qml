@@ -60,8 +60,6 @@ CheckResultView {
 		id: checkIDCardSuggestionView
 
 		CheckIDCardSuggestionView {
-			title: root.title
-
 			onCancelClicked: root.cancelClicked()
 			onRestartCheck: root.restartCheck()
 			onStartAuth: root.startAuth()
@@ -131,9 +129,9 @@ CheckResultView {
 			resultType: pinDeactivated ? ResultEntry.Type.IsError : ResultEntry.Type.IsSuccess
 			text: pinDeactivated ?
 			//: LABEL ANDROID IOS
-			qsTr("Online identification feature disabled") :
+			qsTr("eID function disabled") :
 			//: LABEL ANDROID IOS
-			qsTr("Online identification feature enabled")
+			qsTr("eID function enabled")
 			visible: result >= CheckIDCardModel.PIN_DEACTIVATED
 		}
 		ResultEntry {

@@ -567,16 +567,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Доступ до ID-картки успішно отримано</translation>
     </message>
     <message>
-        <source>Online identification feature disabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Функцію онлайн-ідентифікації вимкнено</translation>
-    </message>
-    <message>
-        <source>Online identification feature enabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Функцію онлайн-ідентифікації ввімкнено</translation>
-    </message>
-    <message>
         <source>ID card PIN suspended</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>PIN-код ID-картки призупинено</translation>
@@ -590,6 +580,16 @@ LABEL ANDROID IOS</extracomment>
         <source>ID card functional</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Функціональна ID-картка</translation>
+    </message>
+    <message>
+        <source>eID function disabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Функцію онлайн-ідентифікації вимкнено</translation>
+    </message>
+    <message>
+        <source>eID function enabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Функцію онлайн-ідентифікації ввімкнено</translation>
     </message>
 </context>
 <context>
@@ -645,11 +645,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Не вдалося встановити стабільне з’єднання з вашою ID-карткою.&lt;br&gt;&lt;br&gt;Почніть перевірку ще раз. Спробуйте змінити положення картки та не рухайте її під час тесту.&lt;br&gt;&lt;br&gt;Якщо з’єднання з ID-карткою не вдається встановити навіть у різних положеннях, це означає, що інтерфейс NFC вашого мобільного пристрою не може забезпечити ID-картку достатньою потужністю.&lt;br&gt;&lt;br&gt;Ви можете знайти смартфони, сумісні з %1, на нашому &lt;a href=&quot;%2&quot;&gt;сайті&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>Online identification feature disabled</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Функцію онлайн-ідентифікації вимкнено</translation>
-    </message>
-    <message>
         <source>OK</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
@@ -688,6 +683,16 @@ LABEL ANDROID IOS</extracomment>
         <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards for citizen of the EU/EEA/&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Жодної підтримуваної ID-картки не було виявлено. Програма %1 підтримує:&lt;p&gt;&lt;ul&gt;&lt;li&gt;Німецькі ID-картки&lt;/li&gt;&lt;li&gt;Електронні посвідки на проживання (eAT)&lt;/li&gt;&lt;li&gt;Картки eID для громадян ЄС/ЄЕЗ&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Якщо ви скористалися одним із вищезазначених документів, але це повідомлення про помилку все одно з’являється, перезапустіть перевірку.</translation>
+    </message>
+    <message>
+        <source>eID function disabled</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Функцію онлайн-ідентифікації вимкнено</translation>
+    </message>
+    <message>
+        <source>Activate the eID function.</source>
+        <extracomment>LABEL ANDROID IOS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1590,16 +1595,6 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
-    <name>Hint</name>
-    <message>
-        <source>Hint</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Підказка</translation>
-    </message>
-</context>
-<context>
     <name>LanguageButtonData</name>
     <message>
         <source>German</source>
@@ -2064,14 +2059,29 @@ LABEL ANDROID IOS</extracomment>
         <translation>Покладіть свою ID-картку на задню панель пристрою.</translation>
     </message>
     <message>
-        <source>Please place your ID card directly on the device&apos;s back side.&lt;br/&gt;&lt;br/&gt;The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
-        <extracomment>INFO ANDROID The ID card may be inserted, the authentication process may be started.</extracomment>
-        <translation>Покладіть ID-картку безпосередньо на задній бік пристрою.&lt;br/&gt;&lt;br/&gt;Точне положення ID-картки залежить від пристрою. На анімації показано можливі положення. Утримуйте ID-картку в одному положенні кілька секунд, перш ніж спробувати інше, і не переміщайте її після встановлення контакту.</translation>
-    </message>
-    <message>
         <source>The device &quot;%1&quot; wants to use this smartphone as card reader and connect to your id card.</source>
         <extracomment>INFO ANDROID IOS %1 will be replaced with the name of the device.</extracomment>
         <translation>Пристрій «%1» намагається використовувати цей смартфон як пристрій читання карток і встановити з’єднання з вашою ID-карткою.</translation>
+    </message>
+    <message>
+        <source>The animations depict possible positions.</source>
+        <extracomment>INFO ANDROID Text regarding ID card position animations</extracomment>
+        <translation type="unfinished">На анімації показано можливі положення.</translation>
+    </message>
+    <message>
+        <source>The exact position of the ID card is device dependent.</source>
+        <extracomment>INFO ANDROID Text regarding different NFC chip positions on different smartphones</extracomment>
+        <translation type="unfinished">Точне положення ID-картки залежить від пристрою.</translation>
+    </message>
+    <message>
+        <source>Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
+        <extracomment>INFO ANDROID Text that one ID card position should be kept for several seconds</extracomment>
+        <translation type="unfinished">Утримуйте ID-картку в одному положенні кілька секунд, перш ніж спробувати інше, і не переміщайте її після встановлення контакту.</translation>
+    </message>
+    <message>
+        <source>Please place your ID card directly on the device&apos;s back side.</source>
+        <extracomment>INFO ANDROID Text regarding the ID card position on the device</extracomment>
+        <translation type="unfinished">Покладіть ID-картку безпосередньо на задній бік пристрою.</translation>
     </message>
 </context>
 <context>
@@ -2202,9 +2212,9 @@ LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text wh
 <context>
     <name>PairingSuccessView</name>
     <message>
-        <source>Pairing with %1 successful, it will be listed under &quot;Paired devices&quot;.</source>
+        <source>Pairing with &quot;%1&quot; successful, it will be listed under &quot;Paired devices&quot;.</source>
         <extracomment>INFO ALL_PLATFORMS The pairing with the SaC server was successful.</extracomment>
-        <translation>Пару із пристроєм %1 створено, його буде додано до переліку «З’єднані пристрої».</translation>
+        <translation>Пару із пристроєм «%1» створено, його буде додано до переліку «З’єднані пристрої».</translation>
     </message>
     <message>
         <source>The device may now be used as a card reader.</source>
@@ -2519,6 +2529,29 @@ LABEL ALL_PLATFORMS</extracomment>
         <source>You can change your card PIN at any time in %1.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
         <translation>Ви можете в будь-який момент змінити PIN-код своєї картки в %1.</translation>
+    </message>
+    <message>
+        <source>I can&apos;t recall my PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I can&apos;t recall my PUK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set a new PIN</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PasswordInfoView</name>
+    <message>
+        <source>Hint</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Підказка</translation>
     </message>
 </context>
 <context>
@@ -3228,6 +3261,13 @@ To do this you first have to pair that device with this smartphone.</source>
         <source>OK</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>OK</translation>
+    </message>
+    <message>
+        <source>Hint</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Підказка</translation>
     </message>
 </context>
 <context>
@@ -3998,6 +4038,13 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <source>Rate app</source>
         <extracomment>LABEL ANDROID</extracomment>
         <translation>Оцінити програму</translation>
+    </message>
+</context>
+<context>
+    <name>SuggestionData</name>
+    <message>
+        <source>Hint</source>
+        <translation>Підказка</translation>
     </message>
 </context>
 <context>
@@ -5662,8 +5709,8 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <translation>Знайти компетентний орган</translation>
     </message>
     <message>
-        <source>To find your competent authority you may visit www.behoerdenfinder.de.</source>
-        <translation>Знайти свій компетентний орган можна, відвідавши www.behoerdenfinder.de.</translation>
+        <source>To find your competent authority you may visit servicesuche.bund.de.</source>
+        <translation>Знайти свій компетентний орган можна, відвідавши servicesuche.bund.de.</translation>
     </message>
     <message>
         <source>If you don&apos;t have your Transport PIN letter and no access to the PUK, you may turn to the competent authority and set a new ID card PIN there.</source>
@@ -5827,6 +5874,11 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
         <source>Click to pair</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Натисніть, щоб створити пару</translation>
+    </message>
+    <message>
+        <source>was</source>
+        <extracomment>LABEL ALL_PLATFORMS Describes the former name of the device and is shown as: &quot;New_Name (was Old_Name)&quot;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

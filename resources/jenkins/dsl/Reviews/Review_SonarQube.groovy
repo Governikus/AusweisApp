@@ -52,7 +52,7 @@ j.with
 			-Dsonar.pullrequest.key=${REVIEWBOARD_REVIEW_ID}
 			-Dsonar.pullrequest.branch=${REVIEWBOARD_REVIEW_ID}
 			-Dsonar.pullrequest.base=${MERCURIAL_REVISION_BRANCH}
-			-Dsonar.login=${SONARQUBE_TOKEN}
+			-Dsonar.token=${SONARQUBE_TOKEN}
 			-Dsonar.qualitygate.wait=true
 			-Dsonar.qualitygate.timeout=90
 			'''))

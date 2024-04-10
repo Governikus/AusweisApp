@@ -47,10 +47,12 @@ class RemoteDeviceModel
 
 		[[nodiscard]] bool indexIsValid(const QModelIndex& pIndex) const;
 		[[nodiscard]] QString getStatus(const RemoteDeviceModelEntry& pRemoteDeviceModelEntry) const;
+		[[nodiscard]] QString getCurrentDeviceName(const QModelIndex& pIndex) const;
+		[[nodiscard]] QString constructDisplayDeviceName(const QModelIndex& pIndex) const;
 		void updatePairedReaders();
 		void updateUnpairedReaders();
 		void removeVanishedReaders();
-		[[nodiscard]] QList<RemoteDeviceModelEntry> presentReaders() const;
+		[[nodiscard]] virtual QList<RemoteDeviceModelEntry> presentReaders() const;
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:

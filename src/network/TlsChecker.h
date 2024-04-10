@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "FailureCode.h"
 #include "LogHandler.h"
 
 #include <QCryptographicHash>
@@ -58,6 +59,7 @@ class TlsChecker
 		 */
 		[[nodiscard]] static bool hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey,
 				const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize = cDefaultFuncMinKeySize);
+		[[nodiscard]] static FailureCode::FailureInfoMap getEphemeralKeyInfoMap(const QSslKey& pEphemeralServerKey);
 
 		/*!
 		 * This method is only needed until QSslCertificate provides its own method issuerDisplayName in Qt 5.12

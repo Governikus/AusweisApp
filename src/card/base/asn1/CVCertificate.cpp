@@ -8,6 +8,7 @@
 #include "ASN1Util.h"
 
 #include <QLoggingCategory>
+#include <openssl/bn.h>
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)

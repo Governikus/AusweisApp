@@ -14,7 +14,7 @@ Change-Id: If5ccbfffd0b6a53f73f221b45033dab7e4775d89
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/q20algorithm.h y/qtbase/src/corelib/global/q20algorithm.h
-index f670a5dbee..24d801b2cd 100644
+index f670a5dbeee81420659a20b68b448a7422d939ec..24d801b2cdfd993def8c60a2bf60e738c921d2ea 100644
 --- x/qtbase/src/corelib/global/q20algorithm.h
 +++ y/qtbase/src/corelib/global/q20algorithm.h
 @@ -147,7 +147,7 @@ using std::ranges::none_of;

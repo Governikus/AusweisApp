@@ -99,6 +99,22 @@ QSharedPointer<QNetworkReply> NetworkManager::deleteResource(QNetworkRequest& pR
 }
 
 
+QSharedPointer<QNetworkReply> NetworkManager::head(QNetworkRequest& pRequest)
+{
+	return processRequest(pRequest, [this] (const QNetworkRequest& request){
+			return trackConnection(mNetAccessManager.head(request));
+		});
+}
+
+
+QSharedPointer<QNetworkReply> NetworkManager::options(QNetworkRequest& pRequest)
+{
+	return processRequest(pRequest, [this] (const QNetworkRequest& request){
+			return trackConnection(mNetAccessManager.sendCustomRequest(request, "OPTIONS"));
+		});
+}
+
+
 QSharedPointer<QNetworkReply> NetworkManager::getAsUpdater(QNetworkRequest& pRequest)
 {
 	return processUpdaterRequest(pRequest, [this] (QNetworkRequest& request){

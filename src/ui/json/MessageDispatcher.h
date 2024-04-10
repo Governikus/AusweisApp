@@ -51,6 +51,7 @@ class MessageDispatcher
 		[[nodiscard]] Msg init(const QSharedPointer<WorkflowContext>& pWorkflowContext);
 		[[nodiscard]] Msg finish();
 		void reset();
+		[[nodiscard]] MsgLevel getApiLevel() const;
 		[[nodiscard]] Msg processCommand(const QByteArray& pMsg);
 		[[nodiscard]] Msg processStateChange(const QString& pState);
 		[[nodiscard]] Msg processProgressChange() const;

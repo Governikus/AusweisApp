@@ -2,14 +2,15 @@
  * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Command APDU for SecureMessaging
- */
-
 #pragma once
+
 
 #include "CommandApdu.h"
 #include "SecureMessagingApdu.h"
+
+
+class test_SecureMessaging;
+
 
 namespace governikus
 {
@@ -22,6 +23,7 @@ class SecureMessagingCommand
 	: public SecureMessagingApdu
 {
 	Q_DISABLE_COPY(SecureMessagingCommand)
+	friend class ::test_SecureMessaging;
 
 	private:
 		QSharedPointer<SM_PROTECTED_LE> mExpectedLength;

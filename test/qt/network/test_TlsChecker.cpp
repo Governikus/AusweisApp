@@ -114,6 +114,7 @@ class test_TlsChecker
 			QTest::addColumn<QByteArray>("pem");
 			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
 			QTest::addColumn<bool>("sufficient");
+			QTest::addColumn<FailureCode::FailureInfoMap>("infoMap");
 
 			/*
 			 * openssl ecparam -name secp112r2 -out secp112r2_param.pem
@@ -124,8 +125,7 @@ class test_TlsChecker
 							 "MDIwEAYHKoZIzj0CAQYFK4EEAAcDHgAEWo89aCax3oUWJho7rFZ1u70WqghvA7Tf\n"
 							 "SXXiZw==\n"
 							 "-----END PUBLIC KEY-----");
-
-			QTest::newRow("ec112") << ec112 << QSsl::KeyAlgorithm::Ec << false;
+			QTest::newRow("ec112") << ec112 << QSsl::KeyAlgorithm::Ec << false << FailureCode::FailureInfoMap {};
 
 			/*
 			 * openssl ecparam -name secp521r1 -out secp521r1_param.pem
@@ -138,7 +138,10 @@ class test_TlsChecker
 							 "zBwxpgBC09TO/3D8fS70xVqBX6dzA4lO9MUZCqgBMt2LTFpklUabviy657kcRQ+H\n"
 							 "tTAy2sDy+bhcj1UyWlE=\n"
 							 "-----END PUBLIC KEY-----");
-			QTest::newRow("ec521") << ec521 << QSsl::KeyAlgorithm::Ec << true;
+			QTest::newRow("ec521") << ec521 << QSsl::KeyAlgorithm::Ec << true << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Ec"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "521"_L1}
+				};
 
 			/*
 			 * openssl dsaparam -out dsa768_param.pem 1024
@@ -155,7 +158,10 @@ class test_TlsChecker
 							  "b3586zIW9Fdg/Rq4yda8GzMLVAtF540s3k5RmsJvnxPEGXlc3c+wEOKR/iHwPrg4\n"
 							  "DNXOVys=\n"
 							  "-----END PUBLIC KEY-----");
-			QTest::newRow("dsa768") << dsa768 << QSsl::KeyAlgorithm::Dsa << false;
+			QTest::newRow("dsa768") << dsa768 << QSsl::KeyAlgorithm::Dsa << false << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Dsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "768"_L1}
+				};
 
 			/*
 			 * openssl dsaparam -out dsa1024_param.pem 1024
@@ -174,7 +180,10 @@ class test_TlsChecker
 							   "1vSGQgpXPK6250pSrx8r8pngr9Qxrt8ElFpLtK+Of6Th/wSTe8COYbXSOP/6Yx7v\n"
 							   "6cObyPo7eAmX8Sg=\n"
 							   "-----END PUBLIC KEY-----");
-			QTest::newRow("dsa1024") << dsa1024 << QSsl::KeyAlgorithm::Dsa << false;
+			QTest::newRow("dsa1024") << dsa1024 << QSsl::KeyAlgorithm::Dsa << false << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Dsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "1024"_L1}
+				};
 
 			/*
 			 * openssl dsaparam -out dsa2048_param.pem 2048
@@ -202,7 +211,10 @@ class test_TlsChecker
 							   "foMYlbwM/IzefL1TD2+eBlyV0unSwMIwrvXPTg==\n"
 							   "-----END PUBLIC KEY-----\n");
 
-			QTest::newRow("dsa2048") << dsa2048 << QSsl::KeyAlgorithm::Dsa << true;
+			QTest::newRow("dsa2048") << dsa2048 << QSsl::KeyAlgorithm::Dsa << true << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Dsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "2048"_L1}
+				};
 
 			/*
 			 * openssl genrsa -out rsa1024_key.pem 1024
@@ -214,7 +226,10 @@ class test_TlsChecker
 							   "tHKRnCy0sQiCQqmSNmWe4qeLwXslKxm1fqj3/tvrX+0VxDVxXz5jS0HH7hHMdELQ\n"
 							   "om/I1IppJFS4IkqEoQIDAQAB\n"
 							   "-----END PUBLIC KEY-----");
-			QTest::newRow("rsa1024") << rsa1024 << QSsl::KeyAlgorithm::Rsa << false;
+			QTest::newRow("rsa1024") << rsa1024 << QSsl::KeyAlgorithm::Rsa << false << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Rsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "1024"_L1}
+				};
 
 			/*
 			 * openssl genrsa -out rsa2048_key.pem 2048
@@ -229,7 +244,10 @@ class test_TlsChecker
 							   "q0hOP6K9hZ7pBZvqLZ0gZdVWqarIf9w/I5yS2QGN9jgJN/oJIKyljlreGuSagST/\n"
 							   "5wIDAQAB\n"
 							   "-----END PUBLIC KEY-----");
-			QTest::newRow("rsa2048") << rsa2048 << QSsl::KeyAlgorithm::Rsa << true;
+			QTest::newRow("rsa2048") << rsa2048 << QSsl::KeyAlgorithm::Rsa << true << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Rsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "2048"_L1}
+				};
 		}
 
 
@@ -238,11 +256,16 @@ class test_TlsChecker
 			QFETCH(QByteArray, pem);
 			QFETCH(QSsl::KeyAlgorithm, algorithm);
 			QFETCH(bool, sufficient);
+			QFETCH(FailureCode::FailureInfoMap, infoMap);
 
 			QSslKey key = createQSslKeyWithHandle(pem);
 			QVERIFY(!key.isNull());
 			QCOMPARE(key.algorithm(), algorithm);
 			QCOMPARE(TlsChecker::hasValidEphemeralKeyLength(key), sufficient);
+			if (!infoMap.isEmpty())
+			{
+				QCOMPARE(TlsChecker::getEphemeralKeyInfoMap(key), infoMap);
+			}
 		}
 
 

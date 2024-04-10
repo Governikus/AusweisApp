@@ -19,7 +19,7 @@ Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
-index 63e7d62b..c7f842ae 100644
+index 63e7d62b9f0980762464083cf915765abd8f18e7..c7f842ae781bd0e24865a1bf011af2accd8dd739 100644
 --- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
 +++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
 @@ -304,14 +304,14 @@ void QNearFieldTargetPrivateImpl::checkIsTargetLost()

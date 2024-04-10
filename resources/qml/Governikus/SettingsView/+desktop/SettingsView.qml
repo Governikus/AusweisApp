@@ -84,13 +84,6 @@ SectionPage {
 		contentObjectModel: ObjectModel {
 			Component {
 				GeneralSettings {
-					Connections {
-						function onFireUseSystemFontChanged() {
-							sectionPage.nextView(UiModule.DEFAULT);
-						}
-
-						target: SettingsModel
-					}
 				}
 			}
 			Component {

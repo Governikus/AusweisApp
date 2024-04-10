@@ -87,6 +87,7 @@ class CommandApdu
 		[[nodiscard]] int getLe() const;
 		[[nodiscard]] bool isExtendedLength() const;
 
+		[[nodiscard]] QByteArray generateLengthField(int pLength) const;
 		operator QByteArray() const;
 };
 

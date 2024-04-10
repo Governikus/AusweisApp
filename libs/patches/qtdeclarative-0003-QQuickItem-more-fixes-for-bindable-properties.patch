@@ -26,7 +26,7 @@ Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
  1 file changed, 15 insertions(+), 11 deletions(-)
 
 diff --git x/qtdeclarative/src/quick/items/qquickitem.cpp y/qtdeclarative/src/quick/items/qquickitem.cpp
-index 30bbf505da..7cc03936fc 100644
+index 30bbf505da10b8d9d4a22f3b7b424c3da7e25d94..7cc03936fc3ac442a6517f0bbd5748d33e314f06 100644
 --- x/qtdeclarative/src/quick/items/qquickitem.cpp
 +++ y/qtdeclarative/src/quick/items/qquickitem.cpp
 @@ -7111,11 +7111,12 @@ void QQuickItem::setY(qreal v)

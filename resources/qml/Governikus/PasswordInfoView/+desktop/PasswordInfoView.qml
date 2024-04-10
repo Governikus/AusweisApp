@@ -20,6 +20,7 @@ FlickableSectionPage {
 	readonly property var contentList: infoContent.contentList
 	readonly property string hint: infoContent.hint
 	readonly property string hintButtonText: infoContent.hintButtonText
+	readonly property string hintTitle: infoContent.hintTitle
 	property PasswordInfoData infoContent: PasswordInfoData {
 	}
 	property alias rootEnabled: titleBarAction.rootEnabled
@@ -103,6 +104,8 @@ FlickableSectionPage {
 		buttonText: root.hintButtonText
 		buttonTooltip: PinResetInformationModel.pinResetUrl
 		text: root.hint
+		//: LABEL DESKTOP
+		title: root.hintTitle !== "" ? root.hintTitle : qsTr("Hint")
 		visible: text !== ""
 
 		onClicked: {

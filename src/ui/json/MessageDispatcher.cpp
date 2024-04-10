@@ -216,6 +216,12 @@ Msg MessageDispatcher::createForStateChange(MsgType pStateType)
 }
 
 
+MsgLevel MessageDispatcher::getApiLevel() const
+{
+	return mContext.getApiLevel();
+}
+
+
 Msg MessageDispatcher::processCommand(const QByteArray& pMsg)
 {
 	QJsonParseError jsonError {};

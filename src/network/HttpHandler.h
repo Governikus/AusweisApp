@@ -24,6 +24,9 @@ class HttpHandler
 
 	private:
 		[[nodiscard]] QByteArray guessImageContentType(const QString& pFileName) const;
+		void setCorsResponseHeaders(HttpResponse& pRequest) const;
+		void handleCorsRequest(const QSharedPointer<HttpRequest>& pRequest) const;
+		bool handleGetRequest(const QSharedPointer<HttpRequest>& pRequest, const QUrl& pUrl);
 
 	protected:
 		virtual ~HttpHandler() = default;
@@ -34,8 +37,6 @@ class HttpHandler
 		virtual void handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest) const;
 		virtual void handleShowUiRequest(const QString& pUiModule, const QSharedPointer<HttpRequest>& pRequest) = 0;
 		virtual void handleWorkflowRequest(const QSharedPointer<HttpRequest>& pRequest) = 0;
-
-
 };
 
 } // namespace governikus

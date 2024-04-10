@@ -32,6 +32,7 @@ RUN cmake /src/ausweisapp -B /build/app \
         -DCONTAINER_SDK=ON \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
         -GNinja && \
     cmake --build /build/app && cmake --install /build/app && \
     ccache -s -vv && rm -rf /build

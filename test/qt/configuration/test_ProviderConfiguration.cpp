@@ -303,7 +303,7 @@ class test_ProviderConfiguration
 				}
 			}
 
-			QCOMPARE(attachedEidCounter, 19);
+			QCOMPARE(attachedEidCounter, 20);
 		}
 
 

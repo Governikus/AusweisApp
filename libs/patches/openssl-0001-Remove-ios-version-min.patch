@@ -8,7 +8,7 @@ Subject: Remove ios-version-min
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git x/Configurations/15-ios.conf y/Configurations/15-ios.conf
-index 54d37f63f4..59739aeceb 100644
+index 54d37f63f445d450ae767903da4d102328b0f142..59739aecebe21780a3990f3f78e10ae92755514b 100644
 --- x/Configurations/15-ios.conf
 +++ y/Configurations/15-ios.conf
 @@ -25,7 +25,7 @@ my %targets = (

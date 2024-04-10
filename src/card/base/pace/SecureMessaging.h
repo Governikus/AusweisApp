@@ -35,8 +35,6 @@ class SecureMessaging final
 		[[nodiscard]] QByteArray getSendSequenceCounter() const;
 		QByteArray getEncryptedIv();
 
-		[[nodiscard]] QByteArray createSecuredLe(int pLe) const;
-
 	public:
 		SecureMessaging(const SecurityProtocol& pSecurityProtocol, const QByteArray& pEncKey, const QByteArray& pMacKey);
 		~SecureMessaging() = default;

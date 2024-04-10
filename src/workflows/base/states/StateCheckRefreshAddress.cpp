@@ -179,7 +179,7 @@ void StateCheckRefreshAddress::onSslErrors(const QList<QSslError>& pErrors)
 }
 
 
-void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus, FailureCode::Reason pFailure, const QString& pErrorString)
+void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pStatus, const FailureCode& pFailure)
 {
 	qCritical() << pStatus;
 	updateStatus(pStatus);
@@ -187,14 +187,7 @@ void StateCheckRefreshAddress::reportCommunicationError(const GlobalStatus& pSta
 	clearConnections();
 	mReply->abort();
 
-	if (pErrorString.isEmpty())
-	{
-		Q_EMIT fireAbort(pFailure);
-		return;
-	}
-
-	Q_EMIT fireAbort({pFailure, {FailureCode::Info::Network_Error, mReply->errorString()}
-			});
+	Q_EMIT fireAbort(pFailure);
 }
 
 
@@ -217,8 +210,9 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 
 	if (!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
+		const auto& map = TlsChecker::getEphemeralKeyInfoMap(pSslConfiguration.ephemeralServerKey());
 		reportCommunicationError({GlobalStatus::Code::Workflow_Network_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap},
-				FailureCode::Reason::Check_Refresh_Address_Invalid_Ephemeral_Key_Length);
+				{FailureCode::Reason::Check_Refresh_Address_Invalid_Ephemeral_Key_Length, map});
 		return false;
 	}
 
@@ -255,41 +249,45 @@ void StateCheckRefreshAddress::onNetworkReply()
 	const auto statusCode = NetworkManager::getLoggedStatusCode(mReply, spawnMessageLogger(network));
 	if (mReply->error() != QNetworkReply::NoError)
 	{
+		const FailureCode::FailureInfoMap infoMap {
+			{FailureCode::Info::Network_Error, mReply->errorString()}
+		};
+
 		switch (NetworkManager::toNetworkError(mReply))
 		{
 			case NetworkManager::NetworkError::ServiceUnavailable:
 				reportCommunicationError({GlobalStatus::Code::Network_ServiceUnavailable, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Service_Unavailable, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Service_Unavailable, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::ServerError:
 				reportCommunicationError({GlobalStatus::Code::Network_ServerError, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Server_Error, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Server_Error, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::ClientError:
 				reportCommunicationError({GlobalStatus::Code::Network_ClientError, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Client_Error, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Client_Error, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::TimeOut:
 				reportCommunicationError({GlobalStatus::Code::Network_TimeOut, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Service_Timeout, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Service_Timeout, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::ProxyError:
 				reportCommunicationError({GlobalStatus::Code::Network_Proxy_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Proxy_Error, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Proxy_Error, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::SecurityError:
 				reportCommunicationError({GlobalStatus::Code::Network_Ssl_Establishment_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_After_Reply, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_After_Reply, infoMap});
 				break;
 
 			case NetworkManager::NetworkError::OtherError:
 				reportCommunicationError({GlobalStatus::Code::Network_Other_Error, {GlobalStatus::ExternalInformation::LAST_URL, mUrl.toString()}
-						}, FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error, mReply->errorString());
+						}, {FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error, infoMap});
 				break;
 		}
 		return;

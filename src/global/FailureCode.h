@@ -175,7 +175,9 @@ class FailureCode
 			Http_Status_Code,
 			Certificate_Status,
 			Ssl_Errors,
-			Paos_Type
+			Paos_Type,
+			Ephemeral_Server_Key_Algorithm,
+			Ephemeral_Server_Key_Length
 		};
 		Q_ENUM(Info)
 

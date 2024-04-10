@@ -31,7 +31,7 @@ Reviewed-by: Marc Mutz <marc.mutz@qt.io>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/access/http2/hpacktable.cpp y/qtbase/src/network/access/http2/hpacktable.cpp
-index c8c5d098c8..2c728b37e3 100644
+index c8c5d098c80ad15c24d1eaca022bd7846f590048..2c728b37e3b5735d118d288f8b0594f717691557 100644
 --- x/qtbase/src/network/access/http2/hpacktable.cpp
 +++ y/qtbase/src/network/access/http2/hpacktable.cpp
 @@ -26,7 +26,9 @@ HeaderSize entry_size(QByteArrayView name, QByteArrayView value)

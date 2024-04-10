@@ -9,7 +9,7 @@ See https://bugreports.qt.io/browse/QTBUG-95236
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git x/qttools/src/CMakeLists.txt y/qttools/src/CMakeLists.txt
-index 014e4c874..1574b1b20 100644
+index 014e4c874c506ebfa78ce4c4664be39c7266e693..1574b1b20e1973a4ce8650345073743ba551f3fd 100644
 --- x/qttools/src/CMakeLists.txt
 +++ y/qttools/src/CMakeLists.txt
 @@ -18,8 +18,8 @@ qt_exclude_tool_directories_from_default_target(

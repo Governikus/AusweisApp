@@ -35,10 +35,14 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 
 	if (homepage.isEmpty())
 	{
-		return QStringLiteral("https://www.behoerdenfinder.de");
+		if (LanguageLoader::getLocaleCode() == QLatin1String("de"))
+		{
+			return QStringLiteral("https://servicesuche.bund.de");
+		}
+		return QStringLiteral("https://servicesuche.bund.de/#/en");
 	}
 
-	if (LanguageLoader::getLocaleCode() != QStringLiteral("de"))
+	if (LanguageLoader::getLocaleCode() != QLatin1String("de"))
 	{
 		return homepage + QStringLiteral("/en");
 	}
@@ -135,7 +139,7 @@ QString PinResetInformationModel::getPinResetActionText() const
 
 QString PinResetInformationModel::authorityFinderSuffix() const
 {
-	return QStringLiteral("<br/><br/>") + tr("To find your competent authority you may visit www.behoerdenfinder.de.");
+	return QStringLiteral("<br/><br/>") + tr("To find your competent authority you may visit servicesuche.bund.de.");
 }
 
 

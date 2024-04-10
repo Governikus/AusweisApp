@@ -19,8 +19,6 @@ GPane {
 	color: Style.color.pane_sublevel
 	drawShadow: false
 	textStyle: Style.text.subline
-	//: LABEL ANDROID IOS
-	title: qsTr("Hint")
 
 	ColumnLayout {
 		spacing: 0

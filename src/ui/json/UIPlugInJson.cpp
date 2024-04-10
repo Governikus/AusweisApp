@@ -35,7 +35,7 @@ void UIPlugInJson::setEnabled(bool pEnable)
 		connect(readerManager, &ReaderManager::fireReaderAdded, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &UIPlugInJson::onReaderEvent);
-		connect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
+		connect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onCardInserted);
 		connect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
 		connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &UIPlugInJson::onCardInfoChanged);
 	}
@@ -44,7 +44,7 @@ void UIPlugInJson::setEnabled(bool pEnable)
 		disconnect(readerManager, &ReaderManager::fireReaderAdded, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireReaderRemoved, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &UIPlugInJson::onReaderEvent);
-		disconnect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onReaderEvent);
+		disconnect(readerManager, &ReaderManager::fireCardInserted, this, &UIPlugInJson::onCardInserted);
 		disconnect(readerManager, &ReaderManager::fireCardRemoved, this, &UIPlugInJson::onReaderEvent);
 		disconnect(readerManager, &ReaderManager::fireCardInfoChanged, this, &UIPlugInJson::onCardInfoChanged);
 	}
@@ -117,6 +117,15 @@ void UIPlugInJson::onReaderEvent(const ReaderInfo& pInfo)
 	for (const auto& msg : messages)
 	{
 		callFireMessage(msg);
+	}
+}
+
+
+void UIPlugInJson::onCardInserted(const ReaderInfo& pInfo)
+{
+	if (pInfo.hasEid() || mMessageDispatcher.getApiLevel() > MsgLevel::v2)
+	{
+		onReaderEvent(pInfo);
 	}
 }
 
