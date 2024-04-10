@@ -11,7 +11,7 @@ Change-Id: I8f5e2947b6529a0a8871d040050205934ee60354
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git x/qtbase/src/network/kernel/qnetworkproxy_libproxy.cpp y/qtbase/src/network/kernel/qnetworkproxy_libproxy.cpp
-index 46066b86f7..6de7a7fb76 100644
+index 46066b86f72ab7d8ffb4e7dd0d51e257a244d9f5..6de7a7fb763f777bcd479fef74cb3fe613e3d74b 100644
 --- x/qtbase/src/network/kernel/qnetworkproxy_libproxy.cpp
 +++ y/qtbase/src/network/kernel/qnetworkproxy_libproxy.cpp
 @@ -72,7 +72,7 @@ private:

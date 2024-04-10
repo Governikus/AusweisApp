@@ -17,7 +17,7 @@ Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
  1 file changed, 1 insertion(+)
 
 diff --git x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
-index 2709e2c7..259c3c17 100644
+index 2709e2c710466171e7e28456cbd700c347d01982..259c3c1787355ddd6d209864605907c1c66ca7f2 100644
 --- x/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
 +++ y/qtconnectivity/src/nfc/qnearfieldmanager_ios.mm
 @@ -143,6 +143,7 @@ bool QNearFieldManagerPrivateImpl::scheduleSession(QNearFieldTarget::AccessMetho

@@ -110,10 +110,12 @@ CheckResultSuggestionView {
 		continueButtonText: qsTr("OK")
 		hintButtonText: PinResetInformationModel.pinResetActionText
 		hintText: PinResetInformationModel.activateOnlineFunctionHint
+		//: LABEL ANDROID IOS Hint when a workflow failed because the eID function was not activated
+		hintTitle: qsTr("Activate the eID function.")
 		text: PinResetInformationModel.activateOnlineFunctionDescription
 
 		//: LABEL ANDROID IOS
-		title: qsTr("Online identification feature disabled")
+		title: qsTr("eID function disabled")
 
 		onContinueClicked: navigationAction.clicked()
 		onHintClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)

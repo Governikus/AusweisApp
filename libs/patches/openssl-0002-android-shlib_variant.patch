@@ -8,7 +8,7 @@ Subject: android shlib_variant
  1 file changed, 4 insertions(+)
 
 diff --git x/Configurations/15-android.conf y/Configurations/15-android.conf
-index 41ad9223e0..f804aeb11b 100644
+index 41ad9223e0945d65ecffc82e0e5c31fd130fd0fe..f804aeb11b9687885eb74451d8b09c4f18c3ed16 100644
 --- x/Configurations/15-android.conf
 +++ y/Configurations/15-android.conf
 @@ -225,12 +225,14 @@ my %targets = (

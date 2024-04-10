@@ -17,6 +17,7 @@ FlickableSectionPage {
 	property alias header: paneTitle.text
 	property alias hintButtonText: hintItem.buttonText
 	property alias hintText: hintItem.text
+	property alias hintTitle: hintItem.title
 	property alias icon: customIcon.source
 	property alias text: resultText.text
 	property alias textFormat: resultText.textFormat
@@ -65,6 +66,8 @@ FlickableSectionPage {
 		id: hintItem
 
 		Layout.fillWidth: true
+		//: LABEL ANDROID IOS
+		title: qsTr("Hint")
 		visible: text !== ""
 
 		onClicked: hintClicked()

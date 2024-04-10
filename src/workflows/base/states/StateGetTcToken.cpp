@@ -140,7 +140,9 @@ void StateGetTcToken::onSslHandshakeDone()
 		mReply->abort();
 		qCCritical(network) << "Error while connecting to the provider. The SSL connection uses an unsupported key algorithm or length.";
 		updateStatus(status);
-		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Ephemeral_Key_Length);
+
+		const auto& map = TlsChecker::getEphemeralKeyInfoMap(cfg.ephemeralServerKey());
+		Q_EMIT fireAbort({FailureCode::Reason::Get_TcToken_Invalid_Ephemeral_Key_Length, map});
 		return;
 	}
 

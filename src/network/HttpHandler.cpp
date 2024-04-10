@@ -26,35 +26,23 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 	const auto& url = pRequest->getUrl();
 	if (url.path() == QLatin1String("/eID-Client"))
 	{
-		const auto queryUrl = QUrlQuery(url);
-		UrlUtil::setHiddenSettings(queryUrl);
-		const auto [type, value] = UrlUtil::getRequest(queryUrl);
-		switch (type)
+		switch (pRequest->getHttpMethod())
 		{
-			case UrlQueryRequest::SHOWUI:
-			{
-				qCDebug(network) << "Request type: showui";
-				handleShowUiRequest(value, pRequest);
-				return;
-			}
+			case HTTP_GET:
+				if (handleGetRequest(pRequest, url))
+				{
+					return;
+				}
+				break;
 
-			case UrlQueryRequest::STATUS:
-			{
-				qCDebug(network) << "Request type: status";
-				const StatusFormat statusFormat = UrlUtil::prepareToEnum(value, StatusFormat::PLAIN);
-				handleStatusRequest(statusFormat, pRequest);
+			case HTTP_OPTIONS:
+			case HTTP_HEAD:
+				qCDebug(network) << "Request type: Pre-flight CORS";
+				handleCorsRequest(pRequest);
 				return;
-			}
-
-			case UrlQueryRequest::TCTOKENURL:
-			{
-				qCDebug(network) << "Request type: authentication";
-				handleWorkflowRequest(pRequest);
-				return;
-			}
 
 			default:
-				qCWarning(network) << "Unknown request type:" << url;
+				qCDebug(network) << "Unhandled HTTP method:" << pRequest->getMethod();
 		}
 	}
 	else if (url.path() == QLatin1String("/favicon.ico"))
@@ -92,6 +80,50 @@ void HttpHandler::handle(const QSharedPointer<HttpRequest>& pRequest)
 	HttpResponse response(HTTP_STATUS_NOT_FOUND);
 	response.setBody(htmlPage, QByteArrayLiteral("text/html; charset=utf-8"));
 	pRequest->send(response);
+}
+
+
+void HttpHandler::handleCorsRequest(const QSharedPointer<HttpRequest>& pRequest) const
+{
+	HttpResponse response(HTTP_STATUS_NO_CONTENT);
+	setCorsResponseHeaders(response);
+	pRequest->send(response);
+}
+
+
+bool HttpHandler::handleGetRequest(const QSharedPointer<HttpRequest>& pRequest, const QUrl& pUrl)
+{
+	const auto queryUrl = QUrlQuery(pUrl);
+	UrlUtil::setHiddenSettings(queryUrl);
+	const auto [type, value] = UrlUtil::getRequest(queryUrl);
+	switch (type)
+	{
+		case UrlQueryRequest::SHOWUI:
+		{
+			qCDebug(network) << "Request type: showui";
+			handleShowUiRequest(value, pRequest);
+			return true;
+		}
+
+		case UrlQueryRequest::STATUS:
+		{
+			qCDebug(network) << "Request type: status";
+			const StatusFormat statusFormat = UrlUtil::prepareToEnum(value, StatusFormat::PLAIN);
+			handleStatusRequest(statusFormat, pRequest);
+			return true;
+		}
+
+		case UrlQueryRequest::TCTOKENURL:
+		{
+			qCDebug(network) << "Request type: authentication";
+			handleWorkflowRequest(pRequest);
+			return true;
+		}
+
+		default:
+			qCWarning(network) << "Unknown request type:" << pUrl;
+			return false;
+	}
 }
 
 
@@ -139,13 +171,19 @@ QByteArray HttpHandler::guessImageContentType(const QString& pFileName) const
 }
 
 
+void HttpHandler::setCorsResponseHeaders(HttpResponse& pResponse) const
+{
+	pResponse.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
+	pResponse.setHeader(QByteArrayLiteral("Access-Control-Allow-Private-Network"), QByteArrayLiteral("true"));
+}
+
+
 void HttpHandler::handleStatusRequest(StatusFormat pStatusFormat, const QSharedPointer<HttpRequest>& pRequest) const
 {
 	qCDebug(network) << "Create response with status format:" << pStatusFormat;
 
 	HttpResponse response(HTTP_STATUS_OK);
-	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Origin"), QByteArrayLiteral("*"));
-	response.setHeader(QByteArrayLiteral("Access-Control-Allow-Private-Network"), QByteArrayLiteral("true"));
+	setCorsResponseHeaders(response);
 	switch (pStatusFormat)
 	{
 		case StatusFormat::PLAIN:

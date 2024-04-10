@@ -249,6 +249,19 @@ bool CommandApdu::isExtendedLength() const
 }
 
 
+QByteArray CommandApdu::generateLengthField(int pLength) const
+{
+	QByteArray field;
+	if (isExtendedLength())
+	{
+		field += static_cast<char>(pLength >> 8 & 0xFF);
+	}
+	field += static_cast<char>(pLength & 0xFF);
+
+	return field;
+}
+
+
 CommandApdu::operator QByteArray() const
 {
 	if (mData.size() > EXTENDED_MAX_LC || mLe > EXTENDED_MAX_LE)
@@ -259,33 +272,20 @@ CommandApdu::operator QByteArray() const
 	QByteArray cmd = getHeaderBytes();
 
 	// According to ISO-7816-4, 5.2 Syntax
+	if (isExtendedLength())
+	{
+		cmd += '\0';
+	}
+
 	if (mData.size() > 0)
 	{
-		if (CommandApdu::isExtendedLength(mData, mLe))
-		{
-			cmd += '\0';
-			cmd += static_cast<char>(mData.size() >> 8 & 0xFF);
-			cmd += static_cast<char>(mData.size() & 0xFF);
-		}
-		else
-		{
-			cmd += static_cast<char>(mData.size() & 0xFF);
-		}
-
+		cmd += generateLengthField(static_cast<int>(mData.size()));
 		cmd += mData;
 	}
 
 	if (mLe > 0)
 	{
-		if (CommandApdu::isExtendedLength(mData, mLe))
-		{
-			if (mData.isEmpty())
-			{
-				cmd += '\0';
-			}
-			cmd += static_cast<char>(mLe >> 8 & 0xFF);
-		}
-		cmd += static_cast<char>(mLe & 0xFF);
+		cmd += generateLengthField(mLe);
 	}
 
 	return cmd;

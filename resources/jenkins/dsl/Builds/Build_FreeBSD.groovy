@@ -21,7 +21,7 @@ j.with
 
 	steps
 	{
-		shell('cd source; cmake -Werror=dev --preset ci-bsd')
+		shell('cd source; cmake --preset ci-bsd')
 
 		shell('''\
 			export LD_LIBRARY_PATH=$WORKSPACE/libs/dist/lib:$LD_LIBRARY_PATH

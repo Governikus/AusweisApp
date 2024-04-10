@@ -22,7 +22,7 @@ Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
  4 files changed, 17 insertions(+), 7 deletions(-)
 
 diff --git x/qtbase/src/network/ssl/qsslconfiguration.cpp y/qtbase/src/network/ssl/qsslconfiguration.cpp
-index 04a9db8521..c8be1ca202 100644
+index 04a9db85216eb2361108bd01dd71f3d5e7855e04..c8be1ca202962789ad088ef528b82883144e7140 100644
 --- x/qtbase/src/network/ssl/qsslconfiguration.cpp
 +++ y/qtbase/src/network/ssl/qsslconfiguration.cpp
 @@ -942,6 +942,9 @@ QSslDiffieHellmanParameters QSslConfiguration::diffieHellmanParameters() const
@@ -36,7 +36,7 @@ index 04a9db8521..c8be1ca202 100644
      Please check the documentation of the \e{exact Qt version} that you
      are using in order to know what defaults that version uses.
 diff --git x/qtbase/src/plugins/tls/openssl/qsslcontext_openssl.cpp y/qtbase/src/plugins/tls/openssl/qsslcontext_openssl.cpp
-index ef0e63911a..75c192bd01 100644
+index ef0e63911a7e5fd6a1358231d1bc5d053a587c15..75c192bd01d2730938e82ab4be86262dca44b7c9 100644
 --- x/qtbase/src/plugins/tls/openssl/qsslcontext_openssl.cpp
 +++ y/qtbase/src/plugins/tls/openssl/qsslcontext_openssl.cpp
 @@ -697,7 +697,9 @@ QT_WARNING_POP
@@ -51,7 +51,7 @@ index ef0e63911a..75c192bd01 100644
          const QByteArray &params = dhparams.d->derData;
          const char *ptr = params.constData();
 diff --git x/qtbase/src/plugins/tls/openssl/qsslsocket_openssl_symbols_p.h y/qtbase/src/plugins/tls/openssl/qsslsocket_openssl_symbols_p.h
-index 1f0d739210..1531564226 100644
+index 1f0d7392101b0a954561772d4ddf1a2979f9506c..1531564226da4c07dc3f41c909dc6f705407032b 100644
 --- x/qtbase/src/plugins/tls/openssl/qsslsocket_openssl_symbols_p.h
 +++ y/qtbase/src/plugins/tls/openssl/qsslsocket_openssl_symbols_p.h
 @@ -516,6 +516,7 @@ DH *q_PEM_read_bio_DHparams(BIO *a, DH **b, pem_password_cb *c, void *d);
@@ -63,7 +63,7 @@ index 1f0d739210..1531564226 100644
  #ifndef OPENSSL_NO_EC
  // EC Diffie-Hellman support
 diff --git x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
-index cfcff44a4d..2f3ad0547a 100644
+index cfcff44a4d9ad3f6aca4f22e368a13ed2cd917a8..2f3ad0547a4186aec2163a0361a91c075462a161 100644
 --- x/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
 +++ y/qtbase/tests/auto/network/ssl/qsslsocket/tst_qsslsocket.cpp
 @@ -3501,9 +3501,10 @@ void tst_QSslSocket::dhServerCustomParamsNull()

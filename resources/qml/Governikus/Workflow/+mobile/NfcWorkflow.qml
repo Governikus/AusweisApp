@@ -11,6 +11,7 @@ import Governikus.Type.AuthModel
 import Governikus.Type.ReaderPlugIn
 import Governikus.Type.NumberModel
 import Governikus.Type.RemoteServiceModel
+import Governikus.Type.SettingsModel
 
 GFlickableColumnLayout {
 	id: baseItem
@@ -43,6 +44,15 @@ GFlickableColumnLayout {
 	}
 	TechnologyInfo {
 		id: technologyInfo
+
+		//: INFO ANDROID Text regarding ID card position animations
+		readonly property string animationText: qsTr("The animations depict possible positions.")
+		//: INFO ANDROID Text regarding different NFC chip positions on different smartphones
+		readonly property string deviceText: qsTr("The exact position of the ID card is device dependent.")
+		//: INFO ANDROID Text that one ID card position should be kept for several seconds
+		readonly property string keepPositionText: qsTr("Keep one position for several seconds before trying another one and do not move the ID card after contact was established.")
+		//: INFO ANDROID Text regarding the ID card position on the device
+		readonly property string positionText: qsTr("Please place your ID card directly on the device's back side.")
 
 		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
@@ -91,9 +101,10 @@ GFlickableColumnLayout {
 			} else if (Constants.is_layout_ios) {
 				//: INFO IOS The ID card may be inserted, the authentication process may be started.
 				return qsTr("Please place your ID card on the top of the device's back side.");
+			} else if (SettingsModel.useAnimations) {
+				return "%1<br/><br/>%2 %3 %4".arg(positionText).arg(deviceText).arg(animationText).arg(keepPositionText);
 			} else {
-				//: INFO ANDROID The ID card may be inserted, the authentication process may be started.
-				return qsTr("Please place your ID card directly on the device's back side.<br/><br/>The exact position of the ID card is device dependent. The animations depict possible positions. Keep one position for several seconds before trying another one and do not move the ID card after contact was established.");
+				return "%1<br/><br/>%2 %3".arg(positionText).arg(deviceText).arg(keepPositionText);
 			}
 		}
 		titleText: {

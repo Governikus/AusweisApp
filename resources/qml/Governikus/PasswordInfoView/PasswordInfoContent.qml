@@ -9,6 +9,7 @@ QtObject {
 	property list<PasswordInfoContentBlock> contentList
 	property string hint: ""
 	property string hintButtonText: ""
+	property string hintTitle: ""
 
 	//: LABEL ALL_PLATFORMS
 	property string linkText: qsTr("More information")

@@ -17,7 +17,7 @@ if(UNIX AND NOT IOS)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0 CACHE STRING "Required macOS version")
 endif()
 
-project(AusweisApp VERSION 2.1.0 LANGUAGES ${LANGUAGES})
+project(AusweisApp VERSION 2.1.1 LANGUAGES ${LANGUAGES})
 
 # Set TWEAK if not defined in PROJECT_VERSION above to
 # have a valid tweak version without propagating it

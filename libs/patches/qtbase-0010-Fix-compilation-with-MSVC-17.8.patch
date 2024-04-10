@@ -25,7 +25,7 @@ Reviewed-by: Marc Mutz <marc.mutz@qt.io>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qcompilerdetection.h y/qtbase/src/corelib/global/qcompilerdetection.h
-index 70fa7f6c9f..58a3689341 100644
+index 70fa7f6c9f7427ff3046a6495b5fc4da6dd6bfa3..58a368934126fa78735b76bc7c5e1d252fcfdc7b 100644
 --- x/qtbase/src/corelib/global/qcompilerdetection.h
 +++ y/qtbase/src/corelib/global/qcompilerdetection.h
 @@ -77,8 +77,10 @@

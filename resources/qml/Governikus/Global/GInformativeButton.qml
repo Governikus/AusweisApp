@@ -10,9 +10,9 @@ import Governikus.View
 AbstractButton {
 	id: root
 
-	property alias description: description.text
+	property alias description: descriptionText.text
 
-	Accessible.name: text + ". " + description
+	Accessible.name: root.text + ". " + root.description
 	horizontalPadding: Constants.component_spacing
 	verticalPadding: Constants.component_spacing
 
@@ -48,7 +48,7 @@ AbstractButton {
 				textStyle: Style.text.subline
 			}
 			GText {
-				id: description
+				id: descriptionText
 
 				Accessible.ignored: true
 				elide: Text.ElideRight
@@ -57,7 +57,7 @@ AbstractButton {
 		TintableIcon {
 			source: "qrc:///images/material_arrow_right.svg"
 			sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
-			tintColor: description.color
+			tintColor: descriptionText.color
 		}
 	}
 
@@ -70,7 +70,7 @@ AbstractButton {
 				when: root.pressed
 
 				PropertyChanges {
-					description.color: Style.color.text_pressed
+					descriptionText.color: Style.color.text_pressed
 					pane.border.color: Style.color.pane_border_pressed
 					pane.color: Style.color.pane_pressed
 					title.color: Style.color.text_subline_pressed
@@ -81,7 +81,7 @@ AbstractButton {
 				when: root.hovered
 
 				PropertyChanges {
-					description.color: Style.color.text_hovered
+					descriptionText.color: Style.color.text_hovered
 					pane.border.color: Style.color.pane_border_hovered
 					pane.color: Style.color.pane_hovered
 					title.color: Style.color.text_subline_hovered

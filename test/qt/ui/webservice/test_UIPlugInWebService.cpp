@@ -231,6 +231,38 @@ class test_UIPlugInWebService
 		}
 
 
+		void corsResponseOptions()
+		{
+			HttpServerRequestor requestor;
+			QSharedPointer<QNetworkReply> reply = requestor.optionsRequest(getUrl("/eID-Client?tctokenURL=bla"_L1));
+			QVERIFY(reply);
+			QCOMPARE(reply->error(), QNetworkReply::NoError);
+			QCOMPARE(reply->readAll().size(), 0);
+			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Origin"));
+			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Private-Network"));
+
+			QCOMPARE(mShowUiSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+		}
+
+
+		void corsResponseHead()
+		{
+			HttpServerRequestor requestor;
+			QSharedPointer<QNetworkReply> reply = requestor.headRequest(getUrl("/eID-Client?tctokenURL=bla"_L1));
+			QVERIFY(reply);
+			QCOMPARE(reply->error(), QNetworkReply::NoError);
+			QCOMPARE(reply->readAll().size(), 0);
+			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Origin"));
+			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Private-Network"));
+
+			QCOMPARE(mShowUiSpy->count(), 0);
+			QCOMPARE(mShowUserInfoSpy->count(), 0);
+			QCOMPARE(mAuthenticationSpy->count(), 0);
+		}
+
+
 		void unknownRequest()
 		{
 			HttpServerRequestor requestor;

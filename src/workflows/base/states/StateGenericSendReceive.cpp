@@ -207,8 +207,10 @@ std::optional<FailureCode> StateGenericSendReceive::checkSslConnectionAndSaveCer
 			!TlsChecker::hasValidEphemeralKeyLength(pSslConfiguration.ephemeralServerKey()))
 	{
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Ssl_Connection_Unsupported_Algorithm_Or_Length, infoMap});
-		return FailureCode(FailureCode::Reason::Generic_Send_Receive_Invalid_Ephemeral_Key_Length,
-				{FailureCode::Info::State_Name, getStateName()});
+
+		auto map = TlsChecker::getEphemeralKeyInfoMap(pSslConfiguration.ephemeralServerKey());
+		map.insert(FailureCode::Info::State_Name, getStateName());
+		return FailureCode(FailureCode::Reason::Generic_Send_Receive_Invalid_Ephemeral_Key_Length, map);
 	}
 
 	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), context->getTcToken()->getServerAddress(), context);

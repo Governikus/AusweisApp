@@ -85,6 +85,24 @@ QSharedPointer<QNetworkReply> HttpServerRequestor::deleteRequest(const QUrl& pUr
 }
 
 
+QSharedPointer<QNetworkReply> HttpServerRequestor::headRequest(const QUrl& pUrl, int pTimeOut)
+{
+	QNetworkRequest request(pUrl);
+	qCDebug(network) << "Request URL (HEAD):" << pUrl;
+	auto reply = mNetworkManager ? mNetworkManager->head(request) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
+QSharedPointer<QNetworkReply> HttpServerRequestor::optionsRequest(const QUrl& pUrl, int pTimeOut)
+{
+	QNetworkRequest request(pUrl);
+	qCDebug(network) << "Request URL (OPTIONS):" << pUrl;
+	auto reply = mNetworkManager ? mNetworkManager->options(request) : nullptr;
+	return waitForReply(reply, pTimeOut);
+}
+
+
 QSharedPointer<QNetworkReply> HttpServerRequestor::waitForReply(QSharedPointer<QNetworkReply> pReply, int pTimeOut)
 {
 	if (!pReply)

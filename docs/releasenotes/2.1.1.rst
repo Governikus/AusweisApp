@@ -1,0 +1,20 @@
+AusweisApp 2.1.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 10. April 2024
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Korrektur von selten auftretenden Problemen im Zusammenhang
+  mit dem verwendeten Browser.
+
+- Textuelle Anpassungen.
+
+
+Entwickler
+""""""""""
+- Korrektur von READER Messages im SDK bei der Verwendung von
+  unbekannten Karten oder bei instabiler Verbindung zur Karte.

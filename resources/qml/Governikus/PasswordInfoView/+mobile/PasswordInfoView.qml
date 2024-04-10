@@ -18,6 +18,7 @@ FlickableSectionPage {
 	readonly property var contentList: infoContent.contentList
 	readonly property string hint: infoContent.hint
 	readonly property string hintButtonText: infoContent.hintButtonText
+	readonly property string hintTitle: infoContent.hintTitle
 	property PasswordInfoData infoContent: PasswordInfoData {
 	}
 	readonly property string infoContentTitle: infoContent.title
@@ -90,6 +91,8 @@ FlickableSectionPage {
 		Layout.topMargin: Constants.component_spacing
 		buttonText: root.hintButtonText
 		text: root.hint
+		//: LABEL ANDROID IOS
+		title: root.hintTitle !== "" ? root.hintTitle : qsTr("Hint")
 		visible: text !== ""
 
 		onClicked: {

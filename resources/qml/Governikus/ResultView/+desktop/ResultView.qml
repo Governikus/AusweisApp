@@ -138,6 +138,8 @@ FlickableSectionPage {
 		id: hintItem
 
 		Layout.fillWidth: true
+		//: LABEL DESKTOP
+		title: qsTr("Hint")
 		visible: text !== ""
 
 		onClicked: baseItem.hintClicked()

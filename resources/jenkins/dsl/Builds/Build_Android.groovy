@@ -44,10 +44,10 @@ j.with
 				}
 			}
 			qualityGates {
-				qualityGate {
+				warningsQualityGate {
 					threshold(1)
 					type('TOTAL')
-					unstable(false)
+					criticality('UNSTABLE')
 				}
 			}
 		}
@@ -88,10 +88,10 @@ j.with
 				}
 			}
 			qualityGates {
-				qualityGate {
+				warningsQualityGate {
 					threshold(1)
 					type('TOTAL')
-					unstable(false)
+					criticality('UNSTABLE')
 				}
 			}
 		}

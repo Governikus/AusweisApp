@@ -36,6 +36,8 @@ QtObject {
 
 			hint: PinResetInformationModel.pinResetHint
 			hintButtonText: PinResetInformationModel.pinResetActionText
+			//: LABEL ALL_PLATFORMS
+			hintTitle: qsTr("I can't recall my PIN")
 
 			//: LABEL ALL_PLATFORMS
 			linkText: qsTr("What is the card PIN?")
@@ -149,6 +151,7 @@ QtObject {
 
 			hint: PinResetInformationModel.pinResetHintTransportPin
 			hintButtonText: PinResetInformationModel.pinResetActionText
+			hintTitle: qsTr("I can't recall my PIN")
 
 			//: LABEL ALL_PLATFORMS
 			linkText: qsTr("What is the Transport PIN?")
@@ -175,6 +178,7 @@ QtObject {
 
 			hint: PinResetInformationModel.noPinAndNoPukHint
 			hintButtonText: PinResetInformationModel.pinResetActionText
+			hintTitle: qsTr("I can't recall my PUK")
 
 			//: LABEL ALL_PLATFORMS
 			linkText: qsTr("Where do I find the PUK?")
@@ -333,6 +337,7 @@ QtObject {
 
 			hint: PinResetInformationModel.pinResetHintNoPin
 			hintButtonText: PinResetInformationModel.pinResetActionText
+			hintTitle: qsTr("Set a new PIN")
 
 			//: LABEL ALL_PLATFORMS
 			title: qsTr("No PIN known")
@@ -356,6 +361,7 @@ QtObject {
 	property int contentType
 	readonly property string hint: infoContent.hint
 	readonly property string hintButtonText: infoContent.hintButtonText
+	readonly property string hintTitle: infoContent.hintTitle
 	readonly property PasswordInfoContent infoContent: {
 		switch (contentType) {
 		case PasswordInfoData.Type.PIN:

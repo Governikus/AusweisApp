@@ -11,7 +11,7 @@ Change-Id: Ied55e3d6ebd90fbbecb8c4d8d1638b1de3ba6969
  1 file changed, 2 deletions(-)
 
 diff --git x/qtbase/src/plugins/tls/openssl/CMakeLists.txt y/qtbase/src/plugins/tls/openssl/CMakeLists.txt
-index 0e0a7a1552..e176bbf9d5 100644
+index 0e0a7a1552dc6ef7e1b5847d5685e8b653806364..e176bbf9d5471ffc977d3a6344998f5c3274de5a 100644
 --- x/qtbase/src/plugins/tls/openssl/CMakeLists.txt
 +++ y/qtbase/src/plugins/tls/openssl/CMakeLists.txt
 @@ -20,8 +20,6 @@ qt_internal_add_plugin(QTlsBackendOpenSSLPlugin

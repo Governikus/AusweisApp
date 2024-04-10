@@ -290,6 +290,12 @@ class test_CommandApdu
 			QTest::newRow("3E   256 0") << 256 << 0 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42);
 			QTest::newRow("3E 65535 0") << 65535 << 0 << true << QByteArray::fromHex("0102030400FFFF") + QByteArray(65535, 0x42);
 
+			QTest::newRow("4E   255   257") << 255 << 257 << true << QByteArray::fromHex("010203040000FF") + QByteArray(255, 0x42) + QByteArray::fromHex("0101");
+			QTest::newRow("4E   255 65535") << 255 << 65535 << true << QByteArray::fromHex("010203040000FF") + QByteArray(255, 0x42) + QByteArray::fromHex("FFFF");
+			QTest::newRow("4E   255 65536") << 255 << 65536 << true << QByteArray::fromHex("010203040000FF") + QByteArray(255, 0x42) + QByteArray::fromHex("0000");
+			QTest::newRow("4E   256     1") << 256 << 1 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("0001");
+			QTest::newRow("4E   256   255") << 256 << 255 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("00FF");
+			QTest::newRow("4E   256   256") << 256 << 256 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("0100");
 			QTest::newRow("4E   256   257") << 256 << 257 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("0101");
 			QTest::newRow("4E   256 65535") << 256 << 65535 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("FFFF");
 			QTest::newRow("4E   256 65536") << 256 << 65536 << true << QByteArray::fromHex("01020304000100") + QByteArray(256, 0x42) + QByteArray::fromHex("0000");

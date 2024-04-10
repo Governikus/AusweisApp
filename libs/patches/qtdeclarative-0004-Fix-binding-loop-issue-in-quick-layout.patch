@@ -19,7 +19,7 @@ Change-Id: I1e318335ce8b5268d878b48a02a089d703bb90ad
  3 files changed, 11 insertions(+), 9 deletions(-)
 
 diff --git x/qtdeclarative/src/quicklayouts/qquicklayout.cpp y/qtdeclarative/src/quicklayouts/qquicklayout.cpp
-index fc2bcc130c..2e54949f1d 100644
+index fc2bcc130c20d7c2b868a921e6161facb1a1e12b..2e54949f1d9017b850d74799f399b4c1711af126 100644
 --- x/qtdeclarative/src/quicklayouts/qquicklayout.cpp
 +++ y/qtdeclarative/src/quicklayouts/qquicklayout.cpp
 @@ -742,14 +742,15 @@ void QQuickLayoutPrivate::applySizeHints() const
@@ -54,7 +54,7 @@ index fc2bcc130c..2e54949f1d 100644
      if (options & Recursive) {
          for (int i = 0; i < itemCount(); ++i) {
 diff --git x/qtdeclarative/src/quicklayouts/qquicklayout_p.h y/qtdeclarative/src/quicklayouts/qquicklayout_p.h
-index df9c4cad97..d0ccc4f185 100644
+index df9c4cad97473fa009b228832ab20d3007e9f3de..d0ccc4f185a2d157b5a8c705fb2837680e4a20f1 100644
 --- x/qtdeclarative/src/quicklayouts/qquicklayout_p.h
 +++ y/qtdeclarative/src/quicklayouts/qquicklayout_p.h
 @@ -49,7 +49,8 @@ public:
@@ -68,7 +68,7 @@ index df9c4cad97..d0ccc4f185 100644
  
      Q_DECLARE_FLAGS(EnsureLayoutItemsUpdatedOptions, EnsureLayoutItemsUpdatedOption)
 diff --git x/qtdeclarative/src/quicklayouts/qquicklinearlayout.cpp y/qtdeclarative/src/quicklayouts/qquicklinearlayout.cpp
-index b34815e449..cbd15b4878 100644
+index b34815e4496eb8eceda16e6219c03c0e0bf10000..cbd15b48786c4d6cd9d412ff59e73cd69aa6e292 100644
 --- x/qtdeclarative/src/quicklayouts/qquicklinearlayout.cpp
 +++ y/qtdeclarative/src/quicklayouts/qquicklinearlayout.cpp
 @@ -459,7 +459,7 @@ void QQuickGridLayoutBase::rearrange(const QSizeF &size)
