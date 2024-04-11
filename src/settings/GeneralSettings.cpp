@@ -144,7 +144,7 @@ bool GeneralSettings::autoStartIsSetByAdmin() const
 
 bool GeneralSettings::showTrayIcon() const
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
 	return isAutoStart();
 
 #else
