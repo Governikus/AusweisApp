@@ -99,6 +99,7 @@ public class MainActivity extends QtActivity
 	private class NfcReaderMode
 	{
 		private final int mFlags;
+		private final Bundle mBundle;
 		private final NfcAdapter.ReaderCallback mCallback;
 		private boolean mEnabled;
 
@@ -108,6 +109,8 @@ public class MainActivity extends QtActivity
 					| NfcAdapter.FLAG_READER_NFC_B
 					| NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
 					| NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS;
+			mBundle = new Bundle();
+			mBundle.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 1000);
 			mCallback = pTag ->
 			{
 				if (Arrays.asList(pTag.getTechList()).contains(IsoDep.class.getName()))
@@ -134,7 +137,7 @@ public class MainActivity extends QtActivity
 			if (adapter != null && !mEnabled)
 			{
 				mEnabled = true;
-				adapter.enableReaderMode(MainActivity.this, mCallback, mFlags, null);
+				adapter.enableReaderMode(MainActivity.this, mCallback, mFlags, mBundle);
 			}
 
 		}
