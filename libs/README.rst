@@ -80,14 +80,14 @@ Es wird der von Apple ausgelieferte clang compiler verwendet.
  Beispiel: Innerhalb von macOS /Users/governikus/AusweisApp2 befindet sich der Quellcode.
 ::
 
-   $ cd $HOME/governikus
+   $ cd $HOME
    $ mkdir build
    $ cd build
    $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2/libs
    $ make
 
 =======
-Beispiel: Innerhalb von /Users/governikus/AusweisApp befindet sich der Quellcode.
+Beispiel: Innerhalb von $HOME/AusweisApp2 befindet sich der Quellcode.
 
 
 Linux / Unix
@@ -97,10 +97,10 @@ Die Einrichtung unter Linux/Unix ist einfach und erfordert nur die oben genannte
  
 ::
 
-   $ cd $HOME/governikus
+   $ cd $HOME
    $ mkdir build
    $ cd build
-   $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp/libs
+   $ cmake -DCMAKE_BUILD_TYPE=release ../AusweisApp2/libs
    $ make
 
 
