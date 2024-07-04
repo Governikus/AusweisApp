@@ -31,11 +31,6 @@ Windows / macOS
 - Der Installationsdialog (bei Installation und auch Deinstallation) richtet
   sich nicht nach der Systemsprache.
 
-- Wenn mit einer MSI-Datei ein Update für die AusweisApp durchgeführt wird,
-  während diese noch läuft, kann es zu einer falschen Fehlermeldung kommen,
-  dass sie nicht beendet werden konnte.
-  Die Installation ist dennoch erfolgreich.
-
 
 Android / iOS
 """""""""""""
@@ -45,13 +40,10 @@ Android / iOS
 
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
 
-- Unter Android führen einige Änderungen der Systemeinstellungen bei laufender
-  |AppName| zu einem Absturz. Dazu zählt die Änderung der Systemsprache und
-  die Änderung des Typs der Navigationsleiste (Gesten / Schaltflächen).
-
-- Bei der Verwendung eines "Smartphone als Kartenleser" mit aktivierter
-  Passworteingabe kommt es bei Verwendung des PUKs zu Fehlern, wenn der
-  Ausweis dauerhaft am Gerät anliegt.
+- Unter Android führen unter Umständen einige Änderungen der
+  Systemeinstellungen bei laufender |AppName| zu einem Neustart oder Absturz.
+  Dazu zählt die Änderung der Systemsprache und die Änderung des Typs der
+  Navigationsleiste (Gesten / Schaltflächen).
 
 
 Barrierearmut
@@ -63,21 +55,6 @@ Barrierearmut
 - Unter Android werden unsichtbare Inhalte vom Screenreader vorgelesen.
 
 - Unter iOS kann der sichtbare Bereich vom Systemfokus abweichen.
-
-- Die aktivierbaren Elemente von eingeklappten Listen können ungewollte
-  Aktionen auslösen.
-
-- Aktuell sind die Bereiche "Softwarelizenz" und "Release Notes" nicht mit
-  dem Screenreader ansteuerbar.
-
-- Die Toggle-Elemente, die Hilfeseiten und die Überschriften der Startseite
-  besitzen zurzeit noch keine Sprachausgabe.
-
-- Bei angeschlossenem Kartenleser wird im Ausweisvorgang direkt auf
-  Schritt 2 gesprungen, ohne dass eine entsprechende Sprachausgabe erfolgt.
-
-- In Texten wird zum Teil auf grafische Elemente hingewiesen, die keine textuelle
-  Repräsentation desselben Inhalts besitzen.
 
 - Die angeforderten Rechte während eines Ausweisvorgangs werden nicht optimal vom
   Screenreader ausgegeben.

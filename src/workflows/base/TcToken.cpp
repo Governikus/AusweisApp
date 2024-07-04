@@ -7,6 +7,7 @@
 
 #include "AppSettings.h"
 
+#include <QBuffer>
 #include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QXmlStreamReader>
@@ -14,9 +15,10 @@
 using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(developermode)
+Q_DECLARE_LOGGING_CATEGORY(secure)
 
 
-TcToken::TcToken(const QByteArray& pData)
+TcToken::TcToken(const QSharedPointer<QIODevice>& pStream)
 	: mSchemaConform(false)
 	, mBinding()
 	, mPathSecurityProtocol()
@@ -26,17 +28,22 @@ TcToken::TcToken(const QByteArray& pData)
 	, mCommunicationErrorAddress()
 	, mRefreshAddress()
 {
-	parse(pData);
+	if (pStream && (pStream->isOpen() || pStream->open(QIODeviceBase::ReadOnly)))
+	{
+		parse(pStream);
+	}
 }
 
 
-TcToken::~TcToken() = default;
-
-
-void TcToken::parse(const QByteArray& pData)
+TcToken::TcToken(QByteArray pData) // clazy:exclude=function-args-by-ref
+	: TcToken(QSharedPointer<QBuffer>::create(&pData))
 {
-	qDebug().noquote() << "Parsing TcToken:\n" << pData;
-	QXmlStreamReader reader(pData);
+}
+
+
+void TcToken::parse(const QSharedPointer<QIODevice>& pStream)
+{
+	QXmlStreamReader reader(pStream.data());
 
 	QString binding;
 	QString pathSecurityProtocol;
@@ -50,7 +57,7 @@ void TcToken::parse(const QByteArray& pData)
 	{
 		if (reader.isStartElement())
 		{
-			QString currentName = reader.name().toString();
+			const QStringView currentName = reader.name();
 			if (currentName == QLatin1String("Binding"))
 			{
 				binding = readElementValue(reader);
@@ -61,7 +68,7 @@ void TcToken::parse(const QByteArray& pData)
 			}
 			else if (currentName == QLatin1String("PSK"))
 			{
-				psk = readElementValue(reader).toUtf8();
+				psk = readElementValue(reader, false).toUtf8();
 			}
 			else if (currentName == QLatin1String("ServerAddress"))
 			{
@@ -102,13 +109,16 @@ void TcToken::parse(const QByteArray& pData)
 }
 
 
-QString TcToken::readElementValue(QXmlStreamReader& pReader) const
+QString TcToken::readElementValue(QXmlStreamReader& pReader, bool pLogValue) const
 {
 	// helper method to distinguish between the cases,
 	// 1) where the element was present but empty (so the value is not null but empty) and
 	// 2) where the element was absent (so the value is null).
-	QString value = pReader.readElementText();
-	return value.isNull() ? QLatin1String("") : value.trimmed();
+	const auto& value = pReader.readElementText().trimmed();
+	qDebug() << pReader.name()
+			 << '='
+			 << (pLogValue || secure().isDebugEnabled() ? value : QStringLiteral("(...)"));
+	return value.isNull() ? QLatin1String("") : value;
 }
 
 
@@ -259,6 +269,12 @@ bool TcToken::usePsk() const
 const QByteArray& TcToken::getPsk() const
 {
 	return mPsk;
+}
+
+
+bool TcToken::isSchemaConform() const
+{
+	return mSchemaConform;
 }
 
 

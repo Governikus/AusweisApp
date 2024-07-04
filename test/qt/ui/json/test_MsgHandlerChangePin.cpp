@@ -10,8 +10,8 @@
 
 #include "Env.h"
 #include "MessageDispatcher.h"
-#include "UILoader.h"
-#include "UIPlugInJson.h"
+#include "UiLoader.h"
+#include "UiPluginJson.h"
 #include "VolatileSettings.h"
 #include "controller/AppController.h"
 
@@ -20,7 +20,7 @@
 #include <QSignalSpy>
 #include <QtTest>
 
-Q_IMPORT_PLUGIN(UIPlugInJson)
+Q_IMPORT_PLUGIN(UiPluginJson)
 
 using namespace governikus;
 
@@ -34,7 +34,7 @@ class test_MsgHandlerChangePin
 		{
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 
-			connect(Env::getSingleton<UILoader>(), &UILoader::fireLoadedPlugin, this, [](UIPlugIn* pUi){
+			connect(Env::getSingleton<UiLoader>(), &UiLoader::fireLoadedPlugin, this, [](UiPlugin* pUi){
 					pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
 				});
 		}
@@ -42,10 +42,10 @@ class test_MsgHandlerChangePin
 
 		void cleanup()
 		{
-			auto* uiLoader = Env::getSingleton<UILoader>();
+			auto* uiLoader = Env::getSingleton<UiLoader>();
 			if (uiLoader->isLoaded())
 			{
-				QSignalSpy spyUi(uiLoader, &UILoader::fireRemovedAllPlugins);
+				QSignalSpy spyUi(uiLoader, &UiLoader::fireRemovedAllPlugins);
 				uiLoader->shutdown();
 				QTRY_COMPARE(spyUi.count(), 1); // clazy:exclude=qstring-allocations
 			}
@@ -54,10 +54,10 @@ class test_MsgHandlerChangePin
 
 		void runChangePinCmd()
 		{
-			QVERIFY(Env::getSingleton<UILoader>()->load<UIPlugInJson>());
-			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			QVERIFY(Env::getSingleton<UiLoader>()->load<UiPluginJson>());
+			auto ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 			QVERIFY(ui);
-			QSignalSpy spy(ui, &UIPlugIn::fireWorkflowRequested);
+			QSignalSpy spy(ui, &UiPlugin::fireWorkflowRequested);
 
 			MessageDispatcher dispatcher;
 			const QByteArray msg = R"({"cmd": "RUN_CHANGE_PIN"})";
@@ -110,13 +110,13 @@ class test_MsgHandlerChangePin
 
 		void cancelChangePin()
 		{
-			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+			QVERIFY(!Env::getSingleton<UiLoader>()->isLoaded());
 
-			UILoader::setUserRequest({QStringLiteral("json")});
+			UiLoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
 
-			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			auto ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
@@ -136,9 +136,9 @@ class test_MsgHandlerChangePin
 
 		void iosScanDialogMessages()
 		{
-			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+			QVERIFY(!Env::getSingleton<UiLoader>()->isLoaded());
 
-			UILoader::setUserRequest({QStringLiteral("json")});
+			UiLoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
 
@@ -149,14 +149,14 @@ class test_MsgHandlerChangePin
 			QVERIFY(initialMessages.getSessionFailed().isEmpty());
 			QVERIFY(!initialMessages.getSessionFailed().isNull());
 
-			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			auto ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
-			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
+			QSignalSpy spyUi(ui, &UiPlugin::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
+					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
 				});
 
 			const QByteArray msg("{"
@@ -207,27 +207,27 @@ class test_MsgHandlerChangePin
 
 		void handleInterrupt()
 		{
-			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+			QVERIFY(!Env::getSingleton<UiLoader>()->isLoaded());
 
 			QFETCH(QVariant, handleInterrupt);
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
-			UILoader::setUserRequest({QStringLiteral("json")});
+			UiLoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 
-			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			auto ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
-			QSignalSpy spyMessage(ui, &UIPlugInJson::fireMessage);
-			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
+			QSignalSpy spyMessage(ui, &UiPluginJson::fireMessage);
+			QSignalSpy spyUi(ui, &UiPlugin::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
+					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
@@ -268,26 +268,26 @@ class test_MsgHandlerChangePin
 
 		void handleInterruptDefault()
 		{
-			QVERIFY(!Env::getSingleton<UILoader>()->isLoaded());
+			QVERIFY(!Env::getSingleton<UiLoader>()->isLoaded());
 
 			QFETCH(bool, handleInterruptExpected);
 			QFETCH(char, apiLevel);
 
-			UILoader::setUserRequest({QStringLiteral("json")});
+			UiLoader::setUserRequest({QStringLiteral("json")});
 			AppController controller;
 			controller.start();
 
 			QCOMPARE(Env::getSingleton<VolatileSettings>()->handleInterrupt(), false); // default
 
-			auto ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+			auto ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 			QVERIFY(ui);
 			ui->setEnabled(true);
-			QSignalSpy spyMessage(ui, &UIPlugInJson::fireMessage);
-			QSignalSpy spyUi(ui, &UIPlugIn::fireWorkflowRequested);
+			QSignalSpy spyMessage(ui, &UiPluginJson::fireMessage);
+			QSignalSpy spyUi(ui, &UiPlugin::fireWorkflowRequested);
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UIPlugInJson is internal API and does not claim by itself
+					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
 				});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";

@@ -98,7 +98,7 @@ void ApplicationModel::showAppStoreRatingDialog()
 
 void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) const
 {
-	if (pAction == Settings::SETTING_APP)
+	if (pAction == Settings::APP)
 	{
 		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:nil];
 	}

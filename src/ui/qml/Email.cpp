@@ -13,8 +13,8 @@ namespace governikus
 
 QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl, bool pPercentEncoding, bool pAddLogNotice)
 {
-	const auto& logHandler = Env::getSingleton<LogHandler>();
-	QStringList mailBody(QObject::tr("Please describe the error that occurred."));
+	auto* logHandler = Env::getSingleton<LogHandler>();
+	QStringList mailBody(QObject::tr("Please describe the error that occurs. Our support is available to you in German and English."));
 
 	if (logHandler->useLogFile() && pAddLogNotice)
 	{
@@ -25,17 +25,16 @@ QString generateMailBody(const GlobalStatus& pStatus, const QUrl& pServiceUrl, b
 	mailBody << newLine;
 
 	const auto& systemInfo = BuildHelper::getInformationHeader();
-	for (const auto& info : systemInfo)
+	for (const auto& [key, value] : systemInfo)
 	{
-		QString first = info.first;
-		QString second = info.second;
 		if (pPercentEncoding)
 		{
-			first = QString::fromUtf8(QUrl::toPercentEncoding(first));
-			second = QString::fromUtf8(QUrl::toPercentEncoding(second));
-
+			const auto& encKey = QString::fromUtf8(QUrl::toPercentEncoding(key));
+			const auto& encValue = QString::fromUtf8(QUrl::toPercentEncoding(value));
+			mailBody << encKey + QStringLiteral(": ") + encValue;
+			continue;
 		}
-		mailBody << first + QStringLiteral(": ") + second;
+		mailBody << key + QStringLiteral(": ") + value;
 	}
 
 	mailBody << newLine + QObject::tr("Error code") + QLatin1Char(':');

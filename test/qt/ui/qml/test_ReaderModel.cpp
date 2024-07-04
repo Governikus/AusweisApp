@@ -27,7 +27,7 @@ class MockReaderManager
 
 	public:
 		MockReaderManager(const QList<ReaderInfo>& pReaderInfos);
-		ReaderManagerPlugInInfo getPlugInInfo(ReaderManagerPlugInType pType) const override;
+		ReaderManagerPluginInfo getPluginInfo(ReaderManagerPluginType pType) const override;
 		QList<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const override;
 
 		void setIsScanRunning(bool pRunning);
@@ -41,9 +41,9 @@ MockReaderManager::MockReaderManager(const QList<ReaderInfo>& pReaderInfos)
 }
 
 
-ReaderManagerPlugInInfo MockReaderManager::getPlugInInfo(ReaderManagerPlugInType pType) const
+ReaderManagerPluginInfo MockReaderManager::getPluginInfo(ReaderManagerPluginType pType) const
 {
-	ReaderManagerPlugInInfo info(pType);
+	ReaderManagerPluginInfo info(pType);
 	info.setScanRunning(mIsScanRunning);
 	return info;
 }
@@ -159,7 +159,7 @@ class test_ReaderModel
 #endif
 			mUsbIds += UsbId(0x0C4B, 0x0501);    // REINER SCT cyberJack RFID komfort
 			mUsbIds += UsbId(0x04E6, 0x5790);    // Identiv Cloud 3700 F
-			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0"_L1, ReaderManagerPlugInType::PCSC);
+			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0"_L1, ReaderManagerPluginType::PCSC);
 
 			QModelIndex index;
 			ReaderModel readerModel;
@@ -179,7 +179,7 @@ class test_ReaderModel
 #endif
 			mUsbIds += UsbId(0x0C4B, 0x0501);    // REINER SCT cyberJack RFID komfort
 			mUsbIds += UsbId(0x04E6, 0x5790);    // Identiv Cloud 3700 F
-			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0"_L1, ReaderManagerPlugInType::PCSC);
+			mReaderInfos += ReaderInfo("Identiv CLOUD 3700 F Contactless Reader 0"_L1, ReaderManagerPluginType::PCSC);
 
 			mMockReaderManager.setIsScanRunning(true);
 
@@ -197,7 +197,7 @@ class test_ReaderModel
 
 		void test_settings_readerManager_unknown()
 		{
-			mReaderInfos += ReaderInfo("Governikus Special Reader"_L1, ReaderManagerPlugInType::PCSC);
+			mReaderInfos += ReaderInfo("Governikus Special Reader"_L1, ReaderManagerPluginType::PCSC);
 
 			ReaderModel readerModel;
 			QCOMPARE(readerModel.rowCount(), 1);

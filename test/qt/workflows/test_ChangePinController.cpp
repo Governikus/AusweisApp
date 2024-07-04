@@ -2,24 +2,22 @@
  * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Test for the Change PIN functionality.
- */
-
 #include "controller/ChangePinController.h"
 
+#include "AppSettings.h"
 #include "ReaderManager.h"
+#include "VolatileSettings.h"
 #include "context/ChangePinContext.h"
-#include "states/AbstractState.h"
 #include "states/StateUpdateRetryCounter.h"
 
 #include <QSharedPointer>
 #include <QtTest>
 
 
-Q_IMPORT_PLUGIN(SimulatorReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(SimulatorReaderManagerPlugin)
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -58,7 +56,10 @@ class test_ChangePinController
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+			Env::getSingleton<AppSettings>()->getSimulatorSettings().setEnabled(true);
+
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, [] (const ReaderInfo& pInfo){
 					if (pInfo.isInsertable())
@@ -74,39 +75,70 @@ class test_ChangePinController
 
 		void cleanupTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			readerManager->disconnect(this);
 			readerManager->shutdown();
 		}
 
 
-		void init()
+		void testSuccess_data()
 		{
-			mChangePinContext.reset(new ChangePinContext());
-			mChangePinContext->setReaderPlugInTypes({ReaderManagerPlugInType::SIMULATOR});
-			connect(mChangePinContext.data(), &WorkflowContext::fireStateChanged, this, &test_ChangePinController::onStateChanged);
+			QTest::addColumn<bool>("basicReader");
 
-			mChangePinController.reset(new ChangePinController(mChangePinContext));
-
-			mRetryCounterUpdated = false;
+			QTest::newRow("basic reader") << true;
+			QTest::newRow("comfort reader") << false;
 		}
 
 
-		void cleanup()
+		void testSuccess()
 		{
+			QFETCH(bool, basicReader);
+			Env::getSingleton<AppSettings>()->getSimulatorSettings().setBasicReader(basicReader);
+
+			mChangePinContext.reset(new ChangePinContext());
+			if (basicReader)
+			{
+				mChangePinContext->setPin("123456"_L1);
+				mChangePinContext->setNewPin("123456"_L1);
+			}
+			mChangePinContext->setReaderPluginTypes({ReaderManagerPluginType::SIMULATOR});
+			connect(mChangePinContext.data(), &WorkflowContext::fireStateChanged, this, &test_ChangePinController::onStateChanged);
+			mChangePinController.reset(new ChangePinController(mChangePinContext));
+			mRetryCounterUpdated = false;
+
+			QSignalSpy controllerFinishedSpy(mChangePinController.data(), &ChangePinController::fireComplete);
+			mChangePinController->run();
+			QVERIFY(controllerFinishedSpy.wait());
+			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::No_Error);
+
 			mChangePinContext->disconnect(this);
 			mChangePinController.reset();
 			mChangePinContext.reset();
 		}
 
 
-		void testSuccess()
+		void createWorkflowRequest_data()
 		{
-			QSignalSpy controllerFinishedSpy(mChangePinController.data(), &ChangePinController::fireComplete);
+			QTest::addColumn<bool>("requestTransportPin");
+			QTest::addColumn<bool>("activateUi");
 
-			mChangePinController->run();
-			QVERIFY(controllerFinishedSpy.wait());
-			QCOMPARE(mChangePinContext->getStatus().getStatusCode(), GlobalStatus::Code::No_Error);
+			QTest::newRow("PIN 5") << true << false;
+			QTest::newRow("PIN 5 + ACTIVATE") << true << true;
+			QTest::newRow("PIN 6") << false << false;
+			QTest::newRow("PIN 6 + ACTIVATE") << false << true;
+		}
+
+
+		void createWorkflowRequest()
+		{
+			QFETCH(bool, requestTransportPin);
+			QFETCH(bool, activateUi);
+
+			const auto& request = ChangePinController::createWorkflowRequest(requestTransportPin, activateUi);
+
+			const auto& context = request->getContext();
+			QCOMPARE(context->isRequestTransportPin(), requestTransportPin);
+			QCOMPARE(context->isActivateUi(), activateUi);
 		}
 
 

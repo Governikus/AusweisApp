@@ -9,6 +9,7 @@
 #pragma once
 
 #include <QObject>
+#include <QtQml/qqmlregistration.h>
 
 namespace governikus
 {
@@ -17,6 +18,7 @@ class CardPosition
 	: public QObject
 {
 	Q_OBJECT
+	QML_ELEMENT
 
 	Q_PROPERTY(double x MEMBER mXPosition CONSTANT)
 	Q_PROPERTY(double y MEMBER mYPosition CONSTANT)

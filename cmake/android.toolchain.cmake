@@ -1,8 +1,3 @@
-cmake_minimum_required(VERSION 3.16.0)
-if(CMAKE_VERSION VERSION_LESS "3.16.4")
-	message(WARNING "Check your cmake: https://gitlab.kitware.com/cmake/cmake/commit/e3d3b7ddeb5922a4d17b962984e698e6387f7544")
-endif()
-
 function(READ_REVISION _var _regex _files)
 	foreach(file ${_files})
 		if(EXISTS "${file}")
@@ -27,15 +22,15 @@ IF(NOT CMAKE_ANDROID_NDK)
 	endif()
 endif()
 
-set(ANDROID_SDK $ENV{ANDROID_SDK_ROOT})
+set(ANDROID_SDK_ROOT $ENV{ANDROID_SDK_ROOT})
 set(ANDROID_BUILD_TOOLS_REVISION $ENV{ANDROID_BUILD_TOOLS_REVISION})
 
-if(NOT EXISTS "${ANDROID_SDK}")
+if(NOT EXISTS "${ANDROID_SDK_ROOT}")
 	message(FATAL_ERROR "Environment variable ANDROID_SDK_ROOT is undefined")
 endif()
 
 if(NOT ANDROID_BUILD_TOOLS_REVISION)
-	set(_android_build_tools_dir "${ANDROID_SDK}/build-tools")
+	set(_android_build_tools_dir "${ANDROID_SDK_ROOT}/build-tools")
 
 	file(GLOB build_tools_list ${_android_build_tools_dir}/*)
 	list(LENGTH build_tools_list build_tools_len)
@@ -53,9 +48,33 @@ endif()
 
 READ_REVISION(ANDROID_NDK_REVISION ".*Revision = ([0-9|\\.]+)" "${CMAKE_ANDROID_NDK}/source.properties")
 
+if(NOT QT_TOOLCHAIN_FILE)
+	foreach(path ${CMAKE_PREFIX_PATH})
+		set(file ${path}/lib/cmake/Qt6/qt.toolchain.cmake)
+		if(EXISTS "${file}")
+			set(QT_TOOLCHAIN_FILE ${file})
+			break()
+		endif()
+	endforeach()
+endif()
+
+if(QT_TOOLCHAIN_FILE)
+	message(STATUS "QT_TOOLCHAIN_FILE: ${QT_TOOLCHAIN_FILE}")
+	include(${QT_TOOLCHAIN_FILE})
+endif()
+
+set(ANDROID_BUILD_NAME android-build)
+set(ANDROID_BUILD_DIR "${PROJECT_BINARY_DIR}/src/${ANDROID_BUILD_NAME}")
+set(ANDROID_PACKAGE_SRC_DIR ${PROJECT_BINARY_DIR}/package-src-dir)
+set(QT_ENABLE_VERBOSE_DEPLOYMENT ON)
+
+if(DEFINED ENV{QT_ANDROID_KEYSTORE_PATH} AND NOT INTEGRATED_SDK)
+	set(QT_ANDROID_SIGN_APK ON)
+endif()
+
 set(CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION clang)
 set(CMAKE_SYSTEM_NAME Android)
-set(CMAKE_SYSTEM_VERSION 26)
+set(CMAKE_SYSTEM_VERSION 28)
 set(ANDROID_TARGET_SDK_VERSION 34)
 set(CMAKE_ANDROID_STL_TYPE c++_shared)
 
@@ -72,7 +91,8 @@ if(CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
 	set(CMAKE_ANDROID_ARM_NEON ON)
 endif()
 
-set(CMAKE_FIND_ROOT_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "android find search path root")
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+set(GOVERNIKUS_TOOLCHAIN_FILE ON)

@@ -21,9 +21,9 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(support)
 
 
-Reader::Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName)
+Reader::Reader(ReaderManagerPluginType pPluginType, const QString& pReaderName)
 	: QObject()
-	, mReaderInfo(pReaderName, pPlugInType)
+	, mReaderInfo(pReaderName, pPluginType)
 	, mTimerId(0)
 {
 }
@@ -60,9 +60,11 @@ void Reader::removeCardInfo()
 }
 
 
-QSharedPointer<CardConnectionWorker> Reader::fetchCardInfo()
+void Reader::fetchCardInfo()
 {
 	const auto& cardConnection = createCardConnectionWorker();
+
+	printGetReaderInfo();
 
 	setInfoCardInfo(CardInfoFactory::create(cardConnection));
 
@@ -71,8 +73,6 @@ QSharedPointer<CardConnectionWorker> Reader::fetchCardInfo()
 		qCWarning(card) << "Update of the retry counter failed";
 		setInfoCardInfo(CardInfo(CardType::UNKNOWN));
 	}
-
-	return cardConnection;
 }
 
 
@@ -103,8 +103,9 @@ void Reader::insertCard(const QVariant& pData)
 		return;
 	}
 
-	qCDebug(card) << "Card inserted";
 	mReaderInfo.insertCard();
+
+	qCInfo(card) << "Card inserted:" << mReaderInfo.getCardInfo();
 	Q_EMIT fireCardInserted(mReaderInfo);
 }
 
@@ -123,6 +124,7 @@ void Reader::shelveCard()
 
 	if (wasShelved)
 	{
+		qCInfo(card) << "Card removed";
 		Q_EMIT fireCardRemoved(mReaderInfo);
 		return;
 	}

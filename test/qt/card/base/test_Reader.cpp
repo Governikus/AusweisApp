@@ -60,8 +60,8 @@ class test_Reader
 
 		void test_UpdateRetryCounterCommandFailed()
 		{
-			CardInfo cInfo(CardType::UNKNOWN, QSharedPointer<const EFCardAccess>(), 3, false, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			CardInfo cInfo(CardType::UNKNOWN, FileRef(), QSharedPointer<const EFCardAccess>(), 3, false, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot get EF.CardAccess");
@@ -73,8 +73,8 @@ class test_Reader
 		{
 			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
-			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, false, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			CardInfo cInfo(CardType::UNKNOWN, FileRef(), efCardAccess, 3, false, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::UNKNOWN);
 			QCOMPARE(mReader->updateRetryCounter(mWorker), CardReturnCode::UNKNOWN);
@@ -85,8 +85,8 @@ class test_Reader
 		{
 			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
-			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 2, true, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			CardInfo cInfo(CardType::UNKNOWN, FileRef(), efCardAccess, 2, true, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
@@ -112,8 +112,8 @@ class test_Reader
 								 "            06 0A 04007F00070202040202"
 								 "            02 01 02");
 			auto efCardAccess = EFCardAccess::fromHex(hexString);
-			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 2, true, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			CardInfo cInfo(CardType::UNKNOWN, FileRef(), efCardAccess, 2, true, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000"));
 			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
@@ -136,8 +136,8 @@ class test_Reader
 		{
 			QByteArray bytes = QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardAccess.hex"_L1));
 			auto efCardAccess = EFCardAccess::decode(bytes);
-			CardInfo cInfo(CardType::UNKNOWN, efCardAccess, 3, true, false);
-			ReaderInfo rInfo(mReaderName, ReaderManagerPlugInType::UNKNOWN, cInfo);
+			CardInfo cInfo(CardType::UNKNOWN, FileRef(), efCardAccess, 3, true, false);
+			ReaderInfo rInfo(mReaderName, ReaderManagerPluginType::UNKNOWN, cInfo);
 			mReader->setReaderInfo(rInfo);
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("63D3"));
 			QSignalSpy spy(mReader.data(), &Reader::fireCardInfoChanged);
@@ -178,7 +178,7 @@ class test_Reader
 			QSignalSpy info(mReader.data(), &Reader::fireCardInfoChanged);
 
 			QVERIFY(!mReader->getReaderInfo().isInsertable());
-			mReader->setInfoCardInfo(CardInfo(type, nullptr, retryCounter));
+			mReader->setInfoCardInfo(CardInfo(type, FileRef(), nullptr, retryCounter));
 
 			mReader->shelveCard();
 			QCOMPARE(removed.count(), 0);

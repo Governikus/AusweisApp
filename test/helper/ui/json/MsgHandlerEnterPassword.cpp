@@ -5,7 +5,7 @@
 #include "MsgHandlerEnterPassword.h"
 
 #include "MockCardConnection.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "ReaderManager.h"
 
 #include <QTest>
@@ -46,7 +46,7 @@ void governikus::setValidState(MessageDispatcher& pDispatcher,
 
 	if (pSelectReader)
 	{
-		auto* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader CARD"_L1);
+		auto* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader CARD"_L1);
 		auto info = reader->getReaderInfo();
 		info.setBasicReader(pBasicReader);
 		reader->setReaderInfo(info);

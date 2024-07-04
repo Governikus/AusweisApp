@@ -8,19 +8,10 @@
 
 #pragma once
 
-#include "Initializer.h"
-
 #include <QDebug>
 #include <QMetaEnum>
 #include <type_traits>
 
-namespace governikus
-{
-#define defineQHash(enumName)\
-	inline size_t qHash(enumName pKey, size_t pSeed)\
-	{\
-		return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
-	}
 
 #define defineEnumOperators(enumName)\
 	inline QDebug operator<<(QDebug pDbg, enumName pType)\
@@ -29,7 +20,18 @@ namespace governikus
 		return pDbg.noquote() << Enum<enumName>::getName(pType);\
 	}\
 \
-	inline QString& operator+=(QString & pStr, enumName pType)\
+	inline QDebug operator<<(QDebug pDbg, const QList<enumName>& pList)\
+	{\
+		QDebugStateSaver saver(pDbg);\
+		QByteArrayList list;\
+		for (const auto& entry : pList)\
+		{\
+			list << Enum<enumName>::getName(entry).data();\
+		}\
+		return pDbg.noquote().nospace() << '(' << list.join(QByteArrayView(", ")) << ')';\
+	}\
+\
+	inline QString& operator+=(QString& pStr, enumName pType)\
 	{\
 		pStr += Enum<enumName>::getName(pType);\
 		return pStr;\
@@ -53,42 +55,45 @@ namespace governikus
 	{\
 		return !(pType == pName);\
 	}\
-	defineQHash(enumName)
-
-
-#define defineTypedEnumType(enumName, enumType, ...)\
-	class Enum##enumName\
+\
+	inline size_t qHash(enumName pKey, size_t pSeed)\
 	{\
-		Q_GADGET\
+		return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
+	}
+
+
+#define defineTypedEnumTypeProperty(enumName, enumType, enumProperty, ...)\
+	namespace Enum##enumName\
+	{\
+	Q_NAMESPACE\
+			enumProperty\
 \
-		Q_DISABLE_COPY(Enum##enumName)\
-\
-		private:\
-			Enum##enumName();\
-\
-		public:\
-			enum class enumName : enumType\
-			{\
-				__VA_ARGS__\
-			};\
-\
-			Q_ENUM(enumName)\
+	enum class enumName : enumType\
+	{\
+		__VA_ARGS__\
 	};\
 \
-	using enumName = Enum##enumName::enumName;\
-	namespace governikusEnum##enumName\
-	{\
-	INIT_FUNCTION([]\
-		{\
-			qRegisterMetaType<enumType>(#enumName);\
-		})\
+	Q_ENUM_NS(enumName)\
+\
+	defineEnumOperators(enumName)\
 	}\
 \
-	defineEnumOperators(enumName)
+	using namespace Enum##enumName;
 
 
+#define defineTypedEnumType(enumName, enumType, ...) defineTypedEnumTypeProperty(enumName, enumType, , __VA_ARGS__)
 #define defineEnumType(enumName, ...) defineTypedEnumType(enumName, int, __VA_ARGS__)
 
+/* *INDENT-OFF* */
+#define ENUM_HELPER_OP (
+#define ENUM_HELPER_CP )
+#define ENUM_HELPER_CO ,
+/* *INDENT-ON* */
+#define defineEnumTypeQmlExposed(enumName, ...) defineTypedEnumTypeProperty(enumName, int, Q_CLASSINFO ENUM_HELPER_OP "QML.Element" ENUM_HELPER_CO #enumName ENUM_HELPER_CP, __VA_ARGS__)
+
+
+namespace governikus
+{
 
 template<typename EnumTypeT> class Enum
 {

@@ -1,0 +1,73 @@
+From 070365219ec34c7d132253305345db1c3ef73de6 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 15 Mar 2024 14:42:43 +0100
+Subject: iOS: Allow to recognize a security violation
+
+Currently it is not possible to decide if an unexpected card
+was used or the connection failed in general. So we need to
+add a new Error to QNearFieldTarget.
+
+Pick-to: 6.7
+Change-Id: I8f88bb81b998e61516ed4ceef207ba1528061e7d
+---
+ src/nfc/qnearfieldtarget.cpp    |  3 +++
+ src/nfc/qnearfieldtarget.h      |  3 ++-
+ src/nfc/qnearfieldtarget_ios.mm | 12 ++++++++----
+ 3 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget.cpp y/qtconnectivity/src/nfc/qnearfieldtarget.cpp
+index dbcca2bd9ad4328886687843e6c1dc5be634c8b6..7df2e531c9b40b910c93733f24ebcc4b6338e0fc 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget.cpp
++++ y/qtconnectivity/src/nfc/qnearfieldtarget.cpp
+@@ -90,6 +90,9 @@ QT_IMPL_METATYPE_EXTERN_TAGGED(QNearFieldTarget::RequestId, QNearFieldTarget__Re
+     \value CommandError             Failed to send a command to the target.
+     \value TimeoutError             The request could not be completed within the time
+                                     specified in waitForRequestCompleted().
++    \value SecurityViolation        A security violation has occurred. As example this can occur
++                                    on iOS when communication with a card is started where the
++                                    identifier is not included in the entitlements.
+ */
+ 
+ /*!
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget.h y/qtconnectivity/src/nfc/qnearfieldtarget.h
+index 0d67011d4e2f3d23fc666f96d5207ebd53dae9b2..024d4454c8899e1b1c0f3c088e8c319dca5c7432 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget.h
++++ y/qtconnectivity/src/nfc/qnearfieldtarget.h
+@@ -59,7 +59,8 @@ public:
+         NdefReadError,
+         NdefWriteError,
+         CommandError,
+-        TimeoutError
++        TimeoutError,
++        SecurityViolation
+     };
+     Q_ENUM(Error)
+ 
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm y/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
+index b058ad7507065bff8c21e66c16de3eefe9d3440e..256393da290c1db19f403196eb97143b9f8b3b67 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
+@@ -270,15 +270,19 @@ bool QNearFieldTargetPrivateImpl::connect()
+         id<NFCTag> tag = static_cast<id<NFCTag>>(nfcTag.get());
+         NFCTagReaderSession* session = tag.session;
+         [session connectToTag: tag completionHandler: ^(NSError* error){
+-            const bool success = error == nil;
+-            QMetaObject::invokeMethod(this, [this, success] {
++            const int errorCode = error == nil ? -1 : error.code;
++            QMetaObject::invokeMethod(this, [this, errorCode] {
+                 requestInProgress = QNearFieldTarget::RequestId();
+-                if (success) {
++                if (errorCode == -1) {
+                     connected = true;
+                     onExecuteRequest();
+                 } else {
+                     const auto requestId = queue.dequeue().first;
+-                    reportError(QNearFieldTarget::ConnectionError, requestId);
++                    reportError(
++                        errorCode == NFCReaderError::NFCReaderErrorSecurityViolation
++                            ? QNearFieldTarget::SecurityViolation
++                            : QNearFieldTarget::ConnectionError,
++                        requestId);
+                     invalidate();
+                 }
+             });

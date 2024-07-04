@@ -6,6 +6,7 @@
 
 #include "RemoteServiceSettings.h"
 #include "SecureStorage.h"
+#include "TlsChecker.h"
 
 #include <QLoggingCategory>
 #include <QThread>
@@ -26,7 +27,8 @@ QString WebSocketChannel::makeConnectionId(const QSharedPointer<QWebSocket>& pCo
 {
 	if (pConnection)
 	{
-		return RemoteServiceSettings::generateFingerprint(pConnection->sslConfiguration().peerCertificate());
+		const auto& selfSignedCert = TlsChecker::getRootCertificate(pConnection->sslConfiguration().peerCertificateChain());
+		return RemoteServiceSettings::generateFingerprint(selfSignedCert);
 	}
 
 	return QString();

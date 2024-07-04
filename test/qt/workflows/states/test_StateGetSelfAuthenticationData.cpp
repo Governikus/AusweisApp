@@ -89,7 +89,7 @@ class test_StateGetSelfAuthenticationData
 			QFETCH(GlobalStatus::Code, globalStatusCode);
 			QFETCH(FailureCode::Reason, failureCodeReason);
 
-			auto reply = new MockNetworkReply();
+			auto* reply = new MockNetworkReply();
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, httpStatus);
 			reply->setError(networkError, QString());

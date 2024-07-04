@@ -6,7 +6,8 @@
 
 #include <QSet>
 #include <QSortFilterProxyModel>
-#include <QString>
+#include <QStringList>
+#include <QtQml/qqmlregistration.h>
 
 
 namespace governikus
@@ -16,10 +17,12 @@ class LogFilterModel
 	: public QSortFilterProxyModel
 {
 	Q_OBJECT
-	Q_PROPERTY(QSet<QString> levels READ getLevels NOTIFY fireLevelsChanged)
-	Q_PROPERTY(QSet<QString> selectedLevels READ getSelectedLevels NOTIFY fireLevelsChanged)
-	Q_PROPERTY(QSet<QString> categories READ getCategories NOTIFY fireCategoriesChanged)
-	Q_PROPERTY(QSet<QString> selectedCategories READ getSelectedCategories NOTIFY fireCategoriesChanged)
+	QML_ELEMENT
+
+	Q_PROPERTY(QStringList levels READ getLevels NOTIFY fireLevelsChanged)
+	Q_PROPERTY(QStringList selectedLevels READ getSelectedLevels NOTIFY fireLevelsChanged)
+	Q_PROPERTY(QStringList categories READ getCategories NOTIFY fireCategoriesChanged)
+	Q_PROPERTY(QStringList selectedCategories READ getSelectedCategories NOTIFY fireCategoriesChanged)
 
 	private:
 		QSet<QString> mSelectedLevels;
@@ -36,10 +39,10 @@ class LogFilterModel
 		LogFilterModel();
 		~LogFilterModel() override = default;
 
-		[[nodiscard]] const QSet<QString>& getLevels() const;
-		[[nodiscard]] const QSet<QString>& getSelectedLevels() const;
-		[[nodiscard]] const QSet<QString>& getCategories() const;
-		[[nodiscard]] const QSet<QString>& getSelectedCategories() const;
+		[[nodiscard]] QStringList getLevels() const;
+		[[nodiscard]] QStringList getSelectedLevels() const;
+		[[nodiscard]] QStringList getCategories() const;
+		[[nodiscard]] QStringList getSelectedCategories() const;
 
 		Q_INVOKABLE void configureLevel(const QString& pLevel, bool pEnabled);
 		Q_INVOKABLE void configureCategory(const QString& pCategory, bool pEnabled);

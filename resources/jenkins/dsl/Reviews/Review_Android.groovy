@@ -10,7 +10,7 @@ def j = new Review
 		name: 'Android_APK_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
-		artifacts: 'build/dist/**/AusweisApp-*.apk*,build/debug.symbols/*'
+		artifacts: 'build/dist/**/AusweisApp-*.apk*,build/src/libAusweisApp*'
 	).generate(this)
 
 
@@ -22,10 +22,10 @@ j.with
 
 		shell("cd source; cmake --preset ci-android-apk-review -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 		shell('cmake --build build')
-		shell('cmake --install build')
 		shell('cmake --build build --target apk')
 		shell('cmake --build build --target verify.signature')
 		shell('cmake --build build --target dump.apk')
+		shell('ctest --test-dir build --output-on-failure')
 	}
 
 	publishers {
@@ -68,8 +68,8 @@ j.with
 		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
 		shell('cd source; cmake --preset ci-android-aar-review')
 		shell('cmake --build build')
-		shell('cmake --install build')
 		shell('cmake --build build --target aar')
+		shell('ctest --test-dir build --output-on-failure')
 	}
 
 	publishers {

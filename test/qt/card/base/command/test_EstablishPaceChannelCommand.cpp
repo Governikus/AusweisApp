@@ -49,7 +49,7 @@ class test_EstablishPaceChannelCommand
 		void test_InternalExecute()
 		{
 			MockReader reader(QStringLiteral("reader"));
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, true, true);
+			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, true, true);
 			reader.setInfoCardInfo(info);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 
@@ -104,7 +104,7 @@ class test_EstablishPaceChannelCommand
 		void test_InternalExecutePinNotBlocked()
 		{
 			MockReader reader(QStringLiteral("reader"));
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, true, true);
+			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, true, true);
 			reader.setInfoCardInfo(info);
 
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
@@ -118,7 +118,7 @@ class test_EstablishPaceChannelCommand
 		void test_InternalExecuteProtocolError()
 		{
 			MockReader reader(QStringLiteral("reader"));
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
+			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, false, true);
 			reader.setInfoCardInfo(info);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 
@@ -133,7 +133,7 @@ class test_EstablishPaceChannelCommand
 		void test_InternalExecuteOK()
 		{
 			MockReader reader(QStringLiteral("reader"));
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, true);
+			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, false, true);
 			reader.setInfoCardInfo(info);
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));
 

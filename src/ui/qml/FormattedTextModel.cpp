@@ -41,14 +41,14 @@ QVariant FormattedTextModel::data(const QModelIndex& pIndex, int pRole) const
 		return QVariant();
 	}
 
-	const auto& line = mLines.at(row);
+	const auto& [content, line] = mLines.at(row);
 	switch (pRole)
 	{
 		case ContentRole:
-			return line.first;
+			return content;
 
 		case LineTypeRole:
-			return line.second;
+			return QVariant::fromValue(line);
 
 		default:
 			return QVariant();
@@ -93,7 +93,7 @@ bool FormattedTextModel::loadSeveral(const QStringList& pFilepaths)
 
 bool FormattedTextModel::isFormattingLine(FormattedTextModel::LineType pType)
 {
-	static const QList<LineType> formattingLineTypes({HEADER, SECTION, SUBSECTION});
+	static const QList<LineType> formattingLineTypes({LineType::HEADER, LineType::SECTION, LineType::SUBSECTION});
 	return formattingLineTypes.contains(pType);
 }
 
@@ -103,28 +103,28 @@ FormattedTextModel::LineType FormattedTextModel::lineType(const QString& pLine)
 	const auto trimmedLine = pLine.trimmed();
 	if (trimmedLine.isEmpty())
 	{
-		return EMPTY;
+		return LineType::EMPTY;
 	}
 	if (pLine.count(QLatin1Char('*')) == trimmedLine.size())
 	{
-		return HEADER;
+		return LineType::HEADER;
 	}
 	if (pLine.count(QLatin1Char('=')) == trimmedLine.size())
 	{
-		return SECTION;
+		return LineType::SECTION;
 	}
 	if (pLine.count(QLatin1Char('-')) == trimmedLine.size())
 	{
-		return SUBSECTION;
+		return LineType::SUBSECTION;
 	}
 
 	const QRegularExpression reListElement(QStringLiteral("^\\s*\\*{1}\\s?\\w+"));
 	if (reListElement.match(trimmedLine).hasMatch())
 	{
-		return LISTITEM;
+		return LineType::LISTITEM;
 	}
 
-	return REGULARTEXT;
+	return LineType::REGULARTEXT;
 
 }
 
@@ -132,7 +132,7 @@ FormattedTextModel::LineType FormattedTextModel::lineType(const QString& pLine)
 QString FormattedTextModel::stripFormattingCharacters(const QString& pLine, LineType pType)
 {
 	QString workingCopy = pLine;
-	if (pType == LISTITEM)
+	if (pType == LineType::LISTITEM)
 	{
 		workingCopy.remove(QRegularExpression(QStringLiteral("^\\s*\\*{1}\\s?")));
 	}
@@ -194,7 +194,7 @@ void FormattedTextModel::processLine(const QString& pLine)
 	const auto strippedLine = stripFormattingCharacters(pLine, type);
 	const auto htmlLine = replaceControlCharactersWithHtml(strippedLine);
 
-	if ((lastLineIsEmpty() && !isFormattingLine(type)) || type == EMPTY)
+	if ((lastLineIsEmpty() && !isFormattingLine(type)) || type == LineType::EMPTY)
 	{
 		mLines << qMakePair(htmlLine, type);
 		return;
@@ -214,5 +214,5 @@ void FormattedTextModel::processLine(const QString& pLine)
 
 bool FormattedTextModel::lastLineIsEmpty() const
 {
-	return mLines.isEmpty() || mLines.last().second == EMPTY;
+	return mLines.isEmpty() || mLines.last().second == LineType::EMPTY;
 }

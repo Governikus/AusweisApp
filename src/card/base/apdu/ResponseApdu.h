@@ -6,6 +6,7 @@
 
 #include "CardReturnCode.h"
 #include "EnumHelper.h"
+#include "LogPrivacy.h"
 
 
 namespace governikus
@@ -36,6 +37,7 @@ defineTypedEnumType(StatusCode, quint16,
 		NO_CURRENT_DIRECTORY_SELECTED = 0x6986,
 		DATAFIELD_EXPECTED = 0x6987,
 		INVALID_SM_OBJECTS = 0x6988,
+		SW_APPLET_SELECT_FAILED = 0x6999,
 		COMMAND_NOT_ALLOWED = 0x69F0,
 		INVALID_DATAFIELD = 0x6A80,
 		ALGORITHM_ID = 0x6A81,
@@ -102,9 +104,7 @@ class ResponseApdu final
 
 inline QDebug operator<<(QDebug pDbg, const ResponseApdu& pResponseApdu)
 {
-	QDebugStateSaver saver(pDbg);
-	pDbg << QByteArray(pResponseApdu).toHex();
-	return pDbg;
+	return privacy::logApdu(pDbg, pResponseApdu);
 }
 
 

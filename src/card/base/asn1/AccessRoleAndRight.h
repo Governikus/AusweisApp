@@ -30,10 +30,10 @@ defineTypedEnumType(AccessRight, uint,
 		WRITE_DG19 = 35,
 		WRITE_DG20 = 34,
 		WRITE_DG21 = 33,
-		RFU_32 = 32, /* Reserved for Future Use */
-		RFU_31 = 31, /* Reserved for Future Use */
-		RFU_30 = 30, /* Reserved for Future Use */
-		RFU_29 = 29, /* Reserved for Future Use */
+		WRITE_DG22 = 32,
+		RFU = 31,
+		PSA = 30,
+		READ_DG22 = 29,
 		READ_DG21 = 28,
 		READ_DG20 = 27,
 		READ_DG19 = 26,
@@ -96,11 +96,6 @@ defineTypedEnumType(AccessRightNames, std::underlying_type_t<AccessRight>,
 		PinManagement = TYPE(AccessRight::PIN_MANAGEMENT)
 		)
 #undef TYPE
-
-[[nodiscard]] inline uint qHash(governikus::AccessRight pAccessRight)
-{
-	return static_cast<uint>(pAccessRight);
-}
 
 
 defineEnumType(AccessRole,

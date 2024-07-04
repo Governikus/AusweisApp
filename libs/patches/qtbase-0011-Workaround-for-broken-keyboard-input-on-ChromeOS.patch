@@ -1,0 +1,74 @@
+From 055ea3f9b3942c7151b72b0452a66ae8aade7cbf Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Thu, 13 Jun 2024 15:43:11 +0200
+Subject: Workaround for broken keyboard input on ChromeOS
+
+* The keyboard input was slightly broken with Qt 6.6.2 already. After changing
+  the SaC device name in the settings, activating elements via space did not
+  work anymore.
+* In Qt 6.6 the Android layer used one QtEditText instance for the entire app.
+  Until Qt 6.7 this was reworked to support multiple windows, each QtWindow
+  now features its "own" QtEditText.
+* On ChromeOS, keyboard input seems to get "stuck" in this case. All input
+  that would make sense for a text input field (letters, digits, SPACES) end
+  up in the (virtual) text input field and don't get dispatched to the actual
+  Android App.
+* This workaround "forbids" the text input field to consume these inputs and
+  directly call the QtInputDelegate.
+* Changing the SaC device name still works on ChromeOS.
+* By checking if the code is run on ChromeOS, the impact on actual Android
+  smartphones is minimized.
+
+issue: QTBUG-126187, AUTENTAPP-61485
+---
+ .../src/org/qtproject/qt/android/QtEditText.java | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEditText.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEditText.java
+index 7e1198c52aae24a9ac870b7bbce9b170befb0afb..09f86d769c4339fad5fedbf48cb580f0d3a57001 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEditText.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEditText.java
+@@ -5,6 +5,7 @@
+ package org.qtproject.qt.android;
+ 
+ import android.content.Context;
++import android.content.pm.PackageManager;
+ import android.graphics.Canvas;
+ import android.text.InputType;
+ import android.view.View;
+@@ -20,6 +21,7 @@ public class QtEditText extends View
+     int m_imeOptions = 0;
+     int m_inputType = InputType.TYPE_CLASS_TEXT;
+     boolean m_optionsChanged = false;
++    boolean m_isChromeOS = false;
+     QtInputConnection m_inputConnection = null;
+ 
+     // input method hints - must be kept in sync with QTDIR/src/corelib/global/qnamespace.h
+@@ -55,6 +57,9 @@ public class QtEditText extends View
+         setFocusable(true);
+         setFocusableInTouchMode(true);
+         m_qtInputConnectionListener = listener;
++
++        PackageManager packageManager = context.getPackageManager();
++        m_isChromeOS = packageManager.hasSystemFeature("org.chromium.arc") || packageManager.hasSystemFeature("org.chromium.arc.device_management");
+     }
+ 
+     private void setImeOptions(int imeOptions)
+@@ -114,6 +119,17 @@ public class QtEditText extends View
+         super.onDraw(canvas);
+     }
+ 
++    @Override
++    public boolean dispatchKeyEventPreIme(KeyEvent event) {
++        if (m_isChromeOS && m_qtInputConnectionListener instanceof QtInputDelegate) {
++            final QtInputDelegate delegate = (QtInputDelegate) m_qtInputConnectionListener;
++            if (event.getAction() == KeyEvent.ACTION_DOWN) {
++                return delegate.onKeyDown(event.getKeyCode(), event);
++            }
++            return delegate.onKeyUp(event.getKeyCode(), event);
++        }
++        return super.dispatchKeyEventPreIme(event);
++    }
+ 
+     public void setEditTextOptions(int enterKeyType, int inputHints)
+     {

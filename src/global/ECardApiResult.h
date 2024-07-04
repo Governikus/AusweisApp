@@ -21,7 +21,7 @@
 
 
 class test_ECardApiResult;
-class test_UrlUtil;
+class test_StateRedirectBrowser;
 
 
 namespace governikus
@@ -35,7 +35,7 @@ class ECardApiResult
 	friend class IfdMessageResponse;
 	friend class StartPaosResponse;
 	friend class ::test_ECardApiResult;
-	friend class ::test_UrlUtil;
+	friend class ::test_StateRedirectBrowser;
 
 	public:
 		enum class Major

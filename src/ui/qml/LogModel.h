@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Env.h"
+#include "SingletonCreator.h"
 
 #include <QAbstractListModel>
 #include <QDateTime>
@@ -15,6 +16,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QUrl>
+#include <QtQml/qqmlregistration.h>
 
 class test_LogModel;
 
@@ -23,8 +25,12 @@ namespace governikus
 
 class LogModel
 	: public QAbstractListModel
+	, public SingletonCreator<LogModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 	friend class ::test_LogModel;
 

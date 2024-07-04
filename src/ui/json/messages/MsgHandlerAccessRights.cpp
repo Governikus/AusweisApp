@@ -78,7 +78,7 @@ void MsgHandlerAccessRights::handleSetChatData(const QJsonArray& pChat, const QS
 		setError(QLatin1String("No optional access rights available"));
 	}
 
-	if (!mJsonObject.contains(QLatin1String("error")))
+	if (!contains(QLatin1String("error")))
 	{
 		*pContext->getAccessRightManager() = effectiveChat;
 	}
@@ -127,20 +127,20 @@ void MsgHandlerAccessRights::fillAccessRights(const QSharedPointer<const AuthCon
 	chat[QLatin1String("required")] = getAccessRights(accessRightManager->getRequiredAccessRights());
 	chat[QLatin1String("optional")] = getAccessRights(accessRightManager->getOptionalAccessRights());
 	chat[QLatin1String("effective")] = getAccessRights(accessRightManager->getEffectiveAccessRights());
-	mJsonObject[QLatin1String("chat")] = chat;
+	setValue(QLatin1String("chat"), chat);
 
 #if __has_include("SmartManager.h")
-	mJsonObject[QLatin1String("acceptedEidTypes")] = getAcceptedEidTypes(pContext);
+	setValue(QLatin1String("acceptedEidTypes"), getAcceptedEidTypes(pContext));
 #endif
 
 	if (const auto& transactionInfo = pContext->getDidAuthenticateEac1()->getTransactionInfo(); !transactionInfo.isEmpty())
 	{
-		mJsonObject[QLatin1String("transactionInfo")] = transactionInfo;
+		setValue(QLatin1String("transactionInfo"), transactionInfo);
 	}
 
 	if (const QJsonObject& aux = getAuxiliaryData(pContext); !aux.isEmpty())
 	{
-		mJsonObject[QLatin1String("aux")] = aux;
+		setValue(QLatin1String("aux"), aux);
 	}
 }
 
@@ -178,5 +178,5 @@ QJsonObject MsgHandlerAccessRights::getAuxiliaryData(const QSharedPointer<const 
 
 void MsgHandlerAccessRights::setError(const QLatin1String pError)
 {
-	mJsonObject[QLatin1String("error")] = pError;
+	setValue(QLatin1String("error"), pError);
 }

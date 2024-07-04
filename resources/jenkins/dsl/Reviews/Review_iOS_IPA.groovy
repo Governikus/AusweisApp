@@ -21,5 +21,6 @@ j.with
 
 		shell('cd build; xcodebuild -configuration MinSizeRel')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
+		shell('ctest --test-dir build --output-on-failure -C MinSizeRel')
 	}
 }

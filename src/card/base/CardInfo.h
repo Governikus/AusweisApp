@@ -8,9 +8,11 @@
 
 #pragma once
 
+#include "FileRef.h"
 #include "SmartCardDefinitions.h"
 #include "asn1/SecurityInfos.h"
 
+#include <QCoreApplication>
 #include <QSharedPointer>
 
 namespace governikus
@@ -36,6 +38,7 @@ class CardInfo
 
 	private:
 		CardType mCardType;
+		FileRef mApplication;
 		QSharedPointer<const EFCardAccess> mEfCardAccess;
 		int mRetryCounter;
 		bool mPinDeactivated;
@@ -45,7 +48,7 @@ class CardInfo
 		static const int UNDEFINED_RETRY_COUNTER;
 
 	public:
-		CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
+		CardInfo(CardType pCardType, const FileRef& pApplication = FileRef(), const QSharedPointer<const EFCardAccess>& = QSharedPointer<const EFCardAccess>(),
 				int pRetryCounter = UNDEFINED_RETRY_COUNTER, bool pPinDeactivated = false, bool pPukInoperative = false, bool pPinInitial = false);
 
 		void setCardType(CardType pCardType);
@@ -60,6 +63,9 @@ class CardInfo
 
 		[[nodiscard]] TagType getTagType() const;
 		void setTagType(TagType pTagType);
+
+		[[nodiscard]] const FileRef& getApplication() const;
+		void setApplication(const FileRef& pApplication);
 
 		[[nodiscard]] bool isRetryCounterDetermined() const;
 

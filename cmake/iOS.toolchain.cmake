@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.14)
-
 set(CMAKE_SYSTEM_NAME iOS)
 
 if(NOT CMAKE_OSX_ARCHITECTURES)

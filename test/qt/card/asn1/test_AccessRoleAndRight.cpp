@@ -53,8 +53,9 @@ class test_AccessRoleAndRight
 		{
 			fillTestData();
 			QTest::newRow("") << AccessRight::WRITE_DG21;
-			QTest::newRow("") << AccessRight::RFU_32;
+			QTest::newRow("") << AccessRight::WRITE_DG22;
 			QTest::newRow("") << AccessRight::PRIVILEGED_TERMINAL;
+			QTest::newRow("") << AccessRight::PSA;
 		}
 
 
@@ -167,17 +168,15 @@ class test_AccessRoleAndRight
 			QTest::addColumn<AccessRight>("input");
 			QTest::addColumn<QLatin1String>("output");
 
-			const auto& reserved = QLatin1String("Unknown (reserved)");
-			QTest::newRow("RFU_29") << AccessRight::RFU_29 << reserved;
-			QTest::newRow("RFU_30") << AccessRight::RFU_30 << reserved;
-			QTest::newRow("RFU_31") << AccessRight::RFU_31 << reserved;
-			QTest::newRow("RFU_32") << AccessRight::RFU_32 << reserved;
+			QTest::newRow("RFU") << AccessRight::RFU << "Unknown (reserved)"_L1;
 
 			QTest::newRow("writeDG17") << AccessRight::WRITE_DG17 << "Address"_L1;
 			QTest::newRow("writeDG18") << AccessRight::WRITE_DG18 << "Community-ID"_L1;
 			QTest::newRow("writeDG19") << AccessRight::WRITE_DG19 << "Residence permit I"_L1;
 			QTest::newRow("writeDG20") << AccessRight::WRITE_DG20 << "Residence permit II"_L1;
 			QTest::newRow("writeDG21") << AccessRight::WRITE_DG21 << "Optional data"_L1;
+			QTest::newRow("writeDG22") << AccessRight::WRITE_DG22 << "Optional data"_L1;
+			QTest::newRow("readDG22") << AccessRight::READ_DG22 << "Optional data"_L1;
 			QTest::newRow("readDG21") << AccessRight::READ_DG21 << "Optional data"_L1;
 			QTest::newRow("readDG20") << AccessRight::READ_DG20 << "Residence permit II"_L1;
 			QTest::newRow("readDG19") << AccessRight::READ_DG19 << "Residence permit I"_L1;
@@ -204,6 +203,7 @@ class test_AccessRoleAndRight
 			QTest::newRow("pinManagement") << AccessRight::PIN_MANAGEMENT << "PIN Management"_L1;
 			QTest::newRow("canAllowed") << AccessRight::CAN_ALLOWED << "CAN allowed"_L1;
 			QTest::newRow("privilegedTerminal") << AccessRight::PRIVILEGED_TERMINAL << "Privileged terminal"_L1;
+			QTest::newRow("pseudonymousSignatureAuthentication") << AccessRight::PSA << "Pseudonym"_L1;
 			QTest::newRow("restrictedIdentification") << AccessRight::RESTRICTED_IDENTIFICATION << "Pseudonym"_L1;
 			QTest::newRow("comunityIdVerification") << AccessRight::COMMUNITY_ID_VERIFICATION << "Address verification"_L1;
 			QTest::newRow("ageVerification") << AccessRight::AGE_VERIFICATION << "Age verification"_L1;

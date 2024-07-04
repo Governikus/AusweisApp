@@ -169,6 +169,17 @@ class test_IfdServiceContext
 		}
 
 
+		void test_UserError()
+		{
+			IfdServiceContext context(mIfdServer);
+			QSignalSpy spy(&context, &IfdServiceContext::fireUserError);
+
+			context.userError(StatusCode::INPUT_TIMEOUT);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(spy.at(0).at(0).value<StatusCode>(), StatusCode::INPUT_TIMEOUT);
+		}
+
+
 		void test_PinLength_data()
 		{
 			QTest::addColumn<EstablishPaceChannel>("inputData");

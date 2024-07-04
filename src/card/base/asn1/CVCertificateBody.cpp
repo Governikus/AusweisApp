@@ -152,7 +152,7 @@ QByteArray CVCertificateBody::getExtension(const Oid& pOid) const
 		for (int i = 0; i < sk_ASN1_TYPE_num(mExtensions); i++)
 		{
 			const ASN1Struct extension(Asn1TypeUtil::encode(sk_ASN1_TYPE_value(mExtensions, i)));
-			if (extension.getData(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER) == pOid.getData())
+			if (Oid(extension.getData(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER)) == pOid)
 			{
 				// Currently we only return the first simple ASN.1 value found in the structure. The
 				// only known case where more information is given is ID_SECTOR_PS (BSI TR-03110-3

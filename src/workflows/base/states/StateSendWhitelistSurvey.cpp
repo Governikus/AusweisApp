@@ -6,7 +6,7 @@
 
 #include "AppSettings.h"
 #include "ReaderManager.h"
-#include "SurveyModel.h"
+#include "Survey.h"
 #include "VolatileSettings.h"
 
 Q_DECLARE_LOGGING_CATEGORY(statemachine)
@@ -31,16 +31,16 @@ void StateSendWhitelistSurvey::run()
 		return;
 	}
 
-	const auto& surveyModel = Env::getSingleton<SurveyModel>();
-	if (!surveyModel->isDeviceSurveyPending())
+	auto* survey = Env::getSingleton<Survey>();
+	if (!survey->isDeviceSurveyPending())
 	{
 		qCDebug(statemachine) << "No survey pending.";
 		Q_EMIT fireContinue();
 		return;
 	}
 
-	surveyModel->setDeviceSurveyPending(false);
-	surveyModel->transmitSurvey();
+	survey->setDeviceSurveyPending(false);
+	survey->transmitSurvey();
 #endif
 
 	Q_EMIT fireContinue();

@@ -9,14 +9,16 @@
 #pragma once
 
 #include "AuthModel.h"
+#include "SingletonCreator.h"
 #include "WorkflowRequest.h"
 
 #if __has_include("context/PersonalizationContext.h")
 	#include "context/PersonalizationContext.h"
 #endif
 
+#include <QtQml/qqmlregistration.h>
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -26,8 +28,11 @@ class PersonalizationModel
 	: public AuthModel
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(QString blockingCode READ getBlockingCode NOTIFY fireBlockingCodeChanged)
 	Q_PROPERTY(int remainingAttempts READ getRemainingAttempts NOTIFY fireRemainingAttemptsChanged)
@@ -48,19 +53,25 @@ class PersonalizationModel
 #endif
 
 	public:
-		Q_INVOKABLE void startWorkflow() const;
+		static PersonalizationModel* create(const QQmlEngine* pQmlEngine, const QJSEngine* pJSEngine)
+		{
+			return SingletonCreator<PersonalizationModel>::create(pQmlEngine, pJSEngine);
+		}
+
+
+		Q_INVOKABLE void startWorkflow();
 		[[nodiscard]] QString getBlockingCode() const;
 		[[nodiscard]] int getRemainingAttempts() const;
 		[[nodiscard]] QString getRestrictionDate() const;
 		[[nodiscard]] QString getBlockingPeriodMessage() const;
 		[[nodiscard]] bool isApplet() const;
-		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 
 	public Q_SLOTS:
 		void onTranslationChanged();
 
 	Q_SIGNALS:
-		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest) const;
+		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
 		void fireBlockingCodeChanged();
 		void fireRemainingAttemptsChanged();
 		void fireRestrictionDateChanged();

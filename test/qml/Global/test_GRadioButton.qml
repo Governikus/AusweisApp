@@ -28,12 +28,6 @@ TestCase {
 		testObject.text = "test";
 		compare(testObject.text, "test", "text: test");
 	}
-	function test_textStyle() {
-		let testObject = createTestObject();
-		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal");
-		testObject.textStyle = Style.text.normal_warning;
-		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
-	}
 	function test_tintIcon() {
 		let testObject = createTestObject();
 		verify(!testObject.tintIcon, "Initial tintIcon: false");

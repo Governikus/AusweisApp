@@ -16,7 +16,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_smart)
 
 
 SmartReader::SmartReader(const QString& pName)
-	: ConnectableReader(ReaderManagerPlugInType::SMART, pName)
+	: ConnectableReader(ReaderManagerPluginType::SMART, pName)
 	, mCard()
 {
 }
@@ -61,6 +61,7 @@ void SmartReader::disconnectReader(const QString& pError)
 
 	if (cardInserted)
 	{
+		qCInfo(card_smart) << "Card removed";
 		Q_EMIT fireCardRemoved(getReaderInfo());
 		return;
 	}

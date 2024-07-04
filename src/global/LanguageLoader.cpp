@@ -31,7 +31,7 @@ LanguageLoader::LanguageLoader()
 		})
 	, mUsedLocale(mFallbackLanguage)
 {
-	QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, [] {
+	QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, QCoreApplication::instance(), [] {
 			// Avoid "this" as lambda capture to get more pointer safety.
 			if (LanguageLoader::getInstance().isLoaded())
 			{

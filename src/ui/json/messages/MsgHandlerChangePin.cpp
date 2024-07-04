@@ -5,8 +5,8 @@
 #include "MsgHandlerChangePin.h"
 
 #include "Env.h"
-#include "UILoader.h"
-#include "UIPlugInJson.h"
+#include "UiLoader.h"
+#include "UiPluginJson.h"
 #include "controller/ChangePinController.h"
 
 using namespace governikus;
@@ -24,7 +24,7 @@ MsgHandlerChangePin::MsgHandlerChangePin(const QJsonObject& pObj, MsgContext& pC
 	setVoid();
 	handleWorkflowProperties(pObj, pContext);
 
-	auto* ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+	auto* ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 	Q_ASSERT(ui);
 	Q_EMIT ui->fireWorkflowRequested(ChangePinController::createWorkflowRequest());
 }
@@ -35,11 +35,11 @@ MsgHandlerChangePin::MsgHandlerChangePin(const QSharedPointer<const ChangePinCon
 {
 	Q_ASSERT(pContext);
 
-	mJsonObject[QLatin1String("success")] = pContext->getLastPaceResult() == CardReturnCode::OK && !pContext->isWorkflowCancelled();
+	setValue(QLatin1String("success"), pContext->getLastPaceResult() == CardReturnCode::OK && !pContext->isWorkflowCancelled());
 
 	const auto& failureCode = pContext->getFailureCode();
 	if (failureCode.has_value())
 	{
-		mJsonObject[QLatin1String("reason")] = Enum<FailureCode::Reason>::getName(failureCode.value().getReason());
+		setValue(QLatin1String("reason"), Enum<FailureCode::Reason>::getName(failureCode.value().getReason()));
 	}
 }

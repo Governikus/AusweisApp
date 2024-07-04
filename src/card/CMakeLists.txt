@@ -3,7 +3,7 @@
 # (APDU).
 #
 # It provides an interface that can be implemented by plugins like
-# PCSC or Android-NFC called ReaderManagerPlugIn.
+# PCSC or Android-NFC called ReaderManagerPlugin.
 # Also it provides a ReaderManager that can be used as a generic
 # control interface. It handles access and commands to specific
 # reader, cards and commands to the identity card.

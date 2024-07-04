@@ -56,11 +56,11 @@ class PaceInfo
 
 		explicit PaceInfo(const QSharedPointer<const paceinfo_st>& pDelegate);
 		[[nodiscard]] ASN1_OBJECT* getProtocolObjectIdentifier() const override;
-		[[nodiscard]] static int getMappedNid(int pCurveIndex);
 		static bool acceptsProtocol(const ASN1_OBJECT* pObjectIdentifier);
 
 	public:
 		static QSharedPointer<const PaceInfo> decode(const QByteArray& pBytes);
+		[[nodiscard]] static int getMappedNid(int pCurveIndex);
 
 		[[nodiscard]] int getVersion() const;
 		[[nodiscard]] bool hasParameterId() const;

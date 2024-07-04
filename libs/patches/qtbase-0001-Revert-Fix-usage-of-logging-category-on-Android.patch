@@ -1,4 +1,4 @@
-From 40410b9e2ba5d02b457bb37fc90663585573ca53 Mon Sep 17 00:00:00 2001
+From 3d84a5d1671aa3b7143c445ef7c8f6e62569c7a1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Andr=C3=A9=20Klitzing?= <aklitzing@gmail.com>
 Date: Mon, 25 Jul 2022 17:08:54 +0200
 Subject: Revert "Fix usage of logging category on Android"
@@ -11,10 +11,10 @@ Change-Id: If19a9d615e01d61c79955cda4789ba1646520ee1
  1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git x/qtbase/src/corelib/global/qlogging.cpp y/qtbase/src/corelib/global/qlogging.cpp
-index 7e708c9c41285b8d899e3f8c0380a7218771c538..96c3bc5dc617af2bae08773da60d975e1b34050a 100644
+index a511af32ee36dcbaadc902f19c12f07e4f928c39..f94d1cd72857e02b9aa02f69ee5973f386a256e8 100644
 --- x/qtbase/src/corelib/global/qlogging.cpp
 +++ y/qtbase/src/corelib/global/qlogging.cpp
-@@ -1593,10 +1593,7 @@ QString qFormatLogMessage(QtMsgType type, const QMessageLogContext &context, con
+@@ -1562,10 +1562,7 @@ static QString formatLogMessage(QtMsgType type, const QMessageLogContext &contex
          } else if (token == messageTokenC) {
              message.append(str);
          } else if (token == categoryTokenC) {
@@ -25,7 +25,7 @@ index 7e708c9c41285b8d899e3f8c0380a7218771c538..96c3bc5dc617af2bae08773da60d975e
          } else if (token == typeTokenC) {
              switch (type) {
              case QtDebugMsg:   message.append("debug"_L1); break;
-@@ -1844,11 +1841,7 @@ static bool android_default_message_handler(QtMsgType type,
+@@ -1815,11 +1812,7 @@ static bool android_default_message_handler(QtMsgType type,
          break;
      };
  

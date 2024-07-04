@@ -51,7 +51,7 @@ void LogModel::addLogEntry(const QString& pEntry)
 	const QString re = QStringLiteral(R"(^[a-z\._ ]{%1} \d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \d{3,} )").arg(LogHandler::MAX_CATEGORY_LENGTH);
 	if (!QRegularExpression(re).match(pEntry).hasMatch() && !mLogEntries.isEmpty())
 	{
-		mLogEntries.last().append(QLatin1String("\n")).append(pEntry);
+		mLogEntries.last().append(QLatin1String("\n")).append(pEntry); // clazy:exclude=detaching-member
 		return;
 	}
 
@@ -182,7 +182,7 @@ void LogModel::setLogFile(int pIndex)
 	}
 
 	mSelectedLogFile = pIndex;
-	const auto logHandler = Env::getSingleton<LogHandler>();
+	auto* logHandler = Env::getSingleton<LogHandler>();
 
 	if (pIndex == 0)
 	{
@@ -193,7 +193,7 @@ void LogModel::setLogFile(int pIndex)
 	else
 	{
 		disconnect(logHandler->getEventHandler(), &LogEventHandler::fireLog, this, &LogModel::onNewLogMsg);
-		QFile inputFile(mLogFiles[pIndex]);
+		QFile inputFile(mLogFiles.value(pIndex));
 		if (inputFile.open(QIODevice::ReadOnly))
 		{
 			QTextStream in(&inputFile);
@@ -216,7 +216,7 @@ void LogModel::saveCurrentLogFile(const QUrl& pFilename) const
 		success = Env::getSingleton<LogHandler>()->copyOther(logfilePath, pFilename.toLocalFile());
 	}
 
-	const auto applicationModel = Env::getSingleton<ApplicationModel>();
+	auto* applicationModel = Env::getSingleton<ApplicationModel>();
 	applicationModel->showFeedback((success ? tr("Successfully saved logfile to \"%1\"") : tr("Error while saving logfile to \"%1\"")).arg(pFilename.toLocalFile()));
 }
 
@@ -226,7 +226,7 @@ void LogModel::saveDummyLogFile(const QDateTime& pTimestamp)
 {
 	auto& generator = Randomizer::getInstance().getGenerator();
 	std::uniform_int_distribution<uint32_t> dist;
-	const auto logHandler = Env::getSingleton<LogHandler>();
+	const auto* logHandler = Env::getSingleton<LogHandler>();
 	const auto& copyFilename = QDir::temp().filePath(QStringLiteral("%1.%2.log").arg(QCoreApplication::applicationName()).arg(dist(generator)));
 	if (logHandler->copy(copyFilename) && pTimestamp.isValid())
 	{

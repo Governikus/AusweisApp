@@ -48,7 +48,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 
 	sChangePin->addTransition(sChangePin, &AbstractState::fireContinue, sDestroyPace);
 	sChangePin->addTransition(sChangePin, &AbstractState::fireAbort, sDestroyPace);
-	sChangePin->addTransition(sChangePin, &StateChangePin::fireRetry, sStatePace);
+	sChangePin->addTransition(sChangePin, &StateChangePin::fireNoCardConnection, sStatePace);
 
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireContinue, sClearPacePasswords);
 	sDestroyPace->addTransition(sDestroyPace, &AbstractState::fireAbort, sClearPacePasswords);

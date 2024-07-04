@@ -50,12 +50,12 @@ TestCase {
 				verify(!testObject.pressed, "pressed: false");
 				mousePress(testObject);
 				tryVerify(function () {
-						return testObject.pressed;
-					});
+					return testObject.pressed;
+				});
 				mouseRelease(testObject);
 				tryVerify(function () {
-						return !testObject.pressed;
-					});
+					return !testObject.pressed;
+				});
 			}
 
 			when: windowShown

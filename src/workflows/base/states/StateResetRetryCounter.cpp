@@ -43,6 +43,7 @@ void StateResetRetryCounter::onResetRetryCounterDone(QSharedPointer<BaseCardComm
 	switch (returnCode)
 	{
 		case CardReturnCode::OK:
+			getContext()->setExpectedRetryCounter(-1);
 			Q_EMIT fireContinue();
 			return;
 

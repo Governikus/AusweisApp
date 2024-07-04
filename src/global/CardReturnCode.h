@@ -14,11 +14,12 @@
 namespace governikus
 {
 
-defineEnumType(CardReturnCode,
+defineEnumTypeQmlExposed(CardReturnCode,
 		UNDEFINED,
 		OK,
 		OK_PUK,
-		RETRY_ALLOWED,
+		OK_CAN,
+		RESPONSE_EMPTY,
 		CARD_NOT_FOUND,
 		UNKNOWN,
 		INPUT_TIME_OUT,

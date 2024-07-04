@@ -135,7 +135,7 @@ void IfdClientImpl::onDispatcherError(const IfdDescriptor& pIfdDescriptor, IfdEr
 }
 
 
-void IfdClientImpl::establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk)
+void IfdClientImpl::establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk)
 {
 	if (mIfdConnector.isNull())
 	{

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <QSortFilterProxyModel>
+#include <QtQml/qqmlregistration.h>
 
 class test_RemoteDeviceFilterModel;
 
@@ -15,6 +16,8 @@ class RemoteDeviceFilterModel
 	: public QSortFilterProxyModel
 {
 	Q_OBJECT
+	QML_UNCREATABLE("Used by RemoteServiceModel only")
+	QML_ELEMENT
 
 	friend class ::test_RemoteDeviceFilterModel;
 

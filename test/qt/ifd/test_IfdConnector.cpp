@@ -76,7 +76,7 @@ class test_IfdConnector
 		void sendRequest(const QSharedPointer<IfdConnectorImpl>& pConnector,
 			const QHostAddress& pHostAddress,
 			const Discovery& pDiscovery,
-			const QString& pPassword)
+			const QByteArray& pPassword)
 		{
 			const IfdDescriptor descr(pDiscovery, pHostAddress);
 			QMetaObject::invokeMethod(pConnector.data(), [ = ] {
@@ -186,7 +186,7 @@ class test_IfdConnector
 			// No device name.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
-			sendRequest(connector, hostAddress, discoveryMsg, QString());
+			sendRequest(connector, hostAddress, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -210,7 +210,7 @@ class test_IfdConnector
 
 			// Device information is null.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			sendRequest(connector, hostAddress, Discovery(QJsonObject()), QStringLiteral("secret"));
+			sendRequest(connector, hostAddress, Discovery(QJsonObject()), "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -237,7 +237,7 @@ class test_IfdConnector
 			// Password is empty.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), server->getServerPort());
-			sendRequest(connector, hostAddress, discoveryMsg, QString());
+			sendRequest(connector, hostAddress, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -262,7 +262,7 @@ class test_IfdConnector
 			// Currently, only API level 1 is supported.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
-			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("secret"));
+			sendRequest(connector, hostAddress, discoveryMsg, "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -287,7 +287,7 @@ class test_IfdConnector
 			// Correct request but no server is running.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
-			sendRequest(connector, hostAddress, discoveryMsg, "dummy"_L1);
+			sendRequest(connector, hostAddress, discoveryMsg, "dummy");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
 			clientThread.exit();
@@ -365,7 +365,7 @@ class test_IfdConnector
 				// Send valid encrypted connect request.
 				const QHostAddress hostAddress(QHostAddress::LocalHost);
 				const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
-				sendRequest(connector, hostAddress, discoveryMsg, QString::fromLatin1(psk));
+				sendRequest(connector, hostAddress, discoveryMsg, psk);
 
 				QTRY_COMPARE(spyConnectorSuccess.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(spyConnectorError.count(), 0);
@@ -395,7 +395,7 @@ class test_IfdConnector
 		void encryptedConnectionWithWrongPasswordFails()
 		{
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
-			QObject::connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, [](QSslPreSharedKeyAuthenticator* pAuthenticator){
+			QObject::connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, this, [](QSslPreSharedKeyAuthenticator* pAuthenticator){
 					pAuthenticator->setPreSharedKey(QByteArray("secret"));
 				});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
@@ -424,7 +424,7 @@ class test_IfdConnector
 			// Send encrypted connect request with wrong psk.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
 			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
-			sendRequest(connector, hostAddress, discoveryMsg, QStringLiteral("sekret"));
+			sendRequest(connector, hostAddress, discoveryMsg, "sekret");
 
 			QTRY_COMPARE(spyConnectorError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyConnectorSuccess.count(), 0);

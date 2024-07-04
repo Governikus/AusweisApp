@@ -3,8 +3,7 @@
  */
 import QtQuick
 import QtTest
-import Governikus.Type.UiModule
-import Governikus.Type.SettingsModel
+import Governikus.Type
 
 TestCase {
 	id: testCase
@@ -12,7 +11,7 @@ TestCase {
 	function createTestObject() {
 		return createTemporaryQmlObject("
 			import QtQuick
-			import Governikus.Type.UiModule
+			import Governikus.Type
 			Item {
 				readonly property int v1: UiModule.CURRENT
 				readonly property int v2: UiModule.DEFAULT

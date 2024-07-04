@@ -8,9 +8,13 @@
 #include "paos/retrieve/DidAuthenticateEac2.h"
 
 #include <QDebug>
+#include <QLoggingCategory>
 
 
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
 DidAuthenticateEac2Parser::DidAuthenticateEac2Parser()

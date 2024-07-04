@@ -60,6 +60,7 @@ class MockNetworkReply
 		}
 
 
+		[[nodiscard]] qint64 bytesAvailable() const override;
 		qint64 readData(char* pDst, qint64 pMaxSize) override;
 
 		void fireFinished();

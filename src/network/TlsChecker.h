@@ -34,8 +34,11 @@ class TlsChecker
 
 	public:
 		static void logSslConfig(const QSslConfiguration& pCfg, const MessageLogger& pLogger);
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 		[[nodiscard]] static QString toString(QSsl::SslProtocol pProtocol);
 		[[nodiscard]] static QString toString(QSsl::KeyAlgorithm pKeyAlgorithm);
+#endif
 
 		[[nodiscard]] static QStringList getFatalErrors(const QList<QSslError>& pErrors);
 		[[nodiscard]] static bool containsFatalError(const QSharedPointer<QNetworkReply>& pReply, const QList<QSslError>& pErrors);
@@ -60,11 +63,6 @@ class TlsChecker
 		[[nodiscard]] static bool hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey,
 				const std::function<int(QSsl::KeyAlgorithm)>& pFuncMinKeySize = cDefaultFuncMinKeySize);
 		[[nodiscard]] static FailureCode::FailureInfoMap getEphemeralKeyInfoMap(const QSslKey& pEphemeralServerKey);
-
-		/*!
-		 * This method is only needed until QSslCertificate provides its own method issuerDisplayName in Qt 5.12
-		 */
-		[[nodiscard]] static QString getCertificateIssuerName(const QSslCertificate& pCertificate);
 
 		[[nodiscard]] static QSslCertificate getRootCertificate(const QList<QSslCertificate>& pCertificates);
 };

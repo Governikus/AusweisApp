@@ -1,0 +1,250 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "JSON schema for AusweisApp's supported-readers.json file",
+	"definitions": {
+		"win_versions": {
+			"type": "string",
+			"enum": [
+				"10.0.19999",
+				"10.0.20000"
+			]
+		},
+		"mac_versions": {
+			"type": "string",
+			"enum": [
+				"12",
+				"13",
+				"14"
+			]
+		},
+		"operating_system_drivers": {
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"os": {
+							"type": "string",
+							"const": "win"
+						},
+						"min": {
+							"$ref": "#/definitions/win_versions"
+						},
+						"max": {
+							"$ref": "#/definitions/win_versions"
+						}
+					},
+					"required": [
+						"os"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"os": {
+							"type": "string",
+							"const": "mac"
+						},
+						"min": {
+							"$ref": "#/definitions/mac_versions"
+						},
+						"max": {
+							"$ref": "#/definitions/mac_versions"
+						}
+					},
+					"required": [
+						"os"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"os": {
+							"type": "string",
+							"const": "unknown"
+						}
+					},
+					"required": [
+						"os"
+					],
+					"additionalProperties": false
+				}
+			]
+		},
+		"operating_system_information": {
+			"oneOf": [
+				{
+					"type": "object",
+					"properties": {
+						"DE": {
+							"type": "string",
+							"minLength": 5
+						},
+						"EN": {
+							"type": "string",
+							"minLength": 5
+						},
+						"os": {
+							"type": "string",
+							"const": "win"
+						},
+						"min": {
+							"$ref": "#/definitions/win_versions"
+						},
+						"max": {
+							"$ref": "#/definitions/win_versions"
+						}
+					},
+					"required": [
+						"DE",
+						"EN",
+						"os"
+					],
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"properties": {
+						"DE": {
+							"type": "string",
+							"minLength": 5
+						},
+						"EN": {
+							"type": "string",
+							"minLength": 5
+						},
+						"os": {
+							"type": "string",
+							"const": "mac"
+						},
+						"min": {
+							"$ref": "#/definitions/mac_versions"
+						},
+						"max": {
+							"$ref": "#/definitions/mac_versions"
+						}
+					},
+					"required": [
+						"DE",
+						"EN",
+						"os"
+					],
+					"additionalProperties": false
+				}
+			]
+		}
+	},
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"SupportedDevices": {
+			"description": "Name of the devices displayed in the supported devices list for example",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"VendorId": {
+						"type": "string",
+						"pattern": "^0x[0-9A-F]{4}$"
+					},
+					"ProductId": {
+						"type": "string",
+						"pattern": "^0x[0-9A-F]{4}$"
+					},
+					"ProductIds": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"pattern": "^0x[0-9A-F]{4}$"
+						}
+					},
+					"Name": {
+						"type": "string",
+						"pattern": "[ \\-0-9a-zA-Z]{8,}"
+					},
+					"Pattern": {
+						"type": "string",
+						"format": "regex"
+					},
+					"Icon": {
+						"type": "string",
+						"pattern": "^img_.+\\.(jpg|png|svg)$"
+					},
+					"IconWithNPA": {
+						"type": "string",
+						"pattern": "^img_.+_mit_ausweis\\.(jpg|png|svg)$"
+					},
+					"Drivers": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Platforms": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/operating_system_drivers"
+									}
+								},
+								"URL": {
+									"type": "string",
+									"format": "uri",
+									"pattern": "^https://"
+								}
+							},
+							"required": [
+								"Platforms",
+								"URL"
+							],
+							"additionalProperties": false
+						}
+					},
+					"Information": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"Platforms": {
+									"type": "array",
+									"items": {
+										"$ref": "#/definitions/operating_system_information"
+									}
+								},
+								"DE": {
+									"type": "string",
+									"minLength": 20
+								},
+								"EN": {
+									"type": "string",
+									"minLength": 20
+								}
+							},
+							"required": [
+								"Platforms",
+								"DE",
+								"EN"
+							],
+							"additionalProperties": false
+						}
+					},
+					"Internal information": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"VendorId",
+					"ProductId",
+					"ProductIds",
+					"Name",
+					"Pattern",
+					"Icon",
+					"IconWithNPA",
+					"Drivers"
+				],
+				"additionalProperties": false
+			}
+		}
+	}
+}

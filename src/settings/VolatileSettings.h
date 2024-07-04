@@ -61,7 +61,7 @@ class VolatileSettings
 		static constexpr bool cHandleInterruptDefault = false;
 
 		VolatileSettings();
-		~VolatileSettings() = default;
+		~VolatileSettings() override = default;
 
 		mutable QReadWriteLock mLock;
 		bool mUsedAsSdk;

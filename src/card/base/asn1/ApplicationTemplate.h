@@ -45,8 +45,7 @@ using ApplicationTemplate = struct application_template_st
 
 	static QSharedPointer<application_template_st> decode(const QByteArray& pBytes);
 
-	application_template_st(const application_template_st& pCopy);
-	application_template_st& operator=(const application_template_st&) = delete;
+	Q_DISABLE_COPY(application_template_st)
 	~application_template_st();
 
 	/**

@@ -38,6 +38,7 @@ class test_SetEidPinCommand
 			worker->addResponse(CardReturnCode::OK, QByteArray::fromHex(("9000")));
 			worker->addResponse(CardReturnCode::PROTOCOL_ERROR, QByteArray::fromHex("1919"));
 			worker->addResponse(CardReturnCode::PIN_BLOCKED, QByteArray::fromHex("63C0"));
+			worker->addResponse(CardReturnCode::COMMAND_FAILED, QByteArray());
 			const QByteArray pin = QByteArrayLiteral("111111");
 			SetEidPinCommand command(worker, pin, 8);
 
@@ -56,6 +57,10 @@ class test_SetEidPinCommand
 			command.internalExecute();
 			QCOMPARE(command.getReturnCode(), CardReturnCode::PIN_BLOCKED);
 			QCOMPARE(command.getResponseApdu(), QByteArray::fromHex("63C0"));
+
+			command.internalExecute();
+			QCOMPARE(command.getReturnCode(), CardReturnCode::RESPONSE_EMPTY);
+			QCOMPARE(command.getResponseApdu(), QByteArray());
 		}
 
 

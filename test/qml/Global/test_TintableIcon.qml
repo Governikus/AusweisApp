@@ -12,10 +12,6 @@ TestCase {
 	function createTestObject() {
 		return createTemporaryQmlObject("import Governikus.Global; TintableIcon {}", testCase);
 	}
-	function test_fillMode() {
-		let testObject = createTestObject();
-		compare(testObject.fillMode, Image.PreserveAspectFit, "Initial fillMode: PreserveAspectFit");
-	}
 	function test_icon() {
 		let testObject = createTestObject();
 		compare(testObject.source, "", "Initial no image");
@@ -28,7 +24,7 @@ TestCase {
 	}
 	function test_tintColor() {
 		let testObject = createTestObject();
-		compare(testObject.tintColor, Style.color.text, "Initial tintColor: text");
+		compare(testObject.tintColor, Style.color.textNormal.basic, "Initial tintColor: text");
 		testObject.tintColor = "#000000";
 		compare(testObject.tintColor, "#000000", "Set tintColor");
 	}

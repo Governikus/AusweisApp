@@ -47,16 +47,16 @@ DiagnosisModel::DiagnosisModel()
 	, mFirewallSection()
 {
 	mSections[Section::GENERAL].reset(new SectionModel());
-	QQmlEngine::setObjectOwnership(mSections[Section::GENERAL].data(), QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(mSections.value(Section::GENERAL).data(), QQmlEngine::CppOwnership);
 
 	mSections[Section::READER].reset(new SectionModel());
-	QQmlEngine::setObjectOwnership(mSections[Section::READER].data(), QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(mSections.value(Section::READER).data(), QQmlEngine::CppOwnership);
 
 	mSections[Section::NETWORK].reset(new SectionModel());
-	QQmlEngine::setObjectOwnership(mSections[Section::NETWORK].data(), QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(mSections.value(Section::NETWORK).data(), QQmlEngine::CppOwnership);
 
 	mSections[Section::SECURITY].reset(new SectionModel());
-	QQmlEngine::setObjectOwnership(mSections[Section::SECURITY].data(), QQmlEngine::CppOwnership);
+	QQmlEngine::setObjectOwnership(mSections.value(Section::SECURITY).data(), QQmlEngine::CppOwnership);
 
 
 	initContent();

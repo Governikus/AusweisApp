@@ -14,6 +14,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -23,8 +24,8 @@ class test_ResponseApdu
 	Q_OBJECT
 
 	private:
-		bool mTestAllKnownStatusCode;
-		QList<StatusCode> mStatusCodeToTest;
+		bool mTestAllKnownStatusCode = false;
+		QList<StatusCode> mStatusCodeToTest = {};
 
 	private Q_SLOTS:
 		void initTestCase_data()
@@ -114,6 +115,7 @@ class test_ResponseApdu
 			QTest::newRow("NO_CURRENT_DIRECTORY_SELECTED") << StatusCode::NO_CURRENT_DIRECTORY_SELECTED << SW1::ERROR_COMMAND_NOT_ALLOWED << static_cast<char>(0x86);
 			QTest::newRow("DATAFIELD_EXPECTED") << StatusCode::DATAFIELD_EXPECTED << SW1::ERROR_COMMAND_NOT_ALLOWED << static_cast<char>(0x87);
 			QTest::newRow("INVALID_SM_OBJECTS") << StatusCode::INVALID_SM_OBJECTS << SW1::ERROR_COMMAND_NOT_ALLOWED << static_cast<char>(0x88);
+			QTest::newRow("SW_APPLET_SELECT_FAILED") << StatusCode::SW_APPLET_SELECT_FAILED << SW1::ERROR_COMMAND_NOT_ALLOWED << static_cast<char>(0x99);
 			QTest::newRow("COMMAND_NOT_ALLOWED") << StatusCode::COMMAND_NOT_ALLOWED << SW1::ERROR_COMMAND_NOT_ALLOWED << static_cast<char>(0xF0);
 			QTest::newRow("INVALID_DATAFIELD") << StatusCode::INVALID_DATAFIELD << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x80);
 			QTest::newRow("ALGORITHM_ID") << StatusCode::ALGORITHM_ID << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x81);
@@ -241,11 +243,18 @@ class test_ResponseApdu
 
 		}
 
-	public:
-		test_ResponseApdu()
-			: mTestAllKnownStatusCode(false)
-			, mStatusCodeToTest()
+
+		void test_logging()
 		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			qDebug() << ResponseApdu(StatusCode::ACCESS_DENIED);
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("6982"_L1));
+
+			qDebug() << ResponseApdu(StatusCode::SUCCESS, QByteArray::fromHex("010203040506070809"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("\"0102030405~9000\" (11)"_L1));
 		}
 
 

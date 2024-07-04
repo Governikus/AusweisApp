@@ -51,14 +51,15 @@ class test_StateVerifyRetryCounter
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
+			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->setExpectedRetryCounter(3);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 3 / expected: 3");
+			QTest::ignoreMessage(QtDebugMsg, "Initially remembering the selected reader including the card with retry counter 3");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
@@ -84,14 +85,15 @@ class test_StateVerifyRetryCounter
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->setReaderName("test reader"_L1);
 			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: -1");
+			QTest::ignoreMessage(QtDebugMsg, "Initially remembering the selected reader including the card with retry counter 2");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(mContext->getPin(), password);
@@ -102,30 +104,45 @@ class test_StateVerifyRetryCounter
 		}
 
 
-		void test_Run_NotExpectedReader()
+		void test_Run_ExpectedReader()
 		{
-			const QString password("000000"_L1);
-			mContext->setPin(password);
-			mContext->setCan(password);
-			mContext->setPuk(password);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
+			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
+			mContext->setCardConnection(connection);
+			mContext->rememberReader();
+			mContext->setReaderName("test reader"_L1);
+			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
+
+			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 3 / expected: 3");
+			QTest::ignoreMessage(QtDebugMsg, "Found expected reader and retry counter matches");
+			mContext->setStateApproved();
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
+			QVERIFY(mContext->isExpectedReader());
+			QCOMPARE(mContext->getExpectedRetryCounter(), 3);
+		}
+
+
+		void test_Run_NotExpectedReader()
+		{
+			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			worker->moveToThread(&mWorkerThread);
+			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->rememberReader();
 			mContext->setReaderName("other reader"_L1);
-			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
+			QSignalSpy spyChanged(mState.data(), &StateVerifyRetryCounter::fireReaderOrCardChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: 2");
-			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Clearing PACE passwords.");
+			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Remembering the new reader including the card with retry counter 2");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mContext->getPin(), QString());
-			QCOMPARE(mContext->getCan(), QString());
-			QCOMPARE(mContext->getPuk(), QString());
+			QTRY_COMPARE(spyChanged.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(!mContext->isExpectedReader());
 			QCOMPARE(mContext->getExpectedRetryCounter(), 2);
 		}
@@ -133,29 +150,22 @@ class test_StateVerifyRetryCounter
 
 		void test_Run_ActualNotEqualExpectedRetryCounter()
 		{
-			const QString password("000000"_L1);
-			mContext->setPin(password);
-			mContext->setCan(password);
-			mContext->setPuk(password);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&mWorkerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 2);
-			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 2);
+			const ReaderInfo readerInfo("test reader"_L1, ReaderManagerPluginType::UNKNOWN, cardInfo);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			mContext->setCardConnection(connection);
 			mContext->rememberReader();
 			mContext->setReaderName("test reader"_L1);
 			mContext->setExpectedRetryCounter(1);
-			QSignalSpy spyContinue(mState.data(), &StateVerifyRetryCounter::fireContinue);
+			QSignalSpy spyChanged(mState.data(), &StateVerifyRetryCounter::fireReaderOrCardChanged);
 
 			QTest::ignoreMessage(QtDebugMsg, "Retry counter | actual: 2 / expected: 1");
-			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Clearing PACE passwords.");
+			QTest::ignoreMessage(QtDebugMsg, "The reader changed or the connected card has an unexpected retry counter. Remembering the new reader including the card with retry counter 2");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(mContext->getPin(), QString());
-			QCOMPARE(mContext->getCan(), QString());
-			QCOMPARE(mContext->getPuk(), QString());
+			QTRY_COMPARE(spyChanged.count(), 1); // clazy:exclude=qstring-allocations
 			QVERIFY(mContext->isExpectedReader());
 			QCOMPARE(mContext->getExpectedRetryCounter(), 2);
 		}

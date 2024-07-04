@@ -14,14 +14,14 @@ using namespace governikus;
 PinResetInformationModel::PinResetInformationModel()
 	: QObject()
 {
-	const auto& providerConfiguration = Env::getSingleton<ProviderConfiguration>();
+	const auto* providerConfiguration = Env::getSingleton<ProviderConfiguration>();
 	connect(providerConfiguration, &ProviderConfiguration::fireUpdated, this, &PinResetInformationModel::fireUpdated);
 }
 
 
 bool PinResetInformationModel::hasPinResetService() const
 {
-	const auto& config = Env::getSingleton<ProviderConfiguration>();
+	const auto* config = Env::getSingleton<ProviderConfiguration>();
 	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
 	return !info.getAddress().isEmpty();
 }
@@ -29,7 +29,7 @@ bool PinResetInformationModel::hasPinResetService() const
 
 QUrl PinResetInformationModel::getPinResetUrl() const
 {
-	const auto& config = Env::getSingleton<ProviderConfiguration>();
+	const auto* config = Env::getSingleton<ProviderConfiguration>();
 	const auto& info = config->getProviderInfo(QStringLiteral("pinResetService"));
 	const auto& homepage = info.getAddress();
 

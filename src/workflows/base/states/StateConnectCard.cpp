@@ -6,7 +6,7 @@
 
 #include "CardConnection.h"
 #include "ReaderManager.h"
-#include "SurveyModel.h"
+#include "Survey.h"
 #include "VolatileSettings.h"
 
 #include <QLoggingCategory>
@@ -24,7 +24,7 @@ StateConnectCard::StateConnectCard(const QSharedPointer<WorkflowContext>& pConte
 
 void StateConnectCard::run()
 {
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	*this << connect(readerManager, &ReaderManager::fireCardInserted, this, &StateConnectCard::onCardInserted);
 	*this << connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateConnectCard::onUnusableCardConnectionLost);
 	*this << connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateConnectCard::onUnusableCardConnectionLost);
@@ -34,9 +34,9 @@ void StateConnectCard::run()
 
 void StateConnectCard::onCardInserted()
 {
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
 	ReaderInfo readerInfo = readerManager->getReaderInfo(getContext()->getReaderName());
-	Env::getSingleton<SurveyModel>()->setReaderInfo(readerInfo);
+	Env::getSingleton<Survey>()->setReaderInfo(readerInfo);
 
 	if (readerInfo.hasEid())
 	{
@@ -120,5 +120,5 @@ void StateConnectCard::onEntry(QEvent* pEvent)
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.
 	 * Changing the plugin types in the context, e.g. from {NFC} to {REMOTE}, causes the state to be left with a fireRetry signal.
 	 */
-	*this << connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateConnectCard::fireRetry);
+	*this << connect(context, &WorkflowContext::fireReaderPluginTypesChanged, this, &StateConnectCard::fireRetry);
 }

@@ -41,11 +41,11 @@ class StateEstablishPaceChannel
 
 	Q_SIGNALS:
 		void fireNoCardConnection();
-		void firePaceChannelEstablished();
-		void fireWrongPin();
+		void fireWrongPassword();
 		void fireThirdPinAttemptFailed();
 		void fireAbortAndUnfortunateCardPosition();
 		void firePaceChannelFailed();
+		void firePaceCanEstablished();
 		void firePacePukEstablished();
 };
 

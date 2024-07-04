@@ -38,12 +38,12 @@ void StateCleanUpReaderManager::run()
 	context->rememberReader();
 
 	const auto& status = context->getStatus();
-	const auto readerManager = Env::getSingleton<ReaderManager>();
-	const auto volatileSettings = Env::getSingleton<VolatileSettings>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
+	const auto* volatileSettings = Env::getSingleton<VolatileSettings>();
 	if (volatileSettings->isUsedAsSDK())
 	{
 #ifdef Q_OS_IOS
-		readerManager->stopScan(ReaderManagerPlugInType::NFC, status.isError() ? volatileSettings->getMessages().getSessionFailed() : QString());
+		readerManager->stopScan(ReaderManagerPluginType::NFC, status.isError() ? volatileSettings->getMessages().getSessionFailed() : QString());
 #endif
 		readerManager->shelve();
 	}
@@ -52,7 +52,7 @@ void StateCleanUpReaderManager::run()
 		readerManager->stopScanAll(status.isError() ? status.toErrorDescription(true) : QString());
 	}
 #ifdef Q_OS_IOS
-	readerManager->reset(ReaderManagerPlugInType::NFC);
+	readerManager->reset(ReaderManagerPluginType::NFC);
 #endif
 
 	Q_EMIT fireContinue();

@@ -49,7 +49,7 @@ class test_GeneralSettings
 			// init ctor of Singleton, otherwise the testcases are not
 			// stable. There could be differences between a run of a
 			// single testcase and the whole testsuite.
-			Env::getSingleton<AppSettings>()->getGeneralSettings();
+			Q_UNUSED(Env::getSingleton<AppSettings>()->getGeneralSettings())
 		}
 
 
@@ -167,18 +167,6 @@ class test_GeneralSettings
 
 #endif
 
-		void testUseScreenKeyboard()
-		{
-			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			bool initial = settings.isUseScreenKeyboard();
-
-			settings.setUseScreenKeyboard(!initial);
-			QCOMPARE(settings.isUseScreenKeyboard(), !initial);
-
-			settings.setUseScreenKeyboard(initial);
-			QCOMPARE(settings.isUseScreenKeyboard(), initial);
-		}
-
 
 		void testVisualPrivacy()
 		{
@@ -256,7 +244,6 @@ class test_GeneralSettings
 			QCOMPARE(settings.isDeveloperOptions(), false);
 			QCOMPARE(settings.isDeveloperMode(), false);
 			QCOMPARE(settings.useSelfAuthTestUri(), false);
-			QCOMPARE(settings.isUseScreenKeyboard(), false);
 			QCOMPARE(settings.isEnableCanAllowed(), false);
 			QCOMPARE(settings.isSkipRightsOnCanAllowed(), false);
 			QCOMPARE(settings.getStartupModule(), ""_L1);

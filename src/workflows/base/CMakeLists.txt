@@ -1,6 +1,6 @@
 ADD_PLATFORM_LIBRARY(AusweisAppWorkflows)
 
-target_link_libraries(AusweisAppWorkflows ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppSettings AusweisAppNetwork AusweisAppWhitelistClient)
+target_link_libraries(AusweisAppWorkflows ${Qt}::Network AusweisAppCard AusweisAppGlobal AusweisAppSettings AusweisAppNetwork)
 
 if(TARGET ${Qt}::StateMachine)
 	target_link_libraries(AusweisAppWorkflows ${Qt}::StateMachine)

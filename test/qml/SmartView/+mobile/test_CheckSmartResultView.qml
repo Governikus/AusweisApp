@@ -1,34 +1,42 @@
 /**
  * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick 2.15
-import QtTest 1.15
-import Governikus.Type.SmartModel 1.0
+import QtQuick
+import QtTest
+import Governikus.Type
 
 TestCase {
 	id: testCase
 
-	function createTestObject(result) {
-		return createTemporaryQmlObject("import \"qrc:/qml/Governikus/SmartView/+mobile\"; CheckSmartResultView { result: %1 }".arg(result), testCase);
-	}
 	function test_load(data) {
-		let testObject = createTestObject(data.result);
+		const component = Qt.createComponent(importPrefix + "/Governikus/SmartView/CheckSmartResultView.qml");
+		verify(component.status === Component.Ready, "Component loaded");
+		const testObject = component.createObject(parent, {
+			result: data.result
+		});
 		verify(testObject, "Object loaded");
 	}
 	function test_load_data() {
-		return [{
-				"result": SmartModel.SMART_UPDATING_STATUS
-			}, {
-				"result": SmartModel.SMART_UNAVAILABLE
-			}, {
-				"result": SmartModel.SMART_UNUSABLE
-			}, {
-				"result": SmartModel.SMART_NO_PROVISIONING
-			}, {
-				"result": SmartModel.SMART_NO_PERSONALIZATION
-			}, {
+		return [
+			{
+				"result": SmartModel.State.UPDATING_STATUS
+			},
+			{
+				"result": SmartModel.State.UNAVAILABLE
+			},
+			{
+				"result": SmartModel.State.UNUSABLE
+			},
+			{
+				"result": SmartModel.State.NO_PROVISIONING
+			},
+			{
+				"result": SmartModel.State.NO_PERSONALIZATION
+			},
+			{
 				"result": -1
-			}];
+			}
+		];
 	}
 
 	name: "test_CheckSmartResultView"

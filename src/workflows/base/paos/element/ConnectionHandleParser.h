@@ -26,6 +26,10 @@ class ConnectionHandleParser
 		explicit ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader);
 		~ConnectionHandleParser() override;
 
+	private:
+		void parseUniqueElementText(const std::function<void(const QString&)>& pFunc, QString& pText);
+
+	public:
 		ConnectionHandle parse();
 };
 

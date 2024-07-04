@@ -25,8 +25,6 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal");
-		testObject.textStyle = Style.text.normal_warning;
-		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GText"

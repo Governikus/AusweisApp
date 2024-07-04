@@ -2,10 +2,6 @@
  * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Contains the method definitions of the GeneralSettings class.
- */
-
 #include "GeneralSettings.h"
 
 #include "AutoStart.h"
@@ -22,7 +18,9 @@
 
 using namespace governikus;
 
+
 Q_DECLARE_LOGGING_CATEGORY(settings)
+
 
 namespace
 {
@@ -34,14 +32,12 @@ SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
-SETTINGS_NAME(SETTINGS_NAME_SIMULATOR, "simulator")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
 SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
 SETTINGS_NAME(SETTINGS_NAME_IN_APP_NOTIFICATIONS, "showInAppNotifications")
 SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
-SETTINGS_NAME(SETTINGS_NAME_KEYLESS_PASSWORD, "keylessPassword")
 SETTINGS_NAME(SETTINGS_NAME_VISUAL_PRIVACY, "visualPrivacy")
 SETTINGS_NAME(SETTINGS_NAME_SHUFFLE_SCREEN_KEYBOARD, "shuffleScreenKeyboard")
 SETTINGS_NAME(SETTINGS_NAME_CUSTOM_PROXY_HOST, "customProxyHost")
@@ -83,6 +79,9 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 
 	// With 2.1.0 the skipVersion was removed
 	mStore->remove(QAnyStringView("skipVersion"));
+
+	// With 2.2.0 the keylessPassword was removed
+	mStore->remove(QAnyStringView("keylessPassword"));
 
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
@@ -332,30 +331,6 @@ void GeneralSettings::setUseSelfauthenticationTestUri(bool pUse)
 }
 
 
-bool GeneralSettings::isSimulatorEnabled() const
-{
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	if (!isDeveloperOptions())
-	{
-		return false;
-	}
-#endif
-
-	return mStore->value(SETTINGS_NAME_SIMULATOR(), false).toBool();
-}
-
-
-void GeneralSettings::setSimulatorEnabled(bool pEnabled)
-{
-	if (pEnabled != isSimulatorEnabled())
-	{
-		mStore->setValue(SETTINGS_NAME_SIMULATOR(), pEnabled);
-		save(mStore);
-		Q_EMIT fireDeveloperOptionsChanged();
-	}
-}
-
-
 QLocale::Language GeneralSettings::getLanguage() const
 {
 	const QString loadedLanguage = mStore->value(SETTINGS_NAME_LANGUAGE(), QString()).toString();
@@ -484,23 +459,6 @@ void GeneralSettings::setAutoUpdateCheck(bool pAutoUpdateCheck)
 	if (!autoUpdateCheckIsSetByAdmin() && pAutoUpdateCheck != isAutoUpdateCheck())
 	{
 		mStore->setValue(SETTINGS_NAME_AUTO(), pAutoUpdateCheck);
-		save(mStore);
-		Q_EMIT fireSettingsChanged();
-	}
-}
-
-
-bool GeneralSettings::isUseScreenKeyboard() const
-{
-	return mStore->value(SETTINGS_NAME_KEYLESS_PASSWORD(), false).toBool();
-}
-
-
-void GeneralSettings::setUseScreenKeyboard(bool pUseScreenKeyboard)
-{
-	if (pUseScreenKeyboard != isUseScreenKeyboard())
-	{
-		mStore->setValue(SETTINGS_NAME_KEYLESS_PASSWORD(), pUseScreenKeyboard);
 		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}

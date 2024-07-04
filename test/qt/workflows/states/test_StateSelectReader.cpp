@@ -30,7 +30,7 @@ class test_StateSelectReader
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -60,9 +60,9 @@ class test_StateSelectReader
 
 		void test_OnReaderInfoChangedNoSelectableReaders()
 		{
-			mContext->setReaderPlugInTypes({ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::UNKNOWN, ReaderManagerPlugInType::REMOTE_IFD});
+			mContext->setReaderPluginTypes({ReaderManagerPluginType::PCSC, ReaderManagerPluginType::UNKNOWN, ReaderManagerPluginType::REMOTE_IFD});
 			mContext->setStateApproved();
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 
 			QTest::ignoreMessage(QtDebugMsg, "No selectable reader detected");
 			Q_EMIT readerManager->fireReaderAdded(ReaderInfo());
@@ -70,10 +70,10 @@ class test_StateSelectReader
 		}
 
 
-		void test_fireReaderPlugInTypesChanged()
+		void test_fireReaderPluginTypesChanged()
 		{
 			QSignalSpy spyRetry(mState.data(), &StateSelectReader::fireRetry);
-			Q_EMIT mContext->fireReaderPlugInTypesChanged();
+			Q_EMIT mContext->fireReaderPluginTypesChanged();
 			QCOMPARE(spyRetry.count(), 1);
 		}
 

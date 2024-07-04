@@ -44,21 +44,21 @@ QList<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(cons
 			continue;
 		}
 
-		providers << ProviderConfigurationInfo(
-				LanguageString(prov[QLatin1String("shortName")]),
-				LanguageString(prov[QLatin1String("longName")]),
-				LanguageString(prov[QLatin1String("longDescription")]),
-				prov[QLatin1String("address")].toString(),
-				prov[QLatin1String("homepage")].toString(),
-				prov[QLatin1String("category")].toString(),
-				prov[QLatin1String("phone")].toString(),
-				prov[QLatin1String("email")].toString(),
-				prov[QLatin1String("postalAddress")].toString(),
-				prov[QLatin1String("icon")].toString(),
-				prov[QLatin1String("image")].toString(),
-				prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
-				prov[QLatin1String("subjectUrlInfo")].toString(),
-				prov[QLatin1String("internalId")].toString());
+		providers << ProviderConfigurationInfo({
+					LanguageString(prov[QLatin1String("shortName")]),
+					LanguageString(prov[QLatin1String("longName")]),
+					LanguageString(prov[QLatin1String("longDescription")]),
+					prov[QLatin1String("address")].toString(),
+					prov[QLatin1String("homepage")].toString(),
+					prov[QLatin1String("category")].toString(),
+					prov[QLatin1String("phone")].toString(),
+					prov[QLatin1String("email")].toString(),
+					prov[QLatin1String("postalAddress")].toString(),
+					prov[QLatin1String("icon")].toString(),
+					prov[QLatin1String("image")].toString(),
+					prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
+					prov[QLatin1String("subjectUrlInfo")].toString(),
+					prov[QLatin1String("internalId")].toString()});
 	}
 
 	return providers;

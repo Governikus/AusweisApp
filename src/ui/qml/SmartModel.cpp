@@ -23,7 +23,7 @@ Q_DECLARE_LOGGING_CATEGORY(card_smart)
 
 SmartModel::SmartModel()
 	: QObject(nullptr)
-	, mStatus(QmlSmartState::SMART_UNAVAILABLE)
+	, mStatus(State::UNAVAILABLE)
 	, mErrorString()
 	, mCachedCardInfo(CardType::NONE)
 	, mProgress(0)
@@ -36,11 +36,11 @@ SmartModel::SmartModel()
 void SmartModel::updateStatus()
 {
 #if __has_include("SmartManager.h")
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
-	const auto& smartInfo = readerManager->getPlugInInfo(ReaderManagerPlugInType::SMART);
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
+	const auto& smartInfo = readerManager->getPluginInfo(ReaderManagerPluginType::SMART);
 	if (smartInfo.isAvailable())
 	{
-		setStatus(QmlSmartState::SMART_UPDATING_STATUS);
+		setStatus(State::UPDATING_STATUS);
 
 		Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
 				return QVariant::fromValue(SmartManager::get()->status());
@@ -49,7 +49,7 @@ void SmartModel::updateStatus()
 		return;
 	}
 
-	setStatus(QmlSmartState::SMART_UNAVAILABLE);
+	setStatus(State::UNAVAILABLE);
 #endif
 }
 
@@ -66,16 +66,16 @@ void SmartModel::setErrorString(const QString& pError)
 
 void SmartModel::updatePinStatus()
 {
-	if (getSmartState() == QmlSmartState::SMART_READY || getSmartState() == QmlSmartState::SMART_UPDATING_STATUS)
+	if (getState() == State::READY || getState() == State::UPDATING_STATUS)
 	{
-		setStatus(QmlSmartState::SMART_UPDATING_STATUS);
-		const auto& readerManager = Env::getSingleton<ReaderManager>();
+		setStatus(State::UPDATING_STATUS);
+		auto* readerManager = Env::getSingleton<ReaderManager>();
 		connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &SmartModel::onUpdatePinStatusDone);
 		connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &SmartModel::onUpdatePinStatusDone);
-		readerManager->startScan(ReaderManagerPlugInType::SMART);
-		if (Env::getSingleton<ApplicationModel>()->getCurrentWorkflow() == ApplicationModel::Workflow::WORKFLOW_NONE)
+		readerManager->startScan(ReaderManagerPluginType::SMART);
+		if (Env::getSingleton<ApplicationModel>()->getCurrentWorkflow() == ApplicationModel::Workflow::NONE)
 		{
-			readerManager->stopScan(ReaderManagerPlugInType::SMART);
+			readerManager->stopScan(ReaderManagerPluginType::SMART);
 		}
 		return;
 	}
@@ -92,19 +92,19 @@ void SmartModel::setProgress(int pProgress)
 }
 
 
-void SmartModel::setStatus(QmlSmartState pNewStatus)
+void SmartModel::setStatus(State pNewStatus)
 {
 	if (mStatus != pNewStatus)
 	{
 		mStatus = pNewStatus;
-		Q_EMIT fireSmartStateChanged();
+		Q_EMIT fireStateChanged();
 	}
 }
 
 
 void SmartModel::onUpdateSupportInfoDone(const QVariant& pResult)
 {
-	QmlSmartState newStatus = QmlSmartState::SMART_UNAVAILABLE;
+	State newStatus = State::UNAVAILABLE;
 #if __has_include("SmartManager.h")
 	const auto& [result, status] = pResult.value<EidSupportStatusResult>();
 	switch (result)
@@ -158,13 +158,13 @@ void SmartModel::onUpdateSupportInfoDone(const QVariant& pResult)
 		{
 			case EidSupportStatus::UNAVAILABLE:
 			case EidSupportStatus::INTERNAL_ERROR:
-				newStatus = QmlSmartState::SMART_UNAVAILABLE;
+				newStatus = State::UNAVAILABLE;
 				break;
 
 			case EidSupportStatus::AVAILABLE:
 			case EidSupportStatus::UP_TO_DATE:
 			case EidSupportStatus::UPDATE_AVAILABLE:
-				newStatus = QmlSmartState::SMART_NO_PROVISIONING;
+				newStatus = State::NO_PROVISIONING;
 				break;
 		}
 	}
@@ -174,7 +174,7 @@ void SmartModel::onUpdateSupportInfoDone(const QVariant& pResult)
 
 	if (newStatus != mStatus)
 	{
-		if (newStatus == QmlSmartState::SMART_NO_PROVISIONING)
+		if (newStatus == State::NO_PROVISIONING)
 		{
 			updateStatus();
 			return;
@@ -251,29 +251,29 @@ void SmartModel::onDeleteSmartDone(const QVariant& pResult)
 
 void SmartModel::onUpdateStatusDone(const QVariant& pResult)
 {
-	QmlSmartState newStatus = QmlSmartState::SMART_UNAVAILABLE;
+	State newStatus = State::UNAVAILABLE;
 #if __has_include("SmartManager.h")
 	switch (pResult.value<EidStatus>())
 	{
 		case EidStatus::INTERNAL_ERROR:
-			newStatus = QmlSmartState::SMART_UNAVAILABLE;
+			newStatus = State::UNAVAILABLE;
 			break;
 
 		case EidStatus::NO_PROVISIONING:
-			newStatus = QmlSmartState::SMART_NO_PROVISIONING;
+			newStatus = State::NO_PROVISIONING;
 			break;
 
 		case EidStatus::NO_PERSONALIZATION:
-			newStatus = QmlSmartState::SMART_NO_PERSONALIZATION;
+			newStatus = State::NO_PERSONALIZATION;
 			break;
 
 		case EidStatus::UNUSABLE:
 		case EidStatus::CERT_EXPIRED:
-			newStatus = QmlSmartState::SMART_UNUSABLE;
+			newStatus = State::UNUSABLE;
 			break;
 
 		case EidStatus::PERSONALIZED:
-			newStatus = QmlSmartState::SMART_READY;
+			newStatus = State::READY;
 			break;
 	}
 #else
@@ -283,7 +283,7 @@ void SmartModel::onUpdateStatusDone(const QVariant& pResult)
 	if (newStatus != mStatus)
 	{
 
-		if (newStatus == QmlSmartState::SMART_READY)
+		if (newStatus == State::READY)
 		{
 			updatePinStatus();
 			return;
@@ -303,29 +303,29 @@ int SmartModel::getProgress() const
 
 void SmartModel::onUpdatePinStatusDone(const ReaderInfo& pInfo)
 {
-	if (pInfo.getPlugInType() != ReaderManagerPlugInType::SMART)
+	if (pInfo.getPluginType() != ReaderManagerPluginType::SMART)
 	{
 		return;
 	}
 
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &SmartModel::onUpdatePinStatusDone);
 	disconnect(readerManager, &ReaderManager::fireCardInfoChanged, this, &SmartModel::onUpdatePinStatusDone);
 
 	mCachedCardInfo = pInfo.getCardInfo();
 
-	setStatus(QmlSmartState::SMART_READY);
+	setStatus(State::READY);
 }
 
 
-void SmartModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+void SmartModel::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
-	if (pInfo.getPlugInType() != ReaderManagerPlugInType::SMART)
+	if (pInfo.getPluginType() != ReaderManagerPluginType::SMART)
 	{
 		return;
 	}
 
-	if (mStatus == QmlSmartState::SMART_UNAVAILABLE && pInfo.isAvailable())
+	if (mStatus == State::UNAVAILABLE && pInfo.isAvailable())
 	{
 		updateStatus();
 	}
@@ -334,11 +334,11 @@ void SmartModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
 }
 
 
-SmartModel::QmlSmartState SmartModel::getSmartState() const
+SmartModel::State SmartModel::getState() const
 {
-	if (mStatus == QmlSmartState::SMART_READY && (mCachedCardInfo.isPinInitial() || mCachedCardInfo.getRetryCounter() < 1))
+	if (mStatus == State::READY && (mCachedCardInfo.isPinInitial() || mCachedCardInfo.getRetryCounter() < 1))
 	{
-		return QmlSmartState::SMART_UNUSABLE;
+		return State::UNUSABLE;
 	}
 
 	return mStatus;
@@ -360,7 +360,7 @@ void SmartModel::workflowFinished(QSharedPointer<WorkflowContext> pContext)
 
 	if (pContext->getAction() == Action::PERSONALIZATION)
 	{
-		mStatus = QmlSmartState::SMART_UNAVAILABLE;
+		mStatus = State::UNAVAILABLE;
 		updateStatus();
 		return;
 	}
@@ -372,10 +372,10 @@ void SmartModel::workflowFinished(QSharedPointer<WorkflowContext> pContext)
 void SmartModel::updateSupportInfo()
 {
 #if __has_include("SmartManager.h")
-	if (mStatus != QmlSmartState::SMART_UPDATING_STATUS && mStatus != QmlSmartState::SMART_READY)
+	if (mStatus != State::UPDATING_STATUS && mStatus != State::READY)
 	{
 		setErrorString(QString());
-		setStatus(QmlSmartState::SMART_UPDATING_STATUS);
+		setStatus(State::UPDATING_STATUS);
 
 		Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
 				return QVariant::fromValue(SmartManager::get()->updateSupportInfo());
@@ -427,5 +427,5 @@ MobileEidType SmartModel::getMobileEidType() const
 
 bool SmartModel::isScanRunning() const
 {
-	return Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::SMART).isScanRunning();
+	return Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::SMART).isScanRunning();
 }

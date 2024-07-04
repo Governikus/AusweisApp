@@ -7,9 +7,15 @@
 using namespace governikus;
 
 
-DestroyPaceChannelCommand::DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+DestroyPaceChannelCommand::DestroyPaceChannelCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker,
+		const QString& pSlotHandle)
 	: BaseCardCommand(pCardConnectionWorker)
+	, mSlotHandle(pSlotHandle)
+	, mSecureMessagingStopped(false)
 {
+	connect(pCardConnectionWorker.data(), &CardConnectionWorker::fireSecureMessagingStopped, this, [this](){
+			mSecureMessagingStopped = true;
+		});
 }
 
 

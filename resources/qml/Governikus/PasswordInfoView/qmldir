@@ -1,8 +1,0 @@
-module PasswordInfoView
-
-internal PasswordInfoContent PasswordInfoContent.qml
-internal PasswordInfoContentBlock PasswordInfoContentBlock.qml
-internal PasswordInfoContentParagraph PasswordInfoContentParagraph.qml
-
-PasswordInfoData 1.0 PasswordInfoData.qml
-PasswordInfoView 1.0 PasswordInfoView.qml

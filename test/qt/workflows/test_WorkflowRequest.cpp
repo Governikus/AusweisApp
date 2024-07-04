@@ -26,7 +26,7 @@ class test_WorkflowRequest
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations

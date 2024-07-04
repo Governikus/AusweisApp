@@ -12,27 +12,27 @@ InitializeFrameworkResponse::InitializeFrameworkResponse()
 }
 
 
-void InitializeFrameworkResponse::createBodyElement()
+void InitializeFrameworkResponse::createBodyElement(QXmlStreamWriter& pWriter)
 {
-	mWriter.writeStartElement(QStringLiteral("InitializeFrameworkResponse"));
+	pWriter.writeStartElement(QStringLiteral("InitializeFrameworkResponse"));
 
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::ECARD));
-	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::ECARD));
+	pWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
 	createResultElement(*this);
-	createVersionElement();
+	createVersionElement(pWriter);
 
-	mWriter.writeEndElement(); // InitializeFrameworkResponse
+	pWriter.writeEndElement(); // InitializeFrameworkResponse
 }
 
 
-void InitializeFrameworkResponse::createVersionElement()
+void InitializeFrameworkResponse::createVersionElement(QXmlStreamWriter& pWriter) const
 {
-	mWriter.writeStartElement(QStringLiteral("Version"));
+	pWriter.writeStartElement(QStringLiteral("Version"));
 
-	mWriter.writeTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor());
-	mWriter.writeTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor());
-	mWriter.writeTextElement(QStringLiteral("SubMinor"), mSupportedAPI.getSubminor());
+	pWriter.writeTextElement(QStringLiteral("Major"), mSupportedAPI.getMajor());
+	pWriter.writeTextElement(QStringLiteral("Minor"), mSupportedAPI.getMinor());
+	pWriter.writeTextElement(QStringLiteral("SubMinor"), mSupportedAPI.getSubminor());
 
-	mWriter.writeEndElement(); // InitializeFrameworkResponse
+	pWriter.writeEndElement(); // InitializeFrameworkResponse
 }

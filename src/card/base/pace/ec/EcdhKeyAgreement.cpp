@@ -11,22 +11,12 @@
 
 #include <QLoggingCategory>
 
+
 using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
 Q_DECLARE_LOGGING_CATEGORY(secure)
-
-
-QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint)
-{
-	const QByteArray& publicKeyData =
-			Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER, pPaceInfo->getOid().getData()) +
-			Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT, EcUtil::point2oct(pCurve, pPoint.data()));
-	const QByteArray publicKey = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::PUBLIC_KEY, publicKeyData, true);
-
-	return publicKey;
-}
 
 
 EcdhKeyAgreement::EcdhKeyAgreement(const QSharedPointer<const PaceInfo>& pPaceInfo,
@@ -85,7 +75,7 @@ KeyAgreement::CardResult EcdhKeyAgreement::determineSharedSecret(const QByteArra
 
 CardReturnCode EcdhKeyAgreement::determineEphemeralDomainParameters(const QByteArray& pNonce)
 {
-	QByteArray terminalMappingData = mMapping->generateTerminalMappingData();
+	QByteArray terminalMappingData = mMapping->generateLocalMappingData();
 	auto [resultCode, cardMappingData] = transmitGAMappingData(terminalMappingData);
 	if (resultCode != CardReturnCode::OK)
 	{
@@ -153,17 +143,25 @@ KeyAgreement::CardResult EcdhKeyAgreement::performKeyExchange()
 
 QByteArray EcdhKeyAgreement::getUncompressedTerminalPublicKey()
 {
-	return encodeUncompressedPublicKey(getPaceInfo(), mMapping->getCurve(), mTerminalPublicKey);
+	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), EcUtil::point2oct(mMapping->getCurve(), mTerminalPublicKey.data()));
 }
 
 
 QByteArray EcdhKeyAgreement::getUncompressedCardPublicKey()
 {
-	return encodeUncompressedPublicKey(getPaceInfo(), mMapping->getCurve(), mCardPublicKey);
+	return encodeUncompressedPublicKey(getPaceInfo()->getOid(), EcUtil::point2oct(mMapping->getCurve(), mCardPublicKey.data()));
 }
 
 
 QByteArray EcdhKeyAgreement::getCompressedCardPublicKey()
 {
 	return EcUtil::point2oct(mMapping->getCurve(), mCardPublicKey.data(), true);
+}
+
+
+QByteArray EcdhKeyAgreement::encodeUncompressedPublicKey(const Oid& pOid, const QByteArray& pKey)
+{
+	const QByteArray oID = Asn1Util::encode(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER, QByteArray(pOid));
+	const QByteArray publicPoint = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT, pKey);
+	return Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::PUBLIC_KEY, oID + publicPoint, true);
 }

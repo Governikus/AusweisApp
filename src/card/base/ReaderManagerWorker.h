@@ -10,8 +10,8 @@
 
 #include "CardConnectionWorker.h"
 #include "ReaderInfo.h"
-#include "ReaderManagerPlugIn.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPlugin.h"
+#include "ReaderManagerPluginInfo.h"
 
 #include <QObject>
 
@@ -23,12 +23,12 @@ class ReaderManagerWorker
 	Q_OBJECT
 
 	private:
-		QList<ReaderManagerPlugIn*> mPlugIns;
+		QList<ReaderManagerPlugin*> mPlugins;
 
-		void callOnPlugIn(ReaderManagerPlugInType pType, const std::function<void(ReaderManagerPlugIn* pPlugIn)>& pFunc, const char* pLog);
-		void registerPlugIns();
-		[[nodiscard]] static bool isPlugIn(const QJsonObject& pJson);
-		void registerPlugIn(ReaderManagerPlugIn* pPlugIn);
+		void callOnPlugin(ReaderManagerPluginType pType, const std::function<void(ReaderManagerPlugin* pPlugin)>& pFunc, const char* pLog);
+		void registerPlugins();
+		[[nodiscard]] static bool isPlugin(const QJsonObject& pJson);
+		void registerPlugin(ReaderManagerPlugin* pPlugin);
 		[[nodiscard]] Reader* getReader(const QString& pReaderName) const;
 
 	public:
@@ -37,19 +37,19 @@ class ReaderManagerWorker
 
 		Q_INVOKABLE void shutdown();
 
-		Q_INVOKABLE void reset(ReaderManagerPlugInType pType);
+		Q_INVOKABLE void reset(ReaderManagerPluginType pType);
 		Q_INVOKABLE void insert(const ReaderInfo& pReaderInfo, const QVariant& pData);
 		Q_INVOKABLE void shelve();
-		Q_INVOKABLE void startScan(ReaderManagerPlugInType pType, bool pAutoConnect);
-		Q_INVOKABLE void stopScan(ReaderManagerPlugInType pType, const QString& pError);
+		Q_INVOKABLE void startScan(ReaderManagerPluginType pType, bool pAutoConnect);
+		Q_INVOKABLE void stopScan(ReaderManagerPluginType pType, const QString& pError);
 
 		[[nodiscard]] Q_INVOKABLE QList<ReaderInfo> getReaderInfos() const;
 		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
-		Q_INVOKABLE void createCardConnectionWorker(const QString& pReaderName);
+		void createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker);
 
 	Q_SIGNALS:
-		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
-		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void firePluginAdded(const ReaderManagerPluginInfo& pInfo);
+		void fireStatusChanged(const ReaderManagerPluginInfo& pInfo);
 		void fireReaderAdded(const ReaderInfo& pInfo);
 		void fireReaderRemoved(const ReaderInfo& pInfo);
 		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);

@@ -94,7 +94,7 @@ void StateGenericProviderCommunication::checkSslConnectionAndSaveCertificate(con
 	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), context->getRefreshUrl(), context);
 	if (statusCode != CertificateChecker::CertificateStatus::Good)
 	{
-		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
+		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, pSslConfiguration.peerCertificate().issuerDisplayName());
 		const auto& status = GlobalStatus(CertificateChecker::getGlobalStatus(statusCode, false), infoMap);
 		const FailureCode& failure {FailureCode::Reason::Generic_Provider_Communication_Certificate_Error,
 									{

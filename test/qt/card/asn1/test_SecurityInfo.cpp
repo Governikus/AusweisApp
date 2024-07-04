@@ -86,7 +86,7 @@ class test_SecurityInfo
 
 			QVERIFY(securityInfo != nullptr);
 			QCOMPARE(securityInfo->getOid(), KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
-			QCOMPARE(securityInfo->getOid().getData(), QByteArray::fromHex("04007F00070202040202"));
+			QCOMPARE(securityInfo->getOid(), Oid(QByteArray::fromHex("04007F00070202040202")));
 		}
 
 

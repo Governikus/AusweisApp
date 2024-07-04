@@ -2,18 +2,19 @@
  * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Parser for the PAOS DidAuthenticateEac1 element.
- */
-
 #include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include "paos/invoke/PaosCreator.h"
 
+#include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QXmlStreamReader>
 
+
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
 DidAuthenticateEac1Parser::DidAuthenticateEac1Parser()

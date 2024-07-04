@@ -22,8 +22,9 @@ class MsgHandlerEnterNumber
 	: public MsgHandler
 {
 	private:
+		void setError(const QLatin1String pError);
 		void setError(const QString& pError);
-		void setReader(const QSharedPointer<const WorkflowContext>& pContext);
+		void setReader(const MsgContext& pContext);
 
 	protected:
 		explicit MsgHandlerEnterNumber(MsgType pType, const MsgContext& pContext);

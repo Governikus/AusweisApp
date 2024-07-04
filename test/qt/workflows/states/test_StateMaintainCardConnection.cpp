@@ -38,17 +38,6 @@ class test_StateMaintainCardConnection
 		}
 
 
-		void test_Run_Error()
-		{
-			QSignalSpy spy(mState.data(), &StateMaintainCardConnection::firePropagateAbort);
-
-			mContext->setStatus(GlobalStatus::Code::Unknown_Error);
-			mContext->setFailureCode(FailureCode::Reason::User_Cancelled);
-			mState->run();
-			QCOMPARE(spy.count(), 1);
-		}
-
-
 		void test_Run_ResultUnrecoverable_data()
 		{
 			QTest::addColumn<CardReturnCode>("code");
@@ -98,13 +87,8 @@ class test_StateMaintainCardConnection
 			QSignalSpy spyNoCardConnection(mState.data(), &StateMaintainCardConnection::fireNoCardConnection);
 			QSignalSpy spyUpdateRetryCounter(mState.data(), &StateMaintainCardConnection::fireForceUpdateRetryCounter);
 
-			const QString password("111111"_L1);
-			mContext->setPin(password);
-			mContext->setCan(password);
-			mContext->setPuk(password);
 			mContext->setLastPaceResult(code);
 
-			QTest::ignoreMessage(QtDebugMsg, "Resetting all PACE passwords.");
 			QTest::ignoreMessage(QtDebugMsg, "No card connection available.");
 			mState->run();
 			QCOMPARE(spyNoCardConnection.count(), 1);
@@ -114,14 +98,9 @@ class test_StateMaintainCardConnection
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
 			mContext->setCardConnection(connection);
 
-			QTest::ignoreMessage(QtDebugMsg, "Resetting all PACE passwords.");
 			QTest::ignoreMessage(QtDebugMsg, "Trigger retry counter update.");
 			mState->run();
 			QCOMPARE(spyUpdateRetryCounter.count(), 1);
-
-			QCOMPARE(mContext->getPin(), QString());
-			QCOMPARE(mContext->getCan(), QString());
-			QCOMPARE(mContext->getPuk(), QString());
 		}
 
 
@@ -131,7 +110,7 @@ class test_StateMaintainCardConnection
 			QTest::addColumn<bool>("doReset");
 
 			QTest::newRow("card_not_found") << CardReturnCode::CARD_NOT_FOUND << true;
-			QTest::newRow("retry_allowed") << CardReturnCode::RETRY_ALLOWED << true;
+			QTest::newRow("retry_allowed") << CardReturnCode::RESPONSE_EMPTY << true;
 
 			QTest::newRow("undefined") << CardReturnCode::UNDEFINED << false;
 			QTest::newRow("unknown") << CardReturnCode::UNKNOWN << false;

@@ -155,14 +155,14 @@ QVariant CertificateDescriptionModel::data(const QModelIndex& pIndex, int pRole)
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		auto entry = mData[pIndex.row()];
+		const auto& [label, text] = mData[pIndex.row()];
 		if (pRole == LABEL)
 		{
-			return entry.first;
+			return label;
 		}
 		if (pRole == TEXT)
 		{
-			return entry.second;
+			return text;
 		}
 	}
 	return QVariant();

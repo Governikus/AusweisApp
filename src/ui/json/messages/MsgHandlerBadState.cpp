@@ -11,6 +11,6 @@ MsgHandlerBadState::MsgHandlerBadState(MsgCmdType pType)
 {
 	if (pType != MsgCmdType::UNDEFINED)
 	{
-		mJsonObject[QLatin1String("error")] = getEnumName(pType);
+		setValue(QLatin1String("error"), getEnumName(pType));
 	}
 }

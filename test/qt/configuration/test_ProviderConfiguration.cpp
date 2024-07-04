@@ -31,33 +31,36 @@ class test_ProviderConfiguration
 
 		void testProviderUrls()
 		{
-			const ProviderConfigurationInfo provider1(
-				/* short name  */ QString(),
-				/* long name  */ QString(),
-				/* long description */ QString(),
-				/* address */ QStringLiteral("ftp://homepage.com/form"),
-				/* homepage */ QStringLiteral("ftp://www.homepage.de/bla/bla1")
-				);
+			const ProviderConfigurationInfo provider1({
+			            /* short name  */ QString(),
+			            /* long name  */ QString(),
+			            /* long description */ QString(),
+			            /* address */ QStringLiteral("ftp://homepage.com/form"),
+			            /* homepage */ QStringLiteral("ftp://www.homepage.de/bla/bla1"),
+						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+					});
 			QCOMPARE(provider1.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider1.getHomepageBase(), QStringLiteral("www.homepage.de"));
 
-			const ProviderConfigurationInfo provider2(
-				/* short name  */ QString(),
-				/* long name  */ QString(),
-				/* long description */ QString(),
-				/* address */ QStringLiteral("https://homepage.com/form"),
-				/* homepage */ QStringLiteral("https://www.homepage.de/bla/bla1")
-				);
+			const ProviderConfigurationInfo provider2({
+			            /* short name  */ QString(),
+			            /* long name  */ QString(),
+			            /* long description */ QString(),
+			            /* address */ QStringLiteral("https://homepage.com/form"),
+			            /* homepage */ QStringLiteral("https://www.homepage.de/bla/bla1"),
+						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+					});
 			QCOMPARE(provider2.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider2.getHomepageBase(), QStringLiteral("www.homepage.de"));
 
-			const ProviderConfigurationInfo provider3(
-				/* short name  */ QString(),
-				/* long name  */ QString(),
-				/* long description */ QString(),
-				/* address */ QStringLiteral("homepage.com/form"),
-				/* homepage */ QStringLiteral("www.homepage.de/bla/bla1")
-				);
+			const ProviderConfigurationInfo provider3({
+			            /* short name  */ QString(),
+			            /* long name  */ QString(),
+			            /* long description */ QString(),
+			            /* address */ QStringLiteral("homepage.com/form"),
+			            /* homepage */ QStringLiteral("www.homepage.de/bla/bla1"),
+						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+					});
 			QCOMPARE(provider3.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider3.getHomepageBase(), QStringLiteral("www.homepage.de"));
 
@@ -70,20 +73,21 @@ class test_ProviderConfiguration
 		void testProviderFields()
 		{
 			// Add image and icon.
-			const ProviderConfigurationInfo provider(
-				/* short name  */ QStringLiteral("Provider 1"),
-				/* long name  */ QStringLiteral("Provider 1 - long name"),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryA"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
-				);
+			const ProviderConfigurationInfo provider({
+			            /* short name  */ QStringLiteral("Provider 1"),
+			            /* long name  */ QStringLiteral("Provider 1 - long name"),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryA"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Provider 1"));
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Provider 1 - long name"));
@@ -102,35 +106,39 @@ class test_ProviderConfiguration
 
 		void checkName()
 		{
-			const ProviderConfigurationInfo providerEmptyLongname(
-				/* short name  */ QStringLiteral("Provider 1"),
-				/* long name  */ QString(QLatin1String("")),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryA"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
+			const ProviderConfigurationInfo providerEmptyLongname({
+			            /* short name  */ QStringLiteral("Provider 1"),
+			            /* long name  */ QString(QLatin1String("")),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryA"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
 			QCOMPARE(providerEmptyLongname.getLongName().toString(), QString());
 
-			const ProviderConfigurationInfo providerWithoutShortname(
-				/* short name  */ QString(),
-				/* long name  */ QStringLiteral("Provider 1"),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryA"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
+			const ProviderConfigurationInfo providerWithoutShortname({
+			            /* short name  */ QString(),
+			            /* long name  */ QStringLiteral("Provider 1"),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryA"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
 			QCOMPARE(providerWithoutShortname.getShortName().toString(), QStringLiteral("Provider 1"));
 		}
@@ -182,7 +190,10 @@ class test_ProviderConfiguration
 			QFETCH(double, landlineCentsPerCall);
 			QFETCH(double, mobileCentsPerMinute);
 			QFETCH(double, mobileCentsPerCall);
-			const ProviderConfigurationInfo provider(QString(), QString(), QString(), QString(), QString(), ""_L1, phone);
+			const ProviderConfigurationInfo provider({
+						QString(), QString(), QString(), QString(), QString(), ""_L1, phone,
+						QString(), QString(), QString(), QString(), {}, QString(), QString()
+					});
 			const CallCost& callCost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
 
 			QVERIFY(notNull || callCost.isNull());
@@ -234,50 +245,53 @@ class test_ProviderConfiguration
 
 		void testProvidersAreEqual()
 		{
-			const ProviderConfigurationInfo provider1(
-				/* short name  */ QStringLiteral("Provider"),
-				/* long name  */ QStringLiteral("Provider - long name"),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryA"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
-				);
+			const ProviderConfigurationInfo provider1({
+			            /* short name  */ QStringLiteral("Provider"),
+			            /* long name  */ QStringLiteral("Provider - long name"),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryA"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
-			const ProviderConfigurationInfo provider2(
-				/* short name  */ QStringLiteral("Provider"),
-				/* long name  */ QStringLiteral("Provider - long name"),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryB"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
-				);
+			const ProviderConfigurationInfo provider2({
+			            /* short name  */ QStringLiteral("Provider"),
+			            /* long name  */ QStringLiteral("Provider - long name"),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryB"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
-			const ProviderConfigurationInfo provider3(
-				/* short name  */ QStringLiteral("Provider"),
-				/* long name  */ QStringLiteral("Provider - long name"),
-				/* long description */ QStringLiteral("Provider description long"),
-				/* address */ QStringLiteral("https://www.homepage.com/form/"),
-				/* homepage */ QStringLiteral("https://www.homepage.com/"),
-				/* category */ QStringLiteral("CategoryB"),
-				/* phone */ QStringLiteral("0421 123456"),
-				/* email */ QStringLiteral("abc@def.de"),
-				/* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
-				/* icon */ QString(),
-				/* image */ QString(),
-				/* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")})
-				);
+			const ProviderConfigurationInfo provider3({
+			            /* short name  */ QStringLiteral("Provider"),
+			            /* long name  */ QStringLiteral("Provider - long name"),
+			            /* long description */ QStringLiteral("Provider description long"),
+			            /* address */ QStringLiteral("https://www.homepage.com/form/"),
+			            /* homepage */ QStringLiteral("https://www.homepage.com/"),
+			            /* category */ QStringLiteral("CategoryB"),
+			            /* phone */ QStringLiteral("0421 123456"),
+			            /* email */ QStringLiteral("abc@def.de"),
+			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
+			            /* icon */ QString(),
+			            /* image */ QString(),
+			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
+						QString(), QString()
+					});
 
 			QVERIFY(provider1 == provider1);
 			QVERIFY(!(provider1 == provider2));

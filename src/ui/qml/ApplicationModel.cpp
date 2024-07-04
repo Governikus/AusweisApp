@@ -29,11 +29,6 @@
 #include <QGuiApplication>
 #include <QRegularExpression>
 
-#ifdef Q_OS_ANDROID
-	#include <QJniEnvironment>
-	#include <QJniObject>
-#endif
-
 
 using namespace governikus;
 
@@ -42,9 +37,9 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 Q_DECLARE_LOGGING_CATEGORY(feedback)
 
 
-void ApplicationModel::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+void ApplicationModel::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
-	if (pInfo.getPlugInType() == ReaderManagerPlugInType::NFC)
+	if (pInfo.getPluginType() == ReaderManagerPluginType::NFC)
 	{
 		Q_EMIT fireNfcStateChanged();
 	}
@@ -63,7 +58,7 @@ ApplicationModel::ApplicationModel()
 	, mPrivate(new Private())
 #endif
 {
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireAvailableReaderChanged);
@@ -84,12 +79,12 @@ void ApplicationModel::resetContext(const QSharedPointer<WorkflowContext>& pCont
 {
 	if (mContext)
 	{
-		disconnect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
+		disconnect(mContext.data(), &WorkflowContext::fireReaderPluginTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
 	}
 
 	if ((mContext = pContext))
 	{
-		connect(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
+		connect(mContext.data(), &WorkflowContext::fireReaderPluginTypesChanged, this, &ApplicationModel::fireAvailableReaderChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireAvailableReaderChanged);
 		connect(mContext.data(), &WorkflowContext::fireReaderNameChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
 		connect(mContext.data(), &WorkflowContext::fireReaderInfoChanged, this, &ApplicationModel::fireReaderPropertiesUpdated);
@@ -128,38 +123,38 @@ QString ApplicationModel::getStoreUrl() const
 
 QUrl ApplicationModel::getReleaseNotesUrl() const
 {
-	const auto storage = Env::getSingleton<SecureStorage>();
+	const auto* storage = Env::getSingleton<SecureStorage>();
 	const auto& url = VersionNumber::getApplicationVersion().isBetaVersion() ? storage->getAppcastBetaUpdateUrl() : storage->getAppcastUpdateUrl();
 	return url.adjusted(QUrl::RemoveFilename).toString() + QStringLiteral("ReleaseNotes.html");
 }
 
 
-ApplicationModel::QmlNfcState ApplicationModel::getNfcState() const
+ApplicationModel::NfcState ApplicationModel::getNfcState() const
 {
 #if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
-	const ReaderManagerPlugInType type = ReaderManagerPlugInType::PCSC;
+	const ReaderManagerPluginType type = ReaderManagerPluginType::PCSC;
 #else
-	const ReaderManagerPlugInType type = ReaderManagerPlugInType::NFC;
+	const ReaderManagerPluginType type = ReaderManagerPluginType::NFC;
 #endif
 
-	const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(type);
+	const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(type);
 
 	if (!pluginInfo.isAvailable())
 	{
-		return QmlNfcState::NFC_UNAVAILABLE;
+		return NfcState::UNAVAILABLE;
 	}
 
 	if (!pluginInfo.isEnabled())
 	{
-		return QmlNfcState::NFC_DISABLED;
+		return NfcState::DISABLED;
 	}
 
 	if (!pluginInfo.isScanRunning())
 	{
-		return QmlNfcState::NFC_INACTIVE;
+		return NfcState::INACTIVE;
 	}
 
-	return QmlNfcState::NFC_READY;
+	return NfcState::READY;
 }
 
 
@@ -181,6 +176,19 @@ bool ApplicationModel::isExtendedLengthApdusUnsupported() const
 }
 
 
+bool ApplicationModel::isSmartSupported() const
+{
+#if __has_include("SmartManager.h")
+	return true;
+
+#else
+	return false;
+
+#endif
+
+}
+
+
 bool ApplicationModel::isWifiEnabled() const
 {
 	return mWifiEnabled;
@@ -191,27 +199,27 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 {
 	if (mContext.objectCast<ChangePinContext>())
 	{
-		return Workflow::WORKFLOW_CHANGE_PIN;
+		return Workflow::CHANGE_PIN;
 	}
 	if (mContext.objectCast<SelfAuthContext>())
 	{
-		return Workflow::WORKFLOW_SELF_AUTHENTICATION;
+		return Workflow::SELF_AUTHENTICATION;
 	}
 #if __has_include("context/PersonalizationContext.h")
 	if (mContext.objectCast<PersonalizationContext>())
 	{
-		return Workflow::WORKFLOW_SMART;
+		return Workflow::SMART;
 	}
 #endif
 	if (mContext.objectCast<AuthContext>())
 	{
-		return Workflow::WORKFLOW_AUTHENTICATION;
+		return Workflow::AUTHENTICATION;
 	}
 	if (mContext.objectCast<IfdServiceContext>())
 	{
-		return Workflow::WORKFLOW_REMOTE_SERVICE;
+		return Workflow::REMOTE_SERVICE;
 	}
-	return Workflow::WORKFLOW_NONE;
+	return Workflow::NONE;
 }
 
 
@@ -222,7 +230,7 @@ qsizetype ApplicationModel::getAvailableReader() const
 		return 0;
 	}
 
-	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPlugInTypes())).size();
+	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPluginTypes())).size();
 }
 
 
@@ -233,11 +241,11 @@ qsizetype ApplicationModel::getAvailablePcscReader() const
 		return 0;
 	}
 
-	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::PCSC})).size();
+	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPluginType::PCSC})).size();
 }
 
 
-bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const
+bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPluginType pPluginType) const
 {
 	if (!mContext)
 	{
@@ -246,30 +254,12 @@ bool ApplicationModel::isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType
 
 	if (!mContext->getReaderName().isEmpty())
 	{
-		return Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName()).getPlugInType() == pPlugInType;
+		return Env::getSingleton<ReaderManager>()->getReaderInfo(mContext->getReaderName()).getPluginType() == pPluginType;
 	}
 
-	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({pPlugInType})).isEmpty();
+	return !Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({pPluginType})).isEmpty();
 }
 
-
-#ifndef Q_OS_IOS
-bool ApplicationModel::isScreenReaderRunning() const
-{
-	#ifdef Q_OS_ANDROID
-	QJniObject context = QNativeInterface::QAndroidApplication::context();
-	const jboolean result = context.callMethod<jboolean>("isScreenReaderRunning", "()Z");
-	return result != JNI_FALSE;
-
-	#else
-	qCWarning(qml) << "NOT IMPLEMENTED";
-	return false;
-
-	#endif
-}
-
-
-#endif
 
 QString ApplicationModel::getFeedback() const
 {
@@ -295,42 +285,11 @@ void ApplicationModel::setClipboardText(const QString& pText) const
 }
 
 
+#ifndef Q_OS_ANDROID
 void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisting)
 {
 	qCInfo(feedback).noquote() << pMessage;
 
-#if defined(Q_OS_ANDROID)
-	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage, pReplaceExisting](){
-			QJniEnvironment env;
-			static thread_local QJniObject toast;
-
-			if (toast.isValid() && pReplaceExisting)
-			{
-				toast.callMethod<void>("cancel");
-			}
-
-			QJniObject context = QNativeInterface::QAndroidApplication::context();
-			const QJniObject& jMessage = QJniObject::fromString(pMessage);
-			toast = QJniObject::callStaticObjectMethod(
-					"android/widget/Toast",
-					"makeText",
-					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
-					context.object(),
-					jMessage.object(),
-					jint(1));
-			toast.callMethod<void>("show");
-
-			if (env->ExceptionCheck())
-			{
-				qCCritical(qml) << "Suppressing an unexpected exception.";
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-				// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
-				// since it is used to display information to the user as required by the TR.
-				Q_ASSERT(false);
-			}
-		});
-#else
 	if (pReplaceExisting)
 	{
 		mFeedbackTimer.stop();
@@ -347,29 +306,16 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 		}
 		Q_EMIT fireFeedbackChanged();
 	}
-#endif
 }
 
 
-#ifndef Q_OS_IOS
+#endif
+
+
+#if !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID)
 void ApplicationModel::keepScreenOn(bool pActive) const
 {
-	#if defined(Q_OS_ANDROID)
-	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pActive](){
-			QJniObject context = QNativeInterface::QAndroidApplication::context();
-			context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
-			QJniEnvironment env;
-			if (env->ExceptionCheck())
-			{
-				qCCritical(qml) << "Exception calling java native function.";
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-			}
-		});
-
-	#else
 	qCWarning(qml) << "NOT IMPLEMENTED:" << pActive;
-	#endif
 }
 
 
@@ -401,10 +347,7 @@ QStringList ApplicationModel::getLicenseText() const
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 QUrl ApplicationModel::getCustomConfigPath() const
 {
-	QFileInfo info(Env::getSingleton<SecureStorage>()->getCustomConfig());
-	QUrl url(info.absolutePath());
-	url.setScheme(QStringLiteral("file"));
-	return url;
+	return Env::getSingleton<SecureStorage>()->getCustomConfigPath();
 }
 
 
@@ -454,7 +397,7 @@ void ApplicationModel::onTranslationChanged()
 void ApplicationModel::enableWifi() const
 {
 #ifdef Q_OS_ANDROID
-	showSettings(Settings::SETTING_WIFI);
+	showSettings(Settings::WIFI);
 #endif
 }
 

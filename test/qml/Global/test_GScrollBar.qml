@@ -15,23 +15,23 @@ TestCase {
 		let testObject = createTestObject();
 		mousePress(testObject);
 		tryVerify(function () {
-				return testObject.pressed;
-			});
+			return testObject.pressed;
+		});
 		mouseRelease(testObject);
 		tryVerify(function () {
-				return !testObject.pressed;
-			});
+			return !testObject.pressed;
+		});
 	}
 	function test_highlight() {
 		let testObject = createTestObject();
 		tryVerify(function () {
-				return !testObject.highlighted;
-			});
+			return !testObject.highlighted;
+		});
 		testObject.highlight();
 		verify(testObject.highlighted, "highlighted: true");
 		tryVerify(function () {
-				return !testObject.highlighted;
-			});
+			return !testObject.highlighted;
+		});
 	}
 	function test_load() {
 		let testObject = createTestObject();

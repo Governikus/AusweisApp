@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CardReturnCode.h"
+#include "apdu/ResponseApdu.h"
 #include "asn1/SecurityInfos.h"
 #include "pace/EstablishPaceChannelCode.h"
 
@@ -83,6 +84,7 @@ class EstablishPaceChannelOutput
 		[[nodiscard]] CardReturnCode getPaceReturnCode() const;
 		void setPaceReturnCode(CardReturnCode pPaceReturnCode);
 
+		[[nodiscard]] StatusCode getStatusCodeMseSetAt() const;
 		[[nodiscard]] const QByteArray& getStatusMseSetAt() const;
 		void setStatusMseSetAt(const QByteArray& pStatusMseSetAt);
 

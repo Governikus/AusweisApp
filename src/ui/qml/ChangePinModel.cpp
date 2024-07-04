@@ -18,9 +18,8 @@ void ChangePinModel::resetChangePinContext(const QSharedPointer<ChangePinContext
 	if (mContext)
 	{
 		connect(mContext.data(), &ChangePinContext::fireSuccessMessageChanged, this, &WorkflowModel::fireResultChanged);
-		connect(mContext.data(), &ChangePinContext::firePaceResultUpdated, this, &ChangePinModel::onPaceResultUpdated);
 
-		Q_EMIT fireSupportedPlugInTypesChanged();
+		Q_EMIT fireSupportedPluginTypesChanged();
 		Q_EMIT fireIsCurrentSmartCardAllowedChanged();
 	}
 }
@@ -43,12 +42,12 @@ QString ChangePinModel::getResultString() const
 }
 
 
-QList<ReaderManagerPlugInType> ChangePinModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPluginType> ChangePinModel::getSupportedReaderPluginTypes() const
 {
-	auto plugins = WorkflowModel::getSupportedReaderPlugInTypes();
+	auto plugins = WorkflowModel::getSupportedReaderPluginTypes();
 	if (mContext && mContext->isRequestTransportPin())
 	{
-		plugins.removeOne(ReaderManagerPlugInType::SMART);
+		plugins.removeOne(ReaderManagerPluginType::SMART);
 	}
 	return plugins;
 }
@@ -61,16 +60,4 @@ bool ChangePinModel::isRequestTransportPin() const
 		return false;
 	}
 	return mContext->isRequestTransportPin();
-}
-
-
-void ChangePinModel::onPaceResultUpdated()
-{
-	if (mContext->getLastPaceResult() == CardReturnCode::OK_PUK)
-	{
-		Q_EMIT fireOnPinUnlocked();
-		return;
-	}
-
-	Q_EMIT fireOnPasswordUsed();
 }

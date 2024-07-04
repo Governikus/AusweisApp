@@ -118,7 +118,7 @@ class test_StateGetSessionId
 
 		void test_OnNetworkReplyWrongHttpStatus()
 		{
-			auto reply = new MockNetworkReply();
+			auto* reply = new MockNetworkReply();
 			mState->mReply.reset(reply, &QObject::deleteLater);
 			reply->setAttribute(QNetworkRequest::Attribute::HttpStatusCodeAttribute, 500);
 			reply->setError(QNetworkReply::NetworkError::InternalServerError, QString());

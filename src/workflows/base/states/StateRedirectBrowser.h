@@ -12,6 +12,7 @@
 #include "GenericContextContainer.h"
 #include "context/AuthContext.h"
 
+
 class test_StateRedirectBrowser;
 
 
@@ -31,6 +32,7 @@ class StateRedirectBrowser
 
 		void run() override;
 
+		static QUrl addMajorMinor(const QUrl& pUrl, const GlobalStatus& pStatus);
 };
 
 } // namespace governikus

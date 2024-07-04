@@ -6,6 +6,7 @@
 
 #include "apdu/CommandApdu.h"
 #include "apdu/FileCommand.h"
+#include "apdu/PacePinStatus.h"
 #include "pace/PaceHandler.h"
 
 #include <QLoggingCategory>
@@ -70,6 +71,41 @@ ReaderInfo CardConnectionWorker::getReaderInfo() const
 void CardConnectionWorker::setPukInoperative()
 {
 	mReader->setPukInoperative();
+}
+
+
+bool CardConnectionWorker::selectApplicationRoot(const FileRef& pApplication)
+{
+	qCDebug(card) << "Try to select application:" << pApplication;
+	ResponseApduResult select = transmit(FileCommand(pApplication));
+	switch (select.mResponseApdu.getStatusCode())
+	{
+		case StatusCode::SUCCESS:
+		case StatusCode::ACCESS_DENIED:
+			// According to ICAO Doc 9303 "Machine Readable Travel Documents", Eighth Edition
+			// 2021, 4.3.2 "Inspection Process" an unsecured SelectApplication command will
+			// return 0x6982 when the card supporting only PACE without Basic Access Control.
+			// While productive cards have Basic Access Control the test cards do not have it.
+			break;
+
+		case StatusCode::UNSUPPORTED_INS:
+			// PersoSim currently does not know its own application identifier.
+			break;
+
+		default:
+			qCWarning(card) << "Cannot select application:" << select.mResponseApdu.getStatusCode();
+			return false;
+	}
+
+	qCDebug(card) << "Try to select master file";
+	ResponseApduResult result = transmit(FileCommand(FileRef::masterFile()));
+	if (result.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
+	{
+		qCWarning(card) << "Cannot select master file:" << result.mResponseApdu.getStatusCode();
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -294,7 +330,19 @@ EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswo
 				break;
 
 			case PacePasswordId::PACE_PIN:
-				invalidPasswordId = CardReturnCode::INVALID_PIN;
+				switch (PacePinStatus::getRetryCounter(output.getStatusCodeMseSetAt()))
+				{
+					case 2:
+						invalidPasswordId = CardReturnCode::INVALID_PIN_2;
+						break;
+
+					case 1:
+						invalidPasswordId = CardReturnCode::INVALID_PIN_3;
+						break;
+
+					default:
+						invalidPasswordId = CardReturnCode::INVALID_PIN;
+				}
 				break;
 
 			case PacePasswordId::PACE_PUK:

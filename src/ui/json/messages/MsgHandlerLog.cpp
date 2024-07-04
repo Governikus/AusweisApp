@@ -13,5 +13,5 @@ MsgHandlerLog::MsgHandlerLog()
 	: MsgHandler(MsgType::LOG)
 {
 	const auto& data = Env::getSingleton<LogHandler>()->getBacklog();
-	mJsonObject[QLatin1String("data")] = QString::fromUtf8(data);
+	setValue(QLatin1String("data"), QString::fromUtf8(data));
 }

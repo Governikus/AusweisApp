@@ -52,13 +52,13 @@ void StateProcessIfdMessages::onMessageHandlerAdded(const QSharedPointer<ServerM
 		return;
 	}
 
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardConnected, this, &StateProcessIfdMessages::onCardConnected, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireDisplayTextChanged, this, &StateProcessIfdMessages::onDisplayTextChanged, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireEstablishPaceChannel, this, &StateProcessIfdMessages::onEstablishPaceChannel, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireModifyPin, this, &StateProcessIfdMessages::onModifyPin, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardDisconnected, this, &StateProcessIfdMessages::onCardDisconnected, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::destroyed, this, &StateProcessIfdMessages::onClosed, Qt::UniqueConnection);
-	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireSecureMessagingStopped, this, &StateProcessIfdMessages::fireSecureMessagingStopped, Qt::UniqueConnection);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardConnected, this, &StateProcessIfdMessages::onCardConnected);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireDisplayTextChanged, this, &StateProcessIfdMessages::onDisplayTextChanged);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireEstablishPaceChannel, this, &StateProcessIfdMessages::onEstablishPaceChannel);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireModifyPin, this, &StateProcessIfdMessages::onModifyPin);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireCardDisconnected, this, &StateProcessIfdMessages::onCardDisconnected);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::destroyed, this, &StateProcessIfdMessages::onClosed);
+	mMessageConnections += connect(pHandler.data(), &ServerMessageHandler::fireSecureMessagingStopped, this, &StateProcessIfdMessages::fireSecureMessagingStopped);
 }
 
 
@@ -84,11 +84,11 @@ void StateProcessIfdMessages::onConnectedChanged(bool pConnected) const
 
 	if (pConnected && !getContext()->getIfdServer()->isPairingConnection())
 	{
-		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::SMART);
+		Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPluginType::SMART);
 	}
 	else
 	{
-		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::SMART);
+		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::SMART);
 	}
 }
 

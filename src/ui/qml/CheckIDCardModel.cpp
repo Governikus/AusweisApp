@@ -11,7 +11,7 @@ using namespace governikus;
 CheckIDCardModel::CheckIDCardModel(QObject* pParent)
 	: QObject(pParent)
 	, mIsRunning(false)
-	, mResult(CheckIDCardResult::UNKNOWN)
+	, mResult(Result::UNKNOWN)
 {
 }
 
@@ -34,33 +34,33 @@ void CheckIDCardModel::onCardInserted(const ReaderInfo& pInfo)
 
 	if (pInfo.hasEid())
 	{
-		mResult = CheckIDCardResult::ID_CARD_DETECTED;
+		mResult = Result::ID_CARD_DETECTED;
 		Q_EMIT fireResultChanged();
 
 		if (pInfo.insufficientApduLength())
 		{
-			stopScanWithResult(CheckIDCardResult::INSUFFICIENT_APDU_LENGTH);
+			stopScanWithResult(Result::INSUFFICIENT_APDU_LENGTH);
 		}
 		else if (pInfo.isPinDeactivated())
 		{
-			stopScanWithResult(CheckIDCardResult::PIN_DEACTIVATED);
+			stopScanWithResult(Result::PIN_DEACTIVATED);
 		}
 		else if (pInfo.getRetryCounter() == 1)
 		{
-			stopScanWithResult(CheckIDCardResult::PIN_SUSPENDED);
+			stopScanWithResult(Result::PIN_SUSPENDED);
 		}
 		else if (pInfo.getRetryCounter() == 0)
 		{
-			stopScanWithResult(CheckIDCardResult::PIN_BLOCKED);
+			stopScanWithResult(Result::PIN_BLOCKED);
 		}
 		else
 		{
-			stopScanWithResult(CheckIDCardResult::SUCCESS);
+			stopScanWithResult(Result::SUCCESS);
 		}
 	}
 	else if (pInfo.hasCard())
 	{
-		stopScanWithResult(CheckIDCardResult::UNKNOWN_CARD_DETECTED);
+		stopScanWithResult(Result::UNKNOWN_CARD_DETECTED);
 	}
 }
 
@@ -72,7 +72,7 @@ void CheckIDCardModel::onCardRemoved(const ReaderInfo& pInfo)
 		return;
 	}
 
-	stopScanWithResult(CheckIDCardResult::CARD_ACCESS_FAILED);
+	stopScanWithResult(Result::CARD_ACCESS_FAILED);
 }
 
 
@@ -100,12 +100,12 @@ void CheckIDCardModel::onReaderPropertiesUpdated(const ReaderInfo& pInfo)
 {
 	if (pInfo.insufficientApduLength())
 	{
-		stopScanWithResult(CheckIDCardResult::INSUFFICIENT_APDU_LENGTH);
+		stopScanWithResult(Result::INSUFFICIENT_APDU_LENGTH);
 	}
 }
 
 
-void CheckIDCardModel::stopScanWithResult(CheckIDCardResult result)
+void CheckIDCardModel::stopScanWithResult(Result result)
 {
 	qDebug() << "Finish with status" << result;
 
@@ -126,7 +126,7 @@ void CheckIDCardModel::startScan()
 
 	mIsRunning = true;
 
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireCardInserted, this, &CheckIDCardModel::onCardInserted);
 	connect(readerManager, &ReaderManager::fireCardRemoved, this, &CheckIDCardModel::onCardRemoved);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &CheckIDCardModel::onReaderAdded);
@@ -144,19 +144,19 @@ void CheckIDCardModel::startScanIfNecessary()
 		return;
 	}
 
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
 
-	if (readerManager->getPlugInInfo(ReaderManagerPlugInType::NFC).isScanRunning())
+	if (readerManager->getPluginInfo(ReaderManagerPluginType::NFC).isScanRunning())
 	{
 		return;
 	}
 
 	mReaderWithCard.clear();
 
-	readerManager->startScan(ReaderManagerPlugInType::NFC);
+	readerManager->startScan(ReaderManagerPluginType::NFC);
 
-	const auto nfcReaderInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::NFC}));
-	mResult = nfcReaderInfos.empty() ? CheckIDCardResult::NO_NFC : CheckIDCardResult::CARD_NOT_DETECTED;
+	const auto nfcReaderInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPluginType::NFC}));
+	mResult = nfcReaderInfos.empty() ? Result::NO_NFC : Result::CARD_NOT_DETECTED;
 
 	// Directly check all NFC readers if an id card is already present
 	for (const auto& info : nfcReaderInfos)
@@ -179,21 +179,21 @@ void CheckIDCardModel::stopScan()
 		return;
 	}
 
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
 	disconnect(readerManager, &ReaderManager::fireCardInserted, this, &CheckIDCardModel::onCardInserted);
 	disconnect(readerManager, &ReaderManager::fireCardRemoved, this, &CheckIDCardModel::onCardRemoved);
 	disconnect(readerManager, &ReaderManager::fireReaderAdded, this, &CheckIDCardModel::onReaderAdded);
 	disconnect(readerManager, &ReaderManager::fireReaderRemoved, this, &CheckIDCardModel::onReaderRemoved);
 	disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &CheckIDCardModel::onReaderPropertiesUpdated);
 
-	readerManager->stopScan(ReaderManagerPlugInType::NFC);
+	readerManager->stopScan(ReaderManagerPluginType::NFC);
 
 	mIsRunning = false;
 	mReaderWithCard.clear();
 }
 
 
-CheckIDCardModel::CheckIDCardResult CheckIDCardModel::getResult() const
+CheckIDCardModel::Result CheckIDCardModel::getResult() const
 {
 	return mResult;
 }

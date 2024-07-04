@@ -10,7 +10,7 @@
 #include "NetworkManager.h"
 #include "PortFile.h"
 #include "SingletonHelper.h"
-#include "UILoader.h"
+#include "UiLoader.h"
 #include "controller/AppController.h"
 
 #include <QCoreApplication>
@@ -29,7 +29,7 @@ CommandLineParser::CommandLineParser()
 	, mOptionNoLogHandler(QStringLiteral("no-loghandler"), QStringLiteral("Disable default log handler."))
 	, mOptionShowWindow(QStringLiteral("show"), QStringLiteral("Show window on startup."))
 	, mOptionProxy(QStringLiteral("no-proxy"), QStringLiteral("Ignore proxy settings."))
-	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UILoader::getDefault())
+	, mOptionUi(QStringLiteral("ui"), QStringLiteral("Use given UI plugin."), UiLoader::getDefault())
 	, mOptionPort(QStringLiteral("port"), QStringLiteral("Use listening port."), QString::number(PortFile::cDefaultPort))
 	, mOptionAddresses(QStringLiteral("address"), QStringLiteral("Use address binding."), HttpServer::getDefault())
 {
@@ -67,8 +67,7 @@ void CommandLineParser::parse(const QCoreApplication* pApp)
 	mParser.process(*pApp);
 	parseUiPlugin();
 
-	const auto& logHandler = Env::getSingleton<LogHandler>();
-
+	auto* logHandler = Env::getSingleton<LogHandler>();
 	logHandler->setAutoRemove(!mParser.isSet(mOptionKeepLog));
 	logHandler->setLogFile(!mParser.isSet(mOptionNoLogFile));
 	logHandler->setUseHandler(!mParser.isSet(mOptionNoLogHandler));
@@ -112,6 +111,6 @@ void CommandLineParser::parseUiPlugin()
 {
 	if (mParser.isSet(mOptionUi))
 	{
-		UILoader::setUserRequest(mParser.values(mOptionUi));
+		UiLoader::setUserRequest(mParser.values(mOptionUi));
 	}
 }

@@ -43,6 +43,15 @@ class PcscCard
 		CardResult transmit(const QByteArray& pSendBuffer);
 		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci);
 		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput);
+#ifdef Q_OS_WIN
+		void disableOverlay();
+#else
+		void disableOverlay() const
+		{
+		}
+
+
+#endif
 
 	private Q_SLOTS:
 		void sendSCardStatus();

@@ -42,7 +42,7 @@ class MockServerMsgHandler
 		}
 
 
-		void setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes) override
+		void setAllowedCardTypes(const QList<ReaderManagerPluginType>& pAllowedCardTypes) override
 		{
 			Q_UNUSED(pAllowedCardTypes)
 		}

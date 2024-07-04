@@ -61,9 +61,11 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			DestroyPaceChannelCommand* command = connection.createDestroyPaceChannelCommand();
+			const QString slotHandle = QStringLiteral("slot handle");
+			DestroyPaceChannelCommand* command = connection.createDestroyPaceChannelCommand(slotHandle);
 			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
+			QCOMPARE(command->getSlotHandle(), slotHandle);
 		}
 
 
@@ -109,7 +111,7 @@ class test_CardConnection
 			TransmitCommand* command = connection.createTransmitCommand(apduInfos, slotHandle);
 			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
-			QCOMPARE(command->mSlotHandle, slotHandle);
+			QCOMPARE(command->getSlotHandle(), slotHandle);
 		}
 
 

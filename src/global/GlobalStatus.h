@@ -22,6 +22,8 @@ class GlobalStatus
 {
 	Q_GADGET
 	Q_DECLARE_TR_FUNCTIONS(governikus::GlobalStatus)
+	Q_CLASSINFO("QML.Element", "auto")
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
 
 	public:
 		enum class Code

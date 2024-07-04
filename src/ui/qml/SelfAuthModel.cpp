@@ -104,14 +104,14 @@ QVariant SelfAuthModel::data(const QModelIndex& pIndex, int pRole) const
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		auto pair = mSelfData.at(pIndex.row());
+		const auto& [name, value] = mSelfData.at(pIndex.row());
 		if (pRole == Qt::DisplayRole || pRole == NAME)
 		{
-			return pair.first;
+			return name;
 		}
 		if (pRole == VALUE)
 		{
-			return pair.second;
+			return value;
 		}
 	}
 	return QVariant();

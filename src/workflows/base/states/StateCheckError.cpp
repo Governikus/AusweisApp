@@ -15,7 +15,7 @@ StateCheckError::StateCheckError(const QSharedPointer<WorkflowContext>& pContext
 
 void StateCheckError::run()
 {
-	if (getContext()->getStatus().isNoError() || getContext()->isErrorReportedToUser())
+	if (getContext()->getStatus().isNoError())
 	{
 		Q_EMIT fireContinue();
 		return;

@@ -81,25 +81,25 @@ void DIDAuthenticateResponseEAC1::setChallenge(const QByteArray& pValue)
 }
 
 
-void DIDAuthenticateResponseEAC1::createBodyElement()
+void DIDAuthenticateResponseEAC1::createBodyElement(QXmlStreamWriter& pWriter)
 {
-	mWriter.writeStartElement(QStringLiteral("DIDAuthenticateResponse"));
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	pWriter.writeStartElement(QStringLiteral("DIDAuthenticateResponse"));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	pWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
 	createResultElement(*this);
-	createAuthenticationProtocolDataElement();
+	createAuthenticationProtocolDataElement(pWriter);
 
-	mWriter.writeEndElement(); // DIDAuthenticateResponse
+	pWriter.writeEndElement(); // DIDAuthenticateResponse
 }
 
 
-void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
+void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement(QXmlStreamWriter& pWriter)
 {
-	mWriter.writeStartElement(QStringLiteral("AuthenticationProtocolData"));
+	pWriter.writeStartElement(QStringLiteral("AuthenticationProtocolData"));
 
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC1OutputType")));
-	mWriter.writeAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), getNamespaceType(Namespace::TECHSCHEMA, QStringLiteral("EAC1OutputType")));
+	pWriter.writeAttribute(QStringLiteral("Protocol"), QStringLiteral("urn:oid:1.3.162.15480.3.0.14.2"));
 
 	if (!mCertificateHolderAuthorizationTemplate.isNull())
 	{
@@ -114,7 +114,7 @@ void DIDAuthenticateResponseEAC1::createAuthenticationProtocolDataElement()
 	writeTextElement(QStringLiteral("IDPICC"), mIdPICC);
 	writeTextElement(QStringLiteral("Challenge"), mChallenge);
 
-	mWriter.writeEndElement(); // AuthenticationProtocolData
+	pWriter.writeEndElement(); // AuthenticationProtocolData
 }
 
 

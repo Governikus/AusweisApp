@@ -127,7 +127,7 @@ void StateEstablishPaceChannel::onUserCancelled()
 
 void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode) const
 {
-	if (pReturnCode == CardReturnCode::CARD_NOT_FOUND || pReturnCode == CardReturnCode::RETRY_ALLOWED)
+	if (pReturnCode == CardReturnCode::CARD_NOT_FOUND || pReturnCode == CardReturnCode::RESPONSE_EMPTY)
 	{
 		qCDebug(statemachine) << "Card vanished during PACE. Incrementing unfortunate-card-position panickiness.";
 		getContext()->handleWrongNpaPosition();
@@ -142,47 +142,52 @@ void StateEstablishPaceChannel::handleNpaPosition(CardReturnCode pReturnCode) co
 
 void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCardCommand> pCommand)
 {
-	if (mPasswordId != PacePasswordId::PACE_PUK)
-	{
-		auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
-		getContext()->setPaceOutputData(paceCommand->getPaceOutput());
-	}
+	getContext()->setInitialInputErrorShown();
+
+	auto paceCommand = pCommand.staticCast<EstablishPaceChannelCommand>();
+	getContext()->setPaceOutputData(paceCommand->getPaceOutput());
 
 	CardReturnCode returnCode = pCommand->getReturnCode();
 	getContext()->setLastPaceResult(returnCode);
-
 	handleNpaPosition(returnCode);
-
-	if (mPasswordId == PacePasswordId::PACE_PIN && returnCode == CardReturnCode::OK)
-	{
-		qCDebug(statemachine) << "PACE_PIN succeeded. Setting expected retry counter to:" << 3;
-		getContext()->setExpectedRetryCounter(3);
-	}
-	else if (mPasswordId == PacePasswordId::PACE_PUK && returnCode == CardReturnCode::OK)
-	{
-		qCDebug(statemachine) << "PACE_PUK succeeded. Resetting PACE passwords and setting expected retry counter to:" << -1;
-		getContext()->resetPacePasswords();
-		getContext()->setExpectedRetryCounter(-1);
-	}
 
 	switch (returnCode)
 	{
 		case CardReturnCode::OK:
-			if (mPasswordId == PacePasswordId::PACE_PIN ||
-					(mPasswordId == PacePasswordId::PACE_CAN && getContext()->isCanAllowedMode()))
+			switch (mPasswordId)
 			{
-				Q_EMIT firePaceChannelEstablished();
-				return;
-			}
-			else if (mPasswordId == PacePasswordId::PACE_PUK)
-			{
-				getContext()->setLastPaceResult(CardReturnCode::OK_PUK);
+				case PacePasswordId::PACE_PIN:
+					qCDebug(statemachine) << "PACE_PIN succeeded. Setting expected retry counter to:" << 3;
+					getContext()->setExpectedRetryCounter(3);
+					Q_EMIT fireContinue();
+					break;
 
-				Q_EMIT firePacePukEstablished();
-				return;
-			}
+				case PacePasswordId::PACE_CAN:
+					if (getContext()->isCanAllowedMode())
+					{
+						qCDebug(statemachine) << "PACE_CAN (AUTH) succeeded";
+						Q_EMIT fireContinue();
+						break;
+					}
 
-			Q_EMIT fireContinue();
+					qCDebug(statemachine) << "PACE_CAN (PIN) succeeded";
+					getContext()->setLastPaceResult(CardReturnCode::OK_CAN);
+					Q_EMIT firePaceCanEstablished();
+					break;
+
+				case PacePasswordId::PACE_PUK:
+					qCDebug(statemachine) << "PACE_PUK succeeded";
+					getContext()->setLastPaceResult(CardReturnCode::OK_PUK);
+					Q_EMIT firePacePukEstablished();
+					break;
+
+				case PacePasswordId::PACE_MRZ:
+				case PacePasswordId::UNKNOWN:
+					qCritical() << "Cannot handle unknown PacePasswordId";
+					updateStatus(GlobalStatus::Code::Card_Protocol_Error);
+					Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_Unknown_Password_Id);
+					break;
+			}
 			return;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
@@ -190,28 +195,16 @@ void StateEstablishPaceChannel::onEstablishConnectionDone(QSharedPointer<BaseCar
 			Q_EMIT fireAbort(FailureCode::Reason::Establish_Pace_Channel_User_Cancelled);
 			return;
 
-		case CardReturnCode::INVALID_PIN:
-		{
-			switch (getContext()->getCardConnection()->getReaderInfo().getRetryCounter())
-			{
-				case 2:
-					// Old retryCounter is 2: 2nd try failed
-					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-					Q_EMIT fireWrongPin();
-					break;
-
-				case 1:
-					// Old retryCounter is 1: 3rd try failed
-					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-					Q_EMIT fireThirdPinAttemptFailed();
-					break;
-
-				default:
-					getContext()->setLastPaceResult(CardReturnCode::INVALID_PIN);
-					Q_EMIT fireWrongPin();
-			}
+		case CardReturnCode::INVALID_PIN_3:
+			Q_EMIT fireThirdPinAttemptFailed();
 			return;
-		}
+
+		case CardReturnCode::INVALID_PIN:
+		case CardReturnCode::INVALID_PIN_2:
+		case CardReturnCode::INVALID_CAN:
+		case CardReturnCode::INVALID_PUK:
+			Q_EMIT fireWrongPassword();
+			return;
 
 		default:
 			if (getContext()->isNpaRepositioningRequired())

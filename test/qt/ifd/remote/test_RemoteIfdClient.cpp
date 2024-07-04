@@ -87,14 +87,14 @@ class RemoteConnectorMock
 	Q_OBJECT
 
 	public Q_SLOTS:
-		void onConnectRequest(const IfdDescriptor& pRemoteDeviceDescriptor, const QString& pPsk) override;
+		void onConnectRequest(const IfdDescriptor& pRemoteDeviceDescriptor, const QByteArray& pPsk) override;
 
 	Q_SIGNALS:
 		void fireConnectionRequestReceived();
 };
 
 
-void RemoteConnectorMock::onConnectRequest(const IfdDescriptor&, const QString&)
+void RemoteConnectorMock::onConnectRequest(const IfdDescriptor&, const QByteArray&)
 {
 	Q_EMIT fireConnectionRequestReceived();
 }
@@ -300,7 +300,7 @@ class test_RemoteIfdClient
 			const Discovery discovery(QString(), QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
 			const IfdDescriptor descr(discovery, QHostAddress("192.168.1.88"_L1));
 			QSharedPointer<IfdListEntry> emptyEntry(new IfdListEntry(descr));
-			client.establishConnection(emptyEntry, "password1"_L1);
+			client.establishConnection(emptyEntry, "password1");
 
 			QTRY_COMPARE(spyConnectionRequest.count(), 1); // clazy:exclude=qstring-allocations
 

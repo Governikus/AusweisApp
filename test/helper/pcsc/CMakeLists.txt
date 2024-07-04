@@ -1,6 +1,7 @@
 if(LINUX OR BSD)
 	file(GLOB SRC "*.cpp")
-
-	add_library(Pcsc SHARED "${SRC}")
-	target_link_libraries(Pcsc ${Qt}::Core PkgConfig::PCSC)
+	add_library(AusweisAppTestHelperPcsc SHARED "${SRC}")
+	target_include_directories(AusweisAppTestHelperPcsc INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
+	target_link_libraries(AusweisAppTestHelperPcsc ${Qt}::Core PkgConfig::PCSC)
+	set_target_properties(AusweisAppTestHelperPcsc PROPERTIES CXX_VISIBILITY_PRESET default)
 endif()

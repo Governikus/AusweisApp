@@ -12,7 +12,7 @@ using namespace governikus;
 
 void LogFilterModel::onLevelsChanged()
 {
-	mSelectedLevels.intersect(getLevels());
+	mSelectedLevels.intersect(Env::getSingleton<LogModel>()->getLevels());
 	invalidateFilter();
 	Q_EMIT fireLevelsChanged();
 }
@@ -20,7 +20,7 @@ void LogFilterModel::onLevelsChanged()
 
 void LogFilterModel::onCategoriesChanged()
 {
-	mSelectedCategories.intersect(getCategories());
+	mSelectedCategories.intersect(Env::getSingleton<LogModel>()->getCategories());
 	invalidateFilter();
 	Q_EMIT fireCategoriesChanged();
 }
@@ -61,27 +61,33 @@ LogFilterModel::LogFilterModel()
 }
 
 
-const QSet<QString>& LogFilterModel::getLevels() const
+QStringList LogFilterModel::getLevels() const
 {
-	return Env::getSingleton<LogModel>()->getLevels();
+	const auto& level = Env::getSingleton<LogModel>()->getLevels();
+	QStringList list(level.constBegin(), level.constEnd());
+	list.sort(Qt::CaseInsensitive);
+	return list;
 }
 
 
-const QSet<QString>& LogFilterModel::getSelectedLevels() const
+QStringList LogFilterModel::getSelectedLevels() const
 {
-	return mSelectedLevels;
+	return QStringList(mSelectedLevels.constBegin(), mSelectedLevels.constEnd());
 }
 
 
-const QSet<QString>& LogFilterModel::getCategories() const
+QStringList LogFilterModel::getCategories() const
 {
-	return Env::getSingleton<LogModel>()->getCategories();
+	const auto& categories = Env::getSingleton<LogModel>()->getCategories();
+	QStringList list(categories.constBegin(), categories.constEnd());
+	list.sort(Qt::CaseInsensitive);
+	return list;
 }
 
 
-const QSet<QString>& LogFilterModel::getSelectedCategories() const
+QStringList LogFilterModel::getSelectedCategories() const
 {
-	return mSelectedCategories;
+	return QStringList(mSelectedCategories.constBegin(), mSelectedCategories.constEnd());
 }
 
 

@@ -11,6 +11,7 @@
 #include "ReaderInfo.h"
 
 #include <QObject>
+#include <QtQml/qqmlregistration.h>
 
 
 namespace governikus
@@ -20,11 +21,12 @@ class CheckIDCardModel
 	: public QObject
 {
 	Q_OBJECT
-
-	Q_PROPERTY(CheckIDCardResult result READ getResult NOTIFY fireResultChanged)
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	Q_PROPERTY(Result result READ getResult NOTIFY fireResultChanged)
+	QML_ELEMENT
 
 	public:
-		enum class CheckIDCardResult
+		enum class Result
 		{
 			UNKNOWN,
 			NO_NFC,
@@ -38,7 +40,7 @@ class CheckIDCardModel
 			PIN_BLOCKED,
 			SUCCESS
 		};
-		Q_ENUM(CheckIDCardResult)
+		Q_ENUM(Result)
 
 		explicit CheckIDCardModel(QObject* pParent = nullptr);
 		~CheckIDCardModel() override;
@@ -47,11 +49,11 @@ class CheckIDCardModel
 		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void stopScan();
 
-		[[nodiscard]] CheckIDCardResult getResult() const;
+		[[nodiscard]] Result getResult() const;
 
 	private:
 		bool mIsRunning;
-		CheckIDCardResult mResult;
+		Result mResult;
 		QString mReaderWithCard;
 
 	private Q_SLOTS:
@@ -61,7 +63,7 @@ class CheckIDCardModel
 		void onReaderRemoved(const ReaderInfo& pInfo);
 		void onReaderPropertiesUpdated(const ReaderInfo& pInfo);
 
-		void stopScanWithResult(CheckIDCardResult result);
+		void stopScanWithResult(Result result);
 
 	Q_SIGNALS:
 		void fireResultChanged();

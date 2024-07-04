@@ -118,20 +118,23 @@ class test_StateChangePin
 			QTest::addColumn<int>("fireRetry");
 			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 
-			QTest::newRow("1") << CardReturnCode::OK << QByteArray() << GlobalStatus::Code::Card_Unexpected_Transmit_Status << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unexpected_Transmit_Status);
-			QTest::newRow("2") << CardReturnCode::OK << QByteArray("9000") << GlobalStatus::Code::No_Error << 1 << 0 << 0 << std::optional<FailureCode>();
-			QTest::newRow("3") << CardReturnCode::OK << QByteArray("6400") << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Input_Timeout);
-			QTest::newRow("4") << CardReturnCode::OK << QByteArray("6401") << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_User_Cancelled);
-			QTest::newRow("5") << CardReturnCode::OK << QByteArray("6402") << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Mismatch);
-			QTest::newRow("6") << CardReturnCode::OK << QByteArray("6403") << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Invalid_Length);
-			QTest::newRow("7") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
-			QTest::newRow("8") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
-			QTest::newRow("9") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
-			QTest::newRow("10") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
-			QTest::newRow("11") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
-			QTest::newRow("12") << CardReturnCode::CARD_NOT_FOUND << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
-			QTest::newRow("13") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
-			QTest::newRow("14") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("OK") << CardReturnCode::OK << QByteArray() << GlobalStatus::Code::Card_Unexpected_Transmit_Status << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unexpected_Transmit_Status);
+			QTest::newRow("OK_9000") << CardReturnCode::OK << QByteArray("9000") << GlobalStatus::Code::No_Error << 1 << 0 << 0 << std::optional<FailureCode>();
+			QTest::newRow("OK_6400") << CardReturnCode::OK << QByteArray("6400") << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Input_Timeout);
+			QTest::newRow("OK_6401") << CardReturnCode::OK << QByteArray("6401") << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_User_Cancelled);
+			QTest::newRow("OK_6402") << CardReturnCode::OK << QByteArray("6402") << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Mismatch);
+			QTest::newRow("OK_6403") << CardReturnCode::OK << QByteArray("6403") << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_New_Pin_Invalid_Length);
+			//Should retry
+			QTest::newRow("CARD_NOT_FOUND") << CardReturnCode::CARD_NOT_FOUND << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			QTest::newRow("RESPONSE_EMPTY") << CardReturnCode::RESPONSE_EMPTY << QByteArray() << GlobalStatus::Code::No_Error << 0 << 0 << 1 << std::optional<FailureCode>();
+			//Should abort
+			QTest::newRow("INPUT_TIME_OUT") << CardReturnCode::INPUT_TIME_OUT << QByteArray() << GlobalStatus::Code::Card_Input_TimeOut << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
+			QTest::newRow("CANCELLATION_BY_USER") << CardReturnCode::CANCELLATION_BY_USER << QByteArray() << GlobalStatus::Code::Card_Cancellation_By_User << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
+			QTest::newRow("NEW_PIN_MISMATCH") << CardReturnCode::NEW_PIN_MISMATCH << QByteArray() << GlobalStatus::Code::Card_NewPin_Mismatch << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
+			QTest::newRow("PROTOCOL_ERROR") << CardReturnCode::PROTOCOL_ERROR << QByteArray() << GlobalStatus::Code::Card_Protocol_Error << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
+			QTest::newRow("NEW_PIN_INVALID_LENGTH") << CardReturnCode::NEW_PIN_INVALID_LENGTH << QByteArray() << GlobalStatus::Code::Card_NewPin_Invalid_Length << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
+			QTest::newRow("COMMAND_FAILED") << CardReturnCode::COMMAND_FAILED << QByteArray() << GlobalStatus::Code::Card_Communication_Error << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
+			QTest::newRow("PIN_BLOCKED") << CardReturnCode::PIN_BLOCKED << QByteArray() << GlobalStatus::Code::Card_Pin_Blocked << 0 << 1 << 0 << std::optional<FailureCode>(FailureCode::Reason::Change_Pin_Unrecoverable);
 		}
 
 
@@ -149,13 +152,13 @@ class test_StateChangePin
 			StateChangePin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockSetEidPinCommand> command(new MockSetEidPinCommand(worker));
-			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPlugInType::NFC);
+			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPluginType::NFC);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
 			context->setCardConnection(connection);
 
 			QSignalSpy spyContinue(&state, &StateChangePin::fireContinue);
 			QSignalSpy spyAbort(&state, &StateChangePin::fireAbort);
-			QSignalSpy spyRetry(&state, &StateChangePin::fireRetry);
+			QSignalSpy spyRetry(&state, &StateChangePin::fireNoCardConnection);
 
 			command->setMockReturnCode(returnCode);
 			command->setData(QByteArray::fromHex(response));
@@ -175,9 +178,9 @@ class test_StateChangePin
 
 		void test_OnSetSmartEidPinDone_data()
 		{
-			QTest::addColumn<ReaderManagerPlugInType>("type");
+			QTest::addColumn<ReaderManagerPluginType>("type");
 
-			const auto& readerTypes = Enum<ReaderManagerPlugInType>::getList();
+			const auto& readerTypes = Enum<ReaderManagerPluginType>::getList();
 			for (const auto& type : readerTypes)
 			{
 				QTest::newRow(getEnumName(type).data()) << type;
@@ -187,7 +190,7 @@ class test_StateChangePin
 
 		void test_OnSetSmartEidPinDone()
 		{
-			QFETCH(ReaderManagerPlugInType, type);
+			QFETCH(ReaderManagerPluginType, type);
 
 			const QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			StateChangePin state(context);

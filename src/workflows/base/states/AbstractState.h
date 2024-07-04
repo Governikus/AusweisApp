@@ -55,7 +55,6 @@ class AbstractState
 		bool mKeepCardConnectionAlive;
 
 		virtual void run() = 0;
-		[[nodiscard]] bool isStartStopEnabled() const;
 
 	protected:
 		explicit AbstractState(const QSharedPointer<WorkflowContext>& pContext);
@@ -77,8 +76,6 @@ class AbstractState
 		void stopNfcScanIfNecessary(const QString& pError = QString()) const;
 
 	public:
-		static const char* const cFORCE_START_STOP_SCAN;
-
 		~AbstractState() override = default;
 
 		[[nodiscard]] QString getStateName() const;
@@ -89,7 +86,7 @@ class AbstractState
 
 	private Q_SLOTS:
 		void onAbort(const FailureCode& pFailure) const;
-		void onReaderStatusChanged(const ReaderManagerPlugInInfo& pInfo) const;
+		void onReaderStatusChanged(const ReaderManagerPluginInfo& pInfo) const;
 
 	public Q_SLOTS:
 		void onStateApprovedChanged(bool pApproved);

@@ -75,7 +75,10 @@ class ASN1Struct
 
 #ifndef QT_NO_DEBUG
 		int getObjectCount() const;
+		void print(QDebug pDbg, int pLevel) const;
 #endif
 };
+
+QDebug operator<<(QDebug pDbg, const ASN1Struct& pASN1Struct);
 
 } // namespace governikus

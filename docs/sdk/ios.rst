@@ -7,11 +7,14 @@ be linked into your application.
 Subsequent sections deal with the SDK interface itself and explain which
 steps are necessary in order to communicate with the |AppName| SDK.
 
+.. seealso::
+   For iOS there is also the
+   `AusweisApp SDK Wrapper <https://www.ausweisapp.bund.de/sdkwrapper/>`_
+   which is a software library that offers a high-level interface to the |AppName| SDK.
+
 .. important::
    Apple released the necessary NFC API with iOS 13.0!
    Be aware that it is not possible to support older versions.
-
-
 
 Use XCFramework
 ---------------

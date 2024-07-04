@@ -46,7 +46,7 @@ class ApplicationTemplates
 	public:
 		static QSharedPointer<ApplicationTemplates> decode(const QByteArray& pBytes);
 
-		bool contains(const QByteArray& pIdentifier);
+		bool contains(const QByteArray& pIdentifier) const;
 
 		[[nodiscard]] const QByteArray& getContentBytes() const;
 		[[nodiscard]] const QList<QSharedPointer<const ApplicationTemplate>>& getApplicationTemplates() const;

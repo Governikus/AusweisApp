@@ -8,7 +8,6 @@
 #include "CertificateChecker.h"
 #include "LogHandler.h"
 #include "NetworkManager.h"
-#include "StateRedirectBrowser.h"
 #include "TlsChecker.h"
 #include "UrlUtil.h"
 
@@ -223,7 +222,7 @@ bool StateCheckRefreshAddress::checkSslConnectionAndSaveCertificate(const QSslCo
 		return true;
 	}
 
-	infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
+	infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, pSslConfiguration.peerCertificate().issuerDisplayName());
 	switch (statusCode)
 	{
 		case CertificateChecker::CertificateStatus::Good:
@@ -393,7 +392,7 @@ void StateCheckRefreshAddress::fetchServerCertificate()
 	//
 	// "...This means that you are only guaranteed to receive this signal for the first connection to a site in the lifespan of the QNetworkAccessManager."
 	Env::getSingleton<NetworkManager>()->clearConnections();
-	mReply = Env::getSingleton<NetworkManager>()->get(request);
+	mReply = Env::getSingleton<NetworkManager>()->head(request);
 
 	*this << connect(mReply.data(), &QNetworkReply::encrypted, this, &StateCheckRefreshAddress::onSslHandshakeDoneFetchingServerCertificate);
 	*this << connect(mReply.data(), &QNetworkReply::sslErrors, this, &StateCheckRefreshAddress::onSslErrors);

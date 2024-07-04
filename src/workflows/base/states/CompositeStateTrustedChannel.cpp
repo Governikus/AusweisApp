@@ -30,27 +30,27 @@ CompositeStateTrustedChannel::CompositeStateTrustedChannel(const QSharedPointer<
 	: QState()
 	, mContext(pContext)
 {
-	auto sGetTcToken = StateBuilder::createState<StateGetTcToken>(mContext);
-	auto sStartPaos = StateBuilder::createState<StateStartPaos>(mContext);
-	auto sSendStartPaos = StateBuilder::createState<StateSendStartPaos>(mContext);
-	auto sInitializeFramework = StateBuilder::createState<StateInitializeFramework>(mContext);
-	auto sSendInitializeFrameworkResponse = StateBuilder::createState<StateSendInitializeFrameworkResponse>(mContext);
-	auto sProcessCvcsAndSetRights = new CompositeStateProcessCvcsAndSetRights(mContext);
-	auto sStatePace = new CompositeStatePace(mContext);
-	auto sDidAuthenticateEac1 = StateBuilder::createState<StateDidAuthenticateEac1>(mContext);
-	auto sSendDidAuthenticateResponseEac1 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC1>(mContext);
-	auto sEacAdditionalInputType = StateBuilder::createState<StateEACAdditionalInputType>(mContext);
-	auto sSendDidAuthenticatResponseEacAdditionalInput = StateBuilder::createState<StateSendDIDAuthenticateResponseEACAdditionalInputType>(mContext);
-	auto sProcessCertificatesFromEac2 = StateBuilder::createState<StateProcessCertificatesFromEac2>(mContext);
-	auto sDidAuthenticateEac2 = StateBuilder::createState<StateDidAuthenticateEac2>(mContext);
-	auto sSendDidAuthenticateResponseEac2 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC2>(mContext);
-	auto sTransmit = StateBuilder::createState<StateTransmit>(mContext);
-	auto sSendTransmitResponse = StateBuilder::createState<StateSendTransmitResponse>(mContext);
-	auto sDestroyPace = StateBuilder::createState<StateDestroyPace>(mContext);
-	auto sClearPacePasswords = StateBuilder::createState<StateClearPacePasswords>(mContext);
-	auto sUpdateRetryCounterFinal = StateBuilder::createState<StateUpdateRetryCounter>(mContext);
-	auto sCleanUpReaderManager = StateBuilder::createState<StateCleanUpReaderManager>(mContext);
-	auto sStartPaosResponse = StateBuilder::createState<StateStartPaosResponse>(mContext);
+	auto* sGetTcToken = StateBuilder::createState<StateGetTcToken>(mContext);
+	auto* sStartPaos = StateBuilder::createState<StateStartPaos>(mContext);
+	auto* sSendStartPaos = StateBuilder::createState<StateSendStartPaos>(mContext);
+	auto* sInitializeFramework = StateBuilder::createState<StateInitializeFramework>(mContext);
+	auto* sSendInitializeFrameworkResponse = StateBuilder::createState<StateSendInitializeFrameworkResponse>(mContext);
+	auto* sProcessCvcsAndSetRights = new CompositeStateProcessCvcsAndSetRights(mContext);
+	auto* sStatePace = new CompositeStatePace(mContext);
+	auto* sDidAuthenticateEac1 = StateBuilder::createState<StateDidAuthenticateEac1>(mContext);
+	auto* sSendDidAuthenticateResponseEac1 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC1>(mContext);
+	auto* sEacAdditionalInputType = StateBuilder::createState<StateEACAdditionalInputType>(mContext);
+	auto* sSendDidAuthenticatResponseEacAdditionalInput = StateBuilder::createState<StateSendDIDAuthenticateResponseEACAdditionalInputType>(mContext);
+	auto* sProcessCertificatesFromEac2 = StateBuilder::createState<StateProcessCertificatesFromEac2>(mContext);
+	auto* sDidAuthenticateEac2 = StateBuilder::createState<StateDidAuthenticateEac2>(mContext);
+	auto* sSendDidAuthenticateResponseEac2 = StateBuilder::createState<StateSendDIDAuthenticateResponseEAC2>(mContext);
+	auto* sTransmit = StateBuilder::createState<StateTransmit>(mContext);
+	auto* sSendTransmitResponse = StateBuilder::createState<StateSendTransmitResponse>(mContext);
+	auto* sDestroyPace = StateBuilder::createState<StateDestroyPace>(mContext);
+	auto* sClearPacePasswords = StateBuilder::createState<StateClearPacePasswords>(mContext);
+	auto* sUpdateRetryCounterFinal = StateBuilder::createState<StateUpdateRetryCounter>(mContext);
+	auto* sCleanUpReaderManager = StateBuilder::createState<StateCleanUpReaderManager>(mContext);
+	auto* sStartPaosResponse = StateBuilder::createState<StateStartPaosResponse>(mContext);
 
 	sGetTcToken->setParent(this);
 	sStartPaos->setParent(this);

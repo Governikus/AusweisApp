@@ -33,7 +33,7 @@ class test_Email
 			QTest::addColumn<bool>("percentEncoding");
 			QTest::addColumn<QString>("result");
 
-			const auto& resultWithService = uR"(Please describe the error that occurred.
+			const auto& resultWithService = uR"(Please describe the error that occurs. Our support is available to you in German and English.
 
 
 Application: Test_ui_qml_Email
@@ -58,7 +58,7 @@ https://www.test.de)"_s;
 			QTest::newRow("service - percent") << QStringLiteral("https://www.foo.bar") << true << resultWithService;
 			QTest::newRow("service - no percent") << QStringLiteral("https://www.foo.bar") << false << QString(resultWithService).replace("%20"_L1, " "_L1);
 
-			const auto resultWithoutService = QString(resultWithService).remove(292, 34);
+			const auto resultWithoutService = QString(resultWithService).remove(346, 34);
 			QTest::newRow("no service - percent") << QString() << true << resultWithoutService;
 			QTest::newRow("no service - no percent") << QString() << false << QString(resultWithoutService).replace("%20"_L1, " "_L1);
 		}

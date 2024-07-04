@@ -58,7 +58,7 @@ class CardConnection
 
 		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
 		SetEidPinCommand* createSetEidPinCommand(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
-		DestroyPaceChannelCommand* createDestroyPaceChannelCommand();
+		DestroyPaceChannelCommand* createDestroyPaceChannelCommand(const QString& pSlotHandle);
 
 		DidAuthenticateEAC1Command* createDidAuthenticateEAC1Command();
 		DidAuthenticateEAC2Command* createDidAuthenticateEAC2Command(const CVCertificateChain& pCvcChain,
@@ -72,7 +72,7 @@ class CardConnection
 		{
 			pCommand->moveToThread(mCardConnectionWorker->thread());
 
-			QMetaObject::Connection resultConnection = connect(pCommand, &BaseCardCommand::commandDone, pReceiver, pFunc, Qt::UniqueConnection);
+			QMetaObject::Connection resultConnection = connect(pCommand, &BaseCardCommand::commandDone, pReceiver, pFunc);
 
 			if (resultConnection)
 			{
@@ -174,9 +174,10 @@ class CardConnection
 
 
 		template<typename T>
-		QMetaObject::Connection callDestroyPaceChannelCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
+		QMetaObject::Connection callDestroyPaceChannelCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
+			const QString& pSlotHandle = QString())
 		{
-			auto command = createDestroyPaceChannelCommand();
+			auto command = createDestroyPaceChannelCommand(pSlotHandle);
 			return call(command, pReceiver, pFunc);
 		}
 

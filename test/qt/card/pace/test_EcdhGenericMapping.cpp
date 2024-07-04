@@ -33,7 +33,7 @@ class test_EcdhGenericMapping
 			auto curve = EcUtil::createCurve(nid);
 			EcdhGenericMapping mapping(curve);
 			QCOMPARE(mapping.getCurve(), curve);
-			QCOMPARE(mapping.generateTerminalMappingData().isEmpty(), curve.isNull());
+			QCOMPARE(mapping.generateLocalMappingData().isEmpty(), curve.isNull());
 		}
 
 

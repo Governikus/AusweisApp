@@ -24,7 +24,7 @@ public final class AusweisApp2LocalIfdService extends QtService
 
 	private final IBinder mBinder = new AusweisApp2LocalIfdServiceBinder();
 
-	// Native method provided by UIPlugInLocalIfd
+	// Native method provided by UiPluginLocalIfd
 	public static native boolean notifyStartWorkflow(String pPsk);
 	public static native void notifyAbortWorkflow();
 	public static native boolean verifyServiceToken(String token);

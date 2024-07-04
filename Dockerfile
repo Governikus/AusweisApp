@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.19
+ARG ALPINE_VERSION=3.20
 
 FROM alpine:$ALPINE_VERSION as builder
 # Install development stuff
@@ -52,7 +52,7 @@ COPY --from=builder /usr/local/share /usr/local/share
 COPY --from=builder /usr/local/bin/AusweisApp /usr/local/bin/AusweisApp
 
 RUN apk --no-cache upgrade -a && \
-    apk --no-cache add tini pcsc-lite pcsc-lite-libs ccid pcsc-cyberjack acsccid eudev-libs doas && \
+    apk --no-cache add tini libstdc++ pcsc-lite-libs eudev-libs doas && \
     echo 'permit nopass :wheel' > /etc/doas.d/wheel.conf && \
     adduser ausweisapp -G wheel -s /bin/sh -D && \
     mkdir -p /home/ausweisapp/.config && chown ausweisapp: /home/ausweisapp/.config

@@ -69,7 +69,7 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 		}
 
 		bool withCard = (mState == DispatcherState::ReaderWithCard || mState == DispatcherState::ReaderWithCardError);
-		ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::PCSC, CardInfo(withCard ? CardType::EID_CARD : CardType::NONE));
+		ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPluginType::PCSC, CardInfo(withCard ? CardType::EID_CARD : CardType::NONE));
 		const QSharedPointer<IfdMessage> message(new IfdStatus(info));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(IfdVersion::Version::v2, mContextHandle)).object(), mId);
 		return;

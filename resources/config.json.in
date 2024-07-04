@@ -189,14 +189,14 @@
 	},
 
 	"minKeySizes": {
-		"Rsa": 2000,
-		"Dsa": 2000,
-		"Dh": 2000,
+		"Rsa": 3000,
+		"Dsa": 3000,
+		"Dh": 3000,
 		"Ec": 250
 	},
 
 	"sizesIfd": {
-		"createRsa": 2048,
+		"createRsa": 3072,
 		"min": {
 			"Rsa": 2000,
 			"Dsa": 2000,

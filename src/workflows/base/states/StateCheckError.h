@@ -11,14 +11,14 @@
 
 #include "AbstractState.h"
 #include "GenericContextContainer.h"
-#include "context/AuthContext.h"
+#include "context/WorkflowContext.h"
 
 namespace governikus
 {
 
 class StateCheckError
 	: public AbstractState
-	, public GenericContextContainer<AuthContext>
+	, public GenericContextContainer<WorkflowContext>
 {
 	Q_OBJECT
 	friend class StateBuilder;

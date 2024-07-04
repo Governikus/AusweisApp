@@ -44,6 +44,8 @@ class SecurityProtocol
 		SignatureType mSignature;
 		std::optional<QCryptographicHash::Algorithm> mHashAlgorithm;
 
+		void logCritical(const QLatin1String& pTopic) const;
+
 	public:
 		explicit SecurityProtocol(const Oid& pOid);
 

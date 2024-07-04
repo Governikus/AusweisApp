@@ -15,6 +15,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
+
 using namespace governikus;
 
 
@@ -51,65 +52,6 @@ bool UrlUtil::isMatchingSameOriginPolicy(const QUrl& pUrl1, const QUrl& pUrl2)
 }
 
 
-QString UrlUtil::removePrefix(QString pStr)
-{
-	return pStr.replace(QRegularExpression(QStringLiteral("(.*)#")), QLatin1String(""));
-}
-
-
-QString UrlUtil::getSuffix(ECardApiResult::Minor pMinor)
-{
-	return removePrefix(ECardApiResult::getMinorString(pMinor));
-}
-
-
-QUrl UrlUtil::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
-{
-	QUrlQuery q;
-	q.setQuery(pOriginUrl.query());
-
-	const ECardApiResult::Major majorEnumVal = pStatus.isError() ? ECardApiResult::Major::Error : ECardApiResult::Major::Ok;
-	QString major = removePrefix(ECardApiResult::getMajorString(majorEnumVal));
-	q.addQueryItem(QStringLiteral("ResultMajor"), major);
-
-	if (pStatus.isError())
-	{
-		QString minor;
-
-		switch (pStatus.getStatusCode())
-		{
-			case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
-				minor = getSuffix(ECardApiResult::Minor::AL_Communication_Error);
-				break;
-
-			case GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
-				minor = getSuffix(ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
-				break;
-
-			case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
-				minor = getSuffix(ECardApiResult::Minor::SAL_Cancellation_by_User);
-				break;
-
-			default:
-				if (pStatus.isOriginServer())
-				{
-					minor = QStringLiteral("serverError");
-				}
-				else
-				{
-					minor = QStringLiteral("clientError");
-				}
-				break;
-		}
-		q.addQueryItem(QStringLiteral("ResultMinor"), minor);
-	}
-
-	QUrl adaptedUrl(pOriginUrl);
-	adaptedUrl.setQuery(q);
-	return adaptedUrl;
-}
-
-
 void UrlUtil::setHiddenSettings(const QUrlQuery& pUrl)
 {
 	const auto queryUseTestUri = QLatin1String("useTestUri");
@@ -125,7 +67,7 @@ void UrlUtil::setHiddenSettings(const QUrlQuery& pUrl)
 	{
 		const auto value = pUrl.queryItemValue(queryEnableSimulator);
 		const bool enableSimulator = QVariant(value).toBool();
-		Env::getSingleton<AppSettings>()->getGeneralSettings().setSimulatorEnabled(enableSimulator);
+		Env::getSingleton<AppSettings>()->getSimulatorSettings().setEnabled(enableSimulator);
 	}
 }
 
@@ -133,12 +75,12 @@ void UrlUtil::setHiddenSettings(const QUrlQuery& pUrl)
 QPair<UrlQueryRequest, QString> UrlUtil::getRequest(const QUrlQuery& pUrl)
 {
 	const auto queryItems = pUrl.queryItems();
-	for (const auto& item : queryItems)
+	for (const auto& [key, value] : queryItems)
 	{
-		const auto type = Enum<UrlQueryRequest>::fromString(item.first.toUpper(), UrlQueryRequest::UNKNOWN);
+		const auto type = Enum<UrlQueryRequest>::fromString(key.toUpper(), UrlQueryRequest::UNKNOWN);
 		if (type != UrlQueryRequest::UNKNOWN)
 		{
-			return {type, item.second};
+			return {type, value};
 		}
 	}
 

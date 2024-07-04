@@ -20,6 +20,7 @@ SetEidPinCommand::SetEidPinCommand(QSharedPointer<CardConnectionWorker> pCardCon
 void SetEidPinCommand::internalExecute()
 {
 	auto [returnCode, responseApdu] = getCardConnectionWorker()->setEidPin(mNewPin, mTimeoutSeconds);
+	returnCode = responseApdu.isEmpty() ? CardReturnCode::RESPONSE_EMPTY : returnCode;
 	setReturnCode(returnCode);
 	mResponseApdu = responseApdu;
 }

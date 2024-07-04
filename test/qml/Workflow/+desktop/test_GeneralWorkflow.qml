@@ -4,7 +4,7 @@
 import QtQuick
 import QtTest
 import Governikus.Global
-import Governikus.Type.ReaderPlugIn
+import Governikus.Type
 
 TestCase {
 	id: testCase

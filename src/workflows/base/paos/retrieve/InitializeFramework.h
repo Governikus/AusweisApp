@@ -20,7 +20,7 @@ class InitializeFramework
 {
 	private:
 		void parse();
-		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
 		explicit InitializeFramework(const QByteArray& pXmlData);

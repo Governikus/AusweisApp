@@ -70,7 +70,7 @@ class test_SimulatorFileSystem
 			QTest::ignoreMessage(QtWarningMsg, R"(Skipping file entry. Expected JSON object, got QJsonValue(array, QJsonArray([{"fileId":"0101","shortFileId":"01"}])))");
 			QTest::ignoreMessage(QtWarningMsg, R"(Skipping file entry. Expected JSON object with 'fileId', 'shortFileId' and 'content', got QJsonObject({"fileId":"0101","shortFileId":"01"}))");
 			QTest::ignoreMessage(QtWarningMsg, R"(Skipping key entry. Expected JSON object, got QJsonValue(array, QJsonArray([{"id":1}])))");
-			QTest::ignoreMessage(QtWarningMsg, R"(Skipping key entry. Expected JSON object with 'id' and 'private', got QJsonObject({"id":1}))");
+			QTest::ignoreMessage(QtWarningMsg, R"(Skipping key entry. Expected JSON object with 'id' and 'content', got QJsonObject({"id":1}))");
 			SimulatorFileSystem fs(doc.object());
 		}
 

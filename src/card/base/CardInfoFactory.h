@@ -30,12 +30,10 @@ class CardInfoFactory final
 		static CardInfo create(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 
 	private:
-		static bool selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef);
-
 		/*!
 		 * Checks, if the smart card is a german eID card (i.e. a NPA or an EAT) or a passport.
 		 */
-		static bool detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+		static FileRef detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
 		static bool detectEid(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pRef);
 
 		/*!

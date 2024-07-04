@@ -45,9 +45,8 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 	}
 
 	const auto& context = getContext();
-	const CardReturnCode returnCode = command->getReturnCode();
-	context->setLastPaceResult(returnCode);
-	switch (returnCode)
+	const auto cardReturnCode = command->getReturnCode();
+	switch (cardReturnCode)
 	{
 		case CardReturnCode::OK:
 			switch (command->getResponseApdu().getStatusCode())
@@ -94,17 +93,24 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 			return;
 
 		case CardReturnCode::CANCELLATION_BY_USER:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(cardReturnCode));
 			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_User_Cancelled);
 			break;
 
 		case CardReturnCode::NEW_PIN_MISMATCH:
-			updateStatus(CardReturnCodeUtil::toGlobalStatus(returnCode));
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(cardReturnCode));
 			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Card_New_Pin_Mismatch);
 			break;
 
+		case CardReturnCode::CARD_NOT_FOUND:
+		case CardReturnCode::RESPONSE_EMPTY:
+			context->resetCardConnection();
+			Q_EMIT fireNoCardConnection();
+			break;
+
 		default:
-			Q_EMIT fireRetry();
+			updateStatus(CardReturnCodeUtil::toGlobalStatus(cardReturnCode));
+			Q_EMIT fireAbort(FailureCode::Reason::Change_Pin_Unrecoverable);
 			break;
 	}
 }

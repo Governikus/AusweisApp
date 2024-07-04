@@ -30,7 +30,7 @@ void InitializeFramework::parse()
 }
 
 
-bool InitializeFramework::handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)
+bool InitializeFramework::handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)
 {
 	if (handleWSAddressingHeaders(pElementName, pValue, pAttributes))
 	{

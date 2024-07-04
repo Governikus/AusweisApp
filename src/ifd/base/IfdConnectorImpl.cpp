@@ -85,7 +85,7 @@ IfdConnectorImpl::IfdConnectorImpl(int pConnectTimeoutMs)
 }
 
 
-void IfdConnectorImpl::onConnectRequest(const IfdDescriptor& pIfdDescriptor, const QString& pPsk)
+void IfdConnectorImpl::onConnectRequest(const IfdDescriptor& pIfdDescriptor, const QByteArray& pPsk)
 {
 	if (pIfdDescriptor.isNull() || pIfdDescriptor.getIfdName().isEmpty())
 	{
@@ -99,7 +99,7 @@ void IfdConnectorImpl::onConnectRequest(const IfdDescriptor& pIfdDescriptor, con
 		return;
 	}
 
-	const QSharedPointer<ConnectRequest> newRequest(new ConnectRequest(pIfdDescriptor, pPsk.toUtf8(), mConnectTimeoutMs), &QObject::deleteLater);
+	const QSharedPointer<ConnectRequest> newRequest(new ConnectRequest(pIfdDescriptor, pPsk, mConnectTimeoutMs), &QObject::deleteLater);
 	mPendingRequests += newRequest;
 	connect(newRequest.data(), &ConnectRequest::fireConnectionCreated, this, &IfdConnectorImpl::onConnectionCreated);
 	connect(newRequest.data(), &ConnectRequest::fireConnectionError, this, &IfdConnectorImpl::onConnectionError);

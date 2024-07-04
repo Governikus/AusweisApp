@@ -35,10 +35,7 @@ IfdConnectResponse::IfdConnectResponse(const QJsonObject& pMessageObject)
 	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
 	mError = pMessageObject.value(QLatin1String("error")).toString();
 
-	if (getType() != IfdMessageType::IFDConnectResponse)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDConnectResponse"));
-	}
+	ensureType(IfdMessageType::IFDConnectResponse);
 }
 
 

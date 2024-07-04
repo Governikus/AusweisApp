@@ -211,9 +211,48 @@ class test_TlsChecker
 							   "foMYlbwM/IzefL1TD2+eBlyV0unSwMIwrvXPTg==\n"
 							   "-----END PUBLIC KEY-----\n");
 
-			QTest::newRow("dsa2048") << dsa2048 << QSsl::KeyAlgorithm::Dsa << true << FailureCode::FailureInfoMap {
+			QTest::newRow("dsa2048") << dsa2048 << QSsl::KeyAlgorithm::Dsa << false << FailureCode::FailureInfoMap {
 				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Dsa"_L1},
 				{FailureCode::Info::Ephemeral_Server_Key_Length, "2048"_L1}
+				};
+
+			/*
+			 * openssl dsaparam -out dsa3072_param.pem 3072
+			 * openssl gendsa -out dsa3072_key.pem dsa3072_param.pem
+			 * openssl dsa -in dsa3072_key.pem -pubout -out dsa3072_pubkey.pem
+			 */
+			QByteArray dsa3072("-----BEGIN PUBLIC KEY-----\n"
+							   "MIIEwjCCAzUGByqGSM44BAEwggMoAoIBgQCSrktmNWqtkuTQKbZnPkpqVq56/YTD\n"
+							   "Fc5EHJmqWoWWyobwChfWn9bsanUGKYUdSR4Y+PfsmNHkHTytaMPixXC3F9wnA14O\n"
+							   "RaI34Ivf+1CUsGbQH0aVX0GfQHODNsqqLaxS6/sI+Kd4Xye6GPQYdxaetLwo9TEA\n"
+							   "jQYHQd3gClQXdSWgqG5bDCU4ILkUNJ5coP8UOkFJjk/z7EcxcuFOu9OPCExxI9G4\n"
+							   "U3bFBIHjUcFk5cbe0i1YehwAo2HGTUmc/K1XGr50THuMSgcWH/MvuXmY7/mhlnlh\n"
+							   "7udLkT1CsBezbcpA2uG7nkDKBzjGKnOnLkLy0elhJs+OYUjR4PibaR2Mat52tM/K\n"
+							   "lUl5duIhxbb/TWLGvVZYBYNm96O2d8P9XVknlqbH1lrukrouF/yTH9yH/s32npR/\n"
+							   "0R7vjzXmokyj0+4AT33NxzWX1ANzI7H4bALKx4G/hpmyBo+dbWrmaUqANVg3blsf\n"
+							   "fgKUleKK5b7lk8Rj1NHazHk3NbXC1GqKIKsCHQD1k8RPbnqQ0itWdC+kTI0lKIas\n"
+							   "92tw8KVbEq/XAoIBgEMfD1FJgMLzS8p7vrw9G2PvaLB5KHrPDu/9uzsdjWDndyzN\n"
+							   "bJCAdDxWB5hPwVS3S5Hx06weT8xNRNYGomlG3iW+AbWNBxpDyWLKeVl4FvGGBYK+\n"
+							   "j7o3vOEKqfVXNxY8ALQUUWPprEpm6UH/mtqMa6AE26bunx/dDDOCdyoLtP1VcYCG\n"
+							   "Un1QhdZ0jo7Aj5gZDsa09Iluxq4I73WE71/3TFgM0RFInR1mNEFRZkLpn1q+YZ4d\n"
+							   "HJllhVmSZFN1LDJ3SEbTBi6nEy3PvWFFUAsYIJPtoZjFWRLoLkNAwLUTdEijOkXG\n"
+							   "F5okmnjmCUC/tLy3jpwKq8X4PCcU29sV0tDINIF0bf182/P9kmfs5GIVeVubkmlX\n"
+							   "/cGb5A+HfRVALAPPP0NYp0RM28OYKmEdPPs2hrbnh49GVaPEdwSI+Ta75zafTXp0\n"
+							   "wH9s3tzChuVfQT0U+aApz4/Zo4RfjjtxvxM4x0PF7+PvNrX0DXYGnetE1pqaOwpW\n"
+							   "cNXwgNTTCOY5LjXreQOCAYUAAoIBgBoAsSoEmKbDONThiRSFP0edi7Rt+gx2NgRr\n"
+							   "oAVtCi0nqCG3yNOA2IbDRINgWxgw+HHvzazQQQMsJA6UPPkxSLBXHnWCSY8EM3iG\n"
+							   "Uu0qVu8eaq7OFmqeSJdg04LmXGMIqA5L79XMKT06gAuOaMQt8NbB8HXZFTlGgLZZ\n"
+							   "76jdrOTjqoChr9jYUbUNd2v9d+YWNWWP9A7YFbiNkmwbWqc2SbecziD3AUuasrZU\n"
+							   "m6+NJjVo2W44mKmXvYyY/wPBV80qGqAXkosef/Xh1c4kHifGID5sKtWRMT881a0Z\n"
+							   "4UT0LgoNpcLlr6FDUWqfUHlHz6h3EdINueHsdvHoRyfK16HfQzcycJ1wePyDP010\n"
+							   "h2BpFQkvsbB4GlEpg2EpA+8pME1pKOdziNR6OPUY/O7CtSl4NzuKbm0xRSRe8Y0l\n"
+							   "WYgK8nUY1xGKBVmGoUfFhCPgZtz2n7g2EXGZuu80qfiGmmKOyo2QmPWvXeErEPop\n"
+							   "onJVM+lxe8gp7okaGGmRcBgho199Bg==\n"
+							   "-----END PUBLIC KEY-----");
+
+			QTest::newRow("dsa3072") << dsa3072 << QSsl::KeyAlgorithm::Dsa << true << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Dsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "3072"_L1}
 				};
 
 			/*
@@ -244,9 +283,29 @@ class test_TlsChecker
 							   "q0hOP6K9hZ7pBZvqLZ0gZdVWqarIf9w/I5yS2QGN9jgJN/oJIKyljlreGuSagST/\n"
 							   "5wIDAQAB\n"
 							   "-----END PUBLIC KEY-----");
-			QTest::newRow("rsa2048") << rsa2048 << QSsl::KeyAlgorithm::Rsa << true << FailureCode::FailureInfoMap {
+			QTest::newRow("rsa2048") << rsa2048 << QSsl::KeyAlgorithm::Rsa << false << FailureCode::FailureInfoMap {
 				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Rsa"_L1},
 				{FailureCode::Info::Ephemeral_Server_Key_Length, "2048"_L1}
+				};
+
+			/*
+			 * openssl genrsa -out rsa3072_key.pem 3072
+			 * openssl rsa -in rsa3072_key.pem -out rsa3072_pubkey.pem -pubout
+			 */
+			QByteArray rsa3072("-----BEGIN PUBLIC KEY-----\n"
+							   "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAml5hQRUb0j/3+bnBCoBE\n"
+							   "U75t43Mp+XOS6nwOy/KJgvbpT+oPjKcNOmM0fXAnByCcpbc0avrT9+jNGduzNWU0\n"
+							   "/TAHBJxfWV3+rC/vQ9MFdOEmcmGB6j2pCbiuxJLQX4jAFE0ilSXouisPhDrU1dvJ\n"
+							   "2NlSV2IarjeywfzN77ik3eA69pBKT9B9Vior5TtWwpqIkeC/41vnysFusbWTfn7M\n"
+							   "3BilReDC1k9KBlm5hHQy3GpswnFRABLvsy/hz3yAeeCQyZxUXCKcSahqE+DB/PTy\n"
+							   "nPwOWU9mL7d61WZ6mZjSo+iHHgeVkAsTnuLOr3yo5FG+utMsNxgZeI352ylMeJdj\n"
+							   "bMlbpdqHBtn5sr3OvOt3Hi+vvzDxI1lX0b71vTVriGfgr+o6VUbvfCRy0b8J2/6f\n"
+							   "HSYiIDh/Wf2tz5mKRfpV61k3AIM7aiw5+evFtU7cT/mBH2e5K2rhcywlUiEmiwzP\n"
+							   "8P3+H+HvrctpZoO3J9kIqOoGBz7Q7ocl1HNYMKFh7oy7AgMBAAE=\n"
+							   "-----END PUBLIC KEY-----");
+			QTest::newRow("rsa3072") << rsa3072 << QSsl::KeyAlgorithm::Rsa << true << FailureCode::FailureInfoMap {
+				{FailureCode::Info::Ephemeral_Server_Key_Algorithm, "Rsa"_L1},
+				{FailureCode::Info::Ephemeral_Server_Key_Length, "3072"_L1}
 				};
 		}
 
@@ -328,7 +387,11 @@ class test_TlsChecker
 
 			QCOMPARE(logSpy.count(), 6);
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Used session cipher QSslCipher(name=, bits=0, proto=)"_L1));
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: \"UnknownProtocol\""_L1));
+#else
+			QVERIFY(logSpy.at(1).at(0).toString().contains("Used session protocol: QSsl::UnknownProtocol"_L1));
+#endif
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Used ephemeral server key:"_L1));
 #if (QT_VERSION < QT_VERSION_CHECK(6, 5, 0))
 			QVERIFY(logSpy.at(3).at(0).toString().contains("Used peer certificate: QSslCertificate(\"\", \"\", \"1B2M2Y8AsgTpgAmY7PhCfg==\""_L1));

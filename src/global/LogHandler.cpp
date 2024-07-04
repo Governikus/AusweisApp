@@ -423,7 +423,7 @@ void LogHandler::handleLogWindow(QtMsgType pType, const char* pCategory, const Q
 }
 
 
-bool LogHandler::copy(const QString& pDest)
+bool LogHandler::copy(const QString& pDest) const
 {
 	const QMutexLocker mutexLocker(&mMutex);
 

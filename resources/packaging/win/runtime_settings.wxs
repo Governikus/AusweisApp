@@ -106,16 +106,6 @@
 			)
 		</SetProperty>
 
-		<Property Id="ONSCREENKEYBOARD" Secure="yes"/>
-		<Property Id="ONSCREENKEYBOARD_FOUND" Secure="yes">
-			<RegistrySearch Id="OnScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="keylessPassword" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="ONSCREENKEYBOARD" Value="[ONSCREENKEYBOARD_FOUND]">
-			(NOT ONSCREENKEYBOARD) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND ONSCREENKEYBOARD_FOUND
-			)
-		</SetProperty>
-
 		<Property Id="SHUFFLESCREENKEYBOARD" Secure="yes"/>
 		<Property Id="SHUFFLESCREENKEYBOARD_FOUND" Secure="yes">
 			<RegistrySearch Id="ShuffleScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="shuffleScreenKeyboard" Type="raw"/>
@@ -169,7 +159,6 @@
 			<ComponentRef Id="CustomProxyHost"/>
 			<ComponentRef Id="CustomProxyPort"/>
 			<ComponentRef Id="UpdateCheck"/>
-			<ComponentRef Id="OnScreenKeyboard"/>
 			<ComponentRef Id="ShuffleScreenKeyboard"/>
 			<ComponentRef Id="SecureScreenKeyboard"/>
 			<ComponentRef Id="EnableCanAllowed"/>
@@ -239,13 +228,6 @@
 				<Condition>UPDATECHECK</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
 					<RegistryValue Name="autoUpdateCheck" Type="string" Value="[UPDATECHECK]" />
-				</RegistryKey>
-			</Component>
-
-			<Component Id="OnScreenKeyboard" Guid="{391CF345-5AA2-45CD-C010-C24861C9AB8D}">
-				<Condition>ONSCREENKEYBOARD</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="keylessPassword" Type="string" Value="[ONSCREENKEYBOARD]" />
 				</RegistryKey>
 			</Component>
 

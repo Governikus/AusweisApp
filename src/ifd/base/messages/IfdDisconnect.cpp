@@ -34,10 +34,7 @@ IfdDisconnect::IfdDisconnect(const QJsonObject& pMessageObject)
 {
 	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
 
-	if (getType() != IfdMessageType::IFDDisconnect)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDDisconnect"));
-	}
+	ensureType(IfdMessageType::IFDDisconnect);
 }
 
 

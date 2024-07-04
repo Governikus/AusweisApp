@@ -83,7 +83,7 @@ const QList<QSharedPointer<const ApplicationTemplate>>& ApplicationTemplates::ge
 }
 
 
-bool ApplicationTemplates::contains(const QByteArray& pIdentifier)
+bool ApplicationTemplates::contains(const QByteArray& pIdentifier) const
 {
 	return std::any_of(mApplicationTemplates.constBegin(), mApplicationTemplates.constEnd(), [pIdentifier](const auto& entry)
 		{

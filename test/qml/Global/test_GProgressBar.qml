@@ -4,7 +4,7 @@
 import QtQuick
 import QtTest
 import Governikus.Global
-import Governikus.Type.SettingsModel
+import Governikus.Type
 
 TestCase {
 	id: testCase
@@ -29,47 +29,56 @@ TestCase {
 		tryCompare(testObject, "effectiveVisualPosition", data.effectiveVisualPosition);
 	}
 	function test_value_data() {
-		return [{
+		return [
+			{
 				"tag": "With Animation, 0",
 				"useAnimations": true,
 				"value": 0,
 				"effectiveVisualPosition": 0
-			}, {
+			},
+			{
 				"tag": "With Animation, 10",
 				"useAnimations": true,
 				"value": 10,
 				"effectiveVisualPosition": 0.1
-			}, {
+			},
+			{
 				"tag": "With Animation, 50",
 				"useAnimations": true,
 				"value": 50,
 				"effectiveVisualPosition": 0.5
-			}, {
+			},
+			{
 				"tag": "With Animation, 100",
 				"useAnimations": true,
 				"value": 100,
 				"effectiveVisualPosition": 1
-			}, {
+			},
+			{
 				"tag": "Without Animation, 0",
 				"useAnimations": false,
 				"value": 0,
 				"effectiveVisualPosition": 0.25
-			}, {
+			},
+			{
 				"tag": "Without Animation, 10",
 				"useAnimations": false,
 				"value": 10,
 				"effectiveVisualPosition": 0.25
-			}, {
+			},
+			{
 				"tag": "Without Animation, 50",
 				"useAnimations": false,
 				"value": 50,
 				"effectiveVisualPosition": 0.25
-			}, {
+			},
+			{
 				"tag": "Without Animation, 100",
 				"useAnimations": false,
 				"value": 100,
 				"effectiveVisualPosition": 1
-			}];
+			}
+		];
 	}
 
 	name: "test_GProgressBar"

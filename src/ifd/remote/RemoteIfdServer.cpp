@@ -31,7 +31,7 @@ void RemoteIfdServer::onConnectedChanged(bool pConnected)
 	{
 		const auto& ifdName = mWebSocketServer->getServerName();
 		const auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-		const auto& ifdId = QString::fromLatin1(TlsChecker::getRootCertificate(remoteServiceSettings.getCertificates()).toPem());
+		const auto& ifdId = RemoteServiceSettings::generateFingerprint(TlsChecker::getRootCertificate(remoteServiceSettings.getCertificates()));
 		quint16 port = mWebSocketServer->getServerPort();
 		bool isPairing = mWebSocketServer->isPairingAnnounced();
 		mRemoteReaderAdvertiser.reset(Env::create<RemoteReaderAdvertiser*>(ifdName, ifdId, port, isPairing));

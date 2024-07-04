@@ -36,7 +36,7 @@ class IfdConnector
 		static GlobalStatus errorToGlobalStatus(IfdErrorCode pErrorCode);
 
 	public Q_SLOTS:
-		virtual void onConnectRequest(const IfdDescriptor& pIfdDescriptor, const QString& pPsk) = 0;
+		virtual void onConnectRequest(const IfdDescriptor& pIfdDescriptor, const QByteArray& pPsk) = 0;
 
 	Q_SIGNALS:
 		void fireDispatcherCreated(const IfdDescriptor& pIfdDescriptor, const QSharedPointer<IfdDispatcherClient>& pClientDispatcher);

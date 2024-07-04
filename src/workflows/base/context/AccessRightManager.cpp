@@ -92,7 +92,7 @@ void AccessRightManager::removeForbiddenAccessRights(QSet<AccessRight>& pAccessR
 
 	const auto& allowedCvcAccessRights = mTerminalCvc->getBody().getCHAT().getAccessRights();
 
-	const auto rights = AccessRoleAndRightsUtil::allDisplayedOrderedRights();
+	const auto& rights = AccessRoleAndRightsUtil::allDisplayedOrderedRights();
 	const auto& allDisplayedOrderedRights = QSet<AccessRight>(rights.constBegin(), rights.constEnd());
 	const auto& allowedAccessRights = allowedCvcAccessRights & allDisplayedOrderedRights;
 

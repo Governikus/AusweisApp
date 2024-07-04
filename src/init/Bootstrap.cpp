@@ -60,9 +60,9 @@ static inline void printInfo()
 
 	qCInfo(init) << "##################################################";
 	const auto& info = BuildHelper::getInformationHeader();
-	for (const auto& entry : info)
+	for (const auto& [key, value] : info)
 	{
-		qCInfo(init).noquote().nospace() << "### " << entry.first << ": " << entry.second;
+		qCInfo(init).noquote().nospace() << "### " << key << ": " << value;
 	}
 	qCInfo(init) << "##################################################";
 

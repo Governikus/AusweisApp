@@ -46,13 +46,13 @@ MsgHandlerApiLevel::MsgHandlerApiLevel(const QJsonObject& pObj, MsgContext& pCon
 
 void MsgHandlerApiLevel::setError(const QLatin1String pError)
 {
-	mJsonObject[QLatin1String("error")] = pError;
+	setValue(QLatin1String("error"), pError);
 }
 
 
 void MsgHandlerApiLevel::setCurrentLevel(MsgLevel pLevel)
 {
-	mJsonObject[QLatin1String("current")] = static_cast<int>(pLevel);
+	setValue(QLatin1String("current"), static_cast<int>(pLevel));
 }
 
 
@@ -64,5 +64,5 @@ void MsgHandlerApiLevel::setAvailableLevel()
 	{
 		availableApiLevel += static_cast<int>(entry);
 	}
-	mJsonObject[QLatin1String("available")] = availableApiLevel;
+	setValue(QLatin1String("available"), availableApiLevel);
 }

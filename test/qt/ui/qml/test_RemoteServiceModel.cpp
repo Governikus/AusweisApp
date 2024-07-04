@@ -49,31 +49,31 @@ class test_RemoteServiceModel
 		}
 
 
-		void test_ReaderPlugInType()
+		void test_ReaderPluginType()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
-			const ReaderManagerPlugInType input1 = ReaderManagerPlugInType::NFC;
-			const ReaderManagerPlugInType input2 = ReaderManagerPlugInType::UNKNOWN;
+			const ReaderManagerPluginType input1 = ReaderManagerPluginType::NFC;
+			const ReaderManagerPluginType input2 = ReaderManagerPluginType::UNKNOWN;
 
-			mModel->setReaderPlugInType(input1);
-			QCOMPARE(mModel->getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+			mModel->setReaderPluginType(input1);
+			QCOMPARE(mModel->getReaderPluginType(), ReaderManagerPluginType::UNKNOWN);
 
 			mModel->resetRemoteServiceContext(mContext);
-			mModel->setReaderPlugInType(input1);
-			QCOMPARE(mModel->getReaderPlugInType(), input1);
+			mModel->setReaderPluginType(input1);
+			QCOMPARE(mModel->getReaderPluginType(), input1);
 
-			mModel->setReaderPlugInType(input2);
-			QCOMPARE(mModel->getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+			mModel->setReaderPluginType(input2);
+			QCOMPARE(mModel->getReaderPluginType(), ReaderManagerPluginType::UNKNOWN);
 		}
 
 
 		void test_CancelPasswordRequest()
 		{
-			QSignalSpy spy(mContext.data(), &IfdServiceContext::fireCancelPasswordRequest);
+			QSignalSpy spy(mContext.data(), &IfdServiceContext::fireUserError);
 
 			mModel->cancelPasswordRequest();
 			QCOMPARE(spy.count(), 0);
@@ -81,6 +81,21 @@ class test_RemoteServiceModel
 			mModel->resetRemoteServiceContext(mContext);
 			mModel->cancelPasswordRequest();
 			QCOMPARE(spy.count(), 1);
+			QCOMPARE(spy.at(0).at(0).value<StatusCode>(), StatusCode::INPUT_CANCELLED);
+		}
+
+
+		void test_PasswordsDiffer()
+		{
+			QSignalSpy spy(mContext.data(), &IfdServiceContext::fireUserError);
+
+			mModel->passwordsDiffer();
+			QCOMPARE(spy.count(), 0);
+
+			mModel->resetRemoteServiceContext(mContext);
+			mModel->passwordsDiffer();
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(spy.at(0).at(0).value<StatusCode>(), StatusCode::PASSWORDS_DIFFER);
 		}
 
 
@@ -152,13 +167,13 @@ class test_RemoteServiceModel
 		}
 
 
-		void test_getSupportedReaderPlugInTypes()
+		void test_getSupportedReaderPluginTypes()
 		{
-			QList<ReaderManagerPlugInType> supportedPlugIns {ReaderManagerPlugInType::NFC};
+			QList<ReaderManagerPluginType> supportedPlugins {ReaderManagerPluginType::NFC};
 #if __has_include("SmartManager.h")
-			supportedPlugIns << ReaderManagerPlugInType::SMART;
+			supportedPlugins << ReaderManagerPluginType::SMART;
 #endif
-			QCOMPARE(mModel->getSupportedReaderPlugInTypes(), supportedPlugIns);
+			QCOMPARE(mModel->getSupportedReaderPluginTypes(), supportedPlugins);
 		}
 
 

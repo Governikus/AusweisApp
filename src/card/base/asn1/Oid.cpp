@@ -4,6 +4,7 @@
 
 #include "Oid.h"
 
+#include "ASN1Struct.h"
 #include "EnumHelper.h"
 #include "Initializer.h"
 
@@ -188,12 +189,16 @@ Oid::Oid(const ASN1_OBJECT* pObject)
 }
 
 
-Oid::Oid(const QByteArray& pOid)
-	: mObject(OBJ_txt2obj(pOid.constData(), 0))
+Oid::Oid(const QByteArray& pData)
+	: mObject(nullptr)
 {
+	const QByteArray& der = ASN1Struct(V_ASN1_UNIVERSAL, ASN1Struct::UNI_OBJECT_IDENTIFIER, pData);
+	const auto* derPointer = reinterpret_cast<const unsigned char*>(der.constData());
+	d2i_ASN1_OBJECT(&mObject, &derPointer, static_cast<long>(der.length()));
+
 	if (!mObject)
 	{
-		qCritical() << "Invalid text input, was not able to create a valid OID for:" << pOid;
+		qCritical() << "d2i_ASN1_OBJECT failed, was not able to create a valid OID";
 		return;
 	}
 
@@ -240,7 +245,7 @@ Oid& Oid::operator=(Oid&& pOid) noexcept
 }
 
 
-QByteArray Oid::getData() const
+Oid::operator QByteArray() const
 {
 	if (!mObject)
 	{
@@ -250,34 +255,6 @@ QByteArray Oid::getData() const
 	const size_t len = OBJ_length(mObject);
 	const uchar* const data = OBJ_get0_data(mObject);
 	return QByteArray(reinterpret_cast<const char*>(data), static_cast<int>(len));
-}
-
-
-Oid::operator QByteArray() const
-{
-	if (!mObject)
-	{
-		return QByteArray();
-	}
-
-	const int oidSize = OBJ_obj2txt(nullptr, 0, mObject, 1);
-	if (oidSize < 1)
-	{
-		return QByteArray();
-	}
-
-	QByteArray description(oidSize + 1, '\0'); // +1 = null termination
-	OBJ_obj2txt(description.data(), static_cast<int>(description.size()), mObject, 1);
-	description.resize(oidSize); // remove null termination
-
-	if (const int nid = OBJ_obj2nid(mObject); nid != NID_undef)
-	{
-		description += QByteArray(" (");
-		description += QByteArray(OBJ_nid2sn(nid));
-		description += QByteArray(")");
-	}
-
-	return description;
 }
 
 
@@ -309,4 +286,40 @@ bool Oid::operator!=(const Oid& pOther) const
 }
 
 
+namespace governikus
+{
+QDebug operator<<(QDebug pDbg, const Oid& pOid)
+{
+	QDebugStateSaver saver(pDbg);
+
+	if (!pOid.mObject)
+	{
+		pDbg.noquote() << "undefined";
+		return pDbg;
+	}
+
+	const int oidSize = OBJ_obj2txt(nullptr, 0, pOid.mObject, 1);
+	if (oidSize < 1)
+	{
+		pDbg.noquote() << "undefined";
+		return pDbg;
+	}
+
+	QByteArray description(oidSize + 1, '\0'); // +1 = null termination
+	OBJ_obj2txt(description.data(), static_cast<int>(description.size()), pOid.mObject, 1);
+	description.resize(oidSize); // remove null termination
+
+	if (const int nid = OBJ_obj2nid(pOid.mObject); nid != NID_undef)
+	{
+		description += QByteArray(" (");
+		description += QByteArray(OBJ_nid2sn(nid));
+		description += QByteArray(")");
+	}
+
+	pDbg.noquote() << description;
+	return pDbg;
+}
+
+
+} // namespace governikus
 #include "moc_Oid.cpp"

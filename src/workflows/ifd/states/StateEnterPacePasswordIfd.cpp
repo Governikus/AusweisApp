@@ -22,7 +22,7 @@ void StateEnterPacePasswordIfd::run()
 }
 
 
-void StateEnterPacePasswordIfd::onCancelEstablishPaceChannel()
+void StateEnterPacePasswordIfd::onUserError()
 {
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
@@ -43,8 +43,8 @@ void StateEnterPacePasswordIfd::onEntry(QEvent* pEvent)
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
 		const auto& handler = getContext()->getIfdServer()->getMessageHandler();
-		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
+		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterPacePasswordIfd::onUserError);
 	}
 
-	*this << connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterPacePasswordIfd::onCancelEstablishPaceChannel);
+	*this << connect(getContext().data(), &IfdServiceContext::fireUserError, this, &StateEnterPacePasswordIfd::onUserError);
 }

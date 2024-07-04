@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <QIODevice>
 #include <QUrl>
 #include <QXmlStreamReader>
 
@@ -31,7 +32,7 @@ class TcToken
 		QUrl mCommunicationErrorAddress;
 		QUrl mRefreshAddress;
 
-		void parse(const QByteArray& pData);
+		void parse(const QSharedPointer<QIODevice>& pStream);
 		[[nodiscard]] bool valuesAreSchemaConform(const QString& pBinding,
 				const QString& pPathSecurityProtocol,
 				const QByteArray& pPsk,
@@ -41,11 +42,11 @@ class TcToken
 				const QString& pRefreshAddress) const;
 		[[nodiscard]] bool isAnyUri(const QString& pCandidate) const;
 		[[nodiscard]] bool isHexBinary(const QString& pCandidate) const;
-		QString readElementValue(QXmlStreamReader& pReader) const;
+		QString readElementValue(QXmlStreamReader& pReader, bool pLogValue = true) const;
 
 	public:
-		explicit TcToken(const QByteArray& pData);
-		virtual ~TcToken();
+		explicit TcToken(const QSharedPointer<QIODevice>& pStream);
+		explicit TcToken(QByteArray pData);
 
 		/**
 		 * Check if parsing of given data was successful.
@@ -59,13 +60,7 @@ class TcToken
 		[[nodiscard]] const QUrl& getCommunicationErrorAddress() const;
 		[[nodiscard]] bool usePsk() const;
 		[[nodiscard]] const QByteArray& getPsk() const;
-
-		[[nodiscard]] bool isSchemaConform() const
-		{
-			return mSchemaConform;
-		}
-
-
+		[[nodiscard]] bool isSchemaConform() const;
 };
 
 } // namespace governikus

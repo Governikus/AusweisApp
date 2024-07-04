@@ -34,7 +34,7 @@ void StatePreparePace::handleRetryCounter(int pRetryCounter)
 				return;
 			}
 
-			Q_EMIT fireEstablishPaceChannel();
+			Q_EMIT fireContinue();
 			return;
 		}
 
@@ -63,7 +63,7 @@ void StatePreparePace::handleRetryCounter(int pRetryCounter)
 					return;
 				}
 
-				Q_EMIT fireEstablishPaceChannel();
+				Q_EMIT fireContinue();
 				return;
 			}
 
@@ -106,7 +106,7 @@ void StatePreparePace::run()
 			return;
 		}
 
-		Q_EMIT fireEstablishPaceChannel();
+		Q_EMIT fireContinue();
 		return;
 	}
 
@@ -141,7 +141,7 @@ bool StatePreparePace::requestPaceCanIfStillRequired()
 			return true;
 		}
 
-		Q_EMIT fireEstablishPaceChannel();
+		Q_EMIT fireContinue();
 		return true;
 	}
 

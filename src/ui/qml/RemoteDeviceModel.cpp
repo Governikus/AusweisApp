@@ -27,13 +27,13 @@ RemoteDeviceModel::RemoteDeviceModel(QObject* pParent)
 	connect(&settings, &RemoteServiceSettings::fireTrustedRemoteInfosChanged, this, &RemoteDeviceModel::onKnownRemoteReadersChanged);
 	onKnownRemoteReadersChanged();
 
-	const auto& ifdClient = Env::getSingleton<RemoteIfdClient>();
+	const auto* ifdClient = Env::getSingleton<RemoteIfdClient>();
 	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &RemoteDeviceModel::onUpdateReaderList);
 	connect(ifdClient, &IfdClient::fireDeviceUpdated, this, &RemoteDeviceModel::onUpdateReaderList);
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteDeviceModel::onUpdateReaderList);
 	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteDeviceModel::onUpdateReaderList);
 
-	const auto& applicationModel = Env::getSingleton<ApplicationModel>();
+	const auto* applicationModel = Env::getSingleton<ApplicationModel>();
 	connect(applicationModel, &ApplicationModel::fireApplicationStateChanged, this, &RemoteDeviceModel::onApplicationStateChanged);
 }
 
@@ -251,7 +251,7 @@ bool RemoteDeviceModel::addOrUpdateReader(const RemoteDeviceModelEntry& pModelEn
 {
 	if (!mAllRemoteReaders.contains(pModelEntry))
 	{
-		const int readerCount = static_cast<int>(mAllRemoteReaders.size());
+		const auto readerCount = static_cast<int>(mAllRemoteReaders.size());
 		beginInsertRows(index(readerCount, 0), readerCount, readerCount);
 		mAllRemoteReaders.append(pModelEntry);
 		endInsertRows();

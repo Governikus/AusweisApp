@@ -19,6 +19,7 @@
 #include <QSslCertificate>
 #include <QString>
 #include <QTimer>
+#include <QtQml/qqmlregistration.h>
 
 
 class test_RemoteDeviceModel;
@@ -32,6 +33,9 @@ class RemoteDeviceModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	QML_UNCREATABLE("Used by RemoteServiceModel only")
+	QML_ELEMENT
+
 	friend class ::test_RemoteDeviceModel;
 	friend class ::test_RemoteDeviceFilterModel;
 

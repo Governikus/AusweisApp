@@ -20,11 +20,11 @@ CompositeStateProcessCvcsAndSetRights::CompositeStateProcessCvcsAndSetRights(con
 	: QState()
 	, mContext(pContext)
 {
-	auto sExtractCvcsFromEac1InputType = StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mContext);
-	auto sPreVerification = StateBuilder::createState<StatePreVerification>(mContext);
-	auto sCertificateDescriptionCheck = StateBuilder::createState<StateCertificateDescriptionCheck>(mContext);
-	auto sCheckCertificates = StateBuilder::createState<StateCheckCertificates>(mContext);
-	auto sEditAccessRights = StateBuilder::createState<StateEditAccessRights>(mContext);
+	auto* sExtractCvcsFromEac1InputType = StateBuilder::createState<StateExtractCvcsFromEac1InputType>(mContext);
+	auto* sPreVerification = StateBuilder::createState<StatePreVerification>(mContext);
+	auto* sCertificateDescriptionCheck = StateBuilder::createState<StateCertificateDescriptionCheck>(mContext);
+	auto* sCheckCertificates = StateBuilder::createState<StateCheckCertificates>(mContext);
+	auto* sEditAccessRights = StateBuilder::createState<StateEditAccessRights>(mContext);
 
 	sExtractCvcsFromEac1InputType->setParent(this);
 	sPreVerification->setParent(this);

@@ -54,20 +54,16 @@ class test_EcdhKeyAgreement
 
 		void encodeUncompressedPublicKey()
 		{
-			QByteArray protocolValue = QByteArray::fromHex("04007F00070202040202");
-			QSharedPointer<const PaceInfo> paceInfo = PaceInfo::decode(QByteArray::fromHex("300F060A") + protocolValue + QByteArray::fromHex("020102"));
-			QSharedPointer<EC_GROUP> ecGroup = EcUtil::create(EC_GROUP_new_by_curve_name(NID_brainpoolP256r1));
-			QByteArray ecPointBytes = QByteArray::fromHex("04A9024A1CE8F02DB4463CD359BE3A6946FA24FDBED7D19B04BEA2F0AA2FF63C6D2A05B17A66EDBC15875611A209CB87C972A141263BD0843CC64B8B884C52F725");
-			QSharedPointer<EC_POINT> ecPoint = EcUtil::oct2point(ecGroup, ecPointBytes);
-
-			const QByteArray& result = EcdhKeyAgreement::encodeUncompressedPublicKey(paceInfo, ecGroup, ecPoint);
+			const Oid oid(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
+			const QByteArray ecPointBytes = QByteArray::fromHex("04A9024A1CE8F02DB4463CD359BE3A6946FA24FDBED7D19B04BEA2F0AA2FF63C6D2A05B17A66EDBC15875611A209CB87C972A141263BD0843CC64B8B884C52F725");
+			const QByteArray& result = EcdhKeyAgreement::encodeUncompressedPublicKey(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128, ecPointBytes);
 			QCOMPARE(result.toHex(),
 					// ISO 7816 Format in TR 3111 - 5.1.2
 					QByteArray("7f49")
 					+ QByteArray("4f")
 					+ QByteArray("06")
 					+ QByteArray("0a")
-					+ protocolValue.toHex()
+					+ QByteArray(oid).toHex()
 					+ QByteArray("86")
 					+ QByteArray("41")
 					+ ecPointBytes.toHex());

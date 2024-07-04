@@ -229,8 +229,7 @@ void StateGetTcToken::parseTcToken()
 {
 	Q_ASSERT(getContext()->getTcToken().isNull());
 
-	QByteArray data = mReply->readAll();
-	if (data.isEmpty())
+	if (mReply->bytesAvailable() == 0)
 	{
 		qCDebug(network) << "Received no data.";
 		updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_No_Data_Received, {GlobalStatus::ExternalInformation::LAST_URL, mReply->url().toString()}
@@ -238,7 +237,7 @@ void StateGetTcToken::parseTcToken()
 		Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Empty_Data);
 		return;
 	}
-	const QSharedPointer<const TcToken>& tcToken = QSharedPointer<TcToken>::create(data);
+	const auto& tcToken = QSharedPointer<TcToken>::create(mReply);
 	getContext()->setTcToken(tcToken);
 	getContext()->setTcTokenNotFound(!tcToken->isSchemaConform());
 

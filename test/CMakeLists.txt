@@ -4,33 +4,25 @@ function(EXTRACT_TESTNAME result filepath)
 	string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" testname ${testname})
 	string(REPLACE "/" "_" testname ${testname})
 	string(REPLACE "+" "" testname ${testname})
-	string(REPLACE "_test_" "_" testname ${testname})
+	string(REPLACE "test_" "" testname ${testname})
 	set(${result} "Test_${testname}" PARENT_SCOPE)
 endfunction()
 
 
 function(GET_TEST_CMDLINE cmdline testname)
-	cmake_parse_arguments(_PARAM "" "" "SELECTORS" ${ARGN})
-
-	foreach(SELECTOR ${_PARAM_SELECTORS})
-		set(testname "${testname}_${SELECTOR}")
-	endforeach()
-
 	set(${cmdline} ${PLATFORM} -v2 -o ${CMAKE_CURRENT_BINARY_DIR}/results.${testname}.log.xml,xml -o -,txt PARENT_SCOPE)
 endfunction()
 
 function(GET_TEST_ENV testenv testname)
-	set(IS_QML_TEST "${testname}" MATCHES "qml")
-	set(IS_GUI_TEST IS_QML_TEST)
+	set(IS_GUI_TEST "${testname}" MATCHES "qml")
 
 	if(NOT WIN32 AND IS_GUI_TEST)
 		list(APPEND ENV "QT_QPA_PLATFORM=offscreen")
 		list(APPEND ENV "QT_QPA_OFFSCREEN_NO_GLX=1")
 	endif()
 
-	set(IS_FLAKY_QT5_TEST "${testname}" MATCHES "UIPlugInWebSocket")
 	# Emasculate ASAN since Qt causes problems
-	if(IS_GUI_TEST OR (QT5 AND IS_FLAKY_QT5_TEST))
+	if(IS_GUI_TEST)
 		list(APPEND ENV "ASAN_OPTIONS=detect_leaks=0")
 	endif()
 
@@ -42,28 +34,28 @@ function(GET_TEST_ENV testenv testname)
 
 	if((LINUX OR BSD) AND "${testname}" MATCHES "card_pcsc_PcscReader")
 		list(APPEND ENV "ASAN_OPTIONS=verify_asan_link_order=0")
-		list(APPEND ENV "LD_PRELOAD=${PROJECT_BINARY_DIR}/test/helper/pcsc/libPcsc.so")
+		list(APPEND ENV "LD_PRELOAD=${PROJECT_BINARY_DIR}/test/helper/pcsc/libAusweisAppTestHelperPcsc.so")
 	endif()
 
 	set(${testenv} "${ENV}" PARENT_SCOPE)
 endfunction()
 
 
-function(ADD_QML_TEST _sourcefile)
-	cmake_parse_arguments(_PARAM "" "" "SELECTORS" ${ARGN})
-
+function(ADD_QML_TEST _sourcefile _platform)
 	EXTRACT_TESTNAME(TESTNAME ${_sourcefile})
-	GET_TEST_CMDLINE(CMD_PARAMS ${TESTNAME} SELECTORS ${_PARAM_SELECTORS})
-	set(CMD $<TARGET_FILE:QmlTestRunner> ${CMD_PARAMS} -input ${sourcefile} -import "qrc:///qml/")
-
-	if(_PARAM_SELECTORS)
-		foreach(_PARAM_SELECTOR_LIST_ENTRY ${_PARAM_SELECTORS})
-			set(TESTNAME ${TESTNAME}_${_PARAM_SELECTOR_LIST_ENTRY})
-			set(CMD ${CMD} -file-selector ${_PARAM_SELECTOR_LIST_ENTRY})
-		endforeach()
+	if(NOT _platform STREQUAL "")
+		set(TESTNAME ${TESTNAME}_${_platform})
 	endif()
 
+	GET_TEST_CMDLINE(CMD_PARAMS ${TESTNAME})
+	if(QT_VERSION VERSION_LESS "6.5")
+		set(CMD_PARAMS ${CMD_PARAMS} -import "qrc:/qt/qml")
+	endif()
+	set(CMD_PARAMS ${CMD_PARAMS} -import "qrc:/qml")
+	set(CMD $<TARGET_FILE:QmlTestRunner> ${CMD_PARAMS} -input ${sourcefile})
+
 	GET_TEST_ENV(TESTENV ${TESTNAME})
+	list(APPEND TESTENV "OVERRIDE_PLATFORM=${_platform}")
 
 	add_test(NAME ${TESTNAME} COMMAND ${CMD})
 	set_tests_properties(${TESTNAME} PROPERTIES ENVIRONMENT "${TESTENV}")
@@ -77,43 +69,46 @@ function(ADD_QML_TEST_FILES)
 		return()
 	endif()
 
-	set(qt_selector qt6)
 	file(GLOB_RECURSE TEST_SUBFILES "${CMAKE_CURRENT_SOURCE_DIR}/test_*.qml")
 	foreach(sourcefile ${TEST_SUBFILES})
 		string(REGEX MATCHALL "\\+[a-z]+" PLATFORM_FILTER ${sourcefile})
 		if(NOT "+mobile" IN_LIST PLATFORM_FILTER)
-			if(NOT "+mac" IN_LIST PLATFORM_FILTER)
-				ADD_QML_TEST(${sourcefile} SELECTORS "${qt_selector};desktop;win")
-			endif()
-			if(NOT "+win" IN_LIST PLATFORM_FILTER)
-				ADD_QML_TEST(${sourcefile} SELECTORS "${qt_selector};desktop;mac")
-			endif()
+			ADD_QML_TEST(${sourcefile} "")
 		endif()
 		if(NOT "+desktop" IN_LIST PLATFORM_FILTER)
 			if(NOT "+ios" IN_LIST PLATFORM_FILTER)
-				ADD_QML_TEST(${sourcefile} SELECTORS "${qt_selector};mobile;android")
+				ADD_QML_TEST(${sourcefile} "android")
 			endif()
 			if(NOT "+android" IN_LIST PLATFORM_FILTER)
-				ADD_QML_TEST(${sourcefile} SELECTORS "${qt_selector};mobile;ios")
+				ADD_QML_TEST(${sourcefile} "ios")
 			endif()
 		endif()
 	endforeach()
 endfunction()
 
+add_subdirectory(tools)
+
+if(NOT TARGET ${Qt}::Test
+		OR IOS
+		OR ANDROID
+		OR NOT CMAKE_BUILD_TYPE STREQUAL DEBUG)
+	return()
+endif()
+
 qt_add_resources(QRC_FIXTURE "fixture/fixture.qrc" OPTIONS -compress-algo zlib)
 ADD_OBJECT_LIBRARY(QRC_FIXTURE_OBJ ${QRC_FIXTURE} ${Qt}::Core)
 
 add_subdirectory(helper)
+add_subdirectory(qt)
+
 if(TARGET ${Qt}::Qml AND TARGET ${Qt}::QuickTest)
 	add_subdirectory(qml)
 endif()
-add_subdirectory(qt)
-add_subdirectory(json)
 
-if(NOT INTEGRATED_SDK AND NOT IOS AND NOT ANDROID)
+if(NOT INTEGRATED_SDK)
 	add_subdirectory(integration)
 endif()
 
-if(INTEGRATED_SDK AND NOT CONTAINER_SDK AND NOT ANDROID)
+if(INTEGRATED_SDK AND NOT CONTAINER_SDK)
 	add_subdirectory(integrated)
 endif()

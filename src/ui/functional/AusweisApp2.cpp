@@ -5,8 +5,8 @@
 #include "AusweisApp2_p.h"
 
 #include "Bootstrap.h"
-#include "UILoader.h"
-#include "UIPlugInFunctional.h"
+#include "UiLoader.h"
+#include "UiPluginFunctional.h"
 
 #include <QMetaObject>
 #include <QObject>
@@ -118,11 +118,11 @@ Q_DECL_EXPORT void ausweisapp2_shutdown(void)
 	{
 		if (!cShutdownCalled)
 		{
-			cShutdownCalled = true; // do not request twice as the UILoader could be re-spawned after shutdown!
+			cShutdownCalled = true; // do not request twice as the UiLoader could be re-spawned after shutdown!
 			std::cout << "Send shutdown request" << std::endl;
 
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-					auto* j = Env::getSingleton<UILoader>()->getLoaded<UIPlugInFunctional>();
+					auto* j = Env::getSingleton<UiLoader>()->getLoaded<UiPluginFunctional>();
 					if (j)
 					{
 						j->doQuitApplicationRequest();
@@ -154,7 +154,7 @@ Q_DECL_EXPORT void ausweisapp2_send(const char* pCmd)
 
 	const auto cmd = QByteArray(pCmd);
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [cmd] {
-			auto* j = Env::getSingleton<UILoader>()->getLoaded<UIPlugInFunctional>();
+			auto* j = Env::getSingleton<UiLoader>()->getLoaded<UiPluginFunctional>();
 			if (j)
 			{
 				j->doMessageProcessing(cmd);

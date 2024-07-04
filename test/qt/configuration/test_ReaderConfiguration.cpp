@@ -121,6 +121,7 @@ class test_ReaderConfiguration
 			QTest::newRow("Identiv SCL011") << UsbId(0x04E6, 0x5292) << "SCM Microsystems Inc. SCL011 Contactless Reader" << "Identiv SCL01x Contactless Smart Card Reader" << "img_Identive_SCL011" << "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$";
 
 			QTest::newRow("ACS ACR1281U") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U" << "img_ACS_ACR1281U" << "ACS ACR1281 PICC Reader( 0)?";
+			QTest::newRow("ACS ACR1281U-C1") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader PICC 0" << "ACS ACR1281U-C1" << "img_ACS_ACR1281U" << "ACS ACR1281 1S Dual Reader (PICC 0|\\(1\\))";
 			QTest::newRow("ACS-ACR1581U-C1") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader PICC" << "ACS ACR1581U-C1" << "img_ACS_ACR1581U-C1" << "ACS ACR1581 1S Dual Reader (PICC|\\(1\\))( 0)?";
 
 			QTest::newRow("HID OMNIKEY 5021") << UsbId(0x076B, 0x5340) << "OMNIKEY CardMan 5x21-CL 0" << "HID OMNIKEY 5021-CL" << "img_HID_Omnikey_Mobile_Reader_502X_CL" << "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL";
@@ -242,6 +243,13 @@ class test_ReaderConfiguration
 
 			QTest::newRow("ACS-ACR1281U-windows-10-11") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader 0" << "ACS ACR1281U";
 			QTest::newRow("ACS-ACR1281U-macosx-12-14") << UsbId(0x072F, 0x0901) << "ACS ACR1281 PICC Reader" << "ACS ACR1281U";
+
+			QTest::newRow("ACS-ACR1281U-C1-windows-10-11-1") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader PICC 0" << "ACS ACR1281U-C1";
+			QTest::newRow("ACS-ACR1281U-C1-windows-10-11-2") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader ICC 0" << "ACS ACR1281 1S Dual Reader ICC 0";
+			QTest::newRow("ACS-ACR1281U-C1-windows-10-11-3") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader SAM 0" << "ACS ACR1281 1S Dual Reader SAM 0";
+			QTest::newRow("ACS-ACR1281U-C1-macosx-12-14-1") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader (1)" << "ACS ACR1281U-C1";
+			QTest::newRow("ACS-ACR1281U-C1-macosx-12-14-2") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader (2)" << "ACS ACR1281 1S Dual Reader (2)";
+			QTest::newRow("ACS-ACR1281U-C1-macosx-12-14-3") << UsbId(0x072F, 0x2224) << "ACS ACR1281 1S Dual Reader (3)" << "ACS ACR1281 1S Dual Reader (3)";
 
 			QTest::newRow("ACS-ACR1581-windows-10-11-1") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader PICC 0" << "ACS ACR1581U-C1";
 			QTest::newRow("ACS-ACR1581-windows-10-11-2") << UsbId(0x072F, 0x2301) << "ACS ACR1581 1S Dual Reader ICC 0" << "ACS ACR1581 1S Dual Reader ICC 0";
@@ -418,7 +426,7 @@ class test_ReaderConfiguration
 };
 
 
-const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 32;
+const int test_ReaderConfiguration::cCardReadersInConfigurationFile = 33;
 
 QTEST_GUILESS_MAIN(test_ReaderConfiguration)
 #include "test_ReaderConfiguration.moc"

@@ -13,8 +13,8 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
 
-IfdReader::IfdReader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const IfdStatus& pIfdStatus)
-	: Reader(pPlugInType, pReaderName)
+IfdReader::IfdReader(ReaderManagerPluginType pPluginType, const QString& pReaderName, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const IfdStatus& pIfdStatus)
+	: Reader(pPluginType, pReaderName)
 	, mCard(nullptr)
 	, mDispatcher(pDispatcher)
 {
@@ -65,7 +65,7 @@ void IfdReader::updateStatus(const IfdStatus& pIfdStatus)
 
 		if (cardInserted)
 		{
-			qCDebug(card_remote) << "Card removed";
+			qCInfo(card_remote) << "Card removed";
 			Q_EMIT fireCardRemoved(getReaderInfo());
 		}
 		else
@@ -82,7 +82,7 @@ void IfdReader::updateStatus(const IfdStatus& pIfdStatus)
 		mCard.reset(new IfdCard(mDispatcher, getName()));
 		fetchCardInfo();
 
-		qCDebug(card_remote) << "Card inserted";
+		qCInfo(card_remote) << "Card inserted:" << getReaderInfo().getCardInfo();
 		Q_EMIT fireCardInserted(getReaderInfo());
 	}
 }

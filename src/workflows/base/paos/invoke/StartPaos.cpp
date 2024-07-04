@@ -19,43 +19,17 @@ StartPaos::StartPaos(const QByteArray& pSessionId)
 }
 
 
-void StartPaos::createConnectionHandleElement()
+void StartPaos::createBodyElement(QXmlStreamWriter& pWriter)
 {
-	mWriter.writeStartElement(QStringLiteral("ConnectionHandle"));
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI), getNamespace(Namespace::XSI));
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandleType"));
+	pWriter.writeStartElement(QStringLiteral("StartPAOS"));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
 
-	mWriter.writeTextElement(QStringLiteral("CardApplication"), QStringLiteral("e80704007f00070302"));
-	mWriter.writeTextElement(QStringLiteral("SlotHandle"), QStringLiteral("00"));
+	createSessionIdentifierElement();
+	createConnectionHandleElement(pWriter);
+	createUserAgentElement(pWriter);
+	createSupportedAPIVersionsElement(pWriter);
 
-	mWriter.writeEndElement(); // ConnectionHandle
-}
-
-
-void StartPaos::createUserAgentElement()
-{
-	mWriter.writeStartElement(QStringLiteral("UserAgent"));
-
-	const UserAgent userAgent;
-	mWriter.writeTextElement(QStringLiteral("Name"), userAgent.getName());
-	mWriter.writeTextElement(QStringLiteral("VersionMajor"), userAgent.getVersionMajor());
-	mWriter.writeTextElement(QStringLiteral("VersionMinor"), userAgent.getVersionMinor());
-	mWriter.writeTextElement(QStringLiteral("VersionSubminor"), userAgent.getVersionSubminor());
-
-	mWriter.writeEndElement(); // UserAgent
-}
-
-
-void StartPaos::createSupportedAPIVersionsElement()
-{
-	mWriter.writeStartElement(QStringLiteral("SupportedAPIVersions"));
-
-	const SupportedAPI supportedAPI;
-	mWriter.writeTextElement(QStringLiteral("Major"), supportedAPI.getMajor());
-	mWriter.writeTextElement(QStringLiteral("Minor"), supportedAPI.getMinor());
-	mWriter.writeTextElement(QStringLiteral("Subminor"), supportedAPI.getSubminor());
-
-	mWriter.writeEndElement(); // SupportedAPIVersions
+	pWriter.writeEndElement(); // StartPAOS
 }
 
 
@@ -65,15 +39,41 @@ void StartPaos::createSessionIdentifierElement()
 }
 
 
-void StartPaos::createBodyElement()
+void StartPaos::createConnectionHandleElement(QXmlStreamWriter& pWriter) const
 {
-	mWriter.writeStartElement(QStringLiteral("StartPAOS"));
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	pWriter.writeStartElement(QStringLiteral("ConnectionHandle"));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::XSI), getNamespace(Namespace::XSI));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::XSI, QStringLiteral("type")), QStringLiteral("ConnectionHandleType"));
 
-	createSessionIdentifierElement();
-	createConnectionHandleElement();
-	createUserAgentElement();
-	createSupportedAPIVersionsElement();
+	pWriter.writeTextElement(QStringLiteral("CardApplication"), QStringLiteral("e80704007f00070302"));
+	pWriter.writeTextElement(QStringLiteral("SlotHandle"), QStringLiteral("00"));
 
-	mWriter.writeEndElement(); // StartPAOS
+	pWriter.writeEndElement(); // ConnectionHandle
+}
+
+
+void StartPaos::createUserAgentElement(QXmlStreamWriter& pWriter) const
+{
+	pWriter.writeStartElement(QStringLiteral("UserAgent"));
+
+	const UserAgent userAgent;
+	pWriter.writeTextElement(QStringLiteral("Name"), userAgent.getName());
+	pWriter.writeTextElement(QStringLiteral("VersionMajor"), userAgent.getVersionMajor());
+	pWriter.writeTextElement(QStringLiteral("VersionMinor"), userAgent.getVersionMinor());
+	pWriter.writeTextElement(QStringLiteral("VersionSubminor"), userAgent.getVersionSubminor());
+
+	pWriter.writeEndElement(); // UserAgent
+}
+
+
+void StartPaos::createSupportedAPIVersionsElement(QXmlStreamWriter& pWriter) const
+{
+	pWriter.writeStartElement(QStringLiteral("SupportedAPIVersions"));
+
+	const SupportedAPI supportedAPI;
+	pWriter.writeTextElement(QStringLiteral("Major"), supportedAPI.getMajor());
+	pWriter.writeTextElement(QStringLiteral("Minor"), supportedAPI.getMinor());
+	pWriter.writeTextElement(QStringLiteral("Subminor"), supportedAPI.getSubminor());
+
+	pWriter.writeEndElement(); // SupportedAPIVersions
 }

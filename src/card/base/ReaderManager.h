@@ -33,7 +33,7 @@ class ReaderManager
 		QThread mThread;
 		QPointer<ReaderManagerWorker> mWorker;
 		QMap<QString, ReaderInfo> mReaderInfoCache;
-		QMap<ReaderManagerPlugInType, ReaderManagerPlugInInfo> mPlugInInfoCache;
+		QMap<ReaderManagerPluginType, ReaderManagerPluginInfo> mPluginInfoCache;
 
 	protected:
 		ReaderManager();
@@ -51,7 +51,7 @@ class ReaderManager
 		/*!
 		 * Resets the plugins matching the given type.
 		 */
-		void reset(ReaderManagerPlugInType pType);
+		void reset(ReaderManagerPluginType pType);
 
 		/*!
 		 * Insert a "virtual" card if plugin supports it.
@@ -71,7 +71,7 @@ class ReaderManager
 		/*!
 		 * Starts a scan for devices if registered plugin don't scan anytime.
 		 */
-		void startScan(ReaderManagerPlugInType pType, bool pAutoConnect = true);
+		void startScan(ReaderManagerPluginType pType, bool pAutoConnect = true);
 
 		/*!
 		 * Stops scan for all device types.
@@ -83,9 +83,11 @@ class ReaderManager
 		 * Be aware that some plugins don't finish the whole scan if you
 		 * abort it with stopScan!
 		 */
-		void stopScan(ReaderManagerPlugInType pType, const QString& pError = QString());
+		void stopScan(ReaderManagerPluginType pType, const QString& pError = QString());
 
-		virtual ReaderManagerPlugInInfo getPlugInInfo(ReaderManagerPlugInType pType) const;
+		bool isInitialScanFinished() const;
+
+		virtual ReaderManagerPluginInfo getPluginInfo(ReaderManagerPluginType pType) const;
 		virtual QList<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
 		void updateReaderInfo(const QString& pReaderName);
@@ -177,7 +179,7 @@ class ReaderManager
 		QMetaObject::Connection callCreateCardConnectionCommand(const QString& pReaderName, const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pSlot)
 		{
 			auto* command = new CreateCardConnectionCommand(pReaderName, mWorker);
-			QMetaObject::Connection connection = connect(command, &CreateCardConnectionCommand::fireCommandDone, pReceiver, pSlot, Qt::UniqueConnection);
+			QMetaObject::Connection connection = connect(command, &CreateCardConnectionCommand::fireCommandDone, pReceiver, pSlot);
 			if (connection)
 			{
 				command->run();
@@ -192,8 +194,8 @@ class ReaderManager
 		}
 
 	Q_SIGNALS:
-		void firePluginAdded(const ReaderManagerPlugInInfo& pInfo);
-		void fireStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void firePluginAdded(const ReaderManagerPluginInfo& pInfo);
+		void fireStatusChanged(const ReaderManagerPluginInfo& pInfo);
 		void fireReaderAdded(const ReaderInfo& pInfo);
 		void fireReaderRemoved(const ReaderInfo& pInfo);
 		void fireReaderPropertiesUpdated(const ReaderInfo& pInfo);
@@ -201,11 +203,12 @@ class ReaderManager
 		void fireCardRemoved(const ReaderInfo& pInfo);
 		void fireCardInfoChanged(const ReaderInfo& pInfo);
 		void fireInitialized();
+		void fireInitialScanFinished();
 
 	private Q_SLOTS:
 		void doUpdateCacheEntry(const ReaderInfo& pInfo);
 		void doRemoveCacheEntry(const ReaderInfo& pInfo);
-		void doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo);
+		void doUpdatePluginCache(const ReaderManagerPluginInfo& pInfo);
 
 	public Q_SLOTS:
 		/*!

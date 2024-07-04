@@ -18,7 +18,7 @@ StateCheckStatus::StateCheckStatus(const QSharedPointer<WorkflowContext>& pConte
 
 void StateCheckStatus::run()
 {
-	const auto smartInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::SMART);
+	const auto smartInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::SMART);
 	if (smartInfo.isAvailable())
 	{
 		Q_EMIT fireContinue();

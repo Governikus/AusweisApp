@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "MsgContext.h"
 #include "MsgHandler.h"
 #include "ReaderInfo.h"
 
@@ -18,16 +19,14 @@ class MsgHandlerReader
 	: public MsgHandler
 {
 	private:
-		static void setReaderInfo(QJsonObject& pObj, const ReaderInfo& pInfo);
-
 		void setError(const QLatin1String pError);
-		void setReaderInfo(const ReaderInfo& pInfo);
+		void setReaderInfo(const ReaderInfo& pInfo, const MsgContext& pContext);
 
 	public:
-		static QJsonObject createReaderInfo(const ReaderInfo& pInfo);
+		static QJsonObject createReaderInfo(const ReaderInfo& pInfo, const MsgContext& pContext);
 
-		explicit MsgHandlerReader(const QJsonObject& pObj);
-		explicit MsgHandlerReader(const ReaderInfo& pInfo);
+		explicit MsgHandlerReader(const QJsonObject& pObj, const MsgContext& pContext);
+		explicit MsgHandlerReader(const ReaderInfo& pInfo, const MsgContext& pContext);
 };
 
 

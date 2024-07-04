@@ -62,6 +62,15 @@ QByteArray IfdMessage::toByteArray(const QJsonObject& pJsonObject)
 }
 
 
+void IfdMessage::ensureType(IfdMessageType pType)
+{
+	if (mMessageType != pType)
+	{
+		markIncomplete(QStringLiteral("The value of msg should be %1").arg(Enum<IfdMessageType>::getName(pType)));
+	}
+}
+
+
 void IfdMessage::markIncomplete(const QString& pLogMessage)
 {
 	Q_ASSERT(!pLogMessage.isEmpty());

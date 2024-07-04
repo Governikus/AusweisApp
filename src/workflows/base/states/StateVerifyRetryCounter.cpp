@@ -32,22 +32,24 @@ void StateVerifyRetryCounter::run()
 	const int expectedRetryCounter = context->getExpectedRetryCounter();
 	qCDebug(statemachine) << "Retry counter | actual:" << currentRetryCounter << "/ expected:" << expectedRetryCounter;
 
-	if (context->remembersReader())
-	{
-		if (!context->isExpectedReader() || expectedRetryCounter != currentRetryCounter)
-		{
-			qCDebug(statemachine) << "The reader changed or the connected card has an unexpected retry counter. Clearing PACE passwords.";
-			context->resetPacePasswords();
-			context->rememberReader();
-		}
-	}
-	else
+	if (!context->remembersReader())
 	{
 		Q_ASSERT(currentRetryCounter != -1);
 
-		qCDebug(statemachine) << "Remembering the selected reader and initializing the expected retry counter:" << currentRetryCounter;
+		qCDebug(statemachine) << "Initially remembering the selected reader including the card with retry counter" << currentRetryCounter;
 		context->rememberReader();
+		Q_EMIT fireContinue();
+		return;
 	}
 
-	Q_EMIT fireContinue();
+	if (context->isExpectedReader() && expectedRetryCounter == currentRetryCounter)
+	{
+		qCDebug(statemachine) << "Found expected reader and retry counter matches";
+		Q_EMIT fireContinue();
+		return;
+	}
+
+	qCDebug(statemachine) << "The reader changed or the connected card has an unexpected retry counter. Remembering the new reader including the card with retry counter" << currentRetryCounter;
+	context->rememberReader();
+	Q_EMIT fireReaderOrCardChanged();
 }

@@ -53,7 +53,7 @@ class IfdServiceContext
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);
 		void fireDisplayTextChanged();
 		void fireCardDisconnected(const QSharedPointer<CardConnection>& pConnection);
-		void fireCancelPasswordRequest();
+		void fireUserError(StatusCode pStatusCode);
 		void fireEstablishPaceChannelUpdated();
 		void fireIsRunningChanged();
 		void fireAccessRightManagerCreated(QSharedPointer<AccessRightManager> pAccessRightManager);
@@ -72,7 +72,7 @@ class IfdServiceContext
 		[[nodiscard]] bool isPinAuthentication() const;
 		[[nodiscard]] bool isCanAllowedMode() const override;
 
-		void cancelPasswordRequest();
+		void userError(StatusCode pStatusCode);
 
 		void setEstablishPaceChannel(const QSharedPointer<const IfdEstablishPaceChannel>& pMessage);
 		[[nodiscard]] const QString& getSlotHandle() const;

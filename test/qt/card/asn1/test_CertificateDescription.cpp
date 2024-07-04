@@ -110,7 +110,7 @@ class test_CertificateDescription
 			auto certDescr = CertificateDescription::fromHex(hexString);
 
 			QVERIFY(certDescr != nullptr);
-			QCOMPARE(QByteArray(certDescr->getDescriptionType()), QByteArray("0.4.0.127.0.7.3.1.3.1.3 (id-pdfFormat)"));
+			QCOMPARE(certDescr->getDescriptionType(), KnownOid::ID_PFD_FORMAT);
 			QCOMPARE(certDescr->getIssuerName(), "D-Trust GmbH"_L1);
 			QCOMPARE(certDescr->getIssuerUrl(), QString());
 			QCOMPARE(certDescr->getSubjectName(), "Gesamtverband der deutschen Versicherungswirtschaft e.V."_L1);
@@ -144,7 +144,7 @@ class test_CertificateDescription
 			auto certDescr = CertificateDescription::fromHex(hexString);
 
 			QVERIFY(certDescr != nullptr);
-			QCOMPARE(QByteArray(certDescr->getDescriptionType()), QByteArray("0.4.0.127.0.7.3.1.3.1.3 (id-pdfFormat)"));
+			QCOMPARE(certDescr->getDescriptionType(), KnownOid::ID_PFD_FORMAT);
 			QCOMPARE(certDescr->getIssuerName(), "D-Trust GmbH"_L1);
 			QCOMPARE(certDescr->getIssuerUrl(), "http://www.d-trust.net"_L1);
 			QCOMPARE(certDescr->getSubjectName(), "Gesamtverband der deutschen Versicherungswirtschaft e.V."_L1);

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Env.h"
+#include "SingletonCreator.h"
 
 #include <QAbstractListModel>
 #include <QContiguousCache>
@@ -12,6 +13,7 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
+#include <QtQml/qqmlregistration.h>
 
 class test_NotificationModel;
 
@@ -20,8 +22,12 @@ namespace governikus
 
 class NotificationModel
 	: public QAbstractListModel
+	, public SingletonCreator<NotificationModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 	friend class ::test_NotificationModel;
 

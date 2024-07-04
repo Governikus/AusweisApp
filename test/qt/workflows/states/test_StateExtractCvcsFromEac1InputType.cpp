@@ -10,6 +10,7 @@
 
 #include "states/StateBuilder.h"
 
+#include "CertificateHelper.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -35,13 +36,13 @@ class test_StateExtractCvcsFromEac1InputType
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"_L1));
-			mTerminalCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"_L1));
-			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"_L1));
-			mDvCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"_L1));
-			mLinkCvcs << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"_L1));
-			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1));
-			mCvcas << CVCertificate::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"_L1));
+			mTerminalCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"_L1));
+			mTerminalCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"_L1));
+			mDvCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"_L1));
+			mDvCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"_L1));
+			mLinkCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"_L1));
+			mCvcas << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1));
+			mCvcas << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"_L1));
 		}
 
 

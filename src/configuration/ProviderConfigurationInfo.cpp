@@ -19,27 +19,13 @@ QString ProviderConfigurationInfo::getDefaultFile(const QString& pSuffix) const
 #else
 	const QString platform;
 #endif
-	const QString category = d->mCategory.isEmpty() ? QStringLiteral("general") : d->mCategory;
+	const QString category = d->mParams.mCategory.isEmpty() ? QStringLiteral("general") : d->mParams.mCategory;
 	return QStringLiteral(":/images/provider/%1%2%3.svg").arg(platform, category, pSuffix);
 }
 
 
-ProviderConfigurationInfo::ProviderConfigurationInfo(const LanguageString& pShortName,
-		const LanguageString& pLongName,
-		const LanguageString& pLongDescription,
-		const QString& pAddress,
-		const QString& pHomepage,
-		const QString& pCategory,
-		const QString& pPhone,
-		const QString& pEmail,
-		const QString& pPostalAddress,
-		const QString& pIcon,
-		const QString& pImage,
-		const QStringList& pSubjectUrls,
-		const QString& pSubjectUrlInfo,
-		const QString& pInternalId)
-	: d(new InternalInfo(pShortName, pLongName, pLongDescription, pAddress, pHomepage,
-			pCategory, pPhone, pEmail, pPostalAddress, pIcon, pImage, pSubjectUrls, pSubjectUrlInfo, pInternalId))
+ProviderConfigurationInfo::ProviderConfigurationInfo(const ProviderConfigurationInfoParams& pParams)
+	: d(new InternalInfo(pParams))
 {
 }
 
@@ -88,97 +74,97 @@ bool ProviderConfigurationInfo::matchWithSubjectUrl(const QString& pSubjectUrl) 
 
 const LanguageString& ProviderConfigurationInfo::getShortName() const
 {
-	return !d->mShortName.toString().isNull() ? d->mShortName : getLongName();
+	return !d->mParams.mShortName.toString().isNull() ? d->mParams.mShortName : getLongName();
 }
 
 
 const LanguageString& ProviderConfigurationInfo::getLongName() const
 {
-	return d->mLongName;
+	return d->mParams.mLongName;
 }
 
 
 const LanguageString& ProviderConfigurationInfo::getLongDescription() const
 {
-	return d->mLongDescription;
+	return d->mParams.mLongDescription;
 }
 
 
 const QString& ProviderConfigurationInfo::getAddress() const
 {
-	return d->mAddress;
+	return d->mParams.mAddress;
 }
 
 
 QString ProviderConfigurationInfo::getAddressDomain() const
 {
-	return QUrl::fromUserInput(d->mAddress).host();
+	return QUrl::fromUserInput(d->mParams.mAddress).host();
 }
 
 
 const QString& ProviderConfigurationInfo::getHomepage() const
 {
-	return d->mHomepage;
+	return d->mParams.mHomepage;
 }
 
 
 QString ProviderConfigurationInfo::getHomepageBase() const
 {
-	return QUrl::fromUserInput(d->mHomepage).host();
+	return QUrl::fromUserInput(d->mParams.mHomepage).host();
 }
 
 
 const QString& ProviderConfigurationInfo::getCategory() const
 {
-	return d->mCategory;
+	return d->mParams.mCategory;
 }
 
 
 const QString& ProviderConfigurationInfo::getPhone() const
 {
-	return d->mPhone;
+	return d->mParams.mPhone;
 }
 
 
 const QString& ProviderConfigurationInfo::getEMail() const
 {
-	return d->mEmail;
+	return d->mParams.mEmail;
 }
 
 
 const QString& ProviderConfigurationInfo::getPostalAddress() const
 {
-	return d->mPostalAddress;
+	return d->mParams.mPostalAddress;
 }
 
 
 QSharedPointer<UpdatableFile> ProviderConfigurationInfo::getIcon() const
 {
 	const QString defaultFile = getDefaultFile(QStringLiteral("_button"));
-	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mIcon, defaultFile);
+	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mParams.mIcon, defaultFile);
 }
 
 
 QSharedPointer<UpdatableFile> ProviderConfigurationInfo::getImage() const
 {
 	const QString defaultFile = getDefaultFile(QStringLiteral("_bg"));
-	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mImage, defaultFile);
+	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mParams.mImage, defaultFile);
 }
 
 
 const QStringList& ProviderConfigurationInfo::getSubjectUrls() const
 {
-	return d->mSubjectUrls;
+	return d->mParams.mSubjectUrls;
 }
 
 
 const QString& ProviderConfigurationInfo::getSubjectUrlInfo() const
 {
-	return d->mSubjectUrlInfo;
+	return d->mParams.mSubjectUrlInfo;
 }
 
 
 const QString& ProviderConfigurationInfo::getInternalId() const
 {
-	return d->mInternalId;
+	return d->mParams.mInternalId;
 }

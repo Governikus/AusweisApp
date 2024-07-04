@@ -20,6 +20,7 @@ project(AusweisApp2_Libs ${COMPILER_SEARCH})
 
 option(INTEGRATED_SDK "Build integrated specific SDK" OFF)
 option(CONTAINER_SDK "Build container specific SDK" OFF)
+option(DEVELOPER "Include modules/features for developer" OFF)
 
 if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
@@ -362,6 +363,12 @@ list(APPEND NO_FEATURES_SHARED imageformat_bmp imageformat_ppm imageformat_xbm)
 list(APPEND NO_FEATURES_SHARED sharedmemory textodfwriter)
 list(APPEND NO_FEATURES_SHARED undocommand undogroup undostack)
 list(APPEND NO_FEATURES_SHARED printsupport dtls dom sql xml pdf)
+list(APPEND NO_FEATURES_SHARED brotli topleveldomain private_tests dnslookup sctp)
+list(APPEND NO_FEATURES_SHARED localserver filesystemwatcher libresolv)
+list(APPEND NO_FEATURES_SHARED quickcontrols2-imagine quickcontrols2-material quickcontrols2-universal)
+if(NOT DEVELOPER)
+	list(APPEND NO_FEATURES_SHARED quickcontrols2-fusion)
+endif()
 if(CONTAINER_SDK)
 	list(APPEND NO_FEATURES_SHARED testlib androiddeployqt)
 endif()
@@ -439,7 +446,7 @@ elseif(ANDROID)
 
 	set(QT_ENV OPENSSL_LIBS=-lcrypto_${CMAKE_ANDROID_ARCH_ABI}\ -lssl_${CMAKE_ANDROID_ARCH_ABI})
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
-		-android-sdk ${ANDROID_SDK} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION}
+		-android-sdk ${ANDROID_SDK_ROOT} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION}
 		-android-abis ${CMAKE_ANDROID_ARCH_ABI} -xplatform android-clang)
 
 	# ANDROID_TARGET_SDK_VERSION cannot be passed here as Qt has it's own variable and uses the latest in "${ANDROID_SDK_ROOT}/platforms".

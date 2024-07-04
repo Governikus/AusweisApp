@@ -79,8 +79,8 @@ class test_StatePreparePace
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::SMART_EID, QSharedPointer<const EFCardAccess>(), 0);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::REMOTE_IFD, cardInfo);
+			const CardInfo cardInfo(CardType::SMART_EID, FileRef(), QSharedPointer<const EFCardAccess>(), 0);
+			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::REMOTE_IFD, cardInfo);
 			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			QSignalSpy spyAbort(mState.data(), &StatePreparePace::fireAbort);
@@ -94,9 +94,9 @@ class test_StatePreparePace
 
 		void test_Run_RetryCounter0_data()
 		{
-			QTest::addColumn<ReaderManagerPlugInType>("type");
+			QTest::addColumn<ReaderManagerPluginType>("type");
 
-			const auto& readerTypes = Enum<ReaderManagerPlugInType>::getList();
+			const auto& readerTypes = Enum<ReaderManagerPluginType>::getList();
 			for (const auto& type : readerTypes)
 			{
 				QTest::newRow(getEnumName(type).data()) << type;
@@ -106,17 +106,17 @@ class test_StatePreparePace
 
 		void test_Run_RetryCounter0()
 		{
-			QFETCH(ReaderManagerPlugInType, type);
+			QFETCH(ReaderManagerPluginType, type);
 
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0);
 			const ReaderInfo readerInfo(QString(), type, cardInfo);
 			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
-			QSignalSpy spyEstablishPaceChannel(mState.data(), &StatePreparePace::fireEstablishPaceChannel);
+			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "PUK required");
 			mContext->setStateApproved();
@@ -128,7 +128,7 @@ class test_StatePreparePace
 			const QString puk("0987654321"_L1);
 			mContext->setPuk(puk);
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -137,10 +137,10 @@ class test_StatePreparePace
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 1);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 1);
+			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
-			QSignalSpy spyEstablishPaceChannel(mState.data(), &StatePreparePace::fireEstablishPaceChannel);
+			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
 			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 
@@ -156,7 +156,7 @@ class test_StatePreparePace
 			QTest::ignoreMessage(QtDebugMsg, "CAN required");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_CAN done: false");
 			mContext->setStateApproved();
-			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 
@@ -165,18 +165,18 @@ class test_StatePreparePace
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3);
-			const ReaderInfo readerInfo(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3);
+			const ReaderInfo readerInfo(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo);
 			mContext->setCardConnection(connection);
 			Q_EMIT worker->fireReaderInfoChanged(readerInfo);
 			QSignalSpy spyEnterPacePassword(mState.data(), &StatePreparePace::fireEnterPacePassword);
-			QSignalSpy spyEstablishPaceChannel(mState.data(), &StatePreparePace::fireEstablishPaceChannel);
+			QSignalSpy spyContinue(mState.data(), &StatePreparePace::fireContinue);
 
 			QTest::ignoreMessage(QtDebugMsg, "PIN allowed");
 			QTest::ignoreMessage(QtDebugMsg, "PACE_PIN done: false");
 			mContext->setStateApproved();
 			QTRY_COMPARE(spyEnterPacePassword.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(spyEstablishPaceChannel.count(), 0);
+			QCOMPARE(spyContinue.count(), 0);
 			QCOMPARE(mContext->getEstablishPaceChannelType(), PacePasswordId::PACE_PIN);
 
 			mContext->setStateApproved(false);
@@ -185,7 +185,7 @@ class test_StatePreparePace
 			mContext->setPin(pin);
 			mContext->setStateApproved();
 			QCOMPARE(spyEnterPacePassword.count(), 1);
-			QTRY_COMPARE(spyEstablishPaceChannel.count(), 1); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spyContinue.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

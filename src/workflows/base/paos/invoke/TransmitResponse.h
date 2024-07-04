@@ -23,9 +23,7 @@ class TransmitResponse
 	private:
 		QByteArrayList mOutputApdus;
 
-		void createTransmitResponse();
-
-		void createBodyElement() override;
+		void createBodyElement(QXmlStreamWriter& pWriter) override;
 
 	public:
 		TransmitResponse();

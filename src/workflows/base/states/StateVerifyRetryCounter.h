@@ -29,6 +29,7 @@ class StateVerifyRetryCounter
 
 	Q_SIGNALS:
 		void fireNoCardConnection();
+		void fireReaderOrCardChanged();
 };
 
 } // namespace governikus

@@ -91,7 +91,7 @@ void LogModel::shareLog(const QPoint /*popupPosition*/) const
 		return;
 	}
 
-	const auto& logHandler = Env::getSingleton<LogHandler>();
+	const auto* logHandler = Env::getSingleton<LogHandler>();
 
 	QString publicLogFile;
 	if (mSelectedLogFile == 0)

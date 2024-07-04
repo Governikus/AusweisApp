@@ -42,7 +42,7 @@ KeyAgreement::CardResult KeyAgreement::createTransmitResult(CardReturnCode pRetu
 	CardReturnCode newReturnCode = CardReturnCode::COMMAND_FAILED;
 	if (pResponseApdu.isEmpty())
 	{
-		newReturnCode = CardReturnCode::RETRY_ALLOWED;
+		newReturnCode = CardReturnCode::RESPONSE_EMPTY;
 	}
 	else if (pReturnCode == CardReturnCode::OK)
 	{
@@ -95,7 +95,7 @@ KeyAgreementStatus KeyAgreement::perform(const QByteArray& pPin)
 		case CardReturnCode::COMMAND_FAILED:
 			return KeyAgreementStatus::COMMUNICATION_ERROR;
 
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 			return KeyAgreementStatus::RETRY_ALLOWED;
 
 		default:
@@ -111,7 +111,7 @@ KeyAgreementStatus KeyAgreement::perform(const QByteArray& pPin)
 		case CardReturnCode::PROTOCOL_ERROR:
 			return KeyAgreementStatus::PROTOCOL_ERROR;
 
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 			return KeyAgreementStatus::RETRY_ALLOWED;
 
 		default:

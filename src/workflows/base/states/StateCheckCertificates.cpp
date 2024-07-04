@@ -38,8 +38,10 @@ void StateCheckCertificates::run()
 			else
 			{
 				qCritical() << certificateDescError;
-				const auto& issuerName = TlsChecker::getCertificateIssuerName(certificate);
-				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description, {GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, issuerName}
+				updateStatus({GlobalStatus::Code::Workflow_TrustedChannel_Hash_Not_In_Description,
+							  {
+								  GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, certificate.issuerDisplayName()
+							  }
 						});
 				Q_EMIT fireAbort(FailureCode::Reason::Certificate_Check_Failed_Hash_Missing_In_Description);
 				return;

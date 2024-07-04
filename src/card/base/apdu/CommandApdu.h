@@ -5,6 +5,7 @@
 #pragma once
 
 #include "EnumHelper.h"
+#include "LogPrivacy.h"
 
 #include <QByteArray>
 #include <QDebug>
@@ -50,7 +51,7 @@ class CommandApdu
 			UNBLOCK = 0x03,
 			PIN = 0x03,
 			CHIP_AUTHENTICATION = 0x41,
-			VERIFICATION = 0x81,
+			TERMINAL_AUTHENTICATION = 0x81,
 			AUTHENTICATION_TEMPLATE = 0xA4,
 			DIGITAL_SIGNATURE_TEMPLATE = 0xB6,
 			SELF_DESCRIPTIVE = 0xBE,
@@ -94,9 +95,7 @@ class CommandApdu
 
 inline QDebug operator<<(QDebug pDbg, const CommandApdu& pCommandApdu)
 {
-	QDebugStateSaver saver(pDbg);
-	pDbg << QByteArray(pCommandApdu).toHex();
-	return pDbg;
+	return privacy::logApdu(pDbg, pCommandApdu);
 }
 
 

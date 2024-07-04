@@ -1,4 +1,8 @@
 {
 	"default": true,
-	"userInteractive": true
+	"userInteractive": true,
+	"env": {
+		"QSG_INFO": "1",
+		"QT_SVG_ASSUME_TRUSTED_SOURCE": "1"
+	}
 }

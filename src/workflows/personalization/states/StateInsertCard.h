@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 #include "context/PersonalizationContext.h"
 #include "states/AbstractState.h"
 #include "states/GenericContextContainer.h"
@@ -28,7 +28,7 @@ class StateInsertCard
 
 	private Q_SLOTS:
 		void onCardInfoChanged(const ReaderInfo& pInfo);
-		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
 
 	Q_SIGNALS:
 		void fireSkipPinChange();

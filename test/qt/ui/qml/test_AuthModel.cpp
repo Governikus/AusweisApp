@@ -59,6 +59,110 @@ class test_AuthModel
 		}
 
 
+		void test_resultHeader_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QString>("resultHeader");
+
+			QTest::addRow("Any error") << GlobalStatus::Code::Card_Communication_Error << "Authentication failed";
+			QTest::addRow("No error") << GlobalStatus::Code::No_Error << "Authentication successful";
+			QTest::addRow("Browser_Transmission_Error") << GlobalStatus::Code::Workflow_Browser_Transmission_Error << "Redirect failed";
+		}
+
+
+		void test_resultHeader()
+		{
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QString, resultHeader);
+
+			const auto model = Env::getSingleton<AuthModel>();
+			const QSharedPointer<AuthContext> context(new AuthContext());
+			context->setStatus(GlobalStatus(statusCode));
+			model->resetAuthContext(context);
+
+			QCOMPARE(model->getResultHeader(), resultHeader);
+		}
+
+
+		void test_resultViewButtonIcon_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QString>("buttonIcon");
+
+			QTest::addRow("Any error") << GlobalStatus::Code::Card_Communication_Error << "";
+			QTest::addRow("No error") << GlobalStatus::Code::No_Error << "";
+			QTest::addRow("Browser_Transmission_Error") << GlobalStatus::Code::Workflow_Browser_Transmission_Error << "qrc:///images/open_website.svg";
+		}
+
+
+		void test_resultViewButtonIcon()
+		{
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QString, buttonIcon);
+
+			const auto model = Env::getSingleton<AuthModel>();
+			const QSharedPointer<AuthContext> context(new AuthContext());
+			context->setStatus(GlobalStatus(statusCode));
+			model->resetAuthContext(context);
+
+			QCOMPARE(model->getResultViewButtonIcon(), buttonIcon);
+		}
+
+
+		void test_resultViewButtonText_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QString>("buttonText");
+
+			QTest::addRow("Any error") << GlobalStatus::Code::Card_Communication_Error << "Back to start page";
+			QTest::addRow("No error") << GlobalStatus::Code::No_Error << "Back to start page";
+			QTest::addRow("Browser_Transmission_Error") << GlobalStatus::Code::Workflow_Browser_Transmission_Error << "Back to provider";
+		}
+
+
+		void test_resultViewButtonText()
+		{
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QString, buttonText);
+
+			const auto model = Env::getSingleton<AuthModel>();
+			const QSharedPointer<AuthContext> context(new AuthContext());
+			context->setStatus(GlobalStatus(statusCode));
+			model->resetAuthContext(context);
+
+			QCOMPARE(model->getResultViewButtonText(), buttonText);
+		}
+
+
+		void test_resultViewButtonLink_data()
+		{
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QUrl>("refreshUrl");
+			QTest::addColumn<QUrl>("buttonLink");
+
+			const auto& refreshUrl = QUrl("https://dummy.url"_L1);
+			QTest::addRow("Any error") << GlobalStatus::Code::Card_Communication_Error << refreshUrl << QUrl();
+			QTest::addRow("No error") << GlobalStatus::Code::No_Error << refreshUrl << QUrl();
+			QTest::addRow("Browser_Transmission_Error") << GlobalStatus::Code::Workflow_Browser_Transmission_Error << refreshUrl << refreshUrl;
+		}
+
+
+		void test_resultViewButtonLink()
+		{
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QUrl, refreshUrl);
+			QFETCH(QUrl, buttonLink);
+
+			const auto model = Env::getSingleton<AuthModel>();
+			const QSharedPointer<AuthContext> context(new AuthContext());
+			context->setStatus(GlobalStatus(statusCode));
+			context->setRefreshUrl(refreshUrl);
+			model->resetAuthContext(context);
+
+			QCOMPARE(model->getResultViewButtonLink(), buttonLink);
+		}
+
+
 };
 
 QTEST_MAIN(test_AuthModel)

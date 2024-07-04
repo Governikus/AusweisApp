@@ -42,7 +42,7 @@ bool IfdListEntry::cleanUpSeenTimestamps(int pReaderResponsiveTimeout)
 	const auto visibilityOld = getPercentSeen();
 
 	const QTime threshold(QTime::currentTime().addMSecs(-pReaderResponsiveTimeout));
-	QMutableListIterator<QTime> i(mLastSeenHistory);
+	QMutableListIterator i(mLastSeenHistory);
 	while (i.hasNext())
 	{
 		if (i.next() < threshold)
@@ -58,7 +58,7 @@ bool IfdListEntry::cleanUpSeenTimestamps(int pReaderResponsiveTimeout)
 
 int IfdListEntry::getPercentSeen(int pCheckInterval, int pTimeFrame) const
 {
-	const int count = static_cast<int>(mLastSeenHistory.size());
+	const auto count = static_cast<int>(mLastSeenHistory.size());
 	const int expectedMax = pTimeFrame / pCheckInterval;
 	const int percent = 100 * count / expectedMax;
 

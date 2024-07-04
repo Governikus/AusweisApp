@@ -33,7 +33,7 @@ class test_UpdateRetryCounterCommand
 		void test_InternalExecuteWithCard()
 		{
 			MockReader reader("reader"_L1);
-			CardInfo info(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 1, true, true);
+			CardInfo info(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 1, true, true);
 			reader.setInfoCardInfo(info);
 
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker(&reader));

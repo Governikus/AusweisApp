@@ -56,13 +56,13 @@ class test_ApplicationModel
 			QTest::addColumn<QSharedPointer<WorkflowContext>>("context");
 			QTest::addColumn<ApplicationModel::Workflow>("workflow");
 
-			QTest::addRow("No Context") << QSharedPointer<WorkflowContext>() << ApplicationModel::Workflow::WORKFLOW_NONE;
-			QTest::addRow("AuthContext") << QSharedPointer<WorkflowContext>(new AuthContext()) << ApplicationModel::Workflow::WORKFLOW_AUTHENTICATION;
-			QTest::addRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << ApplicationModel::Workflow::WORKFLOW_CHANGE_PIN;
-			QTest::addRow("IfdServiceContext") << QSharedPointer<WorkflowContext>(new IfdServiceContext(QSharedPointer<MockIfdServer>::create())) << ApplicationModel::Workflow::WORKFLOW_REMOTE_SERVICE;
-			QTest::addRow("SelfAuthContext") << QSharedPointer<WorkflowContext>(new SelfAuthContext()) << ApplicationModel::Workflow::WORKFLOW_SELF_AUTHENTICATION;
+			QTest::addRow("No Context") << QSharedPointer<WorkflowContext>() << ApplicationModel::Workflow::NONE;
+			QTest::addRow("AuthContext") << QSharedPointer<WorkflowContext>(new AuthContext()) << ApplicationModel::Workflow::AUTHENTICATION;
+			QTest::addRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << ApplicationModel::Workflow::CHANGE_PIN;
+			QTest::addRow("IfdServiceContext") << QSharedPointer<WorkflowContext>(new IfdServiceContext(QSharedPointer<MockIfdServer>::create())) << ApplicationModel::Workflow::REMOTE_SERVICE;
+			QTest::addRow("SelfAuthContext") << QSharedPointer<WorkflowContext>(new SelfAuthContext()) << ApplicationModel::Workflow::SELF_AUTHENTICATION;
 #if __has_include("context/PersonalizationContext.h")
-			QTest::addRow("PersonalizationContext") << QSharedPointer<WorkflowContext>(new PersonalizationContext(QString())) << ApplicationModel::Workflow::WORKFLOW_SMART;
+			QTest::addRow("PersonalizationContext") << QSharedPointer<WorkflowContext>(new PersonalizationContext(QString())) << ApplicationModel::Workflow::SMART;
 #endif
 		}
 

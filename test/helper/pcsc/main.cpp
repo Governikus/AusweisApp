@@ -2,12 +2,32 @@
  * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
  */
 
+#include "pcscmock.h"
+
 #include <QByteArray>
 #include <QtGlobal>
 #include <winscard.h>
 #ifndef Q_OS_WIN
 	#include <wintypes.h>
 #endif
+
+struct MockSCardCommandData
+{
+	LONG mSCardGetStatusChange = 0;
+}
+mMockData;
+
+
+void governikus::setResultGetCardStatus(LONG pReturnCode)
+{
+	mMockData.mSCardGetStatusChange = pReturnCode;
+}
+
+
+LONG governikus::getResultGetCardStatus()
+{
+	return mMockData.mSCardGetStatusChange;
+}
 
 
 LONG SCardEstablishContext(DWORD dwScope, LPCVOID pvReserved1, LPCVOID pvReserved2, LPSCARDCONTEXT phContext)
@@ -66,7 +86,7 @@ LONG SCardGetStatusChange(SCARDCONTEXT hContext, DWORD dwTimeout, SCARD_READERST
 	Q_UNUSED(rgReaderStates)
 	Q_UNUSED(cReaders)
 
-	return SCARD_S_SUCCESS;
+	return governikus::getResultGetCardStatus();
 }
 
 

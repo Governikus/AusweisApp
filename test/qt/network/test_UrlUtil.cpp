@@ -56,37 +56,6 @@ class test_UrlUtil
 		}
 
 
-		void majorMinor()
-		{
-			const QString URL_PREFIX("https://www.der-pott-kocht.net:8443/index.html"_L1);
-			const QUrl url(URL_PREFIX);
-
-			// Ok
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Ok, ECardApiResult::Minor::null))).toString(),
-					URL_PREFIX + "?ResultMajor=ok"_L1);
-
-			// General server error
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Unknown_Error, QString(), ECardApiResult::Origin::Server))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=serverError"_L1);
-
-			// Minors defined in TR-03112-1 and TR-03124-1 2.5.4.2
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Communication_Error))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=communicationError"_L1);
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=trustedChannelEstablishmentFailed"_L1);
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser"_L1);
-
-			// No difference between client and server origin
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::SAL_Cancellation_by_User, QString(), ECardApiResult::Origin::Server))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=cancellationByUser"_L1);
-
-			// General client error
-			QCOMPARE(UrlUtil::addMajorMinor(url, GlobalStatus(ECardApiResult(ECardApiResult::Major::Error, ECardApiResult::Minor::AL_Not_Initialized))).toString(),
-					URL_PREFIX + "?ResultMajor=error&ResultMinor=clientError"_L1);
-		}
-
-
 		void getRequest_data()
 		{
 			QTest::addColumn<QUrl>("url");
@@ -144,12 +113,14 @@ class test_UrlUtil
 		void setHiddenSettings()
 		{
 			auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
+
 			generalSettings.setDeveloperOptions(true);
 			generalSettings.setUseSelfauthenticationTestUri(false);
-			generalSettings.setSimulatorEnabled(false);
+			simulatorSettings.setEnabled(false);
 
 			QCOMPARE(generalSettings.useSelfAuthTestUri(), false);
-			QCOMPARE(generalSettings.isSimulatorEnabled(), false);
+			QCOMPARE(simulatorSettings.isEnabled(), false);
 
 			QFETCH(QUrl, url);
 			QFETCH(bool, useTestUri);
@@ -158,7 +129,7 @@ class test_UrlUtil
 			UrlUtil::setHiddenSettings(QUrlQuery(url));
 
 			QCOMPARE(generalSettings.useSelfAuthTestUri(), useTestUri);
-			QCOMPARE(generalSettings.isSimulatorEnabled(), enableSimulator);
+			QCOMPARE(simulatorSettings.isEnabled(), enableSimulator);
 		}
 
 

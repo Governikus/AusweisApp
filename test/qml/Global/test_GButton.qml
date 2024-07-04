@@ -81,43 +81,50 @@ TestCase {
 		let longText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
 		verify(waitForRendering(longText));
 		let longTextWidth = Math.ceil(longText.width);
-		return [{
+		return [
+			{
 				"tag": "noIconNoText",
 				"icon": "",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": Constants.is_desktop ? 132 : 104
-			}, {
+			},
+			{
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": Constants.is_desktop ? 132 : 104
-			}, {
+			},
+			{
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
-			}, {
+			},
+			{
 				"tag": "withIconNoText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": Constants.is_desktop ? 132 : 104
-			}, {
+			},
+			{
 				"tag": "withIconSmallText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": Constants.is_desktop ? 132 : 104
-			}, {
+			},
+			{
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": 68 + longTextWidth
-			}];
+			}
+		];
 	}
 	function test_size_withoutBackground(data) {
 		let button = createTemporaryQmlObject("
@@ -172,43 +179,50 @@ TestCase {
 		let smallText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"t\"}", testCase);
 		verify(waitForRendering(smallText));
 		let smallTextWidth = Math.ceil(smallText.width);
-		return [{
+		return [
+			{
 				"tag": "noIconNoText",
 				"icon": "",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": Constants.is_desktop ? 36 : 40
-			}, {
+			},
+			{
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": (Constants.is_desktop ? 36 : 40) + smallTextWidth
-			}, {
+			},
+			{
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
-			}, {
+			},
+			{
 				"tag": "withIconNoText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "",
 				"height": Constants.is_desktop ? 40 : 39,
-				"width": 68
-			}, {
+				"width": Constants.is_desktop ? 56 : 58
+			},
+			{
 				"tag": "withIconSmallText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "t",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": 68 + smallTextWidth
-			}, {
+			},
+			{
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
 				"height": Constants.is_desktop ? 40 : 39,
 				"width": 68 + longTextWidth
-			}];
+			}
+		];
 	}
 	function test_text() {
 		let testObject = createTestObject();
@@ -219,8 +233,6 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.button, "Initial textStyle: button");
-		testObject.textStyle = Style.text.normal_warning;
-		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 	function test_tooltipText() {
 		let testObject = createTestObject();
@@ -248,12 +260,12 @@ TestCase {
 				verify(!testObject.pressed, "pressed: false");
 				mousePress(testObject);
 				tryVerify(function () {
-						return testObject.pressed;
-					});
+					return testObject.pressed;
+				});
 				mouseRelease(testObject);
 				tryVerify(function () {
-						return !testObject.pressed;
-					});
+					return !testObject.pressed;
+				});
 			}
 			function test_tintIcon() {
 				verify(!testObject.tintIcon, "Initial tintIcon: false");

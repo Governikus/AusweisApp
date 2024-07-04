@@ -33,7 +33,6 @@ class StatePreparePace
 	Q_SIGNALS:
 		void fireNoCardConnection();
 		void fireEnterPacePassword();
-		void fireEstablishPaceChannel();
 };
 
 } // namespace governikus

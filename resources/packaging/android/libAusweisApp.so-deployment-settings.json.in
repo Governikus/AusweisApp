@@ -23,7 +23,7 @@
    "qtQmlDirectory": {
       "@CMAKE_ANDROID_ARCH_ABI@": "qml"
    },
-   "sdk": "@ANDROID_SDK@",
+   "sdk": "@ANDROID_SDK_ROOT@",
    "sdkBuildToolsRevision": "@ANDROID_BUILD_TOOLS_REVISION@",
    "ndk": "@CMAKE_ANDROID_NDK@",
    "toolchain-prefix": "llvm",
@@ -34,5 +34,5 @@
    "application-binary": "AusweisApp",
    "qml-importscanner-binary": "@QT_HOST_PATH@/libexec/qmlimportscanner",
    "rcc-binary": "@QT_HOST_PATH@/libexec/rcc",
-   "qml-root-path": @QML_ROOT_PATH@
+   "qml-root-path": []
 }

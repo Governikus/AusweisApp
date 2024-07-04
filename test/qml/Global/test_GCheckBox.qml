@@ -42,8 +42,8 @@ TestCase {
 				verify(!testObject.checked, "Initial checked: false");
 				mouseClick(testObject);
 				tryVerify(function () {
-						return testObject.checked;
-					});
+					return testObject.checked;
+				});
 			}
 
 			when: windowShown

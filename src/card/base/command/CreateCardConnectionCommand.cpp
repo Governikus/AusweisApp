@@ -39,12 +39,23 @@ void CreateCardConnectionCommand::execute()
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	if (connect(mReaderManagerWorker.data(), &ReaderManagerWorker::fireCardConnectionWorkerCreated, this, &CreateCardConnectionCommand::onCardConnectionWorkerCreated, Qt::UniqueConnection))
+	if (connect(mReaderManagerWorker.data(), &ReaderManagerWorker::fireCardConnectionWorkerCreated, this, &CreateCardConnectionCommand::onCardConnectionWorkerCreated))
 	{
 		const auto& localCopy = mReaderManagerWorker;
 		const auto& name = mReaderName;
 		QMetaObject::invokeMethod(localCopy.data(), [localCopy, name] {
-				localCopy->createCardConnectionWorker(name);
+				localCopy->createCardConnectionWorker(name, [] (const QSharedPointer<CardConnectionWorker>& pWorker) -> QSharedPointer<CardConnectionWorker> {
+					if (pWorker)
+					{
+						const auto application = pWorker->getReaderInfo().getCardInfo().getApplication();
+						if (application != FileRef() && !pWorker->selectApplicationRoot(application))
+						{
+							return nullptr;
+						}
+					}
+
+					return pWorker;
+				});
 			}, Qt::QueuedConnection);
 	}
 	else

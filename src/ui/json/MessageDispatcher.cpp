@@ -20,6 +20,7 @@
 #include "messages/MsgHandlerInternalError.h"
 #include "messages/MsgHandlerInvalid.h"
 #include "messages/MsgHandlerLog.h"
+#include "messages/MsgHandlerPause.h"
 #include "messages/MsgHandlerReader.h"
 #include "messages/MsgHandlerReaderList.h"
 #include "messages/MsgHandlerStatus.h"
@@ -167,7 +168,7 @@ Msg MessageDispatcher::processProgressChange() const
 
 QList<Msg> MessageDispatcher::processReaderChange(const ReaderInfo& pInfo)
 {
-	QList<Msg> messages({MsgHandlerReader(pInfo)});
+	QList<Msg> messages({MsgHandlerReader(pInfo, mContext)});
 
 	const auto& lastStateMsg = mContext.getLastStateMsg();
 	if (lastStateMsg == MsgType::INSERT_CARD && !lastStateMsg)
@@ -209,8 +210,16 @@ Msg MessageDispatcher::createForStateChange(MsgType pStateType)
 		case MsgType::INSERT_CARD:
 			return MsgHandlerInsertCard(mContext);
 
+		case MsgType::PAUSE:
+			if (getApiLevel() > MsgLevel::v2)
+			{
+				return MsgHandlerPause();
+			}
+			Q_FALLTHROUGH();
+
 		default:
 			mContext.getContext()->setStateApproved();
+
 			return MsgHandler::Void;
 	}
 }
@@ -246,7 +255,7 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 		return MsgHandlerInvalid(QLatin1String("Command cannot be undefined"));
 	}
 
-	auto requestType = Enum<MsgCmdType>::fromString(cmd, MsgCmdType::UNDEFINED);
+	const auto requestType = Enum<MsgCmdType>::fromString(cmd, MsgCmdType::UNDEFINED);
 	qCDebug(json) << "Process type:" << requestType;
 	switch (requestType)
 	{
@@ -269,7 +278,7 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 			return MsgHandlerApiLevel(pObj, mContext);
 
 		case MsgCmdType::GET_READER:
-			return MsgHandlerReader(pObj);
+			return MsgHandlerReader(pObj, mContext);
 
 		case MsgCmdType::GET_READER_LIST:
 			return MsgHandlerReaderList(mContext);
@@ -311,6 +320,9 @@ MsgHandler MessageDispatcher::createForCommand(const QJsonObject& pObj)
 				return MsgHandlerUnknownCommand(cmd);
 			}
 			return HANDLE_CURRENT_STATE({MsgType::INSERT_CARD}, MsgHandlerInsertCard(pObj, mContext));
+
+		case MsgCmdType::CONTINUE:
+			return HANDLE_CURRENT_STATE({MsgType::PAUSE}, MsgHandlerPause(mContext));
 
 		case MsgCmdType::SET_PIN:
 			return HANDLE_CURRENT_STATE({MsgType::ENTER_PIN}, MsgHandlerEnterPin(pObj, mContext));
@@ -400,11 +412,12 @@ MsgHandler MessageDispatcher::interrupt()
 				{
 						case CardReturnCode::OK:
 						case CardReturnCode::OK_PUK:
-							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC); // Null string is interpreted as 'success'
+						case CardReturnCode::OK_CAN:
+							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC); // Null string is interpreted as 'success'
 							break;
 
 						default:
-							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
+							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
 				}
 
 				return MsgHandler::Void;

@@ -47,12 +47,6 @@ IMPLEMENT_ASN1_OBJECT(ApplicationTemplate)
 }  // namespace governikus
 
 
-ApplicationTemplate::application_template_st(const ApplicationTemplate& pCopy)
-	: mApplicationIdentifier(pCopy.mApplicationIdentifier)
-{
-}
-
-
 ApplicationTemplate::~application_template_st()
 {
 	/*

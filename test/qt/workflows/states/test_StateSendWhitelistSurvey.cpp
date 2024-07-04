@@ -8,7 +8,7 @@
 #include "HttpServer.h"
 #include "LogHandler.h"
 #include "SecureStorage.h"
-#include "SurveyModel.h"
+#include "Survey.h"
 #include "VolatileSettings.h"
 #include "states/StateBuilder.h"
 
@@ -128,11 +128,11 @@ class test_StateSendWhitelistSurvey
 			Env::getSingleton<LogHandler>()->init();
 			Env::getSingleton<AppSettings>()->getGeneralSettings().setDeviceSurveyPending(true);
 
-			const auto& surveyModel = Env::getSingleton<SurveyModel>();
-			ReaderInfo readerInfo("reader"_L1, ReaderManagerPlugInType::NFC, CardInfo(CardType::EID_CARD));
+			const auto& survey = Env::getSingleton<Survey>();
+			ReaderInfo readerInfo("reader"_L1, ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD));
 			readerInfo.setMaxApduLength(0);
-			surveyModel->setReaderInfo(readerInfo);
-			surveyModel->setAuthWasSuccessful(true);
+			survey->setReaderInfo(readerInfo);
+			survey->setAuthWasSuccessful(true);
 
 			QSignalSpy spyContinue(mState.data(), &StateSendWhitelistSurvey::fireContinue);
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);

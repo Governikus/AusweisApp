@@ -6,11 +6,13 @@
  * \brief Unit tests for \ref CVCertificateChain
  */
 
+#include "asn1/CVCertificateChainBuilder.h"
+
+#include "CertificateHelper.h"
+#include "TestFileHelper.h"
+
 #include <QtCore>
 #include <QtTest>
-
-#include "TestFileHelper.h"
-#include "asn1/CVCertificateChainBuilder.h"
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -60,18 +62,18 @@ class test_CVCertificateChainBuilder
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mCvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
-			mCvca_DETESTeID00002_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
-			mCvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
-			mCvca_DETESTeID00004_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
-			mCvca_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
-			mCvdv_DEDVeIDDPST00035 = CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1)); // DV issued from CVCA DETESTeID00004
-			mCvat_DEDEMODEV00038 = CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));     // TA issued from DV DEDVeIDDPST00035
+			mCvca_DETESTeID00001 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			mCvca_DETESTeID00002_DETESTeID00001 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			mCvca_DETESTeID00002 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			mCvca_DETESTeID00004_DETESTeID00002 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			mCvca_DETESTeID00004 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
+			mCvdv_DEDVeIDDPST00035 = CertificateHelper::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1)); // DV issued from CVCA DETESTeID00004
+			mCvat_DEDEMODEV00038 = CertificateHelper::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));     // TA issued from DV DEDVeIDDPST00035
 
-			mCvca_DETESTeID00005_DETESTeID00004 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005_DETESTeID00004.hex"_L1));
-			mCvca_DETESTeID00005 = CVCertificate::fromHex(readFile("cvca-DETESTeID00005.hex"_L1));
-			mCvdv_DEDVtIDGVNK00005 = CVCertificate::fromHex(readFile("cvdv-DEDVtIDGVNK00005.hex"_L1)); // DV issued from CVCA DETESTeID00005
-			mCvat_DEDEVDEMO00020 = CVCertificate::fromHex(readFile("cvat-DEDEVDEMO00020.hex"_L1));     // TA issued from DV DEDVtIDGVNK00005
+			mCvca_DETESTeID00005_DETESTeID00004 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00005_DETESTeID00004.hex"_L1));
+			mCvca_DETESTeID00005 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00005.hex"_L1));
+			mCvdv_DEDVtIDGVNK00005 = CertificateHelper::fromHex(readFile("cvdv-DEDVtIDGVNK00005.hex"_L1)); // DV issued from CVCA DETESTeID00005
+			mCvat_DEDEVDEMO00020 = CertificateHelper::fromHex(readFile("cvat-DEDEVDEMO00020.hex"_L1));     // TA issued from DV DEDVtIDGVNK00005
 		}
 
 

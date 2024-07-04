@@ -241,7 +241,7 @@ class test_NumberModel
 			const QString readerName = QStringLiteral("name");
 			const QString test = QStringLiteral("test");
 
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			Q_EMIT readerManager->fireReaderPropertiesUpdated(ReaderInfo());
 			QCOMPARE(spyReaderNameChanged.count(), 0);
 
@@ -295,19 +295,20 @@ class test_NumberModel
 			context->setCardConnection(connection);
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN. You have 2 further attempts to enter the correct ID card PIN."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN.<br/><br/>You have <b>2 further attempts</b> to enter the correct ID card PIN."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 2 times. "
-												 "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
-												 "You can find your CAN in the bottom right on the front of your ID card."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect, 6-digit ID card PIN 2 times</b>.<br/><br/>"
+												 "For a 3rd attempt, the <b>6-digit Card Access Number (CAN)</b> must be entered first. "
+												 "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. "
-												 "To remove the block, the 10-digit PUK must be entered first."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit ID card PIN 3 times. Your <b>ID card PIN is now blocked</b>.<br/><br/>"
+												 "To remove the block, the <b>10-digit PUK</b> must be entered first. "
+												 "You can find the PUK in the bottom <b>right next</b> to the Transport PIN in the <b>authority's letter</b>."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_CAN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 6-digit Card Access Number (CAN). Please try again."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect Card Access Number (CAN)</b>. Please try again. You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
 
 			context->setLastPaceResult(CardReturnCode::INVALID_PUK);
 			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 10-digit PUK. Please try again."));
@@ -325,15 +326,16 @@ class test_NumberModel
 			mModel->resetContext(context);
 			context->setCardConnection(connection);
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN. "
-												 "You have 2 further attempts to enter the correct Transport PIN."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN.<br/><br/>"
+												 "You have <b>2 further attempts</b> to enter the correct Transport PIN. "
+												 "The 5-digit Transport PIN may be found on the <b>bottom left of your PIN letter</b>."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_2);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 2 times. "
-												 "For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. "
-												 "You can find your CAN in the bottom right on the front of your ID card."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an <b>incorrect, 5-digit Transport PIN 2 times</b>.<br/><br/>"
+												 "For a 3rd attempt, the <b>6-digit Card Access Number (CAN)</b> must be entered first. "
+												 "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
 			context->setLastPaceResult(CardReturnCode::INVALID_PIN_3);
-			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your Transport PIN is now blocked. "
-												 "To remove the block, the 10-digit PUK must be entered first."));
+			QCOMPARE(mModel->getInputError(), tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your <b>Transport PIN is now blocked</b>. "
+												 "To remove the block, the <b>10-digit PUK</b> must be entered first."));
 
 			connectionThread.quit();
 			connectionThread.wait();
@@ -353,7 +355,7 @@ class test_NumberModel
 			QCOMPARE(mModel->getRetryCounter(), -1);
 
 			const QString name = QStringLiteral("name");
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(),
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(),
 					3, true, false);
 			MockReader reader(name);
 			reader.setInfoCardInfo(cardInfo);
@@ -371,53 +373,53 @@ class test_NumberModel
 		void test_RequestTransportPin_data()
 		{
 			QTest::addColumn<QSharedPointer<WorkflowContext>>("context");
-			QTest::addColumn<PasswordType>("passwordType");
+			QTest::addColumn<NumberModel::PasswordType>("passwordType");
 
-			QTest::newRow("WorkflowContext") << QSharedPointer<WorkflowContext>(new TestWorkflowContext()) << PasswordType::PIN;
-			QTest::newRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << PasswordType::PIN;
-			QTest::newRow("ChangePinContext-false") << QSharedPointer<WorkflowContext>(new ChangePinContext(false)) << PasswordType::PIN;
-			QTest::newRow("ChangePinContext-true") << QSharedPointer<WorkflowContext>(new ChangePinContext(true)) << PasswordType::TRANSPORT_PIN;
+			QTest::newRow("WorkflowContext") << QSharedPointer<WorkflowContext>(new TestWorkflowContext()) << NumberModel::PasswordType::PIN;
+			QTest::newRow("ChangePinContext") << QSharedPointer<WorkflowContext>(new ChangePinContext()) << NumberModel::PasswordType::PIN;
+			QTest::newRow("ChangePinContext-false") << QSharedPointer<WorkflowContext>(new ChangePinContext(false)) << NumberModel::PasswordType::PIN;
+			QTest::newRow("ChangePinContext-true") << QSharedPointer<WorkflowContext>(new ChangePinContext(true)) << NumberModel::PasswordType::TRANSPORT_PIN;
 		}
 
 
 		void test_RequestTransportPin()
 		{
 			QFETCH(QSharedPointer<WorkflowContext>, context);
-			QFETCH(PasswordType, passwordType);
+			QFETCH(NumberModel::PasswordType, passwordType);
 
-			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
 
 			mModel->resetContext(context);
 			QCOMPARE(mModel->getPasswordType(), passwordType);
 
 			mModel->resetContext();
-			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
 		}
 
 
 		void test_GetPasswordType_ContextIsNullptr()
 		{
-			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
 		}
 
 
 		void test_GetPasswordType_data()
 		{
 			QTest::addColumn<PacePasswordId>("passwordId");
-			QTest::addColumn<PasswordType>("passwordType");
+			QTest::addColumn<NumberModel::PasswordType>("passwordType");
 
-			QTest::newRow("unknown") << PacePasswordId::UNKNOWN << PasswordType::PIN;
-			QTest::newRow("mrz") << PacePasswordId::PACE_MRZ << PasswordType::PIN;
-			QTest::newRow("pin") << PacePasswordId::PACE_PIN << PasswordType::PIN;
-			QTest::newRow("can") << PacePasswordId::PACE_CAN << PasswordType::CAN;
-			QTest::newRow("puk") << PacePasswordId::PACE_PUK << PasswordType::PUK;
+			QTest::newRow("unknown") << PacePasswordId::UNKNOWN << NumberModel::PasswordType::PIN;
+			QTest::newRow("mrz") << PacePasswordId::PACE_MRZ << NumberModel::PasswordType::PIN;
+			QTest::newRow("pin") << PacePasswordId::PACE_PIN << NumberModel::PasswordType::PIN;
+			QTest::newRow("can") << PacePasswordId::PACE_CAN << NumberModel::PasswordType::CAN;
+			QTest::newRow("puk") << PacePasswordId::PACE_PUK << NumberModel::PasswordType::PUK;
 		}
 
 
 		void test_GetPasswordType()
 		{
 			QFETCH(PacePasswordId, passwordId);
-			QFETCH(PasswordType, passwordType);
+			QFETCH(NumberModel::PasswordType, passwordType);
 
 			const QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
@@ -436,16 +438,16 @@ class test_NumberModel
 			mModel->resetContext(context);
 
 			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
-			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
 
 			context->setPin(pin);
-			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_PIN);
 
 			mModel->setNewPin(pin);
-			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN_CONFIRMATION);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_PIN_CONFIRMATION);
 
 			mModel->setNewPinConfirmation(pin);
-			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_PIN_CONFIRMATION);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_PIN_CONFIRMATION);
 		}
 
 
@@ -454,14 +456,14 @@ class test_NumberModel
 #if __has_include("context/PersonalizationContext.h")
 			const QSharedPointer<WorkflowContext> context(new PersonalizationContext(QString()));
 			mModel->resetContext(context);
-			QCOMPARE(mModel->getPasswordType(), PasswordType::PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::PIN);
 
 			auto personalizationContext = context.objectCast<PersonalizationContext>();
 			QVERIFY(personalizationContext);
 			personalizationContext->setSessionIdentifier(QUuid::createUuid());
-			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_SMART_PIN);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_SMART_PIN);
 			mModel->setNewPin(QStringLiteral("123456"));
-			QCOMPARE(mModel->getPasswordType(), PasswordType::NEW_SMART_PIN_CONFIRMATION);
+			QCOMPARE(mModel->getPasswordType(), NumberModel::PasswordType::NEW_SMART_PIN_CONFIRMATION);
 #endif
 		}
 
@@ -493,43 +495,43 @@ class test_NumberModel
 		{
 			QTest::addColumn<EstablishPaceChannel>("inputData");
 			QTest::addColumn<int>("pinLength");
-			QTest::addColumn<PasswordType>("passwordType");
+			QTest::addColumn<NumberModel::PasswordType>("passwordType");
 
-			QTest::newRow("default - 0") << EstablishPaceChannel() << 0 << PasswordType::PIN;
-			QTest::newRow("default - 5") << EstablishPaceChannel() << 5 << PasswordType::TRANSPORT_PIN;
-			QTest::newRow("default - 6") << EstablishPaceChannel() << 6 << PasswordType::PIN;
+			QTest::newRow("default - 0") << EstablishPaceChannel() << 0 << NumberModel::PasswordType::PIN;
+			QTest::newRow("default - 5") << EstablishPaceChannel() << 5 << NumberModel::PasswordType::TRANSPORT_PIN;
+			QTest::newRow("default - 6") << EstablishPaceChannel() << 6 << NumberModel::PasswordType::PIN;
 
-			QTest::newRow("pin - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 0 << PasswordType::PIN;
-			QTest::newRow("pin - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 5 << PasswordType::TRANSPORT_PIN;
-			QTest::newRow("pin - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 6 << PasswordType::PIN;
+			QTest::newRow("pin - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 0 << NumberModel::PasswordType::PIN;
+			QTest::newRow("pin - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 5 << NumberModel::PasswordType::TRANSPORT_PIN;
+			QTest::newRow("pin - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PIN) << 6 << NumberModel::PasswordType::PIN;
 
-			QTest::newRow("can - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 0 << PasswordType::CAN;
-			QTest::newRow("can - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 5 << PasswordType::CAN;
-			QTest::newRow("can - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 6 << PasswordType::CAN;
+			QTest::newRow("can - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 0 << NumberModel::PasswordType::CAN;
+			QTest::newRow("can - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 5 << NumberModel::PasswordType::CAN;
+			QTest::newRow("can - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_CAN) << 6 << NumberModel::PasswordType::CAN;
 
-			QTest::newRow("puk - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 0 << PasswordType::PUK;
-			QTest::newRow("puk - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 5 << PasswordType::PUK;
-			QTest::newRow("puk - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 6 << PasswordType::PUK;
+			QTest::newRow("puk - no cert - 0") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 0 << NumberModel::PasswordType::PUK;
+			QTest::newRow("puk - no cert - 5") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 5 << NumberModel::PasswordType::PUK;
+			QTest::newRow("puk - no cert - 6") << EstablishPaceChannel(PacePasswordId::PACE_PUK) << 6 << NumberModel::PasswordType::PUK;
 
-			QTest::newRow("unknown - no cert - 0") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 0 << PasswordType::PIN;
-			QTest::newRow("unknown - no cert - 5") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 5 << PasswordType::TRANSPORT_PIN;
-			QTest::newRow("unknown - no cert - 6") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 6 << PasswordType::PIN;
+			QTest::newRow("unknown - no cert - 0") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 0 << NumberModel::PasswordType::PIN;
+			QTest::newRow("unknown - no cert - 5") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 5 << NumberModel::PasswordType::TRANSPORT_PIN;
+			QTest::newRow("unknown - no cert - 6") << EstablishPaceChannel(PacePasswordId::UNKNOWN) << 6 << NumberModel::PasswordType::PIN;
 
-			QTest::newRow("pin - cert - 0") << createDataToParse(PacePasswordId::PACE_PIN) << 0 << PasswordType::PIN;
-			QTest::newRow("pin - cert - 5") << createDataToParse(PacePasswordId::PACE_PIN) << 5 << PasswordType::TRANSPORT_PIN;
-			QTest::newRow("pin - cert - 6") << createDataToParse(PacePasswordId::PACE_PIN) << 6 << PasswordType::PIN;
+			QTest::newRow("pin - cert - 0") << createDataToParse(PacePasswordId::PACE_PIN) << 0 << NumberModel::PasswordType::PIN;
+			QTest::newRow("pin - cert - 5") << createDataToParse(PacePasswordId::PACE_PIN) << 5 << NumberModel::PasswordType::TRANSPORT_PIN;
+			QTest::newRow("pin - cert - 6") << createDataToParse(PacePasswordId::PACE_PIN) << 6 << NumberModel::PasswordType::PIN;
 
-			QTest::newRow("can - cert - 0") << createDataToParse(PacePasswordId::PACE_CAN) << 0 << PasswordType::CAN;
-			QTest::newRow("can - cert - 5") << createDataToParse(PacePasswordId::PACE_CAN) << 5 << PasswordType::CAN;
-			QTest::newRow("can - cert - 6") << createDataToParse(PacePasswordId::PACE_CAN) << 6 << PasswordType::CAN;
+			QTest::newRow("can - cert - 0") << createDataToParse(PacePasswordId::PACE_CAN) << 0 << NumberModel::PasswordType::CAN;
+			QTest::newRow("can - cert - 5") << createDataToParse(PacePasswordId::PACE_CAN) << 5 << NumberModel::PasswordType::CAN;
+			QTest::newRow("can - cert - 6") << createDataToParse(PacePasswordId::PACE_CAN) << 6 << NumberModel::PasswordType::CAN;
 
-			QTest::newRow("puk - cert - 0") << createDataToParse(PacePasswordId::PACE_PUK) << 0 << PasswordType::PUK;
-			QTest::newRow("puk - cert - 5") << createDataToParse(PacePasswordId::PACE_PUK) << 5 << PasswordType::PUK;
-			QTest::newRow("puk - cert - 6") << createDataToParse(PacePasswordId::PACE_PUK) << 6 << PasswordType::PUK;
+			QTest::newRow("puk - cert - 0") << createDataToParse(PacePasswordId::PACE_PUK) << 0 << NumberModel::PasswordType::PUK;
+			QTest::newRow("puk - cert - 5") << createDataToParse(PacePasswordId::PACE_PUK) << 5 << NumberModel::PasswordType::PUK;
+			QTest::newRow("puk - cert - 6") << createDataToParse(PacePasswordId::PACE_PUK) << 6 << NumberModel::PasswordType::PUK;
 
-			QTest::newRow("unknown - cert - 0") << createDataToParse(PacePasswordId::UNKNOWN) << 0 << PasswordType::PIN;
-			QTest::newRow("unknown - cert - 5") << createDataToParse(PacePasswordId::UNKNOWN) << 5 << PasswordType::TRANSPORT_PIN;
-			QTest::newRow("unknown - cert - 6") << createDataToParse(PacePasswordId::UNKNOWN) << 6 << PasswordType::PIN;
+			QTest::newRow("unknown - cert - 0") << createDataToParse(PacePasswordId::UNKNOWN) << 0 << NumberModel::PasswordType::PIN;
+			QTest::newRow("unknown - cert - 5") << createDataToParse(PacePasswordId::UNKNOWN) << 5 << NumberModel::PasswordType::TRANSPORT_PIN;
+			QTest::newRow("unknown - cert - 6") << createDataToParse(PacePasswordId::UNKNOWN) << 6 << NumberModel::PasswordType::PIN;
 		}
 
 
@@ -537,7 +539,7 @@ class test_NumberModel
 		{
 			QFETCH(EstablishPaceChannel, inputData);
 			QFETCH(int, pinLength);
-			QFETCH(PasswordType, passwordType);
+			QFETCH(NumberModel::PasswordType, passwordType);
 
 			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(QSharedPointer<IfdServer>(new RemoteIfdServer())));
 			mModel->resetContext(context);
@@ -546,6 +548,57 @@ class test_NumberModel
 			context->setEstablishPaceChannel(message);
 
 			QCOMPARE(mModel->getPasswordType(), passwordType);
+		}
+
+
+		void test_resetInputError()
+		{
+			QThread connectionThread;
+			connectionThread.start();
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
+			worker->moveToThread(&connectionThread);
+			const QSharedPointer<CardConnection> connection(new CardConnection(worker));
+			context->setCardConnection(connection);
+
+			mModel->resetContext(context);
+			context->setLastPaceResult(CardReturnCode::OK);
+			QVERIFY(mModel->getInputError().isEmpty());
+
+			context->setPin(QStringLiteral("000000"));
+			context->setLastPaceResult(CardReturnCode::INVALID_PIN);
+			QVERIFY(!mModel->getPin().isEmpty());
+			QVERIFY(!mModel->getInputError().isEmpty());
+
+			mModel->resetInputError();
+			QVERIFY(!mModel->getPin().isEmpty());
+			QVERIFY(mModel->getInputError().isEmpty());
+
+			connectionThread.quit();
+			connectionThread.wait();
+		}
+
+
+		void test_setInitialInputErrorShown()
+		{
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+
+			mModel->resetContext(context);
+			context->setLastPaceResult(CardReturnCode::OK);
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+			QVERIFY(mModel->getInitialInputError().isEmpty());
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
+			QVERIFY(!mModel->getInitialInputError().isEmpty());
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PUK);
+			QVERIFY(!mModel->getInitialInputError().isEmpty());
+
+			context->setInitialInputErrorShown();
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PIN);
+			QVERIFY(mModel->getInitialInputError().isEmpty());
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_CAN);
+			QVERIFY(mModel->getInitialInputError().isEmpty());
+			context->setEstablishPaceChannelType(PacePasswordId::PACE_PUK);
+			QVERIFY(mModel->getInitialInputError().isEmpty());
 		}
 
 

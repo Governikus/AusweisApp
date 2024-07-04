@@ -62,5 +62,5 @@ void MsgHandlerWorkflows::initProgressStatus(const QJsonValue& pValue, MsgContex
 
 void MsgHandlerWorkflows::setError(const QLatin1String pError)
 {
-	setValue("error", pError);
+	setValue(QLatin1String("error"), pError);
 }

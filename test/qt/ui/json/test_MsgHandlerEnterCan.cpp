@@ -13,12 +13,12 @@
 #include "MessageDispatcher.h"
 #include "ReaderManager.h"
 
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 
 #include <QtPlugin>
 #include <QtTest>
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 using namespace governikus;
 
@@ -38,7 +38,7 @@ class test_MsgHandlerEnterCan
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -53,7 +53,7 @@ class test_MsgHandlerEnterCan
 
 		void cleanup()
 		{
-			MockReaderManagerPlugIn::getInstance().removeAllReader();
+			MockReaderManagerPlugin::getInstance().removeAllReader();
 		}
 
 

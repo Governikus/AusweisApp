@@ -48,7 +48,7 @@ class IfdClient
 		Q_INVOKABLE virtual void stopDetection() = 0;
 		Q_INVOKABLE virtual bool isDetecting() = 0;
 
-		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) = 0;
+		Q_INVOKABLE virtual void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk) = 0;
 
 		[[nodiscard]] virtual QList<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const;
 		[[nodiscard]] bool hasAnnouncingRemoteDevices() const;

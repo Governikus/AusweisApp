@@ -88,10 +88,7 @@ IfdTransmitResponse::IfdTransmitResponse(const QJsonObject& pMessageObject)
 
 	parseResponseApdu(pMessageObject);
 
-	if (getType() != IfdMessageType::IFDTransmitResponse)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDTransmitResponse"));
-	}
+	ensureType(IfdMessageType::IFDTransmitResponse);
 }
 
 

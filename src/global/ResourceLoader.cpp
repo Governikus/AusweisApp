@@ -12,6 +12,10 @@
 #include <QFile>
 #include <QResource>
 
+#ifndef QT_NO_DEBUG
+	#include <QDirIterator>
+#endif
+
 using namespace governikus;
 
 defineSingleton(ResourceLoader)
@@ -44,6 +48,18 @@ void ResourceLoader::init()
 			mLoadedResources << path;
 		}
 	}
+
+#ifndef QT_NO_DEBUG
+	const auto& show = qEnvironmentVariable("SHOW_RESOURCES").toLower();
+	if (show == QLatin1String("true") || show == QLatin1String("on") || show == QLatin1String("1"))
+	{
+		QDirIterator iter(QStringLiteral(":"), QDirIterator::Subdirectories);
+		while (iter.hasNext())
+		{
+			qDebug() << iter.next();
+		}
+	}
+#endif
 }
 
 

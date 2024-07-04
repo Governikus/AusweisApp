@@ -25,8 +25,6 @@ TestCase {
 	function test_textStyle() {
 		let testObject = createTestObject();
 		compare(testObject.textStyle, Style.text.normal, "Initial textStyle: normal");
-		testObject.textStyle = Style.text.normal_warning;
-		compare(testObject.textStyle, Style.text.normal_warning, "textStyle: hint_warning");
 	}
 
 	name: "test_GComboBox"
@@ -43,13 +41,13 @@ TestCase {
 				verify(!testObject.popup.visible, "Initial popup visible: false");
 				mouseClick(testObject);
 				tryVerify(function () {
-						return testObject.popup;
-					});
+					return testObject.popup;
+				});
 				compare(testObject.popup.visible, true);
 				mouseClick(testObject);
 				tryVerify(function () {
-						return testObject.popup;
-					});
+					return testObject.popup;
+				});
 				compare(testObject.popup.visible, false);
 			}
 			function test_model() {

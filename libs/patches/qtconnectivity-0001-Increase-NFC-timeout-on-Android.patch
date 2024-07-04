@@ -1,0 +1,22 @@
+From f08d9ee3dd97ad045f579e6e9966903b78231f1f Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 13 Feb 2024 07:34:17 +0100
+Subject: Increase NFC timeout on Android
+
+---
+ src/nfc/qnearfieldtarget_android.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+index c7f842ae781bd0e24865a1bf011af2accd8dd739..95935920d89f3cc5f5e4fb1a9a7bf53d1f19c71b 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+@@ -463,7 +463,7 @@ bool QNearFieldTargetPrivateImpl::connect()
+     if (connected)
+         return true;
+ 
+-    setCommandTimeout(2000);
++    setCommandTimeout(3000);
+     methodId = env.findMethod<void>(tagTech.objectClass(), "connect");
+     if (!methodId)
+         return false;

@@ -117,7 +117,7 @@ void ConnectRequest::onConnected()
 	}
 	else
 	{
-		const auto& secureStorage = Env::getSingleton<SecureStorage>();
+		const auto* secureStorage = Env::getSingleton<SecureStorage>();
 		const auto& pairingTlsConfig = secureStorage->getTlsConfigRemoteIfd(SecureStorage::TlsSuite::PSK);
 		isRemotePairing = pairingTlsConfig.getCiphers().contains(cfg.sessionCipher());
 

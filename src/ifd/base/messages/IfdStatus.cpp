@@ -95,10 +95,10 @@ IfdStatus::IfdStatus(const ReaderInfo& pReaderInfo, bool pPublishCard)
 		return;
 	}
 
-	switch (pReaderInfo.getPlugInType())
+	switch (pReaderInfo.getPluginType())
 	{
-		case ReaderManagerPlugInType::NFC:
-		case ReaderManagerPlugInType::SMART:
+		case ReaderManagerPluginType::NFC:
+		case ReaderManagerPluginType::SMART:
 			mHasPinPad = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
 			break;
 
@@ -129,10 +129,7 @@ IfdStatus::IfdStatus(const QJsonObject& pMessageObject)
 	mConnectedReader = getBoolValue(pMessageObject, CONNECTED_READER());
 	mCardAvailable = getBoolValue(pMessageObject, CARD_AVAILABLE());
 
-	if (getType() != IfdMessageType::IFDStatus)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDStatus"));
-	}
+	ensureType(IfdMessageType::IFDStatus);
 }
 
 

@@ -16,9 +16,6 @@ void StateMaintainCardConnection::handleWrongPacePassword()
 {
 	auto context = getContext();
 
-	qCDebug(statemachine) << "Resetting all PACE passwords.";
-	context->resetPacePasswords();
-
 	if (context->getCardConnection())
 	{
 		qCDebug(statemachine) << "Trigger retry counter update.";
@@ -42,13 +39,6 @@ StateMaintainCardConnection::StateMaintainCardConnection(const QSharedPointer<Wo
 void StateMaintainCardConnection::run()
 {
 	auto context = getContext();
-	if (context->getStatus().isError())
-	{
-		Q_ASSERT(context->getFailureCode().has_value());
-		Q_EMIT firePropagateAbort();
-		return;
-	}
-
 	const CardReturnCode lastPaceResult = context->getLastPaceResult();
 	qCDebug(statemachine) << "Last PACE result:" << lastPaceResult;
 
@@ -91,7 +81,7 @@ void StateMaintainCardConnection::run()
 			return;
 		}
 
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 		case CardReturnCode::CARD_NOT_FOUND:
 		{
 			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
@@ -104,6 +94,7 @@ void StateMaintainCardConnection::run()
 
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
+		case CardReturnCode::OK_CAN:
 		{
 			Q_ASSERT(!CardReturnCodeUtil::equalsWrongPacePassword(lastPaceResult));
 

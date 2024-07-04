@@ -45,6 +45,22 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 
 	mCard.reset(new NfcCard(pTarget));
 	connect(mCard.data(), &NfcCard::fireSetProgressMessage, this, &NfcReader::setProgressMessage);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 8, 0))
+	#define GOV_UNSUPPORTED_TARGET_ERROR UnsupportedTargetError
+#elif defined(GOVERNIKUS_QT) && (QT_VERSION >= QT_VERSION_CHECK(6, 6, 3))
+	#define GOV_UNSUPPORTED_TARGET_ERROR SecurityViolation
+#endif
+#ifdef GOV_UNSUPPORTED_TARGET_ERROR
+	connect(mCard.data(), &NfcCard::fireTargetError, this, [this](QNearFieldTarget::Error pError) {
+			if (pError == QNearFieldTarget::GOV_UNSUPPORTED_TARGET_ERROR)
+			{
+				setInfoCardInfo(CardInfo(CardType::UNKNOWN));
+				qCInfo(card_nfc) << "Card inserted:" << getReaderInfo().getCardInfo();
+				Q_EMIT fireCardInserted(getReaderInfo());
+			}
+		});
+	#undef GOV_UNSUPPORTED_TARGET_ERROR
+#endif
 	fetchCardInfo();
 
 	if (!getCard())
@@ -74,6 +90,7 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 
 	mNfManager.setUserInformation(info);
 
+	qCInfo(card_nfc) << "Card inserted:" << getReaderInfo().getCardInfo();
 	Q_EMIT fireCardInserted(getReaderInfo());
 }
 
@@ -89,6 +106,7 @@ void NfcReader::targetLost(QNearFieldTarget* pTarget)
 		{
 			removeCardInfo();
 
+			qCInfo(card_nfc) << "Card removed";
 			Q_EMIT fireCardRemoved(getReaderInfo());
 		}
 	}
@@ -102,7 +120,7 @@ void NfcReader::setProgressMessage(const QString& pMessage)
 
 
 NfcReader::NfcReader()
-	: ConnectableReader(ReaderManagerPlugInType::NFC, QStringLiteral("NFC"))
+	: ConnectableReader(ReaderManagerPluginType::NFC, QStringLiteral("NFC"))
 	, mNfManager()
 	, mCard()
 {

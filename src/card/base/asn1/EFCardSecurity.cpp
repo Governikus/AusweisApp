@@ -70,6 +70,18 @@ QSharedPointer<EFCardSecurity> EFCardSecurity::decode(const QByteArray& pBytes)
 		return QSharedPointer<EFCardSecurity>();
 	}
 
+	const QSharedPointer<const STACK_OF(X509)> certs(CMS_get1_certs(contentInfo.data()), [](STACK_OF(X509)* pInfo){sk_X509_pop_free(pInfo, X509_free);});
+	for (int i = 0; certs && i < sk_X509_num(certs.data()); ++i)
+	{
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		const
+#endif
+		auto* const name = X509_get_subject_name(sk_X509_value(certs.data(), i));
+		const int index = X509_NAME_get_index_by_NID(name, NID_serialNumber, -1);
+		const auto* const serial = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(name, index));
+		qCDebug(card) << "Parsed EFCardSecurity signed with DocSigner:" << Asn1StringUtil::getValue(serial);
+	}
+
 	return QSharedPointer<EFCardSecurity>::create(securityInfos);
 }
 

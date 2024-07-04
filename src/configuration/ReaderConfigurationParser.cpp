@@ -98,22 +98,18 @@ bool ReaderConfigurationParser::EntryParser::matchPlatform(const QJsonArray& pPl
 				return QOperatingSystemVersion(pCurrentVersion.type(), number.majorVersion(), minor, micro);
 			};
 
-	for (const QJsonValueConstRef entry : pPlatforms)
-	{
-		const auto& obj = entry.toObject();
-		if (obj.value(QLatin1String("os")).toString() == currentOS)
-		{
-			const auto& min = obj.value(QLatin1String("min")).toString();
-			const auto& max = obj.value(QLatin1String("max")).toString();
+	return std::any_of(pPlatforms.constBegin(), pPlatforms.constEnd(),
+			[currentOS, pCurrentVersion, parseSystemVersion](const QJsonValueConstRef pEntry){
+				const auto& obj = pEntry.toObject();
+				if (obj.value(QLatin1String("os")).toString() == currentOS)
+				{
+					const auto& min = obj.value(QLatin1String("min")).toString();
+					const auto& max = obj.value(QLatin1String("max")).toString();
+					return pCurrentVersion >= parseSystemVersion(min) && pCurrentVersion <= parseSystemVersion(max);
+				}
 
-			if (pCurrentVersion >= parseSystemVersion(min) && pCurrentVersion <= parseSystemVersion(max))
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
+				return false;
+			});
 }
 
 

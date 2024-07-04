@@ -124,13 +124,19 @@ QString SecureStorage::getDeveloperConfig() const
 
 QString SecureStorage::getCustomConfig() const
 {
-	const auto& path = FileDestination::getPath(QStringLiteral("config.json"));
+	const auto& path = getCustomConfigPath();
 	if (QFile(path).exists())
 	{
 		return path;
 	}
 
 	return QString();
+}
+
+
+QString SecureStorage::getCustomConfigPath() const
+{
+	return FileDestination::getPath(QStringLiteral("config.json"));
 }
 
 
@@ -182,7 +188,7 @@ QJsonObject SecureStorage::loadFile(const QStringList& pFiles) const
 void SecureStorage::load()
 {
 	const QStringList files({getDeveloperConfig(), getCustomConfig(), getEmbeddedConfig()});
-	qDebug() << files;
+	qCDebug(securestorage) << "Try locations:" << files;
 	const auto& config = loadFile(files);
 	if (config.isEmpty())
 	{

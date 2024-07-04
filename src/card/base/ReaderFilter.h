@@ -9,7 +9,7 @@
 #pragma once
 
 #include "ReaderInfo.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 
 #include <QFlags>
 #include <QList>
@@ -30,12 +30,12 @@ class ReaderFilter
 
 	private:
 		const ReaderFilter::FilterTypes mFilterType;
-		const QList<ReaderManagerPlugInType> mPluginTypes;
+		const QList<ReaderManagerPluginType> mPluginTypes;
 
 	public:
 		ReaderFilter();
 		ReaderFilter(const ReaderFilter::FilterType pFilterType);
-		explicit ReaderFilter(const QList<ReaderManagerPlugInType>& pPluginTypes);
+		explicit ReaderFilter(const QList<ReaderManagerPluginType>& pPluginTypes);
 
 		[[nodiscard]] QList<ReaderInfo> apply(const QList<ReaderInfo>& pInputList) const;
 };

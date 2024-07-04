@@ -12,6 +12,11 @@ communicate with the |AppName| SDK.
 The |AppName| is available as an AAR package that can automatically
 be fetched by Android's default build system **gradle**.
 
+.. seealso::
+   For Android there is also the
+   `AusweisApp SDK Wrapper <https://www.ausweisapp.bund.de/sdkwrapper/>`_
+   which is a software library that offers a high-level interface to the |AppName| SDK.
+
 .. important::
    The AAR package is available in maven central for free.
    If you need enterprise support feel free to contact us.
@@ -130,21 +135,7 @@ once. To do so the following snippet may prove useful:
 
       private boolean isAA2Process()
       {
-          if (Build.VERSION.SDK_INT >= 28)
-          {
-              return Application.getProcessName().endsWith(AA2_PROCESS);
-          }
-
-          final int pid = android.os.Process.myPid();
-          ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-          for (ActivityManager.RunningAppProcessInfo appProcess : manager.getRunningAppProcesses())
-          {
-              if (appProcess.pid == pid)
-              {
-                  return appProcess.processName.endsWith(AA2_PROCESS);
-              }
-          }
-          return false;
+          return Application.getProcessName().endsWith(AA2_PROCESS);
       }
   }
 

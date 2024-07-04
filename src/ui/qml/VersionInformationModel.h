@@ -4,20 +4,27 @@
 
 #pragma once
 
+#include "Env.h"
+#include "SingletonCreator.h"
+
 #include <QAbstractListModel>
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QtQml/qqmlregistration.h>
 
-#include "Env.h"
 
 namespace governikus
 {
 
 class VersionInformationModel
 	: public QAbstractListModel
+	, public SingletonCreator<VersionInformationModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 
 	private:

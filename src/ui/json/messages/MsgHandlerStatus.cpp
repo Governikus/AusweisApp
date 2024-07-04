@@ -9,9 +9,9 @@ using namespace governikus;
 MsgHandlerStatus::MsgHandlerStatus(const MsgContext& pContext)
 	: MsgHandler(MsgType::STATUS)
 {
-	mJsonObject[QLatin1String("workflow")] = getWorkflow(pContext);
-	mJsonObject[QLatin1String("progress")] = getProgress(pContext);
-	mJsonObject[QLatin1String("state")] = getState(pContext);
+	setValue(QLatin1String("workflow"), getWorkflow(pContext));
+	setValue(QLatin1String("progress"), getProgress(pContext));
+	setValue(QLatin1String("state"), getState(pContext));
 }
 
 

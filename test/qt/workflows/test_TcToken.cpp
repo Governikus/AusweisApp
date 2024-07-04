@@ -14,6 +14,7 @@ using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 Q_DECLARE_METATYPE(QtMsgType)
+Q_DECLARE_LOGGING_CATEGORY(secure)
 
 class test_TcToken
 	: public QObject
@@ -21,28 +22,23 @@ class test_TcToken
 	Q_OBJECT
 
 	private:
-		QFile tokenXmlOk;
-		QFile tokenXmlBroken;
-
-		void checkAndOpenFile(QFile& file)
-		{
-			QVERIFY(file.exists());
-			QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
-		}
-
-	public:
-		test_TcToken()
-			: tokenXmlOk(":/tctoken/ok.xml"_L1)
-			, tokenXmlBroken(":/tctoken/broken.xml"_L1)
-		{
-			checkAndOpenFile(tokenXmlOk);
-			checkAndOpenFile(tokenXmlBroken);
-		}
+		const QByteArray mValidToken = QByteArray("<?xml version=\"1.0\"?>"
+												  "<TCTokenType>"
+												  "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+												  "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+												  "  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
+												  "  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
+												  "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+												  "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+												  "  <PathSecurity-Parameters>"
+												  "    <PSK> 4BC1A0B5 </PSK>"
+												  "  </PathSecurity-Parameters>"
+												  "</TCTokenType>");
 
 	private Q_SLOTS:
 		void parsedValues()
 		{
-			TcToken token(tokenXmlOk.readAll());
+			TcToken token(mValidToken);
 			QVERIFY(token.isValid());
 			QCOMPARE(token.getBinding(), "urn:liberty:paos:2006-08"_L1);
 			QCOMPARE(token.getSessionIdentifier(), QByteArray("1A2BB129"));
@@ -200,7 +196,13 @@ class test_TcToken
 
 		void tryToParseCrap()
 		{
-			TcToken token(tokenXmlBroken.readAll());
+			TcToken token(QByteArray("<?xml version=\"1.0\"?>"
+									 "<TCTokenType>"
+									 "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+									 "  <SessionIdentifier>1meters>"
+									 "  <PSK> 4BC1A0B5 </PSK>"
+									 "  </PathSecurity-Parameters>"
+									 "</TCTokenType>"));
 			QVERIFY(!token.isValid());
 			QVERIFY(token.getBinding().isNull());
 			QVERIFY(token.getSessionIdentifier().isNull());
@@ -211,10 +213,10 @@ class test_TcToken
 		}
 
 
-		void tryToParseClosedFile()
+		void tryToParseEmptyData()
 		{
-			tokenXmlOk.close();
-			TcToken token(tokenXmlOk.readAll());
+			const QByteArray data;
+			TcToken token(data);
 			QVERIFY(!token.isValid());
 		}
 
@@ -428,6 +430,21 @@ class test_TcToken
 
 			QTest::ignoreMessage(messageType, QTest::currentDataTag());
 			QCOMPARE(token.valuesAreSchemaConform(binding, pathProtocol, psk, identifier, serverAdress, errorAdress, refreshAdress), valuesAreSchemaConform);
+		}
+
+
+		void pskOutput()
+		{
+			QTest::ignoreMessage(QtDebugMsg, "\"PSK\" = \"(...)\"");
+			TcToken token(mValidToken);
+			QVERIFY(token.isValid());
+			QCOMPARE(token.getPsk(), "4BC1A0B5");
+
+			QLoggingCategory::setFilterRules(QStringLiteral("secure.debug=true"));
+			QTest::ignoreMessage(QtDebugMsg, "\"PSK\" = \"4BC1A0B5\"");
+			TcToken token2(mValidToken);
+			QVERIFY(token2.isValid());
+			QCOMPARE(token.getPsk(), "4BC1A0B5");
 		}
 
 

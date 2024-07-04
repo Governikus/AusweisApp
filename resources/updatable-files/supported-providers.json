@@ -824,6 +824,25 @@
 			]
 		},
 		{
+			"shortName": {
+				"": "eWA"
+			},
+			"longName": {
+				"": "Elektronische Wohnsitzanmeldung"
+			},
+			"longDescription": {
+				"": "Sind Sie gerade umgezogen und möchten Ihren Wohnsitz anmelden? Das ist jetzt online und gebührenfrei möglich! Mit der elektronischen Wohnsitzanmeldung können Sie Ihrer Meldebehörde Ihre neue Wohnanschrift einfach online mitteilen. Sie erhalten eine digitale Meldebestätigung. Auch die Aktualisierung Ihres Personalausweises, Reisepasses oder Ihrer eID-Karte erfolgt über den Online-Dienst. Am einfachsten geht es mit Ihrem Smartphone.<br/>Die elektronische Wohnsitzanmeldung ist ein bundesweiter Service der Freien und Hansestadt Hamburg, der stetig erweitert wird. Unter www.wohnsitzanmeldung.de können Sie prüfen, ob Ihre Kommune schon dabei ist."
+			},
+			"address": "https://wohnsitzanmeldung.de",
+			"homepage": "https://wohnsitzanmeldung.de",
+			"email": "ewa@sk.hamburg.de",
+			"postalAddress": "Freie und Hansestadt Hamburg Senatskanzlei - Amt für IT und Digitalisierung<br/>Caffamacherreihe 1-3<br/>20354 Hamburg",
+			"image": "eWa_image.png",
+			"icon": "eWa_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from Gemeinsam-Online (https://idp.serviceportal.gemeinsamonline.de)"
+		},
+		{
 			"eidSupport": false,
 			"shortName": {
 				"": "Stadt Frankfurt am Main - iKFZ"
@@ -1116,6 +1135,24 @@
 		},
 		{
 			"shortName": {
+				"": "Organspende-Register"
+			},
+			"longName": {
+				"": "Abgabe einer Erklärung im Organspende-Register"
+			},
+			"longDescription": {
+				"": "Im Register für Erklärungen zur Organ und Gewebespende (Organspende-Register) können Bürgerinnen und Bürger ihre Entscheidung für oder gegen eine Organ- und Gewebespende festhalten. Dies erleichtert es Ärztinnen und Ärzten, die Spendebereitschaft potenzieller Organspenderinnen und -spender schnell und verlässlich zu klären. Der Eintrag ist freiwillig, kostenlos und kann jederzeit geändert oder gelöscht werden.<br/>Zur Abgabe der Erklärung im Organspende-Register ist die Bestätigung der eigenen Identität erforderlich. Über die AusweisApp können Sie sich digital identifizieren. Hierfür benötigen Sie lediglich Ihren Online-Ausweis, die dazugehörige PIN, ein geeignetes Smartphone oder Tablet sowie die installierte AusweisApp.<br/>Weitere Informationen zum Organspende-Register erhalten Sie hier: https://www.organspende-info.de/organspende-register/."
+			},
+			"address": "https://organspende-register.de",
+			"homepage": "https://www.bfarm.de",
+			"email": "poststelle@bfarm.de",
+			"postalAddress": "Kurt-Georg-Kiesinger-Allee 3<br/>53175 Bonn",
+			"icon": "OrganspendeRegister_icon.svg",
+			"category": "other",
+			"subjectUrlInfo": "https://eid.organspende-register.de"
+		},
+		{
+			"shortName": {
 				"": "Serviceportal Solingen"
 			},
 			"longName": {
@@ -1171,7 +1208,7 @@
 			"category": "citizen",
 			"image": "Hameln-Pyrmont_image.png",
 			"icon": "Hameln-Pyrmont_icon.png",
-			"subjectUrlInfo": "Using service from Servicekonto Niedersachsen (https://idp.servicekonto.niedersachsen.de)."
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
 		},
 		{
 			"shortName": {
@@ -1798,6 +1835,26 @@
 		},
 		{
 			"shortName": {
+				"": "ServicePortal der Stadt Mönchengladbach"
+			},
+			"longName": {
+				"": "ServicePortal der Stadt Mönchengladbach"
+			},
+			"longDescription": {
+				"": "Im ServicePortal der Stadt Mönchengladbach können eine Vielzahl an digitalen Antragsformularen mit der BundID genutzt werden. Ein schriftlicher Antrag oder ein Behördengang kann damit entfallen. Folgende Leistungen können u. a. online beantragt werden: <br/><ul><li>Meldebescheinigung</li><li>Melderegisterauskunft</li><li>Führungszeugnis</li><li>Bewohnerparkausweis</li><li>KFZ-Angelegenheiten (z. B. Zulassung, Abmeldung, Wunschkennzeichen)</li><li>den 'berühmt-berüchtigten' Passierschein A38 (Gamification-Ansatz, bundesweit nutzbar)</li></ul><br/>Das Angebot wird laufend erweitert."
+			},
+			"address": "https://service.moenchengladbach.de",
+			"homepage": "https://www.moenchengladbach.de",
+			"phone": "+49 2161 25 0",
+			"email": "post@moenchengladbach.de",
+			"postalAddress": "Stadt Mönchengladbach<br/>41050 Mönchengladbach",
+			"image": "ServiceportalMoenchengladbach_image.png",
+			"icon": "ServiceportalMoenchengladbach_icon.png",
+			"category": "citizen",
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+		},
+		{
+			"shortName": {
 				"": "Servicekonto Sachsen"
 			},
 			"longName": {
@@ -2309,6 +2366,21 @@
 			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
 			"category": "citizen",
 			"icon": "UVO_icon.svg",
+			"subjectUrlInfo": "Using service from Gemeinsam-Online (https://idp.serviceportal.gemeinsamonline.de)."
+		},
+		{
+			"shortName": {
+				"": "Gemeinsam-Online"
+			},
+			"longName": {
+				"": "Gemeinsam-Online"
+			},
+			"address": "https://serviceportal.gemeinsamonline.de",
+			"homepage": "https://serviceportal.gemeinsamonline.de",
+			"longDescription": {
+				"": " Das Serviceportal Gemeinsam-Online stellt verschiedene digitale Dienste bereit."
+			},
+			"category": "citizen",
 			"subjectUrls": [
 				"https://idp.serviceportal.gemeinsamonline.de"
 			]
@@ -2570,23 +2642,6 @@
 		},
 		{
 			"shortName": {
-				"": "Servicekonto Niedersachsen"
-			},
-			"longName": {
-				"": "Servicekonto Niedersachsen"
-			},
-			"address": "https://servicekonto.niedersachsen.de",
-			"homepage": "https://servicekonto.niedersachsen.de",
-			"longDescription": {
-				"": "Das Servicekonto ist Ihr persönlicher Online-Zugang zu den Leistungen der Behörden. Damit können Sie in Zukunft eine Vielzahl von Verwaltungsleistungen von zu Hause digital erledigen. Dies gilt insbesondere für Niedersachsen, das Konto können Sie aber auch deutschlandweit nutzen.<br/><br/>Egal welche Verwaltungsleistung Sie gerade benötigen, Sie werden sich dazu mit Ihrem Servicekonto anmelden und den zugehörigen Antrag rechtssicher bei der Behörde einreichen können. Außerdem werden Ihnen auf Wunsch Informationen und Bescheide zu Ihren Anträgen in Zukunft schnell und digital in Ihr Servicekonto-Postfach zugestellt.<br/><br/>Das Servicekonto ist ein Angebot der niedersächsischen Landesverwaltung an alle Nutzerinnen und Nutzer niedersächsischer Verwaltungsleistungen."
-			},
-			"category": "citizen",
-			"subjectUrls": [
-				"https://idp.servicekonto.niedersachsen.de"
-			]
-		},
-		{
-			"shortName": {
 				"": "Serviceportal Schaumburg"
 			},
 			"longName": {
@@ -2603,7 +2658,7 @@
 			"icon": "Schaumburg_icon.svg",
 			"image": "Schaumburg_image.svg",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Niedersachsen (https://idp.servicekonto.niedersachsen.de)."
+			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
 		},
 		{
 			"shortName": {

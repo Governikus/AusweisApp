@@ -507,8 +507,8 @@ class test_LogHandler
 									<< QByteArray("initApp");
 
 			// the const is fake for better unit testing
-			QTest::newRow("UILoader::load") << QByteArray("std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> governikus::UILoader::load() const [with T = governikus::UIPlugInJson; std::enable_if_t<std::is_base_of<governikus::UIPlugIn, T>::value, bool> = bool]")
-											<< QByteArray("UILoader::load");
+			QTest::newRow("UiLoader::load") << QByteArray("std::enable_if_t<std::is_base_of<governikus::UiPlugin, T>::value, bool> governikus::UiLoader::load() const [with T = governikus::UiPluginJson; std::enable_if_t<std::is_base_of<governikus::UiPlugin, T>::value, bool> = bool]")
+											<< QByteArray("UiLoader::load");
 
 			QTest::newRow("anonymous") << QByteArray("virtual QList<QNetworkProxy> (anonymous namespace)::SystemProxyFactory::queryProxy(const QNetworkProxyQuery &)")
 									   << QByteArray("SystemProxyFactory::queryProxy");

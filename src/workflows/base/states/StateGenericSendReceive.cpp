@@ -216,7 +216,7 @@ std::optional<FailureCode> StateGenericSendReceive::checkSslConnectionAndSaveCer
 	const auto statusCode = CertificateChecker::checkAndSaveCertificate(pSslConfiguration.peerCertificate(), context->getTcToken()->getServerAddress(), context);
 	if (statusCode != CertificateChecker::CertificateStatus::Good)
 	{
-		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, TlsChecker::getCertificateIssuerName(pSslConfiguration.peerCertificate()));
+		infoMap.insert(GlobalStatus::ExternalInformation::CERTIFICATE_ISSUER_NAME, pSslConfiguration.peerCertificate().issuerDisplayName());
 		updateStatus({CertificateChecker::getGlobalStatus(statusCode, true), infoMap});
 		const FailureCode::FailureInfoMap failureInfoMap {
 			{FailureCode::Info::State_Name, getStateName()},

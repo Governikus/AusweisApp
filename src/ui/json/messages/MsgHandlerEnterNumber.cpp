@@ -14,23 +14,30 @@ using namespace governikus;
 MsgHandlerEnterNumber::MsgHandlerEnterNumber(MsgType pType, const MsgContext& pContext)
 	: MsgHandler(pType)
 {
-	Q_ASSERT(pContext.getContext());
-	setReader(pContext.getContext());
+	setReader(pContext);
+}
+
+
+void MsgHandlerEnterNumber::setError(const QLatin1String pError)
+{
+	setValue(QLatin1String("error"), pError);
 }
 
 
 void MsgHandlerEnterNumber::setError(const QString& pError)
 {
-	mJsonObject[QLatin1String("error")] = pError;
+	setValue(QLatin1String("error"), pError);
 }
 
 
-void MsgHandlerEnterNumber::setReader(const QSharedPointer<const WorkflowContext>& pContext)
+void MsgHandlerEnterNumber::setReader(const MsgContext& pContext)
 {
-	const auto& info = pContext->getExpectedReader();
+	Q_ASSERT(pContext.getContext());
+
+	const auto& info = pContext.getContext()->getExpectedReader();
 	if (!info.getName().isEmpty())
 	{
-		mJsonObject[QLatin1String("reader")] = MsgHandlerReader::createReaderInfo(info);
+		setValue(QLatin1String("reader"), MsgHandlerReader::createReaderInfo(info, pContext));
 	}
 }
 
@@ -42,7 +49,7 @@ void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 	const auto& reader = pContext.getContext()->getReaderName();
 	if (reader.isEmpty())
 	{
-		setError(QStringLiteral("No card inserted"));
+		setError(QLatin1String("No card inserted"));
 		return;
 	}
 
@@ -52,13 +59,13 @@ void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 	{
 		if (value.isUndefined())
 		{
-			setError(QStringLiteral("Value cannot be undefined"));
+			setError(QLatin1String("Value cannot be undefined"));
 			return;
 		}
 
 		if (!value.isString())
 		{
-			setError(QStringLiteral("Invalid value"));
+			setError(QLatin1String("Invalid value"));
 			return;
 		}
 
@@ -88,7 +95,7 @@ void MsgHandlerEnterNumber::parseValue(const QJsonObject& pObj,
 		}
 		else
 		{
-			setError(QStringLiteral("Value cannot be defined"));
+			setError(QLatin1String("Value cannot be defined"));
 		}
 	}
 }

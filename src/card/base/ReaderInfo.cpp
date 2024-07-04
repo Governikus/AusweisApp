@@ -17,9 +17,9 @@ INIT_FUNCTION([] {
 		})
 
 ReaderInfo::ReaderInfo(const QString& pName,
-		ReaderManagerPlugInType pPlugInType,
+		ReaderManagerPluginType pPluginType,
 		const CardInfo& pCardInfo)
-	: mPlugInType(pPlugInType)
+	: mPluginType(pPluginType)
 	, mName(pName)
 	, mBasicReader(true)
 	, mCardInfo(pCardInfo)
@@ -27,7 +27,7 @@ ReaderInfo::ReaderInfo(const QString& pName,
 	, mShelvedCard(CardType::NONE)
 {
 #ifdef Q_OS_ANDROID
-	if (pPlugInType == ReaderManagerPlugInType::NFC)
+	if (pPluginType == ReaderManagerPluginType::NFC)
 	{
 		mMaxApduLength = -1;
 	}

@@ -1,6 +1,0 @@
-module ChangePinView
-
-internal ChangePinController ChangePinController.qml
-internal ChangePinViewContent ChangePinViewContent.qml
-
-ChangePinView 1.0 ChangePinView.qml

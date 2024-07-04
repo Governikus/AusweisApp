@@ -113,6 +113,7 @@ class SecureStorage
 
 		[[nodiscard]] QString getDeveloperConfig() const;
 		[[nodiscard]] QString getCustomConfig() const;
+		[[nodiscard]] QString getCustomConfigPath() const;
 		[[nodiscard]] QString getEmbeddedConfig() const;
 };
 

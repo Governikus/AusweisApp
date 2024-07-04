@@ -44,18 +44,6 @@ class test_StateEnterPacePassword
 		}
 
 
-		void test_RunContextError()
-		{
-			mAuthContext->setStatus(GlobalStatus::Code::Card_Cancellation_By_User);
-			mAuthContext->setFailureCode(FailureCode::Reason::User_Cancelled);
-			QSignalSpy spyPropagateAbort(mState.data(), &StateEnterPacePassword::firePropagateAbort);
-
-			mState->run();
-
-			QCOMPARE(spyPropagateAbort.count(), 1);
-		}
-
-
 };
 
 QTEST_GUILESS_MAIN(test_StateEnterPacePassword)

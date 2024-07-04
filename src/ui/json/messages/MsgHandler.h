@@ -21,22 +21,23 @@ class MsgHandler
 	private:
 		const MsgType mType;
 		bool mVoid;
+		QJsonObject mJsonObject;
 
 		MsgHandler();
 
 	protected:
-		QJsonObject mJsonObject;
-
 		explicit MsgHandler(MsgType pType);
 		explicit MsgHandler(MsgType pType, const char* const pKey, const QString& pValue);
 		explicit MsgHandler(MsgType pType, const char* const pKey, const QLatin1String pValue);
 
-		void setValue(const QLatin1String pKey, const QString& pValue);
-		void setValue(const char* const pKey, const QString& pValue);
-		void setValue(const QLatin1String pKey, const QLatin1String pValue);
-		void setValue(const char* const pKey, const QLatin1String pValue);
-
 		void setVoid(bool pVoid = true);
+		void setValue(const QLatin1String pKey, const QString& pValue);
+		void setValue(const QLatin1String pKey, const QLatin1String pValue);
+		void setValue(const QLatin1String pKey, const QJsonValue& pValue);
+		void insertJsonObject(const QJsonObject& pObject);
+
+		bool contains(QLatin1StringView pKey) const;
+		bool isString(const QLatin1String pKey) const;
 
 	public:
 		static const MsgHandler Void;

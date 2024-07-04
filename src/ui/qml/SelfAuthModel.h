@@ -10,15 +10,17 @@
 
 #include "Env.h"
 #include "SelfAuthenticationData.h"
+#include "SingletonCreator.h"
 #include "WorkflowRequest.h"
 
 #include <QAbstractListModel>
 #include <QEvent>
 #include <QSharedPointer>
 #include <QString>
+#include <QtQml/qqmlregistration.h>
 
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -28,10 +30,14 @@ class SelfAuthContext;
 
 class SelfAuthModel
 	: public QAbstractListModel
+	, public SingletonCreator<SelfAuthModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(bool workflowCancelled READ isWorkflowCancelled NOTIFY fireCancelWorkflow FINAL)
 

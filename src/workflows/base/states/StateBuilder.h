@@ -43,7 +43,7 @@ class StateBuilder
 		template<typename T, typename C>
 		static T* createState(const QSharedPointer<C>& pContext)
 		{
-			auto state = new T(pContext);
+			auto* state = new T(pContext);
 			state->setObjectName(getUnqualifiedClassName(state->metaObject()->className()));
 			return state;
 		}

@@ -227,7 +227,7 @@ class test_PaceHandler
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
 
-			QCOMPARE(status, CardReturnCode::RETRY_ALLOWED);
+			QCOMPARE(status, CardReturnCode::RESPONSE_EMPTY);
 		}
 
 
@@ -239,7 +239,7 @@ class test_PaceHandler
 
 			CardReturnCode status = paceHandler->establishPaceChannel(PacePasswordId::PACE_PIN, "123456");
 
-			QCOMPARE(status, CardReturnCode::RETRY_ALLOWED);
+			QCOMPARE(status, CardReturnCode::RESPONSE_EMPTY);
 		}
 
 
@@ -319,7 +319,7 @@ class test_PaceHandler
 
 			worker->addResponse(CardReturnCode::UNDEFINED);
 			QTest::ignoreMessage(QtCriticalMsg, "Error on MSE:Set AT");
-			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::RETRY_ALLOWED);
+			QCOMPARE(paceHandler->transmitMSESetAT(PacePasswordId::PACE_PIN), CardReturnCode::RESPONSE_EMPTY);
 		}
 
 

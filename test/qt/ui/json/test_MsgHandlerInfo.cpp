@@ -9,13 +9,13 @@
 #include "messages/MsgHandlerInfo.h"
 
 #include "MessageDispatcher.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "ReaderManager.h"
 #include "VersionInfo.h"
 
 #include <QtTest>
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 using namespace governikus;
 
@@ -29,7 +29,7 @@ class test_MsgHandlerInfo
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -54,21 +54,6 @@ class test_MsgHandlerInfo
 			QVERIFY(data.contains(versionInfo));
 			QVERIFY(data.contains(R"("VersionInfo":{)"));
 			QVERIFY(data.contains(R"("msg":"INFO")"));
-		}
-
-
-		void localIfd()
-		{
-			const QByteArray msg(R"({"cmd": "GET_INFO"})");
-			MessageDispatcher dispatcher;
-			auto versionInfo = VersionInfo::getInstance().toJson(QJsonDocument::Compact);
-
-			const auto& result = dispatcher.processCommand(msg);
-			QCOMPARE(result, MsgType::INFO);
-			const QByteArray data = result;
-			QVERIFY(data.contains(versionInfo));
-			QVERIFY(data.contains(R"("msg":"INFO")"));
-			QVERIFY(data.contains(R"("AusweisApp")"));
 		}
 
 

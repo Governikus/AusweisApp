@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Env.h"
+#include "SingletonCreator.h"
 #include "WorkflowModel.h"
 #include "WorkflowRequest.h"
 #include "context/ChangePinContext.h"
@@ -17,9 +18,10 @@
 #include <QQmlEngine>
 #include <QSharedPointer>
 #include <QString>
+#include <QtQml/qqmlregistration.h>
 
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -27,10 +29,14 @@ namespace governikus
 
 class ChangePinModel
 	: public WorkflowModel
+	, public SingletonCreator<ChangePinModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireWorkflowStarted)
 
 	private:
@@ -43,16 +49,11 @@ class ChangePinModel
 
 		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true);
 		[[nodiscard]] QString getResultString() const override;
-		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 		[[nodiscard]] bool isRequestTransportPin() const;
-
-	private Q_SLOTS:
-		void onPaceResultUpdated();
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);
-		void fireOnPinUnlocked();
-		void fireOnPasswordUsed();
 };
 
 

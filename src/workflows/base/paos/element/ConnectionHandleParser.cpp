@@ -6,7 +6,15 @@
 
 #include "ConnectionHandle.h"
 
+#include <QLoggingCategory>
+
+
 using namespace governikus;
+using namespace std::placeholders;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
+
 
 ConnectionHandleParser::ConnectionHandleParser(QSharedPointer<QXmlStreamReader> pXmlReader)
 	: ElementParser(pXmlReader)
@@ -15,6 +23,15 @@ ConnectionHandleParser::ConnectionHandleParser(QSharedPointer<QXmlStreamReader> 
 
 
 ConnectionHandleParser::~ConnectionHandleParser() = default;
+
+
+void ConnectionHandleParser::parseUniqueElementText(const std::function<void(const QString&)>& pFunc, QString& pText)
+{
+	if (readUniqueElementText(pText))
+	{
+		pFunc(pText);
+	}
+}
 
 
 ConnectionHandle ConnectionHandleParser::parse()
@@ -31,49 +48,38 @@ ConnectionHandle ConnectionHandleParser::parse()
 		const auto& name = getElementName();
 		if (name == QLatin1String("ContextHandle"))
 		{
-			if (readUniqueElementText(contexthandle))
-			{
-				connectionHandle.setContextHandle(contexthandle);
-			}
+			parseUniqueElementText(std::bind(&ConnectionHandle::setContextHandle, &connectionHandle, _1), contexthandle);
+			continue;
 		}
-		else if (name == QLatin1String("IFDName"))
+		if (name == QLatin1String("IFDName"))
 		{
-			if (readUniqueElementText(ifdName))
-			{
-				connectionHandle.setIfdName(ifdName);
-			}
+			parseUniqueElementText(std::bind(&ConnectionHandle::setIfdName, &connectionHandle, _1), ifdName);
+			continue;
 		}
-		else if (name == QLatin1String("SlotIndex"))
+		if (name == QLatin1String("SlotIndex"))
 		{
-			if (readUniqueElementText(slotIndex))
-			{
-				connectionHandle.setSlotIndex(slotIndex);
-			}
+			parseUniqueElementText(std::bind(&ConnectionHandle::setSlotIndex, &connectionHandle, _1), slotIndex);
+			continue;
 		}
-		else if (name == QLatin1String("CardApplication"))
+		if (name == QLatin1String("CardApplication"))
 		{
-			if (readUniqueElementText(cardApplication))
-			{
-				connectionHandle.setCardApplication(cardApplication);
-			}
+			parseUniqueElementText(std::bind(&ConnectionHandle::setCardApplication, &connectionHandle, _1), cardApplication);
+			continue;
 		}
-		else if (name == QLatin1String("SlotHandle"))
+		if (name == QLatin1String("SlotHandle"))
 		{
-			if (readUniqueElementText(slotHandle))
-			{
-				connectionHandle.setSlotHandle(slotHandle);
-			}
+			parseUniqueElementText(std::bind(&ConnectionHandle::setSlotHandle, &connectionHandle, _1), slotHandle);
+			continue;
 		}
-		else if (name == QLatin1String("RecognitionInfo"))
+		if (name == QLatin1String("RecognitionInfo"))
 		{
 			qCWarning(paos) << "Unsupported element:" << name;
 			skipCurrentElement();
+			continue;
 		}
-		else
-		{
-			qCWarning(paos) << "Unknown element:" << name;
-			skipCurrentElement();
-		}
+
+		qCWarning(paos) << "Unknown element:" << name;
+		skipCurrentElement();
 	}
 
 	return parserFailed() ? ConnectionHandle() : connectionHandle;

@@ -4,8 +4,8 @@
 
 #include "MsgHandlerAuth.h"
 
-#include "UILoader.h"
-#include "UIPlugInJson.h"
+#include "UiLoader.h"
+#include "UiPluginJson.h"
 #include "controller/AuthController.h"
 
 #include <QSharedPointer>
@@ -41,7 +41,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QJsonObject& pObj, MsgContext& pContext)
 			setVoid();
 			return;
 		}
-		Q_ASSERT(mJsonObject[QLatin1String("error")].isString());
+		Q_ASSERT(isString(QLatin1String("error")));
 	}
 }
 
@@ -51,7 +51,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 {
 	Q_ASSERT(pContext);
 
-	mJsonObject[QLatin1String("result")] = ECardApiResult(pContext->getStatus(), pContext->getFailureCode()).toJson();
+	setValue(QLatin1String("result"), ECardApiResult(pContext->getStatus(), pContext->getFailureCode()).toJson());
 
 	QString url;
 	if (pContext->getRefreshUrl().isEmpty())
@@ -67,7 +67,7 @@ MsgHandlerAuth::MsgHandlerAuth(const QSharedPointer<AuthContext>& pContext)
 		url = pContext->getRefreshUrl().toString();
 	}
 
-	setValue("url", url);
+	setValue(QLatin1String("url"), url);
 }
 
 
@@ -91,7 +91,7 @@ QUrl MsgHandlerAuth::createUrl(const QString& pUrl)
 
 void MsgHandlerAuth::initAuth(const QUrl& pTcTokenUrl) const
 {
-	auto* ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+	auto* ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 	Q_ASSERT(ui);
 	Q_EMIT ui->fireWorkflowRequested(AuthController::createWorkflowRequest(pTcTokenUrl));
 }

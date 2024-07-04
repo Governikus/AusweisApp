@@ -27,15 +27,15 @@ struct test_PaosCreatorDummy
 	bool mNamespace = false;
 	const QString mTag = QStringLiteral("content");
 
-	void createBodyElement() override
+	void createBodyElement(QXmlStreamWriter& pWriter) override
 	{
 		if (mNamespace)
 		{
-			mWriter.writeTextElement(getNamespaceType(Namespace::SOAP, mTag), mText);
+			pWriter.writeTextElement(getNamespaceType(Namespace::SOAP, mTag), mText);
 		}
 		else
 		{
-			mWriter.writeTextElement(mTag, mText);
+			pWriter.writeTextElement(mTag, mText);
 		}
 	}
 

@@ -9,7 +9,8 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
+#include "SingletonCreator.h"
 #include "WifiInfo.h"
 #include "context/WorkflowContext.h"
 
@@ -18,12 +19,13 @@
 #include <QSharedPointer>
 #include <QStringList>
 #include <QTimer>
+#include <QtQml/qqmlregistration.h>
 
 #ifdef Q_OS_IOS
 Q_FORWARD_DECLARE_OBJC_CLASS(VoiceOverObserver);
 #endif
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -31,22 +33,31 @@ namespace governikus
 
 class ApplicationModel
 	: public QObject
+	, public SingletonCreator<ApplicationModel>
 {
 	Q_OBJECT
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(QString storeUrl READ getStoreUrl NOTIFY fireStoreUrlChanged)
 	Q_PROPERTY(QUrl releaseNotesUrl READ getReleaseNotesUrl CONSTANT)
 
-	Q_PROPERTY(QmlNfcState nfcState READ getNfcState NOTIFY fireNfcStateChanged)
+	Q_PROPERTY(NfcState nfcState READ getNfcState NOTIFY fireNfcStateChanged)
 	Q_PROPERTY(bool extendedLengthApdusUnsupported READ isExtendedLengthApdusUnsupported NOTIFY fireReaderPropertiesUpdated)
+
+	Q_PROPERTY(bool isSmartSupported READ isSmartSupported CONSTANT)
 
 	Q_PROPERTY(bool wifiEnabled READ isWifiEnabled NOTIFY fireWifiEnabledChanged)
 
 	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
-	Q_PROPERTY(qsizetype availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
-	Q_PROPERTY(qsizetype availablePcscReader READ getAvailablePcscReader NOTIFY fireAvailableReaderChanged)
+
+	// QT_VERSION_CHECK(6, 8, 0) qint64 to qsizetype
+	Q_PROPERTY(qint64 availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
+	Q_PROPERTY(qint64 availablePcscReader READ getAvailablePcscReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 
@@ -74,7 +85,7 @@ class ApplicationModel
 
 		ApplicationModel();
 		~ApplicationModel() override = default;
-		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(Qt::ApplicationState pState);
@@ -86,32 +97,32 @@ class ApplicationModel
 	public:
 		enum class Settings
 		{
-			SETTING_WIFI,
-			SETTING_NETWORK,
-			SETTING_NFC,
-			SETTING_APP
+			WIFI,
+			NETWORK,
+			NFC,
+			APP
 		};
 		Q_ENUM(Settings)
 
 		enum class Workflow
 		{
-			WORKFLOW_CHANGE_PIN,
-			WORKFLOW_SELF_AUTHENTICATION,
-			WORKFLOW_AUTHENTICATION,
-			WORKFLOW_SMART,
-			WORKFLOW_REMOTE_SERVICE,
-			WORKFLOW_NONE
+			CHANGE_PIN,
+			SELF_AUTHENTICATION,
+			AUTHENTICATION,
+			SMART,
+			REMOTE_SERVICE,
+			NONE
 		};
 		Q_ENUM(Workflow)
 
-		enum class QmlNfcState
+		enum class NfcState
 		{
-			NFC_UNAVAILABLE,
-			NFC_DISABLED,
-			NFC_INACTIVE,
-			NFC_READY
+			UNAVAILABLE,
+			DISABLED,
+			INACTIVE,
+			READY
 		};
-		Q_ENUM(QmlNfcState)
+		Q_ENUM(NfcState)
 
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
@@ -120,8 +131,10 @@ class ApplicationModel
 		[[nodiscard]] QString getStoreUrl() const;
 		[[nodiscard]] QUrl getReleaseNotesUrl() const;
 
-		[[nodiscard]] QmlNfcState getNfcState() const;
+		[[nodiscard]] NfcState getNfcState() const;
 		[[nodiscard]] bool isExtendedLengthApdusUnsupported() const;
+
+		[[nodiscard]] bool isSmartSupported() const;
 
 		[[nodiscard]] bool isWifiEnabled() const;
 		[[nodiscard]] Workflow getCurrentWorkflow() const;
@@ -132,7 +145,7 @@ class ApplicationModel
 
 		[[nodiscard]] Q_INVOKABLE bool isScreenReaderRunning() const;
 
-		[[nodiscard]] Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPlugInType pPlugInType) const;
+		[[nodiscard]] Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPluginType pPluginType) const;
 
 		Q_INVOKABLE void enableWifi()const;
 

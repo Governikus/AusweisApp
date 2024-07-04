@@ -10,6 +10,8 @@
 #include "ReaderManager.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnectResponse.h"
+#include "messages/IfdDestroyPaceChannel.h"
+#include "messages/IfdDestroyPaceChannelResponse.h"
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
 #include "messages/IfdError.h"
@@ -32,18 +34,18 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 namespace governikus
 {
 
-template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedPointer<governikus::DataChannel>&, QList<governikus::ReaderManagerPlugInType>&>
-	(QSharedPointer<DataChannel>& pChannel, QList<ReaderManagerPlugInType>& pAllowedPlugInTypes)
+template<> ServerMessageHandler* createNewObject<ServerMessageHandler*, QSharedPointer<governikus::DataChannel>&, QList<governikus::ReaderManagerPluginType>&>
+	(QSharedPointer<DataChannel>& pChannel, QList<ReaderManagerPluginType>& pAllowedPluginTypes)
 {
-	return new ServerMessageHandlerImpl(pChannel, pAllowedPlugInTypes);
+	return new ServerMessageHandlerImpl(pChannel, pAllowedPluginTypes);
 }
 
 
 ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,
-		const QList<ReaderManagerPlugInType>& pAllowedTypes)
+		const QList<ReaderManagerPluginType>& pAllowedTypes)
 	: ServerMessageHandler()
 	, mDispatcher(Env::create<IfdDispatcherServer*>(pDataChannel), &QObject::deleteLater)
-	, mAllowedPlugInTypes(pAllowedTypes)
+	, mAllowedPluginTypes(pAllowedTypes)
 	, mAllowedCardTypes(pAllowedTypes)
 	, mCardConnections()
 {
@@ -52,12 +54,12 @@ ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChan
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireNameChanged, this, &ServerMessageHandler::fireNameChanged);
 
 	connect(mDispatcher.data(), &IfdDispatcherServer::fireContextEstablished, this, [this] {
-			const auto readerManager = Env::getSingleton<ReaderManager>();
-			connect(readerManager, &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-			connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved, Qt::UniqueConnection);
-			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-			connect(readerManager, &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
-			connect(readerManager, &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged, Qt::UniqueConnection);
+			const auto* readerManager = Env::getSingleton<ReaderManager>();
+			connect(readerManager, &ReaderManager::fireReaderAdded, this, &ServerMessageHandlerImpl::onReaderChanged);
+			connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ServerMessageHandlerImpl::onReaderRemoved);
+			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ServerMessageHandlerImpl::onReaderChanged);
+			connect(readerManager, &ReaderManager::fireCardInserted, this, &ServerMessageHandlerImpl::onReaderChanged);
+			connect(readerManager, &ReaderManager::fireCardRemoved, this, &ServerMessageHandlerImpl::onReaderChanged);
 		});
 }
 
@@ -65,7 +67,7 @@ ServerMessageHandlerImpl::ServerMessageHandlerImpl(const QSharedPointer<DataChan
 void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject)
 {
 	const IfdGetStatus ifdGetStatus(pJsonObject);
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 
 	if (!ifdGetStatus.getSlotName().isEmpty())
 	{
@@ -90,7 +92,7 @@ void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject
 			continue;
 		}
 
-		if (!mAllowedPlugInTypes.contains(readerInfo.getPlugInType()))
+		if (!mAllowedPluginTypes.contains(readerInfo.getPluginType()))
 		{
 			continue;
 		}
@@ -103,7 +105,7 @@ void ServerMessageHandlerImpl::handleIfdGetStatus(const QJsonObject& pJsonObject
 void ServerMessageHandlerImpl::handleIfdConnect(const QJsonObject& pJsonObject)
 {
 	const IfdConnect ifdConnect(pJsonObject);
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
 
 	const auto& info = readerManager->getReaderInfo(ifdConnect.getSlotName());
 	if (!info.isValid())
@@ -175,6 +177,20 @@ QString ServerMessageHandlerImpl::slotHandleForReaderName(const QString& pReader
 }
 
 
+bool ServerMessageHandlerImpl::isAllowed(const QSharedPointer<CardConnection>& pCardConnection, QStringView pCommand) const
+{
+	const bool isBasicReader = pCardConnection->getReaderInfo().isBasicReader();
+	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+	if (isBasicReader && !pinPadMode)
+	{
+		qCWarning(ifd) << pCommand << "is only available in pin pad mode.";
+		return false;
+	}
+
+	return true;
+}
+
+
 void ServerMessageHandlerImpl::handleIfdDisconnect(const QJsonObject& pJsonObject)
 {
 	const IfdDisconnect ifdDisconnect(pJsonObject);
@@ -210,7 +226,7 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 		return;
 	}
 
-	const QSharedPointer<CardConnection>& cardConnection = mCardConnections.value(slotHandle);
+	const auto& cardConnection = mCardConnections.value(slotHandle);
 
 	const QString& progressMessage = ifdTransmit.getDisplayText();
 	if (!progressMessage.isNull())
@@ -219,7 +235,7 @@ void ServerMessageHandlerImpl::handleIfdTransmit(const QJsonObject& pJsonObject)
 		Q_EMIT fireDisplayTextChanged(progressMessage);
 	}
 
-	qCDebug(ifd) << "Transmit card APDU for" << slotHandle;
+	qCDebug(ifd) << "Transmit APDU for" << slotHandle;
 	InputAPDUInfo inputApduInfo(ifdTransmit.getInputApdu());
 	cardConnection->callTransmitCommand(this, &ServerMessageHandlerImpl::onTransmitCardCommandDone, {inputApduInfo}, slotHandle);
 }
@@ -238,13 +254,9 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 		return;
 	}
 
-	QSharedPointer<CardConnection> cardConnection = mCardConnections.value(slotHandle);
-
-	const bool isBasicReader = cardConnection->getReaderInfo().isBasicReader();
-	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
-	if (isBasicReader && !pinPadMode)
+	const auto& cardConnection = mCardConnections.value(slotHandle);
+	if (!isAllowed(cardConnection, QStringView(u"EstablishPaceChannel")))
 	{
-		qCWarning(ifd) << "EstablishPaceChannel is only available in pin pad mode.";
 		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(slotHandle, EstablishPaceChannelOutput(), ECardApiResult::Minor::AL_Unknown_Error);
 		mDispatcher->send(response);
 		return;
@@ -275,18 +287,36 @@ void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& p
 }
 
 
+void ServerMessageHandlerImpl::handleIfdDestroyPaceChannel(const QJsonObject& pJsonObject)
+{
+	const IfdDestroyPaceChannel ifdDestroy(pJsonObject);
+	const QString& slotHandle = ifdDestroy.getSlotHandle();
+
+	if (!mCardConnections.contains(slotHandle))
+	{
+		qCWarning(ifd) << "Card is not connected" << slotHandle;
+		const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+		mDispatcher->send(response);
+		return;
+	}
+
+	const auto& cardConnection = mCardConnections.value(slotHandle);
+	if (!isAllowed(cardConnection, QStringView(u"DestroyPaceChannel")))
+	{
+		const auto& response = QSharedPointer<IfdDestroyPaceChannelResponse>::create(slotHandle, ECardApiResult::Minor::AL_Unknown_Error);
+		mDispatcher->send(response);
+		return;
+	}
+
+	qCDebug(ifd) << "Destroy PACE channel for" << slotHandle;
+	cardConnection->callDestroyPaceChannelCommand(this, &ServerMessageHandlerImpl::onDestroyPaceChannelCommandDone, slotHandle);
+}
+
+
 void ServerMessageHandlerImpl::handleIfdModifyPIN(const QJsonObject& pJsonObject)
 {
 	const auto& ifdModifyPin = QSharedPointer<IfdModifyPin>::create(pJsonObject);
 	const QString slotHandle = ifdModifyPin->getSlotHandle();
-	const bool pinPadMode = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
-	if (!pinPadMode)
-	{
-		qCWarning(ifd) << "ModifyPin is only available in pin pad mode.";
-		const auto& response = QSharedPointer<IfdModifyPinResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
-		mDispatcher->send(response);
-		return;
-	}
 
 	if (!mCardConnections.contains(slotHandle))
 	{
@@ -296,7 +326,15 @@ void ServerMessageHandlerImpl::handleIfdModifyPIN(const QJsonObject& pJsonObject
 		return;
 	}
 
-	Q_EMIT fireModifyPin(ifdModifyPin, mCardConnections[slotHandle]);
+	const auto& cardConnection = mCardConnections.value(slotHandle);
+	if (!isAllowed(cardConnection, QStringView(u"ModifyPin")))
+	{
+		const auto& response = QSharedPointer<IfdModifyPinResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
+		mDispatcher->send(response);
+		return;
+	}
+
+	Q_EMIT fireModifyPin(ifdModifyPin, cardConnection);
 }
 
 
@@ -304,7 +342,7 @@ void ServerMessageHandlerImpl::sendIfdStatus(const ReaderInfo& pReaderInfo)
 {
 	if (!mDispatcher->getContextHandle().isEmpty())
 	{
-		const bool isCardAllowed = mAllowedCardTypes.contains(pReaderInfo.getPlugInType());
+		const bool isCardAllowed = mAllowedCardTypes.contains(pReaderInfo.getPluginType());
 		mDispatcher->send(QSharedPointer<IfdStatus>::create(pReaderInfo, isCardAllowed));
 	}
 }
@@ -348,13 +386,13 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 }
 
 
-void ServerMessageHandlerImpl::setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes)
+void ServerMessageHandlerImpl::setAllowedCardTypes(const QList<ReaderManagerPluginType>& pAllowedCardTypes)
 {
 	if (mAllowedCardTypes != pAllowedCardTypes)
 	{
 		mAllowedCardTypes = pAllowedCardTypes;
 
-		const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mAllowedPlugInTypes));
+		const auto& readerInfos = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mAllowedPluginTypes));
 		for (const auto& readerInfo : readerInfos)
 		{
 			sendIfdStatus(readerInfo);
@@ -370,7 +408,7 @@ void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCard
 
 	if (transmitCommand->getReturnCode() != CardReturnCode::OK)
 	{
-		qCWarning(ifd) << "Card transmit for" << slotHandle << "failed" << transmitCommand->getReturnCode();
+		qCWarning(ifd) << "Transmit for" << slotHandle << "failed" << transmitCommand->getReturnCode();
 		const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, QByteArray(), ECardApiResult::Minor::AL_Unknown_Error);
 		mDispatcher->send(response);
 		return;
@@ -382,11 +420,35 @@ void ServerMessageHandlerImpl::onTransmitCardCommandDone(QSharedPointer<BaseCard
 	{
 		responseApdu = QByteArray::fromHex(transmitCommand->getOutputApduAsHex().first());
 	}
-	qCInfo(ifd) << "Card transmit succeeded" << slotHandle;
+	qCInfo(ifd) << "Transmit for" << slotHandle << "succeeded";
 	const auto& response = QSharedPointer<IfdTransmitResponse>::create(slotHandle, responseApdu);
 	mDispatcher->send(response);
 
 	if (transmitCommand->getSecureMessagingStopped())
+	{
+		Q_EMIT fireSecureMessagingStopped();
+	}
+}
+
+
+void ServerMessageHandlerImpl::onDestroyPaceChannelCommandDone(QSharedPointer<BaseCardCommand> pCommand)
+{
+	auto destroyPaceChannelCommand = pCommand.staticCast<DestroyPaceChannelCommand>();
+	const QString& slotHandle = destroyPaceChannelCommand->getSlotHandle();
+
+	if (destroyPaceChannelCommand->getReturnCode() != CardReturnCode::OK)
+	{
+		qCWarning(ifd) << "DestroyPaceChannel for" << slotHandle << "failed" << destroyPaceChannelCommand->getReturnCode();
+		const auto& response = QSharedPointer<IfdDestroyPaceChannelResponse>::create(slotHandle, ECardApiResult::Minor::AL_Unknown_Error);
+		mDispatcher->send(response);
+		return;
+	}
+
+	qCInfo(ifd) << "DestroyPaceChannel for" << slotHandle << "succeeded";
+	const auto& response = QSharedPointer<IfdDestroyPaceChannelResponse>::create(slotHandle);
+	mDispatcher->send(response);
+
+	if (destroyPaceChannelCommand->getSecureMessagingStopped())
 	{
 		Q_EMIT fireSecureMessagingStopped();
 	}
@@ -416,6 +478,7 @@ void ServerMessageHandlerImpl::onMessage(IfdMessageType pMessageType, const QJso
 		case IfdMessageType::IFDDisconnectResponse:
 		case IfdMessageType::IFDTransmitResponse:
 		case IfdMessageType::IFDEstablishPACEChannelResponse:
+		case IfdMessageType::IFDDestroyPACEChannelResponse:
 		case IfdMessageType::IFDModifyPINResponse:
 		{
 			qCWarning(ifd) << "Received an unexpected message of type:" << pMessageType;
@@ -447,6 +510,10 @@ void ServerMessageHandlerImpl::onMessage(IfdMessageType pMessageType, const QJso
 			handleIfdEstablishPaceChannel(pJsonObject);
 			break;
 
+		case IfdMessageType::IFDDestroyPACEChannel:
+			handleIfdDestroyPaceChannel(pJsonObject);
+			break;
+
 		case IfdMessageType::IFDModifyPIN:
 			handleIfdModifyPIN(pJsonObject);
 			break;
@@ -456,7 +523,7 @@ void ServerMessageHandlerImpl::onMessage(IfdMessageType pMessageType, const QJso
 
 void ServerMessageHandlerImpl::onReaderChanged(const ReaderInfo& pInfo)
 {
-	if (!mAllowedPlugInTypes.contains(pInfo.getPlugInType()))
+	if (!mAllowedPluginTypes.contains(pInfo.getPluginType()))
 	{
 		return;
 	}
@@ -476,7 +543,7 @@ void ServerMessageHandlerImpl::onReaderChanged(const ReaderInfo& pInfo)
 
 void ServerMessageHandlerImpl::onReaderRemoved(const ReaderInfo& pInfo)
 {
-	if (!mAllowedPlugInTypes.contains(pInfo.getPlugInType()))
+	if (!mAllowedPluginTypes.contains(pInfo.getPluginType()))
 	{
 		return;
 	}
