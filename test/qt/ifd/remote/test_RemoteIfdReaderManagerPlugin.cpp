@@ -3,10 +3,10 @@
  */
 
 /*!
- * \brief Unit tests for \ref RemoteIfdReaderManagerPlugIn
+ * \brief Unit tests for \ref RemoteIfdReaderManagerPlugin
  */
 
-#include "RemoteIfdReaderManagerPlugIn.h"
+#include "RemoteIfdReaderManagerPlugin.h"
 
 #include "AppSettings.h"
 #include "Env.h"
@@ -53,7 +53,7 @@ class MockIfdClient
 		void startDetection() override;
 		void stopDetection() override;
 		bool isDetecting() override;
-		void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) override;
+		void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk) override;
 		QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 		void requestRemoteDevices() override;
 
@@ -77,7 +77,7 @@ bool MockIfdClient::isDetecting()
 }
 
 
-void MockIfdClient::establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk)
+void MockIfdClient::establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk)
 {
 	Q_UNUSED(pEntry)
 	Q_UNUSED(pPsk)
@@ -137,7 +137,7 @@ void MockIfdClient::populateRemoteDevices()
 }
 
 
-class test_RemoteIfdReaderManagerPlugIn
+class test_RemoteIfdReaderManagerPlugin
 	: public QObject
 {
 	Q_OBJECT
@@ -145,7 +145,7 @@ class test_RemoteIfdReaderManagerPlugIn
 	private:
 		QThread mNetworkThread;
 		QSharedPointer<MockIfdClient> mIfdClient;
-		QSharedPointer<RemoteIfdReaderManagerPlugIn> mPlugin;
+		QSharedPointer<RemoteIfdReaderManagerPlugin> mPlugin;
 		QSharedPointer<MockIfdDispatcher> mDispatcher1;
 		QSharedPointer<MockIfdDispatcher> mDispatcher2;
 		QList<QSharedPointer<const IfdMessage>> mClientMessages;
@@ -178,7 +178,7 @@ class test_RemoteIfdReaderManagerPlugIn
 			mDispatcher2->setPairingConnection(true);
 			mDispatcher2->moveToThread(&mNetworkThread);
 
-			mPlugin.reset(new RemoteIfdReaderManagerPlugIn());
+			mPlugin.reset(new RemoteIfdReaderManagerPlugin());
 			mPlugin->init();
 		}
 
@@ -221,11 +221,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			spySend.clear();
 
 			QSharedPointer<IfdStatus> message;
-			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
-			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
-			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
+			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugin::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugin::fireReaderPropertiesUpdated);
+			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugin::fireReaderRemoved);
 
-			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPluginType::NFC);
 			info.setBasicReader(true);
 			info.setMaxApduLength(500);
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
@@ -261,11 +261,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			spySend.clear();
 
 			QSharedPointer<IfdStatus> message;
-			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
-			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
-			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
+			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugin::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugin::fireReaderPropertiesUpdated);
+			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugin::fireReaderRemoved);
 
-			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPluginType::NFC);
 			info.setBasicReader(true);
 			info.setMaxApduLength(500);
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
@@ -329,10 +329,10 @@ class test_RemoteIfdReaderManagerPlugIn
 			spySend.clear();
 
 			QSharedPointer<IfdMessage> message;
-			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
-			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
+			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugin::fireReaderAdded);
+			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugin::fireReaderRemoved);
 
-			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPluginType::NFC);
 			info.setBasicReader(true);
 			info.setMaxApduLength(500);
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(true);
@@ -363,18 +363,18 @@ class test_RemoteIfdReaderManagerPlugIn
 			spySend2.clear();
 
 			QSharedPointer<IfdStatus> message;
-			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugIn::fireReaderAdded);
-			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugIn::fireReaderPropertiesUpdated);
-			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugIn::fireReaderRemoved);
+			QSignalSpy spyAdded(mPlugin.data(), &ReaderManagerPlugin::fireReaderAdded);
+			QSignalSpy spyUpdated(mPlugin.data(), &ReaderManagerPlugin::fireReaderPropertiesUpdated);
+			QSignalSpy spyRemoved(mPlugin.data(), &ReaderManagerPlugin::fireReaderRemoved);
 
-			ReaderInfo info1(QStringLiteral("NFC Reader 1"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info1(QStringLiteral("NFC Reader 1"), ReaderManagerPluginType::NFC);
 			info1.setMaxApduLength(500);
 			info1.setBasicReader(true);
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
 			message.reset(new IfdStatus(info1));
 			mDispatcher1->onReceived(message);
 
-			ReaderInfo info2(QStringLiteral("NFC Reader 2"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info2(QStringLiteral("NFC Reader 2"), ReaderManagerPluginType::NFC);
 			info2.setMaxApduLength(500);
 			info2.setBasicReader(true);
 			message.reset(new IfdStatus(info2));
@@ -462,7 +462,7 @@ class test_RemoteIfdReaderManagerPlugIn
 
 			QSharedPointer<IfdMessage> message;
 
-			ReaderInfo info1(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info1(QStringLiteral("NFC Reader"), ReaderManagerPluginType::NFC);
 			info1.setMaxApduLength(500);
 			message.reset(new IfdStatus(info1));
 			info1.setBasicReader(true);
@@ -513,7 +513,7 @@ class test_RemoteIfdReaderManagerPlugIn
 			QCOMPARE(spyChanged.size(), 0);
 			QCOMPARE(spyUpdated.size(), 0);
 
-			ReaderInfo info2(QStringLiteral("NFC Reader"), ReaderManagerPlugInType::NFC);
+			ReaderInfo info2(QStringLiteral("NFC Reader"), ReaderManagerPluginType::NFC);
 			info2.setMaxApduLength(1);
 			info2.setBasicReader(true);
 			message.reset(new IfdStatus(info2));
@@ -551,11 +551,11 @@ class test_RemoteIfdReaderManagerPlugIn
 			mDispatcher1->setState(MockIfdDispatcher::DispatcherState::ReaderWithCard);
 			Q_EMIT mIfdClient->fireNewDispatcher(mDispatcher1);
 
-			QTRY_COMPARE(spySend.count(), 8); // clazy:exclude=qstring-allocations
+			QTRY_COMPARE(spySend.count(), 6); // clazy:exclude=qstring-allocations
 			spySend.takeFirst();
 			result = qvariant_cast<QSharedPointer<const IfdMessage>>(spySend.takeFirst().at(0));
 			QCOMPARE(result->getType(), IfdMessageType::IFDConnect);
-			for (int i = 0; i < 5; ++i) // CardInfo detection
+			for (int i = 0; i < 3; ++i) // CardInfo detection
 			{
 				result = qvariant_cast<QSharedPointer<const IfdMessage>>(spySend.takeFirst().at(0));
 				QCOMPARE(result->getType(), IfdMessageType::IFDTransmit);
@@ -677,7 +677,7 @@ class test_RemoteIfdReaderManagerPlugIn
 			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
 
 			QTest::ignoreMessage(QtInfoMsg, "Removing \"3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd\" from connection attempt list as it has vanished");
-			Q_EMIT mIfdClient->fireDeviceVanished(mIfdClient->mRemoteDevices.first());
+			Q_EMIT mIfdClient->fireDeviceVanished(std::as_const(mIfdClient->mRemoteDevices).first());
 			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 0); // clazy:exclude=qstring-allocations
 		}
 
@@ -690,7 +690,7 @@ class test_RemoteIfdReaderManagerPlugIn
 			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 1); // clazy:exclude=qstring-allocations
 
 			QTest::ignoreMessage(QtInfoMsg, "Removing \"3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd\" from connection attempt list as the request finished with No_Error | \"No error occurred.\"");
-			Q_EMIT mIfdClient->fireEstablishConnectionDone(mIfdClient->mRemoteDevices.first(), GlobalStatus::Code::No_Error);
+			Q_EMIT mIfdClient->fireEstablishConnectionDone(std::as_const(mIfdClient->mRemoteDevices).first(), GlobalStatus::Code::No_Error);
 			QTRY_COMPARE(mPlugin->mConnectionAttempts.size(), 0); // clazy:exclude=qstring-allocations
 		}
 
@@ -725,5 +725,5 @@ class test_RemoteIfdReaderManagerPlugIn
 
 };
 
-QTEST_GUILESS_MAIN(test_RemoteIfdReaderManagerPlugIn)
+QTEST_GUILESS_MAIN(test_RemoteIfdReaderManagerPlugin)
 #include "test_RemoteIfdReaderManagerPlugin.moc"

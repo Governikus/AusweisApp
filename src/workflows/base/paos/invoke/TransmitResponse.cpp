@@ -13,11 +13,11 @@ TransmitResponse::TransmitResponse()
 }
 
 
-void TransmitResponse::createBodyElement()
+void TransmitResponse::createBodyElement(QXmlStreamWriter& pWriter)
 {
-	mWriter.writeStartElement(QStringLiteral("TransmitResponse"));
-	mWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
-	mWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
+	pWriter.writeStartElement(QStringLiteral("TransmitResponse"));
+	pWriter.writeAttribute(getNamespacePrefix(Namespace::DEFAULT), getNamespace(Namespace::TECHSCHEMA));
+	pWriter.writeAttribute(QStringLiteral("Profile"), getNamespace(Namespace::ECARD));
 
 	createResultElement(*this);
 
@@ -26,7 +26,7 @@ void TransmitResponse::createBodyElement()
 		writeTextElement(QStringLiteral("OutputAPDU"), apdu);
 	}
 
-	mWriter.writeEndElement(); // TransmitResponse
+	pWriter.writeEndElement(); // TransmitResponse
 }
 
 

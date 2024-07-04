@@ -43,20 +43,20 @@ securestorage 2022.07.26 09:59:20.759 53857 I SecureStorage::load(secure_storage
 securestorage 2022.07.26 09:59:20.761 53857 I SecureStorage::load(secure_storage/SecureStorage.cpp:270)                  : SecureStorage successfully loaded
 default       2022.07.26 09:59:20.761 53857   AppController::clearCacheFolders(core/controller/AppController.cpp:504)    : Try to find and clear cache folder
 default       2022.07.26 09:59:20.763 53857   AppController::clearCacheFolders(core/controller/AppController.cpp:531)    : Cleared cache folder: "/home/BOSKG/schmertmann/.cache/Governikus GmbH & Co. KG/AusweisApp2"
-default       2022.07.26 09:59:20.763 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::UILoader
-gui           2022.07.26 09:59:20.763 53857   UILoader::load(ui/base/UILoader.cpp:89)                                    : Try to load UI plugin: UIPlugInQml
-gui           2022.07.26 09:59:20.763 53857   UILoader::load(ui/base/UILoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UIPlugIn","MetaData":{"default":true,"dependencies":[],"name":"UIPlugInQml"},"archlevel":1,"className":"UIPlugInQml","debug":true,"version":393984})
-default       2022.07.26 09:59:20.780 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UIPlugInQml
-gui           2022.07.26 09:59:20.780 53857   UILoader::load(ui/base/UILoader.cpp:89)                                    : Try to load UI plugin: UIPlugInWebSocket
-gui           2022.07.26 09:59:20.780 53857   UILoader::load(ui/base/UILoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UIPlugIn","MetaData":{"default":true,"dependencies":["UIPlugInJsonApi"],"name":"UIPlugInWebSocket"},"archlevel":1,"className":"UIPlugInWebSocket","debug":true,"version":393984})
-gui           2022.07.26 09:59:20.780 53857   UILoader::load(ui/base/UILoader.cpp:89)                                    : Try to load UI plugin: UIPlugInJson
-gui           2022.07.26 09:59:20.781 53857   UILoader::load(ui/base/UILoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UIPlugIn","MetaData":{"dependencies":[],"name":"UIPlugInJson"},"archlevel":1,"className":"UIPlugInJson","debug":true,"version":393984})
-default       2022.07.26 09:59:20.781 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UIPlugInJson
+default       2022.07.26 09:59:20.763 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::UiLoader
+gui           2022.07.26 09:59:20.763 53857   UiLoader::load(ui/base/UiLoader.cpp:89)                                    : Try to load UI plugin: UiPluginQml
+gui           2022.07.26 09:59:20.763 53857   UiLoader::load(ui/base/UiLoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UiPlugin","MetaData":{"default":true,"dependencies":[],"name":"UiPluginQml"},"archlevel":1,"className":"UiPluginQml","debug":true,"version":393984})
+default       2022.07.26 09:59:20.780 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UiPluginQml
+gui           2022.07.26 09:59:20.780 53857   UiLoader::load(ui/base/UiLoader.cpp:89)                                    : Try to load UI plugin: UiPluginWebSocket
+gui           2022.07.26 09:59:20.780 53857   UiLoader::load(ui/base/UiLoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UiPlugin","MetaData":{"default":true,"dependencies":["UiPluginJsonApi"],"name":"UiPluginWebSocket"},"archlevel":1,"className":"UiPluginWebSocket","debug":true,"version":393984})
+gui           2022.07.26 09:59:20.780 53857   UiLoader::load(ui/base/UiLoader.cpp:89)                                    : Try to load UI plugin: UiPluginJson
+gui           2022.07.26 09:59:20.781 53857   UiLoader::load(ui/base/UiLoader.cpp:97)                                    : Load plugin: QJsonObject({"IID":"governikus.UiPlugin","MetaData":{"dependencies":[],"name":"UiPluginJson"},"archlevel":1,"className":"UiPluginJson","debug":true,"version":393984})
+default       2022.07.26 09:59:20.781 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UiPluginJson
 default       2022.07.26 09:59:20.781 53857   Env::getShared(global/Env.h:338)                                           : Spawn shared instance: governikus::HttpServer
 network       2022.07.26 09:59:20.781 53857   HttpServer::HttpServer(network/HttpServer.cpp:43)                          : Listening on port: 24727 | QHostAddress("127.0.0.1")
 network       2022.07.26 09:59:20.781 53857   HttpServer::HttpServer(network/HttpServer.cpp:43)                          : Listening on port: 24727 | QHostAddress("::1")
-websocket     2022.07.26 09:59:20.781 53857   ...ugInWebSocket::UIPlugInWebSocket(ui/websocket/UIPlugInWebSocket.cpp:48) : Enable WebSocket...
-default       2022.07.26 09:59:20.781 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UIPlugInWebSocket
+websocket     2022.07.26 09:59:20.781 53857   ...ugInWebSocket::UiPluginWebSocket(ui/websocket/UiPluginWebSocket.cpp:48) : Enable WebSocket...
+default       2022.07.26 09:59:20.781 53857   AppController::onUiPlugin(core/controller/AppController.cpp:417)           : Register UI: governikus::UiPluginWebSocket
 default       2022.07.26 09:59:20.781 53857   AppController::start(core/controller/AppController.cpp:147)                : Successfully started activation handler: governikus::WebserviceActivationHandler
 default       2022.07.26 09:59:20.781 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::ReaderManager
 default       2022.07.26 09:59:20.781 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::RemoteIfdClient
@@ -65,14 +65,14 @@ default       2022.07.26 09:59:20.781 53857   Env::createSingleton(global/Env.h:
 card          2022.07.26 09:59:20.781 53860   ReaderManagerWorker::onThreadStarted(card/base/ReaderManagerWorker.cpp:69) : Thread started
 default       2022.07.26 09:59:20.781 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::ApplicationModel
 network       2022.07.26 09:59:20.782 53857   WifiInfo::WifiInfo(network/WifiInfo_generic.cpp:21)                        : NOT IMPLEMENTED
-card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugIns(card/base/ReaderManagerWorker.cpp:78) : Try to register plugins
+card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugins(card/base/ReaderManagerWorker.cpp:78) : Try to register plugins
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::SelfAuthModel
-card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugIns(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugIn","MetaData":{"dependencies":[],"name":"SimulatorReaderManagerPlugIn"},"archlevel":1,"className":"SimulatorReaderManagerPlugIn","debug":true,"version":393984})
+card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugins(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugin","MetaData":{"dependencies":[],"name":"SimulatorReaderManagerPlugin"},"archlevel":1,"className":"SimulatorReaderManagerPlugin","debug":true,"version":393984})
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::RemoteServiceModel
-card          2022.07.26 09:59:20.782 53860   ...::onSettingsChanged(card/simulator/SimulatorReaderManagerPlugIn.cpp:90) : SimulatorStateChanged: true
-card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugIns(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugIn","MetaData":{"dependencies":[],"name":"RemoteIfdReaderManagerPlugIn"},"archlevel":1,"className":"RemoteIfdReaderManagerPlugIn","debug":true,"version":393984})
+card          2022.07.26 09:59:20.782 53860   ...::onSettingsChanged(card/simulator/SimulatorReaderManagerPlugin.cpp:90) : SimulatorStateChanged: true
+card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugins(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugin","MetaData":{"dependencies":[],"name":"RemoteIfdReaderManagerPlugin"},"archlevel":1,"className":"RemoteIfdReaderManagerPlugin","debug":true,"version":393984})
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::PersonalizationModel
-card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugIns(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugIn","MetaData":{"dependencies":[],"name":"PcscReaderManagerPlugIn"},"archlevel":1,"className":"PcscReaderManagerPlugIn","debug":true,"version":393984})
+card          2022.07.26 09:59:20.782 53860   ReaderManagerWorker::registerPlugins(card/base/ReaderManagerWorker.cpp:84) : Register and initialize plugin: QJsonObject({"IID":"governikus.ReaderManagerPlugin","MetaData":{"dependencies":[],"name":"PcscReaderManagerPlugin"},"archlevel":1,"className":"PcscReaderManagerPlugin","debug":true,"version":393984})
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::SettingsModel
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::AppUpdateDataModel
 default       2022.07.26 09:59:20.782 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::AppUpdater
@@ -96,12 +96,12 @@ qt.scen...    2022.07.26 09:59:21.343 53857   (unknown:0)                       
 qt.scen...    2022.07.26 09:59:21.343 53857   (unknown:0)                                                                       : Using sg animation driver
 qt.scen...    2022.07.26 09:59:21.343 53857   (unknown:0)                                                                       : Animation Driver: using vsync: 33.33 ms
 default       2022.07.26 09:59:21.355 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::NotificationModel
-qml           2022.07.26 09:59:21.390 53857   UIPlugInQml::init(ui/qml/UIPlugInQml.cpp:303)                              : Using renderer interface: 3
+qml           2022.07.26 09:59:21.390 53857   UiPluginQml::init(ui/qml/UiPluginQml.cpp:303)                              : Using renderer interface: 3
 card          2022.07.26 09:59:21.390 53857   ReaderManager::doUpdatePluginCache(card/base/ReaderManager.cpp:290)        : Update cache entry: SIMULATOR
 card          2022.07.26 09:59:21.391 53857   ReaderManager::doUpdatePluginCache(card/base/ReaderManager.cpp:290)        : Update cache entry: SIMULATOR
 card          2022.07.26 09:59:21.391 53857   ReaderManager::doUpdatePluginCache(card/base/ReaderManager.cpp:290)        : Update cache entry: REMOTE_IFD
 card          2022.07.26 09:59:21.391 53857   ReaderManager::doUpdatePluginCache(card/base/ReaderManager.cpp:290)        : Update cache entry: PCSC
-qml           2022.07.26 09:59:21.391 53857   UIPlugInQml::onQmlObjectCreated(ui/qml/UIPlugInQml.cpp:760)                : QML engine initialization finished with 0 warnings.
+qml           2022.07.26 09:59:21.391 53857   UiPluginQml::onQmlObjectCreated(ui/qml/UiPluginQml.cpp:760)                : QML engine initialization finished with 0 warnings.
 feedback      2022.07.26 09:59:21.397 53857 I ApplicationModel::showFeedback(ui/qml/ApplicationModel.cpp:314)            : Die Anwendung wurde gestartet.
 qml           2022.07.26 09:59:21.397 53857 W ApplicationModel::isScreenReaderRunning(ui/qml/ApplicationModel.cpp:285)   : NOT IMPLEMENTED
 fileprovider  2022.07.26 09:59:23.123 53857   UpdatableFile::update(file_provider/UpdatableFile.cpp:346)                 : Update Triggered for Name: "supported-providers.json"  with URL: QUrl("https://updates.autentapp.de/updatable-files/supported-providers.json")
@@ -496,7 +496,7 @@ card          2022.07.26 09:59:27.431 53857 W ...ertificateChainBuilder(card/bas
 default       2022.07.26 09:59:27.432 53857   AppController::onWorkflowRequested(core/controller/AppController.cpp:225)  : New workflow requested: SELF
 support       2022.07.26 09:59:27.433 53857 I AppController::startNewWorkflow(core/controller/AppController.cpp:453)     : Started new workflow SELF
 default       2022.07.26 09:59:27.434 53857   AppController::startNewWorkflow(core/controller/AppController.cpp:457)     : Start governikus::SelfAuthController
-default       2022.07.26 09:59:27.434 53857   WorkflowContext::claim(workflows/base/context/WorkflowContext.cpp:76)      : Claim workflow by "governikus::UIPlugInQml"
+default       2022.07.26 09:59:27.434 53857   WorkflowContext::claim(workflows/base/context/WorkflowContext.cpp:76)      : Claim workflow by "governikus::UiPluginQml"
 qml           2022.07.26 09:59:27.434 53857 W ApplicationModel::keepScreenOn(ui/qml/ApplicationModel.cpp:382)            : NOT IMPLEMENTED: true
 default       2022.07.26 09:59:27.434 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::NumberModel
 default       2022.07.26 09:59:27.455 53857   Env::createSingleton(global/Env.h:129)                                     : Create singleton: governikus::AuthModel
@@ -797,12 +797,12 @@ statemachine  2022.07.26 09:59:29.843 53857   AbstractState::onEntry(workflows/b
 qml           2022.07.26 09:59:29.847 53857 W (/qml/Governikus/View/BaseController.qml:48)                               : No focus item found using TitleBar
 statemachine  2022.07.26 09:59:29.848 53857   ...ate::onStateApprovedChanged(workflows/base/states/AbstractState.cpp:73) : Running state "StateSelectReader"
 statemachine  2022.07.26 09:59:29.848 53857   ...er::onReaderInfoChanged(workflows/base/states/StateSelectReader.cpp:73) : No selectable reader detected
-card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::PcscReaderManagerPlugIn
-card_pcsc     2022.07.26 09:59:29.849 53860   ...eaderManagerPlugIn::startScan(card/pcsc/PcscReaderManagerPlugIn.cpp:55) : SCardEstablishContext: "Scard_E_No_Service"
-card_pcsc     2022.07.26 09:59:29.849 53860 W ...eaderManagerPlugIn::startScan(card/pcsc/PcscReaderManagerPlugIn.cpp:58) : Not started: Cannot establish context
-card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::RemoteIfdReaderManagerPlugIn
-card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::SimulatorReaderManagerPlugIn
-card          2022.07.26 09:59:29.849 53860   ...erPlugIn::startScan(card/simulator/SimulatorReaderManagerPlugIn.cpp:49) : fireReaderAdded "Simulator"
+card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::PcscReaderManagerPlugin
+card_pcsc     2022.07.26 09:59:29.849 53860   ...eaderManagerPlugin::startScan(card/pcsc/PcscReaderManagerPlugin.cpp:55) : SCardEstablishContext: "Scard_E_No_Service"
+card_pcsc     2022.07.26 09:59:29.849 53860 W ...eaderManagerPlugin::startScan(card/pcsc/PcscReaderManagerPlugin.cpp:58) : Not started: Cannot establish context
+card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::RemoteIfdReaderManagerPlugin
+card          2022.07.26 09:59:29.849 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Start scan on plugin: governikus::SimulatorReaderManagerPlugin
+card          2022.07.26 09:59:29.849 53860   ...erPlugin::startScan(card/simulator/SimulatorReaderManagerPlugin.cpp:49) : fireReaderAdded "Simulator"
 card          2022.07.26 09:59:29.849 53860   SimulatorReader::connectReader(card/simulator/SimulatorReader.cpp:47)      : targetDetected, type: Simulator
 card          2022.07.26 09:59:29.849 53860   Reader::shelveCard(card/base/Reader.cpp:120)                               : Card shelved
 network       2022.07.26 09:59:29.850 53857   DatagramHandlerImpl::resetSocket(network/DatagramHandlerImpl.cpp:90)       : Bound on port: 24727
@@ -1461,12 +1461,12 @@ statemachine  2022.07.26 09:59:32.675 53857   AbstractState::onExit(workflows/ba
 statemachine  2022.07.26 09:59:32.675 53857   AbstractState::onEntry(workflows/base/states/AbstractState.cpp:95)         : Next state is "StateCleanUpReaderManager"
 statemachine  2022.07.26 09:59:32.675 53857   ...ate::onStateApprovedChanged(workflows/base/states/AbstractState.cpp:73) : Running state "StateCleanUpReaderManager"
 default       2022.07.26 09:59:32.676 53857   ...derManager::run(workflows/base/states/StateCleanUpReaderManager.cpp:38) : Going to disconnect card connection
-card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::PcscReaderManagerPlugIn
+card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::PcscReaderManagerPlugin
 statemachine  2022.07.26 09:59:32.677 53857   AbstractState::onExit(workflows/base/states/AbstractState.cpp:115)         : Leaving state "StateCleanUpReaderManager" with status: [ OK + No_Error | "Es ist kein Fehler aufgetreten." ]
 statemachine  2022.07.26 09:59:32.677 53857   AbstractState::onEntry(workflows/base/states/AbstractState.cpp:95)         : Next state is "StateStartPaosResponse"
-card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::RemoteIfdReaderManagerPlugIn
+card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::RemoteIfdReaderManagerPlugin
 statemachine  2022.07.26 09:59:32.677 53857   ...ate::onStateApprovedChanged(workflows/base/states/AbstractState.cpp:73) : Running state "StateStartPaosResponse"
-card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugIn(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::SimulatorReaderManagerPlugIn
+card          2022.07.26 09:59:32.677 53860   ReaderManagerWorker::callOnPlugin(card/base/ReaderManagerWorker.cpp:131)   : Stop scan on plugin: governikus::SimulatorReaderManagerPlugin
 statemachine  2022.07.26 09:59:32.677 53857   AbstractState::onExit(workflows/base/states/AbstractState.cpp:115)         : Leaving state "StateStartPaosResponse" with status: [ OK + No_Error | "Es ist kein Fehler aufgetreten." ]
 statemachine  2022.07.26 09:59:32.677 53857   AbstractState::onEntry(workflows/base/states/AbstractState.cpp:95)         : Next state is "StateCheckError"
 card          2022.07.26 09:59:32.677 53860   SimulatorReader::disconnectReader(card/simulator/SimulatorReader.cpp:67)   : targetLost, type: Simulator

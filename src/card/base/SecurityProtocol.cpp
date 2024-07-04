@@ -8,6 +8,7 @@
 #include <QLoggingCategory>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -72,6 +73,12 @@ const QMap<char, std::optional<QCryptographicHash::Algorithm>> SecurityProtocol:
 };
 
 
+void SecurityProtocol::logCritical(const QLatin1String& pTopic) const
+{
+	qCCritical(card) << pTopic << "OID:" << mOid;
+}
+
+
 SecurityProtocol::SecurityProtocol(const Oid& pOid)
 	: mOid(pOid)
 	, mProtocol(ProtocolType::UNDEFINED)
@@ -81,17 +88,17 @@ SecurityProtocol::SecurityProtocol(const Oid& pOid)
 	, mSignature(SignatureType::UNDEFINED)
 	, mHashAlgorithm(std::nullopt)
 {
-	const QByteArray rawOid = mOid.getData();
-	if (rawOid.size() < 8 || !rawOid.startsWith(Oid(KnownOid::BSI_DE_PROTOCOLS_SMARTCARD).getData()))
+	const QByteArray rawOid(mOid);
+	if (rawOid.size() < 8 || !rawOid.startsWith(QByteArray(Oid(KnownOid::BSI_DE_PROTOCOLS_SMARTCARD))))
 	{
-		qCCritical(card) << "Unknown OID:" << mOid;
+		logCritical("Unknown"_L1);
 		return;
 	}
 
 	mProtocol = cProtocol.value(rawOid.at(7), ProtocolType::UNDEFINED);
 	if (mProtocol == ProtocolType::UNDEFINED)
 	{
-		qCCritical(card) << "Unsupported OID:" << mOid;
+		logCritical("Unsupported"_L1);
 		return;
 	}
 
@@ -110,7 +117,7 @@ SecurityProtocol::SecurityProtocol(const Oid& pOid)
 			mSignature = cSignature.value(keyAgreement, SignatureType::UNDEFINED);
 			if (mSignature == SignatureType::UNDEFINED)
 			{
-				qCCritical(card) << "Unsupported OID:" << mOid;
+				logCritical("Unsupported"_L1);
 				return;
 			}
 			if (mSignature == SignatureType::RSA)
@@ -123,7 +130,7 @@ SecurityProtocol::SecurityProtocol(const Oid& pOid)
 			mHashAlgorithm = hashBase->value(algorithm, std::nullopt);
 			if (!mHashAlgorithm.has_value())
 			{
-				qCCritical(card) << "Unknown OID:" << mOid;
+				logCritical("Unknown"_L1);
 			}
 			return;
 
@@ -131,7 +138,7 @@ SecurityProtocol::SecurityProtocol(const Oid& pOid)
 			mMapping = cMapping.value(keyAgreement, MappingType::UNDEFINED);
 			if (mMapping == MappingType::UNDEFINED)
 			{
-				qCCritical(card) << "Unknown OID:" << mOid;
+				logCritical("Unknown"_L1);
 				return;
 			}
 			Q_FALLTHROUGH();
@@ -140,19 +147,19 @@ SecurityProtocol::SecurityProtocol(const Oid& pOid)
 			mKeyAgreement = cKeyAgreement.value(keyAgreement, KeyAgreementType::UNDEFINED);
 			if (mKeyAgreement == KeyAgreementType::UNDEFINED)
 			{
-				qCCritical(card) << "Unknown OID:" << mOid;
+				logCritical("Unknown"_L1);
 				return;
 			}
 			mCipher = cCipher.value(algorithm, CipherType::UNDEFINED);
 			if (mCipher == CipherType::UNDEFINED)
 			{
-				qCCritical(card) << "Unknown OID:" << mOid;
+				logCritical("Unknown"_L1);
 				return;
 			}
 			break;
 
 		default:
-			qCCritical(card) << "Unknown OID:" << mOid;
+			logCritical("Unknown"_L1);
 
 	}
 }

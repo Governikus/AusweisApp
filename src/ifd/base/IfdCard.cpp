@@ -7,6 +7,8 @@
 #include "VolatileSettings.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnectResponse.h"
+#include "messages/IfdDestroyPaceChannel.h"
+#include "messages/IfdDestroyPaceChannelResponse.h"
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
 #include "messages/IfdEstablishPaceChannel.h"
@@ -128,47 +130,49 @@ IfdCard::~IfdCard()
 CardReturnCode IfdCard::establishConnection()
 {
 	const auto& connectMsg = QSharedPointer<IfdConnect>::create(mReaderName);
-	if (sendMessage(connectMsg, IfdMessageType::IFDConnectResponse, 5000))
+	if (!sendMessage(connectMsg, IfdMessageType::IFDConnectResponse, 5000))
 	{
-		const IfdConnectResponse response(mResponse);
-		if (!response.isIncomplete())
-		{
-			if (!response.resultHasError())
-			{
-				mConnected = true;
-				mSlotHandle = response.getSlotHandle();
-				return CardReturnCode::OK;
-			}
-			qCWarning(card_remote) << response.getResultMinor();
-		}
+		return CardReturnCode::INPUT_TIME_OUT;
+	}
 
+	const IfdConnectResponse response(mResponse);
+	if (response.isIncomplete())
+	{
+		return CardReturnCode::COMMAND_FAILED;
+	}
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	return CardReturnCode::INPUT_TIME_OUT;
+	mConnected = true;
+	mSlotHandle = response.getSlotHandle();
+	return CardReturnCode::OK;
 }
 
 
 CardReturnCode IfdCard::releaseConnection()
 {
 	const auto& disconnectCmd = QSharedPointer<IfdDisconnect>::create(mSlotHandle);
-	if (sendMessage(disconnectCmd, IfdMessageType::IFDDisconnectResponse, 5000))
+	if (!sendMessage(disconnectCmd, IfdMessageType::IFDDisconnectResponse, 5000))
 	{
-		const IfdDisconnectResponse response(mResponse);
-		if (!response.isIncomplete())
-		{
-			if (!response.resultHasError())
-			{
-				mConnected = false;
-				return CardReturnCode::OK;
-			}
-			qCWarning(card_remote) << response.getResultMinor();
-		}
+		return CardReturnCode::INPUT_TIME_OUT;
+	}
 
+	const IfdDisconnectResponse response(mResponse);
+	if (response.isIncomplete())
+	{
+		return CardReturnCode::COMMAND_FAILED;
+	}
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	return CardReturnCode::INPUT_TIME_OUT;
+	mConnected = false;
+	return CardReturnCode::OK;
 }
 
 
@@ -189,60 +193,83 @@ ResponseApduResult IfdCard::transmit(const CommandApdu& pCommand)
 	qCDebug(card_remote) << "Transmit command APDU:" << pCommand;
 
 	const QSharedPointer<const IfdTransmit>& transmitCmd = QSharedPointer<IfdTransmit>::create(mSlotHandle, pCommand, mProgressMessage);
-	if (sendMessage(transmitCmd, IfdMessageType::IFDTransmitResponse, 5000))
+	if (!sendMessage(transmitCmd, IfdMessageType::IFDTransmitResponse, 5000))
 	{
-		mProgressMessage.clear();
+		return {CardReturnCode::INPUT_TIME_OUT};
+	}
 
-		const IfdTransmitResponse response(mResponse);
-		if (!response.isIncomplete())
-		{
-			if (!response.resultHasError())
-			{
-				qCDebug(card_remote) << "Transmit response APDU:" << response.getResponseApdu().toHex();
-				return {CardReturnCode::OK, ResponseApdu(response.getResponseApdu())};
-			}
-			qCWarning(card_remote) << response.getResultMinor();
-		}
-
+	mProgressMessage.clear();
+	const IfdTransmitResponse response(mResponse);
+	if (response.isIncomplete())
+	{
+		return {CardReturnCode::COMMAND_FAILED};
+	}
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	return {CardReturnCode::INPUT_TIME_OUT};
+	qCDebug(card_remote) << "Transmit response APDU:" << response.getResponseApdu().toHex();
+	return {CardReturnCode::OK, ResponseApdu(response.getResponseApdu())};
 }
 
 
 EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
 {
 	EstablishPaceChannel establishPaceChannel(pPasswordId, pChat, pCertificateDescription);
-
 	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 	{
 		pPreferredPinLength = 0;
 	}
 
 	const QSharedPointer<const IfdEstablishPaceChannel>& message = QSharedPointer<IfdEstablishPaceChannel>::create(mSlotHandle, establishPaceChannel, pPreferredPinLength);
-	if (sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))
+	if (!sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))
 	{
-		const IfdEstablishPaceChannelResponse response(mResponse);
-		if (!response.isIncomplete())
-		{
-			if (response.getResultMinor() == ECardApiResult::Minor::IFDL_Terminal_NoCard
-					|| response.getResultMinor() == ECardApiResult::Minor::IFDL_InvalidSlotHandle)
-			{
-				return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
-			}
+		return EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT);
+	}
 
-			if (!response.resultHasError())
-			{
-				return response.getOutputData();
-			}
-			qCWarning(card_remote) << response.getResultMinor();
-		}
-
+	const IfdEstablishPaceChannelResponse response(mResponse);
+	if (response.isIncomplete())
+	{
+		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+	}
+	if (response.getResultMinor() == ECardApiResult::Minor::IFDL_Terminal_NoCard
+			|| response.getResultMinor() == ECardApiResult::Minor::IFDL_InvalidSlotHandle)
+	{
+		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
+	}
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
 		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
 
-	return EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT);
+	return response.getOutputData();
+
+}
+
+
+CardReturnCode IfdCard::destroyPaceChannel()
+{
+	const auto& destroyCmd = QSharedPointer<IfdDestroyPaceChannel>::create(mSlotHandle);
+	if (!sendMessage(destroyCmd, IfdMessageType::IFDDestroyPACEChannelResponse, 5000))
+	{
+		return CardReturnCode::INPUT_TIME_OUT;
+	}
+
+	const IfdDestroyPaceChannelResponse response(mResponse);
+	if (response.isIncomplete())
+	{
+		return CardReturnCode::COMMAND_FAILED;
+	}
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
+		return CardReturnCode::COMMAND_FAILED;
+	}
+
+	return CardReturnCode::OK;
 }
 
 
@@ -252,26 +279,23 @@ ResponseApduResult IfdCard::setEidPin(quint8 pTimeoutSeconds)
 	const QByteArray inputData = pinModify.createCcid();
 
 	const QSharedPointer<const IfdModifyPin>& message = QSharedPointer<IfdModifyPin>::create(mSlotHandle, inputData);
-	if (sendMessage(message, IfdMessageType::IFDModifyPINResponse, pTimeoutSeconds * 1000))
+	if (!sendMessage(message, IfdMessageType::IFDModifyPINResponse, pTimeoutSeconds * 1000))
 	{
-		const IfdModifyPinResponse response(mResponse);
-		if (response.resultHasError())
-		{
-			return {response.getReturnCode()};
-		}
+		return {CardReturnCode::INPUT_TIME_OUT};
+	}
 
-		if (!response.isIncomplete())
-		{
-			const PinModifyOutput output(ResponseApdu(response.getOutputData()));
-			if (!response.resultHasError())
-			{
-				return {CardReturnCode::OK, output.getResponseApdu()};
-			}
-			qCWarning(card_remote) << response.getResultMinor();
-		}
-
+	const IfdModifyPinResponse response(mResponse);
+	if (response.isIncomplete())
+	{
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	return {CardReturnCode::INPUT_TIME_OUT};
+	const PinModifyOutput output(ResponseApdu(response.getOutputData()));
+	if (response.resultHasError())
+	{
+		qCWarning(card_remote) << response.getResultMinor();
+		return {response.getReturnCode(), output.getResponseApdu()};
+	}
+
+	return {CardReturnCode::OK, output.getResponseApdu()};
 }

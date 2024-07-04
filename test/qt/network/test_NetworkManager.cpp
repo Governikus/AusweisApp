@@ -39,7 +39,7 @@ class test_NetworkManager
 			ResourceLoader::getInstance().init();
 			Env::getSingleton<LogHandler>()->init();
 
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -137,7 +137,7 @@ class test_NetworkManager
 					networkManager.fireFinished();
 				}, Qt::QueuedConnection);
 
-			auto reply = new MockNetworkReply();
+			auto* reply = new MockNetworkReply();
 			reply->setError(QNetworkReply::ServiceUnavailableError, "dummy"_L1);
 			networkManager.setNextReply(reply);
 

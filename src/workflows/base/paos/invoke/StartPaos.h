@@ -27,12 +27,11 @@ class StartPaos
 	private:
 		const QByteArray mSessionId;
 
+		void createBodyElement(QXmlStreamWriter& pWriter) override;
 		void createSessionIdentifierElement();
-		void createConnectionHandleElement();
-		void createUserAgentElement();
-		void createSupportedAPIVersionsElement();
-
-		void createBodyElement() override;
+		void createConnectionHandleElement(QXmlStreamWriter& pWriter) const;
+		void createUserAgentElement(QXmlStreamWriter& pWriter) const;
+		void createSupportedAPIVersionsElement(QXmlStreamWriter& pWriter) const;
 
 	public:
 		explicit StartPaos(const QByteArray& pSessionId);

@@ -133,6 +133,7 @@ defineEnumType(KnownOid
 
 class Oid
 {
+	friend QDebug operator<<(QDebug, const Oid&);
 	friend class ::test_Oid;
 
 	private:
@@ -146,7 +147,7 @@ class Oid
 		Oid();
 		Oid(KnownOid pOid);
 		explicit Oid(const ASN1_OBJECT* pObject);
-		explicit Oid(const QByteArray& pTxt);
+		explicit Oid(const QByteArray& pData);
 		Oid(const Oid& pOid);
 		Oid(Oid&& pOid) noexcept;
 		~Oid();
@@ -155,7 +156,6 @@ class Oid
 		Oid& operator=(Oid&&) noexcept;
 
 		bool isUndefined() const;
-		QByteArray getData() const;
 
 		explicit operator QByteArray() const;
 		bool operator==(const Oid& pOther) const;
@@ -164,16 +164,11 @@ class Oid
 
 inline auto qHash(const Oid& pOid)
 {
-	return qHash(pOid.getData());
+	return qHash(QByteArray(pOid));
 }
 
 
-inline QDebug operator<<(QDebug pDbg, const Oid& pOid)
-{
-	QDebugStateSaver saver(pDbg);
-	pDbg.noquote() << QByteArray(pOid);
-	return pDbg;
-}
+QDebug operator<<(QDebug pDbg, const Oid& pOid);
 
 
 }  // namespace governikus

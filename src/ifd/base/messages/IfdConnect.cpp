@@ -38,10 +38,7 @@ IfdConnect::IfdConnect(const QJsonObject& pMessageObject)
 	mSlotName = getStringValue(pMessageObject, SLOT_NAME());
 	mExclusive = getBoolValue(pMessageObject, EXCLUSIVE());
 
-	if (getType() != IfdMessageType::IFDConnect)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDConnect"));
-	}
+	ensureType(IfdMessageType::IFDConnect);
 }
 
 

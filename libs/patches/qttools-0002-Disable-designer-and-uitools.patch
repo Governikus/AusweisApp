@@ -1,4 +1,4 @@
-From 9852f44ab2b6c6e30d8c6ec4a5d45025bc13c2f4 Mon Sep 17 00:00:00 2001
+From f22b30d4fe85d20f2641d163f04e32945063b33b Mon Sep 17 00:00:00 2001
 From: Andre Klitzing <andre.klitzing@governikus.de>
 Date: Wed, 21 Jun 2023 12:22:46 +0200
 Subject: Disable designer and uitools
@@ -9,7 +9,7 @@ See https://bugreports.qt.io/browse/QTBUG-95236
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git x/qttools/src/CMakeLists.txt y/qttools/src/CMakeLists.txt
-index 014e4c874c506ebfa78ce4c4664be39c7266e693..1574b1b20e1973a4ce8650345073743ba551f3fd 100644
+index dc03e1c144fc9ad798adec8e1ab3eb32b4a368d9..873b231b6fd29241c89c40ad061a3886341b8632 100644
 --- x/qttools/src/CMakeLists.txt
 +++ y/qttools/src/CMakeLists.txt
 @@ -18,8 +18,8 @@ qt_exclude_tool_directories_from_default_target(

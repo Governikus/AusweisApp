@@ -8,6 +8,10 @@
 #include "states/AbstractState.h"
 #include "states/GenericContextContainer.h"
 
+
+class test_StateEnterPacePasswordIfd;
+
+
 namespace governikus
 {
 
@@ -17,13 +21,14 @@ class StateEnterPacePasswordIfd
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StateEnterPacePasswordIfd;
 
 	private:
 		explicit StateEnterPacePasswordIfd(const QSharedPointer<WorkflowContext>& pContext);
 		void run() override;
 
 	private Q_SLOTS:
-		void onCancelEstablishPaceChannel();
+		void onUserError();
 
 	public:
 		void onEntry(QEvent* pEvent) override;

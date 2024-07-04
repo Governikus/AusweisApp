@@ -56,6 +56,7 @@ class test_PacePinStatus
 			QTest::newRow("NO_CURRENT_DIRECTORY_SELECTED") << StatusCode::NO_CURRENT_DIRECTORY_SELECTED << -1 << false << false;
 			QTest::newRow("DATAFIELD_EXPECTED") << StatusCode::DATAFIELD_EXPECTED << -1 << false << false;
 			QTest::newRow("INVALID_SM_OBJECTS") << StatusCode::INVALID_SM_OBJECTS << -1 << false << false;
+			QTest::newRow("SW_APPLET_SELECT_FAILED") << StatusCode::SW_APPLET_SELECT_FAILED << -1 << false << false;
 			QTest::newRow("COMMAND_NOT_ALLOWED") << StatusCode::COMMAND_NOT_ALLOWED << -1 << false << false;
 			QTest::newRow("INVALID_DATAFIELD") << StatusCode::INVALID_DATAFIELD << -1 << false << false;
 			QTest::newRow("ALGORITHM_ID") << StatusCode::ALGORITHM_ID << -1 << false << false;

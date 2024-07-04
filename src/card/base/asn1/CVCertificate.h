@@ -50,9 +50,6 @@ using CVCertificate = struct cvcertificate_st
 
 	static QList<QSharedPointer<const cvcertificate_st>> fromRaw(const QByteArrayList& pByteList);
 	static QSharedPointer<const cvcertificate_st> fromRaw(const QByteArray& pBytes);
-#ifndef QT_NO_DEBUG
-	static QSharedPointer<const cvcertificate_st> fromHex(const QByteArray& pBytes);
-#endif
 	[[nodiscard]] QByteArray encode() const;
 
 	[[nodiscard]] const CVCertificateBody& getBody() const;

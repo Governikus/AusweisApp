@@ -8,9 +8,11 @@
 
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
 
-#include "TestFileHelper.h"
 #include "asn1/CVCertificate.h"
 #include "pinpad/EstablishPaceChannelOutput.h"
+
+#include "CertificateHelper.h"
+#include "TestFileHelper.h"
 
 #include <QtTest>
 
@@ -72,8 +74,8 @@ class test_DidAuthenticateResponseEAC1
 
 		void certificationAuthorityReference()
 		{
-			const auto& cvca_DETESTeID00002 = CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
-			const auto& cvca_DETESTeID00001 = CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			const auto& cvca_DETESTeID00002 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			const auto& cvca_DETESTeID00001 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
 
 			EstablishPaceChannelOutput channel;
 			channel.setCarCurr(cvca_DETESTeID00002->getBody().getCertificateHolderReference());

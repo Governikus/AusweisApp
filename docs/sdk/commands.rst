@@ -169,7 +169,7 @@ Command :ref:`interrupt` allows to stop the dialog manually, if needed.
   - **developerMode**: True to enable "Developer Mode" for test cards and disable some security
     checks according to BSI TR-03124-1, otherwise false. (optional, default: false)
 
-  - **handleInterrupt**: True to automatically handle system dialog on iOS, otherwise false.
+  - **handleInterrupt**: True to automatically handle system dialog on iOS to enter a password, otherwise false.
     :ref:`api_level` v1 only. (optional, default: false)
 
   - **status**: True to enable automatic :ref:`status` messages, otherwise false.
@@ -387,6 +387,34 @@ in a :ref:`reader` message.
   This command is allowed only if the |AppName| sends an initial
   :ref:`insert_card` message. Otherwise you will get a :ref:`bad_state`
   message as an answer.
+
+
+
+
+.. _continue_cmd:
+
+CONTINUE
+^^^^^^^^
+Continues the workflow after a :ref:`pause_message` was sent.
+
+The |AppName| will send a :ref:`pause_message` message with an
+appropriate :ref:`cause <pause_cause>` for the waiting condition.
+After the issue was fixed you have to send CONTINUE to go on with
+the workflow.
+
+
+.. versionadded:: 2.2.0
+   The command :ref:`continue_cmd` was introduced in :ref:`api_level` **3**.
+
+.. code-block:: json
+
+  {
+    "cmd": "CONTINUE"
+  }
+
+.. note::
+  This command is allowed only if the |AppName| sent a :ref:`pause_message`.
+  Otherwise you will get a :ref:`bad_state` message as an answer.
 
 
 

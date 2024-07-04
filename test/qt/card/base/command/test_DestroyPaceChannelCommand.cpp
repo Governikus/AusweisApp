@@ -23,13 +23,13 @@ class test_DestroyPaceChannelCommand
 		{
 			QSharedPointer<MockCardConnectionWorker> worker1(new MockCardConnectionWorker());
 			worker1->addPaceCode(CardReturnCode::OK);
-			DestroyPaceChannelCommand command1(worker1);
+			DestroyPaceChannelCommand command1(worker1, QStringLiteral("slotname"));
 			command1.internalExecute();
 			QCOMPARE(command1.getReturnCode(), CardReturnCode::OK);
 
 			QSharedPointer<MockCardConnectionWorker> worker2(new MockCardConnectionWorker());
 			worker2->addPaceCode(CardReturnCode::UNKNOWN);
-			DestroyPaceChannelCommand command2(worker2);
+			DestroyPaceChannelCommand command2(worker2, QStringLiteral("slotname"));
 			command2.internalExecute();
 			QCOMPARE(command2.getReturnCode(), CardReturnCode::UNKNOWN);
 		}

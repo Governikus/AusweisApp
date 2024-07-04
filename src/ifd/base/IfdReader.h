@@ -30,7 +30,7 @@ class IfdReader
 		const QSharedPointer<IfdDispatcherClient> mDispatcher;
 
 	public:
-		IfdReader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const IfdStatus& pIfdStatus);
+		IfdReader(ReaderManagerPluginType pPluginType, const QString& pReaderName, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const IfdStatus& pIfdStatus);
 		~IfdReader() override;
 
 		[[nodiscard]] Card* getCard() const override;

@@ -33,7 +33,7 @@ class WorkflowController
 		template<typename T>
 		[[nodiscard]] T* addState()
 		{
-			auto state = StateBuilder::createState<T>(mContext);
+			auto* state = StateBuilder::createState<T>(mContext);
 			mStateMachine.addState(state);
 			return state;
 		}
@@ -42,13 +42,10 @@ class WorkflowController
 		template<typename T>
 		[[nodiscard]] T* addInitialState()
 		{
-			auto state = addState<T>();
+			auto* state = addState<T>();
 			mStateMachine.setInitialState(state);
 			return state;
 		}
-
-
-		void forceStartStopScan();
 
 	public:
 		explicit WorkflowController(const QSharedPointer<WorkflowContext>& pContext);

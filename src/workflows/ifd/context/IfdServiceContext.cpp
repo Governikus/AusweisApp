@@ -104,9 +104,9 @@ bool IfdServiceContext::isCanAllowedMode() const
 }
 
 
-void IfdServiceContext::cancelPasswordRequest()
+void IfdServiceContext::userError(StatusCode pStatusCode)
 {
-	Q_EMIT fireCancelPasswordRequest();
+	Q_EMIT fireUserError(pStatusCode);
 }
 
 

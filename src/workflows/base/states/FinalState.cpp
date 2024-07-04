@@ -21,7 +21,7 @@ void FinalState::run()
 	addTransition(this, &AbstractState::fireAbort, sStopMachine);
 
 	// Clear plugin types and disconnect all readers when the workflow has completed.
-	getContext()->setReaderPlugInTypes({});
+	getContext()->setReaderPluginTypes({});
 
 	Q_EMIT fireContinue();
 }

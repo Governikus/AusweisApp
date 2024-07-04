@@ -1,6 +1,0 @@
-module CheckResultView
-
-CheckResultSuggestionView 1.0 CheckResultSuggestionView.qml
-CheckResultView 1.0 CheckResultView.qml
-ResultEntry 1.0 ResultEntry.qml
-SuggestionData 1.0 SuggestionData.qml

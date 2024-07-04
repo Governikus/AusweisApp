@@ -4,6 +4,8 @@
 
 #include "WorkflowRequest.h"
 
+#include "Initializer.h"
+
 using namespace governikus;
 
 INIT_FUNCTION([] {

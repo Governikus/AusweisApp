@@ -8,19 +8,21 @@
 
 #pragma once
 
+#include "Env.h"
+#include "SingletonCreator.h"
+#include "context/AccessRightManager.h"
+#include "context/WorkflowContext.h"
+
 #include <QAbstractListModel>
 #include <QList>
 #include <QSet>
 #include <QSharedPointer>
 #include <QSortFilterProxyModel>
-
-#include "Env.h"
-#include "context/AccessRightManager.h"
-#include "context/WorkflowContext.h"
+#include <QtQml/qqmlregistration.h>
 
 
 class test_ChatModel;
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -30,11 +32,15 @@ struct cvcertificate_st;
 
 class ChatModel
 	: public QAbstractListModel
+	, public SingletonCreator<ChatModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 	friend class ::test_ChatModel;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(QSortFilterProxyModel * optional READ getFilterOptionalModel CONSTANT)
 	Q_PROPERTY(QSortFilterProxyModel * required READ getFilterRequiredModel CONSTANT)

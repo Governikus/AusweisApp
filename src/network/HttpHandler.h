@@ -7,7 +7,9 @@
 #include "EnumHelper.h"
 #include "HttpRequest.h"
 
-class test_UIPlugInWebService;
+#include <QCoreApplication>
+
+class test_UiPluginWebService;
 
 namespace governikus
 {
@@ -20,7 +22,7 @@ defineEnumType(StatusFormat,
 class HttpHandler
 {
 	Q_DECLARE_TR_FUNCTIONS(governikus::HttpHandler)
-	friend class ::test_UIPlugInWebService;
+	friend class ::test_UiPluginWebService;
 
 	private:
 		[[nodiscard]] QByteArray guessImageContentType(const QString& pFileName) const;

@@ -1,0 +1,49 @@
+From 414c483866eeeebcc6b1718b082d7b8dc6b61cab Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Mon, 24 Jun 2024 12:29:28 +0200
+Subject: iOS: Always insert created a11y elements to the cache
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+By having all known a11y elements in the cache, the iOS Screen Reader will
+stay up-to-date with the UI elements that are currently present.
+Do ensure this behavior, the ctor is made private.
+
+Fixes: QTBUG-126622
+Pick-to: 6.8 6.7
+Change-Id: I23452ffd60128889a49e5844a6fc17d45683cee5
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(cherry picked from 9a6c32bed15ed3aa13ff82e15ac6834d6e7bdc3b)
+---
+ src/plugins/platforms/ios/quiaccessibilityelement.h | 1 -
+ src/plugins/platforms/ios/quiview_accessibility.mm  | 3 +--
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.h y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.h
+index 858032543640dd38abc707c2332719c9bc6fb8db..fa96ccbcf9f752123060855c7915019e5a1ed249 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.h
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.h
+@@ -13,7 +13,6 @@
+ 
+ @property (readonly) QAccessible::Id axid;
+ 
+-- (instancetype)initWithId:(QAccessible::Id)anId withAccessibilityContainer:(id)view;
+ + (instancetype)elementWithId:(QAccessible::Id)anId;
+ 
+ @end
+diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+index 8494ee893680a544d91138a3c9bad14bdcca388e..5a41faaf31032ae08703a239474fd8df2cd2d0eb 100644
+--- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
++++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
+@@ -13,9 +13,8 @@
+     if (!iface || iface->state().invisible || (iface->text(QAccessible::Name).isEmpty() && iface->text(QAccessible::Value).isEmpty() && iface->text(QAccessible::Description).isEmpty()))
+         return;
+     QAccessible::Id accessibleId = QAccessible::uniqueId(iface);
+-    UIAccessibilityElement *elem = [[QT_MANGLE_NAMESPACE(QMacAccessibilityElement) alloc] initWithId:accessibleId withAccessibilityContainer:self];
++    UIAccessibilityElement *elem = [QT_MANGLE_NAMESPACE(QMacAccessibilityElement) elementWithId:accessibleId];
+     [m_accessibleElements addObject:elem];
+-    [elem release];
+ }
+ 
+ - (void)createAccessibleContainer:(QAccessibleInterface *)iface

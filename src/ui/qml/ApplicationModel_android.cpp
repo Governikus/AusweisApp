@@ -11,6 +11,7 @@
 
 using namespace governikus;
 
+Q_DECLARE_LOGGING_CATEGORY(feedback)
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
 static void showSystemSettings(const QString& pAction)
@@ -43,7 +44,7 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) c
 
 	switch (pAction)
 	{
-		case Settings::SETTING_WIFI:
+		case Settings::WIFI:
 			if (QOperatingSystemVersion::current() >= androidQ)
 			{
 				showSystemSettings(QStringLiteral("android.settings.panel.action.WIFI"));
@@ -54,7 +55,7 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) c
 			}
 			break;
 
-		case Settings::SETTING_NETWORK:
+		case Settings::NETWORK:
 			if (QOperatingSystemVersion::current() >= androidQ)
 			{
 				showSystemSettings(QStringLiteral("android.settings.panel.action.INTERNET_CONNECTIVITY"));
@@ -65,7 +66,7 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) c
 			}
 			break;
 
-		case Settings::SETTING_NFC:
+		case Settings::NFC:
 			if (QOperatingSystemVersion::current() >= androidQ)
 			{
 				showSystemSettings(QStringLiteral("android.settings.panel.action.NFC"));
@@ -77,8 +78,70 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) c
 
 			break;
 
-		case Settings::SETTING_APP:
+		case Settings::APP:
 			qCWarning(qml) << "NOT IMPLEMENTED:" << pAction;
 			break;
 	}
+}
+
+
+bool ApplicationModel::isScreenReaderRunning() const
+{
+	QJniObject context = QNativeInterface::QAndroidApplication::context();
+	const jboolean result = context.callMethod<jboolean>("isScreenReaderRunning", "()Z");
+	return result != JNI_FALSE;
+}
+
+
+void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisting)
+{
+	qCInfo(feedback).noquote() << pMessage;
+
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage, pReplaceExisting](){
+			QJniEnvironment env;
+			static thread_local QJniObject toast;
+
+			if (toast.isValid() && pReplaceExisting)
+			{
+				toast.callMethod<void>("cancel");
+			}
+
+			QJniObject context = QNativeInterface::QAndroidApplication::context();
+			const QJniObject& jMessage = QJniObject::fromString(pMessage);
+			toast = QJniObject::callStaticObjectMethod(
+					"android/widget/Toast",
+					"makeText",
+					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
+					context.object(),
+					jMessage.object(),
+					jint(1));
+			toast.callMethod<void>("show");
+
+			if (env->ExceptionCheck())
+			{
+				qCCritical(qml) << "Suppressing an unexpected exception.";
+				env->ExceptionDescribe();
+				env->ExceptionClear();
+				// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+				// since it is used to display information to the user as required by the TR.
+				Q_ASSERT(false);
+			}
+		});
+}
+
+
+void ApplicationModel::keepScreenOn(bool pActive) const
+{
+	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pActive](){
+			QJniObject context = QNativeInterface::QAndroidApplication::context();
+			context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
+			QJniEnvironment env;
+			if (env->ExceptionCheck())
+			{
+				qCCritical(qml) << "Exception calling java native function.";
+				env->ExceptionDescribe();
+				env->ExceptionClear();
+			}
+		});
+
 }

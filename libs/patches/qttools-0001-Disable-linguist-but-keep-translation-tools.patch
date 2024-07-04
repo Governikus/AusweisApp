@@ -1,4 +1,4 @@
-From e00687d94bec135898675ffd87f1037c9234b0c4 Mon Sep 17 00:00:00 2001
+From 7e1f300a48a23abc1136fb03e3886a87fd4fe1bb Mon Sep 17 00:00:00 2001
 From: Jan Moeller <jan.moeller@governikus.de>
 Date: Mon, 14 Feb 2022 13:46:46 +0100
 Subject: Disable linguist but keep translation tools
@@ -9,7 +9,7 @@ Change-Id: I1c54eb0e7bb86ec0861b54b5abe753c86bb57dd9
  1 file changed, 3 deletions(-)
 
 diff --git x/qttools/src/linguist/CMakeLists.txt y/qttools/src/linguist/CMakeLists.txt
-index d85254b32ea501178fd6e948cf11e28bcdfef121..dfcfe727128412dd2291f010fc161e9b15bf1728 100644
+index ab2169dec545393074e926cd084981527b071651..63b0d1df32a854e039113d539fb8272ee788f1af 100644
 --- x/qttools/src/linguist/CMakeLists.txt
 +++ y/qttools/src/linguist/CMakeLists.txt
 @@ -14,9 +14,6 @@ add_subdirectory(lrelease)
@@ -21,4 +21,4 @@ index d85254b32ea501178fd6e948cf11e28bcdfef121..dfcfe727128412dd2291f010fc161e9b
 -endif()
  
  # Create a fake module that would emulate the Qt5::LinguistTools CMake Config package
- qt_internal_add_module(Linguist NO_MODULE_HEADERS HEADER_MODULE)
+ qt_internal_add_module(Linguist

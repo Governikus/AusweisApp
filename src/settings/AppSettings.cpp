@@ -7,11 +7,13 @@
 
 using namespace governikus;
 
+
 AppSettings::AppSettings()
 	: QObject()
 	, mGeneralSettings()
 	, mPreVerificationSettings()
 	, mRemoteReaderSettings()
+	, mSimulatorSettings()
 {
 }
 
@@ -31,4 +33,10 @@ PreVerificationSettings& AppSettings::getPreVerificationSettings()
 RemoteServiceSettings& AppSettings::getRemoteServiceSettings()
 {
 	return mRemoteReaderSettings;
+}
+
+
+SimulatorSettings& AppSettings::getSimulatorSettings()
+{
+	return mSimulatorSettings;
 }

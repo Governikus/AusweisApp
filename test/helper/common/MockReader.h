@@ -25,12 +25,12 @@ class MockReader
 	QScopedPointer<MockCard> mCard;
 
 	public:
-		static ReaderManagerPlugInType cMOCKED_READERMANAGER_TYPE;
+		static ReaderManagerPluginType cMOCKED_READERMANAGER_TYPE;
 
 		static MockReader* createMockReader(const QList<TransmitConfig>& pTransmitConfig = QList<TransmitConfig>(), const QByteArray& pEfCardAccess = QByteArray());
 		static MockReader* createMockReader(const QList<TransmitConfig>& pTransmitConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess);
 
-		MockReader(const QString& pReaderName = QStringLiteral("MockReader"), ReaderManagerPlugInType pType = cMOCKED_READERMANAGER_TYPE);
+		MockReader(const QString& pReaderName = QStringLiteral("MockReader"), ReaderManagerPluginType pType = cMOCKED_READERMANAGER_TYPE);
 		~MockReader() override;
 
 
@@ -43,7 +43,7 @@ class MockReader
 		void removeCard();
 
 		MockCard* setCard(const MockCardConfig& pCardConfig, const QByteArray& pEfCardAccess, CardType pType = CardType::EID_CARD);
-		MockCard* setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess = QSharedPointer<EFCardAccess>(), CardType pType = CardType::EID_CARD);
+		MockCard* setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess = QSharedPointer<EFCardAccess>(), CardType pType = CardType::EID_CARD, const FileRef& pApplication = FileRef());
 
 		void setReaderInfo(const ReaderInfo& pReaderInfo);
 		void setInfoBasicReader(bool pBasicReader);

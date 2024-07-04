@@ -5,8 +5,8 @@
 #include "MsgHandlerPersonalization.h"
 
 #if __has_include("controller/PersonalizationController.h")
-	#include "UILoader.h"
-	#include "UIPlugInJson.h"
+	#include "UiLoader.h"
+	#include "UiPluginJson.h"
 	#include "controller/PersonalizationController.h"
 
 using namespace governikus;
@@ -39,7 +39,7 @@ MsgHandlerPersonalization::MsgHandlerPersonalization(const QJsonObject& pObj, Ms
 			setVoid();
 			return;
 		}
-		Q_ASSERT(mJsonObject[QLatin1String("error")].isString());
+		Q_ASSERT(isString(QLatin1String("error")));
 	}
 }
 
@@ -48,7 +48,7 @@ MsgHandlerPersonalization::MsgHandlerPersonalization(const QSharedPointer<Person
 	: MsgHandlerPersonalization()
 {
 	Q_ASSERT(pContext);
-	mJsonObject[QLatin1String("result")] = ECardApiResult(pContext->getStatus()).toJson();
+	setValue(QLatin1String("result"), ECardApiResult(pContext->getStatus()).toJson());
 }
 
 
@@ -66,7 +66,7 @@ QString MsgHandlerPersonalization::createUrl(const QString& pUrl)
 
 void MsgHandlerPersonalization::initPersonalization(const QString& pAppletServiceURL)
 {
-	auto* ui = Env::getSingleton<UILoader>()->getLoaded<UIPlugInJson>();
+	auto* ui = Env::getSingleton<UiLoader>()->getLoaded<UiPluginJson>();
 	Q_ASSERT(ui);
 	Q_EMIT ui->fireWorkflowRequested(PersonalizationController::createWorkflowRequest(pAppletServiceURL));
 }

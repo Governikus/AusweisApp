@@ -8,8 +8,13 @@
 #include "ASN1Util.h"
 #include "SecurityProtocol.h"
 
+#include <QLoggingCategory>
+
 
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 namespace governikus

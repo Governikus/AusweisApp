@@ -251,10 +251,9 @@ void BuildHelper::processInformationHeader(const std::function<void(const QStrin
 {
 	const auto& info = getInformationHeader();
 
-	for (const auto& entry : info)
+	for (const auto& [key, value] : info)
 	{
-		const auto& key = entry.first;
-		pFunc(pTranslate ? tr(key.data()) : QString(key), entry.second);
+		pFunc(pTranslate ? tr(key.data()) : QString(key), value);
 	}
 }
 

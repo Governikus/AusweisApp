@@ -31,17 +31,17 @@ void ElementDetector::detectStartElements(const QStringList& pStartElementNames)
 			qCWarning(paos) << "Error parsing PAOS message:" << mReader.errorString();
 			return;
 		}
-		else if (mReader.isStartElement())
+		else if (mReader.isStartElement() && !handleStartElements(pStartElementNames))
 		{
-			handleStartElements(pStartElementNames);
+			return;
 		}
 	}
 }
 
 
-void ElementDetector::handleStartElements(const QStringList& pStartElementNames)
+bool ElementDetector::handleStartElements(const QStringList& pStartElementNames)
 {
-	QString name = mReader.name().toString();
+	const QStringView name = mReader.name();
 	if (pStartElementNames.contains(name))
 	{
 		QXmlStreamAttributes attributes = mReader.attributes();
@@ -50,9 +50,9 @@ void ElementDetector::handleStartElements(const QStringList& pStartElementNames)
 		{
 			value = mReader.text().toString().simplified();
 		}
-		if (!handleFoundElement(name, value, attributes))
-		{
-			return;
-		}
+
+		return handleFoundElement(name, value, attributes);
 	}
+
+	return true;
 }

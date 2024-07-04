@@ -1,0 +1,41 @@
+AusweisApp 2.2.0
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 02. Juli 2024
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Anzeige des alten und neuen Gerätenamen bei der Nutzung von "Smartphone
+  als Kartenleser", falls sich der Name eines Geräts geändert hat.
+
+- Am Ende einer Authentisierung wurde ein Seite zur Information
+  eingefügt, bevor eine Weiterleitung zum Diensteanbieter erfolgt.
+
+- Erhöhung der zulässigen Zeit für die Antwort auf Kartenkommandos
+  auf Android um Ausweise zu unterstützen, die nach zu vielen falschen
+  Eingaben der CAN in einen sicheren langsamen Modus gewechselt haben.
+
+- Optimierung der Barrierearmut.
+
+- Unterstützung von Android 8 wurde eingestellt.
+
+- Die Funktion "Smartphone als Kartenleser" benötigt nun mindestens
+  die Version 2.1.0.
+
+- Supportunterstützung von ChromeOS.
+
+
+Entwickler
+""""""""""
+- Die Unterstützung von Schlüssellängen kleiner als 3000 Bit wurde eingestellt.
+
+- Erweiterung der Dokumentation für das SDK um ein Changelog.
+
+- Funktionserweiterung des SDKs (siehe Changelog).
+
+- Aktualisierung von Qt auf die Version 6.7.2.
+
+- Aktualisierung von OpenSSL auf die Version 3.3.1.

@@ -11,6 +11,7 @@
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/CVCertificate.h"
 
+#include "CertificateHelper.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
@@ -36,7 +37,7 @@ class test_SignatureChecker
 	static QSharedPointer<const CVCertificate> load(const QString& pName)
 	{
 		QByteArray bytes = TestFileHelper::readFile(pName);
-		return CVCertificate::fromHex(bytes);
+		return CertificateHelper::fromHex(bytes);
 	}
 
 	private Q_SLOTS:

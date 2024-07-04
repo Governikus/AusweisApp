@@ -24,7 +24,7 @@ INIT_FUNCTION([] {
 
 ReaderManagerWorker::ReaderManagerWorker()
 	: QObject()
-	, mPlugIns()
+	, mPlugins()
 {
 }
 
@@ -39,7 +39,7 @@ ReaderManagerWorker::~ReaderManagerWorker()
 void ReaderManagerWorker::shutdown()
 {
 	qCDebug(card) << "Shutdown ReaderManagerWorker";
-	for (auto& plugin : std::as_const(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugins))
 	{
 		plugin->stopScan();
 
@@ -50,7 +50,7 @@ void ReaderManagerWorker::shutdown()
 		// https://bugreports.qt.io/browse/QTBUG-17458
 		plugin->deleteLater();
 	}
-	mPlugIns.clear();
+	mPlugins.clear();
 }
 
 
@@ -67,29 +67,29 @@ void ReaderManagerWorker::onThreadStarted()
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	qCDebug(card) << "Thread started";
-	registerPlugIns();
+	registerPlugins();
 
 	Q_EMIT fireInitialized();
 }
 
 
-void ReaderManagerWorker::registerPlugIns()
+void ReaderManagerWorker::registerPlugins()
 {
 	qCDebug(card) << "Try to register plugins";
 	const auto& plugins = QPluginLoader::staticPlugins();
 	for (const auto& plugin : plugins)
 	{
-		if (isPlugIn(plugin.metaData()))
+		if (isPlugin(plugin.metaData()))
 		{
 			qCDebug(card) << "Register and initialize plugin:" << plugin.metaData();
-			ReaderManagerPlugIn* pluginInstance = qobject_cast<ReaderManagerPlugIn*>(plugin.instance());
+			ReaderManagerPlugin* pluginInstance = qobject_cast<ReaderManagerPlugin*>(plugin.instance());
 			if (pluginInstance == nullptr)
 			{
 				qCWarning(card) << "Cannot cast to plugin instance:" << plugin.instance();
 			}
 			else
 			{
-				registerPlugIn(pluginInstance);
+				registerPlugin(pluginInstance);
 				pluginInstance->init();
 
 				Q_EMIT firePluginAdded(pluginInstance->getInfo());
@@ -99,34 +99,34 @@ void ReaderManagerWorker::registerPlugIns()
 }
 
 
-bool ReaderManagerWorker::isPlugIn(const QJsonObject& pJson)
+bool ReaderManagerWorker::isPlugin(const QJsonObject& pJson)
 {
-	return pJson.value(QLatin1String("IID")).toString() == QLatin1String("governikus.ReaderManagerPlugIn");
+	return pJson.value(QLatin1String("IID")).toString() == QLatin1String("governikus.ReaderManagerPlugin");
 }
 
 
-void ReaderManagerWorker::registerPlugIn(ReaderManagerPlugIn* pPlugIn)
+void ReaderManagerWorker::registerPlugin(ReaderManagerPlugin* pPlugin)
 {
-	Q_ASSERT(pPlugIn != nullptr);
-	Q_ASSERT(!mPlugIns.contains(pPlugIn));
+	Q_ASSERT(pPlugin != nullptr);
+	Q_ASSERT(!mPlugins.contains(pPlugin));
 
-	mPlugIns << pPlugIn;
+	mPlugins << pPlugin;
 
-	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderAdded, this, &ReaderManagerWorker::fireReaderAdded);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderRemoved, this, &ReaderManagerWorker::onReaderRemoved);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireReaderPropertiesUpdated, this, &ReaderManagerWorker::fireReaderPropertiesUpdated);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireStatusChanged, this, &ReaderManagerWorker::fireStatusChanged);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireCardInserted, this, &ReaderManagerWorker::fireCardInserted);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireCardRemoved, this, &ReaderManagerWorker::fireCardRemoved);
-	connect(pPlugIn, &ReaderManagerPlugIn::fireCardInfoChanged, this, &ReaderManagerWorker::fireCardInfoChanged);
+	connect(pPlugin, &ReaderManagerPlugin::fireReaderAdded, this, &ReaderManagerWorker::fireReaderAdded);
+	connect(pPlugin, &ReaderManagerPlugin::fireReaderRemoved, this, &ReaderManagerWorker::onReaderRemoved);
+	connect(pPlugin, &ReaderManagerPlugin::fireReaderPropertiesUpdated, this, &ReaderManagerWorker::fireReaderPropertiesUpdated);
+	connect(pPlugin, &ReaderManagerPlugin::fireStatusChanged, this, &ReaderManagerWorker::fireStatusChanged);
+	connect(pPlugin, &ReaderManagerPlugin::fireCardInserted, this, &ReaderManagerWorker::fireCardInserted);
+	connect(pPlugin, &ReaderManagerPlugin::fireCardRemoved, this, &ReaderManagerWorker::fireCardRemoved);
+	connect(pPlugin, &ReaderManagerPlugin::fireCardInfoChanged, this, &ReaderManagerWorker::fireCardInfoChanged);
 }
 
 
-void ReaderManagerWorker::callOnPlugIn(ReaderManagerPlugInType pType, const std::function<void(ReaderManagerPlugIn*)>& pFunc, const char* pLog)
+void ReaderManagerWorker::callOnPlugin(ReaderManagerPluginType pType, const std::function<void(ReaderManagerPlugin*)>& pFunc, const char* pLog)
 {
-	for (auto& plugin : std::as_const(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugins))
 	{
-		if (plugin->getInfo().getPlugInType() == pType)
+		if (plugin->getInfo().getPluginType() == pType)
 		{
 			qCDebug(card).nospace() << pLog << ": " << plugin->metaObject()->className();
 			pFunc(plugin);
@@ -135,12 +135,12 @@ void ReaderManagerWorker::callOnPlugIn(ReaderManagerPlugInType pType, const std:
 }
 
 
-void ReaderManagerWorker::reset(ReaderManagerPlugInType pType)
+void ReaderManagerWorker::reset(ReaderManagerPluginType pType)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	callOnPlugIn(pType, [](ReaderManagerPlugIn* pPlugIn){
-			pPlugIn->reset();
+	callOnPlugin(pType, [](ReaderManagerPlugin* pPlugin){
+			pPlugin->reset();
 		}, "Reset plugin");
 }
 
@@ -149,8 +149,8 @@ void ReaderManagerWorker::insert(const ReaderInfo& pReaderInfo, const QVariant& 
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	callOnPlugIn(pReaderInfo.getPlugInType(), [pReaderInfo, pData](ReaderManagerPlugIn* pPlugIn){
-			pPlugIn->insert(pReaderInfo.getName(), pData);
+	callOnPlugin(pReaderInfo.getPluginType(), [pReaderInfo, pData](ReaderManagerPlugin* pPlugin){
+			pPlugin->insert(pReaderInfo.getName(), pData);
 		}, "Insert");
 }
 
@@ -159,36 +159,37 @@ void ReaderManagerWorker::shelve()
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	for (const auto& plugIn : std::as_const(mPlugIns))
+	for (const auto& plugin : std::as_const(mPlugins))
 	{
-		callOnPlugIn(plugIn->getInfo().getPlugInType(), [](ReaderManagerPlugIn* pPlugIn){
-				pPlugIn->shelve();
+		callOnPlugin(plugin->getInfo().getPluginType(), [](ReaderManagerPlugin* pPlugin){
+				pPlugin->shelve();
 			}, "Shelve");
 	}
 }
 
 
-void ReaderManagerWorker::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
+void ReaderManagerWorker::startScan(ReaderManagerPluginType pType, bool pAutoConnect)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	callOnPlugIn(pType, [pAutoConnect](ReaderManagerPlugIn* pPlugIn){
-			if (!pPlugIn->getInfo().isScanRunning())
+	callOnPlugin(pType, [pAutoConnect](ReaderManagerPlugin* pPlugin){
+			if (!pPlugin->getInfo().isScanRunning())
 			{
-				pPlugIn->startScan(pAutoConnect);
+				pPlugin->startScan(pAutoConnect);
 			}
 		}, "Start scan on plugin");
 }
 
 
-void ReaderManagerWorker::stopScan(ReaderManagerPlugInType pType, const QString& pError)
+void ReaderManagerWorker::stopScan(ReaderManagerPluginType pType, const QString& pError)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	callOnPlugIn(pType, [pError](ReaderManagerPlugIn* pPlugIn){
-			if (pPlugIn->getInfo().isScanRunning())
+	callOnPlugin(pType, [pError](ReaderManagerPlugin* pPlugin){
+			if (pPlugin->getInfo().isScanRunning())
 			{
-				pPlugIn->stopScan(pError);
+				pPlugin->stopScan(pError);
+				pPlugin->setInitialScanState(ReaderManagerPluginInfo::InitialScan::UNKNOWN);
 			}
 		}, "Stop scan on plugin");
 }
@@ -199,9 +200,9 @@ QList<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	QList<ReaderInfo> list;
-	for (const auto& plugIn : std::as_const(mPlugIns))
+	for (const auto& plugin : std::as_const(mPlugins))
 	{
-		const auto& readerList = plugIn->getReaders();
+		const auto& readerList = plugin->getReaders();
 		for (const Reader* const reader : readerList)
 		{
 			list += reader->getReaderInfo();
@@ -229,7 +230,7 @@ Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
-	for (auto& plugin : std::as_const(mPlugIns))
+	for (auto& plugin : std::as_const(mPlugins))
 	{
 		const auto& readerList = plugin->getReaders();
 		for (Reader* reader : readerList)
@@ -246,7 +247,7 @@ Reader* ReaderManagerWorker::getReader(const QString& pReaderName) const
 }
 
 
-void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
+void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker)
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
@@ -254,6 +255,10 @@ void ReaderManagerWorker::createCardConnectionWorker(const QString& pReaderName)
 	if (auto reader = getReader(pReaderName))
 	{
 		worker = reader->createCardConnectionWorker();
+		if (pInitWorker)
+		{
+			worker = pInitWorker(worker);
+		}
 	}
 	Q_EMIT fireCardConnectionWorkerCreated(worker);
 }

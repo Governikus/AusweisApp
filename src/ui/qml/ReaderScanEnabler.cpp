@@ -18,7 +18,7 @@ using namespace governikus;
 
 ReaderScanEnabler::ReaderScanEnabler(QQuickItem* pParent)
 	: QQuickItem(pParent)
-	, mPlugInType(ReaderManagerPlugInType::UNKNOWN)
+	, mPluginType(ReaderManagerPluginType::UNKNOWN)
 	, mObligedToStopScan(false)
 {
 	connect(Env::getSingleton<ReaderManager>(), &ReaderManager::fireStatusChanged, this, &ReaderScanEnabler::onStatusChanged);
@@ -37,18 +37,18 @@ void ReaderScanEnabler::enableScan(const bool pEnable)
 	{
 		if (!isScanRunning())
 		{
-			qCDebug(qml) << "Starting scan on" << mPlugInType;
-			mObligedToStopScan = Env::getSingleton<ApplicationModel>()->getCurrentWorkflow() == ApplicationModel::Workflow::WORKFLOW_NONE;
-			Env::getSingleton<ReaderManager>()->startScan(mPlugInType, false);
+			qCDebug(qml) << "Starting scan on" << mPluginType;
+			mObligedToStopScan = Env::getSingleton<ApplicationModel>()->getCurrentWorkflow() == ApplicationModel::Workflow::NONE;
+			Env::getSingleton<ReaderManager>()->startScan(mPluginType, false);
 		}
 		return;
 	}
 
 	if (mObligedToStopScan)
 	{
-		qCDebug(qml) << "Stopping scan on" << mPlugInType;
+		qCDebug(qml) << "Stopping scan on" << mPluginType;
 		mObligedToStopScan = false;
-		Env::getSingleton<ReaderManager>()->stopScan(mPlugInType);
+		Env::getSingleton<ReaderManager>()->stopScan(mPluginType);
 	}
 }
 
@@ -61,37 +61,37 @@ void ReaderScanEnabler::enableScanIfVisible()
 
 bool ReaderScanEnabler::isScanRunning() const
 {
-	return Env::getSingleton<ReaderManager>()->getPlugInInfo(mPlugInType).isScanRunning();
+	return Env::getSingleton<ReaderManager>()->getPluginInfo(mPluginType).isScanRunning();
 }
 
 
-void ReaderScanEnabler::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+void ReaderScanEnabler::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
-	if (pInfo.getPlugInType() == mPlugInType)
+	if (pInfo.getPluginType() == mPluginType)
 	{
 		Q_EMIT fireScanRunningChanged();
 	}
 }
 
 
-ReaderManagerPlugInType ReaderScanEnabler::getPlugInType() const
+ReaderManagerPluginType ReaderScanEnabler::getPluginType() const
 {
-	return mPlugInType;
+	return mPluginType;
 }
 
 
-void ReaderScanEnabler::setPlugInType(ReaderManagerPlugInType pPlugInType)
+void ReaderScanEnabler::setPluginType(ReaderManagerPluginType pPluginType)
 {
-	if (mPlugInType == pPlugInType)
+	if (mPluginType == pPluginType)
 	{
 		return;
 	}
 
 	enableScan(false);
-	mPlugInType = pPlugInType;
+	mPluginType = pPluginType;
 	QMetaObject::invokeMethod(this, &ReaderScanEnabler::enableScanIfVisible, Qt::QueuedConnection);
 
-	Q_EMIT firePlugInTypeChanged();
+	Q_EMIT firePluginTypeChanged();
 	Q_EMIT fireScanRunningChanged();
 }
 

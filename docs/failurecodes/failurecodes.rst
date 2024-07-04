@@ -231,6 +231,11 @@ Codes
       a new PIN at the citizens' office (Bürgeramt) or let it be set with the CAN at
       https://www.pin-ruecksetzbrief-bestellen.de.
 
+  - | **Establish_Pace_Channel_Unknown_Password_Id**
+    | The establishment of a PACE channel was finished. However, an unsupported
+      password type was used (PIN, CAN, PUK are supported).
+    | **Possible Solutions:** :ref:`failure_code_contact_support`.
+
   - | **Establish_Pace_Channel_User_Cancelled**
     | The user canceled the workflow on a comfort USB reader or a smartphone as a card reader
       with keyboard mode enabled.
@@ -482,6 +487,11 @@ Codes
   - | **Change_Pin_Card_User_Cancelled**
     | Like Change_Pin_User_Cancelled but at a higher log level.
     | **Possible Solutions:** Carry out the PIN change without abortion.
+
+  - | **Change_Pin_Unrecoverable**
+    | The change PIN workflow encountered an error, which prevents the continuation of the workflow.
+      This often indicates a problem with the card connection.
+    | **Possible Solutions:** :ref:`failure_code_card_position`.
 
   - | **Start_Ifd_Service_Failed**
     | The IFD service according to TR-03112-6 appendix "IFD Service" could not be started. Either no

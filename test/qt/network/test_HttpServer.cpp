@@ -244,7 +244,7 @@ class test_HttpServer
 		void addressInUseError()
 		{
 			QTcpServer existingServer;
-			existingServer.listen(QHostAddress::LocalHost, 0);
+			QVERIFY(existingServer.listen(QHostAddress::LocalHost, 0));
 
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			HttpServer server(existingServer.serverPort());

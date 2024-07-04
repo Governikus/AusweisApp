@@ -1,0 +1,43 @@
+From 550be844ea2eae755ff693681c18c3394b2f8ad1 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 19 Jan 2021 17:07:51 +0100
+Subject: android shlib_variant
+
+---
+ Configurations/15-android.conf | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git x/Configurations/15-android.conf y/Configurations/15-android.conf
+index 1de6b7a91571d7ec22f8549effc5867819663164..3aa2fcdf15ab6b41cdbdceca0778fbdce9c7de6b 100644
+--- x/Configurations/15-android.conf
++++ y/Configurations/15-android.conf
+@@ -226,12 +226,14 @@ my %targets = (
+         bn_ops           => add("RC4_CHAR"),
+         asm_arch         => 'armv4',
+         perlasm_scheme   => "void",
++        shlib_variant    => '_armeabi-v7a',
+     },
+     "android-arm64" => {
+         inherit_from     => [ "android" ],
+         bn_ops           => add("RC4_CHAR"),
+         asm_arch         => 'aarch64',
+         perlasm_scheme   => "linux64",
++        shlib_variant    => '_arm64-v8a',
+     },
+ 
+     "android-mips" => {
+@@ -263,12 +265,14 @@ my %targets = (
+         asm_arch         => 'x86',
+         perlasm_scheme   => "android",
+         ex_libs          => add(threads("-latomic")),
++        shlib_variant    => '_x86',
+     },
+     "android-x86_64" => {
+         inherit_from     => [ "android" ],
+         bn_ops           => add("RC4_INT"),
+         asm_arch         => 'x86_64',
+         perlasm_scheme   => "elf",
++        shlib_variant    => '_x86_64',
+     },
+ 
+     "android-riscv64" => {

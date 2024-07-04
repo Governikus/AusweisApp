@@ -28,6 +28,21 @@ QSharedPointer<EC_GROUP> EcUtil::createCurve(int pNid)
 }
 
 
+QByteArray EcUtil::compressPoint(const QByteArray& pPoint)
+{
+	if (pPoint.size() % 2 == 0 || pPoint.at(0) != 0x04)
+	{
+		qCCritical(card) << "Unable to apply compression on point:" << pPoint.toHex();
+		return pPoint;
+	}
+
+	// Compression as defined in TR 03110-3 A.2.2.3 without a leading
+	// byte in front of the x coordinate indicating the compression type,
+	// i.e. not the typical SECG SEC1 v1.0 format used by OpenSSL.
+	return pPoint.mid(1, (pPoint.size() - 1) / 2);
+}
+
+
 QByteArray EcUtil::point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint, bool pCompressed)
 {
 	if (pCurve.isNull() || pPoint == nullptr)

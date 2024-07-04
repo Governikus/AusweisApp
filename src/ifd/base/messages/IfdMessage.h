@@ -34,6 +34,8 @@ defineEnumType(IfdMessageType,
 		IFDTransmitResponse,
 		IFDEstablishPACEChannel,
 		IFDEstablishPACEChannelResponse,
+		IFDDestroyPACEChannel,
+		IFDDestroyPACEChannelResponse,
 		IFDModifyPIN,
 		IFDModifyPINResponse,
 		UNDEFINED)
@@ -50,6 +52,7 @@ class IfdMessage
 		[[nodiscard]] virtual QJsonObject createMessageBody(const QString& pContextHandle) const;
 		static QByteArray toByteArray(const QJsonObject& pJsonObject);
 
+		void ensureType(IfdMessageType pType);
 		void markIncomplete(const QString& pLogMessage);
 		void missingValue(const QLatin1String& pName);
 		void invalidType(const QLatin1String& pName, const QLatin1String& pExpectedType);

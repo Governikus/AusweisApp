@@ -23,7 +23,7 @@ class StateEnterNewPacePinIfd
 		void run() override;
 
 	private Q_SLOTS:
-		void onCancelChangePin();
+		void onUserError(StatusCode pStatusCode);
 
 	public:
 		void onEntry(QEvent* pEvent) override;

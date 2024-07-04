@@ -10,6 +10,7 @@
 #include <QLoggingCategory>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -136,7 +137,7 @@ void ASN1Struct::append(DATA_TAG pTag, int pValue)
 
 void ASN1Struct::append(DATA_TAG pTag, const Oid& pOid)
 {
-	append(pTag, pOid.getData());
+	append(pTag, QByteArray(pOid));
 }
 
 
@@ -186,4 +187,46 @@ int ASN1Struct::getObjectCount() const
 }
 
 
+void ASN1Struct::print(QDebug pDbg, int pLevel) const
+{
+	static const QMap<int, QString> classNames({
+				{0x00, "UNIVERSAL"_L1},
+				{0x40, "APPLICATION"_L1},
+				{0x80, "CONTEXT_SPECIFIC"_L1},
+				{0xc0, "PRIVATE"_L1}
+			});
+
+	pDbg << '\n' << QString(4 * pLevel, ' '_L1) << '[' << classNames.value(mClass, "UNKNOWN"_L1) << ' ' << mTag << ']';
+	if (!mSimpleData.isNull())
+	{
+		pDbg << ' ' << mSimpleData.toHex();
+		return;
+	}
+
+	for (const auto& child : std::as_const(mComplexData))
+	{
+		child.print(pDbg, pLevel + 1);
+	}
+}
+
+
 #endif
+
+
+namespace governikus
+{
+
+QDebug operator<<(QDebug pDbg, const ASN1Struct& pASN1Struct)
+{
+	QDebugStateSaver saver(pDbg);
+#ifndef QT_NO_DEBUG
+	pDbg.noquote().nospace() << "ASN1Struct:";
+	pASN1Struct.print(pDbg, 0);
+#else
+	pDbg.noquote() << QByteArray(pASN1Struct).toHex();
+#endif
+	return pDbg;
+}
+
+
+} // namespace governikus

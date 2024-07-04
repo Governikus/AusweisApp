@@ -74,6 +74,8 @@ class CardConnectionWorker
 
 		void setPukInoperative();
 
+		[[nodiscard]] bool selectApplicationRoot(const FileRef& pApplication);
+
 		virtual CardReturnCode updateRetryCounter();
 
 		virtual CardReturnCode readFile(const FileRef& pFileRef, QByteArray& pFileContent, int pLe = CommandApdu::SHORT_MAX_LE);

@@ -29,8 +29,6 @@ class EcdhKeyAgreement
 		CardReturnCode determineEphemeralDomainParameters(const QByteArray& pNonce);
 		CardResult performKeyExchange();
 
-		static QByteArray encodeUncompressedPublicKey(const QSharedPointer<const PaceInfo>& pPaceInfo, const QSharedPointer<const EC_GROUP>& pCurve, const QSharedPointer<const EC_POINT>& pPoint);
-
 		KeyAgreement::CardResult determineSharedSecret(const QByteArray& pNonce) override;
 		QByteArray getUncompressedTerminalPublicKey() override;
 		QByteArray getUncompressedCardPublicKey() override;
@@ -43,6 +41,8 @@ class EcdhKeyAgreement
 	public:
 		static QSharedPointer<EcdhKeyAgreement> create(const QSharedPointer<const PaceInfo>& pPaceInfo,
 				const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker);
+
+		static QByteArray encodeUncompressedPublicKey(const Oid& pOid, const QByteArray& pKey);
 };
 
 } // namespace governikus

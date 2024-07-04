@@ -2,18 +2,18 @@
  * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Implementation of Simulator.
- */
-
 #pragma once
 
 #include "Card.h"
 #include "SimulatorFileSystem.h"
 #include "asn1/AuthenticatedAuxiliaryData.h"
+#include "asn1/Chat.h"
+#include "asn1/Oid.h"
 #include "pace/SecureMessaging.h"
 
 #include <memory>
+#include <openssl/ec.h>
+
 
 namespace governikus
 {
@@ -27,11 +27,20 @@ class SimulatorCard
 	private:
 		bool mConnected;
 		SimulatorFileSystem mFileSystem;
-		QSharedPointer<AuthenticatedAuxiliaryData> mAuxiliaryData;
 		std::unique_ptr<SecureMessaging> mSecureMessaging;
 		std::unique_ptr<SecureMessaging> mNewSecureMessaging;
-		int mCaKeyId;
-		int mRiKeyId;
+		Oid mSelectedProtocol;
+		int mChainingStep;
+		int mPaceKeyId;
+		QSharedPointer<CHAT> mPaceChat;
+		QByteArray mPaceNonce;
+		QByteArray mPaceTerminalKey;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		QSharedPointer<EVP_PKEY> mCardKey;
+#else
+		QSharedPointer<EC_KEY> mCardKey;
+#endif
+		QSharedPointer<AuthenticatedAuxiliaryData> mTaAuxData;
 
 	public:
 		explicit SimulatorCard(const SimulatorFileSystem& pFileSystem);
@@ -52,8 +61,8 @@ class SimulatorCard
 		ResponseApduResult executeFileCommand(const CommandApdu& pCmd);
 		ResponseApduResult executeMseSetAt(const CommandApdu& pCmd);
 		ResponseApduResult executeGeneralAuthenticate(const CommandApdu& pCmd);
-		QByteArray brainpoolP256r1Multiplication(const QByteArray& pPoint, const QByteArray& pScalar) const;
-		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce);
+		QByteArray ecMultiplication(const QByteArray& pPoint) const;
+		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce = QByteArray());
 		QByteArray generateRestrictedId(const QByteArray& pPublicKey) const;
 		StatusCode verifyAuxiliaryData(const QByteArray& pASN1Struct);
 };

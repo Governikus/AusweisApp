@@ -20,5 +20,6 @@ j.with
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive')
 		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
 		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
+		shell('ctest --test-dir build --output-on-failure -C MinSizeRel')
 	}
 }

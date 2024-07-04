@@ -1,6 +1,0 @@
-module Navigation
-
-internal NavigationItem NavigationItem.qml
-internal NavigationView NavigationView.qml
-
-Navigation 1.0 Navigation.qml

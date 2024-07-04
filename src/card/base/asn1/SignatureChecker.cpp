@@ -72,7 +72,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 	}
 
 	const QSharedPointer<EVP_PKEY_CTX> ctx = EcUtil::create(EVP_PKEY_CTX_new(signingKey.data(), nullptr));
-	if (!EVP_PKEY_verify_init(ctx.data()))
+	if (EVP_PKEY_verify_init(ctx.data()) <= 0)
 	{
 		qCCritical(card) << "Cannot init verify ctx";
 		return false;
@@ -86,7 +86,7 @@ bool SignatureChecker::checkSignature(const QSharedPointer<const CVCertificate>&
 			reinterpret_cast<const uchar*>(hash.data()),
 			static_cast<size_t>(hash.size()));
 
-	if (result == -1)
+	if (result != 1 && result != 0)
 	{
 		qCCritical(card) << "Signature verification failed, an error occurred:" << getOpenSslError();
 	}

@@ -42,13 +42,13 @@ MsgHandlerInsertCard::MsgHandlerInsertCard(const QJsonObject& pObj, MsgContext& 
 
 	if (value.isUndefined())
 	{
-		setError(QStringLiteral("Name cannot be undefined"));
+		setError(QLatin1String("Name cannot be undefined"));
 		return;
 	}
 
 	if (!value.isString())
 	{
-		setError(QStringLiteral("Invalid name"));
+		setError(QLatin1String("Invalid name"));
 		return;
 	}
 
@@ -56,23 +56,23 @@ MsgHandlerInsertCard::MsgHandlerInsertCard(const QJsonObject& pObj, MsgContext& 
 	const auto& readerInfo = Env::getSingleton<ReaderManager>()->getReaderInfo(value.toString());
 	if (!readerInfo.isValid())
 	{
-		setError(QStringLiteral("Unknown reader name"));
+		setError(QLatin1String("Unknown reader name"));
 		return;
 	}
 
 	if (!readerInfo.isInsertable())
 	{
-		setError(QStringLiteral("Card is not insertable"));
+		setError(QLatin1String("Card is not insertable"));
 		return;
 	}
 
 	QVariant data;
-	if (readerInfo.getPlugInType() == ReaderManagerPlugInType::SIMULATOR)
+	if (readerInfo.getPluginType() == ReaderManagerPluginType::SIMULATOR)
 	{
 		const auto& filesValue = pObj[QLatin1String("simulator")];
 		if (!filesValue.isUndefined() && !filesValue.isObject())
 		{
-			setError(QStringLiteral("Parameter 'simulator' is invalid"));
+			setError(QLatin1String("Parameter 'simulator' is invalid"));
 			return;
 		}
 		data = filesValue.toObject();
@@ -83,7 +83,7 @@ MsgHandlerInsertCard::MsgHandlerInsertCard(const QJsonObject& pObj, MsgContext& 
 }
 
 
-void MsgHandlerInsertCard::setError(const QString& pError)
+void MsgHandlerInsertCard::setError(const QLatin1String pError)
 {
-	setValue("error", pError);
+	setValue(QLatin1String("error"), pError);
 }

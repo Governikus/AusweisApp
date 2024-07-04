@@ -34,10 +34,7 @@ IfdError::IfdError(const QJsonObject& pMessageObject)
 {
 	mSlotHandle = getStringValue(pMessageObject, SLOT_HANDLE());
 
-	if (getType() != IfdMessageType::IFDError)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDError"));
-	}
+	ensureType(IfdMessageType::IFDError);
 }
 
 

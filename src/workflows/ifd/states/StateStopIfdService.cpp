@@ -33,7 +33,7 @@ void StateStopIfdService::onExit(QEvent* pEvent)
 	server->stop();
 
 	stopNfcScanIfNecessary();
-	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::SMART);
+	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::SMART);
 
 	AbstractState::onExit(pEvent);
 }

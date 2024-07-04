@@ -19,11 +19,11 @@ CompositeStatePrepareApplet::CompositeStatePrepareApplet(const QSharedPointer<Wo
 	: QState()
 	, mContext(pContext)
 {
-	auto sCheckApplet = StateBuilder::createState<StateCheckApplet>(mContext);
-	auto sInstallApplet = StateBuilder::createState<StateInstallApplet>(mContext);
-	auto sDeletePersonalization = StateBuilder::createState<StateDeletePersonalization>(mContext);
-	auto sDeleteApplet = StateBuilder::createState<StateDeleteApplet>(mContext);
-	auto sUpdateSupportInfo = StateBuilder::createState<StateUpdateSupportInfo>(mContext);
+	auto* sCheckApplet = StateBuilder::createState<StateCheckApplet>(mContext);
+	auto* sInstallApplet = StateBuilder::createState<StateInstallApplet>(mContext);
+	auto* sDeletePersonalization = StateBuilder::createState<StateDeletePersonalization>(mContext);
+	auto* sDeleteApplet = StateBuilder::createState<StateDeleteApplet>(mContext);
+	auto* sUpdateSupportInfo = StateBuilder::createState<StateUpdateSupportInfo>(mContext);
 
 	sCheckApplet->setParent(this);
 	sInstallApplet->setParent(this);

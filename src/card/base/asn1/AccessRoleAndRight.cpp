@@ -61,12 +61,12 @@ const QList<AccessRight>& AccessRoleAndRightsUtil::allRights()
 		mAllRights += AccessRight::WRITE_DG19;
 		mAllRights += AccessRight::WRITE_DG20;
 		mAllRights += AccessRight::WRITE_DG21;
+		mAllRights += AccessRight::WRITE_DG22;
 
-		mAllRights += AccessRight::RFU_32;
-		mAllRights += AccessRight::RFU_31;
-		mAllRights += AccessRight::RFU_30;
-		mAllRights += AccessRight::RFU_29;
+		mAllRights += AccessRight::RFU;
 
+		mAllRights += AccessRight::PSA;
+		mAllRights += AccessRight::READ_DG22;
 		mAllRights += AccessRight::READ_DG21;
 		mAllRights += AccessRight::READ_DG20;
 		mAllRights += AccessRight::READ_DG19;
@@ -126,6 +126,8 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 {
 	switch (pRight)
 	{
+		case AccessRight::READ_DG22:
+		case AccessRight::WRITE_DG22:
 		case AccessRight::READ_DG21:
 		case AccessRight::WRITE_DG21:
 			//: LABEL ALL_PLATFORMS
@@ -236,6 +238,7 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			//: LABEL ALL_PLATFORMS
 			return tr("Privileged terminal");
 
+		case AccessRight::PSA:
 		case AccessRight::RESTRICTED_IDENTIFICATION:
 			//: LABEL ALL_PLATFORMS
 			return tr("Pseudonym");
@@ -248,11 +251,7 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 			//: LABEL ALL_PLATFORMS
 			return tr("Age verification");
 
-		/* 32-29: reserved for future use */
-		case AccessRight::RFU_29:
-		case AccessRight::RFU_30:
-		case AccessRight::RFU_31:
-		case AccessRight::RFU_32:
+		case AccessRight::RFU:
 			//: LABEL ALL_PLATFORMS
 			return tr("Unknown (reserved)");
 	}

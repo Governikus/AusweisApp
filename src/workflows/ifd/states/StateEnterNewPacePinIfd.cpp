@@ -22,11 +22,11 @@ void StateEnterNewPacePinIfd::run()
 }
 
 
-void StateEnterNewPacePinIfd::onCancelChangePin()
+void StateEnterNewPacePinIfd::onUserError(StatusCode pStatusCode)
 {
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
-		getContext()->setModifyPinMessageResponseApdu(ResponseApdu(StatusCode::INPUT_CANCELLED));
+		getContext()->setModifyPinMessageResponseApdu(ResponseApdu(pStatusCode));
 	}
 	Q_EMIT fireAbort(FailureCode::Reason::Enter_New_Pace_Pin_Ifd_User_Cancelled);
 }
@@ -41,8 +41,10 @@ void StateEnterNewPacePinIfd::onEntry(QEvent* pEvent)
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())
 	{
 		const auto& handler = getContext()->getIfdServer()->getMessageHandler();
-		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, &StateEnterNewPacePinIfd::onCancelChangePin);
+		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, [this]{
+				onUserError(StatusCode::INPUT_CANCELLED);
+			});
 	}
 
-	*this << connect(getContext().data(), &IfdServiceContext::fireCancelPasswordRequest, this, &StateEnterNewPacePinIfd::onCancelChangePin);
+	*this << connect(getContext().data(), &IfdServiceContext::fireUserError, this, &StateEnterNewPacePinIfd::onUserError);
 }

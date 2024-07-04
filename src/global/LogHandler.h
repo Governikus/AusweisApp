@@ -98,7 +98,7 @@ class LogHandler
 		bool mAutoRemove;
 		bool mUseLogFile;
 		const QByteArray mFilePrefix;
-		QMutex mMutex;
+		mutable QMutex mMutex;
 
 		inline void copyMessageLogContext(const QMessageLogContext& pSource,
 				QMessageLogContext& pDestination,
@@ -138,7 +138,7 @@ class LogHandler
 		[[nodiscard]] const LogEventHandler* getEventHandler() const;
 
 		void setAutoRemove(bool pRemove);
-		bool copy(const QString& pDest);
+		bool copy(const QString& pDest) const;
 		[[nodiscard]] bool copyOther(const QString& pSource, const QString& pDest) const;
 		void resetBacklog();
 		QByteArray getBacklog(bool pAll = false);

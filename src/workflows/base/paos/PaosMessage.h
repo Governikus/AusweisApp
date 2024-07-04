@@ -26,7 +26,7 @@ class PaosMessage
 		QString mRelatesTo;
 
 	protected:
-		bool handleWSAddressingHeaders(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes);
+		bool handleWSAddressingHeaders(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes);
 
 	public:
 		const PaosType mType;

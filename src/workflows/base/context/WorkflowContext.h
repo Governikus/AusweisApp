@@ -40,7 +40,7 @@ class WorkflowContext
 		bool mStateApproved;
 		bool mWorkflowKilled;
 		QString mCurrentState;
-		QList<ReaderManagerPlugInType> mReaderPlugInTypes;
+		QList<ReaderManagerPluginType> mReaderPluginTypes;
 		QString mReaderName;
 		QSharedPointer<CardConnection> mCardConnection;
 		int mCardVanishedDuringPacePinCount;
@@ -55,7 +55,6 @@ class WorkflowContext
 		GlobalStatus mStatus;
 		std::optional<FailureCode> mFailureCode;
 		ECardApiResult mStartPaosResult;
-		bool mErrorReportedToUser;
 		bool mWorkflowFinished;
 		bool mWorkflowCancelled;
 		bool mWorkflowCancelledInState;
@@ -67,6 +66,7 @@ class WorkflowContext
 		bool mShowRemoveCardFeedback;
 		QString mClaimedBy;
 		bool mInterruptRequested;
+		bool mInitialInputErrorShown;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -74,7 +74,7 @@ class WorkflowContext
 	Q_SIGNALS:
 		void fireStateApprovedChanged(bool pApproved);
 		void fireStateChanged(const QString& pNewState);
-		void fireReaderPlugInTypesChanged(bool pExplicitStart = false);
+		void fireReaderPluginTypesChanged(bool pExplicitStart = false);
 		void fireReaderInfoChanged();
 		void fireReaderNameChanged();
 		void fireCardConnectionChanged();
@@ -89,6 +89,7 @@ class WorkflowContext
 		void firePasswordTypeChanged();
 		void fireProgressChanged();
 		void fireRemoveCardFeedbackChanged();
+		void fireInitialInputErrorShownChanged();
 
 		void fireCancelWorkflow();
 
@@ -113,9 +114,6 @@ class WorkflowContext
 		[[nodiscard]] bool wasClaimed() const;
 		void claim(const QObject* pClaimant);
 
-		[[nodiscard]] bool isErrorReportedToUser() const;
-		void setErrorReportedToUser(bool pErrorReportedToUser = true);
-
 		void setStateApproved(bool pApproved = true);
 		[[nodiscard]] bool isStateApproved() const;
 
@@ -127,8 +125,8 @@ class WorkflowContext
 
 		[[nodiscard]] bool isSmartCardUsed() const;
 
-		[[nodiscard]] const QList<ReaderManagerPlugInType>& getReaderPlugInTypes() const;
-		void setReaderPlugInTypes(const QList<ReaderManagerPlugInType>& pReaderPlugInTypes);
+		[[nodiscard]] const QList<ReaderManagerPluginType>& getReaderPluginTypes() const;
+		void setReaderPluginTypes(const QList<ReaderManagerPluginType>& pReaderPluginTypes);
 
 		[[nodiscard]] const QString& getReaderName() const;
 		void setReaderName(const QString& pReaderName);
@@ -233,6 +231,9 @@ class WorkflowContext
 
 		[[nodiscard]] bool eidTypeMismatch() const;
 		[[nodiscard]] bool isMobileEidTypeAllowed(const MobileEidType& mobileEidType) const;
+
+		[[nodiscard]] bool isInitialInputErrorShown() const;
+		void setInitialInputErrorShown();
 };
 
 } // namespace governikus

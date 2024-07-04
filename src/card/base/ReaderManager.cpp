@@ -101,7 +101,7 @@ void ReaderManager::init()
 }
 
 
-void ReaderManager::reset(ReaderManagerPlugInType pType)
+void ReaderManager::reset(ReaderManagerPluginType pType)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
@@ -167,13 +167,13 @@ void ReaderManager::shutdown()
 		mThread.quit();
 		mThread.wait(5000);
 		mReaderInfoCache.clear();
-		mPlugInInfoCache.clear();
+		mPluginInfoCache.clear();
 		qCDebug(card).noquote() << mThread.objectName() << "stopped:" << !mThread.isRunning();
 	}
 }
 
 
-void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
+void ReaderManager::startScan(ReaderManagerPluginType pType, bool pAutoConnect)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
@@ -192,14 +192,14 @@ void ReaderManager::startScan(ReaderManagerPlugInType pType, bool pAutoConnect)
 
 void ReaderManager::startScanAll(bool pAutoConnect)
 {
-	for (const auto& entry : std::as_const(mPlugInInfoCache))
+	for (const auto& entry : std::as_const(mPluginInfoCache))
 	{
-		startScan(entry.getPlugInType(), pAutoConnect);
+		startScan(entry.getPluginType(), pAutoConnect);
 	}
 }
 
 
-void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pError)
+void ReaderManager::stopScan(ReaderManagerPluginType pType, const QString& pError)
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
@@ -216,20 +216,31 @@ void ReaderManager::stopScan(ReaderManagerPlugInType pType, const QString& pErro
 }
 
 
+bool ReaderManager::isInitialScanFinished() const
+{
+	const QMutexLocker mutexLocker(&mMutex);
+	return std::all_of(mPluginInfoCache.cbegin(), mPluginInfoCache.cend(), [] (const ReaderManagerPluginInfo& pInfo){
+			const auto& state = pInfo.getInitialScanState();
+			return state == ReaderManagerPluginInfo::InitialScan::SUCCEEDED
+				   || state == ReaderManagerPluginInfo::InitialScan::FAILED;
+		});
+}
+
+
 void ReaderManager::stopScanAll(const QString& pError)
 {
-	for (const auto& entry : std::as_const(mPlugInInfoCache))
+	for (const auto& entry : std::as_const(mPluginInfoCache))
 	{
-		stopScan(entry.getPlugInType(), pError);
+		stopScan(entry.getPluginType(), pError);
 	}
 }
 
 
-ReaderManagerPlugInInfo ReaderManager::getPlugInInfo(ReaderManagerPlugInType pType) const
+ReaderManagerPluginInfo ReaderManager::getPluginInfo(ReaderManagerPluginType pType) const
 {
 	const QMutexLocker mutexLocker(&mMutex);
 
-	return mPlugInInfoCache.value(pType, ReaderManagerPlugInInfo(pType));
+	return mPluginInfoCache.value(pType, ReaderManagerPluginInfo(pType));
 }
 
 
@@ -251,12 +262,23 @@ void ReaderManager::doRemoveCacheEntry(const ReaderInfo& pInfo)
 }
 
 
-void ReaderManager::doUpdatePluginCache(const ReaderManagerPlugInInfo& pInfo)
+void ReaderManager::doUpdatePluginCache(const ReaderManagerPluginInfo& pInfo)
 {
-	const QMutexLocker mutexLocker(&mMutex);
+	ReaderManagerPluginInfo cachedValue;
 
-	qCDebug(card).noquote() << "Update cache entry:" << pInfo.getPlugInType();
-	mPlugInInfoCache.insert(pInfo.getPlugInType(), pInfo);
+	{
+		const QMutexLocker mutexLocker(&mMutex);
+
+		qCDebug(card).noquote() << "Update cache entry:" << pInfo.getPluginType();
+		cachedValue = mPluginInfoCache.value(pInfo.getPluginType());
+		mPluginInfoCache.insert(pInfo.getPluginType(), pInfo);
+	}
+
+	if (cachedValue.getInitialScanState() != pInfo.getInitialScanState() && isInitialScanFinished())
+	{
+		qCDebug(card) << "Initial scan finished";
+		Q_EMIT fireInitialScanFinished();
+	}
 }
 
 

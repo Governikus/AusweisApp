@@ -34,6 +34,6 @@ MsgHandlerCertificate::MsgHandlerCertificate(const MsgContext& pContext)
 	validity[QLatin1String("effectiveDate")] = body.getCertificateEffectiveDate().toString(Qt::ISODate);
 	validity[QLatin1String("expirationDate")] = body.getCertificateExpirationDate().toString(Qt::ISODate);
 
-	mJsonObject[QLatin1String("description")] = desc;
-	mJsonObject[QLatin1String("validity")] = validity;
+	setValue(QLatin1String("description"), desc);
+	setValue(QLatin1String("validity"), validity);
 }

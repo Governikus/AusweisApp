@@ -6,10 +6,7 @@ add_definitions(-DQT_NO_CAST_TO_ASCII)
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_NO_KEYWORDS)
 add_definitions(-DQT_NO_EXCEPTIONS)
-
-if(NOT MSVC AND NOT CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC" AND QT5)
-	add_definitions(-DQT_STRICT_ITERATORS)
-endif()
+add_definitions(-DQT_NO_CONTEXTLESS_CONNECT)
 
 if(QT_VENDOR STREQUAL "Governikus")
 	add_definitions(-DGOVERNIKUS_QT)
@@ -168,7 +165,7 @@ else()
 	endif()
 
 
-	# QTBUG-82978
+	# QTBUG-82978, QTBUG-122004, QTBUG-122582
 	if(CMAKE_CXX_FLAGS MATCHES "-Wextra-semi-stmt")
 		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-extra-semi-stmt")
 	endif()
@@ -177,8 +174,18 @@ else()
 		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-useless-cast")
 	endif()
 
-	if(CMAKE_CXX_FLAGS MATCHES "-Wconversion" AND MAC)
-		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-sign-conversion")
+	if(CMAKE_CXX_FLAGS MATCHES "-Wconversion")
+		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-conversion")
+	endif()
+
+	# codereview: 541911
+	if(CMAKE_CXX_FLAGS MATCHES "-Wnewline-eof")
+		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-newline-eof")
+	endif()
+
+	# QTBUG-114897
+	if(QT_VERSION VERSION_LESS "6.5.3" AND CMAKE_CXX_FLAGS MATCHES "-Wshadow")
+		list(APPEND INCOMPATIBLE_QT_COMPILER_FLAGS "-Wno-shadow")
 	endif()
 endif()
 

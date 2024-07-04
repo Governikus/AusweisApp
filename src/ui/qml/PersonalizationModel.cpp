@@ -5,7 +5,6 @@
 #include "PersonalizationModel.h"
 
 #include "GlobalStatus.h"
-#include "LanguageLoader.h"
 #if __has_include("controller/PersonalizationController.h")
 	#include "AppSettings.h"
 	#include "SecureStorage.h"
@@ -21,7 +20,7 @@ PersonalizationModel::PersonalizationModel()
 }
 
 
-void PersonalizationModel::startWorkflow() const
+void PersonalizationModel::startWorkflow()
 {
 #if __has_include("controller/PersonalizationController.h")
 	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
@@ -108,10 +107,10 @@ void PersonalizationModel::resetPersonalizationContext(const QSharedPointer<Pers
 #endif
 
 
-QList<ReaderManagerPlugInType> PersonalizationModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPluginType> PersonalizationModel::getSupportedReaderPluginTypes() const
 {
-	auto plugins = WorkflowModel::getSupportedReaderPlugInTypes();
-	plugins.removeOne(ReaderManagerPlugInType::SMART);
+	auto plugins = WorkflowModel::getSupportedReaderPluginTypes();
+	plugins.removeOne(ReaderManagerPluginType::SMART);
 	return plugins;
 }
 

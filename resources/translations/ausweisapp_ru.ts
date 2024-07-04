@@ -4,14 +4,14 @@
 <context>
     <name>DvcsAttributes</name>
     <message>
-        <source>00511d1fef97</source>
+        <source>61757c650550</source>
         <extracomment>revision</extracomment>
-        <translation>00511d1fef97</translation>
+        <translation>61757c650550</translation>
     </message>
     <message>
-        <source>2.0.111</source>
+        <source>2.1.106</source>
         <extracomment>version</extracomment>
-        <translation>2.0.111</translation>
+        <translation>2.1.106</translation>
     </message>
 </context>
 <context>
@@ -30,6 +30,88 @@
         <source>Network problems detected, trying to reach server within 30 seconds.</source>
         <extracomment>INFO DESKTOP Information message about cancellation process without working network connectivity</extracomment>
         <translation>Обнаружены проблемы в сети, в течение 30 секунд выполняется подключение к серверу.</translation>
+    </message>
+</context>
+<context>
+    <name>App</name>
+    <message>
+        <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.</extracomment>
+        <translation>Программа по-прежнему доступна через значок в строке меню. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
+    </message>
+    <message>
+        <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled.</extracomment>
+        <translation>Программа по-прежнему доступна через значок на панели задач. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
+    </message>
+    <message>
+        <source>Another application uses %1</source>
+        <extracomment>INFO DESKTOP The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.</extracomment>
+        <translation>Другое приложение использует %1</translation>
+    </message>
+    <message>
+        <source>The user interface of the %1 is closed.</source>
+        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is closed for the first time.</extracomment>
+        <translation>Пользовательский интерфейс %1 закрыт.</translation>
+    </message>
+    <message>
+        <source>Do not show this dialog again.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Не показывать этот диалог снова.</translation>
+    </message>
+    <message>
+        <source>The %1 will be shut down and an authentication will no longer be possible. You will have to restart the %1 to identify yourself towards providers.</source>
+        <extracomment>INFO DESKTOP Text of the popup that is shown when the AA2 is quit for the first time.</extracomment>
+        <translation>%1 будет закрыто, и аутентификация больше не будет возможна. Вам нужно будет перезапустить %1, чтобы идентифицировать себя у провайдеров.</translation>
+    </message>
+    <message>
+        <source>The %1 is closed.</source>
+        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is quit for the first time.</extracomment>
+        <translation>%1 закрыто.</translation>
+    </message>
+    <message>
+        <source>This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active.</extracomment>
+        <translation>Текущий процесс будет прерван, а пользовательский интерфейс %1 скрыт. Вы можете перезапустить процесс в любое время.</translation>
+    </message>
+    <message>
+        <source>This will cancel the current operation and shut the %1 down. You will have to restart the %1 to restart the operation.</source>
+        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is shut down and a workflow is still active.</extracomment>
+        <translation>Текущая операция будет отменена, и %1 будет остановлено. Чтобы снова начать операцию, вам нужно будет перезапустить %1.</translation>
+    </message>
+    <message>
+        <source>Abort operation</source>
+        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is closed and a workflow is still active</extracomment>
+        <translation>Отмена операции</translation>
+    </message>
+    <message>
+        <source>Failed to retrieve update information.</source>
+        <extracomment>INFO DESKTOP Message that the update data is invalid and can&apos;t be used.</extracomment>
+        <translation>Сбой загрузки информации об обновлении.</translation>
+    </message>
+    <message>
+        <source>An update is available (version %1).</source>
+        <extracomment>INFO DESKTOP An update was found which matches the current platform, the new version number is shown in the message.</extracomment>
+        <translation>Доступно обновление (версия %1).</translation>
+    </message>
+    <message>
+        <source>Developer Mode: Enabled!</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Режим разработчика: активирован!</translation>
+    </message>
+    <message>
+        <source>Disable</source>
+        <extracomment>LABEL DESKTOP Global button to disable developer mode.</extracomment>
+        <translation>Деактивировать</translation>
+    </message>
+    <message>
+        <source>Detached log viewer</source>
+        <translation>Средство просмотра файлов журнала</translation>
+    </message>
+    <message>
+        <source>To close the app, press the back button 2 times.</source>
+        <extracomment>INFO ANDROID IOS Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
+        <translation>Чтобы закрыть приложение, два раза нажмите кнопку «Назад».</translation>
     </message>
 </context>
 <context>
@@ -84,6 +166,16 @@
         <extracomment>LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication</extracomment>
         <translation>Аутентификация с помощью провайдера</translation>
     </message>
+    <message>
+        <source>Authentication failed</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Сбой аутентификации</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Назад к начальной странице</translation>
+    </message>
 </context>
 <context>
     <name>AuthView</name>
@@ -110,19 +202,19 @@ LABEL ANDROID IOS</extracomment>
 - remove the mobile phone case (if present)
 - connect the smartphone with a charging cable</source>
         <extracomment>INFO DESKTOP A weak NFC signal was detected since the card communication was aborted. The card&apos;s position needs to be adjusted to hopefully achieve better signal strength.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
-- Измените положение карты.
-- Снимите чехол с мобильного телефона (при наличии).
-- Подключите смартфон к зарядному кабелю.</translation>
+        <translation>Слабый сигнал NFC. Выполните следующее:
+- Измените положение карты
+- Снимите чехол с мобильного телефона (при наличии)
+- Подключите смартфон к зарядному кабелю</translation>
     </message>
     <message>
         <source>Weak NFC signal. Please
 - make sure the card is positioned correctly on the reader
 - do note move the card while it is being accessed</source>
         <extracomment>INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
-- Убедитесь в том, что карта правильно вставлена в устройство чтения карт.
-- Не перемещайте карту, пока система получает к ней доступ.</translation>
+        <translation>Слабый сигнал NFC. Выполните следующее:
+- Убедитесь в том, что карта правильно вставлена в устройство чтения карт
+- Не перемещайте карту, пока система получает к ней доступ</translation>
     </message>
     <message>
         <source>Aborting process and informing the service provider</source>
@@ -272,17 +364,18 @@ INFO DESKTOP Generic progress status message during authentication.</extracommen
 - remove the mobile phone case (if present)
 - connect the smartphone with a charging cable</source>
         <extracomment>INFO ANDROID IOS The NFC signal is weak, by repositioning the card the signal might improve.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
-— Измените положение карты.
-— Снимите чехол с мобильного телефона (при наличии).
-— Подключите смартфон к зарядному кабелю.</translation>
+        <translation>Слабый сигнал NFC. Выполните следующее:
+— Измените положение карты
+— Снимите чехол с мобильного телефона (при наличии)
+— Подключите смартфон к зарядному кабелю</translation>
     </message>
 </context>
 <context>
     <name>CardReaderDelegate</name>
     <message>
-        <source>Press space to open the link in your browser</source>
-        <translation>Нажмите на пробел, чтобы открыть ссылку в браузере</translation>
+        <source>Press space to open link.</source>
+        <extracomment>INFO DESKTOP Text read by screen reader if the text contains a web link to a card reader driver which may be opened.</extracomment>
+        <translation>Нажмите на пробел, чтобы открыть ссылку в браузере.</translation>
     </message>
 </context>
 <context>
@@ -308,6 +401,10 @@ INFO DESKTOP Generic progress status message during authentication.</extracommen
         <source>No connected card reader found.</source>
         <translation>Подключенные устройства чтения карт не найдены.</translation>
     </message>
+    <message>
+        <source>List of connected card readers.</source>
+        <translation>Перечень подключенных устройств чтения карт.</translation>
+    </message>
 </context>
 <context>
     <name>CertificateDescriptionPage</name>
@@ -321,11 +418,6 @@ LABEL ANDROID IOS</extracomment>
 </context>
 <context>
     <name>ChangePinController</name>
-    <message>
-        <source>Your ID card PIN is unblocked. You now have 3 more attempts to change your PIN.</source>
-        <extracomment>INFO ANDROID IOS The ID card has just been unblocked and the user can now continue with their PIN change.</extracomment>
-        <translation>PIN-код вашей карты разблокирован. Теперь у вас есть три дополнительных попытки изменить PIN-код.</translation>
-    </message>
     <message>
         <source>Setting new Smart-eID PIN</source>
         <extracomment>LABEL ANDROID IOS Processing screen label while the card communication is running after the new Smart-eID PIN has been entered during PIN change process.</extracomment>
@@ -372,9 +464,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Вы трижды ввели неправильный 6-значный PIN-код идентификационной карты; PIN-код идентификационной карты заблокирован. Для разблокирования сначала введите 10-значный PUK-код.</translation>
     </message>
     <message>
-        <source>Please note that you may use the 5-digit Transport PIN only once to change to a 6-digit ID card PIN. If you already set a 6-digit ID card PIN, the 5-digit Transport PIN is no longer valid.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Внимание: вы можете использовать 5-значный временный PIN-код только один раз — для смены 6-значного PIN-кода идентификационной карты. Если вы уже установили 6-значный PIN-код идентификационной карты, то 5-значный временный PIN-код больше не действует.</translation>
+        <source>Back to start page</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Назад к начальной странице</translation>
     </message>
 </context>
 <context>
@@ -399,29 +491,24 @@ LABEL ANDROID IOS</extracomment>
         <translation>Не перемещайте идентификационную карту.</translation>
     </message>
     <message>
-        <source>Your ID card PIN is unblocked. You now have 3 more attempts to change your PIN.</source>
-        <extracomment>INFO DESKTOP The ID card has just been unblocked and the user can now continue with their ID card PIN change.</extracomment>
-        <translation>PIN-код вашей карты разблокирован. Теперь у вас есть три дополнительных попытки изменить PIN-код.</translation>
-    </message>
-    <message>
         <source>Weak NFC signal. Please
 - change the card position
 - remove the mobile phone case (if present)
 - connect the smartphone with a charging cable</source>
         <extracomment>INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card&apos;s position to (hopefully) reduce the distance to the NFC chip.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
+        <translation>Слабый сигнал NFC. Выполните следующее:
 — Измените положение карты.
-— Снимите чехол с мобильного телефона (при наличии).
-— Подключите смартфон к зарядному кабелю.</translation>
+— Снимите чехол с мобильного телефона (при наличии)
+— Подключите смартфон к зарядному кабелю</translation>
     </message>
     <message>
         <source>Weak NFC signal. Please
 - make sure the card is positioned correctly on the reader
 - do note move the card while it is being accessed</source>
         <extracomment>INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
-— Убедитесь в том, что карта правильно вставлена в устройство чтения карт.
-— Не перемещайте карту, пока система получает к ней доступ.</translation>
+        <translation>Слабый сигнал NFC. Выполните следующее:
+— Убедитесь в том, что карта правильно вставлена в устройство чтения карт
+— Не перемещайте карту, пока система получает к ней доступ</translation>
     </message>
     <message>
         <source>Change Transport PIN</source>
@@ -434,9 +521,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Сопряжение устройства «%1» не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
     </message>
     <message>
-        <source>Please note that you may use the 5-digit Transport PIN only once to change to a 6-digit ID card PIN. If you already set a 6-digit ID card PIN, the 5-digit Transport PIN is no longer valid.</source>
-        <extracomment>INFO DESKTOP</extracomment>
-        <translation>Внимание: вы можете использовать 5-значный временный PIN-код только один раз — для смены 6-значного PIN-кода идентификационной карты. Если вы уже установили 6-значный PIN-код идентификационной карты, то 5-значный временный PIN-код больше не действует.</translation>
+        <source>Back to start page</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Назад к начальной странице</translation>
     </message>
 </context>
 <context>
@@ -452,9 +539,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>6-значный PIN-код</translation>
     </message>
     <message>
-        <source>Set by yourself</source>
+        <source>Set by yourself or received by the PIN Reset Service</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Создается пользователем самостоятельно</translation>
+        <translation type="unfinished">Создается пользователем самостоятельно</translation>
     </message>
     <message>
         <source>5-digit Transport PIN</source>
@@ -462,9 +549,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>5-значный временный PIN-код</translation>
     </message>
     <message>
-        <source>Received by mail in PIN letter</source>
+        <source>Received by letter while ordering your ID card</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Получен по почте в письме с PIN-кодом</translation>
+        <translation type="unfinished">Получен по почте в письме с PIN-кодом</translation>
     </message>
     <message>
         <source>No PIN</source>
@@ -605,9 +692,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>NFC отсутствует</translation>
     </message>
     <message>
-        <source>Your mobile device has no NFC interface. This is required to read the ID card. However, you can use a separate smartphone as card reader to utilize the eID function.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
+        <source>Your mobile device has no NFC interface. This is required to read the ID card. To use the eID function on this device you may pair a NFC capable smartphone as a card reader.&lt;br&gt;&lt;br&gt;To pair a smartphone go to &lt;b&gt;Settings&lt;/b&gt; and &lt;b&gt;Manage Pairings&lt;/b&gt;.&lt;br&gt;&lt;br&gt;You can find smartphones compatible with the %1 on our website.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>В вашем мобильном устройстве нет интерфейса NFC. Он требуется для считывания идентификационной карты. Вы можете воспользоваться функцией eID на другом смартфоне, используемом в качестве устройства чтения карт.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
+        <translation type="unfinished">В вашем мобильном устройстве нет интерфейса NFC. Он требуется для считывания идентификационной карты. Вы можете воспользоваться функцией eID на другом смартфоне, используемом в качестве устройства чтения карт.&lt;br&gt;&lt;br&gt;Список совместимых с %1 смартфонов см. на нашем сайте.</translation>
     </message>
     <message>
         <source>Open website</source>
@@ -692,6 +779,11 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Activate the eID function.</source>
         <extracomment>LABEL ANDROID IOS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation>Активируйте функцию онлайн-идентификации.</translation>
+    </message>
+    <message>
+        <source>List of compatible devices</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -708,9 +800,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Для использования функции онлайн-идентификации ваше устройство должно соответствовать определенным техническим требованиям. Также необходимо активировать функцию онлайн-идентификации.</translation>
     </message>
     <message>
-        <source>Check if your smartphone and ID card are ready for use.</source>
+        <source>Check if your device &amp; ID card are ready for use</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Убедитесь в том, что смартфон и идентификационная карта готовы к использованию.</translation>
+        <translation>Убедитесь в том, что устройство и идентификационная карта готовы к использованию</translation>
     </message>
     <message>
         <source>Start check</source>
@@ -771,7 +863,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Possible causes are:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Возможные причины</translation>
+        <translation>Возможные причины:</translation>
     </message>
     <message>
         <source>The setup has not been completed.</source>
@@ -930,11 +1022,13 @@ LABEL ANDROID IOS</extracomment>
     <name>DetachedLogView</name>
     <message>
         <source>Select log:</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Выбрать файл журнала:</translation>
     </message>
     <message>
-        <source>Font size:</source>
-        <translation>Размер шрифта:</translation>
+        <source>Zoom:</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Изменение масштаба изображения:</translation>
     </message>
     <message>
         <source>Save log</source>
@@ -1116,14 +1210,14 @@ LABEL IOS_PHONE Inserted into &quot;Proceed to %1 entry&quot;</extracomment>
         <extracomment>LABEL DESKTOP
 ----------
 LABEL IOS_PHONE ANDROID_PHONE</extracomment>
-        <translation>При вводе CAN вы предоставляете указанному выше провайдеру доступ к следующим данным идентификационной карты.</translation>
+        <translation>При вводе CAN вы предоставляете указанному выше провайдеру доступ к следующим данным идентификационной карты:</translation>
     </message>
     <message>
         <source>By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:</source>
         <extracomment>LABEL DESKTOP
 ----------
 LABEL IOS_PHONE ANDROID_PHONE</extracomment>
-        <translation>При вводе PIN-кода вы предоставляете указанному выше провайдеру доступ к следующим данным идентификационной карты.</translation>
+        <translation>При вводе PIN-кода вы предоставляете указанному выше провайдеру доступ к следующим данным идентификационной карты:</translation>
     </message>
     <message>
         <source>Transactional information</source>
@@ -1174,268 +1268,198 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
 <context>
     <name>EnterPasswordView</name>
     <message>
-        <source>Attempts</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Попытки</translation>
-    </message>
-    <message>
         <source>Enter CAN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести CAN</translation>
     </message>
     <message>
         <source>Enter PUK</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести PUK-код</translation>
     </message>
     <message>
         <source>Enter pairing code</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести код сопряжения</translation>
     </message>
     <message>
-        <source>Enter new ID card PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Ввести новый PIN-код идентификационной карты</translation>
+        <source>Choose new ID card PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
+        <translation type="unfinished">Ввести новый PIN-код идентификационной карты</translation>
     </message>
     <message>
         <source>Confirm new ID card PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Подтвердить новый PIN-код идентификационной карты</translation>
     </message>
     <message>
         <source>Enter Transport PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести временный PIN-код</translation>
     </message>
     <message>
         <source>Enter ID card PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести PIN-код идентификационной карты</translation>
     </message>
     <message>
         <source>Please enter the 5-digit Transport PIN.</source>
-        <extracomment>INFO DESKTOP The AA2 expects the Transport PIN with five digits.
-----------
-INFO ANDROID IOS The Transport PIN is required by AA2, it needs to be change to an actual PIN.</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The Transport PIN is required by AA, it needs to be change to an actual PIN. This is the description for the main text.</extracomment>
         <translation>Введите 5-значный временный PIN-код.</translation>
     </message>
     <message>
         <source>Please enter your current 6-digit ID card PIN.</source>
-        <extracomment>INFO DESKTOP The AA2 expects the current ID card PIN with six digits in a PIN change.
-----------
-INFO ANDROID IOS The AA2 expects the current ID card PIN with six digits in a PIN change.</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The AA2 expects the current ID card PIN with six digits in a PIN change. This is the description for the main text.</extracomment>
         <translation>Введите текущий 6-значный PIN-код идентификационной карты.</translation>
     </message>
     <message>
         <source>Please enter your 6-digit ID card PIN.</source>
-        <extracomment>INFO DESKTOP The AA2 expects a ID card PIN with six digits in an authentication.
-----------
-INFO ANDROID IOS The AA2 expects a ID card PIN with six digits in an authentication.</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The AA2 expects a ID card PIN with six digits in an authentication. This is the description for the main text.</extracomment>
         <translation>Введите 6-значный PIN-код идентификационной карты.</translation>
     </message>
     <message>
-        <source>Please enter the 6-digit Card Access Number (CAN). You can find it in the bottom right on the front of the ID card.</source>
-        <extracomment>INFO DESKTOP The user is required to enter the 6-digit CAN in CAN-allowed authentication.
-----------
-INFO ANDROID IOS The user is required to enter the 6-digit CAN in CAN-allowed authentication.</extracomment>
-        <translation>Введите 6-значный код доступа (CAN). Он указан внизу справа на передней стороне идентификационной карты.</translation>
+        <source>You will enter this 6-digit PIN every time you want to use your ID card online.</source>
+        <extracomment>INFO ALL_PLATFORMS A new 6-digit ID card PIN needs to be supplied. This is the description for the main text.</extracomment>
+        <translation type="unfinished">Теперь введите новый 6-значный PIN-код идентификационной карты.</translation>
     </message>
     <message>
-        <source>A wrong ID card PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO DESKTOP The wrong ID card PIN was entered twice, the 3rd attempt requires the CAN for additional verification, hint where the CAN is found.
-----------
-INFO ANDROID IOS The wrong ID card PIN was entered twice, the 3rd attempt requires the CAN for additional verification, hint where the CAN is found.</extracomment>
-        <translation>Дважды введен неправильный PIN-код идентификационной карты. Для третьей попытки сначала введите 6-значный код доступа (CAN). Код CAN указан внизу справа на передней стороне идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.</source>
-        <extracomment>INFO DESKTOP The PUK is required to unlock the ID card since the wrong ID card PIN entered three times.
-----------
-INFO ANDROID IOS The PUK is required to unlock the ID card since the wrong ID card PIN entered three times.</extracomment>
-        <translation>Вы трижды ввели неправильный 6-значный PIN-код идентификационной карты; PIN-код идентификационной карты заблокирован. Для разблокирования сначала введите 10-значный PUK-код.</translation>
-    </message>
-    <message>
-        <source>Please enter a new 6-digit ID card PIN now.</source>
-        <extracomment>INFO DESKTOP A new 6-digit ID card PIN needs to be supplied.
-----------
-INFO ANDROID IOS A new 6-digit ID card PIN needs to be supplied.</extracomment>
-        <translation>Теперь введите новый 6-значный PIN-код идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>Please confirm your new 6-digit ID card PIN.</source>
-        <extracomment>INFO DESKTOP The new ID card PIN needs to be entered again for verification.
-----------
-INFO ANDROID IOS The new ID card PIN needs to be confirmed.</extracomment>
-        <translation>Подтвердите новый 6-значный PIN-код идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>Unknown password type:</source>
-        <extracomment>INFO DESKTOP Error message during PIN/CAN/PUK input procedure, the requested password type is unknown; internal error.</extracomment>
-        <translation>Неизвестный тип пароля:</translation>
+        <source>The PIN is going to be tied to your ID card. It always stays the same regardless of the device you want to use your ID card with.</source>
+        <extracomment>INFO ALL_PLATFORMS The new ID card PIN needs to be confirmed. This is the description for the main text.</extracomment>
+        <translation type="unfinished">Подтвердите новый 6-значный PIN-код идентификационной карты.</translation>
     </message>
     <message>
         <source>Do you have a 5-digit Transport PIN?</source>
-        <extracomment>LABEL ANDROID IOS Button to start a change of the Transport PIN.</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Button to start a change of the Transport PIN.</extracomment>
         <translation>У вас есть 5-значный временный PIN-код?</translation>
     </message>
     <message>
         <source>Enter Smart-eID PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
         <translation>Ввести PIN-код для Smart-eID</translation>
     </message>
     <message>
-        <source>Enter new Smart-eID PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>Ввести новый PIN-код для Smart-eID</translation>
+        <source>Choose new Smart-eID PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
+        <translation type="unfinished">Ввести новый PIN-код для Smart-eID</translation>
     </message>
     <message>
         <source>Confirm new Smart-eID PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Подтвердить новый PIN-код для Smart-eID</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN 2 times. An incorrect 3rd attempt will invalidate your Smart-eID and you will have to set it up again.</source>
-        <extracomment>INFO DESKTOP The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
-        <translation>Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. При третьем неправильном вводе электронная идентификационная карта Smart-eID становится недействительной и ее необходимо создать повторно.</translation>
+        <source>You will enter this 6-digit PIN every time you want to use your Smart-eID.</source>
+        <extracomment>INFO ALL_PLATFORMS A new 6-digit Smart-eID PIN needs to be supplied. This is the description for the main text.</extracomment>
+        <translation type="unfinished">Теперь введите новый 6-значный PIN-код для Smart-eID.</translation>
     </message>
     <message>
-        <source>Please confirm your new 6-digit Smart-eID PIN.</source>
-        <extracomment>INFO DESKTOP The new Smart-eID PIN needs to be confirmed.
-----------
-INFO ANDROID IOS The new Smart-eID PIN needs to be confirmed.</extracomment>
-        <translation>Подтвердите новый 6-значный PIN-код для Smart-eID.</translation>
-    </message>
-    <message>
-        <source>Please enter a new 6-digit Smart-eID PIN now.</source>
-        <extracomment>INFO DESKTOP A new 6-digit Smart-eID PIN needs to be supplied.
-----------
-INFO ANDROID IOS A new 6-digit Smart-eID PIN needs to be supplied.</extracomment>
-        <translation>Теперь введите новый 6-значный PIN-код для Smart-eID.</translation>
+        <source>The PIN is going to be tied to your Smart-eID. It always stays the same regardless of the service you want to use your Smart-eID with.</source>
+        <extracomment>INFO ALL_PLATFORMS The new Smart-eID PIN needs to be confirmed. This is the description for the main text.</extracomment>
+        <translation type="unfinished">Подтвердите новый 6-значный PIN-код для Smart-eID.</translation>
     </message>
     <message>
         <source>Enter the pairing code shown on the device you want to pair.</source>
-        <extracomment>INFO ANDROID IOS The pairing code for the smartphone is required.</extracomment>
+        <extracomment>INFO MOBILE The pairing code for the smartphone is required. This is the description for the main text.</extracomment>
         <translation>Введите код сопряжения с устройства, которое вы хотите подключить.</translation>
     </message>
     <message>
         <source>Please enter your current 6-digit Smart-eID PIN.</source>
-        <extracomment>INFO DESKTOP The AA2 expects the current Smart-eID PIN with six digits in a PIN change.
-----------
-INFO ANDROID IOS The AA2 expects the current Smart-eID PIN with six digits in a PIN change.</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The AA expects the current Smart-eID PIN with six digits in a PIN change. This is the description for the main text.</extracomment>
         <translation>Введите текущий 6-значный PIN-код для Smart-eID.</translation>
     </message>
     <message>
         <source>Please enter your 6-digit Smart-eID PIN.</source>
-        <extracomment>INFO DESKTOP The AA2 expects a Smart-eID PIN with six digits in an authentication.
-----------
-INFO ANDROID IOS The AA2 expects a Smart-eID PIN with six digits in an authentication.</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The AA expects a Smart-eID PIN with six digits in an authentication. This is the description for the main text.</extracomment>
         <translation>Введите 6-значный PIN-код для Smart-eID.</translation>
     </message>
     <message>
         <source>Do you have a 6-digit ID card PIN?</source>
-        <extracomment>LABEL ANDROID IOS Button to switch to a 6-digit ID card PIN.</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Button to switch to a 6-digit ID card PIN.</extracomment>
         <translation>У вас есть 6-значный PIN-код идентификационной карты?</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 6-digit Smart-eID PIN 2 times. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
+        <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered twice on the Smart-eID</extracomment>
         <translation>Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. После третьей попытки неправильного ввода вы больше не сможете использовать Smart-eID, и ее придется настроить еще раз.</translation>
     </message>
     <message>
         <source>Send CAN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить CAN-код</translation>
     </message>
     <message>
         <source>Send PUK</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить PUK-код</translation>
     </message>
     <message>
         <source>Send pairing code</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить код сопряжения</translation>
     </message>
     <message>
         <source>Send new ID card PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить новый PIN-код идентификационной карты</translation>
     </message>
     <message>
         <source>Send Transport PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить временный PIN-код</translation>
     </message>
     <message>
         <source>Send Smart-eID PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить PIN-код для Smart-eID</translation>
     </message>
     <message>
         <source>Send new Smart-eID PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить новый PIN-код для Smart-eID</translation>
     </message>
     <message>
         <source>Send ID card PIN</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS This is the accessible text on the send/confirm button of the number pad.</extracomment>
         <translation>Отправить PIN-код идентификационной карты</translation>
     </message>
     <message>
-        <source>Send confirmation of new ID card PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Отправить подтверждение нового PIN-кода идентификационной карты</translation>
-    </message>
-    <message>
-        <source>Send confirmation of new Smart-eID PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Отправить подтверждение нового PIN-кода для Smart-eID</translation>
-    </message>
-    <message>
         <source>Enter the pairing code shown on your smartphone.</source>
-        <extracomment>INFO DESKTOP The pairing code needs to be supplied.</extracomment>
+        <extracomment>INFO DESKTOP The pairing code needs to be supplied. This is the description for the main text.</extracomment>
         <translation>Введите указанный в смартфоне код сопряжения.</translation>
+    </message>
+    <message>
+        <source>Please enter the CAN. You can find the CAN in the bottom right on the front of the ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS The user is required to enter the 6-digit CAN. This is the description for the main text.</extracomment>
+        <translation>Введите CAN. Вы найдете CAN в нижнем правом углу лицевой стороны идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>Please enter your 10-digit PUK.</source>
+        <extracomment>INFO ALL_PLATFORMS The PUK is required to unlock the ID card since the wrong ID card PIN entered three times. This is the description for the main text.</extracomment>
+        <translation>Введите 10-значный PUK-код.</translation>
+    </message>
+    <message>
+        <source>Confirm ID card PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
+        <translation type="unfinished">Подтвердить новый PIN-код идентификационной карты</translation>
+    </message>
+    <message>
+        <source>Confirm Smart-eID PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS This is the large main text below the icon.</extracomment>
+        <translation type="unfinished">Подтвердить новый PIN-код для Smart-eID</translation>
     </message>
 </context>
 <context>
     <name>GCollapsible</name>
+    <message>
+        <source>collapse</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Свернуть</translation>
+    </message>
+    <message>
+        <source>expand</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Развернуть</translation>
+    </message>
     <message>
         <source>Currently selected is %1</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
@@ -1452,9 +1476,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>GText</name>
     <message>
-        <source>Press space to open link: %1</source>
-        <extracomment>INFO ALL_PLATFORMS Text read by screen reader if the text contains a weblink which may be opened.</extracomment>
-        <translation>Нажмите пробел, чтобы открыть ссылку: %1</translation>
+        <source>Press space to open link</source>
+        <extracomment>INFO DESKTOP Text read by screen reader if the text contains a weblink which may be opened.</extracomment>
+        <translation>Нажмите пробел, чтобы открыть ссылку</translation>
     </message>
 </context>
 <context>
@@ -1535,11 +1559,6 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>GeneralWorkflow</name>
     <message>
-        <source>Attempts</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Попытки</translation>
-    </message>
-    <message>
         <source>Step %1 of 3</source>
         <translation>Шаг %1 из 3</translation>
     </message>
@@ -1592,6 +1611,100 @@ LABEL ANDROID IOS</extracomment>
         <source>Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.</source>
         <extracomment>INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).</extracomment>
         <translation>Следуйте инструкциям в смартфоне (подключен к %1) или вставьте идентификационную карту в устройство чтения карт.</translation>
+    </message>
+    <message>
+        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
+        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
+        <translation>Сопряжение устройства &quot;%1&quot; не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
+    </message>
+</context>
+<context>
+    <name>InputErrorView</name>
+    <message>
+        <source>Wrong CAN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильный CAN-код</translation>
+    </message>
+    <message>
+        <source>Wrong PUK</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильный PUK-код</translation>
+    </message>
+    <message>
+        <source>Wrong Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильный временный PIN-код</translation>
+    </message>
+    <message>
+        <source>Wrong Smart-eID PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильный PIN-код для Smart-eID</translation>
+    </message>
+    <message>
+        <source>Wrong ID card PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильный PIN-код идентификационной карты</translation>
+    </message>
+    <message>
+        <source>Wrong new ID card PIN confirmation</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильное  подтверждение нового  PIN-кода идентификационной карты</translation>
+    </message>
+    <message>
+        <source>Wrong new Smart-eID PIN confirmation</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Неправильное  подтверждение нового  PIN-кода для  Smart-eID</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Продолжить</translation>
+    </message>
+</context>
+<context>
+    <name>InputSuccessView</name>
+    <message>
+        <source>PUK is correct</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Правильный PUK-код</translation>
+    </message>
+    <message>
+        <source>You now have &lt;b&gt;3 more attempts&lt;/b&gt; to enter your correct &lt;b&gt;ID card PIN&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">У вас есть ещё три попытки, чтобы ввести правильный PIN-код идентификационной  карты.</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Продолжить</translation>
+    </message>
+    <message>
+        <source>CAN is correct</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Правильный CAN-код</translation>
+    </message>
+    <message>
+        <source>Please enter your &lt;b&gt;6-digit ID card PIN&lt;/b&gt;. &lt;b&gt;This is your last attempt&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Введите 6-значный PIN-код идентификационной карты. Это ваша последняя попытка.</translation>
+    </message>
+    <message>
+        <source>If you enter a wrong ID Card PIN again, the PIN will be blocked. This block may only be removed using the PUK.</source>
+        <translation>Если вы ещё раз введете неправильный PIN-код идентификационной карты, PIN-код будет заблокирован. Разблокировать его можно будет только через PUK-код.</translation>
+    </message>
+    <message>
+        <source>Please enter your &lt;b&gt;5-digit Transport PIN&lt;/b&gt;. &lt;b&gt;This is your last attempt&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Введите 5-значный временный PIN-код. Это ваша последняя попытка.</translation>
+    </message>
+    <message>
+        <source>If you enter a wrong Transport PIN again, the PIN will be blocked. This block may only be removed using the PUK.</source>
+        <translation>Если вы ещё раз введете неправильный временный PIN-код, PIN-код будет заблокирован. Разблокировать его можно будет только через PUK-код.</translation>
+    </message>
+    <message>
+        <source>You now have &lt;b&gt;3 more attempts&lt;/b&gt; to enter your correct &lt;b&gt;Transport PIN&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">У вас есть ещё три попытки, чтобы ввести правильный временный PIN-код.</translation>
     </message>
 </context>
 <context>
@@ -1805,6 +1918,10 @@ LABEL ANDROID IOS</extracomment>
 LABEL ANDROID IOS</extracomment>
         <translation>Изменить PIN-код</translation>
     </message>
+    <message>
+        <source>Three finger swipe to scroll.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MoreInformationLink</name>
@@ -1999,16 +2116,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Запустить сканирование NFC</translation>
     </message>
     <message>
-        <source>Unfortunately, this functionality is not available on your device.</source>
-        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
-        <translation>Данная функция недоступна для вашего устройства.</translation>
-    </message>
-    <message>
-        <source>However, you can use a separate smartphone as card reader to utilize the eID function.</source>
-        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
-        <translation>Вы можете воспользоваться функцией онлайн-идентификации на другом смартфоне, используемом в качестве устройства чтения карт.</translation>
-    </message>
-    <message>
         <source>NFC is switched off.</source>
         <extracomment>INFO ANDROID IOS NFC is available but needs to be activated in the settings of the smartphone.</extracomment>
         <translation>Функция NFC выключена.</translation>
@@ -2056,7 +2163,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>Please place your ID card on the top of the device&apos;s back side.</source>
         <extracomment>INFO IOS The ID card may be inserted, the authentication process may be started.</extracomment>
-        <translation>Расположите идентификационную карту сверху на обратной стороне устройства.</translation>
+        <translation>Приложите идентификационную карту сверху к обратной стороне устройства.</translation>
     </message>
     <message>
         <source>The device &quot;%1&quot; wants to use this smartphone as card reader and connect to your id card.</source>
@@ -2066,22 +2173,37 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>The animations depict possible positions.</source>
         <extracomment>INFO ANDROID Text regarding ID card position animations</extracomment>
-        <translation type="unfinished">Возможное положение показано в анимации.</translation>
+        <translation>Возможное положение показано в анимации.</translation>
     </message>
     <message>
         <source>The exact position of the ID card is device dependent.</source>
         <extracomment>INFO ANDROID Text regarding different NFC chip positions on different smartphones</extracomment>
-        <translation type="unfinished">Точное положение идентификационной карты зависит от устройства.</translation>
+        <translation>Точное положение идентификационной карты зависит от устройства.</translation>
     </message>
     <message>
         <source>Keep one position for several seconds before trying another one and do not move the ID card after contact was established.</source>
         <extracomment>INFO ANDROID Text that one ID card position should be kept for several seconds</extracomment>
-        <translation type="unfinished">Удерживайте идентификационную карту в одном положении несколько секунд, прежде чем поменять положение, и не смещайте ее после установки соединения.</translation>
+        <translation>Удерживайте идентификационную карту в одном положении несколько секунд, прежде чем поменять положение, и не смещайте ее после установки соединения.</translation>
     </message>
     <message>
         <source>Please place your ID card directly on the device&apos;s back side.</source>
         <extracomment>INFO ANDROID Text regarding the ID card position on the device</extracomment>
-        <translation type="unfinished">Расположите идентификационную карту непосредственно на задней стороне устройства.</translation>
+        <translation>Приложите идентификационную карту непосредственно к задней стороне устройства.</translation>
+    </message>
+    <message>
+        <source>This device cannot be used to read your ID card.</source>
+        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you want to use the online identification on this device anyway, you can connect another NFC capable smartphone as a card reader.</source>
+        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To pair a smartphone select the &lt;b&gt;WiFi&lt;/b&gt; option and click &lt;b&gt;Manage Pairings&lt;/b&gt;.</source>
+        <extracomment>INFO ANDROID IOS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2121,30 +2243,22 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Delete last digit</source>
-        <extracomment>LABEL DESKTOP A11y text for the &quot;delete&quot; button image.
-----------
-LABEL ANDROID IOS A11y text for the &quot;delete&quot; button image.</extracomment>
+        <extracomment>LABEL ANDROID IOS A11y text for the &quot;delete&quot; button image.</extracomment>
         <translation>Удалить последний знак</translation>
     </message>
     <message>
         <source>Submit</source>
-        <extracomment>LABEL DESKTOP A11y text for the &quot;submit&quot; button image.
-----------
-LABEL ANDROID IOS A11y text for the &quot;submit&quot; button image.</extracomment>
+        <extracomment>LABEL ANDROID IOS A11y text for the &quot;submit&quot; button image.</extracomment>
         <translation>Подтвердить</translation>
     </message>
     <message>
         <source>Delete last digit, disabled until input is present.</source>
-        <extracomment>LABEL DESKTOP A11y text for the &quot;delete&quot; button text when the button is disabled.
-----------
-LABEL ANDROID IOS A11y text for the &quot;delete&quot; button text when the button is disabled.</extracomment>
+        <extracomment>LABEL ANDROID IOS A11y text for the &quot;delete&quot; button text when the button is disabled.</extracomment>
         <translation>Удалить последнюю цифру, деактивировано до начала ввода данных.</translation>
     </message>
     <message>
         <source>, disabled until input is complete.</source>
-        <extracomment>LABEL DESKTOP A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.
-----------
-LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.</extracomment>
+        <extracomment>LABEL ANDROID IOS A11y text, appended onto the &quot;submit&quot; button text when the button is disabled.</extracomment>
         <translation>, деактивировано до завершения ввода данных.</translation>
     </message>
 </context>
@@ -2274,24 +2388,24 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Что такое временный PIN-код?</translation>
     </message>
     <message>
-        <source>Transport PIN information</source>
+        <source>The Transport PIN is a %1one-time PIN%2 which is required for the initial %1setup of your ID card%2. Once you replace the %1Transport PIN with a card PIN%2, it is tied to your ID card and valid for all devices.</source>
+        <extracomment>LABEL ALL_PLATFORMS INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Where do I find the Transport PIN?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Информация о временном PIN-коде</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The 5-digit Transport PIN was sent to you in the PIN letter by mail after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 1/3</extracomment>
-        <translation>5-значный временный PIN-код был отправлен вам в письме с PIN-кодом по почте после того, как вы заказали идентификационную карту.</translation>
+        <source>The 5-digit Transport PIN is a %1one-time PIN%2, that you reveived per %1letter%2 when applying for the ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 1/2</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If you did not set a self-selected 6-digit card PIN when you picked up your ID card, you can do so using the Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 2/3</extracomment>
-        <translation>Если при получении идентификационной карты вы не установили 6-значный PIN-код карты, это можно сделать с помощью временного PIN-кода.</translation>
-    </message>
-    <message>
-        <source>Once you have set a card PIN, the Transport PIN loses its validity.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the Transport PIN?&apos; paragraph 3/3</extracomment>
-        <translation>После создания PIN-кода карты временный PIN-код перестает действовать.</translation>
+        <source>When setting up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 2/2</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Where do I find the PUK?</source>
@@ -2299,14 +2413,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Где найти PUK-код?</translation>
     </message>
     <message>
-        <source>PUK information</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Информация о PUK-коде</translation>
-    </message>
-    <message>
-        <source>The PUK is a 10-digit number that you can find in the PIN letter that was sent to you by mail after you applied for your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
-        <translation>PUK-код — это 10-значный номер, который можно найти в письме с PIN-кодом, отправленном вам по почте после того, как вы заказали идентификационную карту.</translation>
+        <source>The PUK is a %1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.</source>
+        <extracomment>LABEL ALL_PLATFORMS INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Why is the PUK required?</source>
@@ -2314,19 +2423,24 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Для чего необходим PUK-код?</translation>
     </message>
     <message>
-        <source>The PUK is required if the card PIN has been entered incorrectly 3 times in a row. As a result, the card PIN is blocked.</source>
+        <source>The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have %1 3 more attempts%2 to enter the correct PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why is the PUK required?&apos;</extracomment>
-        <translation>PUK-код необходим в том случае, если PIN-код карты введен неправильно три раза подряд. После этого PIN-код карты блокируется.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>What is the PUK&apos;s purpose?</source>
+        <source>My PUK does not work</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>В чем назначение PUK-кода?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>By entering the PUK, you unblock the card PIN and have another 3 chances to enter the correct PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;What is the PUK&apos;s purpose?&apos;</extracomment>
-        <translation>После ввода PUK-кода разблокируется PIN-код карты и появляется возможность ввести PIN-код еще три раза.</translation>
+        <source>Make sure, that the letter at hand is the %1letter for your current ID card%2. The PIN letter is valid only for your current ID card. With a new ID card, you receive a new PIN letter with a new PUK.</source>
+        <extracomment>INFO ALL_PLATFORMS Text block regaring &quot;My PUK does not work&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you applied for a PIN Reset letter, make sure that you don&apos;t mix up the letters. The %1PIN letter you need contains the 5-digit Transport PIN and the PUK%2. The PIN Reset letter contains the 6-digit card PIN and the activation code.</source>
+        <extracomment>INFO ALL_PLATFORMS Text block regaring &quot;My PUK does not work&quot;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Why is the CAN required?</source>
@@ -2334,19 +2448,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Для чего необходим CAN-код?</translation>
     </message>
     <message>
-        <source>CAN information</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Информация о CAN</translation>
-    </message>
-    <message>
-        <source>When is the card access number (CAN) required?</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Когда необходим код доступа к карте (CAN-код)?</translation>
-    </message>
-    <message>
-        <source>The card access number (CAN) is required when the card PIN has been entered incorrectly 2 times.</source>
+        <source>The card access number (CAN) is required when the %1card PIN has been entered incorrectly 2 times%2.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;When is the card access number (CAN) required?&apos;</extracomment>
-        <translation>Код доступа к карте (CAN-код) требуется, если PIN-код карты дважды введен неправильно.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Why do I have to enter the CAN before a 3rd attempt?</source>
@@ -2354,9 +2458,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Почему нужно вводить CAN-код перед третьей попыткой?</translation>
     </message>
     <message>
-        <source>A 3rd incorrect entry blocks your PIN and you can no longer use the eID function until it is unblocked. Requesting the CAN ensures that a 3rd incorrect entry can only be made with direct access to your ID card.</source>
+        <source>A 3rd incorrect entry blocks your PIN and you can no longer use the eID function until it is unblocked. Requesting the CAN ensures that %1direct access to your ID card%2 is given.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why do I have to enter the CAN before a 3rd attempt?&apos;</extracomment>
-        <translation>Третий неверный ввод блокирует PIN-код, и вы больше не сможете использовать функцию eID до тех пор, пока он не будет разблокирован. Запрос CAN-кода гарантирует, что третий неправильный ввод может быть выполнен только при наличии прямого доступа к идентификационной карте.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Where can I find the CAN?</source>
@@ -2364,9 +2468,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Где найти CAN-код?</translation>
     </message>
     <message>
-        <source>The CAN is a 6-digit number that can be found on the bottom right of the front of the ID card.</source>
+        <source>The CAN is a 6-digit number that can be found on the %1bottom right%2 of the %1front of the ID card%2.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the CAN?&apos;</extracomment>
-        <translation>CAN-код — это 6-значный номер, указанный в нижнем правом углу на передней стороне идентификационной карты.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
@@ -2411,19 +2515,14 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Вы установили PIN-код карты при получении идентификационной карты или позже самостоятельно, но не можете его вспомнить?</translation>
     </message>
     <message>
-        <source>Learn more about the 2 types of PIN</source>
+        <source>How do the PIN types differ?</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Подробнее о двух типах PIN-кода</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Types of PIN</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Типы PIN-кодов</translation>
-    </message>
-    <message>
-        <source>Your ID card comes with a 5-digit &apos;Transport PIN&apos; which you need to replace with a 6-digit PIN that you choose yourself.</source>
+        <source>Your ID card comes with a 5-digit %1Transport PIN%2 which you need to %1replace with%2 a 6-digit %1card PIN%2 that you choose yourself.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 1/7</extracomment>
-        <translation>К вашей идентификационной карте прилагается 5-значный временный PIN-код, который необходимо заменить 6-значным PIN-кодом (его вы выберете сами).</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>5-digit Transport PIN</source>
@@ -2436,9 +2535,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>6-значный PIN-код</translation>
     </message>
     <message>
-        <source>The 5-digit Transport PIN was sent to you by mail after you applied for your ID card.</source>
+        <source>The 5-digit Transport PIN is a %1one-time PIN%2 that was sent to you by %1mail%2 after you applied for your ID card.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 2/7</extracomment>
-        <translation>5-значный временный PIN-код был отправлен вам по почте после того, как вы заказали идентификационную карту.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>What is the Smart-eID PIN?</source>
@@ -2466,14 +2565,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Изменить 6-значный PIN-код для Smart-eID можно в любое время и неограниченное количество раз, если вы знаете свой действительный PIN-код для Smart-eID.</translation>
     </message>
     <message>
-        <source>The PIN can only be used once. When you set up the eID function, you will replace this 5-digit Transport PIN with a 6-digit card PIN that you choose yourself.</source>
+        <source>When you set up the eID function, you will %1replace%2 this 5-digit %1Transport PIN%2 with a 6-digit %1card PIN that you choose yourself%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
-        <translation>Этот PIN-код можно использовать только один раз. При настройке функции eID вы замените этот 5-значный временный PIN-код 6-значным PIN-кодом карты, который выберете сами.</translation>
-    </message>
-    <message>
-        <source>The 6-digit card PIN is a number that you choose yourself when you set up the eID function for the first time. It replaces your 5-digit Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
-        <translation>6-значный PIN-код карты — это номер, который вы выбираете сами при настройке функции eID в первый раз. Он заменяет 5-значный временный PIN-код.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
@@ -2491,9 +2585,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Ввод 6-значного PIN-кода подтверждает в режиме онлайн то, что идентификационная карта или Smart-eID принадлежит вам. Никто не сможет использовать функцию eID без этого PIN-кода.</translation>
     </message>
     <message>
-        <source>The card PIN is a 6-digit PIN that you set yourself. You always need this PIN if you want to use the eID function with your ID card.</source>
+        <source>The card PIN is a 6-digit PIN that you set yourself. You always need this %1PIN%2 if you want to use the %1eID function%2.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;what is the card pin?&apos;</extracomment>
-        <translation>PIN-код карты — это 6-значный PIN-код, который пользователь создает самостоятельно. Этот PIN-код необходим, если планируется использовать функцию eID с вашей идентификационной картой.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in %1 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function and set up a Smart-eID.</source>
@@ -2501,9 +2595,34 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Задать PIN-код карты можно либо непосредственно при получении идентификационной карты в ведомстве по делам граждан (Bürgeramt), либо позже в %1, используя для этого 5-значный временный PIN-код. Только установив 6-значный PIN-код по своему выбору, вы можете использовать функцию eID и настраивать Smart-eID.</translation>
     </message>
     <message>
-        <source>You set the card PIN either directly when you picked up your ID card at the citizens&apos; office (Bürgeramt) or later in %1 using the 5-digit Transport PIN. Only when you have set a 6-digit PIN of your own choice can you use the eID function.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; (%1 is replaced with the application name)</extracomment>
-        <translation>Вы устанавливаете PIN-код карты либо непосредственно при получении идентификационной карты в ведомстве по делам граждан (Bürgeramt), либо позже в %1, используя для этого 5-значный временный PIN-код. Только установив 6-значный PIN-код по своему выбору, вы можете использовать функцию eID.</translation>
+        <source>The card PIN was %1either%2...</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; - Intro</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>set by you when picking up the ID card %1at the citiziens&apos; office%2</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; - Parapgraph 1/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>set %1in the %3 using%2 the 5-digit %1Transport PIN%2</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; - Parapgraph 2/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>requested using the %1PIN Reset Service%2 - you may continue using the 6-digit card PIN from the letter or change it via &quot;Change PIN&quot; to a self chosen card PIN</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where can I find the card PIN?&apos; - Parapgraph 3/3</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I just have a 5-digit Transport PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You need to change the %1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
+        <extracomment>INFO ALL_PLATFORMS Explanation if only the Transport PIN is at hand</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
@@ -2521,26 +2640,56 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Вы устанавливаете PIN-код для Smart-eID при настройке Smart-eID.</translation>
     </message>
     <message>
-        <source>With this 6-digit PIN you prove online that the ID card belongs to you. No one can use the eID function without this PIN.</source>
+        <source>With this 6-digit PIN you prove online that the ID card belongs to you. %1No one can use the eID function without this PIN%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 6/7</extracomment>
-        <translation>Ввод 6-значного PIN-кода подтверждает в режиме онлайн то, что идентификационная карта принадлежит вам. Никто не сможет использовать функцию eID без этого PIN-кода.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can change your card PIN at any time in %1.</source>
+        <source>If you applied for a %1PIN Reset letter%2, a new card PIN was already set for you. You can change your card PIN at %1any time in %3%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation>Вы можете изменить PIN-код карты в любое время в %1.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>I can&apos;t recall my PIN</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Я не могу вспомнить свой PIN-код</translation>
     </message>
     <message>
         <source>I can&apos;t recall my PUK</source>
-        <translation type="unfinished"></translation>
+        <translation>Я не могу вспомнить свой PUK-код</translation>
     </message>
     <message>
         <source>Set a new PIN</source>
+        <translation>Создание новый PIN-код</translation>
+    </message>
+    <message>
+        <source>My Transport PIN does not work</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Мой временный PIN-код не работает</translation>
+    </message>
+    <message>
+        <source>If your Transport PIN from the PIN letter does work, this might be caused by the following reasons:</source>
+        <extracomment>LABEL ALL_PLATFORMS INFO ALL_PLATFORMS Introduction why the Transport PIN might not work.</extracomment>
+        <translation>Если ваш временный PIN-код, указанный к письме с PIN-кодом, это может иметь слежующие причины:</translation>
+    </message>
+    <message>
+        <source>You already set a 6-digit PIN either at the competent authority or using the %1.</source>
+        <extracomment>INFO ALL_PLATFORMS Information why the Transport PIN is void: a 6-digit PIN was already set</extracomment>
+        <translation>Вы уже создали 6-значный PIN-код в компетентном органе или через %1.</translation>
+    </message>
+    <message>
+        <source>You applied for PIN Reset Letter (letter containing a 6-digit PIN and corresponding Activation Code).</source>
+        <extracomment>INFO ALL_PLATFORMS Information why the Transport PIN is void: the PIN Reset Service was used</extracomment>
+        <translation>Вы запросили письмо для переустановки PIN-кода (письмо содержит 6-значный PIN-код и соответствующий код активации).</translation>
+    </message>
+    <message>
+        <source>Once you set a 6-digit PIN, the Transport PIN is no longer valid. You may then only use the 6-digit PIN to authenticate yourself.</source>
+        <extracomment>INFO ALL_PLATFORMS Information that the Transport PIN is void once a 6-digit PIN was set.</extracomment>
+        <translation>После установки 6-значного PIN-кода временный PIN-код становится недействительным. В дальнейшем для аутентификации может быть использован только 6-значный PIN-код.</translation>
+    </message>
+    <message>
+        <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2701,11 +2850,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Вы успешно создали Smart-eID.</translation>
     </message>
     <message>
-        <source>OK</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>OK</translation>
-    </message>
-    <message>
         <source>Continue</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Продолжить</translation>
@@ -2729,6 +2873,16 @@ LABEL ANDROID IOS</extracomment>
         <source>Attention: you may only set up &lt;b&gt;&lt;u&gt;one&lt;/u&gt;&lt;/b&gt; more Smart-eID with your ID card. Further setups may be carried out on %1.</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Внимание: с помощью вашей идентификационной карты вы можете создать всего &lt;b&gt;&lt;u&gt;одну&lt;/u&gt;&lt;/b&gt; электронную идентификационную карту Smart-eID. Дополнительные попытки доступны (%1).</translation>
+    </message>
+    <message>
+        <source>Personalization failed</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Сбой персонализации</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Назад к начальной странице</translation>
     </message>
 </context>
 <context>
@@ -2848,8 +3002,8 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <translation>Произошла ошибка при управлении файлом журнала: %1</translation>
     </message>
     <message>
-        <source>Please describe the error that occurred.</source>
-        <translation>Опишите возникшую ошибку.</translation>
+        <source>Please describe the error that occurs. Our support is available to you in German and English.</source>
+        <translation>Опишите возникшую ошибку. Мы предоставляем поддержку на немецком и английском языках.</translation>
     </message>
     <message>
         <source>You may want to attach the logfile which can be saved from the error dialog.</source>
@@ -2878,6 +3032,39 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <source>Unknown reader</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Неизвестное устройство чтения карт</translation>
+    </message>
+</context>
+<context>
+    <name>RedirectView</name>
+    <message>
+        <source>Remove the ID card from the card reader.</source>
+        <extracomment>INFO DESKTOP Hint to user that the ID card should be removed</extracomment>
+        <translation>Извлеките идентификационную карту из устройства чтоения карт.</translation>
+    </message>
+    <message>
+        <source>Remove the ID card from the NFC interface.</source>
+        <extracomment>INFO ANDROID IOS Hint to user that the ID card should be removed</extracomment>
+        <translation>Извлеките идентификационную карту из интерфейса NFC.</translation>
+    </message>
+    <message>
+        <source>You will now leave the %1. For any further questions regarding the current process or occurring errors contact the corresponding provider.</source>
+        <extracomment>INFO ALL_PLATFORMS User message that the redirect to the provider is immanent and the user will leave the AusweisApp</extracomment>
+        <translation>Вы покидаете %1. По всем дополнительным вопросам, касающимся текущего процесса или возникающих ошибок, обращайтесь к соответствующему провайдеру.</translation>
+    </message>
+    <message>
+        <source>Return to provider</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Вернуться к провайдеру</translation>
+    </message>
+    <message>
+        <source>Authentication successful</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Аутентификация выполнена успешно</translation>
+    </message>
+    <message>
+        <source>You will be redirected to the provider</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Вас перенаправят к провайдеру</translation>
     </message>
 </context>
 <context>
@@ -2995,11 +3182,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Функция NFC не активирована</translation>
     </message>
     <message>
-        <source>Remote service not available</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Удаленная служба недоступна</translation>
-    </message>
-    <message>
         <source>Card access in progress</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Выполняется доступ к карте</translation>
@@ -3097,6 +3279,11 @@ To do this you first have to pair that device with this smartphone.</source>
         <source>Paired devices may use this Smartphone as a card reader now.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Теперь сопряженные устройства могут использовать этот смартфон в качестве устройства чтения карт.</translation>
+    </message>
+    <message>
+        <source>NFC is not available</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished">Функция NFC недоступна</translation>
     </message>
 </context>
 <context>
@@ -3271,24 +3458,11 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
-    <name>RetryCounter</name>
-    <message>
-        <source>Remaining ID card PIN attempts: %1</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Осталось попыток ввода PIN-кода идентификационной карты: %1</translation>
-    </message>
-</context>
-<context>
     <name>SecurityAndPrivacySettings</name>
     <message>
         <source>Onscreen keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Экранная клавиатура</translation>
-    </message>
-    <message>
-        <source>Use on screen keypad for PIN entry</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Использовать экранную клавиатуру для ввода PIN-кода</translation>
     </message>
     <message>
         <source>Software updates</source>
@@ -3364,16 +3538,16 @@ LABEL ANDROID IOS</extracomment>
         <translation>Считать данные</translation>
     </message>
     <message>
-        <source>OK</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
-        <translation>OK</translation>
-    </message>
-    <message>
         <source>Identify</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Идентифицировать</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>Назад к начальной странице</translation>
     </message>
 </context>
 <context>
@@ -3401,9 +3575,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Use the button &quot;See my personal data&quot; to start the self-authentication service of the manufacturer of the %1 to display the data stored in the chip of your ID card.</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Используйте кнопку «Просмотреть персональные данные» для запуска службы самоаутентификации производителя %1, чтобы отобразить данные, сохраненные в чипсете вашей идентификационной карты.</translation>
     </message>
     <message>
@@ -3422,6 +3594,11 @@ LABEL ANDROID IOS</extracomment>
         <source>Hint</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Совет</translation>
+    </message>
+    <message>
+        <source>View the data stored on your ID card</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Посмотреть данные, сохраненные на идентификационной карте</translation>
     </message>
 </context>
 <context>
@@ -3522,11 +3699,6 @@ LABEL ANDROID IOS</extracomment>
         <source>Use a more tolerant mode</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Использовать менее чувствительный режим</translation>
-    </message>
-    <message>
-        <source>Layout style</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Стиль макета</translation>
     </message>
     <message>
         <source>Create dummy entries</source>
@@ -4101,6 +4273,16 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>SIM</translation>
     </message>
+    <message>
+        <source>%1 mode is active.</source>
+        <extracomment>INFO ANDROID IOS A11y text on button indicating the currently active technology. %1 will be replaced with the name of the technology (e.g. NFC).</extracomment>
+        <translation>Режим %1 активирован.</translation>
+    </message>
+    <message>
+        <source>Click here to change the mode to %1.</source>
+        <extracomment>INFO ANDROID IOS A11y text on button to switch to another technology. %1 will be replaced with the name of the technology (e.g. NFC).</extracomment>
+        <translation>Нажмите сюда, чтобы перейти к режиму %1.</translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -4381,14 +4563,6 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     </message>
 </context>
 <context>
-    <name>WorkflowInfoList</name>
-    <message>
-        <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
-        <extracomment>INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.</extracomment>
-        <translation>Сопряжение устройства &quot;%1&quot; не было выполнено, поскольку оно не отвечало на попытки соединения. Снова выполните сопряжение устройства для его использования в качестве устройства чтения карт.</translation>
-    </message>
-</context>
-<context>
     <name>governikus::AccessRoleAndRightsUtil</name>
     <message>
         <source>Optional data</source>
@@ -4551,7 +4725,32 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>Reason:</source>
         <extracomment>INFO ALL_PLATFORMS Failure code (string) of current workflow error.</extracomment>
-        <translation>Причина</translation>
+        <translation>Причина:</translation>
+    </message>
+    <message>
+        <source>Redirect failed</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Сбой переадресации</translation>
+    </message>
+    <message>
+        <source>Authentication failed</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Сбой аутентификации</translation>
+    </message>
+    <message>
+        <source>Authentication successful</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Аутентификация выполнена успешно</translation>
+    </message>
+    <message>
+        <source>Back to provider</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Назад к провайдеру</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Назад к начальной странице</translation>
     </message>
 </context>
 <context>
@@ -5540,7 +5739,7 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     </message>
 </context>
 <context>
-    <name>governikus::LocalIfdReaderManagerPlugIn</name>
+    <name>governikus::LocalIfdReaderManagerPlugin</name>
     <message>
         <source>Connection closed by remote with status: %1.</source>
         <translation>Соединение закрыто дистанционно со статусом: %1.</translation>
@@ -5622,34 +5821,14 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <source>You have entered an incorrect, 5-digit Transport PIN. You have 2 further attempts to enter the correct Transport PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.</extracomment>
-        <translation>Вы ввели неправильный 5-значный временный PIN-код. Осталось две попытки ввода временного PIN-кода.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have 2 further attempts to enter the correct Smart-eID PIN.</source>
+        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Smart-eID PIN.</source>
         <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.</extracomment>
-        <translation>Вы ввели неправильный 6-значный PIN-код для Smart-eID. Осталось две попытки ввода PIN-кода для Smart-eID.</translation>
+        <translation type="unfinished">Вы ввели неправильный 6-значный PIN-код для Smart-eID. Осталось две попытки ввода PIN-кода для Smart-eID.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN. You have 2 further attempts to enter the correct ID card PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt.</extracomment>
-        <translation>Вы ввели неправильный 6-значный PIN-код идентификационной карты. Осталось две попытки ввода PIN-кода идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 5-digit Transport PIN 2 times. For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
-        <translation>Вы ввели неправильный 5-значный временный PIN два раза. Перед третьей попыткой необходимо ввести 6-значный код доступа (CAN). Код CAN указан внизу справа на передней стороне идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN 2 times. For a 3rd attempt, the 6-digit Card Access Number (CAN) must be entered first. You can find your CAN in the bottom right on the front of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification.</extracomment>
-        <translation>Вы ввели неправильный 6-значный PIN-код идентификационной карты два раза. Перед третьей попыткой необходимо ввести 6-значный код доступа (CAN). Код CAN указан внизу справа на передней стороне идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your Transport PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.</source>
+        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your &lt;b&gt;Transport PIN is now blocked&lt;/b&gt;. To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first.</source>
         <extracomment>INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
-        <translation>Вы трижды ввели неправильный 5-значный временный PIN-код; ваш временный PIN-код заблокирован. Для разблокирования сначала введите 10-значный PUK-код.</translation>
+        <translation type="unfinished">Вы трижды ввели неправильный 5-значный временный PIN-код; ваш временный PIN-код заблокирован. Для разблокирования сначала введите 10-значный PUK-код.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 6-digit Smart-eID PIN 3 times. Your Smart-eID is now invalidated. To use a Smart-eID again you have to set one up in the guided setup on the start page.</source>
@@ -5657,24 +5836,14 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <translation>Вы трижды ввели неправильный 6-значный PIN-код для Smart-eID. Теперь ваша электронная идентификационная карта Smart-eID недействительна. Чтобы снова использовать электронную идентификационную карту Smart-eID, необходимо заново создать ее на начальной странице.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN 3 times, your ID card PIN is now blocked. To remove the block, the 10-digit PUK must be entered first.</source>
-        <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
-        <translation>Вы трижды ввели неправильный 6-значный PIN-код идентификационной карты; PIN-код идентификационной карты заблокирован. Для разблокирования сначала введите 10-значный PUK-код.</translation>
-    </message>
-    <message>
-        <source>You have entered an incorrect, 6-digit Card Access Number (CAN). Please try again.</source>
-        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
-        <translation>Вы ввели неправильный 6-значный код доступа (CAN). Повторите попытку.</translation>
-    </message>
-    <message>
         <source>You have entered an incorrect, 10-digit PUK. Please try again.</source>
         <extracomment>INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.</extracomment>
         <translation>Вы ввели неправильный 10-значный PUK-код. Повторите попытку.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN 2 times. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
+        <source>You have entered an &lt;b&gt;incorrect, 6-digit Smart-eID PIN 2 times&lt;/b&gt;. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
         <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID.</extracomment>
-        <translation>Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. После третьей попытки неправильного ввода вы больше не сможете использовать Smart-eID, и ее придется настроить еще раз.</translation>
+        <translation type="unfinished">Вы дважды ввели неправильный 6-значный PIN-код для Smart-eID. После третьей попытки неправильного ввода вы больше не сможете использовать Smart-eID, и ее придется настроить еще раз.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new Smart-eID PIN.</source>
@@ -5684,6 +5853,78 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <message>
         <source>The input does not match. Please choose a new ID card PIN.</source>
         <translation>Введенные данные не совпадают. Выберите новый PIN-код идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>You have entered an incorrect, 6-digit ID card PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 1/2</extracomment>
+        <translation>Вы ввели  неправильный 6-значный PIN-код идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct ID card PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 2/2</extracomment>
+        <translation type="unfinished">У вас осталось две попытки, чтобы ввести правильный PIN-код идентификационной  карты.</translation>
+    </message>
+    <message>
+        <source>You have entered an &lt;b&gt;incorrect, 6-digit ID card PIN 2 times&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
+        <translation type="unfinished">Вы дважды ввели  неправильный 6-значный PIN-код идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2
+----------
+INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2</extracomment>
+        <translation type="unfinished">Для третьей попытки сначала введите 6-значный код доступа (CAN). Код CAN указан внизу справа на передней стороне идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>You have entered an incorrect, 6-digit ID card PIN 3 times. Your &lt;b&gt;ID card PIN is now blocked&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 1/2</extracomment>
+        <translation type="unfinished">Вы трижды ввели  неправильный 6-значный PIN-код идентификационной карты. PIN-код идентификационной карты заблокирован.</translation>
+    </message>
+    <message>
+        <source>To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first. You can find the PUK in the bottom &lt;b&gt;right next&lt;/b&gt; to the Transport PIN in the &lt;b&gt;authority&apos;s letter&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 2/2</extracomment>
+        <translation type="unfinished">Для разблокирования сначала введите 10-значный PUK-код. PUK-код указан  возле временного PIN-кода внизу справа на передней стороне письма компетентного органа.</translation>
+    </message>
+    <message>
+        <source>You have entered an &lt;b&gt;incorrect Card Access Number (CAN)&lt;/b&gt;. Please try again. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
+        <translation type="unfinished">Вы ввели неправильный код доступа (CAN). Повторите попытку. Код CAN указан внизу справа на передней стороне идентификационной капты.</translation>
+    </message>
+    <message>
+        <source>You have entered an incorrect, 5-digit Transport PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. Part 1/2</extracomment>
+        <translation>Вы ввели  неправильный 5-значный временный PIN-код.</translation>
+    </message>
+    <message>
+        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Transport PIN. The 5-digit Transport PIN may be found on the &lt;b&gt;bottom left of your PIN letter&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.Part 2/2</extracomment>
+        <translation type="unfinished">У вас осталось две попытки, чтобы ввести правильный временный PIN-код. 5-значный временный PIN код указан внизу слева в письме с PIN-кодом.</translation>
+    </message>
+    <message>
+        <source>You have entered an &lt;b&gt;incorrect, 5-digit Transport PIN 2 times&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
+        <translation type="unfinished">Вы дважды ввели  неправильный 5-значный временный PIN-код.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;An incorrect PIN has been entered 2 times&lt;/b&gt; at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 1/2</extracomment>
+        <translation>&lt;b&gt;PIN-код дважды введен неправильно&lt;/b&gt; при последнем использовании вашей идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN &lt;b&gt;in the bottom right on the front of your ID card&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 2/2</extracomment>
+        <translation>Для третьей попытки сначала &lt;b&gt;введите 6-значный код доступа (CAN)&lt;/b&gt;. Код CAN&lt;b&gt;указан внизу справа на передней стороне идентификационной карты&lt;/b&gt;.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;An incorrect PIN has been entered 3 times&lt;/b&gt; at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 1/2</extracomment>
+        <translation>&lt;b&gt;PIN-код трижды  введен неправильно&lt;/b&gt; при последнем использовании вашей идентификационной карты.</translation>
+    </message>
+    <message>
+        <source>Therefor you have to enter the &lt;b&gt;PUK&lt;/b&gt; first to &lt;b&gt;unlock the ID card PIN&lt;/b&gt;.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 2/2</extracomment>
+        <translation>Для этого введите сначала &lt;b&gt;PUK-код&lt;/b&gt;, чтобы &lt;b&gt;разблокировать  PIN-код идентификационной карты&lt;/b&gt;.</translation>
     </message>
 </context>
 <context>
@@ -5878,7 +6119,7 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
     <message>
         <source>was</source>
         <extracomment>LABEL ALL_PLATFORMS Describes the former name of the device and is shown as: &quot;New_Name (was Old_Name)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>прежнее название</translation>
     </message>
 </context>
 <context>
@@ -5896,20 +6137,26 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
     <message>
         <source>The NFC radio standard is required for communication with the ID card.
 
-Unfortunately NFC is not available on your device.</source>
-        <extracomment>INFO ALL_PLATFORMS The device does not offer NFC.</extracomment>
-        <translation>Для обмена данными с идентификационной картой требуется стандарт радиосвязи NFC.
-
-К сожалению, NFC недоступен на вашем устройстве.</translation>
-    </message>
-    <message>
-        <source>The NFC radio standard is required for communication with the ID card.
-
 Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <extracomment>INFO ALL_PLATFORMS NFC is available but not active.</extracomment>
         <translation>Для обмена данными с идентификационной картой требуется стандарт радиосвязи NFC.
 
 Активируйте NFC, чтобы использовать смартфон в качестве устройства чтения карт (SaC).</translation>
+    </message>
+    <message>
+        <source>This device cannot be used to read your ID card.</source>
+        <extracomment>ALL_PLATFORMS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you want to use the online identification on this device anyway, you can connect another NFC capable smartphone as a card reader.</source>
+        <extracomment>ALL_PLATFORMS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To pair a smartphone go to &lt;b&gt;Settings&lt;/b&gt; and &lt;b&gt;Manage Pairings&lt;/b&gt;.</source>
+        <extracomment>ALL_PLATFORMS AA2 can&apos;t use NFC on this device, suggest to use SaK instead.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5939,7 +6186,9 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
     <message>
         <source>xx.MM.yyyy</source>
-        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day</extracomment>
+        <extracomment>LABEL ALL_PLATFORMS Date format according to https://doc.qt.io/qt/qdate.html#toString with unknown day
+----------
+LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <translation>хх.ММ.гггг</translation>
     </message>
     <message>
@@ -6226,10 +6475,10 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
 - remove the mobile phone case (if present)
 - connect the smartphone with a charging cable</source>
         <extracomment>INFO The NFC signal is weak or unstable. The scan is stopped with this information in the iOS dialog.</extracomment>
-        <translation>Слабый сигнал NFC. Выполните следующее.
-- Измените положение карты.
-- Снимите чехол с мобильного телефона (при наличии).
-- Подключите смартфон к зарядному кабелю.</translation>
+        <translation>Слабый сигнал NFC. Выполните следующее:
+- Измените положение карты
+- Снимите чехол с мобильного телефона (при наличии)
+- Подключите смартфон к зарядному кабелю</translation>
     </message>
 </context>
 <context>
@@ -6241,7 +6490,7 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
 </context>
 <context>
-    <name>governikus::SurveyModel</name>
+    <name>governikus::Survey</name>
     <message>
         <source>Vendor</source>
         <translation>Производитель</translation>
@@ -6298,21 +6547,21 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
     </message>
 </context>
 <context>
-    <name>governikus::UIPlugInProxy</name>
+    <name>governikus::UiPluginProxy</name>
     <message>
         <source>Reverse proxy plugin is enabled</source>
         <translation>Активирован плагин обратного прокси-сервера</translation>
     </message>
 </context>
 <context>
-    <name>governikus::UIPlugInQml</name>
+    <name>governikus::UiPluginQml</name>
     <message>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
 </context>
 <context>
-    <name>governikus::UIPlugInWebService</name>
+    <name>governikus::UiPluginWebService</name>
     <message>
         <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
         <extracomment>ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.</extracomment>
@@ -6388,9 +6637,9 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <translation>Сообщить сейчас</translation>
     </message>
     <message>
-        <source>The connection to the browser was lost. No forwarding was executed. Please try to call the URL again manually: %1</source>
+        <source>The connection to the browser was lost while redirecting to the provider (%1). No automatic redirection could be performed.</source>
         <extracomment>ERROR ALL_PLATFORMS The connection to the browser was lost/timed out..</extracomment>
-        <translation>Прервано соединение с браузером. Не удалось выполнить переадресацию. Повторите попытку вызвать URL вручную: %1</translation>
+        <translation>При перенаправлении к провайдеру (%1) было потеряно соединение с браузером. Не удалось выполнить автоматическое перенаправление.</translation>
     </message>
 </context>
 <context>
@@ -6428,87 +6677,10 @@ Please enable NFC to use your smartphone as a card reader (SaC).</source>
         <extracomment>LABEL ANDROID IOS The text on the redirect button that appears when the user tried to use an unusable Smart-eID</extracomment>
         <translation>Перейти в меню Smart-eID</translation>
     </message>
-</context>
-<context>
-    <name>main</name>
     <message>
-        <source>Another application uses %1</source>
-        <extracomment>INFO DESKTOP The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.</extracomment>
-        <translation>Другое приложение использует %1</translation>
-    </message>
-    <message>
-        <source>The user interface of the %1 is closed.</source>
-        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is closed for the first time.</extracomment>
-        <translation>Пользовательский интерфейс %1 закрыт.</translation>
-    </message>
-    <message>
-        <source>The program remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled.</extracomment>
-        <translation>Программа по-прежнему доступна через значок на панели задач. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
-    </message>
-    <message>
-        <source>Do not show this dialog again.</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Не показывать этот диалог снова.</translation>
-    </message>
-    <message>
-        <source>This will cancel the current operation and hide the UI of %1. You can restart the operation at any time.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and a workflow is still active.</extracomment>
-        <translation>Текущий процесс будет прерван, а пользовательский интерфейс %1 скрыт. Вы можете перезапустить процесс в любое время.</translation>
-    </message>
-    <message>
-        <source>Abort operation</source>
-        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is closed and a workflow is still active</extracomment>
-        <translation>Отмена операции</translation>
-    </message>
-    <message>
-        <source>Failed to retrieve update information.</source>
-        <extracomment>INFO DESKTOP Message that the update data is invalid and can&apos;t be used.</extracomment>
-        <translation>Сбой загрузки информации об обновлении.</translation>
-    </message>
-    <message>
-        <source>An update is available (version %1).</source>
-        <extracomment>INFO DESKTOP An update was found which matches the current platform, the new version number is shown in the message.</extracomment>
-        <translation>Доступно обновление (версия %1).</translation>
-    </message>
-    <message>
-        <source>Developer Mode: Enabled!</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Режим разработчика: активирован!</translation>
-    </message>
-    <message>
-        <source>Disable</source>
-        <extracomment>LABEL DESKTOP Global button to disable developer mode.</extracomment>
-        <translation>Деактивировать</translation>
-    </message>
-    <message>
-        <source>Detached log viewer</source>
-        <translation>Средство просмотра файлов журнала</translation>
-    </message>
-    <message>
-        <source>To close the app, press the back button 2 times.</source>
-        <extracomment>INFO ANDROID IOS Hint that is shown if the users pressed the &quot;back&quot; button on the top-most navigation level for the first time (a second press closes the app).</extracomment>
-        <translation>Чтобы закрыть приложение, два раза нажмите кнопку «Назад».</translation>
-    </message>
-    <message>
-        <source>The program remains available via the icon in the menu bar. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is closed and the close/minimize info was not disabled. macOS specific if autostart is enabled.</extracomment>
-        <translation>Программа по-прежнему доступна через значок в строке меню. Нажмите на символ %1, чтобы снова открыть пользовательский интерфейс.</translation>
-    </message>
-    <message>
-        <source>The %1 will be shut down and an authentication will no longer be possible. You will have to restart the %1 to identify yourself towards providers.</source>
-        <extracomment>INFO DESKTOP Text of the popup that is shown when the AA2 is quit for the first time.</extracomment>
-        <translation>%1 будет закрыто, и аутентификация больше не будет возможна. Вам нужно будет перезапустить %1, чтобы идентифицировать себя у провайдеров.</translation>
-    </message>
-    <message>
-        <source>The %1 is closed.</source>
-        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA2 is quit for the first time.</extracomment>
-        <translation>%1 закрыто.</translation>
-    </message>
-    <message>
-        <source>This will cancel the current operation and shut the %1 down. You will have to restart the %1 to restart the operation.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA2 is shut down and a workflow is still active.</extracomment>
-        <translation>Текущая операция будет отменена, и %1 будет остановлено. Чтобы снова начать операцию, вам нужно будет перезапустить %1.</translation>
+        <source>Set a new PIN</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
+        <translation>Установите новый PIN-код</translation>
     </message>
 </context>
 </TS>

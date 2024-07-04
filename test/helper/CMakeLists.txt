@@ -3,6 +3,10 @@ add_library(AusweisAppTestHelper INTERFACE)
 add_subdirectory(common)
 target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperCommon)
 
+if(LINUX OR BSD)
+	target_link_libraries(AusweisAppTestHelper INTERFACE AusweisAppTestHelperPcsc)
+endif()
+
 if(TARGET AusweisAppIfd)
 	add_subdirectory(ifd)
 

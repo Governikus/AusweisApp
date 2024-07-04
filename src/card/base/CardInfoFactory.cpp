@@ -4,7 +4,6 @@
 
 #include "CardInfoFactory.h"
 
-#include "apdu/FileCommand.h"
 #include "asn1/ApplicationTemplates.h"
 #include "asn1/PaceInfo.h"
 
@@ -27,7 +26,9 @@ CardInfo CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCa
 		return CardInfo(CardType::UNKNOWN);
 	}
 
-	if (!CardInfoFactory::detectCard(pCardConnectionWorker))
+	const auto application = CardInfoFactory::detectCard(pCardConnectionWorker);
+
+	if (application == FileRef())
 	{
 		qCWarning(card) << "Not a German EID card";
 		return CardInfo(CardType::UNKNOWN);
@@ -40,43 +41,25 @@ CardInfo CardInfoFactory::create(const QSharedPointer<CardConnectionWorker>& pCa
 		return CardInfo(CardType::UNKNOWN);
 	}
 
-	const CardInfo cardInfo(efCardAccess->getMobileEIDTypeInfo() ? CardType::SMART_EID : CardType::EID_CARD, efCardAccess);
+	const CardInfo cardInfo(efCardAccess->getMobileEIDTypeInfo() ? CardType::SMART_EID : CardType::EID_CARD, application, efCardAccess);
 	qCDebug(card) << "Card detected:" << cardInfo;
 	return cardInfo;
 }
 
 
-bool CardInfoFactory::selectApplication(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pFileRef)
-{
-	qCDebug(card) << "Try to select application:" << pFileRef;
-
-	FileCommand command(pFileRef);
-	ResponseApduResult select = pCardConnectionWorker->transmit(command);
-	if (select.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
-	{
-		qCWarning(card) << "Cannot select application identifier:" << select.mResponseApdu.getStatusCode();
-		return false;
-	}
-
-	return true;
-}
-
-
 bool CardInfoFactory::detectEid(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker, const FileRef& pRef)
 {
-	// 1. Select the application id
-	selectApplication(pCardConnectionWorker, pRef);
-
-	// 2. Select the master file
-	FileCommand command(FileRef::masterFile());
-	ResponseApduResult result = pCardConnectionWorker->transmit(command);
-	if (result.mResponseApdu.getStatusCode() != StatusCode::SUCCESS)
+	if (!pCardConnectionWorker->selectApplicationRoot(pRef))
 	{
-		qCWarning(card) << "Cannot select MF:" << result.mResponseApdu.getStatusCode();
 		return false;
 	}
 
-	// 3. Read EF.DIR
+	if (pRef == FileRef::appPassport())
+	{
+		qCDebug(card) << "Passport found";
+		return false;
+	}
+
 	QByteArray rawEfDir;
 	if (pCardConnectionWorker->readFile(FileRef::efDir(), rawEfDir) != CardReturnCode::OK)
 	{
@@ -101,23 +84,17 @@ bool CardInfoFactory::detectEid(const QSharedPointer<CardConnectionWorker>& pCar
 }
 
 
-bool CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
+FileRef CardInfoFactory::detectCard(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 {
-	for (const auto& appId : {FileRef::appEId(), FileRef::appPersosim()})
+	for (const auto& appId : {FileRef::appEId(), FileRef::appPersosim(), FileRef::appPassport()})
 	{
-		const auto eidAvailable = detectEid(pCardConnectionWorker, appId);
-		if (eidAvailable)
+		if (detectEid(pCardConnectionWorker, appId))
 		{
-			return true;
+			return appId;
 		}
 	}
 
-	if (selectApplication(pCardConnectionWorker, FileRef::appPassport()))
-	{
-		qCDebug(card) << "Passport found";
-	}
-
-	return false;
+	return FileRef();
 }
 
 

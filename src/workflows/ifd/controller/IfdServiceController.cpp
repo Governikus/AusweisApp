@@ -22,7 +22,6 @@
 #include "states/StateVerifyRetryCounter.h"
 
 #include <QDebug>
-#include <initializer_list>
 
 
 using namespace governikus;
@@ -31,12 +30,11 @@ using namespace governikus;
 IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pContext)
 	: WorkflowController(pContext)
 {
-	forceStartStopScan();
-
 	auto sStartIfdService = addInitialState<StateStartIfdService>();
 	auto sProcessIfdMessages = addState<StateProcessIfdMessages>();
 	auto sUpdateRetryCounter = addState<StateUpdateRetryCounter>();
 	auto sVerifyRetryCounter = addState<StateVerifyRetryCounter>();
+	auto sClearPacePasswordsOnNewCard = addState<StateClearPacePasswords>();
 	auto sPreparePaceIfd = addState<StatePreparePaceIfd>();
 	auto sEnterPacePasswordIfd = addState<StateEnterPacePasswordIfd>();
 	auto sEstablishPaceChannelIfd = addState<StateEstablishPaceChannelIfd>();
@@ -46,14 +44,15 @@ IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pCo
 	auto sChangePinIfd = addState<StateChangePinIfd>();
 	auto sChangePinResponse = addState<StateChangePinResponse>();
 	auto sClearPacePasswords = addState<StateClearPacePasswords>();
+	auto sClearPacePasswordsBeforeStop = addState<StateClearPacePasswords>();
 	auto sStopIfdService = addState<StateStopIfdService>();
 	auto sFinal = addState<FinalState>();
 
 	sStartIfdService->addTransition(sStartIfdService, &AbstractState::fireContinue, sProcessIfdMessages);
 	sStartIfdService->addTransition(sStartIfdService, &AbstractState::fireAbort, sStopIfdService);
 
-	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireContinue, sStopIfdService);
-	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireAbort, sStopIfdService);
+	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireContinue, sClearPacePasswordsBeforeStop);
+	sProcessIfdMessages->addTransition(sProcessIfdMessages, &AbstractState::fireAbort, sClearPacePasswordsBeforeStop);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireEstablishPaceChannel, sUpdateRetryCounter);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireModifyPin, sPrepareChangePinIfd);
 	sProcessIfdMessages->addTransition(sProcessIfdMessages, &StateProcessIfdMessages::fireSecureMessagingStopped, sClearPacePasswords);
@@ -65,6 +64,10 @@ IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pCo
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireContinue, sPreparePaceIfd);
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &AbstractState::fireAbort, sEstablishPaceChannelResponse);
 	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &StateVerifyRetryCounter::fireNoCardConnection, sEstablishPaceChannelResponse);
+	sVerifyRetryCounter->addTransition(sVerifyRetryCounter, &StateVerifyRetryCounter::fireReaderOrCardChanged, sClearPacePasswordsOnNewCard);
+
+	sClearPacePasswordsOnNewCard->addTransition(sClearPacePasswordsOnNewCard, &AbstractState::fireContinue, sPreparePaceIfd);
+	sClearPacePasswordsOnNewCard->addTransition(sClearPacePasswordsOnNewCard, &AbstractState::fireAbort, sPreparePaceIfd);
 
 	sPreparePaceIfd->addTransition(sPreparePaceIfd, &AbstractState::fireContinue, sEstablishPaceChannelIfd);
 	sPreparePaceIfd->addTransition(sPreparePaceIfd, &AbstractState::fireAbort, sEstablishPaceChannelResponse);
@@ -96,6 +99,9 @@ IfdServiceController::IfdServiceController(QSharedPointer<IfdServiceContext> pCo
 
 	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireContinue, sProcessIfdMessages);
 	sClearPacePasswords->addTransition(sClearPacePasswords, &AbstractState::fireAbort, sProcessIfdMessages);
+
+	sClearPacePasswordsBeforeStop->addTransition(sClearPacePasswordsBeforeStop, &AbstractState::fireContinue, sStopIfdService);
+	sClearPacePasswordsBeforeStop->addTransition(sClearPacePasswordsBeforeStop, &AbstractState::fireAbort, sStopIfdService);
 
 	sStopIfdService->addTransition(sStopIfdService, &AbstractState::fireContinue, sFinal);
 	sStopIfdService->addTransition(sStopIfdService, &AbstractState::fireAbort, sFinal);

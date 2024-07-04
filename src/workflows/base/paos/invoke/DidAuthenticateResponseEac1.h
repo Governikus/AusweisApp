@@ -33,10 +33,9 @@ class DIDAuthenticateResponseEAC1
 		QByteArray mIdPICC;
 		QByteArray mChallenge;
 
-		void createDIDAuthenticateResponseEAC1Element();
-		void createAuthenticationProtocolDataElement();
+		void createBodyElement(QXmlStreamWriter& pWriter) override;
+		void createAuthenticationProtocolDataElement(QXmlStreamWriter& pWriter);
 
-		void createBodyElement() override;
 		[[nodiscard]] virtual ECardApiResult getResult() const;
 
 	public:

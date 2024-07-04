@@ -3,7 +3,7 @@
 if(DESKTOP)
 	set(MIN_QT_VERSION 6.4)
 else()
-	set(MIN_QT_VERSION 6.5)
+	set(MIN_QT_VERSION 6.7)
 endif()
 
 if(IOS OR ANDROID)
@@ -21,12 +21,11 @@ if(IOS OR ANDROID)
 		message(FATAL_ERROR "QT_HOST_PATH does not exist")
 	endif()
 
-	message(STATUS "Using QT_HOST_PATH: ${QT_HOST_PATH}")
-	set(CMAKE_FIND_ROOT_PATH ${CMAKE_FIND_ROOT_PATH} ${QT_HOST_PATH} )
+	message(STATUS "QT_HOST_PATH: ${QT_HOST_PATH}")
 endif()
 
 set(Qt Qt6)
-find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS Core Concurrent Network StateMachine REQUIRED CMAKE_FIND_ROOT_PATH_BOTH)
+find_package(${Qt} ${MIN_QT_VERSION} REQUIRED COMPONENTS Core Concurrent Network StateMachine CMAKE_FIND_ROOT_PATH_BOTH)
 set(QT_VERSION "${Qt6Core_VERSION}")
 
 if(NOT CONTAINER_SDK)
@@ -54,9 +53,8 @@ elseif(CONTAINER_SDK)
 endif()
 
 
-QUERY_QMAKE(QT_INSTALL_ARCHDATA QT_INSTALL_ARCHDATA)
-QUERY_QMAKE(QT_INSTALL_TRANSLATIONS QT_INSTALL_TRANSLATIONS)
-
+get_filename_component(QT_INSTALL_ARCHDATA ${QT6_INSTALL_PREFIX}/${QT6_INSTALL_ARCHDATA} ABSOLUTE)
+get_filename_component(QT_INSTALL_TRANSLATIONS ${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS} ABSOLUTE)
 message(STATUS "QT_INSTALL_ARCHDATA: ${QT_INSTALL_ARCHDATA}")
 message(STATUS "QT_INSTALL_TRANSLATIONS: ${QT_INSTALL_TRANSLATIONS}")
 
@@ -86,10 +84,10 @@ endif()
 
 if(MINGW)
 	find_package(PCSC REQUIRED)
-	set(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion" "-liphlpapi")
+	set(WIN_DEFAULT_LIBS "-ladvapi32" "-lkernel32" "-lole32" "-lsetupapi" "-lversion" "-liphlpapi" "-ldwmapi")
 elseif(MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
 	find_package(PCSC REQUIRED)
-	set(WIN_DEFAULT_LIBS setupapi.lib version.lib iphlpapi.lib)
+	set(WIN_DEFAULT_LIBS setupapi.lib version.lib iphlpapi.lib dwmapi.lib)
 elseif(ANDROID)
 
 elseif(IOS)
@@ -131,20 +129,25 @@ elseif(UNIX)
 endif()
 
 
-if(BUILD_TESTING AND NOT CONTAINER_SDK)
-	list(APPEND QT_COMPONENTS Test)
+if(BUILD_TESTING)
+	if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
+		set(QT_TEST_COMPONENTS QT_COMPONENTS)
+	else()
+		set(QT_TEST_COMPONENTS QT_COMPONENTS_OPTIONAL)
+	endif()
+
+	list(APPEND ${QT_TEST_COMPONENTS} Test)
+	if(NOT INTEGRATED_SDK)
+		list(APPEND ${QT_TEST_COMPONENTS} QuickTest)
+	endif()
 
 	if(INTEGRATED_SDK)
 		find_package(Threads REQUIRED)
 	endif()
-
-	if(NOT INTEGRATED_SDK)
-		list(APPEND QT_COMPONENTS QuickTest)
-	endif()
 endif()
 
 if(QT_COMPONENTS)
-	find_package(${Qt} ${MIN_QT_VERSION} COMPONENTS ${QT_COMPONENTS} REQUIRED)
+	find_package(${Qt} ${MIN_QT_VERSION} REQUIRED COMPONENTS ${QT_COMPONENTS} OPTIONAL_COMPONENTS ${QT_COMPONENTS_OPTIONAL})
 endif()
 
 if(LINUX OR BSD)

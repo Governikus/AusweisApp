@@ -11,7 +11,11 @@
 #include "retrieve/DidAuthenticateEacAdditionalParser.h"
 #include "retrieve/TransmitParser.h"
 
+
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
 
 
 PaosHandler::PaosHandler(const QByteArray& pXmlData)
@@ -68,7 +72,7 @@ void PaosHandler::setParsedObject(PaosMessage* pParsedObject)
 }
 
 
-bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&, const QXmlStreamAttributes& pAttributes)
+bool PaosHandler::handleFoundElement(QStringView pElementName, const QString&, const QXmlStreamAttributes& pAttributes)
 {
 	if (pElementName == QLatin1String("InitializeFramework"))
 	{
@@ -104,7 +108,8 @@ bool PaosHandler::handleFoundElement(const QString& pElementName, const QString&
 	{
 		mDetectedType = PaosType::STARTPAOS_RESPONSE;
 	}
-	return false;
+
+	return mDetectedType == PaosType::UNKNOWN;
 }
 
 

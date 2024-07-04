@@ -5,7 +5,7 @@
 #include "StateChangeSmartPin.h"
 
 #include "AppSettings.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 #include "VolatileSettings.h"
 
 
@@ -60,7 +60,7 @@ void StateChangeSmartPin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pComma
 			context->setProgress(100, context->getProgressMessage());
 
 			GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			settings.setLastReaderPluginType(getEnumName(ReaderManagerPlugInType::SMART));
+			settings.setLastReaderPluginType(getEnumName(ReaderManagerPluginType::SMART));
 
 			Q_EMIT fireContinue();
 			break;

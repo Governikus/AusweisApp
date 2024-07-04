@@ -102,8 +102,8 @@ class test_DiagnosisModel
 			QCOMPARE(mModel->mCardReaderSection.at(1).mContent, "No supported reader found."_L1);
 
 			ReaderInfo defaultInfo;
-			ReaderInfo infoEidCard("testInfo"_L1, ReaderManagerPlugInType::PCSC, CardInfo(CardType::EID_CARD));
-			ReaderInfo comfortReaderInfo("name"_L1, ReaderManagerPlugInType::REMOTE_IFD, CardInfo(CardType::UNKNOWN));
+			ReaderInfo infoEidCard("testInfo"_L1, ReaderManagerPluginType::PCSC, CardInfo(CardType::EID_CARD));
+			ReaderInfo comfortReaderInfo("name"_L1, ReaderManagerPluginType::REMOTE_IFD, CardInfo(CardType::UNKNOWN));
 			comfortReaderInfo.setBasicReader(false);
 			const QList<ReaderInfo> readerInfos = {defaultInfo, infoEidCard, comfortReaderInfo};
 			mModel->mContext->setReaderInfos(readerInfos);

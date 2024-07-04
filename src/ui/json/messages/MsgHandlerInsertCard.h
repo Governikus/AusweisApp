@@ -18,7 +18,7 @@ class MsgHandlerInsertCard
 	: public MsgHandler
 {
 	private:
-		void setError(const QString& pError);
+		void setError(const QLatin1String pError);
 
 	public:
 		MsgHandlerInsertCard();

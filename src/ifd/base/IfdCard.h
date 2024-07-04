@@ -62,6 +62,8 @@ class IfdCard
 
 		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
 
+		CardReturnCode destroyPaceChannel() override;
+
 		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 };
 

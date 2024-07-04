@@ -6,13 +6,13 @@
 #include "MockNetworkManager.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
-#include "UIPlugInQml.h"
+#include "UiLoader.h"
+#include "UiPluginQml.h"
 
 #include <QFontDatabase>
 #include <QLoggingCategory>
 #include <QQmlContext>
 #include <QQmlEngine>
-#include <QQmlFileSelector>
 #include <QQuickStyle>
 #include <QStandardPaths>
 #include <QtQuickTest>
@@ -21,6 +21,7 @@
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
+Q_IMPORT_PLUGIN(UiPluginQml)
 Q_DECLARE_LOGGING_CATEGORY(init)
 
 class QmlTestRunner
@@ -28,34 +29,8 @@ class QmlTestRunner
 {
 	Q_OBJECT
 
-	// Mock of the UIPluginQml properties
-	Q_PROPERTY(bool debugBuild MEMBER mFalse CONSTANT)
-	Q_PROPERTY(bool developerVersion MEMBER mFalse CONSTANT)
-	Q_PROPERTY(bool dominated MEMBER mFalse CONSTANT)
-	Q_PROPERTY(QVariantMap safeAreaMargins MEMBER mSafeAreaMargins CONSTANT)
-	Q_PROPERTY(bool highContrastEnabled MEMBER mFalse CONSTANT)
-	Q_PROPERTY(QString platformStyle MEMBER mPlatformStyle CONSTANT)
-	Q_PROPERTY(QString fixedFontFamily MEMBER mFixedFontFamily CONSTANT)
-	Q_PROPERTY(qreal scaleFactor MEMBER mScaleFactor CONSTANT)
-	Q_PROPERTY(qreal fontScaleFactor MEMBER mFontScaleFactor CONSTANT)
-
 	private:
-		const bool mFalse = false;
-		const QVariantMap mSafeAreaMargins = {
-			{"top"_L1, 0}, {"right"_L1, 0}, {"bottom"_L1, 0}, {"left"_L1, 0}
-		};
-		QString mPlatformStyle;
-		QString mFixedFontFamily;
-		static constexpr qreal mScaleFactor = 0.6;
-		static constexpr qreal mFontScaleFactor = 1.0;
-
 		QSharedPointer<MockNetworkManager> mMockNetworkManager;
-
-	public:
-		Q_INVOKABLE void applyPlatformStyle(const QString& pPlatformStyle)
-		{
-			Q_UNUSED(pPlatformStyle)
-		}
 
 	public Q_SLOTS:
 		void applicationAvailable()
@@ -68,7 +43,7 @@ class QmlTestRunner
 			Env::getSingleton<ReaderManager>()->init();
 			mMockNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mMockNetworkManager.get());
-			UIPlugInQml::registerQmlTypes();
+			UiPluginQml::registerQmlTypes();
 		}
 
 
@@ -83,14 +58,15 @@ class QmlTestRunner
 
 		void qmlEngineAvailable(QQmlEngine* pEngine)
 		{
-			pEngine->rootContext()->setContextProperty("plugin"_L1, this);
+			const auto& prefix = UiPluginQml::adjustQmlImportPath(pEngine);
+			pEngine->rootContext()->setContextProperty(QStringLiteral("importPrefix"), prefix);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 4, 2))
-			pEngine->rootContext()->setContextProperty("hasBindingLoop"_L1, true);
+			pEngine->rootContext()->setContextProperty(QStringLiteral("hasBindingLoop"), true);
 #else
-			pEngine->rootContext()->setContextProperty("hasBindingLoop"_L1, false);
+			pEngine->rootContext()->setContextProperty(QStringLiteral("hasBindingLoop"), false);
 #endif
 
-			connect(pEngine, &QQmlEngine::warnings, [](const QList<QQmlError>& pWarnings){
+			connect(pEngine, &QQmlEngine::warnings, this, [](const QList<QQmlError>& pWarnings){
 					bool fail = false;
 					for (auto& warning : pWarnings)
 					{
@@ -105,10 +81,7 @@ class QmlTestRunner
 					}
 				});
 
-			const QStringList selectors = QQmlFileSelector(pEngine).selector()->extraSelectors();
-			mPlatformStyle = selectors.join(QLatin1String(","));
-
-			mFixedFontFamily = QFontDatabase::systemFont(QFontDatabase::FixedFont).family();
+			Q_UNUSED(Env::getSingleton<UiLoader>()->load())
 		}
 
 

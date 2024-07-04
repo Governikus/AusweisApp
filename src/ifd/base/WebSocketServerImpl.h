@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 #include "TlsServer.h"
 #include "WebSocketServer.h"
 
@@ -27,7 +27,7 @@ class WebSocketServerImpl
 		QWebSocketServer mServer;
 		QSharedPointer<TlsServer> mTlsServer;
 		QSharedPointer<ServerMessageHandler> mServerMessageHandler;
-		QList<ReaderManagerPlugInType> mAllowedPlugInTypes;
+		QList<ReaderManagerPluginType> mAllowedPluginTypes;
 
 	private Q_SLOTS:
 		void onWebsocketConnection();
@@ -35,7 +35,7 @@ class WebSocketServerImpl
 		void onServerError(QWebSocketProtocol::CloseCode pCloseCode) const;
 
 	public:
-		explicit WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QList<ReaderManagerPlugInType>& pAllowedPlugInTypes);
+		explicit WebSocketServerImpl(QSharedPointer<TlsServer> pTlsServer, const QList<ReaderManagerPluginType>& pAllowedPluginTypes);
 		~WebSocketServerImpl() override;
 
 		[[nodiscard]] bool isListening() const override;

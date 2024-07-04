@@ -10,13 +10,23 @@
 
 #include <array>
 
+#if defined(Q_OS_MACOS)
+	#define CM_IOCTL_GET_FEATURE_REQUEST (0x42000000 + 3400)
+#elif defined(PCSCLITE_VERSION_NUMBER)
+	#include <reader.h>
+#else
+//  PC/SC Part 10 v2.02.09 November 2012 - 2.2 GET_FEATURE_REQUEST
+	#define CM_IOCTL_GET_FEATURE_REQUEST SCARD_CTL_CODE(3400)
+#endif
+
+
 using namespace governikus;
 
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
 PcscReader::PcscReader(const QString& pReaderName)
-	: Reader(ReaderManagerPlugInType::PCSC, pReaderName)
+	: Reader(ReaderManagerPluginType::PCSC, pReaderName)
 	, mReaderState()
 	, mReaderFeatures(nullptr)
 	, mPcscCard()
@@ -156,46 +166,26 @@ static QString SCARD_STATE_toString(DWORD i)
 
 void PcscReader::updateCard()
 {
-	PCSC_RETURNCODE returnCode = SCardGetStatusChange(mContextHandle, 0, &mReaderState, 1);
-	if (returnCode == pcsc::Scard_E_Timeout)
+	if (!readCardStatus())
 	{
 		return;
 	}
-	else if (returnCode == pcsc::Scard_E_Unknown_Reader)
-	{
-		qCWarning(card_pcsc) << "SCardGetStatusChange:" << pcsc::toString(returnCode);
-		qCWarning(card_pcsc) << "Reader unknown, stop updating reader information";
-		if (getTimerId() != 0)
-		{
-			killTimer(getTimerId());
-			setTimerId(0);
-		}
-		return;
-	}
-	else if (returnCode != pcsc::Scard_S_Success)
-	{
-		qCWarning(card_pcsc) << "SCardGetStatusChange:" << pcsc::toString(returnCode);
-		qCWarning(card_pcsc) << "Cannot update reader";
-		return;
-	}
-	else if ((mReaderState.dwEventState & SCARD_STATE_CHANGED) == 0)
+
+	if ((mReaderState.dwEventState & SCARD_STATE_CHANGED) == 0)
 	{
 		return;
 	}
-	else if ((mReaderState.dwEventState & (SCARD_STATE_UNKNOWN | SCARD_STATE_UNAVAILABLE)) != 0)
+
+	if (mReaderState.dwEventState & (SCARD_STATE_UNKNOWN | SCARD_STATE_UNAVAILABLE))
 	{
 		return;
 	}
 
 	qCDebug(card_pcsc) << "old state:" << SCARD_STATE_toString(mReaderState.dwCurrentState)
 					   << "| new state:" << SCARD_STATE_toString(mReaderState.dwEventState);
-
-	bool newPresent = (mReaderState.dwEventState & SCARD_STATE_PRESENT) == SCARD_STATE_PRESENT;
-	bool newExclusive = (mReaderState.dwEventState & SCARD_STATE_EXCLUSIVE) == SCARD_STATE_EXCLUSIVE;
-
 	mReaderState.dwCurrentState = mReaderState.dwEventState;
 
-	if (!newPresent)
+	if ((mReaderState.dwCurrentState & SCARD_STATE_PRESENT) == 0)
 	{
 		if (!mPcscCard.isNull())
 		{
@@ -208,26 +198,29 @@ void PcscReader::updateCard()
 		return;
 	}
 
-	if (mPcscCard || newExclusive)
+	if (mPcscCard || (mReaderState.dwCurrentState & SCARD_STATE_EXCLUSIVE))
 	{
 		return;
 	}
 
 	qCDebug(card_pcsc) << "ATR:" << QByteArray(reinterpret_cast<char*>(mReaderState.rgbAtr), static_cast<int>(mReaderState.cbAtr)).toHex(' ');
 
-	static const int MAX_TRY_COUNT = 5;
-	for (int tryCount = 0; tryCount < MAX_TRY_COUNT; ++tryCount)
+#ifdef Q_OS_MACOS
+	for (int tryCount = 0; tryCount < 3; ++tryCount)
+#endif
 	{
 		mPcscCard.reset(new PcscCard(this));
-		const auto cardConnection = fetchCardInfo();
+		fetchCardInfo();
 
-		if (getReaderInfo().hasEid())
+#ifdef Q_OS_MACOS
+		if (getReaderInfo().getCardType() == CardType::UNKNOWN)
 		{
-			fetchGetReaderInfo(); // cardConnection is required
-			break;
+			qCDebug(card_pcsc) << "Unknown card detected, retrying";
+			continue;
 		}
 
-		qCDebug(card_pcsc) << "Unknown card detected, retrying";
+		break;
+#endif
 	}
 
 	qCInfo(card_pcsc) << "Card inserted:" << getReaderInfo().getCardInfo();
@@ -235,7 +228,7 @@ void PcscReader::updateCard()
 }
 
 
-void PcscReader::fetchGetReaderInfo()
+void PcscReader::printGetReaderInfo() const
 {
 	if (mPcscCard.isNull())
 	{
@@ -294,13 +287,6 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 			qCDebug(card_pcsc) << "SCardDisconnect for" << readerName << ':' << pcsc::toString(disconnectCode);
 		});
 
-	// control (get features)
-#if defined(PCSCLITE_VERSION_NUMBER)
-	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x42000D48;
-#else
-	PCSC_INT CM_IOCTL_GET_FEATURE_REQUEST = 0x00313520;
-#endif
-
 	QByteArray buffer(1024, '\0');
 	const std::array<uchar, 2> inBuffer({0, 0});
 
@@ -323,6 +309,36 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	qCDebug(card_pcsc) << "FEATURES:" << mReaderFeatures;
 
 	return pcsc::Scard_S_Success;
+}
+
+
+bool PcscReader::readCardStatus()
+{
+	PCSC_RETURNCODE returnCode = SCardGetStatusChange(mContextHandle, 0, &mReaderState, 1);
+	switch (returnCode)
+	{
+		case pcsc::Scard_S_Success:
+			return true;
+
+		case pcsc::Scard_E_Timeout:
+			break;
+
+		case pcsc::Scard_E_Unknown_Reader:
+			qCWarning(card_pcsc) << "SCardGetStatusChange:" << pcsc::toString(returnCode);
+			qCWarning(card_pcsc) << "Reader unknown, stop updating reader information";
+			if (getTimerId() != 0)
+			{
+				killTimer(getTimerId());
+				setTimerId(0);
+			}
+			break;
+
+		default:
+			qCWarning(card_pcsc) << "SCardGetStatusChange:" << pcsc::toString(returnCode);
+			qCWarning(card_pcsc) << "Cannot update reader";
+			break;
+	}
+	return false;
 }
 
 

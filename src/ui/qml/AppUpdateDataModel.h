@@ -9,6 +9,7 @@
 
 #include <QDateTime>
 #include <QUrl>
+#include <QtQml/qqmlregistration.h>
 
 
 namespace governikus
@@ -17,6 +18,8 @@ class AppUpdateDataModel
 	: public QObject
 {
 	Q_OBJECT
+	QML_UNCREATABLE("Used by SettingsModel only")
+	QML_ELEMENT
 	friend class Env;
 
 	Q_PROPERTY(bool updateAvailable READ isUpdateAvailable NOTIFY fireAppUpdateDataChanged)

@@ -15,7 +15,6 @@
 #include "states/StateSendWhitelistSurvey.h"
 
 #include <QDebug>
-#include <initializer_list>
 
 
 using namespace governikus;
@@ -63,14 +62,16 @@ QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QUrl
 				if (QList<Action>{Action::AUTH, Action::SELF, Action::PIN}.contains(pActiveWorkflow->getAction()))
 				{
 					const auto activeContext = pActiveWorkflow->getContext();
-					if (activeContext->isWorkflowFinished())
+					if (activeContext->isWorkflowFinished() && pWaitingWorkflow.isNull())
 					{
 						qDebug() << "Auto-approving the current state";
-						if (pWaitingWorkflow.isNull())
+						if (const auto& context = activeContext.objectCast<AuthContext>(); context)
 						{
-							activeContext->setStateApproved(true);
-							return WorkflowControl::ENQUEUE;
+							context->setMobileSkipRedirect(true);
 						}
+
+						activeContext->setStateApproved(true);
+						return WorkflowControl::ENQUEUE;
 					}
 				}
 

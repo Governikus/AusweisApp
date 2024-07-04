@@ -9,6 +9,8 @@
 #include "EnumHelper.h"
 #include "LogHandler.h"
 
+#include "TestFileHelper.h"
+
 #include <QtCore>
 #include <QtTest>
 
@@ -31,6 +33,8 @@ defineEnumType(TestEnum1, FIRST, SECOND, THIRD)
 defineEnumType(TestEnum2, FIRST = 0xFF, SECOND = 0x01, THIRD = 0xAA)
 
 defineTypedEnumType(TestEnum3, char, FIRST = static_cast<char>(0xFF), SECOND = static_cast<char>(0x01), THIRD = static_cast<char>(0xAA))
+
+defineEnumTypeQmlExposed(TestEnum4, A, B, C)
 } // namespace governikus
 
 class test_EnumHelper
@@ -89,11 +93,17 @@ class test_EnumHelper
 		void operatorDebug()
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-			qDebug() << TestEnum1::FIRST;
 
+			qDebug() << TestEnum1::FIRST;
 			QCOMPARE(logSpy.count(), 1);
-			auto result = logSpy.takeFirst();
-			QVERIFY(result.at(0).toString().endsWith(QStringLiteral("FIRST") + lineBreak));
+			QVERIFY(TestFileHelper::containsLog(logSpy, "FIRST"_L1));
+
+			logSpy.takeFirst();
+			QCOMPARE(logSpy.count(), 0);
+
+			qDebug() << QList<TestEnum1>({TestEnum1::FIRST, TestEnum1::SECOND});
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(TestFileHelper::containsLog(logSpy, "(FIRST, SECOND)"_L1));
 		}
 
 
@@ -223,6 +233,17 @@ class test_EnumHelper
 			QVERIFY(dummySet.contains(TestEnum2::FIRST));
 			QVERIFY(!dummySet.contains(TestEnum2::SECOND));
 			QVERIFY(dummySet.contains(TestEnum2::THIRD));
+		}
+
+
+		void enumProperty()
+		{
+			QCOMPARE(EnumTestEnum1::staticMetaObject.classInfoCount(), 0);
+
+			QCOMPARE(EnumTestEnum4::staticMetaObject.classInfoCount(), 1);
+			const auto meta = EnumTestEnum4::staticMetaObject.classInfo(0);
+			QCOMPARE(meta.name(), "QML.Element");
+			QCOMPARE(meta.value(), "TestEnum4");
 		}
 
 

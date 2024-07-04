@@ -319,7 +319,7 @@ class test_EstablishPaceChannelOutput
 			QTest::newRow("OK_PUK") << CardReturnCode::OK_PUK << QByteArray("00000000");
 
 			QTest::newRow("CARD_NOT_FOUND") << CardReturnCode::CARD_NOT_FOUND << QByteArray("020010f0");
-			QTest::newRow("RETRY_ALLOWED") << CardReturnCode::RETRY_ALLOWED << QByteArray("020010f0");
+			QTest::newRow("RETRY_ALLOWED") << CardReturnCode::RESPONSE_EMPTY << QByteArray("020010f0");
 
 			QTest::newRow("INPUT_TIME_OUT") << CardReturnCode::INPUT_TIME_OUT << QByteArray("020020f0");
 

@@ -74,6 +74,53 @@ QSharedPointer<const PaceInfo> PaceInfo::decode(const QByteArray& pBytes)
 }
 
 
+int PaceInfo::getMappedNid(int pCurveIndex)
+{
+	switch (pCurveIndex)
+	{
+		case 8:
+			// According to RFC 5480 2.1.1.1 secp192r1 equals NID_X9_62_prime192v1
+			return NID_X9_62_prime192v1;
+
+		case 9:
+			return NID_brainpoolP192r1;
+
+		case 10:
+			// cannot be used with IM
+			return NID_secp224r1;
+
+		case 11:
+			return NID_brainpoolP224r1;
+
+		case 12:
+			// According to RFC 5480 2.1.1.1 secp256r1 equals NID_X9_62_prime256v1
+			return NID_X9_62_prime256v1;
+
+		case 13:
+			return NID_brainpoolP256r1;
+
+		case 14:
+			return NID_brainpoolP320r1;
+
+		case 15:
+			return NID_secp384r1;
+
+		case 16:
+			return NID_brainpoolP384r1;
+
+		case 17:
+			return NID_brainpoolP512r1;
+
+		case 18:
+			return NID_secp521r1;
+
+		default:
+			qCWarning(card) << "Standardized elliptic curve" << pCurveIndex << "not supported";
+			return NID_undef;
+	}
+}
+
+
 int PaceInfo::getVersion() const
 {
 	return Asn1IntegerUtil::getValue(mDelegate->mVersion);
@@ -139,51 +186,4 @@ bool PaceInfo::isStandardizedDomainParameters() const
 	}
 
 	return false;
-}
-
-
-int PaceInfo::getMappedNid(int pCurveIndex)
-{
-	switch (pCurveIndex)
-	{
-		case 8:
-			// According to RFC 5480 2.1.1.1 secp192r1 equals NID_X9_62_prime192v1
-			return NID_X9_62_prime192v1;
-
-		case 9:
-			return NID_brainpoolP192r1;
-
-		case 10:
-			// cannot be used with IM
-			return NID_secp224r1;
-
-		case 11:
-			return NID_brainpoolP224r1;
-
-		case 12:
-			// According to RFC 5480 2.1.1.1 secp256r1 equals NID_X9_62_prime256v1
-			return NID_X9_62_prime256v1;
-
-		case 13:
-			return NID_brainpoolP256r1;
-
-		case 14:
-			return NID_brainpoolP320r1;
-
-		case 15:
-			return NID_secp384r1;
-
-		case 16:
-			return NID_brainpoolP384r1;
-
-		case 17:
-			return NID_brainpoolP512r1;
-
-		case 18:
-			return NID_secp521r1;
-
-		default:
-			qCWarning(card) << "Standardized elliptic curve" << pCurveIndex << "not supported";
-			return NID_undef;
-	}
 }

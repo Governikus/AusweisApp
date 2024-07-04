@@ -33,7 +33,7 @@ class StateChangePin
 		void onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand);
 
 	Q_SIGNALS:
-		void fireRetry();
+		void fireNoCardConnection();
 };
 
 } // namespace governikus

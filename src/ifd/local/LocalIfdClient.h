@@ -22,7 +22,7 @@ class LocalIfdClient
 	friend LocalIfdClient* createNewObject<LocalIfdClient*>();
 
 	private:
-		QString mPsk;
+		QByteArray mPsk;
 		QSharedPointer<IfdListEntry> mDevice;
 #ifdef Q_OS_ANDROID
 		QJniObject mServiceConnection;
@@ -37,7 +37,7 @@ class LocalIfdClient
 		bool isDetecting() override;
 		QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() override;
 
-		[[nodiscard]] const QString& getPsk() const;
+		[[nodiscard]] const QByteArray& getPsk() const;
 
 		void serviceConnected();
 		void serviceDisconnected();

@@ -11,15 +11,17 @@
 #include "Env.h"
 #include "RemoteDeviceFilterModel.h"
 #include "RemoteDeviceModel.h"
+#include "SingletonCreator.h"
 #include "WorkflowModel.h"
 #include "WorkflowRequest.h"
 #include "context/IfdServiceContext.h"
 
 #include <QObject>
 #include <QQmlEngine>
+#include <QtQml/qqmlregistration.h>
 
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -27,10 +29,14 @@ namespace governikus
 
 class RemoteServiceModel
 	: public WorkflowModel
+	, public SingletonCreator<RemoteServiceModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(bool running READ isRunning NOTIFY fireIsRunningChanged)
 	Q_PROPERTY(bool isStarting READ isStarting NOTIFY fireIsStartingChanged)
@@ -44,10 +50,10 @@ class RemoteServiceModel
 	Q_PROPERTY(bool connectedToPairedDevice READ isConnectedToPairedDevice NOTIFY fireConnectedChanged)
 	Q_PROPERTY(QString connectionInfo READ getConnectionInfo NOTIFY fireConnectionInfoChanged)
 	Q_PROPERTY(QString connectedServerDeviceNames READ getConnectedServerDeviceNames NOTIFY fireConnectedServerDeviceNamesChanged)
-	Q_PROPERTY(RemoteDeviceModel * allDevices READ getAllDevices CONSTANT)
-	Q_PROPERTY(RemoteDeviceFilterModel * availableDevicesInPairingMode READ getAvailableDevicesInPairingMode CONSTANT)
-	Q_PROPERTY(RemoteDeviceFilterModel * availablePairedDevices READ getAvailablePairedDevices CONSTANT)
-	Q_PROPERTY(RemoteDeviceFilterModel * unavailablePairedDevices READ getUnavailablePairedDevices CONSTANT)
+	Q_PROPERTY(governikus::RemoteDeviceModel * allDevices READ getAllDevices CONSTANT)
+	Q_PROPERTY(governikus::RemoteDeviceFilterModel * availableDevicesInPairingMode READ getAvailableDevicesInPairingMode CONSTANT)
+	Q_PROPERTY(governikus::RemoteDeviceFilterModel * availablePairedDevices READ getAvailablePairedDevices CONSTANT)
+	Q_PROPERTY(governikus::RemoteDeviceFilterModel * unavailablePairedDevices READ getUnavailablePairedDevices CONSTANT)
 	Q_PROPERTY(bool detectRemoteDevices READ detectRemoteDevices WRITE setDetectRemoteDevices NOTIFY fireDetectionChanged)
 	Q_PROPERTY(bool enableTransportPinLink READ enableTransportPinLink NOTIFY fireEstablishPaceChannelUpdated)
 	Q_PROPERTY(bool remoteReaderVisible READ getRemoteReaderVisible NOTIFY fireRemoteReaderVisibleChanged)
@@ -80,6 +86,7 @@ class RemoteServiceModel
 		~RemoteServiceModel() override = default;
 
 		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
+		QRegularExpression getPercentMatcher() const;
 
 		void setStarting(bool pStarting);
 
@@ -96,7 +103,7 @@ class RemoteServiceModel
 
 	public Q_SLOTS:
 		void onTranslationChanged();
-		void onReaderPlugInTypesChanged(bool pExplicitStart);
+		void onReaderPluginTypesChanged(bool pExplicitStart);
 
 	public:
 		[[nodiscard]] bool isRunning() const;
@@ -111,8 +118,8 @@ class RemoteServiceModel
 		void setDetectRemoteDevices(bool pNewStatus);
 		[[nodiscard]] bool detectRemoteDevices() const;
 		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
-		Q_INVOKABLE void connectToRememberedServer(const QString& pServerPsk);
-		[[nodiscard]] QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const override;
+		Q_INVOKABLE void connectToRememberedServer(const QByteArray& pServerPsk);
+		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 
 		void resetRemoteServiceContext(const QSharedPointer<IfdServiceContext>& pContext = QSharedPointer<IfdServiceContext>());
 		void setPairing(bool pEnabled) const;
@@ -134,6 +141,7 @@ class RemoteServiceModel
 		[[nodiscard]] Q_INVOKABLE bool pinPadModeOn() const;
 		Q_INVOKABLE void forgetDevice(const QString& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
+		Q_INVOKABLE void passwordsDiffer();
 		Q_INVOKABLE void changePinLength();
 		[[nodiscard]] Q_INVOKABLE bool isPinAuthentication() const;
 

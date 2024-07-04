@@ -10,7 +10,7 @@
 #include <QJsonObject>
 
 
-class test_RemoteIfdReaderManagerPlugIn;
+class test_RemoteIfdReaderManagerPlugin;
 
 
 namespace governikus
@@ -20,7 +20,7 @@ class MockIfdDispatcher;
 class IfdStatus
 	: public IfdMessage
 {
-	friend class ::test_RemoteIfdReaderManagerPlugIn;
+	friend class ::test_RemoteIfdReaderManagerPlugin;
 
 	private:
 		QString mSlotName;

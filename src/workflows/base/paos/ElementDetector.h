@@ -23,9 +23,9 @@ class ElementDetector
 		QXmlStreamReader mReader;
 
 	protected:
-		void handleStartElements(const QStringList& pStartElementNames);
+		bool handleStartElements(const QStringList& pStartElementNames);
 		void detectStartElements(const QStringList& pStartElementNames);
-		virtual bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) = 0;
+		virtual bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) = 0;
 
 	public:
 		explicit ElementDetector(const QByteArray& pXmlData);

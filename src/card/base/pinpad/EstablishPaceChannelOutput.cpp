@@ -5,7 +5,6 @@
 #include "EstablishPaceChannelOutput.h"
 
 #include "LengthValue.h"
-#include "apdu/ResponseApdu.h"
 #include "asn1/ASN1Util.h"
 
 #include <QDataStream>
@@ -127,10 +126,11 @@ EstablishPaceChannelErrorCode EstablishPaceChannelOutput::generateReturnCode(Car
 
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
+		case CardReturnCode::OK_CAN:
 			return EstablishPaceChannelErrorCode::NoError;
 
 		case CardReturnCode::CARD_NOT_FOUND:
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 			return EstablishPaceChannelErrorCode::NoCard;
 
 		case CardReturnCode::INPUT_TIME_OUT:
@@ -261,7 +261,7 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 
 	// Response data according to PC/SC Part 10 amendment 1.1
 	mStatusMseSetAt = pOutput.mid(0, 2);
-	qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(std::as_const(mStatusMseSetAt).data()));
+	qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << getStatusCodeMseSetAt();
 
 	int it = 2;
 	const auto& efCardAccess = LengthValue::readByteArray<quint16>(pOutput, it);
@@ -345,7 +345,7 @@ bool EstablishPaceChannelOutput::parseFromCcid(const QByteArray& pOutput)
 	if (channelOutput->mStatusMSESetAt)
 	{
 		mStatusMseSetAt = Asn1OctetStringUtil::getValue(channelOutput->mStatusMSESetAt);
-		qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << StatusCode(qFromBigEndian<quint16>(std::as_const(mStatusMseSetAt).data()));
+		qCDebug(card) << "mStatusMseSetAt:" << mStatusMseSetAt.toHex() << getStatusCodeMseSetAt();
 	}
 
 	if (channelOutput->mEfCardAccess)
@@ -385,6 +385,12 @@ CardReturnCode EstablishPaceChannelOutput::getPaceReturnCode() const
 void EstablishPaceChannelOutput::setPaceReturnCode(CardReturnCode pPaceReturnCode)
 {
 	mPaceReturnCode = pPaceReturnCode;
+}
+
+
+StatusCode EstablishPaceChannelOutput::getStatusCodeMseSetAt() const
+{
+	return ResponseApdu(mStatusMseSetAt).getStatusCode();
 }
 
 

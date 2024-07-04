@@ -114,7 +114,6 @@ class RemoteServiceSettings
 	Q_SIGNALS:
 		void fireTrustedCertificatesChanged();
 		void fireTrustedRemoteInfosChanged();
-		void fireInitialDeviceNameSet(const QString& pName);
 };
 
 

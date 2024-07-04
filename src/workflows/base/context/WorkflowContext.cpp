@@ -21,7 +21,7 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mStateApproved(false)
 	, mWorkflowKilled(false)
 	, mCurrentState()
-	, mReaderPlugInTypes()
+	, mReaderPluginTypes()
 	, mReaderName()
 	, mCardConnection()
 	, mCardVanishedDuringPacePinCount(0)
@@ -36,7 +36,6 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mStatus(GlobalStatus::Code::No_Error)
 	, mFailureCode()
 	, mStartPaosResult(ECardApiResult::createOk())
-	, mErrorReportedToUser(true)
 	, mWorkflowFinished(false)
 	, mWorkflowCancelled(false)
 	, mWorkflowCancelledInState(false)
@@ -48,6 +47,7 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mShowRemoveCardFeedback(false)
 	, mClaimedBy()
 	, mInterruptRequested(false)
+	, mInitialInputErrorShown(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -94,18 +94,6 @@ void WorkflowContext::onWorkflowCancelled()
 }
 
 
-bool WorkflowContext::isErrorReportedToUser() const
-{
-	return mErrorReportedToUser || mWorkflowKilled;
-}
-
-
-void WorkflowContext::setErrorReportedToUser(bool pErrorReportedToUser)
-{
-	mErrorReportedToUser = pErrorReportedToUser;
-}
-
-
 void WorkflowContext::setStateApproved(bool pApproved)
 {
 	if (mStateApproved != pApproved)
@@ -120,7 +108,7 @@ void WorkflowContext::killWorkflow(GlobalStatus::Code pCode)
 {
 	qWarning() << "Killing the current workflow.";
 	mWorkflowKilled = true;
-	mStatus = pCode;
+	setStatus(pCode);
 	if (!mStateApproved)
 	{
 		setStateApproved(true);
@@ -160,24 +148,24 @@ void WorkflowContext::setCurrentState(const QString& pNewState)
 }
 
 
-const QList<ReaderManagerPlugInType>& WorkflowContext::getReaderPlugInTypes() const
+const QList<ReaderManagerPluginType>& WorkflowContext::getReaderPluginTypes() const
 {
-	return mReaderPlugInTypes;
+	return mReaderPluginTypes;
 }
 
 
-void WorkflowContext::setReaderPlugInTypes(const QList<ReaderManagerPlugInType>& pReaderPlugInTypes)
+void WorkflowContext::setReaderPluginTypes(const QList<ReaderManagerPluginType>& pReaderPluginTypes)
 {
-	if (mReaderPlugInTypes != pReaderPlugInTypes)
+	if (mReaderPluginTypes != pReaderPluginTypes)
 	{
 #ifdef Q_OS_IOS
 		const bool usedAsSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
-		const bool containsNfc = pReaderPlugInTypes.contains(ReaderManagerPlugInType::NFC);
+		const bool containsNfc = pReaderPluginTypes.contains(ReaderManagerPluginType::NFC);
 		setSkipStartScan(containsNfc && !usedAsSdk);
 #endif
 
-		mReaderPlugInTypes = pReaderPlugInTypes;
-		Q_EMIT fireReaderPlugInTypesChanged();
+		mReaderPluginTypes = pReaderPluginTypes;
+		Q_EMIT fireReaderPluginTypesChanged();
 	}
 }
 
@@ -221,8 +209,7 @@ void WorkflowContext::resetCardConnection()
 	setCardConnection(QSharedPointer<CardConnection>());
 	if (!mReaderName.isEmpty())
 	{
-		const auto readerManager = Env::getSingleton<ReaderManager>();
-		readerManager->updateReaderInfo(mReaderName);
+		Env::getSingleton<ReaderManager>()->updateReaderInfo(mReaderName);
 	}
 }
 
@@ -401,7 +388,7 @@ bool WorkflowContext::remembersReader() const
 
 bool WorkflowContext::isExpectedReader() const
 {
-	return mExpectedReader.getName() == mReaderName;
+	return remembersReader() && mExpectedReader.getName() == mReaderName;
 }
 
 
@@ -432,7 +419,6 @@ const GlobalStatus& WorkflowContext::getStatus() const
 void WorkflowContext::setStatus(const GlobalStatus& pStatus)
 {
 	mStatus = pStatus;
-	mErrorReportedToUser = false;
 	Q_EMIT fireResultChanged();
 }
 
@@ -627,4 +613,17 @@ bool WorkflowContext::isMobileEidTypeAllowed(const MobileEidType& mobileEidType)
 void WorkflowContext::setInterruptRequested(bool pInterruptRequested)
 {
 	mInterruptRequested = pInterruptRequested;
+}
+
+
+bool WorkflowContext::isInitialInputErrorShown() const
+{
+	return mInitialInputErrorShown;
+}
+
+
+void WorkflowContext::setInitialInputErrorShown()
+{
+	mInitialInputErrorShown = true;
+	Q_EMIT fireInitialInputErrorShownChanged();
 }

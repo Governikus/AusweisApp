@@ -27,7 +27,7 @@ class Reader
 		void setInfoCardInfo(const CardInfo& pCardInfo);
 		void setCardInfoTagType(CardInfo::TagType pTagType);
 		void removeCardInfo();
-		QSharedPointer<CardConnectionWorker> fetchCardInfo();
+		void fetchCardInfo();
 
 		[[nodiscard]] int getTimerId() const;
 		void setTimerId(int pTimerId);
@@ -48,8 +48,14 @@ class Reader
 		RetryCounterResult getRetryCounter(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
 
 	public:
-		Reader(ReaderManagerPlugInType pPlugInType, const QString& pReaderName);
+		Reader(ReaderManagerPluginType pPluginType, const QString& pReaderName);
 		~Reader() override = default;
+
+
+		virtual void printGetReaderInfo() const
+		{
+		}
+
 
 		/*!
 		 * Periodically called to perform an update of the readers and cards state.

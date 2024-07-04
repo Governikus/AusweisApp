@@ -9,12 +9,14 @@
 #pragma once
 
 #include "Env.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
+#include "SingletonCreator.h"
 #include "context/WorkflowContext.h"
 
 #include <QObject>
 #include <QSharedPointer>
 #include <QVariant>
+#include <QtQml/qqmlregistration.h>
 
 
 class test_SmartModel;
@@ -25,31 +27,36 @@ namespace governikus
 
 class SmartModel
 	: public QObject
+	, public SingletonCreator<SmartModel>
 {
 	Q_OBJECT
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 	friend class ::test_SmartModel;
 
-	Q_PROPERTY(QmlSmartState smartState READ getSmartState NOTIFY fireSmartStateChanged)
+	Q_PROPERTY(State state READ getState NOTIFY fireStateChanged)
 	Q_PROPERTY(QString errorString READ getErrorString NOTIFY fireErrorStringChanged)
 	Q_PROPERTY(int progress READ getProgress NOTIFY fireProgressChanged)
 	Q_PROPERTY(bool isScanRunning READ isScanRunning NOTIFY fireScanRunningChanged)
 
 	public:
-		enum class QmlSmartState
+		enum class State
 		{
-			SMART_UPDATING_STATUS,
-			SMART_UNAVAILABLE,
-			SMART_NO_PROVISIONING,
-			SMART_NO_PERSONALIZATION,
-			SMART_UNUSABLE,
-			SMART_READY
+			UPDATING_STATUS,
+			UNAVAILABLE,
+			NO_PROVISIONING,
+			NO_PERSONALIZATION,
+			UNUSABLE,
+			READY
 		};
-		Q_ENUM(QmlSmartState)
+		Q_ENUM(State)
 
 	private:
 		SmartModel();
-		QmlSmartState mStatus;
+		State mStatus;
 		QString mErrorString;
 		CardInfo mCachedCardInfo;
 		int mProgress;
@@ -58,7 +65,7 @@ class SmartModel
 		void setErrorString(const QString& pError);
 		void updatePinStatus();
 		void setProgress(int pProgress);
-		void setStatus(QmlSmartState pNewStatus);
+		void setStatus(State pNewStatus);
 
 		[[nodiscard]] bool isScanRunning() const;
 
@@ -68,10 +75,10 @@ class SmartModel
 		void onDeleteSmartDone(const QVariant& pResult);
 		void onUpdateStatusDone(const QVariant& pResult);
 		void onUpdatePinStatusDone(const ReaderInfo& pInfo);
-		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
 
 	public:
-		QmlSmartState getSmartState() const;
+		State getState() const;
 		[[nodiscard]] QString getErrorString() const;
 		[[nodiscard]] int getProgress() const;
 
@@ -84,7 +91,7 @@ class SmartModel
 		Q_INVOKABLE void deleteSmart();
 
 	Q_SIGNALS:
-		void fireSmartStateChanged();
+		void fireStateChanged();
 		void fireDeleteSmartDone();
 		void fireDeletePersonalizationDone(bool pSuccess);
 		void fireProgressChanged();

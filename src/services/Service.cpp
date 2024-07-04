@@ -24,7 +24,6 @@ void Service::doAppUpdate(UpdateType pType, bool pForceUpdate)
 	switch (pType)
 	{
 		case UpdateType::APPCAST:
-			mExplicitSuccessMessage = pForceUpdate;
 			if (Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateAvailable())
 			{
 				mTimer.start(mOneDayInMs);
@@ -77,10 +76,7 @@ void Service::onReaderUpdateFinished()
 
 void Service::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError)
 {
-	if (pUpdateAvailable || pError.isError() || mExplicitSuccessMessage)
-	{
-		Q_EMIT fireAppcastFinished(pUpdateAvailable, pError);
-	}
+	Q_EMIT fireAppcastFinished(pUpdateAvailable);
 
 	if (pUpdateAvailable && !pError.isError())
 	{
@@ -98,7 +94,6 @@ void Service::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pErro
 Service::Service()
 	: mTimer(this)
 	, mUpdateScheduled(true)
-	, mExplicitSuccessMessage(true)
 {
 	connect(&mTimer, &QTimer::timeout, this, &Service::onTimedUpdateTriggered);
 	connect(Env::getSingleton<ProviderConfiguration>(), &ProviderConfiguration::fireUpdated, this, &Service::onProviderUpdateFinished);

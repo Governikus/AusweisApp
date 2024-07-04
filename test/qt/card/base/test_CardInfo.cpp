@@ -32,7 +32,7 @@ class test_CardInfo
 			QFETCH(CardType, type);
 			QFETCH(QLatin1String, output);
 
-			const CardInfo info(type, QSharedPointer<EFCardAccess>(), 3, false, false);
+			const CardInfo info(type, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false);
 
 			QCOMPARE(info.getCardTypeString(), output);
 		}
@@ -90,7 +90,7 @@ class test_CardInfo
 			const auto efCardAccess = EFCardAccess::fromHex(efCardAccessBytes);
 			const CardInfo info = efCardAccessBytes.isEmpty()
 					? CardInfo(cardType)
-					: CardInfo(cardType, efCardAccess, 3, false, false);
+					: CardInfo(cardType, FileRef(), efCardAccess, 3, false, false);
 			QCOMPARE(info.getMobileEidType(), expectedResult);
 		}
 
@@ -100,7 +100,7 @@ class test_CardInfo
 			const CardInfo info1(CardType::EID_CARD);
 			QVERIFY(!info1.isRetryCounterDetermined());
 
-			const CardInfo info2(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false);
+			const CardInfo info2(CardType::EID_CARD, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false);
 			QVERIFY(info2.isRetryCounterDetermined());
 		}
 

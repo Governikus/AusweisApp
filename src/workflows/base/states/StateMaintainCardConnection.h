@@ -28,7 +28,6 @@ class StateMaintainCardConnection
 	Q_SIGNALS:
 		void fireNoCardConnection();
 		void fireForceUpdateRetryCounter();
-		void firePropagateAbort();
 };
 
 } // namespace governikus

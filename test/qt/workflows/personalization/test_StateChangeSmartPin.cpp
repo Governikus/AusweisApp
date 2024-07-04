@@ -109,7 +109,7 @@ class test_StateChangeSmartPin
 			StateChangeSmartPin state(context);
 			const QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			const QSharedPointer<MockEstablishPaceChannelCommand> command(new MockEstablishPaceChannelCommand(worker));
-			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPlugInType::SMART);
+			const ReaderInfo readerInfo("NFC"_L1, ReaderManagerPluginType::SMART);
 			const QSharedPointer<CardConnection> connection(new MockCardConnection(readerInfo));
 			context->setCardConnection(connection);
 

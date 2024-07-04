@@ -69,9 +69,6 @@
         <file>card/smartEfCardAccess.hex</file>
         <file>core/network/CERT_TLS_ESERVICE_1.der</file>
         <file>updatable-files/reader/img_ACS_ACR1252U.png</file>
-        <file>tctoken/ok.xml</file>
-        <file>tctoken/broken.xml</file>
-        <file>tctoken/withoutCommunicationErrorAddress.xml</file>
         <file>paos/DIDAuthenticateEAC1.xml</file>
         <file>paos/DIDAuthenticateEAC1_ordered_certificates.xml</file>
         <file>paos/DIDAuthenticateEAC1_template.xml</file>

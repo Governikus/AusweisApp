@@ -2,11 +2,8 @@
  * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Contains the definition of the GeneralSettings class.
- */
-
 #pragma once
+
 
 #include "AbstractSettings.h"
 
@@ -76,9 +73,6 @@ class GeneralSettings
 		[[nodiscard]] bool useSelfAuthTestUri() const;
 		void setUseSelfauthenticationTestUri(bool pUse);
 
-		[[nodiscard]] bool isSimulatorEnabled() const;
-		void setSimulatorEnabled(bool pEnabled);
-
 		[[nodiscard]] QLocale::Language getLanguage() const;
 		void setLanguage(const QLocale::Language pLanguage);
 
@@ -97,9 +91,6 @@ class GeneralSettings
 		[[nodiscard]] bool isAutoUpdateCheck() const;
 		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
-
-		[[nodiscard]] bool isUseScreenKeyboard() const;
-		void setUseScreenKeyboard(bool pUseScreenKeyboard);
 
 		[[nodiscard]] bool isVisualPrivacy() const;
 		void setVisualPrivacy(bool pVisualPrivacy);

@@ -40,6 +40,10 @@ public final class ShareUtil
 			for (ResolveInfo resolveInfo : emailApps)
 			{
 				String packageName = resolveInfo.activityInfo.packageName;
+				if ("org.chromium.arc.intent_helper".equals(packageName))
+				{
+					continue;
+				}
 
 				Intent shareData = new Intent(Intent.ACTION_SEND);
 				shareData.setComponent(new ComponentName(packageName, resolveInfo.activityInfo.name));

@@ -21,6 +21,44 @@
 namespace governikus
 {
 
+struct ProviderConfigurationInfoParams
+{
+	const LanguageString mShortName;
+	const LanguageString mLongName;
+	const LanguageString mLongDescription;
+	const QString mAddress;
+	const QString mHomepage;
+	const QString mCategory;
+	const QString mPhone;
+	const QString mEmail;
+	const QString mPostalAddress;
+	const QString mIcon;
+	const QString mImage;
+	const QStringList mSubjectUrls;
+	const QString mSubjectUrlInfo;
+	const QString mInternalId;
+
+	bool operator ==(const ProviderConfigurationInfoParams& pOther) const
+	{
+		return mShortName == pOther.mShortName &&
+			   mLongName == pOther.mLongName &&
+			   mLongDescription == pOther.mLongDescription &&
+			   mAddress == pOther.mAddress &&
+			   mHomepage == pOther.mHomepage &&
+			   mCategory == pOther.mCategory &&
+			   mPhone == pOther.mPhone &&
+			   mEmail == pOther.mEmail &&
+			   mPostalAddress == pOther.mPostalAddress &&
+			   mIcon == pOther.mIcon &&
+			   mImage == pOther.mImage &&
+			   mSubjectUrls == pOther.mSubjectUrls &&
+			   mSubjectUrlInfo == pOther.mSubjectUrlInfo &&
+			   mInternalId == pOther.mInternalId;
+	}
+
+
+};
+
 class ProviderConfigurationInfo
 {
 	private:
@@ -28,69 +66,17 @@ class ProviderConfigurationInfo
 			: public QSharedData
 		{
 			public:
-				const LanguageString mShortName;
-				const LanguageString mLongName;
-				const LanguageString mLongDescription;
-				const QString mAddress;
-				const QString mHomepage;
-				const QString mCategory;
-				const QString mPhone;
-				const QString mEmail;
-				const QString mPostalAddress;
-				const QString mIcon;
-				const QString mImage;
-				const QStringList mSubjectUrls;
-				const QString mSubjectUrlInfo;
-				const QString mInternalId;
+				const ProviderConfigurationInfoParams mParams;
 
-				InternalInfo(const LanguageString& pShortName,
-						const LanguageString& pLongName,
-						const LanguageString& pLongDescription,
-						const QString& pAddress,
-						const QString& pHomepage,
-						const QString& pCategory,
-						const QString& pPhone,
-						const QString& pEmail,
-						const QString& pPostalAddress,
-						const QString& pIcon,
-						const QString& pImage,
-						const QStringList& pSubjectUrls,
-						const QString& pSubjectUrlInfo,
-						const QString& pInternalId)
-					: mShortName(pShortName)
-					, mLongName(pLongName)
-					, mLongDescription(pLongDescription)
-					, mAddress(pAddress)
-					, mHomepage(pHomepage)
-					, mCategory(pCategory)
-					, mPhone(pPhone)
-					, mEmail(pEmail)
-					, mPostalAddress(pPostalAddress)
-					, mIcon(pIcon)
-					, mImage(pImage)
-					, mSubjectUrls(pSubjectUrls)
-					, mSubjectUrlInfo(pSubjectUrlInfo)
-					, mInternalId(pInternalId)
+				explicit InternalInfo(const ProviderConfigurationInfoParams& pInfos)
+					: mParams(pInfos)
 				{
 				}
 
 
 				bool operator ==(const InternalInfo& pOther) const
 				{
-					return mShortName == pOther.mShortName &&
-						   mLongName == pOther.mLongName &&
-						   mLongDescription == pOther.mLongDescription &&
-						   mAddress == pOther.mAddress &&
-						   mHomepage == pOther.mHomepage &&
-						   mCategory == pOther.mCategory &&
-						   mPhone == pOther.mPhone &&
-						   mEmail == pOther.mEmail &&
-						   mPostalAddress == pOther.mPostalAddress &&
-						   mIcon == pOther.mIcon &&
-						   mImage == pOther.mImage &&
-						   mSubjectUrls == pOther.mSubjectUrls &&
-						   mSubjectUrlInfo == pOther.mSubjectUrlInfo &&
-						   mInternalId == pOther.mInternalId;
+					return mParams == pOther.mParams;
 				}
 
 
@@ -101,20 +87,7 @@ class ProviderConfigurationInfo
 		[[nodiscard]] QString getDefaultFile(const QString& pSuffix) const;
 
 	public:
-		ProviderConfigurationInfo(const LanguageString& pShortName = QString(),
-				const LanguageString& pLongName = QString(),
-				const LanguageString& pLongDescription = QString(),
-				const QString& pAddress = QString(),
-				const QString& pHomepage = QString(),
-				const QString& pCategory = QString(),
-				const QString& pPhone = QString(),
-				const QString& pEmail = QString(),
-				const QString& pPostalAddress = QString(),
-				const QString& pIcon = QString(),
-				const QString& pImage = QString(),
-				const QStringList& pSubjectUrls = QStringList(),
-				const QString& pSubjectUrlInfo = QString(),
-				const QString& pInternalId = QString());
+		explicit ProviderConfigurationInfo(const ProviderConfigurationInfoParams& pParams = {});
 		virtual ~ProviderConfigurationInfo();
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;

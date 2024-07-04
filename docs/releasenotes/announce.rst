@@ -1,7 +1,13 @@
 Abkündigungen
 =============
 
-Mit der Version 2.2.0 der AusweisApp wird die Unterstützung
+Mit der Version 2.3.0 der AusweisApp wird die Unterstützung
+folgender Systeme eingestellt.
+
+- macOS Monterey 12
+
+
+Mit der Version 2.2.0 der AusweisApp wurde die Unterstützung
 folgender Systeme und Funktionen eingestellt.
 
 - Android 8
@@ -12,15 +18,3 @@ Mit der Version 2.1.0 der AusweisApp wurde die Unterstützung
 folgender Systeme eingestellt.
 
 - macOS Big Sur 11
-
-
-Mit der Version 2.0.0 der AusweisApp wurde die Unterstützung
-folgender Systeme und Funktionen eingestellt.
-
-- macOS Catalina 10.15
-- Android 7
-- iOS 13
-- Online-Hilfe
-- PDF-Export-Funktion der Selbstauskunft
-- Direkte Integration der Anbieterliste
-- Verlauf

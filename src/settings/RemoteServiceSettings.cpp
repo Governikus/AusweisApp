@@ -367,13 +367,8 @@ bool RemoteServiceSettings::updateRemoteInfo(const RemoteInfo& pInfo)
 		iter.next();
 		if (iter.value().getFingerprint() == pInfo.getFingerprint())
 		{
-			const bool hadNoNameYet = iter.value().mName.isEmpty();
 			iter.setValue(pInfo);
 			setRemoteInfos(infos);
-			if (hadNoNameYet)
-			{
-				Q_EMIT fireInitialDeviceNameSet(pInfo.getNameEscaped());
-			}
 			return true;
 		}
 	}

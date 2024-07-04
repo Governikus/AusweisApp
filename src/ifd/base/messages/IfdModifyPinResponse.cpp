@@ -39,10 +39,7 @@ IfdModifyPinResponse::IfdModifyPinResponse(const QJsonObject& pMessageObject)
 	const QString& inputData = getStringValue(pMessageObject, OUTPUT_DATA());
 	mOutputData = QByteArray::fromHex(inputData.toUtf8());
 
-	if (getType() != IfdMessageType::IFDModifyPINResponse)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDModifyPINResponse"));
-	}
+	ensureType(IfdMessageType::IFDModifyPINResponse);
 }
 
 

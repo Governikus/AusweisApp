@@ -9,6 +9,7 @@
 #include "apdu/ResponseApdu.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
+#include "pace/ec/EcUtil.h"
 
 #include <QFile>
 #include <QJsonArray>
@@ -20,14 +21,47 @@
 using namespace governikus;
 
 
-Q_DECLARE_LOGGING_CATEGORY(card)
+Q_DECLARE_LOGGING_CATEGORY(card_simulator)
 
 
 void SimulatorFileSystem::initMandatoryData()
 {
-	mKeys.insert(1, QByteArray::fromHex("0353859C2EC67780BA39015DE8C682AF2326D43DE9CE1E07737087BD1E17CB22"));
-	mKeys.insert(2, QByteArray::fromHex("9AD0AD7F4DFAAA06988339FC31D3A111F4C7964AC7F377373A2454327C43E2FF"));
-	mKeys.insert(41, QByteArray::fromHex("A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C987A610"));
+	mKeys.insert(1, QByteArray::fromHex(
+			"308202050201003081EC06072A8648CE3D02013081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E"
+			"660A909D838D726E3BF623D52620282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126"
+			"DC5C6CE94A4B44F330B5D9042026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6044104"
+			"8BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9"
+			"C27745132DED8E545C1D54C72F046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E8297"
+			"4856A70201010482010F3082010B02010104200353859C2EC67780BA39015DE8C682AF2326D43DE9CE1E07737087BD1E"
+			"17CB22A081E33081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D526"
+			"20282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D90420"
+			"26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B60441048BD2AEB9CB7E57CB2C4B482FFC"
+			"81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F"
+			"046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7020101"));
+	mKeys.insert(2, QByteArray::fromHex(
+			"308202050201003081EC06072A8648CE3D02013081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E"
+			"660A909D838D726E3BF623D52620282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126"
+			"DC5C6CE94A4B44F330B5D9042026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6044104"
+			"8BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9"
+			"C27745132DED8E545C1D54C72F046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E8297"
+			"4856A70201010482010F3082010B02010104209AD0AD7F4DFAAA06988339FC31D3A111F4C7964AC7F377373A2454327C"
+			"43E2FFA081E33081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D526"
+			"20282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D90420"
+			"26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B60441048BD2AEB9CB7E57CB2C4B482FFC"
+			"81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F"
+			"046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7020101"));
+	mKeys.insert(41, QByteArray::fromHex(
+			"308202050201003081EC06072A8648CE3D02013081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E"
+			"660A909D838D726E3BF623D52620282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126"
+			"DC5C6CE94A4B44F330B5D9042026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B6044104"
+			"8BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9"
+			"C27745132DED8E545C1D54C72F046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E8297"
+			"4856A70201010482010F3082010B0201010420A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C9"
+			"87A610A081E33081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D526"
+			"20282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126DC5C6CE94A4B44F330B5D90420"
+			"26DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC18FF8C07B60441048BD2AEB9CB7E57CB2C4B482FFC"
+			"81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD97F8461A14611DC9C27745132DED8E545C1D54C72F"
+			"046997022100A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7020101"));
 
 	createFile(FileRef::efDir().getIdentifier(), FileRef::efDir().getShortIdentifier(), QByteArray::fromHex(
 			"61324F0FE828BD080FA000000167455349474E500F434941207A752044462E655369676E5100730C4F0AA00000016745"
@@ -96,6 +130,30 @@ void SimulatorFileSystem::initMandatoryData()
 }
 
 
+void SimulatorFileSystem::parseKey(const QJsonObject& pKey)
+{
+	const auto& keyId = pKey[QLatin1String("id")].toInt(0);
+	auto privateKey = pKey[QLatin1String("content")].toString();
+	if (privateKey.isNull()) // Migration: With 2.2.0 the name and format of the private key was changed
+	{
+		if (const auto& rawKey = pKey[QLatin1String("private")].toString(); !rawKey.isNull())
+		{
+			privateKey = QStringView(u"308188020100301406072a8648ce3d020106092b2403030208010107046d306b02010104"
+									 "20%1a1440342000483dd43a94436965ab3048c66d2932e200055b5d3448cdaebd5f3814d"
+									 "1ba6fc213dccd45fd48e18303d6625f5831e9a9efb6747481209d440588c046f2d188b5b").arg(rawKey);
+			qCWarning(card_simulator) << "'private' is deprecated and was replaced by 'content'";
+		}
+	}
+	if (keyId == 0 || privateKey.isNull())
+	{
+		qCWarning(card_simulator) << "Skipping key entry. Expected JSON object with 'id' and 'content', got" << pKey;
+		return;
+	}
+
+	mKeys.insert(keyId, QByteArray::fromHex(privateKey.toUtf8()));
+}
+
+
 SimulatorFileSystem::SimulatorFileSystem()
 	: mSelectedFile()
 	, mKeys()
@@ -157,7 +215,7 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 	{
 		if (!value.isObject())
 		{
-			qCWarning(card) << "Skipping file entry. Expected JSON object, got" << value;
+			qCWarning(card_simulator) << "Skipping file entry. Expected JSON object, got" << value;
 			continue;
 		}
 
@@ -167,7 +225,7 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 		const auto& content = file[QLatin1String("content")].toString();
 		if (fileId.isNull() || shortFileId.isNull() || content.isNull())
 		{
-			qCWarning(card) << "Skipping file entry. Expected JSON object with 'fileId', 'shortFileId' and 'content', got" << file;
+			qCWarning(card_simulator) << "Skipping file entry. Expected JSON object with 'fileId', 'shortFileId' and 'content', got" << file;
 			continue;
 		}
 
@@ -181,20 +239,11 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 	{
 		if (!value.isObject())
 		{
-			qCWarning(card) << "Skipping key entry. Expected JSON object, got" << value;
+			qCWarning(card_simulator) << "Skipping key entry. Expected JSON object, got" << value;
 			continue;
 		}
 
-		const auto& key = value.toObject();
-		const auto& keyId = key[QLatin1String("id")].toInt(0);
-		const auto& privateKey = key[QLatin1String("private")].toString();
-		if (keyId == 0 || privateKey.isNull())
-		{
-			qCWarning(card) << "Skipping key entry. Expected JSON object with 'id' and 'private', got" << key;
-			continue;
-		}
-
-		mKeys.insert(keyId, QByteArray::fromHex(privateKey.toUtf8()));
+		parseKey(value.toObject());
 	}
 }
 
@@ -278,9 +327,33 @@ QByteArray SimulatorFileSystem::getEfCardAccess() const
 }
 
 
-QByteArray SimulatorFileSystem::getPrivateKey(int pKeyId) const
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+QSharedPointer<EVP_PKEY> SimulatorFileSystem::getKey(int pKeyId) const
+#else
+QSharedPointer<EC_KEY> SimulatorFileSystem::getKey(int pKeyId) const
+#endif
 {
-	return mKeys[pKeyId];
+	if (!mKeys.contains(pKeyId))
+	{
+		return nullptr;
+	}
+
+	const auto& key = mKeys[pKeyId];
+	const auto* dataPointer = reinterpret_cast<const unsigned char*>(key.constData());
+	const auto& privateKey = EcUtil::create(d2i_PrivateKey(EVP_PKEY_EC, nullptr, &dataPointer, static_cast<long>(key.length())));
+	if (privateKey.isNull())
+	{
+		qCCritical(card_simulator) << "Interpreting private key" << pKeyId << "failed:" << getOpenSslError();
+		return nullptr;
+	}
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	return privateKey;
+
+#else
+	return EcUtil::create(EVP_PKEY_get1_EC_KEY(privateKey.data()));
+
+#endif
 }
 
 
@@ -291,7 +364,7 @@ StatusCode SimulatorFileSystem::verify(const Oid& pOid, const QSharedPointer<Aut
 		return StatusCode::VERIFICATION_FAILED;
 	}
 
-	qDebug() << "Checking validity of" << pOid;
+	qCDebug(card_simulator) << "Checking validity of" << pOid;
 
 	if (pOid == KnownOid::ID_DATE_OF_BIRTH)
 	{
@@ -353,14 +426,14 @@ void SimulatorFileSystem::createFile(const QByteArray& pShortFileId, const char*
 		config.reset(NCONF_new(nullptr), [](CONF* pC){NCONF_free(pC);});
 		if (NCONF_load_bio(config.data(), bio.data(), &error_line) == 0)
 		{
-			qCWarning(card) << "Cannot load ASN.1 config. Error on line" << error_line << "." << getOpenSslError();
+			qCWarning(card_simulator) << "Cannot load ASN.1 config. Error on line" << error_line << "." << getOpenSslError();
 		}
 	}
 
 	ASN1_TYPE* type = ASN1_generate_nconf(pStr, config.data());
 	if (!type)
 	{
-		qCWarning(card) << "Cannot generate ASN.1 object:" << getOpenSslError();
+		qCWarning(card_simulator) << "Cannot generate ASN.1 object:" << getOpenSslError();
 		return;
 	}
 

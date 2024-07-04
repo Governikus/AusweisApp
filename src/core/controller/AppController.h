@@ -9,7 +9,7 @@
 #pragma once
 
 #include "EnumHelper.h"
-#include "UIPlugIn.h"
+#include "UiPlugin.h"
 #include "WorkflowRequest.h"
 
 #include <QAbstractNativeEventFilter>
@@ -39,7 +39,7 @@ class AppController final
 		QSharedPointer<WorkflowRequest> mActiveWorkflow;
 		QSharedPointer<WorkflowRequest> mWaitingRequest;
 		bool mShutdownRunning;
-		const UIPlugIn* mUiDomination;
+		const UiPlugin* mUiDomination;
 		bool mRestartApplication;
 		int mExitCode;
 
@@ -70,17 +70,17 @@ class AppController final
 		void fireTranslationChanged();
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		void fireApplicationActivated();
-		void fireUiDomination(const UIPlugIn* pUi, const QString& pInformation, bool pAccepted);
+		void fireUiDomination(const UiPlugin* pUi, const QString& pInformation, bool pAccepted);
 		void fireUiDominationReleased();
 
 	private Q_SLOTS:
 		void doShutdown(int pExitCode = EXIT_SUCCESS);
-		void onUiPlugin(const UIPlugIn* pPlugin);
+		void onUiPlugin(const UiPlugin* pPlugin);
 		void onWorkflowFinished();
 		void onWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
 		void onCloseReminderFinished(bool pDontRemindAgain);
 		void onLanguageChanged();
-		void onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation);
+		void onUiDominationRequested(const UiPlugin* pUi, const QString& pInformation);
 		void onUiDominationRelease();
 		void onRestartApplicationRequested();
 

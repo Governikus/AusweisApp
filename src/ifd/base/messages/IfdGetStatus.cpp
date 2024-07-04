@@ -34,10 +34,7 @@ IfdGetStatus::IfdGetStatus(const QJsonObject& pMessageObject)
 {
 	mSlotName = getStringValue(pMessageObject, SLOT_NAME());
 
-	if (getType() != IfdMessageType::IFDGetStatus)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDGetStatus"));
-	}
+	ensureType(IfdMessageType::IFDGetStatus);
 }
 
 

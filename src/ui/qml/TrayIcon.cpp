@@ -111,14 +111,14 @@ void TrayIcon::updateMenu()
 
 	#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
 	//: LABEL DESKTOP
-	QAction* showApplicationAction = new QAction(tr("Open"), trayIconMenu);
+	auto* showApplicationAction = new QAction(tr("Open"), trayIconMenu);
 	connect(showApplicationAction, &QAction::triggered, this, &TrayIcon::fireShow);
 	trayIconMenu->addAction(showApplicationAction);
 	trayIconMenu->addSeparator();
 	#endif
 
 	//: LABEL DESKTOP
-	const auto quitAction = new QAction(tr("Quit %1").arg(QCoreApplication::applicationName()), trayIconMenu);
+	auto* quitAction = new QAction(tr("Quit %1").arg(QCoreApplication::applicationName()), trayIconMenu);
 	connect(quitAction, &QAction::triggered, this, &TrayIcon::fireQuit);
 	trayIconMenu->addAction(quitAction);
 }

@@ -5,8 +5,14 @@
 #include "TransmitParser.h"
 
 #include <QDebug>
+#include <QLoggingCategory>
+
 
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
+
 
 TransmitParser::TransmitParser()
 	: PaosParser(QStringLiteral("Transmit"))

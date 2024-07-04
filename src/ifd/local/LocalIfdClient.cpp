@@ -69,8 +69,8 @@ void LocalIfdClient::startDetection()
 
 	const auto packageName = QJniObject::fromString(Env::getSingleton<SecureStorage>()->getLocalIfdPackageName());
 	handle.callObjectMethod("setPackage", "(Ljava/lang/String;)Landroid/content/Intent;", packageName.object<jstring>());
-	mPsk = Randomizer::getInstance().createUuid().toString(QUuid::Id128);
-	serviceIntent.putExtra(QStringLiteral("PSK"), mPsk.toUtf8());
+	mPsk = Randomizer::getInstance().createUuid().toByteArray(QUuid::Id128);
+	serviceIntent.putExtra(QStringLiteral("PSK"), mPsk);
 
 	QJniObject context = QNativeInterface::QAndroidApplication::context();
 	if (!context.isValid())
@@ -128,7 +128,7 @@ bool LocalIfdClient::isDetecting()
 }
 
 
-const QString& LocalIfdClient::getPsk() const
+const QByteArray& LocalIfdClient::getPsk() const
 {
 	return mPsk;
 }

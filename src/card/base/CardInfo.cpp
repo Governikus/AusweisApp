@@ -24,8 +24,9 @@ using namespace governikus;
 const int CardInfo::UNDEFINED_RETRY_COUNTER = -1;
 
 
-CardInfo::CardInfo(CardType pCardType, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative, bool pPinInitial)
+CardInfo::CardInfo(CardType pCardType, const FileRef& pApplication, const QSharedPointer<const EFCardAccess>& pEfCardAccess, int pRetryCounter, bool pPinDeactivated, bool pPukInoperative, bool pPinInitial)
 	: mCardType(pCardType)
+	, mApplication(pApplication)
 	, mEfCardAccess(pEfCardAccess)
 	, mRetryCounter(pRetryCounter)
 	, mPinDeactivated(pPinDeactivated)
@@ -124,6 +125,18 @@ CardInfo::TagType CardInfo::getTagType() const
 void CardInfo::setTagType(CardInfo::TagType pTagType)
 {
 	mTagType = pTagType;
+}
+
+
+const FileRef& CardInfo::getApplication() const
+{
+	return mApplication;
+}
+
+
+void CardInfo::setApplication(const FileRef& pApplication)
+{
+	mApplication = pApplication;
 }
 
 

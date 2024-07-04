@@ -43,7 +43,7 @@ class test_WorkflowContext
 
 		QSharedPointer<CardConnection> createCardConnection(CardType pCardType)
 		{
-			auto readerInfo = ReaderInfo("reader"_L1, ReaderManagerPlugInType::UNKNOWN, CardInfo(pCardType));
+			auto readerInfo = ReaderInfo("reader"_L1, ReaderManagerPluginType::UNKNOWN, CardInfo(pCardType));
 			return QSharedPointer<CardConnection>(new MockCardConnection(readerInfo));
 		}
 
@@ -134,16 +134,6 @@ class test_WorkflowContext
 		}
 
 
-		void test_ErrorReportToUser()
-		{
-			mContext->setErrorReportedToUser(true);
-			QVERIFY(mContext->isErrorReportedToUser());
-
-			mContext->setErrorReportedToUser(false);
-			QVERIFY(!mContext->isErrorReportedToUser());
-		}
-
-
 		void test_CurrentState()
 		{
 			const QString state1 = QStringLiteral("state1");
@@ -167,19 +157,19 @@ class test_WorkflowContext
 		}
 
 
-		void test_ReaderPlugInTypes()
+		void test_ReaderPluginTypes()
 		{
-			QList<ReaderManagerPlugInType> vector1({ReaderManagerPlugInType::PCSC});
-			QList<ReaderManagerPlugInType> vector2({ReaderManagerPlugInType::REMOTE_IFD});
-			QSignalSpy spy(mContext.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
+			QList<ReaderManagerPluginType> vector1({ReaderManagerPluginType::PCSC});
+			QList<ReaderManagerPluginType> vector2({ReaderManagerPluginType::REMOTE_IFD});
+			QSignalSpy spy(mContext.data(), &WorkflowContext::fireReaderPluginTypesChanged);
 
-			mContext->setReaderPlugInTypes(vector1);
-			QCOMPARE(mContext->getReaderPlugInTypes(), vector1);
+			mContext->setReaderPluginTypes(vector1);
+			QCOMPARE(mContext->getReaderPluginTypes(), vector1);
 			QCOMPARE(spy.count(), 1);
 			spy.clear();
 
-			mContext->setReaderPlugInTypes(vector2);
-			QCOMPARE(mContext->getReaderPlugInTypes(), vector2);
+			mContext->setReaderPluginTypes(vector2);
+			QCOMPARE(mContext->getReaderPluginTypes(), vector2);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -229,13 +219,13 @@ class test_WorkflowContext
 				mContext->setCardConnection(QSharedPointer<CardConnection>::create(worker));
 				QVERIFY(!mContext->isPinBlocked());
 
-				const CardInfo cardInfo1(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, false, false);
-				const ReaderInfo readerInfo1(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo1);
+				const CardInfo cardInfo1(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, false, false);
+				const ReaderInfo readerInfo1(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo1);
 				Q_EMIT worker->fireReaderInfoChanged(readerInfo1);
 				QVERIFY(!mContext->isPinBlocked());
 
-				const CardInfo cardInfo2(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 0, false, false);
-				const ReaderInfo readerInfo2(QString(), ReaderManagerPlugInType::UNKNOWN, cardInfo2);
+				const CardInfo cardInfo2(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 0, false, false);
+				const ReaderInfo readerInfo2(QString(), ReaderManagerPluginType::UNKNOWN, cardInfo2);
 				Q_EMIT worker->fireReaderInfoChanged(readerInfo2);
 				QVERIFY(mContext->isPinBlocked());
 			}
@@ -363,6 +353,14 @@ class test_WorkflowContext
 			mContext->setAcceptedEidTypes(acceptedTypes);
 
 			QCOMPARE(mContext->isMobileEidTypeAllowed(mobileEidType), result);
+		}
+
+
+		void test_setInitialInputErrorShown()
+		{
+			QVERIFY(!mContext->isInitialInputErrorShown());
+			mContext->setInitialInputErrorShown();
+			QVERIFY(mContext->isInitialInputErrorShown());
 		}
 
 

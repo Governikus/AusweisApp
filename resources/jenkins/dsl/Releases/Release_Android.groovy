@@ -12,7 +12,7 @@ def j = new Release
 		name: 'Android_APK_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
-		artifacts: 'libs/Toolchain_*,build/dist/**/AusweisApp-*.apk*,build/debug.symbols/*'
+		artifacts: 'libs/Toolchain_*,build/dist/**/AusweisApp*.apk*,build/src/libAusweisApp*'
 	).generate(this)
 
 
@@ -46,7 +46,7 @@ j.with
 			"""))
 
 		shell('cmake --build build')
-		shell('cmake --install build')
+		shell('cmake --install build') // remove this if 2.2.0 is stable
 		shell('cmake --build build --target apk')
 		shell('cmake --build build --target verify.signature')
 		shell('cmake --build build --target dump.apk')
@@ -85,7 +85,7 @@ j.with
 			"""))
 
 		shell('cmake --build build')
-		shell('cmake --install build')
+		shell('cmake --install build') // remove this if 2.2.0 is stable
 		shell('cmake --build build --target aar')
 		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
 	}

@@ -63,7 +63,7 @@ class test_IfdStatus
 
 		void values()
 		{
-			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::NONE));
+			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPluginType::PCSC, CardInfo(CardType::NONE));
 			info.setBasicReader(false);
 			const IfdStatus ifdStatus(info);
 
@@ -118,7 +118,7 @@ class test_IfdStatus
 			QFETCH(bool, pinpad);
 			QFETCH(QByteArray, json);
 
-			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPlugInType::PCSC, CardInfo(CardType::NONE));
+			ReaderInfo info(QStringLiteral("SlotName"), ReaderManagerPluginType::PCSC, CardInfo(CardType::NONE));
 			info.setBasicReader(!pinpad);
 			const IfdStatus ifdStatus(info);
 
@@ -372,50 +372,50 @@ class test_IfdStatus
 
 		void constructionWithReaderInfo_data()
 		{
-			QTest::addColumn<ReaderManagerPlugInType>("type");
+			QTest::addColumn<ReaderManagerPluginType>("type");
 			QTest::addColumn<bool>("isBasicReader");
 			QTest::addColumn<int>("maxApduLength");
 			QTest::addColumn<bool>("cardAvailable");
 			QTest::addColumn<bool>("pinPadMode");
 
-			QTest::newRow("NFC - Basic reader without card") << ReaderManagerPlugInType::NFC << true << 500 << false << false;
-			QTest::newRow("NFC - Basic reader with card") << ReaderManagerPlugInType::NFC << true << 500 << true << false;
-			QTest::newRow("NFC - Basic reader with card without extended length") << ReaderManagerPlugInType::NFC << true << 200 << true << false;
-			QTest::newRow("NFC - Basic reader with card and pin pad mode") << ReaderManagerPlugInType::NFC << true << 500 << true << true;
-			QTest::newRow("NFC - Comfort reader with card and enabled pin pad mode") << ReaderManagerPlugInType::NFC << false << 500 << true << true;
-			QTest::newRow("NFC - Comfort reader with card and disabled pin pad mode") << ReaderManagerPlugInType::NFC << false << 500 << true << false;
+			QTest::newRow("NFC - Basic reader without card") << ReaderManagerPluginType::NFC << true << 500 << false << false;
+			QTest::newRow("NFC - Basic reader with card") << ReaderManagerPluginType::NFC << true << 500 << true << false;
+			QTest::newRow("NFC - Basic reader with card without extended length") << ReaderManagerPluginType::NFC << true << 200 << true << false;
+			QTest::newRow("NFC - Basic reader with card and pin pad mode") << ReaderManagerPluginType::NFC << true << 500 << true << true;
+			QTest::newRow("NFC - Comfort reader with card and enabled pin pad mode") << ReaderManagerPluginType::NFC << false << 500 << true << true;
+			QTest::newRow("NFC - Comfort reader with card and disabled pin pad mode") << ReaderManagerPluginType::NFC << false << 500 << true << false;
 
-			QTest::newRow("PCSC - Basic reader with pin pad mode") << ReaderManagerPlugInType::PCSC << true << 500 << false << true;
-			QTest::newRow("PCSC - Basic reader without pin pad mode") << ReaderManagerPlugInType::PCSC << true << 500 << false << false;
-			QTest::newRow("PCSC - Comfort reader with pin pad mode") << ReaderManagerPlugInType::PCSC << false << 500 << false << true;
-			QTest::newRow("PCSC - Comfort reader without pin pad mode") << ReaderManagerPlugInType::PCSC << false << 500 << false << false;
+			QTest::newRow("PCSC - Basic reader with pin pad mode") << ReaderManagerPluginType::PCSC << true << 500 << false << true;
+			QTest::newRow("PCSC - Basic reader without pin pad mode") << ReaderManagerPluginType::PCSC << true << 500 << false << false;
+			QTest::newRow("PCSC - Comfort reader with pin pad mode") << ReaderManagerPluginType::PCSC << false << 500 << false << true;
+			QTest::newRow("PCSC - Comfort reader without pin pad mode") << ReaderManagerPluginType::PCSC << false << 500 << false << false;
 
-			QTest::newRow("REMOTE_IFD - Basic reader with pin pad mode") << ReaderManagerPlugInType::REMOTE_IFD << true << 500 << false << true;
-			QTest::newRow("REMOTE_IFD - Basic reader without pin pad mode") << ReaderManagerPlugInType::REMOTE_IFD << true << 500 << false << false;
-			QTest::newRow("REMOTE_IFD - Comfort reader with pin pad mode") << ReaderManagerPlugInType::REMOTE_IFD << false << 500 << false << true;
-			QTest::newRow("REMOTE_IFD - Comfort reader without pin pad mode") << ReaderManagerPlugInType::REMOTE_IFD << false << 500 << false << false;
+			QTest::newRow("REMOTE_IFD - Basic reader with pin pad mode") << ReaderManagerPluginType::REMOTE_IFD << true << 500 << false << true;
+			QTest::newRow("REMOTE_IFD - Basic reader without pin pad mode") << ReaderManagerPluginType::REMOTE_IFD << true << 500 << false << false;
+			QTest::newRow("REMOTE_IFD - Comfort reader with pin pad mode") << ReaderManagerPluginType::REMOTE_IFD << false << 500 << false << true;
+			QTest::newRow("REMOTE_IFD - Comfort reader without pin pad mode") << ReaderManagerPluginType::REMOTE_IFD << false << 500 << false << false;
 
-			QTest::newRow("LOCAL_IFD - Basic reader with pin pad mode") << ReaderManagerPlugInType::LOCAL_IFD << true << 500 << false << true;
-			QTest::newRow("LOCAL_IFD - Basic reader without pin pad mode") << ReaderManagerPlugInType::LOCAL_IFD << true << 500 << false << false;
-			QTest::newRow("LOCAL_IFD - Comfort reader with pin pad mode") << ReaderManagerPlugInType::LOCAL_IFD << false << 500 << false << true;
-			QTest::newRow("LOCAL_IFD - Comfort reader without pin pad mode") << ReaderManagerPlugInType::LOCAL_IFD << false << 500 << false << false;
+			QTest::newRow("LOCAL_IFD - Basic reader with pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << true << 500 << false << true;
+			QTest::newRow("LOCAL_IFD - Basic reader without pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << true << 500 << false << false;
+			QTest::newRow("LOCAL_IFD - Comfort reader with pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << false << 500 << false << true;
+			QTest::newRow("LOCAL_IFD - Comfort reader without pin pad mode") << ReaderManagerPluginType::LOCAL_IFD << false << 500 << false << false;
 
-			QTest::newRow("SMART - Basic reader with pin pad mode") << ReaderManagerPlugInType::SMART << true << 500 << false << true;
-			QTest::newRow("SMART - Basic reader without pin pad mode") << ReaderManagerPlugInType::SMART << true << 500 << false << false;
-			QTest::newRow("SMART - Comfort reader with pin pad mode") << ReaderManagerPlugInType::SMART << false << 500 << false << true;
-			QTest::newRow("SMART - Comfort reader without pin pad mode") << ReaderManagerPlugInType::SMART << false << 500 << false << false;
+			QTest::newRow("SMART - Basic reader with pin pad mode") << ReaderManagerPluginType::SMART << true << 500 << false << true;
+			QTest::newRow("SMART - Basic reader without pin pad mode") << ReaderManagerPluginType::SMART << true << 500 << false << false;
+			QTest::newRow("SMART - Comfort reader with pin pad mode") << ReaderManagerPluginType::SMART << false << 500 << false << true;
+			QTest::newRow("SMART - Comfort reader without pin pad mode") << ReaderManagerPluginType::SMART << false << 500 << false << false;
 
-			QTest::newRow("SIMULATOR - Basic reader with pin pad mode") << ReaderManagerPlugInType::SIMULATOR << true << 500 << false << true;
-			QTest::newRow("SIMULATOR - Basic reader without pin pad mode") << ReaderManagerPlugInType::SIMULATOR << true << 500 << false << false;
-			QTest::newRow("SIMULATOR - Comfort reader with pin pad mode") << ReaderManagerPlugInType::SIMULATOR << false << 500 << false << true;
-			QTest::newRow("SIMULATOR - Comfort reader without pin pad mode") << ReaderManagerPlugInType::SIMULATOR << false << 500 << false << false;
+			QTest::newRow("SIMULATOR - Basic reader with pin pad mode") << ReaderManagerPluginType::SIMULATOR << true << 500 << false << true;
+			QTest::newRow("SIMULATOR - Basic reader without pin pad mode") << ReaderManagerPluginType::SIMULATOR << true << 500 << false << false;
+			QTest::newRow("SIMULATOR - Comfort reader with pin pad mode") << ReaderManagerPluginType::SIMULATOR << false << 500 << false << true;
+			QTest::newRow("SIMULATOR - Comfort reader without pin pad mode") << ReaderManagerPluginType::SIMULATOR << false << 500 << false << false;
 		}
 
 
 		void constructionWithReaderInfo()
 		{
 			const QString slotName("SlotName"_L1);
-			QFETCH(ReaderManagerPlugInType, type);
+			QFETCH(ReaderManagerPluginType, type);
 			QFETCH(bool, isBasicReader);
 			QFETCH(int, maxApduLength);
 			QFETCH(bool, cardAvailable);
@@ -434,7 +434,7 @@ class test_IfdStatus
 			QCOMPARE(ifdStatus.getType(), IfdMessageType::IFDStatus);
 			QCOMPARE(ifdStatus.getContextHandle(), QString());
 			QCOMPARE(ifdStatus.getSlotName(), slotName);
-			const bool isNfcOrSmart = type == ReaderManagerPlugInType::NFC || type == ReaderManagerPlugInType::SMART;
+			const bool isNfcOrSmart = type == ReaderManagerPluginType::NFC || type == ReaderManagerPluginType::SMART;
 			QCOMPARE(ifdStatus.hasPinPad(), !isBasicReader || (isNfcOrSmart && pinPadMode));
 			QCOMPARE(ifdStatus.getMaxApduLength(), maxApduLength);
 			QCOMPARE(ifdStatus.getConnectedReader(), true);

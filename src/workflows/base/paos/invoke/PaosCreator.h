@@ -31,15 +31,14 @@ class PaosCreator
 
 		QByteArray mContent;
 		QString mRelatedMessageId;
+		QXmlStreamWriter mWriter;
 
 		void createEnvelopeElement();
 		void createHeaderElement();
 
 	protected:
-		QXmlStreamWriter mWriter;
-
 		void writeTextElement(const QString& pQualifiedName, const QByteArray& pText);
-		virtual void createBodyElement() = 0;
+		virtual void createBodyElement(QXmlStreamWriter& pWriter) = 0;
 
 		void createResultElement(const ResponseType& pResponse);
 

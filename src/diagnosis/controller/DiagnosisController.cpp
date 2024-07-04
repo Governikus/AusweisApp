@@ -25,7 +25,7 @@ DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>&
 
 	connect(Env::getSingleton<ReaderDetector>(), &ReaderDetector::fireReaderChangeDetected, this, &DiagnosisController::onReaderEvent);
 
-	const auto& readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &DiagnosisController::onReaderEvent);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &DiagnosisController::onReaderEvent);
 	connect(readerManager, &ReaderManager::fireCardInserted, this, &DiagnosisController::onReaderEvent);
@@ -37,14 +37,14 @@ DiagnosisController::DiagnosisController(const QSharedPointer<DiagnosisContext>&
 DiagnosisController::~DiagnosisController()
 {
 	qCDebug(diagnosis) << "Stopping PCSC scan.";
-	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPlugInType::PCSC);
+	Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::PCSC);
 }
 
 
 void DiagnosisController::run()
 {
 	qCDebug(diagnosis) << "Starting PCSC scan.";
-	Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPlugInType::PCSC);
+	Env::getSingleton<ReaderManager>()->startScan(ReaderManagerPluginType::PCSC);
 
 	mWatcherPcscInfo.setFuture(QtConcurrent::run(&DiagnosisController::retrievePcscInfo));
 	collectInterfaceInformation();
@@ -68,10 +68,10 @@ void DiagnosisController::collectInterfaceInformation()
 DiagnosisController::PcscInfo DiagnosisController::retrievePcscInfo()
 {
 	PcscInfo result;
-	const auto& pcscInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC);
+	const auto& pcscInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::PCSC);
 	if (pcscInfo.isAvailable())
 	{
-		const QVariant version = pcscInfo.getValue(ReaderManagerPlugInInfo::Key::PCSC_LITE_VERSION);
+		const QVariant version = pcscInfo.getValue(ReaderManagerPluginInfo::Key::PCSC_LITE_VERSION);
 		if (version.isValid())
 		{
 			result.mPcscVersion = tr("pcsclite %1").arg(version.toString());
@@ -106,15 +106,14 @@ void DiagnosisController::onReaderEvent()
 	}
 
 	auto attachedDevices = Env::getSingleton<ReaderDetector>()->getAttachedSupportedDevices();
-	const auto& driverIsInstalled =
-			[readersWithDriverInfos](const ReaderConfigurationInfo& readerInfo)
-			{
-				return readersWithDriverInfos.contains(readerInfo);
-			};
-
-	attachedDevices.erase(
-			std::remove_if(attachedDevices.begin(), attachedDevices.end(), driverIsInstalled),
-			attachedDevices.end());
+	QMutableListIterator iter(attachedDevices);
+	while (iter.hasNext())
+	{
+		if (readersWithDriverInfos.contains(iter.next()))
+		{
+			iter.remove();
+		}
+	}
 
 	mContext->setReaderInfosNoDriver(attachedDevices);
 

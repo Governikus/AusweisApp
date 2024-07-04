@@ -58,8 +58,8 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 		case CardReturnCode::COMMAND_FAILED:
 			return CardReturnCode::COMMAND_FAILED;
 
-		case CardReturnCode::RETRY_ALLOWED:
-			return CardReturnCode::RETRY_ALLOWED;
+		case CardReturnCode::RESPONSE_EMPTY:
+			return CardReturnCode::RESPONSE_EMPTY;
 
 		default:
 			break;
@@ -69,7 +69,7 @@ CardReturnCode PaceHandler::establishPaceChannel(PacePasswordId pPasswordId, con
 	switch (keyAgreementStatus)
 	{
 		case KeyAgreementStatus::RETRY_ALLOWED:
-			return CardReturnCode::RETRY_ALLOWED;
+			return CardReturnCode::RESPONSE_EMPTY;
 
 		case KeyAgreementStatus::PROTOCOL_ERROR:
 			return CardReturnCode::PROTOCOL_ERROR;
@@ -162,7 +162,7 @@ CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 	if (cardReturnCode != CardReturnCode::OK)
 	{
 		qCCritical(card) << "Error on MSE:Set AT";
-		return response.isEmpty() ? CardReturnCode::RETRY_ALLOWED : CardReturnCode::PROTOCOL_ERROR;
+		return response.isEmpty() ? CardReturnCode::RESPONSE_EMPTY : CardReturnCode::PROTOCOL_ERROR;
 	}
 	if (PacePinStatus::getRetryCounter(response.getStatusCode()) < 1)
 	{

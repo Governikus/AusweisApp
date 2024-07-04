@@ -9,3 +9,5 @@ endif()
 if(TARGET ${Qt}::Test)
 	target_link_libraries(AusweisAppCard PRIVATE debug ${Qt}::Test)
 endif()
+
+qt_extract_metatypes(AusweisAppCard) # QTBUG-123574

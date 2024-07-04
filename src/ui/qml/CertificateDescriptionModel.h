@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Env.h"
+#include "SingletonCreator.h"
 #include "asn1/CertificateDescription.h"
 #include "context/WorkflowContext.h"
 
@@ -17,9 +18,10 @@
 #include <QPair>
 #include <QSharedPointer>
 #include <QString>
+#include <QtQml/qqmlregistration.h>
 
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
@@ -27,10 +29,14 @@ namespace governikus
 
 class CertificateDescriptionModel
 	: public QAbstractListModel
+	, public SingletonCreator<CertificateDescriptionModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(QString subjectName READ getSubjectName NOTIFY fireChanged)
 	Q_PROPERTY(QString purpose READ getPurpose NOTIFY fireChanged)

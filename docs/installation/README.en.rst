@@ -103,11 +103,6 @@ UPDATECHECK
   The UPDATECHECK parameter affects neither updates of the service
   provider list nor updates of card reader information.
 
-ONSCREENKEYBOARD
-  An on-screen keyboard is available to enter PIN, CAN or PUK. It is deactivated or
-  activated by setting ONSCREENKEYBOARD to false or true. Users are able to adjust
-  the setting.
-
 SHUFFLESCREENKEYBOARD
   If the on-screen keyboard is activated, the number keys can be arranged at random.
   By setting SHUFFLESCREENKEYBOARD to false or true, the random arrangement can be
@@ -172,8 +167,6 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
     <string>proxy.example.org</string>
     <key>customProxyPort</key>
     <integer>1337</integer>
-    <key>keylessPassword</key>
-    <true/>
     <key>shuffleScreenKeyboard</key>
     <true/>
     <key>visualPrivacy</key>
@@ -198,7 +191,6 @@ transportPinReminder     TRANSPORTPINREMINDER
 customProxyType          CUSTOMPROXYTYPE
 customProxyPort          CUSTOMPROXYPORT
 customProxyHost          CUSTOMPROXYHOST
-keylessPassword          ONSCREENKEYBOARD
 shuffleScreenKeyboard    SHUFFLESCREENKEYBOARD
 visualPrivacy            SECURESCREENKEYBOARD
 enableCanAllowed         ENABLECANALLOWED
@@ -327,8 +319,8 @@ The developer options are hidden by default.
 Activating the Developer Options
 --------------------------------
 
-Developer options are activated by clicking the version number accessible via
-"Help" -> "Version Information" 10 times. After the 10th time, you will receive a
+Developer options are activated by clicking the "Application Version" accessible
+via "Help" -> "Information" 10 times. After the 10th time, you will receive a
 notification that the developer options are activated. Once activated, you will
 find a new category "developer options" in the settings menu. In the mobile
 versions additional options for "on-site reading" appear.
@@ -445,3 +437,13 @@ Developer documentation
 
 You can find a detailed developer documentation of the SDK with a list of possible
 failure codes at https://www.ausweisapp.bund.de/sdk/.
+
+SDK Wrapper
+-----------
+
+You can use the SDK Wrapper of the |AppName| to simplify the integration of
+the SDK into your app. The SDK Wrapper offers Swift and Kotlin bindings for iOS
+and Android.
+
+You can find information for integrating the SDK Wrapper in the developer
+documentation at https://www.ausweisapp.bund.de/sdkwrapper/.

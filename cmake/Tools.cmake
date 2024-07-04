@@ -115,6 +115,25 @@ if(UNCRUSTIFY)
 	endif()
 endif()
 
+find_program(DOS2UNIX dos2unix CMAKE_FIND_ROOT_PATH_BOTH)
+if(DOS2UNIX)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.cpp)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.h)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.rst)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.svg)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/CMakeLists.txt)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.cmake)
+	list(APPEND GLOB_FILES ${PROJECT_SOURCE_DIR}/*.cmake.in)
+	file(GLOB_RECURSE FILES ${GLOB_FILES})
+
+	foreach(FILE ${FILES})
+		list(APPEND commands COMMAND ${DOS2UNIX} -q -k --add-eol ${FILE})
+	endforeach()
+
+	add_custom_target(format.dos2unix ${commands})
+	add_dependencies(format format.dos2unix)
+endif()
+
 find_program(PYTHON python CMAKE_FIND_ROOT_PATH_BOTH)
 if(PYTHON)
 	list(APPEND GLOB_JSON ${RESOURCES_DIR}/updatable-files/*.json)
@@ -128,16 +147,6 @@ if(PYTHON)
 
 	add_custom_target(format.json ${commands})
 	add_dependencies(format format.json)
-endif()
-
-find_program(QMLLINT_BIN qmllint CMAKE_FIND_ROOT_PATH_BOTH)
-if(QMLLINT_BIN)
-	file(GLOB_RECURSE TEST_FILES_QML ${TEST_DIR}/qml/*.qml)
-	file(GLOB_RECURSE FILES_QML ${RESOURCES_DIR}/qml/*.qml)
-	file(GLOB_RECURSE FILES_JS ${RESOURCES_DIR}/qml/*.js)
-	set(QMLLINT_CMD ${QMLLINT_BIN} ${FILES_QML} ${FILES_JS})
-
-	add_custom_target(qmllint COMMAND ${QMLLINT_CMD} SOURCES ${TEST_FILES_QML} ${FILES_QML} ${FILES_JS})
 endif()
 
 # doc8 (https://pypi.python.org/pypi/doc8)

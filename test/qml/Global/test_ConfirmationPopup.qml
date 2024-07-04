@@ -32,12 +32,12 @@ TestCase {
 		let testObject = createTestObject();
 		testObject.open();
 		tryVerify(function () {
-				return testObject.opened;
-			});
+			return testObject.opened;
+		});
 		testObject.close();
 		tryVerify(function () {
-				return !testObject.opened;
-			});
+			return !testObject.opened;
+		});
 	}
 	function test_style() {
 		let testObject = createTestObject();
@@ -81,12 +81,12 @@ TestCase {
 				compare(testObject.text, "", "text: empty");
 				testObject.open();
 				tryVerify(function () {
-						return testObject.opened;
-					});
+					return testObject.opened;
+				});
 				testObject.accept();
 				tryVerify(function () {
-						return !testObject.opened;
-					});
+					return !testObject.opened;
+				});
 				compare(testObject.text, "confirmed", "text: confirmed");
 			}
 			function test_cancel() {
@@ -95,12 +95,12 @@ TestCase {
 				compare(testObject.text, "", "text: empty");
 				testObject.open();
 				tryVerify(function () {
-						return testObject.opened;
-					});
+					return testObject.opened;
+				});
 				testObject.cancel();
 				tryVerify(function () {
-						return !testObject.opened;
-					});
+					return !testObject.opened;
+				});
 				compare(testObject.text, "cancelled", "text: cancelled");
 			}
 

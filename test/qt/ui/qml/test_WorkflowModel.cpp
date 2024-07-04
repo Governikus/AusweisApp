@@ -10,7 +10,7 @@
 
 #include "Env.h"
 #include "MockCardConnectionWorker.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
 #include "TestWorkflowContext.h"
@@ -20,7 +20,7 @@
 #include <QtTest>
 
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -34,7 +34,7 @@ class test_WorkflowModel
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -58,7 +58,7 @@ class test_WorkflowModel
 			QSignalSpy spyCurrentStateChanged(&model, &WorkflowModel::fireCurrentStateChanged);
 			QSignalSpy spyStateEntered(&model, &WorkflowModel::fireStateEntered);
 			QSignalSpy spyResultChanged(&model, &WorkflowModel::fireResultChanged);
-			QSignalSpy spyReaderPlugInTypeChanged(&model, &WorkflowModel::fireReaderPlugInTypeChanged);
+			QSignalSpy spyReaderPluginTypeChanged(&model, &WorkflowModel::fireReaderPluginTypeChanged);
 			QSignalSpy spySelectedReaderChanged(&model, &WorkflowModel::fireSelectedReaderChanged);
 			QSignalSpy spyWorkflowFinished(&model, &WorkflowModel::fireWorkflowFinished);
 
@@ -83,8 +83,8 @@ class test_WorkflowModel
 			Q_EMIT context->fireResultChanged();
 			QCOMPARE(spyResultChanged.count(), 3);
 
-			Q_EMIT context->fireReaderPlugInTypesChanged();
-			QCOMPARE(spyReaderPlugInTypeChanged.count(), 1);
+			Q_EMIT context->fireReaderPluginTypesChanged();
+			QCOMPARE(spyReaderPluginTypeChanged.count(), 1);
 
 			Q_EMIT context->fireCardConnectionChanged();
 			QCOMPARE(spySelectedReaderChanged.count(), 1);
@@ -118,23 +118,23 @@ class test_WorkflowModel
 		}
 
 
-		void test_ReaderPlugInType()
+		void test_ReaderPluginType()
 		{
 			WorkflowModel model;
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 
-			QCOMPARE(model.getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+			QCOMPARE(model.getReaderPluginType(), ReaderManagerPluginType::UNKNOWN);
 
 			model.mContext = context;
-			QCOMPARE(model.getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+			QCOMPARE(model.getReaderPluginType(), ReaderManagerPluginType::UNKNOWN);
 
-			model.setReaderPlugInType(ReaderManagerPlugInType::UNKNOWN);
-			QVERIFY(context->getReaderPlugInTypes().contains(ReaderManagerPlugInType::UNKNOWN));
-			QCOMPARE(model.getReaderPlugInType(), ReaderManagerPlugInType::UNKNOWN);
+			model.setReaderPluginType(ReaderManagerPluginType::UNKNOWN);
+			QVERIFY(context->getReaderPluginTypes().contains(ReaderManagerPluginType::UNKNOWN));
+			QCOMPARE(model.getReaderPluginType(), ReaderManagerPluginType::UNKNOWN);
 
-			model.setReaderPlugInType(ReaderManagerPlugInType::NFC);
-			QVERIFY(context->getReaderPlugInTypes().contains(ReaderManagerPlugInType::NFC));
-			QCOMPARE(model.getReaderPlugInType(), ReaderManagerPlugInType::NFC);
+			model.setReaderPluginType(ReaderManagerPluginType::NFC);
+			QVERIFY(context->getReaderPluginTypes().contains(ReaderManagerPluginType::NFC));
+			QCOMPARE(model.getReaderPluginType(), ReaderManagerPluginType::NFC);
 		}
 
 
@@ -148,7 +148,7 @@ class test_WorkflowModel
 		void test_startScanExplicitly()
 		{
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
-			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
+			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPluginTypesChanged);
 
 			WorkflowModel model;
 			model.resetWorkflowContext(context);
@@ -168,11 +168,11 @@ class test_WorkflowModel
 			model.resetWorkflowContext(context);
 			QCOMPARE(model.hasCard(), false);
 
-			auto mockReader = MockReaderManagerPlugIn::getInstance().addReader("SomeReaderWithCard"_L1);
+			auto mockReader = MockReaderManagerPlugin::getInstance().addReader("SomeReaderWithCard"_L1);
 			auto info = mockReader->getReaderInfo();
-			info.setCardInfo(CardInfo(CardType::EID_CARD, QSharedPointer<EFCardAccess>(), 3, false, false, false));
+			info.setCardInfo(CardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<EFCardAccess>(), 3, false, false, false));
 			mockReader->setReaderInfo(info);
-			model.setReaderPlugInType(ReaderManagerPlugInType::MOCK);
+			model.setReaderPluginType(ReaderManagerPluginType::MOCK);
 			QCOMPARE(model.hasCard(), true);
 		}
 
@@ -193,7 +193,7 @@ class test_WorkflowModel
 		void test_statusCodeImage()
 		{
 			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
-			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPlugInTypesChanged);
+			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPluginTypesChanged);
 
 			QFETCH(GlobalStatus::Code, statusCode);
 			context->setStatus(statusCode);
@@ -223,7 +223,20 @@ class test_WorkflowModel
 			{
 				QVERIFY(QFile::exists(image));
 			}
+		}
 
+
+		void test_getLastReturnCode()
+		{
+			WorkflowModel model;
+			QCOMPARE(model.getLastReturnCode(), CardReturnCode::UNDEFINED);
+
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
+			model.resetWorkflowContext(context);
+			QCOMPARE(model.getLastReturnCode(), CardReturnCode::OK);
+
+			context->setLastPaceResult(CardReturnCode::CANCELLATION_BY_USER);
+			QCOMPARE(model.getLastReturnCode(), CardReturnCode::CANCELLATION_BY_USER);
 		}
 
 

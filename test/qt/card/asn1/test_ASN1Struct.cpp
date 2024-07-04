@@ -4,10 +4,15 @@
 
 #include "asn1/ASN1Struct.h"
 
+#include "TestFileHelper.h"
+
 #include <QtCore>
 #include <QtTest>
 
+
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_ASN1Struct
 	: public QObject
@@ -102,7 +107,7 @@ class test_ASN1Struct
 			ASN1Struct data;
 			Oid oid(KnownOid::ID_PACE_ECDH_GM_AES_CBC_CMAC_128);
 			data.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, oid);
-			QCOMPARE(data, QByteArray::fromHex("800A").append(oid.getData()));
+			QCOMPARE(data, QByteArray::fromHex("800A").append(QByteArray(oid)));
 		}
 
 
@@ -271,6 +276,41 @@ class test_ASN1Struct
 			QCOMPARE(data, body);
 			QCOMPARE(data.getData(V_ASN1_APPLICATION, ASN1Struct::CERTIFICATE_BODY), QByteArray());
 			QCOMPARE(data.getObject(V_ASN1_APPLICATION, ASN1Struct::CERTIFICATE_BODY), body);
+		}
+
+
+		void debugOperator()
+		{
+			QTest::ignoreMessage(QtDebugMsg, R"(ASN1Struct:
+[APPLICATION 33]
+    [APPLICATION 78]
+        [APPLICATION 41] 00
+        [APPLICATION 2] 4445445674494447564b333030303239
+        [APPLICATION 73]
+            [UNIVERSAL 6] 04007f00070202020203
+            [CONTEXT_SPECIFIC 6] 04327560563d276d3f5e190196e264d0d391ac134aeb27e07250fa562096b14a8a169a298dc80285cb6e3133e0ffccde7964747d754dd356b4401df2cca7d43dc9
+        [APPLICATION 32] 44454250524c4f43414c333030303337
+        [APPLICATION 76]
+            [UNIVERSAL 6] 04007f000703010202
+            [APPLICATION 19] 000713ff07
+        [APPLICATION 37] 020400020001
+        [APPLICATION 36] 020400030002
+        [APPLICATION 5]
+            [APPLICATION 19]
+                [UNIVERSAL 6] 04007f000703010301
+                [CONTEXT_SPECIFIC 0] 315a1da468ae12c839f8ab386e5cab88c9ffac2033c9910e202e2004bde07fe6
+            [APPLICATION 19]
+                [UNIVERSAL 6] 04007f000703010302
+                [CONTEXT_SPECIFIC 0] 39d51f1942520ae8ec7f5cc654e78a521d8c09f607cd9adf7bb9fdc5bffb90d7
+            [APPLICATION 19]
+                [UNIVERSAL 6] 04007f000703010303
+                [CONTEXT_SPECIFIC 0]
+                    [CONTEXT_SPECIFIC 0] 0d
+                    [CONTEXT_SPECIFIC 1] 5f2513575dd25b7c4b60d2aa66f489f26055dd90d4b6f5997e4e6ee75a89473a
+    [APPLICATION 55] 6ae52f47b70da13b1114db0879d504aef804f8c353ffff253c65254897c3bf000f2bcc37a6550b921e9554185f6fa2e3d14658541b467fb480338faad2422e67)");
+
+			const auto& rawCert = TestFileHelper::readFile(":/card/cvdv-DEDVtIDGVK300029.hex"_L1);
+			qDebug() << ASN1Struct(QByteArray::fromHex(rawCert));
 		}
 
 

@@ -32,10 +32,7 @@ IfdEstablishContextResponse::IfdEstablishContextResponse(const QJsonObject& pMes
 {
 	mIfdName = getStringValue(pMessageObject, IFD_NAME());
 
-	if (getType() != IfdMessageType::IFDEstablishContextResponse)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishContextResponse"));
-	}
+	ensureType(IfdMessageType::IFDEstablishContextResponse);
 }
 
 

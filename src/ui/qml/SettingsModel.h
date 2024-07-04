@@ -10,24 +10,25 @@
 
 #include "AppUpdateDataModel.h"
 #include "Env.h"
+#include "SingletonCreator.h"
+#include "UiPlugin.h"
 
 #include <QObject>
 #include <QUrl>
-#include <UIPlugIn.h>
+#include <QtQml/qqmlregistration.h>
 
 namespace governikus
 {
 
-defineEnumType(ModeOption,
-		ON,
-		OFF,
-		AUTO
-		)
-
 class SettingsModel
 	: public QObject
+	, public SingletonCreator<SettingsModel>
 {
 	Q_OBJECT
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
 
 	Q_PROPERTY(QString language READ getLanguage WRITE setLanguage NOTIFY fireLanguageChanged)
@@ -39,13 +40,12 @@ class SettingsModel
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
 	Q_PROPERTY(bool showAccessRights READ getShowAccessRights WRITE setShowAccessRights NOTIFY fireShowAccessRightsChanged)
 	Q_PROPERTY(QString deviceName READ getDeviceName WRITE setDeviceName NOTIFY fireDeviceNameChanged)
-	Q_PROPERTY(bool useScreenKeyboard READ isUseScreenKeyboard WRITE setUseScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool visualPrivacy READ isVisualPrivacy WRITE setVisualPrivacy NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool shuffleScreenKeyboard READ isShuffleScreenKeyboard WRITE setShuffleScreenKeyboard NOTIFY fireScreenKeyboardChanged)
 	Q_PROPERTY(bool enableCanAllowed READ isEnableCanAllowed WRITE setEnableCanAllowed NOTIFY fireCanAllowedChanged)
 	Q_PROPERTY(bool skipRightsOnCanAllowed READ isSkipRightsOnCanAllowed WRITE setSkipRightsOnCanAllowed NOTIFY fireCanAllowedChanged)
-	Q_PROPERTY(bool enableSimulator READ isSimulatorEnabled WRITE setSimulatorEnabled NOTIFY fireDeveloperOptionsChanged)
-	Q_PROPERTY(UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
+	Q_PROPERTY(bool enableSimulator READ isSimulatorEnabled WRITE setSimulatorEnabled NOTIFY fireSimulatorChanged)
+	Q_PROPERTY(governikus::EnumUiModule::UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
 	Q_PROPERTY(bool showTrayIcon READ showTrayIcon NOTIFY fireShowTrayIconChanged)
@@ -57,7 +57,7 @@ class SettingsModel
 	Q_PROPERTY(bool remindUserToClose READ isRemindUserToClose WRITE setRemindUserToClose NOTIFY fireRemindUserToCloseChanged)
 	Q_PROPERTY(bool transportPinReminder READ isTransportPinReminder WRITE setTransportPinReminder NOTIFY fireTransportPinReminderChanged)
 	Q_PROPERTY(bool showInAppNotifications READ isShowInAppNotifications WRITE setShowInAppNotifications NOTIFY fireShowInAppNotificationsChanged)
-	Q_PROPERTY(AppUpdateDataModel * appUpdateData READ getAppUpdateData NOTIFY fireAppUpdateDataChanged)
+	Q_PROPERTY(governikus::AppUpdateDataModel * appUpdateData READ getAppUpdateData NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(QUrl customProxyUrl READ getCustomProxyUrl CONSTANT)
 	Q_PROPERTY(bool customProxyAttributesPresent READ isCustomProxyAttributesPresent CONSTANT)
 	Q_PROPERTY(bool useCustomProxy READ isUseCustomProxy WRITE setUseCustomProxy NOTIFY fireUseCustomProxyChanged)
@@ -74,6 +74,14 @@ class SettingsModel
 		~SettingsModel() override = default;
 
 	public:
+		enum class ModeOption
+		{
+			ON,
+			OFF,
+			AUTO
+		};
+		Q_ENUM(ModeOption)
+
 		[[nodiscard]] QString getLanguage() const;
 		void setLanguage(const QString& pLanguage) const;
 
@@ -99,9 +107,6 @@ class SettingsModel
 
 		[[nodiscard]] bool getShowAccessRights() const;
 		void setShowAccessRights(bool pShowAccessRights);
-
-		[[nodiscard]] bool isUseScreenKeyboard() const;
-		void setUseScreenKeyboard(bool pUseScreenKeyboard);
 
 		[[nodiscard]] bool isVisualPrivacy() const;
 		void setVisualPrivacy(bool pVisualPrivacy);
@@ -176,6 +181,7 @@ class SettingsModel
 		void fireLanguageChanged();
 		void fireAdvancedSettingsChanged();
 		void fireDeveloperOptionsChanged();
+		void fireSimulatorChanged();
 		void fireDeviceNameChanged();
 		void firePinPadModeChanged();
 		void fireShowAccessRightsChanged();

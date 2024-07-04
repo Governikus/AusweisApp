@@ -35,7 +35,7 @@ class ServerMessageHandler
 
 		virtual void sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput&) = 0;
 		virtual void sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu) = 0;
-		virtual void setAllowedCardTypes(const QList<ReaderManagerPlugInType>& pAllowedCardTypes) = 0;
+		virtual void setAllowedCardTypes(const QList<ReaderManagerPluginType>& pAllowedCardTypes) = 0;
 
 	Q_SIGNALS:
 		void fireCardConnected(const QSharedPointer<CardConnection>& pConnection);

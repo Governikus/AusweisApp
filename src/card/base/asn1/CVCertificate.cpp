@@ -99,16 +99,6 @@ QSharedPointer<const CVCertificate> CVCertificate::fromRaw(const QByteArray& pBy
 }
 
 
-#ifndef QT_NO_DEBUG
-QSharedPointer<const CVCertificate> CVCertificate::fromHex(const QByteArray& pBytes)
-{
-	return fromRaw(QByteArray::fromHex(pBytes));
-}
-
-
-#endif
-
-
 QByteArray CVCertificate::encode() const
 {
 	return encodeObject(this);

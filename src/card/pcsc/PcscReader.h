@@ -33,8 +33,9 @@ class PcscReader
 
 		SCARDCONTEXT mContextHandle;
 
-		void fetchGetReaderInfo();
 		PCSC_RETURNCODE readReaderFeatures();
+
+		[[nodiscard]] bool readCardStatus();
 
 		void updateCard() override;
 
@@ -42,6 +43,8 @@ class PcscReader
 		explicit PcscReader(const QString& pReaderName);
 		[[nodiscard]] PCSC_RETURNCODE init();
 		~PcscReader() override;
+
+		void printGetReaderInfo() const override;
 
 		[[nodiscard]] Card* getCard() const override;
 

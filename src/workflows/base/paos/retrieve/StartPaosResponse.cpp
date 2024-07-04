@@ -64,7 +64,7 @@ void StartPaosResponse::parse()
 }
 
 
-bool StartPaosResponse::handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)
+bool StartPaosResponse::handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes)
 {
 	if (handleWSAddressingHeaders(pElementName, pValue, pAttributes))
 	{

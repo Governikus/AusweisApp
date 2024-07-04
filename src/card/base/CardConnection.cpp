@@ -88,9 +88,9 @@ SetEidPinCommand* CardConnection::createSetEidPinCommand(const QByteArray& pNewP
 }
 
 
-DestroyPaceChannelCommand* CardConnection::createDestroyPaceChannelCommand()
+DestroyPaceChannelCommand* CardConnection::createDestroyPaceChannelCommand(const QString& pSlotHandle)
 {
-	return new DestroyPaceChannelCommand(mCardConnectionWorker);
+	return new DestroyPaceChannelCommand(mCardConnectionWorker, pSlotHandle);
 }
 
 

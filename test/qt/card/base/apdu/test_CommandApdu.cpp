@@ -331,6 +331,20 @@ class test_CommandApdu
 		}
 
 
+		void test_logging()
+		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+
+			qDebug() << CommandApdu(QByteArray::fromHex("01020304"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("01020304"_L1));
+
+			qDebug() << CommandApdu(QByteArray::fromHex("0cb0890000000e970200008e08b4332dac29510ece0000"));
+			QCOMPARE(logSpy.count(), 1);
+			QVERIFY(logSpy.takeFirst().at(0).toString().contains("\"0cb0890000~0000\" (23)"_L1));
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_CommandApdu)

@@ -1,6 +1,0 @@
-module EnterPasswordView
-
-internal NumberPad NumberPad.qml
-internal NumberPadButton NumberPadButton.qml
-
-EnterPasswordView 1.0 EnterPasswordView.qml

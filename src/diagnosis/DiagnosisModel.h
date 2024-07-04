@@ -19,6 +19,7 @@
 #include <QSharedPointer>
 #include <QString>
 #include <QUrl>
+#include <QtQml/qqmlregistration.h>
 
 
 class test_DiagnosisModel;
@@ -31,6 +32,7 @@ class DiagnosisModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	QML_ELEMENT
 
 	friend class ::test_DiagnosisModel;
 

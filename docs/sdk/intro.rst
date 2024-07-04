@@ -19,6 +19,10 @@ or will be sent as an event.
 Also this documentation provides some example workflows to
 show a possible communication.
 
+.. seealso::
+   For Android and iOS there is also the
+   `AusweisApp SDK Wrapper <https://www.ausweisapp.bund.de/sdkwrapper/>`_
+   which is a software library that offers a high-level interface to the |AppName| SDK.
 
 .. important::
    The |AppName| does **not** provide any personal data to

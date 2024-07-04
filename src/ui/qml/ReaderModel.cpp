@@ -44,7 +44,7 @@ void ReaderModel::collectReaderData()
 	mConnectedReaders.clear();
 
 	const QList<ReaderInfo> installedReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({
-				ReaderManagerPlugInType::PCSC, ReaderManagerPlugInType::NFC
+				ReaderManagerPluginType::PCSC, ReaderManagerPluginType::NFC
 			}));
 
 	for (const auto& installedReader : installedReaders)
@@ -105,18 +105,15 @@ QString ReaderModel::getHTMLDescription(const QModelIndex& pIndex) const
 		return QString();
 	}
 
-	const auto& readerSupported = isSupportedReader(pIndex);
-	const auto& readerInstalled = isInstalledReader(pIndex);
-
-	if (readerSupported)
+	if (!isPcscScanRunning())
 	{
-		if (!Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC).isScanRunning())
-		{
-			//: LABEL ALL_PLATFORMS
-			return tr("The smartcard service of your system is not reachable.");
-		}
+		//: LABEL ALL_PLATFORMS
+		return tr("The smartcard service of your system is not reachable.");
+	}
 
-		if (readerInstalled)
+	if (isSupportedReader(pIndex))
+	{
+		if (isInstalledReader(pIndex))
 		{
 			//: LABEL ALL_PLATFORMS
 			return tr("Driver installed");
@@ -150,18 +147,19 @@ bool ReaderModel::isSupportedReader(const QModelIndex& pIndex) const
 
 bool ReaderModel::isInstalledReader(const QModelIndex& pIndex) const
 {
-	if (!indexIsValid(pIndex))
-	{
-		return false;
-	}
-
-	if (!Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::PCSC).isScanRunning())
+	if (!indexIsValid(pIndex) || !isPcscScanRunning())
 	{
 		return false;
 	}
 
 	const auto& readerSettingsInfo = mConnectedReaders.at(pIndex.row());
 	return mKnownDrivers.contains(readerSettingsInfo);
+}
+
+
+bool ReaderModel::isPcscScanRunning() const
+{
+	return Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::PCSC).isScanRunning();
 }
 
 
@@ -178,8 +176,8 @@ void ReaderModel::onUpdateContent()
 }
 
 
-ReaderModel::ReaderModel(QObject* pParent)
-	: QAbstractListModel(pParent)
+ReaderModel::ReaderModel()
+	: QAbstractListModel()
 	, mKnownDrivers()
 	, mConnectedReaders()
 	, mConnectedReadersUpdateTime()

@@ -30,7 +30,7 @@ void StateInsertCard::run()
 	{
 		auto* readerManager = Env::getSingleton<ReaderManager>();
 
-		const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::SMART}));
+		const auto& readerInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPluginType::SMART}));
 		if (readerInfos.isEmpty())
 		{
 			qCWarning(statemachine) << "No Smart reader present";
@@ -46,10 +46,10 @@ void StateInsertCard::run()
 			return;
 		}
 
-		getContext()->setReaderPlugInTypes({ReaderManagerPlugInType::SMART});
+		getContext()->setReaderPluginTypes({ReaderManagerPluginType::SMART});
 		*this << connect(readerManager, &ReaderManager::fireCardInfoChanged, this, &StateInsertCard::onCardInfoChanged);
 		*this << connect(readerManager, &ReaderManager::fireStatusChanged, this, &StateInsertCard::onStatusChanged);
-		readerManager->startScan(ReaderManagerPlugInType::SMART);
+		readerManager->startScan(ReaderManagerPluginType::SMART);
 		return;
 	}
 #endif
@@ -60,7 +60,7 @@ void StateInsertCard::run()
 
 void StateInsertCard::onCardInfoChanged(const ReaderInfo& pInfo)
 {
-	if (pInfo.getPlugInType() != ReaderManagerPlugInType::SMART)
+	if (pInfo.getPluginType() != ReaderManagerPluginType::SMART)
 	{
 		return;
 	}
@@ -96,9 +96,9 @@ void StateInsertCard::onCardInfoChanged(const ReaderInfo& pInfo)
 }
 
 
-void StateInsertCard::onStatusChanged(const ReaderManagerPlugInInfo& pInfo)
+void StateInsertCard::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
-	if (pInfo.getPlugInType() != ReaderManagerPlugInType::SMART)
+	if (pInfo.getPluginType() != ReaderManagerPluginType::SMART)
 	{
 		return;
 	}

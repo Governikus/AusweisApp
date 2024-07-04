@@ -17,7 +17,7 @@ PaosMessage::PaosMessage(PaosType pType)
 PaosMessage::~PaosMessage() = default;
 
 
-bool PaosMessage::handleWSAddressingHeaders(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes&)
+bool PaosMessage::handleWSAddressingHeaders(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes&)
 {
 	if (pElementName == QLatin1String("MessageID"))
 	{

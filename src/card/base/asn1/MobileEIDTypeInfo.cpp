@@ -6,8 +6,13 @@
 
 #include "ASN1TemplateUtil.h"
 
+#include <QLoggingCategory>
+
 
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 namespace governikus

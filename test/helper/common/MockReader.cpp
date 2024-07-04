@@ -9,7 +9,7 @@
 using namespace governikus;
 
 
-ReaderManagerPlugInType MockReader::cMOCKED_READERMANAGER_TYPE = ReaderManagerPlugInType::MOCK;
+ReaderManagerPluginType MockReader::cMOCKED_READERMANAGER_TYPE = ReaderManagerPluginType::MOCK;
 
 MockReader* MockReader::createMockReader(const QList<TransmitConfig>& pTransmitConfig, const QByteArray& pEfCardAccess)
 {
@@ -33,7 +33,7 @@ MockReader* MockReader::createMockReader(const QList<TransmitConfig>& pTransmitC
 }
 
 
-MockReader::MockReader(const QString& pReaderName, ReaderManagerPlugInType pType)
+MockReader::MockReader(const QString& pReaderName, ReaderManagerPluginType pType)
 	: Reader(pType, pReaderName)
 	, mCard(nullptr)
 {
@@ -67,14 +67,14 @@ MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QByteArra
 }
 
 
-MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess, CardType pType)
+MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QSharedPointer<EFCardAccess>& pEfCardAccess, CardType pType, const FileRef& pApplication)
 {
 	// some unit tests uses MockReader without ReaderManager. So avoid a deadlock here.
 	Qt::ConnectionType type = QThread::currentThread() == QObject::thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection;
 
-	QMetaObject::invokeMethod(this, [this, pCardConfig, pEfCardAccess, pType] {
+	QMetaObject::invokeMethod(this, [this, pCardConfig, pEfCardAccess, pType, pApplication] {
 			mCard.reset(new MockCard(pCardConfig));
-			setInfoCardInfo(CardInfo(pType, pEfCardAccess));
+			setInfoCardInfo(CardInfo(pType, pApplication, pEfCardAccess));
 			Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
 		}, type);
 

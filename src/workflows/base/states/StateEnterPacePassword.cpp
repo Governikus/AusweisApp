@@ -21,15 +21,7 @@ StateEnterPacePassword::StateEnterPacePassword(const QSharedPointer<WorkflowCont
 
 void StateEnterPacePassword::run()
 {
-	if (getContext()->getStatus().isError())
-	{
-		Q_ASSERT(getContext()->getFailureCode().has_value());
-		Q_EMIT firePropagateAbort();
-	}
-	else
-	{
-		Q_EMIT fireContinue();
-	}
+	Q_EMIT fireContinue();
 }
 
 
@@ -39,6 +31,7 @@ void StateEnterPacePassword::onEntry(QEvent* pEvent)
 	{
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
+		case CardReturnCode::OK_CAN:
 			stopNfcScanIfNecessary();
 			break;
 

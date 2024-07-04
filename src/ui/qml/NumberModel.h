@@ -9,28 +9,32 @@
 
 #pragma once
 
-#include "EnumHelper.h"
 #include "Env.h"
+#include "SingletonCreator.h"
 #include "context/WorkflowContext.h"
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QtQml/qqmlregistration.h>
 
 
-class test_UIPlugInQml;
+class test_UiPluginQml;
 
 
 namespace governikus
 {
 
-defineEnumType(PasswordType, TRANSPORT_PIN, PIN, CAN, PUK, NEW_PIN, NEW_PIN_CONFIRMATION, REMOTE_PIN, SMART_PIN, NEW_SMART_PIN, NEW_SMART_PIN_CONFIRMATION, SMART_BLOCKING_CODE)
-
 class NumberModel
 	: public QObject
+	, public SingletonCreator<NumberModel>
 {
 	Q_OBJECT
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	QML_ELEMENT
+	QML_SINGLETON
+
 	friend class Env;
-	friend class ::test_UIPlugInQml;
+	friend class ::test_UiPluginQml;
 
 	Q_PROPERTY(PasswordType passwordType READ getPasswordType NOTIFY firePasswordTypeChanged)
 	Q_PROPERTY(QString can READ getCan WRITE setCan NOTIFY fireCanChanged)
@@ -38,10 +42,10 @@ class NumberModel
 	Q_PROPERTY(QString newPin READ getNewPin WRITE setNewPin NOTIFY fireNewPinChanged)
 	Q_PROPERTY(QString newPinConfirmation READ getNewPinConfirmation WRITE setNewPinConfirmation NOTIFY fireNewPinConfirmationChanged)
 	Q_PROPERTY(QString puk READ getPuk WRITE setPuk NOTIFY firePukChanged)
-	Q_PROPERTY(bool hasPasswordError READ hasPasswordError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(QString inputError READ getInputError NOTIFY fireInputErrorChanged)
 	Q_PROPERTY(int retryCounter READ getRetryCounter NOTIFY fireReaderInfoChanged)
 	Q_PROPERTY(bool isCanAllowedMode READ isCanAllowedMode NOTIFY fireCanAllowedModeChanged)
+	Q_PROPERTY(QString initialInputError READ getInitialInputError NOTIFY firePasswordTypeChanged)
 
 	private:
 		QSharedPointer<WorkflowContext> mContext;
@@ -59,6 +63,22 @@ class NumberModel
 		void onCardConnectionChanged();
 
 	public:
+		enum class PasswordType
+		{
+			TRANSPORT_PIN,
+			PIN,
+			CAN,
+			PUK,
+			NEW_PIN,
+			NEW_PIN_CONFIRMATION,
+			REMOTE_PIN,
+			SMART_PIN,
+			NEW_SMART_PIN,
+			NEW_SMART_PIN_CONFIRMATION,
+			SMART_BLOCKING_CODE
+		};
+		Q_ENUM(PasswordType)
+
 		void resetContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		[[nodiscard]] PasswordType getPasswordType() const;
@@ -74,15 +94,18 @@ class NumberModel
 		[[nodiscard]] QString getNewPinConfirmation() const;
 		void setNewPinConfirmation(const QString& pNewPinConfirmation);
 		Q_INVOKABLE bool commitNewPin();
+		Q_INVOKABLE void resetInputError();
 
 		[[nodiscard]] QString getPuk() const;
 		void setPuk(const QString& pPuk);
 
-		[[nodiscard]] bool hasPasswordError() const;
 		[[nodiscard]] QString getInputError() const;
 
 		[[nodiscard]] int getRetryCounter() const;
 		[[nodiscard]] bool isCanAllowedMode() const;
+
+		[[nodiscard]] QString getInitialInputError() const;
+		Q_INVOKABLE void setInitialInputErrorShown();
 
 	private Q_SLOTS:
 		void onReaderInfoChanged(const ReaderInfo& pInfo);

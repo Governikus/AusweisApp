@@ -59,7 +59,7 @@ class test_LocalTlsServer
 				});
 
 			QTcpSocket* remoteSocket = nullptr;
-			connect(&mServer, &LocalTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket)
+			connect(&mServer, &LocalTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket) // clazy:exclude=lambda-in-connect
 				{
 					remoteSocket = pSocket;
 				});

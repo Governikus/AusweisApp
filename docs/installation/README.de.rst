@@ -112,11 +112,6 @@ UPDATECHECK
   Aktualisierung der Anbieterliste noch die Aktualisierung der
   Kartenleserinformationen.
 
-ONSCREENKEYBOARD
-  Für die Eingabe von PIN, CAN und PUK kann eine Bildschirmtastatur verwendet
-  werden. Durch Setzen von ONSCREENKEYBOARD auf false oder true kann diese
-  deaktiviert bzw. aktiviert werden. Der Benutzer kann diese Einstellung anpassen.
-
 SHUFFLESCREENKEYBOARD
   Ist die Bildschirmtastatur aktiviert, können die Zifferntasten zufällig angeordnet werden.
   Durch Setzen von SHUFFLESCREENKEYBOARD auf false oder true kann die zufällige Anordnung
@@ -185,8 +180,6 @@ dargestellt:
     <string>proxy.example.org</string>
     <key>customProxyPort</key>
     <integer>1337</integer>
-    <key>keylessPassword</key>
-    <true/>
     <key>shuffleScreenKeyboard</key>
     <true/>
     <key>visualPrivacy</key>
@@ -212,7 +205,6 @@ transportPinReminder     TRANSPORTPINREMINDER
 customProxyType          CUSTOMPROXYTYPE
 customProxyPort          CUSTOMPROXYPORT
 customProxyHost          CUSTOMPROXYHOST
-keylessPassword          ONSCREENKEYBOARD
 shuffleScreenKeyboard    SHUFFLESCREENKEYBOARD
 visualPrivacy            SECURESCREENKEYBOARD
 enableCanAllowed         ENABLECANALLOWED
@@ -350,7 +342,7 @@ Aktivieren der Entwickleroptionen
 ---------------------------------
 
 Um die Entwickleroptionen zu aktivieren, öffnen Sie im Menü „Hilfe“ den Punkt
-„Versionsinformationen“. Klicken Sie zehnmal auf den Inhalt der
+„Information“. Klicken Sie zehnmal auf die „Anwendungsversion“.
 Versionsinformationen. Nach dem zehnten Klick erhalten Sie eine Benachrichtigung,
 dass die Entwickleroptionen aktiviert sind. Im Bereich Einstellungen befindet
 sich nun eine neue Kategorie „Entwickleroptionen“. In den mobilen Versionen
@@ -480,6 +472,16 @@ Entwicklerdokumentation
 
 Eine ausführliche Entwicklerdokumentation des SDKs und eine Auflistung der
 möglichen Fehlercodes finden Sie unter https://www.ausweisapp.bund.de/sdk/.
+
+SDK Wrapper
+-----------
+
+Sie können den SDK Wrapper der |AppName| zur Vereinfachung der Einbindung
+des SDKs in Ihre App verwenden. Der SDK Wrapper bietet Swift und Kotlin
+Bindings für iOS und Android an.
+
+Informationen zur Integration des SDK Wrappers finden Sie in der
+Entwicklerdokumentation unter https://www.ausweisapp.bund.de/sdkwrapper/.
 
 .. raw:: latex
 

@@ -19,13 +19,6 @@
 
 using namespace governikus;
 
-
-namespace
-{
-const QRegularExpression percentMatcher = QRegularExpression(QStringLiteral("(\\s|^)(100|\\d{1,2}) ?%"));
-} // namespace
-
-
 RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
 	, mContext()
@@ -56,12 +49,12 @@ RemoteServiceModel::RemoteServiceModel()
 	QQmlEngine::setObjectOwnership(&mAvailablePairedDevices, QQmlEngine::CppOwnership);
 	QQmlEngine::setObjectOwnership(&mUnavailablePairedDevices, QQmlEngine::CppOwnership);
 
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::firePluginAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &RemoteServiceModel::onEnvironmentChanged);
-	const auto applicationModel = Env::getSingleton<ApplicationModel>();
+	const auto* applicationModel = Env::getSingleton<ApplicationModel>();
 	connect(applicationModel, &ApplicationModel::fireWifiEnabledChanged, this, &RemoteServiceModel::onEnvironmentChanged);
 	connect(applicationModel, &ApplicationModel::fireApplicationStateChanged, this, &RemoteServiceModel::onApplicationStateChanged);
 
@@ -74,7 +67,7 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
 
-	connect(this, &WorkflowModel::fireReaderPlugInTypeChanged, this, &RemoteServiceModel::onReaderPlugInTypesChanged);
+	connect(this, &WorkflowModel::fireReaderPluginTypeChanged, this, &RemoteServiceModel::onReaderPluginTypesChanged);
 
 	QMetaObject::invokeMethod(this, &RemoteServiceModel::onEnvironmentChanged, Qt::QueuedConnection);
 }
@@ -82,11 +75,11 @@ RemoteServiceModel::RemoteServiceModel()
 
 void RemoteServiceModel::onEnvironmentChanged()
 {
-	const auto& nfcInfo = Env::getSingleton<ReaderManager>()->getPlugInInfo(ReaderManagerPlugInType::NFC);
+	const auto& nfcInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::NFC);
 	const bool nfcPluginAvailable = nfcInfo.isAvailable();
 	const bool nfcPluginEnabled = nfcInfo.isEnabled();
 
-	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPlugInType::NFC})).isEmpty());
+	bool readerAvailable = !(Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPluginType::NFC})).isEmpty());
 	const bool wifiEnabled = Env::getSingleton<ApplicationModel>()->isWifiEnabled();
 
 	const bool runnable = readerAvailable && wifiEnabled;
@@ -144,36 +137,36 @@ void RemoteServiceModel::onTranslationChanged()
 }
 
 
-void RemoteServiceModel::onReaderPlugInTypesChanged(bool pExplicitStart)
+void RemoteServiceModel::onReaderPluginTypesChanged(bool pExplicitStart)
 {
 	if (!mContext)
 	{
 		return;
 	}
 
-	const auto& plugInType = getReaderPlugInType();
+	const auto& pluginType = getReaderPluginType();
 	if (mContext->getIfdServer() && mContext->getIfdServer()->getMessageHandler())
 	{
-		mContext->getIfdServer()->getMessageHandler()->setAllowedCardTypes({plugInType});
+		mContext->getIfdServer()->getMessageHandler()->setAllowedCardTypes({pluginType});
 	}
 
 	auto* readerManager = Env::getSingleton<ReaderManager>();
-	const auto& readerPlugInTypes = Enum<ReaderManagerPlugInType>::getList();
-	for (const auto t : readerPlugInTypes)
+	const auto& readerPluginTypes = Enum<ReaderManagerPluginType>::getList();
+	for (const auto t : readerPluginTypes)
 	{
-		if (t != plugInType)
+		if (t != pluginType)
 		{
 			readerManager->stopScan(t);
 			continue;
 		}
 
 #ifdef Q_OS_IOS
-		if (plugInType != ReaderManagerPlugInType::NFC || pExplicitStart)
+		if (pluginType != ReaderManagerPluginType::NFC || pExplicitStart)
 #else
 		Q_UNUSED(pExplicitStart)
 #endif
 		{
-			readerManager->startScan(plugInType);
+			readerManager->startScan(pluginType);
 		}
 	}
 }
@@ -265,7 +258,7 @@ bool RemoteServiceModel::detectRemoteDevices() const
 }
 
 
-void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
+void RemoteServiceModel::connectToRememberedServer(const QByteArray& pServerPsk)
 {
 	if (!pServerPsk.isEmpty() && !mRememberedServerEntry.isNull())
 	{
@@ -278,13 +271,13 @@ void RemoteServiceModel::connectToRememberedServer(const QString& pServerPsk)
 }
 
 
-QList<ReaderManagerPlugInType> RemoteServiceModel::getSupportedReaderPlugInTypes() const
+QList<ReaderManagerPluginType> RemoteServiceModel::getSupportedReaderPluginTypes() const
 {
 #if __has_include("SmartManager.h")
-	return {ReaderManagerPlugInType::NFC, ReaderManagerPlugInType::SMART};
+	return {ReaderManagerPluginType::NFC, ReaderManagerPluginType::SMART};
 
 #else
-	return {ReaderManagerPlugInType::NFC};
+	return {ReaderManagerPluginType::NFC};
 
 #endif
 }
@@ -324,7 +317,7 @@ void RemoteServiceModel::onConnectionInfoChanged(bool pConnected)
 	}
 	else if (mContext)
 	{
-		mContext->setReaderPlugInTypes({});
+		mContext->setReaderPluginTypes({});
 	}
 	Q_EMIT fireConnectedChanged();
 }
@@ -447,14 +440,14 @@ QByteArray RemoteServiceModel::getPsk() const
 QString RemoteServiceModel::getDisplayText() const
 {
 	QString displayText = mContext ? mContext->getDisplayText() : QString();
-	return displayText.remove(percentMatcher);
+	return displayText.remove(getPercentMatcher());
 }
 
 
 int RemoteServiceModel::getPercentage() const
 {
 	QString displayText = mContext ? mContext->getDisplayText() : QString();
-	return percentMatcher.match(displayText).captured(2).toInt();
+	return getPercentMatcher().match(displayText).captured(2).toInt();
 }
 
 
@@ -510,8 +503,12 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcP
 	}
 	if (!pNfcPluginAvailable)
 	{
-		//: INFO ALL_PLATFORMS The device does not offer NFC.
-		return tr("The NFC radio standard is required for communication with the ID card.\n\nUnfortunately NFC is not available on your device.");
+		//: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
+		return tr("This device cannot be used to read your ID card.") + QStringLiteral("<br/><br/>") +
+		       //: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
+			   tr("If you want to use the online identification on this device anyway, you can connect another NFC capable smartphone as a card reader.") + QStringLiteral("<br/><br/>") +
+		       //: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
+			   tr("To pair a smartphone go to <b>Settings</b> and <b>Manage Pairings</b>.");
 	}
 	if (!pNfcPluginEnabled)
 	{
@@ -520,6 +517,12 @@ QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcP
 	}
 
 	return QString();
+}
+
+
+QRegularExpression RemoteServiceModel::getPercentMatcher() const
+{
+	return QRegularExpression(QStringLiteral("(\\s|^)(100|\\d{1,2}) ?%"));
 }
 
 
@@ -533,7 +536,16 @@ void RemoteServiceModel::cancelPasswordRequest()
 {
 	if (mContext)
 	{
-		mContext->cancelPasswordRequest();
+		mContext->userError(StatusCode::INPUT_CANCELLED);
+	}
+}
+
+
+void RemoteServiceModel::passwordsDiffer()
+{
+	if (mContext)
+	{
+		mContext->userError(StatusCode::PASSWORDS_DIFFER);
 	}
 }
 

@@ -28,10 +28,8 @@ class DIDAuthenticateResponseEAC2
 		QByteArray mNonce;
 		QByteArray mChallenge;
 
-		void createDIDAuthenticateResponseEAC2Element();
-		void createAuthenticationProtocolDataElement();
-
-		void createBodyElement() override;
+		void createBodyElement(QXmlStreamWriter& pWriter) override;
+		void createAuthenticationProtocolDataElement(QXmlStreamWriter& pWriter);
 
 	public:
 		DIDAuthenticateResponseEAC2();

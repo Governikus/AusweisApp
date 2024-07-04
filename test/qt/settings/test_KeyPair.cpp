@@ -8,6 +8,8 @@
 
 #include "KeyPair.h"
 
+#include "ResourceLoader.h"
+#include "SecureStorage.h"
 #include "TlsChecker.h"
 
 #include <QSslCertificateExtension>
@@ -30,6 +32,12 @@ class test_KeyPair
 		const int defaultDeriveSize = 3072;
 
 	private Q_SLOTS:
+		void initTestCase()
+		{
+			ResourceLoader::getInstance().init();
+		}
+
+
 		void validKey_data()
 		{
 			QTest::addColumn<QSsl::KeyAlgorithm>("algorithm");
@@ -79,7 +87,9 @@ class test_KeyPair
 			QTest::addColumn<int>("size");
 			QTest::addColumn<QLatin1String>("curve");
 
-			QTest::newRow("RSA") << QSsl::Rsa << 2048 << QLatin1String();
+#ifndef Q_CC_MSVC
+			QTest::newRow("RSA") << QSsl::Rsa << 3072 << QLatin1String();
+#endif
 			QTest::newRow("prime256v1") << QSsl::Ec << 256 << QLatin1String("prime256v1");
 			QTest::newRow("secp384r1") << QSsl::Ec << 384 << QLatin1String("secp384r1");
 			QTest::newRow("brainpoolP512r1") << QSsl::Ec << 512 << QLatin1String("brainpoolP512r1");
@@ -113,6 +123,7 @@ class test_KeyPair
 			QCOMPARE(key.length(), size);
 			QCOMPARE(key.algorithm(), algorithm);
 			QCOMPARE(key.type(), QSsl::PublicKey);
+			QVERIFY(Env::getSingleton<SecureStorage>()->isValid());
 			QVERIFY(TlsChecker::hasValidCertificateKeyLength(cert));
 
 			QVERIFY(cert.expiryDate().isValid());

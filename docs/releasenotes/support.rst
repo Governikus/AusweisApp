@@ -24,9 +24,11 @@ Betriebssysteme
 
 - Windows Server 2022
 
-- Android 8.0 und höher (armeabi-v7a, arm64-v8a)
+- Android 9 und höher (armeabi-v7a, arm64-v8a)
 
 - iOS 14 und höher
+
+- ChromeOS 125 und höher
 
 
 Karten
@@ -52,13 +54,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 122
+- Chrome 126
 
-- Firefox 123
+- Firefox 127
 
-- Safari 17.3 (macOS)
+- Safari 17.4 (macOS)
 
-- Edge 122
+- Edge 126
 
 
 
@@ -116,13 +118,13 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 122 (iOS/Android)
+- Chrome 126 (iOS/Android)
 
-- Firefox 123 (iOS/Android)
+- Firefox 127 (iOS/Android)
 
-- Samsung Internet 23 (Android)
+- Samsung Internet 25 (Android)
 
-- Safari 17.3 (iOS)
+- Safari 17.4 (iOS)
 
 
 Kartenleser

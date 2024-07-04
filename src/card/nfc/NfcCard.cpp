@@ -113,12 +113,7 @@ ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-#if defined(Q_OS_IOS)
-	constexpr int timeoutMsecs = 3000;
-#else
-	constexpr int timeoutMsecs = 1500;
-#endif
-	if (!mNearFieldTarget->waitForRequestCompleted(id, timeoutMsecs))
+	if (!mNearFieldTarget->waitForRequestCompleted(id, 3000))
 	{
 		qCWarning(card_nfc) << "Transmit timeout reached";
 		return {CardReturnCode::COMMAND_FAILED};

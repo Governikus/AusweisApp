@@ -22,6 +22,12 @@ MockNetworkReply::~MockNetworkReply()
 }
 
 
+qint64 MockNetworkReply::bytesAvailable() const
+{
+	return mSocket.bytesAvailable();
+}
+
+
 qint64 MockNetworkReply::readData(char* pDst, qint64 pMaxSize)
 {
 	return mSocket.readData(pDst, pMaxSize);

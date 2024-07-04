@@ -56,14 +56,14 @@ QVariant VersionInformationModel::data(const QModelIndex& pIndex, int pRole) con
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		const auto& entry = std::as_const(mData).at(pIndex.row());
+		const auto& [label, text] = std::as_const(mData).at(pIndex.row());
 		if (pRole == LABEL)
 		{
-			return entry.first;
+			return label;
 		}
 		if (pRole == TEXT)
 		{
-			return entry.second;
+			return text;
 		}
 	}
 	return QVariant();

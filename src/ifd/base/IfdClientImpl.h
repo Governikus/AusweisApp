@@ -39,7 +39,7 @@ class IfdClientImpl
 		IfdClientImpl();
 		~IfdClientImpl() override;
 
-		Q_INVOKABLE void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QString& pPsk) override;
+		Q_INVOKABLE void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk) override;
 
 		QStringList getConnectedDeviceIDs() const override;
 

@@ -18,9 +18,9 @@ MsgHandlerReaderList::MsgHandlerReaderList(const MsgContext& pContext)
 	const auto& infoList = Env::getSingleton<ReaderManager>()->getReaderInfos();
 	for (const auto& info : infoList)
 	{
-		reader += MsgHandlerReader::createReaderInfo(info);
+		reader += MsgHandlerReader::createReaderInfo(info, pContext);
 	}
 
 	const QLatin1String parameterName = pContext.getApiLevel() >= MsgLevel::v2 ? QLatin1String("readers") : QLatin1String("reader");
-	mJsonObject[parameterName] = reader;
+	setValue(parameterName, reader);
 }

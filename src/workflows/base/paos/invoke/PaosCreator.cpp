@@ -165,7 +165,7 @@ void PaosCreator::createEnvelopeElement()
 	createHeaderElement();
 
 	mWriter.writeStartElement(getNamespacePrefix(Namespace::SOAP, QStringLiteral("Body")));
-	createBodyElement();
+	createBodyElement(mWriter);
 	mWriter.writeEndElement(); // Body
 
 	mWriter.writeEndElement(); // Envelope

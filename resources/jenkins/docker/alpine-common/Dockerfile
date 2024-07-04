@@ -12,6 +12,7 @@ RUN mkdir /build/ && \
     cmake --build build && \
     cmake --install build && \
     apk --no-cache del deps && \
+    apk --no-cache add dos2unix && \
     rm -rf /build
 
 

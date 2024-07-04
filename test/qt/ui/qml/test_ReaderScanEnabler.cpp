@@ -6,7 +6,7 @@
 
 #include "ApplicationModel.h"
 #include "Env.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "ReaderManager.h"
 #include "context/ChangePinContext.h"
 
@@ -14,7 +14,7 @@
 #include <QtTest>
 
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 
 using namespace governikus;
@@ -31,17 +31,17 @@ class test_ReaderScanEnabler
 	private Q_SLOTS:
 		void init()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			mParent.reset(new QQuickItem());
 
-			auto& mockPlugin = MockReaderManagerPlugIn::getInstance();
+			auto& mockPlugin = MockReaderManagerPlugin::getInstance();
 			mockPlugin.addReader();
 			mEnabler = new ReaderScanEnabler(mParent.data());
-			mEnabler->setPlugInType(mockPlugin.getInfo().getPlugInType());
+			mEnabler->setPluginType(mockPlugin.getInfo().getPluginType());
 			mEnabler->setVisible(false);
 			QCoreApplication::processEvents(); // Make sure to process things from itemChange
 		}
@@ -56,24 +56,24 @@ class test_ReaderScanEnabler
 		void test_enableScan()
 		{
 			QSignalSpy scanRunningChanged(mEnabler.data(), &ReaderScanEnabler::fireScanRunningChanged);
-			const auto& pluginType = mEnabler->getPlugInType();
+			const auto& pluginType = mEnabler->getPluginType();
 			const auto* readerManager = Env::getSingleton<ReaderManager>();
 
-			QCOMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), false);
+			QCOMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), false);
 			mEnabler->enableScan(true);
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), true);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), true);
 			QTRY_COMPARE(scanRunningChanged.size(), 1);
 
 			mEnabler->enableScan(true); // Call a second time to ensure the state does not change
-			QCOMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), true);
+			QCOMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), true);
 			QTRY_COMPARE(scanRunningChanged.size(), 1);
 
 			mEnabler->enableScan(false);
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), false);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), false);
 			QTRY_COMPARE(scanRunningChanged.size(), 2);
 
 			mEnabler->enableScan(false); // Call a second time to ensure the state does not change
-			QCOMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), false);
+			QCOMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), false);
 			QTRY_COMPARE(scanRunningChanged.size(), 2);
 		}
 
@@ -90,7 +90,7 @@ class test_ReaderScanEnabler
 
 		void test_visibilityChange()
 		{
-			const auto& pluginType = mEnabler->getPlugInType();
+			const auto& pluginType = mEnabler->getPluginType();
 			auto* readerManager = Env::getSingleton<ReaderManager>();
 
 			QFETCH(bool, initialScanState);
@@ -99,13 +99,13 @@ class test_ReaderScanEnabler
 			initialScanState ? readerManager->startScan(pluginType)
 							 : readerManager->stopScan(pluginType);
 
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), initialScanState);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), initialScanState);
 			mEnabler->setVisible(true);
 			QVERIFY(mEnabler->isVisible());
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), true);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), true);
 			mEnabler->setVisible(false);
 			QVERIFY(!mEnabler->isVisible());
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), finalScanState);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), finalScanState);
 		}
 
 
@@ -121,20 +121,20 @@ class test_ReaderScanEnabler
 
 		void test_restartScan()
 		{
-			const auto& pluginType = mEnabler->getPlugInType();
+			const auto& pluginType = mEnabler->getPluginType();
 			const auto* readerManager = Env::getSingleton<ReaderManager>();
 
 			QFETCH(QSharedPointer<WorkflowContext>, workflowContext);
 			QFETCH(bool, finalScanState);
 
 			Env::getSingleton<ApplicationModel>()->resetContext(workflowContext);
-			QCOMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), false);
+			QCOMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), false);
 			mEnabler->setVisible(true);
 			QVERIFY(mEnabler->isVisible());
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), true);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), true);
 			mEnabler->setVisible(false);
 			QVERIFY(!mEnabler->isVisible());
-			QTRY_COMPARE(readerManager->getPlugInInfo(pluginType).isScanRunning(), finalScanState);
+			QTRY_COMPARE(readerManager->getPluginInfo(pluginType).isScanRunning(), finalScanState);
 		}
 
 

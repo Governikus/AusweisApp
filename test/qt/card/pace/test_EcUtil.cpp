@@ -5,10 +5,13 @@
 #include "pace/ec/EcUtil.h"
 
 #include <QSharedPointer>
+
 #include <QtTest>
 #include <openssl/ec.h>
 
+
 using namespace governikus;
+
 
 class test_EcUtil
 	: public QObject
@@ -18,6 +21,36 @@ class test_EcUtil
 	private Q_SLOTS:
 		void initTestCase()
 		{
+		}
+
+
+		void compressPoint_data()
+		{
+			QTest::addColumn<QByteArray>("input");
+			QTest::addColumn<QByteArray>("output");
+			QTest::addColumn<bool>("warning");
+
+			QTest::newRow("Empty") << QByteArray() << QByteArray() << true;
+			QTest::newRow("Wrong first byte - no data") << QByteArray("00") << QByteArray("00") << true;
+			QTest::newRow("Correct first byte - no data") << QByteArray("04") << QByteArray() << false;
+			QTest::newRow("Wrong first byte - data") << QByteArray("000102") << QByteArray("000102") << true;
+			QTest::newRow("Correct first byte - data") << QByteArray("040102") << QByteArray("01") << false;
+		}
+
+
+		void compressPoint()
+		{
+			QFETCH(QByteArray, input);
+			QFETCH(QByteArray, output);
+			QFETCH(bool, warning);
+
+			if (warning)
+			{
+				QByteArray message("Unable to apply compression on point: \"DATA\" ");
+				message.replace("DATA", input);
+				QTest::ignoreMessage(QtCriticalMsg, message.data());
+			}
+			QCOMPARE(EcUtil::compressPoint(QByteArray::fromHex(input)).toHex(), output);
 		}
 
 

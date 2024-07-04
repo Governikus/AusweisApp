@@ -53,6 +53,14 @@ class FileRef
 };
 
 
+inline bool operator==(const FileRef& pFileRefA, const FileRef& pFileRefB)
+{
+	return pFileRefA.getType() == pFileRefB.getType()
+		   && pFileRefA.getIdentifier() == pFileRefB.getIdentifier()
+		   && pFileRefA.getShortIdentifier() == pFileRefB.getShortIdentifier();
+}
+
+
 inline QDebug operator<<(QDebug pDbg, const FileRef& pFileRef)
 {
 	QDebugStateSaver saver(pDbg);

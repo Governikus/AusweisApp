@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "ReaderManagerPlugInInfo.h"
-#include "UIPlugIn.h"
+#include "CardReturnCode.h"
+#include "ReaderManagerPluginInfo.h"
+#include "UiPlugin.h"
 #include "context/WorkflowContext.h"
 
 #include <QObject>
@@ -25,23 +26,26 @@ class WorkflowModel
 	: public QObject
 {
 	Q_OBJECT
+	friend class Env;
+
 	Q_PROPERTY(QString currentState READ getCurrentState NOTIFY fireCurrentStateChanged)
 	Q_PROPERTY(QString resultString READ getResultString NOTIFY fireResultChanged)
 	Q_PROPERTY(bool error READ isError NOTIFY fireResultChanged)
 	Q_PROPERTY(bool errorIsMasked READ isMaskedError NOTIFY fireResultChanged)
-	Q_PROPERTY(ReaderManagerPlugInType readerPlugInType READ getReaderPlugInType WRITE setReaderPlugInType NOTIFY fireReaderPlugInTypeChanged)
-	Q_PROPERTY(bool isSmartSupported READ isSmartSupported NOTIFY fireSupportedPlugInTypesChanged)
-	Q_PROPERTY(QList<ReaderManagerPlugInType> supportedPlugInTypes READ getSupportedReaderPlugInTypes NOTIFY fireSupportedPlugInTypesChanged)
+	Q_PROPERTY(governikus::EnumReaderManagerPluginType::ReaderManagerPluginType readerPluginType READ getReaderPluginType WRITE setReaderPluginType NOTIFY fireReaderPluginTypeChanged)
+	Q_PROPERTY(QList<ReaderManagerPluginType> supportedPluginTypes READ getSupportedReaderPluginTypes NOTIFY fireSupportedPluginTypesChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isRemoteReader READ isRemoteReader NOTIFY fireSelectedReaderChanged)
 	Q_PROPERTY(bool isCurrentSmartCardAllowed READ isCurrentSmartCardAllowed NOTIFY fireIsCurrentSmartCardAllowedChanged)
 	Q_PROPERTY(QString eidTypeMismatchError READ eidTypeMismatchError NOTIFY fireEidTypeMismatchErrorChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusHintTitle READ getStatusHintTitle NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusCodeImage READ getStatusCodeImage NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback WRITE setRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
 	Q_PROPERTY(bool hasCard READ hasCard NOTIFY fireHasCardChanged)
+	Q_PROPERTY(governikus::EnumCardReturnCode::CardReturnCode lastReturnCode READ getLastReturnCode NOTIFY fireLastReturnCodeChanged)
 	friend class ::test_WorkflowModel;
 
 	private:
@@ -49,21 +53,23 @@ class WorkflowModel
 #if defined(Q_OS_IOS)
 		bool mRemoteScanWasRunning;
 #endif
-		void insertCard(ReaderManagerPlugInType pType) const;
+		void insertCard(ReaderManagerPluginType pType) const;
 
-	public:
-		explicit WorkflowModel(QObject* pParent = nullptr);
+	protected:
+		WorkflowModel();
 		~WorkflowModel() override = default;
 
+	public:
 		void resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext = QSharedPointer<WorkflowContext>());
 
 		[[nodiscard]] QString getCurrentState() const;
 		[[nodiscard]] virtual QString getResultString() const;
 		[[nodiscard]] bool isError() const;
 		[[nodiscard]] bool isMaskedError() const;
+		[[nodiscard]] CardReturnCode getLastReturnCode() const;
 
-		[[nodiscard]] ReaderManagerPlugInType getReaderPlugInType() const;
-		void setReaderPlugInType(ReaderManagerPlugInType pReaderPlugInType);
+		[[nodiscard]] ReaderManagerPluginType getReaderPluginType() const;
+		void setReaderPluginType(ReaderManagerPluginType pReaderPluginType);
 
 		[[nodiscard]] bool isBasicReader() const;
 		[[nodiscard]] bool isRemoteReader() const;
@@ -71,24 +77,23 @@ class WorkflowModel
 
 		[[nodiscard]] bool isCurrentSmartCardAllowed() const;
 
-		[[nodiscard]] bool isSmartSupported() const;
-		[[nodiscard]] virtual QList<ReaderManagerPlugInType> getSupportedReaderPlugInTypes() const;
+		[[nodiscard]] virtual QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const;
 
 		[[nodiscard]] bool getNextWorkflowPending() const;
 
 		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
 		[[nodiscard]] QString getStatusCodeImage() const;
 
-
 		[[nodiscard]] QString getStatusHintText() const;
+		[[nodiscard]] QString getStatusHintTitle() const;
 		[[nodiscard]] QString getStatusHintActionText() const;
 		[[nodiscard]] Q_INVOKABLE bool invokeStatusHintAction();
 
 		[[nodiscard]] bool showRemoveCardFeedback() const;
 		void setRemoveCardFeedback(bool pEnabled);
 
-		Q_INVOKABLE void insertSmartCard();
-		Q_INVOKABLE void insertSimulator();
+		Q_INVOKABLE void insertSmartCard() const;
+		Q_INVOKABLE void insertSimulator() const;
 		Q_INVOKABLE void cancelWorkflow();
 		Q_INVOKABLE void startScanExplicitly();
 		Q_INVOKABLE void continueWorkflow();
@@ -103,23 +108,28 @@ class WorkflowModel
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(bool pIsAppInForeground);
+		void onPaceResultUpdated();
 
 	Q_SIGNALS:
 		void fireWorkflowStarted();
 		void fireCurrentStateChanged(const QString& pState);
 		void fireStateEntered(const QString& pState);
 		void fireResultChanged();
-		void fireReaderPlugInTypeChanged(bool pExplicitStart = false);
+		void fireReaderPluginTypeChanged(bool pExplicitStart = false);
 		void fireSelectedReaderChanged();
 		void fireIsCurrentSmartCardAllowedChanged();
 		void fireReaderImageChanged();
 		void fireNextWorkflowPendingChanged();
-		void fireSupportedPlugInTypesChanged();
+		void fireSupportedPluginTypesChanged();
 		void fireRemoveCardFeedbackChanged();
 		void fireHasCardChanged();
 		void fireEidTypeMismatchErrorChanged();
 		void fireShowUiRequest(UiModule pModule);
 		void fireWorkflowFinished();
+		void fireOnPinUnlocked();
+		void fireOnPasswordUsed();
+		void fireOnCanSuccess();
+		void fireLastReturnCodeChanged();
 };
 
 

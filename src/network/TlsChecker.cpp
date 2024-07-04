@@ -5,6 +5,7 @@
 #include "TlsChecker.h"
 
 #include "AppSettings.h"
+#include "EnumHelper.h"
 #include "SecureStorage.h"
 
 #include <QCryptographicHash>
@@ -47,7 +48,11 @@ bool TlsChecker::hasValidCertificateKeyLength(const QSslCertificate& pCertificat
 
 	auto keyLength = pCertificate.publicKey().length();
 	auto keyAlgorithm = pCertificate.publicKey().algorithm();
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 	qDebug() << "Check certificate key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
+#else
+	qDebug() << "Check certificate key of type" << keyAlgorithm << "and key size" << keyLength;
+#endif
 	return isValidKeyLength(keyLength, keyAlgorithm, pFuncMinKeySize(keyAlgorithm));
 }
 
@@ -62,7 +67,11 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey, 
 		qWarning() << "Qt failed to determine algorithm";
 	}
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 	qDebug() << "Check ephemeral key of type" << TlsChecker::toString(keyAlgorithm) << "and key size" << keyLength;
+#else
+	qDebug() << "Check ephemeral key of type" << keyAlgorithm << "and key size" << keyLength;
+#endif
 	return isValidKeyLength(keyLength, keyAlgorithm, pFuncMinKeySize(keyAlgorithm));
 }
 
@@ -70,20 +79,13 @@ bool TlsChecker::hasValidEphemeralKeyLength(const QSslKey& pEphemeralServerKey, 
 FailureCode::FailureInfoMap TlsChecker::getEphemeralKeyInfoMap(const QSslKey& pEphemeralServerKey)
 {
 	FailureCode::FailureInfoMap infoMap;
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 	infoMap.insert(FailureCode::Info::Ephemeral_Server_Key_Algorithm, TlsChecker::toString(pEphemeralServerKey.algorithm()));
+#else
+	infoMap.insert(FailureCode::Info::Ephemeral_Server_Key_Algorithm, getEnumName(pEphemeralServerKey.algorithm()));
+#endif
 	infoMap.insert(FailureCode::Info::Ephemeral_Server_Key_Length, QString::number(pEphemeralServerKey.length()));
 	return infoMap;
-}
-
-
-QString TlsChecker::getCertificateIssuerName(const QSslCertificate& pCertificate)
-{
-	const auto& issuerNameList = pCertificate.issuerInfo(QSslCertificate::CommonName);
-	if (!issuerNameList.isEmpty())
-	{
-		return issuerNameList.first();
-	}
-	return QString();
 }
 
 
@@ -108,7 +110,11 @@ bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorit
 	bool sufficient = pKeyLength >= pMinKeySize;
 	if (!sufficient)
 	{
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 		auto keySizeError = QStringLiteral("%1 key with insufficient key size found %2").arg(toString(pKeyAlgorithm)).arg(pKeyLength);
+#else
+		auto keySizeError = QStringLiteral("%1 key with insufficient key size found %2").arg(getEnumName(pKeyAlgorithm)).arg(pKeyLength);
+#endif
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCWarning(developermode).noquote() << keySizeError;
@@ -123,6 +129,7 @@ bool TlsChecker::isValidKeyLength(int pKeyLength, QSsl::KeyAlgorithm pKeyAlgorit
 }
 
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 QString TlsChecker::toString(QSsl::SslProtocol pProtocol)
 {
 	switch (pProtocol)
@@ -206,6 +213,8 @@ QString TlsChecker::toString(QSsl::KeyAlgorithm pKeyAlgorithm)
 }
 
 
+#endif
+
 QStringList TlsChecker::getFatalErrors(const QList<QSslError>& pErrors)
 {
 	static const QSet<QSslError::SslError> fatalErrors(
@@ -283,7 +292,11 @@ QString TlsChecker::sslErrorsToString(const QList<QSslError>& pErrors)
 void TlsChecker::logSslConfig(const QSslConfiguration& pCfg, const MessageLogger& pLogger)
 {
 	pLogger.info() << "Used session cipher" << pCfg.sessionCipher();
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
 	pLogger.info() << "Used session protocol:" << toString(pCfg.sessionProtocol());
+#else
+	pLogger.info() << "Used session protocol:" << pCfg.sessionProtocol();
+#endif
 
 	{
 		auto stream = pLogger.info();

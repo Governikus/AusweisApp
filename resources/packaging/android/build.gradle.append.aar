@@ -2,6 +2,5 @@ android {
     packagingOptions {
         exclude '**/libplugins_imageformats_*.so'
         exclude '**/libplugins_iconengines_*.so'
-        exclude '**/libQt6Svg_*.so'
     }
 }

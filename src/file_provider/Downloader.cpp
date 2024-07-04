@@ -22,7 +22,7 @@ using namespace governikus;
 
 static const char* const cABORTED = "aborted_download";
 
-void Downloader::scheduleDownload(QSharedPointer<QNetworkRequest> pDownloadRequest)
+void Downloader::scheduleDownload(const QNetworkRequest& pDownloadRequest)
 {
 	mPendingRequests.enqueue(pDownloadRequest);
 
@@ -44,7 +44,8 @@ void Downloader::startDownloadIfPending()
 		return;
 	}
 
-	mCurrentReply = Env::getSingleton<NetworkManager>()->getAsUpdater(*mPendingRequests.dequeue());
+	auto request = mPendingRequests.dequeue();
+	mCurrentReply = Env::getSingleton<NetworkManager>()->getAsUpdater(request);
 
 	connect(mCurrentReply.data(), &QNetworkReply::metaDataChanged, this, &Downloader::onMetadataChanged);
 	connect(mCurrentReply.data(), &QNetworkReply::finished, this, &Downloader::onNetworkReplyFinished);
@@ -102,34 +103,32 @@ void Downloader::onNetworkReplyFinished()
 			if (const auto& readData = mCurrentReply->readAll(); !hasError && readData.size() > 0)
 			{
 				Q_EMIT fireDownloadSuccess(url, lastModified, readData);
+				return;
 			}
-			else
-			{
-				qCCritical(fileprovider).nospace() << "Received no data." << mCurrentReply->errorString() << " [" << textForLog << "]";
-				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());
-			}
-			break;
+
+			qCCritical(fileprovider).nospace() << "Received no data." << mCurrentReply->errorString() << " [" << textForLog << "]";
+			Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());
+			return;
 		}
 
 		case HTTP_STATUS_NOT_MODIFIED:
 			Q_EMIT fireDownloadUnnecessary(url);
-			break;
+			return;
 
 		case HTTP_STATUS_NOT_FOUND:
 			Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Downloader_File_Not_Found);
-			break;
+			return;
 
 		default:
 			if (hasError)
 			{
 				qCCritical(fileprovider).nospace() << mCurrentReply->errorString() << " [" << textForLog << "]";
 				Q_EMIT fireDownloadFailed(url, NetworkManager::toStatus(mCurrentReply).getStatusCode());
+				return;
 			}
-			else
-			{
-				qCCritical(fileprovider).nospace() << "Invalid HTTP status code for [" << textForLog << "]";
-				Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Network_Other_Error);
-			}
+
+			qCCritical(fileprovider).nospace() << "Invalid HTTP status code for [" << textForLog << "]";
+			Q_EMIT fireDownloadFailed(url, GlobalStatus::Code::Network_Other_Error);
 	}
 }
 
@@ -170,11 +169,11 @@ bool Downloader::abort(const QUrl& pUpdateUrl)
 		aborted = true;
 	}
 
-	QMutableListIterator<QSharedPointer<QNetworkRequest>> iterator(mPendingRequests);
+	QMutableListIterator<QNetworkRequest> iterator(mPendingRequests);
 	while (iterator.hasNext())
 	{
 		const auto item = iterator.next();
-		if (item->url() == pUpdateUrl)
+		if (item.url() == pUpdateUrl)
 		{
 			qCDebug(fileprovider) << "Remove pending request";
 
@@ -192,10 +191,10 @@ void Downloader::download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimes
 {
 	QMetaObject::invokeMethod(this, [this, pUpdateUrl, pCurrentTimestamp] {
 			qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-			auto request = QSharedPointer<QNetworkRequest>::create(pUpdateUrl);
+			QNetworkRequest request(pUpdateUrl);
 			if (pCurrentTimestamp.isValid())
 			{
-				request->setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
+				request.setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
 			}
 			scheduleDownload(request);
 		});

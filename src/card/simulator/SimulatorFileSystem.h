@@ -2,10 +2,6 @@
  * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Implementation of Simulator.
- */
-
 #pragma once
 
 #include "apdu/ResponseApdu.h"
@@ -15,6 +11,7 @@
 #include <QByteArray>
 #include <QJsonObject>
 #include <QMap>
+#include <openssl/ec.h>
 
 
 namespace governikus
@@ -30,6 +27,7 @@ class SimulatorFileSystem
 		QMap<QByteArray, QByteArray> mFileIds;
 
 		void initMandatoryData();
+		void parseKey(const QJsonObject& pKey);
 
 	public:
 		SimulatorFileSystem();
@@ -40,7 +38,11 @@ class SimulatorFileSystem
 		[[nodiscard]] StatusCode write(qsizetype pOffset, const QByteArray& pData);
 
 		[[nodiscard]] QByteArray getEfCardAccess() const;
-		[[nodiscard]] QByteArray getPrivateKey(int pKeyId) const;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		[[nodiscard]] QSharedPointer<EVP_PKEY> getKey(int pKeyId) const;
+#else
+		[[nodiscard]] QSharedPointer<EC_KEY> getKey(int pKeyId) const;
+#endif
 
 		[[nodiscard]] StatusCode verify(const Oid& pOid, const QSharedPointer<AuthenticatedAuxiliaryData>& pAuxiliaryData) const;
 

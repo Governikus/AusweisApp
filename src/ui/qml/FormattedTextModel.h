@@ -13,6 +13,9 @@
 #include <QPair>
 #include <QString>
 #include <QStringList>
+#include <QtQml/qqmlregistration.h>
+
+class test_FormattedTextModel;
 
 namespace governikus
 {
@@ -21,9 +24,13 @@ class FormattedTextModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
+	QML_ELEMENT
+			QML_UNCREATABLE("Used by ReleaseInformationModel only")
+	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	friend class ::test_FormattedTextModel;
 
 	public:
-		enum LineType
+		enum class LineType
 		{
 			EMPTY,
 			HEADER,
@@ -48,10 +55,7 @@ class FormattedTextModel
 
 		[[nodiscard]] Q_INVOKABLE bool loadSeveral(const QStringList& pFilepaths);
 
-#if defined(QT_NO_DEBUG)
-
 	private:
-#endif
 		struct ReadLinesResult
 		{
 			bool mSuccess;

@@ -6,7 +6,7 @@
 
 #include "CardInfo.h"
 #include "ReaderConfigurationInfo.h"
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 #include "SmartCardDefinitions.h"
 
 #include <QString>
@@ -19,7 +19,7 @@ class ReaderInfo
 	friend class Reader;
 
 	private:
-		ReaderManagerPlugInType mPlugInType;
+		ReaderManagerPluginType mPluginType;
 		QString mName;
 		bool mBasicReader;
 		CardInfo mCardInfo;
@@ -28,27 +28,27 @@ class ReaderInfo
 
 	public:
 		explicit ReaderInfo(const QString& pName = QString(),
-				ReaderManagerPlugInType pPlugInType = ReaderManagerPlugInType::UNKNOWN,
+				ReaderManagerPluginType pPluginType = ReaderManagerPluginType::UNKNOWN,
 				const CardInfo& pCardInfo = CardInfo(CardType::NONE));
 
 		[[nodiscard]] ReaderConfigurationInfo getReaderConfigurationInfo() const;
 
 
-		[[nodiscard]] ReaderManagerPlugInType getPlugInType() const
+		[[nodiscard]] ReaderManagerPluginType getPluginType() const
 		{
-			return mPlugInType;
+			return mPluginType;
 		}
 
 
 		[[nodiscard]] bool isValid() const
 		{
-			return mPlugInType != ReaderManagerPlugInType::UNKNOWN;
+			return mPluginType != ReaderManagerPluginType::UNKNOWN;
 		}
 
 
 		void invalidate()
 		{
-			mPlugInType = ReaderManagerPlugInType::UNKNOWN;
+			mPluginType = ReaderManagerPluginType::UNKNOWN;
 			mCardInfo = CardInfo(CardType::NONE);
 		}
 

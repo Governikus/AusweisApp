@@ -26,7 +26,7 @@ StateSelectReader::StateSelectReader(const QSharedPointer<WorkflowContext>& pCon
 
 void StateSelectReader::run()
 {
-	const auto readerManager = Env::getSingleton<ReaderManager>();
+	auto* readerManager = Env::getSingleton<ReaderManager>();
 	*this << connect(readerManager, &ReaderManager::fireReaderAdded, this, &StateSelectReader::onReaderInfoChanged);
 	*this << connect(readerManager, &ReaderManager::fireReaderRemoved, this, &StateSelectReader::onReaderInfoChanged);
 	*this << connect(readerManager, &ReaderManager::fireCardInserted, this, &StateSelectReader::onReaderInfoChanged);
@@ -35,11 +35,11 @@ void StateSelectReader::run()
 	onReaderInfoChanged();
 
 	const auto& context = getContext();
-	const auto& readerPlugInTypes = Enum<ReaderManagerPlugInType>::getList();
-	const auto& enabledPlugInTypes = context->getReaderPlugInTypes();
-	for (const auto t : readerPlugInTypes)
+	const auto& readerPluginTypes = Enum<ReaderManagerPluginType>::getList();
+	const auto& enabledPluginTypes = context->getReaderPluginTypes();
+	for (const auto t : readerPluginTypes)
 	{
-		enabledPlugInTypes.contains(t) && !context->skipStartScan() ? readerManager->startScan(t) : readerManager->stopScan(t);
+		enabledPluginTypes.contains(t) && !context->skipStartScan() ? readerManager->startScan(t) : readerManager->stopScan(t);
 	}
 	context->setSkipStartScan(false);
 }
@@ -51,8 +51,8 @@ void StateSelectReader::onReaderInfoChanged()
 	Q_ASSERT(context);
 	bool currentReaderHasEidCardButInsufficientApduLength = false;
 
-	const QList<ReaderManagerPlugInType>& plugInTypes = context->getReaderPlugInTypes();
-	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(plugInTypes));
+	const QList<ReaderManagerPluginType>& pluginTypes = context->getReaderPluginTypes();
+	const auto allReaders = Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(pluginTypes));
 	QList<ReaderInfo> selectableReaders;
 
 	for (const auto& info : allReaders)
@@ -68,7 +68,7 @@ void StateSelectReader::onReaderInfoChanged()
 			selectableReaders.append(info);
 		}
 		else if (!Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
-				&& info.getPlugInType() == ReaderManagerPlugInType::REMOTE_IFD
+				&& info.getPluginType() == ReaderManagerPluginType::REMOTE_IFD
 				&& info.isInsertable())
 		{
 			Env::getSingleton<ReaderManager>()->insert(info);
@@ -89,7 +89,7 @@ void StateSelectReader::onReaderInfoChanged()
 	const QString readerName = readerInfo.getName();
 	context->setReaderName(readerName);
 	qCDebug(statemachine) << "Select first found reader:" << readerName;
-	qCDebug(statemachine) << "Type:" << readerInfo.getPlugInType() << "BasicReader:" << readerInfo.isBasicReader();
+	qCDebug(statemachine) << "Type:" << readerInfo.getPluginType() << "BasicReader:" << readerInfo.isBasicReader();
 
 	Q_EMIT fireContinue();
 }
@@ -106,6 +106,6 @@ void StateSelectReader::onEntry(QEvent* pEvent)
 	 * Note: the plugin types to be used in this state must be already set in the workflow context before this state is entered.
 	 * Changing the plugin types in the context, e.g. from {NFC} to {REMOTE}, causes the state to be left with a fireRetry signal.
 	 */
-	*this << connect(context, &WorkflowContext::fireReaderPlugInTypesChanged, this, &StateSelectReader::fireRetry);
+	*this << connect(context, &WorkflowContext::fireReaderPluginTypesChanged, this, &StateSelectReader::fireRetry);
 
 }

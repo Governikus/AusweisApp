@@ -36,10 +36,7 @@ IfdEstablishContext::IfdEstablishContext(const QJsonObject& pMessageObject)
 	, mProtocol(IfdVersion(mProtocolRaw))
 	, mUdName(getStringValue(pMessageObject, UD_NAME()))
 {
-	if (getType() != IfdMessageType::IFDEstablishContext)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishContext"));
-	}
+	ensureType(IfdMessageType::IFDEstablishContext);
 }
 
 

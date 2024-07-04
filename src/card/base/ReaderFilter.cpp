@@ -17,7 +17,7 @@ ReaderFilter::ReaderFilter()
 }
 
 
-ReaderFilter::ReaderFilter(const QList<ReaderManagerPlugInType>& pPluginTypes)
+ReaderFilter::ReaderFilter(const QList<ReaderManagerPluginType>& pPluginTypes)
 	: mFilterType(PluginTypeFilter)
 	, mPluginTypes(pPluginTypes)
 {
@@ -41,7 +41,7 @@ QList<ReaderInfo> ReaderFilter::apply(const QList<ReaderInfo>& pInputList) const
 		while (iter.hasNext())
 		{
 			const ReaderInfo entry = iter.next();
-			if (!mPluginTypes.contains(entry.getPlugInType()))
+			if (!mPluginTypes.contains(entry.getPluginType()))
 			{
 				iter.remove();
 			}

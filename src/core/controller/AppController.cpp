@@ -12,8 +12,8 @@
 #include "ReaderManager.h"
 #include "ResourceLoader.h"
 #include "SecureStorage.h"
-#include "UILoader.h"
-#include "UIPlugIn.h"
+#include "UiLoader.h"
+#include "UiPlugin.h"
 #include "VolatileSettings.h"
 #include "controller/ChangePinController.h"
 
@@ -96,6 +96,12 @@ bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 	}
 #endif
 
+	if (pEvent->type() == QEvent::Quit)
+	{
+		doShutdown();
+		return true;
+	}
+
 	if (pEvent->type() == QEvent::ApplicationActivated)
 	{
 		Q_EMIT fireApplicationActivated();
@@ -131,8 +137,8 @@ void AppController::start()
 	}
 #endif
 
-	auto* uiLoader = Env::getSingleton<UILoader>();
-	connect(uiLoader, &UILoader::fireLoadedPlugin, this, &AppController::onUiPlugin);
+	auto* uiLoader = Env::getSingleton<UiLoader>();
+	connect(uiLoader, &UiLoader::fireLoadedPlugin, this, &AppController::onUiPlugin);
 	if (!uiLoader->load() || !uiLoader->hasActiveUI())
 	{
 		qCCritical(init) << "Cannot start without active UI";
@@ -149,7 +155,7 @@ void AppController::start()
 	{
 		// Start the ReaderManager *after* initializing the UIs. Otherwise the TrayIcon
 		// will be created even when we're just showing an error message and shutdown after that.
-		const auto readerManager = Env::getSingleton<ReaderManager>();
+		auto* readerManager = Env::getSingleton<ReaderManager>();
 		connect(this, &AppController::fireShutdown, readerManager, &ReaderManager::shutdown, Qt::QueuedConnection);
 		connect(readerManager, &ReaderManager::fireInitialized, this, &AppController::fireStarted, Qt::QueuedConnection);
 		readerManager->init();
@@ -333,10 +339,10 @@ void AppController::completeShutdown()
 							QCoreApplication::exit(mExitCode);
 						};
 
-				auto* uiLoader = Env::getSingleton<UILoader>();
+				auto* uiLoader = Env::getSingleton<UiLoader>();
 				if (uiLoader->isLoaded())
 				{
-					connect(uiLoader, &UILoader::fireRemovedAllPlugins, this, exitApp, Qt::QueuedConnection);
+					connect(uiLoader, &UiLoader::fireRemovedAllPlugins, this, exitApp, Qt::QueuedConnection);
 					uiLoader->shutdown();
 				}
 				else
@@ -384,7 +390,7 @@ void AppController::waitForNetworkConnections(const std::function<void()>& pExit
 }
 
 
-void AppController::onUiDominationRequested(const UIPlugIn* pUi, const QString& pInformation)
+void AppController::onUiDominationRequested(const UiPlugin* pUi, const QString& pInformation)
 {
 	bool accepted = false;
 	if (mUiDomination == nullptr && canStartNewWorkflow())
@@ -402,6 +408,7 @@ void AppController::onUiDominationRelease()
 {
 	if (mUiDomination)
 	{
+		qDebug() << mUiDomination->metaObject()->className() << "released ui domination";
 		mUiDomination = nullptr;
 		Q_EMIT fireUiDominationReleased();
 	}
@@ -415,32 +422,32 @@ void AppController::onRestartApplicationRequested()
 }
 
 
-void AppController::onUiPlugin(const UIPlugIn* pPlugin)
+void AppController::onUiPlugin(const UiPlugin* pPlugin)
 {
 	qCDebug(init) << "Register UI:" << pPlugin->metaObject()->className();
-	connect(this, &AppController::fireShutdown, pPlugin, &UIPlugIn::doShutdown, Qt::QueuedConnection);
-	connect(this, &AppController::fireWorkflowStarted, pPlugin, &UIPlugIn::onWorkflowStarted);
-	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UIPlugIn::onWorkflowFinished);
-	connect(this, &AppController::fireWorkflowUnhandled, pPlugin, &UIPlugIn::onWorkflowUnhandled);
-	connect(this, &AppController::fireInitialized, pPlugin, &UIPlugIn::onApplicationInitialized);
-	connect(this, &AppController::fireStarted, pPlugin, &UIPlugIn::onApplicationStarted);
-	connect(this, &AppController::fireShowUi, pPlugin, &UIPlugIn::onShowUi);
-	connect(this, &AppController::fireHideUi, pPlugin, &UIPlugIn::onHideUi);
-	connect(this, &AppController::fireTranslationChanged, pPlugin, &UIPlugIn::onTranslationChanged);
-	connect(this, &AppController::fireShowUserInformation, pPlugin, &UIPlugIn::onShowUserInformation);
-	connect(this, &AppController::fireApplicationActivated, pPlugin, &UIPlugIn::fireApplicationActivated);
-	connect(this, &AppController::fireUiDomination, pPlugin, &UIPlugIn::onUiDomination);
-	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UIPlugIn::onUiDominationReleased);
-	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UIPlugIn::onProxyAuthenticationRequired);
+	connect(this, &AppController::fireShutdown, pPlugin, &UiPlugin::doShutdown, Qt::QueuedConnection);
+	connect(this, &AppController::fireWorkflowStarted, pPlugin, &UiPlugin::onWorkflowStarted);
+	connect(this, &AppController::fireWorkflowFinished, pPlugin, &UiPlugin::onWorkflowFinished);
+	connect(this, &AppController::fireWorkflowUnhandled, pPlugin, &UiPlugin::onWorkflowUnhandled);
+	connect(this, &AppController::fireInitialized, pPlugin, &UiPlugin::onApplicationInitialized);
+	connect(this, &AppController::fireStarted, pPlugin, &UiPlugin::onApplicationStarted);
+	connect(this, &AppController::fireShowUi, pPlugin, &UiPlugin::onShowUi);
+	connect(this, &AppController::fireHideUi, pPlugin, &UiPlugin::onHideUi);
+	connect(this, &AppController::fireTranslationChanged, pPlugin, &UiPlugin::onTranslationChanged);
+	connect(this, &AppController::fireShowUserInformation, pPlugin, &UiPlugin::onShowUserInformation);
+	connect(this, &AppController::fireApplicationActivated, pPlugin, &UiPlugin::fireApplicationActivated);
+	connect(this, &AppController::fireUiDomination, pPlugin, &UiPlugin::onUiDomination);
+	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UiPlugin::onUiDominationReleased);
+	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UiPlugin::onProxyAuthenticationRequired);
 
-	connect(pPlugin, &UIPlugIn::fireWorkflowRequested, this, &AppController::onWorkflowRequested, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireShowUiRequested, this, &AppController::fireShowUi, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireShowUserInformationRequested, this, &AppController::fireShowUserInformation);
-	connect(pPlugin, &UIPlugIn::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
-	connect(pPlugin, &UIPlugIn::fireQuitApplicationRequest, this, &AppController::doShutdown);
-	connect(pPlugin, &UIPlugIn::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
-	connect(pPlugin, &UIPlugIn::fireUiDominationRequest, this, &AppController::onUiDominationRequested);
-	connect(pPlugin, &UIPlugIn::fireUiDominationRelease, this, &AppController::onUiDominationRelease);
+	connect(pPlugin, &UiPlugin::fireWorkflowRequested, this, &AppController::onWorkflowRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UiPlugin::fireShowUiRequested, this, &AppController::fireShowUi, Qt::QueuedConnection);
+	connect(pPlugin, &UiPlugin::fireShowUserInformationRequested, this, &AppController::fireShowUserInformation);
+	connect(pPlugin, &UiPlugin::fireRestartApplicationRequested, this, &AppController::onRestartApplicationRequested, Qt::QueuedConnection);
+	connect(pPlugin, &UiPlugin::fireQuitApplicationRequest, this, &AppController::doShutdown);
+	connect(pPlugin, &UiPlugin::fireCloseReminderFinished, this, &AppController::onCloseReminderFinished);
+	connect(pPlugin, &UiPlugin::fireUiDominationRequest, this, &AppController::onUiDominationRequested);
+	connect(pPlugin, &UiPlugin::fireUiDominationRelease, this, &AppController::onUiDominationRelease);
 }
 
 
@@ -492,6 +499,13 @@ bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessa
 		if (msg->message == WM_QUERYENDSESSION)
 		{
 			qCDebug(system) << "WM_QUERYENDSESSION received";
+			*pResult = TRUE;
+			return true;
+		}
+		if (msg->message == WM_ENDSESSION)
+		{
+			qCDebug(system) << "WM_ENDSESSION received";
+			*pResult = 0;
 			doShutdown();
 			return true;
 		}

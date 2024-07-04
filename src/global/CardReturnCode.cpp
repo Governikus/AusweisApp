@@ -15,6 +15,7 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 	{
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
+		case CardReturnCode::OK_CAN:
 			return GlobalStatus::Code::No_Error;
 
 		case CardReturnCode::UNDEFINED:
@@ -22,7 +23,7 @@ GlobalStatus CardReturnCodeUtil::toGlobalStatus(CardReturnCode pCode)
 			return GlobalStatus::Code::Unknown_Error;
 
 		case CardReturnCode::CARD_NOT_FOUND:
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 			return GlobalStatus::Code::Card_Not_Found;
 
 		case CardReturnCode::COMMAND_FAILED:
@@ -92,7 +93,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 			return true;
 
 		case CardReturnCode::UNDEFINED:
-		case CardReturnCode::RETRY_ALLOWED:
+		case CardReturnCode::RESPONSE_EMPTY:
 		case CardReturnCode::CARD_NOT_FOUND:
 		case CardReturnCode::UNKNOWN:
 		case CardReturnCode::COMMAND_FAILED:
@@ -101,6 +102,7 @@ bool CardReturnCodeUtil::equalsWrongPacePassword(CardReturnCode pCode)
 		case CardReturnCode::UNEXPECTED_TRANSMIT_STATUS:
 		case CardReturnCode::OK:
 		case CardReturnCode::OK_PUK:
+		case CardReturnCode::OK_CAN:
 		case CardReturnCode::CANCELLATION_BY_USER:
 		case CardReturnCode::PUK_INOPERATIVE:
 		case CardReturnCode::INPUT_TIME_OUT:

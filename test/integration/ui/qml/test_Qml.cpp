@@ -89,21 +89,17 @@ class test_Qml
 
 		void test_qmlEngineInit_data()
 		{
-			QTest::addColumn<QString>("platformSelector");
+			QTest::addColumn<QString>("platform");
 
-			QTest::newRow("Android") << u"mobile,android"_s;
-			QTest::newRow("iOS") << u"mobile,ios"_s;
-#ifdef Q_OS_WIN
-			QTest::newRow("Windows") << u"desktop,win"_s;
-#else
-			QTest::newRow("macOS") << u"desktop,nowin"_s;
-#endif
+			QTest::newRow("Android") << u"android"_s;
+			QTest::newRow("iOS") << u"ios"_s;
+			QTest::newRow("Desktop") << u""_s;
 		}
 
 
 		void test_qmlEngineInit()
 		{
-			QFETCH(QString, platformSelector);
+			QFETCH(QString, platform);
 
 			QString path = QStringLiteral(AUSWEISAPP_BINARY_DIR);
 			QString app = path + "AusweisApp"_L1;
@@ -123,7 +119,7 @@ class test_Qml
 			mApp2->setArguments(args);
 
 			QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-			env.insert("OVERRIDE_PLATFORM_SELECTOR"_L1, platformSelector);
+			env.insert("OVERRIDE_PLATFORM"_L1, platform);
 			env.insert("QT_QPA_OFFSCREEN_NO_GLX"_L1, "1"_L1);
 			env.insert("QML_DISABLE_DISK_CACHE"_L1, "1"_L1);
 			mApp2->setProcessEnvironment(env);

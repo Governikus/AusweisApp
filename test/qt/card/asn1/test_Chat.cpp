@@ -193,7 +193,7 @@ class test_CHAT
 			auto chat = CHAT::fromHex(hexEncodedChat);
 
 			QVERIFY(chat != nullptr);
-			QCOMPARE(QByteArray(chat->getType()), QByteArray("0.4.0.127.0.7.3.1.2.2 (id-AT)"));
+			QCOMPARE(chat->getType(), KnownOid::ID_AT);
 			QCOMPARE(chat->getTemplate().toHex().toUpper(), QByteArray("FC0F13FFFF"));
 			QVERIFY(encodeObject(chat.data()).toHex().toUpper().endsWith(QByteArray("FC0F13FFFF")));
 		}

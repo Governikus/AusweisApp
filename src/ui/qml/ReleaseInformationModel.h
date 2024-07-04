@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QSharedPointer>
+#include <QtQml/qqmlregistration.h>
 
 
 class test_ReleaseInformationModel;
@@ -25,10 +26,12 @@ class ReleaseInformationModel
 	: public QObject
 {
 	Q_OBJECT
+	QML_ELEMENT
+
 	friend class ::test_ReleaseInformationModel;
 
-	Q_PROPERTY(FormattedTextModel * currentRelease READ getCurrentRelease NOTIFY fireCurrentInformationChanged)
-	Q_PROPERTY(FormattedTextModel * updateRelease READ getUpdateRelease NOTIFY fireUpdateInformationChanged)
+	Q_PROPERTY(governikus::FormattedTextModel * currentRelease READ getCurrentRelease NOTIFY fireCurrentInformationChanged)
+	Q_PROPERTY(governikus::FormattedTextModel * updateRelease READ getUpdateRelease NOTIFY fireUpdateInformationChanged)
 	Q_PROPERTY(bool allowRetry READ allowRetry NOTIFY fireCurrentInformationChanged)
 
 	private:

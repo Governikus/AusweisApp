@@ -140,8 +140,9 @@ class test_efCardSecurity
 		void parseEFCardSecurity_data()
 		{
 			QTest::addColumn<QByteArray>("bytes");
+			QTest::addColumn<QByteArray>("logging");
 
-			QTest::newRow("file") << QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"_L1));
+			QTest::newRow("file") << QByteArray::fromHex(TestFileHelper::readFile(":/card/efCardSecurity.hex"_L1)) << QByteArray("Parsed EFCardSecurity signed with DocSigner: \"0021\"");
 
 			QSharedPointer<EVP_PKEY_CTX> keyCtx(EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr), &EVP_PKEY_CTX_free);
 			QVERIFY(keyCtx);
@@ -219,14 +220,16 @@ class test_efCardSecurity
 			const int contentSize = i2d_CMS_ContentInfo(cms.data(), &rawContent);
 			const auto contentGuard = qScopeGuard([rawContent] {OPENSSL_free(rawContent);});
 
-			QTest::newRow("constructed") << QByteArray(reinterpret_cast<char*>(rawContent), contentSize);
+			QTest::newRow("constructed") << QByteArray(reinterpret_cast<char*>(rawContent), contentSize) << QByteArray("Parsed EFCardSecurity signed with DocSigner: \"\"");
 		}
 
 
 		void parseEFCardSecurity()
 		{
 			QFETCH(QByteArray, bytes);
+			QFETCH(QByteArray, logging);
 
+			QTest::ignoreMessage(QtDebugMsg, logging.data());
 			auto efCardSecurity = EFCardSecurity::decode(bytes);
 			QVERIFY(efCardSecurity);
 			QCOMPARE(efCardSecurity->getSecurityInfos()->getSecurityInfos().size(), 9);
@@ -244,6 +247,7 @@ class test_efCardSecurity
 			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.5.2 (id-RI-ECDH)");
 			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.3.2 (id-CA-ECDH)");
 			QTest::ignoreMessage(QtDebugMsg, "Parsed SecurityInfo: 0.4.0.127.0.7.2.2.1.2 (id-PK-ECDH)");
+			QTest::ignoreMessage(QtDebugMsg, "Parsed EFCardSecurity signed with DocSigner: \"0001\"");
 
 			QVERIFY(EFCardSecurity::fromHex(QByteArray(
 					"3082072f06092a864886f70d010702a08207203082071c020103310f300d060960864801650304020205003082012c06"

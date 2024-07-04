@@ -25,7 +25,6 @@ class Service
 
 		QTimer mTimer;
 		bool mUpdateScheduled;
-		bool mExplicitSuccessMessage;
 		const int mOneDayInMs = 1000 * 60 * 60 * 24;
 
 		Service();
@@ -41,11 +40,11 @@ class Service
 	public:
 		void updateAppcast();
 		[[nodiscard]] bool isUpdateScheduled() const;
-		Q_INVOKABLE void runUpdateIfNeeded();
+		void runUpdateIfNeeded();
 		[[nodiscard]] const AppUpdateData& getUpdateData() const;
 
 	Q_SIGNALS:
-		void fireAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError);
+		void fireAppcastFinished(bool pUpdateAvailable);
 		void fireUpdateScheduled();
 };
 

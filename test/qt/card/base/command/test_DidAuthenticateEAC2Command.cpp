@@ -4,12 +4,13 @@
 
 #include "command/DidAuthenticateEAC2Command.h"
 
-#include "asn1/CVCertificateChainBuilder.h"
-
-#include "MockCardConnectionWorker.h"
-#include "TestFileHelper.h"
 #include "asn1/ASN1Struct.h"
 #include "asn1/ASN1Util.h"
+#include "asn1/CVCertificateChainBuilder.h"
+
+#include "CertificateHelper.h"
+#include "MockCardConnectionWorker.h"
+#include "TestFileHelper.h"
 
 #include <QByteArrayList>
 #include <QtTest>
@@ -40,13 +41,13 @@ class test_DidAuthenticateEAC2Command
 		static CVCertificateChain createCVCertificateChain()
 		{
 			QList<QSharedPointer<const CVCertificate>> list;
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
-			list << CVCertificate::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
+			list << CertificateHelper::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
 			CVCertificateChainBuilder builder(list, false);
 			return builder.getChainStartingWith(list.first());
 		}
@@ -232,7 +233,7 @@ class test_DidAuthenticateEAC2Command
 
 			const CVCertificateChain cvcChain = createCVCertificateChain();
 			const QByteArray auxData = QByteArray::fromHex("670F0102030405060708090A0B0C0D0E0F");
-			DidAuthenticateEAC2Command command(mWorker, cvcChain, QByteArray(), QByteArray(), auxData, QByteArray());
+			DidAuthenticateEAC2Command command(mWorker, cvcChain, QByteArray("040506"), QByteArray(), auxData, QByteArray());
 
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000")); // Performing TA MSE:Set DST with CAR "DETESTeID00001"
 			mWorker->addResponse(CardReturnCode::OK, QByteArray::fromHex("9000")); // Performing TA PSO:Verify Certificate with CVC(type=CVCA, car="DETESTeID00001", chr="DETESTeID00001", valid=["2010-08-13","2013-08-13"]=false)

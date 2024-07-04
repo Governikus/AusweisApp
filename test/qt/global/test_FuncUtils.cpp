@@ -84,7 +84,7 @@ class test_FuncUtils
 
 			const QList<QString> readerNamesList = map<Reader, QString>([](const Reader& r){
 					return r.getName();
-				}, mReaders.toList());
+				}, mReaders);
 
 			QCOMPARE(readerNamesList.size(), 3);
 			QCOMPARE(readerNamesList.at(0), QStringLiteral("NFC Reader"));

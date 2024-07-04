@@ -15,6 +15,7 @@ namespace governikus
 defineEnumType(MsgLevel // See MsgHandler::DEFAULT_MSG_LEVEL
 		, v1 = 1
 		, v2 = 2
+		, v3 = 3
 		)
 
 defineEnumType(MsgType,
@@ -38,12 +39,14 @@ defineEnumType(MsgType,
 		ENTER_PIN,
 		ENTER_NEW_PIN,
 		ENTER_CAN,
-		ENTER_PUK)
+		ENTER_PUK,
+		PAUSE)
 
 defineEnumType(MsgCmdType,
 		UNDEFINED,
 		ACCEPT,
 		CANCEL,
+		CONTINUE,
 		INTERRUPT,
 		GET_STATUS,
 		GET_LOG,

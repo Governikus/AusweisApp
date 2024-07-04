@@ -4,7 +4,7 @@
 import QtQuick
 import QtTest
 import Governikus.Global
-import Governikus.Type.ReaderPlugIn
+import Governikus.Type
 
 TestCase {
 	id: testCase
@@ -14,15 +14,15 @@ TestCase {
 			import QtQuick
 			import QtQuick.Controls
 			import Governikus.Workflow
-			import Governikus.Type.ReaderPlugIn
+			import Governikus.Type
 
 			ApplicationWindow {
 				menuBar: Item {}
 				GeneralWorkflow {
 					workflowModel: Item {
-						property var readerPlugInType: ReaderPlugIn.NFC
+						property var readerPluginType: ReaderManagerPluginType.NFC
 						property bool isCurrentSmartCardAllowed: false
-						property var supportedPlugInTypes: [ReaderPlugIn.NFC, ReaderPlugIn.REMOTE_IFD, ReaderPlugIn.SMART]
+						property var supportedPluginTypes: [ReaderManagerPluginType.NFC, ReaderManagerPluginType.REMOTE_IFD, ReaderManagerPluginType.SMART]
 					}
 				}
 			}

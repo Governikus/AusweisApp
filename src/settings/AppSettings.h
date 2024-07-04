@@ -2,26 +2,20 @@
  * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Contains the definition of the AppSettings class.
- */
-
 #pragma once
+
 
 #include "Env.h"
 #include "GeneralSettings.h"
 #include "PreVerificationSettings.h"
 #include "RemoteServiceSettings.h"
+#include "SimulatorSettings.h"
 
 #include <QObject>
 
 
 namespace governikus
 {
-
-/*!
- * \brief Represents application settings.
- */
 class AppSettings
 	: public QObject
 	, private Env::ThreadSafe
@@ -36,11 +30,13 @@ class AppSettings
 		GeneralSettings mGeneralSettings;
 		PreVerificationSettings mPreVerificationSettings;
 		RemoteServiceSettings mRemoteReaderSettings;
+		SimulatorSettings mSimulatorSettings;
 
 	public:
-		virtual GeneralSettings& getGeneralSettings();
-		virtual PreVerificationSettings& getPreVerificationSettings();
-		virtual RemoteServiceSettings& getRemoteServiceSettings();
+		[[nodiscard]] GeneralSettings& getGeneralSettings();
+		[[nodiscard]] PreVerificationSettings& getPreVerificationSettings();
+		[[nodiscard]] RemoteServiceSettings& getRemoteServiceSettings();
+		[[nodiscard]] SimulatorSettings& getSimulatorSettings();
 };
 
 

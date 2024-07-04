@@ -8,7 +8,6 @@
 
 #include "MockNetworkManager.h"
 #include "TestAuthContext.h"
-#include "TestFileHelper.h"
 
 #include <QList>
 #include <QPair>
@@ -39,7 +38,19 @@ class test_StateGenericSendReceive
 		{
 			mAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1.xml"_L1));
 
-			QSharedPointer<TcToken> tcToken(new TcToken(TestFileHelper::readFile(":/tctoken/ok.xml"_L1)));
+			const QByteArray tokenData("<?xml version=\"1.0\"?>"
+									   "<TCTokenType>"
+									   "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+									   "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+									   "  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
+									   "  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
+									   "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+									   "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+									   "  <PathSecurity-Parameters>"
+									   "    <PSK> 4BC1A0B5 </PSK>"
+									   "  </PathSecurity-Parameters>"
+									   "</TCTokenType>");
+			QSharedPointer<TcToken> tcToken(new TcToken(tokenData));
 			mAuthContext->setTcToken(tcToken);
 			mNetworkManager.reset(new MockNetworkManager());
 			Env::set(NetworkManager::staticMetaObject, mNetworkManager.data());

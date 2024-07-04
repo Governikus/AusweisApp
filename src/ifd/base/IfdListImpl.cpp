@@ -72,7 +72,7 @@ QList<QSharedPointer<IfdListEntry>> IfdListImpl::getIfdList() const
 void IfdListImpl::onProcessUnresponsiveRemoteReaders()
 {
 	const QTime threshold(QTime::currentTime().addMSecs(-mReaderResponsiveTimeout));
-	QMutableListIterator<QSharedPointer<IfdListEntry>> i(mResponsiveList);
+	QMutableListIterator i(mResponsiveList);
 	while (i.hasNext())
 	{
 		const QSharedPointer<IfdListEntry> entry = i.next();

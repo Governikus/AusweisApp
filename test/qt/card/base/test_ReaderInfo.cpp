@@ -45,7 +45,7 @@ class test_ReaderInfo
 			QFETCH(bool, hasCard);
 			QFETCH(bool, hasEid);
 
-			const ReaderInfo info(QStringLiteral("Reader"), ReaderManagerPlugInType::UNKNOWN, CardInfo(type, nullptr, 3, false, false));
+			const ReaderInfo info(QStringLiteral("Reader"), ReaderManagerPluginType::UNKNOWN, CardInfo(type, FileRef(), nullptr, 3, false, false));
 
 			QCOMPARE(info.getCardType(), type);
 			QCOMPARE(info.hasCard(), hasCard);
@@ -75,7 +75,7 @@ class test_ReaderInfo
 			QFETCH(int, length);
 			QFETCH(bool, insufficient);
 
-			ReaderInfo info(QStringLiteral("Reader"), ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::UNKNOWN));
+			ReaderInfo info(QStringLiteral("Reader"), ReaderManagerPluginType::UNKNOWN, CardInfo(CardType::UNKNOWN));
 			QCOMPARE(info.getMaxApduLength(), 500);
 			QVERIFY(!info.insufficientApduLength());
 

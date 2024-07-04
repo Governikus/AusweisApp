@@ -10,6 +10,7 @@
 #include "asn1/ASN1Struct.h"
 #include "asn1/ChipAuthenticationInfo.h"
 #include "asn1/EFCardSecurity.h"
+#include "pace/ec/EcUtil.h"
 
 #include <QLoggingCategory>
 
@@ -82,26 +83,12 @@ void DidAuthenticateEAC2Command::internalExecute()
 
 	Oid taProtocol = mCvcChain.getTerminalCvc()->getBody().getPublicKey().getOid();
 	QByteArray chr = mCvcChain.getTerminalCvc()->getBody().getCertificateHolderReference();
-
 	QByteArray ephemeralPublicKey = QByteArray::fromHex(mEphemeralPublicKeyAsHex);
-	if (ephemeralPublicKey.size() % 2 == 0)
-	{
-		/*
-		 * According to TR-03111, chapter 3.2.1 the uncompressed encoding of an elliptic curve point is:
-		 *  0x04 | xCoordinate | yCoordinate
-		 * In contrast the AGETO and mtG server just sends xCoordinate | yCoordinate.
-		 *
-		 * We fix this by prepending 0x04
-		 */
-		ephemeralPublicKey.prepend(0x04);
-	}
-	QByteArray compressedEphemeralPublicKey = ephemeralPublicKey.mid(1, (ephemeralPublicKey.size() - 1) / 2);
-
 	QByteArray signature = QByteArray::fromHex(mSignatureAsHex);
 	setReturnCode(performTerminalAuthentication(taProtocol,
 			chr,
 			mAuthenticatedAuxiliaryDataAsBinary,
-			compressedEphemeralPublicKey,
+			EcUtil::compressPoint(ephemeralPublicKey),
 			signature));
 
 	if (getReturnCode() != CardReturnCode::OK)
@@ -156,7 +143,7 @@ CardReturnCode DidAuthenticateEAC2Command::putCertificateChain(const CVCertifica
 		QByteArray car = cvCertificate->getBody().getCertificationAuthorityReference();
 		ASN1Struct cmdDataSet;
 		cmdDataSet.append(ASN1Struct::PUBLIC_KEY_REFERENCE, car);
-		CommandApdu cmdApduSet(Ins::MSE_SET, CommandApdu::VERIFICATION, CommandApdu::DIGITAL_SIGNATURE_TEMPLATE, cmdDataSet);
+		CommandApdu cmdApduSet(Ins::MSE_SET, CommandApdu::TERMINAL_AUTHENTICATION, CommandApdu::DIGITAL_SIGNATURE_TEMPLATE, cmdDataSet);
 
 		qCDebug(card) << "Performing TA MSE:Set DST with CAR" << car;
 		const auto& [mseReturnCode, mseResult] = getCardConnectionWorker()->transmit(cmdApduSet);
@@ -213,7 +200,7 @@ CardReturnCode DidAuthenticateEAC2Command::performTerminalAuthentication(const O
 	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, pChr);
 	cmdData.append(pAuxiliaryData);
 	cmdData.append(ASN1Struct::TA_EPHEMERAL_PUBLIC_KEY, pCompressedEphemeralPublicKey);
-	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::VERIFICATION, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
+	CommandApdu cmdApdu(Ins::MSE_SET, CommandApdu::TERMINAL_AUTHENTICATION, CommandApdu::AUTHENTICATION_TEMPLATE, cmdData);
 
 	qCDebug(card) << "Performing TA MSE:Set AT";
 	const auto& [mseReturnCode, mseResult] = getCardConnectionWorker()->transmit(cmdApdu);

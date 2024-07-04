@@ -11,6 +11,7 @@
 #include <QHostAddress>
 #include <QList>
 #include <QObject>
+#include <QtQml/qqmlregistration.h>
 
 class test_ConnectivityManager;
 
@@ -22,6 +23,8 @@ class ConnectivityManager
 	: public QObject
 {
 	Q_OBJECT
+	QML_ELEMENT
+
 	friend class ::test_ConnectivityManager;
 
 	Q_PROPERTY(bool watching READ isWatching WRITE setWatching NOTIFY fireWatchingChanged)

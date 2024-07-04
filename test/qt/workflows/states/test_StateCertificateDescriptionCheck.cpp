@@ -9,6 +9,7 @@
 #include "context/AuthContext.h"
 #include "states/StateBuilder.h"
 
+#include "CertificateHelper.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -79,7 +80,7 @@ class test_StateCertificateDescriptionCheck
 		void nonMatchingDescription()
 		{
 			QByteArray source = TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1);
-			auto cert = CVCertificate::fromHex(source);
+			auto cert = CertificateHelper::fromHex(source);
 			mAuthContext->initAccessRightManager(cert);
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);

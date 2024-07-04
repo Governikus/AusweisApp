@@ -9,13 +9,13 @@
 #include "messages/MsgHandlerReader.h"
 
 #include "MessageDispatcher.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "ReaderManager.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -36,7 +36,7 @@ class test_MsgHandlerReader
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -51,15 +51,15 @@ class test_MsgHandlerReader
 
 		void ctor()
 		{
-			QSignalSpy spy(&MockReaderManagerPlugIn::getInstance(), &ReaderManagerPlugIn::fireReaderAdded);
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
+			QSignalSpy spy(&MockReaderManagerPlugin::getInstance(), &ReaderManagerPlugin::fireReaderAdded);
+			MockReaderManagerPlugin::getInstance().addReader("MockReader 0815"_L1);
 			QCOMPARE(spy.count(), 1);
 			ReaderInfo info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
 
-			MsgHandlerReader noReader(ReaderInfo("MockReader"_L1));
+			MsgHandlerReader noReader(ReaderInfo("MockReader"_L1), MsgContext());
 			QCOMPARE(noReader.toJson(), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader\"}"));
 
-			MsgHandlerReader reader(info);
+			MsgHandlerReader reader(info, MsgContext());
 			QCOMPARE(reader.toJson(), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
 
@@ -77,7 +77,7 @@ class test_MsgHandlerReader
 
 		void oneReaderWithoutCard()
 		{
-			MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
+			MockReaderManagerPlugin::getInstance().addReader("MockReader 0815"_L1);
 
 			MessageDispatcher dispatcher;
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 081"})");
@@ -86,7 +86,7 @@ class test_MsgHandlerReader
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
-			MockReaderManagerPlugIn::getInstance().removeReader("MockReader 0815"_L1);
+			MockReaderManagerPlugin::getInstance().removeReader("MockReader 0815"_L1);
 			msg = R"({"cmd": "GET_READER", "name": "MockReader 0815"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 		}
@@ -94,7 +94,7 @@ class test_MsgHandlerReader
 
 		void oneReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig());
 
 			MessageDispatcher dispatcher;
@@ -103,28 +103,43 @@ class test_MsgHandlerReader
 		}
 
 
+		void multipleReaderWithCard_data()
+		{
+			QTest::addColumn<MsgLevel>("msgLevel");
+
+			QTest::newRow("v2") << MsgLevel::v2;
+			QTest::newRow("v3") << MsgLevel::v3;
+		}
+
+
 		void multipleReaderWithCard()
 		{
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
-			reader->setCard(MockCardConfig());
-			reader = MockReaderManagerPlugIn::getInstance().addReader("ReaderMock"_L1);
-			reader->setCard(MockCardConfig());
-			MockReaderManagerPlugIn::getInstance().addReader("ReaderMockXYZ"_L1);
+			QFETCH(MsgLevel, msgLevel);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMock"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader 0815"_L1);
+			reader->setCard(MockCardConfig());
+			reader = MockReaderManagerPlugin::getInstance().addReader("ReaderMock"_L1);
+			reader->setCard(MockCardConfig());
+			MockReaderManagerPlugin::getInstance().addReader("ReaderMockXYZ"_L1);
+
+			reader = MockReaderManagerPlugin::getInstance().addReader("SpecialMock"_L1);
 			reader->setCard(MockCardConfig());
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(CardInfo(CardType::UNKNOWN));
 			reader->setReaderInfo(info);
 
-			reader = MockReaderManagerPlugIn::getInstance().addReader("SpecialMockWithGermanCard"_L1);
+			reader = MockReaderManagerPlugin::getInstance().addReader("SpecialMockWithGermanCard"_L1);
 			reader->setCard(MockCardConfig());
-			auto cardInfo = CardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			auto cardInfo = CardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
 
 			MessageDispatcher dispatcher;
+			QByteArray setApiLevel(R"({"cmd": "SET_API_LEVEL", "level": <LEVEL>})");
+			setApiLevel.replace(QByteArray("<LEVEL>"), QByteArray::number(Enum<MsgLevel>::getValue(msgLevel)));
+			Q_UNUSED(dispatcher.processCommand(setApiLevel))
+
 			QByteArray msg(R"({"cmd": "GET_READER", "name": "MockReader 0815"})");
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":false," + mEidType + "\"inoperative\":false,\"retryCounter\":-1},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"MockReader 0815\"}"));
 
@@ -135,7 +150,9 @@ class test_MsgHandlerReader
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"ReaderMockXYZ\"}"));
 
 			msg = R"({"cmd": "GET_READER", "name": "SpecialMock"})";
-			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":null,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}"));
+			QByteArray expected("{\"attached\":true,\"card\":<CARD>,\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMock\"}");
+			expected.replace("<CARD>", msgLevel > MsgLevel::v2 ? "{}" : "null");
+			QCOMPARE(dispatcher.processCommand(msg), expected);
 
 			msg = R"({"cmd": "GET_READER", "name": "SpecialMockWithGermanCard"})";
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"attached\":true,\"card\":{\"deactivated\":true," + mEidType + "\"inoperative\":false,\"retryCounter\":3},\"insertable\":false,\"keypad\":false,\"msg\":\"READER\",\"name\":\"SpecialMockWithGermanCard\"}"));
@@ -158,7 +175,7 @@ class test_MsgHandlerReader
 			QFETCH(QByteArray, efCardAccess);
 			QFETCH(QByteArray, eidType);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("MockReader 0815"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader 0815"_L1);
 			reader->setCard(MockCardConfig(), EFCardAccess::decode(QByteArray::fromHex(efCardAccess)), CardType::SMART_EID);
 			MessageDispatcher dispatcher;
 

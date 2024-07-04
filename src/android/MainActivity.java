@@ -9,12 +9,10 @@ import java.util.List;
 import java.util.Locale;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -30,7 +28,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 
-import org.qtproject.qt.android.QtActivityDelegate;
 import org.qtproject.qt.android.QtNative;
 import org.qtproject.qt.android.bindings.QtActivity;
 
@@ -43,58 +40,12 @@ public class MainActivity extends QtActivity
 
 	private final MarginLayoutParams windowInsets = new MarginLayoutParams(0, 0);
 
-	private NfcForegroundDispatcher mNfcForegroundDispatcher;
 	private NfcReaderMode mNfcReaderMode;
 	private boolean mIsResumed;
 
-	// Native methods provided by UIPlugInQml
+	// Native methods provided by UiPluginQml
 	public static native void notifySafeAreaMarginsChanged();
 	public static native void notifyConfigurationChanged();
-
-	private class NfcForegroundDispatcher
-	{
-		private final IntentFilter[] mFilters;
-		private final String[][] mTechLists;
-		private final PendingIntent mPendingIntent;
-
-		@SuppressLint("UnspecifiedImmutableFlag")
-		NfcForegroundDispatcher()
-		{
-			mFilters = new IntentFilter[] {
-				new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED)
-			};
-			mTechLists = new String[][] {
-				new String[] {
-					IsoDep.class.getName()
-				}
-			};
-
-			mPendingIntent = PendingIntent.getActivity(MainActivity.this, 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
-		}
-
-
-		void enable()
-		{
-			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
-			if (adapter != null)
-			{
-				adapter.enableForegroundDispatch(MainActivity.this, mPendingIntent, mFilters, mTechLists);
-			}
-		}
-
-
-		void disable()
-		{
-			NfcAdapter adapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
-			if (adapter != null)
-			{
-				adapter.disableForegroundDispatch(MainActivity.this);
-			}
-		}
-
-
-	}
-
 
 	private class NfcReaderMode
 	{
@@ -173,15 +124,6 @@ public class MainActivity extends QtActivity
 	}
 
 
-	public MainActivity()
-	{
-		QT_ANDROID_THEMES = new String[] {
-			"AppTheme"
-		};
-		QT_ANDROID_DEFAULT_THEME = "AppTheme";
-	}
-
-
 	public static boolean isStartedByAuth()
 	{
 		if (cIntent == null || cIntent.getData() == null)
@@ -215,7 +157,6 @@ public class MainActivity extends QtActivity
 
 		cIntent = getIntent();
 
-		mNfcForegroundDispatcher = new NfcForegroundDispatcher();
 		mNfcReaderMode = new NfcReaderMode();
 
 		// Handle systemWindowInsets
@@ -232,10 +173,6 @@ public class MainActivity extends QtActivity
 
 					return insets;
 				});
-
-		// Set Qt flags first so we can overwrite with our own values.
-		setSystemUiVisibility(QtActivityDelegate.SYSTEM_UI_VISIBILITY_TRANSLUCENT);
-		window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 		// Make statusbar and navigation bar transparent
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) // API 29, Android 10
@@ -271,7 +208,6 @@ public class MainActivity extends QtActivity
 		super.onResume();
 		mIsResumed = true;
 
-		mNfcForegroundDispatcher.enable();
 		setReaderModeNative(true);
 	}
 
@@ -280,7 +216,6 @@ public class MainActivity extends QtActivity
 	public void onPause()
 	{
 		setReaderModeNative(false);
-		mNfcForegroundDispatcher.disable();
 
 		mIsResumed = false;
 		super.onPause();
@@ -295,7 +230,7 @@ public class MainActivity extends QtActivity
 	}
 
 
-	// used by NfcReaderManagerPlugIn
+	// used by NfcReaderManagerPlugin
 	public void setReaderMode(boolean pEnabled)
 	{
 		if (pEnabled)
@@ -309,7 +244,7 @@ public class MainActivity extends QtActivity
 	}
 
 
-	// used by NfcReaderManagerPlugIn
+	// used by NfcReaderManagerPlugin
 	public void resetNfcReaderMode()
 	{
 		if (mIsResumed && mNfcReaderMode.isEnabled())
@@ -331,15 +266,6 @@ public class MainActivity extends QtActivity
 		{
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-	}
-
-
-	// required by UIPlugInQml::getPlatformSelectors()
-	public boolean isTablet()
-	{
-		final Context context = getBaseContext();
-		// https://developer.android.com/training/multiscreen/screensizes.html#TaskUseSWQuali
-		return context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
 	}
 
 
@@ -374,6 +300,13 @@ public class MainActivity extends QtActivity
 			return false;
 		}
 		return true;
+	}
+
+
+	public boolean isChromeOS()
+	{
+		PackageManager packageManager = getPackageManager();
+		return packageManager.hasSystemFeature("org.chromium.arc") || packageManager.hasSystemFeature("org.chromium.arc.device_management");
 	}
 
 

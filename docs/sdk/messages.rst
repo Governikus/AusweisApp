@@ -668,20 +668,6 @@ increased for **incompatible** changes.
 
     - **Specification-Version**: Version of specification.
 
-  - **AusweisApp**: Indicates the state of the connection to
-    the AusweisApp for integrated SDK (**Android only**).
-    The following states are possible.
-
-    - **CONNECTED**: The SDK is connected.
-
-    - **DISCONNECTED**: The SDK is not connected.
-
-    - **INVALID_CERTIFICATE**: The certificate of LocalIfd is not valid.
-
-    - **INCOMPATIBLE_VERSION**: The version of LocalIfd is not compatible.
-
-    - **UNKNOWN**: The state could not be recognized.
-
 .. code-block:: json
 
   {
@@ -695,8 +681,7 @@ increased for **incompatible** changes.
                    "Specification-Title": "TR-03124-1",
                    "Specification-Vendor": "Federal Office for Information Security",
                    "Specification-Version": "1.4"
-                  },
-     "AusweisApp": "CONNECTED"
+                  }
   }
 
 
@@ -802,6 +787,9 @@ If a workflow is in progress and a card with disabled eID function was
 inserted, this message will still be sent, but the workflow will be paused
 until a card with enabled eID function is inserted.
 
+.. versionadded:: 2.2.0
+   Parameter **card** signals an **unknown card** with an empty object (:ref:`api_level` 3).
+
 .. versionadded:: 1.24.0
    Parameter **insertable** added.
 
@@ -818,7 +806,8 @@ until a card with enabled eID function is inserted.
   - **keypad**: Indicates whether a card reader has a keypad. The parameter
     is only shown when a reader is attached.
 
-  - **card**: Provides information about inserted card, otherwise null.
+  - **card**: Provides information about an inserted eID card. An empty object is
+    used for an unknown card. Otherwise null.
 
     - **inoperative**: True if PUK is inoperative and cannot unblock PIN,
       otherwise false. This can be recognized if user enters a correct
@@ -831,6 +820,8 @@ until a card with enabled eID function is inserted.
 
     - **retryCounter**: Count of possible retries for the PIN. If you enter a PIN
       with command :ref:`set_pin` it will be decreased if PIN was incorrect.
+
+**eID card:**
 
 .. code-block:: json
 
@@ -848,7 +839,31 @@ until a card with enabled eID function is inserted.
            }
   }
 
+**Unknown card (**:ref:`api_level` **3):**
 
+.. code-block:: json
+
+  {
+    "msg": "READER",
+    "name": "NFC",
+    "insertable": false,
+    "attached": true,
+    "keypad": false,
+    "card": {}
+  }
+
+**No card:**
+
+.. code-block:: json
+
+  {
+    "msg": "READER",
+    "name": "NFC",
+    "insertable": false,
+    "attached": true,
+    "keypad": false,
+    "card": null
+  }
 
 
 .. _reader_list:
@@ -930,6 +945,44 @@ or :ref:`run_change_pin`.
     "progress": 25,
     "state": "ACCESS_RIGHTS"
   }
+
+
+
+
+.. _pause_message:
+
+PAUSE
+^^^^^
+This message will be sent by |AppName| to signal certain waiting conditions.
+E.g. if a card connection cannot be established or maintained due to a bad
+positioning of the card, this message will be send with :ref:`BadCardPosition <bad_card_position>`
+as the cause.
+After the causing issue, denoted be the value of :ref:`cause <pause_cause>`,
+was fixed, the next command should be :ref:`continue_cmd`.
+
+.. versionadded:: 2.2.0
+   The message :ref:`pause_message` was introduced in :ref:`api_level` **3**. The SDK will halt until
+   :ref:`continue_cmd` was sent to acknowledge the condition.
+
+.. _pause_cause:
+
+  - **cause**: The cause for the waiting condition.
+
+.. code-block:: json
+
+  {
+    "msg": "PAUSE",
+    "cause": "BadCardPosition"
+  }
+
+
+The following list of :ref:`causes <pause_cause>` contains all conditions. Each condition is a stable and
+unique string to safely distinguish each waiting condition.
+
+.. _bad_card_position:
+
+  - **BadCardPosition**: Denotes an unstable or lost card connection. After fixing the issue you
+    have to call :ref:`continue_cmd` to go on with the workflow.
 
 
 

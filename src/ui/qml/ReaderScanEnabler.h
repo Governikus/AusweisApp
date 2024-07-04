@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "ReaderManagerPlugInInfo.h"
+#include "ReaderManagerPluginInfo.h"
 
 #include <QQuickItem>
+#include <QtQml/qqmlregistration.h>
 
 class test_ReaderScanEnabler;
 
@@ -17,13 +18,15 @@ class ReaderScanEnabler
 	: public QQuickItem
 {
 	Q_OBJECT
+	QML_ELEMENT
+
 	friend class ::test_ReaderScanEnabler;
 
-	Q_PROPERTY(ReaderManagerPlugInType plugInType READ getPlugInType WRITE setPlugInType NOTIFY firePlugInTypeChanged)
+	Q_PROPERTY(governikus::EnumReaderManagerPluginType::ReaderManagerPluginType pluginType READ getPluginType WRITE setPluginType NOTIFY firePluginTypeChanged)
 	Q_PROPERTY(bool scanRunning READ isScanRunning NOTIFY fireScanRunningChanged)
 
 	private:
-		ReaderManagerPlugInType mPlugInType;
+		ReaderManagerPluginType mPluginType;
 		bool mObligedToStopScan;
 
 		void enableScan(const bool pEnable);
@@ -31,19 +34,19 @@ class ReaderScanEnabler
 		[[nodiscard]] bool isScanRunning() const;
 
 	private Q_SLOTS:
-		void onStatusChanged(const ReaderManagerPlugInInfo& pInfo);
+		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
 
 	public:
 		explicit ReaderScanEnabler(QQuickItem* pParent = nullptr);
 		~ReaderScanEnabler() override;
 
-		[[nodiscard]] ReaderManagerPlugInType getPlugInType() const;
-		void setPlugInType(ReaderManagerPlugInType pPlugInType);
+		[[nodiscard]] ReaderManagerPluginType getPluginType() const;
+		void setPluginType(ReaderManagerPluginType pPluginType);
 		void itemChange(QQuickItem::ItemChange pChange, const QQuickItem::ItemChangeData& pValue) override;
 		Q_INVOKABLE void restartScan();
 
 	Q_SIGNALS:
-		void firePlugInTypeChanged();
+		void firePluginTypeChanged();
 		void fireScanRunningChanged();
 };
 

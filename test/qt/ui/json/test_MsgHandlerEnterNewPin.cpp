@@ -18,13 +18,13 @@
 	#include "context/PersonalizationContext.h"
 #endif
 
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 
 #include <QtPlugin>
 #include <QtTest>
 
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 
 using namespace Qt::Literals::StringLiterals;
@@ -52,7 +52,7 @@ class test_MsgHandlerEnterNewPin
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -67,7 +67,7 @@ class test_MsgHandlerEnterNewPin
 
 		void cleanup()
 		{
-			MockReaderManagerPlugIn::getInstance().removeAllReader();
+			MockReaderManagerPlugin::getInstance().removeAllReader();
 		}
 
 

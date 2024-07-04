@@ -8,7 +8,9 @@
 
 #pragma once
 
+#include "Env.h"
 #include "ReaderConfigurationInfo.h"
+#include "SingletonCreator.h"
 #include "SortedReaderModel.h"
 
 #include <QAbstractTableModel>
@@ -16,20 +18,30 @@
 #include <QList>
 #include <QSet>
 #include <QTime>
+#include <QtQml/qqmlregistration.h>
 
+class test_ReaderModel;
 
 namespace governikus
 {
 
 class ReaderModel
 	: public QAbstractListModel
+	, public SingletonCreator<ReaderModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
+	friend class Env;
+	friend class ::test_ReaderModel;
 
 	Q_PROPERTY(QString lastUpdatedInformation READ getLastUpdatedInformation NOTIFY fireModelChanged)
-	Q_PROPERTY(SortedReaderModel * sortedModel READ getSortedModel CONSTANT)
+	Q_PROPERTY(governikus::SortedReaderModel * sortedModel READ getSortedModel CONSTANT)
 
 	private:
+		ReaderModel();
+
 		QSet<const ReaderConfigurationInfo> mKnownDrivers;
 		QList<ReaderConfigurationInfo> mConnectedReaders;
 		QTime mConnectedReadersUpdateTime;
@@ -44,6 +56,7 @@ class ReaderModel
 		[[nodiscard]] QString getHTMLDescription(const QModelIndex& pIndex) const;
 		[[nodiscard]] bool isSupportedReader(const QModelIndex& pIndex) const;
 		[[nodiscard]] bool isInstalledReader(const QModelIndex& pIndex) const;
+		[[nodiscard]] bool isPcscScanRunning() const;
 
 	private Q_SLOTS:
 		void onUpdateContent();
@@ -59,7 +72,6 @@ class ReaderModel
 			READER_INSTALLED,
 			READER_SUPPORTED
 		};
-		explicit ReaderModel(QObject* pParent = nullptr);
 
 		[[nodiscard]] int rowCount(const QModelIndex& pParent = QModelIndex()) const override;
 		[[nodiscard]] QVariant data(const QModelIndex& pIndex, int pRole = Qt::DisplayRole) const override;

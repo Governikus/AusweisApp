@@ -31,7 +31,7 @@ class PaosHandler
 		void parse();
 		void setParsedObject(PaosMessage* pParsedObject);
 
-		bool handleFoundElement(const QString& pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
+		bool handleFoundElement(QStringView pElementName, const QString& pValue, const QXmlStreamAttributes& pAttributes) override;
 
 	public:
 		explicit PaosHandler(const QByteArray& pXmlData);

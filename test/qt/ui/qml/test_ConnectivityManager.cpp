@@ -32,7 +32,6 @@ class test_ConnectivityManager
 		void test_Active()
 		{
 			ConnectivityManager manager;
-			const QString name = QStringLiteral("name");
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			QSignalSpy signalSpy(&manager, &ConnectivityManager::fireNetworkInterfaceActiveChanged);
 

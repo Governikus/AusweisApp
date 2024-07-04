@@ -16,7 +16,7 @@ Q_DECLARE_LOGGING_CATEGORY(card)
 
 EcdhGenericMapping::EcdhGenericMapping(const QSharedPointer<EC_GROUP>& pCurve)
 	: mCurve(pCurve)
-	, mTerminalKey()
+	, mLocalKey()
 {
 }
 
@@ -27,7 +27,7 @@ const QSharedPointer<EC_GROUP>& EcdhGenericMapping::getCurve() const
 }
 
 
-QByteArray EcdhGenericMapping::generateTerminalMappingData()
+QByteArray EcdhGenericMapping::generateLocalMappingData()
 {
 	if (!mCurve)
 	{
@@ -35,34 +35,34 @@ QByteArray EcdhGenericMapping::generateTerminalMappingData()
 		return QByteArray();
 	}
 
-	mTerminalKey = EcUtil::generateKey(mCurve);
+	mLocalKey = EcUtil::generateKey(mCurve);
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-	return EcUtil::getEncodedPublicKey(mTerminalKey);
+	return EcUtil::getEncodedPublicKey(mLocalKey);
 
 #else
-	return EcUtil::point2oct(mCurve, EC_KEY_get0_public_key(mTerminalKey.data()));
+	return EcUtil::point2oct(mCurve, EC_KEY_get0_public_key(mLocalKey.data()));
 
 #endif
 }
 
 
-bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pCardMappingData,
+bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pRemoteMappingData,
 		const QByteArray& pNonce)
 {
-	QSharedPointer<EC_POINT> cardPubKey = EcUtil::oct2point(mCurve, pCardMappingData);
-	if (cardPubKey == nullptr)
+	QSharedPointer<EC_POINT> remotePubKey = EcUtil::oct2point(mCurve, pRemoteMappingData);
+	if (remotePubKey == nullptr)
 	{
 		return false;
 	}
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-	const QSharedPointer<const EC_POINT> terminalPubKeyPtr = EcUtil::oct2point(mCurve, EcUtil::getEncodedPublicKey(mTerminalKey));
-	const EC_POINT* terminalPubKey = terminalPubKeyPtr.data();
+	const QSharedPointer<const EC_POINT> localPubKeyPtr = EcUtil::oct2point(mCurve, EcUtil::getEncodedPublicKey(mLocalKey));
+	const EC_POINT* localPubKey = localPubKeyPtr.data();
 #else
-	const EC_POINT* terminalPubKey = EC_KEY_get0_public_key(mTerminalKey.data());
+	const EC_POINT* localPubKey = EC_KEY_get0_public_key(mLocalKey.data());
 #endif
-	if (!EC_POINT_cmp(mCurve.data(), terminalPubKey, cardPubKey.data(), nullptr))
+	if (!EC_POINT_cmp(mCurve.data(), localPubKey, remotePubKey.data(), nullptr))
 	{
 		qCCritical(card) << "The exchanged public keys are equal.";
 		return false;
@@ -75,17 +75,17 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pCa
 		return false;
 	}
 
-	return setGenerator(createNewGenerator(cardPubKey, s));
+	return setGenerator(createNewGenerator(remotePubKey, s));
 }
 
 
-QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPointer<const EC_POINT>& pCardPubKey, const QSharedPointer<const BIGNUM>& pS)
+QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPointer<const EC_POINT>& pRemotePubKey, const QSharedPointer<const BIGNUM>& pS)
 {
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-	const auto& privKeyPtr = EcUtil::getPrivateKey(mTerminalKey);
+	const auto& privKeyPtr = EcUtil::getPrivateKey(mLocalKey);
 	const BIGNUM* privKey = privKeyPtr.data();
 #else
-	const BIGNUM* privKey = EC_KEY_get0_private_key(mTerminalKey.data());
+	const BIGNUM* privKey = EC_KEY_get0_private_key(mLocalKey.data());
 #endif
 
 	if (!privKey)
@@ -95,7 +95,7 @@ QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPoi
 	}
 
 	QSharedPointer<EC_POINT> H = EcUtil::create(EC_POINT_new(mCurve.data()));
-	if (!EC_POINT_mul(mCurve.data(), H.data(), nullptr, pCardPubKey.data(), privKey, nullptr))
+	if (!EC_POINT_mul(mCurve.data(), H.data(), nullptr, pRemotePubKey.data(), privKey, nullptr))
 	{
 		qCCritical(card) << "Calculation of elliptic curve point H failed";
 		return QSharedPointer<EC_POINT>();

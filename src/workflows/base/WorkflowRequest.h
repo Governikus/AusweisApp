@@ -52,33 +52,26 @@ class WorkflowRequest final
 		}
 
 	public:
-		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
+		template<typename Controller, typename Context, typename ... Args>
 		static QSharedPointer<WorkflowRequest> create(Args&& ... pArgs)
 		{
 			auto [controller, context] = getGenerator<Controller, Context, Args...>(std::forward<Args>(pArgs) ...);
-			return QSharedPointer<Request>::create(controller, context);
+			return QSharedPointer<WorkflowRequest>::create(controller, context);
 		}
 
 
-		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
+		template<typename Controller, typename Context, typename ... Args>
 		static QSharedPointer<WorkflowRequest> createHandler(const BusyHandler& pBusyHandler, Args&& ... pArgs)
 		{
-			return createHandler<Controller, Context, Request, Args...>(pBusyHandler, QVariant(), std::forward<Args>(pArgs) ...);
+			return createHandler<Controller, Context, Args...>(pBusyHandler, QVariant(), std::forward<Args>(pArgs) ...);
 		}
 
 
-		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
-		static QSharedPointer<WorkflowRequest> createHandler(const QVariant& pData, Args&& ... pArgs)
-		{
-			return createHandler<Controller, Context, Request, Args...>(BusyHandler(), pData, std::forward<Args>(pArgs) ...);
-		}
-
-
-		template<typename Controller, typename Context, typename Request = WorkflowRequest, typename ... Args>
+		template<typename Controller, typename Context, typename ... Args>
 		static QSharedPointer<WorkflowRequest> createHandler(const BusyHandler& pBusyHandler, const QVariant& pData, Args&& ... pArgs)
 		{
 			auto [controller, context] = getGenerator<Controller, Context, Args...>(std::forward<Args>(pArgs) ...);
-			return QSharedPointer<Request>::create(controller, context, pBusyHandler, pData);
+			return QSharedPointer<WorkflowRequest>::create(controller, context, pBusyHandler, pData);
 		}
 
 

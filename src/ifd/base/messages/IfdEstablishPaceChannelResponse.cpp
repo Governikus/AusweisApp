@@ -76,10 +76,7 @@ IfdEstablishPaceChannelResponse::IfdEstablishPaceChannelResponse(const QJsonObje
 
 	parseOutputData(pMessageObject);
 
-	if (getType() != IfdMessageType::IFDEstablishPACEChannelResponse)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishPACEChannelResponse"));
-	}
+	ensureType(IfdMessageType::IFDEstablishPACEChannelResponse);
 }
 
 

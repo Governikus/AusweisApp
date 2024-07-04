@@ -290,10 +290,20 @@
 				{
 					"Platforms": [
 						{
-							"os": "mac"
+							"os": "mac",
+							"max": "13"
 						}
 					],
 					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304856&q=driver#choice5"
+				},
+				{
+					"Platforms": [
+						{
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"URL": "https://help.reiner-sct.com/de/support/solutions/articles/101000502874"
 				},
 				{
 					"Platforms": [
@@ -326,13 +336,26 @@
 							"min": "10.0.20000"
 						},
 						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
+							"DE": "bis macOS 13",
+							"EN": "up to macOS 13",
+							"os": "mac",
+							"max": "13"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
 					"EN": "The card reader is compatible with the installed system driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 14",
+							"EN": "from macOS 14",
+							"os": "mac",
+							"min": "14"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
 				}
 			]
 		},
@@ -941,6 +964,67 @@
 							"EN": "from macOS 14",
 							"os": "mac",
 							"min": "14"
+						}
+					],
+					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
+				}
+			]
+		},
+		{
+			"VendorId": "0x072F",
+			"ProductId": "0x2224",
+			"ProductIds": [
+				"0x2224"
+			],
+			"Name": "ACS ACR1281U-C1",
+			"Pattern": "ACS ACR1281 1S Dual Reader (PICC 0|\\(1\\))",
+			"Icon": "img_ACS_ACR1281U.png",
+			"IconWithNPA": "img_ACS_ACR1281U_mit_ausweis.png",
+			"Drivers": [
+				{
+					"Platforms": [
+						{
+							"os": "win"
+						},
+						{
+							"os": "mac"
+						}
+					],
+					"URL": "https://www.acs.com.hk/en/driver/159/acr1281u-c1-dualboost-ii-usb-dual-interface-reader"
+				}
+			],
+			"Information": [
+				{
+					"Platforms": [
+						{
+							"DE": "Windows",
+							"EN": "Windows",
+							"os": "win"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "bis macOS 12",
+							"EN": "up to macOS 12",
+							"os": "mac",
+							"max": "12"
+						}
+					],
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
+				},
+				{
+					"Platforms": [
+						{
+							"DE": "ab macOS 13",
+							"EN": "from macOS 13",
+							"os": "mac",
+							"min": "13"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",

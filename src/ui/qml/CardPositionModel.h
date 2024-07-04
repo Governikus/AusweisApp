@@ -13,6 +13,7 @@
 #include <QList>
 #include <QObject>
 #include <QTimer>
+#include <QtQml/qqmlregistration.h>
 
 class test_CardPositionModel;
 
@@ -23,6 +24,8 @@ class CardPositionModel
 	: public QObject
 {
 	Q_OBJECT
+	QML_ELEMENT
+
 	friend class ::test_CardPositionModel;
 
 	Q_PROPERTY(int count READ getCardPositionCount CONSTANT)

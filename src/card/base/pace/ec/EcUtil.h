@@ -24,6 +24,8 @@ namespace governikus
 class EcUtil
 {
 	public:
+		static QByteArray compressPoint(const QByteArray& pPoint);
+
 		static QByteArray point2oct(const QSharedPointer<const EC_GROUP>& pCurve, const EC_POINT* pPoint, bool pCompressed = false);
 
 		static QSharedPointer<EC_POINT> oct2point(const QSharedPointer<const EC_GROUP>& pCurve, const QByteArray& pCompressedData);

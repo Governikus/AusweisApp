@@ -24,10 +24,8 @@ class InitializeFrameworkResponse
 	private:
 		SupportedAPI mSupportedAPI;
 
-		void createVersionElement();
-		void createInitializeFrameworkResponse();
-
-		void createBodyElement() override;
+		void createBodyElement(QXmlStreamWriter& pWriter) override;
+		void createVersionElement(QXmlStreamWriter& pWriter) const;
 
 	public:
 		InitializeFrameworkResponse();

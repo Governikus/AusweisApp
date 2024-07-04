@@ -99,10 +99,7 @@ IfdTransmit::IfdTransmit(const QJsonObject& pMessageObject)
 		mDisplayText = getStringValue(pMessageObject, DISPLAY_TEXT());
 	}
 
-	if (getType() != IfdMessageType::IFDTransmit)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDTransmit"));
-	}
+	ensureType(IfdMessageType::IFDTransmit);
 }
 
 

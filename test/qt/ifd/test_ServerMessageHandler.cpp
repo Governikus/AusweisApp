@@ -14,6 +14,8 @@
 #include "ServerMessageHandlerImpl.h"
 #include "messages/IfdConnect.h"
 #include "messages/IfdConnectResponse.h"
+#include "messages/IfdDestroyPaceChannel.h"
+#include "messages/IfdDestroyPaceChannelResponse.h"
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
 #include "messages/IfdError.h"
@@ -26,15 +28,14 @@
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
 
-#include "MockCardConnectionWorker.h"
 #include "MockDataChannel.h"
-#include "MockReaderManagerPlugIn.h"
+#include "MockReaderManagerPlugin.h"
 #include "TestFileHelper.h"
 
 #include <QSignalSpy>
 #include <QtTest>
 
-Q_IMPORT_PLUGIN(MockReaderManagerPlugIn)
+Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -82,7 +83,7 @@ class test_ServerMessageHandler
 		void removeReaderAndConsumeMessages(const QString& pReaderName)
 		{
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
-			MockReaderManagerPlugIn::getInstance().removeReader(pReaderName);
+			MockReaderManagerPlugin::getInstance().removeReader(pReaderName);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
@@ -116,7 +117,7 @@ class test_ServerMessageHandler
 		void initTestCase()
 		{
 			Env::getSingleton<LogHandler>()->init();
-			const auto readerManager = Env::getSingleton<ReaderManager>();
+			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
@@ -267,7 +268,7 @@ class test_ServerMessageHandler
 			ensureContext(contextHandle);
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
-			MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			sendSpy.clear();
 
@@ -301,12 +302,12 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
 
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -363,11 +364,11 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -424,11 +425,11 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -487,11 +488,11 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -550,11 +551,11 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -625,13 +626,13 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig({
 						{CardReturnCode::OK, QByteArray("9000")}
 					}));
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -693,11 +694,11 @@ class test_ServerMessageHandler
 
 			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
 
-			MockReader* reader = MockReaderManagerPlugIn::getInstance().addReader("test-reader"_L1);
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
 			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
 			reader->setCard(MockCardConfig());
 			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
-			const CardInfo cardInfo(CardType::EID_CARD, QSharedPointer<const EFCardAccess>(), 3, true);
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
 			ReaderInfo info = reader->getReaderInfo();
 			info.setCardInfo(cardInfo);
 			reader->setReaderInfo(info);
@@ -741,7 +742,82 @@ class test_ServerMessageHandler
 			QVERIFY(ifdEstablishPACEChannelResponse.resultHasError());
 			QCOMPARE(ifdEstablishPACEChannelResponse.getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
 
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("EstablishPaceChannel is only available in pin pad mode.")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"EstablishPaceChannel\" is only available in pin pad mode.")));
+
+			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(pinpadModeToSave);
+		}
+
+
+		void test_handleDestroyPaceChannel()
+		{
+			const bool pinpadModeToSave = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
+
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
+			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
+			QString contextHandle;
+			ensureContext(contextHandle);
+
+			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
+
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			reader->setCard(MockCardConfig({
+						{CardReturnCode::OK, QByteArray("6700")}
+					}));
+			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
+			ReaderInfo info = reader->getReaderInfo();
+			info.setCardInfo(cardInfo);
+			reader->setReaderInfo(info);
+			QTRY_COMPARE(sendSpy.count(), 3); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+
+			mDataChannel->onReceived(IfdDestroyPaceChannel(QStringLiteral("invalidSlotHandle")).toByteArray(IfdVersion::Version::latest, contextHandle));
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
+			const auto& msg0 = mDispatcher->getMessage().staticCast<const IfdDestroyPaceChannelResponse>();
+			QCOMPARE(msg0->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+
+			const QByteArray ifdConnectMsg = IfdConnect(QStringLiteral("test-reader"), true).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdConnectMsg);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+
+			const QList<QVariant>& connectResponseArguments = sendSpy.takeLast();
+			const QVariant connectResponseVariant = connectResponseArguments.at(0);
+			QVERIFY(connectResponseVariant.canConvert<QByteArray>());
+
+			const IfdConnectResponse connectResponse(IfdMessage::parseByteArray(connectResponseVariant.toByteArray()));
+			QVERIFY(!connectResponse.isIncomplete());
+			QCOMPARE(connectResponse.getType(), IfdMessageType::IFDConnectResponse);
+			QCOMPARE(connectResponse.getContextHandle(), contextHandle);
+			QVERIFY(!connectResponse.getSlotHandle().isEmpty());
+			QVERIFY(!connectResponse.resultHasError());
+			QCOMPARE(connectResponse.getResultMinor(), ECardApiResult::Minor::null);
+
+			const QByteArray ifdDestroyPace = IfdDestroyPaceChannel(connectResponse.getSlotHandle()).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdDestroyPace);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"DestroyPaceChannel\" is only available in pin pad mode.")));
+			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDDestroyPACEChannelResponse);
+			const auto& msg1 = mDispatcher->getMessage().staticCast<const IfdDestroyPaceChannelResponse>();
+			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
+			QCOMPARE(msg1->getSlotHandle(), connectResponse.getSlotHandle());
+
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(true);
+			mDataChannel->onReceived(ifdDestroyPace);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Destroying PACE channel")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Destroying PACE channel with invalid command causing 6700 as return code")));
+			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDDestroyPACEChannelResponse);
+			const auto& msg2 = mDispatcher->getMessage().staticCast<const IfdDestroyPaceChannelResponse>();
+			QCOMPARE(msg2->getResultMinor(), ECardApiResult::Minor::null);
+			QCOMPARE(msg2->getSlotHandle(), connectResponse.getSlotHandle());
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(pinpadModeToSave);
@@ -750,35 +826,70 @@ class test_ServerMessageHandler
 
 		void test_handleIfdModifyPin()
 		{
-			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
-			const QByteArray message("{\n"
-									 "    \"ContextHandle\": \"TestContext\",\n"
-									 "    \"InputData\": \"abcd1234\",\n"
-									 "    \"SlotHandle\": \"SlotHandle\",\n"
-									 "    \"msg\": \"IFDModifyPIN\"\n"
-									 "}\n");
+			const bool pinpadModeToSave = Env::getSingleton<AppSettings>()->getRemoteServiceSettings().getPinPadMode();
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
 
-			const QJsonObject& obj = QJsonDocument::fromJson(message).object();
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			ServerMessageHandlerImpl serverMsgHandler(mDataChannel);
 			QSignalSpy spyModifyPin(&serverMsgHandler, &ServerMessageHandler::fireModifyPin);
 			QString contextHandle;
 			ensureContext(contextHandle);
 
-			QVERIFY(!TestFileHelper::containsLog(logSpy, QLatin1String("ModifyPin is only available in pin pad mode.")));
-			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(false);
-			Q_EMIT mDispatcher->fireReceived(IfdMessageType::IFDModifyPIN, obj, QString());
+			QSignalSpy sendSpy(mDataChannel.data(), &MockDataChannel::fireSend);
+
+			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("test-reader"_L1);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			reader->setCard(MockCardConfig());
+			QTRY_COMPARE(sendSpy.count(), 2); // clazy:exclude=qstring-allocations
+			const CardInfo cardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), 3, true);
+			ReaderInfo info = reader->getReaderInfo();
+			info.setCardInfo(cardInfo);
+			reader->setReaderInfo(info);
+			QTRY_COMPARE(sendSpy.count(), 3); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+
+			mDataChannel->onReceived(IfdModifyPin(QStringLiteral("invalidSlotHandle"), QByteArray::fromHex("abcd1234")).toByteArray(IfdVersion::Version::latest, contextHandle));
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
+			const auto& msg0 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
+			QCOMPARE(msg0->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
+			QCOMPARE(spyModifyPin.count(), 0);
+
+			const QByteArray ifdConnectMsg = IfdConnect(QStringLiteral("test-reader"), true).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdConnectMsg);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+
+			const QList<QVariant>& connectResponseArguments = sendSpy.takeLast();
+			const QVariant connectResponseVariant = connectResponseArguments.at(0);
+			QVERIFY(connectResponseVariant.canConvert<QByteArray>());
+
+			const IfdConnectResponse connectResponse(IfdMessage::parseByteArray(connectResponseVariant.toByteArray()));
+			QVERIFY(!connectResponse.isIncomplete());
+			QCOMPARE(connectResponse.getType(), IfdMessageType::IFDConnectResponse);
+			QCOMPARE(connectResponse.getContextHandle(), contextHandle);
+			QVERIFY(!connectResponse.getSlotHandle().isEmpty());
+			QVERIFY(!connectResponse.resultHasError());
+			QCOMPARE(connectResponse.getResultMinor(), ECardApiResult::Minor::null);
+
+			const QByteArray ifdModifyPin = IfdModifyPin(connectResponse.getSlotHandle(), QByteArray::fromHex("abcd1234")).toByteArray(IfdVersion::Version::latest, contextHandle);
+			mDataChannel->onReceived(ifdModifyPin);
+			QTRY_COMPARE(sendSpy.count(), 1); // clazy:exclude=qstring-allocations
+			sendSpy.clear();
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("\"ModifyPin\" is only available in pin pad mode.")));
 			QCOMPARE(mDispatcher->getMessage()->getType(), IfdMessageType::IFDModifyPINResponse);
 			const auto& msg1 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
 			QCOMPARE(msg1->getResultMinor(), ECardApiResult::Minor::AL_Unknown_Error);
-			QCOMPARE(msg1->getSlotHandle(), "SlotHandle"_L1);
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("ModifyPin is only available in pin pad mode.")));
+			QCOMPARE(msg1->getSlotHandle(), connectResponse.getSlotHandle());
+			QCOMPARE(spyModifyPin.count(), 0);
 
-			QVERIFY(!TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
 			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(true);
-			Q_EMIT mDispatcher->fireReceived(IfdMessageType::IFDModifyPIN, obj, QString());
-			const auto& msg2 = mDispatcher->getMessage().staticCast<const IfdModifyPinResponse>();
-			QCOMPARE(msg2->getResultMinor(), ECardApiResult::Minor::IFDL_InvalidSlotHandle);
-			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Card is not connected")));
+			mDataChannel->onReceived(ifdModifyPin);
+			QCOMPARE(spyModifyPin.count(), 1);
+
+			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
+			Env::getSingleton<AppSettings>()->getRemoteServiceSettings().setPinPadMode(pinpadModeToSave);
 		}
 
 

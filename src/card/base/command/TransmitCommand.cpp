@@ -12,7 +12,9 @@
 
 #include <algorithm>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 using namespace governikus;
 

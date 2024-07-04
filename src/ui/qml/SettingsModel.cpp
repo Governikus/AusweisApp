@@ -27,13 +27,15 @@ SettingsModel::SettingsModel()
 	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
 
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-
 	connect(&generalSettings, &GeneralSettings::fireShowInAppNotificationsChanged, this, &SettingsModel::fireShowInAppNotificationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDeveloperOptionsChanged, this, &SettingsModel::fireDeveloperOptionsChanged);
 	connect(&generalSettings, &GeneralSettings::fireProxyChanged, this, &SettingsModel::fireUseCustomProxyChanged);
 	connect(&generalSettings, &GeneralSettings::fireUseSystemFontChanged, this, &SettingsModel::fireUseSystemFontChanged);
 	connect(&generalSettings, &GeneralSettings::fireUseAnimationsChanged, this, &SettingsModel::fireUseAnimationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
+
+	const auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
+	connect(&simulatorSettings, &SimulatorSettings::fireEnabledChanged, this, &SettingsModel::fireSimulatorChanged);
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -182,23 +184,6 @@ void SettingsModel::setShowAccessRights(bool pShowAccessRights)
 }
 
 
-bool SettingsModel::isUseScreenKeyboard() const
-{
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().isUseScreenKeyboard();
-}
-
-
-void SettingsModel::setUseScreenKeyboard(bool pUseScreenKeyboard)
-{
-	if (isUseScreenKeyboard() != pUseScreenKeyboard)
-	{
-		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		settings.setUseScreenKeyboard(pUseScreenKeyboard);
-		Q_EMIT fireScreenKeyboardChanged();
-	}
-}
-
-
 bool SettingsModel::isVisualPrivacy() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isVisualPrivacy();
@@ -269,7 +254,7 @@ void SettingsModel::setSkipRightsOnCanAllowed(bool pSkipRightsOnCanAllowed)
 
 bool SettingsModel::isSimulatorEnabled() const
 {
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().isSimulatorEnabled();
+	return Env::getSingleton<AppSettings>()->getSimulatorSettings().isEnabled();
 }
 
 
@@ -277,8 +262,8 @@ void SettingsModel::setSimulatorEnabled(bool pEnabled) const
 {
 	if (isSimulatorEnabled() != pEnabled)
 	{
-		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		settings.setSimulatorEnabled(pEnabled);
+		auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
+		simulatorSettings.setEnabled(pEnabled);
 	}
 }
 
@@ -549,7 +534,7 @@ void SettingsModel::setUseAnimations(bool pUseAnimations) const
 }
 
 
-ModeOption SettingsModel::getDarkMode() const
+SettingsModel::ModeOption SettingsModel::getDarkMode() const
 {
 	return Enum<ModeOption>::fromString(
 			Env::getSingleton<AppSettings>()->getGeneralSettings().getDarkMode(),

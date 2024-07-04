@@ -189,88 +189,12 @@ elseif(IOS)
 
 
 elseif(ANDROID)
-	set(ANDROID_PACKAGE_SRC_DIR ${PROJECT_BINARY_DIR}/package-src-dir)
-	set(ANDROID_DEST libs/${CMAKE_ANDROID_ARCH_ABI})
-	set(PERMISSIONS PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-	install(TARGETS AusweisAppBinary DESTINATION ${ANDROID_DEST} ${PERMISSIONS} COMPONENT Application)
-
-	set(RESOURCES_IMG_ANDROID_DIR ${RESOURCES_DIR}/images/android)
-	if(BUILD_PREVIEW)
-		set(ANDROID_LAUNCHER_ICON "npa_preview.png")
-		set(ANDROID_SPLASH_SCREEN_ICON_NAME "splash_npa_preview.png")
-	elseif(IS_BETA_VERSION)
-		set(ANDROID_LAUNCHER_ICON "npa_beta.png")
-		set(ANDROID_SPLASH_SCREEN_ICON_NAME "splash_npa_beta.png")
-	else()
-		set(ANDROID_LAUNCHER_ICON "npa.png")
-		set(ANDROID_SPLASH_SCREEN_ICON_NAME "splash_npa.png")
-	endif()
-
 	if(INTEGRATED_SDK)
-		set(ANDROID_MANIFEST AndroidManifest.xml.aar.in)
-		foreach(entry network/WifiInfo ui/aidl/AidlBinder android/LogHandler android/BootstrapHelper android/AusweisApp2Service android/AusweisApp2LocalIfdServiceConnection)
-			set(_java_file "${SRC_DIR}/${entry}.java")
-			if(NOT EXISTS "${_java_file}")
-				message(FATAL_ERROR "Cannot find file: ${_java_file}")
-			endif()
-			list(APPEND JAVA_FILES "${_java_file}")
-		endforeach()
-
-		install(FILES ${PACKAGING_DIR}/android/res/values/strings.xml DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/values COMPONENT Runtime)
-	else()
-		set(ANDROID_MANIFEST AndroidManifest.xml.apk.in)
-
-		if(USE_SMARTEID)
-			set(LOCAL_IFD_SERVICE_ENABLED true)
-		else()
-			set(LOCAL_IFD_SERVICE_ENABLED false)
-		endif()
-
-		foreach(entry ldpi mdpi hdpi xhdpi xxhdpi xxxhdpi)
-			install(FILES ${RESOURCES_IMG_ANDROID_DIR}/${entry}/background_npa.png DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/mipmap-${entry} COMPONENT Runtime RENAME npa_background.png)
-			install(FILES ${RESOURCES_IMG_ANDROID_DIR}/${entry}/foreground_${ANDROID_LAUNCHER_ICON} DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/mipmap-${entry} COMPONENT Runtime RENAME npa_foreground.png)
-			install(FILES ${RESOURCES_IMG_ANDROID_DIR}/${entry}/monochrome_${ANDROID_LAUNCHER_ICON} DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/mipmap-${entry} COMPONENT Runtime RENAME npa_monochrome.png)
-			install(FILES ${RESOURCES_IMG_ANDROID_DIR}/${entry}/${ANDROID_SPLASH_SCREEN_ICON_NAME} DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/res/drawable-${entry} COMPONENT Runtime RENAME splash_npa.png)
-		endforeach()
-
-		install(DIRECTORY ${PACKAGING_DIR}/android/res DESTINATION ${ANDROID_PACKAGE_SRC_DIR} COMPONENT Runtime)
-
-		file(GLOB_RECURSE JAVA_FILES "${SRC_DIR}/*.java")
+		add_custom_command(TARGET AusweisAppBinary POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:AusweisAppBinary>" "${ANDROID_BUILD_DIR}/libs/${CMAKE_ANDROID_ARCH_ABI}/$<TARGET_FILE_NAME:AusweisAppBinary>"
+		)
 	endif()
 
-	install(FILES ${JAVA_FILES} DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/src COMPONENT Runtime)
-	install(FILES ${PACKAGING_DIR}/android/IAusweisApp2Sdk.aidl DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/src/com/governikus/ausweisapp2/ COMPONENT Runtime)
-	install(FILES ${PACKAGING_DIR}/android/IAusweisApp2SdkCallback.aidl DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/src/com/governikus/ausweisapp2/ COMPONENT Runtime)
-
-	set(ANDROID_VERSION_NAME ${VERSION_DVCS})
-	configure_file(${PACKAGING_DIR}/android/${ANDROID_MANIFEST} ${ANDROID_PACKAGE_SRC_DIR}/AndroidManifest.xml @ONLY)
-	if(INTEGRATED_SDK)
-		set(QML_ROOT_PATH [])
-		set(ANDROID_ROOT_LOGGER "java")
-	else()
-		set(QML_ROOT_PATH [\"${RESOURCES_DIR}/qml\"])
-		set(ANDROID_ROOT_LOGGER "")
-		configure_file(${PACKAGING_DIR}/android/fileprovider.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/fileprovider.xml COPYONLY)
-		configure_file(${PACKAGING_DIR}/android/full_backup_content.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/full_backup_content.xml COPYONLY)
-		configure_file(${PACKAGING_DIR}/android/data_extraction_rules.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/data_extraction_rules.xml COPYONLY)
-	endif()
-
-	set(ANDROID_SO_NAME libAusweisApp_${CMAKE_ANDROID_ARCH_ABI}.so)
-	set(ANDROID_APP_BINARY "${CMAKE_INSTALL_PREFIX}/${ANDROID_DEST}/${ANDROID_SO_NAME}")
-	set(SYMBOL_FOLDER "${CMAKE_BINARY_DIR}/debug.symbols")
-	set(ANDROID_APP_SYMBOLS "${SYMBOL_FOLDER}/${ANDROID_SO_NAME}")
-
-	install(CODE
-		"
-		execute_process(COMMAND \"${CMAKE_COMMAND}\" -E make_directory \"${SYMBOL_FOLDER}\")
-		execute_process(COMMAND \"${CMAKE_OBJCOPY}\" \"--only-keep-debug\" \"${ANDROID_APP_BINARY}\" \"${ANDROID_APP_SYMBOLS}\")
-		" COMPONENT Runtime)
-
-	set(ANDROID_DEPLOYMENT_SETTINGS ${PROJECT_BINARY_DIR}/libAusweisApp.so-deployment-settings.json CACHE INTERNAL "apk deployment" FORCE)
-	configure_file(${PACKAGING_DIR}/android/libAusweisApp.so-deployment-settings.json.in ${ANDROID_DEPLOYMENT_SETTINGS} @ONLY)
-	configure_file(${PACKAGING_DIR}/android/gradle.properties.in ${CMAKE_INSTALL_PREFIX}/gradle.properties @ONLY)
-
-	set(DEFAULT_FILE_DESTINATION ${ANDROID_PACKAGE_SRC_DIR}/assets)
 
 elseif(UNIX)
 	if(BUILD_SHARED_LIBS)
@@ -320,7 +244,7 @@ if(LINUX OR WIN32 OR MAC)
 endif()
 
 
-if(NOT INTEGRATED_SDK OR CONTAINER_SDK)
+if((NOT INTEGRATED_SDK OR CONTAINER_SDK) AND NOT ANDROID)
 	# resources file
 	install(FILES ${RCC} DESTINATION ${DEFAULT_FILE_DESTINATION} COMPONENT Runtime)
 endif()

@@ -4,7 +4,7 @@
 
 #include "StateStartPaosResponse.h"
 
-#include "SurveyModel.h"
+#include "Survey.h"
 
 using namespace governikus;
 
@@ -31,7 +31,7 @@ void StateStartPaosResponse::run()
 	}
 
 	const ECardApiResult& result = startPaosResponse->getResult();
-	Env::getSingleton<SurveyModel>()->setAuthWasSuccessful(result.isOk());
+	Env::getSingleton<Survey>()->setAuthWasSuccessful(result.isOk());
 	if (result.isOk())
 	{
 		Q_EMIT fireContinue();

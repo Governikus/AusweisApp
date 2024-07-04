@@ -10,6 +10,12 @@
 using namespace governikus;
 
 
+LanguageString::LanguageString()
+	: LanguageString(QString())
+{
+}
+
+
 LanguageString::LanguageString(const QJsonValue& pJson)
 {
 	if (!pJson.isObject())

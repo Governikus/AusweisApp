@@ -148,7 +148,7 @@ QSharedPointer<QNetworkReply> NetworkManager::processUpdaterRequest(QNetworkRequ
 {
 	QSharedPointer<QNetworkReply> response = processRequest(pRequest, [pInvoke] (QNetworkRequest& request){
 			auto cfg = request.sslConfiguration();
-			cfg.setCaCertificates(Env::getSingleton<SecureStorage>()->getUpdateCertificates().toList());
+			cfg.setCaCertificates(Env::getSingleton<SecureStorage>()->getUpdateCertificates());
 			request.setSslConfiguration(cfg);
 			return pInvoke(request);
 		});
@@ -360,6 +360,8 @@ bool NetworkManager::prepareConnection(QNetworkRequest& pRequest) const
 		pRequest.setSslConfiguration(cfg);
 	}
 
+	pRequest.setAttribute(QNetworkRequest::Http2AllowedAttribute, false);
+
 	return true;
 }
 
@@ -425,9 +427,9 @@ int NetworkManager::getLoggedStatusCode(const QSharedPointer<const QNetworkReply
 
 	const int statusCode = pReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	pLogger.debug() << "Status Code:" << statusCode << getStatusMessage(statusCode);
-	for (const auto& header : pReply->rawHeaderPairs())
+	for (const auto& [key, value] : pReply->rawHeaderPairs())
 	{
-		pLogger.debug().nospace().noquote() << "Header | " << header.first << ": " << header.second;
+		pLogger.debug().nospace().noquote() << "Header | " << key << ": " << value;
 	}
 	return statusCode;
 }

@@ -29,7 +29,7 @@ function(ADD_FLAG)
 	endif()
 
 	if(NOT _PARAM_LINK_VAR)
-		set(_PARAM_LINK_VAR CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS)
+		set(_PARAM_LINK_VAR CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS)
 	endif()
 
 	if(_PARAM_LINK)
@@ -109,34 +109,6 @@ function(GET_PUBLIC_HEADER _target _out)
 endfunction()
 
 
-function(QUERY_QMAKE _out _var)
-	if(NOT TARGET ${Qt}::qmake)
-		message(WARNING "qmake not found")
-		return()
-	endif()
-
-	get_target_property(qmake_bin ${Qt}::qmake LOCATION)
-
-	if (IOS OR ANDROID)
-		find_file(TARGET_QT_CONF target_qt.conf PATH_SUFFIXES /bin CMAKE_FIND_ROOT_PATH_BOTH)
-		if(NOT TARGET_QT_CONF)
-			message(FATAL_ERROR "Could not find target_qt.conf")
-		endif()
-
-		set(QT_CONFIG -qtconf ${TARGET_QT_CONF})
-	endif()
-
-execute_process(COMMAND "${qmake_bin}" ${QT_CONFIG} -query ${_var}
-		RESULT_VARIABLE _result
-		OUTPUT_VARIABLE _output
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-	if(_result EQUAL 0)
-		set(${_out} "${_output}" PARENT_SCOPE)
-	endif()
-endfunction()
-
-
 function(GET_FILE_MATCHER _result_remove _result_keep)
 	if(NOT ANDROID)
 		list(APPEND matcher_remove "_android")
@@ -204,7 +176,7 @@ endfunction()
 function(ADD_PLATFORM_LIBRARY _name)
 	set(options)
 	set(oneValueArgs)
-	set(multiValueArgs PATH)
+	set(multiValueArgs PATH EXCLUDE)
 	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	GET_FILE_EXTENSIONS(FILE_EXTENSIONS PATH ${_PARAM_PATH})
@@ -214,6 +186,21 @@ function(ADD_PLATFORM_LIBRARY _name)
 
 	foreach(file ${FILES})
 		string(REPLACE "${CMAKE_SOURCE_DIR}" "" file_stripped "${file}")
+
+		if(_PARAM_EXCLUDE)
+			set(skip_file FALSE)
+			foreach(exclude ${_PARAM_EXCLUDE})
+				if(file_stripped MATCHES "${exclude}")
+					set(skip_file TRUE)
+					break()
+				endif()
+			endforeach()
+
+			if(skip_file)
+				list(REMOVE_ITEM FILES "${file}")
+				continue()
+			endif()
+		endif()
 
 		set(keep FALSE)
 		foreach(match ${matcher_keep})
@@ -414,6 +401,25 @@ function(map_get_value _var _map _key)
 	set(${_var} ${${_map}_${_key}} PARENT_SCOPE)
 endfunction()
 
+function(configure_files _path _pattern _destination)
+	set(options FLATTEN)
+	set(oneValueArgs)
+	set(multiValueArgs)
+	cmake_parse_arguments(_PARAM "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	foreach(pattern ${_pattern})
+		file(GLOB_RECURSE files RELATIVE "${_path}" "${_path}/${pattern}")
+		foreach(entry ${files})
+			if(_PARAM_FLATTEN)
+				get_filename_component(destEntry "${entry}" NAME)
+			else()
+				set(destEntry ${entry})
+			endif()
+
+			configure_file("${_path}/${entry}" "${_destination}/${destEntry}" COPYONLY)
+		endforeach()
+	endforeach()
+endfunction()
 
 if(WIN32)
 	if(WIN_SIGN_SUBJECT_NAME OR (WIN_SIGN_KEYSTORE AND WIN_SIGN_KEYSTORE_PSW))

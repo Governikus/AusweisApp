@@ -63,7 +63,7 @@ class test_StateConnectCard
 
 		void init()
 		{
-			mReaderInfo = ReaderInfo("test"_L1, ReaderManagerPlugInType::UNKNOWN, CardInfo(CardType::EID_CARD));
+			mReaderInfo = ReaderInfo("test"_L1, ReaderManagerPluginType::UNKNOWN, CardInfo(CardType::EID_CARD));
 
 			mContext.reset(new TestWorkflowContext());
 			mState.reset(new StateConnectCard(mContext));
@@ -144,7 +144,7 @@ class test_StateConnectCard
 
 			mState->onEntry(nullptr);
 
-			Q_EMIT mContext->fireReaderPlugInTypesChanged();
+			Q_EMIT mContext->fireReaderPluginTypesChanged();
 			QCOMPARE(spyRetry.count(), 1);
 		}
 

@@ -324,9 +324,9 @@ class test_SecureStorage
 		void testMinKeySizes()
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
-			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
-			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Dsa), 2000);
-			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Dh), 2000);
+			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Rsa), 3000);
+			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Dsa), 3000);
+			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Dh), 3000);
 			QCOMPARE(secureStorage->getMinimumKeySize(QSsl::KeyAlgorithm::Ec), 250);
 		}
 
@@ -459,7 +459,7 @@ class test_SecureStorage
 		{
 			const auto secureStorage = Env::getSingleton<SecureStorage>();
 
-			QCOMPARE(secureStorage->getIfdCreateSize(), 2048);
+			QCOMPARE(secureStorage->getIfdCreateSize(), 3072);
 			QCOMPARE(secureStorage->getMinimumIfdKeySize(QSsl::KeyAlgorithm::Rsa), 2000);
 			QCOMPARE(secureStorage->getMinimumIfdKeySize(QSsl::KeyAlgorithm::Dsa), 2000);
 			QCOMPARE(secureStorage->getMinimumIfdKeySize(QSsl::KeyAlgorithm::Dh), 2000);

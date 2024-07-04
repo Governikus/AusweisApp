@@ -27,11 +27,7 @@ class test_QmlFileStructure
 			QDirIterator iterator(QStringLiteral(":"), {QStringLiteral("*.qml")}, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 			while (iterator.hasNext())
 			{
-				const auto& file = iterator.next();
-				if (!file.endsWith(QStringLiteral("main.qml")))
-				{
-					mQmlFiles += file;
-				}
+				mQmlFiles << iterator.next();
 			}
 		}
 

@@ -77,6 +77,30 @@ bool AuthModel::getShowChangePinView() const
 }
 
 
+QString AuthModel::getResultHeader() const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+
+	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	{
+		//: LABEL ALL_PLATFORMS
+		return tr("Redirect failed");
+	}
+
+	if (mContext->getStatus().isError())
+	{
+		//: LABEL ALL_PLATFORMS
+		return tr("Authentication failed");
+	}
+
+	//: LABEL ALL_PLATFORMS
+	return tr("Authentication successful");
+}
+
+
 QString AuthModel::getErrorHeader() const
 {
 	if (!mContext || mContext->getTcTokenUrl().isEmpty())
@@ -119,6 +143,56 @@ QString AuthModel::getErrorText() const
 QString AuthModel::getStatusCodeString() const
 {
 	return getEnumName(getStatusCode());
+}
+
+
+QString AuthModel::getResultViewButtonIcon() const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+
+	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	{
+		return QStringLiteral("qrc:///images/open_website.svg");
+	}
+
+	return QString();
+}
+
+
+QString AuthModel::getResultViewButtonText() const
+{
+	if (!mContext)
+	{
+		return QString();
+	}
+
+	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	{
+		//: LABEL ALL_PLATFORMS
+		return tr("Back to provider");
+	}
+
+	//: LABEL ALL_PLATFORMS
+	return tr("Back to start page");
+}
+
+
+QUrl AuthModel::getResultViewButtonLink() const
+{
+	if (!mContext)
+	{
+		return QUrl();
+	}
+
+	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	{
+		return mContext->getRefreshUrl();
+	}
+
+	return QUrl();
 }
 
 

@@ -16,7 +16,7 @@
 #include <QSharedPointer>
 #include <QTimer>
 
-class test_UIPlugInWebService;
+class test_UiPluginWebService;
 
 namespace governikus
 {
@@ -33,7 +33,7 @@ class HttpServerRequestor
 	: public QObject
 {
 	Q_OBJECT
-	friend class ::test_UIPlugInWebService;
+	friend class ::test_UiPluginWebService;
 
 	private:
 		QPointer<NetworkManager> mNetworkManager;

@@ -4,16 +4,21 @@
 
 #include "SimulatorReader.h"
 
+#include "AppSettings.h"
 #include "Env.h"
 #include "VolatileSettings.h"
+
 
 using namespace governikus;
 
 
+Q_DECLARE_LOGGING_CATEGORY(card_simulator)
+
+
 SimulatorReader::SimulatorReader()
-	: ConnectableReader(ReaderManagerPlugInType::SIMULATOR, QStringLiteral("Simulator"))
+	: ConnectableReader(ReaderManagerPluginType::SIMULATOR, QStringLiteral("Simulator"))
 {
-	setInfoBasicReader(false);
+	setInfoBasicReader(Env::getSingleton<AppSettings>()->getSimulatorSettings().isBasicReader());
 }
 
 
@@ -27,7 +32,7 @@ void SimulatorReader::insertCard(const QVariant& pData)
 {
 	if (getReaderInfo().hasCard())
 	{
-		qCDebug(card) << "Already inserted";
+		qCDebug(card_simulator) << "Already inserted";
 		return;
 	}
 
@@ -37,13 +42,14 @@ void SimulatorReader::insertCard(const QVariant& pData)
 	mCard.reset(new SimulatorCard(filesystem));
 	fetchCardInfo();
 
+	qCInfo(card_simulator) << "Card inserted:" << getReaderInfo().getCardInfo();
 	Q_EMIT fireCardInserted(getReaderInfo());
 }
 
 
 void SimulatorReader::connectReader()
 {
-	qCDebug(card) << "targetDetected, type: Simulator";
+	qCDebug(card_simulator) << "targetDetected, type: Simulator";
 
 	setInfoCardInfo(CardInfo(CardType::EID_CARD));
 	shelveCard();
@@ -63,10 +69,12 @@ void SimulatorReader::disconnectReader(const QString& pError)
 
 	if (mCard)
 	{
-		qCDebug(card) << "targetLost, type: Simulator";
+		qCDebug(card_simulator) << "targetLost, type: Simulator";
 
 		mCard.reset();
 		removeCardInfo();
+
+		qCInfo(card_simulator) << "Card removed";
 		Q_EMIT fireCardRemoved(getReaderInfo());
 	}
 }

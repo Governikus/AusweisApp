@@ -2,10 +2,6 @@
  * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Implementation of Reader for Simulator.
- */
-
 #pragma once
 
 #include "Reader.h"

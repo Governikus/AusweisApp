@@ -82,10 +82,7 @@ IfdEstablishPaceChannel::IfdEstablishPaceChannel(const QJsonObject& pMessageObje
 		mExpectedPinLength = getIntValue(pMessageObject, EXPECTED_PIN_LENGTH(), 0);
 	}
 
-	if (getType() != IfdMessageType::IFDEstablishPACEChannel)
-	{
-		markIncomplete(QStringLiteral("The value of msg should be IFDEstablishPACEChannel"));
-	}
+	ensureType(IfdMessageType::IFDEstablishPACEChannel);
 }
 
 

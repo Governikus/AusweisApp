@@ -4,15 +4,24 @@
 
 #pragma once
 
+#include "Env.h"
+#include "SingletonCreator.h"
+
 #include <QObject>
+#include <QtQml/qqmlregistration.h>
 
 namespace governikus
 {
 
 class PinResetInformationModel
 	: public QObject
+	, public SingletonCreator<PinResetInformationModel>
 {
 	Q_OBJECT
+	QML_ELEMENT
+	QML_SINGLETON
+
+	friend class Env;
 
 	Q_PROPERTY(QUrl pinResetUrl READ getPinResetUrl NOTIFY fireUpdated)
 	Q_PROPERTY(QString noPinAndNoPukHint READ getNoPinAndNoPukHint NOTIFY fireUpdated)
@@ -25,11 +34,11 @@ class PinResetInformationModel
 	Q_PROPERTY(QString pinResetActionText READ getPinResetActionText NOTIFY fireUpdated)
 
 	private:
+		PinResetInformationModel();
+		~PinResetInformationModel() override = default;
 		bool hasPinResetService() const;
 
 	public:
-		PinResetInformationModel();
-
 		[[nodiscard]] QUrl getPinResetUrl() const;
 		[[nodiscard]] QString getNoPinAndNoPukHint() const;
 		[[nodiscard]] QString getRequestNewPinHint() const;

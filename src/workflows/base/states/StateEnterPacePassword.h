@@ -27,9 +27,6 @@ class StateEnterPacePassword
 
 	public:
 		void onEntry(QEvent* pEvent) override;
-
-	Q_SIGNALS:
-		void firePropagateAbort();
 };
 
 } // namespace governikus

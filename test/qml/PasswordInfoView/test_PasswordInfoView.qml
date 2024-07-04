@@ -19,13 +19,17 @@ TestCase {
 		item.destroy();
 	}
 	function test_load_PasswordInfoView_data() {
-		return [{
+		return [
+			{
 				"contentType": PasswordInfoData.Type.PIN
-			}, {
+			},
+			{
 				"contentType": PasswordInfoData.Type.CAN
-			}, {
+			},
+			{
 				"contentType": PasswordInfoData.Type.PUK
-			}];
+			}
+		];
 	}
 
 	visible: true

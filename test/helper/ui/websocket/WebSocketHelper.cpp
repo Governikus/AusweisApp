@@ -4,7 +4,7 @@
 
 #include "WebSocketHelper.h"
 
-#include "UIPlugInWebSocket.h"
+#include "UiPluginWebSocket.h"
 
 #include <QThread>
 #include <QTimer>
