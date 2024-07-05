@@ -17,7 +17,7 @@ jobs:
 
     - name: Install openssl dev
       run: |
-           choco install openssl --version=3.1.1
+           choco install openssl --version=3.3.1
            choco install ninja
 
     - name: Add nmake
@@ -27,9 +27,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.*'
+        version: '6.7.*'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
         setup-python: 'false'
 
@@ -64,9 +64,9 @@ jobs:
 
     # ubuntu 22.04 comes just with QT 6.2.4 and Qt >= 6.4 is required
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.*'
+        version: '6.7.1'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
         setup-python: 'false'
 
@@ -83,7 +83,6 @@ jobs:
       run: |
            ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
 
-  # due to https://bugreports.qt.io/browse/QTBUG-117765 QT 6.5.2 must be used instead of 6.5.3
   build_macos:
 
     runs-on: macos-latest
@@ -97,11 +96,10 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.2'
+        version: '6.7.1'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
-        setup-python: 'false'
 
     - name: generate cmake
       run: |

@@ -37,9 +37,9 @@ jobs:
 
       #QT > 6.4 is required but ubuntu 22.04 just has 6.2.4, so additional installation is needed
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
-          version: '6.5.*'
+          version: '6.7.1'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
           setup-python: 'false'
 
