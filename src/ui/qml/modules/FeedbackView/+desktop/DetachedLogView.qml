@@ -12,8 +12,8 @@ import Governikus.View
 Rectangle {
 	id: root
 
+	readonly property int controlRadius: 15
 	readonly property int horizontalPadding: 18
-	readonly property int radius: 15
 	readonly property int spacing: 10
 	readonly property int verticalPadding: 6
 
@@ -55,7 +55,7 @@ Rectangle {
 					Layout.preferredWidth: 200
 					horizontalPadding: root.horizontalPadding
 					model: LogModel.logFileNames
-					radius: root.radius
+					radius: root.controlRadius
 					textStyle: logTextStyle
 					verticalPadding: root.verticalPadding
 
@@ -64,7 +64,7 @@ Rectangle {
 						border.width: 1
 						color: Style.color.transparent
 						drawShadow: false
-						radius: root.radius
+						radius: root.controlRadius
 					}
 
 					onCurrentIndexChanged: LogModel.setLogFile(currentIndex)
@@ -286,7 +286,7 @@ Rectangle {
 		Layout.minimumWidth: -1
 		borderWidth: 1
 		horizontalPadding: root.horizontalPadding
-		radius: root.radius
+		radius: root.controlRadius
 		spacing: root.spacing
 		tintIcon: true
 		verticalPadding: root.verticalPadding
