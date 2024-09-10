@@ -28,6 +28,14 @@ Item {
 	implicitHeight: Math.max(mainText.implicitHeight, tempText.implicitHeight)
 	implicitWidth: Math.max(mainText.implicitWidth, tempText.implicitWidth)
 
+	Behavior on implicitHeight {
+		enabled: SettingsModel.useAnimations && !Constants.is_desktop
+
+		NumberAnimation {
+			duration: mainText.text === "" ? 0 : Constants.animation_duration
+		}
+	}
+
 	GText {
 		id: mainText
 
@@ -70,6 +78,11 @@ Item {
 					property: "opacity"
 					target: mainText
 					to: 1
+				}
+				PropertyAction {
+					property: "text"
+					target: tempText
+					value: ""
 				}
 			}
 		}

@@ -26,6 +26,7 @@ Colors {
 		background.pressed: "#80cdec"
 		border.pressed: "#80cdec"
 		content.basic: "#ffffff"
+		content.checked: "#0098eb"
 		content.pressed: "#ffffff"
 	}
 	controlRadiobutton: DefaultControlColors {

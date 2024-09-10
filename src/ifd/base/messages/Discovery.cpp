@@ -82,7 +82,10 @@ void Discovery::parseIfdId(const QJsonObject& pMessageObject)
 	if (!ifdCertificate.isNull())
 	{
 		mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
+		return;
 	}
+
+	mIfdId = mIfdId.toLower();
 }
 
 
@@ -108,7 +111,7 @@ void Discovery::parsePairing(const QJsonObject& pMessageObject)
 
 Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing)
 	: IfdMessage(IfdMessageType::UNDEFINED)
-	, mIfdName(pIfdName)
+	, mIfdName(pIfdName.toHtmlEscaped())
 	, mIfdId(pIfdId)
 	, mPort(pPort)
 	, mSupportedApis(pSupportedApis)
@@ -131,7 +134,7 @@ Discovery::Discovery(const QJsonObject& pMessageObject)
 	}
 
 	parseSupportedApi(pMessageObject);
-	mIfdName = getStringValue(pMessageObject, IFD_NAME());
+	mIfdName = getStringValue(pMessageObject, IFD_NAME()).toHtmlEscaped();
 	parseIfdId(pMessageObject);
 	mPort = static_cast<quint16>(getIntValue(pMessageObject, PORT(), 0));
 	parsePairing(pMessageObject);

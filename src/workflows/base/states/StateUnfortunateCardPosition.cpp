@@ -5,9 +5,11 @@
 #include "StateUnfortunateCardPosition.h"
 
 #include "AbstractState.h"
-#include "Env.h"
 #include "GenericContextContainer.h"
-#include "ReaderManager.h"
+
+#if defined(Q_OS_IOS)
+	#include "ReaderManager.h"
+#endif
 
 using namespace governikus;
 

@@ -4,14 +4,14 @@
 <context>
     <name>DvcsAttributes</name>
     <message>
-        <source>61757c650550</source>
+        <source>828ae9a4549a</source>
         <extracomment>revision</extracomment>
-        <translation>61757c650550</translation>
+        <translation>828ae9a4549a</translation>
     </message>
     <message>
-        <source>2.1.106</source>
+        <source>2.2.0</source>
         <extracomment>version</extracomment>
-        <translation>2.1.106</translation>
+        <translation>2.2.0</translation>
     </message>
 </context>
 <context>
@@ -509,11 +509,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Schwacher NFC-Empfang. Bitte
 - stellen Sie sicher, dass der Ausweis korrekt auf dem Kartenleser positioniert ist
 - bewegen Sie den Ausweis nicht, während auf diesen zugegriffen wird</translation>
-    </message>
-    <message>
-        <source>Change Transport PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Transport-PIN ändern</translation>
     </message>
     <message>
         <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
@@ -2278,18 +2273,23 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Open %1 on your %2other device%3.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 3</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4</extracomment>
         <translation>Öffnen Sie auf Ihrem %2anderen Gerät%3 die %1.</translation>
     </message>
     <message>
         <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 3. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
         <translation>Gehen Sie dort in die %1Einstellungen%2 und dann zu %1Smartphone als Kartenleser%2 bzw. %1Kopplungen verwalten%2.</translation>
     </message>
     <message>
         <source>Choose this smartphone in the list to pair it.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 3</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4</extracomment>
         <translation>Wählen Sie in der angezeigten Liste dieses Smartphone aus, um es zu koppeln.</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code &quot;%1&quot;.</source>
+        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 4 of 4</extracomment>
+        <translation>Geben Sie den Kopplungscode &quot;%1&quot; ein.</translation>
     </message>
 </context>
 <context>
@@ -2473,9 +2473,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Die CAN ist eine 6-stellige Zahl, die %1unten rechts%2 auf der %1Vorderseite des Ausweisdokuments%2 zu finden ist.</translation>
     </message>
     <message>
-        <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
+        <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in picture).</source>
         <extracomment>INFO ALL_PLATFORMS Description text of CAN-allowed authentication</extracomment>
-        <translation>Die Zugangsnummer (CAN) ermöglicht den Zugriff auf die auf dem Ausweis gespeicherten Daten. Die CAN ist eine 6-stellige Zahl, die auf der Vorderseite des Ausweises unten rechts zu finden ist (rot markiert).</translation>
+        <translation>Die Zugangsnummer (CAN) ermöglicht den Zugriff auf die auf dem Ausweis gespeicherten Daten. Die CAN ist eine 6-stellige Zahl, die auf der Vorderseite des Ausweises unten rechts zu finden ist (auf Abbildung markiert).</translation>
     </message>
     <message>
         <source>Smart-eID blocking code</source>
@@ -2652,7 +2652,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>If you applied for a %1PIN Reset letter%2, a new card PIN was already set for you. You can change your card PIN at %1any time in %3%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation type="unfinished">Falls Sie einen %1PIN-Rücksetzbrief%2 bestellt haben, wurde Ihen bereits eine Karten-PIN gesetzt. Sie können Ihre Karten-PIN jedoch %1jederzeit in der %3 ändern%2.</translation>
+        <translation type="unfinished">Falls Sie einen %1PIN-Rücksetzbrief%2 bestellt haben, wurde Ihnen bereits eine Karten-PIN gesetzt. Sie können Ihre Karten-PIN jedoch %1jederzeit in der %3 ändern%2.</translation>
     </message>
     <message>
         <source>I can&apos;t recall my PIN</source>
@@ -3085,15 +3085,18 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteReaderDelegate</name>
     <message>
-        <source>Smartphone named &quot;%1&quot;</source>
-        <translation>Smartphone namens &quot;%1&quot;</translation>
+        <source>Smartphone named &quot;%1&quot;. %2. </source>
+        <extracomment>INFO DESKTOP Name and status of remote device. %1 is replaced with the name, %2 with the status</extracomment>
+        <translation>Smartphone namens &quot;%1&quot;. %2. </translation>
     </message>
     <message>
         <source>Press space to unpair the smartphone &quot;%1&quot;.</source>
+        <extracomment>INFO DESKTOP Text for activation action if the device is paired.</extracomment>
         <translation>Drücken Sie die Leertaste um das Smartphone &quot;%1&quot; zu entkoppeln.</translation>
     </message>
     <message>
         <source>Press space to pair the smartphone &quot;%1&quot;.</source>
+        <extracomment>INFO DESKTOP Text for activation action if the device is unpaired.</extracomment>
         <translation>Drücken Sie die Leertaste um das Smartphone &quot;%1&quot; zu koppeln.</translation>
     </message>
     <message>
@@ -3261,9 +3264,9 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <translation>Wo gebe ich den Kopplungscode ein?</translation>
     </message>
     <message>
-        <source>Enter the pairing code %1 in the %2 on your other device.</source>
+        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Geben Sie den Kopplungscode %1 in der %2 auf Ihrem anderen Gerät ein.</translation>
+        <translation>Geben Sie den Kopplungscode &quot;%1&quot; in der %2 auf Ihrem anderen Gerät ein.</translation>
     </message>
     <message>
         <source>Cancel pairing</source>
@@ -4223,12 +4226,13 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <name>TabbedPane</name>
     <message>
         <source>Tab selected</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Registerkarte ausgewählt</translation>
     </message>
     <message>
-        <source>You may navigate to different tabs by using the up/down arrows.</source>
-        <extracomment>LABEL DESKTOP Additional description of TabbedPane behavior for a11y.</extracomment>
-        <translation>Sie können die verschiedenen Registerkarten mithilfe der Pfeiltasten auswählen.</translation>
+        <source>%1 of %2</source>
+        <extracomment>LABEL DESKTOP %1 is the current selected Page of %2 Pages</extracomment>
+        <translation>%1 von %2</translation>
     </message>
 </context>
 <context>
@@ -6353,11 +6357,6 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
 </context>
 <context>
     <name>governikus::StateConnectCard</name>
-    <message>
-        <source>The used card reader does not meet the technical requirements (Extended Length not supported).</source>
-        <extracomment>INFO IOS</extracomment>
-        <translation>Der verwendete Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
-    </message>
     <message>
         <source>The used ID card type is not accepted by the server.</source>
         <extracomment>INFO IOS</extracomment>

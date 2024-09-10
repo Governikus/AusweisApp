@@ -62,6 +62,7 @@ Rectangle {
 
 			height: rootAction.height + 2 * Style.dimens.titlebar_padding
 			width: parent.width
+			z: 1
 
 			TitleBarAction {
 				id: rootAction
@@ -108,6 +109,15 @@ Rectangle {
 
 					onClicked: notifications.toggle()
 				}
+			}
+			Notifications {
+				id: notifications
+
+				anchors.left: parent.right
+				anchors.top: parent.top
+				anchors.topMargin: firstRow.height
+
+				onNewNotification: notifyButton.notify()
 			}
 		}
 		TitlePane {
@@ -164,14 +174,5 @@ Rectangle {
 			left: parent.left
 			right: parent.right
 		}
-	}
-	Notifications {
-		id: notifications
-
-		anchors.left: parent.right
-		anchors.top: parent.top
-		anchors.topMargin: firstRow.height
-
-		onNewNotification: notifyButton.notify()
 	}
 }

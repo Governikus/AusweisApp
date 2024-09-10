@@ -73,16 +73,13 @@ Item {
 			title: qsTr("Add pairing")
 			width: parent.width
 
-			GListView {
+			Repeater {
 				id: availableDevices
 
-				Layout.fillWidth: true
-				implicitHeight: contentHeight
 				model: RemoteServiceModel.availableDevicesInPairingMode
 
 				delegate: RemoteReaderDelegate {
-					height: implicitHeight + Constants.pane_padding
-					width: availableDevices.width
+					Layout.fillWidth: true
 
 					onPairDevice: pDeviceId => root.pairDevice(pDeviceId)
 				}

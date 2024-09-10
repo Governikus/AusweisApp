@@ -54,8 +54,6 @@ Barrierearmut
 
 - Unter Android werden unsichtbare Inhalte vom Screenreader vorgelesen.
 
-- Unter iOS kann der sichtbare Bereich vom Systemfokus abweichen.
-
 - Die angeforderten Rechte während eines Ausweisvorgangs werden nicht optimal vom
   Screenreader ausgegeben.
 

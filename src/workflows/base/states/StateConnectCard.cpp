@@ -64,17 +64,12 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 	context->setCardConnection(cardConnection);
 
 	const auto& readerInfo = cardConnection->getReaderInfo();
-	if (readerInfo.insufficientApduLength())
-	{
-		//: INFO IOS
-		context->getCardConnection()->setProgressMessage(tr("The used card reader does not meet the technical requirements (Extended Length not supported)."));
-		return;
-	}
+	Q_ASSERT(!readerInfo.insufficientApduLength());
 
 	if (context->eidTypeMismatch())
 	{
 		//: INFO IOS
-		context->getCardConnection()->setProgressMessage(tr("The used ID card type is not accepted by the server."));
+		context->getCardConnection()->setErrorMessage(tr("The used ID card type is not accepted by the server."));
 		return;
 	}
 
@@ -84,7 +79,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 		const GlobalStatus status = GlobalStatus::Code::Card_Pin_Deactivated;
 		if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
 		{
-			context->getCardConnection()->setProgressMessage(status.toErrorDescription());
+			context->getCardConnection()->setErrorMessage(status.toErrorDescription());
 		}
 		else
 		{

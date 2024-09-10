@@ -107,6 +107,7 @@ SectionPage {
 				Accessible.name: transactionText.text
 				activeFocusOnTab: true
 				text: AuthModel.transactionInfo
+				textFormat: Text.PlainText
 				visible: !!text
 
 				FocusFrame {

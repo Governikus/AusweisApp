@@ -23,6 +23,7 @@ Popup {
 	property string cancelButtonText: qsTr("Cancel")
 	default property alias children: customContent.children
 	property int horizontalTextAlignment: Text.AlignLeft
+	property alias mainTextFormat: mainText.textFormat
 	//: LABEL ALL_PLATFORMS
 	property string okButtonText: qsTr("OK")
 	property int style: ConfirmationPopup.PopupStyle.OkButton | ConfirmationPopup.PopupStyle.CancelButton
@@ -91,9 +92,13 @@ Popup {
 			}
 		}
 		GText {
+			id: mainText
+
+			Layout.maximumWidth: Number.POSITIVE_INFINITY
 			activeFocusOnTab: true
 			horizontalAlignment: root.horizontalTextAlignment
 			text: root.text
+			textFormat: Text.RichText
 			visible: root.text !== ""
 
 			FocusFrame {

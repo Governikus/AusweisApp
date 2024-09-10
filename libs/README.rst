@@ -313,7 +313,7 @@ Komponenten vorhanden sein:
 
 - Android SDK (cmdline) mit gesetztem ANDROID_SDK_ROOT
 
-  - https://developer.android.com/studio#cmdline-tools
+  - https://developer.android.com/tools#tools-sdk
 
   - Getestet: 12.0
 

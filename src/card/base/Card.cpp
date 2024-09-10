@@ -25,6 +25,12 @@ void Card::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
+void Card::setErrorMessage(const QString& pMessage)
+{
+	Q_UNUSED(pMessage)
+}
+
+
 EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
 {
 	Q_UNUSED(pPasswordId)
@@ -71,6 +77,14 @@ QString Card::generateProgressMessage(const QString& pMessage, int pProgress)
 	}
 
 	return message;
+}
+
+
+QString Card::generateErrorMessage(const QString& pMessage)
+{
+	return Env::getSingleton<VolatileSettings>()->isUsedAsSDK() && !pMessage.isNull()
+			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed()
+			: pMessage;
 }
 
 

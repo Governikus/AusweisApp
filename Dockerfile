@@ -61,4 +61,4 @@ USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]
 ENTRYPOINT ["/sbin/tini", "--"]
 EXPOSE 24727
-CMD ["AusweisApp", "--address", "0.0.0.0"]
+CMD ["AusweisApp", "--address", "0.0.0.0", "--no-logfile"]

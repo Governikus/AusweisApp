@@ -24,13 +24,15 @@ class test_StateConnectCard
 {
 	Q_OBJECT
 	QSharedPointer<StateConnectCard> mState;
-	QSharedPointer<WorkflowContext> mContext;
+	QSharedPointer<TestWorkflowContext> mContext;
 	ReaderInfo mReaderInfo;
 
 	private:
-		QSharedPointer<CardConnection> createCardConnection(QThread& workerThread)
+		QSharedPointer<CardConnection> createCardConnection(QThread& workerThread, const QString& readerName)
 		{
-			QSharedPointer<MockCardConnectionWorker> connectionWorker(new MockCardConnectionWorker());
+			MockReader* reader = new MockReader();
+			reader->setReaderInfo(ReaderInfo(readerName, ReaderManagerPluginType::NFC, CardInfo(CardType::EID_CARD)));
+			QSharedPointer<MockCardConnectionWorker> connectionWorker(new MockCardConnectionWorker(reader));
 			connectionWorker->moveToThread(&workerThread);
 			return QSharedPointer<CardConnection>(new CardConnection(connectionWorker));
 		}
@@ -77,8 +79,23 @@ class test_StateConnectCard
 		}
 
 
+		void test_OnCommandDone_data()
+		{
+			QTest::addColumn<bool>("eidTypeMismatch");
+
+			QTest::addRow("No eID type mismatch") << false;
+			QTest::addRow("eID type mismatch") << true;
+		}
+
+
 		void test_OnCommandDone()
 		{
+			QFETCH(bool, eidTypeMismatch);
+			if (eidTypeMismatch)
+			{
+				mContext->setAcceptedEidTypes({AcceptedEidType::SE_ENDORSED});
+			}
+
 			QThread workerThread;
 			workerThread.start();
 
@@ -95,10 +112,10 @@ class test_StateConnectCard
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
 			QTest::ignoreMessage(QtDebugMsg, "Card connection was successful");
-			const auto& cardConnection = createCardConnection(workerThread);
+			const auto& cardConnection = createCardConnection(workerThread, rName);
 			mState->onCommandDone(createCardConnectionCommand(rName, cardConnection));
 			QCOMPARE(mContext->getCardConnection(), cardConnection);
-			QCOMPARE(spyContinue.count(), 1);
+			QCOMPARE(spyContinue.count(), eidTypeMismatch ? 0 : 1);
 
 			workerThread.quit();
 			workerThread.wait();
@@ -111,7 +128,7 @@ class test_StateConnectCard
 			workerThread.start();
 
 			const auto info = ReaderInfo(QStringLiteral("name"));
-			const auto cardConnection = createCardConnection(workerThread);
+			const auto cardConnection = createCardConnection(workerThread, info.getName());
 
 			QSignalSpy spy(mState.data(), &StateConnectCard::fireRetry);
 

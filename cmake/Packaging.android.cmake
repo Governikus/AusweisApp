@@ -12,12 +12,12 @@ endif()
 
 if(INTEGRATED_SDK)
 	set(ANDROID_MANIFEST AndroidManifest.xml.aar.in)
-	set(JAVA_FILES network/WifiInfo* ui/aidl/AidlBinder* android/LogHandler* android/BootstrapHelper* android/AusweisApp2Service* android/AusweisApp2LocalIfdServiceConnection*)
-	configure_files("${SRC_DIR}" "${JAVA_FILES}" "${ANDROID_PACKAGE_SRC_DIR}/src" FLATTEN)
+	set(JAVA_FILES network/WifiInfo.java ui/aidl/AidlBinder.java android/LogHandler.java android/BootstrapHelper.java android/AusweisApp2Service.java android/AusweisApp2LocalIfdServiceConnection.java)
 
 	configure_file(${PACKAGING_DIR}/android/res/values/strings.xml ${ANDROID_PACKAGE_SRC_DIR}/res/values/strings.xml COPYONLY)
 else()
 	set(ANDROID_MANIFEST AndroidManifest.xml.apk.in)
+	set(JAVA_FILES *.java)
 
 	if(USE_SMARTEID)
 		set(LOCAL_IFD_SERVICE_ENABLED true)
@@ -33,9 +33,9 @@ else()
 	endforeach()
 
 	configure_files("${PACKAGING_DIR}/android" "res/*" "${ANDROID_PACKAGE_SRC_DIR}")
-	configure_files("${SRC_DIR}" "*.java" "${ANDROID_PACKAGE_SRC_DIR}/src" FLATTEN)
 endif()
 
+configure_files(${SRC_DIR} "${JAVA_FILES}" ${ANDROID_PACKAGE_SRC_DIR}/src/com/governikus/ausweisapp2 FLATTEN)
 configure_file(${PACKAGING_DIR}/android/IAusweisApp2Sdk.aidl ${ANDROID_PACKAGE_SRC_DIR}/src/com/governikus/ausweisapp2/IAusweisApp2Sdk.aidl COPYONLY)
 configure_file(${PACKAGING_DIR}/android/IAusweisApp2SdkCallback.aidl ${ANDROID_PACKAGE_SRC_DIR}/src/com/governikus/ausweisapp2/IAusweisApp2SdkCallback.aidl COPYONLY)
 
@@ -102,7 +102,11 @@ if(INTEGRATED_SDK)
 	configure_file("${PACKAGING_DIR}/android/consumer-rules.pro" "${ANDROID_BUILD_DIR}/consumer-rules.pro" COPYONLY)
 else()
 	set(ANDROID_FILE_EXT apk)
-	configure_file("${PACKAGING_DIR}/android/lint.apk.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+	if(USE_SMARTEID)
+		configure_file("${PACKAGING_DIR}/android/lint.apk.smarteid.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+	else()
+		configure_file("${PACKAGING_DIR}/android/lint.apk.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+	endif()
 endif()
 configure_file(${PACKAGING_DIR}/android/gradle.properties.in ${ANDROID_BUILD_DIR}/gradle.properties @ONLY)
 
@@ -114,6 +118,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 	else()
 		set(ANDROID_FILE ${ANDROID_BUILD_NAME}-debug.${ANDROID_FILE_EXT})
 	endif()
+	set(ANDROID_FILE_AAB ${ANDROID_BUILD_NAME}-debug.aab)
 else()
 	if(INTEGRATED_SDK)
 		set(DEPLOY_CMD_SIGN --release)
@@ -125,19 +130,26 @@ else()
 		set(ANDROID_FILE ${ANDROID_BUILD_NAME}-release-unsigned.apk)
 		message(WARNING "Cannot sign release build! Set environment like QT_ANDROID_KEYSTORE_PATH")
 	endif()
+	set(ANDROID_FILE_AAB ${ANDROID_BUILD_NAME}-release.aab)
 endif()
 
-set(SOURCE_ANDROID_FILE ${ANDROID_BUILD_DIR}/build/outputs/${ANDROID_FILE_EXT})
+set(SOURCE_ANDROID_FILE_OUTPUT ${ANDROID_BUILD_DIR}/build/outputs)
+set(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE_OUTPUT}/${ANDROID_FILE_EXT})
 if(NOT INTEGRATED_SDK)
+	set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_OUTPUT}/bundle)
 	if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 		set(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/debug)
+		set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_AAB}/debug)
 	else()
 		set(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/release)
+		set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_AAB}/release)
 	endif()
 endif()
 set(SOURCE_ANDROID_FILE ${SOURCE_ANDROID_FILE}/${ANDROID_FILE})
+set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_AAB}/${ANDROID_FILE_AAB})
 
-set(DESTINATION_ANDROID_FILE ${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME}.${ANDROID_FILE_EXT})
+set(DESTINATION_ANDROID_FILE_BASE ${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME})
+set(DESTINATION_ANDROID_FILE ${DESTINATION_ANDROID_FILE_BASE}.${ANDROID_FILE_EXT})
 if(INTEGRATED_SDK)
 	find_program(androiddeployqt androiddeployqt HINTS "${QT_HOST_PATH}/bin" CMAKE_FIND_ROOT_PATH_BOTH)
 	if(NOT androiddeployqt)
@@ -149,12 +161,29 @@ if(INTEGRATED_SDK)
 				COMMAND ${DEPLOY_CMD}
 				DEPENDS AusweisAppBinary
 				USES_TERMINAL)
+
+	add_custom_command(TARGET ${ANDROID_FILE_EXT} POST_BUILD
+				COMMAND ${ANDROID_BUILD_DIR}/gradlew sourcesJar
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "build/libs/${ANDROID_BUILD_NAME}-sources.jar" "${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME}-sources.jar"
+				WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
+				USES_TERMINAL)
+else()
+	add_custom_command(TARGET aab POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE_AAB}" "${DESTINATION_ANDROID_FILE_BASE}.aab"
+				WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
+				USES_TERMINAL)
+
+	if(QT_ANDROID_SIGN_APK)
+		add_custom_command(TARGET apk POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE}.idsig" "${DESTINATION_ANDROID_FILE}.idsig"
+					WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
+					USES_TERMINAL)
+	endif()
 endif()
 
 add_custom_command(TARGET ${ANDROID_FILE_EXT} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE}" "${DESTINATION_ANDROID_FILE}"
-			COMMAND ${ANDROID_BUILD_DIR}/gradlew sourcesJar lint
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different "build/libs/${ANDROID_BUILD_NAME}-sources.jar" "${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME}-sources.jar"
+			COMMAND ${ANDROID_BUILD_DIR}/gradlew lint
 			WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
 			USES_TERMINAL)
 
@@ -165,7 +194,10 @@ if(INTEGRATED_SDK)
 else()
 	find_program(apksigner apksigner HINTS ${ANDROID_SDK_ROOT}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)
 	if(apksigner)
-		add_custom_target(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${DESTINATION_ANDROID_FILE})
+		if(QT_ANDROID_SIGN_APK)
+			set(APKSIGNER_PARAM -v4-signature-file ${DESTINATION_ANDROID_FILE}.idsig)
+		endif()
+		add_custom_target(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${APKSIGNER_PARAM} ${DESTINATION_ANDROID_FILE})
 	endif()
 
 	find_program(aapt NAMES aapt2 aapt HINTS ${ANDROID_SDK_ROOT}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)

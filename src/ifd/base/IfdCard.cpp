@@ -188,6 +188,12 @@ void IfdCard::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
+void IfdCard::setErrorMessage(const QString& pMessage)
+{
+	mProgressMessage = generateErrorMessage(pMessage);
+}
+
+
 ResponseApduResult IfdCard::transmit(const CommandApdu& pCommand)
 {
 	qCDebug(card_remote) << "Transmit command APDU:" << pCommand;

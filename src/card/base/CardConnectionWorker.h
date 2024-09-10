@@ -104,6 +104,7 @@ class CardConnectionWorker
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
 		 */
 		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1);
+		virtual void setErrorMessage(const QString& pMessage);
 
 		virtual ResponseApduResult setEidPin(const QByteArray& pNewPin, quint8 pTimeoutSeconds);
 

@@ -309,7 +309,7 @@ QtObject {
 					blockTitle: qsTr("Why is the CAN required?")
 					paragraphList: [
 						//: INFO ALL_PLATFORMS Description text of CAN-allowed authentication
-						qsTr("The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).")]
+						qsTr("The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in picture).")]
 				}
 			]
 		},
@@ -328,13 +328,12 @@ QtObject {
 
 			contentList: [
 				PasswordInfoContentBlock {
-					blockHeaderAnimation: AnimationLoader.Type.ENTER_TRANSPORT_PIN
 					paragraphList: [
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 1/7
 						qsTr("Your ID card comes with a 5-digit %1Transport PIN%2 which you need to %1replace with%2 a 6-digit %1card PIN%2 that you choose yourself.").arg("<b>").arg("</b>")]
 				},
 				PasswordInfoContentBlock {
-					blockHeaderAnimation: AnimationLoader.Type.ENTER_PIN
+					blockHeaderAnimation: AnimationLoader.Type.ENTER_TRANSPORT_PIN
 					//: LABEL ALL_PLATFORMS
 					blockTitle: qsTr("5-digit Transport PIN")
 					paragraphList: [
@@ -344,6 +343,7 @@ QtObject {
 						qsTr("When you set up the eID function, you will %1replace%2 this 5-digit %1Transport PIN%2 with a 6-digit %1card PIN that you choose yourself%2.").arg("<b>").arg("</b>")]
 				},
 				PasswordInfoContentBlock {
+					blockHeaderAnimation: AnimationLoader.Type.ENTER_PIN
 					//: LABEL ALL_PLATFORMS
 					blockTitle: qsTr("6-digit PIN")
 					paragraphList: ApplicationModel.isSmartSupported ? [

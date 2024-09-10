@@ -13,7 +13,7 @@ include(CheckCXXCompilerFlag)
 #             group multiple flags or to indicate the usage.
 #   LINK:     Use these linker flags to try the compiler flag. The linker
 #             flags won't be added unless LINK_GLOBAL is enabled. Otherwise they are for testing only.
-#   LINK_VAR: Checked link flags will be added to these variables. (default: CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS)
+#   LINK_VAR: Checked link flags will be added to these variables. (default: CMAKE_EXE_LINKER_FLAGS CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS)
 #   VAR:      Checked compiler flags will be added to these variables. (default: CMAKE_CXX_FLAGS)
 #             It is possible to add multiple VAR parameter.
 #             If VAR parameter is a cmake TARGET the compiler flag will be added

@@ -55,7 +55,7 @@ bool UiPluginWebService::listening()
 	for (const auto& address : std::as_const(HttpServer::cAddresses))
 	{
 		HttpServerStatusParser parser(port, address);
-		const QString serverAppName = parser.request() ? parser.getVersionInfo().getImplementationTitle() : parser.getServerHeader();
+		const QString serverAppName = (parser.request() ? parser.getVersionInfo().getImplementationTitle() : parser.getServerHeader()).toHtmlEscaped();
 		if (serverAppName.startsWith(VersionInfo::getInstance().getImplementationTitle()))
 		{
 			switch (handleExistingApp(port, address))
@@ -150,7 +150,7 @@ void UiPluginWebService::handleShowUiRequest(const QString& pUiModule, const QSh
 {
 	pRequest->send(HTTP_STATUS_OK);
 
-	QString userAgent = QString::fromLatin1(pRequest->getHeader(QByteArrayLiteral("user-agent")));
+	QString userAgent = QString::fromLatin1(pRequest->getHeader(QByteArrayLiteral("user-agent"))).toHtmlEscaped();
 	if (userAgent.startsWith(VersionInfo::getInstance().getImplementationTitle()))
 	{
 		QString version = userAgent.remove(VersionInfo::getInstance().getImplementationTitle() + QLatin1Char('/')).split(QLatin1Char(' ')).at(0);

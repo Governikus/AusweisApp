@@ -76,8 +76,8 @@ Item {
 		GListView {
 			id: logEntryList
 
+			activeFocusOnTab: d.fadeIn && !fadeOutTimer.running
 			anchors.fill: parent
-			anchors.leftMargin: Constants.pane_padding
 			bottomMargin: Constants.pane_padding
 			clip: true
 			model: NotificationModel
@@ -89,13 +89,15 @@ Item {
 
 			delegate: Item {
 				Accessible.name: notificationTime.text + " " + notificationBody.text
-				activeFocusOnTab: d.fadeIn && !fadeOutTimer.running
-				height: row.height
-				width: row.width
+				Accessible.role: Accessible.StaticText
+				implicitHeight: row.height
+				implicitWidth: row.width + 2 * Constants.pane_padding
 
 				Row {
 					id: row
 
+					anchors.left: parent.left
+					anchors.leftMargin: Constants.pane_padding
 					spacing: logEntryList.spacing
 
 					Component.onCompleted: {
@@ -123,10 +125,12 @@ Item {
 
 						color: model.type === "developermode" ? Style.color.warning : Style.color.control.content.basic
 						text: model.text
-						width: logEntryList.width - notificationTime.width - 3 * logEntryList.spacing
+						width: logEntryList.width - 2 * Constants.pane_padding - notificationTime.width - 3 * logEntryList.spacing
 					}
 				}
 				FocusFrame {
+					borderColor: Style.color.control.content.basic
+					framee: row
 				}
 			}
 

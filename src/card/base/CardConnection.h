@@ -114,6 +114,7 @@ class CardConnection
 
 		void setKeepAlive(bool pEnabled);
 		void setProgressMessage(const QString& pMessage, int pProgress = -1);
+		void setErrorMessage(const QString& pMessage);
 
 		template<typename T>
 		QMetaObject::Connection callDidAuthenticateEAC1Command(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)

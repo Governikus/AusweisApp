@@ -44,14 +44,14 @@ class test_AuthModel
 			QCOMPARE(spyStateEntered.count(), 0);
 			QCOMPARE(spyTransactionInfoChanged.count(), 0);
 
-			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_htmlTransactionInfo.xml"_L1);
 			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			context->setDidAuthenticateEac1(eac1);
-			QCOMPARE(model->getTransactionInfo(), "this is a test for TransactionInfo"_L1);
+			QCOMPARE(model->getTransactionInfo(), "this is a &lt;a&gt;test&lt;/a&gt; for TransactionInfo"_L1);
 			model->resetAuthContext(context);
 			QVERIFY(model->getTransactionInfo().isEmpty());
 			Q_EMIT context->fireDidAuthenticateEac1Changed();
-			QCOMPARE(model->getTransactionInfo(), "this is a test for TransactionInfo"_L1);
+			QCOMPARE(model->getTransactionInfo(), "this is a &lt;a&gt;test&lt;/a&gt; for TransactionInfo"_L1);
 			QCOMPARE(spyWorkflowStarted.count(), 2);
 			QCOMPARE(spyCurrentStateChanged.count(), 2);
 			QCOMPARE(spyStateEntered.count(), 0);

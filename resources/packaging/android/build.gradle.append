@@ -4,10 +4,6 @@ task sourcesJar(type: Jar) {
     archiveClassifier = "sources"
 }
 
-dependencies {
-    implementation "androidx.core:core:1.13.1"
-}
-
 allprojects {
     repositories {
         maven {
@@ -20,11 +16,7 @@ allprojects {
 }
 
 android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
+    compileSdkVersion "android-35"
     packagingOptions {
         merges -= ['/META-INF/services/**']
         exclude 'META-INF/proguard/androidx-annotations.pro'
@@ -45,14 +37,15 @@ android {
         exclude '**/libplugins_imageformats_qtiff_*.so'
         exclude '**/libplugins_imageformats_qwebp_*.so'
         exclude '**/libplugins_imageformats_qwbmp_*.so'
-
-        jniLibs {
-            useLegacyPackaging = true
-        }
     }
 
     lintOptions {
         lintConfig file('lint.xml')
+    }
+
+    buildFeatures {
+        aidl = true
+        buildConfig = true
     }
 
     defaultConfig {

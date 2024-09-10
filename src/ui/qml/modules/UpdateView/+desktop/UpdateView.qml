@@ -26,6 +26,18 @@ FlickableSectionPage {
 	titleBarAction: TitleBarAction {
 		//: LABEL DESKTOP
 		text: qsTr("Application update")
+
+		customSubAction: NavigationAction {
+			type: root.downloadRunning ? NavigationAction.Action.Cancel : NavigationAction.Action.Back
+			visible: true
+
+			onClicked: {
+				if (root.downloadRunning) {
+					root.update.abortDownload();
+				}
+				root.leaveView();
+			}
+		}
 	}
 
 	ResultView {

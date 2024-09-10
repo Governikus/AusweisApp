@@ -1,0 +1,46 @@
+From 26743604b484cb338b15e2929de1b38ee813ad9d Mon Sep 17 00:00:00 2001
+From: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Date: Tue, 7 May 2024 15:59:21 +0300
+Subject: Android: update AGP to version 8.2.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This works better with the current Gradle 8.3 and supports
+Android api 34 builds.
+
+Task-number: QTBUG-106907
+Change-Id: I816a1aa163a9aee0a5859872129cff62f81a2dea
+Reviewed-by: Tinja Paavoseppä <tinja.paavoseppa@qt.io>
+(cherry picked from commit 112e554cbf787fa6b093354d75889f520307c33e)
+---
+ doc/global/macros.qdocconf         | 2 +-
+ src/android/templates/build.gradle | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/doc/global/macros.qdocconf y/qtbase/doc/global/macros.qdocconf
+index a4c38fa04255ec3ab43a843347ecc694b371adf2..a147be5653badd5924c8d475b7cc600035401605 100644
+--- x/qtbase/doc/global/macros.qdocconf
++++ y/qtbase/doc/global/macros.qdocconf
+@@ -87,7 +87,7 @@ macro.AndroidMaxVer       = "14"
+ macro.AndroidPlatformVer  = "34"
+ macro.AndroidBuildToolsVer = "34.0.0"
+ macro.GradleVer           = "8.3"
+-macro.AGPVer              = "7.4.1"
++macro.AGPVer              = "8.2.2"
+ macro.AAOSVer             = "10 to 13"
+ 
+ macro.beginfloatleft.HTML   = "<div style=\"float: left; margin-right: 2em\">"
+diff --git x/qtbase/src/android/templates/build.gradle y/qtbase/src/android/templates/build.gradle
+index b03f36b136bed04fe38d0f376b62c4e9a1d1c123..e1f804dea7721f251f776ecb728eaac80f3b8745 100644
+--- x/qtbase/src/android/templates/build.gradle
++++ y/qtbase/src/android/templates/build.gradle
+@@ -5,7 +5,7 @@ buildscript {
+     }
+ 
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:7.4.1'
++        classpath 'com.android.tools.build:gradle:8.2.2'
+     }
+ }
+ 

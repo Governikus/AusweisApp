@@ -84,7 +84,7 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	}
 
 	const auto& info = Env::getSingleton<VolatileSettings>()->isUsedAsSDK()
-			? Env::getSingleton<VolatileSettings>()->getMessages().getSessionInProgress()
+			? Card::generateProgressMessage(QString(), 0)
 	        //: INFO IOS Feedback when a new ID card has been detected
 			: tr("ID card detected. Please do not move the device!");
 
@@ -191,7 +191,7 @@ void NfcReader::disconnectReader(const QString& pError)
 				 : tr("Scanning process has been finished successfully.");
 		mNfManager.setUserInformation(info);
 	}
-	mNfManager.stopTargetDetection(pError);
+	mNfManager.stopTargetDetection(Card::generateErrorMessage(pError));
 #else
 	Q_UNUSED(pError)
 #endif

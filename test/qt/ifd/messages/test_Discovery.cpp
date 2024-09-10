@@ -168,7 +168,7 @@ class test_Discovery
 			QCOMPARE(discovery.getType(), IfdMessageType::UNDEFINED);
 			QCOMPARE(discovery.getContextHandle(), QString());
 			QCOMPARE(discovery.getIfdName(), QStringLiteral("Sony Xperia Z5 compact"));
-			QCOMPARE(discovery.getIfdId(), QStringLiteral("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"));
+			QCOMPARE(discovery.getIfdId(), QStringLiteral("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF").toLower());
 			QVERIFY(discovery.getPort() == static_cast<quint16>(24728));
 			QCOMPARE(discovery.getSupportedApis(), QList<IfdVersion::Version>({IfdVersion::Version::v0}));
 			QCOMPARE(discovery.getPairing(), pairing);
@@ -439,7 +439,7 @@ class test_Discovery
 			const Discovery discovery(obj);
 
 			QCOMPARE(discovery.isIncomplete(), incomplete);
-			QCOMPARE(discovery.getIfdId(), QString::fromLatin1(ifdid));
+			QCOMPARE(discovery.getIfdId(), QString::fromLatin1(ifdid).toLower());
 
 			QCOMPARE(logSpy.count(), incomplete ? 1 : 0);
 			if (incomplete)
@@ -449,18 +449,30 @@ class test_Discovery
 		}
 
 
+		void sameIfdId_data()
+		{
+			QTest::addColumn<QByteArray>("json_ifdid");
+
+			QTest::newRow("lower case") << QByteArray("0575e99867361c26442ece18bed6f955ab7dd269ae8f42d3a21af0e734c3d8d9");
+			QTest::newRow("upper case") << QByteArray("0575E99867361C26442ECE18BED6F955AB7DD269AE8F42D3A21AF0E734C3D8D9");
+		}
+
+
 		void sameIfdId()
 		{
+			QFETCH(QByteArray, json_ifdid);
+
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
-			const QByteArray messageHash(R"({
-											"IFDID": "0575e99867361c26442ece18bed6f955ab7dd269ae8f42d3a21af0e734c3d8d9",
+			QByteArray messageHash(R"({
+											"IFDID": "[IFDID]",
 											"IFDName": "Sony Xperia Z5 compact",
 											"SupportedAPI": ["IFDInterface_WebSocket_v0"],
 											"msg": "REMOTE_IFD",
 											"pairing": true,
 											"port": 24728
 										 })");
+			messageHash.replace("[IFDID]", json_ifdid);
 			const QJsonObject& objHash = QJsonDocument::fromJson(messageHash).object();
 			const Discovery discoveryHash(objHash);
 			QCOMPARE(logSpy.count(), 0);

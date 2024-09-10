@@ -57,6 +57,7 @@ class IfdCard
 		CardReturnCode releaseConnection() override;
 		bool isConnected() const override;
 		void setProgressMessage(const QString& pMessage, int pProgress = -1) override;
+		void setErrorMessage(const QString& pMessage) override;
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 

@@ -28,6 +28,7 @@ FlickableSectionPage {
 			Accessible.ignored: tileView.allItemsVisible ? false : index !== tileView.currentIndex
 			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
 			activeFocusOnTab: false
+			focusPolicy: Qt.TabFocus
 			height: ListView.view.height
 			image: imagePath
 			title: titleText
@@ -38,11 +39,13 @@ FlickableSectionPage {
 			Accessible.onScrollRightAction: if (tileView.isIos)
 				tileView.scrollPageRight()
 			Component.onCompleted: tileDelegate.DelegateModel.inItems = module !== UiModule.SMART_EID || ApplicationModel.isSmartSupported
-			onClicked: show(module)
+			onClicked: root.show(module)
 
+			PointHandler {
+				onGrabChanged: tileView.focus = false
+			}
 			FocusFrame {
 				marginFactor: -2
-				visible: UiPluginModel.isChromeOS
 			}
 		}
 		model: ListModel {
