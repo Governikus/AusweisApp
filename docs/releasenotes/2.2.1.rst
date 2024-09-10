@@ -1,0 +1,33 @@
+AusweisApp 2.2.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 11. September 2024
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Optimierung der Barrierearmut und Tastaturbedienbarkeit.
+
+- Verhinderung der Anzeige externer Inhalte in der grafischen Oberfläche.
+
+- Unterstützung von Smartphones mit Android 15, bei denen
+  eine optimierte Speicherverwaltung aktiviert wurde.
+
+
+Entwickler
+""""""""""
+- Unterstützung von 16 KB Page Sizes unter Android.
+
+- Stabilisierung des iOS SDK bei schnellen Neustarts.
+
+- Korrektur des Verhaltens bei der Verwendung von Qt 6.6.3.
+
+- Vermeidung einer Logdatei innerhalb des Containers im Container-SDK.
+
+- Aktualisierung vom Android NDK auf r27b (27.1.12297006).
+
+- Aktualisierung der Android SDK Platform auf Android 15 (API-Level 35).
+
+- Aktualisierung von OpenSSL auf die Version 3.3.2.

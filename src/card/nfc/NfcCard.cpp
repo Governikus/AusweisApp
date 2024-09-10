@@ -90,6 +90,13 @@ void NfcCard::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
+void NfcCard::setErrorMessage(const QString& pMessage)
+{
+	QString message = generateErrorMessage(pMessage);
+	Q_EMIT fireSetProgressMessage(message);
+}
+
+
 ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 {
 	if (!mIsValid || mNearFieldTarget == nullptr)

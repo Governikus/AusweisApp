@@ -57,4 +57,4 @@ USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]
 ENTRYPOINT ["/sbin/tini", "--"]
 EXPOSE 5900/tcp 24727/tcp 24727/udp
-CMD ["AusweisApp", "--address", "0.0.0.0"]
+CMD ["AusweisApp", "--address", "0.0.0.0", "--no-logfile"]

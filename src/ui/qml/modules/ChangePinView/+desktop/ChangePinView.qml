@@ -80,8 +80,13 @@ SectionPage {
 		}
 	}
 
-	Keys.onEscapePressed: if (d.cancelAllowed)
-		ChangePinModel.cancelWorkflow()
+	Keys.onEscapePressed: event => {
+		if (d.cancelAllowed) {
+			ChangePinModel.cancelWorkflow();
+		} else {
+			event.accepted = false;
+		}
+	}
 
 	QtObject {
 		id: d

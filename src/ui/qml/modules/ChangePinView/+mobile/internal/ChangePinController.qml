@@ -304,6 +304,7 @@ Controller {
 			}
 
 			onPasswordEntered: pPasswordType => {
+				pop();
 				switch (pPasswordType) {
 				case NumberModel.PasswordType.NEW_PIN:
 				case NumberModel.PasswordType.NEW_SMART_PIN:
@@ -312,7 +313,6 @@ Controller {
 				case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
 				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					if (NumberModel.commitNewPin()) {
-						pop();
 						rootController.isNewPin = true;
 						ChangePinModel.continueWorkflow();
 					} else {
@@ -320,7 +320,6 @@ Controller {
 					}
 					break;
 				default:
-					pop();
 					ChangePinModel.continueWorkflow();
 				}
 			}

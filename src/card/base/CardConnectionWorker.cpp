@@ -280,6 +280,16 @@ void CardConnectionWorker::setProgressMessage(const QString& pMessage, int pProg
 }
 
 
+void CardConnectionWorker::setErrorMessage(const QString& pMessage)
+{
+	const auto card = mReader ? mReader->getCard() : nullptr;
+	if (card)
+	{
+		card->setErrorMessage(pMessage);
+	}
+}
+
+
 EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswordId pPasswordId,
 		const QByteArray& pPasswordValue,
 		const QByteArray& pChat,

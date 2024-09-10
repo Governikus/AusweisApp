@@ -78,6 +78,7 @@
         <file>paos/DIDAuthenticateEAC1_accessRightsEmpty.xml</file>
         <file>paos/DIDAuthenticateEAC1_accessRightsMissing.xml</file>
         <file>paos/DIDAuthenticateEAC1_TS_TA_2.1.1.xml</file>
+        <file>paos/DIDAuthenticateEAC1_htmlTransactionInfo.xml</file>
         <file>paos/DIDAuthenticateEAC2.xml</file>
         <file>paos/DIDAuthenticateEAC2_template.xml</file>
         <file>paos/DIDAuthenticateEAC2_template2.xml</file>

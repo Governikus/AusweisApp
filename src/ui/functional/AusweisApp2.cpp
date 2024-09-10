@@ -11,6 +11,8 @@
 #include <QMetaObject>
 #include <QObject>
 
+#include <chrono>
+#include <future>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -18,10 +20,11 @@
 
 namespace
 {
-static bool cInitialized = false;
 static bool cShutdownCalled = false;
 static AusweisApp2Callback cCallback = nullptr;
 static std::thread cThread; // clazy:exclude=non-pod-global-static
+static std::future<void> cStartedFuture; // clazy:exclude=non-pod-global-static
+static std::promise<void> cStartedPromise; // clazy:exclude=non-pod-global-static
 static std::mutex cMutex;
 } // namespace
 
@@ -50,8 +53,7 @@ Q_DECL_EXPORT bool ausweisapp2_is_running_internal()
 
 Q_DECL_EXPORT void ausweisapp2_started_internal()
 {
-	const std::lock_guard<std::mutex> lock(cMutex);
-	cInitialized = true;
+	cStartedPromise.set_value();
 }
 
 
@@ -105,6 +107,9 @@ Q_DECL_EXPORT bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* p
 
 	cCallback = pCallback;
 	cShutdownCalled = false;
+
+	cStartedPromise = std::promise<void>();
+	cStartedFuture = cStartedPromise.get_future();
 	cThread = std::thread(&ausweisapp2_init_internal, QByteArray(pCmdline));
 
 	return true;
@@ -119,6 +124,9 @@ Q_DECL_EXPORT void ausweisapp2_shutdown(void)
 		if (!cShutdownCalled)
 		{
 			cShutdownCalled = true; // do not request twice as the UiLoader could be re-spawned after shutdown!
+
+			cStartedFuture.wait();
+
 			std::cout << "Send shutdown request" << std::endl;
 
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
@@ -147,7 +155,9 @@ Q_DECL_EXPORT void ausweisapp2_send(const char* pCmd)
 {
 	const std::lock_guard<std::mutex> lock(cMutex);
 
-	if (cShutdownCalled || !cInitialized || pCmd == nullptr)
+	using namespace std::chrono_literals;
+	const bool initialized = cStartedFuture.wait_for(0s) == std::future_status::ready;
+	if (cShutdownCalled || !initialized || pCmd == nullptr)
 	{
 		return;
 	}

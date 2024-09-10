@@ -64,6 +64,14 @@ void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 }
 
 
+void CardConnection::setErrorMessage(const QString& pMessage)
+{
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage] {
+			mCardConnectionWorker->setErrorMessage(pMessage);
+		}, Qt::BlockingQueuedConnection);
+}
+
+
 UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
 {
 	return new UpdateRetryCounterCommand(mCardConnectionWorker);

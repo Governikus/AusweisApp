@@ -71,6 +71,7 @@ class Card
 		 * where interacting with a card leads to a dialog where the message needs to be updated.
 		 */
 		virtual void setProgressMessage(const QString& pMessage, int pProgress = -1);
+		virtual void setErrorMessage(const QString& pMessage);
 
 		/*!
 		 * Performs a transmit to the smart card.
@@ -98,6 +99,7 @@ class Card
 		 * Combines the message and progressvalue depending on the environment.
 		 */
 		static QString generateProgressMessage(const QString& pMessage, int pProgress = -1);
+		static QString generateErrorMessage(const QString& pMessage);
 
 		virtual EstablishPaceChannelOutput prepareIdentification(const QByteArray& pChat);
 

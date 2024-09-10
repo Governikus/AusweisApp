@@ -166,7 +166,7 @@ class test_SmartModel
 
 			int signalCount = 0;
 
-			const auto connection = connect(smartModel, &SmartModel::fireStateChanged, [&signalCount, smartModel](){
+			const auto connection = connect(smartModel, &SmartModel::fireStateChanged, this, [&signalCount, smartModel](){
 					signalCount++;
 
 					switch (signalCount)

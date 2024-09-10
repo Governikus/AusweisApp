@@ -88,7 +88,7 @@ FlickableSectionPage {
 
 				readonly property string currentPin: RemoteServiceModel.psk
 				//: INFO ANDROID IOS
-				readonly property string enterCodeString: qsTr("Enter the pairing code %1 in the %2 on your other device.")
+				readonly property string enterCodeString: qsTr("Enter the pairing code \"%1\" in the %2 on your other device.")
 
 				Accessible.name: text
 				Layout.alignment: Qt.AlignHCenter
@@ -149,7 +149,7 @@ FlickableSectionPage {
 			GText {
 				id: pairingCode
 
-				readonly property string currentPin: RemoteServiceModel.psk.toString()
+				readonly property string currentPin: RemoteServiceModel.psk
 
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignHCenter
@@ -205,6 +205,7 @@ FlickableSectionPage {
 				model: RemoteServiceModel.allDevices
 
 				delegate: DevicesListDelegate {
+					Layout.fillWidth: true
 					highlightTitle: isLastAddedDevice
 					linkQualityVisible: false
 					title: remoteDeviceName

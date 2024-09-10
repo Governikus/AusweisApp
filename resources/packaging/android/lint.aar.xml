@@ -19,12 +19,21 @@
     -->
     <issue id="AndroidGradlePluginVersion" severity="ignore" />
 
-    <!-- DiscouragedApi
+    <!-- ChromeOsAbiSupport
 
-        Qt is using some discouraged API. They are allowed and are not deprecated, but they may be unfit
-        for common use (e.g. due to slow performance or subtle behavior). which we can't change, so ignore it.
+        This is a false positive since the gradle.build defines
+            ndk.abiFilters = qtTargetAbiList.split(",")
+        which may or not contain "x86" or "x86_64".
     -->
-    <issue id="DiscouragedApi">
-        <ignore path="**/QtLoader.java" />
+    <issue id="ChromeOsAbiSupport" severity="ignore" />
+
+    <!-- Instantiatable
+
+        AusweisApp2Service must extend android.app.Service
+
+        This is a false positive since this is given in the inheritance hierarchy.
+    -->
+    <issue id="Instantiatable" severity="ignore">
+        <ignore path="../../AndroidManifest.xml" />
     </issue>
 </lint>

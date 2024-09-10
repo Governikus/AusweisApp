@@ -70,6 +70,36 @@ class test_VolatileSettings
 		}
 
 
+		void test_Messages_data()
+		{
+			QTest::addColumn<QString>("started");
+			QTest::addColumn<QString>("failed");
+			QTest::addColumn<QString>("succeded");
+			QTest::addColumn<QString>("progress");
+
+			QTest::addRow("empty") << QString() << QString() << QString() << QString();
+			QTest::addRow("not empty") << QStringLiteral("a") << QStringLiteral("b") << QStringLiteral("c") << QStringLiteral("d");
+		}
+
+
+		void test_Messages()
+		{
+			QFETCH(QString, started);
+			QFETCH(QString, failed);
+			QFETCH(QString, succeded);
+			QFETCH(QString, progress);
+
+			VolatileSettings::Messages messages(started, failed, succeded, progress);
+
+			QVERIFY(!messages.getSessionFailed().isNull());
+
+			QCOMPARE(messages.getSessionStarted(), started);
+			QCOMPARE(messages.getSessionFailed(), failed);
+			QCOMPARE(messages.getSessionSucceeded(), succeded);
+			QCOMPARE(messages.getSessionInProgress(), progress);
+		}
+
+
 };
 
 QTEST_GUILESS_MAIN(test_VolatileSettings)

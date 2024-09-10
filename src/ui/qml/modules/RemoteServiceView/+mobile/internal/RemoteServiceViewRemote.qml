@@ -131,7 +131,7 @@ Item {
 			GListView {
 				id: searchDeviceList
 
-				height: childrenRect.height
+				height: contentHeight
 				model: RemoteServiceModel.availableDevicesInPairingMode
 				spacing: Constants.component_spacing
 				visible: ApplicationModel.wifiEnabled && count > 0

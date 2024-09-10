@@ -150,7 +150,7 @@ void UiPluginWebSocket::onNewWebSocketRequest(const QSharedPointer<HttpRequest>&
 	}
 
 	mRequest = pRequest;
-	Q_EMIT fireUiDominationRequest(this, QString::fromLatin1(pRequest->getHeader().value(QByteArrayLiteral("user-agent"))));
+	Q_EMIT fireUiDominationRequest(this, QString::fromLatin1(pRequest->getHeader().value(QByteArrayLiteral("user-agent"))).toHtmlEscaped());
 }
 
 

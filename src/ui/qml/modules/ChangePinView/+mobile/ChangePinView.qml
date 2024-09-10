@@ -28,11 +28,8 @@ SectionPage {
 
 	contentIsScrolled: !changePinViewContent.atYBeginning
 	smartEidUsed: isSmartWorkflow
-	title: NumberModel.passwordType === NumberModel.PasswordType.TRANSPORT_PIN ?
 	//: LABEL ANDROID IOS
-	qsTr("Change Transport PIN") :
-	//: LABEL ANDROID IOS
-	qsTr("Change PIN")
+	title: qsTr("Change PIN")
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back

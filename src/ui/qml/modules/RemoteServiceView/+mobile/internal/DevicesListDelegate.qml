@@ -46,6 +46,7 @@ MouseArea {
 				Accessible.ignored: true
 				elide: Text.ElideRight
 				maximumLineCount: 1
+				textFormat: Text.PlainText
 				textStyle: Style.text.subline
 			}
 			GText {

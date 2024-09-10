@@ -5,6 +5,8 @@ Mit der Version 2.3.0 der AusweisApp wird die Unterstützung
 folgender Systeme eingestellt.
 
 - macOS Monterey 12
+- iOS 14
+- iOS 15
 
 
 Mit der Version 2.2.0 der AusweisApp wurde die Unterstützung

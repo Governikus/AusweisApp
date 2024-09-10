@@ -10,9 +10,9 @@ Flickable {
 	id: baseItem
 
 	function handleKeyPress(key) {
-		if (key === Qt.Key_PageDown)
+		if (key === Qt.Key_PageDown || key === Qt.Key_Down)
 			baseItem.scrollPageDown();
-		else if (key === Qt.Key_PageUp)
+		else if (key === Qt.Key_PageUp || key === Qt.Key_Up)
 			baseItem.scrollPageUp();
 		else if (key === Qt.Key_End)
 			baseItem.contentY = baseItem.contentHeight - baseItem.height;
@@ -46,6 +46,7 @@ Flickable {
 	}
 
 	Accessible.focusable: false
+	Accessible.ignored: Constants.is_desktop
 	Accessible.role: Accessible.ScrollBar
 	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
 	boundsMovement: Flickable.FollowBoundsBehavior

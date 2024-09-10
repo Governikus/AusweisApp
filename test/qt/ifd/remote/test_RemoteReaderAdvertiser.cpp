@@ -106,7 +106,7 @@ class test_RemoteReaderAdvertiser
 			const auto& offerMsg = Discovery(QJsonDocument::fromJson(data).object());
 
 			QCOMPARE(offerMsg.getIfdName(), ifdName);
-			QCOMPARE(offerMsg.getIfdId(), ifdId);
+			QCOMPARE(offerMsg.getIfdId(), ifdId.toLower());
 			QCOMPARE(offerMsg.getPort(), port);
 			QCOMPARE(offerMsg.getSupportedApis(), IfdVersion::supported());
 			QCOMPARE(offerMsg.getPairing(), pairing);

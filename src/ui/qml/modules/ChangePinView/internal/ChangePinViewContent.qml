@@ -7,6 +7,7 @@ import Governikus.Global
 import Governikus.PasswordInfoView
 import Governikus.Style
 import Governikus.Type
+import Governikus.View
 
 GFlickableColumnLayout {
 	id: root
@@ -27,11 +28,15 @@ GFlickableColumnLayout {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Constants.component_spacing
+		activeFocusOnTab: true
 
 		//: LABEL ALL_PLATFORMS
 		text: qsTr("What kind of PIN do you have?")
 		textStyle: Style.text.headline
 		wrapMode: Text.WordWrap
+
+		FocusFrame {
+		}
 	}
 	MoreInformationLink {
 		Layout.alignment: Qt.AlignHCenter

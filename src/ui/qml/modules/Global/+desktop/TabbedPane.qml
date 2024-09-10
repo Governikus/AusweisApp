@@ -134,20 +134,21 @@ Item {
 		Item {
 			id: delegateItem
 
-			//: LABEL DESKTOP Additional description of TabbedPane behavior for a11y.
-			readonly property string a11yDescription: qsTr("You may navigate to different tabs by using the up/down arrows.")
+			//: LABEL DESKTOP %1 is the current selected Page of %2 Pages
+			readonly property string a11yPageIndicator: qsTr("%1 of %2").arg(index + 1).arg(ListView.view.count)
 			readonly property bool isFirstItem: index === 0
 			readonly property bool isLastItem: index === ListView.view.count - 1
 			readonly property var itemModel: model
 			readonly property bool nextItemIsHighlighted: index === ListView.view.currentIndex - 1 || index === root.highlightedIndex - 1
 
-			Accessible.description: a11yDescription
+			Accessible.description: Qt.platform.os === "windows" ? a11yPageIndicator : ""
 			Accessible.focusable: true
 			Accessible.name: {
 				if (Qt.platform.os === "windows") {
-					return sectionName.text + ", " + a11yDescription;
+					return sectionName.text;
 				}
-				return sectionName.text + ", " + qsTr("Tab selected");
+				//: LABEL DESKTOP
+				return sectionName.text + ", " + qsTr("Tab selected") + ", " + a11yPageIndicator;
 			}
 			Accessible.role: Accessible.PageTab
 			activeFocusOnTab: false

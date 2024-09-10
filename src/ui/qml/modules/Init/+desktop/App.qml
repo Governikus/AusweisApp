@@ -118,7 +118,43 @@ ApplicationWindow {
 		}
 		function closeOpenDialogs() {
 			closeWarning.close();
+			quitWarning.close();
 			abortWorkflowWarning.close();
+		}
+		function ensureHeight(pMargin) {
+			let preferredScreenHeight = appWindow.screen.height - 2 * pMargin;
+			if (appWindow.height > preferredScreenHeight) {
+				appWindow.height = preferredScreenHeight;
+			}
+		}
+		function ensureScreenFit() {
+			let windowMargin = 50;
+			let screenMinX = appWindow.screen.virtualX;
+			if (appWindow.x < screenMinX) {
+				ensureWidth(windowMargin);
+				appWindow.x = screenMinX + windowMargin;
+			}
+			let screenMinY = appWindow.screen.virtualY;
+			if (appWindow.y < screenMinY) {
+				ensureHeight(windowMargin);
+				appWindow.y = screenMinY + windowMargin;
+			}
+			let screenMaxX = screenMinX + appWindow.screen.width;
+			if (appWindow.x + appWindow.width > screenMaxX) {
+				ensureWidth(windowMargin);
+				appWindow.x = screenMaxX - appWindow.width - windowMargin;
+			}
+			let screenMaxY = screenMinY + appWindow.screen.height;
+			if (appWindow.y + appWindow.height > screenMaxY) {
+				ensureHeight(windowMargin);
+				appWindow.y = screenMaxY - appWindow.height - windowMargin;
+			}
+		}
+		function ensureWidth(pMargin) {
+			let preferredScreenWidth = appWindow.screen.width - 2 * pMargin;
+			if (appWindow.width > preferredScreenWidth) {
+				appWindow.width = preferredScreenWidth;
+			}
 		}
 		function hideUiAndTaskbarEntry() {
 			hide();
@@ -158,6 +194,7 @@ ApplicationWindow {
 
 		ConfirmationPopup {
 			closePolicy: Popup.NoAutoClose
+			mainTextFormat: Text.PlainText
 			style: ConfirmationPopup.PopupStyle.NoButtons
 			//: INFO DESKTOP The AA2 is currently remote controlled via the SDK interface, concurrent usage of the AA2 is not possible.
 			title: qsTr("Another application uses %1").arg(Qt.application.name)
@@ -282,6 +319,7 @@ ApplicationWindow {
 				}
 				break;
 			}
+			d.ensureScreenFit();
 		}
 
 		target: UiPluginModel

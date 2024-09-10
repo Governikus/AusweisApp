@@ -212,7 +212,7 @@ void AuthModel::onDidAuthenticateEac1Changed()
 	if (mContext)
 	{
 		const QSharedPointer<DIDAuthenticateEAC1>& didAuthenticateEAC1 = mContext->getDidAuthenticateEac1();
-		const QString newTransactionInfo = didAuthenticateEAC1.isNull() ? QString() : didAuthenticateEAC1->getTransactionInfo();
+		const QString newTransactionInfo = didAuthenticateEAC1.isNull() ? QString() : didAuthenticateEAC1->getTransactionInfo().toHtmlEscaped();
 		if (newTransactionInfo != mTransactionInfo)
 		{
 			mTransactionInfo = newTransactionInfo;

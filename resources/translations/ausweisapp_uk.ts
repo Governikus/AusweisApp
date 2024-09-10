@@ -4,14 +4,14 @@
 <context>
     <name>DvcsAttributes</name>
     <message>
-        <source>61757c650550</source>
+        <source>828ae9a4549a</source>
         <extracomment>revision</extracomment>
-        <translation>61757c650550</translation>
+        <translation>828ae9a4549a</translation>
     </message>
     <message>
-        <source>2.1.106</source>
+        <source>2.2.0</source>
         <extracomment>version</extracomment>
-        <translation>2.1.106</translation>
+        <translation>2.2.0</translation>
     </message>
 </context>
 <context>
@@ -509,11 +509,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Слабкий сигнал NFC. Будь ласка,
 - переконайтеся, що картку правильно розміщено на пристрої читання;
 - не переміщуйте картку, поки до неї здійснюється доступ</translation>
-    </message>
-    <message>
-        <source>Change Transport PIN</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Змінити транспортний PIN-код</translation>
     </message>
     <message>
         <source>The device &quot;%1&quot; was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.</source>
@@ -2278,18 +2273,23 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Open %1 on your %2other device%3.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 3</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4</extracomment>
         <translation>Відкрийте %1 на своєму %2іншому пристрої%3.</translation>
     </message>
     <message>
         <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 3. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
         <translation>Перейдіть на тому пристрої до розділу %1Параметри%2, а тоді виберіть %1Смартфон як пристрій читання карток%2 і %1Керування створенням пари%2.</translation>
     </message>
     <message>
         <source>Choose this smartphone in the list to pair it.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 3</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4</extracomment>
         <translation>Виберіть цей смартфон у переліку, щоб створити з ним пару.</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code &quot;%1&quot;.</source>
+        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 4 of 4</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2473,9 +2473,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in red).</source>
+        <source>The Card Access Number (CAN) allows to access the imprinted data of the ID card. The CAN is a 6-digit number that can be found on the front of the ID card. It is located at the bottom right next to the validity date (marked in picture).</source>
         <extracomment>INFO ALL_PLATFORMS Description text of CAN-allowed authentication</extracomment>
-        <translation>Номер доступу до картки (CAN) дає змогу отримати доступ до вихідних даних ID-картки. CAN – це 6-значний номер, який можна знайти на лицьовій стороні ID-картки. Він розташований унизу праворуч від терміну дії (позначено червоним).</translation>
+        <translation type="unfinished">Номер доступу до картки (CAN) дає змогу отримати доступ до вихідних даних ID-картки. CAN – це 6-значний номер, який можна знайти на лицьовій стороні ID-картки. Він розташований унизу праворуч від терміну дії (позначено червоним).</translation>
     </message>
     <message>
         <source>Smart-eID blocking code</source>
@@ -3085,15 +3085,18 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>RemoteReaderDelegate</name>
     <message>
-        <source>Smartphone named &quot;%1&quot;</source>
-        <translation>Смартфон під іменем «%1»</translation>
+        <source>Smartphone named &quot;%1&quot;. %2. </source>
+        <extracomment>INFO DESKTOP Name and status of remote device. %1 is replaced with the name, %2 with the status</extracomment>
+        <translation>Смартфон під іменем «%1». %2. </translation>
     </message>
     <message>
         <source>Press space to unpair the smartphone &quot;%1&quot;.</source>
+        <extracomment>INFO DESKTOP Text for activation action if the device is paired.</extracomment>
         <translation>Натисніть пробіл, щоб скасувати пару зі смартфоном «%1».</translation>
     </message>
     <message>
         <source>Press space to pair the smartphone &quot;%1&quot;.</source>
+        <extracomment>INFO DESKTOP Text for activation action if the device is unpaired.</extracomment>
         <translation>Натисніть пробіл, щоб створити пару зі смартфоном «%1».</translation>
     </message>
     <message>
@@ -3261,9 +3264,9 @@ To do this you first have to pair that device with this smartphone.</source>
         <translation>Куди вводити код створення пари?</translation>
     </message>
     <message>
-        <source>Enter the pairing code %1 in the %2 on your other device.</source>
+        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Введіть код створення пари %1 у %2 на своєму іншому пристрої.</translation>
+        <translation>Введіть код створення пари &quot;%1&quot; у %2 на своєму іншому пристрої.</translation>
     </message>
     <message>
         <source>Cancel pairing</source>
@@ -4223,12 +4226,13 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     <name>TabbedPane</name>
     <message>
         <source>Tab selected</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Вибрано вкладку</translation>
     </message>
     <message>
-        <source>You may navigate to different tabs by using the up/down arrows.</source>
-        <extracomment>LABEL DESKTOP Additional description of TabbedPane behavior for a11y.</extracomment>
-        <translation>Ви можете переходити до різних вкладок за допомогою стрілок вгору/вниз.</translation>
+        <source>%1 of %2</source>
+        <extracomment>LABEL DESKTOP %1 is the current selected Page of %2 Pages</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6353,11 +6357,6 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
 </context>
 <context>
     <name>governikus::StateConnectCard</name>
-    <message>
-        <source>The used card reader does not meet the technical requirements (Extended Length not supported).</source>
-        <extracomment>INFO IOS</extracomment>
-        <translation>Використовуваний пристрій читання карток не відповідає технічним вимогам (Extended Length не підтримується).</translation>
-    </message>
     <message>
         <source>The used ID card type is not accepted by the server.</source>
         <extracomment>INFO IOS</extracomment>
