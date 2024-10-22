@@ -57,6 +57,7 @@ GFlickableColumnLayout {
 			checkable: !checked
 			checked: selectedTechnology === ReaderManagerPluginType.NFC
 			icon.source: "qrc:///images/mobile/icon_nfc.svg"
+			style: Style.color.controlOptional
 			//: LABEL ANDROID IOS
 			text: qsTr("NFC")
 			tintIcon: true
@@ -71,6 +72,7 @@ GFlickableColumnLayout {
 			checkable: !checked
 			checked: selectedTechnology === ReaderManagerPluginType.SMART
 			icon.source: "qrc:///images/mobile/icon_smart.svg"
+			style: Style.color.controlOptional
 			//: LABEL ANDROID IOS
 			text: qsTr("SMART")
 			tintIcon: true
@@ -87,6 +89,7 @@ GFlickableColumnLayout {
 			checkable: !checked
 			checked: selectedTechnology === ReaderManagerPluginType.REMOTE_IFD
 			icon.source: "qrc:///images/mobile/icon_remote.svg"
+			style: Style.color.controlOptional
 			//: LABEL ANDROID IOS
 			text: qsTr("WiFi")
 			tintIcon: true
@@ -103,6 +106,7 @@ GFlickableColumnLayout {
 			checkable: !checked
 			checked: selectedTechnology === ReaderManagerPluginType.SIMULATOR
 			icon.source: "qrc:///images/mobile/icon_simulator.svg"
+			style: Style.color.controlOptional
 			//: LABEL ANDROID IOS
 			text: qsTr("SIM")
 			tintIcon: true

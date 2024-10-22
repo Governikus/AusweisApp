@@ -167,7 +167,7 @@ class CardConnection
 		template<typename T>
 		QMetaObject::Connection callSetEidPinCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
 			const QByteArray& pNewPin,
-			quint8 pTimeoutSeconds = 60)
+			quint8 pTimeoutSeconds = Card::DEFAULT_PINPAD_TIMEOUT)
 		{
 			auto command = createSetEidPinCommand(pNewPin, pTimeoutSeconds);
 			return call(command, pReceiver, pFunc);

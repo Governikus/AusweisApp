@@ -14,6 +14,7 @@ AbstractButton {
 
 	property string a11yDisabledText: qsTr("Disabled")
 	property string a11yText: ""
+	readonly property alias colors: colors
 	property real fontScale: 1
 	property bool visualPrivacy: SettingsModel.visualPrivacy
 

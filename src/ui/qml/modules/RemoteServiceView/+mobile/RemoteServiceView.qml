@@ -70,7 +70,7 @@ FlickableSectionPage {
 		//: LABEL ANDROID IOS
 		RemoteServiceModel.isPairing ? qsTr("Waiting for pairing") :
 		//: LABEL ANDROID IOS
-		RemoteServiceModel.running ? qsTr("Waiting for connection") : ""
+		RemoteServiceModel.running ? qsTr("Card reader ready") : ""
 
 		ColumnLayout {
 			spacing: Constants.component_spacing
@@ -132,16 +132,11 @@ FlickableSectionPage {
 						when: RemoteServiceModel.running && knownDeviceList.count > 0
 
 						PropertyChanges {
+							infoText.text: "%1\n\n%2"
 							//: INFO ANDROID IOS
-							infoText.text: qsTr("Paired devices may use this Smartphone as a card reader now.")
-						}
-					},
-					State {
-						when: RemoteServiceModel.running
-
-						PropertyChanges {
+							.arg(qsTr("Paired devices may use this Smartphone as a card reader now."))
 							//: INFO ANDROID IOS
-							infoText.text: qsTr("Waiting for connection from a paired device...")
+							.arg(qsTr("To do this, start a process on a paired device."))
 						}
 					}
 				]
@@ -211,17 +206,15 @@ FlickableSectionPage {
 					title: remoteDeviceName
 				}
 			}
-			GButton {
+			GLink {
 				//: LABEL ANDROID IOS
 				Accessible.name: qsTr("Start pairing of a new device")
 				Layout.alignment: Qt.AlignLeft
 				Layout.topMargin: knownDevices.spacing
-				background: null
 				icon.source: "qrc:///images/material_add.svg"
 				padding: 0
 				//: LABEL ANDROID IOS
 				text: qsTr("Pair new device")
-				textStyle: Style.text.link
 				tintIcon: true
 				visible: !RemoteServiceModel.isPairing && !RemoteServiceModel.running
 
@@ -297,7 +290,7 @@ FlickableSectionPage {
 
 				PropertyChanges {
 					//: LABEL ANDROID IOS
-					pairConnectButton.text: qsTr("Allow connection")
+					pairConnectButton.text: qsTr("Activate card reader")
 
 					pairConnectButton.onClicked: RemoteServiceModel.setRunning(true)
 				}
@@ -319,6 +312,16 @@ FlickableSectionPage {
 					//: LABEL ANDROID IOS
 					pairConnectButton.text: qsTr("Cancel pairing")
 					pairConnectButton.visible: true
+
+					pairConnectButton.onClicked: RemoteServiceModel.setRunning(false, false)
+				}
+			},
+			State {
+				when: RemoteServiceModel.running
+
+				PropertyChanges {
+					//: LABEL ANDROID IOS
+					pairConnectButton.text: qsTr("Stop card reader")
 
 					pairConnectButton.onClicked: RemoteServiceModel.setRunning(false, false)
 				}

@@ -5,6 +5,12 @@ echo "Warning: This script should be called on jenkins only"
   exit 1
 fi
 
+if [ -n "$1" ]; then
+  PATCH=$1
+else
+  PATCH="../patch.diff"
+fi
+
 REVISION_CURRENT=$(hg id -i)
 
 # Check if the current repository state is formatted
@@ -18,7 +24,7 @@ if [ "$STATUS_CURRENT" != "0" ]; then
 fi
 REVISION_FORMATTED=$(hg id -i)
 
-if [ ! -f ../patch.diff ] && [ -n "$NO_PATCH" ]; then
+if [ ! -f "$PATCH" ] && [ -n "$NO_PATCH" ]; then
   if [ "$STATUS_CURRENT" != "0" ]; then
       echo 'FORMATTING FAILED'
   else
@@ -31,7 +37,7 @@ fi
 hg update -C -r "$REVISION_CURRENT"
 
 # Apply patch on the current repository state
-hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' ../patch.diff
+hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' "$PATCH"
 if [ "$?" != "0" ]; then
   echo 'FORMATTING FAILED: Patch cannot be applied'
   exit 0
@@ -58,7 +64,7 @@ fi
 hg update -C -r "$REVISION_FORMATTED"
 
 # Apply patch on the formatted repository state
-hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' ../patch.diff
+hg --config patch.eol=auto --config phases.new-commit=secret import -m 'jenkins patch formatting' -d 'today' -u 'jenkins' "$PATCH"
 if [ "$?" != "0" ]; then
   echo 'FORMATTING FAILED: Patch cannot be applied, because the current repository state is unformatted and the patch conflicts with the formatted repository state without fixing the formatting!'
   exit 0

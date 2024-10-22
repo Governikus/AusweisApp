@@ -64,6 +64,30 @@ spec:
               key: sonarqube
               name: dependency-check-credentials
               optional: false
+        - name: GPG_PSW
+          valueFrom:
+            secretKeyRef:
+              key: GPG_PSW
+              name: gpg
+              optional: false
+        - name: GPG_ID
+          valueFrom:
+            secretKeyRef:
+              key: GPG_ID
+              name: gpg
+              optional: false
+        - name: CENTRAL_PSW
+          valueFrom:
+            secretKeyRef:
+              key: CENTRAL_PSW
+              name: android-passwords
+              optional: false
+        - name: CENTRAL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: CENTRAL_USERNAME
+              name: android-passwords
+              optional: false
         image: dev-docker.governikus.de/ausweisapp2/ubuntu:android
         imagePullPolicy: Always
         lifecycle:
@@ -74,6 +98,7 @@ spec:
               - -c
               - base64 -d /secrets/debug.keystore > /home/governikus/.android/debug.keystore
                 && base64 -d /secrets/release.keystore > /home/governikus/release.keystore
+                && gpg --batch --passphrase $GPG_PSW --pinentry-mode loopback --import /gpg/GPG_PRIVATE
         name: android
         resources:
           limits:
@@ -119,3 +144,8 @@ spec:
       - name: ccache
         persistentVolumeClaim:
           claimName: ccache-android
+      - name: gpg
+        secret:
+          defaultMode: 420
+          optional: false
+          secretName: gpg

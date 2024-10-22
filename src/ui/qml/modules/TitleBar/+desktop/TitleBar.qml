@@ -100,7 +100,14 @@ Rectangle {
 				TitleBarButton {
 					id: notifyButton
 
-					Accessible.description: qsTr("Show in-app notifications of %1").arg(Qt.application.name)
+					Accessible.description: checked ?
+					//: LABEL DESKTOP
+					qsTr("Hide in-app notifications of %1").arg(Qt.application.name) :
+					//: LABEL DESKTOP
+					qsTr("Show in-app notifications of %1").arg(Qt.application.name)
+					Accessible.role: Accessible.CheckBox
+					checkable: true
+					checked: notifications.visibleToUser
 					height: rightTitleBarActions.height
 					iconColor: notifications.iconColor
 					source: notifications.unreadMessages ? "qrc:///images/desktop/notifications_on.svg" : "qrc:///images/desktop/notifications_off.svg"

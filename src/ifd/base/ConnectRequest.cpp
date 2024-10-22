@@ -168,7 +168,14 @@ void ConnectRequest::onConnected()
 
 void ConnectRequest::onError(QAbstractSocket::SocketError pError)
 {
-	qCWarning(ifd) << "Connection error:" << pError;
+	if (mSocket)
+	{
+		qCWarning(ifd) << "Connection error:" << pError << mSocket->errorString();
+	}
+	else
+	{
+		qCWarning(ifd) << "Connection error:" << pError;
+	}
 
 	mTimer.stop();
 	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError

@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
-import Governikus.Style
 
 BaseConfirmationPopup {
 	id: root
@@ -14,19 +13,15 @@ BaseConfirmationPopup {
 		spacing: 0
 		width: parent.width
 
-		GButton {
-			background: null
+		GLink {
 			text: root.okButtonText
-			textStyle: Style.text.normal
-			visible: style & ConfirmationPopup.PopupStyle.OkButton
+			visible: root.style & ConfirmationPopup.PopupStyle.OkButton
 
 			onClicked: root.accept()
 		}
-		GButton {
-			background: null
+		GLink {
 			text: root.cancelButtonText
-			textStyle: Style.text.normal
-			visible: style & ConfirmationPopup.PopupStyle.CancelButton
+			visible: root.style & ConfirmationPopup.PopupStyle.CancelButton
 
 			onClicked: root.cancel()
 		}

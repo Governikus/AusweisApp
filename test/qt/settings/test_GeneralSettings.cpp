@@ -73,6 +73,30 @@ class test_GeneralSettings
 		}
 
 
+		void testAutoRedirectAfterAuthentication()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+			QSignalSpy spy(&settings, &GeneralSettings::fireSettingsChanged);
+			QCOMPARE(settings.isAutoRedirectAfterAuthentication(), true);
+
+			settings.setAutoRedirectAfterAuthentication(false);
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(settings.isAutoRedirectAfterAuthentication(), false);
+
+			settings.setAutoRedirectAfterAuthentication(false);
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(settings.isAutoRedirectAfterAuthentication(), false);
+
+			settings.setAutoRedirectAfterAuthentication(true);
+			QCOMPARE(spy.size(), 2);
+			QCOMPARE(settings.isAutoRedirectAfterAuthentication(), true);
+
+			settings.setAutoRedirectAfterAuthentication(true);
+			QCOMPARE(spy.size(), 2);
+			QCOMPARE(settings.isAutoRedirectAfterAuthentication(), true);
+		}
+
+
 		void testAutoCheck()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();

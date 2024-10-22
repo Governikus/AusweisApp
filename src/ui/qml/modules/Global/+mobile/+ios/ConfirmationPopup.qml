@@ -5,7 +5,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.Global
-import Governikus.Style
 
 BaseConfirmationPopup {
 	id: root
@@ -18,33 +17,29 @@ BaseConfirmationPopup {
 
 		GSeparator {
 			Layout.fillWidth: true
-			visible: style !== ConfirmationPopup.PopupStyle.NoButtons
+			visible: root.style !== ConfirmationPopup.PopupStyle.NoButtons
 		}
 		RowLayout {
 			spacing: 0
 
-			GButton {
+			GLink {
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
-				background: null
 				implicitWidth: 1
 				text: root.cancelButtonText
-				textStyle: Style.text.normal
-				visible: style & ConfirmationPopup.PopupStyle.CancelButton
+				visible: root.style & ConfirmationPopup.PopupStyle.CancelButton
 
 				onClicked: root.cancel()
 			}
 			GSeparator {
 				Layout.fillHeight: true
 				orientation: Qt.Vertical
-				visible: style & ConfirmationPopup.PopupStyle.CancelButton && style & ConfirmationPopup.PopupStyle.OkButton
+				visible: root.style & ConfirmationPopup.PopupStyle.CancelButton && root.style & ConfirmationPopup.PopupStyle.OkButton
 			}
-			GButton {
+			GLink {
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
-				background: null
 				implicitWidth: 1
 				text: root.okButtonText
-				textStyle: Style.text.normal
-				visible: style & ConfirmationPopup.PopupStyle.OkButton
+				visible: root.style & ConfirmationPopup.PopupStyle.OkButton
 
 				onClicked: root.accept()
 			}

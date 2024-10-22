@@ -43,15 +43,6 @@ class PcscCard
 		CardResult transmit(const QByteArray& pSendBuffer);
 		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci);
 		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput);
-#ifdef Q_OS_WIN
-		void disableOverlay();
-#else
-		void disableOverlay() const
-		{
-		}
-
-
-#endif
 
 	private Q_SLOTS:
 		void sendSCardStatus();
@@ -66,7 +57,7 @@ class PcscCard
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
-		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds) override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription) override;
 
 		CardReturnCode destroyPaceChannel() override;
 

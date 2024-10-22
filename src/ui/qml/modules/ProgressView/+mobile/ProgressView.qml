@@ -18,7 +18,6 @@ FlickableSectionPage {
 	property alias subText: subText.text
 	property alias subTextColor: subText.color
 	property alias text: text.text
-	property alias tintEnabled: statusIcon.tintEnabled
 
 	HourglassAnimation {
 		Layout.alignment: Qt.AlignHCenter
@@ -29,6 +28,7 @@ FlickableSectionPage {
 
 		Layout.alignment: Qt.AlignHCenter
 		sourceSize.height: Style.dimens.header_icon_size
+		tintColor: Style.color.image
 		visible: source.toString() !== ""
 	}
 	GText {

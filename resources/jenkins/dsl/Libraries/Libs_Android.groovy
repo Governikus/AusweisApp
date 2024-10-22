@@ -1,7 +1,7 @@
 import common.Library
 import common.Constants
 
-for(ARCH in Constants.AndroidArch)
+for(ARCH in Constants.AndroidArchLibs)
 {
 
 def j = new Library

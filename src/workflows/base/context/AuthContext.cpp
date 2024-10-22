@@ -17,6 +17,7 @@ AuthContext::AuthContext(const Action pAction, bool pActivateUi, const QUrl& pAc
 	: WorkflowContext(pAction, pActivateUi)
 	, mTcTokenNotFound(true)
 	, mErrorReportedToServer(false)
+	, mReceivedBrowserSendFailed(false)
 	, mSkipMobileRedirect(false)
 	, mShowChangePinView(false)
 	, mActivationUrl(pActivationUrl)
@@ -50,6 +51,16 @@ AuthContext::AuthContext(const Action pAction, bool pActivateUi, const QUrl& pAc
 AuthContext::AuthContext(bool pActivateUi, const QUrl& pActivationUrl, const BrowserHandler& pHandler)
 	: AuthContext(Action::AUTH, pActivateUi, pActivationUrl, pHandler)
 {
+}
+
+
+void AuthContext::setReceivedBrowserSendFailed(bool pReceivedBrowserSendFailed)
+{
+	if (mReceivedBrowserSendFailed != pReceivedBrowserSendFailed)
+	{
+		mReceivedBrowserSendFailed = pReceivedBrowserSendFailed;
+		Q_EMIT fireResultChanged();
+	}
 }
 
 

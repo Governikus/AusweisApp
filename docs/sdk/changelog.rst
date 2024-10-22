@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.2.2
+^^^^^^^^^^^^^
+* Added Android ABIs armeabi-v7a and x86_64 in addition to arm64-v8a.
+
+
+Version 2.2.1
+^^^^^^^^^^^^^
+* Stabilized fast SDK restarts on iOS.
+* Support 16 KB page sizes on Android.
+* Updated Android NDK to r27b (27.1.12297006).
+
+
 Version 2.2.0
 ^^^^^^^^^^^^^
 * Introduced the following additions in :ref:`api_level` **3**:

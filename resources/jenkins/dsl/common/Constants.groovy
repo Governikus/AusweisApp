@@ -4,8 +4,11 @@ class Constants
 {
 	static final AndroidArchAPKReview = ["arm64-v8a", "x86_64"]
 	static final AndroidArchAPK = AndroidArchAPKReview + ["armeabi-v7a", "x86"]
-	static final AndroidArchAAR = ["arm64-v8a"]
-	static final AndroidArch = (AndroidArchAPK + AndroidArchAAR).unique()
+	static final AndroidArchAARReview = ["arm64-v8a", "x86_64", "armeabi-v7a"]
+	static final AndroidArchAAR = AndroidArchAARReview
+
+	static final AndroidArchLibsReview = (AndroidArchAPKReview + AndroidArchAARReview).unique()
+	static final AndroidArchLibs = (AndroidArchAPK + AndroidArchAAR).unique()
 
 	static String strip(String content)
 	{

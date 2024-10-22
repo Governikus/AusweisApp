@@ -16,6 +16,7 @@ FlickableSectionPage {
 	signal done
 	signal requestBack
 
+	spacing: Constants.pane_spacing
 	//: LABEL ANDROID IOS
 	title: qsTr("Identify")
 

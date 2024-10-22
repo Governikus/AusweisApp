@@ -56,6 +56,11 @@ class Build
 		return buildName(getNamePrefix(), artifactJob)
 	}
 
+	String getSourceJobNameParam(String artifactJob)
+	{
+		return getSourceJobName(artifactJob).replace('-', '_') + '_Build'
+	}
+
 	String getLibName(String partialLibName)
 	{
 		def prefix = 'Libs_'

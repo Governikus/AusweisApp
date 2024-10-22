@@ -52,6 +52,7 @@ class SettingsModel
 	Q_PROPERTY(bool autoStartSetByAdmin READ autoStartIsSetByAdmin CONSTANT)
 	Q_PROPERTY(bool autoUpdateAvailable READ isAutoUpdateAvailable CONSTANT)
 	Q_PROPERTY(bool autoCloseWindowAfterAuthentication READ isAutoCloseWindowAfterAuthentication WRITE setAutoCloseWindowAfterAuthentication NOTIFY fireAutoCloseWindowAfterAuthenticationChanged)
+	Q_PROPERTY(bool autoRedirectAfterAuthentication READ isAutoRedirectAfterAuthentication WRITE setAutoRedirectAfterAuthentication NOTIFY fireAutoRedirectAfterAuthenticationChanged)
 	Q_PROPERTY(bool autoUpdateCheck READ isAutoUpdateCheck WRITE setAutoUpdateCheck NOTIFY fireAutoUpdateCheckChanged)
 	Q_PROPERTY(bool autoUpdateCheckSetByAdmin READ autoUpdateCheckIsSetByAdmin CONSTANT)
 	Q_PROPERTY(bool remindUserToClose READ isRemindUserToClose WRITE setRemindUserToClose NOTIFY fireRemindUserToCloseChanged)
@@ -134,6 +135,9 @@ class SettingsModel
 		[[nodiscard]] bool isAutoCloseWindowAfterAuthentication() const;
 		void setAutoCloseWindowAfterAuthentication(bool pEnabled);
 
+		[[nodiscard]] bool isAutoRedirectAfterAuthentication() const;
+		void setAutoRedirectAfterAuthentication(bool pEnabled);
+
 		[[nodiscard]] bool isAutoUpdateAvailable() const;
 		[[nodiscard]] bool isAutoUpdateCheck() const;
 		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
@@ -190,6 +194,7 @@ class SettingsModel
 		void fireStartupModuleChanged();
 		void fireAutoStartChanged();
 		void fireAutoCloseWindowAfterAuthenticationChanged();
+		void fireAutoRedirectAfterAuthenticationChanged();
 		void fireAutoUpdateCheckChanged();
 		void fireRemindUserToCloseChanged();
 		void fireTransportPinReminderChanged();

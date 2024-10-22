@@ -112,7 +112,7 @@ class test_ReaderConfiguration
 			QTest::newRow("REINER SCT cyberJack RFID komfort FON") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON" << "REINER SCT cyberJack RFID komfort FON" << "img_Reiner_SCT_cyberjack_RFID_komfort" << "^REINER SCT cyberJack RFID komfort FON";
 			QTest::newRow("REINER SCT cyberJack RFID standard") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard" << "img_Reiner_SCT_cyberjack_RFID_standard" << "REINER SCT cyberJack RFID standard";
 			QTest::newRow("REINER SCT cyberJack RFID basis") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis" << "img_Reiner_SCT_cyberjack_RFID_basis" << "REINER SCT cyberJack RFID basis";
-			QTest::newRow("REINER SCT cyberJack wave") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave" << "img_cyberjack_wave" << "REINER SCT cyberJack wave( USB)?( \\d{1,1})?$";
+			QTest::newRow("REINER SCT cyberJack wave") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave" << "img_cyberjack_wave" << "REINER SCT cyberJack wave";
 
 			QTest::newRow("KOBIL IDToken") << UsbId(0x0D46, 0x301D) << "KOBIL Systems IDToken" << "KOBIL IDToken" << "img_KOBIL_ID_Token" << "^KOBIL (Systems )?IDToken";
 
@@ -187,21 +187,21 @@ class test_ReaderConfiguration
 			QTest::newRow("Simulator") << UsbId(0x0000, 0x0002) << "Simulator" << "Simulator";
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-windows-10-11") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort USB 1" << "REINER SCT cyberJack RFID komfort";
-			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-12-14") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
+			QTest::newRow("REINER SCT cyberJack RFID komfort-macosx-12-15") << UsbId(0x0C4B, 0x0501) << "REINER SCT cyberJack RFID komfort" << "REINER SCT cyberJack RFID komfort";
 
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-windows-7-10") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON USB 52" << "REINER SCT cyberJack RFID komfort FON";
 			QTest::newRow("REINER SCT cyberJack RFID komfort-FON-macosx-10.13-11.0") << UsbId(0x0C4B, 0x2007) << "REINER SCT cyberJack RFID komfort FON" << "REINER SCT cyberJack RFID komfort FON";
 
 			QTest::newRow("REINER SCT cyberJack RFID standard-windows-10-11") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard USB 1" << "REINER SCT cyberJack RFID standard";
-			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-12-14") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
+			QTest::newRow("REINER SCT cyberJack RFID standard-macosx-12-15") << UsbId(0x0C4B, 0x0500) << "REINER SCT cyberJack RFID standard" << "REINER SCT cyberJack RFID standard";
 
 			QTest::newRow("REINER SCT cyberJack RFID basis-windows-10-11") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis 0" << "REINER SCT cyberJack RFID basis";
-			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-11-13") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
+			QTest::newRow("REINER SCT cyberJack RFID basis-macosx-11-15") << UsbId(0x0C4B, 0x9102) << "REINER SCT cyberJack RFID basis" << "REINER SCT cyberJack RFID basis";
 
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 0" << "REINER SCT cyberJack wave";
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-1") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave 1" << "REINER SCT cyberJack wave";
 			QTest::newRow("REINER SCT cyberJack wave-windows-10-11-2") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave USB 1" << "REINER SCT cyberJack wave";
-			QTest::newRow("REINER SCT cyberJack wave-macosx-12-14") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave";
+			QTest::newRow("REINER SCT cyberJack wave-macosx-12-15") << UsbId(0x0C4B, 0x0505) << "REINER SCT cyberJack wave" << "REINER SCT cyberJack wave";
 
 			QTest::newRow("KOBIL IDToken-windows-10-11-1") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 0" << "KOBIL IDToken";
 			QTest::newRow("KOBIL IDToken-windows-10-11-2") << UsbId(0x0D46, 0x301D) << "KOBIL IDToken 1" << "KOBIL IDToken";

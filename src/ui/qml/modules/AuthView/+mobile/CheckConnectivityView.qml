@@ -11,13 +11,12 @@ ProgressView {
 
 	signal cancel
 
-	icon: "qrc:///images/mobile/no_internet_%1.svg".arg(Style.currentTheme.name)
+	icon: "qrc:///images/no_internet.svg"
 	//: INFO ANDROID IOS No network connection, the user needs to active the network interface or abort the procedure.
 	subText: qsTr("Please establish an internet connection.")
 	subTextColor: Style.color.textNormal.basic
 	//: LABEL ANDROID IOS
 	text: qsTr("No network connectivity")
-	tintEnabled: false
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel

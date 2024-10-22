@@ -40,7 +40,7 @@ class Service
 	public:
 		void updateAppcast();
 		[[nodiscard]] bool isUpdateScheduled() const;
-		void runUpdateIfNeeded();
+		void runUpdateIfNeeded(bool pSkipProxy = false);
 		[[nodiscard]] const AppUpdateData& getUpdateData() const;
 
 	Q_SIGNALS:

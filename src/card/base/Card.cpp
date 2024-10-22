@@ -31,13 +31,12 @@ void Card::setErrorMessage(const QString& pMessage)
 }
 
 
-EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
+EstablishPaceChannelOutput Card::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
 {
 	Q_UNUSED(pPasswordId)
 	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pChat)
 	Q_UNUSED(pCertificateDescription)
-	Q_UNUSED(pTimeoutSeconds)
 	qCWarning(card) << "Establishment of PACE channel not supported";
 	return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 }

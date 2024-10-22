@@ -48,6 +48,8 @@ class Card
 	Q_OBJECT
 
 	public:
+		static constexpr int DEFAULT_PINPAD_TIMEOUT = 90;
+
 		Card();
 		~Card() override = default;
 
@@ -83,7 +85,7 @@ class Card
 		/*!
 		 * Establishes a PACE channel, i.e. the corresponding reader is no basic reader.
 		 */
-		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60);
+		virtual EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription);
 
 		/*!
 		 * Destroys an existing  PACE channel, i.e. the corresponding reader is no basic reader.

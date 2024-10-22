@@ -30,8 +30,10 @@ ResultView {
 		Layout.fillWidth: true
 		Layout.leftMargin: -Constants.pane_padding * 2
 		Layout.rightMargin: -Constants.pane_padding * 2
+		arrowToLeft: true
 		horizontalMargin: Constants.pane_padding * 2
-		title: qsTr("Details")
+		//: LABEL ANDROID IOS
+		title: qsTr("Show Details")
 		visible: hasErrorDetails
 
 		GText {

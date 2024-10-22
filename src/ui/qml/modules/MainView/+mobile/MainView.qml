@@ -130,7 +130,7 @@ FlickableSectionPage {
 		preferredHighlightEnd: width / 2 + itemWidth / 2
 		snapMode: ListView.SnapOneItem
 
-		Component.onCompleted: {
+		onCountChanged: {
 			updateTileLimits();
 			currentIndex = 1;
 		}

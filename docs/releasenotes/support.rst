@@ -14,6 +14,8 @@ Betriebssysteme
 
 - macOS 14.0
 
+- macOS 15.0
+
 - Windows 10 (64 Bit) ab Version 1809
 
 - Windows 11
@@ -24,7 +26,7 @@ Betriebssysteme
 
 - Windows Server 2022
 
-- Android 9 und höher (armeabi-v7a, arm64-v8a)
+- Android 9 und höher (armeabi-v7a, arm64-v8a, x86_64)
 
 - iOS 14 und höher
 
@@ -54,55 +56,73 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 126
+- Chrome 129
 
-- Firefox 127
+- Firefox 131
 
-- Safari 17.4 (macOS)
+- Safari 18.0 (macOS)
 
-- Edge 126
+- Edge 129
 
 
 
 Kartenleser
 ~~~~~~~~~~~
 Alle Kartenleser, die die Online-Ausweisfunktion unterstützen und nach
-BSI TR-03119 zertifiziert sind. Details hierzu befinden sich auf der Homepage
-des BSI unter "Nach Technischen Richtlinien zertifizierte Produkte".
+BSI TR-03119 zertifiziert sind. Details hierzu befinden sich auf der Website
+des BSI unter `Zertifizierte Produkte - Chipkartenleser mit PA-Unterstützung
+<https://www.bsi.bund.de/dok/6618012>`_.
 
-Zusätzlich werden folgende nicht zertifizierte Kartenleser getestet.
+
+- ACS ACR1281U-C1
+
+- ACS ACR1581U-C1
+
+- Cherry Secure Board 1.0
+
+- Cherry ST-1275
 
 - Cherry TC-1200
 
 - Cherry TC-1300
 
-- Identiv Cloud 4701 F
+- HID OMNIKEY 5021 CL
+
+- HID OMNIKEY 5022 CL
+
+- HID OMNIKEY 5421
+
+- HID OMNIKEY 5422
+
+- Identiv 3700 F
+
+- Identiv 3720 F
+
+- Identiv 3721 F
+
+- Identiv 4701 F
+
+- Identiv Cloud 4700 F
+
+- Identiv SCL01x
 
 - Identiv SCL3711
 
-- Identiv Cloud 3700 F
+- REINER SCT cyberJack wave (via USB)
 
-- Identiv CLOUD 4700 F
-
-- ACR1252U
-
-- OMNIKEY 5021 CL
-
-- OMNIKEY 5421
-
-- cyberJack wave (via USB)
+- Signotec Omega Pad
 
 
-Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Webseite:
-https://www.ausweisapp.bund.de/aa2/cardreader
+Aktuelle Informationen zu Kartenlesern finden Sie auf unserer Website unter
+`USB-Kartenleser <https://www.ausweisapp.bund.de/aa2/cardreader>`_.
 
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Online-Ausweisfunktion
 unterstützen, können als Kartenleser verwendet werden.
 Dabei ist es notwendig die mobile |AppName| auf dem jeweiligen Smartphone
 zu installieren und zu starten.
 
-Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/aa2/mobile-devices
+Details hierzu befinden sich auf unserer Website unter
+`Smartphones & Tablets <https://www.ausweisapp.bund.de/aa2/mobile-devices>`_.
 
 
 Android / iOS
@@ -120,18 +140,18 @@ folgenden Browser zu verwenden.
 
 - Chrome 126 (iOS/Android)
 
-- Firefox 127 (iOS/Android)
+- Firefox 131 (iOS/Android)
 
-- Samsung Internet 25 (Android)
+- Samsung Internet 26 (Android)
 
-- Safari 17.4 (iOS)
+- Safari 18.0 (iOS)
 
 
 Kartenleser
 ~~~~~~~~~~~
 Alle NFC-fähigen Smartphones bzw. Tablets, die die Online-Ausweisfunktion
-unterstützen. Details hierzu befinden sich auf der Homepage:
-https://www.ausweisapp.bund.de/aa2/mobile-devices
+unterstützen. Details hierzu befinden sich auf unserer Website unter
+`Smartphones & Tablets <https://www.ausweisapp.bund.de/aa2/mobile-devices>`_.
 
 Ebenfalls ist es möglich ein weiteres Smartphone als Kartenleser zu verwenden.
 Dabei ist es notwendig die mobile |AppName| auf dem jeweiligen Smartphone zu

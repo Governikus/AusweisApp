@@ -6,7 +6,7 @@ import static common.Constants.createReviewMessage
 def getJobs()
 {
 	def list = ['Linux', 'MacOS', 'Win64_GNU', 'Win64_MSVC', 'Win64_MSVC_dev', 'iOS', 'iOS_Simulator', 'iOS_Simulator_arm64', 'FreeBSD']
-	for(ARCH in Constants.AndroidArchAPKReview)
+	for(ARCH in Constants.AndroidArchLibsReview)
 	{
 		list << 'Android_' + ARCH
 	}
@@ -54,7 +54,7 @@ j.with
 				killPhaseCondition('NEVER')
 			}
 
-			for(ARCH in Constants.AndroidArchAPKReview)
+			for(ARCH in Constants.AndroidArchLibsReview)
 			{
 				phaseJob(getName('Android_' + ARCH))
 				{

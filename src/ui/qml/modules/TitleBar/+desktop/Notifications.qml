@@ -20,6 +20,7 @@ Item {
 		return Style.color.textNormal.basic;
 	}
 	readonly property bool unreadMessages: d.unreadMsg
+	readonly property bool visibleToUser: d.fadeIn && !fadeOutTimer.running
 
 	signal newNotification
 
@@ -76,7 +77,7 @@ Item {
 		GListView {
 			id: logEntryList
 
-			activeFocusOnTab: d.fadeIn && !fadeOutTimer.running
+			activeFocusOnTab: baseItem.visibleToUser
 			anchors.fill: parent
 			bottomMargin: Constants.pane_padding
 			clip: true

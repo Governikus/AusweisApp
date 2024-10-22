@@ -61,7 +61,7 @@ class IfdCard
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
-		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds = 60) override;
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription) override;
 
 		CardReturnCode destroyPaceChannel() override;
 

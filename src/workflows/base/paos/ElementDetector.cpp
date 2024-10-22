@@ -41,7 +41,7 @@ void ElementDetector::detectStartElements(const QStringList& pStartElementNames)
 
 bool ElementDetector::handleStartElements(const QStringList& pStartElementNames)
 {
-	const QStringView name = mReader.name();
+	const QString name = mReader.name().toString();
 	if (pStartElementNames.contains(name))
 	{
 		QXmlStreamAttributes attributes = mReader.attributes();

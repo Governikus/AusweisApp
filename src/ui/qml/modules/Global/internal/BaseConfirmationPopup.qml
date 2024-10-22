@@ -95,6 +95,7 @@ Popup {
 			id: mainText
 
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
+			Layout.preferredWidth: Math.ceil(hiddenText.implicitWidth)
 			activeFocusOnTab: true
 			horizontalAlignment: root.horizontalTextAlignment
 			text: root.text
@@ -102,6 +103,12 @@ Popup {
 			visible: root.text !== ""
 
 			FocusFrame {
+			}
+			GText {
+				id: hiddenText
+
+				text: root.text
+				visible: false
 			}
 		}
 		Item {

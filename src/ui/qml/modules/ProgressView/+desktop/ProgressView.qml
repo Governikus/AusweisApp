@@ -11,14 +11,30 @@ import Governikus.View
 SectionPage {
 	id: baseItem
 
+	property alias icon: statusIcon.source
 	property alias progressBarVisible: progressBar.visible
 	property alias progressText: progressText.text
 	property alias progressValue: progressBar.value
 	property alias subText: subText.text
 	property alias subTextColor: subText.color
 	property alias text: text.text
+	property alias tintColor: statusIcon.tintColor
 
 	HourglassAnimation {
+		visible: !statusIcon.visible
+
+		anchors {
+			horizontalCenter: parent.horizontalCenter
+			top: parent.top
+			topMargin: Constants.component_spacing
+		}
+	}
+	TintableIcon {
+		id: statusIcon
+
+		sourceSize.height: Style.dimens.header_icon_size
+		visible: source.toString() !== ""
+
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.top

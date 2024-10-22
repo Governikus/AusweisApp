@@ -7,6 +7,7 @@
 #include "AppSettings.h"
 #include "AppUpdater.h"
 #include "ProviderConfiguration.h"
+#include "SecureStorage.h"
 
 #if defined(Q_OS_WIN) || defined(Q_OS_MACOS) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	#include "ReaderConfiguration.h"
@@ -122,8 +123,18 @@ bool Service::isUpdateScheduled() const
 }
 
 
-void Service::runUpdateIfNeeded()
+void Service::runUpdateIfNeeded(bool pSkipProxy)
 {
+	if (pSkipProxy)
+	{
+		const auto& appcastUrl = Env::getSingleton<SecureStorage>()->getAppcastUpdateUrl();
+		const auto& proxies = QNetworkProxyFactory::proxyForQuery(QNetworkProxyQuery(appcastUrl));
+		if (!proxies.isEmpty() && proxies.first().type() != QNetworkProxy::NoProxy)
+		{
+			return;
+		}
+	}
+
 	if (mUpdateScheduled)
 	{
 		mUpdateScheduled = false;

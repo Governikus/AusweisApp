@@ -28,12 +28,7 @@ j.with
 
 	steps
 	{
-		shell("cd source; cmake --preset ci-android-apk -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
-		shell('cmake --build build')
-		shell('cmake --build build --target apk')
-		shell('cmake --build build --target verify.signature')
-		shell('cmake --build build --target dump.apk')
-		shell('ctest --test-dir build --output-on-failure')
+		shell("cmake -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 	}
 
 	publishers {
@@ -63,7 +58,7 @@ for(ARCH in Constants.AndroidArchAAR)
 
 def j = new Build
 	(
-		name: 'Android_AAR',
+		name: 'Android_AAR_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
 		artifacts: 'build/dist/**,build/**/debug.symbols/*'
@@ -73,11 +68,7 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake --preset ci-android-aar')
-		shell('cmake --build build')
-		shell('cmake --build build --target aar')
-		shell('ctest --test-dir build --output-on-failure')
-		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
+		shell("cmake -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 	}
 
 	publishers {
@@ -98,4 +89,34 @@ j.with
 	}
 }
 
+}
+
+
+def build = new Build
+	(
+		name: 'Android_AAR',
+		label: 'Android',
+		artifacts: 'build/dist/**'
+	)
+
+def j = build.generate(this)
+
+j.with
+{
+	steps
+	{
+		for(ARCH in Constants.AndroidArchAAR)
+		{
+			copyArtifacts(build.getSourceJobName('Android_AAR_' + ARCH))
+			{
+				flatten()
+				buildSelector
+				{
+					latestSuccessful(true)
+				}
+			}
+		}
+
+		shell('cmake -P source/ci.cmake')
+	}
 }

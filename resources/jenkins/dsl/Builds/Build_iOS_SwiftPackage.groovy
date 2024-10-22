@@ -16,7 +16,8 @@ j.with
 	{
 		copyArtifacts(build.getSourceJobName('iOS_Framework'))
 		{
-			targetDirectory('build/arm64')
+			targetDirectory('arm64')
+			flatten()
 			buildSelector
 			{
 				latestSuccessful(true)
@@ -25,7 +26,8 @@ j.with
 
 		copyArtifacts(build.getSourceJobName('iOS_Simulator_Framework'))
 		{
-			targetDirectory('build/x86_64-simulator')
+			targetDirectory('x86_64-simulator')
+			flatten()
 			buildSelector
 			{
 				latestSuccessful(true)
@@ -34,13 +36,14 @@ j.with
 
 		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
 		{
-			targetDirectory('build/arm64-simulator')
+			targetDirectory('arm64-simulator')
+			flatten()
 			buildSelector
 			{
 				latestSuccessful(true)
 			}
 		}
 
-		shell('cd build; cmake -P ../source/cmake/SwiftPackage.cmake')
+		shell('cmake -P source/ci.cmake')
 	}
 }

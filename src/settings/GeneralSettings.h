@@ -55,6 +55,9 @@ class GeneralSettings
 		[[nodiscard]] bool isAutoCloseWindowAfterAuthentication() const;
 		void setAutoCloseWindowAfterAuthentication(bool pAutoClose);
 
+		[[nodiscard]] bool isAutoRedirectAfterAuthentication() const;
+		void setAutoRedirectAfterAuthentication(bool pAutoRedirect);
+
 		[[nodiscard]] QString getStartupModule() const;
 		void setStartupModule(const QString& pModule);
 

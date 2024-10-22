@@ -12,17 +12,6 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake --preset ci-integrated')
-
-		shell('cmake --build build')
-
-		shell('ctest --test-dir build --output-on-failure')
-
-		shell('cmake --build build --target gcovr')
-	}
-
-	publishers
-	{
-		cobertura('build/gcovr.xml')
+		shell('cmake -P source/ci.cmake')
 	}
 }

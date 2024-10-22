@@ -11,6 +11,9 @@ TestCase {
 		return createTemporaryQmlObject("import Governikus.View; ContentArea { width: 500 }", testCase);
 	}
 	function test_load() {
+		if (hasPolishLoop) {
+			skip("Skip test because of old Qt version with unfixed Polish Loops");
+		}
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
 	}

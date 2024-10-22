@@ -17,7 +17,7 @@ if(JSONSCHEMA_BIN)
 		else()
 			add_test(NAME ${filename} COMMAND ${JSONSCHEMA_BIN} -i ${file} ${schema})
 		endif()
-		set_tests_properties(${filename} PROPERTIES LABELS "json" TIMEOUT 10)
+		set_tests_properties(${filename} PROPERTIES LABELS "json" TIMEOUT 30)
 	endforeach()
 endif()
 

@@ -12,23 +12,6 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake --preset ci-tools')
-
-		shell('cmake --build build --target notes')
-		shell('cmake --build build --target notes.latex.pdf')
-		shell('cd build/docs/notes; cmake -E tar cfJ ../AusweisApp_ReleaseNotes.tar.xz .')
-
-		shell('cmake --build build --target sdk')
-		shell('cmake --build build --target sdk.latex.pdf')
-		shell('cd build/docs/sdk/html; cmake -E tar cfJ ../../AusweisApp_SDK.tar.xz .')
-
-		shell('cmake --build build --target failurecodes')
-		shell('cmake --build build --target failurecodes.latex.pdf')
-
-		shell('cmake --build build --target installation_integration.latex.pdf')
-
-		shell('cmake --build build --target license')
-
-		shell('cmake --build build --target doc8')
+		shell('cmake -P source/ci.cmake')
 	}
 }

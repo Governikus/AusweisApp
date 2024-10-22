@@ -26,7 +26,6 @@ if(NOT TARGET format.qml)
 			unset(QMLFORMAT CACHE) # let's retry later
 		else()
 			file(GLOB_RECURSE FILES_QML ${PROJECT_SOURCE_DIR}/*.qml)
-			set(QMLFORMAT_CMD ${QMLFORMAT} -i -n -l unix -t -w 4)
 
 			set(FORMATTING_FILE ${PROJECT_BINARY_DIR}/formatting.files.qml)
 			file(WRITE ${FORMATTING_FILE} "")
@@ -36,8 +35,8 @@ if(NOT TARGET format.qml)
 			endforeach()
 
 			add_custom_target(format.qml
-				COMMAND ${CMAKE_COMMAND} -E echo Calling ${QMLFORMAT_CMD} in version ${QMLFORMAT_VERSION}
-				COMMAND ${QMLFORMAT_CMD} -F ${FORMATTING_FILE} SOURCES ${FILES_QML})
+				COMMAND ${CMAKE_COMMAND} -E echo Calling ${QMLFORMAT} in version ${QMLFORMAT_VERSION}
+				COMMAND ${QMLFORMAT} -F ${FORMATTING_FILE} SOURCES ${FILES_QML})
 			add_dependencies(format format.qml)
 		endif()
 	endif()

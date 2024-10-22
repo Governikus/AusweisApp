@@ -143,12 +143,15 @@ SectionPage {
 	ProgressView {
 		id: checkConnectivityView
 
+		icon: "qrc:///images/no_internet.svg"
+
 		//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
 		subText: qsTr("Please establish an internet connection.")
 		subTextColor: Style.color.textNormal.basic
 
 		//: INFO DESKTOP Header of the message that no network connection is present during the authentication procedure.
 		text: qsTr("No network connectivity")
+		tintColor: Style.color.image
 		visible: d.activeView === AuthView.SubViews.Connectivity
 	}
 	EditRights {

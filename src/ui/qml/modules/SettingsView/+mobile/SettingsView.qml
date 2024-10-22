@@ -106,8 +106,7 @@ FlickableSectionPage {
 				width: parent.width
 
 				onButtonClicked: appearanceCollapsible.expanded = false
-				onFocusChanged: if (focus)
-					baseItem.positionViewAtItem(this)
+				onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
 			}
 		}
 		GSeparator {
@@ -119,7 +118,7 @@ FlickableSectionPage {
 		GSwitch {
 			//: LABEL ANDROID IOS
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
-
+			drawBottomCorners: true
 			//: LABEL ANDROID IOS
 			text: qsTr("Use system font")
 			width: parent.width
@@ -136,6 +135,24 @@ FlickableSectionPage {
 			onFocusChanged: if (focus)
 				baseItem.positionViewAtItem(this)
 		}
+	}
+	GOptionsContainer {
+		Layout.fillWidth: true
+		//: LABEL ANDROID IOS
+		title: qsTr("Accessibility")
+
+		GSwitch {
+			checked: !SettingsModel.useAnimations
+			drawTopCorners: true
+
+			//: LABEL ANDROID IOS
+			text: qsTr("Use images instead of animations")
+			width: parent.width
+
+			onCheckedChanged: SettingsModel.useAnimations = !checked
+			onFocusChanged: if (focus)
+				baseItem.positionViewAtItem(this)
+		}
 		GSeparator {
 			anchors.left: parent.left
 			anchors.leftMargin: Constants.component_spacing
@@ -143,14 +160,31 @@ FlickableSectionPage {
 			anchors.rightMargin: Constants.component_spacing
 		}
 		GSwitch {
-			checked: SettingsModel.useAnimations
-			drawBottomCorners: true
-
+			checked: SettingsModel.visualPrivacy
 			//: LABEL ANDROID IOS
-			text: qsTr("Play animations")
+			text: qsTr("Hide key animations when entering PIN")
 			width: parent.width
 
-			onCheckedChanged: SettingsModel.useAnimations = checked
+			onCheckedChanged: SettingsModel.visualPrivacy = checked
+			onFocusChanged: if (focus)
+				baseItem.positionViewAtItem(this)
+		}
+		GSeparator {
+			anchors.left: parent.left
+			anchors.leftMargin: Constants.component_spacing
+			anchors.right: parent.right
+			anchors.rightMargin: Constants.component_spacing
+		}
+		GSwitch {
+			checked: !SettingsModel.autoRedirectAfterAuthentication
+			//: LABEL ANDROID IOS
+			description: qsTr("After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.")
+			drawBottomCorners: true
+			//: LABEL ANDROID IOS
+			text: qsTr("Manual redirection back to the provider")
+			width: parent.width
+
+			onCheckedChanged: SettingsModel.autoRedirectAfterAuthentication = !checked
 			onFocusChanged: if (focus)
 				baseItem.positionViewAtItem(this)
 		}
@@ -256,14 +290,16 @@ FlickableSectionPage {
 	GOptionsContainer {
 		Layout.fillWidth: true
 		//: LABEL ANDROID IOS
-		title: qsTr("Security and privacy")
+		title: qsTr("Numeric keypad")
 
 		GSwitch {
 			checked: SettingsModel.shuffleScreenKeyboard
+			//: LABEL ANDROID IOS
+			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawTopCorners: true
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Randomize the order of the on screen keypad buttons")
+			text: qsTr("Shuffle keys")
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
@@ -277,16 +313,16 @@ FlickableSectionPage {
 			anchors.rightMargin: Constants.component_spacing
 		}
 		GSwitch {
-			checked: !SettingsModel.visualPrivacy
+			checked: SettingsModel.visualPrivacy
 			//: LABEL ANDROID IOS
-			description: qsTr("Visually highlight key presses on screen keypad")
+			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawBottomCorners: true
 
 			//: LABEL ANDROID IOS
-			text: qsTr("Keypad animations")
+			text: qsTr("Hide key animations")
 			width: parent.width
 
-			onCheckedChanged: SettingsModel.visualPrivacy = !checked
+			onCheckedChanged: SettingsModel.visualPrivacy = checked
 			onFocusChanged: if (focus)
 				baseItem.positionViewAtItem(this)
 		}

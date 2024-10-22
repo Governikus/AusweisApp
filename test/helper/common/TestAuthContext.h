@@ -23,9 +23,9 @@ class TestAuthContext
 	private:
 		QList<AcceptedEidType> mAcceptedEidTypes;
 
-		const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1) const;
-
 	public:
+		static const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1);
+
 		explicit TestAuthContext(const QString& pFileName = QString());
 		~TestAuthContext() override;
 
