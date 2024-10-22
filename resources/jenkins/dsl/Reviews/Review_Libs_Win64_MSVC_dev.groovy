@@ -21,7 +21,7 @@ j.with
 
 	steps
 	{
-		batchFile('cd source & cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
+		batchFile('cmake -DPATCH_ONLY=ON -P source/ci.cmake')
 
 		batchFile('''\
 			call vcvarsall.bat amd64

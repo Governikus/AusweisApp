@@ -69,6 +69,7 @@ void StateRedirectBrowser::run()
 		if (const auto& error = handler(context); !error.isEmpty())
 		{
 			qCritical() << "Cannot send page to caller:" << error;
+			context->setReceivedBrowserSendFailed(true);
 			updateStatus({GlobalStatus::Code::Workflow_Browser_Transmission_Error, {GlobalStatus::ExternalInformation::ACTIVATION_ERROR, error}
 					});
 			Q_EMIT fireAbort(FailureCode::Reason::Browser_Send_Failed);

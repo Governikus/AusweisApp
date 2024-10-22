@@ -620,15 +620,15 @@
 		{
 			"eidSupport": false,
 			"shortName": {
-				"": "Bürgerservice-Portal Stadt Lage"
+				"": "Onlinedienste Stadt Lage"
 			},
 			"longName": {
-				"": "Bürgerservice-Portal Stadt Lage"
+				"": "Onlinedienste Stadt Lage"
 			},
 			"longDescription": {
-				"": "Das Bürgerservice-Portal bietet die Möglichkeit, Anträge an die Verwaltung der Stadt Lage online zu erfassen und elektronisch zur weiteren Bearbeitung weiterzuleiten."
+				"": "Die Onlinedienste der Stadt Lage bieten die Möglichkeit, Anträge an die Verwaltung der Stadt Lage online zu erfassen und elektronisch zur weiteren Bearbeitung weiterzuleiten."
 			},
-			"address": "https://www.buergerserviceportal.nrw/krz/lage",
+			"address": "https://onlinedienste-owl.de/Lage",
 			"homepage": "https://www.lage.de",
 			"phone": "+49 5232 601300",
 			"email": "Buergerbuero@lage.de",

@@ -11,7 +11,7 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
+		shell('cmake -DPATCH_ONLY=ON -P source/ci.cmake')
 
 		shell('security unlock-keychain \${KEYCHAIN_CREDENTIALS} \${HOME}/Library/Keychains/login.keychain-db')
 

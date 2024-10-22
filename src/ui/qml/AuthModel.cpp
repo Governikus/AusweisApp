@@ -3,6 +3,7 @@
  */
 
 #include "AuthModel.h"
+#include "context/SelfAuthContext.h"
 
 using namespace governikus;
 
@@ -168,30 +169,22 @@ QString AuthModel::getResultViewButtonText() const
 	{
 		return QString();
 	}
-
-	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	if (mContext.objectCast<SelfAuthContext>())
 	{
 		//: LABEL ALL_PLATFORMS
-		return tr("Back to provider");
+		return tr("Back to start page");
 	}
-
 	//: LABEL ALL_PLATFORMS
-	return tr("Back to start page");
+	return tr("Return to provider");
 }
 
 
 QUrl AuthModel::getResultViewButtonLink() const
 {
-	if (!mContext)
-	{
-		return QUrl();
-	}
-
-	if (mContext->getStatus().getStatusCode() == GlobalStatus::Code::Workflow_Browser_Transmission_Error)
+	if (mContext && mContext->isReceivedBrowserSendFailed())
 	{
 		return mContext->getRefreshUrl();
 	}
-
 	return QUrl();
 }
 

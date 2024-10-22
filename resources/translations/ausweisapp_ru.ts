@@ -172,9 +172,9 @@
         <translation>Сбой аутентификации</translation>
     </message>
     <message>
-        <source>Back to start page</source>
+        <source>Return to provider</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Назад к начальной странице</translation>
+        <translation>Вернуться к провайдеру</translation>
     </message>
 </context>
 <context>
@@ -963,6 +963,23 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>DataGroup</name>
+    <message>
+        <source>%1, optional right, element %2 of %3</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1, required right, element %2 of %3</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DebugSettings</name>
     <message>
         <source>Create dummy entries</source>
@@ -1546,9 +1563,29 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Изменить язык</translation>
     </message>
     <message>
-        <source>Play animations</source>
+        <source>Use images instead of animations</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Воспроизвести анимации</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accessibility</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide key animations when entering PIN</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual redirection back to the provider</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1583,9 +1620,9 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Идентификационная карта не обнаружена. Убедитесь в том, что идентификационная карта размещена на устройстве чтения карт.</translation>
     </message>
     <message>
-        <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the reader settings to configure readers and get more information about supported readers.</source>
+        <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and ready. Open the reader settings to configure readers and get more information about supported readers.</source>
         <extracomment>INFO DESKTOP AA2 is waiting for the card reader or the ID card.</extracomment>
-        <translation>Устройство чтения карт не обнаружено. Убедитесь в том, что USB-устройство чтения карт подключено или используемый в качестве устройства чтения карт смартфон сопряжен и доступен. Откройте настройки устройства чтения карт для конфигурирования устройств чтения карт и получения подробной информации о поддерживаемых устройствах чтения карт.</translation>
+        <translation type="unfinished">Устройство чтения карт не обнаружено. Убедитесь в том, что USB-устройство чтения карт подключено или используемый в качестве устройства чтения карт смартфон сопряжен и доступен. Откройте настройки устройства чтения карт для конфигурирования устройств чтения карт и получения подробной информации о поддерживаемых устройствах чтения карт.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -2097,6 +2134,31 @@ LABEL ANDROID IOS</extracomment>
         <source>Card reader</source>
         <translation>Устройство чтения карт</translation>
     </message>
+    <message>
+        <source>%1 of %2</source>
+        <extracomment>ANDROID IOS LABEL Relative position of current navigation tab in navigation view. %1 is replaced with the current tab&apos;s index, %2 with the total count of tabs</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tab</source>
+        <extracomment>ANDROID IOS LABEL</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <extracomment>IOS Selected navigation tab.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tab bar</source>
+        <extracomment>IOS Name of a11y element of selected navigation tab.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <extracomment>ANDROID Currently selected navigation tab of navigation view.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NfcWorkflow</name>
@@ -2204,9 +2266,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>NumberField</name>
     <message>
-        <source>The password is hidden.</source>
+        <source>The number is hidden.</source>
         <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
-        <translation>Пароль скрыт.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You entered %1 of %2 digits.</source>
@@ -2214,19 +2276,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Вы ввели %1 из %2 знаков.</translation>
     </message>
     <message>
-        <source>Press to hide the password</source>
+        <source>Press to hide the number</source>
         <extracomment>LABEL DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Нажмите, чтобы скрыть пароль</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Press to show the password</source>
+        <source>Press to show the number</source>
         <extracomment>LABEL DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Нажмите, чтобы показать пароль</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The password is visible. Digits entered so far: %1</source>
+        <source>The number is visible. Digits entered so far: %1</source>
         <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
-        <translation>Пароль отображается. Цифры, введенные ранее: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3037,19 +3099,29 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
 <context>
     <name>RedirectView</name>
     <message>
-        <source>Remove the ID card from the card reader.</source>
+        <source>Remove the ID card from the card reader</source>
         <extracomment>INFO DESKTOP Hint to user that the ID card should be removed</extracomment>
-        <translation>Извлеките идентификационную карту из устройства чтоения карт.</translation>
+        <translation>Извлеките идентификационную карту из устройства чтоения карт</translation>
     </message>
     <message>
-        <source>Remove the ID card from the NFC interface.</source>
+        <source>Remove the ID card from the NFC interface</source>
         <extracomment>INFO ANDROID IOS Hint to user that the ID card should be removed</extracomment>
-        <translation>Извлеките идентификационную карту из интерфейса NFC.</translation>
+        <translation>Извлеките идентификационную карту из интерфейса NFC</translation>
     </message>
     <message>
-        <source>You will now leave the %1. For any further questions regarding the current process or occurring errors contact the corresponding provider.</source>
-        <extracomment>INFO ALL_PLATFORMS User message that the redirect to the provider is immanent and the user will leave the AusweisApp</extracomment>
-        <translation>Вы покидаете %1. По всем дополнительным вопросам, касающимся текущего процесса или возникающих ошибок, обращайтесь к соответствующему провайдеру.</translation>
+        <source>If you have any questions or encounter any errors during the process, please contact the corresponding provider.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You will be automatically redirected to the provider in a few seconds. If you are not automatically redirected, click on the &quot;%1&quot; button.</source>
+        <extracomment>INFO ALL_PLATFORMS Redirect information when automatic redirect is enabled</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Press the button to complete the authentication and return to the provider.</source>
+        <extracomment>INFO ALL_PLATFORMS Redirect information when automatic redirect is disabled</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Return to provider</source>
@@ -3060,11 +3132,6 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <source>Authentication successful</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Аутентификация выполнена успешно</translation>
-    </message>
-    <message>
-        <source>You will be redirected to the provider</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Вас перенаправят к провайдеру</translation>
     </message>
 </context>
 <context>
@@ -3190,14 +3257,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Выполняется доступ к карте</translation>
     </message>
     <message>
-        <source>Waiting for connection</source>
+        <source>Card reader ready</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ожидание соединения</translation>
+        <translation type="unfinished">Ожидание соединения</translation>
     </message>
     <message>
-        <source>Waiting for connection from a paired device...</source>
+        <source>To do this, start a process on a paired device.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Ожидание соединения сопряженного устройства…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -3220,9 +3287,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Выполнить сопряжение устройства</translation>
     </message>
     <message>
-        <source>Allow connection</source>
+        <source>Activate card reader</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Разрешить подключение</translation>
+        <translation type="unfinished">Разрешить подключение</translation>
     </message>
     <message>
         <source>You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.
@@ -3287,6 +3354,11 @@ To do this you first have to pair that device with this smartphone.</source>
         <source>NFC is not available</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation type="unfinished">Функция NFC недоступна</translation>
+    </message>
+    <message>
+        <source>Stop card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3416,13 +3488,14 @@ To do this you first have to pair that device with this smartphone.</source>
 <context>
     <name>ResultErrorView</name>
     <message>
-        <source>Details</source>
-        <translation>Подробная информация</translation>
-    </message>
-    <message>
         <source>Error code:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Код ошибки:</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished">Подробная информация</translation>
     </message>
 </context>
 <context>
@@ -3463,9 +3536,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>SecurityAndPrivacySettings</name>
     <message>
-        <source>Onscreen keypad</source>
+        <source>Numeric keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Экранная клавиатура</translation>
+        <translation type="unfinished">Экранная клавиатура</translation>
     </message>
     <message>
         <source>Software updates</source>
@@ -3473,9 +3546,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Обновления программного обеспечения</translation>
     </message>
     <message>
-        <source>Check at program start</source>
+        <source>Check for updates at program start</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Проверить при запуске программы</translation>
+        <translation type="unfinished">Проверить при запуске программы</translation>
     </message>
     <message>
         <source>Show update</source>
@@ -3508,19 +3581,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Нет информации об обновлениях, проверьте наличие доступных обновлений вручную.</translation>
     </message>
     <message>
-        <source>Shuffle digits of on screen keypad</source>
+        <source>Shuffle keys</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Перетасовать цифры экранной клавиатуры</translation>
+        <translation type="unfinished">Перетасовать цифры экранной клавиатуры</translation>
     </message>
     <message>
-        <source>Button animation</source>
+        <source>Hide key animations</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Анимация кнопок</translation>
+        <translation type="unfinished">Анимация кнопок</translation>
     </message>
     <message>
-        <source>Visually highlight key presses on screen keypad</source>
+        <source>Makes it difficult for outsiders to detect PIN entry</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
+        <translation type="unfinished">Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
     </message>
 </context>
 <context>
@@ -3634,10 +3707,13 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Security and privacy</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Безопасность и защита данных</translation>
+    </message>
+    <message>
+        <source>Numeric keypad</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished">Безопасность и защита данных</translation>
     </message>
     <message>
         <source>Debug options</source>
@@ -3669,14 +3745,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ввести PIN-код на этом устройстве</translation>
     </message>
     <message>
-        <source>Randomize the order of the on screen keypad buttons</source>
+        <source>Shuffle keys</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Случайное расположение кнопок экранной клавиатуры</translation>
+        <translation type="unfinished">Случайное расположение кнопок экранной клавиатуры</translation>
     </message>
     <message>
-        <source>Keypad animations</source>
+        <source>Hide key animations</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Анимация кнопок</translation>
+        <translation type="unfinished">Анимация кнопок</translation>
     </message>
     <message>
         <source>Skip rights page</source>
@@ -3794,14 +3870,34 @@ LABEL ANDROID IOS</extracomment>
         <translation>Моделировать тестовую карту в процессах аутентификации</translation>
     </message>
     <message>
-        <source>Visually highlight key presses on screen keypad</source>
+        <source>Makes it difficult for outsiders to detect PIN entry</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
+        <translation type="unfinished">Визуальное выделение нажатой клавиши на экранной клавиатуре</translation>
     </message>
     <message>
-        <source>Play animations</source>
+        <source>Use images instead of animations</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Воспроизвести анимации</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accessibility</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide key animations when entering PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual redirection back to the provider</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4309,12 +4405,18 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
     </message>
     <message>
         <source>Show in-app notifications of %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Показать внутренние оповещения в приложении %1</translation>
     </message>
     <message>
         <source>Title bar</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Строка заголовка</translation>
+    </message>
+    <message>
+        <source>Hide in-app notifications of %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4747,9 +4849,9 @@ To proceed use your ID card by selecting the NFC interface. If you want to set u
         <translation>Аутентификация выполнена успешно</translation>
     </message>
     <message>
-        <source>Back to provider</source>
+        <source>Return to provider</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Назад к провайдеру</translation>
+        <translation>Вернуться к провайдеру</translation>
     </message>
     <message>
         <source>Back to start page</source>

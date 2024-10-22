@@ -23,11 +23,12 @@ Text {
 		}
 	}
 
+	Accessible.focusable: true
 	Accessible.ignored: text === ""
 	Accessible.name: ApplicationModel.stripHtmlTags(text) + (Constants.is_desktop && hasLink ?
 		//: INFO DESKTOP Text read by screen reader if the text contains a weblink which may be opened.
 		" %1: %2".arg(qsTr("Press space to open link")).arg(d.link) : "")
-	Accessible.role: Constants.is_desktop && hasLink ? Accessible.Button : Accessible.StaticText
+	Accessible.role: Constants.is_desktop && hasLink ? Accessible.Button : d.isHeadline ? Accessible.Heading : Accessible.StaticText
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	color: textStyle.textColor
@@ -49,6 +50,7 @@ Text {
 	QtObject {
 		id: d
 
+		readonly property bool isHeadline: [Style.text.headline, Style.text.subline].includes(root.textStyle)
 		property string link: ""
 		readonly property bool nonMultilineElided: maximumLineCount === 1 && elide !== Text.ElideNone
 

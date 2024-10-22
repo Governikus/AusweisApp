@@ -55,9 +55,9 @@ Control {
 
 	Accessible.name: (eye.activated ?
 		//: LABEL DESKTOP Screenreader text for the password field
-		qsTr("The password is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
+		qsTr("The number is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
 		//: LABEL DESKTOP Screenreader text for the password field
-		qsTr("The password is hidden.")) + (text === undefined ? " " + passwordState : "")
+		qsTr("The number is hidden.")) + (text === undefined ? " " + passwordState : "")
 	Accessible.role: Accessible.StaticText
 	Layout.maximumWidth: contentItem.Layout.maximumWidth + leftPadding + rightPadding
 	Layout.minimumWidth: contentItem.Layout.minimumWidth + leftPadding + rightPadding
@@ -135,9 +135,9 @@ Control {
 			padding: Constants.text_spacing / 2
 			text: (activated ?
 				//: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
-				qsTr("Press to hide the password") :
+				qsTr("Press to hide the number") :
 				//: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
-				qsTr("Press to show the password"))
+				qsTr("Press to show the number"))
 
 			contentItem: TintableIcon {
 				source: eye.activated ? "qrc:///images/eye_visibility_on.svg" : "qrc:///images/eye_visibility_off.svg"

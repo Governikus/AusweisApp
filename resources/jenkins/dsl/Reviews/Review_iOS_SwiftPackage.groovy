@@ -21,11 +21,10 @@ j.with
 
 	steps
 	{
-		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
-
 		copyArtifacts(build.getSourceJobName('iOS_Framework'))
 		{
-			targetDirectory('build/arm64')
+			targetDirectory('arm64')
+			flatten()
 			buildSelector
 			{
 				buildNumber('${iOS_Framework_Build}')
@@ -34,7 +33,8 @@ j.with
 
 		copyArtifacts(build.getSourceJobName('iOS_Simulator_Framework'))
 		{
-			targetDirectory('build/x86_64-simulator')
+			targetDirectory('x86_64-simulator')
+			flatten()
 			buildSelector
 			{
 				buildNumber('${iOS_Simulator_Framework_Build}')
@@ -43,13 +43,14 @@ j.with
 
 		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
 		{
-			targetDirectory('build/arm64-simulator')
+			targetDirectory('arm64-simulator')
+			flatten()
 			buildSelector
 			{
 				buildNumber('${iOS_Simulator_arm64_Framework_Build}')
 			}
 		}
 
-		shell('cd build; cmake -P ../source/cmake/SwiftPackage.cmake')
+		shell('cmake -P source/ci.cmake')
 	}
 }

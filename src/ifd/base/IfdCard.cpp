@@ -216,12 +216,13 @@ ResponseApduResult IfdCard::transmit(const CommandApdu& pCommand)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	qCDebug(card_remote) << "Transmit response APDU:" << response.getResponseApdu().toHex();
-	return {CardReturnCode::OK, ResponseApdu(response.getResponseApdu())};
+	const ResponseApdu responseApdu(response.getResponseApdu());
+	qCDebug(card_remote) << "Transmit response APDU:" << responseApdu;
+	return {CardReturnCode::OK, responseApdu};
 }
 
 
-EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
+EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
 {
 	EstablishPaceChannel establishPaceChannel(pPasswordId, pChat, pCertificateDescription);
 	if (Env::getSingleton<VolatileSettings>()->isUsedAsSDK())
@@ -230,7 +231,7 @@ EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswor
 	}
 
 	const QSharedPointer<const IfdEstablishPaceChannel>& message = QSharedPointer<IfdEstablishPaceChannel>::create(mSlotHandle, establishPaceChannel, pPreferredPinLength);
-	if (!sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, pTimeoutSeconds * 1000))
+	if (!sendMessage(message, IfdMessageType::IFDEstablishPACEChannelResponse, DEFAULT_PINPAD_TIMEOUT * 1000))
 	{
 		return EstablishPaceChannelOutput(CardReturnCode::INPUT_TIME_OUT);
 	}

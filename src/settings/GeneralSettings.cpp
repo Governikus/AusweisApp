@@ -26,6 +26,7 @@ namespace
 {
 SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVersion")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
+SETTINGS_NAME(SETTINGS_NAME_AUTO_REDIRECT, "autoRedirect")
 SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
@@ -203,6 +204,23 @@ void GeneralSettings::setAutoCloseWindowAfterAuthentication(bool pAutoClose)
 	if (pAutoClose != isAutoCloseWindowAfterAuthentication())
 	{
 		mStore->setValue(SETTINGS_NAME_AUTO_CLOSE_WINDOW(), pAutoClose);
+		save(mStore);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isAutoRedirectAfterAuthentication() const
+{
+	return mStore->value(SETTINGS_NAME_AUTO_REDIRECT(), true).toBool();
+}
+
+
+void GeneralSettings::setAutoRedirectAfterAuthentication(bool pAutoRedirect)
+{
+	if (pAutoRedirect != isAutoRedirectAfterAuthentication())
+	{
+		mStore->setValue(SETTINGS_NAME_AUTO_REDIRECT(), pAutoRedirect);
 		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}

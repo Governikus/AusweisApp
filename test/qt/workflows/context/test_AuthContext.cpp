@@ -10,7 +10,9 @@
 
 #include "AppSettings.h"
 #include "TestAuthContext.h"
+#include "TestFileHelper.h"
 #include "VolatileSettings.h"
+#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include <QSharedPointer>
 #include <QtTest>
@@ -26,6 +28,68 @@ class test_AuthContext
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void test_ReceivedBrowserSendFailed()
+		{
+			AuthContext context;
+			QSignalSpy spy(&context, &AuthContext::fireResultChanged);
+
+			QCOMPARE(context.isReceivedBrowserSendFailed(), false);
+
+			context.setReceivedBrowserSendFailed(true);
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(context.isReceivedBrowserSendFailed(), true);
+
+			context.setReceivedBrowserSendFailed(true);
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(context.isReceivedBrowserSendFailed(), true);
+
+			context.setReceivedBrowserSendFailed(false);
+			QCOMPARE(spy.size(), 2);
+			QCOMPARE(context.isReceivedBrowserSendFailed(), false);
+
+			context.setReceivedBrowserSendFailed(false);
+			QCOMPARE(spy.size(), 2);
+			QCOMPARE(context.isReceivedBrowserSendFailed(), false);
+		}
+
+
+		void test_requestChangePinView()
+		{
+			AuthContext context;
+			QSignalSpy spy(&context, &AuthContext::fireShowChangePinViewChanged);
+
+			QCOMPARE(context.isSkipMobileRedirect(), false);
+
+			context.requestChangePinView();
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(context.isSkipMobileRedirect(), true);
+
+			context.requestChangePinView();
+			QCOMPARE(spy.size(), 1);
+			QCOMPARE(context.isSkipMobileRedirect(), true);
+		}
+
+
+		void test_acceptedEidTypes()
+		{
+			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1_template.xml"_L1);
+			content = content.replace(QByteArray("<!-- PLACEHOLDER -->"), QByteArray("<AcceptedEIDType>SECertified</AcceptedEIDType>"));
+			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+
+			AuthContext context;
+			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::CARD_CERTIFIED});
+
+			context.setDidAuthenticateEac1(eac1);
+			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::SE_CERTIFIED});
+
+			context.initAccessRightManager(TestAuthContext::getTerminalCvc(eac1));
+			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::CARD_CERTIFIED});
+
+			context.setDidAuthenticateEac1(nullptr);
+			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::CARD_CERTIFIED});
+		}
+
+
 		void test_CanAllowed_data()
 		{
 			QTest::addColumn<bool>("usedAsSdk");

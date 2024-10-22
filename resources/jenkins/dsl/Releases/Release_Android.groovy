@@ -39,16 +39,11 @@ j.with
 		buildDescription('', 'ANDROID_VERSION_CODE: ${ANDROID_VERSION_CODE}<br>BUILD_PREVIEW: ${BUILD_PREVIEW}')
 
 		shell(strip("""\
-			cd source; cmake --preset ci-android-apk
+			cmake -P source/ci.cmake --
 			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
 			-DANDROID_VERSION_CODE=\${ANDROID_VERSION_CODE}
 			-DBUILD_PREVIEW=\${BUILD_PREVIEW}
 			"""))
-
-		shell('cmake --build build')
-		shell('cmake --build build --target apk')
-		shell('cmake --build build --target verify.signature')
-		shell('cmake --build build --target dump.apk')
 	}
 }
 
@@ -61,7 +56,7 @@ for(ARCH in Constants.AndroidArchAAR)
 
 def j = new Release
 	(
-		name: 'Android_AAR',
+		name: 'Android_AAR_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
 		artifacts: 'libs/Toolchain_*,build/dist/**,build/**/debug.symbols/*'
@@ -79,14 +74,58 @@ j.with
 		buildDescription('', 'BUILD_PREVIEW: ${BUILD_PREVIEW}')
 
 		shell(strip("""\
-			cd source; cmake --preset ci-android-aar
+			cmake -P source/ci.cmake --
+			-DCMAKE_ANDROID_ARCH_ABI=${ARCH}
 			-DBUILD_PREVIEW=\${BUILD_PREVIEW}
 			"""))
-
-		shell('cmake --build build')
-		shell('cmake --build build --target aar')
-		shell("cd build/dist; cmake -DCMD=DEPLOY_NEXUS -P \$WORKSPACE/source/cmake/cmd.cmake")
 	}
 }
 
+}
+
+
+def build = new Release
+	(
+		name: 'Android_AAR',
+		label: 'Android',
+		artifacts: 'build/dist/**'
+	)
+
+def j = build.generate(this)
+
+j.with
+{
+	parameters
+	{
+		booleanParam("PUBLISH", false, "Publish to maven central")
+
+		for(ARCH in Constants.AndroidArchAAR)
+		{
+			buildSelectorParam(build.getSourceJobNameParam('Android_AAR_' + ARCH))
+			{
+				defaultBuildSelector
+				{
+					latestSuccessful(true)
+				}
+				description('Build of ' + ARCH)
+			}
+		}
+	}
+
+	steps
+	{
+		for(ARCH in Constants.AndroidArchAAR)
+		{
+			copyArtifacts(build.getSourceJobName('Android_AAR_' + ARCH))
+			{
+				flatten()
+				buildSelector
+				{
+					buildParameter(build.getSourceJobNameParam('Android_AAR_' + ARCH))
+				}
+			}
+		}
+
+		shell('cmake -P source/ci.cmake')
+	}
 }

@@ -16,40 +16,14 @@ def j = new Review
 
 j.with
 {
-	wrappers
-	{
-		environmentVariables
-		{
-			env("QT_PLUGIN_PATH", '$WORKSPACE/libs/dist/plugins')
-		}
-	}
-
 	axes
 	{
 		label('Compiler', 'g++', 'clang++')
+		label('Agent', 'Linux')
 	}
 
 	steps
 	{
-		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
-
-		shell(strip('''\
-			cd source;
-			cmake --preset ci-linux
-			-DCMAKE_CXX_COMPILER=${Compiler}
-			'''))
-
-		shell('''\
-			cmake --build build
-			'''.stripIndent().trim())
-
-		shell('''\
-			export QML2_IMPORT_PATH=${WORKSPACE}/libs/dist/qml
-			ctest --test-dir build --output-on-failure
-			'''.stripIndent().trim())
-
-		shell('''\
-			DESTDIR=$WORKSPACE/install cmake --install build
-			'''.stripIndent().trim())
+		shell('cmake -P source/ci.cmake -- -DCMAKE_CXX_COMPILER=${Compiler}')
 	}
 }

@@ -13,13 +13,6 @@ j.with
 {
 	steps
 	{
-		shell('security unlock-keychain ${KEYCHAIN_CREDENTIALS} ${HOME}/Library/Keychains/login.keychain-db')
-
-		shell('cd source; cmake --preset ci-ios')
-
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive')
-		shell('cd build; xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .')
-		shell('cd build; xcodebuild -configuration MinSizeRel -target ipa')
-		shell('ctest --test-dir build --output-on-failure -C MinSizeRel')
+		shell('cmake -P source/ci.cmake')
 	}
 }

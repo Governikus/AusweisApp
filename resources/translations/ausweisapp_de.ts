@@ -172,9 +172,9 @@
         <translation>Authentisierung fehlgeschlagen</translation>
     </message>
     <message>
-        <source>Back to start page</source>
+        <source>Return to provider</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Zur Startseite</translation>
+        <translation>Zurück zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -963,6 +963,23 @@ LABEL ANDROID IOS</extracomment>
     </message>
 </context>
 <context>
+    <name>DataGroup</name>
+    <message>
+        <source>%1, optional right, element %2 of %3</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>%1, optionales Recht, Element %2 von %3</translation>
+    </message>
+    <message>
+        <source>%1, required right, element %2 of %3</source>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
+        <translation>%1, erforderliches Recht, Element %2 von %3</translation>
+    </message>
+</context>
+<context>
     <name>DebugSettings</name>
     <message>
         <source>Create dummy entries</source>
@@ -1546,9 +1563,29 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Sprache wechseln</translation>
     </message>
     <message>
-        <source>Play animations</source>
+        <source>Use images instead of animations</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Animationen abspielen</translation>
+        <translation>Bilder statt Animationen verwenden</translation>
+    </message>
+    <message>
+        <source>Accessibility</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Barrierefreiheit</translation>
+    </message>
+    <message>
+        <source>Hide key animations when entering PIN</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Tastenanimationen bei PIN-Eingabe ausblenden</translation>
+    </message>
+    <message>
+        <source>After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Nach dem Ausweisen erfolgt die Weiterleitung zurück zum Anbieter erst nach Bestätigung. Ansonsten erfolgt die Weiterleitung automatisch nach wenigen Sekunden.</translation>
+    </message>
+    <message>
+        <source>Manual redirection back to the provider</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Manuelle Weiterleitung zurück zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -1583,9 +1620,9 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Es wurde kein Ausweis erkannt. Bitte stellen Sie sicher, dass Ihr Ausweis auf dem Kartenleser aufliegt.</translation>
     </message>
     <message>
-        <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the reader settings to configure readers and get more information about supported readers.</source>
+        <source>No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and ready. Open the reader settings to configure readers and get more information about supported readers.</source>
         <extracomment>INFO DESKTOP AA2 is waiting for the card reader or the ID card.</extracomment>
-        <translation>Es wurde kein Kartenleser gefunden. Bitte überprüfen Sie, ob ein USB-Kartenleser angeschlossen bzw. ein Smartphone als Kartenleser gekoppelt und verfügbar ist. Öffnen Sie die Einstellungen, um Kartenleser zu konfigurieren und weitere Hinweise zu erhalten.</translation>
+        <translation>Es wurde kein Kartenleser gefunden. Bitte überprüfen Sie, ob ein USB-Kartenleser angeschlossen bzw. ein Smartphone als Kartenleser gekoppelt und bereit ist. Öffnen Sie die Einstellungen, um Kartenleser zu konfigurieren und weitere Hinweise zu erhalten.</translation>
     </message>
     <message>
         <source>Please observe the display of your card reader.</source>
@@ -2097,6 +2134,31 @@ LABEL ANDROID IOS</extracomment>
         <source>Card reader</source>
         <translation>Kartenleser</translation>
     </message>
+    <message>
+        <source>%1 of %2</source>
+        <extracomment>ANDROID IOS LABEL Relative position of current navigation tab in navigation view. %1 is replaced with the current tab&apos;s index, %2 with the total count of tabs</extracomment>
+        <translation>%1 von %2</translation>
+    </message>
+    <message>
+        <source>Tab</source>
+        <extracomment>ANDROID IOS LABEL</extracomment>
+        <translation>Tab</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <extracomment>IOS Selected navigation tab.</extracomment>
+        <translation>Auswahl</translation>
+    </message>
+    <message>
+        <source>Tab bar</source>
+        <extracomment>IOS Name of a11y element of selected navigation tab.</extracomment>
+        <translation>Tab-Leiste</translation>
+    </message>
+    <message>
+        <source>Selected</source>
+        <extracomment>ANDROID Currently selected navigation tab of navigation view.</extracomment>
+        <translation>Ausgewählt</translation>
+    </message>
 </context>
 <context>
     <name>NfcWorkflow</name>
@@ -2204,9 +2266,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>NumberField</name>
     <message>
-        <source>The password is hidden.</source>
+        <source>The number is hidden.</source>
         <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
-        <translation>Das Passwort ist ausgeblendet.</translation>
+        <translation>Die Geheimzahl ist ausgeblendet.</translation>
     </message>
     <message>
         <source>You entered %1 of %2 digits.</source>
@@ -2214,19 +2276,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sie haben %1 von %2 Ziffern eingegeben.</translation>
     </message>
     <message>
-        <source>Press to hide the password</source>
+        <source>Press to hide the number</source>
         <extracomment>LABEL DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Drücken Sie die Taste um das Passwort auszublenden</translation>
+        <translation>Drücken Sie die Taste um die Geheimnummer einzublenden</translation>
     </message>
     <message>
-        <source>Press to show the password</source>
+        <source>Press to show the number</source>
         <extracomment>LABEL DESKTOP Screenreader text for the eye icon to change the password visibility</extracomment>
-        <translation>Drücken Sie die Taste um das Passwort einzublenden</translation>
+        <translation>Drücken Sie die Taste um die Geheimnummer auszublenden</translation>
     </message>
     <message>
-        <source>The password is visible. Digits entered so far: %1</source>
+        <source>The number is visible. Digits entered so far: %1</source>
         <extracomment>LABEL DESKTOP Screenreader text for the password field</extracomment>
-        <translation>Das Passwort ist sichtbar. Bisher eingegebene Ziffern: %1</translation>
+        <translation>Die Geheimnummer ist sichtbar. Bisher eingegebene Ziffern: %1</translation>
     </message>
 </context>
 <context>
@@ -2572,7 +2634,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
-        <translation>Die 6-stellige Karten-PIN ist das %1Passwort, das Sie selbst wählen%2, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie %1ersetzt%2 Ihre %1 5-stellige Transport-PIN%2.</translation>
+        <translation>Die 6-stellige Karten-PIN ist %1eine Geheimnummer, die Sie selbst wählen%2, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie %1ersetzt%2 Ihre %1 5-stellige Transport-PIN%2.</translation>
     </message>
     <message>
         <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
@@ -2652,7 +2714,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>If you applied for a %1PIN Reset letter%2, a new card PIN was already set for you. You can change your card PIN at %1any time in %3%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7</extracomment>
-        <translation type="unfinished">Falls Sie einen %1PIN-Rücksetzbrief%2 bestellt haben, wurde Ihnen bereits eine Karten-PIN gesetzt. Sie können Ihre Karten-PIN jedoch %1jederzeit in der %3 ändern%2.</translation>
+        <translation>Falls Sie einen %1PIN-Rücksetzbrief%2 bestellt haben, wurde Ihnen bereits eine Karten-PIN gesetzt. Sie können Ihre Karten-PIN jedoch %1jederzeit in der %3 ändern%2.</translation>
     </message>
     <message>
         <source>I can&apos;t recall my PIN</source>
@@ -3037,19 +3099,29 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
 <context>
     <name>RedirectView</name>
     <message>
-        <source>Remove the ID card from the card reader.</source>
+        <source>Remove the ID card from the card reader</source>
         <extracomment>INFO DESKTOP Hint to user that the ID card should be removed</extracomment>
-        <translation>Entfernen Sie nun den Ausweis vom Kartenleser.</translation>
+        <translation>Entfernen Sie nun den Ausweis vom Kartenleser</translation>
     </message>
     <message>
-        <source>Remove the ID card from the NFC interface.</source>
+        <source>Remove the ID card from the NFC interface</source>
         <extracomment>INFO ANDROID IOS Hint to user that the ID card should be removed</extracomment>
-        <translation>Entfernen Sie jetzt Ihren Ausweis von der NFC-Schnittstelle.</translation>
+        <translation>Entfernen Sie jetzt Ihren Ausweis von der NFC-Schnittstelle</translation>
     </message>
     <message>
-        <source>You will now leave the %1. For any further questions regarding the current process or occurring errors contact the corresponding provider.</source>
-        <extracomment>INFO ALL_PLATFORMS User message that the redirect to the provider is immanent and the user will leave the AusweisApp</extracomment>
-        <translation>Sie verlassen nun die %1. Bei Rückfragen zum Vorgang oder auftretenden Fehlern wenden Sie sich an den jeweiligen Anbieter.</translation>
+        <source>If you have any questions or encounter any errors during the process, please contact the corresponding provider.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Bei Rückfragen oder auftretenden Fehlern zum Vorgang wenden Sie sich bitte an den jeweiligen Anbieter.</translation>
+    </message>
+    <message>
+        <source>You will be automatically redirected to the provider in a few seconds. If you are not automatically redirected, click on the &quot;%1&quot; button.</source>
+        <extracomment>INFO ALL_PLATFORMS Redirect information when automatic redirect is enabled</extracomment>
+        <translation>Die automatische Weiterleitung zum Anbieter erfolgt in wenigen Sekunden. Falls Sie nicht automatisch weitergeleitet werden, drücken Sie auf den Button &quot;%1&quot;.</translation>
+    </message>
+    <message>
+        <source>Press the button to complete the authentication and return to the provider.</source>
+        <extracomment>INFO ALL_PLATFORMS Redirect information when automatic redirect is disabled</extracomment>
+        <translation>Drücken Sie auf den Button, um die Authentisierung abzuschließen und zum Anbieter zurückzukehren.</translation>
     </message>
     <message>
         <source>Return to provider</source>
@@ -3060,11 +3132,6 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <source>Authentication successful</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Authentisierung erfolgreich</translation>
-    </message>
-    <message>
-        <source>You will be redirected to the provider</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Sie werden zum Anbieter zurückgeleitet</translation>
     </message>
 </context>
 <context>
@@ -3190,14 +3257,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>Kartenzugriff</translation>
     </message>
     <message>
-        <source>Waiting for connection</source>
+        <source>Card reader ready</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Warte auf Verbindung</translation>
+        <translation>Kartenleser bereit</translation>
     </message>
     <message>
-        <source>Waiting for connection from a paired device...</source>
+        <source>To do this, start a process on a paired device.</source>
         <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Warte auf eine Verbindung eines gekoppelten Gerätes...</translation>
+        <translation>Starten Sie hierzu auf einem gekoppelten Gerät einen Vorgang.</translation>
     </message>
     <message>
         <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
@@ -3220,9 +3287,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Gerät koppeln</translation>
     </message>
     <message>
-        <source>Allow connection</source>
+        <source>Activate card reader</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Verbindung erlauben</translation>
+        <translation>Kartenleser aktivieren</translation>
     </message>
     <message>
         <source>You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.
@@ -3287,6 +3354,11 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <source>NFC is not available</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kein NFC verfügbar</translation>
+    </message>
+    <message>
+        <source>Stop card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kartenleser beenden</translation>
     </message>
 </context>
 <context>
@@ -3416,13 +3488,14 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
 <context>
     <name>ResultErrorView</name>
     <message>
-        <source>Details</source>
-        <translation>Details</translation>
-    </message>
-    <message>
         <source>Error code:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Fehlercode:</translation>
+    </message>
+    <message>
+        <source>Show Details</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Details anzeigen</translation>
     </message>
 </context>
 <context>
@@ -3463,9 +3536,9 @@ LABEL ANDROID IOS</extracomment>
 <context>
     <name>SecurityAndPrivacySettings</name>
     <message>
-        <source>Onscreen keypad</source>
+        <source>Numeric keypad</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Bildschirmtastatur</translation>
+        <translation>Ziffernblock</translation>
     </message>
     <message>
         <source>Software updates</source>
@@ -3473,9 +3546,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Software-Aktualisierungen</translation>
     </message>
     <message>
-        <source>Check at program start</source>
+        <source>Check for updates at program start</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Automatisch bei Programmstart prüfen</translation>
+        <translation>Automatisch bei Programmstart nach Updates suchen</translation>
     </message>
     <message>
         <source>Show update</source>
@@ -3508,19 +3581,19 @@ LABEL ANDROID IOS</extracomment>
         <translation>Keine Aktualisierungsinformationen vorhanden, bitte prüfen Sie manuell auf verfügbare Aktualisierungen.</translation>
     </message>
     <message>
-        <source>Shuffle digits of on screen keypad</source>
+        <source>Shuffle keys</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Ziffern der Bildschirmtastatur zufällig anordnen</translation>
+        <translation>Tasten zufällig anordnen</translation>
     </message>
     <message>
-        <source>Button animation</source>
+        <source>Hide key animations</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Tasten-Animationen</translation>
+        <translation>Tasten Animationen ausblenden</translation>
     </message>
     <message>
-        <source>Visually highlight key presses on screen keypad</source>
+        <source>Makes it difficult for outsiders to detect PIN entry</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Eingaben auf der Bildschirmtastatur optisch hervorheben</translation>
+        <translation>Erschwert eine Erkennung der PIN-Eingabe durch Außenstehende</translation>
     </message>
 </context>
 <context>
@@ -3634,10 +3707,13 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Security and privacy</source>
-        <extracomment>LABEL DESKTOP
-----------
-LABEL ANDROID IOS</extracomment>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Sicherheit und Datenschutz</translation>
+    </message>
+    <message>
+        <source>Numeric keypad</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Ziffernblock</translation>
     </message>
     <message>
         <source>Debug options</source>
@@ -3669,14 +3745,14 @@ LABEL ANDROID IOS</extracomment>
         <translation>PIN-Eingabe auf diesem Gerät</translation>
     </message>
     <message>
-        <source>Randomize the order of the on screen keypad buttons</source>
+        <source>Shuffle keys</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Ziffern der Bildschirmtastatur zufällig anordnen</translation>
+        <translation>Tasten zufällig anordnen</translation>
     </message>
     <message>
-        <source>Keypad animations</source>
+        <source>Hide key animations</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Tasten-Animationen</translation>
+        <translation>Tasten Animationen ausblenden</translation>
     </message>
     <message>
         <source>Skip rights page</source>
@@ -3794,14 +3870,34 @@ LABEL ANDROID IOS</extracomment>
         <translation>Bei der Authentisierung eine Testmusterkarte simulieren</translation>
     </message>
     <message>
-        <source>Visually highlight key presses on screen keypad</source>
+        <source>Makes it difficult for outsiders to detect PIN entry</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Eingaben auf der Bildschirmtastatur optisch hervorheben</translation>
+        <translation>Erschwert eine Erkennung der PIN-Eingabe durch Außenstehende</translation>
     </message>
     <message>
-        <source>Play animations</source>
+        <source>Use images instead of animations</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Animationen abspielen</translation>
+        <translation>Bilder statt Animationen verwenden</translation>
+    </message>
+    <message>
+        <source>Accessibility</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Barrierefreiheit</translation>
+    </message>
+    <message>
+        <source>Hide key animations when entering PIN</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Tastenanimationen bei PIN-Eingabe ausblenden</translation>
+    </message>
+    <message>
+        <source>After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Nach dem Ausweisen erfolgt die Weiterleitung zurück zum Anbieter erst nach Bestätigung. Ansonsten erfolgt die Weiterleitung automatisch nach wenigen Sekunden.</translation>
+    </message>
+    <message>
+        <source>Manual redirection back to the provider</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Manuelle Weiterleitung zurück zum Anbieter</translation>
     </message>
 </context>
 <context>
@@ -4309,12 +4405,18 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>Show in-app notifications of %1</source>
-        <translation>Zeige den internen Benachrichtigungsdialog der %1</translation>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Internen Benachrichtigungsdialog der %1 einblenden</translation>
     </message>
     <message>
         <source>Title bar</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Titelleiste</translation>
+    </message>
+    <message>
+        <source>Hide in-app notifications of %1</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Internen Benachrichtigungsdialog der %1 ausblenden</translation>
     </message>
 </context>
 <context>
@@ -4747,7 +4849,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Authentisierung erfolgreich</translation>
     </message>
     <message>
-        <source>Back to provider</source>
+        <source>Return to provider</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Zurück zum Anbieter</translation>
     </message>

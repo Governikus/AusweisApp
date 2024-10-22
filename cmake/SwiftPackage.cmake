@@ -66,7 +66,16 @@ get_filename_component(SCRIPT_DIR "${CMAKE_SCRIPT_MODE_FILE}" DIRECTORY)
 set(PACKAGING_DIR "${SCRIPT_DIR}/../resources/packaging")
 configure_file("${PACKAGING_DIR}/ios/Package.swift" "${CMAKE_BINARY_DIR}/Package.swift" COPYONLY)
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/dist)
-set(dist_filename dist/${prefix}-${APP_NAME_VERSION}${APP_MISMATCH}.swiftpackage.zip)
+if(DIST_DIR)
+	get_filename_component(DIST_DIR "${DIST_DIR}" ABSOLUTE)
+else()
+	set(DIST_DIR ${CMAKE_BINARY_DIR}/dist)
+endif()
+
+if(NOT EXISTS "${DIST_DIR}")
+	file(MAKE_DIRECTORY ${DIST_DIR})
+endif()
+
+set(dist_filename ${DIST_DIR}/${prefix}-${APP_NAME_VERSION}${APP_MISMATCH}.swiftpackage.zip)
 message(STATUS "Create package: ${dist_filename}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E tar cf "${dist_filename}" --format=zip ${prefix}.xcframework Package.swift)

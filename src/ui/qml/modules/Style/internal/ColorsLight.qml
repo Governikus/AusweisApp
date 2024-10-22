@@ -27,6 +27,14 @@ Colors {
 		border.pressed: "#80cdec"
 		content.pressed: "#ffffff"
 	}
+	controlOptional: DefaultControlColors {
+		background.basic: transparent
+		background.pressed: "#0077b6"
+		border.basic: "#0077b6"
+		border.pressed: "#0077b6"
+		content.basic: "#0077b6"
+		content.pressed: "#ffffff"
+	}
 	controlRadiobutton: DefaultControlColors {
 		background.pressed: "#0077b6"
 	}

@@ -1,0 +1,16 @@
+AusweisApp 2.2.2
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 23. Oktober 2024
+
+
+Anwender
+""""""""
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Optimierung der Barrierearmut und Tastaturbedienbarkeit.
+
+
+Entwickler
+""""""""""
+- Ergänzung der Android-ABIs armeabi-v7a und x86_64 zusätzlich zu arm64-v8a im SDK.

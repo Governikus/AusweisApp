@@ -31,12 +31,15 @@ Windows / macOS
 - Der Installationsdialog (bei Installation und auch Deinstallation) richtet
   sich nicht nach der Systemsprache.
 
+- Auf macOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
+  Access" gegeben.
+
 
 Android / iOS
 """""""""""""
 
 - Zu Nutzungseinschränkungen einzelner Geräte beachten Sie bitte unsere
-  Homepage https://www.ausweisapp.bund.de/aa2/mobile-devices
+  Webseite https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
 
@@ -44,6 +47,9 @@ Android / iOS
   Systemeinstellungen bei laufender |AppName| zu einem Neustart oder Absturz.
   Dazu zählt die Änderung der Systemsprache und die Änderung des Typs der
   Navigationsleiste (Gesten / Schaltflächen).
+
+- Unter iOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
+  Access" gegeben.
 
 
 Barrierearmut

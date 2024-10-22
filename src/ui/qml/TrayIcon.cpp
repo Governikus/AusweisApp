@@ -166,18 +166,6 @@ void TrayIcon::setVisible(bool pVisible)
 }
 
 
-bool TrayIcon::isVisible() const
-{
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	if (mTrayIcon)
-	{
-		mTrayIcon->isVisible();
-	}
-#endif
-	return false;
-}
-
-
 void TrayIcon::showMessage(const QString& pTitle, const QString& pMessage)
 {
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)

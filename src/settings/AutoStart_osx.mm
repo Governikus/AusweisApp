@@ -58,7 +58,11 @@ bool AutoStart::isSetByAdmin()
 
 bool AutoStart::setInternal(bool pEnabled)
 {
-	if (SMLoginItemSetEnabled(static_cast<CFStringRef>(autostartBundleIdentifier), pEnabled))
+	QT_WARNING_PUSH
+	QT_WARNING_DISABLE_DEPRECATED
+	const bool callSucceeded = SMLoginItemSetEnabled(static_cast<CFStringRef>(autostartBundleIdentifier), pEnabled);
+	QT_WARNING_POP
+	if (callSucceeded)
 	{
 		qCDebug(settings) << "Setting autostart to" << pEnabled << "succeeded";
 		return true;

@@ -5,14 +5,14 @@ environment:
     - PlatformToolset: mingw-w64
       platform: mingw-w64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-      QTPath: C:\Qt\6.3.1\mingw_64
-      OPENSSLPath: C:\OpenSSL-v30-Win64\bin
+      QTPath: C:\Qt\6.7\mingw_64
+      OPENSSLPath: C:\OpenSSL-v33-Win64\bin
 
     - PlatformToolset: v142
       platform: x64
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
-      QTPath: C:\Qt\6.3.1\msvc2019_64
-      OPENSSLPath: C:\OpenSSL-v30-Win64\bin
+      QTPath: C:\Qt\6.7\msvc2019_64
+      OPENSSLPath: C:\OpenSSL-v33-Win64\bin
       ARCHI: amd64
 
 configuration:

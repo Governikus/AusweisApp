@@ -164,7 +164,7 @@ SectionPage {
 			switch (waitingFor) {
 			case Workflow.WaitingFor.Reader:
 				//: INFO DESKTOP AA2 is waiting for the card reader or the ID card.
-				return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and available. Open the reader settings to configure readers and get more information about supported readers.");
+				return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and ready. Open the reader settings to configure readers and get more information about supported readers.");
 			case Workflow.WaitingFor.Password:
 				//: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
 				return qsTr("Please observe the display of your card reader.");

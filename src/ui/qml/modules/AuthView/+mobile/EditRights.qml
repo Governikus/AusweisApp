@@ -86,8 +86,9 @@ FlickableSectionPage {
 
 		GText {
 			activeFocusOnTab: true
+			objectName: "transactionText"
 			text: workflowModel.transactionInfo
-			textFormat: Text.PlainText
+			textFormat: Text.StyledText
 			visible: !!text
 			width: parent.width
 		}

@@ -1,0 +1,48 @@
+if(NAME MATCHES "IPA")
+	set(IPA ON)
+	set(TARGET ipa)
+	set(PRESET ci-ios)
+elseif(NAME MATCHES "Framework")
+	set(TARGET zip)
+
+	if(NAME MATCHES "Simulator_arm64_Framework")
+		set(PRESET ci-ios-framework-simulator-arm64)
+	elseif(NAME MATCHES "Simulator_Framework")
+		set(PRESET ci-ios-framework-simulator)
+	else()
+		set(PRESET ci-ios-framework)
+	endif()
+elseif(NAME MATCHES "SwiftPackage")
+	step(${CMAKE_COMMAND} -DDIST_DIR=${T_DIST_DIR} -P ${CMAKE_DIR}/SwiftPackage.cmake)
+	return()
+endif()
+
+step(security unlock-keychain $ENV{KEYCHAIN_CREDENTIALS} $ENV{HOME}/Library/Keychains/login.keychain-db)
+
+step(${T_CFG} --preset ${PRESET})
+
+if(IPA AND NOT REVIEW)
+	step(xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive CHDIR ${T_BUILD_DIR})
+	step(xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath . CHDIR ${T_BUILD_DIR})
+else()
+	step(xcodebuild -configuration MinSizeRel CHDIR ${T_BUILD_DIR})
+endif()
+
+if(RELEASE)
+	step(${CMAKE_COMMAND} -E tar cf AusweisApp_BuildDir.tar.zstd --zstd build)
+endif()
+
+step(xcodebuild -configuration MinSizeRel -target ${TARGET} CHDIR ${T_BUILD_DIR})
+
+if(IPA AND NOT RELEASE)
+	step(${T_CTEST} -C MinSizeRel)
+endif()
+
+if(IPA AND RELEASE AND DEFINED ENV{USE_DISTRIBUTION_PROFILE})
+	if($ENV{USE_DISTRIBUTION_PROFILE})
+		set(USER "ausweisapp@governikus.com")
+		file(GLOB ipafile "${T_BUILD_DIR}/*.ipa")
+		step(xcrun altool -t ios --validate-app --verbose -u "${USER}" -p @env:PASSWORD -f ${ipafile})
+		step(xcrun altool -t ios --upload-app -u "${USER}" -p @env:PASSWORD -f ${ipafile})
+	endif()
+endif()

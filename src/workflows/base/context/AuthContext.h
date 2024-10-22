@@ -59,6 +59,7 @@ class AuthContext
 	private:
 		bool mTcTokenNotFound;
 		bool mErrorReportedToServer;
+		bool mReceivedBrowserSendFailed;
 		bool mSkipMobileRedirect;
 		bool mShowChangePinView;
 
@@ -110,6 +111,15 @@ class AuthContext
 		}
 
 
+		[[nodiscard]] bool isReceivedBrowserSendFailed() const
+		{
+			return mReceivedBrowserSendFailed;
+		}
+
+
+		void setReceivedBrowserSendFailed(bool pReceivedBrowserSendFailed);
+
+
 		void setErrorReportedToServer(bool pErrorReportedToServer)
 		{
 			mErrorReportedToServer = pErrorReportedToServer;
@@ -139,7 +149,6 @@ class AuthContext
 
 		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override
 		{
-
 			if (isCanAllowedMode() || !mDIDAuthenticateEAC1)
 			{
 				return {AcceptedEidType::CARD_CERTIFIED};

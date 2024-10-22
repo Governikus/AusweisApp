@@ -24,10 +24,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
@@ -35,10 +35,18 @@ jobs:
       - name: Install dependencies
         run: sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libqt6svg6-dev libqt6websockets6-dev qt6-base-dev qt6-base-private-dev qt6-declarative-dev qt6-connectivity-dev qt6-scxml-dev qt6-tools-dev qt6-tools-dev-tools libqt6opengl6-dev libqt6shadertools6-dev libgl1-mesa-dev qt6-l10n-tools
 
+      #QT > 6.4 is required but ubuntu 22.04 just has 6.2.4, so additional installation is needed
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.2'
+          modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
+          setup-python: 'false'
+
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"

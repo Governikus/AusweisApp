@@ -1,5 +1,4 @@
 FROM dev-docker.governikus.de/ausweisapp2/alpine:swarm
-MAINTAINER Governikus KG <support@ausweisapp.de>
 
 ENV NAME=Docs LABELS=Docs
 

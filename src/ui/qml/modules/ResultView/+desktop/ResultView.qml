@@ -33,6 +33,10 @@ FlickableSectionPage {
 	signal emailButtonPressed
 	signal hintClicked
 
+	function confirm() {
+		button.clicked();
+	}
+
 	spacing: Constants.pane_spacing
 
 	Keys.onEnterPressed: button.clicked()

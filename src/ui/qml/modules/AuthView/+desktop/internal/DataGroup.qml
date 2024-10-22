@@ -51,6 +51,7 @@ ColumnLayout {
 				id: rightItem
 
 				property bool isLast: index === repeater.count - 1
+				property int modelIndex: index
 				property string modelName: name
 				property bool modelSelected: selected
 				property bool modelWriteRight: writeRight
@@ -93,6 +94,8 @@ ColumnLayout {
 		GCheckBox {
 			id: checkBox
 
+			//: LABEL DESKTOP
+			Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
 			checked: modelSelected
 			focusFrameVisible: false
 			horizontalPadding: Constants.text_spacing
@@ -109,6 +112,8 @@ ColumnLayout {
 		GText {
 			id: dataText
 
+			//: LABEL DESKTOP
+			Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
 			activeFocusOnTab: true
 			leftPadding: Constants.text_spacing
 			rightPadding: Constants.text_spacing

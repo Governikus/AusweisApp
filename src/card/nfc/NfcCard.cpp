@@ -134,6 +134,7 @@ ResponseApduResult NfcCard::transmit(const CommandApdu& pCmd)
 	}
 
 	const QByteArray recvBuffer = response.toByteArray();
-	qCDebug(card_nfc) << "Transmit response APDU:" << recvBuffer.toHex();
-	return {CardReturnCode::OK, ResponseApdu(recvBuffer)};
+	const ResponseApdu responseApdu(recvBuffer);
+	qCDebug(card_nfc) << "Transmit response APDU:" << responseApdu;
+	return {CardReturnCode::OK, responseApdu};
 }

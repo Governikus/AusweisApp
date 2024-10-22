@@ -364,6 +364,23 @@ void SettingsModel::setAutoCloseWindowAfterAuthentication(bool pEnabled)
 }
 
 
+bool SettingsModel::isAutoRedirectAfterAuthentication() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoRedirectAfterAuthentication();
+}
+
+
+void SettingsModel::setAutoRedirectAfterAuthentication(bool pEnabled)
+{
+	if (isAutoRedirectAfterAuthentication() != pEnabled)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setAutoRedirectAfterAuthentication(pEnabled);
+		Q_EMIT fireAutoRedirectAfterAuthenticationChanged();
+	}
+}
+
+
 bool SettingsModel::isAutoUpdateAvailable() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isAutoUpdateAvailable();

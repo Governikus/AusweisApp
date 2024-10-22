@@ -42,7 +42,6 @@ class TrayIcon
 		void create();
 		void shutdown();
 		void setVisible(bool pVisible);
-		[[nodiscard]] bool isVisible() const;
 
 		void showMessage(const QString& pTitle, const QString& pMessage);
 

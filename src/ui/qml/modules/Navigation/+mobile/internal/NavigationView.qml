@@ -44,8 +44,26 @@ Control {
 
 			delegate: NavigationItem {
 				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD, UiModule.SMART_EID]
+				//: ANDROID IOS LABEL Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
+				readonly property string tabPositionA11y: qsTr("%1 of %2").arg(index + 1).arg(repeater.count)
 
 				Accessible.ignored: root.Accessible.ignored
+				Accessible.name: {
+					//: ANDROID IOS LABEL
+					var a11yName = [text, qsTr("Tab"), tabPositionA11y];
+					if (checked) {
+						if (Qt.platform.os === "ios") {
+							//: IOS Selected navigation tab.
+							a11yName.unshift(qsTr("Selection"));
+							//: IOS Name of a11y element of selected navigation tab.
+							a11yName.unshift(qsTr("Tab bar"));
+						} else {
+							//: ANDROID Currently selected navigation tab of navigation view.
+							a11yName.unshift(qsTr("Selected"));
+						}
+					}
+					return a11yName.join(". ");
+				}
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				Layout.preferredWidth: repeater.maxItemWidth

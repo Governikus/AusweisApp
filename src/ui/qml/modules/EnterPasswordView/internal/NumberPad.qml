@@ -71,7 +71,7 @@ GridLayout {
 
 		onClicked: baseItem.digitPressed(text)
 	}
-	NumberPadButton {
+	SubmitButton {
 		id: submitButton
 
 		Layout.fillHeight: true

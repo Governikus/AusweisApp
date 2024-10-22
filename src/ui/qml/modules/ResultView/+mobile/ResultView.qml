@@ -27,6 +27,10 @@ FlickableSectionPage {
 	signal continueClicked
 	signal hintClicked
 
+	function confirm() {
+		buttonContinue.clicked();
+	}
+
 	spacing: Constants.component_spacing
 
 	navigationAction: NavigationAction {

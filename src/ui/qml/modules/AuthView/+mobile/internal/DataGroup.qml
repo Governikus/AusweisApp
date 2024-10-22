@@ -56,6 +56,7 @@ Column {
 				id: delegateLoader
 
 				property bool isLast: index === repeater.count - 1
+				property int modelIndex: index
 				property string modelName: name
 				property bool modelSelected: selected
 				property bool modelWriteRight: writeRight
@@ -89,6 +90,8 @@ Column {
 		GCheckBox {
 			id: checkBox
 
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
 			checked: modelSelected
 			horizontalPadding: Constants.pane_padding
 			layoutDirection: Qt.RightToLeft
@@ -112,6 +115,8 @@ Column {
 		id: requiredDelegate
 
 		GText {
+			//: LABEL ANDROID IOS
+			Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
 			activeFocusOnTab: true
 			bottomPadding: Constants.text_spacing
 			leftPadding: Constants.pane_padding

@@ -17,28 +17,30 @@ ColumnLayout {
 		contentPadding: 0
 		spacing: 0
 		//: LABEL DESKTOP
-		title: qsTr("Onscreen keypad")
+		title: qsTr("Numeric keypad")
 
 		GSwitch {
 			Layout.fillWidth: true
 			checked: SettingsModel.shuffleScreenKeyboard
+			//: LABEL DESKTOP
+			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 
 			//: LABEL DESKTOP
-			text: qsTr("Shuffle digits of on screen keypad")
+			text: qsTr("Shuffle keys")
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
 		}
 		GSwitch {
 			Layout.fillWidth: true
-			checked: !SettingsModel.visualPrivacy
+			checked: SettingsModel.visualPrivacy
 			//: LABEL DESKTOP
-			description: qsTr("Visually highlight key presses on screen keypad")
+			description: qsTr("Makes it difficult for outsiders to detect PIN entry")
 			drawBottomCorners: true
 
 			//: LABEL DESKTOP
-			text: qsTr("Button animation")
+			text: qsTr("Hide key animations")
 
-			onCheckedChanged: SettingsModel.visualPrivacy = !checked
+			onCheckedChanged: SettingsModel.visualPrivacy = checked
 		}
 	}
 	GPane {
@@ -55,7 +57,7 @@ ColumnLayout {
 			enabled: !SettingsModel.autoUpdateCheckSetByAdmin
 
 			//: LABEL DESKTOP
-			text: qsTr("Check at program start")
+			text: qsTr("Check for updates at program start")
 
 			onCheckedChanged: SettingsModel.autoUpdateCheck = checked
 		}

@@ -14,10 +14,6 @@ j.with
 {
 	steps
 	{
-		batchFile('cd source & cmake --preset ci-win-release')
-
-		batchFile('cmake --build build --target package')
-
-		batchFile('cmake --build build --target package.sign')
+		batchFile('cmake -P source/ci.cmake')
 	}
 }

@@ -15,7 +15,7 @@ AbstractButton {
 	property alias source: tabImage.source
 
 	Accessible.name: text
-	Accessible.role: Accessible.Button
+	Accessible.role: checked ? Accessible.PageTab : Accessible.Button
 	Layout.minimumWidth: tabImage.implicitWidth + leftPadding + rightPadding
 	padding: Constants.text_spacing / 2
 

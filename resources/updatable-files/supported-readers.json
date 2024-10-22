@@ -224,7 +224,7 @@
 							"os": "win"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304820&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-windows"
 				},
 				{
 					"Platforms": [
@@ -232,7 +232,7 @@
 							"os": "mac"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304820&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-mac"
 				},
 				{
 					"Platforms": [
@@ -240,7 +240,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304820&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-linux"
 				}
 			],
 			"Information": [
@@ -285,7 +285,7 @@
 							"os": "win"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Windows&productGroup=77304735&product=77304856&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-windows"
 				},
 				{
 					"Platforms": [
@@ -294,7 +294,7 @@
 							"max": "13"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=MacOS&productGroup=77304735&product=77304856&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-mac"
 				},
 				{
 					"Platforms": [
@@ -311,7 +311,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304856&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-linux"
 				}
 			],
 			"Information": [
@@ -354,8 +354,8 @@
 							"min": "14"
 						}
 					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
+					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
+					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
 		},
@@ -366,7 +366,7 @@
 				"0x0505"
 			],
 			"Name": "REINER SCT cyberJack wave",
-			"Pattern": "REINER SCT cyberJack wave( USB)?( \\d{1,1})?$",
+			"Pattern": "REINER SCT cyberJack wave",
 			"Icon": "img_cyberjack_wave.png",
 			"IconWithNPA": "img_cyberjack_wave_mit_ausweis.png",
 			"Drivers": [
@@ -376,7 +376,7 @@
 							"os": "win"
 						}
 					],
-					"URL": "https://help.reiner-sct.com/de/support/solutions/articles/101000475765"
+					"URL": "https://www.reiner-sct.com/treiber-windows"
 				},
 				{
 					"Platforms": [
@@ -384,7 +384,7 @@
 							"os": "mac"
 						}
 					],
-					"URL": "https://help.reiner-sct.com/de/support/solutions/articles/101000480002"
+					"URL": "https://www.reiner-sct.com/treiber-mac"
 				},
 				{
 					"Platforms": [
@@ -392,7 +392,7 @@
 							"os": "unknown"
 						}
 					],
-					"URL": "https://www.reiner-sct.com/support/support-anfrage/?os=Linux&productGroup=77304735&product=77304828&q=driver#choice5"
+					"URL": "https://www.reiner-sct.com/treiber-linux"
 				}
 			],
 			"Information": [

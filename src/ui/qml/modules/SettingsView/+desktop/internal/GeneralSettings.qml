@@ -36,6 +36,7 @@ ColumnLayout {
 
 			//: LABEL DESKTOP
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
+			drawBottomCorners: true
 			//: LABEL DESKTOP
 			text: qsTr("Use the system font")
 
@@ -46,14 +47,40 @@ ColumnLayout {
 				}
 			}
 		}
+	}
+	GPane {
+		Layout.fillWidth: true
+		contentPadding: 0
+		spacing: 0
+		//: LABEL DESKTOP
+		title: qsTr("Accessibility")
+
 		GSwitch {
 			Layout.fillWidth: true
-			checked: SettingsModel.useAnimations
+			checked: !SettingsModel.useAnimations
+			//: LABEL DESKTOP
+			text: qsTr("Use images instead of animations")
+
+			onCheckedChanged: SettingsModel.useAnimations = !checked
+		}
+		GSwitch {
+			Layout.fillWidth: true
+			checked: SettingsModel.visualPrivacy
+			//: LABEL DESKTOP
+			text: qsTr("Hide key animations when entering PIN")
+
+			onCheckedChanged: SettingsModel.visualPrivacy = checked
+		}
+		GSwitch {
+			Layout.fillWidth: true
+			checked: !SettingsModel.autoRedirectAfterAuthentication
+			//: LABEL DESKTOP
+			description: qsTr("After identification, you will only be redirected back to the provider after confirmation. Otherwise, you will be redirected automatically after a few seconds.")
 			drawBottomCorners: true
 			//: LABEL DESKTOP
-			text: qsTr("Play animations")
+			text: qsTr("Manual redirection back to the provider")
 
-			onCheckedChanged: SettingsModel.useAnimations = checked
+			onCheckedChanged: SettingsModel.autoRedirectAfterAuthentication = !checked
 		}
 	}
 	GPane {

@@ -22,8 +22,28 @@ spec:
               key: PASSWORD
               name: android-passwords
               optional: false
+        - name: GPG_PSW
+          valueFrom:
+            secretKeyRef:
+              key: GPG_PSW
+              name: gpg
+              optional: false
+        - name: GPG_ID
+          valueFrom:
+            secretKeyRef:
+              key: GPG_ID
+              name: gpg
+              optional: false
         image: dev-docker.governikus.de/ausweisapp2/alpine:common
         imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - '-c'
+                - >-
+                  gpg --batch --passphrase $GPG_PSW --pinentry-mode loopback --import /gpg/GPG_PRIVATE
         name: common
         resources:
           limits:
@@ -42,3 +62,9 @@ spec:
         tty: true
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gpg
+          secret:
+            defaultMode: 420
+            optional: false
+            secretName: gpg

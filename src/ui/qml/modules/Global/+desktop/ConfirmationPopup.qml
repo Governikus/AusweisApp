@@ -17,13 +17,13 @@ BaseConfirmationPopup {
 
 		GButton {
 			text: root.okButtonText
-			visible: style & ConfirmationPopup.PopupStyle.OkButton
+			visible: root.style & ConfirmationPopup.PopupStyle.OkButton
 
 			onClicked: root.accept()
 		}
 		GButton {
 			text: root.cancelButtonText
-			visible: style & ConfirmationPopup.PopupStyle.CancelButton
+			visible: root.style & ConfirmationPopup.PopupStyle.CancelButton
 
 			onClicked: root.cancel()
 		}

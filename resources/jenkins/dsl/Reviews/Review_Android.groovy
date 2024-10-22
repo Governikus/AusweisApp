@@ -18,14 +18,7 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
-
-		shell("cd source; cmake --preset ci-android-apk-review -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
-		shell('cmake --build build')
-		shell('cmake --build build --target apk')
-		shell('cmake --build build --target verify.signature')
-		shell('cmake --build build --target dump.apk')
-		shell('ctest --test-dir build --output-on-failure')
+		shell("cmake -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 	}
 
 	publishers {
@@ -50,12 +43,12 @@ j.with
 
 
 // ----------------------------------------------------------------- AAR
-for(ARCH in Constants.AndroidArchAAR)
+for(ARCH in Constants.AndroidArchAARReview)
 {
 
 def j = new Review
 	(
-		name: 'Android_AAR',
+		name: 'Android_AAR_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
 		artifacts: 'build/dist/**,build/debug.symbols/*'
@@ -65,11 +58,7 @@ j.with
 {
 	steps
 	{
-		shell('cd source; cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
-		shell('cd source; cmake --preset ci-android-aar-review')
-		shell('cmake --build build')
-		shell('cmake --build build --target aar')
-		shell('ctest --test-dir build --output-on-failure')
+		shell("cmake -P source/ci.cmake -- -DCMAKE_ANDROID_ARCH_ABI=${ARCH}")
 	}
 
 	publishers {
@@ -90,4 +79,42 @@ j.with
 	}
 }
 
+}
+
+
+def build = new Review
+	(
+		name: 'Android_AAR',
+		label: 'Common',
+		artifacts: 'build/dist/**'
+	)
+
+def j = build.generate(this)
+
+j.with
+{
+	parameters
+	{
+		for(ARCH in Constants.AndroidArchAARReview)
+		{
+			stringParam(build.getSourceJobNameParam('Android_AAR_' + ARCH), '', 'Build of ' + ARCH)
+		}
+	}
+
+	steps
+	{
+		for(ARCH in Constants.AndroidArchAARReview)
+		{
+			copyArtifacts(build.getSourceJobName('Android_AAR_' + ARCH))
+			{
+				flatten()
+				buildSelector
+				{
+					buildNumber('${' + build.getSourceJobNameParam('Android_AAR_' + ARCH) + '}')
+				}
+			}
+		}
+
+		shell('cmake -P source/ci.cmake')
+	}
 }

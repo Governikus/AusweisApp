@@ -243,6 +243,12 @@ void UiPluginQml::init()
 	}
 
 	onWindowPaletteChanged();
+
+#ifdef Q_OS_WIN
+	QMetaObject::invokeMethod(this, [] {
+			Env::getSingleton<Service>()->runUpdateIfNeeded(true);
+		}, Qt::QueuedConnection);
+#endif
 }
 
 

@@ -35,7 +35,7 @@ be fetched by Android's default build system **gradle**.
 SDK
 ---
 The |AppName| SDK is distributed as an AAR package that contains
-native **arm64-v8a** libraries only.
+native **arm64-v8a**,  **x86_64** and **armeabi-v7a** libraries only.
 The AAR package is available in the default repository of Android.
 The following listing shows the required **mavenCentral** in **build.gradle**.
 

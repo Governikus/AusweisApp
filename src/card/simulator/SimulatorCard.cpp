@@ -167,12 +167,11 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 }
 
 
-EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription, quint8 pTimeoutSeconds)
+EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
 {
 	Q_UNUSED(pPasswordId)
 	Q_UNUSED(pPreferredPinLength)
 	Q_UNUSED(pCertificateDescription)
-	Q_UNUSED(pTimeoutSeconds)
 
 	QThread::msleep(Env::getSingleton<VolatileSettings>()->getDelay());
 	EstablishPaceChannelOutput output(CardReturnCode::OK);

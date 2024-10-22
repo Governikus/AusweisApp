@@ -13,7 +13,7 @@ AbstractButton {
 	id: root
 
 	property int borderWidth: Style.dimens.border_width
-	property alias buttonColor: d.color
+	property alias buttonColor: colors.controlBackground
 	property alias cursorShape: mouseArea.cursorShape
 	property string disabledTooltipText
 
@@ -24,6 +24,7 @@ AbstractButton {
 	property alias layoutDirection: contentLayout.layoutDirection
 	property alias maximumLineCount: buttonText.maximumLineCount
 	property real radius: Style.dimens.control_radius
+	property alias style: colors.controlStyle
 	property TextStyle textStyle: Style.text.button
 	property bool tintIcon: false
 
@@ -42,9 +43,9 @@ AbstractButton {
 	verticalPadding: Constants.control_verticalPadding
 
 	background: Rectangle {
-		border.color: d.borderColor
+		border.color: colors.controlBorder
 		border.width: root.borderWidth
-		color: d.color
+		color: colors.controlBackground
 		radius: root.radius
 	}
 	contentItem: RowLayout {
@@ -62,7 +63,7 @@ AbstractButton {
 
 				source: root.icon.source
 				sourceSize.height: 1.2 * buttonText.effectiveFirstLineHeight
-				tintColor: d.contentColor
+				tintColor: colors.controlContent
 				tintEnabled: tintIcon
 				visible: source != ""
 			}
@@ -72,7 +73,7 @@ AbstractButton {
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignHCenter
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
-				color: d.contentColor
+				color: colors.controlContent
 				elide: Text.ElideRight
 				font: root.font
 				horizontalAlignment: {
@@ -96,60 +97,13 @@ AbstractButton {
 		id: hoverHandler
 
 	}
-	Item {
-		id: d
+	StatefulColors {
+		id: colors
 
-		property color borderColor: color === Style.color.control.background.basic ? Style.color.control.border.basic : color
-		property color color: Style.color.control.background.basic
-		property color contentColor: root.textStyle.textColor
-
-		states: [
-			State {
-				name: "disabled"
-				when: !root.enabled || !root.enableButton
-
-				PropertyChanges {
-					d.borderColor: Style.color.control.border.disabled
-					d.color: Style.color.control.background.disabled
-					d.contentColor: Style.color.control.content.disabled
-				}
-			},
-			State {
-				name: "pressed"
-				when: root.pressed
-
-				PropertyChanges {
-					d.borderColor: Style.color.control.border.pressed
-					d.color: Style.color.control.background.pressed
-					d.contentColor: Style.color.control.content.pressed
-				}
-			},
-			State {
-				name: "hovered"
-				when: hoverHandler.hovered
-
-				PropertyChanges {
-					d.borderColor: Style.color.control.border.hovered
-					d.color: Style.color.control.background.hovered
-					d.contentColor: root.textStyle === Style.text.button ? Style.color.control.content.hovered : Style.color.control.content.pressed
-				}
-			},
-			State {
-				name: "checked"
-				when: root.checked
-
-				PropertyChanges {
-					d.borderColor: Style.color.control.border.checked
-					d.color: Style.color.control.background.checked
-					d.contentColor: Style.color.control.content.checked
-				}
-			}
-		]
-		transitions: [
-			EaseInPressedTransition {
-				target: d
-			}
-		]
+		controlBorder: controlBackground === controlStyle.background.basic ? controlStyle.border.basic : controlBackground
+		disabledCondition: !root.enableButton || !root.enabled
+		hoveredCondition: hoverHandler.hovered
+		statefulControl: root
 	}
 	FocusFrame {
 		marginFactor: root.background ? 0.8 : 1

@@ -1,6 +1,6 @@
 ARG ALPINE_VERSION=3.20
 
-FROM alpine:$ALPINE_VERSION as builder
+FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add patch cmake ccache make ninja g++ pkgconf pcsc-lite-dev binutils-gold eudev-libs perl python3 linux-headers

@@ -65,6 +65,11 @@ class QmlTestRunner
 #else
 			pEngine->rootContext()->setContextProperty(QStringLiteral("hasBindingLoop"), false);
 #endif
+#if (QT_VERSION < QT_VERSION_CHECK(6, 5, 2))
+			pEngine->rootContext()->setContextProperty(QStringLiteral("hasPolishLoop"), true);
+#else
+			pEngine->rootContext()->setContextProperty(QStringLiteral("hasPolishLoop"), false);
+#endif
 
 			connect(pEngine, &QQmlEngine::warnings, this, [](const QList<QQmlError>& pWarnings){
 					bool fail = false;

@@ -35,7 +35,7 @@ if(isMultiConfig)
 	endif()
 endif()
 
-project(AusweisApp VERSION 2.2.1 LANGUAGES ${LANGUAGES})
+project(AusweisApp VERSION 2.2.2 LANGUAGES ${LANGUAGES})
 
 if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
 	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")

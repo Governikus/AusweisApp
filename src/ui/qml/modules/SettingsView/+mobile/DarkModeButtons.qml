@@ -14,6 +14,7 @@ ColumnLayout {
 	readonly property string selectedText: checkedButton.title
 
 	signal buttonClicked
+	signal receivedFocus(var pItem)
 
 	function onAppearanceButtonClicked(mode) {
 		if (SettingsModel.userDarkMode === mode)
@@ -43,6 +44,8 @@ ColumnLayout {
 		title: qsTr("System")
 
 		onClicked: root.onAppearanceButtonClicked(mode)
+		onFocusChanged: if (focus)
+			root.receivedFocus(this)
 	}
 	GCollapsibleSubButton {
 		id: dark
@@ -58,6 +61,8 @@ ColumnLayout {
 		title: qsTr("Dark")
 
 		onClicked: root.onAppearanceButtonClicked(mode)
+		onFocusChanged: if (focus)
+			root.receivedFocus(this)
 	}
 	GCollapsibleSubButton {
 		id: light
@@ -73,5 +78,7 @@ ColumnLayout {
 		title: qsTr("Light")
 
 		onClicked: root.onAppearanceButtonClicked(mode)
+		onFocusChanged: if (focus)
+			root.receivedFocus(this)
 	}
 }

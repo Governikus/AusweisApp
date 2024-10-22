@@ -10,6 +10,7 @@ QtObject {
 	readonly property color card_smart: "#327509"
 	required property ControlComponents control
 	required property ControlComponents controlCheckbox
+	required property ControlComponents controlOptional
 	required property ControlComponents controlRadiobutton
 	required property ControlComponents controlScrollbar
 	required property ControlComponents controlSwitch

@@ -415,7 +415,7 @@ Controller {
 
 		ResultErrorView {
 			//: LABEL ANDROID IOS
-			buttonText: qsTr("Back to start page")
+			buttonText: qsTr("Return to provider")
 			errorCode: AuthModel.statusCodeString
 			errorDescription: AuthModel.errorText
 			//: LABEL ANDROID IOS

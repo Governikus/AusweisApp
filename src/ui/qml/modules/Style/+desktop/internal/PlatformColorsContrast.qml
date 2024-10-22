@@ -29,6 +29,10 @@ Colors {
 		background.pressed: textNormal.basic
 		content.basic: textNormal.basic
 	}
+	controlOptional: DefaultControlColors {
+		content.basic: palette.buttonText
+		content.checked: textNormal.basic
+	}
 	controlRadiobutton: DefaultControlColors {
 		background.pressed: textNormal.basic
 		content.basic: textNormal.basic

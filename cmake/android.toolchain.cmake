@@ -80,11 +80,7 @@ set(ANDROID_TARGET_SDK_VERSION 35)
 set(CMAKE_ANDROID_STL_TYPE c++_shared)
 
 if(NOT CMAKE_ANDROID_ARCH_ABI)
-	if(INTEGRATED_SDK)
-		set(CMAKE_ANDROID_ARCH_ABI arm64-v8a)
-	else()
-		set(CMAKE_ANDROID_ARCH_ABI armeabi-v7a)
-	endif()
+	set(CMAKE_ANDROID_ARCH_ABI armeabi-v7a)
 endif()
 
 # Only required by CMake < 3.30.3 with Android NDK 27 when

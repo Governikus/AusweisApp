@@ -8,14 +8,18 @@ def getJobs()
 {
 	def list = ['Formatting', 'Source', 'Docs']
 
-	def packages = ['Container', 'MacOS_DMG_PKG', 'Win64_GNU_MSI', 'Win64_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'iOS_Simulator_arm64_Framework', 'Android_AAR']
+	def packages = ['Container', 'MacOS_DMG_PKG', 'Win64_GNU_MSI', 'Win64_MSVC_MSI', 'iOS_IPA', 'iOS_Framework', 'iOS_Simulator_Framework', 'iOS_Simulator_arm64_Framework']
+	for(ARCH in Constants.AndroidArchAARReview)
+	{
+		packages << 'Android_AAR_' + ARCH
+	}
 	for(ARCH in Constants.AndroidArchAPKReview)
 	{
 		packages << 'Android_APK_' + ARCH
 	}
 	list += packages
 
-	def subPackages = ['iOS_SwiftPackage']
+	def subPackages = ['Android_AAR', 'iOS_SwiftPackage']
 	list += subPackages
 
 	def unitTests = ['Linux', 'Linux_Integrated', 'MacOS', 'MacOS_Integrated', 'Win64_GNU', 'Win64_MSVC', 'FreeBSD', 'SonarQube', 'Docker_VNC']
@@ -27,6 +31,11 @@ def getJobs()
 String getName(String name)
 {
 	return "${MERCURIAL_REVISION_BRANCH}_Review_" + name
+}
+
+String getNameParam(String name)
+{
+	return getName(name).replace('-', '_') + '_Build'
 }
 
 def reviewMessage = createReviewMessage(getJobs(), this.&getName) + ' | Libraries: ${Libraries}' + ' | SonarQube Analysis: ${SONARQUBE_ANALYSIS_MESSAGE}'
@@ -69,7 +78,10 @@ j.with
 
 		phase('Packages', 'UNSTABLE')
 		{
-			phaseJob(getName('Android_AAR'))
+			for(ARCH in Constants.AndroidArchAARReview)
+			{
+				phaseJob(getName('Android_AAR_' + ARCH))
+			}
 
 			for(ARCH in Constants.AndroidArchAPKReview)
 			{
@@ -95,6 +107,17 @@ j.with
 
 		phase('Sub-Packages', 'UNSTABLE')
 		{
+			phaseJob(getName('Android_AAR'))
+			{
+				parameters
+				{
+					for(ARCH in Constants.AndroidArchAARReview)
+					{
+						predefinedProp(getNameParam('Android_AAR_' + ARCH), getEnvNumber(getName('Android_AAR_' + ARCH)))
+					}
+				}
+			}
+
 			phaseJob(getName('iOS_SwiftPackage'))
 			{
 				parameters

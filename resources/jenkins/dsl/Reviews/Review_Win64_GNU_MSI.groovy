@@ -14,14 +14,6 @@ j.with
 {
 	steps
 	{
-		batchFile('cd source & cmake -DCMD=IMPORT_PATCH -P cmake/cmd.cmake')
-
-		batchFile('cd source & cmake --preset ci-win-release')
-
-		batchFile('cmake --build build --target package')
-
-		batchFile('cmake --build build --target package.sign')
-
-		batchFile('cmake -DCMD=CHECK_WIX_WARNING -DFILE=build/_CPack_Packages/win64/WIX/wix.log -P source/cmake/cmd.cmake')
+		batchFile('cmake -P source/ci.cmake')
 	}
 }

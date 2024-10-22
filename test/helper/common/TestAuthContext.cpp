@@ -35,7 +35,7 @@ TestAuthContext::TestAuthContext(const QString& pFileName)
 }
 
 
-const QSharedPointer<const CVCertificate> TestAuthContext::getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1) const
+const QSharedPointer<const CVCertificate> TestAuthContext::getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1)
 {
 	for (const auto& cvc : pEac1->getCvCertificates())
 	{

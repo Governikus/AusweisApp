@@ -160,7 +160,7 @@ class test_SimulatorCard
 			}
 
 			const QByteArray data(isAuthentication ? "Chat/CertificateDescription" : "");
-			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, data, data, 60), output);
+			QCOMPARE(card.establishPaceChannel(PacePasswordId::PACE_PIN, 6, data, data), output);
 		}
 
 

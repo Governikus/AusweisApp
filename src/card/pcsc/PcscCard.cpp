@@ -264,7 +264,7 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 	QByteArray data(8192, '\0');
 	auto dataReceived = static_cast<PCSC_INT>(data.size());
 
-	qCDebug(card_pcsc) << "SCardTransmit cmdBuffer:" << pSendBuffer.toHex();
+	qCDebug(card_pcsc) << "Transmit command APDU::" << CommandApdu(pSendBuffer);
 	const PCSC_RETURNCODE returnCode = SCardTransmit(mCardHandle,
 			pSendPci,
 			reinterpret_cast<PCSC_CUCHAR_PTR>(pSendBuffer.data()),
@@ -273,13 +273,13 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 			reinterpret_cast<PCSC_UCHAR_PTR>(data.data()),
 			&dataReceived);
 
-	qCDebug(card_pcsc) << "SCardTransmit for" << mReader->getName() << ':' << pcsc::toString(returnCode);
+	qCDebug(card_pcsc) << "Transmit for" << mReader->getName() << ':' << pcsc::toString(returnCode);
 
 	switch (returnCode)
 	{
 		case pcsc::Scard_S_Success:
 			data.resize(static_cast<int>(dataReceived));
-			qCDebug(card_pcsc) << "SCardTransmit resBuffer:" << data.toHex();
+			qCDebug(card_pcsc) << "Transmit response APDU:" << ResponseApdu(data);
 
 			if (data.size() < 2)
 			{
@@ -320,18 +320,14 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
 EstablishPaceChannelOutput PcscCard::establishPaceChannel(PacePasswordId pPasswordId,
 		int pPreferredPinLength,
 		const QByteArray& pChat,
-		const QByteArray& pCertificateDescription,
-		quint8 pTimeoutSeconds)
+		const QByteArray& pCertificateDescription)
 {
 	Q_UNUSED(pPreferredPinLength)
-	Q_UNUSED(pTimeoutSeconds)
 
 	if (!mReader->hasFeature(FeatureID::EXECUTE_PACE))
 	{
 		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
 	}
-
-	disableOverlay();
 
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::EXECUTE_PACE);
 	EstablishPaceChannel builder(pPasswordId, pChat, pCertificateDescription);
@@ -401,31 +397,12 @@ PcscCard::CardResult PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCn
 }
 
 
-#ifdef Q_OS_WIN
-void PcscCard::disableOverlay()
-{
-	const auto& cardResult = control(SCARD_CTL_CODE(3105), QByteArray::fromHex("02"));
-	if (cardResult.mReturnCode == pcsc::Scard_S_Success)
-	{
-		qCDebug(card_pcsc) << "Control to disable overlay succeed";
-		return;
-	}
-
-	qCWarning(card_pcsc) << "Control to disable overlay failed";
-
-}
-
-
-#endif
-
 ResponseApduResult PcscCard::setEidPin(quint8 pTimeoutSeconds)
 {
 	if (!mReader->hasFeature(FeatureID::MODIFY_PIN_DIRECT))
 	{
 		return {CardReturnCode::COMMAND_FAILED};
 	}
-
-	disableOverlay();
 
 	PCSC_INT cmdID = mReader->getFeatureValue(FeatureID::MODIFY_PIN_DIRECT);
 	PinModify pinModify(pTimeoutSeconds);

@@ -31,7 +31,7 @@
 from __future__ import print_function
 
 __author__ = "Conan.io <info@conan.io>"
-__version__ = "1.17.4"
+__version__ = "1.18.0"
 __license__ = "MIT"
 __url__ = "https://github.com/conan-io/python-patch"
 
@@ -424,7 +424,7 @@ class PatchSet(object):
     hunkparsed = False # state after successfully parsed hunk
 
     # regexp to match start of hunk, used groups - 1,3,4,6
-    re_hunk_start = re.compile(b"^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@")
+    re_hunk_start = re.compile(br"^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@")
 
     self.errors = 0
     # temp buffers for header and filenames info
@@ -575,7 +575,7 @@ class PatchSet(object):
             # strptime function and %z support is patchy, so we drop
             # everything from the . onwards and group the year and time
             # separately.
-          re_filename_date_time = b"^--- ([^\t]+)(?:\s([0-9-]+)\s([0-9:]+)|.*)"
+          re_filename_date_time = br"^--- ([^\t]+)(?:\s([0-9-]+)\s([0-9:]+)|.*)"
           match = re.match(re_filename_date_time, line)
           # todo: support spaces in filenames
           if match:
@@ -618,7 +618,7 @@ class PatchSet(object):
             filenames = False
             headscan = True
           else:
-            re_filename_date_time = b"^\+\+\+ ([^\t]+)(?:\s([0-9-]+)\s([0-9:]+)|.*)"
+            re_filename_date_time = br"^\+\+\+ ([^\t]+)(?:\s([0-9-]+)\s([0-9:]+)|.*)"
             match = re.match(re_filename_date_time, line)
             if not match:
               warning("skipping invalid patch - no target filename at line %d" % (lineno+1))
@@ -650,7 +650,7 @@ class PatchSet(object):
               continue
 
       if hunkhead:
-        match = re.match(b"^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@(.*)", line)
+        match = re.match(br"^@@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? @@(.*)", line)
         if not match:
           if not p.hunks:
             warning("skipping invalid patch with no hunks for file %s" % p.source)

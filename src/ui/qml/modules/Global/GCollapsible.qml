@@ -12,6 +12,7 @@ ColumnLayout {
 	id: root
 
 	property bool alwaysReserveSelectionTitleHeight: false
+	property bool arrowToLeft: false
 	property alias backgroundColor: collapsibleContentBackground.color
 	property int contentBottomMargin: Constants.groupbox_spacing
 	property int contentHorizontalMargin: horizontalMargin
@@ -68,8 +69,12 @@ ColumnLayout {
 			anchors.verticalCenter: parent.verticalCenter
 			spacing: 0
 
+			LeftRightArrow {
+				isLeft: root.arrowToLeft
+				visible: root.arrowToLeft
+			}
 			ColumnLayout {
-				Layout.leftMargin: horizontalMargin
+				Layout.leftMargin: root.arrowToLeft ? 0 : root.horizontalMargin
 				spacing: Constants.subtext_spacing
 
 				GText {
@@ -115,20 +120,15 @@ ColumnLayout {
 			TintableIcon {
 				id: selectionIcon
 
+				Layout.rightMargin: root.arrowToLeft ? root.horizontalMargin : 0
 				sourceSize.height: Style.dimens.small_icon_size
 				tintColor: Style.color.textNormal.basic
 				tintEnabled: false
 				visible: source.toString() !== ""
 			}
-			TintableIcon {
-				id: arrow
-
-				Layout.leftMargin: Constants.text_spacing
-				Layout.rightMargin: horizontalMargin
-				source: expanded ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
-				sourceSize.height: Style.text.normal.textSize
-				tintColor: Style.color.textNormal.basic
-				tintEnabled: true
+			LeftRightArrow {
+				isLeft: root.arrowToLeft
+				visible: !root.arrowToLeft
 			}
 		}
 
@@ -175,5 +175,16 @@ ColumnLayout {
 				topMargin: contentTopMargin
 			}
 		}
+	}
+
+	component LeftRightArrow: TintableIcon {
+		property bool isLeft: false
+
+		Layout.leftMargin: isLeft ? root.horizontalMargin : Constants.text_spacing
+		Layout.rightMargin: isLeft ? Constants.text_spacing : root.horizontalMargin
+		source: expanded ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
+		sourceSize.height: Style.text.normal.textSize
+		tintColor: Style.color.textNormal.basic
+		tintEnabled: true
 	}
 }

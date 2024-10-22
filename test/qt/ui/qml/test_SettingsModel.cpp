@@ -21,6 +21,32 @@ class test_SettingsModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void testAutoRedirect()
+		{
+			auto* model = Env::getSingleton<SettingsModel>();
+			QSignalSpy spy(model, &SettingsModel::fireAutoRedirectAfterAuthenticationChanged);
+
+			QCOMPARE(spy.count(), 0);
+			QCOMPARE(model->isAutoRedirectAfterAuthentication(), true);
+
+			model->setAutoRedirectAfterAuthentication(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isAutoRedirectAfterAuthentication(), false);
+
+			model->setAutoRedirectAfterAuthentication(false);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(model->isAutoRedirectAfterAuthentication(), false);
+
+			model->setAutoRedirectAfterAuthentication(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isAutoRedirectAfterAuthentication(), true);
+
+			model->setAutoRedirectAfterAuthentication(true);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(model->isAutoRedirectAfterAuthentication(), true);
+		}
+
+
 		void testAnimations()
 		{
 			const auto* model = Env::getSingleton<SettingsModel>();
