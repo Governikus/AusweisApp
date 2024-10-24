@@ -40,11 +40,11 @@ jobs:
                                                      qt6-tools-dev-tools libqt6opengl6-dev libqt6shadertools6-dev \
                                                      libgl1-mesa-dev qt6-l10n-tools
 
-      # QT > 6.4 is required but ubuntu 22.04 just has 6.2.4, so additional installation is needed
+      # QT additional installation is needed as ubuntu typically has older version
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.2'
+          version: '6.9.2'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
           setup-python: 'false'
 

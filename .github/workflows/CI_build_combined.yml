@@ -5,8 +5,8 @@ name: CI_build_combined
 env:
   BUILD_DIR_LIBS_WIN: "c:/_build_libs"
   BUILD_DIR_APP_WIN: "c:/_build"
-  BUILD_DIR_LIBS: "_build_libs"
-  BUILD_DIR_APP: "_build"
+  BUILD_DIR_LIBS: "../_build_libs"
+  BUILD_DIR_APP: "../_build"
 
 jobs:
   build_windows:
@@ -20,9 +20,18 @@ jobs:
 
     steps:
 
-      - name: Install nmake replacement jom, ninja
+      - name: Install nmake replacement jom, ninja, wix
         run: |
           choco install jom ninja
+          dotnet tool install --global wix
+
+      - name: checkout files with lineending LF to overcome issue with yamllint on windows
+        run: |
+          git config --global core.autocrlf false
+
+      - name: Set up GITHUB_PATH for patch on Windows
+        # Needed to use GNU patch instead of Strawberry Perl patch (https://github.com/actions/runner-images/issues/5459)
+        run: echo "C:\Program Files\Git\usr\bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -32,7 +41,7 @@ jobs:
 
       - name: generate cmake libs
         run: |
-          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_LIBS_WIN }}" \
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_LIBS_WIN }}" `
                 D:\a\AusweisApp\AusweisApp\libs
 
       - name: build cmake libs
@@ -41,7 +50,7 @@ jobs:
 
       - name: generate cmake
         run: |
-          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP_WIN }}" \
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP_WIN }}" `
                 -DCMAKE_PREFIX_PATH=c:\_build_libs\dist D:\a\AusweisApp\AusweisApp
 
       - name: build cmake
@@ -68,7 +77,7 @@ jobs:
       - name: Install packages via apt
         run: |
           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev \
-                                                         libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
+                                     libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
 
       - name: generate cmake libs
         run: |
@@ -81,7 +90,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_APP }} \
-                -DCMAKE_PREFIX_PATH=./_build_libs/dist
+                -DCMAKE_PREFIX_PATH=../_build_libs/dist
 
       - name: build cmake
         run: |
@@ -99,7 +108,7 @@ jobs:
       fail-fast: false
       matrix:
         build_configuration: [Release]
-        build_platform: ["Unix Makefiles"]
+        build_platform: ["Ninja"]
 
     steps:
       - uses: actions/checkout@v6
@@ -107,7 +116,7 @@ jobs:
       - name: Install packages via apt
         run: |
           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev \
-                                                         libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
+                                     libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
           sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime
 
       - name: generate cmake libs
@@ -123,8 +132,8 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/AusweisApp/_build_libs/dist \
-                -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+                -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/_build_libs/dist \
+                -DCMAKE_TOOLCHAIN_FILE=./cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
         run: |
@@ -141,7 +150,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_configuration: [Release, Debug]
+        build_configuration: [Release]
         build_platform: ["Ninja"]
 
     steps:
@@ -162,7 +171,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=./_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
+                -DCMAKE_PREFIX_PATH=../_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
         run: |
@@ -180,7 +189,7 @@ jobs:
       fail-fast: false
       matrix:
         build_configuration: [Release, Debug]
-        build_platform: ["Unix Makefiles"]
+        build_platform: ["Ninja"]
 
     steps:
       - uses: actions/checkout@v6
@@ -201,8 +210,8 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/AusweisApp/_build_libs/dist \
-                -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+                -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/_build_libs/dist \
+                -DCMAKE_TOOLCHAIN_FILE=./cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
         run: |
