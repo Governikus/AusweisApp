@@ -31,13 +31,15 @@ jobs:
 
       - name: Set up GITHUB_PATH for patch on Windows
         # Needed to use GNU patch instead of Strawberry Perl patch (https://github.com/actions/runner-images/issues/5459)
-        run: echo "C:\Program Files\Git\usr\bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        run: Remove-Item -Path C:\Strawberry\c\bin\patch.exe -Force
 
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Add nmake
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
 
       - name: generate cmake libs
         run: |
@@ -51,7 +53,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP_WIN }}" `
-                -DCMAKE_PREFIX_PATH=c:\_build_libs\dist D:\a\AusweisApp\AusweisApp
+                -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR_LIBS_WIN }}\dist D:\a\AusweisApp\AusweisApp
 
       - name: build cmake
         run: |
@@ -60,11 +62,20 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir "${{ env.BUILD_DIR_APP_WIN }}" --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir "${{ env.BUILD_DIR_APP_WIN }}" --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP_WIN }}/junit.xml
+          reporter: java-junit
+
 
   build_linux:
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -72,12 +83,13 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install packages via apt
         run: |
-          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev llhttp-dev libpcsclite-dev \
+          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libpcsclite-dev \
                                      libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
+          sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime ruby* rust*
 
       - name: generate cmake libs
         run: |
@@ -90,7 +102,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_APP }} \
-                -DCMAKE_PREFIX_PATH=../_build_libs/dist
+                -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR_LIBS }}/dist
 
       - name: build cmake
         run: |
@@ -99,11 +111,20 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
+
 
   build_linux_android:
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -111,11 +132,11 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install packages via apt
         run: |
-          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev llhttp-dev libpcsclite-dev \
+          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libpcsclite-dev \
                                      libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
           sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime
 
@@ -132,7 +153,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/_build_libs/dist \
+                -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR_LIBS }}/dist \
                 -DCMAKE_TOOLCHAIN_FILE=./cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
@@ -142,7 +163,16 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
+
 
   build_macos:
 
@@ -154,7 +184,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: install ninja
         run: |
@@ -162,7 +192,8 @@ jobs:
 
       - name: generate cmake libs
         run: |
-          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_LIBS }} ./libs
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
+                -DCMAKE_TOOLCHAIN_FILE=../cmake/macOS.toolchain.cmake -B ${{ env.BUILD_DIR_LIBS }}  ./libs
 
       - name: build cmake libs
         run: |
@@ -171,7 +202,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=../_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
+                -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR_LIBS }}/dist -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
         run: |
@@ -180,7 +211,16 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
+
 
   build_ios:
 
@@ -192,7 +232,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: install ninja
         run: |
@@ -210,7 +250,7 @@ jobs:
       - name: generate cmake
         run: |
           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" \
-                -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/_build_libs/dist \
+                -DCMAKE_PREFIX_PATH=${{ env.BUILD_DIR_LIBS }}/dist \
                 -DCMAKE_TOOLCHAIN_FILE=./cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
       - name: build cmake
@@ -220,4 +260,12 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
