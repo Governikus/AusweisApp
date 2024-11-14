@@ -25,14 +25,16 @@ jobs:
           dotnet tool install --global wix
 
       - name: Add nmake
-        uses: ilammy/msvc-dev-cmd@v1
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
 
       - name: checkout files with lineending LF to overcome issue with yamllint on windows
         run: |
           git config --global core.autocrlf false
 
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -41,9 +43,18 @@ jobs:
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
           setup-python: 'false'
 
+      - name: vcpkg build
+        uses: johnwason/vcpkg-action@v8
+        id: vcpkg
+        with:
+          pkgs: llhttp
+          triplet: x64-windows-release
+          token: ${{ github.token }}
+
       - name: generate cmake
         run: |
-          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP }}"
+          cmake ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -G "${{ matrix.build_platform }}" `
+                -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP }}"
 
       - name: build cmake
         run: |
@@ -52,11 +63,20 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir "${{ env.BUILD_DIR_APP }}" --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
+
 
   build_linux:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -64,7 +84,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install packages via apt
         run: |
@@ -89,7 +109,16 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit
+
 
   build_macos:
 
@@ -101,7 +130,11 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
+
+      - name: install llhttp
+        run: |
+             brew install llhttp
 
       - name: install ninja
         run: |
@@ -127,4 +160,12 @@ jobs:
 
       - name: run ctest
         run: |
-          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}" --output-junit junit.xml
+
+      - name: Report Test results
+        uses: dorny/test-reporter@v3
+        if: success() || failure()
+        with:
+          name: ctest Tests
+          path: ${{ env.BUILD_DIR_APP }}/junit.xml
+          reporter: java-junit

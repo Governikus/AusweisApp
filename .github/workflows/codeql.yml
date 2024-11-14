@@ -11,7 +11,7 @@ name: "CodeQL"
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       actions: read
       contents: read
@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -32,19 +32,15 @@ jobs:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
 
-      - name: Install dependencies
+      - name: Install packages via apt
         run: |
-          sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev llhttp-dev libpcsclite-dev \
-                                                     libqt6svg6-dev libqt6websockets6-dev qt6-base-dev qt6-base-private-dev \
-                                                     qt6-declarative-dev qt6-connectivity-dev qt6-scxml-dev qt6-tools-dev \
-                                                     qt6-tools-dev-tools libqt6opengl6-dev libqt6shadertools6-dev \
-                                                     libgl1-mesa-dev qt6-l10n-tools
+          sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libllhttp-dev libpcsclite-dev \
+                                                     libgl1-mesa-dev qt6-l10n-tools ninja-build
 
-      # QT additional installation is needed as ubuntu typically has older version
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.10.2'
+          version: '6.10.*'
           modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
           setup-python: 'false'
 
