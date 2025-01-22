@@ -13,7 +13,9 @@
 
 #include <QFile>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QLoggingCategory>
+#include <QStandardPaths>
 #include <QString>
 #include <openssl/conf.h>
 
@@ -154,11 +156,7 @@ void SimulatorFileSystem::parseKey(const QJsonObject& pKey)
 }
 
 
-SimulatorFileSystem::SimulatorFileSystem()
-	: mSelectedFile()
-	, mKeys()
-	, mFiles()
-	, mFileIds()
+void SimulatorFileSystem::populateDefaultData()
 {
 	initMandatoryData();
 
@@ -202,11 +200,7 @@ SimulatorFileSystem::SimulatorFileSystem()
 }
 
 
-SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
-	: mSelectedFile()
-	, mKeys()
-	, mFiles()
-	, mFileIds()
+void SimulatorFileSystem::populateJsonData(const QJsonObject& pData)
 {
 	initMandatoryData();
 
@@ -245,6 +239,44 @@ SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
 
 		parseKey(value.toObject());
 	}
+}
+
+
+SimulatorFileSystem::SimulatorFileSystem()
+	: mSelectedFile()
+	, mKeys()
+	, mFiles()
+	, mFileIds()
+{
+	QString customConfig =  QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + QStringLiteral("/sim-fs.json");
+
+	if (QFile::exists(customConfig))
+	{
+		QFile customConfigFile(customConfig);
+		if (customConfigFile.open(QIODevice::ReadOnly | QIODevice::Text))
+		{
+			QByteArray config = customConfigFile.readAll();
+			customConfigFile.close();
+			const QJsonObject& pData = QJsonDocument::fromJson(config).object();
+
+			qCInfo(card_simulator) << "Reading custom simulator file system from " << customConfig;
+
+			populateJsonData(pData);
+			return;
+		}
+	}
+
+	populateDefaultData();
+}
+
+
+SimulatorFileSystem::SimulatorFileSystem(const QJsonObject& pData)
+	: mSelectedFile()
+	, mKeys()
+	, mFiles()
+	, mFileIds()
+{
+	populateJsonData(pData);
 }
 
 

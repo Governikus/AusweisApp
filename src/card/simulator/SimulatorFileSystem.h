@@ -28,6 +28,8 @@ class SimulatorFileSystem
 
 		void initMandatoryData();
 		void parseKey(const QJsonObject& pKey);
+		void populateDefaultData();
+		void populateJsonData(const QJsonObject& pData);
 
 	public:
 		SimulatorFileSystem();
