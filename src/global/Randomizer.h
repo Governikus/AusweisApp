@@ -8,15 +8,32 @@
 
 #pragma once
 
-#include <QList>
 #include <QUuid>
 
+#include <limits>
+#include <openssl/rand.h>
 #include <random>
+#include <memory>
 
 class test_Randomizer;
 
 namespace governikus
 {
+
+class OpenSSLGenerator {
+public:
+	using result_type = uint64_t;
+
+	static constexpr result_type min() {
+		return std::numeric_limits<result_type>::min();
+	}
+
+	static constexpr result_type max() {
+		return std::numeric_limits<result_type>::max();
+	}
+
+	result_type operator()();
+};
 
 class Randomizer
 {
@@ -24,40 +41,13 @@ class Randomizer
 	friend class ::test_Randomizer;
 
 	private:
-		template<typename T = std::mt19937_64::result_type, typename U = uchar> struct UniversalBuffer
-		{
-			U data[sizeof(T)] = {};
-
-			T get()
-			{
-#if __cpp_lib_bit_cast >= 201806
-				return std::bit_cast<T>(data);
-
-#else
-				T number;
-				memcpy(&number, &data, sizeof(T));
-				return number;
-
-#endif
-			}
-
-
-			void set(T pNumber)
-			{
-				memcpy(&data, &pNumber, sizeof(T));
-			}
-
-
-			static_assert(sizeof(T) == sizeof(data));
-		};
-
-		std::mt19937_64 mGenerator;
+		OpenSSLGenerator mGenerator;
 		bool mSecureRandom;
 
-		template<typename T> static QList<T> getEntropy();
-		template<typename T> static QList<T> getEntropyWin();
-		template<typename T> static QList<T> getEntropyUnixoid();
-		template<typename T> static QList<T> getEntropyApple();
+		[[nodiscard]] static size_t getEntropy(std::shared_ptr<EVP_MD_CTX> mdCtx);
+		[[nodiscard]] static bool getEntropyWin(std::shared_ptr<EVP_MD_CTX> mdCtx);
+		[[nodiscard]] static bool getEntropyUnixoid(std::shared_ptr<EVP_MD_CTX> mdCtx);
+		[[nodiscard]] static bool getEntropyApple(std::shared_ptr<EVP_MD_CTX> mdCtx);
 
 	protected:
 		Randomizer();
@@ -66,7 +56,7 @@ class Randomizer
 	public:
 		static Randomizer& getInstance();
 
-		[[nodiscard]] std::mt19937_64& getGenerator();
+		[[nodiscard]] OpenSSLGenerator& getGenerator();
 		[[nodiscard]] bool isSecureRandom() const;
 
 		[[nodiscard]] QUuid createUuid();

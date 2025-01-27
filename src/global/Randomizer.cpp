@@ -10,9 +10,11 @@
 #include <QRandomGenerator>
 #include <QtEndian>
 
-#include <array>
 #include <chrono>
+#include <cstdint>
+#include <openssl/evp.h>
 #include <openssl/rand.h>
+#include <random>
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -37,71 +39,125 @@ using namespace governikus;
 
 defineSingleton(Randomizer)
 
+const size_t ENTROPY_FETCH_SIZE = 256 / 8;
 
-template<typename T> QList<T> Randomizer::getEntropy()
-{
-	QList<T> entropy;
+OpenSSLGenerator::result_type OpenSSLGenerator::operator()() {
+	result_type buffer{0};
 
-	entropy += static_cast<T>(std::chrono::system_clock::now().time_since_epoch().count());
-	entropy += std::random_device()();
-	entropy += QRandomGenerator::securelySeeded().generate();
+	int ret = RAND_bytes(reinterpret_cast<unsigned char*>(&buffer), sizeof(buffer));
+	Q_ASSERT(ret == 1);
 
-	if (UniversalBuffer<T> buffer; RAND_bytes(buffer.data, sizeof(buffer.data)))
-	{
-		entropy += buffer.get();
-	}
-
-	entropy += getEntropyWin<T>();
-	entropy += getEntropyUnixoid<T>();
-	entropy += getEntropyApple<T>();
-
-	return entropy;
+	return buffer;
 }
 
 
-template<typename T> QList<T> Randomizer::getEntropyWin()
+size_t Randomizer::getEntropy(std::shared_ptr<EVP_MD_CTX> mdCtx)
 {
-	QList<T> entropy;
+	int ret;
+	size_t numSources = 3;
+
+	auto clockTicks = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	ret = EVP_DigestUpdate(mdCtx.get(), &clockTicks, sizeof(clockTicks));
+	Q_ASSERT(ret == 1);
+
+	for (size_t i = 0; i < ENTROPY_FETCH_SIZE / sizeof(std::random_device::result_type); ++i) {
+		auto randomDeviceRand = std::random_device()();
+		ret = EVP_DigestUpdate(mdCtx.get(), &randomDeviceRand, sizeof(randomDeviceRand));
+		Q_ASSERT(ret == 1);
+		OPENSSL_cleanse(&randomDeviceRand, sizeof(randomDeviceRand));
+	}
+
+	quint64 qtBuffer[ENTROPY_FETCH_SIZE / sizeof(quint64)];
+	QRandomGenerator::securelySeeded().fillRange(qtBuffer);
+	ret = EVP_DigestUpdate(mdCtx.get(), &qtBuffer, ENTROPY_FETCH_SIZE);
+	Q_ASSERT(ret == 1);
+	OPENSSL_cleanse(&qtBuffer, ENTROPY_FETCH_SIZE);
+
+	if (unsigned char buffer[ENTROPY_FETCH_SIZE]; RAND_bytes(buffer, sizeof(buffer)))
+	{
+		ret = EVP_DigestUpdate(mdCtx.get(), buffer, sizeof(buffer));
+		Q_ASSERT(ret == 1);
+		++numSources;
+		OPENSSL_cleanse(buffer, sizeof(buffer));
+	}
+
+	if (getEntropyWin(mdCtx))
+		++numSources;
+	if (getEntropyUnixoid(mdCtx))
+		++numSources;
+	if (getEntropyApple(mdCtx))
+		++numSources;
+
+	return numSources;
+}
+
+
+bool Randomizer::getEntropyWin(std::shared_ptr<EVP_MD_CTX> mdCtx)
+{
+	bool hasEntropy = false;
 
 #if defined(Q_OS_WIN) && !defined(Q_OS_WINRT)
-	UniversalBuffer<T> buffer;
+	unsigned char buffer[ENTROPY_FETCH_SIZE];
 	HCRYPTPROV provider = 0;
 	if (CryptAcquireContext(&provider, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
 	{
-		if (CryptGenRandom(provider, sizeof(buffer.data), buffer.data))
+		if (CryptGenRandom(provider, sizeof(buffer), buffer))
 		{
-			entropy += buffer.get();
+			int ret = EVP_DigestUpdate(mdCtx.get(), buffer, sizeof(buffer));
+			Q_ASSERT(ret == 1);
+			hasEntropy = true;
 		}
 
 		CryptReleaseContext(provider, 0);
 	}
+	OPENSSL_cleanse(buffer, sizeof(buffer));
+#else
+	Q_UNUSED(mdCtx)
 #endif
 
-	return entropy;
+	return hasEntropy;
 }
 
 
-template<typename T> QList<T> Randomizer::getEntropyUnixoid()
+bool Randomizer::getEntropyUnixoid(std::shared_ptr<EVP_MD_CTX> mdCtx)
 {
-	QList<T> entropy;
+	bool hasEntropy = false;
 
 #ifdef SYS_getrandom
-	if (UniversalBuffer<T> buffer; syscall(SYS_getrandom, buffer.data, sizeof(buffer.data), GRND_NONBLOCK))
 	{
-		entropy += buffer.get();
+		unsigned char buffer[ENTROPY_FETCH_SIZE];
+		long int sys_ret;
+		ssize_t bytesToRead = ENTROPY_FETCH_SIZE;
+		while (bytesToRead > 0) {
+			sys_ret = syscall(SYS_getrandom, buffer + ENTROPY_FETCH_SIZE - bytesToRead, bytesToRead, GRND_NONBLOCK);
+			if (sys_ret > 0 && sys_ret <= static_cast<long int>(bytesToRead)) {
+				bytesToRead -= sys_ret;
+			}
+			if (sys_ret == -1 && !(errno == EINTR || errno == EAGAIN)) {
+				// return from loop, if something goes wrong unexpectedly
+				break;
+			}
+		};
+		Q_ASSERT(bytesToRead == 0);
+
+		int ret = EVP_DigestUpdate(mdCtx.get(), buffer, sizeof(buffer));
+		Q_ASSERT(ret == 1);
+
+		hasEntropy = true;
+
+		OPENSSL_cleanse(buffer, sizeof(buffer));
 	}
 #elif defined(Q_OS_UNIX)
 	// Fallback for unixoid systems without SYS_getrandom (like linux before version 3.17 ).
 	// This is mainly relevant for older androids.
 
-	UniversalBuffer<T, char> buffer;
 	QFile file(QStringLiteral("/dev/urandom"));
 	if (file.open(QIODevice::ReadOnly))
 	{
-		qint64 bytesToRead = sizeof(buffer.data);
+		qint64 bytesToRead = sizeof(buffer);
 		do
 		{
-			const qint64 bytesRead = file.read(buffer.data, bytesToRead);
+			const qint64 bytesRead = file.read(buffer + sizeof(buffer) - bytesToRead, bytesToRead);
 			if (bytesRead < 0)
 			{
 				qCritical() << "Failed to read" << file.fileName();
@@ -111,52 +167,75 @@ template<typename T> QList<T> Randomizer::getEntropyUnixoid()
 		}
 		while (bytesToRead > 0);
 
-		entropy += buffer.get();
+		int ret = EVP_DigestUpdate(mdCtx.get(), buffer, sizeof(buffer));
+		Q_ASSERT(ret == 1);
+		hasEntropy = bytesToRead == 0;
 		file.close();
+
+		OPENSSL_cleanse(buffer, sizeof(buffer));
 	}
 	else
 	{
 		qCritical() << "Failed to open" << file.fileName();
 	}
+#else
+	Q_UNUSED(mdCtx)
 #endif
 
-	return entropy;
+	return hasEntropy;
 }
 
 
-template<typename T> QList<T> Randomizer::getEntropyApple()
+bool Randomizer::getEntropyApple(std::shared_ptr<EVP_MD_CTX> mdCtx)
 {
-	QList<T> entropy;
+	bool hasEntropy = false;
 
 #if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
-	if (UniversalBuffer<T> buffer; SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer.data), buffer.data) == 0)
+	if (unsigned char buffer[ENTROPY_FETCH_SIZE]; SecRandomCopyBytes(kSecRandomDefault, sizeof(buffer), buffer) == 0)
 	{
-		entropy += buffer.get();
+		int ret = EVP_DigestUpdate(mdCtx.get(), buffer, sizeof(buffer));
+		Q_ASSERT(ret == 1);
+		hasEntropy = true;
+		OPENSSL_cleanse(buffer, sizeof(buffer));
 	}
+#else
+	Q_UNUSED(mdCtx)
 #endif
 
-	return entropy;
+	return hasEntropy;
 }
 
 
 Randomizer::Randomizer()
 {
-	const auto& entropy = getEntropy<std::mt19937_64::result_type>();
-	std::seed_seq seed(entropy.cbegin(), entropy.cend());
-	mGenerator.seed(seed);
+	auto mdCtx = std::shared_ptr<EVP_MD_CTX>(EVP_MD_CTX_new(), EVP_MD_CTX_free);
 
-	// We need to seed pseudo random pool of openssl.
-	// yes, OpenSSL is an entropy source, too. But not the only one!
-	UniversalBuffer<std::mt19937_64::result_type> buffer;
-	buffer.set(mGenerator());
-	RAND_seed(buffer.data, sizeof(std::mt19937_64::result_type));
+	int ret = EVP_DigestInit_ex(mdCtx.get(), EVP_sha512(), nullptr);
+	Q_ASSERT(ret == 1);
+
+	size_t numSources = getEntropy(mdCtx);
+
+	const size_t SHA512_DIGEST_SIZE = 512 / 8;
+	unsigned char seedBuffer[SHA512_DIGEST_SIZE];
+	unsigned int mdLen = SHA512_DIGEST_SIZE;
+
+	ret = EVP_DigestFinal_ex(mdCtx.get(), seedBuffer, &mdLen);
+	Q_ASSERT(ret == 1);
+	Q_ASSERT(mdLen = SHA512_DIGEST_SIZE);
+
+	/*
+	* OpenSSL automatically seeds itself, unless configured otherwise.
+	* This is just defensive programming.
+	*/
+	RAND_seed(seedBuffer, sizeof(seedBuffer));
+	OPENSSL_cleanse(seedBuffer, sizeof(seedBuffer));
 
 	static const int MINIMUM_ENTROPY_SOURCES = 4;
-	mSecureRandom = seed.size() >= MINIMUM_ENTROPY_SOURCES;
+	mSecureRandom = numSources >= MINIMUM_ENTROPY_SOURCES;
 }
 
 
-std::mt19937_64& Randomizer::getGenerator()
+OpenSSLGenerator& Randomizer::getGenerator()
 {
 	return mGenerator;
 }
