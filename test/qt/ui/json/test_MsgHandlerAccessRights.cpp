@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref MsgHandlerAccessRights
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerAccessRights.h"
@@ -75,6 +71,7 @@ class test_MsgHandlerAccessRights
 
 		void nonExistingTransactionInfo()
 		{
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(true);
 			const auto& context = QSharedPointer<TestAuthContext>::create(":/paos/DIDAuthenticateEAC1_2.xml"_L1);
 			MessageDispatcher dispatcher;
 			QCOMPARE(dispatcher.init(context), MsgType::AUTH);

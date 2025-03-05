@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QCoreApplication>
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 	// The AusweisApp requires at least one of an RSA-PSK cipher. LibreSSL and OpenSSL <= 1.0.2 does not support that!
 	const QStringList ciphers({"RSA-PSK-AES256-GCM-SHA384", "RSA-PSK-AES256-CBC-SHA384", "RSA-PSK-AES128-GCM-SHA256", "RSA-PSK-AES128-CBC-SHA256", "RSA-PSK-AES256-CBC-SHA"});
 	return std::any_of(ciphers.constBegin(), ciphers.constEnd(), [](const QString& pCipherName)
-		{
-			return !QSslCipher(pCipherName).isNull();
-		}) ? 0 : 2;
+			{
+				return !QSslCipher(pCipherName).isNull();
+			}) ? 0 : 2;
 }

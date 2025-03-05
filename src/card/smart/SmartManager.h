@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Wrapper for calls to eID applet interface
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

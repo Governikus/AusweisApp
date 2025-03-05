@@ -1,223 +1,178 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.TitleBar
 import Governikus.View
+import Governikus.TitleBar
 import Governikus.Type
 
-SectionPage {
+FlickableSectionPage {
 	id: root
 
-	function showProviderInformation(show) {
-		d.detailView = show;
-		if (!d.detailView) {
-			root.visibleChanged();
+	signal rightsAccepted
+
+	fillWidth: true
+	spacing: Style.dimens.pane_spacing
+
+	Keys.onEnterPressed: confirmButton.clicked()
+	Keys.onReturnPressed: confirmButton.clicked()
+
+	RowLayout {
+		Layout.alignment: Qt.AlignHCenter
+		Layout.maximumWidth: Style.dimens.max_text_width * 1.2
+		Layout.topMargin: Style.dimens.pane_padding
+		spacing: Style.dimens.pane_spacing
+
+		Image {
+			id: npaIcon
+
+			source: "qrc:///images/npa.svg"
+			sourceSize.height: Style.dimens.huge_icon_size
 		}
-		root.updateTitleBarActions();
+		ProviderInfo {
+			Layout.fillWidth: true
+			name: CertificateDescriptionModel.subjectName
+
+			onClicked: root.push(certificateDescriptionPage)
+		}
 	}
+	GButton {
+		id: confirmButton
 
-	Keys.onEnterPressed: event => d.onKeyboardConfirmPressed(event)
-	Keys.onEscapePressed: event => {
-		if (!d.detailView) {
-			event.accepted = false;
-			return;
-		}
-		showProviderInformation(false);
+		Accessible.name: confirmButton.text
+		Layout.alignment: Qt.AlignHCenter
+		icon.source: "qrc:/images/identify.svg"
+		//: LABEL DESKTOP %1 can be "CAN" or "PIN"
+		text: qsTr("Proceed to %1 entry").arg((NumberModel.isCanAllowedMode ?
+			//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
+			qsTr("CAN") :
+			//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
+			qsTr("PIN")))
+		tintIcon: true
+
+		onClicked: root.rightsAccepted()
 	}
-	Keys.onReturnPressed: event => d.onKeyboardConfirmPressed(event)
+	GText {
+		Layout.alignment: Qt.AlignLeft
+		text: NumberModel.isCanAllowedMode ?
+		//: LABEL DESKTOP
+		qsTr("By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:") :
+		//: LABEL DESKTOP
+		qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
+	}
+	GPane {
+		Layout.fillWidth: true
+		color: Style.color.paneSublevel.background.basic
 
-	FlickableSectionPage {
-		anchors.fill: parent
-		fillWidth: true
-		spacing: Constants.pane_spacing
-		visible: !d.detailView
+		//: LABEL DESKTOP
+		title: qsTr("Transactional information")
+		visible: !!AuthModel.transactionInfo || !requestedDataRow.visible
 
-		RowLayout {
-			Layout.alignment: Qt.AlignHCenter
-			Layout.maximumWidth: Style.dimens.max_text_width * 1.2
-			Layout.topMargin: Constants.pane_padding
-			spacing: Constants.pane_spacing
+		onFocusChanged: if (focus)
+			root.positionViewAtItem(this)
 
-			Image {
-				id: npaIcon
-
-				source: "qrc:///images/npa.svg"
-				sourceSize.height: Style.dimens.huge_icon_size
-			}
-			ProviderInfo {
-				Layout.fillWidth: true
-				activeFocusOnTab: true
-				name: CertificateDescriptionModel.subjectName
-
-				onClicked: showProviderInformation(true)
-			}
-		}
-		GButton {
-			id: confirmButton
-
-			Accessible.name: confirmButton.text
-			Layout.alignment: Qt.AlignHCenter
-			activeFocusOnTab: true
-			icon.source: "qrc:/images/identify.svg"
-			//: LABEL DESKTOP %1 can be "CAN" or "PIN"
-			text: qsTr("Proceed to %1 entry").arg((NumberModel.isCanAllowedMode ?
-				//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
-				qsTr("CAN") :
-				//: LABEL DESKTOP Inserted into "Proceed to %1 entry"
-				qsTr("PIN")))
-			tintIcon: true
-
-			onClicked: {
-				ChatModel.transferAccessRights();
-				AuthModel.continueWorkflow();
-			}
+		GText {
+			objectName: "transactionText"
+			text: AuthModel.transactionInfo
+			textFormat: Text.StyledText
+			visible: !!text
 		}
 		GText {
-			id: dataIntroduction
-
-			Accessible.name: dataIntroduction.text
-			Layout.alignment: Qt.AlignLeft
-			activeFocusOnTab: true
-			text: NumberModel.isCanAllowedMode ?
 			//: LABEL DESKTOP
-			qsTr("By entering the CAN, access to the following data of the ID card will be allowed to the mentioned provider:") :
-			//: LABEL DESKTOP
-			qsTr("By entering your PIN, access to the following data of your ID card will be allowed to the mentioned provider:")
+			text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
+			visible: !writeDataPane.visible && !readDataPane.visible
+		}
+	}
+	RowLayout {
+		id: requestedDataRow
 
-			FocusFrame {
+		readonly property int maxColumns: 3
+
+		Layout.alignment: Qt.AlignHCenter
+		Layout.fillWidth: true
+		spacing: Style.dimens.pane_spacing
+		visible: writeData.count > 0 || requiredData.count > 0 || optionalData.count > 0
+
+		GPane {
+			id: writeDataPane
+
+			Layout.alignment: Qt.AlignTop
+			Layout.fillWidth: true
+			border.color: Style.color.warning
+			border.width: Style.dimens.pane_border_highlight_width
+			color: Style.color.paneSublevel.background.basic
+			visible: writeData.count > 0
+
+			DataGroup {
+				id: writeData
+
+				Layout.fillWidth: true
+				chat: ChatModel.write
+				columns: readDataPane.visible ? 1 : requestedDataRow.maxColumns
+
+				//: LABEL DESKTOP
+				title: qsTr("Write access (update)")
+				titleStyle: Style.text.headline
+				writeAccess: true
 			}
 		}
 		GPane {
+			id: readDataPane
+
+			Layout.alignment: Qt.AlignTop
 			Layout.fillWidth: true
-			activeFocusOnTab: true
 			color: Style.color.paneSublevel.background.basic
+			visible: requiredData.count > 0 || optionalData.count > 0
 
-			//: LABEL DESKTOP
-			title: qsTr("Transactional information")
-			visible: !!AuthModel.transactionInfo || !requestedDataRow.visible
+			RowLayout {
+				id: readRow
 
-			GText {
-				id: transactionText
+				readonly property real columnWidth: Math.max(requiredData.implicitWidth / requiredData.columns, optionalData.implicitWidth / optionalData.columns)
 
-				Accessible.name: transactionText.text
-				activeFocusOnTab: true
-				objectName: "transactionText"
-				text: AuthModel.transactionInfo
-				textFormat: Text.StyledText
-				visible: !!text
-
-				FocusFrame {
-				}
-			}
-			GText {
-				id: noAccessRightsText
-
-				Accessible.name: noAccessRightsText.text
-				activeFocusOnTab: true
-
-				//: LABEL DESKTOP
-				text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
-				visible: !writeDataPane.visible && !readDataPane.visible
-
-				FocusFrame {
-				}
-			}
-		}
-		RowLayout {
-			id: requestedDataRow
-
-			readonly property int maxColumns: 3
-
-			Layout.alignment: Qt.AlignHCenter
-			Layout.fillWidth: true
-			spacing: Constants.pane_spacing
-			visible: writeData.count > 0 || requiredData.count > 0 || optionalData.count > 0
-
-			GPane {
-				id: writeDataPane
-
-				Layout.alignment: Qt.AlignTop
-				Layout.fillWidth: true
-				border.color: Style.color.warning
-				border.width: Constants.pane_border_highlight_width
-				color: Style.color.paneSublevel.background.basic
-				visible: writeData.count > 0
+				spacing: Style.dimens.pane_spacing
 
 				DataGroup {
-					id: writeData
+					id: requiredData
 
+					Layout.alignment: Qt.AlignTop | Qt.AlignRight
 					Layout.fillWidth: true
-					chat: ChatModel.write
-					columns: readDataPane.visible ? 1 : requestedDataRow.maxColumns
+					Layout.preferredWidth: readRow.columnWidth * columns
+					chat: ChatModel.required
+					columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (optionalData.visible ? 1 : 0) - (count > optionalData.count ? 0 : 1))
 
 					//: LABEL DESKTOP
-					title: qsTr("Write access (update)")
-					titleStyle: Style.text.headline
-					writeAccess: true
+					title: qsTr("Read access")
 				}
-			}
-			GPane {
-				id: readDataPane
+				DataGroup {
+					id: optionalData
 
-				Layout.alignment: Qt.AlignTop
-				Layout.fillWidth: true
-				color: Style.color.paneSublevel.background.basic
-				visible: requiredData.count > 0 || optionalData.count > 0
+					Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+					Layout.fillWidth: true
+					Layout.preferredWidth: readRow.columnWidth * columns
+					chat: ChatModel.optional
+					columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (requiredData.visible ? requiredData.columns : 0))
 
-				RowLayout {
-					id: readRow
-
-					readonly property real columnWidth: Math.max(requiredData.implicitWidth / requiredData.columns, optionalData.implicitWidth / optionalData.columns)
-
-					spacing: Constants.pane_spacing
-
-					DataGroup {
-						id: requiredData
-
-						Layout.alignment: Qt.AlignTop | Qt.AlignRight
-						Layout.fillWidth: true
-						Layout.preferredWidth: readRow.columnWidth * columns
-						chat: ChatModel.required
-						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (optionalData.visible ? 1 : 0) - (count > optionalData.count ? 0 : 1))
-
-						//: LABEL DESKTOP
-						title: qsTr("Read access")
-					}
-					DataGroup {
-						id: optionalData
-
-						Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-						Layout.fillWidth: true
-						Layout.preferredWidth: readRow.columnWidth * columns
-						chat: ChatModel.optional
-						columns: Math.max(1, requestedDataRow.maxColumns - (writeData.visible ? writeData.columns : 0) - (requiredData.visible ? requiredData.columns : 0))
-
-						//: LABEL DESKTOP
-						title: qsTr("Read access (optional)")
-					}
+					//: LABEL DESKTOP
+					title: qsTr("Read access (optional)")
 				}
 			}
 		}
 	}
-	CertificateDescriptionPage {
-		anchors.fill: parent
-		visible: d.detailView
-	}
-	QtObject {
-		id: d
+	Component {
+		id: certificateDescriptionPage
 
-		property bool detailView: false
+		CertificateDescriptionPage {
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Back
 
-		function onKeyboardConfirmPressed(event) {
-			if (d.detailView) {
-				showProviderInformation(false);
-			} else {
-				confirmButton.clicked();
+				onNavigationActionClicked: root.pop()
 			}
 		}
 	}

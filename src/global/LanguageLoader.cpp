@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LanguageLoader.h"
@@ -32,12 +32,12 @@ LanguageLoader::LanguageLoader()
 	, mUsedLocale(mFallbackLanguage)
 {
 	QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, QCoreApplication::instance(), [] {
-			// Avoid "this" as lambda capture to get more pointer safety.
-			if (LanguageLoader::getInstance().isLoaded())
-			{
-				LanguageLoader::getInstance().unload();
-			}
-		});
+				// Avoid "this" as lambda capture to get more pointer safety.
+				if (LanguageLoader::getInstance().isLoaded())
+				{
+					LanguageLoader::getInstance().unload();
+				}
+			});
 }
 
 

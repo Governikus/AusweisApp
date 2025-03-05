@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ReleaseInformationConfiguration
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReleaseInformationConfiguration.h"
@@ -40,13 +36,13 @@ class test_ReleaseInformationConfiguration
 		void init()
 		{
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* ()>([] {
-					auto* mock = new MockReleaseInformation(VersionNumber("1.2.3"_L1), false);
-					return mock;
-				}));
+						auto* mock = new MockReleaseInformation(VersionNumber("1.2.3"_L1), false);
+						return mock;
+					}));
 			Env::setCreator<ReleaseInformation*>(std::function<ReleaseInformation* (const VersionNumber&, bool)>([](const VersionNumber& pVersion, bool pConsiderOnlyThisVersion){
-					auto* mock = new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
-					return mock;
-				}));
+						auto* mock = new MockReleaseInformation(pVersion, pConsiderOnlyThisVersion);
+						return mock;
+					}));
 			mReleaseInfoConfig.reset(new ReleaseInformationConfiguration());
 		}
 

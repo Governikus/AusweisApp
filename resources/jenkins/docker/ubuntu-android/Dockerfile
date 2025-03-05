@@ -1,13 +1,13 @@
 FROM dev-docker.governikus.de/ausweisapp2/ubuntu:swarm
 
 ARG ANDROID_CMDLINE_TOOLS=11076708
-ARG ANDROID_NDK_VERSION=27.1.12297006
-ARG CMAKE=3.30.5
+ARG ANDROID_NDK_VERSION=27.2.12479018
+ARG CMAKE=3.30.6
 ARG MAVEN=3.9.9
 ENV NAME=Android LABELS="Android" PACKAGES_DIR=/home/governikus/packages
 
-ENV ANDROID_SDK_ROOT /opt/android-sdk
-ENV ANDROID_NDK_ROOT $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION
 
 RUN apt-get update && \
     apt-get -y install g++ make ccache ninja-build perl unzip gradle patch openjdk-17-jdk-headless && \
@@ -21,7 +21,7 @@ RUN wget https://dlcdn.apache.org/maven/maven-3/$MAVEN/binaries/apache-maven-$MA
 
 RUN mkdir -p /tmp/dl && cd /tmp/dl && wget -O sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_CMDLINE_TOOLS}_latest.zip && \
     unzip sdk.zip && \
-    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;12.0" "build-tools;34.0.0" "platforms;android-35" "ndk;${ANDROID_NDK_VERSION}" && \
+    yes | /tmp/dl/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "cmdline-tools;17.0" "build-tools;35.0.1" "platforms;android-35" "ndk;${ANDROID_NDK_VERSION}" && \
     rm -rf /tmp/dl
 
 USER governikus

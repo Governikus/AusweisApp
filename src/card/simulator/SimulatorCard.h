@@ -1,15 +1,18 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "Card.h"
 #include "SimulatorFileSystem.h"
-#include "asn1/AuthenticatedAuxiliaryData.h"
-#include "asn1/Chat.h"
+#include "SmartCardDefinitions.h"
+#include "asn1/AccessRoleAndRight.h"
+#include "asn1/CVCertificate.h"
 #include "asn1/Oid.h"
 #include "pace/SecureMessaging.h"
+
+#include <QSet>
 
 #include <memory>
 #include <openssl/ec.h>
@@ -31,8 +34,9 @@ class SimulatorCard
 		std::unique_ptr<SecureMessaging> mNewSecureMessaging;
 		Oid mSelectedProtocol;
 		int mChainingStep;
+		QSet<AccessRight> mAccessRights;
+		PacePasswordId mPacePassword;
 		int mPaceKeyId;
-		QSharedPointer<CHAT> mPaceChat;
 		QByteArray mPaceNonce;
 		QByteArray mPaceTerminalKey;
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
@@ -40,7 +44,9 @@ class SimulatorCard
 #else
 		QSharedPointer<EC_KEY> mCardKey;
 #endif
-		QSharedPointer<AuthenticatedAuxiliaryData> mTaAuxData;
+		QSharedPointer<const CVCertificate> mTaCertificate;
+		QByteArray mTaSigningData;
+		QByteArray mTaAuxData;
 
 	public:
 		explicit SimulatorCard(const SimulatorFileSystem& pFileSystem);
@@ -58,13 +64,19 @@ class SimulatorCard
 		ResponseApduResult setEidPin(quint8 pTimeoutSeconds) override;
 
 	private:
-		ResponseApduResult executeFileCommand(const CommandApdu& pCmd);
-		ResponseApduResult executeMseSetAt(const CommandApdu& pCmd);
-		ResponseApduResult executeGeneralAuthenticate(const CommandApdu& pCmd);
+		ResponseApdu executeCommand(const CommandApdu& pCmd);
+		ResponseApdu executeFileCommand(const CommandApdu& pCmd);
+		ResponseApdu executeMseSetAt(const CommandApdu& pCmd);
+		ResponseApdu executeMseSetDst(const QByteArray& pData) const;
+		ResponseApdu executeGeneralAuthenticate(const CommandApdu& pCmd);
+		ResponseApdu executePsoVerify(const QByteArray& pData);
+		ResponseApdu executeExternalAuthenticate(const QByteArray& pSignature);
+		ResponseApdu executePinManagement(const CommandApdu& pCmd) const;
+		ResponseApdu executeResetRetryCounter(const CommandApdu& pCmd) const;
 		QByteArray ecMultiplication(const QByteArray& pPoint) const;
-		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce = QByteArray());
+		QByteArray generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce, const QByteArray& pVerify = QByteArray());
 		QByteArray generateRestrictedId(const QByteArray& pPublicKey) const;
-		StatusCode verifyAuxiliaryData(const QByteArray& pASN1Struct);
+		StatusCode verifyAuxiliaryData(const QByteArray& pASN1Struct) const;
 };
 
 } // namespace governikus

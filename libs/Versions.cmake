@@ -1,5 +1,5 @@
-set(QT 6.7.2)
-set(QT_HASH 0aaea247db870193c260e8453ae692ca12abc1bd841faa1a6e6c99459968ca8a)
+set(QT 6.8.1)
+set(QT_HASH 45e3a9f6d33c92ffe65a1fde1a8eba5b228112df675f7f9026eaa332b2e2edff)
 
-set(OPENSSL 3.3.2)
-set(OPENSSL_HASH 2e8a40b01979afe8be0bbfb3de5dc1c6709fedb46d6c89c10da114ab5fc3d281)
+set(OPENSSL 3.4.1)
+set(OPENSSL_HASH 002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3)

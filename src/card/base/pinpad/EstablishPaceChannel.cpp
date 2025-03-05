@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannel.h"
@@ -97,7 +97,7 @@ bool EstablishPaceChannel::fromCcid(const QByteArray& pInput)
 	}
 
 	const auto asn1_char = static_cast<char>(ASN1_INTEGER_get(channelInput->mPasswordID));
-	if (!Enum<PacePasswordId>::isValue(asn1_char))
+	if (!Enum<PacePasswordId>::isValue(static_cast<uchar>(asn1_char)))
 	{
 		qCDebug(card) << "Decapsulation: Bad PIN ID!";
 		return false;

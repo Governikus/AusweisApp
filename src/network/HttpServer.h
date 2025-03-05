@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Provide a HTTP server.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +26,7 @@ class HttpServer
 
 		void shutdown();
 		void bindAddresses(quint16 pPort, const QList<QHostAddress>& pAddresses);
-		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest);
+		bool checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest) const;
 
 	public:
 		static quint16 cPort;

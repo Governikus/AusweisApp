@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppController.h"
@@ -114,14 +114,14 @@ bool AppController::eventFilter(QObject* pObj, QEvent* pEvent)
 void AppController::start()
 {
 	auto shutdownGuard = qScopeGuard([this] {
-			qCCritical(init) << "Cannot start application controller, exit application";
+				qCCritical(init) << "Cannot start application controller, exit application";
 
-			// Let's enter event loop before we shutdown.
-			// Otherwise we call QCoreApplication::exit before ::exec and get stuck.
-			QMetaObject::invokeMethod(this, [this]{
-				doShutdown(EXIT_FAILURE);
-			}, Qt::QueuedConnection);
-		});
+				// Let's enter event loop before we shutdown.
+				// Otherwise we call QCoreApplication::exit before ::exec and get stuck.
+				QMetaObject::invokeMethod(this, [this]{
+					doShutdown(EXIT_FAILURE);
+				}, Qt::QueuedConnection);
+			});
 
 	if (!Env::getSingleton<SecureStorage>()->isValid())
 	{
@@ -166,11 +166,11 @@ void AppController::start()
 	}
 
 	connect(this, &AppController::fireStarted, this, [this] {
-			if (cShowUi)
-			{
-				Q_EMIT fireShowUi(UiModule::CURRENT);
-			}
-		}, Qt::QueuedConnection);
+				if (cShowUi)
+				{
+					Q_EMIT fireShowUi(UiModule::CURRENT);
+				}
+			}, Qt::QueuedConnection);
 
 	QCoreApplication::instance()->installEventFilter(this);
 
@@ -251,7 +251,7 @@ void AppController::onWorkflowRequested(const QSharedPointer<WorkflowRequest>& p
 }
 
 
-void AppController::onCloseReminderFinished(bool pDontRemindAgain)
+void AppController::onCloseReminderFinished(bool pDontRemindAgain) const
 {
 	if (pDontRemindAgain)
 	{
@@ -368,23 +368,23 @@ void AppController::waitForNetworkConnections(const std::function<void()>& pExit
 	static const int TIMER_INTERVAL = 50;
 	timer->setInterval(TIMER_INTERVAL);
 	connect(timer, &QTimer::timeout, this, [timer, pExitFunc](){
-			const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
-			if (openConnectionCount > 0)
-			{
-				static int timesInvoked = 0;
-				const int THREE_SECONDS = 3000;
-				if (++timesInvoked < THREE_SECONDS / TIMER_INTERVAL)
+				const int openConnectionCount = Env::getSingleton<NetworkManager>()->getOpenConnectionCount();
+				if (openConnectionCount > 0)
 				{
-					return;
+					static int timesInvoked = 0;
+					const int THREE_SECONDS = 3000;
+					if (++timesInvoked < THREE_SECONDS / TIMER_INTERVAL)
+					{
+						return;
+					}
+
+					qCWarning(init) << "Closing with" << openConnectionCount << "pending network connections.";
+					Q_ASSERT(false);
 				}
 
-				qCWarning(init) << "Closing with" << openConnectionCount << "pending network connections.";
-				Q_ASSERT(false);
-			}
-
-			timer->deleteLater();
-			pExitFunc();
-		});
+				timer->deleteLater();
+				pExitFunc();
+			});
 
 	timer->start();
 }
@@ -422,7 +422,7 @@ void AppController::onRestartApplicationRequested()
 }
 
 
-void AppController::onUiPlugin(const UiPlugin* pPlugin)
+void AppController::onUiPlugin(const UiPlugin* pPlugin) const
 {
 	qCDebug(init) << "Register UI:" << pPlugin->metaObject()->className();
 	connect(this, &AppController::fireShutdown, pPlugin, &UiPlugin::doShutdown, Qt::QueuedConnection);
@@ -436,6 +436,7 @@ void AppController::onUiPlugin(const UiPlugin* pPlugin)
 	connect(this, &AppController::fireTranslationChanged, pPlugin, &UiPlugin::onTranslationChanged);
 	connect(this, &AppController::fireShowUserInformation, pPlugin, &UiPlugin::onShowUserInformation);
 	connect(this, &AppController::fireApplicationActivated, pPlugin, &UiPlugin::fireApplicationActivated);
+	connect(this, &AppController::fireSystemSettingsChanged, pPlugin, &UiPlugin::fireSystemSettingsChanged);
 	connect(this, &AppController::fireUiDomination, pPlugin, &UiPlugin::onUiDomination);
 	connect(this, &AppController::fireUiDominationReleased, pPlugin, &UiPlugin::onUiDominationReleased);
 	connect(this, &AppController::fireProxyAuthenticationRequired, pPlugin, &UiPlugin::onProxyAuthenticationRequired);
@@ -508,6 +509,11 @@ bool AppController::nativeEventFilter(const QByteArray& pEventType, void* pMessa
 			*pResult = 0;
 			doShutdown();
 			return true;
+		}
+		if (msg->message == WM_SETTINGCHANGE)
+		{
+			qCDebug(system) << "WM_SETTINGCHANGE received";
+			Q_EMIT fireSystemSettingsChanged();
 		}
 	}
 #endif

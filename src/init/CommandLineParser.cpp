@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CommandLineParser.h"
@@ -107,7 +107,7 @@ void CommandLineParser::parse(const QCoreApplication* pApp)
 }
 
 
-void CommandLineParser::parseUiPlugin()
+void CommandLineParser::parseUiPlugin() const
 {
 	if (mParser.isSet(mOptionUi))
 	{

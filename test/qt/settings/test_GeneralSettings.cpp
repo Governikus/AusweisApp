@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref GeneralSettings
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -31,10 +27,7 @@ class test_GeneralSettings
 	private:
 		bool getNotificationsOsDefault()
 		{
-#if defined(Q_OS_WIN)
-			return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
-
-#elif defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 			return false;
 
 #else
@@ -249,7 +242,7 @@ class test_GeneralSettings
 			SDK_MODE(false);
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
 			QCOMPARE(settings.isAutoUpdateCheck(), true);
 #else
 			QCOMPARE(settings.isAutoUpdateCheck(), false);
@@ -257,7 +250,7 @@ class test_GeneralSettings
 
 			if (settings.isAutoStartAvailable())
 			{
-				QCOMPARE(settings.isAutoStart(), GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+				QCOMPARE(settings.isAutoStart(), GeneralSettings::autoStartDefault());
 			}
 			else
 			{
@@ -276,7 +269,7 @@ class test_GeneralSettings
 			QCOMPARE(settings.isTransportPinReminder(), true);
 			QCOMPARE(settings.getPersistentSettingsVersion(), QString());
 			QCOMPARE(settings.isNewAppVersion(), false);
-			QCOMPARE(settings.getLastReaderPluginType(), QString());
+			QCOMPARE(settings.getPreferredTechnology(), QString());
 			QCOMPARE(settings.isUseSystemFont(), false);
 			QCOMPARE(settings.getDarkMode(), QString());
 		}
@@ -287,7 +280,7 @@ class test_GeneralSettings
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
 			QString initial = settings.getStartupModule();
-			QString newValue = QStringLiteral("TUTORIAL");
+			QString newValue = QStringLiteral("ONBOARDING");
 
 			settings.setStartupModule(newValue);
 			QCOMPARE(settings.getStartupModule(), newValue);
@@ -346,7 +339,7 @@ class test_GeneralSettings
 			bool newValue = !initial;
 
 			settings.setUseSelfauthenticationTestUri(newValue);
-			QCOMPARE(settings.useSelfAuthTestUri(), initial);
+			QCOMPARE(settings.useSelfAuthTestUri(), newValue);
 
 			settings.setUseSelfauthenticationTestUri(initial);
 			QCOMPARE(settings.useSelfAuthTestUri(), initial);
@@ -459,22 +452,22 @@ class test_GeneralSettings
 		}
 
 
-		void testLastReaderPluginType()
+		void testPreferredTechnology()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-			QString initial = settings.getLastReaderPluginType();
+			QString initial = settings.getPreferredTechnology();
 			QCOMPARE(initial, QString());
-			QSignalSpy spy(&settings, &GeneralSettings::fireSettingsChanged);
+			QSignalSpy spy(&settings, &GeneralSettings::firePreferredTechnologyChanged);
 
 			QString newValue;
-			settings.setLastReaderPluginType(newValue);
+			settings.setPreferredTechnology(newValue);
 
-			QCOMPARE(settings.getLastReaderPluginType(), newValue);
+			QCOMPARE(settings.getPreferredTechnology(), newValue);
 			QCOMPARE(spy.count(), 0);
 			newValue = QStringLiteral("REMOTE");
-			settings.setLastReaderPluginType(newValue);
-			QCOMPARE(settings.getLastReaderPluginType(), newValue);
+			settings.setPreferredTechnology(newValue);
+			QCOMPARE(settings.getPreferredTechnology(), newValue);
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -586,16 +579,12 @@ class test_GeneralSettings
 		}
 
 
-		void testShowTrayIcon()
+		void testIsTrayIconEnabled()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-			QCOMPARE(settings.showTrayIcon(), settings.isAutoStart());
-			settings.setAutoStart(!settings.isAutoStart());
-			QCOMPARE(settings.showTrayIcon(), settings.isAutoStart());
-#else
-			QCOMPARE(settings.showTrayIcon(), true);
-#endif
+			QCOMPARE(settings.isTrayIconEnabled(), GeneralSettings::trayIconDefault());
+			settings.setTrayIconEnabled(!settings.isTrayIconEnabled());
+			QCOMPARE(settings.isTrayIconEnabled(), !GeneralSettings::trayIconDefault());
 		}
 
 

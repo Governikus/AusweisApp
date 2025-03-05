@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthContext.h"
@@ -19,7 +19,7 @@ AuthContext::AuthContext(const Action pAction, bool pActivateUi, const QUrl& pAc
 	, mErrorReportedToServer(false)
 	, mReceivedBrowserSendFailed(false)
 	, mSkipMobileRedirect(false)
-	, mShowChangePinView(false)
+	, mChangeTransportPin(false)
 	, mActivationUrl(pActivationUrl)
 	, mTcTokenUrl()
 	, mTcToken()
@@ -64,22 +64,22 @@ void AuthContext::setReceivedBrowserSendFailed(bool pReceivedBrowserSendFailed)
 }
 
 
-void AuthContext::requestChangePinView()
+void AuthContext::requestChangeTransportPin()
 {
-	if (mShowChangePinView)
+	if (mChangeTransportPin)
 	{
 		return;
 	}
 
 	setMobileSkipRedirect();
-	mShowChangePinView = true;
+	mChangeTransportPin = true;
 	Q_EMIT fireShowChangePinViewChanged();
 }
 
 
 void AuthContext::initAccessRightManager(const QSharedPointer<const CVCertificate>& pTerminalCvc)
 {
-	mAccessRightManager.reset(new AccessRightManager(mDIDAuthenticateEAC1, pTerminalCvc));
+	mAccessRightManager.reset(new AccessRightManager(mDIDAuthenticateEAC1, pTerminalCvc, mDvCvc));
 	connect(mAccessRightManager.data(), &AccessRightManager::fireEffectiveAccessRightsChanged, this, &AuthContext::fireCanAllowedModeChanged);
 	Q_EMIT fireAccessRightManagerCreated(mAccessRightManager);
 	Q_EMIT fireCanAllowedModeChanged();

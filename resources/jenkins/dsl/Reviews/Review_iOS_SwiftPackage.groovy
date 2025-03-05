@@ -15,8 +15,8 @@ j.with
 	parameters
 	{
 		stringParam('iOS_Framework_Build', '', 'Build of iOS Framework')
-		stringParam('iOS_Simulator_Framework_Build', '', 'Build of iOS Simulator-Framework')
-		stringParam('iOS_Simulator_arm64_Framework_Build', '', 'Build of iOS Simulator-arm64-Framework')
+		stringParam('iOS_Framework_Simulator_Build', '', 'Build of iOS Framework for Simulator')
+		stringParam('iOS_Framework_Simulator_arm64_Build', '', 'Build of iOS Framework for Simulator-arm64')
 	}
 
 	steps
@@ -31,23 +31,23 @@ j.with
 			}
 		}
 
-		copyArtifacts(build.getSourceJobName('iOS_Simulator_Framework'))
+		copyArtifacts(build.getSourceJobName('iOS_Framework_Simulator'))
 		{
 			targetDirectory('x86_64-simulator')
 			flatten()
 			buildSelector
 			{
-				buildNumber('${iOS_Simulator_Framework_Build}')
+				buildNumber('${iOS_Framework_Simulator_Build}')
 			}
 		}
 
-		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
+		copyArtifacts(build.getSourceJobName('iOS_Framework_Simulator_arm64'))
 		{
 			targetDirectory('arm64-simulator')
 			flatten()
 			buildSelector
 			{
-				buildNumber('${iOS_Simulator_arm64_Framework_Build}')
+				buildNumber('${iOS_Framework_Simulator_arm64_Build}')
 			}
 		}
 

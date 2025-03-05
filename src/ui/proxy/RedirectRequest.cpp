@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RedirectRequest.h"
@@ -24,48 +24,48 @@ RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QO
 	Q_ASSERT(mRequest);
 
 	connect(mRequest.data(), &HttpRequest::fireSocketStateChanged, this, [this](QAbstractSocket::SocketState pSocketState)
-		{
-			if (pSocketState == QAbstractSocket::UnconnectedState)
 			{
-				deleteLater();
-			}
-		});
+				if (pSocketState == QAbstractSocket::UnconnectedState)
+				{
+					deleteLater();
+				}
+			});
 
 	connect(this, &QAbstractSocket::disconnected, this, &QObject::deleteLater);
 
 	connect(this, &QAbstractSocket::errorOccurred, this, [this] {
-			if (!isAnswerReceived())
-			{
-				qCWarning(rproxy) << "Cannot redirect:" << error();
-				mPortWrapper.invalidate();
-				redirect();
-				return;
-			}
-			deleteLater();
-		});
+				if (!isAnswerReceived())
+				{
+					qCWarning(rproxy) << "Cannot redirect:" << error();
+					mPortWrapper.invalidate();
+					redirect();
+					return;
+				}
+				deleteLater();
+			});
 
 	connect(this, &QAbstractSocket::readyRead, this, [this] {
-			mRequest->send(readAll());
-			answerReceived();
-		});
+				mRequest->send(readAll());
+				answerReceived();
+			});
 
 	connect(this, &QAbstractSocket::connected, this, [this] {
-			if (qEnvironmentVariableIsSet("AUSWEISAPP2_PROXY_USE_REDIRECT"))
-			{
-				sendHttpRedirect();
-				answerReceived();
-				deleteLater();
-			}
-			else
-			{
-				mRequest->triggerSocketBuffer();
-			}
-		});
+				if (qEnvironmentVariableIsSet("AUSWEISAPP2_PROXY_USE_REDIRECT"))
+				{
+					sendHttpRedirect();
+					answerReceived();
+					deleteLater();
+				}
+				else
+				{
+					mRequest->triggerSocketBuffer();
+				}
+			});
 
 	connect(mRequest.data(), &HttpRequest::fireSocketBuffer, this, [this] (const QByteArray& pBuffer){
-			write(pBuffer);
-			flush();
-		});
+				write(pBuffer);
+				flush();
+			});
 
 	if (mPortWrapper.isEmpty())
 	{

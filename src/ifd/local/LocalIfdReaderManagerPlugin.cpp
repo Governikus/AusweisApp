@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdReaderManagerPlugin.h"
@@ -42,15 +42,15 @@ void LocalIfdReaderManagerPlugin::startScan(bool pAutoConnect)
 	const auto ifdClient = LocalIfdReaderManagerPlugin::getIfdClient();
 	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &LocalIfdReaderManagerPlugin::connectToReader);
 	connect(ifdClient, &LocalIfdClient::fireDeviceAppeared, this, [this] {
-			mServiceConnected = true;
-			setState(LocalIfdState::CONNECTED);
-			Q_EMIT fireStatusChanged(getInfo());
-		});
+				mServiceConnected = true;
+				setState(LocalIfdState::CONNECTED);
+				Q_EMIT fireStatusChanged(getInfo());
+			});
 	connect(ifdClient, &LocalIfdClient::fireDeviceVanished, this, [this] {
-			mServiceConnected = false;
-			setState(LocalIfdState::DISCONNECTED);
-			Q_EMIT fireStatusChanged(getInfo());
-		});
+				mServiceConnected = false;
+				setState(LocalIfdState::DISCONNECTED);
+				Q_EMIT fireStatusChanged(getInfo());
+			});
 
 	IfdReaderManagerPlugin::startScan(pAutoConnect);
 }
@@ -88,16 +88,19 @@ void LocalIfdReaderManagerPlugin::addDispatcher(const QSharedPointer<IfdDispatch
 }
 
 
-void LocalIfdReaderManagerPlugin::onLocalIfdConnectionClosed(GlobalStatus::Code pCloseCode, const QString& pId)
+void LocalIfdReaderManagerPlugin::onLocalIfdConnectionClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId)
 {
 	Q_UNUSED(pId)
 
 	qCDebug(ifd) << "Stopping scan, because service closed connection with status:" << getEnumName(pCloseCode);
-	stopScan(tr("Connection closed by remote with status: %1.").arg(getEnumName(pCloseCode)));
+	stopScan();
 }
 
 
 bool LocalIfdReaderManagerPlugin::isAusweisAppInstalled()
+#ifndef Q_OS_ANDROID
+const
+#endif
 {
 	if (mServiceConnected)
 	{
@@ -129,8 +132,8 @@ bool LocalIfdReaderManagerPlugin::isAusweisAppInstalled()
 
 	const auto& certificates = BuildHelper::getAppCertificates(aa2PackageName);
 	bool hasValidCertificate = std::any_of(certificates.begin(), certificates.end(), [aa2CertificateHashes](const auto& certificate){
-			return aa2CertificateHashes.contains(QCryptographicHash::hash(certificate, QCryptographicHash::Sha256));
-		});
+				return aa2CertificateHashes.contains(QCryptographicHash::hash(certificate, QCryptographicHash::Sha256));
+			});
 	if (!hasValidCertificate)
 	{
 		qCWarning(ifd) << "Invalid AusweisApp certificate";

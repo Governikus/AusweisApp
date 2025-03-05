@@ -73,11 +73,16 @@ commandline parameter ``--ui websocket``.
 
 Automatic
 ---------
-.. versionadded:: 1.24.0
-   Mode "automatic" added.
+.. versionadded:: 2.3.0
+   Variable "AUSWEISAPP_AUTOMATIC_SIMULATOR" added.
+
+   Variables "AUSWEISAPP2_AUTOMATIC_*" renamed to "AUSWEISAPP_AUTOMATIC_*".
 
 .. versionadded:: 1.26.3
    Variable "AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE" added.
+
+.. versionadded:: 1.24.0
+   Mode "automatic" added.
 
 You can enable an automatic authentication with the automatic plugin by providing the
 commandline parameter ``--ui automatic``.
@@ -87,9 +92,9 @@ available card. Otherwise it uses the already inserted card. If you use an inser
 card (e.g. via PCSC) you can provide additional environment variables for PIN, CAN and PUK
 on start up.
 
-* ``AUSWEISAPP2_AUTOMATIC_PIN``
-* ``AUSWEISAPP2_AUTOMATIC_CAN``
-* ``AUSWEISAPP2_AUTOMATIC_PUK``
+* ``AUSWEISAPP_AUTOMATIC_PIN``
+* ``AUSWEISAPP_AUTOMATIC_CAN``
+* ``AUSWEISAPP_AUTOMATIC_PUK``
 
 The default value for the PIN is **123456**. If a value is not defined or the card
 refuses a PIN, CAN or PUK the |AppName| will cancel the whole workflow.
@@ -97,8 +102,12 @@ Also the workflow will be canceled if the card reader is not a basic reader as i
 is not possible to automatically enter the values.
 
 The **developerMode** (like in :ref:`run_auth`) can be enabled with the environment
-variable ``AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE``.
+variable ``AUSWEISAPP_AUTOMATIC_DEVELOPERMODE``.
 This will be evaluated if the automatic plugin takes control over the workflow.
+
+If you want to provide another :ref:`filesystem` to the simulator you can use the
+environment variable ``AUSWEISAPP_AUTOMATIC_SIMULATOR``. This can be a file or the
+JSON content itself.
 
 
 .. note::

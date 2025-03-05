@@ -1,17 +1,20 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
+import Governikus.Style
 
 Rectangle {
-	id: baseItem
+	id: root
 
-	property real contentMarginLeft: Constants.groupbox_spacing
-	property real contentMarginRight: Constants.groupbox_spacing
+	property bool boldFont: false
+	property real contentMarginLeft: Style.dimens.groupbox_spacing
+	property real contentMarginRight: Style.dimens.groupbox_spacing
 	property alias footerText: footerItem.text
 	property alias headerText: headerItem.text
 	property alias icon: imageItem.source
@@ -25,31 +28,31 @@ Rectangle {
 	Accessible.name: headerText + ". " + text + ". " + footerText
 	Accessible.role: Accessible.ListItem
 	color: colors.paneBackground
-	height: content.implicitHeight + Constants.text_spacing
+	height: content.implicitHeight + Style.dimens.text_spacing
 	width: parent ? parent.width : 0
 
 	GSeparator {
 		anchors.right: parent.right
 		anchors.top: parent.bottom
 		anchors.topMargin: -height
-		visible: showSeparator
-		width: Constants.is_layout_ios ? (parent.width - textLayout.x - contentMarginLeft) : parent.width
+		visible: root.showSeparator
+		width: Style.is_layout_ios ? (parent.width - textLayout.x - root.contentMarginLeft) : parent.width
 	}
 	RowLayout {
 		id: content
 
 		anchors.fill: parent
-		anchors.leftMargin: contentMarginLeft
-		anchors.rightMargin: contentMarginRight
-		spacing: Constants.groupbox_spacing
+		anchors.leftMargin: root.contentMarginLeft
+		anchors.rightMargin: root.contentMarginRight
+		spacing: Style.dimens.groupbox_spacing
 
 		TintableIcon {
 			id: imageItem
 
-			sourceSize.height: parent.height - 2 * Constants.groupbox_spacing
+			sourceSize.height: parent.height - 2 * Style.dimens.groupbox_spacing
 			tintColor: colors.textNormal
 			tintEnabled: false
-			visible: baseItem.icon !== ""
+			visible: root.icon !== ""
 		}
 		ColumnLayout {
 			id: textLayout
@@ -63,30 +66,36 @@ Rectangle {
 
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignLeft
+				activeFocusOnTab: false
 				color: colors.textSubline
 				elide: Text.ElideRight
+				font.bold: root.boldFont
 				maximumLineCount: 8
-				visible: baseItem.headerText !== ""
+				visible: root.headerText !== ""
 			}
 			GText {
 				id: textItem
 
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignLeft
+				activeFocusOnTab: false
 				color: colors.textNormal
 				elide: Text.ElideRight
+				font.bold: root.boldFont
 				maximumLineCount: 64
-				visible: baseItem.text !== ""
+				visible: root.text !== ""
 			}
 			GText {
 				id: footerItem
 
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignLeft
+				activeFocusOnTab: false
 				color: colors.textNormal
 				elide: Text.ElideRight
+				font.bold: root.boldFont
 				maximumLineCount: 8
-				visible: baseItem.footerText !== ""
+				visible: root.footerText !== ""
 			}
 		}
 	}
@@ -96,7 +105,7 @@ Rectangle {
 		anchors.fill: parent
 		hoverEnabled: UiPluginModel.isChromeOS
 
-		onPressAndHold: baseItem.pressAndHold()
+		onPressAndHold: root.pressAndHold()
 	}
 	StatefulColors {
 		id: colors

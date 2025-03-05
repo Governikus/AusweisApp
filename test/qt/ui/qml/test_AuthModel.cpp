@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref AuthModel
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -88,17 +84,17 @@ class test_AuthModel
 		}
 
 
-		void test_showChangePinView()
+		void test_changeTransportPin()
 		{
 			auto* const model = Env::getSingleton<AuthModel>();
 
 			model->resetAuthContext(nullptr);
-			QCOMPARE(model->getShowChangePinView(), false);
+			QCOMPARE(model->getChangeTransportPin(), false);
 
 			const QSharedPointer<AuthContext> context(new AuthContext());
-			context->requestChangePinView();
+			context->requestChangeTransportPin();
 			model->resetAuthContext(context);
-			QCOMPARE(model->getShowChangePinView(), true);
+			QCOMPARE(model->getChangeTransportPin(), true);
 		}
 
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of Certificate Holder Authorization Template, CHAT.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,6 +12,7 @@
 
 #include <QByteArray>
 #include <QSharedPointer>
+
 
 namespace governikus
 {

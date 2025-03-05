@@ -1,11 +1,6 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
-
-/*!
- * \brief Windows specific implementation of the controller for retrieving and presenting diagnosis info.
- */
-
 
 #include "DiagnosisController.h"
 
@@ -14,6 +9,7 @@
 #include <windows.h>
 
 #include <QScopeGuard>
+
 
 using namespace governikus;
 
@@ -28,8 +24,8 @@ static QString getWindowsDirectoryPath()
 		if (path)
 		{
 			const auto guard = qScopeGuard([path] {
-					HeapFree(GetProcessHeap(), 0, path);
-				});
+						HeapFree(GetProcessHeap(), 0, path);
+					});
 			if (GetSystemWindowsDirectory(path, length) > 0)
 			{
 				auto result = QString::fromWCharArray(path);
@@ -95,8 +91,8 @@ static void addWindowsComponentInfo(QList<DiagnosisContext::ComponentInfo>& pCom
 		return;
 	}
 	const auto guard = qScopeGuard([versionData] {
-			HeapFree(GetProcessHeap(), 0, versionData);
-		});
+				HeapFree(GetProcessHeap(), 0, versionData);
+			});
 	if (!GetFileVersionInfo(fileName.data(), 0, infoSize, versionData))
 	{
 		return;

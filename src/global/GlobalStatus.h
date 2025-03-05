@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief A global mapping for errors
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,6 +11,7 @@
 #include <QPair>
 #include <QSharedData>
 
+
 namespace governikus
 {
 
@@ -22,8 +19,6 @@ class GlobalStatus
 {
 	Q_GADGET
 	Q_DECLARE_TR_FUNCTIONS(governikus::GlobalStatus)
-	Q_CLASSINFO("QML.Element", "auto")
-	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
 
 	public:
 		enum class Code

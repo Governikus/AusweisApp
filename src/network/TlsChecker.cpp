@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TlsChecker.h"
@@ -32,9 +32,9 @@ bool TlsChecker::checkCertificate(const QSslCertificate& pCertificate,
 	qDebug() << "Accepted certificate hashes" << pAcceptedCertificateHashes;
 
 	return std::any_of(pAcceptedCertificateHashes.constBegin(), pAcceptedCertificateHashes.constEnd(), [&hash](const auto& pAcceptedHash)
-		{
-			return hash.compare(pAcceptedHash, Qt::CaseInsensitive) == 0;
-		});
+			{
+				return hash.compare(pAcceptedHash, Qt::CaseInsensitive) == 0;
+			});
 }
 
 

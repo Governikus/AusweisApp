@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref PcscReaderManagerPlugin
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscReaderManagerPlugin.h"

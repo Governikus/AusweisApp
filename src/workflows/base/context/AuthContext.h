@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Authentication context.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -61,7 +57,7 @@ class AuthContext
 		bool mErrorReportedToServer;
 		bool mReceivedBrowserSendFailed;
 		bool mSkipMobileRedirect;
-		bool mShowChangePinView;
+		bool mChangeTransportPin;
 
 		QUrl mActivationUrl;
 		QUrl mTcTokenUrl;
@@ -126,13 +122,13 @@ class AuthContext
 		}
 
 
-		[[nodiscard]] bool showChangePinView() const
+		[[nodiscard]] bool changeTransportPin() const
 		{
-			return mShowChangePinView;
+			return mChangeTransportPin;
 		}
 
 
-		void requestChangePinView();
+		void requestChangeTransportPin();
 
 
 		[[nodiscard]] bool isTcTokenNotFound() const

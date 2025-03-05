@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief An interface for IfdClients, meant to omit the
- * dependency between card_base and ifd.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -36,7 +31,7 @@ class IfdClient
 		void fireNewDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
 		void fireDispatcherChanged(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
 		void fireRemoteDevicesInfo(const QList<QSharedPointer<IfdListEntry>>& pRemoteDevices);
-		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void fireDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 		void fireDetectionChanged();
 		void fireCertificateRemoved(const QString& pDeviceName);
 
@@ -53,7 +48,7 @@ class IfdClient
 		[[nodiscard]] virtual QList<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const;
 		[[nodiscard]] bool hasAnnouncingRemoteDevices() const;
 		Q_INVOKABLE virtual void requestRemoteDevices();
-		[[nodiscard]] virtual QStringList getConnectedDeviceIDs() const;
+		[[nodiscard]] virtual QByteArrayList getConnectedDeviceIDs() const;
 		virtual QList<RemoteServiceSettings::RemoteInfo> getConnectedDeviceInfos() = 0;
 };
 

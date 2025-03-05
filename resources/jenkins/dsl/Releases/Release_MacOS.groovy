@@ -5,7 +5,7 @@ def j = new Release
 		name: 'MacOS_DMG_PKG',
 		libraries: 'MacOS',
 		label: 'MacOS',
-		artifacts: 'libs/Toolchain_*,build/*.dmg,build/*.pkg,build/*.zip'
+		artifacts: 'libs/Toolchain_*,build/*.dmg*,build/*.pkg*,build/*.zip*'
 	).generate(this)
 
 

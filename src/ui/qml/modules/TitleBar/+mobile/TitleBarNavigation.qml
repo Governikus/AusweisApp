@@ -1,18 +1,17 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import Governikus.Global
-import Governikus.Style
 
 TitleBarAction {
-	id: baseItem
+	id: root
 
 	property int navAction: NavigationAction.Action.None
 
 	Accessible.name: text
 	icon.source: {
-		switch (baseItem.navAction) {
+		switch (root.navAction) {
 		case NavigationAction.Action.Cancel:
 			return "qrc:///images/material_close.svg";
 		case NavigationAction.Action.Back:
@@ -22,7 +21,7 @@ TitleBarAction {
 		}
 	}
 	text: {
-		switch (baseItem.navAction) {
+		switch (root.navAction) {
 		//: LABEL ANDROID IOS
 		case NavigationAction.Action.Cancel:
 			return qsTr("Cancel");

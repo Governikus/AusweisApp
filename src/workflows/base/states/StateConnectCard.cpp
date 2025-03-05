@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateConnectCard.h"
@@ -61,6 +61,7 @@ void StateConnectCard::onCommandDone(QSharedPointer<CreateCardConnectionCommand>
 
 	const auto& context = getContext();
 	qCDebug(statemachine) << "Card connection was successful";
+	context->setCardInitiallyAppeared();
 	context->setCardConnection(cardConnection);
 
 	const auto& readerInfo = cardConnection->getReaderInfo();

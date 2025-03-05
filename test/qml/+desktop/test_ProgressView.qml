@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtTest
 
@@ -9,7 +9,7 @@ TestCase {
 	function test_load_ProgressView() {
 		let item = createTemporaryQmlObject("
 			import Governikus.ProgressView
-			ProgressView {}
+			ProgressView { title: \"testCase\" }
 			", parent);
 		item.destroy();
 	}

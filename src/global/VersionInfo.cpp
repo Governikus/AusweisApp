@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionInfo.h"
@@ -16,9 +16,9 @@ using namespace governikus;
 namespace
 {
 #define VERSION_NAME(_name, _key)\
-	QString _name(){\
-		return QStringLiteral(_key);\
-	}
+		QString _name(){\
+			return QStringLiteral(_key);\
+		}
 
 VERSION_NAME(NAME, "Name")
 VERSION_NAME(IMPL_TITLE, "Implementation-Title")

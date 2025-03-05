@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePreVerification.h"
@@ -137,9 +137,9 @@ void StatePreVerification::saveCvcaLinkCertificates(const QList<QSharedPointer<c
 	const auto& contains = [](const QList<QSharedPointer<const CVCertificate>>& pStore, const CVCertificate& pCert)
 			{
 				return std::any_of(pStore.constBegin(), pStore.constEnd(), [&pCert](const auto& pCertInStore)
-					{
-						return *pCertInStore == pCert;
-					});
+						{
+							return *pCertInStore == pCert;
+						});
 			};
 
 	for (const auto& certificate : pCertificates)

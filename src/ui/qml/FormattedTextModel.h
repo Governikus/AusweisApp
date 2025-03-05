@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for displaying simple formatted text.
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,9 +20,9 @@ class FormattedTextModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
-	QML_ELEMENT
-			QML_UNCREATABLE("Used by ReleaseInformationModel only")
+	QML_UNCREATABLE("Used by ReleaseInformationModel only")
 	Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+	QML_ELEMENT
 	friend class ::test_FormattedTextModel;
 
 	public:
@@ -44,7 +40,7 @@ class FormattedTextModel
 		enum FormattedTextRoles
 		{
 			ContentRole = Qt::UserRole + 1,
-			LineTypeRole
+			TypeRole
 		};
 
 		explicit FormattedTextModel(QObject* pParent, const QStringList& pLines = QStringList());

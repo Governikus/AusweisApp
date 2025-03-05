@@ -1,13 +1,15 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import Governikus.Global
+
+import Governikus.Style
 
 Item {
 	id: root
 
-	required property QtObject target
+	required property Item target
 
 	states: [
 		State {
@@ -15,8 +17,7 @@ Item {
 			when: root.target.visible
 
 			PropertyChanges {
-				opacity: 1.0
-				target: root.target
+				root.target.opacity: 1.0
 			}
 		},
 		State {
@@ -24,8 +25,7 @@ Item {
 			when: !root.target.visible
 
 			PropertyChanges {
-				opacity: 0.0
-				target: root.target
+				root.target.opacity: 0.0
 			}
 		}
 	]
@@ -35,7 +35,7 @@ Item {
 			to: "visible"
 
 			PropertyAnimation {
-				duration: Constants.animation_duration * 4
+				duration: Style.animation_duration * 4
 				easing.type: Easing.OutCubic
 				property: "opacity"
 				target: root.target

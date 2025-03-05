@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
+
 import Governikus.AuthView
 import Governikus.ChangePinView
-import Governikus.Global
 import Governikus.SelfAuthenticationView
-import Governikus.Style
 import Governikus.TitleBar
 import Governikus.View
 import Governikus.Type
@@ -24,13 +26,15 @@ FlickableSectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: show(UiModule.DEFAULT)
+		onClicked: root.show(UiModule.DEFAULT)
 	}
 
 	PersonalizationController {
 		id: controller
 
+		smartEidUsed: root.smartEidUsed
 		stackView: root.stackView
+		title: root.title
 	}
 	Component {
 		id: setupStartView
@@ -60,7 +64,7 @@ FlickableSectionPage {
 			initialPlugin: ReaderManagerPluginType.SMART
 
 			Component.onCompleted: ChangePinModel.startWorkflow(false, false)
-			onWorkflowFinished: popAll()
+			onWorkflowFinished: root.popAll()
 		}
 	}
 	Component {
@@ -71,8 +75,8 @@ FlickableSectionPage {
 			hideTechnologySwitch: true
 			initialPlugin: ReaderManagerPluginType.SMART
 
-			onBack: pop()
-			onWorkflowFinished: _ => popAll()
+			onBack: root.pop()
+			onWorkflowFinished: _ => root.popAll()
 		}
 	}
 	Component {
@@ -85,8 +89,8 @@ FlickableSectionPage {
 			Component.onCompleted: connectivityManager.watching = true
 			Component.onDestruction: connectivityManager.watching = false
 			onCancel: {
-				setLockedAndHidden(false);
-				popAll();
+				root.setLockedAndHidden(false);
+				root.popAll();
 			}
 		}
 	}
@@ -97,12 +101,12 @@ FlickableSectionPage {
 			result: SmartModel.state
 
 			onCancelClicked: {
-				setLockedAndHidden(false);
-				popAll();
+				root.setLockedAndHidden(false);
+				root.popAll();
 			}
 			onCheckDevice: {
-				show(UiModule.CHECK_ID_CARD);
-				popAll();
+				root.show(UiModule.CHECK_ID_CARD);
+				root.popAll();
 			}
 			onRunSmartSetup: push(setupStartView)
 		}
@@ -112,7 +116,7 @@ FlickableSectionPage {
 
 		onNetworkInterfaceActiveChanged: {
 			if (networkInterfaceActive) {
-				pop();
+				root.pop();
 				SmartModel.updateSupportInfo();
 			}
 		}
@@ -120,19 +124,18 @@ FlickableSectionPage {
 	SmartMainView {
 		id: smartMainView
 
-		onChangePin: push(changePinView)
-		onDeletePersonalization: push(deletePersonalizationStartview)
-		onReceivedFocus: pItem => root.positionViewAtItem(pItem)
+		onChangePin: root.push(changePinView)
+		onDeletePersonalization: root.push(deletePersonalizationStartview)
 		onShowCheckResult: {
-			setLockedAndHidden();
-			push(checkSmartResultView);
+			root.setLockedAndHidden();
+			root.push(checkSmartResultView);
 			if (connectivityManager.checkConnectivity()) {
 				SmartModel.updateSupportInfo();
 			} else {
-				push(checkConnectivityView);
+				root.push(checkConnectivityView);
 			}
 		}
-		onStartSelfAuth: push(selfAuthView)
-		onUpdateSmart: push(updateStartView)
+		onStartSelfAuth: root.push(selfAuthView)
+		onUpdateSmart: root.push(updateStartView)
 	}
 }

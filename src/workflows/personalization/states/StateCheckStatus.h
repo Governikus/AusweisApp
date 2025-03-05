@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief State that checks if the Smart-eID function is given
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

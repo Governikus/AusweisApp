@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Manager for AccessRights
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +24,7 @@ class AccessRightManager
 	friend class ::test_ChatModel;
 
 	public:
-		explicit AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc);
+		explicit AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc, QSharedPointer<const CVCertificate> pDvCvc);
 		explicit AccessRightManager(QSharedPointer<CHAT> pRequiredChat);
 
 

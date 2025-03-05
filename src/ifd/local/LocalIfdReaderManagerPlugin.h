@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -39,11 +39,15 @@ class LocalIfdReaderManagerPlugin
 		void addDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher) override;
 
 	private Q_SLOTS:
-		void onLocalIfdConnectionClosed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void onLocalIfdConnectionClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 
 	private:
 		bool mServiceConnected;
+#ifdef Q_OS_ANDROID
 		[[nodiscard]] bool isAusweisAppInstalled();
+#else
+		[[nodiscard]] bool isAusweisAppInstalled() const;
+#endif
 		void setState(LocalIfdState pState);
 		void updateState();
 

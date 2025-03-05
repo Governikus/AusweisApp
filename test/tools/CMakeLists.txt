@@ -1,4 +1,4 @@
-find_program(JSONSCHEMA_BIN NAMES check-jsonschema jsonschema jsonschema-3 python-jsonschema python3-jsonschema py-jsonschema py3-jsonschema CMAKE_FIND_ROOT_PATH_BOTH)
+find_program(JSONSCHEMA_BIN NAMES check-jsonschema CMAKE_FIND_ROOT_PATH_BOTH)
 
 if(JSONSCHEMA_BIN)
 	set(JSON_FILES updatable-files/supported-providers.json updatable-files/supported-readers.json)
@@ -32,6 +32,16 @@ if(TARGET ${Qt}::Qml AND QT_VERSION VERSION_GREATER_EQUAL 6.5)
 			COMMAND ${CMAKE_COMMAND} -DCMD=CHECK_QMLTYPES -P ${CMAKE_DIR}/cmd.cmake
 			WORKING_DIRECTORY $<TARGET_PROPERTY:AusweisAppUiQmlModules,BINARY_DIR>)
 	set_tests_properties(qmltypes PROPERTIES LABELS "qml")
+
+	if(Python_FOUND)
+		add_test(NAME qmlresources
+				COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/checkQmlResources.py
+						--module-dir=${CMAKE_SOURCE_DIR}/src/ui/qml/modules
+						--exclude-filenames=App,Workflow
+						--resources-dir=${CMAKE_SOURCE_DIR}/resources
+						--exclude-resources=${CMAKE_CURRENT_SOURCE_DIR}/checkQmlResources_excludes.txt)
+		set_tests_properties(qmlresources PROPERTIES LABELS "qml")
+	endif()
 
 	add_test(NAME qmllint
 			COMMAND ${CMAKE_COMMAND} --build . --target all_qmllint

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -12,6 +12,7 @@ TestCase {
 			import Governikus.AuthView
 
 			EditRights {
+				title: \"test_EditRights\"
 			}
 		", testCase);
 	}

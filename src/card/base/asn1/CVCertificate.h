@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of Card Verifiable Certificate, CVC.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,9 +7,13 @@
 #include "CVCertificateBody.h"
 
 #include <QByteArrayList>
+#include <QDateTime>
 #include <QDebug>
+#include <QList>
+#include <QSharedPointer>
 
-#include <openssl/ecdsa.h>
+
+class test_StatePreVerification;
 
 
 namespace governikus
@@ -44,9 +44,10 @@ struct SIGNATURE
 
 using CVCertificate = struct cvcertificate_st
 {
+	friend class ::test_StatePreVerification;
+
 	CVCertificateBody* mBody;
 	SIGNATURE* mSignature;
-	ECDSA_SIG* mEcdsaSignature;
 
 	static QList<QSharedPointer<const cvcertificate_st>> fromRaw(const QByteArrayList& pByteList);
 	static QSharedPointer<const cvcertificate_st> fromRaw(const QByteArray& pBytes);
@@ -54,14 +55,11 @@ using CVCertificate = struct cvcertificate_st
 
 	[[nodiscard]] const CVCertificateBody& getBody() const;
 	[[nodiscard]] QByteArray getRawBody() const;
-	[[nodiscard]] const ECDSA_SIG* getEcdsaSignature() const;
+	[[nodiscard]] QByteArray getSignature() const;
 	[[nodiscard]] QByteArray getRawSignature() const;
-	[[nodiscard]] QByteArray getDerSignature() const;
 
 	[[nodiscard]] bool isValidOn(const QDateTime& pValidationDate) const;
 	[[nodiscard]] bool isIssuedBy(const cvcertificate_st& pIssuer) const;
-
-	static int decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg);
 };
 
 

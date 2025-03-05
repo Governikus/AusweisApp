@@ -26,6 +26,16 @@
 			)
 		</SetProperty>
 
+		<Property Id="TRAYICON" Secure="yes"/>
+		<Property Id="TRAYICON_FOUND" Secure="yes">
+			<RegistrySearch Id="TrayIconRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableTrayIcon" Type="raw"/>
+		</Property>
+		<SetProperty Before="CostFinalize" Id="TRAYICON" Value="[TRAYICON_FOUND]">
+			(NOT TRAYICON) AND (
+				(WIX_UPGRADE_DETECTED OR REINSTALL) AND TRAYICON_FOUND
+			)
+		</SetProperty>
+
 		<Property Id="AUTOHIDE" Secure="yes"/>
 		<Property Id="AUTOHIDE_FOUND" Secure="yes">
 			<RegistrySearch Id="AutoHideRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="autoCloseWindow" Type="raw"/>
@@ -50,9 +60,15 @@
 		<Property Id="ASSISTANT_FOUND" Secure="yes">
 			<RegistrySearch Id="AssistantRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="uiStartupModule" Type="raw"/>
 		</Property>
+		<Property Id="SHOWONBOARDING_FOUND" Secure="yes">
+			<RegistrySearch Id="OnboardingRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="showOnboarding" Type="raw"/>
+		</Property>
 		<SetProperty Before="CostFinalize" Id="ASSISTANT" Value="false">
 			(NOT ASSISTANT) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND ASSISTANT_FOUND = "DEFAULT"
+				(WIX_UPGRADE_DETECTED OR REINSTALL) AND (
+					(ASSISTANT_FOUND = "DEFAULT" AND NOT SHOWONBOARDING_FOUND) OR
+					SHOWONBOARDING_FOUND = "false"
+				)
 			)
 		</SetProperty>
 
@@ -148,9 +164,9 @@
 
 
 
-
 		<Feature Id="RuntimeSettings">
 			<ComponentRef Id="AutoStart"/>
+			<ComponentRef Id="TrayIcon"/>
 			<ComponentRef Id="AutoHide"/>
 			<ComponentRef Id="RemindToClose"/>
 			<ComponentRef Id="Assistant"/>
@@ -175,6 +191,13 @@
 				</RegistryKey>
 			</Component>
 
+			<Component Id="TrayIcon" Guid="{391CF345-5AA2-45CD-C016-C24861C9AB8D}">
+				<Condition>TRAYICON</Condition>
+				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+					<RegistryValue Name="enableTrayIcon" Type="string" Value="[TRAYICON]" />
+				</RegistryKey>
+			</Component>
+
 			<Component Id="AutoHide" Guid="{391CF345-5AA2-45CD-C002-C24861C9AB8D}">
 				<Condition>AUTOHIDE</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
@@ -192,7 +215,7 @@
 			<Component Id="Assistant" Guid="{391CF345-5AA2-45CD-C004-C24861C9AB8D}">
 				<Condition>ASSISTANT = "false"</Condition>
 				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="uiStartupModule" Type="string" Value="DEFAULT" />
+					<RegistryValue Name="showOnboarding" Type="string" Value="false" />
 				</RegistryKey>
 			</Component>
 

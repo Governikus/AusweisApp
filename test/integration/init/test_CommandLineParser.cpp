@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref CommandLineParser
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QProcess>

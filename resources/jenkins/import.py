@@ -135,8 +135,9 @@ def main():
            'phases.new-commit=draft']
     client = hglib.open(configs=cfg)
 
-    print('Revert workspace...')
-    client.revert(b('.'), all=True, nobackup=True)
+    rev = client.identify(id=True).replace(b('+'), b('')).rstrip()
+    print('Revert workspace to: ' + str(rev))
+    client.update(rev=rev, clean=True)
 
     print('Purge workspace...')
     client.rawcommand([b('purge'), b('--all')])

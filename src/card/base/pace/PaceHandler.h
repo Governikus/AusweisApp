@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Handler for the PACE protocol. See TR-03110.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,7 +12,9 @@
 #include <QByteArray>
 #include <QSharedPointer>
 
+
 class test_PaceHandler;
+
 
 namespace governikus
 {

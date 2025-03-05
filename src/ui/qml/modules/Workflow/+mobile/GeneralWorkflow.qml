@@ -1,105 +1,116 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
-import Governikus.Global
-import Governikus.TechnologyInfo
+
+import Governikus.Animations
 import Governikus.TitleBar
 import Governikus.Workflow
+import Governikus.RemoteServiceView
 import Governikus.ResultView
-import Governikus.Style
 import Governikus.View
 import Governikus.Type
 
 SectionPage {
-	id: baseItem
+	id: root
 
 	property alias autoInsertCard: technologyInfo.autoInsertCard
+	property alias cardInitiallyAppeared: technologyInfo.cardInitiallyAppeared
 	property bool hideSwitch: false
 	property var initialPlugin: null
 	readonly property bool isLandscape: ApplicationWindow.window && ApplicationWindow.menuBar ? ApplicationWindow.window.height - ApplicationWindow.menuBar.height < ApplicationWindow.window.width : false
-	property alias workflowModel: technologyInfo.workflowModel
+	required property var workflowModel
 	property string workflowTitle
 
-	contentIsScrolled: technologyInfo.contentIsScrolled || isLandscape && !technologySwitch.atYBeginning
+	contentIsScrolled: technologyInfo.contentIsScrolled
 	title: workflowTitle
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
 
-		onClicked: workflowModel.cancelWorkflow()
+		onClicked: root.workflowModel.cancelWorkflow()
 	}
 
 	Component.onCompleted: {
 		if (initialPlugin != null) {
-			technologySwitch.requestPluginType(initialPlugin);
+			root.workflowModel.readerPluginType = initialPlugin;
 		}
 	}
 
 	Connections {
 		function onReaderPluginTypeChanged() {
-			baseItem.updateFocus();
+			root.updateFocus();
 		}
 
-		target: workflowModel
+		target: root.workflowModel
 	}
-	GridLayout {
+	WorkflowInfoList {
+		id: technologyInfo
+
 		anchors.fill: parent
-		columns: 3
-		flow: isLandscape ? Flow.LeftToRight : Flow.TopToBottom
-		rows: 3
+		workflowModel: root.workflowModel
 
-		WorkflowInfoList {
-			id: technologyInfo
+		onRemoteDeviceUnpaired: pDeviceName => {
+			root.push(deviceUnpairedView, {
+				deviceName: pDeviceName
+			});
+		}
+		onShowNfcInformation: root.push(nfcConnectionInfoView)
+		onShowRemoteServiceSettings: pEnableScan => {
+			root.push(remoteServiceSettings, {
+				enableScan: pEnableScan
+			});
+		}
 
-			Layout.fillHeight: true
-			Layout.fillWidth: true
+		Component {
+			id: deviceUnpairedView
 
-			onRemoteDeviceUnpaired: pDeviceName => {
-				baseItem.push(deviceUnpairedView, {
-					"deviceName": pDeviceName
-				});
+			ResultView {
+				property string deviceName
+
+				animationSymbol: Symbol.Type.ERROR
+				animationType: AnimationLoader.SAC_RESULT
+				//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
+				text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
+				title: root.workflowTitle
+
+				onCancelClicked: root.pop()
+				onContinueClicked: root.pop()
 			}
+		}
+		Component {
+			id: remoteServiceSettings
 
-			Component {
-				id: deviceUnpairedView
+			RemoteServiceSettings {
+				property bool enableScan: false
+				property bool stopScan: true
 
-				ResultView {
-					property string deviceName
+				allowUsage: true
 
-					icon: "qrc:///images/workflow_error_no_sak_%1.svg".arg(Style.currentTheme.name)
-					//: INFO ANDROID IOS The paired smartphone was removed since it did not respond to connection attempts. It needs to be paired again before using it.
-					text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
-					title: baseItem.workflowTitle
-
-					onCancelClicked: baseItem.pop()
-					onContinueClicked: baseItem.pop()
+				Component.onCompleted: if (enableScan)
+					RemoteServiceModel.startDetection()
+				Component.onDestruction: if (enableScan)
+					RemoteServiceModel.stopDetection(stopScan)
+				onPairedDeviceFound: {
+					stopScan = false;
+					root.pop(root);
+					SettingsModel.preferredTechnology = ReaderManagerPluginType.REMOTE_IFD;
+					root.workflowModel.readerPluginType = ReaderManagerPluginType.REMOTE_IFD;
 				}
 			}
 		}
-		GSeparator {
-			id: separator
+		Component {
+			id: nfcConnectionInfoView
 
-			readonly property real shorteningFactor: 0.75
-
-			Layout.alignment: Qt.AlignCenter
-			Layout.preferredHeight: isLandscape ? parent.height * shorteningFactor : Style.dimens.separator_size
-			Layout.preferredWidth: isLandscape ? Style.dimens.separator_size : parent.width * shorteningFactor
-			visible: technologySwitch.visible
-		}
-		TechnologySwitch {
-			id: technologySwitch
-
-			Layout.fillHeight: isLandscape
-			Layout.fillWidth: !isLandscape
-			flowVertically: isLandscape
-			selectedTechnology: workflowModel.readerPluginType
-			supportedTechnologies: workflowModel.supportedPluginTypes
-			visible: !hideSwitch && workflowModel.supportedPluginTypes.length > 1
-
-			onRequestPluginType: pReaderPluginType => workflowModel.readerPluginType = pReaderPluginType
+			NfcConnectionInfoView {
+				onShowRemoteServiceSettings: root.push(remoteServiceSettings, {
+					enableScan: true
+				})
+			}
 		}
 	}
 }

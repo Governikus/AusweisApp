@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -11,13 +11,12 @@ import Governikus.View
 FlickableSectionPage {
 	id: root
 
+	property alias headline: headline.text
 	property alias icon: statusIcon.source
 	property alias progressBarVisible: progressBar.visible
 	property alias progressText: progressText.text
 	property alias progressValue: progressBar.value
-	property alias subText: subText.text
-	property alias subTextColor: subText.color
-	property alias text: text.text
+	property alias text: infoText.text
 
 	HourglassAnimation {
 		Layout.alignment: Qt.AlignHCenter
@@ -32,20 +31,21 @@ FlickableSectionPage {
 		visible: source.toString() !== ""
 	}
 	GText {
-		id: text
+		id: headline
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.headline
+		visible: text !== ""
 	}
 	GText {
-		id: subText
+		id: infoText
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.text_spacing
+		Layout.topMargin: Style.dimens.text_spacing
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.subline
+		visible: text !== ""
 	}
 	GSpacer {
 		Layout.fillHeight: true
@@ -55,14 +55,14 @@ FlickableSectionPage {
 
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		Layout.topMargin: 2 * Constants.component_spacing
+		Layout.topMargin: 2 * Style.dimens.pane_spacing
 		visible: false
 	}
 	GText {
 		id: progressText
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.text_spacing
+		Layout.topMargin: Style.dimens.text_spacing
 		horizontalAlignment: Text.AlignHCenter
 		visible: progressBar.visible
 	}

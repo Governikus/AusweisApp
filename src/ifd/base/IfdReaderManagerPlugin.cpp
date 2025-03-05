@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdReaderManagerPlugin.h"
@@ -16,7 +16,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
 
-void IfdReaderManagerPlugin::removeDispatcher(const QString& pId)
+void IfdReaderManagerPlugin::removeDispatcher(const QByteArray& pId)
 {
 	const auto& remoteReader = mReadersForDispatcher.values(pId);
 	for (const auto& readerName : remoteReader)
@@ -55,7 +55,7 @@ void IfdReaderManagerPlugin::removeAllDispatchers()
 }
 
 
-void IfdReaderManagerPlugin::processConnectedReader(const QString& pReaderName, const IfdStatus& pIfdStatus, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pId)
+void IfdReaderManagerPlugin::processConnectedReader(const QString& pReaderName, const IfdStatus& pIfdStatus, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QByteArray& pId)
 {
 	bool newReader = false;
 	if (mReaderList.contains(pReaderName))
@@ -96,7 +96,7 @@ void IfdReaderManagerPlugin::processConnectedReader(const QString& pReaderName, 
 }
 
 
-void IfdReaderManagerPlugin::handleIFDStatus(const QJsonObject& pJsonObject, const QString& pId)
+void IfdReaderManagerPlugin::handleIFDStatus(const QJsonObject& pJsonObject, const QByteArray& pId)
 {
 	const auto it = mDispatcherList.constFind(pId);
 	if (it == mDispatcherList.constEnd())
@@ -136,7 +136,7 @@ void IfdReaderManagerPlugin::handleIFDStatus(const QJsonObject& pJsonObject, con
 }
 
 
-void IfdReaderManagerPlugin::onContextEstablished(const QString& pIfdName, const QString& pId) const
+void IfdReaderManagerPlugin::onContextEstablished(const QString& pIfdName, const QByteArray& pId) const
 {
 	const auto& dispatcher = mDispatcherList.value(pId);
 
@@ -157,13 +157,13 @@ void IfdReaderManagerPlugin::onContextEstablished(const QString& pIfdName, const
 	}
 
 	QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
-			const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
-			dispatcher->send(ifdGetStatus);
-		}, Qt::QueuedConnection);
+				const QSharedPointer<const IfdGetStatus>& ifdGetStatus = QSharedPointer<IfdGetStatus>::create();
+				dispatcher->send(ifdGetStatus);
+			}, Qt::QueuedConnection);
 }
 
 
-void IfdReaderManagerPlugin::onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId)
+void IfdReaderManagerPlugin::onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QByteArray& pId)
 {
 	switch (pMessageType)
 	{
@@ -190,9 +190,9 @@ void IfdReaderManagerPlugin::onMessage(IfdMessageType pMessageType, const QJsonO
 			qCWarning(card_remote) << "Received an unexpected message of type:" << pMessageType;
 			const auto& dispatcher = mDispatcherList.value(pId);
 			QMetaObject::invokeMethod(dispatcher.data(), [dispatcher] {
-					const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unknown_API_Function);
-					dispatcher->send(errorMessage);
-				}, Qt::QueuedConnection);
+						const QSharedPointer<const IfdError>& errorMessage = QSharedPointer<IfdError>::create(QString(), ECardApiResult::Minor::AL_Unknown_API_Function);
+						dispatcher->send(errorMessage);
+					}, Qt::QueuedConnection);
 			break;
 		}
 
@@ -203,7 +203,7 @@ void IfdReaderManagerPlugin::onMessage(IfdMessageType pMessageType, const QJsonO
 }
 
 
-void IfdReaderManagerPlugin::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId)
+void IfdReaderManagerPlugin::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId)
 {
 	qCDebug(card_remote) << "IfdDispatcherClient was closed with:" << pCloseCode;
 	removeDispatcher(pId);
@@ -292,7 +292,7 @@ void IfdReaderManagerPlugin::stopScan(const QString& pError)
 }
 
 
-const QMap<QString, QSharedPointer<IfdDispatcherClient>>& IfdReaderManagerPlugin::getDispatchers() const
+const QMap<QByteArray, QSharedPointer<IfdDispatcherClient>>& IfdReaderManagerPlugin::getDispatchers() const
 {
 	return mDispatcherList;
 }

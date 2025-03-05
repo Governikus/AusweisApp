@@ -1,9 +1,9 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
-import QtQuick.Controls
+
 import Governikus.Style
 
 Item {
@@ -33,7 +33,7 @@ Item {
 	states: [
 		State {
 			name: "disabled"
-			when: disabledCondition
+			when: root.disabledCondition
 
 			PropertyChanges {
 				root.controlBackground: controlStyle.background.disabled
@@ -50,7 +50,7 @@ Item {
 		},
 		State {
 			name: "pressed"
-			when: pressedCondition && !(groupMember && checkedCondition)
+			when: root.pressedCondition && !(root.groupMember && root.checkedCondition)
 
 			PropertyChanges {
 				root.controlBackground: controlStyle.background.pressed
@@ -68,7 +68,7 @@ Item {
 		},
 		State {
 			name: "hovered"
-			when: hoveredCondition && !(groupMember && checkedCondition)
+			when: root.hoveredCondition && !(root.groupMember && root.checkedCondition)
 
 			PropertyChanges {
 				root.controlBackground: controlStyle.background.hovered
@@ -86,7 +86,7 @@ Item {
 		},
 		State {
 			name: "checked"
-			when: checkedCondition
+			when: root.checkedCondition
 
 			PropertyChanges {
 				root.controlBackground: controlStyle.background.checked

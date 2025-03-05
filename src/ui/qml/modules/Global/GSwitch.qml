@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -8,32 +8,34 @@ import Governikus.Style
 import Governikus.View
 
 Switch {
-	id: control
+	id: root
 
 	property alias description: descriptionText.text
 	property bool drawBottomCorners: false
 	property bool drawTopCorners: false
 
 	Accessible.name: text + ". " + description
-	horizontalPadding: Constants.component_spacing
+	horizontalPadding: Style.dimens.pane_spacing
 	indicator: null
-	verticalPadding: Constants.component_spacing
+	verticalPadding: Style.dimens.pane_spacing
 
 	background: RoundedRectangle {
-		bottomLeftCorner: control.drawBottomCorners
-		bottomRightCorner: control.drawBottomCorners
+		bottomLeftCorner: root.drawBottomCorners
+		bottomRightCorner: root.drawBottomCorners
 		color: colors.controlPreferredPaneBackground
-		topLeftCorner: control.drawTopCorners
-		topRightCorner: control.drawTopCorners
+		topLeftCorner: root.drawTopCorners
+		topRightCorner: root.drawTopCorners
 	}
 	contentItem: RowLayout {
+		id: switchContent
+
 		readonly property int focusWidth: layoutDirection === Qt.LeftToRight ? width : implicitWidth
 
-		layoutDirection: Constants.is_desktop ? Qt.RightToLeft : Qt.LeftToRight
-		spacing: Constants.component_spacing
+		layoutDirection: Style.is_layout_desktop ? Qt.RightToLeft : Qt.LeftToRight
+		spacing: Style.dimens.pane_spacing
 
 		ColumnLayout {
-			spacing: Constants.subtext_spacing
+			spacing: Style.dimens.subtext_spacing
 			visible: titleText.text !== "" || descriptionText.text !== ""
 
 			GText {
@@ -41,7 +43,8 @@ Switch {
 
 				Accessible.ignored: true
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
-				text: control.text
+				activeFocusOnTab: false
+				text: root.text
 				textStyle: Style.text.subline
 				visible: text !== ""
 			}
@@ -50,6 +53,7 @@ Switch {
 
 				Accessible.ignored: true
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
+				activeFocusOnTab: false
 				visible: text !== ""
 			}
 		}
@@ -70,7 +74,7 @@ Switch {
 				height: parent.height - 2 * distanceBallBorder
 				radius: height / 2
 				width: height
-				x: control.checked ? parent.width - width - distanceBallBorder : distanceBallBorder
+				x: root.checked ? parent.width - width - distanceBallBorder : distanceBallBorder
 
 				Behavior on x {
 					enabled: hoverHandler.hovered
@@ -85,6 +89,8 @@ Switch {
 	}
 
 	Accessible.onPressAction: toggle()
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	HoverHandler {
 		id: hoverHandler
@@ -95,14 +101,14 @@ Switch {
 
 		controlStyle: Style.color.controlSwitch
 		hoveredCondition: hoverHandler.hovered
-		statefulControl: control
+		statefulControl: root
 	}
 	FocusFrame {
 		anchors {
-			bottomMargin: control.bottomPadding / 2
-			leftMargin: control.leftPadding / 2
-			rightMargin: Math.max(0, contentItem.width - contentItem.focusWidth) + control.rightPadding / 2
-			topMargin: control.topPadding / 2
+			bottomMargin: root.bottomPadding / 2
+			leftMargin: root.leftPadding / 2
+			rightMargin: Math.max(0, switchContent.width - switchContent.focusWidth) + root.rightPadding / 2
+			topMargin: root.topPadding / 2
 		}
 	}
 }

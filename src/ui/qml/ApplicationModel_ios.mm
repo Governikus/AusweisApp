@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
+#include "PlatformTools.h"
 
 #include <QLoggingCategory>
 
@@ -48,7 +49,18 @@ using namespace governikus;
 			isEqualToString:
 			UIAccessibilityVoiceOverStatusDidChangeNotification])
 	{
-		self.mRunning = UIAccessibilityIsVoiceOverRunning();
+		BOOL isRunning = UIAccessibilityIsVoiceOverRunning();
+		if (self.mRunning != isRunning)
+		{
+			self.mRunning = isRunning;
+			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+						auto* applicationModel = Env::getSingleton<ApplicationModel>();
+						if (applicationModel)
+						{
+							Q_EMIT applicationModel->fireScreenReaderRunningChanged();
+						}
+					}, Qt::QueuedConnection);
+		}
 	}
 }
 
@@ -86,13 +98,17 @@ void ApplicationModel::keepScreenOn(bool pActive) const
 }
 
 
-void ApplicationModel::showAppStoreRatingDialog()
+void ApplicationModel::showAppStoreRatingDialog() const
 {
+	UIWindowScene* windowScene = PlatformTools::getFirstWindowScene();
+	if (!windowScene)
+	{
+		qCCritical(qml) << "Could not get window scene for store feedback.";
+		return;
+	}
+
 	qCDebug(feedback) << "Requesting iOS AppStore review";
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-	[SKStoreReviewController requestReview];
-#pragma clang diagnostic pop
+	[SKStoreReviewController requestReviewInScene: windowScene];
 }
 
 

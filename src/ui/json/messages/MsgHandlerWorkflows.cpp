@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerWorkflows.h"
@@ -9,7 +9,7 @@
 using namespace governikus;
 
 
-void MsgHandlerWorkflows::handleWorkflowProperties(const QJsonObject& pObj, MsgContext& pContext)
+void MsgHandlerWorkflows::handleWorkflowProperties(const QJsonObject& pObj, MsgContext& pContext) const
 {
 	initMessages(pObj[QLatin1String("messages")].toObject());
 	initDeveloperMode(pObj[QLatin1String("developerMode")]);

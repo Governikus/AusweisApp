@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import Governikus.View
@@ -8,7 +11,7 @@ import Governikus.Style
 import Governikus.Type
 
 ComboBox {
-	id: control
+	id: root
 
 	property int radius: Style.dimens.pane_radius
 	property TextStyle textStyle: Style.text.normal
@@ -16,36 +19,42 @@ ComboBox {
 	Accessible.name: displayText
 	Accessible.role: Accessible.ComboBox
 	font.pixelSize: textStyle.textSize
-	horizontalPadding: Constants.control_horizontalPadding
+	horizontalPadding: Style.dimens.control_horizontalPadding
 	leftPadding: horizontalPadding
 	popup.bottomMargin: UiPluginModel.safeAreaMargins.bottom
 	popup.leftMargin: UiPluginModel.safeAreaMargins.left
 	popup.rightMargin: UiPluginModel.safeAreaMargins.right
 	popup.topMargin: UiPluginModel.safeAreaMargins.top
 	rightPadding: horizontalPadding
-	spacing: Constants.groupbox_spacing
-	verticalPadding: Constants.control_verticalPadding
+	spacing: Style.dimens.groupbox_spacing
+	verticalPadding: Style.dimens.control_verticalPadding
 
 	background: GPaneBackground {
-		border.color: control.textStyle.textColor
+		border.color: root.textStyle.textColor
 		color: Style.color.transparent
 		drawShadow: false
-		radius: control.radius
+		radius: root.radius
 	}
 	contentItem: GText {
+		activeFocusOnTab: false
 		elide: Text.ElideRight
-		font.pixelSize: control.font.pixelSize
+		font.pixelSize: root.font.pixelSize
 		maximumLineCount: 1
-		rightPadding: control.indicator.width + control.spacing
-		text: control.displayText
-		textStyle: control.textStyle
+		rightPadding: root.indicator.width + root.spacing
+		text: root.displayText
+		textStyle: root.textStyle
 	}
 	delegate: ItemDelegate {
-		highlighted: control.highlightedIndex === index
-		width: control.width
+		id: itemDelegate
+
+		required property int index
+		required property string modelData
+
+		highlighted: root.highlightedIndex === index
+		width: root.width
 
 		background: Rectangle {
-			color: highlighted ? Style.color.control.background.basic : Style.color.paneSublevel.background.basic
+			color: itemDelegate.highlighted ? Style.color.control.background.basic : Style.color.paneSublevel.background.basic
 
 			GSeparator {
 				anchors {
@@ -56,26 +65,27 @@ ComboBox {
 			}
 		}
 		contentItem: GText {
-			color: highlighted ? Style.color.control.content.hovered : control.textStyle.textColor
+			activeFocusOnTab: false
+			color: itemDelegate.highlighted ? Style.color.control.content.hovered : root.textStyle.textColor
 			elide: Text.ElideRight
-			font.pixelSize: control.font.pixelSize
-			text: modelData
-			textStyle: control.textStyle
+			font.pixelSize: root.font.pixelSize
+			text: itemDelegate.modelData
+			textStyle: root.textStyle
 		}
 	}
 	indicator: Item {
 		TintableIcon {
-			source: down ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
-			sourceSize.height: control.font.pixelSize
-			tintColor: control.textStyle.textColor
-			x: Math.round(control.width - width - control.rightPadding)
-			y: Math.round(control.topPadding + (control.availableHeight - height) / 2)
+			source: root.down ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
+			sourceSize.height: root.font.pixelSize
+			tintColor: root.textStyle.textColor
+			x: Math.round(root.width - width - root.rightPadding)
+			y: Math.round(root.topPadding + (root.availableHeight - height) / 2)
 		}
 	}
 
 	FocusFrame {
 		marginFactor: 1
-		radius: 1.2 * control.radius
-		size: control.font.pixelSize / 8
+		radius: 1.2 * root.radius
+		size: root.font.pixelSize / 8
 	}
 }

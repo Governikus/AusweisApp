@@ -1,8 +1,10 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.View
 import Governikus.Global
@@ -11,13 +13,19 @@ import Governikus.TitleBar
 import Governikus.Type
 
 SectionPage {
-	id: sectionPage
+	id: root
 
-	anchors.centerIn: parent
+	//: LABEL DESKTOP
+	title: qsTr("System data")
 
-	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP
-		text: qsTr("System data")
+	titleBarSettings: TitleBarSettings {
+		navigationAction: NavigationAction.Back
+
+		onNavigationActionClicked: root.leaveView()
+	}
+
+	Keys.onPressed: event => {
+		sectionContent.handleKeyPress(event.key);
 	}
 
 	DiagnosisModel {
@@ -38,13 +46,15 @@ SectionPage {
 		GPane {
 			Column {
 				Layout.fillWidth: true
-				spacing: Constants.pane_spacing
+				spacing: Style.dimens.pane_spacing
 
 				Repeater {
 					model: sectionContent.currentItemModel.content
 
 					delegate: LabeledText {
-						activeFocusOnTab: true
+						required property string content
+						required property string title
+
 						label: title
 						labelStyle: (title !== "" && content === "") ? Style.text.headline : Style.text.subline
 						text: content
@@ -71,7 +81,7 @@ SectionPage {
 
 			Accessible.description: qsTr("Save system data to textfile")
 			anchors.fill: parent
-			anchors.rightMargin: Constants.groupbox_spacing
+			anchors.rightMargin: Style.dimens.groupbox_spacing
 			//: LABEL DESKTOP
 			disabledTooltipText: qsTr("Diagnosis is still running")
 			enableButton: !diagnosisModel.running || !timeout.running

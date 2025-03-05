@@ -1,0 +1,41 @@
+From 6f3fe68a253bcdb108b73bd4c63348ab2c054872 Mon Sep 17 00:00:00 2001
+From: Fabian Kosmale <fabian.kosmale@qt.io>
+Date: Mon, 3 Mar 2025 14:09:22 +0000
+Subject: Revert "Layouts: Add revision to useDefaultSizePolicy"
+
+This reverts commit ed40975bf5b4a30ab0c8fe05f8ee19e9f3db3bc3.
+
+Reason for revert: We don't need revisions on attached properties,
+they are always qualified anyway.
+
+Change-Id: Id717827467b1974d92f2cf620bf44bf12523bae9
+Task-number: QTBUG-134269
+Pick-to: 6.8 6.9 6.9.0
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit 33c3367510574a8bb5581288d27e758c886a8d41)
+---
+ src/quicklayouts/qquicklayout_p.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git x/qtdeclarative/src/quicklayouts/qquicklayout_p.h y/qtdeclarative/src/quicklayouts/qquicklayout_p.h
+index 22d7a259aa6bed01d08dad23fa0da8e931c8c70d..2f29c783d5a4765b18de9c797e53f061f29d3cb8 100644
+--- x/qtdeclarative/src/quicklayouts/qquicklayout_p.h
++++ y/qtdeclarative/src/quicklayouts/qquicklayout_p.h
+@@ -174,7 +174,7 @@ class Q_QUICKLAYOUTS_EXPORT QQuickLayoutAttached : public QObject
+     Q_PROPERTY(qreal maximumHeight READ maximumHeight WRITE setMaximumHeight NOTIFY maximumHeightChanged FINAL)
+     Q_PROPERTY(bool fillHeight READ fillHeight WRITE setFillHeight NOTIFY fillHeightChanged FINAL)
+     Q_PROPERTY(bool fillWidth READ fillWidth WRITE setFillWidth NOTIFY fillWidthChanged FINAL)
+-    Q_PROPERTY(QQuickLayout::SizePolicy useDefaultSizePolicy READ useDefaultSizePolicy WRITE setUseDefaultSizePolicy NOTIFY useDefaultSizePolicyChanged FINAL REVISION(6, 8))
++    Q_PROPERTY(QQuickLayout::SizePolicy useDefaultSizePolicy READ useDefaultSizePolicy WRITE setUseDefaultSizePolicy NOTIFY useDefaultSizePolicyChanged FINAL)
+     Q_PROPERTY(int row READ row WRITE setRow NOTIFY rowChanged FINAL)
+     Q_PROPERTY(int column READ column WRITE setColumn NOTIFY columnChanged FINAL)
+     Q_PROPERTY(int rowSpan READ rowSpan WRITE setRowSpan NOTIFY rowSpanChanged FINAL)
+@@ -347,7 +347,7 @@ Q_SIGNALS:
+     void maximumHeightChanged();
+     void fillWidthChanged();
+     void fillHeightChanged();
+-    Q_REVISION(6, 8) void useDefaultSizePolicyChanged();
++    void useDefaultSizePolicyChanged();
+     void leftMarginChanged();
+     void topMarginChanged();
+     void rightMarginChanged();

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref MessageDispatcher
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -43,7 +39,12 @@ class test_Message
 		{
 			QByteArray msg("crap");
 			MessageDispatcher dispatcher;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"illegal number (offset: 0)\",\"msg\":\"INVALID\"}"));
+#else
 			QCOMPARE(dispatcher.processCommand(msg), QByteArray("{\"error\":\"illegal value (offset: 1)\",\"msg\":\"INVALID\"}"));
+#endif
 		}
 
 

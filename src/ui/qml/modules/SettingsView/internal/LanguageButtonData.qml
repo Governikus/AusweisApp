@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 
@@ -11,7 +11,7 @@ ListModel {
 		a11yName: qsTr("German")
 		image: "qrc:///images/location_flag_de.svg"
 		language: "de"
-		text: "Deutsch"
+		languageText: "Deutsch"
 	}
 	ListElement {
 		//: LABEL ALL_PLATFORMS
@@ -20,7 +20,7 @@ ListModel {
 		a11yName: qsTr("English")
 		image: "qrc:///images/location_flag_en.svg"
 		language: "en"
-		text: "English"
+		languageText: "English"
 	}
 	ListElement {
 		//: LABEL ALL_PLATFORMS
@@ -29,7 +29,7 @@ ListModel {
 		a11yName: qsTr("Ukrainian")
 		image: "qrc:///images/location_flag_uk.svg"
 		language: "uk"
-		text: "Українська"
+		languageText: "Українська"
 	}
 	ListElement {
 		//: LABEL ALL_PLATFORMS
@@ -38,6 +38,6 @@ ListModel {
 		a11yName: qsTr("Russian")
 		image: "qrc:///images/location_flag_ru.svg"
 		language: "ru"
-		text: "Русский"
+		languageText: "Русский"
 	}
 }

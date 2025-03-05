@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref IfdDispatcher
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDispatcherClient.h"
@@ -34,7 +30,7 @@ class IfdDispatcherSpy
 		GlobalStatus::Code mCloseCode;
 		QList<IfdMessageType> mReceivedMessageTypes;
 		QList<QJsonObject> mReceivedMessages;
-		QList<QString> mReceivedSignalSenders;
+		QList<QByteArray> mReceivedSignalSenders;
 
 	public:
 		IfdDispatcherSpy(const QSharedPointer<IfdDispatcher> pDispatcher);
@@ -44,11 +40,11 @@ class IfdDispatcherSpy
 		[[nodiscard]] GlobalStatus::Code getCloseCode() const;
 		[[nodiscard]] const QList<IfdMessageType>& getReceivedMessageTypes() const;
 		[[nodiscard]] const QList<QJsonObject>& getReceivedMessages() const;
-		[[nodiscard]] const QList<QString>& getReceivedSignalSenders() const;
+		[[nodiscard]] const QList<QByteArray>& getReceivedSignalSenders() const;
 
 	private Q_SLOTS:
-		void onClosed(GlobalStatus::Code pCloseCode, const QString& pId);
-		void onReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId);
+		void onClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
+		void onReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QByteArray& pId);
 };
 
 
@@ -119,13 +115,13 @@ const QList<QJsonObject>& IfdDispatcherSpy::getReceivedMessages() const
 }
 
 
-const QList<QString>& IfdDispatcherSpy::getReceivedSignalSenders() const
+const QList<QByteArray>& IfdDispatcherSpy::getReceivedSignalSenders() const
 {
 	return mReceivedSignalSenders;
 }
 
 
-void IfdDispatcherSpy::onClosed(GlobalStatus::Code pCloseCode, const QString& pId)
+void IfdDispatcherSpy::onClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId)
 {
 	mClosed = true;
 	mCloseCode = pCloseCode;
@@ -133,7 +129,7 @@ void IfdDispatcherSpy::onClosed(GlobalStatus::Code pCloseCode, const QString& pI
 }
 
 
-void IfdDispatcherSpy::onReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId)
+void IfdDispatcherSpy::onReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QByteArray& pId)
 {
 	qDebug() << "IfdDispatcherSpy::onReceived() -" << pMessageType;
 	mReceivedMessageTypes += pMessageType;
@@ -158,7 +154,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -174,7 +170,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -190,7 +186,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose);
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -206,7 +202,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose);
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.first(), dispatcher->getId());
 		}
@@ -251,7 +247,7 @@ class test_IfdDispatcher
 			QCOMPARE(ifdDisconnect.getType(), IfdMessageType::IFDDisconnect);
 			QCOMPARE(ifdDisconnect.getSlotHandle(), QStringLiteral("NFC Reader"));
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 3);
 			QCOMPARE(senders.at(0), serverDispatcher->getId());
 			QCOMPARE(senders.at(1), serverDispatcher->getId());
@@ -277,7 +273,7 @@ class test_IfdDispatcher
 			QVERIFY(spy.isClosed());
 			QCOMPARE(spy.getCloseCode(), GlobalStatus::Code::No_Error);
 
-			const QList<QString>& senders = spy.getReceivedSignalSenders();
+			const QList<QByteArray>& senders = spy.getReceivedSignalSenders();
 			QCOMPARE(senders.size(), 1);
 			QCOMPARE(senders.at(0), serverDispatcher->getId());
 		}

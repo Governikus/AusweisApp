@@ -1,15 +1,17 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
-import Governikus.TechnologyInfo
 import Governikus.Type
 
 GFlickableColumnLayout {
-	id: baseItem
+	id: root
 
 	property bool autoInsertCard: false
 	readonly property bool canUseSmart: smartState === SmartModel.State.READY && isSmartCardAllowed && SmartModel.isScanRunning
@@ -26,25 +28,18 @@ GFlickableColumnLayout {
 	onCanUseSmartChanged: if (autoInsertCard)
 		technologyInfo.enableClicked()
 
-	SmartProgressIndicator {
-		id: progressIndicator
-
-		Accessible.ignored: true
-		Layout.alignment: Qt.AlignCenter
-		disabled: !canUseSmart
-	}
 	TechnologyInfo {
 		id: technologyInfo
 
 		Layout.alignment: Qt.AlignHCenter
 		enableButtonText: {
-			if (canUseSmart && !autoInsertCard) {
+			if (root.canUseSmart && !root.autoInsertCard) {
 				return qsTr("Continue");
 			}
 			return "";
 		}
-		enableText: {
-			switch (smartState) {
+		infoText: {
+			switch (root.smartState) {
 			case SmartModel.State.UPDATING_STATUS:
 				//: LABEL ANDROID IOS
 				return qsTr("Please wait a moment.");
@@ -52,7 +47,7 @@ GFlickableColumnLayout {
 				//: LABEL ANDROID IOS
 				return qsTr("Unfortunately, Smart-eID is not supported by your device.\n\nTo proceed use your ID card by selecting the NFC interface or choose \"WiFi\" to connect with another device as cardreader.");
 			case SmartModel.State.READY:
-				if (!isSmartCardAllowed) {
+				if (!root.isSmartCardAllowed) {
 					//: LABEL ANDROID IOS
 					return qsTr("Unfortunately, using your Smart-eID for this authentication is not allowed by the provider.\n\nTo proceed use your ID card by selecting the NFC interface or choose \"WiFi\" to connect with another device as cardreader.");
 				}
@@ -62,7 +57,7 @@ GFlickableColumnLayout {
 				}
 				return "";
 			default:
-				if (isRemoteWorkflow) {
+				if (root.isRemoteWorkflow) {
 					//: LABEL ANDROID IOS
 					return qsTr("You have not yet set up a Smart-eID or it is no longer usable.\n\nTo proceed use your ID card by selecting the NFC interface. If you want to set up a Smart-eID instead, please abort the current process and start the Smart-eID setup from the main screen.");
 				}
@@ -71,18 +66,18 @@ GFlickableColumnLayout {
 			}
 		}
 		subTitleText: {
-			if (canUseSmart && !autoInsertCard) {
+			if (root.canUseSmart && !root.autoInsertCard) {
 				//: LABEL ANDROID IOS
 				return qsTr("Your Smart-eID is ready for use, press \"Continue\" to proceed.");
 			}
 			return "";
 		}
 		titleText: {
-			if (isRemoteWorkflow && RemoteServiceModel.connectedClientName !== "") {
+			if (root.isRemoteWorkflow && RemoteServiceModel.connectedClientName !== "") {
 				//: INFO ANDROID IOS %1 will be replaced with the name of the device.
 				return qsTr("The device \"%1\" wants to access your Smart-eID.").arg(RemoteServiceModel.connectedClientName);
 			}
-			switch (smartState) {
+			switch (root.smartState) {
 			case SmartModel.State.UPDATING_STATUS:
 				//: LABEL ANDROID IOS
 				return qsTr("Updating Smart-eID status...");
@@ -90,7 +85,7 @@ GFlickableColumnLayout {
 				//: LABEL ANDROID IOS
 				return qsTr("Smart-eID unsupported");
 			case SmartModel.State.READY:
-				if (!isSmartCardAllowed) {
+				if (!root.isSmartCardAllowed) {
 					//: LABEL ANDROID IOS
 					return qsTr("Smart-eID disallowed");
 				}
@@ -107,8 +102,12 @@ GFlickableColumnLayout {
 			}
 		}
 
-		onEnableClicked: if (canUseSmart)
-			workflowModel.insertSmartCard()
-		onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
+		progressIndicator: SmartProgressIndicator {
+			Accessible.ignored: true
+			disabled: !root.canUseSmart
+		}
+
+		onEnableClicked: if (root.canUseSmart)
+			root.workflowModel.insertSmartCard()
 	}
 }

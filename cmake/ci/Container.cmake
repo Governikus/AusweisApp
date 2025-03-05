@@ -1,4 +1,5 @@
 if(NAME MATCHES "VNC")
+	set(VNC ON)
 	set(TARGET vnc)
 	set(Dockerfile -f ${CMAKE_SOURCE_DIR}/resources/jenkins/docker/Dockerfile)
 else()

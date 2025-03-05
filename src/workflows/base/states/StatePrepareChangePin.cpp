@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StatePrepareChangePin.h"
@@ -20,6 +20,12 @@ StatePrepareChangePin::StatePrepareChangePin(const QSharedPointer<WorkflowContex
 
 void StatePrepareChangePin::run()
 {
+	if (getContext()->isOnlyCheckPin())
+	{
+		Q_EMIT fireSkipPinChange();
+		return;
+	}
+
 	if (getContext()->getNewPin().isEmpty())
 	{
 		Q_EMIT fireEnterNewPacePin();

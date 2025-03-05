@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
+import Governikus.Style
 
 RowLayout {
 	id: root
@@ -16,24 +18,22 @@ RowLayout {
 
 	signal toggleUpdate
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	GProgressBar {
 		id: bar
 
 		Layout.fillWidth: true
 		activeFocusOnTab: true
-		visible: downloadInProgress
+		visible: root.downloadInProgress
 	}
 	GSpacer {
 		Layout.fillWidth: true
-		visible: !downloadInProgress
+		visible: !root.downloadInProgress
 	}
 	GButton {
 		enabledTooltipText: SettingsModel.appUpdateData.url
-		text: Qt.platform.os === "osx" ?
-		//: LABEL DESKTOP Open the Mac App Store on macOS
-		qsTr("Open App Store") : downloadInProgress ?
+		text: root.downloadInProgress ?
 		//: LABEL DESKTOP Cancel the download of the update on Windows
 		qsTr("Cancel update") :
 		//: LABEL DESKTOP Start to download the update and execute it on Windows

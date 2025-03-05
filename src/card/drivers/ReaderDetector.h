@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Interface specifying classes that can detect the attached card reader
- * devices on a specific platform.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,6 +22,7 @@
 
 #include <QList>
 #include <QSharedPointer>
+
 
 namespace governikus
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateRedirectBrowser.h"
@@ -41,8 +41,16 @@ void StateRedirectBrowser::run()
 	const auto& context = getContext();
 	if (const auto& url = context->getRefreshUrl(); url.isValid())
 	{
-		const auto& result = context->getStartPaosResult().isOk() ? ECardApiResult(context->getStatus()) : context->getStartPaosResult();
-		context->setRefreshUrl(addMajorMinor(url, GlobalStatus(result)));
+		const auto& status = context->getStatus();
+		const auto& startPaosResult = context->getStartPaosResult();
+		if (status.isCancellationByUser() || startPaosResult.isOk())
+		{
+			context->setRefreshUrl(addMajorMinor(url, ECardApiResult(status)));
+		}
+		else
+		{
+			context->setRefreshUrl(addMajorMinor(url, startPaosResult));
+		}
 	}
 	else
 	{
@@ -51,7 +59,7 @@ void StateRedirectBrowser::run()
 		{
 			if (const auto& address = context->getTcToken()->getCommunicationErrorAddress(); address.isValid())
 			{
-				context->setRefreshUrl(addMajorMinor(address, GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url));
+				context->setRefreshUrl(addMajorMinor(address, ECardApiResult(GlobalStatus::Code::Workflow_Communication_Missing_Redirect_Url)));
 			}
 			else
 			{
@@ -81,35 +89,29 @@ void StateRedirectBrowser::run()
 }
 
 
-QUrl StateRedirectBrowser::addMajorMinor(const QUrl& pOriginUrl, const GlobalStatus& pStatus)
+QUrl StateRedirectBrowser::addMajorMinor(const QUrl& pOriginUrl, const ECardApiResult& pResult)
 {
 	QUrlQuery q;
 	q.setQuery(pOriginUrl.query());
 
-	const ECardApiResult::Major majorEnumVal = pStatus.isError() ? ECardApiResult::Major::Error : ECardApiResult::Major::Ok;
-	QString major = removePrefix(ECardApiResult::getMajorString(majorEnumVal));
+	const ECardApiResult::Major majorEnumVal = pResult.isOk() ? ECardApiResult::Major::Ok : ECardApiResult::Major::Error;
+	const auto& major = removePrefix(ECardApiResult::getMajorString(majorEnumVal));
 	q.addQueryItem(QStringLiteral("ResultMajor"), major);
 
-	if (pStatus.isError())
+	if (!pResult.isOk())
 	{
 		QString minor;
 
-		switch (pStatus.getStatusCode())
+		switch (pResult.getMinor())
 		{
-			case GlobalStatus::Code::Paos_Error_AL_Communication_Error:
-				minor = getSuffix(ECardApiResult::Minor::AL_Communication_Error);
-				break;
-
-			case GlobalStatus::Code::Paos_Error_DP_Trusted_Channel_Establishment_Failed:
-				minor = getSuffix(ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed);
-				break;
-
-			case GlobalStatus::Code::Paos_Error_SAL_Cancellation_by_User:
-				minor = getSuffix(ECardApiResult::Minor::SAL_Cancellation_by_User);
+			case ECardApiResult::Minor::DP_Trusted_Channel_Establishment_Failed:
+			case ECardApiResult::Minor::AL_Communication_Error:
+			case ECardApiResult::Minor::SAL_Cancellation_by_User:
+				minor = getSuffix(pResult.getMinor());
 				break;
 
 			default:
-				if (pStatus.isOriginServer())
+				if (pResult.isOriginServer())
 				{
 					minor = QStringLiteral("serverError");
 				}

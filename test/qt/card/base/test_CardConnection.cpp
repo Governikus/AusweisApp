@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Tests for the class CardConnection.
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"

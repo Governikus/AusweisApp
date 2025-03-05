@@ -1,16 +1,16 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
-import Governikus.TitleBar
-import Governikus.View
 import Governikus.Type
+import Governikus.Style
 
 ColumnLayout {
-	id: contentLayout
+	id: root
 
 	readonly property int smartState: SmartModel.state
 
@@ -21,7 +21,7 @@ ColumnLayout {
 
 	GOptionsContainer {
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 
 		//: LABEL ANDROID IOS
 		title: qsTr("Smart-eID")
@@ -32,16 +32,16 @@ ColumnLayout {
 
 			//: LABEL ANDROID IOS
 			title: qsTr("Try Smart-eID")
-			visible: smartState === SmartModel.State.READY
+			visible: root.smartState === SmartModel.State.READY
 			width: parent.width
 
-			onClicked: startSelfAuth()
+			onClicked: root.startSelfAuth()
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GMenuItem {
 			//: LABEL ANDROID IOS
@@ -49,16 +49,16 @@ ColumnLayout {
 
 			//: LABEL ANDROID IOS
 			title: qsTr("Change Smart-eID PIN")
-			visible: smartState === SmartModel.State.READY
+			visible: root.smartState === SmartModel.State.READY
 			width: parent.width
 
-			onClicked: changePin()
+			onClicked: root.changePin()
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GMenuItem {
 			//: LABEL ANDROID IOS
@@ -66,16 +66,16 @@ ColumnLayout {
 
 			//: LABEL ANDROID IOS
 			title: qsTr("Renew Smart-eID")
-			visible: smartState === SmartModel.State.READY
+			visible: root.smartState === SmartModel.State.READY
 			width: parent.width
 
-			onClicked: updateSmart()
+			onClicked: root.updateSmart()
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GMenuItem {
 			//: LABEL ANDROID IOS
@@ -83,10 +83,10 @@ ColumnLayout {
 
 			//: LABEL ANDROID IOS
 			title: qsTr("Delete Smart-eID")
-			visible: smartState === SmartModel.State.READY
+			visible: root.smartState === SmartModel.State.READY
 			width: parent.width
 
-			onClicked: deletePersonalization()
+			onClicked: root.deletePersonalization()
 		}
 	}
 }

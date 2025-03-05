@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TrayIcon.h"
@@ -78,7 +78,7 @@ void TrayIcon::create()
 	mTrayIcon->setToolTip(QCoreApplication::applicationName());
 
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	if (generalSettings.showTrayIcon())
+	if (generalSettings.isTrayIconEnabled())
 	{
 		mTrayIcon->show();
 	}

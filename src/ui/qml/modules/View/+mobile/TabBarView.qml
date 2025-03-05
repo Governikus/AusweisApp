@@ -1,75 +1,77 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
-import Governikus.Global
+
 import Governikus.Type
+import Governikus.Style
 
 StackView {
 	id: root
 
-	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning() && SettingsModel.useAnimations
+	readonly property bool animationEnabled: !ApplicationModel.isScreenReaderRunning && SettingsModel.useAnimations
 
 	function doActivate() {
-		if (visible && currentItem && typeof currentItem.activate === "function") {
-			currentItem.activate();
+		if (visible && currentItem && (currentItem as BaseController)) {
+			(currentItem as BaseController).activate();
 		}
 	}
 
-	popEnter: enterAnimation.createObject(root)
-	popExit: exitAnimation.createObject(root)
-	pushEnter: enterAnimation.createObject(root, {
-		"reversed": true
-	})
-	pushExit: exitAnimation.createObject(root)
-	replaceEnter: enterAnimation.createObject(root, {
-		"reversed": true
-	})
-	replaceExit: exitAnimation.createObject(root)
+	popEnter: EnterAnimation {
+	}
+	popExit: ExitAnimation {
+	}
+	pushEnter: EnterAnimation {
+		reversed: true
+	}
+	pushExit: ExitAnimation {
+	}
+	replaceEnter: EnterAnimation {
+		reversed: true
+	}
+	replaceExit: ExitAnimation {
+	}
 
 	onCurrentItemChanged: doActivate()
 	onVisibleChanged: doActivate()
 
-	Component {
-		id: enterAnimation
+	component EnterAnimation: Transition {
+		id: transition
 
-		Transition {
-			readonly property bool reversed: false
+		property bool reversed: false
 
-			enabled: animationEnabled
+		enabled: root.animationEnabled
 
-			ParallelAnimation {
-				NumberAnimation {
-					duration: Constants.animation_duration
-					easing.type: Easing.InQuint
-					from: 0
-					property: "opacity"
-					to: 1
-				}
-				NumberAnimation {
-					duration: Constants.animation_duration * 2
-					easing.type: Easing.OutCubic
-					from: (root.mirrored ? -0.3 : 0.3) * root.width * (reversed ? 1 : -1)
-					property: "x"
-					to: 0
-				}
+		ParallelAnimation {
+			NumberAnimation {
+				duration: Style.animation_duration
+				easing.type: Easing.InQuint
+				from: 0
+				property: "opacity"
+				to: 1
+			}
+			NumberAnimation {
+				duration: Style.animation_duration * 2
+				easing.type: Easing.OutCubic
+				from: (root.mirrored ? -0.3 : 0.3) * root.width * (transition.reversed ? 1 : -1)
+				property: "x"
+				to: 0
 			}
 		}
 	}
-	Component {
-		id: exitAnimation
+	component ExitAnimation: Transition {
+		enabled: root.animationEnabled
 
-		Transition {
-			enabled: animationEnabled
-
-			NumberAnimation {
-				duration: Constants.animation_duration
-				easing.type: Easing.OutQuint
-				from: 1
-				property: "opacity"
-				to: 0
-			}
+		NumberAnimation {
+			duration: Style.animation_duration
+			easing.type: Easing.OutQuint
+			from: 1
+			property: "opacity"
+			to: 0
 		}
 	}
 }

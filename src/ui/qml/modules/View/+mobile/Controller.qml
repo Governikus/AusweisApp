@@ -1,20 +1,46 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
+import Governikus.Init
 import Governikus.Workflow
+import Governikus.Navigation
 
 BaseController {
-	readonly property var navBar: typeof (navigation) !== "undefined" ? navigation : parent ? parent.navBar : null
-	property var stackView: StackView.view ? StackView.view : (parent && parent.stackView ? parent.stackView : parent)
+	readonly property Navigation navigation: {
+		if (ApplicationWindow.window === null) {
+			return null;
+		}
+		if ((ApplicationWindow.window as App) === null) {
+			return null;
+		}
+		return (ApplicationWindow.window as App).navigationInstance;
+	}
+	property var stackView: {
+		if (StackView.view) {
+			return StackView.view;
+		} else if (parent && (parent as Controller)) {
+			return (parent as Controller).stackView;
+		} else {
+			return parent;
+		}
+	}
 	readonly property bool workflowActive: stackView ? (stackView.currentItem instanceof GeneralWorkflow) : false
 
-	function getLockedAndHidden() {
-		if (navBar && navBar.lockedAndHidden !== undefined) {
-			return navBar.lockedAndHidden;
+	function find(pCallback) {
+		if (stackView) {
+			return stackView.find(pCallback);
+		} else {
+			console.log("Controller not attached to StackView");
+			return null;
 		}
-		console.log("Controller cannot find navBar");
+	}
+	function getLockedAndHidden() {
+		if (navigation && navigation.lockedAndHidden !== undefined) {
+			return navigation.lockedAndHidden;
+		}
+		console.log("Controller cannot find navigation");
 		return false;
 	}
 	function pop(pItem) {
@@ -56,17 +82,17 @@ BaseController {
 		}
 	}
 	function setLockedAndHidden(pLockedAndHidden = true) {
-		if (navBar && navBar.setLockedAndHidden) {
-			navBar.setLockedAndHidden(pLockedAndHidden);
+		if (navigation && navigation.setLockedAndHidden) {
+			navigation.setLockedAndHidden(pLockedAndHidden);
 		} else {
-			console.log("Controller cannot find navBar");
+			console.log("Controller cannot find navigation");
 		}
 	}
 	function show(pModule, pLockedAndHidden = false) {
-		if (navBar && navBar.show) {
-			navBar.show(pModule, pLockedAndHidden);
+		if (navigation && navigation.show) {
+			navigation.show(pModule, pLockedAndHidden);
 		} else {
-			console.log("Controller cannot find navBar");
+			console.log("Controller cannot find navigation");
 		}
 	}
 }

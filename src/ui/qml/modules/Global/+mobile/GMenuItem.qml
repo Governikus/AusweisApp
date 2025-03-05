@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -20,7 +20,7 @@ AbstractButton {
 	Accessible.name: title + ". " + description
 	Accessible.role: Accessible.Button
 	icon.source: "qrc:///images/material_arrow_right.svg"
-	padding: Constants.pane_padding
+	padding: Style.dimens.pane_padding
 
 	background: RoundedRectangle {
 		bottomLeftCorner: root.drawBottomCorners
@@ -30,14 +30,14 @@ AbstractButton {
 		topRightCorner: root.drawTopCorners
 
 		FocusFrame {
-			anchors.margins: Constants.component_spacing / 2
+			anchors.margins: Style.dimens.pane_spacing / 2
 			scope: root
 		}
 	}
 	contentItem: RowLayout {
 		id: layout
 
-		anchors.margins: Constants.pane_padding
+		anchors.margins: Style.dimens.pane_padding
 		spacing: 0
 
 		ColumnLayout {
@@ -47,6 +47,7 @@ AbstractButton {
 				id: titleText
 
 				Accessible.ignored: true
+				activeFocusOnTab: false
 				textStyle: Style.text.subline
 				visible: text !== ""
 			}
@@ -54,6 +55,7 @@ AbstractButton {
 				id: descriptionText
 
 				Accessible.ignored: true
+				activeFocusOnTab: false
 				visible: text !== ""
 			}
 		}
@@ -66,6 +68,9 @@ AbstractButton {
 			sourceSize.height: Style.dimens.small_icon_size
 		}
 	}
+
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	StatefulColors {
 		id: colors

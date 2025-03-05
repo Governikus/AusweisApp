@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref VersionNumber.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionNumber.h"
@@ -24,16 +20,24 @@ class test_VersionNumber
 			VersionNumber number1("1.2.3.4.5"_L1);
 			VersionNumber number2("1.2.3.4.5"_L1);
 			QCOMPARE(number1, number2);
+			QVERIFY(number1 <= number2);
+			QVERIFY(number2 <= number1);
+			QVERIFY(number1 >= number2);
+			QVERIFY(number2 >= number1);
 
 			VersionNumber number3("4.5"_L1);
 			QVERIFY(number1 != number3);
 			QVERIFY(number1 < number3);
+			QVERIFY(number1 <= number3);
 			QVERIFY(number3 > number1);
+			QVERIFY(number3 >= number1);
 
 			VersionNumber number4("1.12.0+123"_L1);
 			VersionNumber number5("1.12.0+124"_L1);
 			QVERIFY(number4 < number5);
+			QVERIFY(number4 <= number5);
 			QVERIFY(number5 > number4);
+			QVERIFY(number5 >= number4);
 
 			VersionNumber number6(""_L1);
 			QVERIFY(number1 != number6);
@@ -41,6 +45,8 @@ class test_VersionNumber
 			VersionNumber number7("1.12.0+123-default-abc123"_L1);
 			VersionNumber number8("1.12.0+123-default-abc123"_L1);
 			QVERIFY(number7 == number8);
+			QVERIFY(number7 <= number8);
+			QVERIFY(number7 >= number8);
 			QVERIFY(!(number7 < number8));
 			QVERIFY(!(number7 > number8));
 			QVERIFY(!(number8 < number7));
@@ -48,6 +54,8 @@ class test_VersionNumber
 
 			VersionNumber number9("1.12.0+123-stable-xyz123"_L1);
 			QVERIFY(number7 != number9);
+			QVERIFY(!(number7 <= number9));
+			QVERIFY(!(number7 >= number9));
 			QVERIFY(!(number7 < number9));
 			QVERIFY(!(number7 > number9));
 			QVERIFY(!(number9 < number7));
@@ -56,6 +64,8 @@ class test_VersionNumber
 			VersionNumber number10("1.01.0+123-default-abc123"_L1);
 			VersionNumber number11("1.1.0+123-default-abc123"_L1);
 			QVERIFY(number10 == number11);
+			QVERIFY(number10 >= number11);
+			QVERIFY(number10 <= number11);
 			QVERIFY(!(number10 < number11));
 			QVERIFY(!(number11 > number10));
 		}

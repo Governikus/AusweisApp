@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GlobalStatus.h"
@@ -94,7 +94,7 @@ QString GlobalStatus::toErrorDescription(const bool pSimplifiedVersion) const
 	{
 		const QString hyperlink = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(LanguageLoader::getLocaleCode());
 		//: ERROR ALL_PLATFORMS Error message which is used for "masked" errors. Generic message with link to support section of the homepage.
-		QString message = tr("An unknown network error has occurred during the connection to the provider. Check the network connection and try restarting the app. If this does not help, contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
+		QString message = tr("A secure connection to the provider could not be established. Check the network connection and try again later. If this doesn't help, contact our %1support%2.").arg(hyperlink, QStringLiteral("</a>"));
 
 		return message;
 	}
@@ -158,7 +158,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 			return tr("No unique DV CVC");
 
 		case Code::Workflow_No_Permission_Error:
-			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA2 or the ID card declined the certificates.
+			//: ERROR ALL_PLATFORMS DidAuthenticateEAC2, AA or the ID card declined the certificates.
 			return tr("Authentication failed.");
 
 		case Code::Workflow_Wrong_Length_Error:
@@ -267,7 +267,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Network_Other_Error:
 		case Code::Workflow_TrustedChannel_Other_Network_Error:
-			//: ERROR ALL_PLATFORMS Other critial network error by Qt.
+			//: ERROR ALL_PLATFORMS Other critical network error by Qt.
 			return tr("An unknown network error occurred. Check your network connection and try to restart the app.");
 
 		case Code::Workflow_Reader_Became_Inaccessible:

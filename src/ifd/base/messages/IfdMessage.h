@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,9 +13,9 @@
 
 
 #define VALUE_NAME(_name, _key)\
-	inline QLatin1String _name(){\
-		return QLatin1String(_key);\
-	}
+		inline QLatin1String _name(){\
+			return QLatin1String(_key);\
+		}
 
 
 namespace governikus

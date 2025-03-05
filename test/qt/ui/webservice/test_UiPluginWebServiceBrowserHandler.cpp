@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginWebService.h"
@@ -58,8 +58,8 @@ class test_UiPluginWebServiceBrowserHandler
 
 			QUrl url;
 			connect(&ui, &UiPlugin::fireWorkflowRequested, this, [&url](const QSharedPointer<WorkflowRequest>& pRequest){
-					url = pRequest->getContext().objectCast<AuthContext>()->getActivationUrl();
-				});
+						url = pRequest->getContext().objectCast<AuthContext>()->getActivationUrl();
+					});
 
 			ui.handleWorkflowRequest(mRequest);
 			QCOMPARE(url.toEncoded(), QByteArray("/testUrl"));

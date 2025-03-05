@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the authentication action.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,7 +36,7 @@ class AuthModel
 	Q_PROPERTY(QString transactionInfo READ getTransactionInfo NOTIFY fireTransactionInfoChanged)
 	Q_PROPERTY(int progressValue READ getProgressValue NOTIFY fireProgressChanged)
 	Q_PROPERTY(QString progressMessage READ getProgressMessage NOTIFY fireProgressChanged)
-	Q_PROPERTY(bool showChangePinView READ getShowChangePinView NOTIFY fireShowChangePinViewChanged)
+	Q_PROPERTY(bool changeTransportPin READ getChangeTransportPin NOTIFY fireChangeTransportPinChanged)
 	Q_PROPERTY(QString resultHeader READ getResultHeader NOTIFY fireResultChanged)
 	Q_PROPERTY(QString errorHeader READ getErrorHeader NOTIFY fireResultChanged)
 	Q_PROPERTY(QString errorText READ getErrorText NOTIFY fireResultChanged)
@@ -63,7 +59,7 @@ class AuthModel
 		[[nodiscard]] const QString& getTransactionInfo() const;
 		[[nodiscard]] int getProgressValue() const;
 		[[nodiscard]] QString getProgressMessage() const;
-		[[nodiscard]] bool getShowChangePinView() const;
+		[[nodiscard]] bool getChangeTransportPin() const;
 		[[nodiscard]] QString getResultHeader() const;
 		[[nodiscard]] QString getErrorHeader() const;
 		[[nodiscard]] QString getErrorText() const;
@@ -72,13 +68,13 @@ class AuthModel
 		[[nodiscard]] QString getResultViewButtonText() const;
 		[[nodiscard]] QUrl getResultViewButtonLink() const;
 
-		Q_INVOKABLE void cancelWorkflowToChangePin();
+		Q_INVOKABLE void cancelWorkflowToChangeTransportPin();
 
 	private Q_SLOTS:
 		void onDidAuthenticateEac1Changed();
 
 	Q_SIGNALS:
-		void fireShowChangePinViewChanged();
+		void fireChangeTransportPinChanged();
 		void fireTransactionInfoChanged();
 		void fireProgressChanged();
 };

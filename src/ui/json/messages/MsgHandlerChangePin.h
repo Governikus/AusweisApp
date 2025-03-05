@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Message Change PIN of JSON API.
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

@@ -17,7 +17,7 @@ contains all supported arguments, which are explained below.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true SECURESCREENKEYBOARD=true ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
+  msiexec /i AusweisApp-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false TRAYICON=true AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true SECURESCREENKEYBOARD=true ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
 INSTALLDIR
   States the installation directory. If not specified, the folder
@@ -43,11 +43,14 @@ PROXYSERVICE
   in application server mode.
 
 AUTOSTART
-  By setting AUTOSTART=true, an autostart entry is created for all users and
-  closing |AppName| by clicking on the X, it is minimized into the info tray.
+  By setting AUTOSTART=true, an autostart entry is created for all users.
   Users are unable to deactivate the autostart function in the |AppName|. Not
   specified, no autostart entry is created (false). In that case, users are able
   to activate the autostart function in the |AppName|.
+
+TRAYICON
+  Activates the tray icon to keep the |AppName| active in the background to always be available for
+  an authentication.
 
 AUTOHIDE
   Concerns the automatic minimization after a successful authentication. Not
@@ -57,7 +60,7 @@ AUTOHIDE
 REMINDTOCLOSE
   Closing the |AppName| by clicking on the X, the user is notified that only the
   user interface is closed and that the |AppName| is still available in the info
-  tray (if autostart of |AppName| is enabled) or that the |AppName| will be shut
+  tray (if the tray icon is enabled) or that the |AppName| will be shut
   down and the user needs to restart it to identify towards providers.
   At this point, it is possible to prevent future notifications. Setting
   REMINDTOCLOSE=false deactivates this notification from the outset. Not
@@ -153,12 +156,14 @@ the file must be "com.governikus.AusweisApp2.plist". The content is shown below:
   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
   <dict>
+    <key>trayIcon</key>
+    <false/>
     <key>autoCloseWindow</key>
     <false/>
     <key>remindToClose</key>
     <false/>
-    <key>uiStartupModule</key>
-    <string>DEFAULT</string>
+    <key>showOnboarding</key>
+    <false/>
     <key>transportPinReminder</key>
     <false/>
     <key>customProxyType</key>
@@ -184,9 +189,10 @@ although the naming of the attributes differs, as shown in the following table:
 ======================== =======================
 macOS                    Windows
 ======================== =======================
+trayIcon                 TRAYICON
 autoCloseWindow          AUTOHIDE
 remindToClose [#dialog]_ REMINDTOCLOSE
-uiStartupModule          ASSISTANT
+showOnboarding           ASSISTANT
 transportPinReminder     TRANSPORTPINREMINDER
 customProxyType          CUSTOMPROXYTYPE
 customProxyPort          CUSTOMPROXYPORT

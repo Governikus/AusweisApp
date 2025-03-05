@@ -1,23 +1,24 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
-import Governikus.View
+import Governikus.Style
 
 ConfirmationPopup {
-	id: proxyCredentials
+	id: root
 
-	property QtObject credentials
+	property ProxyCredentials credentials
 
 	//: LABEL DESKTOP Text of the button in the proxy credentials popup.
 	okButtonText: qsTr("Sign in")
 
 	//: LABEL DESKTOP Title of the proxy credentials popup.
 	title: qsTr("Sign in")
-	width: formGrid.width + 2 * Constants.pane_padding
+	width: formGrid.width + 2 * Style.dimens.pane_padding
 
 	onClosed: {
 		if (!credentials)
@@ -41,19 +42,15 @@ ConfirmationPopup {
 		id: formGrid
 
 		columns: 2
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 		verticalItemAlignment: Text.AlignVCenter
 
 		GText {
 			//: LABEL DESKTOP Accessible name.
 			Accessible.name: qsTr("Proxy credential username")
-			activeFocusOnTab: true
 
 			//: LABEL DESKTOP Label of the textfield for the username.
 			text: qsTr("Username")
-
-			FocusFrame {
-			}
 		}
 		GTextField {
 			id: userInput
@@ -63,13 +60,9 @@ ConfirmationPopup {
 		GText {
 			//: LABEL DESKTOP Accessible name.
 			Accessible.name: qsTr("Proxy credential password")
-			activeFocusOnTab: true
 
 			//: LABEL DESKTOP Label of the textfield for the password.
 			text: qsTr("Password")
-
-			FocusFrame {
-			}
 		}
 		GTextField {
 			id: passwordInput

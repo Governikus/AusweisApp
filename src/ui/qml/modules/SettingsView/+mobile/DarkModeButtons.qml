@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -11,10 +11,9 @@ ColumnLayout {
 
 	readonly property var checkedButton: system.mode === SettingsModel.userDarkMode ? system : dark.mode === SettingsModel.userDarkMode ? dark : light
 	readonly property string selectedIconPath: checkedButton.image
-	readonly property string selectedText: checkedButton.title
+	readonly property string selectedText: checkedButton.text
 
 	signal buttonClicked
-	signal receivedFocus(var pItem)
 
 	function onAppearanceButtonClicked(mode) {
 		if (SettingsModel.userDarkMode === mode)
@@ -39,13 +38,11 @@ ColumnLayout {
 		Accessible.description: qsTr("Set the app appearance to system mode")
 		Layout.fillWidth: true
 		image: "qrc:///images/appearance_system_mode.svg"
-		tintIcon: true
 		//: LABEL ALL_PLATFORMS
-		title: qsTr("System")
+		text: qsTr("System")
+		tintIcon: true
 
 		onClicked: root.onAppearanceButtonClicked(mode)
-		onFocusChanged: if (focus)
-			root.receivedFocus(this)
 	}
 	GCollapsibleSubButton {
 		id: dark
@@ -56,13 +53,11 @@ ColumnLayout {
 		Accessible.description: qsTr("Set the app appearance to dark mode")
 		Layout.fillWidth: true
 		image: "qrc:///images/appearance_dark_mode.svg"
-		tintIcon: true
 		//: LABEL ALL_PLATFORMS
-		title: qsTr("Dark")
+		text: qsTr("Dark")
+		tintIcon: true
 
 		onClicked: root.onAppearanceButtonClicked(mode)
-		onFocusChanged: if (focus)
-			root.receivedFocus(this)
 	}
 	GCollapsibleSubButton {
 		id: light
@@ -73,12 +68,10 @@ ColumnLayout {
 		Accessible.description: qsTr("Set the app appearance to light mode")
 		Layout.fillWidth: true
 		image: "qrc:///images/appearance_light_mode.svg"
-		tintIcon: true
 		//: LABEL ALL_PLATFORMS
-		title: qsTr("Light")
+		text: qsTr("Light")
+		tintIcon: true
 
 		onClicked: root.onAppearanceButtonClicked(mode)
-		onFocusChanged: if (focus)
-			root.receivedFocus(this)
 	}
 }

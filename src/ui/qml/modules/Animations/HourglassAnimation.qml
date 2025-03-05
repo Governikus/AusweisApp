@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Effects
-import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type

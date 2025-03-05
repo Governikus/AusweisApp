@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
@@ -10,7 +13,7 @@ import Governikus.View
 import Governikus.Type
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
 	property alias actionText: actionText.text
 	property alias dataText: dataPasswordText.text
@@ -18,7 +21,7 @@ FlickableSectionPage {
 
 	signal rightsAccepted
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	//: LABEL IOS_PHONE ANDROID_PHONE
 	title: qsTr("Identify")
@@ -26,7 +29,7 @@ FlickableSectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
 
-		onClicked: workflowModel.cancelWorkflow()
+		onClicked: root.workflowModel.cancelWorkflow()
 	}
 
 	GText {
@@ -39,15 +42,13 @@ FlickableSectionPage {
 		Layout.fillWidth: true
 		name: CertificateDescriptionModel.subjectName
 
-		onClicked: push(certificateDescriptionPage)
-		onFocusChanged: if (focus)
-			baseItem.positionViewAtItem(this)
+		onClicked: root.push(certificateDescriptionPage)
 
 		Component {
 			id: certificateDescriptionPage
 
 			CertificateDescriptionPage {
-				title: baseItem.title
+				title: root.title
 			}
 		}
 	}
@@ -62,9 +63,7 @@ FlickableSectionPage {
 			qsTr("PIN")))
 		tintIcon: true
 
-		onClicked: rightsAccepted()
-		onFocusChanged: if (focus)
-			baseItem.positionViewAtItem(this)
+		onClicked: root.rightsAccepted()
 	}
 	GText {
 		id: dataPasswordText
@@ -82,19 +81,16 @@ FlickableSectionPage {
 		drawShadow: false
 		//: LABEL IOS_PHONE ANDROID_PHONE
 		title: qsTr("Transactional information")
-		visible: !!workflowModel.transactionInfo || (!writeData.visible && !readData.visible)
+		visible: !!root.workflowModel.transactionInfo || (!writeData.visible && !readData.visible)
 
 		GText {
-			activeFocusOnTab: true
 			objectName: "transactionText"
-			text: workflowModel.transactionInfo
+			text: root.workflowModel.transactionInfo
 			textFormat: Text.StyledText
 			visible: !!text
 			width: parent.width
 		}
 		GText {
-			activeFocusOnTab: true
-
 			//: LABEL IOS_PHONE ANDROID_PHONE
 			text: qsTr("The provider mentioned above does not require any data stored on your ID card, only confirmation of you possessing a valid ID card.")
 			visible: !writeData.visible && !readData.visible
@@ -104,7 +100,7 @@ FlickableSectionPage {
 	GPane {
 		Layout.fillWidth: true
 		border.color: Style.color.warning
-		border.width: Constants.pane_border_highlight_width
+		border.width: Style.dimens.pane_border_highlight_width
 		color: Style.color.paneSublevel.background.basic
 		drawShadow: false
 		visible: writeData.count > 0
@@ -120,9 +116,8 @@ FlickableSectionPage {
 			width: parent.width
 			writeAccess: true
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-			onScrollPageDown: baseItem.scrollPageDown()
-			onScrollPageUp: baseItem.scrollPageUp()
+			onScrollPageDown: root.scrollPageDown()
+			onScrollPageUp: root.scrollPageUp()
 		}
 	}
 	GPane {
@@ -143,9 +138,8 @@ FlickableSectionPage {
 			title: qsTr("Read access")
 			width: parent.width
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-			onScrollPageDown: baseItem.scrollPageDown()
-			onScrollPageUp: baseItem.scrollPageUp()
+			onScrollPageDown: root.scrollPageDown()
+			onScrollPageUp: root.scrollPageUp()
 		}
 		DataGroup {
 			id: optionalData
@@ -156,9 +150,8 @@ FlickableSectionPage {
 			title: qsTr("Read access (optional)")
 			width: parent.width
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-			onScrollPageDown: baseItem.scrollPageDown()
-			onScrollPageUp: baseItem.scrollPageUp()
+			onScrollPageDown: root.scrollPageDown()
+			onScrollPageUp: root.scrollPageUp()
 		}
 	}
 }

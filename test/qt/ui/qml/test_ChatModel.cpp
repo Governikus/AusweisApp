@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ChatModel
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChatModel.h"
@@ -82,7 +78,7 @@ class test_ChatModel
 		void test_OnAuthenticationDataChanged()
 		{
 			mModel->resetContext(mAuthContext);
-			auto accessRightManager = QSharedPointer<AccessRightManager>::create(nullptr, nullptr);
+			auto accessRightManager = QSharedPointer<AccessRightManager>::create(nullptr, nullptr, nullptr);
 
 			Q_EMIT mAuthContext->fireAccessRightManagerCreated(accessRightManager);
 			QVERIFY(mModel->mAllRights.isEmpty());
@@ -196,7 +192,8 @@ class test_ChatModel
 			QByteArray content = TestFileHelper::readFile(":/paos/DIDAuthenticateEAC1.xml"_L1);
 			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
 			mAuthContext->setDidAuthenticateEac1(eac1);
-			mAuthContext->initAccessRightManager(eac1->getCvCertificates().at(0));
+			mAuthContext->setDvCvc(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+			mAuthContext->initAccessRightManager(eac1->getCvCertificates({AccessRole::AT}).at(0));
 			const QString requiredAge = mAuthContext->getDidAuthenticateEac1()->getAuthenticatedAuxiliaryData()->getRequiredAge();
 
 			QModelIndex index = mModel->createIndex(0, 0);

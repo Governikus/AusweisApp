@@ -1,27 +1,29 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Style
-import Governikus.View
 import Governikus.Type
+import Governikus.View
 
 Item {
+	id: root
+
 	property int alignment: Text.AlignLeft
 	property alias bodyElide: bodyText.elide
 	readonly property double focusFrameMargins: focusFrame.anchors.margins
-	property alias label: labelText.text
+	required property string label
 	property alias labelColor: labelText.color
 	property alias labelStyle: labelText.textStyle
 	property alias maximumBodyLineCount: bodyText.maximumLineCount
-	property alias text: bodyText.text
+	required property string text
 	property alias textColor: bodyText.color
 	property alias textFormat: bodyText.textFormat
 	property alias textUppercase: bodyText.font.capitalization
 
 	Accessible.name: labelText.text + d.effectiveSeparator + bodyText.text
 	Accessible.role: Accessible.StaticText
-	activeFocusOnTab: true
+	activeFocusOnTab: ApplicationModel.isScreenReaderRunning
 	implicitHeight: column.height
 	implicitWidth: Math.max(labelText.implicitWidth, bodyText.implicitWidth)
 
@@ -38,7 +40,7 @@ Item {
 	Column {
 		id: column
 
-		spacing: Constants.subtext_spacing
+		spacing: Style.dimens.subtext_spacing
 
 		anchors {
 			left: parent.left
@@ -48,7 +50,9 @@ Item {
 			id: labelText
 
 			Accessible.ignored: true
-			horizontalAlignment: alignment
+			activeFocusOnTab: false
+			horizontalAlignment: root.alignment
+			text: root.label
 			textStyle: Style.text.subline
 			visible: !!text
 			width: parent.width
@@ -57,13 +61,11 @@ Item {
 			id: bodyText
 
 			Accessible.ignored: !hasLink
-			activeFocusOnTab: hasLink && (Constants.is_desktop || UiPluginModel.isChromeOS)
-			horizontalAlignment: alignment
+			activeFocusOnTab: hasLink
+			horizontalAlignment: root.alignment
+			text: root.text
 			visible: !!text
 			width: parent.width
-
-			FocusFrame {
-			}
 		}
 	}
 }

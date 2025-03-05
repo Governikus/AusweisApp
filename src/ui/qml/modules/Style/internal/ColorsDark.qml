@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
+pragma ComponentBehavior: Bound
 
 Colors {
+	id: root
+
 	background: "#232323"
 	border: "#ffffff"
-	fail: "#ff9b29"
+	error: "#eb0000"
 	focus_indicator: "#0098eb"
 	image: "#0098eb"
 	progressbar_text: textNormal.basic
@@ -22,7 +25,7 @@ Colors {
 		content.checked: "#ffffff"
 	}
 	controlCheckbox: DefaultControlColors {
-		background.checked: transparent
+		background.checked: root.transparent
 		background.pressed: "#80cdec"
 		border.pressed: "#80cdec"
 		content.basic: "#ffffff"
@@ -30,7 +33,7 @@ Colors {
 		content.pressed: "#ffffff"
 	}
 	controlOptional: DefaultControlColors {
-		background.basic: transparent
+		background.basic: root.transparent
 		background.pressed: "#0098eb"
 		border.basic: "#0098eb"
 		border.pressed: "#0098eb"
@@ -52,6 +55,11 @@ Colors {
 		content.checked: "#ffffff"
 		content.pressed: "#ffffff"
 	}
+	controlStagedProgressBar: DefaultControlColors {
+		background.basic: "#80cdec"
+		border.basic: root.transparent
+		content.basic: "#0098eb"
+	}
 	controlSwitch: DefaultControlColors {
 		background.pressed: "#80cdec"
 		border.pressed: "#80cdec"
@@ -70,8 +78,15 @@ Colors {
 	pane: DefaultPaneColors {
 	}
 	paneSublevel: DefaultPaneColors {
-		background.basic: pane.background.hovered
+		background.basic: root.pane.background.hovered
 		border.basic: "#576164"
+	}
+	remoteIndicator: ComponentColors {
+		basic: "#0098eb"
+		checked: basic
+		disabled: "#798183"
+		hovered: basic
+		pressed: basic
 	}
 	textHeadline: DefaultTextColors {
 	}
@@ -94,7 +109,7 @@ Colors {
 			checked: "#0098eb"
 			disabled: "#303030"
 			hovered: "#80cdec"
-			pressed: transparent
+			pressed: root.transparent
 		}
 		border: ComponentColors {
 			basic: "#ffffff"
@@ -123,11 +138,11 @@ Colors {
 			basic: "#303030"
 			checked: "#0098eb"
 			disabled: "#303030"
-			hovered: lighter(basic, 0.05)
-			pressed: lighter(basic, 0.10)
+			hovered: root.lighter(basic, 0.05)
+			pressed: root.lighter(basic, 0.10)
 		}
 		border: ComponentColors {
-			basic: software_renderer ? "#ffffff" : transparent
+			basic: root.software_renderer ? "#ffffff" : root.transparent
 			checked: basic
 			disabled: basic
 			hovered: basic

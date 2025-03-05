@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Holds some basic card control commands
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,7 +9,9 @@
 
 #include <QSharedPointer>
 
+
 class test_CardConnection;
+
 
 namespace governikus
 {

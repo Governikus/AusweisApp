@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateDataModel.h"
 
 #include "AppUpdater.h"
+#include "SettingsModel.h"
 
 #include <QDir>
 #include <QLoggingCategory>
@@ -30,6 +31,42 @@ AppUpdateDataModel::AppUpdateDataModel()
 }
 
 
+QString AppUpdateDataModel::errorFromStatusCode(GlobalStatus::Code pCode) const
+{
+	switch (pCode)
+	{
+		case GlobalStatus::Code::Downloader_Aborted:
+			return QString();
+
+		case GlobalStatus::Code::Downloader_Data_Corrupted:
+			//: INFO DESKTOP Text of the popup that is shown when the app download failed because of a wrong checksum.
+			return tr("The received data is broken. Check your network connection and try to restart the update.");
+
+		case GlobalStatus::Code::Update_Execution_Failed:
+
+			//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (1/2).
+			return tr("The update could not be started automatically after a successful download. Please try to do a manual update. You can find the downloaded file %1here%2.").arg(QStringLiteral("<a href=\"%1\">").arg(getDownloadFolder())).arg(QStringLiteral("</a>"));
+
+		default:
+			//: INFO DESKTOP Generic text of the popup that is shown when the app download failed.
+			return tr("An unknown network error occurred. Check your network connection and try to restart the update.");
+
+	}
+}
+
+
+QString AppUpdateDataModel::supportInfoFromStatusCode(GlobalStatus::Code pCode) const
+{
+	if (pCode == GlobalStatus::Code::Update_Execution_Failed)
+	{
+		const auto language = Env::getSingleton<SettingsModel>()->getLanguage();
+		//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (2/2).
+		return tr("If this does not help, contact our %1support%2.").arg(QStringLiteral("<a href=\"%1\">").arg(QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/support").arg(language))).arg(QStringLiteral("</a>"));
+	}
+	return QString();
+}
+
+
 void AppUpdateDataModel::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pStatus)
 {
 	mUpdateAvailable = pUpdateAvailable;
@@ -52,8 +89,18 @@ void AppUpdateDataModel::onAppDownloadFinished(const GlobalStatus& pError)
 	if (pError.isError())
 	{
 		mDownloadProgress = 0;
+
 		Q_EMIT fireDownloadProgressChanged();
-		Q_EMIT fireAppUpdateFailed(pError.getStatusCode());
+
+		const auto& statusCode = pError.getStatusCode();
+
+		if (statusCode == GlobalStatus::Code::Downloader_Aborted)
+		{
+			Q_EMIT fireAppUpdateAborted();
+			return;
+		}
+
+		Q_EMIT fireAppUpdateFailed(errorFromStatusCode(statusCode), supportInfoFromStatusCode(statusCode));
 		return;
 	}
 
@@ -79,7 +126,7 @@ void AppUpdateDataModel::onAppDownloadFinished(const GlobalStatus& pError)
 	qCCritical(update) << "Could not launch new process.";
 #endif
 
-	Q_EMIT fireAppUpdateFailed(GlobalStatus::Code::Update_Execution_Failed);
+	Q_EMIT fireAppUpdateFailed(errorFromStatusCode(GlobalStatus::Code::Update_Execution_Failed), supportInfoFromStatusCode(GlobalStatus::Code::Update_Execution_Failed));
 }
 
 

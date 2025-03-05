@@ -1,0 +1,161 @@
+From 9b7450da2b01cd7a8c9e201329d75ea6d4b9ea7b Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Tue, 5 Nov 2024 15:50:12 -0800
+Subject: QThread/Unix: do clean up the QAdoptedThread for the main thread
+
+Commit 1ed0dd88a32cd2c5ae100b48e14ff55bcbb652e6 ("QThread/Unix: make
+QThreadPrivate::finish() be called much later") introduced this problem.
+Commit 4fabde349f16b59f37568da2a4c050c6dd53a34e split the thread
+termination in two phases, but did not fix this.
+
+This re-applies commit 950b35cf97ad398f97883efd2a18ee97994a8a9c ("Clear
+the current thread data for the main thread"), which was reverted in
+commit 7dc622290bb8e81af634034f443e25be0d6d48a3 ("Make sure QThreadData
+and QAdoptedThread object is destroyed at app exit"), both from Qt 5.1.
+
+Between Qt 5.1 and 6.7, the responsibility of clearing the
+QAdoptedThread for the main thread was split: it could occur either in
+~QCoreApplicationData if exit() was called in that thread or in
+~QThreadData() if it wasn't (e.g., when the Qt "main thread" is not
+main()'s thread):
+  * frame #0: 0x0000000101db8a28 QtCore`QAdoptedThread::~QAdoptedThread(this=0x000060000176c070) at qthread.cpp:139:1
+    frame #1: 0x0000000101db81eb QtCore`QThreadData::~QThreadData(this=0x0000600002468000) at qthread.cpp:82:5
+    frame #2: 0x0000000101db8379 QtCore`QThreadData::~QThreadData(this=0x0000600002468000) at qthread.cpp:57:1
+    frame #3: 0x0000000101db841c QtCore`QThreadData::deref(this=0x0000600002468000) at qthread.cpp:108:9
+    frame #4: 0x0000000101f4ec79 QtCore`destroy_current_thread_data(p=0x0000600002468000) at qthread_unix.cpp:104:11
+
+This commit centralizes and gives ~QThreadData() the exclusive
+responsibility.  That requires not resetting QThreadData::threadId so
+~QThreadData can know it is theMainThread.
+
+Fixes: QTBUG-130895
+Task-number: QTBUG-129927
+Task-number: QTBUG-129846
+Task-number: QTBUG-130341
+Task-number: QTBUG-117996
+Pick-to: 6.8
+Change-Id: Ie3f3cbdc5523837b505cfffd95fba5e6498b5069
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+(cherry picked from commit 65093a84c2b94b1543fd4593bc45d491951d28d4)
+---
+ src/corelib/kernel/qcoreapplication.cpp       |  6 +++--
+ src/corelib/thread/qthread_unix.cpp           | 24 ++++++++++++-------
+ .../qcoreapplication/tst_qcoreapplication.cpp | 19 ++++++++++++---
+ 3 files changed, 35 insertions(+), 14 deletions(-)
+
+diff --git x/qtbase/src/corelib/kernel/qcoreapplication.cpp y/qtbase/src/corelib/kernel/qcoreapplication.cpp
+index ba069c40408ed42eafbdc690ad707b1744d41144..faf3b87c2276cc839a3c81b0801954f1da24e431 100644
+--- x/qtbase/src/corelib/kernel/qcoreapplication.cpp
++++ y/qtbase/src/corelib/kernel/qcoreapplication.cpp
+@@ -364,14 +364,16 @@ Q_CONSTINIT uint QCoreApplicationPrivate::attribs =
+     (1 << Qt::AA_SynthesizeMouseForUnhandledTouchEvents) |
+     (1 << Qt::AA_SynthesizeMouseForUnhandledTabletEvents);
+ 
+-struct QCoreApplicationData {
++struct QCoreApplicationData
++{
+     QCoreApplicationData() noexcept {
+         applicationNameSet = false;
+         applicationVersionSet = false;
+     }
+     ~QCoreApplicationData() {
+-#ifndef QT_NO_QOBJECT
++#if !defined(QT_NO_QOBJECT) && defined(Q_OS_WIN)
+         // cleanup the QAdoptedThread created for the main() thread
++        // (for Unix systems, see qthread_unix.cpp:set_thread_data())
+         if (auto *t = QCoreApplicationPrivate::theMainThread.loadAcquire()) {
+             QThreadData *data = QThreadData::get2(t);
+             data->deref(); // deletes the data and the adopted thread
+diff --git x/qtbase/src/corelib/thread/qthread_unix.cpp y/qtbase/src/corelib/thread/qthread_unix.cpp
+index 14c6490c1e7ba09a36bfdfe3c6311fae442ae70d..36112afd4dfa00ac973ffdb2c7a89e40a73ffa42 100644
+--- x/qtbase/src/corelib/thread/qthread_unix.cpp
++++ y/qtbase/src/corelib/thread/qthread_unix.cpp
+@@ -140,12 +140,20 @@ static QThreadData *get_thread_data()
+     return currentThreadData;
+ }
+ 
++#if QT_CONFIG(broken_threadlocal_dtors)
++// The destructors registered with pthread_key_create() below are NOT run from
++// exit(), so we must also use atexit().
++static void destroy_main_thread_data()
++{
++    if (QThreadData *d = get_thread_data())
++        destroy_current_thread_data(d);
++}
++Q_DESTRUCTOR_FUNCTION(destroy_main_thread_data)
++#endif
++
+ static void set_thread_data(QThreadData *data)
+ {
+-    // Only activate the late cleanup for auxiliary threads. We can't use
+-    // QThread::isMainThread() here because theMainThreadId will not have been
+-    // set yet.
+-    if (data && QCoreApplicationPrivate::theMainThreadId.loadAcquire()) {
++    if (data) {
+         if constexpr (QT_CONFIG(broken_threadlocal_dtors)) {
+             static pthread_key_t tls_key;
+             struct TlsKey {
+@@ -418,7 +426,6 @@ void QThreadPrivate::cleanup()
+         d->interruptionRequested.store(false, std::memory_order_relaxed);
+ 
+         d->isInFinish = false;
+-        d->data->threadId.storeRelaxed(nullptr);
+ 
+         d->thread_done.wakeAll();
+     });
+@@ -828,14 +835,14 @@ bool QThread::wait(QDeadlineTimer deadline)
+     Q_D(QThread);
+     QMutexLocker locker(&d->mutex);
+ 
++    if (d->finished || !d->running)
++        return true;
++
+     if (isCurrentThread()) {
+         qWarning("QThread::wait: Thread tried to wait on itself");
+         return false;
+     }
+ 
+-    if (d->finished || !d->running)
+-        return true;
+-
+     return d->wait(locker, deadline);
+ }
+ 
+@@ -848,7 +855,6 @@ bool QThreadPrivate::wait(QMutexLocker<QMutex> &locker, QDeadlineTimer deadline)
+         if (!d->thread_done.wait(locker.mutex(), deadline))
+             return false;
+     }
+-    Q_ASSERT(d->data->threadId.loadRelaxed() == nullptr);
+ 
+     return true;
+ }
+diff --git x/qtbase/tests/auto/corelib/kernel/qcoreapplication/tst_qcoreapplication.cpp y/qtbase/tests/auto/corelib/kernel/qcoreapplication/tst_qcoreapplication.cpp
+index 5dc445d44f211f31d6a17212b09c953fcf1a8c5a..a031e6a54d0d3ff3734de06dbb1cb4e9d1a2ff9c 100644
+--- x/qtbase/tests/auto/corelib/kernel/qcoreapplication/tst_qcoreapplication.cpp
++++ y/qtbase/tests/auto/corelib/kernel/qcoreapplication/tst_qcoreapplication.cpp
+@@ -1065,9 +1065,22 @@ static void createQObjectOnDestruction()
+     // QThread) after the last QObject has been destroyed (especially after
+     // QCoreApplication has).
+ 
+-#if !defined(QT_QGUIAPPLICATIONTEST) && !defined(Q_OS_WIN) && !defined(Q_OS_VXWORKS)
+-    // QCoreApplicationData's global static destructor has run and cleaned up
+-    // the QAdoptedThread.
++#if defined(QT_QGUIAPPLICATIONTEST)
++    // If we've linked to QtGui, we make no representations about there being
++    // global static (not Q_GLOBAL_STATIC) variables that are QObject.
++#elif QT_CONFIG(broken_threadlocal_dtors)
++    // With broken thread-local destructors, we cannot guarantee the ordering
++    // between thread_local destructors and static-lifetime destructors (hence
++    // why they're broken).
++    //
++    // On Unix systems, we use a Q_DESTRUCTOR_FUNCTION in qthread_unix.cpp to
++    // work around the issue, but that means it cannot have run yet.
++    //
++    // This variable is set on Windows too, even though the nature of the
++    // problem is different.
++#else
++    // The thread_local destructor in qthread_unix.cpp has run so the
++    // QAdoptedThread must have been cleaned up.
+     if (theMainThreadIsSet())
+         qFatal("theMainThreadIsSet() returned true; some QObject must have leaked");
+ #endif

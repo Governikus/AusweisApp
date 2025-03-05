@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EcdhGenericMapping.h"
@@ -36,14 +36,7 @@ QByteArray EcdhGenericMapping::generateLocalMappingData()
 	}
 
 	mLocalKey = EcUtil::generateKey(mCurve);
-
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 	return EcUtil::getEncodedPublicKey(mLocalKey);
-
-#else
-	return EcUtil::point2oct(mCurve, EC_KEY_get0_public_key(mLocalKey.data()));
-
-#endif
 }
 
 
@@ -81,13 +74,7 @@ bool EcdhGenericMapping::generateEphemeralDomainParameters(const QByteArray& pRe
 
 QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPointer<const EC_POINT>& pRemotePubKey, const QSharedPointer<const BIGNUM>& pS)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
-	const auto& privKeyPtr = EcUtil::getPrivateKey(mLocalKey);
-	const BIGNUM* privKey = privKeyPtr.data();
-#else
-	const BIGNUM* privKey = EC_KEY_get0_private_key(mLocalKey.data());
-#endif
-
+	const auto& privKey = EcUtil::getPrivateKey(mLocalKey);
 	if (!privKey)
 	{
 		qCCritical(card) << "Cannot fetch private key";
@@ -95,7 +82,7 @@ QSharedPointer<EC_POINT> EcdhGenericMapping::createNewGenerator(const QSharedPoi
 	}
 
 	QSharedPointer<EC_POINT> H = EcUtil::create(EC_POINT_new(mCurve.data()));
-	if (!EC_POINT_mul(mCurve.data(), H.data(), nullptr, pRemotePubKey.data(), privKey, nullptr))
+	if (!EC_POINT_mul(mCurve.data(), H.data(), nullptr, pRemotePubKey.data(), privKey.data(), nullptr))
 	{
 		qCCritical(card) << "Calculation of elliptic curve point H failed";
 		return QSharedPointer<EC_POINT>();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalIfdClient.h"
@@ -39,7 +39,7 @@ LocalIfdClient::LocalIfdClient()
 	, mServiceConnection()
 #endif
 {
-	const Discovery discovery(QStringLiteral("LocalIfdClient"), QStringLiteral("LocalIfdClient"), PortFile::cDefaultPort, {IfdVersion::supported()});
+	const Discovery discovery(QStringLiteral("LocalIfdClient"), QByteArray("LocalIfdClient"), PortFile::cDefaultPort, {IfdVersion::supported()});
 	mDevice.reset(new IfdListEntry(IfdDescriptor(discovery, QHostAddress::LocalHostIPv6, true)));
 }
 
@@ -165,8 +165,8 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdServic
 	Q_UNUSED(pEnv)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			Env::getSingleton<LocalIfdClient>()->serviceConnected();
-		});
+				Env::getSingleton<LocalIfdClient>()->serviceConnected();
+			});
 }
 
 
@@ -176,8 +176,8 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdServic
 	Q_UNUSED(pEnv)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			Env::getSingleton<LocalIfdClient>()->serviceDisconnected();
-		});
+				Env::getSingleton<LocalIfdClient>()->serviceDisconnected();
+			});
 }
 
 

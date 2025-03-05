@@ -5,8 +5,9 @@ It is enabled by default in all SDKs. This will be indicated by a :ref:`reader`
 message with the parameter **name** being `Simulator`.
 This virtual card can be inserted by :ref:`set_card` or can be automatically
 used in :ref:`automatic` mode.
-The default values of that virtual card are hardcoded and can only be changed
-by the **files** and **keys** parameter in the **simulator** parameter.
+The default values of that virtual card are hardcoded and can be changed
+by the **files** and **keys** parameter in the **simulator** parameter or
+by an environment variable in :ref:`automatic` mode.
 
 
 .. note::

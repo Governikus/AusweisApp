@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterPacePasswordIfd.h"
@@ -38,6 +38,7 @@ void StateEnterPacePasswordIfd::onUserError()
 void StateEnterPacePasswordIfd::onEntry(QEvent* pEvent)
 {
 	AbstractState::onEntry(pEvent);
+
 	stopNfcScanIfNecessary();
 
 	if (getContext() && getContext()->getIfdServer() && getContext()->getIfdServer()->getMessageHandler())

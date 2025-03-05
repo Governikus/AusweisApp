@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of \ref Card for smartphone as card reader (SaC).
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,6 +14,9 @@
 #include <QWaitCondition>
 
 
+class test_IfdCard;
+
+
 namespace governikus
 {
 
@@ -25,6 +24,8 @@ class IfdCard
 	: public Card
 {
 	Q_OBJECT
+
+	friend class ::test_IfdCard;
 
 	private:
 		bool mWaitingForAnswer;
@@ -40,11 +41,11 @@ class IfdCard
 		bool mConnected;
 		QString mProgressMessage;
 
-		bool sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pTimeout);
+		bool sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pExtraTimeout = 0);
 
 	private Q_SLOTS:
 		void onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& pJsonObject);
-		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 
 	Q_SIGNALS:
 		void fireCardRemoved();

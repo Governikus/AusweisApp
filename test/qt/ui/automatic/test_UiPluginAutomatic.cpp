@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref UiPluginAutomatic
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginAutomatic.h"
@@ -82,6 +78,7 @@ class test_UiPluginAutomatic
 		void cleanup()
 		{
 			MockReaderManagerPlugin::getInstance().removeAllReader();
+			MockReaderManagerPlugin::getInstance().setPluginInfo(ReaderManagerPluginInfo(ReaderManagerPluginType::MOCK, true, true));
 		}
 
 
@@ -236,11 +233,51 @@ class test_UiPluginAutomatic
 		}
 
 
+		void insertableCard_data()
+		{
+			QTest::addColumn<bool>("killWorkflow");
+			QTest::addColumn<QLatin1String>("envVariable");
+			QTest::addColumn<QByteArray>("envValue");
+			QTest::addColumn<ReaderManagerPluginType>("readerType");
+
+			QTest::newRow("undefined") << false << QLatin1String() << QByteArray() << ReaderManagerPluginType::MOCK;
+			QTest::newRow("defined OK") << false << "AUSWEISAPP_AUTOMATIC_SIMULATOR"_L1 << QByteArray(R"({"files": []})") << ReaderManagerPluginType::SIMULATOR;
+			QTest::newRow("defined broken") << true << "AUSWEISAPP_AUTOMATIC_SIMULATOR"_L1 << "broken"_ba << ReaderManagerPluginType::SIMULATOR;
+			QTest::newRow("defined broken json") << true << "AUSWEISAPP_AUTOMATIC_SIMULATOR"_L1 << "[]"_ba << ReaderManagerPluginType::SIMULATOR;
+			QTest::newRow("defined missing file") << true << "AUSWEISAPP_AUTOMATIC_SIMULATOR"_L1 << ":/missingFile"_ba << ReaderManagerPluginType::SIMULATOR;
+			QTest::newRow("defined ok file") << false << "AUSWEISAPP_AUTOMATIC_SIMULATOR"_L1 << ":/card/simulatorFiles.json"_ba << ReaderManagerPluginType::SIMULATOR;
+		}
+
+
 		void insertableCard()
 		{
+			QFETCH(bool, killWorkflow);
+			QFETCH(QLatin1String, envVariable);
+			QFETCH(QByteArray, envValue);
+			QFETCH(ReaderManagerPluginType, readerType);
+
+			const auto guard = qScopeGuard([envVariable] {
+						if (!envVariable.isEmpty())
+						{
+							qunsetenv(envVariable.data());
+						}
+					});
+
+			if (!envVariable.isEmpty())
+			{
+				qputenv(envVariable.data(), envValue);
+			}
+
+			MockReaderManagerPlugin::getInstance().removeAllReader();
+			Env::getSingleton<ReaderManager>()->clearCache();
+
+			const auto& oldInfo = MockReaderManagerPlugin::getInstance().getInfo();
+			ReaderManagerPluginInfo info(readerType, oldInfo.isEnabled(), oldInfo.isAvailable());
+			MockReaderManagerPlugin::getInstance().setPluginInfo(info);
 			MockReaderManagerPlugin::getInstance().setInitialScanState(ReaderManagerPluginInfo::InitialScan::SUCCEEDED);
-			MockReader* unusedReader = MockReaderManagerPlugin::getInstance().addReader("MockReader1"_L1);
-			MockReader* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader2"_L1);
+
+			MockReader* unusedReader = MockReaderManagerPlugin::getInstance().addReader("MockReader1"_L1, readerType);
+			auto* reader = MockReaderManagerPlugin::getInstance().addReader("MockReader2"_L1, readerType);
 			reader->setCard(MockCardConfig());
 
 			QSignalSpy spy(Env::getSingleton<ReaderManager>(), &ReaderManager::fireReaderPropertiesUpdated);
@@ -264,13 +301,26 @@ class test_UiPluginAutomatic
 			QSignalSpy spyCard(Env::getSingleton<ReaderManager>(), &ReaderManager::fireCardInserted);
 			ui.onWorkflowStarted(request);
 			QVERIFY(!context->isStateApproved());
-			QTest::ignoreMessage(QtDebugMsg, R"(Automatically insert card into: "MockReader2")");
+			if (killWorkflow)
+			{
+				QTest::ignoreMessage(QtWarningMsg, QRegularExpression(u"Cannot get optional data:"_s));
+				QTest::ignoreMessage(QtWarningMsg, "Cannot insert card... abort automatic workflow");
+				QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
+			}
+			else
+			{
+				QTest::ignoreMessage(QtDebugMsg, R"(Automatically insert card into: "MockReader2")");
+			}
+
 			context->setCurrentState(StateBuilder::generateStateName<StateSelectReader>());
-			QVERIFY(!context->isWorkflowKilled());
+			QCOMPARE(context->isWorkflowKilled(), killWorkflow);
 			QVERIFY(context->isStateApproved());
 
-			QTRY_VERIFY(spyCard.count() > 0); // clazy:exclude=qstring-allocations
-			QVERIFY(Env::getSingleton<ReaderManager>()->getReaderInfo(reader->getName()).hasEid());
+			if (!killWorkflow)
+			{
+				QTRY_VERIFY(spyCard.count() > 0); // clazy:exclude=qstring-allocations
+				QVERIFY(Env::getSingleton<ReaderManager>()->getReaderInfo(reader->getName()).hasEid());
+			}
 		}
 
 
@@ -385,11 +435,11 @@ class test_UiPluginAutomatic
 			QFETCH(QByteArray, envValue);
 
 			const auto guard = qScopeGuard([envVariable] {
-					if (!envVariable.isEmpty())
-					{
-						qunsetenv(envVariable.data());
-					}
-				});
+						if (!envVariable.isEmpty())
+						{
+							qunsetenv(envVariable.data());
+						}
+					});
 
 			if (!envVariable.isEmpty())
 			{

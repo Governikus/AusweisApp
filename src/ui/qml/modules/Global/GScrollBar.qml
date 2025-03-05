@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
 import Governikus.Style
 
 ScrollBar {
-	id: baseItem
+	id: root
 
-	property bool autohide: !Constants.is_desktop
+	property bool autohide: !Style.is_layout_desktop
 	property alias borderWidth: customContent.border.width
 	property alias color: customContent.color
 	property bool highlighted: false
@@ -34,12 +34,12 @@ ScrollBar {
 		color: colors.controlBackground
 		implicitHeight: 100
 		implicitWidth: Style.dimens.scrollbar_width
-		opacity: (!autohide || active || highlighted) ? 1.0 : 0.0
+		opacity: (!root.autohide || root.active || root.highlighted) ? 1.0 : 0.0
 		radius: width / 2
 
 		Behavior on opacity {
 			NumberAnimation {
-				duration: Constants.animation_duration
+				duration: Style.animation_duration
 				easing.type: Easing.InOutCubic
 			}
 		}
@@ -53,11 +53,11 @@ ScrollBar {
 
 		checkedCondition: false
 		controlStyle: Style.color.controlScrollbar
-		statefulControl: baseItem
+		statefulControl: root
 	}
 	Timer {
 		id: highlightTimer
 
-		onTriggered: baseItem.highlighted = false
+		onTriggered: root.highlighted = false
 	}
 }

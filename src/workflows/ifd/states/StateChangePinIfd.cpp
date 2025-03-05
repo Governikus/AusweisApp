@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangePinIfd.h"
 
-#include "ServerMessageHandler.h"
 #include "pinpad/PinModify.h"
 
 #include <QLoggingCategory>
 
+
 Q_DECLARE_LOGGING_CATEGORY(ifd)
+Q_DECLARE_LOGGING_CATEGORY(statemachine)
 
 
 using namespace governikus;
@@ -29,8 +30,9 @@ void StateChangePinIfd::run()
 
 	const QSharedPointer<IfdServiceContext>& context = getContext();
 	auto cardConnection = context->getCardConnection();
-	if (cardConnection.isNull())
+	if (!cardConnection)
 	{
+		qCDebug(statemachine) << "No card connection available";
 		context->setModifyPinMessageResponseApdu(ResponseApdu());
 		Q_EMIT fireContinue();
 		return;
@@ -41,7 +43,6 @@ void StateChangePinIfd::run()
 	PinModify pinModify(modifyPinMessage->getInputData());
 	const quint8 timeoutSeconds = pinModify.getTimeoutSeconds();
 
-	Q_ASSERT(cardConnection);
 	*this << cardConnection->callSetEidPinCommand(this,
 			&StateChangePinIfd::onChangePinDone,
 			context->getNewPin().toLatin1(),

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief A configured filter used to retrieve readers
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,6 +9,7 @@
 
 #include <QFlags>
 #include <QList>
+
 
 namespace governikus
 {

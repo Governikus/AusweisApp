@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Downloader.h"
@@ -73,10 +73,10 @@ void Downloader::onNetworkReplyFinished()
 	qCDebug(fileprovider) << "Downloader finished:" << mCurrentReply->request().url().fileName();
 
 	const auto guard = qScopeGuard([this] {
-			mCurrentReply->disconnect(this);
-			mCurrentReply.reset();
-			startDownloadIfPending();
-		});
+				mCurrentReply->disconnect(this);
+				mCurrentReply.reset();
+				startDownloadIfPending();
+			});
 
 	const QUrl url = mCurrentReply->request().url();
 	if (mCurrentReply->property(cABORTED).toBool())
@@ -190,12 +190,12 @@ bool Downloader::abort(const QUrl& pUpdateUrl)
 void Downloader::download(const QUrl& pUpdateUrl, const QDateTime& pCurrentTimestamp)
 {
 	QMetaObject::invokeMethod(this, [this, pUpdateUrl, pCurrentTimestamp] {
-			qCDebug(fileprovider) << "Download:" << pUpdateUrl;
-			QNetworkRequest request(pUpdateUrl);
-			if (pCurrentTimestamp.isValid())
-			{
-				request.setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
-			}
-			scheduleDownload(request);
-		});
+				qCDebug(fileprovider) << "Download:" << pUpdateUrl;
+				QNetworkRequest request(pUpdateUrl);
+				if (pCurrentTimestamp.isValid())
+				{
+					request.setHeader(QNetworkRequest::IfModifiedSinceHeader, pCurrentTimestamp);
+				}
+				scheduleDownload(request);
+			});
 }

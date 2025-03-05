@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -9,7 +9,9 @@
 #include "context/IfdServiceContext.h"
 #include "context/SelfAuthContext.h"
 
-#include "BuildHelper.h"
+#ifdef Q_OS_ANDROID
+	#include "BuildHelper.h"
+#endif
 #include "Env.h"
 #include "LanguageLoader.h"
 #include "Randomizer.h"
@@ -39,7 +41,14 @@ Q_DECLARE_LOGGING_CATEGORY(feedback)
 
 void ApplicationModel::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
-	if (pInfo.getPluginType() == ReaderManagerPluginType::NFC)
+#if defined(QT_NO_DEBUG) || defined(Q_OS_IOS) || defined(Q_OS_ANDROID) || defined(Q_OS_WINRT)
+
+	const ReaderManagerPluginType type = ReaderManagerPluginType::NFC;
+#else
+	const ReaderManagerPluginType type = ReaderManagerPluginType::PCSC;
+#endif
+
+	if (pInfo.getPluginType() == type)
 	{
 		Q_EMIT fireNfcStateChanged();
 	}
@@ -52,7 +61,6 @@ ApplicationModel::ApplicationModel()
 	, mWifiEnabled(false)
 	, mFeedback()
 	, mFeedbackTimer()
-	, mFeedbackDisplayLength(3500)
 	, mIsAppInForeground(true)
 #ifdef Q_OS_IOS
 	, mPrivate(new Private())
@@ -61,6 +69,7 @@ ApplicationModel::ApplicationModel()
 	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &ApplicationModel::fireReaderPropertiesUpdated);
 	connect(readerManager, &ReaderManager::fireStatusChanged, this, &ApplicationModel::onStatusChanged);
+	connect(readerManager, &ReaderManager::firePluginAdded, this, &ApplicationModel::onStatusChanged);
 	connect(readerManager, &ReaderManager::fireReaderAdded, this, &ApplicationModel::fireAvailableReaderChanged);
 	connect(readerManager, &ReaderManager::fireReaderRemoved, this, &ApplicationModel::fireAvailableReaderChanged);
 	connect(&mWifiInfo, &WifiInfo::fireWifiEnabledChanged, this, &ApplicationModel::onWifiEnabledChanged);
@@ -131,10 +140,10 @@ QUrl ApplicationModel::getReleaseNotesUrl() const
 
 ApplicationModel::NfcState ApplicationModel::getNfcState() const
 {
-#if !defined(QT_NO_DEBUG) && !defined(Q_OS_IOS) && !defined(Q_OS_ANDROID) && !defined(Q_OS_WINRT)
-	const ReaderManagerPluginType type = ReaderManagerPluginType::PCSC;
-#else
+#if defined(QT_NO_DEBUG) || defined(Q_OS_IOS) || defined(Q_OS_ANDROID) || defined(Q_OS_WINRT)
 	const ReaderManagerPluginType type = ReaderManagerPluginType::NFC;
+#else
+	const ReaderManagerPluginType type = ReaderManagerPluginType::PCSC;
 #endif
 
 	const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(type);
@@ -272,7 +281,7 @@ void ApplicationModel::onShowNextFeedback()
 	mFeedback.removeFirst();
 	if (!mFeedback.isEmpty() && !isScreenReaderRunning())
 	{
-		mFeedbackTimer.start(mFeedbackDisplayLength);
+		mFeedbackTimer.start(getFeedbackTimeout());
 	}
 
 	Q_EMIT fireFeedbackChanged();
@@ -302,7 +311,7 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 	{
 		if (!isScreenReaderRunning())
 		{
-			mFeedbackTimer.start(mFeedbackDisplayLength);
+			mFeedbackTimer.start(getFeedbackTimeout());
 		}
 		Q_EMIT fireFeedbackChanged();
 	}
@@ -407,3 +416,12 @@ QString ApplicationModel::stripHtmlTags(QString pString) const
 	pString.replace(QRegularExpression(QStringLiteral("(<br>)+")), QStringLiteral(" "));
 	return pString.remove(QRegularExpression(QStringLiteral("<[^>]*>")));
 }
+
+
+#ifndef Q_OS_IOS
+void ApplicationModel::showAppStoreRatingDialog() const
+{
+}
+
+
+#endif

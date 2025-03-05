@@ -1,0 +1,238 @@
+From 336c222c3285f0a026abb4888575741de97ffce5 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Fri, 7 Feb 2025 22:15:40 +0100
+Subject: Fix build with -no-feature-mdiarea and -no-feature-fontcombobox
+
+* To ensure other build errors sync the guards from
+  saveExtraInfo with loadExtraInfo in QAbstractFormBuilder
+  and also guard the includes.
+* Additional guards are also added to QUiLoader.
+
+Fixes: QTBUG-95236
+Pick-to: 6.9 6.8
+Change-Id: I9226bbc215a82179d426da3a0061d4e83035f13b
+Reviewed-by: Friedemann Kleint <Friedemann.Kleint@qt.io>
+(cherry picked from commit c85ef6fac53c8ce80ff31458c305fc5aabc81118)
+---
+ .../src/lib/uilib/abstractformbuilder.cpp     | 47 ++++++++++++++-----
+ .../src/lib/uilib/formbuilderextra.cpp        | 13 +++++
+ .../src/lib/uilib/formbuilderextra_p.h        |  2 +
+ src/uitools/quiloader.cpp                     | 33 +++++++++----
+ 4 files changed, 75 insertions(+), 20 deletions(-)
+
+diff --git x/qttools/src/designer/src/lib/uilib/abstractformbuilder.cpp y/qttools/src/designer/src/lib/uilib/abstractformbuilder.cpp
+index 6e3f83d8902e7f971d9177b9cb1c6386bbef998e..2c55f9f84795eee21cfd17b5002d5a17a9b92a5b 100644
+--- x/qttools/src/designer/src/lib/uilib/abstractformbuilder.cpp
++++ y/qttools/src/designer/src/lib/uilib/abstractformbuilder.cpp
+@@ -13,23 +13,39 @@
+ #include <QtWidgets/qmenubar.h>
+ #include <QtWidgets/qstatusbar.h>
+ #include <QtWidgets/qtoolbar.h>
+-#include <QtWidgets/qmdiarea.h>
++#if QT_CONFIG(mdiarea)
++#  include <QtWidgets/qmdiarea.h>
++#endif
+ #include <QtWidgets/qdockwidget.h>
+ #include <QtWidgets/qwizard.h>
+-#include <QtWidgets/qstackedwidget.h>
+-#include <QtWidgets/qtoolbox.h>
+-#include <QtWidgets/qtabwidget.h>
++#if QT_CONFIG(stackedwidget)
++#  include <QtWidgets/qstackedwidget.h>
++#endif
++#if QT_CONFIG(toolbox)
++#  include <QtWidgets/qtoolbox.h>
++#endif
++#if QT_CONFIG(tabwidget)
++#  include <QtWidgets/qtabwidget.h>
++#endif
+ #include <QtWidgets/qsplitter.h>
+ #include <QtWidgets/qbuttongroup.h>
+ #include <QtWidgets/qboxlayout.h>
+ #include <QtWidgets/qformlayout.h>
+ #include <QtWidgets/qgridlayout.h>
+ #include <QtWidgets/qscrollarea.h>
+-#include <QtWidgets/qtreewidget.h>
+-#include <QtWidgets/qlistwidget.h>
++#if QT_CONFIG(treewidget)
++#  include <QtWidgets/qtreewidget.h>
++#endif
++#if QT_CONFIG(listwidget)
++#  include <QtWidgets/qlistwidget.h>
++#endif
+ #include <QtWidgets/qheaderview.h>
+-#include <QtWidgets/qtablewidget.h>
+-#include <QtWidgets/qfontcombobox.h>
++#if QT_CONFIG(tablewidget)
++#  include <QtWidgets/qtablewidget.h>
++#endif
++#if QT_CONFIG(combobox)
++#  include <QtWidgets/qcombobox.h>
++#endif
+ #include <QtWidgets/qpushbutton.h>
+ #ifndef QFORMINTERNAL_NAMESPACE
+ #  include <private/qlayout_p.h> // Compiling within Designer
+@@ -1980,15 +1996,24 @@ QTextBuilder *QAbstractFormBuilder::textBuilder() const
+ void QAbstractFormBuilder::saveExtraInfo(QWidget *widget, DomWidget *ui_widget,
+                                          DomWidget *ui_parentWidget)
+ {
+-    if (QListWidget *listWidget = qobject_cast<QListWidget*>(widget)) {
++    if (false) {
++#if QT_CONFIG(listwidget)
++    } else if (QListWidget *listWidget = qobject_cast<QListWidget*>(widget)) {
+         saveListWidgetExtraInfo(listWidget, ui_widget, ui_parentWidget);
++#endif
++#if QT_CONFIG(treewidget)
+     } else if (QTreeWidget *treeWidget = qobject_cast<QTreeWidget*>(widget)) {
+         saveTreeWidgetExtraInfo(treeWidget, ui_widget, ui_parentWidget);
++#endif
++#if QT_CONFIG(tablewidget)
+     } else if (QTableWidget *tableWidget = qobject_cast<QTableWidget*>(widget)) {
+         saveTableWidgetExtraInfo(tableWidget, ui_widget, ui_parentWidget);
++#endif
++#if QT_CONFIG(combobox)
+     } else if (QComboBox *comboBox = qobject_cast<QComboBox*>(widget)) {
+-        if (!qobject_cast<QFontComboBox*>(widget))
++        if (!QFormBuilderExtra::isQFontComboBox(widget))
+             saveComboBoxExtraInfo(comboBox, ui_widget, ui_parentWidget);
++#endif
+     } else if(QAbstractButton *ab = qobject_cast<QAbstractButton *>(widget)) {
+         saveButtonExtraInfo(ab, ui_widget, ui_parentWidget);
+     }
+@@ -2311,7 +2336,7 @@ void QAbstractFormBuilder::loadExtraInfo(DomWidget *ui_widget, QWidget *widget,
+ #endif
+ #if QT_CONFIG(combobox)
+     } else if (QComboBox *comboBox = qobject_cast<QComboBox*>(widget)) {
+-        if (!qobject_cast<QFontComboBox *>(widget))
++        if (!QFormBuilderExtra::isQFontComboBox(widget))
+             loadComboBoxExtraInfo(ui_widget, comboBox, parentWidget);
+ #endif
+ #if QT_CONFIG(tabwidget)
+diff --git x/qttools/src/designer/src/lib/uilib/formbuilderextra.cpp y/qttools/src/designer/src/lib/uilib/formbuilderextra.cpp
+index 81b56b9b7c3801b08aca8dc091877d36d4c338c8..5d5a14acf2f8e44cdcde60fb9672a025e3a626ab 100644
+--- x/qttools/src/designer/src/lib/uilib/formbuilderextra.cpp
++++ y/qttools/src/designer/src/lib/uilib/formbuilderextra.cpp
+@@ -11,6 +11,9 @@
+ #include <QtWidgets/qlabel.h>
+ #include <QtWidgets/qboxlayout.h>
+ #include <QtWidgets/qgridlayout.h>
++#if QT_CONFIG(fontcombobox)
++#  include <QtWidgets/qfontcombobox.h>
++#endif
+ 
+ #include <QtCore/qvariant.h>
+ #include <QtCore/qdebug.h>
+@@ -375,6 +378,16 @@ void QFormBuilderExtra::getLayoutMargins(const QList<DomProperty*> &properties,
+         *bottom = p->elementNumber();
+ }
+ 
++bool QFormBuilderExtra::isQFontComboBox(const QWidget *w)
++{
++#if QT_CONFIG(fontcombobox)
++    return qobject_cast<const QFontComboBox*>(w) != nullptr;
++#else
++    Q_UNUSED(w);
++    return false;
++#endif
++}
++
+ QString QFormBuilderExtra::boxLayoutStretch(const QBoxLayout *box)
+ {
+      return perCellPropertyToString(box, box->count(), &QBoxLayout::stretch);
+diff --git x/qttools/src/designer/src/lib/uilib/formbuilderextra_p.h y/qttools/src/designer/src/lib/uilib/formbuilderextra_p.h
+index 13be8d0c6a255b660a7e1496e1349bf2a2efc204..eda716d1744dedda3857173a5808ef8d9d5bc4ec 100644
+--- x/qttools/src/designer/src/lib/uilib/formbuilderextra_p.h
++++ y/qttools/src/designer/src/lib/uilib/formbuilderextra_p.h
+@@ -151,6 +151,8 @@ public:
+     static DomProperty *propertyByName(const QList<DomProperty*> &properties,
+                                        QAnyStringView needle);
+ 
++    static bool isQFontComboBox(const QWidget *w);
++
+     QStringList m_pluginPaths;
+     QMap<QString, QDesignerCustomWidgetInterface*> m_customWidgets;
+ 
+diff --git x/qttools/src/uitools/quiloader.cpp y/qttools/src/uitools/quiloader.cpp
+index 2621ace1cef0e4264f0b91da4e3e08362a5add82..36927a476777179ac47170b32f75849b78c94eeb 100644
+--- x/qttools/src/uitools/quiloader.cpp
++++ y/qttools/src/uitools/quiloader.cpp
+@@ -15,13 +15,24 @@
+ #include <QtWidgets/qapplication.h>
+ #include <QtWidgets/qlayout.h>
+ #include <QtWidgets/qwidget.h>
+-#include <QtWidgets/qtabwidget.h>
+-#include <QtWidgets/qtreewidget.h>
+-#include <QtWidgets/qlistwidget.h>
+-#include <QtWidgets/qtablewidget.h>
+-#include <QtWidgets/qtoolbox.h>
+-#include <QtWidgets/qcombobox.h>
+-#include <QtWidgets/qfontcombobox.h>
++#if QT_CONFIG(tabwidget)
++#   include <QtWidgets/qtabwidget.h>
++#endif
++#if QT_CONFIG(treewidget)
++#  include <QtWidgets/qtreewidget.h>
++#endif
++#if QT_CONFIG(listwidget)
++#   include <QtWidgets/qlistwidget.h>
++#endif
++#if QT_CONFIG(tablewidget)
++#  include <QtWidgets/qtablewidget.h>
++#endif
++#if QT_CONFIG(toolbox)
++#  include <QtWidgets/qtoolbox.h>
++#endif
++#if QT_CONFIG(combobox)
++#  include <QtWidgets/qcombobox.h>
++#endif
+ 
+ #include <QtGui/qaction.h>
+ #include <QtGui/qactiongroup.h>
+@@ -136,6 +147,7 @@ const QUiItemRolePair qUiItemRoles[] = {
+     { -1 , -1 }
+ };
+ 
++#if QT_CONFIG(treewidget)
+ static void recursiveReTranslate(QTreeWidgetItem *item, const QByteArray &class_name, bool idBased)
+ {
+     const QUiItemRolePair *irs = qUiItemRoles;
+@@ -155,6 +167,7 @@ static void recursiveReTranslate(QTreeWidgetItem *item, const QByteArray &class_
+     for (int i = 0; i < cnt; ++i)
+         recursiveReTranslate(item->child(i), class_name, idBased);
+ }
++#endif
+ 
+ template<typename T>
+ static void reTranslateWidgetItem(T *item, const QByteArray &class_name, bool idBased)
+@@ -170,11 +183,13 @@ static void reTranslateWidgetItem(T *item, const QByteArray &class_name, bool id
+     }
+ }
+ 
++#if QT_CONFIG(tablewidget)
+ static void reTranslateTableItem(QTableWidgetItem *item, const QByteArray &class_name, bool idBased)
+ {
+     if (item)
+         reTranslateWidgetItem(item, class_name, idBased);
+ }
++#endif
+ 
+ #define RETRANSLATE_SUBWIDGET_PROP(mainWidget, setter, propName) \
+     do { \
+@@ -253,7 +268,7 @@ public:
+ #endif
+ #if QT_CONFIG(combobox)
+             } else if (QComboBox *combow = qobject_cast<QComboBox*>(o)) {
+-                if (!qobject_cast<QFontComboBox*>(o)) {
++                if (!QFormBuilderExtra::isQFontComboBox(combow)) {
+                     const int cnt = combow->count();
+                     for (int i = 0; i < cnt; ++i) {
+                         const QVariant v = combow->itemData(i, Qt::DisplayPropertyRole);
+@@ -451,7 +466,7 @@ QWidget *FormBuilderPrivate::create(DomWidget *ui_widget, QWidget *parentWidget)
+ #endif
+ #if QT_CONFIG(combobox)
+     } else if (qobject_cast<QComboBox*>(w)) {
+-        if (qobject_cast<QFontComboBox*>(w))
++        if (QFormBuilderExtra::isQFontComboBox(w))
+             return w;
+ #endif
+ #if QT_CONFIG(toolbox)

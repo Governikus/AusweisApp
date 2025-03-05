@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -66,26 +66,26 @@ void Discovery::parseSupportedApi(const QJsonObject& pMessageObject)
 
 void Discovery::parseIfdId(const QJsonObject& pMessageObject)
 {
-	mIfdId = getStringValue(pMessageObject, IFD_ID());
+	const auto ifdId = getStringValue(pMessageObject, IFD_ID()).toLatin1();
 	if (isIncomplete())
 	{
 		return;
 	}
 
-	if (mIfdId.isEmpty())
+	if (ifdId.isEmpty())
 	{
-		markIncomplete(QStringLiteral("The value of IFDID should not be emtpy"));
+		markIncomplete(QStringLiteral("The value of IFDID should not be empty"));
 		return;
 	}
 
-	const QSslCertificate ifdCertificate(mIfdId.toLatin1());
+	const QSslCertificate ifdCertificate(ifdId);
 	if (!ifdCertificate.isNull())
 	{
 		mIfdId = RemoteServiceSettings::generateFingerprint(ifdCertificate);
 		return;
 	}
 
-	mIfdId = mIfdId.toLower();
+	mIfdId = QByteArray::fromHex(ifdId);
 }
 
 
@@ -109,7 +109,7 @@ void Discovery::parsePairing(const QJsonObject& pMessageObject)
 }
 
 
-Discovery::Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing)
+Discovery::Discovery(const QString& pIfdName, const QByteArray& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing)
 	: IfdMessage(IfdMessageType::UNDEFINED)
 	, mIfdName(pIfdName.toHtmlEscaped())
 	, mIfdId(pIfdId)
@@ -147,7 +147,7 @@ const QString& Discovery::getIfdName() const
 }
 
 
-const QString& Discovery::getIfdId() const
+const QByteArray& Discovery::getIfdId() const
 {
 	return mIfdId;
 }
@@ -183,7 +183,7 @@ QByteArray Discovery::toByteArray(IfdVersion::Version pIfdVersion, const QString
 
 	result[MSG_TYPE()] = QStringLiteral("REMOTE_IFD");
 	result[IFD_NAME()] = mIfdName;
-	result[IFD_ID()] = mIfdId;
+	result[IFD_ID()] = QString::fromLatin1(mIfdId.toHex());
 	result[PORT()] = mPort;
 
 	QJsonArray levels;

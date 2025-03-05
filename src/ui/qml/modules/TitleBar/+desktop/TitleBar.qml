@@ -1,27 +1,27 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
+import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
 import Governikus.Type
-import QtQuick.Layouts
 
 Rectangle {
-	id: titleBar
+	id: root
 
-	property var contentRoot
-	readonly property alias title: title.text
+	required property SectionPage contentItem
+	readonly property TitleBarSettings currentSettings: contentItem.titleBarSettings
+	property alias showPane: titlePane.visible
+	readonly property string title: contentItem.title
 
-	signal rootClicked
+	signal startClicked
 
 	function setActiveFocus() {
 		forceActiveFocus(Qt.MouseFocusReason);
-	}
-	function updateActions() {
-		d.actions = [rootAction];
-		d.addRecursive(contentRoot);
 	}
 
 	//: LABEL DESKTOP
@@ -31,25 +31,6 @@ Rectangle {
 	color: Style.color.background
 	height: titleBarColumn.height
 
-	QtObject {
-		id: d
-
-		property list<Item> actions
-		readonly property TitleBarAction currentAction: actions && actions.length > 0 ? actions[actions.length - 1] : rootAction
-		readonly property TitleBarAction prevAction: actions && actions.length > 1 ? actions[actions.length - 2] : rootAction
-
-		function addRecursive(root) {
-			for (let i in root.children) {
-				let child = root.children[i];
-				if (child.breadcrumpSearchPath && child.visible) {
-					if (child instanceof SectionPage && child.titleBarAction) {
-						actions.push(child.titleBarAction);
-					}
-					addRecursive(child);
-				}
-			}
-		}
-	}
 	FocusPoint {
 	}
 	Column {
@@ -67,17 +48,16 @@ Rectangle {
 			TitleBarAction {
 				id: rootAction
 
-				activeFocusOnTab: true
 				anchors.left: parent.left
-				anchors.leftMargin: Constants.pane_padding
+				anchors.leftMargin: Style.dimens.pane_padding
 				anchors.verticalCenter: parent.verticalCenter
-				enabled: d.currentAction.rootEnabled
+				enabled: root.currentSettings.startEnabled
 				horizontalPadding: 0
 				icon.source: "qrc:///images/desktop/home.svg"
 				//: LABEL DESKTOP
 				text: qsTr("Start page")
 
-				onClicked: titleBar.rootClicked()
+				onClicked: root.startClicked()
 			}
 			Row {
 				id: rightTitleBarActions
@@ -93,9 +73,9 @@ Rectangle {
 					height: rightTitleBarActions.height
 					source: "qrc:///images/desktop/material_settings.svg"
 					text: qsTr("Settings")
-					visible: d.currentAction.showSettings
+					visible: root.currentSettings.showSettings
 
-					onClicked: d.currentAction.settingsHandler()
+					onClicked: root.currentSettings.settingsClicked()
 				}
 				TitleBarButton {
 					id: notifyButton
@@ -130,45 +110,33 @@ Rectangle {
 		TitlePane {
 			id: titlePane
 
-			visible: d.actions.length > 1
+			visible: false
 			width: parent.width
 		}
-		Row {
-			height: title.height
-			leftPadding: Constants.pane_padding
+		RowLayout {
+			spacing: Style.dimens.pane_spacing
 			visible: titlePane.visible
 			width: parent.width
 
-			RowLayout {
-				height: parent.height
-				width: 1.5 * Math.max(backAction.implicitWidth, Style.dimens.min_button_width)
+			NavigationAction {
+				id: backAction
 
-				Item {
-					Layout.alignment: Qt.AlignLeft
-					Layout.fillHeight: true
-					data: d.currentAction.customSubAction
-				}
-				NavigationAction {
-					id: backAction
+				Layout.fillHeight: true
+				Layout.leftMargin: Style.dimens.pane_padding
+				enabled: root.currentSettings.navigationEnabled
+				type: root.currentSettings.navigationAction
+				visible: root.currentSettings.navigationAction !== NavigationAction.None
 
-					Layout.alignment: Qt.AlignLeft
-					Layout.fillHeight: true
-					type: NavigationAction.Action.Back
-					visible: !d.currentAction.customSubAction.visible
-
-					onClicked: d.prevAction.clicked()
-				}
+				onClicked: root.currentSettings.navigationActionClicked()
 			}
 			GText {
-				id: title
-
 				Accessible.role: Accessible.Heading
-				activeFocusOnTab: true
-				text: d.currentAction.text
+				Layout.maximumWidth: Number.POSITIVE_INFINITY
+				Layout.rightMargin: x
+				horizontalAlignment: Text.AlignHCenter
+				maximumLineCount: 1
+				text: root.title
 				textStyle: Style.text.title
-
-				FocusFrame {
-				}
 			}
 		}
 	}

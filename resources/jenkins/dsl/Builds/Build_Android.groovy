@@ -10,7 +10,8 @@ def j = new Build
 		name: 'Android_APK_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
-		artifacts: 'build/dist/**,build/src/libAusweisApp*'
+		artifacts: 'build/dist/**,build/src/libAusweisApp*',
+		trigger: ''
 	).generate(this)
 
 
@@ -61,7 +62,8 @@ def j = new Build
 		name: 'Android_AAR_' + ARCH,
 		libraries: 'Android_' + ARCH,
 		label: 'Android',
-		artifacts: 'build/dist/**,build/**/debug.symbols/*'
+		artifacts: 'build/dist/**,build/**/debug.symbols/*',
+		trigger: ''
 	).generate(this)
 
 j.with
@@ -91,18 +93,31 @@ j.with
 
 }
 
+String getNameParam(String arch)
+{
+	return 'Android_AAR_' + arch.replace('-', '_')
+}
 
 def build = new Build
 	(
 		name: 'Android_AAR',
 		label: 'Android',
-		artifacts: 'build/dist/**'
+		artifacts: 'build/dist/**',
+		trigger: ''
 	)
 
 def j = build.generate(this)
 
 j.with
 {
+	parameters
+	{
+		for(ARCH in Constants.AndroidArchAAR)
+		{
+			stringParam(getNameParam(ARCH), '', 'Build of ' + ARCH)
+		}
+	}
+
 	steps
 	{
 		for(ARCH in Constants.AndroidArchAAR)
@@ -112,7 +127,7 @@ j.with
 				flatten()
 				buildSelector
 				{
-					latestSuccessful(true)
+					buildNumber('${' + getNameParam(ARCH) + '}')
 				}
 			}
 		}

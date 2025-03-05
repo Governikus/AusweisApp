@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.View
 
 GPane {
 	id: root
@@ -15,7 +16,6 @@ GPane {
 	property alias text: hintText.text
 
 	signal clicked
-	signal receivedFocus(var pItem)
 
 	color: Style.color.paneSublevel.background.basic
 	drawShadow: false
@@ -34,14 +34,12 @@ GPane {
 			id: hintButton
 
 			Layout.alignment: Qt.AlignHCenter
-			Layout.topMargin: Constants.groupbox_spacing
+			Layout.topMargin: Style.dimens.groupbox_spacing
 			icon.source: "qrc:///images/open_website.svg"
 			tintIcon: hintText.color
 			visible: text !== ""
 
 			onClicked: root.clicked()
-			onFocusChanged: if (focus)
-				root.receivedFocus(this)
 		}
 	}
 }

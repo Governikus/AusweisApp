@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.View
 import Governikus.Style
-import Governikus.Type
 
 GListView {
 	id: root
@@ -15,15 +17,12 @@ GListView {
 
 	Accessible.ignored: false
 	activeFocusOnTab: true
-	displayMarginBeginning: Constants.pane_padding
-	displayMarginEnd: Constants.pane_padding
+	displayMarginBeginning: Style.dimens.pane_padding
+	displayMarginEnd: Style.dimens.pane_padding
 
 	delegate: FormattedTextView {
-		idx: index
-		lineType: model.lineType
 		maximumContentWidth: root.maximumContentWidth
-		text: model.content
-		totalItemCount: count
+		totalItemCount: root.count
 		width: root.width
 	}
 	highlight: Item {
@@ -31,7 +30,7 @@ GListView {
 
 		FocusFrame {
 			anchors.leftMargin: 0
-			anchors.rightMargin: Constants.pane_padding
+			anchors.rightMargin: Style.dimens.pane_padding
 			scope: root
 		}
 	}
@@ -39,12 +38,12 @@ GListView {
 	Keys.onDownPressed: {
 		do {
 			root.incrementCurrentIndex();
-		} while (currentItem.text === "")
+		} while ((currentItem as FormattedTextView).content === "")
 	}
 	Keys.onUpPressed: {
 		do {
 			root.decrementCurrentIndex();
-		} while (currentItem.text === "")
+		} while ((currentItem as FormattedTextView).content === "")
 	}
 
 	layer {

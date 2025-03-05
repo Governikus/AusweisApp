@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Data channel mock for tests.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +19,7 @@ class MockDataChannel
 
 	private:
 		bool mPairing;
-		QString mId;
+		QByteArray mId;
 		QList<QByteArray> mReceivedDataBlocks;
 
 	public:
@@ -33,7 +29,7 @@ class MockDataChannel
 		void send(const QByteArray& pDataBlock) override;
 		void close() override;
 		[[nodiscard]] bool isPairingConnection() const override;
-		[[nodiscard]] const QString& getId() const override;
+		[[nodiscard]] const QByteArray& getId() const override;
 		void closeAbnormal();
 
 		[[nodiscard]] const QList<QByteArray>& getReceivedDataBlocks() const;

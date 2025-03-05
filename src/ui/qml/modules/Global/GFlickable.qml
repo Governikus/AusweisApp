@@ -1,27 +1,29 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
+
 import Governikus.Global
 import Governikus.Style
 
 Flickable {
-	id: baseItem
+	id: root
 
 	function handleKeyPress(key) {
 		if (key === Qt.Key_PageDown || key === Qt.Key_Down)
-			baseItem.scrollPageDown();
+			root.scrollPageDown();
 		else if (key === Qt.Key_PageUp || key === Qt.Key_Up)
-			baseItem.scrollPageUp();
+			root.scrollPageUp();
 		else if (key === Qt.Key_End)
-			baseItem.contentY = baseItem.contentHeight - baseItem.height;
+			root.contentY = root.contentHeight - root.height;
 		else if (key === Qt.Key_Home)
-			baseItem.contentY = baseItem.originY;
+			root.contentY = root.originY;
 	}
 	function highlightScrollbar() {
 		if (ScrollBar.vertical)
-			ScrollBar.vertical.highlight();
+			(ScrollBar.vertical as GScrollBar).highlight();
 	}
 	function positionViewAtBeginning() {
 		contentY = originY;
@@ -39,22 +41,25 @@ Flickable {
 		}
 	}
 	function scrollPageDown() {
-		Utils.scrollPageDown(baseItem);
+		scrollBar.increase();
 	}
 	function scrollPageUp() {
-		Utils.scrollPageUp(baseItem);
+		scrollBar.decrease();
 	}
 
 	Accessible.focusable: false
-	Accessible.ignored: Constants.is_desktop
+	Accessible.ignored: Style.is_layout_desktop
 	Accessible.role: Accessible.ScrollBar
-	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
+	boundsBehavior: Style.is_layout_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
 	boundsMovement: Flickable.FollowBoundsBehavior
-	flickDeceleration: Constants.flickDeceleration
+	flickDeceleration: Style.flickDeceleration
 	flickableDirection: Flickable.VerticalFlick
-	maximumFlickVelocity: Constants.scrolling_speed
+	maximumFlickVelocity: Style.scrolling_speed
 
 	ScrollBar.vertical: GScrollBar {
+		id: scrollBar
+
+		bottomPadding: Style.dimens.scrollbar_padding_vertical
 	}
 
 	Accessible.onDecreaseAction: scrollPageUp()

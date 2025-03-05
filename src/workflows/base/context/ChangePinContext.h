@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Context for changing the Pin.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,9 +18,10 @@ class ChangePinContext
 		QString mNewPin;
 		QString mSuccessMessage;
 		const bool mRequestTransportPin;
+		const bool mOnlyCheckPin;
 
 	public:
-		explicit ChangePinContext(bool pRequestTransportPin = false, bool pActivateUi = true);
+		explicit ChangePinContext(bool pRequestTransportPin = false, bool pActivateUi = true, bool pOnlyCheckPin = false);
 		~ChangePinContext() override;
 
 		[[nodiscard]] const QString& getNewPin() const;
@@ -36,6 +33,8 @@ class ChangePinContext
 		void setSuccessMessage(const QString& pSuccessMessage);
 
 		[[nodiscard]] bool isRequestTransportPin() const override;
+
+		[[nodiscard]] bool isOnlyCheckPin() const;
 
 		[[nodiscard]] QList<AcceptedEidType> getAcceptedEidTypes() const override;
 

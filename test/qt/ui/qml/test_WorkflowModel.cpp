@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref WorkflowModel
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -177,52 +173,20 @@ class test_WorkflowModel
 		}
 
 
-		void test_statusCodeImage_data()
+		void test_isPukInoperative()
 		{
-			QTest::addColumn<GlobalStatus::Code>("statusCode");
-
-			QMetaEnum e = QMetaEnum::fromType<GlobalStatus::Code>();
-
-			for (int k = 0; k < e.keyCount(); k++)
-			{
-				QTest::addRow("%s", e.key(k)) << GlobalStatus::Code(e.value(k));
-			}
-		}
-
-
-		void test_statusCodeImage()
-		{
-			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
-			QSignalSpy spy(context.data(), &WorkflowContext::fireReaderPluginTypesChanged);
-
-			QFETCH(GlobalStatus::Code, statusCode);
-			context->setStatus(statusCode);
-
 			WorkflowModel model;
+			QVERIFY(!model.isPukInoperative());
+
+			QSharedPointer<WorkflowContext> context(new TestWorkflowContext());
 			model.resetWorkflowContext(context);
+			QVERIFY(!model.isPukInoperative());
 
-			auto image = model.getStatusCodeImage();
-			image = image.replace("qrc://"_L1, ":"_L1);
-			if (image.isEmpty())
-			{
-				return;
-			}
+			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
+			QVERIFY(!model.isPukInoperative());
 
-			if (image.contains("%1"_L1))
-			{
-				QStringList themes;
-				themes << QStringLiteral("darkmode") << QStringLiteral("lightmode") << QStringLiteral("highcontrast");
-
-				for (const auto& theme : themes)
-				{
-					const auto fileName = image.arg(theme);
-					QVERIFY2(QFile(fileName).exists(), qPrintable("%1 not found"_L1.arg(fileName)));
-				}
-			}
-			else
-			{
-				QVERIFY(QFile::exists(image));
-			}
+			context->setStatus(GlobalStatus::Code::Card_Puk_Blocked);
+			QVERIFY(model.isPukInoperative());
 		}
 
 

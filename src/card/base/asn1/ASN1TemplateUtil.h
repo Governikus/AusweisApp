@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Utility template functions for encoding and decoding of ASN.1 types
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -16,7 +12,9 @@
 #include <QScopeGuard>
 #include <QSharedPointer>
 
+
 Q_DECLARE_LOGGING_CATEGORY(card)
+
 
 namespace governikus
 {
@@ -74,8 +72,8 @@ QByteArray encodeObject(T* pObject)
 	uchar* encoded = nullptr;
 	const int length = encodeAsn1Object(pObject, &encoded);
 	const auto guard = qScopeGuard([encoded] {
-			OPENSSL_free(encoded);
-		});
+				OPENSSL_free(encoded);
+			});
 	if (length < 0)
 	{
 		qCWarning(card) << "Cannot encode ASN.1 object:" << getOpenSslError();
@@ -150,35 +148,35 @@ static const int CB_ERROR = 0;
 
 
 #define IMPLEMENT_ASN1_OBJECT(name)\
-	template<>\
-	name * newAsn1Object<name>()\
-	{\
-		return name##_new();\
-	}\
+		template<>\
+		name * newAsn1Object<name>()\
+		{\
+			return name##_new();\
+		}\
 \
-	template<>\
-	int encodeAsn1Object<name>(const name * pObject, uchar** encoded)\
-	{\
-		return i2d_##name(i2d_const_cast(name, pObject), encoded);\
-	}\
+		template<>\
+		int encodeAsn1Object<name>(const name * pObject, uchar * *encoded)\
+		{\
+			return i2d_##name(i2d_const_cast(name, pObject), encoded);\
+		}\
 \
-	template<>\
-	name * decodeAsn1Object<name>(name** pObject, const uchar** pData, long pDataLen)\
-	{\
-		return d2i_##name(pObject, pData, pDataLen);\
-	}\
+		template<>\
+		name * decodeAsn1Object<name>(name * *pObject, const uchar * *pData, long pDataLen)\
+		{\
+			return d2i_##name(pObject, pData, pDataLen);\
+		}\
 \
-	template<>\
-	void freeAsn1Object<name>(name * pObject)\
-	{\
-		name##_free(pObject);\
-	}
+		template<>\
+		void freeAsn1Object<name>(name * pObject)\
+		{\
+			name##_free(pObject);\
+		}
 
 #define DECLARE_ASN1_OBJECT(name)\
-	template<> name * newAsn1Object<name>();\
-	template<> int encodeAsn1Object<name>(const name * pObject, uchar** encoded);\
-	template<> name * decodeAsn1Object<name>(name** pObject, const uchar** pData, long pDataLen);\
-	template<> void freeAsn1Object<name>(name * pObject);
+		template<> name * newAsn1Object<name>();\
+		template<> int encodeAsn1Object<name>(const name * pObject, uchar * *encoded);\
+		template<> name * decodeAsn1Object<name>(name * *pObject, const uchar * *pData, long pDataLen);\
+		template<> void freeAsn1Object<name>(name * pObject);
 
 
 } // namespace governikus

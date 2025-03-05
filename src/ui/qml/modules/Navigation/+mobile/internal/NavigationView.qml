@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -11,8 +14,14 @@ import Governikus.Type
 Control {
 	id: root
 
-	Layout.maximumWidth: Math.max(Layout.preferredWidth, Style.dimens.max_text_width)
+	required property int activeModule
+
+	signal show(int pModule)
+
+	Layout.fillWidth: true
+	Layout.maximumWidth: Style.dimens.max_text_width
 	Layout.minimumWidth: navigationRow.Layout.minimumWidth + leftPadding + rightPadding
+	Layout.preferredHeight: Math.ceil(implicitHeight)
 	Layout.preferredWidth: contentItem.Layout.preferredWidth + leftPadding + rightPadding
 	bottomInset: -UiPluginModel.safeAreaMargins.bottom
 	bottomPadding: Style.dimens.navigation_bar_bottom_padding
@@ -43,7 +52,11 @@ Control {
 			model: navModel
 
 			delegate: NavigationItem {
+				required property string desc
+				required property url image
+				required property int index
 				readonly property var mainViewSubViews: [UiModule.IDENTIFY, UiModule.SELF_AUTHENTICATION, UiModule.PINMANAGEMENT, UiModule.CHECK_ID_CARD, UiModule.SMART_EID]
+				required property int module
 				//: ANDROID IOS LABEL Relative position of current navigation tab in navigation view. %1 is replaced with the current tab's index, %2 with the total count of tabs
 				readonly property string tabPositionA11y: qsTr("%1 of %2").arg(index + 1).arg(repeater.count)
 
@@ -67,14 +80,13 @@ Control {
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 				Layout.preferredWidth: repeater.maxItemWidth
-				checked: navigation.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(navigation.activeModule))
+				checked: root.activeModule === module || (module === UiModule.DEFAULT && mainViewSubViews.includes(root.activeModule))
 				flowHorizontally: navigationRow.horizontalIcons
 				source: image
 				text: qsTr(desc)
 
 				onClicked: {
-					navigation.resetContentArea();
-					navigation.show(module);
+					root.show(module);
 				}
 			}
 		}
@@ -100,7 +112,7 @@ Control {
 		}
 		ListElement {
 			desc: QT_TR_NOOP("Help")
-			image: "qrc:///images/mobile/help.svg"
+			image: "qrc:///images/help.svg"
 			module: UiModule.HELP
 		}
 	}

@@ -1,8 +1,7 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
-import Governikus.Global
 
 QtObject {
 	readonly property var button: TextStyle {
@@ -19,7 +18,7 @@ QtObject {
 		textColor: Style.color.linkBasic.basic
 	}
 	readonly property var navigation: TextStyle {
-		fontWeight: Constants.is_desktop ? Font.Medium : Font.Normal
+		fontWeight: Style.is_layout_desktop ? Font.Medium : Font.Normal
 		lineHeight: Style.dimens.lineHeight_navigation
 		textColor: Style.color.linkNavigation.basic
 		textSize: Style.dimens.text_navigation

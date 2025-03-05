@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -162,9 +162,9 @@ class test_Qml
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 4, PROCESS_TIMEOUT);
 			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("PINMANAGEMENT")), PROCESS_TIMEOUT);
 
-			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("TUTORIAL"_L1))));
+			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("ONBOARDING"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 5, PROCESS_TIMEOUT);
-			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("TUTORIAL")), PROCESS_TIMEOUT);
+			QTRY_VERIFY_WITH_TIMEOUT(isShowUiInLog(QStringLiteral("ONBOARDING")), PROCESS_TIMEOUT);
 
 			accessManager.get(QNetworkRequest(QUrl(showUiUri.arg("HELP"_L1))));
 			QTRY_COMPARE_WITH_TIMEOUT(logSpy.size(), 6, PROCESS_TIMEOUT);

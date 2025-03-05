@@ -5,7 +5,7 @@ def j = new Build
 		name: 'MacOS_DMG_PKG',
 		libraries: 'MacOS',
 		label: 'MacOS',
-		artifacts: 'build/*.dmg,build/*.pkg'
+		artifacts: 'build/*.dmg*,build/*.pkg*'
 	).generate(this)
 
 

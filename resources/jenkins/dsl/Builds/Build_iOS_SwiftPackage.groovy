@@ -4,7 +4,8 @@ build = new Build
 	(
 		name: 'iOS_SwiftPackage',
 		label: 'iOS',
-		artifacts: 'build/dist/*.zip'
+		artifacts: 'build/dist/*.zip',
+		trigger: ''
 	)
 
 def j = build.generate(this)
@@ -12,6 +13,13 @@ def j = build.generate(this)
 
 j.with
 {
+	parameters
+	{
+		stringParam('iOS_Framework_Build', '', 'Build of iOS Framework')
+		stringParam('iOS_Framework_Simulator_Build', '', 'Build of iOS Framework for Simulator')
+		stringParam('iOS_Framework_Simulator_arm64_Build', '', 'Build of iOS Framework for Simulator-arm64')
+	}
+
 	steps
 	{
 		copyArtifacts(build.getSourceJobName('iOS_Framework'))
@@ -20,27 +28,27 @@ j.with
 			flatten()
 			buildSelector
 			{
-				latestSuccessful(true)
+				buildNumber('${iOS_Framework_Build}')
 			}
 		}
 
-		copyArtifacts(build.getSourceJobName('iOS_Simulator_Framework'))
+		copyArtifacts(build.getSourceJobName('iOS_Framework_Simulator'))
 		{
 			targetDirectory('x86_64-simulator')
 			flatten()
 			buildSelector
 			{
-				latestSuccessful(true)
+				buildNumber('${iOS_Framework_Simulator_Build}')
 			}
 		}
 
-		copyArtifacts(build.getSourceJobName('iOS_Simulator_arm64_Framework'))
+		copyArtifacts(build.getSourceJobName('iOS_Framework_Simulator_arm64'))
 		{
 			targetDirectory('arm64-simulator')
 			flatten()
 			buildSelector
 			{
-				latestSuccessful(true)
+				buildNumber('${iOS_Framework_Simulator_arm64_Build}')
 			}
 		}
 

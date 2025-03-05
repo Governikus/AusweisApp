@@ -1,11 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class for retrieving information about the system proxy, pinging the proxy, trying
- * to establish a connection to a test server with and without the proxy and providing the
- * results to the DiagnosisModel.
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,9 +9,11 @@
 #include <QObject>
 #include <QTcpSocket>
 
+
 class test_DiagnosisConnectionTest;
 class test_DiagnosisModel;
 class test_DiagnosisTreeModel;
+
 
 namespace governikus
 {

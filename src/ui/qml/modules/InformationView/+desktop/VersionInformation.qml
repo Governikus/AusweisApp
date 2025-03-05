@@ -1,19 +1,24 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
 import Governikus.Type
+import Governikus.Style
 
 ColumnLayout {
-	spacing: Constants.component_spacing
+	id: root
+
+	spacing: Style.dimens.pane_spacing
 
 	GPane {
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 
 		GMenuItem {
 			Layout.fillWidth: true
@@ -55,7 +60,7 @@ ColumnLayout {
 			id: column
 
 			anchors.fill: parent
-			spacing: Constants.component_spacing
+			spacing: Style.dimens.pane_spacing
 
 			Repeater {
 				id: repeater
@@ -63,12 +68,15 @@ ColumnLayout {
 				model: VersionInformationModel
 
 				delegate: LabeledText {
-					id: delegate
+					required property string key
+					required property string value
 
-					Accessible.name: model.label + ": " + model.text
-					label: model.label
-					text: model.text
+					label: key
+					text: value
 					width: baseItem.width
+
+					onFocusChanged: if (focus)
+						Utils.positionViewAtItem(this)
 				}
 			}
 		}

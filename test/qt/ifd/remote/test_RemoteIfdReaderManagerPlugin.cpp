@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref RemoteIfdReaderManagerPlugin
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdReaderManagerPlugin.h"
@@ -98,7 +94,7 @@ void MockIfdClient::requestRemoteDevices()
 
 void MockIfdClient::populateRemoteDevices()
 {
-	const Discovery discovery("TestIfdName"_L1, "3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd"_L1, 1337, {IfdVersion::Version::latest});
+	const Discovery discovery("TestIfdName"_L1, QByteArray::fromHex("3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd"_ba), 1337, {IfdVersion::Version::latest});
 	const IfdDescriptor ifdDescriptor(discovery, QHostAddress("127.0.0.1"_L1), true);
 	mRemoteDevices = {QSharedPointer<IfdListEntry>::create(ifdDescriptor)};
 	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
@@ -635,8 +631,8 @@ class test_RemoteIfdReaderManagerPlugin
 			for (const auto& clientMessage : clientMessages)
 			{
 				QMetaObject::invokeMethod(mDispatcher1.data(), [this, clientMessage] {
-						mDispatcher1->onReceived(clientMessage);
-					}, Qt::QueuedConnection);
+							mDispatcher1->onReceived(clientMessage);
+						}, Qt::QueuedConnection);
 				QTRY_COMPARE(spySend.count(), 1); // clazy:exclude=qstring-allocations
 				const QList<QVariant>& arguments = spySend.last();
 

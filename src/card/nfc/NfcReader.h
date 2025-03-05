@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of \ref Reader for NFC.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +28,7 @@ class NfcReader
 	private Q_SLOTS:
 		void adapterStateChanged(QNearFieldManager::AdapterState pState);
 		void targetDetected(QNearFieldTarget* pTarget);
-		void targetLost(QNearFieldTarget* pTarget);
+		void targetLost(const QNearFieldTarget* pTarget);
 		void setProgressMessage(const QString& pMessage);
 
 	public:

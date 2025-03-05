@@ -1,24 +1,30 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.TitleBar
 import Governikus.View
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
+	property alias animation: animatedIcon.animation
+	property alias animationSymbol: animatedIcon.symbol
+	property alias animationType: animatedIcon.type
 	property alias buttonIcon: buttonContinue.icon.source
+	property alias buttonLayoutDirection: buttonContinue.layoutDirection
 	property alias buttonText: buttonContinue.text
 	default property alias children: layout.data
 	property alias header: paneTitle.text
 	property alias hintButtonText: hintItem.buttonText
 	property alias hintText: hintItem.text
 	property alias hintTitle: hintItem.title
-	property alias icon: customIcon.source
 	property alias subheader: subheader.text
 	property alias text: resultText.text
 	property alias textFormat: resultText.textFormat
@@ -31,12 +37,12 @@ FlickableSectionPage {
 		buttonContinue.clicked();
 	}
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Cancel
 
-		onClicked: cancelClicked()
+		onClicked: root.cancelClicked()
 	}
 
 	PaneTitle {
@@ -44,19 +50,17 @@ FlickableSectionPage {
 
 		Layout.alignment: Qt.AlignHCenter
 	}
-	TintableIcon {
-		id: customIcon
+	WorkflowAnimationLoader {
+		id: animatedIcon
 
 		Layout.alignment: Qt.AlignHCenter
-		sourceSize.height: Style.dimens.header_icon_size
-		tintEnabled: false
-		visible: source.toString() !== ""
+		animated: false
 	}
 	ColumnLayout {
 		id: layout
 
 		Layout.maximumWidth: Number.POSITIVE_INFINITY
-		spacing: Constants.pane_spacing
+		spacing: Style.dimens.pane_spacing
 
 		GText {
 			id: subheader
@@ -81,8 +85,7 @@ FlickableSectionPage {
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: hintClicked()
-		onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
+		onClicked: root.hintClicked()
 	}
 	GButton {
 		id: buttonContinue
@@ -94,8 +97,6 @@ FlickableSectionPage {
 		tintIcon: true
 		visible: text !== ""
 
-		onClicked: continueClicked()
-		onFocusChanged: if (focus)
-			baseItem.positionViewAtItem(this)
+		onClicked: root.continueClicked()
 	}
 }

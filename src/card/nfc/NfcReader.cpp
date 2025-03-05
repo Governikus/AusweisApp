@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcReader.h"
@@ -29,6 +29,12 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 	}
 	qCDebug(card_nfc) << "targetDetected, type:" << pTarget->type();
 
+	if (mCard)
+	{
+		qCDebug(card_nfc) << "Card already inserted";
+		return;
+	}
+
 	if (!(pTarget->accessMethods() & QNearFieldTarget::TagTypeSpecificAccess))
 	{
 		qCDebug(card_nfc) << "The target does not provide commands";
@@ -52,13 +58,13 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 #endif
 #ifdef GOV_UNSUPPORTED_TARGET_ERROR
 	connect(mCard.data(), &NfcCard::fireTargetError, this, [this](QNearFieldTarget::Error pError) {
-			if (pError == QNearFieldTarget::GOV_UNSUPPORTED_TARGET_ERROR)
-			{
-				setInfoCardInfo(CardInfo(CardType::UNKNOWN));
-				qCInfo(card_nfc) << "Card inserted:" << getReaderInfo().getCardInfo();
-				Q_EMIT fireCardInserted(getReaderInfo());
-			}
-		});
+				if (pError == QNearFieldTarget::GOV_UNSUPPORTED_TARGET_ERROR)
+				{
+					setInfoCardInfo(CardInfo(CardType::UNKNOWN));
+					qCInfo(card_nfc) << "Card inserted:" << getReaderInfo().getCardInfo();
+					Q_EMIT fireCardInserted(getReaderInfo());
+				}
+			});
 	#undef GOV_UNSUPPORTED_TARGET_ERROR
 #endif
 	fetchCardInfo();
@@ -95,7 +101,7 @@ void NfcReader::targetDetected(QNearFieldTarget* pTarget)
 }
 
 
-void NfcReader::targetLost(QNearFieldTarget* pTarget)
+void NfcReader::targetLost(const QNearFieldTarget* pTarget)
 {
 	qCDebug(card_nfc) << "targetLost";
 	if (pTarget != nullptr && mCard && mCard->invalidateTarget(pTarget))

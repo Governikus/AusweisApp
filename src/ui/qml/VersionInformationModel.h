@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,8 +30,8 @@ class VersionInformationModel
 	private:
 		enum VersionRoles
 		{
-			LABEL = Qt::UserRole + 1,
-			TEXT
+			KEY = Qt::UserRole + 1,
+			VALUE
 		};
 		QList<QPair<QString, QString>> mData;
 

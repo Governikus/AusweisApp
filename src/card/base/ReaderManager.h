@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -90,7 +90,7 @@ class ReaderManager
 		virtual ReaderManagerPluginInfo getPluginInfo(ReaderManagerPluginType pType) const;
 		virtual QList<ReaderInfo> getReaderInfos(const ReaderFilter& pFilter = ReaderFilter()) const;
 		ReaderInfo getReaderInfo(const QString& pReaderName) const;
-		void updateReaderInfo(const QString& pReaderName);
+		void updateReaderInfo(const QString& pReaderName) const;
 
 		bool isWorkerThread() const
 		{
@@ -163,6 +163,13 @@ class ReaderManager
 			const QMutexLocker mutexLocker(&mMutex);
 
 			QMetaObject::invokeMethod(mWorker.data(), pFunc, Qt::BlockingQueuedConnection);
+		}
+
+
+		void clearCache()
+		{
+			mReaderInfoCache.clear();
+			mPluginInfoCache.clear();
 		}
 
 

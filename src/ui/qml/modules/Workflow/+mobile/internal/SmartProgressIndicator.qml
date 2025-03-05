@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
 import Governikus.Style
 
 Item {
-	id: baseItem
+	id: root
 
 	property alias disabled: icon.tintEnabled
 

@@ -95,19 +95,25 @@ function(ADD_FLAG)
 	endforeach()
 endfunction()
 
+function(SET_PUBLIC_HEADER _target)
+	foreach(entry ${ARGN})
+		list(APPEND header ${CMAKE_CURRENT_SOURCE_DIR}/${entry})
+	endforeach()
+	set_target_properties(${_target} PROPERTIES PUBLIC_HEADER "${header}")
+endfunction()
 
 function(GET_PUBLIC_HEADER _target _out)
-	get_target_property(source ${_target} SOURCE_DIR)
-	file(RELATIVE_PATH source "${CMAKE_CURRENT_SOURCE_DIR}" "${source}")
+	target_get_linked_libraries(${_target} Libraries)
 
-	get_target_property(allHeader ${_target} PUBLIC_HEADER)
-	foreach(header ${allHeader})
-		list(APPEND result ${source}/${header})
+	foreach(libTarget ${Libraries})
+		get_target_property(header ${libTarget} PUBLIC_HEADER)
+		if(header)
+			list(APPEND result ${header})
+		endif()
 	endforeach()
 
 	set(${_out} "${result}" PARENT_SCOPE)
 endfunction()
-
 
 function(GET_FILE_MATCHER _result_remove _result_keep)
 	if(NOT ANDROID)
@@ -375,6 +381,11 @@ macro(target_get_linked_libraries_internal _target _outlist)
 		endif()
 
 		if(NOT "${lib}" MATCHES "AusweisApp")
+			continue()
+		endif()
+
+		get_target_property(lib_type "${lib}" TYPE)
+		if(${lib_type} STREQUAL "INTERFACE_LIBRARY" OR ${lib_type} STREQUAL "OBJECT_LIBRARY")
 			continue()
 		endif()
 

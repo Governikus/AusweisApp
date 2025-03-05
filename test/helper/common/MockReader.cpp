@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockReader.h"
@@ -52,10 +52,10 @@ void MockReader::removeCard()
 	Qt::ConnectionType type = QThread::currentThread() == QObject::thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection;
 
 	QMetaObject::invokeMethod(this, [this] {
-			mCard.reset(nullptr);
-			removeCardInfo();
-			Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
-		}, type);
+				mCard.reset(nullptr);
+				removeCardInfo();
+				Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
+			}, type);
 	QCoreApplication::processEvents();
 }
 
@@ -73,10 +73,10 @@ MockCard* MockReader::setCard(const MockCardConfig& pCardConfig, const QSharedPo
 	Qt::ConnectionType type = QThread::currentThread() == QObject::thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection;
 
 	QMetaObject::invokeMethod(this, [this, pCardConfig, pEfCardAccess, pType, pApplication] {
-			mCard.reset(new MockCard(pCardConfig));
-			setInfoCardInfo(CardInfo(pType, pApplication, pEfCardAccess));
-			Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
-		}, type);
+				mCard.reset(new MockCard(pCardConfig));
+				setInfoCardInfo(CardInfo(pType, pApplication, pEfCardAccess));
+				Q_EMIT fireReaderPropertiesUpdated(getReaderInfo());
+			}, type);
 
 	QCoreApplication::processEvents();
 	return mCard.data();
@@ -89,9 +89,9 @@ void MockReader::setReaderInfo(const ReaderInfo& pReaderInfo)
 	Qt::ConnectionType type = QThread::currentThread() == QObject::thread() ? Qt::DirectConnection : Qt::BlockingQueuedConnection;
 
 	QMetaObject::invokeMethod(this, [this, pReaderInfo] {
-			mReaderInfo = pReaderInfo;
-			Q_EMIT fireReaderPropertiesUpdated(pReaderInfo);
-		}, type);
+				mReaderInfo = pReaderInfo;
+				Q_EMIT fireReaderPropertiesUpdated(pReaderInfo);
+			}, type);
 	QCoreApplication::processEvents();
 }
 

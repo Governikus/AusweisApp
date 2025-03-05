@@ -1,25 +1,9 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
-#ifndef AUSWEISAPP2_HEADER
-#define AUSWEISAPP2_HEADER
-
-#ifdef __cplusplus
-extern "C" {
+#if defined(__clang__) || defined(__GNUC__) || defined(_MSC_VER)
+	#pragma message("Header 'AusweisApp2.h` is deprecated! Use 'AusweisApp.h' instead.")
 #endif
 
-#include <stdbool.h>
-
-typedef void (* AusweisApp2Callback)(const char* pMsg);
-
-bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* pCmdline);
-void ausweisapp2_shutdown(void);
-bool ausweisapp2_is_running(void);
-void ausweisapp2_send(const char* pCmd);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // AUSWEISAPP2_HEADER
+#include "AusweisApp.h"

@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Activates store the feedback dialog after a successful
- *        authentication.
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

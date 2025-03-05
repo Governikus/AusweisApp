@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ApplicationModel
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -27,6 +23,12 @@ class test_ApplicationModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void test_getFeedbackTimeout()
+		{
+			QCOMPARE(ApplicationModel::getFeedbackTimeout(), 7000);
+		}
+
+
 		void test_stripHtmlTags_data()
 		{
 			QTest::addColumn<QString>("rawText");
@@ -37,7 +39,7 @@ class test_ApplicationModel
 			QTest::addRow("with tags") << QStringLiteral("<p>Hello World!</p>") << QStringLiteral("Hello World!");
 			QTest::addRow("with <br> tags") << QStringLiteral("<p>Hello<br>World!</p>") << QStringLiteral("Hello World!");
 			QTest::addRow("with multiple <br> tags") << QStringLiteral("<p>Hello<br>World!<br><br>How are you?</p>") << QStringLiteral("Hello World! How are you?");
-			QTest::addRow("variaty of tags") << QStringLiteral("<h2><a href=\"https://www.example.org\">Hello</a> <marquee>World</marquee></h2><b>!</b>") << QStringLiteral("Hello World!");
+			QTest::addRow("variety of tags") << QStringLiteral("<h2><a href=\"https://www.example.org\">Hello</a> <marquee>World</marquee></h2><b>!</b>") << QStringLiteral("Hello World!");
 		}
 
 

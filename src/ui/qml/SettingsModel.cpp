@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SettingsModel.h"
 
 #include "AppSettings.h"
 #include "LanguageLoader.h"
+#include "ReaderManager.h"
 #include "Service.h"
+#include "VolatileSettings.h"
 
 #include <QQmlEngine>
 
@@ -22,7 +24,7 @@ SettingsModel::SettingsModel()
 	: QObject()
 	, mAdvancedSettings(false)
 	, mIsStartedByAuth(false)
-	, mShowBetaTesting(true)
+	, mShowBetaTesting(!qEnvironmentVariableIsSet("SUPPRESS_BETA_LOGO"))
 {
 	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
 
@@ -33,9 +35,14 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireUseSystemFontChanged, this, &SettingsModel::fireUseSystemFontChanged);
 	connect(&generalSettings, &GeneralSettings::fireUseAnimationsChanged, this, &SettingsModel::fireUseAnimationsChanged);
 	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
+	connect(&generalSettings, &GeneralSettings::firePreferredTechnologyChanged, this, &SettingsModel::firePreferredTechnologyChanged);
 
 	const auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
 	connect(&simulatorSettings, &SimulatorSettings::fireEnabledChanged, this, &SettingsModel::fireSimulatorChanged);
+	connect(&simulatorSettings, &SimulatorSettings::fireEnabledChanged, this, &SettingsModel::firePreferredTechnologyChanged);
+
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
+	connect(readerManager, &ReaderManager::fireStatusChanged, this, &SettingsModel::firePreferredTechnologyChanged);
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -141,12 +148,6 @@ void SettingsModel::setDeviceName(const QString& name)
 	auto& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.setDeviceName(name);
 	Q_EMIT fireDeviceNameChanged();
-}
-
-
-void SettingsModel::removeTrustedCertificate(const QString& pFingerprint) const
-{
-	Env::getSingleton<AppSettings>()->getRemoteServiceSettings().removeTrustedCertificate(pFingerprint);
 }
 
 
@@ -275,14 +276,13 @@ UiModule SettingsModel::getStartupModule() const
 		return UiModule::IDENTIFY;
 	}
 
+	if (getShowOnboarding() && !getOnboardingShown())
+	{
+		return UiModule::ONBOARDING;
+	}
+
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	return Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::DEFAULT);
-
-#else
-	return Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL);
-
-#endif
 }
 
 
@@ -291,7 +291,39 @@ void SettingsModel::setStartupModule(UiModule pModule)
 	if (getStartupModule() != pModule)
 	{
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-		settings.setStartupModule(Enum<UiModule>::getName(pModule));
+		settings.setStartupModule(getEnumName(pModule));
+		Q_EMIT fireStartupModuleChanged();
+	}
+}
+
+
+bool SettingsModel::getShowOnboarding() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().getShowOnboarding();
+}
+
+
+void SettingsModel::setShowOnboarding(bool pShowOnboarding)
+{
+	if (getShowOnboarding() != pShowOnboarding)
+	{
+		Env::getSingleton<AppSettings>()->getGeneralSettings().setShowOnboarding(pShowOnboarding);
+		Q_EMIT fireStartupModuleChanged();
+	}
+}
+
+
+bool SettingsModel::getOnboardingShown() const
+{
+	return Env::getSingleton<VolatileSettings>()->onboardingShown();
+}
+
+
+void SettingsModel::setOnboardingShown(bool pOnboardingShown)
+{
+	if (getOnboardingShown() != pOnboardingShown)
+	{
+		Env::getSingleton<VolatileSettings>()->setOnboardingShown(pOnboardingShown);
 		Q_EMIT fireStartupModuleChanged();
 	}
 }
@@ -322,7 +354,6 @@ void SettingsModel::setAutoStart(bool pEnabled)
 		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 		settings.setAutoStart(pEnabled);
 		Q_EMIT fireAutoStartChanged();
-		Q_EMIT fireShowTrayIconChanged();
 	}
 }
 
@@ -410,9 +441,20 @@ void SettingsModel::setAutoUpdateCheck(bool pAutoUpdateCheck)
 }
 
 
-bool SettingsModel::showTrayIcon() const
+bool SettingsModel::isTrayIconEnabled() const
 {
-	return Env::getSingleton<AppSettings>()->getGeneralSettings().showTrayIcon();
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isTrayIconEnabled();
+}
+
+
+void SettingsModel::setTrayIconEnabled(bool pTrayIconEnabled)
+{
+	if (isTrayIconEnabled() != pTrayIconEnabled)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setTrayIconEnabled(pTrayIconEnabled);
+		Q_EMIT fireTrayIconEnabledChanged();
+	}
 }
 
 
@@ -559,21 +601,97 @@ SettingsModel::ModeOption SettingsModel::getDarkMode() const
 }
 
 
-void SettingsModel::setDarkMode(ModeOption pMode)
+void SettingsModel::setDarkMode(ModeOption pMode) const
 {
-	Env::getSingleton<AppSettings>()->getGeneralSettings().setDarkMode(
-			Enum<ModeOption>::getName(pMode));
+	Env::getSingleton<AppSettings>()->getGeneralSettings().setDarkMode(getEnumName(pMode));
 }
 
 
-#ifndef QT_NO_DEBUG
+ReaderManagerPluginType SettingsModel::getPreferredTechnology() const
+{
+	const auto& technologyString = Env::getSingleton<AppSettings>()->getGeneralSettings().getPreferredTechnology();
+	const auto technology = Enum<ReaderManagerPluginType>::fromString(technologyString, ReaderManagerPluginType::UNKNOWN);
+	const auto simulator = Env::getSingleton<AppSettings>()->getSimulatorSettings().isEnabled();
+	if (technology == ReaderManagerPluginType::UNKNOWN || (technology == ReaderManagerPluginType::SIMULATOR && !simulator))
+	{
+		const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::NFC);
+		if (pluginInfo.isAvailable())
+		{
+			return ReaderManagerPluginType::NFC;
+		}
+
+		return ReaderManagerPluginType::REMOTE_IFD;
+	}
+
+	return technology;
+}
+
+
+void SettingsModel::setPreferredTechnology(ReaderManagerPluginType pTechnology) const
+{
+	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+	settings.setPreferredTechnology(getEnumName(pTechnology));
+}
+
+
 void SettingsModel::resetHideableDialogs() const
 {
+#ifndef QT_NO_DEBUG
 	GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	settings.setTransportPinReminder(true);
 	settings.setRemindUserToClose(true);
 	settings.setRequestStoreFeedback(true);
+	settings.setStartupModule(QString());
+	settings.setShowOnboarding(true);
+#endif
 }
 
 
+bool SettingsModel::getShowBetaTesting() const
+{
+	return
+#ifndef QT_NO_DEBUG
+		mShowBetaTesting &&
 #endif
+		VersionNumber::getApplicationVersion().isDeveloperVersion();
+}
+
+
+void SettingsModel::setShowBetaTesting(bool pShowBetaTesting)
+{
+	if (mShowBetaTesting != pShowBetaTesting)
+	{
+		mShowBetaTesting = pShowBetaTesting;
+		Q_EMIT fireDeveloperOptionsChanged();
+	}
+}
+
+
+QString SettingsModel::getAppendTransportPin() const
+{
+#ifdef QT_NO_DEBUG
+	return QString();
+
+#else
+	return qEnvironmentVariable("APPEND_TRANSPORT_PIN");
+
+#endif
+}
+
+
+void SettingsModel::setAppendTransportPin(const QString& pNumber)
+{
+#ifdef QT_NO_DEBUG
+	Q_UNUSED(pNumber)
+#else
+	if (pNumber.isEmpty())
+	{
+		qunsetenv("APPEND_TRANSPORT_PIN");
+	}
+	else
+	{
+		qputenv("APPEND_TRANSPORT_PIN", pNumber.toLocal8Bit());
+	}
+	Q_EMIT fireDeveloperOptionsChanged();
+#endif
+}

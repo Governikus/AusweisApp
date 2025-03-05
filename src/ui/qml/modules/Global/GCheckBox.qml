@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -10,7 +10,7 @@ import Governikus.Style
 import Governikus.View
 
 CheckBox {
-	id: control
+	id: root
 
 	property alias focusFrameVisible: focusFrame.visible
 	property alias layoutDirection: contentLayout.layoutDirection
@@ -18,16 +18,16 @@ CheckBox {
 	readonly property color preferredBackgroundColor: colors.controlPreferredPaneBackground
 	property alias textStyle: description.textStyle
 
-	horizontalPadding: Constants.component_spacing
+	horizontalPadding: Style.dimens.pane_spacing
 	indicator: null
-	verticalPadding: Constants.component_spacing / 2
+	verticalPadding: Style.dimens.pane_spacing / 2
 
 	contentItem: RowLayout {
 		id: contentLayout
 
 		readonly property int focusWidth: layoutDirection === Qt.RightToLeft ? width : implicitWidth
 
-		spacing: control.spacing
+		spacing: root.spacing
 
 		Rectangle {
 			border.color: colors.controlBorder
@@ -44,7 +44,7 @@ CheckBox {
 				source: "qrc:///images/checkbox_indicator.svg"
 				sourceSize.height: 1.2 * description.font.pixelSize
 				tintColor: colors.controlContent
-				visible: control.checked
+				visible: root.checked
 			}
 		}
 		GText {
@@ -54,7 +54,7 @@ CheckBox {
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
 			elide: Text.ElideRight
 			maximumLineCount: 1
-			text: control.text
+			text: root.text
 			visible: text !== ""
 		}
 	}
@@ -63,6 +63,8 @@ CheckBox {
 		toggle();
 		toggled();
 	}
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	HoverHandler {
 		id: hoverHandler
@@ -73,11 +75,11 @@ CheckBox {
 
 		controlStyle: Style.color.controlCheckbox
 		hoveredCondition: hoverHandler.hovered
-		statefulControl: control
+		statefulControl: root
 	}
 	FocusFrame {
 		id: focusFrame
 
-		size: textStyle.textSize / 8
+		size: root.textStyle.textSize / 8
 	}
 }

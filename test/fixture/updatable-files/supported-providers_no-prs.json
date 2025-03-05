@@ -1,0 +1,33 @@
+{
+	"callcosts": [
+		{
+			"prefixes": [
+				"1801"
+			],
+			"landline": {
+				"per-minute": 3.9
+			},
+			"mobile": {
+				"per-minute": 42
+			}
+		}
+	],
+	"provider": [
+		{
+			"shortName": {
+				"": "Neue PIN für den Online-Ausweis bestellen"
+			},
+			"longName": {
+				"": "Neue PIN für den Online-Ausweis bestellen"
+			},
+			"longDescription": {
+				"": "Wenn Sie Ihre PIN für den Online-Ausweis vergessen haben, Sie Ihren PIN-Brief mit der Transport-PIN nicht mehr haben oder Ihre PIN blockiert ist, können Sie hier einen PIN-Rücksetzbrief bestellen.<br/><br/>Sie erhalten diesen Brief per Post an Ihre deutsche Meldeadresse. Er enthält einen Aktivierungscode und eine neue PIN für Ihren Online-Ausweis, sodass Sie diesen im Anschluss wieder nutzen können."
+			},
+			"address": "https://www.pin-ruecksetzbrief-bestellen.de",
+			"homepage": "https://www.pin-ruecksetzbrief-bestellen.de/support",
+			"phone": "+49 30 18 681 23333",
+			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
+			"category": "citizen"
+		}
+	]
+}

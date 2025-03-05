@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 
 #include "AbstractSettings.h"
+#include "VersionNumber.h"
 
 #include <QLocale>
 #include <QNetworkProxy>
@@ -16,13 +17,6 @@ class test_GeneralSettings;
 
 namespace governikus
 {
-
-#if defined(Q_OS_WIN)
-	#define GENERAL_SETTINGS_DEFAULT_AUTOSTART true
-#else
-	#define GENERAL_SETTINGS_DEFAULT_AUTOSTART false
-#endif
-
 
 class GeneralSettings
 	: public AbstractSettings
@@ -47,8 +41,10 @@ class GeneralSettings
 		[[nodiscard]] bool isAutoStartAvailable() const;
 		[[nodiscard]] bool isAutoStart() const;
 		[[nodiscard]] bool autoStartIsSetByAdmin() const;
-		[[nodiscard]] bool showTrayIcon() const;
 		void setAutoStart(bool pAutoStart);
+
+		[[nodiscard]] bool isTrayIconEnabled() const;
+		void setTrayIconEnabled(bool pTrayIconEnabled);
 
 		[[nodiscard]] bool isNewAppVersion() const;
 
@@ -60,6 +56,9 @@ class GeneralSettings
 
 		[[nodiscard]] QString getStartupModule() const;
 		void setStartupModule(const QString& pModule);
+
+		[[nodiscard]] bool getShowOnboarding() const;
+		void setShowOnboarding(bool pShowOnboarding);
 
 		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
@@ -87,8 +86,8 @@ class GeneralSettings
 		[[nodiscard]] bool isRequestStoreFeedback() const;
 		void setRequestStoreFeedback(bool pRequest);
 
-		[[nodiscard]] QString getLastReaderPluginType() const;
-		void setLastReaderPluginType(const QString& pLastReaderPluginType);
+		[[nodiscard]] QString getPreferredTechnology() const;
+		void setPreferredTechnology(const QString& pTechnology);
 
 		[[nodiscard]] bool isAutoUpdateAvailable() const;
 		[[nodiscard]] bool isAutoUpdateCheck() const;
@@ -138,12 +137,38 @@ class GeneralSettings
 		[[nodiscard]] bool isSmartAvailable() const;
 		void setSmartAvailable(bool pSmartAvailable);
 
+		[[nodiscard]] static constexpr bool autoStartDefault() noexcept
+		{
+#if defined(Q_OS_WIN)
+			return true;
+
+#else
+			return false;
+
+#endif
+
+		}
+
+
+		[[nodiscard]] static constexpr bool trayIconDefault() noexcept
+		{
+#if defined(Q_OS_WIN)
+			return true;
+
+#else
+			return false;
+
+#endif
+		}
+
+
 #ifdef Q_OS_WIN
 		void migrateSettings();
 #endif
 
 	Q_SIGNALS:
 		void fireLanguageChanged();
+		void firePreferredTechnologyChanged();
 		void fireDeveloperOptionsChanged();
 		void fireShowInAppNotificationsChanged();
 		void fireProxyChanged();

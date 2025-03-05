@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/ChangePinController.h"
@@ -62,11 +62,11 @@ class test_ChangePinController
 			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			connect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, [] (const ReaderInfo& pInfo){
-					if (pInfo.isInsertable())
-					{
-						Env::getSingleton<ReaderManager>()->insert(pInfo);
-					}
-				});
+						if (pInfo.isInsertable())
+						{
+							Env::getSingleton<ReaderManager>()->insert(pInfo);
+						}
+					});
 
 			readerManager->init();
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations

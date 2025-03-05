@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateSelectReader.h"
@@ -39,9 +39,8 @@ void StateSelectReader::run()
 	const auto& enabledPluginTypes = context->getReaderPluginTypes();
 	for (const auto t : readerPluginTypes)
 	{
-		enabledPluginTypes.contains(t) && !context->skipStartScan() ? readerManager->startScan(t) : readerManager->stopScan(t);
+		enabledPluginTypes.contains(t) ? readerManager->startScan(t) : readerManager->stopScan(t);
 	}
-	context->setSkipStartScan(false);
 }
 
 

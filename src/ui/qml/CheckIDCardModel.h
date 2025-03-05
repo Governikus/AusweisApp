@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for checking the ID card in "playground".
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +8,9 @@
 
 #include <QObject>
 #include <QtQml/qqmlregistration.h>
+
+
+class test_CheckIDCardModel;
 
 
 namespace governikus
@@ -25,14 +24,16 @@ class CheckIDCardModel
 	Q_PROPERTY(Result result READ getResult NOTIFY fireResultChanged)
 	QML_ELEMENT
 
+	friend class ::test_CheckIDCardModel;
+
 	public:
 		enum class Result
 		{
 			UNKNOWN,
-			NO_NFC,
+			UNSUPPORTED_PLUGIN_TYPE,
+			NO_READER,
 			CARD_NOT_DETECTED,
 			UNKNOWN_CARD_DETECTED,
-			ID_CARD_DETECTED,
 			INSUFFICIENT_APDU_LENGTH,
 			CARD_ACCESS_FAILED,
 			PIN_DEACTIVATED,
@@ -45,7 +46,7 @@ class CheckIDCardModel
 		explicit CheckIDCardModel(QObject* pParent = nullptr);
 		~CheckIDCardModel() override;
 
-		Q_INVOKABLE void startScan();
+		Q_INVOKABLE void startScan(ReaderManagerPluginType pPluginType);
 		Q_INVOKABLE void startScanIfNecessary();
 		Q_INVOKABLE void stopScan();
 
@@ -54,6 +55,7 @@ class CheckIDCardModel
 	private:
 		bool mIsRunning;
 		Result mResult;
+		ReaderManagerPluginType mPluginType;
 		QString mReaderWithCard;
 
 	private Q_SLOTS:

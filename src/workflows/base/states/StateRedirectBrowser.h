@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Send a redirect to the browser.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +28,7 @@ class StateRedirectBrowser
 
 		void run() override;
 
-		static QUrl addMajorMinor(const QUrl& pUrl, const GlobalStatus& pStatus);
+		static QUrl addMajorMinor(const QUrl& pUrl, const ECardApiResult& pResult);
 };
 
 } // namespace governikus

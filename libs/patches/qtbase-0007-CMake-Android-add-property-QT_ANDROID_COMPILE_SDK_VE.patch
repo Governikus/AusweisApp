@@ -1,0 +1,168 @@
+From 148ec3d4a7f16990c518264b80d4419fe781866c Mon Sep 17 00:00:00 2001
+From: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Date: Sun, 8 Sep 2024 20:22:15 +0300
+Subject: CMake:Android: add property QT_ANDROID_COMPILE_SDK_VERSION
+
+This allows to set the compile SDK version from CMakeLists.txt
+instead of a parameter to androiddeployqt to give more flexibility.
+
+Fixes: QTBUG-128364
+Change-Id: I797e8f9b3c35dcb822c1b7e2b67e6b76387775ca
+Reviewed-by:  Alexey Edelev <alexey.edelev@qt.io>
+(cherry picked from commit a9ebb97436b08ac2881c25115d656b6fc6e22764)
+---
+ src/corelib/Qt6AndroidMacros.cmake            |  4 ++
+ .../doc/src/cmake/cmake-properties.qdoc       | 37 +++++++++++++++++++
+ ..._android_generate_deployment_settings.qdoc |  1 +
+ src/tools/androiddeployqt/main.cpp            | 26 +++++++++----
+ .../CMakeLists.txt                            |  2 +
+ .../tst_android_deployment_settings.cpp       |  2 +
+ 6 files changed, 65 insertions(+), 7 deletions(-)
+
+diff --git x/qtbase/src/corelib/Qt6AndroidMacros.cmake y/qtbase/src/corelib/Qt6AndroidMacros.cmake
+index e192ca78e9a75f2f505f0758ecfaf08ed4d988d3..0a5cd17d6b4a12b771c649f35ad61b4aeda90863 100644
+--- x/qtbase/src/corelib/Qt6AndroidMacros.cmake
++++ y/qtbase/src/corelib/Qt6AndroidMacros.cmake
+@@ -237,6 +237,10 @@ function(qt6_android_generate_deployment_settings target)
+     _qt_internal_add_android_deployment_property(file_contents "android-target-sdk-version"
+         ${target} "QT_ANDROID_TARGET_SDK_VERSION")
+ 
++    # compile SDK version
++    _qt_internal_add_android_deployment_property(file_contents "android-compile-sdk-version"
++        ${target} "QT_ANDROID_COMPILE_SDK_VERSION")
++
+     # should Qt shared libs be excluded from deployment
+     _qt_internal_add_android_deployment_property(file_contents "android-no-deploy-qt-libs"
+         ${target} "QT_ANDROID_NO_DEPLOY_QT_LIBS")
+diff --git x/qtbase/src/corelib/doc/src/cmake/cmake-properties.qdoc y/qtbase/src/corelib/doc/src/cmake/cmake-properties.qdoc
+index 1195f2784c337ea34a79a546ead635db32f76da6..25fb9ead06ff22e136407020555ac516fae2a07f 100644
+--- x/qtbase/src/corelib/doc/src/cmake/cmake-properties.qdoc
++++ y/qtbase/src/corelib/doc/src/cmake/cmake-properties.qdoc
+@@ -223,6 +223,43 @@ Specifies the target Android API level for the target.
+ \sa{qt6_android_generate_deployment_settings}{qt_android_generate_deployment_settings()}
+ */
+ 
++/*!
++\page cmake-target-property-qt-android-compile-sdk-version.html
++\ingroup cmake-properties-qtcore
++\ingroup cmake-target-properties-qtcore
++\ingroup cmake-android-build-properties
++
++\title QT_ANDROID_COMPILE_SDK_VERSION
++\target cmake-target-property-QT_ANDROID_COMPILE_SDK_VERSION
++
++\summary {Android target SDK version.}
++
++\cmakepropertysince 6.9
++\cmakepropertyandroidonly
++
++Specifies the version of the Android SDK against which your application is compiled.
++This is propagated to \c {build.gradle} as \c compileSdkVersion. This value can be
++provided via \l {androiddeployqt}'s \c {--android-platform} parameter which takes
++precedence over this CMake property.
++
++\badcode
++set_target_properties(${target} PROPERTIES
++    QT_ANDROID_COMPILE_SDK_VERSION 35
++)
++\endcode
++
++The following format also works:
++
++\badcode
++set_target_properties(${target} PROPERTIES
++ QT_ANDROID_COMPILE_SDK_VERSION "android-35"
++)
++\endcode
++
++\sa{qt6_android_generate_deployment_settings}{qt_android_generate_deployment_settings()}
++\sa QT_ANDROID_TARGET_SDK_VERSION
++*/
++
+ /*!
+ \page cmake-target-property-qt-android-sdk-build-tools-revision.html
+ \ingroup cmake-properties-qtcore
+diff --git x/qtbase/src/corelib/doc/src/cmake/qt_android_generate_deployment_settings.qdoc y/qtbase/src/corelib/doc/src/cmake/qt_android_generate_deployment_settings.qdoc
+index daa3680070a46d0223e2ab49740e2a99006bdf68..ab9dcfa9821a72e93ba9e1dd895e608701e18847 100644
+--- x/qtbase/src/corelib/doc/src/cmake/qt_android_generate_deployment_settings.qdoc
++++ y/qtbase/src/corelib/doc/src/cmake/qt_android_generate_deployment_settings.qdoc
+@@ -63,6 +63,7 @@ how to accomplish this.
+ \li \l{cmake-target-property-QT_ANDROID_MIN_SDK_VERSION}{QT_ANDROID_MIN_SDK_VERSION}
+ \li \l{cmake-target-property-QT_ANDROID_PACKAGE_SOURCE_DIR}{QT_ANDROID_PACKAGE_SOURCE_DIR}
+ \li \l{cmake-target-property-QT_ANDROID_TARGET_SDK_VERSION}{QT_ANDROID_TARGET_SDK_VERSION}
++\li \l{cmake-target-property-QT_ANDROID_COMPILE_SDK_VERSION}{QT_ANDROID_COMPILE_SDK_VERSION}
+ \li \l{cmake-target-property-QT_ANDROID_PACKAGE_NAME}{QT_ANDROID_PACKAGE_NAME}
+ \li \l{cmake-target-property-QT_ANDROID_VERSION_NAME}{QT_ANDROID_VERSION_NAME}
+ \li \l{cmake-target-property-QT_ANDROID_VERSION_CODE}{QT_ANDROID_VERSION_CODE}
+diff --git x/qtbase/src/tools/androiddeployqt/main.cpp y/qtbase/src/tools/androiddeployqt/main.cpp
+index d8839a0ef6e0c1e5fd88610fec59685cc95b2f07..16912823e9c8b447da232608ffbea9ca614eeac3 100644
+--- x/qtbase/src/tools/androiddeployqt/main.cpp
++++ y/qtbase/src/tools/androiddeployqt/main.cpp
+@@ -1022,15 +1022,27 @@ bool readInputFile(Options *options)
+ 
+         options->sdkPath = QDir::fromNativeSeparators(sdkPath.toString());
+ 
++    }
++
++    {
+         if (options->androidPlatform.isEmpty()) {
+-            options->androidPlatform = detectLatestAndroidPlatform(options->sdkPath);
+-            if (options->androidPlatform.isEmpty())
+-                return false;
+-        } else {
+-            if (!QDir(options->sdkPath + "/platforms/"_L1 + options->androidPlatform).exists()) {
+-                fprintf(stderr, "Warning: Android platform '%s' does not exist in SDK.\n",
+-                        qPrintable(options->androidPlatform));
++            const QJsonValue ver = jsonObject.value("android-compile-sdk-version"_L1);
++            if (!ver.isUndefined()) {
++                const auto value = ver.toString();
++                options->androidPlatform = value.startsWith("android-"_L1) ?
++                        value : "android-%1"_L1.arg(value);
+             }
++
++            if (options->androidPlatform.isEmpty()) {
++                options->androidPlatform = detectLatestAndroidPlatform(options->sdkPath);
++                if (options->androidPlatform.isEmpty())
++                    return false;
++            }
++        }
++
++        if (!QDir(options->sdkPath + "/platforms/"_L1 + options->androidPlatform).exists()) {
++            fprintf(stderr, "Warning: Android platform '%s' does not exist in SDK.\n",
++                    qPrintable(options->androidPlatform));
+         }
+     }
+ 
+diff --git x/qtbase/tests/auto/other/android_deployment_settings/CMakeLists.txt y/qtbase/tests/auto/other/android_deployment_settings/CMakeLists.txt
+index 9ef457189a67f0be332ffc2b9c749da192c419a3..4c6dba73c5424f8afd12f7d9bbd37e6baab6b79b 100644
+--- x/qtbase/tests/auto/other/android_deployment_settings/CMakeLists.txt
++++ y/qtbase/tests/auto/other/android_deployment_settings/CMakeLists.txt
+@@ -30,6 +30,7 @@ set_target_properties(${target} PROPERTIES
+     QT_ANDROID_SDK_BUILD_TOOLS_REVISION "23.0.2"
+     QT_ANDROID_MIN_SDK_VERSION "1"
+     QT_ANDROID_TARGET_SDK_VERSION "2"
++    QT_ANDROID_COMPILE_SDK_VERSION "35"
+     QT_ANDROID_PACKAGE_NAME "org.qtproject.android_deployment_settings_test"
+     QT_ANDROID_DEPLOYMENT_DEPENDENCIES "dep1.so;dep2.so;dep3.so"
+     QT_ANDROID_DEPLOYMENT_SETTINGS_FILE "attempt_to_rewrite.json"
+@@ -54,6 +55,7 @@ set_target_properties(${target} PROPERTIES
+     QT_ANDROID_SDK_BUILD_TOOLS_REVISION "23.0.2"
+     QT_ANDROID_MIN_SDK_VERSION "1"
+     QT_ANDROID_TARGET_SDK_VERSION "2"
++    QT_ANDROID_COMPILE_SDK_VERSION "35"
+     QT_ANDROID_PACKAGE_NAME "org.qtproject.android_deployment_settings_test"
+     QT_ANDROID_DEPLOYMENT_DEPENDENCIES "dep1.so;dep2.so;dep3.so"
+     QT_ANDROID_EXTRA_LIBS
+diff --git x/qtbase/tests/auto/other/android_deployment_settings/tst_android_deployment_settings.cpp y/qtbase/tests/auto/other/android_deployment_settings/tst_android_deployment_settings.cpp
+index f8428aaf43ca3e626c15d428d18036ffd7b93124..07285cd42c17de8027e6a896d45e3431ec9d5e93 100644
+--- x/qtbase/tests/auto/other/android_deployment_settings/tst_android_deployment_settings.cpp
++++ y/qtbase/tests/auto/other/android_deployment_settings/tst_android_deployment_settings.cpp
+@@ -76,6 +76,8 @@ void tst_android_deployment_settings::DeploymentSettings_data()
+                                              << "1";
+     QTest::newRow("android-target-sdk-version") << "android-target-sdk-version"
+                                                 << "2";
++    QTest::newRow("android-compile-sdk-version") << "android-compile-sdk-version"
++                                                << "35";
+     QTest::newRow("android-package-name") << "android-package-name"
+                                           << "org.qtproject.android_deployment_settings_test";
+ }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,6 +7,8 @@
 #include "AbstractState.h"
 #include "GenericContextContainer.h"
 #include "context/ChangePinContext.h"
+
+class test_StatePrepareChangePin;
 
 namespace governikus
 {
@@ -17,6 +19,7 @@ class StatePrepareChangePin
 {
 	Q_OBJECT
 	friend class StateBuilder;
+	friend class ::test_StatePrepareChangePin;
 
 	private:
 		explicit StatePrepareChangePin(const QSharedPointer<WorkflowContext>& pContext);
@@ -24,6 +27,7 @@ class StatePrepareChangePin
 
 	Q_SIGNALS:
 		void fireEnterNewPacePin();
+		void fireSkipPinChange();
 };
 
 } // namespace governikus

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,6 +7,7 @@
 #include "IfdMessage.h"
 #include "IfdVersion.h"
 
+#include <QByteArray>
 #include <QList>
 
 
@@ -17,7 +18,7 @@ class Discovery
 {
 	private:
 		QString mIfdName;
-		QString mIfdId;
+		QByteArray mIfdId;
 		quint16 mPort;
 		QList<IfdVersion::Version> mSupportedApis;
 		bool mPairing;
@@ -27,12 +28,12 @@ class Discovery
 		void parsePairing(const QJsonObject& pMessageObject);
 
 	public:
-		Discovery(const QString& pIfdName, const QString& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing = false);
+		Discovery(const QString& pIfdName, const QByteArray& pIfdId, quint16 pPort, const QList<IfdVersion::Version>& pSupportedApis, bool pPairing = false);
 		explicit Discovery(const QJsonObject& pMessageObject);
 		~Discovery() override = default;
 
 		[[nodiscard]] const QString& getIfdName() const;
-		[[nodiscard]] const QString& getIfdId() const;
+		[[nodiscard]] const QByteArray& getIfdId() const;
 		[[nodiscard]] quint16 getPort() const;
 		[[nodiscard]] const QList<IfdVersion::Version>& getSupportedApis() const;
 

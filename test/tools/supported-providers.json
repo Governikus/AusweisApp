@@ -7,7 +7,7 @@
 			"properties": {
 				"": {
 					"type": "string",
-					"pattern": "^[\\säÄöÖüÜßẞ\\w\\_\\'\\/\\-\\+\\*\\&\\<\\>\\(\\)\\,\\:\\.\\?\\!]+$"
+					"pattern": "^[\\säÄöÖüÜßẞ\\w_'\\/\\-\\+\\*&<>\\(\\),:\\.\\?!]+$"
 				}
 			},
 			"required": [
@@ -85,15 +85,6 @@
 					"longDescription": {
 						"$ref": "#/definitions/languageString"
 					},
-					"subjectUrls": {
-						"description": "Foo",
-						"type": "array",
-						"items": {
-							"type": "string",
-							"format": "uri",
-							"pattern": "^https://"
-						}
-					},
 					"phone": {
 						"type": "string",
 						"pattern": "^\\+49 ([\\d]{3}|[\\d ]{6,})$"
@@ -114,7 +105,7 @@
 					"email": {
 						"type": "string",
 						"format": "email",
-						"pattern": "^[\\w\\.\\+\\-]+\\@[\\w\\.\\+\\-]+\\.[a-z]{2,3}$"
+						"pattern": "^(?!\\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
 					},
 					"postalAddress": {
 						"type": "string",
@@ -137,10 +128,6 @@
 						"type": "string",
 						"pattern": "\\.(jpg|png|svg)$"
 					},
-					"subjectUrlInfo": {
-						"type": "string",
-						"minLength": 1
-					},
 					"eidSupport": {
 						"type": "boolean"
 					},
@@ -155,18 +142,6 @@
 					"address",
 					"homepage",
 					"category"
-				],
-				"oneOf": [
-					{
-						"required": [
-							"subjectUrls"
-						]
-					},
-					{
-						"required": [
-							"subjectUrlInfo"
-						]
-					}
 				],
 				"additionalProperties": false
 			}

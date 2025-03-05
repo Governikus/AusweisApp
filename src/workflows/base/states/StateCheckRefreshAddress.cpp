@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateCheckRefreshAddress.h"
@@ -59,8 +59,8 @@ bool StateCheckRefreshAddress::isMatchingSameOriginPolicyInDevMode() const
 		if (matching)
 		{
 			qCCritical(developermode) << "SOP-Check: Ignoring scheme and port in developer mode.";
-			qCCritical(developermode).noquote() << "  Origin URL:" << mSubjectUrl.toString();
-			qCCritical(developermode).noquote() << "  Refresh URL:" << mUrl.toString();
+			qCCritical(developermode).noquote() << "Origin URL:" << mSubjectUrl.toString();
+			qCCritical(developermode).noquote() << "Refresh URL:" << mUrl.toString();
 		}
 		return matching;
 	}

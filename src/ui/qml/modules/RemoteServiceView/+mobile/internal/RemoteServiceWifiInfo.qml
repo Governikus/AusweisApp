@@ -1,18 +1,18 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 
 RowLayout {
-	spacing: Constants.text_spacing
+	spacing: Style.dimens.text_spacing
 
 	TintableIcon {
 		source: "qrc:/images/info.svg"
-		sourceSize.width: Style.dimens.icon_size
+		sourceSize.width: Style.dimens.small_icon_size
 		tintColor: infoText.color
 	}
 	GText {

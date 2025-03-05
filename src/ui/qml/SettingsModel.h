@@ -1,15 +1,12 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the settings.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "AppUpdateDataModel.h"
 #include "Env.h"
+#include "ReaderManagerPluginInfo.h"
 #include "SingletonCreator.h"
 #include "UiPlugin.h"
 
@@ -35,7 +32,8 @@ class SettingsModel
 	Q_PROPERTY(bool advancedSettings READ isAdvancedSettings WRITE setAdvancedSettings NOTIFY fireAdvancedSettingsChanged)
 	Q_PROPERTY(bool developerOptions READ isDeveloperOptions WRITE setDeveloperOptions NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool developerMode READ isDeveloperMode WRITE setDeveloperMode NOTIFY fireDeveloperOptionsChanged)
-	Q_PROPERTY(bool showBetaTesting MEMBER mShowBetaTesting NOTIFY fireDeveloperOptionsChanged)
+	Q_PROPERTY(bool showBetaTesting READ getShowBetaTesting WRITE setShowBetaTesting NOTIFY fireDeveloperOptionsChanged)
+	Q_PROPERTY(QString appendTransportPin READ getAppendTransportPin WRITE setAppendTransportPin NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool useSelfauthenticationTestUri READ useSelfauthenticationTestUri WRITE setUseSelfauthenticationTestUri NOTIFY fireDeveloperOptionsChanged)
 	Q_PROPERTY(bool pinPadMode READ getPinPadMode WRITE setPinPadMode NOTIFY firePinPadModeChanged)
 	Q_PROPERTY(bool showAccessRights READ getShowAccessRights WRITE setShowAccessRights NOTIFY fireShowAccessRightsChanged)
@@ -46,10 +44,12 @@ class SettingsModel
 	Q_PROPERTY(bool skipRightsOnCanAllowed READ isSkipRightsOnCanAllowed WRITE setSkipRightsOnCanAllowed NOTIFY fireCanAllowedChanged)
 	Q_PROPERTY(bool enableSimulator READ isSimulatorEnabled WRITE setSimulatorEnabled NOTIFY fireSimulatorChanged)
 	Q_PROPERTY(governikus::EnumUiModule::UiModule startupModule READ getStartupModule WRITE setStartupModule NOTIFY fireStartupModuleChanged)
+	Q_PROPERTY(bool showOnboarding READ getShowOnboarding WRITE setShowOnboarding NOTIFY fireStartupModuleChanged)
+	Q_PROPERTY(bool onboardingShown READ getOnboardingShown WRITE setOnboardingShown NOTIFY fireStartupModuleChanged)
 	Q_PROPERTY(bool autoStartAvailable READ isAutoStartAvailable CONSTANT)
 	Q_PROPERTY(bool autoStartApp READ isAutoStart WRITE setAutoStart NOTIFY fireAutoStartChanged)
-	Q_PROPERTY(bool showTrayIcon READ showTrayIcon NOTIFY fireShowTrayIconChanged)
 	Q_PROPERTY(bool autoStartSetByAdmin READ autoStartIsSetByAdmin CONSTANT)
+	Q_PROPERTY(bool trayIconEnabled READ isTrayIconEnabled WRITE setTrayIconEnabled NOTIFY fireTrayIconEnabledChanged)
 	Q_PROPERTY(bool autoUpdateAvailable READ isAutoUpdateAvailable CONSTANT)
 	Q_PROPERTY(bool autoCloseWindowAfterAuthentication READ isAutoCloseWindowAfterAuthentication WRITE setAutoCloseWindowAfterAuthentication NOTIFY fireAutoCloseWindowAfterAuthenticationChanged)
 	Q_PROPERTY(bool autoRedirectAfterAuthentication READ isAutoRedirectAfterAuthentication WRITE setAutoRedirectAfterAuthentication NOTIFY fireAutoRedirectAfterAuthenticationChanged)
@@ -65,6 +65,7 @@ class SettingsModel
 	Q_PROPERTY(bool useSystemFont READ isUseSystemFont WRITE setUseSystemFont NOTIFY fireUseSystemFontChanged)
 	Q_PROPERTY(bool useAnimations READ isUseAnimations WRITE setUseAnimations NOTIFY fireUseAnimationsChanged)
 	Q_PROPERTY(ModeOption userDarkMode READ getDarkMode WRITE setDarkMode NOTIFY fireDarkModeChanged)
+	Q_PROPERTY(governikus::EnumReaderManagerPluginType::ReaderManagerPluginType preferredTechnology READ getPreferredTechnology WRITE setPreferredTechnology NOTIFY firePreferredTechnologyChanged)
 
 	private:
 		bool mAdvancedSettings;
@@ -101,8 +102,6 @@ class SettingsModel
 		[[nodiscard]] QString getDeviceName() const;
 		void setDeviceName(const QString& name);
 
-		Q_INVOKABLE void removeTrustedCertificate(const QString& pFingerprint) const;
-
 		[[nodiscard]] bool getPinPadMode() const;
 		void setPinPadMode(bool pPinPadMode);
 
@@ -127,6 +126,12 @@ class SettingsModel
 		[[nodiscard]] UiModule getStartupModule() const;
 		void setStartupModule(UiModule pModule);
 
+		[[nodiscard]] bool getShowOnboarding() const;
+		void setShowOnboarding(bool pShowOnboarding);
+
+		[[nodiscard]] bool getOnboardingShown() const;
+		void setOnboardingShown(bool pOnboardingShown);
+
 		[[nodiscard]] bool isAutoStartAvailable() const;
 		[[nodiscard]] bool isAutoStart() const;
 		[[nodiscard]] bool autoStartIsSetByAdmin() const;
@@ -142,7 +147,9 @@ class SettingsModel
 		[[nodiscard]] bool isAutoUpdateCheck() const;
 		[[nodiscard]] bool autoUpdateCheckIsSetByAdmin() const;
 		void setAutoUpdateCheck(bool pAutoUpdateCheck);
-		[[nodiscard]] bool showTrayIcon() const;
+
+		[[nodiscard]] bool isTrayIconEnabled() const;
+		void setTrayIconEnabled(bool pTrayIconEnabled);
 
 		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
@@ -165,7 +172,10 @@ class SettingsModel
 		void setUseAnimations(bool pUseAnimations) const;
 
 		[[nodiscard]] ModeOption getDarkMode() const;
-		void setDarkMode(ModeOption pMode);
+		void setDarkMode(ModeOption pMode) const;
+
+		ReaderManagerPluginType getPreferredTechnology() const;
+		void setPreferredTechnology(ReaderManagerPluginType pTechnology) const;
 
 		[[nodiscard]] Q_INVOKABLE bool requestStoreFeedback() const;
 		Q_INVOKABLE void hideFutureStoreFeedbackDialogs() const;
@@ -174,9 +184,13 @@ class SettingsModel
 
 		[[nodiscard]] AppUpdateDataModel* getAppUpdateData() const;
 
-#ifndef QT_NO_DEBUG
 		Q_INVOKABLE void resetHideableDialogs() const;
-#endif
+
+		[[nodiscard]] bool getShowBetaTesting() const;
+		void setShowBetaTesting(bool pNewShowBetaTesting);
+
+		[[nodiscard]] QString getAppendTransportPin() const;
+		void setAppendTransportPin(const QString& pNumber);
 
 	public Q_SLOTS:
 		void onTranslationChanged();
@@ -204,7 +218,8 @@ class SettingsModel
 		void fireUseSystemFontChanged();
 		void fireUseAnimationsChanged();
 		void fireDarkModeChanged();
-		void fireShowTrayIconChanged();
+		void fireTrayIconEnabledChanged();
+		void firePreferredTechnologyChanged();
 
 };
 

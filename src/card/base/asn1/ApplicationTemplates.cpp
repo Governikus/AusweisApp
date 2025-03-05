@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationTemplates.h"
@@ -86,9 +86,9 @@ const QList<QSharedPointer<const ApplicationTemplate>>& ApplicationTemplates::ge
 bool ApplicationTemplates::contains(const QByteArray& pIdentifier) const
 {
 	return std::any_of(mApplicationTemplates.constBegin(), mApplicationTemplates.constEnd(), [pIdentifier](const auto& entry)
-		{
-			return entry->getAid() == pIdentifier;
-		});
+			{
+				return entry->getAid() == pIdentifier;
+			});
 }
 
 

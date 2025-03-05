@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SignalHandler.h"
@@ -93,21 +93,21 @@ VOID WINAPI SignalHandler::serviceCtrlHandler(DWORD pCtrlCode)
 void SignalHandler::registerService()
 {
 	QThreadPool::globalInstance()->start([]{
-			QThread::currentThread()->setObjectName(QStringLiteral("ServiceDispatcherThread"));
+				QThread::currentThread()->setObjectName(QStringLiteral("ServiceDispatcherThread"));
 
-			SERVICE_TABLE_ENTRY ServiceTable[] =
-			{
-				{const_cast<LPTSTR>(SERVICE_NAME), static_cast<LPSERVICE_MAIN_FUNCTION>(serviceMain)},
-				{nullptr, nullptr}
-			};
+				SERVICE_TABLE_ENTRY ServiceTable[] =
+				{
+					{const_cast<LPTSTR>(SERVICE_NAME), static_cast<LPSERVICE_MAIN_FUNCTION>(serviceMain)},
+					{nullptr, nullptr}
+				};
 
-			qCDebug(system) << "Start ServiceCtrlDispatcher";
-			if (!StartServiceCtrlDispatcher(ServiceTable))
-			{
-				qCCritical(system) << "Cannot start ServiceCtrlDispatcher:" << GetLastError();
-			}
-			qCDebug(system) << "ServiceCtrlDispatcher returned...";
-		});
+				qCDebug(system) << "Start ServiceCtrlDispatcher";
+				if (!StartServiceCtrlDispatcher(ServiceTable))
+				{
+					qCCritical(system) << "Cannot start ServiceCtrlDispatcher:" << GetLastError();
+				}
+				qCDebug(system) << "ServiceCtrlDispatcher returned...";
+			});
 }
 
 
@@ -132,8 +132,8 @@ VOID WINAPI SignalHandler::serviceMain(DWORD pArgc, LPTSTR* pArgv)
 	handler->setServiceStatus(SERVICE_START_PENDING);
 
 	QMetaObject::invokeMethod(handler, [handler]{
-			handler->setServiceStatus(SERVICE_RUNNING);
-		});
+				handler->setServiceStatus(SERVICE_RUNNING);
+			});
 }
 
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Logging handler of QtMessageHandler
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,11 +18,14 @@
 #include <QTemporaryFile>
 #include <functional>
 
+
 #define spawnMessageLogger(category)\
-	MessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category)
+		MessageLogger(QT_MESSAGELOG_FILE, QT_MESSAGELOG_LINE, QT_MESSAGELOG_FUNC, category)
+
 
 class test_LogHandler;
 class test_LogModel;
+
 
 namespace governikus
 {
@@ -113,7 +112,7 @@ class LogHandler
 		[[nodiscard]] QString getPaddedLogMsg(const QMessageLogContext& pContext, const QString& pMsg) const;
 		void handleMessage(QtMsgType pType, const QMessageLogContext& pContext, const QString& pMsg);
 		void handleLogWindow(QtMsgType pType, const char* pCategory, const QString& pMsg);
-		void removeOldLogFiles();
+		void removeOldLogFiles() const;
 		QByteArray readLogFile(qint64 pStart, qint64 pLength = -1);
 		void setLogFileInternal(bool pEnable);
 
@@ -150,7 +149,7 @@ class LogHandler
 		static QDateTime getFileDate(const QFileInfo& pInfo);
 		[[nodiscard]] QDateTime getCurrentLogFileDate() const;
 		[[nodiscard]] QFileInfoList getOtherLogFiles() const;
-		bool removeOtherLogFiles();
+		bool removeOtherLogFiles() const;
 		void setLogFile(bool pEnable);
 		[[nodiscard]] bool useLogFile() const;
 		void setUseHandler(bool pEnable);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/CipherMac.h"
@@ -43,12 +43,12 @@ CipherMac::CipherMac(const SecurityProtocol& pSecurityProtocol, const QByteArray
 #else
 
 	auto guard = qScopeGuard([this] {
-			EVP_MAC_CTX_free(mCtx);
-			mCtx = nullptr;
+				EVP_MAC_CTX_free(mCtx);
+				mCtx = nullptr;
 
-			EVP_MAC_free(mMac);
-			mMac = nullptr;
-		});
+				EVP_MAC_free(mMac);
+				mMac = nullptr;
+			});
 
 	mMac = EVP_MAC_fetch(nullptr, "cmac", nullptr);
 	if (!mMac)
@@ -103,7 +103,7 @@ bool CipherMac::isInitialized() const
 }
 
 
-QByteArray CipherMac::generate(const QByteArray& pMessage)
+QByteArray CipherMac::generate(const QByteArray& pMessage) const
 {
 	if (!isInitialized())
 	{
@@ -113,9 +113,9 @@ QByteArray CipherMac::generate(const QByteArray& pMessage)
 
 #if OPENSSL_VERSION_NUMBER < 0x30000000L
 	QSharedPointer<EVP_MD_CTX> ctx(EVP_MD_CTX_create(), [](EVP_MD_CTX* pCtx)
-		{
-			EVP_MD_CTX_destroy(pCtx);
-		});
+			{
+				EVP_MD_CTX_destroy(pCtx);
+			});
 
 	if (ctx.isNull() || !EVP_DigestSignInit(ctx.data(), nullptr, nullptr, nullptr, mKey))
 	{
@@ -140,8 +140,8 @@ QByteArray CipherMac::generate(const QByteArray& pMessage)
 #else
 	auto* ctx = EVP_MAC_CTX_dup(mCtx);
 	const auto guard = qScopeGuard([ctx] {
-			EVP_MAC_CTX_free(ctx);
-		});
+				EVP_MAC_CTX_free(ctx);
+			});
 
 	if (!EVP_MAC_init(ctx, nullptr, 0, nullptr))
 	{

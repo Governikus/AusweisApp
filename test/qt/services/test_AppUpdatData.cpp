@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref AppUpdateData
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateData.h"
@@ -170,7 +166,7 @@ class test_AppUpdatData
 			QCOMPARE(data.isValid(), true);
 			QCOMPARE(data.getParsingResult(), GlobalStatus::Code::No_Error);
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
 			QCOMPARE(data.isCompatible(), false);
 #else
 			QCOMPARE(data.isCompatible(), true);

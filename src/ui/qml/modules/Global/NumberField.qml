@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -67,7 +70,7 @@ Control {
 	contentItem: RowLayout {
 		id: layout
 
-		spacing: Constants.text_spacing
+		spacing: Style.dimens.text_spacing
 		z: 2
 
 		GridLayout {
@@ -78,7 +81,7 @@ Control {
 			Layout.maximumWidth: Layout.preferredWidth
 			Layout.minimumWidth: markerWidth
 			Layout.preferredWidth: markerWidth + (markerWidth + columnSpacing) * Math.max(5, root.passwordLength - 1)
-			columnSpacing: Constants.is_desktop ? Constants.component_spacing : 5
+			columnSpacing: Style.is_layout_desktop ? Style.dimens.pane_spacing : 5
 			columns: Math.max(1, Math.min(1 + (width - markerWidth) / (markerWidth + columnSpacing), root.passwordLength))
 			rowSpacing: columnSpacing
 
@@ -86,24 +89,28 @@ Control {
 				model: root.passwordLength
 
 				Text {
+					id: digit
+
+					required property int index
+
 					Layout.alignment: Qt.AlignHCenter
 					Layout.maximumHeight: Layout.preferredHeight
 					Layout.maximumWidth: Layout.preferredWidth
 					Layout.minimumHeight: Layout.preferredHeight
 					Layout.minimumWidth: Layout.preferredWidth
-					Layout.preferredHeight: fontMetrics.height + Constants.text_spacing
+					Layout.preferredHeight: fontMetrics.height + Style.dimens.text_spacing
 					Layout.preferredWidth: grid.markerWidth
 					color: Style.color.textNormal.basic
 					font: fontMetrics.font
 					horizontalAlignment: Text.AlignHCenter
-					text: eye.activated ? root.number.substr(index, 1) : ""
+					text: eye.activated ? root.number.substr(digit.index, 1) : ""
 					verticalAlignment: Text.AlignTop
 
 					Rectangle {
-						readonly property int normalHeight: Constants.is_desktop ? Math.max(UiPluginModel.scaleFactor * 4, 1) : 1
+						readonly property int normalHeight: Style.is_layout_desktop ? Math.max(UiPluginModel.scaleFactor * 4, 1) : 1
 
 						color: parent.color
-						height: index === root.number.length ? normalHeight * 3 : normalHeight
+						height: digit.index === root.number.length ? normalHeight * 3 : normalHeight
 						width: grid.markerWidth
 
 						anchors {
@@ -115,12 +122,12 @@ Control {
 						color: parent.color
 						height: width
 						radius: height / 2
-						visible: !eye.activated && root.number.charAt(index) !== ""
+						visible: !eye.activated && root.number.charAt(digit.index) !== ""
 						width: fontMetrics.averageCharacterWidth
 
 						anchors {
 							centerIn: parent
-							verticalCenterOffset: -Constants.text_spacing / 2
+							verticalCenterOffset: -Style.dimens.text_spacing / 2
 						}
 					}
 				}
@@ -132,7 +139,7 @@ Control {
 			property bool activated: false
 
 			background: null
-			padding: Constants.text_spacing / 2
+			padding: Style.dimens.text_spacing / 2
 			text: (activated ?
 				//: LABEL DESKTOP Screenreader text for the eye icon to change the password visibility
 				qsTr("Press to hide the number") :
@@ -141,7 +148,7 @@ Control {
 
 			contentItem: TintableIcon {
 				source: eye.activated ? "qrc:///images/eye_visibility_on.svg" : "qrc:///images/eye_visibility_off.svg"
-				sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
+				sourceSize.height: Style.is_layout_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
 				tintColor: Style.color.textNormal.basic
 			}
 
@@ -167,8 +174,8 @@ Control {
 	FontMetrics {
 		id: fontMetrics
 
-		font.bold: true
-		font.pixelSize: Constants.is_desktop ? UiPluginModel.scaleFactor * 50 : 24
+		font.pixelSize: Style.is_layout_desktop ? UiPluginModel.scaleFactor * 50 : 24
+		font.weight: Font.Bold
 	}
 	TextInput {
 		id: echoField

@@ -1,14 +1,13 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Test for the chat administration in authentication context.
- */
-
+#include "AppSettings.h"
 #include "VolatileSettings.h"
+#include "paos/retrieve/DidAuthenticateEac1Parser.h"
 
 #include "TestAuthContext.h"
+#include "TestFileHelper.h"
 
 #include <QSharedPointer>
 #include <QSignalSpy>
@@ -66,6 +65,7 @@ class test_AccessRightManager
 		void init()
 		{
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(false);
 
 			mTestAuthContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_accessRightsEmpty.xml"_L1));
 			mEac1Changed.reset(new QSignalSpy(mTestAuthContext.data(), &AuthContext::fireDidAuthenticateEac1Changed));
@@ -77,6 +77,80 @@ class test_AccessRightManager
 		{
 			mEac1Changed.reset();
 			mTestAuthContext.reset();
+		}
+
+
+		void test_canAllowed_data()
+		{
+			QTest::addColumn<bool>("requested");
+			QTest::addColumn<bool>("isUsedAsSDK");
+			QTest::addColumn<bool>("canAllowedEnabled");
+			QTest::addColumn<bool>("officialDomestic");
+			QTest::addColumn<bool>("canAllowed");
+
+			QTest::newRow("Not requested - Not allowed") << false << false << false << false << false;
+			QTest::newRow("Not requested - Allowed by: OD") << false << false << false << true << false;
+			QTest::newRow("Not requested - Allowed by: Settings") << false << false << true << false << false;
+			QTest::newRow("Not requested - Allowed by: Settings, OD") << false << false << true << true << false;
+			QTest::newRow("Not requested - Allowed by: SDK") << false << true << false << false << false;
+			QTest::newRow("Not requested - Allowed by: SDK, OD") << false << true << false << true << false;
+			QTest::newRow("Not requested - Allowed by: SDK, Settings") << false << true << true << false << false;
+			QTest::newRow("Not requested - Allowed by: SDK, Settings,  OD") << false << true << true << true << false;
+			QTest::newRow("Requested - Not allowed") << true << false << false << false << false;
+			QTest::newRow("Requested - Allowed by: OD") << true << false << false << true << true;
+			QTest::newRow("Requested - Allowed by: Settings") << true << false << true << false << true;
+			QTest::newRow("Requested - Allowed by: Settings, OD") << true << false << true << true << true;
+			QTest::newRow("Requested - Allowed by: SDK") << true << true << false << false << true;
+			QTest::newRow("Requested - Allowed by: SDK, OD") << true << true << false << true << true;
+			QTest::newRow("Requested - Allowed by: SDK, Settings") << true << true << true << false << true;
+			QTest::newRow("Requested - Allowed by: SDK, Settings,  OD") << true << true << true << true << true;
+		}
+
+
+		void test_canAllowed()
+		{
+			QFETCH(bool, requested);
+			QFETCH(bool, isUsedAsSDK);
+			QFETCH(bool, canAllowedEnabled);
+			QFETCH(bool, officialDomestic);
+			QFETCH(bool, canAllowed);
+
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(isUsedAsSDK);
+			Env::getSingleton<AppSettings>()->getGeneralSettings().setEnableCanAllowed(canAllowedEnabled);
+
+			QString file;
+			if (requested)
+			{
+				if (officialDomestic)
+				{
+					file = ":/paos/DIDAuthenticateEAC1_official_domestic_can.xml"_L1;
+				}
+				else
+				{
+					file = ":/paos/DIDAuthenticateEAC1.xml"_L1;
+				}
+			}
+			else
+			{
+				if (officialDomestic)
+				{
+					file = ":/paos/DIDAuthenticateEAC1_official_domestic.xml"_L1;
+				}
+				else
+				{
+					file = ":/paos/DIDAuthenticateEAC1_3.xml"_L1;
+				}
+			}
+			const auto& content = TestFileHelper::readFile(file);
+			QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+
+			const auto terminalCvc = eac1->getCvCertificates({AccessRole::AT}).at(0);
+			QCOMPARE(terminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::CAN_ALLOWED), requested);
+			const auto dvCvc = eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0);
+			QCOMPARE(dvCvc->getBody().getCHAT().getAccessRole(), officialDomestic ? AccessRole::DV_od : AccessRole::DV_no_f);
+
+			AccessRightManager manager(eac1, terminalCvc, dvCvc);
+			QCOMPARE(manager.getOptionalAccessRights().contains(AccessRight::CAN_ALLOWED), canAllowed);
 		}
 
 

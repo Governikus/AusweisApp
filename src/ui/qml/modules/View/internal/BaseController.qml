@@ -1,16 +1,20 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
+import Governikus.TitleBar
 import Governikus.Type
+import Governikus.Global
 
 Item {
 	id: root
 
 	property bool contentIsScrolled: false
+	property ProgressTracker progress: null
 
 	signal activate
+	signal leaveView
 
 	function showRemoveCardFeedback(workflowModel, success) {
 		if (workflowModel.showRemoveCardFeedback) {
@@ -19,7 +23,7 @@ Item {
 				// The feedback notification will crash Apple's VoiceOver if it happens at the same time the app is redirecting
 				// back to the browser. This happens with both the iOS toasts and our own toast-like replacement. To work around
 				// this, we will not show the notification during an authentication on iOS with VoiceOver running.
-				if (ApplicationModel.isScreenReaderRunning() && ApplicationModel.currentWorkflow === ApplicationModel.Workflow.AUTHENTICATION) {
+				if (ApplicationModel.isScreenReaderRunning && ApplicationModel.currentWorkflow === ApplicationModel.Workflow.AUTHENTICATION) {
 					return;
 				}
 			}
@@ -39,7 +43,7 @@ Item {
 		if (d.forceFocusFirstA11yItem(root)) {
 			return;
 		}
-		let menuBar = ApplicationWindow.menuBar;
+		let menuBar = (ApplicationWindow.menuBar as TitleBar);
 		if (menuBar && menuBar.setActiveFocus) {
 			console.warn("No focus item found using TitleBar");
 			menuBar.setActiveFocus();

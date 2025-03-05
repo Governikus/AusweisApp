@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief RemoteService settings
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -42,11 +38,11 @@ class RemoteServiceSettings
 			friend class ::test_RemoteServiceSettings;
 
 			private:
-				QString mFingerprint;
+				QByteArray mFingerprint;
 				QString mName;
 				QDateTime mLastConnected;
 
-				RemoteInfo(const QString& pFingerprint,
+				RemoteInfo(const QByteArray& pFingerprint,
 						const QDateTime& pLastConnected);
 
 			public:
@@ -55,7 +51,7 @@ class RemoteServiceSettings
 				static RemoteInfo fromJson(const QJsonObject&);
 				[[nodiscard]] QJsonObject toJson() const;
 
-				[[nodiscard]] const QString& getFingerprint() const;
+				[[nodiscard]] const QByteArray& getFingerprint() const;
 
 				[[nodiscard]] QString getNameEscaped() const;
 				void setNameUnescaped(const QString& pName);
@@ -79,7 +75,7 @@ class RemoteServiceSettings
 		void syncRemoteInfos(const QSet<QSslCertificate>& pCertificates);
 
 	public:
-		static QString generateFingerprint(const QSslCertificate& pCert);
+		static QByteArray generateFingerprint(const QSslCertificate& pCert);
 		~RemoteServiceSettings() override = default;
 
 		[[nodiscard]] QString getDeviceName() const;
@@ -94,7 +90,7 @@ class RemoteServiceSettings
 		[[nodiscard]] QList<QSslCertificate> getTrustedCertificates() const;
 		void addTrustedCertificate(const QSslCertificate& pCertificate);
 		void removeTrustedCertificate(const QSslCertificate& pCertificate);
-		void removeTrustedCertificate(const QString& pFingerprint);
+		void removeTrustedCertificate(const QByteArray& pFingerprint);
 
 		bool checkAndGenerateKey(int pCreateKeySize) const;
 
@@ -105,7 +101,7 @@ class RemoteServiceSettings
 		void setKey(const QSslKey& pKey) const;
 
 		[[nodiscard]] RemoteInfo getRemoteInfo(const QSslCertificate& pCertificate) const;
-		[[nodiscard]] RemoteInfo getRemoteInfo(const QString& pFingerprint) const;
+		[[nodiscard]] RemoteInfo getRemoteInfo(const QByteArray& pFingerprint) const;
 		[[nodiscard]] QList<RemoteInfo> getRemoteInfos() const;
 		bool updateRemoteInfo(const RemoteInfo& pInfo);
 

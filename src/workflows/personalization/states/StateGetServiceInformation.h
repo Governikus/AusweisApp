@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief State that initializes the personalization of the Smart-eID applet
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

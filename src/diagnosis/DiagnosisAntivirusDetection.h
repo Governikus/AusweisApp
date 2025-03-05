@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class for retrieving information about installed antivirus software on windows.
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,9 +8,11 @@
 #include <QProcess>
 #include <QSharedPointer>
 
+
 class test_DiagnosisAntivirusDetection;
 class test_DiagnosisTreeModel;
 class test_DiagnosisModel;
+
 
 namespace governikus
 {
@@ -76,7 +74,15 @@ class DiagnosisAntivirusDetection
 
 	public:
 		DiagnosisAntivirusDetection();
+#ifdef Q_OS_WIN
 		void startInformationProcess();
+#else
+		void startInformationProcess() const
+		{
+		}
+
+
+#endif
 		[[nodiscard]] const QList<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
 };
 

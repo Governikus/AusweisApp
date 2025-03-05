@@ -8,8 +8,6 @@ der |AppName| unterstützt.
 
 Betriebssysteme
 """""""""""""""
-- macOS 12.0
-
 - macOS 13.0
 
 - macOS 14.0
@@ -26,11 +24,13 @@ Betriebssysteme
 
 - Windows Server 2022
 
+- Windows Server 2025
+
 - Android 9 und höher (armeabi-v7a, arm64-v8a, x86_64)
 
-- iOS 14 und höher
+- iOS 16 und höher
 
-- ChromeOS 125 und höher
+- ChromeOS 132 und höher
 
 
 Karten
@@ -56,13 +56,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 129
+- Chrome 133
 
-- Firefox 131
+- Firefox 135
 
 - Safari 18.0 (macOS)
 
-- Edge 129
+- Edge 133
 
 
 
@@ -80,17 +80,7 @@ des BSI unter `Zertifizierte Produkte - Chipkartenleser mit PA-Unterstützung
 
 - Cherry Secure Board 1.0
 
-- Cherry ST-1275
-
-- Cherry TC-1200
-
-- Cherry TC-1300
-
-- HID OMNIKEY 5021 CL
-
 - HID OMNIKEY 5022 CL
-
-- HID OMNIKEY 5421
 
 - HID OMNIKEY 5422
 
@@ -138,11 +128,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 126 (iOS/Android)
+- Chrome 133 (iOS/Android)
 
-- Firefox 131 (iOS/Android)
+- Firefox 135 (iOS/Android)
 
-- Samsung Internet 26 (Android)
+- Samsung Internet 27 (Android)
 
 - Safari 18.0 (iOS)
 

@@ -9,7 +9,6 @@
 			"Name": "Smartphone als Kartenleser",
 			"Pattern": "^NFC.*",
 			"Icon": "img_RemoteReader.png",
-			"IconWithNPA": "img_RemoteReader_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -54,7 +53,6 @@
 			"Name": "PersoSim",
 			"Pattern": "^PersoSim.*",
 			"Icon": "img_PersoSim.png",
-			"IconWithNPA": "img_PersoSim_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -81,7 +79,6 @@
 			"Name": "Simulator",
 			"Pattern": "^Simulator$",
 			"Icon": "img_Simulator.png",
-			"IconWithNPA": "img_Simulator_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -108,7 +105,6 @@
 			"Name": "REINER SCT cyberJack RFID komfort",
 			"Pattern": "REINER SCT cyberJack RFID komfort",
 			"Icon": "img_Reiner_SCT_cyberjack_RFID_komfort.png",
-			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_komfort_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -169,7 +165,6 @@
 			"Name": "REINER SCT cyberJack RFID komfort FON",
 			"Pattern": "^REINER SCT cyberJack RFID komfort FON",
 			"Icon": "img_Reiner_SCT_cyberjack_RFID_komfort.png",
-			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_komfort_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -216,7 +211,6 @@
 			"Name": "REINER SCT cyberJack RFID standard",
 			"Pattern": "REINER SCT cyberJack RFID standard",
 			"Icon": "img_Reiner_SCT_cyberjack_RFID_standard.png",
-			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_standard_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -277,7 +271,6 @@
 			"Name": "REINER SCT cyberJack RFID basis",
 			"Pattern": "REINER SCT cyberJack RFID basis",
 			"Icon": "img_Reiner_SCT_cyberjack_RFID_basis.png",
-			"IconWithNPA": "img_Reiner_SCT_cyberjack_RFID_basis_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -368,7 +361,6 @@
 			"Name": "REINER SCT cyberJack wave",
 			"Pattern": "REINER SCT cyberJack wave",
 			"Icon": "img_cyberjack_wave.png",
-			"IconWithNPA": "img_cyberjack_wave_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -423,7 +415,6 @@
 			"Name": "KOBIL IDToken",
 			"Pattern": "^KOBIL (Systems )?IDToken",
 			"Icon": "img_KOBIL_ID_Token.png",
-			"IconWithNPA": "img_KOBIL_ID_Token_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -490,7 +481,6 @@
 			"Name": "Identiv SDI011 Dual Interface Smart Card Reader",
 			"Pattern": "^(SCM Microsystems Inc. )?SDI011G? ((Contactless Reader( 0)?)|((USB Smart Card|Contactless) Reader\\([12]\\)))$",
 			"Icon": "img_Identive_SDI011.png",
-			"IconWithNPA": "img_Identive_SDI011_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -554,7 +544,6 @@
 			"Name": "Identiv SCL01x Contactless Smart Card Reader",
 			"Pattern": "^(SCM Microsystems Inc. )?SCL011G? Contactless Reader( 0)?$",
 			"Icon": "img_Identive_SCL011.png",
-			"IconWithNPA": "img_Identive_SCL011_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -603,7 +592,6 @@
 			"Name": "Identiv 3700 F",
 			"Pattern": "^Identiv[e]? (uTrust|cloud|CLOUD) 3700 F (Contactless|CL) Reader( 0)?$",
 			"Icon": "img_Identive_XXXX_F.png",
-			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -667,7 +655,6 @@
 			"Name": "Identiv 3720 F",
 			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3720 (Contactless|CL) Reader( 0|\\(1\\))$",
 			"Icon": "img_Identive_XXXX_F.png",
-			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -718,7 +705,6 @@
 			"Name": "Identiv 3721 F",
 			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 3721 (Contactless|CL) Reader( 0|\\(1\\))$",
 			"Icon": "img_Identive_XXXX_F.png",
-			"IconWithNPA": "img_Identive_XXXX_F_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -769,7 +755,6 @@
 			"Name": "Identiv SCL3711",
 			"Pattern": "(SCM Microsystems SCL3711 reader & NFC device 0|SCL3711 Reader and NFC device)",
 			"Icon": "img_Identive_SCL3711.png",
-			"IconWithNPA": "img_Identive_SCL3711_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -817,7 +802,6 @@
 			"Name": "Identiv Cloud 4700 F",
 			"Pattern": "(Identive CLOUD 4700 F Contactless Reader( 0| 1)|Identiv uTrust 4700 F Dual Interface Reader\\(2\\))",
 			"Icon": "img_Identive_Cloud_4700_F.png",
-			"IconWithNPA": "img_Identive_Cloud_4700_F_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -868,7 +852,6 @@
 			"Name": "Identiv 4701 F",
 			"Pattern": "^Identiv (uTrust|cloud|CLOUD) 4701 F (Contactless|CL|Dual Interface) Reader( 0| 1|\\(1\\)|\\(2\\))?$",
 			"Icon": "img_Identive_4701_F.png",
-			"IconWithNPA": "img_Identive_4701_F_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -919,7 +902,6 @@
 			"Name": "ACS ACR1281U",
 			"Pattern": "ACS ACR1281 PICC Reader( 0)?",
 			"Icon": "img_ACS_ACR1281U.png",
-			"IconWithNPA": "img_ACS_ACR1281U_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -980,7 +962,6 @@
 			"Name": "ACS ACR1281U-C1",
 			"Pattern": "ACS ACR1281 1S Dual Reader (PICC 0|\\(1\\))",
 			"Icon": "img_ACS_ACR1281U.png",
-			"IconWithNPA": "img_ACS_ACR1281U_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1034,70 +1015,6 @@
 		},
 		{
 			"VendorId": "0x076B",
-			"ProductId": "0x5340",
-			"ProductIds": [
-				"0x5340"
-			],
-			"Name": "HID OMNIKEY 5021-CL",
-			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5340\\) 5021 CL",
-			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
-			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
-						},
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://www.hidglobal.de/drivers"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Beachten Sie bei der Auswahl, dass nur der \"X-CHIP WINDOWS BU & RU driver\" funktioniert.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please note that only the driver named \"X-CHIP WINDOWS BU & RU driver\" works with this card reader."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				}
-			]
-		},
-		{
-			"VendorId": "0x076B",
 			"ProductId": "0x5022",
 			"ProductIds": [
 				"0x5022"
@@ -1105,7 +1022,6 @@
 			"Name": "HID OMNIKEY 5022-CL",
 			"Pattern": "HID Global OMNIKEY 5022 Smart Card Reader( 0)?$",
 			"Icon": "img_HID_Omnikey_Mobile_Reader_502X_CL.png",
-			"IconWithNPA": "img_HID_Omnikey_Mobile_Reader_502X_CL_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1161,154 +1077,6 @@
 		},
 		{
 			"VendorId": "0x076B",
-			"ProductId": "0x5321",
-			"ProductIds": [
-				"0x5321"
-			],
-			"Name": "HID OMNIKEY 5321 v2",
-			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY CardMan \\(076B:5321\\) 5321(\\(1\\)|\\(2\\))",
-			"Icon": "img_HID_Global_OMNIKEY_5321_V2.png",
-			"IconWithNPA": "img_HID_Global_OMNIKEY_5321_V2_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers/29765"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "mac"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers/29885"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
-				}
-			]
-		},
-		{
-			"VendorId": "0x076B",
-			"ProductId": "0x5421",
-			"ProductIds": [
-				"0x5421"
-			],
-			"Name": "HID OMNIKEY 5421",
-			"Pattern": "OMNIKEY CardMan 5x21-CL 0|OMNIKEY Smart Card Reader USB 0|OMNIKEY CardMan \\(076B:5421\\) 5421(\\(1\\)|\\(2\\))",
-			"Icon": "img_HID_Omnikey_542x.png",
-			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers/29765"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "mac"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers/29885"
-				},
-				{
-					"Platforms": [
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://www3.hidglobal.com/drivers"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber.",
-					"EN": "The card reader is compatible with the installed system driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
-				}
-			]
-		},
-		{
-			"VendorId": "0x076B",
 			"ProductId": "0x5422",
 			"ProductIds": [
 				"0x5422"
@@ -1316,7 +1084,6 @@
 			"Name": "HID OMNIKEY 5422",
 			"Pattern": "HID Global OMNIKEY 5422CL Smartcard Reader 0|HID Global OMNIKEY Smartcard Reader ?(\\(1\\)|\\(2\\))",
 			"Icon": "img_HID_Omnikey_542x.png",
-			"IconWithNPA": "img_HID_Omnikey_542x_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1377,7 +1144,6 @@
 			"Name": "OBID RFID-Reader",
 			"Pattern": "FEIG ELECTRONIC GmbH OBID myAXXESS basic Slot:CL 358334430",
 			"Icon": "img_FEIG_myAXXES_basic.png",
-			"IconWithNPA": "img_FEIG_myAXXES_basic_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1422,7 +1188,6 @@
 			"Name": "Gemalto Prox-SU Contactless",
 			"Pattern": "Gemalto Prox( |-)SU( Contactless_| USB PC LinkReader(\\(1\\)|\\(2\\)))",
 			"Icon": "img_Gemalto_Prox_SU.png",
-			"IconWithNPA": "img_Gemalto_Prox_SU_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1505,7 +1270,6 @@
 			"Name": "Gemalto Prox-DU HID",
 			"Pattern": "Gemalto .*Prox(-DU| Dual)( Contactless_| USB PC Link(Reader| Reader)(\\(2\\)|\\(1\\)))",
 			"Icon": "img_Gemalto_Prox_DU.png",
-			"IconWithNPA": "img_Gemalto_Prox_DU_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1542,10 +1306,10 @@
 				{
 					"Platforms": [
 						{
-							"DE": "bis macOS 12",
-							"EN": "up to macOS 12",
+							"DE": "bis macOS 14",
+							"EN": "up to macOS 14",
 							"os": "mac",
-							"max": "12"
+							"max": "14"
 						}
 					],
 					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
@@ -1554,213 +1318,16 @@
 				{
 					"Platforms": [
 						{
-							"DE": "macOS 13",
-							"EN": "macOS 13",
+							"DE": "ab macOS 15",
+							"EN": "from macOS 15",
 							"os": "mac",
-							"min": "13",
-							"max": "13"
+							"min": "15"
 						}
 					],
 					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Nach der Installation ist ein Neustart erforderlich.",
 					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. A reboot is required after the installation of the driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab macOS 14",
-							"EN": "from macOS 14",
-							"os": "mac",
-							"min": "14"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
 				}
 			]
-		},
-		{
-			"VendorId": "0x046A",
-			"ProductId": "0x0091",
-			"ProductIds": [
-				"0x0091"
-			],
-			"Name": "Cherry TC-1200",
-			"Pattern": "(Cherry TC 1200($|[^-])|TC 12xx-CL 0|Cherry SC Reader \\(046A:0091\\))",
-			"Icon": "img_Cherry_TC_1200.png",
-			"IconWithNPA": "img_Cherry_TC_1200_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
-						},
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://cherry.de/service/downloads#21865"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
-					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
-				}
-			]
-		},
-		{
-			"VendorId": "0x046A",
-			"ProductId": "0x0092",
-			"ProductIds": [
-				"0x0092"
-			],
-			"Name": "Cherry TC-1300",
-			"Pattern": "(Cherry Smartcard Terminal TC 13xx-CL 0|Cherry SC Reader \\(046A:0092\\))",
-			"Icon": "img_Cherry_TC_1300.png",
-			"IconWithNPA": "img_Cherry_TC_1300_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "mac"
-						},
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://www.cherry.de/service/downloads#21864"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						},
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite. Nach der Installation ist ein Neustart erforderlich.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system. A reboot is required after the installation of the driver."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden.",
-					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website."
-				}
-			]
-		},
-		{
-			"VendorId": "0x046A",
-			"ProductId": "0x0072",
-			"ProductIds": [
-				"0x0072"
-			],
-			"Name": "Cherry ST-1275",
-			"Pattern": "(Cherry ST-1275|Cherry SmartTerminal XX7X-RF 0)",
-			"Icon": "img_Cherry_ST_1275.png",
-			"IconWithNPA": "img_Cherry_ST_1275_mit_ausweis.png",
-			"Drivers": [
-				{
-					"Platforms": [
-						{
-							"os": "win"
-						},
-						{
-							"os": "unknown"
-						}
-					],
-					"URL": "https://www.cherry.de/service/downloads#21987"
-				}
-			],
-			"Information": [
-				{
-					"Platforms": [
-						{
-							"DE": "bis Windows 10",
-							"EN": "up to Windows 10",
-							"os": "win",
-							"max": "10.0.19999"
-						}
-					],
-					"DE": "Es ist notwendig, die Treiber vom Hersteller zu installieren. Dazu folgen Sie bitte dem jeweiligen Link für Ihr Betriebssystem zur Herstellerseite.",
-					"EN": "It is necessary to install the drivers from the manufacturer. Please follow the relevant link for your operating system."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "ab Windows 11",
-							"EN": "from Windows 11",
-							"os": "win",
-							"min": "10.0.20000"
-						}
-					],
-					"DE": "Der Kartenleser funktioniert mit dem systemseitig installierten Treiber. Alternativ können Sie den Treiber von der Webseite des Herstellers verwenden. Bitte beachten Sie nach Anschließen des Kartenlesers die Windows-Informationen zur Einstellung der Gerätesicherheit.",
-					"EN": "The card reader operates with the driver automatically installed by the system. Alternatively you have the option to install a driver from the manufacturer's website. After connecting the card reader, please observe the Windows information notification regarding your device security settings."
-				},
-				{
-					"Platforms": [
-						{
-							"DE": "macOS",
-							"EN": "macOS",
-							"os": "mac"
-						}
-					],
-					"DE": "Der Kartenleser wird nicht mehr unterstützt, leider bietet der Hersteller keine aktuellen Treiber an.",
-					"EN": "The card reader is no longer supported, unfortunately the manufacturer does not offer up-to-date drivers."
-				}
-			],
-			"Internal information": "Unter Windows funktioniert nur NFC A. Reader wird nicht als unterstützt markiert, da er nicht zertifiziert ist."
 		},
 		{
 			"VendorId": "0x046A",
@@ -1771,7 +1338,6 @@
 			"Name": "Cherry Secure Board 1.0",
 			"Pattern": "Cherry GmbH CHERRY SECURE BOARD 1.0( 0)?$",
 			"Icon": "img_Cherry_secure_board.png",
-			"IconWithNPA": "img_Cherry_secure_board_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1816,7 +1382,6 @@
 			"Name": "Signotec Omega Pad",
 			"Pattern": "NXP PR533( 0)?",
 			"Icon": "img_Signotec_Omega_Pad.png",
-			"IconWithNPA": "img_Signotec_Omega_Pad_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [
@@ -1861,7 +1426,6 @@
 			"Name": "ACS ACR1581U-C1",
 			"Pattern": "ACS ACR1581 1S Dual Reader (PICC|\\(1\\))( 0)?",
 			"Icon": "img_ACS_ACR1581U-C1.png",
-			"IconWithNPA": "img_ACS_ACR1581U-C1_mit_ausweis.png",
 			"Drivers": [
 				{
 					"Platforms": [

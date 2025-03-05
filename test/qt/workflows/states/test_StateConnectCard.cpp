@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief unit tests for \ref StateConnectCard
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateConnectCard.h"
@@ -109,6 +105,7 @@ class test_StateConnectCard
 			mState->onCommandDone(createCardConnectionCommand(rName));
 			QCOMPARE(spyAbort.count(), 1);
 			QCOMPARE(mState->getContext()->getFailureCode(), FailureCode::Reason::Connect_Card_Connection_Failed);
+			QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
 
 			QTest::ignoreMessage(QtDebugMsg, "Card connection command completed");
 			QTest::ignoreMessage(QtDebugMsg, "Card connection was successful");
@@ -116,6 +113,7 @@ class test_StateConnectCard
 			mState->onCommandDone(createCardConnectionCommand(rName, cardConnection));
 			QCOMPARE(mContext->getCardConnection(), cardConnection);
 			QCOMPARE(spyContinue.count(), eidTypeMismatch ? 0 : 1);
+			QVERIFY(mState->getContext()->getCardInitiallyAppeared());
 
 			workerThread.quit();
 			workerThread.wait();
@@ -142,6 +140,7 @@ class test_StateConnectCard
 			QCOMPARE(spy.count(), 0);
 			QCOMPARE(mContext->getReaderName(), info.getName());
 			QCOMPARE(mContext->getCardConnection(), cardConnection);
+			QVERIFY(!mState->getContext()->getCardInitiallyAppeared());
 
 			mState->onUnusableCardConnectionLost(info);
 			QCOMPARE(spy.count(), 1);

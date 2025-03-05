@@ -1,11 +1,6 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
-
-/*!
- * \brief MockDownloader of class Downloader, part of \ref Updater and \ref UpdatableFile tests
- */
-
 
 #pragma once
 

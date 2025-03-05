@@ -1,0 +1,80 @@
+From d857a206a84029695274a3072b010eaf774bf4f2 Mon Sep 17 00:00:00 2001
+From: Alexey Edelev <alexey.edelev@qt.io>
+Date: Thu, 28 Nov 2024 14:33:46 +0100
+Subject: Add _qt_internal_detect_latest_android_platform
+
+Function generalize the detecting of the latest available Android
+platform in the ANDROID_SDK_ROOT directory.
+
+Change-Id: Ib1d064428c414625f24765b50cff500a0ad5d27e
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+(cherry picked from commit de40931eba2cf09a8c97c9a75c6d23c77748f44c)
+---
+ cmake/QtBuildHelpers.cmake         |  1 +
+ cmake/QtPlatformAndroid.cmake      | 13 ++-----------
+ cmake/QtPublicAndroidHelpers.cmake | 20 ++++++++++++++++++++
+ 3 files changed, 23 insertions(+), 11 deletions(-)
+ create mode 100644 cmake/QtPublicAndroidHelpers.cmake
+
+diff --git x/qtbase/cmake/QtBuildHelpers.cmake y/qtbase/cmake/QtBuildHelpers.cmake
+index 66aceac62838421d0f72cd0550747dc78b42eef0..bafca09043f377cc64be63e031bc23384c5555af 100644
+--- x/qtbase/cmake/QtBuildHelpers.cmake
++++ y/qtbase/cmake/QtBuildHelpers.cmake
+@@ -278,6 +278,7 @@ function(qt_internal_get_qt_build_public_helpers out_var)
+     set(${out_var}
+         QtFeature
+         QtFeatureCommon
++        QtPublicAndroidHelpers
+         QtPublicAppleHelpers
+         QtPublicCMakeHelpers
+         QtPublicCMakeVersionHelpers
+diff --git x/qtbase/cmake/QtPlatformAndroid.cmake y/qtbase/cmake/QtPlatformAndroid.cmake
+index dad58bb6a6d9b2b9c08326b9b1cac51fabe2e7a9..afd023cf75dc51779c546efdc101c67814ae9f3a 100644
+--- x/qtbase/cmake/QtPlatformAndroid.cmake
++++ y/qtbase/cmake/QtPlatformAndroid.cmake
+@@ -69,17 +69,8 @@ macro(qt_internal_get_android_platform_version out_var android_platform)
+     string(REGEX REPLACE ".*-([0-9]+)$" "\\1" ${out_var} "${android_platform}")
+ endmacro()
+ 
+-# Locate the highest available platform
+-file(GLOB android_platforms
+-    LIST_DIRECTORIES true
+-    RELATIVE "${ANDROID_SDK_ROOT}/platforms"
+-    "${ANDROID_SDK_ROOT}/platforms/*")
+-# If list is not empty
+-if(android_platforms)
+-    qt_internal_sort_android_platforms(android_platforms ${android_platforms})
+-    list(REVERSE android_platforms)
+-    list(GET android_platforms 0 android_platform_latest)
+-
++_qt_internal_detect_latest_android_platform(android_platform_latest)
++if(android_platform_latest)
+     qt_internal_get_android_platform_version(latest_platform_version
+         "${android_platform_latest}")
+     qt_internal_get_android_platform_version(required_platform_version
+diff --git x/qtbase/cmake/QtPublicAndroidHelpers.cmake y/qtbase/cmake/QtPublicAndroidHelpers.cmake
+new file mode 100644
+index 0000000000000000000000000000000000000000..dd50c011d3eb25e277e1118ea5e9686659278aee
+--- /dev/null
++++ y/qtbase/cmake/QtPublicAndroidHelpers.cmake
+@@ -0,0 +1,20 @@
++# Copyright (C) 2024 The Qt Company Ltd.
++# SPDX-License-Identifier: BSD-3-Clause
++
++function(_qt_internal_detect_latest_android_platform out_var)
++    # Locate the highest available platform
++    file(GLOB android_platforms
++        LIST_DIRECTORIES true
++        RELATIVE "${ANDROID_SDK_ROOT}/platforms"
++        "${ANDROID_SDK_ROOT}/platforms/*")
++
++    # If list is not empty
++    if(android_platforms)
++        qt_internal_sort_android_platforms(android_platforms ${android_platforms})
++        list(REVERSE android_platforms)
++        list(GET android_platforms 0 android_platform_latest)
++        set(${out_var} "${android_platform_latest}" PARENT_SCOPE)
++    else()
++        set(${out_var} "${out_var}-NOTFOUND" PARENT_SCOPE)
++    endif()
++endfunction()

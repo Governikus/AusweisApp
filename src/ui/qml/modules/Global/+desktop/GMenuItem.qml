@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -7,18 +7,19 @@ import Governikus.Global
 import Governikus.Style
 
 RowLayout {
-	id: baseItem
+	id: root
 
 	property alias buttonIconSource: button.icon.source
 	property alias buttonText: button.text
 	property alias buttonTooltip: button.enabledTooltipText
-	property alias description: labeledText.text
+	property string description: ""
 	property alias iconSource: icon.source
-	property alias title: labeledText.label
+	property alias tintIcon: icon.tintEnabled
+	required property string title
 
 	signal clicked
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	TintableIcon {
 		id: icon
@@ -30,12 +31,17 @@ RowLayout {
 		id: labeledText
 
 		Layout.fillWidth: true
+		label: root.title
+		text: root.description
+
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 	}
 	GButton {
 		id: button
 
 		tintIcon: true
 
-		onClicked: baseItem.clicked()
+		onClicked: root.clicked()
 	}
 }

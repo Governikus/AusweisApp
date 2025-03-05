@@ -1,27 +1,31 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+
+import Governikus.Animations
 import Governikus.Global
-import Governikus.TitleBar
 import Governikus.Style
 import Governikus.View
 import Governikus.Type
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
+	property alias animation: animatedIcon.animation
+	property alias animationSymbol: animatedIcon.symbol
+	property alias animationType: animatedIcon.type
 	property alias buttonIcon: button.icon.source
+	property alias buttonLayoutDirection: button.layoutDirection
 	property alias buttonText: button.text
+	default property alias data: resultContent.data
 	property alias header: resultHeader.text
 	property alias hintButtonText: hintItem.buttonText
 	property alias hintText: hintItem.text
 	property alias hintTitle: hintItem.title
-	property alias icon: headerIcon.source
 	property alias mailButtonVisible: mailButton.visible
 	property string popupText
 	property string popupTitle
@@ -29,7 +33,10 @@ FlickableSectionPage {
 	property alias subheader: subheader.text
 	property alias text: resultText.text
 	property alias textColor: resultText.color
+	property alias textFormat: resultText.textFormat
 
+	signal cancelClicked
+	signal continueClicked
 	signal emailButtonPressed
 	signal hintClicked
 
@@ -37,7 +44,7 @@ FlickableSectionPage {
 		button.clicked();
 	}
 
-	spacing: Constants.pane_spacing
+	spacing: Style.dimens.pane_spacing
 
 	Keys.onEnterPressed: button.clicked()
 	Keys.onEscapePressed: button.clicked()
@@ -47,71 +54,57 @@ FlickableSectionPage {
 		id: resultHeader
 
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.headline
 		visible: text !== ""
-
-		FocusFrame {
-		}
 	}
-	TintableIcon {
-		id: headerIcon
+	WorkflowAnimationLoader {
+		id: animatedIcon
 
 		Layout.alignment: Qt.AlignHCenter
-		sourceSize.height: Style.dimens.header_icon_size
-		tintEnabled: false
-		visible: source.toString() !== ""
-	}
-	GSpacer {
-		Layout.fillHeight: true
+		animated: false
 	}
 	GText {
 		id: subheader
 
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.subline
 		visible: text !== ""
-
-		Accessible.onIgnoredChanged: baseItem.visibleChanged()
-
-		FocusFrame {
-		}
 	}
 	GText {
 		id: resultText
 
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		visible: text !== ""
+	}
+	ColumnLayout {
+		id: resultContent
 
-		Accessible.onIgnoredChanged: baseItem.visibleChanged()
-
-		FocusFrame {
-		}
+		Layout.alignment: Qt.AlignHCenter
 	}
 	RowLayout {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
-		visible: popupTitle !== "" || popupText !== ""
+		spacing: Style.dimens.pane_spacing
+		visible: root.popupTitle !== "" || root.popupText !== ""
 
 		GButton {
 			id: mailButton
 
 			icon.source: "qrc:///images/email_icon.svg"
+			style: Style.color.controlOptional
 			//: LABEL DESKTOP
 			text: qsTr("Send email")
 			tintIcon: true
 			visible: false
 
-			onClicked: baseItem.emailButtonPressed()
+			onClicked: root.emailButtonPressed()
 		}
 		GButton {
 			icon.source: "qrc:/images/desktop/save_icon.svg"
+			style: Style.color.controlOptional
 			//: LABEL DESKTOP
 			text: qsTr("Save log")
 			tintIcon: true
@@ -136,7 +129,7 @@ FlickableSectionPage {
 			}
 		}
 		GButton {
-			property QtObject popup: null
+			property ConfirmationPopup popup: null
 
 			function destroyPopup() {
 				if (popup) {
@@ -147,16 +140,17 @@ FlickableSectionPage {
 			}
 
 			icon.source: "qrc:/images/info.svg"
+			style: Style.color.controlOptional
 			//: LABEL DESKTOP
 			text: qsTr("See details")
 			tintIcon: true
-			visible: popupTitle !== "" || popupText !== ""
+			visible: root.popupTitle !== "" || root.popupText !== ""
 
 			onClicked: {
 				destroyPopup();
-				popup = detailedResultPopup.createObject(baseItem, {
-					"text": popupText,
-					"title": popupTitle
+				popup = detailedResultPopup.createObject(root, {
+					text: root.popupText,
+					title: root.popupTitle
 				});
 				popup.open();
 			}
@@ -174,7 +168,7 @@ FlickableSectionPage {
 		title: qsTr("Hint")
 		visible: text !== ""
 
-		onClicked: baseItem.hintClicked()
+		onClicked: root.hintClicked()
 	}
 	GButton {
 		id: button
@@ -182,11 +176,14 @@ FlickableSectionPage {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.preferredHeight: height
 		Layout.preferredWidth: width
-		activeFocusOnTab: true
 		text: qsTr("OK")
 		tintIcon: true
+		visible: text !== ""
 
-		onClicked: baseItem.nextView(UiModule.DEFAULT)
+		onClicked: {
+			root.leaveView();
+			root.continueClicked();
+		}
 	}
 	Component {
 		id: detailedResultPopup

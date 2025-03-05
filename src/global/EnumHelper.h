@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Helper class to provide a QMetaObject handler for enumerations.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,71 +10,71 @@
 
 
 #define defineEnumOperators(enumName)\
-	inline QDebug operator<<(QDebug pDbg, enumName pType)\
-	{\
-		QDebugStateSaver saver(pDbg);\
-		return pDbg.noquote() << Enum<enumName>::getName(pType);\
-	}\
-\
-	inline QDebug operator<<(QDebug pDbg, const QList<enumName>& pList)\
-	{\
-		QDebugStateSaver saver(pDbg);\
-		QByteArrayList list;\
-		for (const auto& entry : pList)\
+		inline QDebug operator<<(QDebug pDbg, enumName pType)\
 		{\
-			list << Enum<enumName>::getName(entry).data();\
+			QDebugStateSaver saver(pDbg);\
+			return pDbg.noquote() << Enum<enumName>::getName(pType);\
 		}\
-		return pDbg.noquote().nospace() << '(' << list.join(QByteArrayView(", ")) << ')';\
-	}\
 \
-	inline QString& operator+=(QString& pStr, enumName pType)\
-	{\
-		pStr += Enum<enumName>::getName(pType);\
-		return pStr;\
-	}\
+		inline QDebug operator<<(QDebug pDbg, const QList<enumName>& pList)\
+		{\
+			QDebugStateSaver saver(pDbg);\
+			QByteArrayList list;\
+			for (const auto& entry : pList)\
+			{\
+				list << Enum<enumName>::getName(entry).data();\
+			}\
+			return pDbg.noquote().nospace() << '(' << list.join(QByteArrayView(", ")) << ')';\
+		}\
 \
-	inline QString operator+(const QString& pStr, enumName pType)\
-	{\
-		return pStr + Enum<enumName>::getName(pType);\
-	}\
+		inline QString& operator+=(QString& pStr, enumName pType)\
+		{\
+			pStr += Enum<enumName>::getName(pType);\
+			return pStr;\
+		}\
 \
-	inline QString operator+(enumName pType, const QString& pStr)\
-	{\
-		return Enum<enumName>::getName(pType) + pStr;\
-	}\
+		inline QString operator+(const QString& pStr, enumName pType)\
+		{\
+			return pStr + Enum<enumName>::getName(pType);\
+		}\
 \
-	inline bool operator==(std::underlying_type_t<enumName> pType, enumName pName)\
-	{\
-		return static_cast<std::underlying_type_t<enumName>>(pName) == pType;\
-	}\
-	inline bool operator!=(std::underlying_type_t<enumName> pType, enumName pName)\
-	{\
-		return !(pType == pName);\
-	}\
+		inline QString operator+(enumName pType, const QString& pStr)\
+		{\
+			return Enum<enumName>::getName(pType) + pStr;\
+		}\
 \
-	inline size_t qHash(enumName pKey, size_t pSeed)\
-	{\
-		return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
-	}
+		inline bool operator==(std::underlying_type_t<enumName> pType, enumName pName)\
+		{\
+			return static_cast<std::underlying_type_t<enumName>>(pName) == pType;\
+		}\
+		inline bool operator!=(std::underlying_type_t<enumName> pType, enumName pName)\
+		{\
+			return !(pType == pName);\
+		}\
+\
+		inline size_t qHash(enumName pKey, size_t pSeed)\
+		{\
+			return ::qHash(static_cast<std::underlying_type_t<enumName>>(pKey), pSeed);\
+		}
 
 
 #define defineTypedEnumTypeProperty(enumName, enumType, enumProperty, ...)\
-	namespace Enum##enumName\
-	{\
-	Q_NAMESPACE\
-			enumProperty\
+		namespace Enum##enumName\
+		{\
+		Q_NAMESPACE\
+				enumProperty\
 \
-	enum class enumName : enumType\
-	{\
-		__VA_ARGS__\
-	};\
+		enum class enumName : enumType\
+		{\
+			__VA_ARGS__\
+		};\
 \
-	Q_ENUM_NS(enumName)\
+		Q_ENUM_NS(enumName)\
 \
-	defineEnumOperators(enumName)\
-	}\
+		defineEnumOperators(enumName)\
+		}\
 \
-	using namespace Enum##enumName;
+		using namespace Enum##enumName;
 
 
 #define defineTypedEnumType(enumName, enumType, ...) defineTypedEnumTypeProperty(enumName, enumType, , __VA_ARGS__)
@@ -120,7 +116,11 @@ template<typename EnumTypeT> class Enum
 
 		[[nodiscard]] static QLatin1String getName(EnumTypeT pType)
 		{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+			const auto value = static_cast<quint64>(pType);
+#else
 			const auto value = static_cast<int>(pType);
+#endif
 			const char* const name = getQtEnumMetaEnum().valueToKey(value);
 			if (Q_UNLIKELY(name == nullptr))
 			{
@@ -171,17 +171,24 @@ template<typename EnumTypeT> class Enum
 		}
 
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+		[[nodiscard]] static bool isValue(quint64 pValue)
+#else
 		[[nodiscard]] static bool isValue(int pValue)
+#endif
 		{
 			return getQtEnumMetaEnum().valueToKey(pValue) != nullptr;
 		}
 
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 9, 0))
 		[[nodiscard]] static bool isValue(ushort pValue)
 		{
 			return isValue(static_cast<int>(pValue));
 		}
 
+
+#endif
 
 		[[nodiscard]] static EnumBaseTypeT getValue(EnumTypeT pType)
 		{

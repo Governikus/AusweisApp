@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -92,16 +92,16 @@ void LogHandler::init()
 		mEventHandler = new LogEventHandler();
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), &QObject::deleteLater);
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, mEventHandler.data(), [this] {
-				mEventHandler.clear(); // clear immediately, otherwise logging in &QObject::destroyed is dangerous!
-			});
+					mEventHandler.clear(); // clear immediately, otherwise logging in &QObject::destroyed is dangerous!
+				});
 	}
 
 	if (mLogFile.isNull())
 	{
 		mLogFile = new QTemporaryFile(getLogFileTemplate());
 		QObject::connect(QCoreApplication::instance(), &QCoreApplication::destroyed, mLogFile.data(), [this] {
-				delete this->mLogFile.data();
-			});
+					delete this->mLogFile.data();
+				});
 
 		setAutoRemove(mAutoRemove);
 		setLogFileInternal(mUseLogFile);
@@ -160,8 +160,8 @@ QByteArray LogHandler::readLogFile(qint64 pStart, qint64 pLength)
 	{
 		const auto currentPos = mLogFile->pos();
 		const auto resetPosition = qScopeGuard([this, currentPos] {
-				mLogFile->seek(currentPos);
-			});
+					mLogFile->seek(currentPos);
+				});
 
 		mLogFile->seek(pStart);
 		return pLength > 0 ? mLogFile->read(pLength) : mLogFile->readAll();
@@ -475,7 +475,7 @@ QFileInfoList LogHandler::getOtherLogFiles() const
 }
 
 
-void LogHandler::removeOldLogFiles()
+void LogHandler::removeOldLogFiles() const
 {
 	const auto& threshold = QDateTime::currentDateTime().addDays(-14);
 	const QFileInfoList& logfileInfos = getOtherLogFiles();
@@ -490,7 +490,7 @@ void LogHandler::removeOldLogFiles()
 }
 
 
-bool LogHandler::removeOtherLogFiles()
+bool LogHandler::removeOtherLogFiles() const
 {
 	const auto otherLogFiles = getOtherLogFiles();
 	for (const auto& entry : otherLogFiles)
@@ -524,7 +524,12 @@ void LogHandler::setLogFileInternal(bool pEnable)
 		if (!mLogFile->isOpen())
 		{
 			mLogFile->setFileTemplate(getLogFileTemplate());
-			mLogFile->open();
+			if (!mLogFile->open())
+			{
+				QMetaObject::invokeMethod(mLogFile.data(), [] {
+							qWarning() << "Cannot open logfile:" << getLogFileTemplate();
+						}, Qt::QueuedConnection);
+			}
 		}
 	}
 	else

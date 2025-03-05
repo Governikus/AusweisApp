@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.19.0)
 set(CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_MODULE_PATH "${CMAKE_DIR}")
 
-include(Policies)
+include(Policies NO_POLICY_SCOPE)
 
 # "tools.only" can be defined to disable the normal build and enable
 # cmdline "tools" only. For example: "make format" or "make package_source"
@@ -14,7 +14,7 @@ else()
 endif()
 
 if(UNIX AND NOT IOS)
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0 CACHE STRING "Required macOS version")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET 13.0 CACHE STRING "Required macOS version")
 endif()
 
 if(CMAKE_BUILD_TYPE)
@@ -35,7 +35,8 @@ if(isMultiConfig)
 	endif()
 endif()
 
-project(AusweisApp VERSION 2.2.2 LANGUAGES ${LANGUAGES})
+include(Version)
+project(AusweisApp VERSION ${VERSION} LANGUAGES ${LANGUAGES})
 
 if(ANDROID AND NOT GOVERNIKUS_TOOLCHAIN_FILE)
 	message(FATAL_ERROR "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/android.toolchain.cmake is required")
@@ -133,7 +134,7 @@ endif()
 option(USE_SMARTEID "Enable Smart-eID" OFF)
 
 include(Libraries)
-include(PoliciesQt)
+include(PoliciesQt NO_POLICY_SCOPE)
 include(Tools.Libraries)
 include(CompilerFlags)
 

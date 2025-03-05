@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -58,7 +58,10 @@ TestCase {
 			function test_setIndex() {
 				testObject.currentIndex = 2;
 				compare(testObject.currentIndex, 2, "Set index 2");
-				compare(testObject.currentItemModel.modelData, "Item 2", "Current item model: Item 2");
+				if (canUseTypeCast) {
+					verify(testObject.currentItemModel !== null, "The current model (index=2) should not be null");
+					compare(testObject.currentItemModel.modelData, "Item 2", "Current modelData should be: Item 2");
+				}
 			}
 
 			when: windowShown

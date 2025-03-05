@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Helper to use AuthContext in an easy way.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,8 +20,6 @@ class TestAuthContext
 		QList<AcceptedEidType> mAcceptedEidTypes;
 
 	public:
-		static const QSharedPointer<const CVCertificate> getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1);
-
 		explicit TestAuthContext(const QString& pFileName = QString());
 		~TestAuthContext() override;
 

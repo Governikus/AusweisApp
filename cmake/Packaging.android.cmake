@@ -43,8 +43,6 @@ set(ANDROID_VERSION_NAME ${VERSION_DVCS})
 configure_file(${PACKAGING_DIR}/android/${ANDROID_MANIFEST} ${ANDROID_PACKAGE_SRC_DIR}/AndroidManifest.xml @ONLY)
 if(INTEGRATED_SDK)
 	set(ANDROID_ROOT_LOGGER "java")
-	set(ANDROID_DEPLOYMENT_SETTINGS ${PROJECT_BINARY_DIR}/libAusweisApp.so-deployment-settings.json CACHE INTERNAL "aar deployment" FORCE)
-	configure_file(${PACKAGING_DIR}/android/libAusweisApp.so-deployment-settings.json.in ${ANDROID_DEPLOYMENT_SETTINGS} @ONLY)
 else()
 	set(ANDROID_ROOT_LOGGER "")
 	configure_file(${PACKAGING_DIR}/android/fileprovider.xml ${ANDROID_PACKAGE_SRC_DIR}/res/xml/fileprovider.xml COPYONLY)
@@ -59,11 +57,6 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${QT_BUILD_GRADL
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${BUILD_GRADLE_APPEND}")
 
 file(READ "${QT_BUILD_GRADLE}" BUILD_GRADLE)
-
-if(INTEGRATED_SDK)
-	string(REPLACE "apply plugin: 'com.android.application'" "apply plugin: 'com.android.library'" BUILD_GRADLE "${BUILD_GRADLE}")
-endif()
-
 file(WRITE "${ANDROID_BUILD_DIR}/build.gradle" "${BUILD_GRADLE}")
 file(READ "${BUILD_GRADLE_APPEND}" BUILD_GRADLE)
 file(APPEND "${ANDROID_BUILD_DIR}/build.gradle" "${BUILD_GRADLE}")
@@ -98,14 +91,14 @@ if(INTEGRATED_SDK)
 		set(POM_SNAPSHOT "-SNAPSHOT")
 	endif()
 	configure_file(${PACKAGING_DIR}/android/pom.xml.in ${ANDROID_BUILD_DIR}/${CPACK_PACKAGE_FILE_NAME}.pom @ONLY)
-	configure_file("${PACKAGING_DIR}/android/lint.aar.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+	configure_file("${PACKAGING_DIR}/android/lint.aar.xml" "${ANDROID_BUILD_DIR}/lint-baseline.xml" COPYONLY)
 	configure_file("${PACKAGING_DIR}/android/consumer-rules.pro" "${ANDROID_BUILD_DIR}/consumer-rules.pro" COPYONLY)
 else()
 	set(ANDROID_FILE_EXT apk)
 	if(USE_SMARTEID)
-		configure_file("${PACKAGING_DIR}/android/lint.apk.smarteid.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+		configure_file("${PACKAGING_DIR}/android/lint.apk.smarteid.xml" "${ANDROID_BUILD_DIR}/lint-baseline.xml" COPYONLY)
 	else()
-		configure_file("${PACKAGING_DIR}/android/lint.apk.xml" "${ANDROID_BUILD_DIR}/lint.xml" COPYONLY)
+		configure_file("${PACKAGING_DIR}/android/lint.apk.xml" "${ANDROID_BUILD_DIR}/lint-baseline.xml" COPYONLY)
 	endif()
 endif()
 configure_file(${PACKAGING_DIR}/android/gradle.properties.in ${ANDROID_BUILD_DIR}/gradle.properties @ONLY)
@@ -151,41 +144,26 @@ set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_AAB}/${ANDROID_FILE_AAB})
 set(DESTINATION_ANDROID_FILE_BASE ${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME})
 set(DESTINATION_ANDROID_FILE ${DESTINATION_ANDROID_FILE_BASE}.${ANDROID_FILE_EXT})
 if(INTEGRATED_SDK)
-	find_program(androiddeployqt androiddeployqt HINTS "${QT_HOST_PATH}/bin" CMAKE_FIND_ROOT_PATH_BOTH)
-	if(NOT androiddeployqt)
-		message(FATAL_ERROR "Cannot find androiddeployqt to create AARs")
-	endif()
-	message(STATUS "Using androiddeployqt: ${androiddeployqt}")
-	set(DEPLOY_CMD ${androiddeployqt} --verbose --gradle --input ${ANDROID_DEPLOYMENT_SETTINGS} --android-platform android-${ANDROID_TARGET_SDK_VERSION} --output ${ANDROID_BUILD_DIR} ${DEPLOY_CMD_SIGN})
-	add_custom_target(${ANDROID_FILE_EXT}
-				COMMAND ${DEPLOY_CMD}
-				DEPENDS AusweisAppBinary
-				USES_TERMINAL)
-
-	add_custom_command(TARGET ${ANDROID_FILE_EXT} POST_BUILD
+	add_custom_command(TARGET aar POST_BUILD
 				COMMAND ${ANDROID_BUILD_DIR}/gradlew sourcesJar
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different "build/libs/${ANDROID_BUILD_NAME}-sources.jar" "${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME}-sources.jar"
-				WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
-				USES_TERMINAL)
+				WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 else()
 	add_custom_command(TARGET aab POST_BUILD
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE_AAB}" "${DESTINATION_ANDROID_FILE_BASE}.aab"
-				WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
-				USES_TERMINAL)
+				WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 
 	if(QT_ANDROID_SIGN_APK)
 		add_custom_command(TARGET apk POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE}.idsig" "${DESTINATION_ANDROID_FILE}.idsig"
-					WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
-					USES_TERMINAL)
+					WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 	endif()
 endif()
 
 add_custom_command(TARGET ${ANDROID_FILE_EXT} POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${SOURCE_ANDROID_FILE}" "${DESTINATION_ANDROID_FILE}"
 			COMMAND ${ANDROID_BUILD_DIR}/gradlew lint
-			WORKING_DIRECTORY ${ANDROID_BUILD_DIR}
-			USES_TERMINAL)
+			WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 
 if(INTEGRATED_SDK)
 	add_custom_command(TARGET aar POST_BUILD

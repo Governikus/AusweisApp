@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -27,9 +27,9 @@ Q_DECLARE_LOGGING_CATEGORY(securestorage)
 namespace
 {
 #define CONFIG_NAME(_name, _key) /* NOLINT */\
-	inline QLatin1String _name(){\
-		return QLatin1String(_key);\
-	}
+		inline QLatin1String _name(){\
+			return QLatin1String(_key);\
+		}
 
 CONFIG_NAME(CONFIGURATION_VENDOR, "vendor")
 

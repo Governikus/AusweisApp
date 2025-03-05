@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of card object for PC/SC
- *  *
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,12 +35,12 @@ class PcscCard
 		SCARDHANDLE mCardHandle;
 		QTimer mTimer;
 
-		CardResult transmit(const QByteArray& pSendBuffer);
-		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci);
-		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput);
+		CardResult transmit(const QByteArray& pSendBuffer) const;
+		CardResult transmit(const QByteArray& pSendBuffer, const SCARD_IO_REQUEST* pSendPci) const;
+		CardResult control(PCSC_INT pCntrCode, const QByteArray& pCntrInput) const;
 
 	private Q_SLOTS:
-		void sendSCardStatus();
+		void sendSCardStatus() const;
 
 	public:
 		explicit PcscCard(PcscReader* pPcscReader);

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="@BUNDLE_IDENTIFIER@"
     android:installLocation="auto">
 
     <!-- Normal Permissions -->
@@ -24,9 +23,7 @@
         <package android:name="com.governikus.ausweisapp2.dev" />
     </queries>
 
-    <application
-        android:extractNativeLibs="true">
-
+    <application>
         <service
             android:name="com.governikus.ausweisapp2.AusweisApp2Service"
             android:enabled="true"

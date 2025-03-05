@@ -1,14 +1,11 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CVCertificate.h"
 
 #include "ASN1TemplateUtil.h"
 #include "ASN1Util.h"
-
-#include <QLoggingCategory>
-#include <openssl/bn.h>
 
 
 Q_DECLARE_LOGGING_CATEGORY(card)
@@ -29,13 +26,13 @@ IMPLEMENT_ASN1_FUNCTIONS(SIGNATURE)
 IMPLEMENT_ASN1_OBJECT(SIGNATURE)
 
 
-ASN1_SEQUENCE_cb(cvcertificate_st, CVCertificate::decodeCallback) = {
+ASN1_SEQUENCE(cvcertificate_st) = {
 	ASN1_SIMPLE(cvcertificate_st, mBody, CVCertificateBody),
 	ASN1_SIMPLE(cvcertificate_st, mSignature, SIGNATURE)
 }
 
 
-ASN1_SEQUENCE_END_cb(cvcertificate_st, cvcertificate_st)
+ASN1_SEQUENCE_END(cvcertificate_st)
 
 ASN1_ITEM_TEMPLATE(CVCertificate) =
 			ASN1_EX_TEMPLATE_TYPE(ASN1_TFLG_IMPTAG | ASN1_TFLG_APPLICATION, 0x21, CVCertificate, cvcertificate_st)
@@ -46,37 +43,6 @@ IMPLEMENT_ASN1_OBJECT(CVCertificate)
 
 
 }  // namespace governikus
-
-
-int CVCertificate::decodeCallback(int pOperation, ASN1_VALUE** pVal, const ASN1_ITEM* pIt, void* pExarg)
-{
-	Q_UNUSED(pIt)
-	Q_UNUSED(pExarg)
-	if (pOperation == ASN1_OP_D2I_POST)
-	{
-		if (auto cvc = reinterpret_cast<cvcertificate_st*>(*pVal))
-		{
-			cvc->mEcdsaSignature = ECDSA_SIG_new();
-			QByteArray sigValue = Asn1OctetStringUtil::getValue(cvc->mSignature);
-
-			const auto* const sig = reinterpret_cast<const uchar*>(sigValue.data());
-			const auto siglen = static_cast<int>(sigValue.size());
-
-			BIGNUM* r = BN_bin2bn(sig, siglen / 2, nullptr);
-			BIGNUM* s = BN_bin2bn(sig + (siglen / 2), siglen / 2, nullptr);
-			ECDSA_SIG_set0(cvc->mEcdsaSignature, r, s);
-		}
-	}
-	else if (pOperation == ASN1_OP_FREE_POST)
-	{
-		if (auto cvc = reinterpret_cast<cvcertificate_st*>(*pVal))
-		{
-			ECDSA_SIG_free(cvc->mEcdsaSignature);
-		}
-	}
-
-	return CB_SUCCESS;
-}
 
 
 QList<QSharedPointer<const CVCertificate>> CVCertificate::fromRaw(const QByteArrayList& pByteList)
@@ -119,25 +85,15 @@ QByteArray CVCertificate::getRawBody() const
 }
 
 
-const ECDSA_SIG* CVCertificate::getEcdsaSignature() const
+QByteArray CVCertificate::getSignature() const
 {
-	return mEcdsaSignature;
+	return Asn1OctetStringUtil::getValue(mSignature);
 }
 
 
 QByteArray CVCertificate::getRawSignature() const
 {
 	return encodeObject(mSignature);
-}
-
-
-QByteArray CVCertificate::getDerSignature() const
-{
-	uchar* signature = nullptr;
-	const int size = i2d_ECDSA_SIG(mEcdsaSignature, &signature);
-	const QByteArray result(reinterpret_cast<char*>(signature), size);
-	OPENSSL_free(signature);
-	return result;
 }
 
 

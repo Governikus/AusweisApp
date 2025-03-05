@@ -1,0 +1,64 @@
+From 3d026a23adb452790f98b1ea5566e76c0e994314 Mon Sep 17 00:00:00 2001
+From: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Date: Thu, 5 Dec 2024 16:00:38 +0200
+Subject: Android: use latest platform only if the default is not found
+
+We initially set a value to QT_ANDROID_API_USED_FOR_JAVA as the
+default supported version, so consistently use that unless it's
+not found at which case try to take the latest found version.
+
+Task-number: QTBUG-128364
+Change-Id: I5e8404887b1649aad3ae37d2352e3ca099392935
+Reviewed-by: Lars Schmertmann <lars.schmertmann@governikus.de>
+Reviewed-by: Alexey Edelev <alexey.edelev@qt.io>
+(cherry picked from commit 953b7aaddc7579a253cd15562de6eec9476245e4)
+---
+ cmake/QtPlatformAndroid.cmake | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git x/qtbase/cmake/QtPlatformAndroid.cmake y/qtbase/cmake/QtPlatformAndroid.cmake
+index afd023cf75dc51779c546efdc101c67814ae9f3a..4819f4d2ab0662ef37fcf0adace8997b87560704 100644
+--- x/qtbase/cmake/QtPlatformAndroid.cmake
++++ y/qtbase/cmake/QtPlatformAndroid.cmake
+@@ -35,9 +35,6 @@ function(qt_get_android_sdk_jar_for_api api out_jar_location)
+     endif()
+ endfunction()
+ 
+-# Minimum recommend android SDK api version
+-set(QT_ANDROID_API_VERSION "android-34")
+-
+ function(qt_internal_sort_android_platforms out_var)
+     if(CMAKE_VERSION GREATER_EQUAL 3.18)
+         set(platforms ${ARGN})
+@@ -65,18 +62,21 @@ function(qt_internal_sort_android_platforms out_var)
+     set("${out_var}" "${platforms}" PARENT_SCOPE)
+ endfunction()
+ 
+-macro(qt_internal_get_android_platform_version out_var android_platform)
+-    string(REGEX REPLACE ".*-([0-9]+)$" "\\1" ${out_var} "${android_platform}")
+-endmacro()
++if(QT_ANDROID_API_USED_FOR_JAVA)
++   set(QT_ANDROID_API_VERSION ${QT_ANDROID_API_USED_FOR_JAVA})
++endif()
+ 
+-_qt_internal_detect_latest_android_platform(android_platform_latest)
+-if(android_platform_latest)
+-    qt_internal_get_android_platform_version(latest_platform_version
+-        "${android_platform_latest}")
+-    qt_internal_get_android_platform_version(required_platform_version
+-        "${QT_ANDROID_API_VERSION}")
++# Minimum recommend android SDK api version
++if(NOT QT_ANDROID_API_VERSION)
++   set(QT_ANDROID_API_VERSION "android-34")
++endif()
+ 
+-    if("${latest_platform_version}" VERSION_GREATER "${required_platform_version}")
++set(jar_location "${ANDROID_SDK_ROOT}/platforms/${QT_ANDROID_API_VERSION}/android.jar")
++if(NOT EXISTS "${jar_location}")
++    _qt_internal_detect_latest_android_platform(android_platform_latest)
++    if(android_platform_latest)
++        message(NOTICE "The default platform SDK ${QT_ANDROID_API_VERSION} not found, "
++                        "using the latest installed ${android_platform_latest} instead.")
+         set(QT_ANDROID_API_VERSION ${android_platform_latest})
+     endif()
+ endif()

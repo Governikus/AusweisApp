@@ -1,76 +1,66 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
-import Governikus.TitleBar
 import Governikus.View
 import Governikus.Type
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
-	signal accept
+	required property string okButtonText
 
 	fillWidth: true
-	margins: Constants.pane_padding * 2
-	spacing: Constants.component_spacing
+	margins: Style.dimens.pane_padding * 2
+	spacing: Style.dimens.pane_spacing
 
-	titleBarAction: TitleBarAction {
-		rootEnabled: false
-		//: LABEL DESKTOP Title of the self authentication result data view
-		text: qsTr("Read self-authentication data")
-	}
+	//: LABEL DESKTOP Title of the self authentication result data view
+	title: qsTr("Read self-authentication data")
 
 	Keys.onEnterPressed: okButton.clicked()
-	Keys.onEscapePressed: okButton.clicked()
 	Keys.onReturnPressed: okButton.clicked()
 
 	Connections {
 		function onFireCancelWorkflow() {
 			if (SelfAuthModel.workflowCancelled) {
-				accept();
+				root.leaveView();
 			}
 		}
 
-		enabled: visible
+		enabled: root.visible
 		target: SelfAuthModel
 	}
 	Row {
 		id: statusRow
 
-		Layout.preferredHeight: baseItem.height / 4
-		spacing: Constants.component_spacing
+		Layout.preferredHeight: root.height / 4
+		spacing: Style.dimens.pane_spacing
 
-		TintableIcon {
+		StatusAnimation {
 			anchors.verticalCenter: parent.verticalCenter
-			source: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
 			sourceSize.height: Style.dimens.huge_icon_size
-			tintEnabled: false
+			symbol.type: Symbol.Type.CHECK
 		}
 		GText {
-			id: successText
-
-			Accessible.name: successText.text
-			activeFocusOnTab: true
 			anchors.verticalCenter: parent.verticalCenter
 
 			//: INFO DESKTOP Status message that the self authentication successfully completed.
 			text: qsTr("Successfully read data")
 			textStyle: Style.text.headline
-
-			FocusFrame {
-			}
 		}
 	}
 	GPane {
 		id: pane
 
 		Layout.fillWidth: true
-		activeFocusOnTab: true
 
 		//: LABEL DESKTOP Title of the self authentication result data view
 		title: qsTr("Read data")
@@ -79,7 +69,7 @@ FlickableSectionPage {
 			id: grid
 
 			columns: 3
-			spacing: Constants.groupbox_spacing
+			spacing: Style.dimens.groupbox_spacing
 			verticalItemAlignment: Grid.AlignTop
 
 			Repeater {
@@ -88,9 +78,12 @@ FlickableSectionPage {
 				model: SelfAuthModel
 
 				LabeledText {
+					required property string name
+					required property string value
+
 					label: name
 					text: value === "" ? "---" : value
-					width: (pane.width - 2 * Constants.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
+					width: (pane.width - 2 * Style.dimens.pane_padding - (grid.columns - 1) * grid.spacing) / grid.columns
 				}
 			}
 		}
@@ -99,10 +92,8 @@ FlickableSectionPage {
 		id: okButton
 
 		Layout.alignment: Qt.AlignHCenter
+		text: root.okButtonText
 
-		//: LABEL DESKTOP
-		text: qsTr("Back to start page")
-
-		onClicked: baseItem.accept()
+		onClicked: root.leaveView()
 	}
 }

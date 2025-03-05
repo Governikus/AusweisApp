@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Command to perform the DID Authenticate EAC1 process.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,8 +7,10 @@
 #include "BaseCardCommand.h"
 #include "CardConnectionWorker.h"
 
+
 class test_DidAuthenticateEAC1Command;
 class test_StateDidAuthenticateEac1;
+
 
 namespace governikus
 {

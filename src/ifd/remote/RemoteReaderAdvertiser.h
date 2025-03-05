@@ -1,11 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Component advertising the smartphone as card reader (SaC)
- * functionality on the server side. According to the concept this
- * is done by sending the message REMOTE_READER_OFFER as a UDP broadcast.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -53,7 +47,7 @@ class RemoteReaderAdvertiserImpl
 
 	public:
 		~RemoteReaderAdvertiserImpl() override;
-		RemoteReaderAdvertiserImpl(const QString& pIfdName, const QString& pIfdId, quint16 pPort, bool pPairing = false, int pTimerInterval = 1000);
+		RemoteReaderAdvertiserImpl(const QString& pIfdName, const QByteArray& pIfdId, quint16 pPort, bool pPairing = false, int pTimerInterval = 1000);
 
 		void setPairing(bool pEnabled) override;
 };

@@ -1,14 +1,8 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of AuthenticatedAuxiliaryData.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
-
-#include "ASN1TemplateUtil.h"
 
 #include "Oid.h"
 
@@ -18,7 +12,9 @@
 #include <QSharedPointer>
 #include <QString>
 
-class test_AuxiliaryAuthenticatedData;
+
+class test_AuthenticatedAuxiliaryData;
+
 
 namespace governikus
 {
@@ -50,12 +46,14 @@ using AuxDataTemplate = struct auxdatatemplate_st
 	ASN1_TYPE* mExtInfo;
 };
 
+
 DEFINE_STACK_OF(AuxDataTemplate)
 using AuthenticatedAuxiliaryDataInternal = STACK_OF(AuxDataTemplate);
 
+
 class AuthenticatedAuxiliaryData
 {
-	friend class ::test_AuxiliaryAuthenticatedData;
+	friend class ::test_AuthenticatedAuxiliaryData;
 	friend class QSharedPointer<AuthenticatedAuxiliaryData>;
 
 	private:
@@ -69,7 +67,6 @@ class AuthenticatedAuxiliaryData
 	public:
 		static QSharedPointer<AuthenticatedAuxiliaryData> fromHex(const QByteArray& pHexValue);
 		static QSharedPointer<AuthenticatedAuxiliaryData> decode(const QByteArray& pBytes);
-		[[nodiscard]] QByteArray encode() const;
 
 		[[nodiscard]] bool hasValidityDate() const;
 		[[nodiscard]] QDate getValidityDate() const;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Animations
@@ -10,7 +10,7 @@ import Governikus.Type
 Item {
 	id: root
 
-	readonly property real padding: Constants.groupbox_spacing
+	readonly property real padding: Style.dimens.groupbox_spacing
 	readonly property int smartState: SmartModel.state
 
 	implicitHeight: cardIcon.implicitHeight + 2 * padding

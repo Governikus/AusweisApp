@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref RemoteSertviceSettings
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -167,7 +163,7 @@ class test_RemoteServiceSettings
 			settings.addTrustedCertificate(pair2.getCertificate());
 			QCOMPARE(settings.getTrustedCertificates().size(), 2);
 
-			const auto& fingerprint = QString::fromLatin1(pair1.getCertificate().digest(QCryptographicHash::Sha256).toHex());
+			const auto& fingerprint = pair1.getCertificate().digest(QCryptographicHash::Sha256);
 			settings.removeTrustedCertificate(fingerprint);
 			QCOMPARE(settings.getTrustedCertificates().size(), 1);
 			QCOMPARE(settings.getTrustedCertificates().at(0), pair2.getCertificate());
@@ -253,9 +249,9 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().size(), 0);
 
 			const auto& current = QDateTime::currentDateTime();
-			RemoteServiceSettings::RemoteInfo a(QStringLiteral("a"), current);
+			RemoteServiceSettings::RemoteInfo a(QByteArrayLiteral("a"), current);
 			a.setNameUnescaped(QStringLiteral("dummy for A"));
-			RemoteServiceSettings::RemoteInfo b(QStringLiteral("b"), current);
+			RemoteServiceSettings::RemoteInfo b(QByteArrayLiteral("b"), current);
 			b.setNameUnescaped(QStringLiteral("dummy for B"));
 
 			QVERIFY(a == a);
@@ -268,10 +264,10 @@ class test_RemoteServiceSettings
 			auto second = settings.getRemoteInfos().at(1);
 			QCOMPARE(first, a);
 			QCOMPARE(second, b);
-			QCOMPARE(first.getFingerprint(), "a"_L1);
+			QCOMPARE(first.getFingerprint(), "a"_ba);
 			QCOMPARE(first.getNameEscaped(), "dummy for A"_L1);
 			QCOMPARE(first.getLastConnected(), current);
-			QCOMPARE(second.getFingerprint(), "b"_L1);
+			QCOMPARE(second.getFingerprint(), "b"_ba);
 			QCOMPARE(second.getNameEscaped(), "dummy for B"_L1);
 			QCOMPARE(second.getLastConnected(), current);
 
@@ -304,7 +300,7 @@ class test_RemoteServiceSettings
 
 			auto c = pair3.getCertificate();
 			auto cInfo = settings.getRemoteInfo(c);
-			QCOMPARE(cInfo.getFingerprint(), QString());
+			QCOMPARE(cInfo.getFingerprint(), QByteArray());
 			QCOMPARE(settings.getRemoteInfos().size(), 2);
 
 			settings.addTrustedCertificate(c);
@@ -316,7 +312,7 @@ class test_RemoteServiceSettings
 			QCOMPARE(settings.getRemoteInfos().at(1).getNameEscaped(), QString());
 			QCOMPARE(settings.getRemoteInfos().at(2).getNameEscaped(), "c"_L1);
 			QCOMPARE(settings.getRemoteInfos().at(2).getFingerprint(),
-					QString::fromLatin1(c.digest(QCryptographicHash::Sha256).toHex()));
+					c.digest(QCryptographicHash::Sha256));
 		}
 
 
@@ -340,10 +336,10 @@ class test_RemoteServiceSettings
 
 		void testGenerateFingerprint()
 		{
-			QCOMPARE(RemoteServiceSettings::generateFingerprint(QSslCertificate()), QLatin1String());
+			QCOMPARE(RemoteServiceSettings::generateFingerprint(QSslCertificate()), QByteArray());
 			auto cert = pair1.getCertificate();
 			QVERIFY(!cert.isNull());
-			const auto& fingerprint = QString::fromLatin1(cert.digest(QCryptographicHash::Sha256).toHex());
+			const auto& fingerprint = cert.digest(QCryptographicHash::Sha256);
 			QVERIFY(!fingerprint.isEmpty());
 			QCOMPARE(RemoteServiceSettings::generateFingerprint(cert), fingerprint);
 		}

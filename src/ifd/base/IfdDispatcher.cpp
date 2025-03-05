@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDispatcher.h"
@@ -99,11 +99,11 @@ bool IfdDispatcher::isPairingConnection() const
 }
 
 
-QString IfdDispatcher::getId() const
+QByteArray IfdDispatcher::getId() const
 {
 	if (!mDataChannel)
 	{
-		return QString();
+		return QByteArray();
 	}
 
 	return mDataChannel->getId();

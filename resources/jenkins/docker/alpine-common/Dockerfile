@@ -1,6 +1,6 @@
 FROM dev-docker.governikus.de/ausweisapp2/alpine:swarm
 
-ARG UNCRUSTIFY=0.74.0
+ARG UNCRUSTIFY=0.80.1
 ENV NAME=Common LABELS=Common
 
 RUN mkdir /build/ && \

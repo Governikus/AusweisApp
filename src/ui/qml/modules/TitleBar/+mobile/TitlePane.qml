@@ -1,8 +1,12 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Governikus.Global
+import Governikus.Style
 
 Item {
 	id: root
@@ -17,7 +21,7 @@ Item {
 
 		Behavior on color {
 			ColorAnimation {
-				duration: Constants.animation_duration
+				duration: Style.animation_duration
 			}
 		}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -114,7 +114,16 @@ class DiagnosisFirewallDetection
 
 	public:
 		DiagnosisFirewallDetection();
+
+#ifdef Q_OS_WIN
 		void startDetection();
+#else
+		void startDetection() const
+		{
+		}
+
+
+#endif
 
 		[[nodiscard]] bool getFirstRuleExists() const
 		{

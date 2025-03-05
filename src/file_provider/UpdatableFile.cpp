@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -179,8 +179,8 @@ void UpdatableFile::onDownloadSuccess(const QUrl& pUpdateUrl, const QDateTime& p
 		}
 
 		cleanupAfterUpdate([this](){
-				clearDirty();
-			});
+					clearDirty();
+				});
 	}
 }
 
@@ -190,8 +190,8 @@ void UpdatableFile::onDownloadFailed(const QUrl& pUpdateUrl, GlobalStatus::Code 
 	if (pUpdateUrl == mUpdateUrl)
 	{
 		cleanupAfterUpdate([pErrorCode](){
-				qCCritical(fileprovider) << "Download failed with error code:" << pErrorCode;
-			});
+					qCCritical(fileprovider) << "Download failed with error code:" << pErrorCode;
+				});
 	}
 }
 
@@ -203,8 +203,8 @@ void UpdatableFile::onDownloadUnnecessary(const QUrl& pUpdateUrl)
 		Q_EMIT fireNoUpdateAvailable();
 
 		cleanupAfterUpdate([this](){
-				clearDirty();
-			});
+					clearDirty();
+				});
 	}
 }
 
@@ -325,9 +325,9 @@ bool UpdatableFile::forEachLookupPath(const std::function<bool(const QString&)>&
 	}
 
 	return std::any_of(paths.constBegin(), paths.constEnd(), [&pValidate](const QString& pPath)
-		{
-			return pValidate(pPath);
-		});
+			{
+				return pValidate(pPath);
+			});
 }
 
 

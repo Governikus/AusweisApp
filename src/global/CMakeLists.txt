@@ -5,5 +5,5 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppGlobal)
 
-target_link_libraries(AusweisAppGlobal ${Qt}::Core OpenSSL::Crypto ${OSX_SECURITY})
+target_link_libraries(AusweisAppGlobal ${Qt}::Core OpenSSL::Crypto)
 qt_extract_metatypes(AusweisAppGlobal) # QTBUG-123574

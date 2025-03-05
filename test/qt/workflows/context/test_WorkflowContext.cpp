@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/WorkflowContext.h"
@@ -94,22 +94,38 @@ class test_WorkflowContext
 
 		void test_Pin()
 		{
-			const QString pin1 = QStringLiteral("123256");
-			const QString pin2 = QStringLiteral("222222");
-			const QString pin3 = QStringLiteral("222222");
 			QSignalSpy spy(mContext.data(), &WorkflowContext::firePinChanged);
 
+			const QString pin1 = "123256"_L1;
 			mContext->setPin(pin1);
 			QCOMPARE(mContext->getPin(), pin1);
 			QCOMPARE(spy.count(), 1);
 
+			const QString pin2 = "222222"_L1;
 			mContext->setPin(pin2);
 			QCOMPARE(mContext->getPin(), pin2);
 			QCOMPARE(spy.count(), 2);
 
+			const QString pin3 = "222222"_L1;
 			mContext->setPin(pin3);
 			QCOMPARE(mContext->getPin(), pin2);
 			QCOMPARE(spy.count(), 2);
+
+			const QString pin4 = "65432"_L1;
+			mContext->setPin(pin4);
+			QCOMPARE(mContext->getPin(), pin4);
+			QCOMPARE(spy.count(), 3);
+
+			const auto* const env = "APPEND_TRANSPORT_PIN";
+			qputenv(env, QByteArray("1"));
+			mContext->setPin(pin4);
+			QCOMPARE(mContext->getPin(), "654321"_L1);
+			QCOMPARE(spy.count(), 4);
+
+			qunsetenv(env);
+			mContext->setPin(pin4);
+			QCOMPARE(mContext->getPin(), pin4);
+			QCOMPARE(spy.count(), 5);
 		}
 
 

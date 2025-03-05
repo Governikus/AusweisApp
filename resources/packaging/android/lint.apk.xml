@@ -1,41 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<lint>
-    <!-- Unused resources.
+<issues format="6" by="lint 8.6.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.6.0)" variant="all" version="8.6.0">
 
-        Unused resources make applications larger and slow down builds.
-
-        Qt includes some resources like strings, which are seen by lint to be unused.
-    -->
-    <issue id="UnusedResources">
-        <ignore path="**/libs.xml" />
-        <ignore path="**/strings.xml" />
-        <ignore path="**/qtprovider_paths.xml" />
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.tools.build:gradle than 8.6.0 is available: 8.9.0. (There is also a newer version of 8.6.𝑥 available, if upgrading to 8.9.0 is difficult: 8.6.1)"
+        errorLine1="        classpath &apos;com.android.tools.build:gradle:8.6.0&apos;"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="8"
+            column="19"/>
     </issue>
 
-    <!-- AndroidGradlePluginVersion
-
-        The plugin version is set by Qt itself, so no need to warn us about an outdated version, since this has to be
-        updated in Qt itself.
-    -->
-    <issue id="AndroidGradlePluginVersion" severity="ignore" />
-
-    <!-- ChromeOsAbiSupport
-
-        This is a false positive since the gradle.build defines
-            ndk.abiFilters = qtTargetAbiList.split(",")
-        which may or not contain "x86" or "x86_64".
-    -->
-    <issue id="ChromeOsAbiSupport" severity="ignore" />
-
-    <!-- Instantiatable
-
-        QtApplication must extend android.app.Application
-        MainActivity must extend android.app.Activity
-        AusweisApp2LocalIfdService must extend android.app.Service
-
-        This is a false positive since this is given in the inheritance hierarchy.
-    -->
-    <issue id="Instantiatable" severity="ignore">
-        <ignore path="../../AndroidManifest.xml" />
+    <issue
+        id="ChromeOsAbiSupport"
+        message="Missing x86_64 ABI support for ChromeOS"
+        errorLine1="        ndk.abiFilters = qtTargetAbiList.split(&quot;,&quot;)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="83"
+            column="9"/>
     </issue>
-</lint>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.array.bundled_libs` appears to be unused"
+        errorLine1="    &lt;array name=&quot;bundled_libs&quot;>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="5"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.array.qt_libs` appears to be unused"
+        errorLine1="    &lt;array name=&quot;qt_libs&quot;>"
+        errorLine2="           ~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="9"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.array.load_local_libs` appears to be unused"
+        errorLine1="    &lt;array name=&quot;load_local_libs&quot;>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="41"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.static_init_classes` appears to be unused"
+        errorLine1="    &lt;string name=&quot;static_init_classes&quot;>&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="45"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.use_local_qt_libs` appears to be unused"
+        errorLine1="    &lt;string name=&quot;use_local_qt_libs&quot;>1&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.bundle_local_qt_libs` appears to be unused"
+        errorLine1="    &lt;string name=&quot;bundle_local_qt_libs&quot;>1&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="47"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.system_libs_prefix` appears to be unused"
+        errorLine1="    &lt;string name=&quot;system_libs_prefix&quot;>&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/libs.xml"
+            line="48"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.xml.qtprovider_paths` appears to be unused"
+        errorLine1="&lt;paths xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="res/xml/qtprovider_paths.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+</issues>

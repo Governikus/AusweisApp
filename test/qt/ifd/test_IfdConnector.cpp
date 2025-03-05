@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref IfdConnector
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdConnectorImpl.h"
@@ -42,7 +38,7 @@ class test_IfdConnector
 
 		Discovery getDiscovery(const QString& pIfdName, quint16 pPort)
 		{
-			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_L1);
+			QByteArray ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_ba);
 			IfdVersion::Version version = IfdVersion::Version::latest;
 
 			if (IfdVersion::supported().contains(IfdVersion::Version::v2))
@@ -66,7 +62,7 @@ class test_IfdConnector
 							oQu+/VZgDkJaSdDJ4LqVFIvUy3CFGh6ahDVsHGC5kTDm5EQWh3puWR0AkIjUWMPi
 							xU/nr0Jsab99VgX4/nnCW92v/DIRc1c=
 							-----END CERTIFICATE-----
-						)"_L1;
+						)"_ba;
 				version = IfdVersion::Version::v2;
 			}
 			return Discovery(pIfdName, ifdId, pPort, {version});
@@ -80,8 +76,8 @@ class test_IfdConnector
 		{
 			const IfdDescriptor descr(pDiscovery, pHostAddress);
 			QMetaObject::invokeMethod(pConnector.data(), [ = ] {
-					pConnector->onConnectRequest(descr, pPassword);
-				}, Qt::QueuedConnection);
+						pConnector->onConnectRequest(descr, pPassword);
+					}, Qt::QueuedConnection);
 		}
 
 
@@ -185,7 +181,7 @@ class test_IfdConnector
 
 			// No device name.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QString(), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
+			const Discovery discoveryMsg(QString(), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
 			sendRequest(connector, hostAddress, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -261,7 +257,7 @@ class test_IfdConnector
 
 			// Currently, only API level 1 is supported.
 			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QStringLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
+			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
 			sendRequest(connector, hostAddress, discoveryMsg, "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
 
@@ -335,8 +331,8 @@ class test_IfdConnector
 
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
 			connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, this, [&psk](QSslPreSharedKeyAuthenticator* pAuthenticator){
-					pAuthenticator->setPreSharedKey(psk);
-				});
+						pAuthenticator->setPreSharedKey(psk);
+					});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
 
@@ -396,8 +392,8 @@ class test_IfdConnector
 		{
 			QWebSocketServer webSocketServer(QStringLiteral("Smartphone1"), QWebSocketServer::SecureMode);
 			QObject::connect(&webSocketServer, &QWebSocketServer::preSharedKeyAuthenticationRequired, this, [](QSslPreSharedKeyAuthenticator* pAuthenticator){
-					pAuthenticator->setPreSharedKey(QByteArray("secret"));
-				});
+						pAuthenticator->setPreSharedKey(QByteArray("secret"));
+					});
 			QSignalSpy spySocketError(&webSocketServer, &QWebSocketServer::serverError);
 			QSignalSpy spySocketSuccess(&webSocketServer, &QWebSocketServer::newConnection);
 

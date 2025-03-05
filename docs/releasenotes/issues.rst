@@ -6,6 +6,8 @@ Folgende Fehler und Einschränkungen sind zum Auslieferungszeitpunkt bekannt:
 Windows / macOS
 """""""""""""""
 
+- Unter Windows Server 2016 kann die |AppName| nicht genutzt werden.
+
 - Wenn die |AppName| heruntergefahren wird, während eine Authentisierung
   oder eine PIN-Änderung mit einem Komfort-Kartenleser durchgeführt wird, kann
   dieser Vorgang erst abgeschlossen werden, wenn der Prozess auch auf dem
@@ -17,9 +19,6 @@ Windows / macOS
   unter "Systemeinstellungen/Tastatur/Kurzbefehle" auf "Alle Steuerungen" kann
   das Verhalten von macOS geändert werden, sodass auch alle anderen
   Komponenten in der App fokussiert werden können.
-
-- Der "Datei speichern unter"-Dialog wird nicht in allen Fällen automatisch
-  bei Beginn einer Authentisierung geschlossen.
 
 - Vereinzelt kann es bei Problemen mit dem Grafikkartentreiber, insbesondere
   bei der Verwendung einer virtuellen Maschine, zu Darstellungsfehlern in
@@ -34,6 +33,9 @@ Windows / macOS
 - Auf macOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
   Access" gegeben.
 
+- Die Verwendung relativer Redirect-URLs beim Abruf des TCTokens oder der
+  Weiterleitung zum Diensteanbieter führt zu einem Fehler in der |AppName|.
+
 
 Android / iOS
 """""""""""""
@@ -42,11 +44,6 @@ Android / iOS
   Webseite https://www.ausweisapp.bund.de/aa2/mobile-devices
 
 - Unter Umständen kommt es zu Stabilitätsproblemen der NFC-Schnittstelle.
-
-- Unter Android führen unter Umständen einige Änderungen der
-  Systemeinstellungen bei laufender |AppName| zu einem Neustart oder Absturz.
-  Dazu zählt die Änderung der Systemsprache und die Änderung des Typs der
-  Navigationsleiste (Gesten / Schaltflächen).
 
 - Unter iOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
   Access" gegeben.

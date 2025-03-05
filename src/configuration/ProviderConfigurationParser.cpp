@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -56,8 +56,6 @@ QList<ProviderConfigurationInfo> ProviderConfigurationParser::parseProvider(cons
 					prov[QLatin1String("postalAddress")].toString(),
 					prov[QLatin1String("icon")].toString(),
 					prov[QLatin1String("image")].toString(),
-					prov[QLatin1String("subjectUrls")].toVariant().toStringList(),
-					prov[QLatin1String("subjectUrlInfo")].toString(),
 					prov[QLatin1String("internalId")].toString()});
 	}
 

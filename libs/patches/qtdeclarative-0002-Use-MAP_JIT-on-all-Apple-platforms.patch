@@ -1,0 +1,46 @@
+From 2cfb4112a579b22a60fe43349da6cd8112dc6dd0 Mon Sep 17 00:00:00 2001
+From: Ulf Hermann <ulf.hermann@qt.io>
+Date: Tue, 10 Dec 2024 14:01:21 +0100
+Subject: Use MAP_JIT on all Apple platforms
+
+... and make it actually compile.
+
+... and set the flag for JIT pages being prepared. We are clever enough
+not to make them executable right away.
+
+Pick-to: 6.9 6.8
+Task-number: QTBUG-131957
+Change-Id: I07dc6a9c8ec7d0881d73fc5bd44a6059f66dd2eb
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+(cherry picked from commit caf7f29f3acad624aedc5847819e6e2d28a408cb)
+---
+ src/3rdparty/masm/wtf/OSAllocatorPosix.cpp | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git x/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp y/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp
+index b6ac8ebe91963b4044a4c69c0636df243458d06e..a319a99d7432845b179f9d74c589dcc900112246 100644
+--- x/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp
++++ y/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp
+@@ -138,8 +138,8 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
+         protection |= PROT_EXEC;
+ 
+     int flags = MAP_PRIVATE | MAP_ANON;
+-#if PLATFORM(IOS)
+-    if (executable)
++#if OS(DARWIN)
++    if (executable || usage == OSAllocator::JSJITCodePages)
+         flags |= MAP_JIT;
+ #endif
+ 
+@@ -274,9 +274,8 @@ void OSAllocator::releaseDecommitted(void* address, size_t bytes)
+ bool OSAllocator::canAllocateExecutableMemory()
+ {
+     int flags = MAP_PRIVATE;
+-#if PLATFORM(IOS)
+-    if (executable)
+-        flags |= MAP_JIT;
++#if OS(DARWIN)
++    flags |= MAP_JIT;
+ #endif
+ 
+     // Get a read/write memfd page

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EcUtil.h"
@@ -104,7 +104,7 @@ QSharedPointer<EC_POINT> EcUtil::oct2point(const QSharedPointer<const EC_GROUP>&
 
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey)
+QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey, bool pCompressed)
 {
 	if (pKey.isNull())
 	{
@@ -115,10 +115,16 @@ QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EVP_PKEY>& pKey)
 	uchar* key = nullptr;
 	const size_t length = EVP_PKEY_get1_encoded_public_key(pKey.data(), &key);
 	const auto guard = qScopeGuard([key] {
-			OPENSSL_free(key);
-		});
+				OPENSSL_free(key);
+			});
 
-	return length > 0 ? QByteArray(reinterpret_cast<char*>(key), static_cast<int>(length)) : QByteArray();
+	if (length == 0)
+	{
+		return QByteArray();
+	}
+
+	const QByteArray uncompressed(reinterpret_cast<char*>(key), static_cast<int>(length));
+	return pCompressed ? EcUtil::compressPoint(uncompressed) : uncompressed;
 }
 
 
@@ -134,8 +140,8 @@ QSharedPointer<OSSL_PARAM> EcUtil::create(const std::function<bool(OSSL_PARAM_BL
 {
 	OSSL_PARAM_BLD* bld = OSSL_PARAM_BLD_new();
 	const auto guard = qScopeGuard([bld] {
-			OSSL_PARAM_BLD_free(bld);
-		});
+				OSSL_PARAM_BLD_free(bld);
+			});
 
 	if (bld == nullptr)
 	{
@@ -193,14 +199,14 @@ QSharedPointer<EVP_PKEY> EcUtil::generateKey(const QSharedPointer<const EC_GROUP
 	}
 
 	const auto& params = EcUtil::create([&p, &a, &b, &order, &cofactor, &generator](OSSL_PARAM_BLD* pBuilder){
-			return OSSL_PARAM_BLD_push_BN(pBuilder, "p", p.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", a.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", b.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", order.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", cofactor.data())
-				   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", generator.data(), static_cast<size_t>(generator.size()))
-				   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
-		});
+				return OSSL_PARAM_BLD_push_BN(pBuilder, "p", p.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", a.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", b.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", order.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", cofactor.data())
+					   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", generator.data(), static_cast<size_t>(generator.size()))
+					   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
+			});
 
 	if (params == nullptr)
 	{
@@ -234,6 +240,31 @@ QSharedPointer<EVP_PKEY> EcUtil::generateKey(const QSharedPointer<const EC_GROUP
 
 
 #else
+QByteArray EcUtil::getEncodedPublicKey(const QSharedPointer<EC_KEY>& pKey, bool pCompressed)
+{
+	if (pKey.isNull())
+	{
+		qCCritical(card) << "Cannot use undefined key";
+		return QByteArray();
+	}
+
+	const auto& curve = EcUtil::create(EC_GROUP_dup(EC_KEY_get0_group(pKey.data())));
+	return EcUtil::point2oct(curve, EC_KEY_get0_public_key(pKey.data()), pCompressed);
+}
+
+
+QSharedPointer<BIGNUM> EcUtil::getPrivateKey(const QSharedPointer<const EC_KEY>& pKey)
+{
+	if (pKey.isNull())
+	{
+		qCCritical(card) << "Cannot use undefined key";
+		return nullptr;
+	}
+
+	return create(BN_dup(EC_KEY_get0_private_key(pKey.data())));
+}
+
+
 QSharedPointer<EC_KEY> EcUtil::generateKey(const QSharedPointer<const EC_GROUP>& pCurve)
 {
 	if (pCurve.isNull())

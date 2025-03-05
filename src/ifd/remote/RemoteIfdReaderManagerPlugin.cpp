@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdReaderManagerPlugin.h"
@@ -45,7 +45,7 @@ void RemoteIfdReaderManagerPlugin::continueConnectToPairedReaders(const QList<QS
 			continue;
 		}
 
-		const QString ifdId = ifdDescriptor.getIfdId();
+		const QByteArray ifdId = ifdDescriptor.getIfdId();
 
 		// If already connected: skip.
 		if (getDispatchers().contains(ifdId))
@@ -60,8 +60,8 @@ void RemoteIfdReaderManagerPlugin::continueConnectToPairedReaders(const QList<QS
 		{
 			mConnectionAttempts << ifdId;
 			QMetaObject::invokeMethod(ifdClient, [ifdClient, remoteDevice] {
-					ifdClient->establishConnection(remoteDevice, QByteArray());
-				}, Qt::QueuedConnection);
+						ifdClient->establishConnection(remoteDevice, QByteArray());
+					}, Qt::QueuedConnection);
 		}
 	}
 	setInitialScanState(ReaderManagerPluginInfo::InitialScan::SUCCEEDED);
@@ -73,7 +73,7 @@ void RemoteIfdReaderManagerPlugin::onDeviceVanished(const QSharedPointer<IfdList
 	const auto& ifdId = pEntry->getIfdDescriptor().getIfdId();
 	if (mConnectionAttempts.contains(ifdId))
 	{
-		qCInfo(card_remote) << "Removing" << ifdId << "from connection attempt list as it has vanished";
+		qCInfo(card_remote) << "Removing" << ifdId.toHex() << "from connection attempt list as it has vanished";
 		mConnectionAttempts.removeAll(ifdId);
 	}
 }
@@ -84,7 +84,7 @@ void RemoteIfdReaderManagerPlugin::onEstablishConnectionDone(const QSharedPointe
 	const auto& ifdId = pEntry->getIfdDescriptor().getIfdId();
 	if (mConnectionAttempts.contains(ifdId))
 	{
-		qCInfo(card_remote) << "Removing" << ifdId << "from connection attempt list as the request finished with" << pStatus;
+		qCInfo(card_remote) << "Removing" << ifdId.toHex() << "from connection attempt list as the request finished with" << pStatus;
 		mConnectionAttempts.removeAll(ifdId);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -8,6 +8,7 @@
 #include "FileRef.h"
 #include "ResourceLoader.h"
 #include "TestFileHelper.h"
+#include "asn1/CVCertificate.h"
 
 #include <QJsonDocument>
 #include <QScopedPointer>
@@ -112,12 +113,12 @@ class test_SimulatorFileSystem
 
 			QTest::newRow("01 - Document Type") << QByteArray::fromHex("01") << QByteArray::fromHex("610413024944");
 			QTest::newRow("02 - Issuing State") << QByteArray::fromHex("02") << QByteArray::fromHex("6203130144");
-			QTest::newRow("03 - Date of Expiry") << QByteArray::fromHex("03") << QByteArray::fromHex("630A12083230323931303331");
+			QTest::newRow("03 - Date of Expiry") << QByteArray::fromHex("03") << QByteArray::fromHex("630A12083230333430363330");
 			QTest::newRow("04 - Given Names") << QByteArray::fromHex("04") << QByteArray::fromHex("64070C054552494B41");
 			QTest::newRow("05 - Family Names") << QByteArray::fromHex("05") << QByteArray::fromHex("650C0C0A4D55535445524D414E4E");
 			QTest::newRow("06 - Nom de Plume") << QByteArray::fromHex("06") << QByteArray::fromHex("66020C00");
 			QTest::newRow("07 - Academic Title") << QByteArray::fromHex("07") << QByteArray::fromHex("67020C00");
-			QTest::newRow("08 - Date of Birth") << QByteArray::fromHex("08") << QByteArray::fromHex("680A12083139363430383132");
+			QTest::newRow("08 - Date of Birth") << QByteArray::fromHex("08") << QByteArray::fromHex("680A12083139383430383132");
 			QTest::newRow("09 - Place of Birth") << QByteArray::fromHex("09") << QByteArray::fromHex("690AA1080C064245524C494E");
 			QTest::newRow("10 - Nationality") << QByteArray::fromHex("0A") << QByteArray::fromHex("6A03130144");
 			QTest::newRow("11 - Sex") << QByteArray::fromHex("0B") << QByteArray::fromHex("6B03130146");
@@ -224,6 +225,40 @@ class test_SimulatorFileSystem
 		}
 
 
+		void password()
+		{
+			QFETCH_GLOBAL(SimulatorFileSystem, fileSystem);
+
+			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_MRZ), QByteArray::fromHex("C00DBFC8F0A9BF82FF5FBC1355C38822DE221C9B"));
+			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_CAN), QByteArray("500540"));
+			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_PIN), QByteArray("123456"));
+			QCOMPARE(fileSystem.getPassword(PacePasswordId::PACE_PUK), QByteArray("9876543210"));
+		}
+
+
+		void trustPoint()
+		{
+			QFETCH_GLOBAL(SimulatorFileSystem, fileSystem);
+
+			QCOMPARE(fileSystem.getTrustPoint()->getBody().getCertificateHolderReference(), QByteArray("DETESTeID00005"));
+
+			const auto& cert7 = CVCertificate::fromRaw(QByteArray::fromHex(
+					"7F218201B67F4E82016E5F290100420E44455445535465494430303030367F4982011D060A04007F0007020202020381"
+					"20A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E537782207D5A0975FC2C3057EEF6753041"
+					"7AFFE7FB8055C126DC5C6CE94A4B44F330B5D9832026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC"
+					"18FF8C07B68441048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD"
+					"97F8461A14611DC9C27745132DED8E545C1D54C72F0469978520A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561"
+					"A6F7901E0E82974856A786410431D8F49A3095D324E52833E1354860FCD797F44730AA4B67486E10E6059A04B773E16F"
+					"803A115788D307A7B99296D5AB5CBD658D3EA28D4771ED5A027DB5ADE28701015F200E44455445535465494430303030"
+					"377F4C12060904007F0007030102025305FC0F13FFFF5F25060200010001035F24060203010001035F3740275BAD7EF2"
+					"4614F99ABE983C6643BE5385D2C2B1D146DD481AC422B1605CA5A64F87D4B2B9F56BEEE34B8E6B6AF6F3423A21F00AAB"
+					"F55F29C3771B06B22B3A0A"));
+			QTest::ignoreMessage(QtDebugMsg, "Updated TrustPoint to \"DETESTeID00007\"");
+			fileSystem.setTrustPoint(cert7);
+			QCOMPARE(fileSystem.getTrustPoint(), cert7);
+		}
+
+
 		void verify_data()
 		{
 			QTest::addColumn<QByteArray>("authenticatedAuxiliaryData");
@@ -234,13 +269,13 @@ class test_SimulatorFileSystem
 			QTest::newRow("missing authenticatedAuxiliaryData") << QByteArray() << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
 			QTest::newRow("unknown OID") << QByteArray::fromHex("6717 7315 0609 04007F000703010409 5308 3139363430383132") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
 
-			QTest::newRow("age - 1 day before birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139363430383131") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
-			QTest::newRow("age - birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139363430383132") << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
-			QTest::newRow("age - 1 day after birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139363430383133") << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("age - 1 day before birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139383430383131") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("age - birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139383430383132") << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("age - 1 day after birthday") << QByteArray::fromHex("6717 7315 0609 04007F000703010401 5308 3139383430383133") << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
 
-			QTest::newRow("validity - 1 day before expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230323931303330") << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED;
-			QTest::newRow("validity - expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230323931303331") << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED;
-			QTest::newRow("validity - 1 day after expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230323931313031") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("validity - 1 day before expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230333430363239") << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("validity - expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230333430363330") << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS << StatusCode::VERIFICATION_FAILED;
+			QTest::newRow("validity - 1 day after expiry") << QByteArray::fromHex("6717 7315 0609 04007F000703010402 5308 3230333430373031") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED;
 
 			QTest::newRow("community - match 1") << QByteArray::fromHex("6716 7314 0609 04007F000703010403 5307 02760503150000") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS;
 			QTest::newRow("community - match 2") << QByteArray::fromHex("6715 7313 0609 04007F000703010403 5306 027605031500") << StatusCode::VERIFICATION_FAILED << StatusCode::VERIFICATION_FAILED << StatusCode::SUCCESS;

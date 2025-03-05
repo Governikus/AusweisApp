@@ -1,13 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Generic implementation for chain building, i.e. building ordered lists.
- * The ChainBuilder is initialized with a pool of objects and a (pointer to a) function
- * that decides if two objects have a parent child relation. Duplicates are filtered out.
- *
- * All found chains are returned by the function /ref ChainBuilder::getChains().
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -64,9 +56,9 @@ class ChainBuilder
 		bool isSubChain(const QList<T>& pSubChain)
 		{
 			return std::any_of(mChains.constBegin(), mChains.constEnd(), [&pSubChain] (const QList<T>& pChain) {
-					return std::search(pChain.constBegin(), pChain.constEnd(), pSubChain.constBegin(), pSubChain.constEnd())
-						   != pChain.constEnd();
-				});
+						return std::search(pChain.constBegin(), pChain.constEnd(), pSubChain.constBegin(), pSubChain.constEnd())
+							   != pChain.constEnd();
+					});
 		}
 
 	protected:

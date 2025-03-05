@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRoleAndRight.h"
@@ -263,7 +263,11 @@ QString AccessRoleAndRightsUtil::toDisplayText(AccessRight pRight)
 
 QLatin1String AccessRoleAndRightsUtil::toTechnicalName(AccessRight pRight)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+	if (Enum<AccessRightNames>::isValue(static_cast<std::underlying_type_t<AccessRight>>(pRight)))
+#else
 	if (Enum<AccessRightNames>::isValue(static_cast<int>(pRight)))
+#endif
 	{
 		return getEnumName(static_cast<AccessRightNames>(pRight));
 	}
@@ -285,18 +289,18 @@ QStringList AccessRoleAndRightsUtil::fromTechnicalName(const QStringList& pStr, 
 	for (auto entry : pStr)
 	{
 		const bool isValidTechnicalName = fromTechnicalName(entry, [&entry, pJoinRight](AccessRight pRight){
-				if (pJoinRight.testFlag(JoinRight::READWRITE)
-				|| (pJoinRight.testFlag(JoinRight::WRITE) && AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
-				|| (pJoinRight.testFlag(JoinRight::READ) && !AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
-				)
-				{
-					entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
-				}
-				else
-				{
-					entry.clear();
-				}
-			});
+					if (pJoinRight.testFlag(JoinRight::READWRITE)
+					|| (pJoinRight.testFlag(JoinRight::WRITE) && AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+					|| (pJoinRight.testFlag(JoinRight::READ) && !AccessRoleAndRightsUtil::isWriteAccessRight(pRight))
+					)
+					{
+						entry = AccessRoleAndRightsUtil::toDisplayText(pRight);
+					}
+					else
+					{
+						entry.clear();
+					}
+				});
 
 		if ((isValidTechnicalName && !entry.isNull()) || (!isValidTechnicalName && pJoinRight.testFlag(JoinRight::READ)))
 		{
@@ -319,7 +323,12 @@ bool AccessRoleAndRightsUtil::fromTechnicalName(const char* const pStr, const st
 
 	if (const auto& entry = Enum<AccessRightNames>::fromString(pStr, undefined); entry != undefined)
 	{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+		Q_ASSERT(Enum<AccessRight>::isValue(static_cast<std::underlying_type_t<AccessRight>>(entry)));
+#else
 		Q_ASSERT(Enum<AccessRight>::isValue(static_cast<int>(entry)));
+#endif
+
 		pFunc(static_cast<AccessRight>(entry));
 		return true;
 	}

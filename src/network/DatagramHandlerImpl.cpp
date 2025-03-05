@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -11,7 +11,6 @@
 #include <QNetworkDatagram>
 #include <QNetworkInterface>
 #include <QNetworkProxy>
-#include <QOperatingSystemVersion>
 #include <QWeakPointer>
 
 using namespace governikus;
@@ -278,13 +277,7 @@ bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddr
 #if defined(Q_OS_IOS)
 void DatagramHandlerImpl::checkNetworkPermission()
 {
-	if (QOperatingSystemVersion::current() < QOperatingSystemVersion(QOperatingSystemVersion::IOS, 14))
-	{
-		return;
-	}
-
-	// iOS 14 doesn't have an API to ask for local network permissions,
-	// furthermore the permission prompt is only triggered when sending data.
+	// The permission prompt is only triggered when sending data.
 	// So send a dummy packet, as that will hopefully trigger the prompt.
 	// Use port 9 as all traffic send to it is discarded (RFC863).
 

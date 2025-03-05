@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref DatagramHandlerImpl
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DatagramHandlerImpl.h"
@@ -73,17 +69,12 @@ class test_DatagramHandlerImpl
 
 #ifdef Q_OS_WIN
 			QSKIP("Windows does not block privileged ports");
+#elif defined(Q_OS_MACOS)
+			QSKIP("macOS >= 10.14 does not block privileged ports - https://news.ycombinator.com/item?id=18302380");
 #elif defined(Q_OS_LINUX)
 			if (TestFileHelper::systemAllowsPort(HttpServer::cPort))
 			{
 				QSKIP("Cannot check, privileged port allowed.");
-			}
-#endif
-
-#ifdef Q_OS_MACOS
-			if (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 10, 14))
-			{
-				QSKIP("macOS >= 10.14 does not block privileged ports - https://news.ycombinator.com/item?id=18302380");
 			}
 #endif
 

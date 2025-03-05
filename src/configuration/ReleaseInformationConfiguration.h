@@ -1,14 +1,11 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Handles updating information about the App release
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "ReleaseInformation.h"
+
 
 namespace governikus
 {

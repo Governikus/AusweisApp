@@ -1,37 +1,22 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
-import Governikus.Style
 import Governikus.Type
 
-ColumnLayout {
+ReleaseNotesView {
 	id: root
 
-	Component.onCompleted: releaseInformationModel.update()
+	footerPositioning: ListView.OverlayFooter
+	model: releaseInformationModel.currentRelease
 
-	ReleaseInformationModel {
-		id: releaseInformationModel
-
-	}
-	ReleaseNotesView {
-		Layout.fillHeight: true
-		Layout.fillWidth: true
-		model: releaseInformationModel.currentRelease
-
-		layer {
-			enabled: GraphicsInfo.api !== GraphicsInfo.Software
-
-			effect: GDropShadow {
-			}
-		}
-	}
-	GButton {
-		Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-		Layout.bottomMargin: Constants.pane_padding
+	footer: GButton {
+		anchors.horizontalCenter: parent.horizontalCenter
 		icon.source: "qrc:///images/material_refresh.svg"
 		//: LABEL DESKTOP
 		text: qsTr("Retry")
@@ -39,5 +24,18 @@ ColumnLayout {
 		visible: releaseInformationModel.allowRetry
 
 		onClicked: releaseInformationModel.update()
+	}
+
+	Component.onCompleted: releaseInformationModel.update()
+
+	layer {
+		enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+		effect: GDropShadow {
+		}
+	}
+	ReleaseInformationModel {
+		id: releaseInformationModel
+
 	}
 }

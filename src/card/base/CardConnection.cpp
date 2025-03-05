@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnection.h"
@@ -51,24 +51,24 @@ bool CardConnection::getPacePinSuccessful() const
 void CardConnection::setKeepAlive(bool pEnabled)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pEnabled] {
-			mCardConnectionWorker->setKeepAlive(pEnabled);
-		});
+				mCardConnectionWorker->setKeepAlive(pEnabled);
+			});
 }
 
 
 void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage, pProgress] {
-			mCardConnectionWorker->setProgressMessage(pMessage, pProgress);
-		}, Qt::BlockingQueuedConnection);
+				mCardConnectionWorker->setProgressMessage(pMessage, pProgress);
+			}, Qt::BlockingQueuedConnection);
 }
 
 
 void CardConnection::setErrorMessage(const QString& pMessage)
 {
 	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage] {
-			mCardConnectionWorker->setErrorMessage(pMessage);
-		}, Qt::BlockingQueuedConnection);
+				mCardConnectionWorker->setErrorMessage(pMessage);
+			}, Qt::BlockingQueuedConnection);
 }
 
 

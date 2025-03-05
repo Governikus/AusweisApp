@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateProcessIfdMessages.h"
@@ -51,6 +51,26 @@ class test_StateProcessIfdMessages
 
 			state.onMessageHandlerAdded(messageHandler);
 			QCOMPARE(state.mMessageConnections.size(), 7);
+		}
+
+
+		void test_OnCardConnected()
+		{
+			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
+			StateProcessIfdMessages state(context);
+			QVERIFY(!context->getCardInitiallyAppeared());
+			state.onCardConnected();
+			QVERIFY(context->getCardInitiallyAppeared());
+		}
+
+
+		void test_OnClosed()
+		{
+			const QSharedPointer<IfdServiceContext> context(new IfdServiceContext(mIfdServer));
+			StateProcessIfdMessages state(context);
+			context->setCardInitiallyAppeared();
+			state.onClosed();
+			QVERIFY(!context->getCardInitiallyAppeared());
 		}
 
 

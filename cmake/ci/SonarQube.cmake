@@ -29,7 +29,7 @@ step(${T_TARGET} gcovr.sonar)
 if(REVIEW)
 	set(SONAR_CMDLINE
 		-Dsonar.pullrequest.key=$ENV{REVIEWBOARD_REVIEW_ID}
-		-Dsonar.pullrequest.branch=$ENV{REVIEWBOARD_REVIEW_ID}
+		-Dsonar.pullrequest.branch=$ENV{MERCURIAL_REVISION_BRANCH}
 		-Dsonar.pullrequest.base=$ENV{MERCURIAL_REVISION_BRANCH}
 	)
 else()

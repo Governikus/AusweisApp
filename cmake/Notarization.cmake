@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 if(NOT CMAKE_SCRIPT_MODE_FILE)
 	message(STATUS "Usage: cmake -P cmake/Notarization.cmake")

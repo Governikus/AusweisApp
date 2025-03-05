@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include <AppKit/AppKit.h>
@@ -30,20 +30,23 @@
 	{
 		NSString* helperBundlePath = [[NSBundle mainBundle] bundlePath];
 		NSArray* helperBundlePathComponents = [helperBundlePath pathComponents];
-		// Remove last 4 components from helper path to get main path, current bundle is located at "main.app/Contents/Library/LoginItems/helper.app":
+		// Remove last 4 components from bundle path to get main path, current bundle is located at "AusweisApp.app/Contents/Library/LoginItems/AusweisAppAutostartHelper.app"
 		NSArray* mainBundleComponents = [helperBundlePathComponents subarrayWithRange:NSMakeRange(0, [helperBundlePathComponents count] - 4)];
-		NSString* mainBundlePath = [NSString pathWithComponents:mainBundleComponents];
-		NSLog(@"Launching application at: %@", mainBundlePath);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-		BOOL result = [[NSWorkspace sharedWorkspace] launchApplication:mainBundlePath];
-#pragma clang diagnostic pop
-		if (!result)
-		{
-			NSLog(@"Launching failed");
-		}
+		NSString* applicationUrl = [NSString stringWithFormat:@"file:///%@", [NSString pathWithComponents:mainBundleComponents]];
+		NSLog(@"Launching application at: %@", applicationUrl);
+		NSWorkspaceOpenConfiguration* config = [[NSWorkspaceOpenConfiguration alloc] init];
+		[[NSWorkspace sharedWorkspace] openApplicationAtURL:[NSURL URLWithString:applicationUrl] configuration:config completionHandler:^(NSRunningApplication* app, NSError* error){
+			if (error)
+			{
+				NSLog(@"Launching failed: %@", error.localizedDescription);
+			}
+			else
+			{
+				NSLog(@"Started application: %@", app);
+			}
+			[NSApp terminate:nil];
+		}];
 	}
-	[NSApp terminate:nil];
 }
 
 

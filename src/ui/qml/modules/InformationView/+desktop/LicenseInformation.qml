@@ -1,25 +1,63 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.View
 import Governikus.Style
 import Governikus.Type
 
 GListView {
-	id: listView
+	id: root
 
 	activeFocusOnTab: true
 	anchors.fill: parent
-	displayMarginBeginning: Constants.pane_padding
-	displayMarginEnd: Constants.pane_padding
+	displayMarginBeginning: Style.dimens.pane_padding
+	displayMarginEnd: Style.dimens.pane_padding
 	model: ApplicationModel.getLicenseText()
 
-	delegate: RoundedRectangle {
+	delegate: ListEntryDelegate {
+		z: 0
+	}
+	highlight: Item {
+		z: 2
+
+		FocusFrame {
+			anchors.leftMargin: 0
+			anchors.rightMargin: 0
+			scope: root
+		}
+	}
+
+	Keys.onDownPressed: {
+		do {
+			root.incrementCurrentIndex();
+		} while ((currentItem as ListEntryDelegate).text === "")
+	}
+	Keys.onUpPressed: {
+		do {
+			root.decrementCurrentIndex();
+		} while ((currentItem as ListEntryDelegate).text === "")
+	}
+
+	layer {
+		enabled: GraphicsInfo.api !== GraphicsInfo.Software
+
+		effect: GDropShadow {
+		}
+	}
+
+	component ListEntryDelegate: RoundedRectangle {
+		id: listEntryDelegate
+
+		required property int index
 		readonly property bool isFirstItem: index === 0
 		readonly property bool isLastItem: index === ListView.view.count - 1
+		required property string modelData
 		readonly property alias text: delegateText.text
 
 		Accessible.ignored: delegateText.text === ""
@@ -31,49 +69,22 @@ GListView {
 		implicitHeight: Math.ceil(delegateText.implicitHeight) + delegateText.anchors.bottomMargin + delegateText.anchors.topMargin
 		topLeftCorner: isFirstItem
 		topRightCorner: isFirstItem
-		width: listView.width - Constants.pane_padding
-		z: 0
+		width: root.width - Style.dimens.pane_padding
 
 		GText {
 			id: delegateText
 
 			Accessible.ignored: true
-			text: model.modelData
+			activeFocusOnTab: false
+			text: listEntryDelegate.modelData
 
 			anchors {
-				bottomMargin: isLastItem ? Constants.pane_padding : 0
+				bottomMargin: listEntryDelegate.isLastItem ? Style.dimens.pane_padding : 0
 				fill: parent
-				leftMargin: Constants.pane_padding
-				rightMargin: Constants.pane_padding
-				topMargin: isFirstItem ? Constants.pane_padding : Constants.text_spacing
+				leftMargin: Style.dimens.pane_padding
+				rightMargin: Style.dimens.pane_padding
+				topMargin: listEntryDelegate.isFirstItem ? Style.dimens.pane_padding : Style.dimens.text_spacing
 			}
-		}
-	}
-	highlight: Item {
-		z: 2
-
-		FocusFrame {
-			anchors.leftMargin: 0
-			anchors.rightMargin: 0
-			scope: listView
-		}
-	}
-
-	Keys.onDownPressed: {
-		do {
-			listView.incrementCurrentIndex();
-		} while (currentItem.text === "")
-	}
-	Keys.onUpPressed: {
-		do {
-			listView.decrementCurrentIndex();
-		} while (currentItem.text === "")
-	}
-
-	layer {
-		enabled: GraphicsInfo.api !== GraphicsInfo.Software
-
-		effect: GDropShadow {
 		}
 	}
 }

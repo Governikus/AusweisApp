@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SectionModel.h"
@@ -60,7 +60,7 @@ int SectionModel::rowCount(const QModelIndex& pParent) const
 QHash<int, QByteArray> SectionModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
-	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
+	roles.insert(Qt::DisplayRole, QByteArrayLiteral("modelData"));
 	roles.insert(TitleRole, QByteArrayLiteral("title"));
 	roles.insert(ContentRole, QByteArrayLiteral("content"));
 	return roles;

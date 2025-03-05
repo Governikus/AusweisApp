@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceModel.h"
@@ -12,12 +12,11 @@
 #include "RemoteServiceSettings.h"
 #include "controller/IfdServiceController.h"
 
-#ifdef Q_OS_IOS
-	#include <QOperatingSystemVersion>
-#endif
+#include <QOperatingSystemVersion>
 
 
 using namespace governikus;
+
 
 RemoteServiceModel::RemoteServiceModel()
 	: WorkflowModel()
@@ -35,13 +34,10 @@ RemoteServiceModel::RemoteServiceModel()
 	, mConnectionInfo()
 	, mConnectedServerDeviceNames()
 	, mRememberedServerEntry()
+	, mRequiresLocalNetworkPermission(QOperatingSystemVersion::currentType() == QOperatingSystemVersion::IOS)
 #ifdef Q_OS_IOS
-	// iOS 14 introduced a local network permission, so we need to handle it.
-	, mRequiresLocalNetworkPermission(QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::IOS, 14))
 	, mWasRunning(false)
 	, mWasPairing(false)
-#else
-	, mRequiresLocalNetworkPermission(false)
 #endif
 {
 	QQmlEngine::setObjectOwnership(&mAllDevices, QQmlEngine::CppOwnership);
@@ -59,10 +55,10 @@ RemoteServiceModel::RemoteServiceModel()
 	connect(applicationModel, &ApplicationModel::fireApplicationStateChanged, this, &RemoteServiceModel::onApplicationStateChanged);
 
 	const auto* const ifdClient = Env::getSingleton<RemoteIfdClient>();
-	connect(ifdClient, &IfdClient::fireDetectionChanged, this, &RemoteServiceModel::fireDetectionChanged);
 	connect(ifdClient, &IfdClient::fireNewDispatcher, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(ifdClient, &IfdClient::fireDispatcherChanged, this, &RemoteServiceModel::onConnectedDevicesChanged);
 	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteServiceModel::onConnectedDevicesChanged);
+	connect(ifdClient, &IfdClient::fireDispatcherDestroyed, this, &RemoteServiceModel::fireConnectedServerDisconnected);
 	connect(ifdClient, &IfdClient::fireDeviceAppeared, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireDeviceVanished, this, &RemoteServiceModel::fireRemoteReaderVisibleChanged);
 	connect(ifdClient, &IfdClient::fireCertificateRemoved, this, &RemoteServiceModel::fireCertificateRemoved);
@@ -84,7 +80,7 @@ void RemoteServiceModel::onEnvironmentChanged()
 
 	const bool runnable = readerAvailable && wifiEnabled;
 	const bool canEnableNfc = nfcPluginAvailable && !nfcPluginEnabled;
-	const QString errorMessage = getErrorMessage(nfcPluginAvailable, nfcPluginEnabled, wifiEnabled);
+	const QString errorMessage = getErrorMessage(nfcPluginEnabled, wifiEnabled);
 	if (mRunnable != runnable || mCanEnableNfc != canEnableNfc || mErrorMessage != errorMessage)
 	{
 		mRunnable = runnable;
@@ -102,6 +98,9 @@ void RemoteServiceModel::onEnvironmentChanged()
 
 
 void RemoteServiceModel::onApplicationStateChanged(bool pIsAppInForeground)
+#ifndef Q_OS_IOS
+const
+#endif
 {
 #if defined(Q_OS_IOS)
 	if (pIsAppInForeground)
@@ -246,15 +245,15 @@ RemoteDeviceFilterModel* RemoteServiceModel::getUnavailablePairedDevices()
 }
 
 
-void RemoteServiceModel::setDetectRemoteDevices(bool pNewStatus)
+void RemoteServiceModel::startDetection()
 {
-	mAllDevices.setDetectRemoteDevices(pNewStatus);
+	mAllDevices.startDetection();
 }
 
 
-bool RemoteServiceModel::detectRemoteDevices() const
+void RemoteServiceModel::stopDetection(bool pStopScan)
 {
-	return Env::getSingleton<RemoteIfdClient>()->isDetecting();
+	mAllDevices.stopDetection(pStopScan);
 }
 
 
@@ -283,9 +282,9 @@ QList<ReaderManagerPluginType> RemoteServiceModel::getSupportedReaderPluginTypes
 }
 
 
-bool RemoteServiceModel::rememberServer(const QString& pDeviceId)
+bool RemoteServiceModel::rememberServer(const QVariant& pDeviceId)
 {
-	mRememberedServerEntry = mAllDevices.getRemoteDeviceListEntry(pDeviceId);
+	mRememberedServerEntry = mAllDevices.getRemoteDeviceListEntry(pDeviceId.toByteArray());
 	return !mRememberedServerEntry.isNull();
 }
 
@@ -345,12 +344,12 @@ void RemoteServiceModel::resetRemoteServiceContext(const QSharedPointer<IfdServi
 	if (mContext)
 	{
 		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, [this](){
-				setStarting(false);
-			});
+					setStarting(false);
+				});
 		connect(mContext.data(), &IfdServiceContext::fireIsRunningChanged, this, &RemoteServiceModel::fireIsRunningChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, [this](const QByteArray& pPsk){
-				mPsk = pPsk;
-			});
+					mPsk = pPsk;
+				});
 		connect(mContext->getIfdServer().data(), &IfdServer::fireNameChanged, this, &RemoteServiceModel::onNameChanged);
 		connect(mContext->getIfdServer().data(), &IfdServer::firePskChanged, this, &RemoteServiceModel::firePskChanged);
 		connect(mContext.data(), &IfdServiceContext::fireDisplayTextChanged, this, &RemoteServiceModel::fireDisplayTextChanged);
@@ -494,21 +493,12 @@ bool RemoteServiceModel::pinPadModeOn() const
 }
 
 
-QString RemoteServiceModel::getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const
+QString RemoteServiceModel::getErrorMessage(bool pNfcPluginEnabled, bool pWifiEnabled) const
 {
 	if (!pWifiEnabled)
 	{
 		//: INFO ALL_PLATFORMS The WiFi feature is not enabled but required to use the smartphone as a card reader (SaK).
 		return tr("Please connect your WiFi to use your smartphone as a card reader (SaC).");
-	}
-	if (!pNfcPluginAvailable)
-	{
-		//: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
-		return tr("This device cannot be used to read your ID card.") + QStringLiteral("<br/><br/>") +
-		       //: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
-			   tr("If you want to use the online identification on this device anyway, you can connect another NFC capable smartphone as a card reader.") + QStringLiteral("<br/><br/>") +
-		       //: ALL_PLATFORMS AA2 can't use NFC on this device, suggest to use SaK instead.
-			   tr("To pair a smartphone go to <b>Settings</b> and <b>Manage Pairings</b>.");
 	}
 	if (!pNfcPluginEnabled)
 	{
@@ -526,9 +516,9 @@ QRegularExpression RemoteServiceModel::getPercentMatcher() const
 }
 
 
-void RemoteServiceModel::forgetDevice(const QString& pId)
+void RemoteServiceModel::forgetDevice(const QVariant& pId)
 {
-	mAllDevices.forgetDevice(pId);
+	mAllDevices.forgetDevice(pId.toByteArray());
 }
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CheckIDCardModel.h"
@@ -8,10 +8,12 @@
 
 using namespace governikus;
 
+
 CheckIDCardModel::CheckIDCardModel(QObject* pParent)
 	: QObject(pParent)
 	, mIsRunning(false)
 	, mResult(Result::UNKNOWN)
+	, mPluginType(ReaderManagerPluginType::UNKNOWN)
 {
 }
 
@@ -34,9 +36,6 @@ void CheckIDCardModel::onCardInserted(const ReaderInfo& pInfo)
 
 	if (pInfo.hasEid())
 	{
-		mResult = Result::ID_CARD_DETECTED;
-		Q_EMIT fireResultChanged();
-
 		if (pInfo.insufficientApduLength())
 		{
 			stopScanWithResult(Result::INSUFFICIENT_APDU_LENGTH);
@@ -117,14 +116,23 @@ void CheckIDCardModel::stopScanWithResult(Result result)
 }
 
 
-void CheckIDCardModel::startScan()
+void CheckIDCardModel::startScan(ReaderManagerPluginType pPluginType)
 {
 	if (mIsRunning)
 	{
 		return;
 	}
+	static const auto supportedTypes = QList {ReaderManagerPluginType::NFC, ReaderManagerPluginType::PCSC, ReaderManagerPluginType::REMOTE_IFD};
+	if (!supportedTypes.contains(pPluginType))
+	{
+		qWarning() << "Unsupported ReaderManagerPluginType to start scan:" << pPluginType;
+		mResult = Result::UNSUPPORTED_PLUGIN_TYPE;
+		Q_EMIT fireResultChanged();
+		return;
+	}
 
 	mIsRunning = true;
+	mPluginType = pPluginType;
 
 	const auto* readerManager = Env::getSingleton<ReaderManager>();
 	connect(readerManager, &ReaderManager::fireCardInserted, this, &CheckIDCardModel::onCardInserted);
@@ -146,20 +154,20 @@ void CheckIDCardModel::startScanIfNecessary()
 
 	auto* readerManager = Env::getSingleton<ReaderManager>();
 
-	if (readerManager->getPluginInfo(ReaderManagerPluginType::NFC).isScanRunning())
+	if (readerManager->getPluginInfo(mPluginType).isScanRunning())
 	{
 		return;
 	}
 
 	mReaderWithCard.clear();
 
-	readerManager->startScan(ReaderManagerPluginType::NFC);
+	readerManager->startScan(mPluginType);
 
-	const auto nfcReaderInfos = readerManager->getReaderInfos(ReaderFilter({ReaderManagerPluginType::NFC}));
-	mResult = nfcReaderInfos.empty() ? Result::NO_NFC : Result::CARD_NOT_DETECTED;
+	const auto readerInfos = readerManager->getReaderInfos(ReaderFilter({mPluginType}));
+	mResult = readerInfos.empty() ? Result::NO_READER : Result::CARD_NOT_DETECTED;
 
-	// Directly check all NFC readers if an id card is already present
-	for (const auto& info : nfcReaderInfos)
+	// Directly check all readers if an id card is already present
+	for (const auto& info : readerInfos)
 	{
 		if (info.hasCard())
 		{
@@ -186,7 +194,7 @@ void CheckIDCardModel::stopScan()
 	disconnect(readerManager, &ReaderManager::fireReaderRemoved, this, &CheckIDCardModel::onReaderRemoved);
 	disconnect(readerManager, &ReaderManager::fireReaderPropertiesUpdated, this, &CheckIDCardModel::onReaderPropertiesUpdated);
 
-	readerManager->stopScan(ReaderManagerPluginType::NFC);
+	readerManager->stopScan(mPluginType);
 
 	mIsRunning = false;
 	mReaderWithCard.clear();

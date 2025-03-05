@@ -1,19 +1,21 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
+import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import QtQuick.Layouts
 
 GPaneBackground {
 	id: root
 
 	property alias contentSpacing: paneContent.spacing
 	property alias horizontalTitleAlignment: titleText.horizontalAlignment
-	property int padding: Constants.pane_padding
+	property int padding: Style.dimens.pane_padding
 	default property alias paneData: paneContent.data
-	property int spacing: Constants.pane_spacing
+	property int spacing: Style.dimens.pane_spacing
 	property alias textStyle: titleText.textStyle
 	property alias title: titleText.text
 

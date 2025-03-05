@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQml
 import Governikus.AuthView
 import Governikus.Type
@@ -25,19 +28,19 @@ SmartDeleteBaseView {
 		popAll();
 	}
 	onDeleteConfirmed: {
-		setLockedAndHidden();
-		pushProgressView({
-			"title": root.title,
+		root.setLockedAndHidden();
+		root.pushProgressView({
+			title: root.title,
 			//: LABEL ANDROID IOS
-			"text": qsTr("Resetting Smart-eID"),
-			"progressBarVisible": true,
+			text: qsTr("Resetting Smart-eID"),
+			progressBarVisible: true,
 			//: LABEL ANDROID IOS
-			"progressText": qsTr("Resetting Smart-eID")
+			progressText: qsTr("Resetting Smart-eID")
 		});
 		if (connectivityManager.checkConnectivity()) {
 			SmartModel.deleteSmart();
 		} else {
-			push(checkConnectivityView);
+			root.push(checkConnectivityView);
 		}
 	}
 
@@ -46,18 +49,18 @@ SmartDeleteBaseView {
 
 		onNetworkInterfaceActiveChanged: {
 			if (networkInterfaceActive) {
-				pop();
+				root.pop();
 				SmartModel.deleteSmart();
 			}
 		}
 	}
 	Connections {
 		function onFireDeleteSmartDone() {
-			pushResultView({
-				"success": SmartModel.errorString === "",
-				"title": root.title,
+			root.pushResultView({
+				success: SmartModel.errorString === "",
+				title: root.title,
 				//: LABEL ANDROID IOS
-				"text": SmartModel.errorString === "" ? qsTr("You have successfully reset your Smart-eID.") : SmartModel.errorString
+				text: SmartModel.errorString === "" ? qsTr("You have successfully reset your Smart-eID.") : SmartModel.errorString
 			});
 		}
 
@@ -73,8 +76,8 @@ SmartDeleteBaseView {
 			Component.onCompleted: connectivityManager.watching = true
 			Component.onDestruction: connectivityManager.watching = false
 			onCancel: {
-				setLockedAndHidden(false);
-				pop(root);
+				root.setLockedAndHidden(false);
+				root.pop(root);
 			}
 		}
 	}

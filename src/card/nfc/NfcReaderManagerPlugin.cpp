@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NfcReaderManagerPlugin.h"
@@ -76,11 +76,11 @@ void NfcReaderManagerPlugin::enqueueReaderMode(bool pEnabled)
 	if (auto* plugin = NfcReaderManagerPlugin::instance.loadRelaxed())
 	{
 		QMetaObject::invokeMethod(plugin, [plugin, pEnabled] {
-				if (plugin->mNfcReader)
-				{
-					setReaderMode(pEnabled);
-				}
-			}, Qt::QueuedConnection);
+					if (plugin->mNfcReader)
+					{
+						setReaderMode(pEnabled);
+					}
+				}, Qt::QueuedConnection);
 	}
 }
 

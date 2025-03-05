@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -17,10 +17,10 @@ RadioButton {
 	property bool tintIcon: false
 
 	Accessible.name: text
-	horizontalPadding: Constants.component_spacing
+	horizontalPadding: Style.dimens.pane_spacing
 	indicator: null
-	spacing: Constants.groupbox_spacing
-	verticalPadding: Constants.component_spacing / 2
+	spacing: Style.dimens.groupbox_spacing
+	verticalPadding: Style.dimens.pane_spacing / 2
 
 	background: RoundedRectangle {
 		bottomLeftCorner: root.drawBottomCorners
@@ -54,13 +54,14 @@ RadioButton {
 			source: root.icon.source
 			sourceSize.height: root.indicatorHeight
 			tintColor: description.color
-			tintEnabled: tintIcon
+			tintEnabled: root.tintIcon
 			visible: source.toString() !== ""
 		}
 		GText {
 			id: description
 
 			Accessible.ignored: true
+			activeFocusOnTab: false
 			text: root.text
 			visible: text !== ""
 		}
@@ -86,7 +87,7 @@ RadioButton {
 		anchors {
 			bottomMargin: root.bottomPadding / 2
 			leftMargin: root.leftPadding / 2
-			rightMargin: Math.max(0, contentItem.width - contentItem.implicitWidth) + root.rightPadding / 2
+			rightMargin: Math.max(0, root.contentItem.width - root.contentItem.implicitWidth) + root.rightPadding / 2
 			topMargin: root.topPadding / 2
 		}
 	}

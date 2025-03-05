@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderConfiguration.h"
@@ -81,16 +81,16 @@ const QList<ReaderConfigurationInfo>& ReaderConfiguration::getReaderConfiguratio
 QList<ReaderConfigurationInfo> ReaderConfiguration::getSupportedReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
-			return !i.getUrl().isEmpty();
-		}, std::as_const(mReaderConfigurationInfos));
+				return !i.getUrl().isEmpty();
+			}, std::as_const(mReaderConfigurationInfos));
 }
 
 
 QList<ReaderConfigurationInfo> ReaderConfiguration::getVirtualReaderConfigurationInfos() const
 {
 	return filter<ReaderConfigurationInfo>([](const ReaderConfigurationInfo& i){
-			return i.getVendorId() == 0x0;
-		}, std::as_const(mReaderConfigurationInfos));
+				return i.getVendorId() == 0x0;
+			}, std::as_const(mReaderConfigurationInfos));
 }
 
 

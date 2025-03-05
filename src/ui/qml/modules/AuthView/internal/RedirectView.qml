@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQml
 
-import Governikus.Global
+import Governikus.Animations
 import Governikus.ResultView
 import Governikus.Style
 import Governikus.Type
@@ -23,14 +23,15 @@ ResultView {
 		return qsTr("Press the button to complete the authentication and return to the provider.");
 	}
 
+	animationSymbol: Symbol.Type.CHECK
+	animationType: AnimationLoader.Type.STATUS
 	buttonIcon: "qrc:///images/open_website.svg"
 	//: LABEL ALL_PLATFORMS
 	buttonText: qsTr("Return to provider")
 	//: LABEL ALL_PLATFORMS
 	header: qsTr("Authentication successful")
-	icon: "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
 	subheader: {
-		if (Constants.is_desktop) {
+		if (Style.is_layout_desktop) {
 			//: INFO DESKTOP Hint to user that the ID card should be removed
 			return qsTr("Remove the ID card from the card reader");
 		}
@@ -45,12 +46,7 @@ ResultView {
 	}
 
 	Component.onCompleted: {
-		if (!Constants.is_desktop && SettingsModel.autoRedirectAfterAuthentication) {
-			timeout.start();
-		}
-	}
-	onVisibleChanged: {
-		if (Constants.is_desktop && visible && SettingsModel.autoRedirectAfterAuthentication) {
+		if (SettingsModel.autoRedirectAfterAuthentication) {
 			timeout.start();
 		}
 	}
@@ -58,7 +54,7 @@ ResultView {
 	Timer {
 		id: timeout
 
-		interval: 7000
+		interval: ApplicationModel.feedbackTimeout
 
 		onTriggered: root.confirm()
 	}

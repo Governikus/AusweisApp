@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ProviderConfigurationParser
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationParser.h"
@@ -163,42 +159,6 @@ class test_ProviderConfigurationParser
 		}
 
 
-		void parseSubjectUrls()
-		{
-			QByteArray data = QByteArray("{"
-										 "   \"provider\": ["
-										 "      {"
-										 "      },"
-										 "      {"
-										 "         \"subjectUrls\": []"
-										 "      },"
-										 "      {"
-										 "         \"subjectUrls\": [\"https://www.autentapp.de/bla1\"]"
-										 "      },"
-										 "      {"
-										 "         \"subjectUrls\": [\"https://www.autentapp.de/bla1\", \"https://www.autentapp.de/bla2\"]"
-										 "      }"
-										 "   ]"
-										 "}");
-
-			const auto providers = ProviderConfigurationParser::parseProvider(data);
-
-			QCOMPARE(providers.size(), 4);
-
-			auto provider = providers[0];
-			QCOMPARE(provider.getSubjectUrls(), QStringList());
-
-			provider = providers[1];
-			QCOMPARE(provider.getSubjectUrls(), QStringList());
-
-			provider = providers[2];
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1")}));
-
-			provider = providers[3];
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla2")}));
-		}
-
-
 		void defaultProviders()
 		{
 			QByteArray data = TestFileHelper::readFile(":/updatable-files/supported-providers.json"_L1);
@@ -225,8 +185,8 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("majorVersion");
 			QTest::addColumn<int>("count");
 
-			const int all = 130;
-			const int withEidSupport = 108;
+			const int all = 132;
+			const int withEidSupport = 110;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;

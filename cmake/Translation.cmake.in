@@ -1,23 +1,27 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.10.0)
 
-foreach(file @TRANSLATION_FILES@)
-	message(STATUS "Adding DvcsAttributes to ${file}")
-	file(READ ${file} TR_FILE)
-	string(REPLACE "\">\n<context>" "\
+if (@UPDATE_TRANSLATIONS_ADD_DVCS@)
+	foreach(file @TRANSLATION_FILES@)
+		message(STATUS "Adding DvcsAttributes to ${file}")
+		file(READ ${file} TR_FILE)
+		string(REPLACE "\">\n<context>" "\
 \">\n\
 <context>\n\
     <name>DvcsAttributes</name>\n\
     <message>\n\
-        <source>@dvcs_revision@</source>\n\
-        <extracomment>revision</extracomment>\n\
-        <translation>@dvcs_revision@</translation>\n\
+	<source>@dvcs_revision@</source>\n\
+	<extracomment>revision</extracomment>\n\
+	<translation>@dvcs_revision@</translation>\n\
     </message>\n\
     <message>\n\
-        <source>@PROJECT_VERSION@</source>\n\
-        <extracomment>version</extracomment>\n\
-        <translation>@PROJECT_VERSION@</translation>\n\
+	<source>@PROJECT_VERSION@</source>\n\
+	<extracomment>version</extracomment>\n\
+	<translation>@PROJECT_VERSION@</translation>\n\
     </message>\n\
 </context>\n\
 <context>" TR_FILE "${TR_FILE}")
-	file(WRITE ${file} "${TR_FILE}")
-endforeach()
+		file(WRITE ${file} "${TR_FILE}")
+	endforeach()
+else()
+	message(STATUS "Skip adding DvcsAttributes")
+endif()

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref SelfAuthenticationData
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthenticationData.h"
@@ -37,7 +33,11 @@ class test_SelfAuthenticationData
 
 			QTest::addRow("Empty response") << QByteArray() << QByteArray();
 			QTest::addRow("Empty JSON") << QByteArray("{}") << QByteArray("JSON value \"OperationsAllowedByUser\" is of wrong type: 128");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+			QTest::addRow("Broken JSON") << QByteArray("abc") << QByteArray("JSON parsing failed: \"illegal number\"");
+#else
 			QTest::addRow("Broken JSON") << QByteArray("abc") << QByteArray("JSON parsing failed: \"illegal value\"");
+#endif
 			QTest::addRow("Non-empty JSON") << QByteArray("{\"foo\": { \"baz\": \"bar\" }}") << QByteArray("JSON value \"OperationsAllowedByUser\" is of wrong type: 128");
 			QTest::addRow("OperationsAllowedByUser present") << QByteArray("{\"OperationsAllowedByUser\": {}}") << QByteArray("JSON value \"PersonalData\" is of wrong type: 128");
 		}

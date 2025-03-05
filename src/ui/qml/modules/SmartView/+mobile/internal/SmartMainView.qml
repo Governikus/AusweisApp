@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.TitleBar
-import Governikus.View
 import Governikus.Type
 
 ColumnLayout {
@@ -17,7 +17,6 @@ ColumnLayout {
 
 	signal changePin
 	signal deletePersonalization
-	signal receivedFocus(var pItem)
 	signal showCheckResult
 	signal startSelfAuth
 	signal updateSmart
@@ -26,7 +25,7 @@ ColumnLayout {
 
 	SmartCardView {
 		Layout.alignment: Qt.AlignHCenter
-		Layout.bottomMargin: Constants.component_spacing
+		Layout.bottomMargin: Style.dimens.pane_spacing
 		Layout.maximumHeight: Style.dimens.header_icon_size
 	}
 	GText {
@@ -50,7 +49,7 @@ ColumnLayout {
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.text_spacing
+		Layout.topMargin: Style.dimens.text_spacing
 		horizontalAlignment: Text.AlignHCenter
 		text: {
 			switch (root.smartState) {
@@ -68,7 +67,7 @@ ColumnLayout {
 		wrapMode: Text.WordWrap
 	}
 	SmartSettingsView {
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		visible: root.smartState === SmartModel.State.READY
 
 		onChangePin: root.changePin()
@@ -99,15 +98,13 @@ ColumnLayout {
 	}
 	GButton {
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
-		icon.source: "qrc:///images/mobile/device_button.svg"
+		Layout.topMargin: Style.dimens.pane_spacing
+		icon.source: "qrc:///images/device_button.svg"
 		//: LABEL ANDROID IOS
 		text: qsTr("Start check")
 		tintIcon: true
 		visible: root.showCheck
 
 		onClicked: root.showCheckResult()
-		onFocusChanged: if (focus)
-			root.receivedFocus(this)
 	}
 }

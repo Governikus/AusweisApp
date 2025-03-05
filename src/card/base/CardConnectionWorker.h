@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Worker for \ref CardConnection that will do the job in \ref ReaderManagerWorker
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -25,10 +21,6 @@
 
 namespace governikus
 {
-
-/*!
- * This class represents a connection to a smart card.
- */
 class CardConnectionWorker
 	: public QObject
 	, public QEnableSharedFromThis<CardConnectionWorker>

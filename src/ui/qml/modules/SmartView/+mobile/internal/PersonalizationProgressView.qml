@@ -1,12 +1,11 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import Governikus.Global
+
 import Governikus.ProgressView
-import Governikus.Style
 import Governikus.TitleBar
-import Governikus.View
 import Governikus.Type
 
 ProgressView {
@@ -16,30 +15,7 @@ ProgressView {
 
 	signal abortWorkflow
 
-	progressText: PersonalizationModel.progressMessage
-	progressValue: PersonalizationModel.progressValue
-	smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
-	subText: {
-		switch (workflowState) {
-		case PersonalizationController.WorkflowStates.CheckStatus:
-		case PersonalizationController.WorkflowStates.InstallApplet:
-		case PersonalizationController.WorkflowStates.TcToken:
-			//: LABEL ANDROID IOS
-			return qsTr("Please wait a moment.");
-		case PersonalizationController.WorkflowStates.Abort:
-			//: LABEL ANDROID IOS
-			return qsTr("Please wait a moment, the current process is being finished.");
-		case PersonalizationController.WorkflowStates.ProcessingPhysicalEid:
-			return PersonalizationModel.isBasicReader ?
-			//: LABEL ANDROID IOS
-			qsTr("Please do not move the ID card.") :
-			//: LABEL ANDROID IOS
-			qsTr("Please observe the display of your card reader.");
-		default:
-			return "";
-		}
-	}
-	text: {
+	headline: {
 		switch (workflowState) {
 		case PersonalizationController.WorkflowStates.CheckStatus:
 			//: LABEL ANDROID IOS
@@ -64,12 +40,35 @@ ProgressView {
 			return qsTr("Waiting for start of workflow...");
 		}
 	}
+	progressText: PersonalizationModel.progressMessage
+	progressValue: PersonalizationModel.progressValue
+	smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+	text: {
+		switch (workflowState) {
+		case PersonalizationController.WorkflowStates.CheckStatus:
+		case PersonalizationController.WorkflowStates.InstallApplet:
+		case PersonalizationController.WorkflowStates.TcToken:
+			//: LABEL ANDROID IOS
+			return qsTr("Please wait a moment.");
+		case PersonalizationController.WorkflowStates.Abort:
+			//: LABEL ANDROID IOS
+			return qsTr("Please wait a moment, the current process is being finished.");
+		case PersonalizationController.WorkflowStates.ProcessingPhysicalEid:
+			return PersonalizationModel.isBasicReader ?
+			//: LABEL ANDROID IOS
+			qsTr("Please do not move the ID card.") :
+			//: LABEL ANDROID IOS
+			qsTr("Please observe the display of your card reader.");
+		default:
+			return "";
+		}
+	}
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Smart-eID")
 
 	navigationAction: NavigationAction {
-		action: workflowState === PersonalizationController.WorkflowStates.Abort ? NavigationAction.Action.None : NavigationAction.Action.Cancel
+		action: root.workflowState === PersonalizationController.WorkflowStates.Abort ? NavigationAction.Action.None : NavigationAction.Action.Cancel
 
 		onClicked: root.abortWorkflow()
 	}

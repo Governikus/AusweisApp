@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref  SignatureChecker
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/SignatureChecker.h"
@@ -11,7 +7,7 @@
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/CVCertificate.h"
 
-#include "CertificateHelper.h"
+#include "Converter.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
@@ -37,7 +33,7 @@ class test_SignatureChecker
 	static QSharedPointer<const CVCertificate> load(const QString& pName)
 	{
 		QByteArray bytes = TestFileHelper::readFile(pName);
-		return CertificateHelper::fromHex(bytes);
+		return Converter::certificatefromHex(bytes);
 	}
 
 	private Q_SLOTS:
@@ -106,6 +102,26 @@ class test_SignatureChecker
 			SignatureChecker checker(cvcs);
 
 			QVERIFY(checker.check());
+		}
+
+
+		void checkSignature_fail()
+		{
+			QTest::ignoreMessage(QtCriticalMsg, "Cannot fetch signing key");
+			const auto& certificate = load(":/card/cvat-DEDEMODEV00038.hex"_L1);
+			SignatureChecker::checkSignature(nullptr, certificate, &certificate->getBody().getPublicKey());
+
+			QTest::ignoreMessage(QtCriticalMsg, "Missing signing key");
+			SignatureChecker::checkSignature(nullptr, QByteArray(), QByteArray(), QCryptographicHash::Algorithm::Sha256);
+
+			QTest::ignoreMessage(QtCriticalMsg, "Cannot init verify ctx");
+			QSharedPointer<EVP_PKEY> key(EVP_PKEY_new(), [](EVP_PKEY* pKey){EVP_PKEY_free(pKey);});
+			SignatureChecker::checkSignature(key, QByteArray(), QByteArray(), QCryptographicHash::Algorithm::Sha256);
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+			QCOMPARE(getOpenSslError(), QByteArray("error:0609D09C:digital envelope routines:int_ctx_new:unsupported algorithm | error:0608F096:digital envelope routines:EVP_PKEY_verify_init:operation not supported for this keytype"));
+#else
+			QVERIFY(getOpenSslError().startsWith(QByteArray("error:0308010C:digital envelope routines::unsupported | error:03")));
+#endif
 		}
 
 

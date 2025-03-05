@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetServiceInformation.h"
@@ -26,8 +26,8 @@ StateGetServiceInformation::StateGetServiceInformation(const QSharedPointer<Work
 void StateGetServiceInformation::run()
 {
 	*this << Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
-			return QVariant::fromValue(SmartManager::get()->serviceInformation());
-		}, this, &StateGetServiceInformation::onCommandDone);
+				return QVariant::fromValue(SmartManager::get()->serviceInformation());
+			}, this, &StateGetServiceInformation::onCommandDone);
 }
 
 

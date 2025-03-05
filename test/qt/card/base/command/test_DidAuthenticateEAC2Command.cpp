@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "command/DidAuthenticateEAC2Command.h"
@@ -8,7 +8,7 @@
 #include "asn1/ASN1Util.h"
 #include "asn1/CVCertificateChainBuilder.h"
 
-#include "CertificateHelper.h"
+#include "Converter.h"
 #include "MockCardConnectionWorker.h"
 #include "TestFileHelper.h"
 
@@ -41,13 +41,13 @@ class test_DidAuthenticateEAC2Command
 		static CVCertificateChain createCVCertificateChain()
 		{
 			QList<QSharedPointer<const CVCertificate>> list;
-			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvca-DETESTeID00004.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
-			list << CertificateHelper::fromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00002_DETESTeID00001.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00004_DETESTeID00002.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvca-DETESTeID00004.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvdv-DEDVeIDDPST00035.hex"_L1));
+			list << Converter::certificatefromHex(readFile("cvat-DEDEMODEV00038.hex"_L1));
 			CVCertificateChainBuilder builder(list, false);
 			return builder.getChainStartingWith(list.first());
 		}

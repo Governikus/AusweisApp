@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ProviderConfiguration
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfiguration.h"
@@ -37,7 +33,7 @@ class test_ProviderConfiguration
 			            /* long description */ QString(),
 			            /* address */ QStringLiteral("ftp://homepage.com/form"),
 			            /* homepage */ QStringLiteral("ftp://www.homepage.de/bla/bla1"),
-						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+						QString(), QString(), QString(), QString(), QString(), QString(), {},
 					});
 			QCOMPARE(provider1.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider1.getHomepageBase(), QStringLiteral("www.homepage.de"));
@@ -48,7 +44,7 @@ class test_ProviderConfiguration
 			            /* long description */ QString(),
 			            /* address */ QStringLiteral("https://homepage.com/form"),
 			            /* homepage */ QStringLiteral("https://www.homepage.de/bla/bla1"),
-						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+						QString(), QString(), QString(), QString(), QString(), QString(), {},
 					});
 			QCOMPARE(provider2.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider2.getHomepageBase(), QStringLiteral("www.homepage.de"));
@@ -59,7 +55,7 @@ class test_ProviderConfiguration
 			            /* long description */ QString(),
 			            /* address */ QStringLiteral("homepage.com/form"),
 			            /* homepage */ QStringLiteral("www.homepage.de/bla/bla1"),
-						QString(), QString(), QString(), QString(), QString(), QString(), {}, QString(), QString()
+						QString(), QString(), QString(), QString(), QString(), QString(), {},
 					});
 			QCOMPARE(provider3.getAddressDomain(), QStringLiteral("homepage.com"));
 			QCOMPARE(provider3.getHomepageBase(), QStringLiteral("www.homepage.de"));
@@ -85,8 +81,7 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Provider 1"));
@@ -100,7 +95,6 @@ class test_ProviderConfiguration
 			QCOMPARE(provider.getPostalAddress(), QStringLiteral("Am Fallturm 9\n28359 Bremen"));
 			QVERIFY(provider.getIcon()->lookupPath().endsWith("/CategoryA_button.svg"_L1));
 			QVERIFY(provider.getImage()->lookupPath().endsWith("/CategoryA_bg.svg"_L1));
-			QCOMPARE(provider.getSubjectUrls(), QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}));
 		}
 
 
@@ -118,8 +112,7 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			QCOMPARE(providerEmptyLongname.getLongName().toString(), QString());
@@ -136,8 +129,7 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			QCOMPARE(providerWithoutShortname.getShortName().toString(), QStringLiteral("Provider 1"));
@@ -192,7 +184,7 @@ class test_ProviderConfiguration
 			QFETCH(double, mobileCentsPerCall);
 			const ProviderConfigurationInfo provider({
 						QString(), QString(), QString(), QString(), QString(), ""_L1, phone,
-						QString(), QString(), QString(), QString(), {}, QString(), QString()
+						QString(), QString(), QString(), QString(), {}
 					});
 			const CallCost& callCost = Env::getSingleton<ProviderConfiguration>()->getCallCost(provider);
 
@@ -229,17 +221,6 @@ class test_ProviderConfiguration
 			const auto& homepage = QUrl(provider.getHomepage());
 			QVERIFY(!homepage.host().isEmpty());
 			QCOMPARE(homepage.scheme(), "https"_L1);
-
-			const auto& subjectUrls = provider.getSubjectUrls();
-			for (const auto& url : subjectUrls)
-			{
-				if (!url.isEmpty())
-				{
-					const auto& subjectUrl = QUrl(url);
-					QVERIFY(!subjectUrl.host().isEmpty());
-					QCOMPARE(subjectUrl.scheme(), "https"_L1);
-				}
-			}
 		}
 
 
@@ -257,8 +238,7 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			const ProviderConfigurationInfo provider2({
@@ -273,8 +253,7 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			const ProviderConfigurationInfo provider3({
@@ -289,69 +268,12 @@ class test_ProviderConfiguration
 			            /* postal address */ QStringLiteral("Am Fallturm 9\n28359 Bremen"),
 			            /* icon */ QString(),
 			            /* image */ QString(),
-			            /* subjectUrls */ QStringList({QStringLiteral("https://www.autentapp.de/bla1"), QStringLiteral("https://www.autentapp.de/bla1")}),
-						QString(), QString()
+						QString()
 					});
 
 			QVERIFY(provider1 == provider1);
 			QVERIFY(!(provider1 == provider2));
 			QVERIFY(provider2 == provider3);
-		}
-
-
-		void testCheckAttachedEidServices()
-		{
-			uint attachedEidCounter = 0;
-
-			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
-			for (const auto& provider : providers)
-			{
-				const auto& urls = provider.getSubjectUrls();
-				for (const auto& urlString : urls)
-				{
-					const auto& subjectHost = QUrl(urlString).host();
-					if (subjectHost == provider.getAddressDomain() || subjectHost == provider.getHomepageBase())
-					{
-						attachedEidCounter++;
-					}
-				}
-			}
-
-			QCOMPARE(attachedEidCounter, 20);
-		}
-
-
-		void testCheckServicesWithoutAnOwnEidServer()
-		{
-			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
-			for (const auto& provider : providers)
-			{
-				QVERIFY2(!provider.getSubjectUrls().isEmpty() || !provider.getSubjectUrlInfo().isEmpty(), provider.getShortName().toString().toStdString().c_str());
-			}
-		}
-
-
-		void testCheckUniqueSubjectUrls()
-		{
-			QSet<QString> subjectUrls;
-			uint subjectUrlCounter = 0;
-
-			const auto& providers = Env::getSingleton<ProviderConfiguration>()->getProviderConfigurationInfos();
-			for (const auto& provider : providers)
-			{
-				const auto& urls = provider.getSubjectUrls();
-				for (const auto& urlString : urls)
-				{
-					QUrl url(urlString);
-					QVERIFY(url.isValid());
-					QCOMPARE(urlString, QStringLiteral("https://%1").arg(url.host()));
-
-					subjectUrls += urlString;
-					subjectUrlCounter++;
-				}
-			}
-
-			QCOMPARE(subjectUrls.size(), subjectUrlCounter);
 		}
 
 

@@ -1,30 +1,38 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
-import Governikus.View
+import Governikus.Style
 
 Item {
 	id: root
 
-	readonly property int availableHeight: Math.floor(height - 2 * Constants.pane_spacing)
+	readonly property int availableHeight: Math.floor(height - 2 * Style.dimens.pane_spacing)
 	property Component contentDelegate: null
 	property var contentObjectModel: undefined
 	property alias contentRightMargin: flickable.rightMargin
 	readonly property var currentContentItem: contentLoader.item
 	property alias currentIndex: sectionNameList.currentIndex
-	readonly property var currentItemModel: sectionNameList.currentItem ? sectionNameList.currentItem.itemModel : null
+	readonly property var currentItemModel: (sectionNameList.currentItem as TabbedPaneDelegate) ? (sectionNameList.currentItem as TabbedPaneDelegate).model : null
 	property Component footerItem: null
-	property int highlightedIndex: -1
 	readonly property real relativeListViewWidth: 0.3
 	property alias sectionCount: sectionNameList.count
 	property var sectionsModel: undefined
 
+	function handleKeyPress(key) {
+		if (currentContentItem instanceof GListView) {
+			currentContentItem.handleKeyPress(key);
+			return;
+		}
+		flickable.handleKeyPress(key);
+	}
 	function scrollYPositionIntoView(pYposition) {
 		let dy = pYposition - flickable.contentY - flickable.height;
 		if (dy > 0 || flickable.contentY > 0) {
@@ -37,18 +45,18 @@ Item {
 	}
 
 	Item {
-		anchors.bottomMargin: Constants.pane_padding
+		anchors.bottomMargin: Style.dimens.pane_padding
 		anchors.fill: parent
-		anchors.leftMargin: Constants.pane_padding
-		anchors.topMargin: Constants.pane_padding
+		anchors.leftMargin: Style.dimens.pane_padding
+		anchors.topMargin: Style.dimens.pane_padding
 		opacity: SettingsModel.showBetaTesting ? 0.9 : 1.0
 
 		ColumnLayout {
 			id: leftSide
 
 			height: parent.height
-			spacing: Constants.component_spacing
-			width: parent.width * relativeListViewWidth
+			spacing: Style.dimens.pane_spacing
+			width: parent.width * root.relativeListViewWidth
 			z: 1
 
 			anchors {
@@ -73,13 +81,15 @@ Item {
 					anchors.fill: parent
 					boundsBehavior: Flickable.StopAtBounds
 					clip: true
-					delegate: sectionNameDelegate
 					highlight: null
 					highlightFollowsCurrentItem: true
-					model: sectionsModel
+					model: root.sectionsModel
 					scrollBarAutohide: true
-					scrollBarBottomPadding: Constants.text_spacing
-					scrollBarTopPadding: Constants.text_spacing
+					scrollBarBottomPadding: Style.dimens.text_spacing
+					scrollBarTopPadding: Style.dimens.text_spacing
+
+					delegate: TabbedPaneDelegate {
+					}
 
 					onCurrentIndexChanged: flickable.positionViewAtBeginning()
 				}
@@ -87,8 +97,8 @@ Item {
 			Loader {
 				Layout.alignment: Qt.AlignLeft
 				Layout.fillWidth: true
-				Layout.preferredHeight: status === Loader.Ready ? item.implicitHeight : 0
-				sourceComponent: footerItem
+				Layout.preferredHeight: status === Loader.Ready ? (item as Item).implicitHeight : 0
+				sourceComponent: root.footerItem
 			}
 		}
 		GFlickableColumnLayout {
@@ -101,7 +111,7 @@ Item {
 			anchors {
 				bottom: parent.bottom
 				left: leftSide.right
-				leftMargin: Constants.pane_padding
+				leftMargin: Style.dimens.pane_padding
 				right: parent.right
 				top: parent.top
 			}
@@ -109,155 +119,22 @@ Item {
 				id: contentLoader
 
 				Layout.fillWidth: true
-				Layout.maximumHeight: item ? item.Layout.maximumHeight : -1
-				Layout.maximumWidth: item ? item.Layout.maximumWidth : -1
-				Layout.minimumHeight: item ? item.Layout.minimumHeight : -1
-				Layout.minimumWidth: item ? item.Layout.minimumWidth : -1
-				Layout.preferredHeight: item ? item.Layout.preferredHeight : -1
+				Layout.maximumHeight: item ? (item as Item).Layout.maximumHeight : -1
+				Layout.maximumWidth: item ? (item as Item).Layout.maximumWidth : -1
+				Layout.minimumHeight: item ? (item as Item).Layout.minimumHeight : -1
+				Layout.minimumWidth: item ? (item as Item).Layout.minimumWidth : -1
+				Layout.preferredHeight: item ? (item as Item).Layout.preferredHeight : -1
 				sourceComponent: {
-					if (contentDelegate !== null) {
-						return contentDelegate;
+					if (root.contentDelegate !== null) {
+						return root.contentDelegate;
 					}
-					if (contentObjectModel === undefined) {
+					if (root.contentObjectModel === undefined) {
 						return null;
 					}
-					if (sectionNameList.currentIndex < contentObjectModel.count) {
-						return contentObjectModel.get(sectionNameList.currentIndex);
+					if (sectionNameList.currentIndex < root.contentObjectModel.count) {
+						return root.contentObjectModel.get(sectionNameList.currentIndex);
 					}
 				}
-			}
-		}
-	}
-	Component {
-		id: sectionNameDelegate
-
-		Item {
-			id: delegateItem
-
-			//: LABEL DESKTOP %1 is the current selected Page of %2 Pages
-			readonly property string a11yPageIndicator: qsTr("%1 of %2").arg(index + 1).arg(ListView.view.count)
-			readonly property bool isFirstItem: index === 0
-			readonly property bool isLastItem: index === ListView.view.count - 1
-			readonly property var itemModel: model
-			readonly property bool nextItemIsHighlighted: index === ListView.view.currentIndex - 1 || index === root.highlightedIndex - 1
-
-			Accessible.description: Qt.platform.os === "windows" ? a11yPageIndicator : ""
-			Accessible.focusable: true
-			Accessible.name: {
-				if (Qt.platform.os === "windows") {
-					return sectionName.text;
-				}
-				//: LABEL DESKTOP
-				return sectionName.text + ", " + qsTr("Tab selected") + ", " + a11yPageIndicator;
-			}
-			Accessible.role: Accessible.PageTab
-			activeFocusOnTab: false
-			height: sectionName.height + 2 * Constants.pane_padding
-			width: sectionNameList.width
-
-			StatefulColors {
-				id: colors
-
-				checkedCondition: delegateItem.ListView.isCurrentItem
-				disabledCondition: false
-				groupMember: true
-				hoveredCondition: mouseArea.containsMouse
-				pressedCondition: mouseArea.pressed
-				statefulControl: delegateItem
-			}
-			RoundedRectangle {
-				anchors.fill: parent
-				borderColor: colors.paneBorder
-				bottomLeftCorner: isLastItem
-				bottomRightCorner: isLastItem
-				color: colors.paneBackground
-				radius: Style.dimens.pane_radius
-				topLeftCorner: isFirstItem
-				topRightCorner: isFirstItem
-			}
-			GText {
-				id: sectionName
-
-				color: colors.textNormal
-				elide: Text.ElideRight
-				maximumLineCount: 2
-				text: model.display ? model.display : model.modelData
-				textStyle: Style.text.subline
-
-				anchors {
-					left: parent.left
-					leftMargin: Constants.pane_padding
-					right: parent.right
-					rightMargin: Constants.pane_padding
-					verticalCenter: parent.verticalCenter
-				}
-			}
-			GSeparator {
-				id: horizontalSeparator
-
-				visible: !isLastItem && !nextItemIsHighlighted && GraphicsInfo.api !== GraphicsInfo.Software
-
-				states: [
-					State {
-						name: "active"
-						when: delegateItem.ListView.isCurrentItem
-
-						PropertyChanges {
-							horizontalSeparator.visible: false
-						}
-					},
-					State {
-						name: "pressed"
-						when: mouseArea.pressed
-
-						PropertyChanges {
-							horizontalSeparator.visible: false
-						}
-					},
-					State {
-						name: "hovered"
-						when: mouseArea.containsMouse
-
-						PropertyChanges {
-							horizontalSeparator.visible: false
-						}
-					}
-				]
-
-				anchors {
-					bottom: parent.bottom
-					left: parent.left
-					leftMargin: Constants.pane_padding
-					right: parent.right
-					rightMargin: Constants.pane_padding
-				}
-			}
-			FocusFrame {
-				borderColor: sectionName.color
-				framee: sectionName
-			}
-			MouseArea {
-				id: mouseArea
-
-				function updateHighlight() {
-					if (containsMouse || pressed) {
-						root.highlightedIndex = index;
-					} else {
-						if (root.highlightedIndex === index) {
-							root.highlightedIndex = -1;
-						}
-					}
-				}
-
-				anchors.fill: parent
-				hoverEnabled: true
-
-				onClicked: {
-					delegateItem.ListView.view.itemAtIndex(index).forceActiveFocus(Qt.MouseFocusReason);
-					delegateItem.ListView.view.currentIndex = index;
-				}
-				onContainsMouseChanged: updateHighlight()
-				onPressedChanged: updateHighlight()
 			}
 		}
 	}

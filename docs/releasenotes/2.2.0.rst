@@ -11,7 +11,7 @@ Anwender
 - Anzeige des alten und neuen Gerätenamen bei der Nutzung von "Smartphone
   als Kartenleser", falls sich der Name eines Geräts geändert hat.
 
-- Am Ende einer Authentisierung wurde ein Seite zur Information
+- Am Ende einer Authentisierung wurde eine Seite zur Information
   eingefügt, bevor eine Weiterleitung zum Diensteanbieter erfolgt.
 
 - Erhöhung der zulässigen Zeit für die Antwort auf Kartenkommandos

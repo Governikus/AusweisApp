@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 if(POLICY CMP0010)
 	cmake_policy(SET CMP0010 NEW)
@@ -201,7 +201,7 @@ elseif(APPLE)
 		set(OPENSSL_ARCH darwin64-x86_64-cc)
 	endif()
 
-	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=12.0)
+	set(OPENSSL_COMPILER_FLAGS ${OPENSSL_COMPILER_FLAGS} -mmacosx-version-min=13.0)
 elseif(MINGW OR CYGWIN)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(OPENSSL_ARCH mingw64)
@@ -348,7 +348,7 @@ set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -prefix ${DESTINATION_DIR})
 set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -system-proxies -openssl-linked -I ${DESTINATION_DIR}/include -L ${DESTINATION_DIR}/lib)
 
 set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -opensource -confirm-license)
-set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -nomake examples -nomake tests -no-mtdev -no-dbus -no-sql-sqlite)
+set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -nomake examples -nomake tests -no-mtdev -no-dbus)
 set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-zlib -qt-pcre -qt-harfbuzz)
 if(NOT INTEGRATED_SDK)
 	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -qt-libpng -qt-libjpeg)
@@ -359,32 +359,46 @@ if(CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
 endif()
 
 
-list(APPEND NO_FEATURES_SHARED hijricalendar islamiccivilcalendar jalalicalendar)
-list(APPEND NO_FEATURES_SHARED designer testlib_selfcover)
-list(APPEND NO_FEATURES_SHARED imageformat_bmp imageformat_ppm imageformat_xbm)
-list(APPEND NO_FEATURES_SHARED sharedmemory textodfwriter)
-list(APPEND NO_FEATURES_SHARED undocommand undogroup undostack)
-list(APPEND NO_FEATURES_SHARED printsupport dtls dom sql xml pdf)
-list(APPEND NO_FEATURES_SHARED brotli topleveldomain private_tests dnslookup sctp)
-list(APPEND NO_FEATURES_SHARED localserver filesystemwatcher libresolv)
-list(APPEND NO_FEATURES_SHARED quickcontrols2-imagine quickcontrols2-material quickcontrols2-universal)
-if(NOT DEVELOPER)
-	list(APPEND NO_FEATURES_SHARED quickcontrols2-fusion)
-endif()
+# qtbase
+list(APPEND NO_FEATURES printsupport private_tests sql xml)
 if(CONTAINER_SDK)
-	list(APPEND NO_FEATURES_SHARED testlib androiddeployqt)
+	list(APPEND NO_FEATURES testlib)
 endif()
-foreach(feature ${NO_FEATURES_SHARED})
-	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-feature-${feature})
-endforeach()
-
-list(APPEND NO_FEATURES calendarwidget colordialog dial fontcombobox fontdialog lcdnumber)
-list(APPEND NO_FEATURES splashscreen syntaxhighlighter undoview securetransport schannel)
-if(NOT MAC)
-	list(APPEND NO_FEATURES mdiarea)
+# qtbase/src/corelib
+list(APPEND NO_FEATURES hijricalendar islamiccivilcalendar jalalicalendar)
+list(APPEND NO_FEATURES sharedmemory filesystemwatcher)
+# qtbase/src/gui
+list(APPEND NO_FEATURES imageformat_bmp imageformat_ppm imageformat_xbm)
+list(APPEND NO_FEATURES pdf textodfwriter undocommand undogroup undostack)
+# qtbase/src/network
+list(APPEND NO_FEATURES brotli dnslookup dtls localserver libresolv)
+list(APPEND NO_FEATURES schannel sctp securetransport topleveldomain)
+# qtbase/src/testlib
+list(APPEND NO_FEATURES testlib_selfcover)
+# qtdeclarative/src/quickcontrols
+list(APPEND NO_FEATURES quickcontrols2-imagine quickcontrols2-material quickcontrols2-universal)
+if(NOT DEVELOPER)
+	list(APPEND NO_FEATURES quickcontrols2-fusion)
+endif()
+if(IOS OR ANDROID)
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-widgets)
+else()
+	# qtbase/src/widgets
+	list(APPEND NO_FEATURES calendarwidget colordialog dial fontcombobox fontdialog)
+	list(APPEND NO_FEATURES lcdnumber splashscreen syntaxhighlighter undoview)
+	if(NOT MAC)
+		list(APPEND NO_FEATURES mdiarea)
+	endif()
+endif()
+# qtscxml
+list(APPEND NO_FEATURES qeventtransition scxml statemachine-qml)
+# qttools
+list(APPEND NO_FEATURES designer)
+if(CONTAINER_SDK)
+	list(APPEND NO_FEATURES androiddeployqt)
 endif()
 foreach(feature ${NO_FEATURES})
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-feature-${feature})
+	set(QT_CONFIGURE_FLAGS_SHARED ${QT_CONFIGURE_FLAGS_SHARED} -no-feature-${feature})
 endforeach()
 
 
@@ -450,11 +464,8 @@ elseif(ANDROID)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER}
 		-android-sdk ${ANDROID_SDK_ROOT} -android-ndk ${CMAKE_ANDROID_NDK} -android-ndk-platform android-${CMAKE_SYSTEM_VERSION}
 		-android-abis ${CMAKE_ANDROID_ARCH_ABI} -xplatform android-clang)
-
-	# ANDROID_TARGET_SDK_VERSION cannot be passed here as Qt has it's own variable and uses the latest in "${ANDROID_SDK_ROOT}/platforms".
-	# https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPlatformAndroid.cmake?h=6.4#n36
-
 	set(ANDROID_PAGE_SIZE_FLAGS "-Wl,-z,max-page-size=16384")
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DQT_ANDROID_API_USED_FOR_JAVA=android-${ANDROID_COMPILE_SDK_VERSION})
 	if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
 		set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-use-gold-linker)
 		set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} -DCMAKE_SHARED_LINKER_FLAGS=${ANDROID_PAGE_SIZE_FLAGS} -DCMAKE_MODULE_LINKER_FLAGS=${ANDROID_PAGE_SIZE_FLAGS})
@@ -467,10 +478,6 @@ elseif(LINUX)
 	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} ${QT_CONFIGURE_FLAGS_OTHER} -no-libproxy --linker=gold)
 else()
 	message(FATAL_ERROR "Unsupported system")
-endif()
-
-if(IOS OR ANDROID)
-	set(QT_CONFIGURE_FLAGS ${QT_CONFIGURE_FLAGS} -no-widgets)
 endif()
 
 if(QT_ENV)

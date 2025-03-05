@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256px" height="256px" viewBox="0 0 128 128">
-    <image x="-90" y="82" width="80" height="48" transform="rotate(-70)" xlink:href="../ausweis.svg"/>
-    <image x="24" y="12" width="64" height="100" xlink:href="phone_nfc.svg"/>
-</svg>

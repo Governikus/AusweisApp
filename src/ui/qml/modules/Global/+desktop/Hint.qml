@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
-import Governikus.View
 
 GPane {
 	id: root
@@ -24,18 +23,14 @@ GPane {
 	GText {
 		id: hintText
 
-		Layout.topMargin: Constants.text_spacing
-		activeFocusOnTab: true
+		Layout.topMargin: Style.dimens.text_spacing
 		visible: text !== ""
-
-		FocusFrame {
-		}
 	}
 	GButton {
 		id: hintButton
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		icon.source: "qrc:///images/open_website.svg"
 		tintIcon: hintText.color
 		visible: text !== ""

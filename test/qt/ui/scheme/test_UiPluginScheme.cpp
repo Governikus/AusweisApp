@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref UiPluginScheme
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginScheme.h"
@@ -176,8 +172,8 @@ class test_UiPluginScheme
 			QUrl url;
 			QSignalSpy spy(&ui, &UiPlugin::fireWorkflowRequested);
 			connect(&ui, &UiPlugin::fireWorkflowRequested, this, [&url](const QSharedPointer<WorkflowRequest>& pRequest){
-					url = pRequest->getContext().objectCast<AuthContext>()->getActivationUrl();
-				});
+						url = pRequest->getContext().objectCast<AuthContext>()->getActivationUrl();
+					});
 
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request URL: QUrl(\"http://crap\")");
@@ -214,8 +210,8 @@ class test_UiPluginScheme
 			QSharedPointer<WorkflowRequest> request;
 			QSignalSpy spy(&ui, &UiPlugin::fireWorkflowRequested);
 			connect(&ui, &UiPlugin::fireWorkflowRequested, this, [&request](const QSharedPointer<WorkflowRequest>& pRequest){
-					request = pRequest;
-				});
+						request = pRequest;
+					});
 
 			QTest::ignoreMessage(QtDebugMsg, "Got new request");
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");

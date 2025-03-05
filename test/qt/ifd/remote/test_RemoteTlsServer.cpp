@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref RemoteTlsServer
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteTlsServer.h"
@@ -39,8 +35,8 @@ class test_RemoteTlsServer
 			RemoteTlsServer server;
 			QCOMPARE(server.getCurrentCertificate(), QSslCertificate());
 			connect(&server, &RemoteTlsServer::firePskChanged, this, [this](const QByteArray& pPsk){
-					psk = pPsk;
-				});
+						psk = pPsk;
+					});
 			server.setPairing();
 			server.startListening(0);
 			QVERIFY(server.hasPsk());
@@ -53,28 +49,28 @@ class test_RemoteTlsServer
 			QSslSocket client;
 			client.setSslConfiguration(config);
 			connect(&client, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, [&client](const QList<QSslError>& pErrors){
-					QList<QSslError> ignoreList;
-					for (const auto& error : pErrors)
-					{
-						if (error.error() == QSslError::SelfSignedCertificate ||
-						error.error() == QSslError::SelfSignedCertificateInChain ||
-						error.error() == QSslError::HostNameMismatch)
+						QList<QSslError> ignoreList;
+						for (const auto& error : pErrors)
 						{
-							ignoreList << error;
+							if (error.error() == QSslError::SelfSignedCertificate ||
+							error.error() == QSslError::SelfSignedCertificateInChain ||
+							error.error() == QSslError::HostNameMismatch)
+							{
+								ignoreList << error;
+							}
 						}
-					}
-					client.ignoreSslErrors(ignoreList);
-				});
+						client.ignoreSslErrors(ignoreList);
+					});
 
 			connect(&client, &QSslSocket::preSharedKeyAuthenticationRequired, this, [&pskSignalFired, this](QSslPreSharedKeyAuthenticator* pAuthenticator){
-					pAuthenticator->setPreSharedKey(psk);
-					pskSignalFired = true;
-				});
+						pAuthenticator->setPreSharedKey(psk);
+						pskSignalFired = true;
+					});
 
 			QTcpSocket* remoteSocket = nullptr;
 			connect(&server, &RemoteTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket){
-					remoteSocket = pSocket;
-				});
+						remoteSocket = pSocket;
+					});
 
 			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
@@ -183,16 +179,16 @@ class test_RemoteTlsServer
 			config.setCaCertificates(settings.getCertificates());
 			clientPaired.setSslConfiguration(config);
 			connect(&clientPaired, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, [&clientPaired](const QList<QSslError>& pErrors){
-					QList<QSslError> ignoreList;
-					for (const auto& error : pErrors)
-					{
-						if (error.error() == QSslError::HostNameMismatch)
+						QList<QSslError> ignoreList;
+						for (const auto& error : pErrors)
 						{
-							ignoreList << error;
+							if (error.error() == QSslError::HostNameMismatch)
+							{
+								ignoreList << error;
+							}
 						}
-					}
-					clientPaired.ignoreSslErrors(ignoreList);
-				});
+						clientPaired.ignoreSslErrors(ignoreList);
+					});
 			settings.addTrustedCertificate(config.localCertificate());
 
 			QSignalSpy clientPairedEncrypted(&clientPaired, &QSslSocket::encrypted);
@@ -299,16 +295,16 @@ class test_RemoteTlsServer
 			QSslSocket client;
 			client.setSslConfiguration(config);
 			connect(&client, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, [&client](const QList<QSslError>& pErrors){
-					QList<QSslError> ignoreList;
-					for (const auto& error : pErrors)
-					{
-						if (error.error() == QSslError::HostNameMismatch)
+						QList<QSslError> ignoreList;
+						for (const auto& error : pErrors)
 						{
-							ignoreList << error;
+							if (error.error() == QSslError::HostNameMismatch)
+							{
+								ignoreList << error;
+							}
 						}
-					}
-					client.ignoreSslErrors(ignoreList);
-				});
+						client.ignoreSslErrors(ignoreList);
+					});
 
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
 			QSignalSpy clientErrorOccured(&client, &QAbstractSocket::errorOccurred);

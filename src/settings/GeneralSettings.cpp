@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "GeneralSettings.h"
@@ -12,7 +12,6 @@
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
-#include <QOperatingSystemVersion>
 #include <utility>
 
 
@@ -28,6 +27,7 @@ SETTINGS_NAME(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION, "persistentSettingsVers
 SETTINGS_NAME(SETTINGS_NAME_AUTO_CLOSE_WINDOW, "autoCloseWindow")
 SETTINGS_NAME(SETTINGS_NAME_AUTO_REDIRECT, "autoRedirect")
 SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
+SETTINGS_NAME(SETTINGS_NAME_SHOW_ONBOARDING, "showOnboarding")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
@@ -35,7 +35,7 @@ SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
 SETTINGS_NAME(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI, "selfauthTestUri")
 SETTINGS_NAME(SETTINGS_NAME_LANGUAGE, "language")
 SETTINGS_NAME(SETTINGS_NAME_DEVICE_SURVEY_PENDING, "deviceSurveyPending")
-SETTINGS_NAME(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE, "lastTechnology")
+SETTINGS_NAME(SETTINGS_NAME_PREFERRED_TECHNOLOGY, "preferredTechnology")
 SETTINGS_NAME(SETTINGS_NAME_IN_APP_NOTIFICATIONS, "showInAppNotifications")
 SETTINGS_NAME(SETTINGS_NAME_REQUEST_STORE_FEEDBACK, "requestStoreFeedback")
 SETTINGS_NAME(SETTINGS_NAME_AUTO, "autoUpdateCheck")
@@ -52,6 +52,7 @@ SETTINGS_NAME(SETTINGS_NAME_ENABLE_CAN_ALLOWED, "enableCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_SKIP_RIGHTS_ON_CAN_ALLOWED, "skipRightsOnCanAllowed")
 SETTINGS_NAME(SETTINGS_NAME_IFD_SERVICE_TOKEN, "ifdServiceToken")
 SETTINGS_NAME(SETTINGS_NAME_SMART_AVAILABLE, "smartAvailable")
+SETTINGS_NAME(SETTINGS_NAME_TRAY_ICON_ENABLED, "enableTrayIcon")
 } // namespace
 
 GeneralSettings::GeneralSettings()
@@ -84,18 +85,32 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 	// With 2.2.0 the keylessPassword was removed
 	mStore->remove(QAnyStringView("keylessPassword"));
 
+	// With 2.3.0 the technology chooser was removed
+	mStore->remove(QAnyStringView("lastTechnology"));
+
 	const bool isNewInstallation = getPersistentSettingsVersion().isEmpty();
 	if (isNewInstallation)
 	{
-		setAutoStartInternal(GENERAL_SETTINGS_DEFAULT_AUTOSTART);
+		setAutoStartInternal(autoStartDefault());
 	}
 	mIsNewAppVersion = !isNewInstallation && getPersistentSettingsVersion() != QCoreApplication::applicationVersion();
 
 #ifdef QT_NO_DEBUG
 	mAutoStart = AutoStart::enabled();
 #else
-	mAutoStart = GENERAL_SETTINGS_DEFAULT_AUTOSTART;
+	mAutoStart = autoStartDefault();
 #endif
+
+	const auto trayIconSettingAdded = VersionNumber(QStringLiteral("2.3.0"));
+	if (!isNewInstallation)
+	{
+		const auto& oldApplicationVersion = VersionNumber(getPersistentSettingsVersion());
+		if (oldApplicationVersion < trayIconSettingAdded
+				&& VersionNumber::getApplicationVersion() >= trayIconSettingAdded)
+		{
+			setTrayIconEnabled(isAutoStart());
+		}
+	}
 
 	mStore->setValue(SETTINGS_NAME_PERSISTENT_SETTINGS_VERSION(), QCoreApplication::applicationVersion());
 	save(mStore);
@@ -104,10 +119,7 @@ GeneralSettings::GeneralSettings(QSharedPointer<QSettings> pStore)
 
 bool GeneralSettings::isShowNotificationsOsDefault() const
 {
-#if defined(Q_OS_WIN)
-	return QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows10;
-
-#elif defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
 	return false;
 
 #else
@@ -142,15 +154,20 @@ bool GeneralSettings::autoStartIsSetByAdmin() const
 }
 
 
-bool GeneralSettings::showTrayIcon() const
+bool GeneralSettings::isTrayIconEnabled() const
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
-	return isAutoStart();
+	return mStore->value(SETTINGS_NAME_TRAY_ICON_ENABLED(), trayIconDefault()).toBool();
+}
 
-#else
-	return true;
 
-#endif
+void GeneralSettings::setTrayIconEnabled(bool pTrayIconEnabled)
+{
+	if (pTrayIconEnabled != isTrayIconEnabled())
+	{
+		mStore->setValue(SETTINGS_NAME_TRAY_ICON_ENABLED(), pTrayIconEnabled);
+		save(mStore);
+		Q_EMIT fireSettingsChanged();
+	}
 }
 
 
@@ -244,6 +261,23 @@ void GeneralSettings::setStartupModule(const QString& pModule)
 }
 
 
+bool GeneralSettings::getShowOnboarding() const
+{
+	return mStore->value(SETTINGS_NAME_SHOW_ONBOARDING(), true).toBool();
+}
+
+
+void GeneralSettings::setShowOnboarding(bool pShowOnboarding)
+{
+	if (getShowOnboarding() != pShowOnboarding)
+	{
+		mStore->setValue(SETTINGS_NAME_SHOW_ONBOARDING(), pShowOnboarding);
+		save(mStore);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
 bool GeneralSettings::isRemindUserToClose() const
 {
 	return mStore->value(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), true).toBool();
@@ -327,13 +361,6 @@ void GeneralSettings::setDeveloperMode(bool pEnabled)
 
 bool GeneralSettings::useSelfAuthTestUri() const
 {
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	if (!isDeveloperOptions())
-	{
-		return false;
-	}
-#endif
-
 	return mStore->value(SETTINGS_NAME_USE_SELF_AUTH_TEST_URI(), false).toBool();
 }
 
@@ -419,19 +446,19 @@ void GeneralSettings::setRequestStoreFeedback(bool pRequest)
 }
 
 
-QString GeneralSettings::getLastReaderPluginType() const
+QString GeneralSettings::getPreferredTechnology() const
 {
-	return mStore->value(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), QString()).toString();
+	return mStore->value(SETTINGS_NAME_PREFERRED_TECHNOLOGY(), QString()).toString();
 }
 
 
-void GeneralSettings::setLastReaderPluginType(const QString& pLastReaderPluginType)
+void GeneralSettings::setPreferredTechnology(const QString& pTechnology)
 {
-	if (pLastReaderPluginType != getLastReaderPluginType())
+	if (pTechnology != getPreferredTechnology())
 	{
-		mStore->setValue(SETTINGS_NAME_LAST_READER_PLUGIN_TYPE(), pLastReaderPluginType);
+		mStore->setValue(SETTINGS_NAME_PREFERRED_TECHNOLOGY(), pTechnology);
 		save(mStore);
-		Q_EMIT fireSettingsChanged();
+		Q_EMIT firePreferredTechnologyChanged();
 	}
 }
 
@@ -456,7 +483,7 @@ bool GeneralSettings::isAutoUpdateCheck() const
 		save(mStore);
 	}
 
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
 	return mStore->value(SETTINGS_NAME_AUTO(), true).toBool();
 
 #else
@@ -750,6 +777,7 @@ void GeneralSettings::migrateSettings()
 		qCDebug(settings) << "AutoStart is not available, migration not possible.";
 		return;
 	}
+
 	if (AutoStart::removeOldAutostart())
 	{
 		setAutoStart(true);

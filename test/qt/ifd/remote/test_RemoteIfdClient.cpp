@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteIfdClient.h"
@@ -122,19 +122,19 @@ class test_RemoteIfdClient
 		void init()
 		{
 			Env::setCreator<DatagramHandler*>(std::function<DatagramHandler* ()>([this] {
-					mDatagramHandlerMock = new DatagramHandlerMock();
-					return mDatagramHandlerMock;
-				}));
+						mDatagramHandlerMock = new DatagramHandlerMock();
+						return mDatagramHandlerMock;
+					}));
 
 			Env::setCreator<IfdList*>(std::function<IfdList* ()>([this] {
-					mIfdListMock = new IfdListMock(0, 0);
-					return mIfdListMock;
-				}));
+						mIfdListMock = new IfdListMock(0, 0);
+						return mIfdListMock;
+					}));
 
 			Env::setCreator<IfdConnector*>(std::function<IfdConnector* ()>([this] {
-					mRemoteConnectorMock = new RemoteConnectorMock();
-					return mRemoteConnectorMock;
-				}));
+						mRemoteConnectorMock = new RemoteConnectorMock();
+						return mRemoteConnectorMock;
+					}));
 		}
 
 
@@ -221,12 +221,12 @@ class test_RemoteIfdClient
 		{
 			QFETCH(QString, hostAddress);
 
-			QString ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_L1);
+			QByteArray ifdId("0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"_ba);
 			IfdVersion::Version version = IfdVersion::Version::latest;
 
 			if (IfdVersion::supported().contains(IfdVersion::Version::v2))
 			{
-				ifdId = QLatin1StringView(R"({
+				ifdId = QByteArrayLiteral(R"({
 							-----BEGIN CERTIFICATE-----
 							MIIC4zCCAcsCBEQvMpowDQYJKoZIhvcNAQELBQAwNDEUMBIGA1UEAwwLQXVzd2Vp
 							c0FwcDIxHDAaBgNVBAUTEzY0MTgwMjY3MTE5MTA5MjY2MzQwIhgPMTk3MDAxMDEw
@@ -297,7 +297,7 @@ class test_RemoteIfdClient
 
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QSignalSpy spyConnectionRequest(mRemoteConnectorMock.data(), &RemoteConnectorMock::fireConnectionRequestReceived);
-			const Discovery discovery(QString(), QStringLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
+			const Discovery discovery(QString(), QByteArrayLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
 			const IfdDescriptor descr(discovery, QHostAddress("192.168.1.88"_L1));
 			QSharedPointer<IfdListEntry> emptyEntry(new IfdListEntry(descr));
 			client.establishConnection(emptyEntry, "password1");

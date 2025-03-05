@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Controller for retrieving and presenting diagnosis info.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,6 +9,7 @@
 #include <QScopedPointer>
 
 #include "context/DiagnosisContext.h"
+
 
 namespace governikus
 {

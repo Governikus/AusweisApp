@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -70,21 +70,28 @@ class QmlTestRunner
 #else
 			pEngine->rootContext()->setContextProperty(QStringLiteral("hasPolishLoop"), false);
 #endif
+#if (QT_VERSION < QT_VERSION_CHECK(6, 6, 0))
+			pEngine->rootContext()->setContextProperty(QStringLiteral("canUseTypeCast"), false);
+#else
+			// Even though some UTs, that use casts, would fail on 6.4 and 6.5, the app itself is not
+			// affected and works without any issues or concerning log outputs.
+			pEngine->rootContext()->setContextProperty(QStringLiteral("canUseTypeCast"), true);
+#endif
 
 			connect(pEngine, &QQmlEngine::warnings, this, [](const QList<QQmlError>& pWarnings){
-					bool fail = false;
-					for (auto& warning : pWarnings)
-					{
-						qCritical() << warning;
-						fail = true;
-					}
+						bool fail = false;
+						for (auto& warning : pWarnings)
+						{
+							qCritical() << warning;
+							fail = true;
+						}
 
-					if (fail)
-					{
-						QCoreApplication::quit();
-						QFAIL("QQmlEngine has errors");
-					}
-				});
+						if (fail)
+						{
+							QCoreApplication::quit();
+							QFAIL("QQmlEngine has errors");
+						}
+					});
 
 			Q_UNUSED(Env::getSingleton<UiLoader>()->load())
 		}

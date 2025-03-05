@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "QtHooks.h"
@@ -43,12 +43,12 @@ extern "C" Q_DECL_EXPORT void aa2_addObject(QObject* pObj)
 		{
 			const QPointer<QObject> ptr = pObj;
 			QMetaObject::invokeMethod(QCoreApplication::instance(), [ptr] {
-					if (ptr)
-					{
-						const std::lock_guard lock(cMutex);
-						QtHooks::print(ptr, " ~ ");
-					}
-				}, Qt::QueuedConnection);
+						if (ptr)
+						{
+							const std::lock_guard lock(cMutex);
+							QtHooks::print(ptr, " ~ ");
+						}
+					}, Qt::QueuedConnection);
 		}
 	}
 
@@ -108,10 +108,11 @@ void QtHooks::print(const QObject* pObj, const char* pPrefix)
 {
 	assert(pObj);
 
-	std::cout << pPrefix << pObj->metaObject()->className() << "(" << pObj << ")" << std::endl;
-	if (pObj->parent())
+	std::cout << pPrefix << pObj->metaObject()->className() << "(" << pObj << "): " << qPrintable(pObj->objectName()) << std::endl;
+	const auto* const parent = pObj->parent();
+	if (parent)
 	{
-		std::cout << "   Parent: " << pObj->parent()->metaObject()->className() << "(" << pObj->parent() << ")" << std::endl;
+		std::cout << "   Parent: " << parent->metaObject()->className() << "(" << parent << "): " << qPrintable(parent->objectName()) << std::endl;
 	}
 }
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref SmartManager
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -93,101 +89,101 @@ class test_SmartManager
 			QFETCH(EidSupportStatus, supportInfo);
 
 			Env::getSingleton<ReaderManager>()->callExecute([supportInfo] {
-					setSmartEidSupportStatus(supportInfo);
-					QCOMPARE(SmartManager::get()->updateSupportInfo().mStatus, supportInfo);
-				});
+						setSmartEidSupportStatus(supportInfo);
+						QCOMPARE(SmartManager::get()->updateSupportInfo().mStatus, supportInfo);
+					});
 		}
 
 
 		void test_deleteSmart()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					const auto& smartManager = SmartManager::get();
+						const auto& smartManager = SmartManager::get();
 
-					QCOMPARE(smartManager->deleteSmart(), EidServiceResult::UNSUPPORTED);
+						QCOMPARE(smartManager->deleteSmart(), EidServiceResult::UNSUPPORTED);
 
-					setDeleteSmartEidResult(EidServiceResult::SUCCESS);
+						setDeleteSmartEidResult(EidServiceResult::SUCCESS);
 
-					QCOMPARE(smartManager->deleteSmart(), EidServiceResult::SUCCESS);
-					QVERIFY(smartManager->status() == EidStatus::NO_PROVISIONING);
-				});
+						QCOMPARE(smartManager->deleteSmart(), EidServiceResult::SUCCESS);
+						QVERIFY(smartManager->status() == EidStatus::NO_PROVISIONING);
+					});
 		}
 
 
 		void test_installSmart()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					const auto& smartManager = SmartManager::get();
+						const auto& smartManager = SmartManager::get();
 
-					QCOMPARE(smartManager->installSmart(), EidServiceResult::UNSUPPORTED);
+						QCOMPARE(smartManager->installSmart(), EidServiceResult::UNSUPPORTED);
 
-					setInstallSmartEidResult(EidServiceResult::SUCCESS);
+						setInstallSmartEidResult(EidServiceResult::SUCCESS);
 
-					QCOMPARE(smartManager->installSmart(), EidServiceResult::SUCCESS);
-					QVERIFY(smartManager->status() == EidStatus::NO_PERSONALIZATION);
-				});
+						QCOMPARE(smartManager->installSmart(), EidServiceResult::SUCCESS);
+						QVERIFY(smartManager->status() == EidStatus::NO_PERSONALIZATION);
+					});
 		}
 
 
 		void test_deletePersonalization()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					const auto& smartManager = SmartManager::get();
+						const auto& smartManager = SmartManager::get();
 
-					QVERIFY(!smartManager->deletePersonalization());
+						QVERIFY(!smartManager->deletePersonalization());
 
-					setDeletePersonalizationResult(EidServiceResult::SUCCESS);
+						setDeletePersonalizationResult(EidServiceResult::SUCCESS);
 
-					QVERIFY(smartManager->deletePersonalization());
-					QVERIFY(smartManager->status() == EidStatus::NO_PERSONALIZATION);
-				});
+						QVERIFY(smartManager->deletePersonalization());
+						QVERIFY(smartManager->status() == EidStatus::NO_PERSONALIZATION);
+					});
 		}
 
 
 		void test_initializePrePersonalization()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					// The eID interface mock does not support deletion of the Smart-eID personalization, prepare for a brighter future.
-					const auto [result, preparePersonalizationData] = SmartManager::get()->initializePersonalization(QString(), QString());
-					QVERIFY(result == EidServiceResult::UNDEFINED);
-					QVERIFY(preparePersonalizationData == "");
-				});
+						// The eID interface mock does not support deletion of the Smart-eID personalization, prepare for a brighter future.
+						const auto [result, preparePersonalizationData] = SmartManager::get()->initializePersonalization(QString(), QString());
+						QVERIFY(result == EidServiceResult::UNDEFINED);
+						QVERIFY(preparePersonalizationData == "");
+					});
 		}
 
 
 		void test_transmit()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					QByteArray emptyBuffer;
-					CommandApdu emptyApdu(emptyBuffer);
-					QCOMPARE(SmartManager::get()->transmit(emptyApdu), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
-				});
+						QByteArray emptyBuffer;
+						CommandApdu emptyApdu(emptyBuffer);
+						QCOMPARE(SmartManager::get()->transmit(emptyApdu), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
+					});
 		}
 
 
 		void test_prepareIdentification()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					QCOMPARE(SmartManager::get()->prepareIdentification(QByteArray()), EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED));
-				});
+						QCOMPARE(SmartManager::get()->prepareIdentification(QByteArray()), EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED));
+					});
 		}
 
 
 		void test_challenge()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					QCOMPARE(SmartManager::get()->challenge(), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
-				});
+						QCOMPARE(SmartManager::get()->challenge(), ResponseApduResult{CardReturnCode::COMMAND_FAILED});
+					});
 		}
 
 
 		void test_performTAandCA()
 		{
 			Env::getSingleton<ReaderManager>()->callExecute([] {
-					const auto emptyBuffer = QByteArray();
-					const auto& result = SmartManager::get()->performTAandCA(CVCertificateChain(), emptyBuffer, emptyBuffer, emptyBuffer, emptyBuffer);
-					QCOMPARE(result, TerminalAndChipAuthenticationResult{CardReturnCode::COMMAND_FAILED});
-				});
+						const auto emptyBuffer = QByteArray();
+						const auto& result = SmartManager::get()->performTAandCA(CVCertificateChain(), emptyBuffer, emptyBuffer, emptyBuffer, emptyBuffer);
+						QCOMPARE(result, TerminalAndChipAuthenticationResult{CardReturnCode::COMMAND_FAILED});
+					});
 		}
 
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for Smart-eID workflow.
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -59,7 +55,15 @@ class PersonalizationModel
 		}
 
 
+#if __has_include("controller/PersonalizationController.h")
 		Q_INVOKABLE void startWorkflow();
+#else
+		Q_INVOKABLE void startWorkflow() const
+		{
+		}
+
+
+#endif
 		[[nodiscard]] QString getBlockingCode() const;
 		[[nodiscard]] int getRemainingAttempts() const;
 		[[nodiscard]] QString getRestrictionDate() const;

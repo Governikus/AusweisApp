@@ -6,7 +6,7 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppUiAidl)
 
-target_link_libraries(AusweisAppUiAidl ${Qt}::Core AusweisAppUiJson AusweisAppGlobal)
+target_link_libraries(AusweisAppUiAidl ${Qt}::Core ${Qt}::Gui AusweisAppUiJson AusweisAppGlobal)
 if(TARGET ${Qt}::WebSockets)
 	if(INTEGRATED_SDK)
 		target_link_libraries(AusweisAppUiAidl AusweisAppIfdLocal)

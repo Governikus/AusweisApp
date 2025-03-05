@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiLoader.h"
@@ -56,25 +56,25 @@ QStringList UiLoader::getInitialDefault()
 bool UiLoader::initialize() const
 {
 	return std::all_of(mLoadedPlugins.begin(), mLoadedPlugins.end(), [](UiPlugin* pUi){
-			return pUi->initialize();
-		});
+				return pUi->initialize();
+			});
 }
 
 
 bool UiLoader::hasActiveUI() const
 {
 	return std::any_of(mLoadedPlugins.begin(), mLoadedPlugins.end(), [](const UiPlugin* pUi){
-			return !pUi->property("passive").toBool();
-		});
+				return !pUi->property("passive").toBool();
+			});
 }
 
 
 bool UiLoader::requiresReaderManager() const
 {
 	return std::any_of(mLoadedPlugins.begin(), mLoadedPlugins.end(), [](const UiPlugin* pUi){
-			const auto& property = pUi->property("readerManager");
-			return property.isNull() || property.toBool();
-		});
+				const auto& property = pUi->property("readerManager");
+				return property.isNull() || property.toBool();
+			});
 }
 
 
@@ -146,14 +146,14 @@ void UiLoader::preparePlugin(UiPlugin* pUi, const QJsonObject& pMetaData)
 
 	mLoadedPlugins.insert(key, pUi);
 	connect(pUi, &QObject::destroyed, this, [this, key] {
-			qCDebug(gui) << "Shutdown UI:" << key;
-			mLoadedPlugins.remove(key);
+				qCDebug(gui) << "Shutdown UI:" << key;
+				mLoadedPlugins.remove(key);
 
-			if (mLoadedPlugins.isEmpty())
-			{
-				Q_EMIT fireRemovedAllPlugins();
-			}
-		});
+				if (mLoadedPlugins.isEmpty())
+				{
+					Q_EMIT fireRemovedAllPlugins();
+				}
+			});
 
 	Q_EMIT fireLoadedPlugin(pUi);
 }

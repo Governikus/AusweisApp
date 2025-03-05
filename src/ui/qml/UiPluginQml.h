@@ -1,15 +1,9 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief UiPlugin implementation of QML.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
-#include "GlobalStatus.h"
-#include "ProxyCredentials.h"
 #include "TrayIcon.h"
 #include "UiPluginModel.h"
 
@@ -45,7 +39,6 @@ class UiPluginQml
 		QScopedPointer<QMenuBar> mMenuBar;
 #endif
 		qsizetype mQmlEngineWarningCount;
-		bool mUpdateInformationPending;
 		TrayIcon mTrayIcon;
 		QString mDominator;
 		bool mHighContrastEnabled;
@@ -86,14 +79,16 @@ class UiPluginQml
 		static QString adjustQmlImportPath(QQmlEngine* pEngine);
 #endif
 
+		[[nodiscard]] QString getQtVersion() const override;
 		[[nodiscard]] bool isDebugBuild() const override;
 		[[nodiscard]] bool isDeveloperVersion() const override;
 		[[nodiscard]] QString getDominator() const override;
 		[[nodiscard]] bool isDominated() const override;
 		[[nodiscard]] QVariantMap getSafeAreaMargins() const override;
 		[[nodiscard]] bool isHighContrastEnabled() const override;
-		[[nodiscard]] bool isOsDarkModeEnabled() const override;
+		[[nodiscard]] bool isOsDarkModeEnabled() const;
 		[[nodiscard]] bool isOsDarkModeSupported() const override;
+		[[nodiscard]] bool isDarkModeEnabled() const override;
 		[[nodiscard]] QString getFixedFontFamily() const override;
 		[[nodiscard]] QSize getInitialWindowSize() const override;
 		[[nodiscard]] bool getShowFocusIndicator() const override;
@@ -124,17 +119,17 @@ class UiPluginQml
 		void onUiDominationReleased() override;
 		void onShowUserInformation(const QString& pMessage) override;
 		void onUpdateScheduled() const;
-		void onAppcastFinished(bool pUpdateAvailable);
 
 		void onQmlWarnings(const QList<QQmlError>& pWarnings);
-		void onQmlObjectCreated(QObject* pObject);
+		void onQmlObjectCreated(const QObject* pObject);
 		void onSceneGraphError(QQuickWindow::SceneGraphError pError, const QString& pMessage);
 
 		void onRawLog(const QString& pMessage, const QString& pCategoryName);
 
 		void onWindowPaletteChanged();
+		void onUserDarkModeChanged() const;
 		void onUseSystemFontChanged() const;
-		void onAutoStartChanged();
+		void onTrayIconEnabledChanged();
 		void onAppConfigChanged();
 };
 

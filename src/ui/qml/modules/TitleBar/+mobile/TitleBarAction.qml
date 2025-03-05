@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.View
 
 GLink {
-	id: baseItem
+	id: root
 
 	Accessible.focusable: true
 	Accessible.ignored: icon.source == "" && text === ""
@@ -26,6 +26,6 @@ GLink {
 
 		anchors.fill: parent
 
-		onClicked: baseItem.clicked()
+		onClicked: root.clicked()
 	}
 }

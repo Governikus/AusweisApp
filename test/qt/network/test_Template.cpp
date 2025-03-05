@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref Template
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Template.h"
@@ -89,7 +85,7 @@ class test_Template
 
 		void renderErrorPage()
 		{
-			QString title("test titel"_L1);
+			QString title("test title"_L1);
 			QString application_link("application_link"_L1);
 			QString msg_header("nachrichten header"_L1);
 			QString msg_header_expl("nachricht"_L1);
@@ -128,7 +124,7 @@ class test_Template
 
 		void renderAlreadyActivePage()
 		{
-			QString title("test titel"_L1);
+			QString title("test title"_L1);
 			QString application_link("application_link"_L1);
 			QString msg_header("nachrichten header"_L1);
 			QString msg_header_expl("nachricht"_L1);

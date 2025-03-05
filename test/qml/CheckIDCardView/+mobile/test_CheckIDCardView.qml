@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -9,7 +9,12 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.CheckIDCardView; CheckIDCardView {}", testCase);
+		return createTemporaryQmlObject("
+			import Governikus.CheckIDCardView;
+			import Governikus.Type;
+
+			CheckIDCardView {
+			}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

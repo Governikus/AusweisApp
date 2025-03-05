@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class to provide information about providers.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -34,8 +30,6 @@ struct ProviderConfigurationInfoParams
 	const QString mPostalAddress;
 	const QString mIcon;
 	const QString mImage;
-	const QStringList mSubjectUrls;
-	const QString mSubjectUrlInfo;
 	const QString mInternalId;
 
 	bool operator ==(const ProviderConfigurationInfoParams& pOther) const
@@ -51,8 +45,6 @@ struct ProviderConfigurationInfoParams
 			   mPostalAddress == pOther.mPostalAddress &&
 			   mIcon == pOther.mIcon &&
 			   mImage == pOther.mImage &&
-			   mSubjectUrls == pOther.mSubjectUrls &&
-			   mSubjectUrlInfo == pOther.mSubjectUrlInfo &&
 			   mInternalId == pOther.mInternalId;
 	}
 
@@ -92,7 +84,6 @@ class ProviderConfigurationInfo
 
 		bool operator ==(const ProviderConfigurationInfo& pOther) const;
 		bool operator !=(const ProviderConfigurationInfo& pOther) const;
-		[[nodiscard]] bool matchWithSubjectUrl(const QString& pSubjectUrl) const;
 
 		[[nodiscard]] const LanguageString& getShortName() const;
 		[[nodiscard]] const LanguageString& getLongName() const;
@@ -107,8 +98,6 @@ class ProviderConfigurationInfo
 		[[nodiscard]] const QString& getPostalAddress() const;
 		[[nodiscard]] QSharedPointer<UpdatableFile> getIcon() const;
 		[[nodiscard]] QSharedPointer<UpdatableFile> getImage() const;
-		[[nodiscard]] const QStringList& getSubjectUrls() const;
-		[[nodiscard]] const QString& getSubjectUrlInfo() const;
 		[[nodiscard]] const QString& getInternalId() const;
 };
 

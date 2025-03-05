@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Worker implementation of ReaderManger thread
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,6 +10,7 @@
 #include "ReaderManagerPluginInfo.h"
 
 #include <QObject>
+
 
 namespace governikus
 {
@@ -44,7 +41,7 @@ class ReaderManagerWorker
 		Q_INVOKABLE void stopScan(ReaderManagerPluginType pType, const QString& pError);
 
 		[[nodiscard]] Q_INVOKABLE QList<ReaderInfo> getReaderInfos() const;
-		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName);
+		Q_INVOKABLE void updateReaderInfo(const QString& pReaderName) const;
 		void createCardConnectionWorker(const QString& pReaderName, const std::function<QSharedPointer<CardConnectionWorker>(const QSharedPointer<CardConnectionWorker>&)>& pInitWorker);
 
 	Q_SIGNALS:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SimulatorFileSystem.h"
@@ -11,6 +11,7 @@
 #include "asn1/ASN1Util.h"
 #include "pace/ec/EcUtil.h"
 
+#include <QCryptographicHash>
 #include <QFile>
 #include <QJsonArray>
 #include <QLoggingCategory>
@@ -26,6 +27,16 @@ Q_DECLARE_LOGGING_CATEGORY(card_simulator)
 
 void SimulatorFileSystem::initMandatoryData()
 {
+	const QByteArray mrz("IDD<<0000000011<<<<<<<<<<<<<<<8408129F3406304D<<<<<<<<<<<<<4MUSTERMANN<<ERIKA<<<<<<<<<<<<<");
+	QCryptographicHash hash(QCryptographicHash::Sha1);
+	hash.addData(mrz.mid(5, 10));
+	hash.addData(mrz.mid(30, 7));
+	hash.addData(mrz.mid(38, 7));
+	mPasswords.insert(PacePasswordId::PACE_MRZ, hash.result());
+	mPasswords.insert(PacePasswordId::PACE_CAN, QByteArray("500540"));
+	mPasswords.insert(PacePasswordId::PACE_PIN, QByteArray("123456"));
+	mPasswords.insert(PacePasswordId::PACE_PUK, QByteArray("9876543210"));
+
 	mKeys.insert(1, QByteArray::fromHex(
 			"308202050201003081EC06072A8648CE3D02013081E0020101302C06072A8648CE3D0101022100A9FB57DBA1EEA9BC3E"
 			"660A909D838D726E3BF623D52620282013481D1F6E5377304404207D5A0975FC2C3057EEF67530417AFFE7FB8055C126"
@@ -127,6 +138,18 @@ void SimulatorFileSystem::initMandatoryData()
 			"0304046630640230582364C74D9C694D3C8F99ACBF82A7A847141248B015AED8BEE3C395E82788426F032978D196303A"
 			"6B81D9FA8B8DBC8E02305BF169DE97B344A4B03E862C48A76226F044C6DA1EA78E380C2C6479B79526415735345764D7"
 			"B6E738EE83931AABE840"));
+
+	mTrustPoint = CVCertificate::fromRaw(QByteArray::fromHex(
+			"7F218201B67F4E82016E5F290100420E44455445535465494430303030347F4982011D060A04007F0007020202020381"
+			"20A9FB57DBA1EEA9BC3E660A909D838D726E3BF623D52620282013481D1F6E537782207D5A0975FC2C3057EEF6753041"
+			"7AFFE7FB8055C126DC5C6CE94A4B44F330B5D9832026DC5C6CE94A4B44F330B5D9BBD77CBF958416295CF7E1CE6BCCDC"
+			"18FF8C07B68441048BD2AEB9CB7E57CB2C4B482FFC81B7AFB9DE27E1E3BD23C23A4453BD9ACE3262547EF835C3DAC4FD"
+			"97F8461A14611DC9C27745132DED8E545C1D54C72F0469978520A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561"
+			"A6F7901E0E82974856A78641049BFEBA8DC7FAAB6E3BDEB3FF794DBB800848FE4F6940A4CC7EECB5159C87DA53955058"
+			"92026D420A22596CD014ED1FD872DADA597DB0F8D64441041198F62D448701015F200E44455445535465494430303030"
+			"357F4C12060904007F0007030102025305FC0F13FFFF5F25060105000500045F24060108000500045F37402D2468416D"
+			"66BCBE259B9B907A73395BC1EF94ED75F9C17615210246E9EFB06E6753E9055CE76623B7699B9EFB1A7D3A9DD83F6E6E"
+			"09E55A33EA0A5F62A1C719"));
 }
 
 
@@ -159,6 +182,7 @@ SimulatorFileSystem::SimulatorFileSystem()
 	, mKeys()
 	, mFiles()
 	, mFileIds()
+	, mTrustPoint()
 {
 	initMandatoryData();
 
@@ -168,12 +192,12 @@ SimulatorFileSystem::SimulatorFileSystem()
 
 	createFile(QByteArray::fromHex("01"), "FORMAT:UTF8,EXPLICIT:1A,PRINTABLESTRING:ID");
 	createFile(QByteArray::fromHex("02"), "FORMAT:UTF8,EXPLICIT:2A,PRINTABLESTRING:D");
-	createFile(QByteArray::fromHex("03"), "FORMAT:UTF8,EXPLICIT:3A,NUMERICSTRING:20291031");
+	createFile(QByteArray::fromHex("03"), "FORMAT:UTF8,EXPLICIT:3A,NUMERICSTRING:20340630");
 	createFile(QByteArray::fromHex("04"), "FORMAT:UTF8,EXPLICIT:4A,UTF8String:ERIKA");
 	createFile(QByteArray::fromHex("05"), "FORMAT:UTF8,EXPLICIT:5A,UTF8String:MUSTERMANN");
 	createFile(QByteArray::fromHex("06"), "FORMAT:UTF8,EXPLICIT:6A,UTF8String");
 	createFile(QByteArray::fromHex("07"), "FORMAT:UTF8,EXPLICIT:7A,UTF8String");
-	createFile(QByteArray::fromHex("08"), "FORMAT:UTF8,EXPLICIT:8A,NUMERICSTRING:19640812");
+	createFile(QByteArray::fromHex("08"), "FORMAT:UTF8,EXPLICIT:8A,NUMERICSTRING:19840812");
 	createFile(QByteArray::fromHex("09"), "FORMAT:UTF8,EXPLICIT:9A,EXPLICIT:1,UTF8String:BERLIN");
 	createFile(QByteArray::fromHex("0A"), "FORMAT:UTF8,EXPLICIT:10A,PRINTABLESTRING:D");
 	createFile(QByteArray::fromHex("0B"), "FORMAT:UTF8,EXPLICIT:11A,PRINTABLESTRING:F");
@@ -327,6 +351,12 @@ QByteArray SimulatorFileSystem::getEfCardAccess() const
 }
 
 
+QByteArray SimulatorFileSystem::getPassword(PacePasswordId pPasswordId) const
+{
+	return mPasswords[pPasswordId];
+}
+
+
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 QSharedPointer<EVP_PKEY> SimulatorFileSystem::getKey(int pKeyId) const
 #else
@@ -354,6 +384,19 @@ QSharedPointer<EC_KEY> SimulatorFileSystem::getKey(int pKeyId) const
 	return EcUtil::create(EVP_PKEY_get1_EC_KEY(privateKey.data()));
 
 #endif
+}
+
+
+QSharedPointer<const CVCertificate> SimulatorFileSystem::getTrustPoint() const
+{
+	return mTrustPoint;
+}
+
+
+void SimulatorFileSystem::setTrustPoint(const QSharedPointer<const CVCertificate>& pTrustPoint)
+{
+	mTrustPoint = pTrustPoint;
+	qCDebug(card_simulator) << "Updated TrustPoint to" << mTrustPoint->getBody().getCertificateHolderReference();
 }
 
 
@@ -386,13 +429,10 @@ StatusCode SimulatorFileSystem::verify(const Oid& pOid, const QSharedPointer<Aut
 			return validityDate > dateOfExpiry ? StatusCode::VERIFICATION_FAILED : StatusCode::SUCCESS;
 		}
 	}
-	else if (pOid == KnownOid::ID_MUNICIPALITY_ID)
+	else if (pOid == KnownOid::ID_MUNICIPALITY_ID && pAuxiliaryData->hasCommunityID())
 	{
-		if (pAuxiliaryData->hasCommunityID())
-		{
-			const auto communityID = mFiles.value(QByteArray::fromHex("12")).mid(4).toHex();
-			return communityID.startsWith(pAuxiliaryData->getCommunityID()) ? StatusCode::SUCCESS : StatusCode::VERIFICATION_FAILED;
-		}
+		const auto communityID = mFiles.value(QByteArray::fromHex("12")).mid(4).toHex();
+		return communityID.startsWith(pAuxiliaryData->getCommunityID()) ? StatusCode::SUCCESS : StatusCode::VERIFICATION_FAILED;
 	}
 
 	return StatusCode::VERIFICATION_FAILED;

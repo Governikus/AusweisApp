@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for Smart-eID status information.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,6 +13,12 @@
 #include <QSharedPointer>
 #include <QVariant>
 #include <QtQml/qqmlregistration.h>
+
+#if __has_include("SmartManager.h")
+	#define NO_SMART_CONST
+#else
+	#define NO_SMART_CONST const
+#endif
 
 
 class test_SmartModel;
@@ -61,7 +63,7 @@ class SmartModel
 		CardInfo mCachedCardInfo;
 		int mProgress;
 
-		void updateStatus();
+		void updateStatus() NO_SMART_CONST;
 		void setErrorString(const QString& pError);
 		void updatePinStatus();
 		void setProgress(int pProgress);
@@ -72,7 +74,7 @@ class SmartModel
 	private Q_SLOTS:
 		void onUpdateSupportInfoDone(const QVariant& pResult);
 		void onDeletePersonalizationDone(const QVariant& pResult);
-		void onDeleteSmartDone(const QVariant& pResult);
+		void onDeleteSmartDone(const QVariant& pResult) NO_SMART_CONST;
 		void onUpdateStatusDone(const QVariant& pResult);
 		void onUpdatePinStatusDone(const ReaderInfo& pInfo);
 		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
@@ -86,9 +88,9 @@ class SmartModel
 
 		[[nodiscard]] MobileEidType getMobileEidType() const;
 
-		Q_INVOKABLE void updateSupportInfo();
-		Q_INVOKABLE void deletePersonalization();
-		Q_INVOKABLE void deleteSmart();
+		Q_INVOKABLE void updateSupportInfo() NO_SMART_CONST;
+		Q_INVOKABLE void deletePersonalization() NO_SMART_CONST;
+		Q_INVOKABLE void deleteSmart() NO_SMART_CONST;
 
 	Q_SIGNALS:
 		void fireStateChanged();

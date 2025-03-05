@@ -1,6 +1,9 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -14,21 +17,19 @@ ColumnLayout {
 	property bool alwaysReserveSelectionTitleHeight: false
 	property bool arrowToLeft: false
 	property alias backgroundColor: collapsibleContentBackground.color
-	property int contentBottomMargin: Constants.groupbox_spacing
+	property int contentBottomMargin: Style.dimens.groupbox_spacing
 	property int contentHorizontalMargin: horizontalMargin
 	property alias contentSpacing: contentItem.spacing
-	property int contentTopMargin: Constants.groupbox_spacing
+	property int contentTopMargin: Style.dimens.groupbox_spacing
 	property bool drawBottomCorners: false
 	property bool drawTopCorners: false
 	default property alias expandableData: contentItem.data
 	property bool expanded: false
-	property int horizontalMargin: Constants.component_spacing
+	property int horizontalMargin: Style.dimens.pane_spacing
 	property alias selectionIcon: selectionIcon.source
 	property alias selectionTitle: selectionTitle.text
 	property alias tintIcon: selectionIcon.tintEnabled
 	property alias title: title.text
-
-	signal receivedFocus(var pItem)
 
 	spacing: 0
 
@@ -37,27 +38,27 @@ ColumnLayout {
 
 		Accessible.name: root.title + ". " +
 		//: LABEL ANDROID IOS
-		(expanded ? qsTr("collapse") :
+		(root.expanded ? qsTr("collapse") :
 			//: LABEL ANDROID IOS
 			qsTr("expand") + ". ") +
 		//: LABEL ANDROID IOS
 		(root.selectionTitle !== "" ? qsTr("Currently selected is %1").arg(root.selectionTitle) : "")
 		Accessible.role: Accessible.Button
 		Layout.fillWidth: true
-		implicitHeight: bannerLayout.implicitHeight + Constants.component_spacing * 2
+		implicitHeight: bannerLayout.implicitHeight + Style.dimens.pane_spacing * 2
 		implicitWidth: bannerLayout.implicitWidth
 
 		background: RoundedRectangle {
 			id: background
 
-			bottomLeftCorner: drawBottomCorners && !expanded
-			bottomRightCorner: drawBottomCorners && !expanded
+			bottomLeftCorner: root.drawBottomCorners && !root.expanded
+			bottomRightCorner: root.drawBottomCorners && !root.expanded
 			color: colors.paneBackground
-			topLeftCorner: drawTopCorners
-			topRightCorner: drawTopCorners
+			topLeftCorner: root.drawTopCorners
+			topRightCorner: root.drawTopCorners
 
 			FocusFrame {
-				anchors.margins: Constants.component_spacing / 2
+				anchors.margins: Style.dimens.pane_spacing / 2
 				scope: expandButton
 			}
 		}
@@ -70,12 +71,12 @@ ColumnLayout {
 			spacing: 0
 
 			LeftRightArrow {
-				isLeft: root.arrowToLeft
 				visible: root.arrowToLeft
 			}
 			ColumnLayout {
 				Layout.leftMargin: root.arrowToLeft ? 0 : root.horizontalMargin
-				spacing: Constants.subtext_spacing
+				Layout.rightMargin: root.arrowToLeft ? root.horizontalMargin : 0
+				spacing: Style.dimens.subtext_spacing
 
 				GText {
 					id: title
@@ -88,12 +89,12 @@ ColumnLayout {
 					id: selectionTitle
 
 					Accessible.ignored: true
-					visible: alwaysReserveSelectionTitleHeight || text !== ""
+					visible: root.alwaysReserveSelectionTitleHeight || text !== ""
 
 					Behavior on text {
 						SequentialAnimation {
 							PropertyAnimation {
-								duration: Constants.animation_duration
+								duration: Style.animation_duration
 								easing.type: Easing.InCubic
 								property: "opacity"
 								target: selectionTitle
@@ -104,7 +105,7 @@ ColumnLayout {
 								target: selectionTitle
 							}
 							PropertyAnimation {
-								duration: Constants.animation_duration
+								duration: Style.animation_duration
 								easing.type: Easing.OutCubic
 								property: "opacity"
 								target: selectionTitle
@@ -127,14 +128,13 @@ ColumnLayout {
 				visible: source.toString() !== ""
 			}
 			LeftRightArrow {
-				isLeft: root.arrowToLeft
 				visible: !root.arrowToLeft
 			}
 		}
 
-		onClicked: expanded = !expanded
+		onClicked: root.expanded = !root.expanded
 		onFocusChanged: if (focus)
-			root.receivedFocus(this)
+			Utils.positionViewAtItem(this)
 
 		StatefulColors {
 			id: colors
@@ -146,43 +146,41 @@ ColumnLayout {
 		id: collapsibleContentBackground
 
 		Layout.fillWidth: true
-		bottomLeftCorner: drawBottomCorners
-		bottomRightCorner: drawBottomCorners
+		bottomLeftCorner: root.drawBottomCorners
+		bottomRightCorner: root.drawBottomCorners
 		clip: true
 		color: Style.color.paneSublevel.background.basic
-		implicitHeight: expanded ? (contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin) : 0
+		implicitHeight: root.expanded ? (contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin) : 0
 		implicitWidth: contentItem.implicitWidth + contentItem.anchors.leftMargin + contentItem.anchors.rightMargin
 		topLeftCorner: false
 		topRightCorner: false
-		visible: expanded
+		visible: root.expanded
 
 		Behavior on implicitHeight {
 			NumberAnimation {
-				duration: Constants.animation_duration
+				duration: Style.animation_duration
 			}
 		}
 
 		ColumnLayout {
 			id: contentItem
 
-			spacing: Constants.groupbox_spacing
+			spacing: Style.dimens.groupbox_spacing
 
 			anchors {
-				bottomMargin: contentBottomMargin
+				bottomMargin: root.contentBottomMargin
 				fill: parent
-				leftMargin: contentHorizontalMargin
-				rightMargin: contentHorizontalMargin
-				topMargin: contentTopMargin
+				leftMargin: root.contentHorizontalMargin
+				rightMargin: root.contentHorizontalMargin
+				topMargin: root.contentTopMargin
 			}
 		}
 	}
 
 	component LeftRightArrow: TintableIcon {
-		property bool isLeft: false
-
-		Layout.leftMargin: isLeft ? root.horizontalMargin : Constants.text_spacing
-		Layout.rightMargin: isLeft ? Constants.text_spacing : root.horizontalMargin
-		source: expanded ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
+		Layout.leftMargin: root.horizontalMargin
+		Layout.rightMargin: root.horizontalMargin
+		source: root.expanded ? "qrc:///images/material_expand_less.svg" : "qrc:///images/material_expand_more.svg"
 		sourceSize.height: Style.text.normal.textSize
 		tintColor: Style.color.textNormal.basic
 		tintEnabled: true

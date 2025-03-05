@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class holding information about an Android device to be sent to
- * the whitelist server.
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

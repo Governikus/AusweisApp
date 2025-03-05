@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManagerWorker.h"
@@ -140,8 +140,8 @@ void ReaderManagerWorker::reset(ReaderManagerPluginType pType)
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugin(pType, [](ReaderManagerPlugin* pPlugin){
-			pPlugin->reset();
-		}, "Reset plugin");
+				pPlugin->reset();
+			}, "Reset plugin");
 }
 
 
@@ -150,8 +150,8 @@ void ReaderManagerWorker::insert(const ReaderInfo& pReaderInfo, const QVariant& 
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugin(pReaderInfo.getPluginType(), [pReaderInfo, pData](ReaderManagerPlugin* pPlugin){
-			pPlugin->insert(pReaderInfo.getName(), pData);
-		}, "Insert");
+				pPlugin->insert(pReaderInfo.getName(), pData);
+			}, "Insert");
 }
 
 
@@ -161,9 +161,9 @@ void ReaderManagerWorker::shelve()
 
 	for (const auto& plugin : std::as_const(mPlugins))
 	{
-		callOnPlugin(plugin->getInfo().getPluginType(), [](ReaderManagerPlugin* pPlugin){
-				pPlugin->shelve();
-			}, "Shelve");
+		callOnPlugin(plugin->getInfo().getPluginType(), [](const ReaderManagerPlugin* pPlugin){
+					pPlugin->shelve();
+				}, "Shelve");
 	}
 }
 
@@ -173,11 +173,11 @@ void ReaderManagerWorker::startScan(ReaderManagerPluginType pType, bool pAutoCon
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugin(pType, [pAutoConnect](ReaderManagerPlugin* pPlugin){
-			if (!pPlugin->getInfo().isScanRunning())
-			{
-				pPlugin->startScan(pAutoConnect);
-			}
-		}, "Start scan on plugin");
+				if (!pPlugin->getInfo().isScanRunning())
+				{
+					pPlugin->startScan(pAutoConnect);
+				}
+			}, "Start scan on plugin");
 }
 
 
@@ -186,12 +186,12 @@ void ReaderManagerWorker::stopScan(ReaderManagerPluginType pType, const QString&
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 
 	callOnPlugin(pType, [pError](ReaderManagerPlugin* pPlugin){
-			if (pPlugin->getInfo().isScanRunning())
-			{
-				pPlugin->stopScan(pError);
-				pPlugin->setInitialScanState(ReaderManagerPluginInfo::InitialScan::UNKNOWN);
-			}
-		}, "Stop scan on plugin");
+				if (pPlugin->getInfo().isScanRunning())
+				{
+					pPlugin->stopScan(pError);
+					pPlugin->setInitialScanState(ReaderManagerPluginInfo::InitialScan::UNKNOWN);
+				}
+			}, "Stop scan on plugin");
 }
 
 
@@ -212,7 +212,7 @@ QList<ReaderInfo> ReaderManagerWorker::getReaderInfos() const
 }
 
 
-void ReaderManagerWorker::updateReaderInfo(const QString& pReaderName)
+void ReaderManagerWorker::updateReaderInfo(const QString& pReaderName) const
 {
 	Q_ASSERT(QObject::thread() == QThread::currentThread());
 

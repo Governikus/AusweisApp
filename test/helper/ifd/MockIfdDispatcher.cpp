@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockIfdDispatcher.h"
@@ -25,7 +25,7 @@ MockIfdDispatcher::MockIfdDispatcher(DispatcherState pState)
 	: IfdDispatcherClient(IfdVersion::Version::v2, QSharedPointer<MockDataChannel>::create())
 	, mState(pState)
 	, mPairing(false)
-	, mId(QUuid::createUuid().toString())
+	, mId(QUuid::createUuid().toByteArray())
 	, mContextHandle(QStringLiteral("#TestContext"))
 {
 }
@@ -43,7 +43,7 @@ bool MockIfdDispatcher::isPairingConnection() const
 }
 
 
-QString MockIfdDispatcher::getId() const
+QByteArray MockIfdDispatcher::getId() const
 {
 	return mId;
 }
@@ -61,13 +61,29 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 
 	Q_EMIT fireSend(pMessage);
 
+	if (mState == DispatcherState::WithoutReader)
+	{
+		return;
+	}
+
+	if (mState == DispatcherState::ReaderInvalid)
+	{
+		Q_EMIT fireReceived(IfdMessageType::IFDError,
+				QJsonDocument::fromJson("{\n"
+										"    \"ContextHandle\": \"TestContext\",\n"
+										"    \"OutputData\": \"\",\n"
+										"    \"ResponseAPDU\": \"\",\n"
+										"    \"ResultCode\": \"\",\n"
+										"    \"ResultMajor\": \"http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok\",\n"
+										"    \"ResultMinor\": null,\n"
+										"    \"SlotHandle\": \"SlotHandle\",\n"
+										"    \"msg\": \"IFDTest\"\n"
+										"}\n").object(), mId);
+		return;
+	}
+
 	if (pMessage->getType() == IfdMessageType::IFDEstablishContext)
 	{
-		if (mState == DispatcherState::WithoutReader)
-		{
-			return;
-		}
-
 		bool withCard = (mState == DispatcherState::ReaderWithCard || mState == DispatcherState::ReaderWithCardError);
 		ReaderInfo info(QStringLiteral("NFC Reader"), ReaderManagerPluginType::PCSC, CardInfo(withCard ? CardType::EID_CARD : CardType::NONE));
 		const QSharedPointer<IfdMessage> message(new IfdStatus(info));

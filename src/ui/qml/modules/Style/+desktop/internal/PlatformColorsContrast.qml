@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import Governikus.Type
 
 Colors {
+	id: root
+
 	readonly property var disabledPalette: SystemPalette {
 		colorGroup: SystemPalette.Disabled
 	}
@@ -14,7 +18,7 @@ Colors {
 
 	background: palette.base
 	border: control.background.basic
-	fail: "#ff0000"
+	error: "#ff0000"
 	focus_indicator: textNormal.basic
 	image: "#ff0000"
 	progressbar_text: textNormal.basic
@@ -22,32 +26,36 @@ Colors {
 	warning: "#ff0000"
 
 	control: DefaultControlColors {
-		content.basic: palette.buttonText
-		content.checked: textNormal.basic
+		content.basic: root.palette.buttonText
+		content.checked: root.textNormal.basic
 	}
 	controlCheckbox: DefaultControlColors {
-		background.pressed: textNormal.basic
-		content.basic: textNormal.basic
+		background.pressed: root.textNormal.basic
+		content.basic: root.textNormal.basic
 	}
 	controlOptional: DefaultControlColors {
-		content.basic: palette.buttonText
-		content.checked: textNormal.basic
+		content.basic: root.palette.buttonText
+		content.checked: root.textNormal.basic
 	}
 	controlRadiobutton: DefaultControlColors {
-		background.pressed: textNormal.basic
-		content.basic: textNormal.basic
+		background.pressed: root.textNormal.basic
+		content.basic: root.textNormal.basic
 	}
 	controlScrollbar: DefaultControlColors {
-		background.basic: textNormal.basic
-		background.hovered: palette.highlight
-		border.hovered: palette.highlight
-		border.pressed: palette.highlight
-		content.basic: palette.buttonText
-		content.checked: textNormal.basic
+		background.basic: root.textNormal.basic
+		background.hovered: root.palette.highlight
+		border.hovered: root.palette.highlight
+		border.pressed: root.palette.highlight
+		content.basic: root.palette.buttonText
+		content.checked: root.textNormal.basic
+	}
+	controlStagedProgressBar: DefaultControlColors {
+		background.basic: root.background
+		border.basic: content.basic
 	}
 	controlSwitch: DefaultControlColors {
-		background.pressed: textNormal.basic
-		content.basic: textNormal.basic
+		background.pressed: root.textNormal.basic
+		content.basic: root.textNormal.basic
 	}
 	linkBasic: DefaultLinkColors {
 	}
@@ -58,14 +66,21 @@ Colors {
 	pane: DefaultPaneColors {
 	}
 	paneSublevel: DefaultPaneColors {
-		background.hovered: textNormal.basic
-		background.pressed: palette.highlight
+		background.hovered: root.textNormal.basic
+		background.pressed: root.palette.highlight
 		border.basic: "#576164"
+	}
+	remoteIndicator: ComponentColors {
+		basic: "#ff0000"
+		checked: basic
+		disabled: "#f6b1b1"
+		hovered: basic
+		pressed: basic
 	}
 	textHeadline: DefaultTextColors {
 	}
 	textNormal: DefaultTextColors {
-		checked: palette.highlightedText
+		checked: root.palette.highlightedText
 	}
 	textSubline: DefaultTextColors {
 	}
@@ -74,54 +89,54 @@ Colors {
 
 	component DefaultControlColors: ControlComponents {
 		background: ComponentColors {
-			basic: palette.button
-			checked: palette.button
-			disabled: disabledPalette.button
-			hovered: textNormal.basic
-			pressed: palette.highlight
+			basic: root.palette.button
+			checked: root.palette.button
+			disabled: root.disabledPalette.button
+			hovered: root.textNormal.basic
+			pressed: root.palette.highlight
 		}
 		border: ComponentColors {
-			basic: textNormal.basic
-			checked: textNormal.basic
-			disabled: textNormal.disabled
-			hovered: palette.base
-			pressed: palette.highlightedText
+			basic: root.textNormal.basic
+			checked: root.textNormal.basic
+			disabled: root.textNormal.disabled
+			hovered: root.palette.base
+			pressed: root.palette.highlightedText
 		}
 		content: ComponentColors {
-			basic: textNormal.basic
-			checked: palette.buttonText
-			disabled: textNormal.disabled
-			hovered: palette.base
-			pressed: palette.highlightedText
+			basic: root.textNormal.basic
+			checked: root.palette.buttonText
+			disabled: root.textNormal.disabled
+			hovered: root.palette.base
+			pressed: root.palette.highlightedText
 		}
 	}
 	component DefaultLinkColors: ComponentColors {
-		basic: palette.text
+		basic: root.palette.text
 		checked: basic
-		disabled: disabledPalette.text
-		hovered: palette.highlight
-		pressed: palette.highlight
+		disabled: root.disabledPalette.text
+		hovered: root.palette.highlight
+		pressed: root.palette.highlight
 	}
 	component DefaultPaneColors: CoreComponents {
 		background: ComponentColors {
-			basic: palette.base
-			checked: palette.highlight
-			disabled: disabledPalette.base
-			hovered: palette.highlight
-			pressed: palette.highlight
+			basic: root.palette.base
+			checked: root.palette.highlight
+			disabled: root.disabledPalette.base
+			hovered: root.palette.highlight
+			pressed: root.palette.highlight
 		}
 		border: ComponentColors {
-			basic: textNormal.basic
+			basic: root.textNormal.basic
 			checked: basic
-			disabled: disabledPalette.text
-			hovered: textNormal.basic
-			pressed: textNormal.basic
+			disabled: root.disabledPalette.text
+			hovered: root.textNormal.basic
+			pressed: root.textNormal.basic
 		}
 	}
 	component DefaultTextColors: ComponentColors {
-		basic: palette.text
+		basic: root.palette.text
 		checked: basic
-		disabled: disabledPalette.text
+		disabled: root.disabledPalette.text
 		hovered: basic
 		pressed: basic
 	}

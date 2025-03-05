@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Ifd dispatcher mock for tests.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,6 +19,7 @@ class MockIfdDispatcher
 		enum class DispatcherState
 		{
 			WithoutReader,
+			ReaderInvalid,
 			ReaderWithoutCard,
 			ReaderWithCard,
 			ReaderWithCardError
@@ -31,7 +28,7 @@ class MockIfdDispatcher
 	private:
 		DispatcherState mState;
 		bool mPairing;
-		QString mId;
+		QByteArray mId;
 		QString mContextHandle;
 
 	public:
@@ -39,7 +36,7 @@ class MockIfdDispatcher
 
 		void setPairingConnection(bool pPairing);
 		[[nodiscard]] bool isPairingConnection() const override;
-		[[nodiscard]] QString getId() const override;
+		[[nodiscard]] QByteArray getId() const override;
 		[[nodiscard]] const QString& getContextHandle() const override;
 		Q_INVOKABLE void send(const QSharedPointer<const IfdMessage>& pMessage) override;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/IfdMessage.h"
@@ -138,7 +138,11 @@ class test_IfdMessage
 			QVERIFY(msg.isIncomplete());
 
 			QCOMPARE(logSpy.count(), 5);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+			QVERIFY(logSpy.at(0).at(0).toString().contains("Json parsing failed. 0 : \"illegal number\""_L1));
+#else
 			QVERIFY(logSpy.at(0).at(0).toString().contains("Json parsing failed. 1 : \"illegal value\""_L1));
+#endif
 			QVERIFY(logSpy.at(1).at(0).toString().contains("Expected object at top level"_L1));
 			QVERIFY(logSpy.at(2).at(0).toString().contains("Missing value \"msg\""_L1));
 			QVERIFY(logSpy.at(3).at(0).toString().contains("Invalid messageType received: \"\""_L1));

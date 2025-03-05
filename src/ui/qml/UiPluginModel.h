@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -24,20 +24,24 @@ class UiPluginModel
 	QML_ELEMENT
 	QML_SINGLETON
 
+	Q_PROPERTY(QString qtVersion READ getQtVersion CONSTANT)
 	Q_PROPERTY(bool debugBuild READ isDebugBuild CONSTANT)
 	Q_PROPERTY(bool developerVersion READ isDeveloperVersion CONSTANT)
 	Q_PROPERTY(QString dominator READ getDominator NOTIFY fireDominatorChanged)
 	Q_PROPERTY(bool dominated READ isDominated NOTIFY fireDominatorChanged)
 	Q_PROPERTY(QVariantMap safeAreaMargins READ getSafeAreaMargins NOTIFY fireSafeAreaMarginsChanged)
 	Q_PROPERTY(bool highContrastEnabled READ isHighContrastEnabled NOTIFY fireHighContrastEnabledChanged)
-	Q_PROPERTY(bool osDarkModeEnabled READ isOsDarkModeEnabled NOTIFY fireOsDarkModeChanged)
 	Q_PROPERTY(bool osDarkModeSupported READ isOsDarkModeSupported CONSTANT)
+	Q_PROPERTY(bool darkModeEnabled READ isDarkModeEnabled NOTIFY fireDarkModeEnabledChanged)
 	Q_PROPERTY(QString fixedFontFamily READ getFixedFontFamily CONSTANT)
 	Q_PROPERTY(QSize initialWindowSize READ getInitialWindowSize CONSTANT)
 	Q_PROPERTY(bool showFocusIndicator READ getShowFocusIndicator NOTIFY fireShowFocusIndicator)
 	Q_PROPERTY(qreal scaleFactor READ getScaleFactor WRITE setScaleFactor NOTIFY fireScaleFactorChanged)
 	Q_PROPERTY(qreal fontScaleFactor READ getFontScaleFactor NOTIFY fireFontScaleFactorChanged)
 	Q_PROPERTY(bool isChromeOS READ isChromeOS CONSTANT)
+	Q_PROPERTY(bool isUpdatePending READ isUpdatePending NOTIFY fireIsUpdatePendingChanged)
+
+	bool mUpdateInformationPending;
 
 	protected:
 		UiPluginModel();
@@ -46,14 +50,15 @@ class UiPluginModel
 	public:
 		static UiPluginModel* create(const QQmlEngine*, const QJSEngine*);
 
+		[[nodiscard]] virtual QString getQtVersion() const = 0;
 		[[nodiscard]] virtual bool isDebugBuild() const = 0;
 		[[nodiscard]] virtual bool isDeveloperVersion() const = 0;
 		[[nodiscard]] virtual QString getDominator() const = 0;
 		[[nodiscard]] virtual bool isDominated() const = 0;
 		[[nodiscard]] virtual QVariantMap getSafeAreaMargins() const = 0;
 		[[nodiscard]] virtual bool isHighContrastEnabled() const = 0;
-		[[nodiscard]] virtual bool isOsDarkModeEnabled() const = 0;
 		[[nodiscard]] virtual bool isOsDarkModeSupported() const = 0;
+		[[nodiscard]] virtual bool isDarkModeEnabled() const = 0;
 		[[nodiscard]] virtual QString getFixedFontFamily() const = 0;
 		[[nodiscard]] virtual QSize getInitialWindowSize() const = 0;
 		[[nodiscard]] virtual bool getShowFocusIndicator() const = 0;
@@ -65,17 +70,23 @@ class UiPluginModel
 		Q_INVOKABLE virtual void hideFromTaskbar() const = 0;
 		Q_INVOKABLE virtual void doRefresh() = 0;
 
+		[[nodiscard]] bool isUpdatePending() const;
+
+	public Q_SLOTS:
+		void setUpdatePending(bool pNewIsUpdatePending);
+
 	Q_SIGNALS:
 		void fireShowRequest(UiModule pModule);
 		void fireHideRequest();
 		void fireDominatorChanged();
 		void fireSafeAreaMarginsChanged();
 		void fireHighContrastEnabledChanged();
-		void fireOsDarkModeChanged();
+		void fireDarkModeEnabledChanged();
 		void fireProxyAuthenticationRequired(ProxyCredentials* pProxyCredentials);
 		void fireShowFocusIndicator();
 		void fireScaleFactorChanged();
 		void fireFontScaleFactorChanged();
+		void fireIsUpdatePendingChanged();
 };
 
 } // namespace governikus

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref LocalWebSocketServer
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalWebSocketServer.h"
@@ -48,9 +44,9 @@ class test_LocalWebSocketServer
 			client.setSslConfiguration(config);
 
 			connect(&client, &QWebSocket::preSharedKeyAuthenticationRequired, this, [this](QSslPreSharedKeyAuthenticator* pAuthenticator)
-				{
-					pAuthenticator->setPreSharedKey(mPsk.toUtf8());
-				});
+					{
+						pAuthenticator->setPreSharedKey(mPsk.toUtf8());
+					});
 
 			QSignalSpy connectedSpy(&client, &QWebSocket::connected);
 

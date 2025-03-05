@@ -1,22 +1,26 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
-import Governikus.ResultView
-import Governikus.Style
 import Governikus.TitleBar
 import Governikus.View
 import Governikus.Type
+import Governikus.Style
 
 FlickableSectionPage {
 	id: root
 
+	property alias okButtonText: okButton.text
+
 	signal done
 	signal requestBack
 
-	spacing: Constants.pane_spacing
+	spacing: Style.dimens.pane_spacing
 	//: LABEL ANDROID IOS
 	title: qsTr("Identify")
 
@@ -32,9 +36,9 @@ FlickableSectionPage {
 	GridLayout {
 		id: grid
 
-		columnSpacing: Constants.text_spacing
+		columnSpacing: Style.dimens.text_spacing
 		columns: Math.max(1, (width + columnSpacing) / (repeater.maxItemWidth + columnSpacing))
-		rowSpacing: Constants.text_spacing
+		rowSpacing: Style.dimens.text_spacing
 		width: parent.width
 
 		GRepeater {
@@ -43,6 +47,9 @@ FlickableSectionPage {
 			model: SelfAuthModel
 
 			LabeledText {
+				required property string name
+				required property string value
+
 				Layout.fillWidth: true
 				label: name
 				text: value === "" ? "---" : value
@@ -53,12 +60,12 @@ FlickableSectionPage {
 		}
 	}
 	GButton {
+		id: okButton
+
 		Layout.alignment: Qt.AlignHCenter
 		//: LABEL ANDROID IOS
 		text: qsTr("Back to start page")
 
 		onClicked: root.done()
-		onFocusChanged: if (focus)
-			root.positionViewAtItem(this)
 	}
 }

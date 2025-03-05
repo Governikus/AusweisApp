@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.TitleBar
+import Governikus.Style
 
 ResultView {
 	id: root
@@ -28,18 +30,17 @@ ResultView {
 
 	GCollapsible {
 		Layout.fillWidth: true
-		Layout.leftMargin: -Constants.pane_padding * 2
-		Layout.rightMargin: -Constants.pane_padding * 2
-		arrowToLeft: true
-		horizontalMargin: Constants.pane_padding * 2
+		Layout.leftMargin: -Style.dimens.pane_padding * 2
+		Layout.rightMargin: -Style.dimens.pane_padding * 2
+		horizontalMargin: Style.dimens.pane_padding * 2
 		//: LABEL ANDROID IOS
 		title: qsTr("Show Details")
-		visible: hasErrorDetails
+		visible: root.hasErrorDetails
 
 		GText {
-			font.bold: true
+			font.weight: Font.Bold
 			//: LABEL ANDROID IOS
-			text: "%1 %2".arg(qsTr("Error code:")).arg(errorCode)
+			text: "%1 %2".arg(qsTr("Error code:")).arg(root.errorCode)
 		}
 		GText {
 			id: textErrorDescription
@@ -51,11 +52,10 @@ ResultView {
 
 		Layout.alignment: Qt.AlignHCenter
 		icon.source: "qrc:///images/email_icon.svg"
+		style: Style.color.controlOptional
 		tintIcon: true
 		visible: text !== ""
 
-		onClicked: mailClicked()
-		onFocusChanged: if (focus)
-			root.positionViewAtItem(this)
+		onClicked: root.mailClicked()
 	}
 }

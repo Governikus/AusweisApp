@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDescriptor.h"
@@ -29,7 +29,7 @@ class test_IfdDescriptor
 
 		void testValidDescriptorIsEqualToItself()
 		{
-			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
 			const QHostAddress address(QHostAddress::LocalHost);
 			const IfdDescriptor valid(validMsg, address);
 
@@ -51,8 +51,8 @@ class test_IfdDescriptor
 
 		void testValidDescriptorIsDifferentFromInvalid()
 		{
-			const Discovery validMsg(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
-			const Discovery invalidMsg(""_L1, ""_L1, 0, {});
+			const Discovery validMsg(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery invalidMsg(""_L1, ""_ba, 0, {});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const IfdDescriptor valid(validMsg, address);
@@ -64,8 +64,8 @@ class test_IfdDescriptor
 
 		void testDistinctValidDescriptorsWithDifferentDataAreDifferent()
 		{
-			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
-			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest, IfdVersion::Version::v2});
+			const Discovery validMsg1(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg2(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest, IfdVersion::Version::v2});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const IfdDescriptor valid1(validMsg1, address);
@@ -77,8 +77,8 @@ class test_IfdDescriptor
 
 		void testDistinctValidDescriptorsWithTheSameDataAreEqual()
 		{
-			const Discovery validMsg1(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
-			const Discovery validMsg2(QStringLiteral("Device"), QStringLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg1(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
+			const Discovery validMsg2(QStringLiteral("Device"), QByteArrayLiteral("0123456789ABCDEF"), mPort, {IfdVersion::Version::latest});
 			const QHostAddress address(QHostAddress::LocalHost);
 
 			const IfdDescriptor valid1(validMsg1, address);

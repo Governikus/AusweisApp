@@ -1,12 +1,8 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Integration tests for integrated SDK.
- */
-
-#include "AusweisApp2_p.h"
+#include "AusweisApp_p.h"
 
 #include "QtHooks.h"
 
@@ -23,9 +19,9 @@ void cb(const char* pMessage)
 
 	if (pMessage == nullptr)
 	{
-		std::cout << "**** AusweisApp2 is initialized" << "\x1b[0m" << std::endl;
-		ausweisapp2_send(R"({"cmd": "GET_INFO"})");
-		ausweisapp2_send(R"({"cmd": "RUN_AUTH", "tcTokenURL": "https://test.governikus-eid.de/AusweisAuskunft/WebServiceRequesterServlet?mode=json"})");
+		std::cout << "**** AusweisApp is initialized" << "\x1b[0m" << std::endl;
+		ausweisapp_send(R"({"cmd": "GET_INFO"})");
+		ausweisapp_send(R"({"cmd": "RUN_AUTH", "tcTokenURL": "https://test.governikus-eid.de/AusweisAuskunft/WebServiceRequesterServlet?mode=json"})");
 		return;
 	}
 
@@ -34,18 +30,18 @@ void cb(const char* pMessage)
 
 	if (s.find(R"("msg":"ACCESS_RIGHTS")") != std::string::npos)
 	{
-		ausweisapp2_send(R"({"cmd": "ACCEPT"})");
+		ausweisapp_send(R"({"cmd": "ACCEPT"})");
 	}
 
 	if (s.find(R"("msg":"INSERT_CARD")") != std::string::npos || s.find(R"("msg":"ENTER_)") != std::string::npos)
 	{
-		ausweisapp2_send(R"({"cmd": "CANCEL"})");
+		ausweisapp_send(R"({"cmd": "CANCEL"})");
 	}
 
 	if (s.find(R"("msg":"AUTH")") != std::string::npos && s.find(R"(sal#cancellationByUser)") != std::string::npos)
 	{
 		std::cout << "**** Finished" << std::endl;
-		ausweisapp2_shutdown();
+		ausweisapp_shutdown();
 		cExitCode = 0;
 	}
 
@@ -53,16 +49,16 @@ void cb(const char* pMessage)
 }
 
 
-void start_aa2(const char* pParameter)
+void start_ausweisapp(const char* pParameter)
 {
-	ausweisapp2_init(&cb, pParameter);
+	ausweisapp_init(&cb, pParameter);
 
 	std::cout << "Let's wait here..." << std::endl;
-	governikus::ausweisapp2_join_thread_internal();
+	governikus::ausweisapp_join_thread_internal();
 
-	if (ausweisapp2_is_running())
+	if (ausweisapp_is_running())
 	{
-		ausweisapp2_shutdown();
+		ausweisapp_shutdown();
 	}
 }
 
@@ -72,9 +68,9 @@ int main()
 	governikus::QtHooks::init();
 
 #if defined(GOVERNIKUS_QT)
-	start_aa2(nullptr);
+	start_ausweisapp(nullptr);
 #else
-	start_aa2("--no-proxy");
+	start_ausweisapp("--no-proxy");
 #endif
 
 	const int livingDeadCount = static_cast<int>(governikus::QtHooks::getQObjects().size());
@@ -93,7 +89,7 @@ int main()
 	if (cExitCode == 0)
 	{
 		cExitCode = -1;
-		start_aa2("--no-loghandler");
+		start_ausweisapp("--no-loghandler");
 	}
 
 	return cExitCode;

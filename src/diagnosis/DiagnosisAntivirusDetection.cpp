@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisAntivirusDetection.h"
@@ -27,9 +27,9 @@ DiagnosisAntivirusDetection::DiagnosisAntivirusDetection()
 }
 
 
+#ifdef Q_OS_WIN
 void DiagnosisAntivirusDetection::startInformationProcess()
 {
-#if defined(Q_OS_WIN)
 	QString powershellCommand = QStandardPaths::findExecutable(QStringLiteral("powershell.exe"));
 	if (powershellCommand.isEmpty())
 	{
@@ -51,8 +51,10 @@ void DiagnosisAntivirusDetection::startInformationProcess()
 
 	mProcess->start(powershellCommand, parameters);
 	mProcess->closeWriteChannel();
-#endif
 }
+
+
+#endif
 
 
 #if defined(Q_OS_WIN)

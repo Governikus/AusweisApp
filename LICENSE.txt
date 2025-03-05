@@ -318,12 +318,12 @@ Die verwendeten Open-Source-Bibliotheken unterliegen den folgenden Nutzungsbedin
 
 OpenSSL
   Lizenz: Apache 2.0
-  Version: 3.3.2
+  Version: 3.4.1
   Adresse: https://www.openssl.org/
 
 Qt
   Lizenz: LGPL v3
-  Version: 6.7.2
+  Version: 6.8.1
   Adresse: https://www.qt.io/
 
 http_parser

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowModel.h"
@@ -9,10 +9,8 @@
 #include "Email.h"
 #include "Env.h"
 #include "FuncUtils.h"
-#include "GeneralSettings.h"
 #include "Initializer.h"
 #include "PinResetInformationModel.h"
-#include "ReaderConfiguration.h"
 #include "ReaderManager.h"
 #include "SmartModel.h"
 #include "context/AuthContext.h"
@@ -47,6 +45,7 @@ WorkflowModel::WorkflowModel()
 
 void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& pContext)
 {
+	const bool finishedSuccessfully = !isError();
 	mContext = pContext;
 	if (mContext)
 	{
@@ -67,7 +66,7 @@ void WorkflowModel::resetWorkflowContext(const QSharedPointer<WorkflowContext>& 
 	}
 	else
 	{
-		Q_EMIT fireWorkflowFinished();
+		Q_EMIT fireWorkflowFinished(finishedSuccessfully);
 	}
 
 	Q_EMIT fireCurrentStateChanged(getCurrentState());
@@ -99,6 +98,16 @@ bool WorkflowModel::isMaskedError() const
 }
 
 
+bool WorkflowModel::isPukInoperative() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+	return mContext->getStatus().getStatusCode() == GlobalStatus::Code::Card_Puk_Blocked;
+}
+
+
 CardReturnCode WorkflowModel::getLastReturnCode() const
 {
 	if (mContext)
@@ -127,9 +136,6 @@ void WorkflowModel::setReaderPluginType(ReaderManagerPluginType pReaderPluginTyp
 		return;
 	}
 	mContext->setReaderPluginTypes({pReaderPluginType});
-
-	auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	settings.setLastReaderPluginType(getEnumName(pReaderPluginType));
 }
 
 
@@ -206,6 +212,16 @@ bool WorkflowModel::isRemoteReader() const
 }
 
 
+bool WorkflowModel::getCardInitiallyAppeared() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+	return mContext->getCardInitiallyAppeared();
+}
+
+
 bool WorkflowModel::hasCard() const
 {
 	if (!mContext)
@@ -255,10 +271,13 @@ GlobalStatus::Code WorkflowModel::getStatusCode() const
 }
 
 
-QString WorkflowModel::getStatusCodeImage() const
+GAnimation WorkflowModel::getStatusCodeAnimation() const
 {
 	switch (getStatusCode())
 	{
+		case GlobalStatus::Code::No_Error:
+			return GAnimation::STATUS_OK;
+
 		case GlobalStatus::Code::Network_ServiceUnavailable:
 		case GlobalStatus::Code::Network_ServerError:
 		case GlobalStatus::Code::Network_ClientError:
@@ -266,7 +285,7 @@ QString WorkflowModel::getStatusCodeImage() const
 		case GlobalStatus::Code::Network_TimeOut:
 		case GlobalStatus::Code::Network_Proxy_Error:
 		case GlobalStatus::Code::Network_Other_Error:
-			return QStringLiteral("qrc:///images/workflow_error_network_%1.svg");
+			return GAnimation::NETWORK_ERROR;
 
 		case GlobalStatus::Code::Paos_Generic_Server_Error:
 		case GlobalStatus::Code::Workflow_Cannot_Confirm_IdCard_Authenticity:
@@ -282,25 +301,22 @@ QString WorkflowModel::getStatusCodeImage() const
 		case GlobalStatus::Code::Card_NewPin_Mismatch:
 		case GlobalStatus::Code::Card_NewPin_Invalid_Length:
 		case GlobalStatus::Code::Card_ValidityVerificationFailed:
-			return QStringLiteral("qrc:///images/workflow_error_card_%1.svg");
+			return GAnimation::CARD_ERROR;
 
 		case GlobalStatus::Code::Card_Invalid_Pin:
-			return QStringLiteral("qrc:///images/workflow_error_wrong_pin_%1.svg");
+			return GAnimation::PIN_ERROR;
 
 		case GlobalStatus::Code::Card_Invalid_Can:
-			return QStringLiteral("qrc:///images/workflow_error_wrong_can_%1.svg");
+			return GAnimation::CAN_ERROR;
 
 		case GlobalStatus::Code::Card_Invalid_Puk:
-			return QStringLiteral("qrc:///images/workflow_error_wrong_puk_%1.svg");
+			return GAnimation::PUK_ERROR;
 
 		case GlobalStatus::Code::Card_Puk_Blocked:
-			return QStringLiteral("qrc:///images/workflow_error_puk_blocked_%1.svg");
-
-		case GlobalStatus::Code::No_Error:
-			return QStringLiteral("qrc:///images/status_ok_%1.svg");
+			return GAnimation::PUK_BLOCKED;
 
 		default:
-			return QStringLiteral("qrc:///images/status_error_%1.svg");
+			return GAnimation::STATUS_ERROR;
 	}
 }
 
@@ -319,7 +335,7 @@ QString WorkflowModel::getStatusHintText() const
 			return tr("Contact your local citizens' office (B\u00FCrgeramt) to apply for a new ID card or to unblock the ID card.");
 
 		case GlobalStatus::Code::Card_Smart_Invalid:
-			//: LABEL ANDROID IOS The hint text that is shwon right above the redirect button that appears when a user tried to usa an unusable Smart-eID
+			//: LABEL ANDROID IOS The hint text that is shown right above the redirect button that appears when a user tried to usa an unusable Smart-eID
 			return tr("Renew your Smart-eID and set a new PIN in the Smart-eID menu.");
 
 		default:
@@ -402,15 +418,22 @@ void WorkflowModel::setInitialPluginType()
 #if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	const GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
-	const QString& lastReaderPluginTypeString = settings.getLastReaderPluginType();
-	const auto& lastReaderPluginType = Enum<ReaderManagerPluginType>::fromString(lastReaderPluginTypeString, ReaderManagerPluginType::UNKNOWN);
+	const QString& preferredTechnologyString = settings.getPreferredTechnology();
+	const auto& preferredTechnology = Enum<ReaderManagerPluginType>::fromString(preferredTechnologyString, ReaderManagerPluginType::UNKNOWN);
 
-	if (lastReaderPluginType == ReaderManagerPluginType::UNKNOWN || !getSupportedReaderPluginTypes().contains(lastReaderPluginType))
+	if (preferredTechnology == ReaderManagerPluginType::UNKNOWN || !getSupportedReaderPluginTypes().contains(preferredTechnology))
 	{
-		setReaderPluginType(ReaderManagerPluginType::NFC);
+		const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::NFC);
+		if (pluginInfo.isAvailable())
+		{
+			setReaderPluginType(ReaderManagerPluginType::NFC);
+			return;
+		}
+
+		setReaderPluginType(ReaderManagerPluginType::REMOTE_IFD);
 		return;
 	}
-	setReaderPluginType(lastReaderPluginType);
+	setReaderPluginType(preferredTechnology);
 #else
 	if (!mContext)
 	{

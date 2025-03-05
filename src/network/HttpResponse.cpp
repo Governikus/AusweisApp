@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpResponse.h"
@@ -16,9 +16,9 @@ using namespace governikus;
 namespace
 {
 #define HEADER_NAME(_name, _key)\
-	QByteArray _name(){\
-		return QByteArrayLiteral(_key);\
-	}
+		QByteArray _name(){\
+			return QByteArrayLiteral(_key);\
+		}
 
 HEADER_NAME(HEADER_CONTENT_LENGTH, "Content-Length")
 HEADER_NAME(HEADER_CONTENT_TYPE, "Content-Type")

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref FormattedTextModel
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FormattedTextModel.h"
@@ -166,7 +162,7 @@ class test_FormattedTextModel
 			{
 				const auto modelIndex = textModel.index(i);
 				QCOMPARE(textModel.data(modelIndex, FormattedTextModel::ContentRole), modelContent.at(i).first);
-				QCOMPARE(textModel.data(modelIndex, FormattedTextModel::LineTypeRole).value<FormattedTextModel::LineType>(), modelContent.at(i).second);
+				QCOMPARE(textModel.data(modelIndex, FormattedTextModel::TypeRole).value<FormattedTextModel::LineType>(), modelContent.at(i).second);
 			}
 		}
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for version information.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VersionInformationModel.h"
@@ -28,11 +24,11 @@ VersionInformationModel::VersionInformationModel()
 	init();
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-		{
-			beginResetModel();
-			init();
-			endResetModel();
-		});
+			{
+				beginResetModel();
+				init();
+				endResetModel();
+			});
 }
 
 
@@ -41,8 +37,8 @@ void VersionInformationModel::init()
 	mData.clear();
 
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-			mData += qMakePair(pKey, pValue);
-		});
+				mData += qMakePair(pKey, pValue);
+			});
 }
 
 
@@ -56,14 +52,14 @@ QVariant VersionInformationModel::data(const QModelIndex& pIndex, int pRole) con
 {
 	if (pIndex.isValid() && pIndex.row() < rowCount())
 	{
-		const auto& [label, text] = std::as_const(mData).at(pIndex.row());
-		if (pRole == LABEL)
+		const auto& [key, value] = std::as_const(mData).at(pIndex.row());
+		if (pRole == KEY)
 		{
-			return label;
+			return key;
 		}
-		if (pRole == TEXT)
+		if (pRole == VALUE)
 		{
-			return text;
+			return value;
 		}
 	}
 	return QVariant();
@@ -73,7 +69,7 @@ QVariant VersionInformationModel::data(const QModelIndex& pIndex, int pRole) con
 QHash<int, QByteArray> VersionInformationModel::roleNames() const
 {
 	QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-	roles.insert(LABEL, "label");
-	roles.insert(TEXT, "text");
+	roles.insert(KEY, "key");
+	roles.insert(VALUE, "value");
 	return roles;
 }

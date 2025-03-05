@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Version 2.3.0
+^^^^^^^^^^^^^
+* Removed support for iOS 14 and 15.
+* Updated Android NDK to r27c (27.2.12479018).
+* Renamed functions from ``ausweisapp2_`` to ``ausweisapp_`` on iOS.
+* Renamed header from ``AusweisApp2.h`` to ``AusweisApp.h`` on iOS.
+* Added environment variable ``AUSWEISAPP_AUTOMATIC_SIMULATOR``.
+* Renamed environment variables ``AUSWEISAPP2_AUTOMATIC_*`` to ``AUSWEISAPP_AUTOMATIC_*``.
+
+
 Version 2.2.2
 ^^^^^^^^^^^^^
 * Added Android ABIs armeabi-v7a and x86_64 in addition to arm64-v8a.
@@ -15,6 +25,7 @@ Version 2.2.1
 
 Version 2.2.0
 ^^^^^^^^^^^^^
+* Removed support for Android 8.
 * Introduced the following additions in :ref:`api_level` **3**:
 
   * The command :ref:`continue_cmd`.

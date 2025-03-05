@@ -1,11 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- *
- * \brief An interface for Ifd dispatchers, meant to omit the
- * dependency between card_base and ifd.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -47,7 +41,7 @@ class IfdDispatcher
 		~IfdDispatcher() override;
 
 		[[nodiscard]] virtual bool isPairingConnection() const;
-		[[nodiscard]] virtual QString getId() const;
+		[[nodiscard]] virtual QByteArray getId() const;
 		[[nodiscard]] virtual const QString& getContextHandle() const;
 		[[nodiscard]] IfdVersion::Version getVersion() const;
 		void saveRemoteNameInSettings(const QString& pName) const;
@@ -56,8 +50,8 @@ class IfdDispatcher
 		Q_INVOKABLE virtual void send(const QSharedPointer<const IfdMessage>& pMessage);
 
 	Q_SIGNALS:
-		void fireReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId);
-		void fireClosed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void fireReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QByteArray& pId);
+		void fireClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 };
 
 } // namespace governikus

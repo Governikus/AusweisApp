@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref WebserviceActivationHandler
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginWebService.h"
@@ -27,20 +23,35 @@ class test_UiPluginWebService
 	: public QObject
 {
 	Q_OBJECT
-	QSharedPointer<UiPluginWebService> mUi;
-	QScopedPointer<QSignalSpy> mShowUiSpy, mShowUserInfoSpy, mAuthenticationSpy;
 
-	QUrl getUrl(const QString& pUrl)
-	{
-		const auto& port = QString::number(Env::getShared<HttpServer>()->getServerPort());
-		return QUrl(QStringLiteral("http://localhost:%1%2").arg(port, pUrl));
-	}
+	private:
+		QSharedPointer<UiPluginWebService> mUi;
+		QScopedPointer<QSignalSpy> mShowUiSpy, mShowUserInfoSpy, mAuthenticationSpy;
+
+		QUrl getUrl(const QString& pUrl)
+		{
+			const auto& port = QString::number(Env::getShared<HttpServer>()->getServerPort());
+			return QUrl(QStringLiteral("http://localhost:%1%2").arg(port, pUrl));
+		}
 
 
-	QString getUserAgentVersion(const QString& pVersion)
-	{
-		return QStringLiteral("%1/%2 (TR-03124-1/1.4)").arg(VersionInfo::getInstance().getImplementationTitle(), pVersion);
-	}
+		QString getUserAgentVersion(const QString& pVersion)
+		{
+			return QStringLiteral("%1/%2 (TR-03124-1/1.4)").arg(VersionInfo::getInstance().getImplementationTitle(), pVersion);
+		}
+
+
+		bool containsHeader(const QSharedPointer<QNetworkReply>& pReply, QByteArrayView pHeader)
+		{
+			for (const QByteArray& header : pReply->rawHeaderList())
+			{
+				if (header.toLower() == pHeader)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 
 	private Q_SLOTS:
 		void initTestCase()
@@ -79,7 +90,8 @@ class test_UiPluginWebService
 			QTest::newRow("PINManagement caseInsensitive") << QLatin1String("/eID-Client?ShowUI=PINManagement") << UiModule::PINMANAGEMENT;
 			QTest::newRow("Settings") << QLatin1String("/eID-Client?ShowUI=SETTINGS") << UiModule::SETTINGS;
 
-			QTest::newRow("Tutorial") << QLatin1String("/eID-Client?ShowUI=TUTORIAL") << UiModule::TUTORIAL;
+			QTest::newRow("Tutorial") << QLatin1String("/eID-Client?ShowUI=TUTORIAL") << UiModule::DEFAULT;
+			QTest::newRow("Onboarding") << QLatin1String("/eID-Client?ShowUI=ONBOARDING") << UiModule::ONBOARDING;
 			QTest::newRow("Help") << QLatin1String("/eID-Client?ShowUI=HELP") << UiModule::HELP;
 			QTest::newRow("Self AUth") << QLatin1String("/eID-Client?ShowUI=SELF_AUTHENTICATION") << UiModule::SELF_AUTHENTICATION;
 
@@ -175,6 +187,9 @@ class test_UiPluginWebService
 
 		void authentication()
 		{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 8, 0))
+			QSKIP("QTBUG-130666");
+#endif
 			connect(mUi.data(), &UiPlugin::fireWorkflowRequested, mUi.data(), &UiPlugin::onWorkflowStarted); // fake AppController
 
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
@@ -194,14 +209,14 @@ class test_UiPluginWebService
 			QTest::ignoreMessage(QtDebugMsg, "Request type: authentication");
 
 			connect(mUi.data(), &UiPlugin::fireWorkflowRequested, this, [this](const QSharedPointer<WorkflowRequest>& pRequest)
-				{
-					const auto request = pRequest->getData().value<QSharedPointer<HttpRequest>>();
-					request->send(HTTP_STATUS_NO_CONTENT); // send something to avoid retry of Qt
-					auto* socket = request->take();
-					socket->close();
-					socket->deleteLater();
-					mUi->onWorkflowStarted(pRequest);
-				});
+					{
+						const auto request = pRequest->getData().value<QSharedPointer<HttpRequest>>();
+						request->send(HTTP_STATUS_NO_CONTENT); // send something to avoid retry of Qt
+						auto* socket = request->take();
+						socket->close();
+						socket->deleteLater();
+						mUi->onWorkflowStarted(pRequest);
+					});
 
 			QTest::ignoreMessage(QtCriticalMsg, "Cannot send 'Processing' to caller as connection is lost");
 			HttpServerRequestor requestor;
@@ -238,8 +253,8 @@ class test_UiPluginWebService
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
 			QCOMPARE(reply->readAll().size(), 0);
-			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Origin"));
-			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Private-Network"));
+			QVERIFY(containsHeader(reply, "access-control-allow-origin"));
+			QVERIFY(containsHeader(reply, "access-control-allow-private-network"));
 
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 0);
@@ -254,8 +269,8 @@ class test_UiPluginWebService
 			QVERIFY(reply);
 			QCOMPARE(reply->error(), QNetworkReply::NoError);
 			QCOMPARE(reply->readAll().size(), 0);
-			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Origin"));
-			QVERIFY(reply->rawHeaderList().contains("Access-Control-Allow-Private-Network"));
+			QVERIFY(containsHeader(reply, "access-control-allow-origin"));
+			QVERIFY(containsHeader(reply, "access-control-allow-private-network"));
 
 			QCOMPARE(mShowUiSpy->count(), 0);
 			QCOMPARE(mShowUserInfoSpy->count(), 0);

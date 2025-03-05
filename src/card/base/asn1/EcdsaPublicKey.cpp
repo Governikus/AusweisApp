@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EcdsaPublicKey.h"
@@ -277,15 +277,15 @@ QSharedPointer<EVP_PKEY> EcdsaPublicKey::createKey(const uchar* pPublicPoint, in
 
 #else
 	const auto& params = EcUtil::create([&curveData, pPublicPoint, pPublicPointLength, this](OSSL_PARAM_BLD* pBuilder){
-			return OSSL_PARAM_BLD_push_BN(pBuilder, "p", curveData.p.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", curveData.a.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", curveData.b.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", curveData.order.data())
-				   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", curveData.cofactor.data())
-				   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "pub", pPublicPoint, static_cast<size_t>(pPublicPointLength))
-				   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", mBasePoint->data, static_cast<size_t>(mBasePoint->length))
-				   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
-		});
+				return OSSL_PARAM_BLD_push_BN(pBuilder, "p", curveData.p.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "a", curveData.a.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "b", curveData.b.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "order", curveData.order.data())
+					   && OSSL_PARAM_BLD_push_BN(pBuilder, "cofactor", curveData.cofactor.data())
+					   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "pub", pPublicPoint, static_cast<size_t>(pPublicPointLength))
+					   && OSSL_PARAM_BLD_push_octet_string(pBuilder, "generator", mBasePoint->data, static_cast<size_t>(mBasePoint->length))
+					   && OSSL_PARAM_BLD_push_utf8_string(pBuilder, "field-type", "prime-field", 12);
+			});
 
 	if (params == nullptr)
 	{

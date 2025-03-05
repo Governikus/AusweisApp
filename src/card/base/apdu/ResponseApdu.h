@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -45,7 +45,7 @@ defineTypedEnumType(StatusCode, quint16,
 		RECORD_NOT_FOUND = 0x6A83,
 		INVALID_PARAMETER = 0x6A86,
 		LC_INCONSISTANT = 0x6A87,
-		PASSWORD_NOT_FOUND = 0x6A88,
+		REFERENCED_DATA_NOT_FOUND = 0x6A88,
 		ILLEGAL_OFFSET = 0x6B00,
 		UNSUPPORTED_CLA = 0x6E00,
 		CANT_DISPLAY = 0x6410,
@@ -57,7 +57,8 @@ defineTypedEnumType(StatusCode, quint16,
 		INITIAL_PIN_BLOCKED = 0x63D0,
 		INITIAL_PIN_RETRY_COUNT_1 = 0x63D1,
 		INITIAL_PIN_RETRY_COUNT_2 = 0x63D2,
-		INITIAL_PIN_RETRY_COUNT_3 = 0x63D3
+		INITIAL_PIN_RETRY_COUNT_3 = 0x63D3,
+		NO_PRECISE_DIAGNOSIS = 0x6F00
 		)
 
 // According to ISO-7816-4, 5.6 Status bytes, Table 6

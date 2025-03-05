@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "EstablishPaceChannelOutput.h"
@@ -279,8 +279,8 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 	}
 
 	auto debugGuard = qScopeGuard([] {
-			qCDebug(card) << "Decapsulation of command failed. Wrong size.";
-		});
+				qCDebug(card) << "Decapsulation of command failed. Wrong size.";
+			});
 
 	if (it > pOutput.size())
 	{

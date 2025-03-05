@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Message PAUSE of JSON API.
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

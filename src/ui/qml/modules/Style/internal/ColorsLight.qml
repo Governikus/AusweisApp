@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
+pragma ComponentBehavior: Bound
 
 Colors {
+	id: root
+
 	background: "#ffffff"
 	border: "#bbbbbb"
-	fail: "#db6a00"
+	error: "#eb0000"
 	focus_indicator: "#0077b6"
 	image: "#0077b6"
 	progressbar_text: "#232323"
@@ -22,13 +25,13 @@ Colors {
 		content.checked: "#576164"
 	}
 	controlCheckbox: DefaultControlColors {
-		background.basic: transparent
+		background.basic: root.transparent
 		background.pressed: "#80cdec"
 		border.pressed: "#80cdec"
 		content.pressed: "#ffffff"
 	}
 	controlOptional: DefaultControlColors {
-		background.basic: transparent
+		background.basic: root.transparent
 		background.pressed: "#0077b6"
 		border.basic: "#0077b6"
 		border.pressed: "#0077b6"
@@ -49,6 +52,11 @@ Colors {
 		content.checked: "#576164"
 		content.pressed: "#ffffff"
 	}
+	controlStagedProgressBar: DefaultControlColors {
+		background.basic: "#80cdec"
+		border.basic: root.transparent
+		content.basic: "#0077b6"
+	}
 	controlSwitch: DefaultControlColors {
 		background.pressed: "#80cdec"
 		border.pressed: "#80cdec"
@@ -68,6 +76,13 @@ Colors {
 	paneSublevel: DefaultPaneColors {
 		background.basic: "#f2f3f4"
 		border.basic: "#f2f3f4"
+	}
+	remoteIndicator: ComponentColors {
+		basic: "#0077b6"
+		checked: basic
+		disabled: "#bcc0c1"
+		hovered: basic
+		pressed: basic
 	}
 	textHeadline: DefaultTextColors {
 	}
@@ -90,7 +105,7 @@ Colors {
 			checked: "#0077b6"
 			disabled: "#bcc0c1"
 			hovered: "#80cdec"
-			pressed: transparent
+			pressed: root.transparent
 		}
 		border: ComponentColors {
 			basic: "#576164"
@@ -119,11 +134,11 @@ Colors {
 			basic: "#ffffff"
 			checked: "#0077b6"
 			disabled: "#f2f3f4"
-			hovered: darker(basic, 0.05)
-			pressed: darker(basic, 0.10)
+			hovered: root.darker(basic, 0.05)
+			pressed: root.darker(basic, 0.10)
 		}
 		border: ComponentColors {
-			basic: software_renderer ? "#bbbbbb" : transparent
+			basic: root.software_renderer ? "#bbbbbb" : root.transparent
 			checked: basic
 			disabled: basic
 			hovered: basic

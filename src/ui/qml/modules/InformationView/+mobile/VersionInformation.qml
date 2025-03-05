@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -17,7 +17,7 @@ FlickableSectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: pop()
+		onClicked: root.pop()
 	}
 
 	MouseArea {
@@ -32,8 +32,10 @@ FlickableSectionPage {
 			case 7:
 			case 8:
 			case 9:
-				//: INFO ANDROID IOS Used in notifications when the user taps the version information
-				ApplicationModel.showFeedback(qsTr("%1 more presses to toggle the advanced settings.").arg(10 - advancedSettingsCounter), true);
+				if (!ApplicationModel.isScreenReaderRunning) {
+					//: INFO ANDROID IOS Used in notifications when the user taps the version information
+					ApplicationModel.showFeedback(qsTr("%1 more presses to toggle the advanced settings.").arg(10 - advancedSettingsCounter), true);
+				}
 				break;
 			case 10:
 				SettingsModel.advancedSettings = !SettingsModel.advancedSettings;
@@ -58,12 +60,13 @@ FlickableSectionPage {
 				model: VersionInformationModel
 
 				LabeledText {
-					id: delegate
+					required property string key
+					required property string value
 
 					anchors.left: parent.left
 					anchors.right: parent.right
-					label: model.label
-					text: model.text
+					label: key
+					text: value
 				}
 			}
 		}

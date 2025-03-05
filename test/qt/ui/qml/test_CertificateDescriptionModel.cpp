@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref CertificateDescriptionModel
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CertificateDescriptionModel.h"
@@ -96,7 +92,6 @@ class test_CertificateDescriptionModel
 		void test_Validity()
 		{
 			mContext.reset(new TestAuthContext(":/paos/DIDAuthenticateEAC1_ordered_certificates.xml"_L1));
-			mContext->initAccessRightManager(mContext->getDidAuthenticateEac1()->getCvCertificates().last());
 			mModel->resetContext(mContext);
 
 			QCOMPARE(mModel->data(mModel->index(3, 0), CertificateDescriptionModel::UserRoles::LABEL), "Validity"_L1);

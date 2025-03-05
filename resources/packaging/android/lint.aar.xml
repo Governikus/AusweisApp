@@ -1,39 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<lint>
-    <!-- Unused resources.
+<issues format="6" by="lint 8.6.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.6.0)" variant="all" version="8.6.0">
 
-        Unused resources make applications larger and slow down builds.
-
-        Qt includes some resources like strings, which are seen by lint to be unused.
-    -->
-    <issue id="UnusedResources">
-        <ignore path="**/libs.xml" />
-        <ignore path="**/strings.xml" />
-        <ignore path="**/qtprovider_paths.xml" />
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.tools.build:gradle than 8.6.0 is available: 8.9.0. (There is also a newer version of 8.6.𝑥 available, if upgrading to 8.9.0 is difficult: 8.6.1)"
+        errorLine1="        classpath &apos;com.android.tools.build:gradle:8.6.0&apos;"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="8"
+            column="19"/>
     </issue>
 
-    <!-- AndroidGradlePluginVersion
-
-        The plugin version is set by Qt itself, so no need to warn us about an outdated version, since this has to be
-        updated in Qt itself.
-    -->
-    <issue id="AndroidGradlePluginVersion" severity="ignore" />
-
-    <!-- ChromeOsAbiSupport
-
-        This is a false positive since the gradle.build defines
-            ndk.abiFilters = qtTargetAbiList.split(",")
-        which may or not contain "x86" or "x86_64".
-    -->
-    <issue id="ChromeOsAbiSupport" severity="ignore" />
-
-    <!-- Instantiatable
-
-        AusweisApp2Service must extend android.app.Service
-
-        This is a false positive since this is given in the inheritance hierarchy.
-    -->
-    <issue id="Instantiatable" severity="ignore">
-        <ignore path="../../AndroidManifest.xml" />
+    <issue
+        id="ChromeOsAbiSupport"
+        message="Missing x86_64 ABI support for ChromeOS"
+        errorLine1="        ndk.abiFilters = qtTargetAbiList.split(&quot;,&quot;)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="83"
+            column="9"/>
     </issue>
-</lint>
+
+</issues>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -11,6 +11,15 @@ TestCase {
 
 	function createTestObject() {
 		return createTemporaryQmlObject("import Governikus.Global; GText {}", testCase);
+	}
+	function test_links() {
+		let testObject = createTestObject();
+		compare(testObject.link, "");
+		ignoreWarning("More than one link found: [href=\"http://www.governikus.de\",href=\"http://www.autentapp.de\"]");
+		testObject.text = 'Hello World href="http://www.governikus.de" bla bla bla href="http://www.autentapp.de"';
+		compare(testObject.link, "http://www.governikus.de");
+		testObject.text = 'no link inside';
+		compare(testObject.link, "");
 	}
 	function test_load() {
 		let testObject = createTestObject();

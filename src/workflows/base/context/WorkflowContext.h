@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Workflow context.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -60,13 +56,13 @@ class WorkflowContext
 		bool mWorkflowCancelledInState;
 		bool mNextWorkflowPending;
 		bool mCurrentReaderHasEidCardButInsufficientApduLength;
-		bool mSkipStartScan;
 		int mProgressValue;
 		QString mProgressMessage;
 		bool mShowRemoveCardFeedback;
 		QString mClaimedBy;
 		bool mInterruptRequested;
 		bool mInitialInputErrorShown;
+		bool mCardInitiallyAppeared;
 
 	private Q_SLOTS:
 		void onWorkflowCancelled();
@@ -132,8 +128,11 @@ class WorkflowContext
 		void setReaderName(const QString& pReaderName);
 
 		[[nodiscard]] const QSharedPointer<CardConnection>& getCardConnection() const;
+		[[nodiscard]] bool getCardInitiallyAppeared() const;
+		void resetCardInitiallyAppeared();
 		void setCardConnection(const QSharedPointer<CardConnection>& pCardConnection);
 		void resetCardConnection();
+		void setCardInitiallyAppeared();
 
 		[[nodiscard]] bool isNpaRepositioningRequired() const;
 		void setNpaPositionVerified();
@@ -194,9 +193,6 @@ class WorkflowContext
 
 		[[nodiscard]] bool currentReaderHasEidCardButInsufficientApduLength() const;
 		void setCurrentReaderHasEidCardButInsufficientApduLength(bool pState);
-
-		[[nodiscard]] bool skipStartScan() const;
-		void setSkipStartScan(bool pState);
 
 		[[nodiscard]] int getProgressValue() const
 		{

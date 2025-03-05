@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Contains a card connection object
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,14 +23,12 @@
 
 #include <QByteArray>
 
+
 class test_CardConnection;
+
 
 namespace governikus
 {
-
-/*!
- * This class represents a connection to a smart card.
- */
 class CardConnection
 	: public QObject
 {
@@ -146,18 +140,18 @@ class CardConnection
 			if (pPacePasswordId == PacePasswordId::PACE_CAN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-						mPaceCanSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
-					});
+							mPaceCanSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+						});
 			}
 			else if (pPacePasswordId == PacePasswordId::PACE_PIN)
 			{
 				connect(command, &BaseCardCommand::commandDone, this, [this](QSharedPointer<BaseCardCommand> pCommand){
-						mPacePinSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
-						if (!mPacePinSuccessful)
-						{
-							mPaceCanSuccessful = false;
-						}
-					});
+							mPacePinSuccessful = pCommand->getReturnCode() == CardReturnCode::OK;
+							if (!mPacePinSuccessful)
+							{
+								mPaceCanSuccessful = false;
+							}
+						});
 			}
 
 			return call(command, pReceiver, pFunc);

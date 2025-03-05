@@ -1,8 +1,7 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
-import Governikus.Global
 import Governikus.Style
 import Governikus.Type
 
@@ -71,9 +70,9 @@ Item {
 		id: line1
 
 		anchors.left: circle1.horizontalCenter
-		anchors.leftMargin: Constants.component_spacing + circle1.maximumHeight / 2
+		anchors.leftMargin: Style.dimens.pane_spacing + circle1.maximumHeight / 2
 		anchors.right: circle2.horizontalCenter
-		anchors.rightMargin: Constants.component_spacing + circle2.maximumHeight / 2
+		anchors.rightMargin: Style.dimens.pane_spacing + circle2.maximumHeight / 2
 		anchors.verticalCenter: parent.verticalCenter
 		color: Style.color.border
 		height: Style.dimens.border_width
@@ -83,9 +82,9 @@ Item {
 		id: line2
 
 		anchors.left: circle2.horizontalCenter
-		anchors.leftMargin: Constants.component_spacing + circle2.maximumHeight / 2
+		anchors.leftMargin: Style.dimens.pane_spacing + circle2.maximumHeight / 2
 		anchors.right: circle3.horizontalCenter
-		anchors.rightMargin: Constants.component_spacing + circle3.maximumHeight / 2
+		anchors.rightMargin: Style.dimens.pane_spacing + circle3.maximumHeight / 2
 		anchors.verticalCenter: parent.verticalCenter
 		color: Style.color.border
 		height: Style.dimens.border_width

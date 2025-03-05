@@ -1,23 +1,24 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.View
 
 Column {
-	id: column
+	id: root
 
-	property var chat
+	property alias chat: repeater.model
 	readonly property alias count: repeater.count
 	property alias title: dataTitle.text
 	property alias titleStyle: dataTitle.textStyle
 	property bool writeAccess: false
 
-	signal receivedFocus(var pItem)
 	signal scrollPageDown
 	signal scrollPageUp
 
@@ -27,17 +28,17 @@ Column {
 	PaneTitle {
 		id: dataTitle
 
-		color: writeAccess ? Style.color.textNormal.basic : titleStyle.textColor
+		color: root.writeAccess ? Style.color.textNormal.basic : textStyle.textColor
 		height: implicitHeight * 1.5
-		topPadding: Constants.pane_padding
+		topPadding: Style.dimens.pane_padding
 		verticalAlignment: Text.AlignTop
 		width: parent.width
 
 		anchors {
 			left: parent.left
-			leftMargin: Constants.pane_padding
+			leftMargin: Style.dimens.pane_padding
 			right: parent.right
-			rightMargin: Constants.pane_padding
+			rightMargin: Style.dimens.pane_padding
 		}
 	}
 	ColumnLayout {
@@ -49,85 +50,75 @@ Column {
 		Repeater {
 			id: repeater
 
-			model: chat
 			visible: repeater.count > 0
 
 			Loader {
 				id: delegateLoader
 
-				property bool isLast: index === repeater.count - 1
-				property int modelIndex: index
-				property string modelName: name
-				property bool modelSelected: selected
-				property bool modelWriteRight: writeRight
-
-				function updateModel(checked) {
-					selected = checked;
-				}
+				required property int index
+				readonly property bool isLast: index === repeater.count - 1
+				required property var model
+				required property string name
+				required property bool optional
+				required property bool selected
 
 				Layout.fillWidth: true
-				sourceComponent: optional ? optionalDelegate : requiredDelegate
+				sourceComponent: delegateLoader.optional ? optionalDelegate : requiredDelegate
 
 				onFocusChanged: item.focus = focus // QTBUG-122734
 
 				GSeparator {
 					anchors.left: parent.left
-					visible: !isLast
+					visible: !delegateLoader.isLast
 
 					anchors {
-						leftMargin: Constants.pane_padding
+						leftMargin: Style.dimens.pane_padding
 						right: parent.right
-						rightMargin: Constants.pane_padding
+						rightMargin: Style.dimens.pane_padding
 						top: parent.bottom
 					}
 				}
-			}
-		}
-	}
-	Component {
-		id: optionalDelegate
+				Component {
+					id: optionalDelegate
 
-		GCheckBox {
-			id: checkBox
+					GCheckBox {
+						id: checkBox
 
-			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
-			checked: modelSelected
-			horizontalPadding: Constants.pane_padding
-			layoutDirection: Qt.RightToLeft
-			text: modelName
-			verticalPadding: Constants.text_spacing
+						//: LABEL ANDROID IOS
+						Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(delegateLoader.index + 1).arg(repeater.count)
+						checked: delegateLoader.selected
+						horizontalPadding: Style.dimens.pane_padding
+						layoutDirection: Qt.RightToLeft
+						text: delegateLoader.name
+						verticalPadding: Style.dimens.text_spacing
 
-			background: RoundedRectangle {
-				bottomLeftCorner: isLast
-				bottomRightCorner: isLast
-				color: checkBox.preferredBackgroundColor
-				topLeftCorner: false
-				topRightCorner: false
-			}
+						background: RoundedRectangle {
+							bottomLeftCorner: delegateLoader.isLast
+							bottomRightCorner: delegateLoader.isLast
+							color: checkBox.preferredBackgroundColor
+							topLeftCorner: false
+							topRightCorner: false
+						}
 
-			onCheckedChanged: updateModel(checked)
-			onFocusChanged: if (focus)
-				column.receivedFocus(this)
-		}
-	}
-	Component {
-		id: requiredDelegate
+						onCheckedChanged: delegateLoader.model.selected = checked
+					}
+				}
+				Component {
+					id: requiredDelegate
 
-		GText {
-			//: LABEL ANDROID IOS
-			Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
-			activeFocusOnTab: true
-			bottomPadding: Constants.text_spacing
-			leftPadding: Constants.pane_padding
-			rightPadding: Constants.pane_padding
-			text: modelName
-			topPadding: Constants.text_spacing
+					GText {
+						//: LABEL ANDROID IOS
+						Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(delegateLoader.index + 1).arg(repeater.count)
+						bottomPadding: Style.dimens.text_spacing
+						leftPadding: Style.dimens.pane_padding
+						rightPadding: Style.dimens.pane_padding
+						text: delegateLoader.name
+						topPadding: Style.dimens.text_spacing
 
-			onFocusChanged: if (focus)
-				column.receivedFocus(this)
-
-			FocusFrame {
+						onFocusChanged: if (focus)
+							Utils.positionViewAtItem(this)
+					}
+				}
 			}
 		}
 	}

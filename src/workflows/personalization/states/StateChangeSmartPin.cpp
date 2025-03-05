@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangeSmartPin.h"
@@ -60,7 +60,7 @@ void StateChangeSmartPin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pComma
 			context->setProgress(100, context->getProgressMessage());
 
 			GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-			settings.setLastReaderPluginType(getEnumName(ReaderManagerPluginType::SMART));
+			settings.setPreferredTechnology(getEnumName(ReaderManagerPluginType::SMART));
 
 			Q_EMIT fireContinue();
 			break;
