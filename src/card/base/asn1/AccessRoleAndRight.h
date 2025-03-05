@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -19,6 +19,7 @@
 #include <QList>
 #include <QString>
 #include <functional>
+#include <type_traits>
 
 
 namespace governikus

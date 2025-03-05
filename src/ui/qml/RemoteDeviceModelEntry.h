@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the remote device table
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +24,7 @@ class RemoteDeviceModelEntry
 
 	private:
 		QString mDeviceName;
-		QString mId;
+		QByteArray mId;
 		bool mPaired;
 		bool mIsPairing;
 		bool mNetworkVisible;
@@ -40,7 +36,7 @@ class RemoteDeviceModelEntry
 	public:
 		explicit RemoteDeviceModelEntry(const QSharedPointer<IfdListEntry>& pListEntry);
 		RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-				const QString& mId,
+				const QByteArray& pId,
 				bool pNetworkVisible,
 				bool pConnected,
 				bool pSupported,
@@ -53,8 +49,8 @@ class RemoteDeviceModelEntry
 		void setPaired(bool pPaired);
 		[[nodiscard]] bool isPairing() const;
 		void setIsPairing(bool pIsPairing);
-		[[nodiscard]] const QString& getId() const;
-		void setId(const QString& pId);
+		[[nodiscard]] const QByteArray& getId() const;
+		void setId(const QByteArray& pId);
 		[[nodiscard]] bool isNetworkVisible() const;
 		[[nodiscard]] int getLinkQuality() const;
 		[[nodiscard]] bool isSupported() const;

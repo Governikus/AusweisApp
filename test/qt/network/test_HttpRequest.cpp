@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref HttpResponse
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpRequest.h"
@@ -90,8 +86,8 @@ class test_HttpRequest
 
 			QByteArray receivedData;
 			connect(&request, &HttpRequest::fireSocketBuffer, this, [&receivedData] (const QByteArray& pBuffer){
-					receivedData = pBuffer;
-				});
+						receivedData = pBuffer;
+					});
 
 			request.triggerSocketBuffer();
 			QVERIFY(request.mFinished);

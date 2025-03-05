@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
@@ -7,37 +7,20 @@
 #include "AppSettings.h"
 #include "ApplicationModel.h"
 #include "AuthModel.h"
-#include "CardPosition.h"
-#include "CardPositionModel.h"
 #include "CertificateDescriptionModel.h"
 #include "ChangePinModel.h"
 #include "ChatModel.h"
-#include "CheckIDCardModel.h"
-#include "ConnectivityManager.h"
 #include "Env.h"
-#include "FileDestination.h"
-#include "FormattedTextModel.h"
 #include "Initializer.h"
-#include "LogFilterModel.h"
 #include "LogHandler.h"
-#include "LogModel.h"
-#include "NotificationModel.h"
 #include "NumberModel.h"
 #include "PersonalizationModel.h"
-#include "PinResetInformationModel.h"
 #include "PlatformTools.h"
-#include "ReaderModel.h"
-#include "ReaderScanEnabler.h"
-#include "ReleaseInformationModel.h"
 #include "RemoteServiceModel.h"
 #include "SelfAuthModel.h"
 #include "Service.h"
 #include "SettingsModel.h"
-#include "SingletonCreator.h"
 #include "SmartModel.h"
-#include "SurveyModel.h"
-#include "UiLoader.h"
-#include "VersionInformationModel.h"
 #include "VersionNumber.h"
 #include "VolatileSettings.h"
 #include "WorkflowRequest.h"
@@ -45,8 +28,9 @@
 #include "context/ChangePinContext.h"
 #include "context/SelfAuthContext.h"
 
-#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+#ifdef USE_CUSTOM_REGISTRATION
 	#include "DiagnosisModel.h"
+	#include "SectionModel.h"
 #endif
 
 
@@ -75,19 +59,22 @@
 #include <QGuiApplication>
 #include <QLoggingCategory>
 #include <QOpenGLContext>
-#include <QOperatingSystemVersion>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QScopeGuard>
 #include <QScreen>
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
 	#include <QStyleHints>
 #endif
-#include <QScopeGuard>
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 8, 0))
+	#include <QSvgRenderer>
+#endif
 #include <QtPlugin>
 #include <QtQml>
 
 #ifdef Q_OS_WIN
 	#include <dwmapi.h>
+	#include <sdkddkver.h>
 	#include <windows.h>
 #endif
 
@@ -110,7 +97,7 @@ void updateTitleBarColor(QQuickWindow* pWindow, bool pDarkMode)
 	{
 		BOOL darkMode = pDarkMode ? TRUE : FALSE;
 		HWND hwnd = reinterpret_cast<HWND>(pWindow->winId());
-	#ifdef __MINGW32__
+	#if defined(__MINGW32__) || !defined(NTDDI_WIN10_CO)
 		const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 	#endif
 		DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &darkMode, sizeof(darkMode));
@@ -129,7 +116,6 @@ UiPluginQml::UiPluginQml()
 	, mMenuBar()
 #endif
 	, mQmlEngineWarningCount(0)
-	, mUpdateInformationPending(false)
 	, mTrayIcon()
 	, mHighContrastEnabled(false)
 	, mDarkMode(false)
@@ -140,6 +126,10 @@ UiPluginQml::UiPluginQml()
 	, mPrivate(new Private())
 #endif
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 8, 0))
+	QSvgRenderer::setDefaultOptions(QtSvg::AssumeTrustedSource);
+#endif
+
 	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(false);
 
 	QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/AusweisApp_Roboto_Regular.ttf"));
@@ -154,8 +144,8 @@ UiPluginQml::UiPluginQml()
 
 	connect(&mTrayIcon, &TrayIcon::fireShow, this, &UiPluginQml::show);
 	connect(&mTrayIcon, &TrayIcon::fireQuit, this, [this] {
-			Q_EMIT fireQuitApplicationRequest();
-		});
+				Q_EMIT fireQuitApplicationRequest();
+			});
 	connect(this, &UiPluginQml::fireAppConfigChanged, this, &UiPluginQml::onAppConfigChanged);
 	onAppConfigChanged();
 
@@ -169,13 +159,14 @@ void UiPluginQml::registerQmlTypes()
 	constexpr const char* cModuleName = "Governikus.Type";
 	qmlRegisterModule(cModuleName, 1, 0);
 
-	qmlRegisterUncreatableMetaObject(GlobalStatus::staticMetaObject, cModuleName, 1, 0, "GlobalStatus", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableMetaObject(EnumUiModule::staticMetaObject, cModuleName, 1, 0, "UiModule", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableMetaObject(EnumReaderManagerPluginType::staticMetaObject, cModuleName, 1, 0, "ReaderManagerPluginType", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableMetaObject(EnumCardReturnCode::staticMetaObject, cModuleName, 1, 0, "CardReturnCode", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(EnumGAnimation::staticMetaObject, cModuleName, 1, 0, "GAnimation", QStringLiteral("Not creatable as it is an enum type"));
 
 	#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	qmlRegisterType<DiagnosisModel>(cModuleName, 1, 0, "DiagnosisModel");
+	qmlRegisterType<SectionModel>(cModuleName, 1, 0, "SectionModel");
 	#endif
 #endif
 }
@@ -243,11 +234,12 @@ void UiPluginQml::init()
 	}
 
 	onWindowPaletteChanged();
+	onUserDarkModeChanged();
 
 #ifdef Q_OS_WIN
 	QMetaObject::invokeMethod(this, [] {
-			Env::getSingleton<Service>()->runUpdateIfNeeded(true);
-		}, Qt::QueuedConnection);
+				Env::getSingleton<Service>()->runUpdateIfNeeded(true);
+			}, Qt::QueuedConnection);
 #endif
 }
 
@@ -384,7 +376,7 @@ void UiPluginQml::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pReq
 		const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 
 		// Only hide the UI if we don't need to show the update information view. This behaviour ensures that
-		// the user is (aggressively) notified about a pending update if the AA2 is only shown for authentication
+		// the user is (aggressively) notified about a pending update if the AA is only shown for authentication
 		// workflows and never manually brought to foreground in between.
 		if (!context.objectCast<SelfAuthContext>()
 #if __has_include("context/PersonalizationContext.h")
@@ -393,7 +385,7 @@ void UiPluginQml::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& pReq
 				&& !context->hasNextWorkflowPending()
 				&& generalSettings.isAutoCloseWindowAfterAuthentication()
 				&& !showUpdateInformationIfPending()
-				&& !authContext->showChangePinView())
+				&& !authContext->changeTransportPin())
 		{
 			onHideUi();
 		}
@@ -430,11 +422,13 @@ void UiPluginQml::onApplicationInitialized()
 	connect(Env::getSingleton<RemoteServiceModel>(), &RemoteServiceModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<PersonalizationModel>(), &PersonalizationModel::fireStartWorkflow, this, &UiPlugin::fireWorkflowRequested);
 	connect(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireRawLog, this, &UiPluginQml::onRawLog, Qt::QueuedConnection);
-	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireAutoStartChanged, this, &UiPluginQml::onAutoStartChanged);
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireTrayIconEnabledChanged, this, &UiPluginQml::onTrayIconEnabledChanged);
 	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireUseSystemFontChanged, this, &UiPluginQml::onUseSystemFontChanged);
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::onUserDarkModeChanged);
+	connect(Env::getSingleton<SettingsModel>(), &SettingsModel::fireDarkModeChanged, this, &UiPluginQml::fireDarkModeEnabledChanged);
 
 	const auto* service = Env::getSingleton<Service>();
-	connect(service, &Service::fireAppcastFinished, this, &UiPluginQml::onAppcastFinished);
+	connect(service, &Service::fireAppcastFinished, this, &UiPluginModel::setUpdatePending);
 	connect(service, &Service::fireUpdateScheduled, this, &UiPluginQml::onUpdateScheduled);
 
 	init();
@@ -445,13 +439,14 @@ void UiPluginQml::onApplicationStarted()
 {
 	mTrayIcon.create();
 	connect(this, &UiPluginQml::fireTranslationChanged, &mTrayIcon, &TrayIcon::onTranslationChanged);
+	connect(this, &UiPluginQml::fireSystemSettingsChanged, Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireScreenReaderRunningChanged);
 
 #if defined(Q_OS_WIN) || (defined(Q_OS_BSD4) && !defined(Q_OS_IOS)) || (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID))
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
-	const bool showSetupAssistant = Enum<UiModule>::fromString(generalSettings.getStartupModule(), UiModule::TUTORIAL) == UiModule::TUTORIAL;
+	const bool showOnboarding = Env::getSingleton<SettingsModel>()->getStartupModule() == UiModule::ONBOARDING;
 	const bool developerMode = generalSettings.isDeveloperMode();
-	const bool missingTrayIcon = !QSystemTrayIcon::isSystemTrayAvailable() || !Env::getSingleton<AppSettings>()->getGeneralSettings().showTrayIcon();
-	if (missingTrayIcon || showSetupAssistant || developerMode)
+	const bool missingTrayIcon = !QSystemTrayIcon::isSystemTrayAvailable() || !Env::getSingleton<AppSettings>()->getGeneralSettings().isTrayIconEnabled();
+	if (missingTrayIcon || showOnboarding || developerMode)
 #endif
 	{
 		QMetaObject::invokeMethod(this, &UiPluginQml::show, Qt::QueuedConnection);
@@ -471,10 +466,10 @@ void UiPluginQml::onShowUi(UiModule pModule)
 {
 	PlatformTools::restoreToTaskbar();
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
-	const auto& startupModule = Enum<UiModule>::fromString(Env::getSingleton<AppSettings>()->getGeneralSettings().getStartupModule(), UiModule::TUTORIAL);
-	if (pModule == UiModule::CURRENT && startupModule == UiModule::TUTORIAL)
+	const auto& startupModule = Env::getSingleton<SettingsModel>()->getStartupModule();
+	if (pModule == UiModule::CURRENT && startupModule == UiModule::ONBOARDING)
 	{
-		pModule = UiModule::TUTORIAL;
+		pModule = UiModule::ONBOARDING;
 	}
 #endif
 	if (isDominated())
@@ -552,12 +547,6 @@ void UiPluginQml::onUpdateScheduled() const
 }
 
 
-void UiPluginQml::onAppcastFinished(bool pUpdateAvailable)
-{
-	mUpdateInformationPending = pUpdateAvailable;
-}
-
-
 void UiPluginQml::show()
 {
 	if (!showUpdateInformationIfPending())
@@ -569,12 +558,12 @@ void UiPluginQml::show()
 
 bool UiPluginQml::showUpdateInformationIfPending()
 {
-	if (!mUpdateInformationPending)
+	if (!isUpdatePending())
 	{
 		return false;
 	}
 
-	mUpdateInformationPending = false;
+	setUpdatePending(false);
 	onShowUi(UiModule::UPDATEINFORMATION);
 
 	return true;
@@ -653,13 +642,13 @@ void UiPluginQml::onQmlWarnings(const QList<QQmlError>& pWarnings)
 #ifndef QT_NO_DEBUG
 	for (const auto& warning : pWarnings)
 	{
-		Env::getSingleton<ApplicationModel>()->showFeedback(QStringLiteral("Got QML warning: %1").arg(warning.toString()), false);
+		Env::getSingleton<ApplicationModel>()->showFeedback(QStringLiteral("Got QML warning: %1").arg(warning.toString()));
 	}
 #endif
 }
 
 
-void UiPluginQml::onQmlObjectCreated(QObject* pObject)
+void UiPluginQml::onQmlObjectCreated(const QObject* pObject)
 {
 	const bool fatalErrors = pObject == nullptr;
 	const QString result = fatalErrors ? QStringLiteral("fatal errors.") : QStringLiteral("%1 warnings.").arg(mQmlEngineWarningCount);
@@ -693,14 +682,10 @@ void UiPluginQml::onRawLog(const QString& pMessage, const QString& pCategoryName
 	if (pCategoryName == QLatin1String("developermode") || pCategoryName == QLatin1String("feedback"))
 	{
 #ifdef Q_OS_MACOS
-		if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::MacOSMojave)
-		{
-			PlatformTools::postNotification(QCoreApplication::applicationName(), pMessage);
-			return;
-		}
-
-#endif
+		PlatformTools::postNotification(QCoreApplication::applicationName(), pMessage);
+#else
 		mTrayIcon.showMessage(QCoreApplication::applicationName(), pMessage);
+#endif
 	}
 }
 
@@ -711,9 +696,15 @@ void UiPluginQml::doRefresh()
 	QMetaObject::invokeMethod(this, &UiPluginQml::init, Qt::QueuedConnection);
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS) && !defined(Q_OS_WINRT)
 	QMetaObject::invokeMethod(this, [this]{
-			Q_EMIT fireShowUiRequested(UiModule::CURRENT);
-		}, Qt::QueuedConnection);
+				Q_EMIT fireShowUiRequested(UiModule::CURRENT);
+			}, Qt::QueuedConnection);
 #endif
+}
+
+
+QString UiPluginQml::getQtVersion() const
+{
+	return QString::fromLatin1(qVersion());
 }
 
 
@@ -786,12 +777,12 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifySafeAr
 	Q_UNUSED(pObj)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			UiPluginQml* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>();
-			if (uiPlugin)
-			{
-				Q_EMIT uiPlugin->fireSafeAreaMarginsChanged();
-			}
-		}, Qt::QueuedConnection);
+				UiPluginQml* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>();
+				if (uiPlugin)
+				{
+					Q_EMIT uiPlugin->fireSafeAreaMarginsChanged();
+				}
+			}, Qt::QueuedConnection);
 }
 
 
@@ -832,7 +823,10 @@ void UiPluginQml::setOsDarkMode(bool pState)
 #ifdef Q_OS_WIN
 		updateTitleBarColor(getRootWindow(), pState);
 #endif
-		Q_EMIT fireOsDarkModeChanged();
+
+		onUserDarkModeChanged();
+
+		Q_EMIT fireDarkModeEnabledChanged();
 	}
 }
 
@@ -846,6 +840,25 @@ bool UiPluginQml::isOsDarkModeSupported() const
 	return false;
 
 #endif
+}
+
+
+bool UiPluginQml::isDarkModeEnabled() const
+{
+	const auto userDarkMode = Env::getSingleton<SettingsModel>()->getDarkMode();
+	switch (userDarkMode)
+	{
+		case SettingsModel::ModeOption::ON:
+			return true;
+
+		case SettingsModel::ModeOption::OFF:
+			return false;
+
+		case SettingsModel::ModeOption::AUTO:
+			return isOsDarkModeEnabled();
+	}
+
+	Q_UNREACHABLE();
 }
 
 
@@ -933,12 +946,20 @@ void UiPluginQml::onWindowPaletteChanged()
 }
 
 
+#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
+void UiPluginQml::onUserDarkModeChanged() const
+{
+}
+
+
+#endif
+
 void UiPluginQml::onUseSystemFontChanged() const
 {
 	const auto guard = qScopeGuard([] {
-			const auto& family = QGuiApplication::font().family();
-			qDebug() << "Using" << family << "with styles" << QFontDatabase::styles(family);
-		});
+				const auto& family = QGuiApplication::font().family();
+				qDebug() << "Using" << family << "with styles" << QFontDatabase::styles(family);
+			});
 
 	if (Env::getSingleton<AppSettings>()->getGeneralSettings().isUseSystemFont())
 	{
@@ -969,9 +990,9 @@ void UiPluginQml::onUseSystemFontChanged() const
 }
 
 
-void UiPluginQml::onAutoStartChanged()
+void UiPluginQml::onTrayIconEnabledChanged()
 {
-	mTrayIcon.setVisible(Env::getSingleton<AppSettings>()->getGeneralSettings().showTrayIcon());
+	mTrayIcon.setVisible(Env::getSingleton<AppSettings>()->getGeneralSettings().isTrayIconEnabled());
 }
 
 

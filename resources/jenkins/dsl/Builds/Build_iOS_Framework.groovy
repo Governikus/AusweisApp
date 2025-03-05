@@ -5,7 +5,8 @@ def j = new Build
 		name: 'iOS_Framework',
 		libraries: 'iOS',
 		label: 'iOS',
-		artifacts: 'build/*.zip,build/*.bcsymbolmap'
+		artifacts: 'build/*.zip,build/*.bcsymbolmap',
+		trigger: ''
 	).generate(this)
 
 

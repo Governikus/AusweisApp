@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref DidAuthenticateEAC1
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/invoke/DidAuthenticateResponseEac1.h"
@@ -11,7 +7,7 @@
 #include "asn1/CVCertificate.h"
 #include "pinpad/EstablishPaceChannelOutput.h"
 
-#include "CertificateHelper.h"
+#include "Converter.h"
 #include "TestFileHelper.h"
 
 #include <QtTest>
@@ -74,8 +70,8 @@ class test_DidAuthenticateResponseEAC1
 
 		void certificationAuthorityReference()
 		{
-			const auto& cvca_DETESTeID00002 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00002.hex"_L1));
-			const auto& cvca_DETESTeID00001 = CertificateHelper::fromHex(readFile("cvca-DETESTeID00001.hex"_L1));
+			const auto& cvca_DETESTeID00002 = Converter::certificatefromHex(readFile("cvca-DETESTeID00002.hex"_L1));
+			const auto& cvca_DETESTeID00001 = Converter::certificatefromHex(readFile("cvca-DETESTeID00001.hex"_L1));
 
 			EstablishPaceChannelOutput channel;
 			channel.setCarCurr(cvca_DETESTeID00002->getBody().getCertificateHolderReference());

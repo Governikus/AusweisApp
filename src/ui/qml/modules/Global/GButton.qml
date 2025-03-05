@@ -1,20 +1,20 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
-import Governikus.Type
 
 AbstractButton {
 	id: root
 
 	property int borderWidth: Style.dimens.border_width
 	property alias buttonColor: colors.controlBackground
-	property alias cursorShape: mouseArea.cursorShape
 	property string disabledTooltipText
 
 	// Similar to "enabled", but tooltips will continue to work
@@ -32,15 +32,15 @@ AbstractButton {
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
 	Layout.minimumWidth: background ? Style.dimens.min_button_width : -1
-	ToolTip.delay: Constants.toolTipDelay
+	ToolTip.delay: Style.toolTipDelay
 	ToolTip.text: enableButton ? enabledTooltipText : disabledTooltipText
 	ToolTip.visible: hovered && ToolTip.text !== ""
 	activeFocusOnTab: enableButton
 	font.pixelSize: textStyle.textSize
 	font.weight: textStyle.fontWeight
-	horizontalPadding: Constants.control_horizontalPadding
-	spacing: Constants.groupbox_spacing
-	verticalPadding: Constants.control_verticalPadding
+	horizontalPadding: Style.dimens.control_horizontalPadding
+	spacing: Style.dimens.groupbox_spacing
+	verticalPadding: Style.dimens.control_verticalPadding
 
 	background: Rectangle {
 		border.color: colors.controlBorder
@@ -53,8 +53,8 @@ AbstractButton {
 			id: contentLayout
 
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
-			Layout.minimumHeight: root.font.pixelSize + topPadding + bottomPadding
-			Layout.minimumWidth: background ? root.Layout.minimumWidth - leftPadding - rightPadding : -1
+			Layout.minimumHeight: root.font.pixelSize + root.topPadding + root.bottomPadding
+			Layout.minimumWidth: root.background ? root.Layout.minimumWidth - root.leftPadding - root.rightPadding : -1
 			spacing: root.spacing
 			z: 1
 
@@ -64,7 +64,7 @@ AbstractButton {
 				source: root.icon.source
 				sourceSize.height: 1.2 * buttonText.effectiveFirstLineHeight
 				tintColor: colors.controlContent
-				tintEnabled: tintIcon
+				tintEnabled: root.tintIcon
 				visible: source != ""
 			}
 			GText {
@@ -73,6 +73,7 @@ AbstractButton {
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignHCenter
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
+				activeFocusOnTab: false
 				color: colors.controlContent
 				elide: Text.ElideRight
 				font: root.font
@@ -80,7 +81,7 @@ AbstractButton {
 					if (!buttonIcon.visible) {
 						return Text.AlignHCenter;
 					}
-					return layoutDirection === Qt.LeftToRight ? Text.AlignLeft : Text.AlignRight;
+					return root.layoutDirection === Qt.LeftToRight ? Text.AlignLeft : Text.AlignRight;
 				}
 				lineHeight: root.textStyle.lineHeight
 				maximumLineCount: 1
@@ -92,6 +93,8 @@ AbstractButton {
 
 	onActiveFocusOnTabChanged: if (!activeFocusOnTab)
 		focus = false
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	HoverHandler {
 		id: hoverHandler
@@ -111,13 +114,11 @@ AbstractButton {
 		size: root.font.pixelSize / 8
 	}
 	MouseArea {
-		id: mouseArea
-
 		anchors.fill: parent
 		z: 2
 
 		onPressed: mouse => {
-			mouse.accepted = !enableButton;
+			mouse.accepted = !root.enableButton;
 		}
 	}
 }

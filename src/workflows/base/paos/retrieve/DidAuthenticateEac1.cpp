@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DidAuthenticateEac1.h"
@@ -68,6 +68,23 @@ const ConnectionHandle& DIDAuthenticateEAC1::getConnectionHandle() const
 const QList<QSharedPointer<const CVCertificate>>& DIDAuthenticateEAC1::getCvCertificates() const
 {
 	return mEac1InputType.getCvCertificates();
+}
+
+
+QList<QSharedPointer<const CVCertificate>> DIDAuthenticateEAC1::getCvCertificates(const QList<AccessRole>& pAccessRoles) const
+{
+	const auto& certificates = mEac1InputType.getCvCertificates();
+	QList<QSharedPointer<const CVCertificate>> cvcs;
+	for (const auto& cvc : certificates)
+	{
+		const auto& cvcAccessRole = cvc->getBody().getCHAT().getAccessRole();
+		if (pAccessRoles.contains(cvcAccessRole))
+		{
+			cvcs << cvc;
+		}
+	}
+
+	return cvcs;
 }
 
 

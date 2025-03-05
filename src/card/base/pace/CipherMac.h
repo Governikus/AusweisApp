@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief CMAC implementation to be used in PACE protocol. See TR 03110.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +8,7 @@
 
 #include <QByteArray>
 #include <openssl/evp.h>
+
 
 namespace governikus
 {
@@ -49,7 +46,7 @@ class CipherMac final
 		 * \param pMessage the message to build the MAC for.
 		 * \return the MAC of the message
 		 */
-		QByteArray generate(const QByteArray& pMessage);
+		QByteArray generate(const QByteArray& pMessage) const;
 };
 
 } // namespace governikus

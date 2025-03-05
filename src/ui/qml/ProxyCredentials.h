@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -7,6 +7,7 @@
 #include <QAuthenticator>
 #include <QEventLoop>
 #include <QNetworkProxy>
+#include <QtQml/qqmlregistration.h>
 
 
 namespace governikus
@@ -16,6 +17,7 @@ class ProxyCredentials
 	: public QObject
 {
 	Q_OBJECT
+	QML_ELEMENT
 
 	Q_PROPERTY(QString proposedUser READ getProposedUser CONSTANT)
 	Q_PROPERTY(QString url READ getUrl CONSTANT)
@@ -31,6 +33,7 @@ class ProxyCredentials
 		[[nodiscard]] QString createUrl(const QNetworkProxy& pProxy) const;
 
 	public:
+		ProxyCredentials() = default;
 		ProxyCredentials(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 
 		[[nodiscard]] QString getProposedUser() const;

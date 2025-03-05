@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebSocketChannel.h"
@@ -23,7 +23,7 @@ const int PING_PONG_TIMEOUT_MS = 5000;
 } // namespace
 
 
-QString WebSocketChannel::makeConnectionId(const QSharedPointer<QWebSocket>& pConnection)
+QByteArray WebSocketChannel::makeConnectionId(const QSharedPointer<QWebSocket>& pConnection)
 {
 	if (pConnection)
 	{
@@ -31,7 +31,7 @@ QString WebSocketChannel::makeConnectionId(const QSharedPointer<QWebSocket>& pCo
 		return RemoteServiceSettings::generateFingerprint(selfSignedCert);
 	}
 
-	return QString();
+	return QByteArray();
 }
 
 
@@ -104,7 +104,7 @@ bool WebSocketChannel::isPairingConnection() const
 }
 
 
-const QString& WebSocketChannel::getId() const
+const QByteArray& WebSocketChannel::getId() const
 {
 	return mId;
 }

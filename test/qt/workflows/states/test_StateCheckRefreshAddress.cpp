@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCheckRefreshAddress.h"
@@ -204,8 +204,8 @@ class test_StateCheckRefreshAddress
 
 			mState->mUrl = pUrlHttp;
 			QTest::ignoreMessage(QtCriticalMsg, "SOP-Check: Ignoring scheme and port in developer mode.");
-			QTest::ignoreMessage(QtCriticalMsg, "  Origin URL: http://localhost:12345/test_StateCheckRefreshAddress/");
-			QTest::ignoreMessage(QtCriticalMsg, "  Refresh URL: http://localhost:12345/test_StateCheckRefreshAddress/");
+			QTest::ignoreMessage(QtCriticalMsg, "Origin URL: http://localhost:12345/test_StateCheckRefreshAddress/");
+			QTest::ignoreMessage(QtCriticalMsg, "Refresh URL: http://localhost:12345/test_StateCheckRefreshAddress/");
 			QVERIFY(mState->isMatchingSameOriginPolicyInDevMode());
 		}
 

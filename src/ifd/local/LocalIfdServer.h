@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Local Ifd server service to offer SaC to localhost websocket connections.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

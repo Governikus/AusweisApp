@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Enumerations of message types and additional stuff.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

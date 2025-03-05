@@ -1,14 +1,15 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
-import Governikus.TechnologyInfo
 import Governikus.Style
+import Governikus.Type
 
 GFlickableColumnLayout {
-	id: baseItem
+	id: root
 
 	property var workflowModel
 
@@ -17,34 +18,71 @@ GFlickableColumnLayout {
 	spacing: 0
 	topMargin: 0
 
-	Item {
-		id: progressIndicator
-
-		Layout.alignment: Qt.AlignCenter
-		implicitHeight: Style.dimens.workflow_progress_indicator_size
-		implicitWidth: icon.implicitWidth
-
-		TintableIcon {
-			id: icon
-
-			anchors.centerIn: parent
-			desaturate: true
-			source: "qrc:///images/mobile/phone_simulator.svg"
-			sourceSize.height: Style.dimens.header_icon_size
-			tintEnabled: false
-		}
-	}
 	TechnologyInfo {
 		id: technologyInfo
 
 		Layout.alignment: Qt.AlignHCenter
 		//: LABEL ANDROID IOS
 		enableButtonText: qsTr("Continue")
+		showAdditionalContent: true
 
 		//: LABEL ANDROID IOS
 		titleText: qsTr("Simulator")
 
-		onEnableClicked: workflowModel.insertSimulator()
-		onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
+		progressIndicator: Item {
+			id: progressIndicator
+
+			implicitHeight: Style.dimens.workflow_progress_indicator_size
+			implicitWidth: icon.implicitWidth
+
+			TintableIcon {
+				id: icon
+
+				anchors.centerIn: parent
+				desaturate: true
+				source: "qrc:///images/mobile/phone_simulator.svg"
+				sourceSize.height: Style.dimens.header_icon_size
+				tintEnabled: false
+			}
+		}
+
+		onEnableClicked: root.workflowModel.insertSimulator()
+
+		GSpacer {
+			Layout.fillHeight: true
+		}
+		GText {
+			Layout.alignment: Qt.AlignHCenter
+			//: LABEL ANDROID IOS
+			text: qsTr("Switch to:")
+		}
+		GButton {
+			Layout.alignment: Qt.AlignHCenter
+			style: Style.color.controlOptional
+			//: LABEL ANDROID IOS
+			text: qsTr("NFC")
+
+			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.NFC
+		}
+		GButton {
+			Layout.alignment: Qt.AlignHCenter
+			style: Style.color.controlOptional
+			//: LABEL ANDROID IOS
+			text: qsTr("WiFi")
+
+			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.REMOTE_IFD
+		}
+		GButton {
+			Layout.alignment: Qt.AlignHCenter
+			style: Style.color.controlOptional
+			//: LABEL ANDROID IOS
+			text: qsTr("SMART")
+			visible: ApplicationModel.isSmartSupported
+
+			onClicked: root.workflowModel.readerPluginType = ReaderManagerPluginType.SMART
+		}
+		GSpacer {
+			Layout.fillHeight: true
+		}
 	}
 }

@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief UiPlugin implementation of full automatic authentication.
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "UiPlugin.h"
+
+#include "ReaderInfo.h"
+
+#include <utility>
 
 class test_UiPluginAutomatic;
 
@@ -33,6 +33,8 @@ class UiPluginAutomatic
 		void handleInsertCard();
 		void handleInsertCardScanFinished();
 		void handlePassword();
+		std::pair<QString, QVariant> getOptionalData(const ReaderInfo& pInfo) const;
+		QString getEnvVar(const char* pEnv, const QString& pDefault = QString()) const;
 
 	private Q_SLOTS:
 		void onApplicationStarted() override;

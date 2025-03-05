@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -64,19 +64,19 @@ MockReader* MockReaderManagerPlugin::addReader(const QString& pReaderName, Reade
 	MockReader* mockReader = nullptr;
 
 	QMetaObject::invokeMethod(this, [this, pReaderName, pType] {
-			auto* reader = new MockReader(pReaderName, pType);
-			reader->setParent(this);
+				auto* reader = new MockReader(pReaderName, pType);
+				reader->setParent(this);
 
-			connect(reader, &Reader::fireCardInserted, this, &ReaderManagerPlugin::fireCardInserted);
-			connect(reader, &Reader::fireCardRemoved, this, &ReaderManagerPlugin::fireCardRemoved);
-			connect(reader, &Reader::fireCardInfoChanged, this, &ReaderManagerPlugin::fireCardInfoChanged);
-			connect(reader, &Reader::fireReaderPropertiesUpdated, this, &ReaderManagerPlugin::fireReaderPropertiesUpdated);
+				connect(reader, &Reader::fireCardInserted, this, &ReaderManagerPlugin::fireCardInserted);
+				connect(reader, &Reader::fireCardRemoved, this, &ReaderManagerPlugin::fireCardRemoved);
+				connect(reader, &Reader::fireCardInfoChanged, this, &ReaderManagerPlugin::fireCardInfoChanged);
+				connect(reader, &Reader::fireReaderPropertiesUpdated, this, &ReaderManagerPlugin::fireReaderPropertiesUpdated);
 
-			mReaders.insert(pReaderName, reader);
-			Q_EMIT fireReaderAdded(reader->getReaderInfo());
+				mReaders.insert(pReaderName, reader);
+				Q_EMIT fireReaderAdded(reader->getReaderInfo());
 
-			return reader;
-		}, Qt::BlockingQueuedConnection, &mockReader);
+				return reader;
+			}, Qt::BlockingQueuedConnection, &mockReader);
 
 	QCoreApplication::processEvents();
 	return mockReader;
@@ -86,12 +86,12 @@ MockReader* MockReaderManagerPlugin::addReader(const QString& pReaderName, Reade
 void MockReaderManagerPlugin::removeReader(const QString& pReaderName)
 {
 	QMetaObject::invokeMethod(this, [this, pReaderName] {
-			if (auto reader = mReaders.take(pReaderName))
-			{
-				Q_EMIT fireReaderRemoved(reader->getReaderInfo());
-				delete reader;
-			}
-		}, Qt::BlockingQueuedConnection);
+				if (auto reader = mReaders.take(pReaderName))
+				{
+					Q_EMIT fireReaderRemoved(reader->getReaderInfo());
+					delete reader;
+				}
+			}, Qt::BlockingQueuedConnection);
 	QCoreApplication::processEvents();
 }
 
@@ -101,8 +101,8 @@ void MockReaderManagerPlugin::removeAllReader()
 	QList<Reader*> readerList;
 
 	QMetaObject::invokeMethod(this, [this] {
-			return getReaders();
-		}, Qt::BlockingQueuedConnection, &readerList);
+				return getReaders();
+			}, Qt::BlockingQueuedConnection, &readerList);
 
 	for (auto reader : std::as_const(readerList))
 	{

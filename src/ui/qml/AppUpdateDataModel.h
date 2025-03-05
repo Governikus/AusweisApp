@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QtQml/qqmlregistration.h>
 
+class test_AppUpdateDataModel;
 
 namespace governikus
 {
@@ -21,6 +22,7 @@ class AppUpdateDataModel
 	QML_UNCREATABLE("Used by SettingsModel only")
 	QML_ELEMENT
 	friend class Env;
+	friend class ::test_AppUpdateDataModel;
 
 	Q_PROPERTY(bool updateAvailable READ isUpdateAvailable NOTIFY fireAppUpdateDataChanged)
 	Q_PROPERTY(bool missingPlatform READ isMissingPlatform NOTIFY fireAppUpdateDataChanged)
@@ -46,6 +48,9 @@ class AppUpdateDataModel
 
 		AppUpdateDataModel();
 		~AppUpdateDataModel() override = default;
+
+		QString errorFromStatusCode(GlobalStatus::Code pCode) const;
+		QString supportInfoFromStatusCode(GlobalStatus::Code pCode) const;
 
 	private Q_SLOTS:
 		void onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pStatus);
@@ -73,7 +78,8 @@ class AppUpdateDataModel
 	Q_SIGNALS:
 		void fireAppUpdateDataChanged();
 		void fireDownloadProgressChanged();
-		void fireAppUpdateFailed(GlobalStatus::Code pError);
+		void fireAppUpdateAborted();
+		void fireAppUpdateFailed(QString pError, QString pSupportInfo);
 		void fireAppDownloadFinished();
 };
 

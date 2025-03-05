@@ -10,7 +10,7 @@ Unterstützte C++17 Compiler:
 
 - Clang >= 5.0
 
-- MSVC >= 2017
+- MSVC >= 2019
 
 
 Notwendige Bibliotheken:

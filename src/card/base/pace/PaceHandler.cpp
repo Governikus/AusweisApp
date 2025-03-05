@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/PaceHandler.h"
@@ -148,7 +148,7 @@ CardReturnCode PaceHandler::transmitMSESetAT(PacePasswordId pPasswordId)
 {
 	ASN1Struct cmdData;
 	cmdData.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, mPaceInfo->getOid());
-	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, pPasswordId);
+	cmdData.append(ASN1Struct::PASSWORD_REFERENCE, pPasswordId);
 	cmdData.append(ASN1Struct::PRIVATE_KEY_REFERENCE, mPaceInfo->getParameterId());
 	if (!mChat.isNull())
 	{

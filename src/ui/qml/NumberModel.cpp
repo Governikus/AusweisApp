@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "NumberModel.h"
@@ -280,8 +280,7 @@ CardReturnCode NumberModel::getInputErrorCode() const
 			|| mContext->getLastPaceResult() == CardReturnCode::OK
 			|| mContext->getLastPaceResult() == CardReturnCode::OK_PUK
 			|| mContext->getLastPaceResult() == CardReturnCode::OK_CAN
-			|| mContext->getLastPaceResult() == CardReturnCode::CANCELLATION_BY_USER
-			|| mContext->getCardConnection().isNull())
+			|| mContext->getLastPaceResult() == CardReturnCode::CANCELLATION_BY_USER)
 	{
 		return CardReturnCode::OK;
 	}

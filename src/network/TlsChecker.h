@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Helper to check certificates and other security stuff of TLS/SSL.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

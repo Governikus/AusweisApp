@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginFunctional.h"
 
-#include "AusweisApp2_p.h"
+#include "AusweisApp_p.h"
 
 #include "AppSettings.h"
 #include "Env.h"
@@ -46,8 +46,8 @@ bool UiPluginFunctional::initialize()
 
 void UiPluginFunctional::onApplicationStarted()
 {
-	ausweisapp2_started_internal();
-	auto callback = ausweisapp2_get_callback_internal();
+	ausweisapp_started_internal();
+	auto callback = ausweisapp_get_callback_internal();
 	if (callback == nullptr)
 	{
 		qDebug() << "No callback registered";
@@ -92,7 +92,7 @@ void UiPluginFunctional::onWorkflowFinished(const QSharedPointer<WorkflowRequest
 
 void UiPluginFunctional::onJsonMessage(const QByteArray& pMessage)
 {
-	auto callback = ausweisapp2_get_callback_internal();
+	auto callback = ausweisapp_get_callback_internal();
 	if (callback == nullptr)
 	{
 		qDebug() << "No callback registered";

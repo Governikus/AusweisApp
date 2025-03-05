@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEnterNewPacePinIfd.h"
@@ -42,8 +42,8 @@ void StateEnterNewPacePinIfd::onEntry(QEvent* pEvent)
 	{
 		const auto& handler = getContext()->getIfdServer()->getMessageHandler();
 		*this << connect(handler.data(), &ServerMessageHandler::destroyed, this, [this]{
-				onUserError(StatusCode::INPUT_CANCELLED);
-			});
+					onUserError(StatusCode::INPUT_CANCELLED);
+				});
 	}
 
 	*this << connect(getContext().data(), &IfdServiceContext::fireUserError, this, &StateEnterNewPacePinIfd::onUserError);

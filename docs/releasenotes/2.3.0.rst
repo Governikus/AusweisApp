@@ -1,0 +1,27 @@
+AusweisApp 2.3.0
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 06. März 2025
+
+
+Anwender
+""""""""
+- Einführung eines Onboardings.
+
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- macOS Monterey 12 wird nicht mehr unterstützt.
+
+- iOS 14 und 15 werden nicht mehr unterstützt.
+
+
+Entwickler
+""""""""""
+- Der integrierte Simulator führt die Terminal Authentication
+  jetzt vollständig durch anstatt jede Eingabe zu akzeptieren.
+
+- Aktualisierung vom Android NDK auf r27c (27.2.12479018).
+
+- Aktualisierung von Qt auf die Version 6.8.1.
+
+- Aktualisierung von OpenSSL auf die Version 3.4.1.

@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
 
 #include "Env.h"
+#include "SettingsModel.h"
 #include "UiLoader.h"
 
 #include <QJniEnvironment>
@@ -23,11 +24,11 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifyConfig
 	Q_UNUSED(pEnv)
 	Q_UNUSED(pObj)
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			if (auto* uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>())
-			{
-				Q_EMIT uiPlugin->fireAppConfigChanged();
-			}
-		}, Qt::QueuedConnection);
+				if (auto* uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>())
+				{
+					Q_EMIT uiPlugin->fireAppConfigChanged();
+				}
+			}, Qt::QueuedConnection);
 }
 
 
@@ -65,4 +66,12 @@ qreal UiPluginQml::getSystemFontScaleFactor() const
 }
 
 
+}
+
+void UiPluginQml::onUserDarkModeChanged() const
+{
+	if (QJniObject activity = QNativeInterface::QAndroidApplication::context(); activity.isValid())
+	{
+		activity.callMethod<void>("setAppearanceLightStatusBars", "(Z)V", !isDarkModeEnabled());
+	}
 }

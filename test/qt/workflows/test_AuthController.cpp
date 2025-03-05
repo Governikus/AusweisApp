@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AuthController.h"
@@ -31,7 +31,7 @@ class test_AuthController
 			QVERIFY(context->isActivateUi());
 			QCOMPARE(context->getActivationUrl(), url);
 			QCOMPARE(context->getBrowserHandler()(context), QStringLiteral("HelloWorld"));
-			QCOMPARE(request->getData().value<int>(), 42);
+					QCOMPARE(request->getData().value<int>(), 42);
 			QCOMPARE(context->isSkipMobileRedirect(), false);
 
 			context->setWorkflowFinished(true);

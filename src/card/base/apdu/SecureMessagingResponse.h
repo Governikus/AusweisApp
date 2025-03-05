@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Response APDU for SecureMessaging
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -32,7 +28,7 @@ class SecureMessagingResponse
 		explicit SecureMessagingResponse(const ResponseApdu& pApdu);
 
 		/*!
-		 * Returns the cryptographic checsum.
+		 * Returns the cryptographic checksum.
 		 */
 		[[nodiscard]] QByteArray getMac() const;
 

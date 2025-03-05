@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginWebService.h"
@@ -81,13 +81,13 @@ bool UiPluginWebService::listening()
 
 		if (showMessage.isEmpty())
 		{
-			//: ERROR ALL_PLATFORMS An unknown programme is using the local port on which the AA2 listens.
+			//: ERROR ALL_PLATFORMS An unknown program is using the local port on which the AA listens.
 			showMessage = tr("An unknown program uses the required port (%1). Please exit the other program and try again!").arg(port);
 		}
 
 		if (!serverAppName.isEmpty())
 		{
-			//: ERROR ALL_PLATFORMS A known programme is using the local port on which the AA2 listens.
+			//: ERROR ALL_PLATFORMS A known program is using the local port on which the AA listens.
 			showMessage = tr("The program (%1) uses the required port (%2). Please close %1 and try again!").arg(serverAppName).arg(port);
 		}
 	}

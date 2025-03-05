@@ -1,8 +1,12 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "pace/ec/EcUtil.h"
+
+#include "SimulatorFileSystem.h"
+
+#include "Converter.h"
 
 #include <QSharedPointer>
 
@@ -139,17 +143,21 @@ class test_EcUtil
 
 		void getEncodedPublicKey()
 		{
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
-			QVERIFY(EcUtil::getEncodedPublicKey(nullptr).isNull());
-#endif
+			QVERIFY(EcUtil::getEncodedPublicKey(nullptr, true).isNull());
+			QVERIFY(EcUtil::getEncodedPublicKey(nullptr, false).isNull());
+
+			const auto& key = SimulatorFileSystem().getKey(41);
+			QCOMPARE(EcUtil::getEncodedPublicKey(key, true), QByteArray::fromHex("19D4B7447788B0E1993DB35500999627E739A4E5E35F02D8FB07D6122E76567F"));
+			QCOMPARE(EcUtil::getEncodedPublicKey(key, false), QByteArray::fromHex("0419D4B7447788B0E1993DB35500999627E739A4E5E35F02D8FB07D6122E76567F17758D7A3AA6943EF23E5E2909B3E8B31BFAA4544C2CBF1FB487F31FF239C8F8"));
 		}
 
 
 		void getPrivateKey()
 		{
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 			QVERIFY(EcUtil::getPrivateKey(nullptr).isNull());
-#endif
+
+			const auto& key = SimulatorFileSystem().getKey(41);
+			QCOMPARE(Converter::toHex(EcUtil::getPrivateKey(key).data()), QByteArray("A07EB62E891DAA84643E0AFCC1AF006891B669B8F51E379477DBEAB8C987A610"));
 		}
 
 

@@ -1,0 +1,131 @@
+From ef6320938ced9729ade5f3ef91846e4ce36892e7 Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Mon, 9 Dec 2024 16:13:08 +0100
+Subject: Check for valid QAccessibleInterface before invoking action
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+To avoid illegal access, the change ensures that the QAccessibleInterface
+is non-null and valid before accessing its QAccessibleActionInterface.
+
+The check for the validity was also added to existing code which
+previously only checked for the QAccessibleInterface not being null.
+
+Fixes: QTBUG-132059
+Pick-to: 6.8 6.9
+Change-Id: I69fc4f9bb052ded8f188032d324666d0c00b9c3c
+Reviewed-by: Michael Weghorn <m.weghorn@posteo.de>
+Reviewed-by: Lars Schmertmann <lars.schmertmann@governikus.de>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(cherry picked from commit 279c891ddf0ad10dd86c8fc836ce385df57593c4)
+---
+ .../platforms/ios/quiaccessibilityelement.mm  | 32 +++++++++++++++----
+ 1 file changed, 26 insertions(+), 6 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+index fa54f61967eae27de6ac4531a724ae4060f86910..754ad0d9c01d2818e64a33ab5097be28d3e71c9e 100644
+--- x/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
++++ y/qtbase/src/plugins/platforms/ios/quiaccessibilityelement.mm
+@@ -64,7 +64,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (NSString*)accessibilityLabel
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return @"";
+     }
+@@ -76,7 +76,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (NSString*)accessibilityIdentifier
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return @"";
+     }
+@@ -86,7 +86,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (NSString*)accessibilityHint
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return @"";
+     }
+@@ -96,7 +96,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (NSString*)accessibilityValue
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return @"";
+     }
+@@ -121,7 +121,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (CGRect)accessibilityFrame
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return CGRect();
+     }
+@@ -135,7 +135,7 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+     UIAccessibilityTraits traits = UIAccessibilityTraitNone;
+ 
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
+-    if (!iface) {
++    if (!iface || !iface->isValid()) {
+         qWarning() << "invalid accessible interface for: " << self.axid;
+         return traits;
+     }
+@@ -177,6 +177,11 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (BOOL)accessibilityActivate
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return NO;
++    }
++
+     if (QAccessibleActionInterface *action = iface->actionInterface()) {
+         if (action->actionNames().contains(QAccessibleActionInterface::pressAction())) {
+             action->doAction(QAccessibleActionInterface::pressAction());
+@@ -192,6 +197,11 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (void)accessibilityIncrement
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return;
++    }
++
+     if (QAccessibleActionInterface *action = iface->actionInterface())
+         action->doAction(QAccessibleActionInterface::increaseAction());
+ }
+@@ -199,6 +209,11 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (void)accessibilityDecrement
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return;
++    }
++
+     if (QAccessibleActionInterface *action = iface->actionInterface())
+         action->doAction(QAccessibleActionInterface::decreaseAction());
+ }
+@@ -206,6 +221,11 @@ QT_NAMESPACE_ALIAS_OBJC_CLASS(QMacAccessibilityElement);
+ - (BOOL)accessibilityScroll:(UIAccessibilityScrollDirection)direction
+ {
+     QAccessibleInterface *iface = QAccessible::accessibleInterface(self.axid);
++    if (!iface || !iface->isValid()) {
++        qWarning() << "invalid accessible interface for: " << self.axid;
++        return NO;
++    }
++
+     QAccessibleActionInterface *action = iface->actionInterface();
+     if (!action)
+         return NO;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestAuthContext.h"
@@ -19,35 +19,18 @@ TestAuthContext::TestAuthContext(const QString& pFileName)
 {
 	if (pFileName.isEmpty())
 	{
-		mAccessRightManager.reset(new AccessRightManager(nullptr, nullptr));
+		mAccessRightManager.reset(new AccessRightManager(nullptr, nullptr, nullptr));
 	}
 	else
 	{
 		QSharedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(TestFileHelper::readFile(pFileName))));
 		setDidAuthenticateEac1(eac1);
-		initAccessRightManager(getTerminalCvc(eac1));
-		setDvCvc(eac1->getCvCertificates().at(1));
+		setDvCvc(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+		initAccessRightManager(eac1->getCvCertificates({AccessRole::AT}).at(0));
 
 		QSharedPointer<DIDAuthenticateEAC2> eac2(static_cast<DIDAuthenticateEAC2*>(DidAuthenticateEac2Parser().parse(TestFileHelper::readFile(":/paos/DIDAuthenticateEAC2.xml"_L1))));
 		setDidAuthenticateEac2(eac2);
 	}
-
-}
-
-
-const QSharedPointer<const CVCertificate> TestAuthContext::getTerminalCvc(QSharedPointer<DIDAuthenticateEAC1> pEac1)
-{
-	for (const auto& cvc : pEac1->getCvCertificates())
-	{
-		const auto& cvcAccessRole = cvc->getBody().getCHAT().getAccessRole();
-
-		if (cvcAccessRole == AccessRole::AT)
-		{
-			return cvc;
-		}
-	}
-
-	return QSharedPointer<const CVCertificate>::create();
 }
 
 
@@ -66,7 +49,8 @@ void TestAuthContext::setRequiredAccessRights(const QSet<AccessRight>& pAccessRi
 	qSharedPointerConstCast<CHAT>(mDIDAuthenticateEAC1->getRequiredChat())->setAccessRights(pAccessRights);
 
 	setDidAuthenticateEac1(this->mDIDAuthenticateEAC1);
-	initAccessRightManager(mDIDAuthenticateEAC1->getCvCertificates().at(0));
+	setDvCvc(mDIDAuthenticateEAC1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+	initAccessRightManager(mDIDAuthenticateEAC1->getCvCertificates({AccessRole::AT}).at(0));
 }
 
 
@@ -80,7 +64,8 @@ void TestAuthContext::setOptionalAccessRights(const QSet<AccessRight>& pAccessRi
 	qSharedPointerConstCast<CHAT>(mDIDAuthenticateEAC1->getOptionalChat())->setAccessRights(pAccessRights);
 
 	setDidAuthenticateEac1(mDIDAuthenticateEAC1);
-	initAccessRightManager(mDIDAuthenticateEAC1->getCvCertificates().at(0));
+	setDvCvc(mDIDAuthenticateEAC1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+	initAccessRightManager(mDIDAuthenticateEAC1->getCvCertificates({AccessRole::AT}).at(0));
 }
 
 

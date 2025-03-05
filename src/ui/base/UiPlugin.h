@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Abstract layer to UI implementations.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,9 +26,9 @@ defineEnumTypeQmlExposed(UiModule,
 		PINMANAGEMENT,
 		HELP,
 		SELF_AUTHENTICATION,
+		ONBOARDING,
 
 		// Desktop only
-		TUTORIAL,
 		UPDATEINFORMATION,
 
 		// Mobile only
@@ -74,6 +70,7 @@ class UiPlugin
 		void fireQuitApplicationRequest(int pExitCode = EXIT_SUCCESS);
 		void fireCloseReminderFinished(bool pDontRemindAgain);
 		void fireApplicationActivated();
+		void fireSystemSettingsChanged();
 
 		void fireUiDominationRequest(const UiPlugin* pUi, const QString& pInformation);
 		void fireUiDominationRelease();

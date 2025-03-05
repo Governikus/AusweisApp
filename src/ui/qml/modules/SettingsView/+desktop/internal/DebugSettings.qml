@@ -1,27 +1,28 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
-import Governikus.Style
 import Governikus.Type
+import Governikus.Style
 
 ColumnLayout {
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	GPane {
 		Layout.fillWidth: true
 		contentPadding: 0
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 
 		//: LABEL DESKTOP
 		title: qsTr("Create dummy entries")
 
 		RowLayout {
-			Layout.leftMargin: Constants.pane_padding
-			Layout.rightMargin: Constants.pane_padding
-			Layout.topMargin: Constants.pane_padding
+			Layout.leftMargin: Style.dimens.pane_padding
+			Layout.rightMargin: Style.dimens.pane_padding
+			Layout.topMargin: Style.dimens.pane_padding
 
 			GButton {
 				//: LABEL DESKTOP
@@ -39,6 +40,7 @@ ColumnLayout {
 			GSwitch {
 				Layout.fillWidth: true
 				checked: SettingsModel.showBetaTesting
+				enabled: UiPluginModel.developerVersion
 				//: LABEL DESKTOP
 				text: qsTr("Show beta testing image")
 
@@ -63,8 +65,8 @@ ColumnLayout {
 			}
 		}
 		GButton {
-			Layout.leftMargin: Constants.pane_padding
-			Layout.rightMargin: Constants.pane_padding
+			Layout.leftMargin: Style.dimens.pane_padding
+			Layout.rightMargin: Style.dimens.pane_padding
 			//: LABEL DESKTOP
 			text: qsTr("Reset hideable dialogs")
 
@@ -73,15 +75,11 @@ ColumnLayout {
 			}
 		}
 		GText {
-			Layout.bottomMargin: Constants.pane_padding
-			Layout.leftMargin: Constants.pane_padding
-			Layout.rightMargin: Constants.pane_padding
-			activeFocusOnTab: true
+			Layout.bottomMargin: Style.dimens.pane_padding
+			Layout.leftMargin: Style.dimens.pane_padding
+			Layout.rightMargin: Style.dimens.pane_padding
 			//: LABEL DESKTOP
 			text: qsTr("Show Transport PIN reminder, store feedback and close reminder dialogs.")
-
-			FocusFrame {
-			}
 		}
 	}
 }

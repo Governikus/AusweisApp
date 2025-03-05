@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
@@ -12,20 +13,26 @@ MouseArea {
 	id: root
 
 	property alias description: descriptionText.text
-	property alias highlightTitle: titleText.font.bold
-	property alias linkInactive: linkQualityItem.inactive
-	property alias linkQuality: linkQualityItem.percent
+	required property var deviceId
+	required property bool isLastAddedDevice
+	required property bool isNetworkVisible
+	required property bool isPaired
+	required property bool isSupported
+	required property int linkQualityInPercent
 	property alias linkQualityVisible: linkQualityItem.visible
-	property alias title: titleText.text
+	required property string remoteDeviceName
+	required property string remoteDeviceStatus
 
-	Accessible.name: qsTr("Device %1. %2.").arg(title).arg(description)
+	signal activate(var pIsSupported, var pDeviceId)
+
+	Accessible.name: qsTr("Device %1. %2.").arg(titleText.text).arg(description)
 	Accessible.role: Accessible.ListItem
 	activeFocusOnTab: true
 	implicitHeight: content.implicitHeight
 	implicitWidth: content.implicitWidth
 
-	Accessible.onPressAction: clicked(null)
 	Keys.onSpacePressed: clicked(null)
+	onClicked: activate(isSupported, deviceId)
 
 	FocusFrame {
 		marginFactor: 3
@@ -34,7 +41,7 @@ MouseArea {
 		id: content
 
 		anchors.fill: parent
-		spacing: Constants.groupbox_spacing
+		spacing: Style.dimens.groupbox_spacing
 
 		ColumnLayout {
 			Layout.fillWidth: true
@@ -45,7 +52,9 @@ MouseArea {
 
 				Accessible.ignored: true
 				elide: Text.ElideRight
+				font.bold: root.isLastAddedDevice
 				maximumLineCount: 1
+				text: root.remoteDeviceName + (root.isSupported ? "" : (" (" + root.remoteDeviceStatus + ")"))
 				textFormat: Text.PlainText
 				textStyle: Style.text.subline
 			}
@@ -61,9 +70,11 @@ MouseArea {
 		GSpacer {
 			Layout.fillWidth: true
 		}
-		LinkQuality {
+		LinkQualityAnimation {
 			id: linkQualityItem
 
+			inactive: !root.isNetworkVisible && root.isPaired
+			percent: root.linkQualityInPercent
 		}
 	}
 }

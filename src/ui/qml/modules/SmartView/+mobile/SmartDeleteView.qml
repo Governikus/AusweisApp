@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import Governikus.Type
@@ -26,25 +26,25 @@ SmartDeleteBaseView {
 	onDeleteConfirmed: {
 		setLockedAndHidden();
 		pushProgressView({
-			"title": root.title,
+			title: root.title,
 			//: LABEL ANDROID IOS
-			"text": qsTr("Deleting Smart-eID")
+			text: qsTr("Deleting Smart-eID")
 		});
 		SmartModel.deletePersonalization();
 	}
 
 	Connections {
 		function onFireDeletePersonalizationDone(pSuccess) {
-			pushResultView({
-				"success": pSuccess,
-				"title": root.title,
-				"text": (pSuccess ?
+			root.pushResultView({
+				success: pSuccess,
+				title: root.title,
+				text: (pSuccess ?
 					//: LABEL ANDROID IOS
-					qsTr("You have successfuly deleted your Smart-eID.") :
+					qsTr("You have successfully deleted your Smart-eID.") :
 					//: LABEL ANDROID IOS
 					qsTr("The Smart-eID could not be successfully deleted from your device.")),
 				//: LABEL ANDROID IOS
-				"buttonText": qsTr("Back to start page")
+				buttonText: qsTr("Back to start page")
 			});
 		}
 

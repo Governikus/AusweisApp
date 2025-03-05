@@ -1,108 +1,114 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
+import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type
-import Governikus.View
 
-Column {
+GPane {
 	id: root
 
-	spacing: Constants.component_spacing
+	property bool enablePaneOptic: true
+	readonly property bool hasConnectedReader: readerRepeater.count > 0
+	readonly property string hintTextBase: {
+		//: LABEL DESKTOP
+		qsTr("After connecting a new card reader it may take a few seconds to recognize the driver.") + "<br>" +
+		//: LABEL DESKTOP
+		qsTr("It may be necessary to restart your system after installing the driver.");
+	}
+	property alias showHint: hintAndDateText.visible
+
+	color: root.enablePaneOptic ? Style.color.pane.background.basic : Style.color.transparent
+	contentPadding: root.enablePaneOptic ? Style.dimens.pane_padding : 0
+	layer.enabled: root.enablePaneOptic
+	//: LABEL DESKTOP
+	title: qsTr("Connected USB card readers")
+	titleMargins: root.enablePaneOptic ? Style.dimens.pane_padding : 0
 
 	ReaderScanEnabler {
 		id: readerScanEnabler
 
 		pluginType: ReaderManagerPluginType.PCSC
 	}
-	GPane {
+	ColumnLayout {
 		//: LABEL DESKTOP
-		title: qsTr("Connected USB card readers")
-		width: parent.width
+		Accessible.name: qsTr("List of connected card readers.")
+		Accessible.role: Accessible.List
+		spacing: Style.dimens.pane_spacing
+		visible: root.hasConnectedReader
 
-		Column {
-			Accessible.name: qsTr("List of connected card readers.")
-			Accessible.role: Accessible.List
-			Layout.fillWidth: true
-			spacing: Constants.component_spacing
-			visible: readerRepeater.count > 0
+		Repeater {
+			id: readerRepeater
 
-			Repeater {
-				id: readerRepeater
+			model: ReaderModel.sortedModel
 
-				model: ReaderModel.sortedModel
-
-				delegate: CardReaderDelegate {
-					width: parent.width
-				}
+			delegate: CardReaderDelegate {
+				Layout.fillWidth: true
 			}
 		}
-		RowLayout {
-			spacing: Constants.groupbox_spacing
-			visible: !readerScanEnabler.scanRunning
-			width: parent.width
+	}
+	RowLayout {
+		spacing: Style.dimens.groupbox_spacing
+		visible: !readerScanEnabler.scanRunning
 
-			TintableIcon {
-				source: "qrc:///images/status_warning.svg"
-				sourceSize.height: Style.dimens.large_icon_size
-				tintColor: Style.color.warning
-			}
-			GText {
-				activeFocusOnTab: true
-				text: qsTr("The connection to your system's smartcard service could not be established. You can try to resolve this issue and restart the scan.")
-
-				FocusFrame {
-				}
-			}
-			GButton {
-				Layout.minimumWidth: implicitWidth
-				text: qsTr("Restart smartcard scan")
-
-				onClicked: readerScanEnabler.restartScan()
-			}
+		StatusAnimation {
+			sourceSize.height: Style.dimens.large_icon_size
+			symbol.type: Symbol.Type.WARNING
 		}
 		GText {
-			id: placeHolderText
-
-			activeFocusOnTab: true
-			text: qsTr("No connected card reader found.")
-			visible: readerRepeater.count === 0
-			width: parent.width
-
-			FocusFrame {
-			}
+			//: LABEL DESKTOP
+			text: qsTr("The connection to your system's smartcard service could not be established. You can try to resolve this issue and restart the scan.")
 		}
-		GSeparator {
-			visible: readerRepeater.count === 0
-			width: parent.width
+		GButton {
+			Layout.minimumWidth: implicitWidth
+			//: LABEL DESKTOP
+			text: qsTr("Restart smartcard scan")
+
+			onClicked: readerScanEnabler.restartScan()
 		}
-		RowLayout {
-			id: hintAndDateText
+	}
+	CardReaderDelegate {
+		Layout.fillWidth: true
+		readerHTMLDescription: ""
+		readerImagePath: "qrc:///images/desktop/default_reader.png"
+		readerInstalled: false
+		//: LABEL DESKTOP
+		readerName: qsTr("No card reader connected")
+		readerSupported: true
+		showInstalledSupportedIcon: false
+		visible: !root.hasConnectedReader
+	}
+	GSeparator {
+		Layout.fillWidth: true
+		visible: !root.hasConnectedReader && hintAndDateText.visible
+	}
+	RowLayout {
+		id: hintAndDateText
 
-			Layout.topMargin: Constants.component_spacing
-			spacing: Constants.groupbox_spacing
-			width: parent.width
+		Layout.topMargin: Style.dimens.pane_spacing
+		spacing: Style.dimens.groupbox_spacing
 
-			TintableIcon {
-				source: "qrc:/images/info.svg"
-				sourceSize.height: Style.dimens.large_icon_size
-				tintColor: hintText.color
+		TintableIcon {
+			source: "qrc:/images/info.svg"
+			sourceSize.height: Style.dimens.large_icon_size
+			tintColor: hintText.color
+		}
+		GText {
+			id: hintText
+
+			Layout.alignment: Qt.AlignVCenter
+			color: Style.color.textSubline.basic
+			text: {
+				root.hintTextBase + " " +
+				//: LABEL DESKTOP
+				qsTr("Only connected card readers are shown here.") + " " + ReaderModel.lastUpdatedInformation;
 			}
-			GText {
-				id: hintText
-
-				Layout.alignment: Qt.AlignVCenter
-				activeFocusOnTab: true
-				color: Style.color.textSubline.basic
-				text: qsTr("After connecting a new card reader it may take a few seconds to recognize the driver. It may be necessary to restart your system after installing the driver. Only connected card readers are shown here. %1").arg(ReaderModel.lastUpdatedInformation)
-				verticalAlignment: Text.AlignBottom
-
-				FocusFrame {
-				}
-			}
+			verticalAlignment: Text.AlignBottom
 		}
 	}
 }

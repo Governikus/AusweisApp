@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Animations
@@ -9,15 +9,14 @@ import Governikus.Type
 import Governikus.View
 
 SectionPage {
-	id: baseItem
+	id: root
 
+	property alias headline: headline.text
 	property alias icon: statusIcon.source
 	property alias progressBarVisible: progressBar.visible
 	property alias progressText: progressText.text
 	property alias progressValue: progressBar.value
-	property alias subText: subText.text
-	property alias subTextColor: subText.color
-	property alias text: text.text
+	property alias text: infoText.text
 	property alias tintColor: statusIcon.tintColor
 
 	HourglassAnimation {
@@ -26,7 +25,7 @@ SectionPage {
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.top
-			topMargin: Constants.component_spacing
+			topMargin: Style.dimens.pane_spacing
 		}
 	}
 	TintableIcon {
@@ -38,60 +37,47 @@ SectionPage {
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.top
-			topMargin: Constants.component_spacing
+			topMargin: Style.dimens.pane_spacing
 		}
 	}
 	GText {
-		id: text
+		id: headline
 
-		Accessible.name: text.text
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		textStyle: Style.text.headline
-		visible: text.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		visible: text !== ""
+		width: Math.min(parent.width - (2 * Style.dimens.pane_padding), Style.dimens.max_text_width)
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.verticalCenter
-			topMargin: Constants.component_spacing * 2
-		}
-		FocusFrame {
+			topMargin: Style.dimens.pane_spacing * 2
 		}
 	}
 	GText {
-		id: subText
+		id: infoText
 
-		Accessible.name: subText.text
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
-		textStyle: Style.text.subline
-		visible: subText.text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		visible: text !== ""
+		width: Math.min(parent.width - (2 * Style.dimens.pane_padding), Style.dimens.max_text_width)
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
-			top: text.bottom
-			topMargin: Constants.text_spacing
-		}
-		FocusFrame {
+			top: headline.bottom
+			topMargin: Style.dimens.text_spacing
 		}
 	}
 	GText {
 		id: progressText
 
-		Accessible.name: progressText.text
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		visible: progressBar.visible
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		width: Math.min(parent.width - (2 * Style.dimens.pane_padding), Style.dimens.max_text_width)
 
 		anchors {
 			bottom: progressBar.top
-			bottomMargin: Constants.component_spacing
+			bottomMargin: Style.dimens.pane_spacing
 			horizontalCenter: parent.horizontalCenter
-		}
-		FocusFrame {
 		}
 	}
 	GProgressBar {

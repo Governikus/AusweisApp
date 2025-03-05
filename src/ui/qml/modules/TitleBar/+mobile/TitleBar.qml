@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type
 
 Rectangle {
-	id: titleBar
+	id: root
 
 	property alias enableTileStyle: titlePane.visible
 	property NavigationAction navigationAction
@@ -30,12 +31,12 @@ Rectangle {
 	Rectangle {
 		id: safeAreaBackground
 
-		color: smartEidUsed ? Style.color.card_smart : Style.color.card_eid
-		height: topSafeAreaMargin
+		color: root.smartEidUsed ? Style.color.card_smart : Style.color.background
+		height: root.topSafeAreaMargin
 
 		Behavior on color {
 			ColorAnimation {
-				duration: Constants.animation_duration
+				duration: Style.animation_duration
 			}
 		}
 
@@ -58,7 +59,7 @@ Rectangle {
 	ColumnLayout {
 		id: contentLayout
 
-		spacing: Constants.text_spacing
+		spacing: Style.dimens.text_spacing
 		width: Math.min(parent.width - 2 * Style.dimens.titlebar_padding - UiPluginModel.safeAreaMargins.left - UiPluginModel.safeAreaMargins.right, Style.dimens.max_text_width)
 
 		anchors {
@@ -71,13 +72,13 @@ Rectangle {
 
 			Layout.minimumHeight: Style.dimens.small_icon_size
 			Layout.topMargin: Style.dimens.titlebar_padding
-			enabled: titleBar.navigationAction ? titleBar.navigationAction.enabled : false
-			navAction: titleBar.navigationAction ? titleBar.navigationAction.action : NavigationAction.Action.None
+			enabled: root.navigationAction ? root.navigationAction.enabled : false
+			navAction: root.navigationAction ? root.navigationAction.action : NavigationAction.Action.None
 
-			onClicked: titleBar.navigationAction.clicked()
+			onClicked: root.navigationAction.clicked()
 		}
 		RowLayout {
-			spacing: Constants.component_spacing
+			spacing: Style.dimens.pane_spacing
 
 			GCrossBlendedText {
 				id: titleText
@@ -95,14 +96,13 @@ Rectangle {
 			Item {
 				id: rightActionStack
 
-				property var actionItem: rightAction
+				property var actionItem: root.rightAction
 				property var activeActionItem
 
 				Layout.alignment: Qt.AlignRight
 				children: activeActionItem ? [activeActionItem] : []
 				implicitHeight: activeActionItem ? activeActionItem.implicitHeight : 0
 				implicitWidth: activeActionItem ? activeActionItem.implicitWidth : 0
-				width: activeActionItem ? activeActionItem.implicitWidth : 0
 
 				onActionItemChanged: rightActionStackAnimateOut.start()
 				onActiveActionItemChanged: rightActionStackAnimateIn.start()
@@ -110,7 +110,7 @@ Rectangle {
 				PropertyAnimation {
 					id: rightActionStackAnimateOut
 
-					duration: Constants.animation_duration
+					duration: Style.animation_duration
 					easing.type: Easing.InCubic
 					property: "opacity"
 					target: rightActionStack
@@ -121,7 +121,7 @@ Rectangle {
 				PropertyAnimation {
 					id: rightActionStackAnimateIn
 
-					duration: Constants.animation_duration
+					duration: Style.animation_duration
 					easing.type: Easing.OutCubic
 					property: "opacity"
 					target: rightActionStack
@@ -131,7 +131,7 @@ Rectangle {
 		}
 		GSeparator {
 			Layout.fillWidth: true
-			opacity: titleBar.showSeparator
+			opacity: root.showSeparator
 		}
 	}
 }

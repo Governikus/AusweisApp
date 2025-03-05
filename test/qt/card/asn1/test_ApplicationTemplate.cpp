@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ApplicationTemplate
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ApplicationTemplate.h"

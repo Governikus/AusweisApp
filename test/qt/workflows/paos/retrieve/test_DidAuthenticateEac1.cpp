@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \DidAuthenticateEac1
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/retrieve/DidAuthenticateEac1.h"
@@ -35,6 +31,33 @@ class test_DidAuthenticateEac1
 		void cleanup()
 		{
 			Env::getSingleton<LogHandler>()->resetBacklog();
+		}
+
+
+		void ensureDvAndTerminalCvc_data()
+		{
+			QTest::addColumn<QString>("filename");
+
+			const QStringList sel = QStringList({"DIDAuthenticateEAC1*.xml"_L1});
+			QStringList files = QDir(":/paos"_L1).entryList(sel, QDir::Files);
+			for (const auto& file : files)
+			{
+				QTest::newRow(file.toLatin1().data()) << ":/paos/"_L1 + file;
+			}
+		}
+
+
+		void ensureDvAndTerminalCvc()
+		{
+			QFETCH(QString, filename);
+
+			QByteArray content = TestFileHelper::readFile(filename);
+			QScopedPointer<DIDAuthenticateEAC1> eac1(static_cast<DIDAuthenticateEAC1*>(DidAuthenticateEac1Parser().parse(content)));
+			if (eac1)
+			{
+				QCOMPARE(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).size(), 1);
+				QCOMPARE(eac1->getCvCertificates({AccessRole::AT}).size(), 1);
+			}
 		}
 
 

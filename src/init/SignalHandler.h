@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Implements signal handler for unix and windows.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

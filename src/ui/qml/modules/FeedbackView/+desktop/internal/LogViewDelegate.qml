@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
@@ -10,6 +11,10 @@ import Governikus.Type
 GText {
 	id: root
 
+	required property string level
+	required property string message
+	required property string origin
+
 	function copyTextToClipboard() {
 		ApplicationModel.setClipboardText(root.text);
 		//: INFO DESKTOP Toast message used to confirm the copy of a log entry.
@@ -17,6 +22,7 @@ GText {
 	}
 
 	color: level === "C" ? Style.color.warning : (level === "W" ? Style.color.textSubline.basic : textStyle.textColor)
+	focusFrameVisible: false
 	font.bold: activeFocus
 	font.family: UiPluginModel.fixedFontFamily
 	lineHeight: 1.0

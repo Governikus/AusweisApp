@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TransmitCommand.h"
@@ -29,8 +29,8 @@ TransmitCommand::TransmitCommand(QSharedPointer<CardConnectionWorker> pCardConne
 	, mSecureMessagingStopped(false)
 {
 	connect(pCardConnectionWorker.data(), &CardConnectionWorker::fireSecureMessagingStopped, this, [this](){
-			mSecureMessagingStopped = true;
-		});
+				mSecureMessagingStopped = true;
+			});
 }
 
 

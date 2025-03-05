@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterPuk.h"
@@ -18,10 +18,10 @@ MsgHandlerEnterPuk::MsgHandlerEnterPuk(const QJsonObject& pObj, MsgContext& pCon
 	: MsgHandlerEnterPuk(pContext)
 {
 	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
-		{
-			auto ctx = pContext.getContext();
-			ctx->setPuk(pNumber);
-			ctx->setStateApproved();
-			setVoid();
-		}, 10);
+			{
+				auto ctx = pContext.getContext();
+				ctx->setPuk(pNumber);
+				ctx->setStateApproved();
+				setVoid();
+			}, 10);
 }

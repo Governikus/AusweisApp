@@ -1,15 +1,16 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
+
 import Governikus.Type
 import Governikus.Global
 import Governikus.Style
 
 ColumnLayout {
-	spacing: Constants.text_spacing
+	spacing: Style.dimens.text_spacing
 
 	GText {
 		Layout.alignment: Qt.AlignHCenter

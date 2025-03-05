@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -20,11 +20,11 @@ class IfdClientImpl
 	Q_OBJECT
 
 	private:
-		QMap<QString, int> mErrorCounter;
+		QMap<QByteArray, int> mErrorCounter;
 		QThread mIfdConnectorThread;
 		QPointer<IfdConnector> mIfdConnector;
 		QList<QSharedPointer<IfdListEntry>> mIfdConnectorPending;
-		QStringList mConnectedDeviceIds;
+		QByteArrayList mConnectedDeviceIds;
 
 		void bootstrapConnectorThread();
 		void shutdownConnectorThread();
@@ -33,7 +33,7 @@ class IfdClientImpl
 	protected Q_SLOTS:
 		void onDispatcherCreated(const IfdDescriptor& pIfdDescriptor, const QSharedPointer<IfdDispatcherClient>& pDispatcher);
 		void onDispatcherError(const IfdDescriptor& pIfdDescriptor, IfdErrorCode pErrorCode);
-		void onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 
 	public:
 		IfdClientImpl();
@@ -41,7 +41,7 @@ class IfdClientImpl
 
 		Q_INVOKABLE void establishConnection(const QSharedPointer<IfdListEntry>& pEntry, const QByteArray& pPsk) override;
 
-		QStringList getConnectedDeviceIDs() const override;
+		QByteArrayList getConnectedDeviceIDs() const override;
 
 };
 

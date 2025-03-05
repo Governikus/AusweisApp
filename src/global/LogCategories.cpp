@@ -1,14 +1,9 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Definition of all logging categories.
- *
- * \see Q_LOGGING_CATEGORY
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QLoggingCategory>
+
 
 Q_LOGGING_CATEGORY(card, "card")
 Q_LOGGING_CATEGORY(card_pcsc, "card_pcsc")

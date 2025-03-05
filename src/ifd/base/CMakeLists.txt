@@ -6,4 +6,4 @@
 
 ADD_PLATFORM_LIBRARY(AusweisAppIfd)
 
-target_link_libraries(AusweisAppIfd ${Qt}::Core ${Qt}::WebSockets AusweisAppCard AusweisAppGlobal AusweisAppSecureStorage AusweisAppNetwork AusweisAppSettings)
+target_link_libraries(AusweisAppIfd ${Qt}::Core ${Qt}::WebSockets AusweisAppCard AusweisAppGlobal AusweisAppCrypto AusweisAppSecureStorage AusweisAppNetwork AusweisAppSettings)

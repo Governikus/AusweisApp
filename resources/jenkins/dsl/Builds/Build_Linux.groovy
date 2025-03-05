@@ -20,6 +20,8 @@ j.with
 	{
 		recordCoverage
 		{
+			ignoreParsingErrors(true)
+
 			sourceDirectories
 			{
 				sourceCodeDirectory

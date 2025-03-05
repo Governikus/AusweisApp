@@ -1,29 +1,28 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
+pragma ComponentBehavior: Bound
+
 import QtQuick.Layouts
+
 import Governikus.Global
+import Governikus.Style
 
 GridLayout {
 	id: root
 
 	signal buttonClicked
 
-	columnSpacing: Constants.component_spacing
-	rowSpacing: Constants.component_spacing
+	columnSpacing: Style.dimens.pane_spacing
+	rowSpacing: Style.dimens.pane_spacing
 
 	GRepeater {
 		id: repeater
 
 		delegate: LocationButton {
-			Accessible.description: model.a11yDescription
-			Accessible.name: model.a11yName
 			Layout.fillWidth: true
-			Layout.preferredWidth: Constants.is_desktop ? repeater.maxItemWidth : -1
-			image: model.image
-			language: model.language
-			text: model.text
+			Layout.preferredWidth: Style.is_layout_desktop ? repeater.maxItemWidth : -1
 
 			onClicked: root.buttonClicked()
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateCertificateDescriptionCheck.h"
@@ -9,7 +9,7 @@
 #include "context/AuthContext.h"
 #include "states/StateBuilder.h"
 
-#include "CertificateHelper.h"
+#include "Converter.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -80,7 +80,7 @@ class test_StateCertificateDescriptionCheck
 		void nonMatchingDescription()
 		{
 			QByteArray source = TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1);
-			auto cert = CertificateHelper::fromHex(source);
+			auto cert = Converter::certificatefromHex(source);
 			mAuthContext->initAccessRightManager(cert);
 
 			QSignalSpy spy(mState.data(), &StateCertificateDescriptionCheck::fireAbort);

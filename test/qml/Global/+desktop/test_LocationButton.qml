@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -10,7 +10,13 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global; LocationButton {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; LocationButton {
+			a11yDescription: \"a11yDescription\"
+			a11yName: \"a11yName\"
+			image: \"qrc:///images/npa.svg\"
+			language: \"language\"
+			languageText: \"languageText\"
+		}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();

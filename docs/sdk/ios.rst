@@ -18,7 +18,7 @@ steps are necessary in order to communicate with the |AppName| SDK.
 
 Use XCFramework
 ---------------
-The interface ``AusweisApp2.h`` of the SDK for iOS is provided as **C-Header**
+The interface ``AusweisApp.h`` of the SDK for iOS is provided as **C-Header**
 that you need to import/include into your application. It grants access to
 start and shutdown a separate background thread with the integrated
 |AppName| core.
@@ -44,24 +44,27 @@ project under the following menu.
 Import
 ^^^^^^
 After you added the repository to your Xcode project you can import the
-module via ``import AusweisApp2`` in Swift classes or ``@import AusweisApp2;``
-in Objective-C classes and call the functions of the ``AusweisApp2.h`` header.
+module via ``import AusweisApp`` in Swift classes or ``@import AusweisApp;``
+in Objective-C classes and call the functions of the ``AusweisApp.h`` header.
 
 .. code-block:: c
 
-  typedef void (* AusweisApp2Callback)(const char* pMsg);
-  bool ausweisapp2_init(AusweisApp2Callback pCallback, const char* pCmdline);
-  void ausweisapp2_shutdown(void);
-  bool ausweisapp2_is_running(void);
-  void ausweisapp2_send(const char* pCmd);
+  typedef void (* AusweisAppCallback)(const char* pMsg);
+  bool ausweisapp_init(AusweisAppCallback pCallback, const char* pCmdline);
+  void ausweisapp_shutdown(void);
+  bool ausweisapp_is_running(void);
+  void ausweisapp_send(const char* pCmd);
 
 .. versionchanged:: 1.24.0
    Added optional parameter ``pCmdline`` to function ``ausweisapp2_init``.
 
+.. versionchanged:: 2.3.0
+   Renamed function from ``ausweisapp2_`` to ``ausweisapp_`` and header from
+   ``AusweisApp2.h`` to ``AusweisApp.h``.
 
 First, you need to define a callback function that will be called by the |AppName|
 to request or provide additional information. If your application initializes the
-SDK you must pass that callback to ``ausweisapp2_init``. That function will return
+SDK you must pass that callback to ``ausweisapp_init``. That function will return
 ``false`` if the callback is ``NULL`` or the SDK is already running.
 The Parameter ``pCmdline`` is optional and can be ``NULL``. This allows your application
 to provide additional commandline arguments like ``--no-loghandler``.
@@ -69,16 +72,16 @@ to provide additional commandline arguments like ``--no-loghandler``.
 After you called that function the |AppName| SDK will start up. If the
 initialization is finished the SDK calls your callback function once with
 ``NULL`` as parameter to indicate that it is ready to accept :doc:`commands`.
-Do not call ``ausweisapp2_send`` until your callback received that message, otherwise
+Do not call ``ausweisapp_send`` until your callback received that message, otherwise
 that command will be ignored.
 
-Once the SDK is ready to go you can send :doc:`commands` by ``ausweisapp2_send``.
+Once the SDK is ready to go you can send :doc:`commands` by ``ausweisapp_send``.
 Your callback will receive the :doc:`messages`.
 
-If you call ``ausweisapp2_shutdown`` the |AppName| SDK will be terminated. This
+If you call ``ausweisapp_shutdown`` the |AppName| SDK will be terminated. This
 function joins the thread of the |AppName| and blocks until the |AppName| is
 finished. You should not call this function in your callback as it is called
-by the |AppName| thread. In that case ``ausweisapp2_shutdown`` cannot be a
+by the |AppName| thread. In that case ``ausweisapp_shutdown`` cannot be a
 blocking call to avoid a deadlock.
 If you call this function while a workflow is running the workflow will be
 canceled automatically before the shutdown.
@@ -88,7 +91,7 @@ canceled automatically before the shutdown.
    Your callback will be called by the separate |AppName| thread. Do **not**
    make long running or blocking calls! It is recommended to use an async dispatcher.
 
-   Also, you should not call ``ausweisapp2_send`` or ``ausweisapp2_shutdown`` within
+   Also, you should not call ``ausweisapp_send`` or ``ausweisapp_shutdown`` within
    your callback function.
 
 

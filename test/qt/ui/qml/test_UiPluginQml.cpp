@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
@@ -23,6 +23,7 @@
 #include "RemoteServiceModel.h"
 #include "ResourceLoader.h"
 #include "SelfAuthModel.h"
+#include "SettingsModel.h"
 #include "VolatileSettings.h"
 
 #include "TestWorkflowController.h"
@@ -44,6 +45,13 @@ class test_UiPluginQml
 		void init()
 		{
 			qunsetenv("OVERRIDE_PLATFORM");
+		}
+
+
+		void test_getQtVersion()
+		{
+			UiPluginQml plugin;
+			QVERIFY(!plugin.getQtVersion().isEmpty());
 		}
 
 
@@ -154,20 +162,40 @@ class test_UiPluginQml
 		}
 
 
-		void test_setDarkMode()
+		void test_darkModeEnabled_data()
 		{
+			QTest::addColumn<SettingsModel::ModeOption>("userDarkMode");
+			QTest::addColumn<bool>("osDarkMode");
+			QTest::addColumn<int>("expectedSpyCount");
+			QTest::addColumn<bool>("darkModeEnabled");
+
+			QTest::addRow("AUTO - OS Light Mode") << SettingsModel::ModeOption::AUTO << false << 0 << false;
+			QTest::addRow("AUTO - OS Dark Mode") << SettingsModel::ModeOption::AUTO << true << 1 << true;
+			QTest::addRow("ON - OS Light Mode") << SettingsModel::ModeOption::ON << false << 0 << true;
+			QTest::addRow("ON - OS Dark Mode") << SettingsModel::ModeOption::ON << true << 1 << true;
+			QTest::addRow("OFF - OS Light Mode") << SettingsModel::ModeOption::OFF << false << 0 << false;
+			QTest::addRow("OFF - OS Dark Mode") << SettingsModel::ModeOption::OFF << true << 1 << false;
+		}
+
+
+		void test_darkModeEnabled()
+		{
+			QFETCH(SettingsModel::ModeOption, userDarkMode);
+			QFETCH(bool, osDarkMode);
+			QFETCH(int, expectedSpyCount);
+			QFETCH(bool, darkModeEnabled);
+
 			UiPluginQml plugin;
-			QSignalSpy spy(&plugin, &UiPluginQml::fireOsDarkModeChanged);
+			auto* settingsModel = Env::getSingleton<SettingsModel>();
 
-			const auto initialValue = plugin.isOsDarkModeEnabled();
+			QSignalSpy spy(&plugin, &UiPluginQml::fireDarkModeEnabledChanged);
 
-			plugin.setOsDarkMode(initialValue);
-			QTRY_COMPARE(spy.count(), 0);
+			plugin.setOsDarkMode(osDarkMode);
+			settingsModel->setDarkMode(userDarkMode);
 
-			const auto newValue = !initialValue;
-			plugin.setOsDarkMode(newValue);
-			QTRY_COMPARE(spy.count(), 1);
-			QCOMPARE(plugin.isOsDarkModeEnabled(), newValue);
+			QCOMPARE(plugin.isDarkModeEnabled(), darkModeEnabled);
+
+			QCOMPARE(spy.count(), expectedSpyCount);
 		}
 
 
@@ -195,6 +223,27 @@ class test_UiPluginQml
 			QCOMPARE(UiPluginQml::adjustQmlImportPath(&engine), "qrc:/platform"_L1);
 			QVERIFY(!engine.importPathList().contains(primaryPrefix));
 			QVERIFY(engine.importPathList().contains("qrc:/platform"_L1));
+		}
+
+
+		void test_updatePending()
+		{
+			UiPluginQml plugin;
+			QSignalSpy spy(&plugin, &UiPluginModel::fireIsUpdatePendingChanged);
+
+			QVERIFY(!plugin.isUpdatePending());
+
+			plugin.setUpdatePending(false);
+			QVERIFY(!plugin.isUpdatePending());
+			QCOMPARE(spy.count(), 0);
+
+			plugin.setUpdatePending(true);
+			QVERIFY(plugin.isUpdatePending());
+			QCOMPARE(spy.count(), 1);
+
+			plugin.setUpdatePending(false);
+			QVERIFY(!plugin.isUpdatePending());
+			QCOMPARE(spy.count(), 2);
 		}
 
 

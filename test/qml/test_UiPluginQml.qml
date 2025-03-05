@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -45,8 +45,8 @@ TestCase {
 		verify(UiModule.CURRENT !== UiModule.DEFAULT);
 		verify(UiModule.DEFAULT !== UiModule.IDENTIFY);
 		verify(UiModule.IDENTIFY !== UiModule.PINMANAGEMENT);
-		verify(UiModule.SETTINGS !== UiModule.TUTORIAL);
-		verify(UiModule.TUTORIAL !== UiModule.HELP);
+		verify(UiModule.SETTINGS !== UiModule.ONBOARDING);
+		verify(UiModule.ONBOARDING !== UiModule.HELP);
 		verify(UiModule.HELP !== UiModule.SELF_AUTHENTICATION);
 		verify(UiModule.UPDATEINFORMATION !== UiModule.REMOTE_SERVICE);
 		verify(UiModule.REMOTE_SERVICE !== UiModule.CHECK_ID_CARD);
@@ -58,9 +58,20 @@ TestCase {
 		verify(testObject, "Object loaded");
 	}
 	function test_startupModule() {
+		verify(SettingsModel.showOnboarding);
+		let onboardingValue = UiModule.ONBOARDING;
+		verify(SettingsModel.startupModule == onboardingValue);
+		verify(SettingsModel.startupModule === onboardingValue);
+		SettingsModel.onboardingShown = true;
 		let initialValue = SettingsModel.startupModule;
 		let newValue = UiModule.IDENTIFY;
 		SettingsModel.startupModule = newValue;
+		verify(SettingsModel.startupModule == newValue);
+		verify(SettingsModel.startupModule === newValue);
+		SettingsModel.onboardingShown = false;
+		verify(SettingsModel.startupModule == onboardingValue);
+		verify(SettingsModel.startupModule === onboardingValue);
+		SettingsModel.showOnboarding = false;
 		verify(SettingsModel.startupModule == newValue);
 		verify(SettingsModel.startupModule === newValue);
 		SettingsModel.startupModule = initialValue;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Util.h"
@@ -49,8 +49,8 @@ QString Asn1StringUtil::getValue(const ASN1_STRING* pString)
 	uchar* buffer = nullptr;
 	const int length = ASN1_STRING_to_UTF8(&buffer, pString);
 	const auto guard = qScopeGuard([buffer] {
-			OPENSSL_free(buffer);
-		});
+				OPENSSL_free(buffer);
+			});
 
 	if (length < 0)
 	{
@@ -75,8 +75,8 @@ QByteArray Asn1TypeUtil::encode(const ASN1_TYPE* pAny)
 	uchar* buffer = nullptr;
 	const int length = i2d_ASN1_TYPE(pAny, &buffer);
 	const auto guard = qScopeGuard([buffer] {
-			OPENSSL_free(buffer);
-		});
+				OPENSSL_free(buffer);
+			});
 
 	if (length < 0)
 	{

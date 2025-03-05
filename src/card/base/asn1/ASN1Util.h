@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Utility functions, templates and other ASN.1 related helper stuff
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,7 +10,9 @@
 #include <QSharedPointer>
 #include <QString>
 
+
 DEFINE_STACK_OF(ASN1_OCTET_STRING)
+
 
 namespace governikus
 {

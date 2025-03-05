@@ -1,30 +1,42 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import Governikus.EnterPasswordView
+
 import Governikus.Global
-import Governikus.AuthView
-import Governikus.Style
 import Governikus.TitleBar
-import Governikus.PasswordInfoView
-import Governikus.ProgressView
-import Governikus.ResultView
+import Governikus.MultiInfoView
 import Governikus.View
-import Governikus.Workflow
 import Governikus.Type
 
 SectionPage {
-	id: baseItem
+	id: root
 
+	property bool activateUI: true
 	property bool autoInsertCard: false
+	property Component errorViewDelegate: null
 	property bool hidePinTypeSelection: false
 	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	readonly property bool isSmartWorkflow: ChangePinModel.readerPluginType === ReaderManagerPluginType.SMART
+	property int navigationActionType: NavigationAction.Action.Cancel
+	property bool onlyCheckPin: false
+	property bool skipInfoView: true
+	property bool skipProgressView: false
+	property Component successViewDelegate: null
+	property bool usedInOnboarding: false
 
+	signal abortWithUnknownPin
 	signal close
-	signal workflowFinished
+	signal workflowFinished(bool pSuccess)
+
+	function startPinChange(pChangeTransportPin) {
+		workflowStartHandler.enabled = true;
+		ChangePinModel.startWorkflow(pChangeTransportPin, root.activateUI, root.onlyCheckPin && !pChangeTransportPin);
+	}
 
 	contentIsScrolled: !changePinViewContent.atYBeginning
 	smartEidUsed: isSmartWorkflow
@@ -34,11 +46,16 @@ SectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: baseItem.close()
+		onClicked: root.close()
 	}
 
+	QtObject {
+		id: d
+
+		property bool oldLockedAndHiddenStatus
+	}
 	FadeInAnimation {
-		target: baseItem
+		target: root
 	}
 	Connections {
 		function onActivate() {
@@ -46,28 +63,43 @@ SectionPage {
 		}
 	}
 	Connections {
+		id: workflowStartHandler
+
 		function onFireWorkflowStarted() {
-			changePinController.createObject(baseItem);
-			setLockedAndHidden(true);
+			changePinController.createObject(root);
+			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
+			root.setLockedAndHidden(true);
 			ChangePinModel.setInitialPluginType();
+			enabled = false;
 		}
 
-		enabled: visible
+		enabled: false
 		target: ChangePinModel
 	}
 	Component {
 		id: changePinController
 
 		ChangePinController {
-			autoInsertCard: baseItem.autoInsertCard
-			hideTechnologySwitch: baseItem.hideTechnologySwitch
-			initialPlugin: baseItem.initialPlugin
-			smartEidUsed: baseItem.smartEidUsed
-			stackView: baseItem.stackView
-			title: baseItem.title
+			autoInsertCard: root.autoInsertCard
+			errorViewDelegate: root.errorViewDelegate
+			hideTechnologySwitch: root.hideTechnologySwitch
+			initialPlugin: root.initialPlugin
+			navigationActionType: root.navigationActionType
+			skipProgressView: root.skipProgressView
+			smartEidUsed: root.smartEidUsed
+			stackView: root.stackView
+			successViewDelegate: root.successViewDelegate
+			title: root.title
 
-			onWorkflowFinished: {
-				baseItem.workflowFinished();
+			progress: ProgressTracker {
+				baseProgressTracker: root.progress
+				from: 0.3
+			}
+
+			onWorkflowFinished: pSuccess => {
+				root.pop(root);
+				root.setLockedAndHidden(d.oldLockedAndHiddenStatus);
+				root.workflowFinished(pSuccess);
 				this.destroy();
 			}
 		}
@@ -76,26 +108,80 @@ SectionPage {
 		id: changePinViewContent
 
 		anchors.fill: parent
-		visible: !baseItem.hidePinTypeSelection
+		visible: !root.hidePinTypeSelection
 
-		onChangePin: ChangePinModel.startWorkflow(false)
-		onChangePinInfoRequested: push(changePinInfoView)
-		onChangeTransportPin: ChangePinModel.startWorkflow(true)
-		onNoPinAvailable: {
-			setLockedAndHidden();
-			push(pinUnknownView);
+		onChangePin: {
+			if (root.skipInfoView) {
+				root.startPinChange(false);
+			} else {
+				root.push(changePinInfoView);
+			}
 		}
+		onChangePinInfoRequested: root.push(pinTypeInfoView)
+		onChangeTransportPin: {
+			if (root.skipInfoView) {
+				root.startPinChange(true);
+			} else {
+				root.push(changeTransportPinInfoView);
+			}
+		}
+		onNoPinAvailable: {
+			d.oldLockedAndHiddenStatus = root.getLockedAndHidden();
+			root.setLockedAndHidden();
+			root.push(pinUnknownView);
+		}
+	}
+	ProgressTracker {
+		id: pinInfoProgress
+
+		baseProgressTracker: root.progress
+		relativeProgress: 0.1
 	}
 	Component {
 		id: changePinInfoView
 
-		PasswordInfoView {
-			infoContent: changePinViewContent.pinInfo
+		ChangePinInfoView {
+			progress: pinInfoProgress
+			title: root.title
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back
 
-				onClicked: pop()
+				onClicked: root.pop()
+			}
+
+			onContinueClicked: root.startPinChange(false)
+			onLeaveView: root.pop()
+		}
+	}
+	Component {
+		id: changeTransportPinInfoView
+
+		ChangeTransportPinInfoView {
+			progress: pinInfoProgress
+			title: root.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: root.pop()
+			}
+
+			onContinueClicked: root.startPinChange(true)
+			onLeaveView: root.pop()
+		}
+	}
+	Component {
+		id: pinTypeInfoView
+
+		MultiInfoView {
+			infoContent: changePinViewContent.pinInfo
+			progress: root.progress
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: root.pop()
 			}
 
 			onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
@@ -104,16 +190,28 @@ SectionPage {
 	Component {
 		id: pinUnknownView
 
-		PasswordInfoView {
-			infoContent: PasswordInfoData {
-				contentType: PasswordInfoData.Type.NO_PIN
+		MultiInfoView {
+			continueButtonText: root.usedInOnboarding ? qsTr("Abort setup") : ""
+
+			infoContent: MultiInfoData {
+				contentType: MultiInfoData.Type.NO_PIN
 			}
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back
 
 				onClicked: {
-					pop();
-					setLockedAndHidden(false);
+					root.pop();
+					root.setLockedAndHidden(d.oldLockedAndHiddenStatus);
+				}
+			}
+			progress: ProgressTracker {
+				baseProgressTracker: pinInfoProgress
+				relativeProgress: 1
+			}
+
+			onContinueClicked: {
+				if (root.usedInOnboarding) {
+					root.abortWithUnknownPin();
 				}
 			}
 		}

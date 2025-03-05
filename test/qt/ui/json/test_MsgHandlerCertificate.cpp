@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref MsgHandlerCertificate
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerCertificate.h"

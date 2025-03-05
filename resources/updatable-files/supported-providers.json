@@ -142,10 +142,7 @@
 			"postalAddress": "bitkasten GmbH<br/>Wallensteinstr. 63<br/>90431 Nürnberg",
 			"image": "bitkasten_image.png",
 			"icon": "bitkasten_icon.png",
-			"category": "other",
-			"subjectUrls": [
-				"https://mein.bitkasten.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -163,8 +160,7 @@
 			"postalAddress": "Der Senator für Finanzen<br/>Am Tabakquartier 56<br/>28197 Bremen",
 			"image": "AdoptionDigital_image.png",
 			"icon": "AdoptionDigital_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -182,8 +178,7 @@
 			"postalAddress": "Der Senator für Finanzen<br/>Am Tabakquartier 56<br/>28197 Bremen",
 			"image": "PflegekinderwesenDigital_image.png",
 			"icon": "PflegekinderwesenDigital_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -202,10 +197,7 @@
 			"postalAddress": "Der Bundesbeauftragte für die Unterlagen des Staatssicherheitsdienstes der ehemaligen Deutschen Demokratischen Republik (BStU)<br/>Karl-Liebknecht-Straße 31/33<br/>10178 Berlin",
 			"image": "stasi_image.jpg",
 			"icon": "stasi_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.bstu-formulare.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -224,8 +216,7 @@
 			"postalAddress": "Steinstraße 27<br/>59872 Meschede",
 			"image": "HSK_image.png",
 			"icon": "HSK_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -243,10 +234,7 @@
 			"postalAddress": "Ministerium der Justiz und für Europa<br/>Koordinierungsstelle für das Automatisierte Mahnverfahren<br/>Schillerplatz 4<br/>70173 Stuttgart",
 			"image": "MahnantragJustizministeriumBaWue_image.jpg",
 			"icon": "MahnantragJustizministeriumBaWue_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.online-mahnantrag.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -264,8 +252,7 @@
 			"email": "kba@kba.de",
 			"postalAddress": "Kraftfahrt-Bundesamt<br/>Fördestraße 16<br/>24944 Flensburg",
 			"icon": "KraftfahrtBundesamt_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -283,10 +270,7 @@
 			"phone": "+49 331 866 4999",
 			"postalAddress": "Ministerium für Wissenschaft, Forschung und Kultur des Landes Brandenburg<br/>Dortustraße 36<br/>14467 Potsdam",
 			"icon": "AFBG_icon.png",
-			"category": "other",
-			"subjectUrls": [
-				"https://www.bafoeg-brandenburg.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -302,10 +286,7 @@
 			},
 			"phone": "+49 22899358 45454",
 			"postalAddress": "Bundesverwaltungsamt<br/>BT-BAföG<br/>50728 Köln",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://e-id.bva.bund.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -323,8 +304,7 @@
 			"phone": "+49 800 2236341",
 			"postalAddress": "Ministerium für Wissenschaft, Energie, Klimaschutz und Umwelt des Landes Sachsen-Anhalt<br/>Leipziger Straße 58<br/>39112 Magdeburg",
 			"icon": "BafoegDigital_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -341,8 +321,7 @@
 			"phone": "+49 921 605 03",
 			"email": "poststelle@zbfs.bayern.de",
 			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -358,10 +337,26 @@
 			"homepage": "https://www.saarland.de",
 			"phone": "+49 681 9978 2181",
 			"postalAddress": "Ministerium für Soziales, Gesundheit, Frauen und Familie<br/>Franz-Josef-Röder-Straße 23<br/>66119 Saarbrücken",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://tbklas.saarland.de"
-			]
+			"category": "citizen"
+		},
+		{
+			"shortName": {
+				"": "Serviceportal der Stadt Braunschweig"
+			},
+			"longName": {
+				"": "Serviceportal der Stadt Braunschweig"
+			},
+			"longDescription": {
+				"": "Im Service-Portal der Stadt Braunschweig finden Sie eine Vielzahl an öffentlichen Dienstleistungen der Verwaltung für Bürgerinnen, Bürger und Unternehmen, die Sie online erledigen können. Das Angebot wird kontinuierlich ausgebaut."
+			},
+			"address": "https://service.braunschweig.de",
+			"homepage": "https://service.braunschweig.de",
+			"phone": "+49 531 470 1",
+			"email": "stadt@braunschweig.de",
+			"postalAddress": "Stadt Braunschweig<br/>Platz der Deutschen Einheit 1<br/>38100 Braunschweig",
+			"image": "ServiceportalStadtBraunschweig_image.png",
+			"icon": "ServiceportalStadtBraunschweig_icon.png",
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -375,8 +370,7 @@
 			"phone": "+49 531 4701",
 			"email": "stadt@braunschweig.de",
 			"postalAddress": "Stadt Braunschweig<br/>Platz der Deutschen Einheit 1<br/>38100 Braunschweig",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -393,10 +387,7 @@
 			"phone": "+49 911 179 0",
 			"email": "Zentrale@arbeitsagentur.de",
 			"postalAddress": "Bundesagentur für Arbeit<br/>Regensburger Straße 104<br/>90478 Nürnberg",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://formular.arbeitsagentur.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -415,10 +406,7 @@
 			"postalAddress": "Bundesanzeiger Verlag GmbH<br/>Amsterdamer Straße 192<br/>50735 Köln",
 			"image": "BundesanzeigerVerlag_image.jpg",
 			"icon": "BundesanzeigerVerlag_icon.svg",
-			"category": "other",
-			"subjectUrls": [
-				"https://ident.bundesanzeiger-verlag.de"
-			]
+			"category": "other"
 		},
 		{
 			"eidSupport": false,
@@ -436,10 +424,7 @@
 			"phone": "+49 30 227 35257",
 			"email": "post.pet@bundestag.de",
 			"postalAddress": "Sekretariat des Petitionsausschusses<br/>Platz der Republik 1<br/>11011 Berlin",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://epetitionen.bundestag.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -454,10 +439,7 @@
 			"address": "https://www.buergerantrag.bremen.de",
 			"homepage": "https://www.bremische-buergerschaft.de",
 			"email": "webmaster@buergerschaft.bremen.de",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://servicekonto.bremen.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -469,15 +451,14 @@
 			"longDescription": {
 				"": "Hier finden Sie eine Übersicht der Verwaltungs-Dienstleistungen, die Sie online erledigen können. Unser Bürgerservice Online ist Ihr Zugang zu den Onlineverfahren und dem Virtuellen Rathaus der Stadtverwaltung Memmingen mit den jeweiligen Ansprechpartnern und weiteren Informationen, wie z. B. die für die Behördendienstleistung notwendigen Papiere und ggf. Kosten innerhalb der Stadtverwaltung."
 			},
-			"address": "https://www.memmingen.de/buergerservice/virtuelles-rathaus/buergerservice-online.html",
+			"address": "https://www.memmingen.de/digitales-amt",
 			"homepage": "https://www.memmingen.de",
 			"phone": "+49 8331 8500",
 			"email": "digitalisierung@memmingen.de",
 			"postalAddress": "Stadtverwaltung Memmingen<br/>Marktplatz 1<br/>87700 Memmingen",
 			"image": "StadtMemmingen_image.jpg",
 			"icon": "StadtMemmingen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -494,8 +475,7 @@
 			"phone": "+49 251 4 92 0",
 			"email": "stadtverwaltung@stadt-muenster.de",
 			"postalAddress": "Stadt Münster<br/>48127 Münster",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -511,10 +491,7 @@
 			"homepage": "https://www.service-bw.de",
 			"email": "service-bw@im.bwl.de",
 			"postalAddress": "Ministerium für Inneres, Digitalisierung und Migration Baden-Württemberg<br/>Willy-Brandt-Straße 41<br/>70173 Stuttgart",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://eid.service-bw.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -533,8 +510,7 @@
 			"postalAddress": "Stadt Düren<br/>Kaiserplatz 2-4<br/>52349 Düren",
 			"image": "StadtDueren_image.jpg",
 			"icon": "StadtDueren_icon.jpg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -552,8 +528,7 @@
 			"email": "stadt@netphen.de",
 			"postalAddress": "Stadt Netphen<br/>Amtsstraße 2 & 6<br/>57250 Netphen",
 			"icon": "StadtNetphen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -573,8 +548,7 @@
 			"postalAddress": "Kreis Herford<br/>Amtshausstraße 3<br/>32051 Herford",
 			"image": "KreisHerford_image.jpg",
 			"icon": "KreisHerford_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -594,8 +568,7 @@
 			"postalAddress": "Kreis Minden-Lübbecke<br/>Portastraße 13<br/>32423 Minden",
 			"image": "KreisMindenLuebbeke_image.jpg",
 			"icon": "KreisMindenLuebbeke_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -612,10 +585,7 @@
 			"phone": "+49 681 90 50",
 			"email": "stadt@saarbruecken.de",
 			"postalAddress": "Landeshauptstadt Saarbrücken<br/>Rathausplatz 1<br/>66111 Saarbrücken",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://sl.buergerserviceportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -635,8 +605,7 @@
 			"postalAddress": "Bürgerbüro Lage<br/>Bergstraße 21<br/>32791 Lage",
 			"image": "StadtLage_image.jpg",
 			"icon": "StadtLage_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -654,10 +623,7 @@
 			"phone": "+49 40 535 95 0 ",
 			"email": "info@norderstedt.de",
 			"postalAddress": "Stadt Norderstedt<br/>Rathausallee 50<br/>22846 Norderstedt",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://sh.buergerserviceportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -674,10 +640,7 @@
 			"phone": "+49 611 31 8300",
 			"email": "buergeramt@wiesbaden.de",
 			"postalAddress": "Postfach 3920<br/>65029 Wiesbaden",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://he.buergerserviceportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -695,12 +658,7 @@
 			"phone": "+49 89 12 22 20",
 			"email": "direkt@bayern.de",
 			"postalAddress": "Postfach 22 00 03<br/>80535 München",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.buergerserviceportal.de",
-				"https://bayernid.freistaat.bayern",
-				"https://id.bayernportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -717,10 +675,7 @@
 			"phone": "+49 2542 9307 0",
 			"email": "support@foxdox.de",
 			"postalAddress": "d.velop business services GmbH<br/>Schildarpstraße 6-8<br/>48712 Gescher",
-			"category": "other",
-			"subjectUrls": [
-				"https://mein.foxdox.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -738,8 +693,7 @@
 			"email": "poststelle@fuerth.de",
 			"postalAddress": "Stadt Fürth<br/>Königstraße 88<br/>90762 Fürth",
 			"image": "StadtFuerth_image.jpg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -757,8 +711,7 @@
 			"email": "Online-Dienste@deutsche-rentenversicherung.de",
 			"postalAddress": "Deutsche Rentenversicherung Bund<br/>Hohenzollerndamm 45 - 47<br/>10713 Berlin",
 			"icon": "DRV_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Digitale Rentenübersicht (https://login.deutsche-rentenversicherung.de)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -776,10 +729,7 @@
 			"phone": "+49 30 2125 0",
 			"email": "info@ibb.de",
 			"postalAddress": "Investitionsbank Berlin (IBB)<br/>Bundesallee 210<br/>10719 Berlin",
-			"category": "finance",
-			"subjectUrls": [
-				"https://registrierung-eantrag.ibb.de"
-			]
+			"category": "finance"
 		},
 		{
 			"eidSupport": false,
@@ -796,10 +746,7 @@
 			"homepage": "https://kfzonline.ekom21.de/kfzonline.public/start.html?oe=00.00.06.439000",
 			"email": "ekom21@ekom21.de",
 			"postalAddress": "ekom21-KGRZ Hessen<br/>Carlo-Mierendorff-Straße 11<br/>35398 Gießen",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://kfzonline.ekom21.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -818,10 +765,7 @@
 			"postalAddress": "Bayerisches Landesamt für Steuern - Dienststelle München<br/>80284 München",
 			"image": "elster_image.jpg",
 			"icon": "elster_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.elster.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -839,8 +783,7 @@
 			"postalAddress": "Freie und Hansestadt Hamburg Senatskanzlei - Amt für IT und Digitalisierung<br/>Caffamacherreihe 1-3<br/>20354 Hamburg",
 			"image": "eWa_image.png",
 			"icon": "eWa_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Gemeinsam-Online (https://idp.serviceportal.gemeinsamonline.de)"
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -855,8 +798,7 @@
 			"phone": "+49 69 115",
 			"email": "buergerberatung@stadt-frankfurt.de",
 			"postalAddress": "Bürgerberatung<br/>Hinter dem Lämmchen 6<br/>60311 Frankfurt am Main ",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from ekom21 (KGRZ Hessen) (https://kfzonline.ekom21.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -873,10 +815,7 @@
 			"phone": "+49 228 99 410 40",
 			"email": "poststelle@bfj.bund.de",
 			"postalAddress": "Bundesamt für Justiz<br/>53094 Bonn",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.fuehrungszeugnis.bund.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -894,9 +833,6 @@
 			"email": "meinserviceportal@dataport.de",
 			"postalAddress": "Freie und Hansestadt Hamburg<br/>Erster Bürgermeister Dr. Peter Tschentscher Rathausmarkt 1<br/>20095 Hamburg",
 			"category": "citizen",
-			"subjectUrls": [
-				"https://idp.servicekonto.serviceportal.hamburg.de"
-			],
 			"icon": "hamburg_serviceportal_icon.png"
 		},
 		{
@@ -911,10 +847,7 @@
 			"phone": "+49 0331 866 0",
 			"email": "poststelle@stk.brandenburg.de",
 			"postalAddress": "Landesregierung Brandenburg<br/>Staatskanzlei<br/>14473 Potsdam",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://e-ident.brandenburg.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -931,8 +864,7 @@
 			"phone": "+49 4131 26 0",
 			"email": "info@landkreis-lueneburg.de",
 			"postalAddress": "Landkreis Lüneburg<br/>Auf dem Michaeliskloster 4<br/>21335 Lüneburg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -950,8 +882,26 @@
 			"email": "strassenverkehrsamt@landkreismol.de",
 			"postalAddress": "Landkreis Märkisch-Oderland<br/>Straßenverkehrsamt<br/>Am Biotop 12<br/>15344 Strausberg",
 			"icon": "KreisMaerkischOderland_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+			"category": "citizen"
+		},
+		{
+			"shortName": {
+				"": "Landkreis Osnabrück"
+			},
+			"longName": {
+				"": "Serviceportal des Landkreises Osnabrück"
+			},
+			"longDescription": {
+				"": "Das Serviceportal des Landkreises Osnabrück ist Ihr persönlicher Online-Zugang zu den Leistungen, die der Landkreis Osnabrück anbietet. <br/>Hier erhalten Sie viele nützliche Informationen zu den Dienstleistungen und können diese zum Teil bereits von zu Hause aus digital beantragen und sich so den Weg zur Verwaltung sparen."
+			},
+			"homepage": "https://service.landkreis-osnabrueck.de",
+			"address": "https://service.landkreis-osnabrueck.de/auth",
+			"phone": "+49 541 501 0",
+			"email": "info@landkreis-osnabrueck.de",
+			"postalAddress": "Landkreis Osnabrück<br/>Am Schölerberg 1<br/>49082 Osnabrück",
+			"image": "LandkreisOsnabrueck_image.png",
+			"icon": "LandkreisOsnabrueck_icon.png",
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -969,8 +919,7 @@
 			"email": "info@lkprignitz.de",
 			"postalAddress": "Landkreis Prignitz<br/>Berliner Str. 49<br/>19348 Perleberg",
 			"icon": "Prignitz_icon.jpg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -988,8 +937,7 @@
 			"email": "ikfz@lra-nordsachsen.de",
 			"postalAddress": "Landratsamt Nordsachsen<br/>Schloßstraße 27<br/>04860 Torgau",
 			"icon": "Nordsachsen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Sachsen (https://eidconnect.egov.sachsen.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1008,8 +956,26 @@
 			"postalAddress": "Landeshauptstadt Potsdam<br/>Bereich Bürgerservice<br/><br/>Kfz-Zulassungsbehörde<br/>Friedrich-Ebert-Str. 79/81<br/>14469 Potsdam",
 			"image": "Potsdam_image.png",
 			"icon": "Potsdam_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+			"category": "citizen"
+		},
+		{
+			"shortName": {
+				"": "LVR-Beratungskompass"
+			},
+			"longName": {
+				"": "LVR-Beratungskompass"
+			},
+			"longDescription": {
+				"": "Der LVR-Beratungskompass ist das zentrale Portal zur Information über, Beratung zu und Beantragung von Leistungen des Landschaftsverbands Rheinland (LVR).<br/>Bürgerinnen und Bürgern sowie Organisationen können die Leistungen des LVR elektronisch mit der BundID oder Mein Unternehmenskonto beantragen.<br/>Der Landschaftsverband Rheinland (LVR) arbeitet als Kommunalverband mit rund 22.000 Beschäftigten für die etwa 9,8 Millionen Menschen im Rheinland.<br/>Mit seinen 41 Schulen, zehn Kliniken, 20 Museen und Kultureinrichtungen, vier Jugendhilfeeinrichtungen, dem Landesjugendamt sowie dem Verbund Heilpädagogischer Hilfen erfüllt er Aufgaben, die rheinlandweit wahrgenommen werden. Der LVR ist Deutschlands größter Leistungsträger für Menschen mit Behinderungen und engagiert sich für Inklusion in allen Lebensbereichen. 'Qualität für Menschen' ist sein Leitgedanke. Die 13 kreisfreien Städte und die zwölf Kreise im Rheinland sowie die StädteRegion Aachen sind die Mitgliedskörperschaften des LVR. In der Landschaftsversammlung Rheinland gestalten gewählte Mitglieder aus den rheinischen Kommunen die Arbeit des Verbandes."
+			},
+			"address": "https://beratungskompass.lvr.de/antraege",
+			"homepage": "https://lvr.de",
+			"phone": "+49 221 809 0",
+			"email": "post@lvr.de",
+			"postalAddress": "Landschaftsverband Rheinland<br/>Kennedy-Ufer 2<br/>50679 Köln",
+			"image": "LVR_image.svg",
+			"icon": "LVR_icon.svg",
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1025,7 +991,6 @@
 			"postalAddress": "Stadt Leipzig<br/>Der Oberbürgermeister<br/>Amt Bürgerservice<br/>Martin-Luther-Ring 4-6<br/>04109 Leipzig",
 			"icon": "Leipzig_icon.png",
 			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Sachsen (https://eidconnect.egov.sachsen.de).",
 			"longName": {
 				"": "Digitaler Bürgerservice Stadt Leipzig"
 			}
@@ -1048,10 +1013,7 @@
 			"phone": "+49 261 505 777",
 			"email": "invenio@bundesarchiv.de",
 			"postalAddress": "Bundesarchiv<br/>Potsdamer Straße 1<br/>56075 Koblenz",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://invenio.bundesarchiv.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1070,8 +1032,7 @@
 			"postalAddress": "Kfz-Zulassungsstelle Borken<br/>Burloer Str. 93<br/>46325 Borken",
 			"image": "KreisBorken_image.png",
 			"icon": "KreisBorken_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1090,8 +1051,7 @@
 			"postalAddress": "Kreis Viersen<br/>Rathausmarkt 3<br/>41747 Viersen",
 			"image": "KreisViersen_image.jpg",
 			"icon": "KreisViersen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1110,8 +1070,7 @@
 			"postalAddress": "Kreisverwaltung Kleve<br/>Nassauerallee 15-23<br/>47533 Kleve",
 			"image": "KreisKleve_image.jpg",
 			"icon": "KreisKleve_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1130,8 +1089,7 @@
 			"postalAddress": "Kreis Steinfurt<br/>Tecklenburger Straße 10<br/>48565 Steinfurt",
 			"image": "KreisSteinfurt_image.jpg",
 			"icon": "KreisSteinfurt_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1144,12 +1102,30 @@
 				"": "Im Register für Erklärungen zur Organ und Gewebespende (Organspende-Register) können Bürgerinnen und Bürger ihre Entscheidung für oder gegen eine Organ- und Gewebespende festhalten. Dies erleichtert es Ärztinnen und Ärzten, die Spendebereitschaft potenzieller Organspenderinnen und -spender schnell und verlässlich zu klären. Der Eintrag ist freiwillig, kostenlos und kann jederzeit geändert oder gelöscht werden.<br/>Zur Abgabe der Erklärung im Organspende-Register ist die Bestätigung der eigenen Identität erforderlich. Über die AusweisApp können Sie sich digital identifizieren. Hierfür benötigen Sie lediglich Ihren Online-Ausweis, die dazugehörige PIN, ein geeignetes Smartphone oder Tablet sowie die installierte AusweisApp.<br/>Weitere Informationen zum Organspende-Register erhalten Sie hier: https://www.organspende-info.de/organspende-register/."
 			},
 			"address": "https://organspende-register.de",
-			"homepage": "https://www.bfarm.de",
-			"email": "poststelle@bfarm.de",
-			"postalAddress": "Kurt-Georg-Kiesinger-Allee 3<br/>53175 Bonn",
+			"homepage": "https://www.bfarm.de/DE/Das-BfArM/Aufgaben/Organspende-Register/_node.html",
+			"email": "kontakt@organspende-register.de",
+			"postalAddress": "Bundesinstitut für Arzneimittel und Medizinprodukte, Fachgebiet K6<br/>Kurt-Georg-Kiesinger-Allee 3<br/>53175 Bonn",
+			"image": "OrganspendeRegister_image.svg",
 			"icon": "OrganspendeRegister_icon.svg",
-			"category": "other",
-			"subjectUrlInfo": "https://eid.organspende-register.de"
+			"category": "other"
+		},
+		{
+			"shortName": {
+				"": "Serviceportal der Stadt Bielefeld"
+			},
+			"longName": {
+				"": "Serviceportal der Stadt Bielefeld"
+			},
+			"longDescription": {
+				"": "Im Bielefelder Serviceportal finden Sie rund um die Uhr nützliche Informationen zu den Dienstleistungen der Stadt Bielefeld. Viele Dienstleistungen können Sie bereits bequem online über Ihr Smartphone, Tablet oder Ihren Computer erledigen. Probieren Sie es aus!"
+			},
+			"address": "https://service.bielefeld.de",
+			"homepage": "https://www.bielefeld.de",
+			"email": "serviceportal@bielefeld.de",
+			"postalAddress": "Stadt Bielefeld<br/>33597 Bielefeld",
+			"image": "ServiceportalBielefeld_image.png",
+			"icon": "ServiceportalBielefeld_icon.png",
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1167,8 +1143,7 @@
 			"email": "solingen.digital@solingen.de",
 			"postalAddress": "Klingenstadt Solingen<br/>Walter-Scheel-Platz 1<br/>42651 Solingen",
 			"icon": "KlingenstadtSolingen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1187,8 +1162,7 @@
 			"postalAddress": "Kreis Paderborn<br/>Aldegreverstr. 10 - 14<br/>33102 Paderborn",
 			"image": "KreisPaderborn_image.jpg",
 			"icon": "KreisPaderborn_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1207,8 +1181,7 @@
 			"postalAddress": "Landkreis Hameln-Pyrmont<br/>Süntelstraße 9<br/>31785 Hameln",
 			"category": "citizen",
 			"image": "Hameln-Pyrmont_image.png",
-			"icon": "Hameln-Pyrmont_icon.png",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"icon": "Hameln-Pyrmont_icon.png"
 		},
 		{
 			"shortName": {
@@ -1225,8 +1198,7 @@
 			"phone": "+49 30 90269 0",
 			"email": "kundenservice@berlin.de",
 			"postalAddress": "BerlinOnline Stadtportal GmbH & Co. KG<br/>Alte Jakobstraße 105<br/>10969 Berlin",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Service-Portal Berlin (https://eid-prod.connect.verwalt-berlin.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1243,10 +1215,7 @@
 			"phone": "+49 4171 693 99 10 0",
 			"email": "buergerservice@lkharburg.de",
 			"postalAddress": "Landkreis Harburg<br/>Schloßplatz 6<br/>21423 Winsen (Luhe)",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://npa.regioit.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1264,10 +1233,7 @@
 			"phone": "+49 3685 445 286",
 			"email": "poststelle@lrahbn.thueringen.de",
 			"postalAddress": "Landkreis Hildburghausen<br/>SG Zulassungsbehörde<br/>Wiesenstraße 18<br/>98646 Hildburghausen",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://thavelp.thueringen.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1284,8 +1250,7 @@
 			"phone": "+49 3921 949 0",
 			"email": "post@lkjl.de",
 			"postalAddress": "Landkreis Jerichower Land<br/>Bahnhofstraße 9<br/>39288 Burg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1302,10 +1267,7 @@
 			"phone": "+49 6861 80 101",
 			"email": "info@merzig-wadern.de",
 			"postalAddress": "Landkreis Merzig-Wadern<br/>Bahnhofstraße 44<br/>66663 Merzig",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://ident.saarland.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1322,8 +1284,7 @@
 			"phone": "+49 3361 5993050",
 			"postalAddress": "Landkreis Oder-Spree<br/>Amt für Straßenverkehr und Ordnung<br/>Hegelstraße 23a<br/>15517 Fürstenwalde/Spree",
 			"image": "KreisOderSpree_image.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1341,10 +1302,7 @@
 			"phone": "+49 3843 755 0",
 			"email": "info@lkros.de",
 			"postalAddress": "Landkreis Rostock<br/>Der Landrat<br/>Am Wall 3-5<br/>18273 Güstrow",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://mv.buergerserviceportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1359,10 +1317,7 @@
 			"phone": "+49 800 6368262",
 			"email": "de-mail.info@mentana.de",
 			"postalAddress": "Mentana-Claimsoft GmbH<br/>Trebuser-Str. 47 Haus 1<br/>15517 Fürstenwalde",
-			"category": "other",
-			"subjectUrls": [
-				"https://www.fp-demail.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -1381,8 +1336,7 @@
 			"postalAddress": "Stadt Niederkassel<br/>Rathausstraße 19<br/>53859 Niederkassel",
 			"image": "StadtNiederkassel_image.jpg",
 			"icon": "StadtNiederkassel_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1399,10 +1353,7 @@
 			"phone": "+49 511 120 45 00",
 			"email": "poststelle@mi.niedersachsen.de",
 			"postalAddress": "Niedersächsisches Ministerium für Inneres und Sport<br/>Lavesallee 6<br/>30169 Hannover",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://e-id.niedersachsen.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1421,8 +1372,7 @@
 			"postalAddress": "Kreisstadt Siegburg<br/>Nogenter Platz 10<br/>53721 Siegburg",
 			"image": "Siegburg_image.png",
 			"icon": "Siegburg_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1441,8 +1391,7 @@
 			"postalAddress": "Stadt Siegen<br/>Rathaus/Markt 2<br/>57072 Siegen",
 			"image": "Siegen_image.jpg",
 			"icon": "Siegen_icon.jpg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1461,8 +1410,7 @@
 			"postalAddress": "Stadt Bad Oeynhausen<br/>Der Bürgermeister<br/>Ostkorso 8<br/>32545 Bad Oeynhausen",
 			"image": "StadtBadOeynhausen_image.jpg",
 			"icon": "StadtBadOeynhausen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1481,8 +1429,7 @@
 			"postalAddress": "Bundesstadt Bonn<br/>Berliner Platz 2<br/>53103 Bonn (Postanschrift)<br/>53111 Bonn (Hausanschrift)",
 			"image": "StadtBonn_image.jpg",
 			"icon": "StadtBonn_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1501,8 +1448,7 @@
 			"postalAddress": "Kreisverwaltung Soest<br/>Hoher Weg 1-3<br/>59494 Soest",
 			"image": "KreisSoest_image.png",
 			"icon": "KreisSoest_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1520,8 +1466,7 @@
 			"email": "info@kreis-coesfeld.de",
 			"postalAddress": "Kreis Coesfeld<br/>Friedrich-Ebert-Straße 7<br/>48653 Coesfeld",
 			"icon": "Coesfeld_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1539,8 +1484,7 @@
 			"email": "rathaus@neuoetting.de",
 			"postalAddress": "Stadt Neuötting<br/>Ludwigstraße 62<br/>84524 Neuötting",
 			"icon": "Neuoetting_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://id.bayernportal.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1557,8 +1501,7 @@
 			"phone": "+49 6221 522 0",
 			"email": "post@rhein-neckar-kreis.de",
 			"postalAddress": "Landratsamt Rhein-Neckar-Kreis<br/>Kurfürsten-Anlage 38 - 40<br/>69115 Heidelberg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerportal Baden-Württemberg (https://eid.service-bw.de)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1572,8 +1515,7 @@
 			"homepage": "https://www.rheingau-taunus.de",
 			"email": "zulassung@rheingau-taunus.de",
 			"postalAddress": "Rheingau-Taunus-Kreis<br/>Zulassung<br/>Heimbacher Straße 7<br/>65307 Bad Schwalbach",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from ekom21 (KGRZ Hessen) (https://kfzonline.ekom21.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1592,10 +1534,7 @@
 			"postalAddress": "Governikus GmbH & Co. KG<br/>Hochschulring 4<br/>28359 Bremen",
 			"image": "openpgp_image.jpg",
 			"icon": "openpgp_icon.svg",
-			"category": "other",
-			"subjectUrls": [
-				"https://pgp.governikus-eid.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -1614,10 +1553,7 @@
 			"postalAddress": "Governikus GmbH & Co. KG<br/>- im Auftrag des Bundesamtes für Sicherheit in der Informationstechnik -<br/>Hochschulring 4<br/>28359 Bremen",
 			"image": "selbstauskunft_image.jpg",
 			"icon": "selbstauskunft_icon.svg",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.autentapp.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1637,8 +1573,7 @@
 			"postalAddress": "Kreis Lippe<br/>Felix-Fechenbach-Straße 5<br/>32756 Detmold",
 			"image": "KreisLippe_image.jpg",
 			"icon": "KreisLippe_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portal Krz (https://www.buergerserviceportal.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1656,8 +1591,7 @@
 			"email": "poststelle@lra-m.bayern.de",
 			"postalAddress": "Landratsamt München<br/>Mariahilfplatz 17<br/>81541 München",
 			"icon": "LandesamtMuenchen_icon.jpg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1675,10 +1609,7 @@
 			"email": "poststelle@bm.mv-regierung.de",
 			"postalAddress": "Ministerium für Bildung, Wissenschaft und Kultur Mecklenburg-Vorpommern<br/>Werderstraße 124<br/>19055 Schwerin",
 			"icon": "MecklenburgVorpommern_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://fms.mv-regierung.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -1698,8 +1629,7 @@
 			"postalAddress": "Deutsche Emissionshandelsstelle (DEHSt) im Umweltbundesamt (UBA) City Campus - Haus 3, Eingang 3A<br/>Buchholzweg 8<br/>13627 Berlin",
 			"image": "nEHS-Register_image.jpg",
 			"icon": "nEHS-Register_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from ELSTER (https://www.elster.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1718,8 +1648,7 @@
 			"postalAddress": "Region Hannover<br/>Fachbereich Öffentliche Sicherheit<br/>Team Kfz-Zulassungsangelegenheiten<br/>Hildesheimer Straße 20<br/>30169 Hannover",
 			"category": "citizen",
 			"image": "RegionHannover_image.jpg",
-			"icon": "RegionHannover_icon.svg",
-			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+			"icon": "RegionHannover_icon.svg"
 		},
 		{
 			"shortName": {
@@ -1733,10 +1662,7 @@
 			"phone": "+49 30 90269 0",
 			"email": "kundenservice@berlin.de",
 			"postalAddress": "BerlinOnline Stadtportal GmbH & Co. KG<br/>Alte Jakobstraße 105<br/>10969 Berlin",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://eid-prod.connect.verwalt-berlin.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1754,8 +1680,7 @@
 			"email": "stadt@boizenburg.de",
 			"postalAddress": "Stadt Boizenburg/Elbe<br/>Kirchplatz 1<br/>19258 Boizenburg/Elbe",
 			"category": "citizen",
-			"icon": "Boizenburg_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Boizenburg_icon.png"
 		},
 		{
 			"shortName": {
@@ -1772,8 +1697,7 @@
 			"phone": "+49 203 94000",
 			"email": "serviceportal@stadt-duisburg.de",
 			"postalAddress": "Stadt Duisburg<br/>Burgplatz 19<br/>47051 Duisburg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1792,8 +1716,7 @@
 			"postalAddress": "Landeshauptstadt Düsseldorf<br/>Der Oberbürgermeister<br/>Marktplatz 2<br/>40213 Düsseldorf",
 			"image": "Duesseldorf_image.jpg",
 			"icon": "Duesseldorf_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1811,8 +1734,7 @@
 			"email": "info@stralsund.de",
 			"postalAddress": "Hansestadt Stralsund<br/>Postfach 2145<br/>18408 Stralsund",
 			"category": "citizen",
-			"icon": "Stralsund_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Stralsund_icon.png"
 		},
 		{
 			"shortName": {
@@ -1830,8 +1752,7 @@
 			"email": "info@grabow.de",
 			"postalAddress": "Stadt Grabow<br/>Am Markt 1<br/>19300 Grabow",
 			"category": "citizen",
-			"icon": "Grabow_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Grabow_icon.png"
 		},
 		{
 			"shortName": {
@@ -1850,8 +1771,7 @@
 			"postalAddress": "Stadt Mönchengladbach<br/>41050 Mönchengladbach",
 			"image": "ServiceportalMoenchengladbach_image.png",
 			"icon": "ServiceportalMoenchengladbach_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1868,10 +1788,7 @@
 			"phone": "+49 351 564 0",
 			"email": "info@sk.sachsen.de",
 			"postalAddress": "Sächsische Staatskanzlei<br/>Archivstraße 1<br/>01097 Dresden",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://eidconnect.egov.sachsen.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1889,27 +1806,7 @@
 			"email": "stadt@ludwigslust.de",
 			"postalAddress": "Stadt Ludwigslust<br/>Schloßstraße 38<br/>19288 Ludwigslust",
 			"category": "citizen",
-			"icon": "Ludwigslust_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
-		},
-		{
-			"shortName": {
-				"": "Servicekonto Nordrhein-Westfalen"
-			},
-			"longName": {
-				"": "Servicekonto Nordrhein-Westfalen"
-			},
-			"longDescription": {
-				"": "Einmal online registrieren und dann die gespeicherten Daten vielfach nutzen: Dies ist die Idee des Servicekonto.NRW.<br/>Als Bürgerinnen und Bürger können Sie Ihre einmal erfassten Daten in allen angeschlossenen Portalen und Online-Angeboten in Nordrhein-Westfalen nutzen: Dazu gehören Online-Angebote von Städten, Gemeinden und Kreisen genauso wie die von Ministerien und Behörden der Landesverwaltung NRW.<br/>Um das Servicekonto.NRW zu nutzen, müssen Sie sich einmal registrieren und Ihre Daten erfassen.<br/>Mit der Online-Ausweisfunktion können Sie Ihre Daten einfach elektronisch in das Servicekonto.NRW übertragen und sofort alle Funktionen nutzen. Bei manueller Eingabe der Daten stehen Ihnen unter Umständen nicht alle Funktionen zur Verfügung."
-			},
-			"address": "https://www.servicekonto.nrw",
-			"homepage": "https://www.land.nrw",
-			"email": "servicekonto@kdn.de",
-			"postalAddress": "KDN - Dachverband kommunaler IT-Dienstleister<br/>Enggasse 2<br/>50668 Köln",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://servicekonto.nrw"
-			]
+			"icon": "Ludwigslust_icon.png"
 		},
 		{
 			"shortName": {
@@ -1927,8 +1824,7 @@
 			"email": "serviceportal@en-kreis.de",
 			"postalAddress": "Ennepe-Ruhr-Kreis<br/>Hauptstr. 92<br/>58332 Schwelm",
 			"category": "citizen",
-			"icon": "ennepe_icon.png",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"icon": "ennepe_icon.png"
 		},
 		{
 			"shortName": {
@@ -1945,30 +1841,7 @@
 			"phone": "+49 5241 85 0",
 			"email": "kreisverwaltung@kreis-guetersloh.de",
 			"postalAddress": "Kreisverwaltung Gütersloh<br/>Herzebrocker Str. 140<br/>33334 Gütersloh",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
-		},
-		{
-			"shortName": {
-				"": "MV-Serviceportal"
-			},
-			"longName": {
-				"": "Mecklenburg-Vorpommern-Serviceportal"
-			},
-			"longDescription": {
-				"": "MV-Serviceportal: Suchen. Finden. Antrag stellen.<br>Das MV-SERVICEPORTAL ist die zentrale Informationsplattform der öffentlichen Verwaltung von Mecklenburg-Vorpommern für Bürgerinnen und Bürger, Unternehmen und Verwaltungen. Hier können Sie sich informieren, in Kontakt mit den zuständigen Stellen der Verwaltung treten und viele Behördengänge einfach online erledigen."
-			},
-			"address": "https://login.mv-serviceportal.de",
-			"homepage": "https://www.dvz-mv.de",
-			"phone": "+49 115",
-			"email": "mv-serviceportal@dvz-mv.de",
-			"postalAddress": "DVZ Datenverarbeitungszentrum Mecklenburg-Vorpommern GmbH<br/>Lübecker Straße 283<br/>19059 Schwerin",
-			"image": "MV-ServicePortal_image.png",
-			"icon": "MV-ServicePortal_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://login.mv-serviceportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -1986,8 +1859,7 @@
 			"email": "info@neustadt-glewe.de",
 			"postalAddress": "Stadt Neustadt-Glewe<br/>Markt 1<br/>19306 Neustadt-Glewe",
 			"category": "citizen",
-			"icon": "Neustadt-Glewe_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Neustadt-Glewe_icon.png"
 		},
 		{
 			"shortName": {
@@ -2005,8 +1877,7 @@
 			"email": "info@schwerin.de",
 			"postalAddress": "Landeshauptstadt Schwerin<br/>Am Packhof 2-6<br/>19053 Schwerin",
 			"category": "citizen",
-			"icon": "Schwerin_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Schwerin_icon.png"
 		},
 		{
 			"shortName": {
@@ -2024,8 +1895,7 @@
 			"email": "info@kreis-lup.de",
 			"postalAddress": "Landkreis Ludwigslust-Parchim<br/>Postfach 16 02 20<br/>19092 Schwerin",
 			"category": "citizen",
-			"icon": "Ludwigslust-Parchim_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Ludwigslust-Parchim_icon.png"
 		},
 		{
 			"shortName": {
@@ -2043,8 +1913,7 @@
 			"email": "amt@amt-stralendorf.de",
 			"postalAddress": "Amt Stralendorf<br/>Dorfstraße 30<br/>19073 Stralendorf",
 			"category": "citizen",
-			"icon": "Stralendorf_icon.png",
-			"subjectUrlInfo": "Using service from Serviceportal Mecklenburg-Vorpommern (https://login.mv-serviceportal.de)."
+			"icon": "Stralendorf_icon.png"
 		},
 		{
 			"eidSupport": false,
@@ -2056,11 +1925,7 @@
 			},
 			"address": "https://serviceportal.sachsen-anhalt.de",
 			"homepage": "https://serviceportal.sachsen-anhalt.de",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://st.buergerserviceportal.de",
-				"https://bk.sachsen-anhalt-connect.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2079,10 +1944,7 @@
 			"postalAddress": "Der Ministerpräsident - Staatskanzlei des Landes Schleswig-Holstein<br/>Digitalisierung und Zentrales IT-Management der Landesregierung<br/>Düsternbrooker Weg 104<br/>24105 Kiel",
 			"image": "ServiceportalSchleswigHolstein_image.jpg",
 			"icon": "ServiceportalSchleswigHolstein_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://idp.serviceportal.schleswig-holstein.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2101,8 +1963,7 @@
 			"postalAddress": "Stadt Wuppertal<br/>Johannes-Rau-Platz 1<br/>42275 Wuppertal",
 			"image": "ServiceportalWuppertal_image.jpg",
 			"icon": "ServiceportalWuppertal_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2121,8 +1982,7 @@
 			"phone": "+49 30 25980",
 			"email": "vertrieb@d-trust.net",
 			"postalAddress": "D-Trust GmbH<br/>Kommandantenstraße 15<br/>10969 Berlin",
-			"category": "other",
-			"subjectUrlInfo": "Using service from AusweisIDent (https://ausweisident.eid-service.de)."
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -2139,10 +1999,7 @@
 			"phone": "+49 9571 604 8014",
 			"email": "detlef.huehnlein@ecsec.de",
 			"postalAddress": "ecsec GmbH<br/>Sudetenstraße 16<br/>96247 Michelau",
-			"category": "other",
-			"subjectUrls": [
-				"https://service.skidentity.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -2161,10 +2018,7 @@
 			"postalAddress": "Kreissparkasse Esslingen-Nürtingen<br/>Bahnhofstr. 8<br/>73728 Esslingen",
 			"image": "KSK-Esslingen-Nuertingen_image.png",
 			"icon": "KSK-Esslingen-Nuertingen_icon.png",
-			"category": "finance",
-			"subjectUrls": [
-				"https://www.ksk-es.de"
-			]
+			"category": "finance"
 		},
 		{
 			"shortName": {
@@ -2183,30 +2037,7 @@
 			"postalAddress": "Stadt Kassel<br/>Obere Königsstraße 8<br/>34117 Kassel",
 			"image": "kassel_image.png",
 			"icon": "kassel_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from ekom21 (KGRZ Hessen) (https://kfzonline.ekom21.de)."
-		},
-		{
-			"shortName": {
-				"": "Stadt Halle (Saale) - iKFZ"
-			},
-			"longName": {
-				"": "Stadt Halle (Saale) - Internetbasierte Fahrzeugzulassung"
-			},
-			"longDescription": {
-				"": "Mit der internetbasierten Fahrzeugzulassung haben Sie die Möglichkeit, Online-Anträge im Bereich Kfz-Zulassung zu stellen."
-			},
-			"address": "https://ikfz.halle.de/ikfz3/?LICENSEIDENTIFIER=halle_stadt",
-			"homepage": "https://www.halle.de",
-			"phone": "+49 345 22 10",
-			"email": "Buergertelefon@halle.de",
-			"postalAddress": "Dienstleistungszentrum (DLZ) Bürgerbeteiligung der Stadt Halle (Saale)<br/>Marktplatz 1<br/>06100 Halle",
-			"image": "Halle_image.png",
-			"icon": "Halle_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://i-kfz.halle.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2225,8 +2056,7 @@
 			"postalAddress": "Landeshauptstadt Hannover<br/>Trammplatz 2<br/>30159 Hannover",
 			"image": "StadtHannover_image.jpg",
 			"icon": "StadtHannover_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Niedersächsisches Ministerium für Inneres und Sport (https://e-id.niedersachsen.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2245,8 +2075,7 @@
 			"postalAddress": "Magistrat der Stadt Herborn<br/>Hauptstraße 39<br/>35745 Herborn",
 			"image": "StadtHerborn_image.png",
 			"icon": "StadtHerborn_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Führungszeugnis und Auskunft aus dem Gewerbezentralregister (https://www.fuehrungszeugnis.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2265,10 +2094,7 @@
 			"postalAddress": "Stadtverwaltung Oberursel (Taunus)<br/>Rathausplatz 1<br/>61440 Oberursel (Taunus)",
 			"image": "Oberursel_image.jpg",
 			"icon": "Oberursel_icon.png",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://mein-service.hessen.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2287,10 +2113,7 @@
 			"postalAddress": "Stadt Nürnberg<br/>Amt für Digitalisierung und Prozessorganisation Rathausplatz 2<br/>90403 Nürnberg",
 			"category": "citizen",
 			"image": "MeinNuernberg_image.jpg",
-			"icon": "MeinNuernberg_icon.png",
-			"subjectUrls": [
-				"https://meinkonto.nuernberg.de"
-			]
+			"icon": "MeinNuernberg_icon.png"
 		},
 		{
 			"shortName": {
@@ -2308,10 +2131,7 @@
 			"email": "service@pronovabkk.de",
 			"postalAddress": "pronova BKK<br/>Rheinallee 13<br/>67061 Ludwigshafen",
 			"icon": "Pronova_icon.svg",
-			"category": "insurance",
-			"subjectUrls": [
-				"https://apptransfer.pronovabkk.de"
-			]
+			"category": "insurance"
 		},
 		{
 			"shortName": {
@@ -2329,8 +2149,7 @@
 			"email": "Serviceportal@remscheid.de",
 			"postalAddress": "Stadt Remscheid<br/>Theodor-Heuss-Platz 1<br/>42853 Remscheid",
 			"icon": "Remscheid_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -2348,8 +2167,7 @@
 			"phone": "+49 3461 40 1022",
 			"email": "internetredaktion@saalekreis.de",
 			"postalAddress": "Landkreis Saalekreis<br/>Domplatz 9<br/>06217 Merseburg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Serviceportal Sachsen-Anhalt (https://st.buergerserviceportal.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2365,8 +2183,7 @@
 			"homepage": "https://www.unterhaltsvorschuss-online.de",
 			"postalAddress": "Der Senator für Finanzen<br/>Projektteam Unterhaltsvorschuss<br/>Rudolf-Hilferding-Platz 1<br/>28195 Bremen",
 			"category": "citizen",
-			"icon": "UVO_icon.svg",
-			"subjectUrlInfo": "Using service from Gemeinsam-Online (https://idp.serviceportal.gemeinsamonline.de)."
+			"icon": "UVO_icon.svg"
 		},
 		{
 			"shortName": {
@@ -2380,10 +2197,7 @@
 			"longDescription": {
 				"": " Das Serviceportal Gemeinsam-Online stellt verschiedene digitale Dienste bereit."
 			},
-			"category": "citizen",
-			"subjectUrls": [
-				"https://idp.serviceportal.gemeinsamonline.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -2401,10 +2215,26 @@
 			"phone": "+49 221 221 26530",
 			"email": "standesamt@stadt-koeln.de",
 			"postalAddress": "Gülichplatz 1-3<br/>50667 Köln",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://ea.stadt-koeln.de"
-			]
+			"category": "citizen"
+		},
+		{
+			"shortName": {
+				"": "Versorgungswerk Rechtsanwälte Hessen"
+			},
+			"longName": {
+				"": "Versorgungswerk der Rechtsanwälte im Lande Hessen - Mitgliederportal"
+			},
+			"longDescription": {
+				"": "Für die elektronische Interaktion zwischen Mitgliedern und Rentnern mit dem Versorgungswerk steht das Mitgliederportal des Versorgungswerks zur Verfügung. Neben einer zusätzlichen Kommunikationsform bietet es weitere Vorteile. Das Portal dient der Schnelligkeit, Transparenz und Nachvollziehbarkeit. So kann beispielsweise der Stand eines Verfahrensablaufs jederzeit nachvollzogen oder selbst eine Bescheinigung erzeugt werden, ohne dass die Verwaltung eingebunden werden muss."
+			},
+			"address": "https://www.portal-ra-hessen.de",
+			"homepage": "https://www.vw-ra-hessen.de",
+			"phone": "+49 69 7137670",
+			"email": "portal@vw-ra-hessen.de",
+			"postalAddress": "Versorgungswerk der Rechtsanwälte<br/>im Lande Hessen<br/>Bockenheimer Landstraße 23<br/>60325 Frankfurt am Main",
+			"category": "insurance",
+			"image": "VersorgungswerkRechtsanwaelteHessen_image.png",
+			"icon": "VersorgungswerkRechtsanwaelteHessen_icon.png"
 		},
 		{
 			"eidSupport": false,
@@ -2417,13 +2247,12 @@
 			"longDescription": {
 				"": "Sie wollen städtische Dienstleistungen in Anspruch nehmen, sich zunächst nur informieren oder Sie suchen bereits ein bestimmtes Formular?<br/>Wir haben für Sie ein umfassendes Informationsangebot über Produkte und Leistungen (Services) der Stadt Dortmund gegliedert nach Themen und der Behördenstruktur bereitgestellt."
 			},
-			"address": "https://rathaus.dortmund.de",
-			"homepage": "https://rathaus.dortmund.de",
+			"address": "https://rathaus.dortmund.de/home",
+			"homepage": "https://rathaus.dortmund.de/home",
 			"phone": "+49 231 50 25650",
 			"email": "domap-feedback@stadtdo.de",
 			"postalAddress": "Stadt Dortmund<br/>Dortmunder Systemhaus<br/>Deggingstraße 42<br/>44122 Dortmund",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -2440,10 +2269,7 @@
 			"homepage": "https://www.vollstreckungsportal.de",
 			"email": "bundesportal@ag-hagen.nrw.de",
 			"postalAddress": "Land Nordrhein-Westfalen<br/>vertreten durch das Justizministerium<br/>Martin-Luther-Platz 40<br/>40212 Düsseldorf",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.vollstreckungsportal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2461,8 +2287,7 @@
 			"email": "info@nrw-ea.de",
 			"postalAddress": "Ministerium für Wirtschaft, Innovation, Digitalisierung und Energie des Landes Nordrhein-Westfalen<br/>Berger Allee 25<br/>40213 Düsseldorf",
 			"icon": "WSPNRW_icon.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"eidSupport": false,
@@ -2482,10 +2307,7 @@
 			"postalAddress": "Bundesministerium für Arbeit und Soziales<br/>Rochusstraße 1<br/>53123 Bonn",
 			"image": "Z-EU-S_image.jpg",
 			"icon": "Z-EU-S_icon.svg",
-			"category": "other",
-			"subjectUrls": [
-				"https://www.foerderportal-zeus.de"
-			]
+			"category": "other"
 		},
 		{
 			"shortName": {
@@ -2504,8 +2326,7 @@
 			"postalAddress": "Landkreis Elbe-Elster<br/>Der Landrat<br/>Ludwig-Jahn-Str. 2<br/>04916 Herzberg / Elster",
 			"image": "lkee_image.jpg",
 			"icon": "lkee_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Landesportal Brandenburg (https://e-ident.brandenburg.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2523,8 +2344,7 @@
 			"postalAddress": "Landeshauptstadt München<br/>80313 München",
 			"image": "LandeshauptstadtMuenchen_image.png",
 			"icon": "LandeshauptstadtMuenchen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2541,8 +2361,7 @@
 			"email": "poststelle@zbfs.bayern.de",
 			"postalAddress": "Zentrum Bayern Familie und Soziales<br/>95440 Bayreuth",
 			"icon": "ZBFS_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2557,10 +2376,7 @@
 				"": " Die BundID bietet Ihnen ein zentrales Konto zur Identifizierung für alle Ihre Online-Anträge (z. B. mit einem Online-Ausweis). Sie können das Formular Ihres Online-Antrags durch das Hinterlegen Ihrer persönlichen Daten vorausfüllen lassen. Das spart Zeit, ist sicher und bewahrt Sie vor Tippfehlern.<br/><br/>Sie erhalten alle Bescheide und Nachrichten in Bezug auf den Online-Antrag bequem in Ihr elektronisches Postfach in Ihrem BundID-Konto."
 			},
 			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://id.bund.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2577,8 +2393,7 @@
 			},
 			"postalAddress": "Stadt Oberhausen<br/>Schwartzstraße 72<br/>46042 Oberhausen",
 			"icon": "StadtOberhausen_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Servicekonto Nordrhein-Westfalen (https://servicekonto.nrw)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2596,10 +2411,7 @@
 			},
 			"postalAddress": "Deutsche Rentenversicherung Bund Zentrale Stelle für die Digitale Rentenübersicht<br/>10868 Berlin",
 			"icon": "DigitaleRentenuebersicht_icon.svg",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://login.deutsche-rentenversicherung.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2617,10 +2429,7 @@
 			"postalAddress": "Generalzolldirektion<br/>Am Propsthof 78a<br/>53121 Bonn",
 			"icon": "ZollPortal_icon.svg",
 			"image": "ZollPortal_image.svg",
-			"category": "citizen",
-			"subjectUrls": [
-				"https://www.zoll-portal.de"
-			]
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2637,8 +2446,7 @@
 			},
 			"postalAddress": "Stadt Augsburg<br/>Rathausplatz 1<br/>86150 Augsburg",
 			"icon": "StadtAugsburg_icon.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerservice-Portale der bayerischen Kommunen (https://bayernid.freistaat.bayern)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2657,8 +2465,7 @@
 			"postalAddress": "Landkreis Schaumburg<br/>Jahnstraße 20<br/>31655 Stadthagen",
 			"icon": "Schaumburg_icon.svg",
 			"image": "Schaumburg_image.svg",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from bundID (https://id.bund.de)."
+			"category": "citizen"
 		},
 		{
 			"shortName": {
@@ -2677,8 +2484,7 @@
 			"postalAddress": "Stadt Freiburg im Breisgau<br/>Fehrenbachallee 12<br/>79106 Freiburg",
 			"icon": "Freiburg_icon.png",
 			"image": "Freiburg_image.png",
-			"category": "citizen",
-			"subjectUrlInfo": "Using service from Bürgerportal Baden-Württemberg (https://eid.service-bw.de)."
+			"category": "citizen"
 		}
 	]
 }

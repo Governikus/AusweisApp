@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "controller/AppController.h"
@@ -60,8 +60,8 @@ class test_AppController
 		void test_StartNewWorkflow()
 		{
 			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest> pRequest){
-					pRequest->getContext()->claim(this);
-				});
+						pRequest->getContext()->claim(this);
+					});
 
 			QSignalSpy spy(mController.data(), &AppController::fireWorkflowStarted);
 			QTest::ignoreMessage(QtInfoMsg, "Started new workflow PIN");
@@ -156,8 +156,8 @@ class test_AppController
 		void test_OnAuthenticationRequestSELF()
 		{
 			connect(mController.data(), &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest> pRequest){
-					pRequest->getContext()->claim(this);
-				});
+						pRequest->getContext()->claim(this);
+					});
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::SelfAuthController");

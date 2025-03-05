@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PinResetInformationModel.h"
@@ -139,7 +139,7 @@ QString PinResetInformationModel::getPinResetActionText() const
 
 QString PinResetInformationModel::authorityFinderSuffix() const
 {
-	return QStringLiteral("<br/><br/>") + tr("To find your competent authority you may visit servicesuche.bund.de.");
+	return QStringLiteral("<br/><br/>") + tr("To find your competent authority you may visit Servicesuche Bund.");
 }
 
 

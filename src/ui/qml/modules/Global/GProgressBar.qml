@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -9,7 +9,7 @@ import Governikus.Type
 import Governikus.View
 
 ProgressBar {
-	id: progressBar
+	id: root
 
 	readonly property alias effectiveVisualPosition: bar.mutableVisualPosition
 	property alias text: progressText.text
@@ -34,7 +34,7 @@ ProgressBar {
 			Rectangle {
 				id: bar
 
-				property real mutableVisualPosition: SettingsModel.useAnimations || visualPosition === 1 ? visualPosition : 0.25
+				property real mutableVisualPosition: SettingsModel.useAnimations || root.visualPosition === 1 ? root.visualPosition : 0.25
 
 				border.color: Style.color.control.border.basic
 				border.width: Style.dimens.border_width

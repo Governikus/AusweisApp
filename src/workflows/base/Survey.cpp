@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Survey.h"
@@ -25,9 +25,9 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 using namespace governikus;
 
 #define VALUE_NAME(_name, _key)\
-	inline QLatin1String _name(){\
-		return QLatin1String(_key);\
-	}
+		inline QLatin1String _name(){\
+			return QLatin1String(_key);\
+		}
 
 
 namespace

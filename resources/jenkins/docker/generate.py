@@ -13,7 +13,7 @@ if cur_version < req_version:
 args = str(sys.argv)
 
 # Alpine
-alpine = ['alpine:swarm', 'alpine:trigger',
+alpine = ['alpine:swarm', 'alpine:trigger', 'alpine:sync',
           'alpine:common', 'alpine:docs', 'alpine:linux']
 
 # Ubuntu

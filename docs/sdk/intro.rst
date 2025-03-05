@@ -41,7 +41,7 @@ show a possible communication.
 
    Also this approach, recommended for compliance reasons by the
    Federal Office for Information Security, spares your client
-   application the necessity of encypting these high sensitive
+   application the necessity of encrypting these high sensitive
    data.
 
    In case your client application requires data input from the

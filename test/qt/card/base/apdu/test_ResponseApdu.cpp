@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref Apdu
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/ResponseApdu.h"
@@ -123,7 +119,7 @@ class test_ResponseApdu
 			QTest::newRow("RECORD_NOT_FOUND") << StatusCode::RECORD_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x83);
 			QTest::newRow("INVALID_PARAMETER") << StatusCode::INVALID_PARAMETER << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x86);
 			QTest::newRow("LC_INCONSISTANT") << StatusCode::LC_INCONSISTANT << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x87);
-			QTest::newRow("PASSWORD_NOT_FOUND") << StatusCode::PASSWORD_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x88);
+			QTest::newRow("REFERENCED_DATA_NOT_FOUND") << StatusCode::REFERENCED_DATA_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x88);
 			QTest::newRow("ILLEGAL_OFFSET") << StatusCode::ILLEGAL_OFFSET << SW1::WRONG_PARAMETERS_P1_P2_NO_INFO << static_cast<char>(0x00);
 			QTest::newRow("UNSUPPORTED_CLA") << StatusCode::UNSUPPORTED_CLA << SW1::CLASS_NOT_SUPPORTED << static_cast<char>(0x00);
 			QTest::newRow("CANT_DISPLAY") << StatusCode::CANT_DISPLAY << SW1::NONVOLATILE_MEMORY_UNCHANGED_2 << static_cast<char>(0x10);
@@ -136,6 +132,7 @@ class test_ResponseApdu
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_1") << StatusCode::INITIAL_PIN_RETRY_COUNT_1 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD1);
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_2") << StatusCode::INITIAL_PIN_RETRY_COUNT_2 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD2);
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_3") << StatusCode::INITIAL_PIN_RETRY_COUNT_3 << SW1::NONVOLATILE_MEMORY_CHANGED_1 << static_cast<char>(0xD3);
+			QTest::newRow("NO_PRECISE_DIAGNOSIS") << StatusCode::NO_PRECISE_DIAGNOSIS << SW1::NO_PRECISE_DIAGNOSIS << static_cast<char>(0x00);
 
 			mTestAllKnownStatusCode = true;
 		}

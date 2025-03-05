@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "TestFileHelper.h"
@@ -72,9 +72,9 @@ void TestFileHelper::createTranslations(const QString& pTranslationDir)
 bool TestFileHelper::containsLog(const QSignalSpy& pSpy, const QLatin1String pStr)
 {
 	return std::any_of(pSpy.constBegin(), pSpy.constEnd(), [pStr](const auto& pEntry)
-		{
-			return pEntry.at(0).toString().contains(pStr);
-		});
+			{
+				return pEntry.at(0).toString().contains(pStr);
+			});
 }
 
 

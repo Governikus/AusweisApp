@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Holds the data of an InputAPDUInfo element.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +7,7 @@
 #include "apdu/CommandApdu.h"
 
 #include <QByteArrayList>
+
 
 namespace governikus
 {

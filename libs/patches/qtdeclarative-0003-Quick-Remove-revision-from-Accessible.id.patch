@@ -1,0 +1,32 @@
+From f73f23956068ab954c63518ebe8f40a13fb2e4f1 Mon Sep 17 00:00:00 2001
+From: Ulf Hermann <ulf.hermann@qt.io>
+Date: Mon, 3 Mar 2025 15:20:23 +0100
+Subject: Quick: Remove revision from Accessible.id
+
+We don't need revisions on attached properties, they are always
+qualified anyway.
+
+Amends commit 94d736fa94d62632e065e9b919413090f3454546
+
+Pick-to: 6.8 6.9 6.9.0
+Task-number: QTBUG-134269
+Change-Id: I3a133e0391f639dacc7455804be0558c1dd377bf
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+(cherry picked from commit 572bea2c515b98806da0be4c16a4357da5c2c4f3)
+---
+ src/quick/items/qquickaccessibleattached_p.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+index 2d44000242ec50dd763001dc089dc988f4fba068..9f3883b8b7cd32cc18f211ccdeaa8fdf68d00c3b 100644
+--- x/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
++++ y/qtdeclarative/src/quick/items/qquickaccessibleattached_p.h
+@@ -53,7 +53,7 @@ class Q_QUICK_EXPORT QQuickAccessibleAttached : public QObject
+     Q_PROPERTY(QAccessible::Role role READ role WRITE setRole NOTIFY roleChanged FINAL)
+     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged FINAL)
+     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged FINAL)
+-    Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged REVISION(6, 8) FINAL)
++    Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged FINAL)
+     Q_PROPERTY(bool ignored READ ignored WRITE setIgnored NOTIFY ignoredChanged FINAL)
+ 
+     QML_NAMED_ELEMENT(Accessible)

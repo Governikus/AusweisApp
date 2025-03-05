@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Dispatch Messages of JSON API.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -41,7 +37,11 @@ class MessageDispatcher
 
 		MsgHandler cancel();
 		MsgHandler accept();
+#ifdef Q_OS_IOS
 		MsgHandler interrupt();
+#else
+		MsgHandler interrupt() const;
+#endif
 		MsgHandler handleCurrentState(MsgCmdType pCmdType, std::initializer_list<MsgType> pMsgType, const std::function<MsgHandler()>& pFunc) const;
 		MsgHandler handleInternalOnly(MsgCmdType pCmdType, const std::function<MsgHandler()>& pFunc) const;
 

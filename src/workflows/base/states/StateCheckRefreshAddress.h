@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Calls the RefreshAddress of TcToken and checks the certificates.
- * After that it will set RedirectAddress in WorkflowContext.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

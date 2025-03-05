@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,9 +14,9 @@
 #endif
 
 #define SETTINGS_NAME(_name, _key)\
-	QAnyStringView _name(){\
-		return QAnyStringView(_key);\
-	}
+		QAnyStringView _name(){\
+			return QAnyStringView(_key);\
+		}
 
 namespace governikus
 {

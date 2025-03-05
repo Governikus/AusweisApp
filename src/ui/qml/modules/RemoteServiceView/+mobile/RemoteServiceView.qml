@@ -1,17 +1,23 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.TitleBar
 import Governikus.Style
-import Governikus.View
+import Governikus.TitleBar
 import Governikus.Type
+import Governikus.View
+import Governikus.Workflow
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
+
+	readonly property int nfcState: ApplicationModel.nfcState
 
 	enableTileStyle: false
 
@@ -47,7 +53,7 @@ FlickableSectionPage {
 
 	Connections {
 		function onFireIsRunningChanged() {
-			setLockedAndHidden(RemoteServiceModel.running);
+			root.setLockedAndHidden(RemoteServiceModel.running);
 		}
 
 		target: RemoteServiceModel
@@ -55,10 +61,10 @@ FlickableSectionPage {
 	RemoteServiceController {
 		id: controller
 
-		stackView: baseItem.stackView
+		stackView: root.stackView
 	}
 	GOptionsContainer {
-		containerPadding: Constants.pane_padding
+		containerPadding: Style.dimens.pane_padding
 		//: LABEL ANDROID IOS
 		title: !ApplicationModel.wifiEnabled ? qsTr("WiFi not active") :
 		//: LABEL ANDROID IOS
@@ -71,14 +77,15 @@ FlickableSectionPage {
 		RemoteServiceModel.isPairing ? qsTr("Waiting for pairing") :
 		//: LABEL ANDROID IOS
 		RemoteServiceModel.running ? qsTr("Card reader ready") : ""
+		visible: root.nfcState !== ApplicationModel.NfcState.UNAVAILABLE
 
 		ColumnLayout {
-			spacing: Constants.component_spacing
+			spacing: Style.dimens.pane_spacing
 			width: parent.width
 
 			TintableIcon {
 				Layout.alignment: Qt.AlignHCenter
-				Layout.topMargin: Constants.text_spacing
+				Layout.topMargin: Style.dimens.text_spacing
 				source: "qrc:///images/phone_to_pc.svg"
 				sourceSize.height: Style.dimens.medium_icon_size
 				tintColor: Style.color.image
@@ -90,9 +97,8 @@ FlickableSectionPage {
 				//: INFO ANDROID IOS
 				readonly property string enterCodeString: qsTr("Enter the pairing code \"%1\" in the %2 on your other device.")
 
-				Accessible.name: text
 				Layout.alignment: Qt.AlignHCenter
-				Layout.topMargin: Constants.text_spacing
+				Layout.topMargin: Style.dimens.text_spacing
 				horizontalAlignment: Text.AlignHCenter
 				//: INFO ANDROID IOS
 				text: qsTr("You can use this Smartphone as a card reader for the %1 on other devices e.g. a laptop.\n\nTo do this you first have to pair that device with this smartphone.").arg(Qt.application.name)
@@ -125,7 +131,7 @@ FlickableSectionPage {
 
 						PropertyChanges {
 							//: INFO ANDROID IOS
-							infoText.text: qsTr("Allow a connection with paired devices to use this Smartphone as a card reader or pair another device.")
+							infoText.text: qsTr("Activate the card reader, this allows the paired devices to use this smartphone as a card reader.")
 						}
 					},
 					State {
@@ -148,7 +154,7 @@ FlickableSectionPage {
 
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignHCenter
-				Layout.topMargin: Constants.component_spacing
+				Layout.topMargin: Style.dimens.pane_spacing
 				horizontalAlignment: Text.AlignHCenter
 
 				//: LABEL ANDROID IOS
@@ -160,12 +166,12 @@ FlickableSectionPage {
 				id: paringCodeLink
 
 				Layout.alignment: Qt.AlignCenter
-				Layout.topMargin: Constants.component_spacing
+				Layout.topMargin: Style.dimens.pane_spacing
 				//: LABEL ANDROID IOS
 				text: qsTr("Where do I enter the pairing code?")
 				visible: false
 
-				onClicked: push(pairingCodeInfoView)
+				onClicked: root.push(pairingCodeInfoView)
 
 				Component {
 					id: pairingCodeInfoView
@@ -173,17 +179,40 @@ FlickableSectionPage {
 					PairingCodeInfoView {
 						text: paringCodeLink.text
 
-						onNavActionClicked: pop()
+						onNavActionClicked: root.pop()
 					}
 				}
+			}
+		}
+	}
+	NfcWorkflow {
+		id: nfcWorkflow
+
+		Layout.fillHeight: true
+		Layout.fillWidth: true
+		bottomMargin: 0
+		isRemoteWorkflow: true
+		leftMargin: 0
+		rightMargin: 0
+		topMargin: 0
+		visible: root.nfcState === ApplicationModel.NfcState.UNAVAILABLE
+
+		onShowRemoteServiceSettings: root.push(remoteServiceSettings)
+
+		Component {
+			id: remoteServiceSettings
+
+			RemoteServiceSettings {
+				Component.onCompleted: RemoteServiceModel.startDetection()
+				Component.onDestruction: RemoteServiceModel.stopDetection(true)
 			}
 		}
 	}
 	GOptionsContainer {
 		id: knownDevicesContainer
 
-		Layout.topMargin: Constants.component_spacing
-		containerPadding: Constants.pane_padding
+		Layout.topMargin: Style.dimens.pane_spacing
+		containerPadding: Style.dimens.pane_padding
 		//: LABEL ANDROID IOS
 		title: qsTr("Paired Devices")
 		visible: RemoteServiceModel.runnable && knownDeviceList.count > 0
@@ -191,7 +220,7 @@ FlickableSectionPage {
 		ColumnLayout {
 			id: knownDevices
 
-			spacing: Constants.text_spacing
+			spacing: Style.dimens.text_spacing
 			width: parent.width
 
 			Repeater {
@@ -201,9 +230,7 @@ FlickableSectionPage {
 
 				delegate: DevicesListDelegate {
 					Layout.fillWidth: true
-					highlightTitle: isLastAddedDevice
 					linkQualityVisible: false
-					title: remoteDeviceName
 				}
 			}
 			GLink {
@@ -219,8 +246,6 @@ FlickableSectionPage {
 				visible: !RemoteServiceModel.isPairing && !RemoteServiceModel.running
 
 				onClicked: RemoteServiceModel.setRunning(!RemoteServiceModel.running, !RemoteServiceModel.isPairing)
-				onFocusChanged: if (focus)
-					baseItem.positionViewAtItem(this)
 			}
 		}
 	}
@@ -231,20 +256,20 @@ FlickableSectionPage {
 		id: wifiInfo
 
 		Layout.fillWidth: true
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 	}
 	LocalNetworkInfo {
 		id: networkPermissionText
 
-		Layout.bottomMargin: Constants.text_spacing
-		Layout.topMargin: Constants.component_spacing
+		Layout.bottomMargin: Style.dimens.text_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		visible: RemoteServiceModel.requiresLocalNetworkPermission
 	}
 	GProgressBar {
 		id: progressBar
 
 		Layout.fillWidth: true
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		value: RemoteServiceModel.percentage
 		visible: progressText.visible
 	}
@@ -252,7 +277,7 @@ FlickableSectionPage {
 		id: progressText
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.text_spacing
+		Layout.topMargin: Style.dimens.text_spacing
 		text: RemoteServiceModel.displayText
 		visible: text !== ""
 	}
@@ -260,7 +285,7 @@ FlickableSectionPage {
 		id: pairConnectButton
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		enabled: !RemoteServiceModel.isStarting
 		visible: text !== ""
 
@@ -329,7 +354,5 @@ FlickableSectionPage {
 		]
 
 		onClicked: RemoteServiceModel.setRunning(true, !RemoteServiceModel.isPairing)
-		onFocusChanged: if (focus)
-			baseItem.positionViewAtItem(this)
 	}
 }

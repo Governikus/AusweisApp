@@ -1,27 +1,27 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
-import Governikus.Global
-import Governikus.Style
+
 import Governikus.TitleBar
+import Governikus.Style
 
 Row {
-	id: logControls
+	id: root
 
 	property alias allowRemoveAll: removeAllButton.visible
 
 	signal removeAll
 	signal share(point popupPosition)
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	TitleBarAction {
 		Accessible.name: qsTr("Share log")
 		icon.source: "qrc:///images/mobile/share.svg"
 
-		onClicked: logControls.share(mapToGlobal(width / 2, height))
+		onClicked: root.share(mapToGlobal(width / 2, height))
 	}
 	TitleBarAction {
 		id: removeAllButton
@@ -29,6 +29,6 @@ Row {
 		Accessible.name: qsTr("Delete all logs")
 		icon.source: "qrc:///images/trash_icon.svg"
 
-		onClicked: logControls.removeAll()
+		onClicked: root.removeAll()
 	}
 }

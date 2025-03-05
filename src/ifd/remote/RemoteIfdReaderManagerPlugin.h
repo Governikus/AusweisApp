@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of \ref ReaderManagerPlugin for smartphone as card reader (SaC).
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -14,7 +10,9 @@
 #include <QStringList>
 #include <QTimer>
 
+
 class test_RemoteIfdReaderManagerPlugin;
+
 
 namespace governikus
 {
@@ -31,7 +29,7 @@ class RemoteIfdReaderManagerPlugin
 	private:
 		QTimer mScanTimer;
 		bool mConnectToPairedReaders;
-		QStringList mConnectionAttempts;
+		QByteArrayList mConnectionAttempts;
 
 	private Q_SLOTS:
 		void connectToPairedReaders() const;

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Status class that tracks reasons for aborting a Workflow
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,6 +9,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QPair>
+
 
 namespace governikus
 {

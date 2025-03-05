@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -13,7 +13,6 @@ AbstractButton {
 	id: root
 
 	property alias colorStyle: colors.linkStyle
-	property alias cursorShape: mouseArea.cursorShape
 	property alias iconSize: linkIcon.sourceSize.height
 	property alias iconTintColor: linkIcon.tintColor
 	property alias layoutDirection: contentLayout.layoutDirection
@@ -24,33 +23,31 @@ AbstractButton {
 	Accessible.name: text
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
-	activeFocusOnTab: true
 	background: null
 	font.pixelSize: linkText.textStyle.textSize
 	font.weight: linkText.textStyle.fontWeight
-	horizontalPadding: Constants.control_horizontalPadding
-	verticalPadding: Constants.control_verticalPadding
+	horizontalPadding: Style.dimens.control_horizontalPadding
+	verticalPadding: Style.dimens.control_verticalPadding
 
 	contentItem: RowLayout {
 		RowLayout {
 			id: contentLayout
 
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
-			Layout.minimumHeight: root.font.pixelSize + topPadding + bottomPadding
-			spacing: Constants.groupbox_spacing
+			Layout.minimumHeight: root.font.pixelSize + root.topPadding + root.bottomPadding
+			spacing: Style.dimens.groupbox_spacing
 			z: 1
 
 			TintableIcon {
 				id: linkIcon
 
 				source: root.icon.source
-				sourceSize.height: 1.2 * linkText.effectiveFirstLineHeight
+				sourceSize.height: 1.5 * linkText.effectiveFirstLineHeight
 				tintColor: colors.linkColor
-				tintEnabled: true
 				visible: root.icon.source != ""
 
 				Behavior on source {
-					enabled: SettingsModel.useAnimations && !Constants.is_desktop
+					enabled: SettingsModel.useAnimations && !Style.is_layout_desktop
 
 					SequentialAnimation {
 						PropertyAction {
@@ -63,7 +60,7 @@ AbstractButton {
 							target: linkIcon
 						}
 						PropertyAnimation {
-							duration: Constants.animation_duration * 2
+							duration: Style.animation_duration * 2
 							easing.type: Easing.InCubic
 							property: "opacity"
 							target: linkIcon
@@ -78,6 +75,7 @@ AbstractButton {
 				Accessible.ignored: true
 				Layout.alignment: Qt.AlignHCenter
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
+				activeFocusOnTab: false
 				color: colors.linkColor
 				elide: Text.ElideRight
 				font: root.font
@@ -85,7 +83,7 @@ AbstractButton {
 					if (!linkIcon.visible) {
 						return Text.AlignHCenter;
 					}
-					return layoutDirection === Qt.LeftToRight ? Text.AlignLeft : Text.AlignRight;
+					return root.layoutDirection === Qt.LeftToRight ? Text.AlignLeft : Text.AlignRight;
 				}
 				lineHeight: root.textStyle.lineHeight
 				maximumLineCount: 1
@@ -98,6 +96,8 @@ AbstractButton {
 
 	onActiveFocusOnTabChanged: if (!activeFocusOnTab)
 		focus = false
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	HoverHandler {
 		id: hoverHandler
@@ -109,15 +109,5 @@ AbstractButton {
 		statefulControl: root
 	}
 	FocusFrame {
-	}
-	MouseArea {
-		id: mouseArea
-
-		anchors.fill: parent
-		z: 2
-
-		onPressed: mouse => {
-			mouse.accepted = false;
-		}
 	}
 }

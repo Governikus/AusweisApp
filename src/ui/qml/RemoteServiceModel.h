@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the remote service component
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -54,7 +50,6 @@ class RemoteServiceModel
 	Q_PROPERTY(governikus::RemoteDeviceFilterModel * availableDevicesInPairingMode READ getAvailableDevicesInPairingMode CONSTANT)
 	Q_PROPERTY(governikus::RemoteDeviceFilterModel * availablePairedDevices READ getAvailablePairedDevices CONSTANT)
 	Q_PROPERTY(governikus::RemoteDeviceFilterModel * unavailablePairedDevices READ getUnavailablePairedDevices CONSTANT)
-	Q_PROPERTY(bool detectRemoteDevices READ detectRemoteDevices WRITE setDetectRemoteDevices NOTIFY fireDetectionChanged)
 	Q_PROPERTY(bool enableTransportPinLink READ enableTransportPinLink NOTIFY fireEstablishPaceChannelUpdated)
 	Q_PROPERTY(bool remoteReaderVisible READ getRemoteReaderVisible NOTIFY fireRemoteReaderVisibleChanged)
 	Q_PROPERTY(bool requiresLocalNetworkPermission MEMBER mRequiresLocalNetworkPermission CONSTANT)
@@ -85,7 +80,7 @@ class RemoteServiceModel
 		RemoteServiceModel();
 		~RemoteServiceModel() override = default;
 
-		QString getErrorMessage(bool pNfcPluginAvailable, bool pNfcPluginEnabled, bool pWifiEnabled) const;
+		QString getErrorMessage(bool pNfcPluginEnabled, bool pWifiEnabled) const;
 		QRegularExpression getPercentMatcher() const;
 
 		void setStarting(bool pStarting);
@@ -97,7 +92,11 @@ class RemoteServiceModel
 		void onCardDisconnected(const QSharedPointer<CardConnection>& pConnection) const;
 		void onConnectedDevicesChanged();
 		void onEnvironmentChanged();
+#ifdef Q_OS_IOS
 		void onApplicationStateChanged(const bool pIsAppInForeground);
+#else
+		void onApplicationStateChanged(const bool pIsAppInForeground) const;
+#endif
 		void onPairingCompleted(const QSslCertificate& pCertificate);
 		void onNameChanged();
 
@@ -110,14 +109,13 @@ class RemoteServiceModel
 		Q_INVOKABLE void setRunning(bool pState, bool pEnablePairing = false);
 		[[nodiscard]] bool isStarting() const;
 
-
 		[[nodiscard]] RemoteDeviceModel* getAllDevices();
 		[[nodiscard]] RemoteDeviceFilterModel* getAvailableDevicesInPairingMode();
 		[[nodiscard]] RemoteDeviceFilterModel* getAvailablePairedDevices();
 		[[nodiscard]] RemoteDeviceFilterModel* getUnavailablePairedDevices();
-		void setDetectRemoteDevices(bool pNewStatus);
-		[[nodiscard]] bool detectRemoteDevices() const;
-		Q_INVOKABLE bool rememberServer(const QString& pDeviceId);
+		Q_INVOKABLE void startDetection();
+		Q_INVOKABLE void stopDetection(bool pStopScan);
+		Q_INVOKABLE bool rememberServer(const QVariant& pDeviceId);
 		Q_INVOKABLE void connectToRememberedServer(const QByteArray& pServerPsk);
 		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
 
@@ -139,7 +137,7 @@ class RemoteServiceModel
 		[[nodiscard]] QString getConnectedClientName() const;
 
 		[[nodiscard]] Q_INVOKABLE bool pinPadModeOn() const;
-		Q_INVOKABLE void forgetDevice(const QString& pId);
+		Q_INVOKABLE void forgetDevice(const QVariant& pId);
 		Q_INVOKABLE void cancelPasswordRequest();
 		Q_INVOKABLE void passwordsDiffer();
 		Q_INVOKABLE void changePinLength();
@@ -153,8 +151,8 @@ class RemoteServiceModel
 		void firePskChanged(const QByteArray& pPsk);
 		void fireDisplayTextChanged();
 		void fireConnectedChanged();
+		void fireConnectedServerDisconnected();
 		void fireServerPskChanged();
-		void fireDetectionChanged();
 		void firePairingFailed(const QString& pDeviceName, const QString& pErrorMessage);
 		void firePairingSuccess(const QString& pDeviceName);
 		void firePairingCompleted();

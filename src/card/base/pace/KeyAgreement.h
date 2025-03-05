@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief the key agreement protocol use in PACE. For details see TR 03110.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,6 +9,7 @@
 #include "pace/KeyDerivationFunction.h"
 
 #include <QSharedPointer>
+
 
 namespace governikus
 {

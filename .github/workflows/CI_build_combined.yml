@@ -56,7 +56,7 @@ jobs:
 
   build_linux:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -68,7 +68,7 @@ jobs:
 
     - name: Install packages via apt
       run: |
-           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-15-dev libclang-14-dev libclang-13-dev ninja-build
+           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
 
     - name: generate cmake libs
       run: |
@@ -94,7 +94,7 @@ jobs:
 
   build_linux_android:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -106,7 +106,7 @@ jobs:
 
     - name: Install packages via apt
       run: |
-           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-15-dev libclang-14-dev libclang-13-dev ninja-build
+           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
            sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime
 
     - name: generate cmake libs
@@ -118,13 +118,26 @@ jobs:
            cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
            cmake --install ${{ env.BUILD_DIR_LIBS }}
 
+    - name: generate cmake
+      run: |
+           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+
+    - name: build cmake
+      run: |
+           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+           cmake --install ${{ env.BUILD_DIR_APP }}
+
+    - name: run ctest
+      run: |
+           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+
   build_macos:
 
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        build_configuration: [Release]
+        build_configuration: [Release, Debug]
         build_platform: ["Ninja"]
 
     steps:
@@ -146,13 +159,22 @@ jobs:
       run: |
            cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=./_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
 
+    - name: build cmake
+      run: |
+           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+           sudo cmake --install ${{ env.BUILD_DIR_APP }}
+
+    - name: run ctest
+      run: |
+           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+
   build_ios:
 
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        build_configuration: [Release]
+        build_configuration: [Release, Debug]
         build_platform: ["Unix Makefiles"]
 
     steps:
@@ -169,3 +191,16 @@ jobs:
     - name: build cmake libs
       run: |
            cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
+
+    - name: generate cmake
+      run: |
+           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+
+    - name: build cmake
+      run: |
+           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+           sudo cmake --install ${{ env.BUILD_DIR_APP }}
+
+    - name: run ctest
+      run: |
+           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"

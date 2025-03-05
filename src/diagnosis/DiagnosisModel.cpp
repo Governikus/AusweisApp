@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisModel.h"
@@ -14,9 +14,6 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QFile>
-#if defined(Q_OS_WIN)
-	#include <QOperatingSystemVersion>
-#endif
 #include <QQmlEngine>
 #include <QStringList>
 
@@ -98,8 +95,8 @@ void DiagnosisModel::initGeneralSections()
 {
 	mAusweisAppSection.clear();
 	BuildHelper::processInformationHeader([this](const QString& pKey, const QString& pValue){
-			mAusweisAppSection << ContentItem(pKey, pValue);
-		});
+				mAusweisAppSection << ContentItem(pKey, pValue);
+			});
 
 	//: LABEL DESKTOP
 	const auto& title = tr("Time of diagnosis");
@@ -218,7 +215,7 @@ void DiagnosisModel::updateAntiVirusAndFirewallSection(bool pUpdateTimestamp)
 }
 
 
-void DiagnosisModel::connectSignals()
+void DiagnosisModel::connectSignals() const
 {
 	connect(mContext.data(), &DiagnosisContext::timestampChanged, this, &DiagnosisModel::onTimestampChanged);
 	connect(mContext.data(), &DiagnosisContext::fireNetworkInfoChanged, this, &DiagnosisModel::onNetworkInfoChanged);
@@ -237,7 +234,7 @@ void DiagnosisModel::connectSignals()
 }
 
 
-void DiagnosisModel::disconnectSignals()
+void DiagnosisModel::disconnectSignals() const
 {
 	disconnect(mContext.data(), &DiagnosisContext::timestampChanged, this, &DiagnosisModel::onTimestampChanged);
 	disconnect(mContext.data(), &DiagnosisContext::fireNetworkInfoChanged, this, &DiagnosisModel::onNetworkInfoChanged);
@@ -359,7 +356,7 @@ int DiagnosisModel::rowCount(const QModelIndex& pParent) const
 QHash<int, QByteArray> DiagnosisModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
-	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
+	roles.insert(Qt::DisplayRole, QByteArrayLiteral("modelData"));
 	roles.insert(ContentRole, QByteArrayLiteral("content"));
 	return roles;
 }
@@ -597,20 +594,8 @@ void DiagnosisModel::onFirewallInformationReady()
 	auto installedFirewalls = mFirewallDetection.getDetectedFirewalls();
 	if (installedFirewalls.isEmpty())
 	{
-#if defined(Q_OS_WIN)
-		if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
-		{
-			//: LABEL DESKTOP
-			mFirewallSection << ContentItem(QString(), tr("3rd party firewalls cannot be detected on Windows 7."));
-		}
-		else
-		{
-#else
-		{
-#endif
-			//: LABEL DESKTOP
-			mFirewallSection << ContentItem(QString(), tr("No 3rd party firewalls detected"));
-		}
+		//: LABEL DESKTOP
+		mFirewallSection << ContentItem(QString(), tr("No 3rd party firewalls detected"));
 	}
 	else
 	{
@@ -658,8 +643,8 @@ void DiagnosisModel::onFirewallInformationReady()
 	{
 		windowsFirewallProfiles << profile->getName();
 		QString enabled = boolToString(profile->getEnabled());
-		windowsFirewallProfiles << tr("Enabled: %1").arg(enabled);
 		//: LABEL DESKTOP
+		windowsFirewallProfiles << tr("Enabled: %1").arg(enabled);
 	}
 
 	if (windowsFirewallProfiles.isEmpty())
@@ -772,7 +757,7 @@ void DiagnosisModel::onRemoteInfosChanged()
 		else
 		{
 			//: LABEL DESKTOP
-			mRemoteDeviceSection << ContentItem(RemoteServiceSettings::generateFingerprint(cert), tr("No information found for this certificate."));
+			mRemoteDeviceSection << ContentItem(QString::fromLatin1(RemoteServiceSettings::generateFingerprint(cert).toHex()), tr("No information found for this certificate."));
 		}
 	}
 

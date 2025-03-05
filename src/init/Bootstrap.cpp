@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Bootstrap.h"
@@ -182,10 +182,10 @@ int governikus::initApp(int& argc, char** argv)
 	const QMutexLocker mutexLocker(&cMutex);
 	AppController controller;
 	Env::getSingleton<SignalHandler>()->setController([&controller]{
-			QMetaObject::invokeMethod(&controller, [&controller]{
-				controller.doShutdown();
-			}, Qt::QueuedConnection);
-		});
+				QMetaObject::invokeMethod(&controller, [&controller]{
+					controller.doShutdown();
+				}, Qt::QueuedConnection);
+			});
 	controller.start();
 
 	qCDebug(init) << "Enter main event loop...";

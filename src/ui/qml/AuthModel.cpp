@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthModel.h"
@@ -22,7 +22,7 @@ void AuthModel::resetAuthContext(const QSharedPointer<AuthContext>& pContext)
 
 	if (mContext)
 	{
-		connect(mContext.data(), &AuthContext::fireShowChangePinViewChanged, this, &AuthModel::fireShowChangePinViewChanged);
+		connect(mContext.data(), &AuthContext::fireShowChangePinViewChanged, this, &AuthModel::fireChangeTransportPinChanged);
 		connect(mContext.data(), &AuthContext::fireDidAuthenticateEac1Changed, this, &AuthModel::onDidAuthenticateEac1Changed);
 		connect(mContext.data(), &AuthContext::fireProgressChanged, this, &AuthModel::fireProgressChanged);
 	}
@@ -34,7 +34,7 @@ void AuthModel::resetAuthContext(const QSharedPointer<AuthContext>& pContext)
 		Q_EMIT fireTransactionInfoChanged();
 	}
 
-	Q_EMIT fireShowChangePinViewChanged();
+	Q_EMIT fireChangeTransportPinChanged();
 	Q_EMIT fireProgressChanged();
 }
 
@@ -67,11 +67,11 @@ QString AuthModel::getProgressMessage() const
 }
 
 
-bool AuthModel::getShowChangePinView() const
+bool AuthModel::getChangeTransportPin() const
 {
 	if (mContext)
 	{
-		return mContext->showChangePinView();
+		return mContext->changeTransportPin();
 	}
 
 	return false;
@@ -189,11 +189,11 @@ QUrl AuthModel::getResultViewButtonLink() const
 }
 
 
-void AuthModel::cancelWorkflowToChangePin()
+void AuthModel::cancelWorkflowToChangeTransportPin()
 {
 	if (mContext)
 	{
-		mContext->requestChangePinView();
+		mContext->requestChangeTransportPin();
 		mContext->setStatus(GlobalStatus::Code::Workflow_Cancellation_By_User);
 		Q_EMIT mContext->fireCancelWorkflow();
 	}

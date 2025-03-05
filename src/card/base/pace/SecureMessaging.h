@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implements TR-03110 v2 part3 --> Secure Messaging.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +26,7 @@ class SecureMessaging final
 		[[nodiscard]] QByteArray padToCipherBlockSize(const QByteArray& pData) const;
 		[[nodiscard]] QByteArray unpadFromCipherBlockSize(const QByteArray& pData) const;
 		[[nodiscard]] QByteArray createSecuredHeader(const CommandApdu& pCommandApdu) const;
-		QByteArray createMac(const QByteArray& pSecuredHeader, const QByteArray& pFormattedEncryptedData, const QByteArray& pSecuredLe);
+		QByteArray createMac(const QByteArray& pSecuredHeader, const QByteArray& pFormattedEncryptedData, const QByteArray& pSecuredLe) const;
 		[[nodiscard]] int createNewLe(const QByteArray& pSecuredData, int pOldLe) const;
 		[[nodiscard]] QByteArray getSendSequenceCounter() const;
 		QByteArray getEncryptedIv();

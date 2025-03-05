@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref PersonalizationModel
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PersonalizationModel.h"

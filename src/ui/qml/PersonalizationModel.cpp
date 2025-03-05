@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PersonalizationModel.h"
@@ -20,14 +20,17 @@ PersonalizationModel::PersonalizationModel()
 }
 
 
+#if __has_include("controller/PersonalizationController.h")
 void PersonalizationModel::startWorkflow()
 {
-#if __has_include("controller/PersonalizationController.h")
+
 	const bool useTestUri = Env::getSingleton<AppSettings>()->getGeneralSettings().useSelfAuthTestUri();
 	const auto& url = Env::getSingleton<SecureStorage>()->getSmartPersonalizationUrl(useTestUri);
 	Q_EMIT fireStartWorkflow(PersonalizationController::createWorkflowRequest(url));
-#endif
 }
+
+
+#endif
 
 
 QString PersonalizationModel::getBlockingCode() const

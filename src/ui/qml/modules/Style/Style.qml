@@ -1,51 +1,51 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 pragma Singleton
 import QtQuick
 import Governikus.Type
 
-Item {
-	id: style
+PlatformStyle {
+	id: root
 
+	readonly property int animation_duration: 250
 	readonly property var color: currentTheme.color
-	readonly property var currentTheme: UiPluginModel.highContrastEnabled ? highContrastTheme : useDarkMode ? darkTheme : defaultTheme
+	readonly property var currentTheme: UiPluginModel.highContrastEnabled ? highContrastTheme : UiPluginModel.darkModeEnabled ? darkTheme : defaultTheme
 	readonly property var dimens: currentTheme.dimens
+	readonly property var flickDeceleration: Style.is_layout_desktop ? 7500.0 : 1500.0
+	readonly property double scrolling_speed: 7500.0
 	property bool software_renderer: false
 	readonly property var text: currentTheme.text
-	readonly property bool useDarkMode: (UiPluginModel.osDarkModeEnabled && SettingsModel.userDarkMode === SettingsModel.ModeOption.AUTO) || SettingsModel.userDarkMode === SettingsModel.ModeOption.ON
+	readonly property int toolTipDelay: 500
 
 	QtObject {
 		id: darkTheme
 
 		readonly property var color: PlatformColorsDark {
-			software_renderer: style.software_renderer
+			software_renderer: root.software_renderer
 		}
 		readonly property alias dimens: dimensions
 		readonly property bool highContrast: false
-		readonly property string name: "darkmode"
 		readonly property alias text: textStyles
 	}
 	QtObject {
 		id: highContrastTheme
 
 		readonly property var color: PlatformColorsContrast {
-			software_renderer: style.software_renderer
+			software_renderer: root.software_renderer
 		}
 		readonly property alias dimens: dimensions
 		property bool highContrast: true
-		readonly property string name: "highcontrast"
 		readonly property alias text: textStyles
 	}
 	QtObject {
 		id: defaultTheme
 
 		readonly property var color: PlatformColorsLight {
-			software_renderer: style.software_renderer
+			software_renderer: root.software_renderer
 		}
 		readonly property alias dimens: dimensions
 		readonly property bool highContrast: false
-		readonly property string name: "lightmode"
 		readonly property alias text: textStyles
 	}
 	Dimensions {

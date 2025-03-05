@@ -6,6 +6,7 @@ sonar.projectVersion=@PROJECT_VERSION@
 
 sonar.projectBaseDir=@PROJECT_SOURCE_DIR@
 sonar.sources=src
+sonar.tests=test
 
 sonar.sourceEncoding=UTF-8
 sonar.language=cpp

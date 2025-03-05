@@ -1,18 +1,19 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Animations
 import Governikus.Global
-import Governikus.PasswordInfoView
+import Governikus.MultiInfoView
 import Governikus.View
 import Governikus.Style
 import Governikus.Type
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
 	required property string inputError
 	property bool isTransportPin: false
@@ -23,21 +24,25 @@ FlickableSectionPage {
 	signal continueClicked
 	signal passwordInfoRequested
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
-	PasswordInfoData {
+	Keys.onEnterPressed: continueClicked()
+	Keys.onEscapePressed: continueClicked()
+	Keys.onReturnPressed: continueClicked()
+
+	MultiInfoData {
 		id: infoData
 
 		contentType: {
-			if (!isTransportPin) {
-				return fromPasswordType(passwordType);
+			if (!root.isTransportPin) {
+				return fromPasswordType(root.passwordType);
 			}
-			switch (returnCode) {
+			switch (root.returnCode) {
 			case CardReturnCode.INVALID_CAN:
 			case CardReturnCode.INVALID_PUK:
-				return fromPasswordType(passwordType);
+				return fromPasswordType(root.passwordType);
 			default:
-				return PasswordInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
+				return MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
 			}
 		}
 	}
@@ -45,38 +50,37 @@ FlickableSectionPage {
 		id: animation
 
 		Layout.alignment: Qt.AlignHCenter
-		Layout.bottomMargin: Constants.component_spacing
+		Layout.bottomMargin: Style.dimens.pane_spacing
 		animated: false
-		symbol: EnterPasswordAnimation.Symbol.ERROR
+		symbol: Symbol.Type.ERROR
 		type: {
-			switch (returnCode) {
+			switch (root.returnCode) {
 			case CardReturnCode.INVALID_PIN:
 			case CardReturnCode.INVALID_PIN_2:
 			case CardReturnCode.INVALID_PIN_3:
-				return isTransportPin ? AnimationLoader.Type.ENTER_TRANSPORT_PIN : AnimationLoader.Type.ENTER_PIN;
+				return root.isTransportPin ? AnimationLoader.TRANSPORT_PIN : AnimationLoader.PIN;
 			case CardReturnCode.INVALID_CAN:
-				return AnimationLoader.Type.ENTER_CAN;
+				return AnimationLoader.CAN;
 			case CardReturnCode.INVALID_PUK:
-				return AnimationLoader.Type.ENTER_PUK;
+				return AnimationLoader.PUK;
 			}
-			switch (passwordType) {
+			switch (root.passwordType) {
 			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
 			case NumberModel.PasswordType.NEW_PIN:
 			case NumberModel.PasswordType.NEW_SMART_PIN:
 			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
-				return AnimationLoader.Type.ENTER_NEW_PIN;
+				return AnimationLoader.NEW_PIN;
 			}
-			return AnimationLoader.Type.NONE;
+			return AnimationLoader.NONE;
 		}
 	}
 	GText {
 		id: title
 
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		text: {
-			switch (returnCode) {
+			switch (root.returnCode) {
 			case CardReturnCode.INVALID_CAN:
 				//: LABEL ALL_PLATFORMS
 				return qsTr("Wrong CAN");
@@ -86,15 +90,15 @@ FlickableSectionPage {
 			case CardReturnCode.INVALID_PIN:
 			case CardReturnCode.INVALID_PIN_2:
 			case CardReturnCode.INVALID_PIN_3:
-				return isTransportPin ?
+				return root.isTransportPin ?
 				//: LABEL ALL_PLATFORMS
-				qsTr("Wrong Transport PIN") : smartEidUsed ?
+				qsTr("Wrong Transport PIN") : root.smartEidUsed ?
 				//: LABEL ALL_PLATFORMS
 				qsTr("Wrong Smart-eID PIN") :
 				//: LABEL ALL_PLATFORMS
 				qsTr("Wrong ID card PIN");
 			}
-			switch (passwordType) {
+			switch (root.passwordType) {
 			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
 			case NumberModel.PasswordType.NEW_PIN:
 				//: LABEL ALL_PLATFORMS
@@ -107,53 +111,32 @@ FlickableSectionPage {
 			return "";
 		}
 		textStyle: Style.text.headline
-
-		FocusFrame {
-		}
 	}
 	GText {
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
-		text: inputError
-
-		FocusFrame {
-		}
+		text: root.inputError
 	}
 	MoreInformationLink {
 		Layout.alignment: Qt.AlignHCenter
-		activeFocusOnTab: true
 		text: infoData.linkText
-		visible: text !== "" && (returnCode === CardReturnCode.INVALID_PUK || infoData.contentType === PasswordInfoData.Type.TRANSPORT_PIN_NOT_WORKING)
+		visible: text !== "" && (root.returnCode === CardReturnCode.INVALID_PUK || infoData.contentType === MultiInfoData.Type.TRANSPORT_PIN_NOT_WORKING)
 
-		onClicked: passwordInfoRequested()
-
-		FocusFrame {
-		}
+		onClicked: root.passwordInfoRequested()
 	}
 	TintableIcon {
 		Layout.alignment: Qt.AlignHCenter
-		Layout.topMargin: Constants.component_spacing
+		Layout.topMargin: Style.dimens.pane_spacing
 		source: "qrc:///images/can_info.svg"
 		sourceSize.width: animation.width
 		tintColor: Style.color.image
 		tintEnabled: false
-		visible: !isTransportPin && (returnCode === CardReturnCode.INVALID_PIN_2 || returnCode === CardReturnCode.INVALID_CAN)
+		visible: !root.isTransportPin && (root.returnCode === CardReturnCode.INVALID_PIN_2 || root.returnCode === CardReturnCode.INVALID_CAN)
 	}
 	GSpacer {
 		Layout.fillHeight: true
 	}
-	GButton {
-		Layout.alignment: Qt.AlignHCenter
-		icon.source: "qrc:///images/material_arrow_right.svg"
-		layoutDirection: Qt.RightToLeft
-
-		//: LABEL ALL_PLATFORMS
-		text: qsTr("Continue")
-		tintIcon: true
-
-		onClicked: continueClicked()
-		onFocusChanged: if (focus)
-			baseItem.positionViewAtItem(this)
+	GContinueButton {
+		onClicked: root.continueClicked()
 	}
 }

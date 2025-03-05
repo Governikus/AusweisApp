@@ -1,16 +1,12 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Tests the StateExtractCvcsFromEac1InputType
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StateExtractCvcsFromEac1InputType.h"
 
 #include "states/StateBuilder.h"
 
-#include "CertificateHelper.h"
+#include "Converter.h"
 #include "TestAuthContext.h"
 #include "TestFileHelper.h"
 
@@ -36,13 +32,13 @@ class test_StateExtractCvcsFromEac1InputType
 	private Q_SLOTS:
 		void initTestCase()
 		{
-			mTerminalCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"_L1));
-			mTerminalCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"_L1));
-			mDvCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"_L1));
-			mDvCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"_L1));
-			mLinkCvcs << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"_L1));
-			mCvcas << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1));
-			mCvcas << CertificateHelper::fromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"_L1));
+			mTerminalCvcs << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvat-DE0000024001HW.hex"_L1));
+			mTerminalCvcs << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvat-DEDEMOPAA00079.hex"_L1));
+			mDvCvcs << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDPST00039.hex"_L1));
+			mDvCvcs << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvdv-DEDVeIDDTR101415.hex"_L1));
+			mLinkCvcs << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102_DECVCAeID00103.hex"_L1));
+			mCvcas << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00103.hex"_L1));
+			mCvcas << Converter::certificatefromHex(TestFileHelper::readFile(":/card/cvca-DECVCAeID00102.hex"_L1));
 		}
 
 

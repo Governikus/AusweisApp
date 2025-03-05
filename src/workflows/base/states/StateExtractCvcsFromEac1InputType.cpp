@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateExtractCvcsFromEac1InputType.h"
@@ -17,56 +17,50 @@ StateExtractCvcsFromEac1InputType::StateExtractCvcsFromEac1InputType(const QShar
 
 void StateExtractCvcsFromEac1InputType::run()
 {
-	Q_ASSERT(getContext()->getDidAuthenticateEac1());
+	const auto& context = getContext();
+	const auto& eac1 = context->getDidAuthenticateEac1();
+	Q_ASSERT(eac1);
 
-	bool foundTerminalCvc = false;
-	bool foundDvCvc = false;
-	for (const auto& cvc : getContext()->getDidAuthenticateEac1()->getCvCertificates())
+	const auto& dvCvc = eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od});
+	switch (dvCvc.size())
 	{
-		const auto& cvcAccessRole = cvc->getBody().getCHAT().getAccessRole();
+		case 0:
+			qCritical() << "No DV certificate found in EAC1InputType";
+			updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
+			Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_Dv_Missing);
+			return;
 
-		if (cvcAccessRole == AccessRole::AT)
-		{
-			if (foundTerminalCvc)
-			{
-				qCritical() << "More than one terminal certificate found in EAC1InputType";
-				updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
-				Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_At);
-				return;
-			}
-			foundTerminalCvc = true;
-			getContext()->initAccessRightManager(cvc);
-		}
-		else if (cvcAccessRole == AccessRole::DV_no_f || cvcAccessRole == AccessRole::DV_od)
-		{
-			if (foundDvCvc)
-			{
-				qCritical() << "More than one DV certificate found in EAC1InputType";
-				updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
-				Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_Dv);
-				return;
-			}
-			foundDvCvc = true;
-			getContext()->setDvCvc(cvc);
-		}
+		case 1:
+			context->setDvCvc(dvCvc.constFirst());
+			break;
+
+		default:
+			qCritical() << "More than one DV certificate found in EAC1InputType";
+			updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
+			Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_Dv);
+			return;
 	}
 
-	if (!foundTerminalCvc)
+	const auto& terminalCvc = eac1->getCvCertificates({AccessRole::AT});
+	switch (terminalCvc.size())
 	{
-		qCritical() << "No terminal certificate found in EAC1InputType";
-		updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
-		Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_At_Missing);
-		return;
-	}
-	if (!foundDvCvc)
-	{
-		qCritical() << "No DV certificate found in EAC1InputType";
-		updateStatus(GlobalStatus::Code::Workflow_No_Unique_DvCvc);
-		Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_Dv_Missing);
-		return;
+		case 0:
+			qCritical() << "No terminal certificate found in EAC1InputType";
+			updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
+			Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_At_Missing);
+			return;
+
+		case 1:
+			context->initAccessRightManager(terminalCvc.constFirst());
+			break;
+
+		default:
+			qCritical() << "More than one terminal certificate found in EAC1InputType";
+			updateStatus(GlobalStatus::Code::Workflow_No_Unique_AtCvc);
+			Q_EMIT fireAbort(FailureCode::Reason::Extract_Cvcs_From_Eac1_No_Unique_At);
+			return;
 	}
 
-	getContext()->initCvcChainBuilder();
-
+	context->initCvcChainBuilder();
 	Q_EMIT fireContinue();
 }

@@ -1,13 +1,16 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.View
 import Governikus.Style
-import Governikus.TitleBar
 import Governikus.Type
 
 FlickableSectionPage {
@@ -25,6 +28,11 @@ FlickableSectionPage {
 		delegate: Tile {
 			id: tileDelegate
 
+			required property url imagePath
+			required property int index
+			required property int module
+			required property string titleText
+
 			Accessible.ignored: tileView.allItemsVisible ? false : index !== tileView.currentIndex
 			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
 			activeFocusOnTab: false
@@ -35,9 +43,9 @@ FlickableSectionPage {
 			width: tileView.itemWidth
 
 			Accessible.onScrollLeftAction: if (tileView.isIos)
-				tileView.scrollPageLeft()
+				tileView.decrementCurrentIndex()
 			Accessible.onScrollRightAction: if (tileView.isIos)
-				tileView.scrollPageRight()
+				tileView.incrementCurrentIndex()
 			Component.onCompleted: tileDelegate.DelegateModel.inItems = module !== UiModule.SMART_EID || ApplicationModel.isSmartSupported
 			onClicked: root.show(module)
 
@@ -77,7 +85,7 @@ FlickableSectionPage {
 	}
 	GSpacer {
 		Layout.fillHeight: true
-		Layout.minimumHeight: Constants.pane_padding
+		Layout.minimumHeight: Style.dimens.pane_padding
 	}
 	GListView {
 		id: tileView
@@ -85,7 +93,7 @@ FlickableSectionPage {
 		readonly property bool allItemsVisible: root.width > allItemsWidth
 		readonly property int allItemsWidth: count * (itemWidth + spacing) - spacing
 		readonly property bool isIos: Qt.platform.os === "ios"
-		readonly property real itemWidth: Math.min(maximumItemWidth, Math.ceil(width * overlapFactor))
+		readonly property real itemWidth: Math.min(maximumItemWidth, Math.ceil(root.width * overlapFactor))
 		property real maximumItemWidth: 1
 		property real minItemHeight: 1
 		property real minItemWidth: 1
@@ -109,7 +117,7 @@ FlickableSectionPage {
 			}
 		}
 
-		Layout.bottomMargin: Constants.component_spacing
+		Layout.bottomMargin: Style.dimens.pane_spacing
 		Layout.fillHeight: true
 		Layout.fillWidth: true
 		Layout.maximumHeight: 400
@@ -146,6 +154,8 @@ FlickableSectionPage {
 		opacity: tileView.allItemsVisible ? 0 : 1
 
 		delegate: Rectangle {
+			required property int index
+
 			color: index === indicator.currentIndex ? Style.color.control.border.basic : Style.color.control.border.disabled
 			implicitHeight: Style.dimens.pageindicator_size
 			implicitWidth: Style.dimens.pageindicator_size
@@ -154,6 +164,6 @@ FlickableSectionPage {
 	}
 	GSpacer {
 		Layout.fillHeight: true
-		Layout.minimumHeight: Constants.pane_padding
+		Layout.minimumHeight: Style.dimens.pane_padding
 	}
 }

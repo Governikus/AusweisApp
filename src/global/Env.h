@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Runtime environment to create (mockable) objects.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +26,9 @@
 	#include <QList>
 #endif
 
+
 class test_Env;
+
 
 namespace governikus
 {
@@ -127,7 +125,7 @@ class Env
 			qDebug() << "Create singleton:" << T::staticMetaObject.className();
 
 			T* ptr = nullptr;
-			if constexpr (std::is_abstract_v<T> && std::is_destructible_v<T>)
+			if constexpr (std::is_abstract_v<T>&& std::is_destructible_v<T>)
 			{
 				ptr = createNewObject<T*>();
 			}
@@ -137,8 +135,8 @@ class Env
 			}
 
 			QObject::connect(ptr, &QObject::destroyed, ptr, [] {
-					qDebug() << "Destroy singleton:" << T::staticMetaObject.className();
-				});
+						qDebug() << "Destroy singleton:" << T::staticMetaObject.className();
+					});
 			mSingletonHandler->add(ptr);
 			mSingletonCreator << std::bind(&Env::getOrCreateSingleton<T>, this, std::placeholders::_1);
 
@@ -171,7 +169,7 @@ class Env
 			}
 			else
 			{
-				if constexpr (std::is_abstract_v<T> && std::is_destructible_v<T>)
+				if constexpr (std::is_abstract_v<T>&& std::is_destructible_v<T>)
 				{
 					static_assert(std::has_virtual_destructor_v<T>, "Destructor must be virtual");
 					return singleton<T>();
@@ -185,22 +183,20 @@ class Env
 
 
 		template<typename T>
-		inline std::enable_if_t<QtPrivate::IsGadgetHelper<T>::IsRealGadget, T*> checkObjectInfo(Identifier pId, T* pObject) const
+		inline T* checkObjectInfo(Identifier pId, T* pObject) const
 		{
-			Q_UNUSED(pId)
-			return pObject;
-		}
+			static_assert(QtPrivate::IsGadgetHelper<T>::IsRealGadget || QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value,
+					"Object needs to be a Q_GADGET or an QObject/Q_OBJECT");
 
-
-		template<typename T>
-		inline std::enable_if_t<QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value, T*> checkObjectInfo(Identifier pId, T* pObject) const
-		{
-			if (!std::is_base_of<ThreadSafe, T>() && pObject->thread() != QThread::currentThread())
+			if constexpr (QtPrivate::IsPointerToTypeDerivedFromQObject<T*>::Value)
 			{
-				qWarning() << pId << "was created in" << pObject->thread()->objectName() << "but is requested by" << QThread::currentThread()->objectName();
+				if (!std::is_base_of<ThreadSafe, T>() && pObject->thread() != QThread::currentThread())
+				{
+					qWarning() << pId << "was created in" << pObject->thread()->objectName() << "but is requested by" << QThread::currentThread()->objectName();
 #ifndef QT_NO_DEBUG
-				Q_ASSERT(QCoreApplication::applicationName().startsWith(QLatin1String("Test_global_Env")));
+					Q_ASSERT(QCoreApplication::applicationName().startsWith(QLatin1String("Test_global_Env")));
 #endif
+				}
 			}
 
 			return pObject;

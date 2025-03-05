@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
+import Governikus.Type
+
 import QtQuick.Effects
 
 MultiEffect {
 	shadowEnabled: true
-	shadowOpacity: 0.15
+	shadowOpacity: UiPluginModel.qtVersion === "6.8.0" ? 0.4 : 0.15
 	shadowScale: 1.025
 	shadowVerticalOffset: 7
 }

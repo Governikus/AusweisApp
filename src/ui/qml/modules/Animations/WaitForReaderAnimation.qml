@@ -1,9 +1,16 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
-WaitForAnimation {
-	horizontalQuestionmarkOffset: 0.85
+import QtQml.Models
+
+SymbolAnimation {
 	source: "qrc:///animations/wait_for_reader.svg"
-	verticalQuestionmarkOffset: 0.72
+
+	model: ListModel {
+		ListElement {
+			sx: 0.85
+			sy: 0.72
+		}
+	}
 }

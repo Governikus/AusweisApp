@@ -18,7 +18,7 @@ alle unterstützten Parameter, die im Anschluss erläutert werden.
 
 .. code-block:: winbatch
 
-  msiexec /i AusweisApp-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true SECURESCREENKEYBOARD=true ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
+  msiexec /i AusweisApp-X.YY.Z.msi /quiet INSTALLDIR="C:\AusweisApp" SYSTEMSETTINGS=false DESKTOPSHORTCUT=false PROXYSERVICE=false AUTOSTART=false TRAYICON=true AUTOHIDE=false REMINDTOCLOSE=false ASSISTANT=false TRANSPORTPINREMINDER=false CUSTOMPROXYTYPE="HTTP" CUSTOMPROXYHOST="proxy.example.org" CUSTOMPROXYPORT=1337 UPDATECHECK=false ONSCREENKEYBOARD=true SHUFFLESCREENKEYBOARD=true SECURESCREENKEYBOARD=true ENABLECANALLOWED=true SKIPRIGHTSONCANALLOWED=true LAUNCH=true
 
 INSTALLDIR
   Gibt das Installationsverzeichnis an. Ohne Angabe wird der Ordner
@@ -46,12 +46,15 @@ PROXYSERVICE
 
 AUTOSTART
   Durch Angabe von AUTOSTART=true wird ein Autostart-Eintrag für alle Benutzer
-  erstellt und beim Schließen per Klick auf das X wird die |AppName| in den
-  Infobereich minimiert.
+  erstellt.
   Die Deaktivierung des Autostarts ist den Benutzern in der |AppName|
   dadurch nicht möglich. Ohne Angabe wird der Autostart-Eintrag nicht erstellt
   (false). In diesem Fall ist es jedoch jedem Benutzer möglich, die
   Autostart-Funktion innerhalb der |AppName| für sich zu aktivieren.
+
+TRAYICON
+  Aktiviert das Trayicon damit die |AppName| dauerhaft im Hintergrund aktiv ist und jederzeit für
+  eine Authentisierung zur Verfügung steht.
 
 AUTOHIDE
   Betrifft die automatische Minimierung nach Abschluss einer erfolgreichen
@@ -61,8 +64,8 @@ AUTOHIDE
 REMINDTOCLOSE
   Wenn der Benutzer die |AppName| per Klick auf das X schließt, wird er darauf
   hingewiesen, dass nur die Benutzeroberfläche geschlossen wird und die |AppName|
-  weiterhin im Infobereich zur Verfügung steht (falls der Autostart der |AppName|
-  aktiviert ist) bzw. dass die |AppName| geschlossen wird und erneut geöffnet
+  weiterhin im Infobereich zur Verfügung steht (falls das Trayicon aktiviert ist)
+  bzw. dass die |AppName| geschlossen wird und erneut geöffnet
   werden muss um sich gegenüber Diensteanbietern auszuweisen. Zu diesem Zeitpunkt
   ist es möglich, den Hinweis zukünftig zu unterdrücken. Durch REMINDTOCLOSE=false
   kann dieser Hinweis von vornherein deaktiviert werden. Ohne Angabe ist er
@@ -166,12 +169,14 @@ dargestellt:
   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
   <dict>
+    <key>trayIcon</key>
+    <false/>
     <key>autoCloseWindow</key>
     <false/>
     <key>remindToClose</key>
     <false/>
-    <key>uiStartupModule</key>
-    <string>DEFAULT</string>
+    <key>showOnboarding</key>
+    <false/>
     <key>transportPinReminder</key>
     <false/>
     <key>customProxyType</key>
@@ -198,9 +203,10 @@ entnehmen ist.
 ======================== =======================
 macOS                    Windows
 ======================== =======================
+trayIcon                 TRAYICON
 autoCloseWindow          AUTOHIDE
 remindToClose [#dialog]_ REMINDTOCLOSE
-uiStartupModule          ASSISTANT
+showOnboarding           ASSISTANT
 transportPinReminder     TRANSPORTPINREMINDER
 customProxyType          CUSTOMPROXYTYPE
 customProxyPort          CUSTOMPROXYPORT

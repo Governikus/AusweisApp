@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
 import QtQuick
@@ -13,7 +13,7 @@ ColumnLayout {
 	property alias containerSpacing: pane.spacing
 	property alias title: titleText.text
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	GText {
 		id: titleText

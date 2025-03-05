@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/SecureMessagingCommand.h"
@@ -172,7 +172,7 @@ QByteArray SecureMessaging::createSecuredHeader(const CommandApdu& pCommandApdu)
 
 QByteArray SecureMessaging::createMac(const QByteArray& pSecuredHeader,
 		const QByteArray& pFormattedEncryptedData,
-		const QByteArray& pSecuredLe)
+		const QByteArray& pSecuredLe) const
 {
 	QByteArray dataToMac(pSecuredHeader);
 	dataToMac = padToCipherBlockSize(dataToMac);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppUpdateData.h"
@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonParseError>
 #include <QLoggingCategory>
 #include <QOperatingSystemVersion>
@@ -108,7 +109,7 @@ const GlobalStatus& AppUpdateData::getParsingResult() const
 
 bool AppUpdateData::isCompatible() const
 {
-#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
 	return QOperatingSystemVersion::current().version() >= mMinOsVersion;
 
 #else

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PlatformTools.h"
@@ -69,19 +69,19 @@ void ensureNotificationPermission(std::function<void()> pCallback)
 void PlatformTools::postNotification(const QString& pTitle, const QString& pMessage)
 {
 #ifdef QT_NO_DEBUG
-	ensureNotificationPermission([pTitle, pMessage]{
-			UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
-			UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-			content.title = pTitle.toNSString();
-			content.body = pMessage.toNSString();
-			UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"AA2Notification" content:content trigger:nil];
-			[center addNotificationRequest:request withCompletionHandler:^(NSError* _Nullable error){
-				if (error != nil)
-				{
-					qCDebug(gui) << "Failed to post notification:" << error.localizedDescription;
-				}
-			}];
-		});
+	ensureNotificationPermission([pTitle, pMessage] {
+				UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+				UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+				content.title = pTitle.toNSString();
+				content.body = pMessage.toNSString();
+				UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"AA2Notification" content:content trigger:nil];
+				[center addNotificationRequest:request withCompletionHandler:^(NSError* _Nullable error){
+					if (error != nil)
+					{
+						qCDebug(gui) << "Failed to post notification:" << error.localizedDescription;
+					}
+				}];
+			});
 #else
 	Q_UNUSED(pTitle)
 	Q_UNUSED(pMessage)

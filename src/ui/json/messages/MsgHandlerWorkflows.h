@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Generic class for Workflows.
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,7 +14,7 @@ class MsgHandlerWorkflows
 	: public MsgHandler
 {
 	protected:
-		void handleWorkflowProperties(const QJsonObject& pObj, MsgContext& pContext);
+		void handleWorkflowProperties(const QJsonObject& pObj, MsgContext& pContext) const;
 
 		void initMessages(const QJsonObject& pUi) const;
 		void initDeveloperMode(const QJsonValue& pValue) const;

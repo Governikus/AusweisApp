@@ -1,67 +1,23 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 pragma Singleton
+
 import QtQuick
+
 import Governikus.Type
 
 QtObject {
-	function escapeHtml(pStr) {
-		return String(pStr).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-	}
-	function isSameDate(pOne, pAnother) {
-		return pOne.getFullYear() === pAnother.getFullYear() && pOne.getMonth() === pAnother.getMonth() && pOne.getDate() === pAnother.getDate();
-	}
-	function isThisWeek(pDate) {
-		let monday = new Date;
-		monday.setDate(monday.getDate() - monday.getDay());
-		pDate.setDate(pDate.getDate() - pDate.getDay());
-		return isSameDate(monday, pDate);
-	}
-	function isToday(pDate) {
-		let today = new Date;
-		return isSameDate(today, pDate);
-	}
-	function isYesterday(pDate) {
-		let yesterday = new Date;
-		yesterday.setDate(yesterday.getDate() - 1);
-		return isSameDate(yesterday, pDate);
-	}
-	function scrollPageDown(pFlickable) {
-		if (pFlickable.height >= pFlickable.contentHeight) {
+	function positionViewAtItem(pItem, pParent = pItem.parent) {
+		if (pParent === null) {
 			return;
 		}
-		if (pFlickable.atYEnd) {
+		if (typeof pParent.positionViewAtItem === "function") {
+			pParent.positionViewAtItem(pItem);
 			return;
 		}
-		pFlickable.contentY = Math.min(pFlickable.contentY + pFlickable.height, pFlickable.originY + pFlickable.contentHeight - pFlickable.height);
-	}
-	function scrollPageLeft(pFlickable) {
-		if (pFlickable.width >= pFlickable.contentWidth) {
-			return;
-		}
-		if (pFlickable.atXBeginning) {
-			return;
-		}
-		pFlickable.contentX = Math.max(pFlickable.contentX - pFlickable.width, pFlickable.originX);
-	}
-	function scrollPageRight(pFlickable) {
-		if (pFlickable.width >= pFlickable.contentWidth) {
-			return;
-		}
-		if (pFlickable.atXEnd) {
-			return;
-		}
-		pFlickable.contentX = Math.min(pFlickable.contentX + pFlickable.width, pFlickable.contentWidth - pFlickable.width - pFlickable.originX);
-	}
-	function scrollPageUp(pFlickable) {
-		if (pFlickable.height >= pFlickable.contentHeight) {
-			return;
-		}
-		if (pFlickable.atYBeginning) {
-			return;
-		}
-		pFlickable.contentY = Math.max(pFlickable.contentY - pFlickable.height, pFlickable.originY);
+		positionViewAtItem(pItem, pParent.parent);
 	}
 	function shuffle(pArray) {
 		for (let i = pArray.length - 1; i > 0; i--) {

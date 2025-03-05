@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdCard.h"
@@ -31,7 +31,7 @@ using namespace governikus;
 Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
 
-bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pTimeout)
+bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pExtraTimeout)
 {
 	// mResponseAvailable is locked by the constructor, to revert the mutex behavior.
 	// Locking this is a requirement for QWaitCondition.
@@ -43,10 +43,15 @@ bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdM
 	const auto& connectionDC = connect(mDispatcher.data(), &IfdDispatcherClient::fireClosed, this, &IfdCard::onDispatcherClosed, Qt::DirectConnection);
 	const auto& localCopy = mDispatcher;
 	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pMessage] {
-			localCopy->send(pMessage);
-		}, Qt::QueuedConnection);
+				localCopy->send(pMessage);
+			}, Qt::QueuedConnection);
 
-	mWaitCondition.wait(&mResponseAvailable, pTimeout);
+	const auto responseTimeout =
+#ifndef QT_NO_DEBUG
+			qEnvironmentVariableIsSet("SAC_RESPONSE_TIMEOUT") ? qgetenv("SAC_RESPONSE_TIMEOUT").toUInt() :
+#endif
+			5000 + pExtraTimeout;
+	mWaitCondition.wait(&mResponseAvailable, responseTimeout);
 	disconnect(connectionMR);
 	disconnect(connectionDC);
 
@@ -54,7 +59,7 @@ bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdM
 
 	if (mWaitingForAnswer)
 	{
-		qCDebug(card_remote) << "Expected answer (" << pExpectedAnswer << ") was not received within" << pTimeout << "ms.";
+		qCDebug(card_remote) << "Expected answer (" << pExpectedAnswer << ") was not received within" << responseTimeout << "ms.";
 		mWaitingForAnswer = false;
 		return false;
 	}
@@ -84,7 +89,7 @@ void IfdCard::onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& p
 }
 
 
-void IfdCard::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId)
+void IfdCard::onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId)
 {
 	Q_UNUSED(pId)
 	QMutexLocker locker(&mProcessResponse);
@@ -130,7 +135,7 @@ IfdCard::~IfdCard()
 CardReturnCode IfdCard::establishConnection()
 {
 	const auto& connectMsg = QSharedPointer<IfdConnect>::create(mReaderName);
-	if (!sendMessage(connectMsg, IfdMessageType::IFDConnectResponse, 5000))
+	if (!sendMessage(connectMsg, IfdMessageType::IFDConnectResponse))
 	{
 		return CardReturnCode::INPUT_TIME_OUT;
 	}
@@ -155,7 +160,7 @@ CardReturnCode IfdCard::establishConnection()
 CardReturnCode IfdCard::releaseConnection()
 {
 	const auto& disconnectCmd = QSharedPointer<IfdDisconnect>::create(mSlotHandle);
-	if (!sendMessage(disconnectCmd, IfdMessageType::IFDDisconnectResponse, 5000))
+	if (!sendMessage(disconnectCmd, IfdMessageType::IFDDisconnectResponse))
 	{
 		return CardReturnCode::INPUT_TIME_OUT;
 	}
@@ -199,7 +204,7 @@ ResponseApduResult IfdCard::transmit(const CommandApdu& pCommand)
 	qCDebug(card_remote) << "Transmit command APDU:" << pCommand;
 
 	const QSharedPointer<const IfdTransmit>& transmitCmd = QSharedPointer<IfdTransmit>::create(mSlotHandle, pCommand, mProgressMessage);
-	if (!sendMessage(transmitCmd, IfdMessageType::IFDTransmitResponse, 5000))
+	if (!sendMessage(transmitCmd, IfdMessageType::IFDTransmitResponse))
 	{
 		return {CardReturnCode::INPUT_TIME_OUT};
 	}
@@ -260,7 +265,7 @@ EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswor
 CardReturnCode IfdCard::destroyPaceChannel()
 {
 	const auto& destroyCmd = QSharedPointer<IfdDestroyPaceChannel>::create(mSlotHandle);
-	if (!sendMessage(destroyCmd, IfdMessageType::IFDDestroyPACEChannelResponse, 5000))
+	if (!sendMessage(destroyCmd, IfdMessageType::IFDDestroyPACEChannelResponse))
 	{
 		return CardReturnCode::INPUT_TIME_OUT;
 	}

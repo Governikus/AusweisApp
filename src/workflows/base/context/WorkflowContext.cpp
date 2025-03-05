@@ -1,18 +1,16 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WorkflowContext.h"
 
 #include "ReaderManager.h"
 
-#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
-	#include "VolatileSettings.h"
-#endif
-
 #include <QWeakPointer>
 
+
 using namespace governikus;
+
 
 WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	: QObject()
@@ -41,13 +39,13 @@ WorkflowContext::WorkflowContext(const Action pAction, bool pActivateUi)
 	, mWorkflowCancelledInState(false)
 	, mNextWorkflowPending(false)
 	, mCurrentReaderHasEidCardButInsufficientApduLength(false)
-	, mSkipStartScan(false)
 	, mProgressValue(0)
 	, mProgressMessage()
 	, mShowRemoveCardFeedback(false)
 	, mClaimedBy()
 	, mInterruptRequested(false)
 	, mInitialInputErrorShown(false)
+	, mCardInitiallyAppeared(false)
 {
 	connect(this, &WorkflowContext::fireCancelWorkflow, this, &WorkflowContext::onWorkflowCancelled);
 }
@@ -158,12 +156,6 @@ void WorkflowContext::setReaderPluginTypes(const QList<ReaderManagerPluginType>&
 {
 	if (mReaderPluginTypes != pReaderPluginTypes)
 	{
-#ifdef Q_OS_IOS
-		const bool usedAsSdk = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();
-		const bool containsNfc = pReaderPluginTypes.contains(ReaderManagerPluginType::NFC);
-		setSkipStartScan(containsNfc && !usedAsSdk);
-#endif
-
 		mReaderPluginTypes = pReaderPluginTypes;
 		Q_EMIT fireReaderPluginTypesChanged();
 	}
@@ -189,6 +181,24 @@ void WorkflowContext::setReaderName(const QString& pReaderName)
 const QSharedPointer<CardConnection>& WorkflowContext::getCardConnection() const
 {
 	return mCardConnection;
+}
+
+
+bool WorkflowContext::getCardInitiallyAppeared() const
+{
+	return mCardInitiallyAppeared;
+}
+
+
+void WorkflowContext::setCardInitiallyAppeared()
+{
+	mCardInitiallyAppeared = true;
+}
+
+
+void WorkflowContext::resetCardInitiallyAppeared()
+{
+	mCardInitiallyAppeared = false;
 }
 
 
@@ -307,6 +317,18 @@ const QString& WorkflowContext::getPin() const
 
 void WorkflowContext::setPin(const QString& pPin)
 {
+#ifndef QT_NO_DEBUG
+	if (pPin.length() == 5)
+	{
+		if (const auto extended = pPin + qEnvironmentVariable("APPEND_TRANSPORT_PIN"); mPin != extended)
+		{
+			mPin = extended;
+			Q_EMIT firePinChanged();
+		}
+		return;
+	}
+#endif
+
 	if (mPin != pPin)
 	{
 		mPin = pPin;
@@ -519,18 +541,6 @@ void WorkflowContext::setCurrentReaderHasEidCardButInsufficientApduLength(bool p
 		mCurrentReaderHasEidCardButInsufficientApduLength = pState;
 		Q_EMIT fireReaderInfoChanged();
 	}
-}
-
-
-bool WorkflowContext::skipStartScan() const
-{
-	return mSkipStartScan;
-}
-
-
-void WorkflowContext::setSkipStartScan(bool pState)
-{
-	mSkipStartScan = pState;
 }
 
 

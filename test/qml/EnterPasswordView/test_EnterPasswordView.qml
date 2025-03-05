@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtTest
 import Governikus.Global
@@ -13,9 +13,9 @@ TestCase {
 			import Governikus.Type
 			EnterPasswordView {
 				passwordType: NumberModel.PasswordType.PIN
-				%1
+				title: \"EnterPasswordView\"
 			}
-			".arg(Constants.is_desktop ? "" : "title: \"EnterPasswordView\""), parent);
+			", parent);
 		item.destroy();
 	}
 

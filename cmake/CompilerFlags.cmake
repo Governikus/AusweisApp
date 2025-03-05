@@ -8,6 +8,10 @@ add_definitions(-DQT_NO_KEYWORDS)
 add_definitions(-DQT_NO_EXCEPTIONS)
 add_definitions(-DQT_NO_CONTEXTLESS_CONNECT)
 
+if(QT_VERSION VERSION_GREATER_EQUAL "6.8" AND QT_VERSION VERSION_LESS "6.10")
+	add_definitions(-DQT_USE_NODISCARD_FILE_OPEN)
+endif()
+
 if(QT_VENDOR STREQUAL "Governikus")
 	add_definitions(-DGOVERNIKUS_QT)
 	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060502)

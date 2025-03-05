@@ -1,15 +1,12 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Global error code definitions
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
 #include "GlobalStatus.h"
+
 
 namespace governikus
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -86,8 +86,8 @@ class DiagnosisModel
 		void updateCardReaderSection(bool pUpdateTimestamp = true);
 		void initAntiVirusAndFirewallSection();
 		void updateAntiVirusAndFirewallSection(bool pUpdateTimestamp = true);
-		void connectSignals();
-		void disconnectSignals();
+		void connectSignals() const;
+		void disconnectSignals() const;
 
 		[[nodiscard]] QString boolToString(bool pBoolean) const;
 		[[nodiscard]] QString getAsPlaintext() const;

@@ -1,0 +1,121 @@
+From cb9e8979bbadcafda1d1b233a92d489b3138a122 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Wed, 25 Dec 2024 13:41:29 +0100
+Subject: Android: Fix freeze on start when the activity was destroyed before
+
+This can be tested by enabling "Don't keep activities" in the developer
+options. With this option Android will immediately destroy the activity
+when it is moved to the background. In this case registerBackends will
+be called the first time before the BackendRegister was created. Because
+m_backendsRegistered was set to true even if it failed, the final call has
+no effect. So we need to ensure to set m_backendsRegistered only if a
+BackendRegister is available.
+
+Fixes: QTBUG-132085
+Pick-to: 6.9 6.8
+Change-Id: I2ea1c0e0737c982594ceb06cbaf540399c45e3f4
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 9903242ecab82c1ed72dcaf90e90a171c942a84a)
+---
+ .../jar/src/org/qtproject/qt/android/BackendRegister.java | 1 +
+ .../src/org/qtproject/qt/android/QtActivityDelegate.java  | 6 +++++-
+ .../src/org/qtproject/qt/android/QtEmbeddedDelegate.java  | 7 +++++++
+ src/plugins/platforms/android/androidbackendregister.cpp  | 8 +++++++-
+ src/plugins/platforms/android/androidbackendregister.h    | 2 ++
+ 5 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/BackendRegister.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/BackendRegister.java
+index b66a593ec6b79fedf5bc9e852862e8abf078e719..590c7d84aacc1879d72d9c1cdbe318b98b2913d9 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/BackendRegister.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/BackendRegister.java
+@@ -4,6 +4,7 @@ package org.qtproject.qt.android;
+ 
+ class BackendRegister
+ {
++    static native boolean isNull();
+     static native void registerBackend(Class interfaceType, Object interfaceObject);
+     static native void unregisterBackend(Class interfaceType);
+ }
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+index 9c38bc48d3b5c9b0d20ec00c34cc85ef250c75e8..fdee51e419f4f9d3947b67eaa437f5f5ca497fef 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtActivityDelegate.java
+@@ -59,7 +59,7 @@ class QtActivityDelegate extends QtActivityDelegateBase
+ 
+     void registerBackends()
+     {
+-        if (!m_backendsRegistered) {
++        if (!m_backendsRegistered && !BackendRegister.isNull()) {
+             m_backendsRegistered = true;
+             BackendRegister.registerBackend(QtWindowInterface.class,
+                                             (QtWindowInterface)QtActivityDelegate.this);
+@@ -76,6 +76,10 @@ class QtActivityDelegate extends QtActivityDelegateBase
+     {
+         if (m_backendsRegistered) {
+             m_backendsRegistered = false;
++
++            if (BackendRegister.isNull())
++                return;
++
+             BackendRegister.unregisterBackend(QtWindowInterface.class);
+             BackendRegister.unregisterBackend(QtAccessibilityInterface.class);
+             BackendRegister.unregisterBackend(QtMenuInterface.class);
+diff --git x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEmbeddedDelegate.java y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEmbeddedDelegate.java
+index 8598b91167802dd4cf9c8ded39e70a63cf716bba..0a49d9401406209c9f9bcd92231631223d711e72 100644
+--- x/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEmbeddedDelegate.java
++++ y/qtbase/src/android/jar/src/org/qtproject/qt/android/QtEmbeddedDelegate.java
+@@ -95,12 +95,19 @@ class QtEmbeddedDelegate extends QtActivityDelegateBase
+         synchronized (this) {
+             m_stateDetails = details;
+             if (details.isStarted && !m_backendsRegistered) {
++                if (BackendRegister.isNull())
++                    return;
++
+                 m_backendsRegistered = true;
+                 BackendRegister.registerBackend(QtWindowInterface.class, (QtWindowInterface)this);
+                 BackendRegister.registerBackend(QtMenuInterface.class, (QtMenuInterface)this);
+                 BackendRegister.registerBackend(QtInputInterface.class, m_inputDelegate);
+             } else if (!details.isStarted && m_backendsRegistered) {
+                 m_backendsRegistered = false;
++
++                if (BackendRegister.isNull())
++                    return;
++
+                 BackendRegister.unregisterBackend(QtWindowInterface.class);
+                 BackendRegister.unregisterBackend(QtMenuInterface.class);
+                 BackendRegister.unregisterBackend(QtInputInterface.class);
+diff --git x/qtbase/src/plugins/platforms/android/androidbackendregister.cpp y/qtbase/src/plugins/platforms/android/androidbackendregister.cpp
+index bfd86138aa5090a692cf1dd58d622009153747bf..98f0ea593563b8dfcd636120b25caa710baaf7ff 100644
+--- x/qtbase/src/plugins/platforms/android/androidbackendregister.cpp
++++ y/qtbase/src/plugins/platforms/android/androidbackendregister.cpp
+@@ -14,10 +14,16 @@ Q_DECLARE_JNI_CLASS(BackendRegister, "org/qtproject/qt/android/BackendRegister")
+ bool AndroidBackendRegister::registerNatives()
+ {
+     return QtJniTypes::BackendRegister::registerNativeMethods(
+-            { Q_JNI_NATIVE_SCOPED_METHOD(registerBackend, AndroidBackendRegister),
++            { Q_JNI_NATIVE_SCOPED_METHOD(isNull, AndroidBackendRegister),
++              Q_JNI_NATIVE_SCOPED_METHOD(registerBackend, AndroidBackendRegister),
+               Q_JNI_NATIVE_SCOPED_METHOD(unregisterBackend, AndroidBackendRegister) });
+ }
+ 
++jboolean AndroidBackendRegister::isNull(JNIEnv *, jclass)
++{
++    return QtAndroid::backendRegister() == nullptr;
++}
++
+ void AndroidBackendRegister::registerBackend(JNIEnv *, jclass, jclass interfaceClass,
+                                              jobject interface)
+ {
+diff --git x/qtbase/src/plugins/platforms/android/androidbackendregister.h y/qtbase/src/plugins/platforms/android/androidbackendregister.h
+index 502880a77f3e15867dd652502d65ac55fe5302b5..06b7b8324161cb218bc07db25814f89617e9f204 100644
+--- x/qtbase/src/plugins/platforms/android/androidbackendregister.h
++++ y/qtbase/src/plugins/platforms/android/androidbackendregister.h
+@@ -60,6 +60,8 @@ private:
+     QMutex m_registerMutex;
+     QMap<QString, QJniObject> m_register;
+ 
++    static jboolean isNull(JNIEnv *, jclass);
++    Q_DECLARE_JNI_NATIVE_METHOD_IN_CURRENT_SCOPE(isNull)
+     static void registerBackend(JNIEnv *, jclass, jclass interfaceClass, jobject interface);
+     Q_DECLARE_JNI_NATIVE_METHOD_IN_CURRENT_SCOPE(registerBackend)
+     static void unregisterBackend(JNIEnv *, jclass, jclass interfaceClass);

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Contains the CardInfo and the CardInfoFactory
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,13 +11,9 @@
 #include <QCoreApplication>
 #include <QSharedPointer>
 
+
 namespace governikus
 {
-
-/*!
- * Holds smart card information.
- * An instance of CardInfo is created using the CardInfoFactory.
- */
 class CardInfo
 {
 	Q_DECLARE_TR_FUNCTIONS(governikus::CardInfo)

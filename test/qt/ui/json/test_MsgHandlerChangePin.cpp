@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref MsgHandlerChangePin
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "messages/MsgHandlerChangePin.h"
@@ -35,8 +31,8 @@ class test_MsgHandlerChangePin
 			qRegisterMetaType<QSharedPointer<WorkflowContext>>("QSharedPointer<WorkflowContext>");
 
 			connect(Env::getSingleton<UiLoader>(), &UiLoader::fireLoadedPlugin, this, [](UiPlugin* pUi){
-					pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
-				});
+						pUi->setProperty("passive", QVariant()); // fake active UI for AppController::start
+					});
 		}
 
 
@@ -156,8 +152,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
-				});
+						pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
+					});
 
 			const QByteArray msg("{"
 								 "\"cmd\": \"RUN_CHANGE_PIN\","
@@ -227,8 +223,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
-				});
+						pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
+					});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
 			ui->doMessageProcessing(msgApiLevel.replace('*', apiLevel));
@@ -287,8 +283,8 @@ class test_MsgHandlerChangePin
 			QSignalSpy spyStarted(&controller, &AppController::fireWorkflowStarted);
 			QSignalSpy spyFinished(&controller, &AppController::fireWorkflowFinished);
 			connect(&controller, &AppController::fireWorkflowStarted, this, [this](const QSharedPointer<WorkflowRequest>& pRequest){
-					pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
-				});
+						pRequest->getContext()->claim(this); // UiPluginJson is internal API and does not claim by itself
+					});
 
 			QByteArray msgApiLevel = R"({"cmd": "SET_API_LEVEL", "level": *})";
 			ui->doMessageProcessing(msgApiLevel.replace('*', apiLevel));

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief UiPlugin implementation of the integrated SDK (C-API).
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

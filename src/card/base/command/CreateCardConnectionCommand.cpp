@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CreateCardConnectionCommand.h"
@@ -44,19 +44,19 @@ void CreateCardConnectionCommand::execute()
 		const auto& localCopy = mReaderManagerWorker;
 		const auto& name = mReaderName;
 		QMetaObject::invokeMethod(localCopy.data(), [localCopy, name] {
-				localCopy->createCardConnectionWorker(name, [] (const QSharedPointer<CardConnectionWorker>& pWorker) -> QSharedPointer<CardConnectionWorker> {
-					if (pWorker)
-					{
-						const auto application = pWorker->getReaderInfo().getCardInfo().getApplication();
-						if (application != FileRef() && !pWorker->selectApplicationRoot(application))
+					localCopy->createCardConnectionWorker(name, [] (const QSharedPointer<CardConnectionWorker>& pWorker) -> QSharedPointer<CardConnectionWorker> {
+						if (pWorker)
 						{
-							return nullptr;
+							const auto application = pWorker->getReaderInfo().getCardInfo().getApplication();
+							if (application != FileRef() && !pWorker->selectApplicationRoot(application))
+							{
+								return nullptr;
+							}
 						}
-					}
 
-					return pWorker;
-				});
-			}, Qt::QueuedConnection);
+						return pWorker;
+					});
+				}, Qt::QueuedConnection);
 	}
 	else
 	{

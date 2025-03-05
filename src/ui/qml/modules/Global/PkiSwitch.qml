@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick
@@ -8,12 +8,8 @@ import Governikus.Type
 MouseArea {
 	id: root
 
-	required property string functionName
+	Accessible.ignored: true
 
-	Accessible.name: functionName
-	Accessible.role: Accessible.Button
-
-	Accessible.onPressAction: root.clicked(null)
 	onClicked: {
 		d.counter += 1;
 		switch (d.counter) {

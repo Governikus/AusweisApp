@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -9,17 +9,14 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global; GCollapsibleSubButton {}", testCase);
-	}
-	function test_image() {
-		let testObject = createTestObject();
-		compare(testObject.image, "", "Initial no image");
-		testObject.image = "qrc:///images/material_check.svg";
-		compare(testObject.image, "qrc:///images/material_check.svg", "Image: qrc:///images/material_check.svg");
+		return createTemporaryQmlObject("import Governikus.Global; GCollapsibleSubButton {
+			image: \"qrc:///images/material_check.svg\"
+		}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();
 		verify(testObject, "Object loaded");
+		compare(testObject.image, "qrc:///images/material_check.svg", "Image: qrc:///images/material_check.svg");
 	}
 	function test_text() {
 		let testObject = createTestObject();

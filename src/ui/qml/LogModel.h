@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -73,10 +73,7 @@ class LogModel
 		Q_INVOKABLE void removeOtherLogFiles();
 		Q_INVOKABLE void setLogFile(int pIndex);
 		Q_INVOKABLE void saveCurrentLogFile(const QUrl& pFilename) const;
-#ifndef QT_NO_DEBUG
 		Q_INVOKABLE void saveDummyLogFile(const QDateTime& pTimeStamp = QDateTime());
-#endif
-
 		Q_INVOKABLE void mailLog(const QString& pEmail = QStringLiteral("support@ausweisapp.de"),
 				const QString& pSubject = tr("Mobile logfile"),
 				const QString& pMsg = tr("<Please describe the error>")) const;

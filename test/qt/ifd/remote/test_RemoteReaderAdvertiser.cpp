@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref RemoteReaderAdvertiserImpl
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteReaderAdvertiser.h"
@@ -19,7 +15,7 @@ namespace governikus
 {
 
 
-template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QString&, quint16&, int&, bool&>(const QString& pIfdName, const QString& pIfdId, quint16& pPort, int& pInterval, bool& pPairing)
+template<> RemoteReaderAdvertiser* createNewObject<RemoteReaderAdvertiser*, const QString&, const QByteArray&, quint16&, int&, bool&>(const QString& pIfdName, const QByteArray& pIfdId, quint16& pPort, int& pInterval, bool& pPairing)
 {
 	return new RemoteReaderAdvertiserImpl(pIfdName, pIfdId, pPort, pPairing, pInterval);
 }
@@ -94,7 +90,7 @@ class test_RemoteReaderAdvertiser
 			QFETCH(bool, pairing);
 
 			const QString ifdName("ServerName"_L1);
-			const QString ifdId("0123456789ABCDEF"_L1);
+			const QByteArray ifdId("0123456789ABCDEF"_ba);
 			quint16 port = 12345;
 			int pTimerInterval = 99999;
 
@@ -106,7 +102,7 @@ class test_RemoteReaderAdvertiser
 			const auto& offerMsg = Discovery(QJsonDocument::fromJson(data).object());
 
 			QCOMPARE(offerMsg.getIfdName(), ifdName);
-			QCOMPARE(offerMsg.getIfdId(), ifdId.toLower());
+			QCOMPARE(offerMsg.getIfdId(), ifdId);
 			QCOMPARE(offerMsg.getPort(), port);
 			QCOMPARE(offerMsg.getSupportedApis(), IfdVersion::supported());
 			QCOMPARE(offerMsg.getPairing(), pairing);

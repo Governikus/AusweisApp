@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include <QtTest>
@@ -49,37 +49,37 @@ class test_SmartReader
 			QFETCH(EidStatus, status);
 
 			Env::getSingleton<ReaderManager>()->callExecute([status] {
-					setSmartEidStatus(status);
+						setSmartEidStatus(status);
 
-					SmartReader reader(QStringLiteral("Smart"));
-					QCOMPARE(reader.getCard(), nullptr);
-					QCOMPARE(reader.getReaderInfo().isInsertable(), false);
+						SmartReader reader(QStringLiteral("Smart"));
+						QCOMPARE(reader.getCard(), nullptr);
+						QCOMPARE(reader.getReaderInfo().isInsertable(), false);
 
-					QSignalSpy spyInserted(&reader, &Reader::fireCardInserted);
-					QSignalSpy spyRemoved(&reader, &Reader::fireCardRemoved);
+						QSignalSpy spyInserted(&reader, &Reader::fireCardInserted);
+						QSignalSpy spyRemoved(&reader, &Reader::fireCardRemoved);
 
-					reader.connectReader();
-					QCOMPARE(spyInserted.count(), 0);
-					QCOMPARE(spyRemoved.count(), 0);
-					QCOMPARE(reader.getCard() != nullptr, (status == EidStatus::PERSONALIZED));
-					QCOMPARE(reader.getReaderInfo().isInsertable(), (status == EidStatus::PERSONALIZED));
+						reader.connectReader();
+						QCOMPARE(spyInserted.count(), 0);
+						QCOMPARE(spyRemoved.count(), 0);
+						QCOMPARE(reader.getCard() != nullptr, (status == EidStatus::PERSONALIZED));
+						QCOMPARE(reader.getReaderInfo().isInsertable(), (status == EidStatus::PERSONALIZED));
 
-					reader.disconnectReader(QString());
-					QCOMPARE(spyInserted.count(), 0);
-					QCOMPARE(spyRemoved.count(), 0);
+						reader.disconnectReader(QString());
+						QCOMPARE(spyInserted.count(), 0);
+						QCOMPARE(spyRemoved.count(), 0);
 
-					auto spyCount = status == EidStatus::PERSONALIZED ? 1 : 0;
-					reader.connectReader();
+						auto spyCount = status == EidStatus::PERSONALIZED ? 1 : 0;
+						reader.connectReader();
 
-					reader.insertCard();
-					QCOMPARE(spyInserted.count(), spyCount);
-					QCOMPARE(spyRemoved.count(), 0);
-					QCOMPARE(reader.getCard() == nullptr, status != EidStatus::PERSONALIZED);
+						reader.insertCard();
+						QCOMPARE(spyInserted.count(), spyCount);
+						QCOMPARE(spyRemoved.count(), 0);
+						QCOMPARE(reader.getCard() == nullptr, status != EidStatus::PERSONALIZED);
 
-					reader.disconnectReader(QString());
-					QCOMPARE(spyInserted.count(), spyCount);
-					QCOMPARE(spyRemoved.count(), spyCount);
-				});
+						reader.disconnectReader(QString());
+						QCOMPARE(spyInserted.count(), spyCount);
+						QCOMPARE(spyRemoved.count(), spyCount);
+					});
 		}
 
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -7,53 +7,48 @@ import Governikus.Global
 import Governikus.Style
 
 ListView {
-	id: baseItem
+	id: root
 
-	property bool scrollBarAutohide: !Constants.is_desktop
+	property bool scrollBarAutohide: !Style.is_layout_desktop
 	property real scrollBarBottomPadding: 0
-	property alias scrollBarColor: scrollbar.color
+	property alias scrollBarColor: scrollBar.color
 	property real scrollBarTopPadding: 0
 
 	function handleKeyPress(key) {
 		if (key === Qt.Key_PageDown)
-			baseItem.scrollPageDown();
+			root.scrollPageDown();
 		else if (key === Qt.Key_PageUp)
-			baseItem.scrollPageUp();
+			root.scrollPageUp();
 		else if (key === Qt.Key_End)
-			baseItem.positionViewAtEnd();
+			root.positionViewAtEnd();
 		else if (key === Qt.Key_Home)
-			baseItem.positionViewAtBeginning();
+			root.positionViewAtBeginning();
 	}
 	function highlightScrollbar() {
 		if (ScrollBar.vertical)
-			ScrollBar.vertical.highlight();
+			(ScrollBar.vertical as GScrollBar).highlight();
 	}
 	function scrollPageDown() {
-		Utils.scrollPageDown(baseItem);
-	}
-	function scrollPageLeft() {
-		Utils.scrollPageLeft(baseItem);
-	}
-	function scrollPageRight() {
-		Utils.scrollPageRight(baseItem);
+		scrollBar.increase();
 	}
 	function scrollPageUp() {
-		Utils.scrollPageUp(baseItem);
+		scrollBar.decrease();
 	}
 
 	Accessible.ignored: true
-	boundsBehavior: Constants.is_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
+	boundsBehavior: Style.is_layout_desktop ? Flickable.StopAtBounds : (contentHeight <= height ? Flickable.StopAtBounds : Flickable.DragAndOvershootBounds)
 	boundsMovement: Flickable.FollowBoundsBehavior
-	flickDeceleration: Constants.flickDeceleration
+	flickDeceleration: Style.flickDeceleration
 	flickableDirection: Flickable.VerticalFlick
-	maximumFlickVelocity: Constants.scrolling_speed
+	maximumFlickVelocity: Style.scrolling_speed
+	reuseItems: true
 
 	ScrollBar.vertical: GScrollBar {
-		id: scrollbar
+		id: scrollBar
 
-		autohide: scrollBarAutohide
-		bottomPadding: baseItem.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
-		topPadding: baseItem.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
+		autohide: root.scrollBarAutohide
+		bottomPadding: root.scrollBarBottomPadding + Style.dimens.scrollbar_padding_vertical
+		topPadding: root.scrollBarTopPadding + Style.dimens.scrollbar_padding_vertical
 	}
 
 	Accessible.onDecreaseAction: scrollPageUp()

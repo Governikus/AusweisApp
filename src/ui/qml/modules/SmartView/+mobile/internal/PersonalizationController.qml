@@ -1,20 +1,23 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
+
 import Governikus.AuthView
 import Governikus.EnterPasswordView
 import Governikus.ResultView
-import Governikus.Style
 import Governikus.TitleBar
-import Governikus.PasswordInfoView
+import Governikus.MultiInfoView
 import Governikus.View
 import Governikus.WhiteListClient
 import Governikus.Workflow
 import Governikus.Type
 
 Controller {
-	id: controller
+	id: root
 
 	enum WorkflowStates {
 		Initial,
@@ -33,14 +36,16 @@ Controller {
 	property bool skipSelectReader: false
 	//: LABEL ANDROID IOS
 	readonly property string smartEidTitle: qsTr("Smart-eID")
+	property bool smartEidUsed: false
+	required property string title
 	property bool workflowProgressVisible: false
 	property int workflowState: PersonalizationController.WorkflowStates.Initial
 
 	function displayInputError() {
 		push(inputErrorView, {
-			"returnCode": PersonalizationModel.lastReturnCode,
-			"inputError": NumberModel.inputError,
-			"passwordType": NumberModel.passwordType
+			returnCode: PersonalizationModel.lastReturnCode,
+			inputError: NumberModel.inputError,
+			passwordType: NumberModel.passwordType
 		});
 		NumberModel.resetInputError();
 	}
@@ -96,12 +101,12 @@ Controller {
 		case "StateEnterPacePassword":
 			if (PersonalizationModel.lastReturnCode === CardReturnCode.OK_CAN) {
 				push(inputSuccessView, {
-					"passwordType": NumberModel.PasswordType.CAN
+					passwordType: NumberModel.PasswordType.CAN
 				});
 				return;
 			} else if (PersonalizationModel.lastReturnCode === CardReturnCode.OK_PUK) {
 				push(inputSuccessView, {
-					"passwordType": NumberModel.PasswordType.PUK
+					passwordType: NumberModel.PasswordType.PUK
 				});
 				return;
 			}
@@ -111,10 +116,10 @@ Controller {
 			}
 			if (NumberModel.initialInputError !== "") {
 				push(inputErrorView, {
-					"returnCode": NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
-					"inputError": NumberModel.initialInputError,
-					"passwordType": NumberModel.passwordType,
-					"titleVisible": false
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					inputError: NumberModel.initialInputError,
+					passwordType: NumberModel.passwordType,
+					titleVisible: false
 				});
 				NumberModel.setInitialInputErrorShown();
 				return;
@@ -133,6 +138,9 @@ Controller {
 			push(cardPositionView);
 			break;
 		case "StateDidAuthenticateEac1":
+			if (stackView.currentItem instanceof InputSuccessView) {
+				pop();
+			}
 			setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.ProcessingPhysicalEid);
 			workflowProgressVisible = true;
 			break;
@@ -173,7 +181,7 @@ Controller {
 			}
 			break;
 		case "FinalState":
-			if (PersonalizationModel.showChangePinView) {
+			if (PersonalizationModel.changeTransportPin) {
 				done();
 				show(UiModule.PINMANAGEMENT);
 			} else if (PersonalizationModel.error && !PersonalizationModel.hasNextWorkflowPending && !PersonalizationModel.shouldSkipResultView()) {
@@ -191,14 +199,14 @@ Controller {
 		processStateChange(PersonalizationModel.currentState);
 	}
 	function setWorkflowStateAndContinue(pState) {
-		controller.workflowState = pState;
+		root.workflowState = pState;
 		PersonalizationModel.continueWorkflow();
 	}
 	function setWorkflowStateAndRequestInput(pState) {
-		controller.workflowState = pState;
+		root.workflowState = pState;
 		if (PersonalizationModel.isBasicReader) {
 			replace(enterPinView, {
-				"passwordType": NumberModel.passwordType
+				passwordType: NumberModel.passwordType
 			});
 		} else {
 			replace(smartProgress);
@@ -208,14 +216,14 @@ Controller {
 
 	Connections {
 		function onFireStateEntered(pState) {
-			processStateChange(pState);
+			root.processStateChange(pState);
 		}
-		function onFireWorkflowFinished() {
+		function onFireWorkflowFinished(pSuccess) {
 			connectivityManager.watching = false;
 		}
 		function onFireWorkflowStarted() {
-			popAll();
-			skipSelectReader = false;
+			root.popAll();
+			root.skipSelectReader = false;
 			connectivityManager.watching = true;
 		}
 
@@ -226,44 +234,24 @@ Controller {
 
 		onNetworkInterfaceActiveChanged: {
 			if (PersonalizationModel.currentState === "StateCheckStatus")
-				rerunCurrentState();
+				root.rerunCurrentState();
 		}
 	}
 	Component {
 		id: transportPinReminder
 
 		TransportPinReminderView {
-			moreInformationText: transportPinReminderInfoData.linkText
-			smartEidUsed: false
-			title: smartEidTitle
+			title: root.title
 
-			onCancel: PersonalizationModel.cancelWorkflow()
+			onCancel: AuthModel.cancelWorkflow()
 			onPinKnown: {
 				pop();
-				PersonalizationModel.continueWorkflow();
+				AuthModel.continueWorkflow();
 			}
-			onPinUnknown: {
+			onTransportPinKnown: {
 				pop();
-				PersonalizationModel.cancelWorkflowToChangePin();
+				AuthModel.cancelWorkflowToChangeTransportPin();
 			}
-			onShowInfoView: {
-				push(transportPinReminderInfoView);
-			}
-		}
-	}
-	PasswordInfoData {
-		id: transportPinReminderInfoData
-
-		contentType: PasswordInfoData.Type.CHANGE_PIN
-	}
-	Component {
-		id: transportPinReminderInfoView
-
-		PasswordInfoView {
-			infoContent: transportPinReminderInfoData
-			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
-
-			onClose: pop()
 		}
 	}
 	Component {
@@ -271,7 +259,7 @@ Controller {
 
 		CheckConnectivityView {
 			smartEidUsed: true
-			title: smartEidTitle
+			title: root.smartEidTitle
 
 			onCancel: PersonalizationModel.cancelWorkflow()
 		}
@@ -281,11 +269,11 @@ Controller {
 
 		CardPositionView {
 			smartEidUsed: PersonalizationModel.readerPluginType === ReaderManagerPluginType.SMART
-			title: smartEidTitle
+			title: root.smartEidTitle
 
 			onCancelClicked: PersonalizationModel.cancelWorkflow()
 			onContinueClicked: {
-				pop();
+				root.pop();
 				PersonalizationModel.continueWorkflow();
 			}
 		}
@@ -294,12 +282,12 @@ Controller {
 		id: smartProgress
 
 		PersonalizationProgressView {
-			progressBarVisible: workflowProgressVisible
-			title: smartEidTitle
-			workflowState: controller.workflowState
+			progressBarVisible: root.workflowProgressVisible
+			title: root.smartEidTitle
+			workflowState: root.workflowState
 
 			onAbortWorkflow: {
-				controller.workflowState = PersonalizationController.WorkflowStates.Abort;
+				root.workflowState = PersonalizationController.WorkflowStates.Abort;
 				PersonalizationModel.cancelWorkflow();
 			}
 		}
@@ -329,22 +317,22 @@ Controller {
 		GeneralWorkflow {
 			smartEidUsed: false
 			workflowModel: PersonalizationModel
-			workflowTitle: smartEidTitle
+			workflowTitle: root.smartEidTitle
 		}
 	}
-	PasswordInfoData {
+	MultiInfoData {
 		id: infoData
 
 		contentType: fromPasswordType(NumberModel.passwordType, NumberModel.isCanAllowedMode)
 	}
 	Component {
-		id: passwordInfoView
+		id: multiInfoView
 
-		PasswordInfoView {
+		MultiInfoView {
 			infoContent: infoData
-			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+			smartEidUsed: root.workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
 
-			onClose: pop()
+			onClose: root.pop()
 		}
 	}
 	Component {
@@ -352,7 +340,7 @@ Controller {
 
 		EnterPasswordView {
 			moreInformationText: infoData.linkText
-			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.Pin
+			smartEidUsed: root.workflowState !== PersonalizationController.WorkflowStates.Pin
 			//: LABEL ANDROID IOS
 			title: qsTr("Set up Smart-eID")
 
@@ -367,26 +355,26 @@ Controller {
 			onPasswordEntered: pPasswordType => {
 				switch (pPasswordType) {
 				case NumberModel.PasswordType.NEW_SMART_PIN:
-					setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
+					root.setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
 					break;
 				case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
 					if (NumberModel.commitNewPin()) {
-						replace(smartProgress);
+						root.replace(smartProgress);
 						if (PersonalizationModel.applet) {
-							controller.workflowState = PersonalizationController.WorkflowStates.Personalization;
+							root.workflowState = PersonalizationController.WorkflowStates.Personalization;
 						} else {
-							setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.Personalization);
+							root.setWorkflowStateAndContinue(PersonalizationController.WorkflowStates.Personalization);
 						}
 					} else {
-						setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
+						root.setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.SmartPinNew);
 					}
 					break;
 				default:
-					replace(smartProgress);
+					root.replace(smartProgress);
 					PersonalizationModel.continueWorkflow();
 				}
 			}
-			onRequestPasswordInfo: push(passwordInfoView)
+			onRequestPasswordInfo: root.push(multiInfoView)
 		}
 	}
 	Component {
@@ -394,8 +382,8 @@ Controller {
 
 		AbortedProgressView {
 			networkInterfaceActive: connectivityManager.networkInterfaceActive
-			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
-			title: smartEidTitle
+			smartEidUsed: root.workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+			title: root.smartEidTitle
 
 			onCancel: PersonalizationModel.cancelWorkflow()
 		}
@@ -404,13 +392,13 @@ Controller {
 		id: resultView
 
 		PersonalizationResultView {
-			smartEidUsed: workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
+			smartEidUsed: root.workflowState !== PersonalizationController.WorkflowStates.ProcessingPhysicalEid
 
 			onContinueClicked: {
 				if (PersonalizationModel.error) {
-					done();
+					root.done();
 				} else {
-					replace(legalInformation);
+					root.replace(legalInformation);
 				}
 			}
 		}
@@ -419,7 +407,7 @@ Controller {
 		id: legalInformation
 
 		PersonalizationLegalInformationView {
-			onContinueClicked: done()
+			onContinueClicked: root.done()
 		}
 	}
 	Component {
@@ -438,44 +426,44 @@ Controller {
 		id: inputErrorView
 
 		InputErrorView {
-			smartEidUsed: controller.smartEidUsed
-			title: controller.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
 
 				onClicked: {
-					pop();
+					root.pop();
 					PersonalizationModel.cancelWorkflow();
 				}
 			}
 
 			onContinueClicked: {
-				pop();
-				controller.rerunCurrentState();
+				root.pop();
+				root.rerunCurrentState();
 			}
-			onPasswordInfoRequested: push(passwordInfoView)
+			onPasswordInfoRequested: push(multiInfoView)
 		}
 	}
 	Component {
 		id: inputSuccessView
 
 		InputSuccessView {
-			smartEidUsed: controller.smartEidUsed
-			title: controller.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
 
 				onClicked: {
-					pop();
+					root.pop();
 					PersonalizationModel.cancelWorkflow();
 				}
 			}
 
 			onContinueClicked: {
-				pop();
-				setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.Pin);
+				root.pop();
+				root.setWorkflowStateAndRequestInput(PersonalizationController.WorkflowStates.Pin);
 			}
 		}
 	}

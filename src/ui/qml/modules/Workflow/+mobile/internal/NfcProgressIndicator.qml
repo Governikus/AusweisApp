@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -60,7 +60,7 @@ Item {
 
 	Component.onCompleted: {
 		if (!SettingsModel.useAnimations) {
-			cardPosition = cardPositionModel.getCardPosition();
+			root.cardPosition = cardPositionModel.getCardPosition();
 			animation.start();
 			animation.complete();
 		}
@@ -68,7 +68,7 @@ Item {
 
 	Connections {
 		function onFireCardPositionChanged() {
-			cardPosition = cardPositionModel.getCardPosition();
+			root.cardPosition = cardPositionModel.getCardPosition();
 			animation.restart();
 		}
 
@@ -96,7 +96,7 @@ Item {
 		PropertyAction {
 			property: "anchors.horizontalCenterOffset"
 			target: card
-			value: (startPositionLeft ? -fakephone.width : fakephone.width) * 0.75
+			value: (root.startPositionLeft ? -fakephone.width : fakephone.width) * 0.75
 		}
 		PropertyAction {
 			property: "anchors.verticalCenterOffset"
@@ -111,7 +111,7 @@ Item {
 		PropertyAction {
 			property: "z"
 			target: card
-			value: cardPosition ? cardPosition.z : 0
+			value: root.cardPosition ? root.cardPosition.z : 0
 		}
 		ParallelAnimation {
 			NumberAnimation {
@@ -126,21 +126,21 @@ Item {
 				easing.type: Easing.OutCubic
 				property: "rotation"
 				target: card
-				to: cardPosition ? cardPosition.rotation : 0
+				to: root.cardPosition ? root.cardPosition.rotation : 0
 			}
 			NumberAnimation {
 				duration: root.animateInDuration
 				easing.type: Easing.OutCubic
 				property: "anchors.horizontalCenterOffset"
 				target: card
-				to: fakephone.width * ((cardPosition ? cardPosition.x : 0) - 0.5)
+				to: fakephone.width * ((root.cardPosition ? root.cardPosition.x : 0) - 0.5)
 			}
 			NumberAnimation {
 				duration: root.animateInDuration
 				easing.type: Easing.OutCubic
 				property: "anchors.verticalCenterOffset"
 				target: card
-				to: fakephone.height * ((cardPosition ? cardPosition.y : 0) - 0.5)
+				to: fakephone.height * ((root.cardPosition ? root.cardPosition.y : 0) - 0.5)
 			}
 		}
 		PauseAnimation {

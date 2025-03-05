@@ -4,5 +4,8 @@
 	"env": {
 		"QSG_INFO": "1",
 		"QT_SVG_ASSUME_TRUSTED_SOURCE": "1"
-	}
+	},
+	"_comments": [
+		"QT_SVG_ASSUME_TRUSTED_SOURCE is only required with Qt < 6.8.0"
+	]
 }

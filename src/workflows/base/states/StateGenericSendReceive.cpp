@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGenericSendReceive.h"
@@ -266,7 +266,6 @@ void StateGenericSendReceive::run()
 	}
 
 	QNetworkRequest request(serverAddress);
-	request.setRawHeader("requestid", token->getSessionIdentifier());
 	const QByteArray& data = getAsCreator()->marshall();
 	Q_ASSERT(!data.isEmpty());
 

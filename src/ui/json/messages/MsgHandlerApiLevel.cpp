@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerApiLevel.h"
@@ -30,7 +30,11 @@ MsgHandlerApiLevel::MsgHandlerApiLevel(const QJsonObject& pObj, MsgContext& pCon
 	else
 	{
 		const int level = jsonLevel.toInt();
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 9, 0))
+		if (Enum<MsgLevel>::isValue(static_cast<quint64>(level)))
+#else
 		if (Enum<MsgLevel>::isValue(level))
+#endif
 		{
 			pContext.setApiLevel(static_cast<MsgLevel>(level));
 		}

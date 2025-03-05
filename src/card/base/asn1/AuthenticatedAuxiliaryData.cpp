@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AuthenticatedAuxiliaryData.h"
@@ -144,13 +144,6 @@ QSharedPointer<AuthenticatedAuxiliaryData> AuthenticatedAuxiliaryData::decode(co
 	}
 
 	return QSharedPointer<AuthenticatedAuxiliaryData>::create(auxDate);
-}
-
-
-QByteArray AuthenticatedAuxiliaryData::encode() const
-{
-	Q_ASSERT(mData);
-	return encodeObject(mData.data());
 }
 
 

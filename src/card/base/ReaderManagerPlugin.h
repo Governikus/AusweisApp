@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Plugin to control different kinds of reader managers that will be used in \ref ReaderManager.
- * If you implement a class of this Plugin you need to register it in \ref ReaderManager, otherwise it won't be used.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,6 +10,7 @@
 
 #include <QObject>
 #include <QThread>
+
 
 namespace governikus
 {
@@ -97,6 +93,16 @@ class ReaderManagerPlugin
 		virtual void startScan(bool pAutoConnect);
 		virtual void stopScan(const QString& pError = QString());
 		void setInitialScanState(ReaderManagerPluginInfo::InitialScan pState);
+
+#ifndef QT_NO_DEBUG
+		void setPluginInfo(const ReaderManagerPluginInfo& pInfo)
+		{
+			mInfo = pInfo;
+			Q_EMIT fireStatusChanged(mInfo);
+		}
+
+
+#endif
 
 	Q_SIGNALS:
 		void fireStatusChanged(const ReaderManagerPluginInfo& pInfo);

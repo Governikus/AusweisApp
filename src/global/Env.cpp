@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -12,7 +12,7 @@ defineSingleton(Env)
 
 namespace
 {
-static void initialize()
+void initialize()
 {
 	Env::init();
 }

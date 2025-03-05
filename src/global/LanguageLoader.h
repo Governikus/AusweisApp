@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Loads translation files for different languages.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,9 +9,11 @@
 #include <QSharedPointer>
 #include <QTranslator>
 
+
 class test_LanguageLoader;
 class test_ProviderParser;
 class test_ProviderConfigurationParser;
+
 
 namespace governikus
 {

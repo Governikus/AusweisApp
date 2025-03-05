@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginAutomatic.h"
@@ -12,10 +12,14 @@
 #include "states/StateEnterPacePassword.h"
 #include "states/StateSelectReader.h"
 
+#include <QFile>
+#include <QJsonDocument>
 #include <QLoggingCategory>
+#include <QtGlobal>
 
 Q_DECLARE_LOGGING_CATEGORY(automatic)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 UiPluginAutomatic::UiPluginAutomatic()
@@ -24,6 +28,21 @@ UiPluginAutomatic::UiPluginAutomatic()
 	, mPrevUsedAsSDK()
 	, mPrevUsedDeveloperMode()
 {
+}
+
+
+QString UiPluginAutomatic::getEnvVar(const char* pEnv, const QString& pDefault) const
+{
+	const QByteArrayList prefixes({"AUSWEISAPP_AUTOMATIC_"_ba, "AUSWEISAPP2_AUTOMATIC_"_ba});
+	for (const auto& prefix : prefixes)
+	{
+		const QByteArray& var = prefix + pEnv;
+		if (qEnvironmentVariableIsSet(var.constData()))
+		{
+			return qEnvironmentVariable(var.constData(), pDefault);
+		}
+	}
+	return pDefault;
 }
 
 
@@ -58,7 +77,7 @@ void UiPluginAutomatic::onWorkflowStarted(const QSharedPointer<WorkflowRequest>&
 		Env::getSingleton<VolatileSettings>()->setUsedAsSDK(true);
 		Env::getSingleton<ReaderManager>()->startScanAll();
 
-		const auto& developerMode = qEnvironmentVariable("AUSWEISAPP2_AUTOMATIC_DEVELOPERMODE").toLower();
+		const auto& developerMode = getEnvVar("DEVELOPERMODE").toLower();
 		if (developerMode == QLatin1String("true") || developerMode == QLatin1String("on") || developerMode == QLatin1String("1"))
 		{
 			Env::getSingleton<VolatileSettings>()->setDeveloperMode(true);
@@ -114,6 +133,50 @@ bool UiPluginAutomatic::isDominated() const
 }
 
 
+std::pair<QString, QVariant> UiPluginAutomatic::getOptionalData(const ReaderInfo& pInfo) const
+{
+	if (pInfo.getPluginType() == ReaderManagerPluginType::SIMULATOR)
+	{
+		const auto& getJsonContent = [](const QString& pFile){
+					if (pFile.isEmpty())
+					{
+						return QByteArray();
+					}
+
+					if (QFile inputFile(pFile); inputFile.exists() && inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
+					{
+						qCDebug(automatic) << "Use file as JSON data:" << pFile;
+						return inputFile.readAll();
+					}
+
+					qCDebug(automatic) << "Use content as JSON data:" << pFile;
+					return pFile.toLatin1();
+				};
+
+		const auto& simulator = getJsonContent(qEnvironmentVariable("AUSWEISAPP_AUTOMATIC_SIMULATOR", QString()));
+		if (!simulator.isEmpty())
+		{
+			QJsonParseError jsonError {};
+			const auto& json = QJsonDocument::fromJson(simulator, &jsonError);
+
+			if (jsonError.error == QJsonParseError::NoError)
+			{
+				if (json.isObject())
+				{
+					return {QString(), json.object()};
+				}
+
+				return {QStringLiteral("JSON data is not an object"), QVariant()};
+			}
+
+			return {jsonError.errorString(), QVariant()};
+		}
+	}
+
+	return {QString(), QVariant()};
+}
+
+
 void UiPluginAutomatic::handleInsertCard()
 {
 	const auto* readerManager = Env::getSingleton<ReaderManager>();
@@ -124,9 +187,9 @@ void UiPluginAutomatic::handleInsertCard()
 	else
 	{
 		connect(readerManager, &ReaderManager::fireInitialScanFinished, this, [this]{
-				Env::getSingleton<ReaderManager>()->disconnect(this);
-				handleInsertCardScanFinished();
-			});
+					Env::getSingleton<ReaderManager>()->disconnect(this);
+					handleInsertCardScanFinished();
+				});
 	}
 }
 
@@ -148,10 +211,17 @@ void UiPluginAutomatic::handleInsertCardScanFinished()
 		{
 			if (readerInfo.isInsertable())
 			{
-				qCDebug(automatic) << "Automatically insert card into:" << readerInfo.getName();
-				Env::getSingleton<ReaderManager>()->insert(readerInfo);
-				mContext->setStateApproved();
-				return;
+				const auto[error, data] = getOptionalData(readerInfo);
+				if (error.isEmpty())
+				{
+					qCDebug(automatic) << "Automatically insert card into:" << readerInfo.getName();
+					Env::getSingleton<ReaderManager>()->insert(readerInfo, data);
+					mContext->setStateApproved();
+					return;
+				}
+
+				qCWarning(automatic) << "Cannot get optional data:" << error;
+				break;
 			}
 		}
 	}
@@ -179,7 +249,7 @@ void UiPluginAutomatic::handlePassword()
 		{
 			case PacePasswordId::PACE_PIN:
 			{
-				const auto& pin = qEnvironmentVariable("AUSWEISAPP2_AUTOMATIC_PIN", QStringLiteral("123456"));
+				const auto& pin = getEnvVar("PIN", QStringLiteral("123456"));
 				if (pin.size() == 6)
 				{
 					mContext->setPin(pin);
@@ -191,7 +261,7 @@ void UiPluginAutomatic::handlePassword()
 
 			case PacePasswordId::PACE_CAN:
 			{
-				const auto& can = qEnvironmentVariable("AUSWEISAPP2_AUTOMATIC_CAN", QString());
+				const auto& can = getEnvVar("CAN", QString());
 				if (can.size() == 6)
 				{
 					mContext->setCan(can);
@@ -203,7 +273,7 @@ void UiPluginAutomatic::handlePassword()
 
 			case PacePasswordId::PACE_PUK:
 			{
-				const auto& puk = qEnvironmentVariable("AUSWEISAPP2_AUTOMATIC_PUK", QString());
+				const auto& puk = getEnvVar("PUK", QString());
 				if (puk.size() == 10)
 				{
 					mContext->setPuk(puk);

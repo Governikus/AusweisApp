@@ -138,27 +138,10 @@ elseif(MAC)
 		endforeach()
 	endfunction(install_mac_plugins)
 
-	# We need to include the following (i.e. all) image format plug-ins,
-	# since those seem to be loaded upon program start-up. Not including
-	# them would cause the respective add-on from a Qt installation (if
-	# any) to be loaded, which would in turn cause the Qt libraries they
-	# depend on to be loaded as well, thus resulting in two sets of Qt
-	# libraries being loaded (ours from the bundle and the ones from the
-	# installation) and the program misbehaving (crashing).
-	# Workaround for QTBUG-94066
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QMacHeifPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QMacJp2PluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Gui/Qt6QCocoaIntegrationPluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Widgets/Qt6QMacStylePluginTargets.cmake")
-	include("${QT_INSTALL_ARCHDATA}/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake")
-	set(plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QGifPlugin ${Qt}::QICNSPlugin ${Qt}::QICOPlugin ${Qt}::QJpegPlugin ${Qt}::QMacHeifPlugin ${Qt}::QMacJp2Plugin ${Qt}::QSvgPlugin ${Qt}::QCocoaIntegrationPlugin ${Qt}::QMacStylePlugin ${Qt}::QTlsBackendOpenSSLPlugin)
+	set(plugins ${Qt}::QCocoaIntegrationPlugin ${Qt}::QTlsBackendOpenSSLPlugin)
+	if(NOT INTEGRATED_SDK)
+		list(APPEND plugins ${Qt}::QTuioTouchPlugin ${Qt}::QSvgIconPlugin ${Qt}::QGifPlugin ${Qt}::QICNSPlugin ${Qt}::QICOPlugin ${Qt}::QJpegPlugin ${Qt}::QMacHeifPlugin ${Qt}::QMacJp2Plugin ${Qt}::QSvgPlugin ${Qt}::QMacStylePlugin)
+	endif()
 	install_mac_plugins("${plugins}")
 
 	if(TARGET ${Qt}::Qml)
@@ -189,11 +172,6 @@ elseif(IOS)
 
 
 elseif(ANDROID)
-	if(INTEGRATED_SDK)
-		add_custom_command(TARGET AusweisAppBinary POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:AusweisAppBinary>" "${ANDROID_BUILD_DIR}/libs/${CMAKE_ANDROID_ARCH_ABI}/$<TARGET_FILE_NAME:AusweisAppBinary>"
-		)
-	endif()
 
 
 elseif(UNIX)
@@ -202,7 +180,17 @@ elseif(UNIX)
 	endif()
 
 	set(DEFAULT_FILE_DESTINATION ${CMAKE_INSTALL_DATADIR}/${VENDOR}/AusweisApp)
-	install(TARGETS AusweisAppBinary DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Application)
+
+	if(INTEGRATED_SDK AND NOT CONTAINER_SDK)
+		GET_PUBLIC_HEADER(AusweisAppBinary PUBLIC_HEADER)
+		if(PUBLIC_HEADER)
+			install(FILES ${PUBLIC_HEADER} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+		endif()
+		install(TARGETS AusweisAppBinary DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Application)
+	else()
+		install(TARGETS AusweisAppBinary DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT Application)
+	endif()
+
 	if(NOT CONTAINER_SDK)
 		configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.metainfo.xml.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.metainfo.xml @ONLY)
 		configure_file(${PACKAGING_DIR}/linux/${BUNDLE_IDENTIFIER}.desktop.in ${CMAKE_CURRENT_BINARY_DIR}/${BUNDLE_IDENTIFIER}.desktop @ONLY)
@@ -217,7 +205,10 @@ elseif(UNIX)
 	if(BUILD_SHARED_LIBS)
 		target_get_linked_libraries(AusweisAppBinary libraries)
 		foreach(libTarget ${libraries})
-			install(TARGETS ${libTarget} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Application)
+			get_target_property(target_type "${libTarget}" TYPE)
+			if(${target_type} STREQUAL "SHARED_LIBRARY" OR ${target_type} STREQUAL "EXECUTABLE")
+				install(FILES $<TARGET_FILE:${libTarget}> DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Application)
+			endif()
 		endforeach()
 	endif()
 endif()

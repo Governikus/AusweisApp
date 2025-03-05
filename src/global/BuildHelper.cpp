@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "BuildHelper.h"
@@ -13,6 +13,9 @@
 	#include <QJniEnvironment>
 #endif
 
+#ifdef Q_OS_IOS
+	#include <QOperatingSystemVersion>
+#endif
 #include <QSysInfo>
 #include <openssl/crypto.h>
 
@@ -149,6 +152,23 @@ QByteArrayList BuildHelper::getAppCertificates(const QString& pPackageName)
 
 #endif
 
+QString getSystemName()
+{
+#ifdef Q_OS_IOS
+	const auto& osVersion = QOperatingSystemVersion::current();
+	return QStringLiteral("%1 (%2.%3.%4)").arg(
+			osVersion.name()).arg(
+			osVersion.majorVersion()).arg(
+			osVersion.minorVersion()).arg(
+			osVersion.microVersion());
+
+#else
+	return QSysInfo::prettyProductName();
+
+#endif
+}
+
+
 QList<QPair<QLatin1String, QString>> BuildHelper::getInformationHeader()
 {
 	QList<QPair<QLatin1String, QString>> data;
@@ -162,7 +182,7 @@ QList<QPair<QLatin1String, QString>> BuildHelper::getInformationHeader()
 	add(QT_TR_NOOP("Organization"), QCoreApplication::organizationName());
 	add(QT_TR_NOOP("Organization Domain"), QCoreApplication::organizationDomain());
 
-	add(QT_TR_NOOP("System"), QSysInfo::prettyProductName());
+	add(QT_TR_NOOP("System"), getSystemName());
 	add(QT_TR_NOOP("Kernel"), QSysInfo::kernelVersion());
 
 	QString architecture = QSysInfo::currentCpuArchitecture();

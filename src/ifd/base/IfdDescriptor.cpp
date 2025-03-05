@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdDescriptor.h"
@@ -36,7 +36,7 @@ QUrl urlFromMsgAndHost(const Discovery& pDiscovery,
 
 
 IfdDescriptor::IfdDescriptorData::IfdDescriptorData(const QString& pIfdName,
-		const QString& pIfdId,
+		const QByteArray& pIfdId,
 		const QList<IfdVersion::Version>& pApiVersions,
 		const bool pIsPairingAnnounced,
 		const QUrl& pRemoteUrl,
@@ -80,7 +80,7 @@ IfdDescriptor::IfdDescriptor(const Discovery& pDiscovery, const QHostAddress& pH
 	}
 
 	const QString& ifdName = pDiscovery.getIfdName();
-	const QString& ifdId = pDiscovery.getIfdId();
+	const QByteArray& ifdId = pDiscovery.getIfdId();
 	const QList<IfdVersion::Version>& supportedApis = pDiscovery.getSupportedApis();
 	const bool isPairing = pDiscovery.getPairing();
 	d = new IfdDescriptorData(ifdName, ifdId, supportedApis, isPairing, url, pLocalIfd);
@@ -95,11 +95,11 @@ const QString& IfdDescriptor::getIfdName() const
 }
 
 
-const QString& IfdDescriptor::getIfdId() const
+const QByteArray& IfdDescriptor::getIfdId() const
 {
-	static const QString EMPTY_STRING;
+	static const QByteArray EMPTY_ARRAY;
 
-	return d.data() == nullptr ? EMPTY_STRING : d->mIfdId;
+	return d.data() == nullptr ? EMPTY_ARRAY : d->mIfdId;
 }
 
 

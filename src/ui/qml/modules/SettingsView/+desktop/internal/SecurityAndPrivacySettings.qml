@@ -1,16 +1,16 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type
-import Governikus.View
 
 ColumnLayout {
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	GPane {
 		Layout.fillWidth: true
@@ -46,7 +46,7 @@ ColumnLayout {
 	GPane {
 		Layout.fillWidth: true
 		contentPadding: 0
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 		//: LABEL DESKTOP
 		title: qsTr("Software updates")
 		visible: SettingsModel.autoUpdateAvailable
@@ -65,10 +65,10 @@ ColumnLayout {
 			readonly property bool updateAvailable: SettingsModel.appUpdateData.updateAvailable
 			readonly property bool updateValid: SettingsModel.appUpdateData.valid
 
-			Layout.bottomMargin: Constants.pane_padding
-			Layout.leftMargin: Constants.pane_padding
-			Layout.rightMargin: Constants.pane_padding
-			spacing: Constants.component_spacing
+			Layout.bottomMargin: Style.dimens.pane_padding
+			Layout.leftMargin: Style.dimens.pane_padding
+			Layout.rightMargin: Style.dimens.pane_padding
+			spacing: Style.dimens.pane_spacing
 
 			GButton {
 				text: (parent.updateAvailable ?
@@ -80,7 +80,6 @@ ColumnLayout {
 				onClicked: SettingsModel.updateAppcast()
 			}
 			GText {
-				activeFocusOnTab: true
 				color: (parent.updateAvailable || !parent.updateValid) ? Style.color.textNormal.basic : Style.color.textSubline.basic
 				text: {
 					if (parent.updateAvailable && parent.updateValid) {
@@ -96,9 +95,6 @@ ColumnLayout {
 						//: LABEL DESKTOP The automatic update check is disabled (or no network connection was present during app start), a manual check for update is required.
 						return qsTr("No update information available, please check for update manually.");
 					}
-				}
-
-				FocusFrame {
 				}
 			}
 		}

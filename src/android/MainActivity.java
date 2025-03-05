@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -25,6 +25,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.Window;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 
@@ -43,9 +44,12 @@ public class MainActivity extends QtActivity
 	private NfcReaderMode mNfcReaderMode;
 	private boolean mIsResumed;
 
+	private boolean mIsScreenReaderRunning;
+
 	// Native methods provided by UiPluginQml
 	public static native void notifySafeAreaMarginsChanged();
 	public static native void notifyConfigurationChanged();
+	public static native void notifyScreenReaderRunningChanged();
 
 	private class NfcReaderMode
 	{
@@ -185,6 +189,33 @@ public class MainActivity extends QtActivity
 			rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 		}
 		window.setStatusBarColor(Color.TRANSPARENT);
+
+		AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+		refreshAccessibilityState(accessibilityManager);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) // API 33, Android 13
+		{
+			accessibilityManager.addAccessibilityServicesStateChangeListener(new AccessibilityManager.AccessibilityServicesStateChangeListener()
+					{
+						@Override
+						public void onAccessibilityServicesStateChanged(AccessibilityManager accessibilityManager)
+						{
+							MainActivity.this.refreshAccessibilityState(accessibilityManager);
+						}
+					});
+		}
+		else
+		{
+			accessibilityManager.addAccessibilityStateChangeListener(new AccessibilityManager.AccessibilityStateChangeListener()
+					{
+						@Override
+						public void onAccessibilityStateChanged(boolean enabled)
+						{
+							AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+							MainActivity.this.refreshAccessibilityState(accessibilityManager);
+						}
+					});
+		}
+
 	}
 
 
@@ -271,9 +302,7 @@ public class MainActivity extends QtActivity
 
 	public boolean isScreenReaderRunning()
 	{
-		AccessibilityManager accessibilityManager = (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
-		List<AccessibilityServiceInfo> services = accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
-		return !services.isEmpty();
+		return mIsScreenReaderRunning;
 	}
 
 
@@ -310,11 +339,47 @@ public class MainActivity extends QtActivity
 	}
 
 
+	public void setAppearanceLightStatusBars(boolean enable)
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) // API 30, Android 11
+		{
+			WindowInsetsController controller = getWindow().getInsetsController();
+			controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+		}
+		else
+		{
+			View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+			int currentVisibility = rootView.getSystemUiVisibility();
+			if (enable)
+			{
+				rootView.setSystemUiVisibility(currentVisibility | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+			}
+			else
+			{
+				rootView.setSystemUiVisibility(currentVisibility & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+			}
+		}
+	}
+
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
 		super.onConfigurationChanged(newConfig);
 		notifyConfigurationChanged();
+	}
+
+
+	public void refreshAccessibilityState(AccessibilityManager accessibilityManager)
+	{
+		List<AccessibilityServiceInfo> services = accessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN);
+		boolean isRunning = !services.isEmpty();
+
+		if (mIsScreenReaderRunning != isRunning)
+		{
+			mIsScreenReaderRunning = isRunning;
+			notifyScreenReaderRunningChanged();
+		}
 	}
 
 

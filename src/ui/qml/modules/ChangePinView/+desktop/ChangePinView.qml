@@ -1,348 +1,176 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
-import Governikus.EnterPasswordView
-import Governikus.Global
+
 import Governikus.TitleBar
-import Governikus.PasswordInfoView
-import Governikus.ProgressView
-import Governikus.ResultView
-import Governikus.SettingsView
-import Governikus.Style
+import Governikus.MultiInfoView
 import Governikus.View
-import Governikus.Workflow
 import Governikus.Type
+import Governikus.Global
 
 SectionPage {
-	id: baseItem
+	id: root
 
-	enum SubViews {
-		Start,
-		Workflow,
-		WorkflowError,
-		Password,
-		NoPassword,
-		PasswordInfo,
-		Progress,
-		ProgressNewPin,
-		CardPosition,
-		InitialInputError,
-		InputError,
-		Data,
-		PinUnlocked,
-		Result,
-		ReturnToMain,
-		ReaderSettings
+	property bool activateUI: true
+	property Component errorViewDelegate: null
+	property int navigationActionType: NavigationAction.Cancel
+	property bool onlyCheckPin: false
+	property bool skipInfoView: true
+	property Component successViewDelegate: null
+	property bool usedInOnboarding: false
+
+	signal abortWithUnknownPin
+	signal workflowFinished(bool pSuccess)
+
+	//: LABEL DESKTOP
+	title: qsTr("Change PIN")
+
+	titleBarSettings: TitleBarSettings {
+		navigationAction: NavigationAction.Back
+
+		onNavigationActionClicked: root.pop()
 	}
 
-	// Expose private properties, needed for unit tests
-	property alias _d: d
+	ProgressTracker {
+		id: progressTracker
 
-	function showPasswordInfo() {
-		showWithPrecedingView(ChangePinView.SubViews.PasswordInfo);
+		baseProgressTracker: root.progress
 	}
-	function showSettings() {
-		showWithPrecedingView(ChangePinView.SubViews.ReaderSettings);
-	}
-	function showWithPrecedingView(pNextView) {
-		d.precedingView = d.activeView;
-		d.view = pNextView;
-		updateTitleBarActions();
-	}
+	ChangePinViewContent {
+		anchors.fill: parent
 
-	titleBarAction: TitleBarAction {
-		customSettingsHandler: baseItem.showSettings
-		rootEnabled: d.activeView === ChangePinView.SubViews.Start || d.activeView === ChangePinView.SubViews.NoPassword
-		showSettings: changePinController.workflowState === ChangePinController.WorkflowStates.Reader
-		//: LABEL DESKTOP
-		text: qsTr("Change PIN")
-
-		customSubAction: NavigationAction {
-			enabled: d.cancelAllowed
-
-			onClicked: {
-				if (pinResult.visible) {
-					ChangePinModel.continueWorkflow();
-					baseItem.nextView(UiModule.DEFAULT);
-				} else {
-					ChangePinModel.cancelWorkflow();
-				}
+		onChangePin: {
+			if (root.skipInfoView) {
+				root.push(changePinController, {
+					changeTransportPin: false
+				});
+			} else {
+				root.push(changePinInfoView);
 			}
 		}
-
-		onClicked: {
-			if (d.activeView === ChangePinView.SubViews.PasswordInfo || d.activeView === ChangePinView.SubViews.NoPassword || d.activeView === ChangePinView.SubViews.ReaderSettings) {
-				d.view = d.precedingView;
-				updateTitleBarActions();
+		onChangePinInfoRequested: root.push(multiInfoView, {
+			passwordType: MultiInfoData.CHANGE_PIN,
+			progress: progressTracker
+		})
+		onChangeTransportPin: {
+			if (root.skipInfoView) {
+				root.push(changePinController, {
+					changeTransportPin: true
+				});
+			} else {
+				root.push(changeTransportPinInfoView);
 			}
 		}
-	}
+		onNoPinAvailable: root.push(multiInfoView, {
+			passwordType: MultiInfoData.NO_PIN,
+			progress: noPinProgress,
+			continueButtonText: root.usedInOnboarding ? qsTr("Abort setup") : ""
+		})
 
-	Keys.onEscapePressed: event => {
-		if (d.cancelAllowed) {
-			ChangePinModel.cancelWorkflow();
-		} else {
-			event.accepted = false;
+		ProgressTracker {
+			id: noPinProgress
+
+			baseProgressTracker: progressTracker
+			relativeProgress: 1
 		}
 	}
-
-	QtObject {
-		id: d
-
-		readonly property int activeView: inputError.visible ? ChangePinView.SubViews.InputError : pinUnlocked.visible ? ChangePinView.SubViews.PinUnlocked : initialInputError.visible ? ChangePinView.SubViews.InitialInputError : view
-		readonly property bool cancelAllowed: view !== ChangePinView.SubViews.NoPassword && view !== ChangePinView.SubViews.Start && view !== ChangePinView.SubViews.Result && (ChangePinModel.isBasicReader || generalWorkflow.waitingFor !== Workflow.WaitingFor.Password)
-		property int enteredPasswordType: NumberModel.PasswordType.PIN
-		readonly property int passwordType: NumberModel.passwordType
-		property int precedingView: ChangePinView.SubViews.Start
-		property var view: ChangePinView.SubViews.Start
-	}
-	TabbedReaderView {
-		visible: d.activeView === ChangePinView.SubViews.ReaderSettings
-
-		onCloseView: {
-			d.view = d.precedingView;
-			updateTitleBarActions();
-		}
-	}
-	ChangePinController {
+	Component {
 		id: changePinController
 
-		onNextView: pName => {
-			if (pName === ChangePinView.SubViews.ReturnToMain) {
-				baseItem.nextView(UiModule.DEFAULT);
-				return;
+		ChangePinController {
+			required property bool changeTransportPin
+
+			errorViewDelegate: root.errorViewDelegate
+			navigationActionType: root.navigationActionType
+			successViewDelegate: root.successViewDelegate
+			title: root.title
+
+			baseProgressTracker: ProgressTracker {
+				baseProgressTracker: progressTracker
+				from: 0.3
 			}
-			d.view = pName;
+
+			Component.onCompleted: ChangePinModel.startWorkflow(changeTransportPin, root.activateUI, root.onlyCheckPin && !changeTransportPin)
+			onWorkflowFinished: pSuccess => {
+				pop(root);
+				root.workflowFinished(pSuccess);
+				root.leaveView();
+			}
 		}
 	}
-	SectionPage {
-		visible: d.activeView === ChangePinView.SubViews.Start
+	Component {
+		id: multiInfoView
 
-		ChangePinViewContent {
-			id: mainView
+		MultiInfoView {
+			id: infoView
 
-			anchors.fill: parent
+			required property int passwordType
 
-			onChangePin: ChangePinModel.startWorkflow(false)
-			onChangePinInfoRequested: baseItem.showPasswordInfo()
-			onChangeTransportPin: ChangePinModel.startWorkflow(true)
-			onNoPinAvailable: d.view = ChangePinView.SubViews.NoPassword
-		}
-	}
-	PasswordInfoView {
-		id: noPasswordView
+			infoContent: MultiInfoData {
+				contentType: infoView.passwordType
+			}
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Back
+				startEnabled: root.titleBarSettings.startEnabled
 
-		visible: d.activeView === ChangePinView.SubViews.NoPassword
+				onNavigationActionClicked: root.pop()
+			}
 
-		infoContent: PasswordInfoData {
-			contentType: PasswordInfoData.Type.NO_PIN
-		}
-
-		onClose: d.view = ChangePinView.SubViews.Start
-	}
-	GeneralWorkflow {
-		id: generalWorkflow
-
-		isPinChange: true
-		visible: d.activeView === ChangePinView.SubViews.Workflow
-		waitingFor: switch (changePinController.workflowState) {
-		case ChangePinController.WorkflowStates.Reader:
-			return Workflow.WaitingFor.Reader;
-		case ChangePinController.WorkflowStates.Password:
-			return Workflow.WaitingFor.Password;
-		default:
-			return Workflow.WaitingFor.None;
-		}
-
-		onDeviceUnpaired: function (pDeviceName) {
-			deviceUnpairedView.deviceName = pDeviceName;
-			showWithPrecedingView(ChangePinView.SubViews.WorkflowError);
-		}
-		onSettingsRequested: baseItem.showSettings()
-	}
-	ResultView {
-		id: deviceUnpairedView
-
-		property string deviceName
-
-		icon: "qrc:///images/workflow_error_no_sak_%1.svg".arg(Style.currentTheme.name)
-		//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
-		text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
-		visible: d.activeView === ChangePinView.SubViews.WorkflowError
-
-		onNextView: d.view = ChangePinView.SubViews.Workflow
-	}
-	EnterPasswordView {
-		id: enterPasswordView
-
-		moreInformationText: infoData.linkText
-		passwordType: d.passwordType
-		visible: d.activeView === ChangePinView.SubViews.Password
-
-		onPasswordEntered: pPasswordType => {
-			d.enteredPasswordType = pPasswordType;
-			switch (pPasswordType) {
-			case NumberModel.PasswordType.NEW_PIN:
-			case NumberModel.PasswordType.NEW_SMART_PIN:
-				break;
-			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
-				if (NumberModel.commitNewPin()) {
-					d.view = ChangePinView.SubViews.ProgressNewPin;
-					ChangePinModel.continueWorkflow();
+			onContinueClicked: {
+				if (root.usedInOnboarding) {
+					root.abortWithUnknownPin();
 				}
-				break;
-			default:
-				ChangePinModel.continueWorkflow();
-				d.view = ChangePinView.SubViews.Progress;
-			}
-		}
-		onRequestPasswordInfo: baseItem.showPasswordInfo()
-	}
-	PasswordInfoData {
-		id: infoData
-
-		contentType: {
-			if (NumberModel.inputError === "" || !ChangePinModel.requestTransportPin) {
-				return fromPasswordType(d.passwordType);
-			}
-			switch (ChangePinModel.lastReturnCode) {
-			case CardReturnCode.INVALID_CAN:
-			case CardReturnCode.INVALID_PUK:
-				return fromPasswordType(d.passwordType);
-			default:
-				return PasswordInfoData.Type.TRANSPORT_PIN_NOT_WORKING;
 			}
 		}
 	}
-	PasswordInfoView {
-		id: passwordInfoView
+	ProgressTracker {
+		id: pinInfoProgress
 
-		infoContent: changePinController.workflowState === ChangePinController.WorkflowStates.Initial ? mainView.pinInfo : infoData
-		visible: d.activeView === ChangePinView.SubViews.PasswordInfo
+		baseProgressTracker: progressTracker
+		relativeProgress: 0.2
+	}
+	Component {
+		id: changePinInfoView
 
-		onAbortCurrentWorkflow: ChangePinModel.cancelWorkflow()
-		onClose: {
-			d.view = d.precedingView;
-			updateTitleBarActions();
+		ChangePinInfoView {
+			progress: pinInfoProgress
+			title: root.title
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Back
+				startEnabled: root.titleBarSettings.startEnabled
+
+				onNavigationActionClicked: root.pop()
+			}
+
+			onContinueClicked: root.push(changePinController, {
+				changeTransportPin: false
+			})
+			onLeaveView: root.pop()
 		}
 	}
-	ProgressView {
-		id: pinProgressView
+	Component {
+		id: changeTransportPinInfoView
 
-		//: INFO DESKTOP Processing screen text while the card communication is running after the PIN has been entered during PIN change process.
-		subText: qsTr("Please do not move the ID card.")
-		text: d.activeView === ChangePinView.SubViews.ProgressNewPin ?
-		//: LABEL DESKTOP Processing screen label while the card communication is running after the new PIN has been entered during PIN change process.
-		qsTr("Setting new PIN") :
-		//: LABEL DESKTOP Processing screen label while the card communication is running after the old PIN has been entered during PIN change process.
-		qsTr("Change PIN")
-		visible: d.activeView === ChangePinView.SubViews.Progress || d.activeView === ChangePinView.SubViews.ProgressNewPin
-	}
-	InputErrorView {
-		id: inputError
+		ChangeTransportPinInfoView {
+			progress: pinInfoProgress
+			title: root.title
 
-		property bool errorConfirmed: false
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Back
+				startEnabled: root.titleBarSettings.startEnabled
 
-		inputError: NumberModel.inputError
-		isTransportPin: ChangePinModel.requestTransportPin
-		passwordType: NumberModel.passwordType
-		returnCode: ChangePinModel.lastReturnCode
-		visible: !errorConfirmed && NumberModel.inputError !== "" && d.view !== ChangePinView.SubViews.Result && d.view !== ChangePinView.SubViews.PasswordInfo
-
-		onContinueClicked: {
-			errorConfirmed = true;
-			if (ChangePinModel.isBasicReader) {
-				d.view = ChangePinView.SubViews.Password;
-			}
-		}
-		onPasswordInfoRequested: showPasswordInfo()
-
-		Connections {
-			function onFireInputErrorChanged() {
-				inputError.errorConfirmed = false;
+				onNavigationActionClicked: root.pop()
 			}
 
-			target: NumberModel
-		}
-	}
-	InputErrorView {
-		id: initialInputError
-
-		inputError: NumberModel.initialInputError
-		passwordType: NumberModel.passwordType
-		returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK
-		titleVisible: false
-		visible: NumberModel.initialInputError !== "" && d.view !== ChangePinView.SubViews.Result && d.view !== ChangePinView.SubViews.PasswordInfo
-
-		onContinueClicked: {
-			NumberModel.setInitialInputErrorShown();
-			if (ChangePinModel.isBasicReader) {
-				d.view = ChangePinView.SubViews.Password;
-			}
-		}
-		onPasswordInfoRequested: showPasswordInfo()
-	}
-	InputSuccessView {
-		id: pinUnlocked
-
-		property bool confirmed: true
-
-		isTransportPin: ChangePinModel.requestTransportPin
-		passwordType: NumberModel.PasswordType.PUK
-		visible: !confirmed && (d.view === ChangePinView.SubViews.Password || generalWorkflow.waitingFor === Workflow.WaitingFor.Password)
-
-		onContinueClicked: confirmed = true
-
-		Connections {
-			function onFireOnCanSuccess() {
-				pinUnlocked.passwordType = NumberModel.PasswordType.CAN;
-				pinUnlocked.confirmed = false;
-			}
-			function onFireOnPasswordUsed() {
-				pinUnlocked.confirmed = true;
-			}
-			function onFireOnPinUnlocked() {
-				pinUnlocked.passwordType = NumberModel.PasswordType.PUK;
-				pinUnlocked.confirmed = false;
-			}
-
-			target: ChangePinModel
-		}
-	}
-	ResultView {
-		id: cardPositionView
-
-		icon: "qrc:///images/workflow_error_nfc_%1.svg".arg(Style.currentTheme.name)
-		text: ChangePinModel.isRemoteReader ?
-		//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
-		qsTr("Weak NFC signal. Please\n- change the card position\n- remove the mobile phone case (if present)\n- connect the smartphone with a charging cable") :
-		//: INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
-		qsTr("Weak NFC signal. Please\n- make sure the card is positioned correctly on the reader\n- do note move the card while it is being accessed")
-		visible: d.activeView === ChangePinView.SubViews.CardPosition
-
-		onNextView: ChangePinModel.continueWorkflow()
-	}
-	ResultView {
-		id: pinResult
-
-		//: LABEL DESKTOP
-		buttonText: qsTr("Back to start page")
-		hintButtonText: ChangePinModel.statusHintActionText
-		hintText: ChangePinModel.statusHintText
-		hintTitle: ChangePinModel.statusHintTitle
-		icon: ChangePinModel.error ? ChangePinModel.statusCodeImage.arg(Style.currentTheme.name) : "qrc:///images/workflow_success_changepin_%1.svg".arg(Style.currentTheme.name)
-		mailButtonVisible: ChangePinModel.errorIsMasked
-		text: ChangePinModel.resultString
-		visible: d.activeView === ChangePinView.SubViews.Result
-
-		onEmailButtonPressed: ChangePinModel.sendResultMail()
-		onHintClicked: ChangePinModel.invokeStatusHintAction()
-		onNextView: pName => {
-			ChangePinModel.continueWorkflow();
-			baseItem.nextView(pName);
+			onContinueClicked: root.push(changePinController, {
+				changeTransportPin: true
+			})
+			onLeaveView: root.pop()
 		}
 	}
 }

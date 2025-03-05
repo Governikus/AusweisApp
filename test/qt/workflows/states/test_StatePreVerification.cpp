@@ -1,22 +1,18 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref StatePreVerification
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "states/StatePreVerification.h"
 
 #include "AppSettings.h"
+#include "Randomizer.h"
 #include "ResourceLoader.h"
 
 #include "TestAuthContext.h"
 
 #include <QtCore>
 #include <QtTest>
-#include <openssl/bn.h>
-#include <openssl/ecdsa.h>
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
@@ -122,11 +118,10 @@ class test_StatePreVerification
 		void testSignatureInvalid()
 		{
 			const_cast<QDateTime*>(&mState->mValidationDateTime)->setDate(QDate(2020, 05, 25));
-			auto signature = mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->getEcdsaSignature();
+			auto* signature = mAuthContext->getDidAuthenticateEac1()->getCvCertificates().at(0)->mSignature;
 
-			const BIGNUM* signaturePart = nullptr;
-			ECDSA_SIG_get0(signature, &signaturePart, nullptr);
-			BN_rand(const_cast<BIGNUM*>(signaturePart), BN_num_bits(signaturePart), 0, 0);
+			QCOMPARE(Asn1OctetStringUtil::getValue(signature).size(), 64);
+			Asn1OctetStringUtil::setValue(Randomizer::getInstance().createBytes(64), signature);
 
 			QSignalSpy spy(mState.data(), &StatePreVerification::fireAbort);
 			mAuthContext->setStateApproved();

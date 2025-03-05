@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * brief Tests for the class ElementParser.
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "paos/element/ElementParser.h"

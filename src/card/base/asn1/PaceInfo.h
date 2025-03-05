@@ -1,16 +1,14 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of PACEInfo
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "SecurityInfo.h"
 
+
 class test_PaceInfo;
+
 
 namespace governikus
 {

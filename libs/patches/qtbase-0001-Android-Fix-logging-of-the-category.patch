@@ -1,0 +1,136 @@
+From c146065aee6542c2bb9772c85387a8751215a5e8 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Wed, 6 Nov 2024 12:29:50 +0100
+Subject: Android: Fix logging of the category
+
+87d8ee755bfdef8e72a122789c2e3ed382881a12 changed the logging behavior
+on Android to use the category as tag. But it was missed that
+`formatLogMessage` only fills the fields given in the messagePattern.
+Our default messagePattern includes the category but on Android it
+is never filled since this change.
+
+So we change the default messagePattern on Android to omit the category
+and only use the category as tag when the category is not given in the
+messagePattern.
+
+Pick-to: 6.8 6.5
+Task-number: QTBUG-94708
+Change-Id: I80f65d0f7f8c0ca9c2fff2dcd63d4599848b6e2b
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 709bc29a1d2abf40bf3f1c067fe3b96b6e0c09d0)
+---
+ src/corelib/doc/src/external-resources.qdoc   | 10 ++++++
+ src/corelib/global/qlogging.cpp               | 35 ++++++++++++++-----
+ .../corelib/global/qlogging/tst_qlogging.cpp  |  4 ---
+ 3 files changed, 37 insertions(+), 12 deletions(-)
+
+diff --git x/qtbase/src/corelib/doc/src/external-resources.qdoc y/qtbase/src/corelib/doc/src/external-resources.qdoc
+index 7c3653aa71137d0f6df388a018126510d879d9e0..c8d79d163e233ee21d0bad8c383f4b11b8331a6c 100644
+--- x/qtbase/src/corelib/doc/src/external-resources.qdoc
++++ y/qtbase/src/corelib/doc/src/external-resources.qdoc
+@@ -181,3 +181,13 @@
+     \externalpage https://developer.android.com/develop/connectivity/bluetooth/bt-permissions
+     \title Android Bluetooth Permissions
+ */
++
++/*!
++    \externalpage https://developer.android.com/reference/android/util/Log
++    \title Android: Log
++*/
++
++/*!
++    \externalpage https://developer.android.com/ndk/reference/group/logging#__android_log_print
++    \title Android: log_print
++*/
+diff --git x/qtbase/src/corelib/global/qlogging.cpp y/qtbase/src/corelib/global/qlogging.cpp
+index 8bdf7c7b6ff25fee4212bff733adf5fc876f10cf..dff15a0f151f29d509891d5bf65e9f7831ccec62 100644
+--- x/qtbase/src/corelib/global/qlogging.cpp
++++ y/qtbase/src/corelib/global/qlogging.cpp
+@@ -1130,7 +1130,11 @@ static const char ifFatalTokenC[] = "%{if-fatal}";
+ static const char endifTokenC[] = "%{endif}";
+ static const char emptyTokenC[] = "";
+ 
++#ifdef Q_OS_ANDROID
++static const char defaultPattern[] = "%{message}";
++#else
+ static const char defaultPattern[] = "%{if-category}%{category}: %{endif}%{message}";
++#endif
+ 
+ struct QMessagePattern
+ {
+@@ -1158,6 +1162,18 @@ struct QMessagePattern
+ 
+     bool fromEnvironment;
+     static QBasicMutex mutex;
++
++#ifdef Q_OS_ANDROID
++    bool containsToken(const char *token) const
++    {
++        for (int i = 0; tokens[i]; ++i) {
++            if (tokens[i] == token)
++                return true;
++        }
++
++        return false;
++    }
++#endif
+ };
+ #ifdef QLOGGING_HAVE_BACKTRACE
+ Q_DECLARE_TYPEINFO(QMessagePattern::BacktraceParams, Q_RELOCATABLE_TYPE);
+@@ -1619,10 +1635,7 @@ static QString formatLogMessage(QtMsgType type, const QMessageLogContext &contex
+         } else if (token == messageTokenC) {
+             message.append(str);
+         } else if (token == categoryTokenC) {
+-#ifndef Q_OS_ANDROID
+-            // Don't add the category to the message on Android
+             message.append(QLatin1StringView(context.category));
+-#endif
+         } else if (token == typeTokenC) {
+             switch (type) {
+             case QtDebugMsg:   message.append("debug"_L1); break;
+@@ -1878,11 +1891,12 @@ static bool android_default_message_handler(QtMsgType type,
+         break;
+     };
+ 
+-    // If application name is a tag ensure it has no spaces
+-    // If a category is defined, use it as an Android logging tag
+-    __android_log_print(priority, isDefaultCategory(context.category) ?
+-                        qPrintable(QCoreApplication::applicationName().replace(u' ', u'_')) : context.category,
+-                        "%s\n", qPrintable(formattedMessage));
++    QMessagePattern *pattern = qMessagePattern();
++    const QString tag = (pattern && pattern->containsToken(categoryTokenC))
++        // If application name is a tag ensure it has no spaces
++        ? QCoreApplication::applicationName().replace(u' ', u'_')
++        : QString::fromUtf8(context.category);
++    __android_log_print(priority, qPrintable(tag), "%s\n", qPrintable(formattedMessage));
+ 
+     return true; // Prevent further output to stderr
+ }
+@@ -2299,6 +2313,11 @@ void qErrnoWarning(int code, const char *msg, ...)
+ 
+     The default \a pattern is \c{%{if-category}%{category}: %{endif}%{message}}.
+ 
++    \note On Android, the default \a pattern is \c{%{message}} because the category is used as
++    \l{Android: log_print}{tag} since Android logcat has has a dedicated field for the logging
++    categories, see \l{Android: Log}{Android Logging}. If a custom \a pattern including the
++    category is used, QCoreApplication::applicationName() is used as \l{Android: log_print}{tag}.
++
+     The \a pattern can also be changed at runtime by setting the QT_MESSAGE_PATTERN
+     environment variable; if both \l qSetMessagePattern() is called and QT_MESSAGE_PATTERN is
+     set, the environment variable takes precedence.
+diff --git x/qtbase/tests/auto/corelib/global/qlogging/tst_qlogging.cpp y/qtbase/tests/auto/corelib/global/qlogging/tst_qlogging.cpp
+index defe3ac4210dc9cc2e8b979d87661fd7e5b2214d..c8cd60dcdaa985808a2fa283b7510eb300213741 100644
+--- x/qtbase/tests/auto/corelib/global/qlogging/tst_qlogging.cpp
++++ y/qtbase/tests/auto/corelib/global/qlogging/tst_qlogging.cpp
+@@ -955,11 +955,7 @@ void tst_qmessagehandler::formatLogMessage_data()
+             << format << "[F] msg"
+             << QtFatalMsg << BA("") << 0 << BA("func") << QByteArray() << "msg";
+     QTest::newRow("if_cat")
+-#ifndef Q_OS_ANDROID
+             << format << "[F] cat: msg"
+-#else
+-            << format << "[F] : msg"
+-#endif
+             << QtFatalMsg << BA("") << 0 << BA("func") << BA("cat") << "msg";
+ }
+ 

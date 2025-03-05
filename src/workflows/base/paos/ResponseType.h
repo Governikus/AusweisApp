@@ -1,11 +1,6 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
-
-/*!
- * \brief Represents a PAOS response type according to ISOCommon.xsd
- */
-
 
 #pragma once
 

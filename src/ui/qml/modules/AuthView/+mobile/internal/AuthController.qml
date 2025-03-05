@@ -1,12 +1,14 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
+
 import Governikus.EnterPasswordView
-import Governikus.Global
-import Governikus.Style
 import Governikus.TitleBar
-import Governikus.PasswordInfoView
+import Governikus.MultiInfoView
 import Governikus.ProgressView
 import Governikus.ResultView
 import Governikus.WhiteListClient
@@ -15,39 +17,48 @@ import Governikus.Workflow
 import Governikus.Type
 
 Controller {
-	id: rootController
-
-	enum WorkflowStates {
-		Initial,
-		Reader,
-		Update,
-		Can,
-		Pin,
-		Puk,
-		Processing
-	}
+	id: root
 
 	property bool autoInsertCard: false
 	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
-	readonly property bool isInitialState: workflowState === AuthController.WorkflowStates.Initial
+	property bool isInitialState: true
 	readonly property bool isSmartWorkflow: AuthModel.readerPluginType === ReaderManagerPluginType.SMART
 	readonly property int passwordType: NumberModel.passwordType
 	readonly property bool smartEidUsed: isSmartWorkflow && !isInitialState
+	property bool startedByOnboarding: false
 	property string title
 	property bool workflowProgressVisible: false
-	property int workflowState: 0
 
+	signal changeTransportPin
 	signal requestBack
-	signal showChangePinView
-	signal workflowFinished
+	signal workflowFinished(bool pSuccess)
 
+	function continueWorkflowIfComfortReader() {
+		if (!AuthModel.isBasicReader) {
+			AuthModel.continueWorkflow();
+		}
+	}
+	function displayInputError() {
+		replace(inputErrorView, {
+			returnCode: AuthModel.lastReturnCode,
+			inputError: NumberModel.inputError,
+			passwordType: NumberModel.passwordType
+		});
+		continueWorkflowIfComfortReader();
+	}
+	function displaySuccessView(pPasswordType) {
+		replace(inputSuccessView, {
+			passwordType: pPasswordType
+		});
+		continueWorkflowIfComfortReader();
+	}
 	function processStateChange(pState) {
 		switch (pState) {
 		case "StateGetTcToken":
 			if (connectivityManager.networkInterfaceActive) {
 				push(progressView);
-				setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Initial);
+				AuthModel.continueWorkflow();
 			} else {
 				push(checkConnectivityView);
 			}
@@ -71,61 +82,53 @@ Controller {
 			break;
 		case "StateSelectReader":
 			if (!workflowActive) {
-				replace(authWorkflow);
+				replace(authWorkflow, {
+					cardInitiallyAppeared: AuthModel.cardInitiallyAppeared
+				});
 			}
-			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Reader);
+			isInitialState = false;
+			AuthModel.continueWorkflow();
 			break;
 		case "StateEnterPacePassword":
 			if (AuthModel.lastReturnCode === CardReturnCode.OK_CAN) {
-				push(inputSuccessView, {
-					"passwordType": NumberModel.PasswordType.CAN
-				});
+				displaySuccessView(NumberModel.PasswordType.CAN);
 				return;
 			} else if (AuthModel.lastReturnCode === CardReturnCode.OK_PUK) {
-				push(inputSuccessView, {
-					"passwordType": NumberModel.PasswordType.PUK
-				});
+				displaySuccessView(NumberModel.PasswordType.PUK);
 				return;
 			}
 			if (NumberModel.inputError !== "") {
-				push(inputErrorView, {
-					"returnCode": AuthModel.lastReturnCode,
-					"inputError": NumberModel.inputError,
-					"passwordType": NumberModel.passwordType
-				});
+				displayInputError();
 				NumberModel.resetInputError();
 				return;
 			}
 			if (NumberModel.initialInputError !== "") {
-				push(inputErrorView, {
-					"returnCode": NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
-					"inputError": NumberModel.initialInputError,
-					"passwordType": NumberModel.passwordType,
-					"titleVisible": false
+				replace(inputErrorView, {
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					inputError: NumberModel.initialInputError,
+					passwordType: NumberModel.passwordType,
+					titleVisible: false
 				});
 				NumberModel.setInitialInputErrorShown();
 				return;
 			}
-			if (NumberModel.passwordType === NumberModel.PasswordType.PIN) {
-				setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Pin);
-			} else if (NumberModel.passwordType === NumberModel.PasswordType.SMART_PIN) {
-				setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Pin);
-			} else if (NumberModel.passwordType === NumberModel.PasswordType.CAN) {
-				setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Can);
-			} else if (NumberModel.passwordType === NumberModel.PasswordType.PUK) {
-				setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Puk);
+			requestInput();
+			break;
+		case "StateEstablishPaceChannel":
+			if (AuthModel.isBasicReader && !(stackView.currentItem instanceof ProgressView)) {
+				replace(progressView);
 			}
+			AuthModel.continueWorkflow();
 			break;
 		case "StateUnfortunateCardPosition":
 			push(cardPositionView);
 			break;
-		case "StateEstablishPaceChannel":
-			replace(progressView);
-			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Update);
-			break;
 		case "StateDidAuthenticateEac1":
-			rootController.workflowProgressVisible = true;
-			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
+			if (workflowActive) {
+				replace(progressView);
+			}
+			root.workflowProgressVisible = true;
+			AuthModel.continueWorkflow();
 			break;
 		case "StateSendDIDAuthenticateResponseEAC1":
 			if (AuthModel.isCancellationByUser()) {
@@ -157,45 +160,41 @@ Controller {
 			}
 			break;
 		case "FinalState":
-			if (AuthModel.showChangePinView) {
+			if (AuthModel.changeTransportPin) {
 				AuthModel.continueWorkflow();
-				showChangePinView();
+				changeTransportPin();
 			} else if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
 				showRemoveCardFeedback(AuthModel, false);
 				replace(authResult);
 			} else {
 				AuthModel.continueWorkflow();
 			}
-			rootController.workflowProgressVisible = false;
+			root.workflowProgressVisible = false;
 			break;
 		default:
+			AuthModel.continueWorkflow();
+		}
+	}
+	function requestInput() {
+		if (AuthModel.isBasicReader) {
+			replace(enterPinView, {
+				passwordType: NumberModel.passwordType
+			});
+		} else {
+			replace(progressView);
 			AuthModel.continueWorkflow();
 		}
 	}
 	function rerunCurrentState() {
 		processStateChange(AuthModel.currentState);
 	}
-	function setAuthWorkflowStateAndContinue(pState) {
-		rootController.workflowState = pState;
-		AuthModel.continueWorkflow();
-	}
-	function setAuthWorkflowStateAndRequestInput(pState) {
-		rootController.workflowState = pState;
-		if (AuthModel.isBasicReader) {
-			replace(enterPinView, {
-				"passwordType": NumberModel.passwordType
-			});
-		} else {
-			AuthModel.continueWorkflow();
-		}
-	}
 
 	Connections {
 		function onFireStateEntered(pState) {
-			processStateChange(pState);
+			root.processStateChange(pState);
 		}
-		function onFireWorkflowFinished() {
-			rootController.workflowFinished();
+		function onFireWorkflowFinished(pSuccess) {
+			root.workflowFinished(pSuccess);
 		}
 
 		target: AuthModel
@@ -207,50 +206,40 @@ Controller {
 
 		onNetworkInterfaceActiveChanged: {
 			if (AuthModel.currentState === "StateGetTcToken")
-				rerunCurrentState();
+				root.rerunCurrentState();
 		}
 	}
 	Component {
 		id: progressView
 
 		ProgressView {
-			progressBarVisible: workflowProgressVisible
+			//: LABEL ANDROID IOS
+			headline: (AuthModel.error ? qsTr("Cancel authentication process") :
+				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
+				root.isInitialState ? qsTr("Acquiring provider certificate") :
+				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
+				qsTr("Authentication in progress"))
+			progressBarVisible: root.workflowProgressVisible
 			progressText: AuthModel.progressMessage
 			progressValue: AuthModel.progressValue
-			smartEidUsed: rootController.smartEidUsed
-			subText: {
+			smartEidUsed: root.smartEidUsed
+			text: {
 				//: INFO ANDROID IOS Generic status message during the authentication process.
-				if (isInitialState || AuthModel.error || isSmartWorkflow) {
+				if (root.isInitialState || AuthModel.error || root.isSmartWorkflow) {
 					return qsTr("Please wait a moment.");
 				}
 				if (AuthModel.isBasicReader) {
 					//: INFO ANDROID IOS Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
 					return qsTr("Please do not move the ID card.");
 				}
-				if (rootController.workflowState === AuthController.WorkflowStates.Update || rootController.workflowState === AuthController.WorkflowStates.Pin) {
-					//: INFO ANDROID IOS The card reader requests the user's attention.
-					return qsTr("Please observe the display of your card reader.");
-				}
-				if (rootController.workflowState === AuthController.WorkflowStates.Can) {
-					//: INFO ANDROID IOS The PIN was entered wrongfully two times, the 3rd attempts requires additional CAN verification, hint where the CAN is found.
-					return qsTr("A wrong PIN has been entered 2 times on your ID card. For a 3rd attempt, please first enter the 6-digit Card Access Number (CAN). You can find your CAN in the bottom right on the front of your ID card.");
-				}
-
-				//: INFO ANDROID IOS Generic status message during the authentication process.
-				return qsTr("Please wait a moment.");
+				//: INFO ANDROID IOS The card reader requests the user's attention.
+				return qsTr("Please observe the display of your card reader.");
 			}
-			subTextColor: Style.color.textNormal.basic
-			//: LABEL ANDROID IOS
-			text: (AuthModel.error ? qsTr("Cancel authentication process") :
-				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
-				isInitialState ? qsTr("Acquiring provider certificate") :
-				//: INFO ANDROID IOS Header of the progress status message during the authentication process.
-				qsTr("Authentication in progress"))
 			//: LABEL ANDROID IOS
 			title: qsTr("Identify")
 
 			navigationAction: NavigationAction {
-				action: AuthModel.isBasicReader || workflowProgressVisible ? NavigationAction.Action.Cancel : NavigationAction.Action.None
+				action: AuthModel.isBasicReader || root.workflowProgressVisible ? NavigationAction.Action.Cancel : NavigationAction.Action.None
 
 				onClicked: AuthModel.cancelWorkflow()
 			}
@@ -260,7 +249,7 @@ Controller {
 		id: editRights
 
 		EditRights {
-			title: rootController.title
+			title: root.title
 
 			onRightsAccepted: {
 				ChatModel.transferAccessRights();
@@ -272,17 +261,22 @@ Controller {
 		id: selfAuthenticationData
 
 		SelfAuthenticationData {
-			smartEidUsed: rootController.smartEidUsed
+			okButtonText: root.startedByOnboarding ?
+			//: LABEL ANDROID IOS
+			qsTr("Back to setup") :
+			//: LABEL ANDROID IOS
+			qsTr("Back to start page")
+			smartEidUsed: root.smartEidUsed
 
 			onDone: AuthModel.continueWorkflow()
-			onRequestBack: rootController.requestBack()
+			onRequestBack: root.requestBack()
 		}
 	}
 	Component {
 		id: whiteListSurveyView
 
 		WhiteListSurveyView {
-			smartEidUsed: rootController.smartEidUsed
+			smartEidUsed: root.smartEidUsed
 
 			onDone: pUserAccepted => {
 				SurveyModel.setDeviceSurveyPending(pUserAccepted);
@@ -294,60 +288,42 @@ Controller {
 		id: authWorkflow
 
 		GeneralWorkflow {
-			autoInsertCard: rootController.autoInsertCard
-			hideSwitch: rootController.hideTechnologySwitch
-			initialPlugin: rootController.initialPlugin
-			smartEidUsed: rootController.smartEidUsed
+			autoInsertCard: root.autoInsertCard
+			hideSwitch: root.hideTechnologySwitch
+			initialPlugin: root.initialPlugin
+			smartEidUsed: root.smartEidUsed
 			workflowModel: AuthModel
-			workflowTitle: rootController.title
+			workflowTitle: root.title
 		}
 	}
 	Component {
 		id: transportPinReminder
 
 		TransportPinReminderView {
-			moreInformationText: transportPinReminderInfoData.linkText
-			title: rootController.title
+			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
 			onPinKnown: {
 				pop();
 				AuthModel.continueWorkflow();
 			}
-			onPinUnknown: {
+			onTransportPinKnown: {
 				pop();
-				AuthModel.cancelWorkflowToChangePin();
-			}
-			onShowInfoView: {
-				push(transportPinReminderInfoView);
+				AuthModel.cancelWorkflowToChangeTransportPin();
 			}
 		}
 	}
-	PasswordInfoData {
-		id: transportPinReminderInfoData
-
-		contentType: PasswordInfoData.Type.CHANGE_PIN
-	}
-	Component {
-		id: transportPinReminderInfoView
-
-		PasswordInfoView {
-			infoContent: transportPinReminderInfoData
-
-			onClose: pop()
-		}
-	}
-	PasswordInfoData {
+	MultiInfoData {
 		id: infoData
 
 		contentType: fromPasswordType(NumberModel.passwordType, NumberModel.isCanAllowedMode)
 	}
 	Component {
-		id: passwordInfoView
+		id: multiInfoView
 
-		PasswordInfoView {
+		MultiInfoView {
 			infoContent: infoData
-			smartEidUsed: rootController.smartEidUsed
+			smartEidUsed: root.smartEidUsed
 
 			onAbortCurrentWorkflow: AuthModel.cancelWorkflow()
 			onClose: pop()
@@ -360,21 +336,23 @@ Controller {
 			//: LABEL ANDROID IOS A11y button to confirm the PIN and start the provider authentication
 			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || passwordType === NumberModel.PasswordType.SMART_PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
 			moreInformationText: infoData.linkText
-			smartEidUsed: rootController.smartEidUsed
-			title: rootController.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
 
 				onClicked: {
+					root.replace(progressView);
 					AuthModel.cancelWorkflow();
 				}
 			}
 
 			onPasswordEntered: {
+				replace(progressView);
 				AuthModel.continueWorkflow();
 			}
-			onRequestPasswordInfo: push(passwordInfoView)
+			onRequestPasswordInfo: push(multiInfoView)
 		}
 	}
 	Component {
@@ -382,8 +360,8 @@ Controller {
 
 		AbortedProgressView {
 			networkInterfaceActive: connectivityManager.networkInterfaceActive
-			smartEidUsed: rootController.smartEidUsed
-			title: rootController.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
 		}
@@ -392,7 +370,7 @@ Controller {
 		id: checkConnectivityView
 
 		CheckConnectivityView {
-			title: rootController.title
+			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
 		}
@@ -401,7 +379,7 @@ Controller {
 		id: cardPositionView
 
 		CardPositionView {
-			title: rootController.title
+			title: root.title
 
 			onCancelClicked: AuthModel.cancelWorkflow()
 			onContinueClicked: {
@@ -414,8 +392,9 @@ Controller {
 		id: authResult
 
 		ResultErrorView {
+			animation: AuthModel.statusCodeAnimation
 			//: LABEL ANDROID IOS
-			buttonText: qsTr("Return to provider")
+			buttonText: root.startedByOnboarding ? qsTr("Back to setup") : AuthModel.resultViewButtonText
 			errorCode: AuthModel.statusCodeString
 			errorDescription: AuthModel.errorText
 			//: LABEL ANDROID IOS
@@ -423,13 +402,12 @@ Controller {
 			hintButtonText: AuthModel.statusHintActionText
 			hintText: AuthModel.statusHintText
 			hintTitle: AuthModel.statusHintTitle
-			icon: AuthModel.statusCodeImage.arg(Style.currentTheme.name)
 			//: LABEL ANDROID IOS
 			mailButtonText: AuthModel.errorIsMasked ? qsTr("Send log") : ""
-			smartEidUsed: rootController.smartEidUsed
+			smartEidUsed: root.smartEidUsed
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
-			title: rootController.title
+			title: root.title
 
 			onContinueClicked: AuthModel.continueWorkflow()
 			onHintClicked: {
@@ -443,7 +421,7 @@ Controller {
 		id: redirectToProvider
 
 		RedirectView {
-			title: rootController.title
+			title: root.title
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Cancel
@@ -460,44 +438,47 @@ Controller {
 		id: inputErrorView
 
 		InputErrorView {
-			smartEidUsed: rootController.smartEidUsed
-			title: rootController.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			navigationAction: NavigationAction {
-				action: NavigationAction.Action.Cancel
+				action: AuthModel.isBasicReader ? NavigationAction.Action.Cancel : NavigationAction.Action.None
 
 				onClicked: {
-					pop();
+					root.replace(progressView);
 					AuthModel.cancelWorkflow();
 				}
 			}
 
 			onContinueClicked: {
-				pop();
-				rootController.rerunCurrentState();
+				root.requestInput();
 			}
-			onPasswordInfoRequested: push(passwordInfoView)
+			onPasswordInfoRequested: push(multiInfoView)
 		}
 	}
 	Component {
 		id: inputSuccessView
 
 		InputSuccessView {
-			smartEidUsed: rootController.smartEidUsed
-			title: rootController.title
+			smartEidUsed: root.smartEidUsed
+			title: root.title
 
 			navigationAction: NavigationAction {
-				action: NavigationAction.Action.Cancel
+				action: AuthModel.isBasicReader ? NavigationAction.Action.Cancel : NavigationAction.Action.None
 
 				onClicked: {
-					pop();
+					root.replace(progressView);
 					AuthModel.cancelWorkflow();
 				}
 			}
 
 			onContinueClicked: {
-				pop();
-				setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Pin);
+				switch (passwordType) {
+				case NumberModel.PasswordType.CAN:
+				case NumberModel.PasswordType.PUK:
+					root.requestInput();
+					break;
+				}
 			}
 		}
 	}

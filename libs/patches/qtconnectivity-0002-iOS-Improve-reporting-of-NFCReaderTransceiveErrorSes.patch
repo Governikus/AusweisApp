@@ -1,0 +1,123 @@
+From 7e6a864ac764efa73889e34d754a839ddae4a916 Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Fri, 11 Oct 2024 15:49:15 +0200
+Subject: iOS: Improve reporting of NFCReaderTransceiveErrorSessionInvalidated
+
+In 9163f0081459fd9303aa6c31602f4e1b95e5e1b6 the reporting of unsupported NFC
+cards was improved on iOS by emitting QNearFieldTarget::UnsupportedTargetError.
+In the meantime, Apple has changed the behavior. Current versions of iOS no
+longer use NFCReaderErrorSecurityViolation during connect but use
+NFCReaderTransceiveErrorSessionInvalidated or
+NFCReaderTransceiveErrorTagNotConnected in sendCommandAPDU.
+
+Pick-to: 6.9 6.8
+Change-Id: I4fd553ed25718a03de9aecfe4e67501714c78376
+Reviewed-by: Lars Schmertmann <lars.schmertmann@governikus.de>
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+(cherry picked from commit 1a489deb37b24641b6c4fab2af199c03b1ce6037)
+---
+ src/nfc/qnearfieldtarget_ios.mm  | 30 +++++++++++++++++++++++-------
+ src/nfc/qnearfieldtarget_ios_p.h |  7 ++++---
+ 2 files changed, 27 insertions(+), 10 deletions(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm y/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
+index f49ad4acb9cd5f68ca17701f4b3a6541a69d9811..334cd54bd3135a4940295c01e6252036eb7d431f 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_ios.mm
+@@ -19,8 +19,8 @@ QT_BEGIN_NAMESPACE
+ 
+ Q_APPLICATION_STATIC(ResponseProvider, responseProvider)
+ 
+-void ResponseProvider::provideResponse(QNearFieldTarget::RequestId requestId, bool success, QByteArray recvBuffer) {
+-    Q_EMIT responseReceived(requestId, success, recvBuffer);
++void ResponseProvider::provideResponse(QNearFieldTarget::RequestId requestId, QNearFieldTarget::Error error, QByteArray recvBuffer) {
++    Q_EMIT responseReceived(requestId, error, recvBuffer);
+ }
+ 
+ void NfcDeleter::operator()(void *obj)
+@@ -275,6 +275,7 @@ bool QNearFieldTargetPrivateImpl::connect()
+                 requestInProgress = QNearFieldTarget::RequestId();
+                 if (errorCode == -1) {
+                     connected = true;
++                    justConnected = true;
+                     onExecuteRequest();
+                 } else {
+                     const auto requestId = queue.dequeue().first;
+@@ -428,23 +429,38 @@ void QNearFieldTargetPrivateImpl::onExecuteRequest()
+             QByteArray recvBuffer = QByteArray::fromNSData(responseData);
+             recvBuffer += static_cast<char>(sw1);
+             recvBuffer += static_cast<char>(sw2);
+-            const bool success = error == nil;
+-            responseProvider->provideResponse(request.first, success, recvBuffer);
++            auto errorToReport = QNearFieldTarget::NoError;
++            if (error != nil)
++            {
++                switch (error.code) {
++                    case NFCReaderError::NFCReaderTransceiveErrorSessionInvalidated:
++                    case NFCReaderError::NFCReaderTransceiveErrorTagNotConnected:
++                        if (justConnected) {
++                            errorToReport = QNearFieldTarget::UnsupportedTargetError;
++                            justConnected = false;
++                            break;
++                        }
++                        Q_FALLTHROUGH();
++                    default:
++                        errorToReport = QNearFieldTarget::CommandError;
++                }
++            }
++            responseProvider->provideResponse(request.first, errorToReport, recvBuffer);
+         }];
+     }
+ }
+ 
+-void  QNearFieldTargetPrivateImpl::onResponseReceived(QNearFieldTarget::RequestId requestId, bool success, QByteArray recvBuffer)
++void  QNearFieldTargetPrivateImpl::onResponseReceived(QNearFieldTarget::RequestId requestId, QNearFieldTarget::Error error, QByteArray recvBuffer)
+ {
+     if (requestInProgress != requestId)
+         return;
+ 
+     requestInProgress = QNearFieldTarget::RequestId();
+-    if (success) {
++    if (error == QNearFieldTarget::NoError) {
+         setResponseForRequest(requestId, recvBuffer, true);
+         onExecuteRequest();
+     } else {
+-        reportError(QNearFieldTarget::CommandError, requestId);
++        reportError(error, requestId);
+         invalidate();
+     }
+ }
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_ios_p.h y/qtconnectivity/src/nfc/qnearfieldtarget_ios_p.h
+index c0cde0b621c9f64bc14d36a4b469462a88c5b9b0..9c9b1d302ff1e107fbec27f2d2cbaf885608a155 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_ios_p.h
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_ios_p.h
+@@ -33,10 +33,10 @@ class ResponseProvider : public QObject
+     Q_OBJECT
+ 
+     public:
+-        void provideResponse(QNearFieldTarget::RequestId requestId, bool success, QByteArray recvBuffer);
++        void provideResponse(QNearFieldTarget::RequestId requestId, QNearFieldTarget::Error error, QByteArray recvBuffer);
+ 
+     Q_SIGNALS:
+-        void responseReceived(QNearFieldTarget::RequestId requestId, bool success, QByteArray recvBuffer);
++        void responseReceived(QNearFieldTarget::RequestId requestId, QNearFieldTarget::Error error, QByteArray recvBuffer);
+ };
+ 
+ struct NfcDeleter
+@@ -95,6 +95,7 @@ private:
+     bool hasNDEFMessage = false;
+ 
+     bool connected = false;
++    bool justConnected = false;
+     QTimer targetCheckTimer;
+     QNearFieldTarget::RequestId requestInProgress;
+     QQueue<std::pair<QNearFieldTarget::RequestId, QByteArray>> queue;
+@@ -108,7 +109,7 @@ private Q_SLOTS:
+     void onTargetCheck();
+     void onTargetError(QNearFieldTarget::Error error, const QNearFieldTarget::RequestId &id);
+     void onExecuteRequest();
+-    void onResponseReceived(QNearFieldTarget::RequestId requestId, bool success, QByteArray recvBuffer);
++    void onResponseReceived(QNearFieldTarget::RequestId requestId, QNearFieldTarget::Error error, QByteArray recvBuffer);
+     // NDEF:
+     void messageRead(const QNdefMessage &ndefMessage, QNearFieldTarget::RequestId request);
+     void messageWritten(QNearFieldTarget::RequestId request);

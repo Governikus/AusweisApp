@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinModel.h"
@@ -25,9 +25,9 @@ void ChangePinModel::resetChangePinContext(const QSharedPointer<ChangePinContext
 }
 
 
-void ChangePinModel::startWorkflow(bool pRequestTransportPin, bool pActivateUi)
+void ChangePinModel::startWorkflow(bool pRequestTransportPin, bool pActivateUi, bool pOnlyCheckPin)
 {
-	Q_EMIT fireStartWorkflow(ChangePinController::createWorkflowRequest(pRequestTransportPin, pActivateUi));
+	Q_EMIT fireStartWorkflow(ChangePinController::createWorkflowRequest(pRequestTransportPin, pActivateUi, pOnlyCheckPin));
 }
 
 
@@ -53,6 +53,17 @@ QList<ReaderManagerPluginType> ChangePinModel::getSupportedReaderPluginTypes() c
 }
 
 
+GAnimation ChangePinModel::getStatusCodeAnimation() const
+{
+	if (isError())
+	{
+		return WorkflowModel::getStatusCodeAnimation();
+	}
+
+	return GAnimation::CHANGEPIN_SUCCESS;
+}
+
+
 bool ChangePinModel::isRequestTransportPin() const
 {
 	if (!mContext)
@@ -60,4 +71,14 @@ bool ChangePinModel::isRequestTransportPin() const
 		return false;
 	}
 	return mContext->isRequestTransportPin();
+}
+
+
+bool ChangePinModel::isOnlyCheckPin() const
+{
+	if (!mContext)
+	{
+		return false;
+	}
+	return mContext->isOnlyCheckPin();
 }

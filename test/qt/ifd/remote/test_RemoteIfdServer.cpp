@@ -1,10 +1,7 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
-/*!
- * \brief Unit tests for \ref RemoteServerImpl
- */
 #include "RemoteIfdServer.h"
 
 #include "Env.h"
@@ -132,10 +129,10 @@ class RemoteReaderAdvertiserMock
 
 	public:
 		const QString mIfdName;
-		const QString mIfdId;
+		const QByteArray mIfdId;
 		const quint16 mPort;
 
-		RemoteReaderAdvertiserMock(const QString& pIfdName, const QString& pIfdId, quint16 pPort)
+		RemoteReaderAdvertiserMock(const QString& pIfdName, const QByteArray& pIfdId, quint16 pPort)
 			: RemoteReaderAdvertiser()
 			, mIfdName(pIfdName)
 			, mIfdId(pIfdId)
@@ -165,7 +162,7 @@ class test_RemoteIfdServer
 	private Q_SLOTS:
 		void init()
 		{
-			std::function<RemoteReaderAdvertiser* (const QString&, const QString&, quint16&, bool&)> creator = [this](const QString& pIfdName, const QString& pIfdId, quint16& pPort, bool&){
+			std::function<RemoteReaderAdvertiser* (const QString&, const QByteArray&, quint16&, bool&)> creator = [this](const QString& pIfdName, const QByteArray& pIfdId, quint16& pPort, bool&){
 						mAdvertiserMock = new RemoteReaderAdvertiserMock(pIfdName, pIfdId, pPort);
 						return mAdvertiserMock;
 					};

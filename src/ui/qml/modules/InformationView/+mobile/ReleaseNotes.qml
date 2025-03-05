@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -20,7 +20,7 @@ SectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: pop()
+		onClicked: root.pop()
 	}
 
 	Component.onCompleted: releaseInformationModel.update()
@@ -50,7 +50,7 @@ SectionPage {
 			id: retryButton
 
 			Layout.alignment: Qt.AlignHCenter
-			Layout.rightMargin: Constants.pane_padding
+			Layout.rightMargin: Style.dimens.pane_padding
 			icon.source: "qrc:///images/material_refresh.svg"
 			//: LABEL ANDROID IOS
 			text: qsTr("Retry")
@@ -60,10 +60,10 @@ SectionPage {
 			onClicked: releaseInformationModel.update()
 		}
 		anchors {
-			bottomMargin: Constants.pane_padding
+			bottomMargin: Style.dimens.pane_padding
 			fill: parent
-			leftMargin: Constants.pane_padding
-			topMargin: Constants.pane_padding
+			leftMargin: Style.dimens.pane_padding
+			topMargin: Style.dimens.pane_padding
 		}
 	}
 }

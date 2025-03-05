@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -9,7 +9,7 @@ TestCase {
 	id: testCase
 
 	function createTestObject() {
-		return createTemporaryQmlObject("import Governikus.Global; LabeledText {}", testCase);
+		return createTemporaryQmlObject("import Governikus.Global; LabeledText { text: \"testText\"; label: \"testLabel\"}", testCase);
 	}
 	function test_load() {
 		let testObject = createTestObject();
@@ -17,12 +17,12 @@ TestCase {
 	}
 	function test_text() {
 		let testObject = createTestObject();
-		compare(testObject.text, "", "Initial text: empty");
-		testObject.text = "test";
-		compare(testObject.text, "test", "text: test");
-		compare(testObject.label, "", "Initial label: empty");
-		testObject.label = "test";
-		compare(testObject.label, "test", "label: test");
+		compare(testObject.text, "testText", "Initial text set");
+		testObject.text = "newText";
+		compare(testObject.text, "newText", "text: newText");
+		compare(testObject.label, "testLabel", "Initial label set");
+		testObject.label = "newLabel";
+		compare(testObject.label, "newLabel", "label: newLabel");
 	}
 
 	name: "test_LabeledText"

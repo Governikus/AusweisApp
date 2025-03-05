@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
 import QtQuick.Controls
 import Governikus.Global
+import Governikus.Type
 
 TestCase {
 	id: testCase
@@ -21,17 +22,9 @@ TestCase {
 	visible: true
 	when: windowShown
 
-	Item {
+	MockProxyCredentials {
 		id: credentialContainer
 
-		property bool confirmed
-		property string password
-		readonly property string proposedUser: "ProposedUser"
-		property string user
-
-		function confirmInput() {
-			confirmed = true;
-		}
 	}
 	ProxyCredentialsPopup {
 		id: testObject
@@ -76,6 +69,17 @@ TestCase {
 			}
 
 			when: windowShown
+		}
+	}
+
+	component MockProxyCredentials: ProxyCredentials {
+		property bool confirmed
+		property string password
+		readonly property string proposedUser: "ProposedUser"
+		property string user
+
+		function confirmInput() {
+			confirmed = true;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateChangePin.h"
@@ -25,8 +25,13 @@ StateChangePin::StateChangePin(const QSharedPointer<WorkflowContext>& pContext)
 void StateChangePin::run()
 {
 	auto cardConnection = getContext()->getCardConnection();
+	if (!cardConnection)
+	{
+		qCDebug(statemachine) << "No card connection available";
+		Q_EMIT fireNoCardConnection();
+		return;
+	}
 
-	Q_ASSERT(cardConnection);
 	qDebug() << "Invoke set Eid PIN command";
 	*this << cardConnection->callSetEidPinCommand(this, &StateChangePin::onSetEidPinDone, getContext()->getNewPin().toLatin1());
 }

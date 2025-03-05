@@ -16,7 +16,6 @@ allprojects {
 }
 
 android {
-    compileSdkVersion "android-35"
     packagingOptions {
         merges -= ['/META-INF/services/**']
         exclude 'META-INF/proguard/androidx-annotations.pro'
@@ -39,8 +38,9 @@ android {
         exclude '**/libplugins_imageformats_qwbmp_*.so'
     }
 
-    lintOptions {
-        lintConfig file('lint.xml')
+    lint {
+        baseline file('lint-baseline.xml')
+        disable += ['LintBaseline']
     }
 
     buildFeatures {

@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginQml.h"
 
 #include "Env.h"
+#include "PlatformTools.h"
+#include "SettingsModel.h"
 #include "UiLoader.h"
 
 #include <QLoggingCategory>
@@ -13,6 +15,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(qml)
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 @interface FontChangeTracker
@@ -44,15 +47,20 @@ using namespace governikus;
 			UIContentSizeCategoryDidChangeNotification])
 	{
 		QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-				if (auto* uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>())
-				{
-					Q_EMIT uiPlugin->fireAppConfigChanged();
-				}
-			}, Qt::QueuedConnection);
+					if (auto* uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginQml>())
+					{
+						Q_EMIT uiPlugin->fireAppConfigChanged();
+					}
+				}, Qt::QueuedConnection);
 	}
 }
 
 
+@end
+
+@interface QIOSViewController
+	: UIViewController
+@property (nonatomic, assign) UIStatusBarStyle preferredStatusBarStyle;
 @end
 
 
@@ -69,18 +77,24 @@ UiPluginQml::Private::~Private()
 
 QVariantMap UiPluginQml::getSafeAreaMargins() const
 {
-	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
+	UIWindow* window = PlatformTools::getFirstWindow();
+	if (!window)
+	{
+		return {
+			{"top"_L1, 0},
+			{"right"_L1, 0},
+			{"bottom"_L1, 0},
+			{"left"_L1, 0}
+		};
+	}
+	UIEdgeInsets safeAreaInsets = window.safeAreaInsets;
 
-	UIEdgeInsets safeAreaInsets = rootController.view.safeAreaInsets;
-
-	QVariantMap insetMap;
-
-	insetMap[QStringLiteral("top")] = safeAreaInsets.top;
-	insetMap[QStringLiteral("right")] = safeAreaInsets.right;
-	insetMap[QStringLiteral("bottom")] = safeAreaInsets.bottom;
-	insetMap[QStringLiteral("left")] = safeAreaInsets.left;
-
-	return insetMap;
+	return {
+		{"top"_L1, safeAreaInsets.top},
+		{"right"_L1, safeAreaInsets.right},
+		{"bottom"_L1, safeAreaInsets.bottom},
+		{"left"_L1, safeAreaInsets.left}
+	};
 }
 
 
@@ -88,4 +102,26 @@ qreal UiPluginQml::getSystemFontScaleFactor() const
 {
 	UIFont* font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
 	return font.pointSize / 15.0;
+}
+
+
+void UiPluginQml::onUserDarkModeChanged() const
+{
+	UIWindow* window = PlatformTools::getFirstWindow();
+	if (!window)
+	{
+		qCWarning(qml) << "Invalid window, can't set Status Bar color";
+		return;
+	}
+
+	UIViewController* rootController = window.rootViewController;
+	QIOSViewController* qtViewController = static_cast<QIOSViewController*>(rootController);
+	if (!qtViewController)
+	{
+		qCWarning(qml) << "Invalid rootController, can't set Status Bar color";
+		return;
+	}
+
+	qtViewController.preferredStatusBarStyle = isDarkModeEnabled() ? UIStatusBarStyleLightContent : UIStatusBarStyleDarkContent;
+	[qtViewController setNeedsStatusBarAppearanceUpdate];
 }

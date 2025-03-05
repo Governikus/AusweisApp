@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ChangePinModel
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinModel.h"
@@ -20,6 +16,12 @@ class test_ChangePinModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void cleanup()
+		{
+			Env::getSingleton<ChangePinModel>()->resetChangePinContext();
+		}
+
+
 		void test_ResetContext()
 		{
 			const auto& model = Env::getSingleton<ChangePinModel>();
@@ -44,14 +46,16 @@ class test_ChangePinModel
 		void test_GetResultString()
 		{
 			const auto& model = Env::getSingleton<ChangePinModel>();
-			QSharedPointer<ChangePinContext> context(new ChangePinContext());
-
 			QCOMPARE(model->getResultString(), QString());
 
+			QSharedPointer<ChangePinContext> context(new ChangePinContext());
 			context->setStatus(GlobalStatus::Code::No_Error);
 			context->setSuccessMessage(QStringLiteral("success"));
 			model->resetChangePinContext(context);
 			QCOMPARE(model->getResultString(), QStringLiteral("success"));
+
+			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
+			QCOMPARE(model->getResultString(), QStringLiteral("The given PIN is not correct."));
 		}
 
 
@@ -69,6 +73,40 @@ class test_ChangePinModel
 			QSharedPointer<ChangePinContext> contextTransportPin(new ChangePinContext(true));
 			model->resetChangePinContext(contextTransportPin);
 			QVERIFY(!model->getSupportedReaderPluginTypes().contains(ReaderManagerPluginType::SMART));
+		}
+
+
+		void test_getStatusCodeAnimation()
+		{
+			const auto& model = Env::getSingleton<ChangePinModel>();
+			QCOMPARE(model->getStatusCodeAnimation(), GAnimation::CHANGEPIN_SUCCESS);
+
+			QSharedPointer<ChangePinContext> context(new ChangePinContext());
+			context->setStatus(GlobalStatus::Code::Card_Invalid_Pin);
+			model->resetChangePinContext(context);
+			QCOMPARE(model->getStatusCodeAnimation(), GAnimation::PIN_ERROR);
+		}
+
+
+		void test_isRequestTransportPin()
+		{
+			const auto& model = Env::getSingleton<ChangePinModel>();
+			QCOMPARE(model->isRequestTransportPin(), false);
+
+			QSharedPointer<ChangePinContext> context(new ChangePinContext(true));
+			model->resetChangePinContext(context);
+			QCOMPARE(model->isRequestTransportPin(), true);
+		}
+
+
+		void test_isOnlyCheckPin()
+		{
+			const auto& model = Env::getSingleton<ChangePinModel>();
+			QCOMPARE(model->isOnlyCheckPin(), false);
+
+			QSharedPointer<ChangePinContext> context(new ChangePinContext(true, true, true));
+			model->resetChangePinContext(context);
+			QCOMPARE(model->isOnlyCheckPin(), true);
 		}
 
 

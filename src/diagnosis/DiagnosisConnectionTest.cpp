@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisConnectionTest.h"
@@ -195,11 +195,11 @@ void DiagnosisConnectionTest::startConnectionTest()
 		mReplyWithProxy = Env::getSingleton<NetworkManager>()->get(request);
 		connect(mReplyWithProxy.data(), &QNetworkReply::finished, this, &DiagnosisConnectionTest::onSocketConnectionTestWithProxyDone);
 		connect(mReplyWithProxy.data(), &QNetworkReply::sslErrors, this, [this](const QList<QSslError>& pErrors) {
-				if (mReplyWithProxy && TlsChecker::containsFatalError(mReplyWithProxy, pErrors))
-				{
-					mReplyWithProxy->abort();
-				}
-			});
+					if (mReplyWithProxy && TlsChecker::containsFatalError(mReplyWithProxy, pErrors))
+					{
+						mReplyWithProxy->abort();
+					}
+				});
 	}
 
 	mTcpSocketWithoutProxy.reset();

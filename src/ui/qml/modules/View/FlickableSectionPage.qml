@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import Governikus.Global
@@ -10,7 +10,7 @@ SectionPage {
 
 	default property alias data: flickable.data
 	property bool fillWidth: false
-	property real margins: Constants.pane_padding
+	property real margins: Style.dimens.pane_padding
 	property alias spacing: flickable.spacing
 
 	function positionViewAtItem(pItem) {
@@ -25,6 +25,10 @@ SectionPage {
 
 	contentIsScrolled: !flickable.atYBeginning
 
+	Keys.onPressed: event => {
+		flickable.handleKeyPress(event.key);
+	}
+
 	Connections {
 		function onActivate() {
 			flickable.highlightScrollbar();
@@ -36,7 +40,7 @@ SectionPage {
 		anchors.fill: parent
 		bottomMargin: root.margins
 		leftMargin: root.margins
-		maximumContentWidth: fillWidth ? -1 : Style.dimens.max_text_width
+		maximumContentWidth: root.fillWidth ? -1 : Style.dimens.max_text_width
 		rightMargin: root.margins
 		spacing: 0
 		topMargin: root.margins

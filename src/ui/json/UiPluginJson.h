@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief UiPlugin implementation of the Json API.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

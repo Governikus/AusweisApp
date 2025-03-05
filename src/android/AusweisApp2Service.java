@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 package com.governikus.ausweisapp2;
@@ -10,7 +10,7 @@ import android.os.IBinder;
 import org.qtproject.qt.android.bindings.QtService;
 
 public class AusweisApp2Service
-	extends QtService
+extends QtService
 {
 	private final AidlBinder mBinder = new AidlBinder();
 

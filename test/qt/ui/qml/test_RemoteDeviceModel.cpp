@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AppSettings.h"
 #include "IfdDescriptor.h"
 #include "RemoteDeviceModel.h"
+#include "RemoteIfdClient.h"
 
 #include <QtTest>
 
@@ -22,7 +23,7 @@ class MockRemoteDeviceModel
 QList<RemoteDeviceModelEntry> MockRemoteDeviceModel::presentReaders() const
 {
 	const auto dName = QStringLiteral("new_name");
-	const auto dId = QStringLiteral("myDeviceId");
+	const auto dId = QByteArrayLiteral("myDeviceId");
 	const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
 	const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
 	const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
@@ -81,9 +82,9 @@ class test_RemoteDeviceModel
 
 		void test_Id()
 		{
-			const QString id = QStringLiteral("id");
+			const QByteArray id = QByteArrayLiteral("id");
 
-			QCOMPARE(mEntry->getId(), QString());
+			QCOMPARE(mEntry->getId(), QByteArray());
 
 			mEntry->setId(id);
 			QCOMPARE(mEntry->getId(), id);
@@ -102,7 +103,7 @@ class test_RemoteDeviceModel
 		void test_Supported()
 		{
 			const QString name = QStringLiteral("name");
-			const QString id = QStringLiteral("id");
+			const QByteArray id = QByteArrayLiteral("id");
 			const QDateTime time(QDateTime::currentDateTime());
 			RemoteDeviceModelEntry entry1(name);
 			const IfdDescriptor descriptor = IfdDescriptor();
@@ -117,7 +118,7 @@ class test_RemoteDeviceModel
 		void test_RemoteDeviceListEntry()
 		{
 			const QString name = QStringLiteral("name");
-			const QString id = QStringLiteral("id");
+			const QByteArray id = QByteArrayLiteral("id");
 			RemoteDeviceModelEntry entry1(name);
 			QCOMPARE(entry1.getRemoteDeviceListEntry(), nullptr);
 
@@ -199,7 +200,15 @@ class test_RemoteDeviceModel
 			entry.setNetworkVisible(true);
 			entry.mSupported = true;
 			entry.mIsPairing = true;
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 			QCOMPARE(mModel->getStatus(entry), "Click to pair"_L1);
+#else
+			QCOMPARE(mModel->getStatus(entry), "Available"_L1);
+
+			entry.setPaired(false);
+			entry.mIsPairing = false;
+			QCOMPARE(mModel->getStatus(entry), "Not paired"_L1);
+#endif
 		}
 
 
@@ -207,20 +216,20 @@ class test_RemoteDeviceModel
 		{
 			RemoteDeviceModelEntry entry1;
 			RemoteDeviceModelEntry entry2;
-			entry1.setId("id"_L1);
+			entry1.setId("id"_ba);
 
-			QCOMPARE(mModel->getRemoteDeviceListEntry("id"_L1), QSharedPointer<IfdListEntry>());
+			QCOMPARE(mModel->getRemoteDeviceListEntry("id"_ba), QSharedPointer<IfdListEntry>());
 
 			mModel->mAllRemoteReaders.insert(0, entry1);
 			mModel->mAllRemoteReaders.insert(1, entry2);
 
-			QCOMPARE(mModel->getRemoteDeviceListEntry("id"_L1), nullptr);
+			QCOMPARE(mModel->getRemoteDeviceListEntry("id"), nullptr);
 		}
 
 
 		void test_GetRemoteDeviceListEntryModelIndex()
 		{
-			const Discovery discovery = Discovery(QStringLiteral("entry 1"), QStringLiteral("01"), 11111, {IfdVersion::supported()}, true);
+			const Discovery discovery = Discovery(QStringLiteral("entry 1"), QByteArrayLiteral("01"), 11111, {IfdVersion::supported()}, true);
 			const IfdDescriptor descriptor = IfdDescriptor(discovery, QHostAddress::LocalHost, true);
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(descriptor));
 			RemoteDeviceModelEntry entry1(listEntry);
@@ -246,7 +255,7 @@ class test_RemoteDeviceModel
 			QTest::newRow("device name") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME << 0 << 0 << QVariant("reader 1"_L1);
 			QTest::newRow("device status") << RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_STATUS << 1 << 0 << QVariant("Unsupported"_L1);
 			QTest::newRow("last connected") << RemoteDeviceModel::SettingsRemoteRoles::LAST_CONNECTED << 0 << 0 << QVariant("14.05.2019 12:00 AM"_L1);
-			QTest::newRow("device id") << RemoteDeviceModel::SettingsRemoteRoles::DEVICE_ID << 0 << 0 << QVariant("test id"_L1);
+			QTest::newRow("device id") << RemoteDeviceModel::SettingsRemoteRoles::DEVICE_ID << 0 << 0 << QVariant("test id"_ba);
 			QTest::newRow("network visible") << RemoteDeviceModel::SettingsRemoteRoles::IS_NETWORK_VISIBLE << 1 << 0 << QVariant(bool(false));
 			QTest::newRow("supported") << RemoteDeviceModel::SettingsRemoteRoles::IS_SUPPORTED << 0 << 0 << QVariant(bool(true));
 			QTest::newRow("paired") << RemoteDeviceModel::SettingsRemoteRoles::IS_PAIRED << 0 << 0 << QVariant(bool(true));
@@ -265,7 +274,7 @@ class test_RemoteDeviceModel
 
 			QList<RemoteDeviceModelEntry> readers;
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(IfdDescriptor()));
-			const RemoteDeviceModelEntry entry1("reader 1"_L1, "test id"_L1, true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
+			const RemoteDeviceModelEntry entry1("reader 1"_L1, "test id"_ba, true, false, true, false, QDateTime(QDate(2019, 5, 14), QTime(0, 0)), listEntry);
 			const RemoteDeviceModelEntry entry2("reader 2"_L1);
 			readers << entry1 << entry2;
 			mModel->mAllRemoteReaders = readers;
@@ -282,7 +291,7 @@ class test_RemoteDeviceModel
 			settings.addTrustedCertificate(cert);
 
 			const auto dName = QStringLiteral("myDeviceName");
-			const auto dId = QStringLiteral("myDeviceId");
+			const auto dId = QByteArrayLiteral("myDeviceId");
 			const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
 			const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
 			const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
@@ -304,7 +313,7 @@ class test_RemoteDeviceModel
 			settings.addTrustedCertificate(QSslCertificate());
 
 			const auto dName = QStringLiteral("old_name");
-			const auto dId = QStringLiteral("myDeviceId");
+			const auto dId = QByteArrayLiteral("myDeviceId");
 			const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
 			const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
 			const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
@@ -319,6 +328,36 @@ class test_RemoteDeviceModel
 
 			const auto name = model.data(mModel->index(0), RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME).toString();
 			QCOMPARE(name, QStringLiteral("new_name (was old_name)"));
+		}
+
+
+		void test_startStopDetection()
+		{
+			QVERIFY(!Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			QTest::ignoreMessage(QtDebugMsg, "Starting Remote Device Detection");
+			QTest::ignoreMessage(QtDebugMsg, "Bound on port: 24727");
+			mModel->startDetection();
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->startDetection();
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->stopDetection(false);
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->stopDetection(false);
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->stopDetection(true);
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			QTest::ignoreMessage(QtDebugMsg, "Starting Remote Device Detection");
+			QTest::ignoreMessage(QtDebugMsg, "Detection already started");
+			mModel->startDetection();
+			QVERIFY(Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			QTest::ignoreMessage(QtDebugMsg, "Stopping Remote Device Detection");
+			QTest::ignoreMessage(QtDebugMsg, "Shutdown socket");
+			mModel->stopDetection(true);
+			QVERIFY(!Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->stopDetection(true);
+			QVERIFY(!Env::getSingleton<RemoteIfdClient>()->isDetecting());
+			mModel->stopDetection(false);
+			QVERIFY(!Env::getSingleton<RemoteIfdClient>()->isDetecting());
 		}
 
 

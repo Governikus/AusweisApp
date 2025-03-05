@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Service.h"
@@ -139,8 +139,8 @@ void Service::runUpdateIfNeeded(bool pSkipProxy)
 	{
 		mUpdateScheduled = false;
 		QMetaObject::invokeMethod(this, [this] {
-				doAppUpdate(UpdateType::APPCAST);
-			}, Qt::QueuedConnection);
+					doAppUpdate(UpdateType::APPCAST);
+				}, Qt::QueuedConnection);
 	}
 }
 

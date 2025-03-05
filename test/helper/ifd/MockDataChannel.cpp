@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MockDataChannel.h"
@@ -12,7 +12,7 @@ using namespace governikus;
 
 MockDataChannel::MockDataChannel(bool pPairing)
 	: mPairing(pPairing)
-	, mId(QUuid::createUuid().toString())
+	, mId(QUuid::createUuid().toByteArray())
 	, mReceivedDataBlocks()
 {
 }
@@ -35,7 +35,7 @@ bool MockDataChannel::isPairingConnection() const
 }
 
 
-const QString& MockDataChannel::getId() const
+const QByteArray& MockDataChannel::getId() const
 {
 	return mId;
 }

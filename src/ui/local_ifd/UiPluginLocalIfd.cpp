@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginLocalIfd.h"
@@ -126,13 +126,13 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdSe
 
 	bool initialized = false;
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [psk] {
-			UiPluginLocalIfd* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginLocalIfd>();
-			if (uiPlugin)
-			{
-				return uiPlugin->onStartWorkflowRequested(psk);
-			}
-			return false;
-		}, Qt::BlockingQueuedConnection, &initialized);
+				UiPluginLocalIfd* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginLocalIfd>();
+				if (uiPlugin)
+				{
+					return uiPlugin->onStartWorkflowRequested(psk);
+				}
+				return false;
+			}, Qt::BlockingQueuedConnection, &initialized);
 
 	return initialized;
 }
@@ -144,12 +144,12 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AusweisApp2LocalIfdServic
 	Q_UNUSED(pEnv)
 
 	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-			UiPluginLocalIfd* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginLocalIfd>();
-			if (uiPlugin)
-			{
-				uiPlugin->onAbortWorkflowRequested();
-			}
-		}, Qt::BlockingQueuedConnection);
+				UiPluginLocalIfd* const uiPlugin = Env::getSingleton<UiLoader>()->getLoaded<UiPluginLocalIfd>();
+				if (uiPlugin)
+				{
+					uiPlugin->onAbortWorkflowRequested();
+				}
+			}, Qt::BlockingQueuedConnection);
 }
 
 

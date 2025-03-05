@@ -1,0 +1,270 @@
+From 45df93928d3bd5603667bc215e8620ac072d0a79 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Mon, 6 Jan 2025 18:19:33 +0100
+Subject: Fix features and add some new features
+
+* qtscxml contains two independent implementations. With Qt 6 the
+  statemachine was moved into qtscxml to avoid an additional module
+  that provides similar functions. During this process the features
+  were broken.
+* With this change the features are fixed and additional features are
+  added to enable fine-grained configuration for an efficient build.
+* The schema was taken from qttools.
+
+Fixes: QTBUG-132565
+Pick-to: 6.9
+Change-Id: I638a8d08f94425dba3d80a68af389654458ae8dc
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit d59b74c12cbd76f129db5b12246749206bcd3b29)
+---
+ configure.cmake                        | 41 ++++++++++++++++++++++++++
+ src/CMakeLists.txt                     | 20 +++++++++----
+ src/global/CMakeLists.txt              | 15 ++++++++++
+ src/scxml/CMakeLists.txt               |  1 +
+ src/scxml/configure.cmake              | 28 ------------------
+ src/scxml/qscxmlglobals.h              |  2 +-
+ src/statemachine/CMakeLists.txt        |  1 +
+ src/statemachine/configure.cmake       | 29 ------------------
+ src/statemachine/qstatemachineglobal.h |  2 +-
+ tools/CMakeLists.txt                   |  2 +-
+ 10 files changed, 76 insertions(+), 65 deletions(-)
+ create mode 100644 src/global/CMakeLists.txt
+ delete mode 100644 src/scxml/configure.cmake
+ delete mode 100644 src/statemachine/configure.cmake
+
+diff --git x/qtscxml/configure.cmake y/qtscxml/configure.cmake
+index 68f54ce726cbef1df26fee83dbfb1478e8995a9e..337a5d90a6c655e2897e14bb44e617aeb239822a 100644
+--- x/qtscxml/configure.cmake
++++ y/qtscxml/configure.cmake
+@@ -17,6 +17,47 @@
+ 
+ #### Features
+ 
++qt_feature("scxml" PUBLIC
++    LABEL "Qt SCXML"
++    PURPOSE "Allows embedding of state machines created from State Chart XML (SCXML) files."
++)
++qt_feature("scxml-qml" PUBLIC
++    LABEL "SCXML QML Types"
++    PURPOSE "Provides QML Types for Qt SCXML."
++    CONDITION QT_FEATURE_scxml AND TARGET Qt::Qml
++)
++qt_feature("scxml-ecmascriptdatamodel" PUBLIC
++    LABEL "ECMAScript data model for QtScxml"
++    PURPOSE "Enables the usage of ecmascript data models in SCXML state machines."
++    CONDITION QT_FEATURE_scxml AND TARGET Qt::Qml
++)
++
++qt_feature("statemachine" PUBLIC
++    LABEL "Qt State Machine"
++    PURPOSE "Provides hierarchical finite state machines."
++)
++qt_feature("statemachine-qml" PUBLIC
++    LABEL "StateMachine QML Type"
++    PURPOSE "Provides QML Type for Qt State Machine."
++    CONDITION QT_FEATURE_statemachine AND TARGET Qt::Qml
++)
++qt_feature("qeventtransition" PUBLIC
++    LABEL "Q(Mouse)EventTransition class"
++    PURPOSE "Provides QObject-specific transitions for Qt events."
++    CONDITION QT_FEATURE_statemachine AND TARGET Qt::Gui
++)
++
++qt_configure_add_summary_section(NAME "Qt SCXML")
++qt_configure_add_summary_entry(ARGS "scxml")
++qt_configure_add_summary_entry(ARGS "scxml-qml")
++qt_configure_add_summary_entry(ARGS "scxml-ecmascriptdatamodel")
++qt_configure_end_summary_section() # end of "Qt SCXML" section
++
++qt_configure_add_summary_section(NAME "Qt State Machine")
++qt_configure_add_summary_entry(ARGS "statemachine")
++qt_configure_add_summary_entry(ARGS "statemachine-qml")
++qt_configure_add_summary_entry(ARGS "qeventtransition")
++qt_configure_end_summary_section() # end of "Qt State Machine" section
+ 
+ qt_extra_definition("QT_VERSION_STR" "\"${PROJECT_VERSION}\"" PUBLIC)
+ qt_extra_definition("QT_VERSION_MAJOR" ${PROJECT_VERSION_MAJOR} PUBLIC)
+diff --git x/qtscxml/src/CMakeLists.txt y/qtscxml/src/CMakeLists.txt
+index 5fbfbd9d495ba5a926b3a44380a04a60bc06d5ee..b3e1253632d34bec8b78bcc9d2d7141dc4bf6db5 100644
+--- x/qtscxml/src/CMakeLists.txt
++++ y/qtscxml/src/CMakeLists.txt
+@@ -1,11 +1,21 @@
+ # Copyright (C) 2022 The Qt Company Ltd.
+ # SPDX-License-Identifier: BSD-3-Clause
+ 
++# Evaluate features to decide what to build.
++# The config files will be written in the src/global module.
++qt_feature_evaluate_features("${CMAKE_CURRENT_SOURCE_DIR}/../configure.cmake")
+ 
+-add_subdirectory(scxml)
+-add_subdirectory(statemachine)
+-if(TARGET Qt::Qml)
+-    add_subdirectory(statemachineqml)
+-    add_subdirectory(scxmlqml)
++add_subdirectory(global)
++if(QT_FEATURE_scxml)
++    add_subdirectory(scxml)
++    if(QT_FEATURE_scxml_qml)
++        add_subdirectory(scxmlqml)
++    endif()
++endif()
++if(QT_FEATURE_statemachine)
++    add_subdirectory(statemachine)
++    if(QT_FEATURE_statemachine_qml)
++        add_subdirectory(statemachineqml)
++    endif()
+ endif()
+ add_subdirectory(plugins)
+diff --git x/qtscxml/src/global/CMakeLists.txt y/qtscxml/src/global/CMakeLists.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..4ee272e1995f469bab80936da9227a63b85ee3f8
+--- /dev/null
++++ y/qtscxml/src/global/CMakeLists.txt
+@@ -0,0 +1,15 @@
++# Copyright (C) 2025 The Qt Company Ltd.
++# SPDX-License-Identifier: BSD-3-Clause
++
++#####################################################################
++## ScxmlGlobal Module:
++#####################################################################
++
++qt_internal_add_module(ScxmlGlobal
++    INTERNAL_MODULE
++    HEADER_MODULE
++    CONFIGURE_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../configure.cmake"
++    MODULE_INTERFACE_NAME ScxmlGlobal # Specify the 'ScxmlGlobal' name explicitly to avoid
++                                      # warning related to the expected name of internal module.
++    NO_GENERATE_CPP_EXPORTS
++)
+diff --git x/qtscxml/src/scxml/CMakeLists.txt y/qtscxml/src/scxml/CMakeLists.txt
+index ee5b7431bda73f0281ef975294d87808d20b64e7..e4aa6290807fcbaed8570903b4b1fad102e284a0 100644
+--- x/qtscxml/src/scxml/CMakeLists.txt
++++ y/qtscxml/src/scxml/CMakeLists.txt
+@@ -30,6 +30,7 @@ qt_internal_add_module(Scxml
+         QT_NO_CAST_TO_ASCII
+     LIBRARIES
+         Qt::CorePrivate
++        Qt::ScxmlGlobal
+     PUBLIC_LIBRARIES
+         Qt::Core
+     PRIVATE_MODULE_INTERFACE
+diff --git x/qtscxml/src/scxml/configure.cmake y/qtscxml/src/scxml/configure.cmake
+deleted file mode 100644
+index 55fc1d5a800e4855d0658ced9f0e609623705e09..0000000000000000000000000000000000000000
+--- x/qtscxml/src/scxml/configure.cmake
++++ /dev/null
+@@ -1,28 +0,0 @@
+-# Copyright (C) 2022 The Qt Company Ltd.
+-# SPDX-License-Identifier: BSD-3-Clause
+-
+-
+-
+-#### Inputs
+-
+-
+-
+-#### Libraries
+-
+-
+-
+-#### Tests
+-
+-
+-
+-#### Features
+-
+-qt_feature("scxml-ecmascriptdatamodel" PUBLIC
+-    SECTION "SCXML"
+-    LABEL "ECMAScript data model for QtScxml"
+-    PURPOSE "Enables the usage of ecmascript data models in SCXML state machines."
+-    CONDITION TARGET Qt::Qml # special case
+-)
+-qt_configure_add_summary_section(NAME "Qt Scxml")
+-qt_configure_add_summary_entry(ARGS "scxml-ecmascriptdatamodel")
+-qt_configure_end_summary_section() # end of "Qt Scxml" section
+diff --git x/qtscxml/src/scxml/qscxmlglobals.h y/qtscxml/src/scxml/qscxmlglobals.h
+index 64169d240766d04f913294906accc6c1e6455429..9a3f6db8a6bf3a8eea9d937b6def448c6fd60d78 100644
+--- x/qtscxml/src/scxml/qscxmlglobals.h
++++ y/qtscxml/src/scxml/qscxmlglobals.h
+@@ -4,7 +4,7 @@
+ #ifndef QSCXMLGLOBALS_H
+ #define QSCXMLGLOBALS_H
+ #include <QtCore/qglobal.h>
+-#include <QtScxml/qtscxml-config.h>
++#include <QtScxmlGlobal/qtscxmlglobal-config.h>
+ 
+ #if defined(BUILD_QSCXMLC)
+ #  define Q_SCXML_EXPORT
+diff --git x/qtscxml/src/statemachine/CMakeLists.txt y/qtscxml/src/statemachine/CMakeLists.txt
+index e68c5718e245f5fb24a3b0629f315d4d3a8a0507..a225dbad8f81edcbfe99618ab821677cebe3bd3a 100644
+--- x/qtscxml/src/statemachine/CMakeLists.txt
++++ y/qtscxml/src/statemachine/CMakeLists.txt
+@@ -24,6 +24,7 @@ qt_internal_add_module(StateMachine
+         QT_NO_CAST_TO_ASCII
+     LIBRARIES
+         Qt::CorePrivate
++        Qt::ScxmlGlobal
+     PUBLIC_LIBRARIES
+         Qt::Core
+     PRIVATE_MODULE_INTERFACE
+diff --git x/qtscxml/src/statemachine/configure.cmake y/qtscxml/src/statemachine/configure.cmake
+deleted file mode 100644
+index c6cda823037166fd3ebd120b214f296d08ba1386..0000000000000000000000000000000000000000
+--- x/qtscxml/src/statemachine/configure.cmake
++++ /dev/null
+@@ -1,29 +0,0 @@
+-# Copyright (C) 2022 The Qt Company Ltd.
+-# SPDX-License-Identifier: BSD-3-Clause
+-
+-
+-
+-#### Inputs
+-
+-
+-
+-#### Libraries
+-
+-
+-
+-#### Tests
+-
+-
+-
+-#### Features
+-
+-qt_feature("statemachine" PUBLIC
+-    SECTION "Utilities"
+-    LABEL "State machine"
+-    PURPOSE "Provides hierarchical finite state machines."
+-)
+-qt_feature_definition("statemachine" "QT_NO_STATEMACHINE" NEGATE VALUE "1")
+-qt_feature("qeventtransition" PUBLIC
+-    LABEL "QEventTransition class"
+-    CONDITION QT_FEATURE_statemachine AND TARGET Qt::Gui # special case
+-)
+diff --git x/qtscxml/src/statemachine/qstatemachineglobal.h y/qtscxml/src/statemachine/qstatemachineglobal.h
+index 47860b7a4801f397bdd5464b5ab1b72510b25873..cb50c84cb5aa17eca0795ed727333dd941dbeb6d 100644
+--- x/qtscxml/src/statemachine/qstatemachineglobal.h
++++ y/qtscxml/src/statemachine/qstatemachineglobal.h
+@@ -5,7 +5,7 @@
+ #define QSTATEMACHINEGLOBAL_H
+ 
+ #include <QtCore/qglobal.h>
+-#include <QtStateMachine/qtstatemachine-config.h>
++#include <QtScxmlGlobal/qtscxmlglobal-config.h>
+ 
+ #if defined(BUILD_QSTATEMACHINE)
+ #  define Q_STATEMACHINE_EXPORT
+diff --git x/qtscxml/tools/CMakeLists.txt y/qtscxml/tools/CMakeLists.txt
+index c5831a40460daefec3845fa34a2757b0232511fd..1497f1c25383fdc89dd8e2301d79b331fbf9c2d8 100644
+--- x/qtscxml/tools/CMakeLists.txt
++++ y/qtscxml/tools/CMakeLists.txt
+@@ -2,6 +2,6 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ 
+ 
+-if(QT_FEATURE_commandlineparser)
++if(QT_FEATURE_scxml AND QT_FEATURE_commandlineparser)
+     add_subdirectory(qscxmlc)
+ endif()

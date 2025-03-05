@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class that dispatches incoming and outgoing ifd messages.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +24,7 @@ class IfdDispatcherClient
 		Q_INVOKABLE virtual void sendEstablishContext();
 
 	Q_SIGNALS:
-		void fireContextEstablished(const QString& pIfdName, const QString& pId);
+		void fireContextEstablished(const QString& pIfdName, const QByteArray& pId);
 };
 
 } // namespace governikus

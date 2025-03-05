@@ -205,6 +205,15 @@ macro(SET_TEMPLATES) # Provide some base templates for SCRIPTs
 endmacro()
 
 
+function(hashsum)
+	foreach(entry ${ARGV})
+		file(SHA256 ${entry} fileHash)
+		get_filename_component(fileName "${entry}" NAME)
+		file(WRITE ${entry}.sha256 "${fileHash}  ${fileName}\n")
+	endforeach()
+endfunction()
+
+
 function(RESPAWN_PATCHED)
 	if(NOT DEFINED SPLITTED OR SPLITTED)
 		set(SPLITTED_PARAM --splitted)

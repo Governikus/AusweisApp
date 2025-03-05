@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Tests for the class CardConnectionWorker.
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "CardConnectionWorker.h"

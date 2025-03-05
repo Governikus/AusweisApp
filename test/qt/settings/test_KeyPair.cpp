@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref CertificateGenerator
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "KeyPair.h"
@@ -218,16 +214,16 @@ class test_KeyPair
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
 
 			connect(&server, &QSslServer::peerVerifyError, this, [](QSslSocket* pSocket, const QSslError& pError){
-					QVERIFY(pSocket);
-					QCOMPARE(pError.error(), QSslError::NoError);
-				});
+						QVERIFY(pSocket);
+						QCOMPARE(pError.error(), QSslError::NoError);
+					});
 			connect(&server, &QSslServer::sslErrors, this, [](QSslSocket* pSocket, const QList<QSslError>& pErrors){
-					QVERIFY(pSocket);
-					QCOMPARE(pErrors, (QList<QSslError>()));
-				});
+						QVERIFY(pSocket);
+						QCOMPARE(pErrors, (QList<QSslError>()));
+					});
 			connect(&client, &QSslSocket::sslErrors, this, [&allowedErrors](const QList<QSslError>& pErrors){
-					QCOMPARE(pErrors, allowedErrors);
-				});
+						QCOMPARE(pErrors, allowedErrors);
+					});
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
 			QTRY_COMPARE(clientEncrypted.count(), 1);

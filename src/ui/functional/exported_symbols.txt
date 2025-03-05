@@ -1,3 +1,7 @@
+_ausweisapp_init
+_ausweisapp_shutdown
+_ausweisapp_is_running
+_ausweisapp_send
 _ausweisapp2_init
 _ausweisapp2_shutdown
 _ausweisapp2_is_running

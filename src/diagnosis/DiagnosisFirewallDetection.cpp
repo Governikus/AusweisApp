@@ -1,12 +1,11 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DiagnosisFirewallDetection.h"
 
 #include <QFile>
 #include <QLoggingCategory>
-#include <QOperatingSystemVersion>
 #include <QStandardPaths>
 
 using namespace governikus;
@@ -54,11 +53,7 @@ void DiagnosisFirewallDetection::parseFirewallFirstRuleInfos(const QString& pFir
 		}
 		if (lineparts[0].startsWith(QLatin1String("Name")))
 		{
-			if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8 && lineparts[1].startsWith(QLatin1String("AusweisApp")))
-			{
-				mFirstFirewallRuleExists = true;
-			}
-			else if (lineparts[1].startsWith(QLatin1String("AusweisApp-Firewall-Rule")))
+			if (lineparts[1].startsWith(QLatin1String("AusweisApp-Firewall-Rule")))
 			{
 				mFirstFirewallRuleExists = true;
 			}
@@ -305,9 +300,9 @@ DiagnosisFirewallDetection::DiagnosisFirewallDetection()
 }
 
 
+#ifdef Q_OS_WIN
 void DiagnosisFirewallDetection::startDetection()
 {
-#if defined(Q_OS_WIN)
 	mDetectedFirewalls.clear();
 	mFirewallProfiles.clear();
 
@@ -326,14 +321,7 @@ void DiagnosisFirewallDetection::startDetection()
 	QStringList firstRuleParameters;
 	firstRuleParameters << QStringLiteral("-NoProfile");
 	firstRuleParameters << QStringLiteral("-Command");
-	if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
-	{
-		firstRuleParameters << QStringLiteral("(New-object -comObject HNetCfg.FwPolicy2).rules | where-object {$_.name -like \"AusweisApp\"}");
-	}
-	else
-	{
-		firstRuleParameters << QStringLiteral("Get-NetFirewallRule -Name \"AusweisApp-Firewall-Rule\"");
-	}
+	firstRuleParameters << QStringLiteral("Get-NetFirewallRule -Name \"AusweisApp-Firewall-Rule\"");
 
 	connect(&mFirewallFirstRuleProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DiagnosisFirewallDetection::onFirstRuleDone);
 	connect(&mFirewallFirstRuleProcess, &QProcess::errorOccurred, this, &DiagnosisFirewallDetection::onFirstRuleError);
@@ -344,14 +332,7 @@ void DiagnosisFirewallDetection::startDetection()
 	QStringList secondRuleParameters;
 	secondRuleParameters << QStringLiteral("-NoProfile");
 	secondRuleParameters << QStringLiteral("-Command");
-	if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
-	{
-		secondRuleParameters << QStringLiteral("(New-object -comObject HNetCfg.FwPolicy2).rules | where-object {$_.name -like \"AusweisApp-SaC\"}");
-	}
-	else
-	{
-		secondRuleParameters << QStringLiteral("Get-NetFirewallRule -DisplayName \"AusweisApp-SaC\"");
-	}
+	secondRuleParameters << QStringLiteral("Get-NetFirewallRule -DisplayName \"AusweisApp-SaC\"");
 
 	connect(&mFirewallSecondRuleProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DiagnosisFirewallDetection::onSecondRuleDone);
 	connect(&mFirewallSecondRuleProcess, &QProcess::errorOccurred, this, &DiagnosisFirewallDetection::onSecondRuleError);
@@ -362,14 +343,7 @@ void DiagnosisFirewallDetection::startDetection()
 	QStringList profilesParameters;
 	profilesParameters << QStringLiteral("-NoProfile");
 	profilesParameters << QStringLiteral("-Command");
-	if (QOperatingSystemVersion::current() < QOperatingSystemVersion::Windows8)
-	{
-		profilesParameters << QStringLiteral("$fw=New-object -comObject HNetCfg.FwPolicy2; $fwProfileTypes= @{1=\"Domain\"; 2=\"Private\" ; 4=\"Public\"}; @(1,2,4) | select @{Name=\"Name\" ;expression={$fwProfileTypes[$_]}}, @{Name=\"Enabled\" ;expression={$fw.FireWallEnabled($_)}} | Format-List Name, Enabled");
-	}
-	else
-	{
-		profilesParameters << QStringLiteral("Get-NetFirewallProfile");
-	}
+	profilesParameters << QStringLiteral("Get-NetFirewallProfile");
 
 	connect(&mFirewallProfilesProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DiagnosisFirewallDetection::onProfilesDone);
 	connect(&mFirewallProfilesProcess, &QProcess::errorOccurred, this, &DiagnosisFirewallDetection::onProfilesError);
@@ -386,9 +360,10 @@ void DiagnosisFirewallDetection::startDetection()
 
 	mInstalledFirewallSoftwareProcess.start(powershellCommand, installedFirewallSoftwareParameters);
 	mInstalledFirewallSoftwareProcess.closeWriteChannel();
+}
+
 
 #endif
-}
 
 
 FirewallSoftware::FirewallSoftware(const QString& pName, bool pEnabled, bool pUpToDate)

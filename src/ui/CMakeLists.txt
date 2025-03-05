@@ -7,12 +7,12 @@
 add_subdirectory(base)
 
 add_subdirectory(json)
-add_subdirectory(aidl)
 add_subdirectory(automatic)
 add_subdirectory(webservice)
 add_subdirectory(proxy)
 
 if(TARGET ${Qt}::Gui)
+	add_subdirectory(aidl)
 	add_subdirectory(scheme)
 endif()
 

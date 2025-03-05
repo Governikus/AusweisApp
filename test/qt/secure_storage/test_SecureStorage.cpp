@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref SecureStorage
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SecureStorage.h"
@@ -235,9 +231,9 @@ class test_SecureStorage
 
 			const auto& ext = cert.extensions();
 			const bool foundOcspResponder = std::any_of(ext.cbegin(), ext.cend(), [&ocsp](const auto& entry){
-					return entry.name() == QLatin1String("authorityInfoAccess") &&
-						   entry.value().toMap().value(QStringLiteral("OCSP")).toString() == ocsp;
-				});
+						return entry.name() == QLatin1String("authorityInfoAccess") &&
+							   entry.value().toMap().value(QStringLiteral("OCSP")).toString() == ocsp;
+					});
 			QCOMPARE(foundOcspResponder, !ocsp.isEmpty());
 		}
 

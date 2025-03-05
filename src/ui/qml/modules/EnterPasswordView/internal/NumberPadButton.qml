@@ -1,6 +1,7 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -36,8 +37,8 @@ AbstractButton {
 			anchors.centerIn: parent
 			source: root.icon.source
 			sourceSize.height: Math.min(0.8 * root.height, 1.5 * Style.dimens.textHeadline)
-			tintColor: contentItem.color
-			visible: !contentItem.visible
+			tintColor: buttonText.color
+			visible: !buttonText.visible
 		}
 		FocusFrame {
 			marginFactor: 0.8
@@ -46,9 +47,11 @@ AbstractButton {
 		}
 	}
 	contentItem: GText {
+		id: buttonText
+
 		Accessible.ignored: true
 		color: colors.textHeadline
-		font.pixelSize: fontScale * Style.dimens.textHeadline
+		font.pixelSize: root.fontScale * Style.dimens.textHeadline
 		horizontalAlignment: Text.AlignHCenter
 		text: root.text
 		textStyle: Style.text.headline

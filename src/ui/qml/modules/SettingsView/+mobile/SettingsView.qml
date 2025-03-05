@@ -1,27 +1,29 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
+
 import Governikus.Global
-import Governikus.Style
-import Governikus.TitleBar
 import Governikus.View
 import Governikus.RemoteServiceView
 import Governikus.SmartView
 import Governikus.Type
+import Governikus.Style
 
 FlickableSectionPage {
-	id: baseItem
+	id: root
 
 	function platformId(pName) {
 		return "mobile," + pName.replace(" ", "").toLowerCase();
 	}
 
 	enableTileStyle: false
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 	//: LABEL ANDROID IOS
 	title: qsTr("Settings")
 
@@ -55,24 +57,22 @@ FlickableSectionPage {
 			title: qsTr("Change language")
 			width: parent.width
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-
 			GRepeater {
-				id: repeater
-
 				delegate: GCollapsibleSubButton {
-					Accessible.description: model.a11yDescription
-					Accessible.name: model.a11yName
+					required property string a11yDescription
+					required property string a11yName
+					required property string language
+					required property string languageText
+
+					Accessible.description: a11yDescription
+					Accessible.name: a11yName
 					Layout.fillWidth: true
-					image: model.image
-					title: model.text
+					text: languageText
 
 					onClicked: {
-						SettingsModel.language = model.language;
+						SettingsModel.language = language;
 						languageCollapsible.expanded = false;
 					}
-					onFocusChanged: if (focus)
-						baseItem.positionViewAtItem(this)
 				}
 				model: LanguageButtonData {
 				}
@@ -80,9 +80,9 @@ FlickableSectionPage {
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GCollapsible {
 			id: appearanceCollapsible
@@ -98,27 +98,23 @@ FlickableSectionPage {
 			title: qsTr("Appearance")
 			width: parent.width
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-
 			DarkModeButtons {
 				id: modeButtons
 
 				width: parent.width
 
 				onButtonClicked: appearanceCollapsible.expanded = false
-				onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
 			}
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			//: LABEL ANDROID IOS
 			description: qsTr("Toggling will restart the %1").arg(Qt.application.name)
-			drawBottomCorners: true
 			//: LABEL ANDROID IOS
 			text: qsTr("Use system font")
 			width: parent.width
@@ -132,8 +128,20 @@ FlickableSectionPage {
 					UiPluginModel.doRefresh();
 				}
 			}
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
+		}
+		GSeparator {
+			anchors.left: parent.left
+			anchors.leftMargin: Style.dimens.pane_spacing
+			anchors.right: parent.right
+			anchors.rightMargin: Style.dimens.pane_spacing
+		}
+		TechnologySwitch {
+			contentBottomMargin: 0
+			contentHorizontalMargin: 0
+			contentSpacing: 0
+			contentTopMargin: 0
+			drawBottomCorners: true
+			width: parent.width
 		}
 	}
 	GOptionsContainer {
@@ -150,14 +158,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.useAnimations = !checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.visualPrivacy
@@ -166,14 +172,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: !SettingsModel.autoRedirectAfterAuthentication
@@ -185,8 +189,6 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.autoRedirectAfterAuthentication = !checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 	}
 	GOptionsContainer {
@@ -204,8 +206,6 @@ FlickableSectionPage {
 			title: qsTr("Device name")
 			width: parent.width
 
-			onReceivedFocus: pItem => baseItem.positionViewAtItem(pItem)
-
 			GTextField {
 				function saveInput() {
 					focus = false;
@@ -213,19 +213,19 @@ FlickableSectionPage {
 				}
 
 				Layout.fillWidth: true
-				Layout.margins: Constants.component_spacing
-				maximumLength: Constants.maximumDeviceNameLength
+				Layout.margins: Style.dimens.pane_spacing
+				maximumLength: 33
 				text: SettingsModel.deviceName
 
 				onAccepted: saveInput()
-				onFocusChanged: focus ? baseItem.positionViewAtItem(this) : saveInput()
+				onFocusChanged: focus ? root.positionViewAtItem(this) : saveInput()
 			}
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.pinPadMode
@@ -235,14 +235,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.pinPadMode = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.showAccessRights
@@ -253,14 +251,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.showAccessRights = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GMenuItem {
 			//: LABEL ANDROID IOS
@@ -271,18 +267,16 @@ FlickableSectionPage {
 			title: qsTr("Manage pairings")
 			width: parent.width
 
-			onClicked: push(remoteServiceSettings)
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
+			onClicked: root.push(remoteServiceSettings)
 
 			Component {
 				id: remoteServiceSettings
 
 				RemoteServiceSettings {
-					enableTileStyle: baseItem.enableTileStyle
+					enableTileStyle: root.enableTileStyle
 
-					Component.onCompleted: RemoteServiceModel.detectRemoteDevices = true
-					Component.onDestruction: RemoteServiceModel.detectRemoteDevices = false
+					Component.onCompleted: RemoteServiceModel.startDetection()
+					Component.onDestruction: RemoteServiceModel.stopDetection(true)
 				}
 			}
 		}
@@ -303,14 +297,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.shuffleScreenKeyboard = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.visualPrivacy
@@ -323,8 +315,6 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.visualPrivacy = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 	}
 	GOptionsContainer {
@@ -340,9 +330,7 @@ FlickableSectionPage {
 			title: qsTr("Reset Smart-eID")
 			width: parent.width
 
-			onClicked: push(smartDeleteView)
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
+			onClicked: root.push(smartDeleteView)
 
 			Component {
 				id: smartDeleteView
@@ -370,9 +358,9 @@ FlickableSectionPage {
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.skipRightsOnCanAllowed
@@ -408,9 +396,9 @@ FlickableSectionPage {
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GSwitch {
 			checked: SettingsModel.enableSimulator
@@ -443,14 +431,12 @@ FlickableSectionPage {
 			width: parent.width
 
 			onCheckedChanged: SettingsModel.developerMode = checked
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
 		}
 		GSeparator {
 			anchors.left: parent.left
-			anchors.leftMargin: Constants.component_spacing
+			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
-			anchors.rightMargin: Constants.component_spacing
+			anchors.rightMargin: Style.dimens.pane_spacing
 		}
 		GMenuItem {
 			//: LABEL ANDROID IOS
@@ -461,11 +447,46 @@ FlickableSectionPage {
 			title: qsTr("Reset hideable dialogs")
 			width: parent.width
 
-			onClicked: {
-				SettingsModel.resetHideableDialogs();
+			onClicked: SettingsModel.resetHideableDialogs()
+		}
+	}
+	GOptionsContainer {
+		Layout.fillWidth: true
+
+		//: LABEL ANDROID IOS
+		title: qsTr("Extend Transport PIN")
+		visible: UiPluginModel.debugBuild
+
+		Flow {
+			padding: Style.dimens.pane_padding
+			spacing: Style.dimens.pane_spacing
+			width: parent.width
+
+			GButton {
+				Layout.minimumWidth: implicitHeight
+				checkable: true
+				checked: SettingsModel.appendTransportPin === ""
+				style: Style.color.controlOptional
+				//: LABEL ANDROID IOS
+				text: qsTr("Disable")
+
+				onClicked: SettingsModel.appendTransportPin = ""
 			}
-			onFocusChanged: if (focus)
-				baseItem.positionViewAtItem(this)
+			Repeater {
+				model: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+				GButton {
+					required property string modelData
+
+					Layout.minimumWidth: implicitHeight
+					checkable: true
+					checked: SettingsModel.appendTransportPin === modelData
+					style: Style.color.controlOptional
+					text: modelData
+
+					onClicked: SettingsModel.appendTransportPin = modelData
+				}
+			}
 		}
 	}
 	GOptionsContainer {
@@ -476,13 +497,13 @@ FlickableSectionPage {
 		visible: UiPluginModel.debugBuild
 
 		ColumnLayout {
-			spacing: Constants.component_spacing
+			spacing: Style.dimens.pane_spacing
 			width: parent.width
 
 			GButton {
-				Layout.leftMargin: Constants.pane_padding
-				Layout.rightMargin: Constants.pane_padding
-				Layout.topMargin: Constants.pane_padding
+				Layout.leftMargin: Style.dimens.pane_padding
+				Layout.rightMargin: Style.dimens.pane_padding
+				Layout.topMargin: Style.dimens.pane_padding
 
 				//: LABEL ALL_PLATFORMS
 				text: qsTr("New Logfile")
@@ -491,13 +512,11 @@ FlickableSectionPage {
 					LogModel.saveDummyLogFile();
 					ApplicationModel.showFeedback("Created new logfile.");
 				}
-				onFocusChanged: if (focus)
-					baseItem.positionViewAtItem(this)
 			}
 			GButton {
-				Layout.bottomMargin: Constants.pane_padding
-				Layout.leftMargin: Constants.pane_padding
-				Layout.rightMargin: Constants.pane_padding
+				Layout.bottomMargin: Style.dimens.pane_padding
+				Layout.leftMargin: Style.dimens.pane_padding
+				Layout.rightMargin: Style.dimens.pane_padding
 
 				//: LABEL ALL_PLATFORMS
 				text: qsTr("15 days old Logfile")
@@ -508,8 +527,6 @@ FlickableSectionPage {
 					LogModel.saveDummyLogFile(date);
 					ApplicationModel.showFeedback("Created old logfile.");
 				}
-				onFocusChanged: if (focus)
-					baseItem.positionViewAtItem(this)
 			}
 		}
 	}

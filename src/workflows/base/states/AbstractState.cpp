@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AbstractState.h"
@@ -204,7 +204,19 @@ void AbstractState::stopNfcScanIfNecessary(const QString& pError) const
 
 	if (mContext->getReaderPluginTypes().contains(ReaderManagerPluginType::NFC))
 	{
+		if (mHandleNfcStop && volatileSettings->isUsedAsSDK())
+		{
+			mContext->setInterruptRequested(true);
+		}
+		qCDebug(statemachine) << "NFC scan will be stopped to allow user interaction";
 		Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, pError);
+
+		auto cardConnection = mContext->getCardConnection();
+		if (cardConnection && cardConnection->getReaderInfo().getPluginType() == ReaderManagerPluginType::NFC)
+		{
+			qCDebug(statemachine) << "Reset card connection";
+			mContext->resetCardConnection();
+		}
 	}
 #else
 	Q_UNUSED(pError)

@@ -1,15 +1,12 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Extension to QVersionNumber.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <QDebug>
 #include <QVersionNumber>
+
 
 namespace governikus
 {
@@ -60,10 +57,22 @@ inline bool operator<(const VersionNumber& pLeft, const VersionNumber& pRight)
 }
 
 
+inline bool operator<=(const VersionNumber& pLeft, const VersionNumber& pRight)
+{
+	return pLeft < pRight || pLeft == pRight;
+}
+
+
 inline bool operator>(const VersionNumber& pLeft, const VersionNumber& pRight)
 {
 	return pLeft.getVersionNumber() > pRight.getVersionNumber() ||
 		   (pLeft.getVersionNumber() == pRight.getVersionNumber() && pLeft.getDistance() > pRight.getDistance());
+}
+
+
+inline bool operator>=(const VersionNumber& pLeft, const VersionNumber& pRight)
+{
+	return pLeft > pRight || pLeft == pRight;
 }
 
 

@@ -1,13 +1,15 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
-import Governikus.Type
 
 ColumnLayout {
 	id: root
@@ -19,26 +21,24 @@ ColumnLayout {
 	property alias titleStyle: dataTitle.textStyle
 	property bool writeAccess: false
 
-	spacing: Constants.pane_spacing
+	spacing: Style.dimens.pane_spacing
 	visible: count > 0
 
 	GText {
 		id: dataTitle
 
-		Accessible.name: dataTitle.text
-		activeFocusOnTab: true
-		color: writeAccess ? Style.color.textNormal.basic : titleStyle.textColor
+		color: root.writeAccess ? Style.color.textNormal.basic : textStyle.textColor
 		textStyle: Style.text.headline
 
-		FocusFrame {
-		}
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 	}
 	Grid {
 		id: grid
 
 		Layout.fillWidth: true
 		Layout.preferredWidth: repeater.maxItemWidth * columns + grid.columnSpacing * (columns - 1)
-		columnSpacing: Constants.pane_spacing
+		columnSpacing: Style.dimens.pane_spacing
 		flow: Grid.TopToBottom
 		verticalItemAlignment: Grid.AlignBottom
 
@@ -47,37 +47,22 @@ ColumnLayout {
 
 			visible: count > 0
 
-			Loader {
-				id: rightItem
+			Item {
+				id: delegateItem
 
-				property bool isLast: index === repeater.count - 1
-				property int modelIndex: index
-				property string modelName: name
-				property bool modelSelected: selected
-				property bool modelWriteRight: writeRight
-
-				function updateModel(checked) {
-					selected = checked;
-				}
+				required property int index
+				readonly property bool isLast: index === repeater.count - 1
+				required property var model
+				required property string name
+				required property bool optional
+				required property bool selected
 
 				height: fontMetrics.height * 2
-				sourceComponent: optional ? optionalDelegate : requiredDelegate
 				width: (grid.width - (grid.columnSpacing * (grid.columns - 1))) / grid.columns
 
-				Keys.onSpacePressed: if (optional)
-					selected = !selected
-
-				FocusFrame {
-					anchors {
-						bottomMargin: Style.dimens.separator_size * 2
-						leftMargin: 0
-						rightMargin: 0
-						topMargin: Style.dimens.separator_size
-					}
-				}
 				GSeparator {
 					anchors.bottom: parent.bottom
-					visible: !(isLast || ((index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
+					visible: !(delegateItem.isLast || ((delegateItem.index + 1) % Math.ceil(repeater.count / grid.columns)) === 0)
 					width: parent.width
 				}
 				FontMetrics {
@@ -85,39 +70,52 @@ ColumnLayout {
 
 					font.pixelSize: Style.dimens.text
 				}
+				GText {
+					//: LABEL DESKTOP
+					Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(delegateItem.index + 1).arg(repeater.count)
+					anchors.fill: parent
+					focusFrameVisible: false
+					leftPadding: Style.dimens.text_spacing
+					rightPadding: Style.dimens.text_spacing
+					text: delegateItem.name
+					visible: !delegateItem.optional
+
+					onFocusChanged: if (focus)
+						Utils.positionViewAtItem(this)
+
+					FocusFrame {
+						anchors {
+							bottomMargin: Style.dimens.separator_size * 2
+							leftMargin: 0
+							rightMargin: 0
+							topMargin: Style.dimens.separator_size
+						}
+					}
+				}
+				GCheckBox {
+					//: LABEL DESKTOP
+					Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(delegateItem.index + 1).arg(repeater.count)
+					anchors.fill: parent
+					checked: delegateItem.selected
+					focusFrameVisible: false
+					horizontalPadding: Style.dimens.text_spacing
+					layoutDirection: Qt.RightToLeft
+					text: delegateItem.name
+					verticalPadding: 0
+					visible: delegateItem.optional
+
+					onCheckedChanged: delegateItem.model.selected = checked
+
+					FocusFrame {
+						anchors {
+							bottomMargin: Style.dimens.separator_size * 2
+							leftMargin: 0
+							rightMargin: 0
+							topMargin: Style.dimens.separator_size
+						}
+					}
+				}
 			}
-		}
-	}
-	Component {
-		id: optionalDelegate
-
-		GCheckBox {
-			id: checkBox
-
-			//: LABEL DESKTOP
-			Accessible.name: qsTr("%1, optional right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
-			checked: modelSelected
-			focusFrameVisible: false
-			horizontalPadding: Constants.text_spacing
-			layoutDirection: Qt.RightToLeft
-			text: modelName
-			verticalPadding: 0
-
-			onCheckedChanged: updateModel(checked)
-		}
-	}
-	Component {
-		id: requiredDelegate
-
-		GText {
-			id: dataText
-
-			//: LABEL DESKTOP
-			Accessible.name: qsTr("%1, required right, element %2 of %3").arg(text).arg(modelIndex + 1).arg(repeater.count)
-			activeFocusOnTab: true
-			leftPadding: Constants.text_spacing
-			rightPadding: Constants.text_spacing
-			text: modelName
 		}
 	}
 }

@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
 
 ConfirmationPopup {

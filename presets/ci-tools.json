@@ -9,6 +9,7 @@
       "inherits": "ci-with-libs",
       "cacheVariables": {
         "UPDATE_TRANSLATIONS": "ON",
+        "UPDATE_TRANSLATIONS_ADD_DVCS": "ON",
         "UPDATE_TRANSLATIONS_NO_OBSOLETE": "ON"
       }
     },

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -75,7 +75,7 @@ void IfdMessage::markIncomplete(const QString& pLogMessage)
 {
 	Q_ASSERT(!pLogMessage.isEmpty());
 
-	qCCritical(ifd) << pLogMessage;
+	qCCritical(ifd).noquote() << pLogMessage;
 	mIncomplete = true;
 }
 

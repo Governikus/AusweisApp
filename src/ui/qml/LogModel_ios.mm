@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
 
 #include "ApplicationModel.h"
 #include "LogHandler.h"
+#include "PlatformTools.h"
 
 #import <MessageUI/MessageUI.h>
 #import <UIKit/UIKit.h>
@@ -79,8 +80,7 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 {
 	if (![MFMailComposeViewController canSendMail])
 	{
-		qCWarning(qml) << "Email not configured, cannot send mail.";
-		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Could not send log! Please configure your mail client first."));
+		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Could not mail log! Please configure your mail client first."));
 		return;
 	}
 
@@ -93,7 +93,13 @@ void LogModel::mailLog(const QString& pEmail, const QString& pSubject, const QSt
 
 	NSData* fileContent = [NSData dataWithContentsOfFile: logFile.toNSString()];
 
-	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
+	UIWindow* window = PlatformTools::getFirstWindow();
+	if (!window)
+	{
+		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Could not mail log! Connection to OS failed."));
+		return;
+	}
+	UIViewController* rootController = window.rootViewController;
 
 	auto* mailComposeController = [[MailComposeController alloc] init];
 	mailComposeController.mailComposeDelegate = mailComposeController;
@@ -121,7 +127,13 @@ void LogModel::shareLog(const QPoint popupPosition) const
 
 	UIActivityViewController* shareController = [[UIActivityViewController alloc]initWithActivityItems: shareItems applicationActivities:nil];
 
-	UIViewController* rootController = [UIApplication sharedApplication].windows[0].rootViewController;
+	UIWindow* window = PlatformTools::getFirstWindow();
+	if (!window)
+	{
+		Env::getSingleton<ApplicationModel>()->showFeedback(tr("Could not share log! Connection to OS failed."));
+		return;
+	}
+	UIViewController* rootController = window.rootViewController;
 
 	shareController.popoverPresentationController.sourceView = rootController.view;
 	shareController.popoverPresentationController.sourceRect = CGRectMake(popupPosition.x(), popupPosition.y(), 0, 0);

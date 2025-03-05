@@ -1,54 +1,40 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQml.Models
 import Governikus.Global
-import Governikus.View
+import Governikus.MultiInfoView
 import Governikus.TitleBar
 import Governikus.Type
 import Governikus.UpdateView
+import Governikus.View
 
 SectionPage {
-	id: sectionPage
+	id: root
 
-	enum SubView {
-		None,
-		ConnectSacView,
-		AppUpdateView
+	//: LABEL DESKTOP
+	title: qsTr("Settings")
+
+	titleBarSettings: TitleBarSettings {
+		navigationAction: NavigationAction.Back
+
+		onNavigationActionClicked: root.pop()
 	}
 
-	titleBarAction: TitleBarAction {
-		id: titleBarAction
-
-		//: LABEL DESKTOP
-		text: qsTr("Settings")
-
-		onClicked: {
-			d.view = SettingsView.SubView.None;
-		}
-	}
-
-	Keys.onEscapePressed: event => {
-		if (d.view === SettingsView.SubView.None) {
-			event.accepted = false;
-			return;
-		}
-		d.view = SettingsView.SubView.None;
+	Keys.onPressed: event => {
+		tabbedPane.handleKeyPress(event.key);
 	}
 
 	Connections {
 		function onFireAppUpdateDataChanged() {
-			d.view = SettingsView.SubView.AppUpdateView;
+			root.push(updateView);
 		}
 
 		target: SettingsModel
-	}
-	QtObject {
-		id: d
-
-		property int precedingView
-		property int view: SettingsView.SubView.None
 	}
 	TabbedPane {
 		id: tabbedPane
@@ -74,7 +60,6 @@ SectionPage {
 			}
 			return model;
 		}
-		visible: d.view === SettingsView.SubView.None
 
 		contentObjectModel: ObjectModel {
 			Component {
@@ -85,11 +70,35 @@ SectionPage {
 				RemoteReaderView {
 					onPairDevice: pDeviceId => {
 						if (RemoteServiceModel.rememberServer(pDeviceId)) {
-							d.view = SettingsView.SubView.ConnectSacView;
-							updateTitleBarActions();
+							root.push(connectSacView);
 						}
 					}
-					onUnpairDevice: pDeviceId => RemoteServiceModel.forgetDevice(pDeviceId)
+					onShowNoSacFoundInfo: root.push(noSacFoundInfo)
+
+					Component {
+						id: noSacFoundInfo
+
+						MultiInfoView {
+							progress: root.progress
+
+							infoContent: MultiInfoData {
+								contentType: MultiInfoData.NO_SAC_FOUND
+							}
+							titleBarSettings: TitleBarSettings {
+								navigationAction: NavigationAction.Back
+
+								onNavigationActionClicked: root.pop()
+							}
+						}
+					}
+					Component {
+						id: connectSacView
+
+						ConnectSacView {
+							onPairingFailed: root.pop()
+							onPairingSuccessful: root.pop()
+						}
+					}
 				}
 			}
 			Component {
@@ -124,19 +133,11 @@ SectionPage {
 			}
 		}
 	}
-	UpdateView {
-		anchors.fill: parent
-		visible: d.view === SettingsView.SubView.AppUpdateView
+	Component {
+		id: updateView
 
-		onLeaveView: d.view = SettingsView.SubView.None
-	}
-	ConnectSacView {
-		id: connectSacView
-
-		rootEnabled: titleBarAction.rootEnabled
-		visible: d.view === SettingsView.SubView.ConnectSacView
-
-		onPairingFailed: d.view = SettingsView.SubView.None
-		onPairingSuccessful: d.view = SettingsView.SubView.None
+		UpdateView {
+			onLeaveView: root.pop()
+		}
 	}
 }

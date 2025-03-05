@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Controller of the whole program.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -17,7 +13,9 @@
 #include <QNetworkProxy>
 #include <QSharedPointer>
 
+
 class test_AppController;
+
 
 namespace governikus
 {
@@ -70,15 +68,16 @@ class AppController final
 		void fireTranslationChanged();
 		void fireProxyAuthenticationRequired(const QNetworkProxy& pProxy, QAuthenticator* pAuthenticator);
 		void fireApplicationActivated();
+		void fireSystemSettingsChanged();
 		void fireUiDomination(const UiPlugin* pUi, const QString& pInformation, bool pAccepted);
 		void fireUiDominationReleased();
 
 	private Q_SLOTS:
 		void doShutdown(int pExitCode = EXIT_SUCCESS);
-		void onUiPlugin(const UiPlugin* pPlugin);
+		void onUiPlugin(const UiPlugin* pPlugin) const;
 		void onWorkflowFinished();
 		void onWorkflowRequested(const QSharedPointer<WorkflowRequest>& pRequest);
-		void onCloseReminderFinished(bool pDontRemindAgain);
+		void onCloseReminderFinished(bool pDontRemindAgain) const;
 		void onLanguageChanged();
 		void onUiDominationRequested(const UiPlugin* pUi, const QString& pInformation);
 		void onUiDominationRelease();

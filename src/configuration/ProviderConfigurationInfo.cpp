@@ -1,12 +1,10 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ProviderConfigurationInfo.h"
 
 #include "FileProvider.h"
-
-#include <QOperatingSystemVersion>
 
 
 using namespace governikus;
@@ -42,33 +40,6 @@ bool ProviderConfigurationInfo::operator ==(const ProviderConfigurationInfo& pOt
 bool ProviderConfigurationInfo::operator !=(const ProviderConfigurationInfo& pOther) const
 {
 	return !(*d == *pOther.d);
-}
-
-
-bool ProviderConfigurationInfo::matchWithSubjectUrl(const QString& pSubjectUrl) const
-{
-	if (pSubjectUrl.isEmpty())
-	{
-		return false;
-	}
-	const QString subjectUrlHost = QUrl(pSubjectUrl).host();
-
-	// Check provider address host.
-	if (!getAddress().isEmpty() && QUrl(getAddress()).host() == subjectUrlHost)
-	{
-		return true;
-	}
-
-	// Check subject urls.
-	for (const auto& subjectUrl : getSubjectUrls())
-	{
-		if (!subjectUrl.isEmpty() && QUrl(subjectUrl).host() == subjectUrlHost)
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 
@@ -149,18 +120,6 @@ QSharedPointer<UpdatableFile> ProviderConfigurationInfo::getImage() const
 {
 	const QString defaultFile = getDefaultFile(QStringLiteral("_bg"));
 	return Env::getSingleton<FileProvider>()->getFile(QStringLiteral("provider"), d->mParams.mImage, defaultFile);
-}
-
-
-const QStringList& ProviderConfigurationInfo::getSubjectUrls() const
-{
-	return d->mParams.mSubjectUrls;
-}
-
-
-const QString& ProviderConfigurationInfo::getSubjectUrlInfo() const
-{
-	return d->mParams.mSubjectUrlInfo;
 }
 
 

@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Class represents the retrieved PAOS EAC1InputType.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -49,6 +45,7 @@ class DIDAuthenticateEAC1
 		[[nodiscard]] const QByteArray& getCertificateDescriptionAsBinary() const;
 		[[nodiscard]] const ConnectionHandle& getConnectionHandle() const;
 		[[nodiscard]] const QList<QSharedPointer<const CVCertificate>>& getCvCertificates() const;
+		[[nodiscard]] QList<QSharedPointer<const CVCertificate>> getCvCertificates(const QList<AccessRole>& pAccessRoles) const;
 		[[nodiscard]] const QString& getDidName() const;
 		[[nodiscard]] const QSharedPointer<const CHAT>& getOptionalChat() const;
 		[[nodiscard]] const QSharedPointer<const CHAT>& getRequiredChat() const;

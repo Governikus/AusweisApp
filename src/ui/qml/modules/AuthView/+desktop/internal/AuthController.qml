@@ -1,40 +1,81 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
-import Governikus.View
-import Governikus.Type
 
-Controller {
-	id: controller
+pragma ComponentBehavior: Bound
+
+import QtQuick
+
+import Governikus.Animations
+import Governikus.EnterPasswordView
+import Governikus.MultiInfoView
+import Governikus.ProgressView
+import Governikus.ResultView
+import Governikus.SettingsView
+import Governikus.Style
+import Governikus.TitleBar
+import Governikus.Type
+import Governikus.Workflow
+
+ProgressView {
+	id: root
 
 	enum WorkflowStates {
 		Initial,
+		Progress,
 		Reader,
-		Update,
 		Password,
 		Processing
 	}
 
+	readonly property bool isInitialState: workflowState === AuthController.WorkflowStates.Initial
 	readonly property alias networkInterfaceActive: connectivityManager.networkInterfaceActive
+	property bool startedByOnboarding: false
 	property bool workflowProgressVisible: false
 	property int workflowState: 0
 
+	signal backToSelfAuthView
+	signal backToStartPage(bool pSuccess)
+	signal changeTransportPin
+
+	function continueWorkflowIfComfortReader() {
+		if (!AuthModel.isBasicReader) {
+			AuthModel.continueWorkflow();
+		}
+	}
+	function displayAuthWorkflow() {
+		if (!workflowActive) {
+			push(authWorkflow);
+		}
+	}
+	function displayInputError() {
+		push(inputErrorView, {
+			returnCode: AuthModel.lastReturnCode,
+			inputError: NumberModel.inputError,
+			passwordType: NumberModel.passwordType
+		});
+		continueWorkflowIfComfortReader();
+	}
+	function displaySuccessView(pPasswordType) {
+		push(inputSuccessView, {
+			passwordType: pPasswordType
+		});
+		continueWorkflowIfComfortReader();
+	}
 	function processStateChange(pState) {
 		switch (pState) {
 		case "StateGetTcToken":
-			controller.workflowState = AuthController.WorkflowStates.Initial;
-			if (!networkInterfaceActive) {
-				controller.nextView(AuthView.SubViews.Connectivity);
+			if (connectivityManager.networkInterfaceActive) {
+				pop(root);
+				setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Initial);
 			} else {
-				controller.nextView(AuthView.SubViews.Progress);
-				AuthModel.continueWorkflow();
+				push(checkConnectivityView);
 			}
 			break;
 		case "StatePreVerification":
 			if (!NumberModel.isCanAllowedMode && SettingsModel.transportPinReminder) {
 				SettingsModel.transportPinReminder = false;
-				controller.nextView(AuthView.SubViews.TransportPinReminder);
+				push(transportPinReminderView);
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -44,34 +85,52 @@ Controller {
 				ChatModel.transferAccessRights();
 				AuthModel.continueWorkflow();
 			} else {
-				controller.nextView(AuthView.SubViews.AccessRights);
+				push(editRights);
 			}
 			AuthModel.setInitialPluginType();
 			break;
 		case "StateSelectReader":
-			controller.nextView(AuthView.SubViews.Workflow);
+			displayAuthWorkflow();
 			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Reader);
 			break;
-		case "StateHandleRetryCounter":
-			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Update);
+		case "StatePreparePace":
+			pop(root);
+			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
 			break;
 		case "StateEnterPacePassword":
-			controller.workflowState = AuthController.WorkflowStates.Password;
-			if (AuthModel.isBasicReader) {
-				controller.nextView(AuthView.SubViews.Password);
-			} else {
-				AuthModel.continueWorkflow();
+			if (AuthModel.lastReturnCode === CardReturnCode.OK_CAN) {
+				displaySuccessView(NumberModel.PasswordType.CAN);
+				return;
+			} else if (AuthModel.lastReturnCode === CardReturnCode.OK_PUK) {
+				displaySuccessView(NumberModel.PasswordType.PUK);
+				return;
 			}
+			if (NumberModel.inputError !== "") {
+				displayInputError();
+				NumberModel.resetInputError();
+				return;
+			}
+			if (NumberModel.initialInputError !== "") {
+				push(inputErrorView, {
+					returnCode: NumberModel.passwordType === NumberModel.PasswordType.CAN ? CardReturnCode.INVALID_CAN : CardReturnCode.INVALID_PUK,
+					inputError: NumberModel.initialInputError,
+					passwordType: NumberModel.passwordType,
+					titleVisible: false
+				});
+				NumberModel.setInitialInputErrorShown();
+				return;
+			}
+			setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Password);
 			break;
 		case "StateUnfortunateCardPosition":
-			controller.nextView(AuthView.SubViews.CardPosition);
+			push(cardPositionView);
 			break;
 		case "StateSendDIDAuthenticateResponseEAC1":
 			if (AuthModel.isCancellationByUser()) {
-				controller.nextView(AuthView.SubViews.Aborting);
+				push(authAbortedProgressView);
 			} else {
-				controller.workflowProgressVisible = true;
-				controller.nextView(AuthView.SubViews.Progress);
+				workflowProgressVisible = true;
+				pop(root);
 			}
 			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
 			break;
@@ -83,7 +142,7 @@ Controller {
 			break;
 		case "StateRedirectBrowser":
 			if (!AuthModel.error) {
-				controller.nextView(AuthView.SubViews.RedirectToProvider);
+				push(redirectToProvider);
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -91,41 +150,89 @@ Controller {
 		case "FinalState":
 			if (AuthModel.error) {
 				if (AuthModel.shouldSkipResultView()) {
-					controller.nextView(AuthView.SubViews.ReturnToMain);
+					pop(root);
 					AuthModel.continueWorkflow();
+					if (AuthModel.changeTransportPin) {
+						changeTransportPin();
+					} else {
+						backToStartPage(false);
+					}
 				} else {
 					showRemoveCardFeedback(AuthModel, false);
-					controller.nextView(AuthView.SubViews.Result);
+					push(authResult);
 				}
 			} else if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION) {
-				controller.nextView(AuthView.SubViews.Data);
+				push(selfAuthData);
 			} else {
-				controller.nextView(AuthView.SubViews.ReturnToMain);
+				pop(root);
+				backToStartPage(AuthModel.isCancellationByUser());
 				AuthModel.continueWorkflow();
 			}
-			controller.workflowProgressVisible = false;
+			workflowProgressVisible = false;
 			break;
 		default:
 			AuthModel.continueWorkflow();
 		}
 	}
+	function rerunCurrentState() {
+		processStateChange(AuthModel.currentState);
+	}
 	function setAuthWorkflowStateAndContinue(pState) {
-		controller.workflowState = pState;
+		workflowState = pState;
 		AuthModel.continueWorkflow();
 	}
+	function setAuthWorkflowStateAndRequestInput(pState) {
+		workflowState = pState;
+		if (AuthModel.isBasicReader) {
+			push(enterPasswordView);
+		} else {
+			displayAuthWorkflow();
+			AuthModel.continueWorkflow();
+		}
+	}
+
+	//: LABEL DESKTOP
+	headline: (AuthModel.error ? qsTr("Cancel authentication process") :
+		//: INFO DESKTOP Header of the progress status message during the authentication process.
+		isInitialState ? qsTr("Acquiring provider certificate") :
+		//: INFO DESKTOP Header of the progress status message during the authentication process.
+		qsTr("Authentication in progress"))
+	progressBarVisible: workflowProgressVisible
+	progressText: AuthModel.progressMessage
+	progressValue: AuthModel.progressValue
+	text: {
+		if (isInitialState) {
+			//: INFO DESKTOP Generic status message during the authentication process.
+			return qsTr("Please wait a moment.");
+		}
+		if (AuthModel.isBasicReader) {
+			//: INFO DESKTOP Second line text if a basic card reader is used and background communication with the card/server is running. Is not actually visible since the basic reader password handling is done by EnterPasswordView.
+			return qsTr("Please do not move the ID card.");
+		}
+		if (workflowState === AuthController.WorkflowStates.Processing || workflowState === AuthController.WorkflowStates.Password) {
+			//: INFO DESKTOP The card reader requests the user's attention.
+			return qsTr("Please observe the display of your card reader.");
+		}
+
+		//: INFO DESKTOP Generic status message during the authentication process.
+		return qsTr("Please wait a moment.");
+	}
+
+	//: LABEL DESKTOP
+	title: qsTr("Identify")
+	titleBarSettings: cancelNavigation
 
 	Component.onCompleted: if (AuthModel.currentState === "StateParseTcTokenUrl")
-		processStateChange(AuthModel.currentState)
+		rerunCurrentState()
 
+	MultiInfoData {
+		id: infoData
+
+		contentType: fromPasswordType(NumberModel.passwordType, NumberModel.isCanAllowedMode)
+	}
 	Connections {
 		function onFireStateEntered(pState) {
-			processStateChange(pState);
-		}
-		function onFireWorkflowFinished() {
-			connectivityManager.watching = false;
-		}
-		function onFireWorkflowStarted() {
-			connectivityManager.watching = true;
+			root.processStateChange(pState);
 		}
 
 		target: AuthModel
@@ -133,9 +240,290 @@ Controller {
 	ConnectivityManager {
 		id: connectivityManager
 
+		watching: true
+
 		onNetworkInterfaceActiveChanged: {
 			if (AuthModel.currentState === "StateGetTcToken")
-				processStateChange(AuthModel.currentState);
+				root.rerunCurrentState();
 		}
+	}
+	Component {
+		id: checkConnectivityView
+
+		ProgressView {
+
+			//: INFO DESKTOP Header of the message that no network connection is present during the authentication procedure.
+			headline: qsTr("No network connectivity")
+			icon: "qrc:///images/no_internet.svg"
+			//: INFO DESKTOP Content of the message that no network connection is present during the authentication procedure.
+			text: qsTr("Please establish an internet connection.")
+			tintColor: Style.color.image
+			title: root.title
+			titleBarSettings: cancelNavigation
+		}
+	}
+	Component {
+		id: transportPinReminderView
+
+		TransportPinReminderView {
+			title: root.title
+
+			onCancel: AuthModel.cancelWorkflow()
+			onPinKnown: {
+				pop();
+				AuthModel.continueWorkflow();
+			}
+			onTransportPinKnown: {
+				pop();
+				AuthModel.cancelWorkflowToChangeTransportPin();
+			}
+		}
+	}
+	Component {
+		id: editRights
+
+		EditRights {
+			title: root.title
+			titleBarSettings: cancelNavigation
+
+			onRightsAccepted: {
+				ChatModel.transferAccessRights();
+				AuthModel.continueWorkflow();
+				pop();
+			}
+		}
+	}
+	Component {
+		id: authWorkflow
+
+		GeneralWorkflow {
+			title: root.title
+			waitingFor: switch (root.workflowState) {
+			case AuthController.WorkflowStates.Reader:
+				return Workflow.WaitingFor.Reader;
+			case AuthController.WorkflowStates.Processing:
+				return AuthModel.isBasicReader ? Workflow.WaitingFor.None : Workflow.WaitingFor.Password;
+			case AuthController.WorkflowStates.Password:
+				return Workflow.WaitingFor.Password;
+			default:
+				return Workflow.WaitingFor.None;
+			}
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Cancel
+				navigationEnabled: AuthModel.isBasicReader
+				showSettings: true
+
+				onNavigationActionClicked: AuthModel.cancelWorkflow()
+				onSettingsClicked: root.push(settingsView)
+			}
+
+			onSettingsRequested: root.push(settingsView)
+
+			Component {
+				id: settingsView
+
+				TabbedReaderView {
+					onLeaveView: pop()
+				}
+			}
+		}
+	}
+	Component {
+		id: enterPasswordView
+
+		EnterPasswordView {
+			accessibleContinueText: passwordType === NumberModel.PasswordType.PIN || passwordType === NumberModel.PasswordType.SMART_PIN || (passwordType === NumberModel.PasswordType.CAN && NumberModel.isCanAllowedMode) ? qsTr("Authenticate with provider") : ""
+			moreInformationText: infoData.linkText
+			passwordType: NumberModel.passwordType
+			title: root.title
+			titleBarSettings: cancelNavigation
+
+			onPasswordEntered: {
+				pop();
+				AuthModel.continueWorkflow();
+			}
+			onRequestPasswordInfo: push(multiInfoView)
+		}
+	}
+	Component {
+		id: inputErrorView
+
+		InputErrorView {
+			title: root.title
+			titleBarSettings: cancelNavigation
+
+			onContinueClicked: {
+				pop(root);
+				if (!AuthModel.isBasicReader) {
+					root.displayAuthWorkflow();
+				}
+				root.rerunCurrentState();
+			}
+			onPasswordInfoRequested: push(multiInfoView)
+		}
+	}
+	Component {
+		id: multiInfoView
+
+		MultiInfoView {
+			infoContent: infoData
+			titleBarSettings: backNavigation
+
+			onAbortCurrentWorkflow: AuthModel.cancelWorkflow()
+			onLeaveView: pop()
+		}
+	}
+	Component {
+		id: inputSuccessView
+
+		InputSuccessView {
+			passwordType: NumberModel.PasswordType.PUK
+			title: root.title
+			titleBarSettings: cancelNavigation
+
+			onContinueClicked: {
+				pop();
+				root.setAuthWorkflowStateAndRequestInput(AuthController.WorkflowStates.Password);
+			}
+		}
+	}
+	Component {
+		id: cardPositionView
+
+		ResultView {
+			animationSymbol: Symbol.Type.ERROR
+			animationType: AnimationLoader.NFC_RESULT
+			text: AuthModel.isRemoteReader ?
+			//: INFO DESKTOP The NFC signal is weak or unstable, the user is asked to change the card's position to (hopefully) reduce the distance to the NFC chip.
+			qsTr("Weak NFC signal. Please\n change the card position\n remove the mobile phone case (if present)\n connect the smartphone with a charging cable") :
+			//: INFO DESKTOP The NFC signal is weak or unstable, while using a stationary card reader.
+			qsTr("Weak NFC signal. Please\n make sure the card is positioned correctly on the reader\n do note move the card while it is being accessed")
+			title: root.title
+			titleBarSettings: cancelNavigation
+
+			onLeaveView: {
+				pop();
+				AuthModel.continueWorkflow();
+			}
+		}
+	}
+	Component {
+		id: authAbortedProgressView
+
+		ProgressView {
+
+			//: INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider
+			headline: qsTr("Aborting process and informing the service provider")
+			progressBarVisible: false
+			text: {
+				if (connectivityManager.networkInterfaceActive) {
+					//: INFO DESKTOP Information message about cancellation process with present network connectivity
+					return qsTr("Please wait a moment.");
+				}
+				//: INFO DESKTOP Information message about cancellation process without working network connectivity
+				return qsTr("Network problems detected, trying to reach server within 30 seconds.");
+			}
+			title: root.title
+			titleBarSettings: disabledCancelNavigation
+		}
+	}
+	Component {
+		id: selfAuthData
+
+		SelfAuthenticationData {
+			okButtonText: root.startedByOnboarding ?
+			//: LABEL ANDROID IOS
+			qsTr("Back to setup") :
+			//: LABEL ANDROID IOS
+			qsTr("Back to start page")
+			title: root.title
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Back
+
+				onNavigationActionClicked: {
+					root.pop();
+					AuthModel.continueWorkflow();
+					root.backToSelfAuthView();
+				}
+			}
+
+			onLeaveView: {
+				pop();
+				AuthModel.continueWorkflow();
+				root.backToStartPage(true);
+			}
+		}
+	}
+	Component {
+		id: redirectToProvider
+
+		RedirectView {
+			title: root.title
+			titleBarSettings: disabledCancelNavigation
+
+			onLeaveView: {
+				pop();
+				AuthModel.continueWorkflow();
+			}
+		}
+	}
+	Component {
+		id: authResult
+
+		ResultView {
+			animation: AuthModel.statusCodeAnimation
+			buttonIcon: AuthModel.resultViewButtonIcon
+			buttonText: root.startedByOnboarding ?
+			//: LABEL ANDROID IOS
+			qsTr("Back to setup") : AuthModel.resultViewButtonText
+			header: AuthModel.resultHeader
+			hintButtonText: AuthModel.statusHintActionText
+			hintText: AuthModel.statusHintText
+			hintTitle: AuthModel.statusHintTitle
+			mailButtonVisible: AuthModel.errorIsMasked
+			popupText: AuthModel.errorText
+			//: INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.
+			popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCodeString)
+			subheader: AuthModel.errorHeader
+			text: AuthModel.resultString
+			title: root.title
+			titleBarSettings: disabledCancelNavigation
+
+			onEmailButtonPressed: AuthModel.sendResultMail()
+			onHintClicked: AuthModel.invokeStatusHintAction()
+			onLeaveView: {
+				if (AuthModel.resultViewButtonLink !== "") {
+					Qt.openUrlExternally(AuthModel.resultViewButtonLink);
+				}
+				root.backToStartPage(false);
+				AuthModel.continueWorkflow();
+			}
+		}
+	}
+	TitleBarSettings {
+		id: disabledCancelNavigation
+
+		navigationAction: NavigationAction.Cancel
+		navigationEnabled: false
+	}
+	TitleBarSettings {
+		id: cancelNavigation
+
+		navigationAction: NavigationAction.Cancel
+		navigationEnabled: AuthModel.isBasicReader
+
+		onNavigationActionClicked: {
+			root.pop(root);
+			AuthModel.cancelWorkflow();
+		}
+	}
+	TitleBarSettings {
+		id: backNavigation
+
+		navigationAction: NavigationAction.Back
+
+		onNavigationActionClicked: root.pop()
 	}
 }

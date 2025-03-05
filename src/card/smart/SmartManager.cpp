@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SmartManager.h"
@@ -13,7 +13,6 @@
 #endif
 
 #include <QLoggingCategory>
-#include <QOperatingSystemVersion>
 
 #ifdef Q_OS_ANDROID
 	#include <QJniEnvironment>
@@ -79,12 +78,6 @@ SmartManager::SmartManager()
 	}
 
 #ifdef Q_OS_ANDROID
-	if (QOperatingSystemVersion::current() < QOperatingSystemVersion(QOperatingSystemVersion::Android, 9))
-	{
-		qCDebug(card_smart) << "EidAppletService is not available on:" << QOperatingSystemVersion::current();
-		return;
-	}
-
 	QJniEnvironment env;
 	QJniObject context = QNativeInterface::QAndroidApplication::context();
 

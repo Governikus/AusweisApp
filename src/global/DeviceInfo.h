@@ -1,15 +1,11 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implements a wrapper for different APIs to get
- * device information like android device name.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include <QString>
+
 
 namespace governikus
 {

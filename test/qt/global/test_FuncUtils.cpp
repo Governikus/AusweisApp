@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref FuncUtils
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FuncUtils.h"
@@ -74,8 +70,8 @@ class test_FuncUtils
 		void testMapWithNonVoid()
 		{
 			const QList<QString> readerNamesVector = map<Reader, QString>([](const Reader& r){
-					return r.getName();
-				}, mReaders);
+						return r.getName();
+					}, mReaders);
 
 			QCOMPARE(readerNamesVector.size(), 3);
 			QCOMPARE(readerNamesVector.at(0), QStringLiteral("NFC Reader"));
@@ -83,8 +79,8 @@ class test_FuncUtils
 			QCOMPARE(readerNamesVector.at(2), QStringLiteral("PCSC Reader"));
 
 			const QList<QString> readerNamesList = map<Reader, QString>([](const Reader& r){
-					return r.getName();
-				}, mReaders);
+						return r.getName();
+					}, mReaders);
 
 			QCOMPARE(readerNamesList.size(), 3);
 			QCOMPARE(readerNamesList.at(0), QStringLiteral("NFC Reader"));
@@ -96,8 +92,8 @@ class test_FuncUtils
 		void testFilter()
 		{
 			const QList<Reader> connectedReaders = filter<Reader>([](const Reader& r){
-					return r.isConnected();
-				}, mReaders);
+						return r.isConnected();
+					}, mReaders);
 
 			QCOMPARE(connectedReaders.size(), 2);
 			QCOMPARE(connectedReaders.at(0).getName(), QStringLiteral("NFC Reader"));

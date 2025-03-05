@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "WebSocketChannel.h"
@@ -81,18 +81,18 @@ class test_WebSocketChannel
 		{
 			mServer.reset(new QWebSocketServer(QStringLiteral("test_WebSocketChannel"), QWebSocketServer::SecureMode));
 			connect(mServer.data(), &QWebSocketServer::newConnection, this, [this]{
-					QWebSocket* socket = mServer->nextPendingConnection();
-					if (socket)
-					{
-						mChannel.reset(new WebSocketChannel(QSharedPointer<QWebSocket>(socket)));
-					}
-				});
+						QWebSocket* socket = mServer->nextPendingConnection();
+						if (socket)
+						{
+							mChannel.reset(new WebSocketChannel(QSharedPointer<QWebSocket>(socket)));
+						}
+					});
 
 			mClient.reset(new QWebSocket());
 			connect(mClient.data(), &QWebSocket::sslErrors, this, [this](const QList<QSslError>& pErrors) {
-					Q_UNUSED(pErrors)
-					mClient->ignoreSslErrors();
-				});
+						Q_UNUSED(pErrors)
+						mClient->ignoreSslErrors();
+					});
 		}
 
 

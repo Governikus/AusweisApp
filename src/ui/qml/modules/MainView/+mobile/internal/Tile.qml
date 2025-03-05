@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -12,8 +12,8 @@ AbstractButton {
 
 	readonly property bool flowVertically: height > topPadding + image.implicitHeight + layout.spacing + text.effectiveMaxLinesHeight + bottomPadding
 	property alias image: image.source
-	readonly property int insetBaseValue: Constants.component_spacing
-	readonly property int paddingBaseValue: Constants.component_spacing
+	readonly property int insetBaseValue: Style.dimens.pane_spacing
+	readonly property int paddingBaseValue: Style.dimens.pane_spacing
 	property alias title: text.text
 
 	Accessible.name: title
@@ -42,7 +42,7 @@ AbstractButton {
 	contentItem: GridLayout {
 		id: layout
 
-		readonly property int spacing: Constants.component_spacing
+		readonly property int spacing: Style.dimens.pane_spacing
 
 		columnSpacing: spacing
 		columns: 3
@@ -61,10 +61,11 @@ AbstractButton {
 			id: text
 
 			Accessible.ignored: true
+			activeFocusOnTab: false
 			elide: Text.ElideRight
 			horizontalAlignment: Text.AlignLeft
 			maximumLineCount: 3
-			rightPadding: root.flowVertically ? paddingBaseValue : 0
+			rightPadding: root.flowVertically ? root.paddingBaseValue : 0
 			textStyle: Style.text.tile
 		}
 		GSpacer {

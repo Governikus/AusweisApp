@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
@@ -20,9 +20,9 @@
 	#include <QScopeGuard>
 
 	#define SDK_MODE(pEnable)\
-	const auto sdkMode = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();\
-	Env::getSingleton<VolatileSettings>()->setUsedAsSDK(pEnable);\
-	const auto sdkModeGuard = qScopeGuard([sdkMode] {\
+			const auto sdkMode = Env::getSingleton<VolatileSettings>()->isUsedAsSDK();\
+			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(pEnable);\
+			const auto sdkModeGuard = qScopeGuard([sdkMode] {\
 			Env::getSingleton<VolatileSettings>()->setUsedAsSDK(sdkMode);\
 		})
 
@@ -69,6 +69,7 @@ class VolatileSettings
 		bool mHandleInterrupt;
 		Messages mMessages;
 		ulong mDelay;
+		bool mOnboardingShown;
 
 	public:
 		[[nodiscard]] bool isUsedAsSDK() const;
@@ -85,6 +86,9 @@ class VolatileSettings
 
 		void setDelay(ulong pDelay = 0);
 		[[nodiscard]] ulong getDelay() const;
+
+		[[nodiscard]] bool onboardingShown() const;
+		void setOnboardingShown(bool pOnboardingShown);
 
 	Q_SIGNALS:
 		void fireUsedAsSdkChanged();

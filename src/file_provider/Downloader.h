@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Generic class that allows to download files from a server to the
- *        local application cache.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,6 +13,7 @@
 #include <QSharedPointer>
 #include <QSslCipher>
 #include <QUrl>
+
 
 namespace governikus
 {

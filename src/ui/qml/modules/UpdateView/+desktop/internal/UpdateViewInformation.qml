@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.Style
 import Governikus.Type
-import Governikus.View
+import Governikus.Style
 
 ColumnLayout {
 	id: root
@@ -20,93 +21,49 @@ ColumnLayout {
 
 	GridLayout {
 		Layout.fillWidth: true
-		columnSpacing: Constants.pane_spacing
+		columnSpacing: Style.dimens.pane_spacing
 		columns: 2
 
 		GText {
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP Information about the available, new version number.
 			text: qsTr("New version:")
-
-			FocusFrame {
-			}
 		}
 		GText {
 			id: textVersion
 
-			activeFocusOnTab: true
-
-			FocusFrame {
-			}
 		}
 		GText {
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP Date when the available update was released.
 			text: qsTr("Release date:")
-
-			FocusFrame {
-			}
 		}
 		GText {
-			activeFocusOnTab: true
-			text: releaseDate.toLocaleDateString(Qt.locale(SettingsModel.language))
-
-			FocusFrame {
-			}
+			text: root.releaseDate.toLocaleDateString(Qt.locale(SettingsModel.language))
 		}
 		GText {
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP Download size of the available update in megabyte.
 			text: qsTr("Download size:")
-
-			FocusFrame {
-			}
 		}
 		GText {
-			activeFocusOnTab: true
-			text: "%1 MiB".arg((downloadSize / 1024576).toLocaleString(Qt.locale(SettingsModel.language), "f", 1))
-
-			FocusFrame {
-			}
+			text: "%1 MiB".arg((root.downloadSize / 1024576).toLocaleString(Qt.locale(SettingsModel.language), "f", 1))
 		}
 		GText {
-			activeFocusOnTab: true
 
 			//: LABEL DESKTOP Plaintext link to the update download.
 			text: qsTr("Download link:")
-			visible: downloadUrl !== ""
-
-			FocusFrame {
-			}
+			visible: root.downloadUrl !== ""
 		}
 		GText {
-			activeFocusOnTab: true
-			text: "<a href=\"%1\">%1</a>".arg(downloadUrl)
-			visible: downloadUrl !== ""
-
-			FocusFrame {
-			}
+			text: "<a href=\"%1\">%1</a>".arg(root.downloadUrl)
+			visible: root.downloadUrl !== ""
 		}
 		GText {
-			activeFocusOnTab: true
-
 			//: LABEL DESKTOP Link to download checksum to verify the downloaded update file.
 			text: qsTr("Checksum link:")
-			visible: checksumUrl !== ""
-
-			FocusFrame {
-			}
+			visible: root.checksumUrl !== ""
 		}
 		GText {
-			activeFocusOnTab: true
-			text: "<a href=\"%1\">%1</a>".arg(checksumUrl)
-			visible: checksumUrl !== ""
-
-			FocusFrame {
-			}
+			text: "<a href=\"%1\">%1</a>".arg(root.checksumUrl)
+			visible: root.checksumUrl !== ""
 		}
 	}
 }

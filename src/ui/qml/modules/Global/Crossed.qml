@@ -1,10 +1,17 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
+
+import Governikus.Animations
 import Governikus.Style
 
 Item {
+	id: root
+
 	opacity: 0.5
 
 	QtObject {
@@ -14,9 +21,9 @@ Item {
 		readonly property double b: halfHeight - (gap * 2)
 		readonly property double c: Math.sqrt(a * a + b * b)
 		readonly property int gap: 20
-		readonly property double halfHeight: parent.height / 2
-		readonly property double halfWidth: parent.width / 2
-		readonly property double rotate: Math.atan(parent.height / parent.width) * 180 / Math.PI
+		readonly property double halfHeight: root.height / 2
+		readonly property double halfWidth: root.width / 2
+		readonly property double rotate: Math.atan(root.height / root.width) * 180 / Math.PI
 	}
 	Line {
 		x: d.halfWidth + d.gap
@@ -51,16 +58,18 @@ Item {
 			angle: -d.rotate + 180
 		}
 	}
-	TintableIcon {
+	StatusAnimation {
 		id: warning
 
-		anchors.bottom: parent.bottom
-		anchors.bottomMargin: d.gap
-		anchors.left: parent.left
-		anchors.leftMargin: d.gap
-		source: "qrc:///images/status_warning.svg"
 		sourceSize.height: Style.dimens.huge_icon_size - 10
-		tintColor: Style.color.warning
+		symbol.type: Symbol.Type.WARNING
+
+		anchors {
+			bottom: parent.bottom
+			bottomMargin: d.gap
+			left: parent.left
+			leftMargin: d.gap
+		}
 	}
 
 	component Line: Rectangle {

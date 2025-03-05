@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModel.h"
@@ -81,11 +81,13 @@ QString RemoteDeviceModel::getStatus(const RemoteDeviceModelEntry& pRemoteDevice
 		return tr("Not connected");
 	}
 
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
 	if (pRemoteDeviceModelEntry.isPairing())
 	{
 		//: LABEL ALL_PLATFORMS
 		return tr("Click to pair");
 	}
+#endif
 
 	if (pRemoteDeviceModelEntry.isPaired())
 	{
@@ -336,7 +338,7 @@ QSharedPointer<IfdListEntry> RemoteDeviceModel::getRemoteDeviceListEntry(const Q
 }
 
 
-QSharedPointer<IfdListEntry> RemoteDeviceModel::getRemoteDeviceListEntry(const QString& pDeviceId) const
+QSharedPointer<IfdListEntry> RemoteDeviceModel::getRemoteDeviceListEntry(const QByteArray& pDeviceId) const
 {
 	for (const auto& device : mAllRemoteReaders)
 	{
@@ -382,27 +384,34 @@ bool RemoteDeviceModel::isSupported(const QModelIndex& pIndex) const
 }
 
 
-void RemoteDeviceModel::setDetectRemoteDevices(bool pNewStatus)
+void RemoteDeviceModel::startDetection()
 {
-	if (mIsDetectingRemoteDevices == pNewStatus)
+	if (mIsDetectingRemoteDevices)
 	{
 		return;
 	}
 
-	mIsDetectingRemoteDevices = pNewStatus;
+	mIsDetectingRemoteDevices = true;
+	qDebug() << "Starting Remote Device Detection";
+	Env::getSingleton<RemoteIfdClient>()->startDetection();
+	onUpdateReaderList();
+}
 
-	if (mIsDetectingRemoteDevices)
+
+void RemoteDeviceModel::stopDetection(bool pStopScan)
+{
+	if (!mIsDetectingRemoteDevices)
 	{
-		qDebug() << "Starting Remote Device Detection";
-		Env::getSingleton<RemoteIfdClient>()->startDetection();
+		return;
 	}
-	else
+
+	mIsDetectingRemoteDevices = false;
+	if (pStopScan)
 	{
 		qDebug() << "Stopping Remote Device Detection";
 		Env::getSingleton<RemoteIfdClient>()->stopDetection();
+		onUpdateReaderList();
 	}
-
-	onUpdateReaderList();
 }
 
 
@@ -422,6 +431,9 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 
 
 void RemoteDeviceModel::onApplicationStateChanged(bool pIsAppInForeground)
+#ifndef Q_OS_IOS
+const
+#endif
 {
 	if (!mIsDetectingRemoteDevices)
 	{
@@ -474,13 +486,13 @@ void RemoteDeviceModel::forgetDevice(const QModelIndex& pIndex)
 	}
 
 	auto& modelEntry = mAllRemoteReaders.at(pIndex.row());
-	const QString& id = modelEntry.getId();
+	const QByteArray& id = modelEntry.getId();
 
 	forgetDevice(id);
 }
 
 
-void RemoteDeviceModel::forgetDevice(const QString& pDeviceId)
+void RemoteDeviceModel::forgetDevice(const QByteArray& pDeviceId)
 {
 	RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	settings.removeTrustedCertificate(pDeviceId);

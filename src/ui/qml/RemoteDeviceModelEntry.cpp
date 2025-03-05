@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteDeviceModelEntry.h"
@@ -26,7 +26,7 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QSharedPointer<IfdListEntry
 
 
 RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QString& pDeviceNameEscaped,
-		const QString& pId,
+		const QByteArray& pId,
 		bool pNetworkVisible,
 		bool pConnected,
 		bool pSupported,
@@ -98,13 +98,13 @@ void RemoteDeviceModelEntry::setIsPairing(bool pIsPairing)
 }
 
 
-const QString& RemoteDeviceModelEntry::getId() const
+const QByteArray& RemoteDeviceModelEntry::getId() const
 {
 	return mId;
 }
 
 
-void RemoteDeviceModelEntry::setId(const QString& pId)
+void RemoteDeviceModelEntry::setId(const QByteArray& pId)
 {
 	mId = pId;
 }

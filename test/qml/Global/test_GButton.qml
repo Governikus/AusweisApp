@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQml
 import QtQuick
@@ -75,7 +75,7 @@ TestCase {
 			}
 		", testCase);
 		tryCompare(buttonSmallLayout, "buttonHeight", data.height);
-		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, Constants.is_desktop ? 132 : 104));
+		tryCompare(buttonSmallLayout, "buttonWidth", Math.min(data.width, Style.is_layout_desktop ? 132 : 104));
 	}
 	function test_size_data() {
 		let longText = createTemporaryQmlObject("import Governikus.Global; import Governikus.Style; GText {textStyle: Style.text.button; text: \"test test test test test test\"}", testCase);
@@ -86,42 +86,42 @@ TestCase {
 				"tag": "noIconNoText",
 				"icon": "",
 				"text": "",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 132 : 104
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 132 : 104
 			},
 			{
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 132 : 104
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 132 : 104
 			},
 			{
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": (Style.is_layout_desktop ? 36 : 40) + longTextWidth
 			},
 			{
 				"tag": "withIconNoText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 132 : 104
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 132 : 104
 			},
 			{
 				"tag": "withIconSmallText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "t",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 132 : 104
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 132 : 104
 			},
 			{
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 40 : 39,
+				"height": Style.is_layout_desktop ? 40 : 39,
 				"width": 68 + longTextWidth
 			}
 		];
@@ -184,42 +184,42 @@ TestCase {
 				"tag": "noIconNoText",
 				"icon": "",
 				"text": "",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 36 : 40
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 36 : 40
 			},
 			{
 				"tag": "noIconSmallText",
 				"icon": "",
 				"text": "t",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": (Constants.is_desktop ? 36 : 40) + smallTextWidth
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": (Style.is_layout_desktop ? 36 : 40) + smallTextWidth
 			},
 			{
 				"tag": "noIconLongText",
 				"icon": "",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": (Constants.is_desktop ? 36 : 40) + longTextWidth
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": (Style.is_layout_desktop ? 36 : 40) + longTextWidth
 			},
 			{
 				"tag": "withIconNoText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "",
-				"height": Constants.is_desktop ? 40 : 39,
-				"width": Constants.is_desktop ? 56 : 58
+				"height": Style.is_layout_desktop ? 40 : 39,
+				"width": Style.is_layout_desktop ? 56 : 58
 			},
 			{
 				"tag": "withIconSmallText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "t",
-				"height": Constants.is_desktop ? 40 : 39,
+				"height": Style.is_layout_desktop ? 40 : 39,
 				"width": 68 + smallTextWidth
 			},
 			{
 				"tag": "withIconLongText",
 				"icon": "qrc:///images/npa.svg",
 				"text": "test test test test test test",
-				"height": Constants.is_desktop ? 40 : 39,
+				"height": Style.is_layout_desktop ? 40 : 39,
 				"width": 68 + longTextWidth
 			}
 		];

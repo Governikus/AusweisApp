@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the PIN action.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -38,6 +34,7 @@ class ChangePinModel
 	friend class Env;
 	friend class ::test_UiPluginQml;
 	Q_PROPERTY(bool requestTransportPin READ isRequestTransportPin NOTIFY fireWorkflowStarted)
+	Q_PROPERTY(bool onlyCheckPin READ isOnlyCheckPin NOTIFY fireWorkflowStarted)
 
 	private:
 		QSharedPointer<ChangePinContext> mContext;
@@ -47,10 +44,12 @@ class ChangePinModel
 	public:
 		void resetChangePinContext(const QSharedPointer<ChangePinContext>& pContext = QSharedPointer<ChangePinContext>());
 
-		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true);
+		Q_INVOKABLE void startWorkflow(bool pRequestTransportPin, bool pActivateUi = true, bool pOnlyCheckPin = false);
 		[[nodiscard]] QString getResultString() const override;
 		[[nodiscard]] QList<ReaderManagerPluginType> getSupportedReaderPluginTypes() const override;
+		[[nodiscard]] GAnimation getStatusCodeAnimation() const override;
 		[[nodiscard]] bool isRequestTransportPin() const;
+		[[nodiscard]] bool isOnlyCheckPin() const;
 
 	Q_SIGNALS:
 		void fireStartWorkflow(const QSharedPointer<WorkflowRequest>& pRequest);

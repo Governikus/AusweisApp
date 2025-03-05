@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Template functions that allow to map and filter over QLists.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -12,6 +8,7 @@
 #include <type_traits>
 
 #include <QList>
+
 
 namespace governikus
 {

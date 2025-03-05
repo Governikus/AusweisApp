@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "FormattedTextModel.h"
@@ -47,7 +47,7 @@ QVariant FormattedTextModel::data(const QModelIndex& pIndex, int pRole) const
 		case ContentRole:
 			return content;
 
-		case LineTypeRole:
+		case TypeRole:
 			return QVariant::fromValue(line);
 
 		default:
@@ -60,7 +60,7 @@ QHash<int, QByteArray> FormattedTextModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
 	roles.insert(ContentRole, QByteArrayLiteral("content"));
-	roles.insert(LineTypeRole, QByteArrayLiteral("lineType"));
+	roles.insert(TypeRole, QByteArrayLiteral("type"));
 	return roles;
 }
 

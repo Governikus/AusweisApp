@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -17,7 +17,7 @@ AbstractButton {
 	Accessible.name: text
 	Accessible.role: checked ? Accessible.PageTab : Accessible.Button
 	Layout.minimumWidth: tabImage.implicitWidth + leftPadding + rightPadding
-	padding: Constants.text_spacing / 2
+	padding: Style.dimens.text_spacing / 2
 
 	background: Rectangle {
 		id: pane
@@ -35,7 +35,7 @@ AbstractButton {
 
 			Accessible.ignored: true
 			anchors.centerIn: parent
-			columnSpacing: Constants.text_spacing
+			columnSpacing: Style.dimens.text_spacing
 			columns: 2
 			flow: root.flowHorizontally ? GridLayout.LeftToRight : GridLayout.TopToBottom
 			rowSpacing: Style.dimens.navigation_bar_text_padding
@@ -56,6 +56,7 @@ AbstractButton {
 				Accessible.ignored: true
 				Layout.alignment: root.flowHorizontally ? Qt.AlignLeft : Qt.AlignCenter
 				Layout.preferredWidth: Math.min(Math.ceil(implicitWidth), root.contentItem.width)
+				activeFocusOnTab: false
 				color: colors.textNormal
 				elide: Text.ElideRight
 				horizontalAlignment: Text.AlignHCenter

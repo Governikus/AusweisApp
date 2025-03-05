@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 /*!
  * \brief Status representation according to TR-03112-6 "eCard-API-Framework"
  */
+
 
 #pragma once
 

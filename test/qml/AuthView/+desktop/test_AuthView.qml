@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -24,7 +24,7 @@ TestCase {
 		", testCase);
 	}
 	function test_load() {
-		if (hasBindingLoop && Constants.is_desktop) {
+		if (hasBindingLoop && Style.is_layout_desktop) {
 			skip("Skip test because of QTBUG-110899");
 		}
 		let testObject = createTestObject();

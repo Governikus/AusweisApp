@@ -1,10 +1,15 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
+
+import Governikus.Animations
 import Governikus.Global
-import Governikus.PasswordInfoView
+import Governikus.MultiInfoView
 import Governikus.ResultView
 import Governikus.Style
 import Governikus.TitleBar
@@ -13,6 +18,8 @@ import Governikus.Type
 ResultErrorView {
 	id: root
 
+	animationSymbol: PersonalizationModel.error ? Symbol.Type.ERROR : Symbol.Type.CHECK
+	animationType: AnimationLoader.Type.STATUS
 	buttonText: PersonalizationModel.error ?
 	//: LABEL ANDROID IOS
 	qsTr("Back to start page") :
@@ -22,7 +29,6 @@ ResultErrorView {
 	errorDescription: PersonalizationModel.error ? PersonalizationModel.errorText : ""
 	//: LABEL ANDROID IOS
 	header: qsTr("Personalization failed")
-	icon: PersonalizationModel.error ? "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name) : "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name)
 	subheader: PersonalizationModel.error ? PersonalizationModel.errorHeader : ""
 	//: INFO ANDROID IOS Success message that the Smart-eID was created.
 	text: PersonalizationModel.error ? PersonalizationModel.resultString : qsTr("You have successfully set up your Smart-eID.")
@@ -31,7 +37,7 @@ ResultErrorView {
 	title: qsTr("Set up Smart-eID")
 
 	ColumnLayout {
-		spacing: Constants.pane_spacing
+		spacing: Style.dimens.pane_spacing
 		visible: !PersonalizationModel.error
 		width: parent.width
 
@@ -52,7 +58,7 @@ ResultErrorView {
 			visible: PersonalizationModel.blockingCode !== ""
 		}
 		GText {
-			font.bold: true
+			font.weight: Font.Bold
 			//: INFO ANDROID IOS Placeholder (error) text if the Smart-eID setup finished successfully but for some reason no blocking code was retrieved
 			text: qsTr("The Smart-eID setup finished successfully but no blocking code was retrieved. For security reasons, you should delete your Smart-eID and restart the setup.")
 			visible: PersonalizationModel.blockingCode === ""
@@ -61,7 +67,7 @@ ResultErrorView {
 			Layout.alignment: Qt.AlignHCenter
 			text: infoData.linkText
 
-			onClicked: push(passwordInfoView)
+			onClicked: root.push(multiInfoView)
 		}
 		GText {
 			text: {
@@ -78,22 +84,22 @@ ResultErrorView {
 			visible: text !== ""
 		}
 	}
-	PasswordInfoData {
+	MultiInfoData {
 		id: infoData
 
-		contentType: PasswordInfoData.Type.SMART_BLOCKING_CODE
+		contentType: MultiInfoData.Type.SMART_BLOCKING_CODE
 	}
 	Component {
-		id: passwordInfoView
+		id: multiInfoView
 
-		PasswordInfoView {
+		MultiInfoView {
 			infoContent: infoData
 			smartEidUsed: root.smartEidUsed
 
 			navigationAction: NavigationAction {
 				action: NavigationAction.Action.Back
 
-				onClicked: pop()
+				onClicked: root.pop()
 			}
 		}
 	}

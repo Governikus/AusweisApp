@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the remote device table
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -40,7 +36,7 @@ class RemoteDeviceModel
 	friend class ::test_RemoteDeviceFilterModel;
 
 	private:
-		QMap<QString, RemoteServiceSettings::RemoteInfo> mPairedReaders;
+		QMap<QByteArray, RemoteServiceSettings::RemoteInfo> mPairedReaders;
 		QList<RemoteDeviceModelEntry> mAllRemoteReaders;
 		RemoteServiceSettings::RemoteInfo mLastPairedDevice;
 		QTimer mTimer;
@@ -60,7 +56,11 @@ class RemoteDeviceModel
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:
+#ifdef Q_OS_IOS
 		void onApplicationStateChanged(bool pIsAppInForeground);
+#else
+		void onApplicationStateChanged(bool pIsAppInForeground) const;
+#endif
 		void onUpdateReaderList();
 
 	public Q_SLOTS:
@@ -88,16 +88,17 @@ class RemoteDeviceModel
 		[[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
 		[[nodiscard]] QSharedPointer<IfdListEntry> getRemoteDeviceListEntry(const QModelIndex& pIndex) const;
-		[[nodiscard]] QSharedPointer<IfdListEntry> getRemoteDeviceListEntry(const QString& pDeviceId) const;
+		[[nodiscard]] QSharedPointer<IfdListEntry> getRemoteDeviceListEntry(const QByteArray& pDeviceId) const;
 		[[nodiscard]] bool isPaired(const QModelIndex& pIndex) const;
 		[[nodiscard]] bool isPairing(const QModelIndex& pIndex) const;
 		[[nodiscard]] bool isSupported(const QModelIndex& pIndex) const;
 		void forgetDevice(const QModelIndex& pIndex);
-		void forgetDevice(const QString& pDeviceId);
+		void forgetDevice(const QByteArray& pDeviceId);
 		void setLastPairedReader(const QSslCertificate& pCert);
+		void startDetection();
+		void stopDetection(bool pStopScan);
 
 	public Q_SLOTS:
-		void setDetectRemoteDevices(bool pNewStatus);
 		void onKnownRemoteReadersChanged();
 		void onDeviceDisconnected(GlobalStatus::Code pCloseCode, const QString& pId);
 

@@ -7,32 +7,38 @@
         <file>images/desktop/help_icon.svg</file>
         <file>images/desktop/home.svg</file>
         <file>images/desktop/list_icon.svg</file>
-        <file>images/desktop/material_arrow_forward.svg</file>
-        <file>images/desktop/material_assistant.svg</file>
-        <file>images/desktop/material_new_releases.svg</file>
         <file>images/desktop/material_open_in_browser.svg</file>
-        <file>images/desktop/material_question_answer.svg</file>
-        <file>images/desktop/material_rate_review.svg</file>
         <file>images/desktop/material_settings.svg</file>
+        <file>images/desktop/navigation_bar_de.png</file>
+        <file>images/desktop/navigation_bar_en.png</file>
+        <file>images/desktop/navigation_bar_ru.png</file>
+        <file>images/desktop/navigation_bar_uk.png</file>
         <file>images/desktop/notifications_off.svg</file>
         <file>images/desktop/notifications_on.svg</file>
+        <file>images/desktop/pair_device_de.png</file>
+        <file>images/desktop/pair_device_en.png</file>
+        <file>images/desktop/pair_device_ru.png</file>
+        <file>images/desktop/pair_device_uk.png</file>
+        <file>images/desktop/pair_new_device_de.png</file>
+        <file>images/desktop/pair_new_device_en.png</file>
+        <file>images/desktop/pair_new_device_ru.png</file>
+        <file>images/desktop/pair_new_device_uk.png</file>
         <file>images/desktop/privacy_icon.svg</file>
+        <file>images/desktop/qrcode_download_de.png</file>
+        <file>images/desktop/qrcode_download_en.png</file>
+        <file>images/desktop/qrcode_download_uk.png</file>
+        <file>images/desktop/qrcode_download_ru.png</file>
         <file>images/desktop/save_icon.svg</file>
         <file>images/desktop/settings.svg</file>
-        <file>images/desktop/titlebar_arrow.svg</file>
-        <file>images/desktop/workflow_idcard_nfc.svg</file>
-        <file>images/desktop/workflow_idcard_usb.svg</file>
+        <file>images/desktop/trayicon_position_macos.svg</file>
+        <file>images/desktop/trayicon_position_win.svg</file>
         <file>images/macos/appIcon.svg</file>
         <file>updatable-files/reader/img_ACS_ACR1281U.png</file>
         <file>updatable-files/reader/img_ACS_ACR1581U-C1.png</file>
-        <file>updatable-files/reader/img_Cherry_ST_1275.png</file>
-        <file>updatable-files/reader/img_Cherry_TC_1200.png</file>
-        <file>updatable-files/reader/img_Cherry_TC_1300.png</file>
         <file>updatable-files/reader/img_Cherry_secure_board.png</file>
         <file>updatable-files/reader/img_FEIG_myAXXES_basic.png</file>
         <file>updatable-files/reader/img_Gemalto_Prox_DU.png</file>
         <file>updatable-files/reader/img_Gemalto_Prox_SU.png</file>
-        <file>updatable-files/reader/img_HID_Global_OMNIKEY_5321_V2.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_542x.png</file>
         <file>updatable-files/reader/img_HID_Omnikey_Mobile_Reader_502X_CL.png</file>
         <file>updatable-files/reader/img_Identive_4701_F.png</file>

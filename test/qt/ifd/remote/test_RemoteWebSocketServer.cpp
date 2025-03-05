@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref RemoteWebSocketServer
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteWebSocketServerImpl.h"
@@ -42,8 +38,8 @@ class PskHandler
 			if (pServer)
 			{
 				connect(pServer, &RemoteWebSocketServer::firePskChanged, this, [this](const QByteArray& pPsk){
-						mPsk = pPsk;
-					});
+							mPsk = pPsk;
+						});
 			}
 		}
 

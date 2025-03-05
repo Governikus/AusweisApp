@@ -1,17 +1,19 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQuick
+
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
-import Governikus.Type
+import Governikus.Style
 
 GPane {
+	id: root
+
 	signal showDiagnosis
 	signal showLogs
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	GMenuItem {
 		Layout.fillWidth: true
@@ -22,7 +24,7 @@ GPane {
 		//: LABEL DESKTOP
 		title: qsTr("System data")
 
-		onClicked: showDiagnosis()
+		onClicked: root.showDiagnosis()
 	}
 	GSeparator {
 		Layout.fillWidth: true
@@ -36,6 +38,6 @@ GPane {
 		//: LABEL DESKTOP
 		title: qsTr("Logs")
 
-		onClicked: showLogs()
+		onClicked: root.showLogs()
 	}
 }

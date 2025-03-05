@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Little helper that will abstract pathes of underlying systems
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -13,6 +9,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QStringBuilder>
+
 
 namespace governikus
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateGetTcToken.h"
@@ -60,7 +60,7 @@ bool StateGetTcToken::isValidRedirectUrl(const QUrl& pUrl)
 	else if (pUrl.scheme() != QLatin1String("https"))
 	{
 		const auto httpsError1 = QStringLiteral("Error while connecting to the provider. A secure connection could not be established.");
-		const auto httpsError2 = QStringLiteral("  The used URL is not of type HTTPS: %1").arg(pUrl.toString());
+		const auto httpsError2 = QStringLiteral("The used URL is not of type HTTPS: %1").arg(pUrl.toString());
 		if (Env::getSingleton<AppSettings>()->getGeneralSettings().isDeveloperMode())
 		{
 			qCCritical(developermode) << httpsError1;

@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
+
 import Governikus.Animations
 import Governikus.Global
+import Governikus.ResultView
 import Governikus.Style
 import Governikus.View
 import Governikus.Type
@@ -12,10 +16,8 @@ import Governikus.Type
 SectionPage {
 	id: root
 
-	property bool isPinChange: false
 	property int waitingFor: 0
 
-	signal deviceUnpaired(var pDeviceName)
 	signal settingsRequested
 
 	onWaitingForChanged: if (visible)
@@ -27,54 +29,48 @@ SectionPage {
 		readonly property bool foundPCSCReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.PCSC)
 		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.REMOTE_IFD)
 		readonly property bool foundSelectedReader: ApplicationModel.availableReader > 0
+		readonly property bool showProgressIndicator: root.progress === null || !root.progress.enabled
 
-		onFoundPCSCReaderChanged: if (ApplicationModel.isScreenReaderRunning())
+		onFoundPCSCReaderChanged: if (ApplicationModel.isScreenReaderRunning)
 			subText.forceActiveFocus()
-		onFoundRemoteReaderChanged: if (ApplicationModel.isScreenReaderRunning())
+		onFoundRemoteReaderChanged: if (ApplicationModel.isScreenReaderRunning)
 			subText.forceActiveFocus()
 	}
 	Connections {
 		function onFireCertificateRemoved(pDeviceName) {
-			deviceUnpaired(pDeviceName);
+			root.push(deviceUnpairedView, {
+				deviceName: pDeviceName
+			});
 		}
 
 		target: RemoteServiceModel
 	}
 	AnimationLoader {
+		symbol: root.waitingFor === Workflow.WaitingFor.Reader ? Symbol.Type.QUESTION : Symbol.Type.INFO
 		type: {
-			if (waitingFor === Workflow.WaitingFor.Reader) {
+			switch (root.waitingFor) {
+			case Workflow.WaitingFor.Reader:
 				if (d.foundRemoteReader) {
-					return AnimationLoader.Type.WAIT_FOR_CARD_SAC;
+					return AnimationLoader.WAIT_FOR_CARD_SAC;
 				}
 				if (d.foundPCSCReader) {
-					return AnimationLoader.Type.WAIT_FOR_CARD_USB;
+					return AnimationLoader.WAIT_FOR_CARD_USB;
 				}
-				return AnimationLoader.Type.WAIT_FOR_READER;
+				return AnimationLoader.WAIT_FOR_READER;
+			case Workflow.WaitingFor.Password:
+				if (d.foundRemoteReader) {
+					return AnimationLoader.WAIT_FOR_SAC;
+				}
+				return AnimationLoader.WAIT_FOR_READER;
+			default:
+				return AnimationLoader.NONE;
 			}
-			return AnimationLoader.Type.NONE;
 		}
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.top
-			topMargin: Constants.component_spacing
-		}
-	}
-	TintableIcon {
-		source: {
-			if (d.foundRemoteReader) {
-				return "qrc:///images/desktop/workflow_idcard_nfc.svg";
-			}
-			return "qrc:///images/desktop/workflow_idcard_usb.svg";
-		}
-		sourceSize.height: Style.dimens.header_icon_size
-		tintColor: Style.color.image
-		visible: waitingFor === Workflow.WaitingFor.Password
-
-		anchors {
-			horizontalCenter: parent.horizontalCenter
-			top: parent.top
-			topMargin: Constants.component_spacing
+			topMargin: Style.dimens.pane_spacing
 		}
 	}
 	ProgressCircle {
@@ -83,8 +79,7 @@ SectionPage {
 		Accessible.focusable: true
 		Accessible.name: qsTr("Step %1 of 3").arg(state)
 		Accessible.role: Accessible.ProgressBar
-		activeFocusOnTab: true
-		state: switch (waitingFor) {
+		state: switch (root.waitingFor) {
 		case Workflow.WaitingFor.Reader:
 			return d.foundSelectedReader ? "2" : "1";
 		case Workflow.WaitingFor.Password:
@@ -92,24 +87,20 @@ SectionPage {
 		default:
 			return "1";
 		}
-		visible: waitingFor !== Workflow.WaitingFor.None
+		visible: d.showProgressIndicator && root.waitingFor !== Workflow.WaitingFor.None
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: parent.top
-			topMargin: 3 * Constants.component_spacing + Style.dimens.header_icon_size
-		}
-		FocusFrame {
+			topMargin: 3 * Style.dimens.pane_spacing + Style.dimens.header_icon_size
 		}
 	}
 	GText {
 		id: mainText
 
-		Accessible.name: mainText.text
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		text: {
-			switch (waitingFor) {
+			switch (root.waitingFor) {
 			case Workflow.WaitingFor.Reader:
 				if (!!AuthModel.eidTypeMismatchError) {
 					return AuthModel.eidTypeMismatchError;
@@ -132,14 +123,12 @@ SectionPage {
 		}
 		textStyle: Style.text.headline
 		visible: text !== ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		width: Math.min(parent.width - (2 * Style.dimens.pane_padding), Style.dimens.max_text_width)
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: progressCircle.bottom
-			topMargin: Constants.component_spacing * 2
-		}
-		FocusFrame {
+			topMargin: Style.dimens.pane_spacing * 2
 		}
 	}
 	GText {
@@ -147,26 +136,25 @@ SectionPage {
 
 		readonly property string requestCardText: {
 			if (d.foundPCSCReader && !d.foundRemoteReader) {
-				//: INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader.
+				//: INFO DESKTOP The AA is waiting for an ID card to be inserted into the card reader.
 				return qsTr("No ID card detected. Please ensure that your ID card is placed on the card reader.");
 			} else if (!d.foundPCSCReader && d.foundRemoteReader) {
-				//: INFO DESKTOP The AA2 is waiting for the smartphone to be placed on the id.
+				//: INFO DESKTOP The AA is waiting for the smartphone to be placed on the id.
 				return qsTr("No ID card detected. Please follow the instructions on your smartphone (connected to %1) to use it as card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 			}
 
-			//: INFO DESKTOP The AA2 is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
+			//: INFO DESKTOP The AA is waiting for an ID card to be inserted into the card reader (or smartphone for that matter).
 			return qsTr("Please follow the instructions on your smartphone (connected to %1) or put the ID card on the card reader.").arg(RemoteServiceModel.connectedServerDeviceNames);
 		}
 
-		activeFocusOnTab: true
 		horizontalAlignment: Text.AlignHCenter
 		text: {
-			switch (waitingFor) {
+			switch (root.waitingFor) {
 			case Workflow.WaitingFor.Reader:
-				//: INFO DESKTOP AA2 is waiting for the card reader or the ID card.
-				return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Please make sure that an USB card reader is connected or a smartphone as card reader is paired and ready. Open the reader settings to configure readers and get more information about supported readers.");
+				//: INFO DESKTOP AA is waiting for the card reader or the ID card.
+				return d.foundSelectedReader ? requestCardText : qsTr("No card reader detected. Connect an USB card reader or set up a smartphone as a card reader.");
 			case Workflow.WaitingFor.Password:
-				//: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA2).
+				//: INFO DESKTOP The card reader is a comfort reader with its own display, the user is requested to pay attention to that display (instead of the AA).
 				return qsTr("Please observe the display of your card reader.");
 			default:
 				return "";
@@ -174,29 +162,42 @@ SectionPage {
 		}
 		textFormat: Text.StyledText
 		visible: text !== "" && !ApplicationModel.extendedLengthApdusUnsupported && AuthModel.eidTypeMismatchError === ""
-		width: Math.min(parent.width - (2 * Constants.pane_padding), Style.dimens.max_text_width)
+		width: Math.min(parent.width - (2 * Style.dimens.pane_padding), Style.dimens.max_text_width)
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: mainText.bottom
-			topMargin: Constants.text_spacing * 2
-		}
-		FocusFrame {
+			topMargin: Style.dimens.text_spacing * 2
 		}
 	}
 	GButton {
 		id: readerSettingsLink
 
 		//: INFO DESKTOP
-		text: qsTr("Go to reader settings")
-		visible: waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
+		text: qsTr("Set up card reader")
+		visible: root.waitingFor === Workflow.WaitingFor.Reader && !d.foundSelectedReader
 
 		onClicked: root.settingsRequested()
 
 		anchors {
 			horizontalCenter: parent.horizontalCenter
 			top: subText.bottom
-			topMargin: Constants.component_spacing
+			topMargin: Style.dimens.pane_spacing
+		}
+	}
+	Component {
+		id: deviceUnpairedView
+
+		ResultView {
+			required property string deviceName
+
+			animationSymbol: Symbol.Type.ERROR
+			animationType: AnimationLoader.SAC_RESULT
+			//: INFO DESKTOP The paired devices was removed since it did not respond to connection attempts. It needs to be paired again if it should be used as card reader.
+			text: qsTr("The device \"%1\" was unpaired because it did not react to connection attempts. Pair the device again to use it as a card reader.").arg(deviceName)
+			title: root.title
+
+			onLeaveView: pop()
 		}
 	}
 }

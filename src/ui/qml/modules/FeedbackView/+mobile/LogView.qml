@@ -1,9 +1,12 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.Style
 import Governikus.TitleBar
@@ -19,7 +22,7 @@ SectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: pop()
+		onClicked: root.pop()
 	}
 	rightTitleBarAction: LogTitleBarControls {
 		allowRemoveAll: comboBox.model.length > 1 // comboBox.count doesn't seem to update reliably
@@ -49,7 +52,7 @@ SectionPage {
 			id: logSelector
 
 			Layout.fillWidth: true
-			Layout.preferredHeight: comboBox.height + Constants.pane_padding * 2
+			Layout.preferredHeight: comboBox.height + Style.dimens.pane_padding * 2
 			color: Style.color.paneSublevel.background.basic
 
 			GComboBox {
@@ -62,11 +65,11 @@ SectionPage {
 
 				anchors {
 					left: parent.left
-					leftMargin: Constants.pane_padding
+					leftMargin: Style.dimens.pane_padding
 					right: filterButton.left
-					rightMargin: Constants.component_spacing
+					rightMargin: Style.dimens.pane_spacing
 					top: parent.top
-					topMargin: Constants.pane_padding
+					topMargin: Style.dimens.pane_padding
 				}
 			}
 			TitleBarAction {
@@ -84,7 +87,7 @@ SectionPage {
 
 				anchors {
 					right: parent.right
-					rightMargin: Constants.pane_padding
+					rightMargin: Style.dimens.pane_padding
 					verticalCenter: comboBox.verticalCenter
 				}
 			}
@@ -93,13 +96,13 @@ SectionPage {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			clip: true
-			spacing: Constants.text_spacing
+			spacing: Style.dimens.text_spacing
 			visible: filterButton.filter
 
 			GOptionsContainer {
 				Layout.fillWidth: true
-				containerPadding: Constants.pane_padding
-				containerSpacing: Constants.groupbox_spacing
+				containerPadding: Style.dimens.pane_padding
+				containerSpacing: Style.dimens.groupbox_spacing
 				//: LABEL ANDROID IOS
 				title: qsTr("Filter")
 
@@ -109,9 +112,9 @@ SectionPage {
 					textStyle: Style.text.subline
 				}
 				Grid {
-					columnSpacing: Constants.groupbox_spacing
+					columnSpacing: Style.dimens.groupbox_spacing
 					columns: (width + columnSpacing) / (levelRepeater.maxItemWidth + columnSpacing)
-					rowSpacing: Constants.groupbox_spacing
+					rowSpacing: Style.dimens.groupbox_spacing
 					width: parent.width
 
 					GRepeater {
@@ -120,6 +123,8 @@ SectionPage {
 						model: filterModel.levels
 
 						delegate: GCheckBox {
+							required property string modelData
+
 							checked: filterModel.selectedLevels.indexOf(text) !== -1
 							text: modelData
 							width: levelRepeater.maxItemWidth
@@ -134,9 +139,9 @@ SectionPage {
 					textStyle: Style.text.subline
 				}
 				Grid {
-					columnSpacing: Constants.groupbox_spacing
+					columnSpacing: Style.dimens.groupbox_spacing
 					columns: (width + columnSpacing) / (categoryRepeater.maxItemWidth + columnSpacing)
-					rowSpacing: Constants.groupbox_spacing
+					rowSpacing: Style.dimens.groupbox_spacing
 					width: parent.width
 
 					GRepeater {
@@ -145,6 +150,8 @@ SectionPage {
 						model: filterModel.categories
 
 						delegate: GCheckBox {
+							required property string modelData
+
 							checked: filterModel.selectedCategories.indexOf(text) !== -1
 							text: modelData
 							width: categoryRepeater.maxItemWidth
@@ -161,21 +168,27 @@ SectionPage {
 			Accessible.ignored: false
 			Layout.fillHeight: true
 			Layout.fillWidth: true
+			activeFocusOnTab: true
 			clip: true
 			model: filterModel
 			visible: !filterButton.filter
 
 			delegate: ListItem {
+				required property int index
 				readonly property bool isLastItem: index === ListView.view.count - 1
+				required property string message
+				required property string modelData
+				required property string origin
 
+				boldFont: ListView.isCurrentItem && logView.focus
 				headerText: origin
 				showSeparator: !isLastItem
 				text: message
 
-				Accessible.onScrollDownAction: ListView.view.scrollPageDown()
-				Accessible.onScrollUpAction: ListView.view.scrollPageUp()
+				Accessible.onScrollDownAction: (ListView.view as GListView).scrollPageDown()
+				Accessible.onScrollUpAction: (ListView.view as GListView).scrollPageUp()
 				onPressAndHold: {
-					ApplicationModel.setClipboardText(display);
+					ApplicationModel.setClipboardText(modelData);
 					//: INFO ANDROID IOS Toast message used to confirm the copy of a log entry.
 					ApplicationModel.showFeedback(qsTr("The log entry was copied to the clipboard."));
 				}
@@ -195,7 +208,7 @@ SectionPage {
 				//: INFO ANDROID IOS No log entries, placeholder text.
 				text: qsTr("Currently there are no log entries matching your filter.")
 				visible: logView.count === 0
-				width: parent.width - 2 * Constants.component_spacing
+				width: parent.width - 2 * Style.dimens.pane_spacing
 			}
 		}
 	}

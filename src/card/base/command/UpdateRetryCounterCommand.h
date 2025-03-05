@@ -1,16 +1,14 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Command to update the retry counter of a card.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "BaseCardCommand.h"
 
+
 class test_UpdateRetryCounterCommand;
+
 
 namespace governikus
 {

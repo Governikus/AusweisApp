@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Governikus.Global
+import Governikus.Init
 import Governikus.Style
 import Governikus.TitleBar
 import Governikus.View
@@ -15,9 +19,13 @@ SectionPage {
 
 	signal keyPressed(int key)
 
-	titleBarAction: TitleBarAction {
-		//: LABEL DESKTOP
-		text: qsTr("Logs")
+	//: LABEL DESKTOP
+	title: qsTr("Logs")
+
+	titleBarSettings: TitleBarSettings {
+		navigationAction: NavigationAction.Back
+
+		onNavigationActionClicked: root.leaveView()
 	}
 
 	Keys.onPressed: event => {
@@ -33,7 +41,7 @@ SectionPage {
 		sectionsModel: LogModel.logFileNames
 
 		footerItem: ColumnLayout {
-			spacing: Constants.groupbox_spacing
+			spacing: Style.dimens.groupbox_spacing
 
 			GButton {
 				id: saveLog
@@ -82,7 +90,7 @@ SectionPage {
 				text: qsTr("Detach log viewer")
 				tintIcon: true
 
-				onClicked: ApplicationWindow.window.showDetachedLogView()
+				onClicked: (ApplicationWindow.window as App).showDetachedLogView()
 			}
 		}
 
@@ -95,37 +103,46 @@ SectionPage {
 			id: logView
 
 			activeFocusOnTab: true
-			displayMarginBeginning: Constants.pane_padding
-			displayMarginEnd: Constants.pane_padding
+			displayMarginBeginning: Style.dimens.pane_padding
+			displayMarginEnd: Style.dimens.pane_padding
 			implicitHeight: tabbedPane.availableHeight
 			model: LogModel
 
 			delegate: FocusScope {
+				id: logEntry
+
+				required property int index
 				readonly property bool isFirstItem: index === 0
 				readonly property bool isLastItem: index === ListView.view.count - 1
+				required property string level
+				required property string message
+				required property string origin
 
 				implicitHeight: logDelegate.implicitHeight + logDelegate.anchors.topMargin + logDelegate.anchors.bottomMargin
-				width: logView.width - Constants.pane_padding
+				width: logView.width - Style.dimens.pane_padding
 
 				RoundedRectangle {
 					anchors.fill: parent
-					bottomLeftCorner: isLastItem
-					bottomRightCorner: isLastItem
+					bottomLeftCorner: logEntry.isLastItem
+					bottomRightCorner: logEntry.isLastItem
 					color: Style.color.pane.background.basic
-					topLeftCorner: isFirstItem
-					topRightCorner: isFirstItem
+					topLeftCorner: logEntry.isFirstItem
+					topRightCorner: logEntry.isFirstItem
 				}
 				LogViewDelegate {
 					id: logDelegate
 
 					focus: true
+					level: logEntry.level
+					message: logEntry.message
+					origin: logEntry.origin
 
 					anchors {
-						bottomMargin: isLastItem ? Constants.pane_padding : 0
+						bottomMargin: logEntry.isLastItem ? Style.dimens.pane_padding : 0
 						fill: parent
-						leftMargin: Constants.pane_padding
-						rightMargin: Constants.pane_padding
-						topMargin: isFirstItem ? Constants.pane_padding : Constants.text_spacing
+						leftMargin: Style.dimens.pane_padding
+						rightMargin: Style.dimens.pane_padding
+						topMargin: logEntry.isFirstItem ? Style.dimens.pane_padding : Style.dimens.text_spacing
 					}
 				}
 			}

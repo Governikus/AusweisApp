@@ -14,7 +14,8 @@
 			"enum": [
 				"12",
 				"13",
-				"14"
+				"14",
+				"15"
 			]
 		},
 		"operating_system_drivers": {
@@ -173,10 +174,6 @@
 						"type": "string",
 						"pattern": "^img_.+\\.(jpg|png|svg)$"
 					},
-					"IconWithNPA": {
-						"type": "string",
-						"pattern": "^img_.+_mit_ausweis\\.(jpg|png|svg)$"
-					},
 					"Drivers": {
 						"type": "array",
 						"items": {
@@ -240,7 +237,6 @@
 					"Name",
 					"Pattern",
 					"Icon",
-					"IconWithNPA",
 					"Drivers"
 				],
 				"additionalProperties": false

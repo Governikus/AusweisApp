@@ -1,15 +1,17 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
-import QtQml
+
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
-import Governikus.Style
 import Governikus.Type
+import Governikus.Style
 
 ColumnLayout {
-	spacing: Constants.component_spacing
+	id: root
+
+	spacing: Style.dimens.pane_spacing
 
 	GPane {
 		Layout.fillWidth: true
@@ -17,6 +19,9 @@ ColumnLayout {
 		spacing: 0
 		//: LABEL DESKTOP
 		title: qsTr("Developer options")
+
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 
 		GSwitch {
 			Layout.fillWidth: true
@@ -28,6 +33,8 @@ ColumnLayout {
 			text: qsTr("Testmode for the self-authentication")
 
 			onCheckedChanged: SettingsModel.useSelfauthenticationTestUri = checked
+			onFocusChanged: if (focus)
+				Utils.positionViewAtItem(this)
 		}
 		GSwitch {
 			Layout.fillWidth: true
@@ -39,6 +46,8 @@ ColumnLayout {
 			text: qsTr("Internal card simulator")
 
 			onCheckedChanged: SettingsModel.enableSimulator = checked
+			onFocusChanged: if (focus)
+				Utils.positionViewAtItem(this)
 		}
 		GSwitch {
 			Layout.fillWidth: true
@@ -51,22 +60,22 @@ ColumnLayout {
 			text: qsTr("Developer mode")
 
 			onCheckedChanged: SettingsModel.developerMode = checked
+			onFocusChanged: if (focus)
+				Utils.positionViewAtItem(this)
 		}
 	}
 	GPane {
 		Layout.fillWidth: true
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 		//: LABEL DESKTOP
 		title: qsTr("Custom config.json")
 
-		GText {
-			activeFocusOnTab: true
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 
+		GText {
 			//: LABEL DESKTOP
 			text: qsTr("Place the config.json into the application folder to override the embedded config.")
-
-			FocusFrame {
-			}
 		}
 		GText {
 			//: LABEL DESKTOP

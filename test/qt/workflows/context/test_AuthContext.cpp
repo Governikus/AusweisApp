@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Test for the chat administration in authentication context.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "context/AuthContext.h"
@@ -60,11 +56,11 @@ class test_AuthContext
 
 			QCOMPARE(context.isSkipMobileRedirect(), false);
 
-			context.requestChangePinView();
+			context.requestChangeTransportPin();
 			QCOMPARE(spy.size(), 1);
 			QCOMPARE(context.isSkipMobileRedirect(), true);
 
-			context.requestChangePinView();
+			context.requestChangeTransportPin();
 			QCOMPARE(spy.size(), 1);
 			QCOMPARE(context.isSkipMobileRedirect(), true);
 		}
@@ -82,7 +78,8 @@ class test_AuthContext
 			context.setDidAuthenticateEac1(eac1);
 			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::SE_CERTIFIED});
 
-			context.initAccessRightManager(TestAuthContext::getTerminalCvc(eac1));
+			context.setDvCvc(eac1->getCvCertificates({AccessRole::DV_no_f, AccessRole::DV_od}).at(0));
+			context.initAccessRightManager(eac1->getCvCertificates({AccessRole::AT}).at(0));
 			QCOMPARE(context.getAcceptedEidTypes(), {AcceptedEidType::CARD_CERTIFIED});
 
 			context.setDidAuthenticateEac1(nullptr);

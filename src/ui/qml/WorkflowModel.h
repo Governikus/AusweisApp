@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the authentication action.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -22,6 +18,19 @@ class test_WorkflowModel;
 namespace governikus
 {
 
+defineEnumTypeQmlExposed(GAnimation,
+		NONE,
+		PIN_ERROR,
+		CAN_ERROR,
+		PUK_ERROR,
+		PUK_BLOCKED,
+		CARD_ERROR,
+		NETWORK_ERROR,
+		CHANGEPIN_SUCCESS,
+		STATUS_OK,
+		STATUS_ERROR
+		)
+
 class WorkflowModel
 	: public QObject
 {
@@ -32,6 +41,7 @@ class WorkflowModel
 	Q_PROPERTY(QString resultString READ getResultString NOTIFY fireResultChanged)
 	Q_PROPERTY(bool error READ isError NOTIFY fireResultChanged)
 	Q_PROPERTY(bool errorIsMasked READ isMaskedError NOTIFY fireResultChanged)
+	Q_PROPERTY(bool pukInoperative READ isPukInoperative NOTIFY fireResultChanged)
 	Q_PROPERTY(governikus::EnumReaderManagerPluginType::ReaderManagerPluginType readerPluginType READ getReaderPluginType WRITE setReaderPluginType NOTIFY fireReaderPluginTypeChanged)
 	Q_PROPERTY(QList<ReaderManagerPluginType> supportedPluginTypes READ getSupportedReaderPluginTypes NOTIFY fireSupportedPluginTypesChanged)
 	Q_PROPERTY(bool isBasicReader READ isBasicReader NOTIFY fireSelectedReaderChanged)
@@ -42,8 +52,9 @@ class WorkflowModel
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintTitle READ getStatusHintTitle NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusCodeImage READ getStatusCodeImage NOTIFY fireResultChanged)
+	Q_PROPERTY(governikus::EnumGAnimation::GAnimation statusCodeAnimation READ getStatusCodeAnimation NOTIFY fireResultChanged)
 	Q_PROPERTY(bool showRemoveCardFeedback READ showRemoveCardFeedback WRITE setRemoveCardFeedback NOTIFY fireRemoveCardFeedbackChanged)
+	Q_PROPERTY(bool cardInitiallyAppeared READ getCardInitiallyAppeared NOTIFY fireHasCardChanged)
 	Q_PROPERTY(bool hasCard READ hasCard NOTIFY fireHasCardChanged)
 	Q_PROPERTY(governikus::EnumCardReturnCode::CardReturnCode lastReturnCode READ getLastReturnCode NOTIFY fireLastReturnCodeChanged)
 	friend class ::test_WorkflowModel;
@@ -66,6 +77,7 @@ class WorkflowModel
 		[[nodiscard]] virtual QString getResultString() const;
 		[[nodiscard]] bool isError() const;
 		[[nodiscard]] bool isMaskedError() const;
+		[[nodiscard]] bool isPukInoperative() const;
 		[[nodiscard]] CardReturnCode getLastReturnCode() const;
 
 		[[nodiscard]] ReaderManagerPluginType getReaderPluginType() const;
@@ -73,6 +85,7 @@ class WorkflowModel
 
 		[[nodiscard]] bool isBasicReader() const;
 		[[nodiscard]] bool isRemoteReader() const;
+		[[nodiscard]] bool getCardInitiallyAppeared() const;
 		[[nodiscard]] bool hasCard() const;
 
 		[[nodiscard]] bool isCurrentSmartCardAllowed() const;
@@ -82,7 +95,7 @@ class WorkflowModel
 		[[nodiscard]] bool getNextWorkflowPending() const;
 
 		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
-		[[nodiscard]] QString getStatusCodeImage() const;
+		[[nodiscard]] virtual GAnimation getStatusCodeAnimation() const;
 
 		[[nodiscard]] QString getStatusHintText() const;
 		[[nodiscard]] QString getStatusHintTitle() const;
@@ -125,7 +138,7 @@ class WorkflowModel
 		void fireHasCardChanged();
 		void fireEidTypeMismatchErrorChanged();
 		void fireShowUiRequest(UiModule pModule);
-		void fireWorkflowFinished();
+		void fireWorkflowFinished(bool pSuccess);
 		void fireOnPinUnlocked();
 		void fireOnPasswordUsed();
 		void fireOnCanSuccess();

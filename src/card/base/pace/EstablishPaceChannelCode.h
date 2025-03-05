@@ -1,14 +1,11 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief EstablishPaceChannel error code definitions
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
 
 #include "EnumHelper.h"
+
 
 namespace governikus
 {

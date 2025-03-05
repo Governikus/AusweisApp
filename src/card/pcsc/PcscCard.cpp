@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -10,7 +10,6 @@
 
 #include <QLatin1String>
 #include <QLoggingCategory>
-#include <QOperatingSystemVersion>
 
 Q_DECLARE_LOGGING_CATEGORY(card_pcsc)
 
@@ -80,7 +79,7 @@ PcscCard::~PcscCard()
 }
 
 
-void PcscCard::sendSCardStatus()
+void PcscCard::sendSCardStatus() const
 {
 	/*
 	 * According to the documentation of SCardBeginTransaction:
@@ -125,10 +124,8 @@ CardReturnCode PcscCard::establishConnection()
 		return CardReturnCode::COMMAND_FAILED;
 	}
 
-	if (QOperatingSystemVersion::current() >= QOperatingSystemVersion::Windows8)
-	{
-		mTimer.start();
-	}
+	mTimer.start();
+
 	return CardReturnCode::OK;
 }
 
@@ -207,7 +204,7 @@ ResponseApduResult PcscCard::transmit(const CommandApdu& pCmd)
 }
 
 
-PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer)
+PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer) const
 {
 	const SCARD_IO_REQUEST* sendPci;
 	switch (mProtocol)
@@ -255,7 +252,7 @@ PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer)
 
 
 PcscCard::CardResult PcscCard::transmit(const QByteArray& pSendBuffer,
-		const SCARD_IO_REQUEST* pSendPci)
+		const SCARD_IO_REQUEST* pSendPci) const
 {
 	SCARD_IO_REQUEST recvPci;
 	recvPci.dwProtocol = mProtocol;
@@ -366,7 +363,7 @@ CardReturnCode PcscCard::destroyPaceChannel()
 }
 
 
-PcscCard::CardResult PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInput)
+PcscCard::CardResult PcscCard::control(PCSC_INT pCntrCode, const QByteArray& pCntrInput) const
 {
 	QByteArray buffer(2048, '\0');
 	PCSC_INT len = 0;

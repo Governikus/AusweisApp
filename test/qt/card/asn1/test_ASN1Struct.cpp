@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/ASN1Struct.h"
@@ -124,7 +124,7 @@ class test_ASN1Struct
 		{
 			ASN1Struct data;
 			PacePasswordId pinId = PacePasswordId::PACE_PIN;
-			data.append(ASN1Struct::PUBLIC_KEY_REFERENCE, pinId);
+			data.append(ASN1Struct::PASSWORD_REFERENCE, pinId);
 			QCOMPARE(data, QByteArray::fromHex("8301").append(static_cast<char>(pinId)));
 		}
 

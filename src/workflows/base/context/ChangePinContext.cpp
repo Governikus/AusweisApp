@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinContext.h"
@@ -7,11 +7,12 @@
 using namespace governikus;
 
 
-ChangePinContext::ChangePinContext(bool pRequestTransportPin, bool pActivateUi)
+ChangePinContext::ChangePinContext(bool pRequestTransportPin, bool pActivateUi, bool pOnlyCheckPin)
 	: WorkflowContext(Action::PIN, pActivateUi)
 	, mNewPin()
 	, mSuccessMessage()
 	, mRequestTransportPin(pRequestTransportPin)
+	, mOnlyCheckPin(pOnlyCheckPin)
 {
 }
 
@@ -69,6 +70,12 @@ void ChangePinContext::setSuccessMessage(const QString& pSuccessMessage)
 bool ChangePinContext::isRequestTransportPin() const
 {
 	return mRequestTransportPin;
+}
+
+
+bool ChangePinContext::isOnlyCheckPin() const
+{
+	return mOnlyCheckPin;
 }
 
 

@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION=3.20
+ARG ALPINE_VERSION=3.21
 
 FROM alpine:$ALPINE_VERSION AS builder
 # Install development stuff
@@ -16,7 +16,7 @@ COPY cmake/Helper.cmake cmake/DVCS.cmake cmake/Messages.cmake libs /src/libs/
 RUN cmake /src/libs/ -B /build/libs \
         -DCONTAINER_SDK=ON \
         -DCMAKE_BUILD_TYPE=Release \
-        -DDESTINATION_DIR=/usr/local \
+        -DDESTINATION_DIR=/app \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache && \
     cmake --build /build/libs && \
     ccache -s -vv && rm -rf /build
@@ -33,29 +33,32 @@ RUN cmake /src/ausweisapp -B /build/app \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_PREFIX=/app \
         -GNinja && \
     cmake --build /build/app && cmake --install /build/app && \
     ccache -s -vv && rm -rf /build
 
-RUN find /usr/local/ -type d -empty -delete && \
-    find /usr/local/lib/ -type f -not -name "*.so*" -delete && \
-    find /usr/local/lib/ -type f -name "*.so*" -exec strip {} + && \
-    strip /usr/local/bin/AusweisApp
+RUN strip /app/bin/AusweisApp && \
+    find /app/lib/ -type f -not -name "*.so*" -delete && \
+    find /app/ -type f -name "*.so*" -exec strip {} + && \
+    find /app/ -type d -empty -delete
 
 
 
 FROM alpine:$ALPINE_VERSION
 # Copy to image
-COPY --from=builder /usr/local/plugins /usr/local/plugins
-COPY --from=builder /usr/local/lib /usr/local/lib
-COPY --from=builder /usr/local/share /usr/local/share
-COPY --from=builder /usr/local/bin/AusweisApp /usr/local/bin/AusweisApp
+COPY --from=builder /app/plugins /app/plugins
+COPY --from=builder /app/lib /app/lib
+COPY --from=builder /app/share /app/share
+COPY --from=builder /app/bin/AusweisApp /app/bin/AusweisApp
 
 RUN apk --no-cache upgrade -a && \
     apk --no-cache add tini libstdc++ pcsc-lite-libs eudev-libs doas && \
     echo 'permit nopass :wheel' > /etc/doas.d/wheel.conf && \
     adduser ausweisapp -G wheel -s /bin/sh -D && \
-    mkdir -p /home/ausweisapp/.config && chown ausweisapp: /home/ausweisapp/.config
+    mkdir -p /home/ausweisapp/.config && chown ausweisapp: /home/ausweisapp/.config && \
+    ln -s /app/bin/* /usr/local/bin && \
+    ln -s /app/share/* /usr/local/share
 
 USER ausweisapp
 VOLUME ["/home/ausweisapp/.config"]

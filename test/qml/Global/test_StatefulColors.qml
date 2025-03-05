@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
 import Governikus.Global
 import Governikus.Type
+import Governikus.Style
 
 Item {
 	id: control
@@ -66,7 +67,7 @@ Item {
 			];
 		}
 		function test_hovered(data) {
-			let desktopOrChromeOS = Constants.is_desktop || UiPluginModel.isChromeOS;
+			let desktopOrChromeOS = Style.is_layout_desktop || UiPluginModel.isChromeOS;
 			control.enabled = true;
 			control.pressed = false;
 			control.hovered = desktopOrChromeOS;

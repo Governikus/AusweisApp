@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
+import Governikus.Style
 
 GFlickable {
 	id: root
@@ -12,14 +13,14 @@ GFlickable {
 	property real maximumContentWidth: -1
 	property alias spacing: contentLayout.spacing
 
-	bottomMargin: Constants.pane_padding
+	bottomMargin: Style.dimens.pane_padding
 	contentHeight: contentLayout.height
 	contentWidth: limitingLayout.width
 	implicitHeight: contentLayout.implicitHeight + topMargin + bottomMargin
 	implicitWidth: contentLayout.implicitWidth + leftMargin + rightMargin
-	leftMargin: Constants.pane_padding
-	rightMargin: Constants.pane_padding
-	topMargin: Constants.pane_padding
+	leftMargin: Style.dimens.pane_padding
+	rightMargin: Style.dimens.pane_padding
+	topMargin: Style.dimens.pane_padding
 
 	ColumnLayout {
 		id: limitingLayout

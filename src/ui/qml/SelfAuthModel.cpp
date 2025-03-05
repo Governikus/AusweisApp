@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SelfAuthModel.h"
@@ -29,11 +29,11 @@ void SelfAuthModel::onSelfAuthenticationDataChanged()
 		const auto& selfdata = mContext->getSelfAuthenticationData().getOrderedSelfData();
 		for (const auto& entry : selfdata)
 		{
-			if (entry.first.isEmpty())
+			if (const auto& [key, value] = entry; key.isEmpty())
 			{
 				Q_ASSERT(!mSelfData.isEmpty());
-				const auto& previous = mSelfData.takeLast();
-				mSelfData << qMakePair(previous.first, previous.second + QLatin1Char('\n') + entry.second);
+				const auto& [lastKey, lastValue] = mSelfData.takeLast();
+				mSelfData << qMakePair(lastKey, lastValue + QLatin1Char('\n') + value);
 			}
 			else
 			{

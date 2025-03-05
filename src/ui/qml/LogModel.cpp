@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogModel.h"
@@ -221,9 +221,11 @@ void LogModel::saveCurrentLogFile(const QUrl& pFilename) const
 }
 
 
-#ifndef QT_NO_DEBUG
 void LogModel::saveDummyLogFile(const QDateTime& pTimestamp)
 {
+#ifdef QT_NO_DEBUG
+	Q_UNUSED(pTimestamp)
+#else
 	auto& generator = Randomizer::getInstance().getGenerator();
 	std::uniform_int_distribution<uint32_t> dist;
 	const auto* logHandler = Env::getSingleton<LogHandler>();
@@ -237,10 +239,8 @@ void LogModel::saveDummyLogFile(const QDateTime& pTimestamp)
 	}
 	reset();
 	Q_EMIT fireLogFileNamesChanged();
-}
-
-
 #endif
+}
 
 
 int LogModel::rowCount(const QModelIndex& pIndex) const
@@ -253,7 +253,7 @@ int LogModel::rowCount(const QModelIndex& pIndex) const
 QHash<int, QByteArray> LogModel::roleNames() const
 {
 	QHash<int, QByteArray> roles;
-	roles.insert(Qt::DisplayRole, QByteArrayLiteral("display"));
+	roles.insert(Qt::DisplayRole, QByteArrayLiteral("modelData"));
 	roles.insert(OriginRole, QByteArrayLiteral("origin"));
 	roles.insert(LevelRole, QByteArrayLiteral("level"));
 	roles.insert(CategoryRole, QByteArrayLiteral("category"));

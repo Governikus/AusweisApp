@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -11,6 +11,7 @@
 #include <QSharedPointer>
 #include <QString>
 #include <QStringList>
+#include <QtQml/qqmlregistration.h>
 
 class test_DiagnosisModel;
 
@@ -22,7 +23,8 @@ class SectionModel
 	: public QAbstractListModel
 {
 	Q_OBJECT
-
+	QML_UNCREATABLE("Used by Diagnosis(Model|View) only")
+	QML_ELEMENT
 	friend class ::test_DiagnosisModel;
 
 	private:

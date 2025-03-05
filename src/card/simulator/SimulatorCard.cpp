@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SimulatorCard.h"
@@ -12,6 +12,8 @@
 #include "asn1/ASN1Struct.h"
 #include "asn1/ASN1TemplateUtil.h"
 #include "asn1/ASN1Util.h"
+#include "asn1/AuthenticatedAuxiliaryData.h"
+#include "asn1/SignatureChecker.h"
 #include "pace/CipherMac.h"
 #include "pace/KeyDerivationFunction.h"
 #include "pace/ec/EcUtil.h"
@@ -22,9 +24,6 @@
 #include <QScopeGuard>
 #include <QThread>
 #include <QtEndian>
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
-	#include <openssl/bn.h>
-#endif
 
 
 using namespace governikus;
@@ -42,11 +41,14 @@ SimulatorCard::SimulatorCard(const SimulatorFileSystem& pFileSystem)
 	, mNewSecureMessaging()
 	, mSelectedProtocol()
 	, mChainingStep(0)
+	, mAccessRights()
+	, mPacePassword(PacePasswordId::UNKNOWN)
 	, mPaceKeyId(0)
-	, mPaceChat()
 	, mPaceNonce()
 	, mPaceTerminalKey()
 	, mCardKey()
+	, mTaCertificate()
+	, mTaSigningData()
 	, mTaAuxData()
 {
 }
@@ -84,8 +86,6 @@ bool SimulatorCard::isConnected() const
 ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 {
 	CommandApdu commandApdu = pCmd;
-	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
-
 	qCDebug(card_simulator) << "Transmit command APDU:" << commandApdu;
 
 	if (mSecureMessaging)
@@ -99,45 +99,16 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 		{
 			qCDebug(card_simulator) << "Received unencrypted command APDU. Disable secure messaging";
 			mSecureMessaging.reset();
-			mPaceChat.reset();
+			mTaCertificate.reset();
+			mAccessRights.clear();
 		}
 	}
 
-	switch (commandApdu.getINS())
+	ResponseApdu result = executeCommand(commandApdu);
+	if (result.isEmpty())
 	{
-		case Ins::SELECT:
-		case Ins::READ_BINARY:
-		case Ins::UPDATE_BINARY:
-			result = executeFileCommand(commandApdu);
-			break;
-
-		case Ins::GET_CHALLENGE:
-			result = {CardReturnCode::OK, ResponseApdu(QByteArray::fromHex("01020304050607089000"))};
-			break;
-
-		case Ins::MSE_SET:
-			if (pCmd.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
-			{
-				result = executeMseSetAt(commandApdu);
-			}
-			break;
-
-		case Ins::GENERAL_AUTHENTICATE:
-			result = executeGeneralAuthenticate(commandApdu);
-			break;
-
-		case Ins::VERIFY:
-			if (commandApdu.isProprietary())
-			{
-				result = {CardReturnCode::OK, ResponseApdu(verifyAuxiliaryData(commandApdu.getData()))};
-				break;
-			}
-
-			result = {CardReturnCode::OK, ResponseApdu(StatusCode::UNSUPPORTED_CLA)};
-			break;
-
-		default:
-			break;
+		result = ResponseApdu(StatusCode::NO_PRECISE_DIAGNOSIS);
+		Q_ASSERT(false);
 	}
 
 	if (commandApdu.isCommandChaining())
@@ -151,10 +122,10 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 
 	if (mSecureMessaging)
 	{
-		result.mResponseApdu = mSecureMessaging->encrypt(result.mResponseApdu);
+		result = mSecureMessaging->encrypt(result);
 	}
 
-	qCDebug(card_simulator) << "Transmit response APDU:" << result.mResponseApdu;
+	qCDebug(card_simulator) << "Transmit response APDU:" << result;
 
 	if (mNewSecureMessaging)
 	{
@@ -163,7 +134,7 @@ ResponseApduResult SimulatorCard::transmit(const CommandApdu& pCmd)
 		mNewSecureMessaging.reset();
 	}
 
-	return result;
+	return {CardReturnCode::OK, result};
 }
 
 
@@ -174,16 +145,34 @@ EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pP
 	Q_UNUSED(pCertificateDescription)
 
 	QThread::msleep(Env::getSingleton<VolatileSettings>()->getDelay());
+
 	EstablishPaceChannelOutput output(CardReturnCode::OK);
 	output.setPaceReturnCode(CardReturnCode::OK);
 	output.setStatusMseSetAt(QByteArray::fromHex("9000"));
 	output.setEfCardAccess(mFileSystem.getEfCardAccess());
-	if (!pChat.isEmpty() && !pCertificateDescription.isEmpty())
+	if (pChat.isEmpty())
 	{
-		mPaceChat = CHAT::decode(pChat);
-		output.setCarCurr(QByteArray("DETESTeID00005"));
-		output.setIdIcc(QByteArray::fromHex("0102030405060708900A0B0C0D0E0F1011121314"));
+		mAccessRights.clear();
+		mTaCertificate.reset();
+		mTaSigningData.clear();
 	}
+	else
+	{
+		mAccessRights = CHAT::decode(pChat)->getAccessRights();
+		mTaCertificate = mFileSystem.getTrustPoint();
+
+		const int nid = EFCardAccess::decode(mFileSystem.getEfCardAccess())->getPaceInfos().at(0)->getParameterIdAsNid();
+		EcdhGenericMapping cardMapping(EcUtil::createCurve(nid));
+		EcdhGenericMapping terminalMapping(EcUtil::createCurve(nid));
+		const auto& nonce = Randomizer::getInstance().createBytes(16);
+		cardMapping.generateLocalMappingData();
+		cardMapping.generateEphemeralDomainParameters(terminalMapping.generateLocalMappingData(), nonce);
+		mTaSigningData = EcUtil::getEncodedPublicKey(EcUtil::generateKey(cardMapping.getCurve()), true);
+
+		output.setCarCurr(mTaCertificate->getBody().getCertificateHolderReference());
+		output.setIdIcc(mTaSigningData);
+	}
+
 	return output;
 }
 
@@ -191,7 +180,10 @@ EstablishPaceChannelOutput SimulatorCard::establishPaceChannel(PacePasswordId pP
 CardReturnCode SimulatorCard::destroyPaceChannel()
 {
 	mSecureMessaging.reset();
-	mPaceChat.reset();
+
+	mAccessRights.clear();
+	mTaCertificate.reset();
+	mTaSigningData.clear();
 
 	return CardReturnCode::OK;
 }
@@ -202,123 +194,224 @@ ResponseApduResult SimulatorCard::setEidPin(quint8 pTimeoutSeconds)
 	Q_UNUSED(pTimeoutSeconds)
 
 	QThread::msleep(Env::getSingleton<VolatileSettings>()->getDelay());
-	return {CardReturnCode::OK, ResponseApdu(QByteArray::fromHex("9000"))};
+	return {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 }
 
 
-ResponseApduResult SimulatorCard::executeFileCommand(const CommandApdu& pCmd)
+ResponseApdu SimulatorCard::executeCommand(const CommandApdu& pCommandApdu)
+{
+	switch (pCommandApdu.getINS())
+	{
+		case Ins::SELECT:
+		case Ins::READ_BINARY:
+		case Ins::UPDATE_BINARY:
+			return executeFileCommand(pCommandApdu);
+
+		case Ins::GET_CHALLENGE:
+		{
+			const auto& challenge = Randomizer::getInstance().createBytes(8);
+			mTaSigningData.append(challenge);
+			return ResponseApdu(StatusCode::SUCCESS, challenge);
+		}
+
+		case Ins::MSE_SET:
+			if (pCommandApdu.getP2() == CommandApdu::AUTHENTICATION_TEMPLATE)
+			{
+				return executeMseSetAt(pCommandApdu);
+			}
+
+			if (pCommandApdu.getP2() == CommandApdu::DIGITAL_SIGNATURE_TEMPLATE)
+			{
+				return executeMseSetDst(pCommandApdu.getData());
+			}
+
+			return ResponseApdu(StatusCode::INVALID_PARAMETER);
+
+		case Ins::GENERAL_AUTHENTICATE:
+			return executeGeneralAuthenticate(pCommandApdu);
+
+		case Ins::EXTERNAL_AUTHENTICATE:
+			return executeExternalAuthenticate(pCommandApdu.getData());
+
+		case Ins::VERIFY:
+			if (pCommandApdu.isProprietary())
+			{
+				return ResponseApdu(verifyAuxiliaryData(pCommandApdu.getData()));
+			}
+
+			return ResponseApdu(StatusCode::UNSUPPORTED_CLA);
+
+		case Ins::PSO_VERIFY:
+			return executePsoVerify(pCommandApdu.getData());
+
+		case Ins::ACTIVATE:
+		case Ins::DEACTIVATE:
+			return executePinManagement(pCommandApdu);
+
+		case Ins::RESET_RETRY_COUNTER:
+			return executeResetRetryCounter(pCommandApdu);
+
+		default:
+			qCCritical(card_simulator) << "Unknown instruction:" << QByteArray(pCommandApdu).toHex();
+			return ResponseApdu(StatusCode::UNSUPPORTED_INS);
+	}
+}
+
+
+ResponseApdu SimulatorCard::executeFileCommand(const CommandApdu& pCmd)
 {
 	const FileCommand fileCommand(pCmd);
 	const auto& offset = fileCommand.getOffset();
 	const auto& fileRef = fileCommand.getFileRef();
-	ResponseApduResult result = {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 
 	switch (pCmd.getINS())
 	{
 		case Ins::SELECT:
-			if (fileRef.getType() == FileRef::ELEMENTARY_FILE)
+		{
+			const auto& fileId = fileRef.getIdentifier();
+			switch (fileRef.getType())
 			{
-				const auto& fileId = fileRef.getIdentifier();
-				result = {CardReturnCode::OK, ResponseApdu(mFileSystem.select(fileId))};
+				case FileRef::MASTER_FILE:
+					return ResponseApdu(fileId == FileRef::masterFile().getIdentifier() ? StatusCode::SUCCESS : StatusCode::FILE_NOT_FOUND);
+
+				case FileRef::ELEMENTARY_FILE:
+					return ResponseApdu(mFileSystem.select(fileId));
+
+				case FileRef::APPLICATION:
+					return ResponseApdu(fileId == FileRef::appEId().getIdentifier() ? StatusCode::SUCCESS : StatusCode::FILE_NOT_FOUND);
+
+				default:
+					return ResponseApdu(StatusCode::FILE_NOT_FOUND);
 			}
-			break;
+		}
 
 		case Ins::READ_BINARY:
 			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
 			{
 				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
-				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
+				if (selectResult != StatusCode::SUCCESS)
+				{
+					return ResponseApdu(selectResult);
+				}
 			}
 
-			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
-			{
-				const auto& file = mFileSystem.read(offset, fileCommand.getLe(), pCmd.isExtendedLength());
-				result = {CardReturnCode::OK, ResponseApdu(file)};
-			}
-			break;
+			return ResponseApdu(mFileSystem.read(offset, fileCommand.getLe(), pCmd.isExtendedLength()));
 
 		case Ins::UPDATE_BINARY:
 			if (offset == 0 && fileRef.getType() == FileRef::TYPE::ELEMENTARY_FILE)
 			{
 				const auto& selectResult = mFileSystem.select(fileRef.getShortIdentifier());
-				result = {CardReturnCode::OK, ResponseApdu(selectResult)};
+				if (selectResult != StatusCode::SUCCESS)
+				{
+					return ResponseApdu(selectResult);
+				}
 			}
 
-			if (result.mResponseApdu.getStatusCode() == StatusCode::SUCCESS)
-			{
-				const auto& statusCode = mFileSystem.write(offset, pCmd.getData());
-				result = {CardReturnCode::OK, ResponseApdu(statusCode)};
-			}
-			break;
+			return ResponseApdu(mFileSystem.write(offset, pCmd.getData()));
 
 		default:
-			result = {CardReturnCode::COMMAND_FAILED};
+			return ResponseApdu(StatusCode::UNSUPPORTED_INS);
 	}
-
-	return result;
 }
 
 
-ResponseApduResult SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
+ResponseApdu SimulatorCard::executeMseSetAt(const CommandApdu& pCmd)
 {
-
 	if (pCmd.getData().isEmpty())
 	{
-		return {CardReturnCode::OK, ResponseApdu(StatusCode::WRONG_LENGTH)};
+		return ResponseApdu(StatusCode::WRONG_LENGTH);
 	}
 
 	const ASN1Struct cmdData(pCmd.getData());
-
 	mSelectedProtocol = Oid(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE));
-
 	const SecurityProtocol protocol(mSelectedProtocol);
 
 	switch (pCmd.getP1())
 	{
 		case CommandApdu::PACE:
-			if (protocol.getProtocol() == ProtocolType::PACE)
+		{
+			mPacePassword = PacePasswordId(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PASSWORD_REFERENCE).back());
+			if (protocol.getProtocol() != ProtocolType::PACE || mFileSystem.getPassword(mPacePassword).isNull())
 			{
-				mPaceKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back();
-				const auto& chat = cmdData.getObject(V_ASN1_APPLICATION, ASN1Struct::CERTIFICATE_HOLDER_AUTHORIZATION_TEMPLATE);
-				if (!chat.isEmpty())
-				{
-					mPaceChat = CHAT::decode(chat);
-				}
-				else
-				{
-					mPaceChat.reset();
-				}
+				return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
 			}
-			break;
+
+			mPaceKeyId = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back();
+			const auto& chat = cmdData.getObject(V_ASN1_APPLICATION, ASN1Struct::CERTIFICATE_HOLDER_AUTHORIZATION_TEMPLATE);
+			if (chat.isEmpty())
+			{
+				mAccessRights.clear();
+				mTaCertificate.reset();
+			}
+			else
+			{
+				mAccessRights = CHAT::decode(chat)->getAccessRights();
+				mTaCertificate = mFileSystem.getTrustPoint();
+			}
+			mTaSigningData.clear();
+
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
 
 		case CommandApdu::CHIP_AUTHENTICATION:
-			if (protocol.getProtocol() == ProtocolType::CA || protocol.getProtocol() == ProtocolType::RI)
+		{
+			if (protocol.getProtocol() != ProtocolType::CA && protocol.getProtocol() != ProtocolType::RI)
 			{
-				mCardKey = mFileSystem.getKey(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back());
+				return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
 			}
-			break;
+
+			mCardKey = mFileSystem.getKey(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PRIVATE_KEY_REFERENCE).back());
+
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
 
 		case CommandApdu::TERMINAL_AUTHENTICATION:
-			if (protocol.getProtocol() == ProtocolType::TA)
+		{
+			if (protocol.getProtocol() != ProtocolType::TA)
 			{
-				const auto& aad = cmdData.getObject(V_ASN1_APPLICATION, ASN1Struct::AUXILIARY_AUTHENTICATED_DATA);
-				mTaAuxData = AuthenticatedAuxiliaryData::decode(aad);
+				return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
 			}
-			break;
+
+			const auto& chr = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PUBLIC_KEY_REFERENCE);
+			if (!mTaCertificate || mTaCertificate->getBody().getCertificateHolderReference() != chr)
+			{
+				return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
+			}
+
+			if (mTaCertificate->getBody().getHashAlgorithm() != protocol.getHashAlgorithm())
+			{
+				return ResponseApdu(StatusCode::NO_PARENT_FILE);
+			}
+
+			mTaAuxData = cmdData.getObject(V_ASN1_APPLICATION, ASN1Struct::AUXILIARY_AUTHENTICATED_DATA);
+			mTaSigningData.append(cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::TA_EPHEMERAL_PUBLIC_KEY));
+
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
 
 		default:
-			return {CardReturnCode::OK, ResponseApdu(StatusCode::INVALID_PARAMETER)};
+			return ResponseApdu(StatusCode::INVALID_PARAMETER);
 	}
-
-	return {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
 }
 
 
-ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
+ResponseApdu SimulatorCard::executeMseSetDst(const QByteArray& pData) const
+{
+	const auto& pubKey = ASN1Struct(pData).getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PUBLIC_KEY_REFERENCE);
+	if (mTaCertificate && mTaCertificate->getBody().getCertificateHolderReference() == pubKey)
+	{
+		return ResponseApdu(StatusCode::SUCCESS);
+	}
+
+	return ResponseApdu(StatusCode::REFERENCED_DATA_NOT_FOUND);
+}
+
+
+ResponseApdu SimulatorCard::executeGeneralAuthenticate(const CommandApdu& pCmd)
 {
 	if (pCmd.getData().isEmpty())
 	{
-		return {CardReturnCode::OK, ResponseApdu(StatusCode::WRONG_LENGTH)};
+		return ResponseApdu(StatusCode::WRONG_LENGTH);
 	}
 
 	const ASN1Struct cmdData(pCmd.getData());
@@ -330,15 +423,15 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 
 		if (mChainingStep <= 2 && !pCmd.isCommandChaining())
 		{
-			return {CardReturnCode::OK, ResponseApdu(StatusCode::UNSUPPORTED_CLA)};
+			return ResponseApdu(StatusCode::UNSUPPORTED_CLA);
 		}
 
 		switch (mChainingStep)
 		{
 			case 0:
 			{
-				mPaceNonce = Randomizer::getInstance().createUuid().toRfc4122();
-				const auto& symmetricKey = KeyDerivationFunction(protocol).pi(QByteArray("123456"));
+				mPaceNonce = Randomizer::getInstance().createBytes(16);
+				const auto& symmetricKey = KeyDerivationFunction(protocol).pi(mFileSystem.getPassword(mPacePassword));
 				SymmetricCipher nonceDecrypter(protocol, symmetricKey);
 				const auto& encryptedNonce = nonceDecrypter.encrypt(mPaceNonce);
 
@@ -368,12 +461,7 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 				mPaceTerminalKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::PACE_EPHEMERAL_PUBLIC_KEY);
 
 				auto asn1KeyAgreement = newObject<GA_PERFORMKEYAGREEMENTDATA>();
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
 				const auto& encodedPublicKey = EcUtil::getEncodedPublicKey(mCardKey);
-#else
-				const auto& curve = EcUtil::create(EC_GROUP_dup(EC_KEY_get0_group(mCardKey.data())));
-				const auto& encodedPublicKey = EcUtil::point2oct(curve, EC_KEY_get0_public_key(mCardKey.data()));
-#endif
 				Asn1OctetStringUtil::setValue(encodedPublicKey, asn1KeyAgreement->mEphemeralPublicKey);
 				responseData = encodeObject(asn1KeyAgreement.data());
 				break;
@@ -384,19 +472,27 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 				if (pCmd.isCommandChaining())
 				{
 					mChainingStep = -1;
-					return {CardReturnCode::OK, ResponseApdu(StatusCode::LAST_CHAIN_CMD_EXPECTED)};
+					return ResponseApdu(StatusCode::LAST_CHAIN_CMD_EXPECTED);
 				}
 
-				const auto& mutualAuthenticationTerminalData = generateAuthenticationToken(mPaceTerminalKey);
-				mCardKey.reset();
+				const auto guard = qScopeGuard([this] {mCardKey.reset();});
+				const auto& mutualAuthenticationDataCard = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::AUTHENTICATION_TOKEN);
+				const auto& mutualAuthenticationDataTerminal = generateAuthenticationToken(mPaceTerminalKey, QByteArray(), mutualAuthenticationDataCard);
 				mPaceTerminalKey.clear();
 
-				auto ga = newObject<GA_MUTUALAUTHENTICATIONDATA>();
-				Asn1OctetStringUtil::setValue(mutualAuthenticationTerminalData, ga->mAuthenticationToken);
-				if (mPaceChat)
+				if (mutualAuthenticationDataTerminal.isNull())
 				{
+					return ResponseApdu(StatusCode::PIN_RETRY_COUNT_2);
+				}
+
+				auto ga = newObject<GA_MUTUALAUTHENTICATIONDATA>();
+				Asn1OctetStringUtil::setValue(mutualAuthenticationDataTerminal, ga->mAuthenticationToken);
+				if (mTaCertificate)
+				{
+					mTaSigningData = EcUtil::getEncodedPublicKey(mCardKey, true);
+
 					ga->mCarCurr = ASN1_OCTET_STRING_new();
-					Asn1OctetStringUtil::setValue(QByteArray("DETESTeID00005"), ga->mCarCurr);
+					Asn1OctetStringUtil::setValue(mTaCertificate->getBody().getCertificateHolderReference(), ga->mCarCurr);
 				}
 				responseData = encodeObject(ga.data());
 				break;
@@ -406,7 +502,7 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 				Q_UNREACHABLE();
 		}
 
-		return {CardReturnCode::OK, ResponseApdu(responseData + QByteArray::fromHex("9000"))};
+		return ResponseApdu(responseData + QByteArray::fromHex("9000"));
 	}
 
 	if (mSelectedProtocol == KnownOid::ID_CA_ECDH_AES_CBC_CMAC_128)
@@ -414,7 +510,7 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 		const auto& caKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::CA_EPHEMERAL_PUBLIC_KEY);
 		if (caKey.isEmpty())
 		{
-			return {CardReturnCode::OK, ResponseApdu(StatusCode::INVALID_DATAFIELD)};
+			return ResponseApdu(StatusCode::INVALID_DATAFIELD);
 		}
 
 		const QByteArray nonce = QByteArray::fromHex("0001020304050607");
@@ -423,7 +519,7 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 		auto ga = newObject<GA_CHIPAUTHENTICATIONDATA>();
 		Asn1OctetStringUtil::setValue(nonce, ga->mNonce);
 		Asn1OctetStringUtil::setValue(authenticationToken, ga->mAuthenticationToken);
-		return {CardReturnCode::OK, ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"))};
+		return ResponseApdu(encodeObject(ga.data()) + QByteArray::fromHex("9000"));
 	}
 
 	if (mSelectedProtocol == KnownOid::ID_RI_ECDH_SHA_256)
@@ -432,23 +528,128 @@ ResponseApduResult SimulatorCard::executeGeneralAuthenticate(const CommandApdu& 
 		const auto& riKey = cmdData.getData(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::EC_PUBLIC_POINT);
 		if (rawOid.isEmpty() || riKey.isEmpty())
 		{
-			return {CardReturnCode::OK, ResponseApdu(StatusCode::INVALID_DATAFIELD)};
+			return ResponseApdu(StatusCode::INVALID_DATAFIELD);
 		}
 
 		const Oid oid(rawOid);
 		if (oid != KnownOid::ID_RI_ECDH_SHA_256)
 		{
-			return {CardReturnCode::OK, ResponseApdu(StatusCode::NO_BINARY_FILE)};
+			return ResponseApdu(StatusCode::NO_BINARY_FILE);
 		}
 
 		const QByteArray& restrictedId = generateRestrictedId(riKey);
 
 		const auto responseData = Asn1Util::encode(V_ASN1_CONTEXT_SPECIFIC, ASN1Struct::RI_FIRST_IDENTIFIER, restrictedId);
 		const auto response = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::DYNAMIC_AUTHENTICATION_DATA, responseData, true);
-		return {CardReturnCode::OK, ResponseApdu(response + QByteArray::fromHex("9000"))};
+		return ResponseApdu(response + QByteArray::fromHex("9000"));
 	}
 
-	return {CardReturnCode::OK, ResponseApdu(StatusCode::SUCCESS)};
+	return ResponseApdu(StatusCode::VERIFICATION_FAILED);
+}
+
+
+ResponseApdu SimulatorCard::executePsoVerify(const QByteArray& pData)
+{
+	const auto rawCertificate = Asn1Util::encode(V_ASN1_APPLICATION, ASN1Struct::CV_CERTIFICATE, pData, true);
+	const auto& certificate = CVCertificate::fromRaw(rawCertificate);
+	const auto& trustPoint = mFileSystem.getTrustPoint();
+	if (!SignatureChecker::checkSignature(certificate, mTaCertificate, &trustPoint->getBody().getPublicKey()))
+	{
+		return ResponseApdu(StatusCode::VERIFICATION_FAILED);
+	}
+
+	switch (certificate->getBody().getCHAT().getAccessRole())
+	{
+		case EnumAccessRole::AccessRole::CVCA:
+			mFileSystem.setTrustPoint(certificate);
+			break;
+
+		case EnumAccessRole::AccessRole::AT:
+			mAccessRights.intersect(trustPoint->getBody().getCHAT().getAccessRights());
+			mAccessRights.intersect(mTaCertificate->getBody().getCHAT().getAccessRights());
+			mAccessRights.intersect(certificate->getBody().getCHAT().getAccessRights());
+			break;
+
+		default:
+			break;
+	}
+	mTaCertificate = certificate;
+
+	return ResponseApdu(StatusCode::SUCCESS);
+}
+
+
+ResponseApdu SimulatorCard::executeExternalAuthenticate(const QByteArray& pSignature)
+{
+	if (pSignature.isEmpty())
+	{
+		return ResponseApdu(StatusCode::WRONG_LENGTH);
+	}
+
+	SecurityProtocol protocol(mSelectedProtocol);
+	if (protocol.getProtocol() == ProtocolType::TA && protocol.getSignature() == SignatureType::ECDSA)
+	{
+		if (protocol.getHashAlgorithm() != mTaCertificate->getBody().getHashAlgorithm())
+		{
+			return ResponseApdu(StatusCode::NO_PARENT_FILE);
+		}
+
+		const auto guard = qScopeGuard([this] {mTaSigningData.clear();});
+		const auto& terminalPublicKey = mFileSystem.getTrustPoint()->getBody().getPublicKey().createKey(mTaCertificate->getBody().getPublicKey().getUncompressedPublicPoint());
+		mTaSigningData.append(mTaAuxData);
+		if (SignatureChecker::checkSignature(terminalPublicKey, pSignature, mTaSigningData, protocol.getHashAlgorithm()))
+		{
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
+
+		return ResponseApdu(StatusCode::VERIFICATION_FAILED);
+
+	}
+
+	return ResponseApdu(StatusCode::NO_PARENT_FILE);
+}
+
+
+ResponseApdu SimulatorCard::executePinManagement(const CommandApdu& pCmd) const
+{
+	if (pCmd.getINS() != Ins::ACTIVATE && pCmd.getINS() != Ins::DEACTIVATE)
+	{
+		return ResponseApdu(StatusCode::UNSUPPORTED_INS);
+	}
+
+	if (pCmd.getP1() != 0x10 || pCmd.getP2() != CommandApdu::PIN)
+	{
+		return ResponseApdu(StatusCode::INVALID_PARAMETER);
+	}
+
+	qCDebug(card_simulator) << pCmd.getINS() << "PIN";
+	return ResponseApdu(StatusCode::SUCCESS);
+}
+
+
+ResponseApdu SimulatorCard::executeResetRetryCounter(const CommandApdu& pCmd) const
+{
+	if (pCmd.getINS() != Ins::RESET_RETRY_COUNTER)
+	{
+		return ResponseApdu(StatusCode::UNSUPPORTED_INS);
+	}
+
+	if (pCmd.getP2() == CommandApdu::PIN)
+	{
+		if (pCmd.getP1() == CommandApdu::CHANGE)
+		{
+			qCDebug(card_simulator) << "CHANGE PIN:" << pCmd.getData();
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
+
+		if (pCmd.getP1() == CommandApdu::UNBLOCK)
+		{
+			qCDebug(card_simulator) << "UNBLOCK PIN";
+			return ResponseApdu(StatusCode::SUCCESS);
+		}
+	}
+
+	return ResponseApdu(StatusCode::INVALID_PARAMETER);
 }
 
 
@@ -505,7 +706,7 @@ QByteArray SimulatorCard::ecMultiplication(const QByteArray& pPoint) const
 	}
 
 	QSharedPointer<EC_POINT> result = EcUtil::create(EC_POINT_new(curve.data()));
-	const auto& privateKey = EcUtil::create(BN_dup(EC_KEY_get0_private_key(mCardKey.data())));
+	const auto& privateKey = EcUtil::getPrivateKey(mCardKey);
 	if (!EC_POINT_mul(curve.data(), result.data(), nullptr, point.data(), privateKey.data(), nullptr))
 	{
 		qCCritical(card_simulator) << "Calculation of the result failed";
@@ -518,7 +719,7 @@ QByteArray SimulatorCard::ecMultiplication(const QByteArray& pPoint) const
 }
 
 
-QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce)
+QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicKey, const QByteArray& pNonce, const QByteArray& pVerify)
 {
 	QByteArray sharedSecret = ecMultiplication(pPublicKey);
 
@@ -526,11 +727,19 @@ QByteArray SimulatorCard::generateAuthenticationToken(const QByteArray& pPublicK
 	KeyDerivationFunction kdf(protocol);
 
 	QByteArray macKey = kdf.mac(sharedSecret, pNonce);
-	QByteArray encKey = kdf.enc(sharedSecret, pNonce);
-
-	mNewSecureMessaging.reset(new SecureMessaging(protocol, encKey, macKey));
-
 	CipherMac cmac(protocol, macKey);
+	if (!pVerify.isNull())
+	{
+		const auto& uncompressedCardPublicKey = EcdhKeyAgreement::encodeUncompressedPublicKey(mSelectedProtocol, EcUtil::getEncodedPublicKey(mCardKey));
+		const auto& mutualAuthenticationCardData = cmac.generate(uncompressedCardPublicKey);
+		if (pVerify != mutualAuthenticationCardData)
+		{
+			return QByteArray();
+		}
+	}
+
+	QByteArray encKey = kdf.enc(sharedSecret, pNonce);
+	mNewSecureMessaging.reset(new SecureMessaging(protocol, encKey, macKey));
 	return cmac.generate(EcdhKeyAgreement::encodeUncompressedPublicKey(mSelectedProtocol, pPublicKey));
 }
 
@@ -543,10 +752,10 @@ QByteArray SimulatorCard::generateRestrictedId(const QByteArray& pPublicKey) con
 }
 
 
-StatusCode SimulatorCard::verifyAuxiliaryData(const QByteArray& pASN1Struct)
+StatusCode SimulatorCard::verifyAuxiliaryData(const QByteArray& pASN1Struct) const
 {
 	const auto* unsignedCharPointer = reinterpret_cast<const uchar*>(pASN1Struct.constData());
 	ASN1_OBJECT* obj = d2i_ASN1_OBJECT(nullptr, &unsignedCharPointer, static_cast<long>(pASN1Struct.size()));
 	const auto guard = qScopeGuard([obj] {ASN1_OBJECT_free(obj);});
-	return mFileSystem.verify(Oid(obj), mTaAuxData);
+	return mFileSystem.verify(Oid(obj), AuthenticatedAuxiliaryData::decode(mTaAuxData));
 }

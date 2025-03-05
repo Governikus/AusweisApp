@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PcscCard.h"
@@ -283,9 +283,9 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	}
 
 	const auto guard = qScopeGuard([cardHandle, readerName] {
-			PCSC_RETURNCODE disconnectCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);
-			qCDebug(card_pcsc) << "SCardDisconnect for" << readerName << ':' << pcsc::toString(disconnectCode);
-		});
+				PCSC_RETURNCODE disconnectCode = SCardDisconnect(cardHandle, SCARD_LEAVE_CARD);
+				qCDebug(card_pcsc) << "SCardDisconnect for" << readerName << ':' << pcsc::toString(disconnectCode);
+			});
 
 	QByteArray buffer(1024, '\0');
 	const std::array<uchar, 2> inBuffer({0, 0});

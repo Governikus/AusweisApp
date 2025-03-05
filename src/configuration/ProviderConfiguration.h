@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Provides information of provider json.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -18,6 +14,10 @@
 #include <QSharedPointer>
 #include <QString>
 
+
+class test_PinResetInformationModel;
+
+
 namespace governikus
 {
 
@@ -26,6 +26,7 @@ class ProviderConfiguration
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::test_PinResetInformationModel;
 
 	private:
 		const QSharedPointer<UpdatableFile> mUpdatableFile;

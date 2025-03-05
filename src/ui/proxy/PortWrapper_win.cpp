@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "PortWrapper.h"
@@ -46,16 +46,16 @@ QString PortWrapper::getUserOfProcessID(DWORD pPid)
 		return QString();
 	}
 	const auto processHandleGuard = qScopeGuard([&processHandle]{
-			CloseHandle(processHandle);
-		});
+				CloseHandle(processHandle);
+			});
 
 	HANDLE processToken = nullptr;
 	const auto processTokenGuard = qScopeGuard([&processToken]{
-			if (processToken)
-			{
-				CloseHandle(processToken);
-			}
-		});
+				if (processToken)
+				{
+					CloseHandle(processToken);
+				}
+			});
 	if (!OpenProcessToken(processHandle, TOKEN_QUERY, &processToken))
 	{
 		qCWarning(rproxy) << "Cannot call TOKEN_QUERY:" << GetLastError();
@@ -75,11 +75,11 @@ QString PortWrapper::getUserOfProcessID(DWORD pPid)
 
 	PTOKEN_USER tokenUser = static_cast<PTOKEN_USER>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, dwSize));
 	const auto tokenUserGuard = qScopeGuard([&tokenUser]{
-			if (tokenUser)
-			{
-				HeapFree(GetProcessHeap(), 0, tokenUser);
-			}
-		});
+				if (tokenUser)
+				{
+					HeapFree(GetProcessHeap(), 0, tokenUser);
+				}
+			});
 
 	if (!GetTokenInformation(processToken, TokenUser, tokenUser, dwSize, &dwSize))
 	{
@@ -92,9 +92,9 @@ QString PortWrapper::getUserOfProcessID(DWORD pPid)
 	DWORD domainLen = 255;
 	LPTSTR domain = static_cast<LPTSTR>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, domainLen));
 	const auto memGuard = qScopeGuard([&name, &domain] {
-			HeapFree(GetProcessHeap(), 0, name);
-			HeapFree(GetProcessHeap(), 0, domain);
-		});
+				HeapFree(GetProcessHeap(), 0, name);
+				HeapFree(GetProcessHeap(), 0, domain);
+			});
 
 	SID_NAME_USE name_use;
 	if (!LookupAccountSid(nullptr, tokenUser->User.Sid, name, &nameLen, domain, &domainLen, &name_use))
@@ -113,11 +113,11 @@ QString PortWrapper::getExecutableOfProcessID(DWORD pPid)
 	entry.dwSize = sizeof(PROCESSENTRY32);
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	const auto snapshotGuard = qScopeGuard([&snapshot]{
-			if (snapshot)
-			{
-				CloseHandle(snapshot);
-			}
-		});
+				if (snapshot)
+				{
+					CloseHandle(snapshot);
+				}
+			});
 
 	if (!Process32First(snapshot, &entry))
 	{
@@ -134,11 +134,11 @@ QString PortWrapper::getExecutableOfProcessID(DWORD pPid)
 
 		HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, false, entry.th32ProcessID);
 		const auto processGuard = qScopeGuard([&process]{
-				if (process)
-				{
-					CloseHandle(process);
-				}
-			});
+					if (process)
+					{
+						CloseHandle(process);
+					}
+				});
 		return QString::fromWCharArray(entry.szExeFile);
 	}
 	while (Process32Next(snapshot, &entry));
@@ -215,8 +215,8 @@ QList<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 
 	auto* tcpInfo = static_cast<MIB_TCPTABLE_OWNER_PID*>(HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size));
 	const auto tcpInfoGuard = qScopeGuard([tcpInfo]{
-			HeapFree(GetProcessHeap(), 0, tcpInfo);
-		});
+				HeapFree(GetProcessHeap(), 0, tcpInfo);
+			});
 
 	dwResult = GetExtendedTcpTable(tcpInfo, &size, false, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
 	if (dwResult != NO_ERROR)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginScheme.h"
@@ -152,8 +152,8 @@ void UiPluginScheme::onWorkflowFinished(const QSharedPointer<WorkflowRequest>& p
 			 */
 			const auto& referrer = pRequest->getData().value<Referrer>();
 			QMetaObject::invokeMethod(this, [this, referrer, url] {
-					sendRedirect(referrer, url);
-				}, Qt::QueuedConnection);
+						sendRedirect(referrer, url);
+					}, Qt::QueuedConnection);
 		}
 	}
 }

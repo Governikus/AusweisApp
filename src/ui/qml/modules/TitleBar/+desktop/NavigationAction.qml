@@ -1,22 +1,23 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
+
 import Governikus.Global
 import Governikus.Style
-import Governikus.View
 import Governikus.Type
 
 GLink {
 	id: root
 
 	enum Action {
+		None,
 		Cancel,
 		Back
 	}
 
-	readonly property color pressColor: Qt.darker(Style.color.textTitle.basic, Constants.highlightDarkerFactor)
+	readonly property color pressColor: Qt.darker(Style.color.textTitle.basic, Style.color.highlightDarkerFactor)
 	property int type: NavigationAction.Action.Cancel
 
 	colorStyle: Style.color.linkTitle

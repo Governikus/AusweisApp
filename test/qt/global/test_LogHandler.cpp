@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref LogHandler
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LogHandler.h"
@@ -52,9 +48,12 @@ class test_LogHandler
 	QString randomLogFileName(bool pAutoRemove = true)
 	{
 		QTemporaryFile tmp(LogHandler::getLogFileTemplate());
-		tmp.open();
 		tmp.setAutoRemove(pAutoRemove);
-		return tmp.fileName();
+		if (tmp.open())
+		{
+			return tmp.fileName();
+		}
+		return QString();
 	}
 
 	private Q_SLOTS:

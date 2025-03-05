@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MessageDispatcher.h"
@@ -104,8 +104,8 @@ Msg MessageDispatcher::finish()
 	Q_ASSERT(mContext.isActiveWorkflow());
 
 	const auto guard = qScopeGuard([this] {
-			reset();
-		});
+				reset();
+			});
 
 #if __has_include("context/PersonalizationContext.h")
 	if (auto personalizationContext = mContext.getContext<PersonalizationContext>())
@@ -400,6 +400,9 @@ MsgHandler MessageDispatcher::accept()
 
 
 MsgHandler MessageDispatcher::interrupt()
+#ifndef Q_OS_IOS
+const
+#endif
 {
 	const auto cmdType = MsgCmdType::INTERRUPT;
 #ifdef Q_OS_IOS
@@ -407,9 +410,9 @@ MsgHandler MessageDispatcher::interrupt()
 		const auto allowedStates = {MsgType::ENTER_PIN, MsgType::ENTER_CAN, MsgType::ENTER_PUK, MsgType::ENTER_NEW_PIN};
 		const auto& workflowContext = mContext.getContext();
 		return handleCurrentState(cmdType, allowedStates, [&workflowContext] {
-				workflowContext->setInterruptRequested(true);
-				switch (workflowContext->getLastPaceResult())
-				{
+					workflowContext->setInterruptRequested(true);
+					switch (workflowContext->getLastPaceResult())
+					{
 						case CardReturnCode::OK:
 						case CardReturnCode::OK_PUK:
 						case CardReturnCode::OK_CAN:
@@ -418,10 +421,10 @@ MsgHandler MessageDispatcher::interrupt()
 
 						default:
 							Env::getSingleton<ReaderManager>()->stopScan(ReaderManagerPluginType::NFC, Env::getSingleton<VolatileSettings>()->getMessages().getSessionFailed());
-				}
+					}
 
-				return MsgHandler::Void;
-			});
+					return MsgHandler::Void;
+				});
 	}
 #else
 	return MsgHandlerUnknownCommand(cmdType);

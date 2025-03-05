@@ -1,20 +1,34 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
+import Governikus.RemoteServiceView
 import Governikus.SelfAuthenticationView
 import Governikus.Style
 import Governikus.TitleBar
-import Governikus.View
 import Governikus.Type
+import Governikus.View
 
 FlickableSectionPage {
 	id: root
 
-	signal startAuth
+	readonly property int detectedReaderType: {
+		if (SettingsModel.preferredTechnology === ReaderManagerPluginType.SIMULATOR) {
+			return ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE ? ReaderManagerPluginType.REMOTE_IFD : ReaderManagerPluginType.NFC;
+		}
+		return SettingsModel.preferredTechnology;
+	}
+	readonly property int readerType: selectedReaderType !== ReaderManagerPluginType.UNKNOWN ? selectedReaderType : detectedReaderType
+	property int selectedReaderType: ReaderManagerPluginType.UNKNOWN
+
+	signal changeTransportPin
+	signal checkSuccess
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Check device and ID card")
@@ -22,10 +36,11 @@ FlickableSectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: show(UiModule.DEFAULT)
+		onClicked: root.show(UiModule.DEFAULT)
 	}
 
-	onStartAuth: {
+	Component.onDestruction: d.stopScan()
+	onCheckSuccess: {
 		popAll();
 		push(selfAuthView);
 	}
@@ -38,13 +53,14 @@ FlickableSectionPage {
 
 		SelfAuthenticationView {
 			hideTechnologySwitch: true
-			initialPlugin: ReaderManagerPluginType.NFC
+			initialPlugin: root.readerType
 
 			onBack: {
 				setLockedAndHidden(false);
 				pop();
 				show(UiModule.DEFAULT);
 			}
+			onChangeTransportPin: root.changeTransportPin()
 			onWorkflowFinished: pModuleToShow => {
 				show(pModuleToShow);
 				popAll();
@@ -55,42 +71,80 @@ FlickableSectionPage {
 		id: d
 
 		function cancel() {
-			setLockedAndHidden(false);
-			popAll();
-		}
-		function restartCheck() {
-			popAll();
-			startCheck();
+			stopScan();
+			root.setLockedAndHidden(false);
+			root.popAll();
 		}
 		function startCheck() {
-			setLockedAndHidden();
-			push(checkIDCardWorkflow);
+			if (root.readerType === ReaderManagerPluginType.REMOTE_IFD) {
+				RemoteServiceModel.startDetection();
+			}
+			root.setLockedAndHidden();
+			root.push(checkIDCardWorkflow);
+		}
+		function stopScan() {
+			if (root.readerType === ReaderManagerPluginType.REMOTE_IFD) {
+				RemoteServiceModel.stopDetection(true);
+			}
 		}
 	}
 	Component {
-		id: checkIDCardResultView
+		id: noNfcSuggestion
 
-		CheckIDCardResultView {
+		CheckIDCardNoNfcSuggestion {
 			title: root.title
 
-			onCancelClicked: d.cancel()
-			onRestartCheck: d.restartCheck()
-			onStartAuth: root.startAuth()
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: root.pop()
+			}
+
+			onConnectSmartphone: root.push(remoteServiceSettings)
+		}
+	}
+	Component {
+		id: remoteServiceSettings
+
+		RemoteServiceSettings {
+			allowUsage: true
+
+			Component.onCompleted: RemoteServiceModel.startDetection()
+			Component.onDestruction: {
+				if (root.readerType !== ReaderManagerPluginType.REMOTE_IFD) {
+					RemoteServiceModel.stopDetection(true);
+				}
+			}
+			onPairedDeviceFound: {
+				root.selectedReaderType = ReaderManagerPluginType.REMOTE_IFD;
+				d.startCheck();
+			}
 		}
 	}
 	Component {
 		id: checkIDCardWorkflow
 
 		CheckIDCardWorkflow {
+			readerType: root.readerType
+
+			Component.onDestruction: root.selectedReaderType = ReaderManagerPluginType.UNKNOWN
 			onCancel: d.cancel()
-			onRestartCheck: d.restartCheck()
-			onStartAuth: root.startAuth()
+			onCheckSuccess: {
+				d.stopScan();
+				root.checkSuccess();
+			}
+			onLeaveView: d.cancel()
+			onRestartCheck: {
+				root.popAll();
+				d.startCheck();
+			}
+			onShowRemoteServiceSettings: root.push(remoteServiceSettings)
 		}
 	}
 	ColumnLayout {
-		Layout.leftMargin: Constants.pane_padding
-		Layout.rightMargin: Constants.pane_padding
-		spacing: Constants.component_spacing
+		Layout.leftMargin: Style.dimens.pane_padding
+		Layout.rightMargin: Style.dimens.pane_padding
+		spacing: Style.dimens.pane_spacing
 
 		TintableIcon {
 			Layout.alignment: Qt.AlignHCenter
@@ -99,13 +153,11 @@ FlickableSectionPage {
 			tintColor: Style.color.image
 		}
 		GText {
-			Layout.alignment: Qt.AlignHCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("Check if your device & ID card are ready for use")
 			textStyle: Style.text.subline
 		}
 		GText {
-			Layout.alignment: Qt.AlignHCenter
 			//: LABEL ANDROID IOS
 			text: qsTr("To use the eID function, your device must meet certain technical requirements. Furthermore, the eID function must be activated.")
 		}
@@ -114,24 +166,20 @@ FlickableSectionPage {
 		}
 		GButton {
 			Layout.alignment: Qt.AlignHCenter
-			icon.source: "qrc:///images/mobile/device_button.svg"
+			icon.source: "qrc:///images/device_button.svg"
 
 			//: LABEL ANDROID IOS
 			text: qsTr("Start check")
 			tintIcon: true
 
 			onClicked: {
-				if (ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE) {
-					setLockedAndHidden();
-					push(checkIDCardResultView, {
-						"result": CheckIDCardModel.Result.NO_NFC
-					});
+				if (ApplicationModel.nfcState === ApplicationModel.NfcState.UNAVAILABLE && root.readerType !== ReaderManagerPluginType.REMOTE_IFD) {
+					root.setLockedAndHidden();
+					root.push(noNfcSuggestion);
 				} else {
 					d.startCheck();
 				}
 			}
-			onFocusChanged: if (focus)
-				root.positionViewAtItem(this)
 		}
 	}
 }

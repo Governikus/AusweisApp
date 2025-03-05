@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ApplicationModel.h"
@@ -13,6 +13,25 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(feedback)
 Q_DECLARE_LOGGING_CATEGORY(qml)
+
+extern "C" {
+
+JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifyScreenReaderRunningChanged(JNIEnv* pEnv, jobject pObj)
+{
+	Q_UNUSED(pEnv)
+	Q_UNUSED(pObj)
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+				auto* applicationModel = Env::getSingleton<ApplicationModel>();
+				if (applicationModel)
+				{
+					Q_EMIT applicationModel->fireScreenReaderRunningChanged();
+				}
+			}, Qt::QueuedConnection);
+}
+
+
+}
+
 
 static void showSystemSettings(const QString& pAction)
 {
@@ -98,50 +117,50 @@ void ApplicationModel::showFeedback(const QString& pMessage, bool pReplaceExisti
 	qCInfo(feedback).noquote() << pMessage;
 
 	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pMessage, pReplaceExisting](){
-			QJniEnvironment env;
-			static thread_local QJniObject toast;
+				QJniEnvironment env;
+				static thread_local QJniObject toast;
 
-			if (toast.isValid() && pReplaceExisting)
-			{
-				toast.callMethod<void>("cancel");
-			}
+				if (toast.isValid() && pReplaceExisting)
+				{
+					toast.callMethod<void>("cancel");
+				}
 
-			QJniObject context = QNativeInterface::QAndroidApplication::context();
-			const QJniObject& jMessage = QJniObject::fromString(pMessage);
-			toast = QJniObject::callStaticObjectMethod(
-					"android/widget/Toast",
-					"makeText",
-					"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
-					context.object(),
-					jMessage.object(),
-					jint(1));
-			toast.callMethod<void>("show");
+				QJniObject context = QNativeInterface::QAndroidApplication::context();
+				const QJniObject& jMessage = QJniObject::fromString(pMessage);
+				toast = QJniObject::callStaticObjectMethod(
+						"android/widget/Toast",
+						"makeText",
+						"(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;",
+						context.object(),
+						jMessage.object(),
+						jint(1));
+				toast.callMethod<void>("show");
 
-			if (env->ExceptionCheck())
-			{
-				qCCritical(qml) << "Suppressing an unexpected exception.";
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-				// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
-				// since it is used to display information to the user as required by the TR.
-				Q_ASSERT(false);
-			}
-		});
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Suppressing an unexpected exception.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+					// The toast was probably not displayed (e.g. DeadObjectException). We halt on error
+					// since it is used to display information to the user as required by the TR.
+					Q_ASSERT(false);
+				}
+			});
 }
 
 
 void ApplicationModel::keepScreenOn(bool pActive) const
 {
 	QNativeInterface::QAndroidApplication::runOnAndroidMainThread([pActive](){
-			QJniObject context = QNativeInterface::QAndroidApplication::context();
-			context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
-			QJniEnvironment env;
-			if (env->ExceptionCheck())
-			{
-				qCCritical(qml) << "Exception calling java native function.";
-				env->ExceptionDescribe();
-				env->ExceptionClear();
-			}
-		});
+				QJniObject context = QNativeInterface::QAndroidApplication::context();
+				context.callMethod<void>("keepScreenOn", "(Z)V", pActive);
+				QJniEnvironment env;
+				if (env->ExceptionCheck())
+				{
+					qCCritical(qml) << "Exception calling java native function.";
+					env->ExceptionDescribe();
+					env->ExceptionClear();
+				}
+			});
 
 }

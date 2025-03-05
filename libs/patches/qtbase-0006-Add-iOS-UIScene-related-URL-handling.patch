@@ -1,0 +1,115 @@
+From 2d622bade7dd58c807dc1fe0eec4270c52064123 Mon Sep 17 00:00:00 2001
+From: Juha Vuolle <juha.vuolle@qt.io>
+Date: Tue, 3 Dec 2024 10:11:11 +0200
+Subject: Add iOS UIScene related URL handling
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Qt adopted UIScene lifecycle in Qt 6.8. As part of that switch,
+the application URL delivery also changes to scene-specific, and the
+previous QIOSApplicationDelegate URL handling callbacks aren't invoked
+anymore.
+
+This commit adds the URL handling to these scene-based callbacks:
+willConnectToSession, openURLContexts, and continueUserActivity.
+The older callbacks are removed as unnecessary.
+
+With these additions, the application is capable of handling
+custom-uri-schemes and https universal links, both when it's already
+running, and when it needs to be launched.
+
+Amends: 76ebf51bc08f6af624a8540e7af88b9129b22ae1
+
+Pick-to: 6.8
+Fixes: QTBUG-131741
+Change-Id: Icacd76e9769f0a559b2052dfb60466a871187321
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+(cherry picked from commit c81f805817c82018e133ca140183f7ecee9d6130)
+---
+ .../platforms/ios/qiosapplicationdelegate.mm  | 65 +++++++++----------
+ 1 file changed, 29 insertions(+), 36 deletions(-)
+
+diff --git x/qtbase/src/plugins/platforms/ios/qiosapplicationdelegate.mm y/qtbase/src/plugins/platforms/ios/qiosapplicationdelegate.mm
+index c6e5a83874157aa7c4d45ebe823add979b7ab5a6..088d48fc9ffbbc924ddeddbed92edcabefffc488 100644
+--- x/qtbase/src/plugins/platforms/ios/qiosapplicationdelegate.mm
++++ y/qtbase/src/plugins/platforms/ios/qiosapplicationdelegate.mm
+@@ -20,42 +20,6 @@
+ 
+ @implementation QIOSApplicationDelegate
+ 
+-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
+-{
+-    Q_UNUSED(application);
+-    Q_UNUSED(restorationHandler);
+-
+-    if (!QGuiApplication::instance())
+-        return NO;
+-
+-    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+-        QIOSIntegration *iosIntegration = QIOSIntegration::instance();
+-        Q_ASSERT(iosIntegration);
+-
+-        QIOSServices *iosServices = static_cast<QIOSServices *>(iosIntegration->services());
+-
+-        return iosServices->handleUrl(QUrl::fromNSURL(userActivity.webpageURL));
+-    }
+-
+-    return NO;
+-}
+-
+-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
+-{
+-    Q_UNUSED(application);
+-    Q_UNUSED(options);
+-
+-    if (!QGuiApplication::instance())
+-        return NO;
+-
+-    QIOSIntegration *iosIntegration = QIOSIntegration::instance();
+-    Q_ASSERT(iosIntegration);
+-
+-    QIOSServices *iosServices = static_cast<QIOSServices *>(iosIntegration->services());
+-
+-    return iosServices->handleUrl(QUrl::fromNSURL(url));
+-}
+-
+ - (UISceneConfiguration *)application:(UIApplication *)application
+                           configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession
+                           options:(UISceneConnectionOptions *)options
+@@ -94,6 +58,35 @@
+ 
+     window.rootViewController = [[[QIOSViewController alloc]
+         initWithWindow:window andScreen:screen] autorelease];
++
++    if (connectionOptions.URLContexts.count > 0)
++        [self scene:scene openURLContexts:connectionOptions.URLContexts];
++}
++
++- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts
++{
++    qCDebug(lcQpaWindowScene) << "Handling openURLContexts for scene" << scene;
++
++    QIOSIntegration *iosIntegration = QIOSIntegration::instance();
++    Q_ASSERT(iosIntegration);
++
++    QIOSServices *iosServices = static_cast<QIOSServices *>(iosIntegration->services());
++
++    for (UIOpenURLContext *urlContext in URLContexts)
++        iosServices->handleUrl(QUrl::fromNSURL(urlContext.URL));
++}
++
++- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity
++{
++    qCDebug(lcQpaWindowScene) << "Handling continueUserActivity for scene" << scene;
++
++    if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
++        QIOSIntegration *iosIntegration = QIOSIntegration::instance();
++        Q_ASSERT(iosIntegration);
++
++        QIOSServices *iosServices = static_cast<QIOSServices *>(iosIntegration->services());
++        iosServices->handleUrl(QUrl::fromNSURL(userActivity.webpageURL));
++    }
+ }
+ 
+ @end

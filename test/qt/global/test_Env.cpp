@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref Env
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Env.h"
@@ -684,15 +680,15 @@ class test_Env
 			for (int i = 0; i < 100; ++i)
 			{
 				threads << QtConcurrent::run([func, &mock] {
-						for (int j = 0; j < 100; ++j)
-						{
-							Env::setCreator<TestEmptyTmp>(func);
-							Env::create<TestEmptyTmp>();
-							Env::getSingleton<TestSingleInCtor>();
-							Env::getShared<TestSharedInstance>();
-							Env::set(TestInstance::staticMetaObject, &mock);
-						}
-					});
+							for (int j = 0; j < 100; ++j)
+							{
+								Env::setCreator<TestEmptyTmp>(func);
+								Env::create<TestEmptyTmp>();
+								Env::getSingleton<TestSingleInCtor>();
+								Env::getShared<TestSharedInstance>();
+								Env::set(TestInstance::staticMetaObject, &mock);
+							}
+						});
 			}
 
 			for (auto future : std::as_const(threads))
@@ -707,8 +703,8 @@ class test_Env
 			QTest::addColumn<std::function<TestEmptyTmp()>>("creator");
 
 			QTest::newRow("with mock") << std::function<TestEmptyTmp()>([](){
-					return TestEmptyTmp();
-				});
+						return TestEmptyTmp();
+					});
 
 			QTest::newRow("without mock") << std::function<TestEmptyTmp()>();
 		}
@@ -766,8 +762,8 @@ class test_Env
 
 			QThreadPool pool; // do not use global one, otherwise the main thread is allowed, too
 			QtConcurrent::run(&pool, [] {
-					Env::getSingleton<TestAbstractUnmanagedInstance>();
-				}).waitForFinished();
+						Env::getSingleton<TestAbstractUnmanagedInstance>();
+					}).waitForFinished();
 
 			QCOMPARE(logSpy.count(), 0);
 		}
@@ -794,8 +790,8 @@ class test_Env
 
 			QThreadPool pool; // do not use global one, otherwise the main thead is allowed, too
 			QtConcurrent::run(&pool, [] {
-					Env::getSingleton<NetworkManager>();
-				}).waitForFinished();
+						Env::getSingleton<NetworkManager>();
+					}).waitForFinished();
 
 			QCOMPARE(logSpy.count(), 1);
 			QVERIFY(logSpy.takeLast().at(0).toString().contains(QLatin1String("governikus::NetworkManager was created in \"Main\" but is requested by \"Thread (pooled)\"")));

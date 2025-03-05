@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the chat.
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChatModel.h"
@@ -34,10 +30,10 @@ ChatModel::ChatModel()
 	initFilterModel(mFilterRequiredModel, &mFilterReadModel, ChatRoles::OPTIONAL_ROLE, QStringLiteral("false"));
 
 	connect(&Env::getSingleton<AppSettings>()->getGeneralSettings(), &GeneralSettings::fireSettingsChanged, this, [this]()
-		{
-			beginResetModel();
-			endResetModel();
-		});
+			{
+				beginResetModel();
+				endResetModel();
+			});
 }
 
 

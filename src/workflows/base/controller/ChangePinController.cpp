@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ChangePinController.h"
@@ -42,6 +42,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 	sPrepareChangePin->addTransition(sPrepareChangePin, &AbstractState::fireContinue, sChangePin);
 	sPrepareChangePin->addTransition(sPrepareChangePin, &AbstractState::fireAbort, sDestroyPace);
 	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireEnterNewPacePin, sEnterNewPacePin);
+	sPrepareChangePin->addTransition(sPrepareChangePin, &StatePrepareChangePin::fireSkipPinChange, sDestroyPace);
 
 	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireContinue, sChangePin);
 	sEnterNewPacePin->addTransition(sEnterNewPacePin, &AbstractState::fireAbort, sDestroyPace);
@@ -65,7 +66,7 @@ ChangePinController::ChangePinController(QSharedPointer<ChangePinContext> pConte
 }
 
 
-QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool pRequestTransportPin, bool pActivateUi)
+QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool pRequestTransportPin, bool pActivateUi, bool pOnlyCheckPin)
 {
 	const auto& handler = [](const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
 				Q_UNUSED(pActiveWorkflow)
@@ -78,5 +79,5 @@ QSharedPointer<WorkflowRequest> ChangePinController::createWorkflowRequest(bool 
 				return WorkflowControl::SKIP;
 			};
 
-	return WorkflowRequest::createHandler<ChangePinController, ChangePinContext>(handler, pRequestTransportPin, pActivateUi);
+	return WorkflowRequest::createHandler<ChangePinController, ChangePinContext>(handler, pRequestTransportPin, pActivateUi, pOnlyCheckPin);
 }

@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
 import Governikus.Global
 import Governikus.TitleBar
 import Governikus.Style
@@ -11,12 +12,14 @@ import Governikus.View
 import Governikus.Type
 
 FlickableSectionPage {
+	id: root
+
 	readonly property string currentPin: RemoteServiceModel.psk
 	property alias text: descriptionContainer.title
 
 	signal navActionClicked
 
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Pairing Information")
@@ -26,16 +29,16 @@ FlickableSectionPage {
 
 		action: NavigationAction.Action.Back
 
-		onClicked: navActionClicked()
+		onClicked: root.navActionClicked()
 	}
 
 	GOptionsContainer {
 		id: descriptionContainer
 
-		containerPadding: Constants.pane_padding
+		containerPadding: Style.dimens.pane_padding
 
 		ColumnLayout {
-			spacing: Constants.component_spacing
+			spacing: Style.dimens.pane_spacing
 			width: parent.width
 
 			TintableIcon {
@@ -55,9 +58,12 @@ FlickableSectionPage {
 					//: LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4
 					qsTr("Choose this smartphone in the list to pair it."),
 					//: LABEL ANDROID IOS Provide pairing code. Step 4 of 4
-					qsTr("Enter the pairing code \"%1\".").arg(currentPin)]
+					qsTr("Enter the pairing code \"%1\".").arg(root.currentPin)]
 
 				GText {
+					required property int index
+					required property string modelData
+
 					Accessible.name: ApplicationModel.stripHtmlTags(text)
 					Layout.alignment: Qt.AlignTop
 					text: (index + 1) + ". " + modelData

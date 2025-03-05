@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Ifd server service to offer smartphones as card readers (SaCs).
- * This class controls the advertising over UDP as well as the Websocket connection management.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

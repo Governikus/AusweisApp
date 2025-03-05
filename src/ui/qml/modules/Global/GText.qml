@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -7,14 +7,16 @@ import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Style
 import Governikus.Type
+import Governikus.View
 
 Text {
 	id: root
 
 	readonly property real effectiveFirstLineHeight: topPadding + Math.ceil(lineHeight) + bottomPadding
 	readonly property real effectiveMaxLinesHeight: topPadding + maximumLineCount * Math.ceil(lineHeight) + bottomPadding
+	property alias focusFrameVisible: focusFrame.visible
 	readonly property bool hasLink: link !== ""
-	readonly property string link: d.link
+	readonly property alias link: d.link
 	property TextStyle textStyle: Style.text.normal
 
 	function tryActivateLink() {
@@ -25,12 +27,13 @@ Text {
 
 	Accessible.focusable: true
 	Accessible.ignored: text === ""
-	Accessible.name: ApplicationModel.stripHtmlTags(text) + (Constants.is_desktop && hasLink ?
+	Accessible.name: ApplicationModel.stripHtmlTags(text) + (Style.is_layout_desktop && hasLink ?
 		//: INFO DESKTOP Text read by screen reader if the text contains a weblink which may be opened.
 		" %1: %2".arg(qsTr("Press space to open link")).arg(d.link) : "")
-	Accessible.role: Constants.is_desktop && hasLink ? Accessible.Button : d.isHeadline ? Accessible.Heading : Accessible.StaticText
+	Accessible.role: Style.is_layout_desktop && hasLink ? Accessible.Button : Accessible.StaticText
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
+	activeFocusOnTab: hasLink || ApplicationModel.isScreenReaderRunning
 	color: textStyle.textColor
 	font.pixelSize: textStyle.textSize
 	font.weight: textStyle.fontWeight
@@ -42,30 +45,36 @@ Text {
 
 	Component.onCompleted: d.checkForLinks()
 	Keys.onSpacePressed: tryActivateLink()
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 	onLinkActivated: pLink => {
 		Qt.openUrlExternally(pLink);
 	}
 	onTextChanged: d.checkForLinks()
 
+	FocusFrame {
+		id: focusFrame
+
+	}
 	QtObject {
 		id: d
 
 		readonly property bool isHeadline: [Style.text.headline, Style.text.subline].includes(root.textStyle)
 		property string link: ""
-		readonly property bool nonMultilineElided: maximumLineCount === 1 && elide !== Text.ElideNone
+		readonly property bool nonMultilineElided: root.maximumLineCount === 1 && root.elide !== Text.ElideNone
 
 		function checkForLinks() {
 			// Parse the text with a regular expression to see if there's a link somewhere. This has been done by Qt already, but there's no way to access this yet, see https://bugreports.qt.io/browse/QTBUG-79850
-			let reg = /href="(.*?)"/g;
-			let match = reg.exec(text);
-			if (!match) {
-				// no link
+			let match = root.text.match(/href=".*?"/g);
+			if (match) {
+				// 6 = href="
+				// -1 = "
+				d.link = match[0].substring(6, match[0].length - 1);
+				if (match.length > 1) {
+					console.warn("More than one link found:", match);
+				}
+			} else {
 				d.link = "";
-				return;
-			}
-			d.link = match[1];
-			if (reg.exec(text)) {
-				console.warn("More than one link found!");
 			}
 		}
 	}
@@ -79,9 +88,9 @@ Text {
 	}
 	Item {
 		ToolTip {
-			delay: Constants.toolTipDelay
+			delay: Style.toolTipDelay
 			text: root.hoveredLink
-			visible: Constants.is_desktop && root.hoveredLink !== ""
+			visible: Style.is_layout_desktop && root.hoveredLink !== ""
 
 			onAboutToShow: {
 				parent.x = mouseArea.mouseX;

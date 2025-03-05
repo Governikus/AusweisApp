@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Implementation of DataChannel base on web sockets.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -15,6 +11,7 @@
 #include <QTimer>
 #include <QWebSocket>
 
+
 namespace governikus
 {
 class WebSocketChannel
@@ -24,10 +21,10 @@ class WebSocketChannel
 
 	private:
 		const QSharedPointer<QWebSocket> mConnection;
-		const QString mId;
+		const QByteArray mId;
 		QTimer mPingTimer;
 		QTimer mPongTimer;
-		static QString makeConnectionId(const QSharedPointer<QWebSocket>& pConnection);
+		static QByteArray makeConnectionId(const QSharedPointer<QWebSocket>& pConnection);
 
 	public:
 		explicit WebSocketChannel(const QSharedPointer<QWebSocket>& pConnection);
@@ -36,7 +33,7 @@ class WebSocketChannel
 		void send(const QByteArray& pDataBlock) override;
 		void close() override;
 		[[nodiscard]] bool isPairingConnection() const override;
-		[[nodiscard]] const QString& getId() const override;
+		[[nodiscard]] const QByteArray& getId() const override;
 
 	private Q_SLOTS:
 		void onReceived(const QString& pMessage);

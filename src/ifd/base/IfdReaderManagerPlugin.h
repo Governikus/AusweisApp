@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -27,23 +27,23 @@ class IfdReaderManagerPlugin
 	friend class ::test_RemoteIfdReaderManagerPlugin;
 
 	private:
-		QMultiMap<QString, QString> mReadersForDispatcher;
-		QMap<QString, QSharedPointer<IfdDispatcherClient>> mDispatcherList;
+		QMultiMap<QByteArray, QString> mReadersForDispatcher;
+		QMap<QByteArray, QSharedPointer<IfdDispatcherClient>> mDispatcherList;
 		QMap<QString, Reader*> mReaderList;
 
-		void processConnectedReader(const QString& pReaderName, const IfdStatus& pIfdStatus, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QString& pId);
-		void handleIFDStatus(const QJsonObject& pJsonObject, const QString& pId);
+		void processConnectedReader(const QString& pReaderName, const IfdStatus& pIfdStatus, const QSharedPointer<IfdDispatcherClient>& pDispatcher, const QByteArray& pId);
+		void handleIFDStatus(const QJsonObject& pJsonObject, const QByteArray& pId);
 
 	private Q_SLOTS:
-		void onContextEstablished(const QString& pIfdName, const QString& pId) const;
-		void onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QString& pId);
-		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QString& pId);
+		void onContextEstablished(const QString& pIfdName, const QByteArray& pId) const;
+		void onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject, const QByteArray& pId);
+		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 
 	protected:
 		virtual void addDispatcher(const QSharedPointer<IfdDispatcherClient>& pDispatcher);
 		void removeAllDispatchers();
-		void removeDispatcher(const QString& pId);
-		[[nodiscard]] const QMap<QString, QSharedPointer<IfdDispatcherClient>>& getDispatchers() const;
+		void removeDispatcher(const QByteArray& pId);
+		[[nodiscard]] const QMap<QByteArray, QSharedPointer<IfdDispatcherClient>>& getDispatchers() const;
 
 		virtual IfdClient* getIfdClient() const = 0;
 

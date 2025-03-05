@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -13,7 +13,7 @@ FlickableSectionPage {
 	id: root
 
 	smartEidUsed: true
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	//: LABEL ANDROID IOS
 	title: qsTr("Smart-eID")
@@ -21,7 +21,7 @@ FlickableSectionPage {
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: pop()
+		onClicked: root.pop()
 	}
 
 	TintableIcon {
@@ -32,8 +32,6 @@ FlickableSectionPage {
 
 		PkiSwitch {
 			anchors.fill: parent
-			//: LABEL ANDROID IOS
-			functionName: qsTr("Smart-eID setup")
 		}
 	}
 	GPane {
@@ -54,15 +52,15 @@ FlickableSectionPage {
 		Layout.fillHeight: true
 	}
 	GButton {
+
+		//: LABEL ANDROID IOS
+		Accessible.name: text + ". " + qsTr("Sample card required.")
 		Layout.alignment: Qt.AlignHCenter
 		buttonColor: SettingsModel.useSelfauthenticationTestUri ? Style.color.error : Style.color.control.background.basic
 		icon.source: "qrc:///images/identify.svg"
-
 		//: LABEL ANDROID IOS
 		text: qsTr("Set up Smart-eID")
 
 		onClicked: PersonalizationModel.startWorkflow()
-		onFocusChanged: if (focus)
-			root.positionViewAtItem(this)
 	}
 }

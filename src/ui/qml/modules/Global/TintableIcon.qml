@@ -1,8 +1,12 @@
 /**
- * Copyright (c) 2019-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2019-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls
+
 import Governikus.Style
 
 Item {
@@ -25,10 +29,10 @@ Item {
 
 		SequentialAnimation {
 			PropertyAnimation {
-				duration: source == "" ? 0 : Constants.animation_duration
+				duration: root.source == "" ? 0 : Style.animation_duration
 				easing.type: Easing.InCubic
 				property: "opacity"
-				targets: root
+				target: root
 				to: 0
 			}
 			PropertyAction {
@@ -36,10 +40,10 @@ Item {
 				target: root
 			}
 			PropertyAnimation {
-				duration: source == "" ? Constants.animation_duration * 2 : Constants.animation_duration
-				easing.type: source == "" ? Easing.InOutCubic : Easing.InCubic
+				duration: root.source == "" ? Style.animation_duration * 2 : Style.animation_duration
+				easing.type: root.source == "" ? Easing.InOutCubic : Easing.InCubic
 				property: "opacity"
-				targets: root
+				target: root
 				to: 1
 			}
 		}
@@ -53,13 +57,8 @@ Item {
 		visible: !root.tintEnabled || GraphicsInfo.api !== GraphicsInfo.Software
 
 		layer {
+			effect: root.desaturate ? desaturateLayer : colorLayer
 			enabled: root.tintEnabled
-
-			effect: ShaderEffect {
-				property color color: root.tintColor
-
-				fragmentShader: root.desaturate ? "qrc:/shader/DesaturateShader.frag" : "qrc:/shader/ColorOverlayShader.frag"
-			}
 		}
 	}
 	Button {
@@ -72,5 +71,18 @@ Item {
 		icon.width: root.width
 		padding: 0
 		visible: !image.visible
+	}
+	Component {
+		id: desaturateLayer
+
+		GDesaturate {
+		}
+	}
+	Component {
+		id: colorLayer
+
+		GColorOverlay {
+			colorizationColor: root.tintColor
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateEstablishPaceChannelIfd.h"
@@ -31,6 +31,10 @@ void StateEstablishPaceChannelIfd::run()
 	auto cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
+		qCDebug(statemachine) << "No card connection available";
+		EstablishPaceChannelOutput channelOutput;
+		channelOutput.setPaceReturnCode(CardReturnCode::CARD_NOT_FOUND);
+		getContext()->setEstablishPaceChannelOutput(channelOutput);
 		Q_EMIT fireContinue();
 		return;
 	}
@@ -58,7 +62,7 @@ void StateEstablishPaceChannelIfd::run()
 	}
 
 	qDebug() << "Establish connection using" << mPasswordId;
-	Q_ASSERT(!pacePassword.isEmpty() && cardConnection);
+	Q_ASSERT(!pacePassword.isEmpty());
 
 	*this << cardConnection->callEstablishPaceChannelCommand(this,
 			&StateEstablishPaceChannelIfd::onEstablishConnectionDone,

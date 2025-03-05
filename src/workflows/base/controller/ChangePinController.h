@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Controller for the PIN changing process.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -23,7 +19,7 @@ class ChangePinController
 	Q_OBJECT
 
 	public:
-		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pRequestTransportPin = false, bool pActivateUi = true);
+		static QSharedPointer<WorkflowRequest> createWorkflowRequest(bool pRequestTransportPin = false, bool pActivateUi = true, bool pOnlyCheckPin = false);
 
 		explicit ChangePinController(QSharedPointer<ChangePinContext> pContext);
 		~ChangePinController() override = default;

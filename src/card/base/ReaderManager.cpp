@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ReaderManager.h"
@@ -113,8 +113,8 @@ void ReaderManager::reset(ReaderManagerPluginType pType)
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType] {
-			mWorker->reset(pType);
-		}, Qt::QueuedConnection);
+				mWorker->reset(pType);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -130,8 +130,8 @@ void ReaderManager::insert(const ReaderInfo& pReaderInfo, const QVariant& pData)
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pReaderInfo, pData] {
-			mWorker->insert(pReaderInfo, pData);
-		}, Qt::QueuedConnection);
+				mWorker->insert(pReaderInfo, pData);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -147,8 +147,8 @@ void ReaderManager::shelve()
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this] {
-			mWorker->shelve();
-		}, Qt::QueuedConnection);
+				mWorker->shelve();
+			}, Qt::QueuedConnection);
 }
 
 
@@ -185,8 +185,8 @@ void ReaderManager::startScan(ReaderManagerPluginType pType, bool pAutoConnect)
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType, pAutoConnect] {
-			mWorker->startScan(pType, pAutoConnect);
-		}, Qt::QueuedConnection);
+				mWorker->startScan(pType, pAutoConnect);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -211,8 +211,8 @@ void ReaderManager::stopScan(ReaderManagerPluginType pType, const QString& pErro
 
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pType, pError] {
-			mWorker->stopScan(pType, pError);
-		}, Qt::QueuedConnection);
+				mWorker->stopScan(pType, pError);
+			}, Qt::QueuedConnection);
 }
 
 
@@ -220,10 +220,10 @@ bool ReaderManager::isInitialScanFinished() const
 {
 	const QMutexLocker mutexLocker(&mMutex);
 	return std::all_of(mPluginInfoCache.cbegin(), mPluginInfoCache.cend(), [] (const ReaderManagerPluginInfo& pInfo){
-			const auto& state = pInfo.getInitialScanState();
-			return state == ReaderManagerPluginInfo::InitialScan::SUCCEEDED
-				   || state == ReaderManagerPluginInfo::InitialScan::FAILED;
-		});
+				const auto& state = pInfo.getInitialScanState();
+				return state == ReaderManagerPluginInfo::InitialScan::SUCCEEDED
+					   || state == ReaderManagerPluginInfo::InitialScan::FAILED;
+			});
 }
 
 
@@ -300,10 +300,10 @@ ReaderInfo ReaderManager::getReaderInfo(const QString& pReaderName) const
 }
 
 
-void ReaderManager::updateReaderInfo(const QString& pReaderName)
+void ReaderManager::updateReaderInfo(const QString& pReaderName) const
 {
 	Q_ASSERT(mWorker);
 	QMetaObject::invokeMethod(mWorker.data(), [this, pReaderName] {
-			mWorker->updateReaderInfo(pReaderName);
-		}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
+				mWorker->updateReaderInfo(pReaderName);
+			}, Qt::BlockingQueuedConnection); // needed to force the ReaderInfo update, else StateMachine loops based on stale state can occur
 }

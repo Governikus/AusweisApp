@@ -1,0 +1,11 @@
+fonts/.*
+images/html_templates/.*
+images/ausweis.svg
+images/logo_beta_background.svg
+images/desktop/default_reader.png
+images/desktop/npa.ico
+images/macos/appIcon.svg
+updatable-files/.*
+images/signature.jp2
+qtquickcontrols2.conf
+template.html

@@ -3,10 +3,6 @@
         <file>animations/enter_can.svg</file>
         <file>animations/enter_new_pin.svg</file>
         <file>animations/enter_no_pin.svg</file>
-        <file>animations/enter_password_check.svg</file>
-        <file>animations/enter_password_error.svg</file>
-        <file>animations/enter_password_star.svg</file>
-        <file>animations/enter_password_warning.svg</file>
         <file>animations/enter_pin.svg</file>
         <file>animations/enter_puk.svg</file>
         <file>animations/enter_remote_pin.svg</file>
@@ -17,10 +13,30 @@
         <file>animations/hourglass_mask_bottom.svg</file>
         <file>animations/hourglass_mask_top.svg</file>
         <file>animations/hourglass_sand.svg</file>
+        <file>animations/icon_remote_1.svg</file>
+        <file>animations/icon_remote_2.svg</file>
+        <file>animations/icon_remote_3.svg</file>
+        <file>animations/icon_remote_4.svg</file>
+        <file>animations/result_card.svg</file>
+        <file>animations/result_changepin.svg</file>
+        <file>animations/result_network.svg</file>
+        <file>animations/result_nfc.svg</file>
+        <file>animations/result_sac.svg</file>
+        <file>animations/result_sac_connection.svg</file>
+        <file>animations/siteWithLogo.svg</file>
+        <file>animations/status_normal.svg</file>
+        <file>animations/status_warning.svg</file>
+        <file>animations/symbol_block.svg</file>
+        <file>animations/symbol_check.svg</file>
+        <file>animations/symbol_error.svg</file>
+        <file>animations/symbol_info.svg</file>
+        <file>animations/symbol_question.svg</file>
+        <file>animations/symbol_star.svg</file>
+        <file>animations/symbol_warning.svg</file>
         <file>animations/wait_for_idcard_sac.svg</file>
         <file>animations/wait_for_idcard_usb.svg</file>
-        <file>animations/wait_for_questionmark.svg</file>
         <file>animations/wait_for_reader.svg</file>
+        <file>animations/wait_for_sac.svg</file>
         <file>fonts/AusweisApp_Roboto_Bold.ttf</file>
         <file>fonts/AusweisApp_Roboto_Medium.ttf</file>
         <file>fonts/AusweisApp_Roboto_Regular.ttf</file>
@@ -28,31 +44,17 @@
         <file>images/appearance_light_mode.svg</file>
         <file>images/appearance_system_mode.svg</file>
         <file>images/ausweis.svg</file>
-        <file>images/ausweis_outline.svg</file>
         <file>images/can_info.svg</file>
         <file>images/checkbox_indicator.svg</file>
+        <file>images/device_button.svg</file>
         <file>images/email_icon.svg</file>
         <file>images/eye_visibility_off.svg</file>
         <file>images/eye_visibility_on.svg</file>
         <file>images/faq_icon.svg</file>
         <file>images/filter.svg</file>
         <file>images/filter_off.svg</file>
+        <file>images/help.svg</file>
         <file>images/icon_five_digit_pin.svg</file>
-        <file>images/icon_remote_100_darkmode.svg</file>
-        <file>images/icon_remote_100_highcontrast.svg</file>
-        <file>images/icon_remote_100_lightmode.svg</file>
-        <file>images/icon_remote_25_darkmode.svg</file>
-        <file>images/icon_remote_25_highcontrast.svg</file>
-        <file>images/icon_remote_25_lightmode.svg</file>
-        <file>images/icon_remote_50_darkmode.svg</file>
-        <file>images/icon_remote_50_highcontrast.svg</file>
-        <file>images/icon_remote_50_lightmode.svg</file>
-        <file>images/icon_remote_75_darkmode.svg</file>
-        <file>images/icon_remote_75_highcontrast.svg</file>
-        <file>images/icon_remote_75_lightmode.svg</file>
-        <file>images/icon_remote_inactive_darkmode.svg</file>
-        <file>images/icon_remote_inactive_highcontrast.svg</file>
-        <file>images/icon_remote_inactive_lightmode.svg</file>
         <file>images/icon_six_digit_pin.svg</file>
         <file>images/identify.svg</file>
         <file>images/info.svg</file>
@@ -68,72 +70,18 @@
         <file>images/material_backspace.svg</file>
         <file>images/material_block.svg</file>
         <file>images/material_check.svg</file>
-        <file>images/material_clear.svg</file>
         <file>images/material_close.svg</file>
         <file>images/material_expand_less.svg</file>
         <file>images/material_expand_more.svg</file>
-        <file>images/material_location.svg</file>
-        <file>images/material_person.svg</file>
-        <file>images/material_phone.svg</file>
         <file>images/material_refresh.svg</file>
         <file>images/mydata_tile.svg</file>
-        <file>images/npa.svg</file>
         <file>images/no_internet.svg</file>
+        <file>images/npa.svg</file>
         <file>images/open_website.svg</file>
         <file>images/phone_to_pc.svg</file>
-        <file>images/puk_correct_darkmode.svg</file>
-        <file>images/puk_correct_highcontrast.svg</file>
-        <file>images/puk_correct_lightmode.svg</file>
         <file>images/signature.jp2</file>
-        <file>images/siteWithLogo_darkmode.svg</file>
-        <file>images/siteWithLogo_highcontrast.svg</file>
-        <file>images/siteWithLogo_lightmode.svg</file>
-        <file>images/status_error_darkmode.svg</file>
-        <file>images/status_error_highcontrast.svg</file>
-        <file>images/status_error_lightmode.svg</file>
-        <file>images/status_info_darkmode.svg</file>
-        <file>images/status_info_highcontrast.svg</file>
-        <file>images/status_info_lightmode.svg</file>
-        <file>images/status_ok_darkmode.svg</file>
-        <file>images/status_ok_highcontrast.svg</file>
-        <file>images/status_ok_lightmode.svg</file>
-        <file>images/status_warning.svg</file>
         <file>images/trash_icon.svg</file>
-        <file>images/workflow_error_card_darkmode.svg</file>
-        <file>images/workflow_error_card_highcontrast.svg</file>
-        <file>images/workflow_error_card_lightmode.svg</file>
-        <file>images/workflow_error_network_darkmode.svg</file>
-        <file>images/workflow_error_network_highcontrast.svg</file>
-        <file>images/workflow_error_network_lightmode.svg</file>
-        <file>images/workflow_error_nfc_darkmode.svg</file>
-        <file>images/workflow_error_nfc_highcontrast.svg</file>
-        <file>images/workflow_error_nfc_lightmode.svg</file>
-        <file>images/workflow_error_no_sak_darkmode.svg</file>
-        <file>images/workflow_error_no_sak_highcontrast.svg</file>
-        <file>images/workflow_error_no_sak_lightmode.svg</file>
-        <file>images/workflow_error_puk_blocked_darkmode.svg</file>
-        <file>images/workflow_error_puk_blocked_highcontrast.svg</file>
-        <file>images/workflow_error_puk_blocked_lightmode.svg</file>
-        <file>images/workflow_error_sak_connection_darkmode.svg</file>
-        <file>images/workflow_error_sak_connection_highcontrast.svg</file>
-        <file>images/workflow_error_sak_connection_lightmode.svg</file>
-        <file>images/workflow_error_wrong_can_darkmode.svg</file>
-        <file>images/workflow_error_wrong_can_highcontrast.svg</file>
-        <file>images/workflow_error_wrong_can_lightmode.svg</file>
-        <file>images/workflow_error_wrong_pin_darkmode.svg</file>
-        <file>images/workflow_error_wrong_pin_highcontrast.svg</file>
-        <file>images/workflow_error_wrong_pin_lightmode.svg</file>
-        <file>images/workflow_error_wrong_puk_darkmode.svg</file>
-        <file>images/workflow_error_wrong_puk_highcontrast.svg</file>
-        <file>images/workflow_error_wrong_puk_lightmode.svg</file>
-        <file>images/workflow_error_wrong_transportpin_darkmode.svg</file>
-        <file>images/workflow_error_wrong_transportpin_highcontrast.svg</file>
-        <file>images/workflow_error_wrong_transportpin_lightmode.svg</file>
-        <file>images/workflow_success_changepin_darkmode.svg</file>
-        <file>images/workflow_success_changepin_highcontrast.svg</file>
-        <file>images/workflow_success_changepin_lightmode.svg</file>
         <file>shader/ColorOverlayShader.frag</file>
-        <file>shader/ConicalGradientShader.frag</file>
         <file>shader/DesaturateShader.frag</file>
         <file>updatable-files/supported-providers.json</file>
     </qresource>

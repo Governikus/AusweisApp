@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "StateProcessIfdMessages.h"
@@ -109,6 +109,7 @@ void StateProcessIfdMessages::onReaderPropertiesUpdated(const ReaderInfo& pInfo)
 
 void StateProcessIfdMessages::onCardConnected()
 {
+	getContext()->setCardInitiallyAppeared();
 	mResetContextOnDisconnect = false;
 }
 

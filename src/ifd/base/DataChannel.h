@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Interface modelling a component that can send and receive data blocks in the form
- * of QByteArray objects.
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -28,7 +23,7 @@ class DataChannel
 		Q_INVOKABLE virtual void send(const QByteArray& pDataBlock) = 0;
 		Q_INVOKABLE virtual void close() = 0;
 		[[nodiscard]] virtual bool isPairingConnection() const = 0;
-		[[nodiscard]] virtual const QString& getId() const = 0;
+		[[nodiscard]] virtual const QByteArray& getId() const = 0;
 
 	Q_SIGNALS:
 		void fireReceived(const QByteArray& pDataBlock);

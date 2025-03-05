@@ -4,8 +4,6 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
-   2.2.2
-   2.2.1
-   2.2.0
+   2.3.0
    announce
    issues

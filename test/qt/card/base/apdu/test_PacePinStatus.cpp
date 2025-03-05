@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "apdu/PacePinStatus.h"
@@ -64,7 +64,7 @@ class test_PacePinStatus
 			QTest::newRow("RECORD_NOT_FOUND") << StatusCode::RECORD_NOT_FOUND << -1 << false << false;
 			QTest::newRow("INVALID_PARAMETER") << StatusCode::INVALID_PARAMETER << -1 << false << false;
 			QTest::newRow("LC_INCONSISTANT") << StatusCode::LC_INCONSISTANT << -1 << false << false;
-			QTest::newRow("PASSWORD_NOT_FOUND") << StatusCode::PASSWORD_NOT_FOUND << -1 << false << false;
+			QTest::newRow("REFERENCED_DATA_NOT_FOUND") << StatusCode::REFERENCED_DATA_NOT_FOUND << -1 << false << false;
 			QTest::newRow("ILLEGAL_OFFSET") << StatusCode::ILLEGAL_OFFSET << -1 << false << false;
 			QTest::newRow("UNSUPPORTED_CLA") << StatusCode::UNSUPPORTED_CLA << -1 << false << false;
 			QTest::newRow("CANT_DISPLAY") << StatusCode::CANT_DISPLAY << -1 << false << false;
@@ -77,6 +77,7 @@ class test_PacePinStatus
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_1") << StatusCode::INITIAL_PIN_RETRY_COUNT_1 << 1 << true << false;
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_2") << StatusCode::INITIAL_PIN_RETRY_COUNT_2 << 2 << true << false;
 			QTest::newRow("INITIAL_PIN_RETRY_COUNT_3") << StatusCode::INITIAL_PIN_RETRY_COUNT_3 << 3 << true << false;
+			QTest::newRow("NO_PRECISE_DIAGNOSIS") << StatusCode::NO_PRECISE_DIAGNOSIS << -1 << false << false;
 
 			mTestAllKnownStatusCode = true;
 		}

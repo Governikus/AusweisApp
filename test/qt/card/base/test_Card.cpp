@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VolatileSettings.h"
@@ -23,7 +23,7 @@ class test_Card
 			Env::getSingleton<VolatileSettings>()->setMessages(VolatileSettings::Messages(
 					QStringLiteral("scan started"),
 					QStringLiteral("scan failed"),
-					QStringLiteral("scan succeded"),
+					QStringLiteral("scan succeeded"),
 					QStringLiteral("scan progress")));
 		}
 

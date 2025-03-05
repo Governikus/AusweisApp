@@ -1,4 +1,4 @@
-From 32e3976af18232312c83cb5b3c8e9b93f9895cb8 Mon Sep 17 00:00:00 2001
+From 1e9a6663c61caf3efc179980fc6c43b4fccf112c Mon Sep 17 00:00:00 2001
 From: Jens Trillmann <jens.trillmann@governikus.de>
 Date: Mon, 19 Feb 2024 09:41:13 +0100
 Subject: A11y: Send a11y events on Accessible.ignored changes
@@ -15,14 +15,14 @@ Change-Id: I0626b66c91876fa3e6dd23e76c32e8bfe43136bf
  1 file changed, 2 insertions(+)
 
 diff --git x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
-index 865fb8bf11cd956961109d2c65ec5f2989922521..0a4672382ec141e0f6a20459a3347728f0d688a1 100644
+index 4ae9247db37d1c1c2b1e3e4a9f993c0b329e1c75..3aab878e04fb0c45295f798f576ab2e390f287ec 100644
 --- x/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
 +++ y/qtdeclarative/src/quick/items/qquickaccessibleattached.cpp
-@@ -430,6 +430,8 @@ void QQuickAccessibleAttached::setIgnored(bool ignored)
- {
-     if (this->ignored() != ignored && item()) {
-         item()->d_func()->isAccessible = !ignored;
-+        QAccessibleEvent ev(item(), ignored ? QAccessible::ObjectHide : QAccessible::ObjectShow);
+@@ -445,6 +445,8 @@ void QQuickAccessibleAttached::setIgnored(bool ignored)
+     auto item = qobject_cast<QQuickItem *>(parent());
+     if (item && this->ignored() != ignored) {
+         item->d_func()->isAccessible = !ignored;
++        QAccessibleEvent ev(item, ignored ? QAccessible::ObjectHide : QAccessible::ObjectShow);
 +        QAccessible::updateAccessibility(&ev);
          emit ignoredChanged();
      }

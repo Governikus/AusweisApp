@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref LocalTlsServer
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "LocalTlsServer.h"
@@ -54,15 +50,15 @@ class test_LocalTlsServer
 			config.setPeerVerifyMode(QSslSocket::VerifyNone);
 			client.setSslConfiguration(config);
 			connect(&client, &QSslSocket::preSharedKeyAuthenticationRequired, this, [this](QSslPreSharedKeyAuthenticator* pAuthenticator)
-				{
-					pAuthenticator->setPreSharedKey(mPsk.toUtf8());
-				});
+					{
+						pAuthenticator->setPreSharedKey(mPsk.toUtf8());
+					});
 
 			QTcpSocket* remoteSocket = nullptr;
 			connect(&mServer, &LocalTlsServer::fireNewConnection, this, [&remoteSocket](QTcpSocket* pSocket) // clazy:exclude=lambda-in-connect
-				{
-					remoteSocket = pSocket;
-				});
+					{
+						remoteSocket = pSocket;
+					});
 			QSignalSpy newConnection(&mServer, &LocalTlsServer::fireNewConnection);
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
 

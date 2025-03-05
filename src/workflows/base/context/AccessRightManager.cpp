@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "AccessRightManager.h"
@@ -14,7 +14,7 @@
 using namespace governikus;
 
 
-AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc)
+AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDAuthenticateEAC1, QSharedPointer<const CVCertificate> pTerminalCvc, QSharedPointer<const CVCertificate> pDvCvc)
 	: QObject()
 	, mTerminalCvc(pTerminalCvc)
 	, mDIDAuthenticateEAC1(pDIDAuthenticateEAC1)
@@ -22,7 +22,7 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 	, mEffectiveAccessRights()
 	, mRequiredAccessRights()
 {
-	if (!mTerminalCvc || !mDIDAuthenticateEAC1)
+	if (!pDvCvc || !mTerminalCvc || !mDIDAuthenticateEAC1)
 	{
 		return;
 	}
@@ -56,9 +56,9 @@ AccessRightManager::AccessRightManager(QSharedPointer<DIDAuthenticateEAC1> pDIDA
 
 	mRequiredAccessRights -= AccessRight::CAN_ALLOWED;
 	const bool canAllowed = mTerminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::CAN_ALLOWED);
-	const bool pinManagement = mTerminalCvc->getBody().getCHAT().getAccessRights().contains(AccessRight::PIN_MANAGEMENT);
+	const bool officialDomestic = pDvCvc->getBody().getCHAT().getAccessRole() == AccessRole::DV_od;
 	const bool canAllowedEnabled = Env::getSingleton<VolatileSettings>()->isUsedAsSDK() || Env::getSingleton<AppSettings>()->getGeneralSettings().isEnableCanAllowed();
-	if (canAllowed && (canAllowedEnabled || pinManagement))
+	if (canAllowed && (canAllowedEnabled || officialDomestic))
 	{
 		mOptionalAccessRights += AccessRight::CAN_ALLOWED;
 	}

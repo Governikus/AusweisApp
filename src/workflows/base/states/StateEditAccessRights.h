@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- *
- * \brief This state waits for editing of the effective CHAT
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once

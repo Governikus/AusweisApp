@@ -1,13 +1,16 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
 import Governikus.Type
 
 GridLayout {
-	id: baseItem
+	id: root
 
 	property bool deleteEnabled: true
 	property alias submitAccessibleText: submitButton.a11yText
@@ -30,7 +33,7 @@ GridLayout {
 
 		readonly property var numbers: {
 			let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-			if (visible && SettingsModel.shuffleScreenKeyboard) {
+			if (root.visible && SettingsModel.shuffleScreenKeyboard) {
 				Utils.shuffle(numbers);
 			}
 			return numbers;
@@ -42,11 +45,13 @@ GridLayout {
 		model: 9
 
 		NumberPadButton {
+			required property int index
+
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 			text: d.numbers[index]
 
-			onClicked: baseItem.digitPressed(text)
+			onClicked: root.digitPressed(text)
 		}
 	}
 	NumberPadButton {
@@ -57,10 +62,10 @@ GridLayout {
 		a11yDisabledText: qsTr("Delete last digit, disabled until input is present.")
 		//: LABEL ANDROID IOS A11y text for the "delete" button image.
 		a11yText: qsTr("Delete last digit")
-		enabled: baseItem.deleteEnabled
+		enabled: root.deleteEnabled
 		icon.source: "qrc:///images/material_backspace.svg"
 
-		onClicked: baseItem.deletePressed()
+		onClicked: root.deletePressed()
 	}
 	NumberPadButton {
 		Layout.column: 1
@@ -69,7 +74,7 @@ GridLayout {
 		Layout.row: 3
 		text: d.numbers[9]
 
-		onClicked: baseItem.digitPressed(text)
+		onClicked: root.digitPressed(text)
 	}
 	SubmitButton {
 		id: submitButton
@@ -81,9 +86,9 @@ GridLayout {
 		a11yDisabledText: a11yText + qsTr(", disabled until input is complete.")
 		//: LABEL ANDROID IOS A11y text for the "submit" button image.
 		a11yText: qsTr("Submit")
-		enabled: baseItem.submitEnabled
+		enabled: root.submitEnabled
 		icon.source: "qrc:///images/material_check.svg"
 
-		onClicked: baseItem.submitPressed()
+		onClicked: root.submitPressed()
 	}
 }

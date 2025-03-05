@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "MsgHandlerEnterNewPin.h"
@@ -21,24 +21,24 @@ MsgHandlerEnterNewPin::MsgHandlerEnterNewPin(const QJsonObject& pObj, MsgContext
 	: MsgHandlerEnterNewPin(pContext)
 {
 	parseValue(pObj, pContext, [this, &pContext](const QString& pNumber)
-		{
-			if (auto pinCtx = pContext.getContext<ChangePinContext>(); pinCtx)
 			{
-				pinCtx->setNewPin(pNumber);
-				pinCtx->setStateApproved();
-			}
+				if (auto pinCtx = pContext.getContext<ChangePinContext>(); pinCtx)
+				{
+					pinCtx->setNewPin(pNumber);
+					pinCtx->setStateApproved();
+				}
 #if __has_include("context/PersonalizationContext.h")
-			else if (auto persoCtx = pContext.getContext<PersonalizationContext>(); persoCtx)
-			{
-				persoCtx->setNewPin(pNumber);
-				persoCtx->setStateApproved();
-			}
+				else if (auto persoCtx = pContext.getContext<PersonalizationContext>(); persoCtx)
+				{
+					persoCtx->setNewPin(pNumber);
+					persoCtx->setStateApproved();
+				}
 #endif
-			else
-			{
-				Q_ASSERT(false);
-			}
+				else
+				{
+					Q_ASSERT(false);
+				}
 
-			setVoid();
-		}, 6);
+				setVoid();
+			}, 6);
 }

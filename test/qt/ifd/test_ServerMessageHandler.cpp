@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref ServerMessageHandlerImpl
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "ServerMessageHandler.h"
@@ -123,9 +119,9 @@ class test_ServerMessageHandler
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 
 			Env::setCreator<IfdDispatcherServer*>(std::function<IfdDispatcherServer* (const QSharedPointer<DataChannel>& pDataChannel)>([this](const QSharedPointer<DataChannel>){
-					mDispatcher = new MockIfdMessageDispatcherServer(mDataChannel);
-					return mDispatcher.data();
-				}));
+						mDispatcher = new MockIfdMessageDispatcherServer(mDataChannel);
+						return mDispatcher.data();
+					}));
 		}
 
 

@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2020-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Layouts
+
 import Governikus.Global
-import Governikus.View
 import Governikus.Style
 import Governikus.Type
 
@@ -12,16 +13,16 @@ Item {
 	id: root
 
 	property alias color: delegate.color
-	property alias idx: delegate.idx
-	property var lineType
+	required property string content
+	required property int index
 	property real maximumContentWidth: Number.POSITIVE_INFINITY
-	property alias text: contentText.text
 	property alias totalItemCount: delegate.count
+	required property int type
 
-	Accessible.ignored: contentText.text === ""
-	Accessible.name: ApplicationModel.stripHtmlTags(contentText.text)
+	Accessible.ignored: root.content === ""
+	Accessible.name: ApplicationModel.stripHtmlTags(root.content)
 	Accessible.role: {
-		switch (root.lineType) {
+		switch (root.type) {
 		case FormattedTextModel.LineType.HEADER:
 			return Accessible.Heading;
 		case FormattedTextModel.LineType.SECTION:
@@ -40,14 +41,15 @@ Item {
 		id: delegate
 
 		anchors.centerIn: parent
-		anchors.horizontalCenterOffset: -Constants.pane_padding / 2
+		anchors.horizontalCenterOffset: -Style.dimens.pane_padding / 2
+		idx: root.index
 		implicitHeight: row.implicitHeight
-		width: Math.min(root.width - Constants.pane_padding, root.maximumContentWidth)
+		width: Math.min(root.width - Style.dimens.pane_padding, root.maximumContentWidth)
 
 		RowLayout {
 			id: row
 
-			readonly property int horizontalPadding: Constants.pane_padding
+			readonly property int horizontalPadding: Style.dimens.pane_padding
 
 			anchors.fill: parent
 
@@ -56,24 +58,27 @@ Item {
 
 				Accessible.ignored: true
 				Layout.fillHeight: true
+				activeFocusOnTab: false
 				fontSizeMode: Text.Fit
 				leftPadding: row.horizontalPadding
 				text: "•"
 				textStyle: contentText.textStyle
 				verticalAlignment: Text.AlignTop
-				visible: root.lineType === FormattedTextModel.LineType.LISTITEM
+				visible: root.type === FormattedTextModel.LineType.LISTITEM
 			}
 			GText {
 				id: contentText
 
 				Accessible.ignored: true
 				Layout.maximumWidth: Number.POSITIVE_INFINITY
-				bottomPadding: delegate.isLast ? Constants.pane_padding : 0
-				font.underline: lineType === FormattedTextModel.LineType.SECTION
+				activeFocusOnTab: false
+				bottomPadding: delegate.isLast ? Style.dimens.pane_padding : 0
+				font.underline: root.type === FormattedTextModel.LineType.SECTION
 				leftPadding: prefix.visible ? 0 : row.horizontalPadding
 				rightPadding: row.horizontalPadding
+				text: root.content
 				textStyle: {
-					switch (root.lineType) {
+					switch (root.type) {
 					case FormattedTextModel.LineType.HEADER:
 						return Style.text.title;
 					case FormattedTextModel.LineType.SECTION:
@@ -84,7 +89,7 @@ Item {
 						return Style.text.normal;
 					}
 				}
-				topPadding: delegate.isFirst ? Constants.pane_padding : 0
+				topPadding: delegate.isFirst ? Style.dimens.pane_padding : 0
 			}
 		}
 	}

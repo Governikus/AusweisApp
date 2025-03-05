@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Model implementation for the application.
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -21,11 +17,13 @@
 #include <QTimer>
 #include <QtQml/qqmlregistration.h>
 
+
 #ifdef Q_OS_IOS
 Q_FORWARD_DECLARE_OBJC_CLASS(VoiceOverObserver);
 #endif
 
 class test_UiPluginQml;
+class test_ApplicationModel;
 
 
 namespace governikus
@@ -42,6 +40,7 @@ class ApplicationModel
 
 	friend class Env;
 	friend class ::test_UiPluginQml;
+	friend class ::test_ApplicationModel;
 
 	Q_PROPERTY(QString storeUrl READ getStoreUrl NOTIFY fireStoreUrlChanged)
 	Q_PROPERTY(QUrl releaseNotesUrl READ getReleaseNotesUrl CONSTANT)
@@ -60,6 +59,9 @@ class ApplicationModel
 	Q_PROPERTY(qint64 availablePcscReader READ getAvailablePcscReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
+	Q_PROPERTY(int feedbackTimeout READ getFeedbackTimeout CONSTANT)
+
+	Q_PROPERTY(bool isScreenReaderRunning READ isScreenReaderRunning NOTIFY fireScreenReaderRunningChanged)
 
 #if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	Q_PROPERTY(QUrl customConfigPath READ getCustomConfigPath CONSTANT)
@@ -71,7 +73,6 @@ class ApplicationModel
 		bool mWifiEnabled;
 		QStringList mFeedback;
 		QTimer mFeedbackTimer;
-		const int mFeedbackDisplayLength;
 		bool mIsAppInForeground;
 #ifdef Q_OS_IOS
 		struct Private
@@ -86,6 +87,11 @@ class ApplicationModel
 		ApplicationModel();
 		~ApplicationModel() override = default;
 		void onStatusChanged(const ReaderManagerPluginInfo& pInfo);
+
+		[[nodiscard]] static constexpr int getFeedbackTimeout()
+		{
+			return 7000;
+		}
 
 	private Q_SLOTS:
 		void onApplicationStateChanged(Qt::ApplicationState pState);
@@ -143,7 +149,7 @@ class ApplicationModel
 
 		[[nodiscard]] QString getFeedback() const;
 
-		[[nodiscard]] Q_INVOKABLE bool isScreenReaderRunning() const;
+		[[nodiscard]] bool isScreenReaderRunning() const;
 
 		[[nodiscard]] Q_INVOKABLE bool isReaderTypeAvailable(ReaderManagerPluginType pPluginType) const;
 
@@ -160,9 +166,7 @@ class ApplicationModel
 		Q_INVOKABLE void saveEmbeddedConfig(const QUrl& pFilename) const;
 #endif
 		[[nodiscard]] Q_INVOKABLE QString stripHtmlTags(QString pString) const;
-#ifdef Q_OS_IOS
-		Q_INVOKABLE void showAppStoreRatingDialog();
-#endif
+		Q_INVOKABLE void showAppStoreRatingDialog() const;
 
 	public Q_SLOTS:
 		Q_INVOKABLE void onShowNextFeedback();
@@ -181,6 +185,8 @@ class ApplicationModel
 		void fireFeedbackChanged();
 
 		void fireApplicationStateChanged(bool pIsAppInForeground);
+
+		void fireScreenReaderRunningChanged();
 };
 
 

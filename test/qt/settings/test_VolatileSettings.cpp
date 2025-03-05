@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref VolatileSettings
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "VolatileSettings.h"
@@ -48,9 +44,9 @@ class test_VolatileSettings
 		{
 			auto* settings = Env::getSingleton<VolatileSettings>();
 			connect(settings, &VolatileSettings::fireUsedAsSdkChanged, this, []
-				{
-					Q_UNUSED(Env::getSingleton<VolatileSettings>()->isUsedAsSDK());
-				});
+					{
+						Q_UNUSED(Env::getSingleton<VolatileSettings>()->isUsedAsSDK());
+					});
 			QSignalSpy spy(settings, &VolatileSettings::fireUsedAsSdkChanged);
 
 			QVERIFY(settings->isUsedAsSDK());
@@ -74,7 +70,7 @@ class test_VolatileSettings
 		{
 			QTest::addColumn<QString>("started");
 			QTest::addColumn<QString>("failed");
-			QTest::addColumn<QString>("succeded");
+			QTest::addColumn<QString>("succeeded");
 			QTest::addColumn<QString>("progress");
 
 			QTest::addRow("empty") << QString() << QString() << QString() << QString();
@@ -86,16 +82,16 @@ class test_VolatileSettings
 		{
 			QFETCH(QString, started);
 			QFETCH(QString, failed);
-			QFETCH(QString, succeded);
+			QFETCH(QString, succeeded);
 			QFETCH(QString, progress);
 
-			VolatileSettings::Messages messages(started, failed, succeded, progress);
+			VolatileSettings::Messages messages(started, failed, succeeded, progress);
 
 			QVERIFY(!messages.getSessionFailed().isNull());
 
 			QCOMPARE(messages.getSessionStarted(), started);
 			QCOMPARE(messages.getSessionFailed(), failed);
-			QCOMPARE(messages.getSessionSucceeded(), succeded);
+			QCOMPARE(messages.getSessionSucceeded(), succeeded);
 			QCOMPARE(messages.getSessionInProgress(), progress);
 		}
 

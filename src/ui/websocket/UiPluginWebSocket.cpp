@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UiPluginWebSocket.h"
@@ -61,13 +61,13 @@ bool UiPluginWebSocket::initialize()
 	qCDebug(websocket) << "Enable WebSocket...";
 	connect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UiPluginWebSocket::onNewWebSocketRequest);
 	connect(mHttpServer.data(), &HttpServer::fireRebound, this, [this]{
-			if (!mHttpServer->isListening())
-			{
-				qCDebug(websocket) << "Disable WebSocket...";
-				disconnect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UiPluginWebSocket::onNewWebSocketRequest);
-				mHttpServer.clear();
-			}
-		});
+				if (!mHttpServer->isListening())
+				{
+					qCDebug(websocket) << "Disable WebSocket...";
+					disconnect(mHttpServer.data(), &HttpServer::fireNewWebSocketRequest, this, &UiPluginWebSocket::onNewWebSocketRequest);
+					mHttpServer.clear();
+				}
+			});
 	connect(&mServer, &QWebSocketServer::newConnection, this, &UiPluginWebSocket::onNewConnection);
 	return true;
 }

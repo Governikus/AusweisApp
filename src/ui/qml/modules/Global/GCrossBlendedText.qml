@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -11,6 +11,7 @@ Item {
 	id: root
 
 	property alias color: mainText.color
+	property alias effectiveFirstLineHeight: mainText.effectiveFirstLineHeight
 	property alias elide: mainText.elide
 	property alias font: mainText.font
 	property alias horizontalAlignment: mainText.horizontalAlignment
@@ -29,10 +30,10 @@ Item {
 	implicitWidth: Math.max(mainText.implicitWidth, tempText.implicitWidth)
 
 	Behavior on implicitHeight {
-		enabled: SettingsModel.useAnimations && !Constants.is_desktop
+		enabled: SettingsModel.useAnimations && !Style.is_layout_desktop
 
 		NumberAnimation {
-			duration: mainText.text === "" ? 0 : Constants.animation_duration
+			duration: mainText.text === "" ? 0 : Style.animation_duration
 		}
 	}
 
@@ -40,10 +41,11 @@ Item {
 		id: mainText
 
 		Accessible.ignored: true
+		activeFocusOnTab: false
 		anchors.fill: parent
 
 		Behavior on text {
-			enabled: SettingsModel.useAnimations && !Constants.is_desktop
+			enabled: SettingsModel.useAnimations && !Style.is_layout_desktop
 
 			SequentialAnimation {
 				PropertyAction {
@@ -66,14 +68,14 @@ Item {
 					value: 1
 				}
 				PropertyAnimation {
-					duration: mainText.text === "" ? 0 : Constants.animation_duration
+					duration: mainText.text === "" ? 0 : Style.animation_duration
 					easing.type: Easing.OutCubic
 					property: "opacity"
 					target: tempText
 					to: 0
 				}
 				PropertyAnimation {
-					duration: mainText.text === "" ? Constants.animation_duration * 2 : Constants.animation_duration
+					duration: mainText.text === "" ? Style.animation_duration * 2 : Style.animation_duration
 					easing.type: mainText.text === "" ? Easing.InOutCubic : Easing.InCubic
 					property: "opacity"
 					target: mainText
@@ -91,6 +93,7 @@ Item {
 		id: tempText
 
 		Accessible.ignored: true
+		activeFocusOnTab: false
 		color: mainText.color
 		elide: mainText.elide
 		font: mainText.font

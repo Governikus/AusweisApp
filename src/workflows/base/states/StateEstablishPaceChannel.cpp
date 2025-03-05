@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 
@@ -34,24 +34,24 @@ void StateEstablishPaceChannel::run()
 
 	QByteArray effectiveChat;
 	QByteArray certificateDescription;
-	const auto& authContext = context.objectCast<AuthContext>();
 	mPasswordId = context->getEstablishPaceChannelType();
 	Q_ASSERT(mPasswordId != PacePasswordId::UNKNOWN);
 
-	if (mPasswordId == PacePasswordId::PACE_PIN ||
-			(mPasswordId == PacePasswordId::PACE_CAN && context->isCanAllowedMode()))
+	if (const auto& authContext = context.objectCast<AuthContext>();
+			(
+				mPasswordId == PacePasswordId::PACE_PIN ||
+				(mPasswordId == PacePasswordId::PACE_CAN && context->isCanAllowedMode())
+			) &&
+			authContext && authContext->getDidAuthenticateEac1())
 	{
-		if (authContext && authContext->getDidAuthenticateEac1())
-		{
-			// if PACE is performed for authentication purposes,
-			// the chat and certificate description need to be sent
-			//
-			// in other scenarios, e.g. for changing the PIN, the data
-			// is not needed
-			certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
-			effectiveChat = authContext->encodeEffectiveChat();
-			Q_ASSERT(!effectiveChat.isEmpty());
-		}
+		// if PACE is performed for authentication purposes,
+		// the chat and certificate description need to be sent
+		//
+		// in other scenarios, e.g. for changing the PIN, the data
+		// is not needed
+		certificateDescription = authContext->getDidAuthenticateEac1()->getCertificateDescriptionAsBinary();
+		effectiveChat = authContext->encodeEffectiveChat();
+		Q_ASSERT(!effectiveChat.isEmpty());
 	}
 
 	QByteArray password;
@@ -78,7 +78,7 @@ void StateEstablishPaceChannel::run()
 	auto cardConnection = context->getCardConnection();
 	if (!cardConnection)
 	{
-		qCDebug(statemachine) << "No card connection available.";
+		qCDebug(statemachine) << "No card connection available";
 		context->setLastPaceResult(CardReturnCode::CARD_NOT_FOUND);
 		Q_EMIT fireNoCardConnection();
 		return;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -11,10 +11,11 @@ AbstractButton {
 	id: root
 
 	property alias description: descriptionText.text
+	property bool isPane: false
 
 	Accessible.name: root.text + ". " + root.description
-	horizontalPadding: Constants.component_spacing
-	verticalPadding: Constants.component_spacing
+	horizontalPadding: Style.dimens.pane_spacing
+	verticalPadding: Style.dimens.pane_spacing
 
 	background: GPaneBackground {
 		id: pane
@@ -31,21 +32,23 @@ AbstractButton {
 	contentItem: RowLayout {
 		id: rowLayout
 
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 
 		TintableIcon {
 			source: root.icon.source
-			sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
+			sourceSize.height: Style.is_layout_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
 			tintColor: title.color
 		}
 		ColumnLayout {
 			Layout.maximumWidth: Number.POSITIVE_INFINITY
-			spacing: Constants.text_spacing / 2
+			spacing: Style.dimens.text_spacing / 2
 
 			GText {
 				id: title
 
 				Accessible.ignored: true
+				activeFocusOnTab: false
+				color: root.isPane ? colors.textSubline : colors.controlContent
 				elide: Text.ElideRight
 				text: root.text
 				textStyle: Style.text.subline
@@ -54,15 +57,21 @@ AbstractButton {
 				id: descriptionText
 
 				Accessible.ignored: true
+				activeFocusOnTab: false
+				color: root.isPane ? colors.textNormal : colors.controlContent
 				elide: Text.ElideRight
+				visible: text !== ""
 			}
 		}
 		TintableIcon {
 			source: "qrc:///images/material_arrow_right.svg"
-			sourceSize.height: Constants.is_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
+			sourceSize.height: Style.is_layout_desktop ? Style.dimens.icon_size : Style.dimens.small_icon_size
 			tintColor: descriptionText.color
 		}
 	}
+
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	HoverHandler {
 		id: hoverHandler
@@ -72,6 +81,7 @@ AbstractButton {
 		id: colors
 
 		hoveredCondition: hoverHandler.hovered
+		paneStyle: root.isPane ? Style.color.pane : Style.color.control
 		statefulControl: root
 	}
 }

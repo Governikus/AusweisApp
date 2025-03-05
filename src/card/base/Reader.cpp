@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "Reader.h"
@@ -216,7 +216,7 @@ Reader::RetryCounterResult Reader::getRetryCounter(QSharedPointer<CardConnection
 
 	ASN1Struct cmdData;
 	cmdData.append(ASN1Struct::CRYPTOGRAPHIC_MECHANISM_REFERENCE, paceInfo->getOid());
-	cmdData.append(ASN1Struct::PUBLIC_KEY_REFERENCE, PacePasswordId::PACE_PIN);
+	cmdData.append(ASN1Struct::PASSWORD_REFERENCE, PacePasswordId::PACE_PIN);
 	if (paceInfo->hasParameterId())
 	{
 		cmdData.append(ASN1Struct::PRIVATE_KEY_REFERENCE, paceInfo->getParameterId());

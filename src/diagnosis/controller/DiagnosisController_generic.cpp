@@ -1,11 +1,6 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
-
-/*!
- * \brief Generic implementation of the controller for retrieving and presenting diagnosis info.
- */
-
 
 #include "DiagnosisController.h"
 

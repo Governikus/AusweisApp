@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "UpdatableFile.h"
@@ -45,8 +45,8 @@ class test_UpdatableFile
 			check(pUpdatableFile.getSectionCachePath() + mSep + pFilename);
 
 			return qScopeGuard([pFilename, &pUpdatableFile]{
-					removeFileFromCache(pFilename, pUpdatableFile);
-				});
+						removeFileFromCache(pFilename, pUpdatableFile);
+					});
 
 		}
 
@@ -85,9 +85,9 @@ class test_UpdatableFile
 
 			QStringList paths;
 			QVERIFY(updatableFile.forEachLookupPath([&paths](const QString& pPath) -> bool {
-					paths += pPath;
-					return true;
-				}));
+						paths += pPath;
+						return true;
+					}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache}));
 		}
 
@@ -118,9 +118,9 @@ class test_UpdatableFile
 
 			QStringList paths;
 			QVERIFY(!updatableFile.forEachLookupPath([&paths](const QString& pPath) -> bool {
-					paths += pPath;
-					return false;
-				}));
+						paths += pPath;
+						return false;
+					}));
 			QCOMPARE(paths, QStringList({updatableFile.getSectionCachePath() + mSep + filenameInCache, expectedPath}));
 		}
 
@@ -269,8 +269,8 @@ class test_UpdatableFile
 			const QString fileName = updatableFile.getName() + QLatin1Char('_') + downloader.getTimeStampString();
 			const QString filePath = updatableFile.getSectionCachePath() + QLatin1Char('/') + fileName;
 			const auto guard = qScopeGuard([&fileName, &updatableFile]{
-					removeFileFromCache(fileName, updatableFile);
-				});
+						removeFileFromCache(fileName, updatableFile);
+					});
 			QFile testfile(filePath);
 			QVERIFY(testfile.exists());
 			QVERIFY(testfile.open(QIODevice::ReadOnly));

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtTest
@@ -19,7 +19,7 @@ TestCase {
 	function test_load_data() {
 		return [
 			{
-				"result": CheckIDCardModel.Result.NO_NFC
+				"result": CheckIDCardModel.Result.NO_READER
 			},
 			{
 				"result": CheckIDCardModel.Result.UNKNOWN_CARD_DETECTED

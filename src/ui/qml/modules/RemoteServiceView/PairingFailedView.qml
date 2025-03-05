@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 
-import Governikus.Style
+import Governikus.Animations
 import Governikus.ResultView
 
 ResultView {
@@ -11,8 +11,11 @@ ResultView {
 	required property string deviceName
 	required property string errorMessage
 
-	icon: "qrc:///images/workflow_error_sak_connection_%1.svg".arg(Style.currentTheme.name)
-
-	//: ERROR ALL_PLATFORMS An error occurred while pairing the device.
-	text: qsTr("Pairing to \"%1\" failed:").arg(deviceName) + "<br/>%1".arg(errorMessage)
+	animationSymbol: Symbol.Type.ERROR
+	animationType: AnimationLoader.SAC_CONNECTION
+	//: LABEL ALL_PLATFORMS
+	header: qsTr("Pairing failed")
+	//: LABEL ALL_PLATFORMS
+	subheader: qsTr("Pairing to \"%1\" failed").arg(deviceName)
+	text: errorMessage
 }

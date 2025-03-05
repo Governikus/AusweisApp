@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "IfdClientImpl.h"
@@ -155,18 +155,18 @@ void IfdClientImpl::establishConnection(const QSharedPointer<IfdListEntry>& pEnt
 	qCDebug(ifd) << "Establishing connection to remote device.";
 	const auto& localCopy = mIfdConnector;
 	QMetaObject::invokeMethod(localCopy.data(), [localCopy, pEntry, pPsk] {
-			localCopy->onConnectRequest(pEntry->getIfdDescriptor(), pPsk);
-		}, Qt::QueuedConnection);
+				localCopy->onConnectRequest(pEntry->getIfdDescriptor(), pPsk);
+			}, Qt::QueuedConnection);
 }
 
 
-QStringList IfdClientImpl::getConnectedDeviceIDs() const
+QByteArrayList IfdClientImpl::getConnectedDeviceIDs() const
 {
 	return mConnectedDeviceIds;
 }
 
 
-void IfdClientImpl::onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QString& pId)
+void IfdClientImpl::onDispatcherDestroyed(GlobalStatus::Code pCloseCode, const QByteArray& pId)
 {
 	mConnectedDeviceIds.removeAll(pId);
 	Q_EMIT fireDispatcherDestroyed(pCloseCode, pId);

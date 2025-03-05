@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2014-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*
- * \brief Provides and parses command line options.
+ * Copyright (c) 2014-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #pragma once
@@ -30,7 +26,7 @@ class CommandLineParser
 		const QCommandLineOption mOptionAddresses;
 
 		void addOptions();
-		void parseUiPlugin();
+		void parseUiPlugin() const;
 
 	protected:
 		CommandLineParser();

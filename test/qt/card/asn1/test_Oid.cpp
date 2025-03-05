@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "asn1/Oid.h"
@@ -355,10 +355,10 @@ class test_Oid
 			ASN1_OBJECT* objectFromLn = OBJ_txt2obj(ln.constData(), 0);
 
 			const auto guard = qScopeGuard([objectFromOid, objectFromSn, objectFromLn] {
-					ASN1_OBJECT_free(objectFromOid);
-					ASN1_OBJECT_free(objectFromSn);
-					ASN1_OBJECT_free(objectFromLn);
-				});
+						ASN1_OBJECT_free(objectFromOid);
+						ASN1_OBJECT_free(objectFromSn);
+						ASN1_OBJECT_free(objectFromLn);
+					});
 
 			QVERIFY(OBJ_obj2nid(objectFromOid) > 0);
 			QVERIFY(OBJ_obj2nid(objectFromSn) > 0);

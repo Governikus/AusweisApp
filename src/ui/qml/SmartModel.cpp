@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SmartModel.h"
@@ -33,7 +33,7 @@ SmartModel::SmartModel()
 }
 
 
-void SmartModel::updateStatus()
+void SmartModel::updateStatus() NO_SMART_CONST
 {
 #if __has_include("SmartManager.h")
 	const auto* readerManager = Env::getSingleton<ReaderManager>();
@@ -43,8 +43,8 @@ void SmartModel::updateStatus()
 		setStatus(State::UPDATING_STATUS);
 
 		Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
-				return QVariant::fromValue(SmartManager::get()->status());
-			}, this, &SmartModel::onUpdateStatusDone);
+					return QVariant::fromValue(SmartManager::get()->status());
+				}, this, &SmartModel::onUpdateStatusDone);
 
 		return;
 	}
@@ -192,7 +192,7 @@ void SmartModel::onDeletePersonalizationDone(const QVariant& pResult)
 }
 
 
-void SmartModel::onDeleteSmartDone(const QVariant& pResult)
+void SmartModel::onDeleteSmartDone(const QVariant& pResult) NO_SMART_CONST
 {
 #if __has_include("SmartManager.h")
 	switch (pResult.value<EidServiceResult>())
@@ -369,7 +369,7 @@ void SmartModel::workflowFinished(QSharedPointer<WorkflowContext> pContext)
 }
 
 
-void SmartModel::updateSupportInfo()
+void SmartModel::updateSupportInfo() NO_SMART_CONST
 {
 #if __has_include("SmartManager.h")
 	if (mStatus != State::UPDATING_STATUS && mStatus != State::READY)
@@ -378,41 +378,41 @@ void SmartModel::updateSupportInfo()
 		setStatus(State::UPDATING_STATUS);
 
 		Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
-				return QVariant::fromValue(SmartManager::get()->updateSupportInfo());
-			}, this, &SmartModel::onUpdateSupportInfoDone);
+					return QVariant::fromValue(SmartManager::get()->updateSupportInfo());
+				}, this, &SmartModel::onUpdateSupportInfoDone);
 		return;
 	}
 #endif
 }
 
 
-void SmartModel::deletePersonalization()
+void SmartModel::deletePersonalization() NO_SMART_CONST
 {
 #if __has_include("SmartManager.h")
 	Env::getSingleton<ReaderManager>()->callExecuteCommand([] {
-			return SmartManager::get()->deletePersonalization();
-		}, this, &SmartModel::onDeletePersonalizationDone);
+				return SmartManager::get()->deletePersonalization();
+			}, this, &SmartModel::onDeletePersonalizationDone);
 #endif
 
 	updateStatus();
 }
 
 
-void SmartModel::deleteSmart()
+void SmartModel::deleteSmart() NO_SMART_CONST
 {
 #if __has_include("SmartManager.h")
 	const auto& progressHandler = [this](int pProgress){
 				QMetaObject::invokeMethod(this, [this, pProgress] {
-						setProgress(pProgress);
-					}, Qt::QueuedConnection);
+							setProgress(pProgress);
+						}, Qt::QueuedConnection);
 			};
 
 	setProgress(0);
 	setErrorString(QString());
 
 	Env::getSingleton<ReaderManager>()->callExecuteCommand([progressHandler] {
-			return QVariant::fromValue(SmartManager::get()->deleteSmart(progressHandler));
-		}, this, &SmartModel::onDeleteSmartDone);
+				return QVariant::fromValue(SmartManager::get()->deleteSmart(progressHandler));
+			}, this, &SmartModel::onDeleteSmartDone);
 #endif
 
 	updateStatus();

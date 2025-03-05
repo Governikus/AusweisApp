@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2017-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "RemoteServiceSettings.h"
@@ -32,9 +32,9 @@ SETTINGS_NAME(SETTINGS_NAME_CERTIFICATE, "certificate")
 } // namespace
 
 
-QString RemoteServiceSettings::generateFingerprint(const QSslCertificate& pCert)
+QByteArray RemoteServiceSettings::generateFingerprint(const QSslCertificate& pCert)
 {
-	return pCert.isNull() ? QString() : QString::fromLatin1(pCert.digest(QCryptographicHash::Sha256).toHex());
+	return pCert.isNull() ? QByteArray() : pCert.digest(QCryptographicHash::Sha256);
 }
 
 
@@ -186,7 +186,7 @@ void RemoteServiceSettings::removeTrustedCertificate(const QSslCertificate& pCer
 }
 
 
-void RemoteServiceSettings::removeTrustedCertificate(const QString& pFingerprint)
+void RemoteServiceSettings::removeTrustedCertificate(const QByteArray& pFingerprint)
 {
 	const auto& certs = getTrustedCertificates();
 	for (const auto& cert : certs)
@@ -278,7 +278,7 @@ RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QSs
 }
 
 
-RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QString& pFingerprint) const
+RemoteServiceSettings::RemoteInfo RemoteServiceSettings::getRemoteInfo(const QByteArray& pFingerprint) const
 {
 	const auto& infos = getRemoteInfos();
 	for (const auto& item : infos)
@@ -324,7 +324,7 @@ void RemoteServiceSettings::setRemoteInfos(const QList<RemoteInfo>& pInfos)
 
 void RemoteServiceSettings::syncRemoteInfos(const QSet<QSslCertificate>& pCertificates)
 {
-	QStringList trustedFingerprints;
+	QByteArrayList trustedFingerprints;
 	for (const auto& cert : pCertificates)
 	{
 		trustedFingerprints << generateFingerprint(cert);
@@ -383,7 +383,7 @@ QString RemoteServiceSettings::escapeDeviceName(const QString& pDeviceNameUnesca
 }
 
 
-RemoteServiceSettings::RemoteInfo::RemoteInfo(const QString& pFingerprint,
+RemoteServiceSettings::RemoteInfo::RemoteInfo(const QByteArray& pFingerprint,
 		const QDateTime& pLastConnected)
 	: mFingerprint(pFingerprint)
 	, mName()
@@ -395,7 +395,7 @@ RemoteServiceSettings::RemoteInfo::RemoteInfo(const QString& pFingerprint,
 RemoteServiceSettings::RemoteInfo RemoteServiceSettings::RemoteInfo::fromJson(const QJsonObject& obj)
 {
 	RemoteInfo remoteInfo(
-		obj[QLatin1String("fingerprint")].toString(),
+		QByteArray::fromHex(obj[QLatin1String("fingerprint")].toString().toLatin1()),
 		QDateTime::fromString(obj[QLatin1String("lastConnected")].toString(), Qt::ISODateWithMs));
 	remoteInfo.mName = obj[QLatin1String("name")].toString();
 	return remoteInfo;
@@ -405,14 +405,14 @@ RemoteServiceSettings::RemoteInfo RemoteServiceSettings::RemoteInfo::fromJson(co
 QJsonObject RemoteServiceSettings::RemoteInfo::toJson() const
 {
 	QJsonObject obj;
-	obj[QLatin1String("fingerprint")] = mFingerprint;
+	obj[QLatin1String("fingerprint")] = QString::fromLatin1(mFingerprint.toHex());
 	obj[QLatin1String("name")] = mName;
 	obj[QLatin1String("lastConnected")] = mLastConnected.toString(Qt::ISODateWithMs);
 	return obj;
 }
 
 
-const QString& RemoteServiceSettings::RemoteInfo::getFingerprint() const
+const QByteArray& RemoteServiceSettings::RemoteInfo::getFingerprint() const
 {
 	return mFingerprint;
 }

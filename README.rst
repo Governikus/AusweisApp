@@ -143,7 +143,7 @@ Für iOS wird die AusweisApp mittels XCode gebaut!
 
    $ cd build
    $ cmake -DCMAKE_PREFIX_PATH=/Users/governikus/Toolchain/dist -DCMAKE_TOOLCHAIN_FILE=../AusweisApp/cmake/iOS.toolchain.cmake -DCMAKE_BUILD_TYPE=MinSizeRel ../AusweisApp -GXcode
-   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary archive
+   $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -scheme AusweisAppBinary -destination "generic/platform=iOS" archive
    $ xcodebuild -configuration MinSizeRel -archivePath AusweisApp.xcarchive -exportArchive -exportOptionsPlist exportOptions.plist -exportPath .
 
 

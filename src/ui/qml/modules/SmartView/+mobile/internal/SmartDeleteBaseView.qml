@@ -1,9 +1,13 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
+
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
+
+import Governikus.Animations
 import Governikus.Global
 import Governikus.ProgressView
 import Governikus.ResultView
@@ -32,12 +36,12 @@ FlickableSectionPage {
 	}
 
 	smartEidUsed: true
-	spacing: Constants.component_spacing
+	spacing: Style.dimens.pane_spacing
 
 	navigationAction: NavigationAction {
 		action: NavigationAction.Action.Back
 
-		onClicked: pop()
+		onClicked: root.pop()
 	}
 
 	Component {
@@ -47,7 +51,7 @@ FlickableSectionPage {
 			progressValue: SmartModel.progress
 			smartEidUsed: root.smartEidUsed
 			//: LABEL ANDROID IOS
-			subText: qsTr("Please wait a moment.")
+			text: qsTr("Please wait a moment.")
 			//: LABEL ANDROID IOS
 			title: qsTr("Smart-eID")
 		}
@@ -58,7 +62,8 @@ FlickableSectionPage {
 		ResultErrorView {
 			property bool success: false
 
-			icon: success ? "qrc:///images/status_ok_%1.svg".arg(Style.currentTheme.name) : "qrc:///images/status_error_%1.svg".arg(Style.currentTheme.name)
+			animationSymbol: success ? Symbol.Type.CHECK : Symbol.Type.ERROR
+			animationType: AnimationLoader.Type.STATUS
 			mailButtonText: success ? "" :
 			//: LABEL ANDROID IOS
 			qsTr("Send log")
@@ -107,8 +112,6 @@ FlickableSectionPage {
 		text: qsTr("Reset Smart-eID")
 
 		onClicked: deleteConfirmation.open()
-		onFocusChanged: if (focus)
-			root.positionViewAtItem(this)
 	}
 	ConfirmationPopup {
 		id: deleteConfirmation

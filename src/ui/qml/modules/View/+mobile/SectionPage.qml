@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import QtQuick.Controls
-import Governikus.Global
-import Governikus.Style
-import Governikus.TitleBar
+
 import Governikus.Type
 
 Controller {
@@ -18,12 +16,10 @@ Controller {
 	property bool smartEidUsed: false
 	required property string title
 
-	clip: true
-
 	Connections {
 		function onActivate() {
-			if (ApplicationModel.isScreenReaderRunning()) {
-				updateFocus();
+			if (ApplicationModel.isScreenReaderRunning) {
+				root.updateFocus();
 			}
 		}
 	}

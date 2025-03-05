@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2023-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Layouts
@@ -44,6 +44,8 @@ ColumnLayout {
 		tintIcon: true
 
 		onCheckedChanged: root.onChanged(checked, mode)
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 	}
 	GRadioButton {
 		id: dark
@@ -60,6 +62,8 @@ ColumnLayout {
 		tintIcon: true
 
 		onCheckedChanged: root.onChanged(checked, mode)
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 	}
 	GRadioButton {
 		id: light
@@ -76,5 +80,7 @@ ColumnLayout {
 		tintIcon: true
 
 		onCheckedChanged: root.onChanged(checked, mode)
+		onFocusChanged: if (focus)
+			Utils.positionViewAtItem(this)
 	}
 }

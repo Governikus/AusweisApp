@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -12,9 +12,10 @@ import Governikus.Type
 import Governikus.Style
 
 ApplicationWindow {
-	id: appWindow
+	id: root
 
 	property var feedbackPopup: null
+	readonly property Navigation navigationInstance: navigation
 
 	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.MaximizeUsingFullscreenGeometryHint : Qt.Window
 	visible: true
@@ -22,7 +23,21 @@ ApplicationWindow {
 	background: Rectangle {
 		color: Style.color.background
 	}
+	footer: Navigation {
+		id: navigation
+
+		onResetContentArea: contentArea.reset()
+
+		anchors {
+			left: parent.left
+			leftMargin: UiPluginModel.safeAreaMargins.left
+			right: parent.right
+			rightMargin: UiPluginModel.safeAreaMargins.right
+		}
+	}
 	menuBar: TitleBar {
+		id: titleBar
+
 		readonly property var currentSectionPage: contentArea.currentSectionPage
 		readonly property bool isBackAction: navigationAction && navigationAction.action === NavigationAction.Action.Back
 
@@ -37,7 +52,7 @@ ApplicationWindow {
 
 	Component.onCompleted: {
 		Style.dimens.screenHeight = Qt.binding(function () {
-			return appWindow.height;
+			return root.height;
 		});
 		feedback.showIfNecessary();
 	}
@@ -59,7 +74,7 @@ ApplicationWindow {
 			}
 			let activeStackView = contentArea.visibleItem;
 			let navigationAction = contentArea.currentSectionPage.navigationAction;
-			if (activeStackView.depth <= 1 && (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel)) {
+			if (activeStackView.depth <= 1 && (!navigationAction || navigationAction.action !== NavigationAction.Action.Cancel) && contentArea.activeModule !== UiModule.ONBOARDING) {
 				navigation.show(UiModule.DEFAULT);
 			} else if (navigationAction && navigationAction.action !== NavigationAction.Action.None) {
 				navigationAction.clicked(undefined);
@@ -76,7 +91,7 @@ ApplicationWindow {
 		enabled: UiPluginModel.debugBuild
 		shortcut: "Escape"
 
-		onTriggered: appWindow.close()
+		onTriggered: root.close()
 	}
 	Connections {
 		function onFireApplicationActivated() {
@@ -93,7 +108,7 @@ ApplicationWindow {
 			case UiModule.UPDATEINFORMATION:
 				navigation.show(UiModule.DEFAULT);
 				break;
-			case UiModule.TUTORIAL:
+			case UiModule.ONBOARDING:
 				navigation.show(UiModule.HELP);
 				break;
 			case UiModule.IDENTIFY:
@@ -119,16 +134,20 @@ ApplicationWindow {
 		activeModule: navigation.activeModule
 
 		anchors {
-			bottomMargin: navigation.effectiveHeight
+			bottomMargin: (navigation.lockedAndHidden ? UiPluginModel.safeAreaMargins.bottom : 0) + progressBar.visibleHeight
 			fill: parent
 			leftMargin: UiPluginModel.safeAreaMargins.left
 			rightMargin: UiPluginModel.safeAreaMargins.right
 		}
 	}
-	Navigation {
-		id: navigation
+	GStagedProgressBar {
+		id: progressBar
 
-		onResetContentArea: contentArea.reset()
+		readonly property var currentSectionPage: contentArea.currentSectionPage
+		readonly property real visibleHeight: visible ? height : 0
+
+		progress: currentSectionPage ? currentSectionPage.progress : null
+		visible: progress !== null && progress.enabled
 
 		anchors {
 			bottom: parent.bottom
@@ -140,22 +159,22 @@ ApplicationWindow {
 	}
 	IosBackGestureMouseArea {
 		anchors.fill: contentArea
-		visible: Constants.is_layout_ios && menuBar.isBackAction
+		visible: Style.is_layout_ios && titleBar.isBackAction
 
-		onBackGestureTriggered: menuBar.navigationAction.clicked()
+		onBackGestureTriggered: titleBar.navigationAction.clicked()
 	}
 	Connections {
 		function onFireFeedbackChanged() {
-			if (feedbackPopup) {
-				feedbackPopup.close();
-				feedbackPopup.destroy();
-				feedbackPopup = null;
+			if (root.feedbackPopup) {
+				root.feedbackPopup.close();
+				root.feedbackPopup.destroy();
+				root.feedbackPopup = null;
 			}
 			if (ApplicationModel.feedback !== "") {
-				feedbackPopup = toast.createObject(appWindow, {
-					"text": ApplicationModel.feedback
+				root.feedbackPopup = toast.createObject(root, {
+					text: ApplicationModel.feedback
 				});
-				feedbackPopup.open();
+				root.feedbackPopup.open();
 			}
 		}
 
@@ -165,10 +184,10 @@ ApplicationWindow {
 		id: toast
 
 		ConfirmationPopup {
-			closePolicy: Popup.NoAutoClose
+			closePolicy: ApplicationModel.isScreenReaderRunning ? Popup.NoAutoClose : Popup.CloseOnReleaseOutside
 			dim: true
-			modal: ApplicationModel.isScreenReaderRunning()
-			style: ApplicationModel.isScreenReaderRunning() ? ConfirmationPopup.PopupStyle.OkButton : ConfirmationPopup.PopupStyle.NoButtons
+			modal: ApplicationModel.isScreenReaderRunning
+			style: ApplicationModel.isScreenReaderRunning ? ConfirmationPopup.PopupStyle.OkButton : ConfirmationPopup.PopupStyle.NoButtons
 
 			onConfirmed: ApplicationModel.onShowNextFeedback()
 		}

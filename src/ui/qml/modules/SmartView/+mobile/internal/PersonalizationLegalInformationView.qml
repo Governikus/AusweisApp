@@ -1,16 +1,19 @@
 /**
- * Copyright (c) 2022-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2022-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
-import Governikus.Style
+
+import Governikus.Animations
 import Governikus.ResultView
 
 ResultView {
 	id: root
 
+	animationSymbol: Symbol.Type.INFO
+	animationType: AnimationLoader.Type.STATUS
 	//: LABEL ANDROID IOS
 	header: qsTr("Important Notice")
-	icon: "qrc:///images/status_info_%1.svg".arg(Style.currentTheme.name)
 	smartEidUsed: true
 	text: "<style>ul{-qt-list-indent: 0;}li{margin-top:1em;}</style>" + "<ul><li>" +
 	//: LABEL ANDROID IOS

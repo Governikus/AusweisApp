@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2015-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "DestroyPaceChannelCommand.h"
@@ -14,8 +14,8 @@ DestroyPaceChannelCommand::DestroyPaceChannelCommand(QSharedPointer<CardConnecti
 	, mSecureMessagingStopped(false)
 {
 	connect(pCardConnectionWorker.data(), &CardConnectionWorker::fireSecureMessagingStopped, this, [this](){
-			mSecureMessagingStopped = true;
-		});
+				mSecureMessagingStopped = true;
+			});
 }
 
 

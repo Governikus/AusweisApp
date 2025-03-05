@@ -1,9 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Governikus GmbH & Co. KG, Germany
- */
-
-/*!
- * \brief Unit tests for \ref SmartModel
+ * Copyright (c) 2021-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "SmartModel.h"
@@ -167,10 +163,10 @@ class test_SmartModel
 			int signalCount = 0;
 
 			const auto connection = connect(smartModel, &SmartModel::fireStateChanged, this, [&signalCount, smartModel](){
-					signalCount++;
+						signalCount++;
 
-					switch (signalCount)
-					{
+						switch (signalCount)
+						{
 							case 1:
 								QCOMPARE(smartModel->getState(), SmartModel::State::UPDATING_STATUS);
 								break;
@@ -181,11 +177,11 @@ class test_SmartModel
 
 							default:
 								QFAIL("Expected only two signals");
-					}
-				});
+						}
+					});
 			const auto guard = qScopeGuard([connection] {
-					disconnect(connection);
-				});
+						disconnect(connection);
+					});
 
 			smartModel->updateStatus();
 			QTRY_COMPARE(signalCount, 2);

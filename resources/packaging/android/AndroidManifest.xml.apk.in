@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="@BUNDLE_IDENTIFIER@"
     android:installLocation="auto"
     android:versionCode="@ANDROID_VERSION_CODE@"
     android:versionName="@ANDROID_VERSION_NAME@">
@@ -40,7 +39,6 @@
         android:allowBackup="false"
         android:allowNativeHeapPointerTagging="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:extractNativeLibs="true"
         android:fullBackupContent="@xml/full_backup_content"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/npa"
@@ -71,7 +69,7 @@
 
         <activity
             android:name="com.governikus.ausweisapp2.MainActivity"
-            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
+            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:exported="true"
             android:launchMode="singleTask"
             android:resizeableActivity="true"

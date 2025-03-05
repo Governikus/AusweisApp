@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
 #include "HttpServer.h"
@@ -105,8 +105,8 @@ QStringList HttpServer::boundAddresses() const
 bool HttpServer::isListening() const
 {
 	return std::any_of(mServer.begin(), mServer.end(), [](const auto& server){
-			return server->isListening();
-		});
+				return server->isListening();
+			});
 }
 
 
@@ -145,7 +145,7 @@ void HttpServer::onNewConnection()
 }
 
 
-bool HttpServer::checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest)
+bool HttpServer::checkReceiver(const QMetaMethod& pSignal, HttpRequest* pRequest) const
 {
 	if (isSignalConnected(pSignal))
 	{

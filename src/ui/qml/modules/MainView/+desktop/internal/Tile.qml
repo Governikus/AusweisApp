@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018-2024 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 import QtQuick
 import QtQuick.Controls
@@ -13,11 +13,12 @@ AbstractButton {
 	id: root
 
 	Accessible.name: ApplicationModel.stripHtmlTags(text)
+	Accessible.role: Accessible.Button
 	Layout.fillHeight: true
 	Layout.fillWidth: true
 	implicitHeight: 1
 	implicitWidth: 1
-	padding: 2 * Constants.pane_padding
+	padding: 2 * Style.dimens.pane_padding
 
 	background: GPaneBackground {
 		id: pane
@@ -33,7 +34,7 @@ AbstractButton {
 		}
 	}
 	contentItem: Column {
-		spacing: Constants.component_spacing
+		spacing: Style.dimens.pane_spacing
 
 		TintableIcon {
 			id: image
@@ -45,6 +46,7 @@ AbstractButton {
 		GText {
 			id: label
 
+			activeFocusOnTab: false
 			color: root.activeFocus && UiPluginModel.showFocusIndicator ? Style.color.textTitle.checked : Style.color.textTitle.basic
 			horizontalAlignment: Text.AlignLeft
 			text: root.text
