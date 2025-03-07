@@ -17,7 +17,7 @@ jobs:
 
     - name: Install openssl dev
       run: |
-           choco install openssl --version=3.3.2
+           choco install openssl --version=3.4.1
            choco install ninja
 
     - name: Add nmake
@@ -29,7 +29,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.*'
+        version: '6.8.*'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
         setup-python: 'false'
 
@@ -48,7 +48,7 @@ jobs:
 
   build_linux:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -62,11 +62,10 @@ jobs:
       run: |
            sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev qt6-l10n-tools
 
-    # ubuntu 22.04 comes just with QT 6.2.4 and Qt >= 6.4 is required
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.2'
+        version: '6.8.1'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
         setup-python: 'false'
 
@@ -98,7 +97,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.7.2'
+        version: '6.8.*'
         modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
 
     - name: generate cmake
