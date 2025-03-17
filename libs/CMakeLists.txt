@@ -457,6 +457,8 @@ elseif(WIN32 OR CYGWIN)
 	else()
 		message(FATAL_ERROR "Cross-Compiling not supported: ${CMAKE_HOST_SYSTEM_NAME}")
 	endif()
+
+	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} "-DCMAKE_CXX_FLAGS=\"-DQT_WIN_SERVER_2016_COMPAT=1\"")
 elseif(ANDROID)
 	find_package(Java COMPONENTS Development REQUIRED)
 
