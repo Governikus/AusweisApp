@@ -6,8 +6,6 @@ Folgende Fehler und Einschränkungen sind zum Auslieferungszeitpunkt bekannt:
 Windows / macOS
 """""""""""""""
 
-- Unter Windows Server 2016 kann die |AppName| nicht genutzt werden.
-
 - Wenn die |AppName| heruntergefahren wird, während eine Authentisierung
   oder eine PIN-Änderung mit einem Komfort-Kartenleser durchgeführt wird, kann
   dieser Vorgang erst abgeschlossen werden, wenn der Prozess auch auf dem

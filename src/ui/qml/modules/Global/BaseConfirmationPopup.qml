@@ -54,7 +54,7 @@ Popup {
 	leftMargin: parent ? 0.125 * parent.width : 0
 	modal: true
 	padding: Style.dimens.pane_padding / 2
-	// missing-property is disabled because of QTBUG-13112
+	// missing-property is disabled because of QTBUG-131125
 	parent: Overlay.overlay // qmllint disable missing-property
 	rightMargin: leftMargin
 	rightPadding: 0

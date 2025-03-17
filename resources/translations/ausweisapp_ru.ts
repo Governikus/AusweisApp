@@ -7197,11 +7197,6 @@ INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt req
 <context>
     <name>governikus::PinResetInformationModel</name>
     <message>
-        <source>You cannot use the PUK to reset your previously set card PIN. If you forgot your card PIN, you can use the PIN Reset Service to request a new PIN.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
-        <translation>Невозможно использовать PUK-код для сброса ранее установленного PIN-кода карты. Если вы забыли PIN-код своей карты, вы можете воспользоваться службой сброса PIN-кода, чтобы запросить новый PIN-код.</translation>
-    </message>
-    <message>
         <source>Go to PIN Reset Service</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Перейти к службе сброса PIN-кода</translation>
@@ -7217,11 +7212,7 @@ INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt req
         <translation>Найти компетентный орган</translation>
     </message>
     <message>
-        <source>To find your competent authority you may visit Servicesuche Bund.</source>
-        <translation>Найти нужный компетентный орган можно на сайте Servicesuche.bund.</translation>
-    </message>
-    <message>
-        <source>If you don&apos;t have your Transport PIN letter and no access to the PUK, you may turn to the competent authority and set a new ID card PIN there.</source>
+        <source>If you don&apos;t have the letter with your Transport PIN and PUK, you may turn to the competent authority and set a new ID card PIN there.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
         <translation>Если вы не получили письмо с временным PIN-кодом и у вас нет доступа к PUK-коду, можно обратиться в компетентный орган и там задать новый PIN-код идентификационной карты.</translation>
     </message>
@@ -7233,19 +7224,9 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
         <translation>Вы можете обратиться в компетентный орган и там установить новый PIN-код идентификационной карты.</translation>
     </message>
     <message>
-        <source>Please contact the competent authority to activate the eID function.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
-        <translation>Свяжитесь с компетентным органом, чтобы активировать функцию онлайн-идентификации.</translation>
-    </message>
-    <message>
         <source>If you know neither your Transport PIN nor your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN are not known.</extracomment>
         <translation>Если вы не знаете ни своего временного PIN-кода, ни PIN-кода идентификационной карты, можно обратиться в компетентный орган и там задать новый PIN-код идентификационной карты.</translation>
-    </message>
-    <message>
-        <source>If you cannot recall your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
-        <translation>Если вы не можете вспомнить PIN-код идентификационной карты, можно обратиться в компетентный орган и там задать новый PIN-код идентификационной карты.</translation>
     </message>
     <message>
         <source>Request a new card PIN to be able to use the eID function again.</source>
@@ -7253,24 +7234,44 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
         <translation>Запросите новый PIN-код карты, чтобы снова иметь возможность использовать функцию онлайн-идентификации.</translation>
     </message>
     <message>
-        <source>You can request activation of the eID function.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
-        <translation>Вы можете запросить активацию функции онлайн-идентификации.</translation>
-    </message>
-    <message>
-        <source>You can use the PIN Reset Service to request a new card PIN.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Вы можете воспользоваться службой сброса PIN-кода, чтобы запросить новый PIN-код карты.</translation>
-    </message>
-    <message>
-        <source>If you do not know either your Transport PIN or your card PIN, you can request a new PIN using the PIN Reset Service.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Если вы не знаете ни своего временного PIN-кода, ни PIN-кода карты, можно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
-    </message>
-    <message>
         <source>If you have forgotten your ID card PIN, you can request a new PIN using the PIN Reset Service.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
         <translation>Если вы забыли PIN-код идентификационной карты, можно запросить новый PIN-код, воспользовавшись службой сброса PIN-кода.</translation>
+    </message>
+    <message>
+        <source>If you don&apos;t have the letter with your Transport PIN and PUK, you can use the PIN Reset Service to request a new PIN.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested PUK but both, PUK and PIN are not known.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request a new card PIN to be able to use the eID function.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you know neither your Transport PIN nor your ID card PIN, you can request a new PIN using the PIN Reset Service.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you don&apos;t know your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint text for PIN but it is unknown.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To find your competent authority you may visit %1 .</source>
+        <extracomment>LABEL ALL_PLATFORMS %1 will be replaced with a link to a website.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You may request the activation of the eID function.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You may turn to the competent authority to activate the eID function.</source>
+        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

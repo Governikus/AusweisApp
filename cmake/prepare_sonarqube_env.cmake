@@ -13,10 +13,10 @@ message(STATUS "Use PACKAGES_DIR: ${PACKAGES_DIR}")
 set(BUILDWRAPPER_ZIP_NAME build-wrapper-linux-x86.zip)
 set(BUILDWRAPPER_URL https://sonar.govkg.de/static/cpp/${BUILDWRAPPER_ZIP_NAME})
 
-set(SONARSCANNERCLI_VERSION 6.2.1.4610-linux-x64) # https://binaries.sonarsource.com/?prefix=Distribution/sonar-scanner-cli/
+set(SONARSCANNERCLI_VERSION 7.0.2.4839-linux-x64) # https://binaries.sonarsource.com/?prefix=Distribution/sonar-scanner-cli/
 set(SONARSCANNERCLI_ZIP_NAME sonar-scanner-cli-${SONARSCANNERCLI_VERSION}.zip)
 set(SONARSCANNERCLI_URL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/${SONARSCANNERCLI_ZIP_NAME})
-set(SONARSCANNERCLI_HASH 0b8a3049f0bd5de7abc1582c78c233960d3d4ed7cc983a1d1635e8552f8bb439)
+set(SONARSCANNERCLI_HASH 87f80a41ad861c3d0eb2c00a1268e77ab5f93b83c17c816318ddecb0911baeb0)
 
 set(DEPENDENCYCHECK_VERSION 11.1.1) # https://github.com/jeremylong/DependencyCheck/releases
 set(DEPENDENCYCHECK_ZIP_NAME dependency-check-${DEPENDENCYCHECK_VERSION}-release.zip)

@@ -20,7 +20,7 @@ sonar.cfamily.analysisCache.path=@SONAR_CACHE_DIR@
 
 sonar.cfamily.reportingCppStandardOverride=c++17
 
-sonar.cfamily.build-wrapper-output=@PROJECT_BINARY_DIR@
+sonar.cfamily.compile-commands=@PROJECT_BINARY_DIR@/compile_commands.json
 #sonar.cfamily.gcov.reportsPath=@PROJECT_BINARY_DIR@/Testing/CoverageInfo
 sonar.coverageReportPaths=@PROJECT_BINARY_DIR@/gcovr_sonarqube.xml
 sonar.exclusions=src/external/**,utils/**,**/CMakeFiles/*,**/*.java

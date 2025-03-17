@@ -54,7 +54,7 @@ qt_add_qml_module(AusweisAppUiQml
 
 get_target_property(target_type AusweisAppUiQmlplugin TYPE)
 if(target_type STREQUAL STATIC_LIBRARY)
-	target_link_libraries(AusweisAppUiQml PRIVATE AusweisAppUiQmlplugin)
+	target_link_libraries(AusweisAppUiQml INTERFACE AusweisAppUiQmlplugin)
 endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL "6.7.1"

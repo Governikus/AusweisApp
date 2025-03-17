@@ -1,0 +1,15 @@
+AusweisApp 2.3.1
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 18. März 2025
+
+
+Anwender
+""""""""
+- Unter Windows Server 2016 kann die |AppName| wieder genutzt werden.
+
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+
+Entwickler
+""""""""""

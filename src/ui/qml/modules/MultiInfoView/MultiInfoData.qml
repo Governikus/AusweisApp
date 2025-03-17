@@ -484,7 +484,7 @@ QtObject {
 		MultiInfoContent {
 			id: noSacFound
 
-			buttonLink: "mailto:support@governikus.de"
+			buttonLink: "mailto:support@ausweisapp.de"
 			//: LABEL ALL_PLATFORMS
 			hint: qsTr("If you require assistance with this, please contact our support team.")
 			//: LABEL ALL_PLATFORMS

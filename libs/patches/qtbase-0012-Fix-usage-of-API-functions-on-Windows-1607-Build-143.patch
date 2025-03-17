@@ -1,0 +1,101 @@
+From a6863a9528302010b85773ad16cabb117313ef08 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Thu, 13 Mar 2025 12:55:05 +0100
+Subject: Fix usage of API functions on Windows 1607 (Build 14393)
+
+* Windows Server 2016, Windows 10 LTSB 2016 and Windows 10 version 1607:
+  SetThreadDescription is only available by Run Time Dynamic Linking in
+  KernelBase.dll. See [1].
+* According to [2] UiaRaiseNotificationEvent should be available on
+  Windows Server 2016 but in fact it is not.
+
+[1] https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreaddescription
+[2] https://learn.microsoft.com/de-de/windows/win32/api/uiautomationcoreapi/nf-uiautomationcoreapi-uiaraisenotificationevent
+
+Fixes: QTBUG-134075
+Pick-to: 6.8 6.8.3 6.9 6.9.0
+Change-Id: I3c4c733a4112a72b75f91f017a278dff2454e100
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+(cherry picked from commit a9e251332cbec0f64c9c085349836af7276c55d3)
+---
+ src/corelib/thread/qthread_win.cpp               | 14 ++++++++++++++
+ .../uiautomation/qwindowsuiamainprovider.cpp     | 16 +++++++++++++++-
+ .../uiautomation/qwindowsuiautomation.cpp        |  4 ++--
+ 3 files changed, 31 insertions(+), 3 deletions(-)
+
+diff --git x/qtbase/src/corelib/thread/qthread_win.cpp y/qtbase/src/corelib/thread/qthread_win.cpp
+index 33dd03166cf1f6639a9e805f16aeba454f1fe5d9..0dd3889d6793751935f279bedacc02bc35ccddb9 100644
+--- x/qtbase/src/corelib/thread/qthread_win.cpp
++++ y/qtbase/src/corelib/thread/qthread_win.cpp
+@@ -263,7 +263,21 @@ unsigned int __stdcall QT_ENSURE_STACK_ALIGNED_FOR_SSE QThreadPrivate::start(voi
+     QString threadName = std::exchange(thr->d_func()->objectName, {});
+     if (Q_LIKELY(threadName.isEmpty()))
+         threadName = QString::fromUtf8(thr->metaObject()->className());
++#ifndef QT_WIN_SERVER_2016_COMPAT
+     SetThreadDescription(GetCurrentThread(), reinterpret_cast<const wchar_t *>(threadName.utf16()));
++#else
++    HMODULE kernelbase = GetModuleHandleW(L"kernelbase.dll");
++    if (kernelbase != NULL) {
++        typedef HRESULT (WINAPI *DESCFUNC)(HANDLE, PCWSTR);
++
++        DESCFUNC setThreadDescription =
++            (DESCFUNC)GetProcAddress(kernelbase, "SetThreadDescription");
++        if (setThreadDescription != NULL) {
++            setThreadDescription(GetCurrentThread(),
++                                 reinterpret_cast<const wchar_t *>(threadName.utf16()));
++        }
++    }
++#endif
+ 
+     emit thr->started(QThread::QPrivateSignal());
+     QThread::setTerminationEnabled(true);
+diff --git x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
+index 56181caa215456e7fa31d490c1f76803eab537a2..0000e9d0a1e626e04f6248e26028d9ccce6cb664 100644
+--- x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
++++ y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiamainprovider.cpp
+@@ -212,9 +212,23 @@ void QWindowsUiaMainProvider::raiseNotification(QAccessibleAnnouncementEvent *ev
+                     ? NotificationProcessing_ImportantAll
+                     : NotificationProcessing_All;
+             QBStr activityId{ QString::fromLatin1("") };
++#if !defined(Q_CC_MSVC) || !defined(QT_WIN_SERVER_2016_COMPAT)
+             UiaRaiseNotificationEvent(provider.Get(), NotificationKind_Other, processing, message.bstr(),
+                                       activityId.bstr());
+-
++#else
++            HMODULE uiautomationcore = GetModuleHandleW(L"UIAutomationCore.dll");
++            if (uiautomationcore != NULL) {
++                typedef HRESULT (WINAPI *EVENTFUNC)(IRawElementProviderSimple *, NotificationKind,
++                                                    NotificationProcessing, BSTR, BSTR);
++
++                EVENTFUNC uiaRaiseNotificationEvent =
++                    (EVENTFUNC)GetProcAddress(uiautomationcore, "UiaRaiseNotificationEvent");
++                if (uiaRaiseNotificationEvent != NULL) {
++                    uiaRaiseNotificationEvent(provider.Get(), NotificationKind_Other, processing,
++                                              message.bstr(), activityId.bstr());
++                }
++            }
++#endif
+         }
+     }
+ }
+diff --git x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautomation.cpp y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautomation.cpp
+index 6954a881d09d4eb2c8f5ffb80d29d263e9215aca..144ad36f00e89621e04ffc10c343e0759b6c4192 100644
+--- x/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautomation.cpp
++++ y/qtbase/src/plugins/platforms/windows/uiautomation/qwindowsuiautomation.cpp
+@@ -6,7 +6,7 @@
+ 
+ #include "qwindowsuiautomation.h"
+ 
+-#if defined(__MINGW32__) || defined(__MINGW64__)
++#ifndef Q_CC_MSVC
+ 
+ template<typename T, typename... TArg>
+ struct winapi_func
+@@ -77,6 +77,6 @@ HRESULT WINAPI UiaRaiseNotificationEvent(
+     return func.invoke(pProvider, notificationKind, notificationProcessing, displayString, activityId);
+ }
+ 
+-#endif // defined(__MINGW32__) || defined(__MINGW64__)
++#endif // !Q_CC_MSVC
+ 
+ #endif // QT_CONFIG(accessibility)
