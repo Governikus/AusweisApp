@@ -4967,7 +4967,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>USB card reader</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>USB Kartenleser</translation>
+        <translation>USB-Kartenleser</translation>
     </message>
     <message>
         <source>Security and privacy</source>
@@ -5695,7 +5695,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
     <message>
         <source>USB card reader</source>
-        <translation>USB Kartenleser</translation>
+        <translation>USB-Kartenleser</translation>
     </message>
 </context>
 <context>
