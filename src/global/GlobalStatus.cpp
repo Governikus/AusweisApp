@@ -9,7 +9,9 @@
 
 #include <QDebug>
 
+
 using namespace governikus;
+
 
 INIT_FUNCTION([] {
 			qRegisterMetaType<GlobalStatus::Code>("GlobalStatus::Code");
@@ -123,7 +125,7 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 
 		case Code::Workflow_Card_Removed:
 			//: ERROR ALL_PLATFORMS The card was removed after the PACE channel was established.
-			return tr("The connection to the ID card has been lost. The process was aborted.");
+			return tr("Restart the authentication process and make sure that the position of the ID card does not change during the reading process.");
 
 		case Code::Workflow_Cannot_Confirm_IdCard_Authenticity:
 			//: ERROR ALL_PLATFORMS The certificates supplied by the card did not pass the authenticity check, further operation is not allowed.
@@ -402,10 +404,6 @@ QString GlobalStatus::toErrorDescriptionInternal() const
 		case Code::IfdConnector_NoSupportedApiLevel:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) was invalid (API mismatch).
 			return tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
-
-		case Code::IfdConnector_ConnectionTimeout:
-			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.
-			return tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 
 		case Code::IfdConnector_ConnectionError:
 			//: ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)

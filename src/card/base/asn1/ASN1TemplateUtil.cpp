@@ -4,6 +4,15 @@
 
 #include "ASN1TemplateUtil.h"
 
+
+Q_DECLARE_LOGGING_CATEGORY(card)
+
+
+const QLoggingCategory& governikus::getLoggingCategory()
+{
+	return card();
+}
+
 QByteArray governikus::getOpenSslError()
 {
 	QByteArrayList list;

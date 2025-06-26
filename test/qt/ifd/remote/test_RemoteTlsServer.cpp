@@ -74,7 +74,7 @@ class test_RemoteTlsServer
 
 			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
-			QSignalSpy clientErrorOccured(&client, &QAbstractSocket::errorOccurred);
+			QSignalSpy clientErrorOccurred(&client, &QAbstractSocket::errorOccurred);
 
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
 
@@ -83,7 +83,7 @@ class test_RemoteTlsServer
 				QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
 				QVERIFY(pskSignalFired);
 				QTRY_COMPARE(clientEncrypted.count(), 1); // clazy:exclude=qstring-allocations
-				QCOMPARE(clientErrorOccured.count(), 0);
+				QCOMPARE(clientErrorOccurred.count(), 0);
 
 				QVERIFY(remoteSocket);
 				const QByteArray sendData("hello world");
@@ -96,7 +96,7 @@ class test_RemoteTlsServer
 			else
 			{
 				QTest::ignoreMessage(pLogMsgType, QRegularExpression(pLogError));
-				QTRY_COMPARE(clientErrorOccured.count(), 1); // clazy:exclude=qstring-allocations
+				QTRY_COMPARE(clientErrorOccurred.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(client.error(), QAbstractSocket::RemoteHostClosedError);
 			}
 
@@ -307,7 +307,7 @@ class test_RemoteTlsServer
 					});
 
 			QSignalSpy clientEncrypted(&client, &QSslSocket::encrypted);
-			QSignalSpy clientErrorOccured(&client, &QAbstractSocket::errorOccurred);
+			QSignalSpy clientErrorOccurred(&client, &QAbstractSocket::errorOccurred);
 			QSignalSpy newConnection(&server, &RemoteTlsServer::fireNewConnection);
 
 			client.connectToHostEncrypted(QHostAddress(QHostAddress::LocalHost).toString(), server.serverPort());
@@ -315,12 +315,12 @@ class test_RemoteTlsServer
 			{
 				QTRY_COMPARE(newConnection.count(), 1); // clazy:exclude=qstring-allocations
 				QTRY_COMPARE(clientEncrypted.count(), 1); // clazy:exclude=qstring-allocations
-				QCOMPARE(clientErrorOccured.count(), 0);
+				QCOMPARE(clientErrorOccurred.count(), 0);
 			}
 			else
 			{
 				QTest::ignoreMessage(connectLogMsgType, QRegularExpression(connectLogError));
-				QTRY_COMPARE(clientErrorOccured.count(), 1); // clazy:exclude=qstring-allocations
+				QTRY_COMPARE(clientErrorOccurred.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(client.error(), QAbstractSocket::RemoteHostClosedError);
 			}
 		}

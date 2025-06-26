@@ -2,7 +2,7 @@
  * Copyright (c) 2018-2025 Governikus GmbH & Co. KG, Germany
  */
 
-import QtQuick
+import QtQuick.Layouts
 
 import Governikus.Global
 import Governikus.Style
@@ -10,22 +10,26 @@ import Governikus.Style
 BaseConfirmationPopup {
 	id: root
 
-	buttons: Row {
-		layoutDirection: Qt.RightToLeft
-		spacing: Style.dimens.pane_spacing
+	buttons: RowLayout {
+		spacing: 0
 		width: parent.width
 
-		GButton {
-			text: root.okButtonText
-			visible: root.style & ConfirmationPopup.PopupStyle.OkButton
-
-			onClicked: root.accept()
+		GSpacer {
+			Layout.fillWidth: true
 		}
 		GButton {
+			style: root.style & ConfirmationPopup.PopupStyle.OkButton ? Style.color.controlOptional : Style.color.control
 			text: root.cancelButtonText
 			visible: root.style & ConfirmationPopup.PopupStyle.CancelButton
 
 			onClicked: root.cancel()
+		}
+		GButton {
+			Layout.leftMargin: root.style & ConfirmationPopup.PopupStyle.CancelButton ? Style.dimens.pane_spacing : 0
+			text: root.okButtonText
+			visible: root.style & ConfirmationPopup.PopupStyle.OkButton
+
+			onClicked: root.accept()
 		}
 	}
 }

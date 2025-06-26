@@ -15,36 +15,36 @@ jobs:
 
     steps:
 
-    - name: Install openssl dev
-      run: |
-           choco install openssl --version=3.4.1
-           choco install ninja
+      - name: Install openssl dev
+        run: |
+          choco install openssl --version=3.4.1
+          choco install ninja
 
-    - name: Add nmake
-      uses: ilammy/msvc-dev-cmd@v1
+      - name: Add nmake
+        uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Checkout repo
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.8.*'
-        modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
-        setup-python: 'false'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.*'
+          modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
+          setup-python: 'false'
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
 
-    - name: build cmake
-      run: |
-           cmake --build _build --config ${{ matrix.build_configuration }} --target package
-           cmake --install _build
+      - name: build cmake
+        run: |
+          cmake --build _build --config ${{ matrix.build_configuration }} --target package
+          cmake --install _build
 
-    - name: run ctest
-      run: |
-           ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_linux:
 
@@ -56,31 +56,31 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install packages via apt
-      run: |
-           sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev qt6-l10n-tools
+      - name: Install packages via apt
+        run: |
+          sudo apt update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev qt6-l10n-tools
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.8.1'
-        modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
-        setup-python: 'false'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity'
+          setup-python: 'false'
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
 
-    - name: build cmake
-      run: |
-           cmake --build _build --config ${{ matrix.build_configuration }} --target package
-           sudo cmake --install _build
+      - name: build cmake
+        run: |
+          cmake --build _build --config ${{ matrix.build_configuration }} --target package
+          sudo cmake --install _build
 
-    - name: run ctest
-      run: |
-           ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_macos:
 
@@ -92,26 +92,26 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4
-      with:
-        version: '6.8.*'
-        modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.*'
+          modules: 'qtscxml qtwebsockets qtshadertools qtconnectivity qtimageformats'
 
-    - name: generate cmake
-      run: |
-           export OPENSSL_ROOT=/usr/local/opt/openssl/bin
-           export LDFLAGS=-L/usr/local/opt/openssl/lib
-           export CPPFLAGS=-I/usr/local/opt/openssl/include
-           export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
+      - name: generate cmake
+        run: |
+          export OPENSSL_ROOT=/usr/local/opt/openssl/bin
+          export LDFLAGS=-L/usr/local/opt/openssl/lib
+          export CPPFLAGS=-I/usr/local/opt/openssl/include
+          export PKG_CONFIG_PATH=/usr/local/opt/openssl/lib/pkgconfig/
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B _build
 
-    - name: build cmake
-      run: |
-           cmake --build _build --config ${{ matrix.build_configuration }}
+      - name: build cmake
+        run: |
+          cmake --build _build --config ${{ matrix.build_configuration }}
 
-    - name: run ctest
-      run: |
-           ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir _build --output-on-failure -C "${{ matrix.build_configuration }}"

@@ -143,10 +143,10 @@ class test_StateProcessIfdMessages
 
 			state.onDisplayTextChanged(QStringLiteral("dummy text"));
 			QCOMPARE(spy.count(), 1);
-			QCOMPARE(context->getDisplayText(), QStringLiteral("dummy text"));
+			QCOMPARE(context->getDisplayText(), QLatin1String("dummy text"));
 			state.onCardDisconnected();
 			QCOMPARE(spy.count(), 2);
-			QCOMPARE(context->getDisplayText(), QStringLiteral(""));
+			QCOMPARE(context->getDisplayText(), QLatin1String(""));
 		}
 
 

@@ -201,7 +201,7 @@ class test_AccessRoleAndRight
 			QTest::newRow("privilegedTerminal") << AccessRight::PRIVILEGED_TERMINAL << "Privileged terminal"_L1;
 			QTest::newRow("pseudonymousSignatureAuthentication") << AccessRight::PSA << "Pseudonym"_L1;
 			QTest::newRow("restrictedIdentification") << AccessRight::RESTRICTED_IDENTIFICATION << "Pseudonym"_L1;
-			QTest::newRow("comunityIdVerification") << AccessRight::COMMUNITY_ID_VERIFICATION << "Address verification"_L1;
+			QTest::newRow("communityIdVerification") << AccessRight::COMMUNITY_ID_VERIFICATION << "Address verification"_L1;
 			QTest::newRow("ageVerification") << AccessRight::AGE_VERIFICATION << "Age verification"_L1;
 
 			QTest::newRow("default") << static_cast<AccessRight>(100) << "Unknown"_L1;

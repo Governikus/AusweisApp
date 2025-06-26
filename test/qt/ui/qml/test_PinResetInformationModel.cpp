@@ -50,6 +50,30 @@ class test_PinResetInformationModel
 		}
 
 
+		void test_PinResetActivationUrl()
+		{
+			QVERIFY(!Env::getSingleton<PinResetInformationModel>()->getPinResetActivationUrl().isEmpty());
+		}
+
+
+		void test_AdministrativeSearchUrl()
+		{
+			QVERIFY(!Env::getSingleton<PinResetInformationModel>()->getAdministrativeSearchUrl().isEmpty());
+		}
+
+
+		void test_HasPinResetService()
+		{
+			auto* config = Env::getSingleton<ProviderConfiguration>();
+
+			config->parseProviderConfiguration(":/updatable-files/supported-providers_no-prs.json"_L1);
+			QVERIFY(!Env::getSingleton<PinResetInformationModel>()->hasPinResetService());
+
+			config->parseProviderConfiguration(":/updatable-files/supported-providers_prs.json"_L1);
+			QVERIFY(Env::getSingleton<PinResetInformationModel>()->hasPinResetService());
+		}
+
+
 		void test_getNoPinAndNoPukHint()
 		{
 			auto* config = Env::getSingleton<ProviderConfiguration>();

@@ -14,7 +14,7 @@ namespace
 {
 inline double getValue(const QJsonValue& pJson, const char* const pSection, const char* const pSubSection)
 {
-	return pJson.toObject()[QLatin1String(pSection)].toObject()[QLatin1String(pSubSection)].toDouble();
+	return pJson.toObject().value(QLatin1String(pSection)).toObject().value(QLatin1String(pSubSection)).toDouble();
 }
 
 
@@ -31,7 +31,7 @@ CallCost::CallCost(int pFreeSeconds, double pLandlineCentsPerMinute, double pLan
 
 
 CallCost::CallCost(const QJsonValue& pJson)
-	: mFreeSeconds(pJson.toObject()[QLatin1String("free-seconds")].toInt())
+	: mFreeSeconds(pJson.toObject().value(QLatin1String("free-seconds")).toInt())
 	, mLandlineCentsPerMinute(getValue(pJson, "landline", "per-minute"))
 	, mLandlineCentsPerCall(getValue(pJson, "landline", "per-call"))
 	, mMobileCentsPerMinute(getValue(pJson, "mobile", "per-minute"))

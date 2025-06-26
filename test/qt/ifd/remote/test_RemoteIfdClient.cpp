@@ -13,6 +13,7 @@
 #include <QPointer>
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
@@ -35,7 +36,13 @@ class DatagramHandlerMock
 		}
 
 
-		void send(const QByteArray&) override
+		[[nodiscard]] QList<QNetworkAddressEntry> getAllBroadcastEntries() const override
+		{
+			return QList<QNetworkAddressEntry>();
+		}
+
+
+		void send(const QByteArray&, const QList<QNetworkAddressEntry>&) override
 		{
 		}
 
@@ -248,7 +255,9 @@ class test_RemoteIfdClient
 						})");
 				version = IfdVersion::Version::v2;
 			}
-			const QByteArray offerJson = Discovery("Sony Xperia Z5 compact"_L1, ifdId, 24728, {version}).toByteArray(version);
+			Discovery discovery("Sony Xperia Z5 compact"_L1, ifdId, 24728, {version});
+			discovery.setAddresses({QHostAddress(hostAddress)});
+			const QByteArray offerJson = discovery.toByteArray(version);
 
 			RemoteIfdClient client;
 			client.startDetection();
@@ -297,8 +306,9 @@ class test_RemoteIfdClient
 
 			QVERIFY(!mRemoteConnectorMock.isNull());
 			QSignalSpy spyConnectionRequest(mRemoteConnectorMock.data(), &RemoteConnectorMock::fireConnectionRequestReceived);
-			const Discovery discovery(QString(), QByteArrayLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
-			const IfdDescriptor descr(discovery, QHostAddress("192.168.1.88"_L1));
+			Discovery discovery(QString(), QByteArrayLiteral("0123456789ABCDEF"), 12345, {IfdVersion::Version::latest, IfdVersion::Version::v2});
+			discovery.setAddresses({QHostAddress("192.168.1.88"_L1)});
+			const IfdDescriptor descr(discovery);
 			QSharedPointer<IfdListEntry> emptyEntry(new IfdListEntry(descr));
 			client.establishConnection(emptyEntry, "password1");
 

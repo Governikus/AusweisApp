@@ -1,151 +1,193 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    cattle.io/creator: norman
+    workload.user.cattle.io/workloadselector: deployment-ausweisapp-android
   name: android
   namespace: ausweisapp
 spec:
+  progressDeadlineSeconds: 600
   replicas: 3
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       workload.user.cattle.io/workloadselector: deployment-ausweisapp-android
   strategy:
     type: Recreate
   template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-ausweisapp-android
+      namespace: ausweisapp
     spec:
       containers:
-      - env:
-        - name: EXECUTOR
-          value: "2"
-        - name: APK_SIGN_KEYSTORE
-          value: /home/governikus/release.keystore
-        - name: APK_SIGN_KEYSTORE_ALIAS
-          value: autentapp
-        - name: APK_SIGN_KEYSTORE_ALIAS_DEV
-          value: androiddebugkey
-        - name: APK_SIGN_KEYSTORE_DEV
-          value: /home/governikus/.android/debug.keystore
-        - name: APK_SIGN_KEYSTORE_PSW_DEV
-          value: android
-        - name: CCACHE_DIR
-          value: /ccache
-        - name: CMAKE_BUILD_PARALLEL_LEVEL
-          value: 5
-        - name: CTEST_PARALLEL_LEVEL
-          value: 5
-        - name: PROCESSOR_COUNT
-          value: 5
-        - name: APK_SIGN_KEYSTORE_PSW
-          valueFrom:
-            secretKeyRef:
-              key: APK_SIGN_KEYSTORE_PSW
-              name: android-passwords
-              optional: false
-        - name: NEXUS_PSW
-          valueFrom:
-            secretKeyRef:
-              key: NEXUS_PSW
-              name: android-passwords
-              optional: false
-        - name: NEXUS_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: NEXUS_USERNAME
-              name: android-passwords
-              optional: false
-        - name: PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: PASSWORD
-              name: android-passwords
-              optional: false
-        - name: SONARQUBE_TOKEN
-          valueFrom:
-            secretKeyRef:
-              key: sonarqube
-              name: dependency-check-credentials
-              optional: false
-        - name: GPG_PSW
-          valueFrom:
-            secretKeyRef:
-              key: GPG_PSW
+        - env:
+            - name: APK_SIGN_KEYSTORE
+              value: /home/governikus/release.keystore
+            - name: APK_SIGN_KEYSTORE_ALIAS
+              value: autentapp
+            - name: APK_SIGN_KEYSTORE_ALIAS_DEV
+              value: androiddebugkey
+            - name: APK_SIGN_KEYSTORE_DEV
+              value: /home/governikus/.android/debug.keystore
+            - name: APK_SIGN_KEYSTORE_PSW_DEV
+              value: android
+            - name: CMAKE_BUILD_PARALLEL_LEVEL
+              value: '5'
+            - name: CTEST_PARALLEL_LEVEL
+              value: '5'
+            - name: EXECUTOR
+              value: '2'
+            - name: FINGERPRINTS
+              valueFrom:
+                secretKeyRef:
+                  key: FINGERPRINT
+                  name: generic-secrets
+                  optional: false
+            - name: MAKE_FLAGS
+              value: '-j5'
+            - name: PROCESSOR_COUNT
+              value: '5'
+            - name: APK_SIGN_KEYSTORE_PSW
+              valueFrom:
+                secretKeyRef:
+                  key: APK_SIGN_KEYSTORE_PSW
+                  name: android-passwords
+                  optional: false
+            - name: NEXUS_PSW
+              valueFrom:
+                secretKeyRef:
+                  key: NEXUS_PSW
+                  name: android-passwords
+                  optional: false
+            - name: NEXUS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: NEXUS_USERNAME
+                  name: android-passwords
+                  optional: false
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PASSWORD
+                  name: android-passwords
+                  optional: false
+            - name: SONARQUBE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: sonarqube
+                  name: dependency-check-credentials
+                  optional: false
+            - name: APK_SIGN_KEYSTORE_ALIAS_BDR
+              value: androiddebugkey
+            - name: APK_SIGN_KEYSTORE_BDR
+              value: /home/governikus/bdr.keystore
+            - name: APK_SIGN_KEYSTORE_PSW_BDR
+              value: android
+            - name: CCACHE_REMOTE_STORAGE
+              value: redis://ausweisapp-redis.govkg.de:32379
+            - name: CCACHE_REMOTE_ONLY
+              value: 'true'
+            - name: APK_SIGN_KEYSTORE_PSW_UPLOAD
+              valueFrom:
+                secretKeyRef:
+                  key: APK_SIGN_KEYSTORE_PSW_UPLOAD
+                  name: android-passwords
+                  optional: false
+            - name: APK_SIGN_KEYSTORE_ALIAS_UPLOAD
+              value: androiddebugkey
+            - name: APK_SIGN_KEYSTORE_UPLOAD
+              value: /home/governikus/upload.keystore
+            - name: GPG_PSW
+              valueFrom:
+                secretKeyRef:
+                  key: GPG_PSW
+                  name: gpg
+                  optional: false
+            - name: GPG_ID
+              valueFrom:
+                secretKeyRef:
+                  key: GPG_ID
+                  name: gpg
+                  optional: false
+            - name: CENTRAL_PSW
+              valueFrom:
+                secretKeyRef:
+                  key: CENTRAL_PSW
+                  name: android-passwords
+                  optional: false
+            - name: CENTRAL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: CENTRAL_USERNAME
+                  name: android-passwords
+                  optional: false
+          image: dev-docker.govkg.de/ausweisapp2/ubuntu:android
+          imagePullPolicy: Always
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-c'
+                  - >-
+                    base64 -d /secrets/debug.keystore > /home/governikus/.android/debug.keystore && base64 -d /secrets/release.keystore > /home/governikus/release.keystore && base64 -d /secrets/bdr.keystore > /home/governikus/bdr.keystore && base64 -d /secrets/upload.keystore > /home/governikus/upload.keystore && gpg --batch --passphrase $GPG_PSW --pinentry-mode loopback  --import /gpg/GPG_PRIVATE && gpg --batch --passphrase $GPG_PSW --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring
+          name: android
+          resources:
+            limits:
+              cpu: '10'
+              memory: 16Gi
+            requests:
+              cpu: 1500m
+              memory: 8Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - NET_BIND_SERVICE
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: false
+            runAsUser: 1111
+          stdin: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          tty: true
+          volumeMounts:
+            - mountPath: /secrets
+              name: keystores
+            - mountPath: /gpg
               name: gpg
-              optional: false
-        - name: GPG_ID
-          valueFrom:
-            secretKeyRef:
-              key: GPG_ID
-              name: gpg
-              optional: false
-        - name: CENTRAL_PSW
-          valueFrom:
-            secretKeyRef:
-              key: CENTRAL_PSW
-              name: android-passwords
-              optional: false
-        - name: CENTRAL_USERNAME
-          valueFrom:
-            secretKeyRef:
-              key: CENTRAL_USERNAME
-              name: android-passwords
-              optional: false
-        image: dev-docker.governikus.de/ausweisapp2/ubuntu:android
-        imagePullPolicy: Always
-        lifecycle:
-          postStart:
-            exec:
-              command:
-              - /bin/sh
-              - -c
-              - base64 -d /secrets/debug.keystore > /home/governikus/.android/debug.keystore
-                && base64 -d /secrets/release.keystore > /home/governikus/release.keystore
-                && gpg --batch --passphrase $GPG_PSW --pinentry-mode loopback --import /gpg/GPG_PRIVATE
-        name: android
-        resources:
-          limits:
-            cpu: "10"
-            memory: 8Gi
-          requests:
-            cpu: 500m
-            memory: 4Gi
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - NET_BIND_SERVICE
-          privileged: false
-          readOnlyRootFilesystem: false
-          runAsGroup: 1000
-          runAsNonRoot: true
-          runAsUser: 1000
-        stdin: true
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        tty: true
-        volumeMounts:
-        - mountPath: /secrets
-          name: keystores
-        - mountPath: /ccache
-          name: ccache
+              readOnly: true
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        runAsGroup: 2000
+        runAsUser: 3000
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: keystores
-        secret:
-          defaultMode: 511
-          items:
-          - key: ausweisapp.apk.developer.keystore.jks
-            mode: 292
-            path: debug.keystore
-          - key: autentapp2.apk.keystore.jks
-            mode: 292
-            path: release.keystore
-          optional: false
-          secretName: ausweisapp2-apk-keystores
-      - name: ccache
-        persistentVolumeClaim:
-          claimName: ccache-android
-      - name: gpg
-        secret:
-          defaultMode: 420
-          optional: false
-          secretName: gpg
+        - name: keystores
+          secret:
+            defaultMode: 511
+            items:
+              - key: ausweisapp.apk.developer.keystore.jks
+                mode: 292
+                path: debug.keystore
+              - key: autentapp2.apk.keystore.jks
+                mode: 292
+                path: release.keystore
+              - key: ausweisapp.apk.bdr_distribution_developer.keystore.jks
+                mode: 292
+                path: bdr.keystore
+              - key: ausweisapp.aab.uploader.keystore.jks
+                mode: 292
+                path: upload.keystore
+            optional: false
+            secretName: ausweisapp2-apk-keystores
+        - name: gpg
+          secret:
+            defaultMode: 420
+            optional: false
+            secretName: gpg

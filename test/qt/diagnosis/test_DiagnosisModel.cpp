@@ -310,7 +310,7 @@ class test_DiagnosisModel
 
 		void test_SavePlainText()
 		{
-			static const QRegularExpression re(QLatin1StringView(R"(^Test_diagnosis_DiagnosisModel\r?
+			static const QRegularExpression re(QStringLiteral(R"(^Test_diagnosis_DiagnosisModel\r?
 Application\r?
 Test_diagnosis_DiagnosisModel\r?
 Application Version\r?

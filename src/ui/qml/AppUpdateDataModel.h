@@ -46,11 +46,15 @@ class AppUpdateDataModel
 		int mDownloadProgress;
 		int mDownloadTotal;
 
-		AppUpdateDataModel();
-		~AppUpdateDataModel() override = default;
-
 		QString errorFromStatusCode(GlobalStatus::Code pCode) const;
 		QString supportInfoFromStatusCode(GlobalStatus::Code pCode) const;
+
+#ifndef QT_NO_DEBUG
+
+	public:
+#endif
+		AppUpdateDataModel();
+		~AppUpdateDataModel() override = default;
 
 	private Q_SLOTS:
 		void onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pStatus);
@@ -79,7 +83,7 @@ class AppUpdateDataModel
 		void fireAppUpdateDataChanged();
 		void fireDownloadProgressChanged();
 		void fireAppUpdateAborted();
-		void fireAppUpdateFailed(QString pError, QString pSupportInfo);
+		void fireAppUpdateFailed(const QString& pError, const QString& pSupportInfo);
 		void fireAppDownloadFinished();
 };
 

@@ -1,4 +1,4 @@
-From a6863a9528302010b85773ad16cabb117313ef08 Mon Sep 17 00:00:00 2001
+From 26b564c6b08fcb749a238a0fd9704c52517c0205 Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Thu, 13 Mar 2025 12:55:05 +0100
 Subject: Fix usage of API functions on Windows 1607 (Build 14393)

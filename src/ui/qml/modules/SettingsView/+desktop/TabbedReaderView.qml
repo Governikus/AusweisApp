@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQml.Models
 
-import Governikus.Animations
 import Governikus.Global
 import Governikus.MultiInfoView
 import Governikus.ResultView
@@ -19,8 +18,6 @@ import Governikus.View
 SectionPage {
 	id: root
 
-	property int lastReaderCount: 0
-
 	//: LABEL DESKTOP
 	title: qsTr("Card Readers")
 
@@ -30,41 +27,38 @@ SectionPage {
 		onNavigationActionClicked: root.leaveView()
 	}
 
-	Component.onCompleted: lastReaderCount = ApplicationModel.availablePcscReader
 	Keys.onPressed: event => {
 		tabbedPane.handleKeyPress(event.key);
 	}
 
-	Connections {
-		function onFireAvailableReaderChanged() {
-			if (ApplicationModel.availablePcscReader > root.lastReaderCount) {
-				root.push(pcscReaderFound);
+	ReaderDetection {
+		onNewPcscReaderDetected: {
+			if (ApplicationModel.isScreenReaderRunning) {
+				root.push(readerFoundConfirmation, {
+					type: ReaderFoundConfirmation.ReaderType.PCSC
+				});
+			} else {
+				root.leaveView();
 			}
-			root.lastReaderCount = ApplicationModel.availablePcscReader;
 		}
-
-		target: ApplicationModel
+		onNewRemoteReaderDetected: {
+			if (ApplicationModel.isScreenReaderRunning) {
+				root.push(readerFoundConfirmation, {
+					type: ReaderFoundConfirmation.ReaderType.REMOTE
+				});
+			} else {
+				root.leaveView();
+			}
+		}
 	}
 	Component {
-		id: pcscReaderFound
+		id: readerFoundConfirmation
 
-		ResultView {
-			animationSymbol: Symbol.Type.CHECK
-			animationType: AnimationLoader.Type.WAIT_FOR_READER
-			text: qsTr("Found new USB card reader that is suitable for the ID card. The workflow may now be continued.")
+		ReaderFoundConfirmation {
 			title: root.title
 
-			titleBarSettings: TitleBarSettings {
-				navigationAction: NavigationAction.Back
-
-				onNavigationActionClicked: {
-					root.pop();
-					root.leaveView();
-				}
-			}
-
 			onLeaveView: {
-				pop();
+				root.pop();
 				root.leaveView();
 			}
 		}

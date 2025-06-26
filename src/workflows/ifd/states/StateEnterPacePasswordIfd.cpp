@@ -4,6 +4,8 @@
 
 #include "StateEnterPacePasswordIfd.h"
 
+#include "ReaderManager.h"
+
 
 using namespace governikus;
 
@@ -35,6 +37,16 @@ void StateEnterPacePasswordIfd::onUserError()
 }
 
 
+void StateEnterPacePasswordIfd::onCardRemoved(const ReaderInfo& pInfo) const
+{
+	if (const auto& context = getContext(); pInfo.getName() == context->getReaderName())
+	{
+		qDebug() << "Card was removed while waiting for user input. Resetting card connection";
+		context->resetCardConnection();
+	}
+}
+
+
 void StateEnterPacePasswordIfd::onEntry(QEvent* pEvent)
 {
 	AbstractState::onEntry(pEvent);
@@ -48,4 +60,7 @@ void StateEnterPacePasswordIfd::onEntry(QEvent* pEvent)
 	}
 
 	*this << connect(getContext().data(), &IfdServiceContext::fireUserError, this, &StateEnterPacePasswordIfd::onUserError);
+
+	const auto* readerManager = Env::getSingleton<ReaderManager>();
+	*this << connect(readerManager, &ReaderManager::fireCardRemoved, this, &StateEnterPacePasswordIfd::onCardRemoved);
 }

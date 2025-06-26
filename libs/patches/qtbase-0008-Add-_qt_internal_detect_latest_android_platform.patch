@@ -1,4 +1,4 @@
-From d857a206a84029695274a3072b010eaf774bf4f2 Mon Sep 17 00:00:00 2001
+From 4e0d25ace607f0393d9e5db0bd2eb1d195aa0dab Mon Sep 17 00:00:00 2001
 From: Alexey Edelev <alexey.edelev@qt.io>
 Date: Thu, 28 Nov 2024 14:33:46 +0100
 Subject: Add _qt_internal_detect_latest_android_platform

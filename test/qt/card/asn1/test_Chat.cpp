@@ -173,7 +173,7 @@ class test_CHAT
 		}
 
 
-		void testUnsupprtedType()
+		void testUnsupportedType()
 		{
 			// see test case TS_TA_2.1.1 from TR-03105-5.2
 			QByteArray hexEncodedChat = QByteArray("7F4C12060904007F000703010201").append("5305FC0F13FFFF");

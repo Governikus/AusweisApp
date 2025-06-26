@@ -8,15 +8,21 @@ import re
 class CommandLineParser(argparse.ArgumentParser):
     def __init__(self):
         super().__init__()
-        self.add_argument("--module-dir", help="Directory of QML modules",
-                          required=True)
-        self.add_argument("--resources-dir", help="Directory of QML resources",
-                          required=True)
-        self.add_argument("--exclude-filenames",
-                          help="Filenames to exclude from QML module check")
-        self.add_argument("--exclude-resources",
-                          help="Path to textfile that defines excludes for QML"
-                               "resource usage check")
+        self.add_argument(
+            '--module-dir', help='Directory of QML modules', required=True
+        )
+        self.add_argument(
+            '--resources-dir', help='Directory of QML resources', required=True
+        )
+        self.add_argument(
+            '--exclude-filenames',
+            help='Filenames to exclude from QML module check',
+        )
+        self.add_argument(
+            '--exclude-resources',
+            help='Path to textfile that defines excludes for QML'
+            'resource usage check',
+        )
         self.args = self.parse_args()
 
     def qml_module_dir(self):
@@ -28,7 +34,7 @@ class CommandLineParser(argparse.ArgumentParser):
     def exclude_filenames(self):
         if self.args.exclude_filenames is None:
             return []
-        return self.args.exclude_filenames.split(",")
+        return self.args.exclude_filenames.split(',')
 
     def exclude_resources(self):
         return self.args.exclude_resources
@@ -38,14 +44,15 @@ class QmlFileCache:
     def __init__(self, qml_dir):
         self.cache = dict()
         for path in self.collect_qml_files(qml_dir):
-            with open(path, "r", encoding="utf8") as fp:
-                self.cache[path] = [line.strip() for line
-                                    in fp.read().splitlines()]
+            with open(path, 'r', encoding='utf8') as fp:
+                self.cache[path] = [
+                    line.strip() for line in fp.read().splitlines()
+                ]
 
     def collect_qml_files(self, qml_dir):
         for root, _, files in os.walk(qml_dir):
             for file in files:
-                if os.path.splitext(file)[-1].lower() != ".qml":
+                if os.path.splitext(file)[-1].lower() != '.qml':
                     continue
 
                 path = os.path.join(root, file)
@@ -55,7 +62,7 @@ class QmlFileCache:
         return len(self.cache.keys()) == 0
 
     def in_cache(self, search_string):
-        pattern = re.compile(r"\b%s" % search_string)
+        pattern = re.compile(r'\b%s' % search_string)
         for lines in self.cache.values():
             for line in lines:
                 if re.search(pattern, line):
@@ -68,7 +75,7 @@ class QmlFileCache:
             return False
 
         lines = self.cache[filename]
-        return "pragma Singleton" in lines
+        return 'pragma Singleton' in lines
 
     def unused_qml_files(self, exclude_filenames):
         found_unused_file = False
@@ -76,15 +83,15 @@ class QmlFileCache:
             filename, ext = os.path.splitext(os.path.split(file)[-1])
 
             if filename in exclude_filenames:
-                print("Skipping", file)
+                print('Skipping', file)
                 continue
 
             if self.is_singleton(file):
-                if not self.in_cache(filename + "."):
-                    print("QML singleton unused", file)
+                if not self.in_cache(filename + '.'):
+                    print('QML singleton unused', file)
                     found_unused_file = True
-            elif not self.in_cache(filename + " {"):
-                print("QML file unused", file)
+            elif not self.in_cache(filename + ' {'):
+                print('QML file unused', file)
                 found_unused_file = True
 
         return found_unused_file
@@ -92,27 +99,28 @@ class QmlFileCache:
 
 class ResourceCache:
     def __init__(self, resources_dir):
-        self.language_names = ["de", "en", "uk", "ru"]
+        self.language_names = ['de', 'en', 'uk', 'ru']
         self.qrc_content = set()
         self.found_duplicate = False
         for qrc_file in self.collect_qrc_files(resources_dir):
-            with open(qrc_file, "r", encoding="utf8") as fp:
+            with open(qrc_file, 'r', encoding='utf8') as fp:
                 for line in [line.strip() for line in fp.read().splitlines()]:
-                    m = re.match("<file>(.+)</file>", line)
+                    m = re.match('<file>(.+)</file>', line)
                     if m is None:
                         continue
 
                     if m.group(1) in self.qrc_content:
                         self.found_duplicate = True
-                        print("Duplicate QML resource in", qrc_file,
-                              m.group(1))
+                        print(
+                            'Duplicate QML resource in', qrc_file, m.group(1)
+                        )
 
                     self.qrc_content.add(m.group(1))
 
     def collect_qrc_files(self, resources_dir):
         for root, _, files in os.walk(resources_dir):
             for file in files:
-                if os.path.splitext(file)[-1].lower() != ".qrc":
+                if os.path.splitext(file)[-1].lower() != '.qrc':
                     continue
 
                 path = os.path.join(root, file)
@@ -125,7 +133,7 @@ class ResourceCache:
         file_missing = False
         for resource in self.qrc_content:
             if not os.path.exists(os.path.join(resources_dir, resource)):
-                print("QML resource is missing", resource)
+                print('QML resource is missing', resource)
                 file_missing = True
 
         return file_missing
@@ -137,16 +145,16 @@ class ResourceCache:
         resource_unused = False
         for line in sorted(self.qrc_content):
             if excluded_resources.is_excluded(line):
-                print("QML resource is excluded", line)
+                print('QML resource is excluded', line)
                 continue
 
             if self.is_language_aware_resource(line):
                 language_filename = self.language_aware_filename(line)
                 if not qml_cache.in_cache(language_filename):
-                    print("Language aware QML resource is unused", line)
+                    print('Language aware QML resource is unused', line)
                     resource_unused = True
             elif not qml_cache.in_cache(line):
-                print("QML resource is unused", line)
+                print('QML resource is unused', line)
                 resource_unused = True
 
         return resource_unused
@@ -157,9 +165,9 @@ class ResourceCache:
     def language_aware_filename(self, resource_file):
         filename, ext = os.path.splitext(resource_file)
         for language_name in self.language_names:
-            pattern = re.compile("_" + language_name + "$")
+            pattern = re.compile('_' + language_name + '$')
             if re.search(pattern, filename):
-                return re.sub(pattern, "_%1", filename) + ext
+                return re.sub(pattern, '_%1', filename) + ext
 
         return None
 
@@ -167,28 +175,33 @@ class ResourceCache:
 class ExcludedResources:
     def __init__(self, excludes_filename):
         if excludes_filename:
-            with open(excludes_filename, "r", encoding="utf8") as fp:
-                self.excluded_resources = [re.compile(line.strip()) for line
-                                           in fp.readlines()]
+            with open(excludes_filename, 'r', encoding='utf8') as fp:
+                self.excluded_resources = [
+                    re.compile(line.strip()) for line in fp.readlines()
+                ]
         else:
             self.excluded_resources = []
 
     def is_excluded(self, filename):
-        return any([expression.fullmatch(filename) for expression
-                    in self.excluded_resources])
+        return any(
+            [
+                expression.fullmatch(filename)
+                for expression in self.excluded_resources
+            ]
+        )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = CommandLineParser()
 
     qml_cache = QmlFileCache(parser.qml_module_dir())
     if qml_cache.is_empty():
-        print("Found no QML files in", parser.qml_module_dir())
+        print('Found no QML files in', parser.qml_module_dir())
         exit(1)
 
     resource_cache = ResourceCache(parser.resources_dir())
     if resource_cache.is_empty():
-        print("Found no QML resources in", parser.resources_dir())
+        print('Found no QML resources in', parser.resources_dir())
         exit(1)
 
     excluded_resources = ExcludedResources(parser.exclude_resources())

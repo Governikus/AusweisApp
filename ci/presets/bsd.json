@@ -1,0 +1,12 @@
+{
+  "version": 6,
+  "include": [
+    "linux.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-bsd",
+      "inherits": "ci-linux"
+    }
+  ]
+}

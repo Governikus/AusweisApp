@@ -1,46 +1,73 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    cattle.io/creator: norman
+    workload.user.cattle.io/workloadselector: deployment-ausweisapp-trigger
   name: trigger
   namespace: ausweisapp
 spec:
+  progressDeadlineSeconds: 600
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       workload.user.cattle.io/workloadselector: deployment-ausweisapp-trigger
   strategy:
     type: Recreate
   template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-ausweisapp-trigger
     spec:
       containers:
-      - env:
-        - name: EXECUTOR
-          value: "3"
-        - name: PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: PASSWORD
-              name: android-passwords
-              optional: false
-        image: dev-docker.governikus.de/ausweisapp2/alpine:trigger
-        imagePullPolicy: Always
-        name: trigger
-        resources:
-          limits:
-            cpu: "1"
-            memory: 2Gi
-          requests:
-            cpu: 500m
-            memory: 2Gi
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities: {}
-          privileged: false
-          readOnlyRootFilesystem: false
-          runAsGroup: 1000
-          runAsNonRoot: true
-          runAsUser: 1000
-        stdin: true
-        tty: true
+        - env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: PASSWORD
+                  name: android-passwords
+            - name: REVIEWBOARD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: REVIEWBOARD_TOKEN
+                  name: reviewboard
+                  optional: false
+            - name: REVIEWBOARD_USER
+              valueFrom:
+                secretKeyRef:
+                  key: REVIEWBOARD_USER
+                  name: reviewboard
+                  optional: false
+            - name: FINGERPRINTS
+              valueFrom:
+                secretKeyRef:
+                  key: FINGERPRINT
+                  name: generic-secrets
+                  optional: false
+          image: dev-docker.governikus.de/ausweisapp2/alpine:trigger
+          imagePullPolicy: Always
+          name: trigger
+          resources:
+            limits:
+              cpu: '1'
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          stdin: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          tty: true
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
       terminationGracePeriodSeconds: 30

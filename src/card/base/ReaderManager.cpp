@@ -4,16 +4,20 @@
 
 #include "ReaderManager.h"
 
-#include <QLoggingCategory>
-
 
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(card)
 
 
 QList<std::function<void()>> ReaderManager::cMainThreadInit;
 
 
-Q_DECLARE_LOGGING_CATEGORY(card)
+const QLoggingCategory& ReaderManager::getLoggingCategory()
+{
+	return card();
+}
 
 
 ReaderManager::ReaderManager()

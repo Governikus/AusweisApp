@@ -24,15 +24,9 @@ Rectangle {
 		forceActiveFocus(Qt.MouseFocusReason);
 	}
 
-	//: LABEL DESKTOP
-	Accessible.name: qsTr("Title bar")
-	Accessible.role: Accessible.Grouping
-	activeFocusOnTab: true
 	color: Style.color.background
 	height: titleBarColumn.height
 
-	FocusPoint {
-	}
 	Column {
 		id: titleBarColumn
 
@@ -94,6 +88,7 @@ Rectangle {
 					text: qsTr("Notifications")
 					visible: SettingsModel.showInAppNotifications
 
+					Accessible.onToggleAction: notifications.toggle()
 					onClicked: notifications.toggle()
 				}
 			}

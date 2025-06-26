@@ -63,7 +63,7 @@ class test_PacePinStatus
 			QTest::newRow("FILE_NOT_FOUND") << StatusCode::FILE_NOT_FOUND << -1 << false << false;
 			QTest::newRow("RECORD_NOT_FOUND") << StatusCode::RECORD_NOT_FOUND << -1 << false << false;
 			QTest::newRow("INVALID_PARAMETER") << StatusCode::INVALID_PARAMETER << -1 << false << false;
-			QTest::newRow("LC_INCONSISTANT") << StatusCode::LC_INCONSISTANT << -1 << false << false;
+			QTest::newRow("LC_INCONSISTENT") << StatusCode::LC_INCONSISTENT << -1 << false << false;
 			QTest::newRow("REFERENCED_DATA_NOT_FOUND") << StatusCode::REFERENCED_DATA_NOT_FOUND << -1 << false << false;
 			QTest::newRow("ILLEGAL_OFFSET") << StatusCode::ILLEGAL_OFFSET << -1 << false << false;
 			QTest::newRow("UNSUPPORTED_CLA") << StatusCode::UNSUPPORTED_CLA << -1 << false << false;

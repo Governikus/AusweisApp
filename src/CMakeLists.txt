@@ -2,8 +2,8 @@
 # The main component that will link all necessary modules and plugins
 # into AusweisApp executable for the specific platform.
 #
-# This component includes a main entry point and command line
-# parser only. Everything else will be included from sub-modules.
+# This component includes a main entry point only.
+# Everything else will be included from sub-modules.
 #####################################################################
 
 add_subdirectory(external)

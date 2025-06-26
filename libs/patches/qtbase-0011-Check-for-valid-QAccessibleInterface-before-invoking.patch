@@ -1,4 +1,4 @@
-From ef6320938ced9729ade5f3ef91846e4ce36892e7 Mon Sep 17 00:00:00 2001
+From 38941c9af59982757c42dad06d7b8e5fd99fc737 Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Mon, 9 Dec 2024 16:13:08 +0100
 Subject: Check for valid QAccessibleInterface before invoking action

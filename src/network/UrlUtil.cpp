@@ -19,6 +19,19 @@ Q_DECLARE_LOGGING_CATEGORY(network)
 using namespace governikus;
 
 
+QUrl UrlUtil::resolveRedirect(const QSharedPointer<QNetworkReply>& pReply)
+{
+	const QUrl& redirectUrl = pReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	if (redirectUrl.isEmpty() || !redirectUrl.isValid() || !redirectUrl.isRelative())
+	{
+		return redirectUrl;
+	}
+
+	const auto& requestUrl = pReply->request().url();
+	return requestUrl.resolved(redirectUrl);
+}
+
+
 QUrl UrlUtil::getUrlOrigin(const QUrl& pUrl)
 {
 	// get default port for scheme

@@ -1,0 +1,37 @@
+From 67db32186590a214cedebe31da805632871d5ff3 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Sat, 7 Jun 2025 15:52:33 +0200
+Subject: Android: Increase NFC transceive timeout
+
+With Qt 6 a NFC transceive timeout of 2000ms was introduced with
+the note, that "2000ms should be enough for most applications.".
+See d15693d4ea2e06216f55facd504273c990b3814b for details. In our
+application we noted that this is not enough for some cryptographic
+operations especially when a password is checked. In case of a
+wrong password some cards slow down the speed to make brute force
+attacks more difficult. On July 2, 2024, we released a new version
+for Android, where we increased the timeout to 3000ms with a Qt
+patch. Since this we did not note any problems so it is time to
+change this in the official Qt code too.
+
+Pick-to: 6.9 6.10
+Change-Id: I0f0d977081cca01dcd9d0e54814fa92046107505
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit 227718d5a7e5902d1935d7a05c56ef87eae3c360)
+---
+ src/nfc/qnearfieldtarget_android.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+index 0dcd602b7400bc9ec57fd3a4f0536f014051d5e8..88155fa376496b7f949bd5a6ca0798d8ef871325 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+@@ -453,7 +453,7 @@ bool QNearFieldTargetPrivateImpl::connect()
+     if (connected)
+         return true;
+ 
+-    setCommandTimeout(2000);
++    setCommandTimeout(3000);
+     methodId = env.findMethod<void>(tagTech.objectClass(), "connect");
+     if (!methodId)
+         return false;

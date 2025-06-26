@@ -19,19 +19,23 @@ Item {
 	property alias totalItemCount: delegate.count
 	required property int type
 
+	Accessible.focusable: true
 	Accessible.ignored: root.content === ""
 	Accessible.name: ApplicationModel.stripHtmlTags(root.content)
 	Accessible.role: {
+		if (Qt.platform.os === "android") {
+			return Accessible.StaticText;
+		}
+
 		switch (root.type) {
 		case FormattedTextModel.LineType.HEADER:
-			return Accessible.Heading;
 		case FormattedTextModel.LineType.SECTION:
 		case FormattedTextModel.LineType.SUBSECTION:
-			return Accessible.Section;
+			return Accessible.Heading;
 		case FormattedTextModel.LineType.LISTITEM:
 			return Accessible.ListItem;
 		default:
-			return Accessible.StaticText;
+			return Qt.platform.os === "windows" ? Accessible.Paragraph : Accessible.StaticText;
 		}
 	}
 	implicitHeight: delegate.implicitHeight

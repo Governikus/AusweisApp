@@ -48,6 +48,54 @@
     </message>
 </context>
 <context>
+    <name>AuthCanceledView</name>
+    <message>
+        <source>This may take a few moments.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Das kann einen kurzen Moment dauern.</translation>
+    </message>
+    <message>
+        <source>The authentication was cancelled successfully.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Die Authentisierung wurde erfolgreich abgebrochen.</translation>
+    </message>
+    <message>
+        <source>Back to provider</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Zurück zum Anbieter</translation>
+    </message>
+    <message>
+        <source>Authentication was canceled</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Authentisierung wurde abgebrochen</translation>
+    </message>
+    <message>
+        <source>The authentication is being canceled at the provider (%1)</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Die Authentisierung wird seitens des Anbieters (%1) beendet</translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Zurück zur Startseite</translation>
+    </message>
+    <message>
+        <source>The cancellation was triggered on the card reader.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Der Abbruch wurde auf dem Kartenleser ausgelöst.</translation>
+    </message>
+    <message>
+        <source>Back to setup</source>
+        <extracomment>LABEL ALL_PLATFORM</extracomment>
+        <translation>Zurück zur Einrichtung</translation>
+    </message>
+    <message>
+        <source>You may start a new authentication after pressing the button.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Sie können eine neue Authentisierung starten, nachdem Sie den Button gedrückt haben.</translation>
+    </message>
+</context>
+<context>
     <name>AuthController</name>
     <message>
         <source>Identify</source>
@@ -146,21 +194,6 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
 - bewegen Sie den Ausweis nicht, während auf diesen zugegriffen wird</translation>
     </message>
     <message>
-        <source>Network problems detected, trying to reach server within 30 seconds.</source>
-        <extracomment>INFO DESKTOP Information message about cancellation process without working network connectivity</extracomment>
-        <translation>Es wurden Netzwerkprobleme erkannt. Die Verbindung wird weiterhin für 30 Sekunden versucht.</translation>
-    </message>
-    <message>
-        <source>Aborting process and informing the service provider</source>
-        <extracomment>INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider</extracomment>
-        <translation>Der Vorgang wird beendet und der Anbieter informiert</translation>
-    </message>
-    <message>
-        <source>Error code: %1</source>
-        <extracomment>INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.</extracomment>
-        <translation>Fehlercode: %1</translation>
-    </message>
-    <message>
         <source>Back to start page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zur Startseite</translation>
@@ -169,6 +202,16 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
         <source>Back to setup</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zurück zur Einrichtung</translation>
+    </message>
+    <message>
+        <source>Aborting process and informing the service provider</source>
+        <extracomment>INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider</extracomment>
+        <translation>Der Vorgang wird beendet und der Anbieter informiert</translation>
+    </message>
+    <message>
+        <source>Network problems detected, trying to reach server within 30 seconds.</source>
+        <extracomment>INFO DESKTOP Information message about cancellation process without working network connectivity</extracomment>
+        <translation>Es wurden Netzwerkprobleme erkannt. Die Verbindung wird weiterhin für 30 Sekunden versucht.</translation>
     </message>
 </context>
 <context>
@@ -179,6 +222,39 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Ausweisen</translation>
+    </message>
+</context>
+<context>
+    <name>AutoRedirectDecision</name>
+    <message>
+        <source>You are currently using automatic redirection. This may cause the screen reader to miss some information during the authentication process. To ensure all information are received, please enable manual redirection.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Sie nutzen derzeit die automatische Weiterleitung. Dadurch kann Ihr Bildschirmleser Informationen während einer Authetisierung verpassen. Um sicherzustellen dass Sie alle Informationen erhalten, sollten Sie die manuelle Weiterleitung einschalten.</translation>
+    </message>
+    <message>
+        <source>You can change your preference at any time in the settings.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Sie können diese Option jederzeit in den Einstellungen ändern.</translation>
+    </message>
+    <message>
+        <source>Skip and keep automatic redirection</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Überspringen und automatische Weiterleitung behalten</translation>
+    </message>
+    <message>
+        <source>Enable manual redirection</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Manuelle Weiterleitung einschalten</translation>
+    </message>
+    <message>
+        <source>Optimize your settings for screen reading</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation>Optimieren Sie ihre Einstellung für das Bildschirmlesen</translation>
+    </message>
+    <message>
+        <source>Do not display this message in future.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Diesen Hinweis in Zukunft nicht mehr anzeigen.</translation>
     </message>
 </context>
 <context>
@@ -330,6 +406,94 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>OpenSSL Version</source>
         <translation>OpenSSL-Version</translation>
+    </message>
+</context>
+<context>
+    <name>CardNotActivatedBaseView</name>
+    <message>
+        <source>Activate ID card with PIN reset letter</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Ausweis mit dem PIN-Rücksetzbrief freischalten</translation>
+    </message>
+    <message>
+        <source>Request eID function activation</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Aktivierung der Online-Ausweisfunktion anfordern</translation>
+    </message>
+    <message>
+        <source>eID function is not activated</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Online-Ausweisfunktion ist nicht aktiviert</translation>
+    </message>
+    <message>
+        <source>Did you recently order a PIN reset letter with an activation code?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Haben Sie kürzlich einen PIN-Rücksetzbrief mit Aktivierungscode bestellt?</translation>
+    </message>
+    <message>
+        <source>Activate your ID card using the activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Schalten Sie Ihren Ausweis mit dem Aktivierungscode frei</translation>
+    </message>
+    <message>
+        <source>Yes, I already have an activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Ja, ich habe bereits einen Aktivierungscode</translation>
+    </message>
+    <message>
+        <source>Request the activation of the eID function</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Fordern Sie die Aktivierung der Online-Ausweisfunktion an</translation>
+    </message>
+    <message>
+        <source>No, I don&apos;t have an activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Nein, ich habe keinen Aktivierungscode</translation>
+    </message>
+    <message>
+        <source>Abort setup</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Einrichtung abbrechen</translation>
+    </message>
+    <message>
+        <source>Enter your activation code of your present PIN reset letter into the following website.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Geben Sie den Aktivierungscode aus Ihrem vorliegenden PIN-Rücksetzbrief auf der nachfolgenden Webseite ein.</translation>
+    </message>
+    <message>
+        <source>Enter activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Aktivierungscode eingeben</translation>
+    </message>
+    <message>
+        <source>Request action code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Aktivierungscode anfordern</translation>
+    </message>
+    <message>
+        <source>You can request a PIN reset letter with an activation code on the following website.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Auf der nachfolgenden Webseite können Sie einen PIN-Rücksetzbrief mit Aktivierungscode anfordern.</translation>
+    </message>
+    <message>
+        <source>Online via PIN reset service</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Online per PIN-Rücksetzdienst</translation>
+    </message>
+    <message>
+        <source>Find competent authority</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Ausweisbehörde finden</translation>
+    </message>
+    <message>
+        <source>You can activate the eID function directly at your competent authority.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Sie können direkt bei Ihrer zuständigen Ausweisbehörde die Online-Ausweisfunktion aktivieren.</translation>
+    </message>
+    <message>
+        <source>At your competent authority</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Bei Ihrer Ausweisbehörde</translation>
     </message>
 </context>
 <context>
@@ -836,11 +1000,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Es war nicht möglich, eine stabile Verbindung mit Ihrem Ausweis herzustellen.&lt;br&gt;&lt;br&gt;Bitte starten Sie die Prüfung erneut. Versuchen Sie eine andere Kartenposition und achten Sie darauf, die Karte während der Prüfung nicht zu bewegen.&lt;br&gt;&lt;br&gt;Wenn auch bei unterschiedlichen Kartenpositionen keine Verbindung zur Ausweiskarte hergestellt werden kann, deutet dies darauf hin, dass die NFC-Schnittstelle Ihres mobilen Geräts die Ausweiskarte nicht ausreichend mit Strom versorgen kann.&lt;br&gt;&lt;br&gt;Mit der %1 kompatible Smartphones finden Sie auf unserer &lt;a href=&quot;%2&quot;&gt;Website&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>Abort setup</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Einrichtung abbrechen</translation>
-    </message>
-    <message>
         <source>ID card PIN suspended</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Karten-PIN pausiert</translation>
@@ -886,16 +1045,6 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards for citizen of the EU/EEA/&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Es wurde kein unterstützter Ausweis erkannt. Die %1 unterstützt:&lt;p&gt;&lt;ul&gt;&lt;li&gt;deutsche Personalausweise&lt;/li&gt;&lt;li&gt;elektronische Aufenthaltstitel (eAT)&lt;/li&gt;&lt;li&gt;eID-Karten für EU-/EWR-Bürger&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Haben Sie eines der genannten Dokumente verwendet und diese Fehlermeldung erscheint dennoch, starten Sie bitte die Prüfung erneut.</translation>
-    </message>
-    <message>
-        <source>eID function disabled</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Online-Ausweis deaktiviert</translation>
-    </message>
-    <message>
-        <source>Activate the eID function.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
-        <translation>Online-Ausweisfunktion aktivieren</translation>
     </message>
     <message>
         <source>You may continue the onboarding and change your PIN.</source>
@@ -1080,24 +1229,19 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <translation>Vorgang abbrechen</translation>
     </message>
     <message>
-        <source>The user interface of the %1 is closed.</source>
+        <source>How should the %1 be closed in the future?</source>
         <extracomment>INFO DESKTOP Header of the popup that is shown when the AA is closed for the first time.</extracomment>
-        <translation>Die Benutzeroberfläche der %1 wird geschlossen.</translation>
+        <translation>Wie soll die %1 zukünftig beendet werden?</translation>
     </message>
     <message>
-        <source>The %1 is closed.</source>
-        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA is quit for the first time.</extracomment>
-        <translation>Die %1 wird beendet.</translation>
-    </message>
-    <message>
-        <source>Completely close the app</source>
+        <source>Close completely</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>App vollständig beenden</translation>
+        <translation>Vollständig beenden</translation>
     </message>
     <message>
-        <source>Just close the user interface</source>
+        <source>Leave active in the background</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Nur die Nutzeroberfläche schließen</translation>
+        <translation>Im Hintergrund aktiv lassen</translation>
     </message>
     <message>
         <source>If the %1 is closed, it is no longer available for authentication. You must then restart the app to authenticate yourself to service providers.</source>
@@ -1105,44 +1249,24 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <translation>Wenn die %1 beendet wird, steht sie nicht länger für eine Authentisierung zur Verfügung. Sie müssen die App dann erneut starten, um sich gegenüber Dienstanbietern auszuweisen.</translation>
     </message>
     <message>
-        <source>If the %1 is terminated, it is no longer available for authentication. You must then restart the app in order to identify yourself to service providers.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Wenn die %1 beendet wird, steht sie nicht länger für eine Authentisierung zur Verfügung. Sie müssen die App dann erneut starten, um sich gegenüber Dienstanbietern auszuweisen.</translation>
-    </message>
-    <message>
-        <source>The app remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Die App steht weiterhin im Infobereich zur Verfügung. Klicken Sie auf das Symbol der %1, um die Anwendung wieder zu öffnen.</translation>
-    </message>
-    <message>
-        <source>The app remains active in the background and can be reopened via the %1 icon on the menu bar again.</source>
-        <extracomment>INFO DESKTOP Content of the MacOS-popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Die App bleibt im Hintergrund aktiv und kann über das %1-Symbol auf der Menüleiste wieder geöffnet werden.</translation>
-    </message>
-    <message>
-        <source>The app remains active in the background and can be reopened via the %1 icon in the notification area of the Windows taskbar.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Die App bleibt im Hintergrund aktiv und kann über das %1-Symbol im Infobereich der Windows-Taskleiste wieder geöffnet werden.</translation>
-    </message>
-    <message>
         <source>Do not display this message in future.</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Diesen Hinweis in Zukunft nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <source>If you only close the user interface, the app remains active in the background in the future and can be opened again via the %1 icon on the menu bar.</source>
-        <extracomment>INFO DESKTOP Content of the MacOS-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Wenn Sie nur die Nutzeroberfläche schließen, bleibt die App zukünftig im Hintergrund aktiv und kann über das %1-Symbol auf der Menüleiste wieder geöffnet werden.</translation>
+        <source>If the %1 remains active in the background, it will open automatically as soon as you start an authentication. You can still open the %1 manually at any time.</source>
+        <extracomment>INFO DESKTOP %1 is replaced with the application name</extracomment>
+        <translation>Wenn die %1 im Hintergrund aktiv bleibt, wird sie automatisch geöffnet, sobald Sie eine Authentisierung starten. Sie können die AusweisApp auch weiterhin jederzeit manuell öffnen.</translation>
     </message>
     <message>
-        <source>If you only close the user interface, the app remains active in the background in the future and can be reopened via the %1 icon in the notification area of the Windows taskbar.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Wenn Sie nur die Nutzeroberfläche schließen, bleibt die App zukünftig im Hintergrund aktiv und kann über das AusweisApp-Symbol im Infobereich der Windows-Taskleiste wieder geöffnet werden.</translation>
+        <source>Abort process</source>
+        <extracomment>INFO DESKTOP</extracomment>
+        <translation>Vorgang abbrechen</translation>
     </message>
     <message>
-        <source>Close user interface to menu bar</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Schließe die Nutzeroberfläche in die Menüleiste</translation>
+        <source>You can change your selection at any time in the settings.</source>
+        <extracomment>INFO DESKTOP Note to the user that the setting is available in the settings</extracomment>
+        <translation>Sie können Ihre Auswahl jederzeit in den Einstellungen ändern.</translation>
     </message>
 </context>
 <context>
@@ -1883,9 +2007,9 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Der verwendete Kartenleser erfüllt leider nicht die technischen Voraussetzungen (Extended Length wird nicht unterstützt).</translation>
     </message>
     <message>
-        <source>Place ID card</source>
+        <source>Read out ID card with connected device</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Ausweis auflegen</translation>
+        <translation>Ausweis mit verbundenem Gerät auslesen</translation>
     </message>
     <message>
         <source>Connect USB card reader or smartphone</source>
@@ -2483,8 +2607,10 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Die 5-stellige Transport-PIN ist eine %1Einmal-PIN%2, die Sie bei Beantragung des Online-Ausweises per %1Brief%2 erhalten.</translation>
     </message>
     <message>
-        <source>When setting up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 2/2</extracomment>
+        <source>When you set up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 2/2
+----------
+INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Wenn Sie Ihren Online-Ausweis einrichten, %1ersetzen Sie%2 diese 5-stellige %1Transport-PIN durch%2 eine 6-stellige, %1selbstgewählte Karten-PIN%2.</translation>
     </message>
     <message>
@@ -2493,9 +2619,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Wo finde ich die PUK?</translation>
     </message>
     <message>
-        <source>The PUK is a %1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.</source>
+        <source>The PUK is a%1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.</source>
         <extracomment>LABEL ALL_PLATFORMS INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
-        <translation>Die PUK ist eine %1 10-stellige Zahl%2, die Sie in dem %1PIN-Brief%2 finden, den Sie %1nach Beantragung Ihres Ausweises%2 erhalten. Sie befindet sich %1rechts neben%2 der 5-stelligen %1Transport-PIN%2.</translation>
+        <translation>Die PUK ist eine%1 10-stellige Zahl%2, die Sie in dem %1PIN-Brief%2 finden, den Sie %1nach Beantragung Ihres Ausweises%2 erhalten. Sie befindet sich %1rechts neben%2 der 5-stelligen %1Transport-PIN%2.</translation>
     </message>
     <message>
         <source>Why is the PUK required?</source>
@@ -2503,9 +2629,9 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Warum wird die PUK verlangt?</translation>
     </message>
     <message>
-        <source>The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have %1 3 more attempts%2 to enter the correct PIN.</source>
+        <source>The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have%1 3 more attempts%2 to enter the correct PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why is the PUK required?&apos;</extracomment>
-        <translation>Die PUK wird verlangt, wenn die %1Karten-PIN 3-mal falsch eingegeben%2 wurde. Die Karten-PIN ist dadurch gesperrt. Durch die Eingabe der PUK %1entsperren Sie die Karten-PIN%2 und haben %1 3 weitere Versuche%2, die richtige PIN einzugeben.</translation>
+        <translation>Die PUK wird verlangt, wenn die %1Karten-PIN 3-mal falsch eingegeben%2 wurde. Die Karten-PIN ist dadurch gesperrt. Durch die Eingabe der PUK %1entsperren Sie die Karten-PIN%2 und haben%1 3 weitere Versuche%2, die richtige PIN einzugeben.</translation>
     </message>
     <message>
         <source>My PUK does not work</source>
@@ -2645,14 +2771,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Sie können Ihre 6-stellige Smart-eID-PIN jederzeit und unbegrenzt oft ändern, solange Ihnen Ihre gültige Smart-eID-PIN bekannt ist.</translation>
     </message>
     <message>
-        <source>When you set up the eID function, you will %1replace%2 this 5-digit %1Transport PIN%2 with a 6-digit %1card PIN that you choose yourself%2.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
-        <translation>Wenn Sie Ihren Online-Ausweis einrichten, %1ersetzen Sie%2 diese 5-stellige %1Transport-PIN durch%2 eine 6-stellige, %1selbstgewählte Karten-PIN%2.</translation>
-    </message>
-    <message>
-        <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.</source>
+        <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
-        <translation>Die 6-stellige Karten-PIN ist %1eine Geheimnummer, die Sie selbst wählen%2, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie %1ersetzt%2 Ihre %1 5-stellige Transport-PIN%2.</translation>
+        <translation>Die 6-stellige Karten-PIN ist %1eine Geheimnummer, die Sie selbst wählen%2, wenn Sie Ihren Online-Ausweis zum ersten Mal einrichten. Sie %1ersetzt%2 Ihre%1 5-stellige Transport-PIN%2.</translation>
     </message>
     <message>
         <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
@@ -2705,9 +2826,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Ich habe nur eine 5-stellige Transport-PIN</translation>
     </message>
     <message>
-        <source>You need to change the %1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
+        <source>You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
         <extracomment>INFO ALL_PLATFORMS Explanation if only the Transport PIN is at hand</extracomment>
-        <translation>Die %1 5-stellige Transport-PIN%2 müssen Sie durch Ihre persönliche Karten-PIN ersetzen. Wählen Sie hierfür auf der Startseite %1PIN ändern &gt; Transport-PIN%2.</translation>
+        <translation>Die%1 5-stellige Transport-PIN%2 müssen Sie durch Ihre persönliche Karten-PIN ersetzen. Wählen Sie hierfür auf der Startseite %1PIN ändern &gt; Transport-PIN%2.</translation>
     </message>
     <message>
         <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
@@ -2845,7 +2966,7 @@ LABEL ALL_PLATFORMS</extracomment>
     <message>
         <source>You may be using security software that prevents pairing.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Es kann sein, dass Sie Sicherheitssoftware verwenden, die die Kopplung verhindert.</translation>
+        <translation>Es kann sein, dass Sie Sicherheitssoftware verwenden, welche die Kopplung verhindert.</translation>
     </message>
     <message>
         <source>Updates</source>
@@ -2917,11 +3038,18 @@ LABEL ANDROID IOS</extracomment>
     <name>NavigationAction</name>
     <message>
         <source>Cancel</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Back</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Zurück</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -3049,7 +3177,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>NFC scan is not running</source>
-        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
+        <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Der NFC-Scan ist nicht aktiv</translation>
     </message>
     <message>
@@ -3069,7 +3197,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Start scan</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>Scan starten</translation>
     </message>
     <message>
@@ -3151,6 +3279,14 @@ LABEL ANDROID IOS</extracomment>
         <source>Connection to ID card lost</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Verbindung zum Ausweis unterbrochen</translation>
+    </message>
+</context>
+<context>
+    <name>Notifications</name>
+    <message>
+        <source>Notification: %1</source>
+        <extracomment>LABEL DESKTOP %1 will be replaced with a notification text</extracomment>
+        <translation>Benachrichtigung: %1</translation>
     </message>
 </context>
 <context>
@@ -3331,7 +3467,7 @@ LABEL IOS ANDROID</extracomment>
     <message>
         <source>If you have already %1chosen a 6-digit card PIN%2 for this ID card (either in the %3 or at the competent authority) %1or%2 have ordered a %1PIN reset letter%2, this will apply.</source>
         <extracomment>LABEL ALL_PLATFORMS Description of the confirmation view after the set up AusweisApp stage. %1 + %2 are for bold formatting, %3 is replaced with AusweisApp.</extracomment>
-        <translation>Falls Sie für diesen Ausweis bereits eine %1 6-stellige Karten-PIN gewählt%2 haben (entweder in der %3 oder bei der zuständigen Behörde) %1oder%2 einen %1PIN-Rücksetzbrief bestellt%2 haben, gilt diese.</translation>
+        <translation>Falls Sie für diesen Ausweis bereits eine%1 6-stellige Karten-PIN gewählt%2 haben (entweder in der %3 oder bei der zuständigen Behörde) %1oder%2 einen %1PIN-Rücksetzbrief bestellt%2 haben, gilt diese.</translation>
     </message>
     <message>
         <source>Otherwise, use your %1Transport PIN%2 that you received by letter when you first applied for the ID card. You then replace this %1one-time PIN%2 with your personal card PIN in the %3.</source>
@@ -3537,7 +3673,7 @@ LABEL IOS ANDROID</extracomment>
     <message>
         <source>Then select %1Pair device%2 or, if a device was already paired, %1Pair new device%2.</source>
         <extracomment>LABEL DESKTOP %1/%2 are replaced with bold highlighting</extracomment>
-        <translation>Wählen Sie dann %1Gerät koppeln%2 oder, falls bereit ein Gerät gekoppelt ist, %1Neues Gerät koppeln%2.</translation>
+        <translation>Wählen Sie dann %1Gerät koppeln%2 oder, falls bereits ein Gerät gekoppelt ist, %1Neues Gerät koppeln%2.</translation>
     </message>
     <message>
         <source>or</source>
@@ -3552,7 +3688,7 @@ LABEL IOS ANDROID</extracomment>
     <message>
         <source>Press space to continue onboarding using the smartphone &quot;%1&quot;</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Drücken Sie die Leertaste um die Einrichtung mit dem Smartphone \&quot;%1\&quot; fortzusetzen</translation>
+        <translation>Drücken Sie die Leertaste um die Einrichtung mit dem Smartphone &quot;%1&quot; fortzusetzen</translation>
     </message>
     <message>
         <source>Use device</source>
@@ -3630,7 +3766,9 @@ LABEL IOS ANDROID</extracomment>
     <name>OnboardingView</name>
     <message>
         <source>Continue</source>
-        <extracomment>LABEL DESKTOP</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Weiter</translation>
     </message>
     <message>
@@ -3650,23 +3788,33 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Open %1 on your %2other device%3.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 5</extracomment>
         <translation>Öffnen Sie auf Ihrem %2anderen Gerät%3 die %1.</translation>
     </message>
     <message>
-        <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
-        <translation>Gehen Sie dort in die %1Einstellungen%2 und dann zu %1Smartphone als Kartenleser%2 bzw. %1Kopplungen verwalten%2.</translation>
+        <source>Make sure that both devices are on the %1same network%2 (e.g. WiFi).</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 5. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>Stellen Sie sicher, dass beide Geräte mit %1demselben Netzwerk%2, z.B. per WLAN verbunden sind.</translation>
+    </message>
+    <message>
+        <source>On your other device, go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 5. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation>Gehen Sie auf Ihrem anderen Gerät in die %1Einstellungen%2 und dann zu %1Smartphone als Kartenleser%2 bzw. %1Kopplungen verwalten%2.</translation>
     </message>
     <message>
         <source>Choose this smartphone in the list to pair it.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 5</extracomment>
         <translation>Wählen Sie in der angezeigten Liste dieses Smartphone aus, um es zu koppeln.</translation>
     </message>
     <message>
         <source>Enter the pairing code &quot;%1&quot;.</source>
-        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 4 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 5 of 5</extracomment>
         <translation>Geben Sie den Kopplungscode &quot;%1&quot; ein.</translation>
+    </message>
+    <message>
+        <source>Please follow these steps:</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Bitte folgen Sie diesen Schritten:</translation>
     </message>
 </context>
 <context>
@@ -4037,11 +4185,11 @@ LABEL ANDROID IOS</extracomment>
         <translation>Sie können Ihr %2Smartphone mit NFC Funktion%3 als Kartenleser nutzen. Dafür müssen Sie die %1 auch auf dem Smartphone installieren. Alternativ können Sie einen %2USB-Kartenleser an den PC anschließen%3.</translation>
     </message>
     <message>
-        <source>You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a %1 6-digit card PIN%2 in the %3 or at the Citizens&apos; Registration Office. If you do not have a PIN or do not remember your card PIN, click here:</source>
+        <source>You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens&apos; Registration Office. If you do not have a PIN or do not remember your card PIN, click here:</source>
         <extracomment>LABEL DESKTOP %1 + %2 = Bold Tags, %3 = AusweisApp
 ----------
 LABEL ANDROID IOS %1 + %2 = Bold Tags, %3 = AusweisApp</extracomment>
-        <translation>Sie haben eine Einmal-PIN, die %1Transport-PIN%2, als Brief von Ihrer Ausweisbehörde erhalten. Diese ersetzen Sie in der %3 oder im Bürgeramt durch eine %1 6-stellige Karten-PIN%2. Wenn Ihnen keine PIN vorliegt oder Sie sich nicht an Ihre Karten-PIN erinnern, klicken Sie hier:</translation>
+        <translation>Sie haben eine Einmal-PIN, die %1Transport-PIN%2, als Brief von Ihrer Ausweisbehörde erhalten. Diese ersetzen Sie in der %3 oder im Bürgeramt durch eine%1 6-stellige Karten-PIN%2. Wenn Ihnen keine PIN vorliegt oder Sie sich nicht an Ihre Karten-PIN erinnern, klicken Sie hier:</translation>
     </message>
     <message>
         <source>The chip in your ID card is read using %1NFC%2. To do this, simply place the ID card on the %1back of the smartphone%2.</source>
@@ -4097,9 +4245,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Es erfolgt keine Speicherung oder Weiterverarbeitung Ihrer persönlichen Daten. Näheres dazu erfahren Sie in unserer %1.</translation>
     </message>
     <message>
-        <source>data privacy statement of the Federal Ministry of the Interior and Community</source>
+        <source>data privacy statement of the Federal Ministry of the Interior</source>
         <extracomment>LABEL ALL_PLATFORMS Text of the Smart-eID html link inside of a sentence</extracomment>
-        <translation>Datenschutzerklärung des Bundesministeriums des Innern und für Heimat</translation>
+        <translation>Datenschutzerklärung des Bundesministeriums des Innern</translation>
     </message>
     <message>
         <source>data privacy statement</source>
@@ -4213,6 +4361,24 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <source>Unknown reader</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Unbekannter Kartenleser</translation>
+    </message>
+</context>
+<context>
+    <name>ReaderFoundConfirmation</name>
+    <message>
+        <source>Found new smartphone as card reader that is suitable for the ID card. The workflow may now be continued.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Es wurde ein neues Smartphone als Kartenleser gefunden, das für den Ausweis geeignet ist. Der Vorgang kann nun fortgesetzt werden.</translation>
+    </message>
+    <message>
+        <source>Found new USB card reader that is suitable for the ID card. The workflow may now be continued.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Es wurde ein neuer USB-Kartenleser gefunden, der für den Ausweis geeignet ist. Der Vorgang kann nun fortgesetzt werden.</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Weiter</translation>
     </message>
 </context>
 <context>
@@ -4432,11 +4598,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Starten Sie hierzu auf einem gekoppelten Gerät einen Vorgang.</translation>
     </message>
     <message>
-        <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Kopplungscode: &lt;b&gt;%1&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>Enable WiFi</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>WLAN aktivieren</translation>
@@ -4496,23 +4657,13 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <translation>Wo gebe ich den Kopplungscode ein?</translation>
     </message>
     <message>
-        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Geben Sie den Kopplungscode &quot;%1&quot; in der %2 auf Ihrem anderen Gerät ein.</translation>
-    </message>
-    <message>
         <source>Cancel pairing</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kopplung abbrechen</translation>
     </message>
     <message>
-        <source>Activate the card reader, this allows the paired devices to use this smartphone as a card reader.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Aktivieren Sie den Kartenleser, dann können die gekoppelten Geräte dieses Smartphone als Kartenleser nutzen.</translation>
-    </message>
-    <message>
         <source>Paired devices may use this Smartphone as a card reader now.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Gekoppelte Geräte können dieses Smartphone jetzt als Kartenleser nutzen.</translation>
     </message>
     <message>
@@ -4525,13 +4676,50 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Kartenleser beenden</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceWifiInfo</name>
+    <message>
+        <source>No device paired</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kein Gerät gekoppelt</translation>
+    </message>
+    <message>
+        <source>Card reader not active</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kartenleser nicht aktiv</translation>
+    </message>
+    <message>
+        <source>Use this smartphone as a card reader for a paired device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Nutzen Sie das Smartphone als Kartenleser für ein gekoppeltes Gerät</translation>
+    </message>
+    <message>
+        <source>Activate the card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Aktivieren Sie den Kartenleser</translation>
+    </message>
     <message>
         <source>Both devices have to be on the same network (e.g. WiFi).</source>
         <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
         <translation>Beide Geräte müssen hierfür im selben Netzwerk (z.B. WLAN) sein.</translation>
+    </message>
+    <message>
+        <source>Pairing code:</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Kopplungscode:</translation>
+    </message>
+    <message>
+        <source>This allows the paired devices to use this smartphone as a card reader.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation>Dann können die gekoppelten Geräte dieses Smartphone als Kartenleser nutzen.</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Eingabe des Kopplungscodes</translation>
+    </message>
+    <message>
+        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).</source>
+        <extracomment>INFO ANDROID IOS %1 is replaced with the pairing code, %2 with the name &quot;AusweisApp&quot;</extracomment>
+        <translation>Geben Sie den Kopplungscode &quot;%1&quot; in der %2 auf Ihrem anderen Gerät ein. Beide Geräte müssen hierfür im selben Netzwerk (z.B. WLAN) sein.</translation>
     </message>
 </context>
 <context>
@@ -4584,11 +4772,6 @@ Hierfür müssen Sie zuvor das entsprechende Gerät mit diesem Smartphone koppel
 </context>
 <context>
     <name>ResultErrorView</name>
-    <message>
-        <source>Error code:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Fehlercode:</translation>
-    </message>
     <message>
         <source>Show Details</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
@@ -4734,9 +4917,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ausgelesene Daten der Selbstauskunft</translation>
     </message>
     <message>
-        <source>Successfully read data</source>
+        <source>Successfully read data.</source>
         <extracomment>INFO DESKTOP Status message that the self authentication successfully completed.</extracomment>
-        <translation>Lesevorgang erfolgreich</translation>
+        <translation>Lesevorgang erfolgreich.</translation>
     </message>
     <message>
         <source>Read data</source>
@@ -4752,6 +4935,10 @@ LABEL ANDROID IOS</extracomment>
         <source>Back to start page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zur Startseite</translation>
+    </message>
+    <message>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
     </message>
 </context>
 <context>
@@ -5465,6 +5652,19 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     </message>
 </context>
 <context>
+    <name>TabbedPane</name>
+    <message>
+        <source>Content of tab &quot;%1&quot;</source>
+        <extracomment>LABEL DESKTOP %1 will be replaced with the title of the tab</extracomment>
+        <translation>Inhalt der Registerkarte &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Sidebar</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Seitenleiste</translation>
+    </message>
+</context>
+<context>
     <name>TabbedPaneDelegate</name>
     <message>
         <source>%1 of %2</source>
@@ -5475,6 +5675,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Tab selected</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Registerkarte ausgewählt</translation>
+    </message>
+    <message>
+        <source>Tab</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Registerkarte</translation>
     </message>
 </context>
 <context>
@@ -5491,10 +5696,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
     <message>
         <source>USB card reader</source>
         <translation>USB Kartenleser</translation>
-    </message>
-    <message>
-        <source>Found new USB card reader that is suitable for the ID card. The workflow may now be continued.</source>
-        <translation>Es wurde ein neuer USB-Kartenleser gefunden, der für den Ausweis geeignet ist. Der Vorgang kann nun fortgesetzt werden.</translation>
     </message>
 </context>
 <context>
@@ -5550,11 +5751,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Internen Benachrichtigungsdialog der %1 einblenden</translation>
     </message>
     <message>
-        <source>Title bar</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Titelleiste</translation>
-    </message>
-    <message>
         <source>Hide in-app notifications of %1</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Internen Benachrichtigungsdialog der %1 ausblenden</translation>
@@ -5571,6 +5767,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Zurück</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -5684,6 +5885,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <source>Start update</source>
         <extracomment>LABEL DESKTOP Start to download the update and execute it on Windows</extracomment>
         <translation>Aktualisierung starten</translation>
+    </message>
+    <message>
+        <source>%1 of %2 Kilobyte downloaded</source>
+        <extracomment>LABEL DESKTOP %1 and %2 will be replaced with the already downloaded and the total file size.</extracomment>
+        <translation>%1 von %2 Kilobyte heruntergeladen</translation>
     </message>
 </context>
 <context>
@@ -6022,6 +6228,11 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Zur Startseite</translation>
     </message>
+    <message>
+        <source>Connection to ID card lost</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Verbindung zum Ausweis unterbrochen</translation>
+    </message>
 </context>
 <context>
     <name>governikus::CardInfo</name>
@@ -6076,7 +6287,7 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Angabe der für den Anbieter zuständigen Datenschutzaufsicht</translation>
     </message>
     <message>
-        <source>Provider information</source>
+        <source>Provider Information</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Anbieterinformationen</translation>
     </message>
@@ -6600,9 +6811,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Der Ausweisvorgang kann nicht gestartet werden. Ein anderer Vorgang ist bereits aktiv.</translation>
     </message>
     <message>
-        <source>The connection to the ID card has been lost. The process was aborted.</source>
+        <source>Restart the authentication process and make sure that the position of the ID card does not change during the reading process.</source>
         <extracomment>ERROR ALL_PLATFORMS The card was removed after the PACE channel was established.</extracomment>
-        <translation>Die Verbindung zum Ausweis wurde unterbrochen. Der Vorgang wird abgebrochen.</translation>
+        <translation>Starten Sie den Authentisierungsvorgang erneut und stellen Sie sicher, dass sich die Position des Ausweises während des Auslesevorgangs nicht verändert.</translation>
     </message>
     <message>
         <source>The authenticity of your ID card could not be confirmed.</source>
@@ -6875,11 +7086,6 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Die Version Ihres Smartphones als Kartenleser (SaK) ist inkompatibel. Installieren Sie bitte auf Ihrem Smartphone und Ihrem Computer die aktuellste %1 Version.</translation>
     </message>
     <message>
-        <source>A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
-        <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.</extracomment>
-        <translation>Bei der Verbindung zum Smartphone als Kartenleser (SaK) kam es zu einer Zeitüberschreitung.</translation>
-    </message>
-    <message>
         <source>An error occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)</extracomment>
         <translation>Bei der Verbindung zum Smartphone als Kartenleser (SaK) ist ein Fehler aufgetreten.</translation>
@@ -7087,14 +7293,14 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Smart-eID PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.</extracomment>
-        <translation>Sie haben eine falsche, 6-stellige Smart-eID-PIN eingegeben. Sie haben &lt;b&gt;2 weitere Versuche&lt;/b&gt;, die richtige Smart-eID-PIN einzugeben.</translation>
+        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have%1 2 further attempts%2 to enter the correct Smart-eID PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Sie haben eine falsche, 6-stellige Smart-eID-PIN eingegeben. Sie haben%1 2 weitere Versuche%2, die richtige Smart-eID-PIN einzugeben.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your &lt;b&gt;Transport PIN is now blocked&lt;/b&gt;. To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first.</source>
-        <extracomment>INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
-        <translation>Sie haben 3 Mal eine falsche, 5-stellige Transport-PIN eingegeben, Ihre &lt;b&gt;Transport-PIN ist nun gesperrt&lt;/b&gt;. Um die Sperre aufzuheben, muss zunächst die &lt;b&gt;10-stellige PUK&lt;/b&gt; eingegeben werden.</translation>
+        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your %1Transport PIN is now blocked%2. To remove the block, the%1 10-digit PUK%2 must be entered first.</source>
+        <extracomment>INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Sie haben 3 Mal eine falsche, 5-stellige Transport-PIN eingegeben, Ihre %1Transport-PIN ist nun gesperrt%2. Um die Sperre aufzuheben, muss zunächst die%1 10-stellige PUK%2 eingegeben werden.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 6-digit Smart-eID PIN 3 times. Your Smart-eID is now invalidated. To use a Smart-eID again you have to set one up in the guided setup on the start page.</source>
@@ -7107,9 +7313,9 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Sie haben eine falsche, 10-stellige PUK eingegeben. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 6-digit Smart-eID PIN 2 times&lt;/b&gt;. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID.</extracomment>
-        <translation>Sie haben &lt;b&gt;2 Mal eine falsche, 6-stellige Smart-eID-PIN&lt;/b&gt; eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
+        <source>You have entered an %1incorrect, 6-digit Smart-eID PIN 2 times%2. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
+        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Sie haben%1 2 Mal eine falsche, 6-stellige Smart-eID-PIN%2 eingegeben. Nach dem nächsten Fehlversuch können Sie Ihre Smart-eID nicht mehr einsetzen und müssen diese neu einrichten.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new Smart-eID PIN.</source>
@@ -7126,36 +7332,36 @@ Um fortzufahren, verwenden Sie Ihren Ausweis, indem Sie die NFC-Schnittstelle au
         <translation>Sie haben eine falsche 6-stellige Karten-PIN eingegeben.</translation>
     </message>
     <message>
-        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct ID card PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 2/2</extracomment>
-        <translation>Sie haben &lt;b&gt;2 weitere Versuche&lt;/b&gt;, die richtige Karten-PIN einzugegeben.</translation>
+        <source>You have%1 2 further attempts%2 to enter the correct ID card PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Sie haben%1 2 weitere Versuche%2, die richtige Karten-PIN einzugegeben.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 6-digit ID card PIN 2 times&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
-        <translation>Sie haben zum &lt;b&gt;2. Mal eine falsche 6-stellige Karten-PIN&lt;/b&gt; eingegeben.</translation>
+        <source>You have entered an %1incorrect, 6-digit ID card PIN 2 times%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Sie haben zum%1 2. Mal eine falsche 6-stellige Karten-PIN%2 eingegeben.</translation>
     </message>
     <message>
-        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2
+        <source>For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN in the %1bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2
 ----------
-INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2</extracomment>
-        <translation>Für den 3. Versuch muss zunächst die &lt;b&gt;6-stellige Zugangsnummer (CAN)&lt;/b&gt; eingegeben werden. Sie finden Ihre CAN &lt;b&gt;unten rechts auf der Vorderseite Ihres Ausweises&lt;/b&gt;.</translation>
+INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Für den 3. Versuch muss zunächst die%1 6-stellige Zugangsnummer (CAN)%2 eingegeben werden. Sie finden Ihre CAN %1unten rechts auf der Vorderseite Ihres Ausweises%2.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN 3 times. Your &lt;b&gt;ID card PIN is now blocked&lt;/b&gt;.</source>
+        <source>You have entered an incorrect, 6-digit ID card PIN 3 times. Your %1ID card PIN is now blocked%2.</source>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 1/2</extracomment>
-        <translation>Sie haben 3-mal eine falsche, 6-stellige Karten-PIN eingegeben. Ihre &lt;b&gt;Karten-PIN ist nun gesperrt&lt;/b&gt;.</translation>
+        <translation>Sie haben 3-mal eine falsche, 6-stellige Karten-PIN eingegeben. Ihre %1Karten-PIN ist nun gesperrt%2.</translation>
     </message>
     <message>
-        <source>To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first. You can find the PUK in the bottom &lt;b&gt;right next&lt;/b&gt; to the Transport PIN in the &lt;b&gt;authority&apos;s letter&lt;/b&gt;.</source>
+        <source>To remove the block, the%1 10-digit PUK%2 must be entered first. You can find the PUK in the bottom %1right next%2 to the Transport PIN in the %1authority&apos;s letter%2.</source>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 2/2</extracomment>
-        <translation>Um die Sperre aufzuheben, muss zunächst die &lt;b&gt;10-stellige PUK&lt;/b&gt; eingegeben werden. Sie finden die PUK &lt;b&gt;im Brief der Ausweisbehörde unten rechts&lt;/b&gt; neben der Transport-PIN.</translation>
+        <translation>Um die Sperre aufzuheben, muss zunächst die%1 10-stellige PUK%2 eingegeben werden. Sie finden die PUK %1im Brief der Ausweisbehörde unten rechts%2 neben der Transport-PIN.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect Card Access Number (CAN)&lt;/b&gt;. Please try again. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
-        <translation>Sie haben eine &lt;b&gt;falsche Zugangsnummer (CAN)&lt;/b&gt; eingegeben. Bitte versuchen Sie es erneut. Sie finden Ihre CAN &lt;b&gt;unten rechts auf der Vorderseite Ihres Ausweises&lt;/b&gt;.</translation>
+        <source>You have entered an %1incorrect Card Access Number (CAN)%2. Please try again. You can find your CAN in the %1bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Sie haben eine %1falsche Zugangsnummer (CAN)%2 eingegeben. Bitte versuchen Sie es erneut. Sie finden Ihre CAN %1unten rechts auf der Vorderseite Ihres Ausweises%2.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 5-digit Transport PIN.</source>
@@ -7163,34 +7369,34 @@ INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt req
         <translation>Sie haben eine falsche, 5-stellige Transport-PIN eingegeben.</translation>
     </message>
     <message>
-        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Transport PIN. The 5-digit Transport PIN may be found on the &lt;b&gt;bottom left of your PIN letter&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.Part 2/2</extracomment>
-        <translation>Sie haben &lt;b&gt;2 weitere Versuche&lt;/b&gt;, die korrekte Transport-PIN einzugeben. Die 5-stellige Transport-PIN befindet sich &lt;b&gt;unten links in Ihrem PIN-Brief&lt;/b&gt;.</translation>
+        <source>You have%1 2 further attempts%2 to enter the correct Transport PIN. The 5-digit Transport PIN may be found on the %1bottom left of your PIN letter%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Sie haben%1 2 weitere Versuche%2, die korrekte Transport-PIN einzugeben. Die 5-stellige Transport-PIN befindet sich %1unten links in Ihrem PIN-Brief%2.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 5-digit Transport PIN 2 times&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
-        <translation>Sie haben &lt;b&gt;2-mal eine falsche, 5-stellige Transport-PIN&lt;/b&gt; eingegeben.</translation>
+        <source>You have entered an %1incorrect, 5-digit Transport PIN 2 times%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Sie haben%1 2-mal eine falsche, 5-stellige Transport-PIN%2 eingegeben.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;An incorrect PIN has been entered 2 times&lt;/b&gt; at the last use of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 1/2</extracomment>
-        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde &lt;b&gt;2-mal eine falsche Karten-PIN&lt;/b&gt; eingegeben.</translation>
+        <source>%1An incorrect PIN has been entered 2 times%2 at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde%1 2-mal eine falsche Karten-PIN%2 eingegeben.</translation>
     </message>
     <message>
-        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN &lt;b&gt;in the bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 2/2</extracomment>
-        <translation>Für einen 3. Versuch muss die &lt;b&gt;6-stellige Zugangsnummer (CAN)&lt;/b&gt; eingeben werden. Sie finden die CAN &lt;b&gt;unten rechts auf der Vorderseite Ihres Ausweises&lt;/b&gt;.</translation>
+        <source>For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN %1in the bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Für einen 3. Versuch muss die%1 6-stellige Zugangsnummer (CAN)%2 eingeben werden. Sie finden die CAN %1unten rechts auf der Vorderseite Ihres Ausweises%2.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;An incorrect PIN has been entered 3 times&lt;/b&gt; at the last use of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 1/2</extracomment>
-        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde &lt;b&gt;3-mal eine falsche Karten-PIN&lt;/b&gt; eingegeben.</translation>
+        <source>%1An incorrect PIN has been entered 3 times%2 at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Bei der letzten Nutzung ihres Online-Ausweises wurde%1 3-mal eine falsche Karten-PIN%2 eingegeben.</translation>
     </message>
     <message>
-        <source>Therefor you have to enter the &lt;b&gt;PUK&lt;/b&gt; first to &lt;b&gt;unlock the ID card PIN&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 2/2</extracomment>
-        <translation>Deshalb müssen Sie zunächst die &lt;b&gt;PUK&lt;/b&gt; eingeben um die &lt;b&gt;Karten-PIN zu entsperren&lt;/b&gt;.</translation>
+        <source>Therefore you have to enter the %1PUK%2 first to %1unlock the ID card PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Deshalb müssen Sie zunächst die %1PUK%2 eingeben um die %1Karten-PIN zu entsperren%2.</translation>
     </message>
 </context>
 <context>
@@ -7250,7 +7456,7 @@ LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PI
     <message>
         <source>If you know neither your Transport PIN nor your ID card PIN, you can request a new PIN using the PIN Reset Service.</source>
         <extracomment>LABEL ALL_PLATFORMS Hint text for requested Transport PIN but both, Transport PIN and PIN, are not known.</extracomment>
-        <translation>Wenn Sie weder Ihre Transport-PIN, noch Ihre Karten-PIN kennen, können Sie bei Ihrer zuständigen Ausweisbehörde eine neue Karten-PIN setzen.</translation>
+        <translation>Wenn Sie weder Ihre Transport-PIN, noch Ihre Karten-PIN kennen, können Sie mit dem PIN-Rücksetzdienst eine neue PIN anfordern.</translation>
     </message>
     <message>
         <source>If you don&apos;t know your ID card PIN, you may turn to the competent authority and set a new ID card PIN there.</source>
@@ -7594,6 +7800,10 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was changed successfully.</extracomment>
         <translation>Sie haben Ihre Karten-PIN erfolgreich geändert.</translation>
     </message>
+    <message>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Sie können nun Ihren Ausweis vom Gerät entfernen.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::StateCheckRefreshAddress</name>
@@ -7922,6 +8132,11 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <source>Set a new PIN</source>
         <extracomment>LABEL ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
         <translation>Neue PIN setzen</translation>
+    </message>
+    <message>
+        <source>Error code: %1</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation>Fehlercode: %1</translation>
     </message>
 </context>
 </TS>

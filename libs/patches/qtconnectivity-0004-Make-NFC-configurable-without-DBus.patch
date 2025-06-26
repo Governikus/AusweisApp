@@ -1,0 +1,28 @@
+From e81b2a8e2e576650dad3b17281684b531cd8dc57 Mon Sep 17 00:00:00 2001
+From: Juha Vuolle <juha.vuolle@qt.io>
+Date: Sun, 5 Jan 2025 17:17:41 +0200
+Subject: Make NFC configurable without DBus
+
+Linux 'neard' backend links against Qt::DBus, which is now marked
+as a requirement for QT_FEATURE_neard.
+
+Pick-to: 6.9 6.8
+Fixes: QTBUG-132571
+Change-Id: I5821b368e8a2dad90ceac2bf23640b6de4cc142f
+Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+(cherry picked from commit 3de150357e511dd050d7ed2119effc75c96053e1)
+---
+ src/nfc/configure.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git x/qtconnectivity/src/nfc/configure.cmake y/qtconnectivity/src/nfc/configure.cmake
+index 08448333a8d1aa9a98c71cb3aae7c405b1c275ae..ae054aec04ca18bae3db87db4a6162040a8a8863 100644
+--- x/qtconnectivity/src/nfc/configure.cmake
++++ y/qtconnectivity/src/nfc/configure.cmake
+@@ -9,4 +9,4 @@ qt_feature("pcsclite" PUBLIC
+ 
+ qt_feature("neard" PUBLIC
+     LABEL "Use neard to access NFC devices"
+-    CONDITION LINUX AND NOT QT_FEATURE_pcsclite)
++    CONDITION LINUX AND QT_FEATURE_dbus AND NOT QT_FEATURE_pcsclite)

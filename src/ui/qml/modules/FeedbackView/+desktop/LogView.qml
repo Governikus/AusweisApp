@@ -121,6 +121,10 @@ SectionPage {
 				implicitHeight: logDelegate.implicitHeight + logDelegate.anchors.topMargin + logDelegate.anchors.bottomMargin
 				width: logView.width - Style.dimens.pane_padding
 
+				onActiveFocusChanged: if (activeFocus) {
+					logView.handleItemFocused(index);
+				}
+
 				RoundedRectangle {
 					anchors.fill: parent
 					bottomLeftCorner: logEntry.isLastItem
@@ -179,7 +183,7 @@ SectionPage {
 		text: qsTr("All old logs will be deleted.")
 		//: LABEL DESKTOP
 		title: qsTr("Delete all logs")
-		width: UiPluginModel.scaleFactor * 600
+		width: UiPluginModel.scaleFactor * 360
 
 		onConfirmed: LogModel.removeOtherLogFiles()
 	}

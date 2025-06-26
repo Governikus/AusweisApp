@@ -9,14 +9,19 @@
 #include <QCoreApplication>
 #include <QSharedPointer>
 #include <QSignalSpy>
+#include <QThread>
 #include <QtTest>
 
+
 Q_IMPORT_PLUGIN(MockReaderManagerPlugin)
+
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
+
 Q_DECLARE_METATYPE(ReaderInfo)
+
 
 class CreateCardConnectionCommandSlot
 	: public QObject
@@ -46,6 +51,8 @@ class test_ReaderManager
 	private Q_SLOTS:
 		void initTestCase()
 		{
+			QThread::currentThread()->setObjectName(QStringLiteral("MainThread"));
+
 			auto* readerManager = Env::getSingleton<ReaderManager>();
 			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
 			readerManager->init();
@@ -87,6 +94,35 @@ class test_ReaderManager
 			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 			const auto info = qvariant_cast<ReaderInfo>(spy.takeFirst().at(0));
 			QCOMPARE(info.getName(), "MockReader 4711"_L1);
+		}
+
+
+		void callExecute()
+		{
+			auto* readerManager = Env::getSingleton<ReaderManager>();
+
+			QTest::ignoreMessage(QtDebugMsg, "Name of the main thread: MainThread");
+			qDebug().noquote() << "Name of the main thread:" << QThread::currentThread()->objectName();
+
+			QTest::ignoreMessage(QtDebugMsg, "callExecute from MainThread. Executed in ReaderManagerThread");
+			QTest::ignoreMessage(QtDebugMsg, "callExecute from ReaderManagerThread. Executed in ReaderManagerThread");
+			readerManager->callExecute([readerManager] {
+						qDebug().noquote() << "callExecute from MainThread. Executed in" << QThread::currentThread()->objectName();
+
+						readerManager->callExecute([] {
+							qDebug().noquote() << "callExecute from ReaderManagerThread. Executed in" << QThread::currentThread()->objectName();
+						});
+					});
+
+			readerManager->shutdown();
+			QTest::ignoreMessage(QtWarningMsg, "Cannot call Execute if ReaderManager-Thread is not active");
+			readerManager->callExecute([] {
+						qDebug() << "callExecute without ReaderManagerThread";
+					});
+
+			QSignalSpy spy(readerManager, &ReaderManager::fireInitialized);
+			readerManager->init();
+			QTRY_COMPARE(spy.count(), 1); // clazy:exclude=qstring-allocations
 		}
 
 

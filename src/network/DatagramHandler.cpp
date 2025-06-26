@@ -6,11 +6,14 @@
 
 #include "Initializer.h"
 
+
 using namespace governikus;
+
 
 INIT_FUNCTION([] {
 			qRegisterMetaType<QHostAddress>("QHostAddress");
 		})
+
 
 DatagramHandler::DatagramHandler(bool)
 {

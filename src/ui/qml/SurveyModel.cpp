@@ -69,5 +69,5 @@ bool SurveyModel::askForDeviceSurvey() const
 
 void SurveyModel::setDeviceSurveyPending(bool pValue) const
 {
-	return Env::getSingleton<Survey>()->setDeviceSurveyPending(pValue);
+	Env::getSingleton<Survey>()->setDeviceSurveyPending(pValue);
 }

@@ -7,7 +7,8 @@ Item {
 	enum Action {
 		None,
 		Cancel,
-		Back
+		Back,
+		Close
 	}
 
 	property int action: NavigationAction.Action.None

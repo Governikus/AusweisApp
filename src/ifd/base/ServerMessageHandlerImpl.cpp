@@ -23,7 +23,6 @@
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
-#include "pinpad/PinModifyOutput.h"
 
 #include <QLoggingCategory>
 
@@ -204,12 +203,9 @@ void ServerMessageHandlerImpl::handleIfdDisconnect(const QJsonObject& pJsonObjec
 		return;
 	}
 
-	const auto cardConnection = mCardConnections.take(slotHandle);
-	qCInfo(ifd) << "Card successfully disconnected" << slotHandle;
-	const auto& response = QSharedPointer<IfdDisconnectResponse>::create(slotHandle);
-	mDispatcher->send(response);
-
-	Q_EMIT fireCardDisconnected(cardConnection);
+	qCDebug(ifd) << "Update retry counter before disconnect card for" << slotHandle;
+	const auto& cardConnection = mCardConnections.value(slotHandle);
+	cardConnection->callUpdateRetryCounterCommand(this, &ServerMessageHandlerImpl::onUpdateRetryCounterDone, slotHandle);
 }
 
 
@@ -268,21 +264,31 @@ void ServerMessageHandlerImpl::handleIfdEstablishPaceChannel(const QJsonObject& 
 
 void ServerMessageHandlerImpl::sendEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pChannelOutput)
 {
-	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::UNKNOWN)
+	ECardApiResult::Minor minor = ECardApiResult::Minor::null;
+	switch (pChannelOutput.getPaceReturnCode())
 	{
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput, ECardApiResult::Minor::AL_Unknown_Error);
-		mDispatcher->send(response);
-		return;
+
+		case CardReturnCode::INPUT_TIME_OUT:
+			minor = ECardApiResult::Minor::IFDL_Timeout_Error;
+			break;
+
+		case CardReturnCode::CANCELLATION_BY_USER:
+			minor = ECardApiResult::Minor::IFDL_CancellationByUser;
+			break;
+
+		case CardReturnCode::CARD_NOT_FOUND:
+			minor = ECardApiResult::Minor::IFDL_Terminal_NoCard;
+			break;
+
+		case CardReturnCode::UNKNOWN:
+			minor = ECardApiResult::Minor::AL_Unknown_Error;
+			break;
+
+		default:
+			break;
 	}
 
-	if (pChannelOutput.getPaceReturnCode() == CardReturnCode::CARD_NOT_FOUND)
-	{
-		const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput, ECardApiResult::Minor::IFDL_Terminal_NoCard);
-		mDispatcher->send(response);
-		return;
-	}
-
-	const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput);
+	const auto& response = QSharedPointer<IfdEstablishPaceChannelResponse>::create(pSlotHandle, pChannelOutput, minor);
 	mDispatcher->send(response);
 }
 
@@ -350,9 +356,6 @@ void ServerMessageHandlerImpl::sendIfdStatus(const ReaderInfo& pReaderInfo)
 
 void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle, const ResponseApdu& pResponseApdu)
 {
-	PinModifyOutput pinModifyOutput(pResponseApdu);
-	const QByteArray& ccid = pinModifyOutput.toCcid();
-
 	ECardApiResult::Minor minor = ECardApiResult::Minor::null;
 	switch (pResponseApdu.getStatusCode())
 	{
@@ -381,7 +384,7 @@ void ServerMessageHandlerImpl::sendModifyPinResponse(const QString& pSlotHandle,
 					: ECardApiResult::Minor::AL_Unknown_Error;
 	}
 
-	const auto& response = QSharedPointer<IfdModifyPinResponse>::create(pSlotHandle, ccid, minor);
+	const auto& response = QSharedPointer<IfdModifyPinResponse>::create(pSlotHandle, pResponseApdu, minor);
 	mDispatcher->send(response);
 }
 
@@ -457,6 +460,10 @@ void ServerMessageHandlerImpl::onDestroyPaceChannelCommandDone(QSharedPointer<Ba
 
 void ServerMessageHandlerImpl::onClosed()
 {
+	for (const auto& cardConnection : std::as_const(mCardConnections))
+	{
+		cardConnection->callUpdateRetryCounterCommand(this, &ServerMessageHandlerImpl::onUpdateRetryCounterDone);
+	}
 	mCardConnections.clear();
 
 	Q_EMIT fireClosed();
@@ -549,6 +556,25 @@ void ServerMessageHandlerImpl::onReaderRemoved(const ReaderInfo& pInfo)
 	}
 
 	sendIfdStatus(pInfo);
+}
+
+
+void ServerMessageHandlerImpl::onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand)
+{
+	auto updateRetryCounterCommand = pCommand.staticCast<UpdateRetryCounterCommand>();
+	const QString& slotHandle = updateRetryCounterCommand->getSlotHandle();
+	qCInfo(ifd) << "Update retry counter for" << slotHandle << "finished with" << pCommand->getReturnCode();
+	if (slotHandle.isNull())
+	{
+		return;
+	}
+
+	const auto cardConnection = mCardConnections.take(slotHandle);
+	qCInfo(ifd) << "Card successfully disconnected" << slotHandle;
+	const auto& response = QSharedPointer<IfdDisconnectResponse>::create(slotHandle);
+	mDispatcher->send(response);
+
+	Q_EMIT fireCardDisconnected(cardConnection);
 }
 
 

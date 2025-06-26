@@ -6,7 +6,12 @@
 
 #include "paos/element/ConnectionHandleParser.h"
 
+
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(paos)
+
 
 ElementParser::ElementParser(QSharedPointer<QXmlStreamReader> pXmlReader)
 	: mXmlReader(pXmlReader)
@@ -126,4 +131,10 @@ ConnectionHandle ElementParser::parseConnectionHandle()
 	const auto& handle = parser.parse();
 	mParseError |= parser.parserFailed();
 	return handle;
+}
+
+
+const QLoggingCategory& ElementParser::getLoggingCategory()
+{
+	return paos();
 }

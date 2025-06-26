@@ -6,6 +6,8 @@
 
 #include "EnumHelper.h"
 
+#include <QNetworkReply>
+#include <QSharedPointer>
 #include <QString>
 #include <QUrl>
 #include <QUrlQuery>
@@ -28,6 +30,8 @@ class UrlUtil
 		~UrlUtil() = delete;
 
 	public:
+		static QUrl resolveRedirect(const QSharedPointer<QNetworkReply>& pReply);
+
 		/*!
 		 * Determines the URL origin, i.e. the protocol, host name and port part of the full URL.
 		 */

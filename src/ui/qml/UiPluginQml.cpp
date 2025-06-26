@@ -88,26 +88,6 @@ INIT_FUNCTION([] {
 			qRegisterMetaType<QList<QQmlError>>("QList<QQmlError>");
 		})
 
-#ifdef Q_OS_WIN
-namespace
-{
-void updateTitleBarColor(QQuickWindow* pWindow, bool pDarkMode)
-{
-	if (pWindow)
-	{
-		BOOL darkMode = pDarkMode ? TRUE : FALSE;
-		HWND hwnd = reinterpret_cast<HWND>(pWindow->winId());
-	#if defined(__MINGW32__) || !defined(NTDDI_WIN10_CO)
-		const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-	#endif
-		DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &darkMode, sizeof(darkMode));
-	}
-}
-
-
-} // namespace
-#endif
-
 
 UiPluginQml::UiPluginQml()
 	: UiPluginModel()
@@ -120,7 +100,7 @@ UiPluginQml::UiPluginQml()
 	, mHighContrastEnabled(false)
 	, mDarkMode(false)
 	, mShowFocusIndicator(false)
-	, mScaleFactor(DEFAULT_SCALE_FACTOR)
+	, mScaleFactor(1.0)
 	, mFontScaleFactor(getSystemFontScaleFactor())
 #ifdef Q_OS_IOS
 	, mPrivate(new Private())
@@ -163,6 +143,7 @@ void UiPluginQml::registerQmlTypes()
 	qmlRegisterUncreatableMetaObject(EnumReaderManagerPluginType::staticMetaObject, cModuleName, 1, 0, "ReaderManagerPluginType", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableMetaObject(EnumCardReturnCode::staticMetaObject, cModuleName, 1, 0, "CardReturnCode", QStringLiteral("Not creatable as it is an enum type"));
 	qmlRegisterUncreatableMetaObject(EnumGAnimation::staticMetaObject, cModuleName, 1, 0, "GAnimation", QStringLiteral("Not creatable as it is an enum type"));
+	qmlRegisterUncreatableMetaObject(EnumGlobalStatusCode::staticMetaObject, cModuleName, 1, 0, "GlobalStatusCode", QStringLiteral("Not creatable as it is an enum type"));
 
 	#if !defined(Q_OS_ANDROID) && !defined(Q_OS_IOS)
 	qmlRegisterType<DiagnosisModel>(cModuleName, 1, 0, "DiagnosisModel");
@@ -556,20 +537,6 @@ void UiPluginQml::show()
 }
 
 
-bool UiPluginQml::showUpdateInformationIfPending()
-{
-	if (!isUpdatePending())
-	{
-		return false;
-	}
-
-	setUpdatePending(false);
-	onShowUi(UiModule::UPDATEINFORMATION);
-
-	return true;
-}
-
-
 bool UiPluginQml::eventFilter(QObject* pObj, QEvent* pEvent)
 {
 	if (pEvent->type() == QEvent::ApplicationPaletteChange)
@@ -820,10 +787,6 @@ void UiPluginQml::setOsDarkMode(bool pState)
 		qCDebug(qml) << "Dark mode setting has changed";
 		mDarkMode = pState;
 
-#ifdef Q_OS_WIN
-		updateTitleBarColor(getRootWindow(), pState);
-#endif
-
 		onUserDarkModeChanged();
 
 		Q_EMIT fireDarkModeEnabledChanged();
@@ -894,8 +857,6 @@ qreal UiPluginQml::getScaleFactor() const
 
 void UiPluginQml::setScaleFactor(qreal pScaleFactor)
 {
-	pScaleFactor *= DEFAULT_SCALE_FACTOR;
-
 	if (qAbs(pScaleFactor - mScaleFactor) > 0)
 	{
 		mScaleFactor = pScaleFactor;

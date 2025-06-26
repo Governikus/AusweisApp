@@ -23,7 +23,7 @@ class test_LogModel;
 namespace governikus
 {
 
-class LogModel
+class LogModel final
 	: public QAbstractListModel
 	, public SingletonCreator<LogModel>
 {

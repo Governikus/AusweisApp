@@ -9,7 +9,9 @@
 #include <QDebug>
 #include <QStringBuilder>
 
+
 using namespace governikus;
+
 
 constexpr const char* RESULTMAJOR = "http://www.bsi.bund.de/ecard/api/1.1/resultmajor";
 constexpr const char* RESULTMINOR = "http://www.bsi.bund.de/ecard/api/1.1/resultminor";
@@ -114,7 +116,6 @@ void ECardApiResult::initConversionMaps()
 	addConversionElement(GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::IfdConnector_InvalidRequest, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::IfdConnector_NoSupportedApiLevel, Minor::AL_Unknown_Error);
-	addConversionElement(GlobalStatus::Code::IfdConnector_ConnectionTimeout, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::IfdConnector_ConnectionError, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection, Minor::AL_Unknown_Error);
 	addConversionElement(GlobalStatus::Code::Downloader_File_Not_Found, Minor::AL_Unknown_Error);

@@ -1,4 +1,4 @@
-From 3d026a23adb452790f98b1ea5566e76c0e994314 Mon Sep 17 00:00:00 2001
+From 2a1bbdce7c50c3f8c12561436c27d2032ce5b067 Mon Sep 17 00:00:00 2001
 From: Assam Boudjelthia <assam.boudjelthia@qt.io>
 Date: Thu, 5 Dec 2024 16:00:38 +0200
 Subject: Android: use latest platform only if the default is not found

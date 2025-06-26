@@ -7,7 +7,7 @@
 using namespace governikus;
 
 SelfAuthContext::SelfAuthContext(bool pActivateUi)
-	: AuthContext(Action::SELF, pActivateUi)
+	: AuthContext(Action::SELF_AUTH, pActivateUi)
 	, mSelfAuthenticationData()
 {
 }

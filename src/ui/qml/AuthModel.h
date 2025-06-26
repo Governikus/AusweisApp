@@ -40,7 +40,6 @@ class AuthModel
 	Q_PROPERTY(QString resultHeader READ getResultHeader NOTIFY fireResultChanged)
 	Q_PROPERTY(QString errorHeader READ getErrorHeader NOTIFY fireResultChanged)
 	Q_PROPERTY(QString errorText READ getErrorText NOTIFY fireResultChanged)
-	Q_PROPERTY(QString statusCodeString READ getStatusCodeString NOTIFY fireResultChanged)
 	Q_PROPERTY(QString resultViewButtonIcon READ getResultViewButtonIcon NOTIFY fireResultChanged)
 	Q_PROPERTY(QString resultViewButtonText READ getResultViewButtonText NOTIFY fireResultChanged)
 	Q_PROPERTY(QUrl resultViewButtonLink READ getResultViewButtonLink NOTIFY fireResultChanged)
@@ -63,7 +62,6 @@ class AuthModel
 		[[nodiscard]] QString getResultHeader() const;
 		[[nodiscard]] QString getErrorHeader() const;
 		[[nodiscard]] QString getErrorText() const;
-		[[nodiscard]] QString getStatusCodeString() const;
 		[[nodiscard]] QString getResultViewButtonIcon() const;
 		[[nodiscard]] QString getResultViewButtonText() const;
 		[[nodiscard]] QUrl getResultViewButtonLink() const;

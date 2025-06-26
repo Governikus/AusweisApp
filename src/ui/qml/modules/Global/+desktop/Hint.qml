@@ -32,7 +32,7 @@ GPane {
 		Layout.alignment: Qt.AlignHCenter
 		Layout.topMargin: Style.dimens.pane_spacing
 		icon.source: "qrc:///images/open_website.svg"
-		tintIcon: hintText.color
+		tintIcon: true
 		visible: text !== ""
 
 		onClicked: root.clicked()

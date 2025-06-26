@@ -12,7 +12,7 @@ import Governikus.Type
 TintableIcon {
 	id: root
 
-	readonly property bool animated: SettingsModel.useAnimations && GraphicsInfo.api !== GraphicsInfo.Software
+	readonly property bool animated: SettingsModel.useAnimations && GraphicsInfo.api !== GraphicsInfo.Software && visible
 
 	source: animated ? "qrc:///animations/hourglass_background.svg" : "qrc:///animations/hourglass.svg"
 	sourceSize.height: Style.dimens.header_icon_size

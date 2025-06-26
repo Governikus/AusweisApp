@@ -141,6 +141,9 @@ class test_AuthModel
 
 			context->setTcTokenUrl(QUrl("https://www.governikus.de/tcToken"_L1));
 			QCOMPARE(model->getErrorHeader(), QStringLiteral("https://www.governikus.de"));
+
+			context->setStatus(GlobalStatus::Code::Workflow_Card_Removed);
+			QCOMPARE(model->getErrorHeader(), tr("Connection to ID card lost"));
 		}
 
 
@@ -181,35 +184,6 @@ class test_AuthModel
 			model->resetAuthContext(context);
 
 			QCOMPARE(model->getErrorText(), result);
-		}
-
-
-		void test_getStatusCodeString_data()
-		{
-			QTest::addColumn<QSharedPointer<AuthContext>>("context");
-			QTest::addColumn<GlobalStatus::Code>("statusCode");
-			QTest::addColumn<QString>("result");
-
-			QTest::addRow("No context") << QSharedPointer<AuthContext>(nullptr) << GlobalStatus::Code::No_Error << "Unknown_Error";
-			QTest::addRow("Any error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::Card_Communication_Error << "Card_Communication_Error";
-			QTest::addRow("No error") << QSharedPointer<AuthContext>::create() << GlobalStatus::Code::No_Error << "No_Error";
-		}
-
-
-		void test_getStatusCodeString()
-		{
-			QFETCH(QSharedPointer<AuthContext>, context);
-			QFETCH(GlobalStatus::Code, statusCode);
-			QFETCH(QString, result);
-
-			auto* const model = Env::getSingleton<AuthModel>();
-			if (context)
-			{
-				context->setStatus(GlobalStatus(statusCode));
-			}
-			model->resetAuthContext(context);
-
-			QCOMPARE(model->getStatusCodeString(), result);
 		}
 
 

@@ -21,12 +21,19 @@ ColumnLayout {
 	property alias titleStyle: dataTitle.textStyle
 	property bool writeAccess: false
 
+	Accessible.focusable: true
+	Accessible.name: title
+	Accessible.role: Accessible.Grouping
 	spacing: Style.dimens.pane_spacing
 	visible: count > 0
+
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	GText {
 		id: dataTitle
 
+		Accessible.ignored: true
 		color: root.writeAccess ? Style.color.textNormal.basic : textStyle.textColor
 		textStyle: Style.text.headline
 

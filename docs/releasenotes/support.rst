@@ -56,13 +56,13 @@ und sollte daher mit allen marktüblichen Browsern verwendet werden können.
 Im Rahmen der Qualitätssicherung werden die folgenden Browserversionen
 getestet.
 
-- Chrome 133
+- Chrome 137
 
-- Firefox 135
+- Firefox 139
 
 - Safari 18.0 (macOS)
 
-- Edge 133
+- Edge 137
 
 
 
@@ -128,11 +128,11 @@ Im mobilen Umfeld ist die Funktionalität jedoch abhängig von der vom
 Anbieter umgesetzten Aktivierung. Daher empfehlen wir einen der
 folgenden Browser zu verwenden.
 
-- Chrome 133 (iOS/Android)
+- Chrome 137 (iOS/Android)
 
-- Firefox 135 (iOS/Android)
+- Firefox 139 (iOS/Android)
 
-- Samsung Internet 27 (Android)
+- Samsung Internet 28 (Android)
 
 - Safari 18.0 (iOS)
 

@@ -52,6 +52,7 @@ class ServerMessageHandlerImpl
 		void onMessage(IfdMessageType pMessageType, const QJsonObject& pJsonObject);
 		void onReaderChanged(const ReaderInfo& pInfo);
 		void onReaderRemoved(const ReaderInfo& pInfo);
+		void onUpdateRetryCounterDone(QSharedPointer<BaseCardCommand> pCommand);
 
 	public:
 		explicit ServerMessageHandlerImpl(const QSharedPointer<DataChannel>& pDataChannel,

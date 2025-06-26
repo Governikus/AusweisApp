@@ -261,24 +261,11 @@ class test_TcToken
 																   "  </PathSecurity-Parameters>"
 																   "</TCTokenType>") << false;
 
-			QTest::newRow("invalidServerAdress") << QByteArray("<?xml version=\"1.0\"?>"
-															   "<TCTokenType>"
-															   "  <ServerAddress>eid-server.example.de/entrypoint</ServerAddress>"
-															   "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
-															   "  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
-															   "  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
-															   "  <Binding> urn:liberty:paos:2006-08 </Binding>"
-															   "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
-															   "  <PathSecurity-Parameters>"
-															   "    <PSK> 4BC1A0B5 </PSK>"
-															   "  </PathSecurity-Parameters>"
-															   "</TCTokenType>") << false;
-
-			QTest::newRow("invalidRefreshAdress") << QByteArray("<?xml version=\"1.0\"?>"
+			QTest::newRow("invalidServerAddress") << QByteArray("<?xml version=\"1.0\"?>"
 																"<TCTokenType>"
-																"  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+																"  <ServerAddress>eid-server.example.de/entrypoint</ServerAddress>"
 																"  <SessionIdentifier>1A2BB129</SessionIdentifier>"
-																"  <RefreshAddress>service.example.de/loggedin?7eb39f62</RefreshAddress>"
+																"  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
 																"  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
 																"  <Binding> urn:liberty:paos:2006-08 </Binding>"
 																"  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
@@ -287,18 +274,31 @@ class test_TcToken
 																"  </PathSecurity-Parameters>"
 																"</TCTokenType>") << false;
 
-			QTest::newRow("invalidRefreshAdress") << QByteArray("<?xml version=\"1.0\"?>"
-																"<TCTokenType>"
-																"  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
-																"  <SessionIdentifier>1A2BB129</SessionIdentifier>"
-																"  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
-																"  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
-																"  <Binding> urn:liberty:paos:2006-08 </Binding>"
-																"  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
-																"  <PathSecurity-Parameters>"
-																"    <PSK> 4BC1A0B56 </PSK>"
-																"  </PathSecurity-Parameters>"
-																"</TCTokenType>") << false;
+			QTest::newRow("invalidRefreshAddress") << QByteArray("<?xml version=\"1.0\"?>"
+																 "<TCTokenType>"
+																 "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+																 "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+																 "  <RefreshAddress>service.example.de/loggedin?7eb39f62</RefreshAddress>"
+																 "  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
+																 "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+																 "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+																 "  <PathSecurity-Parameters>"
+																 "    <PSK> 4BC1A0B5 </PSK>"
+																 "  </PathSecurity-Parameters>"
+																 "</TCTokenType>") << false;
+
+			QTest::newRow("invalidRefreshAddress") << QByteArray("<?xml version=\"1.0\"?>"
+																 "<TCTokenType>"
+																 "  <ServerAddress>https://eid-server.example.de/entrypoint</ServerAddress>"
+																 "  <SessionIdentifier>1A2BB129</SessionIdentifier>"
+																 "  <RefreshAddress>https://service.example.de/loggedin?7eb39f62</RefreshAddress>"
+																 "  <CommunicationErrorAddress>https://service.example.de/ComError?7eb39f62</CommunicationErrorAddress>"
+																 "  <Binding> urn:liberty:paos:2006-08 </Binding>"
+																 "  <PathSecurity-Protocol> urn:ietf:rfc:4279 </PathSecurity-Protocol>"
+																 "  <PathSecurity-Parameters>"
+																 "    <PSK> 4BC1A0B56 </PSK>"
+																 "  </PathSecurity-Parameters>"
+																 "</TCTokenType>") << false;
 
 			QTest::newRow("valid") << QByteArray("<?xml version=\"1.0\"?>"
 												 "<TCTokenType>"
@@ -331,9 +331,9 @@ class test_TcToken
 			QTest::addColumn<QString>("pathProtocol");
 			QTest::addColumn<QByteArray>("psk");
 			QTest::addColumn<QByteArray>("identifier");
-			QTest::addColumn<QString>("serverAdress");
-			QTest::addColumn<QString>("errorAdress");
-			QTest::addColumn<QString>("refreshAdress");
+			QTest::addColumn<QString>("serverAddress");
+			QTest::addColumn<QString>("errorAddress");
+			QTest::addColumn<QString>("refreshAddress");
 
 			QTest::addColumn<QtMsgType>("messageType");
 			QTest::addColumn<bool>("valuesAreSchemaConform");
@@ -342,58 +342,58 @@ class test_TcToken
 			const QString pathProtocol = QStringLiteral("urn:ietf:rfc:4279");
 			const QByteArray psk("4BC1A0B5");
 			const QByteArray identifier("1A2BB129");
-			const QString serverAdress = QStringLiteral("https://eid-server.example.de/entrypoint");
-			const QString errorAdress = QStringLiteral("https://service.example.de/ComError?7eb39f62");
-			const QString refreshAdress = QStringLiteral("https://service.example.de/loggedin?7eb39f62");
+			const QString serverAddress = QStringLiteral("https://eid-server.example.de/entrypoint");
+			const QString errorAddress = QStringLiteral("https://service.example.de/ComError?7eb39f62");
+			const QString refreshAddress = QStringLiteral("https://service.example.de/loggedin?7eb39f62");
 
 			QTest::newRow("Binding is no valid anyUri: \"\"")
 				<< QString() << pathProtocol << psk << identifier
-				<< serverAdress << errorAdress << refreshAdress
+				<< serverAddress << errorAddress << refreshAddress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("Binding is no valid anyUri: \"://://\"")
 				<< u"://://"_s << pathProtocol << psk << identifier
-				<< serverAdress << errorAdress << refreshAdress
+				<< serverAddress << errorAddress << refreshAddress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("PathSecurity-Protocol is no valid URI: \"\"")
 				<< binding << u""_s << psk << identifier
-				<< serverAdress << errorAdress << refreshAdress
+				<< serverAddress << errorAddress << refreshAddress
 				<< QtCriticalMsg << true;
 
 			QTest::newRow("PSK is null")
 				<< binding << pathProtocol << QByteArray() << identifier
-				<< serverAdress << errorAdress << refreshAdress
+				<< serverAddress << errorAddress << refreshAddress
 				<< QtWarningMsg << true;
 
 			QTest::newRow("SessionIdentifier is null")
 				<< binding << pathProtocol << psk << QByteArray()
-				<< serverAdress << errorAdress << refreshAdress
+				<< serverAddress << errorAddress << refreshAddress
 				<< QtWarningMsg << true;
 
 			QTest::newRow("ServerAddress no valid anyUri: \"\"")
 				<< binding << pathProtocol << psk << identifier
-				<< QString() << errorAdress << refreshAdress
+				<< QString() << errorAddress << refreshAddress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("ServerAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< u"://://"_s << errorAdress << refreshAdress
+				<< u"://://"_s << errorAddress << refreshAddress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("CommunicationErrorAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< serverAdress << u"://://"_s << refreshAdress
+				<< serverAddress << u"://://"_s << refreshAddress
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("RefreshAddress no valid anyUri: \"\"")
 				<< binding << pathProtocol << psk << identifier
-				<< serverAdress << errorAdress << QString()
+				<< serverAddress << errorAddress << QString()
 				<< QtCriticalMsg << false;
 
 			QTest::newRow("RefreshAddress no valid anyUri: \"://://\"")
 				<< binding << pathProtocol << psk << identifier
-				<< serverAdress << errorAdress << u"://://"_s
+				<< serverAddress << errorAddress << u"://://"_s
 				<< QtCriticalMsg << false;
 		}
 
@@ -404,9 +404,9 @@ class test_TcToken
 			QFETCH(QString, pathProtocol);
 			QFETCH(QByteArray, psk);
 			QFETCH(QByteArray, identifier);
-			QFETCH(QString, serverAdress);
-			QFETCH(QString, errorAdress);
-			QFETCH(QString, refreshAdress);
+			QFETCH(QString, serverAddress);
+			QFETCH(QString, errorAddress);
+			QFETCH(QString, refreshAddress);
 
 			QFETCH(QtMsgType, messageType);
 			QFETCH(bool, valuesAreSchemaConform);
@@ -425,7 +425,7 @@ class test_TcToken
 									 "</TCTokenType>"));
 
 			QTest::ignoreMessage(messageType, QTest::currentDataTag());
-			QCOMPARE(token.valuesAreSchemaConform(binding, pathProtocol, psk, identifier, serverAdress, errorAdress, refreshAdress), valuesAreSchemaConform);
+			QCOMPARE(token.valuesAreSchemaConform(binding, pathProtocol, psk, identifier, serverAddress, errorAddress, refreshAddress), valuesAreSchemaConform);
 		}
 
 

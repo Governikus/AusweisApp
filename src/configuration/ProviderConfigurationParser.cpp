@@ -79,7 +79,7 @@ QMap<QString, CallCost> ProviderConfigurationParser::parseCallCosts(const QByteA
 	for (const QJsonValueConstRef callCostElem : callCostArray)
 	{
 		const auto cost = CallCost(callCostElem);
-		const auto& prefixArray = callCostElem.toObject()[QLatin1String("prefixes")].toArray();
+		const auto& prefixArray = callCostElem.toObject().value(QLatin1String("prefixes")).toArray();
 		for (const QJsonValueConstRef prefixElem : prefixArray)
 		{
 			const auto& prefix = prefixElem.toString();

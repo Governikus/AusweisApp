@@ -31,6 +31,7 @@ ProgressView {
 	}
 
 	property ProgressTracker baseProgressTracker: null
+	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property alias navigationActionType: cancelNavigation.navigationAction
 	property Component successViewDelegate: null
@@ -130,7 +131,9 @@ ProgressView {
 				break;
 			}
 			d.setWorkflowProgress(progressTracker.steps);
-			if (ChangePinModel.error) {
+			if (ChangePinModel.error && ChangePinModel.statusCode === GlobalStatusCode.Card_Pin_Deactivated) {
+				push(root.cardNotActivatedDelegate ? root.cardNotActivatedDelegate : cardNotActivatedView);
+			} else if (ChangePinModel.error) {
 				push(root.errorViewDelegate ? root.errorViewDelegate : pinResult);
 			} else {
 				push(root.successViewDelegate ? root.successViewDelegate : pinResult);
@@ -383,6 +386,8 @@ ProgressView {
 		id: pinResult
 
 		ResultView {
+			id: pinResultView
+
 			animation: ChangePinModel.statusCodeAnimation
 			//: LABEL DESKTOP
 			buttonText: qsTr("Back to start page")
@@ -395,8 +400,9 @@ ProgressView {
 			title: root.title
 
 			titleBarSettings: TitleBarSettings {
-				navigationAction: NavigationAction.Cancel
-				navigationEnabled: false
+				navigationAction: NavigationAction.Close
+
+				onNavigationActionClicked: pinResultView.leaveView()
 			}
 
 			onEmailButtonPressed: ChangePinModel.sendResultMail()
@@ -404,6 +410,22 @@ ProgressView {
 			onLeaveView: {
 				ChangePinModel.continueWorkflow();
 				pop(root);
+			}
+		}
+	}
+	Component {
+		id: cardNotActivatedView
+
+		CardNotActivatedView {
+			title: root.title
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: NavigationAction.Action.Close
+
+				onNavigationActionClicked: {
+					ChangePinModel.continueWorkflow();
+					root.pop(root);
+				}
 			}
 		}
 	}

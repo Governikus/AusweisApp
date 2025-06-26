@@ -30,7 +30,7 @@ class test_PaceHandler
 		}
 
 
-		void getPaceProtocol_uninitiaized()
+		void getPaceProtocol_uninitialized()
 		{
 			QScopedPointer<PaceHandler> paceHandler(new PaceHandler(QSharedPointer<CardConnectionWorker>()));
 			QVERIFY(paceHandler->getPaceProtocol().getOid().isUndefined());

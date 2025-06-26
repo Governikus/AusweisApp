@@ -1,0 +1,92 @@
+From b5581cdbecc18e3810b48f264374e4904ded8597 Mon Sep 17 00:00:00 2001
+From: David Faure <david.faure@kdab.com>
+Date: Wed, 26 Mar 2025 12:03:02 +0100
+Subject: QTestLib: fix crashes when using qDebug()s from threads with
+ -junitxml
+
+Other test loggers just output things immediately, but the junit test
+logger appends messages to a vector, so this needs to be
+mutex-protected.
+
+In case of qDebug()s from long-running threads, we also need
+to protect creation/destruction of systemOutputElement and
+systemErrorElement -- and in case of qFatal(), currentTestCase.
+
+Pick-to: 6.9 6.8 6.5
+Change-Id: If35055fc232276a778951ebbfeaccd185b04f46b
+Reviewed-by: Edward Welbourne <edward.welbourne@qt.io>
+Reviewed-by: Jason McDonald <macadder1@gmail.com>
+(cherry picked from commit b4d6892ba5a745c1836daf34c850d13ef61e7ae0)
+---
+ src/testlib/qjunittestlogger.cpp | 21 +++++++++++++--------
+ src/testlib/qjunittestlogger_p.h |  4 ++++
+ 2 files changed, 17 insertions(+), 8 deletions(-)
+
+diff --git x/qtbase/src/testlib/qjunittestlogger.cpp y/qtbase/src/testlib/qjunittestlogger.cpp
+index eb3c38b8b16e305fd549c8cc905e2dfcd6efcadc..65549b2619f13caa6c63931948da9c3f5a310558 100644
+--- x/qtbase/src/testlib/qjunittestlogger.cpp
++++ y/qtbase/src/testlib/qjunittestlogger.cpp
+@@ -129,14 +129,17 @@ void QJUnitTestLogger::enterTestFunction(const char *function)
+ 
+ void QJUnitTestLogger::enterTestCase(const char *name)
+ {
+-    currentTestCase = new QTestElement(QTest::LET_TestCase);
+-    currentTestCase->addAttribute(QTest::AI_Name, name);
+-    currentTestCase->addAttribute(QTest::AI_Classname, QTestResult::currentTestObjectName());
+-    listOfTestcases.push_back(currentTestCase);
+-
+-    Q_ASSERT(!systemOutputElement && !systemErrorElement);
+-    systemOutputElement = new QTestElement(QTest::LET_SystemOutput);
+-    systemErrorElement = new QTestElement(QTest::LET_SystemError);
++    {
++        QMutexLocker locker(&mutex);
++        currentTestCase = new QTestElement(QTest::LET_TestCase);
++        currentTestCase->addAttribute(QTest::AI_Name, name);
++        currentTestCase->addAttribute(QTest::AI_Classname, QTestResult::currentTestObjectName());
++        listOfTestcases.push_back(currentTestCase);
++
++        Q_ASSERT(!systemOutputElement && !systemErrorElement);
++        systemOutputElement = new QTestElement(QTest::LET_SystemOutput);
++        systemErrorElement = new QTestElement(QTest::LET_SystemError);
++    }
+ 
+     // The element will be deleted when the suite is deleted
+ 
+@@ -173,6 +176,7 @@ void QJUnitTestLogger::leaveTestFunction()
+ 
+ void QJUnitTestLogger::leaveTestCase()
+ {
++    QMutexLocker locker(&mutex);
+     currentTestCase->addAttribute(QTest::AI_Time,
+         toSecondsFormat(elapsedTestCaseSeconds() * 1000).constData());
+ 
+@@ -256,6 +260,7 @@ void QJUnitTestLogger::addMessage(MessageTypes type, const QString &message, con
+     Q_UNUSED(file);
+     Q_UNUSED(line);
+ 
++    QMutexLocker locker(&mutex);
+     if (type == QFatal) {
+         addFailure(QTest::LET_Error, "qfatal", message);
+         return;
+diff --git x/qtbase/src/testlib/qjunittestlogger_p.h y/qtbase/src/testlib/qjunittestlogger_p.h
+index 6a7ff3161520bc191774d39cb7903f75cacaf7ac..6c4c7d71f2ad3088cfba897a8c89da5f6898aae3 100644
+--- x/qtbase/src/testlib/qjunittestlogger_p.h
++++ y/qtbase/src/testlib/qjunittestlogger_p.h
+@@ -19,6 +19,7 @@
+ 
+ #include <QtTest/private/qabstracttestlogger_p.h>
+ #include <QtTest/private/qtestelementattribute_p.h>
++#include <QtCore/qmutex.h>
+ 
+ #include <vector>
+ 
+@@ -61,6 +62,9 @@ class QJUnitTestLogger : public QAbstractTestLogger
+         QTestElement *systemOutputElement = nullptr;
+         QTestElement *systemErrorElement = nullptr;
+         QTestJUnitStreamer *logFormatter = nullptr;
++        // protects currentTestCase, systemOutputElement and systemErrorElement
++        // in case of qDebug()/qWarning() etc. from threads
++        QMutex mutex;
+ 
+         int testCounter = 0;
+         int failureCounter = 0;

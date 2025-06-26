@@ -88,7 +88,7 @@ class test_Message
 		}
 
 
-		void noRequestWithUnknowCommand()
+		void noRequestWithUnknownCommand()
 		{
 			QByteArray msg(R"({"cmd": "UnknownRequestedCommand123"})");
 			MessageDispatcher dispatcher;

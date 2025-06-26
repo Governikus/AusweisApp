@@ -100,8 +100,8 @@ FlickableSectionPage {
 			Layout.fillWidth: true
 			Layout.leftMargin: Style.dimens.pane_padding
 			Layout.rightMargin: Layout.leftMargin
-			progressText: "%1 KiB / %2 KiB".arg(root.update.downloadProgress.toLocaleString(Qt.locale(SettingsModel.language), "f", 0)).arg(root.update.downloadTotal.toLocaleString(Qt.locale(SettingsModel.language), "f", 0))
-			progressValue: root.update.downloadProgress * 100 / root.update.downloadTotal
+			downloadProgressKiB: root.update.downloadProgress
+			downloadTotalKiB: root.update.downloadTotal
 
 			onToggleUpdate: root.downloadRunning ? root.update.abortDownload() : download.exec()
 		}
@@ -125,8 +125,15 @@ FlickableSectionPage {
 
 				FormattedTextView {
 					Layout.fillWidth: true
+					activeFocusOnTab: ApplicationModel.isScreenReaderRunning && !Accessible.ignored
 					color: Style.color.transparent
 					totalItemCount: releaseInfoRepeater.count
+
+					onFocusChanged: if (focus)
+						Utils.positionViewAtItem(this)
+
+					FocusFrame {
+					}
 				}
 			}
 		}

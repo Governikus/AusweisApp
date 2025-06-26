@@ -61,9 +61,10 @@ Item {
 		border.color: Style.color.control.border.basic
 		border.width: Style.dimens.border_width
 		color: Style.color.control.background.basic
-		height: UiPluginModel.scaleFactor * 200
+		height: UiPluginModel.scaleFactor * 120
 		radius: Style.dimens.control_radius
-		width: UiPluginModel.scaleFactor * 800
+		visible: anchors.leftMargin < 0
+		width: UiPluginModel.scaleFactor * 480
 
 		Behavior on anchors.leftMargin {
 			PropertyAnimation {
@@ -94,6 +95,7 @@ Item {
 			delegate: Item {
 				id: logEntry
 
+				required property int index
 				required property string text
 				required property string time
 				required property string type
@@ -102,6 +104,10 @@ Item {
 				Accessible.role: Accessible.StaticText
 				implicitHeight: row.height
 				implicitWidth: row.width + 2 * Style.dimens.pane_padding
+
+				onActiveFocusChanged: if (activeFocus) {
+					logEntryList.handleItemFocused(index);
+				}
 
 				Row {
 					id: row
@@ -122,11 +128,14 @@ Item {
 							positionViewAtEndTimer.restart();
 						}
 						root.newNotification();
+						//: LABEL DESKTOP %1 will be replaced with a notification text
+						GAccessible.announce(logEntry, qsTr("Notification: %1").arg(notificationBody.text));
 					}
 
 					GText {
 						id: notificationTime
 
+						Accessible.ignored: true
 						activeFocusOnTab: false
 						color: Style.color.control.content.basic
 						text: logEntry.time
@@ -134,6 +143,7 @@ Item {
 					GText {
 						id: notificationBody
 
+						Accessible.ignored: true
 						activeFocusOnTab: false
 						color: Style.color.control.content.basic
 						style: logEntry.type === "developermode" ? Text.Outline : Text.Normal

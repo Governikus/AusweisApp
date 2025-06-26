@@ -20,8 +20,8 @@ namespace governikus
 {
 defineEnumType(Action,
 		AUTH,
-		SELF,
-		PIN,
+		SELF_AUTH,
+		CHANGE_PIN,
 		PERSONALIZATION,
 		REMOTE_SERVICE)
 

@@ -134,13 +134,17 @@ FlickableSectionPage {
 			anchors.leftMargin: Style.dimens.pane_spacing
 			anchors.right: parent.right
 			anchors.rightMargin: Style.dimens.pane_spacing
+			visible: technologySwitch.visible
 		}
 		TechnologySwitch {
+			id: technologySwitch
+
 			contentBottomMargin: 0
 			contentHorizontalMargin: 0
 			contentSpacing: 0
 			contentTopMargin: 0
 			drawBottomCorners: true
+			visible: hasSelection
 			width: parent.width
 		}
 	}

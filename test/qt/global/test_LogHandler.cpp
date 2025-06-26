@@ -287,7 +287,7 @@ class test_LogHandler
 			fakeLastModifiedAndLastAccessTime(tmp.fileName());
 			logger->removeOldLogFiles();
 			QCOMPARE(logger->getOtherLogFiles().size(), initialFiles.size());
-			QVERIFY(!tmp.exists());
+			QVERIFY(!QFile::exists(tmp.fileName()));
 		}
 
 
@@ -371,8 +371,8 @@ class test_LogHandler
 			fakeLastModifiedAndLastAccessTime(tmp2.fileName());
 			logger->init();
 			QTRY_COMPARE(logger->getOtherLogFiles().size(), initialFiles.size()); // clazy:exclude=qstring-allocations
-			QVERIFY(!tmp1.exists());
-			QVERIFY(!tmp2.exists());
+			QVERIFY(!QFile::exists(tmp1.fileName()));
+			QVERIFY(!QFile::exists(tmp2.fileName()));
 		}
 
 

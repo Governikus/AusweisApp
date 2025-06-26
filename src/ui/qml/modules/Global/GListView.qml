@@ -14,6 +14,10 @@ ListView {
 	property alias scrollBarColor: scrollBar.color
 	property real scrollBarTopPadding: 0
 
+	function handleItemFocused(pIndex) {
+		positionViewAtIndex(pIndex, ListView.Center);
+		currentIndex = pIndex;
+	}
 	function handleKeyPress(key) {
 		if (key === Qt.Key_PageDown)
 			root.scrollPageDown();
@@ -40,8 +44,9 @@ ListView {
 	boundsMovement: Flickable.FollowBoundsBehavior
 	flickDeceleration: Style.flickDeceleration
 	flickableDirection: Flickable.VerticalFlick
+	highlightMoveDuration: 0
+	highlightResizeDuration: 0
 	maximumFlickVelocity: Style.scrolling_speed
-	reuseItems: true
 
 	ScrollBar.vertical: GScrollBar {
 		id: scrollBar

@@ -8,7 +8,9 @@
 #include "IfdVersion.h"
 
 #include <QByteArray>
+#include <QHostAddress>
 #include <QList>
+#include <QUrl>
 
 
 namespace governikus
@@ -20,11 +22,13 @@ class Discovery
 		QString mIfdName;
 		QByteArray mIfdId;
 		quint16 mPort;
+		QList<QUrl> mAddresses;
 		QList<IfdVersion::Version> mSupportedApis;
 		bool mPairing;
 
 		void parseSupportedApi(const QJsonObject& pMessageObject);
 		void parseIfdId(const QJsonObject& pMessageObject);
+		void parseAddresses(const QJsonObject& pMessageObject);
 		void parsePairing(const QJsonObject& pMessageObject);
 
 	public:
@@ -38,7 +42,10 @@ class Discovery
 		[[nodiscard]] const QList<IfdVersion::Version>& getSupportedApis() const;
 
 		void setPairing(bool pEnabled);
-		[[nodiscard]] bool getPairing() const;
+		[[nodiscard]] bool isPairing() const;
+
+		void setAddresses(const QList<QHostAddress>& pAddresses);
+		[[nodiscard]] const QList<QUrl>& getAddresses() const;
 
 		[[nodiscard]] QByteArray toByteArray(IfdVersion::Version pIfdVersion, const QString& pContextHandle = QString()) const override;
 };

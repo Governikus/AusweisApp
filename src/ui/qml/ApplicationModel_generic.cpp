@@ -18,6 +18,5 @@ void ApplicationModel::showSettings(const ApplicationModel::Settings& pAction) c
 
 bool ApplicationModel::isScreenReaderRunning() const
 {
-	qCWarning(qml) << "NOT IMPLEMENTED";
 	return false;
 }

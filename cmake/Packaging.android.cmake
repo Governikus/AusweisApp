@@ -143,6 +143,7 @@ set(SOURCE_ANDROID_FILE_AAB ${SOURCE_ANDROID_FILE_AAB}/${ANDROID_FILE_AAB})
 
 set(DESTINATION_ANDROID_FILE_BASE ${PROJECT_BINARY_DIR}/dist/${CPACK_PACKAGE_FILE_NAME})
 set(DESTINATION_ANDROID_FILE ${DESTINATION_ANDROID_FILE_BASE}.${ANDROID_FILE_EXT})
+set(DESTINATION_ANDROID_FILE_AAB ${DESTINATION_ANDROID_FILE_BASE}.aab)
 if(INTEGRATED_SDK)
 	add_custom_command(TARGET aar POST_BUILD
 				COMMAND ${ANDROID_BUILD_DIR}/gradlew sourcesJar
@@ -171,11 +172,23 @@ if(INTEGRATED_SDK)
 				WORKING_DIRECTORY ${ANDROID_BUILD_DIR})
 else()
 	find_program(apksigner apksigner HINTS ${ANDROID_SDK_ROOT}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)
+	find_program(jarsigner jarsigner CMAKE_FIND_ROOT_PATH_BOTH)
+
+	if(apksigner OR jarsigner)
+		add_custom_target(verify.signature)
+	endif()
+
 	if(apksigner)
 		if(QT_ANDROID_SIGN_APK)
 			set(APKSIGNER_PARAM -v4-signature-file ${DESTINATION_ANDROID_FILE}.idsig)
 		endif()
-		add_custom_target(verify.signature COMMAND ${apksigner} verify --verbose --print-certs -Werr ${APKSIGNER_PARAM} ${DESTINATION_ANDROID_FILE})
+		add_custom_target(verify.signature.apk COMMAND ${apksigner} verify --verbose --print-certs -Werr ${APKSIGNER_PARAM} ${DESTINATION_ANDROID_FILE})
+		add_dependencies(verify.signature verify.signature.apk)
+	endif()
+
+	if(jarsigner)
+		add_custom_target(verify.signature.aab COMMAND ${jarsigner} -verify -verbose -certs ${DESTINATION_ANDROID_FILE_AAB})
+		add_dependencies(verify.signature verify.signature.aab)
 	endif()
 
 	find_program(aapt NAMES aapt2 aapt HINTS ${ANDROID_SDK_ROOT}/build-tools/${ANDROID_BUILD_TOOLS_REVISION} CMAKE_FIND_ROOT_PATH_BOTH)

@@ -9,7 +9,7 @@ TestCase {
 	function test_load_ProgressView() {
 		let item = createTemporaryQmlObject("
 			import Governikus.ProgressView
-			ProgressView { title: \"ProgessView\" }
+			ProgressView { title: \"ProgressView\" }
 			", parent);
 		item.destroy();
 	}

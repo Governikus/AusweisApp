@@ -89,7 +89,7 @@ SectionPage {
 		anchors {
 			bottom: parent.bottom
 			left: parent.left
-			margins: UiPluginModel.scaleFactor * 80
+			margins: UiPluginModel.scaleFactor * 48
 			right: parent.right
 		}
 	}

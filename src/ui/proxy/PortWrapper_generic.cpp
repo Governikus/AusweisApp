@@ -9,27 +9,32 @@
 #include <QFile>
 #include <QLoggingCategory>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(rproxy)
 
 
-PortWrapper::PortWrapper(const QSharedPointer<HttpRequest>& pRequest)
-	: mPortFiles(PortFile::getAllPortFiles())
+PortWrapper::PortWrapper(quint16 pLocalPort, quint16 pPeerPort)
+	: mPorts()
 {
-	Q_UNUSED(pRequest)
-}
+	Q_UNUSED(pPeerPort)
 
+	const auto& portFiles = PortFile::getAllPortFiles();
+	for (const auto& portFile : portFiles)
+	{
+		const auto& filename = portFile.absoluteFilePath();
+		const auto port = readPortFile(filename);
+		if (port > 0 && port != pLocalPort)
+		{
+			mPorts << port;
+		}
 
-bool PortWrapper::isEmpty() const
-{
-	return mPortFiles.isEmpty();
-}
+		qCWarning(rproxy) << "Ignore invalid port file:" << filename;
+	}
 
-
-void PortWrapper::invalidate()
-{
-	mPortFiles.removeFirst();
+	qCDebug(rproxy) << "Found instances on Ports:" << mPorts;
 }
 
 
@@ -39,25 +44,6 @@ quint16 PortWrapper::readPortFile(const QString& pFile)
 	if (portfile.exists() && portfile.open(QIODevice::ReadOnly | QIODevice::Unbuffered))
 	{
 		return static_cast<quint16>(portfile.readAll().toInt());
-	}
-
-	return 0;
-}
-
-
-quint16 PortWrapper::fetchPort()
-{
-	for (QMutableListIterator iter(mPortFiles); iter.hasNext();)
-	{
-		const auto& filename = iter.next().absoluteFilePath();
-		const auto port = readPortFile(filename);
-		if (port > 0)
-		{
-			return port;
-		}
-
-		qCWarning(rproxy) << "Ignore invalid port file:" << filename;
-		iter.remove();
 	}
 
 	return 0;

@@ -15,7 +15,6 @@ GListView {
 
 	property real maximumContentWidth: Number.POSITIVE_INFINITY
 
-	Accessible.ignored: false
 	activeFocusOnTab: true
 	displayMarginBeginning: Style.dimens.pane_padding
 	displayMarginEnd: Style.dimens.pane_padding
@@ -24,6 +23,10 @@ GListView {
 		maximumContentWidth: root.maximumContentWidth
 		totalItemCount: root.count
 		width: root.width
+
+		onActiveFocusChanged: if (activeFocus) {
+			root.handleItemFocused(index);
+		}
 	}
 	highlight: Item {
 		z: 2
@@ -38,12 +41,12 @@ GListView {
 	Keys.onDownPressed: {
 		do {
 			root.incrementCurrentIndex();
-		} while ((currentItem as FormattedTextView).content === "")
+		} while ((currentItem as FormattedTextView).content === "" && root.currentIndex + 1 < root.count)
 	}
 	Keys.onUpPressed: {
 		do {
 			root.decrementCurrentIndex();
-		} while ((currentItem as FormattedTextView).content === "")
+		} while ((currentItem as FormattedTextView).content === "" && root.currentIndex > 1)
 	}
 
 	layer {

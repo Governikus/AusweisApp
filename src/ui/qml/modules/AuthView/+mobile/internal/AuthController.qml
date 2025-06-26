@@ -23,11 +23,13 @@ Controller {
 	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
 	property bool isInitialState: true
+	readonly property bool isSelfAuth: ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION
 	readonly property bool isSmartWorkflow: AuthModel.readerPluginType === ReaderManagerPluginType.SMART
 	readonly property int passwordType: NumberModel.passwordType
 	readonly property bool smartEidUsed: isSmartWorkflow && !isInitialState
 	property bool startedByOnboarding: false
 	property string title
+	property bool userCancelAndManualRedirect: false
 	property bool workflowProgressVisible: false
 
 	signal changeTransportPin
@@ -67,6 +69,13 @@ Controller {
 			if (!NumberModel.isCanAllowedMode && SettingsModel.transportPinReminder) {
 				SettingsModel.transportPinReminder = false;
 				push(transportPinReminder);
+			} else {
+				AuthModel.continueWorkflow();
+			}
+			break;
+		case "StateCertificateDescriptionCheck":
+			if (ApplicationModel.isScreenReaderRunning && SettingsModel.autoRedirectAfterAuthentication && SettingsModel.remindUserOfAutoRedirect) {
+				push(a11yAutoRedirectDecision);
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -131,8 +140,18 @@ Controller {
 			AuthModel.continueWorkflow();
 			break;
 		case "StateSendDIDAuthenticateResponseEAC1":
+			userCancelAndManualRedirect = false;
 			if (AuthModel.isCancellationByUser()) {
-				replace(authAbortedProgressView);
+				if (SettingsModel.autoRedirectAfterAuthentication) {
+					push(regularAbortedAuthView);
+				} else {
+					userCancelAndManualRedirect = true;
+					push(confirmAbortedAuthView);
+					if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION) {
+						//For a SelfAuth we skip continue otherwise we run staight into FinalState and leave
+						break;
+					}
+				}
 			}
 			AuthModel.continueWorkflow();
 			break;
@@ -155,6 +174,8 @@ Controller {
 		case "StateRedirectBrowser":
 			if (!AuthModel.error) {
 				replace(redirectToProvider);
+			} else if (userCancelAndManualRedirect) {
+				break;
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -163,6 +184,8 @@ Controller {
 			if (AuthModel.changeTransportPin) {
 				AuthModel.continueWorkflow();
 				changeTransportPin();
+			} else if (userCancelAndManualRedirect) {
+				AuthModel.continueWorkflow();
 			} else if (AuthModel.error && !AuthModel.hasNextWorkflowPending && !AuthModel.shouldSkipResultView()) {
 				showRemoveCardFeedback(AuthModel, false);
 				replace(authResult);
@@ -202,11 +225,23 @@ Controller {
 	ConnectivityManager {
 		id: connectivityManager
 
-		watching: true
+		watching: AuthModel.currentState === "StateGetTcToken"
 
 		onNetworkInterfaceActiveChanged: {
-			if (AuthModel.currentState === "StateGetTcToken")
+			if (watching)
 				root.rerunCurrentState();
+		}
+	}
+	Component {
+		id: a11yAutoRedirectDecision
+
+		AutoRedirectDecision {
+			title: root.title
+
+			onLeaveView: {
+				root.pop();
+				AuthModel.continueWorkflow();
+			}
 		}
 	}
 	Component {
@@ -268,8 +303,17 @@ Controller {
 			qsTr("Back to start page")
 			smartEidUsed: root.smartEidUsed
 
-			onDone: AuthModel.continueWorkflow()
-			onRequestBack: root.requestBack()
+			navigationAction: NavigationAction {
+				action: root.startedByOnboarding ? NavigationAction.Action.Back : NavigationAction.Action.Close
+
+				onClicked: {
+					if (root.startedByOnboarding)
+						root.requestBack();
+					AuthModel.continueWorkflow();
+				}
+			}
+
+			onLeaveView: AuthModel.continueWorkflow()
 		}
 	}
 	Component {
@@ -356,7 +400,7 @@ Controller {
 		}
 	}
 	Component {
-		id: authAbortedProgressView
+		id: regularAbortedAuthView
 
 		AbortedProgressView {
 			networkInterfaceActive: connectivityManager.networkInterfaceActive
@@ -364,6 +408,24 @@ Controller {
 			title: root.title
 
 			onCancel: AuthModel.cancelWorkflow()
+		}
+	}
+	Component {
+		id: confirmAbortedAuthView
+
+		AuthCanceledView {
+			smartEidUsed: root.smartEidUsed
+			startedByOnboarding: root.startedByOnboarding
+			title: root.title
+
+			navigationAction: NavigationAction {
+				action: !root.isSelfAuth ? NavigationAction.Cancel : root.startedByOnboarding ? NavigationAction.Back : NavigationAction.Close
+				enabled: root.isSelfAuth
+
+				onClicked: AuthModel.continueWorkflow()
+			}
+
+			onLeaveView: AuthModel.continueWorkflow()
 		}
 	}
 	Component {
@@ -392,10 +454,12 @@ Controller {
 		id: authResult
 
 		ResultErrorView {
+			id: authResultView
+
 			animation: AuthModel.statusCodeAnimation
 			//: LABEL ANDROID IOS
 			buttonText: root.startedByOnboarding ? qsTr("Back to setup") : AuthModel.resultViewButtonText
-			errorCode: AuthModel.statusCodeString
+			errorCode: AuthModel.statusCodeDisplayString
 			errorDescription: AuthModel.errorText
 			//: LABEL ANDROID IOS
 			header: qsTr("Authentication failed")
@@ -408,6 +472,12 @@ Controller {
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
 			title: root.title
+
+			navigationAction: NavigationAction {
+				action: root.startedByOnboarding ? NavigationAction.Action.Back : NavigationAction.Action.Close
+
+				onClicked: authResultView.continueClicked()
+			}
 
 			onContinueClicked: AuthModel.continueWorkflow()
 			onHintClicked: {

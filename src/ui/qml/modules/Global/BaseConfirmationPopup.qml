@@ -81,6 +81,8 @@ Popup {
 			root.accept()
 
 		RowLayout {
+			visible: root.title !== "" || root.showCloseButton
+
 			GText {
 				elide: Text.ElideRight
 				focus: true

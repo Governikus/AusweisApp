@@ -67,7 +67,7 @@ class test_StateGenericSendReceive
 		}
 
 
-		void checkServerAdress_data()
+		void checkServerAddress_data()
 		{
 			QTest::addColumn<bool>("personalization");
 			QTest::addColumn<QUrl>("url");
@@ -77,7 +77,7 @@ class test_StateGenericSendReceive
 		}
 
 
-		void checkServerAdress()
+		void checkServerAddress()
 		{
 			QFETCH(bool, personalization);
 			QFETCH(QUrl, url);

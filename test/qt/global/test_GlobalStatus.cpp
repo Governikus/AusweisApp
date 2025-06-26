@@ -6,6 +6,7 @@
 
 #include <QtTest>
 
+
 using namespace governikus;
 
 
@@ -44,7 +45,7 @@ class test_GlobalStatus
 			QTest::addColumn<QString>("message");
 
 			QTest::newRow("inProgress") << GlobalStatus::Code::Workflow_AlreadyInProgress_Error << tr("Cannot start authentication. An operation is already active.");
-			QTest::newRow("cardRemoved") << GlobalStatus::Code::Workflow_Card_Removed << tr("The connection to the ID card has been lost. The process was aborted.");
+			QTest::newRow("cardRemoved") << GlobalStatus::Code::Workflow_Card_Removed << tr("Restart the authentication process and make sure that the position of the ID card does not change during the reading process.");
 			QTest::newRow("unknownPaos") << GlobalStatus::Code::Workflow_Unknown_Paos_From_EidServer << tr("The program received an unknown message from the server.");
 			QTest::newRow("unexpectedMessage") << GlobalStatus::Code::Workflow_Unexpected_Message_From_EidServer << tr("The program received an unexpected message from the server.");
 			QTest::newRow("preverificationDevelopermode") << GlobalStatus::Code::Workflow_Preverification_Developermode_Error << tr("Using the developer mode is only allowed in a test environment.");
@@ -60,7 +61,6 @@ class test_GlobalStatus
 			QTest::newRow("abnormalClose") << GlobalStatus::Code::RemoteReader_CloseCode_AbnormalClose << tr("The smartphone as card reader (SaC) connection was aborted.");
 			QTest::newRow("invalidRequest") << GlobalStatus::Code::IfdConnector_InvalidRequest << tr("Smartphone as card reader (SaC) connection request was invalid.");
 			QTest::newRow("noSupportedApiLevel") << GlobalStatus::Code::IfdConnector_NoSupportedApiLevel << tr("Your smartphone as card reader (SaC) version is incompatible with the local version. Please install the latest %1 version on both your smartphone and your computer.").arg(QCoreApplication::applicationName());
-			QTest::newRow("connectionTimeout") << GlobalStatus::Code::IfdConnector_ConnectionTimeout << tr("A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 			QTest::newRow("connectionError") << GlobalStatus::Code::IfdConnector_ConnectionError << tr("An error occurred while trying to establish a connection to the smartphone as card reader (SaC).");
 			QTest::newRow("hostRefused") << GlobalStatus::Code::IfdConnector_RemoteHostRefusedConnection << tr("The smartphone to be paired has rejected the connection. Please check the pairing code.");
 			QTest::newRow("fileNotFound") << GlobalStatus::Code::Downloader_File_Not_Found << tr("File not found.");

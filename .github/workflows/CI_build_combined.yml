@@ -8,7 +8,6 @@ env:
   BUILD_DIR_LIBS: "_build_libs"
   BUILD_DIR_APP: "_build"
 
-
 jobs:
   build_windows:
 
@@ -21,38 +20,36 @@ jobs:
 
     steps:
 
-    - name: Install nmake replacement jom, ninja
-      run: |
-           choco install jom ninja
+      - name: Install nmake replacement jom, ninja
+        run: |
+          choco install jom ninja
 
-    - name: Checkout repo
-      uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Add nmake
-      uses: ilammy/msvc-dev-cmd@v1
+      - name: Add nmake
+        uses: ilammy/msvc-dev-cmd@v1
 
-    - name: generate cmake libs
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_LIBS_WIN }}"  D:\a\AusweisApp\AusweisApp\libs
+      - name: generate cmake libs
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_LIBS_WIN }}"  D:\a\AusweisApp\AusweisApp\libs
 
-    - name: build cmake libs
-      run: |
-           cmake --build "${{ env.BUILD_DIR_LIBS_WIN }}" --config ${{ matrix.build_configuration }}
+      - name: build cmake libs
+        run: |
+          cmake --build "${{ env.BUILD_DIR_LIBS_WIN }}" --config ${{ matrix.build_configuration }}
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP_WIN }}"  -DCMAKE_PREFIX_PATH=c:\_build_libs\dist D:\a\AusweisApp\AusweisApp
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B "${{ env.BUILD_DIR_APP_WIN }}"  -DCMAKE_PREFIX_PATH=c:\_build_libs\dist D:\a\AusweisApp\AusweisApp
 
-    - name: build cmake
-      run: |
-           cmake --build "${{ env.BUILD_DIR_APP_WIN }}" --config ${{ matrix.build_configuration }} --target package
-           cmake --install "${{ env.BUILD_DIR_APP_WIN }}"
+      - name: build cmake
+        run: |
+          cmake --build "${{ env.BUILD_DIR_APP_WIN }}" --config ${{ matrix.build_configuration }} --target package
+          cmake --install "${{ env.BUILD_DIR_APP_WIN }}"
 
-    - name: run ctest
-      run: |
-           ctest --test-dir "${{ env.BUILD_DIR_APP_WIN }}" --output-on-failure -C "${{ matrix.build_configuration }}"
-
-
+      - name: run ctest
+        run: |
+          ctest --test-dir "${{ env.BUILD_DIR_APP_WIN }}" --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_linux:
 
@@ -64,33 +61,32 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install packages via apt
-      run: |
-           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
+      - name: Install packages via apt
+        run: |
+          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
 
-    - name: generate cmake libs
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_LIBS }}  ./libs
+      - name: generate cmake libs
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_LIBS }}  ./libs
 
-    - name: build cmake libs
-      run: |
-           cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
+      - name: build cmake libs
+        run: |
+          cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_APP }} -DCMAKE_PREFIX_PATH=./_build_libs/dist
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_APP }} -DCMAKE_PREFIX_PATH=./_build_libs/dist
 
-    - name: build cmake
-      run: |
-           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
-           sudo cmake --install ${{ env.BUILD_DIR_APP }}
+      - name: build cmake
+        run: |
+          cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+          sudo cmake --install ${{ env.BUILD_DIR_APP }}
 
-    - name: run ctest
-      run: |
-           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
-
+      - name: run ctest
+        run: |
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_linux_android:
 
@@ -102,34 +98,34 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install packages via apt
-      run: |
-           sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
-           sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime
+      - name: Install packages via apt
+        run: |
+          sudo apt-get update -qq && sudo apt install -y cmake pkg-config libssl-dev libudev-dev libhttp-parser-dev libpcsclite-dev libgl1-mesa-dev libdbus-1-dev libclang-16-dev libclang-17-dev libclang-18-dev ninja-build
+          sudo apt -y remove firefox microsoft-edge-stable google-chrome-stable kotlin libmono* mono-runtime
 
-    - name: generate cmake libs
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_LIBS }}  ./libs
+      - name: generate cmake libs
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_LIBS }}  ./libs
 
-    - name: build cmake libs
-      run: |
-           cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
-           cmake --install ${{ env.BUILD_DIR_LIBS }}
+      - name: build cmake libs
+        run: |
+          cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
+          cmake --install ${{ env.BUILD_DIR_LIBS }}
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/home/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/android.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
-    - name: build cmake
-      run: |
-           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
-           cmake --install ${{ env.BUILD_DIR_APP }}
+      - name: build cmake
+        run: |
+          cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+          cmake --install ${{ env.BUILD_DIR_APP }}
 
-    - name: run ctest
-      run: |
-           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_macos:
 
@@ -141,32 +137,32 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: install ninja
-      run: |
-           brew install ninja
+      - name: install ninja
+        run: |
+          brew install ninja
 
-    - name: generate cmake libs
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_LIBS }}  ./libs
+      - name: generate cmake libs
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -B ${{ env.BUILD_DIR_LIBS }}  ./libs
 
-    - name: build cmake libs
-      run: |
-           cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
+      - name: build cmake libs
+        run: |
+          cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=./_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=./_build_libs/dist -B ${{ env.BUILD_DIR_APP }}
 
-    - name: build cmake
-      run: |
-           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
-           sudo cmake --install ${{ env.BUILD_DIR_APP }}
+      - name: build cmake
+        run: |
+          cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+          sudo cmake --install ${{ env.BUILD_DIR_APP }}
 
-    - name: run ctest
-      run: |
-           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
 
   build_ios:
 
@@ -178,29 +174,29 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: install ninja
-      run: |
-           brew install ninja
+      - name: install ninja
+        run: |
+          brew install ninja
 
-    - name: generate cmake libs
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_LIBS }}  ./libs
+      - name: generate cmake libs
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_LIBS }}  ./libs
 
-    - name: build cmake libs
-      run: |
-           cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
+      - name: build cmake libs
+        run: |
+          cmake --build ${{ env.BUILD_DIR_LIBS }} --config ${{ matrix.build_configuration }}
 
-    - name: generate cmake
-      run: |
-           cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
+      - name: generate cmake
+        run: |
+          cmake -G "${{ matrix.build_platform }}" -DCMAKE_BUILD_TYPE="${{ matrix.build_configuration }}" -DCMAKE_PREFIX_PATH=/Users/runner/work/AusweisApp/AusweisApp/_build_libs/dist -DCMAKE_TOOLCHAIN_FILE=../cmake/iOS.toolchain.cmake -B ${{ env.BUILD_DIR_APP }}
 
-    - name: build cmake
-      run: |
-           cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
-           sudo cmake --install ${{ env.BUILD_DIR_APP }}
+      - name: build cmake
+        run: |
+          cmake --build ${{ env.BUILD_DIR_APP }} --config ${{ matrix.build_configuration }}
+          sudo cmake --install ${{ env.BUILD_DIR_APP }}
 
-    - name: run ctest
-      run: |
-           ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"
+      - name: run ctest
+        run: |
+          ctest --test-dir ${{ env.BUILD_DIR_APP }} --output-on-failure -C "${{ matrix.build_configuration }}"

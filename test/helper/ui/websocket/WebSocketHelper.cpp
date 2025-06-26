@@ -25,7 +25,7 @@ void WebSocketHelper::onTextMessageReceived(const QString& pMessage)
 
 
 WebSocketHelper::WebSocketHelper(int pPort, int pConnectionTimeout)
-	: mConnectionTiemout(pConnectionTimeout)
+	: mConnectionTimeout(pConnectionTimeout)
 {
 	connect(&mWebSocket, &QWebSocket::textMessageReceived, this, &WebSocketHelper::onTextMessageReceived);
 	connectWebsocket(pPort);
@@ -64,11 +64,11 @@ bool WebSocketHelper::waitForMessage(const std::function<bool(const QJsonObject&
 		QEventLoop eventLoop;
 		connect(&mWebSocket, &QWebSocket::textMessageReceived, &eventLoop, &QEventLoop::quit);
 
-		QTimer::singleShot(mConnectionTiemout, &eventLoop, &QEventLoop::quit);
+		QTimer::singleShot(mConnectionTimeout, &eventLoop, &QEventLoop::quit);
 
 		eventLoop.exec();
 	}
-	while (QDateTime::currentMSecsSinceEpoch() - start < mConnectionTiemout);
+	while (QDateTime::currentMSecsSinceEpoch() - start < mConnectionTimeout);
 
 	return false;
 }

@@ -172,7 +172,7 @@ class test_SecureMessaging
 		}
 
 
-		void testExtendedLengthAfterEcryption()
+		void testExtendedLengthAfterEncryption()
 		{
 			const QByteArray data(250, 0x42);
 			const CommandApdu command(Ins::MSE_SET, 0x20, 0x30, data, 24);
@@ -316,7 +316,7 @@ class test_SecureMessaging
 		}
 
 
-		void testMaximumLengthExeeded()
+		void testMaximumLengthExceeded()
 		{
 			CommandApdu apdu = CommandApdu(QByteArray::fromHex("00010203"), QByteArray(65535, 0x42), 1);
 			QTest::ignoreMessage(QtCriticalMsg, "Command data exceeds maximum of 0xffff");

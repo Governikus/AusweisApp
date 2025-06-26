@@ -4,45 +4,39 @@
 
 #pragma once
 
-#include "HttpRequest.h"
+#include <QList>
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
 
 	#include <iphlpapi.h>
 	#include <tlhelp32.h>
-#else
-	#include <QFileInfoList>
 #endif
+
 
 namespace governikus
 {
 class PortWrapper
 {
 	private:
-#ifdef Q_OS_WIN
-		quint16 mPort;
-
-#else
-		QFileInfoList mPortFiles;
-#endif
+		QList<quint16> mPorts;
 
 #ifdef Q_OS_WIN
 		static QString getUserOfProcessID(DWORD pPid);
 		static QString getExecutableOfProcessID(DWORD pPid);
-		static quint16 getPortOfRunningProcess(const QList<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pRemoteAddr);
-		static QString getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pProxyAddr);
+		static quint16 getPortOfRunningProcess(const MIB_TCPROW_OWNER_PID& pConnection, const QString& pUser, quint16 pLocalPort);
+		static QString getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pPeerPort);
 		static QList<MIB_TCPROW_OWNER_PID> getConnections();
-		static quint16 getProcessPort(quint16 pLocalPort, quint16 pRemotePort);
+		static quint16 getProcessPort(quint16 pLocalPort, quint16 pPeerPort);
 #else
 		static quint16 readPortFile(const QString& pFile);
 #endif
 
 	public:
-		explicit PortWrapper(const QSharedPointer<HttpRequest>& pRequest);
+		explicit PortWrapper(quint16 pLocalPort, quint16 pPeerPort = 0);
 
 		[[nodiscard]] bool isEmpty() const;
-		quint16 fetchPort();
+		[[nodiscard]] quint16 fetchPort() const;
 		void invalidate();
 };
 

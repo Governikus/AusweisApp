@@ -39,7 +39,7 @@ class test_DidAuthenticateEac1
 			QTest::addColumn<QString>("filename");
 
 			const QStringList sel = QStringList({"DIDAuthenticateEAC1*.xml"_L1});
-			QStringList files = QDir(":/paos"_L1).entryList(sel, QDir::Files);
+			const QStringList files = QDir(":/paos"_L1).entryList(sel, QDir::Files);
 			for (const auto& file : files)
 			{
 				QTest::newRow(file.toLatin1().data()) << ":/paos/"_L1 + file;

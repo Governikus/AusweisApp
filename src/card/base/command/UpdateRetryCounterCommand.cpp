@@ -7,8 +7,9 @@
 using namespace governikus;
 
 
-UpdateRetryCounterCommand::UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker)
+UpdateRetryCounterCommand::UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pSlotHandle)
 	: BaseCardCommand(pCardConnectionWorker)
+	, mSlotHandle(pSlotHandle)
 {
 }
 
@@ -16,4 +17,10 @@ UpdateRetryCounterCommand::UpdateRetryCounterCommand(QSharedPointer<CardConnecti
 void UpdateRetryCounterCommand::internalExecute()
 {
 	setReturnCode(getCardConnectionWorker()->updateRetryCounter());
+}
+
+
+const QString& UpdateRetryCounterCommand::getSlotHandle() const
+{
+	return mSlotHandle;
 }

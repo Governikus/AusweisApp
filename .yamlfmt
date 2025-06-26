@@ -1,0 +1,7 @@
+formatter:
+  type: basic
+  indent: 2
+  line_ending: lf
+  retain_line_breaks: true
+  retain_line_breaks_single: true
+  eof_newline: true

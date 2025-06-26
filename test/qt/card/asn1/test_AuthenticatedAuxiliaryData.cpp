@@ -81,20 +81,20 @@ class test_AuthenticatedAuxiliaryData
 
 			QTest::newRow("invalid") << QString() << QDate();
 
-			QTest::newRow("vor der Geburt (1 Jahr, 2 Tage)") << QStringLiteral("-2") << QDate(1977, 8, 14);
-			QTest::newRow("vor der Geburt (2 Tage)") << QStringLiteral("-1") << QDate(1978, 8, 14);
-			QTest::newRow("vor der Geburt (1 Tag)") << QStringLiteral("-1") << QDate(1978, 8, 15);
+			QTest::newRow("vor der Geburt (1 Jahr, 2 Tage)") << QStringLiteral("-2") << QDate(1977, 8, 14); // codespell:ignore
+			QTest::newRow("vor der Geburt (2 Tage)") << QStringLiteral("-1") << QDate(1978, 8, 14); // codespell:ignore
+			QTest::newRow("vor der Geburt (1 Tag)") << QStringLiteral("-1") << QDate(1978, 8, 15); // codespell:ignore
 
 			QTest::newRow("Geburt") << QStringLiteral("0") << QDate(1978, 8, 16);
 
 			QTest::newRow("1 Tag") << QStringLiteral("0") << QDate(1978, 8, 17);
-			QTest::newRow("Ende des Jahres") << QStringLiteral("0") << QDate(1978, 12, 31);
+			QTest::newRow("Ende des Jahres") << QStringLiteral("0") << QDate(1978, 12, 31); // codespell:ignore
 			QTest::newRow("Anfang naechstes Jahr") << QStringLiteral("0") << QDate(1979, 1, 1);
 
 			QTest::newRow("vorm 1. Geburtstag") << QStringLiteral("0") << QDate(1979, 8, 15);
 			QTest::newRow("1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 16);
 			QTest::newRow("nach 1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 17);
-			QTest::newRow("Ende Monats nach 1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 31);
+			QTest::newRow("Ende Monats nach 1. Geburtstag") << QStringLiteral("1") << QDate(1979, 8, 31); // codespell:ignore
 		}
 
 

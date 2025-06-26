@@ -1,0 +1,25 @@
+AusweisApp 2.3.2
+^^^^^^^^^^^^^^^^
+
+**Releasedatum:** 26. Juni 2025
+
+
+Anwender
+""""""""
+- Verbesserungen im Bereich der Barrierefreiheit.
+
+- Visuelle Anpassungen und Optimierungen der grafischen Oberfläche.
+
+- Das kurzzeitige Entfernen des Ausweises auf einem Android Smartphone als
+  Kartenleser vor der Passworteingabe führt nicht mehr zu einem Fehler.
+
+- Unter Windows werden jetzt auch Smartphones als Kartenleser erkannt,
+  die sich ausschließlich über IPv6 erreichen lassen.
+
+- Unterstützung von Smartphones als Kartenleser unter Windows Server.
+
+
+Entwickler
+""""""""""
+- Relative URL-Weiterleitungen bei einer Authentisierung werden korrekt
+  berücksichtigt.

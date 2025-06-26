@@ -109,6 +109,12 @@ QString AuthModel::getErrorHeader() const
 		return QString();
 	}
 
+	if (getStatusCode() == GlobalStatus::Code::Workflow_Card_Removed)
+	{
+		//: LABEL ALL_PLATFORMS
+		return tr("Connection to ID card lost");
+	}
+
 	const auto& tcTokenUrl = mContext->getTcTokenUrl();
 	return tcTokenUrl.scheme() + QStringLiteral("://") + tcTokenUrl.authority();
 }
@@ -138,12 +144,6 @@ QString AuthModel::getErrorText() const
 	}
 
 	return errorDescription;
-}
-
-
-QString AuthModel::getStatusCodeString() const
-{
-	return getEnumName(getStatusCode());
 }
 
 

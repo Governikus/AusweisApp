@@ -20,12 +20,13 @@ class IfdEstablishPaceChannelResponse
 		void parseOutputData(const QJsonObject& pMessageObject);
 
 	public:
-		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pOutputData, ECardApiResult::Minor pResultMinor = ECardApiResult::Minor::null);
+		IfdEstablishPaceChannelResponse(const QString& pSlotHandle, const EstablishPaceChannelOutput& pOutputData, ECardApiResult::Minor pResultMinor);
 		explicit IfdEstablishPaceChannelResponse(const QJsonObject& pMessageObject);
 		~IfdEstablishPaceChannelResponse() override = default;
 
 		[[nodiscard]] const QString& getSlotHandle() const;
 		[[nodiscard]] const EstablishPaceChannelOutput& getOutputData() const;
+		[[nodiscard]] CardReturnCode getReturnCode() const;
 		[[nodiscard]] QByteArray toByteArray(IfdVersion::Version pIfdVersion, const QString& pContextHandle) const override;
 };
 

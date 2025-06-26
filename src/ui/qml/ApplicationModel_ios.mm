@@ -53,13 +53,7 @@ using namespace governikus;
 		if (self.mRunning != isRunning)
 		{
 			self.mRunning = isRunning;
-			QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-						auto* applicationModel = Env::getSingleton<ApplicationModel>();
-						if (applicationModel)
-						{
-							Q_EMIT applicationModel->fireScreenReaderRunningChanged();
-						}
-					}, Qt::QueuedConnection);
+			ApplicationModel::notifyScreenReaderChangedThreadSafe();
 		}
 	}
 }

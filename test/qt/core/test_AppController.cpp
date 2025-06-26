@@ -64,14 +64,14 @@ class test_AppController
 					});
 
 			QSignalSpy spy(mController.data(), &AppController::fireWorkflowStarted);
-			QTest::ignoreMessage(QtInfoMsg, "Started new workflow PIN");
+			QTest::ignoreMessage(QtInfoMsg, "Started new workflow CHANGE_PIN");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::ChangePinController");
 			QVERIFY(mController->startNewWorkflow(ChangePinController::createWorkflowRequest()));
 			QVERIFY(mController->mActiveWorkflow->getController()->mContext->wasClaimed());
-			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::PIN);
+			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::CHANGE_PIN);
 			QCOMPARE(spy.count(), 1);
 
-			QTest::ignoreMessage(QtWarningMsg, "Cannot start new workflow: PIN | Current workflow: PIN");
+			QTest::ignoreMessage(QtWarningMsg, "Cannot start new workflow: CHANGE_PIN | Current workflow: CHANGE_PIN");
 			QVERIFY(!mController->startNewWorkflow(ChangePinController::createWorkflowRequest()));
 		}
 
@@ -107,14 +107,14 @@ class test_AppController
 			mController->onWorkflowRequested(ChangePinController::createWorkflowRequest());
 			mController->onWorkflowRequested(ChangePinController::createWorkflowRequest());
 			QTest::ignoreMessage(QtDebugMsg, "governikus::ChangePinController done");
-			QTest::ignoreMessage(QtInfoMsg, "Finish workflow PIN");
+			QTest::ignoreMessage(QtInfoMsg, "Finish workflow CHANGE_PIN");
 			QTest::ignoreMessage(QtDebugMsg, "Running waiting action now.");
-			QTest::ignoreMessage(QtInfoMsg, "Started new workflow PIN");
+			QTest::ignoreMessage(QtInfoMsg, "Started new workflow CHANGE_PIN");
 			mController->onWorkflowFinished();
 			QCOMPARE(spyWorkflowFinished.count(), 1);
 			QVERIFY(!mController->mWaitingRequest);
 			QVERIFY(mController->mActiveWorkflow);
-			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::PIN);
+			QCOMPARE(mController->mActiveWorkflow->getController()->mContext->getAction(), Action::CHANGE_PIN);
 		}
 
 
@@ -126,7 +126,7 @@ class test_AppController
 			mController->mActiveWorkflow->getController()->mContext->setWorkflowFinished(true);
 			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl(QStringLiteral("https://localhost"))));
 			QTest::ignoreMessage(QtDebugMsg, "governikus::SelfAuthController done");
-			QTest::ignoreMessage(QtInfoMsg, "Finish workflow SELF");
+			QTest::ignoreMessage(QtInfoMsg, "Finish workflow SELF_AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Running waiting action now.");
 			QTest::ignoreMessage(QtInfoMsg, "Started new workflow AUTH");
 			mController->onWorkflowFinished();
@@ -159,9 +159,9 @@ class test_AppController
 						pRequest->getContext()->claim(this);
 					});
 
-			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
+			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF_AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::SelfAuthController");
-			QTest::ignoreMessage(QtInfoMsg, "Started new workflow SELF");
+			QTest::ignoreMessage(QtInfoMsg, "Started new workflow SELF_AUTH");
 			mController->onWorkflowRequested(SelfAuthController::createWorkflowRequest());
 			QVERIFY(mController->mActiveWorkflow->getController()->mContext->wasClaimed());
 			mController->mActiveWorkflow->getController()->mContext->setWorkflowFinished(true);
@@ -173,12 +173,12 @@ class test_AppController
 			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
 			QVERIFY(mController->mActiveWorkflow->getController()->mContext->isStateApproved());
 
-			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
-			QTest::ignoreMessage(QtWarningMsg, "Cannot start or enqueue workflow: SELF");
+			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF_AUTH");
+			QTest::ignoreMessage(QtWarningMsg, "Cannot start or enqueue workflow: SELF_AUTH");
 			mController->onWorkflowRequested(SelfAuthController::createWorkflowRequest());
 
 			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: AUTH");
-			QTest::ignoreMessage(QtWarningMsg, "Skip workflow: AUTH | Current workflow: SELF");
+			QTest::ignoreMessage(QtWarningMsg, "Skip workflow: AUTH | Current workflow: SELF_AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Waiting workflow: AUTH");
 			mController->onWorkflowRequested(AuthController::createWorkflowRequest(QUrl()));
 		}
@@ -186,9 +186,9 @@ class test_AppController
 
 		void test_notClaimed()
 		{
-			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF");
+			QTest::ignoreMessage(QtDebugMsg, "New workflow requested: SELF_AUTH");
 			QTest::ignoreMessage(QtDebugMsg, "Start governikus::SelfAuthController");
-			QTest::ignoreMessage(QtInfoMsg, "Started new workflow SELF");
+			QTest::ignoreMessage(QtInfoMsg, "Started new workflow SELF_AUTH");
 			QTest::ignoreMessage(QtCriticalMsg, "Workflow was not claimed by any UI... aborting");
 			QTest::ignoreMessage(QtWarningMsg, "Killing the current workflow.");
 

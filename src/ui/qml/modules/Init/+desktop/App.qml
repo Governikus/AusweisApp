@@ -43,7 +43,20 @@ ApplicationWindow {
 	}
 
 	Component.onCompleted: titleBar.forceActiveFocus(Qt.MouseFocusReason)
+	onActiveChanged: {
+		if (root.active && contentArea.activeModule === UiModule.DEFAULT) {
+			switch (root.visibility) {
+			case ApplicationWindow.Windowed:
+			case ApplicationWindow.Maximized:
+			case ApplicationWindow.FullScreen:
+				UiPluginModel.showUpdateInformationIfPending();
+			default:
+				break;
+			}
+		}
+	}
 	onClosing: close => {
+		ApplicationModel.fireAppAboutToQuit();
 		close.accepted = closeHandler.handle();
 	}
 	onHeightChanged: d.setScaleFactor()
@@ -112,7 +125,7 @@ ApplicationWindow {
 				ensureWidth(windowMargin);
 				root.x = screenMinX + windowMargin;
 			}
-			let screenMinY = root.Screen.virtualY;
+			let screenMinY = root.Screen.virtualY; // codespell:ignore
 			if (root.y < screenMinY) {
 				ensureHeight(windowMargin);
 				root.y = screenMinY + windowMargin;
@@ -206,8 +219,18 @@ ApplicationWindow {
 			root.show();
 			root.raise();
 		}
-		onHide: d.hideUiAndTaskbarEntry()
-		onQuit: UiPluginModel.fireQuitApplicationRequest()
+		onHide: {
+			if (redirectOnSuccess) {
+				AuthModel.continueWorkflow();
+			}
+			d.hideUiAndTaskbarEntry();
+		}
+		onQuit: {
+			if (redirectOnSuccess) {
+				AuthModel.continueWorkflow();
+			}
+			UiPluginModel.fireQuitApplicationRequest();
+		}
 		onShowMinimized: root.showMinimized()
 	}
 	Connections {
@@ -233,11 +256,16 @@ ApplicationWindow {
 			contentArea.setUiModule(pModule);
 			d.ensureScreenFit();
 		}
+		function onIsUpdatePendingChanged() {
+			if (UiPluginModel.isUpdatePending && contentArea.activeModule === UiModule.DEFAULT) {
+				UiPluginModel.showUpdateInformationIfPending();
+			}
+		}
 
 		target: UiPluginModel
 	}
 	Connections {
-		function onFireAppUpdateDataChanged() {
+		function onFireAppUpdateDataChanged(pAfterManualRequest) {
 			if (!SettingsModel.appUpdateData.valid) {
 				//: INFO DESKTOP Message that the update data is invalid and can't be used.
 				ApplicationModel.showFeedback(qsTr("Failed to retrieve update information."));

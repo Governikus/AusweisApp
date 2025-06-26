@@ -55,7 +55,7 @@ FlickableSectionPage {
 			height: childrenRect.height
 			interactive: false
 			model: RemoteServiceModel.availablePairedDevices
-			spacing: Style.dimens.pane_spacing
+			spacing: Style.dimens.text_spacing
 			width: parent.width
 
 			delegate: DevicesListDelegate {
@@ -83,7 +83,7 @@ FlickableSectionPage {
 			height: childrenRect.height
 			interactive: false
 			model: RemoteServiceModel.unavailablePairedDevices
-			spacing: Style.dimens.pane_spacing
+			spacing: Style.dimens.text_spacing
 			width: parent.width
 
 			delegate: DevicesListDelegate {
@@ -126,7 +126,7 @@ FlickableSectionPage {
 
 			height: contentHeight
 			model: RemoteServiceModel.availableDevicesInPairingMode
-			spacing: Style.dimens.pane_spacing
+			spacing: Style.dimens.text_spacing
 			visible: ApplicationModel.wifiEnabled && count > 0
 			width: parent.width
 

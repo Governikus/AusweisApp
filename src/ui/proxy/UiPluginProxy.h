@@ -9,7 +9,11 @@
 #include "HttpServer.h"
 #include "UiPlugin.h"
 
+#include <QUdpSocket>
+
+
 class test_UiPluginProxy;
+
 
 namespace governikus
 {
@@ -24,11 +28,13 @@ class UiPluginProxy
 
 	private:
 		QSharedPointer<HttpServer> mServer;
+		QScopedPointer<QUdpSocket, QScopedPointerDeleteLater> mSocket;
 
 		[[nodiscard]] bool listen();
 
 		void handleShowUiRequest(const QString& pUiModule, const QSharedPointer<HttpRequest>& pRequest) override;
 		void handleWorkflowRequest(const QSharedPointer<HttpRequest>& pRequest) override;
+		void handleBroadcast();
 
 	private Q_SLOTS:
 		void doShutdown() override;

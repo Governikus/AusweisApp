@@ -5,8 +5,11 @@
 #pragma once
 
 #include <QHostAddress>
+#include <QNetworkAddressEntry>
+
 
 class test_DatagramHandlerImpl;
+
 
 namespace governikus
 {
@@ -20,7 +23,8 @@ class DatagramHandler
 		explicit DatagramHandler(bool pEnableListening = true);
 		~DatagramHandler() override = default;
 		[[nodiscard]] virtual bool isBound() const = 0;
-		virtual void send(const QByteArray& pData) = 0;
+		[[nodiscard]] virtual QList<QNetworkAddressEntry> getAllBroadcastEntries() const = 0;
+		virtual void send(const QByteArray& pData, const QList<QNetworkAddressEntry>& pEntries) = 0;
 
 	Q_SIGNALS:
 		void fireNewMessage(const QByteArray& pData, const QHostAddress& pAddress);

@@ -194,7 +194,7 @@ ResponseApduResult CardConnectionWorker::transmit(const CommandApdu& pCommandApd
 		result.mResponseApdu = mSecureMessaging->decrypt(result.mResponseApdu);
 		if (result.mResponseApdu.isEmpty())
 		{
-			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must not be re-used.";
+			qCDebug(::card) << "Stopping Secure Messaging since it failed. The channel therefore must not be reused.";
 			stopSecureMessaging();
 
 			return {CardReturnCode::COMMAND_FAILED};
@@ -328,6 +328,29 @@ EstablishPaceChannelOutput CardConnectionWorker::establishPaceChannel(PacePasswo
 		const bool isTransportPin = (pPasswordValue == QByteArray(5, 0));
 		Q_ASSERT(pPasswordValue.isNull() || isTransportPin);
 		output = card->establishPaceChannel(pPasswordId, isTransportPin ? 5 : 6, pChat, pCertificateDescription);
+
+		if (mReader->getReaderInfo().getPluginType() == ReaderManagerPluginType::PCSC
+				&& output.getPaceReturnCode() == CardReturnCode::INVALID_PASSWORD
+				&& pPasswordId == PacePasswordId::PACE_PIN
+				&& output.getStatusCodeMseSetAt() == StatusCode::UNKNOWN)
+		{
+			qCWarning(::card) << "Add missing StatusCodeMseSet in EstablishPaceChannelOutput for Reiner SCT reader with pin pad"
+								 " that do not follow PCSC Part 10 IFDs with Secure PIN Entry Capabilities - AMENDMENT 1.1";
+			switch (mReader->getReaderInfo().getRetryCounter())
+			{
+				case 2:
+					output.setStatusMseSetAt(QByteArray::fromHex("63C2"));
+					break;
+
+				case 1:
+					output.setStatusMseSetAt(QByteArray::fromHex("63C1"));
+					break;
+
+				default:
+					output.setStatusMseSetAt(QByteArray::fromHex("9000"));
+
+			}
+		}
 	}
 
 	if (output.getPaceReturnCode() == CardReturnCode::INVALID_PASSWORD)

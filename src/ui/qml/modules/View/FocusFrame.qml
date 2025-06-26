@@ -14,7 +14,7 @@ Rectangle {
 	property Item framee: parent
 	property real marginFactor: 1
 	property Item scope: parent
-	property real size: Math.max(UiPluginModel.scaleFactor * 4, 1)
+	property real size: Style.dimens.border_width * 2
 
 	anchors.fill: framee
 	anchors.margins: marginFactor * -size * 2

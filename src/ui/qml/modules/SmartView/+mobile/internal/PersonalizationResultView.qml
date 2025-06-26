@@ -25,7 +25,7 @@ ResultErrorView {
 	qsTr("Back to start page") :
 	//: LABEL ANDROID IOS
 	qsTr("Continue")
-	errorCode: PersonalizationModel.error ? PersonalizationModel.statusCodeString : ""
+	errorCode: PersonalizationModel.error ? PersonalizationModel.statusCodeDisplayString : ""
 	errorDescription: PersonalizationModel.error ? PersonalizationModel.errorText : ""
 	//: LABEL ANDROID IOS
 	header: qsTr("Personalization failed")

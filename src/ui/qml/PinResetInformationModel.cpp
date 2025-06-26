@@ -27,6 +27,22 @@ bool PinResetInformationModel::hasPinResetService() const
 }
 
 
+QUrl PinResetInformationModel::getAdministrativeSearchUrl() const
+{
+	if (LanguageLoader::getLocaleCode() == QLatin1String("de"))
+	{
+		return QStringLiteral("https://servicesuche.bund.de");
+	}
+	return QStringLiteral("https://servicesuche.bund.de/#/en");
+}
+
+
+QUrl PinResetInformationModel::getPinResetActivationUrl() const
+{
+	return QStringLiteral("https://www.pin-ruecksetzbrief-bestellen.de/aktivierung");
+}
+
+
 QUrl PinResetInformationModel::getPinResetUrl() const
 {
 	const auto* config = Env::getSingleton<ProviderConfiguration>();
@@ -35,11 +51,7 @@ QUrl PinResetInformationModel::getPinResetUrl() const
 
 	if (homepage.isEmpty())
 	{
-		if (LanguageLoader::getLocaleCode() == QLatin1String("de"))
-		{
-			return QStringLiteral("https://servicesuche.bund.de");
-		}
-		return QStringLiteral("https://servicesuche.bund.de/#/en");
+		return getAdministrativeSearchUrl();
 	}
 
 	if (LanguageLoader::getLocaleCode() != QLatin1String("de"))

@@ -58,4 +58,11 @@ ResultView {
 
 		onTriggered: root.confirm()
 	}
+	Connections {
+		function onFireAppAboutToQuit() {
+			timeout.stop();
+		}
+
+		target: ApplicationModel
+	}
 }

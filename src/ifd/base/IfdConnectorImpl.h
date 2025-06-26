@@ -10,6 +10,10 @@
 #include <QTimer>
 #include <QWebSocket>
 
+
+class test_IfdConnector;
+
+
 namespace governikus
 {
 
@@ -17,17 +21,17 @@ class IfdConnectorImpl
 	: public IfdConnector
 {
 	Q_OBJECT
+	friend class ::test_IfdConnector;
 
 	private:
 		const int mConnectTimeoutMs;
 		QList<QSharedPointer<ConnectRequest>> mPendingRequests;
 
-		void removeRequest(const IfdDescriptor& pIfdDescriptor);
+		QSharedPointer<ConnectRequest> removeRequest(ConnectRequest const* pRequest);
 
 	private Q_SLOTS:
-		void onConnectionCreated(const IfdDescriptor& pIfdDescriptor, const QSharedPointer<QWebSocket>& pWebSocket);
-		void onConnectionError(const IfdDescriptor& pIfdDescriptor, const IfdErrorCode& pError);
-		void onConnectionTimeout(const IfdDescriptor& pIfdDescriptor);
+		void onConnectionCreated(ConnectRequest const* pRequest, const QSharedPointer<QWebSocket>& pWebSocket);
+		void onConnectionError(ConnectRequest const* pRequest, const IfdErrorCode& pError);
 
 	public:
 		explicit IfdConnectorImpl(int pConnectTimeoutMs = 5000);

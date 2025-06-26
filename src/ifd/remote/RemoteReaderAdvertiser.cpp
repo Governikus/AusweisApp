@@ -41,7 +41,16 @@ void RemoteReaderAdvertiserImpl::timerEvent(QTimerEvent* pEvent)
 
 void RemoteReaderAdvertiserImpl::sendDiscovery()
 {
-	mHandler->send(mDiscovery.toByteArray(IfdVersion::Version::latest));
+	const auto& broadcastEntries = mHandler->getAllBroadcastEntries();
+
+	QList<QHostAddress> sender;
+	for (const auto& broadcastEntry : broadcastEntries)
+	{
+		sender << broadcastEntry.ip();
+	}
+	mDiscovery.setAddresses(sender);
+
+	mHandler->send(mDiscovery.toByteArray(IfdVersion::Version::latest), broadcastEntries);
 }
 
 

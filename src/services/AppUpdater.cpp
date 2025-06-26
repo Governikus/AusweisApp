@@ -230,7 +230,7 @@ void AppUpdater::handleChecksumDownloadFinished(const QUrl& pUpdateUrl, const QB
 		if (mAppUpdateData.isChecksumValid())
 		{
 			clearDownloaderConnection();
-			qCDebug(appupdate) << "Re-use valid package...";
+			qCDebug(appupdate) << "Reuse valid package...";
 			Q_EMIT fireAppDownloadFinished(GlobalStatus::Code::No_Error);
 			return;
 		}

@@ -20,13 +20,7 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_MainActivity_notifyScreen
 {
 	Q_UNUSED(pEnv)
 	Q_UNUSED(pObj)
-	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
-				auto* applicationModel = Env::getSingleton<ApplicationModel>();
-				if (applicationModel)
-				{
-					Q_EMIT applicationModel->fireScreenReaderRunningChanged();
-				}
-			}, Qt::QueuedConnection);
+	ApplicationModel::notifyScreenReaderChangedThreadSafe();
 }
 
 

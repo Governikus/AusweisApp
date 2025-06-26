@@ -1,0 +1,66 @@
+From 708582624105e9e06f573d95a651a5cb6ee3c590 Mon Sep 17 00:00:00 2001
+From: Marc Mutz <marc.mutz@qt.io>
+Date: Fri, 25 Apr 2025 13:58:25 +0200
+Subject: qDecodeDataUrl(): fix precondition violation in call to
+ QByteArrayView::at()
+
+It is a precondition violation to call QByteArrayView::at() with
+size() as argument. The code used that, though, as an implicit
+end-of-string check, assuming == ' ' and == '=' would both fail for
+null bytes. Besides, QByteArrays (but most certainly QByteArrayViews)
+need not be null-terminated, so this could read even past size().
+
+To fix, use higher-level API (startsWith()), consuming parsed tokens
+along the way.
+
+Add a test that would crash in debug mode before the fix.
+
+Amends the start of the public history.
+
+[ChangeLog][QtCore] Fixed a bug in the handling of data: URLs that
+could lead to a crash if Qt was built with assertions enabled. This
+affects QNetworkManager and links in QTextDocument.
+
+Pick-to: 6.9 6.8 6.5 6.5.9 6.2 5.15
+Change-Id: I4331c88051dfbb0a18fe7da4f50858c707785d09
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Ahmad Samir <a.samirh78@gmail.com>
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+(cherry picked from commit 4d839093b480d30eef8a89c0f864ee3f340adaa1)
+---
+ src/corelib/io/qdataurl.cpp                     | 8 ++++----
+ tests/auto/corelib/io/qdataurl/tst_qdataurl.cpp | 2 ++
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git x/qtbase/src/corelib/io/qdataurl.cpp y/qtbase/src/corelib/io/qdataurl.cpp
+index 65b934b3f67f72437de9593e36e7d14cbf46f266..c5ecca8fb826ec999b2266381e08b6e7014e7b1f 100644
+--- x/qtbase/src/corelib/io/qdataurl.cpp
++++ y/qtbase/src/corelib/io/qdataurl.cpp
+@@ -47,10 +47,10 @@ Q_CORE_EXPORT bool qDecodeDataUrl(const QUrl &uri, QString &mimeType, QByteArray
+         QLatin1StringView textPlain;
+         constexpr auto charset = "charset"_L1;
+         if (QLatin1StringView{data}.startsWith(charset, Qt::CaseInsensitive)) {
+-            qsizetype i = charset.size();
+-            while (data.at(i) == ' ')
+-                ++i;
+-            if (data.at(i) == '=')
++            QByteArrayView copy = data.sliced(charset.size());
++            while (copy.startsWith(' '))
++                copy.slice(1);
++            if (copy.startsWith('='))
+                 textPlain = "text/plain;"_L1;
+         }
+ 
+diff --git x/qtbase/tests/auto/corelib/io/qdataurl/tst_qdataurl.cpp y/qtbase/tests/auto/corelib/io/qdataurl/tst_qdataurl.cpp
+index e694a791015882d6fd00995db0217b94caa04777..943b168e0567c0ed2522e4e89c6fbf389123c05c 100644
+--- x/qtbase/tests/auto/corelib/io/qdataurl/tst_qdataurl.cpp
++++ y/qtbase/tests/auto/corelib/io/qdataurl/tst_qdataurl.cpp
+@@ -34,6 +34,8 @@ void tst_QDataUrl::decode_data()
+         "text/plain"_L1, QByteArray::fromPercentEncoding("%E2%88%9A"));
+     row("everythingIsCaseInsensitive", "Data:texT/PlaiN;charSet=iSo-8859-1;Base64,SGVsbG8=", true,
+         "texT/PlaiN;charSet=iSo-8859-1"_L1, QByteArrayLiteral("Hello"));
++    row("prematureCharsetEnd", "data:charset,", true,
++        "charset", ""); // nonsense result, but don't crash
+ }
+ 
+ void tst_QDataUrl::decode()

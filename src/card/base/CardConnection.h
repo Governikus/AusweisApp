@@ -22,6 +22,7 @@
 #include "command/UpdateRetryCounterCommand.h"
 
 #include <QByteArray>
+#include <QLoggingCategory>
 
 
 class test_CardConnection;
@@ -37,6 +38,8 @@ class CardConnection
 	friend class ::test_CardConnection;
 
 	private:
+		static const QLoggingCategory& getLoggingCategory();
+
 		/*!
 		 * The connection worker talks to the Card held by the Reader.
 		 */
@@ -47,7 +50,7 @@ class CardConnection
 		bool mPacePinSuccessful;
 
 		TransmitCommand* createTransmitCommand(const QList<InputAPDUInfo>& pInputApduInfos, const QString& pSlotHandle);
-		UpdateRetryCounterCommand* createUpdateRetryCounterCommand();
+		UpdateRetryCounterCommand* createUpdateRetryCounterCommand(const QString& pSlotHandle);
 		ResetRetryCounterCommand* createResetRetryCounterCommand();
 
 		EstablishPaceChannelCommand* createEstablishPaceChannelCommand(PacePasswordId pPacePasswordId, const QByteArray& pPacePassword, const QByteArray& pEffectiveChat, const QByteArray& pCertificateDescription);
@@ -74,7 +77,7 @@ class CardConnection
 			}
 			else
 			{
-				qCCritical(card) << "Cannot invoke card command:" << pCommand->metaObject()->className();
+				qCCritical(getLoggingCategory()) << "Cannot invoke card command:" << pCommand->metaObject()->className();
 				pCommand->deleteLater();
 			}
 
@@ -187,9 +190,10 @@ class CardConnection
 
 
 		template<typename T>
-		QMetaObject::Connection callUpdateRetryCounterCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc)
+		QMetaObject::Connection callUpdateRetryCounterCommand(const typename QtPrivate::FunctionPointer<T>::Object* pReceiver, T pFunc,
+			const QString& pSlotHandle = QString())
 		{
-			auto command = createUpdateRetryCounterCommand();
+			auto command = createUpdateRetryCounterCommand(pSlotHandle);
 			return call(command, pReceiver, pFunc);
 		}
 

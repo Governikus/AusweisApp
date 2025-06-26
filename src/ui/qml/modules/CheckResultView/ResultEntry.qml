@@ -8,6 +8,7 @@ import QtQuick.Layouts
 import Governikus.Animations
 import Governikus.Global
 import Governikus.Style
+import Governikus.Type
 
 RowLayout {
 	id: root
@@ -28,6 +29,7 @@ RowLayout {
 	Layout.alignment: Qt.AlignLeft
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
+	activeFocusOnTab: ApplicationModel.isScreenReaderRunning
 	spacing: Style.dimens.groupbox_spacing
 
 	StatusAnimation {

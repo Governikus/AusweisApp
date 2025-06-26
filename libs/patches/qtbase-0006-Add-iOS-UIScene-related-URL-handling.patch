@@ -1,4 +1,4 @@
-From 2d622bade7dd58c807dc1fe0eec4270c52064123 Mon Sep 17 00:00:00 2001
+From 92e566ccfd80bda25b2ac029fa18643d427ccde0 Mon Sep 17 00:00:00 2001
 From: Juha Vuolle <juha.vuolle@qt.io>
 Date: Tue, 3 Dec 2024 10:11:11 +0200
 Subject: Add iOS UIScene related URL handling

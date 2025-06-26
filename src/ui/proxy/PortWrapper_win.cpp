@@ -5,35 +5,48 @@
 #include "PortWrapper.h"
 
 #include <QCoreApplication>
-#include <QFile>
 #include <QLoggingCategory>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(rproxy)
 
 
-PortWrapper::PortWrapper(const QSharedPointer<HttpRequest>& pRequest)
-	: mPort(getProcessPort(pRequest->getLocalPort(), pRequest->getPeerPort()))
+namespace
 {
-}
+
+const ULONG LOCALHOST = htonl(INADDR_LOOPBACK);
+
+} // namespace
 
 
-bool PortWrapper::isEmpty() const
+PortWrapper::PortWrapper(quint16 pLocalPort, quint16 pPeerPort)
+	: mPorts()
 {
-	return mPort == 0;
-}
+	if (pPeerPort == 0)
+	{
+		const auto& connections = getConnections();
+		for (const auto& connection : connections)
+		{
+			const auto port = getPortOfRunningProcess(connection, QString(), pLocalPort);
+			if (port != 0)
+			{
+				mPorts << port;
+			}
+		}
+	}
+	else
+	{
+		const auto port = getProcessPort(pLocalPort, pPeerPort);
+		if (port > 0)
+		{
+			mPorts << port;
+		}
+	}
 
-
-void PortWrapper::invalidate()
-{
-	mPort = 0;
-}
-
-
-quint16 PortWrapper::fetchPort()
-{
-	return mPort;
+	qCDebug(rproxy) << "Found instances on Ports:" << mPorts;
 }
 
 
@@ -147,51 +160,46 @@ QString PortWrapper::getExecutableOfProcessID(DWORD pPid)
 }
 
 
-quint16 PortWrapper::getPortOfRunningProcess(const QList<MIB_TCPROW_OWNER_PID>& pConnections, const QString& pUser, quint16 pSelfPort, const in_addr& pProxyAddr)
+quint16 PortWrapper::getPortOfRunningProcess(const MIB_TCPROW_OWNER_PID& pConnection, const QString& pUser, quint16 pLocalPort)
 {
-	for (const auto& connection : pConnections)
+	if (pConnection.dwState != MIB_TCP_STATE_LISTEN
+			|| pConnection.dwLocalAddr != LOCALHOST)
 	{
-		if (connection.dwState != MIB_TCP_STATE_LISTEN
-				|| connection.dwLocalAddr != pProxyAddr.S_un.S_addr)
-		{
-			continue;
-		}
-
-		if (getUserOfProcessID(connection.dwOwningPid) != pUser)
-		{
-			continue;
-		}
-
-		if (ntohs(static_cast<quint16>(connection.dwLocalPort)) == pSelfPort)
-		{
-			continue;
-		}
-
-		const auto& executable = getExecutableOfProcessID(connection.dwOwningPid);
-		if (executable.isEmpty() || !QCoreApplication::applicationFilePath().endsWith(executable))
-		{
-			continue;
-		}
-
-		return ntohs(static_cast<quint16>(connection.dwLocalPort));
+		return 0;
 	}
 
-	return 0;
+	if (!pUser.isNull() && getUserOfProcessID(pConnection.dwOwningPid) != pUser)
+	{
+		return 0;
+	}
+
+	if (ntohs(static_cast<quint16>(pConnection.dwLocalPort)) == pLocalPort)
+	{
+		return 0;
+	}
+
+	const auto& executable = getExecutableOfProcessID(pConnection.dwOwningPid);
+	if (executable.isEmpty() || !QCoreApplication::applicationFilePath().endsWith(executable))
+	{
+		return 0;
+	}
+
+	return ntohs(static_cast<quint16>(pConnection.dwLocalPort));
 }
 
 
-QString PortWrapper::getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pRemotePort, const in_addr& pRemoteAddr)
+QString PortWrapper::getUserOfConnection(const QList<MIB_TCPROW_OWNER_PID>& pConnections, quint16 pLocalPort, quint16 pPeerPort)
 {
 	for (const auto& connection : pConnections)
 	{
 		if (connection.dwState != MIB_TCP_STATE_ESTAB
-				|| connection.dwRemoteAddr != pRemoteAddr.S_un.S_addr
-				|| connection.dwLocalAddr != pRemoteAddr.S_un.S_addr)
+				|| connection.dwRemoteAddr != LOCALHOST
+				|| connection.dwLocalAddr != LOCALHOST)
 		{
 			continue;
 		}
 
-		if (ntohs(static_cast<quint16>(connection.dwLocalPort)) == pRemotePort
+		if (ntohs(static_cast<quint16>(connection.dwLocalPort)) == pPeerPort
 				&& ntohs(static_cast<quint16>(connection.dwRemotePort)) == pLocalPort)
 		{
 			return getUserOfProcessID(connection.dwOwningPid);
@@ -234,20 +242,23 @@ QList<MIB_TCPROW_OWNER_PID> PortWrapper::getConnections()
 }
 
 
-quint16 PortWrapper::getProcessPort(quint16 pLocalPort, quint16 pRemotePort)
+quint16 PortWrapper::getProcessPort(quint16 pLocalPort, quint16 pPeerPort)
 {
-	struct in_addr localhost = {
-		{
-			{127, 0, 0, 1}
-		}
-	};
 	const auto& connections = getConnections();
-	const auto& user = getUserOfConnection(connections, pLocalPort, pRemotePort, localhost);
+	const auto& user = getUserOfConnection(connections, pLocalPort, pPeerPort);
 	if (user.isEmpty())
 	{
 		qCWarning(rproxy) << "Cannot detect user of connection";
 		return 0;
 	}
 	qCDebug(rproxy) << "Detected user of request:" << user;
-	return getPortOfRunningProcess(connections, user, pLocalPort, localhost);
+	for (const auto& connection : connections)
+	{
+		const auto port = getPortOfRunningProcess(connection, user, pLocalPort);
+		if (port != 0)
+		{
+			return port;
+		}
+	}
+	return 0;
 }

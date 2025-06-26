@@ -1,4 +1,4 @@
-From 7c7a583aeaebcc027d7a13a3785fb271aaa9f8e4 Mon Sep 17 00:00:00 2001
+From c627ce14d7feb2c6e9e2f63d1353be69d03f1222 Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Wed, 26 Jun 2024 15:26:09 +0200
 Subject: Revert "Android: Detect mouse buttons"

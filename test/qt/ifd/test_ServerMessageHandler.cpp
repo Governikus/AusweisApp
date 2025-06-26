@@ -149,7 +149,7 @@ class test_ServerMessageHandler
 			ServerMessageHandlerImpl serverMessageHandler(mDataChannel);
 			IfdConnectResponse unexpectedMsg(QStringLiteral("RemoteReader"));
 
-			mDataChannel->onReceived(unexpectedMsg.toByteArray(IfdVersion::Version::latest, QStringLiteral("invalidConextHandle")));
+			mDataChannel->onReceived(unexpectedMsg.toByteArray(IfdVersion::Version::latest, QStringLiteral("invalidContextHandle")));
 			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Invalid context handle received")));
 		}
 
@@ -207,7 +207,7 @@ class test_ServerMessageHandler
 						IfdConnectResponse("NFC Reader"_L1).toByteArray(IfdVersion::Version::v2, contextHandle),
 						IfdDisconnectResponse("NFC Reader"_L1).toByteArray(IfdVersion::Version::v2, contextHandle),
 						IfdTransmitResponse("NFC Reader"_L1, "9000").toByteArray(IfdVersion::Version::v2, contextHandle),
-						IfdEstablishPaceChannelResponse("My little Reader"_L1, EstablishPaceChannelOutput()).toByteArray(IfdVersion::Version::v2, contextHandle)
+						IfdEstablishPaceChannelResponse("My little Reader"_L1, EstablishPaceChannelOutput(), ECardApiResult::Minor::null).toByteArray(IfdVersion::Version::v2, contextHandle)
 					});
 			for (const auto& serverMessage : serverMessages)
 			{
@@ -354,6 +354,7 @@ class test_ServerMessageHandler
 
 		void ifdDisconnectForReaderWithConnectedCardSendsCorrectResponse()
 		{
+			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 			ServerMessageHandlerImpl serverMessageHandler(mDataChannel);
 			QString contextHandle;
 			ensureContext(contextHandle);
@@ -409,6 +410,10 @@ class test_ServerMessageHandler
 			QCOMPARE(disconnectResponse.getResultMinor(), ECardApiResult::Minor::null);
 
 			removeReaderAndConsumeMessages(QStringLiteral("test-reader"));
+
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter before disconnect card for \"{")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Update retry counter for \"{")));
+			QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("}\" finished with COMMAND_FAILED")));
 		}
 
 
@@ -928,8 +933,10 @@ class test_ServerMessageHandler
 			QTest::addColumn<CardReturnCode>("returnCode");
 			QTest::addColumn<ECardApiResult::Minor>("minor");
 
+			QTest::newRow("timeout") << CardReturnCode::INPUT_TIME_OUT << ECardApiResult::Minor::IFDL_Timeout_Error;
+			QTest::newRow("cancel") << CardReturnCode::CANCELLATION_BY_USER << ECardApiResult::Minor::IFDL_CancellationByUser;
+			QTest::newRow("noCard") << CardReturnCode::CARD_NOT_FOUND << ECardApiResult::Minor::IFDL_Terminal_NoCard;
 			QTest::newRow("unknown") << CardReturnCode::UNKNOWN << ECardApiResult::Minor::AL_Unknown_Error;
-			QTest::newRow("unknown") << CardReturnCode::CARD_NOT_FOUND << ECardApiResult::Minor::IFDL_Terminal_NoCard;
 			QTest::newRow("default") << CardReturnCode::OK << ECardApiResult::Minor::null;
 		}
 

@@ -10,7 +10,7 @@ import Governikus.Type
 GText {
 	readonly property string privacyStatementDescription: smart ?
 	//: LABEL ALL_PLATFORMS Text of the Smart-eID html link inside of a sentence
-	qsTr("data privacy statement of the Federal Ministry of the Interior and Community") :
+	qsTr("data privacy statement of the Federal Ministry of the Interior") :
 	//: LABEL ALL_PLATFORMS Text of the self authentication html link inside of a sentence
 	qsTr("data privacy statement")
 	readonly property string privacyStatementLink: "<a href=\"%1\">%2</a>".arg(privacyStatementUrl).arg(privacyStatementDescription)

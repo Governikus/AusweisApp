@@ -93,7 +93,7 @@ class test_EstablishPaceChannelOutput
 												   "0000");
 
 			EstablishPaceChannelOutput channelOutput;
-			QVERIFY(channelOutput.parse(bytes));
+			QVERIFY(!channelOutput.parse(bytes));
 
 			QCOMPARE(channelOutput.getPaceReturnCode(), CardReturnCode::INVALID_PASSWORD);
 			QCOMPARE(channelOutput.getStatusMseSetAt(), QByteArray::fromHex("0000"));

@@ -18,7 +18,7 @@
 #include <QtQml/qqmlregistration.h>
 
 
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 Q_FORWARD_DECLARE_OBJC_CLASS(VoiceOverObserver);
 #endif
 
@@ -55,8 +55,8 @@ class ApplicationModel
 	Q_PROPERTY(Workflow currentWorkflow READ getCurrentWorkflow NOTIFY fireCurrentWorkflowChanged)
 
 	// QT_VERSION_CHECK(6, 8, 0) qint64 to qsizetype
-	Q_PROPERTY(qint64 availableReader READ getAvailableReader NOTIFY fireAvailableReaderChanged)
 	Q_PROPERTY(qint64 availablePcscReader READ getAvailablePcscReader NOTIFY fireAvailableReaderChanged)
+	Q_PROPERTY(qint64 availableRemoteReader READ getAvailableRemoteReader NOTIFY fireAvailableReaderChanged)
 
 	Q_PROPERTY(QString feedback READ getFeedback NOTIFY fireFeedbackChanged)
 	Q_PROPERTY(int feedbackTimeout READ getFeedbackTimeout CONSTANT)
@@ -74,7 +74,7 @@ class ApplicationModel
 		QStringList mFeedback;
 		QTimer mFeedbackTimer;
 		bool mIsAppInForeground;
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 		struct Private
 		{
 			Private();
@@ -144,8 +144,8 @@ class ApplicationModel
 
 		[[nodiscard]] bool isWifiEnabled() const;
 		[[nodiscard]] Workflow getCurrentWorkflow() const;
-		[[nodiscard]] qsizetype getAvailableReader() const;
 		[[nodiscard]] qsizetype getAvailablePcscReader() const;
+		[[nodiscard]] qsizetype getAvailableRemoteReader() const;
 
 		[[nodiscard]] QString getFeedback() const;
 
@@ -167,11 +167,14 @@ class ApplicationModel
 #endif
 		[[nodiscard]] Q_INVOKABLE QString stripHtmlTags(QString pString) const;
 		Q_INVOKABLE void showAppStoreRatingDialog() const;
+		static void notifyScreenReaderChangedThreadSafe();
 
 	public Q_SLOTS:
 		Q_INVOKABLE void onShowNextFeedback();
 
 	Q_SIGNALS:
+		void fireAppAboutToQuit();
+
 		void fireStoreUrlChanged();
 
 		void fireNfcStateChanged();

@@ -19,12 +19,14 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 
 using namespace governikus;
 
+
 INIT_FUNCTION([] {
 			ReaderManager::addMainThreadInit([] {
 				// Force construction of RemoteIfdClient in the MainThread
 				Env::getSingleton<RemoteIfdClient>();
 			});
 		})
+
 
 RemoteIfdClient::RemoteIfdClient()
 	: IfdClientImpl()
@@ -45,14 +47,19 @@ void RemoteIfdClient::onNewMessage(const QByteArray& pData, const QHostAddress& 
 		obj = IfdMessage::parseByteArray(pData);
 	}
 
-	const Discovery discovery(obj);
+	Discovery discovery(obj);
 	if (discovery.isIncomplete())
 	{
 		qCDebug(ifd) << "Discarding unparsable message";
 		return;
 	}
 
-	const IfdDescriptor remoteDeviceDescriptor(discovery, pAddress);
+	if (discovery.getAddresses().isEmpty())
+	{
+		discovery.setAddresses({pAddress});
+	}
+
+	const IfdDescriptor remoteDeviceDescriptor(discovery);
 	if (remoteDeviceDescriptor.isNull())
 	{
 		qCCritical(ifd) << "Dropping message from unparsable address:" << pAddress;

@@ -53,7 +53,7 @@ FlickableSectionPage {
 
 			required property MultiInfoContentBlock modelData
 
-			Layout.alignment: modelData.blockAligment
+			Layout.alignment: modelData.blockAlignment
 			spacing: 2 * Style.dimens.pane_spacing
 
 			AnimationLoader {

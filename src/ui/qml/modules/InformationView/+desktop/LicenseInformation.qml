@@ -22,6 +22,10 @@ GListView {
 
 	delegate: ListEntryDelegate {
 		z: 0
+
+		onActiveFocusChanged: if (activeFocus) {
+			root.handleItemFocused(index);
+		}
 	}
 	highlight: Item {
 		z: 2
@@ -36,12 +40,12 @@ GListView {
 	Keys.onDownPressed: {
 		do {
 			root.incrementCurrentIndex();
-		} while ((currentItem as ListEntryDelegate).text === "")
+		} while ((currentItem as ListEntryDelegate).text === "" && root.currentIndex + 1 < root.count)
 	}
 	Keys.onUpPressed: {
 		do {
 			root.decrementCurrentIndex();
-		} while ((currentItem as ListEntryDelegate).text === "")
+		} while ((currentItem as ListEntryDelegate).text === "" && root.currentIndex > 1)
 	}
 
 	layer {
@@ -60,6 +64,7 @@ GListView {
 		required property string modelData
 		readonly property alias text: delegateText.text
 
+		Accessible.focusable: true
 		Accessible.ignored: delegateText.text === ""
 		Accessible.name: delegateText.text
 		Accessible.role: Accessible.StaticText

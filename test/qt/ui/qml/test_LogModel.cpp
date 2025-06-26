@@ -85,7 +85,7 @@ class test_LogModel
 			QFETCH(QLatin1String, message);
 
 			QSignalSpy spyLevel(mModel, &LogModel::fireLevelsChanged);
-			QSignalSpy spyCategorie(mModel, &LogModel::fireCategoriesChanged);
+			QSignalSpy spyCategory(mModel, &LogModel::fireCategoriesChanged);
 
 			mModel->addLogEntry(input);
 			QCOMPARE(mModel->mLogEntries.at(0), input);
@@ -100,7 +100,7 @@ class test_LogModel
 			QCOMPARE(mModel->getLevels().size(), 1);
 			QVERIFY(mModel->getLevels().contains(level));
 
-			QCOMPARE(spyCategorie.size(), 1);
+			QCOMPARE(spyCategory.size(), 1);
 			QCOMPARE(mModel->getCategories().size(), 1);
 			QVERIFY(mModel->getCategories().contains(category));
 		}
@@ -109,68 +109,68 @@ class test_LogModel
 		void test_LevelCategory()
 		{
 			QSignalSpy spyLevel(mModel, &LogModel::fireLevelsChanged);
-			QSignalSpy spyCategorie(mModel, &LogModel::fireCategoriesChanged);
+			QSignalSpy spyCategory(mModel, &LogModel::fireCategoriesChanged);
 
 			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 W test : test"_L1);
 			QCOMPARE(spyLevel.size(), 1);
 			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1}));
-			QCOMPARE(spyCategorie.size(), 1);
+			QCOMPARE(spyCategory.size(), 1);
 			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
 			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 W test : test"_L1);
 			QCOMPARE(spyLevel.size(), 1);
 			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1}));
-			QCOMPARE(spyCategorie.size(), 1);
+			QCOMPARE(spyCategory.size(), 1);
 			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
 			mModel->addLogEntry("cat           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
 			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
-			QCOMPARE(spyCategorie.size(), 1);
+			QCOMPARE(spyCategory.size(), 1);
 			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1}));
 
 			mModel->addLogEntry("dog           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
 			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
-			QCOMPARE(spyCategorie.size(), 2);
+			QCOMPARE(spyCategory.size(), 2);
 			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1, "dog"_L1}));
 
 			mModel->addLogEntry("dog           0000.00.00 00:00:00.000 000 I test : test"_L1);
 			QCOMPARE(spyLevel.size(), 2);
 			QCOMPARE(mModel->getLevels(), QSet<QString>({"W"_L1, "I"_L1}));
-			QCOMPARE(spyCategorie.size(), 2);
+			QCOMPARE(spyCategory.size(), 2);
 			QCOMPARE(mModel->getCategories(), QSet<QString>({"cat"_L1, "dog"_L1}));
 		}
 
 
 		void test_AddMultilineLogEntry()
 		{
-			mModel->addLogEntry(QLatin1String("FooBar"));
+			mModel->addLogEntry(QStringLiteral("FooBar"));
 			QCOMPARE(mModel->mLogEntries.size(), 1);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar"));
 
-			mModel->addLogEntry(QLatin1String("FooBar"));
+			mModel->addLogEntry(QStringLiteral("FooBar"));
 			QCOMPARE(mModel->mLogEntries.size(), 1);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 
-			mModel->addLogEntry(QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
+			mModel->addLogEntry(QStringLiteral("cat           0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 2);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
 
-			mModel->addLogEntry(QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test"));
+			mModel->addLogEntry(QStringLiteral("cat           0001.02.03 04:05:06.007 0000008 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.at(2), QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test"));
 
-			mModel->addLogEntry(QLatin1String("BarFoo"));
+			mModel->addLogEntry(QStringLiteral("BarFoo"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.at(2), QLatin1String("cat           0001.02.03 04:05:06.007 0000008 test\nBarFoo"));
 
-			mModel->addLogEntry(QLatin1String("cat 0000.00.00 00:00:00.000 000 test"));
+			mModel->addLogEntry(QStringLiteral("cat 0000.00.00 00:00:00.000 000 test"));
 			QCOMPARE(mModel->mLogEntries.size(), 3);
 			QCOMPARE(mModel->mLogEntries.at(0), QLatin1String("FooBar\nFooBar"));
 			QCOMPARE(mModel->mLogEntries.at(1), QLatin1String("cat           0000.00.00 00:00:00.000 000 test"));
@@ -211,7 +211,7 @@ class test_LogModel
 
 			QSignalSpy spyNewLogMsg(mModel, &LogModel::fireNewLogMsg);
 			QSignalSpy spyLevel(mModel, &LogModel::fireLevelsChanged);
-			QSignalSpy spyCategorie(mModel, &LogModel::fireCategoriesChanged);
+			QSignalSpy spyCategory(mModel, &LogModel::fireCategoriesChanged);
 
 			QFile file(fileName);
 			QVERIFY(file.open(QIODevice::ReadOnly));
@@ -222,7 +222,7 @@ class test_LogModel
 			QCOMPARE(mModel->mLogEntries.size(), logEntriesSize);
 			QCOMPARE(spyLevel.size(), 1);
 			QCOMPARE(mModel->getLevels().size(), logLevelSize);
-			QCOMPARE(spyCategorie.size(), 1);
+			QCOMPARE(spyCategory.size(), 1);
 			QCOMPARE(mModel->getCategories().size(), logCategoriesSize);
 		}
 

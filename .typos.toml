@@ -1,0 +1,186 @@
+[files]
+extend-exclude = [
+    "CMakeLists.txt.user",
+    "LICENSE*",
+    "CONTRIBUTING.rst",
+    "README.rst",
+    "docs/**",
+    "src/external/**",
+    "resources/**",
+    "libs/**",
+    "test/fixture/**",
+]
+ignore-hidden = true
+ignore-files = true
+ignore-dot = true
+ignore-vcs = true
+ignore-global = true
+ignore-parent = true
+
+[default]
+binary = false
+check-filename = true
+check-file = true
+unicode = true
+ignore-hex = true
+identifier-leading-digits = false
+locale = "en"
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = [
+    '(?Rm)^.*(#|//)\s*codespell:ignore$',
+    "\\b(MDA|MII)[A-Za-z0-9]{61,}\\b",
+    "\\b[A-Za-z0-9+/]{60,}\\b",
+    "Governikus Root CA 4:PN",
+    "Governikus CA 9:PN",
+    "DEDV",
+    "mCvdv_DED",
+    "cvdv_DED",
+    "cvdv-DED",
+    "cvat-DED",
+    "Q_INVOKABLE",
+    "performTAandCA",
+    "tAandCAResult",
+    "TAandCAResult",
+    "HPE_",
+    "bund.de",
+    "AusweisApp Bund",
+    "-sice:",
+    '"_ba',
+    "itms-apps:",
+    "posix-seh",
+    "E-Mail-Adresse",
+    "AppUpdatData",
+]
+
+[default.extend-identifiers]
+
+[default.extend-words]
+
+[type.lock]
+extend-glob = []
+check-file = false
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.lock.extend-identifiers]
+
+[type.lock.extend-words]
+
+[type.man]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.man.extend-identifiers]
+Nd = "Nd"
+
+[type.man.extend-words]
+
+[type.cpp]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.cpp.extend-identifiers]
+countr_one = "countr_one"
+
+[type.cpp.extend-words]
+
+[type.rust]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.rust.extend-identifiers]
+flate2 = "flate2"
+
+[type.rust.extend-words]
+ser = "ser"
+
+[type.vimscript]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.vimscript.extend-identifiers]
+windo = "windo"
+
+[type.vimscript.extend-words]
+
+[type.go]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.go.extend-identifiers]
+flate = "flate"
+
+[type.go.extend-words]
+
+[type.py]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.py.extend-identifiers]
+NDArray = "NDArray"
+EOFError = "EOFError"
+arange = "arange"
+
+[type.py.extend-words]
+
+[type.sh]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.sh.extend-identifiers]
+ot = "ot"
+stap = "stap"
+
+[type.sh.extend-words]
+
+[type.css]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.css.extend-identifiers]
+nd = "nd"
+
+[type.css.extend-words]
+
+[type.jl]
+extend-glob = []
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.jl.extend-identifiers]
+
+[type.jl.extend-words]
+egal = "egal"
+usig = "usig"
+modul = "modul"
+egals = "egals"
+
+[type.cert]
+extend-glob = []
+check-file = false
+extend-ignore-identifiers-re = []
+extend-ignore-words-re = []
+extend-ignore-re = []
+
+[type.cert.extend-identifiers]
+
+[type.cert.extend-words]

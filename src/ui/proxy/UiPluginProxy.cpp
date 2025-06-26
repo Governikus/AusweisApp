@@ -5,9 +5,12 @@
 #include "UiPluginProxy.h"
 
 #include "Env.h"
+#include "RedirectBroadcast.h"
 #include "RedirectRequest.h"
 
 #include <QLoggingCategory>
+#include <QNetworkDatagram>
+
 
 using namespace governikus;
 
@@ -35,6 +38,17 @@ bool UiPluginProxy::listen()
 
 	if (mServer->isListening())
 	{
+		mSocket.reset(new QUdpSocket());
+		connect(mSocket.data(), &QUdpSocket::readyRead, this, &UiPluginProxy::handleBroadcast);
+		if (mSocket->bind(mServer->getServerPort()))
+		{
+			qCDebug(rproxy) << "UDP proxy port bound:" << mSocket->localPort();
+		}
+		else
+		{
+			qCWarning(rproxy) << "UDP proxy port failed:" << mServer->getServerPort();
+		}
+
 		Q_EMIT fireUiDominationRequest(this, tr("Reverse proxy plugin is enabled"));
 		return true;
 	}
@@ -59,6 +73,15 @@ void UiPluginProxy::onNewWebSocketRequest(const QSharedPointer<HttpRequest>& pRe
 void UiPluginProxy::handleWorkflowRequest(const QSharedPointer<HttpRequest>& pRequest)
 {
 	new RedirectRequest(pRequest, this);
+}
+
+
+void UiPluginProxy::handleBroadcast()
+{
+	while (mSocket->hasPendingDatagrams())
+	{
+		new RedirectBroadcast(mSocket->receiveDatagram(), mSocket->localPort());
+	}
 }
 
 

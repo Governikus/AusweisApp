@@ -29,8 +29,10 @@ ProgressView {
 	}
 
 	readonly property bool isInitialState: workflowState === AuthController.WorkflowStates.Initial
+	readonly property bool isSelfAuth: ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION
 	readonly property alias networkInterfaceActive: connectivityManager.networkInterfaceActive
 	property bool startedByOnboarding: false
+	property bool userCancelAndManualRedirect: false
 	property bool workflowProgressVisible: false
 	property int workflowState: 0
 
@@ -76,6 +78,13 @@ ProgressView {
 			if (!NumberModel.isCanAllowedMode && SettingsModel.transportPinReminder) {
 				SettingsModel.transportPinReminder = false;
 				push(transportPinReminderView);
+			} else {
+				AuthModel.continueWorkflow();
+			}
+			break;
+		case "StateCertificateDescriptionCheck":
+			if (ApplicationModel.isScreenReaderRunning && SettingsModel.autoRedirectAfterAuthentication && SettingsModel.remindUserOfAutoRedirect) {
+				push(a11yAutoRedirectDecision);
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -126,8 +135,18 @@ ProgressView {
 			push(cardPositionView);
 			break;
 		case "StateSendDIDAuthenticateResponseEAC1":
+			userCancelAndManualRedirect = false;
 			if (AuthModel.isCancellationByUser()) {
-				push(authAbortedProgressView);
+				if (SettingsModel.autoRedirectAfterAuthentication) {
+					push(regularAbortedAuthView);
+				} else {
+					userCancelAndManualRedirect = true;
+					push(confirmAbortedAuthView);
+					if (root.isSelfAuth) {
+						//For a SelfAuth we skip continue otherwise we run staight into FinalState and leave
+						break;
+					}
+				}
 			} else {
 				workflowProgressVisible = true;
 				pop(root);
@@ -135,7 +154,7 @@ ProgressView {
 			setAuthWorkflowStateAndContinue(AuthController.WorkflowStates.Processing);
 			break;
 		case "StateActivateStoreFeedbackDialog":
-			if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION) {
+			if (root.isSelfAuth) {
 				showRemoveCardFeedback(AuthModel, true);
 			}
 			AuthModel.continueWorkflow();
@@ -143,6 +162,8 @@ ProgressView {
 		case "StateRedirectBrowser":
 			if (!AuthModel.error) {
 				push(redirectToProvider);
+			} else if (userCancelAndManualRedirect) {
+				break;
 			} else {
 				AuthModel.continueWorkflow();
 			}
@@ -157,16 +178,16 @@ ProgressView {
 					} else {
 						backToStartPage(false);
 					}
+				} else if (userCancelAndManualRedirect) {
+					userCancelledAndBackToStart(true);
 				} else {
 					showRemoveCardFeedback(AuthModel, false);
 					push(authResult);
 				}
-			} else if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.SELF_AUTHENTICATION) {
+			} else if (root.isSelfAuth) {
 				push(selfAuthData);
 			} else {
-				pop(root);
-				backToStartPage(AuthModel.isCancellationByUser());
-				AuthModel.continueWorkflow();
+				userCancelledAndBackToStart(false);
 			}
 			workflowProgressVisible = false;
 			break;
@@ -189,6 +210,11 @@ ProgressView {
 			displayAuthWorkflow();
 			AuthModel.continueWorkflow();
 		}
+	}
+	function userCancelledAndBackToStart(pUserCancelled) {
+		pop(root);
+		backToStartPage(pUserCancelled);
+		AuthModel.continueWorkflow();
 	}
 
 	//: LABEL DESKTOP
@@ -240,11 +266,23 @@ ProgressView {
 	ConnectivityManager {
 		id: connectivityManager
 
-		watching: true
+		watching: AuthModel.currentState === "StateGetTcToken"
 
 		onNetworkInterfaceActiveChanged: {
-			if (AuthModel.currentState === "StateGetTcToken")
+			if (watching)
 				root.rerunCurrentState();
+		}
+	}
+	Component {
+		id: a11yAutoRedirectDecision
+
+		AutoRedirectDecision {
+			title: root.title
+
+			onLeaveView: {
+				root.pop();
+				AuthModel.continueWorkflow();
+			}
 		}
 	}
 	Component {
@@ -409,7 +447,7 @@ ProgressView {
 		}
 	}
 	Component {
-		id: authAbortedProgressView
+		id: regularAbortedAuthView
 
 		ProgressView {
 
@@ -429,6 +467,23 @@ ProgressView {
 		}
 	}
 	Component {
+		id: confirmAbortedAuthView
+
+		AuthCanceledView {
+			startedByOnboarding: root.startedByOnboarding
+			title: root.title
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: !root.isSelfAuth ? NavigationAction.Cancel : root.startedByOnboarding ? NavigationAction.Back : NavigationAction.Close
+				navigationEnabled: root.isSelfAuth
+
+				onNavigationActionClicked: AuthModel.continueWorkflow()
+			}
+
+			onLeaveView: AuthModel.continueWorkflow()
+		}
+	}
+	Component {
 		id: selfAuthData
 
 		SelfAuthenticationData {
@@ -440,12 +495,15 @@ ProgressView {
 			title: root.title
 
 			titleBarSettings: TitleBarSettings {
-				navigationAction: NavigationAction.Back
+				navigationAction: root.startedByOnboarding ? NavigationAction.Back : NavigationAction.Close
 
 				onNavigationActionClicked: {
 					root.pop();
 					AuthModel.continueWorkflow();
-					root.backToSelfAuthView();
+					if (navigationAction === NavigationAction.Back)
+						root.backToSelfAuthView();
+					else
+						root.backToStartPage(true);
 				}
 			}
 
@@ -473,6 +531,8 @@ ProgressView {
 		id: authResult
 
 		ResultView {
+			id: authResultView
+
 			animation: AuthModel.statusCodeAnimation
 			buttonIcon: AuthModel.resultViewButtonIcon
 			buttonText: root.startedByOnboarding ?
@@ -484,12 +544,16 @@ ProgressView {
 			hintTitle: AuthModel.statusHintTitle
 			mailButtonVisible: AuthModel.errorIsMasked
 			popupText: AuthModel.errorText
-			//: INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.
-			popupTitle: qsTr("Error code: %1").arg(AuthModel.statusCodeString)
+			popupTitle: AuthModel.statusCodeDisplayString
 			subheader: AuthModel.errorHeader
 			text: AuthModel.resultString
 			title: root.title
-			titleBarSettings: disabledCancelNavigation
+
+			titleBarSettings: TitleBarSettings {
+				navigationAction: root.startedByOnboarding ? NavigationAction.Action.Back : NavigationAction.Action.Close
+
+				onNavigationActionClicked: authResultView.leaveView()
+			}
 
 			onEmailButtonPressed: AuthModel.sendResultMail()
 			onHintClicked: AuthModel.invokeStatusHintAction()
@@ -514,10 +578,7 @@ ProgressView {
 		navigationAction: NavigationAction.Cancel
 		navigationEnabled: AuthModel.isBasicReader
 
-		onNavigationActionClicked: {
-			root.pop(root);
-			AuthModel.cancelWorkflow();
-		}
+		onNavigationActionClicked: AuthModel.cancelWorkflow()
 	}
 	TitleBarSettings {
 		id: backNavigation

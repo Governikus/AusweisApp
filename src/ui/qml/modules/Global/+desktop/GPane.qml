@@ -19,9 +19,15 @@ GPaneBackground {
 	property int titleMargins: Style.dimens.pane_padding
 	property alias titleTextStyle: titleText.textStyle
 
+	Accessible.focusable: true
+	Accessible.name: title
+	Accessible.role: Accessible.Grouping
 	Layout.maximumHeight: containerCol.Layout.maximumHeight
 	implicitHeight: containerCol.implicitHeight
 	implicitWidth: containerCol.implicitWidth
+
+	onFocusChanged: if (focus)
+		Utils.positionViewAtItem(this)
 
 	ColumnLayout {
 		id: containerCol
@@ -32,6 +38,7 @@ GPaneBackground {
 		GText {
 			id: titleText
 
+			Accessible.ignored: true
 			Layout.leftMargin: root.titleMargins
 			Layout.rightMargin: root.titleMargins
 			Layout.topMargin: root.titleMargins

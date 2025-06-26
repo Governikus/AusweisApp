@@ -82,7 +82,7 @@ QtObject {
 					blockTitle: qsTr("I just have a 5-digit Transport PIN")
 					paragraphList: [
 						//: INFO ALL_PLATFORMS Explanation if only the Transport PIN is at hand
-						qsTr("You need to change the %1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN > Transport PIN%2 from the startpage to do so.").arg("<b>").arg("</b>")]
+						qsTr("You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN > Transport PIN%2 from the startpage to do so.").arg("<b>").arg("</b>")]
 				}
 			]
 		},
@@ -196,7 +196,7 @@ QtObject {
 						//: INFO ALL_PLATFORMS Answer to the question 'Where do I find the Transport PIN?' paragraph 1/2
 						qsTr("The 5-digit Transport PIN is a %1one-time PIN%2, that you received per %1letter%2 when applying for the ID card.").arg("<b>").arg("</b>"),
 						//: INFO ALL_PLATFORMS Answer to the question 'Where do I find the Transport PIN?' paragraph 2/2
-						qsTr("When setting up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.").arg("<b>").arg("</b>")]
+						qsTr("When you set up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.").arg("<b>").arg("</b>")]
 				}
 			]
 		},
@@ -251,14 +251,14 @@ QtObject {
 					//: LABEL ALL_PLATFORMS
 					paragraphList: [
 						//: INFO ALL_PLATFORMS Answer to the question 'Where do I find the PUK?'
-						qsTr("The PUK is a %1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.").arg("<b>").arg("</b>")]
+						qsTr("The PUK is a%1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.").arg("<b>").arg("</b>")]
 				},
 				MultiInfoContentBlock {
 					//: LABEL ALL_PLATFORMS
 					blockTitle: qsTr("Why is the PUK required?")
 					paragraphList: [
 						//: INFO ALL_PLATFORMS Answer to the question 'Why is the PUK required?'
-						qsTr("The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have %1 3 more attempts%2 to enter the correct PIN.").arg("<b>").arg("</b>")]
+						qsTr("The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have%1 3 more attempts%2 to enter the correct PIN.").arg("<b>").arg("</b>")]
 				},
 				MultiInfoContentBlock {
 					//: LABEL ALL_PLATFORMS
@@ -351,7 +351,7 @@ QtObject {
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 2/7
 						qsTr("The 5-digit Transport PIN is a %1one-time PIN%2 that was sent to you by %1mail%2 after you applied for your ID card.").arg("<b>").arg("</b>"),
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 3/7
-						qsTr("When you set up the eID function, you will %1replace%2 this 5-digit %1Transport PIN%2 with a 6-digit %1card PIN that you choose yourself%2.").arg("<b>").arg("</b>")]
+						qsTr("When you set up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.").arg("<b>").arg("</b>")]
 				},
 				MultiInfoContentBlock {
 					blockHeaderAnimation: AnimationLoader.PIN
@@ -360,7 +360,7 @@ QtObject {
 					paragraphList: ApplicationModel.isSmartSupported ? [
 
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 4/7
-						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
+						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 5/7
 						qsTr("The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time."),
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 6/7
@@ -369,7 +369,7 @@ QtObject {
 						qsTr("You can change your card PIN and your Smart-eID PIN at any time in %1.").arg(Qt.application.name)] : [
 
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 4/7
-						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
+						qsTr("The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.").arg("<b>").arg("</b>"),
 						//: INFO ALL_PLATFORMS Description text explaining the PINs 6/7
 						qsTr("With this 6-digit PIN you prove online that the ID card belongs to you. %1No one can use the eID function without this PIN%2.").arg("<b>").arg("</b>"),
 						//: INFO ALL_PLATFORMS Description text explaining the PINs (%1 is replaced with the application name) 7/7
@@ -425,7 +425,7 @@ QtObject {
 
 			contentList: [
 				MultiInfoContentBlock {
-					blockAligment: Qt.AlignHCenter
+					blockAlignment: Qt.AlignHCenter
 					paragraphList: [
 						//: LABEL DESKTOP
 						qsTr("Set up the ID card in three steps")]
@@ -459,7 +459,7 @@ QtObject {
 
 			contentList: [
 				MultiInfoContentBlock {
-					blockAligment: Qt.AlignHCenter
+					blockAlignment: Qt.AlignHCenter
 					paragraphList: [
 						//: LABEL DESKTOP
 						qsTr("Set up the ID card in two steps")]

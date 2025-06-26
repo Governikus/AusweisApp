@@ -396,6 +396,24 @@ class test_GeneralSettings
 		}
 
 
+		void testRemindUserOfAutoRedirect()
+		{
+			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+
+			QSignalSpy spy(&settings, &GeneralSettings::fireSettingsChanged);
+			bool initial = settings.isRemindUserOfAutoRedirect();
+			bool newValue = !initial;
+
+			settings.setRemindUserOfAutoRedirect(newValue);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(settings.isRemindUserOfAutoRedirect(), newValue);
+
+			settings.setRemindUserOfAutoRedirect(initial);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(settings.isRemindUserOfAutoRedirect(), initial);
+		}
+
+
 		void testPersistentSettingsVersion()
 		{
 			auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();

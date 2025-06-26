@@ -12,12 +12,6 @@ Windows / macOS
   Kartenleser beendet wird, oder dieser den Prozess selbstständig wegen einer
   Zeitüberschreitung abbricht.
 
-- Unter macOS können per Tastatur mit den Standardsystemeinstellungen nur
-  Textfelder angesprungen werden. Mit Änderung der Tastaturnavigationsoption
-  unter "Systemeinstellungen/Tastatur/Kurzbefehle" auf "Alle Steuerungen" kann
-  das Verhalten von macOS geändert werden, sodass auch alle anderen
-  Komponenten in der App fokussiert werden können.
-
 - Vereinzelt kann es bei Problemen mit dem Grafikkartentreiber, insbesondere
   bei der Verwendung einer virtuellen Maschine, zu Darstellungsfehlern in
   der Anwendung kommen. Unter Umständen wird kein Fensterinhalt dargestellt.
@@ -27,12 +21,6 @@ Windows / macOS
 
 - Der Installationsdialog (bei Installation und auch Deinstallation) richtet
   sich nicht nach der Systemsprache.
-
-- Auf macOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
-  Access" gegeben.
-
-- Die Verwendung relativer Redirect-URLs beim Abruf des TCTokens oder der
-  Weiterleitung zum Diensteanbieter führt zu einem Fehler in der |AppName|.
 
 
 Android / iOS
@@ -46,16 +34,14 @@ Android / iOS
 - Unter iOS ist derzeit keine Unterstützung für die Funktion "Full Keyboard
   Access" gegeben.
 
+- Unter iOS 16 kommt es bei der Verwendung von VoiceOver zu einem
+  Absturz, wenn versucht wird ein Anwendungsprotokoll zu teilen.
+
 
 Barrierearmut
 """""""""""""
 
 - Eine vollständige Barrierearmut ist zum aktuellen Zeitpunkt nicht
   gegeben. Wir arbeiten kontinuierlich an einer Verbesserung.
-
-- Unter Android werden unsichtbare Inhalte vom Screenreader vorgelesen.
-
-- Die angeforderten Rechte während eines Ausweisvorgangs werden nicht optimal vom
-  Screenreader ausgegeben.
 
 - Der Screenreader kann teilweise Informationen an einigen Stellen doppelt ausgeben.

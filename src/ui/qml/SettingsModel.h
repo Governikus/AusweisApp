@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AppUpdateDataModel.h"
+#include "ApplicationModel.h"
 #include "Env.h"
 #include "ReaderManagerPluginInfo.h"
 #include "SingletonCreator.h"
@@ -14,9 +15,11 @@
 #include <QUrl>
 #include <QtQml/qqmlregistration.h>
 
+
+class test_SettingsModel;
+
 namespace governikus
 {
-
 class SettingsModel
 	: public QObject
 	, public SingletonCreator<SettingsModel>
@@ -27,6 +30,7 @@ class SettingsModel
 	QML_SINGLETON
 
 	friend class Env;
+	friend class ::test_SettingsModel;
 
 	Q_PROPERTY(QString language READ getLanguage WRITE setLanguage NOTIFY fireLanguageChanged)
 	Q_PROPERTY(bool advancedSettings READ isAdvancedSettings WRITE setAdvancedSettings NOTIFY fireAdvancedSettingsChanged)
@@ -56,6 +60,7 @@ class SettingsModel
 	Q_PROPERTY(bool autoUpdateCheck READ isAutoUpdateCheck WRITE setAutoUpdateCheck NOTIFY fireAutoUpdateCheckChanged)
 	Q_PROPERTY(bool autoUpdateCheckSetByAdmin READ autoUpdateCheckIsSetByAdmin CONSTANT)
 	Q_PROPERTY(bool remindUserToClose READ isRemindUserToClose WRITE setRemindUserToClose NOTIFY fireRemindUserToCloseChanged)
+	Q_PROPERTY(bool remindUserOfAutoRedirect READ isRemindUserOfAutoRedirect WRITE setRemindUserOfAutoRedirect NOTIFY fireRemindUserOfAutoRedirectChanged)
 	Q_PROPERTY(bool transportPinReminder READ isTransportPinReminder WRITE setTransportPinReminder NOTIFY fireTransportPinReminderChanged)
 	Q_PROPERTY(bool showInAppNotifications READ isShowInAppNotifications WRITE setShowInAppNotifications NOTIFY fireShowInAppNotificationsChanged)
 	Q_PROPERTY(governikus::AppUpdateDataModel * appUpdateData READ getAppUpdateData NOTIFY fireAppUpdateDataChanged)
@@ -71,9 +76,14 @@ class SettingsModel
 		bool mAdvancedSettings;
 		bool mIsStartedByAuth;
 		bool mShowBetaTesting;
+		bool mManualAppcastUpdateRequested;
 
 		SettingsModel();
 		~SettingsModel() override = default;
+
+	private Q_SLOTS:
+		void onAppUpdateDataChanged();
+		void onNfcStateChanged(ApplicationModel::NfcState pNfcState);
 
 	public:
 		enum class ModeOption
@@ -154,6 +164,9 @@ class SettingsModel
 		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
 
+		[[nodiscard]] bool isRemindUserOfAutoRedirect() const;
+		void setRemindUserOfAutoRedirect(bool pRemindUser) const;
+
 		[[nodiscard]] bool isTransportPinReminder() const;
 		void setTransportPinReminder(bool pTransportPinReminder);
 
@@ -180,7 +193,7 @@ class SettingsModel
 		[[nodiscard]] Q_INVOKABLE bool requestStoreFeedback() const;
 		Q_INVOKABLE void hideFutureStoreFeedbackDialogs() const;
 
-		Q_INVOKABLE void updateAppcast() const;
+		Q_INVOKABLE void updateAppcast();
 
 		[[nodiscard]] AppUpdateDataModel* getAppUpdateData() const;
 
@@ -211,8 +224,9 @@ class SettingsModel
 		void fireAutoRedirectAfterAuthenticationChanged();
 		void fireAutoUpdateCheckChanged();
 		void fireRemindUserToCloseChanged();
+		void fireRemindUserOfAutoRedirectChanged();
 		void fireTransportPinReminderChanged();
-		void fireAppUpdateDataChanged();
+		void fireAppUpdateDataChanged(bool pAfterManualRequest);
 		void fireShowInAppNotificationsChanged();
 		void fireUseCustomProxyChanged();
 		void fireUseSystemFontChanged();

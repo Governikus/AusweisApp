@@ -5,7 +5,18 @@
 #include "CardConnection.h"
 #include "CardConnectionWorker.h"
 
+
 using namespace governikus;
+
+
+Q_DECLARE_LOGGING_CATEGORY(card)
+
+
+const QLoggingCategory& CardConnection::getLoggingCategory()
+{
+	return card();
+}
+
 
 CardConnection::CardConnection(const QSharedPointer<CardConnectionWorker>& pCardConnectionWorker)
 	: QObject()
@@ -50,31 +61,31 @@ bool CardConnection::getPacePinSuccessful() const
 
 void CardConnection::setKeepAlive(bool pEnabled)
 {
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pEnabled] {
-				mCardConnectionWorker->setKeepAlive(pEnabled);
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [worker = mCardConnectionWorker, pEnabled] {
+				worker->setKeepAlive(pEnabled);
 			});
 }
 
 
 void CardConnection::setProgressMessage(const QString& pMessage, int pProgress)
 {
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage, pProgress] {
-				mCardConnectionWorker->setProgressMessage(pMessage, pProgress);
-			}, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [worker = mCardConnectionWorker, pMessage, pProgress] {
+				worker->setProgressMessage(pMessage, pProgress);
+			});
 }
 
 
 void CardConnection::setErrorMessage(const QString& pMessage)
 {
-	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [this, pMessage] {
-				mCardConnectionWorker->setErrorMessage(pMessage);
-			}, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mCardConnectionWorker.data(), [worker = mCardConnectionWorker, pMessage] {
+				worker->setErrorMessage(pMessage);
+			});
 }
 
 
-UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand()
+UpdateRetryCounterCommand* CardConnection::createUpdateRetryCounterCommand(const QString& pSlotHandle)
 {
-	return new UpdateRetryCounterCommand(mCardConnectionWorker);
+	return new UpdateRetryCounterCommand(mCardConnectionWorker, pSlotHandle);
 }
 
 

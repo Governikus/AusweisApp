@@ -116,7 +116,7 @@ class test_StateMaintainCardConnection
 			QTest::newRow("unknown") << CardReturnCode::UNKNOWN << false;
 			QTest::newRow("command_failed") << CardReturnCode::COMMAND_FAILED << false;
 			QTest::newRow("protocol_error") << CardReturnCode::PROTOCOL_ERROR << false;
-			QTest::newRow("unexpectd_transmit_status") << CardReturnCode::UNEXPECTED_TRANSMIT_STATUS << false;
+			QTest::newRow("unexpected_transmit_status") << CardReturnCode::UNEXPECTED_TRANSMIT_STATUS << false;
 		}
 
 

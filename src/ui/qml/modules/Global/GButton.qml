@@ -28,6 +28,7 @@ AbstractButton {
 	property TextStyle textStyle: Style.text.button
 	property bool tintIcon: false
 
+	Accessible.ignored: !enableButton
 	Accessible.name: text
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)

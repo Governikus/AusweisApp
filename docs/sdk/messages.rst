@@ -155,6 +155,9 @@ This message will be sent if :ref:`get_api_level` or :ref:`set_api_level` is cal
 It lists all **available** API levels that can be used and set by :ref:`set_api_level`.
 Also it indicates the **current** selected API level.
 
+.. versionadded:: 2.2.0
+   Level **3** added.
+
 .. versionadded:: 1.24.0
    Level **2** added.
 
@@ -170,8 +173,8 @@ Also it indicates the **current** selected API level.
   {
     "msg": "API_LEVEL",
     "error": "optional error message like an invalid level",
-    "available": [1,2,3,4],
-    "current": 4
+    "available": [1,2,3],
+    "current": 3
   }
 
 Your application should always set the compatible API level. The |AppName|

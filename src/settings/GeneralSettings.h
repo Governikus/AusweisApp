@@ -63,6 +63,9 @@ class GeneralSettings
 		[[nodiscard]] bool isRemindUserToClose() const;
 		void setRemindUserToClose(bool pRemindUser);
 
+		[[nodiscard]] bool isRemindUserOfAutoRedirect() const;
+		void setRemindUserOfAutoRedirect(bool pRemindUser);
+
 		[[nodiscard]] bool isTransportPinReminder() const;
 		void setTransportPinReminder(bool pTransportPinReminder);
 

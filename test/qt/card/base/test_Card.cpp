@@ -60,17 +60,19 @@ class test_Card
 
 		void test_generateErrorMessage_data()
 		{
+			const QString emptyStr = QLatin1String("");
+
 			QTest::addColumn<bool>("sdk");
 			QTest::addColumn<QString>("message");
 			QTest::addColumn<QString>("expectedMessage");
 
 			QTest::addRow("Normal message") << false << "specific message" << "specific message";
 			QTest::addRow("Null message") << false << QString() << QString();
-			QTest::addRow("Empty message") << false << QStringLiteral("") << QStringLiteral("");
+			QTest::addRow("Empty message") << false << emptyStr << emptyStr;
 
 			QTest::addRow("SDK - Normal message") << true << "specific message" << "scan failed";
 			QTest::addRow("SDK - Null message") << true << QString() << QString();
-			QTest::addRow("SDK - Empty message") << true << QStringLiteral("") << "scan failed";
+			QTest::addRow("SDK - Empty message") << true << emptyStr << "scan failed";
 		}
 
 

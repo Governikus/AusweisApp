@@ -8,8 +8,8 @@ import QtQuick
 import QtQuick.Layouts
 
 import Governikus.Global
-import Governikus.Type
 import Governikus.Style
+import Governikus.Type
 
 ColumnLayout {
 	id: root
@@ -75,12 +75,16 @@ ColumnLayout {
 					text: value
 					width: baseItem.width
 
+					Accessible.onPressAction: mouseArea.clicked(null)
+					Keys.onSpacePressed: mouseArea.clicked(null)
 					onFocusChanged: if (focus)
 						Utils.positionViewAtItem(this)
 				}
 			}
 		}
 		MouseArea {
+			id: mouseArea
+
 			property int counter: 0
 
 			anchors.fill: parent

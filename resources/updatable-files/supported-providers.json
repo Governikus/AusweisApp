@@ -409,24 +409,6 @@
 			"category": "other"
 		},
 		{
-			"eidSupport": false,
-			"shortName": {
-				"": "Bundestag ePetition"
-			},
-			"longName": {
-				"": "Bundestag ePetition"
-			},
-			"longDescription": {
-				"": "Mit der Online-Ausweisfunktion des Personalausweises können Sie sich einfach und sicher am Petitionsportal des Deutschen Bundestages<br/><ul><li>registrieren,</li><li>eine Petition einreichen sowie</li><li>eine Petition mitzeichnen.</li></ul>"
-			},
-			"address": "https://epetitionen.bundestag.de/epet/anmelden.html",
-			"homepage": "https://www.bundestag.de",
-			"phone": "+49 30 227 35257",
-			"email": "post.pet@bundestag.de",
-			"postalAddress": "Sekretariat des Petitionsausschusses<br/>Platz der Republik 1<br/>11011 Berlin",
-			"category": "citizen"
-		},
-		{
 			"shortName": {
 				"": "Bürgerantrag Bremen"
 			},
@@ -837,6 +819,24 @@
 		},
 		{
 			"shortName": {
+				"": "Holvi"
+			},
+			"longName": {
+				"": "Holvi"
+			},
+			"longDescription": {
+				"": "Smartes Banking für Selbstständige und kleine Unternehmen: Geschäftskonto, Zahlungskarten, Rechnungen, Investments und Buchhaltungstools, alles in einem Konto."
+			},
+			"address": "https://www.holvi.com/de",
+			"homepage": "https://www.holvi.com/de",
+			"email": "support@holvi.com",
+			"postalAddress": "Holvi Payment Services Oy<br/>Zweigniederlassung Deutschland<br/>Hasenheide 54<br/>10967 Berlin",
+			"category": "finance",
+			"image": "Holvi_image.png",
+			"icon": "Holvi_icon.png"
+		},
+		{
+			"shortName": {
 				"": "Landesportal Brandenburg"
 			},
 			"longName": {
@@ -1174,8 +1174,8 @@
 			"longDescription": {
 				"": "Gemeinschaftsserviceportal der Gemeinden des Landkreises Hameln-Pyrmont.<br/><br/>Die Städte- und Gemeinden des Landkreises Hameln-Pyrmont haben sich zusammengeschlossen und bieten, gemeinsam mit der Kreisverwaltung, auf Ihrem Serviceportal eine Reihe von Online-Diensten an. Städte- und Gemeinden des Landkreises Hameln-Pyrmont:<br/><ul><li>Aerzen</li><li>Bad Münder</li><li>Emmerthal</li><li>Coppenbrügge</li><li>Hameln</li><li>Bad Pyrmont</li><li>Hessisch Oldendorf</li><li>Salzhemmendorf</li></ul>"
 			},
-			"address": "https://service.einfach-digital-leben.de",
-			"homepage": "https://service.einfach-digital-leben.de",
+			"address": "https://service.hameln-pyrmont.de",
+			"homepage": "https://service.hameln-pyrmont.de",
 			"phone": "+49 5151 903 0",
 			"email": "digitalisierung@hameln-pyrmont.de",
 			"postalAddress": "Landkreis Hameln-Pyrmont<br/>Süntelstraße 9<br/>31785 Hameln",
@@ -1193,7 +1193,7 @@
 			"longDescription": {
 				"": "Das Portal 'Kfz-Online Berlin' bündelt alle Vorgänge rund um Kfz, die sich im Land Berlin online erledigen lassen."
 			},
-			"address": "https://kfz-portal.berlin.de",
+			"address": "https://www.behoerden-serviceportal.de/onlineantraege",
 			"homepage": "https://www.berlin.de/labo",
 			"phone": "+49 30 90269 0",
 			"email": "kundenservice@berlin.de",
@@ -2375,7 +2375,7 @@
 			"longDescription": {
 				"": " Die BundID bietet Ihnen ein zentrales Konto zur Identifizierung für alle Ihre Online-Anträge (z. B. mit einem Online-Ausweis). Sie können das Formular Ihres Online-Antrags durch das Hinterlegen Ihrer persönlichen Daten vorausfüllen lassen. Das spart Zeit, ist sicher und bewahrt Sie vor Tippfehlern.<br/><br/>Sie erhalten alle Bescheide und Nachrichten in Bezug auf den Online-Antrag bequem in Ihr elektronisches Postfach in Ihrem BundID-Konto."
 			},
-			"postalAddress": "Bundesministerium des Innern und für Heimat<br/>Alt-Moabit 140<br/>10557 Berlin",
+			"postalAddress": "Bundesministerium des Innern<br/>Alt-Moabit 140<br/>10557 Berlin",
 			"category": "citizen"
 		},
 		{

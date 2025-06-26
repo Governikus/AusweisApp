@@ -152,7 +152,7 @@ class test_UiLoader
 			QTRY_COMPARE(spyDestroyed.count(), 1); // clazy:exclude=qstring-allocations
 
 			// We call deleteLater and add a lambda with QueuedConnection.
-			// So the lambda will be disconnected if loader is destroyed abd
+			// So the lambda will be disconnected if loader is destroyed and
 			// we never get a fireRemovedAllPlugins here. Even we don't have
 			// blockSignals in dtor.
 			QCOMPARE(spyShutdown.count(), 0);

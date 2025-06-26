@@ -300,6 +300,25 @@ OnboardingStartView {
 			title: root.title
 			usedInOnboarding: true
 
+			cardNotActivatedDelegate: CardNotActivatedView {
+				continueButtonVisible: true
+				title: root.title
+
+				progress: ProgressTracker {
+					baseProgressTracker: progressTracker
+					currentStage: 3
+					relativeProgress: 1
+				}
+				titleBarSettings: TitleBarSettings {
+					navigationAction: NavigationAction.Action.Back
+					navigationEnabled: false
+				}
+
+				onContinueClicked: {
+					root.onboardingAborted = true;
+					ChangePinModel.continueWorkflow();
+				}
+			}
 			errorViewDelegate: OnboardingPinErrorView {
 				title: root.title
 

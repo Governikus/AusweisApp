@@ -8,6 +8,7 @@
 #include "Env.h"
 #include "IfdClientImpl.h"
 
+class MockRemoteIfdClient;
 class test_RemoteIfdClient;
 
 namespace governikus
@@ -18,6 +19,7 @@ class RemoteIfdClient
 {
 	Q_OBJECT
 	friend class Env;
+	friend class ::MockRemoteIfdClient;
 	friend class ::test_RemoteIfdClient;
 
 	private:

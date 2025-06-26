@@ -12,7 +12,6 @@ CheckResultSuggestionView {
 	property bool usedInOnboarding: false
 
 	signal checkSuccess
-	signal pinDeactivated
 	signal restartCheck
 
 	Accessible.name: suggestionData.title
@@ -24,8 +23,6 @@ CheckResultSuggestionView {
 			return insufficientApduLengthSuggestionData;
 		case CheckIDCardModel.Result.CARD_ACCESS_FAILED:
 			return cardAccessFailedSuggestionData;
-		case CheckIDCardModel.Result.PIN_DEACTIVATED:
-			return pinDeactivatedSuggestionData;
 		case CheckIDCardModel.Result.PIN_SUSPENDED:
 			return pinSuspendedSuggestionData;
 		case CheckIDCardModel.Result.PIN_BLOCKED:
@@ -86,27 +83,6 @@ CheckResultSuggestionView {
 		title: qsTr("ID card access failed")
 
 		onContinueClicked: root.restartCheck()
-	}
-	SuggestionData {
-		id: pinDeactivatedSuggestionData
-
-		//: LABEL ALL_PLATFORMS
-		continueButtonText: root.usedInOnboarding ? qsTr("Abort setup") : ""
-		hintButtonText: PinResetInformationModel.pinResetActionText
-		hintText: PinResetInformationModel.activateOnlineFunctionHint
-		//: LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated
-		hintTitle: qsTr("Activate the eID function.")
-		text: PinResetInformationModel.activateOnlineFunctionDescription
-
-		//: LABEL ALL_PLATFORMS
-		title: qsTr("eID function disabled")
-
-		onContinueClicked: {
-			if (root.usedInOnboarding) {
-				root.pinDeactivated();
-			}
-		}
-		onHintClicked: Qt.openUrlExternally(PinResetInformationModel.pinResetUrl)
 	}
 	SuggestionData {
 		id: pinSuspendedSuggestionData

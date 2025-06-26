@@ -20,9 +20,9 @@ GridLayout {
 	signal digitPressed(string digit)
 	signal submitPressed
 
-	//: LABEL ANDROID IOS
-	Accessible.description: qsTr("Number pad")
 	Accessible.focusable: true
+	//: LABEL ANDROID IOS
+	Accessible.name: qsTr("Number pad")
 	Accessible.role: Accessible.Grouping
 	columnSpacing: 10
 	columns: 3

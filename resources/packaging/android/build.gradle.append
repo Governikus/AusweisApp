@@ -7,10 +7,7 @@ task sourcesJar(type: Jar) {
 allprojects {
     repositories {
         maven {
-            url "https://maven.google.com"
-        }
-        maven {
-            url "https://repo.govkg.de/repository/maven-3rd-party"
+            url = "https://repo.govkg.de/repository/maven-3rd-party"
         }
     }
 }
@@ -39,7 +36,7 @@ android {
     }
 
     lint {
-        baseline file('lint-baseline.xml')
+        baseline = file('lint-baseline.xml')
         disable += ['LintBaseline']
     }
 

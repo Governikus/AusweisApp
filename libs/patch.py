@@ -214,7 +214,7 @@ def fromstring(s):
 
 def fromurl(url):
   """ Parse patch from an URL, return False
-      if an error occured. Note that this also
+      if an error occurred. Note that this also
       can throw urlopen() exceptions.
   """
   ps = PatchSet( urllib_request.urlopen(url) )

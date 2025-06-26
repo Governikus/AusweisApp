@@ -26,8 +26,8 @@ endif()
 message(STATUS "Using DMG: ${DMG_FILE}")
 
 
-set(keychain --keychain-profile "AC_PASSWORD")
-execute_process(COMMAND ${XCRUN} notarytool submit ${keychain} ${DMG_FILE} OUTPUT_VARIABLE UUID_OUTPUT)
+set(credentials --apple-id $ENV{APPSTORE_USER} --password $ENV{APPSTORE_PSW} --team-id $ENV{APPSTORE_TEAM})
+execute_process(COMMAND ${XCRUN} notarytool submit ${credentials} ${DMG_FILE} OUTPUT_VARIABLE UUID_OUTPUT)
 
 set(regex_uuid "id: ([-|0-9|a-z]+)")
 FETCH_REGEX(UUID "${regex_uuid}" "${UUID_OUTPUT}")
@@ -38,9 +38,9 @@ else()
 endif()
 
 message(STATUS "Wait...")
-execute_process(COMMAND ${XCRUN} notarytool wait ${UUID} ${keychain})
+execute_process(COMMAND ${XCRUN} notarytool wait ${UUID} ${credentials})
 
-execute_process(COMMAND ${XCRUN} notarytool info ${UUID} ${keychain} OUTPUT_VARIABLE STATUS_OUTPUT)
+execute_process(COMMAND ${XCRUN} notarytool info ${UUID} ${credentials} OUTPUT_VARIABLE STATUS_OUTPUT)
 
 set(regex_status "status: ([a-zA-Z| ]+)")
 FETCH_REGEX(STATUS "${regex_status}" "${STATUS_OUTPUT}")
@@ -49,7 +49,7 @@ if(STATUS STREQUAL "Accepted")
 	message(STATUS "Notarization succeeded...")
 else()
 	message(STATUS "Fetched Status: ${STATUS}")
-	execute_process(COMMAND ${XCRUN} notarytool log ${UUID} ${keychain})
+	execute_process(COMMAND ${XCRUN} notarytool log ${UUID} ${credentials})
 	message(FATAL_ERROR "Notarization failed:\n${STATUS_OUTPUT}")
 endif()
 

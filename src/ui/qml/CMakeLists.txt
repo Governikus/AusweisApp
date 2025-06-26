@@ -9,7 +9,9 @@ ADD_PLATFORM_LIBRARY(AusweisAppUiQml EXCLUDE "/modules/")
 target_link_libraries(AusweisAppUiQml PUBLIC ${Qt}::Core ${Qt}::Svg ${Qt}::Qml ${Qt}::Quick ${Qt}::QuickControls2)
 target_link_libraries(AusweisAppUiQml PUBLIC AusweisAppGlobal AusweisAppUi AusweisAppIfdRemote AusweisAppServices AusweisAppWorkflowsSelfAuth AusweisAppUiQmlModules)
 
-target_link_libraries(AusweisAppUiQml PUBLIC ${Qt}::CorePrivate)
+if(ANDROID)
+	target_link_libraries(AusweisAppUiQml PUBLIC ${Qt}::CorePrivate)
+endif()
 
 if(TARGET ${Qt}::Widgets)
 	target_link_libraries(AusweisAppUiQml PUBLIC ${Qt}::Widgets) # QSystemTrayIcon

@@ -28,53 +28,50 @@ template<> IfdConnector* createNewObject<IfdConnector*>()
 using namespace governikus;
 
 
-void IfdConnectorImpl::removeRequest(const IfdDescriptor& pIfdDescriptor)
+QSharedPointer<ConnectRequest> IfdConnectorImpl::removeRequest(ConnectRequest const* pRequest)
 {
 	QMutableListIterator<QSharedPointer<ConnectRequest>> requestIterator(mPendingRequests);
 	while (requestIterator.hasNext())
 	{
 		const QSharedPointer<ConnectRequest> item = requestIterator.next();
 		Q_ASSERT(item);
-		if (item.isNull())
-		{
-			qCCritical(ifd) << "Unexpected null pending request";
 
-			requestIterator.remove();
-		}
-		else if (item->getIfdDescriptor() == pIfdDescriptor)
+		if (item.data() == pRequest)
 		{
 			requestIterator.remove();
+			return item;
 		}
 	}
+
+	return QSharedPointer<ConnectRequest>();
 }
 
 
-void IfdConnectorImpl::onConnectionCreated(const IfdDescriptor& pIfdDescriptor,
-		const QSharedPointer<QWebSocket>& pWebSocket)
+void IfdConnectorImpl::onConnectionCreated(ConnectRequest const* pRequest, const QSharedPointer<QWebSocket>& pWebSocket)
 {
+	const auto& connectRequest = removeRequest(pRequest);
+	if (!connectRequest)
+	{
+		return;
+	}
+
+	const auto& ifdDescriptor = connectRequest->getIfdDescriptor();
 	const QSharedPointer<DataChannel> channel(new WebSocketChannel(pWebSocket), &QObject::deleteLater);
-	const IfdVersion::Version latestSupportedVersion = IfdVersion::selectLatestSupported(pIfdDescriptor.getApiVersions());
+	const IfdVersion::Version latestSupportedVersion = IfdVersion::selectLatestSupported(ifdDescriptor.getSupportedApis());
 	const QSharedPointer<IfdDispatcherClient> dispatcher(Env::create<IfdDispatcherClient*>(latestSupportedVersion, channel), &QObject::deleteLater);
-
-	removeRequest(pIfdDescriptor);
-
-	Q_EMIT fireDispatcherCreated(pIfdDescriptor, dispatcher);
+	Q_EMIT fireDispatcherCreated(ifdDescriptor, dispatcher);
 }
 
 
-void IfdConnectorImpl::onConnectionError(const IfdDescriptor& pIfdDescriptor, const IfdErrorCode& pError)
+void IfdConnectorImpl::onConnectionError(ConnectRequest const* pRequest, const IfdErrorCode& pError)
 {
-	removeRequest(pIfdDescriptor);
+	const auto& connectRequest = removeRequest(pRequest);
+	if (!connectRequest)
+	{
+		return;
+	}
 
-	Q_EMIT fireDispatcherError(pIfdDescriptor, pError);
-}
-
-
-void IfdConnectorImpl::onConnectionTimeout(const IfdDescriptor& pIfdDescriptor)
-{
-	removeRequest(pIfdDescriptor);
-
-	Q_EMIT fireDispatcherError(pIfdDescriptor, IfdErrorCode::CONNECTION_TIMEOUT);
+	Q_EMIT fireDispatcherError(connectRequest->getIfdDescriptor(), pError);
 }
 
 
@@ -103,7 +100,6 @@ void IfdConnectorImpl::onConnectRequest(const IfdDescriptor& pIfdDescriptor, con
 	mPendingRequests += newRequest;
 	connect(newRequest.data(), &ConnectRequest::fireConnectionCreated, this, &IfdConnectorImpl::onConnectionCreated);
 	connect(newRequest.data(), &ConnectRequest::fireConnectionError, this, &IfdConnectorImpl::onConnectionError);
-	connect(newRequest.data(), &ConnectRequest::fireConnectionTimeout, this, &IfdConnectorImpl::onConnectionTimeout);
 	qCDebug(ifd) << "Request connection.";
 	newRequest->start();
 }

@@ -6,7 +6,6 @@
 
 #include "AppSettings.h"
 #include "LanguageLoader.h"
-#include "ReaderManager.h"
 #include "Service.h"
 #include "VolatileSettings.h"
 
@@ -25,8 +24,9 @@ SettingsModel::SettingsModel()
 	, mAdvancedSettings(false)
 	, mIsStartedByAuth(false)
 	, mShowBetaTesting(!qEnvironmentVariableIsSet("SUPPRESS_BETA_LOGO"))
+	, mManualAppcastUpdateRequested(false)
 {
-	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::fireAppUpdateDataChanged);
+	connect(Env::getSingleton<AppUpdateDataModel>(), &AppUpdateDataModel::fireAppUpdateDataChanged, this, &SettingsModel::onAppUpdateDataChanged);
 
 	const auto& generalSettings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	connect(&generalSettings, &GeneralSettings::fireShowInAppNotificationsChanged, this, &SettingsModel::fireShowInAppNotificationsChanged);
@@ -37,12 +37,15 @@ SettingsModel::SettingsModel()
 	connect(&generalSettings, &GeneralSettings::fireDarkModeChanged, this, &SettingsModel::fireDarkModeChanged);
 	connect(&generalSettings, &GeneralSettings::firePreferredTechnologyChanged, this, &SettingsModel::firePreferredTechnologyChanged);
 
+	connect(&generalSettings, &GeneralSettings::fireSettingsChanged, this, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
+
 	const auto& simulatorSettings = Env::getSingleton<AppSettings>()->getSimulatorSettings();
 	connect(&simulatorSettings, &SimulatorSettings::fireEnabledChanged, this, &SettingsModel::fireSimulatorChanged);
 	connect(&simulatorSettings, &SimulatorSettings::fireEnabledChanged, this, &SettingsModel::firePreferredTechnologyChanged);
 
-	const auto* readerManager = Env::getSingleton<ReaderManager>();
-	connect(readerManager, &ReaderManager::fireStatusChanged, this, &SettingsModel::firePreferredTechnologyChanged);
+	connect(Env::getSingleton<ApplicationModel>(), &ApplicationModel::fireNfcStateChanged, this, [this]{
+				onNfcStateChanged(Env::getSingleton<ApplicationModel>()->getNfcState());
+			});
 
 #ifdef Q_OS_ANDROID
 	mIsStartedByAuth = QJniObject::callStaticMethod<jboolean>("com/governikus/ausweisapp2/MainActivity", "isStartedByAuth");
@@ -475,6 +478,22 @@ void SettingsModel::setRemindUserToClose(bool pRemindUser)
 }
 
 
+bool SettingsModel::isRemindUserOfAutoRedirect() const
+{
+	return Env::getSingleton<AppSettings>()->getGeneralSettings().isRemindUserOfAutoRedirect();
+}
+
+
+void SettingsModel::setRemindUserOfAutoRedirect(bool pRemindUser) const
+{
+	if (isRemindUserOfAutoRedirect() != pRemindUser)
+	{
+		auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
+		settings.setRemindUserOfAutoRedirect(pRemindUser);
+	}
+}
+
+
 bool SettingsModel::isTransportPinReminder() const
 {
 	return Env::getSingleton<AppSettings>()->getGeneralSettings().isTransportPinReminder();
@@ -509,8 +528,9 @@ void SettingsModel::setShowInAppNotifications(bool pShowInAppNotifications) cons
 }
 
 
-void SettingsModel::updateAppcast() const
+void SettingsModel::updateAppcast()
 {
+	mManualAppcastUpdateRequested = true;
 	Env::getSingleton<Service>()->updateAppcast();
 }
 
@@ -597,7 +617,7 @@ SettingsModel::ModeOption SettingsModel::getDarkMode() const
 {
 	return Enum<ModeOption>::fromString(
 			Env::getSingleton<AppSettings>()->getGeneralSettings().getDarkMode(),
-			ModeOption::OFF);
+			ModeOption::AUTO);
 }
 
 
@@ -614,8 +634,7 @@ ReaderManagerPluginType SettingsModel::getPreferredTechnology() const
 	const auto simulator = Env::getSingleton<AppSettings>()->getSimulatorSettings().isEnabled();
 	if (technology == ReaderManagerPluginType::UNKNOWN || (technology == ReaderManagerPluginType::SIMULATOR && !simulator))
 	{
-		const auto& pluginInfo = Env::getSingleton<ReaderManager>()->getPluginInfo(ReaderManagerPluginType::NFC);
-		if (pluginInfo.isAvailable())
+		if (Env::getSingleton<ApplicationModel>()->getNfcState() != ApplicationModel::NfcState::UNAVAILABLE)
 		{
 			return ReaderManagerPluginType::NFC;
 		}
@@ -640,6 +659,7 @@ void SettingsModel::resetHideableDialogs() const
 	GeneralSettings& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 	settings.setTransportPinReminder(true);
 	settings.setRemindUserToClose(true);
+	settings.setRemindUserOfAutoRedirect(true);
 	settings.setRequestStoreFeedback(true);
 	settings.setStartupModule(QString());
 	settings.setShowOnboarding(true);
@@ -694,4 +714,28 @@ void SettingsModel::setAppendTransportPin(const QString& pNumber)
 	}
 	Q_EMIT fireDeveloperOptionsChanged();
 #endif
+}
+
+
+void SettingsModel::onAppUpdateDataChanged()
+{
+	if (mManualAppcastUpdateRequested)
+	{
+		mManualAppcastUpdateRequested = false;
+		Q_EMIT fireAppUpdateDataChanged(true);
+		return;
+	}
+	Q_EMIT fireAppUpdateDataChanged(false);
+}
+
+
+void SettingsModel::onNfcStateChanged(ApplicationModel::NfcState pNfcState)
+{
+	if (pNfcState == ApplicationModel::NfcState::UNAVAILABLE && getPreferredTechnology() == ReaderManagerPluginType::NFC)
+	{
+		setPreferredTechnology(ReaderManagerPluginType::UNKNOWN);
+		return;
+	}
+
+	Q_EMIT firePreferredTechnologyChanged();
 }

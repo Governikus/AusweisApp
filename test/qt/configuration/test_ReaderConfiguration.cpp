@@ -97,7 +97,7 @@ class test_ReaderConfiguration
 			QTest::addColumn<QString>("readerIcon");
 			QTest::addColumn<QString>("readerPattern");
 
-			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser") << "img_RemoteReader" << "^NFC.*";
+			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser") << "img_RemoteReader" << "^NFC.*"; // codespell:ignore
 
 			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
 			QTest::newRow("PersoSim native") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim") << "img_PersoSim" << "^PersoSim.*";
@@ -169,7 +169,7 @@ class test_ReaderConfiguration
 
 			QTest::newRow("UU") << UsbId(0xFFFF, 0xFFFF) << "crap" << "crap";
 
-			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser");
+			QTest::newRow("Remote card reader") << UsbId(0x0000, 0x0000) << "NFC-abcdef1234567890" << QStringLiteral("Smartphone als Kartenleser"); // codespell:ignore
 
 			QTest::newRow("PersoSim SaC") << UsbId(0x0000, 0x0001) << "PersoSimHandshake 00 00" << QStringLiteral("PersoSim");
 			QTest::newRow("PersoSim native") << UsbId(0x0000, 0x0001) << "PersoSim Virtual Card Reader 0" << QStringLiteral("PersoSim");

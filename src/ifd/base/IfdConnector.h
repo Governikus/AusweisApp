@@ -10,12 +10,12 @@
 
 #include <QObject>
 
+
 namespace governikus
 {
 defineEnumType(IfdErrorCode,
 		INVALID_REQUEST,
 		NO_SUPPORTED_API_LEVEL,
-		CONNECTION_TIMEOUT,
 		CONNECTION_ERROR,
 		REMOTE_HOST_REFUSED_CONNECTION)
 

@@ -1,4 +1,4 @@
-From 148ec3d4a7f16990c518264b80d4419fe781866c Mon Sep 17 00:00:00 2001
+From 4c33d27dee5f08f999d5469bc58e00d1f459f04a Mon Sep 17 00:00:00 2001
 From: Assam Boudjelthia <assam.boudjelthia@qt.io>
 Date: Sun, 8 Sep 2024 20:22:15 +0300
 Subject: CMake:Android: add property QT_ANDROID_COMPILE_SDK_VERSION

@@ -18,7 +18,7 @@ class WebSocketHelper
 	Q_OBJECT
 
 	private:
-		const int mConnectionTiemout;
+		const int mConnectionTimeout;
 		QWebSocket mWebSocket;
 		QStringList mInput;
 

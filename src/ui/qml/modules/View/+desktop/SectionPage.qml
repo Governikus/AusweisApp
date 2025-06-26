@@ -64,7 +64,7 @@ BaseController {
 
 	Component.onCompleted: setActive()
 	Keys.onEscapePressed: event => {
-		if (titleBarSettings.navigationAction === NavigationAction.Back && titleBarSettings.navigationEnabled) {
+		if ((titleBarSettings.navigationAction === NavigationAction.Back || titleBarSettings.navigationAction === NavigationAction.Close) && titleBarSettings.navigationEnabled) {
 			titleBarSettings.navigationActionClicked();
 		} else {
 			event.accepted = false;

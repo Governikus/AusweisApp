@@ -536,7 +536,7 @@ void DiagnosisModel::onAntivirusInformationChanged()
 	mAntivirusSection.clear();
 	mAntivirusSectionRunning = false;
 
-	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformations();
+	const auto& antivirusInfos = mAntivirusDetection.getAntivirusInformation();
 	if (antivirusInfos.isEmpty())
 	{
 		//: LABEL DESKTOP

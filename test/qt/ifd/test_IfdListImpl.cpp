@@ -8,6 +8,7 @@
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
@@ -29,7 +30,9 @@ class test_IfdListImpl
 			const QHostAddress addr2 = QHostAddress("5.6.7.9"_L1);
 
 			{
-				const IfdDescriptor descr(offerMsg1, addr1);
+				auto discovery = offerMsg1;
+				discovery.setAddresses({addr1});
+				const IfdDescriptor descr(discovery);
 
 				QSignalSpy spy(&deviceList, &IfdListImpl::fireDeviceAppeared);
 				deviceList.update(descr);
@@ -37,7 +40,9 @@ class test_IfdListImpl
 			}
 
 			{
-				const IfdDescriptor descr(offerMsg1, addr1);
+				auto discovery = offerMsg1;
+				discovery.setAddresses({addr1});
+				const IfdDescriptor descr(discovery);
 
 				QSignalSpy spy(&deviceList, &IfdListImpl::fireDeviceAppeared);
 				deviceList.update(descr);
@@ -45,7 +50,9 @@ class test_IfdListImpl
 			}
 
 			{
-				const IfdDescriptor descr(offerMsg1, addr2);
+				auto discovery = offerMsg1;
+				discovery.setAddresses({addr2});
+				const IfdDescriptor descr(discovery);
 
 				QSignalSpy spy(&deviceList, &IfdListImpl::fireDeviceAppeared);
 				deviceList.update(descr);
@@ -53,7 +60,9 @@ class test_IfdListImpl
 			}
 
 			{
-				const IfdDescriptor descr(offerMsg2, addr2);
+				auto discovery = offerMsg2;
+				discovery.setAddresses({addr2});
+				const IfdDescriptor descr(discovery);
 
 				QSignalSpy spy(&deviceList, &IfdListImpl::fireDeviceAppeared);
 				deviceList.update(descr);
@@ -61,7 +70,9 @@ class test_IfdListImpl
 			}
 
 			{
-				const IfdDescriptor descr(offerMsg2, addr1);
+				auto discovery = offerMsg2;
+				discovery.setAddresses({addr1});
+				const IfdDescriptor descr(discovery);
 
 				QSignalSpy spy(&deviceList, &IfdListImpl::fireDeviceAppeared);
 				deviceList.update(descr);

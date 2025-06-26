@@ -30,8 +30,10 @@ SectionPage {
 	}
 
 	Connections {
-		function onFireAppUpdateDataChanged() {
-			root.push(updateView);
+		function onFireAppUpdateDataChanged(pAfterManualRequest) {
+			if (pAfterManualRequest) {
+				root.push(updateView);
+			}
 		}
 
 		target: SettingsModel

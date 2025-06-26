@@ -9,6 +9,7 @@
 #include <QtTest>
 
 
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
 
@@ -31,7 +32,7 @@ class test_CardConnectionWorker
 	private Q_SLOTS:
 		void init()
 		{
-			mReader.reset(new MockReader());
+			mReader.reset(new MockReader(QStringLiteral("Reader"), ReaderManagerPluginType::PCSC));
 			mWorker = CardConnectionWorker::create(mReader.data());
 		}
 
@@ -58,8 +59,40 @@ class test_CardConnectionWorker
 		}
 
 
+		void test_EstablishPaceChannel_data()
+		{
+			QTest::addColumn<int>("retryCounter");
+			QTest::addColumn<PacePasswordId>("pacePasswordId");
+			QTest::addColumn<CardReturnCode>("cardReturnCode");
+
+			QTest::newRow("PIN RT 3") << 3 << PacePasswordId::PACE_PIN << CardReturnCode::INVALID_PIN;
+			QTest::newRow("PIN RT 2") << 2 << PacePasswordId::PACE_PIN << CardReturnCode::INVALID_PIN_2;
+			QTest::newRow("PIN RT 1") << 1 << PacePasswordId::PACE_PIN << CardReturnCode::INVALID_PIN_3;
+			QTest::newRow("PIN RT 0") << 0 << PacePasswordId::PACE_PIN << CardReturnCode::INVALID_PIN;
+
+			QTest::newRow("CAN RT 3") << 3 << PacePasswordId::PACE_CAN << CardReturnCode::INVALID_CAN;
+			QTest::newRow("CAN RT 2") << 2 << PacePasswordId::PACE_CAN << CardReturnCode::INVALID_CAN;
+			QTest::newRow("CAN RT 1") << 1 << PacePasswordId::PACE_CAN << CardReturnCode::INVALID_CAN;
+			QTest::newRow("CAN RT 0") << 0 << PacePasswordId::PACE_CAN << CardReturnCode::INVALID_CAN;
+
+			QTest::newRow("PUK RT 3") << 3 << PacePasswordId::PACE_PUK << CardReturnCode::INVALID_PUK;
+			QTest::newRow("PUK RT 2") << 2 << PacePasswordId::PACE_PUK << CardReturnCode::INVALID_PUK;
+			QTest::newRow("PUK RT 1") << 1 << PacePasswordId::PACE_PUK << CardReturnCode::INVALID_PUK;
+			QTest::newRow("PUK RT 0") << 0 << PacePasswordId::PACE_PUK << CardReturnCode::INVALID_PUK;
+
+			QTest::newRow("MRZ RT 3") << 3 << PacePasswordId::PACE_MRZ << CardReturnCode::UNKNOWN;
+			QTest::newRow("MRZ RT 2") << 2 << PacePasswordId::PACE_MRZ << CardReturnCode::UNKNOWN;
+			QTest::newRow("MRZ RT 1") << 1 << PacePasswordId::PACE_MRZ << CardReturnCode::UNKNOWN;
+			QTest::newRow("MRZ RT 0") << 0 << PacePasswordId::PACE_MRZ << CardReturnCode::UNKNOWN;
+		}
+
+
 		void test_EstablishPaceChannel()
 		{
+			QFETCH(int, retryCounter);
+			QFETCH(PacePasswordId, pacePasswordId);
+			QFETCH(CardReturnCode, cardReturnCode);
+
 			const QByteArray password("111111");
 			const QByteArray chat = QByteArray::fromHex("7F4C12060904007F00070301020253050000000F0F");
 			const QByteArray certDescription = QByteArray::fromHex("30 8202A4"
@@ -74,17 +107,31 @@ class test_CardConnectionWorker
 
 			setCard();
 
+			QByteArray startMsg("Starting PACE for %1");
+			startMsg.replace("%1"_ba, Enum<PacePasswordId>::getName(pacePasswordId));
+
+			QByteArray basicMsg("Finished PACE for %1 with result PROTOCOL_ERROR");
+			basicMsg.replace("%1"_ba, Enum<PacePasswordId>::getName(pacePasswordId));
+
 			//basic reader
-			QTest::ignoreMessage(QtInfoMsg, "Starting PACE for PACE_CAN");
-			QTest::ignoreMessage(QtInfoMsg, "Finished PACE for PACE_CAN with result PROTOCOL_ERROR");
-			QCOMPARE(mWorker->establishPaceChannel(PacePasswordId::PACE_CAN, password, chat, certDescription).getPaceReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+			QTest::ignoreMessage(QtInfoMsg, startMsg.data());
+			QTest::ignoreMessage(QtInfoMsg, basicMsg.data());
+			QCOMPARE(mWorker->establishPaceChannel(pacePasswordId, password, chat, certDescription).getPaceReturnCode(), CardReturnCode::PROTOCOL_ERROR);
+
+			QByteArray comfortMsg("Finished PACE for %1 with result %2");
+			comfortMsg.replace("%1"_ba, Enum<PacePasswordId>::getName(pacePasswordId));
+			comfortMsg.replace("%2"_ba, Enum<CardReturnCode>::getName(cardReturnCode));
 
 			//comfort reader
 			mReader->setInfoBasicReader(false);
-			QTest::ignoreMessage(QtInfoMsg, "Starting PACE for PACE_PIN");
-			QTest::ignoreMessage(QtInfoMsg, "Finished PACE for PACE_PIN with result COMMAND_FAILED");
-			QTest::ignoreMessage(QtWarningMsg, "Establishment of PACE channel not supported");
-			QCOMPARE(mWorker->establishPaceChannel(PacePasswordId::PACE_PIN, QByteArray(), chat, certDescription).getPaceReturnCode(), CardReturnCode::COMMAND_FAILED);
+			mReader->setInfoCardInfo(CardInfo(CardType::EID_CARD, FileRef(), QSharedPointer<const EFCardAccess>(), retryCounter));
+			QTest::ignoreMessage(QtInfoMsg, startMsg.data());
+			if (pacePasswordId == PacePasswordId::PACE_PIN)
+			{
+				QTest::ignoreMessage(QtWarningMsg, "Add missing StatusCodeMseSet in EstablishPaceChannelOutput for Reiner SCT reader with pin pad that do not follow PCSC Part 10 IFDs with Secure PIN Entry Capabilities - AMENDMENT 1.1");
+			}
+			QTest::ignoreMessage(QtInfoMsg, comfortMsg.data());
+			QCOMPARE(mWorker->establishPaceChannel(pacePasswordId, QByteArray(), chat, certDescription).getPaceReturnCode(), cardReturnCode);
 		}
 
 

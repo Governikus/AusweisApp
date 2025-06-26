@@ -23,7 +23,10 @@ class PinResetInformationModel
 
 	friend class Env;
 
+	Q_PROPERTY(bool hasPinResetService READ hasPinResetService NOTIFY fireUpdated)
 	Q_PROPERTY(QUrl pinResetUrl READ getPinResetUrl NOTIFY fireUpdated)
+	Q_PROPERTY(QUrl pinResetActivationUrl READ getPinResetActivationUrl CONSTANT)
+	Q_PROPERTY(QUrl administrativeSearchUrl READ getAdministrativeSearchUrl NOTIFY fireUpdated)
 	Q_PROPERTY(QString noPinAndNoPukHint READ getNoPinAndNoPukHint NOTIFY fireUpdated)
 	Q_PROPERTY(QString requestNewPinHint READ getRequestNewPinHint NOTIFY fireUpdated)
 	Q_PROPERTY(QString activateOnlineFunctionHint READ getActivateOnlineFunctionHint NOTIFY fireUpdated)
@@ -36,10 +39,13 @@ class PinResetInformationModel
 	private:
 		PinResetInformationModel();
 		~PinResetInformationModel() override = default;
-		bool hasPinResetService() const;
 
 	public:
+		bool hasPinResetService() const;
+
 		[[nodiscard]] QUrl getPinResetUrl() const;
+		[[nodiscard]] QUrl getAdministrativeSearchUrl() const;
+		[[nodiscard]] QUrl getPinResetActivationUrl() const;
 		[[nodiscard]] QString getNoPinAndNoPukHint() const;
 		[[nodiscard]] QString getRequestNewPinHint() const;
 		[[nodiscard]] QString getActivateOnlineFunctionHint() const;

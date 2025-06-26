@@ -21,6 +21,12 @@ class test_SettingsModel
 	Q_OBJECT
 
 	private Q_SLOTS:
+		void init()
+		{
+			Env::getSingleton<SettingsModel>()->setPreferredTechnology(ReaderManagerPluginType::UNKNOWN);
+		}
+
+
 		void testAutoRedirect()
 		{
 			auto* model = Env::getSingleton<SettingsModel>();
@@ -77,6 +83,10 @@ class test_SettingsModel
 		{
 			const auto& settings = Env::getSingleton<AppSettings>()->getGeneralSettings();
 			auto* model = Env::getSingleton<SettingsModel>();
+			QCOMPARE(model->getDarkMode(), SettingsModel::ModeOption::AUTO);
+
+			model->setDarkMode(SettingsModel::ModeOption::OFF);
+			QCOMPARE(settings.getDarkMode(), "OFF"_L1);
 			QCOMPARE(model->getDarkMode(), SettingsModel::ModeOption::OFF);
 
 			model->setDarkMode(SettingsModel::ModeOption::AUTO);
@@ -145,17 +155,23 @@ class test_SettingsModel
 			auto* settingsModel = Env::getSingleton<SettingsModel>();
 			settingsModel->setTransportPinReminder(false);
 			settingsModel->setRemindUserToClose(false);
+			auto remindRedirectSpy = QSignalSpy(settingsModel, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
+			settingsModel->setRemindUserOfAutoRedirect(false);
+			QCOMPARE(remindRedirectSpy.count(), 1);
 			settingsModel->hideFutureStoreFeedbackDialogs();
 			settingsModel->setStartupModule(UiModule::REMOTE_SERVICE);
 
 			QVERIFY(!settingsModel->isTransportPinReminder());
 			QVERIFY(!settingsModel->isRemindUserToClose());
+			QVERIFY(!settingsModel->isRemindUserOfAutoRedirect());
 			QVERIFY(!settingsModel->requestStoreFeedback());
 			QCOMPARE(settingsModel->getStartupModule(), UiModule::REMOTE_SERVICE);
 
 			settingsModel->resetHideableDialogs();
 			QVERIFY(settingsModel->isTransportPinReminder());
 			QVERIFY(settingsModel->isRemindUserToClose());
+			QVERIFY(settingsModel->isRemindUserOfAutoRedirect());
+			QVERIFY(remindRedirectSpy.count() > 1);
 			QVERIFY(settingsModel->requestStoreFeedback());
 			QCOMPARE(settingsModel->getStartupModule(), UiModule::ONBOARDING);
 		}
@@ -224,6 +240,74 @@ class test_SettingsModel
 			model->setShowOnboarding(showOnboarding);
 			model->setOnboardingShown(onboardingShown);
 			QCOMPARE(model->getStartupModule() == UiModule::ONBOARDING, startupModuleIsOnboarding);
+		}
+
+
+		void test_manualUpdateCheck()
+		{
+			auto* settingsModel = Env::getSingleton<SettingsModel>();
+			QSignalSpy spy(settingsModel, &SettingsModel::fireAppUpdateDataChanged);
+			Q_EMIT Env::getSingleton<AppUpdateDataModel>()->fireAppUpdateDataChanged();
+
+			QCOMPARE(spy.count(), 1);
+			QList<QVariant> arguments = spy.takeFirst();
+			QVERIFY(arguments.at(0).toBool() == false);
+			spy.clear();
+
+			settingsModel->updateAppcast();
+			Q_EMIT Env::getSingleton<AppUpdateDataModel>()->fireAppUpdateDataChanged();
+			QCOMPARE(spy.count(), 1);
+			arguments = spy.takeFirst();
+			QVERIFY(arguments.at(0).toBool() == true);
+		}
+
+
+		void test_isAutoRedirectAfterAuthentication()
+		{
+			auto* settings = Env::getSingleton<SettingsModel>();
+
+			QSignalSpy spy(settings, &SettingsModel::fireRemindUserOfAutoRedirectChanged);
+			bool initial = settings->isRemindUserOfAutoRedirect();
+			bool newValue = !initial;
+
+			settings->setRemindUserOfAutoRedirect(newValue);
+			QCOMPARE(spy.count(), 1);
+			QCOMPARE(settings->isRemindUserOfAutoRedirect(), newValue);
+
+			settings->setRemindUserOfAutoRedirect(initial);
+			QCOMPARE(spy.count(), 2);
+			QCOMPARE(settings->isRemindUserOfAutoRedirect(), initial);
+		}
+
+
+		void test_onNfcStateChanged_data()
+		{
+			QTest::addColumn<ApplicationModel::NfcState>("nfcState");
+			QTest::addColumn<ReaderManagerPluginType>("initialPreferredTechnology");
+			QTest::addColumn<ReaderManagerPluginType>("finalPreferredTechnology");
+
+			QTest::addRow("NFC ready and selected") << ApplicationModel::NfcState::READY << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC inactive and selected") << ApplicationModel::NfcState::INACTIVE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC disabled and selected") << ApplicationModel::NfcState::DISABLED << ReaderManagerPluginType::NFC << ReaderManagerPluginType::NFC;
+			QTest::addRow("NFC unavailable and selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::NFC << ReaderManagerPluginType::REMOTE_IFD;
+			QTest::addRow("NFC unavailable and simulator selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::SIMULATOR << ReaderManagerPluginType::SIMULATOR;
+			QTest::addRow("NFC unavailable and remote ifd selected") << ApplicationModel::NfcState::UNAVAILABLE << ReaderManagerPluginType::REMOTE_IFD << ReaderManagerPluginType::REMOTE_IFD;
+		}
+
+
+		void test_onNfcStateChanged()
+		{
+			QFETCH(ApplicationModel::NfcState, nfcState);
+			QFETCH(ReaderManagerPluginType, initialPreferredTechnology);
+			QFETCH(ReaderManagerPluginType, finalPreferredTechnology);
+
+			auto* settings = Env::getSingleton<SettingsModel>();
+			settings->setPreferredTechnology(initialPreferredTechnology);
+			QSignalSpy spy(settings, &SettingsModel::firePreferredTechnologyChanged);
+
+			settings->onNfcStateChanged(nfcState);
+			QCOMPARE(settings->getPreferredTechnology(), finalPreferredTechnology);
+			QCOMPARE(spy.count(), 1);
 		}
 
 

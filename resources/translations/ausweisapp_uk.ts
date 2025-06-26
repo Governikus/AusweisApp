@@ -48,6 +48,54 @@
     </message>
 </context>
 <context>
+    <name>AuthCanceledView</name>
+    <message>
+        <source>This may take a few moments.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The authentication was cancelled successfully.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back to provider</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authentication was canceled</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The authentication is being canceled at the provider (%1)</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back to start page</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Повернутися до початкової сторінки</translation>
+    </message>
+    <message>
+        <source>The cancellation was triggered on the card reader.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back to setup</source>
+        <extracomment>LABEL ALL_PLATFORM</extracomment>
+        <translation>Повернутися до налаштувань</translation>
+    </message>
+    <message>
+        <source>You may start a new authentication after pressing the button.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AuthController</name>
     <message>
         <source>Identify</source>
@@ -146,21 +194,6 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
 - не переміщуйте картку, поки до неї здійснюється доступ</translation>
     </message>
     <message>
-        <source>Network problems detected, trying to reach server within 30 seconds.</source>
-        <extracomment>INFO DESKTOP Information message about cancellation process without working network connectivity</extracomment>
-        <translation>Виявлено проблеми з мережею, виконується спроба зв’язатися з сервером протягом 30 секунд.</translation>
-    </message>
-    <message>
-        <source>Aborting process and informing the service provider</source>
-        <extracomment>INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider</extracomment>
-        <translation>Переривання процесу й інформування постачальника послуг</translation>
-    </message>
-    <message>
-        <source>Error code: %1</source>
-        <extracomment>INFO DESKTOP Error code (string) of current GlobalStatus code, shown as header of popup.</extracomment>
-        <translation>Код помилки: %1</translation>
-    </message>
-    <message>
         <source>Back to start page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Повернутися до початкової сторінки</translation>
@@ -169,6 +202,16 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
         <source>Back to setup</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Повернутися до налаштувань</translation>
+    </message>
+    <message>
+        <source>Aborting process and informing the service provider</source>
+        <extracomment>INFO DESKTOP The user aborted the authentication process, according to TR we need to inform the service provider</extracomment>
+        <translation>Переривання процесу й інформування постачальника послуг</translation>
+    </message>
+    <message>
+        <source>Network problems detected, trying to reach server within 30 seconds.</source>
+        <extracomment>INFO DESKTOP Information message about cancellation process without working network connectivity</extracomment>
+        <translation>Виявлено проблеми з мережею, виконується спроба зв’язатися з сервером протягом 30 секунд.</translation>
     </message>
 </context>
 <context>
@@ -179,6 +222,39 @@ INFO ANDROID IOS The card reader requests the user&apos;s attention.</extracomme
 ----------
 LABEL ANDROID IOS</extracomment>
         <translation>Ідентифікувати</translation>
+    </message>
+</context>
+<context>
+    <name>AutoRedirectDecision</name>
+    <message>
+        <source>You are currently using automatic redirection. This may cause the screen reader to miss some information during the authentication process. To ensure all information are received, please enable manual redirection.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can change your preference at any time in the settings.</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip and keep automatic redirection</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable manual redirection</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimize your settings for screen reading</source>
+        <extracomment>INFO ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do not display this message in future.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Надалі не показуйте це повідомлення.</translation>
     </message>
 </context>
 <context>
@@ -330,6 +406,94 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>OpenSSL Version</source>
         <translation>Версія OpenSSL</translation>
+    </message>
+</context>
+<context>
+    <name>CardNotActivatedBaseView</name>
+    <message>
+        <source>Activate ID card with PIN reset letter</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request eID function activation</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>eID function is not activated</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Did you recently order a PIN reset letter with an activation code?</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activate your ID card using the activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes, I already have an activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request the activation of the eID function</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No, I don&apos;t have an activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Abort setup</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Інформація про налаштування</translation>
+    </message>
+    <message>
+        <source>Enter your activation code of your present PIN reset letter into the following website.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter activation code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Request action code</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can request a PIN reset letter with an activation code on the following website.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Online via PIN reset service</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find competent authority</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Знайти компетентний орган</translation>
+    </message>
+    <message>
+        <source>You can activate the eID function directly at your competent authority.</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>At your competent authority</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -836,11 +1000,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Не вдалося встановити стабільне з’єднання з вашою ID-карткою.&lt;br&gt;&lt;br&gt;Почніть перевірку ще раз. Спробуйте змінити положення картки та не рухайте її під час тесту.&lt;br&gt;&lt;br&gt;Якщо з’єднання з ID-карткою не вдається встановити навіть у різних положеннях, це означає, що інтерфейс NFC вашого мобільного пристрою не може забезпечити ID-картку достатньою потужністю.&lt;br&gt;&lt;br&gt;Ви можете знайти смартфони, сумісні з %1, на нашому &lt;a href=&quot;%2&quot;&gt;сайті&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>Abort setup</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Інформація про налаштування</translation>
-    </message>
-    <message>
         <source>ID card PIN suspended</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>PIN-код ID-картки призупинено</translation>
@@ -886,16 +1045,6 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <source>No supported ID card was detected. The %1 supports:&lt;p&gt;&lt;ul&gt;&lt;li&gt;German ID cards&lt;/li&gt;&lt;li&gt;Electronic residence permits (eAT)&lt;/li&gt;&lt;li&gt;eID cards for citizen of the EU/EEA/&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;If you have used one of the above documents and this error message still appears, please restart the check.</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Жодної підтримуваної ID-картки не було виявлено. Програма %1 підтримує:&lt;p&gt;&lt;ul&gt;&lt;li&gt;Німецькі ID-картки&lt;/li&gt;&lt;li&gt;Електронні посвідки на проживання (eAT)&lt;/li&gt;&lt;li&gt;Картки eID для громадян ЄС/ЄЕЗ&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;Якщо ви скористалися одним із вищезазначених документів, але це повідомлення про помилку все одно з’являється, перезапустіть перевірку.</translation>
-    </message>
-    <message>
-        <source>eID function disabled</source>
-        <extracomment>LABEL ALL_PLATFORMS</extracomment>
-        <translation>Функцію eID вимкнено</translation>
-    </message>
-    <message>
-        <source>Activate the eID function.</source>
-        <extracomment>LABEL ALL_PLATFORMS Hint when a workflow failed because the eID function was not activated</extracomment>
-        <translation>Активуйте функцію eID.</translation>
     </message>
     <message>
         <source>You may continue the onboarding and change your PIN.</source>
@@ -1080,24 +1229,19 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <translation>Перервати операцію</translation>
     </message>
     <message>
-        <source>The user interface of the %1 is closed.</source>
+        <source>How should the %1 be closed in the future?</source>
         <extracomment>INFO DESKTOP Header of the popup that is shown when the AA is closed for the first time.</extracomment>
-        <translation>Інтерфейс користувача %1 закрито.</translation>
+        <translation type="unfinished">Інтерфейс користувача %1 закрито.</translation>
     </message>
     <message>
-        <source>The %1 is closed.</source>
-        <extracomment>INFO DESKTOP Header of the popup that is shown when the AA is quit for the first time.</extracomment>
-        <translation>Програму %1 закрито.</translation>
-    </message>
-    <message>
-        <source>Completely close the app</source>
+        <source>Close completely</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Повністю закрийте програму</translation>
+        <translation type="unfinished">Повністю закрийте програму</translation>
     </message>
     <message>
-        <source>Just close the user interface</source>
+        <source>Leave active in the background</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Лише закрийте інтерфейс користувача</translation>
+        <translation type="unfinished">Лише закрийте інтерфейс користувача</translation>
     </message>
     <message>
         <source>If the %1 is closed, it is no longer available for authentication. You must then restart the app to authenticate yourself to service providers.</source>
@@ -1105,44 +1249,24 @@ LABEL ALL_PLATFORMS Sentence 2 of 3 of PUK explanation</extracomment>
         <translation>Якщо %1 закрито, він більше не буде доступний для автентифікації. Щоб пройти автентифікацію у постачальників послуг, вам слід перезапустити програму.</translation>
     </message>
     <message>
-        <source>If the %1 is terminated, it is no longer available for authentication. You must then restart the app in order to identify yourself to service providers.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Якщо %1 перервано, він більше не буде доступний для автентифікації. Щоб ідентифікувати себе у постачальників послуг, вам слід перезапустити програму.</translation>
-    </message>
-    <message>
-        <source>The app remains available via the icon in the system tray. Click on the %1 icon to reopen the user interface.</source>
-        <extracomment>INFO DESKTOP Content of the popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Програма залишається доступною через піктограму в системній панелі. Натисніть піктограму %1, щоб знову відкрити інтерфейс користувача.</translation>
-    </message>
-    <message>
-        <source>The app remains active in the background and can be reopened via the %1 icon on the menu bar again.</source>
-        <extracomment>INFO DESKTOP Content of the MacOS-popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Програма і надалі активна у фоновому режимі і може бути знову відкрита за допомогою піктограми %1 на панелі меню.</translation>
-    </message>
-    <message>
-        <source>The app remains active in the background and can be reopened via the %1 icon in the notification area of the Windows taskbar.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is enabled.</extracomment>
-        <translation>Програма і надалі активна у фоновому режимі і може бути знову відкрита за допомогою піктограми %1 в області сповіщень на панелі завдань Windows.</translation>
-    </message>
-    <message>
         <source>Do not display this message in future.</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Надалі не показуйте це повідомлення.</translation>
     </message>
     <message>
-        <source>If you only close the user interface, the app remains active in the background in the future and can be opened again via the %1 icon on the menu bar.</source>
-        <extracomment>INFO DESKTOP Content of the MacOS-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Якщо ви закриєте лише інтерфейс користувача, програма надалі буде активною у фоновому режимі, і її можна буде знову відкрити за допомогою піктограми %1 на панелі меню.</translation>
+        <source>If the %1 remains active in the background, it will open automatically as soon as you start an authentication. You can still open the %1 manually at any time.</source>
+        <extracomment>INFO DESKTOP %1 is replaced with the application name</extracomment>
+        <translation type="unfinished">Якщо ви закриєте лише інтерфейс користувача, програма надалі буде активною у фоновому режимі, і її можна буде знову відкрити за допомогою піктограми %1 на панелі меню.</translation>
     </message>
     <message>
-        <source>If you only close the user interface, the app remains active in the background in the future and can be reopened via the %1 icon in the notification area of the Windows taskbar.</source>
-        <extracomment>INFO DESKTOP Content of the Windows-popup that is shown when the AA is closed and the tray icon is disabled.</extracomment>
-        <translation>Якщо ви закриєте лише інтерфейс користувача, програма надалі буде активною у фоновому режимі, і її можна буде знову відкрити за допомогою піктограми %1 в області сповіщень на панелі завдань Windows.</translation>
+        <source>Abort process</source>
+        <extracomment>INFO DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close user interface to menu bar</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Закрийте інтерфейс користувача на панелі меню</translation>
+        <source>You can change your selection at any time in the settings.</source>
+        <extracomment>INFO DESKTOP Note to the user that the setting is available in the settings</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1883,9 +2007,9 @@ LABEL IOS_PHONE ANDROID_PHONE</extracomment>
         <translation>Використовуваний пристрій читання карток не відповідає технічним вимогам (Extended Length не підтримується).</translation>
     </message>
     <message>
-        <source>Place ID card</source>
+        <source>Read out ID card with connected device</source>
         <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Помістіть ID-картку</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Connect USB card reader or smartphone</source>
@@ -2483,8 +2607,10 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>5-значний транспортний PIN-код – %1це одноразовий PIN-код%2, який ви отримали у %1листі%2 під час подачі заяви на отримання ID-картки.</translation>
     </message>
     <message>
-        <source>When setting up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.</source>
-        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 2/2</extracomment>
+        <source>When you set up your ID card, you will %1replace%2 this 5-digit %1Transport PIN with%2 a 6-digit, %1self chosen card PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the Transport PIN?&apos; paragraph 2/2
+----------
+INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
         <translation>Під час налаштування вашої ID-картки, ви %1заміните%2 цей 5-значний %1транспортний PIN-код на%2 6-значний, %1вибраний вами PIN-код картки%2.</translation>
     </message>
     <message>
@@ -2493,7 +2619,7 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Де я можу дізнатися PUK-код картки?</translation>
     </message>
     <message>
-        <source>The PUK is a %1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.</source>
+        <source>The PUK is a%1 10-digit number%2 that you can find in the %1PIN letter%2 that was sent to you by mail after you %1applied for your ID card%2. You may find it to the %1right%2 of the 5-digit %1Transport PIN%2.</source>
         <extracomment>LABEL ALL_PLATFORMS INFO ALL_PLATFORMS Answer to the question &apos;Where do I find the PUK?&apos;</extracomment>
         <translation>PUK-код – це %110-значний номер%2, який ви можете знайти в %1листі з PIN-кодом%2, надісланому вам поштою після того, як ви %1подали заяву на отримання ID-картки%2. Він знаходиться %1праворуч%2 від 5-значного %1транспортного PIN-коду%2.</translation>
     </message>
@@ -2503,7 +2629,7 @@ INFO ALL_PLATFORMS Answer to the question &apos;How do I choose a secure (Smart-
         <translation>Навіщо потрібен PUK-код?</translation>
     </message>
     <message>
-        <source>The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have %1 3 more attempts%2 to enter the correct PIN.</source>
+        <source>The PUK is required if the %1card PIN has been entered incorrectly 3 times%2 in a row. As a result, the card PIN is blocked. By entering the PUK you will %1unblock the card PIN%2 and have%1 3 more attempts%2 to enter the correct PIN.</source>
         <extracomment>INFO ALL_PLATFORMS Answer to the question &apos;Why is the PUK required?&apos;</extracomment>
         <translation>PUK-код потрібен, якщо %1PIN-код-картки було введено неправильно 3 рази%2 поспіль. Внаслідок цього PIN-код-картки блокується. Ввівши PUK-код, ви %1розблокуєте PIN-код картки%2 і матимете %1ще 3 спроби%2 ввести правильний PIN-код.</translation>
     </message>
@@ -2645,11 +2771,6 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Ви можете змінювати свій 6-значний PIN-код Smart-eID у будь-який час і необмежену кількість разів, якщо ви знаєте свій дійсний PIN-код Smart-eID.</translation>
     </message>
     <message>
-        <source>When you set up the eID function, you will %1replace%2 this 5-digit %1Transport PIN%2 with a 6-digit %1card PIN that you choose yourself%2.</source>
-        <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 3/7</extracomment>
-        <translation>Коли ви налаштуєте функцію eID, ви %1заміните%2 цей 5-значний %1транспортний PIN-код%2 на 6-значний %1PIN-код картки, який ви оберете самостійно%2.</translation>
-    </message>
-    <message>
         <source>The Smart-eID PIN also has six digits. You also choose that PIN yourself while setting up the Smart-eID for the first time.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 5/7</extracomment>
         <translation>PIN-код Smart-eID також має шість цифр. Цей PIN-код ви також обираєте самостійно під час першого налаштування Smart-eID.</translation>
@@ -2700,9 +2821,9 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>У мене є лише 5-значний транспортний PIN-код</translation>
     </message>
     <message>
-        <source>You need to change the %1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
+        <source>You need to change the%1 5-digit Transport PIN%2 to your personal card PIN. Use %1Change PIN &gt; Transport PIN%2 from the startpage to do so.</source>
         <extracomment>INFO ALL_PLATFORMS Explanation if only the Transport PIN is at hand</extracomment>
-        <translation>Ви повинні змінити %1 5-значний транспортний PIN-код%2 на свій власний PIN-код картки. Для цього скористайтеся функцією %1Змінити PIN-код &gt; Транспортний PIN-код%2 на початковій сторінці.</translation>
+        <translation>Ви повинні змінити%1 5-значний транспортний PIN-код%2 на свій власний PIN-код картки. Для цього скористайтеся функцією %1Змінити PIN-код &gt; Транспортний PIN-код%2 на початковій сторінці.</translation>
     </message>
     <message>
         <source>If you have forgotten your Smart-eID PIN, you can renew your Smart-eID and thereby set a new PIN.</source>
@@ -2768,7 +2889,7 @@ LABEL ALL_PLATFORMS</extracomment>
         <translation>Якщо ви встановили 6-значний PIN-код, транспортний PIN-код більше не дійсний. Після цього для автентифікації своєї особи ви можете використовувати лише 6-значний PIN-код.</translation>
     </message>
     <message>
-        <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your %1 5-digit Transport PIN%2.</source>
+        <source>The 6-digit card PIN is a %1number that you choose yourself%2 when you set up the eID function for the first time. It %1replaces%2 your%1 5-digit Transport PIN%2.</source>
         <extracomment>INFO ALL_PLATFORMS Description text explaining the PINs 4/7</extracomment>
         <translation>6-значний PIN-код картки – це %1код, який ви обираєте самостійно%2, коли вперше налаштовуєте функцію eID. Він %1замінює%2 ваш %15-значний транспортний PIN-код%2.</translation>
     </message>
@@ -2917,11 +3038,18 @@ LABEL ANDROID IOS</extracomment>
     <name>NavigationAction</name>
     <message>
         <source>Cancel</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Скасувати</translation>
     </message>
     <message>
         <source>Back</source>
+        <extracomment>LABEL DESKTOP</extracomment>
         <translation>Назад</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished">Закрийте</translation>
     </message>
 </context>
 <context>
@@ -3049,7 +3177,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>NFC scan is not running</source>
-        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
+        <extracomment>INFO ANDROID IOS</extracomment>
         <translation>Сканування NFC не виконується</translation>
     </message>
     <message>
@@ -3069,7 +3197,7 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Start scan</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
+        <extracomment>INFO ANDROID IOS NFC is available and enabled but needs to be started.</extracomment>
         <translation>Почати сканування</translation>
     </message>
     <message>
@@ -3151,6 +3279,14 @@ LABEL ANDROID IOS</extracomment>
         <source>Connection to ID card lost</source>
         <extracomment>INFO ANDROID IOS</extracomment>
         <translation type="unfinished">Перервано з&apos;єднання з ID-карткою</translation>
+    </message>
+</context>
+<context>
+    <name>Notifications</name>
+    <message>
+        <source>Notification: %1</source>
+        <extracomment>LABEL DESKTOP %1 will be replaced with a notification text</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3630,7 +3766,9 @@ LABEL IOS ANDROID</extracomment>
     <name>OnboardingView</name>
     <message>
         <source>Continue</source>
-        <extracomment>LABEL DESKTOP</extracomment>
+        <extracomment>LABEL DESKTOP
+----------
+LABEL ANDROID IOS</extracomment>
         <translation>Продовжити</translation>
     </message>
     <message>
@@ -3650,23 +3788,33 @@ LABEL ANDROID IOS</extracomment>
     </message>
     <message>
         <source>Open %1 on your %2other device%3.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 1 of 5</extracomment>
         <translation>Відкрийте %1 на своєму %2іншому пристрої%3.</translation>
     </message>
     <message>
-        <source>On that device go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 4. %1 and %2 are surrounding tags for bold font.</extracomment>
-        <translation>Перейдіть на тому пристрої до розділу %1Параметри%2, а тоді виберіть %1Смартфон як пристрій читання карток%2 і %1Керування створенням пари%2.</translation>
+        <source>Make sure that both devices are on the %1same network%2 (e.g. WiFi).</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 2 of 5. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On your other device, go to %1Settings%2 and then %1Smartphone as card reader%2 resp. %1Manage pairings%2.</source>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 5. %1 and %2 are surrounding tags for bold font.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Choose this smartphone in the list to pair it.</source>
-        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 3 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Assistance text for pairing new devices. Step 4 of 5</extracomment>
         <translation>Виберіть цей смартфон у переліку, щоб створити з ним пару.</translation>
     </message>
     <message>
         <source>Enter the pairing code &quot;%1&quot;.</source>
-        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 4 of 4</extracomment>
+        <extracomment>LABEL ANDROID IOS Provide pairing code. Step 5 of 5</extracomment>
         <translation>Уведіть код створення пари «%1».</translation>
+    </message>
+    <message>
+        <source>Please follow these steps:</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4014,7 +4162,7 @@ LABEL ANDROID IOS</extracomment>
     <message>
         <source>The following documents are allowed:</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Дозволені документи наведені нижче.</translation>
+        <translation>Дозволені документи наведені нижче:</translation>
     </message>
     <message>
         <source>german ID card</source>
@@ -4037,7 +4185,7 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ви можете використовувати свій %2смартфон із функцією NFC%3. Для цього вам потрібно буде встановити %1 на цей смартфон. Також, ви можете використовувати %2USB-пристрій читання карток на вашому ПК%3.</translation>
     </message>
     <message>
-        <source>You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a %1 6-digit card PIN%2 in the %3 or at the Citizens&apos; Registration Office. If you do not have a PIN or do not remember your card PIN, click here:</source>
+        <source>You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens&apos; Registration Office. If you do not have a PIN or do not remember your card PIN, click here:</source>
         <extracomment>LABEL DESKTOP %1 + %2 = Bold Tags, %3 = AusweisApp
 ----------
 LABEL ANDROID IOS %1 + %2 = Bold Tags, %3 = AusweisApp</extracomment>
@@ -4097,9 +4245,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Ваші особисті дані жодним чином не зберігаються та не обробляються. Див. %1 для отримання відомостей про те, як обробляються ваші особисті дані.</translation>
     </message>
     <message>
-        <source>data privacy statement of the Federal Ministry of the Interior and Community</source>
+        <source>data privacy statement of the Federal Ministry of the Interior</source>
         <extracomment>LABEL ALL_PLATFORMS Text of the Smart-eID html link inside of a sentence</extracomment>
-        <translation>заяву про конфіденційність даних Федерального міністерства внутрішніх справ і родини</translation>
+        <translation type="unfinished">заяву про конфіденційність даних Федерального міністерства внутрішніх справ і родини</translation>
     </message>
     <message>
         <source>data privacy statement</source>
@@ -4213,6 +4361,24 @@ LABEL DESKTOP Title of the proxy credentials popup.</extracomment>
         <source>Unknown reader</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Невідомий пристрій читання</translation>
+    </message>
+</context>
+<context>
+    <name>ReaderFoundConfirmation</name>
+    <message>
+        <source>Found new smartphone as card reader that is suitable for the ID card. The workflow may now be continued.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Found new USB card reader that is suitable for the ID card. The workflow may now be continued.</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Знайдено новий USB-пристрій читання карток, який підходить для ID-картки. Тепер робочий процес можна продовжити.</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Продовжити</translation>
     </message>
 </context>
 <context>
@@ -4432,11 +4598,6 @@ LABEL ANDROID IOS</extracomment>
         <translation>Для цього запустіть процес на пристрої, з яким створено пару.</translation>
     </message>
     <message>
-        <source>Pairing code: &lt;b&gt;%1&lt;/b&gt;</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Код створення пари: &lt;b&gt;%1&lt;/b&gt;</translation>
-    </message>
-    <message>
         <source>Enable WiFi</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Увімкнути Wi-Fi</translation>
@@ -4487,23 +4648,13 @@ LABEL ANDROID IOS</extracomment>
         <translation>Куди вводити код створення пари?</translation>
     </message>
     <message>
-        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Введіть код створення пари &quot;%1&quot; у %2 на своєму іншому пристрої.</translation>
-    </message>
-    <message>
         <source>Cancel pairing</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Скасувати створення пари</translation>
     </message>
     <message>
-        <source>Activate the card reader, this allows the paired devices to use this smartphone as a card reader.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
-        <translation>Активуйте пристрій читання карток, що дозволить пристроям, з якими створено пару, використовувати цей смартфон як пристрій читання карток.</translation>
-    </message>
-    <message>
         <source>Paired devices may use this Smartphone as a card reader now.</source>
-        <extracomment>INFO ANDROID IOS</extracomment>
+        <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Тепер з’єднані пристрої можуть використовувати цей смартфон як пристрій читання карток.</translation>
     </message>
     <message>
@@ -4524,13 +4675,50 @@ To do this you first have to pair that device with this smartphone.</source>
         <translation>Ви можете використовувати цей смартфон як пристрій читання карток для %1 на інших пристроях, наприклад, на ноутбуці.
 Для цього вам потрібно спочатку створити пару між таким пристроєм і цим смартфоном.</translation>
     </message>
-</context>
-<context>
-    <name>RemoteServiceWifiInfo</name>
+    <message>
+        <source>No device paired</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Card reader not active</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use this smartphone as a card reader for a paired device</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activate the card reader</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>Both devices have to be on the same network (e.g. WiFi).</source>
         <extracomment>INFO ANDROID IOS The remote service is active. Hint that both devices need to be connected to the same network.</extracomment>
-        <translation>Обидва пристрої мають бути в одній мережі (наприклад, Wi-Fi).</translation>
+        <translation type="unfinished">Обидва пристрої мають бути в одній мережі (наприклад, Wi-Fi).</translation>
+    </message>
+    <message>
+        <source>Pairing code:</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This allows the paired devices to use this smartphone as a card reader.</source>
+        <extracomment>INFO ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the pairing code</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the pairing code &quot;%1&quot; in the %2 on your other device. Both devices have to be on the same network (e.g. WiFi).</source>
+        <extracomment>INFO ANDROID IOS %1 is replaced with the pairing code, %2 with the name &quot;AusweisApp&quot;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4583,11 +4771,6 @@ To do this you first have to pair that device with this smartphone.</source>
 </context>
 <context>
     <name>ResultErrorView</name>
-    <message>
-        <source>Error code:</source>
-        <extracomment>LABEL ANDROID IOS</extracomment>
-        <translation>Код помилки:</translation>
-    </message>
     <message>
         <source>Show Details</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
@@ -4733,9 +4916,9 @@ LABEL ANDROID IOS</extracomment>
         <translation>Читати дані самоавтентифікації</translation>
     </message>
     <message>
-        <source>Successfully read data</source>
+        <source>Successfully read data.</source>
         <extracomment>INFO DESKTOP Status message that the self authentication successfully completed.</extracomment>
-        <translation>Дані успішно прочитано</translation>
+        <translation>Дані успішно прочитано.</translation>
     </message>
     <message>
         <source>Read data</source>
@@ -4751,6 +4934,10 @@ LABEL ANDROID IOS</extracomment>
         <source>Back to start page</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Повернутися до початкової сторінки</translation>
+    </message>
+    <message>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Тепер ви можете видалити свою ID-картку з пристрою.</translation>
     </message>
 </context>
 <context>
@@ -5460,6 +5647,19 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     </message>
 </context>
 <context>
+    <name>TabbedPane</name>
+    <message>
+        <source>Content of tab &quot;%1&quot;</source>
+        <extracomment>LABEL DESKTOP %1 will be replaced with the title of the tab</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sidebar</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TabbedPaneDelegate</name>
     <message>
         <source>%1 of %2</source>
@@ -5470,6 +5670,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Tab selected</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Вибрано вкладку</translation>
+    </message>
+    <message>
+        <source>Tab</source>
+        <extracomment>LABEL DESKTOP</extracomment>
+        <translation>Вкладка</translation>
     </message>
 </context>
 <context>
@@ -5486,10 +5691,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
     <message>
         <source>USB card reader</source>
         <translation>USB-пристрій читання карток</translation>
-    </message>
-    <message>
-        <source>Found new USB card reader that is suitable for the ID card. The workflow may now be continued.</source>
-        <translation>Знайдено новий USB-пристрій читання карток, який підходить для ID-картки. Тепер робочий процес можна продовжити.</translation>
     </message>
 </context>
 <context>
@@ -5545,11 +5746,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Показувати сповіщення в програмі щодо %1</translation>
     </message>
     <message>
-        <source>Title bar</source>
-        <extracomment>LABEL DESKTOP</extracomment>
-        <translation>Рядок заголовка</translation>
-    </message>
-    <message>
         <source>Hide in-app notifications of %1</source>
         <extracomment>LABEL DESKTOP</extracomment>
         <translation>Приховати сповіщення у програмі щодо %1</translation>
@@ -5566,6 +5762,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Back</source>
         <extracomment>LABEL ANDROID IOS</extracomment>
         <translation>Назад</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <extracomment>LABEL ANDROID IOS</extracomment>
+        <translation type="unfinished">Закрийте</translation>
     </message>
 </context>
 <context>
@@ -5679,6 +5880,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <source>Start update</source>
         <extracomment>LABEL DESKTOP Start to download the update and execute it on Windows</extracomment>
         <translation>Почати оновлення</translation>
+    </message>
+    <message>
+        <source>%1 of %2 Kilobyte downloaded</source>
+        <extracomment>LABEL DESKTOP %1 and %2 will be replaced with the already downloaded and the total file size.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6017,6 +6223,11 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Повернутися до початкової сторінки</translation>
     </message>
+    <message>
+        <source>Connection to ID card lost</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Перервано з&apos;єднання з ID-карткою</translation>
+    </message>
 </context>
 <context>
     <name>governikus::CardInfo</name>
@@ -6071,7 +6282,7 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Зазначення органів, відповідальних за постачальника, які перевіряють дотримання правил безпеки даних</translation>
     </message>
     <message>
-        <source>Provider information</source>
+        <source>Provider Information</source>
         <extracomment>LABEL ALL_PLATFORMS</extracomment>
         <translation>Інформація про постачальника</translation>
     </message>
@@ -6595,9 +6806,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Неможливо почати автентифікацію. Операція вже активна.</translation>
     </message>
     <message>
-        <source>The connection to the ID card has been lost. The process was aborted.</source>
+        <source>Restart the authentication process and make sure that the position of the ID card does not change during the reading process.</source>
         <extracomment>ERROR ALL_PLATFORMS The card was removed after the PACE channel was established.</extracomment>
-        <translation>З’єднання з ID-карткою втрачено. Процес було перервано.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The authenticity of your ID card could not be confirmed.</source>
@@ -6870,11 +7081,6 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Версія вашого смартфона як пристрою читання карток (SaC) є несумісною з локальною версією. Установіть останню версію %1 як на свій смартфон, так і на комп’ютер.</translation>
     </message>
     <message>
-        <source>A timeout occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
-        <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) timed out.</extracomment>
-        <translation>Під час спроби встановити з’єднання зі смартфоном як пристроєм читання карток (SaC) вичерпано час очікування.</translation>
-    </message>
-    <message>
         <source>An error occurred while trying to establish a connection to the smartphone as card reader (SaC).</source>
         <extracomment>ERROR ALL_PLATFORMS The requested connection to the smartphone card reader (SaK) failed due to network errors (Host not found, OS error, ...)</extracomment>
         <translation>Сталася помилка під час спроби встановити з’єднання зі смартфоном як пристроєм читання карток (SaC).</translation>
@@ -7082,14 +7288,14 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
 <context>
     <name>governikus::NumberModel</name>
     <message>
-        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Smart-eID PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.</extracomment>
-        <translation>Ви ввели неправильний 6-значний PIN-код Smart-eID. Залишилося &lt;b&gt;ще 2 спроби&lt;/b&gt; введення PIN-коду Smart-eID.</translation>
+        <source>You have entered an incorrect, 6-digit Smart-eID PIN. You have%1 2 further attempts%2 to enter the correct Smart-eID PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Ви ввели неправильний 6-значний PIN-код Smart-eID. Залишилося %1ще 2 спроби%2 введення PIN-коду Smart-eID.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your &lt;b&gt;Transport PIN is now blocked&lt;/b&gt;. To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first.</source>
-        <extracomment>INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.</extracomment>
-        <translation>Ви 3 рази ввели неправильний 5-значний транспортний PIN-код. Тепер ваш &lt;b&gt;транспортний PIN-код заблоковано&lt;/b&gt;. Щоб видалити блокування, потрібно спочатку ввести &lt;b&gt;10-значний PUK-код&lt;/b&gt;.</translation>
+        <source>You have entered an incorrect, 5-digit Transport PIN 3 times, your %1Transport PIN is now blocked%2. To remove the block, the%1 10-digit PUK%2 must be entered first.</source>
+        <extracomment>INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Ви 3 рази ввели неправильний 5-значний транспортний PIN-код. Тепер ваш %1транспортний PIN-код заблоковано%2. Щоб видалити блокування, потрібно спочатку ввести%1 10-значний PUK-код%2.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 6-digit Smart-eID PIN 3 times. Your Smart-eID is now invalidated. To use a Smart-eID again you have to set one up in the guided setup on the start page.</source>
@@ -7102,9 +7308,9 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Ви ввели неправильний 10-значний PUK-код. Повторіть спробу.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 6-digit Smart-eID PIN 2 times&lt;/b&gt;. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
-        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID.</extracomment>
-        <translation>Ви &lt;b&gt;2 рази ввели неправильний 6-значний PIN-код Smart-eID&lt;/b&gt;. Після наступної невдалої спроби ви більше не зможете використовувати свій Smart-eID і вам потрібно буде налаштувати його знову.</translation>
+        <source>You have entered an %1incorrect, 6-digit Smart-eID PIN 2 times%2. After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.</source>
+        <extracomment>INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Ви%1 2 рази ввели неправильний 6-значний PIN-код Smart-eID%2. Після наступної невдалої спроби ви більше не зможете використовувати свій Smart-eID і вам потрібно буде налаштувати його знову.</translation>
     </message>
     <message>
         <source>The input does not match. Please choose a new Smart-eID PIN.</source>
@@ -7121,36 +7327,36 @@ To proceed use your ID card by selecting the NFC interface or choose &quot;WiFi&
         <translation>Ви ввели неправильний 6-значний PIN-код ID-картки.</translation>
     </message>
     <message>
-        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct ID card PIN.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 2/2</extracomment>
-        <translation>Залишилося &lt;b&gt;ще 2 спроби&lt;/b&gt; введення PIN-коду ID-картки.</translation>
+        <source>You have%1 2 further attempts%2 to enter the correct ID card PIN.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Залишилося %1ще 2 спроби%2 введення PIN-коду ID-картки.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 6-digit ID card PIN 2 times&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
-        <translation>Ви ввели &lt;b&gt;неправильний 6-значний PIN-код ID-картки 2 рази&lt;/b&gt;.</translation>
+        <source>You have entered an %1incorrect, 6-digit ID card PIN 2 times%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Ви ввели %1неправильний 6-значний PIN-код ID-картки 2 рази%2.</translation>
     </message>
     <message>
-        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2
+        <source>For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN in the %1bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2
 ----------
-INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2</extracomment>
-        <translation>Для 3-ї спроби спочатку потрібно ввести &lt;b&gt;6-значний номер доступу до картки (CAN)&lt;/b&gt;. Ви можете знайти номер CAN у &lt;b&gt;нижньому правому куті на лицьовому боці своєї ID-картки&lt;/b&gt;.</translation>
+INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Для 3-ї спроби спочатку потрібно ввести % 16-значний номер доступу до картки (CAN)%2. Ви можете знайти номер CAN у %1нижньому правому куті на лицьовому боці своєї ID-картки%2.</translation>
     </message>
     <message>
-        <source>You have entered an incorrect, 6-digit ID card PIN 3 times. Your &lt;b&gt;ID card PIN is now blocked&lt;/b&gt;.</source>
+        <source>You have entered an incorrect, 6-digit ID card PIN 3 times. Your %1ID card PIN is now blocked%2.</source>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 1/2</extracomment>
-        <translation>Ви ввели неправильний 6-значний PIN-код ID-картки 3 рази. &lt;b&gt;PIN-код вашої ID-картки заблоковано&lt;/b&gt;.</translation>
+        <translation>Ви ввели неправильний 6-значний PIN-код ID-картки 3 рази. %1PIN-код вашої ID-картки заблоковано%2.</translation>
     </message>
     <message>
-        <source>To remove the block, the &lt;b&gt;10-digit PUK&lt;/b&gt; must be entered first. You can find the PUK in the bottom &lt;b&gt;right next&lt;/b&gt; to the Transport PIN in the &lt;b&gt;authority&apos;s letter&lt;/b&gt;.</source>
+        <source>To remove the block, the%1 10-digit PUK%2 must be entered first. You can find the PUK in the bottom %1right next%2 to the Transport PIN in the %1authority&apos;s letter%2.</source>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 2/2</extracomment>
-        <translation>Щоб видалити блокування, потрібно спочатку ввести &lt;b&gt;10-значний PUK-код&lt;/b&gt;. PUK-код можна знайти в &lt;b&gt;листі від органу влади&lt;/b&gt; в нижньому &lt;b&gt;правому куті поряд&lt;/b&gt; із транспортним PIN-кодом.</translation>
+        <translation>Щоб видалити блокування, потрібно спочатку ввести %110-значний PUK-код%2. PUK-код можна знайти в %1листі від органу влади%2 в нижньому %1правому куті поряд%2 із транспортним PIN-кодом.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect Card Access Number (CAN)&lt;/b&gt;. Please try again. You can find your CAN in the &lt;b&gt;bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.</extracomment>
-        <translation>Ви ввели &lt;b&gt;неправильний номер доступу до картки (CAN)&lt;/b&gt;. Повторіть спробу. Ви можете знайти номер CAN у &lt;b&gt;нижньому правому куті на лицьовому боці своєї ID-картки&lt;/b&gt;.</translation>
+        <source>You have entered an %1incorrect Card Access Number (CAN)%2. Please try again. You can find your CAN in the %1bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again. %1 + %2 are used to emphasize.</extracomment>
+        <translation>Ви ввели %1неправильний номер доступу до картки (CAN)%2. Повторіть спробу. Ви можете знайти номер CAN у %1нижньому правому куті на лицьовому боці своєї ID-картки%2.</translation>
     </message>
     <message>
         <source>You have entered an incorrect, 5-digit Transport PIN.</source>
@@ -7158,34 +7364,34 @@ INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt req
         <translation>Ви ввели неправильний 5-значний транспортний PIN-код.</translation>
     </message>
     <message>
-        <source>You have &lt;b&gt;2 further attempts&lt;/b&gt; to enter the correct Transport PIN. The 5-digit Transport PIN may be found on the &lt;b&gt;bottom left of your PIN letter&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.Part 2/2</extracomment>
-        <translation>Залишилося &lt;b&gt;ще 2 спроби&lt;/b&gt; введення транспортного PIN-коду. 5-значний транспортний PIN-код можна знайти в &lt;b&gt;нижній лівій частині листа з PIN-кодом&lt;/b&gt;.</translation>
+        <source>You have%1 2 further attempts%2 to enter the correct Transport PIN. The 5-digit Transport PIN may be found on the %1bottom left of your PIN letter%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Залишилося %1ще 2 спроби%2 введення транспортного PIN-коду. 5-значний транспортний PIN-код можна знайти в %1нижній лівій частині листа з PIN-кодом%2.</translation>
     </message>
     <message>
-        <source>You have entered an &lt;b&gt;incorrect, 5-digit Transport PIN 2 times&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2</extracomment>
-        <translation>Ви ввели неправильний &lt;b&gt;5-значний транспортний PIN 2 рази&lt;/b&gt;.</translation>
+        <source>You have entered an %1incorrect, 5-digit Transport PIN 2 times%2.</source>
+        <extracomment>INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Ви ввели неправильний%1 5-значний транспортний PIN 2 рази%2.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;An incorrect PIN has been entered 2 times&lt;/b&gt; at the last use of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 1/2</extracomment>
-        <translation>Під час останнього використання вашої ID-картки &lt;b&gt;було 2 рази введено неправильний PIN-код&lt;/b&gt;.</translation>
+        <source>%1An incorrect PIN has been entered 2 times%2 at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Під час останнього використання вашої ID-картки %1було 2 рази введено неправильний PIN-код%2.</translation>
     </message>
     <message>
-        <source>For a 3rd attempt, the &lt;b&gt;6-digit Card Access Number (CAN)&lt;/b&gt; must be entered first. You can find your CAN &lt;b&gt;in the bottom right on the front of your ID card&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 2/2</extracomment>
-        <translation>Для 3-ї спроби спочатку потрібно ввести &lt;b&gt;6-значний номер доступу до картки (CAN)&lt;/b&gt;. Ви можете знайти номер CAN &lt;b&gt;у нижньому правому куті на лицьовому боці своєї ID-картки&lt;/b&gt;.</translation>
+        <source>For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN %1in the bottom right on the front of your ID card%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Для 3-ї спроби спочатку потрібно ввести%1 6-значний номер доступу до картки (CAN)%2. Ви можете знайти номер CAN %1у нижньому правому куті на лицьовому боці своєї ID-картки%2.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;An incorrect PIN has been entered 3 times&lt;/b&gt; at the last use of your ID card.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 1/2</extracomment>
-        <translation>Під час останнього використання вашої ID-картки &lt;b&gt;було 3 рази введено неправильний PIN-код&lt;/b&gt;.</translation>
+        <source>%1An incorrect PIN has been entered 3 times%2 at the last use of your ID card.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 1/2</extracomment>
+        <translation>Під час останнього використання вашої ID-картки %1було 3 рази введено неправильний PIN-код%2.</translation>
     </message>
     <message>
-        <source>Therefor you have to enter the &lt;b&gt;PUK&lt;/b&gt; first to &lt;b&gt;unlock the ID card PIN&lt;/b&gt;.</source>
-        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 2/2</extracomment>
-        <translation>Для цього вам потрібно спочатку ввести &lt;b&gt;PUK-код&lt;/b&gt;, щоб &lt;b&gt;розблокувати PIN-код ID-картки&lt;/b&gt;.</translation>
+        <source>Therefore you have to enter the %1PUK%2 first to %1unlock the ID card PIN%2.</source>
+        <extracomment>INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 2/2</extracomment>
+        <translation>Для цього вам потрібно спочатку ввести %1PUK-код%2, щоб %1розблокувати PIN-код ID-картки%2.</translation>
     </message>
 </context>
 <context>
@@ -7588,6 +7794,10 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <extracomment>INFO ALL_PLATFORMS The ID card PIN was changed successfully.</extracomment>
         <translation>Ви успішно змінили PIN-код ID-картки.</translation>
     </message>
+    <message>
+        <source>You may now remove your ID card from the device.</source>
+        <translation>Тепер ви можете видалити свою ID-картку з пристрою.</translation>
+    </message>
 </context>
 <context>
     <name>governikus::StateCheckRefreshAddress</name>
@@ -7800,7 +8010,7 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
     <message>
         <source>An unknown program uses the required port (%1). Please exit the other program and try again!</source>
         <extracomment>ERROR ALL_PLATFORMS An unknown program is using the local port on which the AA listens.</extracomment>
-        <translation>Невідома програма використовує потрібний порт (%1). Вийдіть з іншої програми й повторіть спробу.</translation>
+        <translation>Невідома програма використовує потрібний порт (%1). Вийдіть з іншої програми й повторіть спробу!</translation>
     </message>
     <message>
         <source>The program (%1) uses the required port (%2). Please close %1 and try again!</source>
@@ -7916,6 +8126,11 @@ LABEL ALL_PLATFORMS Additional date format with unknown day</extracomment>
         <source>Set a new PIN</source>
         <extracomment>LABEL ALL_PLATFORMS Hint title to assist the user on how to set a new PIN</extracomment>
         <translation>Установити новий PIN-код</translation>
+    </message>
+    <message>
+        <source>Error code: %1</source>
+        <extracomment>LABEL ALL_PLATFORMS</extracomment>
+        <translation type="unfinished">Код помилки: %1</translation>
     </message>
 </context>
 </TS>

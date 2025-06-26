@@ -3,284 +3,284 @@
 <?include "cpack_variables.wxi"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Fragment>
-		<WixVariable Id="WindowsAutoStartKey" Value="Software\Microsoft\Windows\CurrentVersion\Run"/>
+    <Fragment>
+        <WixVariable Id="WindowsAutoStartKey" Value="Software\Microsoft\Windows\CurrentVersion\Run" />
 
 
 
-		<Property Id="AUTOSTART" Secure="yes"/>
-		<Property Id="AUTOSTART_FOUND" Secure="yes">
-			<RegistrySearch Id="AutoStartRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp" Type="raw"/>
-		</Property>
-		<Property Id="AUTOSTART_OLD_FOUND" Secure="yes">
-			<RegistrySearch Id="AutoStartRegistryOldRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp2" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="AUTOSTART" Value="true">
-			(NOT AUTOSTART) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_FOUND
-			)
-		</SetProperty>
-		<SetProperty Action="SetAUTOSTART_REGISTRY_OLD_OVERWRITE" Before="CostFinalize" Id="AUTOSTART" Value="true">
-			(NOT AUTOSTART) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_OLD_FOUND
-			)
-		</SetProperty>
+        <Property Id="AUTOSTART" Secure="yes" />
+        <Property Id="AUTOSTART_FOUND" Secure="yes">
+            <RegistrySearch Id="AutoStartRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp" Type="raw" />
+        </Property>
+        <Property Id="AUTOSTART_OLD_FOUND" Secure="yes">
+            <RegistrySearch Id="AutoStartRegistryOldRegistry" Root="HKLM" Key="!(wix.WindowsAutoStartKey)" Name="AusweisApp2" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="AUTOSTART" Value="true">
+            (NOT AUTOSTART) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_FOUND
+            )
+        </SetProperty>
+        <SetProperty Action="SetAUTOSTART_REGISTRY_OLD_OVERWRITE" Before="CostFinalize" Id="AUTOSTART" Value="true">
+            (NOT AUTOSTART) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOSTART_OLD_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="TRAYICON" Secure="yes"/>
-		<Property Id="TRAYICON_FOUND" Secure="yes">
-			<RegistrySearch Id="TrayIconRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableTrayIcon" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="TRAYICON" Value="[TRAYICON_FOUND]">
-			(NOT TRAYICON) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND TRAYICON_FOUND
-			)
-		</SetProperty>
+        <Property Id="TRAYICON" Secure="yes" />
+        <Property Id="TRAYICON_FOUND" Secure="yes">
+            <RegistrySearch Id="TrayIconRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableTrayIcon" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="TRAYICON" Value="[TRAYICON_FOUND]">
+            (NOT TRAYICON) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND TRAYICON_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="AUTOHIDE" Secure="yes"/>
-		<Property Id="AUTOHIDE_FOUND" Secure="yes">
-			<RegistrySearch Id="AutoHideRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="autoCloseWindow" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="AUTOHIDE" Value="[AUTOHIDE_FOUND]">
-			(NOT AUTOHIDE) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOHIDE_FOUND
-			)
-		</SetProperty>
+        <Property Id="AUTOHIDE" Secure="yes" />
+        <Property Id="AUTOHIDE_FOUND" Secure="yes">
+            <RegistrySearch Id="AutoHideRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="autoCloseWindow" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="AUTOHIDE" Value="[AUTOHIDE_FOUND]">
+            (NOT AUTOHIDE) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND AUTOHIDE_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="REMINDTOCLOSE" Secure="yes"/>
-		<Property Id="REMINDTOCLOSE_FOUND" Secure="yes">
-			<RegistrySearch Id="RemindToCloseRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="remindToClose" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="REMINDTOCLOSE" Value="[REMINDTOCLOSE_FOUND]">
-			(NOT REMINDTOCLOSE) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND REMINDTOCLOSE_FOUND
-			)
-		</SetProperty>
+        <Property Id="REMINDTOCLOSE" Secure="yes" />
+        <Property Id="REMINDTOCLOSE_FOUND" Secure="yes">
+            <RegistrySearch Id="RemindToCloseRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="remindToClose" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="REMINDTOCLOSE" Value="[REMINDTOCLOSE_FOUND]">
+            (NOT REMINDTOCLOSE) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND REMINDTOCLOSE_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="ASSISTANT" Secure="yes"/>
-		<Property Id="ASSISTANT_FOUND" Secure="yes">
-			<RegistrySearch Id="AssistantRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="uiStartupModule" Type="raw"/>
-		</Property>
-		<Property Id="SHOWONBOARDING_FOUND" Secure="yes">
-			<RegistrySearch Id="OnboardingRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="showOnboarding" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="ASSISTANT" Value="false">
-			(NOT ASSISTANT) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND (
-					(ASSISTANT_FOUND = "DEFAULT" AND NOT SHOWONBOARDING_FOUND) OR
-					SHOWONBOARDING_FOUND = "false"
-				)
-			)
-		</SetProperty>
+        <Property Id="ASSISTANT" Secure="yes" />
+        <Property Id="ASSISTANT_FOUND" Secure="yes">
+            <RegistrySearch Id="AssistantRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="uiStartupModule" Type="raw" />
+        </Property>
+        <Property Id="SHOWONBOARDING_FOUND" Secure="yes">
+            <RegistrySearch Id="OnboardingRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="showOnboarding" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="ASSISTANT" Value="false">
+            (NOT ASSISTANT) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND (
+                    (ASSISTANT_FOUND = "DEFAULT" AND NOT SHOWONBOARDING_FOUND) OR
+                    SHOWONBOARDING_FOUND = "false"
+                )
+            )
+        </SetProperty>
 
-		<Property Id="TRANSPORTPINREMINDER" Secure="yes"/>
-		<Property Id="TRANSPORTPINREMINDER_FOUND" Secure="yes">
-			<RegistrySearch Id="TransportPinReminderRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="transportPinReminder" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="TRANSPORTPINREMINDER" Value="[TRANSPORTPINREMINDER_FOUND]">
-			(NOT TRANSPORTPINREMINDER) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND TRANSPORTPINREMINDER_FOUND
-			)
-		</SetProperty>
+        <Property Id="TRANSPORTPINREMINDER" Secure="yes" />
+        <Property Id="TRANSPORTPINREMINDER_FOUND" Secure="yes">
+            <RegistrySearch Id="TransportPinReminderRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="transportPinReminder" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="TRANSPORTPINREMINDER" Value="[TRANSPORTPINREMINDER_FOUND]">
+            (NOT TRANSPORTPINREMINDER) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND TRANSPORTPINREMINDER_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="CUSTOMPROXYTYPE" Secure="yes"/>
-		<Property Id="CUSTOMPROXYTYPE_FOUND" Secure="yes">
-			<RegistrySearch Id="CustomProxyTypeRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyType" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="CUSTOMPROXYTYPE" Value="[CUSTOMPROXYTYPE_FOUND]">
-			(NOT CUSTOMPROXYTYPE) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYTYPE_FOUND
-			)
-		</SetProperty>
+        <Property Id="CUSTOMPROXYTYPE" Secure="yes" />
+        <Property Id="CUSTOMPROXYTYPE_FOUND" Secure="yes">
+            <RegistrySearch Id="CustomProxyTypeRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyType" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="CUSTOMPROXYTYPE" Value="[CUSTOMPROXYTYPE_FOUND]">
+            (NOT CUSTOMPROXYTYPE) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYTYPE_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="CUSTOMPROXYHOST" Secure="yes"/>
-		<Property Id="CUSTOMPROXYHOST_FOUND" Secure="yes">
-			<RegistrySearch Id="CustomProxyHostRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyHost" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="CUSTOMPROXYHOST" Value="[CUSTOMPROXYHOST_FOUND]">
-			(NOT CUSTOMPROXYHOST) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYHOST_FOUND
-			)
-		</SetProperty>
+        <Property Id="CUSTOMPROXYHOST" Secure="yes" />
+        <Property Id="CUSTOMPROXYHOST_FOUND" Secure="yes">
+            <RegistrySearch Id="CustomProxyHostRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyHost" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="CUSTOMPROXYHOST" Value="[CUSTOMPROXYHOST_FOUND]">
+            (NOT CUSTOMPROXYHOST) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYHOST_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="CUSTOMPROXYPORT" Secure="yes"/>
-		<Property Id="CUSTOMPROXYPORT_FOUND" Secure="yes">
-			<RegistrySearch Id="CustomProxyPortRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyPort" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="CUSTOMPROXYPORT" Value="[CUSTOMPROXYPORT_FOUND]">
-			(NOT CUSTOMPROXYPORT) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYPORT_FOUND
-			)
-		</SetProperty>
+        <Property Id="CUSTOMPROXYPORT" Secure="yes" />
+        <Property Id="CUSTOMPROXYPORT_FOUND" Secure="yes">
+            <RegistrySearch Id="CustomProxyPortRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="customProxyPort" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="CUSTOMPROXYPORT" Value="[CUSTOMPROXYPORT_FOUND]">
+            (NOT CUSTOMPROXYPORT) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND CUSTOMPROXYPORT_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="UPDATECHECK" Secure="yes"/>
-		<Property Id="UPDATECHECK_FOUND" Secure="yes">
-			<RegistrySearch Id="UpdateCheckRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="autoUpdateCheck" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="UPDATECHECK" Value="[UPDATECHECK_FOUND]">
-			(NOT UPDATECHECK) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND UPDATECHECK_FOUND
-			)
-		</SetProperty>
+        <Property Id="UPDATECHECK" Secure="yes" />
+        <Property Id="UPDATECHECK_FOUND" Secure="yes">
+            <RegistrySearch Id="UpdateCheckRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="autoUpdateCheck" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="UPDATECHECK" Value="[UPDATECHECK_FOUND]">
+            (NOT UPDATECHECK) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND UPDATECHECK_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="SHUFFLESCREENKEYBOARD" Secure="yes"/>
-		<Property Id="SHUFFLESCREENKEYBOARD_FOUND" Secure="yes">
-			<RegistrySearch Id="ShuffleScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="shuffleScreenKeyboard" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="SHUFFLESCREENKEYBOARD" Value="[SHUFFLESCREENKEYBOARD_FOUND]">
-			(NOT SHUFFLESCREENKEYBOARD) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND SHUFFLESCREENKEYBOARD_FOUND
-			)
-		</SetProperty>
+        <Property Id="SHUFFLESCREENKEYBOARD" Secure="yes" />
+        <Property Id="SHUFFLESCREENKEYBOARD_FOUND" Secure="yes">
+            <RegistrySearch Id="ShuffleScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="shuffleScreenKeyboard" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="SHUFFLESCREENKEYBOARD" Value="[SHUFFLESCREENKEYBOARD_FOUND]">
+            (NOT SHUFFLESCREENKEYBOARD) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND SHUFFLESCREENKEYBOARD_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="SECURESCREENKEYBOARD" Secure="yes"/>
-		<Property Id="SECURESCREENKEYBOARD_FOUND" Secure="yes">
-			<RegistrySearch Id="SecureScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="visualPrivacy" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="SECURESCREENKEYBOARD" Value="[SECURESCREENKEYBOARD_FOUND]">
-			(NOT SECURESCREENKEYBOARD) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND SECURESCREENKEYBOARD_FOUND
-			)
-		</SetProperty>
+        <Property Id="SECURESCREENKEYBOARD" Secure="yes" />
+        <Property Id="SECURESCREENKEYBOARD_FOUND" Secure="yes">
+            <RegistrySearch Id="SecureScreenKeyboardRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="visualPrivacy" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="SECURESCREENKEYBOARD" Value="[SECURESCREENKEYBOARD_FOUND]">
+            (NOT SECURESCREENKEYBOARD) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND SECURESCREENKEYBOARD_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="ENABLECANALLOWED" Secure="yes"/>
-		<Property Id="ENABLECANALLOWED_FOUND" Secure="yes">
-			<RegistrySearch Id="EnableCanAllowedRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableCanAllowed" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="ENABLECANALLOWED" Value="[ENABLECANALLOWED_FOUND]">
-			(NOT ENABLECANALLOWED) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND ENABLECANALLOWED_FOUND
-			)
-		</SetProperty>
+        <Property Id="ENABLECANALLOWED" Secure="yes" />
+        <Property Id="ENABLECANALLOWED_FOUND" Secure="yes">
+            <RegistrySearch Id="EnableCanAllowedRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="enableCanAllowed" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="ENABLECANALLOWED" Value="[ENABLECANALLOWED_FOUND]">
+            (NOT ENABLECANALLOWED) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND ENABLECANALLOWED_FOUND
+            )
+        </SetProperty>
 
-		<Property Id="SKIPRIGHTSONCANALLOWED" Secure="yes"/>
-		<Property Id="SKIPRIGHTSONCANALLOWED_FOUND" Secure="yes">
-			<RegistrySearch Id="SkipRightsOnCanAllowedRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="skipRightsOnCanAllowed" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="SKIPRIGHTSONCANALLOWED" Value="[SKIPRIGHTSONCANALLOWED_FOUND]">
-			(NOT SKIPRIGHTSONCANALLOWED) AND (
-				(WIX_UPGRADE_DETECTED OR REINSTALL) AND SKIPRIGHTSONCANALLOWED_FOUND
-			)
-		</SetProperty>
-
-
-
-		<Feature Id="RuntimeSettings">
-			<ComponentRef Id="AutoStart"/>
-			<ComponentRef Id="TrayIcon"/>
-			<ComponentRef Id="AutoHide"/>
-			<ComponentRef Id="RemindToClose"/>
-			<ComponentRef Id="Assistant"/>
-			<ComponentRef Id="TransportPinReminder"/>
-			<ComponentRef Id="CustomProxyType"/>
-			<ComponentRef Id="CustomProxyHost"/>
-			<ComponentRef Id="CustomProxyPort"/>
-			<ComponentRef Id="UpdateCheck"/>
-			<ComponentRef Id="ShuffleScreenKeyboard"/>
-			<ComponentRef Id="SecureScreenKeyboard"/>
-			<ComponentRef Id="EnableCanAllowed"/>
-			<ComponentRef Id="SkipRightsOnCanAllowed"/>
-		</Feature>
+        <Property Id="SKIPRIGHTSONCANALLOWED" Secure="yes" />
+        <Property Id="SKIPRIGHTSONCANALLOWED_FOUND" Secure="yes">
+            <RegistrySearch Id="SkipRightsOnCanAllowedRegistry" Root="HKLM" Key="!(wix.CompanyRootKey)" Name="skipRightsOnCanAllowed" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="SKIPRIGHTSONCANALLOWED" Value="[SKIPRIGHTSONCANALLOWED_FOUND]">
+            (NOT SKIPRIGHTSONCANALLOWED) AND (
+                (WIX_UPGRADE_DETECTED OR REINSTALL) AND SKIPRIGHTSONCANALLOWED_FOUND
+            )
+        </SetProperty>
 
 
 
-		<DirectoryRef Id="TARGETDIR">
-			<Component Id="AutoStart" Guid="{391CF345-5AA2-45CD-C001-C24861C9AB8D}">
-				<Condition>AUTOSTART = "true"</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.WindowsAutoStartKey)">
-					<RegistryValue Type="string" Name="AusweisApp" Value="[INSTALL_ROOT][ProductName].exe"  />
-				</RegistryKey>
-			</Component>
+        <Feature Id="RuntimeSettings">
+            <ComponentRef Id="AutoStart" />
+            <ComponentRef Id="TrayIcon" />
+            <ComponentRef Id="AutoHide" />
+            <ComponentRef Id="RemindToClose" />
+            <ComponentRef Id="Assistant" />
+            <ComponentRef Id="TransportPinReminder" />
+            <ComponentRef Id="CustomProxyType" />
+            <ComponentRef Id="CustomProxyHost" />
+            <ComponentRef Id="CustomProxyPort" />
+            <ComponentRef Id="UpdateCheck" />
+            <ComponentRef Id="ShuffleScreenKeyboard" />
+            <ComponentRef Id="SecureScreenKeyboard" />
+            <ComponentRef Id="EnableCanAllowed" />
+            <ComponentRef Id="SkipRightsOnCanAllowed" />
+        </Feature>
 
-			<Component Id="TrayIcon" Guid="{391CF345-5AA2-45CD-C016-C24861C9AB8D}">
-				<Condition>TRAYICON</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="enableTrayIcon" Type="string" Value="[TRAYICON]" />
-				</RegistryKey>
-			</Component>
 
-			<Component Id="AutoHide" Guid="{391CF345-5AA2-45CD-C002-C24861C9AB8D}">
-				<Condition>AUTOHIDE</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="autoCloseWindow" Type="string" Value="[AUTOHIDE]" />
-				</RegistryKey>
-			</Component>
 
-			<Component Id="RemindToClose" Guid="{391CF345-5AA2-45CD-C003-C24861C9AB8D}">
-				<Condition>REMINDTOCLOSE</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="remindToClose" Type="string" Value="[REMINDTOCLOSE]" />
-				</RegistryKey>
-			</Component>
+        <DirectoryRef Id="TARGETDIR">
+            <Component Id="AutoStart" Guid="{391CF345-5AA2-45CD-C001-C24861C9AB8D}">
+                <Condition>AUTOSTART = "true"</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.WindowsAutoStartKey)">
+                    <RegistryValue Type="string" Name="AusweisApp" Value="[INSTALL_ROOT][ProductName].exe"  />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="Assistant" Guid="{391CF345-5AA2-45CD-C004-C24861C9AB8D}">
-				<Condition>ASSISTANT = "false"</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="showOnboarding" Type="string" Value="false" />
-				</RegistryKey>
-			</Component>
+            <Component Id="TrayIcon" Guid="{391CF345-5AA2-45CD-C016-C24861C9AB8D}">
+                <Condition>TRAYICON</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="enableTrayIcon" Type="string" Value="[TRAYICON]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="TransportPinReminder" Guid="{391CF345-5AA2-45CD-C005-C24861C9AB8D}">
-				<Condition>TRANSPORTPINREMINDER</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="transportPinReminder" Type="string" Value="[TRANSPORTPINREMINDER]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="AutoHide" Guid="{391CF345-5AA2-45CD-C002-C24861C9AB8D}">
+                <Condition>AUTOHIDE</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="autoCloseWindow" Type="string" Value="[AUTOHIDE]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="CustomProxyType" Guid="{391CF345-5AA2-45CD-C006-C24861C9AB8D}">
-				<Condition>CUSTOMPROXYTYPE</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="customProxyType" Type="string" Value="[CUSTOMPROXYTYPE]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="RemindToClose" Guid="{391CF345-5AA2-45CD-C003-C24861C9AB8D}">
+                <Condition>REMINDTOCLOSE</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="remindToClose" Type="string" Value="[REMINDTOCLOSE]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="CustomProxyHost" Guid="{391CF345-5AA2-45CD-C007-C24861C9AB8D}">
-				<Condition>CUSTOMPROXYHOST</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="customProxyHost" Type="string" Value="[CUSTOMPROXYHOST]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="Assistant" Guid="{391CF345-5AA2-45CD-C004-C24861C9AB8D}">
+                <Condition>ASSISTANT = "false"</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="showOnboarding" Type="string" Value="false" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="CustomProxyPort" Guid="{391CF345-5AA2-45CD-C008-C24861C9AB8D}">
-				<Condition>CUSTOMPROXYPORT</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="customProxyPort" Type="string" Value="[CUSTOMPROXYPORT]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="TransportPinReminder" Guid="{391CF345-5AA2-45CD-C005-C24861C9AB8D}">
+                <Condition>TRANSPORTPINREMINDER</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="transportPinReminder" Type="string" Value="[TRANSPORTPINREMINDER]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="UpdateCheck" Guid="{391CF345-5AA2-45CD-C009-C24861C9AB8D}">
-				<Condition>UPDATECHECK</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="autoUpdateCheck" Type="string" Value="[UPDATECHECK]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="CustomProxyType" Guid="{391CF345-5AA2-45CD-C006-C24861C9AB8D}">
+                <Condition>CUSTOMPROXYTYPE</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="customProxyType" Type="string" Value="[CUSTOMPROXYTYPE]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="ShuffleScreenKeyboard" Guid="{391CF345-5AA2-45CD-C011-C24861C9AB8D}">
-				<Condition>SHUFFLESCREENKEYBOARD</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="shuffleScreenKeyboard" Type="string" Value="[SHUFFLESCREENKEYBOARD]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="CustomProxyHost" Guid="{391CF345-5AA2-45CD-C007-C24861C9AB8D}">
+                <Condition>CUSTOMPROXYHOST</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="customProxyHost" Type="string" Value="[CUSTOMPROXYHOST]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="SecureScreenKeyboard" Guid="{391CF345-5AA2-45CD-C015-C24861C9AB8D}">
-				<Condition>SECURESCREENKEYBOARD</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="visualPrivacy" Type="string" Value="[SECURESCREENKEYBOARD]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="CustomProxyPort" Guid="{391CF345-5AA2-45CD-C008-C24861C9AB8D}">
+                <Condition>CUSTOMPROXYPORT</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="customProxyPort" Type="string" Value="[CUSTOMPROXYPORT]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="EnableCanAllowed" Guid="{391CF345-5AA2-45CD-C012-C24861C9AB8D}">
-				<Condition>ENABLECANALLOWED</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="enableCanAllowed" Type="string" Value="[ENABLECANALLOWED]" />
-				</RegistryKey>
-			</Component>
+            <Component Id="UpdateCheck" Guid="{391CF345-5AA2-45CD-C009-C24861C9AB8D}">
+                <Condition>UPDATECHECK</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="autoUpdateCheck" Type="string" Value="[UPDATECHECK]" />
+                </RegistryKey>
+            </Component>
 
-			<Component Id="SkipRightsOnCanAllowed" Guid="{391CF345-5AA2-45CD-C013-C24861C9AB8D}">
-				<Condition>SKIPRIGHTSONCANALLOWED</Condition>
-				<RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
-					<RegistryValue Name="skipRightsOnCanAllowed" Type="string" Value="[SKIPRIGHTSONCANALLOWED]" />
-				</RegistryKey>
-			</Component>
-		</DirectoryRef>
-	</Fragment>
+            <Component Id="ShuffleScreenKeyboard" Guid="{391CF345-5AA2-45CD-C011-C24861C9AB8D}">
+                <Condition>SHUFFLESCREENKEYBOARD</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="shuffleScreenKeyboard" Type="string" Value="[SHUFFLESCREENKEYBOARD]" />
+                </RegistryKey>
+            </Component>
+
+            <Component Id="SecureScreenKeyboard" Guid="{391CF345-5AA2-45CD-C015-C24861C9AB8D}">
+                <Condition>SECURESCREENKEYBOARD</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="visualPrivacy" Type="string" Value="[SECURESCREENKEYBOARD]" />
+                </RegistryKey>
+            </Component>
+
+            <Component Id="EnableCanAllowed" Guid="{391CF345-5AA2-45CD-C012-C24861C9AB8D}">
+                <Condition>ENABLECANALLOWED</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="enableCanAllowed" Type="string" Value="[ENABLECANALLOWED]" />
+                </RegistryKey>
+            </Component>
+
+            <Component Id="SkipRightsOnCanAllowed" Guid="{391CF345-5AA2-45CD-C013-C24861C9AB8D}">
+                <Condition>SKIPRIGHTSONCANALLOWED</Condition>
+                <RegistryKey Root="HKLM" Key="!(wix.CompanyRootKey)">
+                    <RegistryValue Name="skipRightsOnCanAllowed" Type="string" Value="[SKIPRIGHTSONCANALLOWED]" />
+                </RegistryKey>
+            </Component>
+        </DirectoryRef>
+    </Fragment>
 </Wix>

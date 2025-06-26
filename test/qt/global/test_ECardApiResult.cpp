@@ -357,7 +357,7 @@ class test_ECardApiResult
 			QTest::newRow("invalidKey") << ECardApiResult::Minor::SAL_Invalid_Key << tr("This action cannot be performed. The eID function of your ID card is not activated.");
 			QTest::newRow("securityConditionNotSatisfied") << ECardApiResult::Minor::SAL_SecurityConditionNotSatisfied << tr("The authenticity of your ID card could not be verified. Please make sure that you are using a genuine ID card. Please note that test applications require the use of a test ID card.");
 			QTest::newRow("ageVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_AgeVerificationFailedWarning << tr("The age verification failed.");
-			QTest::newRow("comunityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << tr("The community verification failed.");
+			QTest::newRow("communityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_CommunityVerificationFailedWarning << tr("The community verification failed.");
 			QTest::newRow("documentValidityVerificationFailed") << ECardApiResult::Minor::SAL_MEAC_DocumentValidityVerificationFailed << tr("The ID card is invalid or disabled.");
 			QTest::newRow("null") << ECardApiResult::Minor::null << QString();
 			QTest::newRow("default") << ECardApiResult::Minor::IFDL_IFD_SharingViolation << QString();

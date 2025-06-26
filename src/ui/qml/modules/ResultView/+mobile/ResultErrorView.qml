@@ -39,8 +39,7 @@ ResultView {
 
 		GText {
 			font.weight: Font.Bold
-			//: LABEL ANDROID IOS
-			text: "%1 %2".arg(qsTr("Error code:")).arg(root.errorCode)
+			text: root.errorCode
 		}
 		GText {
 			id: textErrorDescription

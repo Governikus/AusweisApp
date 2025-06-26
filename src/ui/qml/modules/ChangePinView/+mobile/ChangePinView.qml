@@ -17,6 +17,7 @@ SectionPage {
 
 	property bool activateUI: true
 	property bool autoInsertCard: false
+	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property bool hidePinTypeSelection: false
 	property bool hideTechnologySwitch: false
@@ -81,6 +82,7 @@ SectionPage {
 
 		ChangePinController {
 			autoInsertCard: root.autoInsertCard
+			cardNotActivatedDelegate: root.cardNotActivatedDelegate
 			errorViewDelegate: root.errorViewDelegate
 			hideTechnologySwitch: root.hideTechnologySwitch
 			initialPlugin: root.initialPlugin

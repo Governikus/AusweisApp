@@ -48,3 +48,21 @@ if(TARGET ${Qt}::Qml AND QT_VERSION VERSION_GREATER_EQUAL 6.5)
 			WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 	set_tests_properties(qmllint PROPERTIES LABELS "qml")
 endif()
+
+
+find_program(TYPOS_BIN typos)
+if(TYPOS_BIN)
+	add_test(NAME typos
+			COMMAND ${TYPOS_BIN}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+	set_tests_properties(typos PROPERTIES LABELS "sanity")
+endif()
+
+
+find_program(CODESPELL_BIN codespell)
+if(CODESPELL_BIN)
+	add_test(NAME codespell
+			COMMAND ${CODESPELL_BIN}
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+	set_tests_properties(codespell PROPERTIES LABELS "sanity")
+endif()
