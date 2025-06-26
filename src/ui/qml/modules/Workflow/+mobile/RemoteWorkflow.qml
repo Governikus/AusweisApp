@@ -14,7 +14,7 @@ import Governikus.Type
 GFlickableColumnLayout {
 	id: root
 
-	property bool foundSelectedReader: ApplicationModel.availableReader > 0
+	property bool foundSelectedReader: ApplicationModel.availableRemoteReader > 0
 	property bool wifiEnabled: ApplicationModel.wifiEnabled
 
 	signal deviceUnpaired(var pDeviceName)

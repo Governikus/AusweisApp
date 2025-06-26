@@ -105,7 +105,7 @@ class test_TransmitCommand
 		}
 
 
-		void test_InternalExecuteUnsuccesfulSingleCommand()
+		void test_InternalExecuteUnsuccessfulSingleCommand()
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 

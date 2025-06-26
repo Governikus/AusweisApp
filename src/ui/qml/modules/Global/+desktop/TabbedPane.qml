@@ -65,6 +65,9 @@ Item {
 				top: parent.top
 			}
 			Item {
+				//: LABEL DESKTOP
+				Accessible.name: qsTr("Sidebar")
+				Accessible.role: Accessible.PageTabList
 				Layout.fillHeight: true
 				Layout.fillWidth: true
 
@@ -104,6 +107,10 @@ Item {
 		GFlickableColumnLayout {
 			id: flickable
 
+			Accessible.ignored: false
+			//: LABEL DESKTOP %1 will be replaced with the title of the tab
+			Accessible.name: root.sectionsModel ? qsTr("Content of tab \"%1\"").arg(root.sectionsModel[sectionNameList.currentIndex]) : ""
+			Accessible.role: Accessible.Grouping
 			bottomMargin: 0
 			leftMargin: 0
 			topMargin: 0

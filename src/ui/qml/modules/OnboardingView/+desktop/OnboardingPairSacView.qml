@@ -112,6 +112,12 @@ BaseOnboardingView {
 			model: RemoteServiceModel.availablePairedDevices
 
 			delegate: RemoteReaderDelegate {
+				id: continueDelegate
+
+				function clickHandler() {
+					root.continueOnboarding();
+				}
+
 				//: LABEL DESKTOP
 				Accessible.name: qsTr("Press space to continue onboarding using the smartphone \"%1\"").arg(remoteDeviceName)
 				Layout.fillWidth: true
@@ -121,16 +127,11 @@ BaseOnboardingView {
 					//: LABEL DESKTOP
 					text: qsTr("Use device")
 
-					onClicked: root.continueOnboarding()
+					onClicked: continueDelegate.clickHandler()
 					onFocusChanged: if (focus)
 						root.positionViewAtItem(this)
 				}
 
-				Keys.onSpacePressed: {
-					if (ApplicationModel.isScreenReaderRunning) {
-						root.continueOnboarding();
-					}
-				}
 				onFocusChanged: if (focus)
 					Utils.positionViewAtItem(this)
 			}
@@ -178,7 +179,7 @@ BaseOnboardingView {
 	}
 	component FramedImage: Image {
 		Layout.alignment: Qt.AlignHCenter
-		sourceSize.width: UiPluginModel.scaleFactor * 380
+		sourceSize.width: UiPluginModel.scaleFactor * 228
 
 		Rectangle {
 			anchors.fill: parent

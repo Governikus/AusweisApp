@@ -25,12 +25,14 @@ Q_DECLARE_LOGGING_CATEGORY(ifd)
 
 using namespace governikus;
 
+
 INIT_FUNCTION([] {
 			ReaderManager::addMainThreadInit([] {
 				// Force construction of LocalIfdClient in the MainThread
 				Env::getSingleton<LocalIfdClient>();
 			});
 		})
+
 
 LocalIfdClient::LocalIfdClient()
 	: mPsk()
@@ -39,8 +41,9 @@ LocalIfdClient::LocalIfdClient()
 	, mServiceConnection()
 #endif
 {
-	const Discovery discovery(QStringLiteral("LocalIfdClient"), QByteArray("LocalIfdClient"), PortFile::cDefaultPort, {IfdVersion::supported()});
-	mDevice.reset(new IfdListEntry(IfdDescriptor(discovery, QHostAddress::LocalHostIPv6, true)));
+	Discovery discovery(QStringLiteral("LocalIfdClient"), QByteArray("LocalIfdClient"), PortFile::cDefaultPort, {IfdVersion::supported()});
+	discovery.setAddresses({QHostAddress::LocalHostIPv6});
+	mDevice.reset(new IfdListEntry(IfdDescriptor(discovery, true)));
 }
 
 

@@ -4,6 +4,10 @@ target_link_libraries(AusweisAppTestHelperCommon ${Qt}::Network ${Qt}::Test Ausw
 target_link_libraries(AusweisAppTestHelperCommon AusweisAppCardSimulator AusweisAppNetwork AusweisAppCore)
 target_link_libraries(AusweisAppTestHelperCommon AusweisAppWorkflowsSelfAuth)
 
+if(TARGET ${Qt}::CorePrivate)
+	target_link_libraries(AusweisAppTestHelperCommon ${Qt}::CorePrivate)
+endif()
+
 target_compile_definitions(AusweisAppTestHelperCommon PRIVATE QT_STATICPLUGIN)
 
 if(DESKTOP)

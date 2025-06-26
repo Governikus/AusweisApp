@@ -91,7 +91,7 @@ void DiagnosisAntivirusDetection::onError(QProcess::ProcessError pError)
 #endif
 
 
-const QList<QSharedPointer<AntivirInfo>>& DiagnosisAntivirusDetection::getAntivirusInformations() const
+const QList<QSharedPointer<AntivirInfo>>& DiagnosisAntivirusDetection::getAntivirusInformation() const
 {
 	return mAntivirInfos;
 }

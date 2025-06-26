@@ -57,7 +57,7 @@ void LogModel::addLogEntry(const QString& pEntry)
 
 	mLogEntries.append(pEntry);
 
-	QModelIndex idx = index(static_cast<int>(mLogEntries.size()) - 1, 0);
+	QModelIndex idx = QAbstractListModel::index(static_cast<int>(mLogEntries.size()) - 1, 0);
 
 	const auto& level = data(idx, LogModel::LogModelRoles::LevelRole).toString();
 	if (!mLevels.contains(level))

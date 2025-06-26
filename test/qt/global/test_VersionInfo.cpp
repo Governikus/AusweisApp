@@ -60,11 +60,11 @@ class test_VersionInfo
 
 		void fromTextInvalidData()
 		{
-			auto versionInfo = VersionInfo::fromText(QLatin1StringView("skdkfsn sdnk fskdfn sdfk sflk nd\n"
-																	   "\n"
-																	   ":\n"
-																	   "  :\r\t\n"
-																	   ""));
+			auto versionInfo = VersionInfo::fromText(QStringLiteral("skdkfsn sdnk fskdfn sdfk sflk gnd\n"
+																	"\n"
+																	":\n"
+																	"  :\r\t\n"
+																	""));
 
 			QVERIFY(versionInfo.getName().isNull());
 			QVERIFY(versionInfo.getSpecificationTitle().isNull());
@@ -78,13 +78,13 @@ class test_VersionInfo
 
 		void fromText()
 		{
-			auto versionInfo = VersionInfo::fromText(QLatin1StringView("Name: MyName\n"
-																	   "Specification-Title: MySpecTitle\n"
-																	   "Specification-Version: MySpecVersion\n"
-																	   "Specification-Vendor: MySpecVendor\n"
-																	   "Implementation-Title: MyImplTitle\n"
-																	   "Implementation-Version: MyImplVersion\n"
-																	   "Implementation-Vendor: MyImplVendor"));
+			auto versionInfo = VersionInfo::fromText(QStringLiteral("Name: MyName\n"
+																	"Specification-Title: MySpecTitle\n"
+																	"Specification-Version: MySpecVersion\n"
+																	"Specification-Vendor: MySpecVendor\n"
+																	"Implementation-Title: MyImplTitle\n"
+																	"Implementation-Version: MyImplVersion\n"
+																	"Implementation-Vendor: MyImplVendor"));
 
 			QCOMPARE(versionInfo.getName(), QLatin1String("MyName"));
 			QCOMPARE(versionInfo.getSpecificationTitle(), QLatin1String("MySpecTitle"));

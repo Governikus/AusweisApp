@@ -1,4 +1,4 @@
-From 9b7450da2b01cd7a8c9e201329d75ea6d4b9ea7b Mon Sep 17 00:00:00 2001
+From 99db209cc843bcf1bb6229c613a643e0bd0c7dcb Mon Sep 17 00:00:00 2001
 From: Thiago Macieira <thiago.macieira@intel.com>
 Date: Tue, 5 Nov 2024 15:50:12 -0800
 Subject: QThread/Unix: do clean up the QAdoptedThread for the main thread

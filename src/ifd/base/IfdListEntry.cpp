@@ -80,14 +80,6 @@ bool IfdListEntry::containsEquivalent(const IfdDescriptor& pIfdDescriptor) const
 }
 
 
-bool IfdListEntry::isEqual(const IfdListEntry* const pOther) const
-{
-	return pOther != nullptr &&
-		   mIfdDescriptor == pOther->mIfdDescriptor &&
-		   mLastSeen == pOther->mLastSeen;
-}
-
-
 const QTime& IfdListEntry::getLastSeen() const
 {
 	return mLastSeen;

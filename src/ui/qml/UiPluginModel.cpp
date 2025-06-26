@@ -41,3 +41,17 @@ void UiPluginModel::setUpdatePending(bool pNewIsUpdatePending)
 	mUpdateInformationPending = pNewIsUpdatePending;
 	Q_EMIT fireIsUpdatePendingChanged();
 }
+
+
+bool UiPluginModel::showUpdateInformationIfPending()
+{
+	if (!isUpdatePending())
+	{
+		return false;
+	}
+
+	setUpdatePending(false);
+	onShowUi(UiModule::UPDATEINFORMATION);
+
+	return true;
+}

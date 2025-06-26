@@ -119,7 +119,7 @@ GFlickableColumnLayout {
 				return qsTr("NFC is switched off");
 			} else if (root.nfcState === ApplicationModel.NfcState.INACTIVE) {
 				//: INFO ANDROID IOS NFC is available and enabled but needs to be started.
-				return qsTr("NFC scan is not running");
+				return qsTr("Start scan");
 			}
 			if (AuthModel.eidTypeMismatchError !== "") {
 				return AuthModel.eidTypeMismatchError;
@@ -136,7 +136,7 @@ GFlickableColumnLayout {
 				return qsTr("NFC is disabled");
 			case ApplicationModel.NfcState.INACTIVE:
 				//: INFO ANDROID IOS
-				return qsTr("Start scan");
+				return qsTr("NFC scan is not running");
 			case ApplicationModel.NfcState.READY:
 				if (ApplicationModel.extendedLengthApdusUnsupported) {
 					//: INFO ANDROID IOS

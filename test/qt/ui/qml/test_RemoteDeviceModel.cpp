@@ -9,28 +9,33 @@
 
 #include <QtTest>
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
+
 Q_DECLARE_METATYPE(RemoteDeviceModel::SettingsRemoteRoles)
 
-class MockRemoteDeviceModel
-	: public RemoteDeviceModel
+
+class MockRemoteIfdClient
+	: public RemoteIfdClient
 {
-	[[nodiscard]] QList<RemoteDeviceModelEntry> presentReaders() const override;
+	Q_OBJECT
+
+	[[nodiscard]] QList<QSharedPointer<IfdListEntry>> getAnnouncingRemoteDevices() const override;
 };
 
-QList<RemoteDeviceModelEntry> MockRemoteDeviceModel::presentReaders() const
+
+QList<QSharedPointer<IfdListEntry>> MockRemoteIfdClient::getAnnouncingRemoteDevices() const
 {
 	const auto dName = QStringLiteral("new_name");
 	const auto dId = QByteArrayLiteral("myDeviceId");
-	const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
-	const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
+	Discovery disco(dName, dId, 12345, {IfdVersion::Version::latest}, false);
+	disco.setAddresses({QHostAddress(QStringLiteral("127.0.0.1"))});
+	const auto ifdDesc = IfdDescriptor(disco);
 	const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
 	remoteDeviceListEntry->setIfdDescriptor(ifdDesc);
-	return QList {
-		RemoteDeviceModelEntry {remoteDeviceListEntry}
-	};
+	return {remoteDeviceListEntry};
 }
 
 
@@ -127,8 +132,9 @@ class test_RemoteDeviceModel
 			RemoteDeviceModelEntry entry2(listEntry1);
 			QCOMPARE(entry2.getRemoteDeviceListEntry(), listEntry1);
 
-			const Discovery discovery = Discovery(name, id, 11111, {IfdVersion::supported()}, true);
-			const IfdDescriptor descriptor = IfdDescriptor(discovery, QHostAddress::LocalHost, true);
+			Discovery discovery(name, id, 11111, {IfdVersion::supported()}, true);
+			discovery.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			const IfdDescriptor descriptor = IfdDescriptor(discovery, true);
 			QSharedPointer<IfdListEntry> listEntry2(new IfdListEntry(descriptor));
 			RemoteDeviceModelEntry entry3(listEntry2);
 			QCOMPARE(entry3.getRemoteDeviceListEntry(), listEntry2);
@@ -229,8 +235,9 @@ class test_RemoteDeviceModel
 
 		void test_GetRemoteDeviceListEntryModelIndex()
 		{
-			const Discovery discovery = Discovery(QStringLiteral("entry 1"), QByteArrayLiteral("01"), 11111, {IfdVersion::supported()}, true);
-			const IfdDescriptor descriptor = IfdDescriptor(discovery, QHostAddress::LocalHost, true);
+			Discovery discovery(QStringLiteral("entry 1"), QByteArrayLiteral("01"), 11111, {IfdVersion::supported()}, true);
+			discovery.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			const IfdDescriptor descriptor = IfdDescriptor(discovery, true);
 			QSharedPointer<IfdListEntry> listEntry(new IfdListEntry(descriptor));
 			RemoteDeviceModelEntry entry1(listEntry);
 
@@ -292,8 +299,9 @@ class test_RemoteDeviceModel
 
 			const auto dName = QStringLiteral("myDeviceName");
 			const auto dId = QByteArrayLiteral("myDeviceId");
-			const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
-			const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
+			Discovery disco(dName, dId, 12345, {IfdVersion::Version::latest}, false);
+			disco.setAddresses({QHostAddress(QStringLiteral("127.0.0.1"))});
+			const auto ifdDesc = IfdDescriptor(disco);
 			const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
 
 			mModel->addOrUpdateReader(RemoteDeviceModelEntry(remoteDeviceListEntry));
@@ -307,27 +315,34 @@ class test_RemoteDeviceModel
 
 		void test_ChangedName()
 		{
-			MockRemoteDeviceModel model;
+			MockRemoteIfdClient remoteIfdClient;
+			Env::set(RemoteIfdClient::staticMetaObject, &remoteIfdClient);
+
+			RemoteDeviceModel model;
 
 			RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 			settings.addTrustedCertificate(QSslCertificate());
 
 			const auto dName = QStringLiteral("old_name");
 			const auto dId = QByteArrayLiteral("myDeviceId");
-			const auto disco = Discovery(dName, dId, 12345, {IfdVersion::Version::latest}, false);
-			const auto ifdDesc = IfdDescriptor(disco, QHostAddress(QStringLiteral("127.0.0.1")));
+			Discovery disco(dName, dId, 12345, {IfdVersion::Version::latest}, false);
+			disco.setAddresses({QHostAddress(QStringLiteral("127.0.0.1"))});
+			const auto ifdDesc = IfdDescriptor(disco);
 			const QSharedPointer<IfdListEntry> remoteDeviceListEntry(new IfdListEntry(ifdDesc));
 
 			model.mAllRemoteReaders.clear();
 			model.addOrUpdateReader(RemoteDeviceModelEntry(remoteDeviceListEntry));
 
 			const auto newName = QStringLiteral("new_name");
-			const auto newDisco = Discovery(newName, dId, 12345, {IfdVersion::Version::latest}, false);
-			const auto newIfdDesc = IfdDescriptor(newDisco, QHostAddress(QStringLiteral("127.0.0.1")));
+			Discovery newDisco(newName, dId, 12345, {IfdVersion::Version::latest}, false);
+			newDisco.setAddresses({QHostAddress(QStringLiteral("127.0.0.1"))});
+			const auto newIfdDesc = IfdDescriptor(newDisco);
 			remoteDeviceListEntry->setIfdDescriptor(newIfdDesc);
 
 			const auto name = model.data(mModel->index(0), RemoteDeviceModel::SettingsRemoteRoles::REMOTE_DEVICE_NAME).toString();
 			QCOMPARE(name, QStringLiteral("new_name (was old_name)"));
+
+			Env::clear();
 		}
 
 

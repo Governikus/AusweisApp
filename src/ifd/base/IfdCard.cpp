@@ -15,11 +15,11 @@
 #include "messages/IfdEstablishPaceChannelResponse.h"
 #include "messages/IfdModifyPin.h"
 #include "messages/IfdModifyPinResponse.h"
+#include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
 #include "pinpad/EstablishPaceChannel.h"
 #include "pinpad/PinModify.h"
-#include "pinpad/PinModifyOutput.h"
 
 #include <QLoggingCategory>
 #include <QMutexLocker>
@@ -36,6 +36,7 @@ bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdM
 	// mResponseAvailable is locked by the constructor, to revert the mutex behavior.
 	// Locking this is a requirement for QWaitCondition.
 
+	mCardRemoved = false;
 	mWaitingForAnswer = true;
 	mExpectedAnswerType = pExpectedAnswer;
 
@@ -68,7 +69,7 @@ bool IfdCard::sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdM
 }
 
 
-void IfdCard::onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& pJsonObject)
+void IfdCard::onMessageReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject)
 {
 	QMutexLocker locker(&mProcessResponse);
 
@@ -77,7 +78,7 @@ void IfdCard::onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& p
 		return;
 	}
 
-	if (pMessageTpe == mExpectedAnswerType || pMessageTpe == IfdMessageType::IFDError)
+	if (pMessageType == mExpectedAnswerType || pMessageType == IfdMessageType::IFDError)
 	{
 		mResponse = pJsonObject;
 		mWaitingForAnswer = false;
@@ -85,7 +86,18 @@ void IfdCard::onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& p
 		return;
 	}
 
-	qCWarning(card_remote) << "Ignoring unexpected message type:" << pMessageTpe;
+	if (pMessageType == IfdMessageType::IFDStatus)
+	{
+		const IfdStatus ifdStatus(pJsonObject);
+		if (!ifdStatus.getCardAvailable())
+		{
+			qCDebug(card_remote) << "Card was removed while waiting for" << mExpectedAnswerType;
+			mCardRemoved = true;
+			return;
+		}
+	}
+
+	qCWarning(card_remote) << "Ignoring unexpected message type:" << pMessageType;
 }
 
 
@@ -117,6 +129,7 @@ IfdCard::IfdCard(const QSharedPointer<IfdDispatcherClient>& pDispatcher, const Q
 	, mReaderName(pReaderName)
 	, mConnected(false)
 	, mProgressMessage()
+	, mCardRemoved(false)
 {
 	Q_ASSERT(mDispatcher);
 
@@ -254,7 +267,12 @@ EstablishPaceChannelOutput IfdCard::establishPaceChannel(PacePasswordId pPasswor
 	if (response.resultHasError())
 	{
 		qCWarning(card_remote) << response.getResultMinor();
-		return EstablishPaceChannelOutput(CardReturnCode::COMMAND_FAILED);
+		return EstablishPaceChannelOutput(response.getReturnCode());
+	}
+
+	if (mCardRemoved && response.getOutputData().getPaceReturnCode() == CardReturnCode::OK)
+	{
+		return EstablishPaceChannelOutput(CardReturnCode::CARD_NOT_FOUND);
 	}
 
 	return response.getOutputData();
@@ -302,12 +320,17 @@ ResponseApduResult IfdCard::setEidPin(quint8 pTimeoutSeconds)
 		return {CardReturnCode::COMMAND_FAILED};
 	}
 
-	const PinModifyOutput output(ResponseApdu(response.getOutputData()));
+	const ResponseApdu output(response.getOutputData());
 	if (response.resultHasError())
 	{
 		qCWarning(card_remote) << response.getResultMinor();
-		return {response.getReturnCode(), output.getResponseApdu()};
+		return {response.getReturnCode(), output};
 	}
 
-	return {CardReturnCode::OK, output.getResponseApdu()};
+	if (mCardRemoved && output.getStatusCode() == StatusCode::SUCCESS)
+	{
+		return {CardReturnCode::CARD_NOT_FOUND};
+	}
+
+	return {CardReturnCode::OK, output};
 }

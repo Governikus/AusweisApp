@@ -17,10 +17,10 @@
 #include <QWebSocketServer>
 #include <QtTest>
 
-#include <functional>
 
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 Q_DECLARE_METATYPE(IfdDescriptor)
 Q_DECLARE_METATYPE(QSharedPointer<IfdDispatcher>)
@@ -65,16 +65,17 @@ class test_IfdConnector
 						)"_ba;
 				version = IfdVersion::Version::v2;
 			}
-			return Discovery(pIfdName, ifdId, pPort, {version});
+			Discovery discovery(pIfdName, ifdId, pPort, {version});
+			discovery.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			return discovery;
 		}
 
 
 		void sendRequest(const QSharedPointer<IfdConnectorImpl>& pConnector,
-			const QHostAddress& pHostAddress,
 			const Discovery& pDiscovery,
 			const QByteArray& pPassword)
 		{
-			const IfdDescriptor descr(pDiscovery, pHostAddress);
+			const IfdDescriptor descr(pDiscovery);
 			QMetaObject::invokeMethod(pConnector.data(), [ = ] {
 						pConnector->onConnectRequest(descr, pPassword);
 					}, Qt::QueuedConnection);
@@ -100,7 +101,7 @@ class test_IfdConnector
 				const QSharedPointer<IfdDispatcherClient> dispatcher = dispatcherVariant.value<QSharedPointer<IfdDispatcherClient>>();
 				QVERIFY(dispatcher);
 
-				const QUrl remoteUrl = descr.getUrl();
+				const QUrl remoteUrl = descr.getAddresses().at(0);
 				const QString remoteAddress = remoteUrl.host();
 				const int remotePort = remoteUrl.port();
 				const bool signalMatches = remoteAddress == HOST_ADDRESS.toString() && remotePort == pPort &&
@@ -143,7 +144,7 @@ class test_IfdConnector
 				QVERIFY(errorCodeVariant.canConvert<IfdErrorCode>());
 				const auto errorCode = errorCodeVariant.value<IfdErrorCode>();
 
-				const QUrl remoteUrl = descr.getUrl();
+				const QUrl remoteUrl = descr.getAddresses().at(0);
 				const QString remoteAddress = remoteUrl.host();
 				const int remotePort = remoteUrl.port();
 				const bool signalMatches = remoteAddress == HOST_ADDRESS.toString() &&
@@ -180,10 +181,11 @@ class test_IfdConnector
 			clientThread.start();
 
 			// No device name.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QString(), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
-			sendRequest(connector, hostAddress, discoveryMsg, QByteArray());
+			Discovery discoveryMsg(QString(), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::latest});
+			discoveryMsg.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			sendRequest(connector, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -205,9 +207,11 @@ class test_IfdConnector
 			clientThread.start();
 
 			// Device information is null.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			sendRequest(connector, hostAddress, Discovery(QJsonObject()), "secret");
+			Discovery discoveryMsg((QJsonObject()));
+			discoveryMsg.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			sendRequest(connector, Discovery(QJsonObject()), "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -231,10 +235,11 @@ class test_IfdConnector
 			clientThread.start();
 
 			// Password is empty.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), server->getServerPort());
-			sendRequest(connector, hostAddress, discoveryMsg, QByteArray());
+			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), server->getServerPort());
+			QTest::ignoreMessage(QtMsgType::QtDebugMsg, "Request connection.");
+			sendRequest(connector, discoveryMsg, QByteArray());
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -256,10 +261,11 @@ class test_IfdConnector
 			clientThread.start();
 
 			// Currently, only API level 1 is supported.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg(QStringLiteral("Smartphone1"), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
-			sendRequest(connector, hostAddress, discoveryMsg, "secret");
+			Discovery discoveryMsg(QStringLiteral("Smartphone1"), QByteArrayLiteral("0123456789ABCDEF"), 2020, {IfdVersion::Version::Unknown});
+			discoveryMsg.setAddresses({QHostAddress(QHostAddress::LocalHost)});
+			sendRequest(connector, discoveryMsg, "secret");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
@@ -281,20 +287,16 @@ class test_IfdConnector
 			clientThread.start();
 
 			// Correct request but no server is running.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
-			sendRequest(connector, hostAddress, discoveryMsg, "dummy");
+			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), 2020);
+			QTest::ignoreMessage(QtMsgType::QtDebugMsg, "Request connection.");
+			sendRequest(connector, discoveryMsg, "dummy");
 			QTRY_COMPARE(spyError.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			clientThread.exit();
 			QVERIFY(clientThread.wait());
 
-#if !defined(Q_OS_FREEBSD) && !defined(Q_OS_WIN)
 			verifyErrorSignal(spyError, {IfdErrorCode::CONNECTION_ERROR}, 2020, QStringLiteral("Smartphone1"));
-#else
-			verifyErrorSignal(spyError, {IfdErrorCode::CONNECTION_TIMEOUT, IfdErrorCode::CONNECTION_ERROR}, 2020, QStringLiteral("Smartphone1"));
-#endif
-
 			QCOMPARE(spySuccess.count(), 0);
 		}
 
@@ -359,12 +361,12 @@ class test_IfdConnector
 				clientThread.start();
 
 				// Send valid encrypted connect request.
-				const QHostAddress hostAddress(QHostAddress::LocalHost);
-				const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
-				sendRequest(connector, hostAddress, discoveryMsg, psk);
-
+				const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
+				QTest::ignoreMessage(QtMsgType::QtDebugMsg, "Request connection.");
+				sendRequest(connector, discoveryMsg, psk);
 				QTRY_COMPARE(spyConnectorSuccess.count(), 1); // clazy:exclude=qstring-allocations
 				QCOMPARE(spyConnectorError.count(), 0);
+				QCOMPARE(connector->mPendingRequests.size(), 0);
 				verifySuccessSignal(spyConnectorSuccess, serverPort);
 
 				const QVariant dispatcherVariant = spyConnectorSuccess.first().at(1);
@@ -418,12 +420,13 @@ class test_IfdConnector
 			clientThread.start();
 
 			// Send encrypted connect request with wrong psk.
-			const QHostAddress hostAddress(QHostAddress::LocalHost);
-			const Discovery discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
-			sendRequest(connector, hostAddress, discoveryMsg, "sekret");
+			const auto& discoveryMsg = getDiscovery(QStringLiteral("Smartphone1"), serverPort);
+			QTest::ignoreMessage(QtMsgType::QtDebugMsg, "Request connection.");
+			sendRequest(connector, discoveryMsg, "sekret");
 
 			QTRY_COMPARE(spyConnectorError.count(), 1); // clazy:exclude=qstring-allocations
 			QCOMPARE(spyConnectorSuccess.count(), 0);
+			QCOMPARE(connector->mPendingRequests.size(), 0);
 
 			verifyErrorSignal(spyConnectorError, {IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION}, serverPort, QStringLiteral("Smartphone1"));
 

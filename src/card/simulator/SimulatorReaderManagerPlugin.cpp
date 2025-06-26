@@ -100,7 +100,7 @@ void SimulatorReaderManagerPlugin::onSettingsChanged()
 	if (!enabled && mSimulatorReader)
 	{
 		mSimulatorReader->disconnect(this);
-		const auto& readerInfo = mSimulatorReader->getReaderInfo();
+		const auto readerInfo = mSimulatorReader->getReaderInfo();
 		mSimulatorReader.reset();
 		Q_EMIT fireReaderRemoved(readerInfo);
 	}

@@ -43,9 +43,12 @@ QString AppUpdateDataModel::errorFromStatusCode(GlobalStatus::Code pCode) const
 			return tr("The received data is broken. Check your network connection and try to restart the update.");
 
 		case GlobalStatus::Code::Update_Execution_Failed:
-
+		{
+			const auto& a_start = QStringLiteral("<a href=\"%1\">").arg(getDownloadFolder());
+			const auto& a_end = QStringLiteral("</a>");
 			//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (1/2).
-			return tr("The update could not be started automatically after a successful download. Please try to do a manual update. You can find the downloaded file %1here%2.").arg(QStringLiteral("<a href=\"%1\">").arg(getDownloadFolder())).arg(QStringLiteral("</a>"));
+			return tr("The update could not be started automatically after a successful download. Please try to do a manual update. You can find the downloaded file %1here%2.").arg(a_start, a_end);
+		}
 
 		default:
 			//: INFO DESKTOP Generic text of the popup that is shown when the app download failed.
@@ -59,9 +62,11 @@ QString AppUpdateDataModel::supportInfoFromStatusCode(GlobalStatus::Code pCode) 
 {
 	if (pCode == GlobalStatus::Code::Update_Execution_Failed)
 	{
-		const auto language = Env::getSingleton<SettingsModel>()->getLanguage();
+		const auto& language = Env::getSingleton<SettingsModel>()->getLanguage();
+		const auto& a_start = QStringLiteral("<a href=\"https://www.ausweisapp.bund.de/%1/aa2/support\">").arg(language);
+		const auto& a_end = QStringLiteral("</a>");
 		//: INFO DESKTOP Text of the popup that is shown when the execution of the update failed (2/2).
-		return tr("If this does not help, contact our %1support%2.").arg(QStringLiteral("<a href=\"%1\">").arg(QStringLiteral("https://www.ausweisapp.bund.de/%1/aa2/support").arg(language))).arg(QStringLiteral("</a>"));
+		return tr("If this does not help, contact our %1support%2.").arg(a_start, a_end);
 	}
 	return QString();
 }

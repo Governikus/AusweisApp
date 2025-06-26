@@ -6,8 +6,11 @@
 
 #include "IfdConnector.h"
 
+#include <QList>
 #include <QTimer>
+#include <QUrl>
 #include <QWebSocket>
+
 
 namespace governikus
 {
@@ -19,11 +22,14 @@ class ConnectRequest
 
 	private:
 		const IfdDescriptor mIfdDescriptor;
+		QList<QUrl> mAddresses;
 		const QByteArray mPsk;
 		const QSharedPointer<QWebSocket> mSocket;
 		QTimer mTimer;
+		bool mRemoteHostRefusedConnection;
 
 		void setTlsConfiguration() const;
+		void tryNext();
 
 	private Q_SLOTS:
 		void onConnected();
@@ -43,10 +49,8 @@ class ConnectRequest
 		void start();
 
 	Q_SIGNALS:
-		void fireConnectionCreated(const IfdDescriptor& pIfdDescriptor,
-				const QSharedPointer<QWebSocket>& pWebSocket);
-		void fireConnectionError(const IfdDescriptor& pIfdDescriptor, const IfdErrorCode& pError);
-		void fireConnectionTimeout(const IfdDescriptor& pIfdDescriptor);
+		void fireConnectionCreated(ConnectRequest const* pRequest, const QSharedPointer<QWebSocket>& pWebSocket);
+		void fireConnectionError(ConnectRequest const* pRequest, const IfdErrorCode& pError);
 };
 
 } // namespace governikus

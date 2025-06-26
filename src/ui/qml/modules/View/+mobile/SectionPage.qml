@@ -11,7 +11,7 @@ Controller {
 
 	property bool enableTileStyle: true
 	property var navigationAction: null
-	property var rightTitleBarAction: null
+	property Component rightTitleBarAction: null
 	property bool showTitleBarContent: true
 	property bool smartEidUsed: false
 	required property string title

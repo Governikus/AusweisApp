@@ -26,9 +26,9 @@ SectionPage {
 	QtObject {
 		id: d
 
-		readonly property bool foundPCSCReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.PCSC)
-		readonly property bool foundRemoteReader: ApplicationModel.availableReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.REMOTE_IFD)
-		readonly property bool foundSelectedReader: ApplicationModel.availableReader > 0
+		readonly property bool foundPCSCReader: ApplicationModel.availablePcscReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.PCSC)
+		readonly property bool foundRemoteReader: ApplicationModel.availableRemoteReader > 0 && ApplicationModel.isReaderTypeAvailable(ReaderManagerPluginType.REMOTE_IFD)
+		readonly property bool foundSelectedReader: foundPCSCReader || foundRemoteReader
 		readonly property bool showProgressIndicator: root.progress === null || !root.progress.enabled
 
 		onFoundPCSCReaderChanged: if (ApplicationModel.isScreenReaderRunning)
@@ -44,6 +44,25 @@ SectionPage {
 		}
 
 		target: RemoteServiceModel
+	}
+	ReaderDetection {
+		enabled: ApplicationModel.isScreenReaderRunning
+
+		onNewPcscReaderDetected: root.push(readerFoundConfirmation, {
+			type: ReaderFoundConfirmation.ReaderType.PCSC
+		})
+		onNewRemoteReaderDetected: root.push(readerFoundConfirmation, {
+			type: ReaderFoundConfirmation.ReaderType.REMOTE
+		})
+	}
+	Component {
+		id: readerFoundConfirmation
+
+		ReaderFoundConfirmation {
+			title: root.title
+
+			onLeaveView: root.pop()
+		}
 	}
 	AnimationLoader {
 		symbol: root.waitingFor === Workflow.WaitingFor.Reader ? Symbol.Type.QUESTION : Symbol.Type.INFO
@@ -111,7 +130,7 @@ SectionPage {
 				}
 				return d.foundSelectedReader ?
 				//: LABEL DESKTOP
-				qsTr("Place ID card") :
+				qsTr("Read out ID card with connected device") :
 				//: LABEL DESKTOP
 				qsTr("Connect USB card reader or smartphone");
 			case Workflow.WaitingFor.Password:

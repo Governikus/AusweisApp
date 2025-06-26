@@ -191,7 +191,7 @@ class test_CertificateDescription
 
 			QString termsOfUsage("<h1>CertificateDescription mit HTML</h1>\n"
 								 "<p>\n"
-								 "Dies ist ein Test, zur &Uuml;berpr&uuml;fung einer CertificateDescription mit HTML-Elementen.\n"
+								 "Dies ist ein Test, zur &Uuml;berpr&uuml;fung einer CertificateDescription mit HTML-Elementen.\n" // codespell:ignore
 								 "</p>\n"
 								 "<p>\n"
 								 "<em>Klappt's?</em>\n"

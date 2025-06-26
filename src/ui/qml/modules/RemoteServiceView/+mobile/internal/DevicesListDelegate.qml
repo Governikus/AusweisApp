@@ -14,6 +14,7 @@ MouseArea {
 
 	property alias description: descriptionText.text
 	required property var deviceId
+	required property int index
 	required property bool isLastAddedDevice
 	required property bool isNetworkVisible
 	required property bool isPaired
@@ -22,6 +23,8 @@ MouseArea {
 	property alias linkQualityVisible: linkQualityItem.visible
 	required property string remoteDeviceName
 	required property string remoteDeviceStatus
+	property bool showSeparator: index < ListView.view.count - 1
+	property alias titleColor: titleText.color
 
 	signal activate(var pIsSupported, var pDeviceId)
 
@@ -37,44 +40,52 @@ MouseArea {
 	FocusFrame {
 		marginFactor: 3
 	}
-	RowLayout {
+	ColumnLayout {
 		id: content
 
 		anchors.fill: parent
-		spacing: Style.dimens.groupbox_spacing
+		spacing: Style.dimens.text_spacing
 
-		ColumnLayout {
-			Layout.fillWidth: true
-			spacing: 2
+		RowLayout {
+			spacing: Style.dimens.groupbox_spacing
 
-			GText {
-				id: titleText
+			ColumnLayout {
+				Layout.fillWidth: true
+				spacing: 2
 
-				Accessible.ignored: true
-				elide: Text.ElideRight
-				font.bold: root.isLastAddedDevice
-				maximumLineCount: 1
-				text: root.remoteDeviceName + (root.isSupported ? "" : (" (" + root.remoteDeviceStatus + ")"))
-				textFormat: Text.PlainText
-				textStyle: Style.text.subline
+				GText {
+					id: titleText
+
+					Accessible.ignored: true
+					elide: Text.ElideRight
+					font.bold: root.isLastAddedDevice
+					maximumLineCount: 1
+					text: root.remoteDeviceName + (root.isSupported ? "" : (" (" + root.remoteDeviceStatus + ")"))
+					textFormat: Text.PlainText
+					textStyle: Style.text.subline
+				}
+				GText {
+					id: descriptionText
+
+					Accessible.ignored: true
+					elide: Text.ElideRight
+					maximumLineCount: 1
+					visible: text !== ""
+				}
 			}
-			GText {
-				id: descriptionText
+			GSpacer {
+				Layout.fillWidth: true
+			}
+			LinkQualityAnimation {
+				id: linkQualityItem
 
-				Accessible.ignored: true
-				elide: Text.ElideRight
-				maximumLineCount: 1
-				visible: text !== ""
+				inactive: !root.isNetworkVisible && root.isPaired
+				percent: root.linkQualityInPercent
 			}
 		}
-		GSpacer {
+		GSeparator {
 			Layout.fillWidth: true
-		}
-		LinkQualityAnimation {
-			id: linkQualityItem
-
-			inactive: !root.isNetworkVisible && root.isPaired
-			percent: root.linkQualityInPercent
+			visible: root.showSeparator
 		}
 	}
 }

@@ -118,7 +118,7 @@ class test_ResponseApdu
 			QTest::newRow("FILE_NOT_FOUND") << StatusCode::FILE_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x82);
 			QTest::newRow("RECORD_NOT_FOUND") << StatusCode::RECORD_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x83);
 			QTest::newRow("INVALID_PARAMETER") << StatusCode::INVALID_PARAMETER << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x86);
-			QTest::newRow("LC_INCONSISTANT") << StatusCode::LC_INCONSISTANT << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x87);
+			QTest::newRow("LC_INCONSISTENT") << StatusCode::LC_INCONSISTENT << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x87);
 			QTest::newRow("REFERENCED_DATA_NOT_FOUND") << StatusCode::REFERENCED_DATA_NOT_FOUND << SW1::WRONG_PARAMETERS_P1_P2 << static_cast<char>(0x88);
 			QTest::newRow("ILLEGAL_OFFSET") << StatusCode::ILLEGAL_OFFSET << SW1::WRONG_PARAMETERS_P1_P2_NO_INFO << static_cast<char>(0x00);
 			QTest::newRow("UNSUPPORTED_CLA") << StatusCode::UNSUPPORTED_CLA << SW1::CLASS_NOT_SUPPORTED << static_cast<char>(0x00);

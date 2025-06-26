@@ -69,6 +69,7 @@ class UiPluginModel
 
 		Q_INVOKABLE virtual void hideFromTaskbar() const = 0;
 		Q_INVOKABLE virtual void doRefresh() = 0;
+		Q_INVOKABLE bool showUpdateInformationIfPending();
 
 		[[nodiscard]] bool isUpdatePending() const;
 

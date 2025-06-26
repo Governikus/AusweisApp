@@ -80,14 +80,36 @@ SectionPage {
 
 			onCancelClicked: root.cancel()
 			onContinueClicked: {
-				if (checkIDCardModel.result === CheckIDCardModel.Result.SUCCESS) {
+				switch (checkIDCardModel.result) {
+				case CheckIDCardModel.Result.PIN_DEACTIVATED:
+					root.push(cardNotActivatedView);
+					break;
+				case CheckIDCardModel.Result.SUCCESS:
 					root.checkSuccess();
-				} else {
+					break;
+				default:
 					root.push(checkIDCardSuggestionView, {
 						result: checkIDCardModel.result
 					});
 				}
 			}
+		}
+	}
+	Component {
+		id: cardNotActivatedView
+
+		CardNotActivatedView {
+			continueButtonVisible: root.usedInOnboarding
+			progress: progressTracker
+			title: root.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: root.pop()
+			}
+
+			onContinueClicked: root.pinDeactivated()
 		}
 	}
 	Component {
@@ -105,7 +127,6 @@ SectionPage {
 
 			onCancelClicked: root.cancel()
 			onCheckSuccess: root.checkSuccess()
-			onPinDeactivated: root.pinDeactivated()
 			onRestartCheck: {
 				root.pop(root);
 				root.restartCheck();

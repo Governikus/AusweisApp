@@ -9,17 +9,20 @@
 #include <QLoggingCategory>
 #include <QMutexLocker>
 #include <QNetworkDatagram>
-#include <QNetworkInterface>
 #include <QNetworkProxy>
 #include <QWeakPointer>
 
+
 using namespace governikus;
+
 
 Q_DECLARE_LOGGING_CATEGORY(network)
 
 
 namespace governikus
 {
+
+constexpr QLatin1StringView ipv6MulticastAddress("ff02::1");
 
 template<> DatagramHandler* createNewObject<DatagramHandler*>()
 {
@@ -40,7 +43,7 @@ DatagramHandlerImpl::DatagramHandlerImpl(bool pEnableListening, quint16 pPort)
 	: DatagramHandler(pEnableListening)
 	, mSocket()
 	, mMulticastLock()
-	, mAllAddresses()
+	, mAllEntries()
 	, mFailedAddresses()
 	, mUsedPort(pPort)
 	, mPortFile(QStringLiteral("udp"))
@@ -84,6 +87,19 @@ void DatagramHandlerImpl::resetSocket()
 	}
 	else if (mSocket->bind(mUsedPort))
 	{
+#ifndef Q_OS_MACOS
+		if (!mSocket->joinMulticastGroup(QHostAddress(ipv6MulticastAddress)))
+		{
+	#ifdef Q_OS_WIN
+			qCDebug(network) << "Could not join multicast group:" << mSocket->errorString();
+	#endif
+		}
+#endif
+		if (!mSocket->joinMulticastGroup(QHostAddress(QStringLiteral("ff02::178"))))
+		{
+			qCDebug(network) << "Could not join multicast group:" << mSocket->errorString();
+		}
+
 		mMulticastLock.reset(new MulticastLock());
 		mUsedPort = mSocket->localPort(); // if user provides 0, we need to overwrite it with real value
 		mPortFile.handlePort(mUsedPort);
@@ -112,9 +128,35 @@ bool DatagramHandlerImpl::isBound() const
 }
 
 
-void DatagramHandlerImpl::send(const QByteArray& pData)
+QList<QNetworkAddressEntry> DatagramHandlerImpl::getAllBroadcastEntries() const
 {
-	sendToAllAddressEntries(pData, 0);
+	QList<QNetworkAddressEntry> broadcastEntries;
+
+	const auto& allInterfaces = QNetworkInterface::allInterfaces();
+	for (const QNetworkInterface& interface : allInterfaces)
+	{
+		if (!isValidBroadcastInterface(interface))
+		{
+			continue;
+		}
+
+		const auto& entries = interface.addressEntries();
+		for (const QNetworkAddressEntry& addressEntry : entries)
+		{
+			if (isValidAddressEntry(addressEntry))
+			{
+				broadcastEntries << addressEntry;
+			}
+		}
+	}
+
+	return broadcastEntries;
+}
+
+
+void DatagramHandlerImpl::send(const QByteArray& pData, const QList<QNetworkAddressEntry>& pEntries)
+{
+	sendToAddressEntries(pData, pEntries, 0);
 }
 
 
@@ -144,111 +186,44 @@ bool DatagramHandlerImpl::isValidBroadcastInterface(const QNetworkInterface& pIn
 }
 
 
-QList<QHostAddress> DatagramHandlerImpl::getAllBroadcastAddresses(const QNetworkInterface& pInterface) const
+bool DatagramHandlerImpl::isValidAddressEntry(const QNetworkAddressEntry& pEntry) const
 {
-	QList<QHostAddress> broadcastAddresses;
-
-	if (!isValidBroadcastInterface(pInterface))
+	const auto ipAddr = pEntry.ip();
+	switch (ipAddr.protocol())
 	{
-		return broadcastAddresses;
+		case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
+			return ipAddr.isGlobal() && !pEntry.broadcast().isNull();
+
+		case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
+			return ipAddr.isGlobal();
+
+		default:
+			qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
+			return false;
+
 	}
-
-	bool skipFurtherIPv6AddressesOnThisInterface = false;
-
-	const auto& entries = pInterface.addressEntries();
-	for (const QNetworkAddressEntry& addressEntry : entries)
-	{
-		const auto ipAddr = addressEntry.ip();
-		switch (ipAddr.protocol())
-		{
-			case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
-			{
-				const QHostAddress& broadcastAddr = addressEntry.broadcast();
-				if (broadcastAddr.isNull() || !ipAddr.isGlobal())
-				{
-					continue;
-				}
-
-				broadcastAddresses += broadcastAddr;
-				break;
-			}
-
-			case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
-			{
-				if (skipFurtherIPv6AddressesOnThisInterface)
-				{
-					continue;
-				}
-
-				const QString& scopeId = ipAddr.scopeId();
-				if (scopeId.isEmpty() || !(ipAddr.isLinkLocal() || ipAddr.isUniqueLocalUnicast()))
-				{
-					continue;
-				}
-
-				QHostAddress scopedMulticastAddress(QStringLiteral("ff02::1"));
-				scopedMulticastAddress.setScopeId(scopeId);
-				broadcastAddresses += scopedMulticastAddress;
-
-				skipFurtherIPv6AddressesOnThisInterface = true;
-				break;
-			}
-
-			default:
-			{
-				qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
-			}
-		}
-	}
-
-	return broadcastAddresses;
 }
 
 
-void DatagramHandlerImpl::sendToAllAddressEntries(const QByteArray& pData, quint16 pPort)
+QHostAddress DatagramHandlerImpl::getBroadcastAddress(const QNetworkAddressEntry& pEntry) const
 {
-	const auto& allInterfaces = QNetworkInterface::allInterfaces();
-
-	// QNetworkInterface has no operator== so we use allAddresses()
-	// to check if something changed. We don't want to log
-	// all interfaces for any broadcast here.
-	const auto& addresses = QNetworkInterface::allAddresses();
-	if (mAllAddresses != addresses)
+	const auto& ipAddr = pEntry.ip();
+	switch (ipAddr.protocol())
 	{
-		mAllAddresses = addresses;
-		mFailedAddresses.clear();
-		qCDebug(network) << "Network interfaces changed...";
-		for (const auto& interface : allInterfaces)
+		case QAbstractSocket::NetworkLayerProtocol::IPv4Protocol:
 		{
-			qCDebug(network) << interface;
+			return pEntry.broadcast();
 		}
-	}
 
-	QList<QHostAddress> broadcastAddresses;
-	for (const QNetworkInterface& interface : allInterfaces)
-	{
-		broadcastAddresses << getAllBroadcastAddresses(interface);
-	}
-
-	if (broadcastAddresses.isEmpty())
-	{
-		return;
-	}
-
-	for (const QHostAddress& broadcastAddr : std::as_const(broadcastAddresses))
-	{
-		const auto& addrString = broadcastAddr.toString(); // QTBUG-112528
-		const auto alreadyFailed = mFailedAddresses.contains(addrString);
-		const auto sendSuccess = sendToAddress(pData, broadcastAddr, pPort, !alreadyFailed);
-
-		if (sendSuccess && alreadyFailed)
+		case QAbstractSocket::NetworkLayerProtocol::IPv6Protocol:
 		{
-			mFailedAddresses.removeAll(addrString);
+			return QHostAddress(ipv6MulticastAddress);
 		}
-		else if (!sendSuccess && !alreadyFailed)
+
+		default:
 		{
-			qCDebug(network) << "Broadcasting to" << broadcastAddr << "failed";
-			mFailedAddresses << addrString;
+			qCDebug(network) << "Skipping unknown protocol type:" << ipAddr.protocol();
+			return QHostAddress();
 		}
 	}
 }
@@ -271,6 +246,57 @@ bool DatagramHandlerImpl::sendToAddress(const QByteArray& pData, const QHostAddr
 	}
 
 	return true;
+}
+
+
+void DatagramHandlerImpl::sendToAddressEntries(const QByteArray& pData, const QList<QNetworkAddressEntry>& pEntries, quint16 pPort)
+{
+	// Check if something changed because We don't want
+	// to log all interfaces for any broadcast here.
+	if (mAllEntries != pEntries)
+	{
+		mAllEntries = pEntries;
+		mFailedAddresses.clear();
+		qCDebug(network) << "Broadcast Addresses changed...";
+		for (const auto& broadcastEntry : pEntries)
+		{
+			qCDebug(network) << broadcastEntry;
+		}
+	}
+
+	if (pEntries.isEmpty())
+	{
+		return;
+	}
+
+	QList<QHostAddress> alreadySent;
+	for (const auto& broadcastEntry : pEntries)
+	{
+		const auto& address = getBroadcastAddress(broadcastEntry);
+		if (alreadySent.contains(address))
+		{
+			qCDebug(network) << "Skipping duplicate broadcasting to" << address;
+			continue;
+		}
+
+		const auto alreadyFailed = mFailedAddresses.contains(address);
+		const auto sendSuccess = sendToAddress(pData, address, pPort, !alreadyFailed);
+		if (sendSuccess)
+		{
+			alreadySent << address;
+			if (alreadyFailed)
+			{
+				mFailedAddresses.removeAll(address);
+			}
+			continue;
+		}
+
+		if (!alreadyFailed)
+		{
+			qCDebug(network) << "Broadcasting to" << address << "failed";
+			mFailedAddresses << address;
+		}
+	}
 }
 
 

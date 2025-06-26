@@ -26,7 +26,7 @@ CheckResultSuggestionView {
 		case SmartModel.State.UPDATING_STATUS:
 			return smartUpdatingData;
 		case SmartModel.State.UNAVAILABLE:
-			return smartUnvailableData;
+			return smartUnavailableData;
 		case SmartModel.State.UNUSABLE:
 			return smartUnusableData;
 		case SmartModel.State.NO_PROVISIONING:
@@ -68,7 +68,7 @@ CheckResultSuggestionView {
 		title: qsTr("Updating Smart-eID status...")
 	}
 	SuggestionData {
-		id: smartUnvailableData
+		id: smartUnavailableData
 
 		animationSymbol: Symbol.Type.ERROR
 		continueButtonIcon: "qrc:///images/device_button.svg"

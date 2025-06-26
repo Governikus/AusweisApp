@@ -10,6 +10,7 @@
 #include "command/CreateCardConnectionCommand.h"
 #include "command/ExecuteCommand.h"
 
+#include <QLoggingCategory>
 #include <QMutex>
 #include <QPointer>
 #include <QThread>
@@ -28,6 +29,7 @@ class ReaderManager
 
 	private:
 		static QList<std::function<void()>> cMainThreadInit;
+		static const QLoggingCategory& getLoggingCategory();
 
 		mutable QMutex mMutex;
 		QThread mThread;
@@ -118,7 +120,7 @@ class ReaderManager
 
 			if (!mThread.isRunning())
 			{
-				qCWarning(card) << "Cannot call ExecuteCommand if ReaderManager-Thread is not active";
+				qCWarning(getLoggingCategory()) << "Cannot call ExecuteCommand if ReaderManager-Thread is not active";
 				return QMetaObject::Connection();
 			}
 
@@ -131,7 +133,7 @@ class ReaderManager
 			}
 			else
 			{
-				qCCritical(card) << "Cannot invoke ExecuteCommand command";
+				qCCritical(getLoggingCategory()) << "Cannot invoke ExecuteCommand command";
 				command->deleteLater();
 			}
 
@@ -150,7 +152,7 @@ class ReaderManager
 		{
 			if (!mThread.isRunning())
 			{
-				qCWarning(card) << "Cannot call Execute if ReaderManager-Thread is not active";
+				qCWarning(getLoggingCategory()) << "Cannot call Execute if ReaderManager-Thread is not active";
 				return;
 			}
 
@@ -193,7 +195,7 @@ class ReaderManager
 			}
 			else
 			{
-				qCCritical(card) << "Cannot invoke CreateCardConnectionCommand command";
+				qCCritical(getLoggingCategory()) << "Cannot invoke CreateCardConnectionCommand command";
 				command->deleteLater();
 			}
 

@@ -72,7 +72,8 @@ class test_IfdEstablishPaceChannelResponse
 		{
 			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(
 				QStringLiteral("SlotHandle"),
-				EstablishPaceChannelOutput()
+				EstablishPaceChannelOutput(),
+				ECardApiResult::Minor::null
 				);
 
 			QVERIFY(!ifdEstablishPaceChannelResponse.isIncomplete());
@@ -105,7 +106,8 @@ class test_IfdEstablishPaceChannelResponse
 
 			const IfdEstablishPaceChannelResponse ifdEstablishPaceChannelResponse(
 				QStringLiteral("SlotHandle"),
-				EstablishPaceChannelOutput()
+				EstablishPaceChannelOutput(),
+				ECardApiResult::Minor::null
 				);
 
 			const QByteArray& byteArray = ifdEstablishPaceChannelResponse.toByteArray(version, QStringLiteral("TestContext"));
@@ -381,6 +383,31 @@ class test_IfdEstablishPaceChannelResponse
 			{
 				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("The value of OutputData should be as defined in TR-03119 section D.3")));
 			}
+		}
+
+
+		void test_GetReturnCode_data()
+		{
+			QTest::addColumn<ECardApiResult::Minor>("minor");
+			QTest::addColumn<CardReturnCode>("code");
+
+			QTest::newRow("ok") << ECardApiResult::Minor::null << CardReturnCode::OK;
+			QTest::newRow("timeout") << ECardApiResult::Minor::IFDL_Timeout_Error << CardReturnCode::INPUT_TIME_OUT;
+			QTest::newRow("cancellation") << ECardApiResult::Minor::IFDL_CancellationByUser << CardReturnCode::CANCELLATION_BY_USER;
+			QTest::newRow("noCard") << ECardApiResult::Minor::IFDL_Terminal_NoCard << CardReturnCode::CARD_NOT_FOUND;
+			QTest::newRow("invalidSlot") << ECardApiResult::Minor::IFDL_InvalidSlotHandle << CardReturnCode::CARD_NOT_FOUND;
+			QTest::newRow("unknownApiFunction") << ECardApiResult::Minor::AL_Unknown_API_Function << CardReturnCode::COMMAND_FAILED;
+			QTest::newRow("default") << ECardApiResult::Minor::AL_Unknown_API_Function << CardReturnCode::COMMAND_FAILED;
+		}
+
+
+		void test_GetReturnCode()
+		{
+			QFETCH(ECardApiResult::Minor, minor);
+			QFETCH(CardReturnCode, code);
+
+			const IfdEstablishPaceChannelResponse response("slothandle"_L1, EstablishPaceChannelOutput(), minor);
+			QCOMPARE(response.getReturnCode(), code);
 		}
 
 

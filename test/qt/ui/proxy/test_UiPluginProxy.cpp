@@ -7,9 +7,14 @@
 #include "Env.h"
 #include "HttpServer.h"
 
+#include <QSignalSpy>
+#include <QUdpSocket>
 #include <QtTest>
 
+
+using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
+
 
 class test_UiPluginProxy
 	: public QObject
@@ -46,6 +51,21 @@ class test_UiPluginProxy
 
 			QTest::ignoreMessage(QtDebugMsg, "Reverse proxy disabled");
 			proxy.onUiDominationReleased();
+		}
+
+
+		void broadcast()
+		{
+			UiPluginProxy proxy;
+			QVERIFY(proxy.initialize());
+
+			QSignalSpy spy(proxy.mSocket.data(), &QUdpSocket::readyRead);
+			QUdpSocket socket;
+			QVERIFY(socket.bind(QHostAddress::LocalHost));
+			const auto port = Env::getShared<HttpServer>()->getServerPort();
+			QVERIFY(socket.writeDatagram("test"_ba, QHostAddress::LocalHost, port));
+			QTest::ignoreMessage(QtDebugMsg, "Found instances on Ports: QList()");
+			QTRY_VERIFY(!spy.isEmpty());
 		}
 
 

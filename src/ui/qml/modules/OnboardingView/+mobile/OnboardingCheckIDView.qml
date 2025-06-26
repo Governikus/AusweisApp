@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Governikus GmbH & Co. KG, Germany
+ * Copyright (c) 2024-2025 Governikus GmbH & Co. KG, Germany
  */
 
 pragma ComponentBehavior: Bound
@@ -88,15 +88,42 @@ BaseOnboardingView {
 			}
 
 			onContinueClicked: {
-				if (result !== CheckIDCardModel.Result.SUCCESS) {
+				switch (result) {
+				case CheckIDCardModel.Result.PIN_DEACTIVATED:
+					root.push(cardNotActivatedView);
+					break;
+				case CheckIDCardModel.Result.SUCCESS:
+					root.pop();
+					root.continueOnboarding();
+					break;
+				default:
 					root.push(checkIDCardSuggestionView, {
 						result: resultView.result
 					});
-				} else {
-					root.pop();
-					root.continueOnboarding();
 				}
 			}
+		}
+	}
+	Component {
+		id: cardNotActivatedView
+
+		CardNotActivatedView {
+			continueButtonVisible: true
+			title: root.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Back
+
+				onClicked: root.pop()
+			}
+			progress: ProgressTracker {
+				baseProgressTracker: root.progress
+				currentStage: 1
+				currentStep: 5
+				steps: 6
+			}
+
+			onContinueClicked: root.pinDeactivated()
 		}
 	}
 	Component {
@@ -118,7 +145,6 @@ BaseOnboardingView {
 			}
 
 			onCheckSuccess: root.continueOnboarding()
-			onPinDeactivated: root.pinDeactivated()
 			onRestartCheck: {
 				root.pop(root);
 				checkConnection.enabled = true;

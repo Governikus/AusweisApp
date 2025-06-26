@@ -16,8 +16,7 @@ endif()
 
 
 set(prefix AusweisApp2)
-set(extension .framework.zip)
-file(GLOB_RECURSE FRAMEWORK_ZIP RELATIVE "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/*${extension}")
+file(GLOB_RECURSE FRAMEWORK_ZIP "${CMAKE_BINARY_DIR}/*.framework.zip")
 if(NOT FRAMEWORK_ZIP)
 	message(FATAL_ERROR "Missing framework(s) in: ${CMAKE_BINARY_DIR}")
 endif()
@@ -26,12 +25,14 @@ endif()
 foreach(framework ${FRAMEWORK_ZIP})
 	message(STATUS "Check framework: ${framework}")
 
-	get_filename_component(dir ${framework} DIRECTORY)
-	get_filename_component(filename ${framework} NAME)
-
 	# Check that any framework has same version
-	string(REPLACE "${extension}" "" framework_version "${filename}")
-	string(REPLACE "${prefix}-" "" framework_version "${framework_version}")
+	get_filename_component(framework_version ${framework} NAME)
+	get_filename_component(framework_version ${framework_version} NAME_WLE) # strip .zip
+	get_filename_component(framework_version ${framework_version} NAME_WLE) # strip .framework
+	get_filename_component(framework_arch ${framework_version} LAST_EXT)
+	get_filename_component(framework_version ${framework_version} NAME_WLE) # strip framework_arch
+	string(REPLACE "${prefix}-" "" framework_version "${framework_version}") # strip AusweisApp
+
 	if(APP_NAME_VERSION AND NOT APP_NAME_VERSION STREQUAL framework_version)
 		message(STATUS "Different package version: ${APP_NAME_VERSION} / ${framework_version}")
 		set(APP_MISMATCH -version-mismatch)
@@ -40,10 +41,12 @@ foreach(framework ${FRAMEWORK_ZIP})
 	endif()
 
 	# Extract the .zip file to package the framework itself
-	set(framework_dir ${dir}/${prefix}.framework)
-	file(REMOVE_RECURSE ${framework_dir})
-	execute_process(COMMAND ${CMAKE_COMMAND} -E tar xf "${filename}" WORKING_DIRECTORY "${dir}")
-	if (NOT ${framework_dir} MATCHES simulator)
+	set(framework_arch_dir ${CMAKE_BINARY_DIR}/arch${framework_arch})
+	set(framework_dir ${framework_arch_dir}/${prefix}.framework)
+	file(REMOVE_RECURSE ${framework_arch_dir})
+	file(MAKE_DIRECTORY ${framework_arch_dir})
+	execute_process(COMMAND ${CMAKE_COMMAND} -E tar xf "${framework}" WORKING_DIRECTORY "${framework_arch_dir}")
+	if (NOT ${framework_arch} MATCHES simulator)
 		list(APPEND FRAMEWORK_PARAM -framework ${framework_dir})
 	else()
 		if (NOT FAT_LIB_TARGETS)
@@ -54,13 +57,12 @@ foreach(framework ${FRAMEWORK_ZIP})
 	endif()
 endforeach()
 
-if (FAT_LIB_TARGETS)
+if(FAT_LIB_TARGETS)
 	execute_process(COMMAND ${LIPO} ${FAT_LIB_TARGETS} -output ${FAT_LIB_OUTPUT})
 endif()
 
 file(REMOVE_RECURSE ${prefix}.xcframework)
 execute_process(COMMAND ${XCODEBUILD} -create-xcframework ${FRAMEWORK_PARAM} -output ${prefix}.xcframework)
-file(REMOVE_RECURSE ${FRAMEWORK_PARAM})
 
 get_filename_component(SCRIPT_DIR "${CMAKE_SCRIPT_MODE_FILE}" DIRECTORY)
 set(PACKAGING_DIR "${SCRIPT_DIR}/../resources/packaging")

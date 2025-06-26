@@ -12,7 +12,7 @@ BrandDimensions {
 	readonly property int control_radius: 12
 	readonly property int control_verticalPadding: 6
 	readonly property int groupbox_spacing: 10
-	readonly property real header_icon_size: screenHeight / 7
+	readonly property real header_icon_size: screenHeight / 8
 	readonly property int icon_size: 48
 	readonly property bool isLongLanguage: SettingsModel.language === "uk" || SettingsModel.language === "ru"
 	readonly property int large_icon_size: 96

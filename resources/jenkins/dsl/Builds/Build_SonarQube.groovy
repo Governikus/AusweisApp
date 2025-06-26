@@ -7,6 +7,7 @@ def j = new Build
 		label: 'Vanilla',
 		excludePattern: 'source/**,cache/**',
 		artifacts: 'tmp/sonar-metadata.txt',
+		trigger: '',
 		xunit: true
 	).generate(this)
 

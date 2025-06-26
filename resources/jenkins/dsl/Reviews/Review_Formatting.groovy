@@ -4,7 +4,7 @@ def j = new Review
 	(
 		name: 'Formatting',
 		libraries: 'Linux',
-		label: 'Common'
+		label: 'Linux'
 	).generate(this)
 
 
@@ -14,7 +14,7 @@ j.with
 
 	steps
 	{
-		shell('cmake -DPENDING=OFF -P source/ci.cmake')
+		shell('cmake -P source/ci.cmake')
 	}
 
 	publishers

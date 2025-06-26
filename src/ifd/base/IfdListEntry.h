@@ -32,7 +32,6 @@ class IfdListEntry
 		void setIfdDescriptor(const IfdDescriptor& pIfdDescriptor);
 
 		[[nodiscard]] bool containsEquivalent(const IfdDescriptor& pIfdDescriptor) const;
-		bool isEqual(const IfdListEntry* const pOther) const;
 
 		[[nodiscard]] const QTime& getLastSeen() const;
 		[[nodiscard]] const IfdDescriptor& getIfdDescriptor() const;

@@ -83,7 +83,7 @@ class DiagnosisAntivirusDetection
 
 
 #endif
-		[[nodiscard]] const QList<QSharedPointer<AntivirInfo>>& getAntivirusInformations() const;
+		[[nodiscard]] const QList<QSharedPointer<AntivirInfo>>& getAntivirusInformation() const;
 };
 
 } // namespace governikus

@@ -443,7 +443,7 @@ if(WIN32)
 			set(SIGNTOOL_PARAMS sign /v /fd ${WIN_SIGN_HASHALGO} /d AusweisApp /du https://www.ausweisapp.bund.de)
 
 			if(WIN_SIGN_SUBJECT_NAME)
-				set(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /n ${WIN_SIGN_SUBJECT_NAME})
+				set(SIGNTOOL_PARAMS ${SIGNTOOL_PARAMS} /a /n ${WIN_SIGN_SUBJECT_NAME})
 				message(STATUS "Files will be signed using: ${WIN_SIGN_SUBJECT_NAME}")
 			else()
 				string(REPLACE "\\" "/" WIN_SIGN_KEYSTORE "${WIN_SIGN_KEYSTORE}")

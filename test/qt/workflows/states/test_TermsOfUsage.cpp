@@ -20,12 +20,12 @@ class test_TermsOfUsage
 		{
 			QTest::addColumn<QString>("purpose");
 
-			QTest::newRow("0") << QStringLiteral("- Anmeldung und Registrierung im Portal der Bundesagentur f\u00FCr Arbeit (BA) f\u00FCr Gesch\u00E4ftsvorf\u00E4lle, die im Portal der BA verf\u00FCgbar sind -");
-			QTest::newRow("1") << QStringLiteral("- Authentisierung der Studierenden beim Login an Hochschuldiensten -");
+			QTest::newRow("0") << QStringLiteral("- Anmeldung und Registrierung im Portal der Bundesagentur f\u00FCr Arbeit (BA) f\u00FCr Gesch\u00E4ftsvorf\u00E4lle, die im Portal der BA verf\u00FCgbar sind -"); // codespell:ignore
+			QTest::newRow("1") << QStringLiteral("- Authentisierung der Studierenden beim Login an Hochschuldiensten -"); // codespell:ignore
 			QTest::newRow("2") << QStringLiteral("Registrierung / Login f\u00FCr \"Meine TK\"");
 			QTest::newRow("3") << QStringLiteral("Permanentes B\u00FCrgerkonto");
 			QTest::newRow("4") << QStringLiteral("- Selbstauskunft -");
-			QTest::newRow("5") << QStringLiteral("- Registrierung und Login f\u00FCr ein Benutzerkonto im HamburgService -");
+			QTest::newRow("5") << QStringLiteral("- Registrierung und Login f\u00FCr ein Benutzerkonto im HamburgService -"); // codespell:ignore
 			QTest::newRow("6") << QStringLiteral("- Altersverifikation f\u00FCr Online-Shop- und eCommerce-Anbieter per Web-Schnittstelle -");
 			QTest::newRow("7") << QStringLiteral("- Abwicklung von Verwaltungsleistungen mit Identifikationsbedarf ohne Registrierung -");
 			QTest::newRow("8") << QStringLiteral("Abwicklung von Verwaltungsleistungen ohne Registrierung");
@@ -37,7 +37,7 @@ class test_TermsOfUsage
 			QTest::newRow("14") << QStringLiteral("Registrierung / Login f\u00FCr \"meinCosmosDirekt\"");
 			QTest::newRow("15") << QStringLiteral("- Selbstauskunft -");
 			QTest::newRow("16") << QStringLiteral("- Login B\u00FCrgerkonto \"Mein Hagen\" -");
-			QTest::newRow("17") << QStringLiteral("- Verifikation von Personendaten zur Alters- und Identit\u00E4tsfeststellung -");
+			QTest::newRow("17") << QStringLiteral("- Verifikation von Personendaten zur Alters- und Identit\u00E4tsfeststellung -"); // codespell:ignore
 			QTest::newRow("18") << QStringLiteral("- Registrierung f\u00FCr die Virtuelle Poststelle bei der Deutschen Emissionshandelsstelle -");
 		}
 

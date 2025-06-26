@@ -8,6 +8,10 @@
 #include "messages/IfdConnectResponse.h"
 #include "messages/IfdDisconnect.h"
 #include "messages/IfdDisconnectResponse.h"
+#include "messages/IfdEstablishPaceChannel.h"
+#include "messages/IfdEstablishPaceChannelResponse.h"
+#include "messages/IfdModifyPin.h"
+#include "messages/IfdModifyPinResponse.h"
 #include "messages/IfdStatus.h"
 #include "messages/IfdTransmit.h"
 #include "messages/IfdTransmitResponse.h"
@@ -82,6 +86,35 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 		return;
 	}
 
+	if (mState == DispatcherState::ReaderWithCardRemoved)
+	{
+		Q_EMIT fireReceived(IfdMessageType::IFDStatus,
+				QJsonDocument::fromJson("{\n"
+										"    \"CardAvailable\": false,\n"
+										"    \"ConnectedReader\": true,\n"
+										"    \"ContextHandle\": \"TestContext\",\n"
+										"    \"EFATR\": null,\n"
+										"    \"EFDIR\": null,\n"
+										"    \"MaxAPDULength\": 500,\n"
+										"    \"PINPad\": false,\n"
+										"    \"SlotName\": \"SlotName\",\n"
+										"    \"msg\": \"IFDStatus\"\n"
+										"}\n").object(), mId);
+
+		Q_EMIT fireReceived(IfdMessageType::IFDStatus,
+				QJsonDocument::fromJson("{\n"
+										"    \"CardAvailable\": true,\n"
+										"    \"ConnectedReader\": true,\n"
+										"    \"ContextHandle\": \"TestContext\",\n"
+										"    \"EFATR\": null,\n"
+										"    \"EFDIR\": null,\n"
+										"    \"MaxAPDULength\": 500,\n"
+										"    \"PINPad\": false,\n"
+										"    \"SlotName\": \"SlotName\",\n"
+										"    \"msg\": \"IFDStatus\"\n"
+										"}\n").object(), mId);
+	}
+
 	if (pMessage->getType() == IfdMessageType::IFDEstablishContext)
 	{
 		bool withCard = (mState == DispatcherState::ReaderWithCard || mState == DispatcherState::ReaderWithCardError);
@@ -91,7 +124,20 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 		return;
 	}
 
-	const ECardApiResult::Minor resultMinor = (mState == DispatcherState::ReaderWithCardError ? ECardApiResult::Minor::AL_Unknown_Error : ECardApiResult::Minor::null);
+	ECardApiResult::Minor resultMinor = ECardApiResult::Minor::null;
+	switch (mState)
+	{
+		case DispatcherState::ReaderWithCardError:
+			resultMinor = ECardApiResult::Minor::AL_Unknown_Error;
+			break;
+
+		case DispatcherState::ReaderWithCardRemoved:
+			resultMinor = ECardApiResult::Minor::IFDL_Terminal_NoCard;
+			break;
+
+		default:
+			break;
+	}
 
 	if (pMessage->getType() == IfdMessageType::IFDConnect)
 	{
@@ -114,6 +160,22 @@ void MockIfdDispatcher::send(const QSharedPointer<const IfdMessage>& pMessage)
 		const QSharedPointer<const IfdDisconnect> request = pMessage.staticCast<const IfdDisconnect>();
 		const QString readerName = request->getSlotHandle();
 		const QSharedPointer<IfdMessage> message(new IfdDisconnectResponse(readerName, resultMinor));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(IfdVersion::Version::v2, mContextHandle)).object(), mId);
+	}
+
+	if (pMessage->getType() == IfdMessageType::IFDEstablishPACEChannel)
+	{
+		const QSharedPointer<const IfdEstablishPaceChannel> request = pMessage.staticCast<const IfdEstablishPaceChannel>();
+		const QString readerName = request->getSlotHandle();
+		const QSharedPointer<IfdMessage> message(new IfdEstablishPaceChannelResponse(readerName, EstablishPaceChannelOutput(CardReturnCode::OK), resultMinor));
+		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(IfdVersion::Version::v2, mContextHandle)).object(), mId);
+	}
+
+	if (pMessage->getType() == IfdMessageType::IFDModifyPIN)
+	{
+		const QSharedPointer<const IfdModifyPin> request = pMessage.staticCast<const IfdModifyPin>();
+		const QString readerName = request->getSlotHandle();
+		const QSharedPointer<IfdMessage> message(new IfdModifyPinResponse(readerName, QByteArray(), resultMinor));
 		Q_EMIT fireReceived(message->getType(), QJsonDocument::fromJson(message->toByteArray(IfdVersion::Version::v2, mContextHandle)).object(), mId);
 	}
 }

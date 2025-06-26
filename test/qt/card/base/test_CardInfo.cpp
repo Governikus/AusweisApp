@@ -95,7 +95,7 @@ class test_CardInfo
 		}
 
 
-		void test_RetryCounterDeterminated()
+		void test_RetryCounterDetermined()
 		{
 			const CardInfo info1(CardType::EID_CARD);
 			QVERIFY(!info1.isRetryCounterDetermined());

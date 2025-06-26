@@ -13,8 +13,8 @@ RowLayout {
 	id: root
 
 	property bool downloadInProgress: false
-	property alias progressText: bar.text
-	property alias progressValue: bar.value
+	required property int downloadProgressKiB
+	required property int downloadTotalKiB
 
 	signal toggleUpdate
 
@@ -23,9 +23,16 @@ RowLayout {
 	GProgressBar {
 		id: bar
 
+		readonly property string localeDownloadedKB: (root.downloadProgressKiB * 1024 / 1000).toLocaleString(Qt.locale(SettingsModel.language), "f", 0)
+		readonly property string localeTotalKB: (root.downloadTotalKiB * 1024 / 1000).toLocaleString(Qt.locale(SettingsModel.language), "f", 0)
+
 		Layout.fillWidth: true
-		activeFocusOnTab: true
+		text: "%1 KB / %2 KB".arg(localeDownloadedKB).arg(localeTotalKB)
+		value: root.downloadProgressKiB * 100 / root.downloadTotalKiB
 		visible: root.downloadInProgress
+
+		//: LABEL DESKTOP %1 and %2 will be replaced with the already downloaded and the total file size.
+		onRequestA11yUpdate: pValue => Accessible.name = qsTr("%1 of %2 Kilobyte downloaded").arg(localeDownloadedKB).arg(localeTotalKB)
 	}
 	GSpacer {
 		Layout.fillWidth: true

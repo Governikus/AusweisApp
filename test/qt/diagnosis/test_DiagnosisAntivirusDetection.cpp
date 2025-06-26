@@ -49,10 +49,10 @@ class test_DiagnosisAntivirusDetection
 		void test_parsingNullAntivirusInformation()
 		{
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 0);
 			mAntivirusDetection->parseAntivirInfos(QString());
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 1);
 		}
 
@@ -60,12 +60,12 @@ class test_DiagnosisAntivirusDetection
 		void test_parsingOneAntivirusInformation()
 		{
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 0);
 
 			const QString& fileContent = getTestData(QStringLiteral("antivir_one_antivirus.txt"));
 			mAntivirusDetection->parseAntivirInfos(fileContent);
-			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
+			auto antivirusInfos = mAntivirusDetection->getAntivirusInformation();
 			QVERIFY(!antivirusInfos.empty());
 			QCOMPARE(antivirusInfos[0]->getDisplayName(), "Windows Defender"_L1);
 			QCOMPARE(antivirusInfos[0]->getLastUpdate(), "Mon, 26 Nov 2018 10:34:23 GMT"_L1);
@@ -77,12 +77,12 @@ class test_DiagnosisAntivirusDetection
 		void test_parsingOneAntivirusInformationMissingTimestamp()
 		{
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 0);
 
 			const QString& fileContent = getTestData(QStringLiteral("antivir_one_antivirus_missing_timestamp.txt"));
 			mAntivirusDetection->parseAntivirInfos(fileContent);
-			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
+			auto antivirusInfos = mAntivirusDetection->getAntivirusInformation();
 			QVERIFY(!antivirusInfos.empty());
 			QCOMPARE(antivirusInfos[0]->getDisplayName(), "Windows Defender"_L1);
 			QCOMPARE(antivirusInfos[0]->getLastUpdate(), QString());
@@ -94,12 +94,12 @@ class test_DiagnosisAntivirusDetection
 		void test_parsingTwoAntivirusInformation()
 		{
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 0);
 
 			const QString& fileContent = getTestData(QStringLiteral("antivir_two_antivirus.txt"));
 			mAntivirusDetection->parseAntivirInfos(fileContent);
-			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
+			auto antivirusInfos = mAntivirusDetection->getAntivirusInformation();
 			QVERIFY(!antivirusInfos.empty());
 			QCOMPARE(antivirusInfos[0]->getDisplayName(), "BullGuard Antivirus"_L1);
 			QCOMPARE(antivirusInfos[0]->getLastUpdate(), "Fri, 30 Nov 2018 15:04:13 GMT"_L1);
@@ -114,12 +114,12 @@ class test_DiagnosisAntivirusDetection
 		void test_parsingTwoBrokenAntivirusInformation()
 		{
 			QSignalSpy spy(mAntivirusDetection.data(), &DiagnosisAntivirusDetection::fireAntivirusInformationChanged);
-			QVERIFY(mAntivirusDetection->getAntivirusInformations().empty());
+			QVERIFY(mAntivirusDetection->getAntivirusInformation().empty());
 			QCOMPARE(spy.count(), 0);
 
 			const QString& fileContent = getTestData(QStringLiteral("antivir_two_broken_antivirus.txt"));
 			mAntivirusDetection->parseAntivirInfos(fileContent);
-			auto antivirusInfos = mAntivirusDetection->getAntivirusInformations();
+			auto antivirusInfos = mAntivirusDetection->getAntivirusInformation();
 			QVERIFY(antivirusInfos.empty());
 			QCOMPARE(spy.count(), 1);
 		}

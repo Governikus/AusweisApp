@@ -40,11 +40,12 @@ class IfdCard
 		QString mSlotHandle;
 		bool mConnected;
 		QString mProgressMessage;
+		bool mCardRemoved;
 
 		bool sendMessage(const QSharedPointer<const IfdMessage>& pMessage, IfdMessageType pExpectedAnswer, unsigned long pExtraTimeout = 0);
 
 	private Q_SLOTS:
-		void onMessageReceived(IfdMessageType pMessageTpe, const QJsonObject& pJsonObject);
+		void onMessageReceived(IfdMessageType pMessageType, const QJsonObject& pJsonObject);
 		void onDispatcherClosed(GlobalStatus::Code pCloseCode, const QByteArray& pId);
 
 	Q_SIGNALS:

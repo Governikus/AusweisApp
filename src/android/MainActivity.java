@@ -345,6 +345,7 @@ public class MainActivity extends QtActivity
 		{
 			WindowInsetsController controller = getWindow().getInsetsController();
 			controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
+			controller.setSystemBarsAppearance(enable ? WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS : 0, WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
 		}
 		else
 		{

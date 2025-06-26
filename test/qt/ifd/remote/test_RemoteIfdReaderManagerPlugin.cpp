@@ -94,8 +94,9 @@ void MockIfdClient::requestRemoteDevices()
 
 void MockIfdClient::populateRemoteDevices()
 {
-	const Discovery discovery("TestIfdName"_L1, QByteArray::fromHex("3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd"_ba), 1337, {IfdVersion::Version::latest});
-	const IfdDescriptor ifdDescriptor(discovery, QHostAddress("127.0.0.1"_L1), true);
+	Discovery discovery("TestIfdName"_L1, QByteArray::fromHex("3ff02e8dc335f7ebb39299fbc12b66bf378445e59a68880e81464c50874e09cd"_ba), 1337, {IfdVersion::Version::latest});
+	discovery.setAddresses({QHostAddress("127.0.0.1"_L1)});
+	const IfdDescriptor ifdDescriptor(discovery, true);
 	mRemoteDevices = {QSharedPointer<IfdListEntry>::create(ifdDescriptor)};
 	auto& remoteServiceSettings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
 	const QByteArray certData = R"(-----BEGIN CERTIFICATE-----

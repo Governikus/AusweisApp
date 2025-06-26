@@ -111,7 +111,7 @@ JSON content itself.
 
 
 .. note::
-  It is possible to pass multiple plugins to the |AppName|, e.g.: ``--ui websocket --ui automatic``.
+  It is possible to pass multiple plugins to the |AppName|, e.g.: ``--ui webservice --ui automatic``.
 
 .. seealso::
   The :doc:`container` SDK is designed for scripted and automatic workflows and enables

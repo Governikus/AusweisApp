@@ -221,9 +221,9 @@ class test_MsgHandlerStatus
 			QTest::addColumn<QString>("name");
 
 			QTest::newRow("AUTH") << Action::AUTH << QStringLiteral("AUTH");
-			QTest::newRow("PIN") << Action::PIN << QStringLiteral("CHANGE_PIN");
+			QTest::newRow("PIN") << Action::CHANGE_PIN << QStringLiteral("CHANGE_PIN");
 			QTest::newRow("PERSONALIZATION") << Action::PERSONALIZATION << QStringLiteral("PERSONALIZATION");
-			QTest::newRow("SELF") << Action::SELF << QStringLiteral("UNKNOWN");
+			QTest::newRow("SELF") << Action::SELF_AUTH << QStringLiteral("UNKNOWN");
 			QTest::newRow("REMOTE_SERVICE") << Action::REMOTE_SERVICE << QStringLiteral("UNKNOWN");
 
 			QCOMPARE(Enum<Action>::getCount(), 5);

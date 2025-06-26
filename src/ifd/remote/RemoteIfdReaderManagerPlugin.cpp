@@ -15,6 +15,7 @@ using namespace governikus;
 
 Q_DECLARE_LOGGING_CATEGORY(card_remote)
 
+
 void RemoteIfdReaderManagerPlugin::connectToPairedReaders() const
 {
 	if (!mConnectToPairedReaders)
@@ -40,7 +41,7 @@ void RemoteIfdReaderManagerPlugin::continueConnectToPairedReaders(const QList<QS
 	for (const QSharedPointer<IfdListEntry>& remoteDevice : pRemoteDevices)
 	{
 		const auto& ifdDescriptor = remoteDevice->getIfdDescriptor();
-		if (!ifdDescriptor.isSupported() || ifdDescriptor.isPairingAnnounced())
+		if (!ifdDescriptor.isSupported() || ifdDescriptor.isPairing())
 		{
 			continue;
 		}

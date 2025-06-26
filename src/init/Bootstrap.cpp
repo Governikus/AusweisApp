@@ -71,8 +71,8 @@ static inline void printInfo()
 		qCWarning(init) << "Linked OpenSSL Version differs:" << OpenSSL_version(OPENSSL_VERSION);
 	}
 
-	const auto libPathes = QCoreApplication::libraryPaths();
-	for (const auto& path : libPathes)
+	const auto libPaths = QCoreApplication::libraryPaths();
+	for (const auto& path : libPaths)
 	{
 		qCDebug(init) << "Library path:" << path;
 	}

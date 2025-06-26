@@ -199,7 +199,7 @@ class test_UiPluginQml
 		}
 
 
-		void test_overridePlattform()
+		void test_overridePlatform()
 		{
 			QCOMPARE(UiPluginQml::getOverridePlatform(), QString());
 			qputenv("OVERRIDE_PLATFORM", "dummy"_ba);

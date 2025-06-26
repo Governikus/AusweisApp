@@ -39,7 +39,7 @@ class test_EnumHelper
 	Q_OBJECT
 
 	private:
-		void testBadConverion(const int pValue, const QString& pExpectedOutput)
+		void testBadConversion(const int pValue, const QString& pExpectedOutput)
 		{
 			QSignalSpy logSpy(Env::getSingleton<LogHandler>()->getEventHandler(), &LogEventHandler::fireLog);
 
@@ -82,7 +82,7 @@ class test_EnumHelper
 
 			QString str2 = "other text"_L1 + TestEnum1::FIRST + str + TestEnum1::SECOND + " test"_L1;
 			QCOMPARE(str, QStringLiteral("this is a dummy: FIRST"));
-			QCOMPARE(str2, QStringLiteral("other textFIRSTthis is a dummy: FIRSTSECOND test"));
+			QCOMPARE(str2, QStringLiteral("other textFIRSTthis is a dummy: FIRSTSECOND test")); // codespell:ignore
 		}
 
 
@@ -111,10 +111,10 @@ class test_EnumHelper
 			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::SECOND), QStringLiteral("SECOND"));
 			QCOMPARE(Enum<TestEnum1>::getName(TestEnum1::THIRD), QStringLiteral("THIRD"));
 
-			testBadConverion(6, QStringLiteral("UNKNOWN 0x6") + lineBreak);
-			testBadConverion(255, QStringLiteral("UNKNOWN 0xff") + lineBreak);
-			testBadConverion(365, QStringLiteral("UNKNOWN 0x16d") + lineBreak);
-			testBadConverion(2147483647, QStringLiteral("UNKNOWN 0x7fffffff") + lineBreak);
+			testBadConversion(6, QStringLiteral("UNKNOWN 0x6") + lineBreak);
+			testBadConversion(255, QStringLiteral("UNKNOWN 0xff") + lineBreak);
+			testBadConversion(365, QStringLiteral("UNKNOWN 0x16d") + lineBreak);
+			testBadConversion(2147483647, QStringLiteral("UNKNOWN 0x7fffffff") + lineBreak);
 
 			QCOMPARE(getEnumName(TestEnum1::SECOND), QStringLiteral("SECOND"));
 			QCOMPARE(getEnumName(EnumTestEnum1::TestEnum1::SECOND), QStringLiteral("SECOND"));

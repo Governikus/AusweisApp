@@ -2,6 +2,8 @@
  * Copyright (c) 2016-2025 Governikus GmbH & Co. KG, Germany
  */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 
@@ -74,6 +76,12 @@ FlickableSectionPage {
 			pinField.number = "";
 		}
 	}
+	PasswordAnimation {
+		readonly property real availableHeight: root.height - grid.implicitHeight - root.spacing - root.margins * 2 - Style.dimens.pane_spacing
+
+		Layout.bottomMargin: Style.dimens.pane_spacing
+		visible: !grid.isLandscape && availableHeight >= implicitHeight
+	}
 	GridLayout {
 		id: grid
 
@@ -99,34 +107,9 @@ FlickableSectionPage {
 			Layout.maximumWidth: Style.dimens.max_text_width
 			spacing: 0
 
-			AnimationLoader {
-				Layout.alignment: Qt.AlignHCenter
+			PasswordAnimation {
 				Layout.bottomMargin: Style.dimens.pane_spacing
-				type: {
-					if (grid.isLandscape && !Style.is_layout_desktop) {
-						return AnimationLoader.NONE;
-					}
-					switch (root.passwordType) {
-					case NumberModel.PasswordType.TRANSPORT_PIN:
-						return AnimationLoader.TRANSPORT_PIN;
-					case NumberModel.PasswordType.CAN:
-						return AnimationLoader.CAN;
-					case NumberModel.PasswordType.SMART_PIN:
-					case NumberModel.PasswordType.PIN:
-						return AnimationLoader.PIN;
-					case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
-					case NumberModel.PasswordType.NEW_PIN:
-					case NumberModel.PasswordType.NEW_SMART_PIN:
-					case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
-						return AnimationLoader.NEW_PIN;
-					case NumberModel.PasswordType.PUK:
-						return AnimationLoader.PUK;
-					case NumberModel.PasswordType.REMOTE_PIN:
-						return AnimationLoader.REMOTE_PIN;
-					default:
-						return AnimationLoader.NONE;
-					}
-				}
+				visible: grid.isLandscape && Style.is_layout_desktop
 			}
 			GText {
 				id: mainText
@@ -344,5 +327,31 @@ FlickableSectionPage {
 
 		style: ConfirmationPopup.PopupStyle.OkButton
 		text: infoText.text
+	}
+
+	component PasswordAnimation: AnimationLoader {
+		Layout.alignment: Qt.AlignHCenter
+		type: {
+			switch (root.passwordType) {
+			case NumberModel.PasswordType.TRANSPORT_PIN:
+				return AnimationLoader.TRANSPORT_PIN;
+			case NumberModel.PasswordType.CAN:
+				return AnimationLoader.CAN;
+			case NumberModel.PasswordType.SMART_PIN:
+			case NumberModel.PasswordType.PIN:
+				return AnimationLoader.PIN;
+			case NumberModel.PasswordType.NEW_PIN_CONFIRMATION:
+			case NumberModel.PasswordType.NEW_PIN:
+			case NumberModel.PasswordType.NEW_SMART_PIN:
+			case NumberModel.PasswordType.NEW_SMART_PIN_CONFIRMATION:
+				return AnimationLoader.NEW_PIN;
+			case NumberModel.PasswordType.PUK:
+				return AnimationLoader.PUK;
+			case NumberModel.PasswordType.REMOTE_PIN:
+				return AnimationLoader.REMOTE_PIN;
+			default:
+				return AnimationLoader.NONE;
+			}
+		}
 	}
 }

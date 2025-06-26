@@ -8,11 +8,15 @@ add_definitions(-DQT_NO_KEYWORDS)
 add_definitions(-DQT_NO_EXCEPTIONS)
 add_definitions(-DQT_NO_CONTEXTLESS_CONNECT)
 
+if(QT_VERSION VERSION_GREATER_EQUAL "6.8")
+	add_definitions(-DQT_NO_QSNPRINTF)
+endif()
+
 if(QT_VERSION VERSION_GREATER_EQUAL "6.8" AND QT_VERSION VERSION_LESS "6.10")
 	add_definitions(-DQT_USE_NODISCARD_FILE_OPEN)
 endif()
 
-if(QT_VENDOR STREQUAL "Governikus")
+if(GOVERNIKUS_QT)
 	add_definitions(-DGOVERNIKUS_QT)
 	add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x060502)
 endif()
@@ -127,7 +131,7 @@ else()
 	ADD_FLAG(-Wconversion)
 	ADD_FLAG(-Wno-gnu-zero-variadic-macro-arguments) # Qt (qDebug) is not compatible
 
-	if(ANDROID OR (INTEGRATED_SDK AND (NOT BUILD_SHARED_LIBS OR NOT BUILD_TESTING)))
+	if(ANDROID OR (INTEGRATED_SDK AND (NOT BUILD_SHARED_LIBS OR NOT CMAKE_BUILD_TYPE STREQUAL "DEBUG")))
 		set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 	endif()
 
@@ -150,6 +154,7 @@ else()
 
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
+	option(SANITIZER "Enable sanitizer" OFF)
 	if(SANITIZER)
 		if(NOT SANITIZER_SKIP_ASAN)
 			set(SANITIZER_FLAGS "-fsanitize=address")
@@ -167,7 +172,7 @@ else()
 	if(CMAKE_CXX_COMPILER MATCHES "clazy")
 		set(clazy_level level0,level1,level2)
 		set(clazy_extra_warnings isempty-vs-count,signal-with-return-value,tr-non-literal,detaching-member)
-		set(clazy_disabled_warnings no-use-static-qregularexpression,no-copyable-polymorphic,no-ctor-missing-parent-argument,no-fully-qualified-moc-types,no-function-args-by-value)
+		set(clazy_disabled_warnings no-no-module-include,no-use-static-qregularexpression,no-copyable-polymorphic,no-ctor-missing-parent-argument,no-fully-qualified-moc-types,no-function-args-by-value)
 
 		set(clazy_all "${clazy_level},${clazy_extra_warnings},${clazy_disabled_warnings}")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -plugin-arg-clazy -Xclang ${clazy_all}")

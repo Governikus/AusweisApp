@@ -26,10 +26,19 @@ ReleaseInformation::ReleaseInformation(const VersionNumber& pVersion, bool pCons
 	for (const auto& releaseNotesFile : mReleaseNotes)
 	{
 		connect(releaseNotesFile.data(), &UpdatableFile::fireUpdated, this, &ReleaseInformation::fireInformationChanged);
+		if (mVersion.isBetaVersion())
+		{
+			connect(releaseNotesFile.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ReleaseInformation::fireInformationChanged);
+		}
 	}
 
 	connect(mAnnouncements.data(), &UpdatableFile::fireUpdated, this, &ReleaseInformation::fireInformationChanged);
 	connect(mIssues.data(), &UpdatableFile::fireUpdated, this, &ReleaseInformation::fireInformationChanged);
+	if (mVersion.isBetaVersion())
+	{
+		connect(mAnnouncements.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ReleaseInformation::fireInformationChanged);
+		connect(mIssues.data(), &UpdatableFile::fireNoUpdateAvailable, this, &ReleaseInformation::fireInformationChanged);
+	}
 }
 
 

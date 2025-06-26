@@ -304,7 +304,7 @@ void StateCheckRefreshAddress::onNetworkReply()
 		return;
 	}
 
-	const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+	const QUrl& redirectUrl = UrlUtil::resolveRedirect(mReply);
 	if (redirectUrl.isEmpty())
 	{
 		qCritical() << "Got empty redirect URL";

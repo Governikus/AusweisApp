@@ -420,7 +420,7 @@ void RemoteDeviceModel::onKnownRemoteReadersChanged()
 	mPairedReaders.clear();
 
 	const RemoteServiceSettings& settings = Env::getSingleton<AppSettings>()->getRemoteServiceSettings();
-	auto pairedReaders = settings.getRemoteInfos();
+	const auto pairedReaders = settings.getRemoteInfos();
 	for (const auto& reader : pairedReaders)
 	{
 		mPairedReaders[reader.getFingerprint()] = reader;

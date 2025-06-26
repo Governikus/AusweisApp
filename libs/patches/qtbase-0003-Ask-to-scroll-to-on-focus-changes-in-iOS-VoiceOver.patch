@@ -1,4 +1,4 @@
-From 6b49c155764ea66813f85d9ecd83d783023c7cb3 Mon Sep 17 00:00:00 2001
+From bae9468a092ce3fc84e0553c056ce37349f282d3 Mon Sep 17 00:00:00 2001
 From: Jan Moeller <Jan.Moeller@governikus.de>
 Date: Mon, 4 Dec 2023 13:06:12 +0100
 Subject: Ask to scroll-to on focus changes in iOS VoiceOver
@@ -15,13 +15,13 @@ Task-number: QTBUG-119724
 Pick-to: 6.8 6.9
 Change-Id: I7632a8dd320af7547b9d36e39f5dce7e266023a4
 ---
- .../platforms/ios/qiosplatformaccessibility.h |   6 ++
+ .../platforms/ios/qiosplatformaccessibility.h |   6 +
  .../ios/qiosplatformaccessibility.mm          |  38 +++++++
  src/plugins/platforms/ios/qioswindow.h        |   1 +
  src/plugins/platforms/ios/qioswindow.mm       |   5 +
  src/plugins/platforms/ios/quiview.h           |   1 +
- .../platforms/ios/quiview_accessibility.mm    | 102 ++++++++++++++++++
- 6 files changed, 153 insertions(+)
+ .../platforms/ios/quiview_accessibility.mm    | 105 ++++++++++++++++++
+ 6 files changed, 156 insertions(+)
 
 diff --git x/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.h y/qtbase/src/plugins/platforms/ios/qiosplatformaccessibility.h
 index 96efc663bac896adb44a80eb5953a57ec7d92381..b8e14c14d19a807824384d4b32cce0554752506f 100644
@@ -138,10 +138,10 @@ index 7899ec6e0e4212f9ce808d4e3cc44d17b4574c73..01d79bd97b14b7926213fa078e4250f8
  
  @interface UIView (QtHelpers)
 diff --git x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
-index a95610614be220e241dad30ff3cda34b562ab791..9a2ed1e1b39b5d409059e2bd8db8f8a0129a0844 100644
+index a95610614be220e241dad30ff3cda34b562ab791..e75435112a8338a447545e8a80876c63297eac1a 100644
 --- x/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
 +++ y/qtbase/src/plugins/platforms/ios/quiview_accessibility.mm
-@@ -55,6 +55,108 @@
+@@ -55,6 +55,111 @@
      [m_accessibleElements removeAllObjects];
  }
  
@@ -217,6 +217,9 @@ index a95610614be220e241dad30ff3cda34b562ab791..9a2ed1e1b39b5d409059e2bd8db8f8a0
 +{
 +    QMacAccessibilityElement* a11yElement = element;
 +    if (!a11yElement)
++        return NO;
++
++    if (![a11yElement respondsToSelector:@selector(axid)])
 +        return NO;
 +
 +    if (!a11yElement.isAccessibilityElement)

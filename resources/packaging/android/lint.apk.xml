@@ -3,7 +3,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.tools.build:gradle than 8.6.0 is available: 8.9.0. (There is also a newer version of 8.6.𝑥 available, if upgrading to 8.9.0 is difficult: 8.6.1)"
+        message="A newer version of com.android.tools.build:gradle than 8.6.0 is available: 8.11.0. (There is also a newer version of 8.6.𝑥 available, if upgrading to 8.11.0 is difficult: 8.6.1)"
         errorLine1="        classpath &apos;com.android.tools.build:gradle:8.6.0&apos;"
         errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location

@@ -8,7 +8,7 @@ import Governikus.Style
 import Governikus.Animations
 
 QtObject {
-	property int blockAligment: Qt.AlignLeft
+	property int blockAlignment: Qt.AlignLeft
 	property int blockHeaderAnimation: AnimationLoader.NONE
 	property url blockImage
 	property string blockTitle

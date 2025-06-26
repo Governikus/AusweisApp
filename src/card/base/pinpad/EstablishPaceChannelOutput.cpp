@@ -247,12 +247,6 @@ bool EstablishPaceChannelOutput::parseOutputData(const QByteArray& pOutput)
 	mCarCurr.clear();
 	mCarPrev.clear();
 
-	if (pOutput.isEmpty())
-	{
-		qCDebug(card) << "No more data available";
-		return true;
-	}
-
 	if (pOutput.size() < 4)
 	{
 		qCCritical(card) << "OutputData too short";

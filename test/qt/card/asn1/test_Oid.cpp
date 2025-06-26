@@ -60,7 +60,7 @@ class test_Oid
 		}
 
 
-		void copyContructor_data()
+		void copyConstructor_data()
 		{
 			QTest::addColumn<QByteArray>("oid");
 			QTest::addColumn<bool>("warnings");
@@ -71,7 +71,7 @@ class test_Oid
 		}
 
 
-		void copyContructor()
+		void copyConstructor()
 		{
 			QFETCH(QByteArray, oid);
 			QFETCH(bool, warnings);
@@ -85,7 +85,7 @@ class test_Oid
 		}
 
 
-		void moveContructor_data()
+		void moveConstructor_data()
 		{
 			QTest::addColumn<QByteArray>("oid");
 			QTest::addColumn<bool>("warnings");
@@ -96,7 +96,7 @@ class test_Oid
 		}
 
 
-		void moveContructor()
+		void moveConstructor()
 		{
 			QFETCH(QByteArray, oid);
 			QFETCH(bool, warnings);

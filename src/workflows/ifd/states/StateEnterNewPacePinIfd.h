@@ -24,6 +24,7 @@ class StateEnterNewPacePinIfd
 
 	private Q_SLOTS:
 		void onUserError(StatusCode pStatusCode);
+		void onCardRemoved(const ReaderInfo& pInfo) const;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

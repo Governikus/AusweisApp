@@ -14,7 +14,9 @@
 #include <QSslPreSharedKeyAuthenticator>
 #include <QWebSocket>
 
+
 Q_DECLARE_LOGGING_CATEGORY(ifd)
+
 
 using namespace governikus;
 
@@ -23,9 +25,11 @@ ConnectRequest::ConnectRequest(const IfdDescriptor& pIfdDescriptor,
 		const QByteArray& pPsk,
 		int pTimeoutMs)
 	: mIfdDescriptor(pIfdDescriptor)
+	, mAddresses(pIfdDescriptor.getAddresses())
 	, mPsk(pPsk)
 	, mSocket(new QWebSocket(), &QObject::deleteLater)
 	, mTimer()
+	, mRemoteHostRefusedConnection(false)
 {
 	if (mIfdDescriptor.isLocalIfd())
 	{
@@ -97,6 +101,24 @@ void ConnectRequest::setTlsConfiguration() const
 }
 
 
+void ConnectRequest::tryNext()
+{
+	if (mAddresses.isEmpty())
+	{
+		if (mRemoteHostRefusedConnection)
+		{
+			Q_EMIT fireConnectionError(this, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
+			return;
+		}
+
+		Q_EMIT fireConnectionError(this, IfdErrorCode::CONNECTION_ERROR);
+		return;
+	}
+
+	start();
+}
+
+
 void ConnectRequest::onConnected()
 {
 	mTimer.stop();
@@ -136,14 +158,14 @@ void ConnectRequest::onConnected()
 	{
 		qCCritical(ifd) << "Server denied... abort connection!";
 		mSocket->abort();
-		Q_EMIT fireConnectionError(mIfdDescriptor, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
+		Q_EMIT fireConnectionError(this, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
 		return;
 	}
 
 	if (mIfdDescriptor.isLocalIfd())
 	{
 		qCDebug(ifd) << "Connected to localhost";
-		Q_EMIT fireConnectionCreated(mIfdDescriptor, mSocket);
+		Q_EMIT fireConnectionCreated(this, mSocket);
 		return;
 	}
 
@@ -162,7 +184,7 @@ void ConnectRequest::onConnected()
 		settings.updateRemoteInfo(info);
 	}
 
-	Q_EMIT fireConnectionCreated(mIfdDescriptor, mSocket);
+	Q_EMIT fireConnectionCreated(this, mSocket);
 }
 
 
@@ -181,18 +203,18 @@ void ConnectRequest::onError(QAbstractSocket::SocketError pError)
 	if (pError == QAbstractSocket::SocketError::RemoteHostClosedError
 			|| pError == QAbstractSocket::SocketError::SslHandshakeFailedError)
 	{
-		Q_EMIT fireConnectionError(mIfdDescriptor, IfdErrorCode::REMOTE_HOST_REFUSED_CONNECTION);
+		mRemoteHostRefusedConnection = true;
 	}
-	else
-	{
-		Q_EMIT fireConnectionError(mIfdDescriptor, IfdErrorCode::CONNECTION_ERROR);
-	}
+
+	tryNext();
 }
 
 
 void ConnectRequest::onTimeout()
 {
-	Q_EMIT fireConnectionTimeout(mIfdDescriptor);
+	qCWarning(ifd) << "Connection error: Timeout";
+
+	tryNext();
 }
 
 
@@ -250,6 +272,14 @@ const IfdDescriptor& ConnectRequest::getIfdDescriptor() const
 
 void ConnectRequest::start()
 {
-	mSocket->open(mIfdDescriptor.getUrl());
+	if (mAddresses.isEmpty())
+	{
+		Q_EMIT fireConnectionError(this, IfdErrorCode::INVALID_REQUEST);
+		return;
+	}
+
+	const auto& address = mAddresses.takeFirst();
+	qCDebug(ifd) << "Connecting to" << address;
+	mSocket->open(address);
 	mTimer.start();
 }

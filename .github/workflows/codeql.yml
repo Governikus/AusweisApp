@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "community" ]
+    branches: ["community"]
   pull_request:
-    branches: [ "community" ]
+    branches: ["community"]
   schedule:
     - cron: "46 18 * * 5"
 
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ cpp ]
+        language: [cpp]
 
     steps:
       - name: Checkout

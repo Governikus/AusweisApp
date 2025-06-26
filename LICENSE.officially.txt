@@ -28,13 +28,9 @@ OPEN-SOURCE-LIZENZ FÜR DIE EUROPÄISCHE UNION v. 1.2
 EUPL © Europäische Union 2007, 2016
 
 
-Diese Open-Source-Lizenz für die Europäische Union (»EUPL«) gilt für Werke (im Sinne der nachfolgenden Begriffsbestimmung),
-die unter EUPL-Bedingungen zur Verfügung gestellt werden. Das Werk darf nur in der durch diese Lizenz
-gestatteten Form genutzt werden (insoweit eine solche Nutzung dem Urheber vorbehalten ist).
+Diese Open-Source-Lizenz für die Europäische Union (»EUPL«) gilt für Werke (im Sinne der nachfolgenden Begriffsbestimmung), die unter EUPL-Bedingungen zur Verfügung gestellt werden. Das Werk darf nur in der durch diese Lizenz gestatteten Form genutzt werden (insoweit eine solche Nutzung dem Urheber vorbehalten ist).
 
-Das Werk wird unter den Bedingungen dieser Lizenz zur Verfügung gestellt, wenn der Lizenzgeber (im Sinne der
-nachfolgenden Begriffsbestimmung) den folgenden Hinweis unmittelbar hinter dem Urheberrechtshinweis dieses Werks
-anbringt:
+Das Werk wird unter den Bedingungen dieser Lizenz zur Verfügung gestellt, wenn der Lizenzgeber (im Sinne der nachfolgenden Begriffsbestimmung) den folgenden Hinweis unmittelbar hinter dem Urheberrechtshinweis dieses Werks anbringt:
 
 Lizenziert unter der EUPL
 
@@ -47,39 +43,27 @@ Für diese Lizenz gelten folgende Begriffsbestimmungen:
 
 - »Lizenz«: diese Lizenz.
 
-- »Originalwerk«: das Werk oder die Software, die vom Lizenzgeber unter dieser Lizenz verbreitet oder zugänglich
-  gemacht wird, und zwar als Quellcode und gegebenenfalls auch als ausführbarer Code.
+- »Originalwerk«: das Werk oder die Software, die vom Lizenzgeber unter dieser Lizenz verbreitet oder zugänglich gemacht wird, und zwar als Quellcode und gegebenenfalls auch als ausführbarer Code.
 
-- »Bearbeitungen«: die Werke oder Software, die der Lizenznehmer auf der Grundlage des Originalwerks oder seiner
-  Bearbeitungen schaffen kann. In dieser Lizenz wird nicht festgelegt, wie umfangreich die Änderung oder wie stark die
-  Abhängigkeit vom Originalwerk für eine Einstufung als Bearbeitung sein muss; dies bestimmt sich nach dem
-  Urheberrecht, das in dem unter Artikel 15 aufgeführten Land anwendbar ist.
+- »Bearbeitungen«: die Werke oder Software, die der Lizenznehmer auf der Grundlage des Originalwerks oder seiner Bearbeitungen schaffen kann. In dieser Lizenz wird nicht festgelegt, wie umfangreich die Änderung oder wie stark die Abhängigkeit vom Originalwerk für eine Einstufung als Bearbeitung sein muss; dies bestimmt sich nach dem Urheberrecht, das in dem unter Artikel 15 aufgeführten Land anwendbar ist.
 
 - »Werk«: das Originalwerk oder seine Bearbeitungen.
 
-- »Quellcode«: diejenige Form des Werkes, die zur Auffassung durch den Menschen bestimmt ist und die am besten
-  geeignet ist, um vom Menschen verstanden und verändert zu werden.
+- »Quellcode«: diejenige Form des Werkes, die zur Auffassung durch den Menschen bestimmt ist und die am besten geeignet ist, um vom Menschen verstanden und verändert zu werden.
 
-- »Ausführbarer Code«: die - üblicherweise - kompilierte Form des Werks, die von einem Computer als Programm
-  ausgeführt werden soll.
+- »Ausführbarer Code«: die - üblicherweise - kompilierte Form des Werks, die von einem Computer als Programm ausgeführt werden soll.
 
-- »Lizenzgeber«: die natürliche oder juristische Person, die das Werk unter der Lizenz verbreitet oder zugänglich
-  macht.
+- »Lizenzgeber«: die natürliche oder juristische Person, die das Werk unter der Lizenz verbreitet oder zugänglich macht.
 
-- »Bearbeiter«: jede natürliche oder juristische Person, die das Werk unter der Lizenz verändert oder auf andere Weise
-  zur Schaffung einer Bearbeitung beiträgt.
+- »Bearbeiter«: jede natürliche oder juristische Person, die das Werk unter der Lizenz verändert oder auf andere Weise zur Schaffung einer Bearbeitung beiträgt.
 
 - »Lizenznehmer« (»Sie«): jede natürliche oder juristische Person, die das Werk unter den Lizenzbedingungen nutzt.
 
-- »Verbreitung« oder »Zugänglichmachung«: alle Formen von Verkauf, Überlassung, Verleih, Vermietung, Verbreitung,
-  Weitergabe, Übermittlung oder anderweitiger Online- oder Offline-Bereitstellung von Vervielfältigungen des Werks
-  oder Zugänglichmachung seiner wesentlichen Funktionen für dritte natürliche oder juristische Personen.
+- »Verbreitung« oder »Zugänglichmachung«: alle Formen von Verkauf, Überlassung, Verleih, Vermietung, Verbreitung, Weitergabe, Übermittlung oder anderweitiger Online- oder Offline-Bereitstellung von Vervielfältigungen des Werks oder Zugänglichmachung seiner wesentlichen Funktionen für dritte natürliche oder juristische Personen.
 
 
 2. Umfang der Lizenzrechte
-
-Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk bestehenden Urheberrechte eine
-weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, die Sie berechtigt:
+Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk bestehenden Urheberrechte eine Der Lizenzgeber erteilt Ihnen hiermit für die Gültigkeitsdauer der am Originalwerk bestehenden Urheberrechte eine weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, die Sie berechtigt:
 
 - das Werk uneingeschränkt zu nutzen,
 
@@ -87,8 +71,7 @@ weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, di
 
 - das Werk zu verändern und Bearbeitungen auf der Grundlage des Werks zu schaffen,
 
-- das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder Vervielfältigungsstücke davon
-  öffentlich bereitzustellen oder wahrnehmbar zu machen oder das Werk, soweit möglich, öffentlich aufzuführen,
+- das Werk öffentlich zugänglich zu machen, was das Recht einschließt, das Werk oder Vervielfältigungsstücke davon  öffentlich bereitzustellen oder wahrnehmbar zu machen oder das Werk, soweit möglich, öffentlich aufzuführen,
 
 - das Werk oder Vervielfältigungen davon zu verbreiten,
 
@@ -96,184 +79,114 @@ weltweite, unentgeltliche, nicht ausschließliche, unterlizenzierbare Lizenz, di
 
 - das Werk oder Vervielfältigungen davon weiter zu lizenzieren.
 
-Für die Wahrnehmung dieser Rechte können beliebige, derzeit bekannte oder künftige Medien, Träger und Formate
-verwendet werden, soweit das geltende Recht dem nicht entgegensteht.
+Für die Wahrnehmung dieser Rechte können beliebige, derzeit bekannte oder künftige Medien, Träger und Formate verwendet werden, soweit das geltende Recht dem nicht entgegensteht.
 
-Für die Länder, in denen Urheberpersönlichkeitsrechte an dem Werk bestehen, verzichtet der Lizenzgeber im gesetzlich
-zulässigen Umfang auf seine Urheberpersönlichkeitsrechte, um die Lizenzierung der oben aufgeführten
-Verwertungsrechte wirksam durchführen zu können.
+Für die Länder, in denen Urheberpersönlichkeitsrechte an dem Werk bestehen, verzichtet der Lizenzgeber im gesetzlich zulässigen Umfang auf seine Urheberpersönlichkeitsrechte, um die Lizenzierung der oben aufgeführten wirksam durchführen zu können.
 
-Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschließliches, unentgeltliches Nutzungsrecht an seinen Patenten,
-sofern dies zur Ausübung der durch die Lizenz erteilten Nutzungsrechte am Werk notwendig ist.
+Der Lizenzgeber erteilt dem Lizenznehmer ein nicht ausschließliches, unentgeltliches Nutzungsrecht an seinen Patenten, sofern dies zur Ausübung der durch die Lizenz erteilten Nutzungsrechte am Werk notwendig ist.
 
 
 3. Zugänglichmachung des Quellcodes
 
 
-Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausführbaren Code zur Verfügung stellen. Stellt er es als
-ausführbaren Code zur Verfügung, so stellt er darüber hinaus eine maschinenlesbare Kopie des Quellcodes für jedes von
-ihm verbreitete Vervielfältigungsstück des Werks zur Verfügung, oder er verweist in einem Vermerk im Anschluss an den
-dem Werk beigefügten Urheberrechtshinweis auf einen Speicherort, an dem problemlos und unentgeltlich auf den
-Quellcode zugegriffen werden kann, solange der Lizenzgeber das Werk verbreitet oder zugänglich macht.
+Der Lizenzgeber kann das Werk entweder als Quellcode oder als ausführbaren Code zur Verfügung stellen. Stellt er es als ausführbaren Code zur Verfügung, so stellt er darüber hinaus eine maschinenlesbare Kopie des Quellcodes für jedes von ihm verbreitete Vervielfältigungsstück des Werks zur Verfügung, oder er verweist in einem Vermerk im Anschluss an den dem Werk beigefügten Urheberrechtshinweis auf einen Speicherort, an dem problemlos und unentgeltlich auf den Quellcode zugegriffen werden kann, solange der Lizenzgeber das Werk verbreitet oder zugänglich macht.
 
 
 4. Einschränkungen des Urheberrechts
 
 
-Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschließlichen Rechte des Urhebers am Werk, die
-dem Lizenznehmer zugutekommen, einzuschränken. Auch die Erschöpfung dieser Rechte bleibt von dieser Lizenz
-unberührt.
+Es ist nicht Zweck dieser Lizenz, Ausnahmen oder Schranken der ausschließlichen Rechte des Urhebers am Werk, die dem Lizenznehmer zugutekommen, einzuschränken. Auch die Erschöpfung dieser Rechte bleibt von dieser Lizenz .
 
 
 5. Pflichten des Lizenznehmers
 
 
-Die Einräumung der oben genannten Rechte ist an mehrere Beschränkungen und Pflichten für den Lizenznehmer
-gebunden:
+Die Einräumung der oben genannten Rechte ist an mehrere Beschränkungen und Pflichten für den Lizenznehmer gebunden:
 
-Urheberrechtshinweis, Lizenztext, Nennung des Bearbeiters: Der Lizenznehmer muss alle Urheberrechts-, Patent-
-oder Markenrechtshinweise und alle Hinweise auf die Lizenz und den Haftungsausschluss unverändert lassen. Jedem von
-ihm verbreiteten oder zugänglich gemachten Vervielfältigungsstück des Werks muss der Lizenznehmer diese Hinweise
-sowie diese Lizenz beifügen. Der Lizenznehmer muss auf jedem abgeleiteten Werk deutlich darauf hinweisen, dass das
-Werk geändert wurde, und das Datum der Bearbeitung angeben.
+Urheberrechtshinweis, Lizenztext, Nennung des Bearbeiters: Der Lizenznehmer muss alle Urheberrechts-, Patent- oder Markenrechtshinweise und alle Hinweise auf die Lizenz und den Haftungsausschluss unverändert lassen. Jedem von ihm verbreiteten oder zugänglich gemachten Vervielfältigungsstück des Werks muss der Lizenznehmer diese Hinweise sowie diese Lizenz beifügen. Der Lizenznehmer muss auf jedem abgeleiteten Werk deutlich darauf hinweisen, dass das geändert wurde, und das Datum der Bearbeitung angeben.
 
-»Copyleft«-Klausel: Der Lizenznehmer darf Vervielfältigungen des Originalwerks oder Bearbeitungen nur unter den
-Bedingungen dieser EUPL oder einer neueren Version dieser Lizenz verbreiten oder zugänglich machen, außer wenn das
-Originalwerk ausdrücklich nur unter dieser Lizenzversion - z. B. mit der Angabe »Nur EUPL V. 1.2« - verbreitet
-werden darf. Der Lizenznehmer (der zum Lizenzgeber wird) darf für das Werk oder die Bearbeitung keine zusätzlichen
-Bedingungen anbieten oder vorschreiben, die die Bedingungen dieser Lizenz verändern oder einschränken.
+»Copyleft«-Klausel: Der Lizenznehmer darf Vervielfältigungen des Originalwerks oder Bearbeitungen nur unter den Bedingungen dieser EUPL oder einer neueren Version dieser Lizenz verbreiten oder zugänglich machen, außer wenn das Originalwerk ausdrücklich nur unter dieser Lizenzversion - z. B. mit der Angabe »Nur EUPL V. 1.2« - verbreitet werden darf. Der Lizenznehmer (der zum Lizenzgeber wird) darf für das Werk oder die Bearbeitung keine zusätzlichen Bedingungen anbieten oder vorschreiben, die die Bedingungen dieser Lizenz verändern oder einschränken.
 
-Kompatibilitäts-Klausel: Wenn der Lizenznehmer Bearbeitungen, die auf dem Werk und einem anderen Werk, das
-unter einer kompatiblen Lizenz lizenziert wurde, basieren, oder die Kopien dieser Bearbeitungen verbreitet oder
-zugänglich macht, kann dies unter den Bedingungen dieser kompatiblen Lizenz erfolgen. Unter »kompatibler Lizenz« ist
-eine im Anhang dieser Lizenz angeführte Lizenz zu verstehen. Sollten die Verpflichtungen des Lizenznehmers aus der
-kompatiblen Lizenz mit denjenigen aus der vorliegenden Lizenz (EUPL) in Konflikt stehen, werden die Verpflichtungen
-aus der kompatiblen Lizenz Vorrang haben.
+Kompatibilitäts-Klausel: Wenn der Lizenznehmer Bearbeitungen, die auf dem Werk und einem anderen Werk, das unter einer kompatiblen Lizenz lizenziert wurde, basieren, oder die Kopien dieser Bearbeitungen verbreitet oder zugänglich macht, kann dies unter den Bedingungen dieser kompatiblen Lizenz erfolgen. Unter »kompatibler Lizenz« ist eine im Anhang dieser Lizenz angeführte Lizenz zu verstehen. Sollten die Verpflichtungen des Lizenznehmers aus der kompatiblen Lizenz mit denjenigen aus der vorliegenden Lizenz (EUPL) in Konflikt stehen, werden die Verpflichtungen aus der kompatiblen Lizenz Vorrang haben.
 
-Bereitstellung des Quellcodes: Wenn der Lizenznehmer Vervielfältigungsstücke des Werks verbreitet oder zugänglich
-macht, muss er eine maschinenlesbare Fassung des Quellcodes mitliefern oder einen Speicherort angeben, über den
-problemlos und unentgeltlich so lange auf diesen Quellcode zugegriffen werden kann, wie der Lizenznehmer das Werk
-verbreitet oder zugänglich macht.
+Bereitstellung des Quellcodes: Wenn der Lizenznehmer Vervielfältigungsstücke des Werks verbreitet oder zugänglich macht, muss er eine maschinenlesbare Fassung des Quellcodes mitliefern oder einen Speicherort angeben, über den problemlos und unentgeltlich so lange auf diesen Quellcode zugegriffen werden kann, wie der Lizenznehmer das Werk verbreitet oder zugänglich macht.
 
-Rechtsschutz: Diese Lizenz erlaubt nicht die Benutzung von Kennzeichen, Marken oder geschützten Namensrechten des
-Lizenzgebers, soweit dies nicht für die angemessene und übliche Beschreibung der Herkunft des Werks und der
-inhaltlichen Wiedergabe des Urheberrechtshinweises erforderlich ist.
+Rechtsschutz: Diese Lizenz erlaubt nicht die Benutzung von Kennzeichen, Marken oder geschützten Namensrechten des Lizenzgebers, soweit dies nicht für die angemessene und übliche Beschreibung der Herkunft des Werks und der inhaltlichen Wiedergabe des Urheberrechtshinweises erforderlich ist.
 
 
 6. Urheber und Bearbeiter
 
-Der ursprüngliche Lizenzgeber gewährleistet, dass er das Urheberrecht am Originalwerk innehat oder dieses an ihn
-lizenziert wurde und dass er befugt ist, diese Lizenz zu erteilen.
+Der ursprüngliche Lizenzgeber gewährleistet, dass er das Urheberrecht am Originalwerk innehat oder dieses an ihn lizenziert wurde und dass er befugt ist, diese Lizenz zu erteilen.
 
-Jeder Bearbeiter gewährleistet, dass er das Urheberrecht an den von ihm vorgenommenen Änderungen des Werks besitzt
-und befugt ist, diese Lizenz zu erteilen.
+Jeder Bearbeiter gewährleistet, dass er das Urheberrecht an den von ihm vorgenommenen Änderungen des Werks besitzt und befugt ist, diese Lizenz zu erteilen.
 
-Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprüngliche Lizenzgeber und alle folgenden Bearbeiter
-eine Befugnis zur Nutzung ihrer Beiträge zum Werk unter den Bedingungen dieser Lizenz.
+Jedes Mal, wenn Sie die Lizenz annehmen, erteilen Ihnen der ursprüngliche Lizenzgeber und alle folgenden Bearbeiter eine Befugnis zur Nutzung ihrer Beiträge zum Werk unter den Bedingungen dieser Lizenz.
 
 
 7. Gewährleistungsausschluss
 
-Die Arbeit an diesem Werk wird laufend fortgeführt; es wird durch unzählige Bearbeiter ständig verbessert. Das Werk ist
-nicht vollendet und kann daher Fehler (»bugs«) enthalten, die dieser Art der Entwicklung inhärent sind.
+Die Arbeit an diesem Werk wird laufend fortgeführt; es wird durch unzählige Bearbeiter ständig verbessert. Das Werk ist nicht vollendet und kann daher Fehler (»bugs«) enthalten, die dieser Art der Entwicklung inhärent sind.
 
-Aus den genannten Gründen wird das Werk unter dieser Lizenz »so, wie es ist« ohne jegliche Gewährleistung zur
-Verfügung gestellt. Dies gilt unter anderem - aber nicht ausschließlich - für Marktreife, Verwendbarkeit für einen
-bestimmten Zweck, Mängelfreiheit, Richtigkeit sowie Nichtverletzung von anderen Immaterialgüterrechten als dem
-Urheberrecht (vgl. dazu Artikel 6 dieser Lizenz).
+Aus den genannten Gründen wird das Werk unter dieser Lizenz »so, wie es ist« ohne jegliche Gewährleistung zur Verfügung gestellt. Dies gilt unter anderem - aber nicht ausschließlich - für Marktreife, Verwendbarkeit für einen bestimmten Zweck, Mängelfreiheit, Richtigkeit sowie Nichtverletzung von anderen Immaterialgüterrechten als dem Urheberrecht (vgl. dazu Artikel 6 dieser Lizenz).
 
-Dieser Gewährleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Bedingung für die Einräumung von
-Rechten an dem Werk.
+Dieser Gewährleistungsausschluss ist wesentlicher Bestandteil der Lizenz und Bedingung für die Einräumung von Rechten an dem Werk.
 
 
 8. Haftungsausschluss/Haftungsbeschränkung
 
-Außer in Fällen von Vorsatz oder der Verursachung von Personenschäden haftet der Lizenzgeber nicht für direkte oder
-indirekte, materielle oder immaterielle Schäden irgendwelcher Art, die aus der Lizenz oder der Benutzung des Werks
-folgen; dies gilt unter anderem, aber nicht ausschließlich, für Firmenwertverluste, Produktionsausfall, Computerausfall
-oder Computerfehler, Datenverlust oder wirtschaftliche Schäden, und zwar auch dann, wenn der Lizenzgeber auf die
-Möglichkeit solcher Schäden hingewiesen wurde. Unabhängig davon haftet der Lizenzgeber im Rahmen der gesetzlichen
-Produkthaftung, soweit die entsprechenden Regelungen auf das Werk anwendbar sind.
+Außer in Fällen von Vorsatz oder der Verursachung von Personenschäden haftet der Lizenzgeber nicht für direkte oder indirekte, materielle oder immaterielle Schäden irgendwelcher Art, die aus der Lizenz oder der Benutzung des Werks folgen; dies gilt unter anderem, aber nicht ausschließlich, für Firmenwertverluste, Produktionsausfall, Computerausfall oder Computerfehler, Datenverlust oder wirtschaftliche Schäden, und zwar auch dann, wenn der Lizenzgeber auf die Möglichkeit solcher Schäden hingewiesen wurde. Unabhängig davon haftet der Lizenzgeber im Rahmen der gesetzlichen Produkthaftung, soweit die entsprechenden Regelungen auf das Werk anwendbar sind.
 
 
 9. Zusatzvereinbarungen
 
-Wenn Sie das Werk verbreiten, können Sie Zusatzvereinbarungen schließen, in denen Verpflichtungen oder
-Dienstleistungen festgelegt werden, die mit dieser Lizenz vereinbar sind. Sie dürfen Verpflichtungen indessen nur in
-Ihrem eigenen Namen und auf Ihre eigene Verantwortung eingehen, nicht jedoch im Namen des ursprünglichen
-Lizenzgebers oder eines anderen Bearbeiters, und nur, wenn Sie sich gegenüber allen Bearbeitern verpflichten, sie zu
-entschädigen, zu verteidigen und von der Haftung freizustellen, falls aufgrund der von Ihnen eingegangenen
-Gewährleistungsverpflichtung oder Haftungsübernahme Forderungen gegen sie geltend gemacht werden oder eine
-Haftungsverpflichtung entsteht.
+Wenn Sie das Werk verbreiten, können Sie Zusatzvereinbarungen schließen, in denen Verpflichtungen oder Dienstleistungen festgelegt werden, die mit dieser Lizenz vereinbar sind. Sie dürfen Verpflichtungen indessen nur in Ihrem eigenen Namen und auf Ihre eigene Verantwortung eingehen, nicht jedoch im Namen des ursprünglichen Lizenzgebers oder eines anderen Bearbeiters, und nur, wenn Sie sich gegenüber allen Bearbeitern verpflichten, sie zu entschädigen, zu verteidigen und von der Haftung freizustellen, falls aufgrund der von Ihnen eingegangenen Gewährleistungsverpflichtung oder Haftungsübernahme Forderungen gegen sie geltend gemacht werden oder eine Haftungsverpflichtung entsteht.
 
 
 10. Annahme der Lizenz
 
-Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol »Lizenz annehmen« unter dem Fenster
-mit dem Lizenztext anklicken oder indem Sie Ihre Zustimmung auf vergleichbare Weise in einer nach anwendbarem
-Recht zulässigen Form geben. Das Anklicken des Symbols gilt als Anzeichen Ihrer eindeutigen und unwiderruflichen
-Annahme der Lizenz und der darin enthaltenen Klauseln und Bedingungen.
+Sie können den Bestimmungen dieser Lizenz zustimmen, indem Sie das Symbol »Lizenz annehmen« unter dem Fenster mit dem Lizenztext anklicken oder indem Sie Ihre Zustimmung auf vergleichbare Weise in einer nach anwendbarem Recht zulässigen Form geben. Das Anklicken des Symbols gilt als Anzeichen Ihrer eindeutigen und unwiderruflichen Annahme der Lizenz und der darin enthaltenen Klauseln und Bedingungen.
 
-In gleicher Weise gilt als Zeichen der eindeutigen und unwiderruflichen Zustimmung die Ausübung eines Rechtes, das in
-Artikel 2 dieser Lizenz angeführt ist, wie das Erstellen einer Bearbeitung oder die Verbreitung oder Zugänglichmachung
-des Werks oder dessen Vervielfältigungen.
+In gleicher Weise gilt als Zeichen der eindeutigen und unwiderruflichen Zustimmung die Ausübung eines Rechtes, das in Artikel 2 dieser Lizenz angeführt ist, wie das Erstellen einer Bearbeitung oder die Verbreitung oder Zugänglichmachung des Werks oder dessen Vervielfältigungen.
 
 
 11. Informationspflichten
 
-Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es zum Herunterladen von einer
-Website anbieten), müssen Sie über den Vertriebskanal oder das benutzte Verbreitungsmedium der Öffentlichkeit
-zumindest jene Informationen bereitstellen, die nach dem anwendbaren Recht bezüglich der Lizenzgeber, der Lizenz und
-ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wie die Lizenz durch den Lizenznehmer
-gespeichert und vervielfältigt werden kann, erforderlich sind.
+Wenn Sie das Werk verbreiten oder zugänglich machen (beispielsweise, indem Sie es zum Herunterladen von einer Website anbieten), müssen Sie über den Vertriebskanal oder das benutzte Verbreitungsmedium der Öffentlichkeit zumindest jene Informationen bereitstellen, die nach dem anwendbaren Recht bezüglich der Lizenzgeber, der Lizenz und ihrer Zugänglichkeit, des Abschlusses des Lizenzvertrags sowie darüber, wie die Lizenz durch den Lizenznehmer gespeichert und vervielfältigt werden kann, erforderlich sind.
 
 
 12. Beendigung der Lizenz
 
-Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der Lizenznehmer gegen die Lizenzbedingungen
-verstößt.
+Die Lizenz und die damit eingeräumten Rechte erlöschen automatisch, wenn der Lizenznehmer gegen die Lizenzbedingungen verstößt.
 
-Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von Personen, denen das Werk vom
-Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist, solange diese Personen die Lizenzbedingungen
-erfüllen.
+Ein solches Erlöschen der Lizenz führt nicht zum Erlöschen der Lizenzen von Personen, denen das Werk vom Lizenznehmer unter dieser Lizenz zur Verfügung gestellt worden ist, solange diese Personen die Lizenzbedingungen erfüllen.
 
 13. Sonstiges
 
 Unbeschadet des Artikels 9 stellt die Lizenz die vollständige Vereinbarung der Parteien über das Werk dar.
 
-Sind einzelne Bestimmungen der Lizenz nach geltendem Recht nichtig oder unwirksam, so berührt dies nicht die
-Wirksamkeit oder Durchsetzbarkeit der Lizenz an sich. Solche Bestimmungen werden vielmehr so ausgelegt oder
-modifiziert, dass sie wirksam und durchsetzbar sind.
+Sind einzelne Bestimmungen der Lizenz nach geltendem Recht nichtig oder unwirksam, so berührt dies nicht die Wirksamkeit oder Durchsetzbarkeit der Lizenz an sich. Solche Bestimmungen werden vielmehr so ausgelegt oder modifiziert, dass sie wirksam und durchsetzbar sind.
 
-Die Europäische Kommission kann weitere Sprachfassungen oder neue Versionen dieser Lizenz oder aktualisierte
-Fassungen des Anhangs veröffentlichen, soweit dies notwendig und angemessen ist, ohne den Umfang der Lizenzrechte
-zu verringern. Neue Versionen werden mit einer eindeutigen Versionsnummer veröffentlicht.
+Die Europäische Kommission kann weitere Sprachfassungen oder neue Versionen dieser Lizenz oder aktualisierte Fassungen des Anhangs veröffentlichen, soweit dies notwendig und angemessen ist, ohne den Umfang der Lizenzrechte zu verringern. Neue Versionen werden mit einer eindeutigen Versionsnummer veröffentlicht.
 
-Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz sind gleichwertig. Die Parteien
-können sich auf die Sprachfassung ihrer Wahl berufen.
+Alle von der Europäischen Kommission anerkannten Sprachfassungen dieser Lizenz sind gleichwertig. Die Parteien können sich auf die Sprachfassung ihrer Wahl berufen.
 
 
 14. Gerichtsstand
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
-- Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen, Einrichtungen und sonstigen Stellen
-  der Europäischen Union als Lizenzgeber und einem Lizenznehmer ist der Gerichtshof der Europäischen Union
-  gemäß Artikel 272 des Vertrags über die Arbeitsweise der Europäischen Union zuständig;
+- Für alle Streitigkeiten über die Auslegung dieser Lizenz zwischen den Organen, Einrichtungen und sonstigen Stellen der Europäischen Union als Lizenzgeber und einem Lizenznehmer ist der Gerichtshof der Europäischen Union gemäß Artikel 272 des Vertrags über die Arbeitsweise der Europäischen Union zuständig;
 
-- Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser Lizenz ist allein der Ort, an
-  dem der Lizenzgeber seinen Wohnsitz oder den wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
+- Gerichtsstand für Streitigkeiten zwischen anderen Parteien über die Auslegung dieser Lizenz ist allein der Ort, an dem der Lizenzgeber seinen Wohnsitz oder den wirtschaftlichen Mittelpunkt seiner Tätigkeit hat.
 
 
 15. Anwendbares Recht
 
 Unbeschadet besonderer Vereinbarungen zwischen den Parteien gilt Folgendes:
 
-- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem der Lizenzgeber seinen Sitz,
-  Wohnsitz oder eingetragenen Sitz hat;
+- Diese Lizenz unterliegt dem Recht des Mitgliedstaats der Europäischen Union, in dem der Lizenzgeber seinen Sitz, Wohnsitz oder eingetragenen Sitz hat;
 
-- diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz, Wohnsitz oder eingetragenen Sitz in
-  einem Mitgliedstaat der Europäischen Union hat.
+- diese Lizenz unterliegt dem belgischen Recht, wenn der Lizenzgeber keinen Sitz, Wohnsitz oder eingetragenen Sitz in einem Mitgliedstaat der Europäischen Union hat.
 
 
 Anlage
@@ -300,12 +213,9 @@ Anlage
 
       - Québec Free and Open-Source Licence - Reciprocity (LiLiQ-R) oder Strong Reciprocity (LiLiQ-R+)
 
-- Die Europäische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen der obigen Lizenzen
-  aufzunehmen, ohne hierfür eine neue Fassung der EUPL auszuarbeiten, solange diese Lizenzen die in Artikel 2
-  gewährten Rechte gewährleisten und den erfassten Quellcode vor ausschließlicher Aneignung schützen.
+- Die Europäische Kommission kann diesen Anhang aktualisieren, um neuere Fassungen der obigen Lizenzen aufzunehmen, ohne hierfür eine neue Fassung der EUPL auszuarbeiten, solange diese Lizenzen die in Artikel 2 gewährten Rechte gewährleisten und den erfassten Quellcode vor ausschließlicher Aneignung schützen.
 
-- Alle sonstigen Änderungen oder Ergänzungen dieses Anhangs bedürfen der Ausarbeitung einer neuen Version der
-  EUPL.
+- Alle sonstigen Änderungen oder Ergänzungen dieses Anhangs bedürfen der Ausarbeitung einer neuen Version der EUPL.
 
 
 
@@ -314,7 +224,7 @@ Anlage
 B. ZUSATZVEREINBARUNGEN
 
 § 1 Nutzungsbedingungen
-(1) Diese Allgemeine Geschäftsbedingungen (AGB) des Bundes, vertreten durch das Bundesministerium des Innern und für Heimat, vertreten durch das Bundesamt für Sicherheit in der Informationstechnik (nachfolgend "Bund") und dem Nutzer gelten für die Überlassung und Nutzung der Software AusweisApp (nachfolgend AusweisApp) und deren neue Versionen, die auf der Grundlage dieser Bedingungen überlassen werden.
+(1) Diese Allgemeine Geschäftsbedingungen (AGB) des Bundes, vertreten durch das Bundesministerium des Innern, vertreten durch das Bundesamt für Sicherheit in der Informationstechnik (nachfolgend "Bund") und dem Nutzer gelten für die Überlassung und Nutzung der Software AusweisApp (nachfolgend AusweisApp) und deren neue Versionen, die auf der Grundlage dieser Bedingungen überlassen werden.
 (2) "Nutzer" im Sinne dieses Vertrages sind natürliche Personen.
 (3) Diese Zusatzvereinbarungen lassen die Rechte und Pflichten aus der EUPL unberührt.
 
@@ -379,10 +289,7 @@ GNU LESSER GENERAL PUBLIC LICENSE
 The Qt Toolkit is Copyright (C) 2016 The Qt Company Ltd.
 Contact: http://www.qt.io/licensing/
 
-You may use, distribute and copy the Qt Toolkit under the terms of
-GNU Lesser General Public License version 3, which is displayed below.
-This license makes reference to the version 3 of the GNU General
-Public License, which you can find in the LICENSE.GPLv3 file.
+You may use, distribute and copy the Qt Toolkit under the terms of GNU Lesser General Public License version 3, which is displayed below. This license makes reference to the version 3 of the GNU General Public License, which you can find in the LICENSE.GPLv3 file.
 
 -------------------------------------------------------------------------
 
@@ -390,164 +297,77 @@ GNU LESSER GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
 Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>
-Everyone is permitted to copy and distribute verbatim copies of this
-licensedocument, but changing it is not allowed.
+Everyone is permitted to copy and distribute verbatim copies of this licensedocument, but changing it is not allowed.
 
-This version of the GNU Lesser General Public License incorporates
-the terms and conditions of version 3 of the GNU General Public
-License, supplemented by the additional permissions listed below.
+This version of the GNU Lesser General Public License incorporates the terms and conditions of version 3 of the GNU General Public License, supplemented by the additional permissions listed below.
 
 0. Additional Definitions.
 
-As used herein, «this License» refers to version 3 of the GNU Lesser
-General Public License, and the «GNU GPL» refers to version 3 of the
-GNU General Public License.
+As used herein, «this License» refers to version 3 of the GNU Lesser General Public License, and the «GNU GPL» refers to version 3 of the GNU General Public License.
 
-«The Library» refers to a covered work governed by this License,
-other than an Application or a Combined Work as defined below.
+«The Library» refers to a covered work governed by this License, other than an Application or a Combined Work as defined below.
 
-An «Application» is any work that makes use of an interface provided
-by the Library, but which is not otherwise based on the Library.
-Defining a subclass of a class defined by the Library is deemed a mode
-of using an interface provided by the Library.
+An «Application» is any work that makes use of an interface provided by the Library, but which is not otherwise based on the Library. Defining a subclass of a class defined by the Library is deemed a mode of using an interface provided by the Library.
 
-A «Combined Work» is a work produced by combining or linking an
-Application with the Library. The particular version of the Library
-with which the Combined Work was made is also called the «Linked
-Version».
+A «Combined Work» is a work produced by combining or linking an Application with the Library. The particular version of the Library with which the Combined Work was made is also called the «Linked Version».
 
-The «Minimal Corresponding Source» for a Combined Work means the
-Corresponding Source for the Combined Work, excluding any source code
-for portions of the Combined Work that, considered in isolation, are
-based on the Application, and not on the Linked Version.
+The «Minimal Corresponding Source» for a Combined Work means the Corresponding Source for the Combined Work, excluding any source code for portions of the Combined Work that, considered in isolation, are based on the Application, and not on the Linked Version.
 
-The «Corresponding Application Code» for a Combined Work means the
-object code and/or source code for the Application, including any data
-and utility programs needed for reproducing the Combined Work from the
-Application, but excluding the System Libraries of the Combined Work.
+The «Corresponding Application Code» for a Combined Work means the object code and/or source code for the Application, including any data and utility programs needed for reproducing the Combined Work from the Application, but excluding the System Libraries of the Combined Work.
 
 1. Exception to Section 3 of the GNU GPL.
 
-You may convey a covered work under sections 3 and 4 of this License
-without being bound by section 3 of the GNU GPL.
+You may convey a covered work under sections 3 and 4 of this License without being bound by section 3 of the GNU GPL.
 
 2. Conveying Modified Versions.
 
-If you modify a copy of the Library, and, in your modifications, a
-facility refers to a function or data to be supplied by an Application
-that uses the facility (other than as an argument passed when the
-facility is invoked), then you may convey a copy of the modified
-version:
+If you modify a copy of the Library, and, in your modifications, a facility refers to a function or data to be supplied by an Application that uses the facility (other than as an argument passed when the facility is invoked), then you may convey a copy of the modified version:
 
-    a) under this License, provided that you make a good faith effort
-    to ensure that, in the event an Application does not supply the
-    function or data, the facility still operates, and performs
-    whatever part of its purpose remains meaningful, or
+    a) under this License, provided that you make a good faith effort to ensure that, in the event an Application does not supply the function or data, the facility still operates, and performs whatever part of its purpose remains meaningful, or
 
-    b) under the GNU GPL, with none of the additional permissions of
-    this License applicable to that copy.
+    b) under the GNU GPL, with none of the additional permissions of this License applicable to that copy.
 
 3. Object Code Incorporating Material from Library Header Files.
 
-The object code form of an Application may incorporate material from
-a header file that is part of the Library. You may convey such object
-code under terms of your choice, provided that, if the incorporated
-material is not limited to numerical parameters, data structure
-layouts and accessors, or small macros, inline functions and templates
-(ten or fewer lines in length), you do both of the following:
+The object code form of an Application may incorporate material from a header file that is part of the Library. You may convey such object code under terms of your choice, provided that, if the incorporated material is not limited to numerical parameters, data structure layouts and accessors, or small macros, inline functions and templates (ten or fewer lines in length), you do both of the following:
 
-    a) Give prominent notice with each copy of the object code that
-    the Library is used in it and that the Library and its use are
-    covered by this License.
+    a) Give prominent notice with each copy of the object code that the Library is used in it and that the Library and its use are covered by this License.
 
-    b) Accompany the object code with a copy of the GNU GPL and this
-    license document.
+    b) Accompany the object code with a copy of the GNU GPL and this license document.
 
 4. Combined Works.
 
-You may convey a Combined Work under terms of your choice that, taken
-together, effectively do not restrict modification of the portions of
-the Library contained in the Combined Work and reverse engineering for
-debugging such modifications, if you also do each of the following:
+You may convey a Combined Work under terms of your choice that, taken together, effectively do not restrict modification of the portions of the Library contained in the Combined Work and reverse engineering for debugging such modifications, if you also do each of the following:
 
-    a) Give prominent notice with each copy of the Combined Work that
-    the Library is used in it and that the Library and its use are
-    covered by this License.
+    a) Give prominent notice with each copy of the Combined Work that the Library is used in it and that the Library and its use are covered by this License.
 
-    b) Accompany the Combined Work with a copy of the GNU GPL and this
-    license document.
+    b) Accompany the Combined Work with a copy of the GNU GPL and this license document.
 
-    c) For a Combined Work that displays copyright notices during
-    execution, include the copyright notice for the Library among
-    these notices, as well as a reference directing the user to the
-    copies of the GNU GPL and this license document.
+    c) For a Combined Work that displays copyright notices during execution, include the copyright notice for the Library among these notices, as well as a reference directing the user to the copies of the GNU GPL and this license document.
 
     d) Do one of the following:
 
-        0) Convey the Minimal Corresponding Source under the terms of
-        this License, and the Corresponding Application Code in a form
-        suitable for, and under terms that permit, the user to
-        recombine or relink the Application with a modified version of
-        the Linked Version to produce a modified Combined Work, in the
-        manner specified by section 6 of the GNU GPL for conveying
-        Corresponding Source.
+        0) Convey the Minimal Corresponding Source under the terms of this License, and the Corresponding Application Code in a form suitable for, and under terms that permit, the user to recombine or relink the Application with a modified version of the Linked Version to produce a modified Combined Work, in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.
 
-        1) Use a suitable shared library mechanism for linking with
-        the Library. A suitable mechanism is one that (a) uses at run
-        time a copy of the Library already present on the user's
-        computer system, and (b) will operate properly with a modified
-        version of the Library that is interface-compatible with the
-        Linked Version.
+        1) Use a suitable shared library mechanism for linking with the Library. A suitable mechanism is one that (a) uses at run time a copy of the Library already present on the user's computer system, and (b) will operate properly with a modified version of the Library that is interface-compatible with the Linked Version.
 
-    e) Provide Installation Information, but only if you would
-    otherwise be required to provide such information under section 6
-    of the GNU GPL, and only to the extent that such information is
-    necessary to install and execute a modified version of the
-    Combined Work produced by recombining or relinking the Application
-    with a modified version of the Linked Version. (If you use option
-    4d0, the Installation Information must accompany the Minimal
-    Corresponding Source and Corresponding Application Code. If you
-    use option 4d1, you must provide the Installation Information in
-    the manner specified by section 6 of the GNU GPL for conveying
-    Corresponding Source.)
+    e) Provide Installation Information, but only if you would otherwise be required to provide such information under section 6 of the GNU GPL, and only to the extent that such information is necessary to install and execute a modified version of the Combined Work produced by recombining or relinking the Application with a modified version of the Linked Version. (If you use option 4d0, the Installation Information must accompany the Minimal Corresponding Source and Corresponding Application Code. If you use option 4d1, you must provide the Installation Information in the manner specified by section 6 of the GNU GPL for conveying Corresponding Source.)
 
 5. Combined Libraries.
 
-You may place library facilities that are a work based on the Library
-side by side in a single library together with other library
-facilities that are not Applications and are not covered by this
-License, and convey such a combined library under terms of your
-choice, if you do both of the following:
+You may place library facilities that are a work based on the Library by side in a single library together with other library that are not Applications and are not covered by this , and convey such a combined library under terms of your , if you do both of the following:
 
-    a) Accompany the combined library with a copy of the same work
-    based on the Library, uncombined with any other library
-    facilities, conveyed under the terms of this License.
+    a) Accompany the combined library with a copy of the same work based on the Library, uncombined with any other library facilities, conveyed under the terms of this License.
 
-    b) Give prominent notice with the combined library that part of
-    it is a work based on the Library, and explaining where to find
-    the accompanying uncombined form of the same work.
+    b) Give prominent notice with the combined library that part of it is a work based on the Library, and explaining where to find the accompanying uncombined form of the same work.
 
 6. Revised Versions of the GNU Lesser General Public License.
 
-The Free Software Foundation may publish revised and/or new versions
-of the GNU Lesser General Public License from time to time. Such new
-versions will be similar in spirit to the present version, but may
-differ in detail to address new problems or concerns.
+The Free Software Foundation may publish revised and/or new versions the GNU Lesser General Public License from time to time. Such new will be similar in spirit to the present version, but may in detail to address new problems or concerns.
 
-Each version is given a distinguishing version number. If the Library
-as you received it specifies that a certain numbered version of the
-GNU Lesser General Public License «or any later version» applies to
-it, you have the option of following the terms and conditions either
-of that published version or of any later version published by the
-Free Software Foundation. If the Library as you received it does not
-specify a version number of the GNU Lesser General Public License,
-you may choose any version of the GNU Lesser General Public License
-ever published by the Free Software Foundation.
+Each version is given a distinguishing version number. If the Library you received it specifies that a certain numbered version of the Lesser General Public License «or any later version» applies to , you have the option of following the terms and conditions either that published version or of any later version published by the Software Foundation. If the Library as you received it does not a version number of the GNU Lesser General Public License, may choose any version of the GNU Lesser General Public License published by the Free Software Foundation.
 
-If the Library as you received it specifies that a proxy can decide
-whether future versions of the GNU Lesser General Public License shall
-apply, that proxy's public statement of acceptance of any version is
-permanent authorization for you to choose that version for the Library.
+If the Library as you received it specifies that a proxy can decide future versions of the GNU Lesser General Public License shall , that proxy's public statement of acceptance of any version is authorization for you to choose that version for the Library.
 
 
 
@@ -558,23 +378,11 @@ MIT License
 
 Copyright Joyent, Inc. and other Node contributors.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy this software and associated documentation files (the "Software"), to in the Software without restriction, including without limitation the to use, copy, modify, merge, publish, distribute, sublicense, and/or copies of the Software, and to permit persons to whom the Software is to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR , INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER , WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING , OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS THE SOFTWARE.
 
 
 
@@ -589,172 +397,50 @@ http://www.apache.org/licenses/
 
    1. Definitions.
 
-      "License" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
+      "License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
 
-      "Licensor" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
+      "Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
 
-      "Legal Entity" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      "control" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
+      "Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
 
-      "You" (or "Your") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
+      "You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
 
-      "Source" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
+      "Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
 
-      "Object" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
+      "Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
 
-      "Work" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
+      "Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
 
-      "Derivative Works" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
+      "Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
 
-      "Contribution" shall mean any work of authorship, including
-      the original version of the Work and any modifications or additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, "submitted"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work, but
-      excluding communication that is conspicuously marked or otherwise
-      designated in writing by the copyright owner as "Not a Contribution."
+      "Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
 
-      "Contributor" shall mean Licensor and any individual or Legal Entity
-      on behalf of whom a Contribution has been received by Licensor and
-      subsequently incorporated within the Work.
+      "Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
 
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
+   2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
 
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
+   3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.
 
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
+   4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:
 
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
+      (a) You must give any other recipients of the Work or Derivative Works a copy of this License; and
 
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
+      (b) You must cause any modified files to carry prominent notices stating that You changed the files; and
 
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
+      (c) You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and
 
-      (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
+      (d) If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.
 
-      You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies with
-      the conditions stated in this License.
+      You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.
 
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
+   5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.
 
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
+   6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.
 
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining the
-      appropriateness of using or redistributing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
+   7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
 
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or consequential damages of any character arising as a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
+   8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
 
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, indemnity,
-      or other liability obligations and/or rights consistent with this
-      License. However, in accepting such obligations, You may act only
-      on Your own behalf and on Your sole responsibility, not on behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by reason
-      of your accepting any such warranty or additional liability.
+   9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.
 
    END OF TERMS AND CONDITIONS
-

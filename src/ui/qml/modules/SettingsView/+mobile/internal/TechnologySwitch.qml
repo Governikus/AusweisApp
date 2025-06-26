@@ -13,6 +13,11 @@ import Governikus.Type
 GCollapsible {
 	id: root
 
+	readonly property bool hasSelection: nfcSupported || simulatorEnabled || smartSupported
+	readonly property bool nfcSupported: ApplicationModel.nfcState !== ApplicationModel.NfcState.UNAVAILABLE
+	readonly property bool simulatorEnabled: SettingsModel.enableSimulator
+	readonly property bool smartSupported: ApplicationModel.isSmartSupported
+
 	function getImage(pTechnology) {
 		switch (pTechnology) {
 		case ReaderManagerPluginType.NFC:
@@ -51,10 +56,11 @@ GCollapsible {
 
 	TechnologyButton {
 		technology: ReaderManagerPluginType.NFC
+		visible: root.nfcSupported
 	}
 	TechnologyButton {
 		technology: ReaderManagerPluginType.SMART
-		visible: ApplicationModel.isSmartSupported
+		visible: root.smartSupported
 	}
 	TechnologyButton {
 		drawBottomCorners: !SettingsModel.enableSimulator
@@ -63,7 +69,7 @@ GCollapsible {
 	TechnologyButton {
 		drawBottomCorners: true
 		technology: ReaderManagerPluginType.SIMULATOR
-		visible: SettingsModel.enableSimulator
+		visible: root.simulatorEnabled
 	}
 
 	component TechnologyButton: GCollapsibleSubButton {

@@ -21,6 +21,7 @@ Controller {
 	id: root
 
 	property bool autoInsertCard: false
+	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property bool hideTechnologySwitch: false
 	property var initialPlugin: null
@@ -124,7 +125,10 @@ Controller {
 				break;
 			}
 			d.setWorkflowProgress(progressTracker.steps);
-			if (ChangePinModel.error) {
+			if (ChangePinModel.error && ChangePinModel.statusCode === GlobalStatusCode.Card_Pin_Deactivated) {
+				push(root.cardNotActivatedDelegate ? root.cardNotActivatedDelegate : cardNotActivatedView);
+				break;
+			} else if (ChangePinModel.error) {
 				push(root.errorViewDelegate ? root.errorViewDelegate : pinResult);
 				break;
 			}
@@ -280,6 +284,8 @@ Controller {
 		id: pinResult
 
 		ResultView {
+			id: pinResultView
+
 			animation: ChangePinModel.statusCodeAnimation
 			//: LABEL ANDROID IOS
 			buttonText: qsTr("Back to start page")
@@ -292,11 +298,11 @@ Controller {
 			title: root.title
 
 			navigationAction: NavigationAction {
-				action: root.navigationActionType
-				enabled: false
+				action: NavigationAction.Action.Close
+
+				onClicked: pinResultView.continueClicked()
 			}
 
-			onCancelClicked: continueClicked()
 			onContinueClicked: ChangePinModel.continueWorkflow()
 			onHintClicked: {
 				ChangePinModel.continueWorkflow();
@@ -418,6 +424,20 @@ Controller {
 				action: ChangePinModel.isBasicReader ? root.navigationActionType : NavigationAction.Action.None
 
 				onClicked: ChangePinModel.cancelWorkflow()
+			}
+		}
+	}
+	Component {
+		id: cardNotActivatedView
+
+		CardNotActivatedView {
+			progress: root.progress
+			title: root.title
+
+			navigationAction: NavigationAction {
+				action: NavigationAction.Action.Cancel
+
+				onClicked: ChangePinModel.continueWorkflow()
 			}
 		}
 	}

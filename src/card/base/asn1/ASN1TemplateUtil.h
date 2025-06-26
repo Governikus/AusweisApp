@@ -13,12 +13,10 @@
 #include <QSharedPointer>
 
 
-Q_DECLARE_LOGGING_CATEGORY(card)
-
-
 namespace governikus
 {
 
+const QLoggingCategory& getLoggingCategory();
 QByteArray getOpenSslError();
 
 /*!
@@ -76,7 +74,7 @@ QByteArray encodeObject(T* pObject)
 			});
 	if (length < 0)
 	{
-		qCWarning(card) << "Cannot encode ASN.1 object:" << getOpenSslError();
+		qCWarning(governikus::getLoggingCategory()) << "Cannot encode ASN.1 object:" << getOpenSslError();
 		return QByteArray();
 	}
 
@@ -117,7 +115,7 @@ QSharedPointer<T> decodeObject(const QByteArray& pData, bool pLogging = true)
 	const auto* dataPointer = reinterpret_cast<const unsigned char*>(pData.constData());
 	if (!decodeAsn1Object(&object, &dataPointer, static_cast<long>(pData.length())) && pLogging)
 	{
-		qCWarning(card) << "Cannot decode ASN.1 object:" << getOpenSslError();
+		qCWarning(governikus::getLoggingCategory()) << "Cannot decode ASN.1 object:" << getOpenSslError();
 	}
 
 	static auto deleter = [](T* pTypeObject)

@@ -163,7 +163,7 @@ class test_StateChangePin
 
 			if (fireContinue > 0)
 			{
-				QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your ID card PIN."));
+				QCOMPARE(context->getSuccessMessage(), tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>") + tr("You may now remove your ID card from the device."));
 			}
 			QCOMPARE(spyContinue.count(), fireContinue);
 			QCOMPARE(spyAbort.count(), fireAbort);

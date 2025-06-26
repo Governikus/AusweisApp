@@ -64,7 +64,7 @@ Item {
 	QtObject {
 		id: d
 
-		readonly property int stepWidth: UiPluginModel.scaleFactor * 250
+		readonly property int stepWidth: UiPluginModel.scaleFactor * 150
 	}
 	Rectangle {
 		id: line1

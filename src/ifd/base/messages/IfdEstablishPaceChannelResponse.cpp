@@ -92,6 +92,31 @@ const EstablishPaceChannelOutput& IfdEstablishPaceChannelResponse::getOutputData
 }
 
 
+CardReturnCode IfdEstablishPaceChannelResponse::getReturnCode() const
+{
+	if (!resultHasError())
+	{
+		return CardReturnCode::OK;
+	}
+
+	switch (getResultMinor())
+	{
+		case ECardApiResult::Minor::IFDL_Timeout_Error:
+			return CardReturnCode::INPUT_TIME_OUT;
+
+		case ECardApiResult::Minor::IFDL_CancellationByUser:
+			return CardReturnCode::CANCELLATION_BY_USER;
+
+		case ECardApiResult::Minor::IFDL_Terminal_NoCard:
+		case ECardApiResult::Minor::IFDL_InvalidSlotHandle:
+			return CardReturnCode::CARD_NOT_FOUND;
+
+		default:
+			return CardReturnCode::COMMAND_FAILED;
+	}
+}
+
+
 QByteArray IfdEstablishPaceChannelResponse::toByteArray(IfdVersion::Version pIfdVersion, const QString& pContextHandle) const
 {
 	QJsonObject result = createMessageBody(pContextHandle);

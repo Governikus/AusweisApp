@@ -80,6 +80,39 @@ class test_StateGetTcToken
 		}
 
 
+		void test_Redirect_data()
+		{
+			QTest::addColumn<QLatin1String>("target");
+			QTest::addColumn<QLatin1String>("redirect");
+
+			QTest::newRow("relative") << "index.html"_L1 << "https://a.not.existing.valid.test.url.com/index.html"_L1;
+			QTest::newRow("absolute") << "https://another.not.existing.valid.test.url.com/index.html"_L1 << "https://another.not.existing.valid.test.url.com/index.html"_L1;
+		}
+
+
+		void test_Redirect()
+		{
+			QFETCH(QLatin1String, target);
+			QFETCH(QLatin1String, redirect);
+
+			const QSharedPointer<AuthContext> context(new AuthContext());
+			StateGetTcToken state(context);
+			QSignalSpy spyAbort(&state, &StateGetTcToken::fireAbort);
+
+			auto reply = QSharedPointer<MockNetworkReply>::create();
+			reply->setRequest(QNetworkRequest(QUrl("https://a.not.existing.valid.test.url.com/tcToken"_L1)));
+			reply->setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(302));
+			reply->setAttribute(QNetworkRequest::RedirectionTargetAttribute, QVariant(target));
+			state.mReply = reply;
+
+			QTest::ignoreMessage(QtDebugMsg, "Status Code: 302 \"Found\"");
+			state.onNetworkReply();
+			QCOMPARE(state.mReply->request().url(), QUrl(redirect));
+			QTRY_COMPARE(spyAbort.count(), 1); // clazy:exclude=qstring-allocations
+			QCOMPARE(context->getFailureCode(), FailureCode::Reason::Get_TcToken_Network_Error);
+		}
+
+
 		void test_ParseTcTokenNoData()
 		{
 			const QSharedPointer<AuthContext> context(new AuthContext());

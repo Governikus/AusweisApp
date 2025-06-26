@@ -16,6 +16,7 @@ SectionPage {
 	id: root
 
 	property bool activateUI: true
+	property Component cardNotActivatedDelegate: null
 	property Component errorViewDelegate: null
 	property int navigationActionType: NavigationAction.Cancel
 	property bool onlyCheckPin: false
@@ -84,6 +85,7 @@ SectionPage {
 		ChangePinController {
 			required property bool changeTransportPin
 
+			cardNotActivatedDelegate: root.cardNotActivatedDelegate
 			errorViewDelegate: root.errorViewDelegate
 			navigationActionType: root.navigationActionType
 			successViewDelegate: root.successViewDelegate

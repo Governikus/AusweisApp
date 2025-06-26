@@ -117,11 +117,11 @@ static void getDriverInfos(QHash<QString, DriverInfo>& pDriverInfos, const QStri
 }
 
 
-static QString runProcessAndReadAllOutput(const QString& pProgramm, const QStringList& pArguments)
+static QString runProcessAndReadAllOutput(const QString& pProgram, const QStringList& pArguments)
 {
 	QString allOutput;
 	QProcess process;
-	process.start(pProgramm, pArguments);
+	process.start(pProgram, pArguments);
 	while (process.waitForReadyRead())
 	{
 		allOutput += QString::fromUtf8(process.readAllStandardOutput());

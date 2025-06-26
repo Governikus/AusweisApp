@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Governikus.Global
-import Governikus.TitleBar
 import Governikus.View
 import Governikus.Type
 import Governikus.Style
@@ -17,21 +16,9 @@ FlickableSectionPage {
 
 	property alias okButtonText: okButton.text
 
-	signal done
-	signal requestBack
-
 	spacing: Style.dimens.pane_spacing
 	//: LABEL ANDROID IOS
 	title: qsTr("Identify")
-
-	navigationAction: NavigationAction {
-		action: NavigationAction.Action.Back
-
-		onClicked: {
-			root.requestBack();
-			root.done();
-		}
-	}
 
 	GridLayout {
 		id: grid
@@ -66,6 +53,6 @@ FlickableSectionPage {
 		//: LABEL ANDROID IOS
 		text: qsTr("Back to start page")
 
-		onClicked: root.done()
+		onClicked: root.leaveView()
 	}
 }

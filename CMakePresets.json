@@ -6,12 +6,12 @@
     "patch": 0
   },
   "include": [
-    "presets/ci-android.json",
-    "presets/ci-bsd.json",
-    "presets/ci-linux.json",
-    "presets/ci-macOS.json",
-    "presets/ci-iOS.json",
-    "presets/ci-tools.json",
-    "presets/ci-windows.json"
+    "ci/presets/android.json",
+    "ci/presets/bsd.json",
+    "ci/presets/linux.json",
+    "ci/presets/macOS.json",
+    "ci/presets/iOS.json",
+    "ci/presets/tools.json",
+    "ci/presets/windows.json"
   ]
 }

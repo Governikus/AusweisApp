@@ -12,9 +12,8 @@
 #include <QXmlStreamReader>
 
 
-Q_DECLARE_LOGGING_CATEGORY(paos)
-
 class test_ElementParser;
+
 
 namespace governikus
 {
@@ -98,6 +97,8 @@ class ElementParser
 		[[nodiscard]] QStringView getElementTypeByNamespace(const QString& pNamespace) const;
 
 	private:
+		static const QLoggingCategory& getLoggingCategory();
+
 		QSharedPointer<QXmlStreamReader> mXmlReader;
 		bool mParseError;
 };
@@ -107,7 +108,7 @@ template<typename T> bool ElementParser::assertMandatoryList(const QList<T>& pLi
 {
 	if (pList.isEmpty())
 	{
-		qCWarning(paos) << "Mandatory list is empty:" << pElementName;
+		qCWarning(getLoggingCategory()) << "Mandatory list is empty:" << pElementName;
 		mParseError = true;
 		return false;
 	}

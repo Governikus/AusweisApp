@@ -28,6 +28,14 @@ class test_ReleaseInformation
 		}
 
 
+		void test_betaVersionUpdate()
+		{
+			QCoreApplication::setApplicationVersion("1.2.100"_L1);
+			ReleaseInformation information;
+			QCOMPARE(information.requiresInitialUpdate(), true);
+		}
+
+
 		void test_versionNumber()
 		{
 			ReleaseInformation information;

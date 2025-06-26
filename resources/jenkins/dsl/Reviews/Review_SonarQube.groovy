@@ -25,6 +25,6 @@ j.with
 
 	steps
 	{
-		shell('cmake -DSPLITTED=OFF -P source/ci.cmake')
+		shell('cmake -DSPLIT=OFF -P source/ci.cmake')
 	}
 }

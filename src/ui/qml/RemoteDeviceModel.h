@@ -52,7 +52,7 @@ class RemoteDeviceModel
 		void updatePairedReaders();
 		void updateUnpairedReaders();
 		void removeVanishedReaders();
-		[[nodiscard]] virtual QList<RemoteDeviceModelEntry> presentReaders() const;
+		[[nodiscard]] QList<RemoteDeviceModelEntry> presentReaders() const;
 		bool addOrUpdateReader(const RemoteDeviceModelEntry& pModelEntry);
 
 	private Q_SLOTS:

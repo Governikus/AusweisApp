@@ -53,8 +53,8 @@ class test_ProviderConfigurationParser
 										 "      {"
 										 "         \"longName\": {\"\" : \"Selbstauskunft - \\\"Meine Daten einsehen\\\"\"},"
 										 "         \"shortName\": {\"\" : \"Selbstauskunft\"},"
-										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
-										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"shortDescription\": {\"\" : \"Selbstauskunft der AusweisAp\"},"
+										 "         \"longDescription\": {\"\" : \"Die AusweisApp verfuegt ueber die Selbstauskunft \\\"Meine Daten einsehen\\\"\"},"
 										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
 										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
 										 "         \"phone\": \"+49 421 - 204 95 995\","
@@ -65,8 +65,8 @@ class test_ProviderConfigurationParser
 										 "		{"
 										 "         \"longName\": {\"\" : \"Selbstauskunft\"},"
 										 "         \"shortName\": {\"\" : \"\"},"
-										 "         \"shortDescription\": {\"\" : \"Funktion der AusweisApp2\"},"
-										 "         \"longDescription\": {\"\" : \"Die AusweisApp2 verfuegt ueber die Funktion \\\"Meine Daten einsehen\\\"\"},"
+										 "         \"shortDescription\": {\"\" : \"Selbstauskunft der AusweisApp\"},"
+										 "         \"longDescription\": {\"\" : \"Die AusweisApp verfuegt ueber die Selbstauskunft \\\"Meine Daten einsehen\\\"\"},"
 										 "         \"address\": \"https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/\","
 										 "         \"homepage\": \"https://www.ausweisapp.bund.de/\","
 										 "         \"phone\": \"+49 421 - 204 95 995\","
@@ -111,7 +111,7 @@ class test_ProviderConfigurationParser
 			provider = providers[1];
 			QCOMPARE(provider.getShortName().toString(), QStringLiteral("Selbstauskunft"));
 			QCOMPARE(provider.getLongName().toString(), QStringLiteral("Selbstauskunft - \"Meine Daten einsehen\""));
-			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Die AusweisApp2 verfuegt ueber die Funktion \"Meine Daten einsehen\""));
+			QCOMPARE(provider.getLongDescription().toString(), QStringLiteral("Die AusweisApp verfuegt ueber die Selbstauskunft \"Meine Daten einsehen\""));
 			QCOMPARE(provider.getAddress(), QStringLiteral("https://www.ausweisapp.bund.de/online-ausweisen/meine-daten-auslesen/"));
 			QCOMPARE(provider.getHomepage(), QStringLiteral("https://www.ausweisapp.bund.de/"));
 			QCOMPARE(provider.getPhone(), QStringLiteral("+49 421 - 204 95 995"));
@@ -186,7 +186,7 @@ class test_ProviderConfigurationParser
 			QTest::addColumn<int>("count");
 
 			const int all = 132;
-			const int withEidSupport = 110;
+			const int withEidSupport = 111;
 			QTest::newRow("win") << QOperatingSystemVersion::Windows << -1 << all;
 			QTest::newRow("mac") << QOperatingSystemVersion::MacOS << -1 << all;
 			QTest::newRow("linux") << QOperatingSystemVersion::Unknown << -1 << all;

@@ -20,8 +20,8 @@ class MockDidAuthenticateEAC2Command
 
 	public:
 		explicit MockDidAuthenticateEAC2Command(const QSharedPointer<MockCardConnectionWorker>& pCardConnectionWorker, const CVCertificateChain& pCvcChain,
-				const QByteArray& pEphermalPublicKeyAsHex, const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
-			: DidAuthenticateEAC2Command(pCardConnectionWorker, pCvcChain, pEphermalPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary, QByteArray())
+				const QByteArray& pEphemeralPublicKeyAsHex, const QByteArray& pSignatureAsHex, const QByteArray& pAuthenticatedAuxiliaryDataAsBinary)
+			: DidAuthenticateEAC2Command(pCardConnectionWorker, pCvcChain, pEphemeralPublicKeyAsHex, pSignatureAsHex, pAuthenticatedAuxiliaryDataAsBinary, QByteArray())
 		{
 		}
 

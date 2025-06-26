@@ -7,7 +7,6 @@ import QtQuick.Controls
 import Governikus.Global
 import Governikus.Style
 import Governikus.View
-import Governikus.Type
 
 AbstractButton {
 	id: root
@@ -63,13 +62,12 @@ AbstractButton {
 				id: link
 
 				Accessible.ignored: true
-				color: labelText.labelColor
-				font.pixelSize: UiPluginModel.scaleFactor * 24
 				text: Style.is_layout_desktop ?
 				//: LABEL DESKTOP
 				qsTr("Details about the provider") :
 				//: LABEL ANDROID IOS
 				qsTr("Touch for more details")
+				textStyle: Style.text.link
 			}
 		}
 		TintableIcon {

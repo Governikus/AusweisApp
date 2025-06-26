@@ -22,7 +22,7 @@
                                 <viewLayoutGuide key="safeArea" id="2Jn-Ml-7zj"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="all-Dr-5Kl" firstAttribute="height" relation="lessThanOrEqual" secondItem="Bcu-3y-fUS" secondAttribute="height" multiplier="0.5" id="6YF-3i-nvd"/>
                             <constraint firstItem="rgD-m7-y4I" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="FOK-xM-heA"/>

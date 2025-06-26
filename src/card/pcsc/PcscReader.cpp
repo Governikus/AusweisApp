@@ -290,12 +290,12 @@ PCSC_RETURNCODE PcscReader::readReaderFeatures()
 	QByteArray buffer(1024, '\0');
 	const std::array<uchar, 2> inBuffer({0, 0});
 
-	PCSC_INT clen = 0;
+	PCSC_INT length = 0;
 	returnCode = SCardControl(cardHandle, CM_IOCTL_GET_FEATURE_REQUEST,
 			inBuffer.data(), static_cast<int>(inBuffer.size()),
 			buffer.data(), static_cast<DWORD>(buffer.size()),
-			&clen);
-	buffer.resize(static_cast<int>(clen));
+			&length);
+	buffer.resize(static_cast<int>(length));
 
 	qCDebug(card_pcsc) << "SCardControl for" << readerName << ':' << pcsc::toString(returnCode);
 	if (returnCode != pcsc::Scard_S_Success)

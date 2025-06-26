@@ -1,0 +1,25 @@
+From 719564f5856fe7074ea0775d59e76da93056f891 Mon Sep 17 00:00:00 2001
+From: Timon Sassor <timon.sassor@governikus.de>
+Date: Tue, 29 Apr 2025 09:22:56 +0200
+Subject: Don't ignore offscreen A11y elements for VoiceOver on macOS
+
+As soon as an element moved offscreen (while still visible: true), VoiceOver couldn't focus it. So either the user had to constantly switch between scrolling and re-navigating to the content he wants to read or he might even miss additional available content.
+
+Fixes: QTBUG-135845
+Change-Id: Ie0b00002357c6efc21cf741680246d54d74f0c86
+---
+ src/plugins/platforms/cocoa/qcocoaaccessibility.mm | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+index 7cab078c64c12fe972d80f70a817a015742fb830..08e9c17df0d86c92c158b505e80a3d84a4dee243 100644
+--- x/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
++++ y/qtbase/src/plugins/platforms/cocoa/qcocoaaccessibility.mm
+@@ -213,7 +213,6 @@ bool shouldBeIgnored(QAccessibleInterface *interface)
+     // state. Ignore interfaces with those flags set.
+     const QAccessible::State state = interface->state();
+     if (state.invisible ||
+-        state.offscreen ||
+         state.invalid)
+         return true;
+ 

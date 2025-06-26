@@ -3,60 +3,60 @@
 <?include "cpack_variables.wxi"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Fragment>
-		<Property Id="PROXYSERVICE" Secure="yes"/>
-		<Property Id="PROXYSERVICE_FOUND" Secure="yes">
-			<RegistrySearch Id="ProxyServiceRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisAppProxy" Name="ImagePath" Type="raw"/>
-		</Property>
-		<Property Id="PROXYSERVICE_OLD_FOUND" Secure="yes">
-			<RegistrySearch Id="ProxyServiceOldRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisApp2Proxy" Name="ImagePath" Type="raw"/>
-		</Property>
-		<SetProperty Before="CostFinalize" Id="PROXYSERVICE" Value="true" Sequence="first">
-			(NOT PROXYSERVICE) AND (
-				((WIX_UPGRADE_DETECTED OR REINSTALL) AND (PROXYSERVICE_FOUND OR PROXYSERVICE_OLD_FOUND))
-				OR (NOT (WIX_UPGRADE_DETECTED OR REINSTALL) AND (WIX_SUITE_TERMINAL="1") AND NOT (WIX_SUITE_SINGLEUSERTS))
-			)
-		</SetProperty>
+    <Fragment>
+        <Property Id="PROXYSERVICE" Secure="yes" />
+        <Property Id="PROXYSERVICE_FOUND" Secure="yes">
+            <RegistrySearch Id="ProxyServiceRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisAppProxy" Name="ImagePath" Type="raw" />
+        </Property>
+        <Property Id="PROXYSERVICE_OLD_FOUND" Secure="yes">
+            <RegistrySearch Id="ProxyServiceOldRegistry" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\AusweisApp2Proxy" Name="ImagePath" Type="raw" />
+        </Property>
+        <SetProperty Before="CostFinalize" Id="PROXYSERVICE" Value="true" Sequence="first">
+		(NOT PROXYSERVICE) AND (
+			((WIX_UPGRADE_DETECTED OR REINSTALL) AND (PROXYSERVICE_FOUND OR PROXYSERVICE_OLD_FOUND))
+			OR (NOT (WIX_UPGRADE_DETECTED OR REINSTALL) AND (WIX_SUITE_TERMINAL="1") AND NOT (WIX_SUITE_SINGLEUSERTS))
+		)
+        </SetProperty>
 
-		<SetProperty Action="SetProxyServiceGui1" Before="CostFinalize" Id="ProxyServiceGui" Value="true" Sequence="ui">
-			PROXYSERVICE = "true"
-		</SetProperty>
-		<SetProperty Action="SetProxyServiceGui2" Before="CostFinalize" Id="ProxyServiceGui" Value="{}" Sequence="ui">
-			NOT (PROXYSERVICE = "true")
-		</SetProperty>
+        <SetProperty Action="SetProxyServiceGui1" Before="CostFinalize" Id="ProxyServiceGui" Value="true" Sequence="ui">
+            PROXYSERVICE = "true"
+        </SetProperty>
+        <SetProperty Action="SetProxyServiceGui2" Before="CostFinalize" Id="ProxyServiceGui" Value="{}" Sequence="ui">
+            NOT (PROXYSERVICE = "true")
+        </SetProperty>
 
-		<Feature Id="Executable">
-			<ComponentRef Id="AusweisApp2"/>
-			<ComponentRef Id="ProxyService"/>
-		</Feature>
+        <Feature Id="Executable">
+            <ComponentRef Id="AusweisApp2" />
+            <ComponentRef Id="ProxyService" />
+        </Feature>
 
-		<DirectoryRef Id="INSTALL_ROOT">
-			<Component Id="AusweisApp2" Guid="{391CF345-5AA2-45CD-E001-C24861C9AB8D}">
-				<Condition>NOT (PROXYSERVICE = "true")</Condition>
-				<File Id="AusweisApp2" Source="AusweisApp.exe" />
-			</Component>
+        <DirectoryRef Id="INSTALL_ROOT">
+            <Component Id="AusweisApp2" Guid="{391CF345-5AA2-45CD-E001-C24861C9AB8D}">
+                <Condition>NOT (PROXYSERVICE = "true")</Condition>
+                <File Id="AusweisApp2" Source="AusweisApp.exe" />
+            </Component>
 
-			<Component Id="ProxyService" Guid="{391CF345-5AA2-45CD-E002-C24861C9AB8D}">
-				<Condition>PROXYSERVICE = "true"</Condition>
-				<File Id="ProxyService" Source="AusweisApp.exe" />
-				<ServiceInstall Id="AusweisAppProxy"
-								Name="AusweisAppProxy"
-								DisplayName="AusweisApp-Proxy"
-								Description="!(loc.ServiceDescription)"
-								Start="auto"
-								Type="ownProcess"
-								ErrorControl="normal"
-								Account="LocalSystem"
-								Arguments="--ui proxy --no-logfile"
-								Vital="yes"
-								Interactive="no" />
-				<ServiceControl Id="AusweisAppProxy"
-								Name="AusweisAppProxy"
-								Start="install"
-								Stop="uninstall"
-								Remove="uninstall"
-								Wait="yes" />
-			</Component>
-		</DirectoryRef>
-	</Fragment>
+            <Component Id="ProxyService" Guid="{391CF345-5AA2-45CD-E002-C24861C9AB8D}">
+                <Condition>PROXYSERVICE = "true"</Condition>
+                <File Id="ProxyService" Source="AusweisApp.exe" />
+                <ServiceInstall Id="AusweisAppProxy"
+                                Name="AusweisAppProxy"
+                                DisplayName="AusweisApp-Proxy"
+                                Description="!(loc.ServiceDescription)"
+                                Start="auto"
+                                Type="ownProcess"
+                                ErrorControl="normal"
+                                Account="LocalSystem"
+                                Arguments="--ui proxy --no-logfile"
+                                Vital="yes"
+                                Interactive="no" />
+                <ServiceControl Id="AusweisAppProxy"
+                                Name="AusweisAppProxy"
+                                Start="install"
+                                Stop="uninstall"
+                                Remove="uninstall"
+                                Wait="yes" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
 </Wix>

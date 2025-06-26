@@ -18,7 +18,7 @@ Q_DECLARE_LOGGING_CATEGORY(rproxy)
 RedirectRequest::RedirectRequest(const QSharedPointer<HttpRequest>& pRequest, QObject* pParent)
 	: QTcpSocket(pParent)
 	, mRequest(pRequest)
-	, mPortWrapper(pRequest)
+	, mPortWrapper(pRequest->getLocalPort(), pRequest->getPeerPort())
 	, mAnswerReceived(false)
 {
 	Q_ASSERT(mRequest);

@@ -38,22 +38,20 @@ FlickableSectionPage {
 		enabled: root.visible
 		target: SelfAuthModel
 	}
-	Row {
-		id: statusRow
-
+	RowLayout {
 		Layout.preferredHeight: root.height / 4
 		spacing: Style.dimens.pane_spacing
 
 		StatusAnimation {
-			anchors.verticalCenter: parent.verticalCenter
+			Layout.alignment: Qt.AlignVCenter
 			sourceSize.height: Style.dimens.huge_icon_size
 			symbol.type: Symbol.Type.CHECK
 		}
 		GText {
-			anchors.verticalCenter: parent.verticalCenter
+			Layout.alignment: Qt.AlignVCenter
 
 			//: INFO DESKTOP Status message that the self authentication successfully completed.
-			text: qsTr("Successfully read data")
+			text: qsTr("Successfully read data.") + "<br>" + qsTr("You may now remove your ID card from the device.")
 			textStyle: Style.text.headline
 		}
 	}

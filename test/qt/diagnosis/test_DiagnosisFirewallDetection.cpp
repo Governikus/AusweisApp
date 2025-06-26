@@ -137,7 +137,7 @@ class test_DiagnosisFirewallDetection
 			QTest::newRow("disabled") << QStringLiteral("firewall_profiles_disabled.txt") << false << false << false << 3;
 			QTest::newRow("domain_disabled") << QStringLiteral("firewall_profiles_domain_disabled.txt") << false << true << true << 3;
 			QTest::newRow("domain_private_disabled") << QStringLiteral("firewall_profiles_domain_private_disabled.txt") << false << false << true << 3;
-			QTest::newRow("domain_public_disbaled") << QStringLiteral("firewall_profiles_domain_public_disabled.txt") << false << true << false << 3;
+			QTest::newRow("domain_public_disabled") << QStringLiteral("firewall_profiles_domain_public_disabled.txt") << false << true << false << 3;
 			QTest::newRow("private_disabled") << QStringLiteral("firewall_profiles_private_disabled.txt") << true << false << true << 3;
 			QTest::newRow("private_public_disabled") << QStringLiteral("firewall_profiles_private_public_disabled.txt") << true << false << false << 3;
 			QTest::newRow("public_disabled") << QStringLiteral("firewall_profiles_public_disabled.txt") << true << true << false << 3;

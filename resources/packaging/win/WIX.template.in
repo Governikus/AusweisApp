@@ -3,90 +3,93 @@
 <?include "cpack_variables.wxi"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-	RequiredVersion="3.6.3303.0">
+    RequiredVersion="3.6.3303.0">
 
-	<Product Id="$(var.CPACK_WIX_PRODUCT_GUID)"
-		Name="$(var.CPACK_PACKAGE_NAME)"
-		Language="1031"
-		Version="$(var.CPACK_PACKAGE_VERSION)"
-		Manufacturer="$(var.CPACK_PACKAGE_VENDOR)"
-		UpgradeCode="$(var.CPACK_WIX_UPGRADE_GUID)">
+    <Product Id="$(var.CPACK_WIX_PRODUCT_GUID)"
+        Name="$(var.CPACK_PACKAGE_NAME)"
+        Language="1031"
+        Version="$(var.CPACK_PACKAGE_VERSION)"
+        Manufacturer="$(var.CPACK_PACKAGE_VENDOR)"
+        UpgradeCode="$(var.CPACK_WIX_UPGRADE_GUID)">
 
-		<Package InstallerVersion="301"
-			InstallScope="perMachine"
-			Compressed="yes"
-			Description="$(var.CPACK_PACKAGE_NAME)"
-			Keywords="!(loc.PackageKeywords)"
-			Comments="!(loc.PackageComments)"/>
+        <Package InstallerVersion="301"
+            InstallScope="perMachine"
+            Compressed="yes"
+            Description="$(var.CPACK_PACKAGE_NAME)"
+            Keywords="!(loc.PackageKeywords)"
+            Comments="!(loc.PackageComments)" />
 
-		<Property Id="ARPCOMMENTS" Value="!(loc.ArpComment)"/>
-		<Property Id="ARPHELPLINK" Value="!(loc.ArpHelp)"/>
-		<Property Id="ARPURLINFOABOUT" Value="!(loc.ArpAbout)"/>
-		<Property Id="ARPURLUPDATEINFO" Value="!(loc.ArpUpdate)"/>
-		<Property Id="ARPCONTACT" Value="$(var.CPACK_PACKAGE_VENDOR)"/>
+        <Property Id="ARPCOMMENTS" Value="!(loc.ArpComment)" />
+        <Property Id="ARPHELPLINK" Value="!(loc.ArpHelp)" />
+        <Property Id="ARPURLINFOABOUT" Value="!(loc.ArpAbout)" />
+        <Property Id="ARPURLUPDATEINFO" Value="!(loc.ArpUpdate)" />
+        <Property Id="ARPCONTACT" Value="$(var.CPACK_PACKAGE_VENDOR)" />
 
-		<!-- We don't need system restore: https://docs.microsoft.com/en-us/windows/win32/msi/msifastinstall -->
-		<Property Id="MSIFASTINSTALL" Value="1"/>
+        <!-- We don't need system restore: https://docs.microsoft.com/en-us/windows/win32/msi/msifastinstall -->
+        <Property Id="MSIFASTINSTALL" Value="1" />
 
-		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes"/>
+        <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
-		<MajorUpgrade
-			Schedule="afterInstallInitialize"
-			AllowSameVersionUpgrades="yes"
-			DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"/>
-
-
-		<Property Id="WIN10FOUND" Secure="yes">
-			<DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
-				<FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.10000.0"/>
-			</DirectorySearch>
-		</Property>
-
-		<Condition Message="!(loc.WindowsRequired)">
-			<![CDATA[Installed OR (VersionNT64 >= 1000) OR (VersionNT64 = 603 AND WIN10FOUND)]]>
-		</Condition>
+        <MajorUpgrade
+            Schedule="afterInstallInitialize"
+            AllowSameVersionUpgrades="yes"
+            DowngradeErrorMessage="!(loc.DowngradeErrorMessage)" />
 
 
-		<Property Id="WIN10RELEASEID">
-			<RegistrySearch Id="searchId" Root="HKLM" Key="Software\Microsoft\Windows NT\CurrentVersion" Name="ReleaseId" Type="raw" />
-		</Property>
+        <Property Id="WIN10FOUND" Secure="yes">
+            <DirectorySearch Id="searchSystem" Path="[SystemFolder]" Depth="0">
+                <FileSearch Id="searchFile" Name="advapi32.dll" MinVersion="6.3.10000.0" />
+            </DirectorySearch>
+        </Property>
 
-		<Condition Message="!(loc.WindowsClient)">
-			<![CDATA[(MsiNTProductType > 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809)]]>
-		</Condition>
-
-		<Condition Message="!(loc.WindowsServer)">
-			<![CDATA[(MsiNTProductType = 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809) OR (WIN10RELEASEID = 1607)]]>
-		</Condition>
+        <Condition Message="!(loc.WindowsRequired)">
+            <![CDATA[Installed OR (VersionNT64 >= 1000) OR (VersionNT64 = 603 AND WIN10FOUND)]]>
+        </Condition>
 
 
-		<WixVariable Id="WixUILicenseRtf" Value="$(var.CPACK_WIX_LICENSE_RTF)"/>
+        <Property Id="WIN10RELEASEID">
+            <RegistrySearch Id="searchId" Root="HKLM" Key="Software\Microsoft\Windows NT\CurrentVersion" Name="ReleaseId" Type="raw" />
+        </Property>
 
-		<WixVariable Id="CompanyRootKey" Value="Software\$(var.CPACK_PACKAGE_VENDOR)\AusweisApp2"/> <!-- use var.CPACK_PACKAGE_NAME after migrating to new registry key -->
+        <Condition Message="!(loc.WindowsClient)">
+            <![CDATA[(MsiNTProductType > 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809)]]>
+        </Condition>
 
-		<?ifdef CPACK_WIX_PRODUCT_ICON?>
-			<Property Id="ARPPRODUCTICON">ProductIcon.ico</Property>
-			<Icon Id="ProductIcon.ico" SourceFile="$(var.CPACK_WIX_PRODUCT_ICON)"/>
-		<?endif?>
+        <Condition Message="!(loc.WindowsServer)">
+            <![CDATA[(MsiNTProductType = 1) OR Installed OR NOT (WIN10RELEASEID) OR (WIN10RELEASEID >= 1809) OR (WIN10RELEASEID = 1607)]]>
+        </Condition>
 
-		<?ifdef CPACK_WIX_UI_BANNER?>
-			<WixVariable Id="WixUIBannerBmp" Value="$(var.CPACK_WIX_UI_BANNER)"/>
-		<?endif?>
 
-		<?ifdef CPACK_WIX_UI_DIALOG?>
-			<WixVariable Id="WixUIDialogBmp" Value="$(var.CPACK_WIX_UI_DIALOG)"/>
-		<?endif?>
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.CPACK_WIX_LICENSE_RTF)" />
 
-		<!-- ######################### -->
-		<!-- ProductFeature components -->
-		<!-- ######################### -->
-		<FeatureRef Id="ProductFeature">
-			<FeatureRef Id="Executable" />
-			<FeatureRef Id="InstallSettings" />
-			<FeatureRef Id="RuntimeSettings" />
-			<ComponentRef Id="RememberInstallRoot"/>
-		</FeatureRef>
+        <WixVariable Id="CompanyRootKey" Value="Software\$(var.CPACK_PACKAGE_VENDOR)\AusweisApp2" /> <!-- use var.CPACK_PACKAGE_NAME after migrating to new registry key -->
 
-		<UIRef Id="CustomWixUI_InstallDir" />
-	</Product>
+        <?ifdef CPACK_WIX_PRODUCT_ICON?>
+            <Property Id="ARPPRODUCTICON">ProductIcon.ico</Property>
+            <Icon Id="ProductIcon.ico" SourceFile="$(var.CPACK_WIX_PRODUCT_ICON)" />
+        <?endif?>
+
+        <?ifdef CPACK_WIX_UI_BANNER?>
+            <WixVariable Id="WixUIBannerBmp" Value="$(var.CPACK_WIX_UI_BANNER)" />
+        <?endif?>
+
+        <?ifdef CPACK_WIX_UI_DIALOG?>
+            <WixVariable Id="WixUIDialogBmp" Value="$(var.CPACK_WIX_UI_DIALOG)" />
+        <?endif?>
+
+        <Property Id="InstallAction" Value="!(loc.InstallActionInstall)" />
+        <Property Id="AllowStartOnExit" Value="1" />
+
+        <!-- ######################### -->
+        <!-- ProductFeature components -->
+        <!-- ######################### -->
+        <FeatureRef Id="ProductFeature">
+            <FeatureRef Id="Executable" />
+            <FeatureRef Id="InstallSettings" />
+            <FeatureRef Id="RuntimeSettings" />
+            <ComponentRef Id="RememberInstallRoot" />
+        </FeatureRef>
+
+        <UIRef Id="CustomWixUI_InstallDir" />
+    </Product>
 </Wix>

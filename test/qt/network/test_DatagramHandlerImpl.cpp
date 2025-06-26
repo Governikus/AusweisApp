@@ -18,6 +18,7 @@
 	#include <QOperatingSystemVersion>
 #endif
 
+
 using namespace Qt::Literals::StringLiterals;
 using namespace governikus;
 
@@ -52,13 +53,13 @@ class test_DatagramHandlerImpl
 			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
 
 			QVERIFY(socket->isBound());
-			QCOMPARE(logSpy.count(), 1);
-			auto param = logSpy.takeFirst();
+			QVERIFY(!logSpy.isEmpty());
+			auto param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Bound on port:"_L1));
 
 			socket.reset();
-			QCOMPARE(logSpy.count(), 1);
-			param = logSpy.takeFirst();
+			QVERIFY(!logSpy.isEmpty());
+			param = logSpy.takeLast();
 			QVERIFY(param.at(0).toString().contains("Shutdown socket"_L1));
 		}
 
@@ -127,35 +128,63 @@ class test_DatagramHandlerImpl
 			}
 #endif
 
-			QSharedPointer<DatagramHandler> socket(Env::create<DatagramHandler*>());
-			QVERIFY(socket->isBound());
-			QSignalSpy spySocket(socket.data(), &DatagramHandler::fireNewMessage);
+			DatagramHandlerImpl socket;
+			QVERIFY(socket.isBound());
+			QSignalSpy spySocket(&socket, &DatagramHandler::fireNewMessage);
 
 			QUdpSocket clientSocket;
 			clientSocket.setProxy(QNetworkProxy::NoProxy);
 
-			QByteArray data(R"({"key":"value"})");
-			auto written = clientSocket.writeDatagram(data, broadcast ? QHostAddress::Broadcast : QHostAddress::LocalHost, socket.staticCast<DatagramHandlerImpl>()->mSocket->localPort());
-			QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(written, data.size());
-			const auto& msg = spySocket.takeFirst();
-			QCOMPARE(msg.size(), 2);
-			QCOMPARE(msg.at(0).toByteArray(), data);
+			QList<QHostAddress> addresses;
+			if (broadcast)
+			{
+				const auto entries = socket.getAllBroadcastEntries();
+				for (const auto& entry : entries)
+				{
+					const auto& addr = socket.getBroadcastAddress(entry);
+					if (!addr.isNull())
+					{
+						addresses << addr;
+					}
+				}
+			}
+			else
+			{
+				addresses << QHostAddress::LocalHost;
+			}
+
+			for (const auto& address : std::as_const(addresses))
+			{
+				QByteArray data(R"({"key":"value"})");
+				const auto written = clientSocket.writeDatagram(data, address, socket.mSocket->localPort());
+				if (written == -1)
+				{
+					qCritical() << address << clientSocket.error() << clientSocket.errorString();
+				}
+				QTRY_COMPARE(spySocket.count(), 1); // clazy:exclude=qstring-allocations
+				QCOMPARE(written, data.size());
+				const auto& msg = spySocket.takeFirst();
+				QCOMPARE(msg.size(), 2);
+				QCOMPARE(msg.at(0).toByteArray(), data);
+			}
 		}
 
 
 		void sendDatagram_data()
 		{
 			QTest::addColumn<bool>("broadcast");
+			QTest::addColumn<bool>("duplicate");
 
-			QTest::newRow("WithBroadcast") << true;
-			QTest::newRow("WithoutBroadcast") << false;
+			QTest::newRow("WithBroadcast - Unique") << true << false;
+			QTest::newRow("WithBroadcast - Duplicate") << true << true;
+			QTest::newRow("WithoutBroadcast") << false << false;
 		}
 
 
 		void sendDatagram()
 		{
 			QFETCH(bool, broadcast);
+			QFETCH(bool, duplicate);
 
 			QUdpSocket receiver;
 			receiver.setProxy(QNetworkProxy::NoProxy);
@@ -175,7 +204,12 @@ class test_DatagramHandlerImpl
 #ifdef Q_OS_FREEBSD
 				QSKIP("FreeBSD does not like that");
 #endif
-				datagramHandlerImpl->sendToAllAddressEntries(doc.toJson(QJsonDocument::Compact), receiver.localPort());
+				auto entries = datagramHandlerImpl->getAllBroadcastEntries();
+				if (duplicate)
+				{
+					entries << entries.last();
+				}
+				datagramHandlerImpl->sendToAddressEntries(doc.toJson(QJsonDocument::Compact), entries, receiver.localPort());
 			}
 			else
 			{
@@ -183,7 +217,19 @@ class test_DatagramHandlerImpl
 			}
 
 			QTRY_COMPARE(spyReceiver.count(), 1); // clazy:exclude=qstring-allocations
-			QCOMPARE(logSpy.count(), broadcast ? QNetworkInterface::allInterfaces().size() + 1 : 0);
+			if (broadcast)
+			{
+				QVERIFY(logSpy.count() >= (duplicate ? 4 : 2));
+				QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Broadcast Addresses changed...")));
+				if (duplicate)
+				{
+					QVERIFY(TestFileHelper::containsLog(logSpy, QLatin1String("Skipping duplicate broadcasting to")));
+				}
+			}
+			else
+			{
+				QVERIFY(logSpy.isEmpty());
+			}
 
 			QVERIFY(receiver.hasPendingDatagrams());
 			QByteArray msg;

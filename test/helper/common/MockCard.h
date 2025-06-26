@@ -55,6 +55,8 @@ class MockCard
 
 		ResponseApduResult transmit(const CommandApdu& pCmd) override;
 
+		EstablishPaceChannelOutput establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription) override;
+
 		void setConnected(bool pConnected);
 };
 

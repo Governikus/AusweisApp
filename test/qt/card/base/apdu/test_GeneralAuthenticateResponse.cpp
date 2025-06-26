@@ -23,7 +23,7 @@ class test_GeneralAuthenticateResponse
 
 			const GAEncryptedNonceResponse response(apdu);
 
-			QCOMPARE(response.getEncryptedNonce(), QByteArray::fromHex("5391DED7867C2d7DF7F871ED6913C07D"));
+			QCOMPARE(response.getEncryptedNonce(), QByteArray::fromHex("5391DED7867C2d7DF7F871ED6913C07D")); // codespell:ignore
 		}
 
 
@@ -79,11 +79,11 @@ class test_GeneralAuthenticateResponse
 
 		void parseGAMutualAuthenticationResponse_withoutCARs()
 		{
-			const ResponseApdu apdu(QByteArray::fromHex("7C0A8608AFCD013365384BA39000"));
+			const ResponseApdu apdu(QByteArray::fromHex("7C0A8608AFCD013365384BA39000")); // codespell:ignore
 
 			const GAMutualAuthenticationResponse response(apdu);
 
-			QCOMPARE(response.getAuthenticationToken(), QByteArray::fromHex("AFCD013365384BA3"));
+			QCOMPARE(response.getAuthenticationToken(), QByteArray::fromHex("AFCD013365384BA3")); // codespell:ignore
 			QCOMPARE(response.getCarCurr(), QByteArray());
 			QCOMPARE(response.getCarPrev(), QByteArray());
 		}

@@ -14,7 +14,7 @@ Rectangle {
 
 	property alias enableTileStyle: titlePane.visible
 	property NavigationAction navigationAction
-	property var rightAction
+	property Component rightAction
 	property alias showContent: contentLayout.visible
 	property bool showSeparator: false
 	property bool smartEidUsed: false
@@ -27,6 +27,8 @@ Rectangle {
 
 	color: Style.color.background
 	height: Math.ceil((showContent ? contentLayout.implicitHeight : 0) + topSafeAreaMargin + titlePane.shadowHeight)
+
+	onRightActionChanged: rightActionLoader.setRightAction(rightAction)
 
 	Rectangle {
 		id: safeAreaBackground
@@ -93,30 +95,37 @@ Rectangle {
 			GSpacer {
 				Layout.fillWidth: true
 			}
-			Item {
-				id: rightActionStack
+			Loader {
+				id: rightActionLoader
 
-				property var actionItem: root.rightAction
-				property var activeActionItem
+				function setRightAction(pRightAction) {
+					if (SettingsModel.useAnimations) {
+						rightActionStackAnimateOut.newSourceComponent = pRightAction;
+						rightActionStackAnimateOut.start();
+						return;
+					}
+					rightActionLoader.sourceComponent = pRightAction;
+				}
 
 				Layout.alignment: Qt.AlignRight
-				children: activeActionItem ? [activeActionItem] : []
-				implicitHeight: activeActionItem ? activeActionItem.implicitHeight : 0
-				implicitWidth: activeActionItem ? activeActionItem.implicitWidth : 0
-
-				onActionItemChanged: rightActionStackAnimateOut.start()
-				onActiveActionItemChanged: rightActionStackAnimateIn.start()
 
 				PropertyAnimation {
 					id: rightActionStackAnimateOut
 
+					property Component newSourceComponent: null
+
 					duration: Style.animation_duration
 					easing.type: Easing.InCubic
 					property: "opacity"
-					target: rightActionStack
+					target: rightActionLoader.item
 					to: 0
 
-					onStopped: rightActionStack.activeActionItem = rightActionStack.actionItem
+					onStopped: {
+						rightActionLoader.sourceComponent = newSourceComponent;
+						if (newSourceComponent !== null) {
+							rightActionStackAnimateIn.start();
+						}
+					}
 				}
 				PropertyAnimation {
 					id: rightActionStackAnimateIn
@@ -124,7 +133,7 @@ Rectangle {
 					duration: Style.animation_duration
 					easing.type: Easing.OutCubic
 					property: "opacity"
-					target: rightActionStack
+					target: rightActionLoader.item
 					to: 1
 				}
 			}

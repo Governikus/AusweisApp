@@ -23,18 +23,31 @@ Item {
 	required property string modelData
 	readonly property bool nextItemIsHighlighted: index === ListView.view.currentIndex - 1 || index === root.highlightedIndex - 1
 
+	function select() {
+		ListView.view.itemAtIndex(index).forceActiveFocus(Qt.MouseFocusReason);
+		ListView.view.currentIndex = index;
+	}
+
 	Accessible.description: Qt.platform.os === "windows" ? a11yPageIndicator : ""
 	Accessible.focusable: true
 	Accessible.name: {
 		if (Qt.platform.os === "windows") {
 			return sectionName.text;
 		}
+
+		let a11yRole = index === ListView.view.currentIndex ?
 		//: LABEL DESKTOP
-		return sectionName.text + ", " + qsTr("Tab selected") + ", " + a11yPageIndicator;
+		qsTr("Tab selected") :
+		//: LABEL DESKTOP
+		qsTr("Tab");
+
+		return sectionName.text + ", " + a11yRole + ", " + a11yPageIndicator;
 	}
 	Accessible.role: Accessible.PageTab
 	height: sectionName.height + 2 * Style.dimens.pane_padding
 	width: ListView.view.width
+
+	Accessible.onPressAction: select()
 
 	StatefulColors {
 		id: colors
@@ -59,6 +72,7 @@ Item {
 	GText {
 		id: sectionName
 
+		Accessible.ignored: true
 		activeFocusOnTab: false
 		color: colors.textNormal
 		elide: Text.ElideRight
@@ -134,10 +148,7 @@ Item {
 		anchors.fill: parent
 		hoverEnabled: true
 
-		onClicked: {
-			root.ListView.view.itemAtIndex(root.index).forceActiveFocus(Qt.MouseFocusReason);
-			root.ListView.view.currentIndex = root.index;
-		}
+		onClicked: root.select()
 		onContainsMouseChanged: updateHighlight()
 		onPressedChanged: updateHighlight()
 	}

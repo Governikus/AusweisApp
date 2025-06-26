@@ -8,6 +8,7 @@
 
 #include <QWebSocket>
 
+
 using namespace governikus;
 
 
@@ -27,9 +28,6 @@ GlobalStatus IfdConnector::errorToGlobalStatus(IfdErrorCode pErrorCode)
 
 		case IfdErrorCode::NO_SUPPORTED_API_LEVEL:
 			return GlobalStatus::Code::IfdConnector_NoSupportedApiLevel;
-
-		case IfdErrorCode::CONNECTION_TIMEOUT:
-			return GlobalStatus::Code::IfdConnector_ConnectionTimeout;
 
 		case IfdErrorCode::CONNECTION_ERROR:
 			return GlobalStatus::Code::IfdConnector_ConnectionError;

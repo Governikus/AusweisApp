@@ -44,6 +44,16 @@ ResponseApduResult MockCard::transmit(const CommandApdu& pCmd)
 }
 
 
+EstablishPaceChannelOutput MockCard::establishPaceChannel(PacePasswordId pPasswordId, int pPreferredPinLength, const QByteArray& pChat, const QByteArray& pCertificateDescription)
+{
+	Q_UNUSED(pPasswordId)
+	Q_UNUSED(pPreferredPinLength)
+	Q_UNUSED(pChat)
+	Q_UNUSED(pCertificateDescription)
+	return EstablishPaceChannelOutput(CardReturnCode::INVALID_PASSWORD);
+}
+
+
 void MockCard::setConnected(bool pConnected)
 {
 	mConnected = pConnected;

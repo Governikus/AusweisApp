@@ -39,6 +39,18 @@ Q_DECLARE_LOGGING_CATEGORY(qml)
 Q_DECLARE_LOGGING_CATEGORY(feedback)
 
 
+void ApplicationModel::notifyScreenReaderChangedThreadSafe()
+{
+	QMetaObject::invokeMethod(QCoreApplication::instance(), [] {
+				auto* applicationModel = Env::getSingleton<ApplicationModel>();
+				if (applicationModel)
+				{
+					Q_EMIT applicationModel->fireScreenReaderRunningChanged();
+				}
+			}, Qt::QueuedConnection);
+}
+
+
 void ApplicationModel::onStatusChanged(const ReaderManagerPluginInfo& pInfo)
 {
 #if defined(QT_NO_DEBUG) || defined(Q_OS_IOS) || defined(Q_OS_ANDROID) || defined(Q_OS_WINRT)
@@ -62,7 +74,7 @@ ApplicationModel::ApplicationModel()
 	, mFeedback()
 	, mFeedbackTimer()
 	, mIsAppInForeground(true)
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_MACOS)
 	, mPrivate(new Private())
 #endif
 {
@@ -81,6 +93,7 @@ ApplicationModel::ApplicationModel()
 
 	onApplicationStateChanged(QGuiApplication::applicationState());
 	connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, &ApplicationModel::onApplicationStateChanged);
+	connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, this, &ApplicationModel::fireAppAboutToQuit);
 }
 
 
@@ -232,17 +245,6 @@ ApplicationModel::Workflow ApplicationModel::getCurrentWorkflow() const
 }
 
 
-qsizetype ApplicationModel::getAvailableReader() const
-{
-	if (!mContext)
-	{
-		return 0;
-	}
-
-	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter(mContext->getReaderPluginTypes())).size();
-}
-
-
 qsizetype ApplicationModel::getAvailablePcscReader() const
 {
 	if (!mContext)
@@ -251,6 +253,17 @@ qsizetype ApplicationModel::getAvailablePcscReader() const
 	}
 
 	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPluginType::PCSC})).size();
+}
+
+
+qsizetype ApplicationModel::getAvailableRemoteReader() const
+{
+	if (!mContext)
+	{
+		return 0;
+	}
+
+	return Env::getSingleton<ReaderManager>()->getReaderInfos(ReaderFilter({ReaderManagerPluginType::REMOTE_IFD})).size();
 }
 
 

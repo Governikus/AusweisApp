@@ -263,7 +263,7 @@ class Build
 				}
 
 				if(getSendMail())
-					mailer('', true, true)
+					mailer('${DEFAULT_EMAIL_RECIPIENTS}', true, true)
 			}
 		}
 

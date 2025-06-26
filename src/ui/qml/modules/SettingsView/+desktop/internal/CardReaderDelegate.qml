@@ -14,7 +14,7 @@ import Governikus.Type
 RoundedRectangle {
 	id: root
 
-	property int iconHeight: UiPluginModel.scaleFactor * 175
+	property int iconHeight: UiPluginModel.scaleFactor * 105
 	required property string readerHTMLDescription
 	required property url readerImagePath
 	required property bool readerInstalled

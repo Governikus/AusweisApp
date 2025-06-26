@@ -82,7 +82,7 @@ void CertificateDescriptionModel::initModelData(const QSharedPointer<const Certi
 	else if (!termsOfUsage.isEmpty())
 	{
 		//: LABEL ALL_PLATFORMS
-		mData += QPair<QString, QString>(tr("Provider information"), termsOfUsage);
+		mData += QPair<QString, QString>(tr("Provider Information"), termsOfUsage);
 	}
 	if (!getValidity().isEmpty())
 	{

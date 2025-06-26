@@ -19,13 +19,17 @@ class UpdateRetryCounterCommand
 	Q_OBJECT
 	friend class ::test_UpdateRetryCounterCommand;
 
+	private:
+		const QString mSlotHandle;
+
 	protected:
 		void internalExecute() override;
 		~UpdateRetryCounterCommand() override = default;
 
 	public:
-		explicit UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker);
+		explicit UpdateRetryCounterCommand(QSharedPointer<CardConnectionWorker> pCardConnectionWorker, const QString& pSlotHandle);
 
+		[[nodiscard]] const QString& getSlotHandle() const;
 };
 
 } // namespace governikus

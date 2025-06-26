@@ -1,4 +1,4 @@
-From cb9e8979bbadcafda1d1b233a92d489b3138a122 Mon Sep 17 00:00:00 2001
+From 321366e644993a43d9c343930fa6d4994e16101b Mon Sep 17 00:00:00 2001
 From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
 Date: Wed, 25 Dec 2024 13:41:29 +0100
 Subject: Android: Fix freeze on start when the activity was destroyed before

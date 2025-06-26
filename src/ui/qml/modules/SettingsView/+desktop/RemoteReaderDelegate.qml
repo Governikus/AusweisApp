@@ -27,6 +27,17 @@ RoundedRectangle {
 	signal pairDevice(var pDeviceId)
 	signal unpairDevice(var pDeviceId)
 
+	function clickHandler() {
+		if (!ApplicationModel.isScreenReaderRunning) {
+			return;
+		}
+		if (hasCustomContent) {
+			return;
+		}
+
+		(isPaired && !isPairing) ? unpairDevice(deviceId) : pairDevice(deviceId);
+	}
+
 	Accessible.name: {
 		//: INFO DESKTOP Name and status of remote device. %1 is replaced with the name, %2 with the status
 		let msg = qsTr("Smartphone named \"%1\". %2. ").arg(remoteDeviceName).arg(subtext.text);
@@ -43,16 +54,8 @@ RoundedRectangle {
 	implicitHeight: rowLayout.implicitHeight + 2 * rowLayout.anchors.margins
 	implicitWidth: rowLayout.implicitWidth + 2 * rowLayout.anchors.margins
 
-	Keys.onSpacePressed: {
-		if (!ApplicationModel.isScreenReaderRunning) {
-			return;
-		}
-		if (hasCustomContent) {
-			return;
-		}
-
-		(isPaired && !isPairing) ? unpairDevice(deviceId) : pairDevice(deviceId);
-	}
+	Accessible.onPressAction: clickHandler()
+	Keys.onSpacePressed: clickHandler()
 
 	RowLayout {
 		id: rowLayout

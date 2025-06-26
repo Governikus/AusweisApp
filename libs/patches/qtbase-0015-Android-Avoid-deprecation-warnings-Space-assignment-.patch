@@ -1,0 +1,93 @@
+From fe896552bc391ac53e5d211356a3041793811ac2 Mon Sep 17 00:00:00 2001
+From: Lars Schmertmann <Lars.Schmertmann@governikus.de>
+Date: Tue, 20 May 2025 07:59:20 +0200
+Subject: Android: Avoid deprecation warnings (Space-assignment syntax)
+
+Space-assignment syntax in Groovy DSL has been deprecated.
+This is scheduled to be removed in Gradle 10.0.
+
+Pick-to: 6.9
+Change-Id: I2029af79b25351337c32db96053548ce5f4f47ae
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+(cherry picked from commit ed76f816e6aa64ec164857e794d3255616bff7f0)
+---
+ src/android/jar/build.gradle                            | 4 ++--
+ src/android/templates/build.gradle                      | 6 +++---
+ src/network/android/jar/build.gradle                    | 2 +-
+ src/plugins/networkinformation/android/jar/build.gradle | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git x/qtbase/src/android/jar/build.gradle y/qtbase/src/android/jar/build.gradle
+index 9e1e941318bc57d6eda364255690afd4fc65073b..dc0651c8694c05293255f84818bfff6f47669d17 100644
+--- x/qtbase/src/android/jar/build.gradle
++++ y/qtbase/src/android/jar/build.gradle
+@@ -24,7 +24,7 @@ repositories {
+ 
+ android {
+     compileSdk 34
+-    namespace "org.qtproject.qt.android"
++    namespace = "org.qtproject.qt.android"
+ 
+     defaultConfig {
+         minSdkVersion 28
+@@ -46,7 +46,7 @@ android {
+ 
+     android {
+         lintOptions {
+-            abortOnError true
++            abortOnError = true
+         }
+     }
+ }
+diff --git x/qtbase/src/android/templates/build.gradle y/qtbase/src/android/templates/build.gradle
+index 3fb1887da33dbbfce5666600bf2bf7549b2d529f..a39172644b19ecc290a1d2fb9194817e4f942297 100644
+--- x/qtbase/src/android/templates/build.gradle
++++ y/qtbase/src/android/templates/build.gradle
+@@ -37,10 +37,10 @@ android {
+      * Changing them manually might break the compilation!
+      *******************************************************/
+ 
+-    namespace androidPackageName
++    namespace = androidPackageName
+     compileSdkVersion androidCompileSdkVersion
+     buildToolsVersion androidBuildToolsVersion
+-    ndkVersion androidNdkVersion
++    ndkVersion = androidNdkVersion
+ 
+     // Extract native libraries from the APK
+     packagingOptions.jniLibs.useLegacyPackaging true
+@@ -68,7 +68,7 @@ android {
+     }
+ 
+     lintOptions {
+-        abortOnError false
++        abortOnError = false
+     }
+ 
+     // Do not compress Qt binary resources file
+diff --git x/qtbase/src/network/android/jar/build.gradle y/qtbase/src/network/android/jar/build.gradle
+index 7b64b01f3da976883b9a5905dbacfd38d984b089..d129cab68de006a13c28d369e5484a92516a98fa 100644
+--- x/qtbase/src/network/android/jar/build.gradle
++++ y/qtbase/src/network/android/jar/build.gradle
+@@ -45,7 +45,7 @@ android {
+ 
+     android {
+         lintOptions {
+-            abortOnError true
++            abortOnError = true
+         }
+     }
+ }
+diff --git x/qtbase/src/plugins/networkinformation/android/jar/build.gradle y/qtbase/src/plugins/networkinformation/android/jar/build.gradle
+index 7b64b01f3da976883b9a5905dbacfd38d984b089..d129cab68de006a13c28d369e5484a92516a98fa 100644
+--- x/qtbase/src/plugins/networkinformation/android/jar/build.gradle
++++ y/qtbase/src/plugins/networkinformation/android/jar/build.gradle
+@@ -45,7 +45,7 @@ android {
+ 
+     android {
+         lintOptions {
+-            abortOnError true
++            abortOnError = true
+         }
+     }
+ }

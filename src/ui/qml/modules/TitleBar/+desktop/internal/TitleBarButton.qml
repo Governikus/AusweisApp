@@ -85,7 +85,7 @@ Button {
 		}
 	}
 	ToolTip {
-		delay: 500
+		delay: Style.toolTipDelay
 		text: root.text
 		visible: mouseArea.containsMouse
 	}

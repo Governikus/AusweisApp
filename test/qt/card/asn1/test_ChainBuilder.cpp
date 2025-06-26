@@ -19,19 +19,18 @@ class test_ChainBuilder
 
 
 	/*
-	 * Der einfacheren Testbarkeit halber werden Ketten aus QStrings statt
-	 * Zertifikatsketten gebildet.
+	 * For easier testability, chains of QByteArray are created instead of
+	 * certificate chains.
 	 *
-	 * Die QStrings sind jeweils zwei Zeichen lang. Das erste Zeichen entspricht
-	 * dem Issuer, das zweite Zeichen entspricht dem Subject.
-	 * Die Verkettungsvorschrift ist durch die Methode test_ChainBuilder::isChild
-	 * definiert.
+	 * The QByteArray are each two characters long. The first character
+	 * represents the issuer, and the second character represents the subject.
+	 * The chaining rule is defined by the method test_ChainBuilder::isChild.
 	 */
 	static bool isChild(const QByteArray& pChild, const QByteArray& pParent)
 	{
 		if (pChild.at(1) == pChild.at(0))
 		{
-			// selbst signierte Zertifikate haben kein anderes Issuer-Zert
+			// Self-signed certificates do not have an external issuer certificate.
 			return false;
 		}
 		return pChild.at(0) == pParent.at(1);
@@ -124,7 +123,7 @@ class test_ChainBuilder
 		}
 
 
-		void testManyLeafs()
+		void testManyLeaves()
 		{
 			/*
 			 * AA

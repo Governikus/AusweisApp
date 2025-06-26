@@ -29,6 +29,7 @@ class StateEnterPacePasswordIfd
 
 	private Q_SLOTS:
 		void onUserError();
+		void onCardRemoved(const ReaderInfo& pInfo) const;
 
 	public:
 		void onEntry(QEvent* pEvent) override;

@@ -22,7 +22,8 @@ class MockIfdDispatcher
 			ReaderInvalid,
 			ReaderWithoutCard,
 			ReaderWithCard,
-			ReaderWithCardError
+			ReaderWithCardError,
+			ReaderWithCardRemoved
 		};
 
 	private:

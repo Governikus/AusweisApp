@@ -59,7 +59,7 @@ AuthController::AuthController(QSharedPointer<AuthContext> pContext)
 QSharedPointer<WorkflowRequest> AuthController::createWorkflowRequest(const QUrl& pUrl, const QVariant& pData, const AuthContext::BrowserHandler& pBrowserHandler)
 {
 	const auto& handler = [](const QSharedPointer<WorkflowRequest>& pActiveWorkflow, const QSharedPointer<WorkflowRequest>& pWaitingWorkflow){
-				if (QList<Action>{Action::AUTH, Action::SELF, Action::PIN}.contains(pActiveWorkflow->getAction()))
+				if (QList<Action>{Action::AUTH, Action::SELF_AUTH, Action::CHANGE_PIN}.contains(pActiveWorkflow->getAction()))
 				{
 					const auto activeContext = pActiveWorkflow->getContext();
 					if (activeContext->isWorkflowFinished() && pWaitingWorkflow.isNull())

@@ -36,7 +36,7 @@ FlickableSectionPage {
 			Accessible.ignored: tileView.allItemsVisible ? false : index !== tileView.currentIndex
 			Accessible.name: titleText + ". " + qsTr("Item %1 of %2").arg(index + 1).arg(tileView.count) + (tileView.allItemsVisible ? "" : " . " + tileView.scrollHint)
 			activeFocusOnTab: false
-			focusPolicy: Qt.TabFocus
+			focusPolicy: ApplicationModel.isScreenReaderRunning ? Qt.StrongFocus : Qt.TabFocus
 			height: ListView.view.height
 			image: imagePath
 			title: titleText
@@ -50,6 +50,8 @@ FlickableSectionPage {
 			onClicked: root.show(module)
 
 			PointHandler {
+				enabled: !ApplicationModel.isScreenReaderRunning
+
 				onGrabChanged: tileView.focus = false
 			}
 			FocusFrame {

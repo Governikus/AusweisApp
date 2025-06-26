@@ -14,7 +14,8 @@ GLink {
 	enum Action {
 		None,
 		Cancel,
-		Back
+		Back,
+		Close
 	}
 
 	readonly property color pressColor: Qt.darker(Style.color.textTitle.basic, Style.color.highlightDarkerFactor)
@@ -24,9 +25,25 @@ GLink {
 	height: if (parent)
 		parent.height
 	horizontalPadding: 0
-	icon.source: root.type === NavigationAction.Action.Cancel ? "qrc:///images/material_close.svg" : "qrc:///images/material_arrow_back.svg"
+	icon.source: switch (root.type) {
+	case NavigationAction.Action.Cancel:
+	case NavigationAction.Action.Close:
+		return "qrc:///images/material_close.svg";
+	default:
+		return "qrc:///images/material_arrow_back.svg";
+	}
 	iconSize: Style.dimens.small_icon_size * 1.5
-	text: root.type === NavigationAction.Action.Cancel ? qsTr("Cancel") : qsTr("Back")
+	text: switch (root.type) {
+	case NavigationAction.Action.Cancel:
+		//: LABEL DESKTOP
+		return qsTr("Cancel");
+	case NavigationAction.Action.Close:
+		//: LABEL DESKTOP
+		return qsTr("Close");
+	default:
+		//: LABEL DESKTOP
+		return qsTr("Back");
+	}
 	tintIcon: true
 	verticalPadding: 0
 	visible: ApplicationModel.currentWorkflow !== ApplicationModel.Workflow.NONE

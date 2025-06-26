@@ -106,9 +106,9 @@ class test_AppUpdatr
 
 		void setJsonItemField(QJsonDocument& pDocument, const QString& pField, const QString& pValue)
 		{
-			auto itemArray = pDocument.object()["items"_L1].toArray();
+			auto itemArray = pDocument.object().value("items"_L1).toArray();
 			int i = 0;
-			for (auto item : itemArray)
+			for (auto item : std::as_const(itemArray))
 			{
 				QJsonObject itemObject = item.toObject();
 				itemObject[pField] = pValue;
@@ -135,7 +135,7 @@ class test_AppUpdatr
 			const auto platform = "src"_L1;
 #endif
 
-			auto itemArray = pDocument.object()["items"_L1].toArray();
+			const auto itemArray = pDocument.object().value("items"_L1).toArray();
 			for (auto item : itemArray)
 			{
 				QJsonObject itemObject = item.toObject();
@@ -262,7 +262,7 @@ class test_AppUpdatr
 			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Data written to file: .*"_L1));
 			QTest::ignoreMessage(QtDebugMsg, "Verify checksum with algorithm: QCryptographicHash::Sha256");
 			QTest::ignoreMessage(QtDebugMsg, QRegularExpression("Package already exists: .*"_L1));
-			QTest::ignoreMessage(QtDebugMsg, "Re-use valid package...");
+			QTest::ignoreMessage(QtDebugMsg, "Reuse valid package...");
 			QVERIFY(mAppUpdater.downloadUpdate());
 			checkDlResult(spyDownload, GlobalStatus::Code::No_Error);
 

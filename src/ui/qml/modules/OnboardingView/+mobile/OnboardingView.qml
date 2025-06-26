@@ -73,7 +73,7 @@ OnboardingStartView {
 		id: setupInfoView
 
 		MultiInfoView {
-			//: LABEL DESKTOP
+			//: LABEL ANDROID IOS
 			continueButtonText: qsTr("Continue")
 			title: root.title
 
@@ -252,6 +252,25 @@ OnboardingStartView {
 			title: root.title
 			usedInOnboarding: true
 
+			cardNotActivatedDelegate: CardNotActivatedView {
+				continueButtonVisible: true
+				title: root.title
+
+				navigationAction: NavigationAction {
+					action: NavigationAction.Action.Back
+					enabled: false
+				}
+				progress: ProgressTracker {
+					baseProgressTracker: progressTracker
+					currentStage: 2
+					relativeProgress: 1
+				}
+
+				onContinueClicked: {
+					ChangePinModel.continueWorkflow();
+					changePinViewInstance.abortOnboarding = true;
+				}
+			}
 			errorViewDelegate: OnboardingPinErrorView {
 				title: root.title
 

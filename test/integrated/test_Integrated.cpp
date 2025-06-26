@@ -65,7 +65,11 @@ void start_ausweisapp(const char* pParameter)
 
 int main()
 {
-	governikus::QtHooks::init();
+	if (!governikus::QtHooks::init())
+	{
+		std::cout << "Cannot initialize QtHooks" << std::endl;
+		return -2;
+	}
 
 #if defined(GOVERNIKUS_QT)
 	start_ausweisapp(nullptr);

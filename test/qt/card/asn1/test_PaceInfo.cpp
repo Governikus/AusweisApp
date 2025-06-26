@@ -311,7 +311,7 @@ class test_PaceInfo
 		}
 
 
-		void paramterId_data()
+		void parameterId_data()
 		{
 			QTest::addColumn<int>("parameterId");
 			QTest::addColumn<int>("curveNid");
@@ -333,7 +333,7 @@ class test_PaceInfo
 		}
 
 
-		void paramterId()
+		void parameterId()
 		{
 			QFETCH(int, parameterId);
 			QFETCH(int, curveNid);

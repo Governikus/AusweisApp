@@ -261,24 +261,26 @@ class test_StateCheckRefreshAddress
 		{
 			QTest::addColumn<QNetworkReply::NetworkError>("networkError");
 			QTest::addColumn<GlobalStatus::Code>("status");
-			QTest::addColumn<FailureCode::Reason>("failureCode");
+			QTest::addColumn<std::optional<FailureCode>>("failureCode");
 			QTest::addColumn<int>("statusCode");
 			QTest::addColumn<QUrl>("redirectUrl");
 			QTest::addColumn<bool>("developerMode");
 
-			QTest::newRow("http service unavailable") << QNetworkReply::NetworkError::ServiceUnavailableError << GlobalStatus::Code::Network_ServiceUnavailable << FailureCode::Reason::Check_Refresh_Address_Service_Unavailable << 503 << QUrl("http://governikus.com/"_L1) << false;
-			QTest::newRow("http internal server error") << QNetworkReply::NetworkError::InternalServerError << GlobalStatus::Code::Network_ServerError << FailureCode::Reason::Check_Refresh_Address_Server_Error << 500 << QUrl("http://governikus.com/"_L1) << false;
-			QTest::newRow("http not found") << QNetworkReply::NetworkError::ContentNotFoundError << GlobalStatus::Code::Network_ClientError << FailureCode::Reason::Check_Refresh_Address_Client_Error << 404 << QUrl("https://governikus.com/"_L1) << false;
-			QTest::newRow("http other error") << QNetworkReply::NetworkError::ProtocolUnknownError << GlobalStatus::Code::Network_Other_Error << FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error << 304 << QUrl("http://governikus.com/"_L1) << false;
-			QTest::newRow("timeout") << QNetworkReply::NetworkError::TimeoutError << GlobalStatus::Code::Network_TimeOut << FailureCode::Reason::Check_Refresh_Address_Service_Timeout << 2 << QUrl() << false;
-			QTest::newRow("proxy error") << QNetworkReply::NetworkError::ProxyNotFoundError << GlobalStatus::Code::Network_Proxy_Error << FailureCode::Reason::Check_Refresh_Address_Proxy_Error << 0 << QUrl("test"_L1) << false;
-			QTest::newRow("ssl error") << QNetworkReply::NetworkError::SslHandshakeFailedError << GlobalStatus::Code::Network_Ssl_Establishment_Error << FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_After_Reply << 1 << QUrl("https://governikus.com/"_L1) << false;
-			QTest::newRow("other error") << QNetworkReply::NetworkError::OperationCanceledError << GlobalStatus::Code::Network_Other_Error << FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error << 2 << QUrl("https://governikus.com/"_L1) << false;
-			QTest::newRow("no error unexpected status") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Expected_Redirect << FailureCode::Reason::Check_Refresh_Address_Invalid_Http_Response << 2 << QUrl("https://governikus.com/"_L1) << false;
-			QTest::newRow("no error empty url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url << FailureCode::Reason::Check_Refresh_Address_Empty << 302 << QUrl() << false;
-			QTest::newRow("no error invalid url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url << FailureCode::Reason::Check_Refresh_Address_Invalid_Url << 302 << QUrl("://://"_L1) << false;
-			QTest::newRow("no error http") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Invalid_Scheme << FailureCode::Reason::Check_Refresh_Address_No_Https_Scheme << 302 << QUrl("http://governikus.com/"_L1) << false;
-			QTest::newRow("no error http developer mode") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << FailureCode::Reason::Check_Refresh_Address_No_Https_Scheme << 302 << QUrl("http://governikus.com/"_L1) << true;
+			QTest::newRow("no error") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << std::optional<FailureCode>() << 302 << QUrl("https://governikus.com/index.html"_L1) << false;
+			QTest::newRow("no error relative") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << std::optional<FailureCode>() << 302 << QUrl("index.html"_L1) << false;
+			QTest::newRow("http service unavailable") << QNetworkReply::NetworkError::ServiceUnavailableError << GlobalStatus::Code::Network_ServiceUnavailable << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Service_Unavailable) << 503 << QUrl("http://governikus.com/"_L1) << false;
+			QTest::newRow("http internal server error") << QNetworkReply::NetworkError::InternalServerError << GlobalStatus::Code::Network_ServerError << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Server_Error) << 500 << QUrl("http://governikus.com/"_L1) << false;
+			QTest::newRow("http not found") << QNetworkReply::NetworkError::ContentNotFoundError << GlobalStatus::Code::Network_ClientError << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Client_Error) << 404 << QUrl("https://governikus.com/"_L1) << false;
+			QTest::newRow("http other error") << QNetworkReply::NetworkError::ProtocolUnknownError << GlobalStatus::Code::Network_Other_Error << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error) << 304 << QUrl("http://governikus.com/"_L1) << false;
+			QTest::newRow("timeout") << QNetworkReply::NetworkError::TimeoutError << GlobalStatus::Code::Network_TimeOut << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Service_Timeout) << 2 << QUrl() << false;
+			QTest::newRow("proxy error") << QNetworkReply::NetworkError::ProxyNotFoundError << GlobalStatus::Code::Network_Proxy_Error << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Proxy_Error) << 0 << QUrl("test"_L1) << false;
+			QTest::newRow("ssl error") << QNetworkReply::NetworkError::SslHandshakeFailedError << GlobalStatus::Code::Network_Ssl_Establishment_Error << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Fatal_Tls_Error_After_Reply) << 1 << QUrl("https://governikus.com/"_L1) << false;
+			QTest::newRow("other error") << QNetworkReply::NetworkError::OperationCanceledError << GlobalStatus::Code::Network_Other_Error << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Unknown_Network_Error) << 2 << QUrl("https://governikus.com/"_L1) << false;
+			QTest::newRow("no error unexpected status") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Expected_Redirect << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Invalid_Http_Response) << 2 << QUrl("https://governikus.com/"_L1) << false;
+			QTest::newRow("no error empty url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Empty_Redirect_Url << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Empty) << 302 << QUrl() << false;
+			QTest::newRow("no error invalid url") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Malformed_Redirect_Url << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_Invalid_Url) << 302 << QUrl("://://"_L1) << false;
+			QTest::newRow("no error http") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::Workflow_Network_Invalid_Scheme << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_No_Https_Scheme) << 302 << QUrl("http://governikus.com/"_L1) << false;
+			QTest::newRow("no error http developer mode") << QNetworkReply::NetworkError::NoError << GlobalStatus::Code::No_Error << std::optional<FailureCode>(FailureCode::Reason::Check_Refresh_Address_No_Https_Scheme) << 302 << QUrl("http://governikus.com/"_L1) << true;
 		}
 
 
@@ -286,7 +288,7 @@ class test_StateCheckRefreshAddress
 		{
 			QFETCH(QNetworkReply::NetworkError, networkError);
 			QFETCH(GlobalStatus::Code, status);
-			QFETCH(FailureCode::Reason, failureCode);
+			QFETCH(std::optional<FailureCode>, failureCode);
 			QFETCH(int, statusCode);
 			QFETCH(QUrl, redirectUrl);
 			QFETCH(bool, developerMode);
@@ -298,6 +300,7 @@ class test_StateCheckRefreshAddress
 
 			const QByteArray headerName("name");
 			const QByteArray value("value");
+			reply->setRequest(QNetworkRequest(QUrl("https://www.foo.bar/refresh"_L1)));
 			reply->setRawHeader(headerName, value);
 			reply->setAttribute(QNetworkRequest::HttpStatusCodeAttribute, QVariant(statusCode));
 			reply->setAttribute(QNetworkRequest::RedirectionTargetAttribute, QVariant(redirectUrl));

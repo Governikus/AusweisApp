@@ -29,6 +29,7 @@ SETTINGS_NAME(SETTINGS_NAME_AUTO_REDIRECT, "autoRedirect")
 SETTINGS_NAME(SETTINGS_NAME_UI_STARTUP_MODULE, "uiStartupModule")
 SETTINGS_NAME(SETTINGS_NAME_SHOW_ONBOARDING, "showOnboarding")
 SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_TO_CLOSE, "remindToClose")
+SETTINGS_NAME(SETTINGS_NAME_REMIND_USER_OF_AUTO_REDIRECT, "remindOfAutoRedirect")
 SETTINGS_NAME(SETTINGS_NAME_TRANSPORT_PIN_REMINDER, "transportPinReminder")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_OPTIONS, "developerOptions")
 SETTINGS_NAME(SETTINGS_NAME_DEVELOPER_MODE, "developerMode")
@@ -289,6 +290,23 @@ void GeneralSettings::setRemindUserToClose(bool pRemindUser)
 	if (pRemindUser != isRemindUserToClose())
 	{
 		mStore->setValue(SETTINGS_NAME_REMIND_USER_TO_CLOSE(), pRemindUser);
+		save(mStore);
+		Q_EMIT fireSettingsChanged();
+	}
+}
+
+
+bool GeneralSettings::isRemindUserOfAutoRedirect() const
+{
+	return mStore->value(SETTINGS_NAME_REMIND_USER_OF_AUTO_REDIRECT(), true).toBool();
+}
+
+
+void GeneralSettings::setRemindUserOfAutoRedirect(bool pRemindUser)
+{
+	if (pRemindUser != isRemindUserOfAutoRedirect())
+	{
+		mStore->setValue(SETTINGS_NAME_REMIND_USER_OF_AUTO_REDIRECT(), pRemindUser);
 		save(mStore);
 		Q_EMIT fireSettingsChanged();
 	}

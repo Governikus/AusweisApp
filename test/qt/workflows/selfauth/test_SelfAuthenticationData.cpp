@@ -119,7 +119,7 @@ class test_SelfAuthenticationData
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::AcademicTitle), QString());
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::BirthName), QString());
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::DateOfBirth), "1981-06-17+02:00"_L1);
-			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), "FRANKFURT (ODER)"_L1);
+			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfBirth), "FRANKFURT (ODER)"_L1); // codespell:ignore
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceStreet), QStringLiteral("EHM-WELK-STRA\u00dfE 33"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCity), QStringLiteral("L\u00dcBBENAU/SPREEWALD"));
 			QCOMPARE(selfAuthenticationData.getValue(SelfAuthData::PlaceOfResidenceCountry), "D"_L1);

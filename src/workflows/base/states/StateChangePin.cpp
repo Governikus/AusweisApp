@@ -64,8 +64,11 @@ void StateChangePin::onSetEidPinDone(QSharedPointer<BaseCardCommand> pCommand)
 					}
 					else
 					{
-						//: INFO ALL_PLATFORMS The ID card PIN was changed successfully.
-						context->setSuccessMessage(tr("You have successfully changed your ID card PIN."));
+						context->setSuccessMessage(
+								//: INFO ALL_PLATFORMS The ID card PIN was changed successfully.
+								tr("You have successfully changed your ID card PIN.") + QStringLiteral("<br>")
+								//: LABEL DESKTOP
+								+ tr("You may now remove your ID card from the device."));
 					}
 					Q_EMIT fireContinue();
 					return;

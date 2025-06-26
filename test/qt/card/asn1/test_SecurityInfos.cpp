@@ -135,7 +135,7 @@ class test_SecurityInfos
 		}
 
 
-		void testAllPossibleMoibleEIDTypeInfo_data()
+		void testAllPossibleMobileEIDTypeInfo_data()
 		{
 			QTest::addColumn<QByteArray>("hexString");
 			QTest::addColumn<Oid>("expectedOid");
@@ -169,7 +169,7 @@ class test_SecurityInfos
 		}
 
 
-		void testAllPossibleMoibleEIDTypeInfo()
+		void testAllPossibleMobileEIDTypeInfo()
 		{
 			QFETCH(QByteArray, hexString);
 			QFETCH(Oid, expectedOid);

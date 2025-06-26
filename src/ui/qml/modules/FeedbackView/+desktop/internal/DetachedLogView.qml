@@ -237,8 +237,14 @@ Rectangle {
 				topPadding: 0
 			}
 			delegate: LogViewDelegate {
+				required property int index
+
 				font.pixelSize: 0.12 * zoomBox.value
 				width: listView.width - root.spacing
+
+				onActiveFocusChanged: if (activeFocus) {
+					listView.handleItemFocused(index);
+				}
 			}
 
 			Connections {

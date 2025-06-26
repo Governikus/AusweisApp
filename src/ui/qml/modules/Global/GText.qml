@@ -33,7 +33,7 @@ Text {
 	Accessible.role: Style.is_layout_desktop && hasLink ? Accessible.Button : Accessible.StaticText
 	Layout.fillWidth: true
 	Layout.maximumWidth: Math.ceil(implicitWidth)
-	activeFocusOnTab: hasLink || ApplicationModel.isScreenReaderRunning
+	activeFocusOnTab: hasLink || (ApplicationModel.isScreenReaderRunning && !Accessible.ignored)
 	color: textStyle.textColor
 	font.pixelSize: textStyle.textSize
 	font.weight: textStyle.fontWeight

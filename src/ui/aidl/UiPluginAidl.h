@@ -33,7 +33,7 @@ class UiPluginAidl
 
 		static UiPluginAidl* getInstance(bool pBlock = true);
 		[[nodiscard]] bool initialize() override;
-		[[nodiscard]] bool isSuccessfullInitialized() const;
+		[[nodiscard]] bool isSuccessfullyInitialized() const;
 		Q_INVOKABLE void onReceived(const QByteArray& pMessage);
 		bool waitForWorkflowToFinish();
 

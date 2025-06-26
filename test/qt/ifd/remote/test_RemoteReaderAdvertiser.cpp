@@ -11,6 +11,7 @@
 #include <QNetworkProxy>
 #include <QtTest>
 
+
 namespace governikus
 {
 
@@ -36,21 +37,25 @@ class DatagramHandlerMock
 	public:
 		QByteArrayList mList;
 
-		[[nodiscard]] bool isBound() const override;
+		[[nodiscard]] bool isBound() const override
+		{
+			return true;
+		}
 
-		void send(const QByteArray& pData) override
+
+		[[nodiscard]] QList<QNetworkAddressEntry> getAllBroadcastEntries() const override
+		{
+			return QList<QNetworkAddressEntry>();
+		}
+
+
+		void send(const QByteArray& pData, const QList<QNetworkAddressEntry>&) override
 		{
 			mList << pData;
 		}
 
 
 };
-
-
-bool DatagramHandlerMock::isBound() const
-{
-	return true;
-}
 
 
 class test_RemoteReaderAdvertiser
@@ -105,7 +110,7 @@ class test_RemoteReaderAdvertiser
 			QCOMPARE(offerMsg.getIfdId(), ifdId);
 			QCOMPARE(offerMsg.getPort(), port);
 			QCOMPARE(offerMsg.getSupportedApis(), IfdVersion::supported());
-			QCOMPARE(offerMsg.getPairing(), pairing);
+			QCOMPARE(offerMsg.isPairing(), pairing);
 		}
 
 

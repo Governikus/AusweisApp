@@ -1,0 +1,32 @@
+{
+  "version": 6,
+  "include": [
+    "ci.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "ci-formatting",
+      "inherits": "ci-with-libs",
+      "cacheVariables": {
+        "UPDATE_TRANSLATIONS": "ON",
+        "UPDATE_TRANSLATIONS_NO_OBSOLETE": "ON"
+      }
+    },
+    {
+      "name": "ci-translations",
+      "inherits": "ci-formatting",
+      "cacheVariables": {
+        "UPDATE_TRANSLATIONS_ADD_DVCS": "ON"
+      }
+    },
+    {
+      "name": "ci-tools",
+      "inherits": "ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "tools.only": "ON",
+        "CMAKE_CXX_COMPILER_LAUNCHER": null
+      }
+    }
+  ]
+}

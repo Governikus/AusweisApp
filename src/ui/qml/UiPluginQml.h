@@ -44,7 +44,6 @@ class UiPluginQml
 		bool mHighContrastEnabled;
 		bool mDarkMode;
 		bool mShowFocusIndicator;
-		constexpr static qreal DEFAULT_SCALE_FACTOR = 0.6;
 		qreal mScaleFactor;
 		qreal mFontScaleFactor;
 
@@ -52,7 +51,6 @@ class UiPluginQml
 		[[nodiscard]] static QString getOverridePlatform();
 		[[nodiscard]] QQuickWindow* getRootWindow() const;
 		[[nodiscard]] bool isHidden() const;
-		[[nodiscard]] bool showUpdateInformationIfPending();
 		[[nodiscard]] qreal getSystemFontScaleFactor() const;
 		void setFontScaleFactor(qreal pFactor);
 		void setOsDarkMode(bool pState);

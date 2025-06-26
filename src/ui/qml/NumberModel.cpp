@@ -12,6 +12,16 @@
 	#include "context/PersonalizationContext.h"
 #endif
 
+namespace
+{
+QString addBoldFormatting(const QString& inputString)
+{
+	return inputString.arg(QStringLiteral("<b>"), QStringLiteral("</b>"));
+}
+
+
+} // namespace
+
 using namespace governikus;
 
 NumberModel::NumberModel()
@@ -309,19 +319,19 @@ QString NumberModel::getInitialInputError() const
 
 		if (getPasswordType() == PasswordType::CAN && !isCanAllowedMode())
 		{
-			return QStringLiteral("%1<br/><br/>%2").arg(
-					//: INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 1/2
-					tr("<b>An incorrect PIN has been entered 2 times</b> at the last use of your ID card."),
-					//: INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. Part 2/2
-					tr("For a 3rd attempt, the <b>6-digit Card Access Number (CAN)</b> must be entered first. You can find your CAN <b>in the bottom right on the front of your ID card</b>."));
+			return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
+					//: INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 1/2
+					tr("%1An incorrect PIN has been entered 2 times%2 at the last use of your ID card."),
+					//: INFO ALL_PLATFORMS Once per workflow info text shown when an ID card with one PIN attempt left has been detected. %1 + %2 are used to emphasize. Part 2/2
+					tr("For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. You can find your CAN %1in the bottom right on the front of your ID card%2.")));
 		}
 		if (getPasswordType() == PasswordType::PUK)
 		{
-			return QStringLiteral("%1<br/><br/>%2").arg(
-					//: INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 1/2
-					tr("<b>An incorrect PIN has been entered 3 times</b> at the last use of your ID card."),
-					//: INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. Part 2/2
-					tr("Therefor you have to enter the <b>PUK</b> first to <b>unlock the ID card PIN</b>."));
+			return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
+					//: INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 1/2
+					tr("%1An incorrect PIN has been entered 3 times%2 at the last use of your ID card."),
+					//: INFO ALL_PLATFORMS Once per workflow info text shown when a blocked ID card has been detected. %1 + %2 are used to emphasize. Part 2/2
+					tr("Therefore you have to enter the %1PUK%2 first to %1unlock the ID card PIN%2.")));
 		}
 	}
 	return QString();
@@ -368,57 +378,57 @@ QString NumberModel::getInputError() const
 				return QStringLiteral("%1<br/><br/>%2").arg(
 						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. Part 1/2
 						tr("You have entered an incorrect, 5-digit Transport PIN."),
-						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt.Part 2/2
-						tr("You have <b>2 further attempts</b> to enter the correct Transport PIN. "
-						   "The 5-digit Transport PIN may be found on the <b>bottom left of your PIN letter</b>."));
+						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2
+						addBoldFormatting(tr("You have%1 2 further attempts%2 to enter the correct Transport PIN. "
+											 "The 5-digit Transport PIN may be found on the %1bottom left of your PIN letter%2.")));
 			}
 			else if (isSmartCard)
 			{
-				//: INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt.
-				return tr("You have entered an incorrect, 6-digit Smart-eID PIN. You have <b>2 further attempts</b> to enter the correct Smart-eID PIN.");
+				//: INFO ALL_PLATFORMS The wrong Smart-eID PIN was entered on the first attempt. %1 + %2 are used to emphasize.
+				return(tr("You have entered an incorrect, 6-digit Smart-eID PIN. You have%1 2 further attempts%2 to enter the correct Smart-eID PIN."));
 			}
 			else
 			{
 				return QStringLiteral("%1<br/><br/>%2").arg(
 						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 1/2
 						tr("You have entered an incorrect, 6-digit ID card PIN."),
-						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. Part 2/2
-						tr("You have <b>2 further attempts</b> to enter the correct ID card PIN."));
+						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered on the first attempt. %1 + %2 are used to emphasize. Part 2/2
+						addBoldFormatting(tr("You have%1 2 further attempts%2 to enter the correct ID card PIN.")));
 			}
 
 		case CardReturnCode::INVALID_PIN_2:
 			if (isRequestTransportPin)
 			{
-				return QStringLiteral("%1<br/><br/>%2").arg(
-						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2
-						tr("You have entered an <b>incorrect, 5-digit Transport PIN 2 times</b>."),
-						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2
-						tr("For a 3rd attempt, the <b>6-digit Card Access Number (CAN)</b> must be entered first. "
-						   "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
+				return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
+						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2
+						tr("You have entered an %1incorrect, 5-digit Transport PIN 2 times%2."),
+						//: INFO ALL_PLATFORMS The wrong Transport PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2
+						tr("For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. "
+						   "You can find your CAN in the %1bottom right on the front of your ID card%2.")));
 
 			}
 			else if (isSmartCard)
 			{
-				//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID.
-				return tr("You have entered an <b>incorrect, 6-digit Smart-eID PIN 2 times</b>. "
-						  "After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again.");
+				//: INFO ANDROID IOS The wrong Smart-eID PIN was entered twice, a 3rd wrong attempt could invalidate the Smart-eID. %1 + %2 are used to emphasize.
+				return addBoldFormatting(tr("You have entered an %1incorrect, 6-digit Smart-eID PIN 2 times%2. "
+											"After the next failed attempt you will no longer be able to use your Smart-eID and will need to set it up again."));
 			}
 			else
 			{
-				return QStringLiteral("%1<br/><br/>%2").arg(
-						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 1/2
-						tr("You have entered an <b>incorrect, 6-digit ID card PIN 2 times</b>."),
-						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. Part 2/2
-						tr("For a 3rd attempt, the <b>6-digit Card Access Number (CAN)</b> must be entered first. "
-						   "You can find your CAN in the <b>bottom right on the front of your ID card</b>."));
+				return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
+						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 1/2
+						tr("You have entered an %1incorrect, 6-digit ID card PIN 2 times%2."),
+						//: INFO ALL_PLATFORMS The wrong ID card PIN was entered twice, the next attempt requires the CAN for additional verification. %1 + %2 are used to emphasize. Part 2/2
+						tr("For a 3rd attempt, the%1 6-digit Card Access Number (CAN)%2 must be entered first. "
+						   "You can find your CAN in the %1bottom right on the front of your ID card%2.")));
 			}
 
 		case CardReturnCode::INVALID_PIN_3:
 			if (isRequestTransportPin)
 			{
-				//: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK.
-				return tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your <b>Transport PIN is now blocked</b>. "
-						  "To remove the block, the <b>10-digit PUK</b> must be entered first.");
+				//: INFO ALL_PLATFORMS The Transport PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. %1 + %2 are used to emphasize.
+				return addBoldFormatting(tr("You have entered an incorrect, 5-digit Transport PIN 3 times, your %1Transport PIN is now blocked%2. "
+											"To remove the block, the%1 10-digit PUK%2 must be entered first."));
 			}
 			else if (isSmartCard)
 			{
@@ -429,18 +439,18 @@ QString NumberModel::getInputError() const
 			}
 			else
 			{
-				return QStringLiteral("%1<br/><br/>%2").arg(
+				return addBoldFormatting(QStringLiteral("%1<br/><br/>%2").arg(
 						//: INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 1/2
-						tr("You have entered an incorrect, 6-digit ID card PIN 3 times. Your <b>ID card PIN is now blocked</b>."),
+						tr("You have entered an incorrect, 6-digit ID card PIN 3 times. Your %1ID card PIN is now blocked%2."),
 						//: INFO ALL_PLATFORMS The ID card PIN was entered wrongfully three times, the ID card needs to be unlocked using the PUK. Part 2/2
-						tr("To remove the block, the <b>10-digit PUK</b> must be entered first. "
-						   "You can find the PUK in the bottom <b>right next</b> to the Transport PIN in the <b>authority's letter</b>."));
+						tr("To remove the block, the%1 10-digit PUK%2 must be entered first. "
+						   "You can find the PUK in the bottom %1right next%2 to the Transport PIN in the %1authority's letter%2.")));
 			}
 
 		case CardReturnCode::INVALID_CAN:
-			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again.
-			return tr("You have entered an <b>incorrect Card Access Number (CAN)</b>. Please try again. "
-					  "You can find your CAN in the <b>bottom right on the front of your ID card</b>.");
+			//: INFO ALL_PLATFORMS The CAN was entered wrongfully and needs to be supplied again. %1 + %2 are used to emphasize.
+			return addBoldFormatting(tr("You have entered an %1incorrect Card Access Number (CAN)%2. Please try again. "
+										"You can find your CAN in the %1bottom right on the front of your ID card%2."));
 
 		case CardReturnCode::INVALID_PUK:
 			//: INFO ALL_PLATFORMS The PUK entered wrongfully and needs to be supplied again.

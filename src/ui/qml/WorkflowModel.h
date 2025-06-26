@@ -49,6 +49,8 @@ class WorkflowModel
 	Q_PROPERTY(bool isCurrentSmartCardAllowed READ isCurrentSmartCardAllowed NOTIFY fireIsCurrentSmartCardAllowedChanged)
 	Q_PROPERTY(QString eidTypeMismatchError READ eidTypeMismatchError NOTIFY fireEidTypeMismatchErrorChanged)
 	Q_PROPERTY(bool hasNextWorkflowPending READ getNextWorkflowPending NOTIFY fireNextWorkflowPendingChanged)
+	Q_PROPERTY(governikus::EnumGlobalStatusCode::GlobalStatusCode statusCode READ getStatusCode NOTIFY fireResultChanged)
+	Q_PROPERTY(QString statusCodeDisplayString READ getStatusCodeDisplayString NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintText READ getStatusHintText NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintTitle READ getStatusHintTitle NOTIFY fireResultChanged)
 	Q_PROPERTY(QString statusHintActionText READ getStatusHintActionText NOTIFY fireResultChanged)
@@ -95,6 +97,7 @@ class WorkflowModel
 		[[nodiscard]] bool getNextWorkflowPending() const;
 
 		[[nodiscard]] GlobalStatus::Code getStatusCode() const;
+		[[nodiscard]] QString getStatusCodeDisplayString() const;
 		[[nodiscard]] virtual GAnimation getStatusCodeAnimation() const;
 
 		[[nodiscard]] QString getStatusHintText() const;

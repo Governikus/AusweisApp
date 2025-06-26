@@ -12,6 +12,7 @@ TitleBarAction {
 	Accessible.name: text
 	icon.source: {
 		switch (root.navAction) {
+		case NavigationAction.Action.Close:
 		case NavigationAction.Action.Cancel:
 			return "qrc:///images/material_close.svg";
 		case NavigationAction.Action.Back:
@@ -22,11 +23,14 @@ TitleBarAction {
 	}
 	text: {
 		switch (root.navAction) {
-		//: LABEL ANDROID IOS
+		case NavigationAction.Action.Close:
+			//: LABEL ANDROID IOS
+			return qsTr("Close");
 		case NavigationAction.Action.Cancel:
+			//: LABEL ANDROID IOS
 			return qsTr("Cancel");
-		//: LABEL ANDROID IOS
 		case NavigationAction.Action.Back:
+			//: LABEL ANDROID IOS
 			return qsTr("Back");
 		default:
 			return "";

@@ -204,6 +204,35 @@ class test_WorkflowModel
 		}
 
 
+		void test_getStatusCodeDisplayString_data()
+		{
+			QTest::addColumn<QSharedPointer<WorkflowContext>>("context");
+			QTest::addColumn<GlobalStatus::Code>("statusCode");
+			QTest::addColumn<QString>("result");
+
+			QTest::addRow("No context") << QSharedPointer<WorkflowContext>(nullptr) << GlobalStatus::Code::No_Error << "Error code: Unknown_Error";
+			QTest::addRow("Any error") << QSharedPointer<WorkflowContext>(new TestWorkflowContext()) << GlobalStatus::Code::Card_Communication_Error << "Error code: Card_Communication_Error";
+			QTest::addRow("No error") << QSharedPointer<WorkflowContext>(new TestWorkflowContext()) << GlobalStatus::Code::No_Error << "Error code: No_Error";
+		}
+
+
+		void test_getStatusCodeDisplayString()
+		{
+			QFETCH(QSharedPointer<WorkflowContext>, context);
+			QFETCH(GlobalStatus::Code, statusCode);
+			QFETCH(QString, result);
+
+			auto* const model = Env::getSingleton<WorkflowModel>();
+			if (context)
+			{
+				context->setStatus(GlobalStatus(statusCode));
+			}
+			model->resetWorkflowContext(context);
+
+			QCOMPARE(model->getStatusCodeDisplayString(), result);
+		}
+
+
 };
 
 QTEST_MAIN(test_WorkflowModel)

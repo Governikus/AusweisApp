@@ -43,7 +43,8 @@ class test_UiPluginWebService
 
 		bool containsHeader(const QSharedPointer<QNetworkReply>& pReply, QByteArrayView pHeader)
 		{
-			for (const QByteArray& header : pReply->rawHeaderList())
+			const auto& list = pReply->rawHeaderList();
+			for (const QByteArray& header : list)
 			{
 				if (header.toLower() == pHeader)
 				{
@@ -349,7 +350,7 @@ class test_UiPluginWebService
 			QTest::newRow("timeout") << 0 << static_cast<int>(UiPluginWebService::ExistingAppResult::SHOWUI_TIMEOUT);
 			QTest::newRow("no-proxy") << 200 << static_cast<int>(UiPluginWebService::ExistingAppResult::SHOWUI_SUCCEED);
 			QTest::newRow("proxy-failed") << 502 << static_cast<int>(UiPluginWebService::ExistingAppResult::REBIND_FAILED);
-			QTest::newRow("proxy-succedd") << 502 << static_cast<int>(UiPluginWebService::ExistingAppResult::REBIND_SUCCEED);
+			QTest::newRow("proxy-succeeded") << 502 << static_cast<int>(UiPluginWebService::ExistingAppResult::REBIND_SUCCEED);
 		}
 
 

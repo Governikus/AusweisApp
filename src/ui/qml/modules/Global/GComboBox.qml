@@ -36,6 +36,7 @@ ComboBox {
 		radius: root.radius
 	}
 	contentItem: GText {
+		Accessible.ignored: true
 		activeFocusOnTab: false
 		elide: Text.ElideRight
 		font.pixelSize: root.font.pixelSize

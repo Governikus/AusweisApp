@@ -56,16 +56,9 @@ Control {
 		echoField.remove(echoField.length - 1, echoField.length);
 	}
 
-	Accessible.name: (eye.activated ?
-		//: LABEL DESKTOP Screenreader text for the password field
-		qsTr("The number is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
-		//: LABEL DESKTOP Screenreader text for the password field
-		qsTr("The number is hidden.")) + (text === undefined ? " " + passwordState : "")
-	Accessible.role: Accessible.StaticText
 	Layout.maximumWidth: contentItem.Layout.maximumWidth + leftPadding + rightPadding
 	Layout.minimumWidth: contentItem.Layout.minimumWidth + leftPadding + rightPadding
 	Layout.preferredWidth: implicitWidth
-	activeFocusOnTab: true
 
 	contentItem: RowLayout {
 		id: layout
@@ -78,9 +71,17 @@ Control {
 
 			readonly property int markerWidth: Math.ceil(fontMetrics.averageCharacterWidth * 1.4)
 
+			Accessible.focusable: true
+			Accessible.name: (eye.activated ?
+				//: LABEL DESKTOP Screenreader text for the password field
+				qsTr("The number is visible. Digits entered so far: %1").arg(root.number.split("").join(" ")) :
+				//: LABEL DESKTOP Screenreader text for the password field
+				qsTr("The number is hidden.")) + (root.text === undefined ? " " + root.passwordState : "")
+			Accessible.role: Accessible.StaticText
 			Layout.maximumWidth: Layout.preferredWidth
 			Layout.minimumWidth: markerWidth
 			Layout.preferredWidth: markerWidth + (markerWidth + columnSpacing) * Math.max(5, root.passwordLength - 1)
+			activeFocusOnTab: true
 			columnSpacing: Style.is_layout_desktop ? Style.dimens.pane_spacing : 5
 			columns: Math.max(1, Math.min(1 + (width - markerWidth) / (markerWidth + columnSpacing), root.passwordLength))
 			rowSpacing: columnSpacing
@@ -107,7 +108,7 @@ Control {
 					verticalAlignment: Text.AlignTop
 
 					Rectangle {
-						readonly property int normalHeight: Style.is_layout_desktop ? Math.max(UiPluginModel.scaleFactor * 4, 1) : 1
+						readonly property int normalHeight: Style.is_layout_desktop ? Style.dimens.border_width * 2 : 1
 
 						color: parent.color
 						height: digit.index === root.number.length ? normalHeight * 3 : normalHeight
@@ -174,7 +175,7 @@ Control {
 	FontMetrics {
 		id: fontMetrics
 
-		font.pixelSize: Style.is_layout_desktop ? UiPluginModel.scaleFactor * 50 : 24
+		font.pixelSize: Style.is_layout_desktop ? UiPluginModel.scaleFactor * 30 : 24
 		font.weight: Font.Bold
 	}
 	TextInput {
@@ -189,6 +190,7 @@ Control {
 	}
 	FocusFrame {
 		framee: layout
+		scope: grid
 		z: 1
 
 		MouseArea {

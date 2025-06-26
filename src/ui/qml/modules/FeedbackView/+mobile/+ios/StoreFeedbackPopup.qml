@@ -5,6 +5,8 @@ import QtQuick
 import Governikus.Type
 
 Item {
+	function close() {
+	}
 	function open() {
 		ApplicationModel.showAppStoreRatingDialog();
 	}

@@ -14,7 +14,7 @@ RemoteDeviceModelEntry::RemoteDeviceModelEntry(const QSharedPointer<IfdListEntry
 	: mDeviceName(RemoteServiceSettings::escapeDeviceName(pListEntry->getIfdDescriptor().getIfdName()))
 	, mId(pListEntry->getIfdDescriptor().getIfdId())
 	, mPaired(false)
-	, mIsPairing(pListEntry->getIfdDescriptor().isPairingAnnounced())
+	, mIsPairing(pListEntry->getIfdDescriptor().isPairing())
 	, mNetworkVisible(false)
 	, mConnected(false)
 	, mSupported(pListEntry->getIfdDescriptor().isSupported())

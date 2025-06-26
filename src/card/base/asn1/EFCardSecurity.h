@@ -67,7 +67,7 @@ namespace governikus
  *      sid SignerIdentifier,
  *      digestAlgorithm DigestAlgorithmIdentifier,
  *      signedAttrs [0] IMPLICIT SignedAttributes OPTIONAL,
- *      signatureAlgoritm SignatureAlgorithmIdentifier,
+ *      signatureAlgorithm SignatureAlgorithmIdentifier,
  *      signature SignatureValue,
  *      unsignedAttrs [1] IMPLICIT UnsignedAttributes OPTIONAL
  * }

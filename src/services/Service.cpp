@@ -77,13 +77,13 @@ void Service::onReaderUpdateFinished()
 
 void Service::onAppcastFinished(bool pUpdateAvailable, const GlobalStatus& pError)
 {
-	Q_EMIT fireAppcastFinished(pUpdateAvailable);
-
 	if (pUpdateAvailable && !pError.isError())
 	{
 		const auto& updateData = Env::getSingleton<AppUpdater>()->getUpdateData();
 		Env::getSingleton<ReleaseInformationConfiguration>()->setUpdateVersion(VersionNumber(updateData.getVersion()));
 	}
+
+	Q_EMIT fireAppcastFinished(pUpdateAvailable);
 
 	if (pError.isNoError() || pError.getStatusCode() == GlobalStatus::Code::Downloader_Missing_Platform)
 	{

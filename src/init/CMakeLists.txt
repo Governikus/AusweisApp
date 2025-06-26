@@ -5,7 +5,9 @@
 ADD_PLATFORM_LIBRARY(AusweisAppInit)
 
 target_link_libraries(AusweisAppInit ${Qt}::Core OpenSSL::Crypto AusweisAppGlobal AusweisAppCore)
-target_link_libraries(AusweisAppInit ${Qt}::CorePrivate)
+if(ANDROID)
+	target_link_libraries(AusweisAppInit ${Qt}::CorePrivate)
+endif()
 
 if(NOT INTEGRATED_SDK)
 	target_link_libraries(AusweisAppInit ${Qt}::Gui) # QGuiApplication

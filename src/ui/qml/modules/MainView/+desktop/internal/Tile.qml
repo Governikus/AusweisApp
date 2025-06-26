@@ -21,8 +21,6 @@ AbstractButton {
 	padding: 2 * Style.dimens.pane_padding
 
 	background: GPaneBackground {
-		id: pane
-
 		border.color: colors.paneBorder
 		color: colors.paneBackground
 		opacity: SettingsModel.showBetaTesting ? 0.9 : 1.0
@@ -37,15 +35,12 @@ AbstractButton {
 		spacing: Style.dimens.pane_spacing
 
 		TintableIcon {
-			id: image
-
 			source: root.icon.source
 			sourceSize.height: Style.dimens.huge_icon_size
 			tintColor: Style.color.textTitle.checked
 		}
 		GText {
-			id: label
-
+			Accessible.ignored: true
 			activeFocusOnTab: false
 			color: root.activeFocus && UiPluginModel.showFocusIndicator ? Style.color.textTitle.checked : Style.color.textTitle.basic
 			horizontalAlignment: Text.AlignLeft

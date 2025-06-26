@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2020-2025 Governikus GmbH & Co. KG, Germany
  */
+
 import QtQuick
 import QtQuick.Controls
 import Governikus.Global
@@ -14,13 +15,17 @@ ProgressBar {
 	readonly property alias effectiveVisualPosition: bar.mutableVisualPosition
 	property alias text: progressText.text
 
-	Accessible.name: qsTr("%1 percent done").arg(value)
+	signal requestA11yUpdate(int pValue)
+
+	Accessible.focusable: true
 	Accessible.role: Accessible.ProgressBar
+	activeFocusOnTab: ApplicationModel.isScreenReaderRunning
 	background: null
 	from: 0
 	to: 100
 
 	contentItem: Rectangle {
+		Accessible.ignored: true
 		border.color: Style.color.control.border.basic
 		border.width: Style.dimens.progress_bar_border
 		color: Style.color.background
@@ -55,6 +60,7 @@ ProgressBar {
 		GText {
 			id: progressText
 
+			activeFocusOnTab: false
 			color: Style.color.progressbar_text
 			elide: Text.ElideMiddle
 			font.weight: Font.Bold
@@ -66,6 +72,19 @@ ProgressBar {
 				right: parent.right
 				verticalCenter: parent.verticalCenter
 			}
+		}
+	}
+
+	onActiveFocusChanged: if (activeFocus) {
+		requestA11yUpdate(value);
+	}
+	onRequestA11yUpdate: pValue => Accessible.name = qsTr("%1 percent done").arg(pValue)
+	onValueChanged: {
+		if (value === to || Qt.platform.os === "android" || Qt.platform.os === "ios") {
+			requestA11yUpdate(value);
+		}
+		if (value === to && activeFocus && Qt.platform.os === "windows") {
+			GAccessible.announce(root, Accessible.name);
 		}
 	}
 

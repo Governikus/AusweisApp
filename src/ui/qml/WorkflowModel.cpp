@@ -271,6 +271,13 @@ GlobalStatus::Code WorkflowModel::getStatusCode() const
 }
 
 
+QString WorkflowModel::getStatusCodeDisplayString() const
+{
+	//: LABEL ALL_PLATFORMS
+	return tr("Error code: %1").arg(getEnumName(getStatusCode()));
+}
+
+
 GAnimation WorkflowModel::getStatusCodeAnimation() const
 {
 	switch (getStatusCode())

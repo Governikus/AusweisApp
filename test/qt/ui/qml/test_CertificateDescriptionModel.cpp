@@ -63,7 +63,7 @@ class test_CertificateDescriptionModel
 			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus GmbH & Co. KG\nhttps://test.governikus-eid.de"));
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), "Certificate issuer"_L1);
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), QStringLiteral("Governikus Test DVCA\nhttp://www.governikus.de"));
-			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider information"_L1);
+			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider Information"_L1);
 			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::TEXT), termsOfUsage);
 			QCOMPARE(mModel->data(mModel->index(3), CertificateDescriptionModel::UserRoles::LABEL), "Validity"_L1);
 			QCOMPARE(spy.count(), 1);
@@ -118,7 +118,7 @@ class test_CertificateDescriptionModel
 			QCOMPARE(mModel->data(mModel->index(0), CertificateDescriptionModel::UserRoles::TEXT), "Gesamtverband der deutschen Versicherungswirtschaft e.V.\n"_L1);
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::LABEL), "Certificate issuer"_L1);
 			QCOMPARE(mModel->data(mModel->index(1), CertificateDescriptionModel::UserRoles::TEXT), "D-Trust GmbH\n"_L1);
-			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider information"_L1);
+			QCOMPARE(mModel->data(mModel->index(2), CertificateDescriptionModel::UserRoles::LABEL), "Provider Information"_L1);
 		}
 
 

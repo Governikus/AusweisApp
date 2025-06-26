@@ -17,6 +17,18 @@ ApplicationWindow {
 	property var feedbackPopup: null
 	readonly property Navigation navigationInstance: navigation
 
+	function closeFeedbackPopup() {
+		if (feedbackPopup) {
+			feedbackPopup.close();
+			feedbackPopup.destroy();
+			feedbackPopup = null;
+		}
+	}
+	function closeOpenPopups() {
+		closeFeedbackPopup();
+		feedback.close();
+	}
+
 	flags: Qt.platform.os === "ios" ? Qt.Window | Qt.MaximizeUsingFullscreenGeometryHint : Qt.Window
 	visible: true
 
@@ -112,6 +124,7 @@ ApplicationWindow {
 				navigation.show(UiModule.HELP);
 				break;
 			case UiModule.IDENTIFY:
+				root.closeOpenPopups();
 				if (ApplicationModel.currentWorkflow === ApplicationModel.Workflow.NONE) {
 					navigation.show(UiModule.SELF_AUTHENTICATION);
 					break;
@@ -165,11 +178,7 @@ ApplicationWindow {
 	}
 	Connections {
 		function onFireFeedbackChanged() {
-			if (root.feedbackPopup) {
-				root.feedbackPopup.close();
-				root.feedbackPopup.destroy();
-				root.feedbackPopup = null;
-			}
+			root.closeFeedbackPopup();
 			if (ApplicationModel.feedback !== "") {
 				root.feedbackPopup = toast.createObject(root, {
 					text: ApplicationModel.feedback

@@ -78,7 +78,7 @@ UiPluginAidl* UiPluginAidl::getInstance(bool pBlock)
 }
 
 
-bool UiPluginAidl::isSuccessfullInitialized() const
+bool UiPluginAidl::isSuccessfullyInitialized() const
 {
 	return mJson;
 }
@@ -172,7 +172,7 @@ JNIEXPORT jstring JNICALL Java_com_governikus_ausweisapp2_AidlBinder_resetValidS
 	Q_UNUSED(pObj)
 
 	UiPluginAidl* plugin = UiPluginAidl::getInstance();
-	if (!plugin->isSuccessfullInitialized())
+	if (!plugin->isSuccessfullyInitialized())
 	{
 		qCCritical(aidl) << "Cannot call AIDL plugin";
 		return pEnv->NewStringUTF("");
@@ -204,7 +204,7 @@ JNIEXPORT jboolean JNICALL Java_com_governikus_ausweisapp2_AidlBinder_startReade
 	Q_UNUSED(pObj)
 
 	UiPluginAidl* plugin = UiPluginAidl::getInstance();
-	if (!plugin->isSuccessfullInitialized())
+	if (!plugin->isSuccessfullyInitialized())
 	{
 		qCCritical(aidl) << "Cannot call AIDL plugin";
 		return false;
@@ -224,7 +224,7 @@ JNIEXPORT void JNICALL Java_com_governikus_ausweisapp2_AidlBinder_aidlSend(JNIEn
 	pEnv->ReleaseStringUTFChars(pJson, nativeString);
 
 	UiPluginAidl* plugin = UiPluginAidl::getInstance();
-	if (!plugin->isSuccessfullInitialized())
+	if (!plugin->isSuccessfullyInitialized())
 	{
 		qCCritical(aidl) << "Cannot call AIDL plugin";
 		return;

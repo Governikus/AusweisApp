@@ -10,7 +10,15 @@ endfunction()
 
 
 function(GET_TEST_CMDLINE cmdline testname)
-	set(${cmdline} ${PLATFORM} -v2 -o ${CMAKE_CURRENT_BINARY_DIR}/results.${testname}.log.xml,xml -o -,txt PARENT_SCOPE)
+	if(DEFINED ENV{GITLAB_CI} AND (GOVERNIKUS_QT
+			OR QT_VERSION VERSION_GREATER_EQUAL "6.9.1"
+			OR (QT_VERSION VERSION_GREATER_EQUAL "6.8.4" AND QT_VERSION VERSION_LESS "6.9")))
+		set(ci_output -o ${CMAKE_CURRENT_BINARY_DIR}/results.${testname}.junit.xml,junitxml)
+	elseif(DEFINED ENV{JENKINS_HOME})
+		set(ci_output -o ${CMAKE_CURRENT_BINARY_DIR}/results.${testname}.log.xml,xml)
+	endif()
+
+	set(${cmdline} ${PLATFORM} -v2 -o -,txt ${ci_output} PARENT_SCOPE)
 endfunction()
 
 function(GET_TEST_ENV testenv testname)

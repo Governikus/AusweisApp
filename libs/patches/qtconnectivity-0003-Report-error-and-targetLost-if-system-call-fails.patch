@@ -1,0 +1,70 @@
+From 6a189f22b436b3e547b5752293a81ed66ac09c3e Mon Sep 17 00:00:00 2001
+From: Jan Moeller <Jan.Moeller@governikus.de>
+Date: Wed, 30 Apr 2025 09:17:16 +0200
+Subject: Report error and targetLost if system call fails
+
+The call to getMaxTransceiveLength() and isConnected() might fail if
+the card was lost in the meantime. Especially Samsung smartphones seem
+to not communicate the loss right away.
+Consequently a Java exception is thrown:
+
+java.lang.SecurityException: Permission Denial: Tag ( ID: 08 B1 F8 BA ) is out of date
+	at android.nfc.Tag.getTagService(Tag.java:382)
+	at android.nfc.tech.BasicTagTechnology.getMaxTransceiveLengthInternal(BasicTagTechnology.java:138)
+	at android.nfc.tech.IsoDep.getMaxTransceiveLength(IsoDep.java:183)
+
+Permission Denial: Tag ( ID: 08 B1 F8 BA ) is out of date
+	at android.nfc.Tag.getTagService(Tag.java:382)
+	at android.nfc.tech.BasicTagTechnology.isConnected(BasicTagTechnology.java:63)
+	at android.nfc.tech.IsoDep.isConnected(IsoDep.java:40)
+
+If this occurs, it seems safe to assume that the card is gone and the
+corresponding error and targetLost should be reported.
+
+Fixes: QTBUG-136506
+Pick-to: 6.10 6.9
+Change-Id: Ie6432aa9a1e4136f96463311312a1a065484111e
+Reviewed-by: Assam Boudjelthia <assam.boudjelthia@qt.io>
+Reviewed-by: Ivan Solovev <ivan.solovev@qt.io>
+(cherry picked from 7d2ac27c1844cfd954827771f2aa8013c9e9f4a7)
+---
+ src/nfc/qnearfieldtarget_android.cpp | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+index 88155fa376496b7f949bd5a6ca0798d8ef871325..e2d2e6151af07c7ac39374dca683c10ddae02694 100644
+--- x/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
++++ y/qtconnectivity/src/nfc/qnearfieldtarget_android.cpp
+@@ -160,7 +160,19 @@ int QNearFieldTargetPrivateImpl::maxCommandLength() const
+ 
+ QNearFieldTarget::RequestId QNearFieldTargetPrivateImpl::sendCommand(const QByteArray &command)
+ {
+-    if (command.size() == 0 || command.size() > maxCommandLength()) {
++    const int maxLength = maxCommandLength();
++    if (maxLength == 0) {
++        // Similar to the handling of "transceive" below, some devices (especially Samsung)
++        // fail to report a lost card right away but consider it still present.
++        // Thus, checkIsTargetLost() does not emit the targetLost signal. When actually
++        // trying to communicate with the alleged card, the JNI call will fail with
++        // an SecurityException, indicating that the card was, in fact, lost before.
++        handleTargetLost();
++        Q_EMIT error(QNearFieldTarget::ConnectionError, QNearFieldTarget::RequestId());
++        return QNearFieldTarget::RequestId();
++    }
++
++    if (command.size() == 0 || command.size() > maxLength) {
+         Q_EMIT error(QNearFieldTarget::InvalidParametersError, QNearFieldTarget::RequestId());
+         return QNearFieldTarget::RequestId();
+     }
+@@ -447,8 +459,10 @@ bool QNearFieldTargetPrivateImpl::connect()
+     bool connected = false;
+     if (methodId)
+         connected = env->CallBooleanMethod(tagTech.object(), methodId);
+-    if (!methodId || env.checkAndClearExceptions())
++    if (!methodId || env.checkAndClearExceptions()) {
++        handleTargetLost();
+         return false;
++    }
+ 
+     if (connected)
+         return true;

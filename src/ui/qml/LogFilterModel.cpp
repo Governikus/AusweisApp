@@ -12,16 +12,34 @@ using namespace governikus;
 
 void LogFilterModel::onLevelsChanged()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	beginFilterChange();
+#endif
+
 	mSelectedLevels.intersect(Env::getSingleton<LogModel>()->getLevels());
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	endFilterChange();
+#else
 	invalidateFilter();
+#endif
 	Q_EMIT fireLevelsChanged();
 }
 
 
 void LogFilterModel::onCategoriesChanged()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	beginFilterChange();
+#endif
+
 	mSelectedCategories.intersect(Env::getSingleton<LogModel>()->getCategories());
+
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	endFilterChange();
+#else
 	invalidateFilter();
+#endif
 	Q_EMIT fireCategoriesChanged();
 }
 
@@ -93,6 +111,10 @@ QStringList LogFilterModel::getSelectedCategories() const
 
 void LogFilterModel::configureLevel(const QString& pLevel, bool pEnabled)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	beginFilterChange();
+#endif
+
 	if (pEnabled)
 	{
 		mSelectedLevels.insert(pLevel);
@@ -102,13 +124,21 @@ void LogFilterModel::configureLevel(const QString& pLevel, bool pEnabled)
 		mSelectedLevels.remove(pLevel);
 	}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	endFilterChange();
+#else
 	invalidateFilter();
+#endif
+
 	Q_EMIT fireLevelsChanged();
 }
 
 
 void LogFilterModel::configureCategory(const QString& pCategory, bool pEnabled)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	beginFilterChange();
+#endif
 	if (pEnabled)
 	{
 		mSelectedCategories.insert(pCategory);
@@ -118,6 +148,11 @@ void LogFilterModel::configureCategory(const QString& pCategory, bool pEnabled)
 		mSelectedCategories.remove(pCategory);
 	}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 10, 0))
+	endFilterChange();
+#else
 	invalidateFilter();
+#endif
+
 	Q_EMIT fireCategoriesChanged();
 }

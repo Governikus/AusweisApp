@@ -16,7 +16,36 @@ if(NOT ANDROID AND NOT IOS)
 	set(COMPILER_SEARCH C CXX)
 endif()
 
-project(AusweisApp2_Libs ${COMPILER_SEARCH})
+project(AusweisApp_Libs ${COMPILER_SEARCH})
+
+list(APPEND LIBS_ID_SALT ${CMAKE_VERSION})
+file(GLOB_RECURSE GENERATE_LIBS_ID_SEED "${CMAKE_SOURCE_DIR}/*")
+list(FILTER GENERATE_LIBS_ID_SEED EXCLUDE REGEX "README|patches.cmake")
+
+if(CMAKE_TOOLCHAIN_FILE)
+	list(APPEND GENERATE_LIBS_ID_SEED "${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
+function(GENERATE_LIBS_ID _out)
+	foreach(file ${GENERATE_LIBS_ID_SEED})
+		file(MD5 "${file}" _hash)
+		string(MD5 hashes "${_hash}${hashes}${SALT}${LIBS_ID_SALT}")
+	endforeach()
+	set(${_out} ${hashes} PARENT_SCOPE)
+endfunction()
+
+set(PROJECT_CMAKE_DIR "${PROJECT_SOURCE_DIR}/../cmake")
+macro(use_project_include _file)
+	if(CONTAINER_SDK)
+		set(CMAKE_MODULE_PATH "${PROJECT_CMAKE_DIR};${PROJECT_SOURCE_DIR}")
+	else()
+		set(CMAKE_MODULE_PATH "${PROJECT_CMAKE_DIR}")
+	endif()
+
+	include(${_file} RESULT_VARIABLE _file_path)
+	list(APPEND GENERATE_LIBS_ID_SEED ${_file_path})
+	unset(CMAKE_MODULE_PATH)
+endmacro()
 
 option(INTEGRATED_SDK "Build integrated specific SDK" OFF)
 option(CONTAINER_SDK "Build container specific SDK" OFF)
@@ -24,14 +53,11 @@ option(DEVELOPER "Include modules/features for developer" OFF)
 
 if(CONTAINER_SDK)
 	set(INTEGRATED_SDK ON)
-	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake;${PROJECT_SOURCE_DIR}")
-else()
-	set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake")
 endif()
 
 include(ExternalProject)
-include(Helper)
-include(DVCS)
+use_project_include(Helper)
+use_project_include(DVCS)
 
 
 if(MSVC)
@@ -83,14 +109,12 @@ else()
 	set(PERL_EXECUTABLE perl)
 endif()
 
-set(PATCH_CMAKE ${CMAKE_CURRENT_BINARY_DIR}/patch.cmake)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/patch.cmake.in ${PATCH_CMAKE} @ONLY)
+set(PATCH_CMAKE ${PROJECT_SOURCE_DIR}/patch.cmake)
 
 if(NOT DESTINATION_DIR)
 	set(DESTINATION_DIR ${PROJECT_BINARY_DIR}/dist)
 endif()
 
-configure_file(${PROJECT_SOURCE_DIR}/test/valgrind.supp.${CMAKE_BUILD_TYPE} ${DESTINATION_DIR}/test/valgrind.supp COPYONLY)
 
 if(NOT PACKAGES_DIR)
 	set(PACKAGES_DIR $ENV{PACKAGES_DIR})
@@ -102,7 +126,7 @@ endif()
 
 string(REPLACE "\\" "/" PACKAGES_DIR ${PACKAGES_DIR})
 set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/b)
-include(Messages)
+use_project_include(Messages)
 
 if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME)
 	get_filename_component(compiler "${CMAKE_CXX_COMPILER}" NAME)
@@ -460,6 +484,7 @@ elseif(WIN32 OR CYGWIN)
 
 	set(ADDITIONAL_QT_DEFINES ${ADDITIONAL_QT_DEFINES} "-DCMAKE_CXX_FLAGS=\"-DQT_WIN_SERVER_2016_COMPAT=1\"")
 elseif(ANDROID)
+	list(APPEND LIBS_ID_SALT ${ANDROID_NDK_REVISION} ${ANDROID_BUILD_TOOLS_REVISION})
 	find_package(Java COMPONENTS Development REQUIRED)
 
 	set(QT_ENV OPENSSL_LIBS=-lcrypto_${CMAKE_ANDROID_ARCH_ABI}\ -lssl_${CMAKE_ANDROID_ARCH_ABI})
@@ -540,7 +565,11 @@ ExternalProject_Add(qt
 	INSTALL_COMMAND ${CMAKE_COMMAND} --install .
 )
 
-add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E touch ${DESTINATION_DIR}/mkspecs/qt_vendor_governikus)
+set(vendor_file "GovernikusConfig.cmake")
+add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/${vendor_file} ${DESTINATION_DIR}/lib/cmake/Governikus/${vendor_file})
+
+configure_file(${PROJECT_SOURCE_DIR}/test/valgrind.supp.${CMAKE_BUILD_TYPE} "${CMAKE_BINARY_DIR}/valgrind.supp" COPYONLY)
+add_custom_command(TARGET qt POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/valgrind.supp" ${DESTINATION_DIR}/test/valgrind.supp)
 
 #########################################################################
 
@@ -560,28 +589,56 @@ if(COMPRESS_DEPENDS)
 endif()
 
 string(TIMESTAMP stamp "%Y-%m-%d")
+set(IDENTIFIER ${stamp})
 FIND_DVCS(${PROJECT_SOURCE_DIR}/..)
 if(DVCS_FOUND)
 	GET_DVCS_INFO()
+	list(APPEND LIBS_ID_SALT ${dvcs_branch})
 
 	if(DEFINED dvcs_phase)
-		set(stamp ${stamp}_${dvcs_phase})
+		set(IDENTIFIER ${IDENTIFIER}_${dvcs_phase})
 	endif()
 
 	if(DEFINED dvcs_revision)
-		set(stamp ${stamp}_${dvcs_revision})
+		set(IDENTIFIER ${IDENTIFIER}_${dvcs_revision})
 	endif()
 endif()
 
+list(APPEND SYSTEM_NAME ${CMAKE_SYSTEM_NAME} ${CMAKE_CXX_COMPILER_ID})
 if(ANDROID)
-	set(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID}_${CMAKE_ANDROID_ARCH_ABI})
-else()
-	set(SYSTEM_NAME ${CMAKE_SYSTEM_NAME}_${CMAKE_CXX_COMPILER_ID})
+	list(APPEND SYSTEM_NAME ${CMAKE_ANDROID_ARCH_ABI})
+elseif(IOS)
+	if(CMAKE_OSX_SYSROOT MATCHES "iphonesimulator")
+		list(APPEND SYSTEM_NAME ${CMAKE_OSX_SYSROOT})
+	endif()
+	if(CMAKE_OSX_ARCHITECTURES)
+		list(APPEND SYSTEM_NAME ${CMAKE_OSX_ARCHITECTURES})
+	endif()
+elseif(LINUX)
+	set(OS_RELEASE "/etc/os-release")
+	if(EXISTS ${OS_RELEASE})
+		file(STRINGS ${OS_RELEASE} _content)
+		function(EXTRACT _identifier _out)
+			foreach(line IN LISTS _content)
+				string(REGEX MATCH "^${_identifier}=\"?([a-zA-Z0-9.-_]+)\"?" _unused "${line}")
+				if(CMAKE_MATCH_1)
+					set(${_out} ${CMAKE_MATCH_1} PARENT_SCOPE)
+					break()
+				endif()
+			endforeach()
+		endfunction()
+
+		EXTRACT(ID LINUX_DISTRO)
+		EXTRACT(VERSION_ID LINUX_DISTRO_VERSION)
+		list(APPEND SYSTEM_NAME ${LINUX_DISTRO} ${LINUX_DISTRO_VERSION})
+	endif()
 endif()
+list(JOIN SYSTEM_NAME "_" SYSTEM_NAME)
 
 if(WIN32)
 	if(SIGNTOOL_CMD)
-		configure_file(${CMAKE_MODULE_PATH}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
+		configure_file(${PROJECT_CMAKE_DIR}/SignFiles.cmake.in ${CMAKE_BINARY_DIR}/SignFiles.cmake @ONLY)
+		list(APPEND GENERATE_LIBS_ID_SEED "${CMAKE_BINARY_DIR}/SignFiles.cmake")
 		set(SIGN_COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/SignFiles.cmake")
 	endif()
 endif()
@@ -601,14 +658,24 @@ else()
 	set(REMOVE_DIRECTORIES ${CMAKE_COMMAND} -E rm -rf "${DESTINATION_DIR}/doc" "${DESTINATION_DIR}/share")
 endif()
 
-add_custom_target(compress.pre ${compressed_filename}
+add_custom_target(compress.pre
 		COMMAND ${REMOVE_DIRECTORIES}
 		COMMAND ${SIGN_COMMAND}
 		DEPENDS ${COMPRESS_TARGETS}
 		WORKING_DIRECTORY "${DESTINATION_DIR}")
 
-set(compressed_filename Toolchain_${SYSTEM_NAME}_${stamp}.${COMPRESSION_FILENDING})
+if(SALT)
+	GENERATE_LIBS_ID(IDENTIFIER)
+endif()
+set(compressed_filename Toolchain_${SYSTEM_NAME}_${IDENTIFIER}.${COMPRESSION_FILENDING})
+message(STATUS "Use tarball: ${compressed_filename}")
 add_custom_command(OUTPUT ${compressed_filename}
 		COMMAND ${CMAKE_COMMAND} -E tar "${COMPRESSION}" "${compressed_filename}" ${COMPRESSION_OPTION} "${DESTINATION_DIR}"
 		DEPENDS compress.pre)
 add_custom_target(compress DEPENDS ${compressed_filename})
+
+include(patch.cmake)
+FETCH_PATCHES_NAMES(QT_PATCHES qt)
+FETCH_PATCHES_NAMES(OPENSSL_PATCHES openssl)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/${vendor_file}.in ${CMAKE_BINARY_DIR}/${vendor_file} INSTALL_DESTINATION ${DESTINATION_DIR})

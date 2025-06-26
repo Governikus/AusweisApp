@@ -7,6 +7,8 @@
 #include "AppSettings.h"
 #include "Env.h"
 
+#include "MockNetworkReply.h"
+
 #include <QtTest>
 
 using namespace Qt::Literals::StringLiterals;
@@ -126,6 +128,80 @@ class test_UrlUtil
 
 			QCOMPARE(generalSettings.useSelfAuthTestUri(), useTestUri);
 			QCOMPARE(simulatorSettings.isEnabled(), enableSimulator);
+		}
+
+
+		void resolveRedirect_data()
+		{
+			QTest::addColumn<QLatin1String>("requestUrl");
+			QTest::addColumn<QLatin1String>("responseUrl");
+			QTest::addColumn<QLatin1String>("resultUrl");
+
+			QLatin1String emptyUrl;
+			QLatin1String invalidUrl("://://");
+
+			QLatin1String requestUrl1("http://www.foo.bar");
+			QLatin1String requestUrl2("http://www.foo.bar/");
+			QLatin1String requestUrl3("http://www.foo.bar/world.html");
+			QLatin1String requestUrl4("http://www.foo.bar/hello/world.html");
+			QLatin1String requestUrl5("http://www.foo.bar/hello/again/world.html");
+
+			QLatin1String responseUrl1("http://www.bar.foo/index.html");
+			QLatin1String responseUrl2("index.html");
+			QLatin1String responseUrl3("/index.html");
+			QLatin1String responseUrl4("./index.html");
+			QLatin1String responseUrl5("../index.html");
+
+			QLatin1String resultUrl1("http://www.bar.foo/index.html");
+			QLatin1String resultUrl2("http://www.foo.bar/index.html");
+			QLatin1String resultUrl3("http://www.foo.bar/hello/index.html");
+			QLatin1String resultUrl4("http://www.foo.bar/hello/again/index.html");
+
+			QTest::newRow("e1") << requestUrl1 << emptyUrl << emptyUrl;
+			QTest::newRow("e2") << requestUrl1 << invalidUrl << invalidUrl;
+
+			QTest::newRow("01") << requestUrl1 << responseUrl1 << resultUrl1;
+			QTest::newRow("02") << requestUrl1 << responseUrl2 << resultUrl2;
+			QTest::newRow("03") << requestUrl1 << responseUrl3 << resultUrl2;
+			QTest::newRow("04") << requestUrl1 << responseUrl4 << resultUrl2;
+			QTest::newRow("05") << requestUrl1 << responseUrl5 << resultUrl2;
+
+			QTest::newRow("06") << requestUrl2 << responseUrl1 << resultUrl1;
+			QTest::newRow("07") << requestUrl2 << responseUrl2 << resultUrl2;
+			QTest::newRow("08") << requestUrl2 << responseUrl3 << resultUrl2;
+			QTest::newRow("09") << requestUrl2 << responseUrl4 << resultUrl2;
+			QTest::newRow("10") << requestUrl2 << responseUrl5 << resultUrl2;
+
+			QTest::newRow("11") << requestUrl3 << responseUrl1 << resultUrl1;
+			QTest::newRow("12") << requestUrl3 << responseUrl2 << resultUrl2;
+			QTest::newRow("13") << requestUrl3 << responseUrl3 << resultUrl2;
+			QTest::newRow("14") << requestUrl3 << responseUrl4 << resultUrl2;
+			QTest::newRow("15") << requestUrl3 << responseUrl5 << resultUrl2;
+
+			QTest::newRow("16") << requestUrl4 << responseUrl1 << resultUrl1;
+			QTest::newRow("17") << requestUrl4 << responseUrl2 << resultUrl3;
+			QTest::newRow("18") << requestUrl4 << responseUrl3 << resultUrl2;
+			QTest::newRow("19") << requestUrl4 << responseUrl4 << resultUrl3;
+			QTest::newRow("20") << requestUrl4 << responseUrl5 << resultUrl2;
+
+			QTest::newRow("21") << requestUrl5 << responseUrl1 << resultUrl1;
+			QTest::newRow("22") << requestUrl5 << responseUrl2 << resultUrl4;
+			QTest::newRow("23") << requestUrl5 << responseUrl3 << resultUrl2;
+			QTest::newRow("24") << requestUrl5 << responseUrl4 << resultUrl4;
+			QTest::newRow("25") << requestUrl5 << responseUrl5 << resultUrl3;
+		}
+
+
+		void resolveRedirect()
+		{
+			QFETCH(QLatin1String, requestUrl);
+			QFETCH(QLatin1String, responseUrl);
+			QFETCH(QLatin1String, resultUrl);
+
+			const auto& reply = QSharedPointer<MockNetworkReply>::create();
+			reply->setRequest(QNetworkRequest(QUrl(requestUrl)));
+			reply->setAttribute(QNetworkRequest::RedirectionTargetAttribute, responseUrl);
+			QCOMPARE(UrlUtil::resolveRedirect(reply), QUrl(resultUrl));
 		}
 
 

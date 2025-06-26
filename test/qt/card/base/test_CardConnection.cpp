@@ -35,9 +35,11 @@ class test_CardConnection
 			QSharedPointer<MockCardConnectionWorker> worker(new MockCardConnectionWorker());
 			worker->moveToThread(&workerThread);
 			CardConnection connection(worker);
-			UpdateRetryCounterCommand* command = connection.createUpdateRetryCounterCommand();
+			const QString slotHandle = QStringLiteral("slot handle");
+			UpdateRetryCounterCommand* command = connection.createUpdateRetryCounterCommand(slotHandle);
 			command->deleteLater();
 			QCOMPARE(command->mCardConnectionWorker, worker);
+			QCOMPARE(command->getSlotHandle(), slotHandle);
 		}
 
 

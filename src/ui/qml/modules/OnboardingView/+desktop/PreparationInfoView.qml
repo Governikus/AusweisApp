@@ -63,7 +63,7 @@ BaseOnboardingView {
 	}
 	GText {
 		//: LABEL DESKTOP  %1 + %2 = Bold Tags, %3 = AusweisApp
-		text: qsTr("You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a %1 6-digit card PIN%2 in the %3 or at the Citizens' Registration Office. If you do not have a PIN or do not remember your card PIN, click here:").arg("<b>").arg("</b>").arg(Qt.application.name)
+		text: qsTr("You have received a one-time PIN, the %1Transport PIN%2, as a letter from your competent authority. You can replace this with a%1 6-digit card PIN%2 in the %3 or at the Citizens' Registration Office. If you do not have a PIN or do not remember your card PIN, click here:").arg("<b>").arg("</b>").arg(Qt.application.name)
 	}
 	MoreInformationLink {
 		Layout.bottomMargin: Style.dimens.pane_spacing * 2

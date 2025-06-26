@@ -176,7 +176,7 @@ void StateGetTcToken::onNetworkReply()
 
 	if (statusCode == HTTP_STATUS_SEE_OTHER || statusCode == HTTP_STATUS_FOUND || statusCode == HTTP_STATUS_TEMPORARY_REDIRECT)
 	{
-		const QUrl& redirectUrl = mReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+		const QUrl& redirectUrl = UrlUtil::resolveRedirect(mReply);
 		if (!isValidRedirectUrl(redirectUrl))
 		{
 			Q_EMIT fireAbort(FailureCode::Reason::Get_TcToken_Invalid_Redirect_Url);
