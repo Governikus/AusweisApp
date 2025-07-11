@@ -107,7 +107,7 @@ RedirectRequest::~RedirectRequest()
 
 void RedirectRequest::sendHttpRedirect()
 {
-	const auto& scheme = mRequest->isUpgrade() ? QByteArrayLiteral("ws://") : QByteArrayLiteral("http://");
+	const auto& scheme = mRequest->isUpgrade() ? QByteArrayLiteral("wss://") : QByteArrayLiteral("https://");
 	const auto host = mRequest->getHeader(QByteArrayLiteral("host")).replace(QByteArray::number(mRequest->getLocalPort()), QByteArray::number(peerPort()));
 	const auto url = scheme + host + mRequest->getUrl().toString().toLatin1();
 
