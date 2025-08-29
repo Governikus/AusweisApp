@@ -7,6 +7,6 @@ StartupNotify=true
 Terminal=false
 Categories=System;Security;
 GenericName=Authentication App
-Keywords=nPA,eID,eAT,Personalausweis,Aufenthaltstitel,Identity,Card
+Keywords=nPA;eID;eAT;Personalausweis;Aufenthaltstitel;Identity;Card
 Name=AusweisApp
 StartupWMClass=AusweisApp
