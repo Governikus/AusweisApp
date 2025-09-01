@@ -25,7 +25,7 @@ jobs:
           choco install jom ninja
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add nmake
         uses: ilammy/msvc-dev-cmd@v1
@@ -61,7 +61,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install packages via apt
         run: |
@@ -98,7 +98,7 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install packages via apt
         run: |
@@ -137,7 +137,7 @@ jobs:
         build_platform: ["Ninja"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: install ninja
         run: |
@@ -174,7 +174,7 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: install ninja
         run: |

@@ -24,7 +24,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -56,7 +56,7 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install packages via apt
         run: |
@@ -92,7 +92,7 @@ jobs:
         build_platform: ["Unix Makefiles"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
